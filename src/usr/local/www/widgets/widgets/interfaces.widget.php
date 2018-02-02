@@ -31,6 +31,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 
 if ($_POST['widgetkey'] && !$_REQUEST['ajax']) {
 	set_customwidgettitle($user_settings);
+	set_customwidgetinterval($user_settings);
 
 	$validNames = array();
 
@@ -53,6 +54,8 @@ if ($_POST['widgetkey'] && !$_REQUEST['ajax']) {
 if ($_REQUEST['widgetkey']) {
 	$widgetkey = $_REQUEST['widgetkey'];
 }
+
+$ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 10;
 
 ?>
 
@@ -157,6 +160,8 @@ endif;
 
 <form action="/widgets/widgets/interfaces.widget.php" method="post" class="form-horizontal">
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
+	<?=gen_customwidgetinterval_div($widgetconfig['interval']); ?>
+
 	<div class="panel panel-default col-sm-10">
 		<div class="panel-body">
 			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
@@ -228,7 +233,7 @@ if ($_REQUEST['ajax']) {
 		interfacesObject.url = "/widgets/widgets/interfaces.widget.php";
 		interfacesObject.callback = interfaces_callback;
 		interfacesObject.parms = postdata;
-		interfacesObject.freq = 1;
+		interfacesObject.freq = <?=$ninterval?>;
 
 		// Register the AJAX object
 		register_ajax(interfacesObject);

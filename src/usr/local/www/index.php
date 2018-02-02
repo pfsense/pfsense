@@ -324,9 +324,16 @@ if ($user_settings['widgets']['sequence'] != "") {
 			}
 		}
 
+		if (isset($user_settings['widgets'][$widgetkey]['interval']) && is_numeric($user_settings['widgets'][$widgetkey]['interval'])) {
+			$interval = intval($user_settings['widgets'][$widgetkey]['interval']);
+		} else {
+			$interval = 1;
+		}
+
 		$widgetsfromconfig[$widgetkey] = array(
 			'basename' => $basename,
 			'title' => $widgettitle,
+			'interval' => $interval,
 			'col' => $col,
 			'display' => $display,
 			'copynum' => $copynum,
@@ -601,8 +608,6 @@ function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
 // ---------------------Centralized widget refresh system -------------------------------------------
 // These need to live outsie of the events.push() function to enable the widgets to see them
 var ajaxspecs = new Array();	// Array to hold widget refresh specifications (objects )
-var ajaxidx = 0;
-var ajaxmutex = false;
 var ajaxcntr = 0;
 
 // Add a widget refresh object to the array list
@@ -668,11 +673,10 @@ events.push(function() {
 	});
 
 	// --------------------- Centralized widget refresh system ------------------------------
-	ajaxtimeout = false;
-
 	function make_ajax_call(wd) {
-		ajaxmutex = true;
-
+		// Add a lock on the widget to prevent overlapping callbacks
+		wd.locked = true;
+		
 		$.ajax({
 			type: 'POST',
 			url: wd.url,
@@ -682,52 +686,48 @@ events.push(function() {
 			success: function(data){
 				if (data.length > 0 ) {
 					// If the session has timed out, display a pop-up
-					if (data.indexOf("SESSION_TIMEOUT") === -1) {
-						wd.callback(data);
-					} else {
-						if (ajaxtimeout === false) {
-							ajaxtimeout = true;
-							alert("<?=$timeoutmessage?>");
-						}
+					if (data.indexOf("SESSION_TIMEOUT") > -1) {
+						alert("<?=$timeoutmessage?>");
+						return;
 					}
-				}
 
-				ajaxmutex = false;
+					// Else call the callback
+					wd.callback(data);
+				}
 			},
 
 			error: function(e){
 //				alert("Error: " + e);
-				ajaxmutex = false;
+			},
+			
+			complete: function() {
+				// Regardless of success or error, remove the widget's lock
+				wd.locked = false;
 			}
 		});
 	}
 
 	// Loop through each AJAX widget refresh object, make the AJAX call and pass the
 	// results back to the widget's callback function
-	function executewidget() {
-		if (ajaxspecs.length > 0) {
-			var freq = ajaxspecs[ajaxidx].freq;	// widget can specifify it should be called freq times around hte loop
-
-			if (!ajaxmutex) {
-				if (((ajaxcntr % freq) === 0) && (typeof ajaxspecs[ajaxidx].callback === "function" )) {
-				    make_ajax_call(ajaxspecs[ajaxidx]);
-				}
-
-			    if (++ajaxidx >= ajaxspecs.length) {
-					ajaxidx = 0;
-
-					if (++ajaxcntr >= 4096) {
-						ajaxcntr = 0;
-					}
-			    }
+	function executewidgets() {
+		for (var ajaxidx = 0; ajaxidx < ajaxspecs.length; ajaxidx++) {
+			if (ajaxspecs[ajaxidx].locked) {
+				continue;
 			}
 
-		    setTimeout(function() { executewidget(); }, 1000);
-	  	}
+			var freq = ajaxspecs[ajaxidx].freq;	// widget can specify it should be called every freq seconds
+
+			if (((ajaxcntr % freq) === 0) && (typeof ajaxspecs[ajaxidx].callback === "function" )) {
+				make_ajax_call(ajaxspecs[ajaxidx]);
+			}
+		}
+		ajaxcntr++;
 	}
 
 	// Kick it off
-	executewidget();
+	if (ajaxspecs.length > 0) {
+		setInterval(executewidgets, 1000);
+	}
 
 	//----------------------------------------------------------------------------------------------------
 });

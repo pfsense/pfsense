@@ -168,6 +168,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 if ($_POST['widgetkey']) {
 	set_customwidgettitle($user_settings);
+	set_customwidgetinterval($user_settings);
 
 	if (!is_array($user_settings["widgets"][$_POST['widgetkey']])) {
 		$user_settings["widgets"][$_POST['widgetkey']] = array();
@@ -198,6 +199,8 @@ if ($_POST['widgetkey']) {
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
+$ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 1;
+
 ?>
 
 <div class="table-responsive">
@@ -222,6 +225,8 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 </div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 <form action="/widgets/widgets/gateways.widget.php" method="post" class="form-horizontal">
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
+	<?=gen_customwidgetinterval_div($widgetconfig['interval']); ?>
+
 	<div class="form-group">
 		<label class="col-sm-4 control-label"><?=gettext('Display')?></label>
 <?php
@@ -323,7 +328,7 @@ events.push(function(){
 	gatewaysObject.url = "/widgets/widgets/gateways.widget.php";
 	gatewaysObject.callback = gateways_callback;
 	gatewaysObject.parms = postdata;
-	gatewaysObject.freq = 1;
+	gatewaysObject.freq = <?=$ninterval?>;
 
 	// Register the AJAX object
 	register_ajax(gatewaysObject);

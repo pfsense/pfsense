@@ -157,6 +157,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	exit;
 } else if ($_POST['widgetkey']) {
 	set_customwidgettitle($user_settings);
+	set_customwidgetinterval($user_settings);
 
 	if (isset($_POST['orientation_type'])) {
 		$user_settings['widgets'][$_POST['widgetkey']]['orientation_type'] = $_POST['orientation_type'];
@@ -193,6 +194,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
+$ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 1;
+
 ?>
 <table id="<?=htmlspecialchars($widgetkey)?>-iftbl" class="table table-striped table-hover">
 	<tr><td><?=gettext("Retrieving interface data")?></td></tr>
@@ -203,6 +206,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 <form action="/widgets/widgets/interface_statistics.widget.php" method="post" class="form-horizontal">
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
+	
 	<div class="form-group">
 		<label class="col-sm-3 control-label"><?=gettext('Orientation')?></label>
 		<?php
@@ -285,6 +289,8 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 		</div>
 	</div>
 
+	<?=gen_customwidgetinterval_div($widgetconfig['interval']); ?>
+
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
@@ -334,7 +340,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 		ifstatObject.url = "/widgets/widgets/interface_statistics.widget.php";
 		ifstatObject.callback = interface_statistics_callback;
 		ifstatObject.parms = postdata;
-		ifstatObject.freq = 1;
+		ifstatObject.freq = <?=$ninterval?>;
 
 		// Register the AJAX object
 		register_ajax(ifstatObject);

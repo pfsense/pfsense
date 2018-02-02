@@ -2256,6 +2256,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 		$bw_down = round(!empty($attributes['bw_down']) ? intval($attributes['bw_down'])/1000 : $dwfaultbw_down, 0);
 
 		if ($passthrumac) {
+
 			$mac = array();
 			$mac['action'] = 'pass';
 			$mac['mac'] = $clientmac;
@@ -2280,7 +2281,16 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 			if (!is_array($config['captiveportal'][$cpzone]['passthrumac'])) {
 				$config['captiveportal'][$cpzone]['passthrumac'] = array();
 			}
-			$config['captiveportal'][$cpzone]['passthrumac'][] = $mac;
+			//check for mac duplicates before adding it to config.
+			$mac_duplicate = false;
+			foreach($config['captiveportal'][$cpzone]['passthrumac'] as $mac_check){
+				if($mac_check['mac'] == $mac['mac']){
+					$mac_duplicate = true;
+				}
+			}
+			if(!$mac_duplicate){
+				$config['captiveportal'][$cpzone]['passthrumac'][] = $mac;
+			}
 			unlock($cpdblck);
 			$macrules = captiveportal_passthrumac_configure_entry($mac);
 			file_put_contents("{$g['tmp_path']}/macentry_{$cpzone}.rules.tmp", $macrules);

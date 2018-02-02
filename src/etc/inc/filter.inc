@@ -693,7 +693,6 @@ function filter_generate_nested_alias_recurse($name, $alias, &$aliasnesting, &$a
 				$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
 			}
 		}
-		$finallist = '';
 	}
 
 	return $finallist;

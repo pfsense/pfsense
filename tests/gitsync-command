@@ -1,0 +1,4 @@
+8
+pfSsh.php playback gitsync file:///tmp/pfsense.git/ travis_build
+exit
+

@@ -1,0 +1,4 @@
+8
+pfSense-upgrade -d -y
+reboot
+

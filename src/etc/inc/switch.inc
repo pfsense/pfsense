@@ -381,6 +381,52 @@ function espressobin_switch_initial_setup() {
 	write_config();
 }
 
+function plccb_switch_initial_setup() {
+	global $config;
+
+	if (!isset($config['switches']['switch']) || !is_array($config['switches']['switch'])) {
+		unset($config['switches']['switch']);
+		$config['switches']['switch'] = array();
+	}
+
+	/* Default settings for the espressobin switch. */
+	$switches = &$config['switches']['switch'];
+	$switch = array();
+	$switch['device'] = "/dev/etherswitch0";
+	$switch['vlanmode'] = "DOT1Q";
+	$switch['vlangroups']['vlangroup'] = array();
+	$vgroup = array();
+	$vgroup['vgroup'] = "0";
+	$vgroup['vlanid'] = "1";
+	$vgroup['members'] = "0";
+	$switch['vlangroups']['vlangroup'][] = $vgroup;
+	$vgroup = array();
+	$vgroup['vgroup'] = "1";
+	$vgroup['vlanid'] = "4090";
+	$vgroup['descr'] = "WAN";
+	$vgroup['members'] = "9t 1";
+	$switch['vlangroups']['vlangroup'][] = $vgroup;
+	$vgroup = array();
+	$vgroup['vgroup'] = "2";
+	$vgroup['vlanid'] = "4091";
+	$vgroup['descr'] = "LAN";
+	$vgroup['members'] = "9t 2 3 4 5 6 7 8";
+	$switch['vlangroups']['vlangroup'][] = $vgroup;
+	$switch['swports']['swport'] = array();
+	$swport = array();
+	$swport['port'] = "1";
+	$swport['pvid'] = "4090";
+	$switch['swports']['swport'][] = $swport;
+	for ($i = 2; $i <= 8; $i++) {
+		$swport = array();
+		$swport['port'] = "${i}";
+		$swport['pvid'] = "4091";
+		$switch['swports']['swport'][] = $swport;
+	}
+	$switches[] = $switch;
+	write_config();
+}
+
 function r1_switch_initial_setup() {
 	global $config;
 
@@ -407,6 +453,9 @@ function default_switch_configure() {
 		switch ($platform['name']) {
 		case "A37XX":
 			espressobin_switch_initial_setup();
+			break;
+		case "PLCC-B":
+			plccb_switch_initial_setup();
 			break;
 		case "ROGUE-1":
 			r1_switch_initial_setup();

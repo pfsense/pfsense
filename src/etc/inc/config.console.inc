@@ -540,16 +540,37 @@ function netgate_hardware_setup() {
 		);
 		break;
 	case 'PLCC-B':
-		$config['interfaces']['wan']['if'] = 'ix0';
-		$config['interfaces']['lan']['if'] = 'ix2';
-		$config['interfaces']['lan2'] = array(
-			'if' => 'ix3',
-			'descr' => 'LAN2'
-		);
 		$config['interfaces']['opt1'] = array(
-			'if' => 'ix1',
+			'if' => 'ix0',
 			'descr' => 'OPT1'
 		);
+		$config['interfaces']['opt2'] = array(
+			'if' => 'ix1',
+			'descr' => 'OPT2'
+		);
+		$config['interfaces']['switch'] = array(
+			'if' => 'ix2',
+			'descr' => 'SWITCH'
+		);
+		$config['interfaces']['switch2'] = array(
+			'if' => 'ix3',
+			'descr' => 'SWITCH2'
+		);
+		$config['vlans']['vlan'] = array();
+		$vlan = array();
+		$vlan['if'] = "ix2";
+		$vlan['tag'] = "4090";
+		$vlan['descr'] = "WAN";
+		$vlan['vlanif'] = "ix2.4090";
+		$config['vlans']['vlan'][] = $vlan;
+		$config['interfaces']['wan']['if'] = 'ix2.4090';
+		$vlan = array();
+		$vlan['if'] = "ix2";
+		$vlan['tag'] = "4091";
+		$vlan['descr'] = "LAN";
+		$vlan['vlanif'] = "ix2.4091";
+		$config['vlans']['vlan'][] = $vlan;
+		$config['interfaces']['lan']['if'] = 'ix2.4091';
 		break;
 	case 'C2758':
 		$config['interfaces']['wan']['if'] = 'igb0';

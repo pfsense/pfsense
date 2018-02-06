@@ -1438,7 +1438,11 @@ EOD;
 						continue;
 					}
 
-					if (!isset($mkent['pool_address']) || !isset($mkent['pool_netbits'])) {
+					if (!isset($mkent['ident_type']) || !isset($mkent['pool_address']) || !isset($mkent['pool_netbits'])) {
+						continue;
+					}
+
+					if (strlen($mkent['pool_address'] < 1) || !is_ipaddr($mkent['pool_address'])) {
 						continue;
 					}
 
@@ -1446,7 +1450,13 @@ EOD;
 					$ipsecfin .= "\talso = con-mobile\n";
 					$ipsecfin .= "\teap_identity = %identity\n";
 					$ipsecfin .= "\trightsourceip = {$mkent['pool_address']}/{$mkent['pool_netbits']}\n";
-					$ipsecfin .= "\trightid = {$mkent['ident_type']}:{$mkent['ident']}\n";
+
+					if ($mkent['ident_type'] == "none") {
+						$ipsecfin .= "\trightid = \"{$mkent['ident']}\"\n";
+					}
+					else {
+						$ipsecfin .= "\trightid = {$mkent['ident_type']}:{$mkent['ident']}\n";
+					}
 
 					// optional: define left|rightid more granular
 					// supported: ipv4, ipv6, rfc822, email, userfqdn, fqdn, dns, asn1dn, asn1gn, keyid

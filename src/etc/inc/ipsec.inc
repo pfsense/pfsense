@@ -71,6 +71,21 @@ $ipsec_log_cats = array(
 	"lib" => gettext("StrongSwan Lib")
 );
 
+global $ipsec_identifier_list;
+$ipsec_identifier_list = array(
+	// 'ipv4' => array('desc' => gettext('IPv4 address'), 'mobile' => true),
+	// 'ipv6' => array('desc' => gettext('IPv6 address'), 'mobile' => true),
+	// 'rfc822' => array('desc' => gettext('RFC822'), 'mobile' => true),
+	'none' => array('desc' => '', 'mobile' => true),
+	'email' => array('desc' => gettext('E-mail address'), 'mobile' => true),
+	'userfqdn' => array('desc' => gettext('User Fully Qualified Domain Name'), 'mobile' => true)
+	// 'fqdn' => array('desc' => gettext('Fully Qualified Domain Name'), 'mobile' => true),
+	// 'dns' => array('desc' => gettext('DNS'), 'mobile' => true),
+	// 'asn1dn' => array('desc' => gettext('ASN.1 Distinguished Name'), 'mobile' => true),
+	// 'asn1gn' => array('desc' => gettext('ASN.1 GN'), 'mobile' => true),
+	// 'keyid' => array('desc' => gettext('KeyID'), 'mobile' => true)
+);
+
 global $my_identifier_list;
 $my_identifier_list = array(
 	'myaddress' => array('desc' => gettext('My IP address'), 'mobile' => true),

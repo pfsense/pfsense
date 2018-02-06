@@ -548,13 +548,13 @@ function netgate_hardware_setup() {
 			'if' => 'ix1',
 			'descr' => 'OPT2'
 		);
-		$config['interfaces']['switch1'] = array(
+		$config['interfaces']['uplink1'] = array(
 			'if' => 'ix2',
-			'descr' => 'SWITCH1'
+			'descr' => 'UPLINK1'
 		);
-		$config['interfaces']['switch2'] = array(
+		$config['interfaces']['uplink2'] = array(
 			'if' => 'ix3',
-			'descr' => 'SWITCH2'
+			'descr' => 'UPLINK2'
 		);
 		$config['vlans']['vlan'] = array();
 		$vlan = array();

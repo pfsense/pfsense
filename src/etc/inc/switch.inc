@@ -497,8 +497,9 @@ function default_switch_configure() {
 				$members = array();
 			}
 			foreach($members as $m) {
-				if ($m[1] == "t") {
-					$m = substr($m, 0, 1);
+				$tagpos = strpos($m, "t");
+				if ($tagpos != false) {
+					$m = substr($m, 0, $tagpos);
 					$vgmembers[$m] = array();
 					$vgmembers[$m]['tagged'] = 1;
 				} else {

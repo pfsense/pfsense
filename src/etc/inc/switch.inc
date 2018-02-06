@@ -141,8 +141,8 @@ function switch_ufw_map_port($port) {
 
 function switch_plcc_map_port($port) {
 
-	$ports = array("lan0", "LAN 1", "LAN 2", "LAN 3", "LAN 4", "LAN 5",
-	    "LAN 6", "LAN 7", "LAN 8", "LAN Uplink 1", "LAN Uplink 2");
+	$ports = array("iCPU", "ETH1", "ETH2", "ETH3", "ETH4", "ETH5",
+	    "ETH6", "ETH7", "ETH8", "Uplink 2", "Uplink 1");
 
 	if ($port < 0)
 		$port = 0;
@@ -404,13 +404,13 @@ function plccb_switch_initial_setup() {
 	$vgroup['vgroup'] = "1";
 	$vgroup['vlanid'] = "4090";
 	$vgroup['descr'] = "WAN";
-	$vgroup['members'] = "9t 1";
+	$vgroup['members'] = "10t 1";
 	$switch['vlangroups']['vlangroup'][] = $vgroup;
 	$vgroup = array();
 	$vgroup['vgroup'] = "2";
 	$vgroup['vlanid'] = "4091";
 	$vgroup['descr'] = "LAN";
-	$vgroup['members'] = "9t 2 3 4 5 6 7 8";
+	$vgroup['members'] = "10t 2 3 4 5 6 7 8";
 	$switch['vlangroups']['vlangroup'][] = $vgroup;
 	$switch['swports']['swport'] = array();
 	$swport = array();

@@ -548,9 +548,9 @@ function netgate_hardware_setup() {
 			'if' => 'ix1',
 			'descr' => 'OPT2'
 		);
-		$config['interfaces']['switch'] = array(
+		$config['interfaces']['switch1'] = array(
 			'if' => 'ix2',
-			'descr' => 'SWITCH'
+			'descr' => 'SWITCH1'
 		);
 		$config['interfaces']['switch2'] = array(
 			'if' => 'ix3',

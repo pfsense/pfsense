@@ -211,21 +211,21 @@ function vlan_valid_tag($tag = NULL) {
 
 function qinq_inuse($qinq = NULL, $inqtag = NULL) {
         global $config;
-  
+
 	if ($qinq == NULL || $inqtag == NULL ||
 	    !is_array($qinq) || !vlan_valid_tag($inqtag)) {
 		return (false);
 	}
- 
+
         $iflist = get_configured_interface_list(true);
         foreach ($iflist as $if) {
                 if ($config['interfaces'][$if]['if'] == qinq_interface($qinq, $inqtag)) {
                         return (true);
                 }
         }
-       
+
         return (false);
-}      
+}
 
 function qinq_interface($qinq = NULL, $inqtag = NULL) {
 
@@ -3283,7 +3283,7 @@ function kill_dhcp6client_process($interface, $force, $release = false) {
 	Beware of the following: Reason, the interface may be down, but
 	dhcp6c may still be running, it just complains it cannot send
 	and carries on. Commented out as will stop the call to kill.
-	
+
 	if (empty($interface) || !does_interface_exist($interface)) {
 		return;
 	}
@@ -3296,7 +3296,7 @@ function kill_dhcp6client_process($interface, $force, $release = false) {
 	So we need to tell it that the interface is down and to just die quickly
 	otherwise a new client may launch and we have duplicate proceses.
 	In this case use SIGUSR1.
-	 
+
 	If we want to exit normally obeying the no release flag then use SIGTERM.
 	If we want to exit with a release overiding the no release flag then
 	use SIGUSR2.
@@ -3307,7 +3307,7 @@ function kill_dhcp6client_process($interface, $force, $release = false) {
 	If $Force is set to false and $release is also set to false dhcp6c will
 	follow the no-release flag.
 
-	If $Force is set to false and $release is true then dhcp6c will send a 
+	If $Force is set to false and $release is true then dhcp6c will send a
 	release regardless of the no-release flag.
 	***********************************************************************/
 
@@ -3322,7 +3322,7 @@ function kill_dhcp6client_process($interface, $force, $release = false) {
 	while ((($pid = find_dhcp6c_process($interface)) != 0) && ($i < 3)) {
 		/* 3rd time make it die for sure */
 		$sig = ($i == 2 ? SIGKILL : $psig);
-		posix_kill($pid, $sig); 
+		posix_kill($pid, $sig);
 		sleep(1);
 		$i++;
 	}
@@ -3331,9 +3331,9 @@ function kill_dhcp6client_process($interface, $force, $release = false) {
 	unlink_if_exists("{$g['varrun_path']}/dhcp6c_{$interface}.pid"); // just in case!
 }
 function reset_dhcp6client_process($interface) {
-	
+
 	$pid = find_dhcp6c_process($interface);
-	
+
 	if($pid != 0) {
 		posix_kill($pid, SIGHUP);
 	}
@@ -3353,7 +3353,7 @@ function run_dhcp6client_process($interface, $interface_name, $wancfg) {
 	 * It should not happen as the process should have been killed and the
 	 * lock deleted.
 	 */
-	 
+
 	if (!file_exists("/tmp/dhcp6c_{$interface}_lock")) {
 		kill_dhcp6client_process($interface, true);
 		/* Lock it to avoid multiple runs */
@@ -3711,7 +3711,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			// handles all non-PPP connections with 'dhcp6usev4iface' set
 			/* Remove the check file. Should not be there but just in case */
 			unlink_if_exists("/tmp/{$wanif}_dhcp6_complete");
-			log_error(gettext("calling interface_dhcpv6_configure."));																																		  
+			log_error(gettext("calling interface_dhcpv6_configure."));
 			if (!(isset($wancfg['dhcp6usev4iface']) || $wancfg['ipaddr']==='ppp')) {
 				interface_dhcpv6_configure($interface, $wancfg);
 			}
@@ -4222,7 +4222,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		    log_error(gettext("Failed to write user DUID file!"));
 		}
 	}
-	
+
 	/* accept router advertisements for this interface                 */
 	/* Moved to early in the function as sometimes interface not ready */
 	/* RTSOLD fails as interface does not accept .....                 */
@@ -4323,10 +4323,10 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	The logging messages appear in the dhcp section of the logs,
 	not in system.
 
-	These scripts now also take advantage of the REASON= env vars 
+	These scripts now also take advantage of the REASON= env vars
 	supplied by dhcp6c.
 	****************************************************************/
-	
+
 	/* Script create for dhcp6withoutRA mode */
 	/* dhcp6c will launch rtsold. rtsold will then run the wan ipv6 configure */
 	$dhcp6cscriptwithoutra = "#!/bin/sh\n";
@@ -4622,7 +4622,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 			}
 			$id_assoc_statement_prefix .= ";";
 		}
-		
+
 		$realif = get_real_interface($wancfg['adv_dhcp6_prefix_selected_interface']);
 		if (is_numeric($wancfg['adv_dhcp6_prefix_interface_statement_sla_id'])) {
 			$id_assoc_statement_prefix .= "\n\tprefix-interface";
@@ -5928,7 +5928,7 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 
 function get_interface_ip($interface = "wan") {
 	global $config;
-	
+
 	if (substr($interface, 0, 4) == '_vip') {
 		return get_configured_vip_ipv4($interface);
 	} else if (substr($interface, 0, 5) == '_lloc') {
@@ -6048,7 +6048,7 @@ function get_interface_linklocal($interface = "wan") {
 
 function get_interface_subnet($interface = "wan") {
 	global $config;
-	
+
 	if (substr($interface, 0, 4) == '_vip') {
 		return (get_configured_vip_subnetv4($interface));
 	}
@@ -6365,7 +6365,7 @@ function get_interface_vendor_mac($interface) {
 	if (isset($macinfo["hwaddr"]) && $macinfo["hwaddr"] != "00:00:00:00:00:00") {
 		return ($macinfo["hwaddr"]);
 	}
-	return (NULL); 
+	return (NULL);
 }
 
 /****f* pfsense-utils/generate_random_mac_address
@@ -6576,6 +6576,8 @@ function remove_ifindex($ifname) {
 }
 
 function get_configured_vip_list_with_descr($family = 'all', $type = VIP_ALL) {
+	$interfaces = array();	// In case there are no VIPs defined
+
 	$viplist = get_configured_vip_list($family, $type);
 	foreach ($viplist as $vip => $address) {
 		$interfaces[$vip] = $address;
@@ -6611,11 +6613,11 @@ function get_serial_ports() {
 	$linklist = array();
 	if (!is_dir("/var/spool/lock")) {
 		mwexec("/bin/mkdir -p /var/spool/lock");
-	}	
+	}
 	$serialports = glob("/dev/cua[a-zA-Z][0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
 	foreach ($serialports as $port) {
 		$linklist[$port] = trim($port);
-	}	
+	}
 	return $linklist;
 }
 
@@ -6646,7 +6648,7 @@ function get_interface_ports() {
 		}
 
 		$linklist[$ifn] = $string;
-	}	
+	}
 	return $linklist;
 }
 
@@ -6659,10 +6661,11 @@ function build_ppps_link_list() {
 		$linklist['list'] = get_serial_ports();
 	} else {
 		$iflist = get_interface_ports();
-		
+
 		$viplist = get_configured_vip_list_with_descr('all', VIP_CARP);
+
 		$linklist['list'] = array_merge($iflist, $viplist);
-		
+
 		// The members of a LAGG cannot be assigned, used in VLANs, QinQ, or PPP.
 		$lagglist = get_lagg_interface_list();
 		foreach ($lagglist as $laggif => $lagg) {

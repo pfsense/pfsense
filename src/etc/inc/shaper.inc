@@ -32,7 +32,7 @@ require_once("notices.inc");
 include_once("interfaces.inc");//required for convert_real_interface_to_friendly_interface_name() in get_queue_stats() to get altq interface name.
 
 function get_queue_stats() {
-	// due to sysutils\qstats not providing accurate stats with 'currently' valid numbers 
+	// due to sysutils\qstats not providing accurate stats with 'currently' valid numbers
 	// in its current implementation this php function does the job for now..
 	$result = array();
 	$result['timestamp'] = gettimeofday(true);
@@ -57,7 +57,7 @@ function get_queue_stats() {
 			$currentqueueif = $items[$level+2];
 			$newqueue['name'] = $currentqueuename;
 			$newqueue['interface'] = $items[$level+2];
-			
+
 			if ($items[$level+3] == "bandwidth") {
 				$level += 2;
 			}
@@ -71,7 +71,7 @@ function get_queue_stats() {
 			if (substr($tmp,strlen($tmp)-1) == "(") {
 				$newqueue['shapertype'] = substr($tmp, 0, strlen($tmp)-1);
 			}
-			
+
 			$interfacestats[$currentqueueif][$currentqueuename] = &$newqueue;
 			if (is_array($contains)) {
 				$newqueue['contains'] = $contains;
@@ -3800,6 +3800,11 @@ function removeBwRow(el) {
 	var d = el.parentNode.parentNode.rowIndex;
 	document.getElementById('maintable').deleteRow(d);
 }
+
+function ceil_func(el){
+	el.value = Math.ceil(el.value);
+
+}
 //]]>
 </script>
 
@@ -3846,7 +3851,7 @@ EOD;
 			foreach ($bandwidth as $bwidx => $bw) {
 				$form .= '<tr>';
 				$form .= '<td class="col-xs-4">';
-				$form .= "<input class='form-control' type=\"number\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"{$bw['bw']}\" />";
+				$form .= "<input class='form-control' onchange=\"ceil_func(this)\" type=\"number\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"" . ceil($bw['bw']) ."\" min=\"0\" step=\"1\"/>";
 				//$form .= "</td><td width='20%'>";
 				//$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"burst{$bwidx}\" name=\"burst{$bwidx}\" value=\"{$bw['burst']}\" />";
 				$form .= "</td>";

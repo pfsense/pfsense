@@ -270,9 +270,9 @@ if ($_POST['save']) {
 	if ($pconfig['remotegw']) {
 		if (!is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw'])) {
 			$input_errors[] = gettext("A valid remote gateway address or host name must be specified.");
-		} elseif (is_ipaddrv4($pconfig['remotegw']) && ($pconfig['protocol'] != "inet")) {
+		} elseif (is_ipaddrv4($pconfig['remotegw']) && ($pconfig['protocol'] == "inet6")) {
 			$input_errors[] = gettext("A valid remote gateway IPv4 address must be specified or protocol needs to be changed to IPv6");
-		} elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] != "inet6")) {
+		} elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] == "inet")) {
 			$input_errors[] = gettext("A valid remote gateway IPv6 address must be specified or protocol needs to be changed to IPv4");
 		}
 	}
@@ -698,7 +698,7 @@ $section->addInput(new Form_Select(
 	'protocol',
 	'*Internet Protocol',
 	$pconfig['protocol'],
-	array("inet" => "IPv4", "inet6" => "IPv6")
+	array("inet" => "IPv4", "inet6" => "IPv6", "both" => "Both (Dual Stack)")
 ))->setHelp('Select the Internet Protocol family.');
 
 $section->addInput(new Form_Select(

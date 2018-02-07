@@ -270,6 +270,9 @@ function vpn_ipsec_configure($restart = false) {
 			$ikeid = $ph1ent['ikeid'];
 
 			$ep = ipsec_get_phase1_src($ph1ent);
+			/* When automatically guessing, use the first address. */
+			$ep  = explode(',', $ep);
+			$ep  = $ep[0];
 			if (!is_ipaddr($ep)) {
 				log_error(sprintf(gettext("IPsec ERROR: Could not find phase 1 source for connection %s. Omitting from configuration file."), $ph1ent['descr']));
 				continue;
@@ -804,24 +807,37 @@ EOD;
 		}
 
 		if (!isset($config['ipsec']['noshuntlaninterfaces'])) {
+			$bypassnets = array();
 			if ($config['interfaces']['lan']) {
 				$lanip = get_interface_ip("lan");
 				if (!empty($lanip) && is_ipaddrv4($lanip)) {
 					$lansn = get_interface_subnet("lan");
-					$lansa = gen_subnet($lanip, $lansn);
+					$lansa = gen_subnetv4($lanip, $lansn);
 					if (!empty($lansa) && !empty($lansn)) {
-						$ipsecconf .= <<<EOD
+						$bypassnets[] = "{$lansa}/{$lansn}";
+					}
+				}
+				$lanip6 = get_interface_ipv6("lan");
+				if (!empty($lanip6) && is_ipaddrv6($lanip6)) {
+					$lansn6 = get_interface_subnetv6("lan");
+					$lansa6 = gen_subnetv6($lanip6, $lansn6);
+					if (!empty($lansa6) && !empty($lansn6)) {
+						$bypassnets[] = "{$lansa6}/{$lansn6}";
+					}
+				}
+			}
+			if (!empty($bypassnets)) {
+				$bypass = implode(',', $bypassnets);
+				$ipsecconf .= <<<EOD
 
 conn bypasslan
-	leftsubnet = {$lansa}/{$lansn}
-	rightsubnet = {$lansa}/{$lansn}
+	leftsubnet = {$bypass}
+	rightsubnet = {$bypass}
 	authby = never
 	type = passthrough
 	auto = route
 
 EOD;
-					}
-				}
 			}
 		}
 

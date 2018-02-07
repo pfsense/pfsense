@@ -277,10 +277,21 @@ function ipsec_get_phase1_src(& $ph1ent) {
 	} else {
 		$if = "wan";
 	}
+	$ip6 = get_interface_ipv6($if);
+	$ip4 = get_interface_ip($if);
 	if ($ph1ent['protocol'] == "inet6") {
-		$interfaceip = get_interface_ipv6($if);
-	} else {
-		$interfaceip = get_interface_ip($if);
+		$interfaceip = $ip6;
+	} elseif ($ph1ent['protocol'] == "inet") {
+		$interfaceip = $ip4;
+	} elseif ($ph1ent['protocol'] == "both") {
+		$ifips = array();
+		if (!empty($ip4)) {
+			$ifips[] = $ip4;
+		}
+		if (!empty($ip6)) {
+			$ifips[] = $ip6;
+		}
+		$interfaceip = implode(',', $ifips);
 	}
 
 	return $interfaceip;
@@ -732,6 +743,9 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 		if (!$addr) {
 			return array();
 		}
+		/* When automatically guessing, use the first address. */
+		$addr = explode(',', $addr);
+		$addr = $addr[0];
 	} elseif ($side == "peer") {
 		$id_type = $ph1ent['peerid_type'];
 		$id_data = $ph1ent['peerid_data'];

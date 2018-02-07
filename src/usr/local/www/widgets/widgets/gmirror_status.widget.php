@@ -23,8 +23,6 @@
  * limitations under the License.
  */
 
-$nocsrf = true;
-
 require_once("guiconfig.inc");
 require_once("gmirror.inc");
 

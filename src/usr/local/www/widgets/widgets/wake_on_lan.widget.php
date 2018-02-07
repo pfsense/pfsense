@@ -20,8 +20,6 @@
  * limitations under the License.
  */
 
-$nocsrf = true;
-
 require_once("guiconfig.inc");
 require_once("/usr/local/www/widgets/include/wake_on_lan.inc");
 

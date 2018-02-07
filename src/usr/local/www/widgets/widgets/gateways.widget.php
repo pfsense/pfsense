@@ -24,8 +24,6 @@
  * limitations under the License.
  */
 
-$nocsrf = true;
-
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
@@ -226,7 +224,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 	<div class="form-group">
 		<label class="col-sm-4 control-label"><?=gettext('Display')?></label>
-		<?php
+<?php
 			$display_type_gw_ip = "checked";
 			$display_type_monitor_ip = "";
 			$display_type_both_ip = "";
@@ -249,13 +247,13 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 ?>
 		<div class="col-sm-6">
 			<div class="radio">
-				<label><input name="display_type" type="radio" id="display_type_gw_ip" value="gw_ip" <?=$display_type_gw_ip;?> onchange="updateGatewayDisplays();" /> <?=gettext('Gateway IP')?></label>
+				<label><input name="display_type" type="radio" id="display_type_gw_ip" value="gw_ip" <?=$display_type_gw_ip;?> /> <?=gettext('Gateway IP')?></label>
 			</div>
 			<div class="radio">
-				<label><input name="display_type" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?=$display_type_monitor_ip;?> onchange="updateGatewayDisplays();" /><?=gettext('Monitor IP')?></label>
+				<label><input name="display_type" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?=$display_type_monitor_ip;?> /><?=gettext('Monitor IP')?></label>
 			</div>
 			<div class="radio">
-				<label><input name="display_type" type="radio" id="display_type_both_ip" value="both_ip" <?=$display_type_both_ip;?> onchange="updateGatewayDisplays();" /><?=gettext('Both')?></label>
+				<label><input name="display_type" type="radio" id="display_type_both_ip" value="both_ip" <?=$display_type_both_ip;?> /><?=gettext('Both')?></label>
 			</div>
 		</div>
 	</div>

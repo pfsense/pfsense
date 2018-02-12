@@ -994,15 +994,22 @@ function captiveportal_prune_old_automac() {
 }
 
 /* remove a single client according to the DB entry */
-function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1, $stop_time = null) {
+function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1,
+    $stop_time = null) {
 	global $g, $config, $cpzone, $cpzoneid;
 
 	$stop_time = (empty($stop_time)) ? time() : $stop_time;
 
 	/* this client needs to be deleted - remove ipfw rules */
-	if (isset($config['captiveportal'][$cpzone]['radacct_enable']) && !empty($radiusservers)) {
-		if ($config['captiveportal'][$cpzone]['reauthenticateacct'] == "stopstartfreeradius") {
-			/* Interim updates are on so the session time must be reported as the elapsed time since the previous interim update. */
+	if (isset($config['captiveportal'][$cpzone]['radacct_enable']) &&
+	    !empty($radiusservers)) {
+		if ($config['captiveportal'][$cpzone]['reauthenticateacct'] ==
+		    "stopstartfreeradius") {
+			/*
+			 * Interim updates are on so the session time must be
+			 * reported as the elapsed time since the previous
+			 * interim update.
+			 */
 			$session_time = ($stop_time - $dbent[0]) % 60;
 			$start_time = $stop_time - $session_time;
 		} else {
@@ -1039,9 +1046,11 @@ function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1, $stop
 	}
 
 	/*
-	* These are the pipe numbers we use to control traffic shaping for each logged in user via captive portal
-	* We could get an error if the pipe doesn't exist but everything should still be fine
-	*/
+	 * These are the pipe numbers we use to control traffic shaping for
+	 * each logged in user via captive portal
+	 * We could get an error if the pipe doesn't exist but everything
+	 * should still be fine
+	 */
 	if (!empty($dbent[1])) {
 		/*
 		 * Call captiveportal_free_dnrules() in dry_run mode to verify
@@ -1069,8 +1078,11 @@ function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1, $stop
 		$syncip   = $config['voucher'][$cpzone]['vouchersyncdbip'];
 		$syncport = $config['voucher'][$cpzone]['vouchersyncport'];
 		$syncpass = $config['voucher'][$cpzone]['vouchersyncpass'];
-		$vouchersyncusername = $config['voucher'][$cpzone]['vouchersyncusername'];
-		$remote_status = xmlrpc_sync_voucher_disconnect($dbent, $syncip, $syncport, $syncpass, $vouchersyncusername, $term_cause, $stop_time);
+		$vouchersyncusername =
+		    $config['voucher'][$cpzone]['vouchersyncusername'];
+		$remote_status = xmlrpc_sync_voucher_disconnect($dbent, $syncip,
+		    $syncport, $syncpass, $vouchersyncusername, $term_cause,
+		    $stop_time);
 	}
 
 }

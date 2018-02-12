@@ -1766,31 +1766,45 @@ function captiveportal_write_elements() {
 	return 0;
 }
 
-function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 64500) {
+function captiveportal_free_dnrules($rulenos_start = 2000,
+    $rulenos_range_max = 64500, $dry_run = false) {
 	global $g, $cpzone;
 
 	$removed_pipes = array();
 
-	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+	if (!$dry_run) {
+		$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+	}
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
-		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		$rules = unserialize(file_get_contents(
+		    "{$g['vardb_path']}/captiveportaldn.rules"));
 		$ridx = $rulenos_start;
 		while ($ridx < $rulenos_range_max) {
 			if ($rules[$ridx] == $cpzone) {
-				$rules[$ridx] = false;
+				if (!$dry_run) {
+					$rules[$ridx] = false;
+				}
 				$removed_pipes[] = $ridx;
 				$ridx++;
-				$rules[$ridx] = false;
+				if (!$dry_run) {
+					$rules[$ridx] = false;
+				}
 				$removed_pipes[] = $ridx;
 				$ridx++;
 			} else {
 				$ridx += 2;
 			}
 		}
-		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+		if (!$dry_run) {
+			file_put_contents(
+			    "{$g['vardb_path']}/captiveportaldn.rules",
+			    serialize($rules));
+		}
 		unset($rules);
 	}
-	unlock($cpruleslck);
+	if (!$dry_run) {
+		unlock($cpruleslck);
+	}
 
 	return $removed_pipes;
 }

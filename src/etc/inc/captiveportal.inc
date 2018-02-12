@@ -1023,12 +1023,16 @@ function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1, $stop
 	if (is_ipaddr($dbent[2])) {
 		/*
 		 * Delete client's ip entry from tables auth_up and auth_down.
-		 *
 		 * It's not necessary to explicit specify mac address here
 		 */
-		$clientsn = (is_ipaddrv6($dbent[2])) ? 128 : 32;
-		pfSense_ipfw_table("{$cpzone}_auth_up", IP_FW_TABLE_XDEL, "{$dbent[2]}/{$clientsn}");
-		pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XDEL, "{$dbent[2]}/{$clientsn}");
+		$cpsession = captiveportal_isip_logged($dbent[2]);
+		if (!empty($cpsession)) {
+			$clientsn = (is_ipaddrv6($dbent[2])) ? 128 : 32;
+			pfSense_ipfw_table("{$cpzone}_auth_up",
+			    IP_FW_TABLE_XDEL, "{$dbent[2]}/{$clientsn}");
+			pfSense_ipfw_table("{$cpzone}_auth_down",
+			    IP_FW_TABLE_XDEL, "{$dbent[2]}/{$clientsn}");
+		}
 		/* XXX: Redundant?! Ensure all pf(4) states are killed. */
 		$_gb = @pfSense_kill_states($dbent[2]);
 		$_gb = @pfSense_kill_srcstates($dbent[2]);
@@ -1039,11 +1043,25 @@ function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1, $stop
 	* We could get an error if the pipe doesn't exist but everything should still be fine
 	*/
 	if (!empty($dbent[1])) {
-		$_gb = @pfSense_ipfw_pipe("pipe delete {$dbent[1]}");
-		$_gb = @pfSense_ipfw_pipe("pipe delete " . ($dbent[1]+1));
+		/*
+		 * Call captiveportal_free_dnrules() in dry_run mode to verify
+		 * if there are pipes to be removed and prevent the attempt to
+		 * delete invalid pipes
+		 */
+		$removed_pipes = captiveportal_free_dnrules($dbent[1],
+		    $dbent[1]+1, true);
 
-		/* Release the ruleno so it can be reallocated to new clients. */
-		captiveportal_free_dn_ruleno($dbent[1]);
+		if (!empty($removed_pipes)) {
+			$_gb = @pfSense_ipfw_pipe("pipe delete {$dbent[1]}");
+			$_gb = @pfSense_ipfw_pipe("pipe delete " .
+			    ($dbent[1]+1));
+
+			/*
+			 * Release the ruleno so it can be reallocated to new
+			 * clients
+			 */
+			captiveportal_free_dn_ruleno($dbent[1]);
+		}
 	}
 
 	// XMLRPC Call over to the master Voucher node

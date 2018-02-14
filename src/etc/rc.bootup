@@ -260,7 +260,7 @@ services_unbound_configure();
 echo "done.\n";
 
 echo "Synchronizing user settings...";
-local_sync_accounts();
+local_reset_accounts();
 echo "done.\n";
 
 if ($realmem > 0 and $realmem < 65) {

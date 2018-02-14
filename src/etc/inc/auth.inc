@@ -417,7 +417,87 @@ function local_backed($username, $passwd) {
 	return false;
 }
 
-function local_sync_accounts() {
+function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
+	global $config, $debug;
+
+	if (empty($u2add) && empty($u2del) && empty($g2add) && empty($g2del)) {
+		/* Nothing to be done here */
+		return;
+	}
+
+	foreach($u2del as $user) {
+		if ($user['uid'] < 2000 || $user['uid'] > 65000) {
+			continue;
+		}
+
+		/*
+		 * If a crontab was created to user, pw userdel will be
+		 * interactive and can cause issues. Just remove crontab
+		 * before run it when necessary
+		 */
+		unlink_if_exists("/var/cron/tabs/{$user['name']}");
+		$cmd = "/usr/sbin/pw userdel -n " .
+		    escapeshellarg($user['name']);
+		if ($debug) {
+			log_error(sprintf(gettext("Running: %s"), $cmd));
+		}
+		mwexec($cmd);
+		local_group_del_user($user);
+
+		$system_user = $config['system']['user'];
+		for ($i = 0; $i < count($system_user); $i++) {
+			if ($system_user[$i]['name'] == $user['name']) {
+				unset($config['system']['user'][$i]);
+				break;
+			}
+		}
+	}
+
+	foreach($g2del as $group) {
+		if ($group['gid'] < 1999 || $group['gid'] > 65000) {
+			continue;
+		}
+
+		$cmd = "/usr/sbin/pw groupdel -g " .
+		    escapeshellarg($group['name']);
+		if ($debug) {
+			log_error(sprintf(gettext("Running: %s"), $cmd));
+		}
+		mwexec($cmd);
+
+		$system_group = $config['system']['group'];
+		for ($i = 0; $i < count($system_group); $i++) {
+			if ($system_group[$i]['name'] == $group['name']) {
+				unset($config['system']['group'][$i]);
+				break;
+			}
+		}
+	}
+
+	foreach ($u2add as $user) {
+		$config['system']['user'][] = $user;
+	}
+
+	foreach ($g2add as $group) {
+		$config['system']['group'][] = $group;
+	}
+
+	write_config("Sync'd users and groups via XMLRPC");
+
+	/* make sure the all group exists */
+	$allgrp = getGroupEntryByGID(1998);
+	local_group_set($allgrp, true);
+
+	foreach ($u2add as $user) {
+		local_user_set($user);
+	}
+
+	foreach ($g2add as $group) {
+		local_group_set($group);
+	}
+}
+
+function local_reset_accounts() {
 	global $debug, $config;
 
 	/* remove local users to avoid uid conflicts */
@@ -491,8 +571,6 @@ function local_sync_accounts() {
 			local_group_set($group);
 		}
 	}
-
-
 }
 
 function local_user_set(& $user) {

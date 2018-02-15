@@ -1111,6 +1111,41 @@ function reload_all_sync() {
 	send_event("service restart webgui");
 }
 
+function load_loader_conf($loader_conf = NULL) {
+
+	if ($loader_conf == NULL) {
+		return (NULL);
+	}
+	if (file_exists($loader_conf)) {
+		$input = file_get_contents($loader_conf_file);
+	} else {
+		$input = "";
+	}
+
+	$input_split = explode("\n", $input);
+
+	/*
+	 * Loop through and only add lines that are not empty and not
+	 * managed by us.
+	 */
+	$data = array();
+	foreach ($input_split as $line) {
+		if (!empty($line) &&
+		    (stripos($line, "autoboot_delay") === false) &&
+		    (stripos($line, "console") === false) &&
+		    (stripos($line, "comconsole_speed") === false) &&
+		    (stripos($line, "boot_multicons") === false) &&
+		    (stripos($line, "boot_serial") === false) &&
+		    (stripos($line, "hw.usb.no_pf") === false) &&
+		    (stripos($line, "hint.uart.0.flags") === false) &&
+		    (stripos($line, "hint.uart.1.flags") === false) &&
+		    (stripos($line, "hint.mdio.0.at") === false) &&
+		    (stripos($line, "hint.e6000sw.0") === false)) {
+			$data[] = $line;
+		}
+	}
+}
+
 function setup_serial_port($when = "save", $path = "") {
 	global $g, $config;
 	$ttys_file = "{$path}/etc/ttys";
@@ -1166,34 +1201,11 @@ function setup_serial_port($when = "save", $path = "") {
 		system("echo \"Reading {$loader_conf_file}...\" >> /conf/upgrade_log.txt");
 	}
 
-	if (file_exists($loader_conf_file)) {
-		$loader_conf = file_get_contents($loader_conf_file);
-	} elseif (file_exists("{$path}/boot/loader.conf.local")) {
-		$loader_conf_file = "{$path}/boot/loader.conf.local";
-		$loader_conf = file_get_contents($loader_conf_file);
-	} else {
-		$loader_conf = "";
-	}
-	$loader_conf_split = explode("\n", $loader_conf);
-
-	$data = array();
-	// Loop through and only add lines that are not empty, and which
-	//  do not contain a console directive.
-	foreach ($loader_conf_split as $bcs) {
-		if (!empty($bcs) &&
-		    (stripos($bcs, "console") === false) &&
-		    (stripos($bcs, "boot_multicons") === false) &&
-		    (stripos($bcs, "boot_serial") === false) &&
-		    (stripos($bcs, "hw.usb.no_pf") === false) &&
-		    (stripos($bcs, "hint.uart.0.flags") === false) &&
-		    (stripos($bcs, "hint.uart.1.flags") === false)) {
-			$data[] = $bcs;
-		}
-	}
-
+	$data = load_loader_conf($loader_conf_file);
 	if ($serial_only === true) {
 		$data[] = 'boot_serial="YES"';
 		$data[] = 'console="comconsole"';
+		$data[] = 'comconsole_speed="' . $serialspeed . '"';
 	} elseif ($vga_only === true) {
 		$data[] = 'console="vidconsole"';
 	} elseif (is_serial_enabled()) {
@@ -1210,8 +1222,8 @@ function setup_serial_port($when = "save", $path = "") {
 			default:
 				$data[] = 'console="comconsole,vidconsole"';
 		}
+		$data[] = 'comconsole_speed="' . $serialspeed . '"';
 	}
-	$data[] = 'comconsole_speed="' . $serialspeed . '"';
 
 	if ($specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
@@ -1220,11 +1232,19 @@ function setup_serial_port($when = "save", $path = "") {
 		$data[] = 'hint.uart.0.flags="0x00"';
 		$data[] = 'hint.uart.1.flags="0x10"';
 	}
+	$data[] = 'autoboot_delay="3"';
 	$data[] = 'hw.usb.no_pf="1"';
 
 	safe_write_file($loader_conf_file, $data);
 
-	unset($loader_conf, $loader_conf_split, $loader_config_file);
+	/* Filter loader.conf.local to avoid duplicate settings. */
+	$loader_conf_file = "{$path}/boot/loader.conf.local";
+	$data = load_loader_conf($loader_conf_file);
+	if (empty($data)) {
+		@unlink($loader_conf_file);
+	} else {
+		safe_write_file($loader_conf_file, $data);
+	}
 
 	$ttys = file_get_contents($ttys_file);
 	$ttys_split = explode("\n", $ttys);

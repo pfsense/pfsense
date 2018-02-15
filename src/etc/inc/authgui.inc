@@ -157,7 +157,7 @@ function display_error_form($http_code, $desc) {
 			<div id="footertext">
 					<p class="text-muted">
 						<a target="_blank" href="https://www.pfsense.org/?gui=bootstrap">pfSense</a> is &copy;
-						2004 - 2017 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
+						2004 - 2018 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
 						[<a href="/license.php" class="tblnk">view license</a>]
 					</p>
 				</div>
@@ -364,7 +364,7 @@ function display_login_form() {
 	            <div id="footertext">
 					<p class="text-muted">
 						<a target="_blank" href="https://www.pfsense.org/?gui=bootstrap">pfSense</a> is &copy;
-						2004 - 2017 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
+						2004 - 2018 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
 						[<a href="/license.php" class="tblnk">view license</a>]
 					</p>
 	            </div>

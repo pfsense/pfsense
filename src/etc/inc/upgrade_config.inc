@@ -1481,7 +1481,7 @@ function upgrade_049_to_050() {
 	}
 
 	/* sync all local account information */
-	local_sync_accounts();
+	local_reset_accounts();
 }
 
 
@@ -3410,7 +3410,7 @@ function upgrade_103_to_104() {
 	}
 
 	/* sync all local account information */
-	local_sync_accounts();
+	local_reset_accounts();
 }
 
 function upgrade_104_to_105() {
@@ -4717,7 +4717,7 @@ function upgrade_147_to_148() {
 		// if there was a space in a group name, there may be multiple
 		// groups with the same name in the group file. To prevent pw
 		// from getting into a neverending loop, delete all user-defined
-		// groups here. local_sync_accounts will run shortly after this
+		// groups here. local_reset_accounts will run shortly after this
 		// and add them back. redmine #6012
 		if ($cleargroups) {
 			foreach ($config['system']['group'] as $grp) {

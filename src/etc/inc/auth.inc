@@ -447,6 +447,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		$system_user = $config['system']['user'];
 		for ($i = 0; $i < count($system_user); $i++) {
 			if ($system_user[$i]['name'] == $user['name']) {
+				log_error("Removing user: {$user['name']}");
 				unset($config['system']['user'][$i]);
 				break;
 			}
@@ -468,6 +469,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		$system_group = $config['system']['group'];
 		for ($i = 0; $i < count($system_group); $i++) {
 			if ($system_group[$i]['name'] == $group['name']) {
+				log_error("Removing group: {$group['name']}");
 				unset($config['system']['group'][$i]);
 				break;
 			}
@@ -475,10 +477,12 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 	}
 
 	foreach ($u2add as $user) {
+		log_error("Adding user: {$user['name']}");
 		$config['system']['user'][] = $user;
 	}
 
 	foreach ($g2add as $group) {
+		log_error("Adding group: {$group['name']}");
 		$config['system']['group'][] = $group;
 	}
 

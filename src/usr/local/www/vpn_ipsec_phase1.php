@@ -825,7 +825,7 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 		null,
 		$p1enc['encryption-algorithm']['keylen'],
 		array()
-	))->setHelp($lastrow ? 'Key lenght' : '');
+	))->setHelp($lastrow ? 'Key length' : '');
 
 	$group->add(new Form_Select(
 		'halgo'.$key,

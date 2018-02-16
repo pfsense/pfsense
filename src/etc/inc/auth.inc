@@ -486,6 +486,14 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		$config['system']['group'][] = $group;
 	}
 
+	/* Sort it alphabetically */
+	usort($config['system']['user'], function($a, $b) {
+		return strcmp($a['name'], $b['name']);
+	});
+	usort($config['system']['group'], function($a, $b) {
+		return strcmp($a['name'], $b['name']);
+	});
+
 	write_config("Sync'd users and groups via XMLRPC");
 
 	/* make sure the all group exists */

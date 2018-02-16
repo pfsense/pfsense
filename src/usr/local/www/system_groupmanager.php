@@ -209,6 +209,11 @@ if (isset($_POST['save'])) {
 			}
 		}
 
+		/* Sort it alphabetically */
+		usort($config['system']['group'], function($a, $b) {
+			return strcmp($a['name'], $b['name']);
+		});
+
 		write_config();
 
 		header("Location: system_groupmanager.php");

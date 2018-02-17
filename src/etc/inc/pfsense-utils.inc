@@ -1117,7 +1117,7 @@ function load_loader_conf($loader_conf = NULL) {
 		return (NULL);
 	}
 	if (file_exists($loader_conf)) {
-		$input = file_get_contents($loader_conf_file);
+		$input = file_get_contents($loader_conf);
 	} else {
 		$input = "";
 	}

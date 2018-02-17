@@ -444,6 +444,11 @@ if ($_POST['save']) {
 			$a_user[] = $userent;
 		}
 
+		/* Sort it alphabetically */
+		usort($config['system']['user'], function($a, $b) {
+			return strcmp($a['name'], $b['name']);
+		});
+
 		/* Add user to groups so PHP can see the memberships properly or else the user's shell account does not get proper permissions (if applicable) See #5152. */
 		local_user_set_groups($userent, $_POST['groups']);
 		local_user_set($userent);
@@ -454,7 +459,6 @@ if ($_POST['save']) {
 		if (is_dir("/etc/inc/privhooks")) {
 			run_plugins("/etc/inc/privhooks");
 		}
-
 
 		pfSenseHeader("system_usermanager.php");
 	}

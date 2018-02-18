@@ -52,13 +52,14 @@ nas_port=$5
 
 # Single quoting $password breaks getting the value from the variable.
 # Base64 and urlEncode usernames and passwords
-password=$(echo -n "${password}" | "${openssl}" enc -base64 | \
+password=$(printf "%s" "${password}" | "${openssl}" enc -base64 | \
     "${sed}" -e 's_=_%3D_g;s_+_%2B_g;s_/_%2F_g')
-username=$(echo -n "${username}" | "${openssl}" enc -base64 | \
+username=$(printf "%s" "${username}" | "${openssl}" enc -base64 | \
     "${sed}" -e 's_=_%3D_g;s_+_%2B_g;s_/_%2F_g')
 
 # ---------- Perform Check
 auth_credentials="username=${username}&password=${password}"
+# Note that common_name is also assumed to be set by the environment
 auth_server_1="cn=${common_name}&strictcn=${strictcn}&authcfg=${authcfg}"
 auth_server_2="modeid=${modeid}&nas_port=${nas_port}"
 auth_args="${auth_credentials}&${auth_server_1}&${auth_server_2}"
@@ -72,6 +73,7 @@ if [ "${result}" = "OK" ]; then
     auth_result="${auth_success}"
 fi
 
+# The output file path should be set in the environment
 printf "%s" "${auth_result}" > "${auth_control_file}"
 
 exit 0

@@ -1144,6 +1144,8 @@ function load_loader_conf($loader_conf = NULL) {
 			$data[] = $line;
 		}
 	}
+
+	return ($data);
 }
 
 function setup_serial_port($when = "save", $path = "") {

@@ -25,6 +25,7 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-arpwatch
 net-mgmt/%%PRODUCT_NAME%%-pkg-net-snmp
 net-mgmt/%%PRODUCT_NAME%%-pkg-snmptt
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
+net-mgmt/%%PRODUCT_NAME%%-pkg-lldpd
 sysutils/htop
 sysutils/pstree
 security/%%PRODUCT_NAME%%

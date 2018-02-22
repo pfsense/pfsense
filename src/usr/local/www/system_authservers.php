@@ -592,10 +592,10 @@ $section->addInput(new Form_StaticText(
 	'Level ' . $SSF . '<br />' . 'Base DN' . $SSB
 ));
 
-$group = new Form_Group('Authentication containers');
+$group = new Form_Group('*Authentication containers');
 $group->add(new Form_Input(
 	'ldapauthcontainers',
-	'*Containers',
+	'Containers',
 	'text',
 	$pconfig['ldap_authcn']
 ))->setHelp('Note: Semi-Colon separated. This will be prepended to the search '.

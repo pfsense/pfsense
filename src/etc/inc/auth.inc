@@ -944,8 +944,6 @@ function local_group_del($group) {
 }
 
 function ldap_test_connection($authcfg) {
-	global $debug, $config, $g;
-
 	if ($authcfg) {
 		if (strstr($authcfg['ldap_urltype'], "SSL")) {
 			$ldapproto = "ldaps";
@@ -957,9 +955,6 @@ function ldap_test_connection($authcfg) {
 		if (!empty($ldapport)) {
 			$ldapserver .= ":{$ldapport}";
 		}
-		$ldapbasedn = $authcfg['ldap_basedn'];
-		$ldapbindun = $authcfg['ldap_binddn'];
-		$ldapbindpw = $authcfg['ldap_bindpw'];
 	} else {
 		return false;
 	}
@@ -979,7 +974,7 @@ function ldap_test_connection($authcfg) {
 	}
 
 	if ($error == true) {
-		log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
+		log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $authcfg['name']));
 		return false;
 	}
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# ovpn_auth_verify
+# ovpn_auth_verify_async
 #
 # part of pfSense (https://www.pfsense.org)
 # Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
@@ -39,8 +39,8 @@ sed="/usr/bin/sed"
 auth_user_php="/etc/inc/openvpn.auth-user.php"
 
 # ---------- Constants
-auth_success="1"
-auth_failure="0"
+auth_success=1
+auth_failure=0
 
 # ---------- Capture Arguments 
 authcfg=$2
@@ -74,6 +74,6 @@ if [ "${result}" = "OK" ]; then
 fi
 
 # The output file path should be set in the environment
-printf "%s" "${auth_result}" > "${auth_control_file}"
+echo -n "${auth_result}" > "${auth_control_file}"
 
 exit 0

@@ -49,6 +49,7 @@ $pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
+$pconfig['pti_disabled'] = isset($config['system']['pti_disabled']);
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['gw_down_kill_states'] = isset($config['system']['gw_down_kill_states']);
 $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
@@ -216,6 +217,13 @@ if ($_POST) {
 			unset($config['system']['thermal_hardware']);
 		}
 
+		$old_pti_state = isset($config['system']['pti_disabled']);
+		if ($_POST['pti_disabled'] == "yes") {
+			$config['system']['pti_disabled'] = true;
+		} else {
+			unset($config['system']['pti_disabled']);
+		}
+
 		if ($_POST['schedule_states'] == "yes") {
 			$config['system']['schedule_states'] = true;
 		} else {
@@ -289,6 +297,9 @@ if ($_POST) {
 		system_resolvconf_generate(true);
 		$retval |= filter_configure();
 
+		if ($old_pti_state != isset($config['system']['pti_disabled'])) {
+			setup_loader_settings();
+		}
 		activate_powerd();
 		load_crypto();
 		load_thermal_hardware();
@@ -471,6 +482,17 @@ $section->addInput(new Form_Select(
 	'"none" and then reboot.');
 
 $form->add($section);
+$pti = get_single_sysctl('vm.pmap.pti');
+if (strlen($pti) > 0) {
+	$section = new Form_Section('Kernel Page Table Isolation');
+	$section->addInput(new Form_Checkbox(
+		'pti_disabled',
+		'Kernel PTI',
+		'Disable the kernel PTI',
+		$pconfig['pti_disabled']
+	))->setHelp('Meltdown workaround.  If disabled the kernel memory can be accessed by unprivileged users on affected CPUs.');
+	$form->add($section);
+}
 $section = new Form_Section('Schedules');
 
 $section->addInput(new Form_Checkbox(

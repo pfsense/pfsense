@@ -1148,22 +1148,16 @@ function load_loader_conf($loader_conf = NULL) {
 	return ($data);
 }
 
-function setup_serial_port($when = "save", $path = "") {
+function setup_loader_settings($path = "", $upgrade = false) {
 	global $g, $config;
-	$ttys_file = "{$path}/etc/ttys";
+
 	$boot_config_file = "{$path}/boot.config";
 	$loader_conf_file = "{$path}/boot/loader.conf";
-	/* serial console - write out /boot.config */
-	if (file_exists($boot_config_file)) {
-		$boot_config = file_get_contents($boot_config_file);
-	} else {
-		$boot_config = "";
-	}
 
 	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
-	$serial_only = false;
-	$vga_only = false;
 
+	$vga_only = false;
+	$serial_only = false;
 	$specific_platform = system_identify_specific_platform();
 	if ($specific_platform['name'] == 'XG-1540' ||
 	    $specific_platform['name'] == 'Turbot Dual-E') {
@@ -1175,6 +1169,12 @@ function setup_serial_port($when = "save", $path = "") {
 		$serial_only = true;
 	}
 
+	/* Serial console - write out /boot.config */
+	if (file_exists($boot_config_file)) {
+		$boot_config = file_get_contents($boot_config_file);
+	} else {
+		$boot_config = "";
+	}
 	$boot_config_split = explode("\n", $boot_config);
 	$data = array();
 	foreach ($boot_config_split as $bcs) {
@@ -1195,11 +1195,10 @@ function setup_serial_port($when = "save", $path = "") {
 	} else {
 		safe_write_file($boot_config_file, $data);
 	}
+	unset($data, $boot_config, $boot_config_file, $boot_config_split);
 
-	unset($boot_config, $boot_config_file, $boot_config_split);
-
-	/* serial console - write out /boot/loader.conf */
-	if ($when == "upgrade") {
+	/* Serial console - write out /boot/loader.conf */
+	if ($upgrade) {
 		system("echo \"Reading {$loader_conf_file}...\" >> /conf/upgrade_log.txt");
 	}
 
@@ -1236,6 +1235,9 @@ function setup_serial_port($when = "save", $path = "") {
 	}
 	$data[] = 'autoboot_delay="3"';
 	$data[] = 'hw.usb.no_pf="1"';
+	if (isset($config['system']['pti_disabled'])) {
+		$data[] = 'vm.pmap.pti="0"';
+	}
 
 	safe_write_file($loader_conf_file, $data);
 
@@ -1247,6 +1249,15 @@ function setup_serial_port($when = "save", $path = "") {
 	} else {
 		safe_write_file($loader_conf_file, $data);
 	}
+
+}
+
+function setup_serial_port($when = "save", $path = "") {
+	global $config;
+	$ttys_file = "{$path}/etc/ttys";
+
+	/* Update the loader settings. */
+	setup_loader_settings($path, ($when == "upgrade"));
 
 	$ttys = file_get_contents($ttys_file);
 	$ttys_split = explode("\n", $ttys);

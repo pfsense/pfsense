@@ -34,29 +34,30 @@ require_once("auth.inc");
 // Test LDAP settings in response to an AJAX request from this page.
 if ($_REQUEST['ajax']) {
 
-	if (isset($config['system']['authserver'][0]['host'])) {
-		$auth_server = $config['system']['authserver'][0]['host'];
-		$authserver = $_REQUEST['authserver'];
-		$authcfg = auth_get_authserver($authserver);
-	}
+	$authserver = $_REQUEST['authserver'];
+	$authcfg = auth_get_authserver($authserver);
+	$auth_server_host = $authcfg['host'];
 
 	if (!$authcfg) {
 		printf(gettext('%1$sError: Could not find settings for %2$s%3$s'), '<span class="text-danger">', htmlspecialchars($authserver), "</span>");
+		exit;
+	} elseif ($authcfg['type'] != 'ldap') {
+		printf(gettext('%1$sError: cannot test settings for %2$s because testing is supported only for LDAP based backends.%3$s'), '<span class="text-danger">', htmlspecialchars($authserver), "</span>");
 		exit;
 	} else {
 		print("<pre>");
 
 		print('<table class="table table-hover table-striped table-condensed">');
 
-		print("<tr><td>" . sprintf(gettext('Attempting connection to %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+		print("<tr><td>" . sprintf(gettext('Attempting connection to %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server_host), "</center></td>"));
 		if (ldap_test_connection($authcfg)) {
 			print("<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>");
 
-			print("<tr><td>" . sprintf(gettext('Attempting bind to %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+			print("<tr><td>" . sprintf(gettext('Attempting bind to %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server_host), "</center></td>"));
 			if (ldap_test_bind($authcfg)) {
 				print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
 
-				print("<tr><td>" . sprintf(gettext('Attempting to fetch Organizational Units from %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+				print("<tr><td>" . sprintf(gettext('Attempting to fetch Organizational Units from %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server_host), "</center></td>"));
 				$ous = ldap_get_user_ous(true, $authcfg);
 
 				if (count($ous)>1) {

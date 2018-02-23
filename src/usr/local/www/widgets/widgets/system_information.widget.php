@@ -269,6 +269,15 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<?php endif; ?>
 <?php
 	endif;
+	$pti = get_single_sysctl('vm.pmap.pti');
+	if (strlen($pti) > 0) {
+?>
+		<tr>
+			<th><?=gettext("Kernel PTI");?></th>
+			<td><?=($pti == 0) ? gettext("Disabled") : gettext("Enabled");?></td>
+		</tr>
+<?php
+	}
 	if (!in_array('uptime', $skipsysinfoitems)):
 		$rows_displayed = true;
 ?>

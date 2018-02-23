@@ -7,6 +7,9 @@ OP="${2}"
 IP="${3}"
 CN="${4}"
 
+# Trim domain off to avoid duplication if the CN is an FQDN
+CN=${CN%%.${DOMAIN}}
+
 DIR="/var/unbound"
 PIDFILE="/var/run/unbound.pid"
 

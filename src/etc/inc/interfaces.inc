@@ -4713,10 +4713,9 @@ function DHCP6_Config_File_Substitutions($wancfg, $wanif, $dhcp6cconf) {
 function interface_dhcp_configure($interface = "wan") {
 	global $config, $g;
 
-	$wancfg = $config['interfaces'][$interface];
-	$wanif = $wancfg['if'];
-	if (empty($wancfg)) {
-		$wancfg = array();
+	$ifcfg = $config['interfaces'][$interface];
+	if (empty($ifcfg)) {
+		$ifcfg = array();
 	}
 
 	/* generate dhclient_wan.conf */
@@ -4726,22 +4725,22 @@ function interface_dhcp_configure($interface = "wan") {
 		return 1;
 	}
 
-	if ($wancfg['dhcphostname']) {
-		$dhclientconf_hostname = "send dhcp-client-identifier \"{$wancfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname .= "\tsend host-name \"{$wancfg['dhcphostname']}\";\n";
+	if ($ifcfg['dhcphostname']) {
+		$dhclientconf_hostname = "send dhcp-client-identifier \"{$ifcfg['dhcphostname']}\";\n";
+		$dhclientconf_hostname .= "\tsend host-name \"{$ifcfg['dhcphostname']}\";\n";
 	} else {
 		$dhclientconf_hostname = "";
 	}
 
-	$wanif = get_real_interface($interface);
-	if (empty($wanif)) {
+	$realif = get_real_interface($interface);
+	if (empty($realif)) {
 		log_error(sprintf(gettext("Invalid interface \"%s\" in interface_dhcp_configure()"), $interface));
 		return 0;
 	}
 	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
-interface "{$wanif}" {
+interface "{$realif}" {
 timeout 60;
 retry 15;
 select-timeout 0;
@@ -4750,10 +4749,10 @@ initial-interval 1;
 	script "/usr/local/sbin/pfSense-dhclient-script";
 EOD;
 
-	if (validate_ipv4_list($wancfg['dhcprejectfrom'])) {
+	if (validate_ipv4_list($ifcfg['dhcprejectfrom'])) {
 		$dhclientconf .= <<<EOD
 
-	reject {$wancfg['dhcprejectfrom']};
+	reject {$ifcfg['dhcprejectfrom']};
 EOD;
 	}
 	$dhclientconf .= <<<EOD
@@ -4763,16 +4762,16 @@ EOD;
 EOD;
 
 	// DHCP Config File Advanced
-	if ($wancfg['adv_dhcp_config_advanced']) {
-		$dhclientconf = DHCP_Config_File_Advanced($interface, $wancfg, $wanif);
+	if ($ifcfg['adv_dhcp_config_advanced']) {
+		$dhclientconf = DHCP_Config_File_Advanced($interface, $ifcfg, $realif);
 	}
 
-	if (is_ipaddr($wancfg['alias-address'])) {
-		$subnetmask = gen_subnet_mask($wancfg['alias-subnet']);
+	if (is_ipaddr($ifcfg['alias-address'])) {
+		$subnetmask = gen_subnet_mask($ifcfg['alias-subnet']);
 		$dhclientconf .= <<<EOD
 alias {
-	interface "{$wanif}";
-	fixed-address {$wancfg['alias-address']};
+	interface "{$realif}";
+	fixed-address {$ifcfg['alias-address']};
 	option subnet-mask {$subnetmask};
 }
 
@@ -4780,25 +4779,23 @@ EOD;
 	}
 
 	// DHCP Config File Override
-	if ($wancfg['adv_dhcp_config_file_override']) {
-		$dhclientconf = DHCP_Config_File_Override($wancfg, $wanif);
+	if ($ifcfg['adv_dhcp_config_file_override']) {
+		$dhclientconf = DHCP_Config_File_Override($ifcfg, $realif);
 	}
 
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
 
 	/* bring wan interface up before starting dhclient */
-	if ($wanif) {
-		interfaces_bring_up($wanif);
-	} else {
-		log_error(sprintf(gettext("Could not bring up %s interface in interface_dhcp_configure()"), $wanif));
+	if ($realif) {
+		interfaces_bring_up($realif);
 	}
 
 	/* Make sure dhclient is not running */
-	kill_dhclient_process($wanif);
+	kill_dhclient_process($realif);
 
 	/* fire up dhclient */
-	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output 2> {$g['tmp_path']}/{$wanif}_error_output");
+	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$realif} > {$g['tmp_path']}/{$realif}_output 2> {$g['tmp_path']}/{$realif}_error_output");
 
 	return 0;
 }

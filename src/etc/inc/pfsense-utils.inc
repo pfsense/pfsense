@@ -1137,12 +1137,16 @@ function load_loader_conf($loader_conf = NULL) {
 		if (empty($line)) {
 			continue;
 		}
+		$found = false;
 		foreach ($ignore as $ignstr) {
 			if (stripos($line, $ignstr) !== false) {
-				continue;
+				$found = true;
+				break;
 			}
 		}
-		$data[] = $line;
+		if ($found === false) {
+			$data[] = $line;
+		}
 	}
 
 	return ($data);

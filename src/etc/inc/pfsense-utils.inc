@@ -1129,18 +1129,22 @@ function load_loader_conf($loader_conf = NULL) {
 	 * managed by us.
 	 */
 	$data = array();
+	$ignore = array("autoboot_delay", "console", "comconsole_speed",
+	    "boot_multicons", "boot_serial", "hw.usb.no_pf",
+	    "hint.uart.0.flags", "hint.uart.1.flags", "hint.mdio.0.at",
+	    "hint.e6000sw.0", "vm.pmap.pti");
 	foreach ($input_split as $line) {
-		if (!empty($line) &&
-		    (stripos($line, "autoboot_delay") === false) &&
-		    (stripos($line, "console") === false) &&
-		    (stripos($line, "comconsole_speed") === false) &&
-		    (stripos($line, "boot_multicons") === false) &&
-		    (stripos($line, "boot_serial") === false) &&
-		    (stripos($line, "hw.usb.no_pf") === false) &&
-		    (stripos($line, "hint.uart.0.flags") === false) &&
-		    (stripos($line, "hint.uart.1.flags") === false) &&
-		    (stripos($line, "hint.mdio.0.at") === false) &&
-		    (stripos($line, "hint.e6000sw.0") === false)) {
+		if (empty($line)) {
+			continue;
+		}
+		$found = false;
+		foreach ($ignore as $ignstr) {
+			if (stripos($line, $ignstr) !== false) {
+				$found = true;
+				break;
+			}
+		}
+		if ($found === false) {
 			$data[] = $line;
 		}
 	}

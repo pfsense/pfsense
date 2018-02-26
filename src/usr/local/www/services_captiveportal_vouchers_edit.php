@@ -146,6 +146,8 @@ if ($_POST['save']) {
 			}
 			$rollent['active'] = $db;
 		}
+		/* Flag this entry to be sync'd */
+		$rollent['lastsync'] = time();
 
 		unlock($voucherlck);
 

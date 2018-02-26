@@ -4713,10 +4713,9 @@ function DHCP6_Config_File_Substitutions($wancfg, $wanif, $dhcp6cconf) {
 function interface_dhcp_configure($interface = "wan") {
 	global $config, $g;
 
-	$wancfg = $config['interfaces'][$interface];
-	$wanif = $wancfg['if'];
-	if (empty($wancfg)) {
-		$wancfg = array();
+	$ifcfg = $config['interfaces'][$interface];
+	if (empty($ifcfg)) {
+		$ifcfg = array();
 	}
 
 	/* generate dhclient_wan.conf */
@@ -4726,22 +4725,22 @@ function interface_dhcp_configure($interface = "wan") {
 		return 1;
 	}
 
-	if ($wancfg['dhcphostname']) {
-		$dhclientconf_hostname = "send dhcp-client-identifier \"{$wancfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname .= "\tsend host-name \"{$wancfg['dhcphostname']}\";\n";
+	if ($ifcfg['dhcphostname']) {
+		$dhclientconf_hostname = "send dhcp-client-identifier \"{$ifcfg['dhcphostname']}\";\n";
+		$dhclientconf_hostname .= "\tsend host-name \"{$ifcfg['dhcphostname']}\";\n";
 	} else {
 		$dhclientconf_hostname = "";
 	}
 
-	$wanif = get_real_interface($interface);
-	if (empty($wanif)) {
+	$realif = get_real_interface($interface);
+	if (empty($realif)) {
 		log_error(sprintf(gettext("Invalid interface \"%s\" in interface_dhcp_configure()"), $interface));
 		return 0;
 	}
 	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
-interface "{$wanif}" {
+interface "{$realif}" {
 timeout 60;
 retry 15;
 select-timeout 0;
@@ -4750,10 +4749,10 @@ initial-interval 1;
 	script "/usr/local/sbin/pfSense-dhclient-script";
 EOD;
 
-	if (validate_ipv4_list($wancfg['dhcprejectfrom'])) {
+	if (validate_ipv4_list($ifcfg['dhcprejectfrom'])) {
 		$dhclientconf .= <<<EOD
 
-	reject {$wancfg['dhcprejectfrom']};
+	reject {$ifcfg['dhcprejectfrom']};
 EOD;
 	}
 	$dhclientconf .= <<<EOD
@@ -4763,16 +4762,16 @@ EOD;
 EOD;
 
 	// DHCP Config File Advanced
-	if ($wancfg['adv_dhcp_config_advanced']) {
-		$dhclientconf = DHCP_Config_File_Advanced($interface, $wancfg, $wanif);
+	if ($ifcfg['adv_dhcp_config_advanced']) {
+		$dhclientconf = DHCP_Config_File_Advanced($interface, $ifcfg, $realif);
 	}
 
-	if (is_ipaddr($wancfg['alias-address'])) {
-		$subnetmask = gen_subnet_mask($wancfg['alias-subnet']);
+	if (is_ipaddr($ifcfg['alias-address'])) {
+		$subnetmask = gen_subnet_mask($ifcfg['alias-subnet']);
 		$dhclientconf .= <<<EOD
 alias {
-	interface "{$wanif}";
-	fixed-address {$wancfg['alias-address']};
+	interface "{$realif}";
+	fixed-address {$ifcfg['alias-address']};
 	option subnet-mask {$subnetmask};
 }
 
@@ -4780,34 +4779,32 @@ EOD;
 	}
 
 	// DHCP Config File Override
-	if ($wancfg['adv_dhcp_config_file_override']) {
-		$dhclientconf = DHCP_Config_File_Override($wancfg, $wanif);
+	if ($ifcfg['adv_dhcp_config_file_override']) {
+		$dhclientconf = DHCP_Config_File_Override($ifcfg, $realif);
 	}
 
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
 
 	/* bring wan interface up before starting dhclient */
-	if ($wanif) {
-		interfaces_bring_up($wanif);
-	} else {
-		log_error(sprintf(gettext("Could not bring up %s interface in interface_dhcp_configure()"), $wanif));
+	if ($realif) {
+		interfaces_bring_up($realif);
 	}
 
 	/* Make sure dhclient is not running */
-	kill_dhclient_process($wanif);
+	kill_dhclient_process($realif);
 
 	/* fire up dhclient */
-	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output 2> {$g['tmp_path']}/{$wanif}_error_output");
+	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$realif} > {$g['tmp_path']}/{$realif}_output 2> {$g['tmp_path']}/{$realif}_error_output");
 
 	return 0;
 }
 
-function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
+function DHCP_Config_File_Advanced($interface, $ifcfg, $realif) {
 
 	$hostname = "";
-	if ($wancfg['dhcphostname'] != '') {
-		$hostname = "\tsend host-name \"{$wancfg['dhcphostname']}\";\n";
+	if ($ifcfg['dhcphostname'] != '') {
+		$hostname = "\tsend host-name \"{$ifcfg['dhcphostname']}\";\n";
 	}
 
 	/* DHCP Protocol Timings */
@@ -4815,38 +4812,38 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 	foreach ($protocol_timings as $Protocol_Timing => $PT_Name) {
 		$pt_variable = "{$Protocol_Timing}";
 		${$pt_variable} = "";
-		if ($wancfg[$Protocol_Timing] != "") {
-			${$pt_variable} = "{$PT_Name} {$wancfg[$Protocol_Timing]};\n";
+		if ($ifcfg[$Protocol_Timing] != "") {
+			${$pt_variable} = "{$PT_Name} {$ifcfg[$Protocol_Timing]};\n";
 		}
 	}
 
 	$send_options = "";
-	if ($wancfg['adv_dhcp_send_options'] != '') {
-		$options = DHCP_Config_Option_Split($wancfg['adv_dhcp_send_options']);
+	if ($ifcfg['adv_dhcp_send_options'] != '') {
+		$options = DHCP_Config_Option_Split($ifcfg['adv_dhcp_send_options']);
 		foreach ($options as $option) {
 			$send_options .= "\tsend " . trim($option) . ";\n";
 		}
 	}
 
 	$request_options = "";
-	if ($wancfg['adv_dhcp_request_options'] != '') {
-		$request_options = "\trequest {$wancfg['adv_dhcp_request_options']};\n";
+	if ($ifcfg['adv_dhcp_request_options'] != '') {
+		$request_options = "\trequest {$ifcfg['adv_dhcp_request_options']};\n";
 	}
 
 	$required_options = "";
-	if ($wancfg['adv_dhcp_required_options'] != '') {
-		$required_options = "\trequire {$wancfg['adv_dhcp_required_options']};\n";
+	if ($ifcfg['adv_dhcp_required_options'] != '') {
+		$required_options = "\trequire {$ifcfg['adv_dhcp_required_options']};\n";
 	}
 
 	$option_modifiers = "";
-	if ($wancfg['adv_dhcp_option_modifiers'] != '') {
-		$modifiers = DHCP_Config_Option_Split($wancfg['adv_dhcp_option_modifiers']);
+	if ($ifcfg['adv_dhcp_option_modifiers'] != '') {
+		$modifiers = DHCP_Config_Option_Split($ifcfg['adv_dhcp_option_modifiers']);
 		foreach ($modifiers as $modifier) {
 			$option_modifiers .= "\t" . trim($modifier) . ";\n";
 		}
 	}
 
-	$dhclientconf  = "interface \"{$wanif}\" {\n";
+	$dhclientconf  = "interface \"{$realif}\" {\n";
 	$dhclientconf .= "\n";
 	$dhclientconf .= "# DHCP Protocol Timing Values\n";
 	$dhclientconf .= "{$adv_dhcp_pt_timeout}";
@@ -4863,13 +4860,13 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 	$dhclientconf .= "{$required_options}";
 	$dhclientconf .= "{$option_modifiers}";
 	$dhclientconf .= "\n";
-	if (is_ipaddrv4($wancfg['dhcprejectfrom'])) {
-		$dhclientconf .= "reject {$wancfg['dhcprejectfrom']};\n";
+	if (is_ipaddrv4($ifcfg['dhcprejectfrom'])) {
+		$dhclientconf .= "reject {$ifcfg['dhcprejectfrom']};\n";
 	}
 	$dhclientconf .= "\tscript \"/usr/local/sbin/pfSense-dhclient-script\";\n";
 	$dhclientconf .= "}\n";
 
-	$dhclientconf = DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
+	$dhclientconf = DHCP_Config_File_Substitutions($ifcfg, $realif, $dhclientconf);
 
 	return $dhclientconf;
 }
@@ -4879,26 +4876,26 @@ function DHCP_Config_Option_Split($option_string) {
 	return $matches ? $matches[0] : [];
 }
 
-function DHCP_Config_File_Override($wancfg, $wanif) {
+function DHCP_Config_File_Override($ifcfg, $realif) {
 
-	$dhclientconf = @file_get_contents($wancfg['adv_dhcp_config_file_override_path']);
+	$dhclientconf = @file_get_contents($ifcfg['adv_dhcp_config_file_override_path']);
 
 	if ($dhclientconf === false) {
-		log_error(sprintf(gettext("Error: cannot open %s in DHCP_Config_File_Override() for reading."), $wancfg['adv_dhcp_config_file_override_path']));
+		log_error(sprintf(gettext("Error: cannot open %s in DHCP_Config_File_Override() for reading."), $ifcfg['adv_dhcp_config_file_override_path']));
 		return '';
 	} else {
-		return DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
+		return DHCP_Config_File_Substitutions($ifcfg, $realif, $dhclientconf);
 	}
 }
 
 
-function DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf) {
+function DHCP_Config_File_Substitutions($ifcfg, $realif, $dhclientconf) {
 
 	/* Apply Interface Substitutions */
-	$dhclientconf = str_replace("{interface}", "{$wanif}", $dhclientconf);
+	$dhclientconf = str_replace("{interface}", "{$realif}", $dhclientconf);
 
 	/* Apply Hostname Substitutions */
-	$dhclientconf = str_replace("{hostname}", $wancfg['dhcphostname'], $dhclientconf);
+	$dhclientconf = str_replace("{hostname}", $ifcfg['dhcphostname'], $dhclientconf);
 
 	/* Arrays of MAC Address Types, Cases, Delimiters */
 	/* ASCII or HEX, Upper or Lower Case, Various Delimiters (none, space, colon, hyphen, period) */
@@ -4916,10 +4913,10 @@ function DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf) {
 
 					/* Get MAC Address as ASCII String With Colon (:) delimiters */
 					if ("$various_mac_case" == "U") {
-						$dhcpclientconf_mac = strtoupper(get_interface_mac($wanif));
+						$dhcpclientconf_mac = strtoupper(get_interface_mac($realif));
 					}
 					if ("$various_mac_case" == "L") {
-						$dhcpclientconf_mac = strtolower(get_interface_mac($wanif));
+						$dhcpclientconf_mac = strtolower(get_interface_mac($realif));
 					}
 
 					if ("$various_mac_type" == "mac_addr_hex") {

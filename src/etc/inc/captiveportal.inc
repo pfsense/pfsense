@@ -1074,12 +1074,8 @@ function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1,
 	}
 
 	// XMLRPC Call over to the master Voucher node
-	if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
-		$syncip   = $config['voucher'][$cpzone]['vouchersyncdbip'];
-		$syncport = $config['voucher'][$cpzone]['vouchersyncport'];
-		$syncpass = $config['voucher'][$cpzone]['vouchersyncpass'];
-		$vouchersyncusername =
-		    $config['voucher'][$cpzone]['vouchersyncusername'];
+	if (xmlrpc_sync_voucher_details($syncip, $syncport,
+	    $vouchersyncusername, $syncpass)) {
 		$remote_status = xmlrpc_sync_voucher_disconnect($dbent, $syncip,
 		    $syncport, $syncpass, $vouchersyncusername, $term_cause,
 		    $stop_time);

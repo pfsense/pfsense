@@ -74,6 +74,6 @@ if [ "${result}" = "OK" ]; then
 fi
 
 # The output file path should be set in the environment
-echo -n "${auth_result}" > "${auth_control_file}"
+printf "%s" "${auth_result}" > "${auth_control_file}"
 
 exit 0

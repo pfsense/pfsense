@@ -1170,6 +1170,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 
 	$vga_only = false;
 	$serial_only = false;
+	$serial_efi_only = false;
 	$specific_platform = system_identify_specific_platform();
 	if ($specific_platform['name'] == 'XG-1540' ||
 	    $specific_platform['name'] == 'Turbot Dual-E') {
@@ -1179,8 +1180,12 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	    $specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
 	    $specific_platform['name'] == 'RCC-DFF' ||
-	    $specific_platform['name'] == 'apu2') {
+	    $specific_platform['name'] == 'ROGUE-1' ||
+	    $specific_platform['name'] == 'apu2' ||
+	    $specific_platform['name'] == 'uFW') {
 		$serial_only = true;
+	} elseif ($specific_platform['name'] == 'A37XX') {
+		$serial_efi_only = true;
 	}
 
 	/* Serial console - write out /boot.config */
@@ -1192,13 +1197,15 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$boot_config_split = explode("\n", $boot_config);
 	$data = array();
 	foreach ($boot_config_split as $bcs) {
-		/* Ignore -D and -h lines now */
-		if (!empty($bcs) && !stristr($bcs, "-D") &&
-		    !stristr($bcs, "-h")) {
+		/* Ignore -S, -D and -h lines now */
+		if (!empty($bcs) && !strstr($bcs, "-S") &&
+		    !strstr($bcs, "-D") && !strstr($bcs, "-h")) {
 			$data[] = $bcs;
 		}
 	}
-	if ($serial_only === true) {
+	if ($serial_efi_only === true) {
+		$data[] = "-S{$serialspeed}";
+	} elseif ($serial_only === true) {
 		$data[] = "-S{$serialspeed} -h";
 	} elseif (is_serial_enabled()) {
 		$data[] = "-S{$serialspeed} -D";
@@ -1217,7 +1224,10 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	}
 
 	$data = load_loader_conf($loader_conf_file);
-	if ($serial_only === true) {
+	if ($serial_efi_only === true) {
+		$data[] = 'boot_serial="YES"';
+		$data[] = 'comconsole_speed="' . $serialspeed . '"';
+	} elseif ($serial_only === true) {
 		$data[] = 'boot_serial="YES"';
 		$data[] = 'console="comconsole"';
 		$data[] = 'comconsole_speed="' . $serialspeed . '"';

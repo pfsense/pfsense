@@ -1254,6 +1254,8 @@ create_memstick_adi_image() {
 }
 
 create_memstick_plccb_image() {
+	local _variant="$1"
+
 	LOGFILE=${BUILDER_LOGS}/plcc-b.${TARGET}
 	if [ "${PLCCBPATH}" = "" ]; then
 		echo ">>> PLCCBPATH is empty skipping generation of plcc-b memstick image!" | tee -a ${LOGFILE}
@@ -1262,10 +1264,21 @@ create_memstick_plccb_image() {
 
 	mkdir -p $(dirname ${PLCCBPATH})
 
+	local _image_path=${PLCCBPATH}
+	if [ -n "${_variant}" ]; then
+		_image_path=$(echo "$_image_path" | \
+			sed "s/-memstick-XG-7100-/-memstick-XG-7100-${_variant}-/")
+		VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_path}"
+	fi
+
+	local _image_netboot_path=$(echo "$_image_path" | \
+		sed "s/-memstick-XG-7100-/-memstick-XG-7100-netboot-/")
+	VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_netboot_path}"
+
 	customize_stagearea_for_image "plcc-b"
 	install_default_kernel ${DEFAULT_KERNEL}
 
-	echo ">>> Creating serial plcc-b to ${PLCCBPATH}." 2>&1 | tee -a ${LOGFILE}
+	echo ">>> Creating serial plcc-b to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
 
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
@@ -1295,16 +1308,28 @@ create_memstick_plccb_image() {
 
 	create_distribution_tarball
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-mfsroot-memstick.sh \
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
-		${PLCCBPATH}
+		${_image_path}
 
-	if [ ! -f "${PLCCBPATH}" ]; then
+	if [ ! -f "${_image_path}" ]; then
 		echo "ERROR! memstick serial image was not built"
 		print_error_pfS
 	fi
 
-	gzip -qf $PLCCBPATH &
+	gzip -qf $_image_path &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-mfsroot-memstick.sh \
+		${INSTALLER_CHROOT_DIR} \
+		${_image_netboot_path}
+
+	if [ ! -f "${_image_netboot_path}" ]; then
+		echo "ERROR! memstick netboot image was not built"
+		print_error_pfS
+	fi
+
+	gzip -qf $_image_netboot_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> PLCC-B created: $(LC_ALL=C date)" | tee -a ${LOGFILE}

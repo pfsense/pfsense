@@ -471,30 +471,37 @@ function gen_requirestatefilter_field(&$section, $value) {
  * RESULT
  *   no return value, section object is added to form if needed
  ******/
-function gen_created_updated_fields(&$form, $created, $updated) {
+function gen_created_updated_fields(&$form, $created, $updated, $tracker = 0) {
 	$has_created_time = (isset($created['time']) && isset($created['username']));
 	$has_updated_time = (isset($updated['time']) && isset($updated['username']));
 
 	if ($has_created_time || $has_updated_time) {
 		$section = new Form_Section('Rule Information');
 
+		if (!empty($tracker)) {
+			$section->addInput(new Form_StaticText(
+				'Tracking ID',
+				htmlspecialchars($tracker)
+			));
+		}
+
 		if ($has_created_time) {
 			$section->addInput(new Form_StaticText(
 				'Created',
-				sprintf(
+				htmlspecialchars(sprintf(
 					gettext('%1$s by %2$s'),
 					date(gettext("n/j/y H:i:s"), $created['time']),
-					$created['username'])
+					$created['username']))
 			));
 		}
 
 		if ($has_updated_time) {
 			$section->addInput(new Form_StaticText(
 				'Updated',
-				sprintf(
+				htmlspecialchars(sprintf(
 					gettext('%1$s by %2$s'),
 					date(gettext("n/j/y H:i:s"), $updated['time']),
-					$updated['username'])
+					$updated['username']))
 			));
 		}
 

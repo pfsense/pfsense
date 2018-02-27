@@ -22,9 +22,14 @@ if ! pgrep -q dhclient; then
 	arch=$(uname -p)
 	if [ "${arch}" == "armv6" -a -f /usr/local/sbin/u-boot-env ]; then
 		_boardpn=$(/usr/local/sbin/u-boot-env boardpn)
+	else
+		_planar_product=$(kenv -q smbios.planar.product 2>/dev/null)
 	fi
 	if [ "${_boardpn%-*}" == "80500-0148" ]; then
 		if="mvneta2"
+	elif [ "${_planar_product%-*}" == "80300-0134" ]; then
+		# XG-7100
+		if="ix2"
 	else
 		# First, find a connected interface
 		if=$(ifconfig \

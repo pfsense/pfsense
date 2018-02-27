@@ -350,6 +350,9 @@ if (is_array($config['hasync'])) {
 	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['captiveportal'])) {
 		$sections[] = 'captiveportal';
 	}
+	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['voucher'])) {
+		$sections[] = 'voucher';
+	}
 
 	if (count($sections) <= 0) {
 		log_error("Nothing has been configured to be synched. Skipping....");

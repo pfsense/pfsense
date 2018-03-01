@@ -1549,6 +1549,7 @@ function apply_all_chosen_items() {
 	$interfacelist = implode(",", $interfacelist);
 
 	/* Rules */
+	$tracker = (int)microtime(true);
 	if ($penalty) {
 		if (is_ipaddr($config['ezshaper']['step4']['address']) || is_alias($config['ezshaper']['step4']['address'])) {
 			$rule = array();
@@ -1562,6 +1563,7 @@ function apply_all_chosen_items() {
 			$rule['wizard'] = "yes";
 			$rule['enabled'] = "on";
 			$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+			$rule['tracker'] = $tracker++;
 			$config['filter']['rule'][] = $rule;
 
 		}
@@ -1583,6 +1585,7 @@ function apply_all_chosen_items() {
 					$rule['wizard'] = "yes";
 					$rule['enabled'] = "on";
 					$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+					$rule['tracker'] = $tracker++;
 					$config['filter']['rule'][] = $rule;
 
 					$rule = array();
@@ -1597,6 +1600,7 @@ function apply_all_chosen_items() {
 					$rule['wizard'] = "yes";
 					$rule['enabled'] = "on";
 					$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+					$rule['tracker'] = $tracker++;
 					$config['filter']['rule'][] = $rule;
 
 				} elseif ($config['ezshaper']['step3']['provider'] == "Generic") {
@@ -1614,6 +1618,7 @@ function apply_all_chosen_items() {
 					$rule['wizard'] = "yes";
 					$rule['enabled'] = "on";
 					$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+					$rule['tracker'] = $tracker++;
 					$config['filter']['rule'][] = $rule;
 
 				} else {
@@ -1633,6 +1638,7 @@ function apply_all_chosen_items() {
 						if ($voip[1] != '')
 							$rule['protocol'] = $voip[1];
 						$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+						$rule['tracker'] = $tracker++;
 						$config['filter']['rule'][] = $rule;
 					}
 				}
@@ -1657,6 +1663,7 @@ function apply_all_chosen_items() {
 						if ($p2pclient[1] != '')
 							$rule['protocol'] = $p2pclient[1];
 						$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+						$rule['tracker'] = $tracker++;
 						$config['filter']['rule'][] = $rule;
 					}
 				}
@@ -1684,6 +1691,7 @@ function apply_all_chosen_items() {
 						if ($Gameclient[1] != '')
 							$rule['protocol'] = $Gameclient[1];
 						$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+						$rule['tracker'] = $tracker++;
 						$config['filter']['rule'][] = $rule;
 					}
 				}
@@ -1737,6 +1745,7 @@ function apply_all_chosen_items() {
 					if ($otherclient[1] != '')
 						$rule['protocol'] = $otherclient[1];
 					$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+					$rule['tracker'] = $tracker++;
 					$config['filter']['rule'][] = $rule;
 				}
 			}

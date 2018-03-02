@@ -86,15 +86,15 @@ if (file_exists("/root/firmware.tgz")) {
 }
 
 /* Reinstall of packages after reboot has been requested */
-if (file_exists('{$g['conf_path']}/needs_package_sync_after_reboot')) {
-	touch('{$g['conf_path']}/needs_package_sync');
-	@unlink('{$g['conf_path']}/needs_package_sync_after_reboot');
+if (file_exists("{$g['conf_path']}/needs_package_sync_after_reboot")) {
+	touch("{$g['conf_path']}/needs_package_sync");
+	@unlink("{$g['conf_path']}/needs_package_sync_after_reboot");
 }
 
 /* Triggering of the initial setup wizard after reboot has been requested */
-if (file_exists('{$g['conf_path']}/trigger_initial_wizard_after_reboot')) {
-	touch('{$g['conf_path']}/trigger_initial_wizard');
-	@unlink('{$g['conf_path']}/trigger_initial_wizard_after_reboot');
+if (file_exists("{$g['conf_path']}/trigger_initial_wizard_after_reboot")) {
+	touch("{$g['conf_path']}/trigger_initial_wizard");
+	@unlink("{$g['conf_path']}/trigger_initial_wizard_after_reboot");
 }
 
 /* start devd (dhclient now uses it) */
@@ -377,10 +377,10 @@ activate_powerd();
 prefer_ipv4_or_ipv6();
 
 /* Resync / Reinstall packages if need be */
-if (file_exists('{$g['conf_path']}/needs_package_sync')) {
+if (file_exists("{$g['conf_path']}/needs_package_sync")) {
 	mark_subsystem_dirty('packagelock');
 	if (package_reinstall_all()) {
-		@unlink('{$g['conf_path']}/needs_package_sync');
+		@unlink("{$g['conf_path']}/needs_package_sync");
 	}
 	clear_subsystem_dirty('packagelock');
 }

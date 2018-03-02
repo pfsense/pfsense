@@ -186,6 +186,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radiuskey4'] = $a_cp[$cpzone]['radiuskey4'];
 	$pconfig['radiusvendor'] = $a_cp[$cpzone]['radiusvendor'];
 	$pconfig['radiussession_timeout'] = isset($a_cp[$cpzone]['radiussession_timeout']);
+	$pconfig['radiustraffic_quota'] = isset($a_cp[$cpzone]['radiustraffic_quota']);
 	$pconfig['radiussrcip_attribute'] = $a_cp[$cpzone]['radiussrcip_attribute'];
 	$pconfig['passthrumacadd'] = isset($a_cp[$cpzone]['passthrumacadd']);
 	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
@@ -435,6 +436,7 @@ if ($_POST['save']) {
 		$newcp['radiuskey4'] = $_POST['radiuskey4'];
 		$newcp['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$newcp['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
+		$newcp['radiustraffic_quota'] = $_POST['radiustraffic_quota'] ? true : false;
 		$newcp['radiussrcip_attribute'] = $_POST['radiussrcip_attribute'];
 		$newcp['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
 		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
@@ -976,6 +978,13 @@ $section->addInput(new Form_Checkbox(
 	'Use RADIUS Session-Timeout attributes',
 	$pconfig['radiussession_timeout']
 ))->setHelp('When enabled, clients will be disconnected after the amount of time retrieved from the RADIUS Session-Timeout attribute.');
+
+$section->addInput(new Form_Checkbox(
+	'radiustraffic_quota',
+	'Traffic quota',
+	'Use RADIUS pfSense-Max-Total-Octets attribute',
+	$pconfig['radiustraffic_quota']
+))->setHelp('When enabled, clients will be disconnected after exceeding the amount of traffic, inclusive of both downloads and uploads, retrieved from the RADIUS pfSense-Max-Total-Octets attribute.');
 
 $section->addInput(new Form_Select(
 	'radiusvendor',

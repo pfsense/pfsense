@@ -44,6 +44,7 @@
 	* Adding of VENDOR Nomadix
 	* Adding of VENDOR WISPr (Wi-Fi Alliance)
 	* Adding of VENDOR ChilliSpot (bandwidth-attributes only)
+	* Adding of VENDOR pfSense (Netgate)
 
 */
 
@@ -693,6 +694,20 @@ class Auth_RADIUS extends PEAR {
                             $this->attributes['url_logoff'] = radius_cvt_string($datav[1]);
                             break;
                         }
+                    }
+                }
+
+                elseif ($vendor == 13644) { /* Netgate */
+                    switch ($attrv) {
+                    case 1: /* pfSense-Bandwidth-Max-Up */
+                        $this->attributes['bw_up'] = radius_cvt_int($datav);
+                        break;
+                    case 2: /* pfSense-Bandwidth-Max-Down */
+                        $this->attributes['bw_down'] = radius_cvt_int($datav);
+                        break;
+                    case 3: /* pfSense-Max-Total-Octets */
+                        $this->attributes['maxbytes'] = radius_cvt_int($datav);
+                        break;
                     }
                 }
 

@@ -1168,11 +1168,13 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
 
 	$vga_only = false;
+	$hdmi_only = false;
 	$serial_only = false;
 	$specific_platform = system_identify_specific_platform();
-	if ($specific_platform['name'] == 'XG-1540' ||
-	    $specific_platform['name'] == 'Turbot Dual-E') {
+	if ($specific_platform['name'] == 'XG-1540') {
 		$vga_only = true;
+	} elseif ($specific_platform['name'] == 'Turbot Dual-E') {
+		$hdmi_only = true;
 	} elseif ($specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
 	    $specific_platform['name'] == 'RCC-DFF' ||

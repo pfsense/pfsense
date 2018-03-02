@@ -34,8 +34,8 @@
 		</field>
 	</fields>
 	<stepbeforeformdisplay>
-		unlink_if_exists('/conf/trigger_initial_wizard');
-		unlink_if_exists('/conf/assign_complete');
+		unlink_if_exists('{$g['conf_path']}/trigger_initial_wizard');
+		unlink_if_exists('{$g['conf_path']}/assign_complete');
 	</stepbeforeformdisplay>
 </step>
 <step>

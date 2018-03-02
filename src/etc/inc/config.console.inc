@@ -387,7 +387,7 @@ EOD;
 		echo gettext("One moment while the settings are reloading...");
 		touch("{$g['tmp_path']}/assign_complete");
 
-		if (file_exists("/conf/trigger_initial_wizard")) {
+		if (file_exists("{$g['conf_path']}/trigger_initial_wizard")) {
 			// Let the system know that the interface assign part of initial setup has been done.
 			touch("{$g['conf_path']}/assign_complete");
 		}

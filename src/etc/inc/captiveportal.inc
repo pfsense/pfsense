@@ -786,6 +786,7 @@ function captiveportal_prune_old() {
 
 		$timedout = false;
 		$term_cause = 1;
+		$logout_cause = 'TIMEOUT';
 		if (empty($cpentry[12])) {
 			$cpentry[12] = 'first';
 		}
@@ -799,6 +800,7 @@ function captiveportal_prune_old() {
 			if (($pruning_time - $cpentry[0]) >= $timeout) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
+				$logout_cause = 'SESSION TIMEOUT';
 			}
 		}
 
@@ -807,6 +809,7 @@ function captiveportal_prune_old() {
 			if ($pruning_time >= $cpentry[9]) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
+				$logout_cause = 'SESSION TIMEOUT';
 			}
 		}
 
@@ -822,6 +825,7 @@ function captiveportal_prune_old() {
 			if ($lastact && (($pruning_time - $lastact) >= $uidletimeout)) {
 				$timedout = true;
 				$term_cause = 4; // Idle-Timeout
+				$logout_cause = 'IDLE TIMEOUT';
 				if (!isset($config['captiveportal'][$cpzone]['includeidletime'])) {
 					$stop_time = $lastact;
 				}
@@ -833,6 +837,7 @@ function captiveportal_prune_old() {
 			if ($pruning_time >= ($cpentry[0] + $cpentry[7])) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
+				$logout_cause = 'SESSION TIMEOUT';
 				$voucher_needs_sync = true;
 			}
 		}
@@ -846,12 +851,13 @@ function captiveportal_prune_old() {
 			if (($volume['input_bytes'] + $volume['output_bytes']) > $trafficquota) {
 				$timedout = true;
 				$term_cause = 10; // NAS-Request
+				$logout_cause = 'QUOTA EXCEEDED';
 			}
 		}
 
 		if ($timedout) {
 			captiveportal_disconnect($cpentry, $radiusservers, $term_cause, $stop_time);
-			captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "TIMEOUT");
+			captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], $logout_cause);
 			$unsetindexes[] = $cpentry[5];
 		}
 

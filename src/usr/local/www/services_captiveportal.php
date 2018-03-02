@@ -145,6 +145,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['maxprocperip'] = $a_cp[$cpzone]['maxprocperip'];
 	$pconfig['timeout'] = $a_cp[$cpzone]['timeout'];
 	$pconfig['idletimeout'] = $a_cp[$cpzone]['idletimeout'];
+	$pconfig['trafficquota'] = $a_cp[$cpzone]['trafficquota'];
 	$pconfig['freelogins_count'] = $a_cp[$cpzone]['freelogins_count'];
 	$pconfig['freelogins_resettimeout'] = $a_cp[$cpzone]['freelogins_resettimeout'];
 	$pconfig['freelogins_updatetimeouts'] = isset($a_cp[$cpzone]['freelogins_updatetimeouts']);
@@ -281,6 +282,10 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");
 	}
 
+	if ($_POST['trafficquota'] && (!is_numeric($_POST['trafficquota']) || ($_POST['trafficquota'] < 1))) {
+		$input_errors[] = gettext("The traffic quota must be at least 1 megabyte.");
+	}
+
 	if ($_POST['freelogins_count'] && (!is_numeric($_POST['freelogins_count']))) {
 		$input_errors[] = gettext("The pass-through credit count must be a number or left blank.");
 	} else if ($_POST['freelogins_count'] && is_numeric($_POST['freelogins_count']) && ($_POST['freelogins_count'] >= 1)) {
@@ -353,6 +358,7 @@ if ($_POST['save']) {
 		$newcp['maxprocperip'] = $_POST['maxprocperip'] ? $_POST['maxprocperip'] : false;
 		$newcp['timeout'] = $_POST['timeout'];
 		$newcp['idletimeout'] = $_POST['idletimeout'];
+		$newcp['trafficquota'] = $_POST['trafficquota'];
 		$newcp['freelogins_count'] = $_POST['freelogins_count'];
 		$newcp['freelogins_resettimeout'] = $_POST['freelogins_resettimeout'];
 		$newcp['freelogins_updatetimeouts'] = $_POST['freelogins_updatetimeouts'] ? true : false;
@@ -568,6 +574,14 @@ $section->addInput(new Form_Input(
 	$pconfig['timeout']
 ))->setHelp('Clients will be disconnected after this amount of time, regardless of activity. They may log in again immediately, though. ' .
 			'Leave this field blank for no hard timeout (not recommended unless an idle timeout is set).');
+
+$section->addInput(new Form_Input(
+	'trafficquota',
+	'Traffic quota (Megabytes)',
+	'number',
+	$pconfig['trafficquota']
+))->setHelp('Clients will be disconnected after exceeding this amount of traffic, inclusive of both downloads and uploads. They may log in again immediately, though. ' .
+			'Leave this field blank for no traffic quota.');
 
 $section->addInput(new Form_Input(
 	'freelogins_count',
@@ -1234,6 +1248,7 @@ events.push(function() {
 		hideInput('maxprocperip', hide);
 		hideInput('idletimeout', hide);
 		hideInput('timeout', hide);
+		hideInput('trafficquota', hide);
 		hideInput('freelogins_count', hide);
 		hideInput('freelogins_resettimeout', hide);
 		hideCheckbox('freelogins_updatetimeouts', hide);

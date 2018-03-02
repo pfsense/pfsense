@@ -755,8 +755,14 @@ function captiveportal_prune_old() {
 		$idletimeout = $cpcfg['idletimeout'] * 60;
 	}
 
+	/* check for entries exceeding their traffic quota */
+	$trafficquota = 0;
+	if (!empty($cpcfg['trafficquota']) && is_numeric($cpcfg['trafficquota'])) {
+		$trafficquota = $cpcfg['trafficquota'] * 1048576;
+	}
+
 	/* Is there any job to do? */
-	if (!$timeout && !$idletimeout && !isset($cpcfg['reauthenticate']) &&
+	if (!$timeout && !$idletimeout && !$trafficquota && !isset($cpcfg['reauthenticate']) &&
 	    !isset($cpcfg['radiussession_timeout']) && !isset($vcpcfg['enable'])) {
 		return;
 	}
@@ -827,6 +833,15 @@ function captiveportal_prune_old() {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
 				$voucher_needs_sync = true;
+			}
+		}
+
+		/* traffic quota */
+		if (!$timedout && $trafficquota > 0) {
+			$volume = getVolume($cpentry[2], $cpentry[3]);
+			if (($volume['input_bytes'] + $volume['output_bytes']) > $trafficquota) {
+				$timedout = true;
+				$term_cause = 10; // NAS-Request
 			}
 		}
 

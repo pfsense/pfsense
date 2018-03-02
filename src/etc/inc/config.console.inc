@@ -380,10 +380,6 @@ EOD;
 
 		fclose($fp);
 
-		if (platform_booting()) {
-			return (0);
-		}
-
 		echo gettext("One moment while the settings are reloading...");
 		touch("{$g['tmp_path']}/assign_complete");
 

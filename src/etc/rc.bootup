@@ -155,6 +155,7 @@ while (is_interface_mismatch() == true) {
 		system("/sbin/shutdown -h now");
 		exit(0);
 	}
+	reload_interfaces_sync();
 	led_kitt();
 }
 

@@ -556,7 +556,7 @@ events.push(function() {
 				hideInput('zoneid', true);
 				hideInput('ttl', false);
 				break;
-			case "azure-v6":
+			case "azurev6":
 			case "azure":
 				hideGroupInput('domainname', true);
 				hideInput('resultmatch', true);

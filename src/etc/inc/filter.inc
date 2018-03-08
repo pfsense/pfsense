@@ -3597,7 +3597,7 @@ EOD;
 		}
 
 		$gw = get_interface_gateway($ifdescr);
-		if (is_ipaddrv4($gw) && is_ipaddrv4($ifcfg['ip'])) {
+		if (is_ipaddrv4($gw) && is_ipaddrv4($ifcfg['ip']) && is_subnetv4("{$ifcfg['sa']}/{$ifcfg['sn']}")) {
 			$ipfrules .= "pass out {$log['pass']} route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips'])) {
 				foreach ($ifcfg['vips'] as $vip) {
@@ -3613,7 +3613,7 @@ EOD;
 		$gwv6 = get_interface_gateway_v6($ifdescr);
 		$stf = get_real_interface($ifdescr, "inet6");
 		$pdlen = 64 - calculate_ipv6_delegation_length($ifdescr);
-		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6'])) {
+		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']) && is_subnetv6("{$ifcfg['ipv6']}/{$pdlen}")) {
 			$ipfrules .= "pass out {$log['pass']} route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips6'])) {
 				foreach ($ifcfg['vips6'] as $vip) {

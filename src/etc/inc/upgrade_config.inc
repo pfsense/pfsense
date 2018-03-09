@@ -5515,9 +5515,12 @@ function upgrade_174_to_175() {
  * And provide the option through gui to disable it again
  */
 function upgrade_175_to_176() {
+}
+function upgrade_176_to_177() {
 	global $config;
+	unset($config['igmpproxy']['enabled']);
 	if (is_array($config['igmpproxy']['igmpentry']) && (count($config['igmpproxy']['igmpentry']) > 0)) {
-		$config['igmpproxy']['enabled'] = true;
+		$config['igmpproxy']['enable'] = true;
 	}
 }
 

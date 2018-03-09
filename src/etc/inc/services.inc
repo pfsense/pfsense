@@ -1667,7 +1667,7 @@ function services_igmpproxy_configure() {
 	/* kill any running igmpproxy */
 	killbyname("igmpproxy");
 
-	if (!isset($config['igmpproxy']['enabled'])) {
+	if (!isset($config['igmpproxy']['enable'])) {
 		return 0;
 	}
 	if (!is_array($config['igmpproxy']['igmpentry']) || (count($config['igmpproxy']['igmpentry']) == 0)) {

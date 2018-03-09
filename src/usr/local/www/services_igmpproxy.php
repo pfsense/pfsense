@@ -50,6 +50,23 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('igmpproxy');
 }
 
+if (isset($config['igmpproxy']['enable'])) {
+	$pconfig['enable'] = true;
+}
+
+if ($_POST['save']) {
+	$pconfig = $_POST;
+	if (isset($pconfig['enable'])) {
+		$config['igmpproxy']['enable'] = true;
+	} else {
+		unset($config['igmpproxy']['enable']);
+	}
+	write_config();
+	mark_subsystem_dirty('igmpproxy');
+	header("Location: services_igmpproxy.php");
+	exit;
+}
+
 if ($_POST['act'] == "del") {
 	if ($a_igmpproxy[$_POST['id']]) {
 		unset($a_igmpproxy[$_POST['id']]);
@@ -72,6 +89,24 @@ if (is_subsystem_dirty('igmpproxy')) {
 }
 ?>
 
+<?php
+
+$form = new Form();
+
+$section = new Form_Section('General IGMP Options');
+
+$section->addInput(new Form_Checkbox(
+	'enable',
+	'Enable',
+	'Enable IGMP',
+	$pconfig['enable']
+));
+
+$form->add($section);
+
+print($form);
+
+?>	
 <form action="services_igmpproxy.php" method="post">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IGMP Proxy')?></h2></div>

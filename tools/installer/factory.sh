@@ -32,12 +32,10 @@ upgrade_netgate_coreboot() {
 	    || return 0
 
 	local _adi_flash_util=/usr/local/sbin/adi_flash_util
-
-	# Upgrade utility is not available
-	[ -f /mnt/${_adi_flash_util} ] \
-	    || return 0
+	local _adi_smbios_util=/usr/local/sbin/adi_smbios_util
 
 	local _product=$(kenv -q smbios.system.product 2>/dev/null)
+	local _planar_product=$(kenv -q smbios.planar.product 2>/dev/null)
 	local _coreboot_model=""
 
 	case "${_product}" in
@@ -51,10 +49,24 @@ upgrade_netgate_coreboot() {
 			_coreboot_model="RCC"
 			;;
 		*)
-			# Unsupported model
-			return 0
+			if [ "${_planar_product%-*}" == "80300-0134" ]; then
+				_coreboot_model="PLCC"
+			else
+				# Unsupported model
+				return 0
+			fi
 			;;
 	esac
+
+	if [ "${_cur_model}" = "PLCC" ]; then
+		local _adi_util=${_adi_smbios_util}
+	else
+		local _adi_util=${_adi_flash_util}
+	fi
+
+	# Upgrade utility is not available
+	[ -f /mnt/${_adi_util} ] \
+	    || return 0
 
 	# Check current model and version
 	local _cur_model=$(kenv -q smbios.bios.version 2>/dev/null | \
@@ -110,7 +122,7 @@ upgrade_netgate_coreboot() {
 	echo "===> Upgrading Netgate Coreboot"
 	mkdir -p /mnt/dev
 	mount -t devfs devfs /mnt/dev
-	chroot /mnt ${_adi_flash_util} -u ${_rom}
+	chroot /mnt ${_adi_util} -u ${_rom}
 	local _rc=$?
 	umount -f /mnt/dev
 	return ${_rc}

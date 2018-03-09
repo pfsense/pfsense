@@ -5517,7 +5517,7 @@ function upgrade_174_to_175() {
 function upgrade_175_to_176() {
 	global $config;
 	if (is_array($config['igmpproxy']['igmpentry']) && (count($config['igmpproxy']['igmpentry']) > 0)) {
-		$config['igmpproxy']['enabled'] = true;
+		$config['igmpproxy']['enable'] = true;
 	}
 }
 

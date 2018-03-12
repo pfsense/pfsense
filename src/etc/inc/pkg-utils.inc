@@ -1307,6 +1307,9 @@ function pkg_list_repos() {
 		    'path' => $conf_file,
 		    'descr' => $descr
 		);
+		if (file_exists($conf_file . ".default")) {
+			$entry['default'] = true;
+		}
 		$result[] = $entry;
 	}
 
@@ -1329,14 +1332,18 @@ function pkg_build_repo_list() {
 function pkg_get_repo_name($path) {
 	$repos = pkg_list_repos();
 
+	$default = $repos[0]['name'];
 	foreach ($repos as $repo) {
 		if ($repo['path'] == $path) {
 			return $repo['name'];
 		}
+		if (isset($repo['default'])) {
+			$default = $repo['name'];
+		}
 	}
 
 	/* Default */
-	return $repos[0]['name'];
+	return $default;
 }
 
 /* Switch between stable and devel repos */

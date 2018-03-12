@@ -1079,8 +1079,6 @@ function package_reinstall_all() {
 		}
 	}
 
-	$pkg_info = get_pkg_info();
-
 	if ($upgrade &&
 	    file_exists("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt")) {
 		$package_list = file("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt",
@@ -1096,6 +1094,9 @@ function package_reinstall_all() {
 		}
 	}
 
+	if (!empty($package_list)) {
+		$pkg_info = get_pkg_info();
+	}
 	foreach ($package_list as $package) {
 		$found = false;
 		foreach ($pkg_info as $pkg) {

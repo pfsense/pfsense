@@ -1148,6 +1148,22 @@ function package_reinstall_all() {
 		}
 	}
 
+	/*
+	 * Verify remaining binary packages not present in current config
+	 * during backup restore and remove them
+	 */
+	if ($restore) {
+		$installed_packages = get_pkg_info('all', true, true);
+		foreach ($installed_packages as $package) {
+			$shortname = $package['name'];
+			pkg_remove_prefix($shortname);
+			if (get_package_id($shortname) != -1) {
+				continue;
+			}
+			pkg_delete($package['name']);
+		}
+	}
+
 	return true;
 }
 

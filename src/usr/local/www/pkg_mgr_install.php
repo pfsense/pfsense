@@ -272,32 +272,6 @@ if ($firmwareupdate) {
 	$tab_array[] = array(gettext("Package Installer"), true, "");
 }
 
-// Create an array of repo names and descriptions to populate the "Branch" selector
-function build_repo_list() {
-	global $repos;
-
-	$list = array();
-
-	foreach ($repos as $repo) {
-		$list[$repo['name']] = $repo['descr'];
-	}
-
-	return($list);
-}
-
-function get_repo_name($path) {
-	global $repos;
-
-	foreach ($repos as $repo) {
-		if ($repo['path'] == $path) {
-			return $repo['name'];
-		}
-	}
-
-	/* Default */
-	return $repos[0]['name'];
-}
-
 include("head.inc");
 ?>
 
@@ -368,15 +342,14 @@ if (!$confirmed && !$completed &&
 		update_repos();
 		$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
 		$helpfilename = "{$repopath}/{$g['product_name']}-repo-custom.help";
-		$repos = pkg_list_repos();
 
 		$group = new Form_Group("Branch");
 
 		$field = new Form_Select(
 			'fwbranch',
 			'*Branch',
-			get_repo_name($config['system']['pkg_repo_conf_path']),
-			build_repo_list()
+			pkg_get_repo_name($config['system']['pkg_repo_conf_path']),
+			pkg_build_repo_list()
 		);
 
 		if (file_exists($helpfilename)) {

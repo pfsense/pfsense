@@ -1313,6 +1313,32 @@ function pkg_list_repos() {
 	return $result;
 }
 
+/* List available repos on a format to be used by selectors */
+function pkg_build_repo_list() {
+	$repos = pkg_list_repos();
+	$list = array();
+
+	foreach ($repos as $repo) {
+		$list[$repo['name']] = $repo['descr'];
+	}
+
+	return($list);
+}
+
+/* Find repo by path */
+function pkg_get_repo_name($path) {
+	$repos = pkg_list_repos();
+
+	foreach ($repos as $repo) {
+		if ($repo['path'] == $path) {
+			return $repo['name'];
+		}
+	}
+
+	/* Default */
+	return $repos[0]['name'];
+}
+
 /* Switch between stable and devel repos */
 function pkg_switch_repo($path) {
 	global $g;
@@ -1417,4 +1443,5 @@ function save_repo($json) {
 		}
 	}
 }
+
 ?>

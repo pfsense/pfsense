@@ -272,8 +272,9 @@ if ($_POST) {
 			$pconfig['tagged'] = array();
 			$pconfig['members'] = array();
 			foreach ($vgroup['members'] as $member => $val) {
-				if ($member[1] == 't') {
-					$member = substr($member, 0, 1);
+				$tagpos = strpos($member, "t");
+				if ($tagpos != false) {
+					$member = substr($member, 0, $tagpos);
 					$pconfig['tagged'][] = $member;
 				}
 				$pconfig['members'][] = $member;

@@ -567,6 +567,26 @@ function netgate_hardware_setup() {
 		$vlan['vlanif'] = "ix2.4091";
 		$config['vlans']['vlan'][] = $vlan;
 		$config['interfaces']['lan']['if'] = 'ix2.4091';
+
+		if (does_interface_exist('igb3')) {
+			$config['interfaces']['opt3'] = array(
+				'if' => 'igb0',
+				'descr' => 'OPT3'
+			);
+			$config['interfaces']['opt4'] = array(
+				'if' => 'igb1',
+				'descr' => 'OPT4'
+			);
+			$config['interfaces']['opt5'] = array(
+				'if' => 'igb2',
+				'descr' => 'OPT5'
+			);
+			$config['interfaces']['opt6'] = array(
+				'if' => 'igb3',
+				'descr' => 'OPT6'
+			);
+		}
+
 		break;
 	case 'C2758':
 		$config['interfaces']['wan']['if'] = 'igb0';

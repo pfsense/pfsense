@@ -50,6 +50,9 @@ if ! pgrep -q dhclient; then
 	echo "request user-class, classless-routes, domain-name-servers;" \
 	    > /tmp/dhclient.conf
 
+	# Make sure if is up
+	ifconfig ${if} up
+
 	# Then, try to obtain an IP address to it running dhclient
 	# if it fails, abort
 	if ! dhclient -c /tmp/dhclient.conf ${if}; then

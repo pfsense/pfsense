@@ -1059,11 +1059,39 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 function package_reinstall_all() {
 	global $g, $config, $pkg_interface;
 
-	$upgrade = (file_exists('/conf/needs_package_sync') && platform_booting());
+	if (platform_booting()) {
+		$upgrade = file_exists('/conf/needs_package_sync');
+		$restore = file_exists('/conf/needs_package_sync_after_reboot');
+	} else {
+		$upgrade = false;
+		$restore = false;
+	}
 
 	if ((!isset($config['installedpackages']['package']) ||
 	    !is_array($config['installedpackages']['package'])) && !$upgrade) {
 		return true;
+	}
+
+	/* When restoring a backup, use default pkg repo */
+	if ($restore) {
+		/*
+		 * Configure default pkg repo for current version instead of
+		 * using it from backup, that could be older
+		 */
+		$default_repo = pkg_get_default_repo();
+		$current_repo_path = "";
+		if (!empty($config['system']['pkg_repo_conf_path'])) {
+			$current_repo_path =
+			    $config['system']['pkg_repo_conf_path'];
+		}
+
+		if ($current_repo_path != $default_repo['path']) {
+			$config['system']['pkg_repo_conf_path'] =
+			    $default_repo['path'];
+			write_config(
+			    "Configured default pkg repo after restore");
+			pkg_switch_repo($default_repo['path']);
+		}
 	}
 
 	/* During boot after upgrade, wait for internet connection */
@@ -1087,8 +1115,6 @@ function package_reinstall_all() {
 		}
 	}
 
-	$pkg_info = get_pkg_info();
-
 	if ($upgrade &&
 	    file_exists("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt")) {
 		$package_list = file("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt",
@@ -1104,6 +1130,9 @@ function package_reinstall_all() {
 		}
 	}
 
+	if (!empty($package_list)) {
+		$pkg_info = get_pkg_info();
+	}
 	foreach ($package_list as $package) {
 		$found = false;
 		foreach ($pkg_info as $pkg) {
@@ -1124,6 +1153,22 @@ function package_reinstall_all() {
 			    sprintf(gettext("Package %s does not exist in current %s version and it has been removed."),
 			    $package, $g['product_name']));
 			uninstall_package($package);
+		}
+	}
+
+	/*
+	 * Verify remaining binary packages not present in current config
+	 * during backup restore and remove them
+	 */
+	if ($restore) {
+		$installed_packages = get_pkg_info('all', true, true);
+		foreach ($installed_packages as $package) {
+			$shortname = $package['name'];
+			pkg_remove_prefix($shortname);
+			if (get_package_id($shortname) != -1) {
+				continue;
+			}
+			pkg_delete($package['name']);
 		}
 	}
 
@@ -1315,10 +1360,56 @@ function pkg_list_repos() {
 		    'path' => $conf_file,
 		    'descr' => $descr
 		);
+		if (file_exists($conf_file . ".default")) {
+			$entry['default'] = true;
+		}
 		$result[] = $entry;
 	}
 
 	return $result;
+}
+
+function pkg_get_default_repo() {
+	$repos = pkg_list_repos();
+
+	foreach ($repos as $repo) {
+		if (isset($repo['default'])) {
+			return $repo;
+		}
+	}
+
+	/* No default found, return the first one */
+	return ($repos[0]);
+}
+
+/* List available repos on a format to be used by selectors */
+function pkg_build_repo_list() {
+	$repos = pkg_list_repos();
+	$list = array();
+
+	foreach ($repos as $repo) {
+		$list[$repo['name']] = $repo['descr'];
+	}
+
+	return($list);
+}
+
+/* Find repo by path */
+function pkg_get_repo_name($path) {
+	$repos = pkg_list_repos();
+
+	$default = $repos[0]['name'];
+	foreach ($repos as $repo) {
+		if ($repo['path'] == $path) {
+			return $repo['name'];
+		}
+		if (isset($repo['default'])) {
+			$default = $repo['name'];
+		}
+	}
+
+	/* Default */
+	return $default;
 }
 
 /* Switch between stable and devel repos */
@@ -1429,4 +1520,5 @@ function save_repo($json) {
 		}
 	}
 }
+
 ?>

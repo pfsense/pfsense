@@ -369,8 +369,13 @@ echo "done."
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
 
+if [ -f /cf/conf/needs_package_sync_after_reboot ]; then
+	skip_pfsense_upgrade=1
+fi
+
 # Second upgrade stage
-/usr/local/sbin/${product}-upgrade -y -b 2
+[ -z "$skip_pfsense_upgrade" ] \
+	&& /usr/local/sbin/${product}-upgrade -y -b 2
 
 # Copy default openssl config file
 [ -d /etc/ssl ] \
@@ -448,7 +453,8 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
 fi
 
-/usr/local/sbin/${product}-upgrade -y -b 3
+[ -z "$skip_pfsense_upgrade" ] \
+	&& /usr/local/sbin/${product}-upgrade -y -b 3
 
 if [ -f /usr/local/sbin/ec2_setup.php ]; then
 	/usr/local/sbin/ec2_setup.php

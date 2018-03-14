@@ -169,6 +169,13 @@ if ($savemsg) {
 	}
 ?>
 						<th><?=gettext("Flags"); ?></th>
+<?
+	if (isset($swinfo['switch_caps']) && $swinfo['switch_caps']['PSTATE'] == 1) {
+?>
+						<th><?=gettext("State"); ?></th>
+<?
+	}
+?>
 						<th><?=gettext("Media"); ?></th>
 						<th><?=gettext("Status"); ?></th>
 					</tr>
@@ -222,6 +229,23 @@ if (! $input_errors) {
 		}
 ?>
 						</td>
+<?
+	if (isset($swinfo['switch_caps']) && $swinfo['switch_caps']['PSTATE'] == 1) {
+?>
+						<td>
+<?
+		$comma = false;
+		foreach ($port['state'] as $state => $val) {
+			if ($comma)
+				echo ",";
+			echo "$state";
+			$comma = true;
+		}
+?>
+						</td>
+<?
+	}
+?>
 						<td>
 <?
 		if (isset($port['media']['current'])) {

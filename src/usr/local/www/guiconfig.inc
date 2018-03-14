@@ -314,7 +314,7 @@ function sprint_info_box($msg, $class="alert-warning", $btnname = "close", $btnt
 
 		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-' . $btnclass . '" name="'. $btnname . '" value="' . $btntext . '">' . $btnicon . $btntext . '</button>';
 
-		if ($_POST['if']) {
+		if ( isset($_POST['if']) && !empty($_POST['if'])) {
 			$msg .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 		}
 

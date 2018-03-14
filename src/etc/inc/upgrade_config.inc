@@ -5521,4 +5521,8 @@ function upgrade_175_to_176() {
 	}
 }
 
+/* Placeholder for a factory update. */
+function upgrade_176_to_177() {
+}
+
 ?>

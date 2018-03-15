@@ -395,6 +395,10 @@ if [ -d /usr/local/share/${product}/custom_logos ]; then
 		/usr/local/www/css
 fi
 
+# Apply CPU microcode update
+[ -x /usr/local/etc/rc.d/microcode_update ] \
+	&& /usr/local/etc/rc.d/microcode_update onestart
+
 /etc/rc.bootup
 
 # /etc/rc.bootup unset $g['booting'], and removes file

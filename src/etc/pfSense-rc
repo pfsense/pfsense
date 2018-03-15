@@ -83,7 +83,7 @@ case $? in
 	echo "Filesystems are clean, continuing..."
 	echo "Mounting filesystems..."
 	;;
-8)
+8|16)
 	echo "Preen mode recommended running a check that will be performed now."
 	FSCK_ACTION_NEEDED=1
 	;;

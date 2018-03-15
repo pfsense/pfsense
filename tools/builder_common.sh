@@ -1303,6 +1303,7 @@ create_memstick_plccb_image() {
 	echo 'hint.e6000sw.0.port10cpu=1' >> ${LOADERCONF}
 	echo 'hint.e6000sw.0.port9speed=2500' >> ${LOADERCONF}
 	echo 'hint.e6000sw.0.port10speed=2500' >> ${LOADERCONF}
+	echo 'hw.e6000sw.default_disabled=1' >> ${LOADERCONF}
 
 	cat ${LOADERCONF} >> ${FINAL_CHROOT_DIR}/boot/loader.conf
 

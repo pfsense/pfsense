@@ -366,17 +366,21 @@ function espressobin_switch_initial_setup() {
 	$switch['vlangroups']['vlangroup'][] = $vgroup;
 	$switch['swports']['swport'] = array();
 	$swport = array();
+	$swport['port'] = "0";
+	$swport['state'] = "forwarding";
+	$switch['swports']['swport'][] = $swport;
+	$swport = array();
 	$swport['port'] = "1";
 	$swport['pvid'] = "4090";
+	$swport['state'] = "forwarding";
 	$switch['swports']['swport'][] = $swport;
-	$swport = array();
-	$swport['port'] = "2";
-	$swport['pvid'] = "4091";
-	$switch['swports']['swport'][] = $swport;
-	$swport = array();
-	$swport['port'] = "3";
-	$swport['pvid'] = "4091";
-	$switch['swports']['swport'][] = $swport;
+	for ($i = 2; $i <= 3; $i++) {
+		$swport = array();
+		$swport['port'] = "{$i}";
+		$swport['pvid'] = "4091";
+		$swport['state'] = "forwarding";
+		$switch['swports']['swport'][] = $swport;
+	}
 	$switches[] = $switch;
 	write_config();
 }
@@ -416,11 +420,19 @@ function plccb_switch_initial_setup() {
 	$swport = array();
 	$swport['port'] = "1";
 	$swport['pvid'] = "4090";
+	$swport['state'] = "forwarding";
 	$switch['swports']['swport'][] = $swport;
 	for ($i = 2; $i <= 8; $i++) {
 		$swport = array();
 		$swport['port'] = "${i}";
 		$swport['pvid'] = "4091";
+		$swport['state'] = "forwarding";
+		$switch['swports']['swport'][] = $swport;
+	}
+	for ($i = 9; $i <= 10; $i++) {
+		$swport = array();
+		$swport['port'] = "${i}";
+		$swport['state'] = "forwarding";
 		$switch['swports']['swport'][] = $swport;
 	}
 	$switches[] = $switch;
@@ -440,6 +452,13 @@ function r1_switch_initial_setup() {
 	$switch = array();
 	$switch['device'] = "/dev/etherswitch0";
 	$switch['vlanmode'] = "PORT";
+	$switch['swports']['swport'] = array();
+	for ($i = 1; $i <= 5; $i++) {
+		$swport = array();
+		$swport['port'] = "${i}";
+		$swport['state'] = "forwarding";
+		$switch['swports']['swport'][] = $swport;
+	}
 	$switches[] = $switch;
 	write_config();
 }
@@ -521,6 +540,13 @@ function default_switch_configure() {
 		if (isset($swport['pvid'])) {
 			pfSense_etherswitch_setport($switch['device'],
 			    $swport['port'], $swport['pvid']);
+		}
+	}
+
+	/* Set the switch port state. */
+	foreach($swports as $pid => $swport) {
+		if (isset($swport['state'])) {
+			mwexec("/sbin/etherswitchcfg port{$swport['port']} {$swport['state']}");
 		}
 	}
 }

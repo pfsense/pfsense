@@ -25,6 +25,9 @@ if (!function_exists("dump_rrd_to_xml")) {
 if (!function_exists("read_altq_config")) {
 	require_once("shaper.inc");
 }
+if (!function_exists("default_switch_configure")) {
+	require_once("switch.inc");
+}
 
 /* Upgrade functions must be named:
 *    upgrade_XXX_to_YYY
@@ -5523,6 +5526,63 @@ function upgrade_175_to_176() {
 
 /* Placeholder for a factory update. */
 function upgrade_176_to_177() {
+	global $config;
+
+	$start = $stop = 0;
+        $platform = system_identify_specific_platform();
+        switch ($platform['name']) {
+        case "A37XX":
+		$start = 0;
+		$stop = 3;
+		break;
+        case "PLCC-B":
+		$start = 1;
+		$stop = 10;
+		break;
+        case "ROGUE-1":
+		$start = 1;
+		$stop = 5;
+		break;
+	default:
+		return;
+	}
+
+	/* Find the default switch. */
+	$swid = -1;
+	$switches = $config['switches']['switch'];
+	foreach($switches as $sid => $switch) {
+		if ($switch['device'] != "/dev/etherswitch0") {
+			continue;
+		}
+		$swid = $sid;
+		break;
+	}
+	if ($swid == -1) {
+		default_switch_configure();
+		return;
+	}
+	$switch = $switches[$swid];
+        $swports = $switch['swports']['swport'];
+	$found = array();
+        if (isset($swports) && is_array($swports)) {
+		foreach($swports as $pid => $swport) {
+			if (!isset($swport['state'])) {
+				$swport['state'] = "forwarding";
+			}
+			$found[] = $swport['port'];
+		}
+	}
+
+	for ($i = $start; $i <= $stop; $i++) {
+		if (in_array($i, $found)) {
+			continue;
+		}
+
+		$swport = array();
+		$swport['port'] = "${i}";
+		$swport['state'] = "forwarding";
+		$switch['swports']['swport'][] = $swport;
+	}
 }
 
 ?>

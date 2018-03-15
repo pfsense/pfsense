@@ -1147,7 +1147,7 @@ function load_loader_conf($loader_conf = NULL) {
 	$ignore = array("autoboot_delay", "console", "comconsole_speed",
 	    "boot_multicons", "boot_serial", "hw.usb.no_pf",
 	    "hint.uart.0.flags", "hint.uart.1.flags", "hint.mdio.0.at",
-	    "hint.e6000sw.0", "vm.pmap.pti");
+	    "hint.e6000sw.0", "hw.e6000sw.default_disabled", "vm.pmap.pti");
 	foreach ($input_split as $line) {
 		if (empty($line)) {
 			continue;
@@ -1274,6 +1274,11 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'hint.e6000sw.0.port10cpu=1';
 		$data[] = 'hint.e6000sw.0.port9speed=2500';
 		$data[] = 'hint.e6000sw.0.port10speed=2500';
+	}
+	if ($specific_platform['name'] == 'PLCC-B' ||
+	    $specific_platform['name'] == 'ROGUE-1' ||
+	    $specific_platform['name'] == 'A37XX') {
+		$data[] = 'hw.e6000sw.default_disabled=1';
 	}
 	$data[] = 'autoboot_delay="3"';
 	$data[] = 'hw.usb.no_pf="1"';

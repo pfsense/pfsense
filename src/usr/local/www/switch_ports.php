@@ -86,7 +86,6 @@ if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['vids']) {
 		$ja = json_decode($_REQUEST['vids'], true);
 
 		// Extract the port and VID from each item in the list
-		$idx = 0;
 		foreach ($ja['vids'] as $vid ) {
 			$port = $vid['port'];
 			$pvid = $vid['vid'];
@@ -94,11 +93,13 @@ if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['vids']) {
 			if (! vlan_valid_tag($pvid) ) {
 				$input_errors[] = sprintf(gettext("%d is not a valid VID for port %s"), $pvid, $port);
 			} else {
-				$swporto[] = array('port' => htmlspecialchars($port), 'pvid' => htmlspecialchars($pvid));
-				$a_swports['swports']['swport'][] = $swporto[$idx];
+				$a_swports['swports']['swport'] = array();
+				$swporto = array();
+				$swporto['port'] = htmlspecialchars($port);
+				$swporto['pvid'] = htmlspecialchars($pvid);
+				$swporto['state'] = "forwarding";
+				$a_swports['swports']['swport'][] = $swporto;
 			}
-
-			$idx++;
 		}
 
 		if (! $input_errors) {

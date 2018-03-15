@@ -81,7 +81,10 @@ if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['vids']) {
 	// Ensure there is some sort of switch configuration to work with
 	if ($sw != -1) {
 		$a_swports = &$config['switches']['switch'][$swid];
+		/* Reset the swports array/nodes. */
 		unset($a_swports['swports']);
+		$a_swports['swports']['swport'] = array();
+
 		// Decode the JSON array
 		$ja = json_decode($_REQUEST['vids'], true);
 
@@ -93,7 +96,6 @@ if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['vids']) {
 			if (! vlan_valid_tag($pvid) ) {
 				$input_errors[] = sprintf(gettext("%d is not a valid VID for port %s"), $pvid, $port);
 			} else {
-				$a_swports['swports']['swport'] = array();
 				$swporto = array();
 				$swporto['port'] = htmlspecialchars($port);
 				$swporto['pvid'] = htmlspecialchars($pvid);

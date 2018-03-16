@@ -29,7 +29,11 @@ if ($_GET['getpic']=="true") {
 	$pic_type = $pic_type_s[1];
 
 	if ($user_settings['widgets'][$_GET['widgetkey']]['picturewidget']) {
-		$data = file_get_contents("/conf/widget_image." . $_GET['widgetkey']);
+		if (file_exists("/conf/widget_image." . $_GET['widgetkey'])) {
+			$data = file_get_contents("/conf/widget_image." . $_GET['widgetkey']);
+		} else {
+			$data = "";
+		}
 	}
 
 	header("Content-Disposition: inline; filename=\"{$user_settings['widgets'][$_GET['widgetkey']]['picturewidget_filename']}\"");

@@ -544,29 +544,28 @@ function netgate_hardware_setup() {
 			'if' => 'ix1',
 			'descr' => 'OPT2'
 		);
-		$config['interfaces']['uplink1'] = array(
-			'if' => 'ix2',
-			'descr' => 'UPLINK1'
-		);
-		$config['interfaces']['uplink2'] = array(
-			'if' => 'ix3',
-			'descr' => 'UPLINK2'
-		);
+		$config['laggs']['lagg'] = array();
+		$lagg = array();
+		$lagg['members'] = "ix2,ix3";
+		$lagg['descr'] = "UPLINK";
+		$lagg['laggif'] = "lagg0";
+		$lagg['proto'] = "loadbalance";
+		$config['laggs']['lagg'][] = $lagg;
 		$config['vlans']['vlan'] = array();
 		$vlan = array();
-		$vlan['if'] = "ix2";
+		$vlan['if'] = "lagg0";
 		$vlan['tag'] = "4090";
 		$vlan['descr'] = "WAN";
-		$vlan['vlanif'] = "ix2.4090";
+		$vlan['vlanif'] = "lagg0.4090";
 		$config['vlans']['vlan'][] = $vlan;
-		$config['interfaces']['wan']['if'] = 'ix2.4090';
+		$config['interfaces']['wan']['if'] = 'lagg0.4090';
 		$vlan = array();
-		$vlan['if'] = "ix2";
+		$vlan['if'] = "lagg0";
 		$vlan['tag'] = "4091";
 		$vlan['descr'] = "LAN";
-		$vlan['vlanif'] = "ix2.4091";
+		$vlan['vlanif'] = "lagg0.4091";
 		$config['vlans']['vlan'][] = $vlan;
-		$config['interfaces']['lan']['if'] = 'ix2.4091';
+		$config['interfaces']['lan']['if'] = 'lagg0.4091';
 
 		if (does_interface_exist('igb3')) {
 			$config['interfaces']['opt3'] = array(

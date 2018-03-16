@@ -393,11 +393,19 @@ function plccb_switch_initial_setup() {
 		$config['switches']['switch'] = array();
 	}
 
-	/* Default settings for the espressobin switch. */
+	/* Default settings for the XG-7100 switch. */
 	$switches = &$config['switches']['switch'];
 	$switch = array();
 	$switch['device'] = "/dev/etherswitch0";
 	$switch['vlanmode'] = "DOT1Q";
+	/* LAGG: Ports 9 and 10. */
+	$switch['laggroups']['laggroup'] = array();
+	$laggroup = array();
+	$laggroup['lgroup'] = "1";
+	$laggroup['descr'] = "Switch Uplink";
+	$laggroup['members'] = "9 10";
+	$switch['laggroups']['laggroup'][] = $laggroup;
+	/* VLANs: 4090 WAN, 4091 LAN. */
 	$switch['vlangroups']['vlangroup'] = array();
 	$vgroup = array();
 	$vgroup['vgroup'] = "0";
@@ -408,14 +416,15 @@ function plccb_switch_initial_setup() {
 	$vgroup['vgroup'] = "1";
 	$vgroup['vlanid'] = "4090";
 	$vgroup['descr'] = "WAN";
-	$vgroup['members'] = "10t 1";
+	$vgroup['members'] = "9t 10t 1";
 	$switch['vlangroups']['vlangroup'][] = $vgroup;
 	$vgroup = array();
 	$vgroup['vgroup'] = "2";
 	$vgroup['vlanid'] = "4091";
 	$vgroup['descr'] = "LAN";
-	$vgroup['members'] = "10t 2 3 4 5 6 7 8";
+	$vgroup['members'] = "9t 10t 2 3 4 5 6 7 8";
 	$switch['vlangroups']['vlangroup'][] = $vgroup;
+	/* Port settings. */
 	$switch['swports']['swport'] = array();
 	$swport = array();
 	$swport['port'] = "1";
@@ -502,6 +511,20 @@ function default_switch_configure() {
 	/* Set switch mode. */
 	if (isset($switch['vlanmode'])) {
 		switch_set_vlan_mode($switch['device'], $switch['vlanmode']);
+	}
+
+	/* Set laggroups. */
+	$laggroups = $switch['laggroups']['laggroup'];
+	if (isset($laggroups) && is_array($laggroups)) {
+		foreach($laggroups as $laggid => $laggroup) {
+			if (isset($laggroup['members'])) {
+				$members = explode(" ", $laggroup['members']);
+			} else {
+				continue;
+			}
+			$laggmembers = implode(",", $members);
+			mwexec("/sbin/etherswitchcfg laggroup{$laggroup['lgroup']} members $laggmembers");
+		}
 	}
 
 	/* Set vlangroups. */

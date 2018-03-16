@@ -27,9 +27,11 @@ require_once("functions.inc");
 if ($_GET['getpic']=="true") {
 	$pic_type_s = explode(".", $user_settings['widgets'][$_GET['widgetkey']]['picturewidget_filename']);
 	$pic_type = $pic_type_s[1];
+
 	if ($user_settings['widgets'][$_GET['widgetkey']]['picturewidget']) {
-		$data = base64_decode($user_settings['widgets'][$_GET['widgetkey']]['picturewidget']);
+		$data = file_get_contents("/conf/widget_image." . $_GET['widgetkey']);
 	}
+
 	header("Content-Disposition: inline; filename=\"{$user_settings['widgets'][$_GET['widgetkey']]['picturewidget_filename']}\"");
 	header("Content-Type: image/{$pic_type}");
 	header("Content-Length: " . strlen($data));
@@ -60,7 +62,8 @@ if ($_POST['widgetkey']) {
 				die("Not a gif/jpg/png");
 			}
 			$picname = basename($_FILES['uploadedfile']['name']);
-			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget'] = base64_encode($data);
+			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget'] = "/conf/widget_image";
+			file_put_contents("/conf/widget_image." . $_POST['widgetkey'], $data);
 			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget_filename'] = $_FILES['pictfile']['name'];
 		}
 	}
@@ -85,7 +88,7 @@ if($user_settings['widgets'][$widgetkey]["picturewidget"] != null){?>
 	<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 	<div class="form-group">
-		<label for="pictfile" class="col-sm-4 control-label"><?=gettext('New picture:')?> </label>
+		<label for="pictfile" class="col-sm-4 control-label"><?=gettext('New pictures:')?> </label>
 		<div class="col-sm-6">
 			<input id="pictfile" name="pictfile" type="file" class="form-control" accept="image/*"/>
 		</div>

@@ -83,7 +83,7 @@ case $? in
 	echo "Filesystems are clean, continuing..."
 	echo "Mounting filesystems..."
 	;;
-8)
+8|16)
 	echo "Preen mode recommended running a check that will be performed now."
 	FSCK_ACTION_NEEDED=1
 	;;
@@ -394,6 +394,10 @@ if [ -d /usr/local/share/${product}/custom_logos ]; then
 	cp -f /usr/local/share/${product}/custom_logos/*css \
 		/usr/local/www/css
 fi
+
+# Apply CPU microcode update
+[ -x /usr/local/etc/rc.d/microcode_update ] \
+	&& /usr/local/etc/rc.d/microcode_update onestart
 
 /etc/rc.bootup
 

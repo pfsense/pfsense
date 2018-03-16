@@ -5521,4 +5521,18 @@ function upgrade_175_to_176() {
 	}
 }
 
+// The image displayed by the picture widget is now stored on the file system
+function upgrade_176_to_177() {
+	global $config;
+
+	if (isset($config['widgets'])) {
+		$idx = 0;
+
+		while (isset($config['widgets']['picture-' . $idx])) {
+			file_put_contents("/conf/widget_image.picture-" . $idx, base64_decode($config['widgets']['picture-' . $idx]['picturewidget']));
+			$config['widgets']['picture-' . $idx]['picturewidget'] = "/conf/widget_image.picture-". $idx;
+			$idx++;
+		}
+	}
+}
 ?>

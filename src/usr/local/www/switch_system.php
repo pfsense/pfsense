@@ -3,7 +3,7 @@
  * switch_system.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,6 +37,7 @@ $tab_array = array();
 $tab_array[] = array(gettext("System"), true, "switch_system.php");
 $tab_array[] = array(gettext("Ports"), false, "switch_ports.php");
 $tab_array[] = array(gettext("VLANs"), false, "switch_vlans.php");
+$tab_array[] = array(gettext("LAGGs"), false, "switch_laggs.php");
 display_top_tabs($tab_array);
 ?>
 <div class="panel panel-default">
@@ -49,6 +50,7 @@ display_top_tabs($tab_array);
 						<th><?=gettext("Type"); ?></th>
 						<th><?=gettext("Ports"); ?></th>
 						<th><?=gettext("VLAN groups"); ?></th>
+						<th><?=gettext("LAGG groups"); ?></th>
 						<th><?=gettext("VLAN Mode"); ?></th>
 						<th><?=gettext("Capabilities"); ?></th>
 					</tr>
@@ -73,6 +75,15 @@ foreach ($swdevices as $swdev) {
 						</td>
 						<td>
 							<?= htmlspecialchars($swinfo['nvlangroups'])?>
+						</td>
+						<td>
+<?
+	if (isset($swinfo['switch_caps']['LAGG'])) {
+		echo htmlspecialchars($swinfo['nlaggroups']);
+	} else {
+		echo "0";
+	}
+?>
 						</td>
 						<td>
 							<?= htmlspecialchars($swinfo['vlan_mode'])?>

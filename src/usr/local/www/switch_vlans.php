@@ -3,7 +3,7 @@
  * switch_vlans.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,6 +43,7 @@ $tab_array = array();
 $tab_array[] = array(gettext("System"), false, "switch_system.php");
 $tab_array[] = array(gettext("Ports"), false, "switch_ports.php");
 $tab_array[] = array(gettext("VLANs"), true, "switch_vlans.php");
+$tab_array[] = array(gettext("LAGGs"), false, "switch_laggs.php");
 display_top_tabs($tab_array);
 
 // Probably uFW specific.

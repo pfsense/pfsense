@@ -46,8 +46,8 @@
 	 *    - DNS-O-Matic (dnsomatic.com)
 	 *    - Custom DDNS (any URL)
 	 *    - Custom DDNS IPv6 (any URL)
-	 *    - CloudFlare (www.cloudflare.com)
-	 *    - CloudFlare IPv6 (www.cloudflare.com)
+	 *    - Cloudflare (www.cloudflare.com)
+	 *    - Cloudflare IPv6 (www.cloudflare.com)
 	 *    - Eurodns (eurodns.com)
 	 *    - GratisDNS (gratisdns.dk)
 	 *    - City Network (citynetwork.se)
@@ -689,7 +689,7 @@
 					}
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
-				case 'route53':		
+				case 'route53':
 					require_once("r53.class");
 					$r53 = new Route53($this->_dnsUser, $this->_dnsPass);
 					$apiurl = $r53->getApiUrl($this->_dnsZoneID);
@@ -706,7 +706,7 @@
 					curl_setopt($ch, CURLOPT_URL, $apiurl);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlreq);
 					break;
-				case 'route53-v6':		
+				case 'route53-v6':
 					require_once("r53.class");
 					$r53 = new Route53($this->_dnsUser, $this->_dnsPass);
 					$apiurl = $r53->getApiUrl($this->_dnsZoneID);
@@ -1009,14 +1009,14 @@
 				@curl_close($ch);
 			}
 		}
-		
+
 		/**
 		 * Private Function (added 23 Feb 17)
 		 *   Send Removal To Selected Service.
-		 *   
+		 *
 		 *   Some services do not perform an inplace upgrade.  If they do not then the solution
 		 *   is to remove the existing record and add a new record.
-		 *   
+		 *
 		 * @param unknown $existing_ip If required, an existing IP address for the record.
 		 */
 		function _remove($existing_ip = NULL) {
@@ -1024,25 +1024,25 @@
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _remove() starting.'), $this->_dnsService, $this->_FQDN));
 			}
-			
+
 			if (strstr($this->_dnsRequestIf, "_vip")) {
 				$parentif = get_configured_vip_interface($this->_dnsRequestIf);
 				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
 			} else {
 				$realparentif = $this->_dnsRequestIf;
 			}
-			
+
 			$ch = curl_init();
-			
+
 			if ($this->_useIPv6 == false) {
 				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 			}
-			
+
 			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 			curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
-			
+
 			switch ($this->_dnsService) {
 			case 'dreamhost':
 			case 'dreamhost-v6':
@@ -1079,38 +1079,38 @@
 				@curl_close($ch);
 			}
 		}
-		
+
 		/**
 		 * Private Function (added 23 Feb 17)
 		 * Retrieves current DNS records from an external API source.
-		 * 
-		 * Some services cannot perform new operations without the caller 
-		 * providing existing record information. 
+		 *
+		 * Some services cannot perform new operations without the caller
+		 * providing existing record information.
 		 */
 		function _lookup_current() {
 			$lookup_allowed = false;
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _listCurrent() starting.'), $this->_dnsService, $this->_FQDN));
 			}
-				
+
 			if (strstr($this->_dnsRequestIf, "_vip")) {
 				$parentif = get_configured_vip_interface($this->_dnsRequestIf);
 				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
 			} else {
 				$realparentif = $this->_dnsRequestIf;
 			}
-				
+
 			$ch = curl_init();
-				
+
 			if ($this->_useIPv6 == false) {
 				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 			}
-				
+
 			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 			curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
-				
+
 			switch ($this->_dnsService) {
 			case 'dreamhost':
 			case 'dreamhost-v6':
@@ -1145,7 +1145,7 @@
 		}
 
 		/*
-		 * Private Function (added 23 Feb 17) 
+		 * Private Function (added 23 Feb 17)
 		 *   Retrieve Lookup Status from the provided data and/or header
 		 */
 		function _checkLookupStatus($ch, $data, $header) {
@@ -1172,7 +1172,7 @@
 					return;
 				} else {
 					foreach($result["data"] as $key => $row) {
-						if($row["record"] == $this->_dnsHost && 
+						if($row["record"] == $this->_dnsHost &&
 								(($row["type"] == "A" && !$this->_useIPv6)
 										|| ($row["type"] == "AAAA" && $this->_useIPv6)
 								)) {
@@ -1862,7 +1862,7 @@
 						$status = $status_intro . $error_str . gettext("Result did not match.");
 					} else if (preg_match("/\s401\sUnauthorized/i", $header)) {
 						$status = $status_intro . $error_str . gettext("Invalid username or password");
-					} 
+					}
 					else {
 							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
 							log_error($status_intro . gettext("PAYLOAD:") . " " . $header.$data);

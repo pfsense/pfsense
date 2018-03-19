@@ -102,8 +102,8 @@
 	 *  SelfHost        - Last Tested: 26 December 2011
 	 *  Amazon Route 53 - Last Tested: 04 February 2017
 	 *  DNS-O-Matic     - Last Tested: 9 September 2010
-	 *  CloudFlare      - Last Tested: 05 September 2016
-	 *  CloudFlare IPv6 - Last Tested: 17 July 2016
+	 *  Cloudflare      - Last Tested: 05 September 2016
+	 *  Cloudflare IPv6 - Last Tested: 17 July 2016
 	 *  Eurodns         - Last Tested: 27 June 2013
 	 *  GratisDNS       - Last Tested: 15 August 2012
 	 *  OVH DynHOST     - Last Tested: NEVER
@@ -1681,7 +1681,7 @@
 						$status = $status_intro . $success_str . sprintf(gettext('%1$s updated to %2$s'), $this->_dnsHost, $this->_dnsIP);
 						$successful_update = true;
 					} elseif ($output->errors[0]->code === 9103) {
-						$status = $status_intro . $error_str . gettext("Invalid Credentials! Don't forget to use API Key for password field with CloudFlare.");
+						$status = $status_intro . $error_str . gettext("Invalid Credentials! Don't forget to use API Key for password field with Cloudflare.");
 					} elseif (($output->success) && (!$output->result[0]->id)) {
 						$status = $status_intro . $error_str . gettext("Zone or Host ID was not found, check the hostname.");
 					} else {

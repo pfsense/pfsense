@@ -5539,4 +5539,8 @@ function upgrade_177_to_178() {
 		}
 	}
 }
+
+/* Placeholder for a factory update. */
+function upgrade_178_to_179() {
+}
 ?>

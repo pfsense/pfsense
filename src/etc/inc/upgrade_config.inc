@@ -5524,8 +5524,12 @@ function upgrade_175_to_176() {
 	}
 }
 
-/* Placeholder for a factory update. */
-function upgrade_176_to_177() {
+/*
+ * Switch port state update.  Runs twice, from two different updates.
+ * The code was broken on the first time, so run a second time to make sure
+ * that the fix is applied.
+ */
+function upgrade_switch_port_state() {
 	global $config;
 
 	$start = $stop = 0;
@@ -5561,13 +5565,13 @@ function upgrade_176_to_177() {
 		default_switch_configure();
 		return;
 	}
-	$switch = $switches[$swid];
-        $swports = $switch['swports']['swport'];
+	$switch = &$config['switches']['switch'][$swid];
+	$swports = &$switch['swports']['swport'];
 	$found = array();
         if (isset($swports) && is_array($swports)) {
 		foreach($swports as $pid => $swport) {
 			if (!isset($swport['state'])) {
-				$swport['state'] = "forwarding";
+				$swports[$pid]['state'] = "forwarding";
 			}
 			$found[] = $swport['port'];
 		}
@@ -5583,6 +5587,11 @@ function upgrade_176_to_177() {
 		$swport['state'] = "forwarding";
 		$switch['swports']['swport'][] = $swport;
 	}
+}
+
+/* Placeholder for a factory update. */
+function upgrade_176_to_177() {
+	upgrade_switch_port_state();
 }
 
 // The image displayed by the picture widget is now stored on the file system
@@ -5602,5 +5611,6 @@ function upgrade_177_to_178() {
 
 /* Placeholder for a factory update. */
 function upgrade_178_to_179() {
+	upgrade_switch_port_state();
 }
 ?>

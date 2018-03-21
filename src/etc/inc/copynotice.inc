@@ -30,7 +30,14 @@
 ##|*MATCH=copynitice.inc*
 ##|-PRIV
 
+/*
+ * This file deisplays the copyright modal when required. (New version installed or completion of hte setup wizard)
+ * The copyright text may have been downloaded from the Netgate server, but if not the default text defined here
+ * is used
+ */
+
 $logincssfile = "#1e3f75";
+$copyrightfile = "/var/db/copyright";
 
 if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui']['logincss']) == 6) {
 	$logincssfile = "#" . $user_settings['webgui']['logincss'];
@@ -43,19 +50,24 @@ if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui
 
 			<div class="modal-body" style="background-color:<?=$logincssfile?>; color:white;">
 <?php
-			print(gettext("<p><font size=\"4\"><strong>pfSense</strong>&reg;</font><font size=\"3\"> is Copyright 2004" .
+			if (file_exists($copyrightfile)) {
+				require_once($copyrightfile);
+			} else {
+				print(gettext("<p><font size=\"4\"><strong>pfSense</strong>&reg;</font><font size=\"3\"> is Copyright 2004" .
 				"-2018 Rubicon Communications, LLC (Netgate)</p>" .
 				"<p>pfSense is a federally registered trademark of Electric Sheep Fencing, LLC. Any unauthorized use of this trademark is " .
 				"prohibited by state and federal law and by international law. Refer to our Trademark Usage Guidelines for how to properly " .
 				"use the marks. All rights reserved.</p>" .
-				"<p align=\"center\"><strong>Absolutely No Commercial Distribution Is Allowed</strong></font></p>"));
+				"<p align=\"center\"><strong>Absolutely No Commercial Distribution Is Allowed</strong></font></p>" .
+				"</div>" .
+				"<div class=\"modal-footer\" style=\"background-color:" . $logincssfile . "; color:white;\">" .
+					"<button type=\"button\" class=\"btn btn-xs btn-success\" data-dismiss=\"modal\" aria-label=\"Close\">" .
+						"<span aria-hidden=\"true\">Accept</span>" .
+					"</button>" .
+				"</div>"));
+			}
 ?>
-			</div>
-			<div class="modal-footer" style="background-color:<?=$logincssfile?>; color:white;">
-				<button type="button" class="btn btn-xs btn-success" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">Accept</span>
-				</button>
-			</div>
+
 		</div>
 	</div>
 </div>

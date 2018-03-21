@@ -892,6 +892,7 @@
 /usr/local/www/classes/maintable.inc
 /usr/local/www/code-syntax-highlighter
 /usr/local/www/copynotice.old
+/usr/local/www/copynotice.inc
 /usr/local/www/copyright-master.txt
 /usr/local/www/csrf/csrf-secret.php
 /usr/local/www/css/table.css

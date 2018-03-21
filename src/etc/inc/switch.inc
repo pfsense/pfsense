@@ -401,7 +401,7 @@ function plccb_switch_initial_setup() {
 	/* LAGG: Ports 9 and 10. */
 	$switch['laggroups']['laggroup'] = array();
 	$laggroup = array();
-	$laggroup['lgroup'] = "1";
+	$laggroup['lgroup'] = "0";
 	$laggroup['descr'] = "Switch Uplink";
 	$laggroup['members'] = "9 10";
 	$switch['laggroups']['laggroup'][] = $laggroup;

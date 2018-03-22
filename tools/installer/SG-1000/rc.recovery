@@ -134,7 +134,7 @@ do
 	MMCHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep MMCHC)
 	if [ -n "${MMCHC}" ]; then
 		MMCDEV=${DEV}
-		break;
+		break
 	fi
 done
 if [ -z "${MMCHC}" ]; then

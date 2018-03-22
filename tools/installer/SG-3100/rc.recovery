@@ -230,12 +230,12 @@ do
 	MMCHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep MMCHC)
 	if [ -n "${MMCHC}" ]; then
 		MMCDEV=${DEV}
-		break;
+		break
 	fi
 	SDHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep SDHC)
 	if [ -n "${SDHC}" ]; then
 		SDDEV=${DEV}
-		break;
+		break
 	fi
 done
 if [ -z "${MMCHC}" -a -z "${SDHC}" ]; then
@@ -251,7 +251,7 @@ do
 	M2=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep descr)
 	if [ -n "${M2}" ]; then
 		M2DEV=${DEV}
-		break;
+		break
 	fi
 done
 

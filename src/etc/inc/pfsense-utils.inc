@@ -1188,7 +1188,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	    $specific_platform['name'] == 'DNVNANO' ||
 	    $specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
-	    $specific_platform['name'] == 'RCC-DFF' ||
+	    $specific_platform['name'] == 'SG-2220' ||
 	    $specific_platform['name'] == 'ROGUE-1' ||
 	    $specific_platform['name'] == 'apu2' ||
 	    $specific_platform['name'] == 'uFW') {
@@ -1261,7 +1261,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 
 	if ($specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
-	    $specific_platform['name'] == 'RCC-DFF') {
+	    $specific_platform['name'] == 'SG-2220') {
 		$data[] = 'comconsole_port="0x2F8"';
 		$data[] = 'hint.uart.0.flags="0x00"';
 		$data[] = 'hint.uart.1.flags="0x10"';

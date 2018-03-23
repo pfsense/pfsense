@@ -36,24 +36,18 @@
  * is used
  */
 
-$logincssfile = "#1e3f75";
 $copyrightfile = "/var/db/copyright";
-
-if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui']['logincss']) == 6) {
-	$logincssfile = "#" . $user_settings['webgui']['logincss'];
-}
 
 ?>
 
 <div id="usage" class="modal fade" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">
-
-			<div class="modal-body" style="background-color:<?=$logincssfile?>; color:white;">
 <?php
 			if (file_exists($copyrightfile)) {
 				require_once($copyrightfile);
 			} else {
+				print("<div class=\"modal-body\" style=\"background-color:#1e3f75; color:white;\">");
 				print(gettext("<p align=\"center\"><font size=\"3\"><strong>This software is only for use on platforms supplied by Rubicon Communications, LLC (Netgate).</strong></font></p>" .
 					"<p><font size=\"4\"><strong>pfSense</strong>&reg;</font><font size=\"3\"> is Copyright 2004" .
 				"-2018 Rubicon Communications, LLC (Netgate)</p>" .
@@ -62,7 +56,7 @@ if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui
 				"use the marks. All rights reserved.</p>" .
 				"<p align=\"center\"><strong>Absolutely No Commercial Distribution Is Allowed</strong></font></p>" .
 				"</div>" .
-				"<div class=\"modal-footer\" style=\"background-color:" . $logincssfile . "; color:white;\">" .
+				"<div class=\"modal-footer\" style=\"background-color:#1e3f75; color:white;\">" .
 					"<button type=\"button\" class=\"btn btn-xs btn-success\" data-dismiss=\"modal\" aria-label=\"Close\">" .
 						"<span aria-hidden=\"true\">Accept</span>" .
 					"</button>" .

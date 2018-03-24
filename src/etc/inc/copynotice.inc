@@ -57,7 +57,7 @@ $copyrightfile = "/var/db/copyright";
 					<button type=\"button\" class=\"btn btn-xs btn-success\" data-dismiss=\"modal\" aria-label=\"Close\">
 							<span aria-hidden=\"true\">Accept</span>
 					</button>
-					</div>)");
+					</div>"));
 			}
 ?>
 

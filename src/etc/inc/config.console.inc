@@ -620,7 +620,7 @@ function netgate_hardware_setup() {
 		);
 		break;
 	case 'RCC-VE':
-	case 'RCC-DFF':
+	case 'SG-2220':
 		/* SG-4860 or SG-8860 */
 		if (does_interface_exist('igb4')) {
 			$config['interfaces']['wan']['if'] = 'igb1';
@@ -772,7 +772,7 @@ function netgate_hardware_setup() {
 	case 'PLCC-B':
 	case 'RCC':
 	case 'RCC-VE':
-	case 'RCC-DFF':
+	case 'SG-2220':
 	case 'XG-1540':
 		$config['system']['thermal_hardware'] = "coretemp";
 		break;
@@ -784,7 +784,7 @@ function netgate_hardware_setup() {
 	case 'PLCC-B':
 	case 'RCC':
 	case 'RCC-VE':
-	case 'RCC-DFF':
+	case 'SG-2220':
 	case 'XG-1540':
 		$config['system']['crypto_hardware'] = "aesni_cryptodev";
 		break;
@@ -794,7 +794,7 @@ function netgate_hardware_setup() {
 	switch ($platform['name']) {
 	case 'RCC':
 	case 'RCC-VE':
-	case 'RCC-DFF':
+	case 'SG-2220':
 	case 'XG-1540':
 		$config['system']['powerd_enable'] = true;
 		break;

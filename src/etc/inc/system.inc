@@ -2326,7 +2326,7 @@ function has_hw_watchdog() {
 	switch ($platform['name']) {
 		case 'ROGUE-1':
 		case 'RCC-VE':
-		case 'RCC-DFF':
+		case 'SG-2220':
 		case 'uFW':
 			return (1);
 			break;
@@ -2356,7 +2356,7 @@ function watchdogd_configure() {
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
 		case 'RCC-VE':
-		case 'RCC-DFF':
+		case 'SG-2220':
 			mwexec("/sbin/kldload ichwd");
 			break;
 	}
@@ -2388,7 +2388,7 @@ function system_check_reset_button() {
 		case 'APU':
 		case 'RCC-VE':
 		case 'RCC':
-		case 'RCC-DFF':
+		case 'SG-2220':
 			break;
 		default:
 			return 0;
@@ -2514,7 +2514,7 @@ function system_identify_specific_platform() {
 			return $result;
 			break;
 		case 'DFFv2':
-			return (array('name' => 'RCC-DFF', 'descr' => 'Netgate SG-2220'));
+			return (array('name' => 'SG-2220', 'descr' => 'Netgate SG-2220'));
 			break;
 		case 'RCC':
 			return (array('name' => 'RCC', 'descr' => 'Netgate XG-2758'));

@@ -128,6 +128,54 @@ upgrade_netgate_coreboot() {
 	return ${_rc}
 }
 
+# Check if M.2 device is present
+has_ada_dev() {
+	for _disk in $(sysctl -qn kern.disks); do
+		echo "$_disk" | /usr/bin/egrep -q '^ada[0-9]' \
+		    || continue
+		return 0
+	done
+
+	return 1
+}
+
+# Detect 2 identical disks (RAID)
+has_raid() {
+	local _lines=diskinfo $(sysctl -qn kern.disks) 2>/dev/null \
+	    | sed 's/^[^[:blank:]]*//' | sort | uniq -d | wc -l
+
+	[ "$_lines" = "0" ] \
+	    && return 1 \
+	    || return 0
+}
+
+# Detect mSata (128Gb)
+has_msata() {
+	local _ada_disk=""
+
+	for _disk in $(sysctl -qn kern.disks); do
+		echo "${_disk}" | egrep '^ada[0-9]' \
+		    || continue
+
+		_ada_disk=${_disk}
+		break
+	done
+
+	[ -z "${_ada_disk}" ] \
+	    && return 1
+
+	local _disk_size=$(diskinfo ${_ada_disk} | awk '{print $3}')
+
+	[ -z "${_disk_size}" ] \
+	    && return 1
+
+	local _size_in_gb=$(expr ${_disk_size} / 1024 / 1024 / 1024)
+
+	[ $_size_in_gb -lt 130 ] \
+	    && return 0 \
+	    || return 1
+}
+
 get_cur_model() {
 	local _cur_model=""
 
@@ -203,6 +251,80 @@ get_cur_model() {
 	fi
 
 	echo "$_cur_model"
+}
+
+get_prodtrack_model() {
+	local _cur_model="$1"
+	local _prodtrack_model=""
+
+	[ -z "${_cur_model}" ] \
+	    && return 0
+
+	# First deal with models easier to identify
+	case "${_cur_model}" in
+		SG-1000)
+			_prodtrack_model="SG-1000-EMMC-512M"
+			;;
+		RCC-VE)
+			has_ada_dev \
+			    && _prodtrack_model="SG-2220-M2-2GB" \
+			    || _prodtrack_model="SG-2220-EMMC-2GB"
+			;;
+		SG-2320|SG-2340)
+			_prodtrack_model="${_cur_model}-M2-2GB"
+			;;
+		SG-2440)
+			has_ada_dev \
+			    && _prodtrack_model="SG-2440-MSATA-4GB" \
+			    || _prodtrack_model="SG-2440-EMMC-4GB"
+			;;
+		SG-3100)
+			has_ada_dev \
+			    && _prodtrack_model="SG-3100-M2-2GB" \
+			    || _prodtrack_model="SG-3100-EMMC-2GB"
+			;;
+		SG-4860|SG-8860)
+			has_ada_dev \
+			    && _prodtrack_model="${_cur_model}-MSATA-8GB" \
+			    || _prodtrack_model="${_cur_model}-EMMC-8GB"
+			;;
+	esac
+
+	if [ -n "${_prodtrack_model}" ]; then
+		echo "${_prodtrack_model}"
+		return 0
+	fi
+
+	local _pmem=$(expr $(/sbin/sysctl -qn hw.physmem) / 1024 / 1024 / 1024)
+	local _mem=""
+
+	if [ $_pmem -gt 28 ]; then
+		_mem="32GB"
+	elif [ $_pmem -gt 20 ]; then
+		_mem="24GB"
+	elif [ $_pmem -gt 13 ]; then
+		_mem="16GB"
+	elif [ $_pmem -gt 6 ]; then
+		_mem="8GB"
+	fi
+
+	local _disk=""
+	if ! has_ada_dev; then
+		_disk="EMMC"
+	elif has_raid; then
+		_disk="RAID"
+	elif has_msata; then
+		[ "${_cur_model}" = "XG-7100" ] \
+		    && _disk="M2" \
+		    || _disk="MSATA"
+	elif echo "${_cur_model}" | grep -q '^XG-15'; then
+		_disk="M2"
+	else
+		_disk="SATA"
+	fi
+
+	echo "${_cur_model}-${_disk}-${_mem}"
+	return 0
 }
 
 machine_arch=$(uname -p)
@@ -296,6 +418,8 @@ if [ -z "${selected_model}" ]; then
 	    0 0 0 2>&1 1>&3) || exit 1
 	exec 3>&-
 fi
+
+prodtrack_model=$(get_prodtrack_model "${cur_model}")
 
 if [ "${machine_arch}" == "amd64" ]; then
 	_loaderconf=/tmp/loader.conf.pfSense
@@ -631,7 +755,7 @@ while [ -z "${is_arm}" ]; do
 	    --backtitle "pfSense installer" \
 	    --title "Register Serial Number" \
 	    --form "Enter system information" 0 0 0 \
-	    "Model" 1 0 "${selected_model}" 1 $col 0 0 \
+	    "Model" 1 0 "${prodtrack_model}" 1 $col 0 0 \
 	    "Serial" 2 0 "${default_serial}" 2 $col ${serial_size} ${serial_size} \
 	    "Order Number" 3 0 "" 3 $col 16 0 \
 	    "Print sticker (0/1)" 4 0 "${sticker}" 4 $col 2 1 \
@@ -696,7 +820,7 @@ trap "-" 1 2 15 EXIT
 # Calculate the "Unique ID" for support and tracking purposes
 UID=$(gnid)
 
-postreq="model=${selected_model}&serial=${serial}&release=${release_ver}"
+postreq="model=${prodtrack_model}&serial=${serial}&release=${release_ver}"
 postreq="${postreq}&wan_mac=${wan_mac}&print=${sticker}"
 postreq="${postreq}&uniqueid=${UID}"
 

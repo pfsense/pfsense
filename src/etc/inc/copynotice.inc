@@ -36,35 +36,31 @@
  * is used
  */
 
-$logincssfile = "#1e3f75";
 $copyrightfile = "/var/db/copyright";
-
-if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui']['logincss']) == 6) {
-	$logincssfile = "#" . $user_settings['webgui']['logincss'];
-}
 
 ?>
 
 <div id="usage" class="modal fade" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">
-
-			<div class="modal-body" style="background-color:<?=$logincssfile?>; color:white;">
 <?php
 			if (file_exists($copyrightfile)) {
 				require_once($copyrightfile);
 			} else {
-				print(gettext("<div class=\"modal-body\" style=\"background-color:#1e3f75; color:white;\">
-					<p align=\"center\"><font size=\"3\">Copyright &copy; 2004-2018. Electric Sheep Fencing LLC (\"ESF\").  All Rights Reserved.</p>
-					<p>The pfSense&reg; Factory software is only for use on platforms supplied by Netgate. NO COMMERCIAL DISTRIBUTION OF THE PFSENSE&reg; FACTORY SOFTWARE IS ALLOWED.</strong></p>
-					<p>pfSense&reg; is a federally and internationally registered trademark and service mark of ESF, and is exclusively licensed to Rubicon Communications, LLC (d/b/a Netgate) (\"Netgate\").</p>
-					<p>Any unauthorized use of the pfSens&reg mark is prohibited by United States and international law. Please refer to the Netgate <a href=\"https://www.pfsense.org/trademarks.html\" target=\"_blank\">Trademark Usage Guidelines</a> for how to properly use the mark.</font></p>
-					</div>
-					<div class=\"modal-footer\" style=\"background-color:#1e3f75; color:white;\">
-					<button type=\"button\" class=\"btn btn-xs btn-success\" data-dismiss=\"modal\" aria-label=\"Close\">
-							<span aria-hidden=\"true\">Accept!</span>
-					</button>
-					</div>));
+				print("<div class=\"modal-body\" style=\"background-color:#1e3f75; color:white;\">");
+				print(gettext("<p align=\"center\"><font size=\"3\"><strong>This software is only for use on platforms supplied by Rubicon Communications, LLC (Netgate).</strong></font></p>" .
+					"<p><font size=\"4\"><strong>pfSense</strong>&reg;</font><font size=\"3\"> is Copyright 2004" .
+				"-2018 Rubicon Communications, LLC (Netgate)</p>" .
+				"<p>pfSense is a federally registered trademark of Electric Sheep Fencing, LLC. Any unauthorized use of this trademark is " .
+				"prohibited by state and federal law and by international law. Refer to our Trademark Usage Guidelines for how to properly " .
+				"use the marks. All rights reserved.</p>" .
+				"<p align=\"center\"><strong>Absolutely No Commercial Distribution Is Allowed</strong></font></p>" .
+				"</div>" .
+				"<div class=\"modal-footer\" style=\"background-color:#1e3f75; color:white;\">" .
+					"<button type=\"button\" class=\"btn btn-xs btn-success\" data-dismiss=\"modal\" aria-label=\"Close\">" .
+						"<span aria-hidden=\"true\">Accept</span>" .
+					"</button>" .
+				"</div>"));
 			}
 ?>
 

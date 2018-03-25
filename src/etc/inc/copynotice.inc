@@ -36,7 +36,7 @@
  * is used
  */
 
-$copyrightfile = "/var/db/copyright";
+$copyrightfile = "{$g['cf_conf_path']}/copyright";
 
 ?>
 <div id="usage" class="modal fade" role="dialog">

@@ -265,7 +265,7 @@ get_prodtrack_model() {
 		SG-1000)
 			_prodtrack_model="SG-1000-EMMC-512M"
 			;;
-		RCC-VE)
+		SG-2220)
 			has_ada_dev \
 			    && _prodtrack_model="SG-2220-M2-2GB" \
 			    || _prodtrack_model="SG-2220-EMMC-2GB"

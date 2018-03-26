@@ -141,8 +141,8 @@ has_ada_dev() {
 
 # Detect 2 identical disks (RAID)
 has_raid() {
-	local _lines=diskinfo $(sysctl -qn kern.disks) 2>/dev/null \
-	    | sed 's/^[^[:blank:]]*//' | sort | uniq -d | wc -l
+	local _lines=$(diskinfo $(sysctl -qn kern.disks) 2>/dev/null \
+	    | sed 's/^[^[:blank:]]*//' | sort | uniq -d | wc -l)
 
 	[ $_lines -eq 0 ] \
 	    && return 1 \

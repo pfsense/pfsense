@@ -154,7 +154,7 @@ has_msata() {
 	local _ada_disk=""
 
 	for _disk in $(sysctl -qn kern.disks); do
-		echo "${_disk}" | egrep '^ada[0-9]' \
+		echo "${_disk}" | egrep -q '^ada[0-9]' \
 		    || continue
 
 		_ada_disk=${_disk}

@@ -17,6 +17,7 @@ clear_disk() {
 	&& exit 0
 
 if="*"
+unset xg7100_etherswitch
 if ! pgrep -q dhclient; then
 	_boardpn=""
 	arch=$(uname -p)
@@ -30,6 +31,7 @@ if ! pgrep -q dhclient; then
 	elif [ "${_planar_product%-*}" == "80300-0134" ]; then
 		# XG-7100
 		if="ix2"
+		xg7100_etherswitch=1
 	else
 		# First, find a connected interface
 		if=$(ifconfig \
@@ -43,6 +45,12 @@ if ! pgrep -q dhclient; then
 	# If we couldn't, just abort
 	if [ -z "${if}" ]; then
 		exit 0
+	fi
+
+	if [ -n "${xg7100_etherswitch}" ]; then
+		/sbin/etherswitchcfg port1 forwarding
+		/sbin/etherswitchcfg port9 forwarding
+		/sbin/etherswitchcfg port10 forwarding
 	fi
 
 	# Use a custom dhclient.conf to obtain 'user-class' and detect custom

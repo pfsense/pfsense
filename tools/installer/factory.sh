@@ -298,13 +298,13 @@ get_prodtrack_model() {
 	local _pmem=$(expr $(/sbin/sysctl -qn hw.physmem) / 1024 / 1024 / 1024)
 	local _mem=""
 
-	if [ $_pmem -gt 28 ]; then
+	if [ $_pmem -gt 25 ]; then
 		_mem="32GB"
-	elif [ $_pmem -gt 20 ]; then
+	elif [ $_pmem -gt 17 ]; then
 		_mem="24GB"
 	elif [ $_pmem -gt 13 ]; then
 		_mem="16GB"
-	elif [ $_pmem -gt 6 ]; then
+	elif [ $_pmem -gt 5 ]; then
 		_mem="8GB"
 	fi
 

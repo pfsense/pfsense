@@ -326,7 +326,7 @@ $section->addInput(new Form_Checkbox(
 	'Cloudflare Proxy',
 	'Enable Proxy',
 	$pconfig['proxied']
-))->setHelp('Note: This enables Cloudflares Virtual DNS proxy.  When Enabled it will route all traffic '.
+))->setHelp('Note: This enables Cloudflare Virtual DNS proxy.  When Enabled it will route all traffic '.
 			'through their servers. By Default this is disabled and your Real IP is exposed.'.
 			'More info: %s', '<a href="https://blog.cloudflare.com/announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-traffic/" target="_blank">Cloudflare Blog</a>');
 

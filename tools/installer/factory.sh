@@ -141,8 +141,10 @@ has_ada_dev() {
 
 # Detect 2 identical disks (RAID)
 has_raid() {
+	# Ignore mmcsd0bootN from XG-7100
 	local _lines=$(diskinfo $(sysctl -qn kern.disks) 2>/dev/null \
-	    | sed 's/^[^[:blank:]]*//' | sort | uniq -d | wc -l)
+	    | egrep -v 'mmcsd[0-9]boot[0-9]' | sed 's/^[^[:blank:]]*//' | sort \
+	    | uniq -d | wc -l)
 
 	[ $_lines -eq 0 ] \
 	    && return 1 \

@@ -354,7 +354,9 @@ elif [ "${cur_model}" == "SG-3100" ]; then
 	serial=$(/usr/local/sbin/u-boot-env boardsn 2>/dev/null)
 
 elif [ "${machine_arch}" == "amd64" ]; then
-	serial=$(kenv smbios.system.serial)
+	serial=$(kenv -q smbios.system.serial)
+	[ -z "${serial}" ] \
+	    && serial=$(kenv -q smbios.planar.serial)
 	product=$(kenv -q smbios.system.product)
 	case "${product}" in
 		RCC-VE|DFFv2|RCC)

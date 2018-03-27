@@ -119,8 +119,9 @@ if (isset($config['system']['trigger_virt_setup'])) {
 	// Only do the alternate interface checks if:
 	// 1) The user has not yet run the initial wizard; and
 	// 2) The user has not used the console menu to setup interface assignments
-	netgate_hardware_setup();
-	check_for_alternate_interfaces();
+	if (!netgate_hardware_setup()) {
+		check_for_alternate_interfaces();
+	}
 }
 
 /* Convert configuration

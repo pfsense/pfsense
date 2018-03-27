@@ -501,6 +501,7 @@ function vlan_setup() {
 function netgate_hardware_setup() {
 	global $config, $g;
 
+	$found = true;
 	$platform = system_identify_specific_platform();
 	$flavor = $g['default-config-flavor'];
 
@@ -764,6 +765,8 @@ function netgate_hardware_setup() {
 			'descr' => 'OPT4'
 		);
 		break;
+	default:
+		$found = false;
 	}
 
 	/* Enable Thermal sensors */
@@ -808,6 +811,7 @@ function netgate_hardware_setup() {
 	case "kvm":
 	case "bhyve":
 	case "openstack-csm":
+		$found = true;
 		$config['sysctl']['item'][] = array(
 			'tunable' => 'debug.trace_on_panic',
 			'value'   => 1,
@@ -831,6 +835,7 @@ function netgate_hardware_setup() {
 	switch ($flavor) {
 	case "kvm":
 	case "bhyve":
+		$found = true;
 		$config['interfaces']['wan']['if'] = 'vtnet0';
 		$config['interfaces']['lan']['if'] = 'vtnet1';
 		break;
@@ -840,6 +845,7 @@ function netgate_hardware_setup() {
 	case "ec2":
 	case "ec2-csm":
 	case "ec2-ic":
+		$found = true;
 		unset($config['interfaces']['wan']['ipaddrv6']);
 
 		if (is_array($config['system']['user'])) {
@@ -1104,6 +1110,8 @@ function netgate_hardware_setup() {
 	unset($config['system']['trigger_virt_setup']);
 
 	write_config(gettext("Default hardware detection on first boot"));
+
+	return ($found);
 }
 
 function check_for_alternate_interfaces() {

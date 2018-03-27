@@ -322,7 +322,9 @@ get_prodtrack_model() {
 	elif echo "${_cur_model}" | grep -q '^XG-15'; then
 		_disk="M2"
 	else
-		_disk="SATA"
+		[ "${_cur_model}" = "XG-7100" ] \
+		    && _disk="M2" \
+		    || _disk="SATA"
 	fi
 
 	echo "${_cur_model}-${_disk}-${_mem}"

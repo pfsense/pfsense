@@ -487,7 +487,6 @@ function default_switch_configure() {
 			break;
 		case "ROGUE-1":
 			r1_switch_initial_setup();
-			return;
 			break;
 		default:
 			return;

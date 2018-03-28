@@ -60,8 +60,10 @@ upgrade_netgate_coreboot() {
 
 	if [ "${_coreboot_model}" = "PLCC" ]; then
 		local _adi_util=${_adi_smbios_util}
+		local _adi_util_param="-w"
 	else
 		local _adi_util=${_adi_flash_util}
+		unset _adi_util_param
 	fi
 
 	# Upgrade utility is not available
@@ -127,7 +129,7 @@ upgrade_netgate_coreboot() {
 	echo "===> Upgrading Netgate Coreboot"
 	mkdir -p /mnt/dev
 	mount -t devfs devfs /mnt/dev
-	chroot /mnt ${_adi_util} -u ${_rom}
+	chroot /mnt ${_adi_util} ${_adi_util_param} -u ${_rom}
 	local _rc=$?
 	umount -f /mnt/dev
 	return ${_rc}

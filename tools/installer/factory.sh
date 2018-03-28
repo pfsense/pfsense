@@ -87,7 +87,8 @@ upgrade_netgate_coreboot() {
 
 	# Look for available rom for this model
 	local _avail_rom=$(cd /mnt/${_roms_dir} && \
-	    ls -1 ADI_${_coreboot_model}-*.rom 2>/dev/null | tail -n 1)
+	    ls -1 ADI_${_coreboot_model}-*.rom ADI_${_coreboot_model}-*.bin \
+	    2>/dev/null | tail -n 1)
 
 	[ -f "/mnt/${_roms_dir}/${_avail_rom}" ] \
 	    || return 0

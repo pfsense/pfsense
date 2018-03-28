@@ -58,7 +58,7 @@ upgrade_netgate_coreboot() {
 			;;
 	esac
 
-	if [ "${_cur_model}" = "PLCC" ]; then
+	if [ "${_coreboot_model}" = "PLCC" ]; then
 		local _adi_util=${_adi_smbios_util}
 	else
 		local _adi_util=${_adi_flash_util}

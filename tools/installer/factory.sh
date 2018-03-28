@@ -90,20 +90,24 @@ upgrade_netgate_coreboot() {
 	    ls -1 ADI_${_coreboot_model}-*.rom ADI_${_coreboot_model}-*.bin \
 	    2>/dev/null | tail -n 1)
 
-	[ -f "/mnt/${_roms_dir}/${_avail_rom}" ] \
-	    || return 0
+	local _get_remote=1
+	if [ -f "/mnt/${_roms_dir}/${_avail_rom}" ]; then
+		# Get available version
+		_avail_version=$(echo "${_avail_rom}" | \
+		    sed "s/^ADI_${_coreboot_model}-//; s/-.*//")
 
-	# Get available version
-	local _avail_version=$(echo "${_avail_rom}" | \
-	    sed "s/^ADI_${_coreboot_model}-//; s/-.*//")
+		# If local available version is the same, use it
+		_ver_cmp=$(/mnt/usr/local/sbin/pkg-static version -t \
+		    "${_remote_version}" "${_avail_version}")
 
-	# If local available version is the same, use it
-	local _ver_cmp=$(/mnt/usr/local/sbin/pkg-static version -t \
-	    "${_remote_version}" "${_avail_version}")
-	if [ "${_ver_cmp}" != ">" ]; then
-		local _version="${_avail_version}"
-		local _rom="${_roms_dir}/${_avail_rom}"
-	else
+		if [ "${_ver_cmp}" != ">" ]; then
+			local _version="${_avail_version}"
+			local _rom="${_roms_dir}/${_avail_rom}"
+			unset _get_remote
+		fi
+	fi
+
+	if [ -n "${_get_remote}" ]; then
 		local _romname=$(tail -n 1 /tmp/remote_version)
 		local _rom="/tmp/coreboot_rom"
 		if ! fetch -o /mnt${_rom} \

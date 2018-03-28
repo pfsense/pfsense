@@ -653,7 +653,7 @@ function step12_submitphpaction() {
 		$rule['destination']['network'] = $server['interface'] . "ip";
 		$rule['destination']['port'] = $server['local_port'];
 		$rule['interface'] = $server['interface'];
-		$rule['protocol'] = strtolower($server['protocol']);
+		$rule['protocol'] = strtolower(substr($server['protocol'], 0, 3));
 		$rule['type'] = "pass";
 		$rule['enabled'] = "on";
 		$rule['tracker'] = $tracker++;

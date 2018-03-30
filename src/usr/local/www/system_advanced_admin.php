@@ -54,7 +54,7 @@ $pconfig['serialspeed'] = $config['system']['serialspeed'];
 $pconfig['primaryconsole'] = $config['system']['primaryconsole'];
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
-$pconfig['sshdkeyonly'] = isset($config['system']['ssh']['sshdkeyonly']);
+$pconfig['sshdkeyonly'] = $config['system']['ssh']['sshdkeyonly'];
 $pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
 
 $a_cert =& $config['cert'];
@@ -103,8 +103,10 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['sshdkeyonly'] == "yes") {
+	if ($_POST['sshdkeyonly'] == "enabled") {
 		$config['system']['ssh']['sshdkeyonly'] = "enabled";
+	} else if ($_POST['sshdkeyonly'] == "both") {
+		$config['system']['ssh']['sshdkeyonly'] = "both";
 	} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
 		unset($config['system']['ssh']['sshdkeyonly']);
 	}
@@ -231,11 +233,13 @@ if ($_POST) {
 			unset($config['system']['enablesshd']);
 		}
 
-		$sshd_keyonly = isset($config['system']['sshdkeyonly']);
-		if ($_POST['sshdkeyonly']) {
-			$config['system']['sshdkeyonly'] = true;
+		$sshd_keyonly = $config['system']['sshd']['sshdkeyonly'];
+		if ($_POST['sshdkeyonly'] == "enabled") {
+			$config['system']['sshd']['sshdkeyonly'] = "enabled";
+		} else if ($_POST['sshdkeyonly'] == "both") {
+			$config['system']['sshd']['sshdkeyonly'] = "both";
 		} else {
-			unset($config['system']['sshdkeyonly']);
+			unset($config['system']['sshd']['sshdkeyonly']);
 		}
 
 		$sshd_port = $config['system']['ssh']['port'];
@@ -246,7 +250,7 @@ if ($_POST) {
 		}
 
 		if (($sshd_enabled != $config['system']['enablesshd']) ||
-		    ($sshd_keyonly != $config['system']['sshdkeyonly']) ||
+		    ($sshd_keyonly != $config['system']['ssh']['sshdkeyonly']) ||
 		    ($sshd_port != $config['system']['ssh']['port'])) {
 			$restart_sshd = true;
 		}
@@ -479,14 +483,15 @@ $section->addInput(new Form_Checkbox(
 	isset($pconfig['enablesshd'])
 ));
 
-$section->addInput(new Form_Checkbox(
+$section->addInput(new Form_Select(
 	'sshdkeyonly',
-	'Authentication Method',
-	'Disable password login for Secure Shell (RSA/DSA key only)',
-	$pconfig['sshdkeyonly']
-))->setHelp('When enabled, authorized keys need to be configured for each '.
-	'%1$suser%2$s that has been granted secure shell '.
-	'access.', '<a href="system_usermanager.php">', '</a>');
+	'SSHd Key Only',
+	$pconfig['sshdkeyonly'],
+	array_combine(array("disabled", "enabled", "both"), array("disabled", "enabled", "both"))
+))->setHelp('When %3$senabled%4$s, SSH access is via authorized keys %5$sonly%6$s and needs to be configured for each '.
+	'%1$suser%2$s that has been granted secure shell access. If set to %3$sboth%4$s, authorized keys '.
+	'%5$sand%6$s passwords must be used. If %3$sdisabled%4$s (default), then passwords %5$sor%6$s authorized keys are accepted.',
+	'<a href="system_usermanager.php">', '</a>', '<i>', '</i>', '<u>', '</u>');
 
 $section->addInput(new Form_Input(
 	'sshport',

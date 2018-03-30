@@ -22,4 +22,3 @@
 require_once("interfaces.inc");
 
 interfaces_carp_set_maintenancemode(false);
-

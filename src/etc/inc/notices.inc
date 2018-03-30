@@ -221,7 +221,7 @@ function notices_sendqueue() {
 	$messagequeue = array();
 	$growlerrorcount = 0;
 	$growlskipped = 0;
-	
+
 	while(true) {
 		$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
 		$nothing_done_count++;
@@ -236,13 +236,13 @@ function notices_sendqueue() {
 		}
 		// clear lock before trying to send messages, so new one's can be added
 		unlock($notifyqueue_lck);
-		
+
 		if (is_array($messagequeue['mails']['item'])) {
 			$smtpmessage = "";
 			$growlqueue = array();
 			foreach($messagequeue['mails']['item'] as $mail) {
 				switch ($mail['type']) {
-					case 'mail': 
+					case 'mail':
 						$smptcount++;
 						$smtpmessage .= "\r\n" . date("G:i:s",$mail['time']) . " " . $mail['msg'];
 						break;
@@ -302,7 +302,7 @@ function notify_via_queue_add($message, $type='mail') {
 		file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
 	}
 	unset($messages);
-	
+
 	mwexec_bg('/usr/local/bin/notify_monitor.php');
 	unlock($notifyqueue_lck);
 }
@@ -444,7 +444,7 @@ function notify_via_growl($message, $force=false) {
 	if (empty($config['notifications']['growl']['ipaddress'])) {
 		return;
 	}
-	
+
 	/* Do NOT send the same message twice */
 	if (file_exists("/var/db/growlnotices_lastmsg.txt")) {
 		$lastmsg = trim(file_get_contents("/var/db/growlnotices_lastmsg.txt"));
@@ -454,7 +454,7 @@ function notify_via_growl($message, $force=false) {
 	}
 	/* Store last message sent to avoid spamming */
 	@file_put_contents("/var/db/growlnotices_lastmsg.txt", $message);
-	
+
 	if (!$force) {
 		notify_via_queue_add($message, 'growl');
 		return;

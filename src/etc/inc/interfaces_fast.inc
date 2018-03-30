@@ -33,10 +33,10 @@
  * usage somewhat, but it shouldn't be significant in the grand scheme of things.
  *
  *
- * Functions in this file may not require/use parameters when called, however 
- * in most cases they will accept parameters as per their original forms, for 
+ * Functions in this file may not require/use parameters when called, however
+ * in most cases they will accept parameters as per their original forms, for
  * consistency.
- 
+
  */
 require_once('interfaces.inc');
 /*
@@ -67,7 +67,7 @@ function convert_real_interface_to_friendly_interface_name_fast() {
 	return $out;
 }
 
-/* 
+/*
  * get_real_interface_fast($interfaces, ...)
  * Exactly the same as it's namesake, except it takes an array of interfaces and returns an array
  *
@@ -196,13 +196,13 @@ function get_real_interface_fast($interfaces = array(), $family = "all", $realv6
  *
  * I created this version of the function because in interfaces_assign.php
  * the interface_assign_description() function is used twice, in both cases
- * being called for every iteration through the array of interfaces, and 
- * was seemingly dragging the performance of the HTML generation code down 
+ * being called for every iteration through the array of interfaces, and
+ * was seemingly dragging the performance of the HTML generation code down
  * when faced with a large number of VLAN interfaces.
  *
  * Although this function internally recreates the loop that its namesake was
  * called in; the fact it's only called once rather than once per interface * 2
- * has resulted in a significant speed gain with a large number of optional 
+ * has resulted in a significant speed gain with a large number of optional
  * interfaces configured.
  *
  * $portlist is the same $portlist as defined in interfaces_assign.php, call this

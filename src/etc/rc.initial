@@ -165,4 +165,3 @@ case ${opmode} in
 esac
 
 done
-

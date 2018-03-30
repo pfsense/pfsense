@@ -152,4 +152,3 @@ for TOPING in $PINGHOSTS ; do
 done
 
 exit 0
-

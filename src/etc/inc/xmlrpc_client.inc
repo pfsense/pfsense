@@ -22,9 +22,9 @@
 require_once("XML/RPC2/Client.php");
 
 class pfsense_xmlrpc_client {
-	
+
 	private $username, $password, $url, $logurl, $filenotice, $error;
-	
+
 	public function __construct() {
 		global $config;
 		$hasync = $config['hasync'];
@@ -67,7 +67,7 @@ class pfsense_xmlrpc_client {
 		}
 		$user = rawurlencode($this->username);
 		$pass = rawurlencode($this->password);
-		
+
 		$this->logurl = "{$scheme}://{$syncip}:{$port}/xmlrpc.php";
 		$this->url = "{$scheme}://{$user}:{$pass}@{$syncip}:{$port}/xmlrpc.php";
 	}
@@ -75,7 +75,7 @@ class pfsense_xmlrpc_client {
 	public function set_noticefile($noticefile) {
 		$this->filenotice = $noticefile;
 	}
-	
+
 	private function xmlrpc_internal($method, $parameter, $timeout = 240) {
 		$this->error = null;
 		$options = array(
@@ -83,7 +83,7 @@ class pfsense_xmlrpc_client {
 			'sslverify' => false,
 			'connectionTimeout' => $timeout
 		);
-		
+
 		$numberofruns = 0;
 		while ($numberofruns < 2) {
 			$numberofruns++;
@@ -143,21 +143,21 @@ class pfsense_xmlrpc_client {
 		}
 		return null;
 	}
-	
+
 	public function xmlrpc_exec_php($execcmd, $timeout = 240) {
 		$resp = $this->xmlrpc_internal("exec_php", $execcmd, $timeout);
 		return $resp;
 	}
-	
+
 	public function xmlrpc_method($method, $parameter = "", $timeout = 240) {
 		$resp = $this->xmlrpc_internal($method, $parameter, $timeout);
 		return $resp;
 	}
-	
+
 	public function get_error() {
 		return $this->error;
 	}
-	
+
 	public function getUrl() {
 		return $this->logurl;
 	}

@@ -280,7 +280,7 @@ elif [ ${REALMEM} -gt 1000 ]; then
        PHPFPMIDLE=3600
        PHPFPMSTART=2
        PHPFPMSPARE=7
-       PHPFPMREQ=5000				 
+       PHPFPMREQ=5000
 fi
 
 /bin/cat > /usr/local/lib/php-fpm.conf <<EOF

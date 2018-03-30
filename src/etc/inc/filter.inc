@@ -1169,6 +1169,9 @@ function filter_generate_optcfg_array() {
 						$oic['vips6'][$vipidx]['sn'] = $vip['subnet_bits'];
 					}
 				}
+				if (isset($vip['mode'])) {
+					$oic['vips'][$vipidx]['mode']=$vip['mode'];
+				}
 			}
 		}
 		unset($vips);
@@ -3601,6 +3604,9 @@ EOD;
 			$ipfrules .= "pass out {$log['pass']} route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips'])) {
 				foreach ($ifcfg['vips'] as $vip) {
+					if ($vip['mode'] == "proxyarp") {
+						continue; 
+					} 
 					if (ip_in_subnet($vip['ip'], "{$ifcfg['sa']}/{$ifcfg['sn']}")) {
 						$ipfrules .= "pass out {$log['pass']} route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 					} else {

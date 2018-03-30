@@ -105,14 +105,14 @@ $form->addGlobal(new Form_Input(
 $section = new Form_Section('pfTop Configuration');
 
 $validViews = array(
-	'default' => gettext('default'), 
-	'label' => gettext('label'), 
+	'default' => gettext('default'),
+	'label' => gettext('label'),
 	'long' => gettext('long'),
-	'queue' => gettext('queue'), 
-	'rules' => gettext('rules'), 
+	'queue' => gettext('queue'),
+	'rules' => gettext('rules'),
 	'size' => gettext('size'),
-	'speed' => gettext('speed'), 
-	'state' => gettext('state'), 
+	'speed' => gettext('speed'),
+	'state' => gettext('state'),
 	'time' => gettext('time'),
 );
 $section->addInput(new Form_Select(

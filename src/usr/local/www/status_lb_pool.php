@@ -193,7 +193,7 @@ foreach ($a_pool as $pool):
 					$checked = "";
 					break;
 				default:
-					$bgcolor = "bg-danger";	
+					$bgcolor = "bg-danger";
 					$checked = "checked";
 			}
 ?>

@@ -311,15 +311,15 @@ class Auth_RADIUS extends PEAR {
             $nasId = $config["captiveportal"][$cpzone]["radiusnasid"];
         }
         $this->putAttribute(RADIUS_NAS_IDENTIFIER, $nasId);
-        
+
         if (function_exists("getNasPortType")) {
             $this->putAttribute(RADIUS_NAS_PORT_TYPE, getNasPortType());
         }
-        
+
         if (function_exists("getNasPort")) {
             $this->putAttribute(RADIUS_NAS_PORT, getNasPort(), 'integer');
         }
-        
+
         if (function_exists("getCalledStationId")) {
             $this->putAttribute(RADIUS_CALLED_STATION_ID, getCalledStationId());
         }

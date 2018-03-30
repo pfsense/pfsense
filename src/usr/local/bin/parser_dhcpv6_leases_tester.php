@@ -35,13 +35,13 @@ if ($is_pfSense) {
 	 * Get from this file back to 'src' so we can use 'src/etc/inc/'.
 	 */
 	define('__ROOT__', dirname(dirname(dirname(dirname(__FILE__)))));
-	require_once(__ROOT__.'/etc/inc/parser_dhcpv6_leases.inc'); 
+	require_once(__ROOT__.'/etc/inc/parser_dhcpv6_leases.inc');
 }
 
 if (isset($argv[1])) {
 	$leasesfile = $argv[1];
 } elseif ($is_pfSense) {
-	require_once("globals.inc"); 
+	require_once("globals.inc");
 	$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases";
 } else {
 	echo 'Please pass the filename of the lease file.' . PHP_EOL;

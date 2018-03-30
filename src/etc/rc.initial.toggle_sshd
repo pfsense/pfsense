@@ -61,4 +61,3 @@ if (isset($config['system']['enablesshd'])) {
 }
 
 fclose($fp);
-

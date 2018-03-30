@@ -76,7 +76,7 @@ EOD;
 		// ifsmallist is kept with spaces at the beginning and end to assist with str_replace() operations
 		$ifsmallist = " ";
 		foreach ($iflist as $iface => $ifa) {
-			$friendly = convert_real_interface_to_friendly_interface_name($iface);	
+			$friendly = convert_real_interface_to_friendly_interface_name($iface);
 			$ifstatus = pfSense_get_interface_addresses($config['interfaces'][$friendly]['if']);
 			if (is_array($ifstatus) && $ifstatus['linkstateup'])
 				$status = "  (up)";
@@ -468,7 +468,7 @@ function vlan_setup() {
 		$vlan['if'] = chop(fgets($fp));
 
 		if ($vlan['if']) {
-			if (!array_key_exists($vlan['if'], $iflist) || 
+			if (!array_key_exists($vlan['if'], $iflist) ||
 			    !is_jumbo_capable($vlan['if'])) {
 				printf(gettext('%1$sInvalid interface name \'%2$s\'%3$s'), "\n", $vlan['if'], "\n");
 				continue;

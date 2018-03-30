@@ -766,6 +766,3 @@ events.push(function(){
 });
 //]]>
 </script>
-
-
-

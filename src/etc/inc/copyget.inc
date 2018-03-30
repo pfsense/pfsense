@@ -77,5 +77,3 @@ if (!file_exists($copyrightfile) || ( time()-filemtime($copyrightfile) > $refres
 
 	updateCopyright();
 }
-
-

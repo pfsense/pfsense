@@ -169,7 +169,7 @@ if ($_POST) {
 	} else {
 		unset($config['system']['webgui']['webguicss']);
 	}
-	
+
 	$config['system']['webgui']['roworderdragging'] = $_POST['roworderdragging'] ? true:false;
 
 	if ($_POST['logincss']) {

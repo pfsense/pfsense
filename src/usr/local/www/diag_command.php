@@ -255,7 +255,7 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 		</div>
 	</div>
 <?php
-	
+
 	// Experimental version. Writes the user's php code to a file and executes it via a new instance of PHP
 	// This is intended to prevent bad code from breaking the GUI
 	if ($_POST['submit'] == "EXECPHP" && !isBlank($_POST['txtPHPCommand'])) {
@@ -288,7 +288,7 @@ END_FILE;
 			/* Trap failed code - test both retval and output message
 			 * Typical messages as at 2.3.x:
 			 *   "Parse error: syntax error, ERR_DETAILS in FILE on line NN"
-			 *   "PHP ERROR: Type: NN, File: FILE, Line: NN, Message: ERR_DETAILS" 
+			 *   "PHP ERROR: Type: NN, File: FILE, Line: NN, Message: ERR_DETAILS"
 			 *   "Parse error: syntax error, unexpected end of file in FILE(NN) : eval()'d code on line 1" [the number in (..) is the error line]
 			*/
 			if ($matches[1] > $lineno_correction) {

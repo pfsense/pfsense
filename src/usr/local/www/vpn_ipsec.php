@@ -277,7 +277,7 @@ foreach ($grouplist as $name => $group) {
 	$iflabels[$name] = "GW Group {$name}";
 }
 
-$i = 0; foreach ($a_phase1 as $ph1ent): 
+$i = 0; foreach ($a_phase1 as $ph1ent):
 
 	$iconfn = "pass";
 

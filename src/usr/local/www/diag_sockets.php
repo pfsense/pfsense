@@ -128,5 +128,3 @@ print_info_box(
 <?php
 
 include('foot.inc');
-
-

@@ -73,7 +73,7 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 
 		exit;
 	} else {
-		// add this so they don't get stuck on the logout page when they have no permissions. 
+		// add this so they don't get stuck on the logout page when they have no permissions.
 		$_SESSION["Logged_In"] = false;
 		display_error_form("201", gettext("No page assigned to this user! Click here to logout."));
 

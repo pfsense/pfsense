@@ -83,14 +83,14 @@ events.push(function() {
 				complete: activitycallback
 			});
 	}
-	
-	function escapeStr(str) 
+
+	function escapeStr(str)
 	{
 		if (str)
 			return str.replace(/([ #;?%&,.+*~\':"!^$[\]()=>|\/@])/g,'\\$1');
 		return str;
 	}
-	
+
 	function activitycallback(transport) {
 		setTimeout(getqueueactivity, refreshrate);
 		json = transport.responseJSON;
@@ -100,7 +100,7 @@ events.push(function() {
 		timestamp = json.timestamp;
 		timestampdiff = timestamp - timestampprevious;
 		$stattype = $('#selStatistic').val();
-		
+
 		interfacename_stats = [];
 		for (interfacename in json.interfacestats) {
 			var queueparents = [];
@@ -109,7 +109,7 @@ events.push(function() {
 			for (queuename in interface) {
 				queue = interface[queuename];
 				statqname = queue['name'] + queue['interface'];
-				
+
 				for(childnr in queue['contains']) {
 					child = queue['contains'][childnr];
 					if (!queueparents[child]) {
@@ -117,7 +117,7 @@ events.push(function() {
 					}
 					queueparents[child] = queuename;
 				}
-				
+
 				if (queuestatprevious[statqname]) {
 					interfacename_stats[interfacename][statqname] = [];
 					pkts_ps = (queue['pkts'] - queuestatprevious[statqname]['pkts']) / timestampdiff
@@ -145,7 +145,7 @@ events.push(function() {
 						find = parentname;
 					}
 				}
-				queuestatprevious[statqname] = queue; 
+				queuestatprevious[statqname] = queue;
 			}
 		}
 		// Find max pps/bps needed for any scale bar
@@ -192,7 +192,7 @@ events.push(function() {
 				$('#queue'+statqname+'length').val(queue['qlengthitems']+'/'+queue['qlengthsize']);
 			}
 		}
-		timestampprevious = timestamp;   
+		timestampprevious = timestamp;
 	}
 
 	$(document).ready(function() {
@@ -291,7 +291,7 @@ include("foot.inc");
 function processInterfaceQueues($altqstats, $parent_name) {
 	global $g;
 	global $if_queue_list;
-	
+
 	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . convert_real_interface_to_friendly_interface_name($altqstats['interface']);
 	$prev_if = $altqstats['interface'];
 	if (!is_array($altqstats['interfacestats'])) {

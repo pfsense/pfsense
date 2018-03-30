@@ -517,4 +517,3 @@ if (!$upgrading) {
 } else {
 	echo "The system is now sync'd.\n\n";
 }
-

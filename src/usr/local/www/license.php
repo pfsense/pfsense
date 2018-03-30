@@ -95,7 +95,7 @@ NSS library</a>)<br />
 				<strong>d3pie</strong> (<a href="http://d3pie.org/" target="_blank">http://d3pie.org/</a>)<br />
 				<?=gettext("Copyright"); ?> &copy; 2014-2016 Benjamin Keen.
 			</li>
-			
+
 			<li class="list-group-item">
 				<strong>Dnsmasq</strong> - a DNS forwarder for NAT firewalls (<a href="http://www.thekelleys.org.uk" target="_blank">http://www.thekelleys.org.uk</a>)<br />
 				<?=gettext("Copyright"); ?> &copy; 2000-2016 Simon Kelley.
@@ -115,7 +115,7 @@ NSS library</a>)<br />
 			</li>
 			<li class="list-group-item">
 				<strong>jQuery</strong> (<a href="https://jquery.com/" target="_blank">https://jquery.com/</a>)<br />
-				<?=gettext("Copyright"); ?> &copy; 2005-2016 jQuery Foundation and other contributors. 
+				<?=gettext("Copyright"); ?> &copy; 2005-2016 jQuery Foundation and other contributors.
 			</li>
 			<li class="list-group-item">
 				<strong>MPD</strong> - Multi-link PPP daemon for FreeBSD (<a href="http://mpd.sourceforge.net/" target="_blank">http://mpd.sourceforge.net/</a>)<br />

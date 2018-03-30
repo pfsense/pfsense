@@ -2525,30 +2525,18 @@ function interfaces_vips_configure($interface = "") {
 		$carp_setuped = false;
 		$anyproxyarp = false;
 		foreach ($config['virtualip']['vip'] as $vip) {
+			if ($interface <> "" && $vip['interface'] <> $interface) {
+				continue;
+			}
 			switch ($vip['mode']) {
 				case "proxyarp":
 					/* nothing it is handled on interface_proxyarp_configure() */
-					if (($interface <> "" && $vip['interface'] <> $interface) ||
-					    !isset($config['interfaces'][$vip['interface']]['enable'])) {
-						continue;
-					}
 					$anyproxyarp = true;
 					break;
 				case "ipalias":
-					$iface = $vip['interface'];
-					if (substr($iface, 0, 4) == "_vip")
-						$iface = get_configured_vip_interface($vip['interface']);
-					if (($interface <> "" && $iface <> $interface) ||
-					    !isset($config['interfaces'][$iface]['enable'])) {
-						continue;
-					}
 					interface_ipalias_configure($vip);
 					break;
 				case "carp":
-					if (($interface <> "" && $vip['interface'] <> $interface) ||
-					    !isset($config['interfaces'][$vip['interface']]['enable'])) {
-						continue;
-					}
 					if ($carp_setuped == false) {
 						$carp_setuped = true;
 					}
@@ -2574,12 +2562,8 @@ function interface_ipalias_configure(&$vip) {
 
 	$realif = get_real_interface("_vip{$vip['uniqid']}");
 	if ($realif != "lo0") {
-		$if = convert_real_interface_to_friendly_interface_name($realif);
-		if (!isset($config['interfaces'][$if])) {
-			return;
-		}
-
-		if (!isset($config['interfaces'][$if]['enable'])) {
+		if (!isset($config['interfaces'][$vip['interface']]) ||
+		    !isset($config['interfaces'][$vip['interface']]['enable'])) {
 			return;
 		}
 	}
@@ -2610,11 +2594,16 @@ function interface_carp_configure(&$vip) {
 		return;
 	}
 
-	/* NOTE: Maybe its useless nowadays */
 	$realif = get_real_interface($vip['interface']);
 	if (!does_interface_exist($realif)) {
 		file_notice("CARP", sprintf(gettext("Interface specified for the virtual IP address %s does not exist. Skipping this VIP."), $vip['subnet']), "Firewall: Virtual IP", "");
 		return;
+	}
+	if ($realif != "lo0") {
+		if (!isset($config['interfaces'][$vip['interface']]) ||
+		    !isset($config['interfaces'][$vip['interface']]['enable'])) {
+			return;
+		}
 	}
 
 	$vip_password = $vip['password'];

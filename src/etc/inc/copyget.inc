@@ -71,10 +71,6 @@ function updatecopyright() {
 // Retrieve the copyright data from Netgate.com if the support data file does not exist,
 // or if it is more than a day old
 if (!file_exists($copyrightfile) || ( time()-filemtime($copyrightfile) > $refreshinterval)) {
-	if (file_exists($copyrightfile)) {
-		unlink($copyrightfile);
-	}
-
 	updateCopyright();
 }
 

@@ -2562,8 +2562,9 @@ function interface_ipalias_configure(&$vip) {
 
 	$realif = get_real_interface("_vip{$vip['uniqid']}");
 	if ($realif != "lo0") {
-		if (!isset($config['interfaces'][$vip['interface']]) ||
-		    !isset($config['interfaces'][$vip['interface']]['enable'])) {
+		$if = convert_real_interface_to_friendly_interface_name($realif);
+		if (!isset($config['interfaces'][$if]) ||
+		    !isset($config['interfaces'][$if]['enable'])) {
 			return;
 		}
 	}

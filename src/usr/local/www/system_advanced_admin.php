@@ -487,7 +487,7 @@ $section->addInput(new Form_Select(
 	'sshdkeyonly',
 	'SSHd Key Only',
 	$pconfig['sshdkeyonly'],
-	array_combine(array("disabled", "enabled", "both"), array("disabled (default): key OR username+password", "enabled: key only", "both: key AND username+password"))
+	array_combine(array("disabled", "enabled", "both"), array("Password or Public Key (disabled)", "Public Key Only (enabled)", "Require Both Password and Public Key (both)"))
 ))->setHelp('When %3$senabled%4$s, SSH access is via authorized keys %5$sonly%6$s and needs to be configured for each '.
 	'%1$suser%2$s that has been granted secure shell access. If set to %3$sboth%4$s, authorized keys '.
 	'%5$sand%6$s passwords must be used. If %3$sdisabled%4$s (default), then passwords %5$sor%6$s authorized keys are accepted.',

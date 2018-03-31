@@ -1152,6 +1152,7 @@ function filter_generate_optcfg_array() {
 					if (!is_array($oic['vips'])) {
 						$oic['vips'] = array();
 					}
+					$oic['vips'][$vipidx]['mode'] = $vip['mode'];
 					$oic['vips'][$vipidx]['ip'] = $vip['subnet'];
 					if (empty($vip['subnet_bits'])) {
 						$oic['vips'][$vipidx]['sn'] = 32;
@@ -1162,15 +1163,13 @@ function filter_generate_optcfg_array() {
 					if (!is_array($oic['vips6'])) {
 						$oic['vips6'] = array();
 					}
+					$oic['vips6'][$vipidx]['mode'] = $vip['mode'];
 					$oic['vips6'][$vipidx]['ip'] = $vip['subnet'];
 					if (empty($vip['subnet_bits'])) {
 						$oic['vips6'][$vipidx]['sn'] = 128;
 					} else {
 						$oic['vips6'][$vipidx]['sn'] = $vip['subnet_bits'];
 					}
-				}
-				if (isset($vip['mode'])) {
-					$oic['vips'][$vipidx]['mode']=$vip['mode'];
 				}
 			}
 		}

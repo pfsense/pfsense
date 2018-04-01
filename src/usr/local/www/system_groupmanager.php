@@ -149,8 +149,8 @@ if (isset($_POST['save'])) {
 		}
 	}
 
-	if (strlen($_POST['groupname']) > 16) {
-		$input_errors[] = gettext("The group name is longer than 16 characters.");
+	if (strlen($_POST['groupname']) > 32) {
+		$input_errors[] = gettext("The group name is longer than 32 characters.");
 	}
 
 	/* Check the POSTed members to ensure they are valid and exist */

@@ -90,6 +90,15 @@ if ($_POST) {
 		}
 	}
 
+	if ($_POST['ipv6allow'] == "yes" && is_bogonsv6_used(true) &&
+	    (!isset($config['system']['maximumtableentries']) ||
+	     $config['system']['maximumtableentries'] <
+	     $g['minimumtableentries_bogonsv6'])) {
+		$input_errors[] = sprintf(gettext(
+		    "In order enable IPv6 and block bogon networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s."),
+		    $g['minimumtableentries_bogonsv6']);
+	}
+
 	ob_flush();
 	flush();
 	if (!$input_errors) {

@@ -5543,4 +5543,15 @@ function upgrade_177_to_178() {
 /* Placeholder for a factory update. */
 function upgrade_178_to_179() {
 }
+
+function upgrade_179_to_180() {
+	global $config, $g;
+
+	/* Change default to 400000 to make sure bogonsv6 works */
+	if (empty($config['system']['maximumtableentries'])) {
+		$config['system']['maximumtableentries'] =
+		    $g['minimumtableentries_bogonsv6'];
+	}
+}
+
 ?>

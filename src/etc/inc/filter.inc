@@ -147,11 +147,11 @@ function fix_rule_label($descr) {
 	}
 }
 
-function is_bogonsv6_used() {
+function is_bogonsv6_used($force = false) {
 	global $config, $g;
 	# Only use bogonsv6 table if IPv6 Allow is on, and at least 1 enabled interface also has "blockbogons" enabled.
 	$usebogonsv6 = false;
-	if (isset($config['system']['ipv6allow'])) {
+	if (isset($config['system']['ipv6allow']) || $force) {
 		foreach ($config['interfaces'] as $ifacedata) {
 			if (isset($ifacedata['enable']) && isset($ifacedata['blockbogons'])) {
 				$usebogonsv6 = true;
@@ -717,7 +717,7 @@ function filter_expand_alias_array($alias_name) {
 }
 
 function filter_generate_aliases() {
-	global $config, $FilterIflist, $after_filter_configure_run;
+	global $g, $config, $FilterIflist, $after_filter_configure_run;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -770,7 +770,15 @@ function filter_generate_aliases() {
 	}
 	$aliases .= "table <bogons> persist file \"/etc/bogons\"\n";
 	if (is_bogonsv6_used()) {
-		$aliases .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
+		if (!isset($config['system']['maximumtableentries']) ||
+		     $config['system']['maximumtableentries'] <
+		     $g['minimumtableentries_bogonsv6']) {
+			file_notice("Filter_Reload", sprintf(gettext(
+			    "In order block bogon IPv6 networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s"),
+			    $g['minimumtableentries_bogonsv6']));
+		} else {
+			$aliases .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
+		}
 	}
 
 	$vpns_list = filter_get_vpns_list();

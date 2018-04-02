@@ -8,11 +8,11 @@ databases/php56-pdo_mysql
 databases/php56-pgsql
 devel/aws-sdk-php
 devel/gdb
-devel/php-xdebug
+devel/pecl-xdebug
 dns/%%PRODUCT_NAME%%-pkg-bind9
 dns/dnstop
 editors/nano
-editors/vim-lite
+editors/vim-console
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
 ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
 ftp/%%PRODUCT_NAME%%-pkg-tftpd

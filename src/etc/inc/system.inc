@@ -1507,7 +1507,37 @@ EOD;
 		if ($config['system']['webgui']['webgui-ocsp-staple'] !== false) {
 			$nginx_config .= "\t\tssl_stapling on;\n";
 			$nginx_config .= "\t\tssl_stapling_verify on;\n";
-			$nginx_config .= "\t\tresolver 8.8.8.8 1.1.1.1 valid=300s;\n";
+			$nginx_config .= "\t\tresolver ";
+			$syscfg = $config['system'];
+			if ((((isset($config['dnsmasq']['enable'])) &&
+	      			(empty($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") &&
+	      			(empty($config['dnsmasq']['interface']) ||
+	       			in_array("lo0", explode(",", $config['dnsmasq']['interface'])))) ||
+	     			((isset($config['unbound']['enable'])) &&
+	      			(empty($config['unbound']['port']) || $config['unbound']['port'] == "53") &&
+	      			(empty($config['unbound']['active_interface']) ||
+	       			in_array("lo0", explode(",", $config['unbound']['active_interface'])) ||
+	       			in_array("all", explode(",", $config['unbound']['active_interface']), true)))) &&
+	     			(!isset($config['system']['dnslocalhost']))) {
+					$nginx_config .= "127.0.0.1 ";
+			}
+			if (isset($syscfg['dnsallowoverride'])) {
+				/* get dynamically assigned DNS servers (if any) */
+				$ns = array_unique(get_nameservers());
+				foreach ($ns as $nameserver) {
+					if ($nameserver) {
+						$nginx_config .= "$nameserver ";
+					}
+				}
+			}
+			if (is_array($syscfg['dnsserver'])) {
+				foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
+					if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
+						$nginx_conifg .= "$sys_dnsserver ";
+					}
+				}
+			}
+			$nginx_config .= "valid=300s;\n";
 			$nginx_config .= "\t\tresolver_timeout 5s;\n";
 		}
 	} else {

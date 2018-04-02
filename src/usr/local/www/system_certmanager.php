@@ -1220,7 +1220,7 @@ foreach ($a_cert as $i => $cert):
 							$certextinfo .= htmlspecialchars(implode(', ', $purpose['eku']));
 							$certextinfo .= '<br/>';
 						}
-						if (cert_get_oscpstaple($cert['crt'])) {
+						if (cert_get_ocspstaple($cert['crt'])) {
 							$certextinfo .= '<b>' . gettext("OCSP: ") . '</b> ';
 							$certextinfo .= gettext("Must Staple");
 						}

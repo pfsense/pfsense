@@ -660,7 +660,7 @@ function cert_get_purpose($str_crt, $decode = true) {
 	return $purpose;
 }
 
-function cert_get_oscpstaple($str_crt, $decode = true) {
+function cert_get_ocspstaple($str_crt, $decode = true) {
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
 	}

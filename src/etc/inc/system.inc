@@ -122,17 +122,8 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$syscfg = $config['system'];
 
-	if ((((isset($config['dnsmasq']['enable'])) &&
-	      (empty($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") &&
-	      (empty($config['dnsmasq']['interface']) ||
-	       in_array("lo0", explode(",", $config['dnsmasq']['interface'])))) ||
-	     ((isset($config['unbound']['enable'])) &&
-	      (empty($config['unbound']['port']) || $config['unbound']['port'] == "53") &&
-	      (empty($config['unbound']['active_interface']) ||
-	       in_array("lo0", explode(",", $config['unbound']['active_interface'])) ||
-	       in_array("all", explode(",", $config['unbound']['active_interface']), true)))) &&
-	     (!isset($config['system']['dnslocalhost']))) {
-		$resolvconf .= "nameserver 127.0.0.1\n";
+	foreach(get_dns_nameservers() as $dns_ns) {
+		$resolvconf .= "nameserver $dns_ns\n";
 	}
 
 	if (isset($syscfg['dnsallowoverride'])) {
@@ -143,24 +134,11 @@ function system_resolvconf_generate($dynupdate = false) {
 				$resolvconf .= "search {$searchserver}\n";
 			}
 		}
-		$ns = array_unique(get_nameservers());
-		foreach ($ns as $nameserver) {
-			if ($nameserver) {
-				$resolvconf .= "nameserver $nameserver\n";
-			}
-		}
 	} else {
 		$ns = array();
 		// Do not create blank search/domain lines, it can break tools like dig.
 		if ($syscfg['domain']) {
 			$resolvconf .= "search {$syscfg['domain']}\n";
-		}
-	}
-	if (is_array($syscfg['dnsserver'])) {
-		foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
-			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
-				$resolvconf .= "nameserver $sys_dnsserver\n";
-			}
 		}
 	}
 
@@ -1365,6 +1343,49 @@ function system_webgui_start() {
 	return $res;
 }
 
+function get_dns_nameservers() {
+	global $config;
+	
+	$dns_nameserver_number = 0;
+	$dns_nameservers = array();
+	
+	if (isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "get_dns_nameservers() being called $mt\n";
+	}
+	
+	$syscfg = $config['system'];
+	if ((((isset($config['dnsmasq']['enable'])) &&
+   		(empty($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") &&
+	      	(empty($config['dnsmasq']['interface']) ||
+	       	in_array("lo0", explode(",", $config['dnsmasq']['interface'])))) ||
+	     	((isset($config['unbound']['enable'])) &&
+	      	(empty($config['unbound']['port']) || $config['unbound']['port'] == "53") &&
+	      	(empty($config['unbound']['active_interface']) ||
+	       	in_array("lo0", explode(",", $config['unbound']['active_interface'])) ||
+	       	in_array("all", explode(",", $config['unbound']['active_interface']), true)))) &&
+	     	(!isset($config['system']['dnslocalhost']))) {
+			$dns_nameservers[$i++] = "127.0.0.1";
+	}
+	if (isset($syscfg['dnsallowoverride'])) {
+	/* get dynamically assigned DNS servers (if any) */
+		$ns = array_unique(get_nameservers());
+		foreach ($ns as $nameserver) {
+			if ($nameserver) {
+				$dns_nameservers[$i++] = "$nameserver";
+			}
+		}
+	}
+	if (is_array($syscfg['dnsserver'])) {
+		foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
+			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
+				$dns_nameservers[$i++] = "$sys_dnsserver";
+			}
+		}
+	}
+	return $dns_nameservers;
+}
+
 function system_generate_nginx_config($filename,
 	$cert,
 	$key,
@@ -1508,34 +1529,8 @@ EOD;
 			$nginx_config .= "\t\tssl_stapling on;\n";
 			$nginx_config .= "\t\tssl_stapling_verify on;\n";
 			$nginx_config .= "\t\tresolver ";
-			$syscfg = $config['system'];
-			if ((((isset($config['dnsmasq']['enable'])) &&
-	      			(empty($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") &&
-	      			(empty($config['dnsmasq']['interface']) ||
-	       			in_array("lo0", explode(",", $config['dnsmasq']['interface'])))) ||
-	     			((isset($config['unbound']['enable'])) &&
-	      			(empty($config['unbound']['port']) || $config['unbound']['port'] == "53") &&
-	      			(empty($config['unbound']['active_interface']) ||
-	       			in_array("lo0", explode(",", $config['unbound']['active_interface'])) ||
-	       			in_array("all", explode(",", $config['unbound']['active_interface']), true)))) &&
-	     			(!isset($config['system']['dnslocalhost']))) {
-					$nginx_config .= "127.0.0.1 ";
-			}
-			if (isset($syscfg['dnsallowoverride'])) {
-				/* get dynamically assigned DNS servers (if any) */
-				$ns = array_unique(get_nameservers());
-				foreach ($ns as $nameserver) {
-					if ($nameserver) {
-						$nginx_config .= "$nameserver ";
-					}
-				}
-			}
-			if (is_array($syscfg['dnsserver'])) {
-				foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
-					if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
-						$nginx_conifg .= "$sys_dnsserver ";
-					}
-				}
+			foreach(get_dns_nameservers() as $dns_ns) {
+				$nginx_config .= "$dns_ns ";
 			}
 			$nginx_config .= "valid=300s;\n";
 			$nginx_config .= "\t\tresolver_timeout 5s;\n";

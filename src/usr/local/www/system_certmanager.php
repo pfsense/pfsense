@@ -1224,6 +1224,9 @@ foreach ($a_cert as $i => $cert):
 							$certextinfo .= '<b>' . gettext("OCSP: ") . '</b> ';
 							$certextinfo .= gettext("Must Staple");
 						}
+						if (cert_get_ocspstaple($cert['crt'])) {
+							$certextinfo .= '<b>' . gettext("OCSP: ") . '</b> ';
+							$certextinfo .= gettext("Must Staple");
 						?>
 						<?php if (!empty($certextinfo)): ?>
 							<div class="infoblock">

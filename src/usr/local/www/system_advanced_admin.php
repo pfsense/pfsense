@@ -42,6 +42,7 @@ $pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['sy
 $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
 $pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttpredirect']);
 $pconfig['disablehsts'] = isset($config['system']['webgui']['disablehsts']);
+$pconfig['ocsp-staple'] = isset($config['system']['webgui']['ocsp-staple']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
@@ -142,6 +143,20 @@ if ($_POST) {
 			}
 
 			unset($config['system']['webgui']['disablehttpredirect']);
+		}
+		
+		if ($_POST['webgui-ocsp'] == "yes") {
+			if ($config['system']['webgui']['ocsp-staple'] != true) {
+				$restart_webgui = true;
+			}
+
+			$config['system']['webgui']['ocsp-staple'] = true;
+		} else {
+			if ($config['system']['webgui']['ocsp-staple'] == true) {
+				$restart_webgui = true;
+			}
+
+			unset($config['system']['webgui']['ocsp-staple']);
 		}
 
 		if ($_POST['webgui-hsts'] == "yes") {
@@ -396,6 +411,13 @@ $section->addInput(new Form_Checkbox(
 	'only HTTPS for future requests to the firewall FQDN. Check this box to disable HSTS. '.
 	'(NOTE: Browser-specific steps are required for disabling to take effect when the browser '.
 	'already visited the FQDN while HSTS was enabled.)');
+	
+$section->addInput(new Form_Checkbox(
+	'webgui-ocsp',
+	'OCSP Must Staple',
+	'Enable OCSP Stapling in nginx',
+	$pconfig['ocsp-staple']
+))->setHelp('When this is checked, OCSP Stapling is enabled in nginx');
 
 $section->addInput(new Form_Checkbox(
 	'loginautocomplete',

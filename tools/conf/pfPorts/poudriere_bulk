@@ -1,5 +1,5 @@
 sysutils/devcpu-data
-devel/php-xdebug
+devel/pecl-xdebug
 sysutils/vm-bhyve
 sysutils/flashrom
 databases/php56-pgsql
@@ -10,7 +10,7 @@ benchmarks/iperf
 benchmarks/iperf3
 devel/aws-sdk-php
 dns/dnstop
-editors/vim-lite
+editors/vim-console
 editors/nano
 irc/znc
 net/mosh

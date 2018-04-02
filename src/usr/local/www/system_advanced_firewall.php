@@ -149,6 +149,20 @@ if ($_POST) {
 		$input_errors[] = gettext("The Other multiple timeout value must be an integer.");
 	}
 
+	if ($_POST['maximumtableentries']) {
+		$maximumtableentries = $_POST['maximumtableentries'];
+	} else {
+		$maximumtableentries = pfsense_default_table_entries_size();
+	}
+	if (!is_numericint($maximumtableentries)) {
+		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
+	} else if (is_bogonsv6_used() &&
+	    $maximumtableentries < $g['minimumtableentries_bogonsv6']) {
+		$input_errors[] = sprintf(gettext(
+		    "The Firewall Maximum Table Entries value must be greater than %s when block bogons is enabled."),
+		    $g['minimumtableentries_bogonsv6']);
+	}
+
 	ob_flush();
 	flush();
 

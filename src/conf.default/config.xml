@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <pfsense>
-	<version>17.9</version>
+	<version>18.0</version>
 	<lastchange/>
 	<system>
 		<optimization>normal</optimization>
@@ -43,6 +43,7 @@
 		<disablesegmentationoffloading/>
 		<disablelargereceiveoffloading/>
 		<ipv6allow/>
+		<maximumtableentries>400000</maximumtableentries>
 		<powerd_ac_mode>hadp</powerd_ac_mode>
 		<powerd_battery_mode>hadp</powerd_battery_mode>
 		<powerd_normal_mode>hadp</powerd_normal_mode>

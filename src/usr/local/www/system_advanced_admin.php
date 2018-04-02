@@ -146,20 +146,6 @@ if ($_POST) {
 
 			unset($config['system']['webgui']['disablehttpredirect']);
 		}
-		
-		if ($_POST['webgui-ocsp'] == "yes") {
-			if ($config['system']['webgui']['ocsp-staple'] != true) {
-				$restart_webgui = true;
-			}
-
-			$config['system']['webgui']['ocsp-staple'] = true;
-		} else {
-			if ($config['system']['webgui']['ocsp-staple'] == true) {
-				$restart_webgui = true;
-			}
-
-			unset($config['system']['webgui']['ocsp-staple']);
-		}
 
 		if ($_POST['webgui-hsts'] == "yes") {
 			if ($config['system']['webgui']['disablehsts'] != true) {
@@ -175,6 +161,20 @@ if ($_POST) {
 			unset($config['system']['webgui']['disablehsts']);
 		}
 
+		if ($_POST['webgui-ocsp'] == "yes") {
+			if ($config['system']['webgui']['ocsp-staple'] != true) {
+				$restart_webgui = true;
+			}
+
+			$config['system']['webgui']['ocsp-staple'] = true;
+		} else {
+			if ($config['system']['webgui']['ocsp-staple'] == true) {
+				$restart_webgui = true;
+			}
+
+			unset($config['system']['webgui']['ocsp-staple']);
+		}
+		
 		if ($_POST['webgui-login-messages'] == "yes") {
 			$config['system']['webgui']['quietlogin'] = true;
 		} else {
@@ -421,7 +421,9 @@ $section->addInput(new Form_Checkbox(
 	'OCSP Must Staple',
 	'Enable OCSP Stapling in nginx',
 	$pconfig['ocsp-staple']
-))->setHelp('When this is checked, OCSP Stapling is enabled in nginx');
+))->setHelp('When this is checked, OCSP Stapling is enabled in nginx. Remember to '.
+	'upload your certificate as a full chain, not just the certificate, or this option '.
+	'will be ignored by nginx.');
 
 $section->addInput(new Form_Checkbox(
 	'loginautocomplete',

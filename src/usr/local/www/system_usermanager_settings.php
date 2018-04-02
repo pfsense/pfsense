@@ -157,7 +157,7 @@ if ($_POST) {
 		} else {
 			unset($config['system']['webgui']['authmode']);
 		}
-		
+
 		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
 			$config['system']['webgui']['auth_refresh_time'] = intval($_POST['auth_refresh_time']);
 		} else {

@@ -45,49 +45,49 @@ $aliases = "";
 
 /* ICMP v4+v6 subtypes */
 $icmptypes = array(
-	'althost'	=> array('descrip' => gettext('Alternate Host'), 'valid4' => true, 'valid6' => false), 
- 	'dataconv'	=> array('descrip' => gettext('Datagram conversion error'), 'valid4' => true, 'valid6' => false), 
- 	'echorep'	=> array('descrip' => gettext('Echo reply'), 'valid4' => true, 'valid6' => true), 
- 	'echoreq'	=> array('descrip' => gettext('Echo request'), 'valid4' => true, 'valid6' => true), 
- 	'fqdnrep'	=> array('descrip' => gettext('FQDN reply'), 'valid4' => false, 'valid6' => true), 
- 	'fqdnreq'	=> array('descrip' => gettext('FQDN query'), 'valid4' => false, 'valid6' => true), 
- 	'groupqry'	=> array('descrip' => gettext('Group membership query'), 'valid4' => false, 'valid6' => true), 
- 	'grouprep'	=> array('descrip' => gettext('Group membership report'), 'valid4' => false, 'valid6' => true), 
- 	'groupterm'	=> array('descrip' => gettext('Group membership termination'), 'valid4' => false, 'valid6' => true), 
- 	'inforep'	=> array('descrip' => gettext('Information reply'), 'valid4' => true, 'valid6' => false), 
- 	'inforeq'	=> array('descrip' => gettext('Information request'), 'valid4' => true, 'valid6' => false), 
- 	'ipv6-here'	=> array('descrip' => gettext('IPv6 I-am-here'), 'valid4' => true, 'valid6' => false), 
- 	'ipv6-where'	=> array('descrip' => gettext('IPv6 where-are-you'), 'valid4' => true, 'valid6' => false), 
- 	'listendone'	=> array('descrip' => gettext('Multicast listener done'), 'valid4' => false, 'valid6' => true), 
- 	'listenrep'	=> array('descrip' => gettext('Multicast listener report'), 'valid4' => false, 'valid6' => true), 
- 	'listqry'	=> array('descrip' => gettext('Multicast listener query'), 'valid4' => false, 'valid6' => true), 
- 	'maskrep'	=> array('descrip' => gettext('Address mask reply'), 'valid4' => true, 'valid6' => false), 
- 	'maskreq'	=> array('descrip' => gettext('Address mask request'), 'valid4' => true, 'valid6' => false), 
- 	'mobredir'	=> array('descrip' => gettext('Mobile host redirect'), 'valid4' => true, 'valid6' => false), 
- 	'mobregrep'	=> array('descrip' => gettext('Mobile registration reply'), 'valid4' => true, 'valid6' => false), 
- 	'mobregreq'	=> array('descrip' => gettext('Mobile registration request'), 'valid4' => true, 'valid6' => false), 
- 	'mtrace'	=> array('descrip' => gettext('mtrace messages'), 'valid4' => false, 'valid6' => true), 
- 	'mtraceresp'	=> array('descrip' => gettext('mtrace resp'), 'valid4' => false, 'valid6' => true), 
- 	'neighbradv'	=> array('descrip' => gettext('Neighbor advertisement'), 'valid4' => false, 'valid6' => true), 
- 	'neighbrsol'	=> array('descrip' => gettext('Neighbor solicitation'), 'valid4' => false, 'valid6' => true), 
- 	'niqry'		=> array('descrip' => gettext('Node information request'), 'valid4' => false, 'valid6' => true), 
- 	'nirep'		=> array('descrip' => gettext('Node information reply'), 'valid4' => false, 'valid6' => true), 
- 	'paramprob'	=> array('descrip' => gettext('Parameter problem (invalid IP header)'), 'valid4' => true, 'valid6' => true), 
- 	'photuris'	=> array('descrip' => gettext('Photuris'), 'valid4' => true, 'valid6' => false), 
- 	'redir'		=> array('descrip' => gettext('Redirect'), 'valid4' => true, 'valid6' => true), 
- 	'routeradv'	=> array('descrip' => gettext('Router advertisement'), 'valid4' => true, 'valid6' => true), 
- 	'routersol'	=> array('descrip' => gettext('Router solicitation'), 'valid4' => true, 'valid6' => true), 
- 	'routrrenum'	=> array('descrip' => gettext('Router renumbering'), 'valid4' => false, 'valid6' => true), 
- 	'skip'		=> array('descrip' => gettext('SKIP'), 'valid4' => true, 'valid6' => false), 
- 	'squench'	=> array('descrip' => gettext('Source quench'), 'valid4' => true, 'valid6' => false), 
- 	'timerep'	=> array('descrip' => gettext('Timestamp reply'), 'valid4' => true, 'valid6' => false), 
- 	'timereq'	=> array('descrip' => gettext('Timestamp'), 'valid4' => true, 'valid6' => false), 
- 	'timex'		=> array('descrip' => gettext('Time exceeded'), 'valid4' => true, 'valid6' => true), 
- 	'toobig'	=> array('descrip' => gettext('Packet too big'), 'valid4' => false, 'valid6' => true), 
- 	'trace'		=> array('descrip' => gettext('Traceroute'), 'valid4' => true, 'valid6' => false), 
- 	'unreach'	=> array('descrip' => gettext('Destination unreachable'), 'valid4' => true, 'valid6' => true), 
- 	'wrurep'	=> array('descrip' => gettext('Who are you reply'), 'valid4' => false, 'valid6' => true), 
- 	'wrureq'	=> array('descrip' => gettext('Who are you request'), 'valid4' => false, 'valid6' => true) 
+	'althost'	=> array('descrip' => gettext('Alternate Host'), 'valid4' => true, 'valid6' => false),
+ 	'dataconv'	=> array('descrip' => gettext('Datagram conversion error'), 'valid4' => true, 'valid6' => false),
+ 	'echorep'	=> array('descrip' => gettext('Echo reply'), 'valid4' => true, 'valid6' => true),
+ 	'echoreq'	=> array('descrip' => gettext('Echo request'), 'valid4' => true, 'valid6' => true),
+ 	'fqdnrep'	=> array('descrip' => gettext('FQDN reply'), 'valid4' => false, 'valid6' => true),
+ 	'fqdnreq'	=> array('descrip' => gettext('FQDN query'), 'valid4' => false, 'valid6' => true),
+ 	'groupqry'	=> array('descrip' => gettext('Group membership query'), 'valid4' => false, 'valid6' => true),
+ 	'grouprep'	=> array('descrip' => gettext('Group membership report'), 'valid4' => false, 'valid6' => true),
+ 	'groupterm'	=> array('descrip' => gettext('Group membership termination'), 'valid4' => false, 'valid6' => true),
+ 	'inforep'	=> array('descrip' => gettext('Information reply'), 'valid4' => true, 'valid6' => false),
+ 	'inforeq'	=> array('descrip' => gettext('Information request'), 'valid4' => true, 'valid6' => false),
+ 	'ipv6-here'	=> array('descrip' => gettext('IPv6 I-am-here'), 'valid4' => true, 'valid6' => false),
+ 	'ipv6-where'	=> array('descrip' => gettext('IPv6 where-are-you'), 'valid4' => true, 'valid6' => false),
+ 	'listendone'	=> array('descrip' => gettext('Multicast listener done'), 'valid4' => false, 'valid6' => true),
+ 	'listenrep'	=> array('descrip' => gettext('Multicast listener report'), 'valid4' => false, 'valid6' => true),
+ 	'listqry'	=> array('descrip' => gettext('Multicast listener query'), 'valid4' => false, 'valid6' => true),
+ 	'maskrep'	=> array('descrip' => gettext('Address mask reply'), 'valid4' => true, 'valid6' => false),
+ 	'maskreq'	=> array('descrip' => gettext('Address mask request'), 'valid4' => true, 'valid6' => false),
+ 	'mobredir'	=> array('descrip' => gettext('Mobile host redirect'), 'valid4' => true, 'valid6' => false),
+ 	'mobregrep'	=> array('descrip' => gettext('Mobile registration reply'), 'valid4' => true, 'valid6' => false),
+ 	'mobregreq'	=> array('descrip' => gettext('Mobile registration request'), 'valid4' => true, 'valid6' => false),
+ 	'mtrace'	=> array('descrip' => gettext('mtrace messages'), 'valid4' => false, 'valid6' => true),
+ 	'mtraceresp'	=> array('descrip' => gettext('mtrace resp'), 'valid4' => false, 'valid6' => true),
+ 	'neighbradv'	=> array('descrip' => gettext('Neighbor advertisement'), 'valid4' => false, 'valid6' => true),
+ 	'neighbrsol'	=> array('descrip' => gettext('Neighbor solicitation'), 'valid4' => false, 'valid6' => true),
+ 	'niqry'		=> array('descrip' => gettext('Node information request'), 'valid4' => false, 'valid6' => true),
+ 	'nirep'		=> array('descrip' => gettext('Node information reply'), 'valid4' => false, 'valid6' => true),
+ 	'paramprob'	=> array('descrip' => gettext('Parameter problem (invalid IP header)'), 'valid4' => true, 'valid6' => true),
+ 	'photuris'	=> array('descrip' => gettext('Photuris'), 'valid4' => true, 'valid6' => false),
+ 	'redir'		=> array('descrip' => gettext('Redirect'), 'valid4' => true, 'valid6' => true),
+ 	'routeradv'	=> array('descrip' => gettext('Router advertisement'), 'valid4' => true, 'valid6' => true),
+ 	'routersol'	=> array('descrip' => gettext('Router solicitation'), 'valid4' => true, 'valid6' => true),
+ 	'routrrenum'	=> array('descrip' => gettext('Router renumbering'), 'valid4' => false, 'valid6' => true),
+ 	'skip'		=> array('descrip' => gettext('SKIP'), 'valid4' => true, 'valid6' => false),
+ 	'squench'	=> array('descrip' => gettext('Source quench'), 'valid4' => true, 'valid6' => false),
+ 	'timerep'	=> array('descrip' => gettext('Timestamp reply'), 'valid4' => true, 'valid6' => false),
+ 	'timereq'	=> array('descrip' => gettext('Timestamp'), 'valid4' => true, 'valid6' => false),
+ 	'timex'		=> array('descrip' => gettext('Time exceeded'), 'valid4' => true, 'valid6' => true),
+ 	'toobig'	=> array('descrip' => gettext('Packet too big'), 'valid4' => false, 'valid6' => true),
+ 	'trace'		=> array('descrip' => gettext('Traceroute'), 'valid4' => true, 'valid6' => false),
+ 	'unreach'	=> array('descrip' => gettext('Destination unreachable'), 'valid4' => true, 'valid6' => true),
+ 	'wrurep'	=> array('descrip' => gettext('Who are you reply'), 'valid4' => false, 'valid6' => true),
+ 	'wrureq'	=> array('descrip' => gettext('Who are you request'), 'valid4' => false, 'valid6' => true)
 );
 
 global $vlanprio_values;
@@ -422,7 +422,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";
 	}
-	
+
 	for ($pfctl_try = 1; $pfctl_try <= 10; $pfctl_try++) {
 		unset($rules_loading, $rules_error);
 		$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug 2>&1", $rules_error, $rules_loading);
@@ -437,8 +437,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 			}
 			break;
 		}
-		if (strstr($_grbg, "DIOCADDALTQ: Device busy") || 
-		    strstr($_grbg, "DIOCADDRULE: Device busy") || 
+		if (strstr($_grbg, "DIOCADDALTQ: Device busy") ||
+		    strstr($_grbg, "DIOCADDRULE: Device busy") ||
 		    strstr($_grbg, "DIOCXCOMMIT: Device busy")) {
 			// when busy status is returned retry after a short pause
 			usleep(200000);//try again after 200 ms..unless it still fails after 10x
@@ -1905,7 +1905,7 @@ function filter_nat_rules_generate() {
 			$dstaddr = filter_generate_address($rule, 'destination');
 			$srcaddr = trim($srcaddr);
 			$dstaddr = trim($dstaddr);
-			
+
 			if (empty($srcaddr) || empty($dstaddr)) {
 				continue;
 			}
@@ -2866,7 +2866,7 @@ function filter_generate_user_rule($rule) {
 		$icmptype_text = (strpos($icmptype_text, ",") === false ? $icmptype_text : '{ ' . $icmptype_text . ' }');
 		$aline[$icmptype_key] = "{$icmptype_key} {$icmptype_text} ";
 	}
-	
+
 	if (!empty($rule['tag'])) {
 		$aline['tag'] = " tag \"" .$rule['tag']. "\" ";
 	}
@@ -3336,11 +3336,11 @@ EOD;
 		$saved_tracker += 10;
 		$tracker = $saved_tracker;
 
-		
+
 		if (isset($config['system']['ipv6allow']) && ($oc['type6'] == "slaac" || $oc['type6'] == "dhcp6")) {
 			// The DHCPv6 client rules ***MUST BE ABOVE BOGONSV6!***  https://redmine.pfsense.org/issues/3395
 			$vlantag = isset($config['interfaces'][$on]['dhcp6vlanenable']) ? "set prio {$vlanprio_values[$config['interfaces'][$on]['dhcp6cvpt']]}" : "";
-					
+
 			$ipfrules .= <<<EOD
 # allow our DHCPv6 client out to the {$oc['descr']}
 pass in {$log['pass']} quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
@@ -3349,7 +3349,7 @@ pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 547 t
 pass out {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 546 to any port = 547 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client out {$oc['descr']}")}" {$vlantag}
 
 EOD;
-		} 
+		}
 
 		/* XXX: Not static but give a step of 1000 for each interface to at least be able to match rules. */
 		$saved_tracker += 1000;
@@ -3605,8 +3605,8 @@ EOD;
 			if (is_array($ifcfg['vips'])) {
 				foreach ($ifcfg['vips'] as $vip) {
 					if ($vip['mode'] == "proxyarp") {
-						continue; 
-					} 
+						continue;
+					}
 					if (ip_in_subnet($vip['ip'], "{$ifcfg['sa']}/{$ifcfg['sn']}")) {
 						$ipfrules .= "pass out {$log['pass']} route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 					} else {

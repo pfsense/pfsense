@@ -143,7 +143,7 @@ $(function() {
 			plus.clone(true).appendTo(controlsClone);
 		});
 	})();
-	
+
 	// Automatically change IpAddress mask selectors to 128/32 options for IPv6/IPv4 addresses
 	$('span.pfIpMask + select').each(function (idx, select){
 		var input = $(select).prevAll('input[type=text]');

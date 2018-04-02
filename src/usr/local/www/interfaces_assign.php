@@ -59,7 +59,7 @@ $gettextArray = array('add'=>gettext('Add'),'addif'=>gettext('Add interface'),'d
 /* get list without VLAN interfaces */
 $portlist = get_interface_list();
 
-/*another *_fast function from interfaces_fast.inc. These functions are basically the same as the 
+/*another *_fast function from interfaces_fast.inc. These functions are basically the same as the
 ones they're named after, except they (usually) take an array and (always) return an array. This means that they only
 need to be called once per script run, the returned array contains all the data necessary for repeated use */
 $friendlyifnames = convert_real_interface_to_friendly_interface_name_fast();
@@ -196,7 +196,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			$newifname = 'opt' . $i;
 			$descr = "OPT" . $i;
 		}
-		
+
 		$config['interfaces'][$newifname] = array();
 		$config['interfaces'][$newifname]['descr'] = $descr;
 		$config['interfaces'][$newifname]['if'] = $_POST['if_add'];
@@ -205,7 +205,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			interface_sync_wireless_clones($config['interfaces'][$newifname], false);
 		}
 
-		
+
 		uksort($config['interfaces'], "compare_interface_friendly_names");
 
 		/* XXX: Do not remove this. */
@@ -466,13 +466,13 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
-/*Generate the port select box only once. 
+/*Generate the port select box only once.
 Not indenting the HTML to produce smaller code
 and faster page load times */
 
 $portselect='';
 foreach ($portlist as $portname => $portinfo) {
-	$portselect.='<option value="'.$portname.'"'; 
+	$portselect.='<option value="'.$portname.'"';
 	$portselect.=">".$ifdescrs[$portname]."</option>\n";
 }
 
@@ -501,7 +501,7 @@ foreach ($portlist as $portname => $portinfo) {
 			<td><a href="/interfaces.php?if=<?=$ifname?>"><?=$ifdescr?></a></td>
 			<td>
 				<select name="<?=$ifname?>" id="<?=$ifname?>" class="form-control">
-<?php 
+<?php
 /*port select menu generation loop replaced with pre-prepared select menu to reduce page generation time */
 echo str_replace('value="'.$iface['if'].'">','value="'.$iface['if'].'" selected>',$portselect);
 ?>
@@ -516,7 +516,7 @@ echo str_replace('value="'.$iface['if'].'">','value="'.$iface['if'].'" selected>
 <?php endif;?>
 			</td>
 		</tr>
-<?php $i++; 
+<?php $i++;
 endforeach;
 	if (count($config['interfaces']) < count($portlist)):
 ?>

@@ -166,7 +166,7 @@ function getThermalSensorValue(stringValue) {
 function getFahrenheitValue(cels) {
         return Math.ceil((cels * 1.8) + 32);
 }
-        
+
 function getCelsiusValue(fahr) {
         return Math.floor((fahr - 32) / 1.8);
 }

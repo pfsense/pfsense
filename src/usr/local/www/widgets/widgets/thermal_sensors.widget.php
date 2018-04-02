@@ -168,7 +168,7 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 			pulsateWarning:<?= $thermal_sensors_widget_pulsateWarning ? "true" : "false"; ?>,
 			pulsateCritical:<?= $thermal_sensors_widget_pulsateCritical ? "true" : "false"; ?>,
 			showFahrenheit:<?= $thermal_sensors_widget_showFahrenheit ? "true" : "false"; ?>
-			
+
 		};
 
 		$("#thermal_sensors_widget_show_fahrenheit").on("change", function(e) {

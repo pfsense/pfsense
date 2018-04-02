@@ -213,7 +213,7 @@ function carp_sync_xml($sections) {
 				$xml[$section] = $config_copy[$section];
 		}
 	}
-	
+
 	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('restore_config_section', $xml, 900);
 	if ($resp != null) {
@@ -358,7 +358,7 @@ if (is_array($config['hasync'])) {
 		log_error("Nothing has been configured to be synched. Skipping....");
 		return;
 	}
-	
+
 	if (!carp_check_version()) {
 		return;
 	}

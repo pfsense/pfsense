@@ -170,7 +170,7 @@ if (!is_array($pconfig['encryption']['item']) || count($pconfig['encryption']['i
 	$item['encryption-algorithm'] = array(name => "aes");
 	$item['hash-algorithm'] = "sha1";
 	$item['dhgroup'] = "2";
-	$pconfig['encryption']['item'][] = $item;	
+	$pconfig['encryption']['item'][] = $item;
 }
 
 if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
@@ -421,7 +421,7 @@ if ($_POST['save']) {
 	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2" && $pconfig['iketype'] != "auto") {
 		$input_errors[] = gettext("Valid arguments for IKE type are v1, v2 or auto");
 	}
-	
+
 	foreach($pconfig['encryption']['item'] as $p1algo) {
 		if (preg_match("/aes\d+gcm/", $p1algo['encryption-algorithm']['name']) && $_POST['iketype'] != "ikev2") {
 			$input_errors[] = gettext("Encryption Algorithm AES-GCM can only be used with IKEv2");
@@ -471,7 +471,7 @@ if ($_POST['save']) {
 		$ph1ent['peerid_type'] = $pconfig['peerid_type'];
 		$ph1ent['peerid_data'] = $pconfig['peerid_data'];
 
-		$ph1ent['encryption'] = $pconfig['encryption'];	
+		$ph1ent['encryption'] = $pconfig['encryption'];
 		$ph1ent['lifetime'] = $pconfig['lifetime'];
 		$ph1ent['pre-shared-key'] = $pconfig['pskey'];
 		$ph1ent['private-key'] = base64_encode($pconfig['privatekey']);
@@ -812,14 +812,14 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 	$lastrow = ($counter == $rowcount - 1);
 	$group = new Form_Group($counter == 0 ? '*Encryption Algorithm' : '');
 	$group->addClass("repeatable");
-	
+
 	$group->add(new Form_Select(
 		'ealgo_algo'.$key,
 		null,
 		$p1enc['encryption-algorithm']['name'],
 		build_eal_list()
 	))->setHelp($lastrow ? 'Algorithm' : '');
-	
+
 	$group->add(new Form_Select(
 		'ealgo_keylen'.$key,
 		null,
@@ -840,7 +840,7 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 		$p1enc['dhgroup'],
 		$p1_dhgroups
 	))->setHelp($lastrow ? 'DH Group' : '');
-	
+
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
 		'Delete',
@@ -1001,12 +1001,12 @@ print($form);
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	
+
 	$('[id^=algoaddrow]').prop('type','button');
 
 	$('[id^=algoaddrow]').click(function() {
 		add_row();
-		
+
 		var lastRepeatableGroup = $('.repeatable:last');
 		$(lastRepeatableGroup).find('[id^=ealgo_algo]select').change(function () {
 			id = getStringInt(this.id);

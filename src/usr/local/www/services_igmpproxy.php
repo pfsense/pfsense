@@ -106,7 +106,7 @@ $form->add($section);
 
 print($form);
 
-?>	
+?>
 <form action="services_igmpproxy.php" method="post">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IGMP Proxy')?></h2></div>

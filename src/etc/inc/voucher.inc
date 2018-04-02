@@ -70,7 +70,7 @@ function xmlrpc_sync_voucher_details(&$syncip, &$port, &$username, &$password) {
 function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $username) {
 	global $cpzone;
 	require_once("xmlrpc_client.inc");
-	
+
 	/* Construct code that is run on remote machine */
 	$execcmd = <<<EOF
 	global \$cpzone;
@@ -135,7 +135,7 @@ EOF;
 	$rpc_client = new pfsense_xmlrpc_client();
 	$rpc_client->setConnectionData($syncip, $port, $username, $password);
 	$resp = $rpc_client->xmlrpc_exec_php($execcmd);
-	
+
 	if (!is_array($config['voucher'])) {
 		$config['voucher'] = array();
 	}

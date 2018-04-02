@@ -91,7 +91,7 @@ display_top_tabs($tab_array);
 					if ($gateways_status[$gname]) {
 						if (!isset($gateway['monitor_disable'])) {
 							echo $gateways_status[$gname]['delay'];
-						} 
+						}
 					} else {
 						echo gettext("Pending");
 					}

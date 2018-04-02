@@ -1504,10 +1504,9 @@ EOD;
 		$nginx_config .= "\t\tadd_header X-Content-Type-Options nosniff;\n";
 		$nginx_config .= "\t\tssl_session_tickets off;\n";
 		$nginx_config .= "\t\tssl_dhparam /etc/dh-parameters.4096;\n";
-		$ssl_stapling = true; // remove once the option is added in webConfigurator config
-		if ($ssl_stapling !== false) {
+		if ($config['system']['webgui']['webgui-ocsp-staple'] !== false) {
 			$nginx_config .= "\t\tssl_stapling on;\n";
-			$nginx_config .= "\t\tssl_stapling_verify on\n";
+			$nginx_config .= "\t\tssl_stapling_verify on;\n";
 			$nginx_config .= "\t\tresolver 8.8.8.8 1.1.1.1 valid=300s;\n";
 			$nginx_config .= "\t\tresolver_timeout 5s;\n";
 		}

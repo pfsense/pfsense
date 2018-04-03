@@ -1525,7 +1525,7 @@ EOD;
 		$nginx_config .= "\t\tadd_header X-Content-Type-Options nosniff;\n";
 		$nginx_config .= "\t\tssl_session_tickets off;\n";
 		$nginx_config .= "\t\tssl_dhparam /etc/dh-parameters.4096;\n";
-		if ($config['system']['webgui']['webgui-ocsp-staple'] !== false) {
+		if (cert_get_ocspstaple(lookup_cert($config['system']['webgui']['ssl-certref'])) {
 			$nginx_config .= "\t\tssl_stapling on;\n";
 			$nginx_config .= "\t\tssl_stapling_verify on;\n";
 			$nginx_config .= "\t\tresolver ";

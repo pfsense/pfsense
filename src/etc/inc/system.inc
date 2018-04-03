@@ -1346,7 +1346,6 @@ function system_webgui_start() {
 function get_dns_nameservers() {
 	global $config;
 	
-	$dns_nameserver_number = 0;
 	$dns_nameservers = array();
 	
 	if (isset($config['system']['developerspew'])) {
@@ -1383,7 +1382,7 @@ function get_dns_nameservers() {
 			}
 		}
 	}
-	return $dns_nameservers;
+	return array_unique($dns_nameservers);
 }
 
 function system_generate_nginx_config($filename,
@@ -1529,11 +1528,7 @@ EOD;
 		    cert_get_ocspstaple(lookup_cert($config['system']['webgui']['ssl-certref'])) {
 			$nginx_config .= "\t\tssl_stapling on;\n";
 			$nginx_config .= "\t\tssl_stapling_verify on;\n";
-			$nginx_config .= "\t\tresolver ";
-			foreach(get_dns_nameservers() as $dns_ns) {
-				$nginx_config .= "$dns_ns ";
-			}
-			$nginx_config .= "valid=300s;\n";
+			$nginx_config .= "\t\tresolver " . implode(" ", get_dns_nameservers()) . " valid=300s;\n";
 			$nginx_config .= "\t\tresolver_timeout 5s;\n";
 		}
 	} else {

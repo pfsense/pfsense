@@ -58,4 +58,3 @@ function  trafficminimizeDiv(incDiv,swapButtons) {
 	}
 	document.traffic_graphs_widget_iform["shown[" + incDiv + "]"].value = "hide";
 }
-

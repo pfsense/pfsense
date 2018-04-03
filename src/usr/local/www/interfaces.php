@@ -541,6 +541,16 @@ if ($_POST['apply']) {
 		}
 	}
 
+	if ($_POST['blockbogons'] == "yes" &&
+	    isset($config['system']['ipv6allow']) &&
+	    (!isset($config['system']['maximumtableentries']) ||
+	     $config['system']['maximumtableentries'] <
+	     $g['minimumtableentries_bogonsv6'])) {
+		$input_errors[] = sprintf(gettext(
+		    "In order to block bogon networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s."),
+		    $g['minimumtableentries_bogonsv6']);
+	}
+
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable'])) {
 		if (!preg_match("/^staticv4/", $_POST['type'])) {
 			$input_errors[] = gettext("The DHCP Server is active " .

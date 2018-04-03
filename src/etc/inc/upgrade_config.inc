@@ -5613,4 +5613,15 @@ function upgrade_177_to_178() {
 function upgrade_178_to_179() {
 	upgrade_switch_port_state();
 }
+
+function upgrade_179_to_180() {
+	global $config, $g;
+
+	/* Change default to 400000 to make sure bogonsv6 works */
+	if (empty($config['system']['maximumtableentries'])) {
+		$config['system']['maximumtableentries'] =
+		    $g['minimumtableentries_bogonsv6'];
+	}
+}
+
 ?>

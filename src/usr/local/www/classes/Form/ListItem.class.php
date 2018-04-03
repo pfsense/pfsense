@@ -44,8 +44,8 @@ class Form_ListItem extends Form_Group
 			$group->add($input);
 			$input = $group;
 		}
-	
-		
+
+
 		array_push($this->_inputs, $input);
 
 		return $input;
@@ -172,7 +172,7 @@ EOT;
 		{$inputs}
 	</div>
 EOT;*/
-		
+
 		return <<<EOT
 	{$element}
 		{$label}

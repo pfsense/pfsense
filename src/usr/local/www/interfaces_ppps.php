@@ -149,4 +149,3 @@ foreach ($a_ppps as $id => $ppp) {
 
 <?php
 include("foot.inc");
-

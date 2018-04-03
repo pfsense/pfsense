@@ -29,7 +29,7 @@ $fd = fopen($leases_file, 'r');
 $duid_arr = array();
 while (( $line = fgets($fd, 4096)) !== false) {
 	// echo "$line";
-	
+
 	/* Originally: preg_match("/^(ia-[np][ad])[ ]+\"(.*?)\"/i", $line, $duidmatch)
 	   That is: \"(.*?)\"
 	   , which is a non-greedy matching. However that does not go well with the legal

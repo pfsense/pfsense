@@ -353,7 +353,7 @@ function get_dpinger_status($gwname, $detailed = false) {
 		// while a latency of 0 and a loss of 0 would be perfect, in a real world it doesnt happen.
 		// or does it, anyone? if so we must 'detect' the initialization period differently..
 		$ready = $r['latency_stddev'] != '0' || $r['loss'] != '0';
-		
+
 		if ($ready) {
 			break;
 		} else {
@@ -657,7 +657,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		}
 	}
 	unset($gateway);
-	
+
 	//Sort the array by GW name before moving on.
 	ksort($gateways_arr, SORT_STRING | SORT_FLAG_CASE);
 

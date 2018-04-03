@@ -93,4 +93,3 @@ outlines varies considerably with browser/OS **/
 input[type="checkbox"]:not(:checked) {
   outline: 1px solid #888888;
 }
-

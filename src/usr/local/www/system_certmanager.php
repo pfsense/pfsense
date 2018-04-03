@@ -1218,6 +1218,11 @@ foreach ($a_cert as $i => $cert):
 						if (is_array($purpose) && !empty($purpose['eku'])) {
 							$certextinfo .= '<b>' . gettext("EKU: ") . '</b> ';
 							$certextinfo .= htmlspecialchars(implode(', ', $purpose['eku']));
+							$certextinfo .= '<br/>';
+						}
+						if (cert_get_ocspstaple($cert['crt'])) {
+							$certextinfo .= '<b>' . gettext("OCSP: ") . '</b> ';
+							$certextinfo .= gettext("Must Staple");
 						}
 						?>
 						<?php if (!empty($certextinfo)): ?>

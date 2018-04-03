@@ -792,6 +792,3 @@ events.push(function(){
 });
 //]]>
 </script>
-
-
-

@@ -73,5 +73,3 @@ function updatecopyright() {
 if (!file_exists($copyrightfile) || ( time()-filemtime($copyrightfile) > $refreshinterval)) {
 	updateCopyright();
 }
-
-

@@ -1376,7 +1376,7 @@ class SimplePie
 
 			list($headers, $sniffed) = $fetched;
 		}
-		
+
 		// Empty response check
 		if(empty($this->raw_data)){
 			$this->error = "A feed could not be found at `$this->feed_url`. Empty body.";
@@ -1908,7 +1908,7 @@ class SimplePie
 
 	/**
 	 * Get the URL for the feed
-	 * 
+	 *
 	 * When the 'permanent' mode is enabled, returns the original feed URL,
 	 * except in the case of an `HTTP 301 Moved Permanently` status response,
 	 * in which case the location of the first redirection is returned.
@@ -4104,7 +4104,7 @@ class SimplePie_Cache_MySQL extends SimplePie_Cache_DB
 				'cache_purge_time' => 2592000
 			),
 		);
-		
+
 		$this->options = SimplePie_Misc::array_merge_recursive($this->options, SimplePie_Cache::parse_URL($location));
 
 		// Path is prefixed with a "/"
@@ -8791,7 +8791,7 @@ class SimplePie_IRI
 	public function set_iri($iri, $clear_cache = false)
 	{
 		static $cache;
-		if ($clear_cache) 
+		if ($clear_cache)
 		{
 			$cache = null;
 			return;
@@ -9053,7 +9053,7 @@ class SimplePie_IRI
 	public function set_path($ipath, $clear_cache = false)
 	{
 		static $cache;
-		if ($clear_cache) 
+		if ($clear_cache)
 		{
 			$cache = null;
 			return;
@@ -9604,13 +9604,13 @@ class SimplePie_Item
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Get the media:thumbnail of the item
 	 *
 	 * Uses `<media:thumbnail>`
 	 *
-	 * 
+	 *
 	 * @return array|null
 	 */
 	public function get_thumbnail()
@@ -9627,7 +9627,7 @@ class SimplePie_Item
 			}
 		}
 		return $this->data['thumbnail'];
-	}	
+	}
 
 	/**
 	 * Get a category for the item
@@ -12767,9 +12767,9 @@ class SimplePie_Misc
 			else
 			{
 				$array1[$key] = $value;
-			}            
+			}
 		}
-		
+
 		return $array1;
 	}
 
@@ -18735,4 +18735,3 @@ class SimplePie_gzdecode
 		}
 	}
 }
-

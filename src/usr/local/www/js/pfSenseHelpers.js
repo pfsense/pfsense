@@ -804,4 +804,3 @@ function postSubmit(data, target) {
 		.appendTo('body')
 		.submit();
 }
-

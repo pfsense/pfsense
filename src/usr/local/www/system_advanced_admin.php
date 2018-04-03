@@ -421,7 +421,7 @@ $section->addInput(new Form_Checkbox(
 	'OCSP Must Staple',
 	'Enable OCSP Stapling in nginx',
 	$pconfig['ocsp-staple']
-))->setHelp('When this is checked, OCSP Stapling is enabled in nginx. Remember to '.
+))->setHelp('When this is checked, OCSP Stapling is forced on in nginx. Remember to '.
 	'upload your certificate as a full chain, not just the certificate, or this option '.
 	'will be ignored by nginx.');
 
@@ -591,6 +591,7 @@ events.push(function() {
 
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
+	hideCheckbx('ocsp-staple', $(cert_get_ocspstaple(lookup_cert($config['system']['webgui']['ssl-certref'])) == true);
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 

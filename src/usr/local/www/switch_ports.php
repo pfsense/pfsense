@@ -93,23 +93,28 @@ if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['vids']) {
 			$port = $vid['port'];
 			$pvid = $vid['vid'];
 
-			if (! vlan_valid_tag($pvid) ) {
+			if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q" &&
+			    !vlan_valid_tag($pvid) ) {
 				$input_errors[] = sprintf(gettext("%d is not a valid VID for port %s"), $pvid, $port);
 			} else {
 				$swporto = array();
 				$swporto['port'] = htmlspecialchars($port);
-				$swporto['pvid'] = htmlspecialchars($pvid);
+				if (vlan_valid_tag($pvid)) {
+					$swporto['pvid'] = htmlspecialchars($pvid);
+				}
 				$swporto['state'] = "forwarding";
 				$a_swports['swports']['swport'][] = $swporto;
 			}
 		}
 
 		if (! $input_errors) {
-			write_config("Updaing switch PVIDs");
-			foreach ($ja['vids'] as $vid ) {
-				pfSense_etherswitch_setport($swdevice, $vid['port'], $vid['vid']);
+			write_config("Updating switch port settings");
+			if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
+				foreach ($ja['vids'] as $vid) {
+					pfSense_etherswitch_setport($swdevice, $vid['port'], $vid['vid']);
+				}
 			}
-			$savemsg = gettext("Port VIDs updated.");
+			$savemsg = gettext("Port settings updated.");
 		}
 	} else {
 		$input_errors[] = sprintf(gettext("There is no switch configuration to modify!"));

@@ -580,7 +580,7 @@ events.push(function() {
 
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
-	hideCheckbx('ocsp-staple', $(cert_get_ocspstaple(lookup_cert($config['system']['webgui']['ssl-certref'])) == true);
+	hideCheckbox('ocsp-staple', <?= cert_get_ocspstaple(lookup_cert($config['system']['webgui']['ssl-certref'])) ? "true" : "false"; ?>);
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 

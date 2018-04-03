@@ -1364,21 +1364,21 @@ function get_dns_nameservers() {
 	       	in_array("lo0", explode(",", $config['unbound']['active_interface'])) ||
 	       	in_array("all", explode(",", $config['unbound']['active_interface']), true)))) &&
 	     	(!isset($config['system']['dnslocalhost']))) {
-			$dns_nameservers[$i++] = "127.0.0.1";
+			$dns_nameservers[] = "127.0.0.1";
 	}
 	if (isset($syscfg['dnsallowoverride'])) {
 	/* get dynamically assigned DNS servers (if any) */
 		$ns = array_unique(get_nameservers());
 		foreach ($ns as $nameserver) {
 			if ($nameserver) {
-				$dns_nameservers[$i++] = "$nameserver";
+				$dns_nameservers[] = "$nameserver";
 			}
 		}
 	}
 	if (is_array($syscfg['dnsserver'])) {
 		foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
 			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
-				$dns_nameservers[$i++] = "$sys_dnsserver";
+				$dns_nameservers[] = "$sys_dnsserver";
 			}
 		}
 	}

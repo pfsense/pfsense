@@ -573,7 +573,7 @@ function default_switch_configure() {
 	}
 }
 
-function switches_configure() {
+function switches_configure($force = false) {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
@@ -585,10 +585,12 @@ function switches_configure() {
 	default:
 		return;
 	}
-	if (!platform_booting()) {
+	if (!$force && !platform_booting()) {
 		return;
 	}
-	echo gettext("Configuring switch...");
+	if (platform_booting()) {
+		echo gettext("Configuring switch...");
+	}
 	switch ($platform['name']) {
 	case "A37XX":
 	case "PLCC-B":
@@ -598,6 +600,8 @@ function switches_configure() {
 	case "uFW":
 		break;
 	}
-	echo gettext("done.") . "\n";
+	if (platform_booting()) {
+		echo gettext("done.") . "\n";
+	}
 }
 ?>

@@ -228,6 +228,19 @@ if ($_POST['act'] == "del") {
 		$switch = array();
 		$switch['device'] = $swdevice;
 		$switch['vlanmode'] = $vlanmode;
+		$switch['swports']['swport'] = array();
+		for ($i = 0; $i < $swinfo['nports']; $i++) {
+			if (isset($swinfo['switch_caps']['PORTS_MASK']) &&
+			    $swinfo['switch_caps']['PORTS_MASK'] == 1 &&
+			    (!isset($swinfo['ports_mask'][$i]) ||
+			    $swinfo['ports_mask'][$i] != 1)) {
+				continue;
+			}
+			$swport = array();
+			$swport['port'] = "${i}";
+			$swport['state'] = "forwarding";
+			$switch['swports']['swport'][] = $swport;
+		}
 		$found = false;
 		foreach ($a_switches as $id => $cswitch) {
 			if ($cswitch['device'] != $swdevice) {
@@ -251,11 +264,27 @@ if ($_POST['act'] == "del") {
 				unset($a_switches[$id]['swports']['swport'][$pid]);
 			}
 		}
+		if ($found) {
+			/* Enable forwarding on all ports. */
+			for ($i = 0; $i < $swinfo['nports']; $i++) {
+				if (isset($swinfo['switch_caps']['PORTS_MASK']) &&
+				    $swinfo['switch_caps']['PORTS_MASK'] == 1 &&
+				    (!isset($swinfo['ports_mask'][$i]) ||
+				    $swinfo['ports_mask'][$i] != 1)) {
+					continue;
+				}
+				$swport = array();
+				$swport['port'] = "${i}";
+				$swport['state'] = "forwarding";
+				$a_switches[$id]['swports']['swport'][] = $swport;
+			}
+		}
 
 		write_config();
 
 		/* Set switch mode. */
 		switch_set_vlan_mode($swdevice, $vlanmode);
+		switches_configure(true);
 
 		header("Location: switch_vlans.php?swdevice=". htmlspecialchars($swdevice));
 		exit;

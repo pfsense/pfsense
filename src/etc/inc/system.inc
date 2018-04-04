@@ -1369,6 +1369,9 @@ function get_dns_nameservers() {
 	/* get dynamically assigned DNS servers (if any) */
 	$ns = array_unique(get_nameservers());
 	if (isset($syscfg['dnsallowoverride'])) {
+		if(!is_array($ns)) {
+			$ns = array();
+		}
 		foreach ($ns as $nameserver) {
 			if ($nameserver) {
 				$dns_nameservers[] = "$nameserver";

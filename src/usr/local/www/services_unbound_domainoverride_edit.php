@@ -45,6 +45,7 @@ if (isset($id) && $a_domainOverrides[$id]) {
 	$pconfig['domain'] = $a_domainOverrides[$id]['domain'];
 	$pconfig['ip'] = $a_domainOverrides[$id]['ip'];
 	$pconfig['descr'] = $a_domainOverrides[$id]['descr'];
+	$pconfig['forward_tls_upstream'] = isset($a_domainOverrides[$id]['forward_tls_upstream']);
 }
 
 if ($_POST['save']) {
@@ -87,6 +88,7 @@ if ($_POST['save']) {
 		$doment['domain'] = $_POST['domain'];
 		$doment['ip'] = $_POST['ip'];
 		$doment['descr'] = $_POST['descr'];
+		$doment['forward_tls_upstream'] = isset($_POST['forward_tls_upstream']);
 
 		if (isset($id) && $a_domainOverrides[$id]) {
 			$a_domainOverrides[$id] = $doment;
@@ -129,6 +131,13 @@ $section->addInput(new Form_IpAddress(
 	$pconfig['ip']
 ))->setHelp('IPv4 or IPv6 address of the authoritative DNS server for this domain. e.g.: 192.168.100.100%1$s' .
 			'To use a non-default port for communication, append an \'@\' with the port number.', '<br />')->setPattern('[a-zA-Z0-9@.:]+');
+
+$section->addInput(new Form_Checkbox(
+	'forward_tls_upstream',
+	'TLS Queries',
+	'Use SSL/TLS for DNS Queries forwarded to this server',
+	$pconfig['forward_tls_upstream']
+))->setHelp('When set, queries to %1$sall DNS servers for this domain%2$s will be sent using SSL/TLS on the default port of 853.', '<b>', '</b>');
 
 $section->addInput(new Form_Input(
 	'descr',

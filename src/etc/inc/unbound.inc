@@ -531,12 +531,17 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 
 	$sorted_domains = msort($domains, "domain");
 	$result = array();
+	$tls_domains = array();
 	foreach ($sorted_domains as $domain) {
 		$domain_key = current($domain);
 		if (!isset($result[$domain_key])) {
 			$result[$domain_key] = array();
 		}
 		$result[$domain_key][] = $domain['ip'];
+		/* If any entry for a domain has TLS set, it will be active for all entries. */
+		if (isset($domain['forward_tls_upstream'])) {
+			$tls_domains[] = $domain_key;
+		}
 	}
 
 	// Domain overrides that have multiple entries need multiple stub-addr: added
@@ -552,8 +557,18 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 		} else {
 			$domain_entries .= "forward-zone:\n";
 			$domain_entries .= "\tname: \"$domain\"\n";
+			$fwdport = "";
+			/* Enable TLS forwarding for this domain if needed. */
+			if (in_array($domain, $tls_domains)) {
+				$domain_entries .= "\tforward-tls-upstream: yes\n";
+				$fwdport = "@853";
+			}
 			foreach ($ips as $ip) {
-				$domain_entries .= "\tforward-addr: $ip\n";
+				/* If an IP address already contains a port specification, do not add another. */
+				if (strstr($ip, '@') !== false) {
+					$fwdport = "";
+				}
+				$domain_entries .= "\tforward-addr: {$ip}{$fwdport}\n";
 			}
 		}
 	}

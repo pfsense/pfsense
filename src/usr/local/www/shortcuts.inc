@@ -235,6 +235,7 @@ $shortcuts['resolver'] = array();
 $shortcuts['resolver']['main'] = "services_unbound.php";
 $shortcuts['resolver']['log'] = "status_logs.php?logfile=resolver";
 $shortcuts['resolver']['service'] = "unbound";
+$shortcuts['resolver']['status'] = "status_unbound.php";
 
 $shortcuts['wireless'] = array();
 $shortcuts['wireless']['main'] = "interfaces_wireless.php";
@@ -275,4 +276,5 @@ $shortcuts['authentication']['main'] = "system_authservers.php";
 $shortcuts['aliases'] = array();
 $shortcuts['aliases']['main'] = "firewall_aliases.php";
 $shortcuts['aliases']['status'] = "diag_tables.php";
+
 ?>

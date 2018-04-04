@@ -1366,9 +1366,9 @@ function get_dns_nameservers() {
 	     	(!isset($config['system']['dnslocalhost']))) {
 			$dns_nameservers[] = "127.0.0.1";
 	}
-	if (isset($syscfg['dnsallowoverride'])) {
 	/* get dynamically assigned DNS servers (if any) */
-		$ns = array_unique(get_nameservers());
+	$ns = array_unique(get_nameservers());
+	if (isset($syscfg['dnsallowoverride'])) {
 		foreach ($ns as $nameserver) {
 			if ($nameserver) {
 				$dns_nameservers[] = "$nameserver";

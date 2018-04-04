@@ -42,7 +42,7 @@ $pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['sy
 $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
 $pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttpredirect']);
 $pconfig['disablehsts'] = isset($config['system']['webgui']['disablehsts']);
-$pconfig['ocsp-staple'] = isset($config['system']['webgui']['ocsp-staple']);
+$pconfig['ocsp-staple'] = $config['system']['webgui']['ocsp-staple'];
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
@@ -161,7 +161,7 @@ if ($_POST) {
 			unset($config['system']['webgui']['disablehsts']);
 		}
 
-		if ($_POST['webgui-ocsp'] == "yes") {
+		if ($_POST['ocsp-staple'] == "yes") {
 			if ($config['system']['webgui']['ocsp-staple'] != true) {
 				$restart_webgui = true;
 			}
@@ -172,7 +172,7 @@ if ($_POST) {
 				$restart_webgui = true;
 			}
 
-			unset($config['system']['webgui']['ocsp-staple']);
+			$config['system']['webgui']['ocsp-staple'] = false;
 		}
 		
 		if ($_POST['webgui-login-messages'] == "yes") {
@@ -417,9 +417,9 @@ $section->addInput(new Form_Checkbox(
 	'already visited the FQDN while HSTS was enabled.)');
 	
 $section->addInput(new Form_Checkbox(
-	'webgui-ocsp',
-	'OCSP Must Staple',
-	'Enable OCSP Stapling in nginx',
+	'ocsp-staple',
+	'OCSP Must-Staple',
+	'Force OCSP Stapling in nginx',
 	$pconfig['ocsp-staple']
 ))->setHelp('When this is checked, OCSP Stapling is forced on in nginx. Remember to '.
 	'upload your certificate as a full chain, not just the certificate, or this option '.
@@ -591,7 +591,10 @@ events.push(function() {
 
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
-	hideCheckbox('ocsp-staple', <?= cert_get_ocspstaple(lookup_cert($config['system']['webgui']['ssl-certref'])) ? "true" : "false"; ?>);
+	hideCheckbox('ocsp-staple', "<?php 
+			$cert_temp = lookup_cert($config['system']['webgui']['ssl-certref']);
+			echo (cert_get_ocspstaple($cert_temp['crt']) ? "true" : "false");
+			?>" === "true");
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 

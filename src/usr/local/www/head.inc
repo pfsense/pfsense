@@ -348,6 +348,7 @@ $status_menu[] = array(gettext("Dashboard"), "/index.php");
 $status_menu[] = array(gettext("Gateways"), "/status_gateways.php");
 $status_menu[] = array(gettext("DHCP Leases"), "/status_dhcp_leases.php");
 $status_menu[] = array(gettext("DHCPv6 Leases"), "/status_dhcpv6_leases.php");
+$status_menu[] = array(gettext("DNS Resolver"), "/status_unbound.php");
 $status_menu[] = array(gettext("Filter Reload"), "/status_filter_reload.php?user=true");
 $status_menu[] = array(gettext("Interfaces"), "/status_interfaces.php");
 $status_menu[] = array(gettext("IPsec"), "/status_ipsec.php");

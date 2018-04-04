@@ -304,9 +304,13 @@ forward-zone:
 	name: "."
 
 EOD;
+			if (isset($unboundcfg['forward_tls_upstream'])) {
+				$forward_conf .= "\tforward-tls-upstream: yes\n";
+			}
 			foreach ($dnsservers as $dnsserver) {
 				if (is_ipaddr($dnsserver) && !ip_in_subnet($dnsserver, "127.0.0.0/8")) {
-					$forward_conf .= "\tforward-addr: $dnsserver\n";
+					$fwdport = isset($unboundcfg['forward_tls_upstream']) ? "@853" : "";
+					$forward_conf .= "\tforward-addr: {$dnsserver}{$fwdport}\n";
 				}
 			}
 		}
@@ -316,6 +320,18 @@ EOD;
 
 	// Size of the RRset cache == 2 * msg-cache-size per Unbound's recommendations
 	$rrset_cache_size = $msg_cache_size * 2;
+
+	/* QNAME Minimization. https://redmine.pfsense.org/issues/8028
+	 * Unbound uses the British style in the option name so the internal option
+	 * name follows that, but the user-visible descriptions follow US English.
+	 */
+	$qname_min = "";
+	if (isset($unboundcfg['qname-minimisation'])) {
+		$qname_min = "qname-minimisation: yes\n";
+		if (isset($unboundcfg['qname-minimisation-strict'])) {
+			$qname_min .= "qname-minimisation-strict: yes\n";
+		}
+	}
 
 	$unboundconf = <<<EOD
 ##########################
@@ -356,7 +372,7 @@ cache-min-ttl: {$cache_min_ttl}
 harden-dnssec-stripped: {$harden_dnssec_stripped}
 msg-cache-size: {$msg_cache_size}m
 rrset-cache-size: {$rrset_cache_size}m
-
+{$qname_min}
 {$optimization['number_threads']}
 {$optimization['msg_cache_slabs']}
 {$optimization['rrset_cache_slabs']}
@@ -515,12 +531,17 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 
 	$sorted_domains = msort($domains, "domain");
 	$result = array();
+	$tls_domains = array();
 	foreach ($sorted_domains as $domain) {
 		$domain_key = current($domain);
 		if (!isset($result[$domain_key])) {
 			$result[$domain_key] = array();
 		}
 		$result[$domain_key][] = $domain['ip'];
+		/* If any entry for a domain has TLS set, it will be active for all entries. */
+		if (isset($domain['forward_tls_upstream'])) {
+			$tls_domains[] = $domain_key;
+		}
 	}
 
 	// Domain overrides that have multiple entries need multiple stub-addr: added
@@ -536,8 +557,18 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 		} else {
 			$domain_entries .= "forward-zone:\n";
 			$domain_entries .= "\tname: \"$domain\"\n";
+			$fwdport = "";
+			/* Enable TLS forwarding for this domain if needed. */
+			if (in_array($domain, $tls_domains)) {
+				$domain_entries .= "\tforward-tls-upstream: yes\n";
+				$fwdport = "@853";
+			}
 			foreach ($ips as $ip) {
-				$domain_entries .= "\tforward-addr: $ip\n";
+				/* If an IP address already contains a port specification, do not add another. */
+				if (strstr($ip, '@') !== false) {
+					$fwdport = "";
+				}
+				$domain_entries .= "\tforward-addr: {$ip}{$fwdport}\n";
 			}
 		}
 	}

@@ -84,14 +84,21 @@ foreach ($keys as $key) {
 $sshconf .= "Compression delayed\n";
 $sshconf .= "ClientAliveInterval 30\n";
 $sshconf .= "PermitRootLogin yes\n";
-if (isset($config['system']['ssh']['sshdkeyonly'])) {
+if ($config['system']['ssh']['sshdkeyonly'] == "both") {
+	$sshconf .= "# Login via both Key and Password only\n";
+	$sshconf .= "AuthenticationMethods publickey,password\n";	
+	$sshconf .= "ChallengeResponseAuthentication yes\n";
+	$sshconf .= "PasswordAuthentication yes\n";
+	$sshconf .= "PubkeyAuthentication yes\n";
+	$sshconf .= "UsePAM yes\n";
+} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
 	$sshconf .= "# Login via Key only\n";
 	$sshconf .= "ChallengeResponseAuthentication no\n";
 	$sshconf .= "PasswordAuthentication no\n";
 	$sshconf .= "PubkeyAuthentication yes\n";
 	$sshconf .= "UsePAM no\n";
 } else {
-	$sshconf .= "# Login via Key and Password\n";
+	$sshconf .= "# Login via Key or Password\n";
 	$sshconf .= "ChallengeResponseAuthentication yes\n";
 	$sshconf .= "PasswordAuthentication yes\n";
 	$sshconf .= "PubkeyAuthentication yes\n";

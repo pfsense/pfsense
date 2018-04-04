@@ -1041,7 +1041,7 @@
 					log_error("Tenant ID not found");
 					return false;
 				}
-					// get an bearer token 
+					// get an bearer token
 				curl_setopt($ch, CURLOPT_URL, "https://login.microsoftonline.com/" . $tenantid . "/oauth2/token");
 				curl_setopt($ch, CURLOPT_POST, 1);
 				$body = "resource=" . urlencode("https://management.core.windows.net/") . "&grant_type=client_credentials&client_id=" . $app_id . "&client_secret=" . urlencode($client_secret);
@@ -1056,7 +1056,7 @@
 					log_error("no valid bearer token");
 					return false;
 				}
-					// Update the DNS record 
+					// Update the DNS record
 				if ($this->_useIPv6) {
 					$url = "https://management.azure.com" . $resourceid . "/AAAA/" . $hostname . "?api-version=2017-09-01";
 					$body = '{"properties":{"TTL":"' . $newttl . '", "AaaaRecords":[{"ipv6Address":"' . $newip . '"}]}}';
@@ -2049,7 +2049,7 @@
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $http_code);
 						$this->_debug($data);
 					}
-					break;				
+					break;
 				default:
 					break;
 			}

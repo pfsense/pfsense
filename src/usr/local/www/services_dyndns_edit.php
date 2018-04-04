@@ -570,7 +570,7 @@ events.push(function() {
 				hideCheckbox('proxied', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
-				break;				
+				break;
 			default:
 				hideGroupInput('domainname', true);
 				hideInput('resultmatch', true);

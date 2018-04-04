@@ -321,6 +321,18 @@ EOD;
 	// Size of the RRset cache == 2 * msg-cache-size per Unbound's recommendations
 	$rrset_cache_size = $msg_cache_size * 2;
 
+	/* QNAME Minimization. https://redmine.pfsense.org/issues/8028
+	 * Unbound uses the British style in the option name so the internal option
+	 * name follows that, but the user-visible descriptions follow US English.
+	 */
+	$qname_min = "";
+	if (isset($unboundcfg['qname-minimisation'])) {
+		$qname_min = "qname-minimisation: yes\n";
+		if (isset($unboundcfg['qname-minimisation-strict'])) {
+			$qname_min .= "qname-minimisation-strict: yes\n";
+		}
+	}
+
 	$unboundconf = <<<EOD
 ##########################
 # Unbound Configuration
@@ -360,7 +372,7 @@ cache-min-ttl: {$cache_min_ttl}
 harden-dnssec-stripped: {$harden_dnssec_stripped}
 msg-cache-size: {$msg_cache_size}m
 rrset-cache-size: {$rrset_cache_size}m
-
+{$qname_min}
 {$optimization['number_threads']}
 {$optimization['msg_cache_slabs']}
 {$optimization['rrset_cache_slabs']}

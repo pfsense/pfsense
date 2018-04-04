@@ -304,9 +304,13 @@ forward-zone:
 	name: "."
 
 EOD;
+			if (isset($unboundcfg['forward_tls_upstream'])) {
+				$forward_conf .= "\tforward-tls-upstream: yes\n";
+			}
 			foreach ($dnsservers as $dnsserver) {
 				if (is_ipaddr($dnsserver) && !ip_in_subnet($dnsserver, "127.0.0.0/8")) {
-					$forward_conf .= "\tforward-addr: $dnsserver\n";
+					$fwdport = isset($unboundcfg['forward_tls_upstream']) ? "@853" : "";
+					$forward_conf .= "\tforward-addr: {$dnsserver}{$fwdport}\n";
 				}
 			}
 		}

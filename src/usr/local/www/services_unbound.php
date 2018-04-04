@@ -59,6 +59,9 @@ if (isset($a_unboundcfg['dnssec'])) {
 if (isset($a_unboundcfg['forwarding'])) {
 	$pconfig['forwarding'] = true;
 }
+if (isset($a_unboundcfg['forward_tls_upstream'])) {
+	$pconfig['forward_tls_upstream'] = true;
+}
 if (isset($a_unboundcfg['regdhcp'])) {
 	$pconfig['regdhcp'] = true;
 }
@@ -184,6 +187,7 @@ if ($_POST['save']) {
 		$a_unboundcfg['port'] = $pconfig['port'];
 		$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
 		$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
+		$a_unboundcfg['forward_tls_upstream'] = isset($pconfig['forward_tls_upstream']);
 		$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);
 		$a_unboundcfg['regdhcpstatic'] = isset($pconfig['regdhcpstatic']);
 		$a_unboundcfg['regovpnclients'] = isset($pconfig['regovpnclients']);
@@ -336,6 +340,13 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('If this option is set, DNS queries will be forwarded to the upstream DNS servers defined under'.
 					' %1$sSystem &gt; General Setup%2$s or those obtained via DHCP/PPP on WAN'.
 					' (if DNS Server Override is enabled there).','<a href="system.php">','</a>');
+
+$section->addInput(new Form_Checkbox(
+	'forward_tls_upstream',
+	null,
+	'Use SSL/TLS for DNS Queries to Forwarding Servers',
+	$pconfig['forward_tls_upstream']
+))->setHelp('When set in conjunction with DNS Query Forwarding, queries to all upstream forwarding DNS servers will be sent using SSL/TLS on the default port of 853. Note that ALL configured forwarding servers MUST support SSL/TLS queries on port 853.');
 
 $section->addInput(new Form_Checkbox(
 	'regdhcp',

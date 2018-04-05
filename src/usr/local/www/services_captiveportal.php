@@ -145,6 +145,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['maxprocperip'] = $a_cp[$cpzone]['maxprocperip'];
 	$pconfig['timeout'] = $a_cp[$cpzone]['timeout'];
 	$pconfig['idletimeout'] = $a_cp[$cpzone]['idletimeout'];
+	$pconfig['trafficquota'] = $a_cp[$cpzone]['trafficquota'];
 	$pconfig['freelogins_count'] = $a_cp[$cpzone]['freelogins_count'];
 	$pconfig['freelogins_resettimeout'] = $a_cp[$cpzone]['freelogins_resettimeout'];
 	$pconfig['freelogins_updatetimeouts'] = isset($a_cp[$cpzone]['freelogins_updatetimeouts']);
@@ -185,6 +186,8 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radiuskey4'] = $a_cp[$cpzone]['radiuskey4'];
 	$pconfig['radiusvendor'] = $a_cp[$cpzone]['radiusvendor'];
 	$pconfig['radiussession_timeout'] = isset($a_cp[$cpzone]['radiussession_timeout']);
+	$pconfig['radiustraffic_quota'] = isset($a_cp[$cpzone]['radiustraffic_quota']);
+	$pconfig['radiusperuserbw'] = isset($a_cp[$cpzone]['radiusperuserbw']);
 	$pconfig['radiussrcip_attribute'] = $a_cp[$cpzone]['radiussrcip_attribute'];
 	$pconfig['passthrumacadd'] = isset($a_cp[$cpzone]['passthrumacadd']);
 	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
@@ -281,6 +284,10 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");
 	}
 
+	if ($_POST['trafficquota'] && (!is_numeric($_POST['trafficquota']) || ($_POST['trafficquota'] < 1))) {
+		$input_errors[] = gettext("The traffic quota must be at least 1 megabyte.");
+	}
+
 	if ($_POST['freelogins_count'] && (!is_numeric($_POST['freelogins_count']))) {
 		$input_errors[] = gettext("The pass-through credit count must be a number or left blank.");
 	} else if ($_POST['freelogins_count'] && is_numeric($_POST['freelogins_count']) && ($_POST['freelogins_count'] >= 1)) {
@@ -353,6 +360,7 @@ if ($_POST['save']) {
 		$newcp['maxprocperip'] = $_POST['maxprocperip'] ? $_POST['maxprocperip'] : false;
 		$newcp['timeout'] = $_POST['timeout'];
 		$newcp['idletimeout'] = $_POST['idletimeout'];
+		$newcp['trafficquota'] = $_POST['trafficquota'];
 		$newcp['freelogins_count'] = $_POST['freelogins_count'];
 		$newcp['freelogins_resettimeout'] = $_POST['freelogins_resettimeout'];
 		$newcp['freelogins_updatetimeouts'] = $_POST['freelogins_updatetimeouts'] ? true : false;
@@ -429,6 +437,8 @@ if ($_POST['save']) {
 		$newcp['radiuskey4'] = $_POST['radiuskey4'];
 		$newcp['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$newcp['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
+		$newcp['radiustraffic_quota'] = $_POST['radiustraffic_quota'] ? true : false;
+		$newcp['radiusperuserbw'] = $_POST['radiusperuserbw'] ? true : false;
 		$newcp['radiussrcip_attribute'] = $_POST['radiussrcip_attribute'];
 		$newcp['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
 		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
@@ -568,6 +578,14 @@ $section->addInput(new Form_Input(
 	$pconfig['timeout']
 ))->setHelp('Clients will be disconnected after this amount of time, regardless of activity. They may log in again immediately, though. ' .
 			'Leave this field blank for no hard timeout (not recommended unless an idle timeout is set).');
+
+$section->addInput(new Form_Input(
+	'trafficquota',
+	'Traffic quota (Megabytes)',
+	'number',
+	$pconfig['trafficquota']
+))->setHelp('Clients will be disconnected after exceeding this amount of traffic, inclusive of both downloads and uploads. They may log in again immediately, though. ' .
+			'Leave this field blank for no traffic quota.');
 
 $section->addInput(new Form_Input(
 	'freelogins_count',
@@ -963,6 +981,21 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['radiussession_timeout']
 ))->setHelp('When enabled, clients will be disconnected after the amount of time retrieved from the RADIUS Session-Timeout attribute.');
 
+$section->addInput(new Form_Checkbox(
+	'radiustraffic_quota',
+	'Traffic quota',
+	'Use RADIUS pfSense-Max-Total-Octets attribute',
+	$pconfig['radiustraffic_quota']
+))->setHelp('When enabled, clients will be disconnected after exceeding the amount of traffic, inclusive of both downloads and uploads, retrieved from the RADIUS pfSense-Max-Total-Octets attribute.');
+
+$section->addInput(new Form_Checkbox(
+	'radiusperuserbw',
+	'Per-user bandwidth restrictions',
+	'Use RADIUS pfSense-Bandwidth-Max-Up and pfSense-Bandwidth-Max-Down attributes',
+	$pconfig['radiusperuserbw']
+))->setHelp('When enabled, the bandwidth assigned to a client will be limited to the values retrieved from the RADIUS pfSense-Bandwidth-Max-Up and ' .
+			'pfSense-Bandwidth-Max-Down attributes or from the comparable WISPr attributes.');
+
 $section->addInput(new Form_Select(
 	'radiusvendor',
 	'Type',
@@ -1234,6 +1267,7 @@ events.push(function() {
 		hideInput('maxprocperip', hide);
 		hideInput('idletimeout', hide);
 		hideInput('timeout', hide);
+		hideInput('trafficquota', hide);
 		hideInput('freelogins_count', hide);
 		hideInput('freelogins_resettimeout', hide);
 		hideCheckbox('freelogins_updatetimeouts', hide);

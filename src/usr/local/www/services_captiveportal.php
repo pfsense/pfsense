@@ -187,6 +187,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radiusvendor'] = $a_cp[$cpzone]['radiusvendor'];
 	$pconfig['radiussession_timeout'] = isset($a_cp[$cpzone]['radiussession_timeout']);
 	$pconfig['radiustraffic_quota'] = isset($a_cp[$cpzone]['radiustraffic_quota']);
+	$pconfig['radiusperuserbw'] = isset($a_cp[$cpzone]['radiusperuserbw']);
 	$pconfig['radiussrcip_attribute'] = $a_cp[$cpzone]['radiussrcip_attribute'];
 	$pconfig['passthrumacadd'] = isset($a_cp[$cpzone]['passthrumacadd']);
 	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
@@ -437,6 +438,7 @@ if ($_POST['save']) {
 		$newcp['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$newcp['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
 		$newcp['radiustraffic_quota'] = $_POST['radiustraffic_quota'] ? true : false;
+		$newcp['radiusperuserbw'] = $_POST['radiusperuserbw'] ? true : false;
 		$newcp['radiussrcip_attribute'] = $_POST['radiussrcip_attribute'];
 		$newcp['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
 		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
@@ -985,6 +987,14 @@ $section->addInput(new Form_Checkbox(
 	'Use RADIUS pfSense-Max-Total-Octets attribute',
 	$pconfig['radiustraffic_quota']
 ))->setHelp('When enabled, clients will be disconnected after exceeding the amount of traffic, inclusive of both downloads and uploads, retrieved from the RADIUS pfSense-Max-Total-Octets attribute.');
+
+$section->addInput(new Form_Checkbox(
+	'radiusperuserbw',
+	'Per-user bandwidth restrictions',
+	'Use RADIUS pfSense-Bandwidth-Max-Up and pfSense-Bandwidth-Max-Down attributes',
+	$pconfig['radiusperuserbw']
+))->setHelp('When enabled, the bandwidth assigned to a client will be limited to the values retrieved from the RADIUS pfSense-Bandwidth-Max-Up and ' .
+			'pfSense-Bandwidth-Max-Down attributes or from the comparable WISPr attributes.');
 
 $section->addInput(new Form_Select(
 	'radiusvendor',

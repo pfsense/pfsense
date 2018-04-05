@@ -1,6 +1,6 @@
 <?php
 /*
- * status_dns_resolver.php
+ * status_unbound.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
@@ -23,7 +23,7 @@
 ##|*IDENT=page-status-dns-resolver
 ##|*NAME=Status: DNS Resolver
 ##|*DESCR=Allow access to the 'Status: DNS Resolver' page.
-##|*MATCH=status_dns_resolver.php*
+##|*MATCH=status_unbound.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
@@ -34,7 +34,16 @@ $shortcut_section = "resolver";
 include("head.inc");
 
 $infra_cache_entries = array();
-exec("/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf dump_infra", $infra_cache_entries, $ubc_ret);
+$errors = "";
+
+// Check if unbound is enabled and running, bail if not
+global $config;
+if (!isset($config['unbound']['enable']) || !is_service_running('unbound')) {
+	print_info_box(gettext("The DNS Resolver is disabled or stopped."), 'warning', false);
+} else {
+	exec("/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf dump_infra", $infra_cache_entries, $ubc_ret);
+}
+
 ?>
 
 <div class="panel panel-default">
@@ -60,7 +69,7 @@ exec("/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.con
 <?php if (empty($infra_cache_entries)): ?>
 					<tr>
 						<td colspan="10">
-							<i>No Data Yet</i>
+							<i><?= gettext("No Data") ?></i>
 						</td>
 					</tr>
 <?php endif; ?>
@@ -145,7 +154,7 @@ foreach ($infra_cache_entries as $ice) {
 <?php if (empty($infra_cache_entries)): ?>
 					<tr>
 						<td colspan="17">
-							<i>No Data Yet</i>
+							<i><?= gettext("No Data") ?></i>
 						</td>
 					</tr>
 <?php endif; ?>

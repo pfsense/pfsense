@@ -108,15 +108,20 @@ function test_unbound_config($unboundcfg, &$output) {
 	global $g;
 
 	$cfgsubdir = "/test";
+	$cfgdir = "{$g['unbound_chroot_path']}{$cfgsubdir}";
+	rmdir_recursive($cfgdir);
+
 	unbound_generate_config($unboundcfg, $cfgsubdir);
 	unbound_remote_control_setup($cfgsubdir);
 	do_as_unbound_user("unbound-anchor", $cfgsubdir);
 
-	$cfgdir = "{$g['unbound_chroot_path']}{$cfgsubdir}";
-
 	$rv = 0;
-	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1", $output, $rv);
-	rmdir_recursive($cfgdir);
+	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1",
+	    $output, $rv);
+
+	if ($rv == 0) {
+		rmdir_recursive($cfgdir);
+	}
 
 	return $rv;
 }

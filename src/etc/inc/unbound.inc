@@ -178,35 +178,64 @@ private-address: fe80::/10
 EOF;
 	}
 
-	// Determine interfaces to run on
-	$bindints = "";
-	if (!empty($unboundcfg['active_interface'])) {
-		$active_interfaces = explode(",", $unboundcfg['active_interface']);
-		if (in_array("all", $active_interfaces, true)) {
-			$bindints .= "interface: 0.0.0.0\n";
-			$bindints .= "interface: ::0\n";
-			$bindints .= "interface-automatic: yes\n";
-		} else {
-			foreach ($active_interfaces as $ubif) {
-				if (is_ipaddr($ubif)) {
-					$bindints .= "interface: $ubif\n";
-				} else {
-					$intip = get_interface_ip($ubif);
-					if (is_ipaddrv4($intip)) {
-						$bindints .= "interface: $intip\n";
-					}
-					$intip = get_interface_ipv6($ubif);
-					if (is_ipaddrv6($intip)) {
-						$bindints .= "interface: $intip\n";
-					}
+	// Determine interfaces where unbound will bind
+	$sslport = is_numeric($unboundcfg['sslport']) ? $unboundcfg['sslport'] : "853";
+	$bindintcfg = "";
+	$bindints = array();
+	$active_interfaces = explode(",", $unboundcfg['active_interface']);
+	if (empty($unboundcfg['active_interface']) || in_array("all", $active_interfaces, true)) {
+		$bindints[] = "0.0.0.0";
+		$bindints[] = "::0";
+		$bindintcfg .= "interface-automatic: " . (isset($unboundcfg['enablessl']) ? "no" : "yes") . "\n";
+	} else {
+		foreach ($active_interfaces as $ubif) {
+			if (is_ipaddr($ubif)) {
+				$bindints[] = $ubif;
+			} else {
+				$intip = get_interface_ip($ubif);
+				if (is_ipaddrv4($intip)) {
+					$bindints[] = $intip;
+				}
+				$intip = get_interface_ipv6($ubif);
+				if (is_ipaddrv6($intip)) {
+					$bindints[] = $intip;
 				}
 			}
 		}
-	} else {
-		$bindints .= "interface: 0.0.0.0\n";
-		$bindints .= "interface: ::0\n";
-		/* If the active interface array is empty, treat it the same as "All" as is done above. Otherwise it breaks CARP with a default config. */
-		$bindints .= "interface-automatic: yes\n";
+	}
+	foreach ($bindints as $bindint) {
+		$bindintcfg .= "interface: {$bindint}\n";
+		if (isset($unboundcfg['enablessl'])) {
+			$bindintcfg .= "interface: {$bindint}@{$sslport}\n";
+		}
+	}
+
+	// SSL Configuration
+	$sslconfig = "";
+	if (isset($unboundcfg['enablessl'])) {
+		$sslcert_path = "{$g['unbound_chroot_path']}/sslcert.crt";
+		$sslkey_path = "{$g['unbound_chroot_path']}/sslcert.key";
+
+		// Enable SSL on the chosen or default port
+		$sslconfig .= "ssl-port: {$sslport}\n";
+
+		// Lookup CA and Server Cert
+		$cert = lookup_cert($unboundcfg['sslcertref']);
+		$ca = ca_chain($cert);
+		$cert_chain = base64_decode($cert['crt']);
+		if (!empty($ca)) {
+			$cert_chain .= "\n" . $ca;
+		}
+
+		// Write CA and Server Cert
+		file_put_contents($sslcert_path, $cert_chain);
+		chmod($sslcert_path, 0644);
+		file_put_contents($sslkey_path, base64_decode($cert['prv']));
+		chmod($sslkey_path, 0600);
+
+		// Add config for CA and Server Cert
+		$sslconfig .= "ssl-service-pem: \"{$sslcert_path}\"\n";
+		$sslconfig .= "ssl-service-key: \"{$sslkey_path}\"\n";
 	}
 
 	// Determine interfaces to run on
@@ -392,10 +421,11 @@ use-caps-for-id: {$use_caps}
 serve-expired: {$dns_record_cache}
 # Statistics
 {$statistics}
+# SSL Configuration
+{$sslconfig}
 # Interface IP(s) to bind to
-{$bindints}
+{$bindintcfg}
 {$outgoingints}
-
 # DNS Rebinding
 {$private_addr}
 {$private_domains}
@@ -764,7 +794,6 @@ function unbound_acls_config($cfgsubdir = "") {
 			$active_interfaces = get_configured_interface_with_descr();
 		}
 
-		$bindints = "";
 		foreach ($active_interfaces as $ubif => $ifdesc) {
 			$ifip = get_interface_ip($ubif);
 			if (is_ipaddrv4($ifip)) {

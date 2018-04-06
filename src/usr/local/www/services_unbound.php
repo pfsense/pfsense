@@ -53,6 +53,9 @@ $a_domainOverrides = &$a_unboundcfg['domainoverrides'];
 if (isset($a_unboundcfg['enable'])) {
 	$pconfig['enable'] = true;
 }
+if (isset($a_unboundcfg['enablessl'])) {
+	$pconfig['enablessl'] = true;
+}
 if (isset($a_unboundcfg['dnssec'])) {
 	$pconfig['dnssec'] = true;
 }
@@ -73,6 +76,8 @@ if (isset($a_unboundcfg['regovpnclients'])) {
 }
 
 $pconfig['port'] = $a_unboundcfg['port'];
+$pconfig['sslport'] = $a_unboundcfg['sslport'];
+$pconfig['sslcertref'] = $a_unboundcfg['sslcertref'];
 $pconfig['custom_options'] = base64_decode($a_unboundcfg['custom_options']);
 
 if (empty($a_unboundcfg['active_interface'])) {
@@ -93,6 +98,14 @@ if (empty($a_unboundcfg['system_domain_local_zone_type'])) {
 	$pconfig['system_domain_local_zone_type'] = $a_unboundcfg['system_domain_local_zone_type'];
 }
 
+$a_cert =& $config['cert'];
+$certs_available = false;
+
+if (is_array($a_cert) && count($a_cert)) {
+	$certs_available = true;
+} else {
+	$a_cert = array();
+}
 
 if ($_POST['apply']) {
 	$retval = 0;
@@ -114,6 +127,10 @@ if ($_POST['save']) {
 		if ($pconfig['port'] == $config['dnsmasq']['port']) {
 			$input_errors[] = gettext("The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.");
 		}
+	}
+
+	if (isset($pconfig['enablessl']) && (!$certs_available || empty($pconfig['sslcertref']))) {
+		$input_errors[] = gettext("Acting as an SSL/TLS server requires a valid server certificate");
 	}
 
 	// forwarding mode requires having valid DNS servers
@@ -154,6 +171,9 @@ if ($_POST['save']) {
 	if ($pconfig['port'] && !is_port($pconfig['port'])) {
 		$input_errors[] = gettext("A valid port number must be specified.");
 	}
+	if ($pconfig['sslport'] && !is_port($pconfig['sslport'])) {
+		$input_errors[] = gettext("A valid SSL/TLS port number must be specified.");
+	}
 
 	if (is_array($pconfig['active_interface']) && !empty($pconfig['active_interface'])) {
 		$display_active_interface = $pconfig['active_interface'];
@@ -184,7 +204,10 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 		$a_unboundcfg['enable'] = isset($pconfig['enable']);
+		$a_unboundcfg['enablessl'] = isset($pconfig['enablessl']);
 		$a_unboundcfg['port'] = $pconfig['port'];
+		$a_unboundcfg['sslport'] = $pconfig['sslport'];
+		$a_unboundcfg['sslcertref'] = $pconfig['sslcertref'];
 		$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
 		$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
 		$a_unboundcfg['forward_tls_upstream'] = isset($pconfig['forward_tls_upstream']);
@@ -297,6 +320,42 @@ $section->addInput(new Form_Input(
 	['placeholder' => '53']
 ))->setHelp('The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.');
 
+$section->addInput(new Form_Checkbox(
+	'enablessl',
+	'Enable SSL/TLS Service',
+	'Respond to incoming SSL/TLS queries from local clients',
+	$pconfig['enablessl']
+))->setHelp('Configures the DNS Resolver to act as a DNS over SSL/TLS server which can answer queries from clients which also support DNS over TLS. ' .
+		'Activating this option disables automatic interface response routing behavior, thus it works best with specific interface bindings.' );
+
+if ($certs_available) {
+	$values = array();
+	foreach ($a_cert as $cert) {
+		$values[ $cert['refid'] ] = $cert['descr'];
+	}
+
+	$section->addInput($input = new Form_Select(
+		'sslcertref',
+		'SSL/TLS Certificate',
+		$pconfig['sslcertref'],
+		$values
+	))->setHelp('The server certificate to use for SSL/TLS service. The CA chain will be determined automatically.');
+} else {
+	$section->addInput(new Form_StaticText(
+		'SSL/TLS Certificate',
+		sprintf('No Certificates have been defined. A certificate is required before SSL/TLS can be enabled. %1$s Create or Import %2$s a Certificate.',
+		'<a href="system_certmanager.php">', '</a>')
+	));
+}
+
+$section->addInput(new Form_Input(
+	'sslport',
+	'SSL/TLS Listen Port',
+	'number',
+	$pconfig['sslport'],
+	['placeholder' => '853']
+))->setHelp('The port used for responding to SSL/TLS DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 853.');
+
 $activeiflist = build_if_list($pconfig['active_interface']);
 
 $section->addInput(new Form_Select(
@@ -344,7 +403,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'forward_tls_upstream',
 	null,
-	'Use SSL/TLS for DNS Queries to Forwarding Servers',
+	'Use SSL/TLS for outgoing DNS Queries to Forwarding Servers',
 	$pconfig['forward_tls_upstream']
 ))->setHelp('When set in conjunction with DNS Query Forwarding, queries to all upstream forwarding DNS servers will be sent using SSL/TLS on the default port of 853. Note that ALL configured forwarding servers MUST support SSL/TLS queries on port 853.');
 

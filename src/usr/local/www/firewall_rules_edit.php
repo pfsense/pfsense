@@ -1943,6 +1943,8 @@ events.push(function() {
 		// Gateway selection is not permitted for "IPV4+IPV6"
 		if (protocol == "inet46") {
 			$('#gateway').prop("disabled", true);
+		} else {
+			$('#gateway').prop("disabled", false);
 		}
 	}
 

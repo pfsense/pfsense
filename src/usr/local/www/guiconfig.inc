@@ -825,7 +825,12 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0
 		}
 	}
 
-	if (is_alias($pbeginport)) {
+	/*
+	 * If the port is still unset, then it must not be numeric, but could
+	 * be an alias or a well-known/registered service.
+	 * See https://redmine.pfsense.org/issues/8410
+	 */
+	if (!isset($adr['port']) && is_port_or_alias($pbeginport)) {
 		$adr['port'] = $pbeginport;
 	}
 }

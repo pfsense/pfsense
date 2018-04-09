@@ -1411,7 +1411,12 @@ EOD;
 					log_error(sprintf(gettext("No phase2 specifications for tunnel with REQID = %s"), $ikeid));
 				}
 			} else {
-				$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
+				if (isset($ph1ent['mobile'])) {
+					$ipsecfin = "\nconn con-mobile\n";
+				}
+				else {
+					$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
+				}
 				//if (!empty($reqids[$idx])) {
 				//	$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				//}
@@ -1435,6 +1440,61 @@ EOD;
 			}
 			$ipsecconf .= $ipsecfin;
 			unset($ipsecfin);
+		}
+	}
+
+	$a_mobilekey = $config['ipsec']['mobilekey'];
+
+	if (is_array($a_phase1) && count($a_phase1)) {
+		foreach ($a_phase1 as $ph1ent) {
+			if (!isset($ph1ent['mobile'])) {
+				continue;
+			}
+			if (isset($ph1ent['disabled'])) {
+				continue;
+			}
+
+			if (is_array($a_mobilekey) && count($a_mobilekey)) {
+				$ipsecfin = '';
+				$mobilekey_counter = 1;
+				foreach ($a_mobilekey as $mkent) {
+					if ($mkent['type'] != "EAP") {
+						continue;
+					}
+
+					if (!isset($mkent['ident_type']) || !isset($mkent['pool_address']) || !isset($mkent['pool_netbits'])) {
+						continue;
+					}
+
+					if (strlen($mkent['pool_address'] < 1) || !is_ipaddr($mkent['pool_address'])) {
+						continue;
+					}
+
+					$ipsecfin .= "\nconn mobile-{$mobilekey_counter}\n";
+					$ipsecfin .= "\talso = con-mobile\n";
+					$ipsecfin .= "\teap_identity = %identity\n";
+					$ipsecfin .= "\trightsourceip = {$mkent['pool_address']}/{$mkent['pool_netbits']}\n";
+
+					if ($mkent['ident_type'] == "none") {
+						$ipsecfin .= "\trightid = \"{$mkent['ident']}\"\n";
+					}
+					else {
+						$ipsecfin .= "\trightid = {$mkent['ident_type']}:{$mkent['ident']}\n";
+					}
+
+					// optional: define left|rightid more granular
+					// supported: ipv4, ipv6, rfc822, email, userfqdn, fqdn, dns, asn1dn, asn1gn, keyid
+					// example: $ipsecfin = "\trightid = email:your@email.address\n";
+
+					// note: comma seperated list for access restriction, regardless of firewall rules
+					// example: $ipsecfin = "\tleftsubnet = 1.1.1.1/32,1.1.1.2/32,2.2.2.0/24\n";
+
+					$mobilekey_counter++;
+				}
+				$ipsecconf .= $ipsecfin;
+				unset($ipsecfin);
+				unset($mobilekey_counter);
+			}
 		}
 	}
 

@@ -49,6 +49,9 @@ if (isset($id) && $a_secret[$id]) {
 	$pconfig['ident'] = $a_secret[$id]['ident'];
 	$pconfig['type'] = $a_secret[$id]['type'];
 	$pconfig['psk'] = $a_secret[$id]['pre-shared-key'];
+	$pconfig['ident_type'] = $a_secret[$id]['ident_type'];
+	$pconfig['pool_address'] = $a_secret[$id]['pool_address'];
+	$pconfig['pool_netbits'] = $a_secret[$id]['pool_netbits'];
 }
 
 if ($_POST['save']) {
@@ -79,6 +82,10 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Pre-Shared Key contains invalid characters.");
 	}
 
+	if (isset($_POST['pool_address']) && strlen($_POST['pool_address'] > 1) && !is_ipaddr($_POST['pool_address'])) {
+		$input_errors[] = gettext("A valid IP address for 'Virtual Address Pool Network' must be specified.");
+	}
+
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
 		/* make sure there are no dupes */
 		foreach ($a_secret as $secretent) {
@@ -98,6 +105,9 @@ if ($_POST['save']) {
 		$secretent['ident'] = $_POST['ident'];
 		$secretent['type'] = $_POST['type'];
 		$secretent['pre-shared-key'] = $_POST['psk'];
+		$secretent['ident_type'] = $_POST['ident_type'];
+		$secretent['pool_address'] = $_POST['pool_address'];
+		$secretent['pool_netbits'] = $_POST['pool_netbits'];
 		$text = "";
 
 		if (isset($id) && $a_secret[$id]) {
@@ -114,6 +124,18 @@ if ($_POST['save']) {
 		header("Location: vpn_ipsec_keys.php");
 		exit;
 	}
+}
+
+function build_ipsecid_list() {
+	global $ipsec_identifier_list;
+
+	$list = array();
+
+	foreach ($ipsec_identifier_list as $id_type => $id_params) {
+		$list[$id_type] = htmlspecialchars($id_params['desc']);
+	}
+
+	return($list);
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Pre-Shared Keys"), gettext("Edit"));
@@ -149,6 +171,19 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['psk']
 ));
+
+$section->addInput(new Form_Select(
+	'ident_type',
+	'*Identifier type',
+	$pconfig['ident_type'],
+	build_ipsecid_list()
+))->setWidth(4)->setHelp('Optional: specify identifier type for strongswan');
+
+$section->addInput(new Form_IpAddress(
+	'pool_address',
+	'*IPv4 address',
+	$pconfig['pool_address']
+))->setWidth(4)->setHelp('Optional: Network configuration for Virtual Address Pool')->addMask(pool_netbits, $pconfig['pool_netbits'], 32, 0);
 
 if (isset($id) && $a_secret[$id]) {
 	$form->addGlobal(new Form_Input(

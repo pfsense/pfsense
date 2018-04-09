@@ -276,7 +276,7 @@ events.push(function() {
 	window.graph_backgroundupdate = <?=json_encode($tg_backgroundupdate)?>;
 
 	window.interval = <?=json_encode($tg_refreshinterval)?>;
-	window.invert = <?=json_encode($tg_invert)?>;
+	window.invert = JSON.parse(<?=json_encode($tg_invert)?>);
 	window.size = <?=json_encode($tg_size)?>;
 	window.smoothing = <?=json_encode($tg_smoothfactor)?>;
 	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });

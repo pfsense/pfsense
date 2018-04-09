@@ -86,7 +86,7 @@ $sshconf .= "ClientAliveInterval 30\n";
 $sshconf .= "PermitRootLogin yes\n";
 if ($config['system']['ssh']['sshdkeyonly'] == "both") {
 	$sshconf .= "# Login via both Key and Password only\n";
-	$sshconf .= "AuthenticationMethods publickey,password\n";	
+	$sshconf .= "AuthenticationMethods publickey,password\n";
 	$sshconf .= "ChallengeResponseAuthentication yes\n";
 	$sshconf .= "PasswordAuthentication yes\n";
 	$sshconf .= "PubkeyAuthentication yes\n";

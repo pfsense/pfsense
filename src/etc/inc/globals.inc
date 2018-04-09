@@ -209,4 +209,21 @@ $factory_default_checkipservice = array(
 );
 
 $dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns", "godaddy", "godaddy-v6");
+
+/* pf tokens from FreeBSD source sbin/pfctl/parse.y (plus our custom entries at the end)*/
+global $pf_reserved_keywords;
+$pf_reserved_keywords = array(
+	"pass", "block", "scrub", "return", "in", "os", "out", "log", "quick", "on", "from", "to", "flags", "returnrst",
+	"returnicmp", "returnicmp6", "proto", "inet", "inet6", "all", "any", "icmptype", "icmp6type", "code", "keep",
+	"modulate", "state", "port", "rdr", "nat", "binat", "arrow", "nodf", "minttl", "error", "allowopts", "fastroute",
+	"filename", "routeto", "dupto", "replyto", "no", "label", "noroute", "urpffailed", "fragment", "user", "group",
+	"maxmss", "maximum", "ttl", "tos", "drop", "table", "reassemble", "fragdrop", "fragcrop", "anchor", "natanchor",
+	"rdranchor", "binatanchor", "set", "optimization", "timeout", "limit", "loginterface", "blockpolicy", "randomid",
+	"requireorder", "synproxy", "fingerprints", "nosync", "debug", "skip", "hostid", "antispoof", "for", "include",
+	"bitmask", "random", "sourcehash", "roundrobin", "staticport", "probability", "altq", "cbq", "codel", "priq",
+	"hfsc", "fairq", "bandwidth", "tbrsize", "linkshare", "realtime", "upperlimit", "queue", "priority", "qlimit",
+	"hogs", "buckets", "rtable", "target", "interval", "load", "ruleset_optimization", "prio", "stickyaddress",
+	"maxsrcstates", "maxsrcnodes", "sourcetrack", "global", "rule", "maxsrcconn", "maxsrcconnrate", "overload",
+	"flush", "sloppy", "tagged", "tag", "ifbound", "floating", "statepolicy", "statedefaults", "route", "settos",
+	"divertto", "divertreply", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 ?>

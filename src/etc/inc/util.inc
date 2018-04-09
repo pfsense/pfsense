@@ -1054,14 +1054,14 @@ function is_validaliasname($name, $return_message = false, $object = "alias") {
 	}
 	if (getprotobyname($name)) {
 		if ($return_message) {
-			return sprintf(gettext('The %1$s name must not be a well-known IP protocol name such as TCP, UDP, ICMP etc.'), $object);
+			return sprintf(gettext('The %1$s name must not be an IP protocol name such as TCP, UDP, ICMP etc.'), $object);
 		} else {
 			return false;
 		}
 	}
 	if (getservbyname($name, "tcp") || getservbyname($name, "udp")) {
 		if ($return_message) {
-			return sprintf(gettext('The %1$s name must not be a well-known TCP or UDP port name such as ssh, smtp, pop3, tftp, http, openvpn etc.'), $object);
+			return sprintf(gettext('The %1$s name must not be a well-known or registered TCP or UDP port name such as ssh, smtp, pop3, tftp, http, openvpn etc.'), $object);
 		} else {
 			return false;
 		}

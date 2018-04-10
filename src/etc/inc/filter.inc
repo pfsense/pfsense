@@ -774,7 +774,7 @@ function filter_generate_aliases() {
 		     $config['system']['maximumtableentries'] <
 		     $g['minimumtableentries_bogonsv6']) {
 			file_notice("Filter_Reload", sprintf(gettext(
-			    "In order block bogon IPv6 networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s"),
+			    "To block bogon IPv6 networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s"),
 			    $g['minimumtableentries_bogonsv6']));
 		} else {
 			$aliases .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";

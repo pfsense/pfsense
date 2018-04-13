@@ -494,8 +494,8 @@ $section->addInput(new Form_Select(
 	)
 ))->setHelp('When set to %3$sPublic Key Only%4$s, SSH access requires authorized keys and these '.
 	'keys must be configured for each %1$suser%2$s that has been granted secure shell access. '.
-	'If set to %3$sRequire Both Password and Public Key%4$s, the ssh daemon requires both authorized keys ' .
-	'%5$sand%6$s valid passwords to gain access. The default %3$sPassword or Public Key%4$s allows'.
+	'If set to %3$sRequire Both Password and Public Key%4$s, the SSH daemon requires both authorized keys ' .
+	'%5$sand%6$s valid passwords to gain access. The default %3$sPassword or Public Key%4$s setting allows '.
 	'either a valid password or a valid authorized key to login.',
 	'<a href="system_usermanager.php">', '</a>', '<i>', '</i>', '<b>', '</b>');
 
@@ -515,10 +515,10 @@ if (!$g['enableserial_force']) {
 	$section->addInput(new Form_Checkbox(
 		'enableserial',
 		'Serial Terminal',
-		'Enables the first serial port with 115200/8/N/1 by default, or another speed selectable below.',
+		'Enables the first Serial Port with 115200/8/N/1 by default, or another speed selectable below.',
 		isset($pconfig['enableserial'])
 	))->setHelp('Note:	This will redirect the console output and messages to '.
-		'the serial port. The console menu can still be accessed from the internal video '.
+		'the Serial Port. The console menu can still be accessed from the internal video '.
 		'card/keyboard. A %1$snull modem%2$s serial cable or adapter is required to use the '.
 		'serial console.', '<b>', '</b>');
 }

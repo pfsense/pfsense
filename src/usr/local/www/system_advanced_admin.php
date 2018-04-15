@@ -515,10 +515,10 @@ if (!$g['enableserial_force']) {
 	$section->addInput(new Form_Checkbox(
 		'enableserial',
 		'Serial Terminal',
-		'Enables the first Serial Port with 115200/8/N/1 by default, or another speed selectable below.',
+		'Enables the first serial port with 115200/8/N/1 by default, or another speed selectable below.',
 		isset($pconfig['enableserial'])
 	))->setHelp('Note:	This will redirect the console output and messages to '.
-		'the Serial Port. The console menu can still be accessed from the internal video '.
+		'the serial port. The console menu can still be accessed from the internal video '.
 		'card/keyboard. A %1$snull modem%2$s serial cable or adapter is required to use the '.
 		'serial console.', '<b>', '</b>');
 }

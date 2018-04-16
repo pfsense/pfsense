@@ -121,44 +121,7 @@ if ($_REQUEST['if']) {
 
 $ifdescs = get_configured_interface_with_descr();
 
-/* add group interfaces */
-if (is_array($config['ifgroups']['ifgroupentry'])) {
-	foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
-		if (have_ruleint_access($ifgen['ifname'])) {
-			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
-		}
-	}
-}
-
-foreach ($ifdescs as $ifent => $ifdesc) {
-	if (have_ruleint_access($ifent)) {
-		$iflist[$ifent] = $ifdesc;
-	}
-}
-
-if ($config['l2tp']['mode'] == "server") {
-	if (have_ruleint_access("l2tp")) {
-		$iflist['l2tp'] = gettext("L2TP VPN");
-	}
-}
-
-if (is_array($config['pppoes']['pppoe'])) {
-	foreach ($config['pppoes']['pppoe'] as $pppoes) {
-		if (($pppoes['mode'] == 'server') && have_ruleint_access("pppoe")) {
-			$iflist['pppoe'] = gettext("PPPoE Server");
-		}
-	}
-}
-
-/* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$iflist["enc0"] = gettext("IPsec");
-}
-
-/* add openvpn/tun interfaces */
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$iflist["openvpn"] = gettext("OpenVPN");
-}
+$iflist = create_interface_list();
 
 if (!$if || !isset($iflist[$if])) {
 	if ($if != "any" && $if != "FloatingRules" && isset($iflist['wan'])) {

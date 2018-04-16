@@ -5090,6 +5090,14 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 			} else if (substr($interface, 0, 5) == '_lloc') {
 				return get_interface_linklocal($interface);
 			} else {
+				if (is_array($config['ifgroups']['ifgroupentry'])) {
+					foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
+						if ($ifgen['ifname'] === $interface) {
+							return $ifgen['ifname'];
+						}
+					}
+				}
+
 				/* if list */
 				$ifdescrs = get_configured_interface_with_descr(true);
 				foreach ($ifdescrs as $if => $ifname) {
@@ -6678,6 +6686,47 @@ function build_ppps_link_list() {
 		}
 	}
 	return($linklist);
+}
+
+function create_interface_list() {
+	global $config;
+
+	$iflist = array();
+
+	// add group interfaces
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
+			if (have_ruleint_access($ifgen['ifname'])) {
+				$iflist[$ifgen['ifname']] = $ifgen['ifname'];
+			}
+		}
+	}
+
+	foreach (get_configured_interface_with_descr() as $ifent => $ifdesc) {
+		if (have_ruleint_access($ifent)) {
+			$iflist[$ifent] = $ifdesc;
+		}
+	}
+
+	if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp")) {
+		$iflist['l2tp'] = gettext('L2TP VPN');
+	}
+
+	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
+		$iflist['pppoe'] = gettext("PPPoE Server");
+	}
+
+	// add ipsec interfaces
+	if (ipsec_enabled() && have_ruleint_access("enc0")) {
+		$iflist["enc0"] = gettext("IPsec");
+	}
+
+	// add openvpn/tun interfaces
+	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+		$iflist["openvpn"] = gettext("OpenVPN");
+	}
+
+	return($iflist);
 }
 
 ?>

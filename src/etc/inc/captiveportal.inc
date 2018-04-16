@@ -1115,7 +1115,6 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 
 	/* find entry */
 	if (!empty($result)) {
-		captiveportal_write_db("DELETE FROM captiveportal WHERE sessionid = '{$sessionid}'");
 
 		foreach ($result as $cpentry) {
 			if (empty($cpentry[12])) {
@@ -1124,6 +1123,7 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 			captiveportal_disconnect($cpentry, $radiusservers[$cpentry[12]], $term_cause);
 			captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "DISCONNECT");
 		}
+		captiveportal_write_db("DELETE FROM captiveportal WHERE sessionid = '{$sessionid}'");
 		unset($result);
 	}
 }

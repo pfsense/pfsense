@@ -494,8 +494,8 @@ $section->addInput(new Form_Select(
 	)
 ))->setHelp('When set to %3$sPublic Key Only%4$s, SSH access requires authorized keys and these '.
 	'keys must be configured for each %1$suser%2$s that has been granted secure shell access. '.
-	'If set to %3$sRequire Both Password and Public Key%4$s, the ssh daemon requires both authorized keys ' .
-	'%5$sand%6$s valid passwords to gain access. The default %3$sPassword or Public Key%4$s allows'.
+	'If set to %3$sRequire Both Password and Public Key%4$s, the SSH daemon requires both authorized keys ' .
+	'%5$sand%6$s valid passwords to gain access. The default %3$sPassword or Public Key%4$s setting allows '.
 	'either a valid password or a valid authorized key to login.',
 	'<a href="system_usermanager.php">', '</a>', '<i>', '</i>', '<b>', '</b>');
 

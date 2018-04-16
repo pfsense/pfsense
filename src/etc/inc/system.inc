@@ -616,25 +616,26 @@ function system_dhcpleases_configure() {
 			$unbound_conf = "";
 		}
 
-		if (isvalidpid($pidfile)) {
-			/* Make sure dhcpleases is using correct unbound or dnsmasq */
-			$_gb = exec("/bin/pgrep -F {$pidfile} -f {$dns_pid}", $output, $retval);
-			if (intval($retval) == 0) {
-				sigkillbypid($pidfile, "HUP");
-				return;
-			} else {
-				sigkillbypid($pidfile, "TERM");
-			}
-		}
+		/* best to never send a HUP to dhcpleases, it is bugged */
+		// if (isvalidpid($pidfile)) {
+		// /* Make sure dhcpleases is using correct unbound or dnsmasq */
+		//	$_gb = exec("/bin/pgrep -F {$pidfile} -f {$dns_pid}", $output, $retval);
+		//	if (intval($retval) == 0) {
+		//		sigkillbypid($pidfile, "HUP");
+		//		return;
+		//	} else {
+		//		sigkillbypid($pidfile, "TERM");
+		//	}
+		// }
 
 		/* To ensure we do not start multiple instances of dhcpleases, perform some clean-up first. */
-		if (is_process_running("dhcpleases")) {
-			sigkillbyname('dhcpleases', "TERM");
-		}
+		mwexec("/bin/pkill -x dhcpleases", true, true, false);
 		@unlink($pidfile);
+		usleep(250000); // quarter-second pause
 		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['etc_path']}/hosts");
-	} elseif (isvalidpid($pidfile)) {
-		sigkillbypid($pidfile, "TERM");
+		
+	} else {
+		mwexec("/bin/pkill -x dhcpleases", true, true, false);
 		@unlink($pidfile);
 	}
 }

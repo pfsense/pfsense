@@ -857,6 +857,14 @@ table[data-sortable].sortable-theme-bootstrap thead th {
     }
 }
 
+@media (min-width:991px){
+	.navbar-fixed-top .navbar-nav .open .dropdown-menu {
+		/* show a scrollbar in the menu when the menu is higher than the viewport */
+		max-height: calc(100vh - 50px);
+		overflow-y: auto;
+	}
+}
+
 @media (max-width: 991px) {
     /* change top navbar from horizontal to vertical */
     .navbar-header {
@@ -897,6 +905,14 @@ table[data-sortable].sortable-theme-bootstrap thead th {
     .navbar-fixed-bottom .navbar-collapse, .navbar-fixed-top .navbar-collapse {
         max-height: none !important;
     }
+	.navbar-fixed-bottom, .navbar-fixed-top {
+		/*cant use fixed position as with non-scrollable menu's on small screens some options would not be visible/usable*/
+		position: relative;
+	}
+	.container.fixed {
+		/*when using relative top bar no need for manual padding*/
+		padding-top: 0;
+	}
 }
 
 @media (max-width: 767px) {

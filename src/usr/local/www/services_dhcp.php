@@ -1555,7 +1555,7 @@ events.push(function() {
 				empty($pconfig['ddnsdomain']) &&
 				empty($pconfig['ddnsdomainprimary']) &&
 			    empty($pconfig['ddnsdomainkeyname']) &&
-			    empty($pconfig['ddnsdomainkeyalgorithm']) &&
+			    (empty($pconfig['ddnsdomainkeyalgorithm']) || ($pconfig['ddnsdomainkeyalgorithm'] == "hmac-md5")) &&
 			    (empty($pconfig['ddnsclientupdates']) || ($pconfig['ddnsclientupdates'] == "allow")) &&
 			    empty($pconfig['ddnsdomainkey'])) {
 				$showadv = false;

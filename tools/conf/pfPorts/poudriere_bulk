@@ -61,7 +61,7 @@ net/py-speedtest-cli
 net/trafshow
 net/trafshow3
 net/vnstat
-security/%%PRODUCT_NAME%%
+security/%%PRODUCT_NAME%%@all
 security/%%PRODUCT_NAME%%-pkg-acme
 security/%%PRODUCT_NAME%%-pkg-nmap
 security/%%PRODUCT_NAME%%-pkg-openvpn-client-export

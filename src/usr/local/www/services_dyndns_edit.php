@@ -370,6 +370,7 @@ $section->addPassword(new Form_Input(
 	$pconfig['password']
 ))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
 			'DNS Made Easy: Dynamic DNS Password%1$s' .
+			'DigitalOcean: Enter API Token%1$s' .
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
@@ -534,6 +535,21 @@ events.push(function() {
 				hideInput('mx', false);
 				hideCheckbox('wildcard', false);
 				hideCheckbox('proxied', false);
+				hideInput('zoneid', true);
+				hideInput('ttl', true);
+				break;
+			case "digitalocean":
+				hideGroupInput('domainname', false);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('username', true);
+				hideInput('host', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideCheckbox('proxied', true);
 				hideInput('zoneid', true);
 				hideInput('ttl', true);
 				break;

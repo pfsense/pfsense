@@ -3,7 +3,7 @@
  * vpn_ipsec_phase1.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -91,9 +91,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['myid_data'] = $a_phase1[$p1index]['myid_data'];
 	$pconfig['peerid_type'] = $a_phase1[$p1index]['peerid_type'];
 	$pconfig['peerid_data'] = $a_phase1[$p1index]['peerid_data'];
-	$pconfig['ealgo'] = $a_phase1[$p1index]['encryption-algorithm'];
-	$pconfig['halgo'] = $a_phase1[$p1index]['hash-algorithm'];
-	$pconfig['dhgroup'] = $a_phase1[$p1index]['dhgroup'];
+	$pconfig['encryption'] = $a_phase1[$p1index]['encryption'];
 	$pconfig['lifetime'] = $a_phase1[$p1index]['lifetime'];
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
 
@@ -153,9 +151,6 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['myid_type'] = "myaddress";
 	$pconfig['peerid_type'] = "peeraddress";
 	$pconfig['authentication_method'] = "pre_shared_key";
-	$pconfig['ealgo'] = array(name => "aes");
-	$pconfig['halgo'] = "sha1";
-	$pconfig['dhgroup'] = "2";
 	$pconfig['lifetime'] = "28800";
 	$pconfig['rekey_enable'] = true;
 	$pconfig['nat_traversal'] = 'on';
@@ -169,6 +164,14 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['mode'] = "aggressive";
 	}
 }
+// default value for new P1 and failsafe to always have at least 1 encryption item for the Form_ListItem
+if (!is_array($pconfig['encryption']['item']) || count($pconfig['encryption']['item']) == 0) {
+	$item = array();
+	$item['encryption-algorithm'] = array(name => "aes");
+	$item['hash-algorithm'] = "sha1";
+	$item['dhgroup'] = "2";
+	$pconfig['encryption']['item'][] = $item;
+}
 
 if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($p1index);
@@ -177,6 +180,17 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	for($i = 0; $i < 100; $i++) {
+		if (isset($_POST['ealgo_algo'.$i])) {
+			$item = array();
+			$item['encryption-algorithm']['name'] = $_POST['ealgo_algo'.$i];
+			$item['encryption-algorithm']['keylen'] = $_POST['ealgo_keylen'.$i];
+			$item['hash-algorithm'] = $_POST['halgo'.$i];
+			$item['dhgroup'] = $_POST['dhgroup'.$i];
+			$pconfig['encryption']['item'][] = $item;
+		}
+	}
 
 	/* input validation */
 
@@ -256,9 +270,9 @@ if ($_POST['save']) {
 	if ($pconfig['remotegw']) {
 		if (!is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw'])) {
 			$input_errors[] = gettext("A valid remote gateway address or host name must be specified.");
-		} elseif (is_ipaddrv4($pconfig['remotegw']) && ($pconfig['protocol'] != "inet")) {
+		} elseif (is_ipaddrv4($pconfig['remotegw']) && ($pconfig['protocol'] == "inet6")) {
 			$input_errors[] = gettext("A valid remote gateway IPv4 address must be specified or protocol needs to be changed to IPv6");
-		} elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] != "inet6")) {
+		} elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] == "inet")) {
 			$input_errors[] = gettext("A valid remote gateway IPv6 address must be specified or protocol needs to be changed to IPv4");
 		}
 	}
@@ -408,10 +422,11 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Valid arguments for IKE type are v1, v2 or auto");
 	}
 
-	if (preg_match("/aes\d+gcm/", $_POST['ealgo']) && $_POST['iketype'] != "ikev2") {
-		$input_errors[] = gettext("Encryption Algorithm AES-GCM can only be used with IKEv2");
+	foreach($pconfig['encryption']['item'] as $p1algo) {
+		if (preg_match("/aes\d+gcm/", $p1algo['encryption-algorithm']['name']) && $_POST['iketype'] != "ikev2") {
+			$input_errors[] = gettext("Encryption Algorithm AES-GCM can only be used with IKEv2");
+		}
 	}
-
 	/* auth backend for mobile eap-radius VPNs should be a RADIUS server */
 	if (($pconfig['authentication_method'] == 'eap-radius') && $pconfig['mobile']) {
 		if (!empty($config['ipsec']['client']['user_source'])) {
@@ -423,13 +438,6 @@ if ($_POST['save']) {
 				}
 			}
 		}
-	}
-
-	/* build our encryption algorithms array */
-	$pconfig['ealgo'] = array();
-	$pconfig['ealgo']['name'] = $_POST['ealgo'];
-	if ($pconfig['ealgo_keylen']) {
-		$pconfig['ealgo']['keylen'] = $_POST['ealgo_keylen'];
 	}
 
 	if (!$input_errors) {
@@ -463,9 +471,7 @@ if ($_POST['save']) {
 		$ph1ent['peerid_type'] = $pconfig['peerid_type'];
 		$ph1ent['peerid_data'] = $pconfig['peerid_data'];
 
-		$ph1ent['encryption-algorithm'] = $pconfig['ealgo'];
-		$ph1ent['hash-algorithm'] = $pconfig['halgo'];
-		$ph1ent['dhgroup'] = $pconfig['dhgroup'];
+		$ph1ent['encryption'] = $pconfig['encryption'];
 		$ph1ent['lifetime'] = $pconfig['lifetime'];
 		$ph1ent['pre-shared-key'] = $pconfig['pskey'];
 		$ph1ent['private-key'] = base64_encode($pconfig['privatekey']);
@@ -692,7 +698,7 @@ $section->addInput(new Form_Select(
 	'protocol',
 	'*Internet Protocol',
 	$pconfig['protocol'],
-	array("inet" => "IPv4", "inet6" => "IPv6")
+	array("inet" => "IPv4", "inet6" => "IPv6", "both" => "Both (Dual Stack)")
 ))->setHelp('Select the Internet Protocol family.');
 
 $section->addInput(new Form_Select(
@@ -800,40 +806,63 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-$section = new Form_Section('Phase 1 Proposal (Algorithms)');
+$rowcount = count($pconfig['encryption']['item']);
+$section = new Form_Section('Phase 1 Proposal (Encryption Algorithm)');
+foreach($pconfig['encryption']['item'] as $key => $p1enc) {
+	$lastrow = ($counter == $rowcount - 1);
+	$group = new Form_Group($counter == 0 ? '*Encryption Algorithm' : '');
+	$group->addClass("repeatable");
 
-$group = new Form_Group('*Encryption Algorithm');
+	$group->add(new Form_Select(
+		'ealgo_algo'.$key,
+		null,
+		$p1enc['encryption-algorithm']['name'],
+		build_eal_list()
+	))->setHelp($lastrow ? 'Algorithm' : '');
 
-$group->add(new Form_Select(
-	'ealgo',
+	$group->add(new Form_Select(
+		'ealgo_keylen'.$key,
+		null,
+		$p1enc['encryption-algorithm']['keylen'],
+		array()
+	))->setHelp($lastrow ? 'Key length' : '');
+
+	$group->add(new Form_Select(
+		'halgo'.$key,
+		'*Hash Algorithm',
+		$p1enc['hash-algorithm'],
+		$p1_halgos
+	))->setHelp($lastrow ? 'Hash' : '');
+
+	$group->add(new Form_Select(
+		'dhgroup'.$key,
+		'*DH Group',
+		$p1enc['dhgroup'],
+		$p1_dhgroups
+	))->setHelp($lastrow ? 'DH Group' : '');
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
+
+	$section->add($group);
+	$counter += 1;
+}
+$form->add($section);
+
+$btnaddopt = new Form_Button(
+	'algoaddrow',
+	'Add Algorithm',
 	null,
-	$pconfig['ealgo']['name'],
-	build_eal_list()
-));
+	'fa-plus'
+);
+$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$section->addInput($btnaddopt);
 
-$group->add(new Form_Select(
-	'ealgo_keylen',
-	null,
-	$pconfig['ealgo_keylen'],
-	array()
-));
-
-$section->add($group);
-
-$section->addInput(new Form_Select(
-	'halgo',
-	'*Hash Algorithm',
-	$pconfig['halgo'],
-	$p1_halgos
-))->setHelp('Must match the setting chosen on the remote side.');
-
-$section->addInput(new Form_Select(
-	'dhgroup',
-	'*DH Group',
-	$pconfig['dhgroup'],
-	$p1_dhgroups
-))->setHelp('Must match the setting chosen on the remote side.');
-
+$section = new Form_Section('NOTITLE');
 $section->addInput(new Form_Input(
 	'lifetime',
 	'*Lifetime (Seconds)',
@@ -964,13 +993,6 @@ $form->add($section);
 
 print($form);
 
-/* determine if we should init the key length */
-$keyset = '';
-if (isset($pconfig['ealgo']['keylen'])) {
-	if (is_numericint($pconfig['ealgo']['keylen'])) {
-		$keyset = $pconfig['ealgo']['keylen'];
-	}
-}
 ?>
 
 
@@ -979,6 +1001,19 @@ if (isset($pconfig['ealgo']['keylen'])) {
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
+	$('[id^=algoaddrow]').prop('type','button');
+
+	$('[id^=algoaddrow]').click(function() {
+		add_row();
+
+		var lastRepeatableGroup = $('.repeatable:last');
+		$(lastRepeatableGroup).find('[id^=ealgo_algo]select').change(function () {
+			id = getStringInt(this.id);
+			ealgosel_change(id, '');
+		});
+		$(lastRepeatableGroup).find('[id^=ealgo_algo]select').change();
+	});
 
 	function myidsel_change() {
 		hideGroupInput('myid_data', ($('#myid_type').val() == 'myaddress'));
@@ -1054,18 +1089,18 @@ events.push(function() {
 	}
 
 	/* PHP generates javascript case statements for variable length keys */
-	function ealgosel_change(bits) {
+	function ealgosel_change(id, bits) {
 
-		$("select[name='ealgo_keylen']").find('option').remove().end();
+		$("select[name='ealgo_keylen"+id+"']").find('option').remove().end();
 
-		switch ($('#ealgo').find(":selected").index().toString()) {
+		switch ($('#ealgo_algo'+id).find(":selected").index().toString()) {
 <?php
 	$i = 0;
 	foreach ($p1_ealgos as $algo => $algodata) {
 		if (is_array($algodata['keysel'])) {
 ?>
 			case '<?=$i?>':
-				hideGroupInput('ealgo_keylen', false);
+				invisibleGroupInput('ealgo_keylen'+id, false);
 <?php
 			$key_hi = $algodata['keysel']['hi'];
 			$key_lo = $algodata['keysel']['lo'];
@@ -1073,7 +1108,7 @@ events.push(function() {
 
 			for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
 ?>
-				$("select[name='ealgo_keylen']").append($('<option value="<?=$keylen?>"><?=$keylen?> bits</option>'));
+				$("select[name='ealgo_keylen"+id+"']").append($('<option value="<?=$keylen?>"><?=$keylen?> bits</option>'));
 <?php
 			}
 ?>
@@ -1082,7 +1117,7 @@ events.push(function() {
 		} else {
 ?>
 			case '<?=$i?>':
-				hideGroupInput('ealgo_keylen', true);
+				invisibleGroupInput('ealgo_keylen'+id, true);
 			break;
 <?php
 		}
@@ -1092,7 +1127,7 @@ events.push(function() {
 		}
 
 		if (bits) {
-			$('#ealgo_keylen').val(bits);
+			$('#ealgo_keylen'+id).val(bits);
 		}
 	}
 
@@ -1161,8 +1196,9 @@ events.push(function() {
 	});
 
 	 // algorithm
-	$('#ealgo').change(function () {
-		ealgosel_change(<?=$keyset?>);
+	$('[id^=ealgo_algo]select').change(function () {
+		id = getStringInt(this.id);
+		ealgosel_change(id, <?=$keyset?>);
 	});
 
 	// On ititial page load
@@ -1170,9 +1206,17 @@ events.push(function() {
 	peeridsel_change();
 	iketype_change();
 	methodsel_change();
-	ealgosel_change(<?=$keyset?>);
 	rekeychkbox_change();
 	dpdchkbox_change();
+<?php
+foreach($pconfig['encryption']['item'] as $key => $p1enc) {
+	$keylen = $p1enc['encryption-algorithm']['keylen'];
+	if (!is_numericint($keylen)) {
+		$keylen = "''";
+	}
+	echo "ealgosel_change({$key}, {$keylen});";
+}
+?>
 
 	// ---------- On initial page load ------------------------------------------------------------
 

@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008 Bill Marquette, Seth Mos
- * Copyright (c) 2008-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -353,7 +353,7 @@ function get_dpinger_status($gwname, $detailed = false) {
 		// while a latency of 0 and a loss of 0 would be perfect, in a real world it doesnt happen.
 		// or does it, anyone? if so we must 'detect' the initialization period differently..
 		$ready = $r['latency_stddev'] != '0' || $r['loss'] != '0';
-		
+
 		if ($ready) {
 			break;
 		} else {
@@ -657,7 +657,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		}
 	}
 	unset($gateway);
-	
+
 	//Sort the array by GW name before moving on.
 	ksort($gateways_arr, SORT_STRING | SORT_FLAG_CASE);
 
@@ -1330,7 +1330,7 @@ function validate_address_family($ipaddr, $gwname, $disabled = false) {
 }
 
 /* check if a interface is part of a gateway group */
-function interface_gateway_group_member($interface) {
+function interface_gateway_group_member($interface, $gwgroup_name = "") {
 	global $config;
 
 	if (is_array($config['gateways']['gateway_group'])) {
@@ -1345,7 +1345,8 @@ function interface_gateway_group_member($interface) {
 			foreach ($group['item'] as $item) {
 				$elements = explode("|", $item);
 				$gwname = $elements[0];
-				if ($interface == $gateways_arr[$gwname]['interface']) {
+				if ($interface == $gateways_arr[$gwname]['interface'] &&
+				    (empty($gwgroup_name) || $gwgroup_name == $group['name'])) {
 					unset($gateways_arr);
 					return true;
 				}

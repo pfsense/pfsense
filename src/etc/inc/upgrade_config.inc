@@ -3,7 +3,7 @@
  * upgrade_config.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1481,7 +1481,7 @@ function upgrade_049_to_050() {
 	}
 
 	/* sync all local account information */
-	local_sync_accounts();
+	local_reset_accounts();
 }
 
 
@@ -2064,13 +2064,6 @@ function upgrade_054_to_055() {
 
 	$rrddbpath = "/var/db/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		/* restore the databases, if we have one */
-		if (restore_rrd()) {
-			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
-		}
-	}
 
 	$rrdinterval = 60;
 	$valid = $rrdinterval * 2;
@@ -2783,14 +2776,6 @@ function upgrade_080_to_081() {
 	$rrddbpath = "/var/db/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		/* restore the databases, if we have one */
-		if (restore_rrd()) {
-			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
-		}
-	}
-
 	$rrdinterval = 60;
 	$valid = $rrdinterval * 2;
 
@@ -3255,14 +3240,6 @@ function upgrade_095_to_096() {
 	$rrddbpath = "/var/db/rrd";
 	$rrdtool = "/usr/local/bin/rrdtool";
 
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		/* restore the databases, if we have one */
-		if (restore_rrd()) {
-			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
-		}
-	}
-
 	/* Assume 2*10GigE for now */
 	$stream = 2500000000;
 
@@ -3433,7 +3410,7 @@ function upgrade_103_to_104() {
 	}
 
 	/* sync all local account information */
-	local_sync_accounts();
+	local_reset_accounts();
 }
 
 function upgrade_104_to_105() {
@@ -4648,14 +4625,6 @@ function upgrade_145_to_146() {
 	$awkcmd .= "    print;\n";
 	$awkcmd .= "}'";
 
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		/* restore the databases, if we have one */
-		if (restore_rrd()) {
-			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
-		}
-	}
-
 	$databases = return_dir_as_array($rrddbpath, '/-quality\.rrd$/');
 	foreach ($databases as $database) {
 		$xmldump = "{$g['tmp_path']}/{$database}.xml";
@@ -4748,7 +4717,7 @@ function upgrade_147_to_148() {
 		// if there was a space in a group name, there may be multiple
 		// groups with the same name in the group file. To prevent pw
 		// from getting into a neverending loop, delete all user-defined
-		// groups here. local_sync_accounts will run shortly after this
+		// groups here. local_reset_accounts will run shortly after this
 		// and add them back. redmine #6012
 		if ($cleargroups) {
 			foreach ($config['system']['group'] as $grp) {
@@ -5490,6 +5459,101 @@ function upgrade_172_to_173() {
 
 		$config['ppps']['ppp'][$id]['ports'] = str_replace('_vlan', '.',
 		    $ppp['ports']);
+	}
+}
+
+/*
+ * Dynamic DNS nsupdate keyfiles have been replaced with a simpler ddns-confgen style file.
+ */
+function upgrade_173_to_174() {
+	global $config;
+
+	/* Stop if there is nothing to do. */
+	if (!is_array($config['dnsupdates']['dnsupdate'])) {
+		return;
+	}
+	/* Remove unused keytype field. */
+	foreach ($config['dnsupdates']['dnsupdate'] as $i => &$dnsupdate) {
+		unset($dnsupdate['keytype']);
+	}
+}
+
+/* IPsec Phase1 now supports multiple authentication ciphers to be specified from the webgui.
+ * This is usefull for mobile users using different OS's supporting different ciphers.
+ */
+function upgrade_174_to_175() {
+	global $config;
+	if (is_array($config['ipsec']['phase1'])) {
+		$a_phase1 = &$config['ipsec']['phase1'];
+		foreach($a_phase1 as &$phase1) {
+			$item = array();
+			$item['encryption-algorithm'] = $phase1['encryption-algorithm'];
+			$item['hash-algorithm'] = $phase1['hash-algorithm'];
+			$item['dhgroup'] = $phase1['dhgroup'];
+			$phase1['encryption']['item'][] = $item;
+			unset($phase1['encryption-algorithm']);
+			unset($phase1['hash-algorithm']);
+			unset($phase1['dhgroup']);
+		}
+	}
+}
+
+/* igmp always was enabled by default if settings were present.
+ * So enable it once on upgrade if settings are there.
+ * And provide the option through gui to disable it again
+ */
+function upgrade_175_to_176() {
+	global $config;
+	if (is_array($config['igmpproxy']['igmpentry']) && (count($config['igmpproxy']['igmpentry']) > 0)) {
+		$config['igmpproxy']['enable'] = true;
+	}
+}
+
+/* Placeholder for a factory update. */
+function upgrade_176_to_177() {
+}
+
+// The image displayed by the picture widget is now stored on the file system
+function upgrade_177_to_178() {
+	global $config;
+
+	if (isset($config['widgets'])) {
+		$idx = 0;
+
+		while (isset($config['widgets']['picture-' . $idx])) {
+			file_put_contents("/conf/widget_image.picture-" . $idx, base64_decode($config['widgets']['picture-' . $idx]['picturewidget']));
+			$config['widgets']['picture-' . $idx]['picturewidget'] = "/conf/widget_image.picture-". $idx;
+			$idx++;
+		}
+	}
+}
+
+/* Placeholder for a factory update. */
+function upgrade_178_to_179() {
+}
+
+function upgrade_179_to_180() {
+	global $config, $g;
+
+	/* Change default to 400000 to make sure bogonsv6 works */
+	if (empty($config['system']['maximumtableentries'])) {
+		$config['system']['maximumtableentries'] =
+		    $g['minimumtableentries_bogonsv6'];
+	}
+}
+
+/*
+ * Automatically enable retrieving captive portal bandwidth limits from RADIUS for each captive portal
+ */
+function upgrade_180_to_181() {
+	global $config;
+
+	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone => $cpcfg) {
+			if ($cpcfg['auth_method'] == "radius") {
+				$config['captiveportal'][$cpzone]['radiusperuserbw'] = true;
+			}
+		}
 	}
 }
 

@@ -3,7 +3,7 @@
  * status_gateways.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -91,7 +91,7 @@ display_top_tabs($tab_array);
 					if ($gateways_status[$gname]) {
 						if (!isset($gateway['monitor_disable'])) {
 							echo $gateways_status[$gname]['delay'];
-						} 
+						}
 					} else {
 						echo gettext("Pending");
 					}

@@ -3,7 +3,7 @@
  * services_unbound.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@pfsense.org)
  * All rights reserved.
  *
@@ -53,11 +53,17 @@ $a_domainOverrides = &$a_unboundcfg['domainoverrides'];
 if (isset($a_unboundcfg['enable'])) {
 	$pconfig['enable'] = true;
 }
+if (isset($a_unboundcfg['enablessl'])) {
+	$pconfig['enablessl'] = true;
+}
 if (isset($a_unboundcfg['dnssec'])) {
 	$pconfig['dnssec'] = true;
 }
 if (isset($a_unboundcfg['forwarding'])) {
 	$pconfig['forwarding'] = true;
+}
+if (isset($a_unboundcfg['forward_tls_upstream'])) {
+	$pconfig['forward_tls_upstream'] = true;
 }
 if (isset($a_unboundcfg['regdhcp'])) {
 	$pconfig['regdhcp'] = true;
@@ -70,6 +76,8 @@ if (isset($a_unboundcfg['regovpnclients'])) {
 }
 
 $pconfig['port'] = $a_unboundcfg['port'];
+$pconfig['sslport'] = $a_unboundcfg['sslport'];
+$pconfig['sslcertref'] = $a_unboundcfg['sslcertref'];
 $pconfig['custom_options'] = base64_decode($a_unboundcfg['custom_options']);
 
 if (empty($a_unboundcfg['active_interface'])) {
@@ -90,6 +98,14 @@ if (empty($a_unboundcfg['system_domain_local_zone_type'])) {
 	$pconfig['system_domain_local_zone_type'] = $a_unboundcfg['system_domain_local_zone_type'];
 }
 
+$a_cert =& $config['cert'];
+$certs_available = false;
+
+if (is_array($a_cert) && count($a_cert)) {
+	$certs_available = true;
+} else {
+	$a_cert = array();
+}
 
 if ($_POST['apply']) {
 	$retval = 0;
@@ -111,6 +127,10 @@ if ($_POST['save']) {
 		if ($pconfig['port'] == $config['dnsmasq']['port']) {
 			$input_errors[] = gettext("The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.");
 		}
+	}
+
+	if (isset($pconfig['enablessl']) && (!$certs_available || empty($pconfig['sslcertref']))) {
+		$input_errors[] = gettext("Acting as an SSL/TLS server requires a valid server certificate");
 	}
 
 	// forwarding mode requires having valid DNS servers
@@ -151,6 +171,9 @@ if ($_POST['save']) {
 	if ($pconfig['port'] && !is_port($pconfig['port'])) {
 		$input_errors[] = gettext("A valid port number must be specified.");
 	}
+	if ($pconfig['sslport'] && !is_port($pconfig['sslport'])) {
+		$input_errors[] = gettext("A valid SSL/TLS port number must be specified.");
+	}
 
 	if (is_array($pconfig['active_interface']) && !empty($pconfig['active_interface'])) {
 		$display_active_interface = $pconfig['active_interface'];
@@ -181,9 +204,13 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 		$a_unboundcfg['enable'] = isset($pconfig['enable']);
+		$a_unboundcfg['enablessl'] = isset($pconfig['enablessl']);
 		$a_unboundcfg['port'] = $pconfig['port'];
+		$a_unboundcfg['sslport'] = $pconfig['sslport'];
+		$a_unboundcfg['sslcertref'] = $pconfig['sslcertref'];
 		$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
 		$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
+		$a_unboundcfg['forward_tls_upstream'] = isset($pconfig['forward_tls_upstream']);
 		$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);
 		$a_unboundcfg['regdhcpstatic'] = isset($pconfig['regdhcpstatic']);
 		$a_unboundcfg['regovpnclients'] = isset($pconfig['regovpnclients']);
@@ -293,6 +320,42 @@ $section->addInput(new Form_Input(
 	['placeholder' => '53']
 ))->setHelp('The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.');
 
+$section->addInput(new Form_Checkbox(
+	'enablessl',
+	'Enable SSL/TLS Service',
+	'Respond to incoming SSL/TLS queries from local clients',
+	$pconfig['enablessl']
+))->setHelp('Configures the DNS Resolver to act as a DNS over SSL/TLS server which can answer queries from clients which also support DNS over TLS. ' .
+		'Activating this option disables automatic interface response routing behavior, thus it works best with specific interface bindings.' );
+
+if ($certs_available) {
+	$values = array();
+	foreach ($a_cert as $cert) {
+		$values[ $cert['refid'] ] = $cert['descr'];
+	}
+
+	$section->addInput($input = new Form_Select(
+		'sslcertref',
+		'SSL/TLS Certificate',
+		$pconfig['sslcertref'],
+		$values
+	))->setHelp('The server certificate to use for SSL/TLS service. The CA chain will be determined automatically.');
+} else {
+	$section->addInput(new Form_StaticText(
+		'SSL/TLS Certificate',
+		sprintf('No Certificates have been defined. A certificate is required before SSL/TLS can be enabled. %1$s Create or Import %2$s a Certificate.',
+		'<a href="system_certmanager.php">', '</a>')
+	));
+}
+
+$section->addInput(new Form_Input(
+	'sslport',
+	'SSL/TLS Listen Port',
+	'number',
+	$pconfig['sslport'],
+	['placeholder' => '853']
+))->setHelp('The port used for responding to SSL/TLS DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 853.');
+
 $activeiflist = build_if_list($pconfig['active_interface']);
 
 $section->addInput(new Form_Select(
@@ -336,6 +399,13 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('If this option is set, DNS queries will be forwarded to the upstream DNS servers defined under'.
 					' %1$sSystem &gt; General Setup%2$s or those obtained via DHCP/PPP on WAN'.
 					' (if DNS Server Override is enabled there).','<a href="system.php">','</a>');
+
+$section->addInput(new Form_Checkbox(
+	'forward_tls_upstream',
+	null,
+	'Use SSL/TLS for outgoing DNS Queries to Forwarding Servers',
+	$pconfig['forward_tls_upstream']
+))->setHelp('When set in conjunction with DNS Query Forwarding, queries to all upstream forwarding DNS servers will be sent using SSL/TLS on the default port of 853. Note that ALL configured forwarding servers MUST support SSL/TLS queries on port 853.');
 
 $section->addInput(new Form_Checkbox(
 	'regdhcp',
@@ -523,9 +593,9 @@ endforeach;
 
 <span class="help-block">
 	Enter any individual hosts for which the resolver's standard DNS lookup process should be overridden and a specific
-	IPv4 or IPv6 address should automatically be returned by the resolver. Standard and also non-standard names and parent domains 
-	can be entered, such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. Any lookup attempt for 
-	the host will automatically return the given IP address, and the usual lookup server for the domain will not be queried for 
+	IPv4 or IPv6 address should automatically be returned by the resolver. Standard and also non-standard names and parent domains
+	can be entered, such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. Any lookup attempt for
+	the host will automatically return the given IP address, and the usual lookup server for the domain will not be queried for
 	the host's records.
 </span>
 
@@ -579,9 +649,9 @@ endforeach;
 </div>
 
 <span class="help-block">
-	Enter any domains for which the resolver's standard DNS lookup process should be overridden and a different (non-standard) 
-	lookup server should be queried instead. Non-standard, 'invalid' and local domains, and subdomains, can also be entered, 
-	such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. The IP address is treated as the 
+	Enter any domains for which the resolver's standard DNS lookup process should be overridden and a different (non-standard)
+	lookup server should be queried instead. Non-standard, 'invalid' and local domains, and subdomains, can also be entered,
+	such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. The IP address is treated as the
 	authoritative lookup server for the domain (including all of its subdomains), and other lookup servers will not be queried.
 </span>
 

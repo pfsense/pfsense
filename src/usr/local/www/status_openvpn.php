@@ -3,7 +3,7 @@
  * status_openvpn.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -78,7 +78,7 @@ include("head.inc"); ?>
 	function killComplete(req) {
 		var values = req.responseText.split("|");
 		if (values[3] != "0") {
-			alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
+	//		alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
 			return;
 		}
 

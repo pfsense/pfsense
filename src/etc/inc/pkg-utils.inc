@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005-2006 Colin Smith (ethethlay@gmail.com)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -612,6 +612,18 @@ function uninstall_package($package_name) {
 	update_status(gettext("done.") . "\n");
 }
 
+function reinstall_package($package_name) {
+	global $config, $g;
+
+	$internal_name = $package_name;
+	$id = get_package_id($package_name);
+	if ($id >= 0) {
+		$internal_name = get_package_internal_name($config['installedpackages']['package'][$id]);
+	}
+	$pkg_name = $g['pkg_prefix'] . $internal_name;
+	pkg_install($pkg_name);
+}
+
 /* Run <custom_php_resync_config_command> */
 function sync_package($package_name) {
 	global $config, $builder_package_install;
@@ -654,7 +666,7 @@ function sync_package($package_name) {
 		} else {
 			log_error(sprintf(gettext('Reinstalling package %1$s because its include file(%2$s) is missing!'), $package['name'], $include_file));
 			uninstall_package($package['name']);
-			if (install_package($package['name']) != 0) {
+			if (reinstall_package($package['name']) != 0) {
 				log_error(sprintf(gettext("Reinstalling package %s failed. Take appropriate measures!!!"), $package['name']));
 				return;
 			}
@@ -1039,11 +1051,39 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 function package_reinstall_all() {
 	global $g, $config, $pkg_interface;
 
-	$upgrade = (file_exists('/conf/needs_package_sync') && platform_booting());
+	if (platform_booting()) {
+		$upgrade = file_exists('/conf/needs_package_sync');
+		$restore = file_exists('/conf/needs_package_sync_after_reboot');
+	} else {
+		$upgrade = false;
+		$restore = false;
+	}
 
 	if ((!isset($config['installedpackages']['package']) ||
 	    !is_array($config['installedpackages']['package'])) && !$upgrade) {
 		return true;
+	}
+
+	/* When restoring a backup, use default pkg repo */
+	if ($restore) {
+		/*
+		 * Configure default pkg repo for current version instead of
+		 * using it from backup, that could be older
+		 */
+		$default_repo = pkg_get_default_repo();
+		$current_repo_path = "";
+		if (!empty($config['system']['pkg_repo_conf_path'])) {
+			$current_repo_path =
+			    $config['system']['pkg_repo_conf_path'];
+		}
+
+		if ($current_repo_path != $default_repo['path']) {
+			$config['system']['pkg_repo_conf_path'] =
+			    $default_repo['path'];
+			write_config(
+			    "Configured default pkg repo after restore");
+			pkg_switch_repo($default_repo['path']);
+		}
 	}
 
 	/* During boot after upgrade, wait for internet connection */
@@ -1067,8 +1107,6 @@ function package_reinstall_all() {
 		}
 	}
 
-	$pkg_info = get_pkg_info();
-
 	if ($upgrade &&
 	    file_exists("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt")) {
 		$package_list = file("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt",
@@ -1084,6 +1122,9 @@ function package_reinstall_all() {
 		}
 	}
 
+	if (!empty($package_list)) {
+		$pkg_info = get_pkg_info();
+	}
 	foreach ($package_list as $package) {
 		$found = false;
 		foreach ($pkg_info as $pkg) {
@@ -1104,6 +1145,22 @@ function package_reinstall_all() {
 			    sprintf(gettext("Package %s does not exist in current %s version and it has been removed."),
 			    $package, $g['product_name']));
 			uninstall_package($package);
+		}
+	}
+
+	/*
+	 * Verify remaining binary packages not present in current config
+	 * during backup restore and remove them
+	 */
+	if ($restore) {
+		$installed_packages = get_pkg_info('all', true, true);
+		foreach ($installed_packages as $package) {
+			$shortname = $package['name'];
+			pkg_remove_prefix($shortname);
+			if (get_package_id($shortname) != -1) {
+				continue;
+			}
+			pkg_delete($package['name']);
 		}
 	}
 
@@ -1295,10 +1352,56 @@ function pkg_list_repos() {
 		    'path' => $conf_file,
 		    'descr' => $descr
 		);
+		if (file_exists($conf_file . ".default")) {
+			$entry['default'] = true;
+		}
 		$result[] = $entry;
 	}
 
 	return $result;
+}
+
+function pkg_get_default_repo() {
+	$repos = pkg_list_repos();
+
+	foreach ($repos as $repo) {
+		if (isset($repo['default'])) {
+			return $repo;
+		}
+	}
+
+	/* No default found, return the first one */
+	return ($repos[0]);
+}
+
+/* List available repos on a format to be used by selectors */
+function pkg_build_repo_list() {
+	$repos = pkg_list_repos();
+	$list = array();
+
+	foreach ($repos as $repo) {
+		$list[$repo['name']] = $repo['descr'];
+	}
+
+	return($list);
+}
+
+/* Find repo by path */
+function pkg_get_repo_name($path) {
+	$repos = pkg_list_repos();
+
+	$default = $repos[0]['name'];
+	foreach ($repos as $repo) {
+		if ($repo['path'] == $path) {
+			return $repo['name'];
+		}
+		if (isset($repo['default'])) {
+			$default = $repo['name'];
+		}
+	}
+
+	/* Default */
+	return $default;
 }
 
 /* Switch between stable and devel repos */
@@ -1349,7 +1452,20 @@ function update_repos() {
 				$nid = file_get_contents($idfile);
 				$serial = system_get_serial();
 				$arch = php_uname(“p”);
-				$version = $g['product_version'];
+
+				$base_pkg = get_base_pkg_name();
+
+				$info = get_pkg_info($base_pkg, true, true);
+
+				$pkg_info = array();
+					foreach ($info as $item) {
+						if ($item['name'] == $base_pkg) {
+							$pkg_info = $item;
+							break;
+						}
+					}
+
+				$version = $pkg_info['installed_version'];
 				$locale = $config['system']['language'];
 				// Architecture comes from the last word in the uname output
 				$arch = array_pop(explode(' ', php_uname(“p”)));
@@ -1405,4 +1521,5 @@ function save_repo($json) {
 		}
 	}
 }
+
 ?>

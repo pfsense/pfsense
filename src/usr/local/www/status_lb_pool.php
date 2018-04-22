@@ -3,7 +3,7 @@
  * status_lb_pool.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -193,7 +193,7 @@ foreach ($a_pool as $pool):
 					$checked = "";
 					break;
 				default:
-					$bgcolor = "bg-danger";	
+					$bgcolor = "bg-danger";
 					$checked = "checked";
 			}
 ?>

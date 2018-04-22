@@ -3,7 +3,7 @@
  * status_logs_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -350,7 +350,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'ipproto',
 	'IP Protocol',
-	$ipproto,
+	$pconfig['ipproto'],
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
 ))->setHelp('This option is only used when a non-default address is chosen as the source above. ' .
 			'This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried.');

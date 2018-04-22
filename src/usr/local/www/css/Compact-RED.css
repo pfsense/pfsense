@@ -3,7 +3,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2016 PiBa-NL
- * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -128,6 +128,11 @@ body {
 .form-group {
     padding: 2px 5px 2px 5px;
 }
+
+.user-duplication .controls {
+    margin-top: 0px;
+}
+
 .table>tbody>tr>td,.table>tbody>tr>th,.table>tfoot>tr>td,.table>tfoot>tr>th,.table>thead>tr>td,.table>thead>tr>th {
      padding:2px;
 }
@@ -183,7 +188,7 @@ table.sortable-theme-bootstrap[data-sortable] {
 		padding-top: 4px;
 	}
 }
-	
+
 /* Experimental styles to correct vertical alignment in forms */
 .col-sm-10 {
 	padding-top: 0px;

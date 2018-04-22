@@ -4,7 +4,7 @@
  * rc.carpmaster
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,6 +53,7 @@ foreach ($vips as $vip) {
 	notify_via_growl($notificationmsg);
 	log_error($notificationmsg);
 }
+restart_ppp_interfaces_using_interfaces($vips);
 
 /* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */
 global $config;

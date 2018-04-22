@@ -3,7 +3,7 @@
  * globals.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -74,7 +74,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "17.3",
+	"latest_config" => "18.1",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -88,7 +88,8 @@ $g = array(
 	"pkg_prefix" => "pfSense-pkg-",
 	"default_timezone" => "Etc/UTC",
 	"language" => "en_US",
-	"default_config_backup_count" => 30
+	"default_config_backup_count" => 30,
+	"minimumtableentries_bogonsv6" => 400000
 );
 
 /* IP TOS flags */
@@ -208,4 +209,21 @@ $factory_default_checkipservice = array(
 );
 
 $dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns", "godaddy", "godaddy-v6");
+
+/* pf tokens from FreeBSD source sbin/pfctl/parse.y (plus our custom entries at the end)*/
+global $pf_reserved_keywords;
+$pf_reserved_keywords = array(
+	"pass", "block", "scrub", "return", "in", "os", "out", "log", "quick", "on", "from", "to", "flags", "returnrst",
+	"returnicmp", "returnicmp6", "proto", "inet", "inet6", "all", "any", "icmptype", "icmp6type", "code", "keep",
+	"modulate", "state", "port", "rdr", "nat", "binat", "arrow", "nodf", "minttl", "error", "allowopts", "fastroute",
+	"filename", "routeto", "dupto", "replyto", "no", "label", "noroute", "urpffailed", "fragment", "user", "group",
+	"maxmss", "maximum", "ttl", "tos", "drop", "table", "reassemble", "fragdrop", "fragcrop", "anchor", "natanchor",
+	"rdranchor", "binatanchor", "set", "optimization", "timeout", "limit", "loginterface", "blockpolicy", "randomid",
+	"requireorder", "synproxy", "fingerprints", "nosync", "debug", "skip", "hostid", "antispoof", "for", "include",
+	"bitmask", "random", "sourcehash", "roundrobin", "staticport", "probability", "altq", "cbq", "codel", "priq",
+	"hfsc", "fairq", "bandwidth", "tbrsize", "linkshare", "realtime", "upperlimit", "queue", "priority", "qlimit",
+	"hogs", "buckets", "rtable", "target", "interval", "load", "ruleset_optimization", "prio", "stickyaddress",
+	"maxsrcstates", "maxsrcnodes", "sourcetrack", "global", "rule", "maxsrcconn", "maxsrcconnrate", "overload",
+	"flush", "sloppy", "tagged", "tag", "ifbound", "floating", "statepolicy", "statedefaults", "route", "settos",
+	"divertto", "divertreply", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 ?>

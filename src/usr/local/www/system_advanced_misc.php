@@ -3,7 +3,7 @@
  * system_advanced_misc.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -49,6 +49,7 @@ $pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
+$pconfig['pti_disabled'] = isset($config['system']['pti_disabled']);
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['gw_down_kill_states'] = isset($config['system']['gw_down_kill_states']);
 $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
@@ -57,7 +58,8 @@ $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 $pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid']);
 
-$use_mfs_tmpvar_before = $pconfig['use_mfs_tmpvar'];
+$use_mfs_tmpvar_before = isset($config['system']['use_mfs_tmpvar']) ? true : false;
+$use_mfs_tmpvar_after = $use_mfs_tmpvar_before;
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode'])) {
@@ -215,6 +217,13 @@ if ($_POST) {
 			unset($config['system']['thermal_hardware']);
 		}
 
+		$old_pti_state = isset($config['system']['pti_disabled']);
+		if ($_POST['pti_disabled'] == "yes") {
+			$config['system']['pti_disabled'] = true;
+		} else {
+			unset($config['system']['pti_disabled']);
+		}
+
 		if ($_POST['schedule_states'] == "yes") {
 			$config['system']['schedule_states'] = true;
 		} else {
@@ -235,8 +244,10 @@ if ($_POST) {
 
 		if ($_POST['use_mfs_tmpvar'] == "yes") {
 			$config['system']['use_mfs_tmpvar'] = true;
+			$use_mfs_tmpvar_after = true;
 		} else {
 			unset($config['system']['use_mfs_tmpvar']);
+			$use_mfs_tmpvar_after = false;
 		}
 
 		$config['system']['use_mfs_tmp_size'] = $_POST['use_mfs_tmp_size'];
@@ -286,6 +297,9 @@ if ($_POST) {
 		system_resolvconf_generate(true);
 		$retval |= filter_configure();
 
+		if ($old_pti_state != isset($config['system']['pti_disabled'])) {
+			setup_loader_settings();
+		}
 		activate_powerd();
 		load_crypto();
 		load_thermal_hardware();
@@ -294,7 +308,6 @@ if ($_POST) {
 		}
 	}
 }
-$use_mfs_tmpvar_after = $pconfig['use_mfs_tmpvar'];
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Miscellaneous"));
 $pglinks = array("", "system_advanced_admin.php", "@self");
@@ -469,6 +482,17 @@ $section->addInput(new Form_Select(
 	'"none" and then reboot.');
 
 $form->add($section);
+$pti = get_single_sysctl('vm.pmap.pti');
+if (strlen($pti) > 0) {
+	$section = new Form_Section('Kernel Page Table Isolation');
+	$section->addInput(new Form_Checkbox(
+		'pti_disabled',
+		'Kernel PTI',
+		'Disable the kernel PTI',
+		$pconfig['pti_disabled']
+	))->setHelp('Meltdown workaround.  If disabled the kernel memory can be accessed by unprivileged users on affected CPUs.');
+	$form->add($section);
+}
 $section = new Form_Section('Schedules');
 
 $section->addInput(new Form_Checkbox(
@@ -597,8 +621,8 @@ $form->add($section);
 
 print $form;
 
-$ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This will cause the firewall\nto reboot immediately after the new setting is saved.\n\nPlease confirm.');
-$use_mfs_tmpvar_changed = $use_mfs_tmpvar_before !== $use_mfs_tmpvar_after && !$input_errors;
+$ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This requires the firewall\nto reboot.\n\nReboot now ?');
+$use_mfs_tmpvar_changed = (($use_mfs_tmpvar_before !== $use_mfs_tmpvar_after) && !$input_errors);
 ?>
 
 <script type="text/javascript">

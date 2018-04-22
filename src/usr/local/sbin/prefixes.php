@@ -3,7 +3,7 @@
  * prefixes.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@ $fd = fopen($leases_file, 'r');
 $duid_arr = array();
 while (( $line = fgets($fd, 4096)) !== false) {
 	// echo "$line";
-	
+
 	/* Originally: preg_match("/^(ia-[np][ad])[ ]+\"(.*?)\"/i", $line, $duidmatch)
 	   That is: \"(.*?)\"
 	   , which is a non-greedy matching. However that does not go well with the legal

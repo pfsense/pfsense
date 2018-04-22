@@ -3,7 +3,7 @@
  * status_dhcpv6_leases.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos
  * All rights reserved.
  *
@@ -33,6 +33,7 @@
 
 require_once("guiconfig.inc");
 require_once("config.inc");
+require_once("parser_dhcpv6_leases.inc");
 
 $pgtitle = array(gettext("Status"), gettext("DHCPv6 Leases"));
 $shortcut_section = "dhcp6";
@@ -118,77 +119,19 @@ function remove_duplicate($array, $field) {
 	return $new;
 }
 
-function parse_duid($duid_string) {
-	$parsed_duid = array();
-	for ($i = 0; $i < strlen($duid_string); $i++) {
-		$s = substr($duid_string, $i, 1);
-		if ($s == '\\') {
-			$n = substr($duid_string, $i+1, 1);
-			if (($n == '\\') || ($n == '"')) {
-				$parsed_duid[] = sprintf("%02x", ord($n));
-				$i += 1;
-			} else {
-				$n = substr($duid_string, $i+1, 3);
-				if (preg_match('/[0-3][0-7]{2}/', $n)) {
-					$parsed_duid[] = sprintf("%02x", octdec($n));
-					$i += 3;
-				}
-			}
-		} else {
-			$parsed_duid[] = sprintf("%02x", ord($s));
-		}
-	}
-	$iaid = array_slice($parsed_duid, 0, 4);
-	$duid = array_slice($parsed_duid, 4);
-	return array($iaid, $duid);
-}
-
-$awk = "/usr/bin/awk";
-$sed = "/usr/bin/sed";
-
-/* Remove all lines except ia-.. blocks */
-$cleanpattern = "'/^ia-.. /, /^}/ !d; s,;$,,; s,  *, ,g'";
-/*                       |               |        |
- *                       |               |        |
- *                       |               |        -> Remove extra spaces
- *                       |               -> Remove ; from EOL
- *                       -> Delete all lines except blocks that start with ia-..
- *                          and end with }
- */
-
-/* Join each block in single line */
-$splitpattern = "'{printf $0}; $0 ~ /^\}/ {printf \"\\n\"}'";
-
 if (is_file($leasesfile)) {
-	/* stuff the leases file in a proper format into an array by line */
-	exec("{$sed} {$cleanpattern} {$leasesfile} | {$awk} {$splitpattern}", $leases_content);
+	$leases_content = file_get_contents ($leasesfile);
 	$leasesfile_found = true;
 } else {
 	$leases_content = array();
 	$leasesfile_found = false;
 }
 
-$leases_count = count($leases_content);
-exec("/usr/sbin/ndp -an", $rawdata);
-$ndpdata = array();
-foreach ($rawdata as $line) {
-	$elements = preg_split('/\s+/ ', $line);
-	if ($elements[1] != "(incomplete)") {
-		$ndpent = array();
-		$ip = trim(str_replace(array('(', ')'), '', $elements[0]));
-		$ndpent['mac'] = trim($elements[1]);
-		$ndpent['interface'] = trim($elements[2]);
-		$ndpdata[$ip] = $ndpent;
-	}
-}
-
+$ndpdata = get_ndpdata ();
 $pools = array();
 $leases = array();
 $prefixes = array();
 $mappings = array();
-$i = 0;
-$l = 0;
-$p = 0;
 
 // Translate these once so we don't do it over and over in the loops below.
 $online_string = gettext("online");
@@ -200,153 +143,13 @@ $released_string = gettext("released");
 $dynamic_string = gettext("dynamic");
 $static_string = gettext("static");
 
-// Put everything together again
-while ($i < $leases_count) {
-	$entry = array();
-	/* split the line by space */
-	$duid_split = array();
-	preg_match('/ia-.. "(.*)" { (.*)/ ', $leases_content[$i], $duid_split);
-	if (!empty($duid_split[1])) {
-		$iaid_duid = parse_duid($duid_split[1]);
-		$entry['iaid'] = hexdec(implode("", array_reverse($iaid_duid[0])));
-		$entry['duid'] = implode(":", $iaid_duid[1]);
-		$data = explode(" ", $duid_split[2]);
-	} else {
-		$data = explode(" ", $leases_content[$i]);
-	}
-	/* walk the fields */
-	$f = 0;
-	$fcount = count($data);
-	/* with less then 12 fields there is nothing useful */
-	if ($fcount < 12) {
-		$i++;
-		continue;
-	}
-	while ($f < $fcount) {
-		switch ($data[$f]) {
-			case "failover":
-				$pools[$p]['name'] = $data[$f+2];
-				$pools[$p]['mystate'] = $data[$f+7];
-				$pools[$p]['peerstate'] = $data[$f+14];
-				$pools[$p]['mydate'] = $data[$f+10];
-				$pools[$p]['mydate'] .= " " . $data[$f+11];
-				$pools[$p]['peerdate'] = $data[$f+17];
-				$pools[$p]['peerdate'] .= " " . $data[$f+18];
-				$p++;
-				$i++;
-				continue 3;
-			case "ia-pd":
-				$is_prefix = true;
-			case "ia-na":
-				$entry['iaid'] = $tmp_iaid;
-				$entry['duid'] = $tmp_duid;
-				if ($data[$f+1][0] == '"') {
-					$duid = "";
-					/* FIXME: This needs a safety belt to prevent an infinite loop */
-					while ($data[$f][strlen($data[$f])-1] != '"') {
-						$duid .= " " . $data[$f+1];
-						$f++;
-					}
-					$entry['duid'] = $duid;
-				} else {
-					$entry['duid'] = $data[$f+1];
-				}
-				$entry['type'] = $dynamic_string;
-				$f = $f+2;
-				break;
-			case "iaaddr":
-				$entry['ip'] = $data[$f+1];
-				$entry['type'] = $dynamic_string;
-				if (in_array($entry['ip'], array_keys($ndpdata))) {
-					$entry['online'] = $online_string;
-				} else {
-					$entry['online'] = $offline_string;
-				}
-				$f = $f+2;
-				break;
-			case "iaprefix":
-				$is_prefix = true;
-				$entry['prefix'] = $data[$f+1];
-				$entry['type'] = $dynamic_string;
-				$f = $f+2;
-				break;
-			case "starts":
-				$entry['start'] = $data[$f+2];
-				$entry['start'] .= " " . $data[$f+3];
-				$f = $f+3;
-				break;
-			case "ends":
-				$entry['end'] = $data[$f+2];
-				$entry['end'] .= " " . $data[$f+3];
-				$f = $f+3;
-				break;
-			case "tstp":
-				$f = $f+3;
-				break;
-			case "tsfp":
-				$f = $f+3;
-				break;
-			case "atsfp":
-				$f = $f+3;
-				break;
-			case "cltt":
-				$entry['start'] = $data[$f+2];
-				$entry['start'] .= " " . $data[$f+3];
-				$f = $f+3;
-				break;
-			case "binding":
-				switch ($data[$f+2]) {
-					case "active":
-						$entry['act'] = $active_string;
-						break;
-					case "free":
-						$entry['act'] = $expired_string;
-						$entry['online'] = $offline_string;
-						break;
-					case "backup":
-						$entry['act'] = $reserved_string;
-						$entry['online'] = $offline_string;
-						break;
-					case "released":
-						$entry['act'] = $released_string;
-						$entry['online'] = $offline_string;
-				}
-				$f = $f+1;
-				break;
-			case "next":
-				/* skip the next binding statement */
-				$f = $f+3;
-				break;
-			case "hardware":
-				$f = $f+2;
-				break;
-			case "client-hostname":
-				if ($data[$f+1] != "") {
-					$entry['hostname'] = preg_replace('/"/', '', $data[$f+1]);
-				} else {
-					$hostname = gethostbyaddr($entry['ip']);
-					if ($hostname != "") {
-						$entry['hostname'] = $hostname;
-					}
-				}
-				$f = $f+1;
-				break;
-			case "uid":
-				$f = $f+1;
-				break;
-		}
-		$f++;
-	}
-	if ($is_prefix) {
-		$prefixes[] = $entry;
-	} else {
-		$leases[] = $entry;
-		$mappings[$entry['duid']] = $entry['ip'];
-	}
-	$l++;
-	$i++;
-	$is_prefix = false;
-}
+$lang_pack = [ 'online' =>  $online_string, 'offline' => $offline_string,
+               'active' =>  $active_string, 'expired' => $expired_string,
+               'reserved' => $reserved_string, 'released' => $released_string,
+               'dynamic' => $dynamic_string, 'static' =>  $static_string];
+// Handle the content of the lease file - parser_dhcpv6_leases.inc
+gui_parse_leases ($pools, $leases, $prefixes, $mappings, $leases_content,
+		  $ndpdata, $lang_pack);
 
 if (count($leases) > 0) {
 	$leases = remove_duplicate($leases, "ip");
@@ -430,7 +233,7 @@ if (!$leasesfile_found) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+		<table class="table statusdhcpv6leases table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><!-- icon --></th>
@@ -491,13 +294,7 @@ foreach ($leases as $data):
 				<td><?=$data['ip']?></td>
 				<td><?=$data['iaid']?></td>
 				<td><?=$data['duid']?></td>
-				<td>
-					<?=$mac?>
-
-					<?php if (isset($mac_man[$mac_hi])):?>
-						(<?=$mac_man[$mac_hi]?>)
-					<?php endif; ?>
-				</td>
+				<td><?=$mac?><?php if (isset($mac_man[$mac_hi])):?><br /><small>(<?=$mac_man[$mac_hi]?>)</small><?php endif; ?></td>
 				<td><?=htmlentities($data['hostname'])?></td>
 <?php if ($data['type'] != $static_string):?>
 				<td><?=adjust_gmt($data['start'])?></td>
@@ -512,7 +309,7 @@ foreach ($leases as $data):
 <?php if ($data['type'] == $dynamic_string): ?>
 					<a class="fa fa-plus-square-o" title="<?=gettext("Add static mapping")?>" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php endif; ?>
-					<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
+					<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$mac?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
 					<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcpv6_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
 <?php endif; ?>
@@ -527,11 +324,12 @@ foreach ($leases as $data):
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Delegated Prefixes')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+		<table class="table statusdhcpv6prefixes table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><!-- icon --></th>
 				<th><?=gettext("IPv6 Prefix")?></th>
+				<th><?=gettext("Routed To")?></th>
 				<th><?=gettext("IAID")?></th>
 				<th><?=gettext("DUID")?></th>
 				<th><?=gettext("Start")?></th>
@@ -572,20 +370,11 @@ foreach ($prefixes as $data):
 	} else {
 		$data['if'] = convert_real_interface_to_friendly_interface_name(guess_interface_from_ip($data['ip']));
 	}
-
-	 {
-		$dip = "";
-	}
 ?>
 			<tr>
 				<td><i class="fa <?=$icon?>"></i></td>
-				<td>
-					<?=$data['prefix']?>
-<?php if ($mappings[$data['duid']]): ?>
-					<br />
-					<?=gettext('Routed To')?>: <?=$mappings[$data['duid']]?>
-<?php endif; ?>
-				</td>
+				<td><?=$data['prefix']?></td>
+				<td><?php foreach ($mappings[$data['duid']] as $iaid => $iproute):?><?=$iproute?><br />IAID: <?=$iaid?><br /><?php endforeach; ?></td>
 				<td><?=$data['iaid']?></td>
 				<td><?=$data['duid']?></td>
 <?php if ($data['type'] != $static_string):?>

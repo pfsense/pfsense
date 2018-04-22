@@ -3,7 +3,7 @@
  * guiconfig.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -314,7 +314,7 @@ function sprint_info_box($msg, $class="alert-warning", $btnname = "close", $btnt
 
 		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-' . $btnclass . '" name="'. $btnname . '" value="' . $btntext . '">' . $btnicon . $btntext . '</button>';
 
-		if ($_POST['if']) {
+		if ( isset($_POST['if']) && !empty($_POST['if'])) {
 			$msg .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 		}
 
@@ -389,7 +389,7 @@ function get_std_save_message($retval) {
 		$to_return = gettext("The changes have been applied successfully.");
 	} else {
 		// non-zero means there was some problem
-		$to_return = sprintf(gettext('There was a problem applying the changes. See the %1$sSystem Logs%2$s.'), '<a href=\"status_logs.php\">', '</a>');
+		$to_return = sprintf(gettext('There was a problem applying the changes. See the %1$sSystem Logs%2$s.'), '<a href="status_logs.php">', '</a>');
 	}
 	foreach ($filter_pages as $fp) {
 		if (stristr($_SERVER['SCRIPT_FILENAME'], $fp)) {
@@ -825,7 +825,12 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0
 		}
 	}
 
-	if (is_alias($pbeginport)) {
+	/*
+	 * If the port is still unset, then it must not be numeric, but could
+	 * be an alias or a well-known/registered service.
+	 * See https://redmine.pfsense.org/issues/8410
+	 */
+	if (!isset($adr['port']) && is_port_or_alias($pbeginport)) {
 		$adr['port'] = $pbeginport;
 	}
 }

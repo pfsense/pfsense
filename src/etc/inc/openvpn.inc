@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2006 Fernando Lemos
- * Copyright (c) 2006-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2006-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * This file was rewritten from scratch by Fernando Lemos but
@@ -950,6 +950,15 @@ function openvpn_reconfigure($mode, $settings) {
 							} else {
 								$conf .= "mode server\n";
 							}
+							if (!empty($settings['serverbridge_routegateway']) && is_ipaddrv4($biface_ip)) {
+								$conf .= "push \"route-gateway {$biface_ip}\"\n";
+							}
+							/* OpenVPN doesn't support this yet, clients do not recognize the option fully.
+							$biface_ip6=get_interface_ipv6($settings['serverbridge_interface']);
+							if (!empty($settings['serverbridge_routegateway']) && is_ipaddrv6($biface_ip6)) {
+								$conf .= "push \"route-ipv6-gateway {$biface_ip6}\"\n";
+							}
+							*/
 						} else {
 							$conf .= "mode server\n";
 						}
@@ -1132,15 +1141,15 @@ function openvpn_reconfigure($mode, $settings) {
 		case 'server_tls':
 		case 'server_tls_user':
 		case 'server_user':
-			// ca_chain() expects parameter to be passed by reference. 
-			// avoid passing the whole settings array, as param names or 
-			// types might change in future releases. 
-			$param = array('caref' => $settings['caref']);	
+			// ca_chain() expects parameter to be passed by reference.
+			// avoid passing the whole settings array, as param names or
+			// types might change in future releases.
+			$param = array('caref' => $settings['caref']);
 			$ca = ca_chain($param);
 			$ca = base64_encode($ca);
-			
+
 			openvpn_add_keyfile($ca, $conf, $mode_id, "ca");
-			
+
 			unset($ca, $param);
 
 			if (!empty($settings['certref'])) {
@@ -1948,7 +1957,11 @@ function openvpn_create_dirs() {
 
 function openvpn_get_interface_ip($ip, $cidr) {
 	$subnet = gen_subnetv4($ip, $cidr);
-	$ip1 = ip_after($subnet);
+	if ($cidr == 31) {
+		$ip1 = $subnet;
+	} else {
+		$ip1 = ip_after($subnet);
+	}
 	$ip2 = ip_after($ip1);
 	return array($ip1, $ip2);
 }
@@ -1958,6 +1971,9 @@ function openvpn_get_interface_ipv6($ipv6, $prefix) {
 	// Is there a better way to do this math?
 	$ipv6_arr = explode(':', $basev6);
 	$last = hexdec(array_pop($ipv6_arr));
+	if ($prefix == 127) {
+		$last--;
+	}
 	$ipv6_1 = text_to_compressed_ip6(implode(':', $ipv6_arr) . ':' . dechex($last + 1));
 	$ipv6_2 = text_to_compressed_ip6(implode(':', $ipv6_arr) . ':' . dechex($last + 2));
 	return array($ipv6_1, $ipv6_2);
@@ -1977,7 +1993,7 @@ function openvpn_clear_route($mode, $settings) {
 			break;
 		case 'p2p_tls':
 		case 'p2p_shared_key':
-			if ($cidr == 30) {
+			if ($cidr >= 30) {
 				$clear_route = true;
 			}
 			break;

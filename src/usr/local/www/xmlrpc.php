@@ -3,7 +3,7 @@
  * xmlrpc.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -227,6 +227,114 @@ class pfsense_xmlrpc_server {
 			$syncd_full_sections[] = $section;
 		}
 
+		$g2add = array();
+		$g2del = array();
+		$g2del_idx = array();
+		$g2keep = array();
+		if (is_array($sections['system']['group'])) {
+			$local_groups = isset($config['system']['group'])
+			    ? $config['system']['group']
+			    : array();
+
+			foreach ($sections['system']['group'] as $group) {
+				$idx = array_search($group['name'],
+				    array_column($local_groups, 'name'));
+
+				if ($idx === false) {
+					$g2add[] = $group;
+				} else if ($group['gid'] < 1999) {
+					$g2keep[] = $idx;
+				} else if ($group != $local_groups[$idx]) {
+					$g2add[] = $group;
+					$g2del[] = $group;
+					$g2del_idx[] = $idx;
+				} else {
+					$g2keep[] = $idx;
+				}
+			}
+		}
+		if (is_array($config['system']['group'])) {
+			foreach ($config['system']['group'] as $idx => $group) {
+				if (array_search($idx, $g2keep) === false &&
+				    array_search($idx, $g2del_idx) === false) {
+					$g2del[] = $group;
+					$g2del_idx[] = $idx;
+				}
+			}
+		}
+		unset($sections['system']['group'], $g2keep, $g2del_idx);
+
+		$u2add = array();
+		$u2del = array();
+		$u2del_idx = array();
+		$u2keep = array();
+		if (is_array($sections['system']['user'])) {
+			$local_users = isset($config['system']['user'])
+			    ? $config['system']['user']
+			    : array();
+
+			foreach ($sections['system']['user'] as $user) {
+				$idx = array_search($user['name'],
+				    array_column($local_users, 'name'));
+
+				if ($idx === false) {
+					$u2add[] = $user;
+				} else if ($user['uid'] < 2000) {
+					$u2keep[] = $idx;
+				} else if ($user != $local_users[$idx]) {
+					$u2add[] = $user;
+					$u2del[] = $user;
+					$u2del_idx[] = $idx;
+				} else {
+					$u2keep[] = $idx;
+				}
+			}
+		}
+		if (is_array($config['system']['user'])) {
+			foreach ($config['system']['user'] as $idx => $user) {
+				if (array_search($idx, $u2keep) === false &&
+				    array_search($idx, $u2del_idx) === false) {
+					$u2del[] = $user;
+					$u2del_idx[] = $idx;
+				}
+			}
+		}
+		unset($sections['system']['user'], $u2keep, $u2del_idx);
+
+		$voucher = array();
+		if (is_array($sections['voucher'])) {
+			/* Save voucher rolls to process after merge */
+			$voucher = $sections['voucher'];
+
+			foreach($sections['voucher'] as $zone => $item) {
+				unset($sections['voucher'][$zone]['roll']);
+				if (isset($config['voucher'][$zone]['vouchersyncdbip'])) {
+					$sections['voucher'][$zone]['vouchersyncdbip'] =
+					    $config['voucher'][$zone]['vouchersyncdbip'];
+				} else {
+					unset($sections['voucher'][$zone]['vouchersyncdbip']);
+				}
+				if (isset($config['voucher'][$zone]['vouchersyncport'])) {
+					$sections['voucher'][$zone]['vouchersyncport'] =
+					    $config['voucher'][$zone]['vouchersyncport'];
+				} else {
+					unset($sections['voucher'][$zone]['vouchersyncport']);
+				}
+				if (isset($config['voucher'][$zone]['vouchersyncusername'])) {
+					$sections['voucher'][$zone]['vouchersyncusername'] =
+					    $config['voucher'][$zone]['vouchersyncusername'];
+				} else {
+					unset($sections['voucher'][$zone]['vouchersyncusername']);
+				}
+				if (isset($config['voucher'][$zone]['vouchersyncpass'])) {
+					$sections['voucher'][$zone]['vouchersyncpass'] =
+					    $config['voucher'][$zone]['vouchersyncpass'];
+				} else {
+					unset($sections['voucher'][$zone]['vouchersyncpass']);
+				}
+			}
+		}
+
 		$vipbackup = array();
 		$oldvips = array();
 		if (isset($sections['virtualip']) &&
@@ -268,6 +376,74 @@ class pfsense_xmlrpc_server {
 
 		/* For vip section, first keep items sent from the master */
 		$config = array_merge_recursive_unique($config, $sections);
+
+		/* Remove locally items removed remote */
+		foreach ($voucher as $zone => $item) {
+			/* Zone was deleted on master, delete its vouchers */
+			if (!isset($config['captiveportal'][$zone])) {
+				unset($config['voucher'][$zone]);
+				continue;
+			}
+			/* No rolls on master, delete local ones */
+			if (!is_array($item['roll'])) {
+				unset($config['voucher'][$zone]['roll']);
+				continue;
+			}
+		}
+
+		$l_rolls = array();
+		if (is_array($config['voucher'])) {
+			foreach ($config['voucher'] as $zone => $item) {
+				if (!is_array($item['roll'])) {
+					continue;
+				}
+				foreach ($item['roll'] as $idx => $roll) {
+					/* Make it easy to find roll by # */
+					$l_rolls[$zone][$roll['number']] = $idx;
+				}
+			}
+		}
+
+		/*
+		 * Process vouchers sent by primary node and:
+		 * - Add new items
+		 * - Update existing items based on 'lastsync' field
+		 */
+		foreach ($voucher as $zone => $item) {
+			if (!is_array($item['roll'])) {
+				continue;
+			}
+			foreach ($item['roll'] as $idx => $roll) {
+				if (!isset($l_rolls[$zone][$roll['number']])) {
+					$config['voucher'][$zone]['roll'][] =
+					    $roll;
+					continue;
+				}
+				$l_roll_idx = $l_rolls[$zone][$roll['number']];
+				$l_vouchers = &$config['voucher'][$zone];
+				$l_roll = $l_vouchers['roll'][$l_roll_idx];
+				if (!isset($l_roll['lastsync'])) {
+					$l_roll['lastsync'] = 0;
+				}
+
+				if (isset($roll['lastsync']) &&
+				    $roll['lastsync'] != $l_roll['lastsync']) {
+					$l_vouchers['roll'][$l_roll_idx] =
+					    $roll;
+					unset($l_rolls[$zone][$roll['number']]);
+				}
+			}
+		}
+
+		/*
+		 * At this point $l_rolls contains only items that are not
+		 * present on primary node. They must be removed
+		 */
+		foreach ($l_rolls as $zone => $item) {
+			foreach ($item as $number => $idx) {
+				unset($config['voucher'][$zone][$idx]);
+			}
+		}
 
 		/*
 		 * Then add ipalias and proxyarp types already defined
@@ -391,6 +567,9 @@ class pfsense_xmlrpc_server {
 
 		unset($old_config);
 
+		local_sync_accounts($u2add, $u2del, $g2add, $g2del);
+		filter_configure(false);
+
 		return true;
 	}
 
@@ -453,7 +632,7 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return bool
 	 */
-	public function filter_configure() {
+	public function filter_configure($reset_accounts = true) {
 		$this->auth();
 
 		global $g, $config;
@@ -499,7 +678,9 @@ class pfsense_xmlrpc_server {
 		 */
 		services_dhcpd_configure();
 
-		local_sync_accounts();
+		if ($reset_accounts) {
+			local_reset_accounts();
+		}
 
 		return true;
 	}
@@ -536,8 +717,8 @@ class pfsense_xmlrpc_server {
 	}
 }
 
-// run script untill its done and can 'unlock' the xmlrpc.lock, this prevents hanging php-fpm / webgui 
-ignore_user_abort(true); 
+// run script untill its done and can 'unlock' the xmlrpc.lock, this prevents hanging php-fpm / webgui
+ignore_user_abort(true);
 set_time_limit(0);
 
 $xmlrpclockkey = lock('xmlrpc', LOCK_EX);

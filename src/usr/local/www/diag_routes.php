@@ -3,7 +3,7 @@
  * diag_routes.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Fernando Lamos
  * All rights reserved.
  *
@@ -32,7 +32,7 @@ $filter = '';
 
 if (isset($_REQUEST['isAjax'])) {
 	require_once('auth_check.inc');
-	
+
 	$netstat = "/usr/bin/netstat -rW";
 	if (isset($_REQUEST['IPv6'])) {
 		$netstat .= " -f inet6";

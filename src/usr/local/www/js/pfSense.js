@@ -2,7 +2,7 @@
  * pfSense.js
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -110,6 +110,37 @@ $(function() {
 
 			if (group == group.parentNode.lastElementChild)
 				plus.clone(true).appendTo(controlsClone);
+		});
+	})();
+
+	// Add +/- buttons to certain Groups; to allow adding multiple entries
+	(function()
+	{
+		var groups = $('div.form-listitem.user-duplication');
+		var fg = $('<div class="form-group"></div>');
+		var controlsContainer = $('<div class="col-sm-10 col-sm-offset-2 controls"></div>');
+		var plus = $('<a class="btn btn-xs btn-success"><i class="fa fa-plus icon-embed-btn"></i>Add</a>');
+		var minus = $('<a class="btn btn-xs btn-warning"><i class="fa fa-trash icon-embed-btn"></i>Delete</a>');
+
+		minus.on('click', function(){
+			var groups = $('div.form-listitem.user-duplication');
+			if (groups.length > 1) {
+				$(this).parents('div.form-listitem').remove();
+			}
+		});
+
+		plus.on('click', function(){
+			var group = $(this).parents('div.form-listitem');
+			var clone = group.clone(true);
+			bump_input_id(clone);
+			clone.appendTo(group.parent());
+		});
+
+		groups.each(function(idx, group){
+			var fgClone = fg.clone(true).appendTo(group);
+			var controlsClone = controlsContainer.clone(true).appendTo(fgClone);
+			minus.clone(true).appendTo(controlsClone);
+			plus.clone(true).appendTo(controlsClone);
 		});
 	})();
 

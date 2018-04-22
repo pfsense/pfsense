@@ -3,7 +3,7 @@
  * ipsec.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004-2005 T. Lechat <dev@lechat.org> (BSD 2 clause)
  * Copyright (c) 2007 Jonathan Watt <jwatt@jwatt.org> (BSD 2 clause)
  * Copyright (c) 2007 Scott Dale (BSD 2 clause)
@@ -25,8 +25,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-$nocsrf = true;
 
 require_once("auth_check.inc");
 require_once("functions.inc");

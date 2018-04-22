@@ -3,7 +3,7 @@
  * system_usermanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
  * All rights reserved.
@@ -415,9 +415,9 @@ if ($_POST['save']) {
 					'organizationName' => $subject[3]['v'],
 					'emailAddress' => $subject[4]['v'],
 					'commonName' => $userent['name']);
-				$altnames_tmp = array(cert_add_altname_type($userent['name']));
-				if (!empty($altnames_tmp)) {
-					$dn['subjectAltName'] = implode(",", $altnames_tmp);
+				$cn_altname = cert_add_altname_type($userent['name']);
+				if (!empty($cn_altname)) {
+					$dn['subjectAltName'] = $cn_altname;
 				}
 
 				cert_create($cert, $_POST['caref'], $_POST['keylen'],
@@ -444,6 +444,11 @@ if ($_POST['save']) {
 			$a_user[] = $userent;
 		}
 
+		/* Sort it alphabetically */
+		usort($config['system']['user'], function($a, $b) {
+			return strcmp($a['name'], $b['name']);
+		});
+
 		/* Add user to groups so PHP can see the memberships properly or else the user's shell account does not get proper permissions (if applicable) See #5152. */
 		local_user_set_groups($userent, $_POST['groups']);
 		local_user_set($userent);
@@ -454,7 +459,6 @@ if ($_POST['save']) {
 		if (is_dir("/etc/inc/privhooks")) {
 			run_plugins("/etc/inc/privhooks");
 		}
-
 
 		pfSenseHeader("system_usermanager.php");
 	}

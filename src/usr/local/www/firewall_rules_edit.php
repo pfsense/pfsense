@@ -3,7 +3,7 @@
  * firewall_rules_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -1069,47 +1069,6 @@ function build_flag_table() {
 	return($flagtable);
 }
 
-function build_if_list() {
-	global $config;
-
-	$iflist = array();
-
-	// add group interfaces
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
-			if (have_ruleint_access($ifgen['ifname'])) {
-				$iflist[$ifgen['ifname']] = $ifgen['ifname'];
-			}
-		}
-	}
-
-	foreach (get_configured_interface_with_descr() as $ifent => $ifdesc) {
-		if (have_ruleint_access($ifent)) {
-			$iflist[$ifent] = $ifdesc;
-		}
-	}
-
-	if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp")) {
-		$iflist['l2tp'] = gettext('L2TP VPN');
-	}
-
-	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-		$iflist['pppoe'] = gettext("PPPoE Server");
-	}
-
-	// add ipsec interfaces
-	if (ipsec_enabled() && have_ruleint_access("enc0")) {
-		$iflist["enc0"] = gettext("IPsec");
-	}
-
-	// add openvpn/tun interfaces
-	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-		$iflist["openvpn"] = gettext("OpenVPN");
-	}
-
-	return($iflist);
-}
-
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $pglinks = array("");
 
@@ -1252,7 +1211,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		'interface',
 		'*Interface',
 		$pconfig['interface'],
-		build_if_list(),
+		create_interface_list(),
 		true
 	))->setHelp('Choose the interface(s) for this rule.');
 } else {
@@ -1260,7 +1219,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		'interface',
 		'*Interface',
 		$pconfig['interface'],
-		build_if_list()
+		create_interface_list()
 	))->setHelp('Choose the interface from which packets must come to match this rule.');
 }
 
@@ -1758,7 +1717,7 @@ $section->add($group)->setHelp('Choose the Acknowledge Queue only if there is a 
 
 $form->add($section);
 
-gen_created_updated_fields($form, $a_filter[$id]['created'], $a_filter[$id]['updated']);
+gen_created_updated_fields($form, $a_filter[$id]['created'], $a_filter[$id]['updated'], $a_filter[$id]['tracker']);
 
 echo $form;
 ?>
@@ -1942,9 +1901,8 @@ events.push(function() {
 		$('#gateway').val(selected);
 
 		// Gateway selection is not permitted for "IPV4+IPV6"
-		if (protocol == "inet46") {
-			$('#gateway').prop("disabled", true);
-		}
+		$('#gateway').prop("disabled", protocol == "inet46");
+
 	}
 
 	function proto_change() {

@@ -6,7 +6,7 @@
  * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -73,7 +73,10 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 
 		exit;
 	} else {
+		// add this so they don't get stuck on the logout page when they have no permissions.
+		$_SESSION["Logged_In"] = false;
 		display_error_form("201", gettext("No page assigned to this user! Click here to logout."));
+
 		exit;
 	}
 } else {
@@ -154,7 +157,7 @@ function display_error_form($http_code, $desc) {
 			<div id="footertext">
 					<p class="text-muted">
 						<a target="_blank" href="https://www.pfsense.org/?gui=bootstrap">pfSense</a> is &copy;
-						2004 - 2017 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
+						2004 - 2018 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
 						[<a href="/license.php" class="tblnk">view license</a>]
 					</p>
 				</div>
@@ -361,7 +364,7 @@ function display_login_form() {
 	            <div id="footertext">
 					<p class="text-muted">
 						<a target="_blank" href="https://www.pfsense.org/?gui=bootstrap">pfSense</a> is &copy;
-						2004 - 2017 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
+						2004 - 2018 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
 						[<a href="/license.php" class="tblnk">view license</a>]
 					</p>
 	            </div>

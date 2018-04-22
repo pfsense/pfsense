@@ -2,7 +2,7 @@
  * thermal_sensors.js
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,9 @@
  * limitations under the License.
  */
 
-warningTemp = 9999;
-criticalTemp = 100;
+var warningTemp = 9999;
+var criticalTemp = 100;
+var widgetUnit = 'C';
 ajaxBusy = false;
 
 function buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams, firstTime) {
@@ -86,14 +87,19 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 			sensorName = getSensorFriendlyName(sensorName);
 		}
 
+		if (tsParams.showFahrenheit) {
+			widgetUnit = 'F';
+			thermalSensorValue = getFahrenheitValue(thermalSensorValue);
+		}
+
 		//build temperature item/row for a sensor
 
 		var thermalSensorRow =	'<div class="progress">' +
-									'<div id="temperaturebarL' + i + widgetKey + '" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1" style="width: 1%"></div>' +
-									'<div id="temperaturebarM' + i + widgetKey + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
-									'<div id="temperaturebarH' + i + widgetKey + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
-								'</div>' +
-								'<span><b>' + sensorName + ': </b></span>' + '<span id="temperaturemsg' + i + widgetKey + '">' + thermalSensorValue + ' &deg;C</span>';
+						'<div id="temperaturebarL' + i + widgetKey + '" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1" style="width: 1%"></div>' +
+						'<div id="temperaturebarM' + i + widgetKey + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
+						'<div id="temperaturebarH' + i + widgetKey + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
+					'</div>' +
+					'<span><b>' + sensorName + ': </b></span>' + '<span id="temperaturemsg' + i + widgetKey + '">' + thermalSensorValue + '</span> &deg;' + widgetUnit;
 
 
 		thermalSensorsHTMLContent = thermalSensorsHTMLContent + thermalSensorRow;
@@ -134,7 +140,7 @@ function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) 
 			sensorName = getSensorFriendlyName(sensorName);
 		}
 
-	setTempProgress(i, thermalSensorValue, widgetKey);
+		setTempProgress(i, thermalSensorValue, widgetKey);
 	}
 }
 
@@ -157,6 +163,14 @@ function getThermalSensorValue(stringValue) {
 	return (+parseFloat(stringValue) || 0).toFixed(1);
 }
 
+function getFahrenheitValue(cels) {
+        return Math.ceil((cels * 1.8) + 32);
+}
+
+function getCelsiusValue(fahr) {
+        return Math.floor((fahr - 32) / 1.8);
+}
+
 // Update the progress indicator
 // transition = true allows the bar to move at default speed, false = instantaneous
 function setTempProgress(bar, percent, widgetKey) {
@@ -176,10 +190,9 @@ function setTempProgress(bar, percent, widgetKey) {
 		barTempH = percent - criticalTemp;
 	}
 
-
 	$('#' + 'temperaturebarL' + bar + widgetKey).css('width', barTempL + '%').attr('aria-valuenow', barTempL);
 	$('#' + 'temperaturebarM' + bar + widgetKey).css('width', barTempM + '%').attr('aria-valuenow', barTempM);
 	$('#' + 'temperaturebarH' + bar + widgetKey).css('width', barTempH + '%').attr('aria-valuenow', barTempH);
 
-	$('#' + 'temperaturemsg' + bar + widgetKey).html(percent + ' &deg;C');
+	$('#' + 'temperaturemsg' + bar + widgetKey).html(widgetUnit === 'F' ? getFahrenheitValue(percent) : percent);
 }

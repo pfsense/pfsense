@@ -3,7 +3,7 @@
  * vpn.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -270,6 +270,9 @@ function vpn_ipsec_configure($restart = false) {
 			$ikeid = $ph1ent['ikeid'];
 
 			$ep = ipsec_get_phase1_src($ph1ent);
+			/* When automatically guessing, use the first address. */
+			$ep  = explode(',', $ep);
+			$ep  = $ep[0];
 			if (!is_ipaddr($ep)) {
 				log_error(sprintf(gettext("IPsec ERROR: Could not find phase 1 source for connection %s. Omitting from configuration file."), $ph1ent['descr']));
 				continue;
@@ -711,6 +714,7 @@ EOD;
 				if (!empty($ph1ent['pre-shared-key'])) {
 					$pskconf .= "{$myid} {$peerid} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
 					if (isset($ph1ent['mobile'])) {
+						$pskconf .= "{$myid} %any : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
 						$pskconf .= " : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
 					}
 				}
@@ -804,22 +808,37 @@ EOD;
 		}
 
 		if (!isset($config['ipsec']['noshuntlaninterfaces'])) {
+			$bypassnets = array();
 			if ($config['interfaces']['lan']) {
 				$lanip = get_interface_ip("lan");
 				if (!empty($lanip) && is_ipaddrv4($lanip)) {
 					$lansn = get_interface_subnet("lan");
-					$lansa = gen_subnet($lanip, $lansn);
-					$ipsecconf .= <<<EOD
+					$lansa = gen_subnetv4($lanip, $lansn);
+					if (!empty($lansa) && !empty($lansn)) {
+						$bypassnets[] = "{$lansa}/{$lansn}";
+					}
+				}
+				$lanip6 = get_interface_ipv6("lan");
+				if (!empty($lanip6) && is_ipaddrv6($lanip6)) {
+					$lansn6 = get_interface_subnetv6("lan");
+					$lansa6 = gen_subnetv6($lanip6, $lansn6);
+					if (!empty($lansa6) && !empty($lansn6)) {
+						$bypassnets[] = "{$lansa6}/{$lansn6}";
+					}
+				}
+			}
+			if (!empty($bypassnets)) {
+				$bypass = implode(',', $bypassnets);
+				$ipsecconf .= <<<EOD
 
 conn bypasslan
-	leftsubnet = {$lansa}/{$lansn}
-	rightsubnet = {$lansa}/{$lansn}
+	leftsubnet = {$bypass}
+	rightsubnet = {$bypass}
 	authby = never
 	type = passthrough
 	auto = route
 
 EOD;
-				}
 			}
 		}
 
@@ -951,22 +970,30 @@ EOD;
 				}
 			}
 
-			if (is_array($ph1ent['encryption-algorithm']) && !empty($ph1ent['encryption-algorithm']['name']) && !empty($ph1ent['hash-algorithm'])) {
-				$ealgosp1 = '';
-				$ealg_id = $ph1ent['encryption-algorithm']['name'];
-				$ealg_kl = $ph1ent['encryption-algorithm']['keylen'];
-				if ($ealg_kl) {
-					$ealgosp1 = "ike = {$ealg_id}{$ealg_kl}-{$ph1ent['hash-algorithm']}";
-				} else {
-					$ealgosp1 = "ike = {$ealg_id}-{$ph1ent['hash-algorithm']}";
-				}
+			$ealgosp1 = '';
+			if (is_array($ph1ent['encryption']['item'])) {
+				$ciphers = "";
+				foreach($ph1ent['encryption']['item'] as $p1enc) {
+					if (!is_array($p1enc['encryption-algorithm']) ||
+							empty($p1enc['encryption-algorithm']['name']) ||
+							empty($p1enc['hash-algorithm'])) {
+						continue;
+					}
+					$ciphers .= ",";
+					$ciphers .= $p1enc['encryption-algorithm']['name'];
+					$ealg_kl = $p1enc['encryption-algorithm']['keylen'];
+					if ($ealg_kl) {
+						$ciphers .= "{$ealg_kl}";
+					}
+					$ciphers .= "-{$p1enc['hash-algorithm']}";
 
-				$modp = vpn_ipsec_convert_to_modp($ph1ent['dhgroup']);
-				if (!empty($modp)) {
-					$ealgosp1 .= "-{$modp}";
+					$modp = vpn_ipsec_convert_to_modp($p1enc['dhgroup']);
+					if (!empty($modp)) {
+						$ciphers .= "-{$modp}";
+					}
 				}
-
-				$ealgosp1 .= "!";
+				$ciphers = substr($ciphers, 1);
+				$ealgosp1 = "ike = {$ciphers}!";
 			}
 
 			if ($ph1ent['dpd_delay'] && $ph1ent['dpd_maxfail']) {
@@ -1385,7 +1412,12 @@ EOD;
 					log_error(sprintf(gettext("No phase2 specifications for tunnel with REQID = %s"), $ikeid));
 				}
 			} else {
-				$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
+				if (isset($ph1ent['mobile'])) {
+					$ipsecfin = "\nconn con-mobile\n";
+				}
+				else {
+					$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
+				}
 				//if (!empty($reqids[$idx])) {
 				//	$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				//}
@@ -1409,6 +1441,61 @@ EOD;
 			}
 			$ipsecconf .= $ipsecfin;
 			unset($ipsecfin);
+		}
+	}
+
+	$a_mobilekey = $config['ipsec']['mobilekey'];
+
+	if (is_array($a_phase1) && count($a_phase1)) {
+		foreach ($a_phase1 as $ph1ent) {
+			if (!isset($ph1ent['mobile'])) {
+				continue;
+			}
+			if (isset($ph1ent['disabled'])) {
+				continue;
+			}
+
+			if (is_array($a_mobilekey) && count($a_mobilekey)) {
+				$ipsecfin = '';
+				$mobilekey_counter = 1;
+				foreach ($a_mobilekey as $mkent) {
+					if ($mkent['type'] != "EAP") {
+						continue;
+					}
+
+					if (!isset($mkent['ident_type']) || !isset($mkent['pool_address']) || !isset($mkent['pool_netbits'])) {
+						continue;
+					}
+
+					if (strlen($mkent['pool_address'] < 1) || !is_ipaddr($mkent['pool_address'])) {
+						continue;
+					}
+
+					$ipsecfin .= "\nconn mobile-{$mobilekey_counter}\n";
+					$ipsecfin .= "\talso = con-mobile\n";
+					$ipsecfin .= "\teap_identity = %identity\n";
+					$ipsecfin .= "\trightsourceip = {$mkent['pool_address']}/{$mkent['pool_netbits']}\n";
+
+					if ($mkent['ident_type'] == "none") {
+						$ipsecfin .= "\trightid = \"{$mkent['ident']}\"\n";
+					}
+					else {
+						$ipsecfin .= "\trightid = {$mkent['ident_type']}:{$mkent['ident']}\n";
+					}
+
+					// optional: define left|rightid more granular
+					// supported: ipv4, ipv6, rfc822, email, userfqdn, fqdn, dns, asn1dn, asn1gn, keyid
+					// example: $ipsecfin = "\trightid = email:your@email.address\n";
+
+					// note: comma seperated list for access restriction, regardless of firewall rules
+					// example: $ipsecfin = "\tleftsubnet = 1.1.1.1/32,1.1.1.2/32,2.2.2.0/24\n";
+
+					$mobilekey_counter++;
+				}
+				$ipsecconf .= $ipsecfin;
+				unset($ipsecfin);
+				unset($mobilekey_counter);
+			}
 		}
 	}
 

@@ -3,7 +3,7 @@
  * services_dhcp_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -185,16 +185,9 @@ if ($_POST['save']) {
 		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent)) {
 			continue;
 		}
-		/* The fully qualified hostname (hostname + '.' + domainname) must be unique.
-		 * The unqualified hostname does not have to be unique as long as the fully
-		 * qualified hostname is unique. */
-		$existingFqn = "{$mapent['hostname']}.{$mapent['domain']}";
-		$candidateFqn = "{$_POST['hostname']}.{$_POST['domain']}";
-		if ((($existingFqn == $candidateFqn) && $mapent['hostname']) ||
-		    (($mapent['mac'] == $_POST['mac']) && $mapent['mac']) ||
-		    (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr']) ||
+		if ((($mapent['mac'] == $_POST['mac']) && $mapent['mac']) ||
 		    (($mapent['cid'] == $_POST['cid']) && $mapent['cid'])) {
-			$input_errors[] = gettext("This fully qualified hostname (Hostname + Domainname), IP, MAC address or Client identifier already exists.");
+			$input_errors[] = gettext("This MAC address or Client identifier already exists.");
 			break;
 		}
 	}
@@ -439,7 +432,8 @@ $section->addInput(new Form_IpAddress(
 	$pconfig['ipaddr'],
 	'V4'
 ))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.%1$s' .
-			'If no IPv4 address is given, one will be dynamically allocated from the pool.', '<br />');
+			'If no IPv4 address is given, one will be dynamically allocated from the pool.%1$s%1$s' .
+			'The same IP address may be assigned to multiple mappings.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',

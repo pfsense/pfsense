@@ -3,7 +3,7 @@
  * status.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -336,7 +336,7 @@ defCmdT("OS-Message Buffer", "/sbin/dmesg -a");
 defCmdT("OS-Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
 
 /* OS/Hardware Status */
-defCmdT("OS-sysctl values", "/sbin/sysctl -a");
+defCmdT("OS-sysctl values", "/sbin/sysctl -aq");
 defCmdT("OS-Kernel Environment", "/bin/kenv");
 defCmdT("OS-Installed Packages", "/usr/sbin/pkg info");
 defCmdT("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");

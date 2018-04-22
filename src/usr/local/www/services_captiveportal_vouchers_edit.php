@@ -3,7 +3,7 @@
  * services_captiveportal_vouchers_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -146,6 +146,8 @@ if ($_POST['save']) {
 			}
 			$rollent['active'] = $db;
 		}
+		/* Flag this entry to be sync'd */
+		$rollent['lastsync'] = time();
 
 		unlock($voucherlck);
 

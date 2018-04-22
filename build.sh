@@ -3,7 +3,7 @@
 # build.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ usage() {
 	echo "		--setup-poudriere - Install poudriere and create necessary jails and ports tree"
 	echo "		--create-unified-patch - Create a big patch with all changes done on FreeBSD"
 	echo "		--update-poudriere-jails [-a ARCH_LIST] - Update poudriere jails using current patch versions"
-	echo "		--update-poudriere-ports [-a ARCH_LIST]- Update poudriere ports tree"
+	echo "		--update-poudriere-ports [-a ARCH_LIST] - Update poudriere ports tree"
 	echo "		--update-pkg-repo [-a ARCH_LIST]- Rebuild necessary ports on poudriere and update pkg repo"
 	echo "		--upload|-U - Upload pkgs and/or snapshots"
 	echo "		--skip-final-rsync|-i - Skip rsync to final server"

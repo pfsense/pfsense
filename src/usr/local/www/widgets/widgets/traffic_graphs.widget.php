@@ -3,7 +3,7 @@
  * traffic_graphs.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * Copyright (c) 2004-2005 T. Lechat <dev@lechat.org>
  * Copyright (c) 2004-2005 Jonathan Watt <jwatt@jwatt.org>.
@@ -26,8 +26,6 @@
  * limitations under the License.
  */
 
-$nocsrf = true;
-
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("ipsec.inc");
@@ -45,23 +43,23 @@ if ($_POST) {
 		$user_settings["widgets"]["traffic_graphs"] = array();
 	}
 
-	if (isset($_POST["refreshinterval"])) {
+	if (isset($_POST["refreshinterval"]) && is_numeric($_POST["refreshinterval"]) && ($_POST["refreshinterval"] >= 1) && ($_POST["refreshinterval"] <= 10)) {
 		$user_settings["widgets"]["traffic_graphs"]["refreshinterval"] = $_POST["refreshinterval"];
 	}
 
-	if (isset($_POST["invert"])) {
+	if (isset($_POST["invert"]) && in_array($_POST["invert"], array("true", "false"))) {
 		$user_settings["widgets"]["traffic_graphs"]["invert"] = $_POST["invert"];
 	}
 
-	if (isset($_POST["backgroundupdate"])) {
+	if (isset($_POST["backgroundupdate"]) && in_array($_POST["backgroundupdate"], array("true", "false"))) {
 		$user_settings["widgets"]["traffic_graphs"]["backgroundupdate"] = $_POST["backgroundupdate"];
 	}
 
-	if (isset($_POST["smoothfactor"])) {
+	if (isset($_POST["smoothfactor"]) && is_numeric($_POST["smoothfactor"]) && ($_POST["smoothfactor"] >= 0) && ($_POST["smoothfactor"] <= 5)) {
 		$user_settings["widgets"]["traffic_graphs"]["smoothfactor"] = $_POST["smoothfactor"];
 	}
 
-	if (isset($_POST["size"])) {
+	if (isset($_POST["size"]) && in_array($_POST["size"], array("8", "1"))) {
 		$user_settings["widgets"]["traffic_graphs"]["size"] = $_POST["size"];
 	}
 
@@ -162,7 +160,7 @@ $tg_displayed_realifsarray = [];
 		<div class="form-group">
 			<label for="traffic-graph-interval" class="col-sm-3 control-label"><?=gettext('Refresh Interval')?></label>
 			<div class="col-sm-9">
-				<input type="number" id="refreshinterval" name="refreshinterval" value="<?=$tg_refreshinterval?>" min="1" max="10" class="form-control" />
+				<input type="number" id="refreshinterval" name="refreshinterval" value="<?=htmlspecialchars($tg_refreshinterval)?>" min="1" max="10" class="form-control" />
 			</div>
 		</div>
 
@@ -220,7 +218,7 @@ $tg_displayed_realifsarray = [];
 		<div class="form-group">
 			<label for="smoothfactor" class="col-sm-3 control-label"><?=gettext('Graph Smoothing')?></label>
 			<div class="col-sm-9">
-				<input type='range' id="smoothfactor" name='smoothfactor' class='form-control' min='0' max='5'value="<?= $tg_smoothfactor ?>"/>
+				<input type='range' id="smoothfactor" name='smoothfactor' class='form-control' min='0' max='5'value="<?= htmlspecialchars($tg_smoothfactor) ?>"/>
 			</div>
 		</div>
 
@@ -275,12 +273,12 @@ events.push(function() {
 
 	var InterfaceString = "<?=implode("|", $tg_displayed_ifs_array)?>";
 	var RealInterfaceString = "<?=implode("|", $tg_displayed_realifsarray)?>";
-    window.graph_backgroundupdate = <?=$tg_backgroundupdate?>;
+	window.graph_backgroundupdate = <?=json_encode($tg_backgroundupdate)?>;
 
-	window.interval = <?=$tg_refreshinterval?>;
-	window.invert = <?=$tg_invert?>;
-	window.size = <?=$tg_size?>;
-	window.smoothing = <?=$tg_smoothfactor?>;
+	window.interval = <?=json_encode($tg_refreshinterval)?>;
+	window.invert = JSON.parse(<?=json_encode($tg_invert)?>);
+	window.size = <?=json_encode($tg_size)?>;
+	window.smoothing = <?=json_encode($tg_smoothfactor)?>;
 	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 	window.realinterfaces = RealInterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 

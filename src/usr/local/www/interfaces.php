@@ -3,7 +3,7 @@
  * interfaces.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt
  * All rights reserved.
  *
@@ -101,8 +101,6 @@ if ($if == "wan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "WAN";
 } else if ($if == "lan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "LAN";
-} else if ($if == "opt1" && !$wancfg['descr']) {
-	$wancfg['descr'] = "OPT1";
 }
 
 /* NOTE: The code here is used to set the $pppid for the curious */
@@ -291,6 +289,8 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
 		$pconfig['dhcp6withoutra'] = isset($wancfg['dhcp6withoutra']);
 		$pconfig['dhcp6norelease'] = isset($wancfg['dhcp6norelease']);
+		$pconfig['dhcp6vlanenable'] = isset($wancfg['dhcp6vlanenable']);
+		$pconfig['dhcp6cvpt'] = $wancfg['dhcp6cvpt'];
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -539,6 +539,16 @@ if ($_POST['apply']) {
 		if (substr($_POST['descr'], 0, 4) == 'pkg_') {
 			$input_errors[] = gettext("The interface description cannot start with pkg_");
 		}
+	}
+
+	if ($_POST['blockbogons'] == "yes" &&
+	    isset($config['system']['ipv6allow']) &&
+	    (!isset($config['system']['maximumtableentries']) ||
+	     $config['system']['maximumtableentries'] <
+	     $g['minimumtableentries_bogonsv6'])) {
+		$input_errors[] = sprintf(gettext(
+		    "In order to block bogon networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s."),
+		    $g['minimumtableentries_bogonsv6']);
 	}
 
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable'])) {
@@ -1058,6 +1068,8 @@ if ($_POST['apply']) {
 		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['dhcp6withoutra']);
 		unset($wancfg['dhcp6norelease']);
+		unset($wancfg['dhcp6vlanenable']);
+		unset($wancfg['dhcp6cvpt']);
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
@@ -1315,6 +1327,15 @@ if ($_POST['apply']) {
 				if ($_POST['dhcp6norelease'] == "yes") {
 					$wancfg['dhcp6norelease'] = true;
 				}
+				if ($_POST['dhcp6vlanenable'] == "yes") {
+					$wancfg['dhcp6vlanenable'] = true;
+				}
+				if (!empty($_POST['dhcp6cvpt'])) {
+					$wancfg['dhcp6cvpt'] = $_POST['dhcp6cvpt'];
+				} else {
+					unset($wancfg['dhcp6cvpt']);
+				}
+
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options'])) {
 					$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];
 				}
@@ -2246,6 +2267,35 @@ $section->addInput(new Form_Checkbox(
 	'dhcp6c will send a release to the ISP on exit, some ISPs then release the allocated address or prefix. This option prevents that signal ever being sent',
 	$pconfig['dhcp6norelease']
 ));
+
+$group = new Form_Group('DHCP6 VLAN Priority');
+
+$vlanprio = array(
+	"bk" => "Background (BK, 0)",
+	"be" => "Best Effort (BE, 1)",
+	"ee" => "Excellent Effort (EE, 2)",
+	"ca" => "Critical Applications (CA, 3)",
+	"vi" => "Video (VI, 4)",
+	"vo" => "Voice (VO, 5)",
+	"ic" => "Internetwork Control (IC, 6)",
+	"nc" => "Network Control (NC, 7)");
+
+$group->add(new Form_Checkbox(
+	'dhcp6vlanenable',
+	null,
+	'Enable dhcp6c VLAN Priority tagging',
+	$pconfig['dhcp6vlanenable']
+))->setHelp('Normally off unless specifically required by the ISP.');
+
+$group->add(new Form_Select(
+	'dhcp6cvpt',
+	'VLAN Prio',
+	$pconfig['dhcp6cvpt'],
+	$vlanprio
+))->setHelp('Choose 802.1p priority to set.');
+
+$section->add($group);
+
 $section->addInput(new Form_Input(
 	'adv_dhcp6_config_file_override_path',
 	'Configuration File Override',

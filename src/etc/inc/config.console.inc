@@ -3,7 +3,7 @@
  * config.console.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -76,7 +76,7 @@ EOD;
 		// ifsmallist is kept with spaces at the beginning and end to assist with str_replace() operations
 		$ifsmallist = " ";
 		foreach ($iflist as $iface => $ifa) {
-			$friendly = convert_real_interface_to_friendly_interface_name($iface);	
+			$friendly = convert_real_interface_to_friendly_interface_name($iface);
 			$ifstatus = pfSense_get_interface_addresses($config['interfaces'][$friendly]['if']);
 			if (is_array($ifstatus) && $ifstatus['linkstateup'])
 				$status = "  (up)";
@@ -380,14 +380,10 @@ EOD;
 
 		fclose($fp);
 
-		if (platform_booting()) {
-			return (0);
-		}
-
 		echo gettext("One moment while the settings are reloading...");
 		touch("{$g['tmp_path']}/assign_complete");
 
-		if (file_exists("/conf/trigger_initial_wizard")) {
+		if (file_exists("{$g['conf_path']}/trigger_initial_wizard")) {
 			// Let the system know that the interface assign part of initial setup has been done.
 			touch("{$g['conf_path']}/assign_complete");
 		}
@@ -472,7 +468,7 @@ function vlan_setup() {
 		$vlan['if'] = chop(fgets($fp));
 
 		if ($vlan['if']) {
-			if (!array_key_exists($vlan['if'], $iflist) || 
+			if (!array_key_exists($vlan['if'], $iflist) ||
 			    !is_jumbo_capable($vlan['if'])) {
 				printf(gettext('%1$sInvalid interface name \'%2$s\'%3$s'), "\n", $vlan['if'], "\n");
 				continue;

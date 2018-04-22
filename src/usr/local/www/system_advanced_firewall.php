@@ -3,7 +3,7 @@
  * system_advanced_firewall.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -147,6 +147,20 @@ if ($_POST) {
 	}
 	if ($_POST['othermultipletimeout'] && !is_numericint($_POST['othermultipletimeout'])) {
 		$input_errors[] = gettext("The Other multiple timeout value must be an integer.");
+	}
+
+	if ($_POST['maximumtableentries']) {
+		$maximumtableentries = $_POST['maximumtableentries'];
+	} else {
+		$maximumtableentries = pfsense_default_table_entries_size();
+	}
+	if (!is_numericint($maximumtableentries)) {
+		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
+	} else if (is_bogonsv6_used() &&
+	    $maximumtableentries < $g['minimumtableentries_bogonsv6']) {
+		$input_errors[] = sprintf(gettext(
+		    "The Firewall Maximum Table Entries value must be greater than %s when block bogons is enabled."),
+		    $g['minimumtableentries_bogonsv6']);
 	}
 
 	ob_flush();

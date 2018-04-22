@@ -3,7 +3,7 @@
  * easyrule.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2009-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2009-2018 Rubicon Communications, LLC (Netgate)
  * Originally Sponsored By Anathematic @ pfSense Forums
  * All rights reserved.
  *
@@ -113,6 +113,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$filterent['descr'] = gettext("Easy Rule: Blocked from Firewall Log View");
 	/* Do not translate this, it's considered a username which cannot contain international characters */
 	$filterent['created'] = make_config_revision_entry(null, "Easy Rule");
+	$filterent['tracker'] = (int)microtime(true);
 
 	// Refer to firewall_rules_edit.php separators updating code.
 	// Using same code, variables, and techniques here.
@@ -335,6 +336,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 
 	/* Do not translate this, it's considered a username which cannot contain international characters */
 	$filterent['created'] = make_config_revision_entry(null, "Easy Rule");
+	$filterent['tracker'] = (int)microtime(true);
 	$a_filter[] = $filterent;
 
 	write_config($filterent['descr']);

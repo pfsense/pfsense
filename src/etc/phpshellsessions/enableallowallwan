@@ -2,7 +2,7 @@
  * enableallowallwan
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,25 +23,20 @@ require_once("filter.inc");
 require("shaper.inc");
 $config = parse_config(true);
 echo "Adding allow all rule...\n";
-$filterent = array();
-$filterent["type"] = "pass";
-$filterent["interface"] = "wan";
-$filterent["source"]["any"] = "";
-$filterent["destination"]["any"] = "";
-$filterent["statetype"] = "keep state";
-$filterent["os"] = "";
-$filterent["descr"] = "Allow all ipv4 via pfSsh.php";
-$config["filter"]["rule"][] = $filterent;
-$filterent = array();
-$filterent["type"] = "pass";
-$filterent["ipprotocol"] = "inet6";
-$filterent["interface"] = "wan";
-$filterent["source"]["any"] = "";
-$filterent["destination"]["any"] = "";
-$filterent["statetype"] = "keep state";
-$filterent["os"] = "";
-$filterent["descr"] = "Allow all ipv6 via pfSsh.php";
-$config["filter"]["rule"][] = $filterent;
+
+$config["filter"]["rule"][] = array(
+	"tracker" => (int)microtime(true),
+	"type" => "pass",
+	"interface" => "wan",
+	"ipprotocol" => "inet46",
+	"statetype" => "keep state",
+	"os" => "",
+	"source" => array("any" => ""),
+	"destination" => array("any" => ""),
+	"descr" => "Allow all ipv4+ipv6 via pfSsh.php",
+	"created" => make_config_revision_entry(null, "pfSsh.php added allow all wan rule")
+);
+
 echo "Turning off block private networks (if on)...\n";
 unset($config["interfaces"]["wan"]["blockpriv"]);
 echo "Turning off block bogon networks (if on)...\n";

@@ -3,7 +3,7 @@
  * thermal_sensors.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@ require_once("guiconfig.inc");
 //called by showThermalSensorsData() (jQuery Ajax call) in thermal_sensors.js
 if (isset($_REQUEST["getThermalSensorsData"])) {
 
-	$_gb = exec("/sbin/sysctl -a | grep temperature", $dfout);
+	$_gb = exec("/sbin/sysctl -aq | grep temperature", $dfout);
 	$dfout_filtered = array_filter($dfout, function($v) {
 		return strpos($negsign, ' -') === false;
 	});
@@ -110,6 +110,14 @@ if (!function_exists('getBoolValueFromConfig')) {
 //=========================================================================
 //save widget config settings on POST
 if ($_POST['widgetkey']) {
+	if (isset($_POST["thermal_sensors_widget_show_fahrenheit"])) {
+		// convert back to celcius
+		$_POST["thermal_sensors_widget_zone_warning_threshold"] = floor(($_POST["thermal_sensors_widget_zone_warning_threshold"] - 32) / 1.8);
+		$_POST["thermal_sensors_widget_zone_critical_threshold"] = floor(($_POST["thermal_sensors_widget_zone_critical_threshold"] - 32) / 1.8);
+		$_POST["thermal_sensors_widget_core_warning_threshold"] = floor(($_POST["thermal_sensors_widget_core_warning_threshold"] - 32) / 1.8);
+		$_POST["thermal_sensors_widget_core_critical_threshold"] = floor(($_POST["thermal_sensors_widget_core_critical_threshold"] - 32) / 1.8);
+	}
+
 	set_customwidgettitle($user_settings);
 	saveThresholdSettings($user_settings, $_POST, "thermal_sensors_widget_zone_warning_threshold", "thermal_sensors_widget_zone_critical_threshold");
 	saveThresholdSettings($user_settings, $_POST, "thermal_sensors_widget_core_warning_threshold", "thermal_sensors_widget_core_critical_threshold");
@@ -119,6 +127,7 @@ if ($_POST['widgetkey']) {
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_full_sensor_name");
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_warning");
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_critical");
+	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_fahrenheit");
 
 	//write settings to config file
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved thermal_sensors_widget settings via Dashboard."));
@@ -139,6 +148,7 @@ $thermal_sensors_widget_showRawOutput = getBoolValueFromConfig($user_settings, "
 $thermal_sensors_widget_showFullSensorName = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_full_sensor_name", false, $widgetkey);
 $thermal_sensors_widget_pulsateWarning = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_warning", true, $widgetkey);
 $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_critical", true, $widgetkey);
+$thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_fahrenheit", false, $widgetkey);
 
 //=========================================================================
 ?>
@@ -156,40 +166,67 @@ $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings,
 			showRawOutput:<?= $thermal_sensors_widget_showRawOutput ? "true" : "false"; ?>,
 			showFullSensorName:<?= $thermal_sensors_widget_showFullSensorName ? "true" : "false"; ?>,
 			pulsateWarning:<?= $thermal_sensors_widget_pulsateWarning ? "true" : "false"; ?>,
-			pulsateCritical:<?= $thermal_sensors_widget_pulsateCritical ? "true" : "false"; ?>
+			pulsateCritical:<?= $thermal_sensors_widget_pulsateCritical ? "true" : "false"; ?>,
+			showFahrenheit:<?= $thermal_sensors_widget_showFahrenheit ? "true" : "false"; ?>
+
 		};
 
-	// --------------------- Centralized widget refresh system ------------------------------
+		$("#thermal_sensors_widget_show_fahrenheit").on("change", function(e) {
+			if (this.checked) {
+				$(".thermal_sensors_widget_unit").html('<?=gettext("&deg;F")?>');
+				$(".thermal_sensors_widget_range").html('<?=gettext("(1&ndash;212)")?>');
+				$("#thermal_sensors_widget_zone_warning_threshold").val(function(){return getFahrenheitValue(this.value);});
+				$("#thermal_sensors_widget_zone_critical_threshold").val(function(){return getFahrenheitValue(this.value);});
+				$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getFahrenheitValue(this.value);});
+				$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getFahrenheitValue(this.value);});
+			} else {
+				$(".thermal_sensors_widget_unit").html('<?=gettext("&deg;C")?>');
+				$(".thermal_sensors_widget_range").html('<?=gettext("(1&ndash;100)")?>');
+				$("#thermal_sensors_widget_zone_warning_threshold").val(function(){return getCelsiusValue(this.value);});
+				$("#thermal_sensors_widget_zone_critical_threshold").val(function(){return getCelsiusValue(this.value);});
+				$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getCelsiusValue(this.value);});
+				$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getCelsiusValue(this.value);});
+			}
+		});
+		// --------------------- Centralized widget refresh system ------------------------------
 
-	// Callback function called by refresh system when data is retrieved
-	function ts_callback(s) {
+		// Callback function called by refresh system when data is retrieved
+		function ts_callback(s) {
 			var thermalSensorsData = s || "";
 			buildThermalSensorsData(thermalSensorsData, "<?=htmlspecialchars($widgetkey)?>", tsParams, true);
 			firstTime = false;
-	}
+		}
 
-	// POST data to send via AJAX
-	var postdata = {
-		ajax: "ajax",
-	 	getThermalSensorsData : "1"
-	 };
+		// POST data to send via AJAX
+		var postdata = {
+			ajax: "ajax",
+			getThermalSensorsData : "1"
+		 };
 
-	// Create an object defining the widget refresh AJAX call
-	var tsObject = new Object();
-	tsObject.name = "Gateways";
-	tsObject.url = "/widgets/widgets/thermal_sensors.widget.php";
-	tsObject.callback = ts_callback;
-	tsObject.parms = postdata;
-	tsObject.freq = 1;
+		// Create an object defining the widget refresh AJAX call
+		var tsObject = new Object();
+		tsObject.name = "thermal-sensors";
+		tsObject.url = "/widgets/widgets/thermal_sensors.widget.php";
+		tsObject.callback = ts_callback;
+		tsObject.parms = postdata;
+		tsObject.freq = 5;
 
-	// Register the AJAX object
-	register_ajax(tsObject);
+		// Register the AJAX object
+		register_ajax(tsObject);
 
-	// ---------------------------------------------------------------------------------------------------
-
+		// ---------------------------------------------------------------------------------------------------
 	});
 //]]>
 </script>
+<?php
+// update displayed values
+if ($thermal_sensors_widget_showFahrenheit) {
+	$thermal_sensors_widget_zoneWarningTempThreshold = ceil($thermal_sensors_widget_zoneWarningTempThreshold * 1.8 + 32);
+	$thermal_sensors_widget_zoneCriticalTempThreshold = ceil($thermal_sensors_widget_zoneCriticalTempThreshold * 1.8 + 32);
+	$thermal_sensors_widget_coreWarningTempThreshold = ceil($thermal_sensors_widget_coreWarningTempThreshold * 1.8 + 32);
+	$thermal_sensors_widget_coreCriticalTempThreshold = ceil($thermal_sensors_widget_coreCriticalTempThreshold * 1.8 + 32);
+}
+?>
 <div style="padding: 5px">
 	<div id="thermalSensorsContainer-<?=htmlspecialchars($widgetkey)?>" class="listr">
 		<?=gettext('(Updating...)')?><br /><br />
@@ -203,33 +240,35 @@ $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings,
 		<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 		<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 		<div class="form-group">
-			<label class="col-sm-6 control-label"><?=gettext('Thresholds in')?> &deg;C <?=gettext('(1 to 100):')?></label>
+			<label class="col-sm-6 control-label">
+				<?=sprintf(gettext('Thresholds in <span class="thermal_sensors_widget_unit">%s</span><br/><span class="thermal_sensors_widget_range">%s</span>:'), $thermal_sensors_widget_showFahrenheit ? gettext("&deg;F") : gettext("&deg;C"), $thermal_sensors_widget_showFahrenheit ? gettext("(1&ndash;212)") : gettext("(1&ndash;100)"))?>
+			</label>
 		</div>
 
 		<div class="form-group">
 			<label class="col-sm-4 control-label"><?=gettext('Zone Warning')?></label>
-			<div class="col-sm-2">
+			<div class="col-sm-4">
 				<input type="text" name="thermal_sensors_widget_zone_warning_threshold" id="thermal_sensors_widget_zone_warning_threshold" value="<?= $thermal_sensors_widget_zoneWarningTempThreshold; ?>" class="form-control" />
 			</div>
 		</div>
 
 		<div class="form-group">
 			<label class="col-sm-4 control-label"><?=gettext('Zone Critical')?></label>
-			<div class="col-sm-2">
+			<div class="col-sm-4">
 				<input type="text" name="thermal_sensors_widget_zone_critical_threshold" id="thermal_sensors_widget_zone_critical_threshold" value="<?= $thermal_sensors_widget_zoneCriticalTempThreshold; ?>" class="form-control" />
 			</div>
 		</div>
 
 		<div class="form-group">
 			<label class="col-sm-4 control-label"><?=gettext('Core Warning')?></label>
-			<div class="col-sm-2">
+			<div class="col-sm-4">
 				<input type="text" name="thermal_sensors_widget_core_warning_threshold" id="thermal_sensors_widget_core_warning_threshold" value="<?= $thermal_sensors_widget_coreWarningTempThreshold; ?>" class="form-control" />
 			</div>
 		</div>
 
 		<div class="form-group">
 			<label class="col-sm-4 control-label"><?=gettext('Core Critical')?></label>
-			<div class="col-sm-2">
+			<div class="col-sm-4">
 				<input type="text" name="thermal_sensors_widget_core_critical_threshold" id="thermal_sensors_widget_core_critical_threshold" value="<?= $thermal_sensors_widget_coreCriticalTempThreshold; ?>" class="form-control" />
 			</div>
 		</div>
@@ -253,6 +292,15 @@ $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings,
 			<div class="col-sm-6 checkbox">
 				<label>
 					<input type="checkbox" name="thermal_sensors_widget_show_full_sensor_name" id="thermal_sensors_widget_show_full_sensor_name" value="<?= $thermal_sensors_widget_showFullSensorName; ?>" <?= ($thermal_sensors_widget_showFullSensorName) ? " checked" : ""; ?>/>
+				</label>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="thermal_sensors_widget_show_fahrenheit" class="col-sm-4 control-label"><?=gettext('Show temperature in Fahrenheit')?></label>
+			<div class="col-sm-6 checkbox">
+				<label>
+					<input type="checkbox" name="thermal_sensors_widget_show_fahrenheit" id="thermal_sensors_widget_show_fahrenheit" value="<?= $thermal_sensors_widget_showFahrenheit; ?>" <?= ($thermal_sensors_widget_showFahrenheit) ? " checked" : ""; ?>/>
 				</label>
 			</div>
 		</div>

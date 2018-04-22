@@ -2,7 +2,7 @@
  * pfSense.css
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -303,6 +303,13 @@ tr.disabled a {
     border-bottom: none;
 }
 
+.form-listitem {
+	border-top: 3px solid #E0E0E0;
+}
+.form-listitem:first-child {
+	border-top: none;
+}
+
 .input-group-addon {
     padding: 0 12px;
 }
@@ -329,6 +336,29 @@ tr.disabled a {
 /* active table row on hover */
 .table-hover>tbody>tr.active:hover>td, .table-hover>tbody>tr.active:hover>th, .table-hover>tbody>tr:hover>.active, .table-hover>tbody>tr>td.active:hover, .table-hover>tbody>tr>th.active:hover {
     background-color: #BDBDBD;
+}
+
+/* Handle the limited space available on the Status DHCPv6 Leases table.
+ * Break DUID string when needed and use smaller text.
+ */
+.statusdhcpv6leases tbody>tr>td:nth-of-type(4) {
+    word-wrap: break-word;
+    word-break: break-all;
+    font-size: smaller;
+}
+
+/* Smaller text for IAID in leases table and in prefixes table
+ * for the route ip and its IAID.
+ */
+.statusdhcpv6leases tbody>tr>td:nth-of-type(3),
+.statusdhcpv6prefixes tbody>tr>td:nth-of-type(3) {
+    font-size: smaller;
+}
+
+/* Break DUID string in the prefixes table. */
+.statusdhcpv6prefixes tbody>tr>td:nth-of-type(5) {
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 .popover {

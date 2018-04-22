@@ -6,7 +6,7 @@
  * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -417,7 +417,99 @@ function local_backed($username, $passwd) {
 	return false;
 }
 
-function local_sync_accounts() {
+function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
+	global $config, $debug;
+
+	if (empty($u2add) && empty($u2del) && empty($g2add) && empty($g2del)) {
+		/* Nothing to be done here */
+		return;
+	}
+
+	foreach($u2del as $user) {
+		if ($user['uid'] < 2000 || $user['uid'] > 65000) {
+			continue;
+		}
+
+		/*
+		 * If a crontab was created to user, pw userdel will be
+		 * interactive and can cause issues. Just remove crontab
+		 * before run it when necessary
+		 */
+		unlink_if_exists("/var/cron/tabs/{$user['name']}");
+		$cmd = "/usr/sbin/pw userdel -n " .
+		    escapeshellarg($user['name']);
+		if ($debug) {
+			log_error(sprintf(gettext("Running: %s"), $cmd));
+		}
+		mwexec($cmd);
+		local_group_del_user($user);
+
+		$system_user = $config['system']['user'];
+		for ($i = 0; $i < count($system_user); $i++) {
+			if ($system_user[$i]['name'] == $user['name']) {
+				log_error("Removing user: {$user['name']}");
+				unset($config['system']['user'][$i]);
+				break;
+			}
+		}
+	}
+
+	foreach($g2del as $group) {
+		if ($group['gid'] < 1999 || $group['gid'] > 65000) {
+			continue;
+		}
+
+		$cmd = "/usr/sbin/pw groupdel -g " .
+		    escapeshellarg($group['name']);
+		if ($debug) {
+			log_error(sprintf(gettext("Running: %s"), $cmd));
+		}
+		mwexec($cmd);
+
+		$system_group = $config['system']['group'];
+		for ($i = 0; $i < count($system_group); $i++) {
+			if ($system_group[$i]['name'] == $group['name']) {
+				log_error("Removing group: {$group['name']}");
+				unset($config['system']['group'][$i]);
+				break;
+			}
+		}
+	}
+
+	foreach ($u2add as $user) {
+		log_error("Adding user: {$user['name']}");
+		$config['system']['user'][] = $user;
+	}
+
+	foreach ($g2add as $group) {
+		log_error("Adding group: {$group['name']}");
+		$config['system']['group'][] = $group;
+	}
+
+	/* Sort it alphabetically */
+	usort($config['system']['user'], function($a, $b) {
+		return strcmp($a['name'], $b['name']);
+	});
+	usort($config['system']['group'], function($a, $b) {
+		return strcmp($a['name'], $b['name']);
+	});
+
+	write_config("Sync'd users and groups via XMLRPC");
+
+	/* make sure the all group exists */
+	$allgrp = getGroupEntryByGID(1998);
+	local_group_set($allgrp, true);
+
+	foreach ($u2add as $user) {
+		local_user_set($user);
+	}
+
+	foreach ($g2add as $group) {
+		local_group_set($group);
+	}
+}
+
+function local_reset_accounts() {
 	global $debug, $config;
 
 	/* remove local users to avoid uid conflicts */
@@ -491,8 +583,6 @@ function local_sync_accounts() {
 			local_group_set($group);
 		}
 	}
-
-
 }
 
 function local_user_set(& $user) {
@@ -831,8 +921,6 @@ function local_group_del($group) {
 }
 
 function ldap_test_connection($authcfg) {
-	global $debug, $config, $g;
-
 	if ($authcfg) {
 		if (strstr($authcfg['ldap_urltype'], "SSL")) {
 			$ldapproto = "ldaps";
@@ -844,9 +932,6 @@ function ldap_test_connection($authcfg) {
 		if (!empty($ldapport)) {
 			$ldapserver .= ":{$ldapport}";
 		}
-		$ldapbasedn = $authcfg['ldap_basedn'];
-		$ldapbindun = $authcfg['ldap_binddn'];
-		$ldapbindpw = $authcfg['ldap_bindpw'];
 	} else {
 		return false;
 	}
@@ -866,7 +951,7 @@ function ldap_test_connection($authcfg) {
 	}
 
 	if ($error == true) {
-		log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
+		log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $authcfg['name']));
 		return false;
 	}
 

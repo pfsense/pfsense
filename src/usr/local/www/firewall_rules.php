@@ -3,7 +3,7 @@
  * firewall_rules.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -83,9 +83,10 @@ function print_states($tracker) {
 		}
 	}
 
+	$trackertext = !empty($tracker) ? "Tracking ID: {$tracker}<br>" : "";
 	printf("<a href=\"diag_dump_states.php?ruleid=%s\" data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"%s\" ",
 	    $rulesid, gettext("States details"));
-	printf("data-content=\"evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\" usepost>",
+	printf("data-content=\"{$trackertext}evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\" usepost>",
 	    format_number($evaluations), format_number($packets), format_bytes($bytes),
 	    format_number($states), format_number($stcreations));
 	printf("%s/%s</a><br>", format_number($states), format_bytes($bytes));
@@ -120,44 +121,7 @@ if ($_REQUEST['if']) {
 
 $ifdescs = get_configured_interface_with_descr();
 
-/* add group interfaces */
-if (is_array($config['ifgroups']['ifgroupentry'])) {
-	foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
-		if (have_ruleint_access($ifgen['ifname'])) {
-			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
-		}
-	}
-}
-
-foreach ($ifdescs as $ifent => $ifdesc) {
-	if (have_ruleint_access($ifent)) {
-		$iflist[$ifent] = $ifdesc;
-	}
-}
-
-if ($config['l2tp']['mode'] == "server") {
-	if (have_ruleint_access("l2tp")) {
-		$iflist['l2tp'] = gettext("L2TP VPN");
-	}
-}
-
-if (is_array($config['pppoes']['pppoe'])) {
-	foreach ($config['pppoes']['pppoe'] as $pppoes) {
-		if (($pppoes['mode'] == 'server') && have_ruleint_access("pppoe")) {
-			$iflist['pppoe'] = gettext("PPPoE Server");
-		}
-	}
-}
-
-/* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$iflist["enc0"] = gettext("IPsec");
-}
-
-/* add openvpn/tun interfaces */
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$iflist["openvpn"] = gettext("OpenVPN");
-}
+$iflist = create_interface_list();
 
 if (!$if || !isset($iflist[$if])) {
 	if ($if != "any" && $if != "FloatingRules" && isset($iflist['wan'])) {

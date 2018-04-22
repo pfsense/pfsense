@@ -3,7 +3,7 @@
  * shortcuts.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -235,6 +235,7 @@ $shortcuts['resolver'] = array();
 $shortcuts['resolver']['main'] = "services_unbound.php";
 $shortcuts['resolver']['log'] = "status_logs.php?logfile=resolver";
 $shortcuts['resolver']['service'] = "unbound";
+$shortcuts['resolver']['status'] = "status_unbound.php";
 
 $shortcuts['wireless'] = array();
 $shortcuts['wireless']['main'] = "interfaces_wireless.php";
@@ -275,4 +276,5 @@ $shortcuts['authentication']['main'] = "system_authservers.php";
 $shortcuts['aliases'] = array();
 $shortcuts['aliases']['main'] = "firewall_aliases.php";
 $shortcuts['aliases']['status'] = "diag_tables.php";
+
 ?>

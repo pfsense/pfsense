@@ -3,7 +3,7 @@
  * services_ntpd_gps.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -173,7 +173,7 @@ if ($_POST) {
 	} else {
 		$config['ntpd']['gps']['nmea'] = strval(array_sum($_POST['gpsnmea']));
 	}
-	
+
 	if (!empty($_POST['processpgrmf'])) {
 		$config['ntpd']['gps']['processpgrmf'] = $_POST['processpgrmf'];
 	} elseif (isset($config['ntpd']['gps']['processpgrmf'])) {

@@ -124,6 +124,7 @@
 	 *  ClouDNS         - Last Tested: 22 August 2017
 	 *  GoDaddy         - Last Tested: 22 November 2017
 	 *  GoDaddy IPv6    - Last Tested: 22 November 2017
+	 *  DigitalOcean    - Not Yet Tested
 	 *  Azure DNS       - Last Tested: 08 March 2018
 	 * +====================================================+
 	 *
@@ -238,6 +239,12 @@
 			case "godaddy":
 			case "godaddy-v6":
 				if (!$dnsUser) $this->_error(3);
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				if (!$dnsTTL) $this->_error(9);
+				break;
+			case 'digitalocean':
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
 				if (!$dnsDomain) $this->_error(5);
@@ -358,6 +365,7 @@
 					case 'all-inkl':
 					case 'cloudns':
 					case 'hover':
+					case 'digitalocean':
 					case 'godaddy':
 					case 'godaddy-v6':
 					case  'azure':
@@ -977,6 +985,34 @@
 						$port = ":" . $this->_dnsPort;
 					}
 					curl_setopt($ch, CURLOPT_URL, $server . $port);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					break;
+				case 'digitalocean':
+					// Get record ID
+					$server = 'https://api.digitalocean.com/v2/domains/';
+					$url = $server . $this->_dnsDomain . '/records';
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer {$this->_dnsPass}"));
+					curl_setopt($ch, CURLOPT_URL, $url);
+					$output = json_decode(curl_exec($ch));
+					foreach($output->domain_records as $dnsRecord) {
+						if ($this->_dnsHost == $dnsRecord->name) {
+							$recordID = $dnsRecord->id;
+							break;
+						}
+					}
+
+					// Create/update record
+					if ($recordID == null) {
+						$url = $server . $this->_dnsDomain . '/records';
+					} else {
+						$url = $server . $this->_dnsDomain . '/records/' . $recordID;
+						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+					}
+					$post_data['type'] = 'A';
+					$post_data['ttl'] = $this->_dnsTTL;
+					$post_data['name'] = $this->_dnsHost;
+					$post_data['data'] = $this->_dnsIP;
+					curl_setopt($ch, CURLOPT_URL, $url);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
 				case 'cloudns':
@@ -1797,6 +1833,16 @@
 					} else if (preg_match('/Domæne kan IKKE administreres af bruger/i', $data)) {
 						$status = $status_intro . $error_str . gettext("User unable to administer the selected domain.");
 					} else if (preg_match('/OK/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
+					}
+					break;
+				case 'digitalocean':
+					if (preg_match("/\s200\sOK/i", $header)) {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
 					} else {

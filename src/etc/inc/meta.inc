@@ -95,7 +95,7 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 	$fdata = @file_get_contents($fpath);
 	if (!$fdata) {
 		printf(gettext("unable to read %s") . "\n", $fpath);
-		continue;
+		return;
 	}
 
 	$offset = 0;

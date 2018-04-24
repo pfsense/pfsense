@@ -217,7 +217,7 @@ if ($_POST) {
 		if (!empty($dummynet_pipe_list[$qname])) {
 			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter.");
 		} else {
-			$dnpipe =& new dnpipe_class();
+			$dnpipe = new dnpipe_class();
 
 			$dnpipe->ReadConfig($_POST);
 			$dnpipe->validate_input($_POST, $input_errors);

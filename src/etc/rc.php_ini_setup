@@ -24,8 +24,10 @@ VERSION=`/bin/cat /etc/version`
 MIN_REALMEM_FOR_OPCACHE=512
 
 if pkg info -e php72; then
+	PHP_VER=7
 	EXTENSIONSDIR="/usr/local/lib/php/20170718/"
 else
+	PHP_VER=5
 	EXTENSIONSDIR="/usr/local/lib/php/20131226/"
 fi
 
@@ -96,8 +98,10 @@ PHPMODULES="$PHPMODULES posix"
 PHPMODULES="$PHPMODULES readline"
 # Login sessions
 PHPMODULES="$PHPMODULES session"
-# Extra sanity seatbelts
-PHPMODULES="$PHPMODULES suhosin"
+if [ $PHP_VER -eq 5 ]; then
+	# Extra sanity seatbelts
+	PHPMODULES="$PHPMODULES suhosin"
+fi
 # Firewall rules edit
 PHPMODULES="$PHPMODULES ctype"
 # firewall_rules_edit.php
@@ -251,6 +255,7 @@ opcache.enabled="0"
 EOF
 fi
 
+if [ $PHP_VER -eq 5 ]; then
 	/bin/cat >>/usr/local/etc/php.ini <<EOF
 
 [suhosin]
@@ -266,7 +271,7 @@ suhosin.request.max_value_length = 500000
 suhosin.memory_limit = 805306368
 
 EOF
-
+fi
 
 PHPFPMMAX=3
 PHPFPMIDLE=30

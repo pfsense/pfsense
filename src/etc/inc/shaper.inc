@@ -621,16 +621,16 @@ class altq_root_queue {
 
 		switch ($this->GetScheduler()) {
 			case "PRIQ":
-				$q =& new priq_queue();
+				$q = new priq_queue();
 				break;
 			case "HFSC":
-				$q =& new hfsc_queue();
+				$q = new hfsc_queue();
 				break;
 			case "CBQ":
-				$q =& new cbq_queue();
+				$q = new cbq_queue();
 				break;
 			case "FAIRQ":
-				$q =& new fairq_queue();
+				$q = new fairq_queue();
 				break;
 			default:
 				/* XXX: but should not happen anyway */
@@ -1827,7 +1827,7 @@ class hfsc_queue extends priq_queue {
 		if (!is_array($this->subqueues)) {
 			$this->subqueues = array();
 		}
-		$q =& new hfsc_queue();
+		$q = new hfsc_queue();
 		$q->SetInterface($this->GetInterface());
 		$q->SetParent($this);
 		$q->ReadConfig($qname);
@@ -2627,7 +2627,7 @@ class cbq_queue extends priq_queue {
 		if (!is_array($this->subqueues)) {
 			$this->subqueues = array();
 		}
-		$q =& new cbq_queue();
+		$q = new cbq_queue();
 		$q->SetInterface($this->GetInterface());
 		$q->SetParent($this);
 		$q->ReadConfig($qname);
@@ -3490,7 +3490,7 @@ class dnpipe_class extends dummynet_class {
 			$this->subqueues = array();
 		}
 
-		$q =& new dnqueue_class();
+		$q = new dnqueue_class();
 		$q->SetLink($path);
 		$q->SetEnabled("on");
 		$q->SetPipe($this->GetQname());
@@ -4509,7 +4509,7 @@ function read_altq_config() {
 
 	foreach ($a_int as $key => $conf) {
 		$int = $conf['interface'];
-		$root =& new altq_root_queue();
+		$root = new altq_root_queue();
 		$root->SetInterface($int);
 		$altq_list_queues[$root->GetInterface()] = &$root;
 		$root->ReadConfig($conf);
@@ -4553,7 +4553,7 @@ function read_dummynet_config() {
 		if (empty($conf['name'])) {
 			continue; /* XXX: grrrrrr at php */
 		}
-		$root =& new dnpipe_class();
+		$root = new dnpipe_class();
 		$root->ReadConfig($conf);
 		$dummynet_pipe_list[$root->GetQname()] = &$root;
 		array_push($path, $key);

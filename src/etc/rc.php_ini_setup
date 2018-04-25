@@ -23,7 +23,11 @@
 VERSION=`/bin/cat /etc/version`
 MIN_REALMEM_FOR_OPCACHE=512
 
-EXTENSIONSDIR="/usr/local/lib/php/20131226/"
+if pkg info -e php72; then
+	EXTENSIONSDIR="/usr/local/lib/php/20170718/"
+else
+	EXTENSIONSDIR="/usr/local/lib/php/20131226/"
+fi
 
 # Grab amount of memory that is detected
 if [ -f /var/log/dmesg.boot ]; then

@@ -2263,6 +2263,9 @@ function timeout($timer = 9) {
  ******/
 function msort($array, $id = "id", $sort_ascending = true) {
 	$temp_array = array();
+	if (!is_array($array)) {
+		return $temp_array;
+	}
 	while (count($array)>0) {
 		$lowest_id = 0;
 		$index = 0;

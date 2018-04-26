@@ -286,7 +286,7 @@ function gen_dashboardcolumns_field(&$section, $value) {
 		'Dashboard Columns',
 		'number',
 		$value,
-		[min => 1, max => 6]
+		['min' => 1, 'max' => 6]
 	));
 }
 

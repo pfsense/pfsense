@@ -250,8 +250,8 @@
 				if (!$dnsDomain) $this->_error(5);
 				if (!$dnsTTL) $this->_error(9);
 				break;
-			case azure:
-			case azurev6:
+			case 'azure':
+			case 'azurev6':
 				if (!$dnsUser) $this->_error(3);
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);

@@ -369,12 +369,13 @@ function get_services() {
 		}
 	}
 
-	if (count($config['load_balancer']['virtual_server']) && count($config['load_balancer']['lbpool'])) {
+	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server']) && count($config['load_balancer']['lbpool'])) {
 		$pconfig = array();
 		$pconfig['name'] = "relayd";
 		$pconfig['description'] = gettext("Server load balancing daemon");
 		$services[] = $pconfig;
 	}
+
 	return $services;
 }
 

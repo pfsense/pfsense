@@ -183,7 +183,7 @@ $section->addInput(new Form_IpAddress(
 	'pool_address',
 	'*IPv4 address',
 	$pconfig['pool_address']
-))->setWidth(4)->setHelp('Optional: Network configuration for Virtual Address Pool')->addMask(pool_netbits, $pconfig['pool_netbits'], 32, 0);
+))->setWidth(4)->setHelp('Optional: Network configuration for Virtual Address Pool')->addMask('pool_netbits', $pconfig['pool_netbits'], 32, 0);
 
 if (isset($id) && $a_secret[$id]) {
 	$form->addGlobal(new Form_Input(

@@ -1347,6 +1347,7 @@ $section->addInput(new Form_StaticText(
 ));
 
 if (!$pconfig['numberoptions']) {
+	$pconfig['numberoptions'] = array();
 	$pconfig['numberoptions']['item']  = array(array('number' => '', 'type' => 'text', 'value' => ''));
 }
 

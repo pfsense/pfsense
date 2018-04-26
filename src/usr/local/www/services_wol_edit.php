@@ -42,6 +42,10 @@ function wol_sort() {
 
 require_once("guiconfig.inc");
 
+if (!is_array($config['wol'])) {
+	$config['wol'] = array();
+}
+
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
 }

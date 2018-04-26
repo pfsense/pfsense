@@ -37,6 +37,10 @@ if (isset($_POST['referer'])) {
 
 $a_gateways = return_gateways_array(true, false, true, true);
 
+if (!is_array($config['gateways'])) {
+	$config['gateways'] = array();
+}
+
 if (!is_array($config['gateways']['gateway_item'])) {
 	$config['gateways']['gateway_item'] = array();
 }

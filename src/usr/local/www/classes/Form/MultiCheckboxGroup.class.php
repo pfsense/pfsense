@@ -22,7 +22,7 @@
 
 class Form_MultiCheckboxGroup extends Form_Group
 {
-	public function add(Form_MultiCheckbox $input)
+	public function add(Form_Input $input)
 	{
 		return parent::add($input);
 	}

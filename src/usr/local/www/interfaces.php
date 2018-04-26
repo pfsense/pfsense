@@ -84,6 +84,10 @@ function remove_bad_chars($string) {
 	return preg_replace('/[^a-z_0-9]/i', '', $string);
 }
 
+if (!is_array($config['gateways'])) {
+	$config['gateways'] = array();
+}
+
 if (!is_array($config['gateways']['gateway_item'])) {
 	$config['gateways']['gateway_item'] = array();
 }

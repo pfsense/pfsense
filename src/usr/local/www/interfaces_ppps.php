@@ -105,7 +105,9 @@ display_top_tabs($tab_array);
 
 $i = 0;
 
-foreach ($a_ppps as $id => $ppp) {
+
+if (is_array($a_ppps)) {
+	foreach ($a_ppps as $id => $ppp) {
 ?>
 					<tr>
 						<td>
@@ -132,6 +134,7 @@ foreach ($a_ppps as $id => $ppp) {
 					</tr>
 <?php
 	$i++;
+	}
 }
 ?>
 				</tbody>

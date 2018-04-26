@@ -199,7 +199,7 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 			}
 		}
 		else {
-			if (is_inrange_v4($data['ip'], $subnet_start, $subnet_end)) {
+			if (is_inrange_v4(intval($data['ip']), $subnet_start, $subnet_end)) {
 				$result['static'] = $result['static'] + 1;
 			}
 		}

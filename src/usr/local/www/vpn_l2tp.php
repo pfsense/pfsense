@@ -234,11 +234,13 @@ $section->addInput(new Form_Input(
 			'NOTE: This should NOT be set to any IP address currently in use on this firewall.', '<br />');
 
 $section->addInput(new Form_IpAddress(
-	'remoteip',
-	'*Remote address range',
-	$pconfig['remoteip']
-))->addMask(l2tp_subnet, $pconfig['l2tp_subnet'])
+        'remoteip',
+        '*Remote address range',
+        $pconfig['remoteip']
+))->addMask('l2tp_subnet', $pconfig['l2tp_subnet'])
   ->setHelp('Specify the starting address for the client IP address subnet.');
+
+$section->addInput($nip);
 
 $section->addInput(new Form_Select(
 	'n_l2tp_units',

@@ -136,7 +136,7 @@ foreach ($timezonedesc as $idx => $desc) {
 
 	$hr_offset = substr($desc, 8);
 	$timezonedesc[$idx] = $desc . " " .
-	    sprintf(ngettext('(%1$s hour %2$s GMT)', '(%1$s hours %2$s GMT)', $hr_offset), $hr_offset, $direction_str);
+	    sprintf(ngettext('(%1$s hour %2$s GMT)', '(%1$s hours %2$s GMT)', intval($hr_offset)), $hr_offset, $direction_str);
 }
 
 $multiwan = false;

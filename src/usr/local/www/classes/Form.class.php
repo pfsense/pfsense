@@ -84,7 +84,7 @@ class Form extends Form_Element
 		return $this;
 	}
 
-	protected function _setParent()
+	protected function _setParent(Form_Element $parent)
 	{
 		throw new Exception('Form does not have a parent');
 	}

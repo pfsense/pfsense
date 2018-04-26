@@ -233,17 +233,12 @@ $section->addInput(new Form_Input(
 			'Typically this is set to an unused IP just outside of the client range.%1$s%1$s' .
 			'NOTE: This should NOT be set to any IP address currently in use on this firewall.', '<br />');
 
-$nip = new Form_IpAddress(
+$section->addInput(new Form_IpAddress(
         'remoteip',
         '*Remote address range',
         $pconfig['remoteip']
-);
-
-if (isset($pconfig['l2tp_subnet'])) {
-        $nip->addMask(l2tp_subnet, $pconfig['l2tp_subnet']);
-}
-
-$nip->setHelp('Specify the starting address for the client IP address subnet.');
+))->addMask('l2tp_subnet', $pconfig['l2tp_subnet'])
+  ->setHelp('Specify the starting address for the client IP address subnet.');
 
 $section->addInput($nip);
 

@@ -62,9 +62,25 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 $pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 $repos = pkg_list_repos();
 
+$pkgname = '';
+if (!empty($_REQUEST['pkg'])) {
+	$pkgname = $_REQUEST['pkg'];
+}
+
 if ($_REQUEST['ajax']) {
 	$response = "";
 	$code = 0;
+	$postlog = "";
+
+	if(isset($_REQUEST['logfilename'])) {
+		if ($_REQUEST['logfilename'] == "UPGR") {
+			$postlog = $g['cf_conf_path'] . '/upgrade_log';
+		}
+
+		if ($_REQUEST['logfilename'] == "PKG") {
+			$postlog = $g['cf_conf_path'] . '/pkg_log_' . $pkgname;
+		}
+	}
 
 	// If this is an ajax call to get the installed and newest versions, call that function,
 	// JSON encode the result, print it and exit
@@ -87,7 +103,7 @@ if ($_REQUEST['ajax']) {
 		$running = "stopped";
 		// The log files may not be complete when the process terminates so we need wait until we see the
 		// exit status (__RC=x)
-		waitfor_string_in_file($_REQUEST['logfilename'] . '.txt', "__RC=", 10);
+		waitfor_string_in_file($postlog . '.txt', "__RC=", 10);
 		filter_configure();
 		send_event("service restart packages");
 	}
@@ -95,7 +111,7 @@ if ($_REQUEST['ajax']) {
 	$pidarray = array('pid' => $running);
 
 	// Process log file -----------------------------------------------------------------------------------------------
-	$logfile = @fopen($_REQUEST['logfilename'] . '.txt', "r");
+	$logfile = @fopen($postlog . '.txt', "r");
 
 	if ($logfile != FALSE) {
 		$resparray = array();
@@ -143,7 +159,7 @@ if ($_REQUEST['ajax']) {
 	$progress = "";
 	$progarray = array();
 
-	$JSONfile = @fopen($_REQUEST['logfilename'] . '.json', "r");
+	$JSONfile = @fopen($postlog . '.json', "r");
 
 	if ($JSONfile != FALSE) {
 		while (($logline = fgets($JSONfile)) !== false) {
@@ -247,10 +263,7 @@ if (!empty($_REQUEST['id'])) {
 	return;
 }
 
-$pkgname = '';
 if (!empty($_REQUEST['pkg'])) {
-	$pkgname = $_REQUEST['pkg'];
-
 	if (!pkg_valid_name($pkgname)) {
 		header("Location: pkg_mgr_installed.php");
 		return;
@@ -415,11 +428,15 @@ endif;
 	</div>
 <?php
 
+$postlog = "";
+
 if ($_POST) {
 	if ($firmwareupdate) {
 		$logfilename = $g['cf_conf_path'] . '/upgrade_log';
+		$postlog = "UPGR";
 	} else {
 		$logfilename = $g['cf_conf_path'] . '/pkg_log_' . $pkgname;
+		$postlog = "PKG";
 	}
 }
 
@@ -680,8 +697,9 @@ function getLogsStatus() {
 			url: "pkg_mgr_install.php",
 			type: "post",
 			data: { ajax: "ajax",
-					logfilename: "<?=$logfilename?>",
-					next_log_line: "0"
+					logfilename: "<?=$postlog?>",
+					next_log_line: "0",
+					pkg: "<?=$pkgname?>"
 			}
 		});
 

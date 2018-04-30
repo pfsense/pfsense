@@ -13,3 +13,4 @@ sysutils/%%PRODUCT_NAME%%-pkg-gwled
 sysutils/%%PRODUCT_NAME%%-pkg-LCDproc
 sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Coreboot_Upgrade
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
+graphics/drm-next-kmod

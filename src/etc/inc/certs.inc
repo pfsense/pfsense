@@ -28,15 +28,17 @@ global $openssl_digest_algs;
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 global $openssl_crl_status;
+/* Numbers are set in the RFC: https://www.ietf.org/rfc/rfc5280.txt */
 $openssl_crl_status = array(
-	OCSP_REVOKED_STATUS_NOSTATUS              => "No Status (default)",
-	OCSP_REVOKED_STATUS_UNSPECIFIED           => "Unspecified",
-	OCSP_REVOKED_STATUS_KEYCOMPROMISE         => "Key Compromise",
-	OCSP_REVOKED_STATUS_CACOMPROMISE          => "CA Compromise",
-	OCSP_REVOKED_STATUS_AFFILIATIONCHANGED    => "Affiliation Changed",
-	OCSP_REVOKED_STATUS_SUPERSEDED            => "Superseded",
-	OCSP_REVOKED_STATUS_CESSATIONOFOPERATION  => "Cessation of Operation",
-	OCSP_REVOKED_STATUS_CERTIFICATEHOLD       => "Certificate Hold"
+	-1 => "No Status (default)",
+	0  => "Unspecified",
+	1 => "Key Compromise",
+	2 => "CA Compromise",
+	3 => "Affiliation Changed",
+	4 => "Superseded",
+	5 => "Cessation of Operation",
+	6 => "Certificate Hold",
+	9 => 'Privilege Withdrawn',
 );
 
 global $cert_altname_types;

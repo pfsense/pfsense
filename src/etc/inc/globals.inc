@@ -89,7 +89,8 @@ $g = array(
 	"default_timezone" => "Etc/UTC",
 	"language" => "en_US",
 	"default_config_backup_count" => 30,
-	"minimumtableentries_bogonsv6" => 400000
+	"minimumtableentries_bogonsv6" => 400000,
+	"alternativemetaports" => array("vmware")
 );
 
 /* IP TOS flags */

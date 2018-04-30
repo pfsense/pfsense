@@ -1224,8 +1224,11 @@ function get_meta_pkg_name() {
 	/* XXX: Use pkg annotation */
 	if (is_pkg_installed($g['product_name'])) {
 		return $g['product_name'];
-	} else if (is_pkg_installed($g['product_name'] . '-vmware')) {
-		return $g['product_name'] . '-vmware';
+	}
+	foreach ($g['alternativemetaports'] as $suffix) {
+		if (is_pkg_installed($g['product_name'] . '-' . $suffix)) {
+			return $g['product_name'] . '-' . $suffix;
+		}
 	}
 	return false;
 }

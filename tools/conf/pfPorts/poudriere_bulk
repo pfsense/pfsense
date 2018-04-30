@@ -61,7 +61,6 @@ net/py-speedtest-cli
 net/trafshow
 net/trafshow3
 net/vnstat
-security/%%PRODUCT_NAME%%@all
 security/%%PRODUCT_NAME%%-pkg-acme@all
 security/%%PRODUCT_NAME%%-pkg-nmap
 security/%%PRODUCT_NAME%%-pkg-openvpn-client-export
@@ -70,6 +69,7 @@ security/%%PRODUCT_NAME%%-pkg-stunnel
 security/%%PRODUCT_NAME%%-pkg-sudo
 security/%%PRODUCT_NAME%%-pkg-suricata
 security/%%PRODUCT_NAME%%-pkg-tinc
+security/%%PRODUCT_NAME%%@all
 sysutils/%%PRODUCT_NAME%%-builder
 sysutils/%%PRODUCT_NAME%%-pkg-AutoConfigBackup
 sysutils/%%PRODUCT_NAME%%-pkg-Backup

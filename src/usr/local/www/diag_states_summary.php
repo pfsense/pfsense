@@ -173,11 +173,16 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 <?php foreach ($ipinfo['protos'] as $proto => $protoinfo): ?>
 <?php if ($protocolCount > 1 && $i > 0): ?>
 							</tr><tr>
-<?php endif; ?>
+<?php endif;
+
+	$srscnt = is_array($protoinfo['srcports']) ? count($protoinfo['srcports']) : 0;
+	$dstcnt = is_array($protoinfo['dstports']) ? count($protoinfo['dstports']) : 0;
+
+?>
 							<td><?=$proto;?></td>
 							<td class="text-center" ><?=$protoinfo['seen'];?></td>
-							<td class="text-center" ><span title="<?=build_port_info($protoinfo['srcports'], $proto);?>"><?=count($protoinfo['srcports']);?></span></td>
-							<td class="text-center" ><span title="<?=build_port_info($protoinfo['dstports'], $proto);?>"><?=count($protoinfo['dstports']);?></span></td>
+							<td class="text-center" ><span title="<?=build_port_info($protoinfo['srcports'], $proto);?>"><?=$srccnt?></span></td>
+							<td class="text-center" ><span title="<?=build_port_info($protoinfo['dstports'], $proto);?>"><?=$dstcnt?></span></td>
 <?php $i++; endforeach; ?>
 						</tr>
 <?php endforeach; ?>

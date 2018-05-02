@@ -227,79 +227,84 @@ class pfsense_xmlrpc_server {
 			$syncd_full_sections[] = $section;
 		}
 
-		$g2add = array();
-		$g2del = array();
-		$g2del_idx = array();
-		$g2keep = array();
-		if (is_array($sections['system']['group'])) {
-			$local_groups = isset($config['system']['group'])
-			    ? $config['system']['group']
-			    : array();
+		/* Only touch users if users are set to synchronize from the primary node
+		 * See https://redmine.pfsense.org/issues/8450
+		 */
+		if ($sections['system']['user'] && $sections['system']['group']) {
+			$g2add = array();
+			$g2del = array();
+			$g2del_idx = array();
+			$g2keep = array();
+			if (is_array($sections['system']['group'])) {
+				$local_groups = isset($config['system']['group'])
+				    ? $config['system']['group']
+				    : array();
 
-			foreach ($sections['system']['group'] as $group) {
-				$idx = array_search($group['name'],
-				    array_column($local_groups, 'name'));
+				foreach ($sections['system']['group'] as $group) {
+					$idx = array_search($group['name'],
+					    array_column($local_groups, 'name'));
 
-				if ($idx === false) {
-					$g2add[] = $group;
-				} else if ($group['gid'] < 1999) {
-					$g2keep[] = $idx;
-				} else if ($group != $local_groups[$idx]) {
-					$g2add[] = $group;
-					$g2del[] = $group;
-					$g2del_idx[] = $idx;
-				} else {
-					$g2keep[] = $idx;
+					if ($idx === false) {
+						$g2add[] = $group;
+					} else if ($group['gid'] < 1999) {
+						$g2keep[] = $idx;
+					} else if ($group != $local_groups[$idx]) {
+						$g2add[] = $group;
+						$g2del[] = $group;
+						$g2del_idx[] = $idx;
+					} else {
+						$g2keep[] = $idx;
+					}
 				}
 			}
-		}
-		if (is_array($config['system']['group'])) {
-			foreach ($config['system']['group'] as $idx => $group) {
-				if (array_search($idx, $g2keep) === false &&
-				    array_search($idx, $g2del_idx) === false) {
-					$g2del[] = $group;
-					$g2del_idx[] = $idx;
+			if (is_array($config['system']['group'])) {
+				foreach ($config['system']['group'] as $idx => $group) {
+					if (array_search($idx, $g2keep) === false &&
+					    array_search($idx, $g2del_idx) === false) {
+						$g2del[] = $group;
+						$g2del_idx[] = $idx;
+					}
 				}
 			}
-		}
-		unset($sections['system']['group'], $g2keep, $g2del_idx);
+			unset($sections['system']['group'], $g2keep, $g2del_idx);
 
-		$u2add = array();
-		$u2del = array();
-		$u2del_idx = array();
-		$u2keep = array();
-		if (is_array($sections['system']['user'])) {
-			$local_users = isset($config['system']['user'])
-			    ? $config['system']['user']
-			    : array();
+			$u2add = array();
+			$u2del = array();
+			$u2del_idx = array();
+			$u2keep = array();
+			if (is_array($sections['system']['user'])) {
+				$local_users = isset($config['system']['user'])
+				    ? $config['system']['user']
+				    : array();
 
-			foreach ($sections['system']['user'] as $user) {
-				$idx = array_search($user['name'],
-				    array_column($local_users, 'name'));
+				foreach ($sections['system']['user'] as $user) {
+					$idx = array_search($user['name'],
+					    array_column($local_users, 'name'));
 
-				if ($idx === false) {
-					$u2add[] = $user;
-				} else if ($user['uid'] < 2000) {
-					$u2keep[] = $idx;
-				} else if ($user != $local_users[$idx]) {
-					$u2add[] = $user;
-					$u2del[] = $user;
-					$u2del_idx[] = $idx;
-				} else {
-					$u2keep[] = $idx;
+					if ($idx === false) {
+						$u2add[] = $user;
+					} else if ($user['uid'] < 2000) {
+						$u2keep[] = $idx;
+					} else if ($user != $local_users[$idx]) {
+						$u2add[] = $user;
+						$u2del[] = $user;
+						$u2del_idx[] = $idx;
+					} else {
+						$u2keep[] = $idx;
+					}
 				}
 			}
-		}
-		if (is_array($config['system']['user'])) {
-			foreach ($config['system']['user'] as $idx => $user) {
-				if (array_search($idx, $u2keep) === false &&
-				    array_search($idx, $u2del_idx) === false) {
-					$u2del[] = $user;
-					$u2del_idx[] = $idx;
+			if (is_array($config['system']['user'])) {
+				foreach ($config['system']['user'] as $idx => $user) {
+					if (array_search($idx, $u2keep) === false &&
+					    array_search($idx, $u2del_idx) === false) {
+						$u2del[] = $user;
+						$u2del_idx[] = $idx;
+					}
 				}
 			}
+			unset($sections['system']['user'], $u2keep, $u2del_idx);
 		}
-		unset($sections['system']['user'], $u2keep, $u2del_idx);
 
 		$voucher = array();
 		if (is_array($sections['voucher'])) {

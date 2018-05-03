@@ -5066,7 +5066,7 @@ function upgrade_157_to_158() {
  *     version
  */
 function additional_config_upgrade() {
-	global $config;
+	global $config, $g;
 
 	if (!is_array($config['system']['already_run_config_upgrade'])) {
 		$config['system']['already_run_config_upgrade'] = array();
@@ -5164,6 +5164,20 @@ function additional_config_upgrade() {
 		    ['upgrade_168_to_169'] = true;
 		write_config("Added pkg metadata update cronjob");
 	}
+
+
+	/* Copy of upgrade_179_to_180 from 2.4 */
+	if (!isset($already_run['upgrade_179_to_180'])) {
+		/* Change default to 400000 to make sure bogonsv6 works */
+		if (empty($config['system']['maximumtableentries'])) {
+			$config['system']['maximumtableentries'] =
+			    $g['minimumtableentries_bogonsv6'];
+		}
+		$config['system']['already_run_config_upgrade']
+		    ['upgrade_179_to_180'] = true;
+		write_config("Increase table size for bogons");
+	}
+
 }
 
 ?>

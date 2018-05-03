@@ -37,6 +37,10 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
+if(!is_array($config['ipsec'])){
+	$config['ipsec'] = array();
+}
+
 if (!is_array($config['ipsec']['phase1'])) {
 	$config['ipsec']['phase1'] = array();
 }

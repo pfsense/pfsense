@@ -260,8 +260,8 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 	// This is intended to prevent bad code from breaking the GUI
 	if ($_POST['submit'] == "EXECPHP" && !isBlank($_POST['txtPHPCommand'])) {
 
-		safe_mkdir($g[tmp_path_user_code]);     //create if doesn't exist
-		$tmpfile = tempnam($g[tmp_path_user_code], "");
+		safe_mkdir($g['tmp_path_user_code']);     //create if doesn't exist
+		$tmpfile = tempnam($g['tmp_path_user_code'], "");
 		$phpcode = <<<END_FILE
 <?php
 require_once("/etc/inc/config.inc");

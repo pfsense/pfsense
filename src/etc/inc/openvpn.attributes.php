@@ -19,13 +19,7 @@
  * limitations under the License.
  */
 
-
-if (empty($common_name)) {
-	$common_name = getenv("common_name");
-	if (empty($common_name)) {
-		$common_name = getenv("username");
-	}
-}
+global $username;
 
 $devname = getenv("dev");
 if (empty($devname)) {
@@ -188,9 +182,10 @@ function parse_cisco_acl($attribs) {
 $rules = parse_cisco_acl($attributes);
 if (!empty($rules)) {
 	$pid = posix_getpid();
-	@file_put_contents("/tmp/ovpn_{$pid}{$common_name}.rules", $rules);
-	mwexec("/sbin/pfctl -a " . escapeshellarg("openvpn/{$common_name}") . " -f {$g['tmp_path']}/ovpn_{$pid}" . escapeshellarg($common_name) . ".rules");
-	@unlink("{$g['tmp_path']}/ovpn_{$pid}{$common_name}.rules");
+	$filename = "{$g['tmp_path']}/ovpn_{$pid}{$username}.rules";
+	@file_put_contents($filename, $rules);
+	mwexec("/sbin/pfctl -a " . escapeshellarg("openvpn/{$username}") . " -f " . escapeshellarg($filename));
+	@unlink($filename);
 }
 
 ?>

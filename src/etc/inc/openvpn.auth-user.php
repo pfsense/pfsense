@@ -95,6 +95,8 @@ function getCalledStationId() {
 /* setup syslog logging */
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 
+global $common_name, $username;
+
 if (isset($_GET['username'])) {
 	$authmodes = explode(",", base64_decode($_GET['authcfg']));
 	/* Any string retrieved through $_GET is automatically urlDecoded */

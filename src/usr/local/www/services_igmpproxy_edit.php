@@ -35,6 +35,10 @@ $pglinks = array("", "services_igmpproxy.php", "@self");
 
 require_once("guiconfig.inc");
 
+if (!is_array($config['igmpproxy'])) {
+	$config['igmpproxy'] = array();
+}
+
 if (!is_array($config['igmpproxy']['igmpentry'])) {
 	$config['igmpproxy']['igmpentry'] = array();
 }

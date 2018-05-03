@@ -1927,7 +1927,7 @@ function services_dyndns_configure($int = "") {
 	}
 
 	$dyndnscfg = $config['dyndnses']['dyndns'];
-	$gwgroups = return_gateway_groups_array();
+	$gwgroups = return_gateway_groups_array(true);
 	if (is_array($dyndnscfg)) {
 		if (platform_booting()) {
 			echo gettext("Starting DynDNS clients...");
@@ -2497,7 +2497,7 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 	}
 
 	$notify_text = "";
-	$gwgroups = return_gateway_groups_array();
+	$gwgroups = return_gateway_groups_array(true);
 	foreach ($config['dnsupdates']['dnsupdate'] as $i => $dnsupdate) {
 		if (!isset($dnsupdate['enable'])) {
 			continue;

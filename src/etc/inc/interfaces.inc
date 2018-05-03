@@ -1985,17 +1985,10 @@ default:
 
 EOD;
 	$setdefaultgw = false;
-	$founddefaultgw = false;
-	if (is_array($config['gateways']['gateway_item'])) {
-		foreach ($config['gateways']['gateway_item'] as $gateway) {
-			if ($interface == $gateway['interface'] && isset($gateway['defaultgw'])) {
-				$setdefaultgw = true;
-				break;
-			} else if (isset($gateway['defaultgw']) && !empty($gateway['interface'])) {
-				$founddefaultgw = true;
-				break;
-			}
-		}
+	$defgw4 = lookup_gateway_or_group_by_name($config['gateways']['defaultgw4']);
+//	$defgw6 = lookup_gateway_or_group_by_name($config['gateways']['defaultgw6']);
+	if ($defgw4['interface'] == $interface) {
+		$setdefaultgw = true;
 	}
 
 /* Omit this, we maintain the default route by other means, and it causes problems with
@@ -2003,13 +1996,13 @@ EOD;
  * re-enabling this for now to fix issue with missing default gateway with PPPoE in some
  * edge case. redmine #6495 open to address.
  */
-	if (($interface == "wan" && $founddefaultgw == false) || $setdefaultgw == true) {
-		$setdefaultgw = true;
+	if ($setdefaultgw == true) {
 		$mpdconf .= <<<EOD
 	set iface route default
 
 EOD;
 	}
+ 
 	$mpdconf .= <<<EOD
 	set iface {$ondemand} on-demand
 	set iface idle {$ppp['idletimeout']}
@@ -2283,13 +2276,13 @@ EOD;
 			interface_setup_pppoe_reset_file($ppp['if']);
 		}
 	}
-	/* wait for upto 10 seconds for the interface to appear (ppp(oe)) */
+	/* wait for upto 30 seconds for the interface to appear (ppp(oe)) */
 	$i = 0;
-	while ($i < 3) {
-		sleep(10);
+	while ($i < 10) {
 		if (does_interface_exist($ppp['if'], true)) {
 			break;
 		}
+		sleep(3);
 		$i++;
 	}
 
@@ -6504,7 +6497,7 @@ function get_failover_interface($interface, $family = "all") {
 	}
 
 	/* compare against gateway groups */
-	$a_groups = return_gateway_groups_array();
+	$a_groups = return_gateway_groups_array(true);
 	if (is_array($a_groups[$interface])) {
 		/* we found a gateway group, fetch the interface or vip */
 		if (!empty($a_groups[$interface][0]['vip'])) {

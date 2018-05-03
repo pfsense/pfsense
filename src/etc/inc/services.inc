@@ -232,6 +232,17 @@ function services_radvd_configure($blacklist = array()) {
 			}
 		}
 		$radvdconf .= "\troute ::/0 {\n";
+		switch ($dhcpv6ifconf['rapriority']) {
+			case "low":
+				$radvdconf .= "\t\tAdvRoutePreference low;\n";
+				break;
+			case "high":
+				$radvdconf .= "\t\tAdvRoutePreference high;\n";
+				break;
+			default:
+				$radvdconf .= "\t\tAdvRoutePreference medium;\n";
+				break;
+		}
 		$radvdconf .= "\t\tRemoveRoute on;\n";
 		$radvdconf .= "\t};\n";
 

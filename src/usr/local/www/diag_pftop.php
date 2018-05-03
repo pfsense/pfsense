@@ -208,6 +208,13 @@ events.push(function() {
 			$("#sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').show();
 		}
 	});
+	$('#filter').on('keypress keyup', function(event) {
+		var keyPressed = event.keyCode || event.which;
+		if (keyPressed === 13) {
+			event.preventDefault();
+			return false;
+		}
+	});
 });
 //]]>
 </script>

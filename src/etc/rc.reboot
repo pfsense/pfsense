@@ -49,4 +49,4 @@ fi
 
 sleep 1
 
-/sbin/reboot ${REROOT} now
+/sbin/reboot ${REROOT}

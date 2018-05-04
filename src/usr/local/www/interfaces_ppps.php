@@ -65,9 +65,14 @@ if ($_POST['act'] == "del") {
 	}
 }
 
+if (!is_array($config['ppps'])) {
+	$config['ppps'] = array();
+}
+
 if (!is_array($config['ppps']['ppp'])) {
 	$config['ppps']['ppp'] = array();
 }
+
 $a_ppps = $config['ppps']['ppp'];
 
 $pgtitle = array(gettext("Interfaces"), gettext("PPPs"));

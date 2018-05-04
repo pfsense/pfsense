@@ -37,6 +37,10 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
+if (!is_array($config['ipsec'])) {
+	$config['ipsec'] = array();
+}
+
 if (!is_array($config['ipsec']['phase1'])) {
 	$config['ipsec']['phase1'] = array();
 }
@@ -167,7 +171,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 // default value for new P1 and failsafe to always have at least 1 encryption item for the Form_ListItem
 if (!is_array($pconfig['encryption']['item']) || count($pconfig['encryption']['item']) == 0) {
 	$item = array();
-	$item['encryption-algorithm'] = array(name => "aes");
+	$item['encryption-algorithm'] = array('name' => "aes");
 	$item['hash-algorithm'] = "sha1";
 	$item['dhgroup'] = "2";
 	$pconfig['encryption']['item'][] = $item;

@@ -35,6 +35,10 @@ require_once("interfaces_fast.inc");
 
 global $profile;
 
+if (!is_array($config['vlans'])) {
+	$config['vlans'] = array();
+}
+
 if (!is_array($config['vlans']['vlan'])) {
 	$config['vlans']['vlan'] = array();
 }

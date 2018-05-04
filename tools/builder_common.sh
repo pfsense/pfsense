@@ -848,9 +848,10 @@ create_memstick_image() {
 
 	create_distribution_tarball
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
-		${INSTALLER_CHROOT_DIR} \
-		${_image_path}
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
+		${FSLABEL} \
+		${_image_path} \
+		${INSTALLER_CHROOT_DIR}
 
 	if [ ! -f "${_image_path}" ]; then
 		echo "ERROR! memstick image was not built"
@@ -896,9 +897,10 @@ create_memstick_serial_image() {
 
 	create_distribution_tarball
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
-		${INSTALLER_CHROOT_DIR} \
-		${MEMSTICKSERIALPATH}
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
+		${FSLABEL} \
+		${MEMSTICKSERIALPATH} \
+		${INSTALLER_CHROOT_DIR}
 
 	if [ ! -f "${MEMSTICKSERIALPATH}" ]; then
 		echo "ERROR! memstick serial image was not built"
@@ -946,9 +948,10 @@ create_memstick_adi_image() {
 
 	create_distribution_tarball
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
-		${INSTALLER_CHROOT_DIR} \
-		${MEMSTICKADIPATH}
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
+		${FSLABEL} \
+		${MEMSTICKADIPATH} \
+		${INSTALLER_CHROOT_DIR}
 
 	if [ ! -f "${MEMSTICKADIPATH}" ]; then
 		echo "ERROR! memstick ADI image was not built"

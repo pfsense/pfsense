@@ -848,6 +848,8 @@ create_memstick_image() {
 
 	create_distribution_tarball
 
+	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
+
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
 		${FSLABEL} \
 		${_image_path} \
@@ -896,6 +898,8 @@ create_memstick_serial_image() {
 	cat ${LOADERCONF} >> ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
+
+	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
 
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
 		${FSLABEL} \
@@ -947,6 +951,8 @@ create_memstick_adi_image() {
 	cat ${LOADERCONF} >> ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
+
+	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
 
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
 		${FSLABEL} \

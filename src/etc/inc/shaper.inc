@@ -75,7 +75,7 @@ function getSchedulers() {
 		),
 		"fq_codel" => array(
 			"name" => "FQ_CODEL",
-			"parameter_format" => "type fq_codel target %sms interval %sms quantum %s limit %limit flows %flows",
+			"parameter_format" => "type fq_codel target %sms interval %sms quantum %s limit %s flows %s",
 			"description" => "CoDel is a novel \"no knobs\", \"just works\", \"handles variable bandwidth and RTT\", and simple AQM algorithm."
 							. " As a scheduler, FQ_CODEL implements several flows (defined below), each having their own CoDel AQM.",
 			"parameters" => array(

@@ -3660,6 +3660,12 @@ class dnpipe_class extends dummynet_class {
 	function GetAQMParameters() {
 			return $this->aqm_params;
 	}
+	function GetAQMParameter($parameter) {
+			return $this->aqm_params[$parameter];
+	}
+	function SetAQMParameter($key, $value) {
+			return $this->aqm_params[$key] = $value;
+	}
 	function SetAQMParameters($params) {
 			$this->aqm_params = $params;
 	}
@@ -3680,6 +3686,12 @@ class dnpipe_class extends dummynet_class {
 	}
 	function SetSchedulerParameters($params) {
 			$this->scheduler_params = $params;
+	}
+	function SetSchedulerParameter($key, $value) {
+			$this->scheduler_params[$key] = $value;
+	}
+	function GetSchedulerParameter($key) {
+			return $this->scheduler_params[$key];
 	}
 	/* End limiter queue patch */
 
@@ -3912,9 +3924,9 @@ class dnpipe_class extends dummynet_class {
 		foreach ($selectedParameters as $key => $value) {
 			$config_key = 'param_' . $this->GetAQM() . '_' . $key;
 			if (isset($q[$config_key]) && $q[$config_key] <> "") {
-				$this->aqm_params[$key] = $q[$config_key];
+				$this->SetAQMParameter($key, $q[$config_key]);
 			} else {
-				$this->aqm_params[$key] = $value["default"];
+				$this->SetAQMParameter($key, $value["default"]);
 			}
 		}
 	
@@ -3928,9 +3940,9 @@ class dnpipe_class extends dummynet_class {
 		foreach ($selectedParameters as $key => $value) {
 			$config_key = 'param_' . $this->GetScheduler() . '_' . $key;
 			if (isset($q[$config_key]) && $q[$config_key] <> "") {
-				$this->scheduler_params[$key] = $q[$config_key];
+				$this->SetSchedulerParameter($key, $q[$config_key]);
 			} else {
-				$this->scheduler_params[$key] = $value["default"];
+				$this->SetSchedulerParameter($key, $value["default"]);
 			}
 		}
 		
@@ -4021,7 +4033,7 @@ class dnpipe_class extends dummynet_class {
 		/* Limiter patch */
 		$selectedAQM = getAQMs()[$this->getAQM()];
 		if ($selectedAQM) {
-			$pfq_rule .= " " . FormatParameters($selectedAQM["parameter_format"], $this->aqm_params);
+			$pfq_rule .= " " . FormatParameters($selectedAQM["parameter_format"], $this->GetAQMParameters());
 			if ($selectedAQM["ecn"]) {
 				if ($this->getECN() == 'on') {
 					$pfq_rule .= ' ecn';
@@ -4032,7 +4044,7 @@ class dnpipe_class extends dummynet_class {
 		}
 		$selectedScheduler = getSchedulers()[$this->getScheduler()];
 		if ($selectedScheduler) {
-			$pfq_rule .= "\nsched ". $this->GetNumber() . " config pipe " . $this->GetNumber() . " " . FormatParameters($selectedScheduler["parameter_format"], $this->scheduler_params);
+			$pfq_rule .= "\nsched ". $this->GetNumber() . " config pipe " . $this->GetNumber() . " " . FormatParameters($selectedScheduler["parameter_format"], $this->GetSchedulerParameters());
 			if ($selectedScheduler["ecn"]) {
 				if ($this->getECN() == 'on') {
 					$pfq_rule .= ' ecn';
@@ -4320,7 +4332,7 @@ EOD;
 		
 		$section->addInput(new Form_StaticText(
 			'',
-			build_queue_params($aqm_map, $this->GetAQM(), $this->aqm_params, "aqm")
+			build_queue_params($aqm_map, $this->GetAQM(), $this->GetAQMParameters(), "aqm")
 		))->setHelp('Specifies the queue management algorithm parameters.');
 		
 		$section->addInput(new Form_Select(
@@ -4334,7 +4346,7 @@ EOD;
 
 		$section->addInput(new Form_StaticText(
 			'',
-			build_queue_params($scheduler_map, $this->GetScheduler(), $this->scheduler_params, "sched")
+			build_queue_params($scheduler_map, $this->GetScheduler(), $this->GetSchedulerParameters(), "sched")
 		))->setHelp('Specifies the scheduler parameters.');
 		
 		$section->addInput(new Form_Input(
@@ -4420,14 +4432,14 @@ EOD;
 		$selectedParameters = $scheduler_map[$this->getScheduler()]["parameters"];
 		foreach ($selectedParameters as $key => $value) {
 			$config_key = 'param_' . $this->GetScheduler() . '_' . $key;
-			$cflink[$config_key] = $this->scheduler_params[$key];
+			$cflink[$config_key] = $this->GetSchedulerParameter($key);
 		}
 		$cflink['aqm'] = $this->GetAQM();
 		$aqm_map = GetAQMs();
 		$selectedParameters = $aqm_map[$this->getAQM()]["parameters"];
 		foreach ($selectedParameters as $key => $value) {
 			$config_key = 'param_' . $this->GetAQM() . '_' . $key;
-			$cflink[$config_key] = $this->aqm_params[$key];
+			$cflink[$config_key] = $this->GetAQMParameter($key);
 		}
 		$cflink['ecn'] = $this->GetECN();
 		/* End limiter queue patch */
@@ -4450,6 +4462,12 @@ class dnqueue_class extends dummynet_class {
 	}
 	function GetAQMParameters() {
 			return $this->aqm_params;
+	}
+	function GetAQMParameter($parameter) {
+			return $this->aqm_params[$parameter];
+	}
+	function SetAQMParameter($key, $value) {
+			return $this->aqm_params[$key] = $value;
 	}
 	function SetAQMParameters($params) {
 			$this->aqm_params = $params;
@@ -4591,9 +4609,9 @@ class dnqueue_class extends dummynet_class {
 		foreach ($selectedParameters as $key => $value) {
 			$config_key = 'param_' . $this->GetAQM() . '_' . $key;
 			if (isset($q[$config_key]) && $q[$config_key] <> "") {
-				$this->aqm_params[$key] = $q[$config_key];
+				$this->SetAQMParameter($key, $q[$config_key]);
 			} else {
-				$this->aqm_params[$key] = $value["default"];
+				$this->SetAQMParameter($key, $value["default"]);
 			}
 		}
 		
@@ -4632,7 +4650,7 @@ class dnqueue_class extends dummynet_class {
 		/* Limiter patch */
 		$selectedAQM = getAQMs()[$this->getAQM()];
 		if ($selectedAQM) {
-			$pfq_rule .= " " . FormatParameters($selectedAQM["parameter_format"], $this->aqm_params);
+			$pfq_rule .= " " . FormatParameters($selectedAQM["parameter_format"], $this->GetAQMParameters());
 			if ($selectedAQM["ecn"]) {
 				if ($this->getECN() == 'on') {
 					$pfq_rule .= ' ecn';
@@ -4757,7 +4775,7 @@ class dnqueue_class extends dummynet_class {
 		
 		$section->addInput(new Form_StaticText(
 			'',
-			build_queue_params($aqm_map, $this->GetAQM(), $this->aqm_params, "aqm")
+			build_queue_params($aqm_map, $this->GetAQM(), $this->GetAQMParameters(), "aqm")
 		))->setHelp('Specifies the queue management algorithm parameters.');
 		
 		$section->addInput(new Form_Input(
@@ -4844,7 +4862,7 @@ class dnqueue_class extends dummynet_class {
 		$selectedParameters = $aqm_map[$this->getAQM()]["parameters"];
 		foreach ($selectedParameters as $key => $value) {
 			$config_key = 'param_' . $this->GetAQM() . '_' . $key;
-			$cflink[$config_key] = $this->aqm_params[$key];
+			$cflink[$config_key] = $this->GetAQMParameter($key);
 		}
 		$cflink['ecn'] = $this->GetECN();
 		/* End limiter queue patch */

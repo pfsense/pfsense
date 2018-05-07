@@ -36,133 +36,7 @@ include_once("interfaces.inc");//required for convert_real_interface_to_friendly
 // update as needed when dummynet changes
 
 // List of schedulers ('type' command on scheduler/pipe) that dummynet/ipfw is supposed to support
-function getSchedulers() {
-	return array(
-		"fifo" => array(
-			"name" => "FIFO",
-			"parameter_format" => "type fifo",
-			"description" => "First-in-First-out is a fundamental queueing discipline which ensures packet sequence.",
-			"parameters" => array(),
-			"ecn" => false
-		),
-		"qfq" => array(
-			"name" => "Quick Fair Queueing",
-			"parameter_format" => "type qfq",
-			"description" => "QFQ is a fast, low-complexity Approximated Fair Queueing scheduler.",
-			"parameters" => array(),
-			"ecn" => false
-		),
-		"rr" => array(
-			"name" => "Round Robin",
-			"parameter_format" => "type rr",
-			"description" => "Round Robin (RR) schedules packets in a round-robin fashion.",
-			"parameters" => array(),
-			"ecn" => false
-		),
-		"wf2q+" => array(
-			"name" => "Worst-case Weighted fair Queueing",
-			"parameter_format" => "type wf2q+",
-			"description" => "Worst-case Weighted fair Queueing (WF2Q+) schedules flows with an associated weight.",
-			"parameters" => array(),
-			"ecn" => false
-		),
-		"prio" => array(
-			"name" => "PRIO",
-			"parameter_format" => "type prio",
-			"description" => "PRIO schedules packets by their corresponding priority.",
-			"parameters" => array(),
-			"ecn" => false
-		),
-		"fq_codel" => array(
-			"name" => "FQ_CODEL",
-			"parameter_format" => "type fq_codel target %target interval %interval quantum %quantum limit %limit flows %flows",
-			"description" => "CoDel is a novel \"no knobs\", \"just works\", \"handles variable bandwidth and RTT\", and simple AQM algorithm."
-							. " As a scheduler, FQ_CODEL implements several flows (defined below), each having their own CoDel AQM.",
-			"parameters" => array(
-				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.target")),
-				"interval" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.interval")),
-				"quantum" => array("name" => "quantum", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.quantum")),
-				"limit" => array("name" => "limit", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.limit")),
-				"flows" => array("name" => "flows", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.flows"))
-			),
-			"ecn" => true
-		),
-		"fq_pie" => array(
-			"name" => "FQ_PIE",
-			"parameter_format" => "type fq_pie target %target tupdate %tupdate alpha %alpha beta %beta max_burst %max_burst max_ecnth %max_ecnth",
-			"description" => "Fair Queue Proportional Integral controller Enhanced AQM (FQ_PIE) is similar to FQ_CODEL but uses a slightly different algorithm.",
-			"parameters" => array(
-				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.target")),
-				"tupdate" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.tupdate")),
-				"alpha" => array("name" => "alpha", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.alpha")),
-				"beta" => array("name" => "beta", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.beta")),
-				"max_burst" => array("name" => "max_burst", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_burst")),
-				"max_ecnth" => array("name" => "max_ecnth", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_ecnth"))
-			),
-			"ecn" => true
-		)
-	);
-}
-// list of AQMs that dummynet supports
-function getAQMs() {
-	return array(
-		"droptail" => array(
-			"name" => "Tail Drop",
-			"description" => "Tail Drop is a fundamental queue management algorithm which drops inbound packets once the queue is full.",
-			"parameter_format" => "droptail",
-			"parameters" => array(),
-			"ecn" => false
-		),
-		"codel" => array(
-			"name" => "CoDel",
-			"description" => "CoDel is a novel \"no knobs\", \"just works\", \"handles variable bandwidth and RTT\", and simple AQM algorithm.",
-			"parameter_format" => "codel target %target interval %interval",
-			"parameters" => array(
-				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.codel.target")),
-				"interval" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.codel.interval")),
-			),
-			"ecn" => true
-		),
-		"pie" => array(
-			"name" => "PIE",
-			"description" => "Proportional Integral controller Enhanced AQM (PIE) is similar to CoDel but uses a slightly different algorithm.",
-			"parameter_format" => "pie target %target tupdate %tupdate alpha %alpha beta %beta max_burst %max_burst max_ecnth %max_ecnth",
-			"parameters" => array(
-				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.target")),
-				"tupdate" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.tupdate")),
-				"alpha" => array("name" => "alpha", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.alpha")),
-				"beta" => array("name" => "beta", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.beta")),
-				"max_burst" => array("name" => "max_burst", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_burst")),
-				"max_ecnth" => array("name" => "max_ecnth", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_ecnth"))
-			),
-			"ecn" => true
-		),
-		"red" => array(
-			"name" => "Random Early Detection (RED)",
-			"description" => "Random Early Detection (RED) drops packets based on probability, which increases as the queue increases in size.",
-			"parameter_format" => "red %w_q/%min_th/%max_th/%max_p",
-			"parameters" => array(
-				"w_q" => array("name" => "w_q", "type" => "number", "default" => 1),
-				"min_th" => array("name" => "min_th", "type" => "number", "default" => 0),
-				"max_th" => array("name" => "max_th", "type" => "number", "default" => 1),
-				"max_p" => array("name" => "max_p", "type" => "number", "default" => 1)
-			),
-			"ecn" => true
-		),
-		"gred" => array(
-			"name" => "Gentle Random Early Detection (GRED)",
-			"description" => "Gentle Random Early Detection (GRED) drops packets based on probability, which increases as the queue increases in size.",
-			"parameter_format" => "gred %w_q/%min_th/%max_th/%max_p",
-			"parameters" => array(
-				"w_q" => array("name" => "w_q", "type" => "number", "default" => 1),
-				"min_th" => array("name" => "min_th", "type" => "number", "default" => 0),
-				"max_th" => array("name" => "max_th", "type" => "number", "default" => 1),
-				"max_p" => array("name" => "max_p", "type" => "number", "default" => 1)
-			),
-			"ecn" => true
-		)
-	);
-}
+function getSchedulers() {	return array(		"fifo" => array(			"name" => "FIFO",			"parameter_format" => "type fifo",			"description" => "First-in-First-out is a fundamental queueing discipline which ensures packet sequence.",			"parameters" => array(),			"ecn" => false		),		"qfq" => array(			"name" => "Quick Fair Queueing",			"parameter_format" => "type qfq",			"description" => "QFQ is a fast, low-complexity Approximated Fair Queueing scheduler.",			"parameters" => array(),			"ecn" => false		),		"rr" => array(			"name" => "Round Robin",			"parameter_format" => "type rr",			"description" => "Round Robin (RR) schedules packets in a round-robin fashion.",			"parameters" => array(),			"ecn" => false		),		"wf2q+" => array(			"name" => "Worst-case Weighted fair Queueing",			"parameter_format" => "type wf2q+",			"description" => "Worst-case Weighted fair Queueing (WF2Q+) schedules flows with an associated weight.",			"parameters" => array(),			"ecn" => false		),		"prio" => array(			"name" => "PRIO",			"parameter_format" => "type prio",			"description" => "PRIO schedules packets by their corresponding priority.",			"parameters" => array(),			"ecn" => false		),		"fq_codel" => array(			"name" => "FQ_CODEL",			"parameter_format" => "type fq_codel target %sms interval %sms quantum %s limit %limit flows %flows",			"description" => "CoDel is a novel \"no knobs\", \"just works\", \"handles variable bandwidth and RTT\", and simple AQM algorithm."							. " As a scheduler, FQ_CODEL implements several flows (defined below), each having their own CoDel AQM.",			"parameters" => array(				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.target") / 1000),				"interval" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.interval") / 1000),				"quantum" => array("name" => "quantum", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.quantum")),				"limit" => array("name" => "limit", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.limit")),				"flows" => array("name" => "flows", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.flows"))			),			"ecn" => true		),		"fq_pie" => array(			"name" => "FQ_PIE",			"parameter_format" => "type fq_pie target %sms tupdate %sms alpha %s beta %s max_burst %s max_ecnth %s",			"description" => "Fair Queue Proportional Integral controller Enhanced AQM (FQ_PIE) is similar to FQ_CODEL but uses a slightly different algorithm.",			"parameters" => array(				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.target") / 1000),				"tupdate" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.tupdate") / 1000),				"alpha" => array("name" => "alpha", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.alpha")),				"beta" => array("name" => "beta", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.beta")),				"max_burst" => array("name" => "max_burst", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_burst")),				"max_ecnth" => array("name" => "max_ecnth", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_ecnth"))			),			"ecn" => true		)	);}// list of AQMs that dummynet supportsfunction getAQMs() {	return array(		"droptail" => array(			"name" => "Tail Drop",			"description" => "Tail Drop is a fundamental queue management algorithm which drops inbound packets once the queue is full.",			"parameter_format" => "droptail",			"parameters" => array(),			"ecn" => false		),		"codel" => array(			"name" => "CoDel",			"description" => "CoDel is a novel \"no knobs\", \"just works\", \"handles variable bandwidth and RTT\", and simple AQM algorithm.",			"parameter_format" => "codel target %sms interval %sms",			"parameters" => array(				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.codel.target") / 1000),				"interval" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.codel.interval") / 1000),			),			"ecn" => true		),		"pie" => array(			"name" => "PIE",			"description" => "Proportional Integral controller Enhanced AQM (PIE) is similar to CoDel but uses a slightly different algorithm.",			"parameter_format" => "pie target %sms tupdate %sms alpha %s beta %s max_burst %s max_ecnth %s",			"parameters" => array(				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.target") / 1000),				"tupdate" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.tupdate") / 1000),				"alpha" => array("name" => "alpha", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.alpha")),				"beta" => array("name" => "beta", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.beta")),				"max_burst" => array("name" => "max_burst", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_burst")),				"max_ecnth" => array("name" => "max_ecnth", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_ecnth"))			),			"ecn" => true		),		"red" => array(			"name" => "Random Early Detection (RED)",			"description" => "Random Early Detection (RED) drops packets based on probability, which increases as the queue increases in size.",			"parameter_format" => "red %s/%s/%s/%s",			"parameters" => array(				"w_q" => array("name" => "w_q", "type" => "number", "default" => 1),				"min_th" => array("name" => "min_th", "type" => "number", "default" => 0),				"max_th" => array("name" => "max_th", "type" => "number", "default" => 1),				"max_p" => array("name" => "max_p", "type" => "number", "default" => 1)			),			"ecn" => true		),		"gred" => array(			"name" => "Gentle Random Early Detection (GRED)",			"description" => "Gentle Random Early Detection (GRED) drops packets based on probability, which increases as the queue increases in size.",			"parameter_format" => "gred %s/%s/%s/%s",			"parameters" => array(				"w_q" => array("name" => "w_q", "type" => "number", "default" => 1),				"min_th" => array("name" => "min_th", "type" => "number", "default" => 0),				"max_th" => array("name" => "max_th", "type" => "number", "default" => 1),				"max_p" => array("name" => "max_p", "type" => "number", "default" => 1)			),			"ecn" => true		)	);}
 // used to map above
 function array_map_assoc(callable $f, array $a) {
 	return array_column(array_map($f, array_keys($a), $a), 1, 0);
@@ -220,13 +94,7 @@ function build_queue_params($array, $selected, $params, $id) {
 
 	return($form);
 }
-function FormatParameters($format_string, $params) {
-	foreach ($params as $key => $value) {
-		$format_string = str_replace('%' . $key, gettext($value), $format_string);
-	}
-	
-	return $format_string;
-}
+function FormatParameters($format_string, $params) {	return vsprintf($format_string, $params);}
 /* End limiter patch */
 
 function get_queue_stats() {
@@ -4036,7 +3904,7 @@ class dnpipe_class extends dummynet_class {
 		}
 		$selectedScheduler = getSchedulers()[$this->getScheduler()];
 		if ($selectedScheduler) {
-			$pfq_rule .= "\nsched ". $this->GetNumber() . " config " . FormatParameters($selectedScheduler["parameter_format"], $this->scheduler_params);
+			$pfq_rule .= "\nsched ". $this->GetNumber() . " config pipe " . $this->GetNumber() . " " . FormatParameters($selectedScheduler["parameter_format"], $this->scheduler_params);
 			if ($selectedScheduler["ecn"]) {
 				if ($this->getECN() == 'on') {
 					$pfq_rule .= ' ecn';

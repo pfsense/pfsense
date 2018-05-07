@@ -215,7 +215,7 @@ $section->addInput(new Form_IpAddress(
 	'ip',
 	'*IP Address',
 	$pconfig['ip']
-))->addMask(sn, $pconfig['sn'], 32);
+))->addMask('sn', $pconfig['sn'], 32);
 
 $section->addInput(new Form_Input(
 	'descr',

@@ -3,7 +3,7 @@
  * xmlparse.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -116,7 +116,8 @@ function startElement($parser, $name, $attrs) {
 
 	} else if (isset($ptr)) {
 		/* multiple entries not allowed for this element, bail out */
-		die(sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
+		throw new Exception(
+		    sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
 		    $name,
 		    xml_get_current_line_number($parser)));
 	}

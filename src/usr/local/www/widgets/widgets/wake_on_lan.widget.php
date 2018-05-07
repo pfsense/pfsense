@@ -3,7 +3,7 @@
  * wake_on_lan.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2017 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c)  2010 Yehuda Katz
  * All rights reserved.
  *

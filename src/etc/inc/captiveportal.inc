@@ -3,7 +3,7 @@
  * captiveportal.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -446,7 +446,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 		}
 		system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal-SSL.conf",
 			$crt, $key, $ca, "nginx-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
-			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", $cpzone);
+			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", $cpzone, false);
 	}
 
 	/* generate nginx configuration */
@@ -457,7 +457,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	}
 	system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal.conf",
 		"", "", "", "nginx-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
-		"", "", $cpzone);
+		"", "", $cpzone, false);
 
 	@unlink("{$g['varrun']}/nginx-{$cpzone}-CaptivePortal.pid");
 	/* attempt to start nginx */

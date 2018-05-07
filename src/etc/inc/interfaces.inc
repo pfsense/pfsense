@@ -3,7 +3,7 @@
  * interfaces.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -5597,9 +5597,15 @@ function get_interface_linklocal($interface = "wan") {
 }
 
 function get_interface_subnet($interface = "wan") {
-
+	global $config;
+	
 	if (substr($interface, 0, 4) == '_vip') {
 		return (get_configured_vip_subnetv4($interface));
+	}
+
+	if (is_array($config['interfaces'][$interface]) &&
+		!empty($config['interfaces'][$interface]['subnet'])) {
+		return ($config['interfaces'][$interface]['subnet']);
 	}
 
 	$realif = get_real_interface($interface);
@@ -5616,11 +5622,17 @@ function get_interface_subnet($interface = "wan") {
 }
 
 function get_interface_subnetv6($interface = "wan") {
+	global $config;
 
 	if (substr($interface, 0, 4) == '_vip') {
 		return (get_configured_vip_subnetv6($interface));
 	} else if (substr($interface, 0, 5) == '_lloc') {
 		$interface = substr($interface, 5);
+	}
+
+	if (is_array($config['interfaces'][$interface]) &&
+		!empty($config['interfaces'][$interface]['subnetv6'])) {
+		return ($config['interfaces'][$interface]['subnetv6']);
 	}
 
 	$realif = get_real_interface($interface, 'inet6');

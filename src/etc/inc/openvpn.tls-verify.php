@@ -4,7 +4,7 @@
  * openvpn.tls-verify.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2011-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2011-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

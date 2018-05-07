@@ -3,7 +3,7 @@
  * system_advanced_admin.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -73,6 +73,7 @@ $pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
 $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
 $pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttpredirect']);
+$pconfig['disablehsts'] = isset($config['system']['webgui']['disablehsts']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
@@ -173,6 +174,20 @@ if ($_POST) {
 			}
 
 			unset($config['system']['webgui']['disablehttpredirect']);
+		}
+
+		if ($_POST['webgui-hsts'] == "yes") {
+			if ($config['system']['webgui']['disablehsts'] != true) {
+				$restart_webgui = true;
+			}
+
+			$config['system']['webgui']['disablehsts'] = true;
+		} else {
+			if ($config['system']['webgui']['disablehsts'] == true) {
+				$restart_webgui = true;
+			}
+
+			unset($config['system']['webgui']['disablehsts']);
 		}
 
 		if ($_POST['webgui-login-messages'] == "yes") {
@@ -403,6 +418,17 @@ $section->addInput(new Form_Checkbox(
 	'Check this box to disable this automatically added redirect rule.');
 
 $section->addInput(new Form_Checkbox(
+	'webgui-hsts',
+	'HSTS',
+	'Disable HTTP Strict Transport Security',
+	$pconfig['disablehsts']
+))->setHelp('When this is unchecked, Strict-Transport-Security HTTPS response header '.
+	'is sent by the webConfigurator to the browser. This will force the browser to use '.
+	'only HTTPS for future requests to the firewall FQDN. Check this box to disable HSTS. '.
+	'(NOTE: Browser-specific steps are required for disabling to take effect when the browser '.
+	'already visited the FQDN while HSTS was enabled.)');
+
+$section->addInput(new Form_Checkbox(
 	'loginautocomplete',
 	'WebGUI Login Autocomplete',
 	'Enable webConfigurator login autocomplete',
@@ -560,11 +586,13 @@ events.push(function() {
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
+	hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	 $('[name=webguiproto]').click(function () {
 		hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
+		hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
 	});
 });
 //]]>

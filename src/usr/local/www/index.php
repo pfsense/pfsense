@@ -457,7 +457,7 @@ foreach ($widgets as $widgetname => $widgetconfig) {
  * when /etc/version changes
  */
 if (file_exists("{$g['cf_conf_path']}/copynotice_display")) {
-	require_once("{$g['www_path']}/copynotice.inc");
+	require_once("copynotice.inc");
 	@unlink("{$g['cf_conf_path']}/copynotice_display");
 }
 ?>

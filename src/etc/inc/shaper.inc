@@ -3714,6 +3714,7 @@ class dnpipe_class extends dummynet_class {
 		}
 		unset_dn_object_by_reference($this->GetLink());
 		@pfSense_ipfw_pipe("pipe delete " . $this->GetNumber());
+		@pfSense_ipfw_pipe("sched delete " . $this->GetNumber());
 	}
 	function GetBandwidth() {
 		return $this->qbandwidth;

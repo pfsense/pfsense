@@ -408,7 +408,7 @@ if ($savemsg) {
 <?php
 	$i = 0;
 	$pagination_counter = 0;
-	if ($evaledvar) {
+	if ($evaledvar && is_array($evaledvar)) {
 		foreach ($evaledvar as $ip) {
 			if ($startdisplayingat) {
 				if ($i < $startdisplayingat) {

@@ -21,7 +21,7 @@
 set +e
 usage() {
 	echo "Usage $0 [options] [ iso | ova | memstick | memstickserial | memstickadi | memstick-plcc-b | all | none ]"
-	echo "		all = iso memstick memstickserial memstickadi"
+	echo "		all = memstick memstickserial memstickadi memstick-plcc-b"
 	echo "		none = upgrade only pkg repo"
 	echo "	[ options ]: "
 	echo "		--no-buildworld|-c - Will set NO_BUILDWORLD NO_BUILDKERNEL to not build kernel and world"

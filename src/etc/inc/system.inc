@@ -122,17 +122,8 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$syscfg = $config['system'];
 
-	if ((((isset($config['dnsmasq']['enable'])) &&
-	      (empty($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") &&
-	      (empty($config['dnsmasq']['interface']) ||
-	       in_array("lo0", explode(",", $config['dnsmasq']['interface'])))) ||
-	     ((isset($config['unbound']['enable'])) &&
-	      (empty($config['unbound']['port']) || $config['unbound']['port'] == "53") &&
-	      (empty($config['unbound']['active_interface']) ||
-	       in_array("lo0", explode(",", $config['unbound']['active_interface'])) ||
-	       in_array("all", explode(",", $config['unbound']['active_interface']), true)))) &&
-	     (!isset($config['system']['dnslocalhost']))) {
-		$resolvconf .= "nameserver 127.0.0.1\n";
+	foreach(get_dns_nameservers() as $dns_ns) {
+		$resolvconf .= "nameserver $dns_ns\n";
 	}
 
 	if (isset($syscfg['dnsallowoverride'])) {
@@ -143,24 +134,11 @@ function system_resolvconf_generate($dynupdate = false) {
 				$resolvconf .= "search {$searchserver}\n";
 			}
 		}
-		$ns = array_unique(get_nameservers());
-		foreach ($ns as $nameserver) {
-			if ($nameserver) {
-				$resolvconf .= "nameserver $nameserver\n";
-			}
-		}
 	} else {
 		$ns = array();
 		// Do not create blank search/domain lines, it can break tools like dig.
 		if ($syscfg['domain']) {
 			$resolvconf .= "search {$syscfg['domain']}\n";
-		}
-	}
-	if (is_array($syscfg['dnsserver'])) {
-		foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
-			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
-				$resolvconf .= "nameserver $sys_dnsserver\n";
-			}
 		}
 	}
 
@@ -666,65 +644,6 @@ function system_routing_configure($interface = "") {
 		echo "system_routing_configure() being called $mt\n";
 	}
 
-	$gatewayip = "";
-	$interfacegw = "";
-	$gatewayipv6 = "";
-	$interfacegwv6 = "";
-	$foundgw = false;
-	$foundgwv6 = false;
-	/* tack on all the hard defined gateways as well */
-	if (is_array($config['gateways']['gateway_item'])) {
-		array_map('unlink', glob("{$g['tmp_path']}/*_defaultgw{,v6}", GLOB_BRACE));
-		foreach	($config['gateways']['gateway_item'] as $gateway) {
-			if (isset($gateway['defaultgw'])) {
-				if ($foundgw == false && ($gateway['ipprotocol'] != "inet6" && (is_ipaddrv4($gateway['gateway']) || $gateway['gateway'] == "dynamic"))) {
-					if (strpos($gateway['gateway'], ":")) {
-						continue;
-					}
-					if ($gateway['gateway'] == "dynamic") {
-						$gateway['gateway'] = get_interface_gateway($gateway['interface']);
-					}
-					$gatewayip = $gateway['gateway'];
-					$interfacegw = $gateway['interface'];
-					if (!empty($gateway['interface'])) {
-						$defaultif = get_real_interface($gateway['interface']);
-						if ($defaultif) {
-							@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw", $gateway['gateway']);
-						}
-					}
-					$foundgw = true;
-				} else if ($foundgwv6 == false && ($gateway['ipprotocol'] == "inet6" && (is_ipaddrv6($gateway['gateway']) || $gateway['gateway'] == "dynamic"))) {
-					if ($gateway['gateway'] == "dynamic") {
-						$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
-					}
-					$gatewayipv6 = $gateway['gateway'];
-					$interfacegwv6 = $gateway['interface'];
-					if (!empty($gateway['interface'])) {
-						$defaultifv6 = get_real_interface($gateway['interface']);
-						if ($defaultifv6) {
-							@file_put_contents("{$g['tmp_path']}/{$defaultifv6}_defaultgwv6", $gateway['gateway']);
-						}
-					}
-					$foundgwv6 = true;
-				}
-			}
-			if ($foundgw === true && $foundgwv6 === true) {
-				break;
-			}
-		}
-	}
-	if ($foundgw == false) {
-		$defaultif = get_real_interface("wan");
-		$interfacegw = "wan";
-		$gatewayip = get_interface_gateway("wan");
-		@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw", $gatewayip);
-	}
-	if ($foundgwv6 == false) {
-		$defaultifv6 = get_real_interface("wan");
-		$interfacegwv6 = "wan";
-		$gatewayipv6 = get_interface_gateway_v6("wan");
-		@file_put_contents("{$g['tmp_path']}/{$defaultifv6}_defaultgwv6", $gatewayipv6);
-	}
 	$dont_add_route = false;
 	/* if OLSRD is enabled, allow WAN to house DHCP. */
 	if (is_array($config['installedpackages']['olsrd'])) {
@@ -752,23 +671,9 @@ function system_routing_configure($interface = "") {
 	}
 
 	if ($dont_add_route == false) {
-		if (!empty($interface) && $interface != $interfacegw) {
-			;
-		} else if (is_ipaddrv4($gatewayip)) {
-			log_error(sprintf(gettext("ROUTING: setting default route to %s"), $gatewayip));
-			route_add_or_change("-inet default {$gatewayip}");
-		}
-
-		if (!empty($interface) && $interface != $interfacegwv6) {
-			;
-		} else if (is_ipaddrv6($gatewayipv6)) {
-			$ifscope = "";
-			if (is_linklocal($gatewayipv6) && !strpos($gatewayipv6, '%')) {
-				$ifscope = "%{$defaultifv6}";
-			}
-			log_error(sprintf(gettext("ROUTING: setting IPv6 default route to %s"), $gatewayipv6 . $ifscope));
-			route_add_or_change("-inet6 default {$gatewayipv6}{$ifscope}");
-		}
+		$gateways_status = return_gateways_status(true);
+		fixup_default_gateway("inet", $gateways_status, $gateways_arr);
+		fixup_default_gateway("inet6", $gateways_status, $gateways_arr);
 	}
 
 	system_staticroutes_configure($interface, false);
@@ -1376,6 +1281,51 @@ function system_webgui_start() {
 	return $res;
 }
 
+function get_dns_nameservers() {
+	global $config;
+	
+	$dns_nameservers = array();
+	
+	if (isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "get_dns_nameservers() being called $mt\n";
+	}
+	
+	$syscfg = $config['system'];
+	if ((((isset($config['dnsmasq']['enable'])) &&
+   		(empty($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") &&
+	      	(empty($config['dnsmasq']['interface']) ||
+	       	in_array("lo0", explode(",", $config['dnsmasq']['interface'])))) ||
+	     	((isset($config['unbound']['enable'])) &&
+	      	(empty($config['unbound']['port']) || $config['unbound']['port'] == "53") &&
+	      	(empty($config['unbound']['active_interface']) ||
+	       	in_array("lo0", explode(",", $config['unbound']['active_interface'])) ||
+	       	in_array("all", explode(",", $config['unbound']['active_interface']), true)))) &&
+	     	(!isset($config['system']['dnslocalhost']))) {
+			$dns_nameservers[] = "127.0.0.1";
+	}
+	/* get dynamically assigned DNS servers (if any) */
+	$ns = array_unique(get_nameservers());
+	if (isset($syscfg['dnsallowoverride'])) {
+		if(!is_array($ns)) {
+			$ns = array();
+		}
+		foreach ($ns as $nameserver) {
+			if ($nameserver) {
+				$dns_nameservers[] = "$nameserver";
+			}
+		}
+	}
+	if (is_array($syscfg['dnsserver'])) {
+		foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
+			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
+				$dns_nameservers[] = "$sys_dnsserver";
+			}
+		}
+	}
+	return array_unique($dns_nameservers);
+}
+
 function system_generate_nginx_config($filename,
 	$cert,
 	$key,
@@ -1515,6 +1465,14 @@ EOD;
 		$nginx_config .= "\t\tadd_header X-Content-Type-Options nosniff;\n";
 		$nginx_config .= "\t\tssl_session_tickets off;\n";
 		$nginx_config .= "\t\tssl_dhparam /etc/dh-parameters.4096;\n";
+		$cert_temp = lookup_cert($config['system']['webgui']['ssl-certref']);
+		if (($config['system']['webgui']['ocsp-staple'] == true) or
+		    (cert_get_ocspstaple($cert_temp['crt']) == true)) {
+			$nginx_config .= "\t\tssl_stapling on;\n";
+			$nginx_config .= "\t\tssl_stapling_verify on;\n";
+			$nginx_config .= "\t\tresolver " . implode(" ", get_dns_nameservers()) . " valid=300s;\n";
+			$nginx_config .= "\t\tresolver_timeout 5s;\n";
+		}
 	} else {
 		$nginx_config .= "\n";
 		$nginx_config .= "\tserver {\n";

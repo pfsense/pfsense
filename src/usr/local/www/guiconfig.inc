@@ -535,8 +535,13 @@ function gentitle($title) {
 }
 
 function genhtmltitle($title, $links=true) {
-
-	$num_crumbs = count($title);
+	if (is_array($title)) {
+		$num_crumbs = count($title);
+	} else if ($title != NULL) {
+		$num_crumbs = 1;
+	} else {
+		$num_crumbs = 0;
+	}
 
 	// If the array contains only one element, there are no breadcrumbs, so don't
 	// add anything else

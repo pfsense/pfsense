@@ -34,6 +34,10 @@ require_once("pkg-utils.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes;
 
+if (!is_array($config['openvpn'])) {
+	$config['openvpn'] = array();
+}
+
 if (!is_array($config['openvpn']['openvpn-server'])) {
 	$config['openvpn']['openvpn-server'] = array();
 }

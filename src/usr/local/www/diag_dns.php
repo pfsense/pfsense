@@ -33,9 +33,14 @@ $host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
 
 /* If this section of config.xml has not been populated yet we need to set it up
 */
+if (!is_array($config['aliases'])) {
+	$config['aliases'] = array();
+}
+
 if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
 }
+
 $a_aliases = &$config['aliases']['alias'];
 
 $aliasname = substr(str_replace(array(".", "-"), "_", $host), 0, 31);

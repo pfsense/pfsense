@@ -28,6 +28,10 @@
 
 require_once("guiconfig.inc");
 
+if (!is_array($config['dnsupdates'])) {
+	$config['dnsupdates'] = array();
+}
+
 if (!is_array($config['dnsupdates']['dnsupdate'])) {
 	$config['dnsupdates']['dnsupdate'] = array();
 }

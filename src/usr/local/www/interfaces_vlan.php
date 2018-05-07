@@ -36,6 +36,10 @@ require_once("switch.inc");
 
 global $profile;
 
+if (!is_array($config['vlans'])) {
+	$config['vlans'] = array();
+}
+
 if (!is_array($config['vlans']['vlan'])) {
 	$config['vlans']['vlan'] = array();
 }

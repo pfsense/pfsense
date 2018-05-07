@@ -82,6 +82,10 @@ if ($pkg['custom_php_global_functions'] != "") {
 }
 
 // grab the installedpackages->package_name section.
+if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])])) {
+	$config['installedpackages'][xml_safe_fieldname($pkg['name'])] = array();
+}
+
 if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'])) {
 	$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'] = array();
 }

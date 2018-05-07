@@ -50,6 +50,7 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 }
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
+
 $id = $_REQUEST['id'];
 
 if (isset($id) && isset($a_dyndns[$id])) {

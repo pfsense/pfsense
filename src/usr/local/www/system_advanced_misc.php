@@ -46,7 +46,6 @@ $pconfig['proxypass'] = $config['system']['proxypass'];
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['srctrack'] = $config['system']['srctrack'];
-$pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['watchdogd_enable'] = isset($config['system']['watchdogd_enable']);
 $pconfig['watchdogd_timeout'] = $config['system']['watchdogd_timeout'];
@@ -189,12 +188,6 @@ if ($_POST) {
 				unset($config['system']['lb_use_sticky']);
 				$need_relayd_restart = true;
 			}
-		}
-
-		if ($_POST['gw_switch_default'] == "yes") {
-			$config['system']['gw_switch_default'] = true;
-		} else {
-			unset($config['system']['gw_switch_default']);
 		}
 
 		if ($_POST['pkg_nochecksig'] == "yes") {
@@ -423,15 +416,6 @@ $group->add(new Form_Input(
 	'to persist for longer periods of time.');
 
 $section->add($group);
-
-$section->addInput(new Form_Checkbox(
-	'gw_switch_default',
-	'Default gateway switching',
-	'Enable default gateway switching',
-	$pconfig['gw_switch_default']
-))->setHelp('If the default gateway goes down, switch the default gateway to '.
-	'another available one. This is not enabled by default, as it\'s unnecessary in '.
-	'most all scenarios, which instead use gateway groups.');
 
 $form->add($section);
 $section = new Form_Section('Power Savings');

@@ -528,7 +528,7 @@ $group->add(new Form_IpAddress(
 	'localid_address',
 	null,
 	$pconfig['localid_address']
-))->setHelp('Address')->addMask(localid_netbits, $pconfig['localid_netbits'], 128, 0);
+))->setHelp('Address')->addMask('localid_netbits', $pconfig['localid_netbits'], 128, 0);
 
 $section->add($group);
 
@@ -554,7 +554,7 @@ $group->add(new Form_IpAddress(
 	'natlocalid_address',
 	null,
 	$pconfig['natlocalid_address']
-))->setHelp('Address')->addMask(natlocalid_netbits, $pconfig['natlocalid_netbits'], 128, 0);
+))->setHelp('Address')->addMask('natlocalid_netbits', $pconfig['natlocalid_netbits'], 128, 0);
 
 $group->setHelp('If NAT/BINAT is required on this network specify the address to be translated');
 $section->add($group);
@@ -574,7 +574,7 @@ if (!isset($pconfig['mobile'])) {
 		'remoteid_address',
 		null,
 		$pconfig['remoteid_address']
-	))->setHelp('Address')->addMask(remoteid_netbits, $pconfig['remoteid_netbits'], 128, 0);
+	))->setHelp('Address')->addMask('remoteid_netbits', $pconfig['remoteid_netbits'], 128, 0);
 
 	$section->add($group);
 }

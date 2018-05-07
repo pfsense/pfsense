@@ -2442,8 +2442,9 @@ function route_add_or_change($args) {
 
 	/* First, try to add it */
 	$_gb = exec(escapeshellcmd("/sbin/route add " . $args), $output, $rc);
-
+		
 	if (isset($config['system']['route-debug'])) {
+		$add_change = 'add';
 		$mt = microtime();
 		log_error("ROUTING debug: $mt - ADD RC={$rc} - $args");
 	}
@@ -2454,9 +2455,13 @@ function route_add_or_change($args) {
 		    $output, $rc);
 
 		if (isset($config['system']['route-debug'])) {
+			$add_change = 'change';
 			$mt = microtime();
 			log_error("ROUTING debug: $mt - CHG RC={$rc} - $args");
 		}
+	}
+	if (isset($config['system']['route-debug'])) {
+		file_put_contents("/dev/console", "\n[".getmypid()."] ROUTE: {$add_change} {$args} result: {$rc}");
 	}
 
 	return ($rc == 0);

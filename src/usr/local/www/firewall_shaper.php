@@ -217,7 +217,7 @@ if ($_POST) {
 	unset($input_errors);
 
 	if ($addnewaltq) {
-		$altq = new altq_root_queue();
+		$__tmp_altq = new altq_root_queue(); $altq =& $__tmp_altq;
 		$altq->SetInterface($interface);
 		$altq->ReadConfig($_POST);
 		$altq->validate_input($_POST, $input_errors);

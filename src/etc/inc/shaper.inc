@@ -4026,23 +4026,26 @@ class dnpipe_class extends dummynet_class {
 		$selectedAQM = getAQMs()[$this->getAQM()];
 		if ($selectedAQM) {
 			$pfq_rule .= " " . FormatParameters($selectedAQM["parameter_format"], $this->aqm_params);
-			if ($this->getECN() == 'on' && $selectedAQM["ecn"]) {
-				$pfq_rule .= ' ecn';
-			} else {
-				$pfq_rule .= ' noecn';
+			if ($selectedAQM["ecn"]) {
+				if ($this->getECN() == 'on') {
+					$pfq_rule .= ' ecn';
+				} else {
+					$pfq_rule .= ' noecn';
+				}
 			}
 		}
-		$pfq_rule .= "\n";
 		$selectedScheduler = getSchedulers()[$this->getScheduler()];
 		if ($selectedScheduler) {
 			$pfq_rule .= "\nsched ". $this->GetNumber() . " config " . FormatParameters($selectedScheduler["parameter_format"], $this->scheduler_params);
-			if ($this->getECN() == 'on' && $selectedScheduler["ecn"]) {
-				$pfq_rule .= ' ecn';
-			} else {
-				$pfq_rule .= ' noecn';
+			if ($selectedScheduler["ecn"]) {
+				if ($this->getECN() == 'on') {
+					$pfq_rule .= ' ecn';
+				} else {
+					$pfq_rule .= ' noecn';
+				}
 			}
-			$pfq_rule .= "\n";
 		}
+		$pfq_rule .= "\n";
 		/* End patch */
 		
 		if (!empty($this->subqueues) && count($this->subqueues) > 0) {
@@ -4634,10 +4637,12 @@ class dnqueue_class extends dummynet_class {
 		$selectedAQM = getAQMs()[$this->getAQM()];
 		if ($selectedAQM) {
 			$pfq_rule .= " " . FormatParameters($selectedAQM["parameter_format"], $this->aqm_params);
-			if ($this->getECN() == 'on' && $selectedAQM["ecn"]) {
-				$pfq_rule .= ' ecn';
-			} else {
-				$pfq_rule .= ' noecn';
+			if ($selectedAQM["ecn"]) {
+				if ($this->getECN() == 'on') {
+					$pfq_rule .= ' ecn';
+				} else {
+					$pfq_rule .= ' noecn';
+				}
 			}
 		}
 		/* End patch */
@@ -5035,7 +5040,7 @@ function read_dummynet_config() {
 		}
 		$__tmp_root = new dnpipe_class(); $root =& $__tmp_root;
 		$root->ReadConfig($conf);
-		$dummynet_pipe_list[$root->GetQname()] = &$root;
+		$dummynet_pipe_list[$root->GetQname()] = $root; // matt_: WEIRD referential issues with &$root - fixing here (shapers listed in GUI: c,c,c with list of a,b,c in config?) only tail array element was showing in GUI
 		array_push($path, $key);
 		$root->SetLink($path);
 		if (is_array($conf['queue'])) {

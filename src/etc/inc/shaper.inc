@@ -5040,7 +5040,7 @@ function read_dummynet_config() {
 		}
 		$__tmp_root = new dnpipe_class(); $root =& $__tmp_root;
 		$root->ReadConfig($conf);
-		$dummynet_pipe_list[$root->GetQname()] = $root; // matt_: WEIRD referential issues with &$root - fixing here (shapers listed in GUI: c,c,c with list of a,b,c in config?) only tail array element was showing in GUI
+		$dummynet_pipe_list[$root->GetQname()] = &$root;
 		array_push($path, $key);
 		$root->SetLink($path);
 		if (is_array($conf['queue'])) {

@@ -28,6 +28,10 @@
 
 require_once("guiconfig.inc");
 
+if (!is_array($config['checkipservices'])) {
+	$config['checkipservices'] = array();
+}
+
 if (!is_array($config['checkipservices']['checkipservice'])) {
 	$config['checkipservices']['checkipservice'] = array();
 }

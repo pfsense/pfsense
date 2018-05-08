@@ -28,6 +28,10 @@
 
 require_once("guiconfig.inc");
 
+if (!is_array($config['laggs'])) {
+	$config['laggs'] = array();
+}
+
 if (!is_array($config['laggs']['lagg'])) {
 	$config['laggs']['lagg'] = array();
 }

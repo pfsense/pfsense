@@ -2002,7 +2002,7 @@ EOD;
 
 EOD;
 	}
- 
+
 	$mpdconf .= <<<EOD
 	set iface {$ondemand} on-demand
 	set iface idle {$ppp['idletimeout']}

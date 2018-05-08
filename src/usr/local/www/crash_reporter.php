@@ -36,27 +36,30 @@ define("FILE_SIZE", 450000);
 function upload_crash_report($files) {
 	global $g, $config;
 
-	$post = array();
+	$target_url = $g['crashreporterurl'];
+
+	$post = array ();
+
 	$counter = 0;
 	foreach ($files as $file) {
-		$post["file{$counter}"] = "@{$file}";
+		$post["file{$counter}"] = curl_file_create ($file);
 		$counter++;
 	}
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_VERBOSE, 0);
-	curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+	$ch = curl_init ($target_url);
+	curl_setopt ($ch, CURLOPT_POST, true);
+	curl_setopt ($ch, CURLOPT_POSTFIELDS, $post);
+	curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+
 	if (!isset($config['system']['do_not_send_uniqueid'])) {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ':' . system_get_uniqueid());
 	} else {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
 	}
-	curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-	$response = curl_exec($ch);
-	return $response;
+
+	$result=curl_exec ($ch);
+	curl_close ($ch);
+	return $result;
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Crash Reporter"));

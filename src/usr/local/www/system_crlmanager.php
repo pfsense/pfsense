@@ -144,7 +144,7 @@ if ($act == "addcert") {
 	}
 
 	if (!$input_errors) {
-		$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
+		$reason = (empty($pconfig['crlreason'])) ? 0 : $pconfig['crlreason'];
 		cert_revoke($cert, $crl, $reason);
 		// refresh IPsec and OpenVPN CRLs
 		openvpn_refresh_crls();

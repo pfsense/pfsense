@@ -915,12 +915,32 @@ function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 9999) {
 	$crl['serial'] = $serial;
 	$crl['lifetime'] = $lifetime;
 	$crl['cert'] = array();
-	$crl_res = crl_update($crl);
 	$config['crl'][] = $crl;
-	return $crl_res;
+	return $crl;
 }
 
 function crl_update(& $crl) {
+	require_once('ASN1.php');
+	require_once('ASN1_UTF8STRING.php');
+	require_once('ASN1_ASCIISTRING.php');
+	require_once('ASN1_BITSTRING.php');
+	require_once('ASN1_BOOL.php');
+	require_once('ASN1_GENERALTIME.php');
+	require_once('ASN1_INT.php');
+	require_once('ASN1_ENUM.php');
+	require_once('ASN1_NULL.php');
+	require_once('ASN1_OCTETSTRING.php');
+	require_once('ASN1_OID.php');
+	require_once('ASN1_SEQUENCE.php');
+	require_once('ASN1_SET.php');
+	require_once('ASN1_SIMPLE.php');
+	require_once('ASN1_TELETEXSTRING.php');
+	require_once('ASN1_UTCTIME.php');
+	require_once('OID.php');
+	require_once('X509.php');
+	require_once('X509_CERT.php');
+	require_once('X509_CRL.php');
+
 	global $config;
 	$ca =& lookup_ca($crl['caref']);
 	if (!$ca) {
@@ -931,17 +951,31 @@ function crl_update(& $crl) {
 		return false;
 	}
 	$crl['serial']++;
-	$ca_str_crt = base64_decode($ca['crt']);
-	$ca_str_key = base64_decode($ca['prv']);
-	$crl_res = openssl_crl_new($ca_str_crt, $crl['serial'], $crl['lifetime']);
+	$ca_cert = \Ukrbublik\openssl_x509_crl\X509::pem2der(base64_decode($ca['crt']));
+	$ca_pkey = openssl_pkey_get_private(base64_decode($ca['prv']));
+
+	$crlconf = array(
+		'no' => $crl['serial'],
+		'version' => 2,
+		'days' => $crl['lifetime'],
+		'alg' => OPENSSL_ALGO_SHA1,
+		'revoked' => array()
+	);
+
 	if (is_array($crl['cert']) && (count($crl['cert']) > 0)) {
 		foreach ($crl['cert'] as $cert) {
-			openssl_crl_revoke_cert($crl_res, base64_decode($cert["crt"]), $cert["revoke_time"], $cert["reason"]);
+			$crlconf['revoked'][] = array(
+				'serial' => cert_get_serial($cert["crt"], true),
+				'rev_date' => $cert["revoke_time"],
+				'reason' => ($cert["reason"] == -1) ? null : (int) $cert["reason"],
+			);
 		}
 	}
-	openssl_crl_export($crl_res, $crl_text, $ca_str_key);
-	$crl['text'] = base64_encode($crl_text);
-	return $crl_res;
+
+	$crl_data = \Ukrbublik\openssl_x509_crl\X509_CRL::create($crlconf, $ca_pkey, $ca_cert);
+	$crl['text'] = base64_encode(\Ukrbublik\openssl_x509_crl\X509::der2pem4crl($crl_data));
+
+	return $crl['text'];
 }
 
 function cert_revoke($cert, & $crl, $reason = OCSP_REVOKED_STATUS_UNSPECIFIED) {

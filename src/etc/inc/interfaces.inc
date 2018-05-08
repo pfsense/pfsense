@@ -950,10 +950,15 @@ function interface_lagg_configure($lagg) {
 		if (!does_interface_exist($member)) {
 			continue;
 		}
+
 		/* make sure the parent interface is up */
 		pfSense_interface_mtu($member, $lagg_mtu);
 		interfaces_bring_up($member);
 		hardware_offloading_applyflags($member);
+
+		// Ensure there are no nulls in these values. It upsets escapeshellarg()
+		$laggif = str_replace("\0", "", $laggif);
+		$member = str_replace("\0", "", $member);
 		mwexec("/sbin/ifconfig " . escapeshellarg($laggif) . " laggport " . escapeshellarg($member));
 	}
 

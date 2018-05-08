@@ -564,11 +564,13 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 
 	$i = -1;
 	/* Process/add all the configured gateways. */
-	if (is_array($config['gateways']['gateway_item'])) {
+	if (is_array($config['gateways']) && is_array($config['gateways']['gateway_item'])) {
 		foreach ($config['gateways']['gateway_item'] as $gateway) {
 			/* Increment it here to do not skip items */
 			$i++;
-			unset($gateway['defaultgw']);
+			if (isset($gateway['defaultgw'])) {
+				unset($gateway['defaultgw']);
+			}
 
 			if (empty($config['interfaces'][$gateway['interface']])) {
 				if ($inactive === false) {

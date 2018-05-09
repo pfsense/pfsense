@@ -564,11 +564,13 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 
 	$i = -1;
 	/* Process/add all the configured gateways. */
-	if (is_array($config['gateways']['gateway_item'])) {
+	if (is_array($config['gateways']) && is_array($config['gateways']['gateway_item'])) {
 		foreach ($config['gateways']['gateway_item'] as $gateway) {
 			/* Increment it here to do not skip items */
 			$i++;
-			unset($gateway['defaultgw']);
+			if (isset($gateway['defaultgw'])) {
+				unset($gateway['defaultgw']);
+			}
 
 			if (empty($config['interfaces'][$gateway['interface']])) {
 				if ($inactive === false) {
@@ -635,11 +637,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				$gateway['interface'] = get_real_interface($gateway['interface'], "inet", false, false);
 			}
 
-			if ($gateway['ipprotocol'] == "inet" && 
+			if ($gateway['ipprotocol'] == "inet" &&
 					($config['gateways']['defaultgw4'] == $gateway['name'] || $gateway['gateway'] == $cgw4)) {
 				$gateway['isdefaultgw'] = true;
 				$found_defaultv4 = 1;
-			} else if ($gateway['ipprotocol'] == "inet6" && 
+			} else if ($gateway['ipprotocol'] == "inet6" &&
 					($config['gateways']['defaultgw6'] == $gateway['name'] || $gateway['gateway'] == $cgw6)) {
 				$gateway['isdefaultgw'] = true;
 				$found_defaultv6 = 1;
@@ -951,7 +953,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	$dfltgwname = '';
 	$dfltgwdown = false;
 	$dfltgwfound = false;
-	
+
 	if ($ipprotocol == 'inet') {
 		$gwdefault = $config['gateways']['defaultgw4'];
 	} else {
@@ -967,7 +969,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			if (isset($gateways_status[$gwdefault])) {
 				$dfltgwfound = true;
 				$dfltgwname = $gwdefault;
-				if (!isset($gateways_arr['monitor_disable']) && !isset($gateways_arr['action_disable']) && 
+				if (!isset($gateways_arr['monitor_disable']) && !isset($gateways_arr['action_disable']) &&
 						$gateways_status[$gwdefault]['status'] != "none") {
 					$dfltgwdown = true;
 				}
@@ -975,11 +977,14 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 				$dfltgwfound = true;
 
 				$viplist = get_configured_vip_list();
-				foreach ($config['gateways']['gateway_group'] as $group) {
-					if ($group['name'] == $gwdefault) {
-						$gwgroup = get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $viplist);
+				if (is_array($config['gateways']['gateway_group'])) {
+	 				foreach ($config['gateways']['gateway_group'] as $group) {
+						if ($group['name'] == $gwdefault) {
+							$gwgroup = get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $viplist);
+						}
 					}
 				}
+
 				if (is_array($gwgroup)) {
 					if (count($gwgroup) > 0) {
 						$currentdefaultgwip = getcurrentdefaultgatewayip($ipprotocol);
@@ -1007,11 +1012,11 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			foreach ($gateways_arr as $gwname => $gwsttng) {
 				/* Keep a record of the last up gateway */
 				/* XXX: Blacklist lan for now since it might cause issues to those who have a gateway set for it */
-				if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && 
-						(isset($gwsttng['monitor_disable']) || 
-						isset($gwsttng['action_disable']) || 
+				if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) &&
+						(isset($gwsttng['monitor_disable']) ||
+						isset($gwsttng['action_disable']) ||
 						$gateways_status[$gwname]['status'] == "none"
-						) && 
+						) &&
 						$gwsttng[$gwname]['friendlyiface'] != "lan") {
 					$upgw = $gwname;
 				}
@@ -1063,7 +1068,7 @@ function setdefaultgateway($gw) {
 	$currentdefaultgwip = getcurrentdefaultgatewayip($ipprotocol);
 	if ($currentdefaultgwip != $gw['gateway']) {
 		log_error("Default gateway setting {$gw['descr']} as default.");
-		
+
 		if ($ipprotocol == 'inet') {
 			array_map('unlink', glob("{$g['tmp_path']}/*_defaultgw", GLOB_BRACE));
 		} else {
@@ -1073,7 +1078,7 @@ function setdefaultgateway($gw) {
 		if ($defaultif) {
 			@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw", $gw['gateway']);
 		}
-		
+
 		if (isset($gw["nonlocalgateway"])) {
 			if (is_ipaddr($gw['gateway']) && !empty($gw['interface'])) {
 				route_add_or_change("-{$ipprotocol} {$gw['gateway']} -iface {$gw['interface']}");
@@ -1947,7 +1952,7 @@ function save_gateway($gateway_settings, $realid = "") {
 		if (is_array($a_gateway_item)) {
 			foreach ($a_gateway_item as $gw) {
 				if ($gateway['ipprotocol'] == $gw['ipprotocol']) {
-					if ($gw['interface'] != $gateway_settings['interface'] && 
+					if ($gw['interface'] != $gateway_settings['interface'] &&
 						($gw['name'] == $config['gateways']['defaultgw4'] || $gw['name'] == $config['gateways']['defaultgw6'])) {
 						// remember the old default gateway interface to call with a "interface reconfigure" event.
 						$reloadif = $gw['interface'];

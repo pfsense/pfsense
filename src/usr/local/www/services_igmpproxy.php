@@ -143,7 +143,7 @@ foreach ($a_igmpproxy as $igmpentry):
 	$addresses = implode(", ", array_slice(explode(" ", $igmpentry['address']), 0, 10));
 	print($addresses);
 
-	if (count($igmpentry['address']) < 10) {
+	if (!is_array($igmpentry['address']) || count($igmpentry['address']) < 10) {
 		print(' ');
 	} else {
 		print('...');

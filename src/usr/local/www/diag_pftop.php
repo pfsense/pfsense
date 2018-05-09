@@ -166,9 +166,9 @@ $section->addInput(new Form_Input(
 	'<code>[in|out]</code><br /><br />' .
 	'These are the most common selectors. Some expressions can be combined using "and" / "or". ' .
 	'See %2$s for more detailed expression syntax.%3$s',
-	'<span class="infoblock"><br />',
+	['<span class="infoblock"><br />',
 	'<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=pftop#STATE_FILTERING">pftop(8)</a>',
-	'</span></p>'
+	'</span></p>']
 );
 
 $section->addInput(new Form_Select(

@@ -39,6 +39,10 @@ define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 
+if (!is_array($config['ppps'])) {
+	$config['ppps'] = array();
+}
+
 if (!is_array($config['ppps']['ppp'])) {
 	$config['ppps']['ppp'] = array();
 }

@@ -2323,19 +2323,22 @@ function system_check_reset_button() {
 	$specplatform = system_identify_specific_platform();
 
 	switch ($specplatform['name']) {
+		case 'SG-2220':
+			$binprefix = "RCC-DFF";
+			break;
 		case 'alix':
 		case 'wrap':
 		case 'FW7541':
 		case 'APU':
 		case 'RCC-VE':
 		case 'RCC':
-		case 'SG-2220':
+			$binprefix = $specplatform['name'];
 			break;
 		default:
 			return 0;
 	}
 
-	$retval = mwexec("/usr/local/sbin/" . $specplatform['name'] . "resetbtn");
+	$retval = mwexec("/usr/local/sbin/" . $binprefix . "resetbtn");
 
 	if ($retval == 99) {
 		/* user has pressed reset button for 2 seconds -

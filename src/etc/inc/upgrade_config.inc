@@ -5559,13 +5559,65 @@ function upgrade_180_to_181() {
 
 function upgrade_181_to_182() {
 	global $config;
+
+	/*
+	 * Some gateways did not have an ipprotocol set, and some configurations
+	 * did not have a default set so one was assumed. To avoid leaving the
+	 * user without a default, fix these situations first.
+	 */
+	$defgw_v4_found = false;
+	$defgw_v6_found = false;
+	$defgw_v4_candidate = array();
+	$defgw_v6_candidate = array();
+	if (is_array($config['gateways']) && is_array($config['gateways']['gateway_item'])) {
+		foreach($config['gateways']['gateway_item'] as &$item) {
+			/* Attempt to determine IP protocol for static gateways
+			 * missing the protocol definition */
+			if (empty($item['ipprotocol'])) {
+				if (is_ipaddrv4($item['gateway'])) {
+					$item['ipprotocol'] = 'inet';
+				} elseif (is_ipaddrv6($item['gateway'])) {
+					$item['ipprotocol'] = 'inet6';
+				}
+			}
+			/* Check if we have found a default gw */
+			if (isset($item['defaultgw'])) {
+				if ($item['ipprotocol'] == 'inet') {
+					$defgw_v4_found = true;
+				} elseif ($item['ipprotocol'] == 'inet6') {
+					$defgw_v6_found = true;
+				}
+			} else {
+				/* This isn't a default gateway, but could it be? */
+				if ($item['ipprotocol'] == 'inet') {
+					if (!$defgw_v4_found &&
+					    ($item['interface'] == "wan")) {
+						$defgw_v4_candidate = &$item;
+					}
+				} elseif ($item['ipprotocol'] == 'inet6') {
+					if (!$defgw_v6_found &&
+					    ($item['interface'] == "wan")) {
+						$defgw_v6_candidate = &$item;
+					}
+				}
+			}
+		}
+	}
+	/* If there was no other default gateway, use the one of last resort. */
+	if (!$defgw_v4_found && !empty($defgw_v4_candidate)) {
+		$defgw_v4_candidate['defaultgw'] = true;
+	}
+	if (!$defgw_v6_found && !empty($defgw_v6_candidate)) {
+		$defgw_v6_candidate['defaultgw'] = true;
+	}
+
 	if (isset($config['system']['gw_switch_default'])) {
 		// default gateway switching was enabled, convert gatewaygroup
 		$newgroup4 = array();
 		$newgroup6 = array();
 		$tiernr4 = 2;
 		$tiernr6 = 2;
-		if (is_array($config['gateways']['gateway_item'])) {
+		if (is_array($config['gateways']) && is_array($config['gateways']['gateway_item'])) {
 			foreach($config['gateways']['gateway_item'] as &$item) {
 				if ($item['ipprotocol'] == 'inet') {
 					if (isset($item['defaultgw'])) {
@@ -5626,7 +5678,7 @@ function upgrade_181_to_182() {
 		unset($config['system']['gw_switch_default']);// remove old setting, if a group is used switching is already implied
 	} else {
 		// set new defaultgw selection boxes to old selected default
-		if (is_array($config['gateways']['gateway_item'])) {
+		if (is_array($config['gateways']) && is_array($config['gateways']['gateway_item'])) {
 			foreach($config['gateways']['gateway_item'] as &$item) {
 				if (isset($item['defaultgw'])) {
 					if ($item['ipprotocol'] == 'inet') {

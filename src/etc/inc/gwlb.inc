@@ -1040,12 +1040,14 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 }
 
 function getcurrentdefaultgatewayip($ipprotocol) {
-	return trim(exec("/sbin/route -n get -{$ipprotocol} default | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
+	return trim(exec("/sbin/route -n get -{$ipprotocol} default 2>/dev/null | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
 }
 
 function setdefaultgateway($gw) {
 	global $g;
-	file_put_contents("/dev/console", "\n[".getmypid()."] SET DFGW:".$gw['name']);
+	if (isset($config['system']['route-debug'])) {
+		file_put_contents("/dev/console", "\n[".getmypid()."] SET DEF GW: {$gw['name']}");
+	}
 	$ipprotocol = $gw['ipprotocol'];
 	if ($gw['gateway'] == "dynamic") {
 		if ($ipprotocol == 'inet') {
@@ -1084,7 +1086,9 @@ function setdefaultgateway($gw) {
 				route_add_or_change("-{$ipprotocol} {$gw['gateway']} -iface {$gw['interface']}");
 			}
 		}
-		file_put_contents("/dev/console", "\n[".getmypid()."] SET DFGW:".$gw['name']." ".$gw['gateway']);
+		if (isset($config['system']['route-debug'])) {
+			file_put_contents("/dev/console", "\n[".getmypid()."] SET DEF GW: {$gw['name']} ({$gw['gateway']})");
+		}
 		route_add_or_change("-{$ipprotocol} default {$gw['gateway']}");
 		return true;
 	}

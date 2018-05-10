@@ -55,9 +55,14 @@ $reserved_ifs = get_configured_interface_list(true);
 $pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 $max_alias_addresses = 5000;
 
+if (!is_array($config['aliases'])) {
+	$config['aliases'] = array();
+}
+
 if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
 }
+
 $a_aliases = &$config['aliases']['alias'];
 
 // Debugging

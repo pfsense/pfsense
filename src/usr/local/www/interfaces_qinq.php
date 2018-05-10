@@ -29,6 +29,10 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
+if (!is_array($config['qinqs'])) {
+	$config['qinqs'] = array();
+}
+
 if (!is_array($config['qinqs']['qinqentry'])) {
 	$config['qinqs']['qinqentry'] = array();
 }

@@ -5521,6 +5521,12 @@ function upgrade_switch_port_state() {
 	global $config;
 
 	$start = $stop = 0;
+	if (!is_array($config['switches']['switch'])) {
+		$config['switches']['switch'] = array();
+	}
+	if (!is_array($config['swports']['swport'])) {
+		$config['swports']['swport'] = array();
+	}
         $platform = system_identify_specific_platform();
         switch ($platform['name']) {
         case "A37XX":

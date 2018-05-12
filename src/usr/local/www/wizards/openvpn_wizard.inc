@@ -639,8 +639,10 @@ function step12_submitphpaction() {
 		$server['wins_server2'] = $pconfig['step10']['wins2'];
 	if (isset($pconfig['step10']['nbtenable'])) {
 		$server['netbios_ntype'] = $pconfig['step10']['nbttype'];
-		if (isset($pconfig['step10']['nbtscope']))
+		if (isset($pconfig['step10']['nbtscope'])) {
 			$server['netbios_scope'] = $pconfig['step10']['nbtscope'];
+		}
+
 		$server['netbios_enable'] = $pconfig['step10']['nbtenable'];
 	}
 
@@ -649,8 +651,9 @@ function step12_submitphpaction() {
 		$rule = array();
 		$rule['descr'] = sprintf(gettext("OpenVPN %s wizard"),$server['description']);
 		/* Ensure the rule descr is not too long for pf to handle */
-		if (strlen($rule['descr']) > 52)
+		if (strlen($rule['descr']) > 52) {
 			$rule['descr'] = substr($rule['descr'], 0, 52);
+		}
 		$rule['direction'] = "in";
 		$rule['source']['any'] = TRUE;
 		$rule['destination']['network'] = $server['interface'] . "ip";
@@ -661,6 +664,7 @@ function step12_submitphpaction() {
 		$rule['enabled'] = "on";
 		$rule['tracker'] = $tracker++;
 		$rule['created'] = make_config_revision_entry(null, gettext("OpenVPN Wizard"));
+
 		$config['filter']['rule'][] = $rule;
 	}
 	if (isset($pconfig['step11']['ovpnallow'])) {

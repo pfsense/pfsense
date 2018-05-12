@@ -178,7 +178,7 @@ function step5_submitphpaction() {
 function step6_stepbeforeformdisplay() {
 	global $stepid, $config;
 
-	if (count($config['ca']) < 1) {
+	if (!is_array($config['ca']) || count($config['ca']) < 1) {
 		$stepid++;
 	}
 }

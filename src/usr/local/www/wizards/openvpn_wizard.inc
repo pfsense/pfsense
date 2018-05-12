@@ -392,6 +392,8 @@ function step10_stepbeforeformdisplay() {
 function step10_submitphpaction() {
 	global $savemsg, $stepid;
 
+	$input_errors = array();
+
 	/* Default OpenVPN port to next available port if left empty. */
 	if (empty($_POST['localport']))
 		$pconfig["step10"]["localport"] = openvpn_port_next('UDP');
@@ -439,6 +441,7 @@ function step10_submitphpaction() {
 
 	if (empty($_POST['tunnelnet']))
 		$input_errors[] = "A 'Tunnel network' must be specified.";
+
 
 	if (count($input_errors) > 0) {
 		$savemsg = $input_errors[0];
@@ -677,8 +680,13 @@ function step12_submitphpaction() {
 		$config['filter']['rule'][] = $rule;
 	}
 
-	if (!is_array($config['openvpn']['openvpn-server']))
+	if (!is_array($config['openvpn'])) {
+		$config['openvpn'] = array();
+	}
+
+	if (!is_array($config['openvpn']['openvpn-server'])) {
 		$config['openvpn']['openvpn-server'] = array();
+	}
 
 	$config['openvpn']['openvpn-server'][] = $server;
 

@@ -28,7 +28,7 @@ require_once("rrd.inc");
 
 echo gettext("Removing shaper settings...\n");
 
-if (is_array($config['shaper']) {
+if (is_array($config['shaper'])) {
 	unset($config['shaper']['queue']);
 }
 

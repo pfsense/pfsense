@@ -178,7 +178,7 @@ function step5_submitphpaction() {
 function step6_stepbeforeformdisplay() {
 	global $stepid, $config;
 
-	if (count($config['ca']) < 1) {
+	if (!is_array($config['ca']) || count($config['ca']) < 1) {
 		$stepid++;
 	}
 }
@@ -392,6 +392,8 @@ function step10_stepbeforeformdisplay() {
 function step10_submitphpaction() {
 	global $savemsg, $stepid;
 
+	$input_errors = array();
+
 	/* Default OpenVPN port to next available port if left empty. */
 	if (empty($_POST['localport']))
 		$pconfig["step10"]["localport"] = openvpn_port_next('UDP');
@@ -439,6 +441,7 @@ function step10_submitphpaction() {
 
 	if (empty($_POST['tunnelnet']))
 		$input_errors[] = "A 'Tunnel network' must be specified.";
+
 
 	if (count($input_errors) > 0) {
 		$savemsg = $input_errors[0];
@@ -636,8 +639,10 @@ function step12_submitphpaction() {
 		$server['wins_server2'] = $pconfig['step10']['wins2'];
 	if (isset($pconfig['step10']['nbtenable'])) {
 		$server['netbios_ntype'] = $pconfig['step10']['nbttype'];
-		if (isset($pconfig['step10']['nbtscope']))
+		if (isset($pconfig['step10']['nbtscope'])) {
 			$server['netbios_scope'] = $pconfig['step10']['nbtscope'];
+		}
+
 		$server['netbios_enable'] = $pconfig['step10']['nbtenable'];
 	}
 
@@ -646,8 +651,9 @@ function step12_submitphpaction() {
 		$rule = array();
 		$rule['descr'] = sprintf(gettext("OpenVPN %s wizard"),$server['description']);
 		/* Ensure the rule descr is not too long for pf to handle */
-		if (strlen($rule['descr']) > 52)
+		if (strlen($rule['descr']) > 52) {
 			$rule['descr'] = substr($rule['descr'], 0, 52);
+		}
 		$rule['direction'] = "in";
 		$rule['source']['any'] = TRUE;
 		$rule['destination']['network'] = $server['interface'] . "ip";
@@ -658,6 +664,7 @@ function step12_submitphpaction() {
 		$rule['enabled'] = "on";
 		$rule['tracker'] = $tracker++;
 		$rule['created'] = make_config_revision_entry(null, gettext("OpenVPN Wizard"));
+
 		$config['filter']['rule'][] = $rule;
 	}
 	if (isset($pconfig['step11']['ovpnallow'])) {
@@ -677,8 +684,13 @@ function step12_submitphpaction() {
 		$config['filter']['rule'][] = $rule;
 	}
 
-	if (!is_array($config['openvpn']['openvpn-server']))
+	if (!is_array($config['openvpn'])) {
+		$config['openvpn'] = array();
+	}
+
+	if (!is_array($config['openvpn']['openvpn-server'])) {
 		$config['openvpn']['openvpn-server'] = array();
+	}
 
 	$config['openvpn']['openvpn-server'][] = $server;
 

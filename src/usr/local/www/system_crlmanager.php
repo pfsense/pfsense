@@ -388,7 +388,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		'Lifetime (Days)',
 		'number',
 		$pconfig['lifetime'],
-		[max => '9999']
+		['max' => '9999']
 	));
 
 	$section->addInput(new Form_Input(

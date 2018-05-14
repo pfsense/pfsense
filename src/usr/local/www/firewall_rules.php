@@ -108,6 +108,10 @@ function delete_nat_association($id) {
 	}
 }
 
+if (!is_array($config['filter'])) {
+	$config['filter'] = array();
+}
+
 if (!is_array($config['filter']['rule'])) {
 	$config['filter']['rule'] = array();
 }

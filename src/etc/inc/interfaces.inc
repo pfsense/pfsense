@@ -1602,9 +1602,12 @@ function interfaces_carp_set_maintenancemode($carp_maintenancemode) {
 	}
 
 	$viparr = &$config['virtualip']['vip'];
-	foreach ($viparr as $vip) {
-		if ($vip['mode'] == "carp") {
-			interface_carp_configure($vip);
+
+	if (is_array($viparr)) {
+		foreach ($viparr as $vip) {
+			if ($vip['mode'] == "carp") {
+				interface_carp_configure($vip);
+			}
 		}
 	}
 }

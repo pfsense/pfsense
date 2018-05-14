@@ -776,10 +776,14 @@ function apply_all_chosen_items() {
 					$remainbw = 100 - $remainbw;
 				}
 
-				if ($sched == "CBQ")
-					$__tmp_q = new cbq_queue(); $q =& $__tmp_q;
-				else if ($sched == "HFSC")
-					$__tmp_q = new hfsc_queue(); $q =& $__tmp_q;
+				if ($sched == "CBQ") {
+					$__tmp_q = new cbq_queue();
+					$q =& $__tmp_q;
+				} else if ($sched == "HFSC") {
+					$__tmp_q = new hfsc_queue();
+					$q =& $__tmp_q;
+				}
+
 				$tmpcf = array();
 				$tmpcf['name'] = "qInternet";
 				//$tmpcf['priority'] = 6;

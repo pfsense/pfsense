@@ -4554,9 +4554,9 @@ function read_dummynet_config() {
 		if (empty($conf['name'])) {
 			continue; /* XXX: grrrrrr at php */
 		}
-		$__tmp_root = new dnpipe_class(); $root =& $__tmp_root;
+		$root = new dnpipe_class();
 		$root->ReadConfig($conf);
-		$dummynet_pipe_list[$root->GetQname()] = &$root;
+		$dummynet_pipe_list[$root->GetQname()] = $root;
 		array_push($path, $key);
 		$root->SetLink($path);
 		if (is_array($conf['queue'])) {

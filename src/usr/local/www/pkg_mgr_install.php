@@ -63,6 +63,7 @@ $pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 $repos = pkg_list_repos();
 
 $pkgname = '';
+
 if (!empty($_REQUEST['pkg'])) {
 	$pkgname = $_REQUEST['pkg'];
 }
@@ -525,7 +526,11 @@ ob_flush();
 
 if ($confirmed && !$completed) {
 	/* Write out configuration to create a backup prior to pkg install. */
-	write_config(gettext("Creating restore point before package installation."));
+	if ($firmwareupdate) {
+		write_config(gettext("Creating restore point before upgrade."));
+	} else {
+		write_config(gettext("Creating restore point before package installation."));
+	}
 
 	$progbar = true;
 	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -y -l {$logfilename}.txt -p {$g['tmp_path']}/{$g['product_name']}-upgrade.sock";
@@ -555,12 +560,25 @@ if ($confirmed && !$completed) {
 
 		case 'installed':
 		default:
-			if ($firmwareupdate) {
-				mwexec_bg("{$upgrade_script}");
-			} else {
-				mwexec_bg("{$upgrade_script} -i {$pkgname}");
+			$rv = 0;
+
+			for ($rv=0, $cnt=0; $cnt < 8; $cnt++) {
+				if ($firmwareupdate) {
+					$r = mwexec_bg("{$upgrade_script}");
+				} else {
+					$r = mwexec_bg("{$upgrade_script} -i {$pkgname}");
+				}
+
+				if (($rv != 75) && file_exists("{$g['tmp_path']}/{$g['product_name']}-upgrade.sock")) {
+					$start_polling = true;
+					break;
+				}
+
+				sleep(2);
 			}
-			$start_polling = true;
+
+			$upgrbusy = ($cnt >= 8);
+
 			break;
 	}
 }
@@ -644,8 +662,7 @@ function show_info() {
 	$('#final').show();
 }
 
-function get_firmware_versions()
-{
+function get_firmware_versions() {
 	var ajaxVersionRequest;
 
 	// Retrieve the version information
@@ -813,6 +830,10 @@ events.push(function() {
 	if ("<?=$start_polling?>") {
 		setTimeout(getLogsStatus, 3000);
 		show_info();
+	}
+
+	if ("<?=$upgrbusy?>") {
+		$('#output').html("THe update system is busy. Please try again later");
 	}
 
 	// If we are just re-drawing the page after a successful install/remove/reinstall,

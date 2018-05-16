@@ -3614,6 +3614,9 @@ EOD;
 					if ($vip['mode'] == "proxyarp") {
 						continue;
 					}
+					if (!is_ipaddrv4($vip['ip']) || !is_subnetv4("{$vip['ip']}/{$vip['sn']}")) {
+						continue;
+					}
 					if (ip_in_subnet($vip['ip'], "{$ifcfg['sa']}/{$ifcfg['sn']}")) {
 						$ipfrules .= "pass out {$log['pass']} route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 					} else {
@@ -3630,6 +3633,9 @@ EOD;
 			$ipfrules .= "pass out {$log['pass']} route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips6'])) {
 				foreach ($ifcfg['vips6'] as $vip) {
+					if (!is_ipaddrv6($vip['ip']) || !is_subnetv6("{$vip['ip']}/{$pdlen}")) {
+						continue;
+					}
 					$ipfrules .= "pass out {$log['pass']} route-to ( {$stf} {$gwv6} ) inet6 from {$vip['ip']} to !{$vip['ip']}/{$pdlen} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 				}
 			}

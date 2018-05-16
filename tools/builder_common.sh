@@ -1591,10 +1591,10 @@ poudriere_init() {
 	fi
 
 	# Make sure poudriere is installed
-	if ! pkg info --quiet poudriere-devel; then
-		echo ">>> Installing poudriere-devel..." | tee -a ${LOGFILE}
-		if ! pkg install poudriere-devel >/dev/null 2>&1; then
-			echo ">>> ERROR: poudriere-devel was not installed, aborting..." | tee -a ${LOGFILE}
+	if [ ! -f /usr/local/bin/poudriere ]; then
+		echo ">>> Installing poudriere..." | tee -a ${LOGFILE}
+		if ! pkg install poudriere >/dev/null 2>&1; then
+			echo ">>> ERROR: poudriere was not installed, aborting..." | tee -a ${LOGFILE}
 			print_error_pfS
 		fi
 	fi

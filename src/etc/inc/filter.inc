@@ -1179,9 +1179,6 @@ function filter_generate_optcfg_array() {
 						$oic['vips6'][$vipidx]['sn'] = $vip['subnet_bits'];
 					}
 				}
-				if (isset($vip['mode'])) {
-					$oic['vips'][$vipidx]['mode']=$vip['mode'];
-				}
 			}
 		}
 		unset($vips);

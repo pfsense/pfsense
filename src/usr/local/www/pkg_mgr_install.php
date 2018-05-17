@@ -833,7 +833,7 @@ events.push(function() {
 	}
 
 	if ("<?=$upgrbusy?>") {
-		$('#output').html("THe update system is busy. Please try again later");
+		$('#output').html("The update system is busy. Please try again later");
 	}
 
 	// If we are just re-drawing the page after a successful install/remove/reinstall,

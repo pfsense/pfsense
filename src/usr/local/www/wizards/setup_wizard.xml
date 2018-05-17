@@ -601,6 +601,19 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitbeforesave>
+		<![CDATA[
+		/*
+		 * Store the old LAN IP address so it doesn't trip up the security checks
+		 * between the time it is saved here and applied at the end of the wizard.
+		 * See https://redmine.pfsense.org/issues/8524
+		 */
+		$althosts_before = $config['system']['webgui']['althostnames'];
+		$althosts = explode(' ', $config['system']['webgui']['althostnames']);
+		$althosts[] = get_interface_ip('lan');
+		$config['system']['webgui']['althostnames'] = implode(' ', $althosts);
+		]]>
+	</stepsubmitbeforesave>
 	<stepsubmitphpaction>
 		<![CDATA[
 		if (empty($_POST['lanipaddress']) || (!is_ipaddr($_POST['lanipaddress']) && (strtolower($_POST['lanipaddress']) != "dhcp"))) {
@@ -760,6 +773,8 @@
 			}
 		}
 		unset($config['wizardtemp']);
+		/* See https://redmine.pfsense.org/issues/8524 */
+		$config['system']['webgui']['althostnames'] = $althosts_before;
 		write_config(gettext("Configuration saved on completion of the pfSense setup wizard."));
 		reload_all();
 		mwexec_bg("/etc/rc.update_bogons.sh now");

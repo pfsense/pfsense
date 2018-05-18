@@ -369,6 +369,10 @@ function get_services() {
 		}
 	}
 
+	if (!is_array($config['load_balancer']['lbpool'])) {
+		$config['load_balancer']['lbpool'] = array();
+	}
+
 	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server']) && count($config['load_balancer']['lbpool'])) {
 		$pconfig = array();
 		$pconfig['name'] = "relayd";

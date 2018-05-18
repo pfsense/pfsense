@@ -4732,10 +4732,11 @@ function interface_dhcp_configure($interface = "wan") {
 
 	$dhclientconf .= <<<EOD
 interface "{$realif}" {
-timeout 60;
-retry 15;
-select-timeout 0;
-initial-interval 1;
+	supersede interface-mtu 0;
+	timeout 60;
+	retry 15;
+	select-timeout 0;
+	initial-interval 1;
 	{$dhclientconf_hostname}
 	script "/usr/local/sbin/pfSense-dhclient-script";
 EOD;

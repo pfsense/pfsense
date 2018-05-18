@@ -3498,6 +3498,11 @@ class dnpipe_class extends dummynet_class {
 		$q->SetParent($this);
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
+
+		if (!is_array($input_errors)) {
+			$input_errors = array();
+		}
+
 		if (count($input_errors)) {
 			log_error(sprintf(gettext('SHAPER: Could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
 			return $q;

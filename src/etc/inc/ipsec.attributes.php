@@ -117,10 +117,10 @@ function parse_cisco_acl($attribs) {
 					$isblock = false;
 				}
 			} else if (trim($rule[$index]) == "any") {
-				$tmprule .= "from any";
+				$tmprule .= "from any ";
 				$index++;
 			} else {
-				$tmprule .= "from {$rule[$index]}";
+				$tmprule .= "from {$rule[$index]} ";
 				$index++;
 				$netmask = cisco_to_cidr($rule[$index]);
 				$tmprule .= "/{$netmask} ";

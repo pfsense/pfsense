@@ -39,6 +39,10 @@ if (!is_array($config['load_balancer']['virtual_server'])) {
 	$config['load_balancer']['virtual_server'] = array();
 }
 
+if (!is_array($config['load_balancer']['lbpool'])) {
+	$config['load_balancer']['lbpool'] = array();
+}
+
 $a_vs = &$config['load_balancer']['virtual_server'];
 $id = $_REQUEST['id'];
 

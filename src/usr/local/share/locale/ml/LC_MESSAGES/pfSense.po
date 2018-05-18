@@ -1,9 +1,4 @@
-# Jiri Novacek <gfreshman@gmail.com>, 2017. #zanata
-# Lukáš Malý <Iam@LukasMaly.NET>, 2017. #zanata
-# Marek Renda <marek.renda@gmail.com>, 2017. #zanata
-# Martin Hodný <hodnym@gmail.com>, 2017. #zanata
-# Pavel Obr <pavel.obr@gmail.com>, 2017. #zanata
-# Petr Kejval <petr.kejval6@gmail.com>, 2017. #zanata
+# Chris Walter <cwalter@hmesecnet.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -12,57 +7,59 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-11-01 04:46-0400\n"
-"Last-Translator: Martin Hodný <hodnym@gmail.com>\n"
-"Language-Team: Czech\n"
-"Language: cs\n"
+"PO-Revision-Date: 2018-03-01 12:49-0500\n"
+"Last-Translator: Chris Walter <cwalter@hmesecnet.com>\n"
+"Language-Team: Malayalam\n"
+"Language: ml\n"
 "X-Generator: Zanata 3.9.6\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: src/usr/local/bin/dhcpd_gather_stats.php:102
 #: src/usr/local/www/status_dhcp_leases.php:189
 msgid "Never"
-msgstr ""
+msgstr "ഒരിക്കലും"
 
 #: src/usr/local/sbin/gmirror_status_check.php:45
 #, php-format
 msgid "List of mirrors changed. Old: (%s) New: (%s)"
 msgstr ""
+"മാറ്റിയ കണ്ണാടികളുടെ (Mirrors)  പട്ടിക . പഴ്യ്ത് :(%s ) പുതിയത് : (%s )"
 
 #: src/usr/local/sbin/gmirror_status_check.php:53
 #, php-format
 msgid "Mirror %s status changed from %s to %s."
-msgstr ""
+msgstr "കണ്ണാടിയുടെ  %s  നില %s  നിന്നും  %s  ലേക്ക്  മാറ്റി "
 
 #: src/usr/local/sbin/gmirror_status_check.php:58
 #, php-format
 msgid "Mirror %s consumer count changed from %d to %d."
-msgstr ""
+msgstr "കണ്ണാടിയുടെ %s  ഉപഭോക്താക്കളുടെ എണ്ണം %d നിന്നും %d   ലേക്ക്  മാറ്റി "
 
 #: src/usr/local/sbin/gmirror_status_check.php:65
 #, php-format
 msgid "Mirror %s drive status changed. Old: (%s) New: (%s)"
-msgstr ""
+msgstr "%s  കണ്ണാടിയുടെ ഡ്രൈവ്  നില നില %s  നിന്നും  %s  ലേക്ക്  മാറ്റി "
 
 #: src/usr/local/www/firewall_nat_1to1.php:56
 msgid "Firewall: NAT: 1:1 - reordered NAT 1:1 mappings."
-msgstr ""
+msgstr "ഫയർവാൾ : N A T : 1 :1 -   NAT 1:1 കണ്ണികൾ പുനഃക്രമീകരിച്ചു "
 
 #: src/usr/local/www/firewall_nat_1to1.php:79
 msgid "Firewall: NAT: 1:1 - deleted NAT 1:1 mapping."
-msgstr ""
+msgstr "ഫയർവാൾ : N A T : 1 :1  -   NAT 1:1 കണ്ണികൾ  ഇല്ലാതാക്കി  "
 
 #: src/usr/local/www/firewall_nat_1to1.php:95
 msgid "Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings."
-msgstr ""
+msgstr "ഫയർവാൾ : N A T : 1 :1  -  തിരഞ്ഞെടുത്ത    NAT 1:1 കണ്ണികൾ ഇല്ലാതാക്കി"
 
 #: src/usr/local/www/firewall_nat_1to1.php:107
 msgid "Firewall: NAT: 1:1 - enabled a NAT 1:1 rule."
 msgstr ""
+"ഫയർവാൾ : N A T : 1 :1 - ഒരു   N A T  1 :1  നിയമം  പ്രവർത്തന  സജ്ജമാക്കി "
 
 #: src/usr/local/www/firewall_nat_1to1.php:110
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
-msgstr ""
+msgstr "ഫയർവാൾ : N A T : 1 :1 - ഒരു   N A T  1 :1  നിയമം അസാധുവാക്കി "
 
 #: src/usr/local/www/firewall_nat_1to1.php:120
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
@@ -88,7 +85,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_settings.php:217
 #: src/usr/local/www/firewall_nat_npt_edit.php:140
 msgid "Firewall"
-msgstr ""
+msgstr "ഫയർവാൾ "
 
 #: src/usr/local/www/firewall_nat_1to1.php:120
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
@@ -100,7 +97,7 @@ msgstr ""
 #: src/usr/local/www/head.inc:298
 #: src/usr/local/www/firewall_nat_npt_edit.php:140
 msgid "NAT"
-msgstr ""
+msgstr "NAT"
 
 #: src/usr/local/www/firewall_nat_1to1.php:120
 #: src/usr/local/www/firewall_nat_1to1.php:135
@@ -109,14 +106,14 @@ msgstr ""
 #: src/usr/local/www/firewall_nat.php:198
 #: src/usr/local/www/firewall_nat_npt.php:134
 msgid "1:1"
-msgstr ""
+msgstr "1:1"
 
 #: src/usr/local/www/firewall_nat_1to1.php:129
 #: src/usr/local/www/firewall_nat_out.php:215
 #: src/usr/local/www/firewall_nat.php:192
 #: src/usr/local/www/firewall_nat_npt.php:128
 msgid "The NAT configuration has been changed."
-msgstr "Konfigurace NATu byla změněna."
+msgstr "NAT രൂപരേഖ  മാറ്റിയിരിക്കുന്നു "
 
 #: src/usr/local/www/firewall_nat_1to1.php:130
 #: src/usr/local/www/interfaces_assign.php:440
@@ -153,7 +150,7 @@ msgstr "Konfigurace NATu byla změněna."
 #: src/usr/local/www/firewall_rules.php:300
 #: src/usr/local/www/system_gateway_groups.php:112
 msgid "The changes must be applied for them to take effect."
-msgstr "Změny se projeví až po aplikování."
+msgstr "മാറ്റങ്ങൾ പ്രാബല്യത്തിൽ വരാൻ അവ  സ്ഥിരീകരിക്കണം "
 
 #: src/usr/local/www/firewall_nat_1to1.php:134
 #: src/usr/local/www/firewall_nat_out.php:220
@@ -162,7 +159,7 @@ msgstr "Změny se projeví až po aplikování."
 #: src/usr/local/www/firewall_nat_edit.php:647
 #: src/usr/local/www/firewall_nat_npt.php:133
 msgid "Port Forward"
-msgstr "Přesměrování portu"
+msgstr "മറ്റൊരു  കവാടത്തിലേക്ക്  (Port)  തിരിച്ചുവിടുക "
 
 #: src/usr/local/www/firewall_nat_1to1.php:136
 #: src/usr/local/www/firewall_nat_out.php:202
@@ -171,7 +168,7 @@ msgstr "Přesměrování portu"
 #: src/usr/local/www/firewall_nat_npt.php:135
 #: src/usr/local/www/firewall_nat_out_edit.php:393
 msgid "Outbound"
-msgstr "Odchozí"
+msgstr "പുറത്തേക്കുള്ളത് "
 
 #: src/usr/local/www/firewall_nat_1to1.php:137
 #: src/usr/local/www/firewall_nat_out.php:223
@@ -180,11 +177,11 @@ msgstr "Odchozí"
 #: src/usr/local/www/firewall_nat_npt.php:136
 #: src/usr/local/www/firewall_nat_npt_edit.php:140
 msgid "NPt"
-msgstr ""
+msgstr "NPt"
 
 #: src/usr/local/www/firewall_nat_1to1.php:143
 msgid "NAT 1:1 Mappings"
-msgstr ""
+msgstr "NAT 1:1 കണ്ണികൾ "
 
 #: src/usr/local/www/firewall_nat_1to1.php:150
 #: src/usr/local/www/interfaces_assign.php:485
@@ -238,20 +235,20 @@ msgstr ""
 #: src/usr/local/www/status_graph.php:136
 #: src/usr/local/www/firewall_nat_npt_edit.php:95 src/etc/inc/gwlb.inc:1571
 msgid "Interface"
-msgstr "Rozhraní"
+msgstr "ഇൻറ്റർഫേസ്"
 
 #: src/usr/local/www/firewall_nat_1to1.php:151
 msgid "External IP"
-msgstr "Vnější IP"
+msgstr "ബാഹ്യ ഐ .പി (IP)"
 
 #: src/usr/local/www/firewall_nat_1to1.php:152
 #: src/usr/local/www/status_upnp.php:71
 msgid "Internal IP"
-msgstr "Vnitřní IP"
+msgstr "ആന്തരികമായ ഐ .പി  (IP )"
 
 #: src/usr/local/www/firewall_nat_1to1.php:153
 msgid "Destination IP"
-msgstr "Cílová IP"
+msgstr "ലക്ഷ്യ ഐ.പി (IP )"
 
 #: src/usr/local/www/firewall_nat_1to1.php:154
 #: src/usr/local/www/status_ipsec.php:508
@@ -373,7 +370,7 @@ msgstr "Cílová IP"
 #: src/usr/local/www/firewall_nat_npt_edit.php:198 src/etc/inc/shaper.inc:1582
 #: src/etc/inc/shaper.inc:3993 src/etc/inc/shaper.inc:4297
 msgid "Description"
-msgstr "Popis"
+msgstr "വിവരണം "
 
 #: src/usr/local/www/firewall_nat_1to1.php:155
 #: src/usr/local/www/load_balancer_pool.php:123
@@ -439,7 +436,7 @@ msgstr "Popis"
 #: src/usr/local/www/system_gateway_groups.php:132
 #: src/usr/local/www/services_captiveportal_filemanager.php:191
 msgid "Actions"
-msgstr "Akce"
+msgstr "പ്രവർത്തികൾ "
 
 #: src/usr/local/www/firewall_nat_1to1.php:182
 #: src/usr/local/www/vpn_ipsec.php:300 src/usr/local/www/vpn_ipsec.php:463
@@ -447,12 +444,13 @@ msgstr "Akce"
 #: src/usr/local/www/firewall_nat_npt.php:177
 #: src/usr/local/www/firewall_rules.php:469
 msgid "click to toggle enabled/disabled status"
-msgstr ""
+msgstr "പ്രാവർത്തികവും അപ്രാവർത്തികവും ആക്കാൻ ക്ലിക്ക് ചെയുക "
 
 #: src/usr/local/www/firewall_nat_1to1.php:184
 #: src/usr/local/www/firewall_nat.php:293
 msgid "Negated: This rule excludes NAT from a later rule"
 msgstr ""
+"റദ്ദാക്കി : ഈ നിയമം പിന്നീടുള്ള  ഒരു NAT നിയമത്തിനെ ഒഴിവാക്കിയിരിക്കുന്നു "
 
 #: src/usr/local/www/firewall_nat_1to1.php:211
 #: src/usr/local/www/firewall_nat.php:332
@@ -466,30 +464,30 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:694
 #: src/usr/local/www/firewall_rules.php:703
 msgid "Alias details"
-msgstr ""
+msgstr "അപരനാമങ്ങളുടെ  വിശദാംശങ്ങൾ "
 
 #: src/usr/local/www/firewall_nat_1to1.php:225
 #: src/usr/local/www/firewall_nat_out.php:479
 #: src/usr/local/www/firewall_nat_npt.php:207
 msgid "Edit mapping"
-msgstr ""
+msgstr "കണ്ണികളുടെ വിശദാംശങ്ങൾ തിരുത്തുക "
 
 #: src/usr/local/www/firewall_nat_1to1.php:226
 #: src/usr/local/www/firewall_nat_out.php:480
 #: src/usr/local/www/firewall_nat_npt.php:208
 msgid "Add a new mapping based on this one"
-msgstr "Přidat nové mapování na základě tohoto"
+msgstr "ഈ കണ്ണിയെ അടിസ്ഥാനപ്പെടുത്തി മറ്റൊരെണ്ണം സൃഷ്ടിക്കുക "
 
 #: src/usr/local/www/firewall_nat_1to1.php:227
 #: src/usr/local/www/firewall_nat_out.php:481
 #: src/usr/local/www/firewall_nat_npt.php:209
 msgid "Delete mapping"
-msgstr "Odstranit mapování"
+msgstr "കണ്ണി ഒഴിവാക്കുക "
 
 #: src/usr/local/www/firewall_nat_1to1.php:241
 #: src/usr/local/www/firewall_nat_npt.php:222
 msgid "Add mapping to the top of the list"
-msgstr "Přidat mapování na záčatek seznamu"
+msgstr "കണ്ണി പട്ടികയുടെ മുകളിലേക്ക് നീക്കുക "
 
 #: src/usr/local/www/firewall_nat_1to1.php:243
 #: src/usr/local/www/firewall_nat_1to1.php:247
@@ -561,17 +559,17 @@ msgstr "Přidat mapování na záčatek seznamu"
 #: src/usr/local/www/system_gateway_groups.php:186
 #: src/usr/local/www/services_captiveportal_filemanager.php:235
 msgid "Add"
-msgstr "Přidat"
+msgstr "ചേർക്കുക "
 
 #: src/usr/local/www/firewall_nat_1to1.php:245
 #: src/usr/local/www/firewall_nat_npt.php:226
 msgid "Add mapping to the end of the list"
-msgstr "Přidat mapování na konec seznamu"
+msgstr "കണ്ണി പട്ടികയുടെ പിന്നറ്റത്തിലേക്കു ചേർക്കുക "
 
 #: src/usr/local/www/firewall_nat_1to1.php:249
 #: src/usr/local/www/firewall_nat_npt.php:230
 msgid "Delete selected mappings"
-msgstr "Odstranit vybraná mapování"
+msgstr "തിരഞ്ഞെടുത്ത കണ്ണികൾ ഒഴിവാക്കുക "
 
 #: src/usr/local/www/firewall_nat_1to1.php:251
 #: src/usr/local/www/interfaces_assign.php:52
@@ -599,13 +597,13 @@ msgstr "Odstranit vybraná mapování"
 #: src/usr/local/www/firewall_rules.php:797 src/usr/local/www/pkg_edit.php:1458
 #: src/etc/inc/shaper.inc:3889
 msgid "Delete"
-msgstr "Smazat"
+msgstr "മായ്ക്കുക (ഒഴിവാക്കുക)"
 
 #: src/usr/local/www/firewall_nat_1to1.php:253
 #: src/usr/local/www/firewall_nat_out.php:506
 #: src/usr/local/www/firewall_nat_npt.php:234
 msgid "Save mapping order"
-msgstr "Uložit pořadí mapování"
+msgstr "കണ്ണികളുടെ ക്രമം  സേവ് ചെയ്യുക "
 
 #: src/usr/local/www/firewall_nat_1to1.php:255
 #: src/usr/local/www/interfaces_assign.php:549
@@ -645,7 +643,7 @@ msgstr "Uložit pořadí mapování"
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:297
 #: src/usr/local/www/pkg_edit.php:611
 msgid "Save"
-msgstr "Uložit"
+msgstr "സേവ്  ചെയ്യുക"
 
 #: src/usr/local/www/firewall_nat_1to1.php:261
 #, php-format
@@ -653,6 +651,8 @@ msgid ""
 "Depending on the way the WAN connection is setup, this may also need a "
 "%1$sVirtual IP%2$s."
 msgstr ""
+"WAN കണക്ഷൻ സജ്ജമാക്കിയ രീതി അനുസരിച്ച് ഇവിടെ ഒരു %1$s സാങ്കൽപ്പിക IP  IP%2$s "
+"വേണ്ടിവരും "
 
 #: src/usr/local/www/firewall_nat_1to1.php:263
 msgid ""
@@ -661,12 +661,17 @@ msgid ""
 "address is used, any services on this system (IPsec, OpenVPN server, etc.) "
 "using the WAN IP address will no longer function."
 msgstr ""
+"ഏതെങ്കിലും ഇൻറ്റർഫേസ് IPയിൽ 1:1 NAT ചേർത്തിട്ടുണ്ടെങ്കിൽ ആ IP അഡ്രസ്സിൽ ഈ "
+"സിസ്റ്റം ലഭ്യമായിരിക്കില്ല.  (ഉദാഹരണം: WAN IP അഡ്രസ്  ഉപയോഗിച്ചാൽ  ഈ  "
+"സിസ്റ്റത്തിലുള്ള ആ  IP  ഉപയോഗിക്കുന്ന സർവീസ് (ഐപി സെക് , ഓപ്പൺ വിപ് യെൻ ..) "
+"ലഭ്യമായിരിക്കുകയില്ല. "
 
 #: src/usr/local/www/firewall_nat_1to1.php:300
 msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
 msgstr ""
-"Jedno nebo více NAT 1:1 mapování bylo přesunuto, ale není zatím uloženo"
+"ഒന്നോ അല്ലങ്കിൽ അതിൽ അധികമോ NAT 1:1 കണ്ണികൾ  നീക്കിയിരിക്കുന്നു എന്നാൽ സേവ് "
+"ചെയ്തിട്ടില്ല "
 
 #: src/usr/local/www/status_unbound.php:31
 #: src/usr/local/www/status_ipsec.php:488
@@ -721,7 +726,7 @@ msgstr ""
 #: src/usr/local/www/status_gateway_groups.php:47
 #: src/usr/local/www/status_graph.php:120 src/etc/inc/gmirror.inc:74
 msgid "Status"
-msgstr "Stav"
+msgstr "നിലവിലുള്ള അവസ്ഥ "
 
 #: src/usr/local/www/status_unbound.php:31
 #: src/usr/local/www/status_logs_common.inc:106
@@ -838,7 +843,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec.php:132
 #: src/usr/local/www/status_ipsec.php:165
 msgid "Any identifier"
-msgstr "Jakýkoli identifikátor"
+msgstr "ഏതെങ്കിലും ഐഡന്റിഫയർ"
 
 #: src/usr/local/www/status_ipsec.php:137
 #: src/usr/local/www/status_ipsec.php:146
@@ -856,26 +861,26 @@ msgstr "Jakýkoli identifikátor"
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:92
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:137
 msgid "Unknown"
-msgstr ""
+msgstr "അജ്ഞാതം "
 
 #: src/usr/local/www/status_ipsec.php:216
 msgid " seconds ("
-msgstr ""
+msgstr "സെക്കൻഡുകൾ ("
 
 #: src/usr/local/www/status_ipsec.php:239
 #, php-format
 msgid "%1$s seconds (%2$s) ago"
-msgstr ""
+msgstr "%1$s സെക്കന്റുകൾക്കു ( (%2$s) ) മുമ്പ് "
 
 #: src/usr/local/www/status_ipsec.php:248
 #: src/usr/local/www/status_ipsec.php:250
 #: src/usr/local/www/status_ipsec.php:476
 msgid "Connect VPN"
-msgstr "Připojit VPN"
+msgstr "വിപിഎൻ (VPN) കണക്ഷൻ  തുടങ്ങുക   "
 
 #: src/usr/local/www/status_ipsec.php:255
 msgid "Disconnect VPN"
-msgstr "Odpojit VPN"
+msgstr "വിപിഎൻ (VPN) കണക്ഷൻ വിച്ഛേദിക്കുക"
 
 #: src/usr/local/www/status_ipsec.php:257
 #: src/usr/local/www/status_ipsec.php:376
@@ -884,38 +889,38 @@ msgstr "Odpojit VPN"
 #: src/usr/local/www/status_interfaces.php:121
 #: src/usr/local/www/status_interfaces.php:122
 msgid "Disconnect"
-msgstr "Odpojit"
+msgstr "കണക്ഷൻ വിച്ഛേദിക്കുക"
 
 #: src/usr/local/www/status_ipsec.php:277
 msgid "Show child SA entries"
-msgstr ""
+msgstr "ശിശു SA കുറിപ്പുകൾ കാണിക്കുക "
 
 #: src/usr/local/www/status_ipsec.php:311
 msgid "Local: "
-msgstr ""
+msgstr "പ്രാദേശികമായ (ലോക്കൽ):"
 
 #: src/usr/local/www/status_ipsec.php:315
 msgid "Remote: "
-msgstr ""
+msgstr "റിമോട്ട് "
 
 #: src/usr/local/www/status_ipsec.php:332
 #, php-format
 msgid "Rekey: %1$s seconds (%2$s)"
-msgstr ""
+msgstr "റീകീ : %1$s സെക്കൻഡുകൾ (%2$s)"
 
 #: src/usr/local/www/status_ipsec.php:334
 #, php-format
 msgid "Life: %1$s seconds (%2$s)"
-msgstr ""
+msgstr "ആയുസ്സ് : %1$s  സെക്കൻഡുകൾ (%2$s)"
 
 #: src/usr/local/www/status_ipsec.php:336
 #, php-format
 msgid "Install: %1$s seconds (%2$s)"
-msgstr ""
+msgstr "പ്രതിഷ്ട്ടാനം (ഇൻസ്റ്റാൾ ): %1$s  സെക്കൻഡുകൾ (%2$s)"
 
 #: src/usr/local/www/status_ipsec.php:357
 msgid "IPComp: "
-msgstr ""
+msgstr "ഐപികോംപ് (IPComp: )"
 
 #: src/usr/local/www/status_ipsec.php:361
 #: src/usr/local/www/vpn_openvpn_client.php:599
@@ -925,35 +930,35 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1673
 #: src/usr/local/www/firewall_rules.php:728 src/etc/inc/openvpn.inc:53
 msgid "none"
-msgstr ""
+msgstr "ഒന്നുമില്ല "
 
 #: src/usr/local/www/status_ipsec.php:367
 msgid "Bytes-In: "
-msgstr ""
+msgstr "ബെറ്റിസ്‌ - ഉള്ളിലേക്ക് "
 
 #: src/usr/local/www/status_ipsec.php:368
 msgid "Packets-In: "
-msgstr ""
+msgstr "പാക്കറ്റുകൾ -ഉള്ളിലേക്ക്"
 
 #: src/usr/local/www/status_ipsec.php:369
 msgid "Bytes-Out: "
-msgstr ""
+msgstr "ബെറ്റിസ്‌-പുറത്തേക്ക് "
 
 #: src/usr/local/www/status_ipsec.php:370
 msgid "Packets-Out: "
-msgstr ""
+msgstr "പാക്കറ്റുകൾ-പുറത്തേക്ക്"
 
 #: src/usr/local/www/status_ipsec.php:374
 msgid "Disconnect Child SA"
-msgstr ""
+msgstr "ശിശു SA  കണക്ഷൻ വിച്ഛേദിക്കുക"
 
 #: src/usr/local/www/status_ipsec.php:463
 msgid "Awaiting connections"
-msgstr ""
+msgstr "കണക്ഷൻ കാത്തിരിക്കുന്നു"
 
 #: src/usr/local/www/status_ipsec.php:471
 msgid "Disconnected"
-msgstr ""
+msgstr "കണക്ഷൻ വിച്ഛേദിച്ചിരിക്കുന്നു "
 
 #: src/usr/local/www/status_ipsec.php:488
 #: src/usr/local/www/status_ipsec_leases.php:32
@@ -974,7 +979,7 @@ msgstr ""
 #: src/usr/local/www/status_graph.php:42 src/usr/local/www/status_graph.php:298
 #: src/etc/inc/interfaces.inc:6722
 msgid "IPsec"
-msgstr ""
+msgstr "ഐപിസെക്  (IPsec)"
 
 #: src/usr/local/www/status_ipsec.php:488
 #: src/usr/local/www/status_ipsec.php:495
@@ -983,7 +988,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:47
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:185
 msgid "Overview"
-msgstr ""
+msgstr "വിഹഗവീക്ഷണം (ഓവർവ്യൂ)"
 
 #: src/usr/local/www/status_ipsec.php:496
 #: src/usr/local/www/status_ipsec_leases.php:32
@@ -993,7 +998,7 @@ msgstr ""
 #: src/usr/local/www/status_dhcpv6_leases.php:234
 #: src/usr/local/www/status_dhcp_leases.php:346
 msgid "Leases"
-msgstr ""
+msgstr "പാട്ടങ്ങൾ (ലീസസ്)"
 
 #: src/usr/local/www/status_ipsec.php:497
 #: src/usr/local/www/status_ipsec_leases.php:42
@@ -1001,7 +1006,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_sad.php:56
 #: src/usr/local/www/status_ipsec_spd.php:49
 msgid "SADs"
-msgstr ""
+msgstr "SADs"
 
 #: src/usr/local/www/status_ipsec.php:498
 #: src/usr/local/www/status_ipsec_leases.php:43
@@ -1009,44 +1014,44 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:39
 #: src/usr/local/www/status_ipsec_spd.php:50
 msgid "SPDs"
-msgstr ""
+msgstr "SPDs"
 
 #: src/usr/local/www/status_ipsec.php:503
 msgid "IPsec Status"
-msgstr ""
+msgstr "ഐപിസെക്  (IPsec)നിലവിലുള്ള അവസ്ഥ"
 
 #: src/usr/local/www/status_ipsec.php:509
 msgid "Local ID"
-msgstr ""
+msgstr "സ്വന്തം  ഐഡി (ID)"
 
 #: src/usr/local/www/status_ipsec.php:510
 #: src/usr/local/www/services_pppoe.php:104
 msgid "Local IP"
-msgstr ""
+msgstr "സ്വന്തം ഐപി (IP)"
 
 #: src/usr/local/www/status_ipsec.php:511
 msgid "Remote ID"
-msgstr ""
+msgstr "മറ്റേ അറ്റത്തെ ഐഡി (ID )"
 
 #: src/usr/local/www/status_ipsec.php:512
 msgid "Remote IP"
-msgstr ""
+msgstr "മറ്റേ അറ്റത്തെ ഐപി (IP)"
 
 #: src/usr/local/www/status_ipsec.php:513
 msgid "Role"
-msgstr ""
+msgstr "റോൾ (ഭൂമിക)"
 
 #: src/usr/local/www/status_ipsec.php:514
 msgid "Reauth"
-msgstr ""
+msgstr "Reauth "
 
 #: src/usr/local/www/status_ipsec.php:515
 msgid "Algo"
-msgstr ""
+msgstr "Algo (ആൽഗോ)"
 
 #: src/usr/local/www/status_ipsec.php:523
 msgid "Collecting IPsec status information."
-msgstr ""
+msgstr "ഐപിസെക് (IPsec) വിവരങ്ങൾ ശേഖരിക്കുന്നു "
 
 #: src/usr/local/www/status_ipsec.php:540
 #: src/usr/local/www/status_ipsec_leases.php:129
@@ -1054,11 +1059,11 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:113
 #, php-format
 msgid "IPsec can be configured %1$shere%2$s."
-msgstr ""
+msgstr "ഐപിസെക് രൂപരേഖ  (IPsec) %1$s  ഇവിടെ  %2$s. സ്ഥിരീകരിക്കാം "
 
 #: src/usr/local/www/status_ipsec.php:584
 msgid "No IPsec status information available."
-msgstr ""
+msgstr " ഐപിസെക്കിന്റെ  (IPsec) അവസ്ഥ  ലഭ്യമല്ല "
 
 #: src/usr/local/www/interfaces_assign.php:36
 #: src/usr/local/www/interfaces_lagg_edit.php:221
@@ -1086,7 +1091,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:70
 #: src/usr/local/www/interfaces_lagg.php:80
 msgid "Interfaces"
-msgstr ""
+msgstr "ഇന്റർഫേസുകൾ "
 
 #: src/usr/local/www/interfaces_assign.php:36
 #: src/usr/local/www/interfaces_assign.php:457
@@ -1100,15 +1105,15 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:77
 #: src/usr/local/www/interfaces_lagg.php:89
 msgid "Interface Assignments"
-msgstr "Přiřazení rozhraní"
+msgstr "ഇന്റർഫേസ്  ക്രമീകരണങ്ങൾ "
 
 #: src/usr/local/www/interfaces_assign.php:52
 msgid "Add interface"
-msgstr ""
+msgstr "പുതിയ ഇന്റർഫേസ് ചേർക്കുക "
 
 #: src/usr/local/www/interfaces_assign.php:52
 msgid "Delete interface"
-msgstr ""
+msgstr "ഇന്റർഫേസ്  മായ്ച്ചുകളയുക "
 
 #: src/usr/local/www/interfaces_assign.php:52
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
@@ -1161,29 +1166,29 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac_edit.php:66
 #: src/usr/local/www/firewall_nat_npt_edit.php:140
 msgid "Edit"
-msgstr ""
+msgstr "തിരുത്തുക "
 
 #: src/usr/local/www/interfaces_assign.php:52
 #: src/etc/inc/interfaces_fast.inc:221
 msgid "on"
-msgstr ""
+msgstr "ഓൺ "
 
 #: src/usr/local/www/interfaces_assign.php:188
 msgid "lan"
-msgstr ""
+msgstr "ലാൻ (lan )"
 
 #: src/usr/local/www/interfaces_assign.php:189
 msgid "LAN"
-msgstr ""
+msgstr "ലാൻ (LAN  )"
 
 #: src/usr/local/www/interfaces_assign.php:216
 msgid "Interface has been added."
-msgstr "Rozhraní bylo přidáno."
+msgstr "പുതിയ ഇന്റർഫേസ്  ചേർത്തിരിക്കുന്നു "
 
 #: src/usr/local/www/interfaces_assign.php:255
 #, php-format
 msgid "Port %1$s  was assigned to %2$s interfaces:"
-msgstr ""
+msgstr "%2$s ഇന്റർഫേസിലേക്ക്  %1$s കവാടം  ക്രമീകരിച്ചിരിക്കുന്നു "
 
 #: src/usr/local/www/interfaces_assign.php:273
 #, php-format
@@ -1191,6 +1196,8 @@ msgid ""
 "Cannot set port %1$s to interface %2$s because this interface is a member of "
 "%3$s."
 msgstr ""
+"%2$s ഇന്റർഫേസിലേക്ക്  %1$s കവാടം ക്രമീകരിക്കാൻ സാധ്യമല്ല എന്തെന്നാൽ ഈ "
+"ഇന്റർഫേസ് %3$s ഇൻറെ  ഭാഗമാണ്."
 
 #: src/usr/local/www/interfaces_assign.php:284
 #, php-format
@@ -1198,60 +1205,72 @@ msgid ""
 "Vlan parent interface %1$s does not exist anymore so vlan id %2$s cannot be "
 "created please fix the issue before continuing."
 msgstr ""
+"വിലാനിറെ (VLAN) ഉത്ഭവ ഇന്റർഫേസ്  %1$s  ഇനി നിലവിൽ ഇല്ല.  അതുകൊണ്ട് വിലാൻ ഐഡി "
+" %2$s തുടങ്ങാൻ സാധ്യമല്ല.  തുടരാൻ ഇതു തിരുത്തുക "
 
 #: src/usr/local/www/interfaces_assign.php:352
 msgid ""
 "The interface is part of a group. Please remove it from the group to "
 "continue"
 msgstr ""
-"Rozhraní je členem skupiny. Nejprve jej odstraňte ze skupiny, abyste mohli "
-"pokračovat"
+"ഈ ഇന്റർഫേസ് ഒരു ഗ്രൂപ്പിന്റെ ഭാഗമാണ്.  തുടരാൻ ഗ്രൂപ്പിൽ നിന്നും നീക്കം ചെയുക "
+""
 
 #: src/usr/local/www/interfaces_assign.php:354
 msgid ""
 "The interface is part of a bridge. Please remove it from the bridge to "
 "continue"
 msgstr ""
-"Rozhraní je součástí síťového mostu. Nejprve je jej odstraňte ze síťového "
-"mostu, abyste mohli pokračovat"
+"ഈ ഇന്റർഫേസ്  ഒരു പാലത്തിന്റെ ഭാഗമാണ് .  തുടരാൻ അതിനെ പാലത്തിൽ നിന്നും നീക്കം "
+"ചെയ്യൂ "
 
 #: src/usr/local/www/interfaces_assign.php:356
 msgid ""
 "The interface is part of a gre tunnel. Please delete the tunnel to continue"
 msgstr ""
+"ഈ ഇന്റർഫേസ് ഒരു ജിആർഇ (GRE) തുരങ്കത്തിന്റെ ഭാഗമാണ്.  തുടരാൻ തുരങ്കം നീക്കം "
+"ചെയ്യുക. "
 
 #: src/usr/local/www/interfaces_assign.php:358
 msgid ""
 "The interface is part of a gif tunnel. Please delete the tunnel to continue"
 msgstr ""
+"ഈ ഇന്റർഫേസ് ഒരു ജിഐഫ്  (gif ) തുരങ്കത്തിൻറെ ഭാഗമാണ്.  തുടരാൻ തുരങ്കം "
+"മായ്ക്കുക (ഡെലീറ്റ്  ചെയുക )"
 
 #: src/usr/local/www/interfaces_assign.php:360
 msgid ""
 "The interface has a traffic shaper queue configured.\n"
 "Please remove all queues on the interface to continue."
 msgstr ""
+"ഈ ഇന്റർഫേസിൽ ഒരു ട്രാഫിക്  നിയന്ത്രണ ക്യൂ ഉണ്ട്.  തുടരാൻ എല്ലാ ക്യുകളും "
+"നീക്കം ചെയുക "
 
 #: src/usr/local/www/interfaces_assign.php:405
 msgid "Interface has been deleted."
-msgstr ""
+msgstr "ഇന്റർഫേസ് നീക്കം ചെയ്തിരിക്കുന്നു "
 
 #: src/usr/local/www/interfaces_assign.php:426
 msgid "The system is now rebooting. Please wait."
-msgstr ""
+msgstr "സിസ്റ്റം റീബൂട്ട് ചെയ്യുകയാണ്.  ദയവായി കാത്തിരിക്കുക "
 
 #: src/usr/local/www/interfaces_assign.php:429
 msgid "Reboot is needed. Please apply the settings in order to reboot."
 msgstr ""
+"റീബൂട്ട് ആവശ്യം ആണ്.  റീബൂട്ട്  ചെയ്യാൻ എല്ലാ സെറ്റിങ്ങുകളും അപ്ലൈ ചെയുക "
 
 #: src/usr/local/www/interfaces_assign.php:433
 msgid ""
 "Interface mismatch detected. Please resolve the mismatch, save and then "
 "click 'Apply Changes'. The firewall will reboot afterwards."
 msgstr ""
+"ഇന്റർഫേസിൽ പൊരുത്തക്കേട് ഉണ്ട്.  അത് ശരിയാക്കുക.  എന്നിട്ടു സേവ് ചെയുക.  "
+"പിന്നെ മാറ്റങ്ങൾ നിലവില്വരുത്താൻ ക്ലിക്ക് ചെയുക.  ഫയർവാൾ പിന്നെ റീബൂട്ട് "
+"ചെയ്യും. "
 
 #: src/usr/local/www/interfaces_assign.php:440
 msgid "The interface configuration has been changed."
-msgstr ""
+msgstr "ഇന്റർഫേസിന്റെ രൂപരേഖ (കൻഫിഗ്യറേഷൻ) മാറ്റിയിരിക്കുന്നു. "
 
 #: src/usr/local/www/interfaces_assign.php:458
 #: src/usr/local/www/interfaces_wireless.php:81
@@ -1267,7 +1286,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:78
 #: src/usr/local/www/interfaces_lagg.php:90
 msgid "Interface Groups"
-msgstr ""
+msgstr "ഇന്റർഫേസ് ഭാഗമായ ഗ്രൂപ്പുകൾ "
 
 #: src/usr/local/www/interfaces_assign.php:459
 #: src/usr/local/www/status_wireless.php:31
@@ -1285,7 +1304,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:79
 #: src/usr/local/www/interfaces_lagg.php:91
 msgid "Wireless"
-msgstr ""
+msgstr "വയർലെസ്സ് "
 
 #: src/usr/local/www/interfaces_assign.php:460
 #: src/usr/local/www/interfaces_wireless.php:83
@@ -1300,7 +1319,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:80
 #: src/usr/local/www/interfaces_lagg.php:92
 msgid "VLANs"
-msgstr ""
+msgstr "വീലാനുകൾ (VLANs)"
 
 #: src/usr/local/www/interfaces_assign.php:461
 #: src/usr/local/www/interfaces_wireless.php:84
@@ -1315,7 +1334,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:81
 #: src/usr/local/www/interfaces_lagg.php:93
 msgid "QinQs"
-msgstr ""
+msgstr "QinQs"
 
 #: src/usr/local/www/interfaces_assign.php:462
 #: src/usr/local/www/interfaces_wireless.php:85
@@ -1330,7 +1349,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:82
 #: src/usr/local/www/interfaces_lagg.php:94
 msgid "PPPs"
-msgstr ""
+msgstr "പിപിപി (PPPs)"
 
 #: src/usr/local/www/interfaces_assign.php:463
 #: src/usr/local/www/interfaces_wireless.php:86
@@ -1345,7 +1364,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:83
 #: src/usr/local/www/interfaces_lagg.php:95
 msgid "GREs"
-msgstr ""
+msgstr "ജിആറികൽ  (GREs)"
 
 #: src/usr/local/www/interfaces_assign.php:464
 #: src/usr/local/www/interfaces_wireless.php:87
@@ -1360,7 +1379,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:84
 #: src/usr/local/www/interfaces_lagg.php:96
 msgid "GIFs"
-msgstr ""
+msgstr "ജിഐഫ്ഫുകൾ  (GIFs)"
 
 #: src/usr/local/www/interfaces_assign.php:465
 #: src/usr/local/www/interfaces_wireless.php:88
@@ -1375,7 +1394,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:85
 #: src/usr/local/www/interfaces_lagg.php:97
 msgid "Bridges"
-msgstr ""
+msgstr "പാലങ്ങൾ "
 
 #: src/usr/local/www/interfaces_assign.php:466
 #: src/usr/local/www/interfaces_lagg_edit.php:221
@@ -1390,31 +1409,33 @@ msgstr ""
 #: src/usr/local/www/interfaces_lagg.php:80
 #: src/usr/local/www/interfaces_lagg.php:98
 msgid "LAGGs"
-msgstr ""
+msgstr "LAGGs"
 
 #: src/usr/local/www/interfaces_assign.php:486
 msgid "Network port"
-msgstr ""
+msgstr "നെറ്റ്‌വർക്ക് കവാടങ്ങൾ "
 
 #: src/usr/local/www/interfaces_assign.php:525
 msgid "Available network ports:"
-msgstr ""
+msgstr "ഉപയോഗിക്കാവുന്ന നെറ്റ്‌വർക്ക് കവാടങ്ങൾ"
 
 #: src/usr/local/www/interfaces_assign.php:538
 msgid "Add selected interface"
-msgstr ""
+msgstr "തിരഞ്ഞുടുത്ത ഇന്റർഫേസ് കൂട്ടിച്ചേർക്കുക "
 
 #: src/usr/local/www/interfaces_assign.php:554
 msgid ""
 "Interfaces that are configured as members of a lagg(4) interface will not be "
 "shown."
-msgstr ""
+msgstr "lagg(4)ഇന്റെ  ഭാഗമായി ക്രമീകരിച്ച ഇന്റർഫേസുകൾ മറച്ചിരിക്കുന്നു "
 
 #: src/usr/local/www/interfaces_assign.php:556
 msgid ""
 "Wireless interfaces must be created on the Wireless tab before they can be "
 "assigned."
 msgstr ""
+"വയർലെസ്സ്  ഇന്റർഫേസുകൾ  ക്രമീകരിക്കുന്നതിന് മുമ്പേ വയർലെസ്സ്  ടാബിൽ അവ "
+"സൃഷ്ടിച്ചിരിക്കണം. "
 
 #: src/usr/local/www/diag_limiter_info.php:31
 #: src/usr/local/www/diag_dump_states.php:75
@@ -1437,43 +1458,43 @@ msgstr ""
 #: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/diag_halt.php:45
 #: src/usr/local/www/diag_ping.php:35
 msgid "Diagnostics"
-msgstr ""
+msgstr "ഡൈഗ്നാസ്റ്റിക്സ്"
 
 #: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:398
 msgid "Limiter Info"
-msgstr ""
+msgstr "അതിരുകളുടെ  വിവരം "
 
 #: src/usr/local/www/diag_limiter_info.php:37
 msgid "No limiters were found on this system."
-msgstr ""
+msgstr "ഈ സിസ്റ്റത്തിൽ  അതിരുകൾ ഒന്നും ഇല്ല "
 
 #: src/usr/local/www/diag_limiter_info.php:39
 msgid "Limiters:"
-msgstr ""
+msgstr "അതിരുകൾ "
 
 #: src/usr/local/www/diag_limiter_info.php:43
 #: src/usr/local/www/status_queues.php:50 src/usr/local/www/head.inc:359
 msgid "Queues"
-msgstr ""
+msgstr "ക്യുകൾ "
 
 #: src/usr/local/www/diag_limiter_info.php:80
 msgid "Limiter Information"
-msgstr ""
+msgstr "അതിരുകളുടെ വിശദാംശങ്ങൾ "
 
 #: src/usr/local/www/diag_limiter_info.php:82
 msgid "Gathering Limiter information, please wait..."
-msgstr ""
+msgstr "അതിരുകളുടെ വിശദാംശങ്ങൾ  ശേഖരിക്കുന്നു. ദയവായി കാത്തിരിക്കുക. "
 
 #: src/usr/local/www/status_ipsec_leases.php:52
 #: src/usr/local/www/load_balancer_pool.php:112
 #: src/usr/local/www/load_balancer_virtual_server.php:143
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:59
 msgid "Pool"
-msgstr ""
+msgstr "കൂട്ടായ്മ (Pool)"
 
 #: src/usr/local/www/status_ipsec_leases.php:53
 msgid "Usage"
-msgstr ""
+msgstr "ഉപയോഗം "
 
 #: src/usr/local/www/status_ipsec_leases.php:54
 #: src/usr/local/www/status_gateways.php:147
@@ -1483,12 +1504,12 @@ msgstr ""
 #: src/usr/local/www/status_dhcp_leases.php:366
 #: src/usr/local/www/status_gateway_groups.php:129
 msgid "Online"
-msgstr ""
+msgstr "ഓൺലൈൻ "
 
 #: src/usr/local/www/status_ipsec_leases.php:55
 #: src/usr/local/www/firewall_rules_edit.php:1102
 msgid "ID"
-msgstr ""
+msgstr "ഐഡി "
 
 #: src/usr/local/www/status_ipsec_leases.php:56
 #: src/usr/local/www/services_unbound.php:530
@@ -1501,15 +1522,15 @@ msgstr ""
 #: src/usr/local/www/diag_ping.php:50
 #: src/usr/local/www/services_dnsmasq_edit.php:202
 msgid "Host"
-msgstr ""
+msgstr "ആതിഥേയൻ/  ഹോസ്റ്റ് "
 
 #: src/usr/local/www/status_ipsec_leases.php:106
 msgid "No leases from this pool yet."
-msgstr ""
+msgstr "ഈ കൂട്ടത്തിൽ നിന്നും ഇതുവരെ ഒന്നും കടം എടുത്തിട്ടില്ല "
 
 #: src/usr/local/www/status_ipsec_leases.php:117
 msgid "No IPsec pools."
-msgstr ""
+msgstr "ഐപിസെക്  (IPSec) കൂട്ടങ്ങൾ ഇതുവരെ ഒന്നും ഇല്ല "
 
 #: src/usr/local/www/status_captiveportal_expire.php:55
 #: src/usr/local/www/services_captiveportal_zones_edit.php:35
@@ -1533,7 +1554,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_filemanager.php:66
 #: src/etc/inc/service-utils.inc:277
 msgid "Captive Portal"
-msgstr ""
+msgstr "കാപ്റ്റീവ് പോർട്ടൽ "
 
 #: src/usr/local/www/status_captiveportal_expire.php:55
 #: src/usr/local/www/status_captiveportal_expire.php:73
@@ -1543,15 +1564,15 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:72
 #: src/usr/local/www/status_captiveportal_vouchers.php:98
 msgid "Expire Vouchers"
-msgstr ""
+msgstr "വൗചെറുകളെ  ഇല്ലാതാക്കുക "
 
 #: src/usr/local/www/status_captiveportal_expire.php:62
 msgid "Voucher(s) successfully marked."
-msgstr ""
+msgstr "വൗച്ചർ മാർക്ക് ചെയ്തിരിക്കുന്നു "
 
 #: src/usr/local/www/status_captiveportal_expire.php:64
 msgid "Voucher(s) could not be processed."
-msgstr ""
+msgstr "വൗച്ചർ ഉപയോഗിക്കാൻ കഴിഞ്ഞില്ല "
 
 #: src/usr/local/www/status_captiveportal_expire.php:69
 #: src/usr/local/www/status_captiveportal_test.php:77
@@ -1560,7 +1581,7 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:68
 #: src/usr/local/www/status_captiveportal_vouchers.php:94
 msgid "Active Users"
-msgstr ""
+msgstr "ഇപ്പോൾ സജീവമായ ഉപഭോക്താക്കൾ "
 
 #: src/usr/local/www/status_captiveportal_expire.php:70
 #: src/usr/local/www/status_captiveportal_test.php:78
@@ -1569,7 +1590,7 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
 #: src/usr/local/www/status_captiveportal_vouchers.php:95
 msgid "Active Vouchers"
-msgstr ""
+msgstr "സജീവമായ വൗച്ചറുകൾ "
 
 #: src/usr/local/www/status_captiveportal_expire.php:71
 #: src/usr/local/www/status_captiveportal_test.php:79
@@ -1580,7 +1601,7 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:70
 #: src/usr/local/www/status_captiveportal_vouchers.php:96
 msgid "Voucher Rolls"
-msgstr ""
+msgstr "വൗച്ചർ ചുരുളുകൾ "
 
 #: src/usr/local/www/status_captiveportal_expire.php:72
 #: src/usr/local/www/status_captiveportal_test.php:55
@@ -1590,26 +1611,28 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:71
 #: src/usr/local/www/status_captiveportal_vouchers.php:97
 msgid "Test Vouchers"
-msgstr ""
+msgstr "പരീക്ഷണാടിസ്ഥാനത്തുള്ള വൗച്ചറുകൾ "
 
 #: src/usr/local/www/status_captiveportal_expire.php:82
 #: src/usr/local/www/status_captiveportal_test.php:90
 msgid "*Vouchers"
-msgstr ""
+msgstr "*വൗച്ചറുകൾ "
 
 #: src/usr/local/www/status_captiveportal_expire.php:84
 msgid ""
 "Enter multiple vouchers separated by space or newline. All valid vouchers "
 "will be marked as expired."
 msgstr ""
+"അനേക വൗച്ചറുകൾ സ്പേസ് അല്ലങ്കിൽ പുതിയ വരി ആയി എന്റർ ചെയ്യുക.  എല്ലാ സാധുവായ "
+"വൗച്ചറുകളും കാലഹരണം വന്നതായി അടയാളപ്പെടുത്തും "
 
 #: src/usr/local/www/status_captiveportal_expire.php:97
 msgid "Expire"
-msgstr ""
+msgstr "കാലഹരണം വന്നിരിക്കുന്നു "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:42
 msgid "They must be either both IPv4 or both IPv6 addresses."
-msgstr ""
+msgstr "അതു രണ്ടും IPV4 അല്ലങ്കിൽ IPv6 വിലാസം (അഡ്രസ് ) ആയിരിക്കണം."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:115
 #: src/usr/local/www/firewall_nat_out_edit.php:156
@@ -1617,26 +1640,28 @@ msgstr ""
 msgid ""
 "Invalid characters detected (%s).  Please remove invalid characters and save "
 "again."
-msgstr ""
+msgstr "അസാധുവായ അക്ഷരങ്ങൾ ഉണ്ട് (%s ).  അവ നീക്കം ചെയ്തതിനു ശേഷം സേവ് ചെയുക "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
 msgid "External subnet"
-msgstr ""
+msgstr "പുറത്തുള്ള സബ്നെറ് "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:130
 #: src/usr/local/www/firewall_nat_edit.php:218
 msgid "Source address"
-msgstr ""
+msgstr "ഉത്ഭവ വിലാസം (അഡ്രസ്)"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:135
 #: src/usr/local/www/firewall_nat_edit.php:223
 msgid "Destination address"
-msgstr ""
+msgstr "ലക്ഷ്യത്തിൻറെ വിലാസം (അഡ്രസ്)"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:181
 #: src/usr/local/www/firewall_nat_edit.php:285
 msgid "Alias entries must specify a single host or alias."
 msgstr ""
+"അപരനാമ കുറിപ്പ് ഒരു ഒറ്റക്കുള്ള  ആതിഥേയൻ (ഹോസ്റ്റ്) അല്ലങ്കിൽ മറ്റൊരു "
+"അപരനാമം ആയിരിക്കണം "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:193
 #, php-format
@@ -1644,10 +1669,12 @@ msgid ""
 "The external IP address (%1$s) and internal IP address (%2$s) are of "
 "different address families."
 msgstr ""
+"ബാഹ്യ ഐപി (IP) വിലാസവും (%1$s)  ആന്തരികമായ ഐപി (IP) വിലാസവും (%2$s) വിവിധ "
+"തരം വിലാസങ്ങൾ  ആണ് "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:202
 msgid "A valid internal bit count must be specified."
-msgstr ""
+msgstr "സാധുവായ ഒരു ആന്തരിക ബിറ്റ് എണ്ണം വ്യക്തമാക്കിയിരിക്കണം"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:219
 #, php-format
@@ -1655,6 +1682,8 @@ msgid ""
 "The external IP address (%1$s) and destination IP address (%2$s) are of "
 "different address families."
 msgstr ""
+"ബാഹ്യ ഐപി (IP) വിലാസവും (%1$s) ലക്ഷ്യസ്ഥാനത്തിൻറെ  ഐപി (IP) വിലാസവും (%2$s) "
+"വിവിധ തരം വിലാസങ്ങൾ  ആണ്"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:226
 #, php-format
@@ -1662,17 +1691,19 @@ msgid ""
 "The internal IP address (%1$s) and destination IP address (%2$s) are of "
 "different address families."
 msgstr ""
+"ആന്തരിക ഐപി (IP) വിലാസവും (%1$s) ലക്ഷ്യസ്ഥാനത്തിൻറെ  ഐപി (IP) വിലാസവും "
+"(%2$s) വിവിധ തരം വിലാസങ്ങൾ  ആണ്"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:235
 #: src/usr/local/www/firewall_nat_edit.php:308
 #: src/usr/local/www/firewall_rules_edit.php:570
 #: src/usr/local/www/firewall_nat_out_edit.php:221
 msgid "A valid destination bit count must be specified."
-msgstr ""
+msgstr "സാധുവായ ഒരു ലക്ഷ്യ ബിറ്റ് എണ്ണം വ്യക്തമാക്കിയിരിക്കണം"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:282
 msgid "Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping."
-msgstr ""
+msgstr "ഫയർവാൾ: NAT: 1:1 -സേവ് / എഡിറ്റ്  ചെയ്തിരിക്കുന്നു   NAT 1:1 കണ്ണി "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
 #: src/usr/local/www/firewall_nat_1to1_edit.php:344
@@ -1686,11 +1717,11 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:3106
 #: src/usr/local/www/diag_traceroute.php:142 src/etc/inc/ipsec.inc:102
 msgid "Any"
-msgstr "Jakýkoliv"
+msgstr "ഏതെങ്കിലും "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
 msgid "Single host"
-msgstr ""
+msgstr "ഒറ്റ ആതിഥേയൻ/  ഹോസ്റ്റ് "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
 #: src/usr/local/www/firewall_nat_1to1_edit.php:344
@@ -1706,7 +1737,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:544
 #: src/usr/local/www/vpn_ipsec_phase2.php:570
 msgid "Network"
-msgstr ""
+msgstr "നെറ്റ്‌വർക്ക് "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:302
 #: src/usr/local/www/firewall_nat_1to1_edit.php:347
@@ -1715,7 +1746,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:581
 #: src/usr/local/www/firewall_rules_edit.php:1339
 msgid "PPPoE clients"
-msgstr ""
+msgstr "PPPoE ക്ലയന്റുകൾ "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:306
 #: src/usr/local/www/firewall_nat_1to1_edit.php:351
@@ -1724,18 +1755,18 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:585
 #: src/usr/local/www/firewall_rules_edit.php:1342
 msgid "L2TP clients"
-msgstr ""
+msgstr "L2TP ക്ലയന്റുകൾ"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:344
 #: src/usr/local/www/firewall_nat_edit.php:538
 #: src/usr/local/www/firewall_nat_edit.php:578
 #: src/usr/local/www/firewall_rules_edit.php:1327
 msgid "Single host or alias"
-msgstr ""
+msgstr "ഒറ്റയായ ആതിഥേയൻ/  ഹോസ്റ്റ് അല്ലങ്കിൽ അപരനാമം "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:416
 msgid "Edit NAT 1:1 Entry"
-msgstr ""
+msgstr "NAT 1:1 കുറിപ്പ് മാറ്റുക (എഡിറ്റ് ചെയ്യുക)"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:420
 #: src/usr/local/www/services_router_advertisements.php:104
@@ -1759,19 +1790,21 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt_edit.php:154
 #: src/etc/inc/service-utils.inc:500
 msgid "Disabled"
-msgstr ""
+msgstr "അശ്കതമാക്കി "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:423
 msgid "When disabled, the rule will not have any effect."
-msgstr ""
+msgstr "അശക്തമാക്കിയ നിയമത്തിനു പ്രസക്‌തി ഇല്ല  "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:427
 msgid "No BINAT (NOT)"
-msgstr ""
+msgstr "No BINAT (NOT)"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:430
 msgid "Excludes the address from a later, more general, rule."
 msgstr ""
+"പിന്നീടുള്ള ഒരു സർവ്വവ്യാപിയായ നിയമത്തിൽ നിന്ന് വിലാസത്തെ (അഡ്രസ്സിനെ) "
+"ഒഴിവാക്കും "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:434
 #: src/usr/local/www/status_logs_common.inc:96
@@ -1785,7 +1818,7 @@ msgstr ""
 #: src/usr/local/www/status_graph.php:49 src/etc/inc/service-utils.inc:365
 #: src/etc/inc/interfaces.inc:5917 src/etc/inc/interfaces.inc:6727
 msgid "OpenVPN"
-msgstr ""
+msgstr "ഓപ്പൺ വിപിഎൻ (OpenVPN)"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:439
 #: src/usr/local/www/services_igmpproxy_edit.php:157
@@ -1806,7 +1839,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:751
 #: src/usr/local/www/firewall_nat_npt_edit.php:161
 msgid "*Interface"
-msgstr ""
+msgstr "*ഇന്റർഫേസ് "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:442
 #: src/usr/local/www/firewall_nat_edit.php:678
@@ -1814,10 +1847,12 @@ msgid ""
 "Choose which interface this rule applies to. In most cases \"WAN\" is "
 "specified."
 msgstr ""
+"ഈ നിയമം ഏത് ഇന്റർഫേസിൽ ആണ്‌ നിലവിൽ വരുത്തേണ്ടത്  (സാധാരണഗതിയിൽ ഇത് വിപിഎൻ "
+"ആയിരിക്കും "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:446
 msgid "*External subnet IP"
-msgstr ""
+msgstr "*ബാഹ്യ സബ്നെറ്റ് ഐപി (IP)"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:448
 msgid ""
@@ -1825,15 +1860,18 @@ msgid ""
 "mapping. The subnet mask from the internal address below will be applied to "
 "this IP address."
 msgstr ""
+"ഒരു ബാഹ്യ സബ്നെറ്റ്നിന്റെ (സാധാരണഗതിയിൽ WAN) തുടക്ക അഡ്രസ് 1:1  കണ്ണി "
+"ട്രൈപ്പ് ചെയ്യു:  താഴെ ഉള്ള ആന്തരിക അഡ്രസിന്റെ സബ്നെറ്റ് മകുടം ഇതിൽ "
+"ഉപയോഗിക്കും "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:451
 msgid "*Internal IP"
-msgstr ""
+msgstr "*ആന്തരിക (ഐപി) IP  "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:458
 #: src/usr/local/www/firewall_nat_1to1_edit.php:485
 msgid "Invert the sense of the match."
-msgstr ""
+msgstr "പൊരുത്തത്തിന്റെ ധാരണ വിപരീതമാക്കുക "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:465
 #: src/usr/local/www/firewall_nat_1to1_edit.php:492
@@ -1863,32 +1901,36 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:551
 #: src/usr/local/www/vpn_ipsec_phase2.php:571
 msgid "Type"
-msgstr ""
+msgstr "തരം "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:471
 #: src/usr/local/www/firewall_nat_1to1_edit.php:499
 #: src/usr/local/www/firewall_nat_edit.php:725
 #: src/usr/local/www/firewall_nat_edit.php:793
 msgid "Address/mask"
-msgstr ""
+msgstr "വിലാസം (അഡ്രസ്) / മകുടം (മാസ്ക് ) "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:473
 msgid ""
 "Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size "
 "specified for the internal subnet will be applied to the external subnet."
 msgstr ""
+"1 :1  കണ്ണിക്  ആന്തരിക ലാൻ (LAN) സബ്നെറ്റ ടൈപ്പ് ചെയ്യു. ആന്തരിക "
+"സബ്നെറ്റിൻറെ നിര്‍ദ്ദിഷ്‌ടമായ വിസ്താരം ബാഹ്യ സബ് നെറ്റിൽ  നടപ്പിലാക്കും "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:478
 #: src/usr/local/www/firewall_nat_edit.php:772
 #: src/usr/local/www/firewall_nat_out_edit.php:516
 msgid "*Destination"
-msgstr ""
+msgstr "*ലക്‌ഷ്യം "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:501
 msgid ""
 "The 1:1 mapping will only be used for connections to or from the specified "
 "destination. Hint: this is usually \"Any\"."
 msgstr ""
+"1 :1 കണ്ണി ലക്ഷ്യത്തിൽ നിന്നോ ലക്ഷ്യത്തിലേക്കോ ഉള്ള ബന്ധങ്ങൾക്കേ (കണക്ഷൻസ്) "
+"ബാധകമാകുള്ളൂ .  സൂചന : സാധാരണയായി ഇത് ഏതെങ്കിലും (Any ) ആണ് "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:510
 #: src/usr/local/www/services_captiveportal_zones_edit.php:97
@@ -1923,11 +1965,12 @@ msgstr ""
 msgid ""
 "A description may be entered here for administrative reference (not parsed)."
 msgstr ""
+"ഇവിടെ വിശദീകരണത്തിനു വേണ്ടി  ഒരു വിവരണം ടൈപ്പ് ചെയ്യാം (അറിവിന് മാത്രം)"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:517
 #: src/usr/local/www/firewall_nat_edit.php:884
 msgid "Use system default"
-msgstr ""
+msgstr "സിസ്റ്റംത്തിൻ്റെ സ്വതവേ ഉള്ള മൂല്യന്മകൾ ഉപയോഗിക്കു "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:518
 #: src/usr/local/www/services_dhcp.php:841
@@ -1951,7 +1994,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:748 src/etc/inc/shaper.inc:3924
 #: src/etc/inc/shaper.inc:4237 src/usr/local/www/diag_routes.php:83
 msgid "Enable"
-msgstr ""
+msgstr "നടപ്പിൽ വരുത്തുക "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:519
 #: src/usr/local/www/services_dyndns_edit.php:261
@@ -1960,18 +2003,19 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:921
 #: src/usr/local/www/firewall_rules.php:751
 msgid "Disable"
-msgstr ""
+msgstr "അസാധുവാക്കുക "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:514
 #: src/usr/local/www/firewall_nat_edit.php:881
 msgid "NAT reflection"
-msgstr ""
+msgstr "നാറ്റ് (NAT) പ്രതിബിംബം "
 
 #: src/usr/local/www/load_balancer_pool.php:57
 msgid ""
 "This entry cannot be deleted because it is still referenced by at least one "
 "virtual server."
 msgstr ""
+"ഈ കുറിപ്പ് മറ്റൊരു വെർച്വൽ സെർവറിൽ പരാമർശിച്ചതുകൊണ്ട്  മായ്ക്കാൻ സാധ്യമല്ല "
 
 #: src/usr/local/www/load_balancer_pool.php:83
 #: src/usr/local/www/services_dhcpv6.php:506
@@ -2029,7 +2073,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac_edit.php:66
 #: src/usr/local/www/services_captiveportal_filemanager.php:66
 msgid "Services"
-msgstr ""
+msgstr "സേവനങ്ങൾ "
 
 #: src/usr/local/www/load_balancer_pool.php:83
 #: src/usr/local/www/status_logs_common.inc:95
@@ -2045,7 +2089,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:154
 #: src/usr/local/www/status_logs_settings.php:223
 msgid "Load Balancer"
-msgstr ""
+msgstr "ലോഡ്ബാലൻസർ "
 
 #: src/usr/local/www/load_balancer_pool.php:83
 #: src/usr/local/www/load_balancer_pool.php:103
@@ -2057,14 +2101,14 @@ msgstr ""
 #: src/usr/local/www/status_lb_pool.php:119
 #: src/usr/local/www/load_balancer_virtual_server.php:125
 msgid "Pools"
-msgstr ""
+msgstr "കൂട്ടങ്ങൾ "
 
 #: src/usr/local/www/load_balancer_pool.php:98
 #: src/usr/local/www/load_balancer_monitor.php:86
 #: src/usr/local/www/load_balancer_setting.php:100
 #: src/usr/local/www/status_lb_pool.php:110
 msgid "The load balancer configuration has been changed."
-msgstr ""
+msgstr "ലോഡ്ബാലൻസർ കോണ്ഫിഗറേഷൻ മാറ്റിയിരിക്കുന്നു "
 
 #: src/usr/local/www/load_balancer_pool.php:104
 #: src/usr/local/www/load_balancer_monitor.php:92
@@ -2076,7 +2120,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_virtual_server.php:134
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:154
 msgid "Virtual Servers"
-msgstr ""
+msgstr "വിർച്യുൽ സെർവറുകൾ "
 
 #: src/usr/local/www/load_balancer_pool.php:105
 #: src/usr/local/www/load_balancer_monitor.php:71
@@ -2085,7 +2129,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
 #: src/usr/local/www/load_balancer_virtual_server.php:127
 msgid "Monitors"
-msgstr ""
+msgstr "നിരീക്ഷണ സഹായികൽ "
 
 #: src/usr/local/www/load_balancer_pool.php:106
 #: src/usr/local/www/services_router_advertisements.php:462
@@ -2115,7 +2159,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_settings.php:187
 #: src/usr/local/www/status_logs_settings.php:226
 msgid "Settings"
-msgstr ""
+msgstr "സെറ്റിങ്ങുകൾ "
 
 #: src/usr/local/www/load_balancer_pool.php:117
 #: src/usr/local/www/services_checkip.php:97
@@ -2157,7 +2201,7 @@ msgstr ""
 #: src/etc/inc/gmirror.inc:73 src/etc/inc/shaper.inc:1293
 #: src/etc/inc/shaper.inc:3378 src/etc/inc/gwlb.inc:1571
 msgid "Name"
-msgstr "Název"
+msgstr "പേര് "
 
 #: src/usr/local/www/load_balancer_pool.php:118
 #: src/usr/local/www/vpn_ipsec.php:256 src/usr/local/www/vpn_ipsec.php:431
@@ -2173,7 +2217,7 @@ msgstr "Název"
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:70
 #: src/etc/inc/pfsense-utils.inc:3219 src/etc/inc/pfsense-utils.inc:3262
 msgid "Mode"
-msgstr ""
+msgstr "മുറ  (മോഡ് )"
 
 #: src/usr/local/www/load_balancer_pool.php:119
 #: src/usr/local/www/vpn_openvpn_client.php:510
@@ -2184,7 +2228,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:655
 #: src/usr/local/www/vpn_openvpn_server.php:679
 msgid "Servers"
-msgstr ""
+msgstr "സെർവറുകൾ "
 
 #: src/usr/local/www/load_balancer_pool.php:120
 #: src/usr/local/www/diag_packet_capture.php:368
@@ -2199,7 +2243,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:352
 #: src/usr/local/www/firewall_rules.php:354
 msgid "Port"
-msgstr ""
+msgstr "കവാടം "
 
 #: src/usr/local/www/load_balancer_pool.php:121
 #: src/usr/local/www/load_balancer_monitor.php:100
@@ -2209,144 +2253,146 @@ msgstr ""
 #: src/usr/local/www/status_lb_pool.php:136
 #: src/usr/local/www/status_gateways.php:62
 msgid "Monitor"
-msgstr ""
+msgstr "നിരീക്ഷണ സഹായി "
 
 #: src/usr/local/www/load_balancer_pool.php:160
 #: src/usr/local/www/services_dhcp.php:751
 msgid "Edit pool"
-msgstr ""
+msgstr "കൂട്ടത്തിൻറെ വിവരങ്ങൾ മാറ്റുക "
 
 #: src/usr/local/www/load_balancer_pool.php:161
 msgid "Copy pool"
-msgstr ""
+msgstr "കൂട്ടം കോപ്പി ചെയ്യുക "
 
 #: src/usr/local/www/load_balancer_pool.php:162
 #: src/usr/local/www/services_dhcp.php:753
 msgid "Delete pool"
-msgstr ""
+msgstr "കൂട്ടം മായ്ച് കളയുക "
 
 #: src/usr/local/www/guiconfig.inc:133
 msgid "One Level"
-msgstr ""
+msgstr "ഒരു പടി "
 
 #: src/usr/local/www/guiconfig.inc:134
 msgid "Entire Subtree"
-msgstr ""
+msgstr "മുഴുവൻ ശിഖിരവും "
 
 #: src/usr/local/www/guiconfig.inc:161
 msgid "Authentication and Accounting"
-msgstr ""
+msgstr "പ്രമാണീകരണവും അക്കൗണ്ടിങ്ങും "
 
 #: src/usr/local/www/guiconfig.inc:162
 #: src/usr/local/www/diag_authentication.php:69
 #: src/usr/local/www/services_captiveportal.php:703
 #: src/usr/local/www/head.inc:386
 msgid "Authentication"
-msgstr ""
+msgstr "പ്രമാണികരണം "
 
 #: src/usr/local/www/guiconfig.inc:163 src/usr/local/www/vpn_l2tp.php:296
 #: src/usr/local/www/services_captiveportal.php:887
 msgid "Accounting"
-msgstr ""
+msgstr "അക്കൗണ്ടിംഗ് "
 
 #: src/usr/local/www/guiconfig.inc:229
 msgid "This Firewall"
-msgstr ""
+msgstr "ഈ ഫയർവാൾ "
 
 #: src/usr/local/www/guiconfig.inc:240
 msgid "autoselect"
-msgstr ""
+msgstr "തനിയെ തിരഞ്ഞെടുക്കുക"
 
 #: src/usr/local/www/guiconfig.inc:241
 msgid "100BASE-TX full-duplex"
-msgstr ""
+msgstr "100BASE-TX ഫുൾ  ഡ്യൂപ്ലെക്സ്"
 
 #: src/usr/local/www/guiconfig.inc:242
 msgid "100BASE-TX half-duplex"
-msgstr ""
+msgstr "100BASE-TX ഹാഫ്  ഡ്യൂപ്ലെക്സ്"
 
 #: src/usr/local/www/guiconfig.inc:243
 msgid "10BASE-T full-duplex"
-msgstr ""
+msgstr "10BASE-T ഫുൾ  ഡ്യൂപ്ലെക്സ്"
 
 #: src/usr/local/www/guiconfig.inc:244
 msgid "10BASE-T half-duplex"
-msgstr ""
+msgstr "10BASE-T ഹാഫ്  ഡ്യൂപ്ലെക്സ്"
 
 #: src/usr/local/www/guiconfig.inc:247
 #: src/usr/local/www/interfaces_wireless_edit.php:186
 #: src/usr/local/www/interfaces.php:3091
 msgid "Infrastructure (BSS)"
-msgstr ""
+msgstr "അടിസ്ഥാനം (BSS )"
 
 #: src/usr/local/www/guiconfig.inc:248
 #: src/usr/local/www/interfaces_wireless_edit.php:187
 #: src/usr/local/www/interfaces.php:3091
 msgid "Ad-hoc (IBSS)"
-msgstr ""
+msgstr "അനൗപചാരികം "
 
 #: src/usr/local/www/guiconfig.inc:249
 #: src/usr/local/www/interfaces_wireless_edit.php:188
 #: src/usr/local/www/interfaces.php:3091
 msgid "Access Point"
-msgstr ""
+msgstr "പ്രവേശന കവാടം "
 
 #: src/usr/local/www/guiconfig.inc:256
 #, php-format
 msgid "The field %s contains invalid characters."
-msgstr ""
+msgstr "ഈ ഫീൽഡിൽ %s  തെറ്റായ അക്ഷരങ്ങൾ ഉണ്ട് "
 
 #: src/usr/local/www/guiconfig.inc:262
 #, php-format
 msgid "The field %s is required."
-msgstr ""
+msgstr "ഈ %s ഫീൽഡ് ആവശ്യം ആണ് "
 
 #: src/usr/local/www/guiconfig.inc:269
 msgid "The following input errors were detected:"
-msgstr ""
+msgstr "ഇൻപുട്ടിൽ ഇനിപ്പറയുന്ന പിശകുകൾ കണ്ടെത്തി "
 
 #: src/usr/local/www/guiconfig.inc:333
 msgid "Apply Changes"
-msgstr ""
+msgstr "മാറ്റങ്ങൾ സ്ഥിരീകരിക്കൂ "
 
 #: src/usr/local/www/guiconfig.inc:389
 msgid "The changes have been applied successfully."
-msgstr ""
+msgstr "മാറ്റങ്ങൾ വിജയകരമായി പ്രയോഗിച്ചു "
 
 #: src/usr/local/www/guiconfig.inc:392
 #, php-format
 msgid "There was a problem applying the changes. See the %1$sSystem Logs%2$s."
 msgstr ""
+"മാറ്റങ്ങൾ പ്രയോഗിക്കുന്നതിൽ എന്തോ പിശക് ഉണ്ട് .  %1$s സിസ്റ്റം ലോഗ്  %2$s "
+"കാണുക "
 
 #: src/usr/local/www/guiconfig.inc:400
 msgid "The firewall rules are now reloading in the background."
-msgstr ""
+msgstr "ഫയർവാൾ നിയമങ്ങൾ പശ്ചാതലത്തിൽ റീലോഡ് ചെയുന്നു "
 
 #: src/usr/local/www/guiconfig.inc:401
 #, php-format
 msgid "%1$sMonitor%2$s the filter reload progress."
-msgstr ""
+msgstr "%1$sമോണിറ്റർ %2$s ഫിൽറ്റർ റീലോഡ്  പുരോഗതിയിൽ ആണ് "
 
 #: src/usr/local/www/guiconfig.inc:587
 msgid "Widget title"
-msgstr ""
+msgstr "വിഡ്ജറ് ശീർഷകം "
 
 #: src/usr/local/www/guiconfig.inc:634 src/usr/local/www/guiconfig.inc:685
 #, php-format
 msgid "File %s is a directory."
-msgstr ""
+msgstr "%s ഫയൽ ഒരു ഡയറക്ടറി ആകുന്നു "
 
 #: src/usr/local/www/guiconfig.inc:636 src/usr/local/www/guiconfig.inc:687
 msgid "Log file started."
-msgstr ""
+msgstr "ലോഗ് ഫയൽ തുടങ്ങി "
 
 #: src/usr/local/www/guiconfig.inc:1079
 msgid "Currently viewing: "
-msgstr ""
+msgstr "ഇപ്പോൾ ശ്രദ്ധിക്കുന്നത് :"
 
 #: src/usr/local/www/guiconfig.inc:1177
 msgid "listing only first 10k items"
-msgstr ""
+msgstr "ആദ്യത്തെ പതിനായിരം എണ്ണം മാത്രം കാണിക്കുന്നു "
 
 #: src/usr/local/www/guiconfig.inc:1187
 #: src/usr/local/www/services_dhcpv6.php:984
@@ -2354,37 +2400,41 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:1393
 #: src/usr/local/www/system_certmanager.php:1031
 msgid "Value"
-msgstr ""
+msgstr "മൂല്യം "
 
 #: src/usr/local/www/services_dhcpv6.php:238
 #: src/usr/local/www/services_dhcp.php:251
 msgid "Range begin"
-msgstr ""
+msgstr "ശ്രേണി (റേഞ്ച്) ആരംഭം "
 
 #: src/usr/local/www/services_dhcpv6.php:238
 #: src/usr/local/www/services_dhcp.php:251
 msgid "Range end"
-msgstr ""
+msgstr "ശ്രേണി (റേഞ്ച്) അവസാനം "
 
 #: src/usr/local/www/services_dhcpv6.php:244
 #: src/usr/local/www/services_dhcpv6.php:247
 msgid "A valid prefix range must be specified."
 msgstr ""
+"ഒരു സാധുവായ ഉപസർഗ്ഗ (പ്രീഫിക്സ്) ശ്രേണി (റേഞ്ച്) വ്യക്തമാക്കിയിരിക്കണം"
 
 #: src/usr/local/www/services_dhcpv6.php:259
 #, php-format
 msgid "Prefix Delegation From address is not a valid IPv6 Netmask for %s"
 msgstr ""
+"വിലാസത്തിൽ (അഡ്രസ്) നിന്നുള്ള നിയോജിത (പ്രീഫിക്സ് സാധുതയുള്ളതല്ല   %s ൻറെ "
+"നെറ്റ്‌മാസ്ക് "
 
 #: src/usr/local/www/services_dhcpv6.php:270
 #, php-format
 msgid "Prefix Delegation To address is not a valid IPv6 Netmask for %s"
 msgstr ""
+"പ്രിഫിക്സ് ഡെലിഗേഷൻ ടു വിലാസം (അഡ്രസ്) സാധുതയുള്ളതല്ല   %s ൻറെ നെറ്റ്‌മാസ്ക്"
 
 #: src/usr/local/www/services_dhcpv6.php:279
 #: src/usr/local/www/services_dhcpv6.php:291
 msgid "A valid range must be specified."
-msgstr ""
+msgstr "ഒരു സാധുവായ ശ്രേണി (റേഞ്ച്) വ്യക്തമാക്കിയിരിക്കണം"
 
 #: src/usr/local/www/services_dhcpv6.php:284
 #: src/usr/local/www/services_dhcpv6.php:296
@@ -2392,26 +2442,33 @@ msgstr ""
 #, php-format
 msgid "The prefix (upper %1$s bits) must be zero.  Use the form %2$s"
 msgstr ""
+"പ്രിഫിക്സ് (മുകളിലുള്ള  %1$s ബിറ്റുകൾ) പൂജ്യം ആയിരിക്കണം.   %2$s രൂപം "
+"ഉപയോഗിക്കുക "
 
 #: src/usr/local/www/services_dhcpv6.php:302
 #: src/usr/local/www/services_dhcp.php:267
 msgid "Range From and Range To must both be entered."
 msgstr ""
+" ശ്രേണിയിൽ (റേഞ്ച് ) നിന്നും  ശ്രേണിയിലേക്കും,  രണ്ടു അഡ്രസ്സും ടൈപ്പ് "
+"ചെയ്യണം "
 
 #: src/usr/local/www/services_dhcpv6.php:305
 msgid "A valid IPv6 address must be specified for the gateway."
 msgstr ""
+"ബാഹ്യ കവാടത്തിന്റെ (ഗേറ്റ് വേ ) സാധുവായ ഒരു IPv6 വിലാസം   "
+"വ്യക്‌തമാക്കിയിരിക്കണം "
 
 #: src/usr/local/www/services_dhcpv6.php:311
 #: src/usr/local/www/services_router_advertisements.php:166
 msgid "A valid IPv6 address must be specified for each of the DNS servers."
 msgstr ""
+"എല്ലാ ഡിഎൻഎൻസ് (DNS )സെർവറുകൾക്കും ഒരു സാധുവായ IPv6 വിലാസം നൽകിയിരിക്കണം "
 
 #: src/usr/local/www/services_dhcpv6.php:315
 #: src/usr/local/www/services_dhcp.php:288
 #: src/usr/local/www/services_dhcp_edit.php:245
 msgid "The default lease time must be at least 60 seconds."
-msgstr ""
+msgstr "പാട്ടത്തിൻറെ ഡീഫോൾട് സമയം 60 സെക്കൻഡ് എങ്കിലും ആയിരിക്കണം "
 
 #: src/usr/local/www/services_dhcpv6.php:318
 #: src/usr/local/www/services_dhcp.php:316
@@ -2420,6 +2477,8 @@ msgid ""
 "The maximum lease time must be at least 60 seconds and higher than the "
 "default lease time."
 msgstr ""
+"പാട്ടത്തിൻറെ പരമാവധി സമയം ഡീഫോൾട് സമയത്തിനേക്കാൾ 60 സെക്കൻഡിങ്ങിലും "
+"കൂടിയിരിക്കണം "
 
 #: src/usr/local/www/services_dhcpv6.php:321
 #: src/usr/local/www/services_dhcp.php:319
@@ -2427,6 +2486,8 @@ msgstr ""
 msgid ""
 "A valid domain name must be specified for the dynamic DNS registration."
 msgstr ""
+"ചലനാത്മകമായ (ഡൈനാമിക് ) ഡിഎൻഎസ്  DNS രെജിസ്ട്രേഷനായി ഒരു സാധുവായ ഡൊമെയ്ൻ "
+"നാമം വ്യക്‌തമാക്കിയിരിക്കണം "
 
 #: src/usr/local/www/services_dhcpv6.php:324
 #: src/usr/local/www/services_dhcp_edit.php:254
@@ -2434,43 +2495,50 @@ msgid ""
 "A valid primary domain name server IPv4 address must be specified for the "
 "dynamic domain name."
 msgstr ""
+"ചലനാത്മകമായ ഡൊമെയ്ൻ നാമത്തിന് ഒരു സാധുവായ പ്രാഥമിക ഡൊമെയ്ൻ നാമ സെർവറിന്റെ "
+"IPv4 വിലാസം വ്യക്‌തമാക്കണം "
 
 #: src/usr/local/www/services_dhcpv6.php:327
 #: src/usr/local/www/services_dhcp.php:325
 msgid "A valid domain key name, algorithm and secret must be specified."
 msgstr ""
+"ഒരു സാധുവായ ഡൊമെയ്ൻ താക്കോൽ  (കീ)  നാമം, അൽഗോരിതം, രഹസ്യം എന്നിവ "
+"വ്യക്തമാക്കിയിരിക്കണം"
 
 #: src/usr/local/www/services_dhcpv6.php:333
 #: src/usr/local/www/services_router_advertisements.php:172
 #: src/usr/local/www/services_dhcp.php:331
 #: src/usr/local/www/services_dhcp_edit.php:264
 msgid "A valid domain search list must be specified."
-msgstr ""
+msgstr "ഒരു സാധുവായ ഡൊമെയ്ൻ തിരയൽ ലിസ്റ്റ് വ്യക്തമാക്കണം."
 
 #: src/usr/local/www/services_dhcpv6.php:340
 msgid ""
 "A valid IPv6 address must be specified for the primary/secondary NTP servers."
 ""
 msgstr ""
+"പ്രാഥമിക / ദ്വിതീയ എൻടിപി (NTP)  സെർവറുകളിൽ സാധുവായ IPv6 വിലാസം "
+"വ്യക്തമാക്കണം"
 
 #: src/usr/local/www/services_dhcpv6.php:343
 #: src/usr/local/www/services_dhcp.php:349
 msgid "A valid domain name must be specified for the DNS domain."
-msgstr ""
+msgstr "DNS ഡൊമെയ്നിനായി ഒരു സാധുവായ ഡൊമെയ്ൻ നാമം വ്യക്തമാക്കിയിരിക്കണം."
 
 #: src/usr/local/www/services_dhcpv6.php:346
 msgid ""
 "A valid IPv6 address or hostname must be specified for the TFTP server."
-msgstr ""
+msgstr "സാധുവായ IPv6 വിലാസം അല്ലെങ്കിൽ ഹോസ്റ്റ്നാമം TFTP സർവറിനു് നൽകണം."
 
 #: src/usr/local/www/services_dhcpv6.php:349
 msgid "A valid URL must be specified for the network bootfile."
-msgstr ""
+msgstr "നെറ്റ്വർക്ക് ബൂട്ട്ഫയലിനായി സാധുവായ ഒരു യുആർഎൽ നൽകേണ്ടതാണ്"
 
 #: src/usr/local/www/services_dhcpv6.php:357
 #, php-format
 msgid "The subnet range cannot overlap with virtual IPv6 address %s."
 msgstr ""
+" സബ്നെറ്റ് റേഞ്ച് വെർച്വൽ IPv6 %s  വിലാസവും ആയി  ഓവർലാപ്പ് ചെയ്യാൻ പാടില്ല "
 
 #: src/usr/local/www/services_dhcpv6.php:374
 #: src/usr/local/www/services_dhcp.php:421
@@ -2479,29 +2547,31 @@ msgid ""
 "The DHCP relay on the %s interface must be disabled before enabling the DHCP "
 "server."
 msgstr ""
+"%s ൽ ഇന്റർഫേസിൽ ഉള്ള ഡിഎച് സി പി (DHCP) റിലേ   ഡിഎച് സി പി സെർവർ പ്രവർത്തന "
+"സജ്ജമാക്കുന്നതിനു മുൻപിൽ അസാധുവാക്കണം "
 
 #: src/usr/local/www/services_dhcpv6.php:386
 #: src/usr/local/www/services_dhcp.php:452
 msgid "The specified range lies outside of the current subnet."
-msgstr ""
+msgstr "നിർദേശിച്ച റേഞ്ച് ഇപ്പോൾ ഉള്ള സബ്നെറ്റിന് പുറത്ത് ആണ് "
 
 #: src/usr/local/www/services_dhcpv6.php:391
 #: src/usr/local/www/services_dhcp.php:447
 msgid "The range is invalid (first element higher than second element)."
-msgstr ""
+msgstr "ശ്രേണി അസാധുവാണ് (രണ്ടാമത്തെ ഘടകത്തെക്കാൾ ആദ്യ ഘടകം കൂടുതലാണ്)"
 
 #: src/usr/local/www/services_dhcpv6.php:407
 #: src/usr/local/www/services_dhcp.php:486
 #, php-format
 msgid "The DHCP range cannot overlap any static DHCP mappings."
-msgstr ""
+msgstr "DHCP റേഞ്ച് സ്ഥിതിത (Static) DHCP ശൃംഖലയിലേക്ക്  കവിഞ്ഞുകിടക്കരുത് "
 
 #: src/usr/local/www/services_dhcpv6.php:506
 #: src/usr/local/www/services_router_advertisements.php:249
 #: src/usr/local/www/head.inc:315
 #: src/usr/local/www/services_dhcpv6_edit.php:194
 msgid "DHCPv6 Server & RA"
-msgstr ""
+msgstr "DHCPv6 സെർവർ & RA "
 
 #: src/usr/local/www/services_dhcpv6.php:512
 #: src/usr/local/www/services_dhcpv6.php:587
@@ -2511,56 +2581,62 @@ msgstr ""
 #: src/usr/local/www/diag_backup.php:435
 #: src/usr/local/www/services_dhcpv6_edit.php:194
 msgid "DHCPv6 Server"
-msgstr ""
+msgstr "DHCPv6 സെർവർ "
 
 #: src/usr/local/www/services_dhcpv6.php:528
 #: src/usr/local/www/services_dhcp.php:787
 msgid "The static mapping configuration has been changed."
-msgstr ""
+msgstr "സ്ഥിതിത  ശൃംഖലയുടെ രൂപരേഖ (configuration) മാറിയിരിക്കുന്നു "
 
 #: src/usr/local/www/services_dhcpv6.php:579
 msgid ""
 "The DHCPv6 Server can only be enabled on interfaces configured with a static "
 "IPv6 address. This system has none."
 msgstr ""
+"DHCPv6 സെർവർ സ്ഥിതിത IPv6 വിലാസം ഉള്ള ഇന്റർഫേസിൽ മാത്രമേ "
+"പ്രവർത്തനക്ഷമമാക്കാൻ കഴിയൂ.  ഈ സിസ്റ്റത്തിൽ അങ്ങനെ ഒന്ന് ഇല്ല."
 
 #: src/usr/local/www/services_dhcpv6.php:588
 #: src/usr/local/www/services_router_advertisements.php:256
 #: src/usr/local/www/services_router_advertisements.php:303
 msgid "Router Advertisements"
-msgstr ""
+msgstr "റൗട്ടറിൻറെ പരസ്യങ്ങൾ "
 
 #: src/usr/local/www/services_dhcpv6.php:593
 msgid "DHCPv6 Options"
-msgstr ""
+msgstr "DHCPv6 കൂടുതൽ വിശേഷണങ്ങൾ "
 
 #: src/usr/local/www/services_dhcpv6.php:599
 msgid ""
 "DHCPv6 Relay is currently enabled. DHCPv6 Server canot be enabled while the "
 "DHCPv6 Relay is enabled on any interface."
 msgstr ""
+"DHCPv6 റിലേ ഇപ്പോൾ പ്രവർത്തന സജ്ജമാണ്.  അങ്ങനെ ഒരു ഇന്റർഫേസിൽ DHCPv6 സെർവർ   "
+"പ്രവർത്തനസജ്ജമാക്കാൻ പറ്റില്ല. "
 
 #: src/usr/local/www/services_dhcpv6.php:619
 #: src/usr/local/www/services_dhcp.php:896
 #: src/usr/local/www/interfaces_ppps_edit.php:223
 #: src/usr/local/www/interfaces_ppps_edit.php:226
 msgid "Subnet"
-msgstr ""
+msgstr "സബ്നെറ്റ് "
 
 #: src/usr/local/www/services_dhcpv6.php:624
 #: src/usr/local/www/services_dhcpv6.php:637
 msgid "Subnet Mask"
-msgstr ""
+msgstr "സബ്നെറ്റ് മകുടം "
 
 #: src/usr/local/www/services_dhcpv6.php:629
 msgid "Available Range"
-msgstr ""
+msgstr "ലഭ്യമായ റേഞ്ച് "
 
 #: src/usr/local/www/services_dhcpv6.php:631
 msgid ""
 "Prefix Delegation subnet will be appended to the beginning of the defined "
 "range"
 msgstr ""
+"പ്രീഫിക്സ് ഡെലിഗേഷൻ സബ്നെറ്റ് നിർവചിത ശ്രേണിയുടെ തുടക്കത്തിൽ "
+"കൂട്ടിച്ചേർക്കും."
 
 #: src/usr/local/www/services_dhcpv6.php:650
 #: src/usr/local/www/services_dhcpv6.php:675
@@ -2571,7 +2647,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:303
 #: src/usr/local/www/firewall_rules_edit.php:1396
 msgid "From"
-msgstr ""
+msgstr "ഫ്രം "
 
 #: src/usr/local/www/services_dhcpv6.php:659
 #: src/usr/local/www/services_dhcpv6.php:684
@@ -2582,20 +2658,20 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:310
 #: src/usr/local/www/firewall_rules_edit.php:1410
 msgid "To"
-msgstr ""
+msgstr "ടു "
 
 #: src/usr/local/www/services_dhcpv6.php:661
 #: src/usr/local/www/services_dhcp.php:935
 msgid "*Range"
-msgstr ""
+msgstr "*ശ്രേണി "
 
 #: src/usr/local/www/services_dhcpv6.php:686
 msgid "Prefix Delegation Range"
-msgstr ""
+msgstr "പ്രീഫിക്സ് ഡെലിഗേഷൻ ശ്രേണി"
 
 #: src/usr/local/www/services_dhcpv6.php:695
 msgid "Prefix Delegation Size"
-msgstr ""
+msgstr "പ്രീഫിക്സ് ഡെലിഗേഷൻ വിസ്‌റ്റീർണം "
 
 #: src/usr/local/www/services_dhcpv6.php:708
 msgid ""
@@ -2603,6 +2679,9 @@ msgid ""
 "for assigning networks to subrouters. The start and end of the range must "
 "end on boundaries of the prefix delegation size."
 msgstr ""
+"ഡിഎച്ച്സിപി പ്രിഫിക്സ് ഡെലിഗേഷനായി ഒരു പ്രിഫിക്സ് റേഞ്ച് ഇവിടെ നിർവചിക്കാം. "
+"സബ്റൂട്ടറുകൾക്ക് നെറ്റ്വർക്കുകൾ നൽകുന്നതിനായി ഇത് സഹായിക്കുന്നു.  ശ്രേണിയുടെ "
+"ആരംഭവും അവസാനവും പ്രിഫിക്സ് ഡെലിഗേഷൻ വലുപ്പത്തിന്റെ പരിധികളിൽ അവസാനിക്കണം."
 
 #: src/usr/local/www/services_dhcpv6.php:710
 #: src/usr/local/www/services_dhcp_edit.php:494
@@ -2610,13 +2689,16 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:466
 #: src/usr/local/www/services_pppoe_edit.php:350
 msgid "DNS Servers"
-msgstr ""
+msgstr "ഡിഎൻസ്  സെർവറുകൾ "
 
 #: src/usr/local/www/services_dhcpv6.php:722
 msgid ""
 "Leave blank to use the system default DNS servers, this interface's IP if "
 "DNS forwarder is enabled, or the servers configured on the \"General\" page."
 msgstr ""
+"സിസ്റ്റത്തിന്റെ  സ്വതവേ ഉള്ള  ഡിഎൻസ്  സെർവറുകൾ , ഡിഎൻസ്  ഫോർവേഡറുകൾ "
+"ഉണ്ടെങ്കിൽ  ഈ ഇന്റർഫേസിന്റെ ഐപി , അല്ലങ്കിൽ 'പൊതു കോണ്ഫിഗറേഷൻ ' പേജിൽ ഉള്ള "
+"സെർവറുകൾ ഉപയോഗിക്കാൻ ഇവിടെ    ഒന്നും പൂരിപ്പിക്കരുത്.   "
 
 #: src/usr/local/www/services_dhcpv6.php:727
 #: src/usr/local/www/services_dhcp.php:1020
@@ -2624,7 +2706,7 @@ msgstr ""
 #: src/usr/local/www/services_dyndns_edit.php:102
 #: src/usr/local/www/services_dyndns_edit.php:299
 msgid "Domain name"
-msgstr ""
+msgstr "ഡൊമൈൻ നാമം "
 
 #: src/usr/local/www/services_dhcpv6.php:730
 #: src/usr/local/www/services_dhcp_edit.php:544
@@ -2743,7 +2825,7 @@ msgstr ""
 #: src/usr/local/www/head.inc:318 src/usr/local/www/services_dyndns.php:74
 #: src/etc/inc/ipsec.inc:97
 msgid "Dynamic DNS"
-msgstr "Dynamická DNS"
+msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:780
 #: src/usr/local/www/services_unbound.php:412
@@ -3101,7 +3183,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:2662
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:80
 msgid "Username"
-msgstr "Uživatelské jméno"
+msgstr ""
 
 #: src/usr/local/www/vpn_l2tp_users.php:95
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:58
@@ -3114,7 +3196,7 @@ msgstr "Uživatelské jméno"
 #: src/usr/local/www/status_dhcp_leases.php:352 src/etc/inc/ipsec.inc:92
 #: src/etc/inc/ipsec.inc:104 src/etc/inc/certs.inc:47
 msgid "IP address"
-msgstr "IP adresa"
+msgstr ""
 
 #: src/usr/local/www/vpn_l2tp_users.php:110
 #: src/usr/local/www/system_usermanager.php:651
@@ -3532,7 +3614,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_install.php:139 src/etc/inc/dyndns.class:1272
 #: src/etc/inc/dyndns.class:1324
 msgid "Success"
-msgstr "Úspěch"
+msgstr ""
 
 #: src/usr/local/www/pkg_mgr_install.php:141
 msgid "Failed"
@@ -3916,7 +3998,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_notifications.php:212
 #: src/etc/inc/ipsec.inc:33 src/etc/inc/ipsec.inc:63
 msgid "Networking"
-msgstr "Síťování"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_sysctl.php:141
 #: src/usr/local/www/system_advanced_misc.php:305
@@ -4054,7 +4136,7 @@ msgstr ""
 #: src/etc/inc/ipsec.inc:440 src/etc/inc/shaper.inc:3968
 #: src/etc/inc/shaper.inc:4272 src/etc/inc/pfsense-utils.inc:3201
 msgid "None"
-msgstr "Žádný"
+msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:148
 msgid "Age"
@@ -4890,11 +4972,11 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_filter.php:238
 msgid "Easy Rule: Add to Block List"
-msgstr "Jednoduché Pravidlo: přidat na seznam blokovaných"
+msgstr ""
 
 #: src/usr/local/www/status_logs_filter.php:247
 msgid "Easy Rule: Pass this traffic"
-msgstr "Jednoduché Pravidlo: Povolit tento provoz"
+msgstr ""
 
 #: src/usr/local/www/status_logs_filter.php:299
 #: src/usr/local/www/status_logs_common.inc:276
@@ -5170,9 +5252,6 @@ msgid ""
 "Packets that are allowed by the implicit default pass rule will be logged if "
 "this option is checked. Per-rule logging options are still respected. "
 msgstr ""
-"Pakety povolené implicitním povolujícím pravidlem budou logovány pokud je "
-"tato volba aktivní. Logování nastavené na jednotlivých pravidlech je "
-"respektováno."
 
 #: src/usr/local/www/status_logs_common.inc:925
 #: src/usr/local/www/status_logs_settings.php:310
@@ -5516,7 +5595,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec.php:328 src/etc/inc/ipsec.inc:437
 msgid "Mobile Client"
-msgstr "Mobilní klient"
+msgstr ""
 
 #: src/usr/local/www/vpn_ipsec.php:351 src/usr/local/www/vpn_ipsec.php:492
 msgid "bits"
@@ -6570,7 +6649,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:2669
 #: src/usr/local/www/system_advanced_notifications.php:359
 msgid "Password"
-msgstr "Heslo"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:624
 msgid "User Authentication Settings"
@@ -10844,7 +10923,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_gmirror.php:223 src/etc/inc/gmirror.inc:75
 msgid "Component"
-msgstr "Komponenta"
+msgstr ""
 
 #: src/usr/local/www/diag_gmirror.php:239
 msgid "Forget Disconnected Disks"
@@ -11102,7 +11181,7 @@ msgstr ""
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/etc/inc/filter.inc:87
 msgid "Traceroute"
-msgstr "Traceroute"
+msgstr ""
 
 #: src/usr/local/www/diag_dns.php:332
 msgid ""
@@ -13846,7 +13925,6 @@ msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #: src/usr/local/www/system.php:205
 #: src/usr/local/www/services_dnsmasq_edit.php:67
@@ -14070,7 +14148,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe_edit.php:277 src/usr/local/www/head.inc:322
 #: src/etc/inc/interfaces.inc:6717
 msgid "PPPoE Server"
-msgstr ""
+msgstr "PPPoE സെർവർ "
 
 #: src/usr/local/www/services_pppoe.php:91
 msgid "The PPPoE entry list has been changed."
@@ -20106,7 +20184,7 @@ msgstr ""
 
 #: src/usr/local/www/crash_reporter.php:102 src/etc/inc/captiveportal.inc:101
 msgid "Continue"
-msgstr "Pokračovat"
+msgstr ""
 
 #: src/usr/local/www/crash_reporter.php:104
 msgid "Could not find any crash files."
@@ -21563,7 +21641,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:1052
 #: src/etc/inc/authgui.inc:293
 msgid "Login"
-msgstr "Přihlásit"
+msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:1055
 msgid ""
@@ -21704,7 +21782,7 @@ msgstr ""
 #: src/usr/local/www/head.inc:238 src/usr/local/www/head.inc:534
 #: src/etc/inc/captiveportal.inc:269
 msgid "Logout"
-msgstr "Odhlásit"
+msgstr ""
 
 #: src/usr/local/www/head.inc:242
 msgid "High Avail. Sync"
@@ -22297,11 +22375,11 @@ msgstr ""
 
 #: src/usr/local/www/easyrule.php:61
 msgid "Easy Rule"
-msgstr "Jednoduché Pravidlo"
+msgstr ""
 
 #: src/usr/local/www/easyrule.php:71
 msgid "Confirmation Required to Add Easy Rule"
-msgstr "Přidání Jednoduchého Pravidla vyžaduje potvrzení"
+msgstr ""
 
 #: src/usr/local/www/easyrule.php:79 src/usr/local/www/easyrule.php:87
 msgid "Rule Type"
@@ -22317,8 +22395,6 @@ msgid ""
 "This is the Easy Rule status page, mainly used to display errors when adding "
 "rules."
 msgstr ""
-"Toto je přehled stavu Jednoduchého Pravidla, především pro zobrazení chyb "
-"při vytváření pravidel."
 
 #: src/usr/local/www/easyrule.php:119
 msgid ""
@@ -25609,8 +25685,6 @@ msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Gateway Group "
 "\"%2$s\""
 msgstr ""
-"Brána \"%1$s\" nemohla být vypnuta, protože se používá ve Skupině Bran "
-"\"%2$s\""
 
 #: src/usr/local/www/system_gateways.php:107
 #, php-format
@@ -25625,8 +25699,6 @@ msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Static Route "
 "\"%2$s\""
 msgstr ""
-"Brána \"%1$s\" nemohla být vypnuta, protože se používá ve Statické Routě "
-"\"%2$s\""
 
 #: src/usr/local/www/system_gateways.php:196
 #, php-format
@@ -25665,7 +25737,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways.php:377
 #: src/usr/local/www/interfaces.php:1970 src/usr/local/www/interfaces.php:3332
 msgid "Default gateway"
-msgstr "Výchozí brána"
+msgstr ""
 
 #: src/usr/local/www/system_gateways.php:403
 msgid "Default gateway IPv4"
@@ -26306,8 +26378,6 @@ msgid ""
 "All incoming connections on this interface will be blocked until pass rules "
 "are added."
 msgstr ""
-"Všechna příchozí spojení na toto rozhraní budou blokována dokud nebudou "
-"přidána povolující pravidla."
 
 #: src/usr/local/www/firewall_rules.php:781
 msgid "Click the button to add a new rule."
@@ -26596,8 +26666,6 @@ msgid ""
 "Log packets that are %1$sallowed%2$s by the implicit default pass rule. - "
 "Per-rule logging options are still respected. "
 msgstr ""
-"Loguj pakety %1$spovolené%2$s implicitním povolujícím pravidlem. Logování "
-"nastavené na jednotlivých pravidlech je respektováno."
 
 #: src/usr/local/www/status_logs_settings.php:289
 msgid ""
@@ -27913,7 +27981,7 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:2401 src/etc/inc/filter.inc:295
 #: src/etc/inc/filter.inc:566
 msgid "done."
-msgstr "hotovo."
+msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:651
 #, php-format
@@ -28172,59 +28240,59 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:34 src/etc/inc/ipsec.inc:64
 msgid "ASN encoding"
-msgstr "ASN kódování"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:35 src/etc/inc/ipsec.inc:65
 msgid "Message encoding"
-msgstr "Kódování zpráv"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:36 src/etc/inc/ipsec.inc:66
 msgid "Integrity checker"
-msgstr "Kontrola integrity"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:37 src/etc/inc/ipsec.inc:67
 msgid "Integrity Verifier"
-msgstr "Ověření integrity"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:38 src/etc/inc/ipsec.inc:68
 msgid "Platform Trust Service"
-msgstr "Platform Trust Service"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:39 src/etc/inc/ipsec.inc:69
 msgid "TLS handler"
-msgstr "TLS handler"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:40 src/etc/inc/ipsec.inc:70
 msgid "IPsec traffic"
-msgstr "IPsec provoz"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:41 src/etc/inc/ipsec.inc:71
 msgid "StrongSwan Lib"
-msgstr "StrongSwan Lib"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:46
 msgid "Silent"
-msgstr "Tichý"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:47
 msgid "Audit"
-msgstr "Audit"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:48
 msgid "Control"
-msgstr "Kontrola"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:49
 msgid "Diag"
-msgstr "Diagnostika"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:50 src/usr/local/www/status_logs_common.inc:862
 msgid "Raw"
-msgstr "Nezpracovaný"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:51
 msgid "Highest"
-msgstr "Nejvyšší"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:80
 msgid "E-mail address"
@@ -28236,35 +28304,35 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:91
 msgid "My IP address"
-msgstr "Moje IP adresa"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:93 src/etc/inc/ipsec.inc:105
 msgid "Distinguished name"
-msgstr "Uznávané jméno"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:94 src/etc/inc/ipsec.inc:106
 msgid "User distinguished name"
-msgstr "Uživatelovo uznávané jméno"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:95 src/etc/inc/ipsec.inc:107
 msgid "ASN.1 distinguished Name"
-msgstr "ASN.1 uznávané jméno"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:96 src/etc/inc/ipsec.inc:108
 msgid "KeyID tag"
-msgstr "KeyID tag"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:103
 msgid "Peer IP address"
-msgstr "Klientova IP adresa"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:181
 msgid "Hybrid RSA + Xauth"
-msgstr "Hybridní RSA + Xauth"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:182
 msgid "Mutual RSA + Xauth"
-msgstr "Mutual RSA + Xauth"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:183
 msgid "Mutual PSK + Xauth"
@@ -28364,11 +28432,11 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:228
 msgid "29 (brainpool ecp384)"
-msgstr "29 (brainpool ecp384)"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:229
 msgid "30 (brainpool ecp512)"
-msgstr "30 (brainpool ecp512)"
+msgstr ""
 
 #: src/etc/inc/ipsec.inc:638
 msgid ""
@@ -28485,16 +28553,16 @@ msgstr ""
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr "Upgraduji m0n0wall konfiguraci na pfSense..."
+msgstr ""
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr "CHYBA!  Nemohu zkonvertovat m0n0wall -> pfsense v config.xml"
+msgstr ""
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
 msgid "Found configuration on %1$s.%2$s"
-msgstr "Nalezena konfigurace na %1$s.%2$s"
+msgstr ""
 
 #: src/etc/inc/config.inc:137 src/etc/inc/config.inc:138
 #: src/etc/inc/config.lib.inc:90 src/etc/inc/config.lib.inc:91
@@ -28502,14 +28570,10 @@ msgstr "Nalezena konfigurace na %1$s.%2$s"
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
 msgstr ""
-"Žádný config.xml nebyl nalezen, pokouším se vrátit poslední známou "
-"konfiguraci."
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
 msgstr ""
-"Žádný config.xml nebo zálohy nebyly nelezeny, resetuji do továrního "
-"nastavení."
 
 #: src/etc/inc/unbound.inc:872
 msgid "Static"
@@ -28525,7 +28589,7 @@ msgstr ""
 
 #: src/etc/inc/unbound.inc:875 src/etc/inc/filter.inc:77
 msgid "Redirect"
-msgstr "Přesměrování"
+msgstr ""
 
 #: src/etc/inc/unbound.inc:876
 msgid "Inform"
@@ -28587,15 +28651,15 @@ msgstr ""
 
 #: src/etc/inc/certs.inc:46
 msgid "FQDN or Hostname"
-msgstr "FQDN nebo Hostname"
+msgstr ""
 
 #: src/etc/inc/certs.inc:48
 msgid "URI"
-msgstr "URI"
+msgstr ""
 
 #: src/etc/inc/certs.inc:49
 msgid "email address"
-msgstr "emailová adresa"
+msgstr ""
 
 #: src/etc/inc/xmlreader.inc:161
 #, php-format
@@ -28708,7 +28772,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:2109 src/etc/inc/dyndns.class:2117
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
-msgstr "phpDynDNS: aktualizován cache soubor %1$s: %2$s"
+msgstr ""
 
 #: src/etc/inc/services.inc:2706
 #, php-format
@@ -28862,7 +28926,7 @@ msgstr ""
 
 #: src/etc/inc/gmirror.inc:65
 msgid "No mirrors found."
-msgstr "Žádná zrcadla nebyla nalezena."
+msgstr ""
 
 #: src/etc/inc/auth.inc:50
 msgid ""
@@ -28870,8 +28934,6 @@ msgid ""
 "address.<br /><br />Try accessing the firewall again after the lockout "
 "expires."
 msgstr ""
-"Přístup odepřen<br/><br/>Pokus o přístup z dočasně uzamčené adresy. <br /"
-"><br />Zkuste se znovu připojit až vyprší uzamčení."
 
 #: src/etc/inc/auth.inc:121
 msgid ""
@@ -28879,184 +28941,166 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
-"Byl detekován potencionální DNS Rebind  útok, viz http://en.wikipedia.org/"
-"wiki/DNS_rebinding <br />Zkuste přístup k routeru s použitím IP adresy místo "
-"názvu hostitele."
 
 #: src/etc/inc/auth.inc:140 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Přesměrování..."
+msgstr ""
 
 #: src/etc/inc/auth.inc:146
 msgid "Redirecting to the dashboard..."
-msgstr "Přesměrování na dashboard..."
+msgstr ""
 
 #: src/etc/inc/auth.inc:442 src/etc/inc/auth.inc:465 src/etc/inc/auth.inc:538
 #: src/etc/inc/auth.inc:562 src/etc/inc/auth.inc:637 src/etc/inc/auth.inc:678
 #: src/etc/inc/auth.inc:747 src/etc/inc/auth.inc:905 src/etc/inc/auth.inc:918
 #, php-format
 msgid "Running: %s"
-msgstr "Průběh: %s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:954 src/etc/inc/auth.inc:1041 src/etc/inc/auth.inc:1129
 #: src/etc/inc/auth.inc:1441
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "CHYBA! Nemohu se připojit k serveru %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:978
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
-msgstr "LDAP: Nemohu vyhledat CA dle odkazu pro hosta %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1053
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
 msgstr ""
-"CHYBA! ldap_test_bind() nemohu se připojit s použitím STARTTLS k serveru %s. "
-""
 
 #: src/etc/inc/auth.inc:1115
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
-"CHYBA!  ldap_get_user_ous() vybraný backend s žádným definovaným "
-"autentizačním serverem LDAP."
 
 #: src/etc/inc/auth.inc:1143
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
 msgstr ""
-"CHYBA ldap_get_user_ous() nemohu se připojit s použitím STARTTLS k serveru "
-"%s. "
 
 #: src/etc/inc/auth.inc:1153
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
-msgstr "CHYBA! ldap_get_user_ous() nemohu se anonymně připojit k serveru %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1158
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
-msgstr "CHYBA! ldap_get_user_ous() nemohu se připojit k serveru %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1274
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
-msgstr "CHYBA! ldap_get_groups() nemohu se připojit k serveru %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1286
 #, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
 msgstr ""
-"CHYBA! ldap_get_groups() nemohu se připojit s použitím STARTTLS k serveru %s."
-" "
 
 #: src/etc/inc/auth.inc:1297
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
-msgstr "CHYBA! ldap_get_groups() nemohu se anonymně připojit k serveru %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1302
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
-msgstr "CHYBA! ldap_get_groups() nemohu se připojit k serveru %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1408
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
-"CHYBA ldap_backed() volaný backend s žádným definovaným autentizačním "
-"serverem LDAP. Defaultně použiji lokální uživatelskou databázi. Nastavení v  "
-"System -> User Manager."
 
 #: src/etc/inc/auth.inc:1411
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr ""
-"CHYBA! ldap_backed() volaný backend s žádným definovaným autentizačním "
-"serverem LDAP."
 
 #: src/etc/inc/auth.inc:1434
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
 msgstr ""
-"CHYBA! ldap_backed() nemohu se připojit s použitím STARTTLS k serveru %s. "
 
 #: src/etc/inc/auth.inc:1459
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr "CHYBA! Nemohu se připojit k serveru %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1477
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr "Právě hledám %s v adresáři."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1486
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr "Právě hledám v serveru %1$s, jednotce %2$s s filtrem %3$s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1500
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr "Nalezeny chyby: %s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1516
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
 msgstr ""
-"CHYBA! Buď selhalo vyhledávání LDAP nebo bylo nalezeno více uživatelů."
 
 #: src/etc/inc/auth.inc:1523
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
-msgstr "CHYBA! Nemohu se přihlásit k serveru %1$s jako uživatel %2$s: %3$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1530
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
-msgstr "Úspěšně přihlášen jako %1$s s použitím LDAP serveru %2$s s DN = %3$s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1605
 #, php-format
 msgid "RADIUS start: %s"
-msgstr "RADIUS start: %s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1617
 #, php-format
 msgid "RADIUS send failed: %s"
-msgstr "RADIUS odeslání selhalo: %s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1625
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr "RADIUS Autentikace úspěšná"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1631
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr "RADIUS Autentikace zamítnuta"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1753
 msgid "Widget configuration has been changed."
-msgstr "Konfigurace widgetu byla změněna."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1758
 #, php-format
 msgid "(User %s)"
-msgstr "(Uživatel %s)"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1776 src/etc/inc/auth.inc:1792
 msgid "Local Database"
-msgstr "Lokální Databáze"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1896
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr "Úspěšné přihlášení pro uživatele '%1$s' z: %2$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1909
 msgid "Username or Password incorrect"
@@ -29065,12 +29109,12 @@ msgstr ""
 #: src/etc/inc/auth.inc:1955
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
-msgstr "Relace vypršela pro uživatele '%1$s' z: %2$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1957
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
-msgstr "Uživatel odhlášen pro uživatele '%1$s' z: %2$s"
+msgstr ""
 
 #: src/etc/inc/rrd.inc:32
 #, php-format
@@ -30292,11 +30336,11 @@ msgstr ""
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
-msgstr "Config.xml odemčen."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr "Zadáno neplatné heslo. Zkuste to prosím znovu."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -30304,56 +30348,50 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
-"Config.xml je porušený a má velikost 0 bytů. Nemohu obnovit předchozí zálohu."
-""
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:525
 msgid "Could not restore config.xml."
-msgstr "Nemohu obnovit config.xml."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
 msgid "%1$s is restoring the configuration %2$s"
-msgstr "%1$s obnovuje konfiguraci %2$s"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
-msgstr "XML konfigurační soubor nenalezen. %s nemůže pokračovat v bootování."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
-"Poslední známá konfigurace nalezena a obnovena. Pro jistotu prosím "
-"překontrolujte konfigurační soubor."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr "Nemohu najít použitelný konfigurační soubor!  Ukončuji..."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
 msgstr ""
-"Startuji upgrade konfigurace na %s, timeout pro provedení nastaven na 15 "
-"minut "
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
-msgstr "Updatována frekvence falešných updatů na 3:00"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:389
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr "Konfigurace upgradu ukočena na %s"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:391
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr " Verze konfigurace upgradována z %1$s na %2$s"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:469
 #, php-format
@@ -30361,39 +30399,37 @@ msgid ""
 "Save config permission denied by the 'User - Config: Deny Config Write' "
 "permission for user '%s'."
 msgstr ""
-"Oprávnění k uložení konfigurace pro uživatele '%s' bylo zamítnuto pravidlem "
-"'Uživatel - Konfigurace: Nepovolit zápis konfigurace'."
 
 #: src/etc/inc/config.lib.inc:502
 msgid "WARNING: Config contents could not be saved. Could not open file!"
-msgstr "VAROVÁNÍ: Obsah konfigurace nemůže být uložen. Nemohu otevřít soubor!"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:504
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
-msgstr "Nemohu otevřít %1$s/config.xml pro zápis v write_config()%2$s"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:635
 #, php-format
 msgid "Reverted to %s."
-msgstr "Vráceno zpět na %s."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:652
 msgid "Installing configuration..."
-msgstr "Instaluji konfiguraci..."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:654
 msgid "Installing configuration ...."
-msgstr "Instaluji konfiguraci..."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:705
 msgid "XML error: unable to open file"
-msgstr "XML chyba: nemohu otevřít soubor"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:711
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr "%1$s na řádku %2$d"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:765
 #, php-format
@@ -30403,12 +30439,12 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:770
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
-msgstr "Záložní cache soubor %s je porušený.  Ruším propojení."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:922
 #, php-format
 msgid "%s made unknown change"
-msgstr "%s provedena neznámá změna"
+msgstr ""
 
 #: src/etc/inc/priv/user.priv.inc:6
 msgid "System - HA node sync"
@@ -30947,42 +30983,41 @@ msgstr ""
 #: src/etc/inc/authgui.inc:78
 msgid "No page assigned to this user! Click here to logout."
 msgstr ""
-"Tento uživatel nemá přiřazenu žádnou stránku! Klikni zde pro odhlášení."
 
 #: src/etc/inc/authgui.inc:110
 #, php-format
 msgid "Error: %1$s Description: %2$s"
-msgstr "Chyba: %1$s Popis: %2$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:123 src/etc/inc/dyndns.class:1273
 #: src/etc/inc/dyndns.class:1325 src/etc/inc/dyndns.class:2133
 #: src/usr/local/www/diag_smart.php:374
 msgid "Error"
-msgstr "Chyba"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:183
 msgid "unknown reason"
-msgstr "neznámý důvod"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:184
 #, php-format
 msgid "Invalid login (%s)."
-msgstr "Neplatné přihlášení (%s)."
+msgstr ""
 
 #: src/etc/inc/authgui.inc:189
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr "Toto zařízení je v současné době udržováno: %s."
+msgstr ""
 
 #: src/etc/inc/authgui.inc:274
 #, php-format
 msgid "%1$s.%2$s"
-msgstr "%1$s.%2$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:276
 #, php-format
 msgid "Login to %1$s"
-msgstr "Přihlásit se do %1$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:335
 msgid ""
@@ -30991,144 +31026,137 @@ msgid ""
 "\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
 "a man-in-the-middle attack is not taking place."
 msgstr ""
-"IP adresa kterou právě používáte k přístupu na tento router není "
-"nakonfigurována lokálně, to může znamenat, že je forwardována NATem nebo z "
-"jiného důvodu.\n"
-"\t\t\t\t\t\t\t\tPokud je tento forward neočekávaný, ověřte, zda nejste obětí "
-"útoku \"man-in-the-middle\""
 
 #: src/etc/inc/authgui.inc:386
 msgid "The browser must support cookies to login."
-msgstr "Prohlížeč musí podporovat cookies pro přihlášení."
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:113
 msgid "Easy Rule: Blocked from Firewall Log View"
-msgstr "Jednoduché Pravidlo: Blokováno Firewallem Pohled na Log"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:205 src/etc/inc/easyrule.inc:217
 msgid "Entry added"
-msgstr "Záznam přidán"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:214
 msgid "Hosts blocked from Firewall Log view"
-msgstr "Hosts blokován firewalem Pohled na Log"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:267
 #, php-format
 msgid "Blocked host %s via easy rule"
-msgstr "Hostitel %s blokován Jednoduchým Pravidlem"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:296
 msgid "Easy Rule: Passed from Firewall Log View"
-msgstr "Jednoduché Pravidlo: Prošlo Firewallem Pohled na Log"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:356
 msgid "Tried to block invalid IP:"
-msgstr "Snaha blokovat neplatné IP:"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:360 src/etc/inc/easyrule.inc:383
 #: src/etc/inc/easyrule.inc:440
 msgid "Invalid interface for block rule:"
-msgstr "Neplatné rozhraní pro pravidlo pro blokování:"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:363
 msgid "Host added successfully"
-msgstr "Hosti byl úspěšně přidán"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:365
 msgid "Failed to create block rule, alias, or add host."
-msgstr "Nepodařilo se vytvořit blokovací pravidlo, alias nebo přidat hosta."
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:368
 msgid "Tried to block but had no host IP or interface"
-msgstr "Pokus zablokovat, ale neměl žádný host IP nebo rozhraní"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:370
 msgid "Unknown block error."
-msgstr "Neznámá chyba blokování."
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:379
 msgid "Tried to unblock invalid IP:"
-msgstr "Pokus odblokovat neplatnou IP:"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:389 src/etc/inc/easyrule.inc:447
 msgid "No block rules set on interface:"
-msgstr "Žádné blokové pravidlo nastaveno na rozhraní:"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:418
 #, php-format
 msgid "Unblocked host %s via easy rule"
-msgstr "Hostitel %s odblokován Jednoduchým Pravidlem"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:424
 msgid "Host unblocked successfully"
-msgstr "Hostitel úspěšně odblokován"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:427
 msgid "Host is not on block list: "
-msgstr "Hostitel není na seznamu blokovaných"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:431
 msgid "Tried to unblock but had no host IP or interface"
-msgstr "Snaha o odblokování ale chybí IP hostitele nebo rozhraní"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:462
 msgid "Invalid interface for pass rule:"
-msgstr "Neplatné rozhraní pro povolující pravidlo"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:465
 msgid "Invalid protocol for pass rule:"
-msgstr "Neplatný protokol pro povolující pravidlo"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:468
 msgid "Tried to pass invalid source IP:"
-msgstr "Pokus o průchod neplatná zdrojová IP:"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:471
 msgid "Tried to pass invalid destination IP:"
-msgstr "Pokus o průchod neplatná cílová IP:"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:475
 msgid "Missing destination port:"
-msgstr "Chybí cílový port:"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:478
 msgid "Tried to pass invalid destination port:"
-msgstr "Pokus o průchod neplatný cílový port:"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:485
 msgid "Successfully added pass rule!"
-msgstr "Úspěšně přidáno povolující pravidlo!"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:487
 msgid "Failed to add pass rule."
-msgstr "Nepodařilo se přidat povolující pravidlo."
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:490
 msgid "Missing parameters for pass rule."
-msgstr "Chybí parametry pro přidání povolujícího pravidla."
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:492
 msgid "Unknown pass error."
-msgstr "Neznámá chyba průchodu."
+msgstr ""
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
-msgstr "Selhalo zakódování/dekódování dat!"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:33
 msgid "interfaces_bring_up() was called but no variable defined."
 msgstr ""
-"byla zavolaná funkce interfaces_bring_up() ale žádná proměnná nebyla "
-"definována."
 
 #: src/etc/inc/interfaces.inc:193
 msgid "Configuring loopback interface..."
-msgstr "Nastavuji loopback rozhraní..."
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:334
 msgid "Configuring VLAN interfaces..."
-msgstr "Nastavuji VLAN rozhraní..."
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:358
 msgid "VLAN: called with wrong options. Problems with config!"
@@ -31215,31 +31243,31 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:1312 src/etc/inc/interfaces.inc:1330
 #, php-format
 msgid "Configuring %s interface..."
-msgstr "Nastavuji rozhraní %s..."
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:1262 src/etc/inc/interfaces.inc:1291
 #: src/etc/inc/interfaces.inc:1315 src/etc/inc/interfaces.inc:1333
 #, php-format
 msgid "Configuring %s"
-msgstr "Nastavuji %s"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:1416
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
-msgstr "Volám vypnutí rozhraní %1$s, zničení je %2$s"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:1430
 msgid "Wrong parameters used during interface_bring_down"
-msgstr "Chybné parametry byly použity při volání interface_bring_down"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:1601
 msgid "Enter CARP maintenance mode"
-msgstr "Vstoupit do údržbového módu CARP"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:1829
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
-msgstr "Nemohu najít nastavení PPP pro %s v interface_ppps_configure()."
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:1895
 #, php-format
@@ -31247,8 +31275,6 @@ msgid ""
 "Could not get a Local IP address for PPTP/L2TP link on %s in "
 "interfaces_ppps_configure. Using 0.0.0.0 ip!"
 msgstr ""
-"Nemohu zjistit lokální IP adresu pro PPTP/L2TP spojení na %s v "
-"interfaces_ppps_configure. Použiju IP 0.0.0.0!"
 
 #: src/etc/inc/interfaces.inc:1902
 #, php-format
@@ -31256,47 +31282,44 @@ msgid ""
 "Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in "
 "interfaces_ppps_configure."
 msgstr ""
-"Nemohu zjistit vzdálenou IP adresu PPTP/L2TP od %1$s pro %2$s v "
-"interfaces_ppps_configure."
 
 #: src/etc/inc/interfaces.inc:1909
 #, php-format
 msgid ""
 "Device %s does not exist. PPP link cannot start without the modem device."
 msgstr ""
-"Zařízení %s neexistuje. PPP spojení nemůže začít bez modemového zařízení."
 
 #: src/etc/inc/interfaces.inc:1914
 #, php-format
 msgid "Unknown %s configured as ppp interface."
-msgstr "Neznámý %s nastaven jako rozhraní ppp."
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:2227
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
-msgstr "Chyba: nemohu otevřít mpd_%1$s.conf v interface_ppps_configure().%2$s"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:2322
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
-msgstr "Startuji 3gstats.php na zařízení '%1$s' pro rozhraní '%2$s'"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:2339
 msgid "Configuring CARP settings..."
-msgstr "Nastavuji CARP..."
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:2380
 msgid "waiting for pfsync..."
-msgstr "čekám na pfsync..."
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:2386
 #, php-format
 msgid "pfsync done in %s seconds."
-msgstr "pfsync dokončen za %s sekund."
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:2387
 msgid "Configuring CARP settings finalize..."
-msgstr "Nastavování CARP se dokončuje..."
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:2601
 #, php-format
@@ -31304,48 +31327,46 @@ msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
 "this VIP."
 msgstr ""
-"Rozhraní nastavené pro virtuální IP adresu %s neexistuje. Vynechávám tuto "
-"VIP."
 
 #: src/etc/inc/interfaces.inc:2667
 #, php-format
 msgid "Interface %s changed to hostap mode"
-msgstr "Rozhraní %s se změnilo mód na hostap"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:2671
 #, php-format
 msgid "Interface %s changed to adhoc mode"
-msgstr "Rozhraní %s změnilo mód na adhoc"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:2675
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
-msgstr "Rozhraní %s změnilo mód na infrastructure"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:2688
 #, php-format
 msgid "Cloning new wireless interface %s"
-msgstr "Klonuji nové bezdrátové rozhraní %s"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:2693
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
-msgstr "Chyba při klonování rozhraní %1$s s chybovým kódem %2$s, výstup %3$s"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:3358
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
-msgstr "Startuji dhcp6 klienta pro rozhraní wan %s v DHCP6 bez RA módu"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:3379
 #, php-format
 msgid "OpenVPN: Resync server %s"
-msgstr "OpenVPN: Znovu synchronizuji server %s"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:3392
 #, php-format
 msgid "OpenVPN: Resync client %s"
-msgstr "OpenVPN: Znovu synchronizuji klienta %s"
+msgstr ""
 
 #: src/etc/inc/interfaces.inc:3527
 #, php-format
@@ -31436,7 +31457,7 @@ msgstr ""
 
 #: src/etc/inc/interfaces.inc:6713
 msgid "L2TP VPN"
-msgstr ""
+msgstr "L2TP (വിപിഎൻ)  VPN"
 
 #: src/etc/inc/xmlparse.inc:187
 #, php-format
@@ -31690,8 +31711,6 @@ msgstr ""
 #: src/etc/inc/priv.defs.inc:205
 msgid "Allow access to the 'Firewall: Easy Rule' add/status page."
 msgstr ""
-"Povolit přístup ke stránce Firewall: Jednoduché Pravidlo pro přidání/"
-"zobrazení stavu"
 
 #: src/etc/inc/priv.defs.inc:210
 msgid "WebCfg - Firewall: Aliases"
@@ -33143,30 +33162,30 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:52
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr "NEBEZPEČÍ! VAROVÁNÍ! POZOR!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:53
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr "%1$s požaduje *AT LEAST* %2$s RAM pro správné fungování.%3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:54
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
-msgstr "Pouze (%1$s) MB RAM bylo zjištěno, s (%2$s) k dispozici pro %3$s.%4$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:55
 msgid "Press ENTER to continue."
-msgstr "Pokračujte stisknutím klávesy ENTER."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:73 src/etc/inc/config.console.inc:450
 msgid "No interfaces found!"
-msgstr "Nebyly nalezeny žádná rozhraní!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:91
 msgid "Do VLANs need to be set up first?"
-msgstr "Je nutné nastavit VLANy jako první?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:94
 msgid ""
@@ -33174,32 +33193,29 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
-"Pokud VLANy nebudou použity nebo pouze pro volitelná rozhraní, je obvyklé "
-"zde říci ne a použít později webKonfigurátor ke konfiguraci VLAN, pokud je "
-"to tak požadováno."
 
 #: src/etc/inc/config.console.inc:97
 msgid "Should VLANs be set up now [y|n]?"
-msgstr "Měly by VLANy být nastaveny nyní [y|n]?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:108
 msgid "VLAN interfaces:"
-msgstr "VLAN rozhraní:"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:128
 msgid "Enter the WAN interface name or 'a' for auto-detection"
-msgstr "Zadejte název WAN rozhraní nebo \"a\" pro automatickou detekci"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:129
 #, php-format
 msgid "%1$s(%2$s or a): "
-msgstr "%1$s(%2$s nebo a): "
+msgstr ""
 
 #: src/etc/inc/config.console.inc:137 src/etc/inc/config.console.inc:163
 #: src/etc/inc/config.console.inc:199 src/etc/inc/config.console.inc:473
 #, php-format
 msgid "%1$sInvalid interface name '%2$s'%3$s"
-msgstr "%1$sNeplatný název rozhraní '%2$s'%3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:145
 #, php-format
@@ -33207,13 +33223,11 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sZadejte název LAN rozhraní nebo 'a' pro autodetekci %2$sPOZNÁMKA: toto "
-"zapne plný Firewall/NAT mód.%3$s(%4$s a nebo nic pokud je vše hotovo):%5$s"
 
 #: src/etc/inc/config.console.inc:182
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr "%1$sVolitelné rozhraní%2$s popis nalezen: %3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:185
 #, php-format
@@ -33221,96 +33235,91 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sZadejte jméno volitelného %2$s rozhraní nebo 'a' pro "
-"autodetekci%3$s(%4$s a nebo nic pokud je vše hotovo):%5$s"
 
 #: src/etc/inc/config.console.inc:192
 msgid "Optional"
-msgstr "Volitelný"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:228
 msgid "The interfaces will be assigned as follows:"
-msgstr "Rozhraní budou přiřazena dle následujícího pořadi:"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:238 src/etc/inc/config.console.inc:433
 msgid "Do you want to proceed [y|n]?"
-msgstr "Chcete pokračovat [y|n]?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:255
 msgid "You have chosen to remove the LAN interface."
-msgstr "Musíte zvolit k odebrání LAN rozhraní."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:256
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
-msgstr "Chtěl byste teď odebrat LAN IP adresu  a uvolnit toto rozhraní [y|n]?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:377
 #, php-format
 msgid "%sWriting configuration..."
-msgstr "%sZapisuji konfiguraci..."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:378
 msgid "Console assignment of interfaces"
-msgstr "Konzolové přiřazení rozhraní"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:379
 #, php-format
 msgid "done.%s"
-msgstr "hotovo.%s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:383
 msgid "One moment while the settings are reloading..."
-msgstr "Moment než bude nastavení znovu načteno..."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:391
 msgid " done!"
-msgstr "hotovo!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:410
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr "Detekováno spojení na rozhraní %1$s.%2$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:415
 #, php-format
 msgid "No link-up detected.%s"
-msgstr "Žádné spojení nebylo detekováno.%s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:432
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
 msgstr ""
-"VAROVÁNÍ: všechny existující VLANy budou vymazány pokud budete pokračovat!"
 
 #: src/etc/inc/config.console.inc:448
 msgid "VLAN Capable interfaces:"
-msgstr "Rozhraní s možností VLAN:"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:463
 msgid "No VLAN capable interfaces detected."
-msgstr "Nebyla detekována rozhraní umožňující VLAN."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:467
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
-"Vložte jméno rodičovského rohraní pro novou VLAN (nebo nic pokud jste "
-"skončili):"
 
 #: src/etc/inc/config.console.inc:480
 msgid "Enter the VLAN tag (1-4094):"
-msgstr "Vložte tag pro VLAN (1-4094):"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:484
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
-msgstr "%1$sNeplatný VLAN tag '%2$s'%3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:491
 #, php-format
 msgid "This parent interface and VLAN already created."
-msgstr "Toto rodičovské rozhraní a VLAN jsou již vytvořeny."
+msgstr ""
 
 #: src/etc/inc/filter_log.inc:227 src/etc/inc/filter_log.inc:249
 #: src/etc/inc/filter_log.inc:272 src/etc/inc/filter_log.inc:295
@@ -33319,8 +33328,6 @@ msgid ""
 "There was a error parsing log entry: %s. Please report to mailing list or "
 "forum."
 msgstr ""
-"Vyskytla se chyba při parsování záznamu z logu: %s. Nahlaste to prosím na "
-"mailing list nebo forum."
 
 #: src/etc/inc/filter_log.inc:426
 #, php-format
@@ -33328,229 +33335,225 @@ msgid ""
 "There was a error parsing rule number: %s. Please report to mailing list or "
 "forum."
 msgstr ""
-"Vyskytla se chyba při parsování pravidla číslo: %s. Nahlaste to prosím na "
-"mailing list nebo forum."
 
 #: src/etc/inc/filter_log.inc:436
 #, php-format
 msgid ""
 "There was a error parsing rule: %s. Please report to mailing list or forum."
 msgstr ""
-"Vyskytla se chyba při parsování pravidla: %s. Nahlaste to prosím na mailing "
-"list nebo forum."
 
 #: src/etc/inc/filter_log.inc:450
 #, php-format
 msgid "Service %1$s/%2$s: %3$s"
-msgstr "Služba %1$s/%2$s: %3$s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:48
 msgid "Alternate Host"
-msgstr "Alternativní Host"
+msgstr ""
 
 #: src/etc/inc/filter.inc:49
 msgid "Datagram conversion error"
-msgstr "Chyba převodu datagramu"
+msgstr ""
 
 #: src/etc/inc/filter.inc:50
 msgid "Echo reply"
-msgstr "Echo odpověď"
+msgstr ""
 
 #: src/etc/inc/filter.inc:51
 msgid "Echo request"
-msgstr "Echo požadavek"
+msgstr ""
 
 #: src/etc/inc/filter.inc:52
 msgid "FQDN reply"
-msgstr "FQDN odpověď"
+msgstr ""
 
 #: src/etc/inc/filter.inc:53
 msgid "FQDN query"
-msgstr "FQDN dotaz"
+msgstr ""
 
 #: src/etc/inc/filter.inc:54
 msgid "Group membership query"
-msgstr "Dotaz na členství ve skupině"
+msgstr ""
 
 #: src/etc/inc/filter.inc:55
 msgid "Group membership report"
-msgstr "Zpráva o členství ve skupině"
+msgstr ""
 
 #: src/etc/inc/filter.inc:56
 msgid "Group membership termination"
-msgstr "Ukončení členství ve skupině"
+msgstr ""
 
 #: src/etc/inc/filter.inc:57
 msgid "Information reply"
-msgstr "Informace o odpověďi"
+msgstr ""
 
 #: src/etc/inc/filter.inc:58
 msgid "Information request"
-msgstr "Žádost o informace"
+msgstr ""
 
 #: src/etc/inc/filter.inc:59
 msgid "IPv6 I-am-here"
-msgstr "IPv6 jsem-tady"
+msgstr ""
 
 #: src/etc/inc/filter.inc:60
 msgid "IPv6 where-are-you"
-msgstr "IPv6 kde-jsi"
+msgstr ""
 
 #: src/etc/inc/filter.inc:61
 msgid "Multicast listener done"
-msgstr "Multicast listener hotov"
+msgstr ""
 
 #: src/etc/inc/filter.inc:62
 msgid "Multicast listener report"
-msgstr "Multicast listener report"
+msgstr ""
 
 #: src/etc/inc/filter.inc:63
 msgid "Multicast listener query"
-msgstr "Multicast listener dotaz"
+msgstr ""
 
 #: src/etc/inc/filter.inc:64
 msgid "Address mask reply"
-msgstr "Maska adresy odpověd"
+msgstr ""
 
 #: src/etc/inc/filter.inc:65
 msgid "Address mask request"
-msgstr "Maska adresy požadavek"
+msgstr ""
 
 #: src/etc/inc/filter.inc:66
 msgid "Mobile host redirect"
-msgstr "Přesměrování mobilního hostitele"
+msgstr ""
 
 #: src/etc/inc/filter.inc:67
 msgid "Mobile registration reply"
-msgstr "Odpověď na mobilní registraci"
+msgstr ""
 
 #: src/etc/inc/filter.inc:68
 msgid "Mobile registration request"
-msgstr "Žádost o mobile registraci"
+msgstr ""
 
 #: src/etc/inc/filter.inc:69
 msgid "mtrace messages"
-msgstr "mtrace zprávy"
+msgstr ""
 
 #: src/etc/inc/filter.inc:70
 msgid "mtrace resp"
-msgstr "mtrace odpověď"
+msgstr ""
 
 #: src/etc/inc/filter.inc:71
 msgid "Neighbor advertisement"
-msgstr "Sousední reklama"
+msgstr ""
 
 #: src/etc/inc/filter.inc:72
 msgid "Neighbor solicitation"
-msgstr "Sousední poptávka"
+msgstr ""
 
 #: src/etc/inc/filter.inc:73
 msgid "Node information request"
-msgstr "Požadavek na informace uzlu"
+msgstr ""
 
 #: src/etc/inc/filter.inc:74
 msgid "Node information reply"
-msgstr "Odpověď na informace uzlu"
+msgstr ""
 
 #: src/etc/inc/filter.inc:75
 msgid "Parameter problem (invalid IP header)"
-msgstr "Problém parametru (neplatná hlavička IP)"
+msgstr ""
 
 #: src/etc/inc/filter.inc:76
 msgid "Photuris"
-msgstr "Photuris"
+msgstr ""
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
-msgstr "Router reklama"
+msgstr ""
 
 #: src/etc/inc/filter.inc:79
 msgid "Router solicitation"
-msgstr "Router poptávka"
+msgstr ""
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
-msgstr "Router přečíslení"
+msgstr ""
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
-msgstr "PŘESKOČIT"
+msgstr ""
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
-msgstr "Zdroj potlačit"
+msgstr ""
 
 #: src/etc/inc/filter.inc:83
 msgid "Timestamp reply"
-msgstr "Odpověď časového razítka"
+msgstr ""
 
 #: src/etc/inc/filter.inc:84
 msgid "Timestamp"
-msgstr "Časové razítko"
+msgstr ""
 
 #: src/etc/inc/filter.inc:85
 msgid "Time exceeded"
-msgstr "Čas překročen"
+msgstr ""
 
 #: src/etc/inc/filter.inc:86
 msgid "Packet too big"
-msgstr "Paket je příliš velký"
+msgstr ""
 
 #: src/etc/inc/filter.inc:88
 msgid "Destination unreachable"
-msgstr "Cíl nedosažitelný"
+msgstr ""
 
 #: src/etc/inc/filter.inc:89
 msgid "Who are you reply"
-msgstr "Kdo vám odpoví"
+msgstr ""
 
 #: src/etc/inc/filter.inc:90
 msgid "Who are you request"
-msgstr "Kdo jste požádal"
+msgstr ""
 
 #: src/etc/inc/filter.inc:240
 msgid "Initializing"
-msgstr "Inicializace"
+msgstr ""
 
 #: src/etc/inc/filter.inc:252
 msgid "Configuring firewall"
-msgstr "Konfigurace firewalu"
+msgstr ""
 
 #: src/etc/inc/filter.inc:259
 msgid "Creating aliases"
-msgstr "Vytvoření aliasů"
+msgstr ""
 
 #: src/etc/inc/filter.inc:265
 msgid "Generating Limiter rules"
-msgstr "Vytvoření Limiter pravidel"
+msgstr ""
 
 #: src/etc/inc/filter.inc:268
 msgid "Generating NAT rules"
-msgstr "Vytvoření pravidel NAT"
+msgstr ""
 
 #: src/etc/inc/filter.inc:274
 msgid "Generating filter rules"
-msgstr "Vytvoření filtr pravidel"
+msgstr ""
 
 #: src/etc/inc/filter.inc:281
 msgid "Generating ALTQ queues"
-msgstr "Generování ALTQ front"
+msgstr ""
 
 #: src/etc/inc/filter.inc:286
 msgid "Loading filter rules"
-msgstr "Načtení pravidla filtru"
+msgstr ""
 
 #: src/etc/inc/filter.inc:293
 msgid "Filter is disabled.  Not loading rules."
-msgstr "Filtr je zakázán. Neproběhlo načtení pravidel."
+msgstr ""
 
 #: src/etc/inc/filter.inc:391
 msgid "Setting up logging information"
-msgstr "Nastavení informací o protokolování"
+msgstr ""
 
 #: src/etc/inc/filter.inc:396
 msgid "Setting up SCRUB information"
-msgstr "Nastavení informacíSCRUB"
+msgstr ""
 
 #: src/etc/inc/filter.inc:436
 #, php-format
@@ -33560,36 +33563,36 @@ msgstr ""
 #: src/etc/inc/filter.inc:461
 #, php-format
 msgid "The line in question reads [%1$d]: %2$s"
-msgstr "Zmíněný řádek [%1$d]: %2$s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:468
 msgid "PF was wedged/busy and has been reset."
-msgstr "PF byl zaseknutý/zaneprázdněný a byl resetován."
+msgstr ""
 
 #: src/etc/inc/filter.inc:474 src/etc/inc/filter.inc:475
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
-msgstr "Došlo k chybě při načítání pravidel: %1$s - %2$s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:551
 msgid "Processing down interface states"
-msgstr "Zpracovávání dole stavy rozhraní"
+msgstr ""
 
 #: src/etc/inc/filter.inc:555
 msgid "Running plugins"
-msgstr "Spouštění pluginů"
+msgstr ""
 
 #: src/etc/inc/filter.inc:559
 msgid "Running plugins (pf)"
-msgstr "Spouštění pluginů (pf)"
+msgstr ""
 
 #: src/etc/inc/filter.inc:561
 msgid "Plugins completed."
-msgstr "Pluginy dokončeny."
+msgstr ""
 
 #: src/etc/inc/filter.inc:564
 msgid "Done"
-msgstr "Hotovo"
+msgstr ""
 
 #: src/etc/inc/filter.inc:777
 #, php-format
@@ -33601,23 +33604,21 @@ msgstr ""
 #: src/etc/inc/filter.inc:802
 #, php-format
 msgid "Aliases with numeric-only names are not valid. Skipping alias %s"
-msgstr "Aliasy jen s čísly názvy nejsou platné. Přeskočení aliasu %s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:880
 msgid "Creating gateway group item..."
-msgstr "Vytvoření položky skupina brány ..."
+msgstr ""
 
 #: src/etc/inc/filter.inc:920
 #, php-format
 msgid "Setting up route with %1$s on %2$s"
-msgstr "Nastavení trasy pomocí %1$s na %2$s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:924
 #, php-format
 msgid "Too many members in group %s, gateway group truncated in ruleset."
 msgstr ""
-"Příliš mnoho členů ve skupině %s, skupina brány byla sesazena v sadě "
-"pravidel."
 
 #: src/etc/inc/filter.inc:936
 #, php-format
@@ -33625,208 +33626,204 @@ msgid ""
 "An error occurred while trying to find the interface got %s .  The rule has "
 "not been added."
 msgstr ""
-"Při pokusu o nalezení rozhraní se vyskytla chyba %s .  Pravidlo nebylo "
-"přidáno."
 
 #: src/etc/inc/filter.inc:1303
 #, php-format
 msgid "Creating reflection NAT rule for %s..."
-msgstr "Vytvoření pravidla odrazu NAT pro %s..."
+msgstr ""
 
 #: src/etc/inc/filter.inc:1401
 #, php-format
 msgid "Creating reflection rule for %s..."
-msgstr "Vytvoření pravidla odrazu pro %s..."
+msgstr ""
 
 #: src/etc/inc/filter.inc:1522
 msgid "Not installing NAT reflection rules for a port range > 500"
-msgstr "Neinstalovat pravidla odrazu NAT pro rozsah portů > 500"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1528
 msgid "Installing partial NAT reflection rules. Maximum 1,000 reached."
-msgstr "Instalace částečných pravidel reflexe NAT. Maximálně dosaženo 1,000."
+msgstr ""
 
 #: src/etc/inc/filter.inc:1609
 msgid "localhost"
-msgstr "localhost"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1618
 msgid "static route"
-msgstr "statická trasa"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1630
 msgid "DHCP alias address"
-msgstr "DHCP alias adresa"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1664
 msgid "PPPoE server"
-msgstr "PPPoE server"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1675
 msgid "L2TP server"
-msgstr "L2TP server"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1684
 msgid "OpenVPN server"
-msgstr "OpenVPN server"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1693
 msgid "OpenVPN client"
-msgstr "OpenVPN klient"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1703
 msgid "IPsec client"
-msgstr "IPsec klient"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1739
 msgid "Auto created rule for ISAKMP"
-msgstr "Automatické pravidlo pro ISAKMP"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1749
 msgid "Auto created rule"
-msgstr "Pravidlo vytvořené automaticky"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1882
 msgid "Creating 1:1 rules..."
-msgstr "Vytvoření 1:1 pravidel ..."
+msgstr ""
 
 #: src/etc/inc/filter.inc:2067
 #, php-format
 msgid "Creating advanced outbound rule %s"
-msgstr "Vytvoření pokročilého odchozího pravidla %s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2114
 msgid "Creating outbound NAT rules"
-msgstr "Vytvoření odchozích pravidel NAT"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2121
 msgid "Creating automatic outbound rules"
-msgstr "Vytvoření automatických odchozích pravidel"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2151
 msgid "Setting up TFTP helper"
-msgstr "Nastavení TFTP pomocníka"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2195
 #, php-format
 msgid "Creating NAT rule %s"
-msgstr "Vytvoření NAT pravidla %s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2421
 #, php-format
 msgid "Creating filter rule %s ..."
-msgstr "Vytvoření filtrovacího pravidla %s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2445
 #, php-format
 msgid "filter_generate_port: %1$s is not a valid %2$s port."
-msgstr "filter_generate_port: %1$s není validní %2$s port."
+msgstr ""
 
 #: src/etc/inc/filter.inc:2682
 #, php-format
 msgid "Creating filter rules %s ..."
-msgstr "Vytvoření filtrovacího pravidla %s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2737
 #, php-format
 msgid "Unresolvable source alias '%1$s' for rule '%2$s'"
-msgstr "Nerozeznatelný alias '%1$s' zdroje pro pravidlo '%2$s'"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2742
 #, php-format
 msgid "Unresolvable destination alias '%1$s' for rule '%2$s'"
-msgstr "Nerozeznatelný alias '%1$s' cíle pro pravidlo '%2$s'"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2752
 #, php-format
 msgid "Unresolvable source port alias '%1$s' for rule '%2$s'"
-msgstr "Nerozeznatelný alias portu '%1$s' zdroje pro pravidlo '%2$s'"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2754
 #, php-format
 msgid "Empty source port alias '%1$s' for rule '%2$s'"
-msgstr "Prázdný alias portu '%1$s' zdroje pro pravidlo '%2$s'"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2768
 #, php-format
 msgid "Unresolvable destination port alias '%1$s' for rule '%2$s'"
-msgstr "Nerozeznatelný alias portu '%1$s' cíle pro pravidlo '%2$s'"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2770
 #, php-format
 msgid "Empty destination port alias '%1$s' for rule '%2$s'"
-msgstr "Prázdný alias portu '%1$s' cíle pro pravidlo '%2$s'"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2778
 msgid "Setting up pass/block rules"
-msgstr "Nastavení povolit/blokovat pravidel"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2805
 #, php-format
 msgid "Setting up pass/block rules %s"
-msgstr "Nastavení povolit/blokovat pravidel %s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:2829
 #, php-format
 msgid "The gateway: %s is invalid or unknown, not using it."
-msgstr "Brána: %s je neplatná nebo neznámá, nepoužívat."
+msgstr ""
 
 #: src/etc/inc/filter.inc:2848
 #, php-format
 msgid "Creating rule %s"
-msgstr "Vytvoření pravidla %s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:3093
 #, php-format
 msgid "[TDR DEBUG] status true -- rule type '%s'"
-msgstr "[TDR DEBUG] status true -- typ pravidla '%s'"
+msgstr ""
 
 #: src/etc/inc/filter.inc:3137
 msgid "Creating default rules"
-msgstr "Vytvářím výchozí pravidla"
+msgstr ""
 
 #: src/etc/inc/filter.inc:3831
 msgid "Creating IPsec rules..."
-msgstr "Vytvářím pravidla IPsec..."
+msgstr ""
 
 #: src/etc/inc/filter.inc:3927
 msgid "Installed 15 minute filter reload for Time Based Rules"
-msgstr "Nastaven 15 minutový  interval pro znovu načtení Časových pravidel"
+msgstr ""
 
 #: src/etc/inc/filter.inc:3934
 msgid "Removed 15 minute filter reload for Time Based Rules"
-msgstr "Odstraněn 15 minutový interval pro znovu načtení Časových pravidel"
+msgstr ""
 
 #: src/etc/inc/filter.inc:4318
 #, php-format
 msgid "Checking for %1$s PF hooks in package %2$s"
-msgstr "Ověřuji %1$s PF hooky v balíčku %2$s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:4331
 #, php-format
 msgid "Processing early %1$s rules for package %2$s"
-msgstr "Zpracovávám prvních %1$s pravidel pro balíček %2$s"
+msgstr ""
 
 #: src/etc/inc/filter.inc:4341
 #, php-format
 msgid "There was an error while parsing the package filter rules for %s."
-msgstr "Vyskytla se chyba při parsování filtrovacích pravidel pro %s."
+msgstr ""
 
 #: src/etc/inc/filter.inc:4409
 msgid "delete this separator"
-msgstr "vymazat tento oddělovač"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:208
 msgid "Dynamic DNS: updatedns() starting"
-msgstr "Dynamické DNS: updatedns() startuje"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:304
 #, php-format
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
 msgstr ""
-"Dynamické DNS (%1$s): spuštěné get_failover_interface pro %2$s. nalezeno "
-"%3$s"
 
 #: src/etc/inc/dyndns.class:313
 #, php-format
@@ -33834,13 +33831,11 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
-"Dynamické DNS (%1$s) Vyskytla se chyba při pokusu určit veřejnou IP pro "
-"rozhraní - %2$s (%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:410
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr "Dynamické DNS %1$s (%2$s): _update() startuje."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:507
 #, php-format
@@ -33848,32 +33843,30 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
-"Dynamické DNS %1$s (%2$s): Provádím  falešnou aktualizaci na  No-IP účtu "
-"zdarma. IP dočasně nastaveno na %3$s"
 
 #: src/etc/inc/dyndns.class:764
 #, php-format
 msgid "Sending request to: %s"
-msgstr "Posílám požadavek na: %s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1142
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _remove() starting."
-msgstr "Dynamické DNS %1$s (%2$s): _remove() startuje."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1210
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _listCurrent() starting."
-msgstr "Dynamické DNS %1$s (%2$s): _listCurrent() startuje."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1270
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting."
-msgstr "Dynamické DNS %1$s (%2$s): _checkLookupStatus() startuje."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1277 src/etc/inc/dyndns.class:1329
 msgid "Curl error occurred:"
-msgstr "Vyskytla se chyba Curl:"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1287 src/etc/inc/dyndns.class:1342
 #: src/etc/inc/dyndns.class:1365 src/etc/inc/dyndns.class:1384
@@ -33893,7 +33886,7 @@ msgstr "Vyskytla se chyba Curl:"
 #: src/etc/inc/dyndns.class:1995 src/etc/inc/dyndns.class:2006
 #: src/etc/inc/dyndns.class:2095
 msgid "PAYLOAD:"
-msgstr "ZATÍŽENÍ:"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1306
 #, php-format
@@ -33901,13 +33894,11 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
 "found."
 msgstr ""
-"Dynamické DNS %1$s (%2$s): _checkLookupStatus() končí.  Žádné odpovídající "
-"záznamy nebyly nalezeny."
 
 #: src/etc/inc/dyndns.class:1321
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
-msgstr "Dynamické DNS %1$s (%2$s): _checkStatus() startuje."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1338 src/etc/inc/dyndns.class:1359
 #: src/etc/inc/dyndns.class:1378 src/etc/inc/dyndns.class:1396
@@ -33920,7 +33911,7 @@ msgstr "Dynamické DNS %1$s (%2$s): _checkStatus() startuje."
 #: src/etc/inc/dyndns.class:2002 src/etc/inc/dyndns.class:2028
 #: src/etc/inc/dyndns.class:2088 src/etc/inc/dyndns.class:2091
 msgid "IP Address Changed Successfully!"
-msgstr "IP adresa úspěšně změněna!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1341 src/etc/inc/dyndns.class:1364
 #: src/etc/inc/dyndns.class:1383 src/etc/inc/dyndns.class:1401
@@ -33939,58 +33930,50 @@ msgstr "IP adresa úspěšně změněna!"
 #: src/etc/inc/dyndns.class:1979 src/etc/inc/dyndns.class:1994
 #: src/etc/inc/dyndns.class:2005 src/etc/inc/dyndns.class:2094
 msgid "Unknown Response"
-msgstr "Neznámá odpověď"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1349
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
-"Uvedené uživatelské jméno nebo heslo DNS-O-Matic není správné. Žádná "
-"aktualizace nebude rozeslána dokud se to nevyřeší."
 
 #: src/etc/inc/dyndns.class:1351
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr ""
-"Specifikované hostname není plně kvalifikované doménové jméno (FQDN).  Pokud "
-"žádné hostname nebude vloženo, bude jednou vráceno notfqdn."
 
 #: src/etc/inc/dyndns.class:1353
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
-"Hostname vyhovuje, ale nemůže být použit v konfiguraci jakékoliv služby. "
-"Pole služba bude prázdné v návratovém kódu."
 
 #: src/etc/inc/dyndns.class:1355
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
 msgstr ""
-"Až 20 hostů muže být aktualizováno. Počet hostů je vrácen, pokud se pokouší "
-"aktualizovat více než 20 hostů nebo aktualizovat jako round-robin."
 
 #: src/etc/inc/dyndns.class:1357
 msgid "The hostname is blocked for update abuse."
-msgstr "Hostname je blokován pro aktualizaci abuse."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1362
 msgid "DNS error encountered. Stop updating for 30 minutes."
-msgstr "Došlo k chybě DNS. Zastavena aktualizace na 30 minut."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1371 src/etc/inc/dyndns.class:1391
 #: src/etc/inc/dyndns.class:1408 src/etc/inc/dyndns.class:1425
 #: src/etc/inc/dyndns.class:1746 src/etc/inc/dyndns.class:1811
 #: src/etc/inc/dyndns.class:1967
 msgid "Not A FQDN!"
-msgstr "Není FQDN!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1373 src/etc/inc/dyndns.class:1969
 msgid "No such host"
-msgstr "Žádný host"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1375 src/etc/inc/dyndns.class:1393
 #: src/etc/inc/dyndns.class:1410 src/etc/inc/dyndns.class:1427
@@ -33999,7 +33982,7 @@ msgstr "Žádný host"
 #: src/etc/inc/dyndns.class:1905 src/etc/inc/dyndns.class:1948
 #: src/etc/inc/dyndns.class:1971
 msgid "No Change In IP Address"
-msgstr "Nedošlo ke změně IP adresy"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1381 src/etc/inc/dyndns.class:1399
 #: src/etc/inc/dyndns.class:1416 src/etc/inc/dyndns.class:1433
@@ -34007,120 +33990,112 @@ msgstr "Nedošlo ke změně IP adresy"
 #: src/etc/inc/dyndns.class:1819 src/etc/inc/dyndns.class:1911
 #: src/etc/inc/dyndns.class:1977 src/etc/inc/dyndns.class:2086
 msgid "User Authorization Failed"
-msgstr "Autorizace uživatele selhala"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1447
 msgid "IP address is current, no update performed."
-msgstr "IP adresa je aktuální, neprovedena žádná aktualizace."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1451
 msgid "DNS hostname update successful."
-msgstr "DNS hostitel úspěšně aktualizován"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1455
 msgid "Hostname supplied does not exist."
-msgstr "Zadný hostname neexistuje."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1458
 msgid "Invalid Username."
-msgstr "Neplatné Uživatelské jméno."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1461
 msgid "Invalid Password."
-msgstr "Neplatné heslo."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1464
 msgid "Too many updates sent."
-msgstr "Odesláno příliš mnoho aktualizací."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1467
 msgid "Account disabled due to violation of No-IP terms of service."
-msgstr "Účet byl zakázán v důsledku porušení No-IP, podmínky služby."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1470
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr ""
-"Neplatná IP. Zadaná IP adresa nemá správný formát nebo se jedná o privátní "
-"IP adresu nebo je na black listu."
 
 #: src/etc/inc/dyndns.class:1473
 msgid "Disabled / Locked Hostname."
-msgstr "Zakázáno / Hostname uzamčen."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1476
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
-"Host aktualizace je konfigurována jako web přesměrování a žádná aktualizace "
-"nebyla provedena."
 
 #: src/etc/inc/dyndns.class:1479
 msgid "Group supplied does not exist."
-msgstr "Zadaná skupina neexistuje."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1482
 msgid "DNS group update is successful."
-msgstr "Aktualizace DNS skupiny je úspěšná."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1486
 msgid "DNS group is current, no update performed."
-msgstr "Skupina DNS je aktuální, neprovedena žádná aktualizace."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1490
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
-"Aktualizace klientské podpory není k dispozici pro zadaného hosta nebo "
-"skupinu."
 
 #: src/etc/inc/dyndns.class:1493
 msgid "Hostname supplied does not have offline settings configured."
-msgstr "Zadaný hostname nemá v režimu offline konfigurační nastavení."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1496 src/etc/inc/dyndns.class:1499
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr ""
-"Klient zakázán. Klient by měl zkončit a neprovádět žádné další aktualizace "
-"bez zásahu uživatele."
 
 #: src/etc/inc/dyndns.class:1503
 msgid "Unknown Response:"
-msgstr "Neznámá odpověď:"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1509
 msgid "Authentication Failed: Username and/or Password was Incorrect."
-msgstr "Ověřování selhalo: Uživatelské jméno a/nebo heslo je nesprávné."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1511
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
-msgstr "Žádná služba: Služba Dynamic DNS byla zakázána pro tuto doménu."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1513
 msgid "Illegal Input: Self-Explanatory"
-msgstr "Neplatný vstup"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1515
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
-msgstr "Příliš brzo: Neuplynulo dost času od poslední aktualizace"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1517
 msgid "IP Updated Successfully!"
-msgstr "IP aktualizována úspěšně!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1530
 msgid "Error 799"
-msgstr "Chyba 799"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1530 src/etc/inc/dyndns.class:1532
 msgid "Update Failed!"
-msgstr "Aktualizace selhala!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1532
 msgid "Error 700"
-msgstr "Chyba 700"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1534 src/etc/inc/dyndns.class:1537
 #: src/etc/inc/dyndns.class:1555 src/etc/inc/dyndns.class:1565
@@ -34130,119 +34105,114 @@ msgstr "Chyba 700"
 #: src/etc/inc/dyndns.class:1836 src/etc/inc/dyndns.class:1846
 #: src/etc/inc/dyndns.class:1860 src/etc/inc/dyndns.class:1884
 msgid "IP Address Updated Successfully!"
-msgstr "IP adresa aktualizována úspěšně!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1547
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
-"Špatný požadavek - URL byla znehodnocena. Požadované parametry nebyly zadány."
-""
 
 #: src/etc/inc/dyndns.class:1549
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
-"Aktualizace příliš brzo - požadavek na aktualizaci příliš rychle od poslední "
-"změny."
 
 #: src/etc/inc/dyndns.class:1551
 msgid "Database Error - There was a server-sided database error."
-msgstr "Databázová chyba - Vyskytla se chyba na straně serveru."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1553
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
-msgstr "Chyba v hostname - hostname  (%1$s) nenáleží uživateli (%2$s)."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1617
 msgid "Not a valid username or password!"
-msgstr "Neplatné uživatelské jméno nebo heslo!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1619
 msgid "Hostname specified does not exist."
-msgstr "Zadané hostname neexistuje."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1625
 msgid "Hostname specified exists, but not under the username specified."
-msgstr "Zadané hostname existuje, ale ne pod zadaným uživatelským jménem."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1627
 msgid "Updating too frequently, considered abuse."
-msgstr "Aktualizace příliš často, je zvažováno zneužívání."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1636 src/etc/inc/dyndns.class:1700
 msgid "Bad Request - The IP provided was invalid."
-msgstr "Chybný požadavek - zadaná IP adresa  není platná."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1638
 msgid "Bad Request - Required parameters were not provided."
-msgstr "Chybný požadavek - požadované parametry nebyly zadány."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1640
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr ""
-"Chybný požadavek - neplatné znaky buď v uživatelském jménu nebo hesle."
 
 #: src/etc/inc/dyndns.class:1642
 msgid "Invalid password."
-msgstr "Neplatné heslo."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1644
 msgid "This account has been administratively locked."
-msgstr "Tento účet byl administrativně uzamknut."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1646
 msgid "Updating too frequently."
-msgstr "Příliš často aktualizováno."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1648 src/etc/inc/dyndns.class:1662
 #: src/etc/inc/dyndns.class:1680
 msgid "Server side error."
-msgstr "Chyba na straně serveru."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1664
 msgid "Badly Formed Request (check the settings)."
-msgstr "Chybně formovaný požadavek (překontrolujte nastavení)."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1682 src/etc/inc/dyndns.class:1702
 msgid "Bad Request - A hostname was not provided."
-msgstr "Chybný požadavek - hostname nebylo poskytnuto."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1684 src/etc/inc/dyndns.class:1704
 #: src/etc/inc/dyndns.class:1731
 msgid "Invalid username or password."
-msgstr "Neplatné uživatelské jméno nebo heslo."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1689 src/etc/inc/dyndns.class:1709
 #: src/etc/inc/dyndns.class:1736 src/etc/inc/dyndns.class:1748
 msgid "No Change In IP Address."
-msgstr "Žádná změna v IP adrese."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1727
 msgid "Bad Request - Missing/Invalid Parameters."
-msgstr "Chybný požadavek - chybějící/neplatné parametry."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1729
 msgid "Bad Request - Invalid Tunnel ID."
-msgstr "Chybný požadavek - neplatné ID tunelu."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1764
 msgid "Route53 API call failed"
-msgstr "Volání Route53 API  selhalo."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1768
 msgid "IP address changed successfully"
-msgstr "IP adresa byly úspěšně změněna."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1791 src/etc/inc/dyndns.class:1989
 msgid "Result did not match."
-msgstr "Výsledek nesouhlasí."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1798
 #, php-format
 msgid "%1$s updated to %2$s"
-msgstr "%1$s aktualizováno na %2$s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1801
 msgid ""
@@ -34252,184 +34222,182 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1803
 msgid "Zone or Host ID was not found, check the hostname."
-msgstr "Zóna nebo host ID nebylo nalezeno, překontrolujte hostname."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1805
 msgid "UNKNOWN ERROR"
-msgstr "NEZNÁMÁ CHYBA"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1828
 msgid "Wrong values - Update could not be completed."
-msgstr "Špatný hodnota - aktualizace nemohlo být dokončena."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1830
 msgid "Unknown username - User does not exist."
-msgstr "Neznámé uživatelské jméno - uživatel neexistuje."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1832
 msgid "Wrong password - Remember password is case sensitive."
-msgstr "Špatné heslo - pozor na to, že heslo je citlivé na velikost písmen."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1834
 msgid "User unable to administer the selected domain."
-msgstr "Uživatel není schopný spravovat vybranou doménu."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1903
 msgid "Not A FQDN"
-msgstr "Není FQDN."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1913
 msgid "Hostname does not exist or DynDNS not enabled"
-msgstr "Hostname neexistuje nebo DynDNS není zapnuto."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1915
 msgid "Bad request"
-msgstr "Chybný požadavek."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1917
 msgid "Dynamic DNS access has been blocked!"
-msgstr "Dynamický DNS přístup byl zablokován."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1919
 msgid "Error on Google's end, retry in 5 minutes"
-msgstr "Chyba na straně Google, zkuste znovu za pět minut"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1933 src/etc/inc/dyndns.class:1991
 msgid "Invalid username or password"
-msgstr "Chybné uživatelské jméno nebo heslo."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1936
 msgid "Account suspended"
-msgstr "Účet byl pozastavený."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1939
 msgid "Account revoked"
-msgstr "Účet byl zrušený."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1942
 msgid "Record does not exist in the system. Unable to update record"
-msgstr "Záznam v systému neexistuje. Nemožné aktualizovat záznam."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1945
 msgid "User does not have access to this record"
-msgstr "Uživatel nemá přístup k tomuto záznamu."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1952
 msgid "General system error recognized by the system"
-msgstr "Obecná systémová chyba byla rozpoznána systémem."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1955
 msgid "General system error unrecognized by the system"
-msgstr "Obecná systémová chyba nerozpoznaná systémem."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2022
 #, php-format
 msgid "_checkStatus() results: %1$s"
-msgstr "_checkStatus() výsledky: %1$s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2033
 msgid "No record exists."
-msgstr "Neexistuje žádný záznam."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2037
 msgid "No type exists."
-msgstr "Neexistuje žádný typ."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2041
 msgid "No value exists."
-msgstr "Neexistuje žádná hodnota."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2044
 msgid "No such zone exists."
-msgstr "Neexistuje taková zóna."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2047
 msgid "The specified record is invalid."
-msgstr "Zadaný záznam je neplatný."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2050
 msgid "The specified type is invalid."
-msgstr "Zadaný typ je neplatný."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2053
 msgid "The specified value is invalid."
-msgstr "Zadaná hodnota je neplatná."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2056
 msgid "Record is not editable."
-msgstr "Záznam není editovatelný."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2059
 msgid "Record exists but is not editable."
-msgstr "Záznam existuje, ale není editovatelný."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2062
 msgid "Record exists and must be removed before adding."
-msgstr "Záznam existuje a musí být odstraněn před přidáním."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2065 src/etc/inc/dyndns.class:2071
 msgid "A remote server error occurred updating the zone."
-msgstr "Vyskytla se chyba na vzdáleném serveru při aktualizování zóny."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2068
 msgid "A remote server error occurred loading the zone."
-msgstr "Vyskytla se chyba na vzdáleném serveru při načítání zóny."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2074
 msgid "A remote server error occurred adding a new record."
-msgstr "Vyskytla se chyba na vzdáleném serveru při přidávání nového záznamu."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2077
 msgid "A remote server error occurred removing an existing record."
 msgstr ""
-"Vyskytla se chyba na vzdáleném serveru při odstraňování existujícího záznamu."
-""
 
 #: src/etc/inc/dyndns.class:2108
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
-msgstr "DynDNS aktualizována IP adresa z %1$s (%2$s) na %3$s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2116
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
-msgstr "DynDNS aktualizována IPv6 adresa z %1$s (%2$s) na %3$s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2132
 msgid "ERROR!"
-msgstr "CHYBA!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2138
 msgid "No Dynamic DNS Service provider was selected."
-msgstr "Nebyl vybrán žádný poskytovatel Dynamické DNS služby."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2141
 msgid "No Username Provided."
-msgstr "Žádné uživatelské jméno k dispozici."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2144
 msgid "No Password Provided."
-msgstr "Žádné heslo k dispozici."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2147
 msgid "No Hostname Provided."
-msgstr "Žádné hostname k dispozici."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2150
 msgid "The Dynamic DNS Service provided is not yet supported."
-msgstr "Poskytnutá dynamická DNS služba není podporována."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2153
 msgid "No Update URL Provided."
-msgstr "Žádné aktualizované URL k dispozici."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2156
 msgid "Invalid ZoneID"
-msgstr "Neplatné ZoneID"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2159
 msgid "Invalid TTL"
-msgstr "Neplatné TTL"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2162
 #, php-format
@@ -34437,17 +34405,15 @@ msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
 "dynamic DNS entry."
 msgstr ""
-"Žádná změna  IP adresy a/nebo %s dny nevyhovují. Neaktualizují se dynamické "
-"položky DNS."
 
 #: src/etc/inc/dyndns.class:2165
 msgid "Unknown Response."
-msgstr "Neznámá odpověď."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2184
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _detectChange() starting."
-msgstr "Dynamické DNS %1$s (%2$s): _detectChange() startuje."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2191
 #, php-format
@@ -34455,54 +34421,52 @@ msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
 "process."
 msgstr ""
-"Dynamic DNS (%s): Nebylo možné určit aktuální IP WAN, proces aktualizace "
-"přeskočen."
 
 #: src/etc/inc/dyndns.class:2194
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
-msgstr "Dynamic DNS (%1$s): Aktuální IP WAN: %2$s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2202
 #, php-format
 msgid "Cached IPv6: %s"
-msgstr "Mezipaměť IPv6: %s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2208
 msgid "No Cached IPv6 found."
-msgstr "Mezipaměť IPv6 nenalezena."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2216
 #, php-format
 msgid "Cached IP: %s"
-msgstr "Mezipaměť IP: %s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2222
 msgid "No Cached IP found."
-msgstr "Mezipaměť IP nenalezena."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2236
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
-msgstr "Dynamic DNS: cacheIP != wan_ip. Aktualizováno."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2237
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
-msgstr "Mezipaměť IP: %1$s WAN IP: %2$s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2242
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
-msgstr "Dynamic DNS: Více než %s dní. Aktualizováno."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2247
 msgid "Initial update."
-msgstr "Počáteční aktualizace."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2284
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
-msgstr "Dynamic DNS %1$s (%2$s): _checkIP() start."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2309
 #, php-format
@@ -34510,23 +34474,21 @@ msgid ""
 "Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP "
 "using interface IP %4$s."
 msgstr ""
-"Dynamic DNS %1$s debug informace (%2$s): Nelze vyřešit %3$s pro IP pomocí "
-"rozhraní IP %4$s."
 
 #: src/etc/inc/dyndns.class:2328
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
-msgstr "Dynamic DNS %1$s (%2$s): %3$s odvozena z %4$s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2331
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
-msgstr "Dynamic DNS %1$s (%2$s): IP adresa nemohla být odvozena z %3$s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:2336
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
-msgstr "Dynamic DNS %1$s (%2$s): %3$s odvozeno z lokálního systému."
+msgstr ""
 
 #: src/etc/inc/copynotice.inc:50
 msgid ""
@@ -34632,74 +34594,71 @@ msgstr ""
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
 msgid "%s captive portal"
-msgstr "%s captive portal"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:37
 #, php-format
 msgid "Welcome to the %s Captive Portal!"
-msgstr "Vítejte na stránce %s Captive Portal!"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr "Uživatelské jméno:"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr "Heslo:"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr "Zadejte kód voucheru:"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr "Přesměrování na"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
-msgstr "Kliknutím na tlačítko níže pro odpojení"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:1804
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr "Chyba: nelze otevřít '%1$s' v captiveportal_write_elements ()%2$s"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:2442
 msgid "Captive Portal allowed users configuration changed"
-msgstr "Captive Portal povoleny uživatelské změny konfigurace"
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:172
 msgid ""
 "Timeout waiting for IPv6 address in tentative state.  dpinger will not run."
 msgstr ""
-"Vypršel časový limit při čekání na IPv6 adresu. dpinger nebude spuštěn."
 
 #: src/etc/inc/gwlb.inc:189
 msgid "No gateways to monitor. dpinger will not run."
-msgstr "Žádné brány ke sledování. dpinger nebude spuštěn."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:237 src/etc/inc/gwlb.inc:278
 #, php-format
 msgid ""
 "Removing static route for monitor %1$s and adding a new route through %2$s"
 msgstr ""
-"Odstraňuji statickou routu pro sledování %1$s a přidávám novou routu skrze "
-"%2$s"
 
 #: src/etc/inc/gwlb.inc:306
 #, php-format
 msgid "Error starting gateway monitor for %s"
-msgstr "Vyskytla se chyba při startu sledování brány %s"
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:319
 #, php-format
 msgid "dpinger: No dpinger session running for gateway %s"
-msgstr "dpinger: Žádný dpinger neběží pro bránu %s"
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:334
 #, php-format
 msgid "dpinger: cannot connect to status socket %1$s - %2$s (%3$s)"
-msgstr "dpinger: nemohu se připojit na stavový socket %1$s - %2$s (%3$s)"
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:362
 #, php-format
@@ -34709,24 +34668,22 @@ msgstr ""
 #: src/etc/inc/gwlb.inc:1124
 #, php-format
 msgid "MONITOR: %1$s is down, omitting from routing group %2$s"
-msgstr "SLEDOVÁNÍ: %1$s je neaktivní, vynechávám ho ze skupiny routování %2$s"
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1128
 #, php-format
 msgid "MONITOR: %1$s has packet loss, omitting from routing group %2$s"
 msgstr ""
-"SLEDOVÁNÍ: %1$s má ztrátu packetů, vynechávám ho ze skupiny routování %2$s"
 
 #: src/etc/inc/gwlb.inc:1132
 #, php-format
 msgid "MONITOR: %1$s has high latency, omitting from routing group %2$s"
 msgstr ""
-"SLEDOVÁNÍ: %1$s má vysokou odezvu, vynechávám ho ze skupiny routování %2$s"
 
 #: src/etc/inc/gwlb.inc:1153
 #, php-format
 msgid "MONITOR: %1$s is available now, adding to routing group %2$s"
-msgstr "SLEDOVÁNÍ: %1$s je dostupný, přidávám ho do skupiny routování %2$s"
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1176
 #, php-format
@@ -34734,103 +34691,93 @@ msgid ""
 "Gateways status could not be determined, considering all as up/active. "
 "(Group: %s)"
 msgstr ""
-"Stav bran nebyl rozpoznán, předpokládám tedy, že jsou všechny aktivní. "
-"(Skupina: %s)"
 
 #: src/etc/inc/gwlb.inc:1221
 #, php-format
 msgid "GATEWAYS: Group %1$s did not have any gateways up on tier %2$s!"
-msgstr "BRÁNY: Skupina %1$s nemá žádné brány aktivní v tieru %2$s!"
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1293
 #, php-format
 msgid "Updating gateway group gateway for %1$s - new gateway is %2$s"
-msgstr "Aktualizuji bránu ve skupině bran %1$s - nová brána je %2$s"
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1579
 msgid "gateway"
-msgstr "brána"
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1608
 msgid "A valid gateway IP address must be specified."
-msgstr "Musí být zadána platná IP adresa brány."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1618
 msgid ""
 "Cannot add IPv4 Gateway Address because no IPv4 address could be found on "
 "the interface."
 msgstr ""
-"Nemohu přidat IPv4 adresu brány, protože žádná IPv4 adresa nebyla na "
-"rozhraní nalezena."
 
 #: src/etc/inc/gwlb.inc:1640 src/etc/inc/gwlb.inc:1673
 #, php-format
 msgid ""
 "The gateway address %s does not lie within one of the chosen interface's "
 "subnets."
-msgstr "Adresa brány %s není v subnetu žádného vybraného rozhraní."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1651
 msgid ""
 "Cannot add IPv6 Gateway Address because no IPv6 address could be found on "
 "the interface."
 msgstr ""
-"Nemohu přidat IPv6 adresu brány, protože žádná IPv6 adresa nebyla na "
-"interface nalezena."
 
 #: src/etc/inc/gwlb.inc:1681
 msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv4 "
 "configuration."
 msgstr ""
-"Hodnoty dynamické brány nemohou být zadány pro rozhraní se statickou "
-"konfigurací IPv4."
 
 #: src/etc/inc/gwlb.inc:1686
 msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv6 "
 "configuration."
 msgstr ""
-"Hodnoty dynamické brány nemohou být zadány pro rozhraní se statickou "
-"konfigurací IPv6."
 
 #: src/etc/inc/gwlb.inc:1694
 msgid "A valid data payload must be specified."
-msgstr "Musí být specifikovány správná data."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1699
 #, php-format
 msgid "The IPv6 gateway address '%s' can not be used as a IPv4 gateway."
-msgstr "IPv6 adresa brány '%s' nemůže být použita jako IPv4 brána."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1702
 #, php-format
 msgid "The IPv4 gateway address '%s' can not be used as a IPv6 gateway."
-msgstr "IPv4 adresa brány '%s' nemůže být použita jako IPv6 brána."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1708
 #, php-format
 msgid "The IPv6 monitor address '%s' can not be used on a IPv4 gateway."
-msgstr "IPv6 sledovací adresa '%s' nemůže být použita na IPv4 bráně."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1711
 #, php-format
 msgid "The IPv4 monitor address '%s' can not be used on a IPv6 gateway."
-msgstr "IPv4 sledovací adresa '%s' nemůže být použita na IPv6 bráně."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1720
 msgid "Changing name on a gateway is not allowed."
-msgstr "Změna jména brány není povolena."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1726
 #, php-format
 msgid "The gateway name \"%s\" already exists."
-msgstr "Jméno brány \"%s\" již existuje."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1732
 #, php-format
 msgid "The gateway IP address \"%s\" already exists."
-msgstr "IP adresa brány \"%s\" již existuje."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1738
 #, php-format
@@ -34838,62 +34785,59 @@ msgid ""
 "The monitor IP address \"%s\" is already in use. A different monitor IP must "
 "be chosen."
 msgstr ""
-"Sledovací IP adresa \"%s\" se již používá. Musíte vybrat jinou sledovací IP "
-"adresu."
 
 #: src/etc/inc/gwlb.inc:1751
 msgid "The low latency threshold needs to be a numeric value."
-msgstr "Limit nejnižší odezvy musí být číselná hodnota."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1753
 msgid "The low latency threshold needs to be positive."
-msgstr "Limit nejnižší odezvy musí být kladné číslo."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1762
 msgid "The high latency threshold needs to be a numeric value."
-msgstr "Limit nejvyšší odezvy musí být číselná hodnota."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1764
 msgid "The high latency threshold needs to be positive."
-msgstr "Limit nejvyšší odezvy musí být kladné číslo."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1773
 msgid "The low Packet Loss threshold needs to be a numeric value."
-msgstr "Limit nejnižšího Packet Loss musí být číselná hodnota."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1775
 msgid "The low Packet Loss threshold needs to be positive."
-msgstr "Limit nejnižšího Packet Loss musí být kladné číslo."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1777
 msgid "The low Packet Loss threshold needs to be less than 100."
-msgstr "Limit nejnižšího Packet Loss musí být nižší než 100."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1786
 msgid "The high Packet Loss threshold needs to be a numeric value."
-msgstr "Limit nejvyššího Packet Loss musí být číselná hodnota."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1788
 msgid "The high Packet Loss threshold needs to be positive."
-msgstr "Limit nejvyššího Packet Loss musí být kladné číslo."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1790
 msgid "The high Packet Loss threshold needs to be 100 or less."
-msgstr "Limit nevyššího Packet Loss musí být 100 či méně."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1799
 msgid ""
 "The time period over which results are averaged needs to be a numeric value."
-msgstr "Časový interval zprůměrování výsledků musí být číselná hodnota."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1801
 msgid "The time period over which results are averaged needs to be positive."
 msgstr ""
-"Časový interval za který budou výsledky zprůměrovány musí být kladné číslo."
 
 #: src/etc/inc/gwlb.inc:1810
 msgid "The probe interval needs to be a numeric value."
-msgstr "Interval sondování musí být číselná hodnota."
+msgstr ""
 
 #: src/etc/inc/gwlb.inc:1812
 msgid "The probe interval needs to be positive."
@@ -35015,25 +34959,23 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:786
 msgid "These settings override the \"General Logging Options\" settings."
 msgstr ""
-"Tyto volby mají přednost před nastavením v sekci \"Všeobecné volby "
-"logování\"."
 
 #: src/usr/local/www/status_logs_common.inc:796
 msgid "Forward"
-msgstr "Dopředné"
+msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:804
 msgid "Reverse"
-msgstr "Obrácené"
+msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:812
 #: src/usr/local/www/status_logs_common.inc:870
 msgid "General Logging Options Setting"
-msgstr "Převzít z nastavení \"Všeobecné volby logování\""
+msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:854
 msgid "Formatted"
-msgstr "Formátované"
+msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:884
 #: src/usr/local/www/status_logs_settings.php:287
@@ -35049,8 +34991,6 @@ msgstr ""
 #: src/usr/local/www/status_logs_settings.php:266
 msgid "Log packets matched from the default pass rules put in the ruleset"
 msgstr ""
-"Loguj pakety vyhovující výchozímu povolujícímu pravidlu vloženému do sady "
-"pravidel"
 
 #: src/usr/local/www/status_logs_common.inc:909
 #: src/usr/local/www/status_logs_settings.php:273
@@ -35060,7 +35000,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:916
 #: src/usr/local/www/status_logs_settings.php:280
 msgid "Log packets blocked by 'Block Private Networks' rules"
-msgstr "Logovat pakety blokované pravidlem \"Blokuj privátní sítě\""
+msgstr ""
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:138
 msgid "Use SSL/TLS for DNS Queries forwarded to this server"
@@ -35277,7 +35217,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:396
 msgid "Enable PowerD"
-msgstr "Aktivovat PowerD"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:475
 msgid "Disable the kernel PTI"
@@ -35289,15 +35229,15 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:497
 msgid "Flush all states when a gateway goes down"
-msgstr "Zahodit všechny stavy pokud je brána nedostupná"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:505
 msgid "Do not create rules when gateway is down"
-msgstr "Nevytvářet pravidla pokud je brána nedostupná"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:517
 msgid "Use memory file system for /tmp and /var"
-msgstr "Pro ukládání /tmp a /var používat pouze souborový systém v RAM"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:600
 msgid "Do NOT send Netgate Device ID with user agent"
@@ -35364,15 +35304,15 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:289
 msgid "Virtual IPs "
-msgstr "Virtuální IP adresy"
+msgstr ""
 
 #: src/usr/local/www/system_hasync.php:297
 msgid "Traffic Shaper configuration "
-msgstr "Nastavení Regulace síťového provozu"
+msgstr ""
 
 #: src/usr/local/www/system_hasync.php:305
 msgid "Traffic Shaper Limiters configuration "
-msgstr "Nastavení Limiterů u Regulace síťového provozu"
+msgstr ""
 
 #: src/usr/local/www/system_hasync.php:313
 msgid "DNS Forwarder and DNS Resolver configurations "
@@ -35380,7 +35320,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:321
 msgid "Captive Portal "
-msgstr "Captive Portal"
+msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:317
 msgid "Enable promiscuous mode"
@@ -35512,11 +35452,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:526
 msgid "Disable all auto-added VPN rules."
-msgstr "Vypnout všechny automaticky přidaná VPN pravidla"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:533
 msgid "Disable reply-to on WAN rules"
-msgstr "Vypnout reply-to na WAN pravidlech"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:543
 msgid "Disable Negate rule on policy routing rules"
@@ -35524,7 +35464,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:562
 msgid "Verify HTTPS certificates when downloading alias URLs"
-msgstr "Ověřovat HTTPS certifikáty při stahování URL adres z aliasů"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:633
 msgid ""
@@ -35926,15 +35866,14 @@ msgstr ""
 msgid ""
 "All IPv6 traffic will be blocked by the firewall unless this box is checked"
 msgstr ""
-"Veškerý IPv6 provoz bude blokován firewallem pokud tato volba není aktivní"
 
 #: src/usr/local/www/system_advanced_network.php:224
 msgid "Enable IPv6 over IPv4 tunneling"
-msgstr "Aktivovat tunelování IPv6 přes IPv4"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:240
 msgid "Prefer to use IPv4 even if IPv6 is available"
-msgstr "Upřednostnit IPv4 i v případě kdy je dostupné IPv6"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:248
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
@@ -35942,19 +35881,19 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:352
 msgid "Disable hardware checksum offload"
-msgstr "Vypnout HW akceleraci výpočtu kontrolních součtů"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:363
 msgid "Disable hardware TCP segmentation offload"
-msgstr "Vypnout HW akceleraci TCP segmentace"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:373
 msgid "Disable hardware large receive offload"
-msgstr "Vypnout HW akceleraci \"large receive\""
+msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:383
 msgid "Suppress ARP messages"
-msgstr "Potlačit ARP zprávy"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:391
 msgid "Reset all states if WAN IP Address changes"
@@ -36094,7 +36033,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:711
 msgid "No Authentication"
-msgstr "Bez autentizace"
+msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:719
 msgid "Local User Manager / Vouchers"
@@ -36110,19 +36049,19 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:749
 msgid "PAP"
-msgstr "PAP"
+msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:757
 msgid "CHAP-MD5"
-msgstr "CHAP-MD5"
+msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:765
 msgid "MSCHAPv1"
-msgstr "MSCHAPv1"
+msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:773
 msgid "MSCHAPv2"
-msgstr "MSCHAPv2"
+msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:893
 msgid "Send RADIUS accounting packets to the primary RADIUS server."
@@ -36342,11 +36281,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:501
 msgid "Disable this phase 2 entry without removing it from the list. "
-msgstr "Deaktivovat tento záznam \"phase 2\" bez jeho odstranění ze seznamu"
+msgstr ""
 
 #: src/usr/local/www/diag_pf_info.php:68
 msgid "Automatically refresh the output below"
-msgstr "Automaticky obnovovat výstup níže"
+msgstr ""
 
 #: src/usr/local/www/interfaces.php:1813
 msgid "Enable interface"
@@ -36422,19 +36361,19 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2808
 msgid "Reset at each month (\"0 0 1 * *\")"
-msgstr "Resetovat každý měsíc (\"0 0 1 * *\")"
+msgstr ""
 
 #: src/usr/local/www/interfaces.php:2816
 msgid "Reset at each week (\"0 0 * * 0\")"
-msgstr "Resetovat každá týden (\"0 0 * * 0\")"
+msgstr ""
 
 #: src/usr/local/www/interfaces.php:2824
 msgid "Reset at each day (\"0 0 * * *\")"
-msgstr "Resetovat každá den (\"0 0 * * *\")"
+msgstr ""
 
 #: src/usr/local/www/interfaces.php:2832
 msgid "Reset at each hour (\"0 * * * *\")"
-msgstr "Resetovat každou hodinu (\"0 * * * *\")"
+msgstr ""
 
 #: src/usr/local/www/interfaces.php:2921
 msgid ""
@@ -36468,23 +36407,23 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3214
 msgid "Enable 802.1X authentication"
-msgstr "Aktivovat ověřování 802.1X"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:225
 msgid "Disable SMTP Notifications"
-msgstr "Deaktivovat SMTP oznámení"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:258
 msgid "Enable SMTP over SSL/TLS"
-msgstr "Aktivovat SMTP přes SSL/TLS"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:316
 msgid "Disable the startup/shutdown beep"
-msgstr "Vypnout zvuk při spuštění/vypnutí"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:328
 msgid "Disable Growl Notifications"
-msgstr "Deaktivovat notifikace přes Growl"
+msgstr ""
 
 #: src/usr/local/www/interfaces_qinq_edit.php:282
 msgid "Adds interface to QinQ interface groups"
@@ -36504,11 +36443,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:696
 msgid "Disable this server"
-msgstr "Deaktivovat tento server"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:987
 msgid "Enforce match"
-msgstr "Vynutit shodu"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1018
 msgid "Allow clients on the bridge to obtain DHCP."
@@ -36534,42 +36473,35 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1139
 msgid "Allow communication between clients connected to this server"
-msgstr "Umožnit komunikaci mezi klienty připojenými k tomto serveru"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1146
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
 "Name."
 msgstr ""
-"Povolit několik souběžných spojení klientům používajících stejný \"Common "
-"Name\"."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1158
 msgid ""
 "Allow connected clients to retain their connections if their IP address "
 "changes."
-msgstr "Dovolit klientům udržet si spojení při změně jejich IP adresy."
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1193
 msgid "Provide a DNS server list to clients. Addresses may be IPv4 or IPv6."
 msgstr ""
-"Poskytne seznam DNS serverů klientům. Adresy mohou být IPv4 nebo IPv6."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1228
 msgid ""
 "Make Windows 10 Clients Block access to DNS servers except across OpenVPN "
 "while connected, forcing clients to use only VPN DNS servers."
 msgstr ""
-"Vynutit Windows 10 klienty blokovat přístup k DNS serverům mimo OpenVPN "
-"během připojení, vynutí použití DNS serverů uvnitř VPN."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1235
 msgid ""
 "Run \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
 "and \"ipconfig /registerdns\" on connection initiation."
 msgstr ""
-"Spustit \"net stop dnscache\", \"net start dnscache\", \"ipconfig /"
-"flushdns\" a \"ipconfig /registerdns\" při inicializaci spojení."
 
 #: src/usr/local/www/vpn_ipsec_settings.php:263
 msgid "Enable IPCompression"
@@ -36589,7 +36521,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:315
 msgid "Enable Unity Plugin"
-msgstr "Zapnout Unity plugin"
+msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:322
 msgid "Enable strict Certificate Revocation List checking"
@@ -36605,63 +36537,63 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:236
 msgid "Show log entries in reverse order (newest entries on top)"
-msgstr "Zobrazit položky logu v obráceném pořadí (nejnovější nahoře)"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:294
 msgid "Show raw filter logs"
-msgstr "Zobrazit surový log filtru"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:301
 msgid "Enable verbose logging (Default is terse logging)"
-msgstr "Zapnout upovídané logování (výchozí je stručné)"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:321
 msgid "Disable writing log files to the local disk"
-msgstr "Vypnout zápis logů na místní disk"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:339
 msgid "Send log messages to remote syslog server"
-msgstr "Odesílat zprávy logu na vzdálený server syslog"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:394
 msgid "Everything"
-msgstr "Vše"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:401
 msgid "System Events"
-msgstr "Systémové události"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:408
 msgid "Firewall Events"
-msgstr "Firewallové události"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:415
 msgid "DNS Events (Resolver/unbound, Forwarder/dnsmasq, filterdns)"
-msgstr "DNS události (Resolver/unbound, Forwarder/dnsmasq, filterdns)"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:422
 msgid "DHCP Events (DHCP Daemon, DHCP Relay, DHCP Client)"
-msgstr "DHCP události (DHCP služba, DHCP relay, DHCP klient)"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:429
 msgid "PPP Events (PPPoE WAN Client, L2TP WAN Client, PPTP WAN Client)"
-msgstr "PPP události (PPPoE WAN klient, L2TP WAN klient, PPTP WAN klient)"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:436
 msgid "Captive Portal Events"
-msgstr "Captive Portál události"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:443
 msgid "VPN Events (IPsec, OpenVPN, L2TP, PPPoE Server)"
-msgstr "VPN události (IPsec, OpenVPN, L2TP, PPPoE server)"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:450
 msgid "Gateway Monitor Events"
-msgstr "Události monitoru brány"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:457
 msgid "Routing Daemon Events (RADVD, UPnP, RIP, OSPF, BGP)"
-msgstr "Události služby směrovače (RADVD, UPnP, RIP, OSPF, BGP)"
+msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:464
 msgid "Server Load Balancer Events (relayd)"
@@ -36673,7 +36605,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:478
 msgid "Wireless Events (hostapd)"
-msgstr "Události bezdrátového připojení (hostapd)"
+msgstr ""
 
 #: src/usr/local/www/pkg_edit.php:1327 src/usr/local/www/pkg_edit.php:1333
 #: src/usr/local/www/pkg_edit.php:1338
@@ -36682,11 +36614,11 @@ msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:149
 msgid "Disable the Dashboard auto-update check"
-msgstr "Vypnout automatickou kontrolu aktualizací na Dashboardu"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:161
 msgid "Enable repository/branch sync before reboot"
-msgstr "Povolit synchronizaci repositáře/větve před restartem"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:207
 msgid "Minimal"
@@ -36694,11 +36626,11 @@ msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:221
 msgid "Show Files"
-msgstr "Zobrazit soubory"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:228
 msgid "Show Command"
-msgstr "Zobrazit příkaz"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:235
 msgid "Dry Run"
@@ -36710,7 +36642,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:2389
 msgid "Upper Limit"
-msgstr "Horní limit"
+msgstr ""
 
 #: src/etc/inc/shaper.inc:2422
 msgid "Real Time"
@@ -36734,15 +36666,15 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:307
 msgid "Sort Alphabetically"
-msgstr "Seřadit abecedně"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:342
 msgid "Manage Log"
-msgstr "Správa logu"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:349
 msgid "Monitoring Settings"
-msgstr "Nastavení Monitorování"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:391
 msgid "Disable details in alias popups"
@@ -36754,4 +36686,4 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:457
 msgid "Do not display state table without a filter"
-msgstr "Nezobrazovat stavovou tabulku bez filtru"
+msgstr ""

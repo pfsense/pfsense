@@ -266,6 +266,11 @@ defCmdT("Network-ARP Table", "/usr/sbin/arp -an");
 defCmdT("Network-NDP Table", "/usr/sbin/ndp -na");
 defCmdT("OS-Kernel VMStat", "/usr/bin/vmstat -afimsz");
 
+/* If a device has a switch, put the switch configuration in the status output */
+if (file_exists("/dev/etherswitch0")) {
+	defCmdT("Network-Switch Configuration", "/sbin/etherswitchcfg -f /dev/etherswitch0 info");
+}
+
 /* Firewall rules and info */
 defCmdT("Firewall-Generated Ruleset", "/bin/cat {$g['tmp_path']}/rules.debug");
 defCmdT("Firewall-Generated Ruleset Limiters", "/bin/cat {$g['tmp_path']}/rules.limiter");

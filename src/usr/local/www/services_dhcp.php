@@ -232,6 +232,10 @@ if (isset($_POST['save'])) {
 	$numberoptions = array();
 	for ($x = 0; $x < 99; $x++) {
 		if (isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
+			if ($_POST["number{$x}"] < 1 || $_POST["number{$x}"] > 254) {
+				$input_errors[] = gettext("The DHCP option must be a number between 1 and 254.");
+				continue;
+			}
 			$numbervalue = array();
 			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
 			$numbervalue['type'] = htmlspecialchars($_POST["itemtype{$x}"]);
@@ -1373,8 +1377,9 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 	$group->add(new Form_Input(
 		'number' . $counter,
 		null,
-		'text',
-		$number
+		'number',
+		$number,
+		['min'=>'1', 'max'=>'254']
 	))->setHelp($numrows == $counter ? 'Number':null);
 
 

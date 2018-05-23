@@ -45,6 +45,10 @@ if (!function_exists('get_dyndns_hostname_text')) {
 	}
 }
 
+if (!is_array($config['dyndnses'])) {
+	$config['dyndnses'] = array();
+}
+
 if (!is_array($config['dyndnses']['dyndns'])) {
 	$config['dyndnses']['dyndns'] = array();
 }

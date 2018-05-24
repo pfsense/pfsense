@@ -588,7 +588,7 @@ if ($act=="new" || $act=="edit"):
 	$section->addInput(new Form_Input(
 		'proxy_port',
 		'Proxy port',
-		number,
+		'number',
 		$pconfig['proxy_port']
 	));
 

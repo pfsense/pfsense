@@ -82,6 +82,13 @@ core_pkg_create() {
 
 	local _template_path=${BUILDER_TOOLS}/templates/core_pkg/${_template}
 
+	# Use default pkg repo to obtain ABI and ALTABI
+	local _abi=$(sed -e "s/%%ARCH%%/${TARGET_ARCH}/g" \
+	    ${PKG_REPO_DEFAULT%%.conf}.abi)
+	local _altabi_arch=$(get_altabi_arch ${TARGET_ARCH})
+	local _altabi=$(sed -e "s/%%ARCH%%/${_altabi_arch}/g" \
+	    ${PKG_REPO_DEFAULT%%.conf}.altabi)
+
 	${BUILDER_SCRIPTS}/create_core_pkg.sh \
 		-t "${_template_path}" \
 		-f "${_flavor}" \
@@ -90,6 +97,8 @@ core_pkg_create() {
 		-s "${_findroot}" \
 		-F "${_filter}" \
 		-d "${CORE_PKG_REAL_PATH}/All" \
+		-a "${_abi}" \
+		-A "${_altabi}" \
 		|| print_error_pfS
 }
 
@@ -970,6 +979,21 @@ create_memstick_adi_image() {
 	echo ">>> MEMSTICKADI created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
 
+get_altabi_arch() {
+	local _target_arch="$1"
+
+	if [ "${_target_arch}" = "amd64" ]; then
+		echo "x86:64"
+	elif [ "${_target_arch}" = "i386" ]; then
+		echo "x86:32"
+	elif [ "${_target_arch}" = "armv6" ]; then
+		echo "32:el:eabi:hardfp"
+	else
+		echo ">>> ERROR: Invalid arch"
+		print_error_pfS
+	fi
+}
+
 # Create pkg conf on desired place with desired arch/branch
 setup_pkg_repo() {
 	if [ -z "${4}" ]; then
@@ -1014,16 +1038,7 @@ setup_pkg_repo() {
 		${_template} \
 		> ${_target}
 
-	if [ "${_target_arch}" = "amd64" ]; then
-		ALTABI_ARCH="x86:64"
-	elif [ "${_target_arch}" = "i386" ]; then
-		ALTABI_ARCH="x86:32"
-	elif [ "${_target_arch}" = "armv6" ]; then
-		ALTABI_ARCH="32:el:eabi:hardfp"
-	else
-		echo ">>> ERROR: Invalid arch"
-		print_error_pfS
-	fi
+	local ALTABI_ARCH=$(get_altabi_arch ${_target_arch})
 
 	ABI=$(cat ${_template%%.conf}.abi 2>/dev/null \
 	    | sed -e "s/%%ARCH%%/${_target_arch}/g")

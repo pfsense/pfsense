@@ -33,33 +33,59 @@ require_once("system.inc");
 
 define("FILE_SIZE", 450000);
 
-function upload_crash_report($files) {
-	global $g, $config;
-
-	$target_url = $g['crashreporterurl'];
-
-	$post = array ();
-
-	$counter = 0;
-	foreach ($files as $file) {
-		$post["file{$counter}"] = curl_file_create ($file);
-		$counter++;
+function download_crashdata_file($name) {
+	if (!file_exists($name)) {
+		exit;
 	}
-
-	$ch = curl_init ($target_url);
-	curl_setopt ($ch, CURLOPT_POST, true);
-	curl_setopt ($ch, CURLOPT_POSTFIELDS, $post);
-	curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-
-	if (!isset($config['system']['do_not_send_uniqueid'])) {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ':' . system_get_uniqueid());
+	session_cache_limiter('public');
+	$fd = fopen($name, "rb");
+	header("Content-Type: application/octet-stream");
+	header("Content-Length: " . filesize($name));
+	header("Content-Disposition: attachment; filename=\"" .
+		trim(htmlentities(basename($name))) . "\"");
+	if (isset($_SERVER['HTTPS'])) {
+		header('Pragma: ');
+		header('Cache-Control: ');
 	} else {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
+		header("Pragma: private");
+		header("Cache-Control: private, must-revalidate");
 	}
 
-	$result=curl_exec ($ch);
-	curl_close ($ch);
-	return $result;
+	fpassthru($fd);
+	exit;
+}
+
+/* Remove files we do not want to see in the report */
+function cleanup_file_list($files) {
+	if (!is_array($files)) {
+		return $files;
+	}
+
+	$exclude_patterns = array(
+		'.*.last',
+		'bounds',
+		'minfree'
+	);
+
+	foreach ($files as $idx => $fb) {
+		if (preg_match('/' . implode('|', $exclude_patterns) . '/', basename($fb)) == 1) {
+			unset($files[$idx]);
+		}
+	}
+
+	return $files;
+}
+
+if (!empty($_POST['Download'])) {
+	if ($_POST['Download'] == "PHP") {
+		/* Send PHP log */
+		download_crashdata_file("/tmp/PHP_errors.log");
+	} else {
+		$filename = "/var/crash/" . basename($_POST['Download']);
+		if (file_exists($filename)) {
+			download_crashdata_file($filename);
+		}
+	}
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Crash Reporter"));
@@ -73,88 +99,77 @@ $crash_report_header .= "\nCrash report details:\n";
 
 exec("/bin/cat /tmp/PHP_errors.log", $php_errors);
 
-	if ($_POST['Submit'] == "Yes") {
-		echo gettext("Processing...");
-		if (!is_dir("/var/crash")) {
-			mkdir("/var/crash", 0750, true);
-		}
-		@file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
-		if (file_exists("/tmp/PHP_errors.log")) {
-			copy("/tmp/PHP_errors.log", "/var/crash/PHP_errors.log");
-		}
-		exec("find /var/crash -type l -exec rm {} +");
-		exec("/usr/bin/gzip /var/crash/*");
-		$files_to_upload = glob("/var/crash/*");
-		echo "<br/>";
-		echo gettext("Uploading...");
-		ob_flush();
-		flush();
-		if (is_array($files_to_upload)) {
-			$resp = upload_crash_report($files_to_upload);
-			echo "<br/>";
-			print_r($resp);
-			if (preg_match('/Upload received OK./i', $resp)) {
-				array_map('unlink', glob("/var/crash/*"));
-				// Erase the contents of the PHP error log
-				fclose(fopen("/tmp/PHP_errors.log", 'w'));
-				echo "<br/>" . gettext("Deleted crash report files from local disk.");
-			}
-			echo "<p><a href=\"/\">" . gettext("Continue") . "</a>" . "</p>";
-		} else {
-			echo gettext("Could not find any crash files.");
-		}
-	} else if ($_POST['Submit'] == "No") {
-		array_map('unlink', glob("/var/crash/*"));
-		// Erase the contents of the PHP error log
-		fclose(fopen("/tmp/PHP_errors.log", 'w'));
-		header("Location: /");
-		exit;
+if ($_POST['Submit'] == "No") {
+	array_map('unlink', glob("/var/crash/*"));
+	// Erase the contents of the PHP error log
+	fclose(fopen("/tmp/PHP_errors.log", 'w'));
+	header("Location: /");
+	exit;
+} else {
+	$crash_files = cleanup_file_list(glob("/var/crash/*"));
+	$crash_reports = $crash_report_header;
+	if (count($php_errors) > 0) {
+		$crash_reports .= "\nPHP Errors:\n";
+		$crash_reports .= implode("\n", $php_errors) . "\n\n";
 	} else {
-		$crash_files = glob("/var/crash/*");
-		$crash_reports = $crash_report_header;
-		if (count($php_errors) > 0) {
-			$crash_reports .= "\nPHP Errors:\n";
-			$crash_reports .= implode("\n", $php_errors) . "\n\n";
-		} else {
-			$crash_reports .= "\nNo PHP errors found.\n";
-		}
-		if (count($crash_files) > 0) {
-			foreach ($crash_files as $cf) {
-				if (filesize($cf) < FILE_SIZE) {
-					$crash_reports .= "\nFilename: {$cf}\n";
-					$crash_reports .= file_get_contents($cf);
-				}
-			}
-		} else {
-			$crash_reports .= "\nNo FreeBSD crash data found.\n";
-		}
-?>
-	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Unfortunately a Programming Bug has been detected")?></h2></div>
-		<div class="panel-body">
-			<div class="content">
-				<p>
-					<?=gettext("The programming debug logs can be submitted to the pfSense developers for inspection.")?>
-					<i><?=gettext("Please double check the contents to ensure this information is acceptable to disclose before submitting.")?></i>
-				</p>
-				<textarea readonly style="width: 100%; height: 350px;">
-					<?=$crash_reports?>
-				</textarea>
-				<br/><br/>
-				<form action="crash_reporter.php" method="post">
-					<button class="btn btn-primary" name="Submit" type="submit" value="Yes">
-						<i class="fa fa-upload"></i>
-						<?=gettext("Yes")?> - <?=gettext("Submit this to the developers for inspection")?>
-					</button>
-					<button class="btn btn-warning" name="Submit" type="submit" value="No">
-						<i class="fa fa-undo"></i>
-						<?=gettext("No")?> - <?=gettext("Just delete the crash report and return to the Dashboard")?>
-					</button>
-				</form>
-			</div>
-		</div>
-<?php
+		$crash_reports .= "\nNo PHP errors found.\n";
 	}
+	if (count($crash_files) > 0) {
+		foreach ($crash_files as $cf) {
+			if (filesize($cf) < FILE_SIZE) {
+				$crash_reports .= "\nFilename: {$cf}\n";
+				$crash_reports .= file_get_contents($cf);
+			}
+		}
+	} else {
+		$crash_reports .= "\nNo FreeBSD crash data found.\n";
+	}
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("The firewall has enountered an error")?></h2></div>
+	<div class="panel-body">
+		<div class="content">
+			<p>
+				<?=gettext("Debugging output can be submitted to the pfSense developers for inspection.")?>
+				<br/><br/>
+				<i><?=gettext("Inspect the contents to ensure this information is acceptable to disclose before distributing these files.")?></i>
+			</p>
+			<textarea readonly style="width: 100%; height: 350px;">
+<?=$crash_reports?>
+			</textarea>
+			<br/><br/>
+			<form action="crash_reporter.php" method="post">
+				<button class="btn btn-warning" name="Submit" type="submit" value="No">
+					<i class="fa fa-undo"></i>
+					<?=gettext("Delete the crash report data and return to the Dashboard")?>
+				</button>
+			<br/><br/>
+
+<?php	if (count($crash_files) > 0): ?>
+			Click a button below to download an individual debugging data file:
+			<br/><br/>
+	<?php	if (count($php_errors) > 0): ?>
+				<button class="btn btn-info" name="Download" type="submit" value="PHP">
+					<i class="fa fa-download"></i>
+					<?=gettext("Download PHP Error Log")?>
+				</button>
+				<br/><br/>
+	<?php	endif;
+		foreach ($crash_files as $cf):
+				$tfn = htmlspecialchars(basename($cf)); ?>
+				<button class="btn btn-info" name="Download" type="submit" value="<?= $tfn ?>">
+					<i class="fa fa-download"></i>
+					<?=gettext("Download")?> <?= $tfn ?>
+				</button>
+				<br/><br/>
+	<?php	endforeach;
+	endif;
+?>
+			</form>
+		</div>
+	</div>
+<?php
+}
 ?>
 
 <?php include("foot.inc")?>

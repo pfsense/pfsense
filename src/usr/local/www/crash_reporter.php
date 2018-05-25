@@ -130,7 +130,7 @@ if ($_POST['Submit'] == "No") {
 	<div class="panel-body">
 		<div class="content">
 			<p>
-				<?=gettext("Debugging output can be submitted to the pfSense developers for inspection.")?>
+				<?=gettext("Debugging output can be collected to share with pfSense developers or others providing support or assistance.")?>
 				<br/><br/>
 				<i><?=gettext("Inspect the contents to ensure this information is acceptable to disclose before distributing these files.")?></i>
 			</p>

@@ -167,7 +167,7 @@ fi
 
 # Add license information
 if [ -d "${template_licensedir}" ]; then
-	portname=$(sed '/^name: /!d; s,^[^"]*",,; s,",,' ${metadir}/+MANIFEST)
+	portname=$(sed '/^name: /!d; s,^[^"]*",,; s,",,' ${manifest})
 	licenses_dir="/usr/local/share/licenses/${portname}-${version}"
 
 	mkdir -p ${root}${licenses_dir}

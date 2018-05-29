@@ -82,6 +82,13 @@ core_pkg_create() {
 
 	local _template_path=${BUILDER_TOOLS}/templates/core_pkg/${_template}
 
+	# Use default pkg repo to obtain ABI and ALTABI
+	local _abi=$(sed -e "s/%%ARCH%%/${TARGET_ARCH}/g" \
+	    ${PKG_REPO_DEFAULT%%.conf}.abi)
+	local _altabi_arch=$(get_altabi_arch ${TARGET_ARCH})
+	local _altabi=$(sed -e "s/%%ARCH%%/${_altabi_arch}/g" \
+	    ${PKG_REPO_DEFAULT%%.conf}.altabi)
+
 	${BUILDER_SCRIPTS}/create_core_pkg.sh \
 		-t "${_template_path}" \
 		-f "${_flavor}" \
@@ -90,6 +97,8 @@ core_pkg_create() {
 		-s "${_findroot}" \
 		-F "${_filter}" \
 		-d "${CORE_PKG_REAL_PATH}/All" \
+		-a "${_abi}" \
+		-A "${_altabi}" \
 		|| print_error_pfS
 }
 
@@ -258,10 +267,19 @@ make_world() {
 		-d ${STAGE_CHROOT_DIR} \
 		|| print_error_pfS
 
+	# Use the builder cross compiler from obj to produce the final binary.
+	if [ "${TARGET_ARCH}" == "$(uname -p)" ]; then
+		BUILD_CC="${MAKEOBJDIRPREFIX}/${FREEBSD_SRC_DIR}/tmp/usr/bin/cc"
+	else
+		BUILD_CC="${MAKEOBJDIRPREFIX}/${TARGET}.${TARGET_ARCH}${FREEBSD_SRC_DIR}/tmp/usr/bin/cc"
+	fi
+
+	[ -f "${BUILD_CC}" ] || print_error_pfS
+
 	# XXX It must go to the scripts
 	[ -d "${STAGE_CHROOT_DIR}/usr/local/bin" ] \
 		|| mkdir -p ${STAGE_CHROOT_DIR}/usr/local/bin
-	makeargs="DESTDIR=${STAGE_CHROOT_DIR}"
+	makeargs="CC=${BUILD_CC} DESTDIR=${STAGE_CHROOT_DIR}"
 	echo ">>> Building and installing crypto tools and athstats for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs} clean all install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	# XXX FIX IT
@@ -272,8 +290,11 @@ make_world() {
 		echo ">>> Building gnid... " | tee -a ${LOGFILE}
 		(\
 			cd ${GNID_SRC_DIR} && \
-			make INCLUDE_DIR=${GNID_INCLUDE_DIR} \
-			LIBCRYPTO_DIR=${GNID_LIBCRYPTO_DIR} clean gnid \
+			make \
+				CC=${BUILD_CC} \
+				INCLUDE_DIR=${GNID_INCLUDE_DIR} \
+				LIBCRYPTO_DIR=${GNID_LIBCRYPTO_DIR} \
+			clean gnid \
 		) || print_error_pfS
 		install -o root -g wheel -m 0700 ${GNID_SRC_DIR}/gnid \
 			${STAGE_CHROOT_DIR}/usr/sbin \
@@ -1345,6 +1366,23 @@ create_memstick_plccb_image() {
 	echo ">>> PLCC-B created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
 
+get_altabi_arch() {
+	local _target_arch="$1"
+
+	if [ "${_target_arch}" = "amd64" ]; then
+		echo "x86:64"
+	elif [ "${_target_arch}" = "i386" ]; then
+		echo "x86:32"
+	elif [ "${_target_arch}" = "armv6" ]; then
+		echo "32:el:eabi:hardfp"
+	elif [ "${_target_arch}" = "aarch64" ]; then
+		echo "aarch64:64"
+	else
+		echo ">>> ERROR: Invalid arch"
+		print_error_pfS
+	fi
+}
+
 # Create pkg conf on desired place with desired arch/branch
 setup_pkg_repo() {
 	if [ -z "${4}" ]; then
@@ -1389,18 +1427,7 @@ setup_pkg_repo() {
 		${_template} \
 		> ${_target}
 
-	if [ "${_target_arch}" = "aarch64" ]; then
-		ALTABI_ARCH="aarch64:64"
-	elif [ "${_target_arch}" = "amd64" ]; then
-		ALTABI_ARCH="x86:64"
-	elif [ "${_target_arch}" = "i386" ]; then
-		ALTABI_ARCH="x86:32"
-	elif [ "${_target_arch}" = "armv6" ]; then
-		ALTABI_ARCH="32:el:eabi:hardfp"
-	else
-		echo ">>> ERROR: Invalid arch"
-		print_error_pfS
-	fi
+	local ALTABI_ARCH=$(get_altabi_arch ${_target_arch})
 
 	ABI=$(cat ${_template%%.conf}.abi 2>/dev/null \
 	    | sed -e "s/%%ARCH%%/${_target_arch}/g")

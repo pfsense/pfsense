@@ -345,7 +345,7 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	git_last_commit
 
 	# Ensure binaries are present that builder system requires
-	builder_setup
+	depend_check
 
 	# Build world, kernel and install
 	make_world

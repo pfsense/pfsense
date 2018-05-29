@@ -1064,6 +1064,15 @@ setup_pkg_repo() {
 	fi
 }
 
+depend_check() {
+	for _pkg in BUILDER_PKG_DEPENDENCIES; do
+		if ! pkg info -e ${_pkg}; then
+			echo "Missing dependency (${_pkg})."
+			print_error_pfS
+		fi
+	done
+}
+
 # This routine ensures any ports / binaries that the builder
 # system needs are on disk and ready for execution.
 builder_setup() {

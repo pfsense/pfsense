@@ -255,10 +255,10 @@ case "${PRODUCT_VERSION##*-}" in
 		exit 1
 esac
 
-export BUILDER_PKG_DEPENDENCIES="devel/git ftp/curl net/rsync sysutils/screen" \
-    "sysutils/vmdktool sysutils/py-salt security/sudo www/nginx" \
-    "emulators/qemu-user-static security/sssd security/pam_ldap" \
-    "security/pam_mkhomedir archivers/gtar textproc/xmlstarlet"
+export BUILDER_PKG_DEPENDENCIES="devel/git ftp/curl net/rsync sysutils/screen \
+    sysutils/vmdktool sysutils/py-salt security/sudo www/nginx \
+    emulators/qemu-user-static security/sssd security/pam_ldap \
+    security/pam_mkhomedir archivers/gtar textproc/xmlstarlet"
 
 # Host to rsync pkg repos from poudriere
 export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-${STAGING_HOSTNAME}}

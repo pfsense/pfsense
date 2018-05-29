@@ -1065,7 +1065,7 @@ setup_pkg_repo() {
 }
 
 depend_check() {
-	for _pkg in BUILDER_PKG_DEPENDENCIES; do
+	for _pkg in ${BUILDER_PKG_DEPENDENCIES}; do
 		if ! pkg info -e ${_pkg}; then
 			echo "Missing dependency (${_pkg})."
 			print_error_pfS

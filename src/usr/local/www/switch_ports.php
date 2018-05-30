@@ -221,9 +221,7 @@ if (! $input_errors) {
 <?
 		if ($swinfo['vlan_mode'] == "DOT1Q") {
 ?>
-						<td title="<?=gettext("Click to edit")?>" class="editable icon-pointer">
-							<?= htmlspecialchars($port['pvid'])?>
-						</td>
+			<td title="<?=gettext("Click to edit")?>" class="editable icon-pointer"><?= htmlspecialchars($port['pvid'])?></td>
 <?
 		}
 ?>

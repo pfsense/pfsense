@@ -37,7 +37,6 @@ $tab_array = array();
 $tab_array[] = array(gettext("System"), true, "switch_system.php");
 $tab_array[] = array(gettext("Ports"), false, "switch_ports.php");
 $tab_array[] = array(gettext("VLANs"), false, "switch_vlans.php");
-$tab_array[] = array(gettext("LAGGs"), false, "switch_laggs.php");
 display_top_tabs($tab_array);
 ?>
 <div class="panel panel-default">

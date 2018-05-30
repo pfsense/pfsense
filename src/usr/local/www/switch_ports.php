@@ -49,6 +49,21 @@ function get_switches($devicelist) {
 	return($switches);
 }
 
+function lagg_port($laggs = NULL, $port = NULL) {
+
+	if ($laggs == NULL || $port == NULL) {
+		return "-";
+	}
+
+	foreach ($laggs as $lagg) {
+		if ($lagg['members'][$port] == 1) {
+			return ($lagg['laggroup']);
+		}
+	}
+
+	return "-";
+}
+
 // List the available switches
 $swdevices = switch_get_devices();
 $swtitle = switch_get_title();
@@ -76,20 +91,24 @@ if (isset($config['switches']['switch']) && is_array($config['switches']['switch
 	}
 }
 
-if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['vids']) {
+if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['data']) {
 
 	// Ensure there is some sort of switch configuration to work with
 	if ($sw != -1) {
-		$a_swports = &$config['switches']['switch'][$swid];
+		$a_switch = &$config['switches']['switch'][$swid];
 		/* Reset the swports array/nodes. */
-		unset($a_swports['swports']);
-		$a_swports['swports']['swport'] = array();
+		unset($a_switch['swports']);
+		$a_switch['swports']['swport'] = array();
+		if (isset($swinfo['switch_caps']['LAGG'])) {
+			unset($a_switch['laggroups']);
+			$a_switch['laggroups']['laggroup'] = array();
+		}
 
 		// Decode the JSON array
-		$ja = json_decode($_REQUEST['vids'], true);
+		$ja = json_decode($_REQUEST['data'], true);
 
 		// Extract the port and VID from each item in the list
-		foreach ($ja['vids'] as $vid ) {
+		foreach ($ja['data'] as $vid ) {
 			$port = $vid['port'];
 			$pvid = $vid['vid'];
 
@@ -103,22 +122,78 @@ if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['vids']) {
 					$swporto['pvid'] = htmlspecialchars($pvid);
 				}
 				$swporto['state'] = "forwarding";
-				$a_swports['swports']['swport'][] = $swporto;
+				$a_switch['swports']['swport'][] = $swporto;
+			}
+		}
+
+		$laggs = array();
+		foreach ($ja['data'] as $lagg) {
+			if (!isset($lagg['lagg']) || !is_numeric($lagg['lagg'])) {
+				continue;
+			}
+			$lid = htmlspecialchars($lagg['lagg']);
+			if (!is_numeric($lid) || $lid > $swinfo['nlaggroups']) {
+				$input_errors[] = sprintf(gettext("%d is not a valid LAGG group (max: %d)"), $lid, $swinfo['nlaggroups']);
+				continue;
+			}
+			if (!isset($lagg['port']) || !is_numeric($lagg['port'])) {
+				continue;
+			}
+			$port = htmlspecialchars($lagg['port']);
+			if (!is_numeric($port) || $port > $swinfo['nports']) {
+				$input_errors[] = sprintf(gettext("%d is not a valid port (max: %d)"), $port, $swinfo['nports']);
+				continue;
+			}
+			$laggs[$lid]['lagg'] = $lid;
+			$laggs[$lid]['members'] .= " ". $port;
+		}
+
+		if (! $input_errors && isset($swinfo['switch_caps']['LAGG'])) {
+			$swlagg = array();
+			foreach ($laggs as $lagg) {
+				$swlagg['lgroup'] = $lagg['lagg'];
+				$swlagg['members'] = trim($lagg['members']);
+				$a_switch['laggroups']['laggroup'][] = $swlagg;
 			}
 		}
 
 		if (! $input_errors) {
 			write_config("Updating switch port settings");
 			if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
-				foreach ($ja['vids'] as $vid) {
+				foreach ($ja['data'] as $vid) {
 					pfSense_etherswitch_setport($swdevice, $vid['port'], $vid['vid']);
 				}
 			}
+
+			if (isset($swinfo['switch_caps']['LAGG'])) {
+				for ($i = 0; $i < $swinfo['nlaggroups']; $i++) {
+					$laggroup = pfSense_etherswitch_getlaggroup($swdevice, $i);
+					if ($laggroup == NULL) {
+						continue;
+					}
+					mwexec("/sbin/etherswitchcfg laggroup{$i} members none");
+				}
+				foreach ($laggs as $lagg) {
+					$laggmembers = implode(",", explode(" ", trim($lagg['members'])));
+					mwexec("/sbin/etherswitchcfg laggroup{$lagg['lagg']} members $laggmembers");
+				}
+			}
+
 			$savemsg = gettext("Port settings updated.");
 		}
 	} else {
 		$input_errors[] = sprintf(gettext("There is no switch configuration to modify!"));
 	}
+}
+
+/* Load lagg settings _after_ editing. */
+$g_laggs = array();
+for ($i = 0; $i < $swinfo['nlaggroups']; $i++) {
+	$laggroup = pfSense_etherswitch_getlaggroup($swdevice, $i);
+	if ($laggroup == NULL) {
+		continue;
+	}
+	$g_laggs[] = $laggroup;
 }
 
 $pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("Ports"));
@@ -129,7 +204,6 @@ $tab_array = array();
 $tab_array[] = array(gettext("System"), false, "switch_system.php");
 $tab_array[] = array(gettext("Ports"), true, "switch_ports.php");
 $tab_array[] = array(gettext("VLANs"), false, "switch_vlans.php");
-$tab_array[] = array(gettext("LAGGs"), false, "switch_laggs.php");
 display_top_tabs($tab_array);
 
 // If there is more than one switch, draw a selector to allow the user to choose which one to look at
@@ -174,6 +248,11 @@ if ($savemsg) {
 	if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
 ?>
 						<th><?=gettext("Port VID"); ?></th>
+<?
+	}
+	if (isset($swinfo['switch_caps']['LAGG'])) {
+?>
+						<th><?=gettext("LAGG"); ?></th>
 <?
 	}
 ?>
@@ -222,6 +301,11 @@ if (! $input_errors) {
 		if ($swinfo['vlan_mode'] == "DOT1Q") {
 ?>
 			<td title="<?=gettext("Click to edit")?>" class="editable icon-pointer"><?= htmlspecialchars($port['pvid'])?></td>
+<?
+		}
+		if (isset($swinfo['switch_caps']['LAGG'])) {
+?>
+			<td title="<?=gettext("Click to edit")?>" class="editable icon-pointer"><?= htmlspecialchars(lagg_port($g_laggs, $port['port']))?></td>
 <?
 		}
 ?>
@@ -292,7 +376,10 @@ if (! $input_errors) {
 
 <nav class="action-buttons">
 <?php
-	if ($swinfo['vlan_mode'] == "DOT1Q") { ?>
+	if (isset($swinfo['switch_caps']['LAGG'])) { ?>
+	<span class="pull-left text-info"><?=gettext("Click a Port VID or a LAGG to edit")?></span>
+<?php
+	} else if ($swinfo['vlan_mode'] == "DOT1Q") { ?>
 	<span class="pull-left text-info"><?=gettext("Click a Port VID to edit")?></span>
 <?php } ?>
 	<button name="submit" id="submit" type="submit" class="btn btn-primary btn-sm" value="<?= gettext("Save"); ?>" >
@@ -316,7 +403,7 @@ events.push(function() {
 	// Create a JSON array of VIDs by port, add it to a form and transmit
 	$('#submit').on('click', function () {
 		var form = $('<form></form>').attr("method", 'post');
-		var json = '{"vids":[';
+		var json = '{"data":[';
 		var entry = 0;
 
 		$('#vlanporttablebody tr').each(function() {
@@ -324,7 +411,15 @@ events.push(function() {
 				json += ",\n";
 			}
 
-			json = json + '{"port":"' + $(this).find('td:eq(0)').text().trim() + '", "vid":"' + $(this).find('td:eq(2)').text().trim() + '"}';
+			json += '{"port":"' + $(this).find('td:eq(0)').text().trim() + '", "vid":"' + $(this).find('td:eq(2)').text().trim() + '"';
+<?
+	if (isset($swinfo['switch_caps']['LAGG'])) {
+?>
+			json += ', "lagg":"' + $(this).find('td:eq(3)').text().trim() + '"';
+<?
+	}
+?>
+ 			json += '}';
 			entry++;
 		});
 
@@ -333,7 +428,7 @@ events.push(function() {
 		// Compose a form containing the PVIDs and submit it
 		$('<input>').attr({
 				type: 'hidden',
-				name: 'vids',
+				name: 'data',
 				value: json
 			}).appendTo(form);
 

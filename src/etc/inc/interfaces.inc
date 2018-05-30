@@ -1212,6 +1212,75 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	return $gifif;
 }
 
+function interface_ipsec_vti_configure($ph1ent) {
+	global $config;
+
+	if (empty($ph1ent) || !is_array($ph1ent) || !is_array($config['ipsec']['phase2'])) {
+		return false;
+	}
+
+	$vtisubnet_spec = ipsec_vti($ph1ent, true);
+
+	if ($vtisubnet_spec && is_array($vtisubnet_spec)) {
+		$left_spec = ipsec_get_phase1_src($ph1ent);
+		$right_spec = $ph1ent['remote-gateway'];
+		$ipsecif = "ipsec{$ph1ent['ikeid']}";
+
+		if (platform_booting() || !does_interface_exist($ipsecif)) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " destroy", false);
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " create reqid " . escapeshellarg($ph1ent['ikeid']), false);
+		} else {
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " create reqid " . escapeshellarg($ph1ent['ikeid']), false);
+		}
+
+		$inet = is_ipaddrv6($left_spec) ? "inet6" : "inet";
+		mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} tunnel " . escapeshellarg($left_spec) . " " . escapeshellarg($right_spec) . " up", false);
+
+		$have_v4 = false;
+		$have_v6 = false;
+		foreach ($vtisubnet_spec as $vtisub) {
+			$alias = "";
+			if (is_ipaddrv6($vtisub['left'])) {
+				if ($have_v6) {
+					$alias = " alias";
+				} else {
+					// Write out gwv6 file
+					file_put_contents("/tmp/{$ipsecif}_routerv6", $vtisub['right']);
+				}
+				$inet =  "inet6";
+				$have_v6 = true;
+			} else {
+				if ($have_v4) {
+					$alias = " alias";
+				} else {
+					// Write out gw file
+					file_put_contents("/tmp/{$ipsecif}_router", $vtisub['right']);
+				}
+				$inet =  "inet";
+				$have_v4 = true;
+			}
+			/* ifconfig ipsec0 inet <p2 local> <p2 remote> */
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} " . escapeshellarg($vtisub['left']) . " " . escapeshellarg($vtisub['right']), false) . $alias;
+		}
+
+		if (!platform_booting()) {
+			system_routing_configure($ipsecif);
+		}
+	}
+}
+
+function interfaces_ipsec_vti_configure() {
+	global $config;
+	if (platform_booting()) {
+		echo gettext("Configuring IPsec VTI interfaces...");
+	}
+	if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
+		foreach ($config['ipsec']['phase1'] as $ph1ent) {
+			interface_ipsec_vti_configure($ph1ent);
+		}
+	}
+}
+
 function interfaces_configure() {
 	global $config, $g;
 
@@ -1228,6 +1297,9 @@ function interfaces_configure() {
 	interfaces_vlan_configure();
 
 	interfaces_qinq_configure();
+
+	/* set up IPsec VTI interfaces */
+	interfaces_ipsec_vti_configure();
 
 	$iflist = get_configured_interface_with_descr();
 	$delayed_list = array();
@@ -1250,6 +1322,8 @@ function interfaces_configure() {
 			$delayed_list[$if] = $ifname;
 		} else if (strstr($realif, "ovpn")) {
 			//echo "Delaying OpenVPN interface configuration...done.\n";
+			continue;
+		} else if (strstr($realif, "ipsec")) {
 			continue;
 		} else if (!empty($config['interfaces'][$if]['ipaddrv6']) && $config['interfaces'][$if]['ipaddrv6'] == "track6") {
 			$track6_list[$if] = $ifname;
@@ -1583,7 +1657,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	}
 
 	if ($destroy == true) {
-		if (preg_match("/^[a-z0-9]+^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_stf$/i", $realif)) {
+		if (preg_match("/^[a-z0-9]+^tun|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_stf$/i", $realif)) {
 			pfSense_interface_destroy($realif);
 		}
 	}
@@ -3395,6 +3469,17 @@ function interface_virtual_create($interface) {
 			}
 			unset($client);
 		}
+	} else if (substr($interface, 0, 5) == "ipsec") {
+		if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
+			foreach ($config['ipsec']['phase1'] as $ph1ent) {
+				if ($ph1ent['disabled']) {
+					continue;
+				}
+				if ($interface == "ipsec{$ph1ent['ikeid']}") {
+					interface_ipsec_vti_configure($ph1ent);
+				}
+			}
+		}
 	} else if (substr($interface, 0, 4) == "lagg") {
 		interfaces_lagg_configure($interface);
 	} else if (substr($interface, 0, 6) == "bridge") {
@@ -3485,7 +3570,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 	$realhwif = $realhwif_array[0];
 
-	if (!platform_booting() && !(substr($realif, 0, 4) == "ovpn")) {
+	if (!platform_booting() && !(substr($realif, 0, 4) == "ovpn") && !(substr($realif, 0, 5) == "ipsec")) {
 		/* remove all IPv4 and IPv6 addresses */
 		$tmpifaces = pfSense_getall_interface_addresses($realif);
 		if (is_array($tmpifaces)) {
@@ -3518,7 +3603,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* Need to check that the interface exists or not in the case where its coming back from disabled state see #3270 */
-	if (!platform_booting() && (in_array(substr($realif, 0, 3), array("gre", "gif")) || !does_interface_exist($interface_to_check))) {
+	if (!platform_booting() && (in_array(substr($realif, 0, 3), array("gre", "gif", "ips")) || !does_interface_exist($interface_to_check))) {
 		interface_virtual_create($interface_to_check);
 	}
 
@@ -3686,7 +3771,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			break;
 		default:
 			/* XXX: Kludge for now related to #3280 */
-			if (!in_array($tunnelif, array("gif", "gre", "ovp"))) {
+			if (!in_array($tunnelif, array("gif", "gre", "ovp", "ips"))) {
 				if (is_ipaddrv4($wancfg['ipaddr']) && $wancfg['subnet'] <> "") {
 					pfSense_interface_setaddress($realif, "{$wancfg['ipaddr']}/{$wancfg['subnet']}");
 				}
@@ -3718,7 +3803,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			break;
 		default:
 			/* XXX: Kludge for now related to #3280 */
-			if (!in_array($tunnelif, array("gif", "gre", "ovp"))) {
+			if (!in_array($tunnelif, array("gif", "gre", "ovp", "ips"))) {
 				if (is_ipaddrv6($wancfg['ipaddrv6']) && $wancfg['subnetv6'] <> "") {
 					//pfSense_interface_setaddress($realif, "{$wancfg['ipaddrv6']}/{$wancfg['subnetv6']}");
 					// FIXME: Add IPv6 Support to the pfSense module
@@ -3749,7 +3834,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			}
 		}
 
-		if ($linkupevent == false || substr($realif, 0, 4) == "ovpn") {
+		if (($linkupevent == false) || (substr($realif, 0, 4) == "ovpn") || (substr($realif, 0, 5) == "ipsec")) {
 			unset($bridgetmp);
 			$bridgetmp = link_interface_to_bridge($interface);
 			if (!empty($bridgetmp)) {
@@ -5920,6 +6005,17 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 			}
 		}
 	}
+	if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
+		foreach ($config['ipsec']['phase1'] as $ph1ent) {
+			if ($ph1ent['disabled']) {
+				continue;
+			}
+			if (ipsec_vti($ph1ent)) {
+				$sourceips_key = "ipsec{$ph1ent['ikeid']}";
+				$sourceips[$sourceips_key] = gettext("IPsec VTI") . ": " . htmlspecialchars($ph1ent['descr']);
+			}
+		}
+	}
 	return $sourceips;
 }
 
@@ -6115,7 +6211,11 @@ function get_interfaces_with_gateway() {
 				if (substr($ifname['if'], 0, 4) == "ovpn" ||
 				    !empty($ifname['gateway'])) {
 					$ints[$ifdescr] = $ifdescr;
+				} elseif (substr($ifname['if'], 0, 5) == "ipsec" ||
+				    !empty($ifname['gateway'])) {
+					$ints[$ifdescr] = $ifdescr;
 				}
+
 				break;
 		}
 	}
@@ -6137,7 +6237,8 @@ function interface_has_gateway($friendly) {
 				return true;
 			break;
 			default:
-				if (substr($ifname['if'], 0, 4) == "ovpn") {
+				if ((substr($ifname['if'], 0, 4) == "ovpn") ||
+				    (substr($ifname['if'], 0, 5) == "ipsec")) {
 					return true;
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);
@@ -6170,7 +6271,8 @@ function interface_has_gatewayv6($friendly) {
 				return true;
 				break;
 			default:
-				if (substr($ifname['if'], 0, 4) == "ovpn") {
+				if ((substr($ifname['if'], 0, 4) == "ovpn") ||
+				    (substr($ifname['if'], 0, 5) == "ipsec")) {
 					return true;
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);

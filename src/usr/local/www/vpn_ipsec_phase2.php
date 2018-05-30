@@ -138,16 +138,21 @@ if ($_POST['save']) {
 	}
 
 	/* input validation */
-	$reqdfields = explode(" ", "localid_type uniqid");
-	$reqdfieldsn = array(gettext("Local network type"), gettext("Unique Identifier"));
-	if (!isset($pconfig['mobile'])) {
-		$reqdfields[] = "remoteid_type";
-		$reqdfieldsn[] = gettext("Remote network type");
+	$reqdfields = array("uniqid");
+	$reqdfieldsn = array(gettext("Unique Identifier"));
+	if ($pconfig['mode'] != "vti") {
+		$reqdfields[] = "localid_type";
+		$reqdfieldsn[] = gettext("Local network type");
+
+		if (!isset($pconfig['mobile'])) {
+			$reqdfields[] = "remoteid_type";
+			$reqdfieldsn[] = gettext("Remote network type");
+		}
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($pconfig['mode'] == "tunnel") || ($pconfig['mode'] == "tunnel6")) {
+	if (($pconfig['mode'] == "tunnel") || ($pconfig['mode'] == "tunnel6") || ($pconfig['mode'] == "vti")) {
 		switch ($pconfig['localid_type']) {
 			case "network":
 				if (($pconfig['localid_netbits'] != 0 && !$pconfig['localid_netbits']) || !is_numericint($pconfig['localid_netbits'])) {
@@ -156,10 +161,14 @@ if ($_POST['save']) {
 			case "address":
 				if (!$pconfig['localid_address'] || !is_ipaddr($pconfig['localid_address'])) {
 					$input_errors[] = gettext("A valid local network IP address must be specified.");
+				} elseif ($pconfig['mode'] == "vti") {
+					if (!is_ipaddr($pconfig['localid_address'])) {
+						$input_errors[] = gettext("VTI requires a valid local address");
+					}
 				} elseif (is_ipaddrv4($pconfig['localid_address']) && ($pconfig['mode'] != "tunnel")) {
-					$input_errors[] = gettext("A valid local network IPv4 address must be specified or Mode needs to be changed to IPv6");
+					$input_errors[] = gettext("An IPv4 local address was specified but the mode is not set to tunnel");
 				} elseif (is_ipaddrv6($pconfig['localid_address']) && ($pconfig['mode'] != "tunnel6")) {
-					$input_errors[] = gettext("A valid local network IPv6 address must be specified or Mode needs to be changed to IPv4");
+					$input_errors[] = gettext("An IPv6 local address was specified but the mode is not set to tunnel6");
 				}
 				break;
 		}
@@ -213,10 +222,14 @@ if ($_POST['save']) {
 			case "address":
 				if (!$pconfig['remoteid_address'] || !is_ipaddr($pconfig['remoteid_address'])) {
 					$input_errors[] = gettext("A valid remote network IP address must be specified.");
+				} elseif ($pconfig['mode'] == "vti") {
+					if (!is_ipaddr($pconfig['remoteid_address'])) {
+						$input_errors[] = gettext("VTI requires a valid remote address");
+					}
 				} elseif (is_ipaddrv4($pconfig['remoteid_address']) && ($pconfig['mode'] != "tunnel")) {
-					$input_errors[] = gettext("A valid remote network IPv4 address must be specified or Mode needs to be changed to IPv6");
+					$input_errors[] = gettext("An IPv4 remote network was specified but the mode is not set to tunnel");
 				} elseif (is_ipaddrv6($pconfig['remoteid_address']) && ($pconfig['mode'] != "tunnel6")) {
-					$input_errors[] = gettext("A valid remote network IPv6 address must be specified or Mode needs to be changed to IPv4");
+					$input_errors[] = gettext("An IPv6 remote network was specified but the mode is not set to tunnel6");
 				}
 				break;
 		}
@@ -362,7 +375,7 @@ if ($_POST['save']) {
 			$ph2ent['reqid'] = $pconfig['reqid'];
 		}
 
-		if (($ph2ent['mode'] == "tunnel") || ($ph2ent['mode'] == "tunnel6")) {
+		if (($ph2ent['mode'] == "tunnel") || ($ph2ent['mode'] == "tunnel6") || ($ph2ent['mode'] == "vti")) {
 			if (!empty($pconfig['natlocalid_address'])) {
 				$ph2ent['natlocalid'] = pconfig_to_idinfo("natlocal", $pconfig);
 			}
@@ -722,12 +735,18 @@ print($form);
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+	$("form").submit(function() {
+		disableInput('localid_type', false);
+		disableInput('remoteid_type', false);
+	});
 
 	// ---------- On changing "Mode" ----------------------------------------------------------------------------------
 	function change_mode() {
 
 		value = $('#mode').val();
 
+		disableInput('localid_type', false);
+		disableInput('remoteid_type', false);
 		if ((value == 'tunnel') || (value == 'tunnel6')) {
 			hideClass('opt_localid', false);
 			hideClass('opt_natid', false);
@@ -736,6 +755,15 @@ events.push(function() {
 			hideClass('opt_remoteid', false);
 			hideClass('opt_natid', false);
 <?php	endif; ?>
+		} else if (value == 'vti') {
+			hideClass('opt_localid', false);
+			hideClass('opt_natid', true);
+			$('#localid_type').val('address');
+			$('#remoteid_type').val('address');
+			disableInput('localid_type', true);
+			disableInput('remoteid_type', true);
+			typesel_change_local(32);
+			typesel_change_remote(32);
 		} else {
 			hideClass('opt_localid', true);
 			hideClass('opt_natid', true);

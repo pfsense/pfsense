@@ -58,6 +58,9 @@ function easyrule_find_rule_interface($int) {
 	if (substr($int, 0, 4) == "ovpn") {
 		return "openvpn";
 	}
+	if (substr($int, 0, 5) == "ipsec") {
+		return "ipsec";
+	}
 
 	return false;
 }

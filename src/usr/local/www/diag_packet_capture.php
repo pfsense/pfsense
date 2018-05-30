@@ -134,6 +134,16 @@ foreach (array('server' => gettext('OpenVPN Server'), 'client' => gettext('OpenV
 		}
 	}
 }
+if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if ($ph1ent['disabled']) {
+			continue;
+		}
+		if (ipsec_vti($ph1ent)) {
+			$interfaces["ipsec{$ph1ent['ikeid']}"] = gettext("IPsec VTI") . ": ".htmlspecialchars($ph1ent['descr']);
+		}
+	}
+}
 
 if ($_POST) {
 	$host = $_POST['host'];

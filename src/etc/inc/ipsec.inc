@@ -198,7 +198,8 @@ global $p2_modes;
 $p2_modes = array(
 	'tunnel' => gettext('Tunnel IPv4'),
 	'tunnel6' => gettext('Tunnel IPv6'),
-	'transport' => gettext('Transport')
+	'transport' => gettext('Transport'),
+	'vti' => gettext('Routed (VTI)')
 );
 
 global $p2_protos;
@@ -868,4 +869,31 @@ function ipsec_get_loglevels() {
 	}
 	return $levels;
 }
+
+function ipsec_vti($ph1ent, $returnaddresses = false) {
+	global $config;
+	if (empty($ph1ent) || !is_array($ph1ent) || !is_array($config['ipsec']['phase2'])) {
+		return false;
+	}
+
+	$is_vti = false;
+	$vtisubnet_spec = array();
+
+	foreach ($config['ipsec']['phase2'] as $ph2ent) {
+		if ($ph1ent['ikeid'] != $ph2ent['ikeid']) {
+			continue;
+		}
+		if ($ph2ent['mode'] == 'vti') {
+			if ($returnaddresses) {
+				$vtisubnet_spec[] = array(
+					'left' => ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']),
+					'right' => ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']),
+				);
+			}
+			$is_vti = true;
+		}
+	}
+	return ($returnaddresses) ? $vtisubnet_spec : $is_vti;
+}
+
 ?>

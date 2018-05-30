@@ -145,7 +145,7 @@ if ($_POST['Submit'] == "No") {
 				</button>
 			<br/><br/>
 
-<?php	if (count($crash_files) > 0): ?>
+<?php	if ((count($crash_files) > 0) || (count($php_errors) > 0)): ?>
 			Click a button below to download an individual debugging data file:
 			<br/><br/>
 	<?php	if (count($php_errors) > 0): ?>

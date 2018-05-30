@@ -284,6 +284,9 @@ if ($_POST) {
 						if (!stristr($data, "<" . $g['xml_rootobj'] . ">")) {
 							$input_errors[] = sprintf(gettext("A full configuration restore was selected but a %s tag could not be located."), $g['xml_rootobj']);
 						} else {
+							if ($_POST['switch_safe_restore']) {
+								$switch = $config['switches'];
+							}
 							/* restore the entire configuration */
 							file_put_contents($_FILES['conffile']['tmp_name'], $data);
 							if (config_install($_FILES['conffile']['tmp_name']) == 0) {
@@ -295,6 +298,11 @@ if ($_POST) {
 									unlink("{$g['tmp_path']}/config.cache");
 								}
 								$config = parse_config(true);
+								if ($_POST['switch_safe_restore']) {
+									unset($config['switches']);
+									$config['switches'] = $switch;
+									write_config(gettext("Restore existing switch settings."));
+								}
 								if (file_exists("/boot/loader.conf")) {
 									$loaderconf = file_get_contents("/boot/loader.conf");
 									if (strpos($loaderconf, "console=\"comconsole")) {
@@ -565,6 +573,13 @@ $section->addInput(new Form_Input(
 	'Configuration file',
 	'file',
 	null
+));
+
+$section->addInput(new Form_Checkbox(
+	'switch_safe_restore',
+	'Switch',
+	'Preserve switch configuration.',
+	false
 ));
 
 $section->addInput(new Form_Checkbox(

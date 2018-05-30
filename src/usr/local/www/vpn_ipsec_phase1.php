@@ -156,7 +156,6 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['peerid_type'] = "peeraddress";
 	$pconfig['authentication_method'] = "pre_shared_key";
 	$pconfig['lifetime'] = "28800";
-	$pconfig['rekey_enable'] = true;
 	$pconfig['nat_traversal'] = 'on';
 	$pconfig['mobike'] = 'off';
 	$pconfig['dpd_enable'] = true;

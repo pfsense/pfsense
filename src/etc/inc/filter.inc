@@ -1702,6 +1702,26 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		$tonathosts[] = "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']}";
 		$descriptions[] = gettext("IPsec client");
 	}
+	if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
+		foreach ($config['ipsec']['phase1'] as $ph1ent) {
+			// Skip disabled or non-matching IPsec
+			if (($ikeid != $ph1ent['ikeid']) || $ph1ent['disabled']) {
+				continue;
+			}
+			$vti_addrs = ipsec_vti($ph1ent, true);
+			// Skip non-VTI tunnels
+			if (!$vti_addrs || !is_array($vti_addrs)) {
+				continue;
+			}
+			// If any of the VTI remotes is v4, then we can make a v4 gw
+			foreach ($vti_addrs as $vtia) {
+				if (is_ipaddrv4($vtia['right'])) {
+					$tonathosts[] = $vtia['right'];
+					$descriptions[] = gettext("IPsec VTI: {$ph1ent['descr']}");
+				}
+			}
+		}
+	}
 
 	if ($with_descr) {
 		$combined = array();
@@ -1722,7 +1742,8 @@ function filter_nat_rules_outbound_automatic($src) {
 
 	$rules = array();
 	foreach ($FilterIflist as $if => $ifcfg) {
-		if (substr($ifcfg['if'], 0, 4) == "ovpn") {
+		if ((substr($ifcfg['if'], 0, 4) == "ovpn") ||
+		    (substr($ifcfg['if'], 0, 5) == "ipsec")) {
 			continue;
 		}
 		if (!interface_has_gateway($if)) {

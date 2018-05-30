@@ -169,6 +169,21 @@ if (is_array($config['openvpn'])) {
 	}
 }
 
+global $ipsec_descrs;
+$ipsec_descrs = array();
+if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if ($ph1ent['disabled']) {
+			continue;
+		}
+		if (ipsec_vti($ph1ent)) {
+			$portname = "ipsec{$ph1ent['ikeid']}";
+			$portlist[$portname] = $ph1ent;
+			$ipsec_descrs[$ph1ent['ikeid']] = $ph1ent['descr'];
+		}
+	}
+}
+
 
 $ifdescrs = interface_assign_description_fast($portlist,$friendlyifnames);
 

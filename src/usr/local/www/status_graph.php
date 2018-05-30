@@ -51,6 +51,16 @@ foreach (array('server', 'client') as $mode) {
 		}
 	}
 }
+if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if ($ph1ent['disabled']) {
+			continue;
+		}
+		if (ipsec_vti($ph1ent)) {
+			$ifdescrs["ipsec{$ph1ent['ikeid']}"] = gettext("IPsec VTI") . ": ".htmlspecialchars($ph1ent['descr']);
+		}
+	}
+}
 
 if ($_REQUEST['if']) {
 	$curif = $_REQUEST['if'];

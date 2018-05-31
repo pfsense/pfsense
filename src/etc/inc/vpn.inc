@@ -1350,6 +1350,9 @@ EOD;
 					}
 
 					$reqids[] = $ph2ent['reqid'];
+					if ($ph2ent['mode'] != 'vti') {
+						$vtireq[] = null;
+					}
 
 					if (!empty($ph2ent['lifetime'])) {
 						if ($ipseclifetime == 0 || intval($ipseclifetime) > intval($ph2ent['lifetime'])) {
@@ -1420,7 +1423,7 @@ EOD;
 						//	$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
 						//}
 						if (!empty($vtireq[$idx])) {
-							$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
+							$ipsecfin .= "\treqid = " . $vtireq[$idx] . "\n";
 						}
 						$ipsecfin .= $ipsecconnect;
 						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
@@ -1440,7 +1443,7 @@ EOD;
 				//	$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				//}
 				if (!empty($vtireq[$idx])) {
-					$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
+					$ipsecfin .= "\treqid = " . $vtireq[0] . "\n";
 				}
 				$ipsecfin .= $ipsecconnect;
 				if (!isset($ph1ent['mobile']) && !empty($rightsubnet_spec)) {

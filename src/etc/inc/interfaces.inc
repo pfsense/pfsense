@@ -1307,6 +1307,9 @@ function interfaces_ipsec_vti_configure() {
 			interface_ipsec_vti_configure($ph1ent);
 		}
 	}
+	if (platform_booting()) {
+		echo gettext("done.") . "\n";
+	}
 }
 
 function interfaces_configure() {

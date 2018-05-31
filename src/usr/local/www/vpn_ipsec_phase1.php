@@ -1201,7 +1201,7 @@ events.push(function() {
 	 // algorithm
 	$('[id^=ealgo_algo]select').change(function () {
 		id = getStringInt(this.id);
-		ealgosel_change(id, <?=$keyset?>);
+		ealgosel_change(id, 0);
 	});
 
 	// On ititial page load

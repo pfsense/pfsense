@@ -32,6 +32,9 @@ $services = get_services();
 $numsvcs = count($services);
 
 for ($idx=0; $idx<$numsvcs; $idx++) {
+	if (!is_array($services[$idx])) {
+		$services[$idx] = array();
+	}
 	$services[$idx]['dispname'] = $services[$idx]['name'];
 }
 

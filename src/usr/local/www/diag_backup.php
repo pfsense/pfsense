@@ -41,6 +41,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("switch.inc");
 
 $rrddbpath = "/var/db/rrd";
 $rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
@@ -575,12 +576,14 @@ $section->addInput(new Form_Input(
 	null
 ));
 
-$section->addInput(new Form_Checkbox(
-	'switch_safe_restore',
-	'Switch',
-	'Preserve switch configuration.',
-	false
-));
+if (platform_has_switch()) {
+	$section->addInput(new Form_Checkbox(
+		'switch_safe_restore',
+		'Switch',
+		'Preserve switch configuration.',
+		false
+	));
+}
 
 $section->addInput(new Form_Checkbox(
 	'decrypt',

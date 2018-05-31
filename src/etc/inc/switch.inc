@@ -604,4 +604,17 @@ function switches_configure($force = false) {
 		echo gettext("done.") . "\n";
 	}
 }
+
+function platform_has_switch() {
+
+	$platform = system_identify_specific_platform();
+	switch ($platform['name']) {
+	case "A37XX":
+	case "PLCC-B":
+	case "ROGUE-1":
+	case "uFW":
+		return true;
+	}
+	return false;
+}
 ?>

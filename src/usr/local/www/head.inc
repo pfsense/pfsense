@@ -23,6 +23,7 @@ require_once("globals.inc");
 require_once("functions.inc");
 require_once("shortcuts.inc");
 require_once("service-utils.inc");
+require_once("switch.inc");
 require_once('notices.inc');
 
 header('Content-Type: text/html; charset=utf-8');
@@ -269,15 +270,8 @@ if (!isset($config['system']['webgui']['noassigninterfaces'])) {
 	$div = true;
 }
 
-$platform = system_identify_specific_platform();
-
-switch ($platform['name']) {
-	case "A37XX":
-	case "PLCC-B":
-	case "ROGUE-1":
-	case "uFW":
-		$interfaces_top[] = array(gettext("Switches"), "/switch_system.php");
-		break;
+if (platform_has_switch()) {
+	$interfaces_top[] = array(gettext("Switches"), "/switch_system.php");
 }
 
 $opts = get_configured_interface_with_descr(true);

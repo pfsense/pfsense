@@ -211,6 +211,33 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("A valid source bit count must be specified.");
 	}
 
+	# Check for source-destination and source-target address family agreement
+	if ($_POST['source_type'] != "any" && $_POST['source_type'] != "(self)" && $_POST['source'] && $_POST['source'] != "any" && !is_alias($_POST['source'])) {
+		if ($_POST['destination_type'] != "any" && $_POST['destination'] && !is_alias($_POST['destination'])) {
+			# Check whether source and destination are IP addresses of the same
+			# type. If they both are 'false' (not IP addresses), then continue
+			# without error, as we've already validated above (i.e. aliases)
+			if(is_ipaddr($_POST['source']) !== is_ipaddr($_POST['destination'])) {
+				$input_errors[] = gettext("Source and destination must be in the same address family.");
+			}
+		}
+
+		# Check for source-target address family agreement
+		if ($_POST['target'] && !is_alias($_POST['target']) && !isset($_POST['nonat'])) {
+			# Check whether source and target are IP addresses of the same
+			# type. If they both are 'false' (not IP addresses), then continue
+			# without error, as we've already validated above (i.e. aliases)
+			$real_target = ($_POST['target'] == "other-subnet" ? $_POST['targetip'] : $_POST['target']);
+			if (is_subnet($real_target)) {
+				$real_target = strstr($real_target,"/",true);
+			}
+			if(is_ipaddr($_POST['source']) !== is_ipaddr($real_target)) {
+				$input_errors[] = gettext("Source and target must be in the same address family.");
+			}
+		}
+
+	}
+
 	if ($_POST['destination_type'] != "any") {
 		if ($_POST['destination'] && !is_ipaddroralias($_POST['destination'])) {
 			$input_errors[] = gettext("A valid destination must be specified.");
@@ -479,7 +506,7 @@ $section->addInput(new Form_Select(
 	create_interface_list()
 ))->setHelp('The interface on which traffic is matched as it exits the firewall. In most cases this is "WAN" or another externally-connected interface.');
 
-$protocols = "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync";
+$protocols = "any TCP UDP TCP/UDP ICMP ESP AH GRE IGMP carp pfsync";
 
 $section->addInput(new Form_Select(
 	'protocol',

@@ -5693,6 +5693,20 @@ function upgrade_181_to_182() {
 	}
 }
 
+function upgrade_182_to_183() {
+	global $config;
+
+	if (is_array($config['nat']['outbound']['rule'])) {
+		foreach ($config['nat']['outbound']['rule'] as &$obent) {
+			// We no longer need a protocol "ipv6", as specifying
+			// IPv6 addresses is sufficient.
+			if($obent['protocol'] == "ipv6") {
+				$obent['protocol'] = "any";
+			}
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

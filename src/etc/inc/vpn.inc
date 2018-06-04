@@ -308,9 +308,13 @@ function vpn_ipsec_configure($restart = false) {
 			}
 			$rgmap[$ph1ent['remote-gateway']] = $rg;
 
+			$is_vti = false;
 			if (is_array($a_phase2)) {
 				/* step through each phase2 entry */
 				foreach ($a_phase2 as $ph2ent) {
+					if ($ph2ent['mode'] == 'vti') {
+						$is_vti = true;
+					}
 					if (isset($ph2ent['disabled'])) {
 						continue;
 					}
@@ -371,6 +375,9 @@ function vpn_ipsec_configure($restart = false) {
 						}
 					}
 				}
+			}
+			if ($is_vti) {
+				interface_ipsec_vti_configure($ph1ent);
 			}
 		}
 		@file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);

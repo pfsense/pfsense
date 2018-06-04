@@ -138,16 +138,11 @@ if ($_POST['save']) {
 	}
 
 	/* input validation */
-	$reqdfields = array("uniqid");
-	$reqdfieldsn = array(gettext("Unique Identifier"));
-	if ($pconfig['mode'] != "vti") {
-		$reqdfields[] = "localid_type";
-		$reqdfieldsn[] = gettext("Local network type");
-
-		if (!isset($pconfig['mobile'])) {
-			$reqdfields[] = "remoteid_type";
-			$reqdfieldsn[] = gettext("Remote network type");
-		}
+	$reqdfields = explode(" ", "localid_type uniqid");
+	$reqdfieldsn = array(gettext("Local network type"), gettext("Unique Identifier"));
+	if (!isset($pconfig['mobile'])) {
+		$reqdfields[] = "remoteid_type";
+		$reqdfieldsn[] = gettext("Remote network type");
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -758,11 +753,8 @@ events.push(function() {
 		} else if (value == 'vti') {
 			hideClass('opt_localid', false);
 			hideClass('opt_natid', true);
-			$('#localid_type').val('address');
 			$('#remoteid_type').val('address');
-			disableInput('localid_type', true);
 			disableInput('remoteid_type', true);
-			typesel_change_local(32);
 			typesel_change_remote(32);
 		} else {
 			hideClass('opt_localid', true);

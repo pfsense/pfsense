@@ -1260,7 +1260,7 @@ function interface_ipsec_vti_configure($ph1ent) {
 				$have_v4 = true;
 			}
 			/* ifconfig ipsec0 inet <p2 local> <p2 remote> */
-			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} " . escapeshellarg($vtisub['left']) . " " . escapeshellarg($vtisub['right']), false) . $alias;
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} " . escapeshellarg($vtisub['left']) . " " . escapeshellarg($vtisub['right']) . $alias, false);
 		}
 
 		if (!platform_booting()) {

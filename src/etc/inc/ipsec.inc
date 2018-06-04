@@ -886,7 +886,7 @@ function ipsec_vti($ph1ent, $returnaddresses = false) {
 		if ($ph2ent['mode'] == 'vti') {
 			if ($returnaddresses) {
 				$vtisubnet_spec[] = array(
-					'left' => ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']),
+					'left' => ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']),
 					'right' => ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']),
 				);
 			}

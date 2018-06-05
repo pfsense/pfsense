@@ -1430,7 +1430,7 @@ EOD;
 						//	$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
 						//}
 						if (!empty($vtireq[$idx])) {
-							$ipsecfin .= "\treqid = " . $vtireq[$idx] . "\n";
+							$ipsecfin .= "\treqid = {$ph1ent['ikeid']}00{$idx}\n";
 						}
 						$ipsecfin .= $ipsecconnect;
 						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
@@ -1450,7 +1450,7 @@ EOD;
 				//	$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				//}
 				if (!empty($vtireq[$idx])) {
-					$ipsecfin .= "\treqid = " . $vtireq[0] . "\n";
+					$ipsecfin .= "\treqid = {$ph1ent['ikeid']}000\n";
 				}
 				$ipsecfin .= $ipsecconnect;
 				if (!isset($ph1ent['mobile']) && !empty($rightsubnet_spec)) {

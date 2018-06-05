@@ -1212,6 +1212,45 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	return $gifif;
 }
 
+/* Build a list of IPsec interfaces */
+function interface_ipsec_vti_list_p1($ph1ent) {
+	global $config;
+	$iface_list = array();
+
+	if (empty($ph1ent) || !is_array($ph1ent) || !is_array($config['ipsec']['phase2'])) {
+		return $iface_list;
+	}
+
+	$vtisubnet_spec = ipsec_vti($ph1ent, true);
+	if ((!$vtisubnet_spec || !is_array($vtisubnet_spec))) {
+		return $iface_list;
+	}
+
+	/* With IKEv1 or v2+Split, each P2 gets its own conn/reqid/interface */
+	if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
+		foreach ($vtisubnet_spec as $idx => $vtisub) {
+			$iface_list["ipsec{$ph1ent['ikeid']}00{$idx}"] = gettext("IPsec VTI") . ": ".htmlspecialchars($ph1ent['descr'] . " / " . $vtisub['descr']);
+		}
+	} else {
+		/* For IKEv2, only create one interface with additional addresses as aliases */
+		$iface_list["ipsec{$ph1ent['ikeid']}000"] = gettext("IPsec VTI") . ": ".htmlspecialchars($ph1ent['descr']);
+	}
+	return $iface_list;
+}
+function interface_ipsec_vti_list_all() {
+	global $config;
+	$iface_list = array();
+	if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
+		foreach ($config['ipsec']['phase1'] as $ph1ent) {
+			if ($ph1ent['disabled']) {
+				continue;
+			}
+			$iface_list = array_merge($iface_list, interface_ipsec_vti_list_p1($ph1ent));
+		}
+	}
+	return $iface_list;
+}
+
 function interface_ipsec_vti_configure($ph1ent) {
 	global $config;
 
@@ -1220,52 +1259,90 @@ function interface_ipsec_vti_configure($ph1ent) {
 	}
 
 	$vtisubnet_spec = ipsec_vti($ph1ent, true);
+	if ((!$vtisubnet_spec || !is_array($vtisubnet_spec))) {
+		return false;
+	}
 
-	if ($vtisubnet_spec && is_array($vtisubnet_spec)) {
-		$left_spec = ipsec_get_phase1_src($ph1ent);
-		$right_spec = $ph1ent['remote-gateway'];
-		$ipsecif = "ipsec{$ph1ent['ikeid']}";
+	$left_spec = ipsec_get_phase1_src($ph1ent);
+	$right_spec = $ph1ent['remote-gateway'];
 
-		if (platform_booting() || !does_interface_exist($ipsecif)) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " destroy", false);
-			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " create reqid " . escapeshellarg($ph1ent['ikeid']), false);
-		} else {
-			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " create reqid " . escapeshellarg($ph1ent['ikeid']), false);
+	$iface_addrs = array();
+
+	/* With IKEv1 or v2+Split, each P2 gets its own conn/reqid/interface */
+	if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
+		/* Form a single interface for each P2 entry */
+		foreach ($vtisubnet_spec as $idx => $vtisub) {
+			$ipsecifnum = "{$ph1ent['ikeid']}00{$idx}";
+			if (!is_array($iface_addrs[$ipsecifnum])) {
+				$iface_addrs[$ipsecifnum] = array();
+			}
+			$vtisub['alias'] = "";
+			$iface_addrs[$ipsecifnum][] = $vtisub;
 		}
-
-		$inet = is_ipaddrv6($left_spec) ? "inet6" : "inet";
-		mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} tunnel " . escapeshellarg($left_spec) . " " . escapeshellarg($right_spec) . " up", false);
-
+	} else {
+		/* For IKEv2, only create one interface with additional addresses as aliases */
+		$ipsecifnum = "{$ph1ent['ikeid']}000";
+		if (!is_array($iface_addrs[$ipsecifnum])) {
+			$iface_addrs[$ipsecifnum] = array();
+		}
 		$have_v4 = false;
 		$have_v6 = false;
 		foreach ($vtisubnet_spec as $vtisub) {
-			$alias = "";
+			// Alias stuff
+			$vtisub['alias'] = "";
 			if (is_ipaddrv6($vtisub['left'])) {
 				if ($have_v6) {
-					$alias = " alias";
-				} else {
-					// Write out gwv6 file
-					file_put_contents("/tmp/{$ipsecif}_routerv6", $vtisub['right']);
+					$vtisub['alias'] = " alias";
 				}
-				$inet =  "inet6";
 				$have_v6 = true;
 			} else {
 				if ($have_v4) {
-					$alias = " alias";
-				} else {
-					// Write out gw file
-					file_put_contents("/tmp/{$ipsecif}_router", $vtisub['right']);
+					$vtisub['alias'] = " alias";
 				}
-				$inet =  "inet";
 				$have_v4 = true;
 			}
-			/* ifconfig ipsec0 inet <p2 local> <p2 remote> */
-			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} " . escapeshellarg($vtisub['left']) . " " . escapeshellarg($vtisub['right']) . $alias, false);
+			$iface_addrs[$ipsecifnum][] = $vtisub;
+		}
+	}
+
+	foreach ($iface_addrs as $ipsecifnum => $addrs) {
+		$ipsecif = "ipsec{$ipsecifnum}";
+		if (!is_array($addrs)) {
+			continue;
+		}
+		// Create IPsec interface
+		if (platform_booting() || !does_interface_exist($ipsecif)) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " destroy", false);
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " create reqid " . escapeshellarg($ipsecifnum), false);
+		} else {
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " create reqid " . escapeshellarg($ipsecifnum), false);
 		}
 
-		if (!platform_booting()) {
-			system_routing_configure($ipsecif);
+		/* Apply the outer tunnel addresses to the interface */
+		$inet = is_ipaddrv6($left_spec) ? "inet6" : "inet";
+		mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} tunnel " . escapeshellarg($left_spec) . " " . escapeshellarg($right_spec) . " up", false);
+
+		/* Loop through all of the addresses for this interface and apply them as needed */
+		foreach ($addrs as $addr) {
+			// apply interface addresses
+			if (is_ipaddrv6($addr['left'])) {
+				$inet = "inet6";
+				$gwtype = "v6";
+			} else {
+				$inet = "inet";
+				$gwtype = "";
+			}
+
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} " . escapeshellarg($addr['left']) . " " . escapeshellarg($addr['right']) . $addr['alias'], false);
+			/* If alias is empty, this is the first address on the interface and should be used as the gateway. */
+			if (empty($addr['alias'])) {
+				file_put_contents("/tmp/{$ipsecif}_router{$gwtype}", $addr['right']);
+			}
 		}
+	}
+
+	if (!platform_booting()) {
+		system_routing_configure($ipsecif);
 	}
 }
 
@@ -1276,6 +1353,9 @@ function interfaces_ipsec_vti_configure() {
 	}
 	if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
 		foreach ($config['ipsec']['phase1'] as $ph1ent) {
+			if ($ph1ent['disabled']) {
+				continue;
+			}
 			interface_ipsec_vti_configure($ph1ent);
 		}
 	}

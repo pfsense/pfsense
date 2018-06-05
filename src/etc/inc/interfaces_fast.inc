@@ -261,7 +261,7 @@ function interface_assign_description_fast($portlist, $friendlyifnames) {
 		} elseif (substr($portname, 0, 4) == 'ovpn') {
 			$descr = $portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")";
 		} elseif (substr($portname, 0, 5) == 'ipsec') {
-			$descr = $portname . " (" . $ipsec_descrs[substr($portname, 5)] . ")";
+			$descr = $portname . " (" . $ipsec_descrs[$portname] . ")";
 		} else {
 			$descr = $portname . " (" . $portinfo['mac'] . ")";
 		}

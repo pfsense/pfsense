@@ -31,6 +31,9 @@
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
+$logging_level = LOG_WARNING;
+$logging_prefix = gettext("Local User Database");
+
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$userid = $_REQUEST['userid'];
 }
@@ -77,7 +80,10 @@ if ($_POST['save']) {
 
 		$a_user['priv'] = sort_user_privs($a_user['priv']);
 		local_user_set($a_user);
-		write_config();
+
+		$savemsg = sprintf(gettext("Privileges changed for user: %s"), $a_user['name']);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 
 		post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
 

@@ -36,6 +36,9 @@
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
+$logging_level = LOG_WARNING;
+$logging_prefix = gettext("Local User Database");
+
 if (!is_array($config['system']['group'])) {
 	$config['system']['group'] = array();
 }
@@ -72,8 +75,10 @@ if ($_POST['act'] == "delgroup") {
 	unset($a_group[$id]);
 	/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
 	$a_group = array_values($a_group);
-	write_config();
-	$savemsg = sprintf(gettext("Group %s successfully deleted."), $groupdeleted);
+
+	$savemsg = sprintf(gettext("Successfully deleted group: %s"), $groupdeleted);
+	write_config($savemsg);
+	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 }
 
 if ($_POST['act'] == "delpriv") {
@@ -95,9 +100,11 @@ if ($_POST['act'] == "delpriv") {
 		}
 	}
 
-	write_config();
+	$savemsg = sprintf(gettext("Removed Privilege \"%s\" from group %s"), $privdeleted, $a_group[$id]['name']);
+	write_config($savemsg);
+	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+
 	$act = "edit";
-	$savemsg = sprintf(gettext("Privilege %s successfully deleted."), $privdeleted);
 }
 
 if ($act == "edit") {
@@ -114,18 +121,22 @@ if ($act == "edit") {
 if (isset($_POST['dellall_x'])) {
 
 	$del_groups = $_POST['delete_check'];
+	$deleted_groups = array();
 
 	if (!empty($del_groups)) {
 		foreach ($del_groups as $groupid) {
 			if (isset($a_group[$groupid]) && $a_group[$groupid]['scope'] != "system") {
+				$deleted_groups[] = $a_group[$groupid]['name'];
 				local_group_del($a_group[$groupid]);
 				unset($a_group[$groupid]);
 			}
 		}
+
+		$savemsg = sprintf(gettext("Successfully deleted %s: %s"), (count($deleted_groups) == 1) ? gettext("group") : gettext("groups"), implode(', ', $deleted_groups));
 		/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
 		$a_group = array_values($a_group);
-		$savemsg = gettext("Selected groups removed successfully.");
 		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	}
 }
 
@@ -214,7 +225,9 @@ if (isset($_POST['save'])) {
 			return strcmp($a['name'], $b['name']);
 		});
 
-		write_config();
+		$savemsg = sprintf(gettext("Successfully %s group %s"), (strlen($id) > 0) ? gettext("edited") : gettext("created"), $group['name']);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 
 		header("Location: system_groupmanager.php");
 		exit;

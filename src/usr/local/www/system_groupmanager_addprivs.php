@@ -35,6 +35,9 @@
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
+$logging_level = LOG_WARNING;
+$logging_prefix = gettext("Local User Database");
+
 $groupid = $_REQUEST['groupid'];
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"), gettext("Edit"), gettext("Add Privileges"));
@@ -87,7 +90,9 @@ if ($_POST['save']) {
 			}
 		}
 
-		write_config();
+		$savemsg = sprintf(gettext("Privileges changed for group: %s"), $a_group['name']);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 
 		pfSenseHeader("system_groupmanager.php?act=edit&groupid={$groupid}");
 		exit;

@@ -66,6 +66,11 @@ net/py-speedtest-cli
 net/trafshow
 net/trafshow3
 net/vnstat
+security/netgate-cryptoauthlib
+security/netgate-libthoth
+security/netgate-openssl
+security/netgate-ping-auth
+security/netgate-thoth
 security/%%PRODUCT_NAME%%-pkg-acme@all
 security/%%PRODUCT_NAME%%-pkg-nmap
 security/%%PRODUCT_NAME%%-pkg-openvpn-client-export

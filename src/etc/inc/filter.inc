@@ -1704,10 +1704,6 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	}
 	if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
 		foreach ($config['ipsec']['phase1'] as $ph1ent) {
-			// Skip disabled or non-matching IPsec
-			if (($ikeid != $ph1ent['ikeid']) || $ph1ent['disabled']) {
-				continue;
-			}
 			$vti_addrs = ipsec_vti($ph1ent, true);
 			// Skip non-VTI tunnels
 			if (!$vti_addrs || !is_array($vti_addrs)) {

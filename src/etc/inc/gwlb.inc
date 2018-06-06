@@ -734,19 +734,31 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 					$ikeid = substr($ifcfg['if'], 5);
 					if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
 						foreach ($config['ipsec']['phase1'] as $ph1ent) {
-							// Skip disabled or non-matching IPsec
-							if (($ikeid != $ph1ent['ikeid']) || $ph1ent['disabled']) {
+							if ($ph1ent['disabled']) {
 								continue;
 							}
-							$vti_addrs = ipsec_vti($ph1ent, true);
+							$vtisubnet_spec = ipsec_vti($ph1ent, true);
 							// Skip non-VTI tunnels
-							if (!$vti_addrs || !is_array($vti_addrs)) {
+							if (!$vtisubnet_spec || !is_array($vtisubnet_spec)) {
 								continue;
 							}
-							// If any of the VTI remotes is v4, then we can make a v4 gw
-							foreach ($vti_addrs as $vtia) {
-								if (is_ipaddrv4($vtia['right'])) {
-									$ctype = "VTIv4";
+							if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
+								foreach ($vtisubnet_spec as $idx => $vtisub) {
+									if ($ifcfg['if'] == "ipsec{$ph1ent['ikeid']}00{$idx}") {
+										// If this specific VTI remote is v4, then we can make a v4 gw
+										if (is_ipaddrv4($vtisub['right'])) {
+											$ctype = "VTIv4";
+										}
+									}
+								}
+							} else {
+								if ($ifcfg['if'] == "ipsec{$ph1ent['ikeid']}000") {
+									// If any of the VTI remotes are v4, then we can make a v4 gw
+									foreach ($vtisubnet_spec as $vtisub) {
+										if (is_ipaddrv4($vtisub['right'])) {
+											$ctype = "VTIv4";
+										}
+									}
 								}
 							}
 						}
@@ -864,19 +876,31 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 					$ikeid = substr($ifcfg['if'], 5);
 					if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
 						foreach ($config['ipsec']['phase1'] as $ph1ent) {
-							// Skip disabled or non-matching IPsec
-							if (($ikeid != $ph1ent['ikeid']) || $ph1ent['disabled']) {
+							if ($ph1ent['disabled']) {
 								continue;
 							}
-							$vti_addrs = ipsec_vti($ph1ent, true);
+							$vtisubnet_spec = ipsec_vti($ph1ent, true);
 							// Skip non-VTI tunnels
-							if (!$vti_addrs || !is_array($vti_addrs)) {
+							if (!$vtisubnet_spec || !is_array($vtisubnet_spec)) {
 								continue;
 							}
-							// If any of the VTI remotes is v6, then we can make a v6 gw
-							foreach ($vti_addrs as $vtia) {
-								if (is_ipaddrv6($vtia['right'])) {
-									$ctype = "VTIv6";
+							if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
+								foreach ($vtisubnet_spec as $idx => $vtisub) {
+									if ($ifcfg['if'] == "ipsec{$ph1ent['ikeid']}00{$idx}") {
+										// If this specific VTI remote is v6, then we can make a v6 gw
+										if (is_ipaddrv6($vtisub['right'])) {
+											$ctype = "VTIv6";
+										}
+									}
+								}
+							} else {
+								if ($ifcfg['if'] == "ipsec{$ph1ent['ikeid']}000") {
+									// If any of the VTI remotes are v6, then we can make a v6 gw
+									foreach ($vtisubnet_spec as $vtisub) {
+										if (is_ipaddrv6($vtisub['right'])) {
+											$ctype = "VTIv6";
+										}
+									}
 								}
 							}
 						}

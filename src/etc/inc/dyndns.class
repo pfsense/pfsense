@@ -854,13 +854,11 @@
 					   Piggybacks on Route 53's ZoneID field for DNSimple record ID
 					   Data sent as JSON */
 					$needsIP = TRUE;
-					$server = 'https://api.dnsimple.com/v1/domains/';
-					$token = $this->_dnsUser . ':' . $this->_dnsPass;
-					$jsondata = '{"record":{"content":"' . $this->_dnsIP . '","ttl":"' . $this->_dnsTTL . '"}}';
-					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/json', 'X-DNSimple-Token: ' . $token));
-					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '/records/' . $this->_dnsZoneID);
-					curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
+					$server = 'https://api.dnsimple.com/v2/';
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/json', 'Authorization: Bearer ' . $this->_dnsPass));
+					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsUser . '/zones/' . $this->_dnsHost . '/records/' . $this->_dnsZoneID);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, '{"content":"' . $this->_dnsIP . '","ttl":"' . $this->_dnsTTL . '"}');
 					break;
 				case 'godaddy':
 				case 'godaddy-v6':

@@ -63,7 +63,7 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone][
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
+if ($_POST['act'] == "del" && !empty($cpzone)) {
 	$a_allowedhostnames =& $a_cp[$cpzone]['allowedhostname'];
 	if ($a_allowedhostnames[$_POST['id']]) {
 		$ipent = $a_allowedhostnames[$_POST['id']];

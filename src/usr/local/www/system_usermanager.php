@@ -37,6 +37,9 @@ require_once("certs.inc");
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
+$logging_level = LOG_WARNING;
+$logging_prefix = gettext("Local User Database");
+
 // start admin user code
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$id = $_REQUEST['userid'];
@@ -96,8 +99,9 @@ if ($_POST['act'] == "deluser") {
 		unset($a_user[$id]);
 		/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
 		$a_user = array_values($a_user);
-		write_config();
-		$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
+		$savemsg = sprintf(gettext("Successfully deleted user: %s"), $userdeleted);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	}
 
 } else if ($act == "new") {
@@ -125,9 +129,7 @@ if ($_POST['act'] == "deluser") {
 if (isset($_POST['dellall'])) {
 
 	$del_users = $_POST['delete_check'];
-	$deleted_users = "";
-	$deleted_count = 0;
-	$comma = "";
+	$deleted_users = array();
 
 	if (!empty($del_users)) {
 		foreach ($del_users as $userid) {
@@ -135,9 +137,7 @@ if (isset($_POST['dellall'])) {
 				if ($a_user[$userid]['name'] == $_SESSION['Username']) {
 					$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $a_user[$userid]['name']);
 				} else {
-					$deleted_users = $deleted_users . $comma . $a_user[$userid]['name'];
-					$comma = ", ";
-					$deleted_count++;
+					$deleted_users[] = $a_user[$userid]['name'];
 					local_user_del($a_user[$userid]);
 					unset($a_user[$userid]);
 				}
@@ -146,15 +146,12 @@ if (isset($_POST['dellall'])) {
 			}
 		}
 
-		if ($deleted_count > 0) {
-			if ($deleted_count == 1) {
-				$savemsg = sprintf(gettext("User %s successfully deleted."), $deleted_users);
-			} else {
-				$savemsg = sprintf(gettext("Users %s successfully deleted."), $deleted_users);
-			}
+		if (count($deleted_users) > 0) {
+			$savemsg = sprintf(gettext("Successfully deleted %s: %s"), (count($deleted_users) == 1) ? gettext("user") : gettext("users"), implode(', ', $deleted_users));
 			/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
 			$a_user = array_values($a_user);
 			write_config($savemsg);
+			syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 		}
 	}
 }
@@ -169,18 +166,20 @@ if ($_POST['act'] == "delcert") {
 	$certdeleted = lookup_cert($a_user[$id]['cert'][$_POST['certid']]);
 	$certdeleted = $certdeleted['descr'];
 	unset($a_user[$id]['cert'][$_POST['certid']]);
-	write_config();
+	$savemsg = sprintf(gettext("Removed certificate association \"%s\" from user %s"), $certdeleted, $a_user[$id]['name']);
+	write_config($savemsg);
+	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	$_POST['act'] = "edit";
-	$savemsg = sprintf(gettext("Certificate %s association removed."), $certdeleted);
 }
 
 if ($_POST['act'] == "delprivid") {
 	$privdeleted = $priv_list[$a_user[$id]['priv'][$_POST['privid']]]['name'];
 	unset($a_user[$id]['priv'][$_POST['privid']]);
 	local_user_set($a_user[$id]);
-	write_config();
+	$savemsg = sprintf(gettext("Removed Privilege \"%s\" from user %s"), $privdeleted, $a_user[$id]['name']);
+	write_config($savemsg);
+	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	$_POST['act'] = "edit";
-	$savemsg = sprintf(gettext("Privilege %s removed."), $privdeleted);
 }
 
 if ($_POST['save']) {
@@ -454,8 +453,9 @@ if ($_POST['save']) {
 		local_user_set($userent);
 		/* Add user to groups again to ensure they are set everywhere, otherwise the user may not appear to be a member of the group. See commit:5372d26d9d25d751d16865ed9d46869d3b0ec5e1. */
 		local_user_set_groups($userent, $_POST['groups']);
-		write_config();
-
+		$savemsg = sprintf(gettext("Successfully %s user %s"), (isset($id)) ? gettext("edited") : gettext("created"), $userent['name']);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 		if (is_dir("/etc/inc/privhooks")) {
 			run_plugins("/etc/inc/privhooks");
 		}

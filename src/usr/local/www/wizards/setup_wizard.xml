@@ -795,10 +795,19 @@
 	</stepbeforeformdisplay>
 	<description>
 	<![CDATA[
-		<p>Congratulations! pfSense is now configured.</p>
-		Remember, we're here to help.</p><p>
-		Click <a target='_blank' href='https://www.netgate.com/more-support-info/'>here</a> to learn about Netgate 24/7/365 support.</p><p>
-		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.</p>
+	<div style="padding-right:25px;">
+		<p><h4>Congratulations! pfSense is now configured.</h4></p>
+		<p>
+		We recommend that you check to see if there are any software updates available. Keeping your software up to date is
+		one of the most important things you can do to maintain the security of your network.</p>
+		<input type="button" onclick="window.location.href='$myurlpkg_mgr_install.php?id=firmware'" class="btn btn-xs btn-success" value="Check for updates"/>
+		<p></p>
+		<p><h4>Remember, we're here to help.</h4></p>
+		<p>
+		<a target='_blank' href='https://www.netgate.com/more-support-info/'><strong><span style="font-size:16px"> Click here</span></strong></a> to learn about Netgate 24/7/365 support services.</p><p>
+		<input type="button" onclick="window.location.href='$myurl'" class="btn btn-sm btn-success" value="Finish"/>
+		</p>
+	</div>
 	]]>
 	</description>
 </step>

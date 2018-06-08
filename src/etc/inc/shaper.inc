@@ -116,8 +116,13 @@ function &get_reference_to_me_in_config(&$mypath) {
 
 	$ptr =& $config['shaper'];
 	foreach ($mypath as $indeks) {
-		$t_ptr = $ptr['queue'][$indeks];
-		$ptr =& $t_ptr;
+		if (!is_array($ptr['queue'])) {
+			$ptr['queue'] = array();
+		}
+		if (!is_array($ptr['queue'][$indeks])) {
+			$ptr['queue'][$indeks] = array();
+		}
+		$ptr =& $ptr['queue'][$indeks];
 	}
 
 	return $ptr;

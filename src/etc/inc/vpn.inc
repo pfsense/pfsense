@@ -1444,12 +1444,12 @@ EOD;
 					$ipsecfin = "\nconn con-mobile\n";
 				}
 				else {
-					$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
+					$ipsecfin = "\nconn con{$ph1ent['ikeid']}000\n";
 				}
 				//if (!empty($reqids[$idx])) {
 				//	$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				//}
-				if (!empty($vtireq[$idx])) {
+				if (!empty($vtireq)) {
 					$ipsecfin .= "\treqid = {$ph1ent['ikeid']}000\n";
 				}
 				$ipsecfin .= $ipsecconnect;

@@ -1032,7 +1032,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	} else {
 		$gwdefault = $config['gateways']['defaultgw6'];
 	}
-	if (isset($gateways_status[$gwdefault])) {
+	if (isset($gateways_arr[$gwdefault])) {
 		// the configured gateway is a regular one. (not a gwgroup) use it as is..
 		$dfltgwname = $gwdefault;
 	} else {

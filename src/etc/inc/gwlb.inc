@@ -1370,13 +1370,12 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 
 function lookup_gateway_or_group_by_name($gwname) {
 	global $config;
-
-	if (is_array($config['gateways']['gateway_item'])) {
-		foreach ($config['gateways']['gateway_item'] as $gw) {
-			if ($gw['name'] == $gwname) {
-				$gw['type'] = 'gateway';
-				return $gw;
-			}
+	
+	$gateways_arr = return_gateways_array();
+	foreach ($gateways_arr as $gw) {
+		if ($gw['name'] == $gwname) {
+			$gw['type'] = 'gateway';
+			return $gw;
 		}
 	}
 

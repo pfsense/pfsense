@@ -72,7 +72,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 						continue;
 					}
 
-					$ikeid = "con{$ph1ent['ikeid']}";
+					$ikeid = "con{$ph1ent['ikeid']}000";
 					$ikenum[$ph1ent['ikeid']] = true;
 				}
 

@@ -195,12 +195,11 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 			continue;
 		if ($data['act'] != "static") {
 			if (is_inrange_v4($data['ip'], $config['dhcpd'][$dhcpif]['range']['from'], $config['dhcpd'][$dhcpif]['range']['to'])) {
-					$result['active'] = $result['active'] + 1;
+					$result['active'] = intval($result['active']) + 1;
 			}
-		}
-		else {
-			if (is_inrange_v4(intval($data['ip']), $subnet_start, $subnet_end)) {
-				$result['static'] = $result['static'] + 1;
+		} else {
+			if (is_inrange_v4($data['ip'], $subnet_start, $subnet_end)) {
+				$result['static'] = intval($result['static']) + 1;
 			}
 		}
 	}

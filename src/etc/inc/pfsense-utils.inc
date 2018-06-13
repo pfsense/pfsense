@@ -1118,7 +1118,7 @@ function reload_all_sync() {
 	send_event("service restart webgui");
 }
 
-function load_loader_conf($loader_conf = NULL) {
+function load_loader_conf($loader_conf = NULL, $local = false) {
 
 	if ($loader_conf == NULL) {
 		return (NULL);
@@ -1136,22 +1136,23 @@ function load_loader_conf($loader_conf = NULL) {
 	 * managed by us.
 	 */
 	$data = array();
-	$ignore = array("autoboot_delay", "console", "comconsole_speed",
-	    "boot_multicons", "boot_serial", "hw.usb.no_pf",
-	    "hint.uart.0.flags", "hint.uart.1.flags", "hint.mdio.0.at",
-	    "hint.e6000sw.0", "vm.pmap.pti");
+	/* These values should be removed from loader.conf and loader.conf.local
+	 * As they will be replaced when necessary. */
+	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
+	    "vm.pmap.pti");
+	if (!$local) {
+		/* These values should only be filtered in loader.conf, not .local */
+		$remove = array_merge($remove,
+		    array("autoboot_delay", "console", "comconsole_speed",
+		    "boot_multicons", "boot_serial", "hint.uart.0.flags",
+		    "hint.uart.1.flags"));
+	}
 	foreach ($input_split as $line) {
 		if (empty($line)) {
 			continue;
 		}
-		$found = false;
-		foreach ($ignore as $ignstr) {
-			if (stripos($line, $ignstr) !== false) {
-				$found = true;
-				break;
-			}
-		}
-		if ($found === false) {
+		list($name, $value) = explode('=', $line, 2);
+		if (!in_array(trim($name), $remove)) {
 			$data[] = $line;
 		}
 	}
@@ -1256,7 +1257,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 
 	/* Filter loader.conf.local to avoid duplicate settings. */
 	$loader_conf_file = "{$path}/boot/loader.conf.local";
-	$data = load_loader_conf($loader_conf_file);
+	$data = load_loader_conf($loader_conf_file, true);
 	if (empty($data)) {
 		@unlink($loader_conf_file);
 	} else {

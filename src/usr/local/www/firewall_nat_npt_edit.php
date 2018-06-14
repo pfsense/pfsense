@@ -100,6 +100,13 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+	if (!is_ipaddrv6(trim($_POST['src']))) {
+		$input_errors[] = gettext("The specified source address is not a valid IPv6 prefix");
+	}
+	if (!is_ipaddrv6(trim($_POST['dst']))) {
+		$input_errors[] = gettext("The specified destination address is not a valid IPv6 prefix");
+	}
+
 	if (!$input_errors) {
 		$natent = array();
 

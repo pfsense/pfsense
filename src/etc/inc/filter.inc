@@ -1977,6 +1977,12 @@ function filter_nat_rules_generate() {
 
 			$natif = $FilterIflist[$natif]['descr'];
 
+			/* Do not form an invalid NPt rule.
+			 * See https://redmine.pfsense.org/issues/8575 */
+			if (!is_subnetv6($srcaddr) || !is_subnetv6($dstaddr)) {
+				continue;
+			}
+
 			$natrules .= "binat on \${$natif} inet6 from {$srcaddr} to any -> {$dstaddr}\n";
 			$natrules .= "binat on \${$natif} inet6 from any to {$dstaddr} -> {$srcaddr}\n";
 

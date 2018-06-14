@@ -168,7 +168,7 @@ function array_map_assoc(callable $f, array $a) {
 	return array_column(array_map($f, array_keys($a), $a), 1, 0);
 }
 function build_queue_params($array, $selected, $params, $id) {
-	$form .= '<div id="params_' . gettext($id) . '">';
+	$form .= '<div id="params_' . $id . '">';
 	
 	$selectedAlgorithm = $array[$selected];
 	
@@ -202,7 +202,7 @@ function build_queue_params($array, $selected, $params, $id) {
 				$currentValue = $value["default"]; // default to default
 			}
 			
-			$form .= "<td class=\"col-xs-4\">" . gettext($value["name"]) . "</td>";
+			$form .= "<td class=\"col-xs-4\">" . htmlspecialchars(gettext($currentValue)) . "</td>";
 			$form .= "<td class=\"col-xs-8\"><input class=\"form-control\" type=" . gettext($value["type"]) 
 					. " name=\"param_" . gettext($selected) . "_" . gettext($key) . "\" placeholder=\"" .
 					gettext($value["default"]) . "\" value=\"" . gettext($currentValue) . "\"/></td>";
@@ -215,7 +215,7 @@ function build_queue_params($array, $selected, $params, $id) {
 	
 	$form .= '</div>';
 	$form .= '<script type="text/javascript">';
-	$form .= 'events.push(function() {$("#' . gettext($id) . '").change(function() {$("#params_' .
+	$form .= 'events.push(function() {$("#' . $id . '").change(function() {$("#params_' .
 		gettext($id) . '").html("Save this limiter to see algorithm parameters.");})});</script>';
 
 	return($form);
@@ -3824,11 +3824,7 @@ class dnpipe_class extends dummynet_class {
 		
 		/* Limiter patch */
 		$selectedScheduler = getSchedulers()[$data['sched']];
-		if (!$selectedScheduler)
-			$input_errors[] = gettext("Selected scheduler not recognized: " . $data['sched'] . '.');
 		$selectedAqm = getAQMs()[$data['aqm']];
-		if (!$selectedAqm)
-			$input_errors[] = gettext("Selected scheduler not recognized: " . $data['sched'] . '.');
 		if ($data['ecn'] && $data['ecn'] == 'on' && !$selectedScheduler["ecn"] && !$selectedAqm["ecn"]) {
 			$input_errors[] = gettext("Explicit Congestion Notification is selected, but neither " . $selectedAqm["name"] . " nor " . $selectedScheduler["name"] . " support it.");
 		}
@@ -4511,8 +4507,6 @@ class dnqueue_class extends dummynet_class {
 		
 		/* Limiter patch */
 		$selectedAqm = getAQMs()[$data['aqm']];
-		if (!$selectedAqm)
-			$input_errors[] = gettext("Selected scheduler not recognized: " . $data['sched'] . '.');
 		if ($data['ecn'] && $data['ecn'] == 'on' && !$selectedAqm["ecn"]) {
 			$input_errors[] = gettext("Explicit Congestion Notification is selected, but " . $selectedAqm["name"] . " does not support it.");
 		}

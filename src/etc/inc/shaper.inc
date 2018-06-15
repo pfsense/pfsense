@@ -4520,9 +4520,9 @@ function read_altq_config() {
 
 	foreach ($a_int as $key => $conf) {
 		$int = $conf['interface'];
-		$__tmp_root = new altq_root_queue(); $root =& $__tmp_root;
+		$root = new altq_root_queue();
 		$root->SetInterface($int);
-		$altq_list_queues[$root->GetInterface()] = &$root;
+		$altq_list_queues[$root->GetInterface()] = $root;
 		$root->ReadConfig($conf);
 		array_push($path, $key);
 		$root->SetLink($path);

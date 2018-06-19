@@ -133,6 +133,9 @@ if ($_POST['act'] == "del") {
 		$subnet .= "/" . $a_vip[$_POST['id']]['subnet_bits'];
 		$if_subnet .= "/" . $if_subnet_bits;
 
+		/* Determine if this VIP is in the same subnet as any gateway
+		 * which can only be reached by VIPs */
+		$viponlygws = array();
 		if (is_array($config['gateways']['gateway_item'])) {
 			foreach ($config['gateways']['gateway_item'] as $gateway) {
 				if ($a_vip[$_POST['id']]['interface'] != $gateway['interface']) {
@@ -147,12 +150,33 @@ if ($_POST['act'] == "del") {
 				if (ip_in_subnet($gateway['gateway'], $if_subnet)) {
 					continue;
 				}
-
-
 				if (ip_in_subnet($gateway['gateway'], $subnet)) {
-					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one Gateway.");
-					break;
+					$viponlygws[] = $gateway;
 				}
+			}
+		}
+
+		/*
+		 * If gateways for this subnet are only reachable via VIPs,
+		 * make sure this is not the last VIP through which that gateway
+		 * can be reached. See https://redmine.pfsense.org/issues/4438
+		 */
+		foreach ($viponlygws as $vgw) {
+			$numrefs = 0;
+			foreach ($a_vip as $refvip) {
+				if (($refvip['interface'] != $vgw['interface']) ||
+				    (is_ipaddrv4($refvip['subnet']) && ($vgw['ipprotocol'] == 'inet6')) ||
+				    (is_ipaddrv6($refvip['subnet']) && ($vgw['ipprotocol'] == 'inet'))) {
+					continue;
+				}
+				if (ip_in_subnet($vgw['gateway'],
+				    gen_subnet($refvip['subnet'], $refvip['subnet_bits']) . '/' . $refvip['subnet_bits'])) {
+					$numrefs++;
+				}
+			}
+			if ($numrefs <= 1) {
+				$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is required to reach Gateway: %s."), $vgw['name']);
+				break;
 			}
 		}
 

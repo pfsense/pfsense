@@ -96,7 +96,7 @@ if (!empty($new_domain_name_servers)) {
 		}
 	}
 
-	if (count($valid_ns > 0)) {
+	if (count($valid_ns) > 0) {
 		file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
 	}
 }

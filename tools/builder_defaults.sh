@@ -269,8 +269,6 @@ if [ -z "${BUILTDATESTRING}" ]; then
 fi
 echo "$BUILTDATESTRING" > $BUILTDATESTRINGFILE
 
-STAGING_HOSTNAME=${STAGING_HOSTNAME:-"release-staging.netgate.com"}
-
 # Poudriere
 export ZFS_TANK=${ZFS_TANK:-"zroot"}
 export ZFS_ROOT=${ZFS_ROOT:-"/poudriere"}
@@ -310,12 +308,14 @@ case "${PRODUCT_VERSION##*-}" in
 		exit 1
 esac
 
+STAGING_HOSTNAME=${STAGING_HOSTNAME:-"release-staging.nyi.netgate.com"}
+
 # Host to rsync pkg repos from poudriere
-export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-${STAGING_HOSTNAME}}
+export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-"nfs1.nyi.netgate.com"}
 export PKG_RSYNC_USERNAME=${PKG_RSYNC_USERNAME:-"wwwsync"}
 export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
-export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/staging/ce/packages"}
-export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/staging/ce/packages/logs/${POUDRIERE_BRANCH}/${TARGET}"}
+export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/storage/files/release-staging/ce/packages"}
+export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/storage/files/release-staging/ce/packages/logs/${POUDRIERE_BRANCH}/${TARGET}"}
 
 # Final packages server
 if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then
@@ -405,9 +405,9 @@ export NANOBSD_UPGRADE_TEMPLATE=${NANOBSD_UPGRADE_TEMPLATE:-"${PRODUCT_NAME}${PR
 
 # Rsync data to send snapshots
 if [ -n "${_IS_RELEASE}" -o -n "${SKIP_FINAL_RSYNC}" ]; then
-	export RSYNCIP=${RSYNCIP:-"release-staging.netgate.com"}
+	export RSYNCIP=${RSYNCIP:-"nfs1.nyi.netgate.com"}
 	export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
-	export RSYNCPATH=${RSYNCPATH:-"/staging/ce/images"}
+	export RSYNCPATH=${RSYNCPATH:-"/storage/files/release-staging/ce/images"}
 else
 	export RSYNCIP=${RSYNCIP:-"nfs1.nyi.netgate.com"}
 	export RSYNCUSER=${RSYNCUSER:-"wwwsync"}

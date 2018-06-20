@@ -123,7 +123,7 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		if (strtolower($pconfig['save']) == gettext("save")) {
+		if (strtolower($pconfig['save']) == strtolower(gettext("save"))) {
 			$acl_entry = array();
 			$acl_entry['aclid'] = $pconfig['aclid'];
 			$acl_entry['aclname'] = $pconfig['aclname'];
@@ -152,12 +152,12 @@ if ($_POST['save']) {
 }
 
 $actionHelp =
-					sprintf(gettext('%1$sDeny:%2$s Stops queries from hosts within the netblock defined below.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
-					sprintf(gettext('%1$sRefuse:%2$s Stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
-					sprintf(gettext('%1$sAllow:%2$s Allow queries from hosts within the netblock defined below.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
-					sprintf(gettext('%1$sAllow Snoop:%2$s Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for the administrative host.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
-					sprintf(gettext('%1$sDeny Nonlocal:%2$s Allow only authoritative local-data queries from hosts within the netblock defined below. Messages that are disallowed are dropped.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
-					sprintf(gettext('%1$sRefuse Nonlocal:%2$s Allow only authoritative local-data queries from hosts within the netblock defined below. Sends a DNS rcode REFUSED error message back to the client for messages that are disallowed.'), '<span class="text-success"><strong>', '</strong></span>');
+	sprintf(gettext('%1$sDeny:%2$s Stops queries from hosts within the netblock defined below.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+	sprintf(gettext('%1$sRefuse:%2$s Stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+	sprintf(gettext('%1$sAllow:%2$s Allow queries from hosts within the netblock defined below.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+	sprintf(gettext('%1$sAllow Snoop:%2$s Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for the administrative host.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+	sprintf(gettext('%1$sDeny Nonlocal:%2$s Allow only authoritative local-data queries from hosts within the netblock defined below. Messages that are disallowed are dropped.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+	sprintf(gettext('%1$sRefuse Nonlocal:%2$s Allow only authoritative local-data queries from hosts within the netblock defined below. Sends a DNS rcode REFUSED error message back to the client for messages that are disallowed.'), '<span class="text-success"><strong>', '</strong></span>');
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access Lists"));
 $pglinks = array("", "services_unbound.php", "@self");

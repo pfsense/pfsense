@@ -116,8 +116,13 @@ function &get_reference_to_me_in_config(&$mypath) {
 
 	$ptr =& $config['shaper'];
 	foreach ($mypath as $indeks) {
-		$t_ptr = $ptr['queue'][$indeks];
-		$ptr =& $t_ptr;
+		if (!is_array($ptr['queue'])) {
+			$ptr['queue'] = array();
+		}
+		if (!is_array($ptr['queue'][$indeks])) {
+			$ptr['queue'][$indeks] = array();
+		}
+		$ptr =& $ptr['queue'][$indeks];
 	}
 
 	return $ptr;
@@ -4515,9 +4520,9 @@ function read_altq_config() {
 
 	foreach ($a_int as $key => $conf) {
 		$int = $conf['interface'];
-		$__tmp_root = new altq_root_queue(); $root =& $__tmp_root;
+		$root = new altq_root_queue();
 		$root->SetInterface($int);
-		$altq_list_queues[$root->GetInterface()] = &$root;
+		$altq_list_queues[$root->GetInterface()] = $root;
 		$root->ReadConfig($conf);
 		array_push($path, $key);
 		$root->SetLink($path);

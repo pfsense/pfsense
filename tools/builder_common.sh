@@ -920,12 +920,9 @@ create_memstick_serial_image() {
 
 	create_distribution_tarball
 
-	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
-
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
-		${FSLABEL} \
-		${MEMSTICKSERIALPATH} \
-		${INSTALLER_CHROOT_DIR}
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
+		${INSTALLER_CHROOT_DIR} \
+		${MEMSTICKSERIALPATH}
 
 	if [ ! -f "${MEMSTICKSERIALPATH}" ]; then
 		echo "ERROR! memstick serial image was not built"
@@ -973,12 +970,9 @@ create_memstick_adi_image() {
 
 	create_distribution_tarball
 
-	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
-
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
-		${FSLABEL} \
-		${MEMSTICKADIPATH} \
-		${INSTALLER_CHROOT_DIR}
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
+		${INSTALLER_CHROOT_DIR} \
+		${MEMSTICKADIPATH}
 
 	if [ ! -f "${MEMSTICKADIPATH}" ]; then
 		echo "ERROR! memstick ADI image was not built"

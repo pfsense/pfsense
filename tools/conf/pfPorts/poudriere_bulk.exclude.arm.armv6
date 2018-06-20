@@ -14,5 +14,3 @@ sysutils/pfSense-azure
 sysutils/pfSense-ec2_setup
 sysutils/vm-bhyve
 sysutils/xe-guest-utilities
-security/netgate-thoth
-security/netgate-ping-auth

@@ -185,20 +185,20 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'ident_type',
-	'*Identifier type',
+	'Identifier type',
 	$pconfig['ident_type'],
 	build_ipsecid_list()
 ))->setWidth(4)->setHelp('Optional: specify identifier type for strongswan');
 
 $section->addInput(new Form_IpAddress(
 	'pool_address',
-	'*Virtual Address Pool',
+	'Virtual Address Pool',
 	$pconfig['pool_address']
 ))->setWidth(4)->setHelp('Optional. If used, must be IPv4 address. If left blank, "Virtual Address Pool" of "Mobile Clients" will be used.')->addMask('pool_netbits', $pconfig['pool_netbits'], 32, 0);
 
 $section->addInput(new Form_IpAddress(
 	'dns_address',
-	'*DNS Server',
+	'DNS Server',
 	$pconfig['dns_address']
 ))->setWidth(4)->setHelp('Optional. If used, must be IPv4 address. Individual DNS server only for this user. If left blank, "DNS Servers" of "Mobile Clients" will be used.');
 

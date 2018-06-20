@@ -1498,7 +1498,7 @@ EOD;
 						continue;
 					}
 
-					if (strlen($mkent['pool_address'] < 1) || !is_ipaddr($mkent['pool_address'])) {
+					if (strlen($mkent['pool_address']) < 1 || !is_ipaddr($mkent['pool_address'])) {
 						continue;
 					}
 
@@ -1506,6 +1506,10 @@ EOD;
 					$ipsecfin .= "\talso = con-mobile\n";
 					$ipsecfin .= "\teap_identity = %identity\n";
 					$ipsecfin .= "\trightsourceip = {$mkent['pool_address']}/{$mkent['pool_netbits']}\n";
+
+					if (isset($mkent['dns_address']) && strlen($mkent['dns_address']) > 0 && is_ipaddr($mkent['dns_address'])) {
+						$ipsecfin .= "\trightdns = {$mkent['dns_address']}\n";
+					}
 
 					if ($mkent['ident_type'] == "none") {
 						$ipsecfin .= "\trightid = \"{$mkent['ident']}\"\n";

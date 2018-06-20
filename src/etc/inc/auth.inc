@@ -1014,7 +1014,7 @@ function ldap_test_bind($authcfg) {
 		$ldapbindpw = $authcfg['ldap_bindpw'];
 		$ldapver = $authcfg['ldap_protver'];
 		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
-		if (empty($ldapbndun) || empty($ldapbindpw)) {
+		if (empty($ldapbindun) || empty($ldapbindpw)) {
 			$ldapanon = true;
 		} else {
 			$ldapanon = false;

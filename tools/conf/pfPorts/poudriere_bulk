@@ -53,7 +53,7 @@ net/%%PRODUCT_NAME%%-pkg-haproxy-devel
 net/%%PRODUCT_NAME%%-pkg-mtr-nox11
 net/%%PRODUCT_NAME%%-pkg-ntopng
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG@all
-net/%%PRODUCT_NAME%%-pkg-pfBlockerNG-devel
+net/%%PRODUCT_NAME%%-pkg-pfBlockerNG-devel@all
 net/%%PRODUCT_NAME%%-pkg-routed
 net/%%PRODUCT_NAME%%-pkg-siproxd
 net/bird

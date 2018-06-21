@@ -1032,7 +1032,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	} else {
 		$gwdefault = $config['gateways']['defaultgw6'];
 	}
-	if (isset($gateways_status[$gwdefault])) {
+	if (isset($gateways_arr[$gwdefault])) {
 		// the configured gateway is a regular one. (not a gwgroup) use it as is..
 		$dfltgwname = $gwdefault;
 	} else {
@@ -1370,13 +1370,12 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 
 function lookup_gateway_or_group_by_name($gwname) {
 	global $config;
-
-	if (is_array($config['gateways']['gateway_item'])) {
-		foreach ($config['gateways']['gateway_item'] as $gw) {
-			if ($gw['name'] == $gwname) {
-				$gw['type'] = 'gateway';
-				return $gw;
-			}
+	
+	$gateways_arr = return_gateways_array();
+	foreach ($gateways_arr as $gw) {
+		if ($gw['name'] == $gwname) {
+			$gw['type'] = 'gateway';
+			return $gw;
 		}
 	}
 

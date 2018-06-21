@@ -312,8 +312,7 @@ if [ "$IMAGETYPE" = "none" ]; then
 	_IMAGESTOBUILD=""
 elif [ "$IMAGETYPE" = "all" ]; then
 	_IMAGESTOBUILD="${_IMAGESTOBUILD} memstick \
-		memstickserial memstickadi memstick-plcc-b ova ec2 ec2-ic azure \
-		kvm bhyve"
+		memstickserial memstickadi memstick-plcc-b ec2 azure kvm bhyve"
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"
 fi

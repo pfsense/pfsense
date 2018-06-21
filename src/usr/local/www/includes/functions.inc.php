@@ -177,7 +177,7 @@ function disk_usage($slice = '/') {
 }
 
 function swap_usage() {
-	exec("/usr/sbin/swapinfo", $swap_info);
+	exec("/usr/sbin/swapinfo | /usr/bin/tail -1", $swap_info);
 	$swap_used = "";
 	foreach ($swap_info as $line) {
 		if (preg_match('/(\d+)%$/', $line, $matches)) {

@@ -435,7 +435,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$swapusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$swapusage?>%">
 					</div>
 				</div>
-				<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MiB</span>
+				<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/tail -1 | /usr/bin/awk '{ print $2;}'`) ?> MiB</span>
 			</td>
 		</tr>
 		<?php endif; ?>

@@ -51,7 +51,7 @@ net/%%PRODUCT_NAME%%-pkg-frr
 net/%%PRODUCT_NAME%%-pkg-haproxy
 net/%%PRODUCT_NAME%%-pkg-haproxy-devel
 net/%%PRODUCT_NAME%%-pkg-mtr-nox11
-net/%%PRODUCT_NAME%%-pkg-nbtopng
+net/%%PRODUCT_NAME%%-pkg-ntopng
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG@all
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG-devel
 net/%%PRODUCT_NAME%%-pkg-routed

@@ -401,7 +401,6 @@ def pem(der, kind='DH PARAMETERS'):
     return out
 
 def writePEM(f, identifier, str):
-    f.write(format(identifier))
     f.write(str)
             
 def main():

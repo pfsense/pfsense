@@ -1283,14 +1283,14 @@ function system_webgui_start() {
 
 function get_dns_nameservers() {
 	global $config;
-	
+
 	$dns_nameservers = array();
-	
+
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "get_dns_nameservers() being called $mt\n";
 	}
-	
+
 	$syscfg = $config['system'];
 	if ((((isset($config['dnsmasq']['enable'])) &&
    		(empty($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") &&
@@ -1443,8 +1443,8 @@ EOD;
 	if ($cert <> "" and $key <> "") {
 		$nginx_config .= "\n";
 		$nginx_config .= "\tserver {\n";
-		$nginx_config .= "\t\tlisten {$nginx_port} ssl;\n";
-		$nginx_config .= "\t\tlisten [::]:{$nginx_port} ssl;\n";
+		$nginx_config .= "\t\tlisten {$nginx_port} ssl http2;\n";
+		$nginx_config .= "\t\tlisten [::]:{$nginx_port} ssl http2;\n";
 		$nginx_config .= "\n";
 		$nginx_config .= "\t\tssl_certificate         {$g['varetc_path']}/{$cert_location};\n";
 		$nginx_config .= "\t\tssl_certificate_key     {$g['varetc_path']}/{$key_location};\n";

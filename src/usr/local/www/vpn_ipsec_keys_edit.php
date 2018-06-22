@@ -57,6 +57,7 @@ if (isset($id) && $a_secret[$id]) {
 	$pconfig['ident_type'] = $a_secret[$id]['ident_type'];
 	$pconfig['pool_address'] = $a_secret[$id]['pool_address'];
 	$pconfig['pool_netbits'] = $a_secret[$id]['pool_netbits'];
+	$pconfig['dns_address'] = $a_secret[$id]['dns_address'];
 }
 
 if ($_POST['save']) {
@@ -87,8 +88,12 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Pre-Shared Key contains invalid characters.");
 	}
 
-	if (isset($_POST['pool_address']) && strlen($_POST['pool_address'] > 1) && !is_ipaddr($_POST['pool_address'])) {
-		$input_errors[] = gettext("A valid IP address for 'Virtual Address Pool Network' must be specified.");
+	if (isset($_POST['pool_address']) && strlen($_POST['pool_address']) > 1 && !is_ipaddr($_POST['pool_address'])) {
+		$input_errors[] = gettext("A valid IP address for 'Virtual Address Pool' must be specified.");
+	}
+
+	if (isset($_POST['dns_address']) && strlen($_POST['dns_address']) > 1 && !is_ipaddr($_POST['dns_address'])) {
+		$input_errors[] = gettext("A valid IP address for 'DNS Server' must be specified.");
 	}
 
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
@@ -113,6 +118,7 @@ if ($_POST['save']) {
 		$secretent['ident_type'] = $_POST['ident_type'];
 		$secretent['pool_address'] = $_POST['pool_address'];
 		$secretent['pool_netbits'] = $_POST['pool_netbits'];
+		$secretent['dns_address'] = $_POST['dns_address'];
 		$text = "";
 
 		if (isset($id) && $a_secret[$id]) {
@@ -179,16 +185,22 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'ident_type',
-	'*Identifier type',
+	'Identifier type',
 	$pconfig['ident_type'],
 	build_ipsecid_list()
 ))->setWidth(4)->setHelp('Optional: specify identifier type for strongswan');
 
 $section->addInput(new Form_IpAddress(
 	'pool_address',
-	'*IPv4 address',
+	'Virtual Address Pool',
 	$pconfig['pool_address']
-))->setWidth(4)->setHelp('Optional: Network configuration for Virtual Address Pool')->addMask('pool_netbits', $pconfig['pool_netbits'], 32, 0);
+))->setWidth(4)->setHelp('Optional. If used, must be IPv4 address. If left blank, "Virtual Address Pool" of "Mobile Clients" will be used.')->addMask('pool_netbits', $pconfig['pool_netbits'], 32, 0);
+
+$section->addInput(new Form_IpAddress(
+	'dns_address',
+	'DNS Server',
+	$pconfig['dns_address']
+))->setWidth(4)->setHelp('Optional. If used, must be IPv4 address. Individual DNS server only for this user. If left blank, "DNS Servers" of "Mobile Clients" will be used.');
 
 if (isset($id) && $a_secret[$id]) {
 	$form->addGlobal(new Form_Input(

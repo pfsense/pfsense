@@ -93,15 +93,14 @@ if ($_POST['act'] == "del") {
 
 if ($act == "new") {
 	$pconfig['ncp_enable'] = "enabled";
-	$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
+	$pconfig['ncp-ciphers'] = "AES-128-GCM";
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
 	$pconfig['autotls_enable'] = "yes";
 	$pconfig['interface'] = "wan";
 	$pconfig['server_port'] = 1194;
 	$pconfig['verbosity_level'] = 1; // Default verbosity is 1
-	// OpenVPN Defaults to SHA1
-	$pconfig['digest'] = "SHA1";
+	$pconfig['digest'] = "SHA256";
 }
 
 global $simplefields;
@@ -134,7 +133,7 @@ if ($act == "edit") {
 		if (isset($a_client[$id]['ncp-ciphers'])) {
 			$pconfig['ncp-ciphers'] = $a_client[$id]['ncp-ciphers'];
 		} else {
-			$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
+			$pconfig['ncp-ciphers'] = "AES-128-GCM";
 		}
 		if (isset($a_client[$id]['ncp_enable'])) {
 			$pconfig['ncp_enable'] = $a_client[$id]['ncp_enable'];
@@ -156,8 +155,7 @@ if ($act == "edit") {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
 		}
 		$pconfig['crypto'] = $a_client[$id]['crypto'];
-		// OpenVPN Defaults to SHA1 if unset
-		$pconfig['digest'] = !empty($a_client[$id]['digest']) ? $a_client[$id]['digest'] : "SHA1";
+		$pconfig['digest'] = !empty($a_client[$id]['digest']) ? $a_client[$id]['digest'] : "SHA256";
 		$pconfig['engine'] = $a_client[$id]['engine'];
 
 		$pconfig['tunnel_network'] = $a_client[$id]['tunnel_network'];
@@ -797,7 +795,7 @@ if ($act=="new" || $act=="edit"):
 		openvpn_get_digestlist()
 		))->setHelp('The algorithm used to authenticate data channel packets, and control channel packets if a TLS Key is present.%1$s' .
 		    'When an AEAD Encryption Algorithm mode is used, such as AES-GCM, this digest is used for the control channel only, not the data channel.%1$s' .
-		    'Leave this set to SHA1 unless the server uses a different value. SHA1 is the default for OpenVPN. ', '<br />');
+		    'Set this to the same value as the server. While SHA1 is the default for OpenVPN, this algorithm is insecure. ', '<br />');
 
 	$section->addInput(new Form_Select(
 		'engine',

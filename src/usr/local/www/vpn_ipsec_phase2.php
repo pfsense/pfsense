@@ -108,8 +108,8 @@ if ($ph2found === true) {
 	$pconfig['remoteid_type'] = "network";
 	$pconfig['proto'] = "esp";
 	$pconfig['ealgos'] = explode(",", "aes");
-	$pconfig['halgos'] = explode(",", "hmac_sha1");
-	$pconfig['pfsgroup'] = "0";
+	$pconfig['halgos'] = explode(",", "hmac_sha256");
+	$pconfig['pfsgroup'] = "14";
 	$pconfig['lifetime'] = "3600";
 	$pconfig['uniqid'] = uniqid();
 

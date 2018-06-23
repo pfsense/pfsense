@@ -171,8 +171,9 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 if (!is_array($pconfig['encryption']['item']) || count($pconfig['encryption']['item']) == 0) {
 	$item = array();
 	$item['encryption-algorithm'] = array('name' => "aes");
-	$item['hash-algorithm'] = "sha1";
-	$item['dhgroup'] = "2";
+	$item['encryption-algorithm'] = array('keylen' => 128);
+	$item['hash-algorithm'] = "sha256";
+	$item['dhgroup'] = "14";
 	$pconfig['encryption']['item'][] = $item;
 }
 

@@ -366,10 +366,6 @@
 			<bindstofield>ovpnserver->step6->keylength</bindstofield>
 			<options>
 				<option>
-					<name>512 bit</name>
-					<value>512</value>
-				</option>
-				<option>
 					<name>1024 bit</name>
 					<value>1024</value>
 				</option>
@@ -520,10 +516,6 @@
 			<value>2048</value>
 			<bindstofield>ovpnserver->step9->keylength</bindstofield>
 			<options>
-				<option>
-					<name>512 bit</name>
-					<value>512</value>
-				</option>
 				<option>
 					<name>1024 bit</name>
 					<value>1024</value>

@@ -46,7 +46,7 @@ net/%%PRODUCT_NAME%%-pkg-OpenBGPD
 net/%%PRODUCT_NAME%%-pkg-Quagga_OSPF
 net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 net/%%PRODUCT_NAME%%-pkg-arping
-net/%%PRODUCT_NAME%%-pkg-aws-wizard
+net/%%PRODUCT_NAME%%-pkg-aws-wizard@all
 net/%%PRODUCT_NAME%%-pkg-cellular
 net/%%PRODUCT_NAME%%-pkg-freeradius3
 net/%%PRODUCT_NAME%%-pkg-frr

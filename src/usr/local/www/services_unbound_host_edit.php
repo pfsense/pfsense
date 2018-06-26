@@ -246,6 +246,9 @@ $form->add($section);
 
 $section = new Form_Section('Additional Names for this Host');
 
+if (!$pconfig['aliases']) {
+	$pconfig['aliases'] = array();
+}
 if (!$pconfig['aliases']['item']) {
 	$pconfig['aliases']['item'] = array('host' => "");
 }

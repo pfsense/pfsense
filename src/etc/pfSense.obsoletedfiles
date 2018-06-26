@@ -31,6 +31,7 @@
 /etc/inc/plain_sasl_client.inc
 /etc/inc/regdomain.inc
 /etc/inc/sasl.inc
+/etc/inc/simplepie
 /etc/inc/smtp.inc
 /etc/inc/sysctl.inc
 /etc/inc/uuid.php

@@ -1,5 +1,6 @@
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
 graphics/drm-next-kmod
+graphics/drm-stable-kmod
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 net/%%PRODUCT_NAME%%-pkg-aws-wizard@all
 sysutils/%%PRODUCT_NAME%%-builder

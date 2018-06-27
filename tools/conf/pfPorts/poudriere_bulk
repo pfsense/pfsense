@@ -66,6 +66,7 @@ net/py-speedtest-cli
 net/trafshow
 net/trafshow3
 net/vnstat
+security/netgate-ca
 security/netgate-cryptoauthlib
 security/netgate-libthoth
 security/netgate-openssl

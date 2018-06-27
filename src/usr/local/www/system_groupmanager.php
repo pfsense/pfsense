@@ -423,7 +423,8 @@ if ($pconfig['gtype'] == "system") {
 		'*Scope',
 		$pconfig['gtype'],
 		["local" => gettext("Local"), "remote" => gettext("Remote")]
-	));
+	))->setHelp("<span class=\"text-danger\">Warning: Changing this setting may affect the local groups file, " .
+				"in which case a reboot may be required for the changes to take effect.</span>");
 }
 
 $section->addInput(new Form_Input(

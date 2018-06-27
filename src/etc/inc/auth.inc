@@ -880,11 +880,18 @@ function local_group_set($group, $reset = false) {
 	$group_name = $group['name'];
 	$group_gid = $group['gid'];
 	$group_members = '';
+
 	if (!$reset && !empty($group['member']) && count($group['member']) > 0) {
 		$group_members = implode(",", $group['member']);
 	}
 
-	if (empty($group_name) || $group['scope'] == "remote") {
+	if (empty($group_name)) {
+		return;
+	}
+
+	// If the group is now remote, make sure there is no local group with the same name
+	if ($group['scope'] == "remote") {
+		local_group_del($group);
 		return;
 	}
 
@@ -904,8 +911,8 @@ function local_group_set($group, $reset = false) {
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	}
-	mwexec($cmd);
 
+	mwexec($cmd);
 }
 
 function local_group_del($group) {

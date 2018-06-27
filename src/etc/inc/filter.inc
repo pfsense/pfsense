@@ -1371,7 +1371,11 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 				if (count($subnets) > 1) {
 					$subnet = "{ " . implode(" ", $subnets) . " }";
 				}
-				$natrules .= "no nat on {$subnet_if}{$protocol_text} from {$subnet_if} to {$target}\n";
+				/* Do not generate a rule with an interface source if that interface has no IP address.
+				 * See https://redmine.pfsense.org/issues/8604 */
+				if (!empty(get_interface_ip($subnet_if))) {
+					$natrules .= "no nat on {$subnet_if}{$protocol_text} from {$subnet_if} to {$target}\n";
+				}
 				$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";
 			}
 		}
@@ -2377,7 +2381,11 @@ function filter_nat_rules_generate() {
 					if (!empty($rule_interface_ip) && !empty($rule_interface_subnet)) {
 						$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
 						$natrules .= "\n";
-						$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
+						/* Do not generate a rule with an interface source if that interface has no IP address.
+						 * See https://redmine.pfsense.org/issues/8604 */
+						if (!empty(get_interface_ip($natif))) {
+							$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
+						}
 						$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 					}
 				}

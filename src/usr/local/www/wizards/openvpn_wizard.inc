@@ -93,9 +93,9 @@ function step3_submitphpaction() {
 
 	/* Default LDAP port is 389 for TCP and 636 for SSL */
 	if (empty($_POST['port'])) {
-		if ($_POST['transport'] == "tcp")
+		if (($_POST['transport'] == "TCP - Standard") || ($_POST['transport'] == "TCP - STARTTLS"))
 			$config['ovpnserver']['step2']['port'] = 389;
-		elseif ($_POST['transport'] == "ssl")
+		elseif ($_POST['transport'] == "SSL - Encrypted")
 			$config['ovpnserver']['step2']['port'] = 636;
 	} elseif (!is_port($_POST['port'])) {
 		$stepid--;
@@ -106,7 +106,7 @@ function step3_submitphpaction() {
 	     empty($_POST['scope']) || empty($_POST['basedn']) || empty($_POST['authscope']) || empty($_POST['nameattr'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for authentication server.";
-	} else if (count(($authcfg = auth_get_authserver($_POST['name']))) > 0) {
+	} else if (!empty(auth_get_authserver($_POST['name']))) {
 		$stepid--;
 		$savemsg = "Please choose a different name because an authentication server with this name already exists.";
 	} elseif (!is_fqdn($_POST['ip']) && !is_ipaddr($_POST['ip'])) {
@@ -163,7 +163,7 @@ function step5_submitphpaction() {
 	if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['secret'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for authentication server.";
-	} else if (count(($authcfg = auth_get_authserver($_POST['name']))) > 0) {
+	} else if (!empty(auth_get_authserver($_POST['name']))) {
 		$stepid--;
 		$savemsg = "Please choose a different name because an authentication server with this name already exists.";
 	} elseif (!is_fqdn($_POST['ip']) && !is_ipaddr($_POST['ip'])) {
@@ -477,15 +477,24 @@ function step12_submitphpaction() {
 				$auth['ldap_urltype'] = 'TCP - Standard';
 			else
 				$auth['ldap_urltype'] = 'SSL - Encrypted';
-			$auth['ldap_protver'] = 3;
+			$auth['ldap_caref'] = $pconfig['step2']['ldap_caref'];
+			$auth['ldap_protver'] = $pconfig['step2']['ldap_protver'];
+			$auth['ldap_timeout'] = $pconfig['step2']['ldap_timeout'];
 			$auth['ldap_scope'] = $pconfig['step2']['scope'];
 			$auth['ldap_basedn'] = $pconfig['step2']['basedn'];
 			$auth['ldap_authcn'] = $pconfig['step2']['authscope'];
+			$auth['ldap_extended_enabled'] = isset($pconfig['step2']['ldap_extended_enabled']);
+			$auth['ldap_extended_query'] = $pconfig['step2']['ldap_extended_query'];
 			$auth['ldap_binddn'] = $pconfig['step2']['userdn'];
 			$auth['ldap_bindpw'] = $pconfig['step2']['passdn'];
-			$auth['ldap_attr_user'] = $pconfig['step1']['nameattr'];
-			$auth['ldap_attr_member'] = $pconfig['step1']['memberattr'];
-			$auth['ldap_attr_group'] = $pconfig['step1']['groupattr'];
+			$auth['ldap_attr_user'] = $pconfig['step2']['nameattr'];
+			$auth['ldap_attr_member'] = $pconfig['step2']['memberattr'];
+			$auth['ldap_attr_group'] = $pconfig['step2']['groupattr'];
+			$auth['ldap_rfc2307'] = isset($pconfig['step2']['ldap_rfc2307']);
+			$auth['ldap_attr_groupobj'] = $pconfig['step2']['ldap_attr_groupobj'];
+			$auth['ldap_utf8'] = isset($pconfig['step2']['ldap_utf8']);
+			$auth['ldap_nostrip_at'] = isset($pconfig['step2']['ldap_nostrip_at']);
+
 		} else if ($auth['type'] == "radius") {
 			$auth['host'] = $pconfig['step2']['ip'];
 			$auth['radius_auth_port'] = $pconfig['step2']['port'];

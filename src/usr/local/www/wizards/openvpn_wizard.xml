@@ -121,7 +121,7 @@
 			<displayname>Hostname or IP address</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->ip</bindstofield>
-			<description>Address of the LDAP server.</description>
+			<description>Address of the LDAP server. When using SSL or STARTTLS, this hostname must match the LDAP server certificate.</description>
 		</field>
 		<field>
 			<name>port</name>
@@ -129,7 +129,7 @@
 			<type>input</type>
 			<size>8</size>
 			<bindstofield>ovpnserver->step2->port</bindstofield>
-			<description>LDAP Server port, leave blank for the default (389 for TCP, 636 for SSL).</description>
+			<description>LDAP Server port, leave blank for the default (389 for TCP or STARTTLS, 636 for SSL).</description>
 		</field>
 		<field>
 			<name>transport</name>
@@ -139,14 +139,50 @@
 			<options>
 				<option>
 					<name>TCP - Standard</name>
-					<value>tcp</value>
+					<value>TCP - Standard</value>
+				</option>
+				<option>
+					<name>TCP - STARTTLS</name>
+					<value>TCP - STARTTLS</value>
 				</option>
 				<option>
 					<name>SSL - Encrypted</name>
-					<value>ssl</value>
+					<value>SSL - Encrypted</value>
 				</option>
 			</options>
-			<description>&lt;br/&gt;The protocol used by the LDAP server. It can either be standard TCP or SSL encrypted.</description>
+			<description>&lt;br/&gt;The transport used by the LDAP server. It can either be standard TCP or SSL encrypted.</description>
+		</field>
+		<field>
+			<type>certca_selection</type>
+			<name>ldap_caref</name>
+			<displayname>Peer Certificate Authority</displayname>
+			<bindstofield>ovpnserver->step2->ldap_caref</bindstofield>
+			<description>&lt;br/&gt;The Certificate Authority for the LDAP server certificate. Used for SSL and STARTTLS.</description>
+			<add_to_certca_selection>global</add_to_certca_selection>
+		</field>
+		<field>
+			<name>ldap_protver</name>
+			<displayname>Protocol Version</displayname>
+			<type>select</type>
+			<options>
+				<option>
+					<name>3</name>
+					<value>3</value>
+				</option>
+				<option>
+					<name>2</name>
+					<value>2</value>
+				</option>
+			</options>
+			<bindstofield>ovpnserver->step2->ldap_protver</bindstofield>
+		</field>
+		<field>
+			<name>ldap_timeout</name>
+			<displayname>Server Timeout</displayname>
+			<type>input</type>
+			<size>40</size>
+			<value>25</value>
+			<bindstofield>ovpnserver->step2->ldap_timeout</bindstofield>
 		</field>
 		<field>
 			<name>scope</name>
@@ -154,12 +190,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>One Level</name>
-					<value>one</value>
-				</option>
-				<option>
 					<name>Entire Subtree</name>
 					<value>subtree</value>
+				</option>
+				<option>
+					<name>One Level</name>
+					<value>one</value>
 				</option>
 			</options>
 			<bindstofield>ovpnserver->step2->scope</bindstofield>
@@ -178,6 +214,21 @@
 			<size>40</size>
 			<bindstofield>ovpnserver->step2->authscope</bindstofield>
 			<description>Semi-Colon separated. This will be prepended to the search base dn above or full container path can be specified.&lt;br/&gt;EXAMPLE: CN=Users;DC=example&lt;br/&gt;EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com </description>
+		</field>
+		<field>
+			<name>ldap_extended_enabled</name>
+			<displayname>Enable Extended Query</displayname>
+			<type>checkbox</type>
+			<typehint>Enable extended query.</typehint>
+			<bindstofield>ovpnserver->step2->ldap_extended_enabled</bindstofield>
+		</field>
+		<field>
+			<name>ldap_extended_query</name>
+			<displayname>Extended Query</displayname>
+			<type>input</type>
+			<size>40</size>
+			<description>Example: memberOf=CN=Groupname,OU=MyGroups,DC=example,DC=com</description>
+			<bindstofield>ovpnserver->step2->ldap_extended_query</bindstofield>
 		</field>
 		<field>
 			<name>userdn</name>
@@ -200,6 +251,7 @@
 			<displayname>User Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->nameattr</bindstofield>
+			<value>cn</value>
 			<description>Typically "cn" (OpenLDAP, Novell eDirectory), "samAccountName" (Microsoft AD)</description>
 		</field>
 		<field>
@@ -207,6 +259,7 @@
 			<displayname>Group Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->groupattr</bindstofield>
+			<value>cn</value>
 			<description>Typically "cn" (OpenLDAP, Microsoft AD, and Novell eDirectory)</description>
 		</field>
 		<field>
@@ -214,7 +267,40 @@
 			<displayname>Member Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->memberattr</bindstofield>
+			<value>member</value>
 			<description>Typically "member" (OpenLDAP), "memberOf" (Microsoft AD), "uniqueMember" (Novell eDirectory)</description>
+		</field>
+		<field>
+			<name>ldap_rfc2307</name>
+			<displayname>RFC 2307 Groups</displayname>
+			<type>checkbox</type>
+			<typehint>LDAP Server uses RFC 2307 style group membership.</typehint>
+			<description>RFC 2307 style group membership has members listed on the group object rather than using groups listed on user object. Leave unchecked for Active Directory style group membership (RFC 2307bis).</description>
+			<bindstofield>ovpnserver->step2->ldap_rfc2307</bindstofield>
+		</field>
+		<field>
+			<name>ldap_attr_groupobj</name>
+			<displayname>Group Object Class</displayname>
+			<type>input</type>
+			<value>posixGroup</value>
+			<bindstofield>ovpnserver->step2->ldap_attr_groupobj</bindstofield>
+			<description>Object class used for groups in RFC2307 mode. Typically "posixGroup" or "group".</description>
+		</field>
+		<field>
+			<name>ldap_utf8</name>
+			<displayname>UTF8 Encode</displayname>
+			<type>checkbox</type>
+			<typehint>UTF8 encode LDAP parameters before sending them to the server.</typehint>
+			<description>Required to support international characters, but may not be supported by every LDAP server.</description>
+			<bindstofield>ovpnserver->step2->ldap_utf8</bindstofield>
+		</field>
+		<field>
+			<name>ldap_nostrip_at</name>
+			<displayname>Username Alterations</displayname>
+			<type>checkbox</type>
+			<typehint>Do not strip away parts of the username after the @ symbol.</typehint>
+			<description>e.g. user@host becomes user when unchecked.</description>
+			<bindstofield>ovpnserver->step2->ldap_nostrip_at</bindstofield>
 		</field>
 		<field>
 			<type>submit</type>

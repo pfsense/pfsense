@@ -251,9 +251,9 @@ if ($_POST) {
 		$sshd_keyonly = $config['system']['sshd']['sshdkeyonly'];
 		if ($_POST['sshdkeyonly'] == "enabled") {
 			$config['system']['sshd']['sshdkeyonly'] = "enabled";
-		} else if ($_POST['sshdkeyonly'] == "both") {
+		} elseif ($_POST['sshdkeyonly'] == "both") {
 			$config['system']['sshd']['sshdkeyonly'] = "both";
-		} else {
+		} elseif (is_array($config['system']['sshd']) && isset($config['system']['sshd']['sshdkeyonly'])) {
 			unset($config['system']['sshd']['sshdkeyonly']);
 		}
 

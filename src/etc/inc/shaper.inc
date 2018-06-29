@@ -202,10 +202,10 @@ function build_queue_params($array, $selected, $params, $id) {
 				$currentValue = $value["default"]; // default to default
 			}
 			
-			$form .= "<td class=\"col-xs-4\">" . htmlspecialchars(gettext($currentValue)) . "</td>";
+			$form .= "<td class=\"col-xs-4\">" . htmlspecialchars($key) . "</td>";
 			$form .= "<td class=\"col-xs-8\"><input class=\"form-control\" type=" . gettext($value["type"]) 
-					. " name=\"param_" . gettext($selected) . "_" . gettext($key) . "\" placeholder=\"" .
-					gettext($value["default"]) . "\" value=\"" . gettext($currentValue) . "\"/></td>";
+					. " name=\"param_" . $selected . "_" . $key . "\" placeholder=\"" .
+					htmlspecialchars($value["default"]) . "\" value=\"" . htmlspecialchars($currentValue) . "\"/></td>";
 			
 			$form .= '</tr>';
 		}
@@ -3918,28 +3918,32 @@ class dnpipe_class extends dummynet_class {
 		// parse AQM arguments
 		$aqm_map = getAQMs();
 		$selectedParameters = $aqm_map[$this->getAQM()]["parameters"];
-		foreach ($selectedParameters as $key => $value) {
-			$config_key = 'param_' . $this->GetAQM() . '_' . $key;
-			if (isset($q[$config_key]) && $q[$config_key] <> "") {
-				$this->SetAQMParameter($key, $q[$config_key]);
-			} else {
-				$this->SetAQMParameter($key, $value["default"]);
+		if (is_array($selectedParameters)) {
+			foreach ($selectedParameters as $key => $value) {
+				$config_key = 'param_' . $this->GetAQM() . '_' . $key;
+				if (isset($q[$config_key]) && $q[$config_key] <> "") {
+					$this->SetAQMParameter($key, $q[$config_key]);
+				} else {
+					$this->SetAQMParameter($key, $value["default"]);
+				}
 			}
 		}
 	
 		if (isset($q['sched']) && $q['sched'] <> "") {
 				$this->SetScheduler($q['sched']);
 		} else {
-				$this->SetScheduler('FIFO');
+				$this->SetScheduler('fifo');
 		}
 		$scheduler_map = getSchedulers();
 		$selectedParameters = $scheduler_map[$this->getScheduler()]["parameters"];
-		foreach ($selectedParameters as $key => $value) {
-			$config_key = 'param_' . $this->GetScheduler() . '_' . $key;
-			if (isset($q[$config_key]) && $q[$config_key] <> "") {
-				$this->SetSchedulerParameter($key, $q[$config_key]);
-			} else {
-				$this->SetSchedulerParameter($key, $value["default"]);
+		if (is_array($selectedParameters)) {
+			foreach ($selectedParameters as $key => $value) {
+				$config_key = 'param_' . $this->GetScheduler() . '_' . $key;
+				if (isset($q[$config_key]) && $q[$config_key] <> "") {
+					$this->SetSchedulerParameter($key, $q[$config_key]);
+				} else {
+					$this->SetSchedulerParameter($key, $value["default"]);
+				}
 			}
 		}
 		

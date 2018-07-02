@@ -170,8 +170,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 // default value for new P1 and failsafe to always have at least 1 encryption item for the Form_ListItem
 if (!is_array($pconfig['encryption']['item']) || count($pconfig['encryption']['item']) == 0) {
 	$item = array();
-	$item['encryption-algorithm'] = array('name' => "aes");
-	$item['encryption-algorithm'] = array('keylen' => 128);
+	$item['encryption-algorithm'] = array('name' => "aes", 'keylen' => 128);
 	$item['hash-algorithm'] = "sha256";
 	$item['dhgroup'] = "14";
 	$pconfig['encryption']['item'][] = $item;

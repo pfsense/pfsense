@@ -292,6 +292,8 @@ export SKIP_FINAL_RSYNC=${SKIP_FINAL_RSYNC:-}
 export USE_PKG_REPO_STAGING="1"
 export PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL:-"pkg+https://firmware.netgate.com/beta/packages"}
 export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+https://firmware.netgate.com/pkg"}
+export PKG_REPO_SERVER_DEVEL_aarch64=${PKG_REPO_SERVER_DEVEL_aarch64:-"pkg+https://repo.netgate.com/beta/packages"}
+export PKG_REPO_SERVER_RELEASE_aarch64=${PKG_REPO_SERVER_RELEASE_aarch64:-"pkg+https://repo.netgate.com/pkg"}
 export PKG_REPO_SERVER_STAGING=${PKG_REPO_SERVER_STAGING:-"pkg+http://${STAGING_HOSTNAME}/factory/packages"}
 
 if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then

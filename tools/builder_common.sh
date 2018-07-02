@@ -1799,24 +1799,24 @@ EOF
 
 	local _value=""
 	for jail_arch in ${_archs}; do
-		eval "_value=\${PKG_REPO_BRANCH_DEVEL_${jail_arch}}"
+		eval "_value=\${PKG_REPO_BRANCH_DEVEL_${jail_arch##*.}}"
 		if [ -n "${_value}" ]; then
-			echo "PKG_REPO_BRANCH_DEVEL_${jail_arch}=${_value}" \
+			echo "PKG_REPO_BRANCH_DEVEL_${jail_arch##*.}=${_value}" \
 				>> ${_makeconf}
 		fi
-		eval "_value=\${PKG_REPO_BRANCH_RELEASE_${jail_arch}}"
+		eval "_value=\${PKG_REPO_BRANCH_RELEASE_${jail_arch##*.}}"
 		if [ -n "${_value}" ]; then
-			echo "PKG_REPO_BRANCH_RELEASE_${jail_arch}=${_value}" \
+			echo "PKG_REPO_BRANCH_RELEASE_${jail_arch##*.}=${_value}" \
 				>> ${_makeconf}
 		fi
-		eval "_value=\${PKG_REPO_SERVER_DEVEL_${jail_arch}}"
+		eval "_value=\${PKG_REPO_SERVER_DEVEL_${jail_arch##*.}}"
 		if [ -n "${_value}" ]; then
-			echo "PKG_REPO_SERVER_DEVEL_${jail_arch}=${_value}" \
+			echo "PKG_REPO_SERVER_DEVEL_${jail_arch##*.}=${_value}" \
 				>> ${_makeconf}
 		fi
-		eval "_value=\${PKG_REPO_SERVER_RELEASE_${jail_arch}}"
+		eval "_value=\${PKG_REPO_SERVER_RELEASE_${jail_arch##*.}}"
 		if [ -n "${_value}" ]; then
-			echo "PKG_REPO_SERVER_RELEASE_${jail_arch}=${_value}" \
+			echo "PKG_REPO_SERVER_RELEASE_${jail_arch##*.}=${_value}" \
 				>> ${_makeconf}
 		fi
 	done

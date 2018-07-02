@@ -3824,7 +3824,13 @@ class dnpipe_class extends dummynet_class {
 		
 		/* Limiter patch */
 		$selectedScheduler = getSchedulers()[$data['sched']];
+		if (!$selectedScheduler) {
+			$input_errors[] = gettext("Selected scheduler not recognized.");
+		}
 		$selectedAqm = getAQMs()[$data['aqm']];
+		if (!$selectedAqm) {
+			$input_errors[] = gettext("Selected AQM not recognized.");
+		}
 		if ($data['ecn'] && $data['ecn'] == 'on' && !$selectedScheduler["ecn"] && !$selectedAqm["ecn"]) {
 			$input_errors[] = gettext("Explicit Congestion Notification is selected, but neither " . $selectedAqm["name"] . " nor " . $selectedScheduler["name"] . " support it.");
 		}
@@ -4511,6 +4517,9 @@ class dnqueue_class extends dummynet_class {
 		
 		/* Limiter patch */
 		$selectedAqm = getAQMs()[$data['aqm']];
+		if (!$selectedAqm) {
+			$input_errors[] = gettext("Selected AQM not recognized.");
+		}
 		if ($data['ecn'] && $data['ecn'] == 'on' && !$selectedAqm["ecn"]) {
 			$input_errors[] = gettext("Explicit Congestion Notification is selected, but " . $selectedAqm["name"] . " does not support it.");
 		}

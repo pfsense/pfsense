@@ -1796,6 +1796,25 @@ PRODUCT_NAME=${PRODUCT_NAME}
 REPO_BRANCH_PREFIX=${REPO_BRANCH_PREFIX}
 EOF
 
+	for jail_arch in ${_archs}; do
+		if [ -n "${PKG_REPO_BRANCH_DEVEL_${jail_arch}}" ]; then
+			echo "PKG_REPO_BRANCH_DEVEL_${jail_arch}=${PKG_REPO_BRANCH_DEVEL_${jail_arch}}" \
+				>> /usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
+		fi
+		if [ -n "${PKG_REPO_BRANCH_RELEASE_${jail_arch}}" ]; then
+			echo "PKG_REPO_BRANCH_RELEASE_${jail_arch}=${PKG_REPO_BRANCH_RELEASE_${jail_arch}}" \
+				>> /usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
+		fi
+		if [ -n "${PKG_REPO_SERVER_DEVEL_${jail_arch}}" ]; then
+			echo "PKG_REPO_SERVER_DEVEL_${jail_arch}=${PKG_REPO_SERVER_DEVEL_${jail_arch}}" \
+				>> /usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
+		fi
+		if [ -n "${PKG_REPO_SERVER_RELEASE_${jail_arch}}" ]; then
+			echo "PKG_REPO_SERVER_RELEASE_${jail_arch}=${PKG_REPO_SERVER_RELEASE_${jail_arch}}" \
+				>> /usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
+		fi
+	done
+
 	# Change version of pfSense meta ports for snapshots
 	if [ -z "${_IS_RELEASE}" ]; then
 		local _meta_pkg_version="$(echo "${PRODUCT_VERSION}" | sed 's,DEVELOPMENT,ALPHA,')-${DATESTRING}"

@@ -323,7 +323,7 @@ $section->addInput(new Form_Input(
 	$pconfig['interval'],
 	[
 		'placeholder' => $dpinger_default['interval'],
-		'max' => 86400
+		'max' => 3600000
 	]
 ))->setHelp('How often an ICMP probe will be sent in milliseconds. Default is %d.', $dpinger_default['interval']);
 

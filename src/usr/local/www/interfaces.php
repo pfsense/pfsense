@@ -1009,6 +1009,7 @@ if ($_POST['apply']) {
 		$gateway_settings4['gateway'] = $_POST['gatewayip4'];
 		$gateway_settings4['descr'] = $_POST['gatewaydescr4'];
 		$gateway_settings4['defaultgw'] = $_POST['defaultgw4'];
+		$gateway_settings4['ipprotocol'] = 'inet';
 		$gw_input_errors = validate_gateway($gateway_settings4, '', $_POST['ipaddr'], $_POST['subnet']);
 		foreach ($gw_input_errors as $input_error_text) {
 			$input_errors[] = $input_error_text;
@@ -1024,6 +1025,7 @@ if ($_POST['apply']) {
 		$gateway_settings6['gateway'] = $_POST['gatewayip6'];
 		$gateway_settings6['descr'] = $_POST['gatewaydescr6'];
 		$gateway_settings6['defaultgw'] = $_POST['defaultgw6'];
+		$gateway_settings6['ipprotocol'] = 'inet6';
 		$gw_input_errors = validate_gateway($gateway_settings6, '', $_POST['ipaddrv6'], $_POST['subnetv6']);
 		foreach ($gw_input_errors as $input_error_text) {
 			$input_errors[] = $input_error_text;

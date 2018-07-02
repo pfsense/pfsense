@@ -5693,6 +5693,42 @@ function upgrade_181_to_182() {
 	}
 }
 
+/* Correct gateway group trigger level values.
+ * See https://redmine.pfsense.org/issues/8586
+ */
+function upgrade_182_to_183() {
+	global $config;
+	if (!is_array($config['gateways']) ||
+	    !is_array($config['gateways']['gateway_group'])) {
+		/* No gateway groups, nothing to do. */
+		return;
+	}
+	foreach ($config['gateways']['gateway_group'] as &$gwg) {
+		switch ($gwg['trigger']) {
+			case "0":
+				/* '0' => gettext('Member down'), */
+				/* 'down' => gettext("Member Down"), */
+				$gwg['trigger'] = "down";
+				break;
+			case "1":
+				/* '1' => gettext('Packet Loss'), */
+				/* 'downloss' => gettext("Packet Loss"), */
+				$gwg['trigger'] = "downloss";
+				break;
+			case "2":
+				/* '2' => gettext('High Latency'), */
+				/* 'downlatency' => gettext("High Latency"), */
+				$gwg['trigger'] = "downlatency";
+				break;
+			case "3":
+				/* '3' => gettext('Packet Loss or High latency') */
+				/* 'downlosslatency' => gettext("Packet Loss or High Latency")); */
+				$gwg['trigger'] = "downlosslatency";
+				break;
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

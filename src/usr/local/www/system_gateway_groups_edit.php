@@ -322,12 +322,7 @@ $section->addInput(new Form_Select(
 	'trigger',
 	'*Trigger Level',
 	$pconfig['trigger'],
-	array(
-		'0' => gettext('Member down'),
-		'1' => gettext('Packet Loss'),
-		'2' => gettext('High Latency'),
-		'3' => gettext('Packet Loss or High latency')
-	)
+	$categories
 ))->setHelp('When to trigger exclusion of a member');
 
 $section->addInput(new Form_Input(

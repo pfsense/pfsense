@@ -286,8 +286,8 @@ $section->addInput(new Form_Checkbox(
 	'Static DHCP',
 	'Register DHCP static mappings in DNS forwarder',
 	$pconfig['regdhcpstatic']
-))->setHelp('If this option is set, DHCP static mappings will '.
-					'be registered in the DNS forwarder, so that their name can be '.
+))->setHelp('If this option is set, IPv4 DHCP static mappings will '.
+					'be registered in the DNS forwarder so that their name can be '.
 					'resolved. The domain in %1$sSystem: General Setup%2$s should also '.
 					'be set to the proper value.', '<a href="system.php">', '</a>')
 	->addClass('toggle-dhcp');

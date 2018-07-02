@@ -412,8 +412,8 @@ $section->addInput(new Form_Checkbox(
 	'DHCP Registration',
 	'Register DHCP leases in the DNS Resolver',
 	$pconfig['regdhcp']
-))->setHelp('If this option is set, then machines that specify their hostname when requesting a DHCP lease will be registered'.
-					' in the DNS Resolver, so that their name can be resolved.'.
+))->setHelp('If this option is set, then machines that specify their hostname when requesting an IPv4 DHCP lease will be registered'.
+					' in the DNS Resolver so that their name can be resolved.'.
 					' The domain in %1$sSystem &gt; General Setup%2$s should also be set to the proper value.','<a href="system.php">','</a>');
 
 $section->addInput(new Form_Checkbox(

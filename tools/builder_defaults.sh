@@ -296,7 +296,7 @@ if [ "${TARGET_ARCH}" == "aarch64" ]; then
 else
 	export PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL:-"pkg+https://firmware.netgate.com/beta/packages"}
 	export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+https://firmware.netgate.com/pkg"}
-fi
+if
 export PKG_REPO_SERVER_STAGING=${PKG_REPO_SERVER_STAGING:-"pkg+http://${STAGING_HOSTNAME}/factory/packages"}
 
 if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then

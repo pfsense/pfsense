@@ -603,7 +603,7 @@ $section->addInput(new Form_Select(
 	'*Protocol',
 	$pconfig['proto'],
 	$p2_protos
-))->setHelp('ESP is encryption, AH is authentication only.');
+))->setHelp('Encapsulating Security Payload (ESP) is encryption, Authentication Header (AH) is authentication only.');
 
 $i = 0;
 $rows = count($p2_ealgos) - 1;
@@ -640,7 +640,7 @@ foreach ($p2_ealgos as $algo => $algodata) {
 
 
 	if ($i == $rows) {
-		$group->setHelp('Use 3DES for best compatibility or for a hardware crypto accelerator card. Blowfish is usually the fastest in software encryption.');
+		$group->setHelp('Note: Blowfish, 3DES, and CAST128 provide weak security and should be avoided.');
 	}
 
 	$i++;
@@ -658,6 +658,8 @@ foreach ($p2_halgos as $algo => $algoname) {
 		(empty($pconfig['halgos']) ? '' : in_array($algo, $pconfig['halgos'])),
 		$algo
 	))->addClass('multi')->setAttribute('id');
+
+	$group->setHelp('Note: MD5 and SHA1 provide weak security and should be avoided.');
 }
 
 $section->add($group);
@@ -669,14 +671,18 @@ $section->addInput(new Form_Select(
 	'PFS key group',
 	$pconfig['pfsgroup'],
 	$sm ? $p2_pfskeygroups:array()
-))->setHelp($sm ? '':'Set globally in mobile client options');
+));
+
+$helpstr = $sm ? '':'Set globally in mobile client options. ';
+$helpstr .= 'Note: Groups 1, 2, 22, 23, and 24 provide weak security and should be avoided.';
+$section->setHelp($helpstr);
 
 $section->addInput(new Form_Input(
 	'lifetime',
 	'Lifetime',
 	'number',
 	$pconfig['lifetime']
-))->setHelp('Seconds');
+))->setHelp('Specifies how often the connection must be rekeyed, in seconds');
 
 $form->add($section);
 

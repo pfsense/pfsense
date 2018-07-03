@@ -25,14 +25,23 @@ require("acb.inc");
 $oper_sep = "\|\|";
 $exp_sep = '||';
 
+// $legacy is used to determine whether to work with the old "Gold" ACB system, or the
+// current system
+$legacy = false;
+if (isset($_REQUEST['legacy'])) {
+	$legacy = true;
+}
+
 // Encryption password
-$decrypt_password = $config['system']['acb']['encryption_password'];
+if (!$legacy) {
+	$decrypt_password = $config['system']['acb']['encryption_password'];
+} else {
+	$decrypt_password = $config['system']['acb']['gold_encryption_password'];
+}
 
 // Defined username. Username must be sent lowercase. See Redmine #7127 and Netgate Redmine #163
 $username = strtolower($config['system']['acb']['gold_username']);
-
-// Defined password
-$password = $username = strtolower($config['system']['acb']['gold_password']);
+$password = $config['system']['acb']['gold_password'];
 
 // URL to restore.php
 $get_url = "https://portal.pfsense.org/pfSconfigbackups/restore.php";
@@ -66,13 +75,6 @@ if ($_REQUEST['download']) {
 	$pgtitle = array("Services", "Auto Configuration Backup", "Revision Information");
 } else {
 	$pgtitle = array("Services", "Auto Configuration Backup", "Restore");
-}
-
-// $legacy is used to determine whether to work with the old "Gold" ACB system, or the
-// current system
-$legacy = false;
-if (isset($_REQUEST['legacy'])) {
-	$legacy = true;
 }
 
 /* Set up time zones for conversion. See #5250 */
@@ -244,6 +246,7 @@ if ($_REQUEST['download']) {
 	$curl_session = curl_init();
 
 	if ($legacy) {
+
 		curl_setopt($curl_session, CURLOPT_URL, $get_url);
 		curl_setopt($curl_session, CURLOPT_HTTPHEADER, array("Authorization: Basic " . base64_encode("{$username}:{$password}")));
 		curl_setopt($curl_session, CURLOPT_POSTFIELDS, "action=restore" .

@@ -1,6 +1,6 @@
 <?php
 /*
- * autoconfigbackup.php
+ * services_acb.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2015 Rubicon Communications, LLC (Netgate)
@@ -359,18 +359,20 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[0] = array("Settings", false, "/pkg_edit.php?xml=autoconfigbackup.xml&amp;id=0");
+$tab_array[0] = array("Settings", false, "/services_acb_settings.php");
 if ($_REQUEST['download']) {
 	$active = false;
 } else {
 	$active = true;
 }
 
-$tab_array[1] = array("Restore", $active, "/autoconfigbackup.php");
+$tab_array[1] = array("Restore", $active, "/services_acb.php");
+
 if ($_REQUEST['download']) {
-	$tab_array[] = array("Revision", true, "/autoconfigbackup.php?download={$_REQUEST['download']}");
+	$tab_array[] = array("Revision", true, "/servcies_acb.php?download={$_REQUEST['download']}");
 }
-$tab_array[] = array("Backup now", false, "/autoconfigbackup_backup.php");
+
+$tab_array[] = array("Backup now", false, "/services_acb_backup.php");
 
 display_top_tabs($tab_array);
 
@@ -435,7 +437,7 @@ $form->add($section);
 print($form);
 
 ?>
-<a class="btn btn-primary" title="<?=gettext('Restore this revision')?>" href="autoconfigbackup.php?newver=<?= urlencode($_REQUEST['download']) ?>" onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"><i class="fa fa-undo"></i> Install this revision</a>
+<a class="btn btn-primary" title="<?=gettext('Restore this revision')?>" href="services_acb.php?newver=<?= urlencode($_REQUEST['download']) ?>" onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"><i class="fa fa-undo"></i> Install this revision</a>
 
 <?php else:
 
@@ -446,7 +448,7 @@ print($form);
 		<div class="table-responsive">
 <?php if ($legacy)	{ ?>
 		<strong>Hostname:</strong>
-		<select id="hostname" name="hostname" onchange="document.location='autoconfigbackup.php?hostname=' + this.value + '&legacy=true';">
+		<select id="hostname" name="hostname" onchange="document.location='services_acb.php?hostname=' + this.value + '&legacy=true';">
 			<?
 			$host_not_found = true;
 			foreach ($hostnames as $hn):
@@ -488,9 +490,9 @@ print($form);
 						<td><?= $cv['localtime']; ?></td>
 						<td><?= $cv['reason']; ?></td>
 						<td>
-							<a class="fa fa-undo"		title="<?=gettext('Restore this revision')?>"	href="autoconfigbackup.php?hostname=<?=urlencode($hostname)?>&newver=<?=urlencode($cv['time'])?><?=($legacy ? "&legacy=true":"")?>"	onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"></a>
-							<a class="fa fa-download"	title="<?=gettext('Show info')?>"	href="autoconfigbackup.php?download=<?=urlencode($cv['time'])?>&hostname=<?=urlencode($hostname)?>&reason=<?=urlencode($cv['reason'])?><?=($legacy ? "&legacy=true":"")?> "></a>
-							<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="autoconfigbackup.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?><?=($legacy ? "&legacy=true":"")?>"></a>
+							<a class="fa fa-undo"		title="<?=gettext('Restore this revision')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&newver=<?=urlencode($cv['time'])?><?=($legacy ? "&legacy=true":"")?>"	onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"></a>
+							<a class="fa fa-download"	title="<?=gettext('Show info')?>"	href="services_acb.php?download=<?=urlencode($cv['time'])?>&hostname=<?=urlencode($hostname)?>&reason=<?=urlencode($cv['reason'])?><?=($legacy ? "&legacy=true":"")?> "></a>
+							<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?><?=($legacy ? "&legacy=true":"")?>"></a>
 						</td>
 					</tr>
 				<?php	$counter++;
@@ -597,7 +599,7 @@ events.push(function(){
 
 	// Redraw the page if they cancel
 	$('#nolegacy').click(function() {
-		window.location.replace('/autoconfigbackup.php');
+		window.location.replace('/services_acb.php');
 	});
 
 	// On clicking "OK", reload the page but with a POST parameter "legacy" set
@@ -606,7 +608,7 @@ events.push(function(){
 
 		$form
 			.attr("method", "POST")
-			.attr("action", '/autoconfigbackup.php')
+			.attr("action", '/services_acb.php')
 			// The CSRF magic is required because we will be viewing the results of the POST
 			.append(
 				$("<input>")
@@ -631,7 +633,7 @@ events.push(function(){
 
 		$form
 			.attr("method", "POST")
-			.attr("action", '/autoconfigbackup.php')
+			.attr("action", '/services_acb.php')
 			// The CSRF magic is required because we will be viewing the results of the POST
 			.append(
 				$("<input>")

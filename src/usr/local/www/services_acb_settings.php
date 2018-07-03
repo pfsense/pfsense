@@ -85,7 +85,7 @@ if (isset($_POST['save'])) {
 			$config['system']['acb']['encryption_password'] = $pconfig['encryption_password'];
 		}
 
-		$config['system']['acb']['enable'] = $pconfig['acb_enable'];
+		$config['system']['acb']['enable'] = $pconfig['enable'];
 
 		if($update_gp) {
 			$config['system']['acb']['gold_password'] = $pconfig['gold_password'];
@@ -120,7 +120,7 @@ $section->addInput(new Form_Checkbox(
 	'enable',
 	'Enable ACB',
 	'Enable automatic configuration backups',
-	($pconfig['acb_enable'] == "yes")
+	($pconfig['enable'] == "yes")
 ));
 
 $section->addPassword(new Form_Input(

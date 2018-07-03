@@ -238,7 +238,7 @@ function upload_config($reasonm = "") {
 	}
 
 
-	$encryptpw = $config['system']['acb']['gold_password'];
+	$encryptpw = $config['system']['acb']['encryption_password'];
 
 	// Define upload_url, must be present after other variable definitions due to username, password
 	$upload_url = "https://acb.netgate.com/save";
@@ -246,7 +246,7 @@ function upload_config($reasonm = "") {
 	if (!$encryptpw) {
 		if (!file_exists("/cf/conf/autoconfigback.notice")) {
 			$notice_text = "The encryption password is not set for Automatic Configuration Backup.";
-			$notice_text .= " Please correct this in Diagnostics -> AutoConfigBackup -> Settings.";
+			$notice_text .= " Please correct this in Services -> AutoConfigBackup -> Settings.";
 			//log_error($notice_text);
 			//file_notice("AutoConfigBackup", $notice_text, $notice_text, "");
 			conf_mount_rw();

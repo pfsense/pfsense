@@ -27,7 +27,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("radius.inc");
+require_once("auth.inc");
 
 if ($_POST) {
 	$pconfig = $_POST;

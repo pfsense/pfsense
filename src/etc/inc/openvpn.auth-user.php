@@ -28,7 +28,6 @@
 
 require_once("globals.inc");
 require_once("config.inc");
-require_once("radius.inc");
 require_once("auth.inc");
 require_once("interfaces.inc");
 

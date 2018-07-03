@@ -85,13 +85,15 @@ if (isset($_POST['save'])) {
 			$config['system']['acb']['encryption_password'] = $pconfig['encryption_password'];
 		}
 
-		$config['system']['acb']['acb_enable'] = $pconfig['acb_enable'];
+		$config['system']['acb']['enable'] = $pconfig['acb_enable'];
 
 		if($update_gp) {
 			$config['system']['acb']['gold_password'] = $pconfig['gold_password'];
 		}
 
 		$config['system']['acb']['gold_username'] = $pconfig['gold_username'];
+		$config['system']['acb']['hint'] = $pconfig['hint'];
+
 
 		write_config("AutoCcnfigBackup settings updated");
 	}
@@ -115,7 +117,7 @@ $section->addInput(new Form_Input(
 ));
 
 $section->addInput(new Form_Checkbox(
-	'acb_enable',
+	'enable',
 	'Enable ACB',
 	'Enable automatic configuration backups',
 	($pconfig['acb_enable'] == "yes")
@@ -127,6 +129,14 @@ $section->addPassword(new Form_Input(
 	'password',
 	$pconfig['encryption_password']
 ));
+
+$section->addInput(new Form_Input(
+	'hint',
+	'Hint',
+	'text',
+	$pconfig['hint']
+))->setHelp("You may optionally provide a hint which will be stored in plain text along with each backup. " .
+			"This may assist in recovering a backup should you lose your device key.");
 
 $form->add($section);
 

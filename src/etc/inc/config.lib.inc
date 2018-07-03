@@ -545,7 +545,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	}
 
 	// Try the core AutoConfigBackup system
-	if ($config['system']['acb']['enable'] == "yes") {
+	if (is_array($config['system']['acb']) && $config['system']['acb']['enable'] == "yes") {
 		require_once("acb.inc");
 		upload_config();
 	}

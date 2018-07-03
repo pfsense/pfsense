@@ -177,6 +177,13 @@ $section->addPassword(new Form_Input(
 	$pconfig['gold_password']
 ));
 
+$section->addPassword(new Form_Input(
+	'gold_encryption_password',
+	'*Encryption password',
+	'password',
+	$pconfig['gold_encryption_password']
+));
+
 $form->add($section);
 
 $form->addGlobal(new Form_Button(

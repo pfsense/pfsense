@@ -117,7 +117,7 @@ function switch_get_system_vlans($dot1q_only = false) {
 
 function switch_espressobin_map_port($port) {
 
-	$ports = array("LAN Uplink", "WAN", "LAN 1", "LAN 2");
+	$ports = array("LAN Uplink", "OPT", "LAN", "WAN");
 
 	if ($port < 0)
 		$port = 0;
@@ -362,7 +362,13 @@ function espressobin_switch_initial_setup() {
 	$vgroup['vgroup'] = "2";
 	$vgroup['vlanid'] = "4091";
 	$vgroup['descr'] = "LAN";
-	$vgroup['members'] = "0t 2 3";
+	$vgroup['members'] = "0t 2";
+	$switch['vlangroups']['vlangroup'][] = $vgroup;
+	$vgroup = array();
+	$vgroup['vgroup'] = "3";
+	$vgroup['vlanid'] = "4092";
+	$vgroup['descr'] = "OPT";
+	$vgroup['members'] = "0t 3";
 	$switch['vlangroups']['vlangroup'][] = $vgroup;
 	$switch['swports']['swport'] = array();
 	$swport = array();
@@ -374,13 +380,16 @@ function espressobin_switch_initial_setup() {
 	$swport['pvid'] = "4090";
 	$swport['state'] = "forwarding";
 	$switch['swports']['swport'][] = $swport;
-	for ($i = 2; $i <= 3; $i++) {
-		$swport = array();
-		$swport['port'] = "{$i}";
-		$swport['pvid'] = "4091";
-		$swport['state'] = "forwarding";
-		$switch['swports']['swport'][] = $swport;
-	}
+	$swport = array();
+	$swport['port'] = "2";
+	$swport['pvid'] = "4091";
+	$swport['state'] = "forwarding";
+	$switch['swports']['swport'][] = $swport;
+	$swport = array();
+	$swport['port'] = "3";
+	$swport['pvid'] = "4092";
+	$swport['state'] = "forwarding";
+	$switch['swports']['swport'][] = $swport;
 	$switches[] = $switch;
 	write_config();
 }

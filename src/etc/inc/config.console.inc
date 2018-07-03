@@ -523,6 +523,13 @@ function netgate_hardware_setup() {
 		$vlan['vlanif'] = "mvneta0.4091";
 		$config['vlans']['vlan'][] = $vlan;
 		$config['interfaces']['lan']['if'] = 'mvneta0.4091';
+		$vlan = array();
+		$vlan['if'] = "mvneta0";
+		$vlan['tag'] = "4092";
+		$vlan['descr'] = "OPT";
+		$vlan['vlanif'] = "mvneta0.4092";
+		$config['vlans']['vlan'][] = $vlan;
+		$config['interfaces']['lan']['if'] = 'mvneta0.4092';
 		break;
 	case 'DNVNANO':
 		$config['interfaces']['wan']['if'] = 'ix0';

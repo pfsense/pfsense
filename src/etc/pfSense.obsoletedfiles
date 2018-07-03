@@ -29,6 +29,7 @@
 /etc/inc/m0n0
 /etc/inc/ntlm_sasl_client.inc
 /etc/inc/plain_sasl_client.inc
+/etc/inc/radius.inc
 /etc/inc/regdomain.inc
 /etc/inc/sasl.inc
 /etc/inc/simplepie

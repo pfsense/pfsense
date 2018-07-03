@@ -34,6 +34,8 @@
 
  */
 
+require_once("PEAR.php");
+require_once("Auth/RADIUS.php");
 require_once("Crypt/CHAP.php");
 
 function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$clientmac,$ruleno) {

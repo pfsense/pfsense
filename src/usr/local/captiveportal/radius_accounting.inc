@@ -34,6 +34,9 @@
    author of the PHP PECL Radius package
  */
 
+require_once("PEAR.php");
+require_once("Auth/RADIUS.php");
+
 define('GIGAWORDS_RIGHT_OPERAND', '4294967296'); // 2^32
 
 PEAR::loadExtension('bcmath');

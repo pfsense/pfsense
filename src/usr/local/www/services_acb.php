@@ -63,7 +63,7 @@ if ($_REQUEST['hostname']) {
 $myhostname = $config['system']['hostname'] . "." . $config['system']['domain'];
 
 if (!$decrypt_password) {
-	Header("Location: /services+acb_settings.php");
+	Header("Location: /services_acb_settings.php");
 	exit;
 }
 
@@ -321,7 +321,7 @@ if ( !($_REQUEST['download']) || $input_errors) {
 
 	$data = curl_exec($curl_session);
 
-	if (!curl_errno($curl_session)) {
+	if (curl_errno($curl_session)) {
 		$fd = fopen("/tmp/acb_backupdebug.txt", "w");
 		fwrite($fd, $get_url . "" . "action=showbackups" . "\n\n");
 		fwrite($fd, $data);
@@ -600,8 +600,8 @@ endif; ?>
 		$legacyready = "yes";
 	}
 
-	$legacynotready = "Please configure your \"Gold\" membershipt settings on the Settings page " .
-		"before accessing the legacy backup features";
+	$legacynotready = gettext("Please configure your \"Gold\" membershipt settings on the Settings page " .
+		"before accessing the legacy backup features");
 ?>
 
 <script type="text/javascript">

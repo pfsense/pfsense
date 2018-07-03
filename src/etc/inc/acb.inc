@@ -104,13 +104,17 @@ function acb_custom_php_resync_config_command() {
 		unlink("/cf/conf/lastpfSbackup.txt");
 		conf_mount_ro();
 	}
+
 	if (!function_exists("filter_configure")) {
 		require_once("filter.inc");
 	}
+
 	filter_configure();
+
 	if ($savemsg) {
 		$savemsg .= "<br/>";
 	}
+
 	$savemsg .= "A configuration backup has been queued.";
 }
 
@@ -159,9 +163,11 @@ function test_connection($post) {
 	// Populate available backups
 	$curl_session = curl_init();
 	curl_setopt($curl_session, CURLOPT_URL, $get_url);
+
 	if ($legacy) {
 		curl_setopt($curl_session, CURLOPT_HTTPHEADER, array("Authorization: Basic " . base64_encode("{$username}:{$password}")));
 	}
+
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_POST, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
@@ -222,6 +228,7 @@ function upload_config($reasonm = "") {
 
 	$last_config_change = $config['revision']['time'];
 	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
+
 	if ($reasonm) {
 		$reason = $reasonm;
 	} else {

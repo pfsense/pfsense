@@ -590,14 +590,32 @@ endif; ?>
 	</div>
 </div>
 
+<?php
+
+	if ((strlen($username) == 0) || (strlen($password) == 0) ||
+	   (strlen($config['system']['acb']['gold_encryption_password']) == 0) ||
+	   ($config['system']['acb']['gold_encryption_password'] == "********" )) {
+		$legacyready = "no";
+	} else {
+		$legacyready = "yes";
+	}
+
+	$legacynotready = "Please configure your \"Gold\" membershipt settings on the Settings page " .
+		"before accessing the legacy backup features";
+?>
+
 <script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	$('#loading').hide();
 
-	// SHow teh acceptance modal if the user wants to use hte legacy system
+	// Show the acceptance modal if the user wants to use hte legacy system
 	$('#legacy').click(function() {
-		$('#legacynotice').modal('show');
+		if ("<?=$legacyready?>" == "yes") {
+			$('#legacynotice').modal('show');
+		} else {
+			alert('<?=$legacynotready?>');
+		}
 	});
 
 	// Redraw the page if they cancel

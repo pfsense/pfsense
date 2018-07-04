@@ -1547,7 +1547,7 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 	global $debug, $config;
 	$ret = false;
 
-	require_once("Auth/RADIUS.inc");
+	require_once("Auth/RADIUS.php");
 	require_once("Crypt/CHAP.php");
 
 	if ($authcfg) {

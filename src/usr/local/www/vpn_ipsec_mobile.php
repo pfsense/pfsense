@@ -676,7 +676,7 @@ $group->add(new Form_Select(
 	'Group',
 	$pconfig['pfs_group'],
 	$p2_pfskeygroups
-))->setWidth(2);
+))->setHelp('Note: Groups 1, 2, 22, 23, and 24 provide weak security and should be avoided.');
 
 $section->add($group);
 

@@ -665,17 +665,15 @@ foreach ($p2_halgos as $algo => $algoname) {
 $section->add($group);
 
 $sm = (!isset($pconfig['mobile']) || !isset($a_client['pfs_group']));
+$helpstr = $sm ? '':'Set globally in mobile client options. ';
+$helpstr .= 'Note: Groups 1, 2, 22, 23, and 24 provide weak security and should be avoided.';
 
 $section->addInput(new Form_Select(
 	'pfsgroup',
 	'PFS key group',
 	$pconfig['pfsgroup'],
 	$sm ? $p2_pfskeygroups:array()
-));
-
-$helpstr = $sm ? '':'Set globally in mobile client options. ';
-$helpstr .= 'Note: Groups 1, 2, 22, 23, and 24 provide weak security and should be avoided.';
-$section->setHelp($helpstr);
+))->setHelp($helpstr);
 
 $section->addInput(new Form_Input(
 	'lifetime',

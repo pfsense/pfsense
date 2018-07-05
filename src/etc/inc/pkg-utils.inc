@@ -1407,17 +1407,24 @@ function pkg_get_repo_name($path) {
 	return $default;
 }
 
-/* Switch between stable and devel repos */
-function pkg_switch_repo($path) {
-	global $g;
+/* Setup pkg.conf according current repo */
+function pkg_conf_setup() {
+	$pkg_conf_path = "/usr/local/etc/pkg.conf";
+	$conf = "/usr/local/etc/pkg/repos/{$g['product_name']}.conf";
+	if (!file_exists($conf)) {
+		return;
+	}
 
-	safe_mkdir("/usr/local/etc/pkg/repos");
-	@unlink("/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
-	@symlink($path, "/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
+	$real_conf = readlink($conf);
 
-	$abi_file = str_replace('.conf', '.abi', $path);
-	$altabi_file = str_replace('.conf', '.altabi', $path);
+	if (!$real_conf) {
+		return;
+	}
 
+	$abi_file = str_replace('.conf', '.abi', $real_conf);
+	$altabi_file = str_replace('.conf', '.altabi', $real_conf);
+
+	$pkg_conf = array();
 	if (file_exists($abi_file) && file_exists($altabi_file)) {
 		$abi = file_get_contents($abi_file);
 		$altabi = file_get_contents($altabi_file);
@@ -1426,9 +1433,20 @@ function pkg_switch_repo($path) {
 			"ABI={$abi}",
 			"ALTABI={$altabi}"
 		);
-
-		file_put_contents("/usr/local/etc/pkg.conf", $pkg_conf);
 	}
+
+	file_put_contents($pkg_conf_path, $pkg_conf);
+}
+
+/* Switch between stable and devel repos */
+function pkg_switch_repo($path) {
+	global $g;
+
+	safe_mkdir("/usr/local/etc/pkg/repos");
+	@unlink("/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
+	@symlink($path, "/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
+
+	pkg_conf_setup();
 
 	/* Update pfSense_version cache */
 	mwexec_bg("/etc/rc.update_pkg_metadata now");

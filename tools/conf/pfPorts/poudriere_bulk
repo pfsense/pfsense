@@ -75,7 +75,6 @@ security/%%PRODUCT_NAME%%-pkg-tinc
 security/%%PRODUCT_NAME%%@all
 sysutils/%%PRODUCT_NAME%%-builder
 sysutils/%%PRODUCT_NAME%%-pkg-AutoConfigBackup
-sysutils/%%PRODUCT_NAME%%-pkg-AutoConfigBackup2
 sysutils/%%PRODUCT_NAME%%-pkg-Backup
 sysutils/%%PRODUCT_NAME%%-pkg-Cron
 sysutils/%%PRODUCT_NAME%%-pkg-LCDproc

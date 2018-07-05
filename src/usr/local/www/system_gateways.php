@@ -35,8 +35,6 @@ require_once("gwlb.inc");
 
 $simplefields = array('defaultgw4', 'defaultgw6');
 
-$a_gateways = return_gateways_array(true, false, true, true);
-
 if (!is_array($config['gateways'])) {
 	$config['gateways'] = array();
 }
@@ -49,7 +47,22 @@ $a_gateway_item = &$config['gateways']['gateway_item'];
 
 $pconfig = $_REQUEST;
 
-if ($_POST['save']) {
+if ($_POST['order-store']) {
+	// Include the rules of this (the selected) interface.
+	// If a rule is not in POST[rule], it has been deleted by the user
+	$a_gateway_item_new = array();
+	//print "<pre>";
+	foreach ($_POST['row'] as $id) {
+		//print " $id";
+		$a_gateway_item_new[] = $a_gateway_item[$id];
+	}
+	//print_r($a_gateway_item);
+	//print_r($a_gateway_item_new);
+	//print "</pre>";
+	$a_gateway_item = $a_gateway_item_new;
+	//mark_subsystem_dirty('staticroutes');
+	write_config("System - Gateways: save default gateway");
+} else if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 	foreach($simplefields as $field) {
@@ -58,6 +71,8 @@ if ($_POST['save']) {
 	mark_subsystem_dirty('staticroutes');
 	write_config("System - Gateways: save default gateway");
 }
+
+$a_gateways = return_gateways_array(true, false, true, true);
 
 if ($_POST['apply']) {
 
@@ -251,7 +266,11 @@ function gateway_displaygwtiername($gwname) {
 		}
 	}
 	if (!empty($result)) {
-		$result .= $gw['ipprotocol'] == "inet" ? " (IPv4)" : " (IPv6)";
+		if ($gw['ipprotocol'] == "inet") {
+			$result .= " (IPv4)";
+		} elseif ($gw['ipprotocol'] == "inet6") {
+			$result .= " (IPv6)";
+		}
 	}
 	return $result;
 }
@@ -281,13 +300,15 @@ $tab_array[2] = array(gettext("Gateway Groups"), false, "system_gateway_groups.p
 display_top_tabs($tab_array);
 
 ?>
+<form method="post">
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Gateways')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
+			<table id="gateways" class="table table-striped table-hover table-condensed table-rowdblclickedit">
 				<thead>
 					<tr>
+						<th></th>
 						<th></th>
 						<th><?=gettext("Name")?></th>
 						<th><?=gettext("Default")?></th>
@@ -314,8 +335,16 @@ foreach ($a_gateways as $i => $gateway):
 	} else {
 		$title = '';
 	}
+	$id = $gateway['attribute'];
 ?>
-				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
+				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?> onClick="fr_toggle(<?=$id;?>)" id="fr<?=$id;?>">
+					<td style="white-space: nowrap;">
+						<?php 
+						if (is_numeric($id)) :?>
+							<input type='checkbox' id='frc<?=$id?>' onClick='fr_toggle(<?=$id?>)' name='row[]' value='<?=$id?>'/>
+							<a class='fa fa-anchor' id='Xmove_<?=$id?>' title='"<?=gettext("Move checked entries to here")?>"'></a>
+						<?php endif; ?>
+					</td>
 					<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
 					<td>
 						<?=htmlspecialchars($gateway['name'])?>
@@ -340,7 +369,7 @@ foreach ($a_gateways as $i => $gateway):
 						<td>
 							<?=htmlspecialchars($gateway['descr'])?>
 						</td>
-						<td>
+						<td style="white-space: nowrap;">
 							<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway');?>"></a>
 							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway')?>"></a>
 
@@ -366,11 +395,16 @@ foreach ($a_gateways as $i => $gateway):
 </div>
 
 <nav class="action-buttons">
+	<button type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled title="<?=gettext('Save rule order')?>">
+		<i class="fa fa-save icon-embed-btn"></i>
+		<?=gettext("Save")?>
+	</button>
 	<a href="system_gateways_edit.php" role="button" class="btn btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>
 </nav>
+</form>
 <?php
 
 $form = new Form;
@@ -378,8 +412,8 @@ $section = new Form_Section('Default gateway');
 
 $items4 = array();
 $items6 = array();
-$items4['-'] = "None";
-$items6['-'] = "None";
+$items4[''] = "Automatic";
+$items6[''] = "Automatic";
 foreach($a_gateways as $gw) {
 	$gwn = $gw['name'];
 	if ($gw['ipprotocol'] == "inet6") {
@@ -397,6 +431,8 @@ foreach ($groups as $key => $group) {
 		$items4[$key] = "$key ($gwn)";
 	}
 }
+$items4['-'] = "None";
+$items6['-'] = "None";
 
 $section->addInput(new Form_Select(
 	'defaultgw4',
@@ -415,4 +451,39 @@ $section->addInput(new Form_Select(
 $form->add($section);
 print $form;
 
-include("foot.inc");
+?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$('#order-store').click(function () {
+		// Check all of the rule checkboxes so that their values are posted
+	   $('[id^=frc]').prop('checked', true);
+	});
+
+	$('[id^=Xmove_]').click(function (event) {
+		// anchor click to move gateways around..
+		moveRowUpAboveAnchor(event.target.id.slice(6),"gateways");
+		return false;
+	});
+	$('[id^=Xmove_]').css('cursor', 'pointer');
+});
+	function moveRowUpAboveAnchor(rowId, tableId) {
+		var table = $('#'+tableId);
+		var viewcheckboxes = $('[id^=frc]input:checked', table);
+		var rowview = $("#fr" + rowId, table);
+		var moveabove = rowview;
+		//var parent = moveabove[0].parentNode;
+		
+		viewcheckboxes.each(function( index ) {
+			var moveid = this.value;
+			console.log( index + ": " + this.id );
+
+			var prevrowview = $("#fr" + moveid, table);
+			prevrowview.insertBefore(moveabove);
+			$('#order-store').removeAttr('disabled');
+		});
+	}
+//]]>
+</script>
+
+<?php include("foot.inc");

@@ -216,9 +216,8 @@ add_new_routes() {
 	fi
 
 	ADDED_ROUTE=no
-	EXISTSGW=`/bin/ls -l /tmp/*_defaultgw | /usr/bin/wc -l`
 	# Only allow the default route to be overridden if it's on our own interface
-	if [ -f "/tmp/${interface}_defaultgw" -o $EXISTSGW -eq 0 ]; then
+	if [ -f "/tmp/${interface}_defaultgw" ]; then
 		$ROUTE delete default
 		for router in $new_routers; do
 			if [ "$new_ip_address" = "$router" -o "$router" = "255.255.255.255" ]; then

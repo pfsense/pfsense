@@ -1,6 +1,6 @@
 <?php
 /*
- * autoconfigbackup.php
+ * services_acb.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2015 Rubicon Communications, LLC (Netgate)
@@ -25,14 +25,23 @@ require("acb.inc");
 $oper_sep = "\|\|";
 $exp_sep = '||';
 
+// $legacy is used to determine whether to work with the old "Gold" ACB system, or the
+// current system
+$legacy = false;
+if (isset($_REQUEST['legacy'])) {
+	$legacy = true;
+}
+
 // Encryption password
-$decrypt_password = $config['system']['acb']['encryption_password'];
+if (!$legacy) {
+	$decrypt_password = $config['system']['acb']['encryption_password'];
+} else {
+	$decrypt_password = $config['system']['acb']['gold_encryption_password'];
+}
 
 // Defined username. Username must be sent lowercase. See Redmine #7127 and Netgate Redmine #163
 $username = strtolower($config['system']['acb']['gold_username']);
-
-// Defined password
-$password = $username = strtolower($config['system']['acb']['gold_password']);
+$password = $config['system']['acb']['gold_password'];
 
 // URL to restore.php
 $get_url = "https://portal.pfsense.org/pfSconfigbackups/restore.php";
@@ -54,7 +63,7 @@ if ($_REQUEST['hostname']) {
 $myhostname = $config['system']['hostname'] . "." . $config['system']['domain'];
 
 if (!$decrypt_password) {
-	Header("Location: /services+acb_settings.php");
+	Header("Location: /services_acb_settings.php");
 	exit;
 }
 
@@ -66,13 +75,6 @@ if ($_REQUEST['download']) {
 	$pgtitle = array("Services", "Auto Configuration Backup", "Revision Information");
 } else {
 	$pgtitle = array("Services", "Auto Configuration Backup", "Restore");
-}
-
-// $legacy is used to determine whether to work with the old "Gold" ACB system, or the
-// current system
-$legacy = false;
-if (isset($_REQUEST['legacy'])) {
-	$legacy = true;
 }
 
 /* Set up time zones for conversion. See #5250 */
@@ -244,6 +246,7 @@ if ($_REQUEST['download']) {
 	$curl_session = curl_init();
 
 	if ($legacy) {
+
 		curl_setopt($curl_session, CURLOPT_URL, $get_url);
 		curl_setopt($curl_session, CURLOPT_HTTPHEADER, array("Authorization: Basic " . base64_encode("{$username}:{$password}")));
 		curl_setopt($curl_session, CURLOPT_POSTFIELDS, "action=restore" .
@@ -318,7 +321,7 @@ if ( !($_REQUEST['download']) || $input_errors) {
 
 	$data = curl_exec($curl_session);
 
-	if (!curl_errno($curl_session)) {
+	if (curl_errno($curl_session)) {
 		$fd = fopen("/tmp/acb_backupdebug.txt", "w");
 		fwrite($fd, $get_url . "" . "action=showbackups" . "\n\n");
 		fwrite($fd, $data);
@@ -359,18 +362,20 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[0] = array("Settings", false, "/pkg_edit.php?xml=autoconfigbackup.xml&amp;id=0");
+$tab_array[0] = array("Settings", false, "/services_acb_settings.php");
 if ($_REQUEST['download']) {
 	$active = false;
 } else {
 	$active = true;
 }
 
-$tab_array[1] = array("Restore", $active, "/autoconfigbackup.php");
+$tab_array[1] = array("Restore", $active, "/services_acb.php");
+
 if ($_REQUEST['download']) {
-	$tab_array[] = array("Revision", true, "/autoconfigbackup.php?download={$_REQUEST['download']}");
+	$tab_array[] = array("Revision", true, "/servcies_acb.php?download={$_REQUEST['download']}");
 }
-$tab_array[] = array("Backup now", false, "/autoconfigbackup_backup.php");
+
+$tab_array[] = array("Backup now", false, "/services_acb_backup.php");
 
 display_top_tabs($tab_array);
 
@@ -435,7 +440,7 @@ $form->add($section);
 print($form);
 
 ?>
-<a class="btn btn-primary" title="<?=gettext('Restore this revision')?>" href="autoconfigbackup.php?newver=<?= urlencode($_REQUEST['download']) ?>" onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"><i class="fa fa-undo"></i> Install this revision</a>
+<a class="btn btn-primary" title="<?=gettext('Restore this revision')?>" href="services_acb.php?newver=<?= urlencode($_REQUEST['download']) ?>" onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"><i class="fa fa-undo"></i> Install this revision</a>
 
 <?php else:
 
@@ -446,7 +451,7 @@ print($form);
 		<div class="table-responsive">
 <?php if ($legacy)	{ ?>
 		<strong>Hostname:</strong>
-		<select id="hostname" name="hostname" onchange="document.location='autoconfigbackup.php?hostname=' + this.value + '&legacy=true';">
+		<select id="hostname" name="hostname" onchange="document.location='services_acb.php?hostname=' + this.value + '&legacy=true';">
 			<?
 			$host_not_found = true;
 			foreach ($hostnames as $hn):
@@ -488,9 +493,9 @@ print($form);
 						<td><?= $cv['localtime']; ?></td>
 						<td><?= $cv['reason']; ?></td>
 						<td>
-							<a class="fa fa-undo"		title="<?=gettext('Restore this revision')?>"	href="autoconfigbackup.php?hostname=<?=urlencode($hostname)?>&newver=<?=urlencode($cv['time'])?><?=($legacy ? "&legacy=true":"")?>"	onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"></a>
-							<a class="fa fa-download"	title="<?=gettext('Show info')?>"	href="autoconfigbackup.php?download=<?=urlencode($cv['time'])?>&hostname=<?=urlencode($hostname)?>&reason=<?=urlencode($cv['reason'])?><?=($legacy ? "&legacy=true":"")?> "></a>
-							<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="autoconfigbackup.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?><?=($legacy ? "&legacy=true":"")?>"></a>
+							<a class="fa fa-undo"		title="<?=gettext('Restore this revision')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&newver=<?=urlencode($cv['time'])?><?=($legacy ? "&legacy=true":"")?>"	onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"></a>
+							<a class="fa fa-download"	title="<?=gettext('Show info')?>"	href="services_acb.php?download=<?=urlencode($cv['time'])?>&hostname=<?=urlencode($hostname)?>&reason=<?=urlencode($cv['reason'])?><?=($legacy ? "&legacy=true":"")?> "></a>
+							<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?><?=($legacy ? "&legacy=true":"")?>"></a>
 						</td>
 					</tr>
 				<?php	$counter++;
@@ -585,19 +590,37 @@ endif; ?>
 	</div>
 </div>
 
+<?php
+
+	if ((strlen($username) == 0) || (strlen($password) == 0) ||
+	   (strlen($config['system']['acb']['gold_encryption_password']) == 0) ||
+	   ($config['system']['acb']['gold_encryption_password'] == "********" )) {
+		$legacyready = "no";
+	} else {
+		$legacyready = "yes";
+	}
+
+	$legacynotready = gettext("Please configure your \"Gold\" membershipt settings on the Settings page " .
+		"before accessing the legacy backup features");
+?>
+
 <script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	$('#loading').hide();
 
-	// SHow teh acceptance modal if the user wants to use hte legacy system
+	// Show the acceptance modal if the user wants to use hte legacy system
 	$('#legacy').click(function() {
-		$('#legacynotice').modal('show');
+		if ("<?=$legacyready?>" == "yes") {
+			$('#legacynotice').modal('show');
+		} else {
+			alert('<?=$legacynotready?>');
+		}
 	});
 
 	// Redraw the page if they cancel
 	$('#nolegacy').click(function() {
-		window.location.replace('/autoconfigbackup.php');
+		window.location.replace('/services_acb.php');
 	});
 
 	// On clicking "OK", reload the page but with a POST parameter "legacy" set
@@ -606,7 +629,7 @@ events.push(function(){
 
 		$form
 			.attr("method", "POST")
-			.attr("action", '/autoconfigbackup.php')
+			.attr("action", '/services_acb.php')
 			// The CSRF magic is required because we will be viewing the results of the POST
 			.append(
 				$("<input>")
@@ -631,7 +654,7 @@ events.push(function(){
 
 		$form
 			.attr("method", "POST")
-			.attr("action", '/autoconfigbackup.php')
+			.attr("action", '/services_acb.php')
 			// The CSRF magic is required because we will be viewing the results of the POST
 			.append(
 				$("<input>")

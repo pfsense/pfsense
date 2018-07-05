@@ -104,13 +104,17 @@ function acb_custom_php_resync_config_command() {
 		unlink("/cf/conf/lastpfSbackup.txt");
 		conf_mount_ro();
 	}
+
 	if (!function_exists("filter_configure")) {
 		require_once("filter.inc");
 	}
+
 	filter_configure();
+
 	if ($savemsg) {
 		$savemsg .= "<br/>";
 	}
+
 	$savemsg .= "A configuration backup has been queued.";
 }
 
@@ -159,9 +163,11 @@ function test_connection($post) {
 	// Populate available backups
 	$curl_session = curl_init();
 	curl_setopt($curl_session, CURLOPT_URL, $get_url);
+
 	if ($legacy) {
 		curl_setopt($curl_session, CURLOPT_HTTPHEADER, array("Authorization: Basic " . base64_encode("{$username}:{$password}")));
 	}
+
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_POST, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
@@ -222,6 +228,7 @@ function upload_config($reasonm = "") {
 
 	$last_config_change = $config['revision']['time'];
 	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
+
 	if ($reasonm) {
 		$reason = $reasonm;
 	} else {
@@ -238,7 +245,7 @@ function upload_config($reasonm = "") {
 	}
 
 
-	$encryptpw = $config['system']['acb']['gold_password'];
+	$encryptpw = $config['system']['acb']['encryption_password'];
 
 	// Define upload_url, must be present after other variable definitions due to username, password
 	$upload_url = "https://acb.netgate.com/save";
@@ -246,7 +253,7 @@ function upload_config($reasonm = "") {
 	if (!$encryptpw) {
 		if (!file_exists("/cf/conf/autoconfigback.notice")) {
 			$notice_text = "The encryption password is not set for Automatic Configuration Backup.";
-			$notice_text .= " Please correct this in Diagnostics -> AutoConfigBackup -> Settings.";
+			$notice_text .= " Please correct this in Services -> AutoConfigBackup -> Settings.";
 			//log_error($notice_text);
 			//file_notice("AutoConfigBackup", $notice_text, $notice_text, "");
 			conf_mount_rw();

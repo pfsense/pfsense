@@ -544,6 +544,12 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		run_plugins("/usr/local/pkg/write_config/");
 	}
 
+	// Try the core AutoConfigBackup system
+	if (is_array($config['system']['acb']) && $config['system']['acb']['enable'] == "yes") {
+		require_once("acb.inc");
+		upload_config();
+	}
+
 	return $config;
 }
 

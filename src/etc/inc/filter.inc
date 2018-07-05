@@ -1905,6 +1905,10 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	if (!empty($descr)) {
 		$descr = " # " . $descr;
 	}
+	
+	if (empty($if_friendly) || empty($src) || empty($dst)) {
+		return "# validation of rule properties failed to verify the interface/source/destination" . " in nat rule: {$descr}\n";
+	}
 	/* Put all the pieces together */
 	$natrules = "";
 	if ($nonat) {
@@ -1912,10 +1916,18 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 		$natrules .= "no nat on \${$if_friendly} {$inet}{$protocol} from {$src} to {$dst}{$descr}\n";
 	} else {
 		if ($inet == "" || $inet == 'inet') {
-			$natrules .= "nat on \${$if_friendly} inet{$protocol} from {$src} to {$dst} -> {$tgt4}{$tgtport} {$poolopts}{$staticnatport_txt}{$descr}\n";
+			if (empty($tgt4)) {
+				$natrules .= "# validation of rule properties failed to verify the IPv4 target" . " in nat rule: {$descr}\n";
+			} else {
+				$natrules .= "nat on \${$if_friendly} inet{$protocol} from {$src} to {$dst} -> {$tgt4}{$tgtport} {$poolopts}{$staticnatport_txt}{$descr}\n";
+			}
 		} 
 		if ($inet == "" || $inet == 'inet6') {
-			$natrules .= "nat on \${$if_friendly} inet6{$protocol} from {$src} to {$dst} -> {$tgt6}{$tgtport} {$poolopts}{$staticnatport_txt}{$descr}\n";
+			if (empty($tgt6)) {
+				$natrules .= "# validation of rule properties failed to verify the IPv6 target" . " in nat rule: {$descr}\n";
+			} else {
+				$natrules .= "nat on \${$if_friendly} inet6{$protocol} from {$src} to {$dst} -> {$tgt6}{$tgtport} {$poolopts}{$staticnatport_txt}{$descr}\n";
+			}
 		}
 	}
 	return $natrules;

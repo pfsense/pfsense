@@ -1409,6 +1409,8 @@ function pkg_get_repo_name($path) {
 
 /* Setup pkg.conf according current repo */
 function pkg_conf_setup() {
+	global $g;
+
 	$pkg_conf_path = "/usr/local/etc/pkg.conf";
 	$conf = "/usr/local/etc/pkg/repos/{$g['product_name']}.conf";
 	if (!file_exists($conf)) {

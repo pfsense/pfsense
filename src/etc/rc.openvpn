@@ -70,6 +70,16 @@ if (isset($_GET['interface'])) {
 	$argument = trim($argv[1], " \n");
 }
 
+// Workaround as rc.openvpn is called by the gatewaymonitor / check_reload event system,..
+//file_put_contents("/dev/console", "\n[".getmypid()."] OPENVPN CALLED ".$argument);
+$gateways_arr = return_gateways_array();
+if (isset($gateways_arr[$argument])) {
+	//file_put_contents("/dev/console", "\n[".getmypid()."] OPENVPN CALLED WITH GW:".$argument);
+	// called upon rc.gateway_alarm 
+	system_routing_configure();
+}
+
+
 if ((is_array($config['openvpn']['openvpn-server']) && count($config['openvpn']['openvpn-server'])) ||
     (is_array($config['openvpn']['openvpn-client']) && count($config['openvpn']['openvpn-client']))) {
 	if (empty($argument) || $argument == "all") {

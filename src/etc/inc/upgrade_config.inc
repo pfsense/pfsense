@@ -5729,6 +5729,18 @@ function upgrade_182_to_183() {
 	}
 }
 
+function upgrade_183_to_184() {
+	/* 'none' was kinda confusing and didnt really do none
+	 * now use the new 'automatic' mode if it was set to none. */
+	global $config;
+	if ($config['gateways']['defaultgw4'] === "-") {
+		$config['gateways']['defaultgw4'] = "";
+	}
+	if ($config['gateways']['defaultgw6'] === "-") {
+		$config['gateways']['defaultgw6'] = "";
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

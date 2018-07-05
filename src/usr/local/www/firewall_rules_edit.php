@@ -1733,6 +1733,9 @@ events.push(function() {
 	// Show advanced additional opts options ======================================================
 	var showadvopts = false;
 
+	// Remove focus on page load
+	document.activeElement.blur()
+	
 	function show_advopts(ispageload) {
 		var text;
 		// On page load decide the initial state based on the data.

@@ -548,8 +548,8 @@ if (are_notices_pending()) {
 
 		if (password_verify($g['factory_shipped_password'], $cu['bcrypt-hash'])) {
 			print('<div class="alert alert-danger">' .
-				sprintf(gettext('%sWARNING:%s The admin account password is set to the default value. ' .
-				' %s Change the admin password in the User Manager.%s'),
+				sprintf(gettext('%sWARNING:%s The \'admin\' account password is set to the default value. ' .
+				' %s Change the password in the User Manager.%s'),
 				'<strong>', '</strong>', '<a href="/system_usermanager.php?act=edit&userid=' . $cu['uid'] . '">', '</a>') .
 				'</div>');
 		}

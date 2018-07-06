@@ -547,8 +547,8 @@ if (are_notices_pending()) {
 		$cu = getUserEntry("admin");
 
 		if ($cu['bcrypt-hash'] == '$2b$10$13u6qwCOwODv34GyCMgdWub6oQF3RX0rG7c3d3X4JvzuEmAXLYDd2') {
-			print('<div class="alert alert-danger">' . gettext('<strong>WARNING:</strong> The password associated with "admin" is still set to the default. Please enter a new password ' .
-				' <a href="/system_usermanager.php?act=edit&userid=' . $cu['uid'] . '">HERE.</a>') .
+			print('<div class="alert alert-danger">' . gettext('<strong>WARNING:</strong> The <i>admin</i> account password is still set to the default. ' .
+				' <a href="/system_usermanager.php?act=edit&userid=' . $cu['uid'] . '">Change the <i>admin</i> password in the User Manager.</a>') .
 				'</div>');
 		}
 	}

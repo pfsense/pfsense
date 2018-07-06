@@ -540,6 +540,20 @@ if (are_notices_pending()) {
 </nav>
 
 <div class="container <?=$menuclass?>" <?=$columnsContainer?>>
+
+<?php
+	// Print a warning if current user = admin and the password hash is still set to the default value
+	if ($_SESSION['Username'] == "admin") {
+		$cu = getUserEntry("admin");
+
+		if ($cu['bcrypt-hash'] == '$2b$10$13u6qwCOwODv34GyCMgdWub6oQF3RX0rG7c3d3X4JvzuEmAXLYDd2') {
+			print('<div class="alert alert-danger">' . gettext('<strong>WARNING:</strong> The password associated with "admin" is still set to the default. Please enter a new password ' .
+				' <a href="/system_usermanager.php?act=edit&userid=' . $cu['uid'] . '">HERE.</a>') .
+				'</div>');
+		}
+	}
+?>
+
 	<header class="header">
 
 <?php

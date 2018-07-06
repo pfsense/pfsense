@@ -647,6 +647,10 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$options[$field['add_to_certca_selection']] = $field['add_to_certca_selection'];
 				}
 
+				if (!is_array($config['ca'])) {
+					$config['ca'] = array();
+				}
+
 				foreach ($config['ca'] as $ca) {
 					$caname = htmlspecialchars($ca['descr']);
 
@@ -690,6 +694,10 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					}
 
 					$options[$field['add_to_cert_selection']] = $field['add_to_cert_selection'];
+				}
+
+				if (!is_array($config['cert'])) {
+					$config['cert'] = array();
 				}
 
 				foreach ($config['cert'] as $ca) {

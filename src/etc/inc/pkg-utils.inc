@@ -1445,6 +1445,16 @@ function pkg_conf_setup() {
 		);
 	}
 
+	/* XXX Replace by a function that detect thoth hardware */
+	if (php_uname('m') == "arm64") {
+		$pkg_conf[] = "PKG_ENV {";
+		$pkg_conf[] = "\tOPENSSL_CONF=/etc/thoth/openssl.cnf";
+		$pkg_conf[] = "\tSSL_CA_CERT_FILE=/etc/thoth/ca.pem";
+		$pkg_conf[] = "\tSSL_CLIENT_CERT_FILE=/etc/thoth/device.pem";
+		$pkg_conf[] = "\tSSL_CLIENT_KEY_FILE=/etc/thoth/key.pem";
+		$pkg_conf[] = "}";
+	}
+
 	file_put_contents($pkg_conf_path, $pkg_conf);
 }
 

@@ -1062,7 +1062,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	} elseif (empty($gwdefault)) {
 		// 'automatic' mode, pick the first one thats 'up' or 'unmonitored' which is always considered up
 		$gateways_arr = order_gateways_as_configured($gateways_arr);
-
+		$fallback = "";
 		foreach($gateways_arr as $gwname => $gwsttng) {
 			if ($gwsttng['ipprotocol'] != $ipprotocol) {
 				continue;
@@ -1072,6 +1072,13 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 				$set_dfltgwname = $gwname;
 				break;
 			}
+			if (empty($fallback) && $gwsttng['interface'] != 'lo0') {
+				$fallback = $gwname;
+			}
+		}
+		if (empty($set_dfltgwname)) {
+			log_error(sprintf("Gateway, none 'available' for %s, use the first one configured. '%s'", $ipprotocol, $fallback));
+			$set_dfltgwname = $fallback;
 		}
 	} else {
 		// a gwgroup is selected

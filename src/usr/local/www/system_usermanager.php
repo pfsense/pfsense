@@ -822,7 +822,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	foreach ($config['system']['group'] as $Ggroup) {
 		if ($Ggroup['name'] != "all") {
-			if (($act == 'edit') && $Ggroup['member'] && in_array($pconfig['uid'], $Ggroup['member'])) {
+			if (($act == 'edit' || $input_errors) && $Ggroup['member'] && in_array($a_user[$id]['uid'], $Ggroup['member'])) {
 				$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list
 			} else {
 				$systemGroups[ $Ggroup['name'] ] = $Ggroup['name']; // Add it to the 'not a member of' list

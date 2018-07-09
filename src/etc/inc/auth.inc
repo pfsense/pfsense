@@ -805,7 +805,7 @@ function local_user_get_groups($user, $all = false) {
 }
 
 function local_user_set_groups($user, $new_groups = NULL) {
-	global $debug, $config, $groupindex;
+	global $debug, $config, $groupindex, $userindex;
 
 	if (!is_array($config['system']['group'])) {
 		return;
@@ -830,6 +830,14 @@ function local_user_set_groups($user, $new_groups = NULL) {
 		$group = & $config['system']['group'][$groupindex[$groupname]];
 		$group['member'][] = $user['uid'];
 		$mod_groups[] = $group;
+
+		/*
+		 * If it's a new user, make sure it is added before try to
+		 * add it as a member of a group
+		 */
+		if (!isset($userindex[$user['uid']])) {
+			local_user_set($user);
+		}
 	}
 	unset($group);
 

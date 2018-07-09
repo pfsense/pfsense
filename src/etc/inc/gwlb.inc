@@ -1207,7 +1207,7 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 			$statuschanged = false;
 			$pluginparams = array();
 			$pluginparams['type'] = 'gateway';
-			$pluginparams['name'] = ${gwname};
+			$pluginparams['name'] = $gwname;
 			if ($gwdown == true) {
 				if (!file_exists("/tmp/.down.{$gwname}")) {
 					touch("/tmp/.down.{$gwname}");

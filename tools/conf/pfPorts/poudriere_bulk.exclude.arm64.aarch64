@@ -2,7 +2,7 @@ emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
 graphics/drm-next-kmod
 graphics/drm-stable-kmod
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
-net/%%PRODUCT_NAME%%-pkg-aws-wizard@all
+net/%%PRODUCT_NAME%%-pkg-aws-wizard
 sysutils/%%PRODUCT_NAME%%-builder
 sysutils/%%PRODUCT_NAME%%-pkg-LCDproc
 sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Coreboot_Upgrade

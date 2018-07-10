@@ -362,8 +362,10 @@ if (!($act == "new" || $act == "edit")) {
 	foreach ($a_group as $i => $group):
 		if ($group["name"] == "all") {
 			$groupcount = count($config['system']['user']);
-		} else {
+		} elseif (is_array($group['member'])) {
 			$groupcount = count($group['member']);
+		} else {
+			$groupcount = 0;
 		}
 ?>
 					<tr>

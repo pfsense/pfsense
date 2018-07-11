@@ -1046,7 +1046,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.
 	 */
 	$set_dfltgwname = '';
-	
+
 	if ($ipprotocol == 'inet') {
 		$gwdefault = $config['gateways']['defaultgw4'];
 	} else {
@@ -1062,7 +1062,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	} elseif (empty($gwdefault)) {
 		// 'automatic' mode, pick the first one thats 'up' or 'unmonitored' which is always considered up
 		$gateways_arr = order_gateways_as_configured($gateways_arr);
-		
+
 		foreach($gateways_arr as $gwname => $gwsttng) {
 			if ($gwsttng['ipprotocol'] != $ipprotocol) {
 				continue;
@@ -1207,7 +1207,7 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 			$statuschanged = false;
 			$pluginparams = array();
 			$pluginparams['type'] = 'gateway';
-			$pluginparams['name'] = ${gwname};
+			$pluginparams['name'] = ${'gwname'};
 			if ($gwdown == true) {
 				if (!file_exists("/tmp/.down.{$gwname}")) {
 					touch("/tmp/.down.{$gwname}");
@@ -1369,7 +1369,7 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 
 function lookup_gateway_or_group_by_name($gwname) {
 	global $config;
-	
+
 	$gateways_arr = return_gateways_array();
 	foreach ($gateways_arr as $gw) {
 		if ($gw['name'] == $gwname) {

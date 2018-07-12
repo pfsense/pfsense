@@ -1938,6 +1938,10 @@ function openvpn_create_dirs() {
 		safe_mkdir("{$g['varetc_path']}/openvpn", 0750);
 	}
 	if (!is_dir("{$g['varetc_path']}/openvpn-csc")) {
+		/* If it's a file, remove it */
+		if (file_exists("{$g['varetc_path']}/openvpn-csc")) {
+			unlink_if_exists("{$g['varetc_path']}/openvpn-csc");
+		}
 		safe_mkdir("{$g['varetc_path']}/openvpn-csc", 0750);
 	}
 

@@ -67,9 +67,6 @@ net/trafshow
 net/trafshow3
 net/vnstat
 security/netgate-ca
-security/netgate-cryptoauthlib
-security/netgate-libthoth
-security/netgate-openssl
 security/netgate-ping-auth
 security/netgate-thoth
 security/%%PRODUCT_NAME%%-pkg-acme

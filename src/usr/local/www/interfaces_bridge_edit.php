@@ -344,6 +344,11 @@ if ($_POST['save']) {
 		if ($bridge['bridgeif'] == "" || !stristr($bridge['bridgeif'], "bridge")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
+
+			// $bridge[bridgeif] is getting some invalid characters that need to be
+			// taken out for it to parse as xml. This hack should work until the actual bug is found.
+			$bridge['bridgeif'] = preg_replace('/[^A-Za-z0-9\-]/', '', $bridge['bridgeif']); // Removes special chars.
+
 			if (isset($id) && $a_bridges[$id]) {
 				$a_bridges[$id] = $bridge;
 			} else {

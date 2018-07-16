@@ -67,6 +67,9 @@ $a_rfc2136 = $config['dnsupdates']['dnsupdate'];
 $all_dyndns = array_merge($a_dyndns, $a_rfc2136);
 
 array_walk($all_dyndns, function(&$dyndns) {
+	if (empty($dyndns)) {
+		return;
+	}
 	if (empty($dyndns['type'])) {
 		/* RFC2136, add some dummy values */
 		$dyndns['type'] = '_rfc2136_';

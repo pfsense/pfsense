@@ -321,10 +321,8 @@ function switch_set_vlan_mode($swdev = NULL, $vlanmode = NULL) {
 
 	switch ($vlanmode) {
 	case "DOT1Q":
-		mwexec("/sbin/etherswitchcfg config vlan_mode dot1q");
-		break;
 	case "PORT":
-		mwexec("/sbin/etherswitchcfg config vlan_mode port");
+		pfSense_etherswitch_setmode($swdev, strtolower($vlanmode));
 		break;
 	default:
 		return (false);

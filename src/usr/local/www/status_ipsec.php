@@ -61,8 +61,8 @@ if ($_POST['act'] == 'connect') {
 					mwexec_bg("/usr/local/sbin/ipsec up {$connid}");
 				}
 			} else {
-				mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_POST['ikeid']));
-				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_POST['ikeid']));
+				mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_POST['ikeid'] . '000'));
+				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_POST['ikeid'] . '000'));
 			}
 		}
 	}

@@ -55,6 +55,9 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 
 $a_dyndns = $config['dyndnses']['dyndns'];
 
+if (!is_array($config['dnsupdates'])) {
+	$config['dnsupdates'] = array();
+}
 if (!is_array($config['dnsupdates']['dnsupdate'])) {
 	$config['dnsupdates']['dnsupdate'] = array();
 }

@@ -336,7 +336,7 @@ foreach ($pconfig['members'] as $member) {
 
 	if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
 		if (in_array($member, $pconfig['tagged'])) {
-			$checked = yes;
+			$checked = 'yes';
 		} else {
 			$checked = '';
 		}

@@ -102,7 +102,7 @@ function switch_get_system_vlans($dot1q_only = false) {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
-	case "A37XX":
+	case "SG-1100":
 	case "PLCC-B":
 	case "ROGUE-1":
 		return (switch_default_get_system_vlans($dot1q_only));
@@ -115,7 +115,7 @@ function switch_get_system_vlans($dot1q_only = false) {
 	return (NULL);
 }
 
-function switch_espressobin_map_port($port) {
+function switch_sg1100_map_port($port) {
 
 	$ports = array("LAN Uplink", "OPT", "LAN", "WAN");
 
@@ -168,8 +168,8 @@ function switch_map_port($port) {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
-	case "A37XX":
-		return (switch_espressobin_map_port($port));
+	case "SG-1100":
+		return (switch_sg1100_map_port($port));
 		break;
 	case "PLCC-B":
 		return (switch_plcc_map_port($port));
@@ -193,7 +193,7 @@ function switch_get_devices() {
 		return ($swdevices);
 
 	switch ($platform['name']) {
-	case "A37XX":
+	case "SG-1100":
 	case "PLCC-B":
 	case "ROGUE-1":
 	case "uFW":
@@ -212,7 +212,7 @@ function switch_get_title() {
 		return ("");
 
 	switch ($platform['name']) {
-	case "A37XX":
+	case "SG-1100":
 		return ("Armada 3700");
 		break;
 	case "PLCC-B":
@@ -333,7 +333,7 @@ function switch_set_vlan_mode($swdev = NULL, $vlanmode = NULL) {
 	return (true);
 }
 
-function espressobin_switch_initial_setup() {
+function sg1100_switch_initial_setup() {
 	global $config;
 
 	if (!isset($config['switches']['switch']) || !is_array($config['switches']['switch'])) {
@@ -341,7 +341,7 @@ function espressobin_switch_initial_setup() {
 		$config['switches']['switch'] = array();
 	}
 
-	/* Default settings for the espressobin switch. */
+	/* Default settings for the SG-1100 switch. */
 	$switches = &$config['switches']['switch'];
 	$switch = array();
 	$switch['device'] = "/dev/etherswitch0";
@@ -488,8 +488,8 @@ function default_switch_configure() {
 	if (!isset($switches) || !is_array($switches)) {
 		$platform = system_identify_specific_platform();
 		switch ($platform['name']) {
-		case "A37XX":
-			espressobin_switch_initial_setup();
+		case "SG-1100":
+			sg1100_switch_initial_setup();
 			break;
 		case "PLCC-B":
 			plccb_switch_initial_setup();
@@ -586,7 +586,7 @@ function switches_configure($force = false) {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
-	case "A37XX":
+	case "SG-1100":
 	case "PLCC-B":
 	case "ROGUE-1":
 	case "uFW":
@@ -601,7 +601,7 @@ function switches_configure($force = false) {
 		echo gettext("Configuring switch...");
 	}
 	switch ($platform['name']) {
-	case "A37XX":
+	case "SG-1100":
 	case "PLCC-B":
 	case "ROGUE-1":
 		default_switch_configure();
@@ -618,7 +618,7 @@ function platform_has_switch() {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
-	case "A37XX":
+	case "SG-1100":
 	case "PLCC-B":
 	case "ROGUE-1":
 	case "uFW":

@@ -5529,7 +5529,7 @@ function upgrade_switch_port_state() {
 	}
         $platform = system_identify_specific_platform();
         switch ($platform['name']) {
-        case "A37XX":
+        case "SG-1100":
 		$start = 0;
 		$stop = 3;
 		break;

@@ -2244,7 +2244,7 @@ function system_setup_sysctl() {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
-	case 'A37XX':
+	case 'SG-1100':
 	case 'DNVNANO':
 	case 'PLCC-B':
 	case 'ROGUE-1':
@@ -2499,8 +2499,13 @@ function system_identify_specific_platform() {
 			return $result;
 			break;
 		case 'mvebu_armada-37xx':
-			return (array('name' => 'A37XX', 'descr' => 'Marvell Armada 3700'));
+			return (array('name' => 'SG-1100', 'descr' => 'SG-1100'));
 			break;
+/*
+ *		case 'mvebu_armada-37xx':
+ *			return (array('name' => 'A37XX', 'descr' => 'Marvel Armada 37x0'));
+ *			break;
+ */
 		case 'SYS-5018A-FTN4':
 		case 'A1SAi':
 			return (array('name' => 'C2758', 'descr' => 'Super Micro C2758'));

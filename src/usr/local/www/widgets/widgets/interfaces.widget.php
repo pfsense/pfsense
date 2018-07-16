@@ -27,7 +27,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 
 $platform = system_identify_specific_platform();
 $ifdescrs = get_configured_interface_with_descr();
-$has_switch = array("A37XX", "PLCC-B", "ROGUE-1");
+$has_switch = array("SG-1100", "PLCC-B", "ROGUE-1");
 if (in_array($platform['name'], $has_switch)) {
 	$swdevs = switch_get_devices();
 	if (count($swdevs) > 0) {

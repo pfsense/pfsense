@@ -1194,7 +1194,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	    $specific_platform['name'] == 'apu2' ||
 	    $specific_platform['name'] == 'uFW') {
 		$serial_only = true;
-	} elseif ($specific_platform['name'] == 'A37XX') {
+	} elseif ($specific_platform['name'] == 'SG1100') {
 		$serial_efi_only = true;
 	}
 
@@ -1278,7 +1278,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	}
 	if ($specific_platform['name'] == 'PLCC-B' ||
 	    $specific_platform['name'] == 'ROGUE-1' ||
-	    $specific_platform['name'] == 'A37XX') {
+	    $specific_platform['name'] == 'SG1100') {
 		$data[] = 'hw.e6000sw.default_disabled=1';
 	}
 	$data[] = 'autoboot_delay="3"';

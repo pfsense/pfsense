@@ -264,7 +264,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			if ($cpucount > 1): ?>
 				<div id="cpucount">
 					<?= htmlspecialchars($cpucount) ?> <?=gettext('CPUs')?>: <?= htmlspecialchars(get_cpu_count(true)); ?>
-				<?php if ($platform['name'] == "A37XX"): ?>
+				<?php if ($platform['name'] == "SG-1100"): ?>
 					<br />
 <?
 					exec("dmesg | grep CPU | grep ARM", $cpus);

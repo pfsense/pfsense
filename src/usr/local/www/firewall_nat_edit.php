@@ -324,7 +324,7 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		if (!isset($_POST['nordr']) && ($_POST['dstendport'] - $_POST['dstbeginport'] + $_POST['localbeginport']) > 65535) {
+		if (!isset($_POST['nordr']) && ((int) $_POST['dstendport'] - (int) $_POST['dstbeginport'] + (int) $_POST['localbeginport']) > 65535) {
 			$input_errors[] = gettext("The target port range must be an integer between 1 and 65535.");
 		}
 	}
@@ -462,7 +462,7 @@ if ($_POST['save']) {
 			}
 
 			$dstpfrom = $_POST['localbeginport'];
-			$dstpto = $dstpfrom + $_POST['dstendport'] - $_POST['dstbeginport'];
+			$dstpto = (int) $dstpfrom + (int) $_POST['dstendport'] - (int) $_POST['dstbeginport'];
 
 			if ($dstpfrom == $dstpto) {
 				$filterent['destination']['port'] = $dstpfrom;

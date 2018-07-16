@@ -59,6 +59,11 @@ if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($nate
 
 		if ($_POST['separator']) {
 			$idx = 0;
+
+			if (!is_array($config['nat']['separator'])) {
+				$config['nat']['separator'] = array();
+			}
+
 			foreach ($_POST['separator'] as $separator) {
 				$config['nat']['separator']['sep' . $idx++] = $separator;
 			}

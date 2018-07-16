@@ -1067,7 +1067,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			if ($gwsttng['ipprotocol'] != $ipprotocol) {
 				continue;
 			}
-			print "\n check: ".$gwname;
+			
 			if ((isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) || $gateways_status[$gwname]['status'] == "none")) {
 				$set_dfltgwname = $gwname;
 				break;

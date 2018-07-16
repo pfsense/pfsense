@@ -243,7 +243,7 @@ function vpn_ipsec_configure($restart = false) {
 	$mobile_ipsec_auth = "";
 	if (is_array($a_phase1) && count($a_phase1)) {
 
-		$ipsecpinghosts = "";
+		$ipsecpinghosts = array();
 		/* step through each phase1 entry */
 		foreach ($a_phase1 as $ph1ent) {
 			if (isset($ph1ent['disabled'])) {

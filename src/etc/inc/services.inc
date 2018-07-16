@@ -1987,6 +1987,12 @@ function dyndnsCheckIP($int) {
 
 		// Append the factory default check IP service to the list (if not disabled).
 		if (!isset($config['checkipservices']['disable_factory_default'])) {
+			if (!is_array($config['checkipservices'])) {
+				$config['checkipservices'] = array();
+			}
+			if (!is_array($config['checkipservices']['checkipservice'])) {
+				$config['checkipservices']['checkipservice'] = array();
+			}
 			$config['checkipservices']['checkipservice'][] = $factory_default_checkipservice;
 		}
 

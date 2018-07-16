@@ -79,8 +79,8 @@ function getSchedulers() {
 			"description" => "CoDel is a novel \"no knobs\", \"just works\", \"handles variable bandwidth and RTT\", and simple AQM algorithm."
 							. " As a scheduler, FQ_CODEL implements several flows (defined below), each having their own CoDel AQM.",
 			"parameters" => array(
-				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.target") / 1000),
-				"interval" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.interval") / 1000),
+				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqcodel.target")) / 1000),
+				"interval" => array("name" => "Interval (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqcodel.interval")) / 1000),
 				"quantum" => array("name" => "quantum", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.quantum")),
 				"limit" => array("name" => "limit", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.limit")),
 				"flows" => array("name" => "flows", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqcodel.flows"))
@@ -92,8 +92,8 @@ function getSchedulers() {
 			"parameter_format" => "type fq_pie target %sms tupdate %sms alpha %s beta %s max_burst %s max_ecnth %s",
 			"description" => "Fair Queue Proportional Integral controller Enhanced AQM (FQ_PIE) is similar to FQ_CODEL but uses a slightly different algorithm.",
 			"parameters" => array(
-				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.target") / 1000),
-				"tupdate" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.tupdate") / 1000),
+				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.target")) / 1000),
+				"tupdate" => array("name" => "Interval (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.tupdate")) / 1000),
 				"alpha" => array("name" => "alpha", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.alpha")),
 				"beta" => array("name" => "beta", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.beta")),
 				"max_burst" => array("name" => "max_burst", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_burst")),
@@ -118,8 +118,8 @@ function getAQMs() {
 			"description" => "CoDel is a novel \"no knobs\", \"just works\", \"handles variable bandwidth and RTT\", and simple AQM algorithm.",
 			"parameter_format" => "codel target %sms interval %sms",
 			"parameters" => array(
-				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.codel.target") / 1000),
-				"interval" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.codel.interval") / 1000),
+				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.codel.target")) / 1000),
+				"interval" => array("name" => "Interval (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.codel.interval")) / 1000),
 			),
 			"ecn" => true
 		),
@@ -128,8 +128,8 @@ function getAQMs() {
 			"description" => "Proportional Integral controller Enhanced AQM (PIE) is similar to CoDel but uses a slightly different algorithm.",
 			"parameter_format" => "pie target %sms tupdate %sms alpha %s beta %s max_burst %s max_ecnth %s",
 			"parameters" => array(
-				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.target") / 1000),
-				"tupdate" => array("name" => "Interval (ms)", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.tupdate") / 1000),
+				"target" => array("name" => "Target Delay (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.target")) / 1000),
+				"tupdate" => array("name" => "Interval (ms)", "type" => "number", "default" => intval(get_single_sysctl("net.inet.ip.dummynet.fqpie.tupdate")) / 1000),
 				"alpha" => array("name" => "alpha", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.alpha")),
 				"beta" => array("name" => "beta", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.beta")),
 				"max_burst" => array("name" => "max_burst", "type" => "number", "default" => get_single_sysctl("net.inet.ip.dummynet.fqpie.max_burst")),
@@ -169,15 +169,15 @@ function array_map_assoc(callable $f, array $a) {
 }
 function build_queue_params($array, $selected, $params, $id) {
 	$form .= '<div id="params_' . $id . '">';
-	
+
 	$selectedAlgorithm = $array[$selected];
-	
+
 	if ($selectedAlgorithm) {
 		$form .= '<span class="help-block">' . gettext($selectedAlgorithm['description']) . '</span><br/>';
 	}
-	
+
 	$parameters = $selectedAlgorithm["parameters"];
-	
+
 	if (!$parameters || sizeof($parameters) <= 0) {
 		if (!$selectedAlgorithm) {
 			$form .= 'No parameters for selected algorithm.';
@@ -192,27 +192,27 @@ function build_queue_params($array, $selected, $params, $id) {
 		$form .= "<th>Value</th>";
 		$form .= "</tr></thead>";
 		$form .= "<tbody>";
-		
+
 		foreach ($parameters as $key => $value) {
 			$form .= '<tr>';
-			
+
 			// get current value, or default.
 			$currentValue = $params[$key];
 			if (!$currentValue || $currentValue == '') {
 				$currentValue = $value["default"]; // default to default
 			}
-			
+
 			$form .= "<td class=\"col-xs-4\">" . htmlspecialchars($key) . "</td>";
-			$form .= "<td class=\"col-xs-8\"><input class=\"form-control\" type=" . gettext($value["type"]) 
+			$form .= "<td class=\"col-xs-8\"><input class=\"form-control\" type=" . gettext($value["type"])
 					. " name=\"param_" . $selected . "_" . $key . "\" placeholder=\"" .
 					htmlspecialchars($value["default"]) . "\" value=\"" . htmlspecialchars($currentValue) . "\"/></td>";
-			
+
 			$form .= '</tr>';
 		}
-		
+
 		$form .= "</tbody></table></div><br />";
 	}
-	
+
 	$form .= '</div>';
 	$form .= '<script type="text/javascript">';
 	$form .= 'events.push(function() {$("#' . $id . '").change(function() {$("#params_' .
@@ -3653,7 +3653,7 @@ class dnpipe_class extends dummynet_class {
 	var $delay;
 	var $qbandwidth = array();
 	var $qbandwidthtype;
-	
+
 	/* Limiter queue patch */
     var $ecn; // ecn 'on' or 'off'
     var $aqm; // key to aqm_map
@@ -3835,7 +3835,7 @@ class dnpipe_class extends dummynet_class {
 		if ($data['delay'] && (!is_numeric($data['delay']))) {
 			$input_errors[] = gettext("Delay must be an integer.");
 		}
-		
+
 		/* Limiter patch */
 		$selectedScheduler = getSchedulers()[$data['sched']];
 		if (!$selectedScheduler) {
@@ -3928,7 +3928,7 @@ class dnpipe_class extends dummynet_class {
 			$this->SetDescription("");
 		}
 		$this->SetEnabled($q['enabled']);
-		
+
 		/* Limiter patch */
 		if (isset($q['aqm']) && $q['aqm'] <> "") {
 				$this->SetAQM($q['aqm']);
@@ -3948,7 +3948,7 @@ class dnpipe_class extends dummynet_class {
 				}
 			}
 		}
-	
+
 		if (isset($q['sched']) && $q['sched'] <> "") {
 				$this->SetScheduler($q['sched']);
 		} else {
@@ -3966,7 +3966,7 @@ class dnpipe_class extends dummynet_class {
 				}
 			}
 		}
-		
+
 		// ecn flag
 		$this->SetECN($q['ecn']);
 		/* End limiter patch */
@@ -4076,13 +4076,13 @@ class dnpipe_class extends dummynet_class {
 		}
 		$pfq_rule .= "\n";
 		/* End patch */
-		
+
 		if (!empty($this->subqueues) && count($this->subqueues) > 0) {
 			foreach ($this->subqueues as $q) {
 				$pfq_rule .= $q->build_rules();
 			}
 		}
-		
+
 		$pfq_rule .= " \n";
 
 		return $pfq_rule;
@@ -4338,7 +4338,7 @@ EOD;
 		/* Begin limiter patch */
 		$aqm_map = getAQMs();
 		$scheduler_map = getSchedulers();
-		
+
 		$section = new Form_Section('Queue');
 		$section->addInput(new Form_Select(
 				'aqm',
@@ -4350,12 +4350,12 @@ EOD;
 		))->setHelp('Active queue management (AQM) is the intelligent drop of network packets inside the limiter, ' .
 						'when it becomes full or gets close to becoming full, with the goal of reducing ' .
 						'network congestion.');
-		
+
 		$section->addInput(new Form_StaticText(
 			'',
 			build_queue_params($aqm_map, $this->GetAQM(), $this->GetAQMParameters(), "aqm")
 		))->setHelp('Specifies the queue management algorithm parameters.');
-		
+
 		$section->addInput(new Form_Select(
 				'sched',
 				'Scheduler',
@@ -4369,7 +4369,7 @@ EOD;
 			'',
 			build_queue_params($scheduler_map, $this->GetScheduler(), $this->GetSchedulerParameters(), "sched")
 		))->setHelp('Specifies the scheduler parameters.');
-		
+
 		$section->addInput(new Form_Input(
 				'qlimit',
 				'Queue length',
@@ -4377,7 +4377,7 @@ EOD;
 				$this->GetQlimit()
 		))->setHelp('Specifies the length of the limiter\'s queue, which the scheduler and AQM are responsible for. ' .
 			'This field may be left empty.');
-		
+
 		$section->addInput(new Form_Checkbox(
 			'ecn',
 			'ECN',
@@ -4388,7 +4388,7 @@ EOD;
 
 		$sform->add($section);
 		/* End limiter patch */
-		
+
 		$section = new Form_Section('Advanced Options');
 
 		$section->addInput(new Form_Input(
@@ -4446,7 +4446,7 @@ EOD;
 		$cflink['maskbits'] = $mask['bits'];
 		$cflink['maskbitsv6'] = $mask['bitsv6'];
 		$cflink['delay'] = $this->GetDelay();
-		
+
 		/* Limiter queue patch */
 		$cflink['sched'] = $this->GetScheduler();
 		$scheduler_map = getSchedulers();
@@ -4527,8 +4527,8 @@ class dnqueue_class extends dummynet_class {
 
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
-		
-		
+
+
 		/* Limiter patch */
 		$selectedAqm = getAQMs()[$data['aqm']];
 		if (!$selectedAqm) {
@@ -4618,7 +4618,7 @@ class dnqueue_class extends dummynet_class {
 			$this->SetDescription("");
 		}
 		$this->SetEnabled($q['enabled']);
-		
+
 		/* Limiter patch */
 		if (isset($q['aqm']) && $q['aqm'] <> "") {
 				$this->SetAQM($q['aqm']);
@@ -4636,7 +4636,7 @@ class dnqueue_class extends dummynet_class {
 				$this->SetAQMParameter($key, $value["default"]);
 			}
 		}
-		
+
 		// ecn flag
 		$this->SetECN($q['ecn']);
 		/* End limiter patch */
@@ -4668,7 +4668,7 @@ class dnqueue_class extends dummynet_class {
 			$pfq_rule .= " buckets " . $this->GetBuckets();
 		}
 		$this->build_mask_rules($pfq_rule);
-		
+
 		/* Limiter patch */
 		$selectedAQM = getAQMs()[$this->getAQM()];
 		if ($selectedAQM) {
@@ -4682,7 +4682,7 @@ class dnqueue_class extends dummynet_class {
 			}
 		}
 		/* End patch */
-		
+
 		$pfq_rule .= "\n";
 
 		return $pfq_rule;
@@ -4779,10 +4779,10 @@ class dnqueue_class extends dummynet_class {
 		))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 		$sform->add($section);
-		
+
 		/* Begin limiter patch */
 		$aqm_map = getAQMs();
-		
+
 		$section = new Form_Section('Queue');
 		$section->addInput(new Form_Select(
 				'aqm',
@@ -4794,19 +4794,19 @@ class dnqueue_class extends dummynet_class {
 		))->setHelp('Active queue management (AQM) is the intelligent drop of network packets inside this limiter\'s queue, ' .
 						'when it becomes full or gets close to becoming full, with the goal of reducing ' .
 						'network congestion.');
-		
+
 		$section->addInput(new Form_StaticText(
 			'',
 			build_queue_params($aqm_map, $this->GetAQM(), $this->GetAQMParameters(), "aqm")
 		))->setHelp('Specifies the queue management algorithm parameters.');
-		
+
 		$section->addInput(new Form_Input(
 				'qlimit',
 				'Queue length',
 				'number',
 				$this->GetQlimit()
 		))->setHelp('Specifies the length of this queue, which the AQM is responsible for.  This field may be left empty.');
-		
+
 		$section->addInput(new Form_Checkbox(
 			'ecn',
 			'ECN',
@@ -4837,7 +4837,7 @@ class dnqueue_class extends dummynet_class {
 			['step' => '0.001', 'min' => '0.000']
 		))->setHelp('In most cases, zero (0) should be specified here (or leave the field empty). ' .
 					'A value of 0.001 means one packet in 1000 gets dropped');
-					
+
 		$section->addInput(new Form_Input(
 			'buckets',
 			'Bucket size (slots)',
@@ -4877,7 +4877,7 @@ class dnqueue_class extends dummynet_class {
 		$cflink['mask'] = $mask['type'];
 		$cflink['maskbits'] = $mask['bits'];
 		$cflink['maskbitsv6'] = $mask['bitsv6'];
-		
+
 		/* Limiter queue patch */
 		$cflink['aqm'] = $this->GetAQM();
 		$aqm_map = GetAQMs();

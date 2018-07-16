@@ -2226,7 +2226,7 @@ function filter_nat_rules_generate() {
 			}
 
 			/* if item is an alias, expand */
-			$dstport = "";
+			$dstport = array();
 			$dstport[0] = alias_expand($rule['destination']['port']);
 			if (!$dstport[0]) {
 				$dstport = explode("-", $rule['destination']['port']);

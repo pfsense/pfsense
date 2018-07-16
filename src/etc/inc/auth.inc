@@ -1402,6 +1402,8 @@ function ldap_backed($username, $passwd, $authcfg) {
 		$username = $username_split[0];
 	}
 
+	$username = ldap_escape($username, null, LDAP_ESCAPE_FILTER);
+
 	if ($authcfg) {
 		if (strstr($authcfg['ldap_urltype'], "SSL")) {
 			$ldapproto = "ldaps";

@@ -5741,6 +5741,35 @@ function upgrade_183_to_184() {
 	}
 }
 
+// Migrate AutoConfigBackup package settings to integtrated ACB system
+// and remove package
+function upgrade_184_to_185() {
+	global $config;
+
+	if (is_array($config['installedpackages']['autoconfigbackup']['config'][0])) {
+		$acbpkg = &$config['installedpackages']['autoconfigbackup']['config'][0];
+
+		if (!is_array($config['system']['acb'])) {
+			$config['system']['acb'] = array();
+		}
+
+		$acb = &$config['system']['acb'];
+		$acb['enable'] = ($acbpkg['enable_acb'] != 'disabled') ?  'yes':'no';
+		$acb['gold_encryption_password'] = $acbpkg['crypto_password'];
+
+		// If no encryption password has been set up yet, we might as well import the "Gold" password
+		// The user can update it later
+		if (!isset($acb['encryption_password'])) {
+			$acb['encryption_password'] = $acbpkg['crypto_password'];
+		}
+
+		$acb['gold_password'] = $acbpkg['password'];
+		$acb['gold_username'] = $acbpkg['username'];
+
+		unset($config['installedpackages']['autoconfigbackup']['config']);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

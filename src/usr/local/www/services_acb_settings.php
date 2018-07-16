@@ -83,8 +83,8 @@ if (isset($_POST['save'])) {
 	$update_gep = false;
 
 	if ($pconfig['legacy'] == 'yes') {
-		if ($_POST['gold__encryption_password'] != "********") {
-			if ($_POST['gold__encryption_password'] != $_POST['gold__encryption_password_confirm']) {
+		if ($_POST['gold_encryption_password'] != "********") {
+			if ($_POST['gold_encryption_password'] != $_POST['gold_encryption_password_confirm']) {
 				$input_errors[] = gettext("Legacy Gold encryption password and confirmation do not match");
 			} else {
 				$update_gep = true;

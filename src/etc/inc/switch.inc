@@ -528,10 +528,20 @@ function default_switch_configure() {
 			if (isset($laggroup['members'])) {
 				$members = explode(" ", $laggroup['members']);
 			} else {
-				continue;
+				$members = array();
 			}
-			$laggmembers = implode(",", $members);
-			mwexec("/sbin/etherswitchcfg laggroup{$laggroup['lgroup']} members $laggmembers");
+			foreach($members as $m) {
+				$tagpos = strpos($m, "t");
+				if ($tagpos != false) {
+					$m = substr($m, 0, $tagpos);
+					$lgmembers[$m] = array();
+					$lgmembers[$m]['tagged'] = 1;
+				} else {
+					$lgmembers[$m] = array();
+				}
+			}
+
+			pfSense_etherswitch_setlaggroup($switch['device'], $laggroup, $lgmembers);
 		}
 	}
 

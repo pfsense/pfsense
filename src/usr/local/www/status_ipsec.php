@@ -410,8 +410,8 @@ function print_ipsec_body() {
 			}
 
 			print("<tr>\n");
-			print("<td>\n");
 			print("<td></td>\n");
+			print("<td>\n");
 			print(htmlspecialchars($ph1ent['descr']));
 			print("</td>\n");
 			print("<td>\n");

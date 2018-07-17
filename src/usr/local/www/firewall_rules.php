@@ -499,6 +499,13 @@ foreach ($a_filter as $filteri => $filterent):
 			pprint_port($filterent['destination']['port'])
 		);
 
+		if (!is_array($config['schedules'])) {
+			$config['schedules'] = array();
+		}
+
+		if (!is_array($config['schedules']['schedule'])) {
+			$config['schedules']['schedule'] = array();
+		}
 		//build Schedule popup box
 		$a_schedules = &$config['schedules']['schedule'];
 		$schedule_span_begin = "";

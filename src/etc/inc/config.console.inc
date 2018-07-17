@@ -510,7 +510,7 @@ function netgate_hardware_setup() {
 
 	/* Determine interfaces */
 	switch ($platform['name']) {
-	case 'SG1100':
+	case 'SG-1100':
 		$config['vlans']['vlan'] = array();
 		$vlan = array();
 		$vlan['if'] = "mvneta0";

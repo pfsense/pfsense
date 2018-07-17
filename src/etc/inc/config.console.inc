@@ -519,6 +519,7 @@ function netgate_hardware_setup() {
 		$vlan['vlanif'] = "mvneta0.4090";
 		$config['vlans']['vlan'][] = $vlan;
 		$config['interfaces']['wan']['if'] = 'mvneta0.4090';
+		$config['interfaces']['lan']['switchif'] = 'switch0.port3';
 		$vlan = array();
 		$vlan['if'] = "mvneta0";
 		$vlan['tag'] = "4091";
@@ -526,6 +527,7 @@ function netgate_hardware_setup() {
 		$vlan['vlanif'] = "mvneta0.4091";
 		$config['vlans']['vlan'][] = $vlan;
 		$config['interfaces']['lan']['if'] = 'mvneta0.4091';
+		$config['interfaces']['lan']['switchif'] = 'switch0.port2';
 		$vlan = array();
 		$vlan['if'] = "mvneta0";
 		$vlan['tag'] = "4092";
@@ -569,6 +571,7 @@ function netgate_hardware_setup() {
 		$vlan['vlanif'] = "lagg0.4090";
 		$config['vlans']['vlan'][] = $vlan;
 		$config['interfaces']['wan']['if'] = 'lagg0.4090';
+		$config['interfaces']['wan']['switchif'] = 'switch0.port1';
 		$vlan = array();
 		$vlan['if'] = "lagg0";
 		$vlan['tag'] = "4091";

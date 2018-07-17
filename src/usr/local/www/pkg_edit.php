@@ -908,8 +908,11 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$onchange = (isset($pkga['onchange']) ? "{$pkga['onchange']}" : '');
 
 			$source_url = $pkga['source'];
-			eval("\$pkg_source_txt = &$source_url;");
-
+			try{
+				@eval("\$pkg_source_txt = &$source_url;");
+			} catch (\Throwable | \Error | \Exception $e) {
+				//do nothing
+			}
 			#check if show disable option is present on xml
 			if (!is_array($pkg_source_txt)) {
 				$pkg_source_txt = array();

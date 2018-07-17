@@ -609,7 +609,7 @@ endif; ?>
 events.push(function(){
 	$('#loading').hide();
 
-	// Show the acceptance modal if the user wants to use hte legacy system
+	// Show the acceptance modal if the user wants to use the legacy system
 	$('#legacy').click(function() {
 		if ("<?=$legacyready?>" == "yes") {
 			$('#legacynotice').modal('show');

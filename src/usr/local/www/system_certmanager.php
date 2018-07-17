@@ -802,6 +802,19 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		$pconfig['lifetime']
 	));
 
+	$section->addInput(new Form_Input(
+		'dn_commonname',
+		'*Common Name',
+		'text',
+		$pconfig['dn_commonname'],
+		['placeholder' => 'e.g. www.example.com']
+	));
+
+	$section->addInput(new Form_StaticText(
+		null,
+		gettext('The following certificate subject components are optional and may be left blank.')
+	));
+
 	$section->addInput(new Form_Select(
 		'dn_country',
 		'Country Code',
@@ -841,14 +854,6 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		['placeholder' => 'e.g. My Department Name (optional)']
 	));
 
-	$section->addInput(new Form_Input(
-		'dn_commonname',
-		'*Common Name',
-		'text',
-		$pconfig['dn_commonname'],
-		['placeholder' => 'e.g. www.example.com']
-	));
-
 	$form->add($section);
 	$section = new Form_Section('External Signing Request');
 	$section->addClass('toggle-external collapse');
@@ -867,6 +872,19 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		array_combine($openssl_digest_algs, $openssl_digest_algs)
 	))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
 		'SHA1 when possible');
+
+	$section->addInput(new Form_Input(
+		'csr_dn_commonname',
+		'*Common Name',
+		'text',
+		$pconfig['csr_dn_commonname'],
+		['placeholder' => 'e.g. internal-ca']
+	));
+
+	$section->addInput(new Form_StaticText(
+		null,
+		gettext('The following certificate subject components are optional and may be left blank.')
+	));
 
 	$section->addInput(new Form_Select(
 		'csr_dn_country',
@@ -905,14 +923,6 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'text',
 		$pconfig['csr_dn_organizationalunit'],
 		['placeholder' => 'e.g. My Department Name (optional)']
-	));
-
-	$section->addInput(new Form_Input(
-		'csr_dn_commonname',
-		'*Common Name',
-		'text',
-		$pconfig['csr_dn_commonname'],
-		['placeholder' => 'e.g. internal-ca']
 	));
 
 	$form->add($section);

@@ -41,6 +41,9 @@ require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"));
 
+if (!is_array($config['schedules'])) {
+	$config['schedules'] = array();
+}
 if (!is_array($config['schedules']['schedule'])) {
 	$config['schedules']['schedule'] = array();
 }

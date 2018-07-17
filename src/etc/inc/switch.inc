@@ -22,6 +22,23 @@
 /* include all configuration functions */
 require_once("globals.inc");
 
+function switch_get_uplink_ports() {
+	$platform = system_identify_specific_platform();
+	switch ($platform['name']) {
+	case "SG-1100":
+		return (array("mvneta0"));
+		break;
+	case "PLCC-B":
+		return (array("ix2", "ix3"));
+		break;
+	case "ROGUE-1":
+		return (array("mvneta1"));
+		break;
+	}
+
+	return (NULL);
+}
+
 function switch_default_get_system_vlans($dot1q_only) {
 
 	/* Defaults to a single switch. */

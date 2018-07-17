@@ -1577,9 +1577,33 @@ function get_interface_info($ifdescr) {
 	$ifinfo['enable'] = isset($config['interfaces'][$ifdescr]['enable']);
 	$ifinfo['if'] = get_real_interface($ifdescr);
 
-	$chkif = $ifinfo['if'];
-	$ifinfotmp = pfSense_get_interface_addresses($chkif);
-	$ifinfo['status'] = $ifinfotmp['status'];
+	$swifinfo = NULL;
+	if (isset($config['interfaces'][$ifdescr]['switchif'])) {
+		$ifinfo['switchif'] = $config['interfaces'][$ifdescr]['switchif'];
+		$switchif = sscanf($ifinfo['switchif'], "switch%d.port%d");
+		if (is_array($switchif)) {
+			list($swdev, $swport) = $switchif;
+			if (isset($swdev) && isset($swport) && is_numeric($swdev) && is_numeric($swport)) {
+				$swdevice = "/dev/etherswitch$swdev";
+				$swifinfo = pfSense_etherswitch_getport($swdevice, $swport);
+				if ($swifinfo != NULL) {
+					if (isset($swifinfo['status']) && $swifinfo['status'] == "active") {
+						$ifinfo['status'] = "up";
+					}
+					if (isset($swifinfo['media']) && is_array($swifinfo['media']) &&
+					    isset($swifinfo['media']['active'])) {
+						$ifinfo['media'] = $swifinfo['media']['active'];
+					}
+				}
+			}
+		}
+	}
+
+	if ($swifinfo == NULL) {
+		$chkif = $ifinfo['if'];
+		$ifinfotmp = pfSense_get_interface_addresses($chkif);
+		$ifinfo['status'] = $ifinfotmp['status'];
+	}
 	if (empty($ifinfo['status'])) {
 		$ifinfo['status'] = "down";
 	}
@@ -1736,7 +1760,7 @@ function get_interface_info($ifdescr) {
 		$ifinfo['ppp_uptime'] = convert_seconds_to_dhms($sec);
 	}
 
-	if ($ifinfo['status'] == "up") {
+	if ($ifinfo['status'] == "up" && $swifinfo == NULL) {
 		/* try to determine media with ifconfig */
 		unset($ifconfiginfo);
 		exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);

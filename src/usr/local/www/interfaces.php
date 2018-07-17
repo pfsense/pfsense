@@ -116,6 +116,26 @@ foreach ($a_ppps as $pppid => $ppp) {
 
 $type_disabled = (substr($wancfg['if'], 0, 3) == 'gre') ? 'disabled' : '';
 
+$switch_uplink = false;
+if (platform_has_switch()) {
+	$switch_uplink_ports = switch_get_uplink_ports();
+	if (interface_is_vlan($wancfg['if']) != NULL) {
+		$parent_array = get_parent_interface($wancfg['if']);
+		$realif = get_real_interface($parent_array[0]);
+	} else {
+		$realif = get_real_interface($wancfg['if']);
+	}
+	if (is_array($switch_uplink_ports) && in_array($realif, $switch_uplink_ports)) {
+		$switch_uplink = true;
+	}
+	/* List of available switches.  XXX. */
+	$swdevices = switch_get_devices();
+	$swinfo = pfSense_etherswitch_getinfo($swdevices[0]);
+	if ($swinfo == NULL) {
+		$input_errors[] = "Cannot get switch device information\n";
+	}
+}
+
 if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	$pconfig['pppid'] = $pppid;
 	$pconfig['ptpid'] = $a_ppps[$pppid]['ptpid'];
@@ -249,6 +269,8 @@ $pconfig['adv_dhcp6_key_info_statement_expire'] = $wancfg['adv_dhcp6_key_info_st
 $pconfig['adv_dhcp6_config_advanced'] = $wancfg['adv_dhcp6_config_advanced'];
 $pconfig['adv_dhcp6_config_file_override'] = $wancfg['adv_dhcp6_config_file_override'];
 $pconfig['adv_dhcp6_config_file_override_path'] = $wancfg['adv_dhcp6_config_file_override_path'];
+
+$pconfig['switchif'] = $wancfg['switchif'];
 
 $pconfig['dhcp_plus'] = isset($wancfg['dhcp_plus']);
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
@@ -510,6 +532,16 @@ if ($_POST['apply']) {
 			if ($if != $ifent && (strcasecmp($ifdescr, $_POST['descr']) == 0)) {
 				$input_errors[] = gettext("An interface with the specified description already exists.");
 				break;
+			}
+		}
+
+		/* Switch if cannot be reused. */
+		if (is_array($config['interfaces']) && isset($_POST['switchif'])) {
+			foreach ($config['interfaces'] as $int) {
+				if ($int != $wancfg && $int['switchif'] == $_POST['switchif']) {
+					$input_errors[] = gettext("This Switch port is already in used by another interface.");
+					break;
+				}
 			}
 		}
 
@@ -1506,6 +1538,14 @@ if ($_POST['apply']) {
 			handle_wireless_post();
 		}
 
+		if (!$input_errors) {
+			if (empty($_POST['switchif'])) {
+				unset($wancfg['switchif']);
+			} else {
+				$wancfg['switchif'] = $_POST['switchif'];
+			}
+		}
+
 		write_config();
 
 		if ($_POST['gatewayip4']) {
@@ -1749,6 +1789,24 @@ $mymac = str_replace("\n", "", $mymac);
 $defgatewayname4 = $wancfg['descr'] . "GW";
 $defgatewayname6 = $wancfg['descr'] . "GWv6";
 
+function build_switchports_list() {
+	global $swdevices, $swinfo;
+
+	$list = [""	 =>	 gettext("Select the Switch port to monitor for media state changes"),
+		];
+	if (!platform_has_switch()) {
+		return($list);
+	}
+	for ($i = 0; $i < $swinfo['nports']; $i++) {
+		if (!switch_port_is_enabled($swinfo, $i)) {
+			continue;
+		}
+		list($swdevice) = sscanf($swdevices[0], "/dev/etherswitch%d");
+		$list["switch{$swdevice}.port{$i}"] = "Port {$i}";
+	}
+	return($list);
+}
+
 function build_mediaopts_list() {
 	global $mediaopts_list;
 
@@ -1878,7 +1936,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('If a value is entered in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP ' .
 			'header size) will be in effect.');
 
-if (count($mediaopts_list) > 0) {
+if (count($mediaopts_list) > 0 && !$switch_uplink) {
 	$section->addInput(new Form_Select(
 		'mediaopt',
 		'Speed and Duplex',
@@ -1886,6 +1944,15 @@ if (count($mediaopts_list) > 0) {
 		build_mediaopts_list()
 	))->setHelp('Explicitly set speed and duplex mode for this interface.%s' .
 				'WARNING: MUST be set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.', '<br />');
+}
+
+if ($switch_uplink) {
+	$section->addInput(new Form_Select(
+		'switchif',
+		'Switch port',
+		$pconfig['switchif'],
+		build_switchports_list()
+	))->setHelp('Use the selected Switch port as source for the port state changes.');
 }
 
 $form->add($section);

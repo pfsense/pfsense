@@ -408,6 +408,12 @@ if ($_POST['save']) {
 	}
 }
 
+$localid_help_tunnel  = "Local network component of this IPsec security association.";
+$localid_help_vti     = "Local point-to-point IPsec interface tunnel network address.";
+$localid_help_mobile  = "Network reachable by mobile IPsec clients.";
+$remoteid_help_tunnel = "Remote network component of this IPsec security association.";
+$remoteid_help_vti    = "Remote point-to-point IPsec interface tunnel network address";
+
 if ($pconfig['mobile']) {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"), gettext("Edit Phase 2"));
 	$pglinks = array("", "vpn_ipsec.php", "vpn_ipsec_mobile.php", "@self");
@@ -538,6 +544,7 @@ $group->add(new Form_IpAddress(
 	$pconfig['localid_address']
 ))->setHelp('Address')->addMask('localid_netbits', $pconfig['localid_netbits'], 128, 0);
 
+$group->setHelp('%s', '<span id="opt_localid_help"></span>');
 $section->add($group);
 
 $group = new Form_Group('NAT/BINAT translation');
@@ -584,6 +591,7 @@ if (!isset($pconfig['mobile'])) {
 		$pconfig['remoteid_address']
 	))->setHelp('Address')->addMask('remoteid_netbits', $pconfig['remoteid_netbits'], 128, 0);
 
+	$group->setHelp('%s', '<span id="opt_remoteid_help"></span>');
 	$section->add($group);
 }
 
@@ -749,10 +757,13 @@ events.push(function() {
 		if ((value == 'tunnel') || (value == 'tunnel6')) {
 			hideClass('opt_localid', false);
 			hideClass('opt_natid', false);
+			$('#opt_localid_help').html("<?=$localid_help_mobile?>");
 
 <?php	if (!isset($pconfig['mobile'])): ?>
 			hideClass('opt_remoteid', false);
 			hideClass('opt_natid', false);
+			$('#opt_localid_help').html("<?=$localid_help_tunnel?>");
+			$('#opt_remoteid_help').html("<?=$remoteid_help_tunnel?>");
 <?php	endif; ?>
 		} else if (value == 'vti') {
 			hideClass('opt_localid', false);
@@ -760,6 +771,8 @@ events.push(function() {
 			$('#remoteid_type').val('address');
 			disableInput('remoteid_type', true);
 			typesel_change_remote(32);
+			$('#opt_localid_help').html("<?=$localid_help_vti?>");
+			$('#opt_remoteid_help').html("<?=$remoteid_help_vti?>");
 		} else {
 			hideClass('opt_localid', true);
 			hideClass('opt_natid', true);

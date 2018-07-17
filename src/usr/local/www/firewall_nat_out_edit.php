@@ -45,6 +45,10 @@ if (!is_array($config['nat']['outbound']['rule'])) {
 
 $a_out = &$config['nat']['outbound']['rule'];
 
+if (!is_array($config['aliases'])) {
+	$config['aliases'] = array();
+}
+
 if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
 }

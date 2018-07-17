@@ -179,7 +179,7 @@ EOF;
 	}
 
 	// Determine interfaces where unbound will bind
-	$tlsport = is_numeric($unboundcfg['tlsport']) ? $unboundcfg['tlsport'] : "853";
+	$sslport = is_numeric($unboundcfg['sslport']) ? $unboundcfg['sslport'] : "853";
 	$bindintcfg = "";
 	$bindints = array();
 	$active_interfaces = explode(",", $unboundcfg['active_interface']);
@@ -206,19 +206,18 @@ EOF;
 	foreach ($bindints as $bindint) {
 		$bindintcfg .= "interface: {$bindint}\n";
 		if (isset($unboundcfg['enablessl'])) {
-			$bindintcfg .= "interface: {$bindint}@{$tlsport}\n";
+			$bindintcfg .= "interface: {$bindint}@{$sslport}\n";
 		}
 	}
 
-	// TLS Configuration
-	$tlsconfig = "tls-cert-bundle: \"/etc/ssl/cert.pem\"\n";
-
+	// SSL Configuration
+	$sslconfig = "";
 	if (isset($unboundcfg['enablessl'])) {
-		$tlscert_path = "{$g['unbound_chroot_path']}/sslcert.crt";
-		$tlskey_path = "{$g['unbound_chroot_path']}/sslcert.key";
+		$sslcert_path = "{$g['unbound_chroot_path']}/sslcert.crt";
+		$sslkey_path = "{$g['unbound_chroot_path']}/sslcert.key";
 
 		// Enable SSL on the chosen or default port
-		$tlsconfig .= "tls-port: {$tlsport}\n";
+		$sslconfig .= "ssl-port: {$sslport}\n";
 
 		// Lookup CA and Server Cert
 		$cert = lookup_cert($unboundcfg['sslcertref']);
@@ -229,14 +228,14 @@ EOF;
 		}
 
 		// Write CA and Server Cert
-		file_put_contents($tlscert_path, $cert_chain);
-		chmod($tlscert_path, 0644);
-		file_put_contents($tlskey_path, base64_decode($cert['prv']));
-		chmod($tlskey_path, 0600);
+		file_put_contents($sslcert_path, $cert_chain);
+		chmod($sslcert_path, 0644);
+		file_put_contents($sslkey_path, base64_decode($cert['prv']));
+		chmod($sslkey_path, 0600);
 
 		// Add config for CA and Server Cert
-		$tlsconfig .= "tls-service-pem: \"{$tlscert_path}\"\n";
-		$tlsconfig .= "tls-service-key: \"{$tlskey_path}\"\n";
+		$sslconfig .= "ssl-service-pem: \"{$sslcert_path}\"\n";
+		$sslconfig .= "ssl-service-key: \"{$sslkey_path}\"\n";
 	}
 
 	// Determine interfaces to run on
@@ -342,29 +341,10 @@ EOD;
 			if (isset($unboundcfg['forward_tls_upstream'])) {
 				$forward_conf .= "\tforward-tls-upstream: yes\n";
 			}
-
-			/* Build DNS server hostname list. See https://redmine.pfsense.org/issues/8602 */
-			$dns_hostnames = array();
-			$dnshost_counter = 1;
-			while (isset($config["system"]["dns{$dnshost_counter}host"])) {
-				$pconfig_dnshost_counter = $dnshost_counter - 1;
-				if (!empty($config["system"]["dns{$dnshost_counter}host"]) &&
-				    isset($config["system"]["dnsserver"][$pconfig_dnshost_counter]))
-				$dns_hostnames[$config["system"]["dnsserver"][$pconfig_dnshost_counter]] = $config["system"]["dns{$dnshost_counter}host"];
-				$dnshost_counter++;
-			}
-
 			foreach ($dnsservers as $dnsserver) {
-				$fwdport = "";
-				$fwdhost = "";
 				if (is_ipaddr($dnsserver) && !ip_in_subnet($dnsserver, "127.0.0.0/8")) {
-					if (isset($unboundcfg['forward_tls_upstream'])) {
-						$fwdport = "@853";
-						if (array_key_exists($dnsserver, $dns_hostnames)) {
-							$fwdhost = "#{$dns_hostnames[$dnsserver]}";
-						}
-					}
-					$forward_conf .= "\tforward-addr: {$dnsserver}{$fwdport}{$fwdhost}\n";
+					$fwdport = isset($unboundcfg['forward_tls_upstream']) ? "@853" : "";
+					$forward_conf .= "\tforward-addr: {$dnsserver}{$fwdport}\n";
 				}
 			}
 		}
@@ -441,8 +421,8 @@ use-caps-for-id: {$use_caps}
 serve-expired: {$dns_record_cache}
 # Statistics
 {$statistics}
-# TLS Configuration
-{$tlsconfig}
+# SSL Configuration
+{$sslconfig}
 # Interface IP(s) to bind to
 {$bindintcfg}
 {$outgoingints}
@@ -587,7 +567,6 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 	$sorted_domains = msort($domains, "domain");
 	$result = array();
 	$tls_domains = array();
-	$tls_hostnames = array();
 	foreach ($sorted_domains as $domain) {
 		$domain_key = current($domain);
 		if (!isset($result[$domain_key])) {
@@ -597,7 +576,6 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 		/* If any entry for a domain has TLS set, it will be active for all entries. */
 		if (isset($domain['forward_tls_upstream'])) {
 			$tls_domains[] = $domain_key;
-			$tls_hostnames[$domain['ip']] = $domain['tls_hostname'];
 		}
 	}
 
@@ -612,25 +590,20 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 				$domain_entries .= "local-zone: \"$domain\" typetransparent\n";
 			}
 		} else {
-			$use_tls = in_array($domain, $tls_domains);
 			$domain_entries .= "forward-zone:\n";
 			$domain_entries .= "\tname: \"$domain\"\n";
 			$fwdport = "";
 			/* Enable TLS forwarding for this domain if needed. */
-			if ($use_tls) {
+			if (in_array($domain, $tls_domains)) {
 				$domain_entries .= "\tforward-tls-upstream: yes\n";
 				$fwdport = "@853";
 			}
 			foreach ($ips as $ip) {
-				$fwdhost = "";
 				/* If an IP address already contains a port specification, do not add another. */
 				if (strstr($ip, '@') !== false) {
 					$fwdport = "";
 				}
-				if ($use_tls && array_key_exists($ip, $tls_hostnames)) {
-					$fwdhost = "#{$tls_hostnames[$ip]}";
-				}
-				$domain_entries .= "\tforward-addr: {$ip}{$fwdport}{$fwdhost}\n";
+				$domain_entries .= "\tforward-addr: {$ip}{$fwdport}\n";
 			}
 		}
 	}

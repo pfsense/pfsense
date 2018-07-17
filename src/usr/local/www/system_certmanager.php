@@ -247,34 +247,22 @@ if ($_POST['save']) {
 
 		if ($pconfig['method'] == "internal") {
 			$reqdfields = explode(" ",
-				"descr caref keylen type lifetime dn_country dn_state dn_city ".
-				"dn_organization dn_email dn_commonname");
+				"descr caref keylen type lifetime dn_commonname");
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Certificate authority"),
 				gettext("Key length"),
 				gettext("Certificate Type"),
 				gettext("Lifetime"),
-				gettext("Distinguished name Country Code"),
-				gettext("Distinguished name State or Province"),
-				gettext("Distinguished name City"),
-				gettext("Distinguished name Organization"),
-				gettext("Distinguished name Email Address"),
 				gettext("Distinguished name Common Name"));
 		}
 
 		if ($pconfig['method'] == "external") {
 			$reqdfields = explode(" ",
-				"descr csr_keylen csr_dn_country csr_dn_state csr_dn_city ".
-				"csr_dn_organization csr_dn_email csr_dn_commonname");
+				"descr csr_keylen csr_dn_commonname");
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Key length"),
-				gettext("Distinguished name Country Code"),
-				gettext("Distinguished name State or Province"),
-				gettext("Distinguished name City"),
-				gettext("Distinguished name Organization"),
-				gettext("Distinguished name Email Address"),
 				gettext("Distinguished name Common Name"));
 		}
 
@@ -349,14 +337,6 @@ if ($_POST['save']) {
 
 			if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
 				array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
-			}
-
-			for ($i = 0; $i < count($reqdfields); $i++) {
-				if (preg_match('/email/', $reqdfields[$i])) { /* dn_email or csr_dn_name */
-					if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]])) {
-						array_push($input_errors, gettext("The field 'Distinguished name Email Address' contains invalid characters."));
-					}
-				}
 			}
 
 			if (($pconfig['method'] != "external") && isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
@@ -439,13 +419,19 @@ if ($_POST['save']) {
 				}
 
 				if ($pconfig['method'] == "internal") {
-					$dn = array(
-						'countryName' => $pconfig['dn_country'],
-						'stateOrProvinceName' => cert_escape_x509_chars($pconfig['dn_state']),
-						'localityName' => cert_escape_x509_chars($pconfig['dn_city']),
-						'organizationName' => cert_escape_x509_chars($pconfig['dn_organization']),
-						'emailAddress' => cert_escape_x509_chars($pconfig['dn_email']),
-						'commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+					$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+					if (!empty($pconfig['dn_country'])) {
+						$dn['countryName'] = $pconfig['dn_country'];
+					}
+					if (!empty($pconfig['dn_state'])) {
+						$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['dn_state']);
+					}
+					if (!empty($pconfig['dn_city'])) {
+						$dn['localityName'] = cert_escape_x509_chars($pconfig['dn_city']);
+					}
+					if (!empty($pconfig['dn_organization'])) {
+						$dn['organizationName'] = cert_escape_x509_chars($pconfig['dn_organization']);
+					}
 					if (!empty($pconfig['dn_organizationalunit'])) {
 						$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 					}
@@ -478,13 +464,19 @@ if ($_POST['save']) {
 				}
 
 				if ($pconfig['method'] == "external") {
-					$dn = array(
-						'countryName' => $pconfig['csr_dn_country'],
-						'stateOrProvinceName' => cert_escape_x509_chars($pconfig['csr_dn_state']),
-						'localityName' => cert_escape_x509_chars($pconfig['csr_dn_city']),
-						'organizationName' => cert_escape_x509_chars($pconfig['csr_dn_organization']),
-						'emailAddress' => cert_escape_x509_chars($pconfig['csr_dn_email']),
-						'commonName' => cert_escape_x509_chars($pconfig['csr_dn_commonname']));
+					$dn = array('commonName' => cert_escape_x509_chars($pconfig['csr_dn_commonname']));
+					if (!empty($pconfig['csr_dn_country'])) {
+						$dn['countryName'] = $pconfig['csr_dn_country'];
+					}
+					if (!empty($pconfig['csr_dn_state'])) {
+						$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['csr_dn_state']);
+					}
+					if (!empty($pconfig['csr_dn_city'])) {
+						$dn['localityName'] = cert_escape_x509_chars($pconfig['csr_dn_city']);
+					}
+					if (!empty($pconfig['csr_dn_organization'])) {
+						$dn['organizationName'] = cert_escape_x509_chars($pconfig['csr_dn_organization']);
+					}
 					if (!empty($pconfig['csr_dn_organizationalunit'])) {
 						$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['csr_dn_organizationalunit']);
 					}
@@ -621,6 +613,7 @@ display_top_tabs($tab_array);
 $dn_cc = array();
 if (file_exists("/etc/ca_countries")) {
 	$dn_cc_file=file("/etc/ca_countries");
+	$dn_cc[''] = gettext("None");
 	foreach ($dn_cc_file as $line) {
 		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
 			$dn_cc[$matches[1]] = $matches[1];
@@ -811,14 +804,14 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Select(
 		'dn_country',
-		'*Country Code',
+		'Country Code',
 		$pconfig['dn_country'],
 		$dn_cc
 	));
 
 	$section->addInput(new Form_Input(
 		'dn_state',
-		'*State or Province',
+		'State or Province',
 		'text',
 		$pconfig['dn_state'],
 		['placeholder' => 'e.g. Texas']
@@ -826,7 +819,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'dn_city',
-		'*City',
+		'City',
 		'text',
 		$pconfig['dn_city'],
 		['placeholder' => 'e.g. Austin']
@@ -834,7 +827,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'dn_organization',
-		'*Organization',
+		'Organization',
 		'text',
 		$pconfig['dn_organization'],
 		['placeholder' => 'e.g. My Company Inc']
@@ -846,14 +839,6 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'text',
 		$pconfig['dn_organizationalunit'],
 		['placeholder' => 'e.g. My Department Name (optional)']
-	));
-
-	$section->addInput(new Form_Input(
-		'dn_email',
-		'*Email Address',
-		'text',
-		$pconfig['dn_email'],
-		['placeholder' => 'e.g. admin@mycompany.com']
 	));
 
 	$section->addInput(new Form_Input(
@@ -885,14 +870,14 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Select(
 		'csr_dn_country',
-		'*Country Code',
+		'Country Code',
 		$pconfig['csr_dn_country'],
 		$dn_cc
 	));
 
 	$section->addInput(new Form_Input(
 		'csr_dn_state',
-		'*State or Province',
+		'State or Province',
 		'text',
 		$pconfig['csr_dn_state'],
 		['placeholder' => 'e.g. Texas']
@@ -900,7 +885,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'csr_dn_city',
-		'*City',
+		'City',
 		'text',
 		$pconfig['csr_dn_city'],
 		['placeholder' => 'e.g. Austin']
@@ -908,7 +893,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'csr_dn_organization',
-		'*Organization',
+		'Organization',
 		'text',
 		$pconfig['csr_dn_organization'],
 		['placeholder' => 'e.g. My Company Inc']
@@ -920,14 +905,6 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'text',
 		$pconfig['csr_dn_organizationalunit'],
 		['placeholder' => 'e.g. My Department Name (optional)']
-	));
-
-	$section->addInput(new Form_Input(
-		'csr_dn_email',
-		'*Email Address',
-		'text',
-		$pconfig['csr_dn_email'],
-		['placeholder' => 'e.g. admin@mycompany.com']
 	));
 
 	$section->addInput(new Form_Input(
@@ -1324,7 +1301,6 @@ events.push(function() {
 					$('#dn_state').val(<?=json_encode(cert_escape_x509_chars($subject[1]['v'], true));?>);
 					$('#dn_city').val(<?=json_encode(cert_escape_x509_chars($subject[2]['v'], true));?>);
 					$('#dn_organization').val(<?=json_encode(cert_escape_x509_chars($subject[3]['v'], true));?>);
-					$('#dn_email').val(<?=json_encode(cert_escape_x509_chars($subject[4]['v'], true));?>);
 					$('#dn_organizationalunit').val(<?=json_encode(cert_escape_x509_chars($subject[6]['v'], true));?>);
 					break;
 <?php

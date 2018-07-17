@@ -531,14 +531,6 @@
 			<bindstofield>ovpnserver->step6->organization</bindstofield>
 		</field>
 		<field>
-			<name>email</name>
-			<displayname>E-mail</displayname>
-			<description>E-mail address for the Certificate contact. Often the e-mail of the person generating the certificate.</description>
-			<type>input</type>
-			<size>30</size>
-			<bindstofield>ovpnserver->step6->email</bindstofield>
-		</field>
-		<field>
 			<name>Add new CA</name>
 			<type>submit</type>
 		</field>
@@ -680,14 +672,6 @@
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step9->organization</bindstofield>
-		</field>
-		<field>
-			<name>email</name>
-			<displayname>E-mail</displayname>
-			<description>E-mail address for the Certificate contact. Often the e-mail of the person generating the certificate.</description>
-			<type>input</type>
-			<size>30</size>
-			<bindstofield>ovpnserver->step9->email</bindstofield>
 		</field>
 		<field>
 			<name>Create new Certificate</name>

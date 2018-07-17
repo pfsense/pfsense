@@ -571,6 +571,19 @@ $section->addInput(new Form_Input(
 	$pconfig['lifetime']
 ));
 
+$section->addInput(new Form_Input(
+	'dn_commonname',
+	'*Common Name',
+	'text',
+	$pconfig['dn_commonname'],
+	['placeholder' => 'e.g. internal-ca']
+));
+
+$section->addInput(new Form_StaticText(
+	null,
+	gettext('The following certificate authority subject components are optional and may be left blank.')
+));
+
 $section->addInput(new Form_Select(
 	'dn_country',
 	'Country Code',
@@ -608,14 +621,6 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['dn_organizationalunit'],
 	['placeholder' => 'e.g. My Department Name (optional)']
-));
-
-$section->addInput(new Form_Input(
-	'dn_commonname',
-	'*Common Name',
-	'text',
-	$pconfig['dn_commonname'],
-	['placeholder' => 'e.g. internal-ca']
 ));
 
 $form->add($section);

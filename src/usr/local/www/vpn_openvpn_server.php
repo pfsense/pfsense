@@ -1724,7 +1724,7 @@ events.push(function() {
 				hideInput('tunnel_network', false);
 				hideCheckbox('serverbridge_dhcp', true);
 				hideInput('serverbridge_interface', true);
-				hideInput('serverbridge_routegateway', true);
+				hideCheckbox('serverbridge_routegateway', true);
 				hideInput('serverbridge_dhcp_start', true);
 				hideInput('serverbridge_dhcp_end', true);
 				setRequired('tunnel_network', true);
@@ -1750,19 +1750,19 @@ events.push(function() {
 					hideCheckbox('serverbridge_dhcp', false);
 					disableInput('serverbridge_dhcp', false);
 					hideInput('serverbridge_interface', false);
-					hideInput('serverbridge_routegateway', false);
+					hideCheckbox('serverbridge_routegateway', false);
 					hideInput('serverbridge_dhcp_start', false);
 					hideInput('serverbridge_dhcp_end', false);
 					hideInput('topology', true);
 
 					if ($('#serverbridge_dhcp').prop('checked')) {
 						disableInput('serverbridge_interface', false);
-						disableInput('serverbridge_routegateway', false);
+						hideCheckbox('serverbridge_routegateway', false);
 						disableInput('serverbridge_dhcp_start', false);
 						disableInput('serverbridge_dhcp_end', false);
 					} else {
 						disableInput('serverbridge_interface', true);
-						disableInput('serverbridge_routegateway', true);
+						hideCheckbox('serverbridge_routegateway', true);
 						disableInput('serverbridge_dhcp_start', true);
 						disableInput('serverbridge_dhcp_end', true);
 					}
@@ -1770,7 +1770,7 @@ events.push(function() {
 					hideInput('topology', true);
 					disableInput('serverbridge_dhcp', true);
 					disableInput('serverbridge_interface', true);
-					disableInput('serverbridge_routegateway', true);
+					hideCheckbox('serverbridge_routegateway', true);
 					disableInput('serverbridge_dhcp_start', true);
 					disableInput('serverbridge_dhcp_end', true);
 				}

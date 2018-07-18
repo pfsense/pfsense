@@ -134,6 +134,20 @@ switch ($action) {
 		break;
 }
 
+if (substr($realiface, 0, 7) == "e6000sw" &&
+    convert_real_interface_to_friendly_interface_name($realiface) == NULL) {
+	list($swdev, $swport) = sscanf($realiface, "e6000sw%dport%d");
+	if (isset($swdev) && isset($swport) && is_numeric($swdev) && is_numeric($swport)) {
+		foreach ($config['interfaces'] as $int) {
+			if (!isset($int['switchif']) || $int['switchif'] != "switch{$swdev}.port{$swport}") {
+				continue;
+			}
+			$realiface = $int['if'];
+			break;
+		}
+	}
+}
+
 if (!empty($realiface)) {
 	if (substr($realiface, 0, 4) == 'ovpn') {
 		log_error("Ignoring link event for ovpn interface");

@@ -962,6 +962,12 @@ if (!$pconfig['numberoptions']) {
 }
 
 $counter = 0;
+if (!is_array($pconfig['numberoptions'])) {
+	$pconfig['numberoptions'] = array();
+}
+if (!is_array($pconfig['numberoptions']['item'])) {
+	$pconfig['numberoptions']['item'] = array();
+}
 $last = count($pconfig['numberoptions']['item']) - 1;
 
 foreach ($pconfig['numberoptions']['item'] as $item) {

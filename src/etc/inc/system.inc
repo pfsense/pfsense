@@ -2499,7 +2499,7 @@ function system_identify_specific_platform() {
 			return $result;
 			break;
 		case 'mvebu_armada-37xx':
-			return (array('name' => 'SG-1100', 'descr' => 'SG-1100'));
+			return (array('name' => 'SG-1100', 'descr' => 'Negate SG-1100'));
 			break;
 /*
  *		case 'mvebu_armada-37xx':

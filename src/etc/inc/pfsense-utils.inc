@@ -1599,9 +1599,9 @@ function get_interface_info($ifdescr) {
 		}
 	}
 
+	$chkif = $ifinfo['if'];
+	$ifinfotmp = pfSense_get_interface_addresses($chkif);
 	if ($swifinfo == NULL) {
-		$chkif = $ifinfo['if'];
-		$ifinfotmp = pfSense_get_interface_addresses($chkif);
 		$ifinfo['status'] = $ifinfotmp['status'];
 	}
 	if (empty($ifinfo['status'])) {

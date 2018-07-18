@@ -534,10 +534,10 @@ function netgate_hardware_setup() {
 		$vlan['descr'] = "OPT";
 		$vlan['vlanif'] = "mvneta0.4092";
 		$config['vlans']['vlan'][] = $vlan;
-		$config['interfaces']['opt1']['switchif'] = 'switch0.port1';
 		$config['interfaces']['opt1'] = array(
 			'if' => 'mvneta0.4092',
-			'descr' => 'OPT1'
+			'descr' => 'OPT',
+			'switchif' => 'switch0.port1'
 		);
 		break;
 	case 'DNVNANO':

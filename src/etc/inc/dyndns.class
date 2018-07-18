@@ -994,6 +994,9 @@
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer {$this->_dnsPass}"));
 					curl_setopt($ch, CURLOPT_URL, $url);
 					$output = json_decode(curl_exec($ch));
+					if (!is_array($output->domain_records)) {
+						$output->domain_records = array();
+					}
 					foreach($output->domain_records as $dnsRecord) {
 						if ($this->_dnsHost == $dnsRecord->name) {
 							$recordID = $dnsRecord->id;

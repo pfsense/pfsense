@@ -372,7 +372,7 @@ if ($_REQUEST['download']) {
 $tab_array[1] = array("Restore", $active, "/services_acb.php");
 
 if ($_REQUEST['download']) {
-	$tab_array[] = array("Revision", true, "/servcies_acb.php?download={$_REQUEST['download']}");
+	$tab_array[] = array("Revision", true, "/services_acb.php?download={$_REQUEST['download']}");
 }
 
 $tab_array[] = array("Backup now", false, "/services_acb_backup.php");

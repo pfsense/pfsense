@@ -994,6 +994,9 @@
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer {$this->_dnsPass}"));
 					curl_setopt($ch, CURLOPT_URL, $url);
 					$output = json_decode(curl_exec($ch));
+					if (!is_array($output->domain_records)) {
+						$output->domain_records = array();
+					}
 					foreach($output->domain_records as $dnsRecord) {
 						if ($this->_dnsHost == $dnsRecord->name) {
 							$recordID = $dnsRecord->id;
@@ -2290,45 +2293,18 @@
 					return 0;
 				}
 			} else {
-				$ip_address = get_interface_ip($this->_if);
+				$ip_address = dyndnsCheckIP($this->_if);
 				if (!is_ipaddr($ip_address)) {
 					return 0;
 				}
 			}
-			if ($this->_useIPv6 == false && is_private_ip($ip_address)) {
-				$hosttocheck = "checkip.dyndns.org";
-				$try = 0;
-				while ($try < 3) {
-					$checkip = gethostbyname($hosttocheck);
-					if (is_ipaddr($checkip)) {
-						break;
-					}
-					$try++;
-				}
-				if ($try >= 3) {
-					log_error(sprintf(gettext('Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP using interface IP %4$s.'), $this->_dnsService, $this->_FQDN, $hosttocheck, $ip_address));
-					return 0;
-				}
-				$ip_ch = curl_init("http://{$checkip}");
-				curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-				curl_setopt($ip_ch, CURLOPT_INTERFACE, 'host!' . $ip_address);
-				curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
-				curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
-				if ($this->_useIPv6 == false) {
-					curl_setopt($ip_ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-				}
-				$ip_result_page = curl_exec($ip_ch);
-				curl_close($ip_ch);
-				$ip_result_decoded = urldecode($ip_result_page);
-				preg_match('/Current IP Address: (.*)<\/body>/', $ip_result_decoded, $matches);
-				$ip_address = trim($matches[1]);
+			if ($this->_useIPv6 == false && is_private_ip(get_interface_ip($this->_if))) {
 				if (is_ipaddr($ip_address)) {
 					if ($this->_dnsVerboseLog) {
-						log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s'), $this->_dnsService, $this->_FQDN, $ip_address, $hosttocheck));
+						log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): %3$s extracted from Check IP Service'), $this->_dnsService, $this->_FQDN, $ip_address));
 					}
 				} else {
-					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s'), $this->_dnsService, $this->_FQDN, $hosttocheck));
+					log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): IP address could not be extracted from Check IP Service'), $this->_dnsService, $this->_FQDN));
 					return 0;
 				}
 			} else {

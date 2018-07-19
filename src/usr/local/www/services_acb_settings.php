@@ -114,7 +114,7 @@ if (isset($_POST['save'])) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Auto Config Backup"), gettext("Settings"));
+$pgtitle = array(gettext("Services"), gettext("Auto Configuration Backup"), gettext("Settings"));
 include("head.inc");
 
 if ($input_errors) {

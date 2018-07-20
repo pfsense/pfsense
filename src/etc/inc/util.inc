@@ -2371,6 +2371,9 @@ function array_merge_recursive_unique($array0, $array1) {
 						$result[$key] = call_user_func_array(__FUNCTION__, $args);
 					} else {
 						foreach ($value as $vkey => $vval) {
+							if (!is_array($result[$key])) {
+								$result[$key] = array();
+							}
 							$result[$key][$vkey] = $vval;
 						}
 					}

@@ -50,9 +50,10 @@ if (isset($_POST['save'])) {
 		$input_errors[] = gettext("The encryption password must contain at least 8 characters");
 	}
 
-	if (($pconfig['legacy'] == 'yes') && (strlen($_POST['gold_password']) < 8)) {
-		$input_errors[] = gettext("The legacy Gold password must contain at least 8 characters");
-	}
+//	Since there was no restriction on the Gold subscription password, there can be no restriction here
+//	if (($pconfig['legacy'] == 'yes') && (strlen($_POST['gold_password']) < 8)) {
+//		$input_errors[] = gettext("The legacy Gold password must contain at least 8 characters");
+//	}
 
 	$update_ep = false;
 

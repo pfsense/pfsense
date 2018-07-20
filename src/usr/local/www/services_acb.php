@@ -600,7 +600,7 @@ endif; ?>
 		$legacyready = "yes";
 	}
 
-	$legacynotready = gettext("Please configure your \"Gold\" membershipt settings on the Settings page " .
+	$legacynotready = gettext("Please configure your \"Gold\" membership settings on the Settings page " .
 		"before accessing the legacy backup features");
 ?>
 

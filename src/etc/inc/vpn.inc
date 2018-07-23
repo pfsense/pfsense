@@ -160,6 +160,7 @@ function vpn_ipsec_configure($restart = false) {
 	$crlpath = "{$g['varetc_path']}/ipsec/ipsec.d/crls";
 
 	mwexec("/sbin/ifconfig enc0 up");
+	$ipsec_vti_cleanup_ifs = array();
 
 	/* needed for config files */
 	if (!is_dir("{$g['varetc_path']}/ipsec")) {
@@ -1421,6 +1422,12 @@ EOD;
 				$ipsecconnect .= "\taggressive = {$aggressive}\n";
 			}
 
+			/* Build a list of all IPsec interfaces configured on the firewall at the OS level */
+			foreach (get_interface_arr() as $thisif) {
+				if (substr($thisif, 0, 5) == "ipsec") {
+					$ipsec_vti_cleanup_ifs[] = $thisif;
+				}
+			}
 			if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
 				if (!empty($rightsubnet_spec)) {
 					$ipsecfin = '';
@@ -1431,6 +1438,8 @@ EOD;
 						//}
 						if (!empty($vtireq[$idx])) {
 							$ipsecfin .= "\treqid = {$ph1ent['ikeid']}00{$idx}\n";
+							/* This interface will be a valid IPsec interface, so remove it from the cleanup list. */
+							$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array("ipsec{$ph1ent['ikeid']}00{$idx}"));
 						}
 						$ipsecfin .= $ipsecconnect;
 						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
@@ -1449,8 +1458,10 @@ EOD;
 				//if (!empty($reqids[$idx])) {
 				//	$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				//}
-				if (!empty($vtireq)) {
+				if (!empty($vtireq[0])) {
 					$ipsecfin .= "\treqid = {$ph1ent['ikeid']}000\n";
+					/* This interface will be a valid IPsec interface, so remove it from the cleanup list. */
+					$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array("ipsec{$ph1ent['ikeid']}000"));
 				}
 				$ipsecfin .= $ipsecconnect;
 				if (!isset($ph1ent['mobile']) && !empty($rightsubnet_spec)) {
@@ -1537,6 +1548,12 @@ EOD;
 	@file_put_contents("{$g['varetc_path']}/ipsec/ipsec.conf", $ipsecconf);
 	unset($ipsecconf);
 	/* end ipsec.conf */
+
+	foreach ($ipsec_vti_cleanup_ifs as $cleanif) {
+		if (does_interface_exist($cleanif)) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($cleanif) . " destroy", false);
+		}
+	}
 
 	if ($enablecompression === true) {
 		set_single_sysctl('net.inet.ipcomp.ipcomp_enable', 1);

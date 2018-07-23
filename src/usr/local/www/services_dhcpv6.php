@@ -956,6 +956,7 @@ $title = 'Show Additional BOOTP/DHCP Options';
 
 if (!$pconfig['numberoptions']) {
 	$noopts = true;
+	$pconfig['numberoptions'] = array();
 	$pconfig['numberoptions']['item'] = array(0 => array('number' => "", 'value' => ""));
 } else {
 	$noopts = false;

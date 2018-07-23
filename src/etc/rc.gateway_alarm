@@ -28,13 +28,9 @@ if [ -z "$GW" ]; then
 fi
 
 print_rtt() {
-  usec=$1
-  if [ "$usec" -lt "1000" ]; then
-    retval="0.${usec}ms"
-  else
-    retval="$( expr ${usec} / 1000 )ms"
-  fi
-  echo $retval
+	usec=$1
+	usec_to_ms=$( echo "scale=3; ${usec}/1000" | bc -l )
+	echo "${usec_to_ms}ms"
 }
 
 echo ">>> Gateway alarm: ${GW} (Addr:${alarm_addr} Alarm:${alarm_flag} RTT:$( print_rtt ${alarm_rtt} ) RTTsd:$( print_rtt ${alarm_rttsd} ) Loss:${alarm_loss}%)" | /usr/bin/logger -p daemon.info -i -t rc.gateway_alarm

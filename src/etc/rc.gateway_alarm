@@ -27,7 +27,17 @@ if [ -z "$GW" ]; then
 	exit 1
 fi
 
-echo ">>> Gateway alarm: ${GW} (Addr:${alarm_addr} Alarm:${alarm_flag} RTT:${alarm_rtt}us RTTsd:${alarm_rttsd}us Loss:${alarm_loss}%)" | /usr/bin/logger -p daemon.info -i -t rc.gateway_alarm
+print_rtt() {
+  usec=$1
+  if [ "$usec" -lt "1000" ]; then
+    retval="0.${usec}ms"
+  else
+    retval="$( expr ${usec} / 1000 )ms"
+  fi
+  echo $retval
+}
+
+echo ">>> Gateway alarm: ${GW} (Addr:${alarm_addr} Alarm:${alarm_flag} RTT:$( print_rtt ${alarm_rtt} ) RTTsd:$( print_rtt ${alarm_rttsd} ) Loss:${alarm_loss}%)" | /usr/bin/logger -p daemon.info -i -t rc.gateway_alarm
 
 /usr/local/sbin/pfSctl \
 	-c "service reload dyndns ${GW}" \

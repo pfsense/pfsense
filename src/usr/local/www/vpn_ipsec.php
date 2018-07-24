@@ -77,7 +77,11 @@ if ($_POST['apply']) {
 	/* delete selected p2 entries */
 	if (is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
 		foreach ($_POST['p2entry'] as $p2entrydel) {
-			unset($a_phase2[$p2entrydel]);
+			if (is_interface_ipsec_vti_assigned($a_phase2[$p2entrydel])) {
+				$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
+			} else {
+				unset($a_phase2[$p2entrydel]);
+			}
 		}
 		if (write_config(gettext("Deleted selected IPsec Phase 2 entries."))) {
 			mark_subsystem_dirty('ipsec');
@@ -188,7 +192,11 @@ if ($_POST['apply']) {
 		if (isset($a_phase2[$togglebtnp2]['disabled'])) {
 			unset($a_phase2[$togglebtnp2]['disabled']);
 		} else {
-			$a_phase2[$togglebtnp2]['disabled'] = true;
+			if (is_interface_ipsec_vti_assigned($a_phase2[$togglebtnp2])) {
+				$input_errors[] = gettext("Cannot disable a VTI Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
+			} else {
+				$a_phase2[$togglebtnp2]['disabled'] = true;
+			}
 		}
 	} else if (isset($delbtn)) {
 		/* remove static route if interface is not WAN */
@@ -198,16 +206,33 @@ if ($_POST['apply']) {
 
 		/* remove all phase2 entries that match the ikeid */
 		$ikeid = $a_phase1[$delbtn]['ikeid'];
+		$p1_has_vti = false;
+		$delp2ids = array();
 		foreach ($a_phase2 as $p2index => $ph2tmp) {
 			if ($ph2tmp['ikeid'] == $ikeid) {
-				unset($a_phase2[$p2index]);
+				if (is_interface_ipsec_vti_assigned($ph2tmp)) {
+					$p1_has_vti = true;
+				} else {
+					$delp2ids[] = $p2index;
+				}
 			}
 		}
-		unset($a_phase1[$delbtn]);
+
+		if ($p1_has_vti) {
+			$input_errors[] = gettext("Cannot delete a Phase 1 which contains an active VTI Phase 2 with an interface assigned. Remove the interface assignment before deleting this P1.");
+		} else {
+			foreach ($delp2ids as $dp2idx) {
+				unset($a_phase2[$dp2idx]);
+			}
+			unset($a_phase1[$delbtn]);
+		}
 
 	} else if (isset($delbtnp2)) {
-		unset($a_phase2[$delbtnp2]);
-
+		if (is_interface_ipsec_vti_assigned($a_phase2[$delbtnp2])) {
+			$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
+		} else {
+			unset($a_phase2[$delbtnp2]);
+		}
 	} else {
 		$save = 0;
 	}
@@ -225,6 +250,10 @@ $pglinks = array("", "@self", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Tunnels"), true, "vpn_ipsec.php");

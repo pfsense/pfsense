@@ -107,7 +107,9 @@ if ($ph2found === true) {
 	$pconfig['localid_type'] = "lan";
 	$pconfig['remoteid_type'] = "network";
 	$pconfig['proto'] = "esp";
-	$pconfig['ealgos'] = explode(",", "aes");
+	$pconfig['ealgos'] = explode(",", "aes,aes128gcm");
+	$pconfig['keylen_aes'] = 128;
+	$pconfig['keylen_aes128gcm'] = 128;
 	$pconfig['halgos'] = explode(",", "hmac_sha256");
 	$pconfig['pfsgroup'] = "14";
 	$pconfig['lifetime'] = "3600";

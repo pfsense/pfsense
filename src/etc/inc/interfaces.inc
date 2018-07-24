@@ -1227,7 +1227,7 @@ function interface_ipsec_vti_list_p1($ph1ent) {
 	}
 
 	/* With IKEv1 or v2+Split, each P2 gets its own conn/reqid/interface */
-	if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
+	if (!isset($ph1ent['mobile']) && ($ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn']))) {
 		foreach ($vtisubnet_spec as $idx => $vtisub) {
 			$iface_list["ipsec{$ph1ent['ikeid']}00{$idx}"] = gettext("IPsec VTI") . ": ".htmlspecialchars($ph1ent['descr'] . " / " . $vtisub['descr']);
 		}
@@ -1251,6 +1251,27 @@ function interface_ipsec_vti_list_all() {
 	return $iface_list;
 }
 
+function is_interface_ipsec_vti_assigned($phase2) {
+	$phase1 = ipsec_get_phase1($phase2['ikeid']);
+	$vti_interface = null;
+	$vtisubnet_spec = ipsec_vti($phase1, true);
+	if (($vtisubnet_spec && is_array($vtisubnet_spec))) {
+		/* With IKEv1 or v2+Split, each P2 gets its own conn/reqid/interface */
+		if (!isset($phase1['mobile']) && ($phase1['iketype'] == 'ikev1' || isset($phase1['splitconn']))) {
+			foreach ($vtisubnet_spec as $idx => $vtisub) {
+				/* Is this for this P2? */
+				if (($vtisub['left'] == ipsec_idinfo_to_cidr($phase2['localid'], true, $phase2['mode'])) &&
+				    ($vtisub['right'] == ipsec_idinfo_to_cidr($phase2['remoteid'], false, $phase2['mode']))) {
+					$vti_interface = "ipsec{$phase1['ikeid']}00{$idx}";
+				}
+			}
+		} else {
+			$vti_interface = "ipsec{$phase1['ikeid']}000";
+		}
+	}
+	/* Check if this interface is assigned */
+	return (does_interface_exist($vti_interface) && (convert_real_interface_to_friendly_interface_name($vti_interface) != null));
+}
 function interface_ipsec_vti_configure($ph1ent) {
 	global $config;
 
@@ -1269,7 +1290,7 @@ function interface_ipsec_vti_configure($ph1ent) {
 	$iface_addrs = array();
 
 	/* With IKEv1 or v2+Split, each P2 gets its own conn/reqid/interface */
-	if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
+	if (!isset($ph1ent['mobile']) && ($ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn']))) {
 		/* Form a single interface for each P2 entry */
 		foreach ($vtisubnet_spec as $idx => $vtisub) {
 			$ipsecifnum = "{$ph1ent['ikeid']}00{$idx}";

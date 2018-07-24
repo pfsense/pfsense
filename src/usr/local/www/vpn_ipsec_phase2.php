@@ -131,6 +131,10 @@ if (!empty($_REQUEST['dup'])) {
 if ($_POST['save']) {
 
 	unset($input_errors);
+
+	/* Check if the user is switching away from VTI */
+	$vti_switched = ($ph2found && ($pconfig['mode'] == "vti") && ($_POST['mode'] != "vti"));
+
 	$pconfig = $_POST;
 
 	if (!isset($_POST['ikeid'])) {
@@ -290,7 +294,14 @@ if ($_POST['save']) {
 		}
 		foreach ($a_phase1 as $phase1) {
 			if ($phase1['ikeid'] == $pconfig['ikeid']) {
-				/* This is the P1 for this entry, validate its remote-gateway and local interface isn't within tunnel */
+				/* This is the P1 for this entry */
+				if ($vti_switched) {
+					/* Determine what this P2 interface would be */
+					if (is_interface_ipsec_vti_assigned($a_phase2[$p2index])) {
+						$input_errors[] = gettext("Cannot switch away from VTI while the interface is assigned. Remove the interface assignment before switching away from VTI.");
+					}
+				}
+				/* validate its remote-gateway and local interface isn't within tunnel */
 				$entered_local = array();
 				$entered_local['type'] = $pconfig['localid_type'];
 				if (isset($pconfig['localid_address'])) {

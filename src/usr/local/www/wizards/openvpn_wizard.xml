@@ -452,10 +452,6 @@
 			<bindstofield>ovpnserver->step6->keylength</bindstofield>
 			<options>
 				<option>
-					<name>512 bit</name>
-					<value>512</value>
-				</option>
-				<option>
 					<name>1024 bit</name>
 					<value>1024</value>
 				</option>
@@ -470,6 +466,10 @@
 				<option>
 					<name>4096 bit</name>
 					<value>4096</value>
+				</option>
+				<option>
+					<name>6144 bit</name>
+					<value>6144</value>
 				</option>
 				<option>
 					<name>7680 bit</name>
@@ -595,10 +595,6 @@
 			<bindstofield>ovpnserver->step9->keylength</bindstofield>
 			<options>
 				<option>
-					<name>512 bit</name>
-					<value>512</value>
-				</option>
-				<option>
 					<name>1024 bit</name>
 					<value>1024</value>
 				</option>
@@ -613,6 +609,10 @@
 				<option>
 					<name>4096 bit</name>
 					<value>4096</value>
+				</option>
+				<option>
+					<name>6144 bit</name>
+					<value>6144</value>
 				</option>
 				<option>
 					<name>7680 bit</name>
@@ -800,6 +800,10 @@
 					<value>4096</value>
 				</option>
 				<option>
+					<name>6144 bit</name>
+					<value>6144</value>
+				</option>
+				<option>
 					<name>7680 bit</name>
 					<value>7680</value>
 				</option>
@@ -823,7 +827,7 @@
 			<type>select</type>
 			<displayname>Encryption Algorithm</displayname>
 			<bindstofield>ovpnserver->step10->crypto</bindstofield>
-			<value>AES-256-CBC</value>
+			<value>AES-128-CBC</value>
 			<options>
 				<option>
 					<name>dummy</name>
@@ -843,7 +847,7 @@
 					<value>dummy</value>
 				</option>
 			</options>
-			<value>SHA1</value>
+			<value>SHA256</value>
 			<description>&lt;br/&gt;The method used to authenticate traffic between endpoints. This setting must match on the client and server side, but is otherwise set however desired.</description>
 		</field>
 		<field>

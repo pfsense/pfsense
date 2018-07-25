@@ -169,18 +169,22 @@ fi
 
 echo "Serial: ${serial}"
 
+# Find the boot device
+rootdev=$(/sbin/mount | /usr/bin/grep "on / " | /usr/bin/cut -f1 -d' ' | /usr/bin/sed "s/\/dev\///")
+rootlabel=$(/sbin/glabel status | /usr/bin/grep ${rootdev})
+
 # Find the eMMC device
 for DEV in mmcsd0 mmcsd1
 do
 	MMCHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep MMCHC)
-	if [ -n "${MMCHC}" ]; then
+	if [ -n "${MMCHC}" -a -z $(/usr/bin/grep ${MMCHC} ${rootlabel}) ]; then
 		MMCDEV=${DEV}
-		break
+		continue
 	fi
 	SDHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep SDHC)
-	if [ -n "${SDHC}" ]; then
+	if [ -n "${SDHC}" -a -z $(/usr/bin/grep ${SDHC} ${rootlabel}) ]; then
 		SDDEV=${DEV}
-		break
+		continue
 	fi
 done
 if [ -z "${MMCHC}" -a -z "${SDHC}" ]; then

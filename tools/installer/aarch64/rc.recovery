@@ -1,0 +1,212 @@
+#!/bin/sh
+
+#
+# Copyright (c) 2017-2018 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
+#
+
+main() {
+
+	echo
+	echo "This will install the standard firmware and will erase all the existing"
+	echo "contents of the destination device permanently."
+	echo
+	DEVS=""
+	TYPE=""
+	DEFAULT=""
+	if [ -n "${MMCDEV}" ]; then
+		echo eMMC device: ${MMCDEV}
+		DEVS=${MMCDEV}
+		DEFAULT=${MMCDEV}
+		TYPE="eMMC"
+	fi
+	if [ -n "${SDDEV}" ]; then
+		if [ -n "${DEVS}" ]; then
+			echo
+			DEVS="${DEVS},"
+		fi
+		DEVS="${DEVS}${SDDEV}"
+		DEFAULT=${SDDEV}
+		TYPE="SD Card"
+		echo SD card device: ${SDDEV}
+	fi
+	if [ -n "${M2DEV}" ]; then
+		if [ -n "${DEVS}" ]; then
+			echo
+			DEVS="${DEVS},"
+		fi
+		DEVS="${DEVS}${M2DEV}"
+		echo M.2 device: ${M2DEV}
+	fi
+	echo
+	echo
+	read -p "Type the name of the destination device (${DEVS}) or type enter to install on ${DEFAULT}: " destdev
+	echo
+
+	DEV=""
+	BOOTDEV=""
+	BOOTFROM=""
+	if [ -z "${destdev}" ]; then
+		DEV=${DEFAULT}
+		BOOTFROM="-e"
+	elif [ "${destdev}" == "${MMCDEV}" ]; then
+		DEV=${MMCDEV}
+		TYPE="eMMC"
+		BOOTFROM="-e"
+	elif [ "${destdev}" == "${SDDEV}" ]; then
+		DEV=${SDDEV}
+		TYPE="SD Card"
+		BOOTFROM="-e"
+	elif [ "${destdev}" == "${M2DEV}" ]; then
+		DEV=${M2DEV}
+		TYPE="M.2"
+		BOOTDEV=${DEV#ada*}
+		BOOTFROM="-m"
+	fi
+	if [ -z "${DEV}" ]; then
+		echo
+		echo "Invalid device ${destdev}.  aborting."
+		sleep 5
+		reboot
+	fi
+
+	echo Selected ${TYPE} device: ${DEV}
+	echo
+	read -p "Are you sure you want to continue ? (y/N) " confirm
+	echo
+
+	case "${confirm}" in
+	[Yy] | [Yy][Ee] | [Yy][Ee][Ss])
+		break
+		;;
+	*)
+		echo rebooting.
+		reboot
+	esac
+
+	echo "Erasing the ${TYPE} contents..."
+	/bin/dd if=/dev/zero of=/dev/${DEV} bs=4m count=15 2> /dev/null
+
+	echo "Writing the firmware to ${TYPE}..."
+	echo "(this may take a few minutes to complete)"
+	/usr/bin/gzip -dc ${IMG} | /bin/dd of=/dev/${DEV} bs=4m
+
+	echo "Fixing ${TYPE} labels..."
+	DISKID=$(/sbin/glabel status -s "${DEV}" 2>/dev/null \
+		| /usr/bin/grep diskid | /usr/bin/cut -d' ' -f1)
+
+	if [ -z "${DISKID}" ]; then
+		echo
+		echo "error obtaining DISKID.  aborting."
+		sleep 5
+		reboot
+	fi
+	if ! /sbin/mount /dev/${DISKID}s2a /mnt; then
+		echo
+		echo "error mounting pfSense partition.  aborting."
+		sleep 5
+		reboot
+	fi
+
+	/usr/bin/sed -i '' \
+		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s2a," \
+		/mnt/etc/fstab
+
+	/sbin/umount /mnt
+	sync ; sync ; sync
+
+	echo
+	echo "Done!"
+	echo
+	echo "The system will halt now, please power off and remove the firmware"
+	echo "recovery storage device."
+	echo
+	echo
+	echo
+	echo
+
+	trap "-" 1 2 15 EXIT
+	/sbin/shutdown -h now
+}
+
+# Try to read serial
+machine_arch=$(uname -p)
+case "${machine_arch}" in
+	aarch64)
+		product=$(/bin/kenv -q uboot.boardmodel)
+		serial=$(/bin/kenv -q uboot.boardsn)
+		;;
+	*)
+		echo "Unsuported platform"
+		exit 1
+esac
+
+# XXX is it really necessary?
+if [ "${serial}" = "123456789" ]; then
+	serial=""
+fi
+
+# Bad serial
+if ! echo "${serial}" | egrep -q '^[0-9]*$'; then
+	serial=""
+fi
+
+echo "Netgate SG-1100 firmware recovery"
+
+if [ -z "${product}" -o "${product%-*}" != "SG-1100" ]; then
+	echo
+	echo "unsupported system: unknown product.  aborting."
+	sleep 5
+	reboot
+fi
+
+if [ -z "${serial}" ]; then
+	echo
+	echo "unsupported system: no serial number.  aborting."
+	sleep 5
+	reboot
+fi
+
+echo "Serial: ${serial}"
+
+# Find the eMMC device
+for DEV in mmcsd0 mmcsd1
+do
+	MMCHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep MMCHC)
+	if [ -n "${MMCHC}" ]; then
+		MMCDEV=${DEV}
+		break
+	fi
+	SDHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep SDHC)
+	if [ -n "${SDHC}" ]; then
+		SDDEV=${DEV}
+		break
+	fi
+done
+if [ -z "${MMCHC}" -a -z "${SDHC}" ]; then
+	echo
+	echo "no eMMC device detected.  aborting."
+	sleep 5
+	reboot
+fi
+
+# Find the M.2 device
+for DEV in ada0 ada1 ada2 ada3 ada4 ada5 ada6 ada7 ada8 ada9
+do
+	M2=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep descr)
+	if [ -n "${M2}" ]; then
+		M2DEV=${DEV}
+		break
+	fi
+done
+
+IMG=$(/bin/cat /usr/local/share/pfSense/img.path 2> /dev/null)
+if [ -z "${IMG}" -o ! -f "${IMG}" ]; then
+	echo
+	echo "cannot find the firmware image.  aborting."
+	sleep 5
+	reboot
+fi
+
+trap main 1 2 15 EXIT
+main

@@ -1211,7 +1211,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		'interface',
 		'*Interface',
 		$pconfig['interface'],
-		create_interface_list(),
+		filter_get_interface_list(),
 		true
 	))->setHelp('Choose the interface(s) for this rule.');
 } else {
@@ -1219,7 +1219,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		'interface',
 		'*Interface',
 		$pconfig['interface'],
-		create_interface_list()
+		filter_get_interface_list()
 	))->setHelp('Choose the interface from which packets must come to match this rule.');
 }
 

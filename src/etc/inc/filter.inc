@@ -103,6 +103,14 @@ $vlanprio_values = array(
 );
 
 /*
+ * Interfaces that can be assigned but do not directly support filtering in pf.
+ * Specify the driver prefix to match (from the left)
+ * https://redmine.pfsense.org/issues/8685
+ */
+global $filter_interface_blacklist;
+$filter_interface_blacklist = array("ipsec");
+
+/*
  * Fixed tracker values (used to group and track usage in GUI):
  *
  * anti-lockout rules:	10000
@@ -4467,6 +4475,22 @@ function move_separators(&$a_separators, $ridx, $mvnrows) {
 			}
 		}
 	}
+}
+
+function filter_get_interface_list() {
+	global $filter_interface_blacklist;
+	$iflist = create_interface_list();
+	$filter_ifs = array();
+	foreach ($iflist as $ifent => $ifname) {
+		$realifname = get_real_interface($ifent);
+		foreach ($filter_interface_blacklist as $ifbl) {
+			if (substr($realifname, 0, strlen($ifbl)) == $ifbl) {
+				continue 2;
+			}
+		}
+		$filter_ifs[$ifent] = $ifname;
+	}
+	return $filter_ifs;
 }
 
 ?>

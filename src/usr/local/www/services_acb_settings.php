@@ -50,13 +50,11 @@ if (isset($_POST['save'])) {
 		$input_errors[] = gettext("The encryption password must contain at least 8 characters");
 	}
 
-//	Since there was no restriction on the Gold subscription password, there can be no restriction here
-//	if (($pconfig['legacy'] == 'yes') && (strlen($_POST['gold_password']) < 8)) {
-//		$input_errors[] = gettext("The legacy Gold password must contain at least 8 characters");
-//	}
-
 	$update_ep = false;
+	$update_gp = false;
+	$update_gep = false;
 
+	// Validate form contents
 	if ($_POST['encryption_password'] != "********") {
 		if ($_POST['encryption_password'] != $_POST['encryption_password_confirm']) {
 			$input_errors[] = gettext("Encryption password and confirmation do not match");
@@ -65,30 +63,40 @@ if (isset($_POST['save'])) {
 		}
 	}
 
-	$update_gp = false;
-
+	// Validate legacy settings
+	// All blank is allowed, otherwise they must be valid
 	if ($pconfig['legacy'] == 'yes') {
-		if ($_POST['gold_password'] != "********") {
-			if ($_POST['gold_password'] != $_POST['gold_password_confirm']) {
-				$input_errors[] = gettext("Legacy Gold password and confirmation do not match");
-			} else {
-				$update_gp = true;
+		if (empty($_POST['gold_password']) && empty($_POST['gold_username']) && empty($_POST['gold_password_confirm']) &&
+		    empty($_POST['gold_encryption_password']) && empty($_POST['gold_encryption_password_confirm'])) {
+			$update_gep = true;
+			$pconfig['legacy'] = 'no';
+		} else {
+			if ($_POST['gold_password'] != "********") {
+				if ($_POST['gold_password'] != $_POST['gold_password_confirm']) {
+					$input_errors[] = gettext("Legacy Gold password and confirmation do not match");
+				} else {
+					$update_gp = true;
+				}
 			}
-		}
 
-		if (strlen($_POST['gold_username']) == 0) {
-			$input_errors[] = gettext("Legacy Gold username may not be blank");
-		}
-	}
+			if ($_POST['gold_encryption_password'] != "********") {
+				if ($_POST['gold_encryption_password'] != $_POST['gold_encryption_password_confirm']) {
+					$input_errors[] = gettext("Legacy Gold encryption password and confirmation do not match");
+				} else {
+					$update_gep = true;
+				}
+			}
 
-	$update_gep = false;
+			if (empty($_POST['gold_username'])) {
+				$input_errors[] = gettext("Legacy Gold username may not be blank");
+			}
 
-	if ($pconfig['legacy'] == 'yes') {
-		if ($_POST['gold_encryption_password'] != "********") {
-			if ($_POST['gold_encryption_password'] != $_POST['gold_encryption_password_confirm']) {
-				$input_errors[] = gettext("Legacy Gold encryption password and confirmation do not match");
-			} else {
-				$update_gep = true;
+			if (empty($_POST['gold_password'])) {
+				$input_errors[] = gettext("Legacy Gold password may not be blank");
+			}
+
+			if (empty($_POST['gold_encryption_password'])) {
+				$input_errors[] = gettext("Legacy Gold encryption password may not be blank");
 			}
 		}
 	}
@@ -157,8 +165,8 @@ $section->addInput(new Form_Input(
 	'Hint',
 	'text',
 	$pconfig['hint']
-))->setHelp("You may optionally provide a hint which will be stored in plain text along with each backup. " .
-			"This may assist in recovering a backup should you lose your device key.");
+))->setHelp("You may optionally provide a hint which will be stored in plain text along with each encrypted backup. " .
+			"This may allow the Netgate support team to recover your key should you lose it.");
 
 $form->add($section);
 
@@ -204,11 +212,12 @@ print $form;
 	events.push(function() {
 		$('#btnlegacy').prop('type', 'button');
 
-		// Hide the legacy settings
+		// Hide/show the legacy settings on page load
 		if ($('#legacy').val() != 'yes') {
 			$('#legacy_panel').addClass('hidden');
 		}
 
+		// On clicking "legacy" button
 		$('#btnlegacy').click(function() {
 			if ($('#legacy').val() != "yes") {
 				$('#legacy_panel').removeClass('hidden');

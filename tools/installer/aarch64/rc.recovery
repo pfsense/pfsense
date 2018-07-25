@@ -153,7 +153,7 @@ fi
 
 echo "Netgate SG-1100 firmware recovery"
 
-if [ -z "${product}" -o "${product%-*}" != "mvebu_armada-37xx" ]; then
+if [ -z "${product}" -o "${product}" != "mvebu_armada-37xx" ]; then
 	echo
 	echo "unsupported system: unknown product.  aborting."
 	sleep 5

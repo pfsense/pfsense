@@ -28,6 +28,9 @@
 
 require_once("guiconfig.inc");
 
+if (!is_array($config['gifs'])) {
+	$config['gifs'] = array();
+}
 if (!is_array($config['gifs']['gif'])) {
 	$config['gifs']['gif'] = array();
 }

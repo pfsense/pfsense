@@ -442,6 +442,9 @@ if ($_POST['save']) {
 			}
 		}
 	}
+	if (is_array($old_ph1ent) && ipsec_vti($old_ph1ent) && $pconfig['disabled']) {
+		$input_errors[] = gettext("Cannot disable a Phase 1 with a child Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
+	}
 
 	if (!$input_errors) {
 		$ph1ent['ikeid'] = $pconfig['ikeid'];

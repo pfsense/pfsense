@@ -95,6 +95,17 @@ if (!is_array($config['gateways']['gateway_item'])) {
 $a_gateways = &$config['gateways']['gateway_item'];
 
 $interfaces = get_configured_interface_with_descr();
+/* Interfaces which have addresses configired elsewhere and should not be
+ * configured here. See https://redmine.pfsense.org/issues/8687 */
+$no_address_interfaces = array("ovpn", "ipsec", "gif", "gre");
+$show_address_controls = true;
+$realifname = get_real_interface($if);
+foreach ($no_address_interfaces as $ifbl) {
+	if (substr($realifname, 0, strlen($ifbl)) == $ifbl) {
+		$show_address_controls = false;
+	}
+}
+
 $wancfg = &$config['interfaces'][$if];
 $old_wancfg = $wancfg;
 $old_wancfg['realif'] = get_real_interface($if);
@@ -1736,7 +1747,7 @@ foreach ($mediaopts as $mediaopt) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"), $wancfg['descr']);
+$pgtitle = array(gettext("Interfaces"), "{$wancfg['descr']} ({$realifname})");
 $shortcut_section = "interfaces";
 
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP"));
@@ -1824,19 +1835,37 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('Enter a description (name) for the interface here.');
 
-$section->addInput(new Form_Select(
-	'type',
-	'IPv4 Configuration Type',
-	$pconfig['type'],
-	$types4
-));
-
-$section->addInput(new Form_Select(
-	'type6',
-	'IPv6 Configuration Type',
-	$pconfig['type6'],
-	$types6
-));
+if ($show_address_controls) {
+	$section->addInput(new Form_Select(
+		'type',
+		'IPv4 Configuration Type',
+		$pconfig['type'],
+		$types4
+	));
+	$section->addInput(new Form_Select(
+		'type6',
+		'IPv6 Configuration Type',
+		$pconfig['type6'],
+		$types6
+	));
+} else {
+	$section->addInput(new Form_StaticText(
+		'IPv4/IPv6 Configuration',
+		"This interface type does not support manual address configuration on this page. "
+	));
+	$section->addInput(new Form_Input(
+		'type',
+		null,
+		'hidden',
+		'none'
+	));
+	$section->addInput(new Form_Input(
+		'type6',
+		null,
+		'hidden',
+		'none'
+	));
+}
 
 $macaddress = new Form_Input(
 	'spoofmac',

@@ -369,6 +369,9 @@ if ($_POST['save']) {
 	if (($_POST['lifetime'] && !is_numericint($_POST['lifetime']))) {
 		$input_errors[] = gettext("The P2 lifetime must be an integer.");
 	}
+	if (($pconfig['mode'] == "vti") && $pconfig['disabled']) {
+		$input_errors[] = gettext("Cannot disable a VTI Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
+	}
 
 	if (!$input_errors) {
 

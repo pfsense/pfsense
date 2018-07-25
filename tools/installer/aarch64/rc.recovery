@@ -133,7 +133,7 @@ main() {
 machine_arch=$(uname -p)
 case "${machine_arch}" in
 	aarch64)
-		product=$(/bin/kenv -q uboot.boardmodel)
+		product=$(/bin/kenv -q smbios.system.product)
 		serial=$(/bin/kenv -q uboot.boardsn)
 		;;
 	*)
@@ -153,7 +153,7 @@ fi
 
 echo "Netgate SG-1100 firmware recovery"
 
-if [ -z "${product}" -o "${product%-*}" != "SG-1100" ]; then
+if [ -z "${product}" -o "${product%-*}" != "mvebu_armada-37xx" ]; then
 	echo
 	echo "unsupported system: unknown product.  aborting."
 	sleep 5
@@ -164,7 +164,7 @@ if [ -z "${serial}" ]; then
 	echo
 	echo "unsupported system: no serial number.  aborting."
 	sleep 5
-	reboot
+#	reboot
 fi
 
 echo "Serial: ${serial}"

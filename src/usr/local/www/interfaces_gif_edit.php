@@ -28,6 +28,9 @@
 
 require_once("guiconfig.inc");
 
+if (!is_array($config['gifs'])) {
+	$config['gifs'] = array();
+}
 if (!is_array($config['gifs']['gif'])) {
 	$config['gifs']['gif'] = array();
 }
@@ -122,7 +125,7 @@ if ($_POST['save']) {
 			$gif['link2'] = '';
 		}
 		$gif['gifif'] = $_POST['gifif'];
-		$gif['gifif'] = interface_gif_configure($gif);
+		$gif['gifif'] = trim(interface_gif_configure($gif));
 
 		if ($gif['gifif'] == "" || !stristr($gif['gifif'], "gif")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");

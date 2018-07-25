@@ -29,6 +29,9 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
+if (!is_array($config['gres'])) {
+	$config['gres'] = array();
+}
 if (!is_array($config['gres']['gre'])) {
 	$config['gres']['gre'] = array();
 }

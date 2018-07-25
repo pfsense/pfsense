@@ -82,7 +82,7 @@ function unbound_optimization() {
 	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
 		foreach ($config['sysctl']['item'] as $tunable) {
 			if ($tunable['tunable'] == 'kern.ipc.maxsockbuf') {
-				$so = floor(intval(($tunable['value'])/1024/1024)-4);
+				$so = floor((intval($tunable['value'])/1024/1024)-4);
 				// Check to ensure that the number is not a negative
 				if ($so >= 4) {
 					// Limit to 32MB, users might set maxsockbuf very high for other reasons.

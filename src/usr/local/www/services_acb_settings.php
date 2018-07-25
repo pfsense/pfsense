@@ -66,29 +66,41 @@ if (isset($_POST['save'])) {
 	}
 
 	$update_gp = false;
-
-	if ($pconfig['legacy'] == 'yes') {
-		if ($_POST['gold_password'] != "********") {
-			if ($_POST['gold_password'] != $_POST['gold_password_confirm']) {
-				$input_errors[] = gettext("Legacy Gold password and confirmation do not match");
-			} else {
-				$update_gp = true;
-			}
-		}
-
-		if (strlen($_POST['gold_username']) == 0) {
-			$input_errors[] = gettext("Legacy Gold username may not be blank");
-		}
-	}
-
 	$update_gep = false;
 
 	if ($pconfig['legacy'] == 'yes') {
-		if ($_POST['gold_encryption_password'] != "********") {
-			if ($_POST['gold_encryption_password'] != $_POST['gold_encryption_password_confirm']) {
-				$input_errors[] = gettext("Legacy Gold encryption password and confirmation do not match");
-			} else {
-				$update_gep = true;
+		if (empty($_POST['gold_password']) && empty($_POST['gold_username']) && empty($_POST['gold_password_confirm']) &&
+		    empty($_POST['gold_encryption_password']) && empty($_POST['gold_encryption_password_confirm'])) {
+			$update_gep = true;
+			$pconfig['legacy'] = 'no';
+		} else {
+
+			if ($_POST['gold_password'] != "********") {
+				if ($_POST['gold_password'] != $_POST['gold_password_confirm']) {
+					$input_errors[] = gettext("Legacy Gold password and confirmation do not match");
+				} else {
+					$update_gp = true;
+				}
+			}
+
+			if ($_POST['gold_encryption_password'] != "********") {
+				if ($_POST['gold_encryption_password'] != $_POST['gold_encryption_password_confirm']) {
+					$input_errors[] = gettext("Legacy Gold encryption password and confirmation do not match");
+				} else {
+					$update_gep = true;
+				}
+			}
+
+			if (empty($_POST['gold_username'])) {
+				$input_errors[] = gettext("Legacy Gold username may not be blank");
+			}
+
+			if (empty($_POST['gold_password'])) {
+				$input_errors[] = gettext("Legacy Gold password may not be blank");
+			}
+
+			if (empty($_POST['gold_encryption_password'])) {
+				$input_errors[] = gettext("Legacy Gold encryption password may not be blank");
 			}
 		}
 	}

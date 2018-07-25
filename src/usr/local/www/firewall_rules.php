@@ -125,7 +125,7 @@ if ($_REQUEST['if']) {
 
 $ifdescs = get_configured_interface_with_descr();
 
-$iflist = create_interface_list();
+$iflist = filter_get_interface_list();
 
 if (!$if || !isset($iflist[$if])) {
 	if ($if != "any" && $if != "FloatingRules" && isset($iflist['wan'])) {

@@ -549,7 +549,7 @@ if ($_POST['apply']) {
 		/* Switch if cannot be reused. */
 		if (is_array($config['interfaces']) && isset($_POST['switchif'])) {
 			foreach ($config['interfaces'] as $int) {
-				if ($int != $wancfg && $int['switchif'] == $_POST['switchif']) {
+				if (!empty($_POST['switchif']) && ($int != $wancfg && $int['switchif'] == $_POST['switchif'])) {
 					$input_errors[] = gettext("This Switch port is already in used by another interface.");
 					break;
 				}

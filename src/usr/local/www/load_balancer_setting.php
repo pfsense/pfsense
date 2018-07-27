@@ -80,6 +80,7 @@ if ($_POST) {
 
 		$savemsg = get_std_save_message($retval);
 		clear_subsystem_dirty('loadbalancer');
+		$pconfig = $lbsetting;
 	} else {
 		unset($input_errors);
 		$pconfig = $_POST;
@@ -113,6 +114,8 @@ if ($_POST) {
 			mark_subsystem_dirty('loadbalancer');
 		}
 	}
+} else {
+	$pconfig = $lbsetting;
 }
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Settings"));

@@ -388,8 +388,8 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 	 */
 	if (!$installed_pkgs_only || !$remote_repo_usage_disabled) {
 		$did_search = true;
-		$search_rc = pkg_exec(
-		    "search {$extra_param}-R --raw-format json-compact " .
+		$search_rc = pkg_exec("search -r {$g['product_name']} " .
+		    "{$extra_param}-R --raw-format json-compact " .
 		    $pkgs, $search_out, $search_err);
 		if ($search_rc == 0) {
 			$search_items = explode("\n", chop($search_out));
@@ -472,6 +472,12 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		$pkg_is_installed = false;
 
 		if (is_pkg_installed($pkg_info['name'])) {
+			$rc = pkg_exec("query %R {$pkg_info['name']}", $out,
+			    $err);
+			if (rtrim($out) != $g['product_name']) {
+				continue;
+			}
+
 			$pkg_info['installed'] = true;
 			$pkg_is_installed = true;
 

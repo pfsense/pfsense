@@ -522,8 +522,14 @@
 		}
 		$type = $_POST['selectedtype'];
 
-		if (!is_array($config['ppps']['ppp']))
+		if (!is_array($config['ppps'])) {
+			$config['ppps'] = array();
+		}
+
+		if (!is_array($config['ppps']['ppp'])) {
 			$config['ppps']['ppp'] = array();
+		}
+
 		if (count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 				if ($ppp['ptpid'] == "0") {

@@ -411,14 +411,25 @@ events.push(function() {
 				json += ",\n";
 			}
 
-			json += '{"port":"' + $(this).find('td:eq(0)').text().trim() + '", "vid":"' + $(this).find('td:eq(2)').text().trim() + '"';
-<?
-	if (isset($swinfo['switch_caps']['LAGG'])) {
-?>
-			json += ', "lagg":"' + $(this).find('td:eq(3)').text().trim() + '"';
-<?
-	}
-?>
+			json += '{"port":"' + $(this).find('td:eq(0)').text().trim() + '"';
+		<?
+			if ($swinfo['vlan_mode'] == "DOT1Q") {
+		?>
+				json += ', "vid":"' + $(this).find('td:eq(2)').text().trim() + '"';
+		<?
+			}
+		?>
+		<?
+			if (isset($swinfo['switch_caps']['LAGG'])) {
+				// If vlan_mode is not DOT1Q the vid column gets removed so
+				// this will adjust the lagg column to get the right data
+				$lagg_column = (($swinfo['vlan_mode'] == "DOT1Q") ? 3 : 2);
+		?>
+				json += ', "lagg":"' +
+				$(this).find('td:eq(' + <? echo $lagg_column ?> + ')').text().trim() + '"';
+		<?
+			}
+		?>
  			json += '}';
 			entry++;
 		});

@@ -342,11 +342,10 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 
 	if (is_array($pkgs)) {
 		$pkg_filter = $pkgs;
-		$pkgs = $g['pkg_prefix'] . '*';
-	} elseif ($pkgs == 'all') {
-		$pkgs = $g['pkg_prefix'] . '*';
+	} elseif ($pkgs != 'all') {
+		return array();
 	}
-
+	$pkgs = $g['pkg_prefix'] . '*';
 
 	if ($installed_pkgs_only && !is_pkg_installed($pkgs)) {
 		// Return early if the caller wants just installed packages and there are none.

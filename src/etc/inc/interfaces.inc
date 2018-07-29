@@ -2703,7 +2703,7 @@ function interfaces_vips_configure($interface = "") {
 		$carp_setuped = false;
 		$anyproxyarp = false;
 		foreach ($config['virtualip']['vip'] as $vip) {
-			if ($interface <> "" && $vip['interface'] <> $interface) {
+			if ($interface <> "" && get_root_interface($vip['interface']) <> $interface) {
 				continue;
 			}
 			switch ($vip['mode']) {

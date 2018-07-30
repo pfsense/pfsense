@@ -175,7 +175,7 @@ rootdev=$(/sbin/mount | /usr/bin/grep "on / " | /usr/bin/awk '{ printf $1 }')
 if [ -n "$(echo ${rootdev} | /usr/bin/grep -e 's3$')" ]; then
 	rootdev=${rootdev%s3}
 fi
-rootlabel=$(/sbin/glabel status | /usr/bin/grep "${rootdev#/dev/}}")
+rootlabel=$(/sbin/glabel status | /usr/bin/grep "${rootdev#/dev/}")
 
 # Identify the SDHCI devices
 for DEV in mmcsd0 mmcsd1

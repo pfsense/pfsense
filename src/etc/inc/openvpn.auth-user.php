@@ -134,7 +134,7 @@ if (file_exists("{$g['varetc_path']}/openvpn/{$modeid}.ca")) {
 $authenticated = false;
 
 if (($strictusercn === true) && (mb_strtolower($common_name) !== mb_strtolower($username))) {
-	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
+	syslog(LOG_WARNING, "Username does not match certificate common name (\"{$username}\" != \"{$common_name}\"), access denied.\n");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();

@@ -125,7 +125,7 @@ if ($_POST['save']) {
 			$gif['link2'] = '';
 		}
 		$gif['gifif'] = $_POST['gifif'];
-		$gif['gifif'] = trim(interface_gif_configure($gif));
+		$gif['gifif'] = interface_gif_configure($gif);
 
 		if ($gif['gifif'] == "" || !stristr($gif['gifif'], "gif")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");

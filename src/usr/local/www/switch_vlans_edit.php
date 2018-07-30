@@ -29,9 +29,14 @@
 require_once("guiconfig.inc");
 require_once("switch.inc");
 
+if (!is_array($config['switches'])) {
+        $config['switches'] = array();
+}
+
 if (!is_array($config['switches']['switch'])) {
         $config['switches']['switch'] = array();
 }
+
 $a_switches = &$config['switches']['switch'];
 
 function find_vgroup_id($vgroups = NULL, $vlangroup = -1) {
@@ -106,14 +111,17 @@ if (!isset($_REQUEST['swdevice'])) {
 	header("Location: switch_vlans.php");
 	exit;
 }
+
 $swdevice = $_REQUEST['swdevice'];
 $swinfo = pfSense_etherswitch_getinfo($swdevice);
+
 if ($swinfo == NULL) {
 	header("Location: switch_vlans.php");
 	exit;
 }
 
 $swid = -1;
+
 foreach($a_switches as $switchid => $switch) {
 	if ($switch['device'] != $swdevice) {
 		continue;
@@ -121,19 +129,24 @@ foreach($a_switches as $switchid => $switch) {
 	$swid = $switchid;
 	break;
 }
+
 if ($swid == -1) {
 	header("Location: switch_vlans.php");
 	exit;
 }
+
 if (!is_array($a_switches[$swid]['vlangroups'])) {
         $a_switches[$swid]['vlangroups'] = array();
 }
+
 if (!is_array($a_switches[$swid]['vlangroups']['vlangroup'])) {
         $a_switches[$swid]['vlangroups']['vlangroup'] = array();
 }
+
 $a_vgroups = &$a_switches[$swid]['vlangroups']['vlangroup'];
 
 unset ($input_errors);
+
 if ($_POST) {
 
 	$members = "";
@@ -210,7 +223,7 @@ if ($_POST) {
 		}
 		$err = pfSense_etherswitch_setvlangroup($swdevice, $vgroupid, $_POST['vlanid'], $vgmembers);
 		if ($err == false) {
-		/* XXX */	
+		/* XXX */
 		}
 		if ($vgroupid == -1) {
 			$vgroupid = $err;
@@ -307,6 +320,7 @@ if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
 	$vidtag = "PORT";
 	$vidhelp = "";
 }
+
 $section->addInput(new Form_Input(
 	'vlanid',
 	$vidtag,
@@ -340,6 +354,7 @@ foreach ($pconfig['members'] as $member) {
 		} else {
 			$checked = '';
 		}
+
 		$group->add(new Form_Checkbox(
 			'tagged' . $counter,
 			null,
@@ -356,9 +371,8 @@ foreach ($pconfig['members'] as $member) {
 		'fa-trash'
 	))->addClass('btn-warning');
 
-	$counter++;
-
 	$section->add($group);
+	$counter++;
 }
 
 $form->addGlobal(new Form_Button(

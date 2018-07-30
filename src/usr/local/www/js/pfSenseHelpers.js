@@ -285,7 +285,7 @@ function delete_row(rowDelBtn) {
 
 	// If we are deleting row zero, we need to save/restore the label
 	if ( (rowDelBtn == "deleterow0") && ((typeof retainhelp) == "undefined")) {
-		rowLabel = $('#' + rowDelBtn).parent('div').parent('div').find('label').text();
+		rowLabel = $('#' + rowDelBtn).parent('div').parent('div').find('label:first').text();
 	}
 
 	$('#' + rowDelBtn).parent('div').parent('div').remove();
@@ -294,7 +294,7 @@ function delete_row(rowDelBtn) {
 	checkLastRow();
 
 	if (rowDelBtn == "deleterow0") {
-		$('#' + rowDelBtn).parent('div').parent('div').find('label').text(rowLabel);
+		$('#' + rowDelBtn).parent('div').parent('div').find('label:first').text(rowLabel);
 	}
 }
 

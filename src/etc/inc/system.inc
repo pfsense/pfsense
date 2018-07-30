@@ -2499,13 +2499,11 @@ function system_identify_specific_platform() {
 			return $result;
 			break;
 		case 'mvebu_armada-37xx':
-			return (array('name' => 'SG-1100', 'descr' => 'Negate SG-1100'));
+			$_gb = exec('/usr/sbin/ofwdump -P model -R / 2>/dev/null', $fdtModel);
+			if (strcmp($fdtModel, "Netgate SG-1100") == 0) {
+				return (array('name' => 'SG-1100', 'descr' => 'Negate SG-1100'));
+			}
 			break;
-/*
- *		case 'mvebu_armada-37xx':
- *			return (array('name' => 'A37XX', 'descr' => 'Marvel Armada 37x0'));
- *			break;
- */
 		case 'SYS-5018A-FTN4':
 		case 'A1SAi':
 			return (array('name' => 'C2758', 'descr' => 'Super Micro C2758'));

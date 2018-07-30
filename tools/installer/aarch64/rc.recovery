@@ -30,13 +30,13 @@ main() {
 		TYPE="SD Card"
 		echo SD card device: ${SDDEV}
 	fi
-	if [ -n "${M2DEV}" ]; then
+	if [ -n "${AHCIDEV}" ]; then
 		if [ -n "${DEVS}" ]; then
 			echo
 			DEVS="${DEVS},"
 		fi
-		DEVS="${DEVS}${M2DEV}"
-		echo M.2 device: ${M2DEV}
+		DEVS="${DEVS}${AHCIDEV}"
+		echo AHCI device: ${AHCIDEV}
 	fi
 	echo
 	echo
@@ -57,9 +57,9 @@ main() {
 		DEV=${SDDEV}
 		TYPE="SD Card"
 		BOOTFROM="-e"
-	elif [ "${destdev}" == "${M2DEV}" ]; then
-		DEV=${M2DEV}
-		TYPE="M.2"
+	elif [ "${destdev}" == "${AHCIDEV}" ]; then
+		DEV=${AHCIDEV}
+		TYPE="AHCI"
 		BOOTDEV=${DEV#ada*}
 		BOOTFROM="-m"
 	fi
@@ -101,7 +101,7 @@ main() {
 		sleep 5
 		reboot
 	fi
-	if ! /sbin/mount /dev/${DISKID}s2a /mnt; then
+	if ! /sbin/mount /dev/${DISKID}s3 /mnt; then
 		echo
 		echo "error mounting pfSense partition.  aborting."
 		sleep 5
@@ -109,7 +109,7 @@ main() {
 	fi
 
 	/usr/bin/sed -i '' \
-		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s2a," \
+		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s3," \
 		/mnt/etc/fstab
 
 	/sbin/umount /mnt
@@ -133,6 +133,7 @@ main() {
 machine_arch=$(uname -p)
 case "${machine_arch}" in
 	aarch64)
+		model=$(/usr/sbin/ofwdump -P model -R /)
 		product=$(/bin/kenv -q smbios.system.product)
 		serial=$(/bin/kenv -q uboot.boardsn)
 		;;
@@ -153,7 +154,7 @@ fi
 
 echo "Netgate SG-1100 firmware recovery"
 
-if [ -z "${product}" -o "${product}" != "mvebu_armada-37xx" ]; then
+if [ -z "${product}" -o "${product}" != "mvebu_armada-37xx" -o -z "${model}" -o "${model}" != "Netgate SG-1100" ]; then
 	echo
 	echo "unsupported system: unknown product.  aborting."
 	sleep 5
@@ -173,16 +174,21 @@ echo "Serial: ${serial}"
 rootdev=$(/sbin/mount | /usr/bin/grep "on / " | /usr/bin/cut -f1 -d' ' | /usr/bin/sed "s/\/dev\///")
 rootlabel=$(/sbin/glabel status | /usr/bin/grep "${rootdev}")
 
-# Find the eMMC device
+# Identify the SDHCI devices
 for DEV in mmcsd0 mmcsd1
 do
+	ROOT=$(echo "${rootlabel}" | /usr/bin/grep ${DEV})
+	# Skip the boot device.
+	if [ -n "${ROOT}" ]; then
+		continue;
+	fi
 	MMCHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep MMCHC)
-	if [ -n "${MMCHC}" -a -z $(/usr/bin/grep ${MMCHC} "${rootlabel}") ]; then
+	if [ -n "${MMCHC}" ]; then
 		MMCDEV=${DEV}
 		continue
 	fi
 	SDHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep SDHC)
-	if [ -n "${SDHC}" -a -z $(/usr/bin/grep ${SDHC} "${rootlabel}") ]; then
+	if [ -n "${SDHC}" ]; then
 		SDDEV=${DEV}
 		continue
 	fi
@@ -194,12 +200,12 @@ if [ -z "${MMCHC}" -a -z "${SDHC}" ]; then
 	reboot
 fi
 
-# Find the M.2 device
+# Find the AHCI devices
 for DEV in ada0 ada1 ada2 ada3 ada4 ada5 ada6 ada7 ada8 ada9
 do
-	M2=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep descr)
-	if [ -n "${M2}" ]; then
-		M2DEV=${DEV}
+	AHCI=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep descr)
+	if [ -n "${AHCI}" ]; then
+		AHCIDEV=${DEV}
 		break
 	fi
 done

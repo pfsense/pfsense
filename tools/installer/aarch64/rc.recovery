@@ -196,7 +196,7 @@ do
 		continue
 	fi
 done
-if [ -z "${MMCHC}" -a -z "${SDHC}" ]; then
+if [ -z "${MMCDEV}" -a -z "${SDDEV}" ]; then
 	echo
 	echo "no eMMC device detected.  aborting."
 	sleep 5

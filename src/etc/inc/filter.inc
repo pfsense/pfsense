@@ -466,7 +466,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 			$line_number = $line_error[1];
 			$line_split = file("{$g['tmp_path']}/rules.debug");
 			if (is_array($line_split)) {
-				$line_error = sprintf(gettext('The line in question reads [%1$d]: %2$s'), $line_number, $line_split[$line_number-1]);
+				$line_error = sprintf(gettext('The line in question reads [%1$d]: %2$s'), $line_number, $line_split[(int) $line_number - 1]);
 			}
 			unset($line_split);
 

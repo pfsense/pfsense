@@ -355,10 +355,15 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		$pkgs = $g['pkg_prefix'] . '*';
 	}
 
+	$base_packages = (substr($pkgs, 0, strlen($g['pkg_prefix'])) !=
+	    $g['pkg_prefix']);
 
 	if ($installed_pkgs_only && !is_pkg_installed($pkgs)) {
-		// Return early if the caller wants just installed packages and there are none.
-		// Saves doing any calls that might access a remote package repo.
+		/*
+		 * Return early if the caller wants just installed packages
+		 * and there are none.  Saves doing any calls that might
+		 * access a remote package repo.
+		 */
 		return array();
 	}
 
@@ -388,14 +393,20 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 	$search_items = array();
 	$info_items = array();
 
+	if ($base_packages) {
+		$repo_param = "";
+	} else {
+		$repo_param = "-r {$g['product_name']}";
+	}
+
 	/*
 	 * If we want more than just the currently installed packages or
 	 * we want up-to-date remote repo info then do a full pkg search
 	 */
 	if (!$installed_pkgs_only || !$remote_repo_usage_disabled) {
 		$did_search = true;
-		$search_rc = pkg_exec(
-		    "search {$extra_param}-R --raw-format json-compact " .
+		$search_rc = pkg_exec("search {$repo_param} " .
+		    "{$extra_param}-R --raw-format json-compact " .
 		    $pkgs, $search_out, $search_err);
 		if ($search_rc == 0) {
 			$search_items = explode("\n", chop($search_out));
@@ -478,6 +489,13 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		$pkg_is_installed = false;
 
 		if (is_pkg_installed($pkg_info['name'])) {
+			$rc = pkg_exec("query %R {$pkg_info['name']}", $out,
+			    $err);
+			if (!$base_packages &&
+			    rtrim($out) != $g['product_name']) {
+				continue;
+			}
+
 			$pkg_info['installed'] = true;
 			$pkg_is_installed = true;
 
@@ -485,29 +503,33 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 			    $err);
 
 			if ($rc != 0) {
-				update_status("\n" . gettext(
-				    "ERROR: Error trying to get package version. Aborting...")
-				    . "\n");
+				update_status("\n" . gettext("ERROR: Error " .
+				    "trying to get package version. " .
+				    "Aborting...") . "\n");
 				update_status($err);
-				$input_errors[] = gettext(
-				    "ERROR: Error trying to get package version. Aborting...") .
-				    "\n";
+				$input_errors[] = gettext("ERROR: Error " .
+				    "trying to get package version. " .
+				    "Aborting...") . "\n";
 				$input_errors[] = $err;
 				return array();
 			}
 
-			$pkg_info['installed_version'] = str_replace("\n", "", $out);
+			$pkg_info['installed_version'] = str_replace("\n", "",
+			    $out);
 
 			/*
-			* We used pkg info to collect pkg data so remote
-			* version is not available. Lets try to collect it
-			* using rquery if possible
-			*/
+			 * We used pkg info to collect pkg data so remote
+			 * version is not available. Lets try to collect it
+			 * using rquery if possible
+			 */
 			if ($search_rc != 0 || !$did_search) {
-				$rc = pkg_exec("rquery -U %v {$pkg_info['name']}", $out, $err);
+				$rc = pkg_exec(
+				    "rquery -U %v {$pkg_info['name']}", $out,
+				    $err);
 
 				if ($rc == 0) {
-					$pkg_info['version'] = str_replace("\n", "", $out);
+					$pkg_info['version'] =
+					    str_replace("\n", "", $out);
 				}
 			}
 

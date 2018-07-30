@@ -47,6 +47,7 @@ if ($_POST) {
 		$retval |= relayd_configure();
 
 		clear_subsystem_dirty('loadbalancer');
+		$pconfig = $lbsetting;
 	} else {
 		unset($input_errors);
 		$pconfig = $_POST;
@@ -80,6 +81,8 @@ if ($_POST) {
 			mark_subsystem_dirty('loadbalancer');
 		}
 	}
+} else {
+	$pconfig = $lbsetting;
 }
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Settings"));

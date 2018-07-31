@@ -193,7 +193,7 @@ if ($_POST) {
 	}
 
 	if ($_POST['dashboardcolumns']) {
-		$config['system']['webgui']['dashboardcolumns'] = $_POST['dashboardcolumns'];
+		$config['system']['webgui']['dashboardcolumns'] = htmlspecialchars($_POST['dashboardcolumns']);
 	} else {
 		unset($config['system']['webgui']['dashboardcolumns']);
 	}
@@ -209,6 +209,7 @@ if ($_POST) {
 			}
 		}
 	}
+
 	if ($_POST['domain'] && !is_domain($_POST['domain'])) {
 		$input_errors[] = gettext("The domain may only contain the characters a-z, 0-9, '-' and '.'.");
 	}

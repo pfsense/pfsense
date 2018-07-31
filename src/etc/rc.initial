@@ -132,7 +132,7 @@ if [ "${uFW}" = "A335uFW" -o "${fdtModel}" = "Netgate SG-1100" ]; then
 	fi
 	if [ "${fdtModel}" = "Netgate SG-1100" ]; then
 		# Do not show the option 99 when running from SATA disk.
-		SATADEV=$(echo "${DEV}" | /usr/bin/grep ada.s3)
+		SATADEV=$(echo "${DEV}" | /usr/bin/grep ada.)
 		if [ "${SATADEV}" = "${DEV}" -a -z "${MMCDEV}" ]; then
 			MMCDEV="1"
 		fi

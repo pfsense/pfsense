@@ -73,7 +73,7 @@ echo "Creating pfSense partition on eMMC"
 /sbin/gpart add -t freebsd ${MMCDEV}
 /sbin/newfs -UjE /dev/${MMCDEV}s3
 
-echo "Mounting chroot environment"
+echo "Mounting pfSense partition"
 DISKID=$(/sbin/glabel status -s "${MMCDEV}" 2>/dev/null \
 	| /usr/bin/head -n 1 | /usr/bin/cut -d' ' -f1)
 if [ -z "${DISKID}" ]; then

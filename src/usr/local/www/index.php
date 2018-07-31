@@ -273,7 +273,7 @@ if ($fd) {
 
 ##build widget saved list information
 if ($user_settings['widgets']['sequence'] != "") {
-	$dashboardcolumns = isset($user_settings['webgui']['dashboardcolumns']) ? $user_settings['webgui']['dashboardcolumns'] : 2;
+	$dashboardcolumns = isset($user_settings['webgui']['dashboardcolumns']) ? (int) $user_settings['webgui']['dashboardcolumns'] : 2;
 	$pconfig['sequence'] = $user_settings['widgets']['sequence'];
 	$widgetsfromconfig = array();
 

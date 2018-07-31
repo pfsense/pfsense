@@ -91,6 +91,7 @@ uFW=$(/bin/kenv -q uboot.board_name)
 fdtModel=$(/usr/sbin/ofwdump -P model -R /)
 if [ "${uFW}" = "A335uFW" -o "${fdtModel}" = "Netgate SG-1100" ]; then
 	rootdev=$(/sbin/mount -p / | /usr/bin/awk '{ printf $1 }')
+	# diskid
 	if [ "${uFW}" = "A335uFW" ]; then
 		if [ -n "$(echo ${rootdev} | /usr/bin/grep -e 's2$')" ]; then
 			rootdev=${rootdev%s2}
@@ -111,9 +112,30 @@ if [ "${uFW}" = "A335uFW" -o "${fdtModel}" = "Netgate SG-1100" ]; then
 		    /usr/bin/grep "${rootdev#/dev/}" | \
 		    /usr/bin/awk '{ printf $3 }')
 	fi
+	# ufsid
+	if [ "${uFW}" = "A335uFW" ]; then
+		if [ -n "$(echo ${DEV} | /usr/bin/grep -e 's2$')" ]; then
+			DEV=${DEV%s2}
+		fi
+		if [ -n "$(echo ${DEV} | /usr/bin/grep -e 's2a$')" ]; then
+			DEV=${DEV%s2a}
+		fi
+	fi
+	if [ "${fdtModel}" = "Netgate SG-1100" ]; then
+		if [ -n "$(echo ${DEV} | /usr/bin/grep -e 's3$')" ]; then
+			DEV=${DEV%s3}
+		fi
+	fi
 	if [ -n "${DEV}" ]; then
 		MMCDEV=$(/sbin/geom disk list ${DEV} 2> /dev/null | \
 		    /usr/bin/grep MMCHC)
+	fi
+	if [ "${fdtModel}" = "Netgate SG-1100" ]; then
+		# Do not show the option 99 when running from SATA disk.
+		SATADEV=$(echo "${DEV}" | /usr/bin/grep ada.s3)
+		if [ "${SATADEV}" = "${DEV}" -a -z "${MMCDEV}" ]; then
+			MMCDEV="1"
+		fi
 	fi
 	if [ -z "${MMCDEV}" ]; then
 		install_option="99) Install to eMMC"

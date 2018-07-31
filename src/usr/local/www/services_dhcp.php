@@ -428,18 +428,32 @@ if (isset($_POST['save'])) {
 
 		/* If disabling DHCP Server, make sure that DHCP registration isn't enabled for DNS forwarder/resolver */
 		if (!$_POST['enable']) {
+			/* Find out how many other interfaces have DHCP enabled. */
+			$dhcp_enabled_count = 0;
+			foreach ($config['dhcpd'] as $dhif => $dhcps) {
+				if ($dhif == $if) {
+					/* Skip this interface, we only want to know how many others are enabled. */
+					continue;
+				}
+				if (isset($dhcps['enable'])) {
+					$dhcp_enabled_count++;
+				}
+			}
+
 			if (isset($config['dnsmasq']['enable']) &&
+			    ($dhcp_enabled_count == 0) &&
 			    (isset($config['dnsmasq']['regdhcp']) ||
 			    isset($config['dnsmasq']['regdhcpstatic']) ||
 			    isset($config['dnsmasq']['dhcpfirst']))) {
 				$input_errors[] = gettext(
-				    "Disable DHCP Registration features in DNS Forwarder before disabling DHCP Server.");
+				    "DHCP Registration features in the DNS Forwarder are active and require at least one enabled DHCP Server.");
 			}
 			if (isset($config['unbound']['enable']) &&
+			    ($dhcp_enabled_count == 0) &&
 			    (isset($config['unbound']['regdhcp']) ||
 			    isset($config['unbound']['regdhcpstatic']))) {
 				$input_errors[] = gettext(
-				    "Disable DHCP Registration features in DNS Resolver before disabling DHCP Server.");
+				    "DHCP Registration features in the DNS Resolver are active and require at least one enabled DHCP Server.");
 			}
 		}
 	}

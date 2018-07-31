@@ -227,6 +227,12 @@ function gen_webguicss_field(&$section, $value) {
 		$csslist
 	))->setHelp('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/css/%s', '<span id="csstxt"></span>');
 }
+function validate_webguicss_field(&$input_errors, $value) {
+	$csslist = get_css_files();
+	if (!isset($csslist[$value])) {
+		$input_errors[] = gettext("The submitted Theme could not be found. Pick a different theme.");
+	}
+}
 
 /****f* pfsense-utils/gen_webguifixedmenu_field
  * NAME
@@ -245,6 +251,12 @@ function gen_webguifixedmenu_field(&$section, $value) {
 		$value,
 		["" => gettext("Scrolls with page"), "fixed" => gettext("Fixed (Remains visible at top of page)")]
 	))->setHelp("The fixed option is intended for large screens only.");
+}
+function validate_webguifixedmenu_field(&$input_errors, $value) {
+	$valid_values = array("", "fixed");
+	if (!in_array($value, $valid_values)) {
+		$input_errors[] = gettext("The submitted Top Navigation value is invalid.");
+	}
 }
 
 /****f* pfsense-utils/gen_webguihostnamemenu_field
@@ -265,6 +277,12 @@ function gen_webguihostnamemenu_field(&$section, $value) {
 		["" => gettext("Default (No hostname)"), "hostonly" => gettext("Hostname only"), "fqdn" => gettext("Fully Qualified Domain Name")]
 	))->setHelp("Replaces the Help menu title in the Navbar with the system hostname or FQDN.");
 }
+function validate_webguihostnamemenu_field(&$input_errors, $value) {
+	$valid_values = array("", "hostonly", "fqdn");
+	if (!in_array($value, $valid_values)) {
+		$input_errors[] = gettext("The submitted Hostname in Menu value is invalid.");
+	}
+}
 
 /****f* pfsense-utils/gen_dashboardcolumns_field
  * NAME
@@ -277,7 +295,7 @@ function gen_webguihostnamemenu_field(&$section, $value) {
  ******/
 function gen_dashboardcolumns_field(&$section, $value) {
 
-	if (($value < 1) || ($value > 6)) {
+	if (((int) $value < 1) || ((int) $value > 6)) {
 		$value = 2;
 	}
 
@@ -288,6 +306,11 @@ function gen_dashboardcolumns_field(&$section, $value) {
 		$value,
 		[min => 1, max => 6]
 	));
+}
+function validate_dashboardcolumns_field(&$input_errors, $value) {
+	if (!is_numericint($value) || ((int) $value < 1) || ((int) $value > 6)) {
+		$input_errors[] = gettext("The submitted Dashboard Columns value is invalid.");
+	}
 }
 
 /****f* pfsense-utils/gen_interfacessort_field

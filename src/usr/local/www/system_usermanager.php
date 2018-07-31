@@ -285,6 +285,10 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
 		}
 	}
+	validate_webguicss_field($input_errors, $_POST['webguicss']);
+	validate_webguifixedmenu_field($input_errors, $_POST['webguifixedmenu']);
+	validate_webguihostnamemenu_field($input_errors, $_POST['webguihostnamemenu']);
+	validate_dashboardcolumns_field($input_errors, $_POST['dashboardcolumns']);
 
 	if (!$input_errors) {
 

@@ -437,7 +437,7 @@ if ($user_settings['webgui']['webguifixedmenu'] == "fixed") {
 	$menuclass = "fixed";
 }
 
-$numColumns = $user_settings['webgui']['dashboardcolumns'];
+$numColumns = (int) $user_settings['webgui']['dashboardcolumns'];
 
 if (($pagename === "index.php") && ($numColumns > 2)) {
 	$columnsContainer = 'style="max-width: ' . 585*$numColumns . 'px;width: 100%"';

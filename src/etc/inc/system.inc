@@ -2500,7 +2500,7 @@ function system_identify_specific_platform() {
 			break;
 		case 'mvebu_armada-37xx':
 			$_gb = exec('/usr/sbin/ofwdump -P model -R / 2>/dev/null', $fdtModel);
-			if (strcmp($fdtModel, "Netgate SG-1100") == 0) {
+			if (strncmp($fdtModel[0], "Netgate SG-1100", 15) == 0) {
 				return (array('name' => 'SG-1100', 'descr' => 'Negate SG-1100'));
 			}
 			break;

@@ -35,6 +35,10 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+if (!is_array($config['virtualip'])) {
+		$config['virtualip'] = array();
+}
+
 if (!is_array($config['virtualip']['vip'])) {
 		$config['virtualip']['vip'] = array();
 }

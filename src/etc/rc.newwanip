@@ -223,11 +223,12 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	 */
 	filter_configure_sync();
 
+	/* reconfigure our gateway monitor, dpinger results need to be 
+	 * available when configuring the default gateway */
+	setup_gateways_monitor();
+
 	/* reconfigure static routes (kernel may have deleted them) */
 	system_routing_configure($interface);
-
-	/* reconfigure our gateway monitor */
-	setup_gateways_monitor();
 
 	/* reload unbound */
 	services_unbound_configure();

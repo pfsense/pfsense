@@ -37,6 +37,14 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
+if ($_REQUEST['generatekey']) {
+	$keyoutput = "";
+	$keystatus = "";
+	exec("/bin/dd status=none if=/dev/random bs=4096 count=1 | /usr/bin/openssl sha224 | /usr/bin/cut -f2 -d' '", $keyoutput, $keystatus);
+	print json_encode(['pskey' => $keyoutput[0]]);
+	exit;
+}
+
 if (!is_array($config['ipsec'])) {
 	$config['ipsec'] = array();
 }
@@ -794,7 +802,7 @@ $section->addInput(new Form_Input(
 	'*Pre-Shared Key',
 	'text',
 	$pconfig['pskey']
-))->setHelp('Enter the Pre-Shared Key string.');
+))->setHelp('Enter the Pre-Shared Key string. This key must match on both peers. %1$sThis key should be long and random to protect the tunnel and its contents. A weak Pre-Shared Key can lead to a tunnel compromise.%1$s', '<br/>');
 
 $section->addInput(new Form_Select(
 	'certref',
@@ -1228,6 +1236,19 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideInput('ikeid', true);
+
+	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new Pre-Shared Key");?></a>');
+	generateButton.on('click', function() {
+		$.ajax({
+			type: 'get',
+			url: 'vpn_ipsec_phase1.php?generatekey=true',
+			dataType: 'json',
+			success: function(data) {
+				$('#pskey').val(data.pskey.replace(/\\n/g, '\n'));
+			}
+		});
+	});
+	generateButton.appendTo($('#pskey + .help-block')[0]);
 });
 //]]>
 </script>

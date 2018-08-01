@@ -36,6 +36,9 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("itemid.inc");
 
+if (!is_array($config['nat'])) {
+	$config['nat'] = array();
+}
 if (!is_array($config['nat']['rule'])) {
 	$config['nat']['rule'] = array();
 }

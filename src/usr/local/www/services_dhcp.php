@@ -513,6 +513,9 @@ if (isset($_POST['save'])) {
 			if ($act == "newpool") {
 				$dhcpdconf = array();
 			} else {
+				if (!is_array($config['dhcpd'])) {
+					$config['dhcpd']= array();
+				}
 				if (!is_array($config['dhcpd'][$if])) {
 					$config['dhcpd'][$if] = array();
 				}
@@ -526,6 +529,9 @@ if (isset($_POST['save'])) {
 				header("Location: services_dhcp.php");
 				exit;
 			}
+		}
+		if (!is_array($dhcpdconf)) {
+			$dhcpdconf = array();
 		}
 		if (!is_array($dhcpdconf['range'])) {
 			$dhcpdconf['range'] = array();

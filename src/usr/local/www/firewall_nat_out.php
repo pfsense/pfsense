@@ -38,6 +38,9 @@ require_once("shaper.inc");
 global $FilterIflist;
 global $GatewaysList;
 
+if (!is_array($config['nat'])) {
+	$config['nat'] = array();
+}
 if (!is_array($config['nat']['outbound'])) {
 	$config['nat']['outbound'] = array();
 }

@@ -547,7 +547,9 @@ if (are_notices_pending()) {
 	if ($_SESSION['Username'] == "admin") {
 		$cu = getUserEntry("admin");
 
-		if (password_verify($g['factory_shipped_password'], $cu['bcrypt-hash'])) {
+		$hash = (empty($cu['bcrypt-hash']) ? $cu['password'] : $cu['bcrypt-hash']);
+
+		if (password_verify($g['factory_shipped_password'], $hash)) {
 			print('<div class="alert alert-danger">' .
 				sprintf(gettext('%sWARNING:%s The \'admin\' account password is set to the default value. ' .
 				' %s Change the password in the User Manager.%s'),

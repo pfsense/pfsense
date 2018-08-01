@@ -29,9 +29,11 @@
 		<div class="container">
 			<p class="text-muted">
 				<a id="tpl" style="display: none;" href="#" title="<?=gettext('Top of page')?>"><i class="fa fa-caret-square-o-up pull-left"></i></a>
-				<a target="_blank" href="<?=$g['product_website_footer']?>"><?=$g['product_name']?></a> is &copy;
-				<?=$g['product_copyright_years']?> by <a href="<?=$g['product_copyright_url']?>" class="tblnk"><?=$g['product_copyright']?></a>. All Rights Reserved.
-				[<a href="/license.php" class="tblnk">view license</a>]
+				<a target="_blank" href="<?=$g['product_website_footer']?>"><?=$g['product_name']?></a> is developed and maintained by
+				<a target="_blank" href="<?=$g['product_website_footer']?>">Netgate.</a>
+				<a target="_blank" href="<?=$g['product_website_footer']?>">&copy; ESF
+				<?=$g['product_copyright_years']?></a>
+				<a href="/license.php" class="tblnk">View license.</a>
 				<a id="tpr" style="display: none;" href="#" title="<?=gettext('Top of page')?>"><i class="fa fa-caret-square-o-up pull-right"></i></a>
 			</p>
 		</div>

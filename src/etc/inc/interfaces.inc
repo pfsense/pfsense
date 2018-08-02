@@ -2093,7 +2093,8 @@ function interface_ppps_configure($interface) {
 		}
 	}
 
-	if (is_array($ports) && count($ports) > 1) {
+	if (isset($ppp['pppoe-multilink-over-singlelink']) ||
+	    (is_array($ports) && count($ports) > 1)) {
 		$multilink = "enable";
 	} else {
 		$multilink = "disable";
@@ -2294,7 +2295,8 @@ EOD;
 				$mtus[$pid] = get_interface_mtu($port) - 8;
 			}
 		}
-		if (! ($type == "pppoe" && $mtus[$pid] > 1492) ) {
+		if (!isset($ppp['pppoe-multilink-over-singlelink']) &&
+		    !($type == "pppoe" && $mtus[$pid] > 1492)) {
 			// N.B. MTU for PPPoE with MTU > 1492 is set using pppoe max-payload - see below
 			$mpdconf .= <<<EOD
 	set link mtu {$mtus[$pid]}
@@ -2302,7 +2304,8 @@ EOD;
 EOD;
 		}
 
-		if (!empty($mrus[$pid])) {
+		if (!isset($ppp['pppoe-multilink-over-singlelink']) &&
+		    !empty($mrus[$pid])) {
 			$mpdconf .= <<<EOD
 	set link mru {$mrus[$pid]}
 

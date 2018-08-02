@@ -100,6 +100,9 @@ if (isset($id) && $a_ppps[$id]) {
 	if (isset($a_ppps[$id]['protocomp'])) {
 		$pconfig['protocomp'] = true;
 	}
+	if (isset($a_ppps[$id]['pppoe-multilink-over-singlelink'])) {
+		$pconfig['pppoe-multilink-over-singlelink'] = true;
+	}
 	if (isset($a_ppps[$id]['vjcomp'])) {
 		$pconfig['vjcomp'] = true;
 	}
@@ -411,6 +414,8 @@ if ($_POST['save']) {
 		$ppp['shortseq'] = $_POST['shortseq'] ? true : false;
 		$ppp['acfcomp'] = $_POST['acfcomp'] ? true : false;
 		$ppp['protocomp'] = $_POST['protocomp'] ? true : false;
+		$ppp['pppoe-multilink-over-singlelink'] =
+		    $_POST['pppoe-multilink-over-singlelink'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
 		if (is_array($port_data['bandwidth'])) {
@@ -827,6 +832,13 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['protocomp']
 ))->setHelp('Protocol field compression. This option saves one byte per frame for most frames.');
 
+$section->addInput(new Form_Checkbox(
+	'pppoe-multilink-over-singlelink',
+	'Multilink over single link',
+	'Multilink extensions over single link',
+	$pconfig['pppoe-multilink-over-singlelink']
+))->addClass('pppoe')->setHelp('Enable if the provider supports LCP multilink extensions over single link (will ignore MTU / MRU settings)');
+
 // Display the Link parameters. We will hide this by default, then un-hide the selected ones on clicking 'Advanced'
 $j = 0;
 foreach ($linklist['list'] as $ifnm => $nm) {
@@ -940,6 +952,7 @@ events.push(function() {
 			    (!$pconfig['tcpmssfix']) &&
 			    (!$pconfig['shortseq']) &&
 			    (!$pconfig['acfcomp']) &&
+			    (!$pconfig['pppoe-multilink-over-singlelink']) &&
 			    (!$pconfig['protocomp'])) {
 				$showadv = false;
 			} else {

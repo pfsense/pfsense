@@ -2016,4 +2016,13 @@ function session_auth() {
 	return true;
 }
 
+function print_credit() {
+	global $g;
+
+	return  '<a target="_blank" href="https://pfsense.org">' . $g["product_name"] . '</a>' .
+			gettext(' is developed and maintained by ') .
+			'<a target="_blank" href="https://netgate.com">Netgate. </a>' . ' &copy; ESF ' . $g["product_copyright_years"] .
+			'<a target="_blank" href="https://pfsense.org/license">' .
+			gettext(' View license.') . '</a>';
+}
 ?>

@@ -556,7 +556,8 @@ function default_switch_configure() {
 				}
 			}
 
-			pfSense_etherswitch_setlaggroup($switch['device'], $laggroup, $lgmembers);
+			pfSense_etherswitch_setlaggroup($switch['device'],
+			    $laggroup['lgroup'], $lgmembers);
 		}
 	}
 

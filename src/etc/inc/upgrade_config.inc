@@ -5776,6 +5776,24 @@ function upgrade_184_to_185() {
 	}
 }
 
+function upgrade_185_to_186() {
+	global $config;
+
+	/* FEC LAGG is deprecated, replace with loadbalance */
+	if (!function_exists("file_notice")) {
+		require_once("notices.inc");
+	}
+	if (is_array($config['laggs']) &&
+	    is_array($config['laggs']['lagg'])) {
+		foreach ($config['laggs']['lagg'] as &$lagg) {
+			if ($lagg['proto'] == 'fec') {
+				$lagg['proto'] = 'failover';
+				file_notice("Interfaces", sprintf(gettext("The FEC LAGG protocol is deprecated. The %s LAGG interface has been set to failover."), $lagg['laggif']));
+			}
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

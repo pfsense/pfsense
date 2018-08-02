@@ -28,6 +28,10 @@
 
 require_once("guiconfig.inc");
 
+if (!is_array($config['bridges'])) {
+	$config['bridges'] = array();
+}
+
 if (!is_array($config['bridges']['bridged'])) {
 	$config['bridges']['bridged'] = array();
 }

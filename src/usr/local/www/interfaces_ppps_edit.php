@@ -103,6 +103,9 @@ if (isset($id) && $a_ppps[$id]) {
 	if (isset($a_ppps[$id]['pppoe-multilink-over-singlelink'])) {
 		$pconfig['pppoe-multilink-over-singlelink'] = true;
 	}
+	if (isset($a_ppps[$id]['mtu-override'])) {
+		$pconfig['mtu-override'] = true;
+	}
 	if (isset($a_ppps[$id]['vjcomp'])) {
 		$pconfig['vjcomp'] = true;
 	}
@@ -416,6 +419,8 @@ if ($_POST['save']) {
 		$ppp['protocomp'] = $_POST['protocomp'] ? true : false;
 		$ppp['pppoe-multilink-over-singlelink'] =
 		    $_POST['pppoe-multilink-over-singlelink'] ? true : false;
+		$ppp['mtu-override'] =
+		    $_POST['mtu-override'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
 		if (is_array($port_data['bandwidth'])) {
@@ -839,6 +844,13 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['pppoe-multilink-over-singlelink']
 ))->setHelp('Enable if the provider supports LCP multilink extensions over single link (will ignore MTU / MRU settings)');
 
+$section->addInput(new Form_Checkbox(
+	'mtu-override',
+	'Force MTU',
+	'Force MTU value to a known higher value',
+	$pconfig['mtu-override']
+))->setHelp('Overwrite the result of LCP negotiation with a known working higher value. WARNING: This option violates RFC 1661 and can break connectivity.');
+
 // Display the Link parameters. We will hide this by default, then un-hide the selected ones on clicking 'Advanced'
 $j = 0;
 foreach ($linklist['list'] as $ifnm => $nm) {
@@ -953,6 +965,7 @@ events.push(function() {
 			    (!$pconfig['shortseq']) &&
 			    (!$pconfig['acfcomp']) &&
 			    (!$pconfig['pppoe-multilink-over-singlelink']) &&
+			    (!$pconfig['mtu-override']) &&
 			    (!$pconfig['protocomp'])) {
 				$showadv = false;
 			} else {
@@ -985,6 +998,7 @@ events.push(function() {
 		hideResetDisplay(!(showadvopts && pppoetype));
 		hideInput('pppoe-reset-type', !(showadvopts && pppoetype));
 		hideCheckbox('pppoe-multilink-over-singlelink', !(showadvopts && pppoetype));
+		hideCheckbox('mtu-override', !(showadvopts && pppoetype));
 
 		hideInterfaces();
 

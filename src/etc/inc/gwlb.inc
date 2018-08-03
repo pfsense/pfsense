@@ -1435,15 +1435,20 @@ function lookup_gateway_interface_by_name($name) {
 	return (false);
 }
 
-function get_interface_gateway($interface, &$dynamic = false) {
-	global $config, $g;
-
+function get_root_interface($interface) {
 	if (substr($interface, 0, 4) == '_vip') {
 		$interface = get_configured_vip_interface($interface);
 		if (substr($interface, 0, 4) == '_vip') {
 			$interface = get_configured_vip_interface($interface);
 		}
 	}
+	return $interface;
+}
+
+function get_interface_gateway($interface, &$dynamic = false) {
+	global $config, $g;
+	
+	$interface = get_root_interface($interface);
 
 	$gw = NULL;
 	$gwcfg = $config['interfaces'][$interface];
@@ -1476,12 +1481,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 function get_interface_gateway_v6($interface, &$dynamic = false) {
 	global $config, $g;
 
-	if (substr($interface, 0, 4) == '_vip') {
-		$interface = get_configured_vip_interface($interface);
-		if (substr($interface, 0, 4) == '_vip') {
-			$interface = get_configured_vip_interface($interface);
-		}
-	}
+	$interface = get_root_interface($interface);
 
 	$gw = NULL;
 	$gwcfg = $config['interfaces'][$interface];

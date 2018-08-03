@@ -837,7 +837,7 @@ $section->addInput(new Form_Checkbox(
 	'Multilink over single link',
 	'Multilink extensions over single link',
 	$pconfig['pppoe-multilink-over-singlelink']
-))->addClass('pppoe')->setHelp('Enable if the provider supports LCP multilink extensions over single link (will ignore MTU / MRU settings)');
+))->setHelp('Enable if the provider supports LCP multilink extensions over single link (will ignore MTU / MRU settings)');
 
 // Display the Link parameters. We will hide this by default, then un-hide the selected ones on clicking 'Advanced'
 $j = 0;

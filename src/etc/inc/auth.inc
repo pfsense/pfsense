@@ -753,27 +753,9 @@ function local_user_del($user) {
 }
 
 function local_user_set_password(&$user, $password) {
-
 	unset($user['password']);
 	unset($user['md5-hash']);
 	$user['bcrypt-hash'] = password_hash($password, PASSWORD_BCRYPT);
-
-	/* Maintain compatibility with FreeBSD - change $2y$ prefix to $2b$
-	 * https://reviews.freebsd.org/D2742
-	 * XXX: Can be removed as soon as r284483 is MFC'd.
-	 */
-	if ($user['bcrypt-hash'][2] == "y") {
-		$user['bcrypt-hash'][2] = "b";
-	}
-
-	// Converts ascii to unicode.
-	$astr = (string) $password;
-	$ustr = '';
-	for ($i = 0; $i < strlen($astr); $i++) {
-		$a = ord($astr{$i}) << 8;
-		$ustr .= sprintf("%X", $a);
-	}
-
 }
 
 function local_user_get_groups($user, $all = false) {

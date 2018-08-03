@@ -39,8 +39,8 @@ if (!is_array($config['laggs']['lagg'])) {
 $a_laggs = &$config['laggs']['lagg'];
 
 $portlist = get_interface_list();
-$laggprotos	  = array("none", "lacp", "failover", "fec", "loadbalance", "roundrobin");
-$laggprotosuc = array(gettext("NONE"), gettext("LACP"), gettext("FAILOVER"), gettext("FEC"), gettext("LOADBALANCE"), gettext("ROUNDROBIN"));
+$laggprotos	  = array("none", "lacp", "failover", "loadbalance", "roundrobin");
+$laggprotosuc = array(gettext("NONE"), gettext("LACP"), gettext("FAILOVER"), gettext("LOADBALANCE"), gettext("ROUNDROBIN"));
 
 $protohelp =
 '<ul>' .
@@ -71,12 +71,6 @@ $protohelp =
 	'</li>' .
 	'<li>' .
 		'<strong>' . $laggprotosuc[3] . '</strong><br />' .
-		gettext('Supports Cisco EtherChannel.  This is a static setup and ' .
-				'does not negotiate aggregation with the peer or exchange ' .
-				'frames to monitor the link.') .
-	'</li>' .
-	'<li>' .
-		'<strong>' . $laggprotosuc[4] . '</strong><br />' .
 		gettext('Balances outgoing traffic across the active ports based on ' .
 				'hashed protocol header information and accepts incoming ' .
 				'traffic from any active port.	 This is a static setup and ' .
@@ -86,7 +80,7 @@ $protohelp =
 				'tag, and the IP source and destination address.') .
 	'</li>' .
 	'<li>' .
-		'<strong>' . $laggprotosuc[5] . '</strong><br />' .
+		'<strong>' . $laggprotosuc[4] . '</strong><br />' .
 		gettext('Distributes outgoing traffic using a round-robin scheduler ' .
 				'through all active ports and accepts incoming traffic from ' .
 				'any active port.') .

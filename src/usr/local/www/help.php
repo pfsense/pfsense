@@ -96,7 +96,6 @@ $helppages = array(
 	'interfaces_vlan.php' => 'https://doc.pfsense.org/index.php/VLAN_Trunking',
 	'interfaces_wireless_edit.php' => 'https://doc.pfsense.org/index.php/Wireless_Interfaces',
 	'interfaces_wireless.php' => 'https://doc.pfsense.org/index.php/Wireless_Interfaces',
-	'license.php' => 'https://www.pfsense.org/about-pfsense/#legal',
 	'load_balancer_monitor_edit.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing',
 	'load_balancer_monitor.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing',
 	'load_balancer_pool_edit.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing#Set_up_Load_Balancing_Pool',

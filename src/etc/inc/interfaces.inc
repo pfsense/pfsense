@@ -2202,6 +2202,29 @@ EOD;
 EOD;
 	}
 
+	if (isset($ppp['mtu-override']) &&
+	    !isset($ppp['pppoe-multilink-over-singlelink'])) {
+		/* Find the smaller MTU set on ports */
+		$mtu = $defaultmtu;
+		foreach ($ports as $pid => $port) {
+			if (empty($mtus[$pid])) {
+				$mtus[$pid] = $defaultmtu;
+			}
+			if ($type == "pppoe") {
+				if ($mtus[$pid] > (get_interface_mtu($port) - 8)) {
+					$mtus[$pid] = get_interface_mtu($port) - 8;
+				}
+			}
+			if ($mtu > $mtus[$pid]) {
+				$mtu = $mtus[$pid];
+			}
+		}
+		$mpdconf .= <<<EOD
+	set iface mtu {$mtu} override
+
+EOD;
+	}
+
 	if (isset($ppp['tcpmssfix'])) {
 		$tcpmss = "disable";
 	} else {
@@ -2296,6 +2319,7 @@ EOD;
 			}
 		}
 		if (!isset($ppp['pppoe-multilink-over-singlelink']) &&
+		    !isset($ppp['mtu-override']) &&
 		    !($type == "pppoe" && $mtus[$pid] > 1492)) {
 			// N.B. MTU for PPPoE with MTU > 1492 is set using pppoe max-payload - see below
 			$mpdconf .= <<<EOD
@@ -2305,6 +2329,7 @@ EOD;
 		}
 
 		if (!isset($ppp['pppoe-multilink-over-singlelink']) &&
+		    !isset($ppp['mtu-override']) &&
 		    !empty($mrus[$pid])) {
 			$mpdconf .= <<<EOD
 	set link mru {$mrus[$pid]}

@@ -984,6 +984,7 @@ events.push(function() {
 		hideClass('pppoe', !pppoetype);
 		hideResetDisplay(!(showadvopts && pppoetype));
 		hideInput('pppoe-reset-type', !(showadvopts && pppoetype));
+		hideCheckbox('pppoe-multilink-over-singlelink', !(showadvopts && pppoetype));
 
 		hideInterfaces();
 
@@ -992,6 +993,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
+
 		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
 	} // e-o-show_advopts
 

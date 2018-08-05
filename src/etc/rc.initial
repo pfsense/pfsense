@@ -88,7 +88,11 @@ else
 fi
 
 uFW=$(/bin/kenv -q uboot.board_name)
-fdtModel=$(/usr/sbin/ofwdump -P model -R /)
+if [ -x /usr/sbin/ofwdump ]; then
+	fdtModel=$(/usr/sbin/ofwdump -P model -R /)
+else
+	fdtModel=none
+fi
 if [ "${uFW}" = "A335uFW" -o "${fdtModel}" = "Netgate SG-1100" ]; then
 	rootdev=$(/sbin/mount -p / | /usr/bin/awk '{ printf $1 }')
 	# diskid

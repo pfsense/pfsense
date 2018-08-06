@@ -26,7 +26,16 @@
 	<id>1</id>
 	<title>pfSense Setup</title>
 	<disableheader>true</disableheader>
-	<description>This wizard will provide guidance through the initial configuration of pfSense.&lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.</description>
+	<description>
+		<![CDATA[
+		<p><h4>Welcome to pfSense® software!</h4></p>
+		<p>This wizard will provide guidance through the initial configuration of pfSense.</p>
+		<p>The wizard may be stopped at any time by clicking the logo image at the top of the screen.</p>
+		<p><strong>pfSense® software is developed and maintained by Netgate®<strong></p>
+		<br />
+		<p><a href="https://netgate.com/solutions/pfsense" class="btn btn-info" target="_blank">Learn more</a></p>
+		]]>
+	</description>
 	<fields>
 		<field>
 			<name>Next</name>
@@ -40,19 +49,22 @@
 </step>
 <step>
 	<id>2</id>
-	<title>Netgate Global Support is available</title>
+	<title>Netgate® Global Support is available 24/7</title>
 	<disableheader>true</disableheader>
 	<description>
-    pfSense firewalls are known for their reliability, manageability, and flexibility.
-    &lt;br/&gt; &lt;br/&gt;
-    You know that network security is crucial, now more than ever.
-    Support provides peace-of-mind and help if you need it.
-    &lt;br/&gt; &lt;br/&gt;
-    Netgate offers 24/7/365 world-class support subscriptions that cover every need, from SOHO to Enterprise.
-    &lt;br/&gt; &lt;br/&gt;
-    &lt;a href="https://netgate.com/more-support-info/" target="_blank"&gt;
-    &lt;span class="btn btn-info" "&gt;Learn More &lt;/button&gt;&lt;/a&gt;
-    &lt;br/&gt; &lt;br/&gt;
+	<![CDATA[
+		<p>Our 24/7 worldwide team of support engineers are the most qualified to diagnose your issue and resolve it quickly, from branch office to enterprise — on premises to cloud.</p>
+		<p>We offer several support subscription plans tailored to fit different environment sizes and requirements. Many companies around the world choose Netgate support because:</p>
+		<p>
+		<ul>
+			<li>Support is available 24 hours a day, seven days a week, including holidays.</li>
+			<li>Support engineers are located around the world, ensuring that no support call is missed.</li>
+			<li>Our support engineers hold many prestigious network engineer certificates and have years of hands-on experience with networking.</li>
+		</ul>
+		</p>
+		<br />
+		<p><a href="https://netgate.com/solutions/pfsense" class="btn btn-info" target="_blank">Learn more</a></p>
+    ]]>
   </description>
 	<fields>
 		<field>
@@ -807,11 +819,21 @@
 		We recommend that you check to see if there are any software updates available. Keeping your software up to date is
 		one of the most important things you can do to maintain the security of your network.</p>
 		<input type="button" onclick="window.location.href='$myurlpkg_mgr_install.php?id=firmware'" class="btn btn-xs btn-success" value="Check for updates"/>
-		<p></p>
+		</br></br>
 		<p><h4>Remember, we're here to help.</h4></p>
+		<p><a target='_blank' href='https://www.netgate.com/more-support-info/'><strong><span style="font-size:16px"> Click here</span></strong></a> to learn about Netgate 24/7/365 support services.</p>
+		</br>
+		<p><h4>Useful resources.</h4></p>
 		<p>
-		<a target='_blank' href='https://www.netgate.com/more-support-info/'><strong><span style="font-size:16px"> Click here</span></strong></a> to learn about Netgate 24/7/365 support services.</p><p>
-		<input type="button" onclick="window.location.href='$myurl'" class="btn btn-sm btn-success" value="Finish"/>
+			<ul>
+				<li>Learn more about Netgate's product line, services, and pfSense software from our <a target='_blank' href='https://www.netgate.com/'>website</a></li>
+				<li>To learn about Netgate appliances and other offers, <a target='_blank' href='https://store.netgate.com/ '>visit our store</a></li>
+				<li>Become part of the pfSense community. Visit our <a target='_blank' href='https://forum.netgate.com/'>forum</a></li>
+				<li>Subscribe to our <a target='_blank' href='https://www.netgate.com/resources/newsletters/'>newsletter</a> for ongoing product information, software announcements and special offers.</li>
+			</ul>
+		</p>
+		</br>
+		<input type="button" onclick="window.location.href='$myurl'" class="btn btn-sm btn-primary" value="Finish"/>
 		</p>
 	</div>
 	]]>

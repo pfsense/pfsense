@@ -354,7 +354,7 @@ fi
 
 # Second upgrade stage
 [ -z "$skip_pfsense_upgrade" ] \
-	&& /usr/local/sbin/${product}-upgrade -y -b 2
+	&& /usr/local/sbin/${product}-upgrade -y -U -b 2
 
 # Copy default openssl config file
 [ -d /etc/ssl ] \
@@ -437,7 +437,7 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 fi
 
 [ -z "$skip_pfsense_upgrade" ] \
-	&& /usr/local/sbin/${product}-upgrade -y -b 3
+	&& /usr/local/sbin/${product}-upgrade -y -U -b 3
 
 # Update pkg metadata
 /etc/rc.update_pkg_metadata now

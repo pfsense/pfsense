@@ -492,6 +492,13 @@ events.push(function() {
 		setRequired('vhid', false);
 		setRequired('advbase', false);
 
+		// Make sure the type is selected before allowing address to be selected.
+		if(mode == undefined){
+			disableInput('subnet', true);
+		}else{
+			disableInput('subnet', false);
+		}
+
 		if (mode == 'ipalias') {
 			$('#address_note').html("<?=$ipaliashelp?>");
 			$('#type').val('single');

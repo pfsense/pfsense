@@ -609,8 +609,6 @@ function resync_all_package_configs($show_message = false) {
 	if ($show_message == true) {
 		echo " done.\n";
 	}
-
-	@unlink("/conf/needs_package_sync");
 }
 
 function uninstall_package($package_name) {
@@ -797,7 +795,6 @@ function install_package_xml($package_name) {
 		$changedesc = sprintf(gettext("Overwrote previous installation of %s."), $pkg_info['name']);
 		$to_output = gettext("overwrite!") . "\n";
 	}
-	unlink_if_exists('/conf/needs_package_sync');
 	write_config(sprintf(gettext("Intermediate config write during package install for %s."), $pkg_info['name']));
 	update_status($to_output);
 

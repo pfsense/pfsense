@@ -1129,19 +1129,14 @@ function package_reinstall_all() {
 		}
 	}
 
-	if ($upgrade &&
-	    file_exists("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt")) {
-		$package_list = file("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt",
-		    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		unlink_if_exists("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt");
-	} else {
-		if (!isset($config['installedpackages']['package']) || !is_array($config['installedpackages']['package'])) {
-			return true;
-		}
-		$package_list = array();
-		foreach ($config['installedpackages']['package'] as $package) {
-			$package_list[] = get_package_internal_name($package);
-		}
+	if (!isset($config['installedpackages']['package']) ||
+	    !is_array($config['installedpackages']['package'])) {
+		return true;
+	}
+
+	$package_list = array();
+	foreach ($config['installedpackages']['package'] as $package) {
+		$package_list[] = get_package_internal_name($package);
 	}
 
 	if (!empty($package_list)) {

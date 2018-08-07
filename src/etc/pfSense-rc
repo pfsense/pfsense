@@ -349,11 +349,11 @@ echo "done."
 /usr/bin/cap_mkdb /etc/login.conf
 
 if [ -f /cf/conf/needs_package_sync_after_reboot ]; then
-	skip_pfsense_upgrade=1
+	skip_packages=1
 fi
 
 # Second upgrade stage
-[ -z "$skip_pfsense_upgrade" ] \
+[ -z "$skip_packages" ] \
 	&& /usr/local/sbin/${product}-upgrade -y -U -b 2
 
 # Copy default openssl config file
@@ -433,11 +433,12 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
 fi
 
-[ -z "$skip_pfsense_upgrade" ] \
+[ -z "$skip_packages" ] \
 	&& /usr/local/sbin/${product}-upgrade -y -U -b 3
 
 # Start packages
-/usr/local/sbin/fcgicli -f /etc/rc.start_packages
+[ -z "$skip_packages" ] \
+	&& /usr/local/sbin/fcgicli -f /etc/rc.start_packages
 
 # Update pkg metadata
 /etc/rc.update_pkg_metadata now

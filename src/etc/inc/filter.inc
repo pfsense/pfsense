@@ -4335,7 +4335,7 @@ function discover_pkg_rules($ruletype) {
 	 */
 	if (!is_array($config['installedpackages']['package']) ||
 	    !is_dir("/usr/local/pkg") ||
-	    file_exists('/conf/needs_package_sync')) {
+	    is_subsystem_dirty('packagelock')) {
 		return "";
 	}
 

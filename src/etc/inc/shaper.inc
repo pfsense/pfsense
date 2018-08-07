@@ -454,7 +454,7 @@ function get_bandwidthtype_scale($type) {
 }
 
 function get_bandwidth($bw, $scale, $obj) {
-
+	$bw = (int) $bw;
 	$pattern= "/(b|Kb|Mb|Gb|%)/";
 	if (!preg_match($pattern, $scale, $match))
 		return 0;

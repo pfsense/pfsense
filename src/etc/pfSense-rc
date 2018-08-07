@@ -369,13 +369,13 @@ echo "done."
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
 
-if [ -f /cf/conf/needs_package_sync_after_reboot ]; then
-	skip_pfsense_upgrade=1
+if [ -f /cf/conf/needs_package_sync ]; then
+	skip_packages=1
 fi
 
 # Second upgrade stage
-[ -z "$skip_pfsense_upgrade" ] \
-	&& /usr/local/sbin/${product}-upgrade -y -b 2
+[ -z "$skip_packages" ] \
+	&& /usr/local/sbin/${product}-upgrade -y -U -b 2
 
 # Copy default openssl config file
 [ -d /etc/ssl ] \
@@ -432,9 +432,6 @@ echo -n "Starting CRON... "
 cd /tmp && /usr/sbin/cron -s 2>/dev/null
 echo "done."
 
-# Start packages
-/usr/local/sbin/fcgicli -f /etc/rc.start_packages
-
 /bin/rm -rf /usr/local/pkg/pf/CVS
 
 # Start ping handler every 240 seconds
@@ -457,8 +454,12 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
 fi
 
-[ -z "$skip_pfsense_upgrade" ] \
-	&& /usr/local/sbin/${product}-upgrade -y -b 3
+[ -z "$skip_packages" ] \
+	&& /usr/local/sbin/${product}-upgrade -y -U -b 3
+
+# Start packages
+[ -z "$skip_packages" ] \
+	&& /usr/local/sbin/fcgicli -f /etc/rc.start_packages
 
 if [ -f /usr/local/sbin/ec2_setup.php ]; then
 	/usr/local/sbin/ec2_setup.php

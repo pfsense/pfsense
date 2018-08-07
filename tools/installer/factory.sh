@@ -406,8 +406,14 @@ if [ -n "${is_adi}" ]; then
 	esac
 elif [ "${machine_arch}" != "armv6" ]; then
 	case "${cur_model}" in
-		C2758|APU|SG-2320|SG-2340|XG-1537|XG-7100)
+		C2758|APU|SG-2320|SG-2340|XG-1537)
 			selected_model="${cur_model}"
+			;;
+		XG-7100)
+			models="\
+			    \"${cur_model}-DT\" \"${cur_model}-DT\" \
+			    \"${cur_model}-1U\" \"${cur_model}-1U\" \
+			"
 			;;
 		XG-1540)
 			models="\
@@ -516,7 +522,7 @@ case "${selected_model}" in
 	SG-3100)
 		wan_if="mvneta2"
 		;;
-	XG-7100)
+	XG-7100*)
 		wan_if="ix2"
 		;;
 	*)

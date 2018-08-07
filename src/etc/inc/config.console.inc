@@ -782,6 +782,25 @@ function netgate_hardware_setup() {
 			'descr' => 'OPT4'
 		);
 		break;
+	case 'SG-5100':
+		$config['interfaces']['wan']['if'] = 'igb0';
+		$config['interfaces']['lan']['if'] = 'igb1';
+		$config['interfaces']['opt1'] = array(
+			'if' => 'ix0',
+			'descr' => 'OPT1'
+		);
+		$config['interfaces']['opt2'] = array(
+			'if' => 'ix1',
+			'descr' => 'OPT2'
+		);
+		$config['interfaces']['opt3'] = array(
+			'if' => 'igb3',
+			'descr' => 'OPT3'
+		);
+		$config['interfaces']['opt4'] = array(
+			'if' => 'igb2',
+			'descr' => 'OPT4'
+		);
 	default:
 		$found = false;
 	}

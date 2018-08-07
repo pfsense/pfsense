@@ -204,22 +204,6 @@ if (file_exists("/usr/sbin/swapinfo")) {
 	if (stristr($swapinfo, '%') == true) $showswap=true;
 }
 
-## User recently restored his config.
-## If packages are installed lets resync
-if (file_exists('/conf/needs_package_sync')) {
-	if ($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
-		## If the user has logged into webGUI quickly while the system is booting then do not redirect them to
-		## the package reinstall page. That is about to be done by the boot script anyway.
-		## The code in head.inc will put up a notice to the user.
-		if (!platform_booting()) {
-			header('Location: pkg_mgr_install.php?mode=reinstallall');
-			exit;
-		}
-	} else {
-		@unlink('/conf/needs_package_sync');
-	}
-}
-
 ## If it is the first time webConfigurator has been
 ## accessed since initial install show this stuff.
 if (file_exists('/conf/trigger_initial_wizard')) {

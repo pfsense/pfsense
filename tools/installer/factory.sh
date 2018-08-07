@@ -215,6 +215,9 @@ get_cur_model() {
 		FW7541)
 			_cur_model="FW7541"
 			;;
+		SG-5100)
+			_cur_model="SG-5100"
+			;;
 		APU)
 			_cur_model="APU"
 			;;
@@ -296,6 +299,11 @@ get_prodtrack_model() {
 			has_ada_dev \
 			    && _prodtrack_model="${_cur_model}-MSATA-8GB" \
 			    || _prodtrack_model="${_cur_model}-EMMC-8GB"
+			;;
+		SG-5100)
+			has_ada_dev \
+			    && _prodtrack_model="SG-5100-M2-4GB" \
+			    || _prodtrack_model="SG-5100-EMMC-4GB"
 			;;
 	esac
 
@@ -406,7 +414,7 @@ if [ -n "${is_adi}" ]; then
 	esac
 elif [ "${machine_arch}" != "armv6" ]; then
 	case "${cur_model}" in
-		C2758|APU|SG-2320|SG-2340|XG-1537)
+		C2758|APU|SG-2320|SG-2340|XG-1537|SG-5100)
 			selected_model="${cur_model}"
 			;;
 		XG-7100)

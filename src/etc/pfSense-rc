@@ -411,9 +411,6 @@ echo -n "Starting CRON... "
 cd /tmp && /usr/sbin/cron -s 2>/dev/null
 echo "done."
 
-# Start packages
-/usr/local/sbin/fcgicli -f /etc/rc.start_packages
-
 /bin/rm -rf /usr/local/pkg/pf/CVS
 
 # Start ping handler every 240 seconds
@@ -438,6 +435,9 @@ fi
 
 [ -z "$skip_pfsense_upgrade" ] \
 	&& /usr/local/sbin/${product}-upgrade -y -U -b 3
+
+# Start packages
+/usr/local/sbin/fcgicli -f /etc/rc.start_packages
 
 # Update pkg metadata
 /etc/rc.update_pkg_metadata now

@@ -348,7 +348,7 @@ echo "done."
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
 
-if [ -f /cf/conf/needs_package_sync_after_reboot ]; then
+if [ -f /cf/conf/needs_package_sync ]; then
 	skip_packages=1
 fi
 

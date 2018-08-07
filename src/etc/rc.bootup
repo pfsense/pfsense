@@ -85,11 +85,6 @@ if (file_exists("/root/firmware.tgz")) {
 	unlink("/root/firmware.tgz");
 }
 
-/* Reinstall of packages after reboot has been requested */
-if (file_exists("{$g['conf_path']}/needs_package_sync_after_reboot")) {
-	touch("{$g['conf_path']}/needs_package_sync");
-}
-
 /* Triggering of the initial setup wizard after reboot has been requested */
 if (file_exists("{$g['conf_path']}/trigger_initial_wizard_after_reboot")) {
 	touch("{$g['conf_path']}/trigger_initial_wizard");
@@ -376,19 +371,11 @@ prefer_ipv4_or_ipv6();
 
 /* Resync / Reinstall packages if need be */
 if (file_exists("{$g['conf_path']}/needs_package_sync")) {
-	mark_subsystem_dirty('packagelock');
-	if (package_reinstall_all()) {
-		@unlink("{$g['conf_path']}/needs_package_sync");
-	}
-	clear_subsystem_dirty('packagelock');
-}
-
-/* Detect installed binary pkgs that are not registered in the system */
-register_all_installed_packages();
-
-/* Now we used this file, delete it */
-if (file_exists("{$g['conf_path']}/needs_package_sync_after_reboot")) {
-	@unlink("{$g['conf_path']}/needs_package_sync_after_reboot");
+	echo "Triggering packages reinstallation in background\n";
+	mwexec_bg("{$g['etc_path']}/rc.package_reinstall_all");
+} else {
+	/* Detect installed binary pkgs that are not registered in the system */
+	register_all_installed_packages();
 }
 
 /* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally

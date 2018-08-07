@@ -289,7 +289,7 @@ if ($_POST) {
 							if (config_install($_FILES['conffile']['tmp_name']) == 0) {
 								/* this will be picked up by /index.php */
 								mark_subsystem_dirty("restore");
-								touch("/conf/needs_package_sync_after_reboot");
+								touch("/conf/needs_package_sync");
 								/* remove cache, we will force a config reboot */
 								if (file_exists("{$g['tmp_path']}/config.cache")) {
 									unlink("{$g['tmp_path']}/config.cache");

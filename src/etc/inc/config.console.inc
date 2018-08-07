@@ -812,6 +812,7 @@ function netgate_hardware_setup() {
 	case 'RCC':
 	case 'RCC-VE':
 	case 'SG-2220':
+	case 'SG-5100':
 	case 'XG-1540':
 		$config['system']['thermal_hardware'] = "coretemp";
 		break;

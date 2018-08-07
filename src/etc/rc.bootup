@@ -251,13 +251,12 @@ echo "Setting up static routes...";
 system_routing_configure();
 echo "done.\n";
 
-echo "Setting up DNSs...";
+echo "Setting up DNSs...\n";
 /* start dnsmasq service */
 services_dnsmasq_configure();
 
 /* start unbound service */
 services_unbound_configure();
-echo "done.\n";
 
 echo "Synchronizing user settings...";
 local_reset_accounts();

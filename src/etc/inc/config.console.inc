@@ -889,6 +889,7 @@ function netgate_hardware_setup() {
 	case 'RCC':
 	case 'RCC-VE':
 	case 'SG-2220':
+	case 'SG-5100':
 	case 'XG-1540':
 	case 'XG-1541':
 		$config['system']['crypto_hardware'] = "aesni_cryptodev";
@@ -900,6 +901,7 @@ function netgate_hardware_setup() {
 	case 'RCC':
 	case 'RCC-VE':
 	case 'SG-2220':
+	case 'SG-5100':
 	case 'XG-1540':
 	case 'XG-1541':
 		$config['system']['powerd_enable'] = true;

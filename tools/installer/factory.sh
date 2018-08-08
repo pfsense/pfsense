@@ -376,8 +376,21 @@ elif [ "${cur_model}" == "SG-3100" ]; then
 
 elif [ "${machine_arch}" == "amd64" ]; then
 	serial=$(kenv -q smbios.system.serial)
+	case "$serial" in
+		0123456789|Default*)
+			serial=""
+			;;
+	esac
+
 	[ -z "${serial}" ] \
 	    && serial=$(kenv -q smbios.planar.serial)
+
+	case "$serial" in
+		0123456789|Default*)
+			serial=""
+			;;
+	esac
+
 	product=$(kenv -q smbios.system.product)
 	case "${product}" in
 		RCC-VE|DFFv2|RCC)

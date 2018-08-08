@@ -2398,8 +2398,22 @@ function system_get_serial() {
 		$_gb = exec('/bin/kenv uboot.boardsn 2>/dev/null', $output);
 		$serial = $output[0];
 	} else {
-		$_gb = exec('/bin/kenv smbios.system.serial 2>/dev/null', $output);
+		$_gb = exec('/bin/kenv smbios.system.serial 2>/dev/null',
+		    $output);
 		$serial = $output[0];
+
+		if (empty($serial) || $serial == "0123456789" ||
+		    strpos($serial, "Default") !== false) {
+			$_gb = exec(
+			    '/bin/kenv smbios.planar.serial 2>/dev/null',
+			    $output);
+			$serial = $output[0];
+
+			if (empty($serial) || $serial == "0123456789" ||
+			    strpos($serial, "Default") !== false) {
+				$serial="";
+			}
+		}
 	}
 
 	$vm_guest = get_single_sysctl('kern.vm_guest');

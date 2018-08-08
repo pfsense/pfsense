@@ -225,7 +225,11 @@ get_cur_model() {
 			_cur_model="C2758"
 			;;
 		SYS-5018D-FN4T)
-			_cur_model="XG-1540"
+			if sysctl -nq hw.model | grep -q "D-1541"; then
+				_cur_model="XG-1541"
+			else
+				_cur_model="XG-1540"
+			fi
 			;;
 		"Minnowboard Turbot D0 PLATFORM")
 			case "${_hw_ncpu}" in
@@ -414,19 +418,13 @@ if [ -n "${is_adi}" ]; then
 	esac
 elif [ "${machine_arch}" != "armv6" ]; then
 	case "${cur_model}" in
-		C2758|APU|SG-2320|SG-2340|XG-1537|SG-5100)
+		C2758|APU|SG-2320|SG-2340|XG-1537|SG-5100|XG-154*)
 			selected_model="${cur_model}"
 			;;
 		XG-7100)
 			models="\
 			    \"${cur_model}-DT\" \"${cur_model}-DT\" \
 			    \"${cur_model}-1U\" \"${cur_model}-1U\" \
-			"
-			;;
-		XG-1540)
-			models="\
-			    \"XG-1540\" \"XG-1540\" \
-			    \"XG-1541\" \"XG-1541\" \
 			"
 			;;
 		*)

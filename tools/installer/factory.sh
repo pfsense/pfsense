@@ -375,21 +375,15 @@ elif [ "${cur_model}" == "SG-3100" ]; then
 	serial=$(/usr/local/sbin/u-boot-env boardsn 2>/dev/null)
 
 elif [ "${machine_arch}" == "amd64" ]; then
-	serial=$(kenv -q smbios.system.serial)
-	case "$serial" in
-		0123456789|Default*)
-			serial=""
-			;;
-	esac
+	for key in system planar; do
+		serial=$(kenv -q smbios.system.serial | \
+		    grep -E '^[a-zA-Z0-9]{10,16}$')
 
-	[ -z "${serial}" ] \
-	    && serial=$(kenv -q smbios.planar.serial)
-
-	case "$serial" in
-		0123456789|Default*)
-			serial=""
-			;;
-	esac
+		if [ -n "$serial" -a "$serial" != "0123456789" ]; then
+			break
+		fi
+		serial=""
+	done
 
 	product=$(kenv -q smbios.system.product)
 	case "${product}" in

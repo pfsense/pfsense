@@ -2398,20 +2398,15 @@ function system_get_serial() {
 		$_gb = exec('/bin/kenv uboot.boardsn 2>/dev/null', $output);
 		$serial = $output[0];
 	} else {
-		$_gb = exec('/bin/kenv smbios.system.serial 2>/dev/null',
-		    $output);
-		$serial = $output[0];
-
-		if (empty($serial) || $serial == "0123456789" ||
-		    strpos($serial, "Default") !== false) {
-			$_gb = exec(
-			    '/bin/kenv smbios.planar.serial 2>/dev/null',
+		foreach (array("system", "planar") as $key) {
+			$serial = "";
+			$_gb = exec("/bin/kenv -q smbios.{$key}.serial",
 			    $output);
 			$serial = $output[0];
 
-			if (empty($serial) || $serial == "0123456789" ||
-			    strpos($serial, "Default") !== false) {
-				$serial="";
+			if ($serial != "0123456789" &&
+			    preg_match('/^[\w\d]{10,16}$/', $serial) == 1) {
+				break;
 			}
 		}
 	}

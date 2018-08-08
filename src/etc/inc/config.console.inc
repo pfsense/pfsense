@@ -544,20 +544,24 @@ function netgate_hardware_setup() {
 		$config['interfaces']['wan']['if'] = 'ix0';
 		$config['interfaces']['lan']['if'] = 'ix1';
 		$config['interfaces']['opt1'] = array(
+			'enable' => true,
 			'if' => 'ix2',
 			'descr' => 'OPT1'
 		);
 		$config['interfaces']['opt2'] = array(
+			'enable' => true,
 			'if' => 'ix3',
 			'descr' => 'OPT2'
 		);
 		break;
 	case 'PLCC-B':
 		$config['interfaces']['opt1'] = array(
+			'enable' => true,
 			'if' => 'ix0',
 			'descr' => 'OPT1'
 		);
 		$config['interfaces']['opt2'] = array(
+			'enable' => true,
 			'if' => 'ix1',
 			'descr' => 'OPT2'
 		);
@@ -680,6 +684,7 @@ function netgate_hardware_setup() {
 				'descr' => 'OPT1'
 			);
 			$config['interfaces']['opt2'] = array(
+				'enable' => true,
 				'if' => 'ix0',
 				'descr' => 'OPT2'
 			);
@@ -688,6 +693,7 @@ function netgate_hardware_setup() {
 				'descr' => 'OPT3'
 			);
 			$config['interfaces']['opt4'] = array(
+				'enable' => true,
 				'if' => 'ix1',
 				'descr' => 'OPT4'
 			);
@@ -696,10 +702,12 @@ function netgate_hardware_setup() {
 			$config['interfaces']['wan']['if'] = 'igb4';
 			$config['interfaces']['lan']['if'] = 'igb4';
 			$config['interfaces']['opt1'] = array(
+				'enable' => true,
 				'if' => 'ix0',
 				'descr' => 'OPT1'
 			);
 			$config['interfaces']['opt2'] = array(
+				'enable' => true,
 				'if' => 'ix1',
 				'descr' => 'OPT2'
 			);
@@ -723,10 +731,12 @@ function netgate_hardware_setup() {
 			$config['interfaces']['wan']['if'] = 'igb0';
 			$config['interfaces']['lan']['if'] = 'igb1';
 			$config['interfaces']['opt1'] = array(
+				'enable' => true,
 				'if' => 'ix0',
 				'descr' => 'OPT1'
 			);
 			$config['interfaces']['opt2'] = array(
+				'enable' => true,
 				'if' => 'ix1',
 				'descr' => 'OPT2'
 			);
@@ -739,10 +749,12 @@ function netgate_hardware_setup() {
 			$config['interfaces']['wan']['if'] = 'igb4';
 			$config['interfaces']['lan']['if'] = 'igb5';
 			$config['interfaces']['opt1'] = array(
+				'enable' => true,
 				'if' => 'ix0',
 				'descr' => 'OPT1'
 			);
 			$config['interfaces']['opt2'] = array(
+				'enable' => true,
 				'if' => 'ix1',
 				'descr' => 'OPT2'
 			);
@@ -771,6 +783,7 @@ function netgate_hardware_setup() {
 				'descr' => 'OPT1'
 			);
 			$config['interfaces']['opt2'] = array(
+				'enable' => true,
 				'if' => 'ix0',
 				'descr' => 'OPT2'
 			);
@@ -779,6 +792,7 @@ function netgate_hardware_setup() {
 				'descr' => 'OPT3'
 			);
 			$config['interfaces']['opt4'] = array(
+				'enable' => true,
 				'if' => 'ix1',
 				'descr' => 'OPT4'
 			);
@@ -837,16 +851,17 @@ function netgate_hardware_setup() {
 			);
 		}
 		$config['interfaces']['opt3'] = array(
+			'enable' => true,
 			'if' => 'ix0',
 			'descr' => 'OPT3'
 		);
 		$config['interfaces']['opt4'] = array(
+			'enable' => true,
 			'if' => 'ix1',
 			'descr' => 'OPT4'
 		);
 		break;
 	case 'SG-5100':
-		/* IX interfaces on SG-5100 must be enabled */
 		$config['interfaces']['wan']['if'] = 'igb0';
 		$config['interfaces']['lan']['if'] = 'igb1';
 		$config['interfaces']['opt1'] = array(

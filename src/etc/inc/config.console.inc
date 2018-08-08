@@ -794,11 +794,11 @@ function netgate_hardware_setup() {
 			'descr' => 'OPT2'
 		);
 		$config['interfaces']['opt3'] = array(
-			'if' => 'igb3',
+			'if' => 'ix2',
 			'descr' => 'OPT3'
 		);
 		$config['interfaces']['opt4'] = array(
-			'if' => 'igb2',
+			'if' => 'ix3',
 			'descr' => 'OPT4'
 		);
 	default:

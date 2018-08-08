@@ -670,6 +670,68 @@ function netgate_hardware_setup() {
 			);
 		}
 		break;
+	case 'XG-1537':
+		if (does_interface_exist('cxl0')) {
+			/* It has 10G SFP+ addon */
+			$config['interfaces']['wan']['if'] = 'cxl0';
+			$config['interfaces']['lan']['if'] = 'cxl1';
+			$config['interfaces']['opt1'] = array(
+				'if' => 'igb0',
+				'descr' => 'OPT1'
+			);
+			$config['interfaces']['opt2'] = array(
+				'if' => 'ix0',
+				'descr' => 'OPT2'
+			);
+			$config['interfaces']['opt3'] = array(
+				'if' => 'igb1',
+				'descr' => 'OPT3'
+			);
+			$config['interfaces']['opt4'] = array(
+				'if' => 'ix1',
+				'descr' => 'OPT4'
+			);
+		} elseif (does_interface_exist('igb4')) {
+			/* It has 4 port ethernet addon */
+			$config['interfaces']['wan']['if'] = 'igb4';
+			$config['interfaces']['lan']['if'] = 'igb4';
+			$config['interfaces']['opt1'] = array(
+				'if' => 'ix0',
+				'descr' => 'OPT1'
+			);
+			$config['interfaces']['opt2'] = array(
+				'if' => 'ix1',
+				'descr' => 'OPT2'
+			);
+			$config['interfaces']['opt3'] = array(
+				'if' => 'igb3',
+				'descr' => 'OPT3'
+			);
+			$config['interfaces']['opt4'] = array(
+				'if' => 'igb2',
+				'descr' => 'OPT4'
+			);
+			$config['interfaces']['opt5'] = array(
+				'if' => 'igb1',
+				'descr' => 'OPT5'
+			);
+			$config['interfaces']['opt6'] = array(
+				'if' => 'igb0',
+				'descr' => 'OPT6'
+			);
+		} else {
+			$config['interfaces']['wan']['if'] = 'igb0';
+			$config['interfaces']['lan']['if'] = 'igb1';
+			$config['interfaces']['opt1'] = array(
+				'if' => 'ix0',
+				'descr' => 'OPT1'
+			);
+			$config['interfaces']['opt2'] = array(
+				'if' => 'ix1',
+				'descr' => 'OPT2'
+			);
+		}
+		break;
 	case 'XG-1540':
 		if (does_interface_exist('igb2')) {
 			/* It has 4 port Intel 1Gb expansion card */

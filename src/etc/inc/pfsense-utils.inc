@@ -1204,7 +1204,8 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$serial_only = false;
 	$serial_efi_only = false;
 	$specific_platform = system_identify_specific_platform();
-	if ($specific_platform['name'] == 'XG-1540') {
+	if ($specific_platform['name'] == 'XG-1540' ||
+	    $specific_platform['name'] == 'XG-1541') {
 		$vga_only = true;
 	} elseif ($specific_platform['name'] == 'Turbot Dual-E') {
 		$hdmi_only = true;

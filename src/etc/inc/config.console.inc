@@ -733,6 +733,7 @@ function netgate_hardware_setup() {
 		}
 		break;
 	case 'XG-1540':
+	case 'XG-1541':
 		if (does_interface_exist('igb2')) {
 			/* It has 4 port Intel 1Gb expansion card */
 			$config['interfaces']['wan']['if'] = 'igb4';
@@ -876,6 +877,7 @@ function netgate_hardware_setup() {
 	case 'SG-2220':
 	case 'SG-5100':
 	case 'XG-1540':
+	case 'XG-1541':
 		$config['system']['thermal_hardware'] = "coretemp";
 		break;
 	}
@@ -888,6 +890,7 @@ function netgate_hardware_setup() {
 	case 'RCC-VE':
 	case 'SG-2220':
 	case 'XG-1540':
+	case 'XG-1541':
 		$config['system']['crypto_hardware'] = "aesni_cryptodev";
 		break;
 	}
@@ -898,6 +901,7 @@ function netgate_hardware_setup() {
 	case 'RCC-VE':
 	case 'SG-2220':
 	case 'XG-1540':
+	case 'XG-1541':
 		$config['system']['powerd_enable'] = true;
 		break;
 	}

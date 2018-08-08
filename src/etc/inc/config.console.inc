@@ -846,21 +846,26 @@ function netgate_hardware_setup() {
 		);
 		break;
 	case 'SG-5100':
+		/* IX interfaces on SG-5100 must be enabled */
 		$config['interfaces']['wan']['if'] = 'igb0';
 		$config['interfaces']['lan']['if'] = 'igb1';
 		$config['interfaces']['opt1'] = array(
+			'enable' => true,
 			'if' => 'ix0',
 			'descr' => 'OPT1'
 		);
 		$config['interfaces']['opt2'] = array(
+			'enable' => true,
 			'if' => 'ix1',
 			'descr' => 'OPT2'
 		);
 		$config['interfaces']['opt3'] = array(
+			'enable' => true,
 			'if' => 'ix2',
 			'descr' => 'OPT3'
 		);
 		$config['interfaces']['opt4'] = array(
+			'enable' => true,
 			'if' => 'ix3',
 			'descr' => 'OPT4'
 		);

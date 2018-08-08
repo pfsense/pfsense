@@ -1617,8 +1617,8 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	global $config, $FilterIflist, $GatewaysList;
 
-	$tonathosts = array("127.0.0.0/8");
-	$descriptions = array(gettext("localhost"));
+	$tonathosts = array("127.0.0.0/8", "::1/128");
+	$descriptions = array(gettext("localhost"), gettext("localhost"));
 
 	// Add any enabled static routes
 	foreach (get_staticroutes(false, false, true) as $route) {

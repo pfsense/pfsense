@@ -38,6 +38,7 @@ $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
 $pconfig['strictcrlpolicy'] = isset($config['ipsec']['strictcrlpolicy']);
 $pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
 $pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
+$pconfig['async_crypto'] = isset($config['ipsec']['async_crypto']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
@@ -133,6 +134,12 @@ if ($_POST['save']) {
 			}
 		} else {
 			$config['ipsec']['noshuntlaninterfaces'] = true;
+		}
+
+		if ($_POST['async_crypto'] == "yes") {
+			$config['ipsec']['async_crypto'] = true;
+		} elseif (isset($config['ipsec']['async_crypto'])) {
+			unset($config['ipsec']['async_crypto']);
 		}
 
 		if ($_POST['acceptunencryptedmainmode'] == "yes") {
@@ -338,6 +345,14 @@ $section->addInput(new Form_Checkbox(
 	'Enable bypass for LAN interface IP',
 	!$pconfig['noshuntlaninterfaces']
 ))->setHelp('Exclude traffic from LAN subnet to LAN IP address from IPsec.');
+
+$section->addInput(new Form_Checkbox(
+	'async_crypto',
+	'Asynchronous Cryptography',
+	'Use asynchronous mode to parallelize multiple cryptography jobs',
+	$pconfig['async_crypto']
+))->setHelp('Allow crypto(9) jobs to be dispatched multi-threaded to increase performance. ' .
+		'Jobs are handled in the order they are received so that packets will be reinjected in the correct order.');
 
 $form->add($section);
 

@@ -139,9 +139,6 @@ if ($stepid > $totalsteps) {
 	$stepid = $totalsteps;
 }
 
-$title = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
-$description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['description']);
-
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
 	global $config;
 	$field_split = explode("->", $field);
@@ -184,8 +181,8 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	$thisvar = $updatetext;
 }
 
-$title	   = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
-$description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['description']);
+$title	   = $pkg['step'][$stepid]['title'];
+$description = $pkg['step'][$stepid]['description'];
 
 // handle before form display event.
 do {

@@ -357,7 +357,7 @@ EOD;
 
 		if (platform_booting()) {
 			/* send Accounting-On to server */
-			captiveportal_send_server_accounting();
+			captiveportal_send_server_accounting('on');
 			echo "done\n";
 		}
 
@@ -786,11 +786,10 @@ function captiveportal_prune_old() {
 	/* Is there any job to do? */
 	if (!$timeout && !$idletimeout && !$trafficquota && !isset($cpcfg['reauthenticate']) &&
 	    !isset($cpcfg['radiussession_timeout']) && !isset($cpcfg['radiustraffic_quota']) &&
-	    !isset($vcpcfg['enable'])) {
+	    !isset($vcpcfg['enable']) && !isset($cpcfg['radacct_enable'])) {
 		return;
 	}
 
-	$radiussrvs = [];
 
 	/* Read database */
 	/* NOTE: while this can be simplified in non radius case keep as is for now */
@@ -877,28 +876,28 @@ function captiveportal_prune_old() {
 			$unsetindexes[] = $cpentry[5];
 		}
 
-		/* do periodic accounting/ Re-authentication? */
+		/* do periodic reauthentication? For Radius servers, send accounting updates? */
 		if (!$timedout) {
-			if (isset($cpcfg['radacct_enable'])) {
-				if (substr($cpcfg['reauthenticateacct'], 0, 9) == "stopstart") {
+			//Radius servers : send accounting
+			if (isset($cpcfg['radacct_enable']) && $cpentry[12] === 'radius') {
+				if (substr($cpcfg['reauthenticateacct'], 0, 9) === "stopstart") {
 					/* stop and restart accounting */
-					if ($cpcfg['reauthenticateacct'] == "stopstartfreeradius") {
+					if ($cpcfg['reauthenticateacct'] === "stopstartfreeradius") {
 						$rastart_time = 0;
 						$rastop_time = 60;
 					} else {
 						$rastart_time = $cpentry[0];
-						$rastop_time = null;
+						$rastop_time = time();
 					}
-					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
+					captiveportal_send_server_accounting('stop',
+						$cpentry[1], // ruleno
 						$cpentry[4], // username
-						$cpentry[5], // sessionid
-						$rastart_time, // start time
-						$radiusservers,
 						$cpentry[2], // clientip
 						$cpentry[3], // clientmac
-						10, // NAS Request
-						false, // Not an interim request
-						$rastop_time); // Stop Time
+						$cpentry[5], // sessionid
+						$rastart_time, // start time
+						$rastop_time, // Stop Time
+						10); // NAS Request
 					$clientsn = (is_ipaddrv6($cpentry[2])) ? 128 : 32;
 					pfSense_ipfw_table_zerocnt("{$cpzone}_auth_up", "{$cpentry[2]}/{$clientsn}");
 					pfSense_ipfw_table_zerocnt("{$cpzone}_auth_down", "{$cpentry[2]}/{$clientsn}");
@@ -906,12 +905,12 @@ function captiveportal_prune_old() {
 						/* Need to pause here or the FreeRADIUS server gets confused about packet ordering. */
 						sleep(1);
 					}
-					RADIUS_ACCOUNTING_START($cpentry[1], // ruleno
+					captiveportal_send_server_accounting('start',
+						$cpentry[1], // ruleno
 						$cpentry[4], // username
-						$cpentry[5], // sessionid
-						$radiusservers,
 						$cpentry[2], // clientip
-						$cpentry[3]); // clientmac
+						$cpentry[3], // clientmac
+						$cpentry[5]); // sessionid
 				} else if ($cpcfg['reauthenticateacct'] == "interimupdate") {
 					$session_time = $pruning_time - $cpentry[0];
 					if (!empty($cpentry[10]) && $cpentry[10] > 60) {
@@ -924,15 +923,13 @@ function captiveportal_prune_old() {
 						$within_interval = ($session_time % $interval >= 0 && $session_time % $interval <= 59);
 					}
 					if ($interval === 0 || ($interval > 0 && $past_interval_min && $within_interval)) {
-						RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
-							$cpentry[4], // username
-							$cpentry[5], // sessionid
-							$cpentry[0], // start time
-							$radiusservers,
-							$cpentry[2], // clientip
-							$cpentry[3], // clientmac
-							10, // NAS Request
-							true); // Interim Updates
+					captiveportal_send_server_accounting('update',
+						$cpentry[1], // ruleno
+						$cpentry[4], // username
+						$cpentry[2], // clientip
+						$cpentry[3], // clientmac
+						$cpentry[5], // sessionid
+						$cpentry[0]); // start time
 					}
 				}
 			}
@@ -1072,10 +1069,8 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null) {
 	$stop_time = (empty($stop_time)) ? time() : $stop_time;
 
 	/* this client needs to be deleted - remove ipfw rules */
-	if (isset($config['captiveportal'][$cpzone]['radacct_enable']) &&
-	    !empty($radiusservers)) {
-		if ($config['captiveportal'][$cpzone]['reauthenticateacct'] ==
-		    "stopstartfreeradius") {
+	if (isset($config['captiveportal'][$cpzone]['radacct_enable']) && $dbent[12] =='radius') {
+		if ($config['captiveportal'][$cpzone]['reauthenticateacct'] == "stopstartfreeradius") {
 			/*
 			 * Interim updates are on so the session time must be
 			 * reported as the elapsed time since the previous
@@ -1086,16 +1081,15 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null) {
 		} else {
 			$start_time = $dbent[0];
 		}
-		RADIUS_ACCOUNTING_STOP($dbent[1], // ruleno
+		captiveportal_send_server_accounting('stop', 
+			$dbent[1], // ruleno
 			$dbent[4], // username
-			$dbent[5], // sessionid
-			$start_time, // start time
-			$radiusservers,
 			$dbent[2], // clientip
 			$dbent[3], // clientmac
-			$term_cause, // Acct-Terminate-Cause
-			false,
-			$stop_time);
+			$dbent[5], // sessionid
+			$start_time, // start time
+			$stop_time, // stop time
+			$term_cause); // Acct-Terminate-Cause
 	}
 
 	if (is_ipaddr($dbent[2])) {
@@ -1207,34 +1201,30 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 	unlock($rcprunelock);
 }
 
-/* send RADIUS acct stop for all current clients */
+/* send RADIUS acct stop for all current clients connected with RADIUS servers */
 function captiveportal_radius_stop_all($term_cause = 6, $logoutReason = "DISCONNECT") {
 	global $g, $config, $cpzone, $cpzoneid;
 
 	$cpdb = captiveportal_read_db();
 
 	$radacct = isset($config['captiveportal'][$cpzone]['radacct_enable']) ? true : false;
-	if ($radacct) {
-		$radiusservers = [];
-	}
-
 	foreach ($cpdb as $cpentry) {
-		if ($radacct) {
-			if (!empty($radiusservers)) {
-				if (empty($cpentry[12])) {
-					$cpentry[12] = 'first';
-				}
-				if (!empty($radiusservers[$cpentry[12]])) {
-					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
-						$cpentry[4], // username
-						$cpentry[5], // sessionid
-						$cpentry[0], // start time
-						$radiusservers[$cpentry[12]],
-						$cpentry[2], // clientip
-						$cpentry[3], // clientmac
-						$term_cause);
-				}
+		if ($cpentry[12] === 'radius' && $radacct) {
+			if ($config['captiveportal'][$cpzone]['reauthenticateacct'] == "stopstartfreeradius") {
+				$session_time = (time() - $cpentry[0]) % 60;
+				$start_time = time() - $session_time;
+			} else {
+				$start_time = $cpentry[0];
 			}
+			captiveportal_send_server_accounting('stop', 
+				$cpentry[1], // ruleno
+				$cpentry[4], // username
+				$cpentry[2], // clientip
+				$cpentry[3], // clientmac
+				$cpentry[5], // sessionid
+				$start_time, // start time
+				$stop_time, // stop time
+				$term_cause); // Acct-Terminate-Cause
 		}
 		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], $logoutReason);
 	}
@@ -2047,33 +2037,6 @@ function getVolume($ip) {
 	return $volume;
 }
 
-/**
- * Get the NAS-IP-Address based on the current wan address
- *
- * Use functions in interfaces.inc to find this out
- *
- */
-
-function getNasIP() {
-	global $config, $cpzone;
-
-	if (empty($config['captiveportal'][$cpzone]['radiussrcip_attribute'])) {
-			$nasIp = get_interface_ip();
-	} else {
-		if (is_ipaddr($config['captiveportal'][$cpzone]['radiussrcip_attribute'])) {
-			$nasIp = $config['captiveportal'][$cpzone]['radiussrcip_attribute'];
-		} else {
-			$nasIp = get_interface_ip($config['captiveportal'][$cpzone]['radiussrcip_attribute']);
-		}
-	}
-
-	if (!is_ipaddr($nasIp)) {
-		$nasIp = "0.0.0.0";
-	}
-
-	return $nasIp;
-}
-
 function portal_ip_from_client_ip($cliip) {
 	global $config, $cpzone;
 
@@ -2292,16 +2255,9 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 
 	/* Snapshot the timestamp */
 	$allow_time = time();
-	$radiusservers = []; 
 	$unsetindexes = array();
-	if (is_null($radiusctx)) {
-		$radiusctx = 'first';
-	}
 
 	foreach ($cpdb as $cpentry) {
-		if (empty($cpentry[12])) {
-			$cpentry[12] = 'first';
-		}
 		/* on the same ip */
 		if ($cpentry[2] == $clientip) {
 			if (isset($config['captiveportal'][$cpzone]['nomacfilter']) || $cpentry[3] == $clientmac) {
@@ -2458,11 +2414,15 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 			unlock($cpdblck);
 			unset($insertquery, $bpassword);
 
-			if (isset($config['captiveportal'][$cpzone]['radacct_enable']) && !empty($radiusservers[$radiusctx])) {
-				$acct_val = RADIUS_ACCOUNTING_START($pipeno, $username, $sessionid, $radiusservers[$radiusctx], $clientip, $clientmac);
-				if ($acct_val == 1) {
-					captiveportal_logportalauth($username, $clientmac, $clientip, $type, "RADIUS ACCOUNTING FAILED");
-				}
+			$radacct = isset($config['captiveportal'][$cpzone]['radacct_enable']) ? true : false;
+			if ($authmethod === 'radius' && $radacct) {
+				captiveportal_send_server_accounting('start',
+					$pipeno, // ruleno
+					$username, // username
+					$clientip, // clientip
+					$clientmac, // clientmac
+					$sessionid, // sessionid
+					time());  // start time
 			}
 		}
 	} else {
@@ -2627,6 +2587,37 @@ function captiveportal_blocked_mac($mac) {
 
 	return false;
 
+}
+
+/* Captiveportal Radius Accounting */
+
+function gigawords($bytes) {
+
+	/*
+	 * RFC2866 Specifies a 32bit unsigned integer, which is a max of 4294967295
+	 * Currently there is a fault in the PECL radius_put_int function which can handle only 32bit signed integer.
+	 */
+
+	// We use BCMath functions since normal integers don't work with so large numbers
+	$gigawords = bcdiv( bcsub( $bytes, remainder($bytes) ) , GIGAWORDS_RIGHT_OPERAND) ;
+
+	// We need to manually set this to a zero instead of NULL for put_int() safety
+	if (is_null($gigawords)) {
+		$gigawords = 0;
+	}
+
+	return $gigawords;
+}
+
+function remainder($bytes) {
+	// Calculate the bytes we are going to send to the radius
+	$bytes = bcmod($bytes, GIGAWORDS_RIGHT_OPERAND);
+	
+	if (is_null($bytes)) {
+		$bytes = 0;
+	}
+
+    return $bytes;
 }
 
 function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $username = null, $clientip = null, $clientmac = null, $sessionid = null, $start_time = null, $stop_time = null, $term_cause = null) {

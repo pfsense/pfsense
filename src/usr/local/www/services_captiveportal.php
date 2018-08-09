@@ -738,25 +738,44 @@ $section->addClass('Accounting');
 $section->addInput(new Form_Checkbox(
 	'radacct_enable',
 	'RADIUS',
-	'Send RADIUS accounting packets to the primary RADIUS server.',
+	'Send RADIUS accounting packets.',
 	$pconfig['radacct_enable']
+))->setHelp('If enabled, accounting request will be made for users identified against any RADIUS server.');
+
+
+$options = array();
+
+foreach (auth_get_authserver_list() as $i => $auth) {
+	if ($auth['type'] == 'radius' && !empty($auth['radius_acct_port'])) {
+		$options[$auth['name']] = $auth['name']; 
+	}
+}
+
+$group = new Form_Group('Accounting Server');
+
+
+$group->add(new Form_Select(
+	'radacct_server',
+	'Accounting Server',
+	$pconfig['radacct_server'],
+	$options
 ));
 
-$section->addInput(new Form_Input(
-	'radiusacctport',
-	'Accounting Port',
-	'text',
-	$pconfig['radiusacctport']
-))->setHelp('Leave blank to use the default port (1813).');
+$group->addClass('radacct_enable');
+$group->setHelp('You can add a Radius Accounting server in the <a href="/system_authservers.php">User Manager</a>.');
 
-$group = new Form_Group('Accounting updates');
+$section->add($group);
+
+$group = new Form_Group('Send accounting updates');
+
+$group->addClass('reauthenticateacct');
 
 $group->add(new Form_Checkbox(
 	'reauthenticateacct',
 	null,
 	'No updates',
-	$pconfig['reauthenticateacct'] == "",
-	""
+	$pconfig['reauthenticateacct'] == 'none',
+	"none"
 ))->displayasRadio();
 
 $group->add(new Form_Checkbox(
@@ -783,12 +802,12 @@ $group->add(new Form_Checkbox(
 	"interimupdate"
 ))->displayasRadio();
 
+$group->setHelp('This field set the way Accounting Updates should be done : <br />'.
+				'- If "No updates" is selected, then only one "Accounting Start" and one "Accounting Stop" request will be sent, when any user get connected and disconnected.<br />'.
+				'- If "Interim" is selected, then "Accounting Update" requests will be send regularly (every minute) to the RADIUS server, for each connected user.<br />'.
+				'- In some rare cases, you would like to simulate users to disconnect and reconnect every minute (eg, to send an Accounting Stop then an Accounting Start) instead of sending Accounting updates, this is the purpose of "Stop/Start" option. FreeRADIUS does not support this option very well, you should select "Stop/Start (FreeRADIUS)" instead.');
+
 $section->add($group);
-
-$form->add($section);
-
-$section = new Form_Section('RADIUS Options');
-$section->addClass('Radius');
 
 $section->addInput(new Form_Checkbox(
 	'reverseacct',
@@ -801,12 +820,10 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'includeidletime',
 	'Idle time accounting',
-	'Include idle time in session time',
+	'Include idle time when users get disconnected due to idle timeout',
 	$pconfig['includeidletime']
-))->setHelp('When enabled, if a client is disconnected for exceeding the idle timeout the time spent idle is included in the total session time. ' .
-			'Otherwise the session time reported to the RADIUS server is the time between when the session started and when the last ' .
-			'activity was recorded.');
-
+))->setHelp('This setting change the stop time that will be send in the Accounting Stop request, when a user get disconnected after exceeding the idle timeout. ' .
+			'If not checked, the sent stop time will be the last activity time.');
 $form->add($section);
 
 $section = new Form_Section('HTTPS Options');
@@ -1003,6 +1020,7 @@ events.push(function() {
 		hideClass('HTTPS', hide);
 		hideClass('HTML', hide);
 		hideGeneral(hide);
+		hideClass('Accounting', hide);
 	}
 
 	function hideRadius(hide) {
@@ -1042,7 +1060,16 @@ events.push(function() {
 		hideInput('bwdefaultup', hide);
 		hideCheckbox('reauthenticate', hide);
 	}
+	
+	function hideRadiusAccounting(radiusServerSelected, hide) { 
+		if(radiusServerSelected) return;
 
+		hideInput('radacct_server', hide);
+		hideClass('reauthenticateacct', hide);
+		hideCheckbox('reverseacct', hide);
+		hideCheckbox('includeidletime', hide);	
+	}
+	
 	function triggerChangesAuthMethod() {
 		if(!$('#enable').prop('checked')) return;
 		
@@ -1129,6 +1156,8 @@ events.push(function() {
 		hideCheckbox('localauth_priv', shouldHideLocal); // Hide/Show Local Auth options
 		hideClass('auth_server2', shouldHideSecondAuth); // Hide/show second auth context
 		hideRadius(shouldHideRadius); // Hide/Show Radius authentication options
+		hideClass('Accounting', shouldHideRadius);
+		hideRadiusAccounting(shouldHideRadius, !$('input[name="radacct_enable"]').prop('checked'));
 	}
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 	$("#enable").click(function() {
@@ -1147,6 +1176,9 @@ events.push(function() {
 	});
 	$('select[name="auth_method"]').on('change', function() {
 		triggerChangesAuthMethod();
+	});
+	$('input[name="radacct_enable"]').on('change', function() {
+		hideRadiusAccounting(false, !this.checked);
 	});
 
 

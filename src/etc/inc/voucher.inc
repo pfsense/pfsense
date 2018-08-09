@@ -100,9 +100,8 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
 	\$cpzone = "$cpzone";
-	\$radiusservers = captiveportal_get_radius_servers();
 	\$dbent = unserialize("$dbent_str");
-	return captiveportal_disconnect(\$dbent, \$radiusservers, $term_cause, $tmp_stop_time);
+	return captiveportal_disconnect(\$dbent, $term_cause, $tmp_stop_time);
 
 EOF;
 	$rpc_client = new pfsense_xmlrpc_client();
@@ -222,7 +221,7 @@ function voucher_expire($voucher_received) {
 						$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 					}
 					$cpentry = $cpentry[0];
-					captiveportal_disconnect($cpentry, null, 13);
+					captiveportal_disconnect($cpentry, 13);
 					captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "FORCLY TERMINATING VOUCHER {$voucher} SESSION");
 					$unsetindexes[] = $cpentry[5];
 				}

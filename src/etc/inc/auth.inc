@@ -1554,7 +1554,9 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 			$radius_protocol = 'PAP';
 		}
 	} else {
-		return false;
+		log_error(gettext("ERROR! could not find details of the RADIUS server used for authentication."));
+		$attributes['error_message'] =  gettext("Internal error during authentication.");
+		return null;
 	}
 
 	// Create our instance
@@ -1598,10 +1600,43 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 	}
 
 	if (PEAR::isError($rauth->start())) {
-		$retvalue['auth_val'] = 1;
-		$retvalue['error'] = $rauth->getError();
-		if ($debug) {
-			printf(gettext("RADIUS start: %s") . "<br />\n", $retvalue['error']);
+		$ret = null;
+		log_error(sprintf(gettext("Error during RADIUS authentication : %s"), $rauth->getError()));
+		$attributes['error_message'] = gettext("Error : could not connect to authentication server.");
+	} else {
+		$nasid = $attributes['nas_identifier'];
+		$nasip = $authcfg['radius_nasip_attribute'];
+		if (empty($nasid)) {
+			$nasid = gethostname(); //If no RADIUS NAS-Identifier is given : we use pfsense's hostname as NAS-Identifier
+		}
+		if (!is_ipaddr($nasip)) {
+			$nasip = get_interface_ip($nasip);
+			
+			if (!is_ipaddr($nasip)) {
+				$nasip = get_interface_ip();//We use wan interface IP as fallback for NAS-IP-Address
+			}
+		}
+		$nasmac = get_interface_mac(find_ip_interface($nasip));
+
+		$rauth->putAttribute(RADIUS_NAS_IP_ADDRESS, $nasip, "addr");
+		$rauth->putAttribute(RADIUS_NAS_IDENTIFIER, $nasid);
+		
+		if(!empty($attributes['calling_station_id'])) {
+			$rauth->putAttribute(RADIUS_CALLING_STATION_ID, $attributes['calling_station_id']);
+		}
+		// Carefully check that interface has a MAC address
+		if(!empty($nasmac)) {
+			$nasmac = mac_format($nasmac);
+			$rauth->putAttribute(RADIUS_CALLED_STATION_ID, $nasmac.':'.gethostname());
+		}
+		if(!empty($attributes['nas_port_type'])) {
+			$rauth->putAttribute(RADIUS_NAS_PORT_TYPE, $attributes['nas_port_type']);
+		}		
+		if(!empty($attributes['nas_port'])) {
+			$rauth->putAttribute(RADIUS_NAS_PORT, intval($attributes['nas_port']), 'integer');
+		}
+		if(!empty($attributes['framed_ip']) && is_ipaddr($attributes['framed_ip'])) {
+			$rauth->putAttribute(RADIUS_FRAMED_IP_ADDRESS, $attributes['framed_ip'], "addr");
 		}
 	}
 
@@ -1610,27 +1645,28 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 	/* Send request */
 	$result = $rauth->send();
 	if (PEAR::isError($result)) {
-		$retvalue['auth_val'] = 1;
-		$retvalue['error'] = $result->getMessage();
-		if ($debug) {
-			printf(gettext("RADIUS send failed: %s") . "<br />\n", $retvalue['error']);
-		}
+		log_error(sprintf(gettext("Error during RADIUS authentication : %s"), $rauth->getError()));
+		$attributes['error_message'] = gettext("Error : could not connect to authentication server.");
+		$ret = null;
 	} else if ($result === true) {
-		if ($rauth->getAttributes()) {
-			$attributes = $rauth->listAttributes();
-		}
-		$retvalue['auth_val'] = 2;
-		if ($debug) {
-			printf(gettext("RADIUS Auth succeeded")."<br />\n");
-		}
 		$ret = true;
 	} else {
-		$retvalue['auth_val'] = 3;
-		if ($debug) {
-			printf(gettext("RADIUS Auth rejected")."<br />\n");
-		}
+		$ret = false;
 	}
 
+	
+	// Get attributes, even if auth failed.
+	if ($rauth->getAttributes()) {
+	$attributes = array_merge($attributes,$rauth->listAttributes());
+
+	// We convert the session_terminate_time to unixtimestamp if its set before returning the whole array to our caller
+	if (!empty($attributes['session_terminate_time'])) {
+			$stt = &$attributes['session_terminate_time'];
+			$stt = strtotime(preg_replace("/\+(\d+):(\d+)$/", " +\${1}\${2}", preg_replace("/(\d+)T(\d+)/", "\${1} \${2}",$stt)));
+		}
+	}
+	
+	// close OO RADIUS_AUTHENTICATION
 	$rauth->close();
 
 	return $ret;

@@ -24,12 +24,20 @@
  */
 
 /* include all configuration functions */
+require_once("auth.inc");
+require_once("PEAR.php"); // required for bcmath
+require_once("Auth/RADIUS.php"); // required for radius accounting
 require_once("config.inc");
 require_once("functions.inc");
 require_once("filter.inc");
-require_once("radius_accounting.inc");
-require_once("radius_authentication.inc");
 require_once("voucher.inc");
+
+/* Captiveportal Radius Accounting */
+PEAR::loadExtension('bcmath');
+// The RADIUS Package doesn't have these vars so we create them ourself
+define("CUSTOM_RADIUS_ACCT_INPUT_GIGAWORDS", "52");
+define("CUSTOM_RADIUS_ACCT_OUTPUT_GIGAWORDS", "53");
+define("GIGAWORDS_RIGHT_OPERAND", '4294967296'); // 2^32
 
 function get_default_captive_portal_html() {
 	global $config, $g, $cpzone;
@@ -2594,49 +2602,125 @@ function captiveportal_blocked_mac($mac) {
 
 }
 
-function captiveportal_send_server_accounting($off = false) {
+function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $username = null, $clientip = null, $clientmac = null, $sessionid = null, $start_time = null, $stop_time = null, $term_cause = null) {
 	global $cpzone, $config;
 
-	if (!isset($config['captiveportal'][$cpzone]['radacct_enable'])) {
-		return;
+	$cpcfg = $config['captiveportal'][$cpzone];
+	$acctcfg = auth_get_authserver($cpcfg['radacct_server']);
+	
+	if (!isset($cpcfg['radacct_enable']) || empty($acctcfg)) {
+		return null;
 	}
-	if ($off) {
-		$racct = new Auth_RADIUS_Acct_Off;
-	} else {
+	
+	if ($type === 'on') {
 		$racct = new Auth_RADIUS_Acct_On;
+	} elseif ($type === 'off') {
+		$racct = new Auth_RADIUS_Acct_Off;
+	} elseif ($type === 'start') {
+		$racct = new Auth_RADIUS_Acct_Start;
+		if (!is_int($start_time)) {
+			$start_time = time();
+		}
+	} elseif ($type === 'stop') {
+		$racct = new Auth_RADIUS_Acct_Stop;
+		if (!is_int($stop_time)) {
+			$stop_time = time();
+		}
+	} elseif ($type === 'update') {
+        $racct = new Auth_RADIUS_Acct_Update;
+		if (!is_int($stop_time)) {
+			$stop_time = time(); // "top time" here will be used only for calcuating session time.
+		}
+	} else {
+		return null;
 	}
-	$radiusservers = captiveportal_get_radius_servers();
-	if (empty($radiusservers)) {
-		return;
-	}
-	foreach ($radiusservers['first'] as $radsrv) {
-		// Add a new server to our instance
-		$racct->addServer($radsrv['ipaddr'], $radsrv['acctport'], $radsrv['key']);
-	}
-	if (PEAR::isError($racct->start())) {
-		$retvalue['acct_val'] = 1;
-		$retvalue['error'] = $racct->getMessage();
 
-		// If we encounter an error immediately stop this function and go back
-		$racct->close();
-		return $retvalue;
+	$racct->addServer($acctcfg['host'], $acctcfg['radius_acct_port'],
+		$acctcfg['radius_secret'], $acctcfg['radius_timeout']);
+	
+	$racct->authentic = RADIUS_AUTH_RADIUS;
+	if (!empty($username)) {
+		$racct->username = $username;
 	}
+
+	if (PEAR::isError($racct->start())) {
+		captiveportal_syslog('RADIUS ACCOUNTING FAILED : '.$racct->getError());
+		$racct->close();
+		return null;
+	}
+	
+	$nasip = $acctcfg['radius_nasip_attribute'];
+	if (!is_ipaddr($nasip)) {
+		$nasip = get_interface_ip($nasip);	
+		if (!is_ipaddr($nasip)) {
+			$nasip = get_interface_ip();//We use WAN interface IP as fallback for NAS-IP-Address
+		}
+	}
+	$nasmac = get_interface_mac(find_ip_interface($nasip));
+	$racct->putAttribute(RADIUS_NAS_IP_ADDRESS, $nasip, "addr");
+	$racct->putAttribute(RADIUS_NAS_IDENTIFIER, 'CaptivePortal');
+	
+	if (is_int($ruleno)) {
+		$racct->putAttribute(RADIUS_NAS_PORT_TYPE, RADIUS_ETHERNET);
+		$racct->putAttribute(RADIUS_NAS_PORT, intval($ruleno), 'integer');
+	}
+	
+	if (!empty($sessionid)) {
+		$racct->putAttribute(RADIUS_ACCT_SESSION_ID, $sessionid);
+	}
+
+	if (!empty($clientip) && is_ipaddr($clientip)) {
+		$racct->putAttribute(RADIUS_FRAMED_IP_ADDRESS, $clientip, "addr");
+	}
+	if (!empty($clientmac)) {
+		$racct->putAttribute(RADIUS_CALLING_STATION_ID, mac_format($clientmac));
+	}
+	if (!empty($nasmac)) {
+		$racct->putAttribute(RADIUS_CALLED_STATION_ID, mac_format($nasmac).':'.gethostname());
+	}
+	
+	// Accounting request Stop and Update : send the current data volume
+	if (($type === 'stop' || $type === 'update') && is_int($start_time)) {
+		$volume = getVolume($clientip);
+		$session_time = $stop_time - $start_time;
+		$volume['input_bytes_radius'] = remainder($volume['input_bytes']);
+		$volume['input_gigawords'] = gigawords($volume['input_bytes']);
+		$volume['output_bytes_radius'] = remainder($volume['output_bytes']);
+		$volume['output_gigawords'] = gigawords($volume['output_bytes']);
+
+		// Volume stuff: Ingress
+		$racct->putAttribute(RADIUS_ACCT_INPUT_PACKETS, intval($volume['input_pkts']), "integer");
+		$racct->putAttribute(RADIUS_ACCT_INPUT_OCTETS, intval($volume['input_bytes_radius']), "integer");
+		// Volume stuff: Outgress
+		$racct->putAttribute(RADIUS_ACCT_OUTPUT_PACKETS, intval($volume['output_pkts']), "integer");
+		$racct->putAttribute(RADIUS_ACCT_OUTPUT_OCTETS, intval($volume['output_bytes_radius']), "integer");
+		$racct->putAttribute(RADIUS_ACCT_SESSION_TIME, intval($session_time), "integer");
+		
+		$racct->putAttribute(CUSTOM_RADIUS_ACCT_OUTPUT_GIGAWORDS, intval($volume['output_gigawords']), "integer");
+		$racct->putAttribute(CUSTOM_RADIUS_ACCT_INPUT_GIGAWORDS, intval($volume['input_gigawords']), "integer");
+		// Set session_time
+		$racct->session_time = $session_time;
+	}
+	
+	if ($type === 'stop') {
+		if (empty($term_cause)) {
+			$term_cause = 1;
+		}
+		$racct->putAttribute(RADIUS_ACCT_TERMINATE_CAUSE, $term_cause);
+	}
+    
 	// Send request
 	$result = $racct->send();
-	// Evaluation of the response
-	// 5 -> Accounting-Response
-	// See RFC2866 for this.
+
 	if (PEAR::isError($result)) {
-		$retvalue['acct_val'] = 1;
-		$retvalue['error'] = $result->getMessage();
-	} else if ($result === true) {
-		$retvalue['acct_val'] = 5 ;
-	} else {
-		$retvalue['acct_val'] = 1 ;
+		 captiveportal_syslog('RADIUS ACCOUNTING FAILED : '.$racct->getError());
+		 $result = null;
+	} elseif ($result !== true) {
+		$result = false;
 	}
 
 	$racct->close();
-	return $retvalue;
+	return $result;
 }
 
 function captiveportal_isip_logged($clientip) {

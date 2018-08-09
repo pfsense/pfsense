@@ -299,7 +299,7 @@ get_prodtrack_model() {
 			    && _prodtrack_model="SG-3100-M2-2GB" \
 			    || _prodtrack_model="SG-3100-EMMC-2GB"
 			;;
-		SG-4860|SG-8860)
+		SG-4860*|SG-8860*)
 			has_ada_dev \
 			    && _prodtrack_model="${_cur_model}-MSATA-8GB" \
 			    || _prodtrack_model="${_cur_model}-EMMC-8GB"
@@ -335,13 +335,13 @@ get_prodtrack_model() {
 	elif has_raid; then
 		_disk="RAID"
 	elif has_msata; then
-		[ "${_cur_model}" = "XG-7100" ] \
+		echo "${_cur_model}" | grep -q '^XG-7100' \
 		    && _disk="M2" \
 		    || _disk="MSATA"
 	elif echo "${_cur_model}" | grep -q '^XG-15'; then
 		_disk="M2"
 	else
-		[ "${_cur_model}" = "XG-7100" ] \
+		echo "${_cur_model}" | grep -q '^XG-7100' \
 		    && _disk="M2" \
 		    || _disk="SATA"
 	fi
@@ -451,7 +451,7 @@ if [ -z "${selected_model}" ]; then
 	exec 3>&-
 fi
 
-prodtrack_model=$(get_prodtrack_model "${cur_model}")
+prodtrack_model=$(get_prodtrack_model "${selected_model}")
 
 if [ "${machine_arch}" == "amd64" ]; then
 	_loaderconf=/tmp/loader.conf.pfSense

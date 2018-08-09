@@ -468,6 +468,13 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['enable']
 ));
 
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
+
 $section->addInput(new Form_Select(
 	'cinterface',
 	'*Interfaces',
@@ -545,14 +552,14 @@ $section->addInput(new Form_Input(
 	'Pre-authentication redirect URL',
 	'text',
 	$pconfig['preauthurl']
-))->setHelp('Use this field to set $PORTAL_REDIRURL$ variable which can be accessed using the custom captive portal index.php page or error pages.');
+))->setHelp('Set a default redirection URL. Visitors will be redirected to this URL after authentication only if the captive portal don\'t know where to redirect them. This field will be accessible through $PORTAL_REDIRURL$ variable in captiveportal\'s HTML pages.');
 
 $section->addInput(new Form_Input(
 	'redirurl',
 	'After authentication Redirection URL',
 	'text',
 	$pconfig['redirurl']
-))->setHelp('Clients will be redirected to this URL instead of the one they initially tried to access after they\'ve authenticated.');
+))->setHelp('Set a forced redirection URL. Clients will be redirected to this URL instead of the one they initially tried to access after they\'ve authenticated.');
 
 $section->addInput(new Form_Input(
 	'blockedmacsurl',
@@ -586,16 +593,14 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('When enabled, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will ' .
 			'never have to authenticate again. To remove the passthrough MAC entry either log in and remove it manually from the ' .
 			'%1$sMAC tab%2$s or send a POST from another system. '  .
-			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.', "<a href=\"services_captiveportal_mac.php?zone={$cpzone}\">", '</a>');
+			'If this is enabled, the logout window will not be shown.', "<a href=\"services_captiveportal_mac.php?zone={$cpzone}\">", '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'passthrumacaddusername',
 	null,
-	'Enable Pass-through MAC automatic addition with username',
+	'Include username in the created Pass-through entry',
 	$pconfig['passthrumacaddusername']
-))->setHelp('If enabled with the automatically MAC passthrough entry created, the username used during authentication will be saved. ' .
-			'To remove the passthrough MAC entry either log in and remove it manually from the %1$sMAC tab%2$s or send a POST from another system.',
-			"<a href=\"services_captiveportal_mac.php?zone={$cpzone}\">", '</a>');
+))->setHelp('If enabled the username used during authentication will be saved in the "Description" Field.');
 
 $section->addInput(new Form_Checkbox(
 	'peruserbw',
@@ -617,7 +622,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['bwdefaultup']
 ))->setHelp('If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. ' .
-			'RADIUS can override the default settings. Leave empty for no limit.');
+			'RADIUS servers can override the default settings. Leave empty for no limit.');
 
 $form->add($section);
 
@@ -1054,10 +1059,7 @@ events.push(function() {
 		hideCheckbox('noconcurrentlogins', hide);
 		hideCheckbox('nomacfilter', hide);
 		hideCheckbox('passthrumacadd', hide);
-		hideCheckbox('passthrumacaddusername', hide);
 		hideCheckbox('peruserbw', hide);
-		hideInput('bwdefaultdn', hide);
-		hideInput('bwdefaultup', hide);
 		hideCheckbox('reauthenticate', hide);
 	}
 	
@@ -1068,6 +1070,26 @@ events.push(function() {
 		hideClass('reauthenticateacct', hide);
 		hideCheckbox('reverseacct', hide);
 		hideCheckbox('includeidletime', hide);	
+	}
+
+	function hidePassthru(hide) { 
+		if(!$('#enable').prop('checked')) {
+			hide = true;
+		}
+		else if(!hide) {
+			$('#logoutwin_enable').prop('checked', false);
+		}
+		
+		disableInput("logoutwin_enable", !hide);
+		hideCheckbox('passthrumacaddusername', hide);
+	}	
+
+	function hidePerUserBandwith(hide) {
+		if(!$('#enable').prop('checked')) {
+			hide = true;
+		}
+		hideInput('bwdefaultdn', hide);
+		hideInput('bwdefaultup', hide);
 	}
 	
 	function triggerChangesAuthMethod() {
@@ -1185,9 +1207,32 @@ events.push(function() {
 	$("#httpslogin_enable").click(function() {
 		hideHTTPS(!this.checked);
 	});
+	$("#nomacfilter").click(function() 
+	{
+		let radmac_option = $('select[name="auth_method"] option[value="radmac"]');
+		if(this.checked) {
+			radmac_option.prop('disabled','disabled');
+			if($('select[name="auth_method"]').val() == radmac_option.val() || $('select[name="auth_method"]').val() == null) {
+				$('select[name="auth_method"]').val($('select[name="auth_method"] option:first').val());
+			}
+		} else {
+			radmac_option.removeAttr('disabled');
+		}
+	});
+	
 
+	$("#peruserbw").click(function() {
+		hidePerUserBandwith(!this.checked);
+	});
+
+	$("#passthrumacadd").click(function() {
+		hidePassthru(!this.checked);
+	});
+	
 	// ---------- On initial page load ------------------------------------------------------------
 	hideSections(!$('#enable').prop('checked'));
+	hidePerUserBandwith(!$("#peruserbw").prop('checked'));
+	hidePassthru(!$("#passthrumacadd").prop('checked'));
 	triggerChangesAuthMethod();
 	triggerChangesAuthServer();
 	

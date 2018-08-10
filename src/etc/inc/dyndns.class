@@ -849,18 +849,18 @@
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				case 'dnsimple':
-					/* Uses DNSimple's REST API
-					   Requires username and Account API token passed in header
-					   Piggybacks on Route 53's ZoneID field for DNSimple record ID
-					   Data sent as JSON */
+					/* Uses DNSimple's v2 REST API
+					   Requires the Account ID as the username (found in the URL when pull up the domain)
+					   And an API Token for the password (generated in the User Settings -> API tokens area of the website)
+					   Piggybacks on Route 53's ZoneID field for the DNSimple record ID to update
+					   The DNS record MUST exist before it can update since it performs a PATCH operation
+					   Data sent as JSON over HTTPS */
 					$needsIP = TRUE;
-					$server = 'https://api.dnsimple.com/v1/domains/';
-					$token = $this->_dnsUser . ':' . $this->_dnsPass;
-					$jsondata = '{"record":{"content":"' . $this->_dnsIP . '","ttl":"' . $this->_dnsTTL . '"}}';
-					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/json', 'X-DNSimple-Token: ' . $token));
-					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '/records/' . $this->_dnsZoneID);
-					curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
+					$server = 'https://api.dnsimple.com/v2/';
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/json', 'Authorization: Bearer ' . $this->_dnsPass));
+					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsUser . '/zones/' . $this->_dnsHost . '/records/' . $this->_dnsZoneID);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, '{"content":"' . $this->_dnsIP . '","ttl":"' . $this->_dnsTTL . '"}');
 					break;
 				case 'godaddy':
 				case 'godaddy-v6':

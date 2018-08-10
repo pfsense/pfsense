@@ -1617,8 +1617,8 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	global $config, $FilterIflist, $GatewaysList;
 
-	$tonathosts = array("127.0.0.0/8");
-	$descriptions = array(gettext("localhost"));
+	$tonathosts = array("127.0.0.0/8", "::1/128");
+	$descriptions = array(gettext("localhost"), gettext("localhost"));
 
 	// Add any enabled static routes
 	foreach (get_staticroutes(false, false, true) as $route) {
@@ -1786,26 +1786,72 @@ function filter_nat_rules_outbound_automatic($src) {
 }
 
 /* Generate a 'nat on' or 'no nat on' rule for given interface */
-function filter_nat_rules_generate_if ($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "", $poolopts = "") {
+function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "", $poolopts = "") {
 	global $config, $FilterIflist;
+
 	/* XXX: billm - any idea if this code is needed? */
-	if ($src == "/32" || $src{0} == "/") {
+	if ($src == "/32" || $src == "/128" || $src{0} == "/") {
 		return "# src incorrectly specified\n";
 	}
-	if ($natip != "") {
-		if (is_subnet($natip)) {
-			$tgt = $natip;
-		} elseif (is_alias($natip)) {
-			$tgt = "\${$natip}";
-		} else {
-			$tgt = "{$natip}/32";
+	$if_friendly = $FilterIflist[$if]['descr'];
+	if (!$if_friendly) {
+		return "# Could not convert {$if} to friendly name(alias) {$descr}\n";
+	}
+	
+	$inet = "";
+	if (is_v4($src) || is_v4($dst) || is_v4($natip)) {
+		$inet = "inet";
+	}
+	if (is_v6($src) || is_v6($dst) || is_v6($natip)) {
+		if ($inet == "inet") {
+			return "# conflicting ipv4/ipv6 settings in nat rule: " . $descr;
 		}
-	} else {
-		$natip = get_interface_ip($if);
-		if (is_ipaddr($natip)) {
-			$tgt = "{$natip}/32";
+		$inet = "inet6";
+	}
+	if (($ipprotocol == 'inet' && $inet == 'inet6') ||
+	    ($ipprotocol == 'inet6' && $inet == 'inet')) {
+		return "# ipv4/ipv6 settings dont match selected ipprotocol in nat rule: " . $descr;
+	}
+	if (!empty($ipprotocol)) {
+		$inet = $ipprotocol; //if ipprotocol is set specifically to ipv4 or ipv6 then that has to be used
+	}
+	
+	/* Set tgt4 for IPv4 */
+	if ($inet == "" || $inet == 'inet') {
+		if ($natip != "") {
+			if (is_subnetv4($natip)) {
+				$tgt4 = $natip;
+			} elseif (is_alias($natip)) {
+				$tgt4 = "\${$natip}";
+			} else {
+				$tgt4 = "{$natip}/32";
+			}
 		} else {
-			$tgt = "(" . $FilterIflist[$if]['if'] . ")";
+			$ifip = get_interface_ip($if);
+			if (is_ipaddrv4($ifip)) {
+				$tgt4 = "{$ifip}/32";
+			} else {
+				$tgt4 = "(" . $FilterIflist[$if]['if'] . ")";
+			}
+		}
+	}
+	/* Set tgt6 for IPv6 */
+	if ($inet == "" || $inet == 'inet6') {
+		if ($natip != "") {
+			if (is_subnetv6($natip)) {
+				$tgt6 = $natip;
+			} elseif (is_alias($natip)) {
+				$tgt6 = "\${$natip}";
+			} else {
+				$tgt6 = "{$natip}/128";
+			}
+		} else {
+			$ifip = get_interface_ipv6($if);
+			if (is_ipaddrv6($ifip)) {
+				$tgt6 = "{$ifip}/128";
+			} else {
+				$tgt6 = "(" . $FilterIflist[$if]['if'] . ")";
+			}
 		}
 	}
 	/* Add the protocol, if defined */
@@ -1818,16 +1864,12 @@ function filter_nat_rules_generate_if ($if, $src = "any", $srcport = "", $dst = 
 	} else {
 		$protocol = "";
 	}
-	/* Set tgt for IPv6 */
-	if ($proto == "ipv6") {
-		$natip = get_interface_ipv6($if);
-		if (is_ipaddrv6($natip)) {
-			$tgt = "{$natip}/128";
-		}
-	}
+	
+
+	$tgtport = "";
 	/* Add the hard set source port (useful for ISAKMP) */
 	if ($natport != "") {
-		$tgt .= " port {$natport}";
+		$tgtport .= " port {$natport}";
 	}
 	/* sometimes this gets called with "" instead of a value */
 	if ($src == "") {
@@ -1856,28 +1898,39 @@ function filter_nat_rules_generate_if ($if, $src = "any", $srcport = "", $dst = 
 	/* outgoing static-port option, hamachi, Grandstream, VOIP, etc */
 	$staticnatport_txt = "";
 	if ($staticnatport) {
-		$staticnatport_txt = "static-port";
+		$staticnatport_txt = " static-port";
 	} elseif (!$natport) {
-		$tgt .= " port 1024:65535"; // set source port range
+		$tgtport = " port 1024:65535"; // set source port range
 	}
-	/* Allow for negating NAT entries */
-	if ($nonat) {
-		$nat = "no nat";
-		$target = "";
-		$staticnatport_txt = "";
-		$poolopts = "";
-	} else {
-		$nat = "nat";
-		$target = "-> {$tgt}";
+	if (!empty($descr)) {
+		$descr = " # " . $descr;
 	}
-	$if_friendly = $FilterIflist[$if]['descr'];
+	
+	if (empty($if_friendly) || empty($src) || empty($dst)) {
+		return "# validation of rule properties failed to verify the interface/source/destination" . " in nat rule: {$descr}\n";
+	}
 	/* Put all the pieces together */
-	if ($if_friendly) {
-		$natrule = "{$nat} on \${$if_friendly} {$protocol} from {$src} to {$dst} {$target} {$poolopts} {$staticnatport_txt}\n";
+	$natrules = "";
+	if ($nonat) {
+		/* Allow for negating NAT entries */
+		$natrules .= "no nat on \${$if_friendly} {$inet}{$protocol} from {$src} to {$dst}{$descr}\n";
 	} else {
-		$natrule .= "# Could not convert {$if} to friendly name(alias)\n";
+		if ($inet == "" || $inet == 'inet') {
+			if (empty($tgt4)) {
+				$natrules .= "# validation of rule properties failed to verify the IPv4 target" . " in nat rule: {$descr}\n";
+			} else {
+				$natrules .= "nat on \${$if_friendly} inet{$protocol} from {$src} to {$dst} -> {$tgt4}{$tgtport} {$poolopts}{$staticnatport_txt}{$descr}\n";
+			}
+		} 
+		if ($inet == "" || $inet == 'inet6') {
+			if (empty($tgt6)) {
+				$natrules .= "# validation of rule properties failed to verify the IPv6 target" . " in nat rule: {$descr}\n";
+			} else {
+				$natrules .= "nat on \${$if_friendly} inet6{$protocol} from {$src} to {$dst} -> {$tgt6}{$tgtport} {$poolopts}{$staticnatport_txt}{$descr}\n";
+			}
+		}
 	}
-	return $natrule;
+	return $natrules;
 }
 
 function xinetd_service_entry($entry_array) {
@@ -2125,6 +2178,8 @@ function filter_nat_rules_generate() {
 				}
 
 				$natrules .= filter_nat_rules_generate_if($obent['interface'],
+					$obent['descr'],
+					$obent['ipprotocol'],
 					$src,
 					$obent['sourceport'],
 					$dst,
@@ -2166,6 +2221,8 @@ function filter_nat_rules_generate() {
 			$a_outs = filter_nat_rules_outbound_automatic($macroortable);
 			foreach ($a_outs as $a_out) {
 				$natrules .= filter_nat_rules_generate_if($a_out['interface'],
+					"",
+					$a_out['ipprotocol'],
 					$a_out['source']['network'],
 					$a_out['sourceport'],
 					$a_out['destination']['address'],

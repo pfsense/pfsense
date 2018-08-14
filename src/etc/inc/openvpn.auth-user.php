@@ -31,66 +31,6 @@ require_once("config.inc");
 require_once("auth.inc");
 require_once("interfaces.inc");
 
-/**
- * Get the NAS-Identifier
- *
- * We will return "openVPN" so that connections can be distinguished by the Radius
- */
-if (!function_exists("getNasID")) {
-function getNasID() {
-	return "openVPN";
-}
-}
-
-/**
- * Get the NAS-IP-Address based on the current wan address
- *
- * Use functions in interfaces.inc to find this out
- *
- */
-if (!function_exists("getNasIP")) {
-function getNasIP() {
-	$nasIp = get_interface_ip();
-	if (!$nasIp) {
-		$nasIp = "0.0.0.0";
-	}
-	return $nasIp;
-}
-}
-
-/**
- * Set the NAS-Port-Type
- *
- * Should be "Virtual" since that denotes VPN connections
- */
-if (!function_exists("getNasPortType")) {
-function getNasPortType() {
-	return RADIUS_VIRTUAL;
-}
-}
-
-/**
- * Set the NAS-Port
- *
- * We will return the port the client connected to
- */
-if (!function_exists("getNasPort")) {
-function getNasPort() {
-	return $_GET['nas_port'];
-}
-}
-
-/**
- * Set the Called-Station-ID
- *
- * We will return the IP and port the client connected to
- */
-if (!function_exists("getCalledStationId")) {
-function getCalledStationId() {
-	return get_interface_ip() . ":" . getNasPort();
-}
-}
-
 /* setup syslog logging */
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 
@@ -157,7 +97,11 @@ if (!is_array($authmodes)) {
 	}
 }
 
-$attributes = array();
+
+$attributes = array("nas_identifier" => "openVPN",
+	"nas_port_type" => RADIUS_VIRTUAL,
+	"nas_port" => $_GET['nas_port']);
+	
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
 	if (!$authcfg && $authmode != "Local Database") {

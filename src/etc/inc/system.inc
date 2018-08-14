@@ -2104,7 +2104,7 @@ function system_reboot_cleanup() {
 			$cpzoneid = $cp['zoneid'];
 			captiveportal_radius_stop_all(7); // Admin-Reboot
 			/* Send Accounting-Off packet to the RADIUS server */
-			captiveportal_send_server_accounting(true);
+			captiveportal_send_server_accounting('off');
 		}
 	}
 	require_once("voucher.inc");

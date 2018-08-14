@@ -33,7 +33,7 @@
 		<p>The wizard may be stopped at any time by clicking the logo image at the top of the screen.</p>
 		<p><strong>pfSense® software is developed and maintained by Netgate®<strong></p>
 		<br />
-		<p><a href="https://netgate.com/solutions/pfsense" class="btn btn-info" target="_blank">Learn more</a></p>
+		<p><a href="https://www.netgate.com/pfw1" class="btn btn-info" target="_blank">Learn more</a></p>
 		]]>
 	</description>
 	<fields>
@@ -63,7 +63,7 @@
 		</ul>
 		</p>
 		<br />
-		<p><a href="https://netgate.com/support" class="btn btn-info" target="_blank">Learn more</a></p>
+		<p><a href="https://www.netgate.com/pfw2" class="btn btn-info" target="_blank">Learn more</a></p>
     ]]>
   </description>
 	<fields>
@@ -826,10 +826,10 @@
 		<p><h4>Useful resources.</h4></p>
 		<p>
 			<ul>
-				<li>Learn more about Netgate's product line, services, and pfSense software from our <a target='_blank' href='https://www.netgate.com/'>website</a></li>
-				<li>To learn about Netgate appliances and other offers, <a target='_blank' href='https://store.netgate.com/ '>visit our store</a></li>
-				<li>Become part of the pfSense community. Visit our <a target='_blank' href='https://forum.netgate.com/'>forum</a></li>
-				<li>Subscribe to our <a target='_blank' href='https://www.netgate.com/resources/newsletters/'>newsletter</a> for ongoing product information, software announcements and special offers.</li>
+				<li>Learn more about Netgate's product line, services, and pfSense software from our <a target='_blank' href='https://www.netgate.com/pfw3'>website</a></li>
+				<li>To learn about Netgate appliances and other offers, <a target='_blank' href='https://www.netgate.com/pfw4'>visit our store</a></li>
+				<li>Become part of the pfSense community. Visit our <a target='_blank' href='https://www.netgate.com/pfw5'>forum</a></li>
+				<li>Subscribe to our <a target='_blank' href='https://www.netgate.com/pfw6'>newsletter</a> for ongoing product information, software announcements and special offers.</li>
 			</ul>
 		</p>
 		</br>

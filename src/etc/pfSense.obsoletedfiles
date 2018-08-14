@@ -586,6 +586,8 @@
 /usr/local/bin/spawn-fcgi
 /usr/local/bin/tickadj
 /usr/local/bin/verifysig
+/usr/local/captiveportal/radius_accounting.inc
+/usr/local/captiveportal/radius_authentication.inc
 /usr/local/etc/pkg.conf
 /usr/local/info
 /usr/local/lib/engines

@@ -772,6 +772,14 @@ function is_subnet($subnet) {
 	return false;
 }
 
+function is_v4($ip_or_subnet) {
+	return is_ipaddrv4($ip_or_subnet) || is_subnetv4($ip_or_subnet);
+}
+
+function is_v6($ip_or_subnet) {
+	return is_ipaddrv6($ip_or_subnet) || is_subnetv6($ip_or_subnet);
+}
+
 /* same as is_subnet() but accepts IPv4 only */
 function is_subnetv4($subnet) {
 	return (is_subnet($subnet) == 4);

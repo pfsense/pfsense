@@ -80,6 +80,7 @@ if (isset($id) && $a_out[$id]) {
 		$pconfig['updated'] = $a_out[$id]['updated'];
 	}
 
+	$pconfig['ipprotocol'] = $a_out[$id]['ipprotocol'];
 	$pconfig['protocol'] = $a_out[$id]['protocol'];
 	list($pconfig['source'], $pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
 	if (!is_numeric($pconfig['source_subnet'])) {
@@ -337,6 +338,12 @@ if ($_POST['save']) {
 			unset($natent['nonat']);
 		}
 
+		if ($_POST['ipprotocol'] && $_POST['ipprotocol'] != "inet46") {
+			$natent['ipprotocol'] = $_POST['ipprotocol'];
+		} else {
+			unset($natent['ipprotocol']);
+		}
+		
 		if ($_POST['protocol'] && $_POST['protocol'] != "any") {
 			$natent['protocol'] = $_POST['protocol'];
 		} else {
@@ -485,6 +492,17 @@ $section->addInput(new Form_Select(
 	$pconfig['interface'],
 	create_interface_list()
 ))->setHelp('The interface on which traffic is matched as it exits the firewall. In most cases this is "WAN" or another externally-connected interface.');
+
+$section->addInput(new Form_Select(
+	'ipprotocol',
+	'*Address Family',
+	$pconfig['ipprotocol'],
+	array(
+		'inet' => 'IPv4',
+		'inet6' => 'IPv6',
+		'' => 'IPv4+IPv6',
+	)
+))->setHelp('Select the Internet Protocol version this rule applies to.');
 
 $protocols = "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync";
 

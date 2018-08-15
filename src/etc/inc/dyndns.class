@@ -756,7 +756,6 @@
 						} else {
 							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 						}
-						curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 						curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
 					}
 					$server = str_replace("%IP%", $this->_dnsIP, $this->_dnsUpdateURL);

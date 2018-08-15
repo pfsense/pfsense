@@ -821,7 +821,7 @@
 		<input type="button" onclick="window.location.href='$myurlpkg_mgr_install.php?id=firmware'" class="btn btn-xs btn-success" value="Check for updates"/>
 		</br></br>
 		<p><h4>Remember, we're here to help.</h4></p>
-		<p><a target='_blank' href='https://www.netgate.com/more-support-info/'><strong><span style="font-size:16px"> Click here</span></strong></a> to learn about Netgate 24/7/365 support services.</p>
+		<p><a target='_blank' href='https://www.netgate.com/pfw2'><strong><span style="font-size:16px"> Click here</span></strong></a> to learn about Netgate 24/7/365 support services.</p>
 		</br>
 		<p><h4>Useful resources.</h4></p>
 		<p>

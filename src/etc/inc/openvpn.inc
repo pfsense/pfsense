@@ -123,11 +123,13 @@ $openvpn_client_modes = array(
 
 global $openvpn_compression_modes;
 $openvpn_compression_modes = array(
-	'' => gettext("Omit Preference (Use OpenVPN Default)"),
+	'none' => gettext("Disable Compression, retain compression packet framing [compress]"),
 	'lz4' => gettext("LZ4 Compression [compress lz4]"),
 	'lz4-v2' => gettext("LZ4 Compression v2 [compress lz4-v2]"),
 	'lzo' => gettext("LZO Compression [compress lzo, equivalent to comp-lzo yes for compatibility]"),
-	'stub' => gettext("Enable Compression (stub) [compress]"),
+	'stub' => gettext("Enable Compression (stub) [compress stub]"),
+	'stub-v2' => gettext("Enable Compression (stub v2) [compress stub-v2]"),
+	'' => gettext("Omit Preference (Use OpenVPN Default)"),
 	'noadapt' => gettext("Omit Preference, + Disable Adaptive LZO Compression [Legacy style, comp-noadapt]"),
 	'adaptive' => gettext("Adaptive LZO Compression [Legacy style, comp-lzo adaptive]"),
 	'yes' => gettext("LZO Compression [Legacy style, comp-lzo yes]"),
@@ -1209,10 +1211,13 @@ function openvpn_reconfigure($mode, $settings) {
 
 	$compression = "";
 	switch ($settings['compression']) {
+		case 'none':
+			$settings['compression'] = '';
 		case 'lz4':
 		case 'lz4-v2':
 		case 'lzo':
 		case 'stub':
+		case 'stub-v2':
 			$compression .= "compress {$settings['compression']}";
 			break;
 		case 'noadapt':

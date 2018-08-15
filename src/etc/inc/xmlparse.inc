@@ -251,6 +251,7 @@ function dump_xml_config_sub($arr, $indent) {
 						    (substr($ent, 0, 5) == "email") ||
 						    (substr($ent, 0, 6) == "certca") ||
 						    (substr($ent, 0, 8) == "certname") ||
+						    (substr($ent, 0, 9) == "auth_prompt") ||
 						    (substr($ent, 0, 9) == "ldap_attr") ||
 						    (substr($ent, 0, 9) == "ldap_bind") ||
 						    (substr($ent, 0, 11) == "ldap_basedn") ||
@@ -288,6 +289,7 @@ function dump_xml_config_sub($arr, $indent) {
 				    (substr($ent, 0, 5) == "email") ||
 				    (substr($ent, 0, 6) == "certca") ||
 				    (substr($ent, 0, 8) == "certname") ||
+				    (substr($ent, 0, 8) == "auth_prompt") ||
 				    (substr($ent, 0, 9) == "ldap_attr") ||
 				    (substr($ent, 0, 9) == "ldap_bind") ||
 				    (substr($ent, 0, 11) == "ldap_basedn") ||

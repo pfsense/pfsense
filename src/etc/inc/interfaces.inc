@@ -747,7 +747,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 
 function interface_bridge_configure_stp($bridge) {
 	if (isset($bridge['enablestp'])) {
-		$bridgeif = $bridge['bridgeif'];
+		$bridgeif = trim($bridge['bridgeif']);
 		/* configure spanning tree proto */
 		mwexec("/sbin/ifconfig {$bridgeif} proto " . escapeshellarg($bridge['proto']));
 
@@ -805,7 +805,7 @@ function interface_bridge_configure_stp($bridge) {
 }
 
 function interface_bridge_configure_advanced($bridge) {
-	$bridgeif = $bridge['bridgeif'];
+	$bridgeif = trim($bridge['bridgeif']);
 
 	if ($bridge['maxaddr'] <> "") {
 		mwexec("/sbin/ifconfig {$bridgeif} maxaddr " . escapeshellarg($bridge['maxaddr']));
@@ -865,7 +865,7 @@ function interface_bridge_configure_advanced($bridge) {
 }
 
 function interface_bridge_configure_ip6linklocal($bridge) {
-	$bridgeif = $bridge['bridgeif'];
+	$bridgeif = trim($bridge['bridgeif']);
 
 	$members = explode(',', $bridge['members']);
 	if (!count($members)) {

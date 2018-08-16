@@ -345,7 +345,10 @@ if ($_POST['save']) {
 		if ($_POST['auth_method'] != 'none') {
 			$newcp['auth_server'] = implode(",", $_POST['auth_server']);
 		}
-		$newcp['auth_server2'] = implode(",", $_POST['auth_server2']);
+		$newcp['auth_server2'] = '';
+		if (!empty($_POST['auth_server2']) && $_POST['auth_method'] === 'authserver') {
+			$newcp['auth_server2'] = implode(",", $_POST['auth_server2']);
+		}
 		$newcp['radacct_server'] = $_POST['radacct_server'];
 		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;

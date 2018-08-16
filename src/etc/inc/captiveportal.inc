@@ -2205,43 +2205,28 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 	}
 
 	$writecfg = false;
-	/* Find an existing session */
+	/* If both "Add MAC addresses of connected users as pass-through MAC" and "Disable concurrent logins" are checked, 
+	then we need to check if the user was already authenticated using another MAC Address, and if so remove the previous Pass-Through MAC. */	
 	if ((isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) &&
 	    $passthrumac &&
 	    isset($config['captiveportal'][$cpzone]['passthrumacadd'])) {
 		$mac = captiveportal_passthrumac_findbyname($username);
-		if (!empty($mac) && $_POST['replacemacpassthru']) {
+		if (!empty($mac)) {
 			foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $idx => $macent) {
 				if ($macent['mac'] != $mac['mac']) {
 					continue;
 				}
 
-				$macrules = "";
 				$pipeno = captiveportal_get_dn_passthru_ruleno($mac['mac']);
 				if ($pipeno) {
 					captiveportal_free_dn_ruleno($pipeno);
-					$macrules .= "table {$cpzone}_pipe_mac delete any,{$mac['mac']}\n";
-					$macrules .= "table {$cpzone}_pipe_mac delete {$mac['mac']},any\n";
-					$macrules .= "pipe delete {$pipeno}\n";
-					++$pipeno;
-					$macrules .= "pipe delete {$pipeno}\n";
+					@pfSense_ipfw_table("{$cpzone}_pipe_mac", IP_FW_TABLE_XDEL, "any,{$mac['mac']}");
+					@pfSense_ipfw_table("{$cpzone}_pipe_mac", IP_FW_TABLE_XDEL, "{$mac['mac']},any");
+					@pfSense_ipfw_pipe("pipe delete {$pipeno+1}");
+					@pfSense_ipfw_pipe("pipe delete {$pipeno}");
 				}
 				unset($config['captiveportal'][$cpzone]['passthrumac'][$idx]);
-				$mac['action'] = 'pass';
-				$mac['mac'] = $clientmac;
-				$config['captiveportal'][$cpzone]['passthrumac'][] = $mac;
-				$macrules .= captiveportal_passthrumac_configure_entry($mac);
-				file_put_contents("{$g['tmp_path']}/macentry_{$cpzone}.rules.tmp", $macrules);
-				mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry_{$cpzone}.rules.tmp");
-				$writecfg = true;
-				$sessionid = true;
-				break;
 			}
-		} elseif (!empty($mac)) {
-			portal_reply_page($redirurl, "error", "Username: {$username} is already authenticated using another MAC address.",
-				$clientmac, $clientip, $username, $password);
-			unlock($cpdblck);
-			return;
 		}
 	}
 

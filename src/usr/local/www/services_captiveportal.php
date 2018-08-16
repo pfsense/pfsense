@@ -191,6 +191,10 @@ if ($a_cp[$cpzone]) {
 	if ($a_cp[$cpzone]['page']['logouttext']) {
 		$pconfig['page']['logouttext'] = $a_cp[$cpzone]['page']['logouttext'];
 	}
+	$pconfig['customlogo'] = isset($a_cp[$cpzone]['customlogo']);
+	$pconfig['custombg'] = isset($a_cp[$cpzone]['custombg']);
+	$pconfig['customhtml'] = isset($pconfig['page']['htmltext']);
+	$pconfig['termsconditions'] = base64_decode($a_cp[$cpzone]['termsconditions']);
 }
 
 if ($_POST['save']) {
@@ -278,7 +282,7 @@ if ($_POST['save']) {
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
-	
+
 	if ($_POST['auth_method']) {
 		if ($_POST['auth_method'] !== 'none' && empty($_POST['auth_server'])) {
 			$input_errors[] = gettext("You need to select at least one authentication server.");
@@ -286,28 +290,28 @@ if ($_POST['save']) {
 		/* If RADMAC auth method is selected : carefully check that the selected server is a RADIUS one */
 		if ($_POST['auth_method'] === 'radmac') {
 			foreach ($_POST['auth_server'] as $server) {
-				
+
 				$realauthserver = explode(' - ', $server);
 				array_shift($realauthserver);
 				$realauthserver = implode(' - ', $realauthserver);
 				$realauthserver = auth_get_authserver($realauthserver);
-				
+
 				if ($realauthserver === null || $realauthserver['type'] !== 'radius') {
 					$input_errors[] = gettext("RADIUS MAC Authentication can only be performed on a RADIUS server.");
 				}
 			}
-			
+
 			if (isset($_POST['nomacfilter'])) {
 				$input_errors[] = gettext("RADIUS MAC Authentication cannot be used if MAC filtering is disabled");
 			}
 		}
 	}
-	
+
 	if (isset($_POST['radacct_enable']) && empty(auth_get_authserver($_POST['radacct_server']))) {
 		$input_errors[] = gettext("You need to select at least one accounting server.");
 	}
-	if (isset($_POST['radacct_enable']) && !in_array($_POST['reauthenticateacct'], array('none', 'stopstart', 'stopstartfreeradius', 'interimupdate'))) {	
-		$input_errors[] = gettext("You need to select an option for Accounting Updates !");	
+	if (isset($_POST['radacct_enable']) && !in_array($_POST['reauthenticateacct'], array('none', 'stopstart', 'stopstartfreeradius', 'interimupdate'))) {
+		$input_errors[] = gettext("You need to select an option for Accounting Updates !");
 	}
 
 	if (!$input_errors) {
@@ -345,7 +349,10 @@ if ($_POST['save']) {
 		if ($_POST['auth_method'] != 'none') {
 			$newcp['auth_server'] = implode(",", $_POST['auth_server']);
 		}
-		$newcp['auth_server2'] = implode(",", $_POST['auth_server2']);
+		$newcp['auth_server2'] = '';
+		if (!empty($_POST['auth_server2']) && $_POST['auth_method'] === 'authserver') {
+			$newcp['auth_server2'] = implode(",", $_POST['auth_server2']);
+		}
 		$newcp['radacct_server'] = $_POST['radacct_server'];
 		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
@@ -385,7 +392,22 @@ if ($_POST['save']) {
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
 		$newcp['includeidletime'] = $_POST['includeidletime'] ? true : false;
-
+		if ($_POST['customhtml']) {
+			$newcp['customhtml'] = true;
+		} else {
+			unset($newcp['customhtml']);
+		}
+		if ($_POST['customlogo']) {
+			$newcp['customlogo'] = true;
+		} else {
+			unset($newcp['customlogo']);
+		}
+		if ($_POST['custombg']) {
+			$newcp['custombg'] = true;
+		} else {
+			unset($newcp['custombg']);
+		}
+		$newcp['termsconditions'] = base64_encode(htmlspecialchars($_POST['termsconditions']));
 		if (!is_array($newcp['page'])) {
 			$newcp['page'] = array();
 		}
@@ -399,6 +421,52 @@ if ($_POST['save']) {
 		}
 		if (is_uploaded_file($_FILES['logoutfile']['tmp_name'])) {
 			$newcp['page']['logouttext'] = base64_encode(file_get_contents($_FILES['logoutfile']['tmp_name']));
+		}
+
+		// Check for uploaded images for the default CP login
+		if (is_uploaded_file($_FILES['logo-img']['tmp_name'])) {
+			$ext = pathinfo($_FILES['logo-img']['name'],PATHINFO_EXTENSION);
+			$logo_name = "captiveportal-logo." . $ext;
+			for ($i = 0; $i < count($a_cp[$cpzone]['element']); $i++) {
+				if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-logo.") !== false){
+					// remove old image before replacing it.
+					@unlink("{$g['captiveportal_element_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
+					@unlink("{$g['captiveportal_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
+					unset($a_cp[$cpzone]['element'][$i]);
+				}
+			}
+			$element = array();
+			$element['name'] = $logo_name;
+			$element['size'] = filesize($_FILES['logo-img']['tmp_name']);
+			// Set this so it will still show up in file manager but won't be
+			// deleted for having no content.
+			$element['nocontent'] = true;
+			$newcp['element'][] = $element;
+			$target = "{$g['captiveportal_path']}/" . $logo_name;
+			move_uploaded_file( $_FILES['logo-img']['tmp_name'], $target);
+		}
+		if (is_uploaded_file($_FILES['background-img']['tmp_name'])) {
+			$ext = pathinfo($_FILES['background-img']['name'],PATHINFO_EXTENSION);
+			$background_name = "captiveportal-background." . $ext;
+			// is there already a file with that name?
+			for ($i = 0; $i < count($a_cp[$cpzone]['element']); $i++) {
+				if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-background.") !== false){
+					// remove old image and replace it.
+					@unlink("{$g['captiveportal_element_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
+					@unlink("{$g['captiveportal_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
+					unset($a_cp[$cpzone]['element'][$i]);
+				}
+			}
+
+			$element = array();
+			$element['name'] = $background_name;
+			$element['size'] = filesize($_FILES['background-img']['tmp_name']);
+			// Set this so it will still show up in file manager but won't be
+			// deleted for having no content.
+			$element['nocontent'] = true;
+			$newcp['element'][] = $element;
+			$target = "{$g['captiveportal_path']}/" . $background_name;
+			move_uploaded_file( $_FILES['background-img']['tmp_name'], $target);
 		}
 
 		write_config();
@@ -432,10 +500,10 @@ function build_authserver_list() {
 	$authlist = auth_get_authserver_list();
 	$options = array();
 
-	/* auth types are used by javascript */ 
+	/* auth types are used by javascript */
 	foreach ($authlist as $i => $auth) {
 		if ($auth['type'] != 'radius' || $auth['type'] == 'radius' && !empty($auth['radius_auth_port'])) {
-			$options[$auth['type'].' - '.$auth['name']] = $auth['name']; 
+			$options[$auth['type'].' - '.$auth['name']] = $auth['name'];
 		}
 	}
 	return $options;
@@ -624,254 +692,18 @@ $section->addInput(new Form_Input(
 ))->setHelp('If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. ' .
 			'RADIUS servers can override the default settings. Leave empty for no limit.');
 
-$form->add($section);
-
-$section = new Form_Section('Authentication');
-$section->addClass('Authentication');
-
-$group = new Form_Group('*Authentication Method');
-
-$options['authserver'] = 'Use an Authentication backend'; 
-$options['none'] = 'None, don\'t authenticate users'; 
-$options['radmac'] = 'Use RADIUS MAC Authentication'; 
-
-$group->add(new Form_Select(
-	'auth_method',
-	'Authentication Method',
-	$pconfig['auth_method'],
-	$options
-))->setHelp('Select an Authentication Method to use for this zone. One method must be selected.<br />'.
-'- "Authentication backend" will force the login page to be displayed and will authenticate users using their login and password, or using vouchers.<br />'.
-'- "None" method will force the login page to be displayed but will accept any visitor that clicks the "submit" button.<br/>'.
-'- "RADIUS MAC Authentication" method will try to authenticate devices automatically with their MAC address without displaying any login page.');
-
-$section->add($group);
-
-$group = new Form_Group('*Authentication Server');
-$group->addClass('auth_server');
-
-$group->add(new Form_Select(
-	'auth_server',
-	'*Authentication Server',
-	$pconfig['auth_server'],
-	build_authserver_list(),
-	true
-))->setHelp("You can add a remote authentication server in the <a href=\"/system_authservers.php\">User Manager</a>.<br/>".
-	"<span class=\"vouchers_helptext\">Vouchers could also be used, please go to ".
-	"the <a href=\"services_captiveportal_vouchers.php?zone={$cpzone}\">Voutchers Page</a> to enable them.</span>");
-$section->add($group);
-
-$group = new Form_Group('Secondary authentication Server');
-$group->addClass('auth_server2');
-
-$group->add(new Form_Select(
-	'auth_server2',
-	'',
-	$pconfig['auth_server2'],
-	build_authserver_list(),
-	true
-))->setHelp("You can optionally select a second set of servers to to authenticate users. Users will then be able to login using separated HTML inputs.<br />".
-			"This setting is useful if you want to provide multiple authentication method to your users. If you don't need multiple authentication method, then leave this setting empty.");
-$section->add($group);
-
 $section->addInput(new Form_Checkbox(
-	'reauthenticate',
-	'Reauthenticate Users',
-	'Reauthenticate connected users every minute',
-	$pconfig['reauthenticate']
-))->setHelp('If reauthentication is enabled, request are made to the server for each user that is logged in every minute. ' .
-			'If an access denied is received for a user, that user is disconnected from the captive portal immediately. ' .
-			'Reauthentication requires user credentials to be cached in the captive portal database while a user is logged in; ' .
-			'The cached credentials are necessary for the portal to perform automatic reauthentication requests.');
-
-
-
-$section->addInput(new Form_Checkbox(
-	'localauth_priv',
-	'Local Authentication Privileges',
-	'Allow only users/groups with "Captive portal login" privilege set',
-	$pconfig['localauth_priv']
-));
-
-
-$section->addInput(new Form_Input(
-	'radmac_secret',
-	'RADIUS MAC Secret',
-	'text',
-	$pconfig['radmac_secret']
-))->setHelp('RADIUS MAC will automatically try to authenticate devices with their MAC address as username, and the password entered below as password. Devices will still need to make one HTTP request to get connected, throught.');
-
-$section->addInput(new Form_Checkbox(
-	'radiussession_timeout',
-	'Session timeout',
-	'Use RADIUS Session-Timeout attributes',
-	$pconfig['radiussession_timeout']
-))->setHelp('When enabled, clients will be disconnected after the amount of time retrieved from the RADIUS Session-Timeout attribute.');
-
-$section->addInput(new Form_Checkbox(
-	'radiustraffic_quota',
-	'Traffic quota',
-	'Use RADIUS pfSense-Max-Total-Octets attribute',
-	$pconfig['radiustraffic_quota']
-))->setHelp('When enabled, clients will be disconnected after exceeding the amount of traffic, inclusive of both downloads and uploads, retrieved from the RADIUS pfSense-Max-Total-Octets attribute.');
-
-$section->addInput(new Form_Checkbox(
-	'radiusperuserbw',
-	'Per-user bandwidth restrictions',
-	'Use RADIUS pfSense-Bandwidth-Max-Up and pfSense-Bandwidth-Max-Down attributes',
-	$pconfig['radiusperuserbw']
-))->setHelp('When enabled, the bandwidth assigned to a client will be limited to the values retrieved from the RADIUS pfSense-Bandwidth-Max-Up and ' .
-			'pfSense-Bandwidth-Max-Down attributes or from the comparable WISPr attributes.');
-
-$section->addInput(new Form_Select(
-	'radmac_format',
-	'MAC address format',
-	$pconfig['radmac_format'],
-	['default' => 'Default', 'singledash' => gettext('Single dash'), 'ietf' => 'IETF', 'cisco' => 'Cisco', 'unformatted' => gettext('Unformatted')]
-))->setHelp('This option changes the MAC address format used when performing a RADIUS authentication. %1$s' .
-			'Default: 00:11:22:33:44:55 %1$s' .
-			'Single dash: 001122-334455 %1$s' .
-			'IETF: 00-11-22-33-44-55 %1$s' .
-			'Cisco: 0011.2233.4455 %1$s' .
-			'Unformatted: 001122334455', '<br />');
-
-$form->add($section);
-
-$section = new Form_Section('Accounting');
-$section->addClass('Accounting');
-
-$section->addInput(new Form_Checkbox(
-	'radacct_enable',
-	'RADIUS',
-	'Send RADIUS accounting packets.',
-	$pconfig['radacct_enable']
-))->setHelp('If enabled, accounting request will be made for users identified against any RADIUS server.');
-
-
-$options = array();
-
-foreach (auth_get_authserver_list() as $i => $auth) {
-	if ($auth['type'] == 'radius' && !empty($auth['radius_acct_port'])) {
-		$options[$auth['name']] = $auth['name']; 
-	}
-}
-
-$group = new Form_Group('Accounting Server');
-
-
-$group->add(new Form_Select(
-	'radacct_server',
-	'Accounting Server',
-	$pconfig['radacct_server'],
-	$options
-));
-
-$group->addClass('radacct_enable');
-$group->setHelp('You can add a Radius Accounting server in the <a href="/system_authservers.php">User Manager</a>.');
-
-$section->add($group);
-
-$group = new Form_Group('Send accounting updates');
-
-$group->addClass('reauthenticateacct');
-
-$group->add(new Form_Checkbox(
-	'reauthenticateacct',
-	null,
-	'No updates',
-	$pconfig['reauthenticateacct'] == 'none',
-	"none"
-))->displayasRadio();
-
-$group->add(new Form_Checkbox(
-	'reauthenticateacct',
-	null,
-	'Stop/Start',
-	$pconfig['reauthenticateacct'] == 'stopstart',
-	"stopstart"
-))->displayasRadio();
-
-$group->add(new Form_Checkbox(
-	'reauthenticateacct',
-	null,
-	'Stop/Start (FreeRADIUS)',
-	$pconfig['reauthenticateacct'] == 'stopstartfreeradius',
-	"stopstartfreeradius"
-))->displayasRadio();
-
-$group->add(new Form_Checkbox(
-	'reauthenticateacct',
-	null,
-	'Interim',
-	$pconfig['reauthenticateacct'] == 'interimupdate',
-	"interimupdate"
-))->displayasRadio();
-
-$group->setHelp('This field set the way Accounting Updates should be done : <br />'.
-				'- If "No updates" is selected, then only one "Accounting Start" and one "Accounting Stop" request will be sent, when any user get connected and disconnected.<br />'.
-				'- If "Interim" is selected, then "Accounting Update" requests will be send regularly (every minute) to the RADIUS server, for each connected user.<br />'.
-				'- In some rare cases, you would like to simulate users to disconnect and reconnect every minute (eg, to send an Accounting Stop then an Accounting Start) instead of sending Accounting updates, this is the purpose of "Stop/Start" option. FreeRADIUS does not support this option very well, you should select "Stop/Start (FreeRADIUS)" instead.');
-
-$section->add($group);
-
-$section->addInput(new Form_Checkbox(
-	'reverseacct',
-	'Accounting style',
-	'Invert Acct-Input-Octets and Acct-Output-Octets',
-	$pconfig['reverseacct']
-))->setHelp('When enabled, data counts for RADIUS accounting packets will be taken from the client perspective, not the NAS. ' .
-			'Acct-Input-Octets will represent download, and Acct-Output-Octets will represent upload.');
-
-$section->addInput(new Form_Checkbox(
-	'includeidletime',
-	'Idle time accounting',
-	'Include idle time when users get disconnected due to idle timeout',
-	$pconfig['includeidletime']
-))->setHelp('This setting change the stop time that will be send in the Accounting Stop request, when a user get disconnected after exceeding the idle timeout. ' .
-			'If not checked, the sent stop time will be the last activity time.');
-$form->add($section);
-
-$section = new Form_Section('HTTPS Options');
-$section->addClass('HTTPS');
-
-$section->addInput(new Form_Checkbox(
-	'httpslogin_enable',
-	'Login',
-	'Enable HTTPS login',
-	$pconfig['httpslogin_enable']
-))->setHelp('When enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. ' .
-			'A server name and certificate must also be specified below.');
-
-$section->addInput(new Form_Input(
-	'httpsname',
-	'*HTTPS server name',
-	'text',
-	$pconfig['httpsname']
-))->setHelp('This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in the certificate ' .
-			'(otherwise, the client browser will most likely display a security warning). ' .
-			'Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on pfSense.');
-
-$section->addInput(new Form_Select(
-	'certref',
-	'*SSL Certificate',
-	$pconfig['certref'],
-	build_cert_list()
-))->setHelp('If no certificates are defined, one may be defined here: %1$sSystem &gt; Cert. Manager%2$s', '<a href="system_certmanager.php">', '</a>');
-
-$section->addInput(new Form_Checkbox(
-	'nohttpsforwards',
-	'HTTPS Forwards',
-	'Disable HTTPS Forwards',
-	$pconfig['nohttpsforwards']
-))->setHelp('If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites will not be forwarded to the captive portal. ' .
-			'This prevents certificate errors from being presented to the user even if HTTPS logins are enabled. ' .
-			'Users must attempt a connecton to an HTTP (Port 80) site to get forwarded to the captive portal. ' .
-			'If HTTPS logins are enabled, the user will be redirected to the HTTPS login page.');
+	'customhtml',
+	'Use Custom HTML',
+	'Enable to use a custom captive portal login page',
+	$pconfig['customhtml']
+))->setHelp('If set the user will be responsible for uploading a portal.html file to be used. '.
+			'If unchecked it will use the default portal.html template');
 
 $form->add($section);
 
 $section = new Form_Section('HTML Page Contents');
-$section->addClass('HTML');
+$section->addClass('Custom-HTML');
 
 $section->addInput(new Form_Input(
 	'htmlfile',
@@ -1006,6 +838,290 @@ $section->addInput(new Form_Input(
 ));
 
 $form->add($section);
+
+$section = new Form_Section('Captive Portal Login Page');
+$section->addClass('Default-HTML');
+
+$section->addInput(new Form_Checkbox(
+	'customlogo',
+	'Use Custom Logo',
+	'Enable to use a custom uploaded logo',
+	$pconfig['customlogo']
+));
+
+$section->addInput(new Form_Input(
+	'logo-img',
+	'Logo Image',
+	'file',
+	''
+))->setHelp('Add a logo for use in the default portal login screen. File will be renamed captiveportal-logo.* The image will be resized to fit within the given area, It can be of any image type: .png, .jpg, .svg <strong>This image will not be stored in the config</strong>. The default logo will be used if no custom image is present.')->addClass("btn btn-info btn-sm");
+
+$section->addInput(new Form_Checkbox(
+	'custombg',
+	'Use Custom Background',
+	'Enable to use a custom uploaded background image',
+	$pconfig['custombg']
+));
+
+$section->addInput(new Form_Input(
+	'background-img',
+	'Background Image',
+	'file',
+	''
+))->setHelp('Add a background image for use in the default portal login screen. File will be renamed captiveportal-background.* The background image will fill the screen. <strong>This image will not be stored in the config</strong>. The default background image will be used if no custom background is present.')->addClass("btn btn-info btn-sm");
+
+$section->addInput(new Form_Textarea(
+	'termsconditions',
+	'Terms and Conditions',
+	$pconfig['termsconditions']
+	))->setHelp('Copy and paste terms and conditions for use in the captive portal.');
+
+$form->add($section);
+
+$section = new Form_Section('Authentication');
+$section->addClass('Authentication');
+
+$group = new Form_Group('*Authentication Method');
+
+$options['authserver'] = 'Use an Authentication backend';
+$options['none'] = 'None, don\'t authenticate users';
+$options['radmac'] = 'Use RADIUS MAC Authentication';
+
+$group->add(new Form_Select(
+	'auth_method',
+	'Authentication Method',
+	$pconfig['auth_method'],
+	$options
+))->setHelp('Select an Authentication Method to use for this zone. One method must be selected.<br />'.
+'- "Authentication backend" will force the login page to be displayed and will authenticate users using their login and password, or using vouchers.<br />'.
+'- "None" method will force the login page to be displayed but will accept any visitor that clicks the "submit" button.<br/>'.
+'- "RADIUS MAC Authentication" method will try to authenticate devices automatically with their MAC address without displaying any login page.');
+
+$section->add($group);
+
+$group = new Form_Group('*Authentication Server');
+$group->addClass('auth_server');
+
+$group->add(new Form_Select(
+	'auth_server',
+	'*Authentication Server',
+	$pconfig['auth_server'],
+	build_authserver_list(),
+	true
+))->setHelp("You can add a remote authentication server in the <a href=\"/system_authservers.php\">User Manager</a>.<br/>".
+	"<span class=\"vouchers_helptext\">Vouchers could also be used, please go to ".
+	"the <a href=\"services_captiveportal_vouchers.php?zone={$cpzone}\">Voutchers Page</a> to enable them.</span>");
+$section->add($group);
+
+$group = new Form_Group('Secondary authentication Server');
+$group->addClass('auth_server2');
+
+$group->add(new Form_Select(
+	'auth_server2',
+	'',
+	$pconfig['auth_server2'],
+	build_authserver_list(),
+	true
+))->setHelp("You can optionally select a second set of servers to to authenticate users. Users will then be able to login using separated HTML inputs.<br />".
+			"This setting is useful if you want to provide multiple authentication method to your users. If you don't need multiple authentication method, then leave this setting empty.");
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'reauthenticate',
+	'Reauthenticate Users',
+	'Reauthenticate connected users every minute',
+	$pconfig['reauthenticate']
+))->setHelp('If reauthentication is enabled, request are made to the server for each user that is logged in every minute. ' .
+			'If an access denied is received for a user, that user is disconnected from the captive portal immediately. ' .
+			'Reauthentication requires user credentials to be cached in the captive portal database while a user is logged in; ' .
+			'The cached credentials are necessary for the portal to perform automatic reauthentication requests.');
+
+
+
+$section->addInput(new Form_Checkbox(
+	'localauth_priv',
+	'Local Authentication Privileges',
+	'Allow only users/groups with "Captive portal login" privilege set',
+	$pconfig['localauth_priv']
+));
+
+
+$section->addInput(new Form_Input(
+	'radmac_secret',
+	'RADIUS MAC Secret',
+	'text',
+	$pconfig['radmac_secret']
+))->setHelp('RADIUS MAC will automatically try to authenticate devices with their MAC address as username, and the password entered below as password. Devices will still need to make one HTTP request to get connected, throught.');
+
+$section->addInput(new Form_Checkbox(
+	'radiussession_timeout',
+	'Session timeout',
+	'Use RADIUS Session-Timeout attributes',
+	$pconfig['radiussession_timeout']
+))->setHelp('When enabled, clients will be disconnected after the amount of time retrieved from the RADIUS Session-Timeout attribute.');
+
+$section->addInput(new Form_Checkbox(
+	'radiustraffic_quota',
+	'Traffic quota',
+	'Use RADIUS pfSense-Max-Total-Octets attribute',
+	$pconfig['radiustraffic_quota']
+))->setHelp('When enabled, clients will be disconnected after exceeding the amount of traffic, inclusive of both downloads and uploads, retrieved from the RADIUS pfSense-Max-Total-Octets attribute.');
+
+$section->addInput(new Form_Checkbox(
+	'radiusperuserbw',
+	'Per-user bandwidth restrictions',
+	'Use RADIUS pfSense-Bandwidth-Max-Up and pfSense-Bandwidth-Max-Down attributes',
+	$pconfig['radiusperuserbw']
+))->setHelp('When enabled, the bandwidth assigned to a client will be limited to the values retrieved from the RADIUS pfSense-Bandwidth-Max-Up and ' .
+			'pfSense-Bandwidth-Max-Down attributes or from the comparable WISPr attributes.');
+
+$section->addInput(new Form_Select(
+	'radmac_format',
+	'MAC address format',
+	$pconfig['radmac_format'],
+	['default' => 'Default', 'singledash' => gettext('Single dash'), 'ietf' => 'IETF', 'cisco' => 'Cisco', 'unformatted' => gettext('Unformatted')]
+))->setHelp('This option changes the MAC address format used when performing a RADIUS authentication. %1$s' .
+			'Default: 00:11:22:33:44:55 %1$s' .
+			'Single dash: 001122-334455 %1$s' .
+			'IETF: 00-11-22-33-44-55 %1$s' .
+			'Cisco: 0011.2233.4455 %1$s' .
+			'Unformatted: 001122334455', '<br />');
+
+$form->add($section);
+
+$section = new Form_Section('Accounting');
+$section->addClass('Accounting');
+
+$section->addInput(new Form_Checkbox(
+	'radacct_enable',
+	'RADIUS',
+	'Send RADIUS accounting packets.',
+	$pconfig['radacct_enable']
+))->setHelp('If enabled, accounting request will be made for users identified against any RADIUS server.');
+
+
+$options = array();
+
+foreach (auth_get_authserver_list() as $i => $auth) {
+	if ($auth['type'] == 'radius' && !empty($auth['radius_acct_port'])) {
+		$options[$auth['name']] = $auth['name'];
+	}
+}
+
+$group = new Form_Group('Accounting Server');
+
+
+$group->add(new Form_Select(
+	'radacct_server',
+	'Accounting Server',
+	$pconfig['radacct_server'],
+	$options
+));
+
+$group->addClass('radacct_enable');
+$group->setHelp('You can add a Radius Accounting server in the <a href="/system_authservers.php">User Manager</a>.');
+
+$section->add($group);
+
+$group = new Form_Group('Send accounting updates');
+
+$group->addClass('reauthenticateacct');
+
+$group->add(new Form_Checkbox(
+	'reauthenticateacct',
+	null,
+	'No updates',
+	$pconfig['reauthenticateacct'] == 'none',
+	"none"
+))->displayasRadio();
+
+$group->add(new Form_Checkbox(
+	'reauthenticateacct',
+	null,
+	'Stop/Start',
+	$pconfig['reauthenticateacct'] == 'stopstart',
+	"stopstart"
+))->displayasRadio();
+
+$group->add(new Form_Checkbox(
+	'reauthenticateacct',
+	null,
+	'Stop/Start (FreeRADIUS)',
+	$pconfig['reauthenticateacct'] == 'stopstartfreeradius',
+	"stopstartfreeradius"
+))->displayasRadio();
+
+$group->add(new Form_Checkbox(
+	'reauthenticateacct',
+	null,
+	'Interim',
+	$pconfig['reauthenticateacct'] == 'interimupdate',
+	"interimupdate"
+))->displayasRadio();
+
+$group->setHelp('This field set the way Accounting Updates should be done : <br />'.
+				'- If "No updates" is selected, then only one "Accounting Start" and one "Accounting Stop" request will be sent, when any user get connected and disconnected.<br />'.
+				'- If "Interim" is selected, then "Accounting Update" requests will be send regularly (every minute) to the RADIUS server, for each connected user.<br />'.
+				'- In some rare cases, you would like to simulate users to disconnect and reconnect every minute (eg, to send an Accounting Stop then an Accounting Start) instead of sending Accounting updates, this is the purpose of "Stop/Start" option. FreeRADIUS does not support this option very well, you should select "Stop/Start (FreeRADIUS)" instead.');
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'reverseacct',
+	'Accounting style',
+	'Invert Acct-Input-Octets and Acct-Output-Octets',
+	$pconfig['reverseacct']
+))->setHelp('When enabled, data counts for RADIUS accounting packets will be taken from the client perspective, not the NAS. ' .
+			'Acct-Input-Octets will represent download, and Acct-Output-Octets will represent upload.');
+
+$section->addInput(new Form_Checkbox(
+	'includeidletime',
+	'Idle time accounting',
+	'Include idle time when users get disconnected due to idle timeout',
+	$pconfig['includeidletime']
+))->setHelp('This setting change the stop time that will be send in the Accounting Stop request, when a user get disconnected after exceeding the idle timeout. ' .
+			'If not checked, the sent stop time will be the last activity time.');
+$form->add($section);
+
+$section = new Form_Section('HTTPS Options');
+$section->addClass('HTTPS');
+
+$section->addInput(new Form_Checkbox(
+	'httpslogin_enable',
+	'Login',
+	'Enable HTTPS login',
+	$pconfig['httpslogin_enable']
+))->setHelp('When enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. ' .
+			'A server name and certificate must also be specified below.');
+
+$section->addInput(new Form_Input(
+	'httpsname',
+	'*HTTPS server name',
+	'text',
+	$pconfig['httpsname']
+))->setHelp('This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in the certificate ' .
+			'(otherwise, the client browser will most likely display a security warning). ' .
+			'Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on pfSense.');
+
+$section->addInput(new Form_Select(
+	'certref',
+	'*SSL Certificate',
+	$pconfig['certref'],
+	build_cert_list()
+))->setHelp('If no certificates are defined, one may be defined here: %1$sSystem &gt; Cert. Manager%2$s', '<a href="system_certmanager.php">', '</a>');
+
+$section->addInput(new Form_Checkbox(
+	'nohttpsforwards',
+	'HTTPS Forwards',
+	'Disable HTTPS Forwards',
+	$pconfig['nohttpsforwards']
+))->setHelp('If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites will not be forwarded to the captive portal. ' .
+			'This prevents certificate errors from being presented to the user even if HTTPS logins are enabled. ' .
+			'Users must attempt a connecton to an HTTP (Port 80) site to get forwarded to the captive portal. ' .
+			'If HTTPS logins are enabled, the user will be redirected to the HTTPS login page.');
+
+$form->add($section);
+
 print($form);
 
 print_info_box(gettext('Don\'t forget to enable the DHCP server on the captive portal interface! ' .
@@ -1024,12 +1140,14 @@ events.push(function() {
 		hideHTTPS();
 		hideClass('HTTPS', hide);
 		hideClass('HTML', hide);
+		hideClass('Custom-HTML', (hide || !$('#customhtml').prop('checked')));
+		hideClass('Default-HTML', (hide || $('#customhtml').prop('checked')));
 		hideGeneral(hide);
 		hideClass('Accounting', hide);
 	}
 
 	function hideRadius(hide) {
-		hideCheckbox('radiussession_timeout', hide);	
+		hideCheckbox('radiussession_timeout', hide);
 		hideInput('radmac_format', hide);
 		hideCheckbox('radiusperuserbw', hide);
 		hideCheckbox('radiustraffic_quota', hide);
@@ -1061,28 +1179,29 @@ events.push(function() {
 		hideCheckbox('passthrumacadd', hide);
 		hideCheckbox('peruserbw', hide);
 		hideCheckbox('reauthenticate', hide);
+		hideCheckbox('customhtml', hide);
 	}
-	
-	function hideRadiusAccounting(radiusServerSelected, hide) { 
+
+	function hideRadiusAccounting(radiusServerSelected, hide) {
 		if(radiusServerSelected) return;
 
 		hideInput('radacct_server', hide);
 		hideClass('reauthenticateacct', hide);
 		hideCheckbox('reverseacct', hide);
-		hideCheckbox('includeidletime', hide);	
+		hideCheckbox('includeidletime', hide);
 	}
 
-	function hidePassthru(hide) { 
+	function hidePassthru(hide) {
 		if(!$('#enable').prop('checked')) {
 			hide = true;
 		}
 		else if(!hide) {
 			$('#logoutwin_enable').prop('checked', false);
 		}
-		
+
 		disableInput("logoutwin_enable", !hide);
 		hideCheckbox('passthrumacaddusername', hide);
-	}	
+	}
 
 	function hidePerUserBandwith(hide) {
 		if(!$('#enable').prop('checked')) {
@@ -1091,18 +1210,18 @@ events.push(function() {
 		hideInput('bwdefaultdn', hide);
 		hideInput('bwdefaultup', hide);
 	}
-	
+
 	function triggerChangesAuthMethod() {
 		if(!$('#enable').prop('checked')) return;
-		
+
 		let authserver_list = <?php echo json_encode(build_authserver_list()); ?>;
 		let auth_method =  $('#auth_method').val();
 		let saved_values = $('select[name="auth_server[]"]').val(); // we save the current list of selected servers
-		
+
 		if(auth_method.indexOf("authserver") === 0) {
 			// If authserver is selected : we display all the server list.
 			$('select[name="auth_server[]"]').find('option').remove();
-			$.each(authserver_list, function(key, value) { 
+			$.each(authserver_list, function(key, value) {
 				$('<option>').val(key).text(value).appendTo($('select[name="auth_server[]"]'));
 			});
 
@@ -1111,11 +1230,11 @@ events.push(function() {
 			hideInput('radmac_secret', true);
 			$('.auth_server .vouchers_helptext').removeClass('hidden');
 		}
-		else if(auth_method.indexOf("radmac") === 0) { 
+		else if(auth_method.indexOf("radmac") === 0) {
 			// If Radmac is selected : only RADIUS servers should be displayed
 			$('select[name="auth_server[]"]').find('option').remove();
-			
-			$.each(authserver_list, function(key, value) {  
+
+			$.each(authserver_list, function(key, value) {
 				if(key.indexOf("radius") === 0) {
 					$('<option>').val(key).text(value).appendTo($('select[name="auth_server[]"]'));
 				}
@@ -1131,26 +1250,26 @@ events.push(function() {
 			hideClass('auth_server', true);
 			hideInput('radmac_secret', true);
 		}
-		
-		
+
+
 		// we try to restore all previous selected servers
 		$.each(saved_values, function(key, value) {
 			$('select[name="auth_server[]"] option').filter(function(i, e) {return $(e).val() == value}).attr("selected", "selected");
 		});
-		
+
 		triggerChangesAuthServer();
 	}
 
 	function triggerChangesAuthServer() {
 		if(!$('#enable').prop('checked')) return;
-		
+
 		let shouldHideLocal = true;
 		let shouldHideRadius = true;
 		let shouldHideLdap = true;
 		let shouldHideSecondAuth = true;
-		
+
 		if($('#auth_method').val().indexOf("none") !== 0) {
-			$.each($('select[name="auth_server[]"]').val(), function(key,value) {  
+			$.each($('select[name="auth_server[]"]').val(), function(key,value) {
 				if(value.indexOf("radius") === 0) {
 					shouldHideRadius = false;
 				} else if(value.indexOf("ldap") === 0) {
@@ -1160,11 +1279,11 @@ events.push(function() {
 					shouldHideLocal = false;
 				}
 				if($('#auth_method').val().indexOf("authserver") === 0) { // There is no second auth possiblity when none/radmac are selected
-					shouldHideSecondAuth = false; 
+					shouldHideSecondAuth = false;
 				}
 			});
-			
-			$.each($('select[name="auth_server2[]"]').val(), function(key,value) {  
+
+			$.each($('select[name="auth_server2[]"]').val(), function(key,value) {
 				if(value.indexOf("radius") === 0) {
 					shouldHideRadius = false;
 				} else if(value.indexOf("ldap") === 0) {
@@ -1207,7 +1326,7 @@ events.push(function() {
 	$("#httpslogin_enable").click(function() {
 		hideHTTPS(!this.checked);
 	});
-	$("#nomacfilter").click(function() 
+	$("#nomacfilter").click(function()
 	{
 		let radmac_option = $('select[name="auth_method"] option[value="radmac"]');
 		if(this.checked) {
@@ -1219,7 +1338,7 @@ events.push(function() {
 			radmac_option.removeAttr('disabled');
 		}
 	});
-	
+
 
 	$("#peruserbw").click(function() {
 		hidePerUserBandwith(!this.checked);
@@ -1228,14 +1347,19 @@ events.push(function() {
 	$("#passthrumacadd").click(function() {
 		hidePassthru(!this.checked);
 	});
-	
+
+	$("#customhtml").click(function() {
+		hideClass('Custom-HTML', !this.checked);
+		hideClass('Default-HTML', this.checked);
+	})
+
 	// ---------- On initial page load ------------------------------------------------------------
 	hideSections(!$('#enable').prop('checked'));
 	hidePerUserBandwith(!$("#peruserbw").prop('checked'));
 	hidePassthru(!$("#passthrumacadd").prop('checked'));
 	triggerChangesAuthMethod();
 	triggerChangesAuthServer();
-	
+
 });
 //]]>
 </script>

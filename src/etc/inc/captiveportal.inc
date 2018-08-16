@@ -42,113 +42,105 @@ define("GIGAWORDS_RIGHT_OPERAND", '4294967296'); // 2^32
 function get_default_captive_portal_html() {
 	global $config, $g, $cpzone;
 
-	$translated_text1 = sprintf(gettext("%s captive portal"), $g['product_name']);
-	$translated_text2 = sprintf(gettext("Welcome to the %s Captive Portal!"), $g['product_name']);
-	$translated_text3 = gettext("Username:");
-	$translated_text4 = gettext("Password:");
-	$translated_text5 = gettext("First Authentication Method:");
-	$translated_text6 = gettext("Second Authentication Method:");
+	$translated_text1 = gettext("User");
+	$translated_text2 = gettext("Password");
+	// default images to use.
+	$logo_src = "captiveportal-default-logo.png";
+	$bg_src = "linear-gradient(135deg, #1475CF, #2B40B5, #1C1275)";
+	// Check if customlogo is set and if the element exists
+	// Check if the image is in the directory
+	if (isset($config['captiveportal'][$cpzone]['customlogo'])) {
+		foreach ($config['captiveportal'][$cpzone]['element'] as $element) {
+			if (strpos($element['name'], "captiveportal-logo.") !== false) {
+				if (file_exists("{$g['captiveportal_path']}/{$element['name']}")) {
+					$logo_src = $element['name'];
+					break;
+				}
+			}
+		}
+	}
+	// check if custombg is set and if the element exists
+	if (isset($config['captiveportal'][$cpzone]['custombg'])) {
+		foreach ($config['captiveportal'][$cpzone]['element'] as $element) {
+			if (strpos($element['name'],"captiveportal-background.") !== false) {
+				if( file_exists("{$g['captiveportal_path']}/{$element['name']}")) {
+					$bg_src = "url(" . $element['name'] . ")" . "center center no-repeat fixed";
+					break;
+				}
+			}
+		}
+
+	}
+	// bring in terms and conditions
+	$termsconditions = base64_decode($config['captiveportal'][$cpzone]['termsconditions']);
+	// if there is no terms and conditions do not require the checkbox to be selected.
+	$disabled = "";
+	if ($termsconditions) {
+		$disabled = "disabled";
+	}
 	$htmltext = <<<EOD
+<!DOCTYPE html>
 <html>
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Captive Portal Login Page</title>
+  <style>
+	  #content,.login,.login-card a,.login-card h1,.login-help{text-align:center}body,html{margin:0;padding:0;width:100%;height:100%;display:table}#content{font-family:'Source Sans Pro',sans-serif;background:{$bg_src};-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;display:table-cell;vertical-align:middle}.login-card{padding:40px;width:280px;background-color:#F7F7F7;margin:100px auto 10px;border-radius:2px;box-shadow:0 2px 2px rgba(0,0,0,.3);overflow:hidden}.login-card h1{font-weight:400;font-size:2.3em;color:#1383c6}.login-card h1 span{color:#f26721}.login-card img{width:70%;height:70%}.login-card input[type=submit]{width:100%;display:block;margin-bottom:10px;position:relative}.login-card input[type=text],input[type=password]{height:44px;font-size:16px;width:100%;margin-bottom:10px;-webkit-appearance:none;background:#fff;border:1px solid #d9d9d9;border-top:1px solid silver;padding:0 8px;box-sizing:border-box;-moz-box-sizing:border-box}.login-card input[type=text]:hover,input[type=password]:hover{border:1px solid #b9b9b9;border-top:1px solid #a0a0a0;-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}.login{font-size:14px;font-family:Arial,sans-serif;font-weight:700;height:36px;padding:0 8px}.login-submit{-webkit-appearance:none;-moz-appearance:none;appearance:none;border:0;color:#fff;text-shadow:0 1px rgba(0,0,0,.1);background-color:#4d90fe}.login-submit:disabled{opacity:.6}.login-submit:hover{border:0;text-shadow:0 1px rgba(0,0,0,.3);background-color:#357ae8}.login-card a{text-decoration:none;color:#222;font-weight:400;display:inline-block;opacity:.6;transition:opacity ease .5s}.login-card a:hover{opacity:1}.login-help{width:100%;font-size:12px}.list{list-style-type:none;padding:0}.list__item{margin:0 0 .7rem;padding:0}label{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;text-align:left;font-size:14px;}input[type=checkbox]{-webkit-box-flex:0;-webkit-flex:none;-ms-flex:none;flex:none;margin-right:10px;float:left}@media screen and (max-width:450px){.login-card{width:70%!important}.login-card img{width:30%;height:30%}}textarea{width:66%;margin:auto;height:300px;}#terms{display:none;padding-top:100px;padding-bottom:300px;}
+  </style>
+</head>
+
 <body>
-<form method="post" action="\$PORTAL_ACTION\$">
-	<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
-	<input name="zone" type="hidden" value="\$PORTAL_ZONE\$">
-	<center>
-	<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
-	<tr height="10" style="background-color:#990000">
-		<td style="border-bottom:1px solid #000000">
-			<font color='white'>
-			<b>
-				{$translated_text1}
-			</b>
-			</font>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="mainlevel">
-			<center>
-			<table width="100%" border="0" cellpadding="5" cellspacing="0">
-			<tr>
-				<td>
-					<center>
-					<div id="mainarea">
-					<center>
-					<table width="100%" border="0" cellpadding="5" cellspacing="5">
-					<tr>
-						<td>
-							<div id="maindivarea">
-							<center>
-								<div id='statusbox'>
-									<font color='red' face='arial' size='+1'>
-									<b>
-										\$PORTAL_MESSAGE\$
-									</b>
-									</font>
-								</div>
-								<br />
-								<div id='loginbox'>
-								<table>
-									<tr><td colspan="2"><center>{$translated_text2}</td></tr>
-									<tr><td>&nbsp;</td></tr>
+<div id="content">
+	<div class="login-card">
+		<img src="{$logo_src}"/><br>
+ 		<h1></h1>
+	  <form name="login_form" method="post" action="\$PORTAL_ACTION\$">
 EOD;
-	if ($config['captiveportal'][$cpzone]['auth_method'] === 'authserver' && !empty($config['captiveportal'][$cpzone]['auth_server2'])) {
-		$htmltext .= <<<EOD
-									<tr><td class="text-right">{$translated_text5}</td></tr>
+	if ($config['captiveportal'][$cpzone]['auth_method'] != "none"){
+		$htmltext .=<<<EOD
+		<input type="text" name="auth_user" placeholder="{$translated_text1}" id="auth_user">
+		<input type="password" name="auth_pass" placeholder="{$translated_text2}" id="auth_pass">
 EOD;
+
+
+		if (isset($config['voucher'][$cpzone]['enable'])) {
+			$translated_text = gettext("Voucher Code");
+			$htmltext .= <<<EOD
+								<input name="auth_voucher" type="text" placeholder="{$translated_text}">
+EOD;
+		}
 	}
+
+if ($termsconditions) {
 	$htmltext .= <<<EOD
-									<tr><td class="text-right">{$translated_text3}</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
-									<tr><td class="text-right">{$translated_text4}</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
-									<tr><td>&nbsp;</td></tr>
+		  <div class="login-help">
+			<ul class="list">
+				<li class="list__item">
+				  <label class="label--checkbox">
+					<input type="checkbox" class="checkbox" onchange="document.getElementById('login').disabled = !this.checked;">
+					<span>I agree with the <a  rel="noopener" href="#" onclick="document.getElementById('terms').style.display = 'block';">terms & conditions</a></span>
+				  </label>
+				</li>
+			</ul>
+		  </div>
 EOD;
-
-	if ($config['captiveportal'][$cpzone]['auth_method'] === 'authserver' && !empty($config['captiveportal'][$cpzone]['auth_server2'])) {
-		$htmltext .= <<<EOD
-									<tr><td class="text-right">{$translated_text6}</td></tr>
-									<tr><td class="text-right">{$translated_text3}</td><td><input name="auth_user2" type="text" style="border: 1px dashed;"></td></tr>
-									<tr><td class="text-right">{$translated_text4}</td><td><input name="auth_pass2" type="password" style="border: 1px dashed;"></td></tr>
-									<tr><td>&nbsp;</td></tr>
-EOD;
-	}
-
-	if (isset($config['voucher'][$cpzone]['enable'])) {
-		$translated_text = gettext("Enter Voucher Code:");
-		$htmltext .= <<<EOD
-									<tr>
-										<td class="text-right">{$translated_text} </td>
-										<td><input name="auth_voucher" type="text" style="border:1px dashed;" size="22"></td>
-									</tr>
-
-EOD;
-	}
-
-	$translated_text = gettext("Continue");
+}
 	$htmltext .= <<<EOD
-									<tr>
-										<td colspan="2"><center><input name="accept" type="submit" value="{$translated_text}"></center></td>
-									</tr>
-								</table>
-								</div>
-							</center>
-							</div>
-						</td>
-					</tr>
-					</table>
-					</center>
-					</div>
-					</center>
-				</td>
-			</tr>
-			</table>
-			</center>
-			</div>
-		</td>
-	</tr>
-	</table>
-	</center>
-</form>
+
+		<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
+		<input type="submit" name="accept" class="login login-submit" value="Login" id="login" {$disabled}>
+	  </form>
+	  <br  />
+	  <span> <i>Made with &hearts; by</i> <strong>Netgate</strong></span>
+	</div>
+	<div id="terms">
+		<textarea readonly>{$termsconditions}</textarea>
+	</div>
+</div>
 </body>
 </html>
 
@@ -940,7 +932,7 @@ function captiveportal_prune_old() {
 					$cpentry[4], // username
 					base64_decode($cpentry[6]), // password
 					$cpentry[3], // clientmac
-					$cpentry[2], // clientip 
+					$cpentry[2], // clientip
 					$cpentry[1], // ruleno
 					$cpentry[13]); // context
 				if ($auth_result['result'] === false) {
@@ -1081,7 +1073,7 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null) {
 		} else {
 			$start_time = $dbent[0];
 		}
-		captiveportal_send_server_accounting('stop', 
+		captiveportal_send_server_accounting('stop',
 			$dbent[1], // ruleno
 			$dbent[4], // username
 			$dbent[2], // clientip
@@ -1216,7 +1208,7 @@ function captiveportal_radius_stop_all($term_cause = 6, $logoutReason = "DISCONN
 			} else {
 				$start_time = $cpentry[0];
 			}
-			captiveportal_send_server_accounting('stop', 
+			captiveportal_send_server_accounting('stop',
 				$cpentry[1], // ruleno
 				$cpentry[4], // username
 				$cpentry[2], // clientip
@@ -1521,28 +1513,28 @@ function captiveportal_syslog($message) {
 function captiveportal_authenticate_user(&$login = '', &$password = '', $clientmac = '', $clientip = '', $pipeno = 'null', $context = 'first') {
 	global $g, $config, $cpzone;
 	$cpcfg = $config['captiveportal'][$cpzone];
-	
+
 	$login_status = 'FAILURE';
 	$login_msg = gettext('Invalid credentials specified');
 	$reply_attributes = array();
 	$auth_method = '';
 	$auth_result = null;
-	
-	/*  
-	Management of the reply Message (reason why the authentication failed) : 
+
+	/*
+	Management of the reply Message (reason why the authentication failed) :
 	multiple authentication servers can be used, so multiple reply messages could theoretically be returned.
 	But only one message is returned (the most important one).
 	The return value of authenticate_user() define how important messages are :
-		- Reply message of a successful auth is more important than reply message of 
+		- Reply message of a successful auth is more important than reply message of
 		a user failed auth(invalid credentials/authorization)
-			  
-		- Reply message of a user failed auth is more important than reply message of 
+
+		- Reply message of a user failed auth is more important than reply message of
 		a server failed auth (unable to contact server)
-		
+
 		- When multiple user failed auth are encountered, messages returned by remote servers
 		(eg. reply in RADIUS Access-Reject) are more important than pfSense error messages.
-		  
-	The $authlevel variable is a flag indicating the status of authentication 
+
+	The $authlevel variable is a flag indicating the status of authentication
 	0 = failed server auth
 	1 = failed user auth
 	2 = failed user auth with custom server reply recieved
@@ -1552,7 +1544,7 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 
 	/* Getting authentication servers from captiveportal configuration */
 	$auth_servers = array();
-	
+
 	if ($cpcfg['auth_method'] === 'none') {
 		$auth_servers[] = array('type' => 'none');
 	} else {
@@ -1567,7 +1559,7 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 				$authserver = explode(' - ', $authserver);
 				array_shift($authserver);
 				$authserver = implode(' - ', $authserver);
-				
+
 				if (auth_get_authserver($authserver) !== null) {
 					$auth_servers[] = auth_get_authserver($authserver);
 				} else {
@@ -1592,11 +1584,11 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 				if (mac_format($clientmac) !== null) {
 					$attributes["calling_station_id"] = mac_format($clientmac);
 				}
-				
+
 				$result = null;
 				$status = null;
 				$msg = null;
-				
+
 				/* Radius MAC authentication */
 				if ($cpcfg['auth_method'] === 'radmac' && $clientmac) {
 					if ($authcfg['type'] === 'radius') {
@@ -1611,25 +1603,25 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 						$result = null;
 					}
 				}
-				
+
 				if (!$radmac_error) {
 					if ($authcfg['type'] === 'none') {
 						$result = true;
 					} else {
 						$result = authenticate_user($login, $password, $authcfg, $attributes);
 					}
-					
+
 					if (!empty($attributes['error_message'])) {
 						$msg = $attributes['error_message'];
 					}
-					
+
 					if ($authcfg['type'] == 'Local Auth' && $result && isset($cpcfg['localauth_priv'])) {
 						if (!userHasPrivilege(getUserEntry($login), "user-services-captiveportal-login")) {
 							$result = false;
 							$msg = gettext("Access Denied");
 						}
 					}
-					
+
 					if (empty($status)) {
 						if ($result === true) {
 							$status = "ACCEPT";
@@ -1639,10 +1631,10 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 							$status = "FAILURE";
 						}
 					}
-					
+
 					if ($cpcfg['auth_method'] === 'radmac' && $login == mac_format($clientmac) || $authcfg['type'] === 'none' && empty($login)) {
 						$login = "unauthenticated";
-					} 
+					}
 					// We determine a flag
 					if ($result === true) {
 						$val = 3;
@@ -1655,7 +1647,7 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 						$val = 0;
 					}
 				}
-				
+
 				if ($val >= $auth_val) {
 					$auth_val = $val;
 					$auth_method = $authcfg['type'];
@@ -1842,6 +1834,9 @@ function captiveportal_write_elements() {
 	if (is_array($cpcfg['element'])) {
 		foreach ($cpcfg['element'] as $data) {
 			/* Do not attempt to decode or write out empty files. */
+			if (isset($data['nocontent'])) {
+					continue;
+			}
 			if (empty($data['content']) || empty(base64_decode($data['content']))) {
 				unlink_if_exists("{$g['captiveportal_element_path']}/{$data['name']}");
 				touch("{$g['captiveportal_element_path']}/{$data['name']}");
@@ -2612,7 +2607,7 @@ function gigawords($bytes) {
 function remainder($bytes) {
 	// Calculate the bytes we are going to send to the radius
 	$bytes = bcmod($bytes, GIGAWORDS_RIGHT_OPERAND);
-	
+
 	if (is_null($bytes)) {
 		$bytes = 0;
 	}
@@ -2625,11 +2620,11 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 
 	$cpcfg = $config['captiveportal'][$cpzone];
 	$acctcfg = auth_get_authserver($cpcfg['radacct_server']);
-	
+
 	if (!isset($cpcfg['radacct_enable']) || empty($acctcfg)) {
 		return null;
 	}
-	
+
 	if ($type === 'on') {
 		$racct = new Auth_RADIUS_Acct_On;
 	} elseif ($type === 'off') {
@@ -2655,7 +2650,7 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 
 	$racct->addServer($acctcfg['host'], $acctcfg['radius_acct_port'],
 		$acctcfg['radius_secret'], $acctcfg['radius_timeout']);
-	
+
 	$racct->authentic = RADIUS_AUTH_RADIUS;
 	if (!empty($username)) {
 		$racct->username = $username;
@@ -2666,10 +2661,10 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 		$racct->close();
 		return null;
 	}
-	
+
 	$nasip = $acctcfg['radius_nasip_attribute'];
 	if (!is_ipaddr($nasip)) {
-		$nasip = get_interface_ip($nasip);	
+		$nasip = get_interface_ip($nasip);
 		if (!is_ipaddr($nasip)) {
 			$nasip = get_interface_ip();//We use WAN interface IP as fallback for NAS-IP-Address
 		}
@@ -2677,12 +2672,12 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 	$nasmac = get_interface_mac(find_ip_interface($nasip));
 	$racct->putAttribute(RADIUS_NAS_IP_ADDRESS, $nasip, "addr");
 	$racct->putAttribute(RADIUS_NAS_IDENTIFIER, 'CaptivePortal');
-	
+
 	if (is_int($ruleno)) {
 		$racct->putAttribute(RADIUS_NAS_PORT_TYPE, RADIUS_ETHERNET);
 		$racct->putAttribute(RADIUS_NAS_PORT, intval($ruleno), 'integer');
 	}
-	
+
 	if (!empty($sessionid)) {
 		$racct->putAttribute(RADIUS_ACCT_SESSION_ID, $sessionid);
 	}
@@ -2696,7 +2691,7 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 	if (!empty($nasmac)) {
 		$racct->putAttribute(RADIUS_CALLED_STATION_ID, mac_format($nasmac).':'.gethostname());
 	}
-	
+
 	// Accounting request Stop and Update : send the current data volume
 	if (($type === 'stop' || $type === 'update') && is_int($start_time)) {
 		$volume = getVolume($clientip);
@@ -2713,20 +2708,20 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 		$racct->putAttribute(RADIUS_ACCT_OUTPUT_PACKETS, intval($volume['output_pkts']), "integer");
 		$racct->putAttribute(RADIUS_ACCT_OUTPUT_OCTETS, intval($volume['output_bytes_radius']), "integer");
 		$racct->putAttribute(RADIUS_ACCT_SESSION_TIME, intval($session_time), "integer");
-		
+
 		$racct->putAttribute(CUSTOM_RADIUS_ACCT_OUTPUT_GIGAWORDS, intval($volume['output_gigawords']), "integer");
 		$racct->putAttribute(CUSTOM_RADIUS_ACCT_INPUT_GIGAWORDS, intval($volume['input_gigawords']), "integer");
 		// Set session_time
 		$racct->session_time = $session_time;
 	}
-	
+
 	if ($type === 'stop') {
 		if (empty($term_cause)) {
 			$term_cause = 1;
 		}
 		$racct->putAttribute(RADIUS_ACCT_TERMINATE_CAUSE, $term_cause);
 	}
-    
+
 	// Send request
 	$result = $racct->send();
 

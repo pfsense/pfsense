@@ -75,8 +75,20 @@ $a_element =& $a_cp[$cpzone]['element'];
 
 // Calculate total size of all files
 $total_size = 0;
-foreach ($a_element as $element) {
-	$total_size += $element['size'];
+for ($i = 0; $i < count($a_element); $i++) {
+
+	// if the image in the directory does not exist remove it from config
+	if(!file_exists("{$g['captiveportal_path']}/" . $a_element[$i]['name'])){
+		@unlink("{$g['captiveportal_element_path']}/" . $a_element[$i]['name']);
+		// remove from list and reorder array.
+		unset($a_element[$i]);
+		$a_element = array_values($a_element);
+		continue;
+	}
+	if(!isset($a_element[$i]['nocontent'])) {
+		$total_size += $a_element[$i]['size'];
+	}
+
 }
 
 if ($_POST['Submit']) {

@@ -129,16 +129,30 @@ $type_disabled = (substr($wancfg['if'], 0, 3) == 'gre') ? 'disabled' : '';
 
 $switch_uplink = false;
 if (platform_has_switch()) {
+	$parent = $wancfg['if'];
 	$switch_uplink_ports = switch_get_uplink_ports();
-	if (interface_is_vlan($wancfg['if']) != NULL) {
-		$parent_array = get_parent_interface($wancfg['if']);
-		$realif = get_real_interface($parent_array[0]);
+	while (interface_is_vlan($parent) != NULL || interface_is_lagg($parent) != NULL) {
+		$parent_array = get_parent_interface($parent);
+		if (count($parent_array) > 1) {
+			$parent = $parent_array;
+		} else {
+			$parent = $parent_array[0];
+		}
+	}
+	if (is_array($parent)) {
+		$realif = $parent;
+		foreach ($realif as $uplink) {
+			if (is_array($switch_uplink_ports) && in_array($uplink, $switch_uplink_ports)) {
+				$switch_uplink = true;
+			}
+		}
 	} else {
-		$realif = get_real_interface($wancfg['if']);
+		$realif = get_real_interface($parent);
+		if (is_array($switch_uplink_ports) && in_array($realif, $switch_uplink_ports)) {
+			$switch_uplink = true;
+		}
 	}
-	if (is_array($switch_uplink_ports) && in_array($realif, $switch_uplink_ports)) {
-		$switch_uplink = true;
-	}
+
 	/* List of available switches.  XXX. */
 	$swdevices = switch_get_devices();
 	$swinfo = pfSense_etherswitch_getinfo($swdevices[0]);

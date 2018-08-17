@@ -407,7 +407,7 @@ if ($_POST['save']) {
 		} else {
 			unset($newcp['custombg']);
 		}
-		$newcp['termsconditions'] = base64_encode(htmlspecialchars($_POST['termsconditions']));
+		$newcp['termsconditions'] = base64_encode(strip_tags($_POST['termsconditions']));
 		if (!is_array($newcp['page'])) {
 			$newcp['page'] = array();
 		}
@@ -874,7 +874,7 @@ $section->addInput(new Form_Textarea(
 	'termsconditions',
 	'Terms and Conditions',
 	$pconfig['termsconditions']
-	))->setHelp('Copy and paste terms and conditions for use in the captive portal.');
+	))->setHelp('Copy and paste terms and conditions for use in the captive portal. HTML tags will be stripped out');
 
 $form->add($section);
 

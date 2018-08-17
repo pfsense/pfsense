@@ -694,11 +694,10 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Checkbox(
 	'customhtml',
-	'Use Custom HTML',
+	'Use custom captive portal page',
 	'Enable to use a custom captive portal login page',
 	$pconfig['customhtml']
-))->setHelp('If set the user will be responsible for uploading a portal.html file to be used. '.
-			'If unchecked it will use the default portal.html template');
+))->setHelp('If set a portal.html page must be created and uploaded. If unchecked the default template will be used');
 
 $form->add($section);
 
@@ -844,7 +843,7 @@ $section->addClass('Default-HTML');
 
 $section->addInput(new Form_Checkbox(
 	'customlogo',
-	'Use Custom Logo',
+	'Display custom logo image',
 	'Enable to use a custom uploaded logo',
 	$pconfig['customlogo']
 ));
@@ -858,7 +857,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Checkbox(
 	'custombg',
-	'Use Custom Background',
+	'Display custom background image',
 	'Enable to use a custom uploaded background image',
 	$pconfig['custombg']
 ));

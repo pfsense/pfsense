@@ -40,7 +40,9 @@ if (file_exists("/etc/ca_countries")) {
 function step1_stepsubmitbeforesave() {
 	global $stepid, $config;
 	if (($_POST['authtype'] != NULL) && ($_POST['authtype'] != $config['ovpnserver']['step1']['type'])) {
-		unset($config['ovpnserver']['step2']);
+		if (isset($config['ovpnserver']['step2'])) {
+			unset($config['ovpnserver']['step2']);
+		}
 	}
 }
 
@@ -54,7 +56,9 @@ function step1_submitphpaction() {
 	} else if ($_POST['authtype'] == "radius") {
 		$stepid = 2;
 		$config['ovpnserver']['step1']['type'] = "radius";
-		unset($config['ovpnserver']['step1']['uselist']);
+		if (isset($config['ovpnserver']['step1']['uselist'])) {
+			unset($config['ovpnserver']['step1']['uselist']);
+		}
 	}
 }
 
@@ -189,7 +193,9 @@ function step6_submitphpaction() {
 
 	if (isset($_POST['next'])) {
 		$_POST['uselist'] = "";
-		unset($config['ovpnserver']['step6']['uselist']);
+		if (isset($config['ovpnserver']['step6']['uselist'])) {
+			unset($config['ovpnserver']['step6']['uselist']);
+		}
 		$stepid++;
 	} else {
 		$config['ovpnserver']['step6']['uselist'] = "on";
@@ -243,7 +249,9 @@ function step8_submitphpaction() {
 
 	if (isset($_POST['next'])) {
 		$_POST['uselist'] = "";
-		unset($config['ovpnserver']['step9']['uselist']);
+		if (isset($config['ovpnserver']['step9']['uselist'])) {
+			unset($config['ovpnserver']['step9']['uselist']);
+		}
 		$stepid++;
 	} else {
 		$config['ovpnserver']['step9']['uselist'] = "on";

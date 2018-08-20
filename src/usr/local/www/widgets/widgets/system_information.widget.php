@@ -32,6 +32,7 @@ include_once("includes/functions.inc.php");
 
 $sysinfo_items = array(
 	'name' => gettext('Name'),
+	'user' => gettext('User'),
 	'system' => gettext('System'),
 	'bios' => gettext('BIOS'),
 	'version' => gettext('Version'),
@@ -153,6 +154,14 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			<th><?=gettext("Name");?></th>
 			<td><?php echo htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']); ?></td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('user', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("User");?></th>
+			<td><?php echo htmlspecialchars(get_config_user()); ?></td>
 <?php
 	endif;
 	if (!in_array('system', $skipsysinfoitems)):

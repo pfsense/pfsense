@@ -588,7 +588,7 @@ function default_switch_configure() {
 		}
 	}
 
-	/* Set PVID. */
+	/* Set the Switch port PVID, state and media. */
 	$swports = $switch['swports']['swport'];
 	if (!isset($swports) || !is_array($swports)) {
 		return;
@@ -598,12 +598,15 @@ function default_switch_configure() {
 			pfSense_etherswitch_setport($switch['device'],
 			    $swport['port'], $swport['pvid']);
 		}
-	}
-
-	/* Set the switch port state. */
-	foreach($swports as $pid => $swport) {
 		if (isset($swport['state'])) {
-			mwexec("/sbin/etherswitchcfg port{$swport['port']} {$swport['state']}");
+			mwexec("/sbin/etherswitchcfg -f {$switch['device']} port{$swport['port']} {$swport['state']}");
+		}
+		if (isset($swport['media'])) {
+			$media = "media {$swport['media']}";
+			if (isset($swport['mediaopt'])) {
+				$media .= " mediaopt {$swport['mediaopt']}";
+			}
+			mwexec("/sbin/etherswitchcfg -f {$switch['device']} port{$swport['port']} {$media}");
 		}
 	}
 }

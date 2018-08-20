@@ -1931,13 +1931,19 @@ function session_auth() {
 			session_regenerate_id();
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['remoteauth'] = $remoteauth;
+			if ($remoteauth) {
+				$_SESSION['authsource'] = ($authcfg['type'] == "Local Auth") ? "" : strtoupper(gettext($authcfg['type'])) . '/';
+				$_SESSION['authsource'] .= "{$authcfg['name']}";
+			} else {
+				$_SESSION['authsource'] = gettext('Local Database Fallback') ;
+			}
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['user_radius_attributes'] = $attributes;
 			$_SESSION['last_access'] = time();
 			$_SESSION['protocol'] = $config['system']['webgui']['protocol'];
 			phpsession_end(true);
 			if (!isset($config['system']['webgui']['quietlogin'])) {
-				log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
+				log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], get_user_remote_address() . get_user_remote_authsource()));
 			}
 			if (isset($_POST['postafterlogin'])) {
 				return true;
@@ -1951,7 +1957,7 @@ function session_auth() {
 		} else {
 			/* give the user an error message */
 			$_SESSION['Login_Error'] = gettext("Username or Password incorrect");
-			log_auth("webConfigurator authentication error for '{$_POST['usernamefld']}' from {$_SERVER['REMOTE_ADDR']}");
+			log_auth(sprintf(gettext("webConfigurator authentication error for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], get_user_remote_address() . get_user_remote_authsource()));
 			if (isAjax()) {
 				echo "showajaxmessage('{$_SESSION['Login_Error']}');";
 				return;
@@ -1996,9 +2002,9 @@ function session_auth() {
 	if (isset($_POST['logout'])) {
 
 		if ($_SESSION['Logout']) {
-			log_error(sprintf(gettext("Session timed out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], $_SERVER['REMOTE_ADDR']));
+			log_error(sprintf(gettext("Session timed out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], get_user_remote_address() . get_user_remote_authsource()));
 		} else {
-			log_error(sprintf(gettext("User logged out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], $_SERVER['REMOTE_ADDR']));
+			log_error(sprintf(gettext("User logged out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], get_user_remote_address() . get_user_remote_authsource()));
 		}
 
 		/* wipe out $_SESSION */
@@ -2052,5 +2058,21 @@ function print_credit() {
 			'<a target="_blank" href="https://netgate.com">Netgate. </a>' . ' &copy; ESF ' . $g["product_copyright_years"] .
 			'<a target="_blank" href="https://pfsense.org/license">' .
 			gettext(' View license.') . '</a>';
+}
+function get_user_remote_address() {
+	$remote_address = $_SERVER['REMOTE_ADDR'];
+	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+		$remote_address .= "[{$_SERVER['HTTP_CLIENT_IP']}]";
+	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		$remote_address .= "[{$_SERVER['HTTP_X_FORWARDED_FOR']}]";
+	}
+	return $remote_address;
+}
+function get_user_remote_authsource() {
+	$authsource = "";
+	if (!empty($_SESSION['authsource'])) {
+		$authsource .= " ({$_SESSION['authsource']})";
+	}
+	return $authsource;
 }
 ?>

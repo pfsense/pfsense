@@ -466,7 +466,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		if (!empty($_SESSION['Username']) && ($_SESSION['Username'] != "admin")) {
 			$user = getUserEntry($_SESSION['Username']);
 			if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
-				syslog(LOG_AUTHPRIV, sprintf(gettext("Save config permission denied by the 'User - Config: Deny Config Write' permission for user '%s'."), $_SESSION['Username']));
+				syslog(LOG_AUTHPRIV, sprintf(gettext("Save config permission denied by the 'User - Config: Deny Config Write' permission for user '%s'."), get_config_user()));
 				phpsession_end(true);
 				return false;
 			}
@@ -903,7 +903,7 @@ function get_config_user() {
 	}
 
 	if (!empty($_SERVER['REMOTE_ADDR'])) {
-		$username .= '@' . $_SERVER['REMOTE_ADDR'];
+		$username .= '@' . get_user_remote_address() . get_user_remote_authsource();
 	}
 
 	return $username;

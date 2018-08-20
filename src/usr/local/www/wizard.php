@@ -176,8 +176,16 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
 	}
-	$text .= "\$thisvar = &\$config" . $field_conv . ";";
-	eval($text);
+
+	// Verify that the needed $config element exists
+	$text = 'return (isset($config' . $field_conv . '));';
+	file_put_contents("/tmp/wizard.dbg", $text . "\n", FILE_APPEND);
+
+	if (eval($text)) {
+		$text .= "\$thisvar = &\$config" . $field_conv . ";";
+		eval($text);
+	}
+
 	$thisvar = $updatetext;
 }
 

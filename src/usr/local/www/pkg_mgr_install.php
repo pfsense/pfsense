@@ -608,23 +608,26 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 	}
 
 	if (isset($params)) {
-		$upgrade_script = "{$pfsense_upgrade} -y -l " .
-		    "{$logfilename}.txt -p {$sock_file}";
+		for ($idx = 0; $idx < 3; $idx++) {
+			$upgrade_script = "{$pfsense_upgrade} -y -l " .
+			    "{$logfilename}.txt -p {$sock_file}";
 
-		unlink_if_exists($sock_file);
-		$execpid = mwexec_bg("{$upgrade_script} {$params}");
+			unlink_if_exists($sock_file);
+			$execpid = mwexec_bg("{$upgrade_script} {$params}");
 
-		// Make sure the upgrade process starts
-		while (posix_kill($execpid, 0) && !file_exists(
-		    $sock_file)) {
-			sleep(1);
-		}
+			// Make sure the upgrade process starts
+			while (posix_kill($execpid, 0) && !file_exists(
+			    $sock_file)) {
+				sleep(1);
+			}
 
-		if (posix_kill($execpid, 0) && file_exists(
-		    $sock_file)) {
-			$start_polling = true;
-			@file_put_contents($gui_pidfile, $execpid);
-			@file_put_contents($gui_mode, $mode);
+			if (posix_kill($execpid, 0) && file_exists(
+			    $sock_file)) {
+				$start_polling = true;
+				@file_put_contents($gui_pidfile, $execpid);
+				@file_put_contents($gui_mode, $mode);
+				break;
+			}
 		}
 	}
 }

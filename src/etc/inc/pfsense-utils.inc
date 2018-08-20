@@ -3386,4 +3386,36 @@ function addrtolower($ip) {
 function compare_by_name($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
 }
+
+/****f* pfsense-utils/getarraybyref
+ * NAME
+ *   getarraybyref
+ * INPUTS
+ *   $array the array of which a items array needs to be found. 
+ *   $args.. the sub-items to be retrieved/created
+ * RESULT
+ *   returns the array that was retrieved from configuration, its created if it does not exist
+ * NOTES
+ *   Used by haproxy / acme / others.?. . 
+ *   can be used like this:  $a_certificates = getarraybyref($config, 'installedpackages', 'acme', 'certificates', 'item');
+ ******/
+function &getarraybyref(&$array) {
+	if (!isset($array)) {
+		return false;
+	}
+	if (!is_array($array)) {
+		$array = array();
+	}
+	$item = &$array;
+	$arg = func_get_args();
+	for($i = 1; $i < count($arg); $i++) {
+		$itemindex = $arg[$i];
+		if (!is_array($item[$itemindex])) {
+			$item[$itemindex] = array();
+		}
+		$item = &$item[$itemindex];
+	}
+	return $item;
+}
+
 ?>

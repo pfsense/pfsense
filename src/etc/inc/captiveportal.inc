@@ -91,7 +91,7 @@ function get_default_captive_portal_html() {
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <title>Captive Portal Login Page</title>
   <style>
-	  #content,.login,.login-card a,.login-card h1,.login-help{text-align:center}body,html{margin:0;padding:0;width:100%;height:100%;display:table}#content{font-family:'Source Sans Pro',sans-serif;background-color:#1C1275;background:{$bg_src};-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;display:table-cell;vertical-align:middle}.login-card{padding:40px;width:280px;background-color:#F7F7F7;margin:100px auto 10px;border-radius:2px;box-shadow:0 2px 2px rgba(0,0,0,.3);overflow:hidden}.login-card h1{font-weight:400;font-size:2.3em;color:#1383c6}.login-card h1 span{color:#f26721}.login-card img{width:70%;height:70%}.login-card input[type=submit]{width:100%;display:block;margin-bottom:10px;position:relative}.login-card input[type=text],input[type=password]{height:44px;font-size:16px;width:100%;margin-bottom:10px;-webkit-appearance:none;background:#fff;border:1px solid #d9d9d9;border-top:1px solid silver;padding:0 8px;box-sizing:border-box;-moz-box-sizing:border-box}.login-card input[type=text]:hover,input[type=password]:hover{border:1px solid #b9b9b9;border-top:1px solid #a0a0a0;-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}.login{font-size:14px;font-family:Arial,sans-serif;font-weight:700;height:36px;padding:0 8px}.login-submit{-webkit-appearance:none;-moz-appearance:none;appearance:none;border:0;color:#fff;text-shadow:0 1px rgba(0,0,0,.1);background-color:#4d90fe}.login-submit:disabled{opacity:.6}.login-submit:hover{border:0;text-shadow:0 1px rgba(0,0,0,.3);background-color:#357ae8}.login-card a{text-decoration:none;color:#222;font-weight:400;display:inline-block;opacity:.6;transition:opacity ease .5s}.login-card a:hover{opacity:1}.login-help{width:100%;font-size:12px}.list{list-style-type:none;padding:0}.list__item{margin:0 0 .7rem;padding:0}label{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;text-align:left;font-size:14px;}input[type=checkbox]{-webkit-box-flex:0;-webkit-flex:none;-ms-flex:none;flex:none;margin-right:10px;float:left}@media screen and (max-width:450px){.login-card{width:70%!important}.login-card img{width:30%;height:30%}}textarea{width:66%;margin:auto;height:300px;}#terms{display:none;padding-top:100px;padding-bottom:300px;}.auth_source{border: 1px solid lightgray; padding:20px 8px 0px 8px; margin-top: -2em; border-radius: 2px; }.auth_head{background-color:#f7f7f7;display:inline-block;}.auth_head_div{text-align:left;}
+	  #content,.login,.login-card a,.login-card h1,.login-help{text-align:center}body,html{margin:0;padding:0;width:100%;height:100%;display:table}#content{font-family:'Source Sans Pro',sans-serif;background-color:#1C1275;background:{$bg_src};-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;display:table-cell;vertical-align:middle}.login-card{padding:40px;width:280px;background-color:#F7F7F7;margin:100px auto 10px;border-radius:2px;box-shadow:0 2px 2px rgba(0,0,0,.3);overflow:hidden}.login-card h1{font-weight:400;font-size:2.3em;color:#1383c6}.login-card h1 span{color:#f26721}.login-card img{width:70%;height:70%}.login-card input[type=submit]{width:100%;display:block;margin-bottom:10px;position:relative}.login-card input[type=text],input[type=password]{height:44px;font-size:16px;width:100%;margin-bottom:10px;-webkit-appearance:none;background:#fff;border:1px solid #d9d9d9;border-top:1px solid silver;padding:0 8px;box-sizing:border-box;-moz-box-sizing:border-box}.login-card input[type=text]:hover,input[type=password]:hover{border:1px solid #b9b9b9;border-top:1px solid #a0a0a0;-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}.login{font-size:14px;font-family:Arial,sans-serif;font-weight:700;height:36px;padding:0 8px}.login-submit{-webkit-appearance:none;-moz-appearance:none;appearance:none;border:0;color:#fff;text-shadow:0 1px rgba(0,0,0,.1);background-color:#4d90fe}.login-submit:disabled{opacity:.6}.login-submit:hover{border:0;text-shadow:0 1px rgba(0,0,0,.3);background-color:#357ae8}.login-card a{text-decoration:none;color:#222;font-weight:400;display:inline-block;opacity:.6;transition:opacity ease .5s}.login-card a:hover{opacity:1}.login-help{width:100%;font-size:12px}.list{list-style-type:none;padding:0}.list__item{margin:0 0 .7rem;padding:0}label{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;text-align:left;font-size:14px;}input[type=checkbox]{-webkit-box-flex:0;-webkit-flex:none;-ms-flex:none;flex:none;margin-right:10px;float:left}@media screen and (max-width:450px){.login-card{width:70%!important}.login-card img{width:30%;height:30%}}textarea{width:66%;margin:auto;height:300px;background-color:#f7f7f7;padding:20px}#terms{display:none;padding-top:100px;padding-bottom:300px;}.auth_source{border: 1px solid lightgray; padding:20px 8px 0px 8px; margin-top: -2em; border-radius: 2px; }.auth_head{background-color:#f7f7f7;display:inline-block;}.auth_head_div{text-align:left;}#error-message{text-align:left;color:#ff3e3e;font-style:italic;}
   </style>
 </head>
 
@@ -100,6 +100,9 @@ function get_default_captive_portal_html() {
 	<div class="login-card">
 		<img src="{$logo_src}"/><br>
  		<h1></h1>
+		<div id="error-message">
+			\$PORTAL_MESSAGE\$
+		</div>
 	  <form name="login_form" method="post" action="\$PORTAL_ACTION\$">
 EOD;
 	if ($config['captiveportal'][$cpzone]['auth_method'] != "none"){
@@ -2226,43 +2229,28 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 	}
 
 	$writecfg = false;
-	/* Find an existing session */
+	/* If both "Add MAC addresses of connected users as pass-through MAC" and "Disable concurrent logins" are checked, 
+	then we need to check if the user was already authenticated using another MAC Address, and if so remove the previous Pass-Through MAC. */	
 	if ((isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) &&
 	    $passthrumac &&
 	    isset($config['captiveportal'][$cpzone]['passthrumacadd'])) {
 		$mac = captiveportal_passthrumac_findbyname($username);
-		if (!empty($mac) && $_POST['replacemacpassthru']) {
+		if (!empty($mac)) {
 			foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $idx => $macent) {
 				if ($macent['mac'] != $mac['mac']) {
 					continue;
 				}
 
-				$macrules = "";
 				$pipeno = captiveportal_get_dn_passthru_ruleno($mac['mac']);
 				if ($pipeno) {
 					captiveportal_free_dn_ruleno($pipeno);
-					$macrules .= "table {$cpzone}_pipe_mac delete any,{$mac['mac']}\n";
-					$macrules .= "table {$cpzone}_pipe_mac delete {$mac['mac']},any\n";
-					$macrules .= "pipe delete {$pipeno}\n";
-					++$pipeno;
-					$macrules .= "pipe delete {$pipeno}\n";
+					@pfSense_ipfw_table("{$cpzone}_pipe_mac", IP_FW_TABLE_XDEL, "any,{$mac['mac']}");
+					@pfSense_ipfw_table("{$cpzone}_pipe_mac", IP_FW_TABLE_XDEL, "{$mac['mac']},any");
+					@pfSense_ipfw_pipe("pipe delete " . $pipeno+1);
+					@pfSense_ipfw_pipe("pipe delete " . $pipeno);
 				}
 				unset($config['captiveportal'][$cpzone]['passthrumac'][$idx]);
-				$mac['action'] = 'pass';
-				$mac['mac'] = $clientmac;
-				$config['captiveportal'][$cpzone]['passthrumac'][] = $mac;
-				$macrules .= captiveportal_passthrumac_configure_entry($mac);
-				file_put_contents("{$g['tmp_path']}/macentry_{$cpzone}.rules.tmp", $macrules);
-				mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry_{$cpzone}.rules.tmp");
-				$writecfg = true;
-				$sessionid = true;
-				break;
 			}
-		} elseif (!empty($mac)) {
-			portal_reply_page($redirurl, "error", "Username: {$username} is already authenticated using another MAC address.",
-				$clientmac, $clientip, $username, $password);
-			unlock($cpdblck);
-			return;
 		}
 	}
 

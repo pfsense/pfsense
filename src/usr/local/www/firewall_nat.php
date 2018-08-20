@@ -226,7 +226,7 @@ $columns_in_table = 13;
 			<table id="ruletable" class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th><!-- Checkbox --></th>
+						<th style="padding-left:10px;">  <input type="checkbox" id="selectAll" name="selectAll" /></th>
 						<th><!-- Icon --></th>
 						<th><!-- Rule type --></th>
 						<th><?=gettext("Interface")?></th>
@@ -540,6 +540,13 @@ events.push(function() {
 		} else {
 			return undefined;
 		}
+	});
+
+	$('#selectAll').click(function() {
+		var checkedStatus = this.checked;
+		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
+		$(this).prop('checked', checkedStatus);
+		});
 	});
 });
 //]]>

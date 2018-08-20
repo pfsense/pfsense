@@ -1304,14 +1304,14 @@ events.push(function() {
 					continue;
 				}
 
-				$subject = cert_get_subject_array($ca['crt']);
+				$subject = cert_get_subject_hash($ca['crt']);
 ?>
 				case "<?=$ca['refid'];?>":
-					$('#dn_country').val(<?=json_encode(cert_escape_x509_chars($subject[0]['v'], true));?>);
-					$('#dn_state').val(<?=json_encode(cert_escape_x509_chars($subject[1]['v'], true));?>);
-					$('#dn_city').val(<?=json_encode(cert_escape_x509_chars($subject[2]['v'], true));?>);
-					$('#dn_organization').val(<?=json_encode(cert_escape_x509_chars($subject[3]['v'], true));?>);
-					$('#dn_organizationalunit').val(<?=json_encode(cert_escape_x509_chars($subject[6]['v'], true));?>);
+					$('#dn_country').val(<?=json_encode(cert_escape_x509_chars($subject['C'], true));?>);
+					$('#dn_state').val(<?=json_encode(cert_escape_x509_chars($subject['ST'], true));?>);
+					$('#dn_city').val(<?=json_encode(cert_escape_x509_chars($subject['L'], true));?>);
+					$('#dn_organization').val(<?=json_encode(cert_escape_x509_chars($subject['O'], true));?>);
+					$('#dn_organizationalunit').val(<?=json_encode(cert_escape_x509_chars($subject['OU'], true));?>);
 					break;
 <?php
 			endforeach;

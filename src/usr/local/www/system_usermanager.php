@@ -409,15 +409,25 @@ if ($_POST['save']) {
 
 				$cert['descr'] = $_POST['name'];
 
-				$subject = cert_get_subject_array($ca['crt']);
+				$subject = cert_get_subject_hash($ca['crt']);
 
-				$dn = array(
-					'countryName' => $subject[0]['v'],
-					'stateOrProvinceName' => $subject[1]['v'],
-					'localityName' => $subject[2]['v'],
-					'organizationName' => $subject[3]['v'],
-					'emailAddress' => $subject[4]['v'],
-					'commonName' => $userent['name']);
+				$dn = array();
+				if (!empty($subject['C'])) {
+					$dn['countryName'] = $subject['C'];
+				}
+				if (!empty($subject['ST'])) {
+					$dn['stateOrProvinceName'] = $subject['ST'];
+				}
+				if (!empty($subject['L'])) {
+					$dn['localityName'] = $subject['L'];
+				}
+				if (!empty($subject['O'])) {
+					$dn['organizationName'] = $subject['O'];
+				}
+				if (!empty($subject['OU'])) {
+					$dn['organizationalUnit'] = $subject['OU'];
+				}
+				$dn['commonName'] = $userent['name'];
 				$cn_altname = cert_add_altname_type($userent['name']);
 				if (!empty($cn_altname)) {
 					$dn['subjectAltName'] = $cn_altname;

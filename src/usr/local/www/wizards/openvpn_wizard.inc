@@ -271,11 +271,11 @@ function step9_stepbeforeformdisplay() {
 		$org = $pconfig['step6']['organization'];
 	} else {
 		$ca = lookup_ca($pconfig['step6']['authcertca']);
-		$cavl = cert_get_subject_array($ca['crt']);
-		$country = $cavl[0]['v'];
-		$state = $cavl[1]['v'];
-		$city = $cavl[2]['v'];
-		$org = $cavl[3]['v'];
+		$cavl = cert_get_subject_hash($ca['crt']);
+		$country = $cavl['C'];
+		$state = $cavl['ST'];
+		$city = $cavl['L'];
+		$org = $cavl['O'];
 	}
 	$fields =& $pkg['step'][$stepid]['fields']['field'];
 

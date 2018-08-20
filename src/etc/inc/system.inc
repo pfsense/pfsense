@@ -1185,11 +1185,7 @@ function system_webgui_create_certificate() {
 	$cert_hostname = "{$config['system']['hostname']}-{$cert['refid']}";
 
 	$dn = array(
-		'countryName' => "US",
-		'stateOrProvinceName' => "State",
-		'localityName' => "Locality",
 		'organizationName' => "{$g['product_name']} webConfigurator Self-Signed Certificate",
-		'emailAddress' => "admin@{$config['system']['hostname']}.{$config['system']['domain']}",
 		'commonName' => $cert_hostname,
 		'subjectAltName' => "DNS:{$cert_hostname}");
 	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */

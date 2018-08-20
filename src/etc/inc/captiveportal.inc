@@ -2246,8 +2246,8 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 					captiveportal_free_dn_ruleno($pipeno);
 					@pfSense_ipfw_table("{$cpzone}_pipe_mac", IP_FW_TABLE_XDEL, "any,{$mac['mac']}");
 					@pfSense_ipfw_table("{$cpzone}_pipe_mac", IP_FW_TABLE_XDEL, "{$mac['mac']},any");
-					@pfSense_ipfw_pipe("pipe delete {intval($pipeno) + 1}");
-					@pfSense_ipfw_pipe("pipe delete {intval($pipeno)}");
+					@pfSense_ipfw_pipe("pipe delete " . $pipeno+1);
+					@pfSense_ipfw_pipe("pipe delete " . $pipeno);
 				}
 				unset($config['captiveportal'][$cpzone]['passthrumac'][$idx]);
 			}

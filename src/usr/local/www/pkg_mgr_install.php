@@ -255,9 +255,6 @@ if (isvalidpid($gui_pidfile) && file_exists($sock_file)) {
 			$pkgname = $mode[1];
 		}
 		$mode = $mode[0];
-
-		if ($mode == "reinstallall") {
-		}
 	}
 	switch ($mode) {
 	case 'firmwareupdate':

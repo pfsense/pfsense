@@ -611,16 +611,17 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 		$upgrade_script = "{$pfsense_upgrade} -y -l " .
 		    "{$logfilename}.txt -p {$sock_file}";
 
+		unlink_if_exists($sock_file);
 		$execpid = mwexec_bg("{$upgrade_script} {$params}");
 
 		// Make sure the upgrade process starts
-		for ($cnt=0;
-		   ((!posix_kill($execpid, 0) || !file_exists($sock_file))) && $cnt<5;
-		   $cnt++) {
+		while (posix_kill($execpid, 0) && !file_exists(
+		    $sock_file)) {
 			sleep(1);
 		}
 
-		if (file_exists($sock_file)) {
+		if (posix_kill($execpid, 0) && file_exists(
+		    $sock_file)) {
 			$start_polling = true;
 			@file_put_contents($gui_pidfile, $execpid);
 			@file_put_contents($gui_mode, $mode);

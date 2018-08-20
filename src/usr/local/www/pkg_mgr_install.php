@@ -126,8 +126,10 @@ if ($_REQUEST['ajax']) {
 		// Log file is read a line at a time so that we can detect/modify certain entries
 		while (($logline = fgets($logfile)) !== false) {
 			// Check for return codes and replace with suitable strings
-			if (strpos($logline, "__RC=") !== false) {
-				$code = explode(" ", $logline);
+			$rc_pos = strpos($logline, "__RC=");
+			if ($rc_pos !== false) {
+				$rc_string = substr($logline, $rc_pos);
+				$code = explode(" ", $rc_string);
 
 				$rc = str_replace("__RC=", "", $code[0]);
 

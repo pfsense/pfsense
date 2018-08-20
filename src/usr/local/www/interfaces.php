@@ -2303,33 +2303,35 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['dhcp6norelease']
 ));
 
-$group = new Form_Group('DHCP6 VLAN Priority');
+if (interface_is_vlan($wancfg['if']) != NULL) {
+	$group = new Form_Group('DHCP6 VLAN Priority');
 
-$vlanprio = array(
-	"bk" => "Background (BK, 0)",
-	"be" => "Best Effort (BE, 1)",
-	"ee" => "Excellent Effort (EE, 2)",
-	"ca" => "Critical Applications (CA, 3)",
-	"vi" => "Video (VI, 4)",
-	"vo" => "Voice (VO, 5)",
-	"ic" => "Internetwork Control (IC, 6)",
-	"nc" => "Network Control (NC, 7)");
+	$vlanprio = array(
+		"bk" => "Background (BK, 0)",
+		"be" => "Best Effort (BE, 1)",
+		"ee" => "Excellent Effort (EE, 2)",
+		"ca" => "Critical Applications (CA, 3)",
+		"vi" => "Video (VI, 4)",
+		"vo" => "Voice (VO, 5)",
+		"ic" => "Internetwork Control (IC, 6)",
+		"nc" => "Network Control (NC, 7)");
 
-$group->add(new Form_Checkbox(
-	'dhcp6vlanenable',
-	null,
-	'Enable dhcp6c VLAN Priority tagging',
-	$pconfig['dhcp6vlanenable']
-))->setHelp('Normally off unless specifically required by the ISP.');
+	$group->add(new Form_Checkbox(
+		'dhcp6vlanenable',
+		null,
+		'Enable dhcp6c VLAN Priority tagging',
+		$pconfig['dhcp6vlanenable']
+	))->setHelp('Normally off unless specifically required by the ISP.');
 
-$group->add(new Form_Select(
-	'dhcp6cvpt',
-	'VLAN Prio',
-	$pconfig['dhcp6cvpt'],
-	$vlanprio
-))->setHelp('Choose 802.1p priority to set.');
+	$group->add(new Form_Select(
+		'dhcp6cvpt',
+		'VLAN Prio',
+		$pconfig['dhcp6cvpt'],
+		$vlanprio
+	))->setHelp('Choose 802.1p priority to set.');
 
-$section->add($group);
+	$section->add($group);
+}
 
 $section->addInput(new Form_Input(
 	'adv_dhcp6_config_file_override_path',

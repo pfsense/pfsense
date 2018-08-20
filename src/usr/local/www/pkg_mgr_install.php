@@ -608,10 +608,10 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 	}
 
 	if (isset($params)) {
-		for ($idx = 0; $idx < 3; $idx++) {
-			$upgrade_script = "{$pfsense_upgrade} -y -l " .
-			    "{$logfilename}.txt -p {$sock_file}";
+		$upgrade_script = "{$pfsense_upgrade} -y -l " .
+		    "{$logfilename}.txt -p {$sock_file}";
 
+		for ($idx = 0; $idx < 3; $idx++) {
 			unlink_if_exists($sock_file);
 			$execpid = mwexec_bg("{$upgrade_script} {$params}");
 

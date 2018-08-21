@@ -65,10 +65,7 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 		require_once("functions.inc");
 		pfSenseHeader("/{$page}");
 
-		$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
-		if (!empty($_SERVER['REMOTE_ADDR'])) {
-			$username .= '@' . $_SERVER['REMOTE_ADDR'];
-		}
+		$username = get_config_user();
 		log_error("{$username} attempted to access {$_SERVER['SCRIPT_NAME']} but does not have access to that page. Redirecting to {$page}.");
 
 		exit;

@@ -277,6 +277,8 @@ if ($_POST['save']) {
 			$config['voucher'][$cpzone] = $newvoucher;
 			write_config();
 			voucher_configure_zone();
+			// Refresh captivportal login to show voucher changes
+			captiveportal_configure_zone($config['captiveportal'][$cpzone]);
 		} else {
 			$newvoucher['vouchersyncdbip'] = $_POST['vouchersyncdbip'];
 			$newvoucher['vouchersyncport'] = $_POST['vouchersyncport'];
@@ -347,6 +349,8 @@ EOF;
 						$config['voucher'][$cpzone] = $newvoucher;
 						write_config();
 						voucher_configure_zone(true);
+						// Refresh captivportal login to show voucher changes
+						captiveportal_configure_zone($config['captiveportal'][$cpzone]);
 					}
 				}
 			}

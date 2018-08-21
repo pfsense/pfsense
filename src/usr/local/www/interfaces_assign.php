@@ -191,8 +191,8 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 	if ($portused === false) {
 		/* find next free optional interface number */
 		if (!$config['interfaces']['lan']) {
-			$newifname = gettext("lan");
-			$descr = gettext("LAN");
+			$newifname = "lan";
+			$descr = "LAN";
 		} else {
 			for ($i = 1; $i <= count($config['interfaces']); $i++) {
 				if (!$config['interfaces']["opt{$i}"]) {

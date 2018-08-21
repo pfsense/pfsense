@@ -163,6 +163,11 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"kern.corefile" => "/root/%N.core" /* Write all core files to /root/ so they do not consume space on other slices */
 );
 
+$machine_type = php_uname('m');
+if (($machine_type == 'arm') || ($machine_type == 'arm64')) {
+	$sysctls['kern.shutdown.secure_halt'] = 1;
+}
+
 /* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */
 if (file_exists("/etc/inc/globals_override.inc")) {
 	@include_once("globals_override.inc");

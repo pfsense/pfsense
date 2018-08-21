@@ -126,8 +126,10 @@ if ($_REQUEST['ajax']) {
 		// Log file is read a line at a time so that we can detect/modify certain entries
 		while (($logline = fgets($logfile)) !== false) {
 			// Check for return codes and replace with suitable strings
-			if (strpos($logline, "__RC=") !== false) {
-				$code = explode(" ", $logline);
+			$rc_pos = strpos($logline, "__RC=");
+			if ($rc_pos !== false) {
+				$rc_string = substr($logline, $rc_pos);
+				$code = explode(" ", $rc_string);
 
 				$rc = str_replace("__RC=", "", $code[0]);
 
@@ -253,9 +255,6 @@ if (isvalidpid($gui_pidfile) && file_exists($sock_file)) {
 			$pkgname = $mode[1];
 		}
 		$mode = $mode[0];
-
-		if ($mode == "reinstallall") {
-		}
 	}
 	switch ($mode) {
 	case 'firmwareupdate':
@@ -623,19 +622,23 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 		$upgrade_script = "{$pfsense_upgrade} -y -l " .
 		    "{$logfilename}.txt -p {$sock_file}";
 
-		$execpid = mwexec_bg("{$upgrade_script} {$params}");
+		for ($idx = 0; $idx < 3; $idx++) {
+			unlink_if_exists($sock_file);
+			$execpid = mwexec_bg("{$upgrade_script} {$params}");
 
-		// Make sure the upgrade process starts
-		for ($cnt=0;
-		   ((!posix_kill($execpid, 0) || !file_exists($sock_file))) && $cnt<5;
-		   $cnt++) {
-			sleep(1);
-		}
+			// Make sure the upgrade process starts
+			while (posix_kill($execpid, 0) && !file_exists(
+			    $sock_file)) {
+				sleep(1);
+			}
 
-		if (file_exists($sock_file)) {
-			$start_polling = true;
-			@file_put_contents($gui_pidfile, $execpid);
-			@file_put_contents($gui_mode, $mode);
+			if (posix_kill($execpid, 0) && file_exists(
+			    $sock_file)) {
+				$start_polling = true;
+				@file_put_contents($gui_pidfile, $execpid);
+				@file_put_contents($gui_mode, $mode);
+				break;
+			}
 		}
 	}
 }

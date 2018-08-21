@@ -352,7 +352,7 @@ $columns_in_table = 13;
 			<table id="ruletable" class="table table-hover table-striped table-condensed" style="overflow-x: 'visible'">
 				<thead>
 					<tr>
-						<th style="padding-left:10px;">  <input type="checkbox" id="selectAll" name="selectAll" /></th>
+						<th><input type="checkbox" id="selectAll" name="selectAll" /></th>
 						<th><!-- status icons --></th>
 						<th><?=gettext("States")?></th>
 						<th><?=gettext("Protocol")?></th>

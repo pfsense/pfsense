@@ -113,6 +113,7 @@ function doCmdT($title, $command, $method) {
 				$line = preg_replace("/<crypto_password2>.*?<\\/crypto_password2>/", "<crypto_password2>xxxxx</crypto_password2>", $line);
 				$line = preg_replace("/<md5sigpass>.*?<\\/md5sigpass>/", "<md5sigpass>xxxxx</md5sigpass>", $line);
 				$line = preg_replace("/<md5sigkey>.*?<\\/md5sigkey>/", "<md5sigkey>xxxxx</md5sigkey>", $line);
+				$line = preg_replace("/<lighttpd_ls_password>.*?<\\/lighttpd_ls_password>/", "<lighttpd_ls_password>xxxxx</lighttpd_ls_password>", $line);
 				$line = preg_replace("/<redis_password>.*?<\\/redis_password>/", "<redis_password>xxxxx</redis_password>", $line);
 				$line = preg_replace("/<redis_passwordagain>.*?<\\/redis_passwordagain>/", "<redis_passwordagain>xxxxx</redis_passwordagain>", $line);
 				$line = preg_replace("/<varclientsharedsecret>.*?<\\/varclientsharedsecret>/", "<varclientsharedsecret>xxxxx</varclientsharedsecret>", $line);

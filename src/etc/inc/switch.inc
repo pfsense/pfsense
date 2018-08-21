@@ -602,10 +602,10 @@ function default_switch_configure() {
 			mwexec("/sbin/etherswitchcfg -f {$switch['device']} port{$swport['port']} {$swport['state']}");
 		}
 		if (isset($swport['media'])) {
-			$media = "media {$swport['media']}";
-			if (isset($swport['mediaopt'])) {
-				$media .= " mediaopt {$swport['mediaopt']}";
-			}
+			$media = $swport['media'];
+			$media = str_replace("<", "mediaopt ", $media);
+			$media = str_replace(">", "", $media);
+			$media = "media {$media}";
 			mwexec("/sbin/etherswitchcfg -f {$switch['device']} port{$swport['port']} {$media}");
 		}
 	}

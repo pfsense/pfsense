@@ -1932,8 +1932,11 @@ function session_auth() {
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['remoteauth'] = $remoteauth;
 			if ($remoteauth) {
-				$_SESSION['authsource'] = ($authcfg['type'] == "Local Auth") ? "" : strtoupper(gettext($authcfg['type'])) . '/';
-				$_SESSION['authsource'] .= "{$authcfg['name']}";
+				if (empty($authcfg['type']) || ($authcfg['type'] == "Local Auth")) {
+					$_SESSION['authsource'] = gettext("Local Database");
+				} else {
+					$_SESSION['authsource'] = strtoupper(gettext($authcfg['type'])) . "/{$authcfg['name']}";
+				}
 			} else {
 				$_SESSION['authsource'] = gettext('Local Database Fallback') ;
 			}

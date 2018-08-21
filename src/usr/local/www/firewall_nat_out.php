@@ -277,7 +277,7 @@ print($form);
 			<table class="table table-hover table-striped table-condensed">
 				<thead>
 					<tr>
-						<th><!-- checkbox	  --></th>
+						<th><input type="checkbox" id="selectAll" name="selectAll" /></th>
 						<th><!-- status	  --></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Source")?></th>
@@ -689,6 +689,13 @@ events.push(function() {
 		} else {
 			return undefined;
 		}
+	});
+
+	$('#selectAll').click(function() {
+		var checkedStatus = this.checked;
+		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
+		$(this).prop('checked', checkedStatus);
+		});
 	});
 });
 //]]>

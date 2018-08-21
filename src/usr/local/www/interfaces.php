@@ -268,6 +268,8 @@ $pconfig['enable'] = isset($wancfg['enable']);
 switch ($wancfg['ipaddr']) {
 	case "dhcp":
 		$pconfig['type'] = "dhcp";
+		$pconfig['dhcpvlanenable'] = isset($wancfg['dhcpvlanenable']);
+		$pconfig['dhcpcvpt'] = $wancfg['dhcpcvpt'];
 		break;
 	case "pppoe":
 	case "pptp":
@@ -1091,6 +1093,9 @@ if ($_POST['apply']) {
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
 
+		unset($wancfg['dhcpvlanenable']);
+		unset($wancfg['dhcpcvpt']);
+
 		unset($wancfg['adv_dhcp_pt_timeout']);
 		unset($wancfg['adv_dhcp_pt_retry']);
 		unset($wancfg['adv_dhcp_pt_select_timeout']);
@@ -1217,6 +1222,14 @@ if ($_POST['apply']) {
 				$wancfg['dhcp_plus'] = $_POST['dhcp_plus'] == "yes" ? true : false;
 				if ($gateway_item) {
 					$a_gateways[] = $gateway_item;
+				}
+				if ($_POST['dhcpvlanenable'] == "yes") {
+					$wancfg['dhcpvlanenable'] = true;
+				}
+				if (!empty($_POST['dhcpcvpt'])) {
+					$wancfg['dhcpcvpt'] = $_POST['dhcpcvpt'];
+				} else {
+					unset($wancfg['dhcpcvpt']);
 				}
 				break;
 			case "ppp":
@@ -2094,6 +2107,26 @@ $section->addInput(new Form_Input(
 			'(separate multiple entries with a comma). ' .
 			'This is useful for rejecting leases from cable modems that offer private IP addresses when they lose upstream sync.');
 
+if (interface_is_vlan($wancfg['if']) != NULL) {
+
+	$group = new Form_Group('DHCP VLAN Priority');
+	$group->add(new Form_Checkbox(
+		'dhcpvlanenable',
+		null,
+		'Enable dhcpclient VLAN Priority tagging',
+		$pconfig['dhcpvlanenable']
+	))->setHelp('Normally off unless specifically required by the ISP.');
+
+	$group->add(new Form_Select(
+		'dhcpcvpt',
+		'VLAN Prio',
+		$pconfig['dhcpcvpt'],
+		$vlanprio
+	))->setHelp('Choose 802.1p priority to set.');
+
+	$section->add($group);
+}
+
 $group = new Form_Group('Protocol timing');
 $group->addClass('dhcpadvanced');
 
@@ -2305,16 +2338,6 @@ $section->addInput(new Form_Checkbox(
 
 if (interface_is_vlan($wancfg['if']) != NULL) {
 	$group = new Form_Group('DHCP6 VLAN Priority');
-
-	$vlanprio = array(
-		"bk" => "Background (BK, 0)",
-		"be" => "Best Effort (BE, 1)",
-		"ee" => "Excellent Effort (EE, 2)",
-		"ca" => "Critical Applications (CA, 3)",
-		"vi" => "Video (VI, 4)",
-		"vo" => "Voice (VO, 5)",
-		"ic" => "Internetwork Control (IC, 6)",
-		"nc" => "Network Control (NC, 7)");
 
 	$group->add(new Form_Checkbox(
 		'dhcp6vlanenable',

@@ -90,18 +90,6 @@ $icmptypes = array(
  	'wrureq'	=> array('descrip' => gettext('Who are you request'), 'valid4' => false, 'valid6' => true)
 );
 
-global $vlanprio_values;
-$vlanprio_values = array(
-	"bk" => 0,
-	"be" => 1,
-	"ee" => 2,
-	"ca" => 3,
-	"vi" => 4,
-	"vo" => 5,
-	"ic" => 6,
-	"nc" => 7
-);
-
 /*
  * Interfaces that can be assigned but do not directly support filtering in pf.
  * Specify the driver prefix to match (from the left)
@@ -3440,6 +3428,16 @@ EOD;
 		$saved_tracker += 10;
 		$tracker = $saved_tracker;
 
+		if ($oc['type'] == "dhcp") {
+			$vlantag = isset($config['interfaces'][$on]['dhcpvlanenable']) ? "set prio {$vlanprio_values[$config['interfaces'][$on]['dhcpcvpt']]}" : "";
+			$ipfrules .= <<<EOD
+# allow our DHCP client out to the {$oc['descr']}
+pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 67 to any port = 68 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}"
+pass out {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 68 to any port = 67 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}" {$vlantag}
+# Not installing DHCP server firewall rules for {$oc['descr']} which is configured for DHCP.
+
+EOD;
+		}
 
 		if (isset($config['system']['ipv6allow']) && ($oc['type6'] == "slaac" || $oc['type6'] == "dhcp6")) {
 			// The DHCPv6 client rules ***MUST BE ABOVE BOGONSV6!***  https://redmine.pfsense.org/issues/3395
@@ -3539,16 +3537,6 @@ EOD;
 pass in {$log['pass']} on \${$oc['descr']} proto gre from any to any keep state tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow PPTP client on {$oc['descr']}")}"
 
 EOD;
-				break;
-			case "dhcp":
-				$ipfrules .= <<<EOD
-# allow our DHCP client out to the {$oc['descr']}
-pass in {$log['pass']} on \${$oc['descr']} proto udp from any port = 67 to any port = 68 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}"
-pass out {$log['pass']} on \${$oc['descr']} proto udp from any port = 68 to any port = 67 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}"
-# Not installing DHCP server firewall rules for {$oc['descr']} which is configured for DHCP.
-
-EOD;
-
 				break;
 			case "pppoe":
 			case "none":

@@ -64,6 +64,18 @@ function lagg_port($laggs = NULL, $port = NULL) {
 	return "-";
 }
 
+function build_mediaopts_list($mediaopts_list) {
+	$list = [""      =>      gettext("Default (no preference, typically autoselect)"),
+			 " " =>  gettext("------- Media Supported by this interface -------")
+			];
+
+	foreach ($mediaopts_list as $mediaopt) {
+		$list[$mediaopt] = $mediaopt;
+	}
+
+	return($list);
+}
+
 // List the available switches
 $swdevices = switch_get_devices();
 $swtitle = switch_get_title();
@@ -107,7 +119,7 @@ if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['data']) {
 		// Decode the JSON array
 		$ja = json_decode($_REQUEST['data'], true);
 
-		// Extract the port and VID from each item in the list
+		// Extract the port. media type and VID from each item in the list
 		foreach ($ja['data'] as $vid ) {
 			$port = $vid['port'];
 			$pvid = $vid['vid'];
@@ -121,7 +133,13 @@ if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['data']) {
 				if (vlan_valid_tag($pvid)) {
 					$swporto['pvid'] = htmlspecialchars($pvid);
 				}
+
 				$swporto['state'] = "forwarding";
+				if (isset($vid['media']) && strlen($vid['media']) > 0 &&
+				    $vid['media'] != "undefined" && $vid['media'] != "autoselect") {
+					$swporto['media'] = $vid['media'];
+				}
+
 				$a_switch['swports']['swport'][] = $swporto;
 			}
 		}
@@ -171,14 +189,43 @@ if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['data']) {
 					if ($laggroup == NULL) {
 						continue;
 					}
-					mwexec("/sbin/etherswitchcfg laggroup{$i} members none");
+					mwexec("/sbin/etherswitchcfg -f {$a_switch['device']} laggroup{$i} members none");
 				}
 				foreach ($laggs as $lagg) {
-					$laggmembers = implode(",", explode(" ", trim($lagg['members'])));
-					mwexec("/sbin/etherswitchcfg laggroup{$lagg['lagg']} members $laggmembers");
+					if (isset($lagg['members'])) {
+						$members = explode(" ", trim($lagg['members']));
+					} else {
+						$members = array();
+					}
+					foreach($members as $m) {
+						$tagpos = strpos($m, "t");
+						if ($tagpos != false) {
+							$m = substr($m, 0, $tagpos);
+							$lgmembers[$m] = array();
+							$lgmembers[$m]['tagged'] = 1;
+						} else {
+							$lgmembers[$m] = array();
+						}
+					}
+
+					pfSense_etherswitch_setlaggroup($a_switch['device'], $lagg['lagg'], $lgmembers);
 				}
 			}
 
+			for ($i = 0; $i < $swinfo['nports']; $i++) {
+				mwexec("/sbin/etherswitchcfg -f {$a_switch['device']} port{$i} media autoselect");
+			}
+			foreach ($ja['data'] as $media) {
+				if (isset($media['media']) && strlen($media['media']) > 0 &&
+				    $media['media'] != "undefined" && $media['media'] != "autoselect") {
+					$m = $media['media'];
+					if (strpos($m, "<") > 0) {
+						$m = str_replace("<", "mediaopt ", $m);
+						$m = str_replace(">", "", $m);
+					}
+					mwexec("/sbin/etherswitchcfg -f {$a_switch['device']} port{$media['port']} media {$m}");
+				}
+			}
 			$savemsg = gettext("Port settings updated.");
 		}
 	} else {
@@ -264,7 +311,7 @@ if ($savemsg) {
 <?
 	}
 ?>
-						<th><?=gettext("Media"); ?></th>
+						<th width="40%"><?=gettext("Media"); ?></th>
 						<th><?=gettext("Status"); ?></th>
 					</tr>
 				</thead>
@@ -318,13 +365,13 @@ if (! $input_errors) {
 			echo "$flag";
 			$comma = true;
 		}
-?>
-						</td>
-<?
+
+		print("</td>");
+
 	if (isset($swinfo['switch_caps']) && $swinfo['switch_caps']['PSTATE'] == 1) {
-?>
-						<td>
-<?
+
+		print("<td>");
+
 		$comma = false;
 		foreach ($port['state'] as $state => $val) {
 			if ($comma)
@@ -332,18 +379,55 @@ if (! $input_errors) {
 			echo "$state";
 			$comma = true;
 		}
-?>
-						</td>
-<?
+
+		print("</td>");
 	}
-?>
-						<td>
-<?
-		if (isset($port['media']['current'])) {
+
+		print("<td>");
+
+		if ($port['status'] == 'active' && isset($port['media']['current'])) {
 			echo htmlspecialchars($port['media']['current']);
 			if (isset($port['media']['active'])) {
 				echo " (". htmlspecialchars($port['media']['active']) .")";
 			}
+			echo "<br>";
+		}
+
+		if (!isset($port['flags']['HOST'])) {
+			$mediaopts = array();
+			$mediaopts_list = array();
+			exec("/sbin/etherswitchcfg -m port{$port['port']} | grep \"media \"", $mediaopts);
+
+			foreach ($mediaopts as $mediaopt) {
+				preg_match("/media (.*)/", $mediaopt, $matches);
+				if (preg_match("/(.*) mediaopt (.*)/", $matches[1], $matches1)) {
+					// there is media + mediaopt like "media 1000baseT mediaopt full-duplex"
+					array_push($mediaopts_list, $matches1[1] . $matches1[2]);
+				} else {
+					// there is only media like "media 1000baseT"
+					array_push($mediaopts_list, htmlspecialchars($matches[1]));
+				}
+			}
+
+			print("<select id=\"media_" . $port['port'] . "\" name=\"media_" . $port['port'] . "\">");
+			$mediaopts = build_mediaopts_list($mediaopts_list);
+			foreach($mediaopts as $opt => $val) {
+				print("<option value=\"" . $opt . "\" ");
+				if (isset($port['media']['current'])) {
+					$current = $port['media']['current'];
+					if (strncmp($current, "Ethernet ", 9) == 0) {
+						$current = substr($current, 9);
+					}
+					if ($current != 'autoselect' && $opt == htmlspecialchars($current)) {
+						print("selected");
+					}
+				}
+				print(">" . $val . "</option>");
+			}
+			print("</select>");
+
+			unset($mediaopts_list);
+			unset($mediaopts);
 		}
 
 		print('</td>');
@@ -375,23 +459,20 @@ if (! $input_errors) {
 </div>
 
 <nav class="action-buttons">
-<?php
-	if (isset($swinfo['switch_caps']['LAGG'])) { ?>
-	<span class="pull-left text-info"><?=gettext("Click a Port VID or a LAGG to edit")?></span>
-<?php
-	} else if ($swinfo['vlan_mode'] == "DOT1Q") { ?>
-	<span class="pull-left text-info"><?=gettext("Click a Port VID to edit")?></span>
-<?php } ?>
 	<button name="submit" id="submit" type="submit" class="btn btn-primary btn-sm" value="<?= gettext("Save"); ?>" >
 		<i class="fa fa-save icon-embed-btn"></i>
 		<?=gettext("Save")?>
 	</button>
 </nav>
 
-<div class="infoblock <?=$swinfo['vlan_mode'] == "DOT1Q" ? "":"blockopen" ?>">
+<div class="infoblock blockopen">
 <?php
-	print_info_box(sprintf(gettext('%1$sVLAN IDs are displayed only if 802.1q VLAN mode is enabled on the "VLANs" tab. %2$s' .
-		'The Port VIDs may be edited by clicking on the cell in the table above, then clicking "Save"'), '<b>', '</b><br />'), 'info', false);
+
+	print_info_box(sprintf(gettext('%1$sVLAN IDs are displayed only if 802.1q VLAN mode is enabled on the "VLANs" tab. %2$s %3$s' .
+		'The Port VIDs or LAGGs may be edited by clicking on the cell in the table above, then clicking "Save" %3$s' .
+		'The "Media" selectors allow you to select the speed and duplex mode for that interface.%3$s' .
+		'%1$sWARNING:%2$s The media %1$sMUST%2$s be set to autoselect unless the port this interface connects to has its speed and duplex forced!'),
+		 '<b>', '</b>', '<br />'), 'info', false);
 ?>
 </div>
 
@@ -405,13 +486,15 @@ events.push(function() {
 		var form = $('<form></form>').attr("method", 'post');
 		var json = '{"data":[';
 		var entry = 0;
+		var port = 0;
 
 		$('#vlanporttablebody tr').each(function() {
+			port = $(this).find('td:eq(0)').text().trim();
 			if (entry > 0) {
 				json += ",\n";
 			}
 
-			json += '{"port":"' + $(this).find('td:eq(0)').text().trim() + '"';
+			json += '{"port":"' + port + '"';
 		<?
 			if ($swinfo['vlan_mode'] == "DOT1Q") {
 		?>
@@ -427,6 +510,10 @@ events.push(function() {
 		?>
 				json += ', "lagg":"' +
 				$(this).find('td:eq(' + <? echo $lagg_column ?> + ')').text().trim() + '"';
+
+				var selectname = "media_" + port;
+				json += ', "media":"' +
+				$('#media_' + port).find(':selected').val() + '"';		// Get the selected value
 		<?
 			}
 		?>

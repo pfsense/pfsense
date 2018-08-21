@@ -139,6 +139,15 @@ if ($stepid > $totalsteps) {
 	$stepid = $totalsteps;
 }
 
+// Convert a string containing a text version of a PHP array into a real $config array
+// that can then be created. e.g.: config_array_from_str("['apple']['orange']['pear']['bannana']");
+function config_array_from_str( $text) {
+	$t = str_replace("['", "", $text);
+	$t = str_replace("']", " ", $t);
+	$a = explode(" ", trim($t));
+	init_config_arr($a);
+}
+
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
 	global $config;
 	$field_split = explode("->", $field);
@@ -177,14 +186,15 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		eval($text);
 	}
 
-	// Verify that the needed $config element exists
-	$text = 'return (isset($config' . $field_conv . '));';
-	file_put_contents("/tmp/wizard.dbg", $text . "\n", FILE_APPEND);
+	// Verify that the needed $config element exists. If not, create it
+	$tsttext = 'return (isset($config' . $field_conv . '));';
 
-	if (eval($text)) {
-		$text .= "\$thisvar = &\$config" . $field_conv . ";";
-		eval($text);
+	if (!eval($tsttext)) {
+		config_array_from_str($field_conv);
 	}
+
+	$text .= "\$thisvar = &\$config" . $field_conv . ";";
+	eval($text);
 
 	$thisvar = $updatetext;
 }

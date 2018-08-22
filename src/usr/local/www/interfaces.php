@@ -489,7 +489,7 @@ if ($_POST['apply']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
+	if (ctype_xdigit($_POST['track6-prefix-id--hex'])) {
 		$pconfig['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);
 	} else {
 		$pconfig['track6-prefix-id'] = 0;
@@ -1480,7 +1480,7 @@ if ($_POST['apply']) {
 				$wancfg['track6-interface'] = $_POST['track6-interface'];
 				if ($_POST['track6-prefix-id--hex'] === "") {
 					$wancfg['track6-prefix-id'] = 0;
-				} else if (is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
+				} else if (ctype_xdigit($_POST['track6-prefix-id--hex'])) {
 					$wancfg['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);
 				} else {
 					$wancfg['track6-prefix-id'] = 0;

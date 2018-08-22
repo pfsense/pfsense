@@ -51,7 +51,7 @@ if (isset($id) && $a_ifgroups[$id]) {
 	$pconfig['descr'] = html_entity_decode($a_ifgroups[$id]['descr']);
 }
 
-$interface_list = get_configured_interface_with_descr();
+$interface_list = get_configured_interface_with_descr(true);
 $interface_list_disabled = get_configured_interface_with_descr(true);
 $ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9) and '_' are allowed.");
 $ifname_no_digit_text = gettext("The group name cannot end with a digit.");

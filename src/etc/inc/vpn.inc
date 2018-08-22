@@ -527,25 +527,7 @@ EOD;
 
 	if (is_array($a_client) && isset($a_client['enable'])) {
 		$strongswan .= "\t\tattr {\n";
-
-		$cfgservers = array();
-		if (!empty($a_client['dns_server1'])) {
-			$cfgservers[] = $a_client['dns_server1'];
-		}
-		if (!empty($a_client['dns_server2'])) {
-			$cfgservers[] = $a_client['dns_server2'];
-		}
-		if (!empty($a_client['dns_server3'])) {
-			$cfgservers[] = $a_client['dns_server3'];
-		}
-		if (!empty($a_client['dns_server4'])) {
-			$cfgservers[] = $a_client['dns_server4'];
-		}
-
-		if (!empty($cfgservers)) {
-			$strongswan .= "\t\t\tdns = " . implode(",", $cfgservers) . "\n";
-		}
-		unset($cfgservers);
+		
 		$cfgservers = array();
 		if (!empty($a_client['wins_server1'])) {
 			$cfgservers[] = $a_client['wins_server1'];
@@ -1027,6 +1009,7 @@ EOD;
 			}
 
 			$rightsourceip = NULL;
+			$rightdnsserver = NULL;
 			if (isset($ph1ent['mobile'])) {
 				$rightsourceips = array();
 				if (!empty($a_client['pool_address'])) {
@@ -1040,6 +1023,24 @@ EOD;
 				}
 				if (count($rightsourceips)) {
 					$rightsourceip = "\trightsourceip = " . implode(',', $rightsourceips) . "\n";
+				}
+
+				$rightdnsservers = array();
+				if (!empty($a_client['dns_server1'])) {
+					$rightdnsservers[] = $a_client['dns_server1'];
+				}
+				if (!empty($a_client['dns_server2'])) {
+					$rightdnsservers[] = $a_client['dns_server2'];
+				}
+				if (!empty($a_client['dns_server3'])) {
+					$rightdnsservers[] = $a_client['dns_server3'];
+				}
+				if (!empty($a_client['dns_server4'])) {
+					$rightdnsservers[] = $a_client['dns_server4'];
+				}
+				
+				if (count($rightdnsservers)) {
+					$rightdnsserver = "\trightdns = " . implode(',', $rightdnsservers) . "\n";
 				}
 			}
 
@@ -1406,6 +1407,9 @@ EOD;
 			}
 			if (!empty($rightsourceip)) {
 				$ipsecconnect .= "{$rightsourceip}";
+			}
+			if (!empty($rightdnsserver)) {
+				$ipsecconnect .= "{$rightdnsserver}";
 			}
 			if (!empty($ealgosp1)) {
 				$ipsecconnect .= "\t{$ealgosp1}\n";

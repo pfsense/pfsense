@@ -227,4 +227,28 @@ $pf_reserved_keywords = array(
 	"maxsrcstates", "maxsrcnodes", "sourcetrack", "global", "rule", "maxsrcconn", "maxsrcconnrate", "overload",
 	"flush", "sloppy", "tagged", "tag", "ifbound", "floating", "statepolicy", "statedefaults", "route", "settos",
 	"divertto", "divertreply", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
+
+/* VLAN Prio values. */
+$vlanprio_values = array(
+	"bk" => 0,
+	"be" => 1,
+	"ee" => 2,
+	"ca" => 3,
+	"vi" => 4,
+	"vo" => 5,
+	"ic" => 6,
+	"nc" => 7
+);
+
+$vlanprio = array(
+	"bk" => "Background (BK, 0)",
+	"be" => "Best Effort (BE, 1)",
+	"ee" => "Excellent Effort (EE, 2)",
+	"ca" => "Critical Applications (CA, 3)",
+	"vi" => "Video (VI, 4)",
+	"vo" => "Voice (VO, 5)",
+	"ic" => "Internetwork Control (IC, 6)",
+	"nc" => "Network Control (NC, 7)"
+);
+
 ?>

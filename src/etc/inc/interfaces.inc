@@ -335,12 +335,64 @@ function interface_is_vlan($if = NULL) {
 }
 
 function vlan_interface($vlan = NULL) {
-
 	if ($vlan == NULL || !is_array($vlan) || !isset($vlan['if']) ||
 	    !isset($vlan['tag']) || !vlan_valid_tag($vlan['tag'])) {
 		return (NULL);
 	}
 	return ("{$vlan['if']}.{$vlan['tag']}");
+}
+
+function interface_set_macaddr($interface, $mac_addr) {
+	if (empty($mac_addr) || !is_macaddr($mac_addr)) {
+		return;
+	}
+
+	$current_mac = get_interface_mac($interface);
+
+	/*
+	 * Don't try to reapply the MAC if it's already applied.
+	 * When ifconfig link is used, it cycles the interface down/up, which
+	 * triggers the interface config again, which attempts to apply the
+	 * MAC again, which cycles the link again...
+	 */
+	if ($mac_addr != $current_mac) {
+		mwexec("/sbin/ifconfig " . escapeshellarg($interface) .
+		    " link " . escapeshellarg($mac_addr));
+	}
+}
+
+function vlan_chilren_set_macaddr($interface) {
+	global $config;
+
+	if (!is_array($config['vlans']['vlan']) ||
+	    !count($config['vlans']['vlan'])) {
+		return;
+	}
+
+	if (interface_is_vlan($interface)) {
+		return;
+	}
+
+	$macinfo = pfSense_get_interface_addresses($interface);
+	if (!isset($macinfo["hwaddr"]) || $macinfo["hwaddr"] ==
+	    "00:00:00:00:00:00") {
+		return;
+	}
+
+	foreach ($config['vlans']['vlan'] as $vlan) {
+		if ($vlan['if'] != $interface) {
+			continue;
+		}
+
+		foreach ($config['interfaces'] as $ifcfg) {
+			if ($ifcfg['if'] != $vlan['vlanif'] ||
+			    empty($ifcfg['spoofmac'])) {
+				continue;
+			}
+
+			interface_set_macaddr($ifcfg['if'], $ifcfg['spoofmac']);
+		}
+	}
 }
 
 function interfaces_vlan_configure($realif = "") {
@@ -3716,6 +3768,12 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 	$realhwif = $realhwif_array[0];
 
+	if (interface_is_vlan($realif) && !interface_is_qinq($realif)) {
+		$macaddr_if = $realif;
+	} else {
+		$macaddr_if = $realhwif;
+	}
+
 	if (!platform_booting() && !(substr($realif, 0, 4) == "ovpn") && !(substr($realif, 0, 5) == "ipsec")) {
 		/* remove all IPv4 and IPv6 addresses */
 		$tmpifaces = pfSense_getall_interface_addresses($realif);
@@ -3766,36 +3824,24 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 	}
 
-	$current_mac = get_interface_mac($realhwif);
-	$vendor_mac = get_interface_vendor_mac($realhwif);
-	/*
-	 * Do not change the MAC address if the interface does not store the original
-	 * vendor MAC address.
-	 */
-	if ($vendor_mac != NULL) {
-		/* Get the vendor MAC.  Use source dependent upon whether or not booting. */
-		if (platform_booting()) {
-			$vendor_mac = $current_mac;
-		}
+	$current_mac = get_interface_mac($macaddr_if);
+	$vendor_mac = get_interface_vendor_mac($macaddr_if);
+
+	if ($current_mac != "ff:ff:ff:ff:ff:ff") {
 		$mac_addr = $wancfg['spoofmac'] ?: $vendor_mac;
-		/*
-		 * Don't try to reapply the MAC if it's already applied.
-		 * When ifconfig link is used, it cycles the interface down/up, which triggers
-		 * the interface config again, which attempts to apply the MAC again,
-		 * which cycles the link again...
-		 */
+
 		if (!empty($mac_addr) && ($mac_addr != $current_mac)) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
-				" link " . escapeshellarg($mac_addr));
+			interface_set_macaddr($macaddr_if, $mac_addr);
+			vlan_chilren_set_macaddr($macaddr_if);
 		}
-	} elseif ($current_mac == "ff:ff:ff:ff:ff:ff") {
+	} else {
 		/*   this is not a valid mac address.  generate a
 		 *   temporary mac address so the machine can get online.
 		 */
 		echo gettext("Generating new MAC address.");
 		$random_mac = generate_random_mac_address();
-		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
-			" link " . escapeshellarg($random_mac));
+		interface_set_macaddr($macaddr_if, $random_mac);
+		vlan_chilren_set_macaddr($macaddr_if);
 		$wancfg['spoofmac'] = $random_mac;
 		write_config(sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac));
 		file_notice("MAC Address altered", sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac), "Interfaces");
@@ -6620,10 +6666,42 @@ function get_interface_mac($interface) {
 }
 
 function get_interface_vendor_mac($interface) {
-	$macinfo = pfSense_get_interface_addresses($interface);
-	if (isset($macinfo["hwaddr"]) && $macinfo["hwaddr"] != "00:00:00:00:00:00") {
+	global $config, $g;
+
+	if (interface_is_vlan($interface) && !interface_is_qinq($interface)) {
+		$realhwif_array = get_parent_interface($interface);
+		$realhwif = $realhwif_array[0];
+
+		$ifcfg = convert_real_interface_to_friendly_interface_name(
+		    $realhwif);
+
+		if (!empty($config['interfaces'][$ifcfg]['spoofmac'])) {
+			$macaddr = $config['interfaces'][$ifcfg]['spoofmac'];
+			if (is_macaddr($macaddr)) {
+				return ($macaddr);
+			}
+		}
+	} else {
+		$realhwif = $interface;
+	}
+
+	$macinfo = pfSense_get_interface_addresses($realhwif);
+	if (isset($macinfo["hwaddr"]) && $macinfo["hwaddr"] !=
+	    "00:00:00:00:00:00") {
 		return ($macinfo["hwaddr"]);
 	}
+
+	$hwaddr_file = "{$g['tmp_path']}/{$realhwif}_hwaddr";
+	if (file_exists($hwaddr_file)) {
+		$macaddr = trim(file_get_contents($hwaddr_file));
+		if (is_macaddr($macaddr)) {
+			return ($macaddr);
+		}
+	} elseif (is_macaddr($macinfo['macaddr'])) {
+		/* Save original macaddress to be restored when necessary */
+		@file_put_contents($hwaddr_file, $macinfo['macaddr']);
+	}
+
 	return (NULL);
 }
 

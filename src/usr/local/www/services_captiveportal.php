@@ -177,7 +177,6 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radiustraffic_quota'] = isset($a_cp[$cpzone]['radiustraffic_quota']);
 	$pconfig['radiusperuserbw'] = isset($a_cp[$cpzone]['radiusperuserbw']);
 	$pconfig['passthrumacadd'] = isset($a_cp[$cpzone]['passthrumacadd']);
-	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
 	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
 	$pconfig['reverseacct'] = isset($a_cp[$cpzone]['reverseacct']);
 	$pconfig['includeidletime'] = isset($a_cp[$cpzone]['includeidletime']);
@@ -388,7 +387,6 @@ if ($_POST['save']) {
 		$newcp['radiustraffic_quota'] = $_POST['radiustraffic_quota'] ? true : false;
 		$newcp['radiusperuserbw'] = $_POST['radiusperuserbw'] ? true : false;
 		$newcp['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
-		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
 		$newcp['includeidletime'] = $_POST['includeidletime'] ? true : false;
@@ -662,13 +660,6 @@ $section->addInput(new Form_Checkbox(
 			'never have to authenticate again. To remove the passthrough MAC entry either log in and remove it manually from the ' .
 			'%1$sMAC tab%2$s or send a POST from another system. '  .
 			'If this is enabled, the logout window will not be shown.', "<a href=\"services_captiveportal_mac.php?zone={$cpzone}\">", '</a>');
-
-$section->addInput(new Form_Checkbox(
-	'passthrumacaddusername',
-	null,
-	'Include username in the created Pass-through entry',
-	$pconfig['passthrumacaddusername']
-))->setHelp('If enabled the username used during authentication will be saved in the "Description" Field.');
 
 $section->addInput(new Form_Checkbox(
 	'peruserbw',
@@ -1199,7 +1190,6 @@ events.push(function() {
 		}
 
 		disableInput("logoutwin_enable", !hide);
-		hideCheckbox('passthrumacaddusername', hide);
 	}
 
 	function hidePerUserBandwith(hide) {

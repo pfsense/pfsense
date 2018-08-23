@@ -101,10 +101,9 @@ if (!empty($cpcfg['redirurl'])) {
 }
 
 $macfilter = !isset($cpcfg['nomacfilter']);
-$passthrumac = isset($cpcfg['passthrumacadd']);
 
 /* find MAC address for client */
-if ($macfilter || $passthrumac) {
+if ($macfilter || isset($cpcfg['passthrumacadd'])) {
 	$tmpres = pfSense_ip_to_mac($clientip);
 	if (!is_array($tmpres)) {
 		/* unable to find MAC address - shouldn't happen! - bail out */

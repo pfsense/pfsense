@@ -305,9 +305,7 @@ function upload_config($reasonm = "") {
 
 			$data = curl_exec($curl_session);
 
-			if (file_exists($tmpname)) {
-				unlink($tmpname));
-			}
+			unlink_if_exists($tmpname);
 
 			if (curl_errno($curl_session)) {
 				$fd = fopen("/tmp/backupdebug.txt", "w");

@@ -1028,7 +1028,7 @@ function captiveportal_prune_old_automac() {
 	global $g, $config, $cpzone, $cpzoneid;
 
 	if (is_array($config['captiveportal'][$cpzone]['passthrumac']) &&
-	    isset($config['captiveportal'][$cpzone]['passthrumacaddusername'])) {
+	    isset($config['captiveportal'][$cpzone]['passthrumacadd'])) {
 		$tmpvoucherdb = array();
 		$macrules = "";
 		$writecfg = false;
@@ -2210,7 +2210,7 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 }
 
 function portal_allow($clientip, $clientmac, $username, $password = null, $attributes = null, $pipeno = null, $authmethod = null, $context = 'first') {
-	global $redirurl, $g, $config, $type, $passthrumac, $_POST, $cpzone, $cpzoneid;
+	global $redirurl, $g, $config, $type, $_POST, $cpzone, $cpzoneid;
 
 	// Ensure we create an array if we are missing attributes
 	if (!is_array($attributes)) {
@@ -2231,9 +2231,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 	$writecfg = false;
 	/* If both "Add MAC addresses of connected users as pass-through MAC" and "Disable concurrent logins" are checked, 
 	then we need to check if the user was already authenticated using another MAC Address, and if so remove the previous Pass-Through MAC. */	
-	if ((isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) &&
-	    $passthrumac &&
-	    isset($config['captiveportal'][$cpzone]['passthrumacadd'])) {
+	if ((isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) && ($username != 'unauthenticated') && isset($config['captiveportal'][$cpzone]['passthrumacadd'])) {
 		$mac = captiveportal_passthrumac_findbyname($username);
 		if (!empty($mac)) {
 			foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $idx => $macent) {
@@ -2330,20 +2328,20 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 			$bw_down = round($dwfaultbw_down,0);
 		}
 
-		if ($passthrumac) {
+		if (isset($config['captiveportal'][$cpzone]['passthrumacadd'])) {
 
 			$mac = array();
 			$mac['action'] = 'pass';
 			$mac['mac'] = $clientmac;
 			$mac['ip'] = $clientip; /* Used only for logging */
-			if (isset($config['captiveportal'][$cpzone]['passthrumacaddusername'])) {
-				$mac['username'] = $username;
-				if ($attributes['voucher']) {
-					$mac['logintype'] = "voucher";
-				}
+			$mac['username'] = $username;
+			if ($attributes['voucher']) {
+				$mac['logintype'] = "voucher";
 			}
 			if ($username == "unauthenticated") {
 				$mac['descr'] = "Auto-added";
+			} else if ($authmethod == "voucher") {
+				$mac['descr'] = "Auto-added for voucher {$username}";
 			} else {
 				$mac['descr'] = "Auto-added for user {$username}";
 			}
@@ -2456,7 +2454,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 		$my_redirurl = $config['captiveportal'][$cpzone]['redirurl'];
 	}
 
-	if (isset($config['captiveportal'][$cpzone]['logoutwin_enable']) && !$passthrumac) {
+	if (isset($config['captiveportal'][$cpzone]['logoutwin_enable']) && !isset($config['captiveportal'][$cpzone]['passthrumacadd'])) {
 		$ourhostname = portal_hostname_from_client_ip($clientip);
 		$protocol = (isset($config['captiveportal'][$cpzone]['httpslogin'])) ? 'https://' : 'http://';
 		$logouturl = "{$protocol}{$ourhostname}/";

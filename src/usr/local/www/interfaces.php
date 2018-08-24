@@ -663,8 +663,8 @@ if ($_POST['apply']) {
 			break;
 		case "6rd":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && ($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6'])) {
-					if ($config[interfaces][$ifent]['prefix-6rd'] == $_POST['prefix-6rd']) {
+				if ($if != $ifent && ($config['interfaces'][$ifent]['ipaddrv6'] == $_POST['type6'])) {
+					if ($config['interfaces'][$ifent]['prefix-6rd'] == $_POST['prefix-6rd']) {
 						$input_errors[] = gettext("Only one interface can be configured within a single 6rd prefix.");
 						break;
 					}
@@ -679,7 +679,7 @@ if ($_POST['apply']) {
 			break;
 		case "6to4":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && ($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6'])) {
+				if ($if != $ifent && ($config['interfaces'][$ifent]['ipaddrv6'] == $_POST['type6'])) {
 					$input_errors[] = sprintf(gettext("Only one interface can be configured as 6to4."), $_POST['type6']);
 					break;
 				}

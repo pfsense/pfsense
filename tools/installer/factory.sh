@@ -193,6 +193,12 @@ get_cur_model() {
 	local _hw_model=$(sysctl -qb hw.model)
 	local _hw_ncpu=$(sysctl -qn hw.ncpu)
 	local _boardpn=""
+	local _model=""
+
+	# Read board model from FDT.
+	if [ "${machine_arch}" == "aarch64" ]; then
+		_model=$(/usr/sbin/ofwdump -P model -R /)
+	fi
 
 	case "${_product}" in
 		RCC-VE)
@@ -240,6 +246,11 @@ get_cur_model() {
 					_cur_model="SG-2320"
 					;;
 			esac
+			;;
+		mvebu_armada-37xx)
+			if [ -n "${_model}" -a "${_model}" == "Netgate SG-1100" ]; then
+				_cur_model="SG-1100"
+			fi
 			;;
 	esac
 
@@ -370,6 +381,10 @@ if [ "${cur_model}" == "SG-1000" ]; then
 	serial=$(hexdump -C /tmp/serial.bin | \
 	    sed '1!d; s,\.*\|$,,; s,^.*\|,,')
 
+elif [ "${cur_model}" == "SG-1100" ]; then
+	is_arm=1
+	serial=		# XXX
+
 elif [ "${cur_model}" == "SG-3100" ]; then
 	is_arm=1
 	serial=$(/usr/local/sbin/u-boot-env boardsn 2>/dev/null)
@@ -423,7 +438,7 @@ if [ -n "${is_adi}" ]; then
 		*)
 			selected_model="Default"
 	esac
-elif [ "${machine_arch}" != "armv6" ]; then
+elif [ "${machine_arch}" != "armv6" -a "${machine_arch}" != "aarch64" ]; then
 	case "${cur_model}" in
 		C2758|APU|SG-2320|SG-2340|XG-1537|SG-5100|XG-154*)
 			selected_model="${cur_model}"
@@ -532,6 +547,9 @@ case "${selected_model}" in
 	SG-1000)
 		wan_if="cpsw0"
 		;;
+	SG-1100)
+		wan_if="mvneta0"
+		;;
 	SG-3100)
 		wan_if="mvneta2"
 		;;
@@ -603,6 +621,11 @@ if [ "${selected_model}" = "SG-1000" ]; then
 
 	# Enable the factory post installation automatic halt
 	touch /mnt/root/factory_boot
+elif [ "${selected_model}" = "SG-1100" ]; then
+
+echo "SG-1100 install.."
+sleep 2
+
 elif [ "${selected_model}" = "SG-3100" ]; then
 	[ "$(/usr/local/sbin/u-boot-env boardrev 2>/dev/null)" = "R100" ] \
 		&& gpiodev="1" \

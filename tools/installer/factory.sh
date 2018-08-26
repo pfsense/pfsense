@@ -684,7 +684,8 @@ elif [ "${selected_model}" = "SG-1100" ]; then
 		/mnt/etc/fstab
 
 	# Enable the factory post installation automatic halt
-	touch /mnt/root/factory_boot
+	# not used on SG-1100.  the installer will halt after finish.
+	#touch /mnt/root/factory_boot
 
 elif [ "${selected_model}" = "SG-3100" ]; then
 	[ "$(/usr/local/sbin/u-boot-env boardrev 2>/dev/null)" = "R100" ] \

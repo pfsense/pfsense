@@ -644,7 +644,7 @@ elif [ "${selected_model}" = "SG-1100" ]; then
 		reboot
 	fi
 
-	IMG=$(/usr/bin/fetch -q -o - http://192.168.123.1/img.txt 2> /dev/null)
+	IMG=$(/bin/cat /usr/local/share/pfSense/img.path 2> /dev/null)
 	if [ -z "${IMG}" -o ! -f "${IMG}" ]; then
 		echo
 		echo "cannot find the firmware image.  aborting."
@@ -657,11 +657,9 @@ elif [ "${selected_model}" = "SG-1100" ]; then
 
 	echo "Writing the firmware to eMMC..."
 	echo "(this may take a few minutes to complete)"
-	/usr/bin/gzip -dc ${IMG} | /bin/dd of=/dev/${DEV} bs=4m
-
-	/usr/bin/fetch -o - "http://192.168.123.1/${IMG}" | bunzip2 | dd of=/dev/${MMCDEV} bs=4m
+	/usr/bin/bunzip2 -c ${IMG} | /bin/dd of=/dev/${MMCDEV} bs=4m
 	if [ $? -ne 0 ]; then
-		echo "Error: Something went wrong when tried to dd image to disk"
+		echo "Error: Failed to write the image to disk"
 		exit 1
 	fi
 

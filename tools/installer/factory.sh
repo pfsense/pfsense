@@ -623,8 +623,70 @@ if [ "${selected_model}" = "SG-1000" ]; then
 	touch /mnt/root/factory_boot
 elif [ "${selected_model}" = "SG-1100" ]; then
 
-echo "SG-1100 install.."
-sleep 2
+	# Identify the SDHCI devices
+	for DEV in mmcsd0 mmcsd1
+	do
+		MMCHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep MMCHC)
+		if [ -n "${MMCHC}" ]; then
+			MMCDEV=${DEV}
+			continue
+		fi
+		SDHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep SDHC)
+		if [ -n "${SDHC}" ]; then
+			SDDEV=${DEV}
+			continue
+		fi
+	done
+	if [ -z "${MMCDEV}" -a -z "${SDDEV}" ]; then
+		echo
+		echo "no eMMC device detected.  aborting."
+		sleep 5
+		reboot
+	fi
+
+	IMG=$(/usr/bin/fetch -q -o - http://192.168.123.1/img.txt 2> /dev/null)
+	if [ -z "${IMG}" -o ! -f "${IMG}" ]; then
+		echo
+		echo "cannot find the firmware image.  aborting."
+		sleep 5
+		reboot
+	fi
+
+	echo "Erasing the eMMC contents..."
+	/bin/dd if=/dev/zero of=/dev/${MMCDEV} bs=4m count=15 2> /dev/null
+
+	echo "Writing the firmware to eMMC..."
+	echo "(this may take a few minutes to complete)"
+	/usr/bin/gzip -dc ${IMG} | /bin/dd of=/dev/${DEV} bs=4m
+
+	/usr/bin/fetch -o - "http://192.168.123.1/${IMG}" | bunzip2 | dd of=/dev/${MMCDEV} bs=4m
+	if [ $? -ne 0 ]; then
+		echo "Error: Something went wrong when tried to dd image to disk"
+		exit 1
+	fi
+
+	echo "Fixing ${TYPE} labels..."
+	DISKID=$(/sbin/glabel status -s "${MMCDEV}" 2>/dev/null \
+		| /usr/bin/grep diskid | /usr/bin/cut -d' ' -f1)
+	if [ -z "${DISKID}" ]; then
+		echo
+		echo "error obtaining DISKID.  aborting."
+		sleep 5
+		reboot
+	fi
+	if ! /sbin/mount /dev/${DISKID}s3 /mnt; then
+		echo
+		echo "error mounting pfSense partition.  aborting."
+		sleep 5
+		reboot
+	fi
+
+	/usr/bin/sed -i '' \
+		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s3," \
+		/mnt/etc/fstab
+
+	# Enable the factory post installation automatic halt
+	touch /mnt/root/factory_boot
 
 elif [ "${selected_model}" = "SG-3100" ]; then
 	[ "$(/usr/local/sbin/u-boot-env boardrev 2>/dev/null)" = "R100" ] \
@@ -871,6 +933,10 @@ fi
 umount /mnt
 sync; sync; sync
 trap "-" 1 2 15 EXIT
+
+if [ "${machine_arch}" == "aarch64" ]; then
+	exit $?
+fi
 
 # Calculate the "Unique ID" for support and tracking purposes
 UID=$(gnid)

@@ -89,7 +89,7 @@ main() {
 
 	echo "Writing the firmware to ${TYPE}..."
 	echo "(this may take a few minutes to complete)"
-	/usr/bin/gzip -dc ${IMG} | /bin/dd of=/dev/${DEV} bs=4m
+	/usr/bin/bunzip2 -c ${IMG} | /bin/dd of=/dev/${DEV} bs=4m
 
 	echo "Fixing ${TYPE} labels..."
 	DISKID=$(/sbin/glabel status -s "${DEV}" 2>/dev/null \

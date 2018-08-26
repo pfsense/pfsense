@@ -67,6 +67,7 @@ net/trafshow3
 net/vnstat
 security/netgate-ca
 security/netgate-ping-auth
+security/netgate-signer
 security/netgate-thoth
 security/%%PRODUCT_NAME%%-pkg-acme
 security/%%PRODUCT_NAME%%-pkg-nmap

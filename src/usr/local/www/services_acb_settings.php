@@ -162,11 +162,11 @@ $section->addPassword(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'hint',
-	'Hint',
+	'Identifier',
 	'text',
 	$pconfig['hint']
-))->setHelp("You may optionally provide a hint which will be stored in plain text along with each encrypted backup. " .
-			"This may allow the Netgate support team to recover your key should you lose it.");
+))->setHelp("You may optionally provide an identifier which will be stored in plain text along with each encrypted backup. " .
+			"This may allow the Netgate support team to locate your key should you lose it.");
 
 $form->add($section);
 

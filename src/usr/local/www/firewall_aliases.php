@@ -239,7 +239,7 @@ display_top_tabs($tab_array);
 		if (is_array($alias["aliasurl"])) {
 			$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
 			echo $aliasurls;
-			if (count($aliasurls) > 10) {
+			if (is_array($aliasurls) && (count($aliasurls) > 10)) {
 				echo "&hellip;<br />";
 			}
 			echo "<br />\n";

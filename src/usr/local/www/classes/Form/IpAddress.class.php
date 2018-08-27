@@ -39,6 +39,7 @@ class Form_IpAddress extends Form_Input
 
 			case "V6":
 				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1';
+				break;
 
 			case "ALIASV4V6":
 				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1 or an alias';

@@ -257,7 +257,7 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 		}
 	}
 
-	if (is_array($reqdfields)) {}
+	if (is_array($reqdfields)) {
 		for ($i = 0; $i < count($reqdfields); $i++) {
 			if ($postdata[$reqdfields[$i]] == "") {
 				$input_errors[] = sprintf(gettext("The field %s is required."), $reqdfieldsn[$i]);

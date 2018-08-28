@@ -1888,9 +1888,9 @@ $macaddress = new Form_Input(
 	['placeholder' => 'xx:xx:xx:xx:xx:xx']
 );
 
-if (interface_is_qinq($realifname)) {
+if (interface_is_vlan($realifname)) {
 	$macaddress->setDisabled();
-	$macaddress->setHelp('The MAC address of a QinQ interface must be ' .
+	$macaddress->setHelp('The MAC address of a VLAN interface must be ' .
 	    'set on its parent interface');
 } else {
 	$macaddress->setHelp('This field can be used to modify ("spoof") the ' .

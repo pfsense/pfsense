@@ -361,40 +361,6 @@ function interface_set_macaddr($interface, $mac_addr) {
 	}
 }
 
-function vlan_chilren_set_macaddr($interface) {
-	global $config;
-
-	if (!is_array($config['vlans']['vlan']) ||
-	    !count($config['vlans']['vlan'])) {
-		return;
-	}
-
-	if (interface_is_vlan($interface)) {
-		return;
-	}
-
-	$macinfo = pfSense_get_interface_addresses($interface);
-	if (!isset($macinfo["hwaddr"]) || $macinfo["hwaddr"] ==
-	    "00:00:00:00:00:00") {
-		return;
-	}
-
-	foreach ($config['vlans']['vlan'] as $vlan) {
-		if ($vlan['if'] != $interface) {
-			continue;
-		}
-
-		foreach ($config['interfaces'] as $ifcfg) {
-			if ($ifcfg['if'] != $vlan['vlanif'] ||
-			    empty($ifcfg['spoofmac'])) {
-				continue;
-			}
-
-			interface_set_macaddr($ifcfg['if'], $ifcfg['spoofmac']);
-		}
-	}
-}
-
 function interfaces_vlan_configure($realif = "") {
 	global $config, $g;
 	if (platform_booting()) {
@@ -3768,10 +3734,15 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 	$realhwif = $realhwif_array[0];
 
-	if (interface_is_vlan($realif) && !interface_is_qinq($realif)) {
-		$macaddr_if = $realif;
-	} else {
-		$macaddr_if = $realhwif;
+	$mac_if_cfg = $wancfg;
+	if (interface_is_vlan($realif)) {
+		$mac_if = convert_real_interface_to_friendly_interface_name(
+		    $realhwif);
+		if (is_array($config['interfaces'][$mac_if])) {
+			$mac_if_cfg = $config['interfaces'][$mac_if];
+		} else {
+			$mac_if = $interface;
+		}
 	}
 
 	if (!platform_booting() && !(substr($realif, 0, 4) == "ovpn") && !(substr($realif, 0, 5) == "ipsec")) {
@@ -3824,24 +3795,21 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 	}
 
-	$current_mac = get_interface_mac($macaddr_if);
-	$vendor_mac = get_interface_vendor_mac($macaddr_if);
+	$current_mac = get_interface_mac($realhwif);
+	$vendor_mac = get_interface_vendor_mac($realhwif);
 
 	if ($current_mac != "ff:ff:ff:ff:ff:ff") {
-		$mac_addr = $wancfg['spoofmac'] ?: $vendor_mac;
+		$mac_addr = $mac_if_cfg['spoofmac'] ?: $vendor_mac;
 
-		if (!empty($mac_addr) && ($mac_addr != $current_mac)) {
-			interface_set_macaddr($macaddr_if, $mac_addr);
-			vlan_chilren_set_macaddr($macaddr_if);
-		}
+		interface_set_macaddr($realhwif, $mac_addr);
 	} else {
-		/*   this is not a valid mac address.  generate a
-		 *   temporary mac address so the machine can get online.
+		/*
+		 * this is not a valid mac address.  generate a
+		 * temporary mac address so the machine can get online.
 		 */
 		echo gettext("Generating new MAC address.");
 		$random_mac = generate_random_mac_address();
-		interface_set_macaddr($macaddr_if, $random_mac);
-		vlan_chilren_set_macaddr($macaddr_if);
+		interface_set_macaddr($realhwif, $random_mac);
 		$wancfg['spoofmac'] = $random_mac;
 		write_config(sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac));
 		file_notice("MAC Address altered", sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac), "Interfaces");
@@ -6668,30 +6636,13 @@ function get_interface_mac($interface) {
 function get_interface_vendor_mac($interface) {
 	global $config, $g;
 
-	if (interface_is_vlan($interface) && !interface_is_qinq($interface)) {
-		$realhwif_array = get_parent_interface($interface);
-		$realhwif = $realhwif_array[0];
-
-		$ifcfg = convert_real_interface_to_friendly_interface_name(
-		    $realhwif);
-
-		if (!empty($config['interfaces'][$ifcfg]['spoofmac'])) {
-			$macaddr = $config['interfaces'][$ifcfg]['spoofmac'];
-			if (is_macaddr($macaddr)) {
-				return ($macaddr);
-			}
-		}
-	} else {
-		$realhwif = $interface;
-	}
-
-	$macinfo = pfSense_get_interface_addresses($realhwif);
+	$macinfo = pfSense_get_interface_addresses($interface);
 	if (isset($macinfo["hwaddr"]) && $macinfo["hwaddr"] !=
 	    "00:00:00:00:00:00") {
 		return ($macinfo["hwaddr"]);
 	}
 
-	$hwaddr_file = "{$g['tmp_path']}/{$realhwif}_hwaddr";
+	$hwaddr_file = "{$g['tmp_path']}/{$interface}_hwaddr";
 	if (file_exists($hwaddr_file)) {
 		$macaddr = trim(file_get_contents($hwaddr_file));
 		if (is_macaddr($macaddr)) {

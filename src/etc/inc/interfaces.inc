@@ -3810,9 +3810,14 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		echo gettext("Generating new MAC address.");
 		$random_mac = generate_random_mac_address();
 		interface_set_macaddr($realhwif, $random_mac);
-		$wancfg['spoofmac'] = $random_mac;
-		write_config(sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac));
-		file_notice("MAC Address altered", sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac), "Interfaces");
+		$config['interfaces'][$mac_if]['spoofmac'] = $random_mac;
+		write_config(sprintf(gettext('The invalid MAC address ' .
+		    '(ff:ff:ff:ff:ff:ff) on interface %1$s has been ' .
+		    'automatically replaced with %2$s'), $mac_if, $random_mac));
+		file_notice("MAC Address altered", sprintf(gettext('The ' .
+		    'invalid MAC address (ff:ff:ff:ff:ff:ff) on interface ' .
+		    '%1$s has been automatically replaced with %2$s'), $mac_if,
+		    $random_mac), "Interfaces");
 	}
 
 	/* media */

@@ -240,10 +240,10 @@ get_cur_model() {
 		"Minnowboard Turbot D0 PLATFORM")
 			case "${_hw_ncpu}" in
 				4)
-					_cur_model="SG-2340"
+					_cur_model="MBT-4220"
 					;;
 				2)
-					_cur_model="SG-2320"
+					_cur_model="MBT-2220"
 					;;
 			esac
 			;;
@@ -297,7 +297,7 @@ get_prodtrack_model() {
 			    && _prodtrack_model="SG-2220-M2-2GB" \
 			    || _prodtrack_model="SG-2220-EMMC-2GB"
 			;;
-		SG-2320|SG-2340)
+		MBT-2220|MBT-4220)
 			_prodtrack_model="${_cur_model}-M2-2GB"
 			;;
 		SG-2440)
@@ -440,7 +440,7 @@ if [ -n "${is_adi}" ]; then
 	esac
 elif [ "${machine_arch}" != "armv6" -a "${machine_arch}" != "aarch64" ]; then
 	case "${cur_model}" in
-		C2758|APU|SG-2320|SG-2340|XG-1537|SG-5100|XG-154*)
+		C2758|APU|MBT-2220|MBT-4220|XG-1537|SG-5100|XG-154*)
 			selected_model="${cur_model}"
 			;;
 		XG-7100)

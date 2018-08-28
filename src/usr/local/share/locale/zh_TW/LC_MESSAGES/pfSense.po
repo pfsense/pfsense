@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-23 08:28-0300\n"
+"POT-Creation-Date: 2018-08-28 17:18-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh_TW\n"
-"X-Generator: Zanata 4.6.0\n"
+"X-Generator: Zanata 4.6.2\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: src/usr/local/captiveportal/index.php:41
@@ -30,20 +30,20 @@ msgstr ""
 msgid "You are connected."
 msgstr ""
 
-#: src/usr/local/captiveportal/index.php:148
+#: src/usr/local/captiveportal/index.php:147
 msgid "This MAC address has been blocked"
 msgstr ""
 
-#: src/usr/local/captiveportal/index.php:160
-#: src/usr/local/captiveportal/index.php:230
+#: src/usr/local/captiveportal/index.php:159
+#: src/usr/local/captiveportal/index.php:229
 msgid "Invalid credentials specified."
 msgstr ""
 
-#: src/usr/local/captiveportal/index.php:200
+#: src/usr/local/captiveportal/index.php:199
 msgid "System reached maximum login capacity"
 msgstr ""
 
-#: src/usr/local/captiveportal/index.php:237
+#: src/usr/local/captiveportal/index.php:236
 msgid "RADIUS MAC Authentication Failed."
 msgstr ""
 
@@ -246,7 +246,7 @@ msgstr "NAT 1：1映射"
 #: src/usr/local/www/services_dhcpv6_relay.php:79
 #: src/usr/local/www/interfaces_gre.php:100
 #: src/usr/local/www/firewall_nat_out_edit.php:170
-#: src/usr/local/www/services_captiveportal.php:208
+#: src/usr/local/www/services_captiveportal.php:207
 #: src/usr/local/www/easyrule.php:80 src/usr/local/www/easyrule.php:88
 #: src/usr/local/www/interfaces_bridge.php:106
 #: src/usr/local/www/diag_ndp.php:141
@@ -285,7 +285,7 @@ msgstr "目的IP"
 #: src/usr/local/www/status_ipsec.php:513
 #: src/usr/local/www/firewall_nat_1to1_edit.php:507
 #: src/usr/local/www/load_balancer_pool.php:122
-#: src/usr/local/www/guiconfig.inc:1187
+#: src/usr/local/www/guiconfig.inc:1189
 #: src/usr/local/www/services_dhcpv6.php:1057
 #: src/usr/local/www/services_checkip.php:100
 #: src/usr/local/www/services_rfc2136.php:89
@@ -336,7 +336,7 @@ msgstr "目的IP"
 #: src/usr/local/www/system_gateway_groups_edit.php:333
 #: src/usr/local/www/interfaces_vlan_edit.php:214
 #: src/usr/local/www/load_balancer_monitor_edit.php:79
-#: src/usr/local/www/interfaces_bridge_edit.php:420
+#: src/usr/local/www/interfaces_bridge_edit.php:416
 #: src/usr/local/www/load_balancer_pool_edit.php:319
 #: src/usr/local/www/firewall_virtual_ip.php:287
 #: src/usr/local/www/system_routes.php:249
@@ -364,7 +364,7 @@ msgstr "目的IP"
 #: src/usr/local/www/load_balancer_virtual_server.php:145
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:156
 #: src/usr/local/www/firewall_aliases_import.php:266
-#: src/usr/local/www/services_captiveportal.php:541
+#: src/usr/local/www/services_captiveportal.php:539
 #: src/usr/local/www/firewall_schedule.php:98
 #: src/usr/local/www/vpn_ipsec_phase1.php:736
 #: src/usr/local/www/firewall_aliases_edit.php:680
@@ -373,8 +373,8 @@ msgstr "目的IP"
 #: src/usr/local/www/interfaces_gif_edit.php:224
 #: src/usr/local/www/services_captiveportal_ip.php:108
 #: src/usr/local/www/vpn_ipsec_phase2.php:616
-#: src/usr/local/www/interfaces.php:517 src/usr/local/www/interfaces.php:2034
-#: src/usr/local/www/interfaces.php:3408
+#: src/usr/local/www/interfaces.php:517 src/usr/local/www/interfaces.php:2030
+#: src/usr/local/www/interfaces.php:3404
 #: src/usr/local/www/services_dhcpv6_edit.php:235
 #: src/usr/local/www/services_wol_edit.php:152
 #: src/usr/local/www/services_unbound_host_edit.php:219
@@ -580,7 +580,7 @@ msgstr "將映射新增到列表頂部"
 #: src/usr/local/www/interfaces_bridge.php:160
 #: src/usr/local/www/services_captiveportal_ip.php:154
 #: src/usr/local/www/services_ntpd_acls.php:318
-#: src/usr/local/www/interfaces.php:2041 src/usr/local/www/interfaces.php:3415
+#: src/usr/local/www/interfaces.php:2037 src/usr/local/www/interfaces.php:3411
 #: src/usr/local/www/system_gateways.php:404
 #: src/usr/local/www/vpn_openvpn_server.php:1460
 #: src/usr/local/www/services_dyndns.php:221
@@ -720,8 +720,8 @@ msgstr "一個或多個NAT 1：1映射已移動，但尚未儲存"
 #: src/usr/local/www/status_openvpn.php:156
 #: src/usr/local/www/status_openvpn.php:237
 #: src/usr/local/www/status_openvpn.php:297
-#: src/usr/local/www/status_interfaces.php:94
-#: src/usr/local/www/status_interfaces.php:116
+#: src/usr/local/www/status_interfaces.php:98
+#: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/diag_gmirror.php:222
 #: src/usr/local/www/status_services.php:56
 #: src/usr/local/www/status_services.php:88
@@ -911,10 +911,10 @@ msgstr "斷開VPN連接 "
 
 #: src/usr/local/www/status_ipsec.php:256
 #: src/usr/local/www/status_ipsec.php:380
-#: src/usr/local/www/status_interfaces.php:119
-#: src/usr/local/www/status_interfaces.php:120
-#: src/usr/local/www/status_interfaces.php:121
-#: src/usr/local/www/status_interfaces.php:122
+#: src/usr/local/www/status_interfaces.php:123
+#: src/usr/local/www/status_interfaces.php:124
+#: src/usr/local/www/status_interfaces.php:125
+#: src/usr/local/www/status_interfaces.php:126
 msgid "Disconnect"
 msgstr "斷開連接"
 
@@ -1034,7 +1034,7 @@ msgstr "斷開連接 "
 #: src/usr/local/www/status_logs_settings.php:220
 #: src/usr/local/www/widgets/include/ipsec.inc:22
 #: src/usr/local/www/status_graph.php:42 src/usr/local/www/status_graph.php:300
-#: src/etc/inc/interfaces.inc:6985
+#: src/etc/inc/interfaces.inc:7019
 msgid "IPsec"
 msgstr "IPsec"
 
@@ -1121,7 +1121,7 @@ msgstr "沒有可用的IPsec狀態信息。"
 #: src/usr/local/www/interfaces_assign.php:36
 #: src/usr/local/www/interfaces_lagg_edit.php:215
 #: src/usr/local/www/interfaces_wireless.php:71
-#: src/usr/local/www/status_interfaces.php:94
+#: src/usr/local/www/status_interfaces.php:98
 #: src/usr/local/www/interfaces_groups.php:58
 #: src/usr/local/www/interfaces_wireless_edit.php:162
 #: src/usr/local/www/interfaces_groups_edit.php:33
@@ -1129,7 +1129,7 @@ msgstr "沒有可用的IPsec狀態信息。"
 #: src/usr/local/www/interfaces_gif.php:72
 #: src/usr/local/www/diag_backup.php:437
 #: src/usr/local/www/interfaces_vlan_edit.php:177
-#: src/usr/local/www/interfaces_bridge_edit.php:395
+#: src/usr/local/www/interfaces_bridge_edit.php:391
 #: src/usr/local/www/interfaces_ppps.php:78
 #: src/usr/local/www/services_captiveportal_zones.php:75
 #: src/usr/local/www/interfaces_gre_edit.php:156
@@ -1190,7 +1190,7 @@ msgstr "刪除介面"
 #: src/usr/local/www/system_gateway_groups_edit.php:147
 #: src/usr/local/www/interfaces_vlan_edit.php:177
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
-#: src/usr/local/www/interfaces_bridge_edit.php:395
+#: src/usr/local/www/interfaces_bridge_edit.php:391
 #: src/usr/local/www/load_balancer_pool_edit.php:181
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:50
 #: src/usr/local/www/firewall_virtual_ip_edit.php:294
@@ -1414,7 +1414,7 @@ msgstr "GIFs"
 #: src/usr/local/www/interfaces_groups.php:72
 #: src/usr/local/www/interfaces_qinq.php:99
 #: src/usr/local/www/interfaces_gif.php:89
-#: src/usr/local/www/interfaces_bridge_edit.php:395
+#: src/usr/local/www/interfaces_bridge_edit.php:391
 #: src/usr/local/www/interfaces_ppps.php:91
 #: src/usr/local/www/interfaces_gre.php:89
 #: src/usr/local/www/interfaces_bridge.php:79
@@ -1730,7 +1730,7 @@ msgstr "防火牆: NAT: 1:1 - 已儲存/編輯NAT 1：1映射。"
 #: src/usr/local/www/firewall_rules_edit.php:1468
 #: src/usr/local/www/firewall_nat_out_edit.php:522
 #: src/usr/local/www/firewall_nat_out_edit.php:547
-#: src/usr/local/www/interfaces.php:3162
+#: src/usr/local/www/interfaces.php:3158
 #: src/usr/local/www/diag_traceroute.php:142 src/etc/inc/ipsec.inc:102
 msgid "Any"
 msgstr "Any"
@@ -1800,7 +1800,7 @@ msgstr "編輯NAT1:1條目"
 #: src/usr/local/www/firewall_nat_out_edit.php:477
 #: src/usr/local/www/vpn_ipsec_phase1.php:699
 #: src/usr/local/www/vpn_ipsec_phase2.php:530
-#: src/usr/local/www/interfaces.php:2825
+#: src/usr/local/www/interfaces.php:2821
 #: src/usr/local/www/vpn_openvpn_server.php:694
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:286
 #: src/usr/local/www/firewall_nat_npt_edit.php:161
@@ -1830,7 +1830,7 @@ msgstr "從稍後更常見的規則中排除地址。"
 #: src/usr/local/www/status_logs_settings.php:224
 #: src/usr/local/www/widgets/include/openvpn.inc:22
 #: src/usr/local/www/status_graph.php:49 src/etc/inc/service-utils.inc:365
-#: src/etc/inc/interfaces.inc:6163 src/etc/inc/interfaces.inc:6990
+#: src/etc/inc/interfaces.inc:6182 src/etc/inc/interfaces.inc:7024
 msgid "OpenVPN"
 msgstr "OpenVPN"
 
@@ -1954,7 +1954,7 @@ msgstr "1：1映射將僅用於到指定目標的連接或從指定目標的連�
 #: src/usr/local/www/firewall_nat_out_edit.php:664
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:159
 #: src/usr/local/www/firewall_aliases_import.php:269
-#: src/usr/local/www/services_captiveportal.php:544
+#: src/usr/local/www/services_captiveportal.php:542
 #: src/usr/local/www/vpn_ipsec_phase1.php:739
 #: src/usr/local/www/firewall_aliases_edit.php:683
 #: src/usr/local/www/interfaces_gif_edit.php:227
@@ -1992,9 +1992,9 @@ msgstr "使用系統預設值"
 #: src/usr/local/www/services_dhcpv6_relay.php:148
 #: src/usr/local/www/services_pppoe_edit.php:292
 #: src/usr/local/www/services_rfc2136_edit.php:183
-#: src/usr/local/www/services_captiveportal.php:534
+#: src/usr/local/www/services_captiveportal.php:532
 #: src/usr/local/www/vpn_ipsec_phase1.php:932
-#: src/usr/local/www/interfaces.php:1838 src/usr/local/www/interfaces.php:3205
+#: src/usr/local/www/interfaces.php:1838 src/usr/local/www/interfaces.php:3201
 #: src/usr/local/www/firewall_rules.php:763 src/etc/inc/shaper.inc:4262
 #: src/etc/inc/shaper.inc:4716 src/usr/local/www/diag_routes.php:83
 msgid "Enable"
@@ -2217,7 +2217,7 @@ msgstr "名稱"
 #: src/usr/local/www/load_balancer_pool_edit.php:69
 #: src/usr/local/www/load_balancer_pool_edit.php:309
 #: src/usr/local/www/status_lb_pool.php:134
-#: src/usr/local/www/interfaces.php:917 src/usr/local/www/interfaces.php:3145
+#: src/usr/local/www/interfaces.php:917 src/usr/local/www/interfaces.php:3141
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:69
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:74
 #: src/etc/inc/pfsense-utils.inc:3246 src/etc/inc/pfsense-utils.inc:3289
@@ -2243,7 +2243,7 @@ msgstr "伺服器"
 #: src/usr/local/www/diag_testport.php:52
 #: src/usr/local/www/load_balancer_virtual_server.php:142
 #: src/usr/local/www/firewall_aliases_edit.php:570
-#: src/usr/local/www/interfaces.php:3285 src/usr/local/www/interfaces.php:3309
+#: src/usr/local/www/interfaces.php:3281 src/usr/local/www/interfaces.php:3305
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:199
 #: src/usr/local/www/firewall_rules.php:360
 #: src/usr/local/www/firewall_rules.php:362
@@ -2288,13 +2288,13 @@ msgstr "認證和計費"
 
 #: src/usr/local/www/guiconfig.inc:162
 #: src/usr/local/www/diag_authentication.php:69
-#: src/usr/local/www/services_captiveportal.php:880
+#: src/usr/local/www/services_captiveportal.php:871
 #: src/usr/local/www/head.inc:387
 msgid "Authentication"
 msgstr "認證測試"
 
 #: src/usr/local/www/guiconfig.inc:163 src/usr/local/www/vpn_l2tp.php:296
-#: src/usr/local/www/services_captiveportal.php:991
+#: src/usr/local/www/services_captiveportal.php:982
 msgid "Accounting"
 msgstr "計費"
 
@@ -2324,19 +2324,19 @@ msgstr "10BASE-T half-duplex"
 
 #: src/usr/local/www/guiconfig.inc:247
 #: src/usr/local/www/interfaces_wireless_edit.php:186
-#: src/usr/local/www/interfaces.php:3147
+#: src/usr/local/www/interfaces.php:3143
 msgid "Infrastructure (BSS)"
 msgstr "Infrastructure (BSS)"
 
 #: src/usr/local/www/guiconfig.inc:248
 #: src/usr/local/www/interfaces_wireless_edit.php:187
-#: src/usr/local/www/interfaces.php:3147
+#: src/usr/local/www/interfaces.php:3143
 msgid "Ad-hoc (IBSS)"
 msgstr "Ad-hoc (IBSS)"
 
 #: src/usr/local/www/guiconfig.inc:249
 #: src/usr/local/www/interfaces_wireless_edit.php:188
-#: src/usr/local/www/interfaces.php:3147
+#: src/usr/local/www/interfaces.php:3143
 msgid "Access Point"
 msgstr "接入點"
 
@@ -2345,59 +2345,59 @@ msgstr "接入點"
 msgid "The field %s contains invalid characters."
 msgstr "欄位 %s 包含無效字元"
 
-#: src/usr/local/www/guiconfig.inc:262
+#: src/usr/local/www/guiconfig.inc:263
 #, php-format
 msgid "The field %s is required."
 msgstr "欄位 %s 是必須的"
 
-#: src/usr/local/www/guiconfig.inc:269
+#: src/usr/local/www/guiconfig.inc:271
 msgid "The following input errors were detected:"
 msgstr "檢測到以下輸入錯誤："
 
-#: src/usr/local/www/guiconfig.inc:333
+#: src/usr/local/www/guiconfig.inc:335
 msgid "Apply Changes"
 msgstr "應用更改"
 
-#: src/usr/local/www/guiconfig.inc:389
+#: src/usr/local/www/guiconfig.inc:391
 msgid "The changes have been applied successfully."
 msgstr "已成功應用更改。"
 
-#: src/usr/local/www/guiconfig.inc:392
+#: src/usr/local/www/guiconfig.inc:394
 #, php-format
 msgid "There was a problem applying the changes. See the %1$sSystem Logs%2$s."
 msgstr "應用更改時出現問題。 參見 %1$s系統日誌%2$s."
 
-#: src/usr/local/www/guiconfig.inc:400
+#: src/usr/local/www/guiconfig.inc:402
 msgid "The firewall rules are now reloading in the background."
 msgstr "防火牆規則現在在後台重新載入。"
 
-#: src/usr/local/www/guiconfig.inc:401
+#: src/usr/local/www/guiconfig.inc:403
 #, php-format
 msgid "%1$sMonitor%2$s the filter reload progress."
 msgstr "%1$s監視器%2$s 過濾器重新載入進度。"
 
-#: src/usr/local/www/guiconfig.inc:587
+#: src/usr/local/www/guiconfig.inc:589
 msgid "Widget title"
 msgstr "小工具標題"
 
-#: src/usr/local/www/guiconfig.inc:634 src/usr/local/www/guiconfig.inc:685
+#: src/usr/local/www/guiconfig.inc:636 src/usr/local/www/guiconfig.inc:687
 #, php-format
 msgid "File %s is a directory."
 msgstr "文件%s 是一個目錄."
 
-#: src/usr/local/www/guiconfig.inc:636 src/usr/local/www/guiconfig.inc:687
+#: src/usr/local/www/guiconfig.inc:638 src/usr/local/www/guiconfig.inc:689
 msgid "Log file started."
 msgstr "日誌文件已啟動。"
 
-#: src/usr/local/www/guiconfig.inc:1079
+#: src/usr/local/www/guiconfig.inc:1081
 msgid "Currently viewing: "
 msgstr "現在查看："
 
-#: src/usr/local/www/guiconfig.inc:1177
+#: src/usr/local/www/guiconfig.inc:1179
 msgid "listing only first 10k items"
 msgstr "只列出前10k項目"
 
-#: src/usr/local/www/guiconfig.inc:1187
+#: src/usr/local/www/guiconfig.inc:1189
 #: src/usr/local/www/services_dhcpv6.php:994
 #: src/usr/local/www/system_advanced_sysctl.php:159
 #: src/usr/local/www/services_dhcp.php:1418
@@ -2768,8 +2768,8 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:788
 #: src/usr/local/www/system_gateways_edit.php:248
 #: src/usr/local/www/system_gateways_edit.php:451
-#: src/usr/local/www/interfaces_bridge_edit.php:428
-#: src/usr/local/www/interfaces_bridge_edit.php:680
+#: src/usr/local/www/interfaces_bridge_edit.php:424
+#: src/usr/local/www/interfaces_bridge_edit.php:676
 #: src/usr/local/www/firewall_nat_edit.php:691
 #: src/usr/local/www/firewall_nat_edit.php:1123
 #: src/usr/local/www/interfaces_ppps_edit.php:763
@@ -3004,7 +3004,7 @@ msgstr "IPv6地址"
 #: src/usr/local/www/system.php:159 src/usr/local/www/diag_arp.php:335
 #: src/usr/local/www/services_rfc2136_edit.php:85
 #: src/usr/local/www/status_dhcpv6_leases.php:244
-#: src/usr/local/www/diag_ndp.php:140 src/usr/local/www/interfaces.php:2089
+#: src/usr/local/www/diag_ndp.php:140 src/usr/local/www/interfaces.php:2085
 #: src/usr/local/www/services_dhcpv6_edit.php:228
 #: src/usr/local/www/services_dyndns.php:98
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:189
@@ -3042,7 +3042,7 @@ msgstr "刪除靜態映射"
 #: src/usr/local/www/services_dhcp_edit.php:752
 #: src/usr/local/www/services_dhcp_edit.php:786
 #: src/usr/local/www/system_gateways_edit.php:449
-#: src/usr/local/www/interfaces_bridge_edit.php:678
+#: src/usr/local/www/interfaces_bridge_edit.php:674
 #: src/usr/local/www/firewall_nat_edit.php:1125
 #: src/usr/local/www/interfaces_ppps_edit.php:1006
 #: src/usr/local/www/firewall_rules_edit.php:1755
@@ -3123,7 +3123,7 @@ msgstr "警告：這將終止所有現在的L2TP會話！"
 #: src/usr/local/www/vpn_l2tp.php:217
 #: src/usr/local/www/services_captiveportal_mac.php:161
 #: src/usr/local/www/services_captiveportal.php:63
-#: src/usr/local/www/services_captiveportal.php:519
+#: src/usr/local/www/services_captiveportal.php:517
 #: src/usr/local/www/services_captiveportal_ip.php:94
 #: src/usr/local/www/services_captiveportal_filemanager.php:151
 msgid "Configuration"
@@ -3151,7 +3151,7 @@ msgstr "L2TP用戶"
 #: src/usr/local/www/system_usermanager.php:202
 #: src/usr/local/www/system_usermanager.php:632
 #: src/usr/local/www/services_pppoe_edit.php:500
-#: src/usr/local/www/interfaces.php:2718
+#: src/usr/local/www/interfaces.php:2714
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:80
 msgid "Username"
 msgstr "用戶名"
@@ -3185,7 +3185,7 @@ msgid "Add Zone"
 msgstr "添加區域"
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:51
-#: src/usr/local/www/services_captiveportal.php:208
+#: src/usr/local/www/services_captiveportal.php:207
 msgid "Zone name"
 msgstr "區域名稱"
 
@@ -3221,6 +3221,7 @@ msgid "Save & Continue"
 msgstr "儲存 & 繼續"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:74
+#: src/usr/local/www/services_acb_settings.php:165
 #: src/usr/local/www/system_advanced_network.php:324
 #: src/usr/local/www/vpn_ipsec_keys.php:105
 msgid "Identifier"
@@ -3229,7 +3230,7 @@ msgstr "標識符 "
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:74
 #: src/usr/local/www/vpn_ipsec_keys.php:107
 #: src/usr/local/www/vpn_ipsec_phase1.php:245
-#: src/usr/local/www/interfaces.php:3229
+#: src/usr/local/www/interfaces.php:3225
 msgid "Pre-Shared Key"
 msgstr "預共享密鑰"
 
@@ -3415,7 +3416,7 @@ msgstr "刪除已過濾地址的所有狀態"
 #: src/usr/local/www/vpn_openvpn_client.php:998
 #: src/usr/local/www/firewall_nat.php:233 src/usr/local/www/status_upnp.php:70
 #: src/usr/local/www/diag_states_summary.php:153
-#: src/usr/local/www/interfaces_bridge_edit.php:558
+#: src/usr/local/www/interfaces_bridge_edit.php:554
 #: src/usr/local/www/status_logs_filter_dynamic.php:394
 #: src/usr/local/www/system_advanced_admin.php:343
 #: src/usr/local/www/system_advanced_admin.php:347
@@ -4616,7 +4617,7 @@ msgstr "用戶"
 #: src/usr/local/www/services_pppoe_edit.php:513
 #: src/usr/local/www/load_balancer_virtual_server.php:141
 #: src/usr/local/www/vpn_ipsec_phase2.php:717
-#: src/usr/local/www/interfaces.php:3279 src/usr/local/www/interfaces.php:3303
+#: src/usr/local/www/interfaces.php:3275 src/usr/local/www/interfaces.php:3299
 #: src/usr/local/www/system_advanced_notifications.php:352
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:69
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:74
@@ -5911,7 +5912,7 @@ msgstr "刪除 ACL"
 #: src/usr/local/www/services_captiveportal_vouchers.php:379
 #: src/usr/local/www/services_captiveportal_hostname.php:105
 #: src/usr/local/www/services_captiveportal_mac.php:163
-#: src/usr/local/www/services_captiveportal.php:521
+#: src/usr/local/www/services_captiveportal.php:519
 #: src/usr/local/www/services_captiveportal_ip.php:59
 #: src/usr/local/www/services_captiveportal_ip.php:96
 #: src/usr/local/www/services_captiveportal_filemanager.php:153
@@ -5967,8 +5968,8 @@ msgstr "[%s] 已經允許。"
 #: src/usr/local/www/services_captiveportal_ip_edit.php:194
 #: src/usr/local/www/pkg_mgr.php:160
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
-#: src/usr/local/www/interfaces.php:3222 src/usr/local/www/interfaces.php:3229
-#: src/usr/local/www/interfaces.php:3236
+#: src/usr/local/www/interfaces.php:3218 src/usr/local/www/interfaces.php:3225
+#: src/usr/local/www/interfaces.php:3232
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:256
 #: src/usr/local/www/vpn_openvpn_client.php:933
 #: src/usr/local/www/services_rfc2136_edit.php:294
@@ -6724,7 +6725,7 @@ msgstr "代理伺服器使用的身份驗證類型。"
 #: src/usr/local/www/system_usermanager.php:785
 #: src/usr/local/www/system_usermanager.php:788
 #: src/usr/local/www/services_pppoe_edit.php:507
-#: src/usr/local/www/interfaces.php:2725
+#: src/usr/local/www/interfaces.php:2721
 #: src/usr/local/www/system_advanced_notifications.php:359
 #: src/etc/inc/captiveportal.inc:46
 msgid "Password"
@@ -7077,11 +7078,11 @@ msgid ""
 msgstr "不要執行操作系統命令來安裝路由。 相反，使用環境變數將路由傳遞到--route-up腳本。"
 
 #: src/usr/local/www/vpn_openvpn_client.php:902
-#: src/usr/local/www/interfaces_bridge_edit.php:442
+#: src/usr/local/www/interfaces_bridge_edit.php:438
 #: src/usr/local/www/interfaces_ppps_edit.php:777
 #: src/usr/local/www/vpn_ipsec_phase2.php:711
 #: src/usr/local/www/vpn_openvpn_server.php:1311
-#: src/usr/local/www/interfaces.php:2074 src/usr/local/www/interfaces.php:2279
+#: src/usr/local/www/interfaces.php:2070 src/usr/local/www/interfaces.php:2275
 msgid "Advanced Configuration"
 msgstr "進階配置"
 
@@ -7463,7 +7464,7 @@ msgid "WINS servers"
 msgstr "WINS 伺服器"
 
 #: src/usr/local/www/services_dhcp.php:1024
-#: src/usr/local/www/status_interfaces.php:153
+#: src/usr/local/www/status_interfaces.php:157
 msgid "DNS servers"
 msgstr "DNS 伺服器"
 
@@ -8183,7 +8184,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_reboot.php:43 src/usr/local/www/diag_reboot.php:113
 #: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:406
-#: src/usr/local/www/interfaces.php:2160
+#: src/usr/local/www/interfaces.php:2156
 msgid "Reboot"
 msgstr "重啟系統"
 
@@ -8207,7 +8208,7 @@ msgid "Reboot the system"
 msgstr "重新啟動系統"
 
 #: src/usr/local/www/diag_reboot.php:119 src/usr/local/www/firewall_nat.php:499
-#: src/usr/local/www/interfaces.php:2050 src/usr/local/www/interfaces.php:3424
+#: src/usr/local/www/interfaces.php:2046 src/usr/local/www/interfaces.php:3420
 #: src/usr/local/www/diag_halt.php:78 src/usr/local/www/firewall_rules.php:866
 msgid "Cancel"
 msgstr "取消"
@@ -8366,7 +8367,7 @@ msgstr ""
 "hosts、DHCP或特定域覆蓋不知道IP名稱，則立即返回“未找到”答案。"
 
 #: src/usr/local/www/services_dnsmasq.php:337
-#: src/usr/local/www/services_captiveportal.php:548
+#: src/usr/local/www/services_captiveportal.php:546
 msgid "*Interfaces"
 msgstr "*介面"
 
@@ -9029,8 +9030,8 @@ msgstr "認證測試"
 
 #: src/usr/local/www/diag_authentication.php:91
 #: src/usr/local/www/system_usermanager_settings.php:215
-#: src/usr/local/www/services_captiveportal.php:901
-#: src/usr/local/www/services_captiveportal.php:906
+#: src/usr/local/www/services_captiveportal.php:892
+#: src/usr/local/www/services_captiveportal.php:897
 msgid "*Authentication Server"
 msgstr "*認證伺服器"
 
@@ -9042,14 +9043,14 @@ msgstr "選擇要測試的認證伺服器。"
 #: src/usr/local/www/vpn_l2tp_users_edit.php:153
 #: src/usr/local/www/services_acb_settings.php:177
 #: src/usr/local/www/system_usermanager.php:763
-#: src/usr/local/www/interfaces.php:2785 src/usr/local/www/interfaces.php:2910
+#: src/usr/local/www/interfaces.php:2781 src/usr/local/www/interfaces.php:2906
 msgid "*Username"
 msgstr "*用戶名"
 
 #: src/usr/local/www/diag_authentication.php:106
 #: src/usr/local/www/system_usermanager_passwordmg.php:100
 #: src/usr/local/www/services_acb_settings.php:184
-#: src/usr/local/www/interfaces.php:2792 src/usr/local/www/interfaces.php:2917
+#: src/usr/local/www/interfaces.php:2788 src/usr/local/www/interfaces.php:2913
 msgid "*Password"
 msgstr "*密碼"
 
@@ -9234,7 +9235,7 @@ msgid ""
 msgstr "設置已保存，但未執行測試，因為僅支持基於LDAP的後台。"
 
 #: src/usr/local/www/system_usermanager_settings.php:200
-#: src/usr/local/www/services_captiveportal.php:957
+#: src/usr/local/www/services_captiveportal.php:948
 msgid "Session timeout"
 msgstr "會話超時"
 
@@ -9771,192 +9772,192 @@ msgstr "添加新隊列"
 msgid "Delete this queue"
 msgstr "刪除此隊列"
 
-#: src/usr/local/www/status_interfaces.php:105
+#: src/usr/local/www/status_interfaces.php:109
 msgid "Send a gratuitous DHCP release packet to the server."
 msgstr "向伺服器發送免費的DHCP釋放包。"
 
-#: src/usr/local/www/status_interfaces.php:105
+#: src/usr/local/www/status_interfaces.php:109
 msgid "Relinquish Lease"
 msgstr "放棄租賃"
 
-#: src/usr/local/www/status_interfaces.php:112
+#: src/usr/local/www/status_interfaces.php:116
 msgid " Interface "
 msgstr "介面"
 
-#: src/usr/local/www/status_interfaces.php:116
+#: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/system_advanced_firewall.php:600
 msgid "disabled"
 msgstr "停用"
 
-#: src/usr/local/www/status_interfaces.php:117
-#: src/usr/local/www/status_interfaces.php:118
+#: src/usr/local/www/status_interfaces.php:121
+#: src/usr/local/www/status_interfaces.php:122
 msgid "Release"
 msgstr "釋放"
 
-#: src/usr/local/www/status_interfaces.php:117
-#: src/usr/local/www/status_interfaces.php:118
+#: src/usr/local/www/status_interfaces.php:121
+#: src/usr/local/www/status_interfaces.php:122
 msgid "Renew"
 msgstr "更新"
 
-#: src/usr/local/www/status_interfaces.php:119
-#: src/usr/local/www/status_interfaces.php:120
-#: src/usr/local/www/status_interfaces.php:121
-#: src/usr/local/www/status_interfaces.php:122
+#: src/usr/local/www/status_interfaces.php:123
+#: src/usr/local/www/status_interfaces.php:124
+#: src/usr/local/www/status_interfaces.php:125
+#: src/usr/local/www/status_interfaces.php:126
 msgid "Connect"
 msgstr "連接"
 
-#: src/usr/local/www/status_interfaces.php:123
+#: src/usr/local/www/status_interfaces.php:127
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:41
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:294
 msgid "Uptime"
 msgstr "運行時間"
 
-#: src/usr/local/www/status_interfaces.php:123
+#: src/usr/local/www/status_interfaces.php:127
 msgid "(historical)"
 msgstr "（歷史）"
 
-#: src/usr/local/www/status_interfaces.php:124
+#: src/usr/local/www/status_interfaces.php:128
 msgid "Cell Signal (RSSI)"
 msgstr "手機信號 (RSSI)"
 
-#: src/usr/local/www/status_interfaces.php:125
+#: src/usr/local/www/status_interfaces.php:129
 msgid "Cell Mode"
 msgstr "手機模式"
 
-#: src/usr/local/www/status_interfaces.php:126
+#: src/usr/local/www/status_interfaces.php:130
 msgid "Cell SIM State"
 msgstr "手機SIM狀態"
 
-#: src/usr/local/www/status_interfaces.php:127
+#: src/usr/local/www/status_interfaces.php:131
 msgid "Cell Service"
 msgstr "手機服務"
 
-#: src/usr/local/www/status_interfaces.php:128
+#: src/usr/local/www/status_interfaces.php:132
 msgid "Cell Upstream"
 msgstr "Cell 上行"
 
-#: src/usr/local/www/status_interfaces.php:129
+#: src/usr/local/www/status_interfaces.php:133
 msgid "Cell Downstream"
 msgstr "Cell下行"
 
-#: src/usr/local/www/status_interfaces.php:130
+#: src/usr/local/www/status_interfaces.php:134
 msgid "Cell Current Up"
 msgstr "電池電流上升"
 
-#: src/usr/local/www/status_interfaces.php:131
+#: src/usr/local/www/status_interfaces.php:135
 msgid "Cell Current Down"
 msgstr "電池電流下降"
 
-#: src/usr/local/www/status_interfaces.php:136
+#: src/usr/local/www/status_interfaces.php:140
 #: src/usr/local/www/services_dhcp_edit.php:399
 #: src/usr/local/www/services_dhcp_edit.php:414
-#: src/usr/local/www/interfaces.php:1885 src/usr/local/www/interfaces.php:1900
+#: src/usr/local/www/interfaces.php:1885
 #: src/usr/local/www/services_captiveportal_mac_edit.php:205
 msgid "MAC Address"
 msgstr "MAC地址"
 
-#: src/usr/local/www/status_interfaces.php:141
+#: src/usr/local/www/status_interfaces.php:145
 msgid "IPv4 Address"
 msgstr "IPv4地址"
 
-#: src/usr/local/www/status_interfaces.php:142
+#: src/usr/local/www/status_interfaces.php:146
 msgid "Subnet mask IPv4"
 msgstr "IPv4子網遮罩"
 
-#: src/usr/local/www/status_interfaces.php:143
-#: src/usr/local/www/interfaces.php:3401
+#: src/usr/local/www/status_interfaces.php:147
+#: src/usr/local/www/interfaces.php:3397
 msgid "Gateway IPv4"
 msgstr "IPv4閘道"
 
-#: src/usr/local/www/status_interfaces.php:144
+#: src/usr/local/www/status_interfaces.php:148
 msgid "IPv6 Link Local"
 msgstr "IPv6本地鏈路"
 
-#: src/usr/local/www/status_interfaces.php:145
+#: src/usr/local/www/status_interfaces.php:149
 msgid "IPv6 Address"
 msgstr "IPv6地址 "
 
-#: src/usr/local/www/status_interfaces.php:146
+#: src/usr/local/www/status_interfaces.php:150
 msgid "Subnet mask IPv6"
 msgstr "IPv6子網遮罩"
 
-#: src/usr/local/www/status_interfaces.php:147
-#: src/usr/local/www/interfaces.php:2027
+#: src/usr/local/www/status_interfaces.php:151
+#: src/usr/local/www/interfaces.php:2023
 msgid "Gateway IPv6"
 msgstr "IPv6閘道"
 
-#: src/usr/local/www/status_interfaces.php:159
+#: src/usr/local/www/status_interfaces.php:163
 #: src/usr/local/www/interfaces_ppps_edit.php:872
-#: src/usr/local/www/interfaces.php:1909
+#: src/usr/local/www/interfaces.php:1905
 msgid "MTU"
 msgstr "MTU"
 
-#: src/usr/local/www/status_interfaces.php:160
+#: src/usr/local/www/status_interfaces.php:164
 msgid "Media"
 msgstr "網卡類型"
 
-#: src/usr/local/www/status_interfaces.php:161
+#: src/usr/local/www/status_interfaces.php:165
 msgid "LAGG Protocol"
 msgstr "LAGG協定"
 
-#: src/usr/local/www/status_interfaces.php:162
+#: src/usr/local/www/status_interfaces.php:166
 msgid "LAGG Ports"
 msgstr "LAGG埠"
 
-#: src/usr/local/www/status_interfaces.php:163
-#: src/usr/local/www/interfaces.php:3041
+#: src/usr/local/www/status_interfaces.php:167
+#: src/usr/local/www/interfaces.php:3037
 msgid "Channel"
 msgstr "信道"
 
-#: src/usr/local/www/status_interfaces.php:164
-#: src/usr/local/www/interfaces.php:920 src/usr/local/www/interfaces.php:3152
+#: src/usr/local/www/status_interfaces.php:168
+#: src/usr/local/www/interfaces.php:920 src/usr/local/www/interfaces.php:3148
 msgid "SSID"
 msgstr "SSID"
 
-#: src/usr/local/www/status_interfaces.php:165
+#: src/usr/local/www/status_interfaces.php:169
 msgid "BSSID"
 msgstr "BSSID"
 
-#: src/usr/local/www/status_interfaces.php:166
+#: src/usr/local/www/status_interfaces.php:170
 #: src/usr/local/www/diag_dump_states_sources.php:123
 msgid "Rate"
 msgstr "速率"
 
-#: src/usr/local/www/status_interfaces.php:167
+#: src/usr/local/www/status_interfaces.php:171
 msgid "RSSI"
 msgstr "RSSI"
 
-#: src/usr/local/www/status_interfaces.php:168
+#: src/usr/local/www/status_interfaces.php:172
 msgid "In/out packets"
 msgstr "進/出數據包 "
 
-#: src/usr/local/www/status_interfaces.php:170
+#: src/usr/local/www/status_interfaces.php:174
 msgid "In/out packets (pass)"
 msgstr "進/出數據包（通過） "
 
-#: src/usr/local/www/status_interfaces.php:172
+#: src/usr/local/www/status_interfaces.php:176
 msgid "In/out packets (block)"
 msgstr "進/出數據包（阻止） "
 
-#: src/usr/local/www/status_interfaces.php:174
+#: src/usr/local/www/status_interfaces.php:178
 msgid "In/out errors"
 msgstr "進/出 錯誤 "
 
-#: src/usr/local/www/status_interfaces.php:175
+#: src/usr/local/www/status_interfaces.php:179
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:42
 msgid "Collisions"
 msgstr "碰撞"
 
-#: src/usr/local/www/status_interfaces.php:178
+#: src/usr/local/www/status_interfaces.php:182
 #, php-format
 msgid "Bridge (%1$s)"
 msgstr "橋 (%1$s)"
 
-#: src/usr/local/www/status_interfaces.php:195
+#: src/usr/local/www/status_interfaces.php:199
 msgid "Total interrupts"
 msgstr "中斷總數"
 
-#: src/usr/local/www/status_interfaces.php:206
+#: src/usr/local/www/status_interfaces.php:210
 #, php-format
 msgid ""
 "Using dial-on-demand will bring the connection up again if any packet "
@@ -10817,7 +10818,7 @@ msgid "Relayd Global Settings"
 msgstr "中繼全局設定"
 
 #: src/usr/local/www/load_balancer_setting.php:120
-#: src/usr/local/www/interfaces.php:2138
+#: src/usr/local/www/interfaces.php:2134
 msgid "Timeout"
 msgstr "超時"
 
@@ -11628,16 +11629,11 @@ msgstr ""
 msgid "*Encryption Password"
 msgstr ""
 
-#: src/usr/local/www/services_acb_settings.php:165
-#: src/usr/local/www/firewall_aliases_edit.php:697
-msgid "Hint"
-msgstr "例如："
-
 #: src/usr/local/www/services_acb_settings.php:168
 msgid ""
-"You may optionally provide a hint which will be stored in plain text along "
-"with each encrypted backup. This may allow the Netgate support team to "
-"recover your key should you lose it."
+"You may optionally provide an identifier which will be stored in plain text "
+"along with each encrypted backup. This may allow the Netgate support team to "
+"locate your key should you lose it."
 msgstr ""
 
 #: src/usr/local/www/services_acb_settings.php:173
@@ -11659,7 +11655,7 @@ msgstr "在具有未知區域參數的網頁認證網站頁面上提交： %s"
 #: src/usr/local/www/services_captiveportal_hostname.php:107
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:50
 #: src/usr/local/www/services_captiveportal_mac.php:165
-#: src/usr/local/www/services_captiveportal.php:523
+#: src/usr/local/www/services_captiveportal.php:521
 #: src/usr/local/www/services_captiveportal_ip.php:98
 #: src/usr/local/www/services_captiveportal_filemanager.php:155
 msgid "Vouchers"
@@ -11781,7 +11777,7 @@ msgstr "憑單資料庫已從 %1$s同步。"
 #: src/usr/local/www/services_captiveportal_hostname.php:104
 #: src/usr/local/www/services_captiveportal_mac.php:56
 #: src/usr/local/www/services_captiveportal_mac.php:162
-#: src/usr/local/www/services_captiveportal.php:520
+#: src/usr/local/www/services_captiveportal.php:518
 #: src/usr/local/www/services_captiveportal_ip.php:95
 #: src/usr/local/www/services_captiveportal_mac_edit.php:66
 #: src/usr/local/www/services_captiveportal_filemanager.php:152
@@ -11793,7 +11789,7 @@ msgstr "MACs"
 #: src/usr/local/www/services_captiveportal_hostname.php:106
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:63
 #: src/usr/local/www/services_captiveportal_mac.php:164
-#: src/usr/local/www/services_captiveportal.php:522
+#: src/usr/local/www/services_captiveportal.php:520
 #: src/usr/local/www/services_captiveportal_ip.php:97
 #: src/usr/local/www/services_captiveportal_filemanager.php:154
 msgid "Allowed Hostnames"
@@ -11802,7 +11798,7 @@ msgstr "允許的主機名"
 #: src/usr/local/www/services_captiveportal_vouchers.php:382
 #: src/usr/local/www/services_captiveportal_hostname.php:108
 #: src/usr/local/www/services_captiveportal_mac.php:166
-#: src/usr/local/www/services_captiveportal.php:524
+#: src/usr/local/www/services_captiveportal.php:522
 #: src/usr/local/www/services_captiveportal_ip.php:99
 #: src/usr/local/www/services_captiveportal_filemanager.php:66
 #: src/usr/local/www/services_captiveportal_filemanager.php:156
@@ -12347,7 +12343,6 @@ msgid "Edit Static Mapping"
 msgstr "編輯靜態映射"
 
 #: src/usr/local/www/services_dhcp_edit.php:407
-#: src/usr/local/www/interfaces.php:1893
 #: src/usr/local/www/services_captiveportal_mac_edit.php:213
 msgid "Copy My MAC"
 msgstr "複製我的MAC地址"
@@ -12586,7 +12581,7 @@ msgstr "關鍵詞"
 #: src/usr/local/www/system_groupmanager_addprivs.php:218
 #: src/usr/local/www/diag_command.php:218
 #: src/usr/local/www/system_usermanager_addprivs.php:203
-#: src/usr/local/www/interfaces.php:2192
+#: src/usr/local/www/interfaces.php:2188
 msgid "Clear"
 msgstr "清除"
 
@@ -13886,7 +13881,7 @@ msgid "*Name"
 msgstr "*名稱"
 
 #: src/usr/local/www/system_gateways_edit.php:183
-#: src/usr/local/www/interfaces.php:2020 src/usr/local/www/interfaces.php:3394
+#: src/usr/local/www/interfaces.php:2016 src/usr/local/www/interfaces.php:3390
 msgid "Gateway name"
 msgstr "閘道名稱"
 
@@ -14530,7 +14525,7 @@ msgstr "%s用戶創建的主題不受支持，請自行承擔使用風險。"
 #: src/usr/local/www/services_pppoe.php:82
 #: src/usr/local/www/services_pppoe.php:96
 #: src/usr/local/www/services_pppoe_edit.php:277 src/usr/local/www/head.inc:323
-#: src/etc/inc/interfaces.inc:6980
+#: src/etc/inc/interfaces.inc:7014
 msgid "PPPoE Server"
 msgstr "PPPoE服務"
 
@@ -14782,7 +14777,7 @@ msgstr "副L2TP DNS伺服器"
 
 #: src/usr/local/www/vpn_l2tp.php:284
 #: src/usr/local/www/services_pppoe_edit.php:363
-#: src/usr/local/www/services_captiveportal.php:996
+#: src/usr/local/www/services_captiveportal.php:987
 msgid "RADIUS"
 msgstr "RADIUS"
 
@@ -14985,7 +14980,7 @@ msgid "HTTP Code"
 msgstr "HTTP代碼"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:311
-#: src/usr/local/www/services_captiveportal.php:1085
+#: src/usr/local/www/services_captiveportal.php:1076
 msgid "HTTPS Options"
 msgstr "HTTPS 選項"
 
@@ -15345,19 +15340,19 @@ msgid ""
 "continue."
 msgstr "%s是另一網橋的一部分。 從網橋成員中刪除介面以繼續。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:406
+#: src/usr/local/www/interfaces_bridge_edit.php:402
 msgid "Bridge Configuration"
 msgstr "網橋配置"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:412
+#: src/usr/local/www/interfaces_bridge_edit.php:408
 msgid "*Member Interfaces"
 msgstr "*成員介面"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:416
+#: src/usr/local/www/interfaces_bridge_edit.php:412
 msgid "Interfaces participating in the bridge."
 msgstr "參與橋接的介面。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:436
+#: src/usr/local/www/interfaces_bridge_edit.php:432
 #: src/usr/local/www/firewall_rules_edit.php:1455
 #: src/usr/local/www/firewall_rules_edit.php:1461
 #: src/usr/local/www/vpn_ipsec_phase1.php:890 src/etc/inc/shaper.inc:4392
@@ -15365,30 +15360,30 @@ msgstr "參與橋接的介面。"
 msgid "Advanced Options"
 msgstr "進階設定"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:448
+#: src/usr/local/www/interfaces_bridge_edit.php:444
 msgid "Cache Size"
 msgstr "緩存的大小"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:451
+#: src/usr/local/www/interfaces_bridge_edit.php:447
 msgid "Set the size of the bridge address cache. The default is 2000 entries."
 msgstr "設定網橋地址緩存的大小。 預設值為2000個項目。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:455
+#: src/usr/local/www/interfaces_bridge_edit.php:451
 msgid "Cache expire time"
 msgstr "緩存到期時間"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:458
+#: src/usr/local/www/interfaces_bridge_edit.php:454
 msgid ""
 "Set the timeout of address cache entries to this number of seconds. If "
 "seconds is zero, then address cache entries will not be expired. The default "
 "is 1200 seconds."
 msgstr "將地址緩存項目的超時設定為此秒數。 如果零，則地址緩存項目不會過期。 預設值為1200秒。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:464
+#: src/usr/local/www/interfaces_bridge_edit.php:460
 msgid "Span Port"
 msgstr "Span 埠"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:468
+#: src/usr/local/www/interfaces_bridge_edit.php:464
 #, php-format
 msgid ""
 "Add the interface named by interface as a span port on the bridge. Span "
@@ -15400,22 +15395,22 @@ msgstr ""
 "將介面上已已命名的介面添加為橋接器上的跨度埠。 跨度埠傳輸由橋接收的每個幀的副本。 "
 "這對於連接到橋接器的一個跨接埠的另一個主機上被動地偵聽橋接網路是最有用的。 %1$s%2$s跨介面不能是橋接器介面的一部分。%3$s"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:476
+#: src/usr/local/www/interfaces_bridge_edit.php:472
 msgid "Edge Ports"
 msgstr "Edge 埠"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:480
+#: src/usr/local/www/interfaces_bridge_edit.php:476
 msgid ""
 "Set interface as an edge port. An edge port connects directly to end "
 "stations and cannot create bridging loops in the network; this allows it to "
 "transition straight to forwarding."
 msgstr "設置介面為Edge （邊界）埠。 邊界埠直接連接到終端站，並且不能在網路中創建橋接環路；這允許它直接過渡到轉發。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:486
+#: src/usr/local/www/interfaces_bridge_edit.php:482
 msgid "Auto Edge Ports"
 msgstr "自動Edge  埠"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:490
+#: src/usr/local/www/interfaces_bridge_edit.php:486
 #, php-format
 msgid ""
 "Allow interface to automatically detect edge status. This is the default for "
@@ -15423,22 +15418,22 @@ msgid ""
 "of interfaces. %2$s"
 msgstr "允許介面自動檢測邊界狀態。 這是新增到網橋的所有介面的預設值。%1$s這將停用介面的自動綁定狀態。%2$s"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:497
+#: src/usr/local/www/interfaces_bridge_edit.php:493
 msgid "PTP Ports"
 msgstr "PTP埠"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:501
+#: src/usr/local/www/interfaces_bridge_edit.php:497
 msgid ""
 "Set the interface as a point-to-point link. This is required for straight "
 "transitions to forwarding and should be enabled on a direct link to another "
 "RSTP-capable switch."
 msgstr "將介面設定為點對點鏈路。 這是直接過渡到轉發所必需的，並且應該在到另一個支持RSTP的交換機的直接鏈路上啟用。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:507
+#: src/usr/local/www/interfaces_bridge_edit.php:503
 msgid "Auto PTP Ports"
 msgstr "自動PTP埠"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:511
+#: src/usr/local/www/interfaces_bridge_edit.php:507
 #, php-format
 msgid ""
 "Automatically detect the point-to-point status on interface by checking the "
@@ -15448,11 +15443,11 @@ msgid ""
 msgstr ""
 "通過檢查全雙工鏈路狀態，自動檢測介面的點對點狀態。 這是新增到網橋的介面的預設值。%1$s在此處選擇的介面將從預設自動邊界狀態中刪除。%2$s"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:518
+#: src/usr/local/www/interfaces_bridge_edit.php:514
 msgid "Sticky Ports"
 msgstr "Sticky埠"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:522
+#: src/usr/local/www/interfaces_bridge_edit.php:518
 msgid ""
 "Mark an interface as a \"sticky\" interface. Dynamically learned address "
 "entries are treated as static once entered into the cache. Sticky entries "
@@ -15462,44 +15457,44 @@ msgstr ""
 "將介面標記為“Sticky”（粘性）介面。 動態學習的地址項目一旦被輸入到高速緩存中就被視為靜態。 "
 "即使地址在不同的介面上，粘性項目也不會從緩存中刪除或更換。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:529
+#: src/usr/local/www/interfaces_bridge_edit.php:525
 msgid "Private Ports"
 msgstr "Private埠"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:533
+#: src/usr/local/www/interfaces_bridge_edit.php:529
 msgid ""
 "Mark an interface as a \"private\" interface. A private interface does not "
 "forward any traffic to any other port that is also a private interface. "
 msgstr "將介面標記為“Private”（專有）介面。專有 介面不將任何流量轉發到也是專有介面的任何其他通訊埠。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:537
+#: src/usr/local/www/interfaces_bridge_edit.php:533
 msgid "Enable IPv6 auto linklocal"
 msgstr "啟用本地IPv6自動鏈路"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:540
+#: src/usr/local/www/interfaces_bridge_edit.php:536
 msgid ""
 "When enabled, the AUTO_LINKLOCAL flag is set on the bridge interface and "
 "cleared on every member interface. This is required when the bridge "
 "interface is used for stateless autoconfiguration. "
 msgstr "啟用後，在橋接介面上設定AUTO_LINKLOCAL標誌，並在每個成員介面上清除。 當橋接介面用於無狀態自動配置時，這是必需的。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:546
+#: src/usr/local/www/interfaces_bridge_edit.php:542
 msgid "Enable RSTP/STP"
 msgstr "啟用RSTP/STP"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:553
+#: src/usr/local/www/interfaces_bridge_edit.php:549
 msgid "RSTP/STP"
 msgstr "RSTP/STP"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:562
+#: src/usr/local/www/interfaces_bridge_edit.php:558
 msgid "Protocol used for spanning tree."
 msgstr "用於生成樹的協定。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:568
+#: src/usr/local/www/interfaces_bridge_edit.php:564
 msgid "STP Interfaces"
 msgstr "STP介面"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:572
+#: src/usr/local/www/interfaces_bridge_edit.php:568
 msgid ""
 "Enable Spanning Tree Protocol on interface. The if_bridge(4) driver has "
 "support for the IEEE 802.1D Spanning Tree Protocol (STP). STP is used to "
@@ -15507,33 +15502,33 @@ msgid ""
 msgstr ""
 "在介面上啟用生成樹協議。 if_bridge（4）驅動程序支持IEEE 802.1D生成樹協議（STP）。 STP用於檢測和刪除網路拓撲中的環路。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:577
+#: src/usr/local/www/interfaces_bridge_edit.php:573
 msgid "Valid time"
 msgstr "有效時間"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:581
+#: src/usr/local/www/interfaces_bridge_edit.php:577
 msgid ""
 "Set the time that a Spanning Tree Protocol configuration is valid. The "
 "default is 20 seconds. The minimum is 6 seconds and the maximum is 40 "
 "seconds."
 msgstr "設定生成樹協定配置有效的時間。預設為20秒。最低為6秒，最大為40秒。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:585
+#: src/usr/local/www/interfaces_bridge_edit.php:581
 msgid "Forward time"
 msgstr "轉發時間"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:589
+#: src/usr/local/www/interfaces_bridge_edit.php:585
 msgid ""
 "Set the time that must pass before an interface begins forwarding packets "
 "when Spanning Tree is enabled. The default is 15 seconds. The minimum is 4 "
 "seconds and the maximum is 30 seconds. "
 msgstr "設定啟用生成樹時介面開始轉發數據包之前必須經過的時間。 預設值為15秒。 最小值為4秒，最大值為30秒。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:593
+#: src/usr/local/www/interfaces_bridge_edit.php:589
 msgid "Hello time"
 msgstr "握手時間"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:597
+#: src/usr/local/www/interfaces_bridge_edit.php:593
 msgid ""
 "Set the time in seconds between broadcasting of Spanning Tree Protocol "
 "configuration messages. The hello time may only be changed when operating in "
@@ -15542,44 +15537,44 @@ msgid ""
 msgstr ""
 "設定生成樹協定配置消息的廣播之間的時間（以秒為單位）。 只在傳統STP模式下操作時，才更改握手時間。 預設值2秒。 最小值1秒，最大值2秒。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:602
+#: src/usr/local/www/interfaces_bridge_edit.php:598
 #: src/usr/local/www/interfaces_vlan.php:103
 #: src/usr/local/www/system_gateway_groups.php:134 src/etc/inc/shaper.inc:1724
 msgid "Priority"
 msgstr "優先順序"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:606
+#: src/usr/local/www/interfaces_bridge_edit.php:602
 msgid ""
 "Set the bridge priority for Spanning Tree. The default is 32768. The minimum "
 "is 0 and the maximum is 61440. "
 msgstr "設定生成樹的橋優先順序。預設為32768。最低為0，最大為61440。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:610
+#: src/usr/local/www/interfaces_bridge_edit.php:606
 msgid "Hold Count"
 msgstr "保持計數"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:614
+#: src/usr/local/www/interfaces_bridge_edit.php:610
 msgid ""
 "Set the transmit hold count for Spanning Tree. This is the number of packets "
 "transmitted before being rate limited. The default is 6. The minimum is 1 "
 "and the maximum is 10."
 msgstr "設定生成樹的發送保持計數。 這是速率受限之前發送的數據包數。預設值為6，最小值為1，最大值為10。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:619
+#: src/usr/local/www/interfaces_bridge_edit.php:615
 msgid " Priority"
 msgstr "優先"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:623
+#: src/usr/local/www/interfaces_bridge_edit.php:619
 msgid ""
 "Set the Spanning Tree priority of interface to value. The default is 128. "
 "The minimum is 0 and the maximum is 240. Increments of 16."
 msgstr "介面的生成樹優先順序設定的值。預設值為128。最小值為0，最大值為240。增量為16。"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:630
+#: src/usr/local/www/interfaces_bridge_edit.php:626
 msgid " Path cost"
 msgstr "路徑成本"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:634
+#: src/usr/local/www/interfaces_bridge_edit.php:630
 msgid ""
 "Set the Spanning Tree path cost of interface to value. The default is "
 "calculated from the link speed. To change a previously selected path cost "
@@ -15678,7 +15673,7 @@ msgid ""
 msgstr "這是伺服器正在偵聽的埠。 也可以在此處指定防火牆 - >別名中列出的埠別名。"
 
 #: src/usr/local/www/load_balancer_pool_edit.php:333
-#: src/usr/local/www/interfaces.php:2145
+#: src/usr/local/www/interfaces.php:2141
 msgid "Retry"
 msgstr "重試"
 
@@ -17182,9 +17177,9 @@ msgstr "頁面載入完成後，輸出文件將保存在%1$s中。 它可以通�
 
 #: src/usr/local/www/status.php:381 src/usr/local/www/diag_command.php:233
 #: src/usr/local/www/crash_reporter.php:162
-#: src/usr/local/www/services_captiveportal.php:753
-#: src/usr/local/www/services_captiveportal.php:787
-#: src/usr/local/www/services_captiveportal.php:819
+#: src/usr/local/www/services_captiveportal.php:744
+#: src/usr/local/www/services_captiveportal.php:778
+#: src/usr/local/www/services_captiveportal.php:810
 msgid "Download"
 msgstr "下載"
 
@@ -17272,7 +17267,7 @@ msgid "Accounting port"
 msgstr "計費埠 "
 
 #: src/usr/local/www/system_authservers.php:268
-#: src/usr/local/www/interfaces.php:3292 src/usr/local/www/interfaces.php:3316
+#: src/usr/local/www/interfaces.php:3288 src/usr/local/www/interfaces.php:3312
 msgid "Shared Secret"
 msgstr "共享密鑰"
 
@@ -17723,7 +17718,7 @@ msgstr "從"
 #: src/usr/local/www/firewall_rules_edit.php:1403
 #: src/usr/local/www/firewall_rules_edit.php:1417
 #: src/usr/local/www/services_ntpd_gps.php:339
-#: src/usr/local/www/interfaces.php:2825
+#: src/usr/local/www/interfaces.php:2821
 msgid "Custom"
 msgstr "自定義"
 
@@ -18518,8 +18513,8 @@ msgstr "電話號碼"
 #: src/usr/local/www/interfaces_ppps_edit.php:218
 #: src/usr/local/www/interfaces_ppps_edit.php:229
 #: src/usr/local/www/interfaces.php:613 src/usr/local/www/interfaces.php:623
-#: src/usr/local/www/interfaces.php:633 src/usr/local/www/interfaces.php:2806
-#: src/usr/local/www/interfaces.php:2938
+#: src/usr/local/www/interfaces.php:633 src/usr/local/www/interfaces.php:2802
+#: src/usr/local/www/interfaces.php:2934
 msgid "Dial on demand"
 msgstr "按需撥號"
 
@@ -18648,7 +18643,7 @@ msgstr ""
 ">S僅適用於MLPPP連接。 MRRU將預設自動協商。"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:504
-#: src/usr/local/www/interfaces.php:2692
+#: src/usr/local/www/interfaces.php:2688
 msgid "PPP Configuration"
 msgstr "PPP配置"
 
@@ -18671,22 +18666,22 @@ msgid ""
 msgstr "此處可以輸入描述以供管理參考。 說明將顯示在“介面分配”選擇列表中。"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:532
-#: src/usr/local/www/interfaces.php:2697 src/usr/local/www/interfaces.php:3123
+#: src/usr/local/www/interfaces.php:2693 src/usr/local/www/interfaces.php:3119
 msgid "Country"
 msgstr "國家"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:539
-#: src/usr/local/www/interfaces.php:2704
+#: src/usr/local/www/interfaces.php:2700
 msgid "Provider"
 msgstr "提供商"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:546
-#: src/usr/local/www/interfaces.php:2711
+#: src/usr/local/www/interfaces.php:2707
 msgid "Plan"
 msgstr "計劃"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:549
-#: src/usr/local/www/interfaces.php:2714
+#: src/usr/local/www/interfaces.php:2710
 msgid "Select to fill in service provider data."
 msgstr "選擇填寫您的服務提供商的數據"
 
@@ -18703,7 +18698,7 @@ msgid "Gateway IP or Hostname"
 msgstr "閘道IP或主機名 "
 
 #: src/usr/local/www/interfaces_ppps_edit.php:604
-#: src/usr/local/www/interfaces.php:2732
+#: src/usr/local/www/interfaces.php:2728
 msgid "*Phone number"
 msgstr "*電話號碼"
 
@@ -18769,7 +18764,7 @@ msgid ""
 msgstr "累積正常運行時間被記錄並顯示在%1$s系統狀態->介面%2$s頁面上。"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:661
-#: src/usr/local/www/interfaces.php:2799
+#: src/usr/local/www/interfaces.php:2795
 msgid "Service name"
 msgstr "伺服器名稱"
 
@@ -18781,7 +18776,7 @@ msgid ""
 msgstr "此字段通常可以為空。 如果此字段為空，將不會配置服務名稱。 檢查“Configure NULL”框以配置空白服務名稱。"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:691
-#: src/usr/local/www/interfaces.php:2825
+#: src/usr/local/www/interfaces.php:2821
 msgid "Pre-set"
 msgstr "預設"
 
@@ -19008,7 +19003,7 @@ msgid "Users Logged In (%d)"
 msgstr "用戶 (%d)已登入"
 
 #: src/usr/local/www/status_captiveportal.php:231
-#: src/usr/local/www/services_captiveportal.php:208
+#: src/usr/local/www/services_captiveportal.php:207
 msgid "Authentication method"
 msgstr "認證方法"
 
@@ -19963,7 +19958,7 @@ msgid "This does NOT prevent the rule from being overwritten on Slave."
 msgstr "這不會阻止規則在從（備份）設備上被覆蓋。"
 
 #: src/usr/local/www/firewall_rules_edit.php:1604
-#: src/usr/local/www/interfaces.php:2122 src/usr/local/www/interfaces.php:2351
+#: src/usr/local/www/interfaces.php:2118 src/usr/local/www/interfaces.php:2347
 msgid "VLAN Prio"
 msgstr "VLAN 優先順序"
 
@@ -20785,9 +20780,9 @@ msgstr "NTP 串口GPS配置"
 
 #: src/usr/local/www/services_ntpd_gps.php:339
 #: src/usr/local/www/firewall_nat_out_edit.php:600
-#: src/usr/local/www/interfaces.php:2013 src/usr/local/www/interfaces.php:3056
-#: src/usr/local/www/interfaces.php:3065 src/usr/local/www/interfaces.php:3074
-#: src/usr/local/www/interfaces.php:3132 src/usr/local/www/interfaces.php:3387
+#: src/usr/local/www/interfaces.php:2009 src/usr/local/www/interfaces.php:3052
+#: src/usr/local/www/interfaces.php:3061 src/usr/local/www/interfaces.php:3070
+#: src/usr/local/www/interfaces.php:3128 src/usr/local/www/interfaces.php:3383
 #: src/usr/local/www/system_gateways.php:314 src/etc/inc/openvpn.inc:544
 msgid "Default"
 msgstr "預設"
@@ -21562,98 +21557,98 @@ msgstr "網頁認證:區域%s: 恢復預設錯誤頁面"
 msgid "Captive Portal: zone %s: Restore default logout page"
 msgstr "網頁認證: 區域 %s: 恢復預設登出頁面"
 
-#: src/usr/local/www/services_captiveportal.php:216
+#: src/usr/local/www/services_captiveportal.php:215
 #, php-format
 msgid ""
 "The captive portal cannot be used on interface %s since it is part of a "
 "bridge."
 msgstr "網頁認證不能使用介面%s，因為它是網橋的一部分。"
 
-#: src/usr/local/www/services_captiveportal.php:221
+#: src/usr/local/www/services_captiveportal.php:220
 #, php-format
 msgid ""
 "The captive portal cannot be used on interface %1$s since it is used already "
 "on %2$s instance."
 msgstr "網頁認證不能在介面％%1$s 上使用，它已經在 %2$s 實例上使用。"
 
-#: src/usr/local/www/services_captiveportal.php:229
+#: src/usr/local/www/services_captiveportal.php:228
 msgid "Authentication method is invalid."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:234
+#: src/usr/local/www/services_captiveportal.php:233
 msgid "Certificate must be specified for HTTPS login."
 msgstr "必須為HTTPS登入指定憑證。"
 
-#: src/usr/local/www/services_captiveportal.php:237
+#: src/usr/local/www/services_captiveportal.php:236
 msgid "The HTTPS server name must be specified for HTTPS login."
 msgstr "必須為HTTPS登入指定HTTPS伺服器名稱。"
 
-#: src/usr/local/www/services_captiveportal.php:244
+#: src/usr/local/www/services_captiveportal.php:243
 msgid "The timeout must be at least 1 minute."
 msgstr "超時至少為1分鐘。"
 
-#: src/usr/local/www/services_captiveportal.php:260
+#: src/usr/local/www/services_captiveportal.php:259
 msgid ""
 "Hard timeout must be less than or equal to the Default lease time set on "
 "DHCP Server"
 msgstr "硬超時必須小於或等於在DHCP伺服器上設定的預設租約時間"
 
-#: src/usr/local/www/services_captiveportal.php:267
+#: src/usr/local/www/services_captiveportal.php:266
 msgid "The idle timeout must be at least 1 minute."
 msgstr "空閑超時至少為1分鐘。"
 
-#: src/usr/local/www/services_captiveportal.php:271
+#: src/usr/local/www/services_captiveportal.php:270
 msgid "The traffic quota must be at least 1 megabyte."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:275
+#: src/usr/local/www/services_captiveportal.php:274
 msgid "The pass-through credit count must be a number or left blank."
 msgstr "傳遞證計數必須是一個數字或留空。"
 
-#: src/usr/local/www/services_captiveportal.php:278
+#: src/usr/local/www/services_captiveportal.php:277
 msgid ""
 "The waiting period to restore pass-through credits must be above 0 hours."
 msgstr "等待時間恢復傳遞證必須在0小時以上。"
 
-#: src/usr/local/www/services_captiveportal.php:283
+#: src/usr/local/www/services_captiveportal.php:282
 msgid ""
 "The maximum number of concurrent connections per client IP address may not "
 "be larger than the global maximum."
 msgstr "每個客戶端IP地址的並發連接上限不能大於全局最大值。"
 
-#: src/usr/local/www/services_captiveportal.php:288
+#: src/usr/local/www/services_captiveportal.php:287
 msgid "You need to select at least one authentication server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:300
+#: src/usr/local/www/services_captiveportal.php:299
 msgid "RADIUS MAC Authentication can only be performed on a RADIUS server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:305
+#: src/usr/local/www/services_captiveportal.php:304
 msgid "RADIUS MAC Authentication cannot be used if MAC filtering is disabled"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:311
+#: src/usr/local/www/services_captiveportal.php:310
 msgid "You need to select at least one accounting server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:314
+#: src/usr/local/www/services_captiveportal.php:313
 msgid "You need to select an option for Accounting Updates !"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:530
+#: src/usr/local/www/services_captiveportal.php:528
 msgid "Captive Portal Configuration"
 msgstr "網頁認證配置"
 
-#: src/usr/local/www/services_captiveportal.php:552
+#: src/usr/local/www/services_captiveportal.php:550
 msgid "Select the interface(s) to enable for captive portal."
 msgstr "選擇在哪個介面上開啟網頁認證。"
 
-#: src/usr/local/www/services_captiveportal.php:556
+#: src/usr/local/www/services_captiveportal.php:554
 msgid "Maximum concurrent connections"
 msgstr "並發連接"
 
-#: src/usr/local/www/services_captiveportal.php:560
+#: src/usr/local/www/services_captiveportal.php:558
 msgid ""
 "Limits the number of concurrent connections to the captive portal HTTP(S) "
 "server. This does not set how many users can be logged in to the captive "
@@ -21661,21 +21656,21 @@ msgid ""
 "portal web server."
 msgstr "限制與入網門戶HTTP(S)伺服器的並發連接數。 這不是設置有多少用戶可以登錄入網門戶，而是設置單個IP可以與門戶網站建立多少連接。"
 
-#: src/usr/local/www/services_captiveportal.php:565
+#: src/usr/local/www/services_captiveportal.php:563
 msgid "Idle timeout (Minutes)"
 msgstr "空閑超時(分鐘)"
 
-#: src/usr/local/www/services_captiveportal.php:568
+#: src/usr/local/www/services_captiveportal.php:566
 msgid ""
 "Clients will be disconnected after this amount of inactivity. They may log "
 "in again immediately, though. Leave this field blank for no idle timeout."
 msgstr "當空閑超過所設的時長後，該用戶的連接就會被斷開。當然，他也可以馬上再連接上。此處若不填，則沒有超時斷開操作。"
 
-#: src/usr/local/www/services_captiveportal.php:572
+#: src/usr/local/www/services_captiveportal.php:570
 msgid "Hard timeout (Minutes)"
 msgstr "超時斷開(分鐘)"
 
-#: src/usr/local/www/services_captiveportal.php:575
+#: src/usr/local/www/services_captiveportal.php:573
 msgid ""
 "Clients will be disconnected after this amount of time, regardless of "
 "activity. They may log in again immediately, though. Leave this field blank "
@@ -21683,22 +21678,22 @@ msgid ""
 msgstr ""
 "不管用戶有沒有操作，在超過所設時長後，他都被強制斷開。當然他也可以馬上再連接上。此處若不填，則沒有此超時斷開操作。（除非已設置了空閑超時斷開，建議設置超時強制斷開）。"
 
-#: src/usr/local/www/services_captiveportal.php:580
+#: src/usr/local/www/services_captiveportal.php:578
 msgid "Traffic quota (Megabytes)"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:583
+#: src/usr/local/www/services_captiveportal.php:581
 msgid ""
 "Clients will be disconnected after exceeding this amount of traffic, "
 "inclusive of both downloads and uploads. They may log in again immediately, "
 "though. Leave this field blank for no traffic quota."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:588
+#: src/usr/local/www/services_captiveportal.php:586
 msgid "Pass-through credits per MAC address."
 msgstr "信用傳遞"
 
-#: src/usr/local/www/services_captiveportal.php:591
+#: src/usr/local/www/services_captiveportal.php:589
 msgid ""
 "Allows passing through the captive portal without authentication a limited "
 "number of times per MAC address. Once used up, the client can only log in "
@@ -21709,43 +21704,43 @@ msgstr ""
 "允許每個MAC地址通過入網門戶，而不進行有限次數的身份驗證。 一旦用完，客戶端只能使用有效的憑據登錄，直到下面指定的「恢復傳遞信用時間」過期。 "
 "建議設置超時強制斷開或或空閑超時，並使用它使其生效。"
 
-#: src/usr/local/www/services_captiveportal.php:597
+#: src/usr/local/www/services_captiveportal.php:595
 msgid "Waiting period to restore pass-through credits. (Hours)"
 msgstr "傳遞恢復"
 
-#: src/usr/local/www/services_captiveportal.php:600
+#: src/usr/local/www/services_captiveportal.php:598
 msgid ""
 "Clients will have their available pass-through credits restored to the "
 "original count after this amount of time since using the first one. This "
 "must be above 0 hours if pass-through credits are enabled."
 msgstr "在使用第一個之後的這段時間後，客戶將有可用的傳遞證恢復到原始計數。 如果啟用傳遞證，此值必須大於0小時。"
 
-#: src/usr/local/www/services_captiveportal.php:605
+#: src/usr/local/www/services_captiveportal.php:603
 msgid "Reset waiting period"
 msgstr "重置等待期"
 
-#: src/usr/local/www/services_captiveportal.php:608
+#: src/usr/local/www/services_captiveportal.php:606
 msgid ""
 "If enabled, the waiting period is reset to the original duration if access "
 "is attempted when all pass-through credits have already been exhausted."
 msgstr "如果啟用，則如果在所有傳遞證已經用盡時嘗試訪問，則等待時間被重置為原始持續時間。"
 
-#: src/usr/local/www/services_captiveportal.php:612
+#: src/usr/local/www/services_captiveportal.php:610
 msgid "Logout popup window"
 msgstr "登出彈出窗口"
 
-#: src/usr/local/www/services_captiveportal.php:615
+#: src/usr/local/www/services_captiveportal.php:613
 msgid ""
 "If enabled, a popup window will appear when clients are allowed through the "
 "captive portal. This allows clients to explicitly disconnect themselves "
 "before the idle or hard timeout occurs."
 msgstr "如果啟用，當客戶端被允許通過入網門戶時，將出現一個彈出窗口。 這允許客戶端在空閑或強制超時發生之前斷開自己。"
 
-#: src/usr/local/www/services_captiveportal.php:620
+#: src/usr/local/www/services_captiveportal.php:618
 msgid "Pre-authentication redirect URL"
 msgstr "預認證重導向網址"
 
-#: src/usr/local/www/services_captiveportal.php:623
+#: src/usr/local/www/services_captiveportal.php:621
 msgid ""
 "Set a default redirection URL. Visitors will be redirected to this URL after "
 "authentication only if the captive portal don't know where to redirect them. "
@@ -21753,41 +21748,41 @@ msgid ""
 "captiveportal's HTML pages."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:627
+#: src/usr/local/www/services_captiveportal.php:625
 msgid "After authentication Redirection URL"
 msgstr "認證後重導向網址"
 
-#: src/usr/local/www/services_captiveportal.php:630
+#: src/usr/local/www/services_captiveportal.php:628
 msgid ""
 "Set a forced redirection URL. Clients will be redirected to this URL instead "
 "of the one they initially tried to access after they've authenticated."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:634
+#: src/usr/local/www/services_captiveportal.php:632
 msgid "Blocked MAC address redirect URL"
 msgstr "已阻止MAC重導向網址"
 
-#: src/usr/local/www/services_captiveportal.php:637
+#: src/usr/local/www/services_captiveportal.php:635
 msgid ""
 "Blocked MAC addresses will be redirected to this URL when attempting access."
 msgstr "當嘗試訪問時，已阻止的MAC地址將重導向到此網址。"
 
-#: src/usr/local/www/services_captiveportal.php:641
+#: src/usr/local/www/services_captiveportal.php:639
 msgid "Concurrent user logins"
 msgstr "並發用戶登錄"
 
-#: src/usr/local/www/services_captiveportal.php:644
+#: src/usr/local/www/services_captiveportal.php:642
 msgid ""
 "If enabled only the most recent login per username will be active. "
 "Subsequent logins will cause machines previously logged in with the same "
 "username to be disconnected."
 msgstr "如果啟用，則每個用戶名的最近一次登錄將處於活動狀態。 後續登錄將導致先前使用相同用戶名登錄的計算機斷開連接。"
 
-#: src/usr/local/www/services_captiveportal.php:649
+#: src/usr/local/www/services_captiveportal.php:647
 msgid "MAC filtering"
 msgstr "MAC地址過濾"
 
-#: src/usr/local/www/services_captiveportal.php:652
+#: src/usr/local/www/services_captiveportal.php:650
 msgid ""
 "If enabled no attempts will be made to ensure that the MAC address of "
 "clients stays the same while they are logged in. This is required when the "
@@ -21798,11 +21793,11 @@ msgstr ""
 "如果啟用，將不會嘗試確保客戶端的MAC地址在登入時保持不變。當無法確定客戶端的MAC地址（通常是因為pfSense和客戶端之間存在路由器）時，這是必需的。 "
 "如果啟用，則不能使用RADIUS MAC身份驗證。"
 
-#: src/usr/local/www/services_captiveportal.php:658
+#: src/usr/local/www/services_captiveportal.php:656
 msgid "Pass-through MAC Auto Entry"
 msgstr "Pass-through MAC自動項目"
 
-#: src/usr/local/www/services_captiveportal.php:661
+#: src/usr/local/www/services_captiveportal.php:659
 #, php-format
 msgid ""
 "When enabled, a MAC passthrough entry is automatically added after the user "
@@ -21812,50 +21807,44 @@ msgid ""
 "system. If this is enabled, the logout window will not be shown."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:671
-msgid ""
-"If enabled the username used during authentication will be saved in the "
-"\"Description\" Field."
-msgstr ""
-
-#: src/usr/local/www/services_captiveportal.php:675
+#: src/usr/local/www/services_captiveportal.php:666
 msgid "Per-user bandwidth restriction"
 msgstr "帶寬限制"
 
-#: src/usr/local/www/services_captiveportal.php:682
+#: src/usr/local/www/services_captiveportal.php:673
 msgid "Default download (Kbit/s)"
 msgstr "下載限速（Kbit / s）"
 
-#: src/usr/local/www/services_captiveportal.php:689
+#: src/usr/local/www/services_captiveportal.php:680
 msgid "Default upload (Kbit/s)"
 msgstr "上傳限速（Kbit / s）"
 
-#: src/usr/local/www/services_captiveportal.php:692
+#: src/usr/local/www/services_captiveportal.php:683
 msgid ""
 "If this option is set, the captive portal will restrict each user who logs "
 "in to the specified default bandwidth. RADIUS servers can override the "
 "default settings. Leave empty for no limit."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:697
+#: src/usr/local/www/services_captiveportal.php:688
 msgid "Use custom captive portal page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:700
+#: src/usr/local/www/services_captiveportal.php:691
 msgid ""
 "If set a portal.html page must be created and uploaded. If unchecked the "
 "default template will be used"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:704
+#: src/usr/local/www/services_captiveportal.php:695
 msgid "HTML Page Contents"
 msgstr "HTML頁面內容"
 
-#: src/usr/local/www/services_captiveportal.php:709
+#: src/usr/local/www/services_captiveportal.php:700
 msgid "Portal page contents"
 msgstr "入口頁面內容"
 
-#: src/usr/local/www/services_captiveportal.php:712
+#: src/usr/local/www/services_captiveportal.php:703
 #, php-format
 msgid ""
 "Upload an HTML/PHP file for the portal page here (leave blank to keep the "
@@ -21897,31 +21886,31 @@ msgstr ""
 "&quot;accept&quot; type=&quot;submit&quot; value="
 "&quot;Continue&quot;&gt;%1$s&lt;/form&gt;"
 
-#: src/usr/local/www/services_captiveportal.php:736
+#: src/usr/local/www/services_captiveportal.php:727
 msgid "Current Portal Page"
 msgstr "現在頁"
 
-#: src/usr/local/www/services_captiveportal.php:739
+#: src/usr/local/www/services_captiveportal.php:730
 msgid "Live View"
 msgstr "實時查看"
 
-#: src/usr/local/www/services_captiveportal.php:746
-#: src/usr/local/www/services_captiveportal.php:780
-#: src/usr/local/www/services_captiveportal.php:812
+#: src/usr/local/www/services_captiveportal.php:737
+#: src/usr/local/www/services_captiveportal.php:771
+#: src/usr/local/www/services_captiveportal.php:803
 msgid "View Page Contents"
 msgstr "查看頁面內容"
 
-#: src/usr/local/www/services_captiveportal.php:760
-#: src/usr/local/www/services_captiveportal.php:794
-#: src/usr/local/www/services_captiveportal.php:826
+#: src/usr/local/www/services_captiveportal.php:751
+#: src/usr/local/www/services_captiveportal.php:785
+#: src/usr/local/www/services_captiveportal.php:817
 msgid "Restore Default Page"
 msgstr "恢復預設頁面"
 
-#: src/usr/local/www/services_captiveportal.php:769
+#: src/usr/local/www/services_captiveportal.php:760
 msgid "Auth error page contents"
 msgstr "認證錯誤頁"
 
-#: src/usr/local/www/services_captiveportal.php:772
+#: src/usr/local/www/services_captiveportal.php:763
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed when "
 "an authentication error occurs. It may include \"$PORTAL_MESSAGE$\", which "
@@ -21931,37 +21920,37 @@ msgstr ""
 "當發生身份認證錯誤時，將顯示此處上傳的HTML / PHP檔的內容。 它可以包括“$ PORTAL_MESSAGE "
 "$”。如果有RADIUS伺服器，它將被來自RADIUS伺服器的錯誤或應答消息替換。"
 
-#: src/usr/local/www/services_captiveportal.php:777
+#: src/usr/local/www/services_captiveportal.php:768
 msgid "Current Auth Error Page"
 msgstr "現在認證錯誤頁"
 
-#: src/usr/local/www/services_captiveportal.php:803
+#: src/usr/local/www/services_captiveportal.php:794
 msgid "Logout page contents"
 msgstr "登出頁面內容"
 
-#: src/usr/local/www/services_captiveportal.php:806
+#: src/usr/local/www/services_captiveportal.php:797
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed on "
 "authentication success when the logout popup is enabled."
 msgstr "當啟用註銷彈出窗口時，將顯示在此處上傳的HTML / PHP文件的內容。"
 
-#: src/usr/local/www/services_captiveportal.php:809
+#: src/usr/local/www/services_captiveportal.php:800
 msgid "Current Logout Page"
 msgstr "現在登出頁面"
 
-#: src/usr/local/www/services_captiveportal.php:841
+#: src/usr/local/www/services_captiveportal.php:832
 msgid "Captive Portal Login Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:846
+#: src/usr/local/www/services_captiveportal.php:837
 msgid "Display custom logo image"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:853
+#: src/usr/local/www/services_captiveportal.php:844
 msgid "Logo Image"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:856
+#: src/usr/local/www/services_captiveportal.php:847
 msgid ""
 "Add a logo for use in the default portal login screen. File will be renamed "
 "captiveportal-logo.* The image will be resized to fit within the given area, "
@@ -21970,15 +21959,15 @@ msgid ""
 "image is present."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:860
+#: src/usr/local/www/services_captiveportal.php:851
 msgid "Display custom background image"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:867
+#: src/usr/local/www/services_captiveportal.php:858
 msgid "Background Image"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:870
+#: src/usr/local/www/services_captiveportal.php:861
 msgid ""
 "Add a background image for use in the default portal login screen. File will "
 "be renamed captiveportal-background.* The background image will fill the "
@@ -21986,26 +21975,26 @@ msgid ""
 "default background image will be used if no custom background is present."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:874
+#: src/usr/local/www/services_captiveportal.php:865
 msgid "Terms and Conditions"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:876
+#: src/usr/local/www/services_captiveportal.php:867
 msgid ""
 "Copy and paste terms and conditions for use in the captive portal. HTML tags "
 "will be stripped out"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:883
+#: src/usr/local/www/services_captiveportal.php:874
 #: src/usr/local/www/vpn_ipsec_phase1.php:747
 msgid "*Authentication Method"
 msgstr "*認證方法"
 
-#: src/usr/local/www/services_captiveportal.php:891
+#: src/usr/local/www/services_captiveportal.php:882
 msgid "Authentication Method"
 msgstr "認證方法"
 
-#: src/usr/local/www/services_captiveportal.php:894
+#: src/usr/local/www/services_captiveportal.php:885
 msgid ""
 "Select an Authentication Method to use for this zone. One method must be "
 "selected.<br />- \"Authentication backend\" will force the login page to be "
@@ -22016,18 +22005,18 @@ msgid ""
 "automatically with their MAC address without displaying any login page."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:910
+#: src/usr/local/www/services_captiveportal.php:901
 msgid ""
 "You can add a remote authentication server in the <a href=\"/"
 "system_authservers.php\">User Manager</a>.<br/><span class="
 "\"vouchers_helptext\">Vouchers could also be used, please go to "
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:915
+#: src/usr/local/www/services_captiveportal.php:906
 msgid "Secondary authentication Server"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:924
+#: src/usr/local/www/services_captiveportal.php:915
 msgid ""
 "You can optionally select a second set of servers to to authenticate users. "
 "Users will then be able to login using separated HTML inputs.<br />This "
@@ -22036,11 +22025,11 @@ msgid ""
 "this setting empty."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:930
+#: src/usr/local/www/services_captiveportal.php:921
 msgid "Reauthenticate Users"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:933
+#: src/usr/local/www/services_captiveportal.php:924
 msgid ""
 "If reauthentication is enabled, request are made to the server for each user "
 "that is logged in every minute. If an access denied is received for a user, "
@@ -22050,62 +22039,62 @@ msgid ""
 "necessary for the portal to perform automatic reauthentication requests."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:942
+#: src/usr/local/www/services_captiveportal.php:933
 msgid "Local Authentication Privileges"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:950
+#: src/usr/local/www/services_captiveportal.php:941
 msgid "RADIUS MAC Secret"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:953
+#: src/usr/local/www/services_captiveportal.php:944
 msgid ""
 "RADIUS MAC will automatically try to authenticate devices with their MAC "
 "address as username, and the password entered below as password. Devices "
 "will still need to make one HTTP request to get connected, throught."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:960
+#: src/usr/local/www/services_captiveportal.php:951
 msgid ""
 "When enabled, clients will be disconnected after the amount of time "
 "retrieved from the RADIUS Session-Timeout attribute."
 msgstr "若啟用此項，防火牆會按照從RADIUS伺服器收到的會話超時時長斷開用戶的連接."
 
-#: src/usr/local/www/services_captiveportal.php:964
+#: src/usr/local/www/services_captiveportal.php:955
 msgid "Traffic quota"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:967
+#: src/usr/local/www/services_captiveportal.php:958
 msgid ""
 "When enabled, clients will be disconnected after exceeding the amount of "
 "traffic, inclusive of both downloads and uploads, retrieved from the RADIUS "
 "pfSense-Max-Total-Octets attribute."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:971
+#: src/usr/local/www/services_captiveportal.php:962
 msgid "Per-user bandwidth restrictions"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:974
+#: src/usr/local/www/services_captiveportal.php:965
 msgid ""
 "When enabled, the bandwidth assigned to a client will be limited to the "
 "values retrieved from the RADIUS pfSense-Bandwidth-Max-Up and pfSense-"
 "Bandwidth-Max-Down attributes or from the comparable WISPr attributes."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:981
+#: src/usr/local/www/services_captiveportal.php:972
 msgid "Single dash"
 msgstr "單破折號"
 
-#: src/usr/local/www/services_captiveportal.php:981
+#: src/usr/local/www/services_captiveportal.php:972
 msgid "Unformatted"
 msgstr "未格式化"
 
-#: src/usr/local/www/services_captiveportal.php:979
+#: src/usr/local/www/services_captiveportal.php:970
 msgid "MAC address format"
 msgstr "MAC地址格式"
 
-#: src/usr/local/www/services_captiveportal.php:982
+#: src/usr/local/www/services_captiveportal.php:973
 #, php-format
 msgid ""
 "This option changes the MAC address format used when performing a RADIUS "
@@ -22114,28 +22103,28 @@ msgid ""
 " 001122334455"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:999
+#: src/usr/local/www/services_captiveportal.php:990
 msgid ""
 "If enabled, accounting request will be made for users identified against any "
 "RADIUS server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1010
-#: src/usr/local/www/services_captiveportal.php:1015
+#: src/usr/local/www/services_captiveportal.php:1001
+#: src/usr/local/www/services_captiveportal.php:1006
 msgid "Accounting Server"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1021
+#: src/usr/local/www/services_captiveportal.php:1012
 msgid ""
 "You can add a Radius Accounting server in the <a href=\"/system_authservers."
 "php\">User Manager</a>."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1025
+#: src/usr/local/www/services_captiveportal.php:1016
 msgid "Send accounting updates"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1061
+#: src/usr/local/www/services_captiveportal.php:1052
 msgid ""
 "This field set the way Accounting Updates should be done : <br />- If \"No "
 "updates\" is selected, then only one \"Accounting Start\" and one "
@@ -22149,11 +22138,11 @@ msgid ""
 "option very well, you should select \"Stop/Start (FreeRADIUS)\" instead."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1070
+#: src/usr/local/www/services_captiveportal.php:1061
 msgid "Accounting style"
 msgstr "記帳方式"
 
-#: src/usr/local/www/services_captiveportal.php:1073
+#: src/usr/local/www/services_captiveportal.php:1064
 msgid ""
 "When enabled, data counts for RADIUS accounting packets will be taken from "
 "the client perspective, not the NAS. Acct-Input-Octets will represent "
@@ -22162,34 +22151,34 @@ msgstr ""
 "啟用後，RADIUS計費數據包的數據計數將從客戶端角度獲取，而不是NAS。 Acct-Input-Octets表示下載，Acct-Output-"
 "Octets表示上傳。"
 
-#: src/usr/local/www/services_captiveportal.php:1078
+#: src/usr/local/www/services_captiveportal.php:1069
 msgid "Idle time accounting"
 msgstr "空閑時間計費處理"
 
-#: src/usr/local/www/services_captiveportal.php:1081
+#: src/usr/local/www/services_captiveportal.php:1072
 msgid ""
 "This setting change the stop time that will be send in the Accounting Stop "
 "request, when a user get disconnected after exceeding the idle timeout. If "
 "not checked, the sent stop time will be the last activity time."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1090
+#: src/usr/local/www/services_captiveportal.php:1081
 #: src/etc/inc/authgui.inc:288
 msgid "Login"
 msgstr "登入"
 
-#: src/usr/local/www/services_captiveportal.php:1093
+#: src/usr/local/www/services_captiveportal.php:1084
 msgid ""
 "When enabled, the username and password will be transmitted over an HTTPS "
 "connection to protect against eavesdroppers. A server name and certificate "
 "must also be specified below."
 msgstr "如果啟用，用戶名和密碼將通過HTTPS連接傳輸，以防止泄密。還必須在下面指定伺服器名稱和證書。"
 
-#: src/usr/local/www/services_captiveportal.php:1098
+#: src/usr/local/www/services_captiveportal.php:1089
 msgid "*HTTPS server name"
 msgstr "*HTTPS伺服器名稱"
 
-#: src/usr/local/www/services_captiveportal.php:1101
+#: src/usr/local/www/services_captiveportal.php:1092
 msgid ""
 "This name will be used in the form action for the HTTPS POST and should "
 "match the Common Name (CN) in the certificate (otherwise, the client browser "
@@ -22200,22 +22189,22 @@ msgstr ""
 "此名稱將用於HTTPS POST的表單操作中，並應與證書中的公用名（CN）匹配（否則，客戶端瀏覽器很可能顯示安全警告）。 "
 "確保入網門戶網站客戶端可以在DNS中解析此名稱，並在客戶端上驗證IP解析到pfSense上的正確介面IP。"
 
-#: src/usr/local/www/services_captiveportal.php:1107
+#: src/usr/local/www/services_captiveportal.php:1098
 msgid "*SSL Certificate"
 msgstr "*SSL 憑證"
 
-#: src/usr/local/www/services_captiveportal.php:1110
+#: src/usr/local/www/services_captiveportal.php:1101
 #, php-format
 msgid ""
 "If no certificates are defined, one may be defined here: %1$sSystem &gt; "
 "Cert. Manager%2$s"
 msgstr "如果沒有定義憑證，可以在這裏定義： %1$s系統 &gt;憑證管理%2$s"
 
-#: src/usr/local/www/services_captiveportal.php:1114
+#: src/usr/local/www/services_captiveportal.php:1105
 msgid "HTTPS Forwards"
 msgstr "HTTPS轉發"
 
-#: src/usr/local/www/services_captiveportal.php:1117
+#: src/usr/local/www/services_captiveportal.php:1108
 msgid ""
 "If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites "
 "will not be forwarded to the captive portal. This prevents certificate "
@@ -22227,7 +22216,7 @@ msgstr ""
 "如果設置此選項，則嘗試連接到SSL / HTTPS（埠443）站點將不會轉發到入網門戶。 這將防止證書錯誤顯示給用戶，即使啟用了HTTPS登錄。 "
 "用戶必須嘗試連接到HTTP（埠80）站點才能轉發到入網門戶。 如果啟用了HTTPS登錄，則用戶將被重定向到HTTPS登錄頁面。"
 
-#: src/usr/local/www/services_captiveportal.php:1126
+#: src/usr/local/www/services_captiveportal.php:1117
 msgid ""
 "Don't forget to enable the DHCP server on the captive portal interface! Make "
 "sure that the default/maximum DHCP lease time is higher than the hard "
@@ -22635,8 +22624,8 @@ msgstr "編輯階段 1 "
 #: src/usr/local/www/vpn_ipsec_phase1.php:708
 #: src/usr/local/www/vpn_ipsec_phase1.php:924
 #: src/usr/local/www/vpn_ipsec_phase2.php:661
-#: src/usr/local/www/interfaces.php:3017 src/usr/local/www/interfaces.php:3065
-#: src/usr/local/www/interfaces.php:3074
+#: src/usr/local/www/interfaces.php:3013 src/usr/local/www/interfaces.php:3061
+#: src/usr/local/www/interfaces.php:3070
 msgid "Auto"
 msgstr "自動"
 
@@ -23147,6 +23136,10 @@ msgstr "輸入包含埠號和/或埠範圍列表的單個URL。 保存後，將�
 #: src/usr/local/www/firewall_aliases_edit.php:666
 msgid "Properties"
 msgstr "屬性"
+
+#: src/usr/local/www/firewall_aliases_edit.php:697
+msgid "Hint"
+msgstr "例如："
 
 #: src/usr/local/www/interfaces_bridge.php:62
 msgid "This bridge cannot be deleted because it is assigned as an interface."
@@ -24730,7 +24723,12 @@ msgstr "IPv6配置類型"
 msgid "IPv4/IPv6 Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1903
+#: src/usr/local/www/interfaces.php:1893
+msgid ""
+"The MAC address of a VLAN interface must be set on its parent interface"
+msgstr ""
+
+#: src/usr/local/www/interfaces.php:1896
 #, php-format
 msgid ""
 "This field can be used to modify (\"spoof\") the MAC address of this "
@@ -24738,27 +24736,27 @@ msgid ""
 "or leave blank."
 msgstr "此字段可用於修改（“欺騙”）此介面的MAC地址。%s請按xx:xx:xx:xx:xx:xx格式輸入MAC地址或留空。"
 
-#: src/usr/local/www/interfaces.php:1912
+#: src/usr/local/www/interfaces.php:1908
 msgid ""
 "If this field is blank, the adapter's default MTU will be used. This is "
 "typically 1500 bytes but can vary in some circumstances."
 msgstr "如果此欄位為空，將使用適配器默認MTU（網路傳輸最大報文包）。 這通常為1500位元組，但在某些情況下可能會有所不同。"
 
-#: src/usr/local/www/interfaces.php:1917
+#: src/usr/local/www/interfaces.php:1913
 msgid "MSS"
 msgstr "MSS"
 
-#: src/usr/local/www/interfaces.php:1920
+#: src/usr/local/www/interfaces.php:1916
 msgid ""
 "If a value is entered in this field, then MSS clamping for TCP connections "
 "to the value entered above minus 40 (TCP/IP header size) will be in effect."
 msgstr "如果在此欄位中輸入值，則MSS（網路傳輸數據最大值）的值為TCP連接到上面輸入的值減40（TCP / IP頭大小）。"
 
-#: src/usr/local/www/interfaces.php:1926
+#: src/usr/local/www/interfaces.php:1922
 msgid "Speed and Duplex"
 msgstr "速度和雙工"
 
-#: src/usr/local/www/interfaces.php:1929
+#: src/usr/local/www/interfaces.php:1925
 #, php-format
 msgid ""
 "Explicitly set speed and duplex mode for this interface.%sWARNING: MUST be "
@@ -24766,27 +24764,27 @@ msgid ""
 "interface connects to has its speed and duplex forced."
 msgstr "設置此介面的速度和雙工模式。%s警告：必須設置為自動選擇（自動協商速度），除非此介面連接的埠具有速度和雙工強制。"
 
-#: src/usr/local/www/interfaces.php:1935
+#: src/usr/local/www/interfaces.php:1931
 msgid "Static IPv4 Configuration"
 msgstr "靜態IPv4配置類型"
 
-#: src/usr/local/www/interfaces.php:1940
+#: src/usr/local/www/interfaces.php:1936
 msgid "*IPv4 Address"
 msgstr "*IPv4地址"
 
-#: src/usr/local/www/interfaces.php:1945
+#: src/usr/local/www/interfaces.php:1941
 msgid "IPv4 Upstream gateway"
 msgstr "IPv4上游閘道"
 
-#: src/usr/local/www/interfaces.php:1949
+#: src/usr/local/www/interfaces.php:1945
 msgid "IPv4 Upstream Gateway"
 msgstr "IPv4上游閘道"
 
-#: src/usr/local/www/interfaces.php:1956 src/usr/local/www/interfaces.php:1997
+#: src/usr/local/www/interfaces.php:1952 src/usr/local/www/interfaces.php:1993
 msgid "Add a new gateway"
 msgstr "新增新閘道"
 
-#: src/usr/local/www/interfaces.php:1961
+#: src/usr/local/www/interfaces.php:1957
 #, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
@@ -24797,27 +24795,27 @@ msgstr ""
 "如果此介面是Internet連接，請從列表中選擇一個現有閘道，或使用“新增新閘道”按鈕新增一個。在%1$s局域網介面，上游閘道應為“沒有”。 "
 "閘道可以在%2$s這裏%3$s進行管理。"
 
-#: src/usr/local/www/interfaces.php:1969
+#: src/usr/local/www/interfaces.php:1965
 msgid "Static IPv6 Configuration"
 msgstr "靜態IPv6配置"
 
-#: src/usr/local/www/interfaces.php:1974
+#: src/usr/local/www/interfaces.php:1970
 msgid "*IPv6 address"
 msgstr "*IPv6 地址"
 
-#: src/usr/local/www/interfaces.php:1981 src/usr/local/www/interfaces.php:2294
+#: src/usr/local/www/interfaces.php:1977 src/usr/local/www/interfaces.php:2290
 msgid "Use IPv4 connectivity as parent interface"
 msgstr "使用IPv4為父介面"
 
-#: src/usr/local/www/interfaces.php:1986
+#: src/usr/local/www/interfaces.php:1982
 msgid "IPv6 Upstream gateway"
 msgstr "IPv6上游閘道"
 
-#: src/usr/local/www/interfaces.php:1990
+#: src/usr/local/www/interfaces.php:1986
 msgid "IPv6 Upstream Gateway"
 msgstr "IPv6上游閘道"
 
-#: src/usr/local/www/interfaces.php:2002
+#: src/usr/local/www/interfaces.php:1998
 #, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
@@ -24825,48 +24823,48 @@ msgid ""
 "upstream gateway should be \"none\". "
 msgstr "如果此介面是Internet連接，請從列表中選擇現有閘道，或使用“新增新閘道”按鈕新增一個新的。%s在本地LAN上，上游閘道應為“沒有”。"
 
-#: src/usr/local/www/interfaces.php:2009
+#: src/usr/local/www/interfaces.php:2005
 msgid "New IPv6 Gateway"
 msgstr "新增新的IPV6閘道"
 
-#: src/usr/local/www/interfaces.php:2066
+#: src/usr/local/www/interfaces.php:2062
 msgid "DHCP Client Configuration"
 msgstr "DHCP客戶端配置"
 
-#: src/usr/local/www/interfaces.php:2069 src/usr/local/www/interfaces.php:2274
+#: src/usr/local/www/interfaces.php:2065 src/usr/local/www/interfaces.php:2270
 msgid "Options"
 msgstr "選項"
 
-#: src/usr/local/www/interfaces.php:2076
+#: src/usr/local/www/interfaces.php:2072
 msgid "Use advanced DHCP configuration options."
 msgstr "使用進階DHCP配置選項。"
 
-#: src/usr/local/www/interfaces.php:2083 src/usr/local/www/interfaces.php:2288
+#: src/usr/local/www/interfaces.php:2079 src/usr/local/www/interfaces.php:2284
 msgid "Override the configuration from this file."
 msgstr "覆蓋此文件中的配置。"
 
-#: src/usr/local/www/interfaces.php:2092
+#: src/usr/local/www/interfaces.php:2088
 msgid ""
 "The value in this field is sent as the DHCP client identifier and hostname "
 "when requesting a DHCP lease. Some ISPs may require this (for client "
 "identification)."
 msgstr "當請求DHCP時，此欄位中的值將作為DHCP客戶端標識符和主機名發送，一些ISP可能需要此（用於客戶端標識）。"
 
-#: src/usr/local/www/interfaces.php:2096
+#: src/usr/local/www/interfaces.php:2092
 msgid "Alias IPv4 address"
 msgstr "別名IPv4地址"
 
-#: src/usr/local/www/interfaces.php:2099
+#: src/usr/local/www/interfaces.php:2095
 msgid ""
 "The value in this field is used as a fixed alias IPv4 address by the DHCP "
 "client."
 msgstr "此欄位中的值由DHCP客戶端用作固定別名IPv4地址。"
 
-#: src/usr/local/www/interfaces.php:2103
+#: src/usr/local/www/interfaces.php:2099
 msgid "Reject leases from"
 msgstr "拒絕租約"
 
-#: src/usr/local/www/interfaces.php:2106
+#: src/usr/local/www/interfaces.php:2102
 msgid ""
 "To have the DHCP client reject offers from specific DHCP servers, enter "
 "their IP addresses here (separate multiple entries with a comma). This is "
@@ -24876,112 +24874,112 @@ msgstr ""
 "要讓DHCP客戶端拒絕來自特定DHCP伺服器的分配，可以在此輸入其IP地址（用逗號分隔多個項目）。 "
 "這對於拒絕在丟失上游同步時提供私有IP地址的有線數據機的租賃非常有用。"
 
-#: src/usr/local/www/interfaces.php:2112
+#: src/usr/local/www/interfaces.php:2108
 msgid "DHCP VLAN Priority"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2118 src/usr/local/www/interfaces.php:2347
+#: src/usr/local/www/interfaces.php:2114 src/usr/local/www/interfaces.php:2343
 msgid "Normally off unless specifically required by the ISP."
 msgstr "通常情況下關閉，除非ISP特別要求。"
 
-#: src/usr/local/www/interfaces.php:2125 src/usr/local/www/interfaces.php:2354
+#: src/usr/local/www/interfaces.php:2121 src/usr/local/www/interfaces.php:2350
 msgid "Choose 802.1p priority to set."
 msgstr "選擇802.1p優先順序進行設置"
 
-#: src/usr/local/www/interfaces.php:2130
+#: src/usr/local/www/interfaces.php:2126
 msgid "Protocol timing"
 msgstr "協定時序"
 
-#: src/usr/local/www/interfaces.php:2153
+#: src/usr/local/www/interfaces.php:2149
 msgid "Select timeout"
 msgstr "選擇超時"
 
-#: src/usr/local/www/interfaces.php:2167
+#: src/usr/local/www/interfaces.php:2163
 msgid "Backoff cutoff"
 msgstr "返回截止"
 
-#: src/usr/local/www/interfaces.php:2174
+#: src/usr/local/www/interfaces.php:2170
 msgid "Initial interval"
 msgstr "初始間隔"
 
-#: src/usr/local/www/interfaces.php:2178
+#: src/usr/local/www/interfaces.php:2174
 msgid "Presets"
 msgstr "預設"
 
-#: src/usr/local/www/interfaces.php:2213
+#: src/usr/local/www/interfaces.php:2209
 #, php-format
 msgid ""
 "The values in these fields are DHCP protocol timings used when requesting a "
 "lease.%1$sSee %2$shere%3$s for more information"
 msgstr "這些欄位中的值是請求租用時使用的DHCP協議時序。%1$s點擊%2$s這裡%3$s 獲取更多信息。"
 
-#: src/usr/local/www/interfaces.php:2220 src/usr/local/www/interfaces.php:2361
+#: src/usr/local/www/interfaces.php:2216 src/usr/local/www/interfaces.php:2357
 msgid "Configuration File Override"
 msgstr "覆蓋配置文件"
 
-#: src/usr/local/www/interfaces.php:2230
+#: src/usr/local/www/interfaces.php:2226
 msgid "Lease Requirements and Requests"
 msgstr "租賃要求和請求"
 
-#: src/usr/local/www/interfaces.php:2235 src/usr/local/www/interfaces.php:2386
+#: src/usr/local/www/interfaces.php:2231 src/usr/local/www/interfaces.php:2382
 msgid "Send options"
 msgstr "發送選項"
 
-#: src/usr/local/www/interfaces.php:2245
+#: src/usr/local/www/interfaces.php:2241
 msgid "Request options"
 msgstr "請求選項"
 
-#: src/usr/local/www/interfaces.php:2253
+#: src/usr/local/www/interfaces.php:2249
 msgid "Require options"
 msgstr "需求選項"
 
-#: src/usr/local/www/interfaces.php:2260
+#: src/usr/local/www/interfaces.php:2256
 msgid "Option modifiers"
 msgstr "修飾符選項"
 
-#: src/usr/local/www/interfaces.php:2271
+#: src/usr/local/www/interfaces.php:2267
 msgid "DHCP6 Client Configuration"
 msgstr "DHCP6客戶端配置"
 
-#: src/usr/local/www/interfaces.php:2281
+#: src/usr/local/www/interfaces.php:2277
 msgid "Use advanced DHCPv6 configuration options."
 msgstr "使用進階DHCPv6配置選項。"
 
-#: src/usr/local/www/interfaces.php:2301
+#: src/usr/local/www/interfaces.php:2297
 msgid "Request only an IPv6 prefix"
 msgstr "僅請求IPv6前綴"
 
-#: src/usr/local/www/interfaces.php:2308
+#: src/usr/local/www/interfaces.php:2304
 msgid "DHCPv6 Prefix Delegation size"
 msgstr "前綴委託大小"
 
-#: src/usr/local/www/interfaces.php:2311
+#: src/usr/local/www/interfaces.php:2307
 msgid ""
 "The value in this field is the delegated prefix length provided by the "
 "DHCPv6 server. Normally specified by the ISP."
 msgstr "此欄位中的值是DHCPv6伺服器提供的委派前綴長度，通常由ISP指定。"
 
-#: src/usr/local/www/interfaces.php:2315
+#: src/usr/local/www/interfaces.php:2311
 msgid "Send IPv6 prefix hint"
 msgstr "發送IPv6前綴提示"
 
-#: src/usr/local/www/interfaces.php:2322
+#: src/usr/local/www/interfaces.php:2318
 msgid "Debug"
 msgstr "調試"
 
-#: src/usr/local/www/interfaces.php:2328
+#: src/usr/local/www/interfaces.php:2324
 msgid "Do not wait for a RA"
 msgstr "不要等待RA"
 
-#: src/usr/local/www/interfaces.php:2334
+#: src/usr/local/www/interfaces.php:2330
 msgid "Do not allow PD/Address release"
 msgstr "不允許PD/地址釋放"
 
-#: src/usr/local/www/interfaces.php:2340
+#: src/usr/local/www/interfaces.php:2336
 msgid "DHCP6 VLAN Priority"
 msgstr "DHCP6 VLAN優先順序"
 
-#: src/usr/local/www/interfaces.php:2364
+#: src/usr/local/www/interfaces.php:2360
 #, php-format
 msgid ""
 "The value in this field is the full absolute path to a DHCP client "
@@ -24996,98 +24994,98 @@ msgstr ""
 "U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, "
 "or period) (omitted for none)。%1$s一些ISP可能需要或不發送某些選項。"
 
-#: src/usr/local/www/interfaces.php:2373
+#: src/usr/local/www/interfaces.php:2369
 msgid "Advanced DHCP6 Client Configuration"
 msgstr "進階DHCP6客戶端配置"
 
-#: src/usr/local/www/interfaces.php:2378
+#: src/usr/local/www/interfaces.php:2374
 msgid "Information only"
 msgstr "僅供參考"
 
-#: src/usr/local/www/interfaces.php:2382
+#: src/usr/local/www/interfaces.php:2378
 msgid "Only exchange informational configuration parameters with servers."
 msgstr "僅與伺服器交換信息配置參數。"
 
-#: src/usr/local/www/interfaces.php:2396
+#: src/usr/local/www/interfaces.php:2392
 msgid "Request Options"
 msgstr "請求選項"
 
-#: src/usr/local/www/interfaces.php:2404
+#: src/usr/local/www/interfaces.php:2400
 msgid "Scripts"
 msgstr "腳本"
 
-#: src/usr/local/www/interfaces.php:2410
+#: src/usr/local/www/interfaces.php:2406
 msgid "Identity Association Statement"
 msgstr "身份聯合聲明"
 
-#: src/usr/local/www/interfaces.php:2491
+#: src/usr/local/www/interfaces.php:2487
 msgid "Prefix interface statement"
 msgstr "前綴介面語句"
 
-#: src/usr/local/www/interfaces.php:2509
+#: src/usr/local/www/interfaces.php:2505
 msgid "Select prefix interface"
 msgstr "選擇前綴介面"
 
-#: src/usr/local/www/interfaces.php:2512
+#: src/usr/local/www/interfaces.php:2508
 msgid "Prefix Interface"
 msgstr "前綴介面"
 
-#: src/usr/local/www/interfaces.php:2515
+#: src/usr/local/www/interfaces.php:2511
 msgid "Select the interface on which to apply the prefix delegation."
 msgstr "選擇應用前綴委派的介面。"
 
-#: src/usr/local/www/interfaces.php:2517
+#: src/usr/local/www/interfaces.php:2513
 msgid "Authentication statement"
 msgstr "認證語句"
 
-#: src/usr/local/www/interfaces.php:2549
+#: src/usr/local/www/interfaces.php:2545
 msgid "Keyinfo statement"
 msgstr "關鍵信息語句"
 
-#: src/usr/local/www/interfaces.php:2590
+#: src/usr/local/www/interfaces.php:2586
 #, php-format
 msgid "See %1$shere%2$s more information"
 msgstr "點擊%1$s這裡%2$s 獲取更多信息。"
 
-#: src/usr/local/www/interfaces.php:2596
+#: src/usr/local/www/interfaces.php:2592
 msgid "6RD Configuration"
 msgstr "6RD配置"
 
-#: src/usr/local/www/interfaces.php:2601
+#: src/usr/local/www/interfaces.php:2597
 msgid "6RD Prefix"
 msgstr "6RD 前綴"
 
-#: src/usr/local/www/interfaces.php:2608
+#: src/usr/local/www/interfaces.php:2604
 msgid "*6RD Border relay"
 msgstr "*6 RD邊界中繼"
 
-#: src/usr/local/www/interfaces.php:2615
+#: src/usr/local/www/interfaces.php:2611
 msgid "6RD IPv4 Prefix length"
 msgstr "6RD  IPv4前綴長度"
 
-#: src/usr/local/www/interfaces.php:2618
+#: src/usr/local/www/interfaces.php:2614
 msgid ""
 "6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means "
 "embed the entire IPv4 address in the 6RD prefix."
 msgstr "6RD IPv4前綴長度。 通常由ISP指定。 值為0表示將整個IPv4地址嵌入6RD前綴。"
 
-#: src/usr/local/www/interfaces.php:2623
+#: src/usr/local/www/interfaces.php:2619
 msgid "Track IPv6 Interface"
 msgstr "跟蹤IPv6介面"
 
-#: src/usr/local/www/interfaces.php:2665
+#: src/usr/local/www/interfaces.php:2661
 msgid "*IPv6 Interface"
 msgstr "*IPv6介面"
 
-#: src/usr/local/www/interfaces.php:2668
+#: src/usr/local/www/interfaces.php:2664
 msgid "Selects the dynamic IPv6 WAN interface to track for configuration."
 msgstr "選擇要跟蹤配置的動態IPv6 WAN介面。"
 
-#: src/usr/local/www/interfaces.php:2676
+#: src/usr/local/www/interfaces.php:2672
 msgid "IPv6 Prefix ID"
 msgstr "IPv6前綴ID"
 
-#: src/usr/local/www/interfaces.php:2679
+#: src/usr/local/www/interfaces.php:2675
 #, php-format
 msgid ""
 "(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the "
@@ -25097,102 +25095,102 @@ msgstr ""
 "(%1$s16進位%2$s 從 0 到 %3$s) 此欄位中的值是（委派）IPv6前綴標識。 這將基於動態IPv6連接確定可配置的網路ID。 "
 "默認值為0。"
 
-#: src/usr/local/www/interfaces.php:2735
+#: src/usr/local/www/interfaces.php:2731
 msgid "Typically *99# for GSM networks and #777 for CDMA networks."
 msgstr "通常* 99＃用於GSM網路，＃777用於CDMA網路。"
 
-#: src/usr/local/www/interfaces.php:2739
+#: src/usr/local/www/interfaces.php:2735
 msgid "Access Point Name"
 msgstr "接入點名稱"
 
-#: src/usr/local/www/interfaces.php:2765
+#: src/usr/local/www/interfaces.php:2761
 msgid "*Modem port"
 msgstr "*解調器埠"
 
-#: src/usr/local/www/interfaces.php:2772
+#: src/usr/local/www/interfaces.php:2768
 msgid "Advanced PPP"
 msgstr "進階PPP"
 
-#: src/usr/local/www/interfaces.php:2775
+#: src/usr/local/www/interfaces.php:2771
 msgid "Create a new PPP configuration."
 msgstr "創建一個PPP配置。"
 
-#: src/usr/local/www/interfaces.php:2780
+#: src/usr/local/www/interfaces.php:2776
 msgid "PPPoE Configuration"
 msgstr "PPPoE配置"
 
-#: src/usr/local/www/interfaces.php:2802
+#: src/usr/local/www/interfaces.php:2798
 msgid "This field can usually be left empty."
 msgstr "這裡通常留空。"
 
-#: src/usr/local/www/interfaces.php:2814
+#: src/usr/local/www/interfaces.php:2810
 msgid "Idle timeout"
 msgstr "空閑超時"
 
-#: src/usr/local/www/interfaces.php:2818 src/usr/local/www/interfaces.php:2951
+#: src/usr/local/www/interfaces.php:2814 src/usr/local/www/interfaces.php:2947
 msgid ""
 "If no qualifying outgoing packets are transmitted for the specified number "
 "of seconds, the connection is brought down. An idle timeout of zero disables "
 "this feature."
 msgstr "如果在指定的秒數內沒有發送限定的出站數據包，則連接斷開。空閑超時為零將禁用此功能。"
 
-#: src/usr/local/www/interfaces.php:2823
+#: src/usr/local/www/interfaces.php:2819
 msgid "Periodic reset"
 msgstr "定期複位"
 
-#: src/usr/local/www/interfaces.php:2826
+#: src/usr/local/www/interfaces.php:2822
 msgid "Select a reset timing type."
 msgstr "選擇一個複位時序類型"
 
-#: src/usr/local/www/interfaces.php:2828
+#: src/usr/local/www/interfaces.php:2824
 msgid "Custom reset"
 msgstr "自定義"
 
-#: src/usr/local/www/interfaces.php:2837
+#: src/usr/local/www/interfaces.php:2833
 msgid "Hour (0-23)"
 msgstr "小時（0-23）"
 
-#: src/usr/local/www/interfaces.php:2845
+#: src/usr/local/www/interfaces.php:2841
 msgid "Minutes (0-59)"
 msgstr "分鐘（0-59）"
 
-#: src/usr/local/www/interfaces.php:2852
+#: src/usr/local/www/interfaces.php:2848
 msgid "Specific date (mm/dd/yyyy)"
 msgstr "在特定日期重置（mm / dd / yyyy）"
 
-#: src/usr/local/www/interfaces.php:2854
+#: src/usr/local/www/interfaces.php:2850
 msgid ""
 "Leave the date field empty, for the reset to be executed each day at the "
 "time specified by the minutes and hour fields"
 msgstr "將日期欄位留空，以便在分鐘和小時欄位指定的時間每天執行重置"
 
-#: src/usr/local/www/interfaces.php:2858
+#: src/usr/local/www/interfaces.php:2854
 msgid "cron based reset"
 msgstr "基於cron的複位"
 
-#: src/usr/local/www/interfaces.php:2897 src/usr/local/www/interfaces.php:2962
+#: src/usr/local/www/interfaces.php:2893 src/usr/local/www/interfaces.php:2958
 msgid "Advanced and MLPPP"
 msgstr "進階和MLPPP"
 
-#: src/usr/local/www/interfaces.php:2900
+#: src/usr/local/www/interfaces.php:2896
 msgid ""
 "Click for additional PPPoE configuration options. Save first if changes have "
 "been made."
 msgstr "點選以獲取其他PPPoE配置選項。 如果已更改，請先儲存。"
 
-#: src/usr/local/www/interfaces.php:2905
+#: src/usr/local/www/interfaces.php:2901
 msgid "PPTP/L2TP Configuration"
 msgstr "PPTP/L2TP配置"
 
-#: src/usr/local/www/interfaces.php:2924
+#: src/usr/local/www/interfaces.php:2920
 msgid "*Local IP address"
 msgstr "*本地IP地址"
 
-#: src/usr/local/www/interfaces.php:2931
+#: src/usr/local/www/interfaces.php:2927
 msgid "*Remote IP address"
 msgstr "*遠端IP地址 "
 
-#: src/usr/local/www/interfaces.php:2942
+#: src/usr/local/www/interfaces.php:2938
 msgid ""
 "This option causes the interface to operate in dial-on-demand mode, allowing "
 "it to be a virtual full time connection. The interface is configured, but "
@@ -25200,58 +25198,58 @@ msgid ""
 "traffic is detected."
 msgstr "此選項使介面以按需撥號模式操作，從而允許其成為虛擬全時連接。 介面配置後，但是鏈路的實際連接將被延遲，直到檢測到合格的轉出流量。"
 
-#: src/usr/local/www/interfaces.php:2947
+#: src/usr/local/www/interfaces.php:2943
 msgid "Idle timeout (seconds)"
 msgstr "空閑超時（秒）"
 
-#: src/usr/local/www/interfaces.php:2955
+#: src/usr/local/www/interfaces.php:2951
 msgid "There are additional Local and Remote IP addresses defined for MLPPP."
 msgstr "還有為MLPPP定義的其他本地和遠端IP地址。"
 
-#: src/usr/local/www/interfaces.php:2965
+#: src/usr/local/www/interfaces.php:2961
 #, php-format
 msgid ""
 "%sClick for additional PPTP and L2TP configuration options. Save first if "
 "changes have been made."
 msgstr "%s點選其他PPTP和L2TP配置選項。 如果已更改，請先儲存。"
 
-#: src/usr/local/www/interfaces.php:2972
+#: src/usr/local/www/interfaces.php:2968
 msgid ""
 "Common Wireless Configuration - Settings apply to all wireless networks on "
 msgstr "常見的無線配置 - 設定適用於所有無線網路 "
 
-#: src/usr/local/www/interfaces.php:2976
+#: src/usr/local/www/interfaces.php:2972
 msgid "Persist common settings"
 msgstr "保留常用設定"
 
-#: src/usr/local/www/interfaces.php:2996
+#: src/usr/local/www/interfaces.php:2992
 msgid "Standard"
 msgstr "標準"
 
-#: src/usr/local/www/interfaces.php:3006 src/usr/local/www/interfaces.php:3056
+#: src/usr/local/www/interfaces.php:3002 src/usr/local/www/interfaces.php:3052
 #: src/usr/local/www/status_graph.php:193
 msgid "Off"
 msgstr "關閉"
 
-#: src/usr/local/www/interfaces.php:3006
+#: src/usr/local/www/interfaces.php:3002
 msgid "CTS to self"
 msgstr "CTS 到 SELF"
 
-#: src/usr/local/www/interfaces.php:3006
+#: src/usr/local/www/interfaces.php:3002
 msgid "RTS and CTS"
 msgstr "RTS 和 CTS"
 
-#: src/usr/local/www/interfaces.php:3004
+#: src/usr/local/www/interfaces.php:3000
 msgid "802.11g OFDM Protection Mode"
 msgstr "802.11g OFDM保護模式"
 
-#: src/usr/local/www/interfaces.php:3007
+#: src/usr/local/www/interfaces.php:3003
 msgid ""
 "For IEEE 802.11g, use the specified technique for protecting OFDM frames in "
 "a mixed 11b/11g network."
 msgstr "對於IEEE 802.11g，使用指定的技術來保護混合11b / 11g網路中的OFDM幀。"
 
-#: src/usr/local/www/interfaces.php:3044
+#: src/usr/local/www/interfaces.php:3040
 #, php-format
 msgid ""
 "Legend: wireless standards - channel # (frequency @ max TX power / TX power "
@@ -25259,88 +25257,88 @@ msgid ""
 " Auto may override the wireless standard selected above."
 msgstr "圖例：無線標準 - 信道＃（頻率@最大發射功率/註冊域允許的TX功率） %1$s某些卡可能支持所有信道。 自動可以覆蓋上面選擇的無線標準。"
 
-#: src/usr/local/www/interfaces.php:3049
+#: src/usr/local/www/interfaces.php:3045
 msgid "Antenna Settings"
 msgstr "天線設定"
 
-#: src/usr/local/www/interfaces.php:3056 src/usr/local/www/status_graph.php:192
+#: src/usr/local/www/interfaces.php:3052 src/usr/local/www/status_graph.php:192
 msgid "On"
 msgstr "On"
 
-#: src/usr/local/www/interfaces.php:3057
+#: src/usr/local/www/interfaces.php:3053
 msgid "Diversity"
 msgstr "差異"
 
-#: src/usr/local/www/interfaces.php:3065 src/usr/local/www/interfaces.php:3074
+#: src/usr/local/www/interfaces.php:3061 src/usr/local/www/interfaces.php:3070
 msgid "#1"
 msgstr "# 1"
 
-#: src/usr/local/www/interfaces.php:3065 src/usr/local/www/interfaces.php:3074
+#: src/usr/local/www/interfaces.php:3061 src/usr/local/www/interfaces.php:3070
 msgid "#2"
 msgstr "# 2"
 
-#: src/usr/local/www/interfaces.php:3066
+#: src/usr/local/www/interfaces.php:3062
 msgid "Transmit antenna"
 msgstr "發射天線"
 
-#: src/usr/local/www/interfaces.php:3075
+#: src/usr/local/www/interfaces.php:3071
 msgid "Receive antenna"
 msgstr "接收天線"
 
-#: src/usr/local/www/interfaces.php:3078
+#: src/usr/local/www/interfaces.php:3074
 msgid ""
 "Note: The antenna numbers do not always match up with the labels on the card."
 ""
 msgstr "注意：天線號碼不總是與卡上的標籤匹配。"
 
-#: src/usr/local/www/interfaces.php:3087
+#: src/usr/local/www/interfaces.php:3083
 msgid "Distance setting (meters)"
 msgstr "距離設定（米）"
 
-#: src/usr/local/www/interfaces.php:3090
+#: src/usr/local/www/interfaces.php:3086
 msgid ""
 "This field can be used to tune ACK/CTS timers to fit the distance between AP "
 "and Client"
 msgstr "此欄位可用於調整ACK / CTS定時器以適應AP和客戶端之間的距離"
 
-#: src/usr/local/www/interfaces.php:3096
+#: src/usr/local/www/interfaces.php:3092
 msgid "Regulatory Settings"
 msgstr "監管設定"
 
-#: src/usr/local/www/interfaces.php:3108
+#: src/usr/local/www/interfaces.php:3104
 msgid "Regulatory domain"
 msgstr "監管域"
 
-#: src/usr/local/www/interfaces.php:3111
+#: src/usr/local/www/interfaces.php:3107
 msgid ""
 "Some cards have a default that is not recognized and require changing the "
 "regulatory domain to one in this list for the changes to other regulatory "
 "settings to work"
 msgstr "某些卡具有無法識別的預設值，並且需要將監管域更改為此列表中的一個，以便對其他監管設定進行更改。"
 
-#: src/usr/local/www/interfaces.php:3126
+#: src/usr/local/www/interfaces.php:3122
 msgid ""
 "Any country setting other than \"Default\" will override the regulatory "
 "domain setting"
 msgstr "“預設”以外的任何國家/地區設定將覆蓋監管域設定"
 
-#: src/usr/local/www/interfaces.php:3132
+#: src/usr/local/www/interfaces.php:3128
 msgid "Indoor"
 msgstr "室內"
 
-#: src/usr/local/www/interfaces.php:3132
+#: src/usr/local/www/interfaces.php:3128
 msgid "Outdoor"
 msgstr "戶外"
 
-#: src/usr/local/www/interfaces.php:3132
+#: src/usr/local/www/interfaces.php:3128
 msgid "Anywhere"
 msgstr "任何地方"
 
-#: src/usr/local/www/interfaces.php:3130
+#: src/usr/local/www/interfaces.php:3126
 msgid "Location"
 msgstr "位置"
 
-#: src/usr/local/www/interfaces.php:3133
+#: src/usr/local/www/interfaces.php:3129
 #, php-format
 msgid ""
 "These settings may affect which channels are available and the maximum "
@@ -25355,166 +25353,166 @@ msgstr ""
 "建議使用正確的設定以符合當地法規要求。%1$s在更改規範設定時，此介面上的所有無線網路將暫時關閉。 某些卡可能不允許某些管制域或國家/"
 "地區代碼。\t這些設定可能無法新增尚未支持的其他頻道。"
 
-#: src/usr/local/www/interfaces.php:3141
+#: src/usr/local/www/interfaces.php:3137
 msgid "Network-Specific Wireless Configuration"
 msgstr "特定網路的無線配置"
 
-#: src/usr/local/www/interfaces.php:3162
+#: src/usr/local/www/interfaces.php:3158
 msgid "802.11g"
 msgstr "802.11g"
 
-#: src/usr/local/www/interfaces.php:3162
+#: src/usr/local/www/interfaces.php:3158
 msgid "802.11n"
 msgstr "802.11n"
 
-#: src/usr/local/www/interfaces.php:3160
+#: src/usr/local/www/interfaces.php:3156
 msgid "Minimum wireless standard"
 msgstr "最小的無線標準"
 
-#: src/usr/local/www/interfaces.php:3163
+#: src/usr/local/www/interfaces.php:3159
 msgid ""
 "When operating as an access point, allow only stations capable of the "
 "selected wireless standard to associate (stations not capable are not "
 "permitted to associate)"
 msgstr "當作為接入點操作時，僅允許具有所選無線標準的站相關聯（不允許的站不允許關聯）"
 
-#: src/usr/local/www/interfaces.php:3167
+#: src/usr/local/www/interfaces.php:3163
 msgid "802.11g only"
 msgstr "僅 802.11g "
 
-#: src/usr/local/www/interfaces.php:3171
+#: src/usr/local/www/interfaces.php:3167
 msgid ""
 "When operating as an access point in 802.11g mode, allow only 11g-capable "
 "stations to associate (11b-only stations are not permitted to associate)"
 msgstr "當在802.11g模式下作為接入點操作時，僅允許11g的站進行關聯（僅允許11b站關聯）"
 
-#: src/usr/local/www/interfaces.php:3176
+#: src/usr/local/www/interfaces.php:3172
 msgid "Allow intra-BSS communication"
 msgstr "允許intra-BSS通信"
 
-#: src/usr/local/www/interfaces.php:3180
+#: src/usr/local/www/interfaces.php:3176
 msgid ""
 "Provides extra security by isolating clients so they cannot directly "
 "communicate with one another"
 msgstr "通過隔離客戶端提供額外的安全性，使它們不能直接彼此通信"
 
-#: src/usr/local/www/interfaces.php:3184
+#: src/usr/local/www/interfaces.php:3180
 msgid "Enable WME"
 msgstr "啟用WME"
 
-#: src/usr/local/www/interfaces.php:3192
+#: src/usr/local/www/interfaces.php:3188
 msgid "Hide SSID"
 msgstr "隱藏SSID"
 
-#: src/usr/local/www/interfaces.php:3201 src/usr/local/www/interfaces.php:3222
+#: src/usr/local/www/interfaces.php:3197 src/usr/local/www/interfaces.php:3218
 msgid "WPA"
 msgstr "WPA"
 
-#: src/usr/local/www/interfaces.php:3213
+#: src/usr/local/www/interfaces.php:3209
 msgid "WPA Pre-Shared Key"
 msgstr "WPA預共享密鑰"
 
-#: src/usr/local/www/interfaces.php:3216
+#: src/usr/local/www/interfaces.php:3212
 msgid "WPA Passphrase must be between 8 and 63 characters long"
 msgstr "WPA密碼必須介於8到63個字元之間。"
 
-#: src/usr/local/www/interfaces.php:3222
+#: src/usr/local/www/interfaces.php:3218
 msgid "WPA2"
 msgstr "WPA2"
 
-#: src/usr/local/www/interfaces.php:3220
+#: src/usr/local/www/interfaces.php:3216
 msgid "WPA mode"
 msgstr "WPA模式"
 
-#: src/usr/local/www/interfaces.php:3229
+#: src/usr/local/www/interfaces.php:3225
 msgid "Extensible Authentication Protocol"
 msgstr "可擴展的認證協定"
 
-#: src/usr/local/www/interfaces.php:3227
+#: src/usr/local/www/interfaces.php:3223
 msgid "WPA Key Management Mode"
 msgstr "WPA密鑰管理模式"
 
-#: src/usr/local/www/interfaces.php:3236
+#: src/usr/local/www/interfaces.php:3232
 msgid "AES (recommended)"
 msgstr "AES（推薦）"
 
-#: src/usr/local/www/interfaces.php:3236
+#: src/usr/local/www/interfaces.php:3232
 msgid "TKIP"
 msgstr "TKIP"
 
-#: src/usr/local/www/interfaces.php:3234
+#: src/usr/local/www/interfaces.php:3230
 msgid "WPA Pairwise"
 msgstr "WPA成對"
 
-#: src/usr/local/www/interfaces.php:3241
+#: src/usr/local/www/interfaces.php:3237
 msgid "Group Key Rotation"
 msgstr "密鑰組輪換"
 
-#: src/usr/local/www/interfaces.php:3245
+#: src/usr/local/www/interfaces.php:3241
 msgid ""
 "Time between group rekey events, specified in seconds. Allowed values are 1-"
 "9999. Must be shorter than Master Key Regeneration time"
 msgstr "組密鑰更新事件之間的時間，以秒為單位指定。 允許的值為1-9999。 必須小於主密鑰重新生成時間"
 
-#: src/usr/local/www/interfaces.php:3249
+#: src/usr/local/www/interfaces.php:3245
 msgid "Group Master Key Regeneration"
 msgstr "主密鑰組再生"
 
-#: src/usr/local/www/interfaces.php:3253
+#: src/usr/local/www/interfaces.php:3249
 msgid ""
 "Time between GMK rekey events, specified in seconds. Allowed values are 1-"
 "9999. Must be longer than Group Key Rotation time"
 msgstr "GMK密鑰更新事件之間的時間，以秒為單位指定。 允許的值為1-9999。 必須小於主密鑰重新生成時間..."
 
-#: src/usr/local/www/interfaces.php:3257
+#: src/usr/local/www/interfaces.php:3253
 msgid "Strict Key Regeneration"
 msgstr "嚴格的密鑰再生"
 
-#: src/usr/local/www/interfaces.php:3265
+#: src/usr/local/www/interfaces.php:3261
 msgid "802.1x RADIUS Options"
 msgstr "802.1x RADIUS選項"
 
-#: src/usr/local/www/interfaces.php:3269
+#: src/usr/local/www/interfaces.php:3265
 msgid "IEEE802.1X"
 msgstr "IEEE802.1X"
 
-#: src/usr/local/www/interfaces.php:3273
+#: src/usr/local/www/interfaces.php:3269
 msgid "This option requires that the \"Enable WPA box\" is checked"
 msgstr "\"啟用WPA box\"選項需要檢查  。"
 
-#: src/usr/local/www/interfaces.php:3275
+#: src/usr/local/www/interfaces.php:3271
 msgid "Primary 802.1X server"
 msgstr "主802.1X 伺服器"
 
-#: src/usr/local/www/interfaces.php:3281 src/usr/local/www/interfaces.php:3305
+#: src/usr/local/www/interfaces.php:3277 src/usr/local/www/interfaces.php:3301
 msgid "IP address of the RADIUS server"
 msgstr "RADIUS伺服器的IP地址"
 
-#: src/usr/local/www/interfaces.php:3288 src/usr/local/www/interfaces.php:3312
+#: src/usr/local/www/interfaces.php:3284 src/usr/local/www/interfaces.php:3308
 msgid "Server auth port. Default is 1812"
 msgstr "伺服器認證埠，默認1812"
 
-#: src/usr/local/www/interfaces.php:3295 src/usr/local/www/interfaces.php:3319
+#: src/usr/local/www/interfaces.php:3291 src/usr/local/www/interfaces.php:3315
 msgid "RADIUS Shared secret for this firewall"
 msgstr "防火牆RADIUS共享密鑰"
 
-#: src/usr/local/www/interfaces.php:3299
+#: src/usr/local/www/interfaces.php:3295
 msgid "Secondary 802.1X server"
 msgstr "輔助802.1X伺服器"
 
-#: src/usr/local/www/interfaces.php:3325
+#: src/usr/local/www/interfaces.php:3321
 msgid "Authentication Roaming Preauth"
 msgstr "漫遊預認證"
 
-#: src/usr/local/www/interfaces.php:3334
+#: src/usr/local/www/interfaces.php:3330
 msgid "Reserved Networks"
 msgstr "保留網路"
 
-#: src/usr/local/www/interfaces.php:3338
+#: src/usr/local/www/interfaces.php:3334
 msgid "Block private networks and loopback addresses"
 msgstr "阻止專用網路和迴環地址"
 
-#: src/usr/local/www/interfaces.php:3342
+#: src/usr/local/www/interfaces.php:3338
 msgid ""
 "Blocks traffic from IP addresses that are reserved for private networks per "
 "RFC 1918 (10/8, 172.16/12, 192.168/16) and unique local addresses per RFC "
@@ -25525,12 +25523,12 @@ msgstr ""
 "阻止來自RFC 1918（10 / 8,172.16 / 12,192.168 / 16）保留用於專用網路IP地址的業務和根據RFC 4193（fc00 "
 ":: / 7）確定的唯一本地地址以及環回地址 (127/8)。 通常應該打開此選項，除非此網路介面也駐留在此類私有地址空間中。"
 
-#: src/usr/local/www/interfaces.php:3348
+#: src/usr/local/www/interfaces.php:3344
 #: src/usr/local/www/firewall_rules.php:429
 msgid "Block bogon networks"
 msgstr "阻止未知網路"
 
-#: src/usr/local/www/interfaces.php:3352
+#: src/usr/local/www/interfaces.php:3348
 #, php-format
 msgid ""
 "Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet "
@@ -25543,7 +25541,7 @@ msgstr ""
 "1918）或尚未由IANA分配的流量。Bogons是不應出現在Internet路由表中的首碼，，因此不應作為接收到的任何數據包中的源地址。%1$s注意: "
 "更新頻率可以在系統>高級設置，防火牆和NAT設置下進行更改。"
 
-#: src/usr/local/www/interfaces.php:3383
+#: src/usr/local/www/interfaces.php:3379
 msgid "New IPv4 Gateway"
 msgstr "新增IPv4閘道"
 
@@ -26285,7 +26283,7 @@ msgid "Delete gateway"
 msgstr "刪除閘道"
 
 #: src/usr/local/www/system_gateways.php:411
-#: src/usr/local/www/interfaces.php:2014 src/usr/local/www/interfaces.php:3388
+#: src/usr/local/www/interfaces.php:2010 src/usr/local/www/interfaces.php:3384
 msgid "Default gateway"
 msgstr "預設閘道"
 
@@ -28595,11 +28593,11 @@ msgstr "移除套件...."
 #: src/etc/inc/services.inc:1970 src/etc/inc/services.inc:2193
 #: src/etc/inc/services.inc:2261 src/etc/inc/services.inc:2486
 #: src/etc/inc/rrd.inc:970 src/etc/inc/interfaces.inc:198
-#: src/etc/inc/interfaces.inc:365 src/etc/inc/interfaces.inc:525
-#: src/etc/inc/interfaces.inc:593 src/etc/inc/interfaces.inc:922
-#: src/etc/inc/interfaces.inc:1398 src/etc/inc/interfaces.inc:1458
-#: src/etc/inc/interfaces.inc:1489 src/etc/inc/interfaces.inc:1513
-#: src/etc/inc/interfaces.inc:1534 src/etc/inc/interfaces.inc:2621
+#: src/etc/inc/interfaces.inc:383 src/etc/inc/interfaces.inc:543
+#: src/etc/inc/interfaces.inc:611 src/etc/inc/interfaces.inc:940
+#: src/etc/inc/interfaces.inc:1416 src/etc/inc/interfaces.inc:1476
+#: src/etc/inc/interfaces.inc:1507 src/etc/inc/interfaces.inc:1531
+#: src/etc/inc/interfaces.inc:1552 src/etc/inc/interfaces.inc:2639
 #: src/etc/inc/filter.inc:291 src/etc/inc/filter.inc:562
 msgid "done."
 msgstr "完成。"
@@ -31902,317 +31900,317 @@ msgstr "interfaces_bring_up（）被調用，但沒有定義變數。"
 msgid "Configuring loopback interface..."
 msgstr "配置Loopback介面..."
 
-#: src/etc/inc/interfaces.inc:349
+#: src/etc/inc/interfaces.inc:367
 msgid "Configuring VLAN interfaces..."
 msgstr "配置VLAN介面..."
 
-#: src/etc/inc/interfaces.inc:373
+#: src/etc/inc/interfaces.inc:391
 msgid "VLAN: called with wrong options. Problems with config!"
 msgstr "VLAN：調用了錯誤的選項。配置問題！"
 
-#: src/etc/inc/interfaces.inc:378
+#: src/etc/inc/interfaces.inc:396
 msgid "interface_vlan_configure called with if undefined."
 msgstr "如果未定義，則調用interface_vlan_configure。"
 
-#: src/etc/inc/interfaces.inc:384
+#: src/etc/inc/interfaces.inc:402
 msgid "vlan_interface called with if undefined var."
 msgstr "如果未定義var則調用vlan_interface。"
 
-#: src/etc/inc/interfaces.inc:428 src/etc/inc/interfaces.inc:533
+#: src/etc/inc/interfaces.inc:446 src/etc/inc/interfaces.inc:551
 #, php-format
 msgid "QinQ compat VLAN: called with wrong options. Problems with config!%s"
 msgstr "QinQ compat VLAN:調用錯誤的選項。 是 config!%s的問題"
 
-#: src/etc/inc/interfaces.inc:435
+#: src/etc/inc/interfaces.inc:453
 #, php-format
 msgid "interface_qinq_configure called with if undefined.%s"
 msgstr "如果未定義，則調用interface_qinq_configure。%s"
 
-#: src/etc/inc/interfaces.inc:440
+#: src/etc/inc/interfaces.inc:458
 #, php-format
 msgid "interface_qinq_configure called with invalid if.%s"
 msgstr "如果無效，則調用interface_qinq_configure 。%s"
 
-#: src/etc/inc/interfaces.inc:446
+#: src/etc/inc/interfaces.inc:464
 msgid "interface_qinq_configure cannot create VLAN interface"
 msgstr "interface_qinq_configure不能創建VLAN介面"
 
-#: src/etc/inc/interfaces.inc:516
+#: src/etc/inc/interfaces.inc:534
 msgid "Configuring QinQ interfaces..."
 msgstr "配置QinQ介面..."
 
-#: src/etc/inc/interfaces.inc:539
+#: src/etc/inc/interfaces.inc:557
 #, php-format
 msgid "interface_qinq2_configure called with if undefined.%s"
 msgstr "interface_qinq2_configure called with if undefined.%s"
 
-#: src/etc/inc/interfaces.inc:546
+#: src/etc/inc/interfaces.inc:564
 #, php-format
 msgid ""
 "interface_qinq2_configure interface name too big %s. (max. size: %d).%s"
 msgstr "interface_qinq2_configure介面名稱太大%s。 （最大尺寸：%d）。%s"
 
-#: src/etc/inc/interfaces.inc:568
+#: src/etc/inc/interfaces.inc:586
 msgid "Creating wireless clone interfaces..."
 msgstr "正在創建無線克隆介面..."
 
-#: src/etc/inc/interfaces.inc:646
+#: src/etc/inc/interfaces.inc:664
 #, php-format
 msgid "No members found on %s"
 msgstr "在 %s上未找到任何成員"
 
-#: src/etc/inc/interfaces.inc:710
+#: src/etc/inc/interfaces.inc:728
 msgid "realif not defined in interfaces bridge - up"
 msgstr "realif在介面橋接中未定義"
 
-#: src/etc/inc/interfaces.inc:731
+#: src/etc/inc/interfaces.inc:749
 msgid "bridgeif not defined -- could not bring interface up"
 msgstr "橋如果未定義 - 就無法生成介面。"
 
-#: src/etc/inc/interfaces.inc:905
+#: src/etc/inc/interfaces.inc:923
 msgid "Configuring LAGG interfaces..."
 msgstr "配置LAGG介面..."
 
-#: src/etc/inc/interfaces.inc:1061
+#: src/etc/inc/interfaces.inc:1079
 msgid "Could not bring greif up -- variable not defined."
 msgstr "無法生成greif up - 變數未定義。"
 
-#: src/etc/inc/interfaces.inc:1144
+#: src/etc/inc/interfaces.inc:1162
 msgid ""
 "could not bring realif up -- variable not defined -- "
 "interface_gif_configure()"
 msgstr "無法帶來realif up-變數未定義 - interface_GIF_configure（）"
 
-#: src/etc/inc/interfaces.inc:1191
+#: src/etc/inc/interfaces.inc:1209
 msgid "could not bring gifif up -- variable not defined"
 msgstr "不能生成GIFif up - 變數沒有定義"
 
-#: src/etc/inc/interfaces.inc:1247 src/etc/inc/interfaces.inc:1251
-#: src/etc/inc/interfaces.inc:6175
+#: src/etc/inc/interfaces.inc:1265 src/etc/inc/interfaces.inc:1269
+#: src/etc/inc/interfaces.inc:6194
 msgid "IPsec VTI"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1387
+#: src/etc/inc/interfaces.inc:1405
 msgid "Configuring IPsec VTI interfaces..."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1450 src/etc/inc/interfaces.inc:1480
-#: src/etc/inc/interfaces.inc:1504 src/etc/inc/interfaces.inc:1522
+#: src/etc/inc/interfaces.inc:1468 src/etc/inc/interfaces.inc:1498
+#: src/etc/inc/interfaces.inc:1522 src/etc/inc/interfaces.inc:1540
 #, php-format
 msgid "Configuring %s interface..."
 msgstr "配置 %s 介面..."
 
-#: src/etc/inc/interfaces.inc:1454 src/etc/inc/interfaces.inc:1483
-#: src/etc/inc/interfaces.inc:1507 src/etc/inc/interfaces.inc:1525
+#: src/etc/inc/interfaces.inc:1472 src/etc/inc/interfaces.inc:1501
+#: src/etc/inc/interfaces.inc:1525 src/etc/inc/interfaces.inc:1543
 #, php-format
 msgid "Configuring %s"
 msgstr "配置 %s"
 
-#: src/etc/inc/interfaces.inc:1608
+#: src/etc/inc/interfaces.inc:1626
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
 msgstr "介面%1$s調用介面向下，破壞是 %2$s"
 
-#: src/etc/inc/interfaces.inc:1622
+#: src/etc/inc/interfaces.inc:1640
 msgid "Wrong parameters used during interface_bring_down"
 msgstr "在interface_bring_down期間使用錯誤的參數"
 
-#: src/etc/inc/interfaces.inc:1793
+#: src/etc/inc/interfaces.inc:1811
 msgid "Enter CARP maintenance mode"
 msgstr "進入CARP維護模式"
 
-#: src/etc/inc/interfaces.inc:2021
+#: src/etc/inc/interfaces.inc:2039
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
 msgstr "在 interface_ppps_configure()上不能找到PPP配置 %s "
 
-#: src/etc/inc/interfaces.inc:2087
+#: src/etc/inc/interfaces.inc:2105
 #, php-format
 msgid ""
 "Could not get a Local IP address for PPTP/L2TP link on %s in "
 "interfaces_ppps_configure. Using 0.0.0.0 ip!"
 msgstr "無法在interfaces_ppps_configure中的 %s上獲取PPTP/L2TP連接的本地IP地址，使用 0.0.0.0 ip!"
 
-#: src/etc/inc/interfaces.inc:2094
+#: src/etc/inc/interfaces.inc:2112
 #, php-format
 msgid ""
 "Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in "
 "interfaces_ppps_configure."
 msgstr "不能從 %1$s for %2$s in interfaces_ppps_configure得到PPTP/L2TP遠端地址。"
 
-#: src/etc/inc/interfaces.inc:2101
+#: src/etc/inc/interfaces.inc:2119
 #, php-format
 msgid ""
 "Device %s does not exist. PPP link cannot start without the modem device."
 msgstr "設備 %s 不存在，PPP鏈路無法啟動數據機設備。"
 
-#: src/etc/inc/interfaces.inc:2106
+#: src/etc/inc/interfaces.inc:2124
 #, php-format
 msgid "Unknown %s configured as ppp interface."
 msgstr "未知的%s 已配置為ppp介面。"
 
-#: src/etc/inc/interfaces.inc:2447
+#: src/etc/inc/interfaces.inc:2465
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
 msgstr "錯誤: 不能打開 mpd_%1$s.conf 在interface_ppps_configure().%2$s"
 
-#: src/etc/inc/interfaces.inc:2542
+#: src/etc/inc/interfaces.inc:2560
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
 msgstr " 在設備 '%1$s'為 介面'%2$s'啟動 3gstats.php"
 
-#: src/etc/inc/interfaces.inc:2559
+#: src/etc/inc/interfaces.inc:2577
 msgid "Configuring CARP settings..."
 msgstr "正在配置CARP設定..."
 
-#: src/etc/inc/interfaces.inc:2600
+#: src/etc/inc/interfaces.inc:2618
 msgid "waiting for pfsync..."
 msgstr "正在等待同步 ..."
 
-#: src/etc/inc/interfaces.inc:2606
+#: src/etc/inc/interfaces.inc:2624
 #, php-format
 msgid "pfsync done in %s seconds."
 msgstr "同步在 %s 秒內完成。"
 
-#: src/etc/inc/interfaces.inc:2607
+#: src/etc/inc/interfaces.inc:2625
 msgid "Configuring CARP settings finalize..."
 msgstr "正在配置CARP設定......."
 
-#: src/etc/inc/interfaces.inc:2821
+#: src/etc/inc/interfaces.inc:2839
 #, php-format
 msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
 "this VIP."
 msgstr "為虛擬IP地址%s指定的介面不存在。 跳過此VIP。"
 
-#: src/etc/inc/interfaces.inc:2887
+#: src/etc/inc/interfaces.inc:2905
 #, php-format
 msgid "Interface %s changed to hostap mode"
 msgstr "介面%s已更改為hostap模式。"
 
-#: src/etc/inc/interfaces.inc:2891
+#: src/etc/inc/interfaces.inc:2909
 #, php-format
 msgid "Interface %s changed to adhoc mode"
 msgstr "介面%s已更改為adhoc（點對點）模式。"
 
-#: src/etc/inc/interfaces.inc:2895
+#: src/etc/inc/interfaces.inc:2913
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
 msgstr "介面%s已更改為基礎架構模式。"
 
-#: src/etc/inc/interfaces.inc:2908
+#: src/etc/inc/interfaces.inc:2926
 #, php-format
 msgid "Cloning new wireless interface %s"
 msgstr "克隆新的無線介面 %s"
 
-#: src/etc/inc/interfaces.inc:2913
+#: src/etc/inc/interfaces.inc:2931
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
 msgstr "介面%1$s克隆出錯，錯誤代碼%2$s, 輸出 %3$s"
 
-#: src/etc/inc/interfaces.inc:3578
+#: src/etc/inc/interfaces.inc:3596
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
 msgstr "在沒有RA模式的DHCP6中為介面wan %s啟動dhcp6客戶端"
 
-#: src/etc/inc/interfaces.inc:3599
+#: src/etc/inc/interfaces.inc:3617
 #, php-format
 msgid "OpenVPN: Resync server %s"
 msgstr "OpenVPN: 重新同步伺服器 %s"
 
-#: src/etc/inc/interfaces.inc:3612
+#: src/etc/inc/interfaces.inc:3630
 #, php-format
 msgid "OpenVPN: Resync client %s"
 msgstr "OpenVPN: 重新同步客戶端 %s"
 
-#: src/etc/inc/interfaces.inc:3758
+#: src/etc/inc/interfaces.inc:3787
 #, php-format
 msgid "Deny router advertisements for interface %s"
 msgstr "拒絕介面 %s上的路由器廣播"
 
-#: src/etc/inc/interfaces.inc:3795
+#: src/etc/inc/interfaces.inc:3810
 msgid "Generating new MAC address."
 msgstr "生成新的MAC地址。"
 
-#: src/etc/inc/interfaces.inc:3800 src/etc/inc/interfaces.inc:3801
+#: src/etc/inc/interfaces.inc:3814 src/etc/inc/interfaces.inc:3817
 #, php-format
 msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr "介面%1$s 上無效的MAC地址 (ff:ff:ff:ff:ff:ff) 已被自動替換為 %2$s"
 
-#: src/etc/inc/interfaces.inc:3866
+#: src/etc/inc/interfaces.inc:3885
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
 msgstr "父級％ %1$s和VLAN(%2$s)之間的MTU有衝突"
 
-#: src/etc/inc/interfaces.inc:3936
+#: src/etc/inc/interfaces.inc:3955
 msgid "calling interface_dhcpv6_configure."
 msgstr "調用interface_dhcpv6_configure。"
 
-#: src/etc/inc/interfaces.inc:4060 src/etc/inc/interfaces.inc:4130
-#: src/etc/inc/interfaces.inc:4194
+#: src/etc/inc/interfaces.inc:4079 src/etc/inc/interfaces.inc:4149
+#: src/etc/inc/interfaces.inc:4213
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
 msgstr "介面 %1$s 跟蹤不存在的介面 %2$s"
 
-#: src/etc/inc/interfaces.inc:4067 src/etc/inc/interfaces.inc:4073
+#: src/etc/inc/interfaces.inc:4086 src/etc/inc/interfaces.inc:4092
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
 msgstr "介面 %1$s 通過%2$s已配置 類型 %3$s"
 
-#: src/etc/inc/interfaces.inc:4136
+#: src/etc/inc/interfaces.inc:4155
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr "介面'%2$s'上的介面IPv4 '%1$s'地址無效，未配置6RD隧道"
 
-#: src/etc/inc/interfaces.inc:4172
+#: src/etc/inc/interfaces.inc:4191
 #, php-format
 msgid "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr "rd6 %1$s 與ipv6地址 %2$s基於 %3$s ipv4 %4$s"
 
-#: src/etc/inc/interfaces.inc:4200 src/etc/inc/interfaces.inc:4255
-#: src/etc/inc/interfaces.inc:4338
+#: src/etc/inc/interfaces.inc:4219 src/etc/inc/interfaces.inc:4274
+#: src/etc/inc/interfaces.inc:4357
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
 "configuring 6RD tunnel"
 msgstr "介面'%2$s' 上的介面IPv4 '%1$s' 地址不是公共的，不能配置6RD隧道"
 
-#: src/etc/inc/interfaces.inc:4232
+#: src/etc/inc/interfaces.inc:4251
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr "sixto4 %1$s ipv6地址 %2$s 基於 %3$s ipv4 %4$s"
 
-#: src/etc/inc/interfaces.inc:4444
+#: src/etc/inc/interfaces.inc:4463
 msgid "Failed to write user DUID file!"
 msgstr "無法寫入用戶DUID文件！"
 
-#: src/etc/inc/interfaces.inc:4919
+#: src/etc/inc/interfaces.inc:4938
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr "錯誤: 不能打開 %s 在 DHCP6_Config_File_Override() for reading."
 
-#: src/etc/inc/interfaces.inc:4951
+#: src/etc/inc/interfaces.inc:4970
 #, php-format
 msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
 "writing."
 msgstr "錯誤: 不能打開dhclient_%s.conf 在 interface_dhcp_configure() for writing."
 
-#: src/etc/inc/interfaces.inc:4964
+#: src/etc/inc/interfaces.inc:4983
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
 msgstr "無接介面 \"%s\" 在interface_dhcp_configure()"
 
-#: src/etc/inc/interfaces.inc:5113
+#: src/etc/inc/interfaces.inc:5132
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
 msgstr "錯誤：無法在 DHCP_Config_File_Override() 中打開%s進行讀取。"
 
-#: src/etc/inc/interfaces.inc:6976
+#: src/etc/inc/interfaces.inc:7010
 msgid "L2TP VPN"
 msgstr "L2TP VPN"
 
@@ -35385,7 +35383,7 @@ msgstr ""
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
 msgstr "錯誤：不能打開 '%1$s' 在 captiveportal_write_elements()%2$s"
 
-#: src/etc/inc/captiveportal.inc:2447
+#: src/etc/inc/captiveportal.inc:2445
 msgid "Captive Portal allowed users configuration changed"
 msgstr "網頁認證已允許用戶配置已更改"
 
@@ -36782,105 +36780,101 @@ msgid ""
 "stop processing Outbound NAT rules"
 msgstr "啟用此選項將停用與此規則匹配流量的NAT，並停止處理轉出NAT規則"
 
-#: src/usr/local/www/services_captiveportal.php:535
+#: src/usr/local/www/services_captiveportal.php:533
 msgid "Enable Captive Portal"
 msgstr "開啟網頁認證"
 
-#: src/usr/local/www/services_captiveportal.php:606
+#: src/usr/local/www/services_captiveportal.php:604
 msgid "Enable waiting period reset on attempted access"
 msgstr "在嘗試訪問時啟用等待期重置"
 
-#: src/usr/local/www/services_captiveportal.php:613
+#: src/usr/local/www/services_captiveportal.php:611
 msgid "Enable logout popup window"
 msgstr "啟用登出彈出窗口 "
 
-#: src/usr/local/www/services_captiveportal.php:642
+#: src/usr/local/www/services_captiveportal.php:640
 msgid "Disable Concurrent user logins"
 msgstr "禁用並發用戶登錄"
 
-#: src/usr/local/www/services_captiveportal.php:650
+#: src/usr/local/www/services_captiveportal.php:648
 msgid "Disable MAC filtering"
 msgstr "停用MAC過濾 "
 
-#: src/usr/local/www/services_captiveportal.php:659
+#: src/usr/local/www/services_captiveportal.php:657
 msgid "Enable Pass-through MAC automatic additions"
 msgstr "啟用Pass-through MAC自動新增 "
 
-#: src/usr/local/www/services_captiveportal.php:669
-msgid "Include username in the created Pass-through entry"
-msgstr ""
-
-#: src/usr/local/www/services_captiveportal.php:676
+#: src/usr/local/www/services_captiveportal.php:667
 msgid "Enable per-user bandwidth restriction"
 msgstr "開啟用戶頻寬限制 "
 
-#: src/usr/local/www/services_captiveportal.php:698
+#: src/usr/local/www/services_captiveportal.php:689
 msgid "Enable to use a custom captive portal login page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:847
+#: src/usr/local/www/services_captiveportal.php:838
 msgid "Enable to use a custom uploaded logo"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:861
+#: src/usr/local/www/services_captiveportal.php:852
 msgid "Enable to use a custom uploaded background image"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:931
+#: src/usr/local/www/services_captiveportal.php:922
 msgid "Reauthenticate connected users every minute"
 msgstr "對連接的用戶每分鐘認證一次 "
 
-#: src/usr/local/www/services_captiveportal.php:943
+#: src/usr/local/www/services_captiveportal.php:934
 msgid "Allow only users/groups with \"Captive portal login\" privilege set"
 msgstr "僅允許具有“網頁認證登入”許可權的用戶/組"
 
-#: src/usr/local/www/services_captiveportal.php:958
+#: src/usr/local/www/services_captiveportal.php:949
 msgid "Use RADIUS Session-Timeout attributes"
 msgstr "使用RADIUS會話超時屬性 "
 
-#: src/usr/local/www/services_captiveportal.php:965
+#: src/usr/local/www/services_captiveportal.php:956
 msgid "Use RADIUS pfSense-Max-Total-Octets attribute"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:972
+#: src/usr/local/www/services_captiveportal.php:963
 msgid ""
 "Use RADIUS pfSense-Bandwidth-Max-Up and pfSense-Bandwidth-Max-Down "
 "attributes"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:997
+#: src/usr/local/www/services_captiveportal.php:988
 msgid "Send RADIUS accounting packets."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1032
+#: src/usr/local/www/services_captiveportal.php:1023
 msgid "No updates"
 msgstr "不更新"
 
-#: src/usr/local/www/services_captiveportal.php:1040
+#: src/usr/local/www/services_captiveportal.php:1031
 msgid "Stop/Start"
 msgstr "停止/啟動"
 
-#: src/usr/local/www/services_captiveportal.php:1048
+#: src/usr/local/www/services_captiveportal.php:1039
 msgid "Stop/Start (FreeRADIUS)"
 msgstr "停止/啟動（FreeRADIUS）"
 
-#: src/usr/local/www/services_captiveportal.php:1056
+#: src/usr/local/www/services_captiveportal.php:1047
 msgid "Interim"
 msgstr "臨時"
 
-#: src/usr/local/www/services_captiveportal.php:1071
+#: src/usr/local/www/services_captiveportal.php:1062
 msgid "Invert Acct-Input-Octets and Acct-Output-Octets"
 msgstr "反相輸入八位位元組和輸出八位位元組"
 
-#: src/usr/local/www/services_captiveportal.php:1079
+#: src/usr/local/www/services_captiveportal.php:1070
 msgid "Include idle time when users get disconnected due to idle timeout"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1091
+#: src/usr/local/www/services_captiveportal.php:1082
 msgid "Enable HTTPS login"
 msgstr "啟用HTTPS登入 "
 
-#: src/usr/local/www/services_captiveportal.php:1115
+#: src/usr/local/www/services_captiveportal.php:1106
 msgid "Disable HTTPS Forwards"
 msgstr "停用HTTPS轉發"
 
@@ -37060,125 +37054,125 @@ msgid ""
 "page. "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1982
+#: src/usr/local/www/interfaces.php:1978
 msgid "IPv6 will use the IPv4 connectivity link (PPPoE)"
 msgstr "IPv6將使用IPv4連接鏈路（PPPoE）"
 
-#: src/usr/local/www/interfaces.php:2081 src/usr/local/www/interfaces.php:2286
+#: src/usr/local/www/interfaces.php:2077 src/usr/local/www/interfaces.php:2282
 msgid "Configuration Override"
 msgstr "配置覆蓋"
 
-#: src/usr/local/www/interfaces.php:2116
+#: src/usr/local/www/interfaces.php:2112
 msgid "Enable dhcpclient VLAN Priority tagging"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2184
+#: src/usr/local/www/interfaces.php:2180
 msgid "FreeBSD default"
 msgstr "FreeBSD預設"
 
-#: src/usr/local/www/interfaces.php:2200
+#: src/usr/local/www/interfaces.php:2196
 msgid "pfSense Default"
 msgstr "pfSense預設"
 
-#: src/usr/local/www/interfaces.php:2208
+#: src/usr/local/www/interfaces.php:2204
 msgid "Saved Cfg"
 msgstr "儲存配置"
 
-#: src/usr/local/www/interfaces.php:2295
+#: src/usr/local/www/interfaces.php:2291
 msgid "Request a IPv6 prefix/information through the IPv4 connectivity link"
 msgstr "通過IPv4連接鏈路請求IPv6前綴/信息"
 
-#: src/usr/local/www/interfaces.php:2302
+#: src/usr/local/www/interfaces.php:2298
 msgid "Only request an IPv6 prefix, do not request an IPv6 address"
 msgstr "僅請求IPv6前綴，不請求IPv6地址"
 
-#: src/usr/local/www/interfaces.php:2316
+#: src/usr/local/www/interfaces.php:2312
 msgid ""
 "Send an IPv6 prefix hint to indicate the desired prefix size for delegation"
 msgstr "發送IPv6前綴提示以指示用於委派的所需前綴大小"
 
-#: src/usr/local/www/interfaces.php:2323
+#: src/usr/local/www/interfaces.php:2319
 msgid "Start DHCP6 client in debug mode"
 msgstr "在調試模式下啟動DHCP6 "
 
-#: src/usr/local/www/interfaces.php:2329
+#: src/usr/local/www/interfaces.php:2325
 msgid "Required by some ISPs, especially those not using PPPoE"
 msgstr "某些ISP需要，特別是那些不使用PPPoE的ISP"
 
-#: src/usr/local/www/interfaces.php:2335
+#: src/usr/local/www/interfaces.php:2331
 msgid ""
 "dhcp6c will send a release to the ISP on exit, some ISPs then release the "
 "allocated address or prefix. This option prevents that signal ever being "
 "sent"
 msgstr "dhcp6c將在退出時向ISP發送一個釋放，然後ISP釋放分配的地址或前綴。 此選項可防止該信號被發送。"
 
-#: src/usr/local/www/interfaces.php:2345
+#: src/usr/local/www/interfaces.php:2341
 msgid "Enable dhcp6c VLAN Priority tagging"
 msgstr "啟用dhcp6c VLAN優先順序標記"
 
-#: src/usr/local/www/interfaces.php:2379
+#: src/usr/local/www/interfaces.php:2375
 msgid "Exchange Information Only"
 msgstr "僅交換信息"
 
-#: src/usr/local/www/interfaces.php:2415
+#: src/usr/local/www/interfaces.php:2411
 msgid "Non-Temporary Address Allocation"
 msgstr "非臨時地址分配"
 
-#: src/usr/local/www/interfaces.php:2456
+#: src/usr/local/www/interfaces.php:2452
 msgid "Prefix Delegation "
 msgstr "前綴委託"
 
-#: src/usr/local/www/interfaces.php:2807 src/usr/local/www/interfaces.php:2939
+#: src/usr/local/www/interfaces.php:2803 src/usr/local/www/interfaces.php:2935
 msgid "Enable Dial-On-Demand mode "
 msgstr "啟用按需撥號模式"
 
-#: src/usr/local/www/interfaces.php:2864
+#: src/usr/local/www/interfaces.php:2860
 msgid "Reset at each month (\"0 0 1 * *\")"
 msgstr "在每月重置（0 0 1 **“）"
 
-#: src/usr/local/www/interfaces.php:2872
+#: src/usr/local/www/interfaces.php:2868
 msgid "Reset at each week (\"0 0 * * 0\")"
 msgstr "每星期的重置（0 0 ** 0'）"
 
-#: src/usr/local/www/interfaces.php:2880
+#: src/usr/local/www/interfaces.php:2876
 msgid "Reset at each day (\"0 0 * * *\")"
 msgstr "每天重置(\"0 0 * * *\")"
 
-#: src/usr/local/www/interfaces.php:2888
+#: src/usr/local/www/interfaces.php:2884
 msgid "Reset at each hour (\"0 * * * *\")"
 msgstr "每小時重置（0 ****）"
 
-#: src/usr/local/www/interfaces.php:2977
+#: src/usr/local/www/interfaces.php:2973
 msgid ""
 "Preserve common wireless configuration through interface deletions and "
 "reassignments."
 msgstr "通過刪除介面和重新分配保持常見的無線配置。"
 
-#: src/usr/local/www/interfaces.php:3177
+#: src/usr/local/www/interfaces.php:3173
 msgid ""
 "Allow packets to pass between wireless clients directly when operating as an "
 "access point"
 msgstr "允許數據包在作為接入點操作時直接在無線客戶端之間傳遞"
 
-#: src/usr/local/www/interfaces.php:3185
+#: src/usr/local/www/interfaces.php:3181
 msgid "Force the card to use WME (wireless QoS)"
 msgstr "強制使用WME（無線QoS）"
 
-#: src/usr/local/www/interfaces.php:3193
+#: src/usr/local/www/interfaces.php:3189
 msgid ""
 "Disable broadcasting of the SSID for this network (This may cause problems "
 "for some clients, and the SSID may still be discovered by other means.)"
 msgstr "停用此網路的SSID廣播（這可能會導致某些客戶端出現問題，並且仍可能通過其他方式發現SSID）。"
 
-#: src/usr/local/www/interfaces.php:3206
+#: src/usr/local/www/interfaces.php:3202
 msgid "Enable WPA"
 msgstr "啟用WPA "
 
-#: src/usr/local/www/interfaces.php:3258
+#: src/usr/local/www/interfaces.php:3254
 msgid "Force the AP to rekey whenever a client disassociates"
 msgstr "強制AP密鑰更新，不論客戶端是否解除關聯"
 
-#: src/usr/local/www/interfaces.php:3270
+#: src/usr/local/www/interfaces.php:3266
 msgid "Enable 802.1X authentication"
 msgstr "啟用802.1X認證"
 

@@ -219,7 +219,7 @@ if ($_POST['save']) {
 	$alias['type'] = $_POST['type'];
 
 	if (preg_match("/urltable/i", $_POST['type'])) {
-		$address = "";
+		$address = array();
 
 		/* item is a url table type */
 		if ($_POST['address0']) {

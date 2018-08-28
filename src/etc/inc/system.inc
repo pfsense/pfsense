@@ -2414,10 +2414,10 @@ function system_identify_specific_platform() {
 			/* Detect specific model */
 			switch ($hw_ncpu) {
 			case '4':
-				$result['model'] = 'SG-2340';
+				$result['model'] = 'MBT-4220';
 				break;
 			case '2':
-				$result['model'] = 'SG-2320';
+				$result['model'] = 'MBT-2220';
 				break;
 			default:
 				$result['model'] = $result['name'];

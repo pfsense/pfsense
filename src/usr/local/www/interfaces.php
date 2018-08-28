@@ -1960,9 +1960,9 @@ $macaddress = new Form_Input(
 	['placeholder' => 'xx:xx:xx:xx:xx:xx']
 );
 
-if (interface_is_qinq($realifname)) {
+if (interface_is_vlan($realifname)) {
 	$macaddress->setDisabled();
-	$macaddress->setHelp('The MAC address of a QinQ interface must be ' .
+	$macaddress->setHelp('The MAC address of a VLAN interface must be ' .
 	    'set on its parent interface');
 } else {
 	$macaddress->setHelp('This field can be used to modify ("spoof") the ' .
@@ -2715,7 +2715,7 @@ function build_ipv6interface_list() {
 			case "dhcp6":
 				$dynv6ifs[$iface] = array(
 					'name' => $ifacename,
-					'ipv6_num_prefix_ids' => pow(2, calculate_ipv6_delegation_length($iface)) - 1
+					'ipv6_num_prefix_ids' => pow(2, (int) calculate_ipv6_delegation_length($iface)) - 1
 				);
 				break;
 			default:

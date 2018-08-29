@@ -32,8 +32,8 @@ require_once("certs.inc");
 require_once("pfsense-utils.inc");
 
 $cert_methods = array(
-	"import" => gettext("Import an existing Certificate"),
 	"internal" => gettext("Create an internal Certificate"),
+	"import" => gettext("Import an existing Certificate"),
 	"external" => gettext("Create a Certificate Signing Request"),
 	"sign" => gettext("Sign a Certificate Signing Request")
 );

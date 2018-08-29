@@ -32,8 +32,8 @@ require_once("certs.inc");
 require_once("pfsense-utils.inc");
 
 $ca_methods = array(
-	"existing" => gettext("Import an existing Certificate Authority"),
 	"internal" => gettext("Create an internal Certificate Authority"),
+	"existing" => gettext("Import an existing Certificate Authority"),
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
 $ca_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");

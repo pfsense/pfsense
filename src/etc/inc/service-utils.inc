@@ -84,6 +84,11 @@ function start_service($name) {
 	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
 		foreach ($config['installedpackages']['service'] as $service) {
 			if (strtolower($service['name']) == strtolower($name)) {
+				/* Avoid starting twice if this is called just after a
+				 * package sync which starts the service itself. */
+				if ($after_sync && isset($service['starts_on_sync'])) {
+					break;
+				}
 				if ($service['rcfile']) {
 					$prefix = RCFILEPREFIX;
 					if (!empty($service['prefix'])) {

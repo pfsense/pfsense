@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-23 08:28-0300\n"
+"POT-Creation-Date: 2018-08-28 17:18-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Last-Translator: Neko Prog <nekoprog@gmail.com>\n"
 "Language-Team: Malay\n"
 "Language: ms\n"
-"X-Generator: Zanata 4.6.0\n"
+"X-Generator: Zanata 4.6.2\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 
 #: src/usr/local/captiveportal/index.php:41
@@ -30,20 +30,20 @@ msgstr ""
 msgid "You are connected."
 msgstr ""
 
-#: src/usr/local/captiveportal/index.php:148
+#: src/usr/local/captiveportal/index.php:147
 msgid "This MAC address has been blocked"
 msgstr ""
 
-#: src/usr/local/captiveportal/index.php:160
-#: src/usr/local/captiveportal/index.php:230
+#: src/usr/local/captiveportal/index.php:159
+#: src/usr/local/captiveportal/index.php:229
 msgid "Invalid credentials specified."
 msgstr ""
 
-#: src/usr/local/captiveportal/index.php:200
+#: src/usr/local/captiveportal/index.php:199
 msgid "System reached maximum login capacity"
 msgstr ""
 
-#: src/usr/local/captiveportal/index.php:237
+#: src/usr/local/captiveportal/index.php:236
 msgid "RADIUS MAC Authentication Failed."
 msgstr ""
 
@@ -246,7 +246,7 @@ msgstr "NAT padanan 1:1"
 #: src/usr/local/www/services_dhcpv6_relay.php:79
 #: src/usr/local/www/interfaces_gre.php:100
 #: src/usr/local/www/firewall_nat_out_edit.php:170
-#: src/usr/local/www/services_captiveportal.php:208
+#: src/usr/local/www/services_captiveportal.php:207
 #: src/usr/local/www/easyrule.php:80 src/usr/local/www/easyrule.php:88
 #: src/usr/local/www/interfaces_bridge.php:106
 #: src/usr/local/www/diag_ndp.php:141
@@ -285,7 +285,7 @@ msgstr "IP Tujuan"
 #: src/usr/local/www/status_ipsec.php:513
 #: src/usr/local/www/firewall_nat_1to1_edit.php:507
 #: src/usr/local/www/load_balancer_pool.php:122
-#: src/usr/local/www/guiconfig.inc:1187
+#: src/usr/local/www/guiconfig.inc:1189
 #: src/usr/local/www/services_dhcpv6.php:1057
 #: src/usr/local/www/services_checkip.php:100
 #: src/usr/local/www/services_rfc2136.php:89
@@ -336,7 +336,7 @@ msgstr "IP Tujuan"
 #: src/usr/local/www/system_gateway_groups_edit.php:333
 #: src/usr/local/www/interfaces_vlan_edit.php:214
 #: src/usr/local/www/load_balancer_monitor_edit.php:79
-#: src/usr/local/www/interfaces_bridge_edit.php:420
+#: src/usr/local/www/interfaces_bridge_edit.php:416
 #: src/usr/local/www/load_balancer_pool_edit.php:319
 #: src/usr/local/www/firewall_virtual_ip.php:287
 #: src/usr/local/www/system_routes.php:249
@@ -364,7 +364,7 @@ msgstr "IP Tujuan"
 #: src/usr/local/www/load_balancer_virtual_server.php:145
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:156
 #: src/usr/local/www/firewall_aliases_import.php:266
-#: src/usr/local/www/services_captiveportal.php:541
+#: src/usr/local/www/services_captiveportal.php:539
 #: src/usr/local/www/firewall_schedule.php:98
 #: src/usr/local/www/vpn_ipsec_phase1.php:736
 #: src/usr/local/www/firewall_aliases_edit.php:680
@@ -373,8 +373,8 @@ msgstr "IP Tujuan"
 #: src/usr/local/www/interfaces_gif_edit.php:224
 #: src/usr/local/www/services_captiveportal_ip.php:108
 #: src/usr/local/www/vpn_ipsec_phase2.php:616
-#: src/usr/local/www/interfaces.php:517 src/usr/local/www/interfaces.php:2034
-#: src/usr/local/www/interfaces.php:3408
+#: src/usr/local/www/interfaces.php:517 src/usr/local/www/interfaces.php:2030
+#: src/usr/local/www/interfaces.php:3404
 #: src/usr/local/www/services_dhcpv6_edit.php:235
 #: src/usr/local/www/services_wol_edit.php:152
 #: src/usr/local/www/services_unbound_host_edit.php:219
@@ -580,7 +580,7 @@ msgstr "Tambah padanan di atas pada permulaan senarai"
 #: src/usr/local/www/interfaces_bridge.php:160
 #: src/usr/local/www/services_captiveportal_ip.php:154
 #: src/usr/local/www/services_ntpd_acls.php:318
-#: src/usr/local/www/interfaces.php:2041 src/usr/local/www/interfaces.php:3415
+#: src/usr/local/www/interfaces.php:2037 src/usr/local/www/interfaces.php:3411
 #: src/usr/local/www/system_gateways.php:404
 #: src/usr/local/www/vpn_openvpn_server.php:1460
 #: src/usr/local/www/services_dyndns.php:221
@@ -724,8 +724,8 @@ msgstr ""
 #: src/usr/local/www/status_openvpn.php:156
 #: src/usr/local/www/status_openvpn.php:237
 #: src/usr/local/www/status_openvpn.php:297
-#: src/usr/local/www/status_interfaces.php:94
-#: src/usr/local/www/status_interfaces.php:116
+#: src/usr/local/www/status_interfaces.php:98
+#: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/diag_gmirror.php:222
 #: src/usr/local/www/status_services.php:56
 #: src/usr/local/www/status_services.php:88
@@ -915,10 +915,10 @@ msgstr "Putus VPN"
 
 #: src/usr/local/www/status_ipsec.php:256
 #: src/usr/local/www/status_ipsec.php:380
-#: src/usr/local/www/status_interfaces.php:119
-#: src/usr/local/www/status_interfaces.php:120
-#: src/usr/local/www/status_interfaces.php:121
-#: src/usr/local/www/status_interfaces.php:122
+#: src/usr/local/www/status_interfaces.php:123
+#: src/usr/local/www/status_interfaces.php:124
+#: src/usr/local/www/status_interfaces.php:125
+#: src/usr/local/www/status_interfaces.php:126
 msgid "Disconnect"
 msgstr "Putus"
 
@@ -1038,7 +1038,7 @@ msgstr "Diputuskan"
 #: src/usr/local/www/status_logs_settings.php:220
 #: src/usr/local/www/widgets/include/ipsec.inc:22
 #: src/usr/local/www/status_graph.php:42 src/usr/local/www/status_graph.php:300
-#: src/etc/inc/interfaces.inc:6985
+#: src/etc/inc/interfaces.inc:7019
 msgid "IPsec"
 msgstr "IPsec"
 
@@ -1125,7 +1125,7 @@ msgstr "Tiada maklumat status IPsec diperolehi "
 #: src/usr/local/www/interfaces_assign.php:36
 #: src/usr/local/www/interfaces_lagg_edit.php:215
 #: src/usr/local/www/interfaces_wireless.php:71
-#: src/usr/local/www/status_interfaces.php:94
+#: src/usr/local/www/status_interfaces.php:98
 #: src/usr/local/www/interfaces_groups.php:58
 #: src/usr/local/www/interfaces_wireless_edit.php:162
 #: src/usr/local/www/interfaces_groups_edit.php:33
@@ -1133,7 +1133,7 @@ msgstr "Tiada maklumat status IPsec diperolehi "
 #: src/usr/local/www/interfaces_gif.php:72
 #: src/usr/local/www/diag_backup.php:437
 #: src/usr/local/www/interfaces_vlan_edit.php:177
-#: src/usr/local/www/interfaces_bridge_edit.php:395
+#: src/usr/local/www/interfaces_bridge_edit.php:391
 #: src/usr/local/www/interfaces_ppps.php:78
 #: src/usr/local/www/services_captiveportal_zones.php:75
 #: src/usr/local/www/interfaces_gre_edit.php:156
@@ -1194,7 +1194,7 @@ msgstr "Padam antaramuka"
 #: src/usr/local/www/system_gateway_groups_edit.php:147
 #: src/usr/local/www/interfaces_vlan_edit.php:177
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
-#: src/usr/local/www/interfaces_bridge_edit.php:395
+#: src/usr/local/www/interfaces_bridge_edit.php:391
 #: src/usr/local/www/load_balancer_pool_edit.php:181
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:50
 #: src/usr/local/www/firewall_virtual_ip_edit.php:294
@@ -1431,7 +1431,7 @@ msgstr "GIFs"
 #: src/usr/local/www/interfaces_groups.php:72
 #: src/usr/local/www/interfaces_qinq.php:99
 #: src/usr/local/www/interfaces_gif.php:89
-#: src/usr/local/www/interfaces_bridge_edit.php:395
+#: src/usr/local/www/interfaces_bridge_edit.php:391
 #: src/usr/local/www/interfaces_ppps.php:91
 #: src/usr/local/www/interfaces_gre.php:89
 #: src/usr/local/www/interfaces_bridge.php:79
@@ -1751,7 +1751,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1468
 #: src/usr/local/www/firewall_nat_out_edit.php:522
 #: src/usr/local/www/firewall_nat_out_edit.php:547
-#: src/usr/local/www/interfaces.php:3162
+#: src/usr/local/www/interfaces.php:3158
 #: src/usr/local/www/diag_traceroute.php:142 src/etc/inc/ipsec.inc:102
 msgid "Any"
 msgstr "Sebarang"
@@ -1821,7 +1821,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:477
 #: src/usr/local/www/vpn_ipsec_phase1.php:699
 #: src/usr/local/www/vpn_ipsec_phase2.php:530
-#: src/usr/local/www/interfaces.php:2825
+#: src/usr/local/www/interfaces.php:2821
 #: src/usr/local/www/vpn_openvpn_server.php:694
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:286
 #: src/usr/local/www/firewall_nat_npt_edit.php:161
@@ -1851,7 +1851,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_settings.php:224
 #: src/usr/local/www/widgets/include/openvpn.inc:22
 #: src/usr/local/www/status_graph.php:49 src/etc/inc/service-utils.inc:365
-#: src/etc/inc/interfaces.inc:6163 src/etc/inc/interfaces.inc:6990
+#: src/etc/inc/interfaces.inc:6182 src/etc/inc/interfaces.inc:7024
 msgid "OpenVPN"
 msgstr "OpenVPN"
 
@@ -1975,7 +1975,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:664
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:159
 #: src/usr/local/www/firewall_aliases_import.php:269
-#: src/usr/local/www/services_captiveportal.php:544
+#: src/usr/local/www/services_captiveportal.php:542
 #: src/usr/local/www/vpn_ipsec_phase1.php:739
 #: src/usr/local/www/firewall_aliases_edit.php:683
 #: src/usr/local/www/interfaces_gif_edit.php:227
@@ -2013,9 +2013,9 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6_relay.php:148
 #: src/usr/local/www/services_pppoe_edit.php:292
 #: src/usr/local/www/services_rfc2136_edit.php:183
-#: src/usr/local/www/services_captiveportal.php:534
+#: src/usr/local/www/services_captiveportal.php:532
 #: src/usr/local/www/vpn_ipsec_phase1.php:932
-#: src/usr/local/www/interfaces.php:1838 src/usr/local/www/interfaces.php:3205
+#: src/usr/local/www/interfaces.php:1838 src/usr/local/www/interfaces.php:3201
 #: src/usr/local/www/firewall_rules.php:763 src/etc/inc/shaper.inc:4262
 #: src/etc/inc/shaper.inc:4716 src/usr/local/www/diag_routes.php:83
 msgid "Enable"
@@ -2238,7 +2238,7 @@ msgstr "Nama"
 #: src/usr/local/www/load_balancer_pool_edit.php:69
 #: src/usr/local/www/load_balancer_pool_edit.php:309
 #: src/usr/local/www/status_lb_pool.php:134
-#: src/usr/local/www/interfaces.php:917 src/usr/local/www/interfaces.php:3145
+#: src/usr/local/www/interfaces.php:917 src/usr/local/www/interfaces.php:3141
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:69
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:74
 #: src/etc/inc/pfsense-utils.inc:3246 src/etc/inc/pfsense-utils.inc:3289
@@ -2264,7 +2264,7 @@ msgstr "Pelayan"
 #: src/usr/local/www/diag_testport.php:52
 #: src/usr/local/www/load_balancer_virtual_server.php:142
 #: src/usr/local/www/firewall_aliases_edit.php:570
-#: src/usr/local/www/interfaces.php:3285 src/usr/local/www/interfaces.php:3309
+#: src/usr/local/www/interfaces.php:3281 src/usr/local/www/interfaces.php:3305
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:199
 #: src/usr/local/www/firewall_rules.php:360
 #: src/usr/local/www/firewall_rules.php:362
@@ -2309,13 +2309,13 @@ msgstr "Authentication and Accounting"
 
 #: src/usr/local/www/guiconfig.inc:162
 #: src/usr/local/www/diag_authentication.php:69
-#: src/usr/local/www/services_captiveportal.php:880
+#: src/usr/local/www/services_captiveportal.php:871
 #: src/usr/local/www/head.inc:387
 msgid "Authentication"
 msgstr "Authentication"
 
 #: src/usr/local/www/guiconfig.inc:163 src/usr/local/www/vpn_l2tp.php:296
-#: src/usr/local/www/services_captiveportal.php:991
+#: src/usr/local/www/services_captiveportal.php:982
 msgid "Accounting"
 msgstr "Accounting"
 
@@ -2345,19 +2345,19 @@ msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:247
 #: src/usr/local/www/interfaces_wireless_edit.php:186
-#: src/usr/local/www/interfaces.php:3147
+#: src/usr/local/www/interfaces.php:3143
 msgid "Infrastructure (BSS)"
 msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:248
 #: src/usr/local/www/interfaces_wireless_edit.php:187
-#: src/usr/local/www/interfaces.php:3147
+#: src/usr/local/www/interfaces.php:3143
 msgid "Ad-hoc (IBSS)"
 msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:249
 #: src/usr/local/www/interfaces_wireless_edit.php:188
-#: src/usr/local/www/interfaces.php:3147
+#: src/usr/local/www/interfaces.php:3143
 msgid "Access Point"
 msgstr ""
 
@@ -2366,59 +2366,59 @@ msgstr ""
 msgid "The field %s contains invalid characters."
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:262
+#: src/usr/local/www/guiconfig.inc:263
 #, php-format
 msgid "The field %s is required."
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:269
+#: src/usr/local/www/guiconfig.inc:271
 msgid "The following input errors were detected:"
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:333
+#: src/usr/local/www/guiconfig.inc:335
 msgid "Apply Changes"
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:389
+#: src/usr/local/www/guiconfig.inc:391
 msgid "The changes have been applied successfully."
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:392
+#: src/usr/local/www/guiconfig.inc:394
 #, php-format
 msgid "There was a problem applying the changes. See the %1$sSystem Logs%2$s."
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:400
+#: src/usr/local/www/guiconfig.inc:402
 msgid "The firewall rules are now reloading in the background."
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:401
+#: src/usr/local/www/guiconfig.inc:403
 #, php-format
 msgid "%1$sMonitor%2$s the filter reload progress."
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:587
+#: src/usr/local/www/guiconfig.inc:589
 msgid "Widget title"
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:634 src/usr/local/www/guiconfig.inc:685
+#: src/usr/local/www/guiconfig.inc:636 src/usr/local/www/guiconfig.inc:687
 #, php-format
 msgid "File %s is a directory."
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:636 src/usr/local/www/guiconfig.inc:687
+#: src/usr/local/www/guiconfig.inc:638 src/usr/local/www/guiconfig.inc:689
 msgid "Log file started."
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:1079
+#: src/usr/local/www/guiconfig.inc:1081
 msgid "Currently viewing: "
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:1177
+#: src/usr/local/www/guiconfig.inc:1179
 msgid "listing only first 10k items"
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:1187
+#: src/usr/local/www/guiconfig.inc:1189
 #: src/usr/local/www/services_dhcpv6.php:994
 #: src/usr/local/www/system_advanced_sysctl.php:159
 #: src/usr/local/www/services_dhcp.php:1418
@@ -2788,8 +2788,8 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:788
 #: src/usr/local/www/system_gateways_edit.php:248
 #: src/usr/local/www/system_gateways_edit.php:451
-#: src/usr/local/www/interfaces_bridge_edit.php:428
-#: src/usr/local/www/interfaces_bridge_edit.php:680
+#: src/usr/local/www/interfaces_bridge_edit.php:424
+#: src/usr/local/www/interfaces_bridge_edit.php:676
 #: src/usr/local/www/firewall_nat_edit.php:691
 #: src/usr/local/www/firewall_nat_edit.php:1123
 #: src/usr/local/www/interfaces_ppps_edit.php:763
@@ -3022,7 +3022,7 @@ msgstr "Alamat IPv6"
 #: src/usr/local/www/system.php:159 src/usr/local/www/diag_arp.php:335
 #: src/usr/local/www/services_rfc2136_edit.php:85
 #: src/usr/local/www/status_dhcpv6_leases.php:244
-#: src/usr/local/www/diag_ndp.php:140 src/usr/local/www/interfaces.php:2089
+#: src/usr/local/www/diag_ndp.php:140 src/usr/local/www/interfaces.php:2085
 #: src/usr/local/www/services_dhcpv6_edit.php:228
 #: src/usr/local/www/services_dyndns.php:98
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:189
@@ -3060,7 +3060,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:752
 #: src/usr/local/www/services_dhcp_edit.php:786
 #: src/usr/local/www/system_gateways_edit.php:449
-#: src/usr/local/www/interfaces_bridge_edit.php:678
+#: src/usr/local/www/interfaces_bridge_edit.php:674
 #: src/usr/local/www/firewall_nat_edit.php:1125
 #: src/usr/local/www/interfaces_ppps_edit.php:1006
 #: src/usr/local/www/firewall_rules_edit.php:1755
@@ -3142,7 +3142,7 @@ msgstr "Amaran: ini akan menamatkan semua sesi L2TP semasa!"
 #: src/usr/local/www/vpn_l2tp.php:217
 #: src/usr/local/www/services_captiveportal_mac.php:161
 #: src/usr/local/www/services_captiveportal.php:63
-#: src/usr/local/www/services_captiveportal.php:519
+#: src/usr/local/www/services_captiveportal.php:517
 #: src/usr/local/www/services_captiveportal_ip.php:94
 #: src/usr/local/www/services_captiveportal_filemanager.php:151
 msgid "Configuration"
@@ -3170,7 +3170,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:202
 #: src/usr/local/www/system_usermanager.php:632
 #: src/usr/local/www/services_pppoe_edit.php:500
-#: src/usr/local/www/interfaces.php:2718
+#: src/usr/local/www/interfaces.php:2714
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:80
 msgid "Username"
 msgstr "Nama Pengguna"
@@ -3204,7 +3204,7 @@ msgid "Add Zone"
 msgstr ""
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:51
-#: src/usr/local/www/services_captiveportal.php:208
+#: src/usr/local/www/services_captiveportal.php:207
 msgid "Zone name"
 msgstr ""
 
@@ -3240,6 +3240,7 @@ msgid "Save & Continue"
 msgstr "Simpan & Teruskan"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:74
+#: src/usr/local/www/services_acb_settings.php:165
 #: src/usr/local/www/system_advanced_network.php:324
 #: src/usr/local/www/vpn_ipsec_keys.php:105
 msgid "Identifier"
@@ -3248,7 +3249,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:74
 #: src/usr/local/www/vpn_ipsec_keys.php:107
 #: src/usr/local/www/vpn_ipsec_phase1.php:245
-#: src/usr/local/www/interfaces.php:3229
+#: src/usr/local/www/interfaces.php:3225
 msgid "Pre-Shared Key"
 msgstr "Kekunci Prakongsi"
 
@@ -3434,7 +3435,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:998
 #: src/usr/local/www/firewall_nat.php:233 src/usr/local/www/status_upnp.php:70
 #: src/usr/local/www/diag_states_summary.php:153
-#: src/usr/local/www/interfaces_bridge_edit.php:558
+#: src/usr/local/www/interfaces_bridge_edit.php:554
 #: src/usr/local/www/status_logs_filter_dynamic.php:394
 #: src/usr/local/www/system_advanced_admin.php:343
 #: src/usr/local/www/system_advanced_admin.php:347
@@ -4624,7 +4625,7 @@ msgstr "Pengguna"
 #: src/usr/local/www/services_pppoe_edit.php:513
 #: src/usr/local/www/load_balancer_virtual_server.php:141
 #: src/usr/local/www/vpn_ipsec_phase2.php:717
-#: src/usr/local/www/interfaces.php:3279 src/usr/local/www/interfaces.php:3303
+#: src/usr/local/www/interfaces.php:3275 src/usr/local/www/interfaces.php:3299
 #: src/usr/local/www/system_advanced_notifications.php:352
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:69
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:74
@@ -5905,7 +5906,7 @@ msgstr "Hapus ACL"
 #: src/usr/local/www/services_captiveportal_vouchers.php:379
 #: src/usr/local/www/services_captiveportal_hostname.php:105
 #: src/usr/local/www/services_captiveportal_mac.php:163
-#: src/usr/local/www/services_captiveportal.php:521
+#: src/usr/local/www/services_captiveportal.php:519
 #: src/usr/local/www/services_captiveportal_ip.php:59
 #: src/usr/local/www/services_captiveportal_ip.php:96
 #: src/usr/local/www/services_captiveportal_filemanager.php:153
@@ -5961,8 +5962,8 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_ip_edit.php:194
 #: src/usr/local/www/pkg_mgr.php:160
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
-#: src/usr/local/www/interfaces.php:3222 src/usr/local/www/interfaces.php:3229
-#: src/usr/local/www/interfaces.php:3236
+#: src/usr/local/www/interfaces.php:3218 src/usr/local/www/interfaces.php:3225
+#: src/usr/local/www/interfaces.php:3232
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:256
 #: src/usr/local/www/vpn_openvpn_client.php:933
 #: src/usr/local/www/services_rfc2136_edit.php:294
@@ -6710,7 +6711,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:785
 #: src/usr/local/www/system_usermanager.php:788
 #: src/usr/local/www/services_pppoe_edit.php:507
-#: src/usr/local/www/interfaces.php:2725
+#: src/usr/local/www/interfaces.php:2721
 #: src/usr/local/www/system_advanced_notifications.php:359
 #: src/etc/inc/captiveportal.inc:46
 msgid "Password"
@@ -7049,11 +7050,11 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:902
-#: src/usr/local/www/interfaces_bridge_edit.php:442
+#: src/usr/local/www/interfaces_bridge_edit.php:438
 #: src/usr/local/www/interfaces_ppps_edit.php:777
 #: src/usr/local/www/vpn_ipsec_phase2.php:711
 #: src/usr/local/www/vpn_openvpn_server.php:1311
-#: src/usr/local/www/interfaces.php:2074 src/usr/local/www/interfaces.php:2279
+#: src/usr/local/www/interfaces.php:2070 src/usr/local/www/interfaces.php:2275
 msgid "Advanced Configuration"
 msgstr "Lanjutan Konfigurasi"
 
@@ -7429,7 +7430,7 @@ msgid "WINS servers"
 msgstr "Pelayan WINS"
 
 #: src/usr/local/www/services_dhcp.php:1024
-#: src/usr/local/www/status_interfaces.php:153
+#: src/usr/local/www/status_interfaces.php:157
 msgid "DNS servers"
 msgstr "Pelayan DNS"
 
@@ -8135,7 +8136,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_reboot.php:43 src/usr/local/www/diag_reboot.php:113
 #: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:406
-#: src/usr/local/www/interfaces.php:2160
+#: src/usr/local/www/interfaces.php:2156
 msgid "Reboot"
 msgstr ""
 
@@ -8159,7 +8160,7 @@ msgid "Reboot the system"
 msgstr ""
 
 #: src/usr/local/www/diag_reboot.php:119 src/usr/local/www/firewall_nat.php:499
-#: src/usr/local/www/interfaces.php:2050 src/usr/local/www/interfaces.php:3424
+#: src/usr/local/www/interfaces.php:2046 src/usr/local/www/interfaces.php:3420
 #: src/usr/local/www/diag_halt.php:78 src/usr/local/www/firewall_rules.php:866
 msgid "Cancel"
 msgstr "Batal"
@@ -8309,7 +8310,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_dnsmasq.php:337
-#: src/usr/local/www/services_captiveportal.php:548
+#: src/usr/local/www/services_captiveportal.php:546
 msgid "*Interfaces"
 msgstr ""
 
@@ -8965,8 +8966,8 @@ msgstr ""
 
 #: src/usr/local/www/diag_authentication.php:91
 #: src/usr/local/www/system_usermanager_settings.php:215
-#: src/usr/local/www/services_captiveportal.php:901
-#: src/usr/local/www/services_captiveportal.php:906
+#: src/usr/local/www/services_captiveportal.php:892
+#: src/usr/local/www/services_captiveportal.php:897
 msgid "*Authentication Server"
 msgstr ""
 
@@ -8978,14 +8979,14 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users_edit.php:153
 #: src/usr/local/www/services_acb_settings.php:177
 #: src/usr/local/www/system_usermanager.php:763
-#: src/usr/local/www/interfaces.php:2785 src/usr/local/www/interfaces.php:2910
+#: src/usr/local/www/interfaces.php:2781 src/usr/local/www/interfaces.php:2906
 msgid "*Username"
 msgstr ""
 
 #: src/usr/local/www/diag_authentication.php:106
 #: src/usr/local/www/system_usermanager_passwordmg.php:100
 #: src/usr/local/www/services_acb_settings.php:184
-#: src/usr/local/www/interfaces.php:2792 src/usr/local/www/interfaces.php:2917
+#: src/usr/local/www/interfaces.php:2788 src/usr/local/www/interfaces.php:2913
 msgid "*Password"
 msgstr "*Kata Laluan"
 
@@ -9170,7 +9171,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/system_usermanager_settings.php:200
-#: src/usr/local/www/services_captiveportal.php:957
+#: src/usr/local/www/services_captiveportal.php:948
 msgid "Session timeout"
 msgstr ""
 
@@ -9707,192 +9708,192 @@ msgstr ""
 msgid "Delete this queue"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:105
+#: src/usr/local/www/status_interfaces.php:109
 msgid "Send a gratuitous DHCP release packet to the server."
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:105
+#: src/usr/local/www/status_interfaces.php:109
 msgid "Relinquish Lease"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:112
+#: src/usr/local/www/status_interfaces.php:116
 msgid " Interface "
 msgstr "Antara Muka"
 
-#: src/usr/local/www/status_interfaces.php:116
+#: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/system_advanced_firewall.php:600
 msgid "disabled"
 msgstr "dilumpuhkan"
 
-#: src/usr/local/www/status_interfaces.php:117
-#: src/usr/local/www/status_interfaces.php:118
+#: src/usr/local/www/status_interfaces.php:121
+#: src/usr/local/www/status_interfaces.php:122
 msgid "Release"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:117
-#: src/usr/local/www/status_interfaces.php:118
+#: src/usr/local/www/status_interfaces.php:121
+#: src/usr/local/www/status_interfaces.php:122
 msgid "Renew"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:119
-#: src/usr/local/www/status_interfaces.php:120
-#: src/usr/local/www/status_interfaces.php:121
-#: src/usr/local/www/status_interfaces.php:122
+#: src/usr/local/www/status_interfaces.php:123
+#: src/usr/local/www/status_interfaces.php:124
+#: src/usr/local/www/status_interfaces.php:125
+#: src/usr/local/www/status_interfaces.php:126
 msgid "Connect"
 msgstr "Sambung"
 
-#: src/usr/local/www/status_interfaces.php:123
+#: src/usr/local/www/status_interfaces.php:127
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:41
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:294
 msgid "Uptime"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:123
+#: src/usr/local/www/status_interfaces.php:127
 msgid "(historical)"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:124
+#: src/usr/local/www/status_interfaces.php:128
 msgid "Cell Signal (RSSI)"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:125
+#: src/usr/local/www/status_interfaces.php:129
 msgid "Cell Mode"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:126
+#: src/usr/local/www/status_interfaces.php:130
 msgid "Cell SIM State"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:127
+#: src/usr/local/www/status_interfaces.php:131
 msgid "Cell Service"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:128
+#: src/usr/local/www/status_interfaces.php:132
 msgid "Cell Upstream"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:129
+#: src/usr/local/www/status_interfaces.php:133
 msgid "Cell Downstream"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:130
+#: src/usr/local/www/status_interfaces.php:134
 msgid "Cell Current Up"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:131
+#: src/usr/local/www/status_interfaces.php:135
 msgid "Cell Current Down"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:136
+#: src/usr/local/www/status_interfaces.php:140
 #: src/usr/local/www/services_dhcp_edit.php:399
 #: src/usr/local/www/services_dhcp_edit.php:414
-#: src/usr/local/www/interfaces.php:1885 src/usr/local/www/interfaces.php:1900
+#: src/usr/local/www/interfaces.php:1885
 #: src/usr/local/www/services_captiveportal_mac_edit.php:205
 msgid "MAC Address"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:141
+#: src/usr/local/www/status_interfaces.php:145
 msgid "IPv4 Address"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:142
+#: src/usr/local/www/status_interfaces.php:146
 msgid "Subnet mask IPv4"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:143
-#: src/usr/local/www/interfaces.php:3401
+#: src/usr/local/www/status_interfaces.php:147
+#: src/usr/local/www/interfaces.php:3397
 msgid "Gateway IPv4"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:144
+#: src/usr/local/www/status_interfaces.php:148
 msgid "IPv6 Link Local"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:145
+#: src/usr/local/www/status_interfaces.php:149
 msgid "IPv6 Address"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:146
+#: src/usr/local/www/status_interfaces.php:150
 msgid "Subnet mask IPv6"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:147
-#: src/usr/local/www/interfaces.php:2027
+#: src/usr/local/www/status_interfaces.php:151
+#: src/usr/local/www/interfaces.php:2023
 msgid "Gateway IPv6"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:159
+#: src/usr/local/www/status_interfaces.php:163
 #: src/usr/local/www/interfaces_ppps_edit.php:872
-#: src/usr/local/www/interfaces.php:1909
+#: src/usr/local/www/interfaces.php:1905
 msgid "MTU"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:160
+#: src/usr/local/www/status_interfaces.php:164
 msgid "Media"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:161
+#: src/usr/local/www/status_interfaces.php:165
 msgid "LAGG Protocol"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:162
+#: src/usr/local/www/status_interfaces.php:166
 msgid "LAGG Ports"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:163
-#: src/usr/local/www/interfaces.php:3041
+#: src/usr/local/www/status_interfaces.php:167
+#: src/usr/local/www/interfaces.php:3037
 msgid "Channel"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:164
-#: src/usr/local/www/interfaces.php:920 src/usr/local/www/interfaces.php:3152
+#: src/usr/local/www/status_interfaces.php:168
+#: src/usr/local/www/interfaces.php:920 src/usr/local/www/interfaces.php:3148
 msgid "SSID"
 msgstr "SSID"
 
-#: src/usr/local/www/status_interfaces.php:165
+#: src/usr/local/www/status_interfaces.php:169
 msgid "BSSID"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:166
+#: src/usr/local/www/status_interfaces.php:170
 #: src/usr/local/www/diag_dump_states_sources.php:123
 msgid "Rate"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:167
+#: src/usr/local/www/status_interfaces.php:171
 msgid "RSSI"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:168
+#: src/usr/local/www/status_interfaces.php:172
 msgid "In/out packets"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:170
+#: src/usr/local/www/status_interfaces.php:174
 msgid "In/out packets (pass)"
 msgstr "Paket masuk/keluar (Lulus)"
 
-#: src/usr/local/www/status_interfaces.php:172
+#: src/usr/local/www/status_interfaces.php:176
 msgid "In/out packets (block)"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:174
+#: src/usr/local/www/status_interfaces.php:178
 msgid "In/out errors"
 msgstr "Ralat masuk/keluar"
 
-#: src/usr/local/www/status_interfaces.php:175
+#: src/usr/local/www/status_interfaces.php:179
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:42
 msgid "Collisions"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:178
+#: src/usr/local/www/status_interfaces.php:182
 #, php-format
 msgid "Bridge (%1$s)"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:195
+#: src/usr/local/www/status_interfaces.php:199
 msgid "Total interrupts"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:206
+#: src/usr/local/www/status_interfaces.php:210
 #, php-format
 msgid ""
 "Using dial-on-demand will bring the connection up again if any packet "
@@ -10736,7 +10737,7 @@ msgid "Relayd Global Settings"
 msgstr ""
 
 #: src/usr/local/www/load_balancer_setting.php:120
-#: src/usr/local/www/interfaces.php:2138
+#: src/usr/local/www/interfaces.php:2134
 msgid "Timeout"
 msgstr ""
 
@@ -11529,16 +11530,11 @@ msgstr ""
 msgid "*Encryption Password"
 msgstr ""
 
-#: src/usr/local/www/services_acb_settings.php:165
-#: src/usr/local/www/firewall_aliases_edit.php:697
-msgid "Hint"
-msgstr ""
-
 #: src/usr/local/www/services_acb_settings.php:168
 msgid ""
-"You may optionally provide a hint which will be stored in plain text along "
-"with each encrypted backup. This may allow the Netgate support team to "
-"recover your key should you lose it."
+"You may optionally provide an identifier which will be stored in plain text "
+"along with each encrypted backup. This may allow the Netgate support team to "
+"locate your key should you lose it."
 msgstr ""
 
 #: src/usr/local/www/services_acb_settings.php:173
@@ -11560,7 +11556,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_hostname.php:107
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:50
 #: src/usr/local/www/services_captiveportal_mac.php:165
-#: src/usr/local/www/services_captiveportal.php:523
+#: src/usr/local/www/services_captiveportal.php:521
 #: src/usr/local/www/services_captiveportal_ip.php:98
 #: src/usr/local/www/services_captiveportal_filemanager.php:155
 msgid "Vouchers"
@@ -11682,7 +11678,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_hostname.php:104
 #: src/usr/local/www/services_captiveportal_mac.php:56
 #: src/usr/local/www/services_captiveportal_mac.php:162
-#: src/usr/local/www/services_captiveportal.php:520
+#: src/usr/local/www/services_captiveportal.php:518
 #: src/usr/local/www/services_captiveportal_ip.php:95
 #: src/usr/local/www/services_captiveportal_mac_edit.php:66
 #: src/usr/local/www/services_captiveportal_filemanager.php:152
@@ -11694,7 +11690,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_hostname.php:106
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:63
 #: src/usr/local/www/services_captiveportal_mac.php:164
-#: src/usr/local/www/services_captiveportal.php:522
+#: src/usr/local/www/services_captiveportal.php:520
 #: src/usr/local/www/services_captiveportal_ip.php:97
 #: src/usr/local/www/services_captiveportal_filemanager.php:154
 msgid "Allowed Hostnames"
@@ -11703,7 +11699,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_vouchers.php:382
 #: src/usr/local/www/services_captiveportal_hostname.php:108
 #: src/usr/local/www/services_captiveportal_mac.php:166
-#: src/usr/local/www/services_captiveportal.php:524
+#: src/usr/local/www/services_captiveportal.php:522
 #: src/usr/local/www/services_captiveportal_ip.php:99
 #: src/usr/local/www/services_captiveportal_filemanager.php:66
 #: src/usr/local/www/services_captiveportal_filemanager.php:156
@@ -12245,7 +12241,6 @@ msgid "Edit Static Mapping"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp_edit.php:407
-#: src/usr/local/www/interfaces.php:1893
 #: src/usr/local/www/services_captiveportal_mac_edit.php:213
 msgid "Copy My MAC"
 msgstr ""
@@ -12483,7 +12478,7 @@ msgstr ""
 #: src/usr/local/www/system_groupmanager_addprivs.php:218
 #: src/usr/local/www/diag_command.php:218
 #: src/usr/local/www/system_usermanager_addprivs.php:203
-#: src/usr/local/www/interfaces.php:2192
+#: src/usr/local/www/interfaces.php:2188
 msgid "Clear"
 msgstr ""
 
@@ -13754,7 +13749,7 @@ msgid "*Name"
 msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:183
-#: src/usr/local/www/interfaces.php:2020 src/usr/local/www/interfaces.php:3394
+#: src/usr/local/www/interfaces.php:2016 src/usr/local/www/interfaces.php:3390
 msgid "Gateway name"
 msgstr ""
 
@@ -14390,7 +14385,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe.php:82
 #: src/usr/local/www/services_pppoe.php:96
 #: src/usr/local/www/services_pppoe_edit.php:277 src/usr/local/www/head.inc:323
-#: src/etc/inc/interfaces.inc:6980
+#: src/etc/inc/interfaces.inc:7014
 msgid "PPPoE Server"
 msgstr "Pelayan PPPoE"
 
@@ -14640,7 +14635,7 @@ msgstr "Pelayan L2TP DNS menengah"
 
 #: src/usr/local/www/vpn_l2tp.php:284
 #: src/usr/local/www/services_pppoe_edit.php:363
-#: src/usr/local/www/services_captiveportal.php:996
+#: src/usr/local/www/services_captiveportal.php:987
 msgid "RADIUS"
 msgstr ""
 
@@ -14843,7 +14838,7 @@ msgid "HTTP Code"
 msgstr ""
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:311
-#: src/usr/local/www/services_captiveportal.php:1085
+#: src/usr/local/www/services_captiveportal.php:1076
 msgid "HTTPS Options"
 msgstr ""
 
@@ -15203,19 +15198,19 @@ msgid ""
 "continue."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:406
+#: src/usr/local/www/interfaces_bridge_edit.php:402
 msgid "Bridge Configuration"
 msgstr "Konfigurasi Jambatan"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:412
+#: src/usr/local/www/interfaces_bridge_edit.php:408
 msgid "*Member Interfaces"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:416
+#: src/usr/local/www/interfaces_bridge_edit.php:412
 msgid "Interfaces participating in the bridge."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:436
+#: src/usr/local/www/interfaces_bridge_edit.php:432
 #: src/usr/local/www/firewall_rules_edit.php:1455
 #: src/usr/local/www/firewall_rules_edit.php:1461
 #: src/usr/local/www/vpn_ipsec_phase1.php:890 src/etc/inc/shaper.inc:4392
@@ -15223,30 +15218,30 @@ msgstr ""
 msgid "Advanced Options"
 msgstr "Pilihan Lanjutan"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:448
+#: src/usr/local/www/interfaces_bridge_edit.php:444
 msgid "Cache Size"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:451
+#: src/usr/local/www/interfaces_bridge_edit.php:447
 msgid "Set the size of the bridge address cache. The default is 2000 entries."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:455
+#: src/usr/local/www/interfaces_bridge_edit.php:451
 msgid "Cache expire time"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:458
+#: src/usr/local/www/interfaces_bridge_edit.php:454
 msgid ""
 "Set the timeout of address cache entries to this number of seconds. If "
 "seconds is zero, then address cache entries will not be expired. The default "
 "is 1200 seconds."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:464
+#: src/usr/local/www/interfaces_bridge_edit.php:460
 msgid "Span Port"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:468
+#: src/usr/local/www/interfaces_bridge_edit.php:464
 #, php-format
 msgid ""
 "Add the interface named by interface as a span port on the bridge. Span "
@@ -15256,22 +15251,22 @@ msgid ""
 "part of the bridge member interfaces.%3$s"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:476
+#: src/usr/local/www/interfaces_bridge_edit.php:472
 msgid "Edge Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:480
+#: src/usr/local/www/interfaces_bridge_edit.php:476
 msgid ""
 "Set interface as an edge port. An edge port connects directly to end "
 "stations and cannot create bridging loops in the network; this allows it to "
 "transition straight to forwarding."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:486
+#: src/usr/local/www/interfaces_bridge_edit.php:482
 msgid "Auto Edge Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:490
+#: src/usr/local/www/interfaces_bridge_edit.php:486
 #, php-format
 msgid ""
 "Allow interface to automatically detect edge status. This is the default for "
@@ -15279,22 +15274,22 @@ msgid ""
 "of interfaces. %2$s"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:497
+#: src/usr/local/www/interfaces_bridge_edit.php:493
 msgid "PTP Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:501
+#: src/usr/local/www/interfaces_bridge_edit.php:497
 msgid ""
 "Set the interface as a point-to-point link. This is required for straight "
 "transitions to forwarding and should be enabled on a direct link to another "
 "RSTP-capable switch."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:507
+#: src/usr/local/www/interfaces_bridge_edit.php:503
 msgid "Auto PTP Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:511
+#: src/usr/local/www/interfaces_bridge_edit.php:507
 #, php-format
 msgid ""
 "Automatically detect the point-to-point status on interface by checking the "
@@ -15303,11 +15298,11 @@ msgid ""
 "autoedge status. %2$s"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:518
+#: src/usr/local/www/interfaces_bridge_edit.php:514
 msgid "Sticky Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:522
+#: src/usr/local/www/interfaces_bridge_edit.php:518
 msgid ""
 "Mark an interface as a \"sticky\" interface. Dynamically learned address "
 "entries are treated as static once entered into the cache. Sticky entries "
@@ -15315,77 +15310,77 @@ msgid ""
 "a different interface."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:529
+#: src/usr/local/www/interfaces_bridge_edit.php:525
 msgid "Private Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:533
+#: src/usr/local/www/interfaces_bridge_edit.php:529
 msgid ""
 "Mark an interface as a \"private\" interface. A private interface does not "
 "forward any traffic to any other port that is also a private interface. "
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:537
+#: src/usr/local/www/interfaces_bridge_edit.php:533
 msgid "Enable IPv6 auto linklocal"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:540
+#: src/usr/local/www/interfaces_bridge_edit.php:536
 msgid ""
 "When enabled, the AUTO_LINKLOCAL flag is set on the bridge interface and "
 "cleared on every member interface. This is required when the bridge "
 "interface is used for stateless autoconfiguration. "
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:546
+#: src/usr/local/www/interfaces_bridge_edit.php:542
 msgid "Enable RSTP/STP"
 msgstr "Dayakan RSTP/STP"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:553
+#: src/usr/local/www/interfaces_bridge_edit.php:549
 msgid "RSTP/STP"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:562
+#: src/usr/local/www/interfaces_bridge_edit.php:558
 msgid "Protocol used for spanning tree."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:568
+#: src/usr/local/www/interfaces_bridge_edit.php:564
 msgid "STP Interfaces"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:572
+#: src/usr/local/www/interfaces_bridge_edit.php:568
 msgid ""
 "Enable Spanning Tree Protocol on interface. The if_bridge(4) driver has "
 "support for the IEEE 802.1D Spanning Tree Protocol (STP). STP is used to "
 "detect and remove loops in a network topology."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:577
+#: src/usr/local/www/interfaces_bridge_edit.php:573
 msgid "Valid time"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:581
+#: src/usr/local/www/interfaces_bridge_edit.php:577
 msgid ""
 "Set the time that a Spanning Tree Protocol configuration is valid. The "
 "default is 20 seconds. The minimum is 6 seconds and the maximum is 40 "
 "seconds."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:585
+#: src/usr/local/www/interfaces_bridge_edit.php:581
 msgid "Forward time"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:589
+#: src/usr/local/www/interfaces_bridge_edit.php:585
 msgid ""
 "Set the time that must pass before an interface begins forwarding packets "
 "when Spanning Tree is enabled. The default is 15 seconds. The minimum is 4 "
 "seconds and the maximum is 30 seconds. "
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:593
+#: src/usr/local/www/interfaces_bridge_edit.php:589
 msgid "Hello time"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:597
+#: src/usr/local/www/interfaces_bridge_edit.php:593
 msgid ""
 "Set the time in seconds between broadcasting of Spanning Tree Protocol "
 "configuration messages. The hello time may only be changed when operating in "
@@ -15393,44 +15388,44 @@ msgid ""
 "maximum is 2 seconds."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:602
+#: src/usr/local/www/interfaces_bridge_edit.php:598
 #: src/usr/local/www/interfaces_vlan.php:103
 #: src/usr/local/www/system_gateway_groups.php:134 src/etc/inc/shaper.inc:1724
 msgid "Priority"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:606
+#: src/usr/local/www/interfaces_bridge_edit.php:602
 msgid ""
 "Set the bridge priority for Spanning Tree. The default is 32768. The minimum "
 "is 0 and the maximum is 61440. "
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:610
+#: src/usr/local/www/interfaces_bridge_edit.php:606
 msgid "Hold Count"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:614
+#: src/usr/local/www/interfaces_bridge_edit.php:610
 msgid ""
 "Set the transmit hold count for Spanning Tree. This is the number of packets "
 "transmitted before being rate limited. The default is 6. The minimum is 1 "
 "and the maximum is 10."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:619
+#: src/usr/local/www/interfaces_bridge_edit.php:615
 msgid " Priority"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:623
+#: src/usr/local/www/interfaces_bridge_edit.php:619
 msgid ""
 "Set the Spanning Tree priority of interface to value. The default is 128. "
 "The minimum is 0 and the maximum is 240. Increments of 16."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:630
+#: src/usr/local/www/interfaces_bridge_edit.php:626
 msgid " Path cost"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:634
+#: src/usr/local/www/interfaces_bridge_edit.php:630
 msgid ""
 "Set the Spanning Tree path cost of interface to value. The default is "
 "calculated from the link speed. To change a previously selected path cost "
@@ -15528,7 +15523,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/load_balancer_pool_edit.php:333
-#: src/usr/local/www/interfaces.php:2145
+#: src/usr/local/www/interfaces.php:2141
 msgid "Retry"
 msgstr ""
 
@@ -17004,9 +16999,9 @@ msgstr ""
 
 #: src/usr/local/www/status.php:381 src/usr/local/www/diag_command.php:233
 #: src/usr/local/www/crash_reporter.php:162
-#: src/usr/local/www/services_captiveportal.php:753
-#: src/usr/local/www/services_captiveportal.php:787
-#: src/usr/local/www/services_captiveportal.php:819
+#: src/usr/local/www/services_captiveportal.php:744
+#: src/usr/local/www/services_captiveportal.php:778
+#: src/usr/local/www/services_captiveportal.php:810
 msgid "Download"
 msgstr ""
 
@@ -17094,7 +17089,7 @@ msgid "Accounting port"
 msgstr ""
 
 #: src/usr/local/www/system_authservers.php:268
-#: src/usr/local/www/interfaces.php:3292 src/usr/local/www/interfaces.php:3316
+#: src/usr/local/www/interfaces.php:3288 src/usr/local/www/interfaces.php:3312
 msgid "Shared Secret"
 msgstr ""
 
@@ -17538,7 +17533,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1403
 #: src/usr/local/www/firewall_rules_edit.php:1417
 #: src/usr/local/www/services_ntpd_gps.php:339
-#: src/usr/local/www/interfaces.php:2825
+#: src/usr/local/www/interfaces.php:2821
 msgid "Custom"
 msgstr ""
 
@@ -18330,8 +18325,8 @@ msgstr ""
 #: src/usr/local/www/interfaces_ppps_edit.php:218
 #: src/usr/local/www/interfaces_ppps_edit.php:229
 #: src/usr/local/www/interfaces.php:613 src/usr/local/www/interfaces.php:623
-#: src/usr/local/www/interfaces.php:633 src/usr/local/www/interfaces.php:2806
-#: src/usr/local/www/interfaces.php:2938
+#: src/usr/local/www/interfaces.php:633 src/usr/local/www/interfaces.php:2802
+#: src/usr/local/www/interfaces.php:2934
 msgid "Dial on demand"
 msgstr ""
 
@@ -18458,7 +18453,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:504
-#: src/usr/local/www/interfaces.php:2692
+#: src/usr/local/www/interfaces.php:2688
 msgid "PPP Configuration"
 msgstr "Konfigurasi PPP"
 
@@ -18481,22 +18476,22 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:532
-#: src/usr/local/www/interfaces.php:2697 src/usr/local/www/interfaces.php:3123
+#: src/usr/local/www/interfaces.php:2693 src/usr/local/www/interfaces.php:3119
 msgid "Country"
 msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:539
-#: src/usr/local/www/interfaces.php:2704
+#: src/usr/local/www/interfaces.php:2700
 msgid "Provider"
 msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:546
-#: src/usr/local/www/interfaces.php:2711
+#: src/usr/local/www/interfaces.php:2707
 msgid "Plan"
 msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:549
-#: src/usr/local/www/interfaces.php:2714
+#: src/usr/local/www/interfaces.php:2710
 msgid "Select to fill in service provider data."
 msgstr ""
 
@@ -18513,7 +18508,7 @@ msgid "Gateway IP or Hostname"
 msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:604
-#: src/usr/local/www/interfaces.php:2732
+#: src/usr/local/www/interfaces.php:2728
 msgid "*Phone number"
 msgstr ""
 
@@ -18579,7 +18574,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:661
-#: src/usr/local/www/interfaces.php:2799
+#: src/usr/local/www/interfaces.php:2795
 msgid "Service name"
 msgstr ""
 
@@ -18591,7 +18586,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:691
-#: src/usr/local/www/interfaces.php:2825
+#: src/usr/local/www/interfaces.php:2821
 msgid "Pre-set"
 msgstr ""
 
@@ -18812,7 +18807,7 @@ msgid "Users Logged In (%d)"
 msgstr ""
 
 #: src/usr/local/www/status_captiveportal.php:231
-#: src/usr/local/www/services_captiveportal.php:208
+#: src/usr/local/www/services_captiveportal.php:207
 msgid "Authentication method"
 msgstr ""
 
@@ -19758,7 +19753,7 @@ msgid "This does NOT prevent the rule from being overwritten on Slave."
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1604
-#: src/usr/local/www/interfaces.php:2122 src/usr/local/www/interfaces.php:2351
+#: src/usr/local/www/interfaces.php:2118 src/usr/local/www/interfaces.php:2347
 msgid "VLAN Prio"
 msgstr ""
 
@@ -20564,9 +20559,9 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_gps.php:339
 #: src/usr/local/www/firewall_nat_out_edit.php:600
-#: src/usr/local/www/interfaces.php:2013 src/usr/local/www/interfaces.php:3056
-#: src/usr/local/www/interfaces.php:3065 src/usr/local/www/interfaces.php:3074
-#: src/usr/local/www/interfaces.php:3132 src/usr/local/www/interfaces.php:3387
+#: src/usr/local/www/interfaces.php:2009 src/usr/local/www/interfaces.php:3052
+#: src/usr/local/www/interfaces.php:3061 src/usr/local/www/interfaces.php:3070
+#: src/usr/local/www/interfaces.php:3128 src/usr/local/www/interfaces.php:3383
 #: src/usr/local/www/system_gateways.php:314 src/etc/inc/openvpn.inc:544
 msgid "Default"
 msgstr ""
@@ -21326,98 +21321,98 @@ msgstr ""
 msgid "Captive Portal: zone %s: Restore default logout page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:216
+#: src/usr/local/www/services_captiveportal.php:215
 #, php-format
 msgid ""
 "The captive portal cannot be used on interface %s since it is part of a "
 "bridge."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:221
+#: src/usr/local/www/services_captiveportal.php:220
 #, php-format
 msgid ""
 "The captive portal cannot be used on interface %1$s since it is used already "
 "on %2$s instance."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:229
+#: src/usr/local/www/services_captiveportal.php:228
 msgid "Authentication method is invalid."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:234
+#: src/usr/local/www/services_captiveportal.php:233
 msgid "Certificate must be specified for HTTPS login."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:237
+#: src/usr/local/www/services_captiveportal.php:236
 msgid "The HTTPS server name must be specified for HTTPS login."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:244
+#: src/usr/local/www/services_captiveportal.php:243
 msgid "The timeout must be at least 1 minute."
 msgstr "Tamat masa perlu sekurang-kurangnya 1 minit."
 
-#: src/usr/local/www/services_captiveportal.php:260
+#: src/usr/local/www/services_captiveportal.php:259
 msgid ""
 "Hard timeout must be less than or equal to the Default lease time set on "
 "DHCP Server"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:267
+#: src/usr/local/www/services_captiveportal.php:266
 msgid "The idle timeout must be at least 1 minute."
 msgstr "Tamat masa melahu perlu sekurang-kurangnya 1 minit."
 
-#: src/usr/local/www/services_captiveportal.php:271
+#: src/usr/local/www/services_captiveportal.php:270
 msgid "The traffic quota must be at least 1 megabyte."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:275
+#: src/usr/local/www/services_captiveportal.php:274
 msgid "The pass-through credit count must be a number or left blank."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:278
+#: src/usr/local/www/services_captiveportal.php:277
 msgid ""
 "The waiting period to restore pass-through credits must be above 0 hours."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:283
+#: src/usr/local/www/services_captiveportal.php:282
 msgid ""
 "The maximum number of concurrent connections per client IP address may not "
 "be larger than the global maximum."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:288
+#: src/usr/local/www/services_captiveportal.php:287
 msgid "You need to select at least one authentication server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:300
+#: src/usr/local/www/services_captiveportal.php:299
 msgid "RADIUS MAC Authentication can only be performed on a RADIUS server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:305
+#: src/usr/local/www/services_captiveportal.php:304
 msgid "RADIUS MAC Authentication cannot be used if MAC filtering is disabled"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:311
+#: src/usr/local/www/services_captiveportal.php:310
 msgid "You need to select at least one accounting server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:314
+#: src/usr/local/www/services_captiveportal.php:313
 msgid "You need to select an option for Accounting Updates !"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:530
+#: src/usr/local/www/services_captiveportal.php:528
 msgid "Captive Portal Configuration"
 msgstr "Konfigurasi Portal Tawanan"
 
-#: src/usr/local/www/services_captiveportal.php:552
+#: src/usr/local/www/services_captiveportal.php:550
 msgid "Select the interface(s) to enable for captive portal."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:556
+#: src/usr/local/www/services_captiveportal.php:554
 msgid "Maximum concurrent connections"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:560
+#: src/usr/local/www/services_captiveportal.php:558
 msgid ""
 "Limits the number of concurrent connections to the captive portal HTTP(S) "
 "server. This does not set how many users can be logged in to the captive "
@@ -21425,43 +21420,43 @@ msgid ""
 "portal web server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:565
+#: src/usr/local/www/services_captiveportal.php:563
 msgid "Idle timeout (Minutes)"
 msgstr "Tamat masa melahu (Minit)"
 
-#: src/usr/local/www/services_captiveportal.php:568
+#: src/usr/local/www/services_captiveportal.php:566
 msgid ""
 "Clients will be disconnected after this amount of inactivity. They may log "
 "in again immediately, though. Leave this field blank for no idle timeout."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:572
+#: src/usr/local/www/services_captiveportal.php:570
 msgid "Hard timeout (Minutes)"
 msgstr "Tamat masa keras (Minit)"
 
-#: src/usr/local/www/services_captiveportal.php:575
+#: src/usr/local/www/services_captiveportal.php:573
 msgid ""
 "Clients will be disconnected after this amount of time, regardless of "
 "activity. They may log in again immediately, though. Leave this field blank "
 "for no hard timeout (not recommended unless an idle timeout is set)."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:580
+#: src/usr/local/www/services_captiveportal.php:578
 msgid "Traffic quota (Megabytes)"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:583
+#: src/usr/local/www/services_captiveportal.php:581
 msgid ""
 "Clients will be disconnected after exceeding this amount of traffic, "
 "inclusive of both downloads and uploads. They may log in again immediately, "
 "though. Leave this field blank for no traffic quota."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:588
+#: src/usr/local/www/services_captiveportal.php:586
 msgid "Pass-through credits per MAC address."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:591
+#: src/usr/local/www/services_captiveportal.php:589
 msgid ""
 "Allows passing through the captive portal without authentication a limited "
 "number of times per MAC address. Once used up, the client can only log in "
@@ -21470,43 +21465,43 @@ msgid ""
 "to be effective."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:597
+#: src/usr/local/www/services_captiveportal.php:595
 msgid "Waiting period to restore pass-through credits. (Hours)"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:600
+#: src/usr/local/www/services_captiveportal.php:598
 msgid ""
 "Clients will have their available pass-through credits restored to the "
 "original count after this amount of time since using the first one. This "
 "must be above 0 hours if pass-through credits are enabled."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:605
+#: src/usr/local/www/services_captiveportal.php:603
 msgid "Reset waiting period"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:608
+#: src/usr/local/www/services_captiveportal.php:606
 msgid ""
 "If enabled, the waiting period is reset to the original duration if access "
 "is attempted when all pass-through credits have already been exhausted."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:612
+#: src/usr/local/www/services_captiveportal.php:610
 msgid "Logout popup window"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:615
+#: src/usr/local/www/services_captiveportal.php:613
 msgid ""
 "If enabled, a popup window will appear when clients are allowed through the "
 "captive portal. This allows clients to explicitly disconnect themselves "
 "before the idle or hard timeout occurs."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:620
+#: src/usr/local/www/services_captiveportal.php:618
 msgid "Pre-authentication redirect URL"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:623
+#: src/usr/local/www/services_captiveportal.php:621
 msgid ""
 "Set a default redirection URL. Visitors will be redirected to this URL after "
 "authentication only if the captive portal don't know where to redirect them. "
@@ -21514,41 +21509,41 @@ msgid ""
 "captiveportal's HTML pages."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:627
+#: src/usr/local/www/services_captiveportal.php:625
 msgid "After authentication Redirection URL"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:630
+#: src/usr/local/www/services_captiveportal.php:628
 msgid ""
 "Set a forced redirection URL. Clients will be redirected to this URL instead "
 "of the one they initially tried to access after they've authenticated."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:634
+#: src/usr/local/www/services_captiveportal.php:632
 msgid "Blocked MAC address redirect URL"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:637
+#: src/usr/local/www/services_captiveportal.php:635
 msgid ""
 "Blocked MAC addresses will be redirected to this URL when attempting access."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:641
+#: src/usr/local/www/services_captiveportal.php:639
 msgid "Concurrent user logins"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:644
+#: src/usr/local/www/services_captiveportal.php:642
 msgid ""
 "If enabled only the most recent login per username will be active. "
 "Subsequent logins will cause machines previously logged in with the same "
 "username to be disconnected."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:649
+#: src/usr/local/www/services_captiveportal.php:647
 msgid "MAC filtering"
 msgstr "Penapisan MAC"
 
-#: src/usr/local/www/services_captiveportal.php:652
+#: src/usr/local/www/services_captiveportal.php:650
 msgid ""
 "If enabled no attempts will be made to ensure that the MAC address of "
 "clients stays the same while they are logged in. This is required when the "
@@ -21557,11 +21552,11 @@ msgid ""
 "authentication cannot be used."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:658
+#: src/usr/local/www/services_captiveportal.php:656
 msgid "Pass-through MAC Auto Entry"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:661
+#: src/usr/local/www/services_captiveportal.php:659
 #, php-format
 msgid ""
 "When enabled, a MAC passthrough entry is automatically added after the user "
@@ -21571,50 +21566,44 @@ msgid ""
 "system. If this is enabled, the logout window will not be shown."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:671
-msgid ""
-"If enabled the username used during authentication will be saved in the "
-"\"Description\" Field."
-msgstr ""
-
-#: src/usr/local/www/services_captiveportal.php:675
+#: src/usr/local/www/services_captiveportal.php:666
 msgid "Per-user bandwidth restriction"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:682
+#: src/usr/local/www/services_captiveportal.php:673
 msgid "Default download (Kbit/s)"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:689
+#: src/usr/local/www/services_captiveportal.php:680
 msgid "Default upload (Kbit/s)"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:692
+#: src/usr/local/www/services_captiveportal.php:683
 msgid ""
 "If this option is set, the captive portal will restrict each user who logs "
 "in to the specified default bandwidth. RADIUS servers can override the "
 "default settings. Leave empty for no limit."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:697
+#: src/usr/local/www/services_captiveportal.php:688
 msgid "Use custom captive portal page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:700
+#: src/usr/local/www/services_captiveportal.php:691
 msgid ""
 "If set a portal.html page must be created and uploaded. If unchecked the "
 "default template will be used"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:704
+#: src/usr/local/www/services_captiveportal.php:695
 msgid "HTML Page Contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:709
+#: src/usr/local/www/services_captiveportal.php:700
 msgid "Portal page contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:712
+#: src/usr/local/www/services_captiveportal.php:703
 #, php-format
 msgid ""
 "Upload an HTML/PHP file for the portal page here (leave blank to keep the "
@@ -21639,31 +21628,31 @@ msgid ""
 "&quot;Continue&quot;&gt;%1$s&lt;/form&gt;"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:736
+#: src/usr/local/www/services_captiveportal.php:727
 msgid "Current Portal Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:739
+#: src/usr/local/www/services_captiveportal.php:730
 msgid "Live View"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:746
-#: src/usr/local/www/services_captiveportal.php:780
-#: src/usr/local/www/services_captiveportal.php:812
+#: src/usr/local/www/services_captiveportal.php:737
+#: src/usr/local/www/services_captiveportal.php:771
+#: src/usr/local/www/services_captiveportal.php:803
 msgid "View Page Contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:760
-#: src/usr/local/www/services_captiveportal.php:794
-#: src/usr/local/www/services_captiveportal.php:826
+#: src/usr/local/www/services_captiveportal.php:751
+#: src/usr/local/www/services_captiveportal.php:785
+#: src/usr/local/www/services_captiveportal.php:817
 msgid "Restore Default Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:769
+#: src/usr/local/www/services_captiveportal.php:760
 msgid "Auth error page contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:772
+#: src/usr/local/www/services_captiveportal.php:763
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed when "
 "an authentication error occurs. It may include \"$PORTAL_MESSAGE$\", which "
@@ -21671,37 +21660,37 @@ msgid ""
 "any."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:777
+#: src/usr/local/www/services_captiveportal.php:768
 msgid "Current Auth Error Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:803
+#: src/usr/local/www/services_captiveportal.php:794
 msgid "Logout page contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:806
+#: src/usr/local/www/services_captiveportal.php:797
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed on "
 "authentication success when the logout popup is enabled."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:809
+#: src/usr/local/www/services_captiveportal.php:800
 msgid "Current Logout Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:841
+#: src/usr/local/www/services_captiveportal.php:832
 msgid "Captive Portal Login Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:846
+#: src/usr/local/www/services_captiveportal.php:837
 msgid "Display custom logo image"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:853
+#: src/usr/local/www/services_captiveportal.php:844
 msgid "Logo Image"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:856
+#: src/usr/local/www/services_captiveportal.php:847
 msgid ""
 "Add a logo for use in the default portal login screen. File will be renamed "
 "captiveportal-logo.* The image will be resized to fit within the given area, "
@@ -21710,15 +21699,15 @@ msgid ""
 "image is present."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:860
+#: src/usr/local/www/services_captiveportal.php:851
 msgid "Display custom background image"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:867
+#: src/usr/local/www/services_captiveportal.php:858
 msgid "Background Image"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:870
+#: src/usr/local/www/services_captiveportal.php:861
 msgid ""
 "Add a background image for use in the default portal login screen. File will "
 "be renamed captiveportal-background.* The background image will fill the "
@@ -21726,26 +21715,26 @@ msgid ""
 "default background image will be used if no custom background is present."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:874
+#: src/usr/local/www/services_captiveportal.php:865
 msgid "Terms and Conditions"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:876
+#: src/usr/local/www/services_captiveportal.php:867
 msgid ""
 "Copy and paste terms and conditions for use in the captive portal. HTML tags "
 "will be stripped out"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:883
+#: src/usr/local/www/services_captiveportal.php:874
 #: src/usr/local/www/vpn_ipsec_phase1.php:747
 msgid "*Authentication Method"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:891
+#: src/usr/local/www/services_captiveportal.php:882
 msgid "Authentication Method"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:894
+#: src/usr/local/www/services_captiveportal.php:885
 msgid ""
 "Select an Authentication Method to use for this zone. One method must be "
 "selected.<br />- \"Authentication backend\" will force the login page to be "
@@ -21756,18 +21745,18 @@ msgid ""
 "automatically with their MAC address without displaying any login page."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:910
+#: src/usr/local/www/services_captiveportal.php:901
 msgid ""
 "You can add a remote authentication server in the <a href=\"/"
 "system_authservers.php\">User Manager</a>.<br/><span class="
 "\"vouchers_helptext\">Vouchers could also be used, please go to "
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:915
+#: src/usr/local/www/services_captiveportal.php:906
 msgid "Secondary authentication Server"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:924
+#: src/usr/local/www/services_captiveportal.php:915
 msgid ""
 "You can optionally select a second set of servers to to authenticate users. "
 "Users will then be able to login using separated HTML inputs.<br />This "
@@ -21776,11 +21765,11 @@ msgid ""
 "this setting empty."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:930
+#: src/usr/local/www/services_captiveportal.php:921
 msgid "Reauthenticate Users"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:933
+#: src/usr/local/www/services_captiveportal.php:924
 msgid ""
 "If reauthentication is enabled, request are made to the server for each user "
 "that is logged in every minute. If an access denied is received for a user, "
@@ -21790,62 +21779,62 @@ msgid ""
 "necessary for the portal to perform automatic reauthentication requests."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:942
+#: src/usr/local/www/services_captiveportal.php:933
 msgid "Local Authentication Privileges"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:950
+#: src/usr/local/www/services_captiveportal.php:941
 msgid "RADIUS MAC Secret"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:953
+#: src/usr/local/www/services_captiveportal.php:944
 msgid ""
 "RADIUS MAC will automatically try to authenticate devices with their MAC "
 "address as username, and the password entered below as password. Devices "
 "will still need to make one HTTP request to get connected, throught."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:960
+#: src/usr/local/www/services_captiveportal.php:951
 msgid ""
 "When enabled, clients will be disconnected after the amount of time "
 "retrieved from the RADIUS Session-Timeout attribute."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:964
+#: src/usr/local/www/services_captiveportal.php:955
 msgid "Traffic quota"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:967
+#: src/usr/local/www/services_captiveportal.php:958
 msgid ""
 "When enabled, clients will be disconnected after exceeding the amount of "
 "traffic, inclusive of both downloads and uploads, retrieved from the RADIUS "
 "pfSense-Max-Total-Octets attribute."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:971
+#: src/usr/local/www/services_captiveportal.php:962
 msgid "Per-user bandwidth restrictions"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:974
+#: src/usr/local/www/services_captiveportal.php:965
 msgid ""
 "When enabled, the bandwidth assigned to a client will be limited to the "
 "values retrieved from the RADIUS pfSense-Bandwidth-Max-Up and pfSense-"
 "Bandwidth-Max-Down attributes or from the comparable WISPr attributes."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:981
+#: src/usr/local/www/services_captiveportal.php:972
 msgid "Single dash"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:981
+#: src/usr/local/www/services_captiveportal.php:972
 msgid "Unformatted"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:979
+#: src/usr/local/www/services_captiveportal.php:970
 msgid "MAC address format"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:982
+#: src/usr/local/www/services_captiveportal.php:973
 #, php-format
 msgid ""
 "This option changes the MAC address format used when performing a RADIUS "
@@ -21854,28 +21843,28 @@ msgid ""
 " 001122334455"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:999
+#: src/usr/local/www/services_captiveportal.php:990
 msgid ""
 "If enabled, accounting request will be made for users identified against any "
 "RADIUS server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1010
-#: src/usr/local/www/services_captiveportal.php:1015
+#: src/usr/local/www/services_captiveportal.php:1001
+#: src/usr/local/www/services_captiveportal.php:1006
 msgid "Accounting Server"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1021
+#: src/usr/local/www/services_captiveportal.php:1012
 msgid ""
 "You can add a Radius Accounting server in the <a href=\"/system_authservers."
 "php\">User Manager</a>."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1025
+#: src/usr/local/www/services_captiveportal.php:1016
 msgid "Send accounting updates"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1061
+#: src/usr/local/www/services_captiveportal.php:1052
 msgid ""
 "This field set the way Accounting Updates should be done : <br />- If \"No "
 "updates\" is selected, then only one \"Accounting Start\" and one "
@@ -21889,45 +21878,45 @@ msgid ""
 "option very well, you should select \"Stop/Start (FreeRADIUS)\" instead."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1070
+#: src/usr/local/www/services_captiveportal.php:1061
 msgid "Accounting style"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1073
+#: src/usr/local/www/services_captiveportal.php:1064
 msgid ""
 "When enabled, data counts for RADIUS accounting packets will be taken from "
 "the client perspective, not the NAS. Acct-Input-Octets will represent "
 "download, and Acct-Output-Octets will represent upload."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1078
+#: src/usr/local/www/services_captiveportal.php:1069
 msgid "Idle time accounting"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1081
+#: src/usr/local/www/services_captiveportal.php:1072
 msgid ""
 "This setting change the stop time that will be send in the Accounting Stop "
 "request, when a user get disconnected after exceeding the idle timeout. If "
 "not checked, the sent stop time will be the last activity time."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1090
+#: src/usr/local/www/services_captiveportal.php:1081
 #: src/etc/inc/authgui.inc:288
 msgid "Login"
 msgstr "Log masuk"
 
-#: src/usr/local/www/services_captiveportal.php:1093
+#: src/usr/local/www/services_captiveportal.php:1084
 msgid ""
 "When enabled, the username and password will be transmitted over an HTTPS "
 "connection to protect against eavesdroppers. A server name and certificate "
 "must also be specified below."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1098
+#: src/usr/local/www/services_captiveportal.php:1089
 msgid "*HTTPS server name"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1101
+#: src/usr/local/www/services_captiveportal.php:1092
 msgid ""
 "This name will be used in the form action for the HTTPS POST and should "
 "match the Common Name (CN) in the certificate (otherwise, the client browser "
@@ -21936,22 +21925,22 @@ msgid ""
 "resolves to the correct interface IP on pfSense."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1107
+#: src/usr/local/www/services_captiveportal.php:1098
 msgid "*SSL Certificate"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1110
+#: src/usr/local/www/services_captiveportal.php:1101
 #, php-format
 msgid ""
 "If no certificates are defined, one may be defined here: %1$sSystem &gt; "
 "Cert. Manager%2$s"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1114
+#: src/usr/local/www/services_captiveportal.php:1105
 msgid "HTTPS Forwards"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1117
+#: src/usr/local/www/services_captiveportal.php:1108
 msgid ""
 "If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites "
 "will not be forwarded to the captive portal. This prevents certificate "
@@ -21961,7 +21950,7 @@ msgid ""
 "to the HTTPS login page."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1126
+#: src/usr/local/www/services_captiveportal.php:1117
 msgid ""
 "Don't forget to enable the DHCP server on the captive portal interface! Make "
 "sure that the default/maximum DHCP lease time is higher than the hard "
@@ -22367,8 +22356,8 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:708
 #: src/usr/local/www/vpn_ipsec_phase1.php:924
 #: src/usr/local/www/vpn_ipsec_phase2.php:661
-#: src/usr/local/www/interfaces.php:3017 src/usr/local/www/interfaces.php:3065
-#: src/usr/local/www/interfaces.php:3074
+#: src/usr/local/www/interfaces.php:3013 src/usr/local/www/interfaces.php:3061
+#: src/usr/local/www/interfaces.php:3070
 msgid "Auto"
 msgstr "Auto"
 
@@ -22872,6 +22861,10 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:666
 msgid "Properties"
+msgstr ""
+
+#: src/usr/local/www/firewall_aliases_edit.php:697
+msgid "Hint"
 msgstr ""
 
 #: src/usr/local/www/interfaces_bridge.php:62
@@ -24451,7 +24444,12 @@ msgstr ""
 msgid "IPv4/IPv6 Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1903
+#: src/usr/local/www/interfaces.php:1893
+msgid ""
+"The MAC address of a VLAN interface must be set on its parent interface"
+msgstr ""
+
+#: src/usr/local/www/interfaces.php:1896
 #, php-format
 msgid ""
 "This field can be used to modify (\"spoof\") the MAC address of this "
@@ -24459,27 +24457,27 @@ msgid ""
 "or leave blank."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1912
+#: src/usr/local/www/interfaces.php:1908
 msgid ""
 "If this field is blank, the adapter's default MTU will be used. This is "
 "typically 1500 bytes but can vary in some circumstances."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1917
+#: src/usr/local/www/interfaces.php:1913
 msgid "MSS"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1920
+#: src/usr/local/www/interfaces.php:1916
 msgid ""
 "If a value is entered in this field, then MSS clamping for TCP connections "
 "to the value entered above minus 40 (TCP/IP header size) will be in effect."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1926
+#: src/usr/local/www/interfaces.php:1922
 msgid "Speed and Duplex"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1929
+#: src/usr/local/www/interfaces.php:1925
 #, php-format
 msgid ""
 "Explicitly set speed and duplex mode for this interface.%sWARNING: MUST be "
@@ -24487,27 +24485,27 @@ msgid ""
 "interface connects to has its speed and duplex forced."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1935
+#: src/usr/local/www/interfaces.php:1931
 msgid "Static IPv4 Configuration"
 msgstr "Konfigurasi IPv4 Statik"
 
-#: src/usr/local/www/interfaces.php:1940
+#: src/usr/local/www/interfaces.php:1936
 msgid "*IPv4 Address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1945
+#: src/usr/local/www/interfaces.php:1941
 msgid "IPv4 Upstream gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1949
+#: src/usr/local/www/interfaces.php:1945
 msgid "IPv4 Upstream Gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1956 src/usr/local/www/interfaces.php:1997
+#: src/usr/local/www/interfaces.php:1952 src/usr/local/www/interfaces.php:1993
 msgid "Add a new gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1961
+#: src/usr/local/www/interfaces.php:1957
 #, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
@@ -24516,27 +24514,27 @@ msgid ""
 "by %2$sclicking here%3$s."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1969
+#: src/usr/local/www/interfaces.php:1965
 msgid "Static IPv6 Configuration"
 msgstr "Konfigurasi IPv6 Statik"
 
-#: src/usr/local/www/interfaces.php:1974
+#: src/usr/local/www/interfaces.php:1970
 msgid "*IPv6 address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1981 src/usr/local/www/interfaces.php:2294
+#: src/usr/local/www/interfaces.php:1977 src/usr/local/www/interfaces.php:2290
 msgid "Use IPv4 connectivity as parent interface"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1986
+#: src/usr/local/www/interfaces.php:1982
 msgid "IPv6 Upstream gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1990
+#: src/usr/local/www/interfaces.php:1986
 msgid "IPv6 Upstream Gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2002
+#: src/usr/local/www/interfaces.php:1998
 #, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
@@ -24544,48 +24542,48 @@ msgid ""
 "upstream gateway should be \"none\". "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2009
+#: src/usr/local/www/interfaces.php:2005
 msgid "New IPv6 Gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2066
+#: src/usr/local/www/interfaces.php:2062
 msgid "DHCP Client Configuration"
 msgstr "Konfigurasi Klien DHCP"
 
-#: src/usr/local/www/interfaces.php:2069 src/usr/local/www/interfaces.php:2274
+#: src/usr/local/www/interfaces.php:2065 src/usr/local/www/interfaces.php:2270
 msgid "Options"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2076
+#: src/usr/local/www/interfaces.php:2072
 msgid "Use advanced DHCP configuration options."
 msgstr "Guna lanjutan DHCP pilihan konfigurasi."
 
-#: src/usr/local/www/interfaces.php:2083 src/usr/local/www/interfaces.php:2288
+#: src/usr/local/www/interfaces.php:2079 src/usr/local/www/interfaces.php:2284
 msgid "Override the configuration from this file."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2092
+#: src/usr/local/www/interfaces.php:2088
 msgid ""
 "The value in this field is sent as the DHCP client identifier and hostname "
 "when requesting a DHCP lease. Some ISPs may require this (for client "
 "identification)."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2096
+#: src/usr/local/www/interfaces.php:2092
 msgid "Alias IPv4 address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2099
+#: src/usr/local/www/interfaces.php:2095
 msgid ""
 "The value in this field is used as a fixed alias IPv4 address by the DHCP "
 "client."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2103
+#: src/usr/local/www/interfaces.php:2099
 msgid "Reject leases from"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2106
+#: src/usr/local/www/interfaces.php:2102
 msgid ""
 "To have the DHCP client reject offers from specific DHCP servers, enter "
 "their IP addresses here (separate multiple entries with a comma). This is "
@@ -24593,112 +24591,112 @@ msgid ""
 "addresses when they lose upstream sync."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2112
+#: src/usr/local/www/interfaces.php:2108
 msgid "DHCP VLAN Priority"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2118 src/usr/local/www/interfaces.php:2347
+#: src/usr/local/www/interfaces.php:2114 src/usr/local/www/interfaces.php:2343
 msgid "Normally off unless specifically required by the ISP."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2125 src/usr/local/www/interfaces.php:2354
+#: src/usr/local/www/interfaces.php:2121 src/usr/local/www/interfaces.php:2350
 msgid "Choose 802.1p priority to set."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2130
+#: src/usr/local/www/interfaces.php:2126
 msgid "Protocol timing"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2153
+#: src/usr/local/www/interfaces.php:2149
 msgid "Select timeout"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2167
+#: src/usr/local/www/interfaces.php:2163
 msgid "Backoff cutoff"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2174
+#: src/usr/local/www/interfaces.php:2170
 msgid "Initial interval"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2178
+#: src/usr/local/www/interfaces.php:2174
 msgid "Presets"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2213
+#: src/usr/local/www/interfaces.php:2209
 #, php-format
 msgid ""
 "The values in these fields are DHCP protocol timings used when requesting a "
 "lease.%1$sSee %2$shere%3$s for more information"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2220 src/usr/local/www/interfaces.php:2361
+#: src/usr/local/www/interfaces.php:2216 src/usr/local/www/interfaces.php:2357
 msgid "Configuration File Override"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2230
+#: src/usr/local/www/interfaces.php:2226
 msgid "Lease Requirements and Requests"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2235 src/usr/local/www/interfaces.php:2386
+#: src/usr/local/www/interfaces.php:2231 src/usr/local/www/interfaces.php:2382
 msgid "Send options"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2245
+#: src/usr/local/www/interfaces.php:2241
 msgid "Request options"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2253
+#: src/usr/local/www/interfaces.php:2249
 msgid "Require options"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2260
+#: src/usr/local/www/interfaces.php:2256
 msgid "Option modifiers"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2271
+#: src/usr/local/www/interfaces.php:2267
 msgid "DHCP6 Client Configuration"
 msgstr "Konfigurasi Klien DHCP6"
 
-#: src/usr/local/www/interfaces.php:2281
+#: src/usr/local/www/interfaces.php:2277
 msgid "Use advanced DHCPv6 configuration options."
 msgstr "Guna lanjutan DHCPv6 pilihan konfigurasi."
 
-#: src/usr/local/www/interfaces.php:2301
+#: src/usr/local/www/interfaces.php:2297
 msgid "Request only an IPv6 prefix"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2308
+#: src/usr/local/www/interfaces.php:2304
 msgid "DHCPv6 Prefix Delegation size"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2311
+#: src/usr/local/www/interfaces.php:2307
 msgid ""
 "The value in this field is the delegated prefix length provided by the "
 "DHCPv6 server. Normally specified by the ISP."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2315
+#: src/usr/local/www/interfaces.php:2311
 msgid "Send IPv6 prefix hint"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2322
+#: src/usr/local/www/interfaces.php:2318
 msgid "Debug"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2328
+#: src/usr/local/www/interfaces.php:2324
 msgid "Do not wait for a RA"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2334
+#: src/usr/local/www/interfaces.php:2330
 msgid "Do not allow PD/Address release"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2340
+#: src/usr/local/www/interfaces.php:2336
 msgid "DHCP6 VLAN Priority"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2364
+#: src/usr/local/www/interfaces.php:2360
 #, php-format
 msgid ""
 "The value in this field is the full absolute path to a DHCP client "
@@ -24709,98 +24707,98 @@ msgid ""
 "may require certain options be or not be sent."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2373
+#: src/usr/local/www/interfaces.php:2369
 msgid "Advanced DHCP6 Client Configuration"
 msgstr "Lanjutan Konfigurasi Klien DHCP6"
 
-#: src/usr/local/www/interfaces.php:2378
+#: src/usr/local/www/interfaces.php:2374
 msgid "Information only"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2382
+#: src/usr/local/www/interfaces.php:2378
 msgid "Only exchange informational configuration parameters with servers."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2396
+#: src/usr/local/www/interfaces.php:2392
 msgid "Request Options"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2404
+#: src/usr/local/www/interfaces.php:2400
 msgid "Scripts"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2410
+#: src/usr/local/www/interfaces.php:2406
 msgid "Identity Association Statement"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2491
+#: src/usr/local/www/interfaces.php:2487
 msgid "Prefix interface statement"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2509
+#: src/usr/local/www/interfaces.php:2505
 msgid "Select prefix interface"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2512
+#: src/usr/local/www/interfaces.php:2508
 msgid "Prefix Interface"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2515
+#: src/usr/local/www/interfaces.php:2511
 msgid "Select the interface on which to apply the prefix delegation."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2517
+#: src/usr/local/www/interfaces.php:2513
 msgid "Authentication statement"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2549
+#: src/usr/local/www/interfaces.php:2545
 msgid "Keyinfo statement"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2590
+#: src/usr/local/www/interfaces.php:2586
 #, php-format
 msgid "See %1$shere%2$s more information"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2596
+#: src/usr/local/www/interfaces.php:2592
 msgid "6RD Configuration"
 msgstr "Konfigurasi 6RD"
 
-#: src/usr/local/www/interfaces.php:2601
+#: src/usr/local/www/interfaces.php:2597
 msgid "6RD Prefix"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2608
+#: src/usr/local/www/interfaces.php:2604
 msgid "*6RD Border relay"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2615
+#: src/usr/local/www/interfaces.php:2611
 msgid "6RD IPv4 Prefix length"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2618
+#: src/usr/local/www/interfaces.php:2614
 msgid ""
 "6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means "
 "embed the entire IPv4 address in the 6RD prefix."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2623
+#: src/usr/local/www/interfaces.php:2619
 msgid "Track IPv6 Interface"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2665
+#: src/usr/local/www/interfaces.php:2661
 msgid "*IPv6 Interface"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2668
+#: src/usr/local/www/interfaces.php:2664
 msgid "Selects the dynamic IPv6 WAN interface to track for configuration."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2676
+#: src/usr/local/www/interfaces.php:2672
 msgid "IPv6 Prefix ID"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2679
+#: src/usr/local/www/interfaces.php:2675
 #, php-format
 msgid ""
 "(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the "
@@ -24808,102 +24806,102 @@ msgid ""
 "based on the dynamic IPv6 connection. The default value is 0."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2735
+#: src/usr/local/www/interfaces.php:2731
 msgid "Typically *99# for GSM networks and #777 for CDMA networks."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2739
+#: src/usr/local/www/interfaces.php:2735
 msgid "Access Point Name"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2765
+#: src/usr/local/www/interfaces.php:2761
 msgid "*Modem port"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2772
+#: src/usr/local/www/interfaces.php:2768
 msgid "Advanced PPP"
 msgstr "Lanjutan PPP"
 
-#: src/usr/local/www/interfaces.php:2775
+#: src/usr/local/www/interfaces.php:2771
 msgid "Create a new PPP configuration."
 msgstr "Buat konfigurasi PPP baru."
 
-#: src/usr/local/www/interfaces.php:2780
+#: src/usr/local/www/interfaces.php:2776
 msgid "PPPoE Configuration"
 msgstr "Konfigurasi PPPoE."
 
-#: src/usr/local/www/interfaces.php:2802
+#: src/usr/local/www/interfaces.php:2798
 msgid "This field can usually be left empty."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2814
+#: src/usr/local/www/interfaces.php:2810
 msgid "Idle timeout"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2818 src/usr/local/www/interfaces.php:2951
+#: src/usr/local/www/interfaces.php:2814 src/usr/local/www/interfaces.php:2947
 msgid ""
 "If no qualifying outgoing packets are transmitted for the specified number "
 "of seconds, the connection is brought down. An idle timeout of zero disables "
 "this feature."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2823
+#: src/usr/local/www/interfaces.php:2819
 msgid "Periodic reset"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2826
+#: src/usr/local/www/interfaces.php:2822
 msgid "Select a reset timing type."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2828
+#: src/usr/local/www/interfaces.php:2824
 msgid "Custom reset"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2837
+#: src/usr/local/www/interfaces.php:2833
 msgid "Hour (0-23)"
 msgstr "Jam (0-23)"
 
-#: src/usr/local/www/interfaces.php:2845
+#: src/usr/local/www/interfaces.php:2841
 msgid "Minutes (0-59)"
 msgstr "Minit (0-59)"
 
-#: src/usr/local/www/interfaces.php:2852
+#: src/usr/local/www/interfaces.php:2848
 msgid "Specific date (mm/dd/yyyy)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2854
+#: src/usr/local/www/interfaces.php:2850
 msgid ""
 "Leave the date field empty, for the reset to be executed each day at the "
 "time specified by the minutes and hour fields"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2858
+#: src/usr/local/www/interfaces.php:2854
 msgid "cron based reset"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2897 src/usr/local/www/interfaces.php:2962
+#: src/usr/local/www/interfaces.php:2893 src/usr/local/www/interfaces.php:2958
 msgid "Advanced and MLPPP"
 msgstr "Lanjutan dan MLPPP"
 
-#: src/usr/local/www/interfaces.php:2900
+#: src/usr/local/www/interfaces.php:2896
 msgid ""
 "Click for additional PPPoE configuration options. Save first if changes have "
 "been made."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2905
+#: src/usr/local/www/interfaces.php:2901
 msgid "PPTP/L2TP Configuration"
 msgstr "Konfigurasi PPTP/L2TP"
 
-#: src/usr/local/www/interfaces.php:2924
+#: src/usr/local/www/interfaces.php:2920
 msgid "*Local IP address"
 msgstr "*Alamat IP Tetapan"
 
-#: src/usr/local/www/interfaces.php:2931
+#: src/usr/local/www/interfaces.php:2927
 msgid "*Remote IP address"
 msgstr "*Alamat IP Jauh"
 
-#: src/usr/local/www/interfaces.php:2942
+#: src/usr/local/www/interfaces.php:2938
 msgid ""
 "This option causes the interface to operate in dial-on-demand mode, allowing "
 "it to be a virtual full time connection. The interface is configured, but "
@@ -24911,58 +24909,58 @@ msgid ""
 "traffic is detected."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2947
+#: src/usr/local/www/interfaces.php:2943
 msgid "Idle timeout (seconds)"
 msgstr "Tamat masa melahu (Saat)"
 
-#: src/usr/local/www/interfaces.php:2955
+#: src/usr/local/www/interfaces.php:2951
 msgid "There are additional Local and Remote IP addresses defined for MLPPP."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2965
+#: src/usr/local/www/interfaces.php:2961
 #, php-format
 msgid ""
 "%sClick for additional PPTP and L2TP configuration options. Save first if "
 "changes have been made."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2972
+#: src/usr/local/www/interfaces.php:2968
 msgid ""
 "Common Wireless Configuration - Settings apply to all wireless networks on "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2976
+#: src/usr/local/www/interfaces.php:2972
 msgid "Persist common settings"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2996
+#: src/usr/local/www/interfaces.php:2992
 msgid "Standard"
 msgstr "Standard"
 
-#: src/usr/local/www/interfaces.php:3006 src/usr/local/www/interfaces.php:3056
+#: src/usr/local/www/interfaces.php:3002 src/usr/local/www/interfaces.php:3052
 #: src/usr/local/www/status_graph.php:193
 msgid "Off"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3006
+#: src/usr/local/www/interfaces.php:3002
 msgid "CTS to self"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3006
+#: src/usr/local/www/interfaces.php:3002
 msgid "RTS and CTS"
 msgstr "RTS dan CTS"
 
-#: src/usr/local/www/interfaces.php:3004
+#: src/usr/local/www/interfaces.php:3000
 msgid "802.11g OFDM Protection Mode"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3007
+#: src/usr/local/www/interfaces.php:3003
 msgid ""
 "For IEEE 802.11g, use the specified technique for protecting OFDM frames in "
 "a mixed 11b/11g network."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3044
+#: src/usr/local/www/interfaces.php:3040
 #, php-format
 msgid ""
 "Legend: wireless standards - channel # (frequency @ max TX power / TX power "
@@ -24970,88 +24968,88 @@ msgid ""
 " Auto may override the wireless standard selected above."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3049
+#: src/usr/local/www/interfaces.php:3045
 msgid "Antenna Settings"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3056 src/usr/local/www/status_graph.php:192
+#: src/usr/local/www/interfaces.php:3052 src/usr/local/www/status_graph.php:192
 msgid "On"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3057
+#: src/usr/local/www/interfaces.php:3053
 msgid "Diversity"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3065 src/usr/local/www/interfaces.php:3074
+#: src/usr/local/www/interfaces.php:3061 src/usr/local/www/interfaces.php:3070
 msgid "#1"
 msgstr "#1"
 
-#: src/usr/local/www/interfaces.php:3065 src/usr/local/www/interfaces.php:3074
+#: src/usr/local/www/interfaces.php:3061 src/usr/local/www/interfaces.php:3070
 msgid "#2"
 msgstr "#2"
 
-#: src/usr/local/www/interfaces.php:3066
+#: src/usr/local/www/interfaces.php:3062
 msgid "Transmit antenna"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3075
+#: src/usr/local/www/interfaces.php:3071
 msgid "Receive antenna"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3078
+#: src/usr/local/www/interfaces.php:3074
 msgid ""
 "Note: The antenna numbers do not always match up with the labels on the card."
 ""
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3087
+#: src/usr/local/www/interfaces.php:3083
 msgid "Distance setting (meters)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3090
+#: src/usr/local/www/interfaces.php:3086
 msgid ""
 "This field can be used to tune ACK/CTS timers to fit the distance between AP "
 "and Client"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3096
+#: src/usr/local/www/interfaces.php:3092
 msgid "Regulatory Settings"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3108
+#: src/usr/local/www/interfaces.php:3104
 msgid "Regulatory domain"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3111
+#: src/usr/local/www/interfaces.php:3107
 msgid ""
 "Some cards have a default that is not recognized and require changing the "
 "regulatory domain to one in this list for the changes to other regulatory "
 "settings to work"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3126
+#: src/usr/local/www/interfaces.php:3122
 msgid ""
 "Any country setting other than \"Default\" will override the regulatory "
 "domain setting"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3132
+#: src/usr/local/www/interfaces.php:3128
 msgid "Indoor"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3132
+#: src/usr/local/www/interfaces.php:3128
 msgid "Outdoor"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3132
+#: src/usr/local/www/interfaces.php:3128
 msgid "Anywhere"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3130
+#: src/usr/local/www/interfaces.php:3126
 msgid "Location"
 msgstr "Lokasi"
 
-#: src/usr/local/www/interfaces.php:3133
+#: src/usr/local/www/interfaces.php:3129
 #, php-format
 msgid ""
 "These settings may affect which channels are available and the maximum "
@@ -25063,166 +25061,166 @@ msgid ""
 "additional channels that are not already supported."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3141
+#: src/usr/local/www/interfaces.php:3137
 msgid "Network-Specific Wireless Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3162
+#: src/usr/local/www/interfaces.php:3158
 msgid "802.11g"
 msgstr "802.11g"
 
-#: src/usr/local/www/interfaces.php:3162
+#: src/usr/local/www/interfaces.php:3158
 msgid "802.11n"
 msgstr "802.11n"
 
-#: src/usr/local/www/interfaces.php:3160
+#: src/usr/local/www/interfaces.php:3156
 msgid "Minimum wireless standard"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3163
+#: src/usr/local/www/interfaces.php:3159
 msgid ""
 "When operating as an access point, allow only stations capable of the "
 "selected wireless standard to associate (stations not capable are not "
 "permitted to associate)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3167
+#: src/usr/local/www/interfaces.php:3163
 msgid "802.11g only"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3171
+#: src/usr/local/www/interfaces.php:3167
 msgid ""
 "When operating as an access point in 802.11g mode, allow only 11g-capable "
 "stations to associate (11b-only stations are not permitted to associate)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3176
+#: src/usr/local/www/interfaces.php:3172
 msgid "Allow intra-BSS communication"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3180
+#: src/usr/local/www/interfaces.php:3176
 msgid ""
 "Provides extra security by isolating clients so they cannot directly "
 "communicate with one another"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3184
+#: src/usr/local/www/interfaces.php:3180
 msgid "Enable WME"
 msgstr "Dayakan WME"
 
-#: src/usr/local/www/interfaces.php:3192
+#: src/usr/local/www/interfaces.php:3188
 msgid "Hide SSID"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3201 src/usr/local/www/interfaces.php:3222
+#: src/usr/local/www/interfaces.php:3197 src/usr/local/www/interfaces.php:3218
 msgid "WPA"
 msgstr "WPA"
 
-#: src/usr/local/www/interfaces.php:3213
+#: src/usr/local/www/interfaces.php:3209
 msgid "WPA Pre-Shared Key"
 msgstr "WPA Kekunci Prakongsi"
 
-#: src/usr/local/www/interfaces.php:3216
+#: src/usr/local/www/interfaces.php:3212
 msgid "WPA Passphrase must be between 8 and 63 characters long"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3222
+#: src/usr/local/www/interfaces.php:3218
 msgid "WPA2"
 msgstr "WPA2"
 
-#: src/usr/local/www/interfaces.php:3220
+#: src/usr/local/www/interfaces.php:3216
 msgid "WPA mode"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3229
+#: src/usr/local/www/interfaces.php:3225
 msgid "Extensible Authentication Protocol"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3227
+#: src/usr/local/www/interfaces.php:3223
 msgid "WPA Key Management Mode"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3236
+#: src/usr/local/www/interfaces.php:3232
 msgid "AES (recommended)"
 msgstr "AES (disyorkan)"
 
-#: src/usr/local/www/interfaces.php:3236
+#: src/usr/local/www/interfaces.php:3232
 msgid "TKIP"
 msgstr "TKIP"
 
-#: src/usr/local/www/interfaces.php:3234
+#: src/usr/local/www/interfaces.php:3230
 msgid "WPA Pairwise"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3241
+#: src/usr/local/www/interfaces.php:3237
 msgid "Group Key Rotation"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3245
+#: src/usr/local/www/interfaces.php:3241
 msgid ""
 "Time between group rekey events, specified in seconds. Allowed values are 1-"
 "9999. Must be shorter than Master Key Regeneration time"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3249
+#: src/usr/local/www/interfaces.php:3245
 msgid "Group Master Key Regeneration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3253
+#: src/usr/local/www/interfaces.php:3249
 msgid ""
 "Time between GMK rekey events, specified in seconds. Allowed values are 1-"
 "9999. Must be longer than Group Key Rotation time"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3257
+#: src/usr/local/www/interfaces.php:3253
 msgid "Strict Key Regeneration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3265
+#: src/usr/local/www/interfaces.php:3261
 msgid "802.1x RADIUS Options"
 msgstr "802.1x RADIUS Tetapan"
 
-#: src/usr/local/www/interfaces.php:3269
+#: src/usr/local/www/interfaces.php:3265
 msgid "IEEE802.1X"
 msgstr "IEEE802.1X"
 
-#: src/usr/local/www/interfaces.php:3273
+#: src/usr/local/www/interfaces.php:3269
 msgid "This option requires that the \"Enable WPA box\" is checked"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3275
+#: src/usr/local/www/interfaces.php:3271
 msgid "Primary 802.1X server"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3281 src/usr/local/www/interfaces.php:3305
+#: src/usr/local/www/interfaces.php:3277 src/usr/local/www/interfaces.php:3301
 msgid "IP address of the RADIUS server"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3288 src/usr/local/www/interfaces.php:3312
+#: src/usr/local/www/interfaces.php:3284 src/usr/local/www/interfaces.php:3308
 msgid "Server auth port. Default is 1812"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3295 src/usr/local/www/interfaces.php:3319
+#: src/usr/local/www/interfaces.php:3291 src/usr/local/www/interfaces.php:3315
 msgid "RADIUS Shared secret for this firewall"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3299
+#: src/usr/local/www/interfaces.php:3295
 msgid "Secondary 802.1X server"
 msgstr "Pelayan 802.1X menengah"
 
-#: src/usr/local/www/interfaces.php:3325
+#: src/usr/local/www/interfaces.php:3321
 msgid "Authentication Roaming Preauth"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3334
+#: src/usr/local/www/interfaces.php:3330
 msgid "Reserved Networks"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3338
+#: src/usr/local/www/interfaces.php:3334
 msgid "Block private networks and loopback addresses"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3342
+#: src/usr/local/www/interfaces.php:3338
 msgid ""
 "Blocks traffic from IP addresses that are reserved for private networks per "
 "RFC 1918 (10/8, 172.16/12, 192.168/16) and unique local addresses per RFC "
@@ -25236,12 +25234,12 @@ msgstr ""
 "amnya hendaklah dihidupkan, kecuali antara muka rangkaian ini tetap berada "
 "di dalam apa-apa ruang alamat persendirian juga."
 
-#: src/usr/local/www/interfaces.php:3348
+#: src/usr/local/www/interfaces.php:3344
 #: src/usr/local/www/firewall_rules.php:429
 msgid "Block bogon networks"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3352
+#: src/usr/local/www/interfaces.php:3348
 #, php-format
 msgid ""
 "Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet "
@@ -25251,7 +25249,7 @@ msgid ""
 "System > Advanced, Firewall & NAT settings."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3383
+#: src/usr/local/www/interfaces.php:3379
 msgid "New IPv4 Gateway"
 msgstr ""
 
@@ -25985,7 +25983,7 @@ msgid "Delete gateway"
 msgstr ""
 
 #: src/usr/local/www/system_gateways.php:411
-#: src/usr/local/www/interfaces.php:2014 src/usr/local/www/interfaces.php:3388
+#: src/usr/local/www/interfaces.php:2010 src/usr/local/www/interfaces.php:3384
 msgid "Default gateway"
 msgstr ""
 
@@ -28249,11 +28247,11 @@ msgstr "Menghapus pakej..."
 #: src/etc/inc/services.inc:1970 src/etc/inc/services.inc:2193
 #: src/etc/inc/services.inc:2261 src/etc/inc/services.inc:2486
 #: src/etc/inc/rrd.inc:970 src/etc/inc/interfaces.inc:198
-#: src/etc/inc/interfaces.inc:365 src/etc/inc/interfaces.inc:525
-#: src/etc/inc/interfaces.inc:593 src/etc/inc/interfaces.inc:922
-#: src/etc/inc/interfaces.inc:1398 src/etc/inc/interfaces.inc:1458
-#: src/etc/inc/interfaces.inc:1489 src/etc/inc/interfaces.inc:1513
-#: src/etc/inc/interfaces.inc:1534 src/etc/inc/interfaces.inc:2621
+#: src/etc/inc/interfaces.inc:383 src/etc/inc/interfaces.inc:543
+#: src/etc/inc/interfaces.inc:611 src/etc/inc/interfaces.inc:940
+#: src/etc/inc/interfaces.inc:1416 src/etc/inc/interfaces.inc:1476
+#: src/etc/inc/interfaces.inc:1507 src/etc/inc/interfaces.inc:1531
+#: src/etc/inc/interfaces.inc:1552 src/etc/inc/interfaces.inc:2639
 #: src/etc/inc/filter.inc:291 src/etc/inc/filter.inc:562
 msgid "done."
 msgstr "selesai."
@@ -31587,131 +31585,131 @@ msgstr ""
 msgid "Configuring loopback interface..."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:349
+#: src/etc/inc/interfaces.inc:367
 msgid "Configuring VLAN interfaces..."
 msgstr "Mengkonfigurasi antara muka VLAN..."
 
-#: src/etc/inc/interfaces.inc:373
+#: src/etc/inc/interfaces.inc:391
 msgid "VLAN: called with wrong options. Problems with config!"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:378
+#: src/etc/inc/interfaces.inc:396
 msgid "interface_vlan_configure called with if undefined."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:384
+#: src/etc/inc/interfaces.inc:402
 msgid "vlan_interface called with if undefined var."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:428 src/etc/inc/interfaces.inc:533
+#: src/etc/inc/interfaces.inc:446 src/etc/inc/interfaces.inc:551
 #, php-format
 msgid "QinQ compat VLAN: called with wrong options. Problems with config!%s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:435
+#: src/etc/inc/interfaces.inc:453
 #, php-format
 msgid "interface_qinq_configure called with if undefined.%s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:440
+#: src/etc/inc/interfaces.inc:458
 #, php-format
 msgid "interface_qinq_configure called with invalid if.%s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:446
+#: src/etc/inc/interfaces.inc:464
 msgid "interface_qinq_configure cannot create VLAN interface"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:516
+#: src/etc/inc/interfaces.inc:534
 msgid "Configuring QinQ interfaces..."
 msgstr "Mengkonfigurasi antara muka QinQ..."
 
-#: src/etc/inc/interfaces.inc:539
+#: src/etc/inc/interfaces.inc:557
 #, php-format
 msgid "interface_qinq2_configure called with if undefined.%s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:546
+#: src/etc/inc/interfaces.inc:564
 #, php-format
 msgid ""
 "interface_qinq2_configure interface name too big %s. (max. size: %d).%s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:568
+#: src/etc/inc/interfaces.inc:586
 msgid "Creating wireless clone interfaces..."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:646
+#: src/etc/inc/interfaces.inc:664
 #, php-format
 msgid "No members found on %s"
 msgstr "Tiada ahli ditemui pada %s"
 
-#: src/etc/inc/interfaces.inc:710
+#: src/etc/inc/interfaces.inc:728
 msgid "realif not defined in interfaces bridge - up"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:731
+#: src/etc/inc/interfaces.inc:749
 msgid "bridgeif not defined -- could not bring interface up"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:905
+#: src/etc/inc/interfaces.inc:923
 msgid "Configuring LAGG interfaces..."
 msgstr "Mengkonfigurasi antara muka VLAN..."
 
-#: src/etc/inc/interfaces.inc:1061
+#: src/etc/inc/interfaces.inc:1079
 msgid "Could not bring greif up -- variable not defined."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1144
+#: src/etc/inc/interfaces.inc:1162
 msgid ""
 "could not bring realif up -- variable not defined -- "
 "interface_gif_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1191
+#: src/etc/inc/interfaces.inc:1209
 msgid "could not bring gifif up -- variable not defined"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1247 src/etc/inc/interfaces.inc:1251
-#: src/etc/inc/interfaces.inc:6175
+#: src/etc/inc/interfaces.inc:1265 src/etc/inc/interfaces.inc:1269
+#: src/etc/inc/interfaces.inc:6194
 msgid "IPsec VTI"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1387
+#: src/etc/inc/interfaces.inc:1405
 msgid "Configuring IPsec VTI interfaces..."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1450 src/etc/inc/interfaces.inc:1480
-#: src/etc/inc/interfaces.inc:1504 src/etc/inc/interfaces.inc:1522
+#: src/etc/inc/interfaces.inc:1468 src/etc/inc/interfaces.inc:1498
+#: src/etc/inc/interfaces.inc:1522 src/etc/inc/interfaces.inc:1540
 #, php-format
 msgid "Configuring %s interface..."
 msgstr "Mengkonfigurasi antara muka %s..."
 
-#: src/etc/inc/interfaces.inc:1454 src/etc/inc/interfaces.inc:1483
-#: src/etc/inc/interfaces.inc:1507 src/etc/inc/interfaces.inc:1525
+#: src/etc/inc/interfaces.inc:1472 src/etc/inc/interfaces.inc:1501
+#: src/etc/inc/interfaces.inc:1525 src/etc/inc/interfaces.inc:1543
 #, php-format
 msgid "Configuring %s"
 msgstr "Mengkonfigurasi %s"
 
-#: src/etc/inc/interfaces.inc:1608
+#: src/etc/inc/interfaces.inc:1626
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1622
+#: src/etc/inc/interfaces.inc:1640
 msgid "Wrong parameters used during interface_bring_down"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1793
+#: src/etc/inc/interfaces.inc:1811
 msgid "Enter CARP maintenance mode"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2021
+#: src/etc/inc/interfaces.inc:2039
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
 msgstr "Tidak menjumpai konfig PPP untuk %s dalam interface_ppps_configure()."
 
-#: src/etc/inc/interfaces.inc:2087
+#: src/etc/inc/interfaces.inc:2105
 #, php-format
 msgid ""
 "Could not get a Local IP address for PPTP/L2TP link on %s in "
@@ -31720,110 +31718,110 @@ msgstr ""
 "Tidak dapat satu alamat IP tempatan untuk penghubung PPTP/L2TP pada %s dalam "
 "interfaces_ppps_configure. Menggunakan 0.0.0.0 IP!"
 
-#: src/etc/inc/interfaces.inc:2094
+#: src/etc/inc/interfaces.inc:2112
 #, php-format
 msgid ""
 "Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in "
 "interfaces_ppps_configure."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2101
+#: src/etc/inc/interfaces.inc:2119
 #, php-format
 msgid ""
 "Device %s does not exist. PPP link cannot start without the modem device."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2106
+#: src/etc/inc/interfaces.inc:2124
 #, php-format
 msgid "Unknown %s configured as ppp interface."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2447
+#: src/etc/inc/interfaces.inc:2465
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
 msgstr ""
 "Ralat: tidak dapat membuka mpd_%1$s.conf dalam interface_ppps_configure()."
 "%2$s"
 
-#: src/etc/inc/interfaces.inc:2542
+#: src/etc/inc/interfaces.inc:2560
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2559
+#: src/etc/inc/interfaces.inc:2577
 msgid "Configuring CARP settings..."
 msgstr "Mengkonfigurasi tetapan CARP..."
 
-#: src/etc/inc/interfaces.inc:2600
+#: src/etc/inc/interfaces.inc:2618
 msgid "waiting for pfsync..."
 msgstr "Menunggu pfsync..."
 
-#: src/etc/inc/interfaces.inc:2606
+#: src/etc/inc/interfaces.inc:2624
 #, php-format
 msgid "pfsync done in %s seconds."
 msgstr "pfsync selesai di %s saat."
 
-#: src/etc/inc/interfaces.inc:2607
+#: src/etc/inc/interfaces.inc:2625
 msgid "Configuring CARP settings finalize..."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2821
+#: src/etc/inc/interfaces.inc:2839
 #, php-format
 msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
 "this VIP."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2887
+#: src/etc/inc/interfaces.inc:2905
 #, php-format
 msgid "Interface %s changed to hostap mode"
 msgstr "Antaramuka %s diubah kepada mod hostap"
 
-#: src/etc/inc/interfaces.inc:2891
+#: src/etc/inc/interfaces.inc:2909
 #, php-format
 msgid "Interface %s changed to adhoc mode"
 msgstr "Antaramuka %s diubah kepada mod adhoc"
 
-#: src/etc/inc/interfaces.inc:2895
+#: src/etc/inc/interfaces.inc:2913
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
 msgstr "Antaramuka %s diubah kepada mod infrastruktur"
 
-#: src/etc/inc/interfaces.inc:2908
+#: src/etc/inc/interfaces.inc:2926
 #, php-format
 msgid "Cloning new wireless interface %s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2913
+#: src/etc/inc/interfaces.inc:2931
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3578
+#: src/etc/inc/interfaces.inc:3596
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3599
+#: src/etc/inc/interfaces.inc:3617
 #, php-format
 msgid "OpenVPN: Resync server %s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3612
+#: src/etc/inc/interfaces.inc:3630
 #, php-format
 msgid "OpenVPN: Resync client %s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3758
+#: src/etc/inc/interfaces.inc:3787
 #, php-format
 msgid "Deny router advertisements for interface %s"
 msgstr "Menafikan iklan penghala untuk antaramuka %s"
 
-#: src/etc/inc/interfaces.inc:3795
+#: src/etc/inc/interfaces.inc:3810
 msgid "Generating new MAC address."
 msgstr "Menjana alamat MAC baru."
 
-#: src/etc/inc/interfaces.inc:3800 src/etc/inc/interfaces.inc:3801
+#: src/etc/inc/interfaces.inc:3814 src/etc/inc/interfaces.inc:3817
 #, php-format
 msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
@@ -31832,63 +31830,63 @@ msgstr ""
 "Alamat tidak sah MAC (ff:ff:ff:ff:ff:ff) di antara muka %1$s telah automatik "
 "digantikan dengan %2$s"
 
-#: src/etc/inc/interfaces.inc:3866
+#: src/etc/inc/interfaces.inc:3885
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3936
+#: src/etc/inc/interfaces.inc:3955
 msgid "calling interface_dhcpv6_configure."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4060 src/etc/inc/interfaces.inc:4130
-#: src/etc/inc/interfaces.inc:4194
+#: src/etc/inc/interfaces.inc:4079 src/etc/inc/interfaces.inc:4149
+#: src/etc/inc/interfaces.inc:4213
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4067 src/etc/inc/interfaces.inc:4073
+#: src/etc/inc/interfaces.inc:4086 src/etc/inc/interfaces.inc:4092
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
 msgstr "Antaramuka %1$s ditetapkan melalui %2$s jenis %3$s"
 
-#: src/etc/inc/interfaces.inc:4136
+#: src/etc/inc/interfaces.inc:4155
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4172
+#: src/etc/inc/interfaces.inc:4191
 #, php-format
 msgid "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4200 src/etc/inc/interfaces.inc:4255
-#: src/etc/inc/interfaces.inc:4338
+#: src/etc/inc/interfaces.inc:4219 src/etc/inc/interfaces.inc:4274
+#: src/etc/inc/interfaces.inc:4357
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
 "configuring 6RD tunnel"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4232
+#: src/etc/inc/interfaces.inc:4251
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4444
+#: src/etc/inc/interfaces.inc:4463
 msgid "Failed to write user DUID file!"
 msgstr "Gagal menulis pengguna DUID fail!"
 
-#: src/etc/inc/interfaces.inc:4919
+#: src/etc/inc/interfaces.inc:4938
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr ""
 "Ralat: tidak dapat membuka %s dalam DHCP6_Config_File_Override() untuk "
 "pembacaan."
 
-#: src/etc/inc/interfaces.inc:4951
+#: src/etc/inc/interfaces.inc:4970
 #, php-format
 msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
@@ -31897,19 +31895,19 @@ msgstr ""
 "Ralat: tidak dapat membuka dhclient_%s.conf dalam interface_dhcp_configure() "
 "untuk penulisan."
 
-#: src/etc/inc/interfaces.inc:4964
+#: src/etc/inc/interfaces.inc:4983
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:5113
+#: src/etc/inc/interfaces.inc:5132
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
 msgstr ""
 "Ralat: tidak dapat membuka %s dalam DHCP_Config_File_Override() untuk "
 "pembacaan."
 
-#: src/etc/inc/interfaces.inc:6976
+#: src/etc/inc/interfaces.inc:7010
 msgid "L2TP VPN"
 msgstr "VPN L2TP"
 
@@ -35144,7 +35142,7 @@ msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
 msgstr ""
 "Ralat: tidak dapat membuka '%1$s' dalam captiveportal_write_elements() %2$s"
 
-#: src/etc/inc/captiveportal.inc:2447
+#: src/etc/inc/captiveportal.inc:2445
 msgid "Captive Portal allowed users configuration changed"
 msgstr ""
 "Portal Tawanan pengguna yang dibenarkan konfigurasi anda telah berubah"
@@ -36545,105 +36543,101 @@ msgid ""
 "stop processing Outbound NAT rules"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:535
+#: src/usr/local/www/services_captiveportal.php:533
 msgid "Enable Captive Portal"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:606
+#: src/usr/local/www/services_captiveportal.php:604
 msgid "Enable waiting period reset on attempted access"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:613
+#: src/usr/local/www/services_captiveportal.php:611
 msgid "Enable logout popup window"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:642
+#: src/usr/local/www/services_captiveportal.php:640
 msgid "Disable Concurrent user logins"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:650
+#: src/usr/local/www/services_captiveportal.php:648
 msgid "Disable MAC filtering"
 msgstr "Lumpuhkan penapisan MAC"
 
-#: src/usr/local/www/services_captiveportal.php:659
+#: src/usr/local/www/services_captiveportal.php:657
 msgid "Enable Pass-through MAC automatic additions"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:669
-msgid "Include username in the created Pass-through entry"
-msgstr ""
-
-#: src/usr/local/www/services_captiveportal.php:676
+#: src/usr/local/www/services_captiveportal.php:667
 msgid "Enable per-user bandwidth restriction"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:698
+#: src/usr/local/www/services_captiveportal.php:689
 msgid "Enable to use a custom captive portal login page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:847
+#: src/usr/local/www/services_captiveportal.php:838
 msgid "Enable to use a custom uploaded logo"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:861
+#: src/usr/local/www/services_captiveportal.php:852
 msgid "Enable to use a custom uploaded background image"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:931
+#: src/usr/local/www/services_captiveportal.php:922
 msgid "Reauthenticate connected users every minute"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:943
+#: src/usr/local/www/services_captiveportal.php:934
 msgid "Allow only users/groups with \"Captive portal login\" privilege set"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:958
+#: src/usr/local/www/services_captiveportal.php:949
 msgid "Use RADIUS Session-Timeout attributes"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:965
+#: src/usr/local/www/services_captiveportal.php:956
 msgid "Use RADIUS pfSense-Max-Total-Octets attribute"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:972
+#: src/usr/local/www/services_captiveportal.php:963
 msgid ""
 "Use RADIUS pfSense-Bandwidth-Max-Up and pfSense-Bandwidth-Max-Down "
 "attributes"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:997
+#: src/usr/local/www/services_captiveportal.php:988
 msgid "Send RADIUS accounting packets."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1032
+#: src/usr/local/www/services_captiveportal.php:1023
 msgid "No updates"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1040
+#: src/usr/local/www/services_captiveportal.php:1031
 msgid "Stop/Start"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1048
+#: src/usr/local/www/services_captiveportal.php:1039
 msgid "Stop/Start (FreeRADIUS)"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1056
+#: src/usr/local/www/services_captiveportal.php:1047
 msgid "Interim"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1071
+#: src/usr/local/www/services_captiveportal.php:1062
 msgid "Invert Acct-Input-Octets and Acct-Output-Octets"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1079
+#: src/usr/local/www/services_captiveportal.php:1070
 msgid "Include idle time when users get disconnected due to idle timeout"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1091
+#: src/usr/local/www/services_captiveportal.php:1082
 msgid "Enable HTTPS login"
 msgstr "Dayakan log masuk HTTPS"
 
-#: src/usr/local/www/services_captiveportal.php:1115
+#: src/usr/local/www/services_captiveportal.php:1106
 msgid "Disable HTTPS Forwards"
 msgstr ""
 
@@ -36823,125 +36817,125 @@ msgid ""
 "page. "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1982
+#: src/usr/local/www/interfaces.php:1978
 msgid "IPv6 will use the IPv4 connectivity link (PPPoE)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2081 src/usr/local/www/interfaces.php:2286
+#: src/usr/local/www/interfaces.php:2077 src/usr/local/www/interfaces.php:2282
 msgid "Configuration Override"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2116
+#: src/usr/local/www/interfaces.php:2112
 msgid "Enable dhcpclient VLAN Priority tagging"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2184
+#: src/usr/local/www/interfaces.php:2180
 msgid "FreeBSD default"
 msgstr "FreeBSD asal"
 
-#: src/usr/local/www/interfaces.php:2200
+#: src/usr/local/www/interfaces.php:2196
 msgid "pfSense Default"
 msgstr "pfSense Asal"
 
-#: src/usr/local/www/interfaces.php:2208
+#: src/usr/local/www/interfaces.php:2204
 msgid "Saved Cfg"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2295
+#: src/usr/local/www/interfaces.php:2291
 msgid "Request a IPv6 prefix/information through the IPv4 connectivity link"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2302
+#: src/usr/local/www/interfaces.php:2298
 msgid "Only request an IPv6 prefix, do not request an IPv6 address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2316
+#: src/usr/local/www/interfaces.php:2312
 msgid ""
 "Send an IPv6 prefix hint to indicate the desired prefix size for delegation"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2323
+#: src/usr/local/www/interfaces.php:2319
 msgid "Start DHCP6 client in debug mode"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2329
+#: src/usr/local/www/interfaces.php:2325
 msgid "Required by some ISPs, especially those not using PPPoE"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2335
+#: src/usr/local/www/interfaces.php:2331
 msgid ""
 "dhcp6c will send a release to the ISP on exit, some ISPs then release the "
 "allocated address or prefix. This option prevents that signal ever being "
 "sent"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2345
+#: src/usr/local/www/interfaces.php:2341
 msgid "Enable dhcp6c VLAN Priority tagging"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2379
+#: src/usr/local/www/interfaces.php:2375
 msgid "Exchange Information Only"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2415
+#: src/usr/local/www/interfaces.php:2411
 msgid "Non-Temporary Address Allocation"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2456
+#: src/usr/local/www/interfaces.php:2452
 msgid "Prefix Delegation "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2807 src/usr/local/www/interfaces.php:2939
+#: src/usr/local/www/interfaces.php:2803 src/usr/local/www/interfaces.php:2935
 msgid "Enable Dial-On-Demand mode "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2864
+#: src/usr/local/www/interfaces.php:2860
 msgid "Reset at each month (\"0 0 1 * *\")"
 msgstr "Tetapkan semula setiap bulan (\"0 0 1 * *\")"
 
-#: src/usr/local/www/interfaces.php:2872
+#: src/usr/local/www/interfaces.php:2868
 msgid "Reset at each week (\"0 0 * * 0\")"
 msgstr "Tetapkan semula setiap minggu (\"0 0 * * 0\")"
 
-#: src/usr/local/www/interfaces.php:2880
+#: src/usr/local/www/interfaces.php:2876
 msgid "Reset at each day (\"0 0 * * *\")"
 msgstr "Tetapkan semula setiap hari (\"0 0 * * *\")"
 
-#: src/usr/local/www/interfaces.php:2888
+#: src/usr/local/www/interfaces.php:2884
 msgid "Reset at each hour (\"0 * * * *\")"
 msgstr "Tetapkan semula setiap jam (\"0 * * * *\")"
 
-#: src/usr/local/www/interfaces.php:2977
+#: src/usr/local/www/interfaces.php:2973
 msgid ""
 "Preserve common wireless configuration through interface deletions and "
 "reassignments."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3177
+#: src/usr/local/www/interfaces.php:3173
 msgid ""
 "Allow packets to pass between wireless clients directly when operating as an "
 "access point"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3185
+#: src/usr/local/www/interfaces.php:3181
 msgid "Force the card to use WME (wireless QoS)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3193
+#: src/usr/local/www/interfaces.php:3189
 msgid ""
 "Disable broadcasting of the SSID for this network (This may cause problems "
 "for some clients, and the SSID may still be discovered by other means.)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3206
+#: src/usr/local/www/interfaces.php:3202
 msgid "Enable WPA"
 msgstr "Dayakan WPA"
 
-#: src/usr/local/www/interfaces.php:3258
+#: src/usr/local/www/interfaces.php:3254
 msgid "Force the AP to rekey whenever a client disassociates"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3270
+#: src/usr/local/www/interfaces.php:3266
 msgid "Enable 802.1X authentication"
 msgstr "Dayakan pengesahan 802.1X"
 

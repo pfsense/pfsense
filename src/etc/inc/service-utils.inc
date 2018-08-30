@@ -74,7 +74,7 @@ function write_rcfile($params) {
 	return;
 }
 
-function start_service($name) {
+function start_service($name, $after_sync = false) {
 	global $config;
 
 	if (empty($name)) {

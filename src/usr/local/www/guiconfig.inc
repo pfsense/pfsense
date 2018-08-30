@@ -87,7 +87,7 @@ $reserved_table_names = array(
 	"bogonsv6",
 	"negate_networks",
 	"snort2c",
-	"sshlockout",
+	"sshguard",
 	"tonatsubnets",
 	"virusprot",
 	"vpn_networks",

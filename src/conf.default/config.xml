@@ -178,7 +178,7 @@
 			<month>*</month>
 			<wday>*</wday>
 			<who>root</who>
-			<command>/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshlockout</command>
+			<command>/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshguard</command>
 		</item>
 		<item>
 			<minute>*/60</minute>

@@ -750,7 +750,7 @@ function filter_generate_aliases() {
 	}
 
 	$aliases .= "\n#SSH Lockout Table\n";
-	$aliases .= "table <sshlockout> persist\n";
+	$aliases .= "table <sshguard> persist\n";
 	$aliases .= "table <webConfiguratorlockout> persist\n";
 
 	$aliases .= "#Snort tables\n";
@@ -3335,9 +3335,9 @@ EOD;
 
 	$ipfrules .= "\n# SSH lockout\n";
 	if (is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
-		$ipfrules .= "block in {$log['block']} quick proto tcp from <sshlockout> to (self) port ";
+		$ipfrules .= "block in {$log['block']} quick proto tcp from <sshguard> to (self) port ";
 		$ipfrules .= $config['system']['ssh']['port'];
-		$ipfrules .= " tracker {$increment_tracker($tracker)} label \"sshlockout\"\n";
+		$ipfrules .= " tracker {$increment_tracker($tracker)} label \"sshguard\"\n";
 	} else {
 		if ($config['system']['ssh']['port'] <> "") {
 			$sshport = $config['system']['ssh']['port'];
@@ -3345,7 +3345,7 @@ EOD;
 			$sshport = 22;
 		}
 		if ($sshport) {
-			$ipfrules .= "block in {$log['block']} quick proto tcp from <sshlockout> to (self) port {$sshport} tracker {$increment_tracker($tracker)} label \"sshlockout\"\n";
+			$ipfrules .= "block in {$log['block']} quick proto tcp from <sshguard> to (self) port {$sshport} tracker {$increment_tracker($tracker)} label \"sshguard\"\n";
 		}
 	}
 

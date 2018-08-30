@@ -463,7 +463,7 @@ function upgrade_025_to_026() {
 	$cron_item['month'] = "*";
 	$cron_item['wday'] = "*";
 	$cron_item['who'] = "root";
-	$cron_item['command'] = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshlockout";
+	$cron_item['command'] = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshguard";
 
 	$config['cron']['item'][] = $cron_item;
 
@@ -5894,6 +5894,27 @@ function upgrade_186_to_187() {
 			// we don't need to update anything when "none" auth method is selected
 			
 			$config['captiveportal'][$cpzone] = $cp;
+		}
+	}
+}
+
+function upgrade_187_to_188() {
+	global $config;
+
+	$old_cmd = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshlockout";
+	$new_cmd = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshguard";
+	if (!is_array($config['cron'])) {
+		$config['cron'] = array();
+	}
+	if (!is_array($config['cron']['item'])) {
+		$config['cron']['item'] = array();
+	}
+	if (is_array($config['cron']['item'])) {
+		foreach ($config['cron']['item'] as $idx => $entry) {
+			if ($entry['command'] == $old_cmd) {
+				$config['cron']['item'][$idx]['command'] = $new_cmd;
+				break;
+			}
 		}
 	}
 }

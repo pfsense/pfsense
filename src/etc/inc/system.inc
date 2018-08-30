@@ -1059,7 +1059,7 @@ local4.*							{$log_directive}{$g['varlog_path']}/portalauth.log
 local5.*							{$log_directive}{$g['varlog_path']}/nginx.log
 local7.*							{$log_directive}{$g['varlog_path']}/dhcpd.log
 *.notice;kern.debug;lpr.info;mail.crit;daemon.none;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$log_directive}{$g['varlog_path']}/system.log
-auth.info;authpriv.info 					|exec /usr/local/sbin/sshlockout_pf 15
+auth.info;authpriv.info 					|exec /usr/local/sbin/sshguard
 *.emerg								*
 
 EOD;
@@ -1141,8 +1141,14 @@ EOD;
 		$sighup = false;
 	}
 
+	$sshguard_config = array();
+	$sshguard_config[] = 'BACKEND="/usr/local/libexec/sshg-fw-pf"' . "\n";
+	/* XXX Add a GUI option to user to define it? */
+	$sshguard_config[] = 'DETECTION_TIME=3600' . "\n";
+	file_put_contents("/usr/local/etc/sshguard.conf", $sshguard_config);
+
 	if (!$sighup) {
-		sigkillbyname("sshlockout_pf", "TERM");
+		sigkillbyname("sshguard", "TERM");
 		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
 			sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
 			usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful

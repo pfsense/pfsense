@@ -5,6 +5,7 @@ net/%%PRODUCT_NAME%%-pkg-aws-wizard
 sysutils/%%PRODUCT_NAME%%-builder
 sysutils/%%PRODUCT_NAME%%-pkg-LCDproc
 sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Coreboot_Upgrade
+net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 sysutils/%%PRODUCT_NAME%%-pkg-blinkled
 sysutils/%%PRODUCT_NAME%%-pkg-gwled
 sysutils/azure-agent

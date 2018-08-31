@@ -251,7 +251,7 @@ global $g, $config;
 
 /* OS stats/info */
 defCmdT("OS-Uptime", "/usr/bin/uptime");
-defCmdT("Network-Interfaces", "/sbin/ifconfig -a");
+defCmdT("Network-Interfaces", "/sbin/ifconfig -va");
 defCmdT("Network-Interface Statistics", "/usr/bin/netstat -nWi");
 defCmdT("Process-Top Usage", "/usr/bin/top | /usr/bin/head -n5");
 defCmdT("Process-List", "/bin/ps xauwwd");

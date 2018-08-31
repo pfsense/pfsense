@@ -371,6 +371,12 @@ function vpn_ipsec_configure($restart = false) {
 		unset($ipsecpinghosts);
 	}
 	unset($iflist);
+	/* Build a list of all IPsec interfaces configured on the firewall at the OS level */
+	foreach (get_interface_arr() as $thisif) {
+		if (substr($thisif, 0, 5) == "ipsec") {
+			$ipsec_vti_cleanup_ifs[] = $thisif;
+		}
+	}
 
 	$accept_unencrypted = "";
 	if (isset($config['ipsec']['acceptunencryptedmainmode'])) {
@@ -1412,12 +1418,6 @@ EOD;
 				$ipsecconnect .= "\taggressive = {$aggressive}\n";
 			}
 
-			/* Build a list of all IPsec interfaces configured on the firewall at the OS level */
-			foreach (get_interface_arr() as $thisif) {
-				if (substr($thisif, 0, 5) == "ipsec") {
-					$ipsec_vti_cleanup_ifs[] = $thisif;
-				}
-			}
 			if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
 				if (!empty($rightsubnet_spec)) {
 					$ipsecfin = '';

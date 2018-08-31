@@ -136,7 +136,7 @@ function vpn_ipsec_configure($restart = false) {
 	$ipseccfg = $config['ipsec'];
 
 	/* Configure asynchronous crypto. See https://redmine.pfsense.org/issues/8772 */
-	set_sysctl(array('net.inet.ipsec.async_crypto' => (int) ($ipseccfg['async_crypto'] == "enabled")  ));
+	set_sysctl(array('net.inet.ipsec.async_crypto' => (int) (isset($ipseccfg['async_crypto']) && ($ipseccfg['async_crypto'] == "enabled"))));
 
 	if (!ipsec_enabled()) {
 		/* try to stop charon */

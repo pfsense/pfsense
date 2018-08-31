@@ -38,7 +38,6 @@ $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
 $pconfig['strictcrlpolicy'] = isset($config['ipsec']['strictcrlpolicy']);
 $pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
 $pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
-$pconfig['async_crypto'] = isset($config['ipsec']['async_crypto']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
@@ -138,9 +137,9 @@ if ($_POST['save']) {
 		}
 
 		if ($_POST['async_crypto'] == "yes") {
-			$config['ipsec']['async_crypto'] = true;
-		} elseif (isset($config['ipsec']['async_crypto'])) {
-			unset($config['ipsec']['async_crypto']);
+			$config['ipsec']['async_crypto'] = "enabled";
+		} else {
+			$config['ipsec']['async_crypto'] = "disabled";
 		}
 
 		if ($_POST['acceptunencryptedmainmode'] == "yes") {
@@ -189,6 +188,12 @@ if ($_POST['save']) {
 	} else {
 		$pconfig['noshuntlaninterfaces'] = true;
 	}
+}
+
+if (isset($config['ipsec']['async_crypto'])) {
+	$pconfig['async_crypto'] = $config['ipsec']['async_crypto'];
+} else {
+	$pconfig['async_crypto'] = "disabled";
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Advanced Settings"));
@@ -351,7 +356,7 @@ $section->addInput(new Form_Checkbox(
 	'async_crypto',
 	'Asynchronous Cryptography',
 	'Use asynchronous mode to parallelize multiple cryptography jobs',
-	$pconfig['async_crypto']
+	($pconfig['async_crypto'] == "enabled")
 ))->setHelp('Allow crypto(9) jobs to be dispatched multi-threaded to increase performance. ' .
 		'Jobs are handled in the order they are received so that packets will be reinjected in the correct order.');
 

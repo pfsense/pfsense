@@ -171,41 +171,23 @@ function vpn_ipsec_configure($restart = false) {
 	$ipsec_vti_cleanup_ifs = array();
 
 	/* needed for config files */
-	if (!is_dir("{$g['varetc_path']}/ipsec")) {
-		mkdir("{$g['varetc_path']}/ipsec");
-	}
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d")) {
-		mkdir("{$g['varetc_path']}/ipsec/ipsec.d");
-	}
+	safe_mkdir("{$g['varetc_path']}/ipsec");
+	safe_mkdir("{$g['varetc_path']}/ipsec/ipsec.d");
+
 	// delete these paths first to ensure old CAs, certs and CRLs aren't left behind. redmine #5238
 	rmdir_recursive($capath);
 	rmdir_recursive($keypath);
 	rmdir_recursive($crlpath);
 	rmdir_recursive($certpath);
-	if (!is_dir($capath)) {
-		mkdir($capath);
-	}
-	if (!is_dir($keypath)) {
-		mkdir($keypath);
-	}
-	if (!is_dir($crlpath)) {
-		mkdir($crlpath);
-	}
-	if (!is_dir($certpath)) {
-		mkdir($certpath);
-	}
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts")) {
-		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts");
-	}
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/acerts")) {
-		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/acerts");
-	}
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/ocspcerts")) {
-		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/ocspcerts");
-	}
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/reqs")) {
-		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
-	}
+
+	safe_mkdir($capath);
+	safe_mkdir($keypath);
+	safe_mkdir($crlpath);
+	safe_mkdir($certpath);
+	safe_mkdir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts");
+	safe_mkdir("{$g['varetc_path']}/ipsec/ipsec.d/acerts");
+	safe_mkdir("{$g['varetc_path']}/ipsec/ipsec.d/ocspcerts");
+	safe_mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
 
 	if (!file_exists("/usr/local/etc/ipsec.d") ||
 	    !is_link("/usr/local/etc/ipsec.d")) {
@@ -393,6 +375,12 @@ function vpn_ipsec_configure($restart = false) {
 		unset($ipsecpinghosts);
 	}
 	unset($iflist);
+	/* Build a list of all IPsec interfaces configured on the firewall at the OS level */
+	foreach (get_interface_arr() as $thisif) {
+		if (substr($thisif, 0, 5) == "ipsec") {
+			$ipsec_vti_cleanup_ifs[] = $thisif;
+		}
+	}
 
 	$accept_unencrypted = "";
 	if (isset($config['ipsec']['acceptunencryptedmainmode'])) {
@@ -1434,12 +1422,6 @@ EOD;
 				$ipsecconnect .= "\taggressive = {$aggressive}\n";
 			}
 
-			/* Build a list of all IPsec interfaces configured on the firewall at the OS level */
-			foreach (get_interface_arr() as $thisif) {
-				if (substr($thisif, 0, 5) == "ipsec") {
-					$ipsec_vti_cleanup_ifs[] = $thisif;
-				}
-			}
 			if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
 				if (!empty($rightsubnet_spec)) {
 					$ipsecfin = '';

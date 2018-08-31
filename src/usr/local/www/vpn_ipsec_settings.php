@@ -77,6 +77,7 @@ if ($_POST['save']) {
 				continue;
 			}
 			if ($pconfig['logging'][$cat] != $config['ipsec']['logging'][$cat]) {
+				init_config_arr(array('ipsec', 'logging'));
 				$config['ipsec']['logging'][$cat] = $pconfig['logging'][$cat];
 				vpn_update_daemon_loglevel($cat, $pconfig['logging'][$cat]);
 			}

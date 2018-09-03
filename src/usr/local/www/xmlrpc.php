@@ -573,7 +573,7 @@ class pfsense_xmlrpc_server {
 		unset($old_config);
 
 		local_sync_accounts($u2add, $u2del, $g2add, $g2del);
-		filter_configure(false);
+		$this->filter_configure(false);
 
 		return true;
 	}

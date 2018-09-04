@@ -33,6 +33,7 @@ require_once("auth.inc");
 require_once("filter.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("captiveportal.inc");
 require_once("shaper.inc");
 require_once("XML/RPC2/Server.php");
 
@@ -183,7 +184,7 @@ class pfsense_xmlrpc_server {
 	public function restore_config_section($sections) {
 		$this->auth();
 
-		global $config;
+		global $config, $cpzone, $cpzoneid;
 
 		$old_config = $config;
 		$old_ipsec_enabled = ipsec_enabled();
@@ -225,6 +226,22 @@ class pfsense_xmlrpc_server {
 			$config[$section] = $sections[$section];
 			unset($sections[$section]);
 			$syncd_full_sections[] = $section;
+		}
+
+		/* Create a list of CP zones to be deleted locally */
+		$cp_to_del = array();
+		if (is_array($config['captiveportal'])) {
+			if (is_array($sections['captiveportal'])) {
+				$remote_cp = $sections['captiveportal'];
+			} else {
+				$remote_cp = array();
+			}
+			foreach ($config['captiveportal'] as $zone => $item) {
+				if (!isset($remote_cp[$zone])) {
+					$cp_to_del[] = $zone;
+				}
+			}
+			unset($remote_cp);
 		}
 
 		/* Only touch users if users are set to synchronize from the primary node
@@ -382,17 +399,24 @@ class pfsense_xmlrpc_server {
 		/* For vip section, first keep items sent from the master */
 		$config = array_merge_recursive_unique($config, $sections);
 
+		/* Remove local CP zones removed remote */
+		foreach ($cp_to_del as $zone) {
+			$cpzone = $zone;
+			$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
+			unset($config['captiveportal'][$cpzone]['enable']);
+			captiveportal_configure_zone(
+			    $config['captiveportal'][$cpzone]);
+			unset($config['captiveportal'][$cpzone]);
+			if (isset($config['voucher'][$cpzone])) {
+				unset($config['voucher'][$cpzone]);
+			}
+		}
+
 		/* Remove locally items removed remote */
 		foreach ($voucher as $zone => $item) {
-			/* Zone was deleted on master, delete its vouchers */
-			if (!isset($config['captiveportal'][$zone])) {
-				unset($config['voucher'][$zone]);
-				continue;
-			}
 			/* No rolls on master, delete local ones */
 			if (!is_array($item['roll'])) {
 				unset($config['voucher'][$zone]['roll']);
-				continue;
 			}
 		}
 
@@ -686,6 +710,8 @@ class pfsense_xmlrpc_server {
 		if ($reset_accounts) {
 			local_reset_accounts();
 		}
+
+		captiveportal_configure();
 
 		return true;
 	}

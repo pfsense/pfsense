@@ -51,6 +51,7 @@ $g = array(
 	"varetc_path" => "/var/etc",
 	"vardb_path" => "/var/db",
 	"varlog_path" => "/var/log",
+	"thoth_path" => "/etc/thoth",
 	"etc_path" => "/etc",
 	"tmp_path" => "/tmp",
 	"tmp_path_user_code" => "/tmp/user_code",

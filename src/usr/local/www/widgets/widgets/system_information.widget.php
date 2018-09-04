@@ -198,6 +198,15 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					    gettext("Netgate Device ID:") .
 					    " <strong>{$uniqueid}</strong>");
 				}
+
+				if (php_uname("m") == "arm64") {
+					$thothid = system_get_thothid();
+					if (!empty($thothid)) {
+						print("<br />" .
+						    gettext("Netgate Crypto ID:") .
+						    " <strong>{$thothid}</strong>");
+					}
+				}
 ?>
 			</td>
 		</tr>

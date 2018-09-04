@@ -2441,6 +2441,19 @@ function system_get_uniqueid() {
 	return ($g['uniqueid'] ?: '');
 }
 
+function system_get_thothid() {
+	$thothid_file="{$g['thoth_path']}/thothid";
+	if (empty($g['thothid'])) {
+		if (!file_exists($thothid_file)) {
+			mwexec("/usr/local/sbin/ping-auth -s > {$g['thoth_path']}/thothid 2>/dev/null");
+		}
+		if (file_exists($thothid_file)) {
+			$g['thothid'] = @file_get_contents($thothid_file);
+		}
+	}
+	return ($g['thothid'] ?: '');
+}
+
 /*
  * attempt to identify the specific platform (for embedded systems)
  * Returns an array with two elements:

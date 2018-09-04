@@ -59,8 +59,15 @@ if (count($a_client)) {
 
 	$pconfig['user_source'] = $a_client['user_source'];
 	$pconfig['group_source'] = $a_client['group_source'];
+   
+	if (strpos($a_client['pool_address'], '%radius') !== false) {
 
-	$pconfig['pool_address'] = $a_client['pool_address'];
+		$pconfig['pool_address'] = trim(explode(',', $a_client['pool_address'])[1]);
+		$pconfig['radius_ip_priority_enable'] = true;
+	} else {
+		$pconfig['pool_address'] = $a_client['pool_address'];
+	}
+
 	$pconfig['pool_netbits'] = $a_client['pool_netbits'];
 	$pconfig['pool_address_v6'] = $a_client['pool_address_v6'];
 	$pconfig['pool_netbits_v6'] = $a_client['pool_netbits_v6'];
@@ -76,7 +83,8 @@ if (count($a_client)) {
 	$pconfig['wins_server2'] = $a_client['wins_server2'];
 	$pconfig['pfs_group'] = $a_client['pfs_group'];
 	$pconfig['login_banner'] = $a_client['login_banner'];
-
+	$pconfig['radius_ip_priority_enable'];
+	
 	if (isset($pconfig['enable'])) {
 		$pconfig['enable'] = true;
 	}
@@ -238,6 +246,12 @@ if ($_POST['save']) {
 		}
 	}
 
+	if ($pconfig['radius_ip_priority_enable']) {
+		if (!(isset($mobileph1) && $mobileph1['authentication_method'] == 'eap-radius')) {
+			$input_errors[] = gettext("RADIUS IP may only take prioriy when using EAP-RADIUS for authentication on the Mobile IPsec VPN.");
+		}
+	}
+
 	if (!$input_errors) {
 		$client = array();
 
@@ -252,7 +266,13 @@ if ($_POST['save']) {
 		$client['group_source'] = $pconfig['group_source'];
 
 		if ($pconfig['pool_enable']) {
-			$client['pool_address'] = $pconfig['pool_address'];
+			if($pconfig['radius_ip_priority_enable'])
+			{
+				$client['pool_address'] = '%radius,' . $pconfig['pool_address'];
+			} else {
+				$client['pool_address'] = $pconfig['pool_address'];
+			}
+			
 			$client['pool_netbits'] = $pconfig['pool_netbits'];
 		}
 
@@ -508,6 +528,13 @@ $group->add(new Form_Select(
 ))->setWidth(2);
 
 $section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'radius_ip_priority_enable',
+	'RADIUS IP address priority',
+	'IPv4 address pool is used if IP is not supplied by RADIUS server',
+	$pconfig['radius_ip_priority_enable']
+));
 
 $section->addInput(new Form_Checkbox(
 	'pool_enable_v6',

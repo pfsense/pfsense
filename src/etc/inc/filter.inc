@@ -2192,10 +2192,6 @@ function filter_nat_rules_generate() {
 		update_filter_reload_status(gettext("Creating outbound NAT rules"));
 		$tonathosts_array = filter_nat_rules_automatic_tonathosts();
 		$tonathosts = implode(" ", $tonathosts_array);
-
-		// Remove %radius from string
-		$tonathosts = str_replace('%radius,', '', $tonathosts);
-
 		$numberofnathosts = count($tonathosts_array);
 
 		$natrules .= "\n# Subnets to NAT \n";

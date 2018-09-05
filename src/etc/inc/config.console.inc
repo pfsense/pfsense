@@ -1187,6 +1187,9 @@ function netgate_hardware_setup() {
 		$p1['dpd_delay'] = 10;
 		$p1['dpd_maxfail'] = 5;
 		$p1['iketype'] = 'ikev1';
+		if (!is_array($config['ipsec'])) {
+			$config['ipsec'] = array();
+		}
 		$config['ipsec']['phase1'] = array();
 		$config['ipsec']['phase1'][] = $p1;
 		unset($p1);
@@ -1224,6 +1227,9 @@ function netgate_hardware_setup() {
 		$alias['descr'] = 'Networks that may originate internet traffic';
 		$alias['type'] = 'network';
 		$alias['detail'] = 'Loopback||Default Remote Access VPN||Default Mobile IPsec VPN';
+		if (!is_array($config['aliases'])) {
+			$config['aliases'] = array();
+		}
 		$config['aliases']['alias'] = array();
 		$config['aliases']['alias'][] = $alias;
 		unset($alias);

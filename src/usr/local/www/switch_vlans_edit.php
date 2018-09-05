@@ -238,7 +238,8 @@ if ($_POST) {
 		} else {
 			$a_vgroups[] = $vgroup;
 		}
-		write_config();
+
+		write_config(gettext("Update switch VLAN settings"));
 
 		header("Location: switch_vlans.php?swdevice=". htmlspecialchars($swdevice));
 		exit;

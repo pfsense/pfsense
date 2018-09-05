@@ -193,7 +193,7 @@ if ($_POST['act'] == "del") {
 			}
 			pfSense_etherswitch_setvlangroup($swdevice, $vgroup['vgroup'], 0, array());
 			unset($a_vgroups[$vgid]);
-			write_config();
+			write_config(gettext("Delete switch VLAN"));
 			break;
 		}
 	}
@@ -279,7 +279,7 @@ if ($_POST['act'] == "del") {
 			}
 		}
 
-		write_config();
+		write_config(gettext("Update switch VLAN settings"));
 
 		/* Set switch mode. */
 		switch_set_vlan_mode($swdevice, $vlanmode);

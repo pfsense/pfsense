@@ -35,11 +35,12 @@ define('COLOR', true);
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['gateways']['gateway_group'])) {
+if (!is_array($config['gateways']['gateway_group'] || !is_array($config)['gateways'])) {
+	$config['gateways'] = array('gateway_group');
 	$config['gateways']['gateway_group'] = array();
 }
 
-$a_gateway_groups = &$config['gateways']['gateway_group'];
+$a_gateway_groups = $config['gateways']['gateway_group'];
 $changedesc = gettext("Gateway Groups") . ": ";
 
 $gateways_status = return_gateways_status();

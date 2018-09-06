@@ -172,6 +172,11 @@ if ($_POST['save']) {
 					$input_errors[] = gettext("An IPv6 local address was specified but the mode is not set to tunnel6");
 				}
 				break;
+			default:
+				if (($pconfig['mode'] == "vti") && !is_ipaddr($pconfig['localid_address'])) {
+					$input_errors[] = gettext("VTI requires a valid local network or IP address for its endpoint address, it cannot use a network macro for a different interface (e.g. LAN).");
+				}
+
 		}
 		/* Check if the localid_type is an interface, to confirm if it has a valid subnet. */
 		if (is_array($config['interfaces'][$pconfig['localid_type']])) {

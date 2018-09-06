@@ -5651,7 +5651,7 @@ function upgrade_181_to_182() {
 				}
 			}
 		}
-		if (count($newgroup4['item']) > 0) {
+		if (is_array($newgroup4['item']) && count($newgroup4['item']) > 0) {
 			$newname = "Default_Gateway_Group_ipv4";
 			if (gateway_or_gwgroup_exists($newname)) { //make sure we create a new name
 				$id = 2;
@@ -5666,7 +5666,7 @@ function upgrade_181_to_182() {
 			$config['gateways']['gateway_group'][] = $newgroup4;
 			$config['gateways']['defaultgw4'] = $newname;
 		}
-		if (count($newgroup6['item']) > 0) {
+		if (is_array($newgroup6['item']) && count($newgroup6['item']) > 0) {
 			$newname = "Default_Gateway_Group_ipv6";
 			if (gateway_or_gwgroup_exists($newname)) { //make sure we create a new name
 				$id = 2;

@@ -56,7 +56,7 @@ function switch_default_get_system_vlans($dot1q_only) {
 		if ($vgroup == NULL) {
 			continue;
 		}
-		if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "PORT") {
+		if ($dot1q_only == false && isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "PORT") {
 			$vgroup['switchname'] = $swinfo['name'];
 			$vlans[] = $vgroup;
 		} elseif (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q" && $vgroup['vid'] == 1) {

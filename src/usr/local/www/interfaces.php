@@ -463,6 +463,11 @@ if ($_POST['apply']) {
 						services_dhcpd_configure();
 					}
 				}
+				/*
+				 * If the parent interface has changed above, the VLANs needs to be
+				 * redone.
+				 */
+				interfaces_vlan_configure();
 			}
 		}
 		/* restart snmp so that it binds to correct address */

@@ -506,6 +506,8 @@ if [ "${machine_arch}" == "amd64" ]; then
 		echo 'hint.e6000sw.0.port10cpu=1' >> ${_loaderconf}
 		echo 'hint.e6000sw.0.port9speed=2500' >> ${_loaderconf}
 		echo 'hint.e6000sw.0.port10speed=2500' >> ${_loaderconf}
+	elif [ "${cur_model}" == "SG-5100" ]; then
+		echo 'sg5100_load="YES"' >> ${_loaderconf}
 	fi
 fi
 

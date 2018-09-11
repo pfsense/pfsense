@@ -119,7 +119,7 @@ if (isset($_POST['save'])) {
 		$config['system']['acb']['gold_username'] = $pconfig['gold_username'];
 		$config['system']['acb']['hint'] = $pconfig['hint'];
 
-		write_config("AutoCcnfigBackup settings updated");
+		write_config("AutoConfigBackup settings updated");
 	}
 }
 

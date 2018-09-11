@@ -1110,7 +1110,9 @@ function netgate_hardware_setup() {
 		$rule['descr'] = 'Default allow LAN to any rule';
 		$rule['tracker'] = '0100000101';
 		$rules[] = $rule;
-
+		if (!is_array($config['filter'])) {
+			$config['filter'] = array();
+		}
 		$config['filter']['rule'] = $rules;
 		unset($rule, $rules);
 
@@ -1124,6 +1126,9 @@ function netgate_hardware_setup() {
 		$gw['descr'] = 'Interface WAN_DHCP Gateway';
 		$gw['monitor_disable'] = true;
 		$gw['default_gw'] = true;
+		if (!is_array($config['gateways'])) {
+			$config['gateways'] = array();
+		}
 		$config['gateways']['gateway_item'] = array();
 		$config['gateways']['gateway_item'][] = $gw;
 		unset($gw);
@@ -1140,6 +1145,9 @@ function netgate_hardware_setup() {
 		$vip['type'] = 'single';
 		$vip['subnet_bits'] = 24;
 		$vip['subnet'] = '172.19.0.1';
+		if (!is_array($config['virtualip'])) {
+			$config['virtualip'] = array();
+		}
 		$config['virtualip']['vip'] = array();
 		$config['virtualip']['vip'][] = $vip;
 		unset($vip);
@@ -1158,6 +1166,9 @@ function netgate_hardware_setup() {
 		$client['save_passwd'] = true;
 		$client['dns_server1'] = '172.19.0.1';
 		$client['login_banner'] = 'Welcome to the Netgate IPsec VPN on AWS';
+		if (!is_array($config['ipsec'])) {
+			$config['ipsec'] = array();
+		}
 		$config['ipsec']['client'] = $client;
 		unset($client);
 
@@ -1187,9 +1198,6 @@ function netgate_hardware_setup() {
 		$p1['dpd_delay'] = 10;
 		$p1['dpd_maxfail'] = 5;
 		$p1['iketype'] = 'ikev1';
-		if (!is_array($config['ipsec'])) {
-			$config['ipsec'] = array();
-		}
 		$config['ipsec']['phase1'] = array();
 		$config['ipsec']['phase1'][] = $p1;
 		unset($p1);

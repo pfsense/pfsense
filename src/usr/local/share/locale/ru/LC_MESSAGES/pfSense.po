@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-28 17:18-0300\n"
+"POT-Creation-Date: 2018-09-11 15:51-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -271,7 +271,7 @@ msgstr "NAT 1:1 "
 #: src/usr/local/www/interfaces_lagg.php:108
 #: src/usr/local/www/status_dhcp_leases.php:495
 #: src/usr/local/www/status_graph.php:138
-#: src/usr/local/www/firewall_nat_npt_edit.php:95 src/etc/inc/gwlb.inc:1649
+#: src/usr/local/www/firewall_nat_npt_edit.php:95 src/etc/inc/gwlb.inc:1653
 msgid "Interface"
 msgstr "Интерфейс"
 
@@ -379,9 +379,9 @@ msgstr "IP назначения"
 #: src/usr/local/www/interfaces_bridge.php:108
 #: src/usr/local/www/interfaces_gif_edit.php:224
 #: src/usr/local/www/services_captiveportal_ip.php:108
-#: src/usr/local/www/vpn_ipsec_phase2.php:616
-#: src/usr/local/www/interfaces.php:517 src/usr/local/www/interfaces.php:2030
-#: src/usr/local/www/interfaces.php:3404
+#: src/usr/local/www/vpn_ipsec_phase2.php:625
+#: src/usr/local/www/interfaces.php:522 src/usr/local/www/interfaces.php:2035
+#: src/usr/local/www/interfaces.php:3409
 #: src/usr/local/www/services_dhcpv6_edit.php:235
 #: src/usr/local/www/services_wol_edit.php:152
 #: src/usr/local/www/services_unbound_host_edit.php:219
@@ -390,7 +390,7 @@ msgstr "IP назначения"
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:183
 #: src/usr/local/www/system_gateways.php:318
 #: src/usr/local/www/services_dnsmasq_edit.php:225
-#: src/usr/local/www/services_dnsmasq_edit.php:274
+#: src/usr/local/www/services_dnsmasq_edit.php:278
 #: src/usr/local/www/vpn_openvpn_server.php:765
 #: src/usr/local/www/vpn_openvpn_server.php:1411
 #: src/usr/local/www/services_dyndns.php:100
@@ -403,7 +403,7 @@ msgstr "IP назначения"
 #: src/usr/local/www/interfaces_lagg.php:110
 #: src/usr/local/www/status_dhcp_leases.php:363
 #: src/usr/local/www/services_captiveportal_mac_edit.php:228
-#: src/usr/local/www/status_gateway_groups.php:66
+#: src/usr/local/www/status_gateway_groups.php:63
 #: src/usr/local/www/status_graph.php:168
 #: src/usr/local/www/system_gateway_groups.php:135
 #: src/usr/local/www/firewall_nat_npt_edit.php:205 src/etc/inc/shaper.inc:1784
@@ -587,7 +587,7 @@ msgstr "Добавить соотвествие в верх списка"
 #: src/usr/local/www/interfaces_bridge.php:160
 #: src/usr/local/www/services_captiveportal_ip.php:154
 #: src/usr/local/www/services_ntpd_acls.php:318
-#: src/usr/local/www/interfaces.php:2037 src/usr/local/www/interfaces.php:3411
+#: src/usr/local/www/interfaces.php:2042 src/usr/local/www/interfaces.php:3416
 #: src/usr/local/www/system_gateways.php:404
 #: src/usr/local/www/vpn_openvpn_server.php:1460
 #: src/usr/local/www/services_dyndns.php:221
@@ -632,7 +632,7 @@ msgstr "Удалить выделенное соотвествие"
 #: src/usr/local/www/services_ntpd_acls.php:304
 #: src/usr/local/www/services_unbound_host_edit.php:287
 #: src/usr/local/www/interfaces_qinq_edit.php:332
-#: src/usr/local/www/services_dnsmasq_edit.php:278
+#: src/usr/local/www/services_dnsmasq_edit.php:282
 #: src/usr/local/www/firewall_rules.php:812 src/usr/local/www/pkg_edit.php:1466
 #: src/etc/inc/shaper.inc:4227
 msgid "Delete"
@@ -762,7 +762,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:211
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
 #: src/usr/local/www/status_dhcp_leases.php:36
-#: src/usr/local/www/status_gateway_groups.php:47
+#: src/usr/local/www/status_gateway_groups.php:44
 #: src/usr/local/www/status_graph.php:122 src/etc/inc/gmirror.inc:74
 msgid "Status"
 msgstr "Статус"
@@ -776,7 +776,7 @@ msgstr "Статус"
 #: src/usr/local/www/head.inc:310 src/usr/local/www/head.inc:352
 #: src/usr/local/www/services_unbound_advanced.php:224
 #: src/usr/local/www/services_unbound_host_edit.php:181
-#: src/etc/inc/service-utils.inc:257
+#: src/etc/inc/service-utils.inc:262
 msgid "DNS Resolver"
 msgstr "DNS резолвер"
 
@@ -1043,9 +1043,9 @@ msgstr "Отключено"
 #: src/usr/local/www/vpn_ipsec_keys.php:76 src/usr/local/www/head.inc:338
 #: src/usr/local/www/head.inc:355 src/usr/local/www/vpn_ipsec_phase1.php:671
 #: src/usr/local/www/vpn_ipsec_phase1.php:674
-#: src/usr/local/www/vpn_ipsec_phase2.php:434
-#: src/usr/local/www/vpn_ipsec_phase2.php:438
-#: src/usr/local/www/vpn_ipsec_settings.php:193
+#: src/usr/local/www/vpn_ipsec_phase2.php:443
+#: src/usr/local/www/vpn_ipsec_phase2.php:447
+#: src/usr/local/www/vpn_ipsec_settings.php:199
 #: src/usr/local/www/status_logs_settings.php:220
 #: src/usr/local/www/widgets/include/ipsec.inc:22
 #: src/usr/local/www/status_graph.php:42 src/usr/local/www/status_graph.php:300
@@ -1152,7 +1152,7 @@ msgstr "Недоступны сведения о статусе IPsec."
 #: src/usr/local/www/interfaces_gre.php:73 src/usr/local/www/head.inc:354
 #: src/usr/local/www/interfaces_bridge.php:79
 #: src/usr/local/www/interfaces_gif_edit.php:163
-#: src/usr/local/www/interfaces.php:1763
+#: src/usr/local/www/interfaces.php:1768
 #: src/usr/local/www/status_logs_filter_summary.php:84
 #: src/usr/local/www/interfaces_qinq_edit.php:29
 #: src/usr/local/www/widgets/include/interfaces.inc:23
@@ -1565,7 +1565,7 @@ msgstr "Использование"
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:95
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:129
 #: src/usr/local/www/status_dhcp_leases.php:366
-#: src/usr/local/www/status_gateway_groups.php:129
+#: src/usr/local/www/status_gateway_groups.php:126
 msgid "Online"
 msgstr "В сети"
 
@@ -1615,7 +1615,7 @@ msgstr "Нет пулов IPsec."
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
 #: src/usr/local/www/services_captiveportal_mac_edit.php:66
 #: src/usr/local/www/services_captiveportal_filemanager.php:66
-#: src/etc/inc/service-utils.inc:277
+#: src/etc/inc/service-utils.inc:282
 msgid "Captive Portal"
 msgstr "Портал Авторизации"
 
@@ -1777,7 +1777,7 @@ msgstr "Брандмауэр: NAT: 1:1 - сохраненна/отредакти
 #: src/usr/local/www/firewall_rules_edit.php:1468
 #: src/usr/local/www/firewall_nat_out_edit.php:522
 #: src/usr/local/www/firewall_nat_out_edit.php:547
-#: src/usr/local/www/interfaces.php:3158
+#: src/usr/local/www/interfaces.php:3163
 #: src/usr/local/www/diag_traceroute.php:142 src/etc/inc/ipsec.inc:102
 msgid "Any"
 msgstr "Любой"
@@ -1796,9 +1796,9 @@ msgstr "Один хост."
 #: src/usr/local/www/firewall_rules_edit.php:1328
 #: src/usr/local/www/firewall_nat_out_edit.php:522
 #: src/usr/local/www/firewall_nat_out_edit.php:547
-#: src/usr/local/www/vpn_ipsec_phase2.php:554
-#: src/usr/local/www/vpn_ipsec_phase2.php:575
-#: src/usr/local/www/vpn_ipsec_phase2.php:601
+#: src/usr/local/www/vpn_ipsec_phase2.php:563
+#: src/usr/local/www/vpn_ipsec_phase2.php:584
+#: src/usr/local/www/vpn_ipsec_phase2.php:610
 msgid "Network"
 msgstr "Сеть"
 
@@ -1846,12 +1846,12 @@ msgstr "Редактировать запись NAT 1:1 "
 #: src/usr/local/www/firewall_rules_edit.php:1157
 #: src/usr/local/www/firewall_nat_out_edit.php:477
 #: src/usr/local/www/vpn_ipsec_phase1.php:699
-#: src/usr/local/www/vpn_ipsec_phase2.php:530
-#: src/usr/local/www/interfaces.php:2821
+#: src/usr/local/www/vpn_ipsec_phase2.php:539
+#: src/usr/local/www/interfaces.php:2826
 #: src/usr/local/www/vpn_openvpn_server.php:694
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:286
 #: src/usr/local/www/firewall_nat_npt_edit.php:161
-#: src/etc/inc/service-utils.inc:504
+#: src/etc/inc/service-utils.inc:509
 msgid "Disabled"
 msgstr "Не активно"
 
@@ -1876,7 +1876,7 @@ msgstr "Исключает правило из последующего, бол�
 #: src/usr/local/www/head.inc:358 src/usr/local/www/vpn_openvpn_server.php:654
 #: src/usr/local/www/status_logs_settings.php:224
 #: src/usr/local/www/widgets/include/openvpn.inc:22
-#: src/usr/local/www/status_graph.php:49 src/etc/inc/service-utils.inc:365
+#: src/usr/local/www/status_graph.php:49 src/etc/inc/service-utils.inc:370
 #: src/etc/inc/interfaces.inc:6182 src/etc/inc/interfaces.inc:7024
 msgid "OpenVPN"
 msgstr "OpenVPN"
@@ -1957,9 +1957,9 @@ msgstr "Обратить смысл соответствия."
 #: src/usr/local/www/firewall_nat_out_edit.php:523
 #: src/usr/local/www/firewall_nat_out_edit.php:548
 #: src/usr/local/www/vpn_ipsec_keys.php:106
-#: src/usr/local/www/vpn_ipsec_phase2.php:555
-#: src/usr/local/www/vpn_ipsec_phase2.php:582
-#: src/usr/local/www/vpn_ipsec_phase2.php:602
+#: src/usr/local/www/vpn_ipsec_phase2.php:564
+#: src/usr/local/www/vpn_ipsec_phase2.php:591
+#: src/usr/local/www/vpn_ipsec_phase2.php:611
 msgid "Type"
 msgstr "Тип"
 
@@ -2014,7 +2014,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:739
 #: src/usr/local/www/firewall_aliases_edit.php:683
 #: src/usr/local/www/interfaces_gif_edit.php:227
-#: src/usr/local/www/vpn_ipsec_phase2.php:619
+#: src/usr/local/www/vpn_ipsec_phase2.php:628
 #: src/usr/local/www/services_dhcpv6_edit.php:238
 #: src/usr/local/www/services_wol_edit.php:155
 #: src/usr/local/www/services_unbound_host_edit.php:222
@@ -2052,7 +2052,7 @@ msgstr "Использовать параметры системы по умол
 #: src/usr/local/www/services_rfc2136_edit.php:183
 #: src/usr/local/www/services_captiveportal.php:532
 #: src/usr/local/www/vpn_ipsec_phase1.php:932
-#: src/usr/local/www/interfaces.php:1838 src/usr/local/www/interfaces.php:3201
+#: src/usr/local/www/interfaces.php:1843 src/usr/local/www/interfaces.php:3206
 #: src/usr/local/www/firewall_rules.php:763 src/etc/inc/shaper.inc:4262
 #: src/etc/inc/shaper.inc:4716 src/usr/local/www/diag_routes.php:83
 msgid "Enable"
@@ -2264,7 +2264,7 @@ msgstr "Настройки"
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:207
 #: src/usr/local/www/services_captiveportal_filemanager.php:201
 #: src/etc/inc/gmirror.inc:73 src/etc/inc/shaper.inc:1495
-#: src/etc/inc/shaper.inc:3580 src/etc/inc/gwlb.inc:1649
+#: src/etc/inc/shaper.inc:3580 src/etc/inc/gwlb.inc:1653
 msgid "Name"
 msgstr "Имя"
 
@@ -2277,7 +2277,7 @@ msgstr "Имя"
 #: src/usr/local/www/load_balancer_pool_edit.php:69
 #: src/usr/local/www/load_balancer_pool_edit.php:309
 #: src/usr/local/www/status_lb_pool.php:134
-#: src/usr/local/www/interfaces.php:917 src/usr/local/www/interfaces.php:3141
+#: src/usr/local/www/interfaces.php:922 src/usr/local/www/interfaces.php:3146
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:69
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:74
 #: src/etc/inc/pfsense-utils.inc:3246 src/etc/inc/pfsense-utils.inc:3289
@@ -2303,7 +2303,7 @@ msgstr "Серверы"
 #: src/usr/local/www/diag_testport.php:52
 #: src/usr/local/www/load_balancer_virtual_server.php:142
 #: src/usr/local/www/firewall_aliases_edit.php:570
-#: src/usr/local/www/interfaces.php:3281 src/usr/local/www/interfaces.php:3305
+#: src/usr/local/www/interfaces.php:3286 src/usr/local/www/interfaces.php:3310
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:199
 #: src/usr/local/www/firewall_rules.php:360
 #: src/usr/local/www/firewall_rules.php:362
@@ -2384,19 +2384,19 @@ msgstr "100BASE-T полудуплекс"
 
 #: src/usr/local/www/guiconfig.inc:247
 #: src/usr/local/www/interfaces_wireless_edit.php:186
-#: src/usr/local/www/interfaces.php:3143
+#: src/usr/local/www/interfaces.php:3148
 msgid "Infrastructure (BSS)"
 msgstr "Инфраструктура (BSS)"
 
 #: src/usr/local/www/guiconfig.inc:248
 #: src/usr/local/www/interfaces_wireless_edit.php:187
-#: src/usr/local/www/interfaces.php:3143
+#: src/usr/local/www/interfaces.php:3148
 msgid "Ad-hoc (IBSS)"
 msgstr "Ad-hoc (IBSS)"
 
 #: src/usr/local/www/guiconfig.inc:249
 #: src/usr/local/www/interfaces_wireless_edit.php:188
-#: src/usr/local/www/interfaces.php:3143
+#: src/usr/local/www/interfaces.php:3148
 msgid "Access Point"
 msgstr "Точка доступа"
 
@@ -3106,7 +3106,7 @@ msgstr "DUID (уникальный идентификатор DHCP)"
 
 #: src/usr/local/www/services_dhcpv6.php:1055
 #: src/usr/local/www/status_dhcpv6_leases.php:240
-#: src/usr/local/www/diag_ndp.php:138 src/usr/local/www/interfaces.php:644
+#: src/usr/local/www/diag_ndp.php:138 src/usr/local/www/interfaces.php:649
 #: src/usr/local/www/services_dhcpv6_edit.php:220
 msgid "IPv6 address"
 msgstr "IPv6 адрес"
@@ -3122,7 +3122,7 @@ msgstr "IPv6 адрес"
 #: src/usr/local/www/system.php:159 src/usr/local/www/diag_arp.php:335
 #: src/usr/local/www/services_rfc2136_edit.php:85
 #: src/usr/local/www/status_dhcpv6_leases.php:244
-#: src/usr/local/www/diag_ndp.php:140 src/usr/local/www/interfaces.php:2085
+#: src/usr/local/www/diag_ndp.php:140 src/usr/local/www/interfaces.php:2090
 #: src/usr/local/www/services_dhcpv6_edit.php:228
 #: src/usr/local/www/services_dyndns.php:98
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:189
@@ -3182,10 +3182,10 @@ msgstr "Скрыть Расширенные"
 #: src/usr/local/www/vpn_ipsec_keys.php:76
 #: src/usr/local/www/vpn_ipsec_phase1.php:671
 #: src/usr/local/www/vpn_ipsec_phase1.php:674
-#: src/usr/local/www/vpn_ipsec_phase2.php:434
-#: src/usr/local/www/vpn_ipsec_phase2.php:438
+#: src/usr/local/www/vpn_ipsec_phase2.php:443
+#: src/usr/local/www/vpn_ipsec_phase2.php:447
 #: src/usr/local/www/vpn_openvpn_server.php:654
-#: src/usr/local/www/vpn_ipsec_settings.php:193
+#: src/usr/local/www/vpn_ipsec_settings.php:199
 #: src/usr/local/www/status_logs_settings.php:222
 msgid "VPN"
 msgstr "VPN"
@@ -3194,7 +3194,7 @@ msgstr "VPN"
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 #: src/usr/local/www/vpn_l2tp.php:179
 #: src/usr/local/www/interfaces_ppps_edit.php:468
-#: src/usr/local/www/head.inc:341 src/usr/local/www/interfaces.php:1766
+#: src/usr/local/www/head.inc:341 src/usr/local/www/interfaces.php:1771
 msgid "L2TP"
 msgstr "L2TP"
 
@@ -3270,7 +3270,7 @@ msgstr "Пользователи L2TP"
 #: src/usr/local/www/system_usermanager.php:202
 #: src/usr/local/www/system_usermanager.php:632
 #: src/usr/local/www/services_pppoe_edit.php:500
-#: src/usr/local/www/interfaces.php:2714
+#: src/usr/local/www/interfaces.php:2719
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:80
 msgid "Username"
 msgstr "Имя пользователя"
@@ -3352,7 +3352,7 @@ msgstr "Идентификатор"
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:74
 #: src/usr/local/www/vpn_ipsec_keys.php:107
 #: src/usr/local/www/vpn_ipsec_phase1.php:245
-#: src/usr/local/www/interfaces.php:3225
+#: src/usr/local/www/interfaces.php:3230
 msgid "Pre-Shared Key"
 msgstr "Предустановленный ключ"
 
@@ -3398,8 +3398,8 @@ msgstr "Добавлены Предварительно Созданные IPSec
 #: src/usr/local/www/vpn_ipsec_keys.php:93
 #: src/usr/local/www/vpn_ipsec_keys.php:99
 #: src/usr/local/www/vpn_ipsec_phase1.php:689
-#: src/usr/local/www/vpn_ipsec_phase2.php:520
-#: src/usr/local/www/vpn_ipsec_settings.php:226
+#: src/usr/local/www/vpn_ipsec_phase2.php:529
+#: src/usr/local/www/vpn_ipsec_settings.php:232
 msgid "Pre-Shared Keys"
 msgstr "Предварительно Созданные Ключи"
 
@@ -4271,10 +4271,10 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:894
 #: src/usr/local/www/firewall_rules_edit.php:1579
 #: src/usr/local/www/services_ntpd_gps.php:364
-#: src/usr/local/www/vpn_ipsec_phase2.php:575
+#: src/usr/local/www/vpn_ipsec_phase2.php:584
 #: src/usr/local/www/wizards/openvpn_wizard.inc:32
-#: src/usr/local/www/interfaces.php:1766 src/usr/local/www/interfaces.php:1767
-#: src/usr/local/www/interfaces.php:1793 src/usr/local/www/interfaces.php:1806
+#: src/usr/local/www/interfaces.php:1771 src/usr/local/www/interfaces.php:1772
+#: src/usr/local/www/interfaces.php:1798 src/usr/local/www/interfaces.php:1811
 #: src/etc/inc/ipsec.inc:441 src/etc/inc/shaper.inc:4306
 #: src/etc/inc/shaper.inc:4751 src/etc/inc/pfsense-utils.inc:3228
 msgid "None"
@@ -4817,8 +4817,8 @@ msgstr "Пользователь"
 #: src/usr/local/www/services_pppoe_edit.php:442
 #: src/usr/local/www/services_pppoe_edit.php:513
 #: src/usr/local/www/load_balancer_virtual_server.php:141
-#: src/usr/local/www/vpn_ipsec_phase2.php:717
-#: src/usr/local/www/interfaces.php:3275 src/usr/local/www/interfaces.php:3299
+#: src/usr/local/www/vpn_ipsec_phase2.php:726
+#: src/usr/local/www/interfaces.php:3280 src/usr/local/www/interfaces.php:3304
 #: src/usr/local/www/system_advanced_notifications.php:352
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:69
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:74
@@ -5233,7 +5233,7 @@ msgid "Resolve"
 msgstr "Разрешить"
 
 #: src/usr/local/www/status_logs_common.inc:90
-#: src/usr/local/www/status_logs.php:43 src/usr/local/www/interfaces.php:1766
+#: src/usr/local/www/status_logs.php:43 src/usr/local/www/interfaces.php:1771
 #: src/usr/local/www/status_logs_settings.php:218
 msgid "DHCP"
 msgstr "DHCP"
@@ -5247,7 +5247,7 @@ msgstr "Аутентификация Портала Захвата"
 #: src/usr/local/www/status_logs_common.inc:93
 #: src/usr/local/www/status_logs.php:49
 #: src/usr/local/www/interfaces_ppps_edit.php:468
-#: src/usr/local/www/interfaces.php:1766
+#: src/usr/local/www/interfaces.php:1771
 #: src/usr/local/www/status_logs_settings.php:221
 msgid "PPP"
 msgstr "PPP"
@@ -5279,9 +5279,9 @@ msgstr "Общее"
 #: src/usr/local/www/system_gateways.php:297
 #: src/usr/local/www/system_gateways.php:305
 #: src/usr/local/www/widgets/include/gateways.inc:23
-#: src/usr/local/www/status_gateway_groups.php:47
-#: src/usr/local/www/status_gateway_groups.php:53
-#: src/usr/local/www/status_gateway_groups.php:65
+#: src/usr/local/www/status_gateway_groups.php:44
+#: src/usr/local/www/status_gateway_groups.php:50
+#: src/usr/local/www/status_gateway_groups.php:62
 #: src/usr/local/www/system_gateway_groups.php:120
 #: src/usr/local/www/system_gateway_groups.php:133
 msgid "Gateways"
@@ -5790,7 +5790,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec.php:200
-#: src/usr/local/www/vpn_ipsec_phase2.php:373
+#: src/usr/local/www/vpn_ipsec_phase2.php:382
 msgid ""
 "Cannot disable a VTI Phase 2 while the interface is assigned. Remove the "
 "interface assignment before disabling this P2."
@@ -5811,9 +5811,9 @@ msgstr "Сохраненные изменения конфигурации ту�
 #: src/usr/local/www/vpn_ipsec_keys.php:91
 #: src/usr/local/www/vpn_ipsec_phase1.php:674
 #: src/usr/local/www/vpn_ipsec_phase1.php:687
-#: src/usr/local/www/vpn_ipsec_phase2.php:438
-#: src/usr/local/www/vpn_ipsec_phase2.php:518
-#: src/usr/local/www/vpn_ipsec_settings.php:224
+#: src/usr/local/www/vpn_ipsec_phase2.php:447
+#: src/usr/local/www/vpn_ipsec_phase2.php:527
+#: src/usr/local/www/vpn_ipsec_settings.php:230
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:186
 msgid "Tunnels"
 msgstr "Туннели"
@@ -5824,9 +5824,9 @@ msgstr "Туннели"
 #: src/usr/local/www/vpn_ipsec_keys.php:92
 #: src/usr/local/www/vpn_ipsec_phase1.php:671
 #: src/usr/local/www/vpn_ipsec_phase1.php:688
-#: src/usr/local/www/vpn_ipsec_phase2.php:434
-#: src/usr/local/www/vpn_ipsec_phase2.php:519
-#: src/usr/local/www/vpn_ipsec_settings.php:225
+#: src/usr/local/www/vpn_ipsec_phase2.php:443
+#: src/usr/local/www/vpn_ipsec_phase2.php:528
+#: src/usr/local/www/vpn_ipsec_settings.php:231
 msgid "Mobile Clients"
 msgstr "Мобильные Клиенты"
 
@@ -5838,9 +5838,9 @@ msgstr "Мобильные Клиенты"
 #: src/usr/local/www/vpn_ipsec_phase1.php:690
 #: src/usr/local/www/services_unbound_advanced.php:224
 #: src/usr/local/www/services_unbound_advanced.php:243
-#: src/usr/local/www/vpn_ipsec_phase2.php:521
-#: src/usr/local/www/vpn_ipsec_settings.php:193
-#: src/usr/local/www/vpn_ipsec_settings.php:227
+#: src/usr/local/www/vpn_ipsec_phase2.php:530
+#: src/usr/local/www/vpn_ipsec_settings.php:199
+#: src/usr/local/www/vpn_ipsec_settings.php:233
 msgid "Advanced Settings"
 msgstr "Расширенные Установки"
 
@@ -6248,8 +6248,8 @@ msgstr "[%s] уже разрешено."
 #: src/usr/local/www/services_captiveportal_ip_edit.php:194
 #: src/usr/local/www/pkg_mgr.php:160
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
-#: src/usr/local/www/interfaces.php:3218 src/usr/local/www/interfaces.php:3225
-#: src/usr/local/www/interfaces.php:3232
+#: src/usr/local/www/interfaces.php:3223 src/usr/local/www/interfaces.php:3230
+#: src/usr/local/www/interfaces.php:3237
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:256
 #: src/usr/local/www/vpn_openvpn_client.php:933
 #: src/usr/local/www/services_rfc2136_edit.php:294
@@ -6319,7 +6319,7 @@ msgstr "Введите ограничение загрузки с этого а�
 #: src/usr/local/www/services_unbound_host_edit.php:72
 #: src/usr/local/www/services_unbound_host_edit.php:276
 #: src/usr/local/www/services_dnsmasq_edit.php:61
-#: src/usr/local/www/services_dnsmasq_edit.php:267
+#: src/usr/local/www/services_dnsmasq_edit.php:271
 msgid "Domain"
 msgstr "Домен"
 
@@ -6543,7 +6543,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_groups_edit.php:66
 #: src/usr/local/www/system_gateway_groups_edit.php:266
 #: src/usr/local/www/system_gateway_groups_edit.php:295
-#: src/usr/local/www/status_gateway_groups.php:64
+#: src/usr/local/www/status_gateway_groups.php:61
 #: src/usr/local/www/system_gateway_groups.php:132
 msgid "Group Name"
 msgstr "Имя Группы"
@@ -6915,7 +6915,7 @@ msgstr "Мастер установки"
 #: src/usr/local/www/vpn_openvpn_client.php:519
 #: src/usr/local/www/vpn_openvpn_csc.php:316
 #: src/usr/local/www/vpn_ipsec_phase1.php:695
-#: src/usr/local/www/vpn_ipsec_phase2.php:526
+#: src/usr/local/www/vpn_ipsec_phase2.php:535
 #: src/usr/local/www/vpn_openvpn_server.php:690
 msgid "General Information"
 msgstr "Общая Информация"
@@ -6938,7 +6938,7 @@ msgstr "*Режим Сервера"
 #: src/usr/local/www/firewall_nat_edit.php:684
 #: src/usr/local/www/firewall_rules_edit.php:1259
 #: src/usr/local/www/firewall_nat_out_edit.php:511
-#: src/usr/local/www/vpn_ipsec_phase2.php:627
+#: src/usr/local/www/vpn_ipsec_phase2.php:636
 #: src/usr/local/www/vpn_openvpn_server.php:735
 msgid "*Protocol"
 msgstr "*Протокол"
@@ -7050,7 +7050,7 @@ msgstr "Тип аутентификации, используемый прокс
 #: src/usr/local/www/system_usermanager.php:785
 #: src/usr/local/www/system_usermanager.php:788
 #: src/usr/local/www/services_pppoe_edit.php:507
-#: src/usr/local/www/interfaces.php:2721
+#: src/usr/local/www/interfaces.php:2726
 #: src/usr/local/www/system_advanced_notifications.php:359
 #: src/etc/inc/captiveportal.inc:46
 msgid "Password"
@@ -7455,9 +7455,9 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:902
 #: src/usr/local/www/interfaces_bridge_edit.php:438
 #: src/usr/local/www/interfaces_ppps_edit.php:777
-#: src/usr/local/www/vpn_ipsec_phase2.php:711
+#: src/usr/local/www/vpn_ipsec_phase2.php:720
 #: src/usr/local/www/vpn_openvpn_server.php:1311
-#: src/usr/local/www/interfaces.php:2070 src/usr/local/www/interfaces.php:2275
+#: src/usr/local/www/interfaces.php:2075 src/usr/local/www/interfaces.php:2280
 msgid "Advanced Configuration"
 msgstr "Расширенные настройки"
 
@@ -7940,7 +7940,7 @@ msgstr "Другие Опции"
 #: src/usr/local/www/system_routes.php:247
 #: src/usr/local/www/status_gateways.php:61
 #: src/usr/local/www/firewall_rules_edit.php:1654
-#: src/usr/local/www/interfaces.php:593 src/usr/local/www/interfaces.php:644
+#: src/usr/local/www/interfaces.php:598 src/usr/local/www/interfaces.php:649
 #: src/usr/local/www/system_gateways.php:316
 #: src/usr/local/www/firewall_rules.php:363
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:270
@@ -8715,7 +8715,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_reboot.php:43 src/usr/local/www/diag_reboot.php:113
 #: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:406
-#: src/usr/local/www/interfaces.php:2156
+#: src/usr/local/www/interfaces.php:2161
 msgid "Reboot"
 msgstr "Перезагрузка"
 
@@ -8742,7 +8742,7 @@ msgid "Reboot the system"
 msgstr "Перезагрузить систему"
 
 #: src/usr/local/www/diag_reboot.php:119 src/usr/local/www/firewall_nat.php:499
-#: src/usr/local/www/interfaces.php:2046 src/usr/local/www/interfaces.php:3420
+#: src/usr/local/www/interfaces.php:2051 src/usr/local/www/interfaces.php:3425
 #: src/usr/local/www/diag_halt.php:78 src/usr/local/www/firewall_rules.php:866
 msgid "Cancel"
 msgstr "Отмена"
@@ -8753,12 +8753,12 @@ msgstr "Ни одного балансировщика нагрузки не н�
 
 #: src/usr/local/www/status_lb_vs.php:64 src/usr/local/www/system.php:486
 #: src/usr/local/www/firewall_aliases_edit.php:731
-#: src/usr/local/www/vpn_ipsec_phase2.php:554
-#: src/usr/local/www/vpn_ipsec_phase2.php:561
-#: src/usr/local/www/vpn_ipsec_phase2.php:575
-#: src/usr/local/www/vpn_ipsec_phase2.php:588
-#: src/usr/local/www/vpn_ipsec_phase2.php:601
-#: src/usr/local/www/vpn_ipsec_phase2.php:608
+#: src/usr/local/www/vpn_ipsec_phase2.php:563
+#: src/usr/local/www/vpn_ipsec_phase2.php:570
+#: src/usr/local/www/vpn_ipsec_phase2.php:584
+#: src/usr/local/www/vpn_ipsec_phase2.php:597
+#: src/usr/local/www/vpn_ipsec_phase2.php:610
+#: src/usr/local/www/vpn_ipsec_phase2.php:617
 msgid "Address"
 msgstr "Адрес"
 
@@ -8828,7 +8828,7 @@ msgstr "Недопустимые настраиваемые параметры"
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/head.inc:309
 #: src/usr/local/www/services_dnsmasq_edit.php:187
-#: src/etc/inc/service-utils.inc:250
+#: src/etc/inc/service-utils.inc:255
 msgid "DNS Forwarder"
 msgstr "DNS форвардер"
 
@@ -8993,12 +8993,12 @@ msgstr ""
 "странице%1$sСистема > Общая Настройка%2$s."
 
 #: src/usr/local/www/system_certmanager.php:35
-msgid "Import an existing Certificate"
-msgstr "Импортировать существующий Сертификат"
-
-#: src/usr/local/www/system_certmanager.php:36
 msgid "Create an internal Certificate"
 msgstr "Создать внутренний Сертификат"
+
+#: src/usr/local/www/system_certmanager.php:36
+msgid "Import an existing Certificate"
+msgstr "Импортировать существующий Сертификат"
 
 #: src/usr/local/www/system_certmanager.php:37
 msgid "Create a Certificate Signing Request"
@@ -9099,7 +9099,7 @@ msgstr "Тип сертификата"
 #: src/usr/local/www/system_camanager.php:204
 #: src/usr/local/www/system_usermanager.php:207
 #: src/usr/local/www/system_usermanager.php:971
-#: src/usr/local/www/vpn_ipsec_phase2.php:704
+#: src/usr/local/www/vpn_ipsec_phase2.php:713
 msgid "Lifetime"
 msgstr "Время жизни"
 
@@ -9640,14 +9640,14 @@ msgstr "Выберите сервер аутентификации для про
 #: src/usr/local/www/vpn_l2tp_users_edit.php:153
 #: src/usr/local/www/services_acb_settings.php:177
 #: src/usr/local/www/system_usermanager.php:763
-#: src/usr/local/www/interfaces.php:2781 src/usr/local/www/interfaces.php:2906
+#: src/usr/local/www/interfaces.php:2786 src/usr/local/www/interfaces.php:2911
 msgid "*Username"
 msgstr "*Имя пользователя"
 
 #: src/usr/local/www/diag_authentication.php:106
 #: src/usr/local/www/system_usermanager_passwordmg.php:100
 #: src/usr/local/www/services_acb_settings.php:184
-#: src/usr/local/www/interfaces.php:2788 src/usr/local/www/interfaces.php:2913
+#: src/usr/local/www/interfaces.php:2793 src/usr/local/www/interfaces.php:2918
 msgid "*Password"
 msgstr "*Пароль"
 
@@ -10513,7 +10513,7 @@ msgstr "Текущая Неактивная Сота"
 #: src/usr/local/www/status_interfaces.php:140
 #: src/usr/local/www/services_dhcp_edit.php:399
 #: src/usr/local/www/services_dhcp_edit.php:414
-#: src/usr/local/www/interfaces.php:1885
+#: src/usr/local/www/interfaces.php:1890
 #: src/usr/local/www/services_captiveportal_mac_edit.php:205
 msgid "MAC Address"
 msgstr "MAC адрес"
@@ -10527,7 +10527,7 @@ msgid "Subnet mask IPv4"
 msgstr "Маска подсети IPv4"
 
 #: src/usr/local/www/status_interfaces.php:147
-#: src/usr/local/www/interfaces.php:3397
+#: src/usr/local/www/interfaces.php:3402
 msgid "Gateway IPv4"
 msgstr "Шлюз IPv4"
 
@@ -10544,13 +10544,13 @@ msgid "Subnet mask IPv6"
 msgstr "Маска подсети IPv6"
 
 #: src/usr/local/www/status_interfaces.php:151
-#: src/usr/local/www/interfaces.php:2023
+#: src/usr/local/www/interfaces.php:2028
 msgid "Gateway IPv6"
 msgstr "Шлюз IPv6"
 
 #: src/usr/local/www/status_interfaces.php:163
 #: src/usr/local/www/interfaces_ppps_edit.php:872
-#: src/usr/local/www/interfaces.php:1905
+#: src/usr/local/www/interfaces.php:1910
 msgid "MTU"
 msgstr "MTU"
 
@@ -10567,12 +10567,12 @@ msgid "LAGG Ports"
 msgstr "LAGG Порты"
 
 #: src/usr/local/www/status_interfaces.php:167
-#: src/usr/local/www/interfaces.php:3037
+#: src/usr/local/www/interfaces.php:3042
 msgid "Channel"
 msgstr "Канал"
 
 #: src/usr/local/www/status_interfaces.php:168
-#: src/usr/local/www/interfaces.php:920 src/usr/local/www/interfaces.php:3148
+#: src/usr/local/www/interfaces.php:925 src/usr/local/www/interfaces.php:3153
 msgid "SSID"
 msgstr "SSID"
 
@@ -11572,7 +11572,7 @@ msgid "Relayd Global Settings"
 msgstr "Глобальный Настройки Relayd"
 
 #: src/usr/local/www/load_balancer_setting.php:120
-#: src/usr/local/www/interfaces.php:2134
+#: src/usr/local/www/interfaces.php:2139
 msgid "Timeout"
 msgstr "Перерыв"
 
@@ -12067,16 +12067,16 @@ msgstr ""
 "Для восстановления зеркала, сначала на зеркале выполните команду 'Forget', "
 "потом действие 'insert' на новом потребителе. "
 
-#: src/usr/local/www/xmlrpc.php:68
+#: src/usr/local/www/xmlrpc.php:69
 msgid "Authentication failed: Invalid username or password"
 msgstr "Аутентификация неуспешна: Невалидные имя пользователя или пароль"
 
-#: src/usr/local/www/xmlrpc.php:85
+#: src/usr/local/www/xmlrpc.php:86
 msgid "Authentication failed: not enough privileges"
 msgstr "Аутентификация неуспешна: недостаточно привилегий"
 
-#: src/usr/local/www/xmlrpc.php:473 src/usr/local/www/xmlrpc.php:602
-#: src/usr/local/www/xmlrpc.php:629
+#: src/usr/local/www/xmlrpc.php:497 src/usr/local/www/xmlrpc.php:626
+#: src/usr/local/www/xmlrpc.php:653
 #, php-format
 msgid "Merged in config (%s sections) from XMLRPC client."
 msgstr "Слияние в конфигурации (секции %s) от клиента XMLRPC."
@@ -12103,7 +12103,7 @@ msgid "At least one Destination Server IP address must be specified."
 msgstr "По крайней мере один IP адрес сервера назначения должен быть указан."
 
 #: src/usr/local/www/services_dhcp_relay.php:124 src/usr/local/www/head.inc:311
-#: src/etc/inc/service-utils.inc:295
+#: src/etc/inc/service-utils.inc:300
 msgid "DHCP Relay"
 msgstr "Трансляция DHCP"
 
@@ -13018,7 +13018,7 @@ msgid "*Parent Interface"
 msgstr "*Родительский Интерфейс"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:183
-#: src/usr/local/www/vpn_ipsec_phase2.php:537
+#: src/usr/local/www/vpn_ipsec_phase2.php:546
 msgid "*Mode"
 msgstr "*Режим"
 
@@ -13153,12 +13153,12 @@ msgid ""
 msgstr "Допустимое имя хоста указано, но доменная часть должна быть опущена"
 
 #: src/usr/local/www/services_dhcp_edit.php:173
-#: src/usr/local/www/interfaces.php:729
+#: src/usr/local/www/interfaces.php:734
 msgid "A valid IPv4 address must be specified."
 msgstr "Должен быть указан валидный адрес IPv4."
 
 #: src/usr/local/www/services_dhcp_edit.php:177
-#: src/usr/local/www/services_wol.php:79 src/usr/local/www/interfaces.php:857
+#: src/usr/local/www/services_wol.php:79 src/usr/local/www/interfaces.php:862
 #: src/usr/local/www/services_wol_edit.php:85
 msgid "A valid MAC address must be specified."
 msgstr "Должен быть задан допустимый MAC адрес."
@@ -13388,12 +13388,12 @@ msgstr ""
 "сервера."
 
 #: src/usr/local/www/system_camanager.php:35
-msgid "Import an existing Certificate Authority"
-msgstr "Импортировать существующий Центр Сертификации"
-
-#: src/usr/local/www/system_camanager.php:36
 msgid "Create an internal Certificate Authority"
 msgstr "Создать Внутренний Центр Сертификации"
+
+#: src/usr/local/www/system_camanager.php:36
+msgid "Import an existing Certificate Authority"
+msgstr "Импортировать существующий Центр Сертификации"
 
 #: src/usr/local/www/system_camanager.php:37
 msgid "Create an intermediate Certificate Authority"
@@ -13527,7 +13527,7 @@ msgstr "Условие поиска"
 #: src/usr/local/www/system_groupmanager_addprivs.php:218
 #: src/usr/local/www/diag_command.php:218
 #: src/usr/local/www/system_usermanager_addprivs.php:203
-#: src/usr/local/www/interfaces.php:2188
+#: src/usr/local/www/interfaces.php:2193
 msgid "Clear"
 msgstr "Очистить"
 
@@ -14490,13 +14490,10 @@ msgstr "Максимальное Число Записей Таблицы Меж
 #: src/usr/local/www/system_advanced_firewall.php:500
 #, php-format
 msgid ""
-"Maximum number of table entries for systems such as aliases, sshlockout, "
+"Maximum number of table entries for systems such as aliases, sshguard, "
 "snort, etc, combined.%1$sNote: Leave this blank for the default. On this "
 "system the default size is: %2$d"
 msgstr ""
-"Общее максимальное число записей таблицы для системы, такие как алиасы, ssh "
-"локаут, snort и т.д. %1$sК сведению: Оставьте данное поле пустым для "
-"значения по умолчанию. Но данной системе размер по умолчанию: %2$d"
 
 #: src/usr/local/www/system_advanced_firewall.php:508
 msgid "Firewall Maximum Fragment Entries"
@@ -14962,7 +14959,7 @@ msgid "*Name"
 msgstr "*Имя"
 
 #: src/usr/local/www/system_gateways_edit.php:183
-#: src/usr/local/www/interfaces.php:2016 src/usr/local/www/interfaces.php:3390
+#: src/usr/local/www/interfaces.php:2021 src/usr/local/www/interfaces.php:3395
 msgid "Gateway name"
 msgstr "Имя шлюза"
 
@@ -15765,10 +15762,10 @@ msgstr "Шлюз(ы) не были выбраны для использован�
 #: src/usr/local/www/system_routes.php:234
 #: src/usr/local/www/status_gateways.php:49
 #: src/usr/local/www/system_gateways.php:299
-#: src/usr/local/www/status_gateway_groups.php:43
-#: src/usr/local/www/status_gateway_groups.php:47
-#: src/usr/local/www/status_gateway_groups.php:54
-#: src/usr/local/www/status_gateway_groups.php:58
+#: src/usr/local/www/status_gateway_groups.php:40
+#: src/usr/local/www/status_gateway_groups.php:44
+#: src/usr/local/www/status_gateway_groups.php:51
+#: src/usr/local/www/status_gateway_groups.php:55
 #: src/usr/local/www/system_gateway_groups.php:46
 #: src/usr/local/www/system_gateway_groups.php:105
 #: src/usr/local/www/system_gateway_groups.php:122
@@ -16150,7 +16147,7 @@ msgid "Edit Load Balancer - Monitor Entry"
 msgstr "Редактировавать Балансировщик Нагрузки - Монитор"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:271
-#: src/usr/local/www/interfaces.php:1846
+#: src/usr/local/www/interfaces.php:1851
 msgid "*Description"
 msgstr "*Описание"
 
@@ -16415,8 +16412,8 @@ msgstr ""
 #: src/usr/local/www/firewall_virtual_ip_edit.php:386
 #: src/usr/local/www/firewall_rules_edit.php:1287
 #: src/usr/local/www/firewall_nat_out_edit.php:608
-#: src/usr/local/www/vpn_ipsec_phase2.php:563
-#: src/usr/local/www/vpn_ipsec_phase2.php:610
+#: src/usr/local/www/vpn_ipsec_phase2.php:572
+#: src/usr/local/www/vpn_ipsec_phase2.php:619
 #, php-format
 msgid "%s"
 msgstr "%s"
@@ -16964,7 +16961,7 @@ msgstr ""
 "> Алиасы, тоже можно указать здесь."
 
 #: src/usr/local/www/load_balancer_pool_edit.php:333
-#: src/usr/local/www/interfaces.php:2141
+#: src/usr/local/www/interfaces.php:2146
 msgid "Retry"
 msgstr "Повторить попытку"
 
@@ -18705,7 +18702,7 @@ msgid "Accounting port"
 msgstr "Порт Учёта"
 
 #: src/usr/local/www/system_authservers.php:268
-#: src/usr/local/www/interfaces.php:3288 src/usr/local/www/interfaces.php:3312
+#: src/usr/local/www/interfaces.php:3293 src/usr/local/www/interfaces.php:3317
 msgid "Shared Secret"
 msgstr "Общий пароль"
 
@@ -19191,7 +19188,7 @@ msgstr "От порта"
 #: src/usr/local/www/firewall_rules_edit.php:1403
 #: src/usr/local/www/firewall_rules_edit.php:1417
 #: src/usr/local/www/services_ntpd_gps.php:339
-#: src/usr/local/www/interfaces.php:2821
+#: src/usr/local/www/interfaces.php:2826
 msgid "Custom"
 msgstr "Частный"
 
@@ -19618,7 +19615,7 @@ msgstr "Не в сети (принудительно)"
 #: src/usr/local/www/status_gateways.php:129
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:99
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:111
-#: src/usr/local/www/status_gateway_groups.php:120
+#: src/usr/local/www/status_gateway_groups.php:117
 #: src/usr/local/www/diag_smart.php:301
 msgid "Offline"
 msgstr "Не в сети"
@@ -19628,7 +19625,7 @@ msgid "Danger, Packetloss"
 msgstr "Опасность, потеря пакетов"
 
 #: src/usr/local/www/status_gateways.php:135
-#: src/usr/local/www/status_gateway_groups.php:123
+#: src/usr/local/www/status_gateway_groups.php:120
 msgid "Warning, Packetloss"
 msgstr "Предупреждение, потеря пакетов"
 
@@ -19637,7 +19634,7 @@ msgid "Danger, Latency"
 msgstr "Опасность, задержка"
 
 #: src/usr/local/www/status_gateways.php:141
-#: src/usr/local/www/status_gateway_groups.php:126
+#: src/usr/local/www/status_gateway_groups.php:123
 msgid "Warning, Latency"
 msgstr "Предупреждение, задержка"
 
@@ -20025,22 +20022,22 @@ msgid "Link Interface(s)"
 msgstr "Интерфейс(ы) соединения"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:212
-#: src/usr/local/www/interfaces.php:607
+#: src/usr/local/www/interfaces.php:612
 msgid "Phone Number"
 msgstr "Номер Телефона"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:218
 #: src/usr/local/www/interfaces_ppps_edit.php:229
-#: src/usr/local/www/interfaces.php:613 src/usr/local/www/interfaces.php:623
-#: src/usr/local/www/interfaces.php:633 src/usr/local/www/interfaces.php:2802
-#: src/usr/local/www/interfaces.php:2934
+#: src/usr/local/www/interfaces.php:618 src/usr/local/www/interfaces.php:628
+#: src/usr/local/www/interfaces.php:638 src/usr/local/www/interfaces.php:2807
+#: src/usr/local/www/interfaces.php:2939
 msgid "Dial on demand"
 msgstr "Набор номера по запросу"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:218
 #: src/usr/local/www/interfaces_ppps_edit.php:229
-#: src/usr/local/www/interfaces.php:613 src/usr/local/www/interfaces.php:623
-#: src/usr/local/www/interfaces.php:633
+#: src/usr/local/www/interfaces.php:618 src/usr/local/www/interfaces.php:628
+#: src/usr/local/www/interfaces.php:638
 msgid "Idle timeout value"
 msgstr "Значение таймаута простоя"
 
@@ -20071,22 +20068,22 @@ msgid "Do not specify both a Service name and a NULL Service name."
 msgstr "Не указывайте одновременно оба значения: Имя службы и имя службы NULL"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:256
-#: src/usr/local/www/interfaces.php:831 src/usr/local/www/interfaces.php:854
+#: src/usr/local/www/interfaces.php:836 src/usr/local/www/interfaces.php:859
 msgid "The idle timeout value must be an integer."
 msgstr "Значение времени простоя должно быть целым числом."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:260
-#: src/usr/local/www/interfaces.php:835
+#: src/usr/local/www/interfaces.php:840
 msgid "A valid PPPoE reset hour must be specified (0-23)."
 msgstr "Валидное время в часах для сброса PPPoE должно быть указано (0-23)."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:264
-#: src/usr/local/www/interfaces.php:839
+#: src/usr/local/www/interfaces.php:844
 msgid "A valid PPPoE reset minute must be specified (0-59)."
 msgstr "Валидное время в минутах для сброса PPPoE должно быть указано (0-23)."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:267
-#: src/usr/local/www/interfaces.php:842
+#: src/usr/local/www/interfaces.php:847
 msgid "A valid PPPoE reset date must be specified (mm/dd/yyyy)."
 msgstr "Валидная дата для сброса PPPoE должна быть указана (мм/дд/гггг)."
 
@@ -20152,12 +20149,12 @@ msgid "Select"
 msgstr "Выбрать"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:468
-#: src/usr/local/www/interfaces.php:1766
+#: src/usr/local/www/interfaces.php:1771
 msgid "PPPoE"
 msgstr "PPPoE"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:468
-#: src/usr/local/www/interfaces.php:1766
+#: src/usr/local/www/interfaces.php:1771
 msgid "PPTP"
 msgstr "PPTP"
 
@@ -20174,7 +20171,7 @@ msgstr ""
 "подключений MLPPP. По умолчанию MRRU будет автоматически согласовываться."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:504
-#: src/usr/local/www/interfaces.php:2688
+#: src/usr/local/www/interfaces.php:2693
 msgid "PPP Configuration"
 msgstr "Конфигурация PPP"
 
@@ -20199,22 +20196,22 @@ msgstr ""
 "списках выбора «Назначение Интерфейсов»."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:532
-#: src/usr/local/www/interfaces.php:2693 src/usr/local/www/interfaces.php:3119
+#: src/usr/local/www/interfaces.php:2698 src/usr/local/www/interfaces.php:3124
 msgid "Country"
 msgstr "Страна"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:539
-#: src/usr/local/www/interfaces.php:2700
+#: src/usr/local/www/interfaces.php:2705
 msgid "Provider"
 msgstr "Провайдер"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:546
-#: src/usr/local/www/interfaces.php:2707
+#: src/usr/local/www/interfaces.php:2712
 msgid "Plan"
 msgstr "План"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:549
-#: src/usr/local/www/interfaces.php:2710
+#: src/usr/local/www/interfaces.php:2715
 msgid "Select to fill in service provider data."
 msgstr "Выберите, чтобы заполнить данные провайдера."
 
@@ -20231,7 +20228,7 @@ msgid "Gateway IP or Hostname"
 msgstr "IP адрес или Имя Шлюза"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:604
-#: src/usr/local/www/interfaces.php:2728
+#: src/usr/local/www/interfaces.php:2733
 msgid "*Phone number"
 msgstr "*Номер телефона"
 
@@ -20307,7 +20304,7 @@ msgstr ""
 "совокупного аптайма."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:661
-#: src/usr/local/www/interfaces.php:2795
+#: src/usr/local/www/interfaces.php:2800
 msgid "Service name"
 msgstr "Имя сервиса"
 
@@ -20322,7 +20319,7 @@ msgstr ""
 "\"Configure NULL\", чтобы указать пустое имя Сервиса."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:691
-#: src/usr/local/www/interfaces.php:2821
+#: src/usr/local/www/interfaces.php:2826
 msgid "Pre-set"
 msgstr "Предустановки"
 
@@ -21672,7 +21669,7 @@ msgid "This does NOT prevent the rule from being overwritten on Slave."
 msgstr "Это НЕ предотвращает перезапись правила на резервном устройстве."
 
 #: src/usr/local/www/firewall_rules_edit.php:1604
-#: src/usr/local/www/interfaces.php:2118 src/usr/local/www/interfaces.php:2347
+#: src/usr/local/www/interfaces.php:2123 src/usr/local/www/interfaces.php:2352
 msgid "VLAN Prio"
 msgstr "Приоритет VLAN "
 
@@ -21845,7 +21842,7 @@ msgstr ""
 "IP адрес сервера назначения %s не является действительным IPv6 адресом."
 
 #: src/usr/local/www/services_dhcpv6_relay.php:124
-#: src/usr/local/www/head.inc:312 src/etc/inc/service-utils.inc:302
+#: src/usr/local/www/head.inc:312 src/etc/inc/service-utils.inc:307
 msgid "DHCPv6 Relay"
 msgstr "Трансляция DHCPv6"
 
@@ -22580,9 +22577,9 @@ msgstr "Конфигурация NTP для последовательного G
 
 #: src/usr/local/www/services_ntpd_gps.php:339
 #: src/usr/local/www/firewall_nat_out_edit.php:600
-#: src/usr/local/www/interfaces.php:2009 src/usr/local/www/interfaces.php:3052
-#: src/usr/local/www/interfaces.php:3061 src/usr/local/www/interfaces.php:3070
-#: src/usr/local/www/interfaces.php:3128 src/usr/local/www/interfaces.php:3383
+#: src/usr/local/www/interfaces.php:2014 src/usr/local/www/interfaces.php:3057
+#: src/usr/local/www/interfaces.php:3066 src/usr/local/www/interfaces.php:3075
+#: src/usr/local/www/interfaces.php:3133 src/usr/local/www/interfaces.php:3388
 #: src/usr/local/www/system_gateways.php:314 src/etc/inc/openvpn.inc:544
 msgid "Default"
 msgstr "По умолчанию"
@@ -24628,9 +24625,9 @@ msgstr "Редактировать Фазу 1"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:708
 #: src/usr/local/www/vpn_ipsec_phase1.php:924
-#: src/usr/local/www/vpn_ipsec_phase2.php:661
-#: src/usr/local/www/interfaces.php:3013 src/usr/local/www/interfaces.php:3061
-#: src/usr/local/www/interfaces.php:3070
+#: src/usr/local/www/vpn_ipsec_phase2.php:670
+#: src/usr/local/www/interfaces.php:3018 src/usr/local/www/interfaces.php:3066
+#: src/usr/local/www/interfaces.php:3075
 msgid "Auto"
 msgstr "Авто"
 
@@ -26136,22 +26133,28 @@ msgstr ""
 msgid "An IPv6 local address was specified but the mode is not set to tunnel6"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:183
-#: src/usr/local/www/vpn_ipsec_phase2.php:213
+#: src/usr/local/www/vpn_ipsec_phase2.php:177
+msgid ""
+"VTI requires a valid local network or IP address for its endpoint address, "
+"it cannot use a network macro for a different interface (e.g. LAN)."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase2.php:188
+#: src/usr/local/www/vpn_ipsec_phase2.php:218
 msgid "Invalid Local Network."
 msgstr "Неверная локальная сеть."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:183
-#: src/usr/local/www/vpn_ipsec_phase2.php:213
+#: src/usr/local/www/vpn_ipsec_phase2.php:188
+#: src/usr/local/www/vpn_ipsec_phase2.php:218
 #, php-format
 msgid "%s has no subnet."
 msgstr "%s не имеет подсети."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:191
+#: src/usr/local/www/vpn_ipsec_phase2.php:196
 msgid "A valid NAT local network bit count must be specified."
 msgstr "Должно быть указано допустимое количество бит локальной сети NAT."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:194
+#: src/usr/local/www/vpn_ipsec_phase2.php:199
 msgid ""
 "A network type address cannot be configured for NAT while only an address "
 "type is selected for local source."
@@ -26159,11 +26162,11 @@ msgstr ""
 "Адрес сетевого типа не может быть настроен для NAT, в то время как для "
 "локального источника выбран только тип \"адрес\"."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:198
+#: src/usr/local/www/vpn_ipsec_phase2.php:203
 msgid "A valid NAT local network IP address must be specified."
 msgstr "Должен быть указан действительный IP-адрес локальной сети NAT."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:200
+#: src/usr/local/www/vpn_ipsec_phase2.php:205
 msgid ""
 "A valid NAT local network IPv4 address must be specified or Mode needs to be "
 "changed to IPv6"
@@ -26171,7 +26174,7 @@ msgstr ""
 "Должен быть указан действительный IP-адрес локальной сети NAT или режим "
 "должен быть изменен на IPv6"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:202
+#: src/usr/local/www/vpn_ipsec_phase2.php:207
 msgid ""
 "A valid NAT local network IPv6 address must be specified or Mode needs to be "
 "changed to IPv4"
@@ -26179,32 +26182,36 @@ msgstr ""
 "Должен быть указан действительный IPv6-адрес локальной сети NAT или режим "
 "должен быть изменен на IPv4"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:221
+#: src/usr/local/www/vpn_ipsec_phase2.php:226
 msgid "A valid remote network bit count must be specified."
 msgstr "Должно быть указано допустимое количество бит удаленной сети."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:225
+#: src/usr/local/www/vpn_ipsec_phase2.php:230
 msgid "A valid remote network IP address must be specified."
 msgstr "Должен быть указан действительный IP-адрес удаленной сети."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:228
+#: src/usr/local/www/vpn_ipsec_phase2.php:233
 msgid "VTI requires a valid remote address"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:231
+#: src/usr/local/www/vpn_ipsec_phase2.php:236
 msgid "An IPv4 remote network was specified but the mode is not set to tunnel"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:233
+#: src/usr/local/www/vpn_ipsec_phase2.php:238
 msgid ""
 "An IPv6 remote network was specified but the mode is not set to tunnel6"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:259
+#: src/usr/local/www/vpn_ipsec_phase2.php:247
+msgid "VTI is not compatible with mobile IPsec."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase2.php:268
 msgid "Phase2 with this Local Network is already defined for mobile clients."
 msgstr "Фаза 2 с этой локальной сетью уже определена для мобильных клиентов."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:292
+#: src/usr/local/www/vpn_ipsec_phase2.php:301
 msgid ""
 "Phase2 with this Local/Remote networks combination is already defined for "
 "this Phase1."
@@ -26212,14 +26219,14 @@ msgstr ""
 "Фаза2 с этой комбинацией локальных/удаленных сетей уже определен для этой "
 "Фазы1."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:303
+#: src/usr/local/www/vpn_ipsec_phase2.php:312
 msgid ""
 "Cannot switch away from VTI while the interface is assigned. Remove the "
 "interface assignment before switching away from VTI."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:338
-#: src/usr/local/www/vpn_ipsec_phase2.php:343
+#: src/usr/local/www/vpn_ipsec_phase2.php:347
+#: src/usr/local/www/vpn_ipsec_phase2.php:352
 msgid ""
 "The local and remote networks of a phase 2 entry cannot overlap the outside "
 "of the tunnel (interface and remote gateway) configured in its phase 1."
@@ -26227,82 +26234,82 @@ msgstr ""
 "Локальные и удаленные сети в записи фазы 2 не могут перекрывать внешнюю "
 "сторону туннеля (интерфейс и удаленный шлюз), сконфигурированного в фазе 1."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:357
+#: src/usr/local/www/vpn_ipsec_phase2.php:366
 msgid "At least one encryption algorithm must be selected."
 msgstr "Необходимо выбрать хотя бы один алгоритм шифрования."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:362
+#: src/usr/local/www/vpn_ipsec_phase2.php:371
 msgid "At least one hashing algorithm needs to be selected."
 msgstr "Необходимо выбрать хотя бы один алгоритм хэширования."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:370
+#: src/usr/local/www/vpn_ipsec_phase2.php:379
 msgid "The P2 lifetime must be an integer."
 msgstr "Время жизни Ф2 должно быть целым числом."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:419
+#: src/usr/local/www/vpn_ipsec_phase2.php:428
 msgid "Saved IPsec tunnel Phase 2 configuration."
 msgstr "Сохраненная конфигурация туннеля IPsec фазы 2."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:434
-#: src/usr/local/www/vpn_ipsec_phase2.php:438
+#: src/usr/local/www/vpn_ipsec_phase2.php:443
+#: src/usr/local/www/vpn_ipsec_phase2.php:447
 msgid "Edit Phase 2"
 msgstr "Редактировать Фазу 2"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:542
+#: src/usr/local/www/vpn_ipsec_phase2.php:551
 msgid "*Local Network"
 msgstr "*Локальная Сеть"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:566
+#: src/usr/local/www/vpn_ipsec_phase2.php:575
 msgid "NAT/BINAT translation"
 msgstr "Трансляция NAT/BINAT"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:590
+#: src/usr/local/www/vpn_ipsec_phase2.php:599
 msgid ""
 "If NAT/BINAT is required on this network specify the address to be "
 "translated"
 msgstr "Если в этой сети требуется NAT/BINAT, укажите адрес трансляции"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:594
+#: src/usr/local/www/vpn_ipsec_phase2.php:603
 msgid "*Remote Network"
 msgstr "*Удаленная Сеть"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:623
+#: src/usr/local/www/vpn_ipsec_phase2.php:632
 msgid "Phase 2 Proposal (SA/Key Exchange)"
 msgstr "Предложение Фазы 2 (SA/Key Exchange)"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:630
+#: src/usr/local/www/vpn_ipsec_phase2.php:639
 msgid ""
 "Encapsulating Security Payload (ESP) is encryption, Authentication Header "
 "(AH) is authentication only."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:636
+#: src/usr/local/www/vpn_ipsec_phase2.php:645
 msgid "*Encryption Algorithms"
 msgstr "*Алгоритмы Шифрования"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:667
+#: src/usr/local/www/vpn_ipsec_phase2.php:676
 msgid ""
 "Note: Blowfish, 3DES, and CAST128 provide weak security and should be "
 "avoided."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:674
+#: src/usr/local/www/vpn_ipsec_phase2.php:683
 msgid "*Hash Algorithms"
 msgstr "*Алгоритмы Хеширования"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:686
+#: src/usr/local/www/vpn_ipsec_phase2.php:695
 msgid "Note: MD5 and SHA1 provide weak security and should be avoided."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:697
+#: src/usr/local/www/vpn_ipsec_phase2.php:706
 msgid "PFS key group"
 msgstr "Группа ключей PFS"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:707
+#: src/usr/local/www/vpn_ipsec_phase2.php:716
 msgid "Specifies how often the connection must be rekeyed, in seconds"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:715
+#: src/usr/local/www/vpn_ipsec_phase2.php:724
 msgid "Automatically ping host"
 msgstr "Автоматически пинговать хост"
 
@@ -26487,36 +26494,36 @@ msgstr ""
 msgid "The settings have already been applied!"
 msgstr "Настройки уже применены!"
 
-#: src/usr/local/www/interfaces.php:524
+#: src/usr/local/www/interfaces.php:529
 msgid "An interface with the specified description already exists."
 msgstr "Интерфейс с указанным описанием уже существует."
 
-#: src/usr/local/www/interfaces.php:533
+#: src/usr/local/www/interfaces.php:538
 #, php-format
 msgid "Sorry, an alias with the name %s already exists."
 msgstr "Извините, алиас с именем %s  уже существует."
 
-#: src/usr/local/www/interfaces.php:542
+#: src/usr/local/www/interfaces.php:547
 #, php-format
 msgid "Sorry, an interface group with the name %s already exists."
 msgstr "Извините, группа интерфейсов с именем %s  уже существует."
 
-#: src/usr/local/www/interfaces.php:548
+#: src/usr/local/www/interfaces.php:553
 msgid "The interface description cannot contain only numbers."
 msgstr "Описание интерфейса не может содержать только числа."
 
-#: src/usr/local/www/interfaces.php:557
+#: src/usr/local/www/interfaces.php:562
 msgid "The interface description cannot start with pkg_"
 msgstr "Описание интерфейса не может начинаться с pkg_"
 
-#: src/usr/local/www/interfaces.php:567
+#: src/usr/local/www/interfaces.php:572
 #, php-format
 msgid ""
 "In order to block bogon networks the Firewall Maximum Table Entries value in "
 "System / Advanced / Firewall must be increased at least to %s."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:573
+#: src/usr/local/www/interfaces.php:578
 msgid ""
 "The DHCP Server is active on this interface and it can be used only with a "
 "static IP configuration. Please disable the DHCP Server service on this "
@@ -26526,7 +26533,7 @@ msgstr ""
 "статической IP-конфигурацией. Сначала отключите на этом интерфейсе службу "
 "DHCP-сервера, а затем измените конфигурацию интерфейса."
 
-#: src/usr/local/www/interfaces.php:579
+#: src/usr/local/www/interfaces.php:584
 msgid ""
 "The DHCP Server is active on this interface and it can be used only with "
 "IPv4 subnet < 31. Please disable the DHCP Server service on this interface "
@@ -26536,7 +26543,7 @@ msgstr ""
 "подсетью IPv4 < 31. Сначала отключите службу DHCP-сервера на этом "
 "интерфейсе, а затем измените конфигурацию интерфейса."
 
-#: src/usr/local/www/interfaces.php:587
+#: src/usr/local/www/interfaces.php:592
 msgid ""
 "The DHCP6 Server is active on this interface and it can be used only with a "
 "static IPv6 configuration. Please disable the DHCPv6 Server service on this "
@@ -26546,15 +26553,15 @@ msgstr ""
 "статической конфигурацией IPv6. Сначала отключите на этом интерфейсе службу "
 "сервера DHCPv6, а затем измените конфигурацию интерфейса."
 
-#: src/usr/local/www/interfaces.php:593
+#: src/usr/local/www/interfaces.php:598
 msgid "IPv4 address"
 msgstr "IPv4 адрес"
 
-#: src/usr/local/www/interfaces.php:593 src/usr/local/www/interfaces.php:644
+#: src/usr/local/www/interfaces.php:598 src/usr/local/www/interfaces.php:649
 msgid "Subnet bit count"
 msgstr "Бит подсети"
 
-#: src/usr/local/www/interfaces.php:600
+#: src/usr/local/www/interfaces.php:605
 msgid ""
 "This interface is referenced by IPv4 VIPs. Please delete those before "
 "setting the interface to 'none' configuration."
@@ -26562,51 +26569,51 @@ msgstr ""
 "На этот интерфейс ссылаются VIP-адреса IPv4. Удалите их перед тем как "
 "установить значение «нет»."
 
-#: src/usr/local/www/interfaces.php:607
+#: src/usr/local/www/interfaces.php:612
 msgid "Modem Port"
 msgstr "Порт Модема"
 
-#: src/usr/local/www/interfaces.php:613 src/usr/local/www/interfaces.php:616
+#: src/usr/local/www/interfaces.php:618 src/usr/local/www/interfaces.php:621
 msgid "PPPoE username"
 msgstr "Имя пользователя PPPoE"
 
-#: src/usr/local/www/interfaces.php:613 src/usr/local/www/interfaces.php:616
+#: src/usr/local/www/interfaces.php:618 src/usr/local/www/interfaces.php:621
 msgid "PPPoE password"
 msgstr "Пароль PPPoE"
 
-#: src/usr/local/www/interfaces.php:623 src/usr/local/www/interfaces.php:626
+#: src/usr/local/www/interfaces.php:628 src/usr/local/www/interfaces.php:631
 msgid "PPTP username"
 msgstr "Имя пользователя PPTP"
 
-#: src/usr/local/www/interfaces.php:623 src/usr/local/www/interfaces.php:626
+#: src/usr/local/www/interfaces.php:628 src/usr/local/www/interfaces.php:631
 msgid "PPTP password"
 msgstr "Пароль PPTP"
 
-#: src/usr/local/www/interfaces.php:623 src/usr/local/www/interfaces.php:626
+#: src/usr/local/www/interfaces.php:628 src/usr/local/www/interfaces.php:631
 msgid "PPTP local IP address"
 msgstr "Локальный IP адрес PPTP"
 
-#: src/usr/local/www/interfaces.php:623 src/usr/local/www/interfaces.php:626
+#: src/usr/local/www/interfaces.php:628 src/usr/local/www/interfaces.php:631
 msgid "PPTP subnet"
 msgstr "Подсеть PPTP"
 
-#: src/usr/local/www/interfaces.php:623 src/usr/local/www/interfaces.php:626
+#: src/usr/local/www/interfaces.php:628 src/usr/local/www/interfaces.php:631
 msgid "PPTP remote IP address"
 msgstr "Удаленный IP адрес PPTP"
 
-#: src/usr/local/www/interfaces.php:633 src/usr/local/www/interfaces.php:636
+#: src/usr/local/www/interfaces.php:638 src/usr/local/www/interfaces.php:641
 msgid "L2TP username"
 msgstr "Имя пользователя L2TP"
 
-#: src/usr/local/www/interfaces.php:633 src/usr/local/www/interfaces.php:636
+#: src/usr/local/www/interfaces.php:638 src/usr/local/www/interfaces.php:641
 msgid "L2TP password"
 msgstr "Пароль L2TP"
 
-#: src/usr/local/www/interfaces.php:633 src/usr/local/www/interfaces.php:636
+#: src/usr/local/www/interfaces.php:638 src/usr/local/www/interfaces.php:641
 msgid "L2TP remote IP address"
 msgstr "Удаленный IP адрес L2TP"
 
-#: src/usr/local/www/interfaces.php:651
+#: src/usr/local/www/interfaces.php:656
 msgid ""
 "This interface is referenced by IPv6 VIPs. Please delete those before "
 "setting the interface to 'none' configuration."
@@ -26614,13 +26621,13 @@ msgstr ""
 "На этот интерфейс ссылаются VIP-адреса IPv6. Удалите их перед тем как "
 "установить значение «нет»."
 
-#: src/usr/local/www/interfaces.php:658 src/usr/local/www/interfaces.php:677
-#: src/usr/local/www/interfaces.php:688 src/usr/local/www/interfaces.php:694
+#: src/usr/local/www/interfaces.php:663 src/usr/local/www/interfaces.php:682
+#: src/usr/local/www/interfaces.php:693 src/usr/local/www/interfaces.php:699
 #, php-format
 msgid "The interface must be reassigned to configure as %s."
 msgstr "Интерфейс должен быть переназначен для настройки как %s"
 
-#: src/usr/local/www/interfaces.php:661
+#: src/usr/local/www/interfaces.php:666
 msgid ""
 "DHCPv6 Prefix Delegation size must be provided when Send IPv6 prefix hint "
 "flag is checked"
@@ -26628,172 +26635,172 @@ msgstr ""
 "Должен быть предоставлен размер делегирования DHCPv6 префикса, если "
 "установлен флажок посылать подсказку префикса  IPv6 "
 
-#: src/usr/local/www/interfaces.php:668
+#: src/usr/local/www/interfaces.php:673
 msgid "Only one interface can be configured within a single 6rd prefix."
 msgstr ""
 "Только один интерфейс может быть настроен в пределах одного 6rd префикса."
 
-#: src/usr/local/www/interfaces.php:674
+#: src/usr/local/www/interfaces.php:679
 msgid "6RD Border Relay must be an IPv4 address."
 msgstr "6RD Пограничный Транслятор должен иметь IPv4 адрес."
 
-#: src/usr/local/www/interfaces.php:683
+#: src/usr/local/www/interfaces.php:688
 #, php-format
 msgid "Only one interface can be configured as 6to4."
 msgstr "Только один интерфейс может быть настроен для 6к4."
 
-#: src/usr/local/www/interfaces.php:698
+#: src/usr/local/www/interfaces.php:703
 msgid "A valid interface to track must be selected."
 msgstr "Должен быть настроен валидный интерфейс для отслеживания."
 
-#: src/usr/local/www/interfaces.php:702
+#: src/usr/local/www/interfaces.php:707
 msgid "A valid hexadecimal number must be entered for the IPv6 prefix ID."
 msgstr ""
 "Следует указать валидное шестнадцатеричное число для идентификатора IPv6 "
 "префикса."
 
-#: src/usr/local/www/interfaces.php:706
+#: src/usr/local/www/interfaces.php:711
 msgid "The specified IPv6 Prefix ID is out of range."
 msgstr "Указанный идентификатор IPv6 префикса выходит за пределы диапазона."
 
-#: src/usr/local/www/interfaces.php:716
+#: src/usr/local/www/interfaces.php:721
 #, php-format
 msgid "This track6 prefix ID is already being used in %s."
 msgstr "Данный идентификатор отслеживания track6 уже используется в %s."
 
-#: src/usr/local/www/interfaces.php:733
+#: src/usr/local/www/interfaces.php:738
 #, php-format
 msgid "IPv4 address %s is being used by or overlaps with:"
 msgstr "Адрес IPv4 %s используется  или пересекается:"
 
-#: src/usr/local/www/interfaces.php:743
+#: src/usr/local/www/interfaces.php:748
 msgid "This IPv4 address is the network address and cannot be used"
 msgstr "Адрес IPv4 является сетевым адресом и не может использован"
 
-#: src/usr/local/www/interfaces.php:745
+#: src/usr/local/www/interfaces.php:750
 msgid "This IPv4 address is the broadcast address and cannot be used"
 msgstr "Адрес IPv4  является широковещательный адресом и не может использован"
 
-#: src/usr/local/www/interfaces.php:752
+#: src/usr/local/www/interfaces.php:757
 msgid "This IPv4 address conflicts with a Static Route."
 msgstr "Адрес IPv4 конфликтует со Статическим Маршрутом."
 
-#: src/usr/local/www/interfaces.php:763
+#: src/usr/local/www/interfaces.php:768
 #: src/usr/local/www/services_dhcpv6_edit.php:120
 msgid "A valid IPv6 address must be specified."
 msgstr "Валидный адрес IPv6 должен быть указан."
 
-#: src/usr/local/www/interfaces.php:766
+#: src/usr/local/www/interfaces.php:771
 msgid "IPv6 link local addresses cannot be configured as an interface IP."
 msgstr ""
 "IPv6 link local  адрес не может быть настроен как IP адрес интерфейса."
 
-#: src/usr/local/www/interfaces.php:770
+#: src/usr/local/www/interfaces.php:775
 #, php-format
 msgid "IPv6 address %s is being used by or overlaps with:"
 msgstr "IPv6 адрес %s уже используется или перескается с:"
 
-#: src/usr/local/www/interfaces.php:780
+#: src/usr/local/www/interfaces.php:785
 msgid "This IPv6 address conflicts with a Static Route."
 msgstr "Адрес IPv6 конфликтует со Статическим Маршрутом."
 
-#: src/usr/local/www/interfaces.php:788 src/usr/local/www/interfaces.php:791
+#: src/usr/local/www/interfaces.php:793 src/usr/local/www/interfaces.php:796
 msgid "A valid subnet bit count must be specified."
 msgstr "Валидное количество битов подсети должно быть указано."
 
-#: src/usr/local/www/interfaces.php:794
+#: src/usr/local/www/interfaces.php:799
 msgid "A valid alias IP address must be specified."
 msgstr "Валидный IP адрес алиаса должен быть указан."
 
-#: src/usr/local/www/interfaces.php:797
+#: src/usr/local/www/interfaces.php:802
 msgid "A valid alias subnet bit count must be specified."
 msgstr "Валидное количество битов алиаса подсети должно быть указано."
 
-#: src/usr/local/www/interfaces.php:800
+#: src/usr/local/www/interfaces.php:805
 msgid "An invalid IP address was detected in the 'Reject leases from' field."
 msgstr "Неверный IP адрес был обнаружен в поле 'Отклонить аренду от'."
 
-#: src/usr/local/www/interfaces.php:812
+#: src/usr/local/www/interfaces.php:817
 msgid "A valid IPv4 gateway must be specified."
 msgstr "Должен быть указан валидный  IPv4 шлюз."
 
-#: src/usr/local/www/interfaces.php:824
+#: src/usr/local/www/interfaces.php:829
 msgid "A valid IPv6 gateway must be specified."
 msgstr "Должен быть указан валидный  IPv6 шлюз."
 
-#: src/usr/local/www/interfaces.php:828
+#: src/usr/local/www/interfaces.php:833
 msgid "The service name contains invalid characters."
 msgstr "Имя сервиса содержить невалидные символы."
 
-#: src/usr/local/www/interfaces.php:845
+#: src/usr/local/www/interfaces.php:850
 msgid "A valid PPTP local IP address must be specified."
 msgstr "Валидный локальный PPTP  IP адрес должен быть указан."
 
-#: src/usr/local/www/interfaces.php:848
+#: src/usr/local/www/interfaces.php:853
 msgid "A valid PPTP subnet bit count must be specified."
 msgstr "Должно быть указано допустимое значение бита подсети PPTP."
 
-#: src/usr/local/www/interfaces.php:851
+#: src/usr/local/www/interfaces.php:856
 msgid "A valid PPTP remote IP address must be specified."
 msgstr "Должен быть задан допустимый удаленный IP адрес PPTP."
 
-#: src/usr/local/www/interfaces.php:872
+#: src/usr/local/www/interfaces.php:877
 #, php-format
 msgid "The MTU must be between %d and %d bytes."
 msgstr "Значение MTU должно быть в пределах между %d и %d байт. "
 
-#: src/usr/local/www/interfaces.php:888
+#: src/usr/local/www/interfaces.php:893
 msgid "The MTU of a VLAN cannot be greater than that of its parent interface."
 msgstr ""
 "Значение MTU для VLANa не может быть больше чем у родительского интерфейса."
 
-#: src/usr/local/www/interfaces.php:904
+#: src/usr/local/www/interfaces.php:909
 #, php-format
 msgid "Interface %s (VLAN) has MTU set to a larger value."
 msgstr "Интерфейс %s (VLAN) имеет значение MTU большего значения."
 
-#: src/usr/local/www/interfaces.php:911
+#: src/usr/local/www/interfaces.php:916
 msgid "The MSS must be an integer between 576 and 65535 bytes."
 msgstr "Значение MSS должно быть в пределах между 576 и 65535 байт."
 
-#: src/usr/local/www/interfaces.php:923
+#: src/usr/local/www/interfaces.php:928
 msgid "A specific channel, not auto, must be selected for Access Point mode."
 msgstr ""
 "Для режима Точка Доступа необходимо выбрать конкретный канал, а не авто."
 
-#: src/usr/local/www/interfaces.php:928
+#: src/usr/local/www/interfaces.php:933
 msgid "802.11n standards require enabling WME."
 msgstr "Стандарт 802.11n требует включения WME."
 
-#: src/usr/local/www/interfaces.php:934
+#: src/usr/local/www/interfaces.php:939
 msgid "Key Rotation must be an integer between 1 and 9999."
 msgstr "Ротация Ключа должно быть числом между 1 и 9999."
 
-#: src/usr/local/www/interfaces.php:937
+#: src/usr/local/www/interfaces.php:942
 msgid "Master Key Regeneration must be an integer between 1 and 9999."
 msgstr "Значение Регинирации Мастер-Ключа должно быть числом между 1 и 9999."
 
-#: src/usr/local/www/interfaces.php:941
+#: src/usr/local/www/interfaces.php:946
 msgid "Master Key Regeneration must be greater than Key Rotation."
 msgstr ""
 "Значение Регинирации Мастер-Ключа должно быть больше значения Ротации Ключа"
 
-#: src/usr/local/www/interfaces.php:946
+#: src/usr/local/www/interfaces.php:951
 msgid "802.1X Authentication Server must be an IP or hostname."
 msgstr "Сервер Аутентификации 802.1X должен быть IP адрес или имя хоста."
 
-#: src/usr/local/www/interfaces.php:951
+#: src/usr/local/www/interfaces.php:956
 msgid "Secondary 802.1X Authentication Server must be an IP or hostname."
 msgstr ""
 "Вторичный Сервер Аутентификации 802.1X должен быть IP адрес или имя хоста."
 
-#: src/usr/local/www/interfaces.php:956
+#: src/usr/local/www/interfaces.php:961
 msgid ""
 "802.1X Authentication Server Port must be a valid port number (1-65535)."
 msgstr ""
 "Порт Сервера Аутентификации 802.1X должен быть числом между 1 и 65535."
 
-#: src/usr/local/www/interfaces.php:961
+#: src/usr/local/www/interfaces.php:966
 msgid ""
 "Secondary 802.1X Authentication Server Port must be a valid port number (1-"
 "65535)."
@@ -26801,51 +26808,51 @@ msgstr ""
 "Порт вторичного Сервера Аутентификации 802.1X должен быть числом между 1 и "
 "65535."
 
-#: src/usr/local/www/interfaces.php:966
+#: src/usr/local/www/interfaces.php:971
 msgid "Invalid channel specified."
 msgstr "Указан неверный канал."
 
-#: src/usr/local/www/interfaces.php:969
+#: src/usr/local/www/interfaces.php:974
 msgid "Channel must be between 0-255."
 msgstr "Значение канала должно быть от 0 до 255"
 
-#: src/usr/local/www/interfaces.php:974
+#: src/usr/local/www/interfaces.php:979
 msgid "Distance must be an integer."
 msgstr "Дистанция должна быть целым числом."
 
-#: src/usr/local/www/interfaces.php:978
+#: src/usr/local/www/interfaces.php:983
 msgid "Channel selected is not valid for 802.11a or 802.11na."
 msgstr "Выбраный канал не допустим для стандартов 802.11a или 802.11na."
 
-#: src/usr/local/www/interfaces.php:983
+#: src/usr/local/www/interfaces.php:988
 msgid "Channel selected is not valid for 802.11b or 802.11g."
 msgstr "Выбраный канал не допустим для стандартов 802.11b или 802.11g."
 
-#: src/usr/local/www/interfaces.php:987
+#: src/usr/local/www/interfaces.php:992
 msgid "Invalid option chosen for OFDM Protection Mode"
 msgstr "Выбрана неверная опция для OFDM Защитный Режим"
 
-#: src/usr/local/www/interfaces.php:993
+#: src/usr/local/www/interfaces.php:998
 msgid "The WPA passphrase must be between 8 and 63 characters long."
 msgstr "Кодовое слово WPA должно содержать от 8 до 63 символов."
 
-#: src/usr/local/www/interfaces.php:999
+#: src/usr/local/www/interfaces.php:1004
 msgid "A WPA Passphrase must be specified when WPA PSK is enabled."
 msgstr "Кодовое слово WPA должно быть указано когда активирован режим WPA PSK"
 
-#: src/usr/local/www/interfaces.php:1005
+#: src/usr/local/www/interfaces.php:1010
 msgid "PPP Password and confirmed password must match!"
 msgstr "Пароль PPP и подтвержденный пароль должны совпадать!"
 
-#: src/usr/local/www/interfaces.php:1009
+#: src/usr/local/www/interfaces.php:1014
 msgid "PPPoE Password and confirmed password must match!"
 msgstr "Пароль PPPoE и подтвержденный пароль должны совпадать!"
 
-#: src/usr/local/www/interfaces.php:1013
+#: src/usr/local/www/interfaces.php:1018
 msgid "PTPP Password and confirmed password must match!"
 msgstr "Пароль PTPP и подтвержденный пароль должны совпадать!"
 
-#: src/usr/local/www/interfaces.php:1740
+#: src/usr/local/www/interfaces.php:1745
 #, php-format
 msgid ""
 "Unable to change mode to %s. The maximum number of wireless clones supported "
@@ -26854,83 +26861,83 @@ msgstr ""
 "Не удаётся изменить режим к  %s. Возможно, достигнуто максимальное "
 "количество беспроводных клонов, поддерживаемых в данном режиме."
 
-#: src/usr/local/www/interfaces.php:1766
+#: src/usr/local/www/interfaces.php:1771
 msgid "Static IPv4"
 msgstr "Статический IPv4"
 
-#: src/usr/local/www/interfaces.php:1767
+#: src/usr/local/www/interfaces.php:1772
 msgid "Static IPv6"
 msgstr "Статический IPv6"
 
-#: src/usr/local/www/interfaces.php:1767
+#: src/usr/local/www/interfaces.php:1772
 msgid "DHCP6"
 msgstr "DHCP6"
 
-#: src/usr/local/www/interfaces.php:1767
+#: src/usr/local/www/interfaces.php:1772
 msgid "SLAAC"
 msgstr "SLAAC"
 
-#: src/usr/local/www/interfaces.php:1767
+#: src/usr/local/www/interfaces.php:1772
 msgid "6rd Tunnel"
 msgstr "6rd Туннель"
 
-#: src/usr/local/www/interfaces.php:1767
+#: src/usr/local/www/interfaces.php:1772
 msgid "6to4 Tunnel"
 msgstr "6to4 Туннель"
 
-#: src/usr/local/www/interfaces.php:1767
+#: src/usr/local/www/interfaces.php:1772
 msgid "Track Interface"
 msgstr "Интерфейс отслеживания"
 
-#: src/usr/local/www/interfaces.php:1779
+#: src/usr/local/www/interfaces.php:1784
 msgid "Default (no preference, typically autoselect)"
 msgstr "По умолчанию (нет предпочтения, автоматический выбор, как правило)"
 
-#: src/usr/local/www/interfaces.php:1780
+#: src/usr/local/www/interfaces.php:1785
 msgid "------- Media Supported by this interface -------"
 msgstr "----------Среда, поддерживаемая данным интерфейсом---------"
 
-#: src/usr/local/www/interfaces.php:1823
+#: src/usr/local/www/interfaces.php:1828
 #, php-format
 msgid "The %s configuration has been changed."
 msgstr "Конфигурация %s изменилась."
 
-#: src/usr/local/www/interfaces.php:1824
+#: src/usr/local/www/interfaces.php:1829
 msgid "The changes must be applied to take effect."
 msgstr "Изменения должны быть применены, для того чтобы они вступили в силу."
 
-#: src/usr/local/www/interfaces.php:1825
+#: src/usr/local/www/interfaces.php:1830
 msgid "Don't forget to adjust the DHCP Server range if needed after applying."
 msgstr ""
 "В случае необходимости не забудьте отрегулировать диапазон DHCP сервера "
 "после того применения изменений."
 
-#: src/usr/local/www/interfaces.php:1834
+#: src/usr/local/www/interfaces.php:1839
 msgid "General Configuration"
 msgstr "Общие Настройки "
 
-#: src/usr/local/www/interfaces.php:1849
+#: src/usr/local/www/interfaces.php:1854
 msgid "Enter a description (name) for the interface here."
 msgstr "Введите описание (имя) интерфейса здесь."
 
-#: src/usr/local/www/interfaces.php:1854
+#: src/usr/local/www/interfaces.php:1859
 msgid "IPv4 Configuration Type"
 msgstr "Тип Настроек IPv4 "
 
-#: src/usr/local/www/interfaces.php:1860
+#: src/usr/local/www/interfaces.php:1865
 msgid "IPv6 Configuration Type"
 msgstr "Тип Настроек IPv6"
 
-#: src/usr/local/www/interfaces.php:1866
+#: src/usr/local/www/interfaces.php:1871
 msgid "IPv4/IPv6 Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1893
+#: src/usr/local/www/interfaces.php:1898
 msgid ""
 "The MAC address of a VLAN interface must be set on its parent interface"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1896
+#: src/usr/local/www/interfaces.php:1901
 #, php-format
 msgid ""
 "This field can be used to modify (\"spoof\") the MAC address of this "
@@ -26941,7 +26948,7 @@ msgstr ""
 "интерфейса.%sВведите MAC адрес в следующем формате: xx: xx: xx: xx: xx: xx "
 "или оставьте поле пустым."
 
-#: src/usr/local/www/interfaces.php:1908
+#: src/usr/local/www/interfaces.php:1913
 msgid ""
 "If this field is blank, the adapter's default MTU will be used. This is "
 "typically 1500 bytes but can vary in some circumstances."
@@ -26949,11 +26956,11 @@ msgstr ""
 "Если это поле пустое, будет использован MTU адаптера по умолчанию. Обычно "
 "это 1500 байт, но может варьироваться в некоторых случаях."
 
-#: src/usr/local/www/interfaces.php:1913
+#: src/usr/local/www/interfaces.php:1918
 msgid "MSS"
 msgstr "MSS"
 
-#: src/usr/local/www/interfaces.php:1916
+#: src/usr/local/www/interfaces.php:1921
 msgid ""
 "If a value is entered in this field, then MSS clamping for TCP connections "
 "to the value entered above minus 40 (TCP/IP header size) will be in effect."
@@ -26962,11 +26969,11 @@ msgstr ""
 "соединений TCP со значением, введенным выше минус 40 (размер заголовка TCP / "
 "IP)."
 
-#: src/usr/local/www/interfaces.php:1922
+#: src/usr/local/www/interfaces.php:1927
 msgid "Speed and Duplex"
 msgstr "Скорость и Дуплекс"
 
-#: src/usr/local/www/interfaces.php:1925
+#: src/usr/local/www/interfaces.php:1930
 #, php-format
 msgid ""
 "Explicitly set speed and duplex mode for this interface.%sWARNING: MUST be "
@@ -26978,27 +26985,27 @@ msgstr ""
 "согласовать скорость), кроме случаев, когда этот интерфейс подключается, "
 "порту где явно указаны скорость и дуплекс."
 
-#: src/usr/local/www/interfaces.php:1931
+#: src/usr/local/www/interfaces.php:1936
 msgid "Static IPv4 Configuration"
 msgstr "Настройка Статического IPv4"
 
-#: src/usr/local/www/interfaces.php:1936
+#: src/usr/local/www/interfaces.php:1941
 msgid "*IPv4 Address"
 msgstr "*IPv4 адрес"
 
-#: src/usr/local/www/interfaces.php:1941
+#: src/usr/local/www/interfaces.php:1946
 msgid "IPv4 Upstream gateway"
 msgstr " IPv4 Шлюз"
 
-#: src/usr/local/www/interfaces.php:1945
+#: src/usr/local/www/interfaces.php:1950
 msgid "IPv4 Upstream Gateway"
 msgstr " IPv4 Шлюз"
 
-#: src/usr/local/www/interfaces.php:1952 src/usr/local/www/interfaces.php:1993
+#: src/usr/local/www/interfaces.php:1957 src/usr/local/www/interfaces.php:1998
 msgid "Add a new gateway"
 msgstr "Добавить новый шлюз"
 
-#: src/usr/local/www/interfaces.php:1957
+#: src/usr/local/www/interfaces.php:1962
 #, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
@@ -27011,27 +27018,27 @@ msgstr ""
 "интерфейсов локальной сети шлюз должен быть установлен на «нет». Управление "
 "шлюзами может осуществляться %2$sнажатием сюда%3$s."
 
-#: src/usr/local/www/interfaces.php:1965
+#: src/usr/local/www/interfaces.php:1970
 msgid "Static IPv6 Configuration"
 msgstr "Конфигурация Статического IPv6"
 
-#: src/usr/local/www/interfaces.php:1970
+#: src/usr/local/www/interfaces.php:1975
 msgid "*IPv6 address"
 msgstr "*IPv6 адрес"
 
-#: src/usr/local/www/interfaces.php:1977 src/usr/local/www/interfaces.php:2290
+#: src/usr/local/www/interfaces.php:1982 src/usr/local/www/interfaces.php:2295
 msgid "Use IPv4 connectivity as parent interface"
 msgstr "Используйте  IPv4 связность как родительский интерфейс"
 
-#: src/usr/local/www/interfaces.php:1982
+#: src/usr/local/www/interfaces.php:1987
 msgid "IPv6 Upstream gateway"
 msgstr "IPv6 шлюз"
 
-#: src/usr/local/www/interfaces.php:1986
+#: src/usr/local/www/interfaces.php:1991
 msgid "IPv6 Upstream Gateway"
 msgstr "IPv6 Шлюз"
 
-#: src/usr/local/www/interfaces.php:1998
+#: src/usr/local/www/interfaces.php:2003
 #, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
@@ -27042,27 +27049,27 @@ msgstr ""
 "шлюз из списка или добавьте новый, используя кнопку «Добавить».%sДля "
 "локальных сетей шлюз должен быть установлен на «нет»."
 
-#: src/usr/local/www/interfaces.php:2005
+#: src/usr/local/www/interfaces.php:2010
 msgid "New IPv6 Gateway"
 msgstr "Новый IPv6 Шлюз"
 
-#: src/usr/local/www/interfaces.php:2062
+#: src/usr/local/www/interfaces.php:2067
 msgid "DHCP Client Configuration"
 msgstr "Конфигурация Клиента DHCP"
 
-#: src/usr/local/www/interfaces.php:2065 src/usr/local/www/interfaces.php:2270
+#: src/usr/local/www/interfaces.php:2070 src/usr/local/www/interfaces.php:2275
 msgid "Options"
 msgstr "Опции"
 
-#: src/usr/local/www/interfaces.php:2072
+#: src/usr/local/www/interfaces.php:2077
 msgid "Use advanced DHCP configuration options."
 msgstr "Используйте расширенные опции настроек DHCP."
 
-#: src/usr/local/www/interfaces.php:2079 src/usr/local/www/interfaces.php:2284
+#: src/usr/local/www/interfaces.php:2084 src/usr/local/www/interfaces.php:2289
 msgid "Override the configuration from this file."
 msgstr "Измените конфигурацию из этого файла."
 
-#: src/usr/local/www/interfaces.php:2088
+#: src/usr/local/www/interfaces.php:2093
 msgid ""
 "The value in this field is sent as the DHCP client identifier and hostname "
 "when requesting a DHCP lease. Some ISPs may require this (for client "
@@ -27072,11 +27079,11 @@ msgstr ""
 "хоста при запросе DHCP аренды. Некоторые Интернет провайдеры могут их "
 "использовать (для идентификации клиента)."
 
-#: src/usr/local/www/interfaces.php:2092
+#: src/usr/local/www/interfaces.php:2097
 msgid "Alias IPv4 address"
 msgstr "Алиас адреса IPv4"
 
-#: src/usr/local/www/interfaces.php:2095
+#: src/usr/local/www/interfaces.php:2100
 msgid ""
 "The value in this field is used as a fixed alias IPv4 address by the DHCP "
 "client."
@@ -27084,11 +27091,11 @@ msgstr ""
 "Значение в данном поле используется DHCP клиентом  как фиксированный алиас "
 "адреса IPv4."
 
-#: src/usr/local/www/interfaces.php:2099
+#: src/usr/local/www/interfaces.php:2104
 msgid "Reject leases from"
 msgstr "Отказаться от аренды IP от"
 
-#: src/usr/local/www/interfaces.php:2102
+#: src/usr/local/www/interfaces.php:2107
 msgid ""
 "To have the DHCP client reject offers from specific DHCP servers, enter "
 "their IP addresses here (separate multiple entries with a comma). This is "
@@ -27100,39 +27107,39 @@ msgstr ""
 "аренды от кабельных модемов, которые предлагают частные IP адреса, когда они "
 "теряют восходящую синхронизацию."
 
-#: src/usr/local/www/interfaces.php:2108
+#: src/usr/local/www/interfaces.php:2113
 msgid "DHCP VLAN Priority"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2114 src/usr/local/www/interfaces.php:2343
+#: src/usr/local/www/interfaces.php:2119 src/usr/local/www/interfaces.php:2348
 msgid "Normally off unless specifically required by the ISP."
 msgstr "Обычно отключается, если это специально не требуется провайдером."
 
-#: src/usr/local/www/interfaces.php:2121 src/usr/local/www/interfaces.php:2350
+#: src/usr/local/www/interfaces.php:2126 src/usr/local/www/interfaces.php:2355
 msgid "Choose 802.1p priority to set."
 msgstr "Выберите приоритет для 802.1p."
 
-#: src/usr/local/www/interfaces.php:2126
+#: src/usr/local/www/interfaces.php:2131
 msgid "Protocol timing"
 msgstr "Расписание работы протокола"
 
-#: src/usr/local/www/interfaces.php:2149
+#: src/usr/local/www/interfaces.php:2154
 msgid "Select timeout"
 msgstr "Выберите перерыв"
 
-#: src/usr/local/www/interfaces.php:2163
+#: src/usr/local/www/interfaces.php:2168
 msgid "Backoff cutoff"
 msgstr "Отключение отсрочки"
 
-#: src/usr/local/www/interfaces.php:2170
+#: src/usr/local/www/interfaces.php:2175
 msgid "Initial interval"
 msgstr "Начальный интервал"
 
-#: src/usr/local/www/interfaces.php:2174
+#: src/usr/local/www/interfaces.php:2179
 msgid "Presets"
 msgstr "Предустановки"
 
-#: src/usr/local/www/interfaces.php:2209
+#: src/usr/local/www/interfaces.php:2214
 #, php-format
 msgid ""
 "The values in these fields are DHCP protocol timings used when requesting a "
@@ -27141,47 +27148,47 @@ msgstr ""
 "Значения в данных полях являются используемым временем работы протокола DHCP "
 "при запросе аренды. Для большей информации %1$sСмотрите %2$sздесь%3$s"
 
-#: src/usr/local/www/interfaces.php:2216 src/usr/local/www/interfaces.php:2357
+#: src/usr/local/www/interfaces.php:2221 src/usr/local/www/interfaces.php:2362
 msgid "Configuration File Override"
 msgstr "Файл Изменений Настроек."
 
-#: src/usr/local/www/interfaces.php:2226
+#: src/usr/local/www/interfaces.php:2231
 msgid "Lease Requirements and Requests"
 msgstr "Требования и Запросы Аренды"
 
-#: src/usr/local/www/interfaces.php:2231 src/usr/local/www/interfaces.php:2382
+#: src/usr/local/www/interfaces.php:2236 src/usr/local/www/interfaces.php:2387
 msgid "Send options"
 msgstr "Отправить опции"
 
-#: src/usr/local/www/interfaces.php:2241
+#: src/usr/local/www/interfaces.php:2246
 msgid "Request options"
 msgstr "Запросить опции"
 
-#: src/usr/local/www/interfaces.php:2249
+#: src/usr/local/www/interfaces.php:2254
 msgid "Require options"
 msgstr "Потребовать опции"
 
-#: src/usr/local/www/interfaces.php:2256
+#: src/usr/local/www/interfaces.php:2261
 msgid "Option modifiers"
 msgstr "Модификаторы опций"
 
-#: src/usr/local/www/interfaces.php:2267
+#: src/usr/local/www/interfaces.php:2272
 msgid "DHCP6 Client Configuration"
 msgstr "Настройки клиента DHCP6"
 
-#: src/usr/local/www/interfaces.php:2277
+#: src/usr/local/www/interfaces.php:2282
 msgid "Use advanced DHCPv6 configuration options."
 msgstr "Используйте расширенные опции настроек DHCPv6"
 
-#: src/usr/local/www/interfaces.php:2297
+#: src/usr/local/www/interfaces.php:2302
 msgid "Request only an IPv6 prefix"
 msgstr "Запросить только IPv6  префикс"
 
-#: src/usr/local/www/interfaces.php:2304
+#: src/usr/local/www/interfaces.php:2309
 msgid "DHCPv6 Prefix Delegation size"
 msgstr "Размер префикса делегирования DHCPv6 "
 
-#: src/usr/local/www/interfaces.php:2307
+#: src/usr/local/www/interfaces.php:2312
 msgid ""
 "The value in this field is the delegated prefix length provided by the "
 "DHCPv6 server. Normally specified by the ISP."
@@ -27190,27 +27197,27 @@ msgstr ""
 "DHCPv6  сервером. Как правило, длина задаётся сервисным Интернет-провайдером."
 ""
 
-#: src/usr/local/www/interfaces.php:2311
+#: src/usr/local/www/interfaces.php:2316
 msgid "Send IPv6 prefix hint"
 msgstr "Отравить подсказку для префикса IPv6"
 
-#: src/usr/local/www/interfaces.php:2318
+#: src/usr/local/www/interfaces.php:2323
 msgid "Debug"
 msgstr "Отладка"
 
-#: src/usr/local/www/interfaces.php:2324
+#: src/usr/local/www/interfaces.php:2329
 msgid "Do not wait for a RA"
 msgstr "Не ожидать RA (объявлений маршрутизатора)"
 
-#: src/usr/local/www/interfaces.php:2330
+#: src/usr/local/www/interfaces.php:2335
 msgid "Do not allow PD/Address release"
 msgstr "Не разрешать выпуск Делегированного префикса/Адреса"
 
-#: src/usr/local/www/interfaces.php:2336
+#: src/usr/local/www/interfaces.php:2341
 msgid "DHCP6 VLAN Priority"
 msgstr "DHCP6  Приоритет VLANа"
 
-#: src/usr/local/www/interfaces.php:2360
+#: src/usr/local/www/interfaces.php:2365
 #, php-format
 msgid ""
 "The value in this field is the full absolute path to a DHCP client "
@@ -27228,77 +27235,77 @@ msgstr ""
 "(не указывать, если не нужен).%1$sНекоторые Сервисные Интернет-провайдеры "
 "могут потребовать наличие или отсутствие определённых опций."
 
-#: src/usr/local/www/interfaces.php:2369
+#: src/usr/local/www/interfaces.php:2374
 msgid "Advanced DHCP6 Client Configuration"
 msgstr "Расширенные настройки клиента DHCP6 "
 
-#: src/usr/local/www/interfaces.php:2374
+#: src/usr/local/www/interfaces.php:2379
 msgid "Information only"
 msgstr "Только для сведения"
 
-#: src/usr/local/www/interfaces.php:2378
+#: src/usr/local/www/interfaces.php:2383
 msgid "Only exchange informational configuration parameters with servers."
 msgstr ""
 "Только для обмена информационных конфигурационных параметров с серверами."
 
-#: src/usr/local/www/interfaces.php:2392
+#: src/usr/local/www/interfaces.php:2397
 msgid "Request Options"
 msgstr "Запросить Опции"
 
-#: src/usr/local/www/interfaces.php:2400
+#: src/usr/local/www/interfaces.php:2405
 msgid "Scripts"
 msgstr "Скрипты"
 
-#: src/usr/local/www/interfaces.php:2406
+#: src/usr/local/www/interfaces.php:2411
 msgid "Identity Association Statement"
 msgstr "Сообщение об идентичности ассоциации"
 
-#: src/usr/local/www/interfaces.php:2487
+#: src/usr/local/www/interfaces.php:2492
 msgid "Prefix interface statement"
 msgstr "Сообщение о префиксе интерфейса"
 
-#: src/usr/local/www/interfaces.php:2505
+#: src/usr/local/www/interfaces.php:2510
 msgid "Select prefix interface"
 msgstr "Выберите префикс интерфейса"
 
-#: src/usr/local/www/interfaces.php:2508
+#: src/usr/local/www/interfaces.php:2513
 msgid "Prefix Interface"
 msgstr "Префикс интерфейса"
 
-#: src/usr/local/www/interfaces.php:2511
+#: src/usr/local/www/interfaces.php:2516
 msgid "Select the interface on which to apply the prefix delegation."
 msgstr "Выберите интерфейс, к которому применить делегирование префикса."
 
-#: src/usr/local/www/interfaces.php:2513
+#: src/usr/local/www/interfaces.php:2518
 msgid "Authentication statement"
 msgstr "Сообщение об аутентификации"
 
-#: src/usr/local/www/interfaces.php:2545
+#: src/usr/local/www/interfaces.php:2550
 msgid "Keyinfo statement"
 msgstr "Утверждение об информации ключа"
 
-#: src/usr/local/www/interfaces.php:2586
+#: src/usr/local/www/interfaces.php:2591
 #, php-format
 msgid "See %1$shere%2$s more information"
 msgstr "Смотрите %1$sздесь%2$s для более подробной информации"
 
-#: src/usr/local/www/interfaces.php:2592
+#: src/usr/local/www/interfaces.php:2597
 msgid "6RD Configuration"
 msgstr "Настройки 6RD"
 
-#: src/usr/local/www/interfaces.php:2597
+#: src/usr/local/www/interfaces.php:2602
 msgid "6RD Prefix"
 msgstr "Префикс 6RD"
 
-#: src/usr/local/www/interfaces.php:2604
+#: src/usr/local/www/interfaces.php:2609
 msgid "*6RD Border relay"
 msgstr "*6RD  Пограничный шлюз"
 
-#: src/usr/local/www/interfaces.php:2611
+#: src/usr/local/www/interfaces.php:2616
 msgid "6RD IPv4 Prefix length"
 msgstr "6RD IPv4 длина префикса"
 
-#: src/usr/local/www/interfaces.php:2614
+#: src/usr/local/www/interfaces.php:2619
 msgid ""
 "6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means "
 "embed the entire IPv4 address in the 6RD prefix."
@@ -27307,24 +27314,24 @@ msgstr ""
 "провайдером. Значение 0 означает помещение всего IPv4 префикса в префикс 6RD."
 ""
 
-#: src/usr/local/www/interfaces.php:2619
+#: src/usr/local/www/interfaces.php:2624
 msgid "Track IPv6 Interface"
 msgstr "Отслеживать IPv6 интерфейс"
 
-#: src/usr/local/www/interfaces.php:2661
+#: src/usr/local/www/interfaces.php:2666
 msgid "*IPv6 Interface"
 msgstr "*IPv6 Интерфейс"
 
-#: src/usr/local/www/interfaces.php:2664
+#: src/usr/local/www/interfaces.php:2669
 msgid "Selects the dynamic IPv6 WAN interface to track for configuration."
 msgstr ""
 "Выбирает динамический IPv6 WAN интерфейс для отслеживания конфигурации."
 
-#: src/usr/local/www/interfaces.php:2672
+#: src/usr/local/www/interfaces.php:2677
 msgid "IPv6 Prefix ID"
 msgstr "Идентификатор Префикса IPv6"
 
-#: src/usr/local/www/interfaces.php:2675
+#: src/usr/local/www/interfaces.php:2680
 #, php-format
 msgid ""
 "(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the "
@@ -27336,39 +27343,39 @@ msgstr ""
 "конфигурируемый сетевой идентификатор на основе динамического соединения "
 "IPv6. Значение по умолчанию - 0."
 
-#: src/usr/local/www/interfaces.php:2731
+#: src/usr/local/www/interfaces.php:2736
 msgid "Typically *99# for GSM networks and #777 for CDMA networks."
 msgstr "Обычно *99# для GSM сетей и #777 для CDMA сетей."
 
-#: src/usr/local/www/interfaces.php:2735
+#: src/usr/local/www/interfaces.php:2740
 msgid "Access Point Name"
 msgstr "Имя Точки Доступа"
 
-#: src/usr/local/www/interfaces.php:2761
+#: src/usr/local/www/interfaces.php:2766
 msgid "*Modem port"
 msgstr "*Порт модема"
 
-#: src/usr/local/www/interfaces.php:2768
+#: src/usr/local/www/interfaces.php:2773
 msgid "Advanced PPP"
 msgstr "Расширенные настройки PPP"
 
-#: src/usr/local/www/interfaces.php:2771
+#: src/usr/local/www/interfaces.php:2776
 msgid "Create a new PPP configuration."
 msgstr "Создать новую конфигурацию PPP"
 
-#: src/usr/local/www/interfaces.php:2776
+#: src/usr/local/www/interfaces.php:2781
 msgid "PPPoE Configuration"
 msgstr "Конфигурация PPPoE"
 
-#: src/usr/local/www/interfaces.php:2798
+#: src/usr/local/www/interfaces.php:2803
 msgid "This field can usually be left empty."
 msgstr "Обычно это поле можно оставить пустым."
 
-#: src/usr/local/www/interfaces.php:2810
+#: src/usr/local/www/interfaces.php:2815
 msgid "Idle timeout"
 msgstr "Таймаут простоя"
 
-#: src/usr/local/www/interfaces.php:2814 src/usr/local/www/interfaces.php:2947
+#: src/usr/local/www/interfaces.php:2819 src/usr/local/www/interfaces.php:2952
 msgid ""
 "If no qualifying outgoing packets are transmitted for the specified number "
 "of seconds, the connection is brought down. An idle timeout of zero disables "
@@ -27378,31 +27385,31 @@ msgstr ""
 "соединение сбрасывается. Тайм-аут простоя, равный нулю, отключает эту "
 "функцию."
 
-#: src/usr/local/www/interfaces.php:2819
+#: src/usr/local/www/interfaces.php:2824
 msgid "Periodic reset"
 msgstr "Периодический сброс"
 
-#: src/usr/local/www/interfaces.php:2822
+#: src/usr/local/www/interfaces.php:2827
 msgid "Select a reset timing type."
 msgstr "Выберите тип таймера сброса. "
 
-#: src/usr/local/www/interfaces.php:2824
+#: src/usr/local/www/interfaces.php:2829
 msgid "Custom reset"
 msgstr "Пользовательские настройки сброса"
 
-#: src/usr/local/www/interfaces.php:2833
+#: src/usr/local/www/interfaces.php:2838
 msgid "Hour (0-23)"
 msgstr "Часы (0-23)"
 
-#: src/usr/local/www/interfaces.php:2841
+#: src/usr/local/www/interfaces.php:2846
 msgid "Minutes (0-59)"
 msgstr "Минуты(0-59)"
 
-#: src/usr/local/www/interfaces.php:2848
+#: src/usr/local/www/interfaces.php:2853
 msgid "Specific date (mm/dd/yyyy)"
 msgstr "Конкретная дата (мм/дд/гггг)"
 
-#: src/usr/local/www/interfaces.php:2850
+#: src/usr/local/www/interfaces.php:2855
 msgid ""
 "Leave the date field empty, for the reset to be executed each day at the "
 "time specified by the minutes and hour fields"
@@ -27410,15 +27417,15 @@ msgstr ""
 "Оставьте поле даты пустым, чтобы сброс выполнялся каждый день в указанное "
 "время в полях минут и часов"
 
-#: src/usr/local/www/interfaces.php:2854
+#: src/usr/local/www/interfaces.php:2859
 msgid "cron based reset"
 msgstr "Сброс по cron'у"
 
-#: src/usr/local/www/interfaces.php:2893 src/usr/local/www/interfaces.php:2958
+#: src/usr/local/www/interfaces.php:2898 src/usr/local/www/interfaces.php:2963
 msgid "Advanced and MLPPP"
 msgstr "Расширенные и MLPPP"
 
-#: src/usr/local/www/interfaces.php:2896
+#: src/usr/local/www/interfaces.php:2901
 msgid ""
 "Click for additional PPPoE configuration options. Save first if changes have "
 "been made."
@@ -27426,19 +27433,19 @@ msgstr ""
 "Выберите дополнительные параметры конфигурации PPPoE. Если изменения были "
 "сделаны, сначала сохраните их."
 
-#: src/usr/local/www/interfaces.php:2901
+#: src/usr/local/www/interfaces.php:2906
 msgid "PPTP/L2TP Configuration"
 msgstr "Конфигурация PPTP/L2TP"
 
-#: src/usr/local/www/interfaces.php:2920
+#: src/usr/local/www/interfaces.php:2925
 msgid "*Local IP address"
 msgstr "*Локальный IP адрес"
 
-#: src/usr/local/www/interfaces.php:2927
+#: src/usr/local/www/interfaces.php:2932
 msgid "*Remote IP address"
 msgstr "*Удаленный IP адрес"
 
-#: src/usr/local/www/interfaces.php:2938
+#: src/usr/local/www/interfaces.php:2943
 msgid ""
 "This option causes the interface to operate in dial-on-demand mode, allowing "
 "it to be a virtual full time connection. The interface is configured, but "
@@ -27450,15 +27457,15 @@ msgstr ""
 "фактическое подключение не происходит до тех пор, пока не будет сгенерирован "
 "соответствующий исходящий трафик."
 
-#: src/usr/local/www/interfaces.php:2943
+#: src/usr/local/www/interfaces.php:2948
 msgid "Idle timeout (seconds)"
 msgstr "Таймаут простоя (в секундах)"
 
-#: src/usr/local/www/interfaces.php:2951
+#: src/usr/local/www/interfaces.php:2956
 msgid "There are additional Local and Remote IP addresses defined for MLPPP."
 msgstr "Для MLPPP определены дополнительные локальные и удаленные IP-адреса."
 
-#: src/usr/local/www/interfaces.php:2961
+#: src/usr/local/www/interfaces.php:2966
 #, php-format
 msgid ""
 "%sClick for additional PPTP and L2TP configuration options. Save first if "
@@ -27467,39 +27474,39 @@ msgstr ""
 "%s Щелкните для выбора дополнительныч параметров конфигурации PPTP и L2TP.  "
 "Если изменения были сделаны, сначала сохраните их."
 
-#: src/usr/local/www/interfaces.php:2968
+#: src/usr/local/www/interfaces.php:2973
 msgid ""
 "Common Wireless Configuration - Settings apply to all wireless networks on "
 msgstr ""
 "Общая настройка беспроводной сети - Настройки применяются ко всем "
 "беспроводным сетям"
 
-#: src/usr/local/www/interfaces.php:2972
+#: src/usr/local/www/interfaces.php:2977
 msgid "Persist common settings"
 msgstr "Сохранить общие настройки"
 
-#: src/usr/local/www/interfaces.php:2992
+#: src/usr/local/www/interfaces.php:2997
 msgid "Standard"
 msgstr "Стандартный"
 
-#: src/usr/local/www/interfaces.php:3002 src/usr/local/www/interfaces.php:3052
+#: src/usr/local/www/interfaces.php:3007 src/usr/local/www/interfaces.php:3057
 #: src/usr/local/www/status_graph.php:193
 msgid "Off"
 msgstr "Откл."
 
-#: src/usr/local/www/interfaces.php:3002
+#: src/usr/local/www/interfaces.php:3007
 msgid "CTS to self"
 msgstr "CTS на себя"
 
-#: src/usr/local/www/interfaces.php:3002
+#: src/usr/local/www/interfaces.php:3007
 msgid "RTS and CTS"
 msgstr "RTS и CTS"
 
-#: src/usr/local/www/interfaces.php:3000
+#: src/usr/local/www/interfaces.php:3005
 msgid "802.11g OFDM Protection Mode"
 msgstr "802.11g OFDM Защитный Режим"
 
-#: src/usr/local/www/interfaces.php:3003
+#: src/usr/local/www/interfaces.php:3008
 msgid ""
 "For IEEE 802.11g, use the specified technique for protecting OFDM frames in "
 "a mixed 11b/11g network."
@@ -27507,7 +27514,7 @@ msgstr ""
 "Для IEEE 802.11g используйте указанную методику для защиты кадров OFDM в "
 "смешанной сети 11b/11g."
 
-#: src/usr/local/www/interfaces.php:3040
+#: src/usr/local/www/interfaces.php:3045
 #, php-format
 msgid ""
 "Legend: wireless standards - channel # (frequency @ max TX power / TX power "
@@ -27519,45 +27526,45 @@ msgstr ""
 "могут поддерживаться некоторыми картами. Авто может переопределить стандарт "
 "беспроводной связи, выбранный выше."
 
-#: src/usr/local/www/interfaces.php:3045
+#: src/usr/local/www/interfaces.php:3050
 msgid "Antenna Settings"
 msgstr "Настройки Антены"
 
-#: src/usr/local/www/interfaces.php:3052 src/usr/local/www/status_graph.php:192
+#: src/usr/local/www/interfaces.php:3057 src/usr/local/www/status_graph.php:192
 msgid "On"
 msgstr "Вкл."
 
-#: src/usr/local/www/interfaces.php:3053
+#: src/usr/local/www/interfaces.php:3058
 msgid "Diversity"
 msgstr "Разновидность"
 
-#: src/usr/local/www/interfaces.php:3061 src/usr/local/www/interfaces.php:3070
+#: src/usr/local/www/interfaces.php:3066 src/usr/local/www/interfaces.php:3075
 msgid "#1"
 msgstr "#1"
 
-#: src/usr/local/www/interfaces.php:3061 src/usr/local/www/interfaces.php:3070
+#: src/usr/local/www/interfaces.php:3066 src/usr/local/www/interfaces.php:3075
 msgid "#2"
 msgstr "#2"
 
-#: src/usr/local/www/interfaces.php:3062
+#: src/usr/local/www/interfaces.php:3067
 msgid "Transmit antenna"
 msgstr "Передающая антенна"
 
-#: src/usr/local/www/interfaces.php:3071
+#: src/usr/local/www/interfaces.php:3076
 msgid "Receive antenna"
 msgstr "Принимающая антенна"
 
-#: src/usr/local/www/interfaces.php:3074
+#: src/usr/local/www/interfaces.php:3079
 msgid ""
 "Note: The antenna numbers do not always match up with the labels on the card."
 ""
 msgstr "К сведению: Номера антенн не всегда соответствуют ярлыкам на карте."
 
-#: src/usr/local/www/interfaces.php:3083
+#: src/usr/local/www/interfaces.php:3088
 msgid "Distance setting (meters)"
 msgstr "Настройки дистанции (метры)"
 
-#: src/usr/local/www/interfaces.php:3086
+#: src/usr/local/www/interfaces.php:3091
 msgid ""
 "This field can be used to tune ACK/CTS timers to fit the distance between AP "
 "and Client"
@@ -27565,15 +27572,15 @@ msgstr ""
 "Данное поле может быть использовано для настройки таймеров ACK/CTS для "
 "регулировки расстояния между точкой доступа и Клиентом"
 
-#: src/usr/local/www/interfaces.php:3092
+#: src/usr/local/www/interfaces.php:3097
 msgid "Regulatory Settings"
 msgstr "Административные настройки"
 
-#: src/usr/local/www/interfaces.php:3104
+#: src/usr/local/www/interfaces.php:3109
 msgid "Regulatory domain"
 msgstr "Административный домен"
 
-#: src/usr/local/www/interfaces.php:3107
+#: src/usr/local/www/interfaces.php:3112
 msgid ""
 "Some cards have a default that is not recognized and require changing the "
 "regulatory domain to one in this list for the changes to other regulatory "
@@ -27583,7 +27590,7 @@ msgstr ""
 "могут требовать изменения  административного домена на другой в списке, "
 "чтобы настройки заработали."
 
-#: src/usr/local/www/interfaces.php:3122
+#: src/usr/local/www/interfaces.php:3127
 msgid ""
 "Any country setting other than \"Default\" will override the regulatory "
 "domain setting"
@@ -27591,23 +27598,23 @@ msgstr ""
 "Указание любой страны вместо \"По умолчанию\" изменит настройку "
 "административного домена"
 
-#: src/usr/local/www/interfaces.php:3128
+#: src/usr/local/www/interfaces.php:3133
 msgid "Indoor"
 msgstr "В помещении"
 
-#: src/usr/local/www/interfaces.php:3128
+#: src/usr/local/www/interfaces.php:3133
 msgid "Outdoor"
 msgstr "Наружный"
 
-#: src/usr/local/www/interfaces.php:3128
+#: src/usr/local/www/interfaces.php:3133
 msgid "Anywhere"
 msgstr "Везде"
 
-#: src/usr/local/www/interfaces.php:3126
+#: src/usr/local/www/interfaces.php:3131
 msgid "Location"
 msgstr "Место"
 
-#: src/usr/local/www/interfaces.php:3129
+#: src/usr/local/www/interfaces.php:3134
 #, php-format
 msgid ""
 "These settings may affect which channels are available and the maximum "
@@ -27627,23 +27634,23 @@ msgstr ""
 "картами. Это настройки могут запретить добавление дополнительных каналов, "
 "которые еще не поддерживаются. "
 
-#: src/usr/local/www/interfaces.php:3137
+#: src/usr/local/www/interfaces.php:3142
 msgid "Network-Specific Wireless Configuration"
 msgstr "Специфические сетевые беспроводные настройки"
 
-#: src/usr/local/www/interfaces.php:3158
+#: src/usr/local/www/interfaces.php:3163
 msgid "802.11g"
 msgstr "802.11g"
 
-#: src/usr/local/www/interfaces.php:3158
+#: src/usr/local/www/interfaces.php:3163
 msgid "802.11n"
 msgstr "802.11n"
 
-#: src/usr/local/www/interfaces.php:3156
+#: src/usr/local/www/interfaces.php:3161
 msgid "Minimum wireless standard"
 msgstr "Минимальный беспроводной стандарт"
 
-#: src/usr/local/www/interfaces.php:3159
+#: src/usr/local/www/interfaces.php:3164
 msgid ""
 "When operating as an access point, allow only stations capable of the "
 "selected wireless standard to associate (stations not capable are not "
@@ -27653,11 +27660,11 @@ msgstr ""
 "тех станций, которые поддерживают выбранный беспроводной стандарт (станциям, "
 "которые не поддерживают выбранный стандарт, не разрешено подключаться)"
 
-#: src/usr/local/www/interfaces.php:3163
+#: src/usr/local/www/interfaces.php:3168
 msgid "802.11g only"
 msgstr "802.11g только"
 
-#: src/usr/local/www/interfaces.php:3167
+#: src/usr/local/www/interfaces.php:3172
 msgid ""
 "When operating as an access point in 802.11g mode, allow only 11g-capable "
 "stations to associate (11b-only stations are not permitted to associate)"
@@ -27666,11 +27673,11 @@ msgstr ""
 "подключение только тех станций, которые поддерживают  11g (Станциям, "
 "поддерживающие только 11b, не разрешено подключаться)"
 
-#: src/usr/local/www/interfaces.php:3172
+#: src/usr/local/www/interfaces.php:3177
 msgid "Allow intra-BSS communication"
 msgstr "Разрешить коммуникацию внутри BSS"
 
-#: src/usr/local/www/interfaces.php:3176
+#: src/usr/local/www/interfaces.php:3181
 msgid ""
 "Provides extra security by isolating clients so they cannot directly "
 "communicate with one another"
@@ -27678,59 +27685,59 @@ msgstr ""
 "Обеспечивает дополнительную безопасность, изолируя клиентов - таким образом, "
 "они не могут коммуницировать друг с другом напрямую."
 
-#: src/usr/local/www/interfaces.php:3180
+#: src/usr/local/www/interfaces.php:3185
 msgid "Enable WME"
 msgstr "Активировать WME"
 
-#: src/usr/local/www/interfaces.php:3188
+#: src/usr/local/www/interfaces.php:3193
 msgid "Hide SSID"
 msgstr "Скрыть SSID"
 
-#: src/usr/local/www/interfaces.php:3197 src/usr/local/www/interfaces.php:3218
+#: src/usr/local/www/interfaces.php:3202 src/usr/local/www/interfaces.php:3223
 msgid "WPA"
 msgstr "WPA"
 
-#: src/usr/local/www/interfaces.php:3209
+#: src/usr/local/www/interfaces.php:3214
 msgid "WPA Pre-Shared Key"
 msgstr "WPA Предустановленный ключ"
 
-#: src/usr/local/www/interfaces.php:3212
+#: src/usr/local/www/interfaces.php:3217
 msgid "WPA Passphrase must be between 8 and 63 characters long"
 msgstr "Кодовое слово WPA должно содержать от 8 до 63 символов."
 
-#: src/usr/local/www/interfaces.php:3218
+#: src/usr/local/www/interfaces.php:3223
 msgid "WPA2"
 msgstr "WPA2"
 
-#: src/usr/local/www/interfaces.php:3216
+#: src/usr/local/www/interfaces.php:3221
 msgid "WPA mode"
 msgstr "Режим WPA"
 
-#: src/usr/local/www/interfaces.php:3225
+#: src/usr/local/www/interfaces.php:3230
 msgid "Extensible Authentication Protocol"
 msgstr "Расширяемый протокол аутентификации (EAP)"
 
-#: src/usr/local/www/interfaces.php:3223
+#: src/usr/local/www/interfaces.php:3228
 msgid "WPA Key Management Mode"
 msgstr "Режим управления ключами WPA"
 
-#: src/usr/local/www/interfaces.php:3232
+#: src/usr/local/www/interfaces.php:3237
 msgid "AES (recommended)"
 msgstr "AES (рекомендуемый)"
 
-#: src/usr/local/www/interfaces.php:3232
+#: src/usr/local/www/interfaces.php:3237
 msgid "TKIP"
 msgstr "TKIP"
 
-#: src/usr/local/www/interfaces.php:3230
+#: src/usr/local/www/interfaces.php:3235
 msgid "WPA Pairwise"
 msgstr "WPA Pairwise"
 
-#: src/usr/local/www/interfaces.php:3237
+#: src/usr/local/www/interfaces.php:3242
 msgid "Group Key Rotation"
 msgstr "Ротация Ключей Группы"
 
-#: src/usr/local/www/interfaces.php:3241
+#: src/usr/local/www/interfaces.php:3246
 msgid ""
 "Time between group rekey events, specified in seconds. Allowed values are 1-"
 "9999. Must be shorter than Master Key Regeneration time"
@@ -27738,11 +27745,11 @@ msgstr ""
 "Время между событиями смены ключа группы, указанное в секундах. Допустимые "
 "значения: 1-9999. Должно быть короче времени регенерации мастер-ключа"
 
-#: src/usr/local/www/interfaces.php:3245
+#: src/usr/local/www/interfaces.php:3250
 msgid "Group Master Key Regeneration"
 msgstr "Регенрация Мастер-ключа Группы"
 
-#: src/usr/local/www/interfaces.php:3249
+#: src/usr/local/www/interfaces.php:3254
 msgid ""
 "Time between GMK rekey events, specified in seconds. Allowed values are 1-"
 "9999. Must be longer than Group Key Rotation time"
@@ -27750,55 +27757,55 @@ msgstr ""
 "Время между событиями смены мастер-ключа группы, указанное в секундах. "
 "Допустимые значения: 1-9999. Должно быть длиннее времени смены ключа группы"
 
-#: src/usr/local/www/interfaces.php:3253
+#: src/usr/local/www/interfaces.php:3258
 msgid "Strict Key Regeneration"
 msgstr "Принудительная Регенерация Ключа"
 
-#: src/usr/local/www/interfaces.php:3261
+#: src/usr/local/www/interfaces.php:3266
 msgid "802.1x RADIUS Options"
 msgstr "Опции 802.1x RADIUS"
 
-#: src/usr/local/www/interfaces.php:3265
+#: src/usr/local/www/interfaces.php:3270
 msgid "IEEE802.1X"
 msgstr "IEEE802.1X"
 
-#: src/usr/local/www/interfaces.php:3269
+#: src/usr/local/www/interfaces.php:3274
 msgid "This option requires that the \"Enable WPA box\" is checked"
 msgstr "Для этого параметра необходимо установить флажок «Включить WPA»."
 
-#: src/usr/local/www/interfaces.php:3271
+#: src/usr/local/www/interfaces.php:3276
 msgid "Primary 802.1X server"
 msgstr "Основной сервер 802.1X "
 
-#: src/usr/local/www/interfaces.php:3277 src/usr/local/www/interfaces.php:3301
+#: src/usr/local/www/interfaces.php:3282 src/usr/local/www/interfaces.php:3306
 msgid "IP address of the RADIUS server"
 msgstr "IP адрес RADIUS сервера"
 
-#: src/usr/local/www/interfaces.php:3284 src/usr/local/www/interfaces.php:3308
+#: src/usr/local/www/interfaces.php:3289 src/usr/local/www/interfaces.php:3313
 msgid "Server auth port. Default is 1812"
 msgstr "Порт аутентификации Сервера. Значение по умолчанию 1812"
 
-#: src/usr/local/www/interfaces.php:3291 src/usr/local/www/interfaces.php:3315
+#: src/usr/local/www/interfaces.php:3296 src/usr/local/www/interfaces.php:3320
 msgid "RADIUS Shared secret for this firewall"
 msgstr "Общий пароль RADIUS для данного межсетевого экрана"
 
-#: src/usr/local/www/interfaces.php:3295
+#: src/usr/local/www/interfaces.php:3300
 msgid "Secondary 802.1X server"
 msgstr "Второстепенный сервер 802.1X "
 
-#: src/usr/local/www/interfaces.php:3321
+#: src/usr/local/www/interfaces.php:3326
 msgid "Authentication Roaming Preauth"
 msgstr "Аутентификация Роуминга Преаутентификация"
 
-#: src/usr/local/www/interfaces.php:3330
+#: src/usr/local/www/interfaces.php:3335
 msgid "Reserved Networks"
 msgstr "Зарезервированные Сети"
 
-#: src/usr/local/www/interfaces.php:3334
+#: src/usr/local/www/interfaces.php:3339
 msgid "Block private networks and loopback addresses"
 msgstr "Блокировать частные сети и адреса лупбека"
 
-#: src/usr/local/www/interfaces.php:3338
+#: src/usr/local/www/interfaces.php:3343
 msgid ""
 "Blocks traffic from IP addresses that are reserved for private networks per "
 "RFC 1918 (10/8, 172.16/12, 192.168/16) and unique local addresses per RFC "
@@ -27812,12 +27819,12 @@ msgstr ""
 "правило, данная опция должна быть включена, за исключением случаев, когда "
 "данный сетевой интерфейс тоже находится в частном адресном пространстве."
 
-#: src/usr/local/www/interfaces.php:3344
+#: src/usr/local/www/interfaces.php:3349
 #: src/usr/local/www/firewall_rules.php:429
 msgid "Block bogon networks"
 msgstr "Блокировать богон (bogon) сети"
 
-#: src/usr/local/www/interfaces.php:3348
+#: src/usr/local/www/interfaces.php:3353
 #, php-format
 msgid ""
 "Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet "
@@ -27833,7 +27840,7 @@ msgstr ""
 "обновления можно изменить в настройках «Система» > «Расширенные Настройки\n"
 "», «Брандмауэр и NAT»."
 
-#: src/usr/local/www/interfaces.php:3379
+#: src/usr/local/www/interfaces.php:3384
 msgid "New IPv4 Gateway"
 msgstr "Новый IPv4 шлюз"
 
@@ -28106,12 +28113,12 @@ msgid "Additional Names for this Host"
 msgstr "Дополнительные Имени для Хоста"
 
 #: src/usr/local/www/services_unbound_host_edit.php:269
-#: src/usr/local/www/services_dnsmasq_edit.php:260
+#: src/usr/local/www/services_dnsmasq_edit.php:264
 msgid "Host name"
 msgstr "Имя хоста"
 
 #: src/usr/local/www/services_unbound_host_edit.php:299
-#: src/usr/local/www/services_dnsmasq_edit.php:290
+#: src/usr/local/www/services_dnsmasq_edit.php:294
 msgid "Add Host Name"
 msgstr "Добавить Имя Хоста"
 
@@ -28599,7 +28606,7 @@ msgstr ""
 "Шлюз \"%1$s\" не может быть удален, потому что он используется в Группе "
 "Шлюзов \"%2$s\""
 
-#: src/usr/local/www/system_gateways.php:110 src/etc/inc/gwlb.inc:1666
+#: src/usr/local/www/system_gateways.php:110 src/etc/inc/gwlb.inc:1670
 #, php-format
 msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Gateway Group "
@@ -28617,7 +28624,7 @@ msgstr ""
 "Шлюз \"%1$s\" не может быть удален, поскольку он используется в Статическом "
 "Маршруте \"%2$s\""
 
-#: src/usr/local/www/system_gateways.php:126 src/etc/inc/gwlb.inc:1678
+#: src/usr/local/www/system_gateways.php:126 src/etc/inc/gwlb.inc:1682
 #, php-format
 msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Static Route "
@@ -28661,7 +28668,7 @@ msgid "Delete gateway"
 msgstr "Удалить шлюз"
 
 #: src/usr/local/www/system_gateways.php:411
-#: src/usr/local/www/interfaces.php:2010 src/usr/local/www/interfaces.php:3384
+#: src/usr/local/www/interfaces.php:2015 src/usr/local/www/interfaces.php:3389
 msgid "Default gateway"
 msgstr "Шлюз по умолчанию"
 
@@ -29471,16 +29478,16 @@ msgstr ""
 msgid "One or more rules have been moved but have not yet been saved"
 msgstr "Одно или несколько правил были перемещены, но пока не сохранены"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:55
+#: src/usr/local/www/vpn_ipsec_settings.php:54
 #, php-format
 msgid "A valid value must be specified for %s debug."
 msgstr "Для отладки %s должно быть указано допустимое значение."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:63
+#: src/usr/local/www/vpn_ipsec_settings.php:62
 msgid "An integer must be specified for Maximum MSS."
 msgstr "Для параметра Максимальный MSS должно быть указано целое число."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:66
+#: src/usr/local/www/vpn_ipsec_settings.php:65
 msgid "An integer between 576 and 65535 must be specified for Maximum MSS"
 msgstr "Целое число от 576 до 65535 должно быть указано для Максимального MSS"
 
@@ -29488,11 +29495,11 @@ msgstr "Целое число от 576 до 65535 должно быть указ
 msgid "Saved IPsec advanced settings."
 msgstr "Сохраненные расширенные настройки IPsec."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:232
+#: src/usr/local/www/vpn_ipsec_settings.php:238
 msgid "IPsec Logging Controls"
 msgstr "Управление Журналированием IPsec"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:244
+#: src/usr/local/www/vpn_ipsec_settings.php:250
 msgid ""
 "Changes the log verbosity for the IPsec daemon, so that more detail will be "
 "generated to aid in troubleshooting."
@@ -29500,15 +29507,15 @@ msgstr ""
 "Изменяет подробность журнала для демона IPsec, более подробные сведения "
 "будут сгенерированы, чтобы помочь в устранении неполадок."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:249
+#: src/usr/local/www/vpn_ipsec_settings.php:255
 msgid "Advanced IPsec Settings"
 msgstr "Расширенные Настройки IPsec"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:253
+#: src/usr/local/www/vpn_ipsec_settings.php:259
 msgid "Configure Unique IDs as"
 msgstr "Настроить Уникальные Идентификаторы как"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:257
+#: src/usr/local/www/vpn_ipsec_settings.php:263
 #, php-format
 msgid ""
 "Whether a particular participant ID should be kept unique, with any new "
@@ -29532,20 +29539,20 @@ msgstr ""
 "значение %1$skeep%2$s, чтобы отклонить новые настройки IKE_SA и сохранить "
 "дубликат, установленный ранее. По умолчанию используется значение «Да»."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:269
+#: src/usr/local/www/vpn_ipsec_settings.php:275
 msgid "IP Compression"
 msgstr "Компрессия IP"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:272
+#: src/usr/local/www/vpn_ipsec_settings.php:278
 msgid "IPComp compression of content is proposed on the connection."
 msgstr "В соединении предлагается сжатие содержимого IPComp."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:276
+#: src/usr/local/www/vpn_ipsec_settings.php:282
 #: src/usr/local/www/services_dnsmasq.php:347
 msgid "Strict interface binding"
 msgstr "Строгая привязка интерфейса"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:279
+#: src/usr/local/www/vpn_ipsec_settings.php:285
 msgid ""
 "Enable strongSwan's interfaces_use option to bind specific interfaces only. "
 "This option is known to break IPsec with dynamic IP interfaces. This is not "
@@ -29556,11 +29563,11 @@ msgstr ""
 "динамических IP-интерфейсов. В этом случае не рекомендуется её использование."
 ""
 
-#: src/usr/local/www/vpn_ipsec_settings.php:283
+#: src/usr/local/www/vpn_ipsec_settings.php:289
 msgid "Unencrypted payloads in IKEv1 Main Mode"
 msgstr "Незашифрованные данные в Основном режиме IKEv1"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:287
+#: src/usr/local/www/vpn_ipsec_settings.php:293
 msgid ""
 "Some implementations send the third Main Mode message unencrypted, probably "
 "to find the PSKs for the specified ID for authentication. This is very "
@@ -29579,16 +29586,16 @@ msgstr ""
 "если не известны точные значения, и для таких устройств требуется "
 "совместимость (например, некоторые устройства SonicWall)."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:295
+#: src/usr/local/www/vpn_ipsec_settings.php:301
 msgid "Enable Maximum MSS"
 msgstr "Включить Максимальный MSS"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:300
-#: src/usr/local/www/vpn_ipsec_settings.php:309
+#: src/usr/local/www/vpn_ipsec_settings.php:306
+#: src/usr/local/www/vpn_ipsec_settings.php:315
 msgid "Maximum MSS"
 msgstr "Максимальный MSS"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:313
+#: src/usr/local/www/vpn_ipsec_settings.php:319
 msgid ""
 "Enable MSS clamping on TCP flows over VPN. This helps overcome problems with "
 "PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "
@@ -29597,11 +29604,11 @@ msgstr ""
 "проблемы с PMTUD на VPN-соединениях IPsec. Если оставить пустым, значение по "
 "умолчанию равно 1400 байтам."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:321
+#: src/usr/local/www/vpn_ipsec_settings.php:327
 msgid "Enable Cisco Extensions"
 msgstr "Включение Расширений Cisco"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:324
+#: src/usr/local/www/vpn_ipsec_settings.php:330
 msgid ""
 "Enable Unity Plugin which provides Cisco Extension support such as Split-"
 "Include, Split-Exclude and Split-Dns."
@@ -29609,11 +29616,11 @@ msgstr ""
 "Включить плагин Unity, который обеспечивает поддержку Расширений Cisco , "
 "такие как Split-Include, Split-Exclude и Split-Dns."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:328
+#: src/usr/local/www/vpn_ipsec_settings.php:334
 msgid "Strict CRL Checking"
 msgstr "Строгая Проверка Списка Отозваных  Сертификатов"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:331
+#: src/usr/local/www/vpn_ipsec_settings.php:337
 msgid ""
 "Check this to require availability of a fresh CRL for peer authentication "
 "based on RSA signatures to succeed."
@@ -29621,11 +29628,11 @@ msgstr ""
 "Отметьте это, чтобы требовать наличие свежего CRL для аутентификации "
 "удаленного узла на основе подписей RSA."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:335
+#: src/usr/local/www/vpn_ipsec_settings.php:341
 msgid "Make before Break"
 msgstr "Make before Break"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:338
+#: src/usr/local/www/vpn_ipsec_settings.php:344
 msgid ""
 "Instead of a break-before-make scheme. Make-before-break uses overlapping "
 "IKE and CHILD_SA during reauthentication by first recreating all new SAs "
@@ -29639,21 +29646,21 @@ msgstr ""
 "быть полезно во избежание разрывов соединения во время повторной проверки "
 "подлинности, но требует поддержки перекрывающихся SA удаленным узлом."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:344
+#: src/usr/local/www/vpn_ipsec_settings.php:350
 msgid "Auto-exclude LAN address"
 msgstr "Автоматически исключать LAN адрес"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:347
+#: src/usr/local/www/vpn_ipsec_settings.php:353
 msgid "Exclude traffic from LAN subnet to LAN IP address from IPsec."
 msgstr ""
 "Исключить трафик из LAN  подсети адресованый IP адресу локальной сети от "
 "IPsec."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:351
+#: src/usr/local/www/vpn_ipsec_settings.php:357
 msgid "Asynchronous Cryptography"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_settings.php:354
+#: src/usr/local/www/vpn_ipsec_settings.php:360
 msgid ""
 "Allow crypto(9) jobs to be dispatched multi-threaded to increase performance."
 " Jobs are handled in the order they are received so that packets will be "
@@ -30819,12 +30826,12 @@ msgstr "Введите ограничение загрузки на этот MAC
 msgid "Enter a download limit to be enforced on this MAC in Kbit/s"
 msgstr "Введите ограничение загрузки с этого MAC адреса в Кбит/с"
 
-#: src/usr/local/www/status_gateway_groups.php:92
+#: src/usr/local/www/status_gateway_groups.php:89
 #, php-format
 msgid "Tier %s"
 msgstr "Уровень %s"
 
-#: src/usr/local/www/status_gateway_groups.php:132
+#: src/usr/local/www/status_gateway_groups.php:129
 msgid "Gathering data"
 msgstr "Сбор данных"
 
@@ -31173,9 +31180,9 @@ msgstr "Удаление пакетов..."
 #: src/etc/inc/pkg-utils.inc:878 src/etc/inc/pkg-utils.inc:895
 #: src/etc/inc/pkg-utils.inc:922 src/etc/inc/pkg-utils.inc:968
 #: src/etc/inc/pkg-utils.inc:994 src/etc/inc/pkg-utils.inc:1037
-#: src/etc/inc/pkg-utils.inc:1056 src/etc/inc/system.inc:1163
-#: src/etc/inc/system.inc:1260 src/etc/inc/system.inc:1633
-#: src/etc/inc/system.inc:2206 src/etc/inc/services.inc:1669
+#: src/etc/inc/pkg-utils.inc:1056 src/etc/inc/system.inc:1169
+#: src/etc/inc/system.inc:1266 src/etc/inc/system.inc:1639
+#: src/etc/inc/system.inc:2212 src/etc/inc/services.inc:1669
 #: src/etc/inc/services.inc:1970 src/etc/inc/services.inc:2193
 #: src/etc/inc/services.inc:2261 src/etc/inc/services.inc:2486
 #: src/etc/inc/rrd.inc:970 src/etc/inc/interfaces.inc:198
@@ -31700,74 +31707,74 @@ msgstr "Инициализация syslog..."
 msgid "Error: cannot open syslog.conf in system_syslogd_start().%s"
 msgstr "Ошибка: syslog.conf в system_syslogd_start().%s"
 
-#: src/etc/inc/system.inc:1180
+#: src/etc/inc/system.inc:1186
 msgid "Creating SSL Certificate for this host"
 msgstr "Создаю сертификат SSL для данного хоста"
 
-#: src/etc/inc/system.inc:1184
+#: src/etc/inc/system.inc:1190
 #, php-format
 msgid "webConfigurator default (%s)"
 msgstr "ВебКонфигуратор по умолчанию (%s)"
 
-#: src/etc/inc/system.inc:1194
+#: src/etc/inc/system.inc:1200
 #, php-format
 msgid "Error creating WebGUI Certificate: openssl library returns: %s"
 msgstr ""
 "Ошибка создания сертификата  ВебИнтерфейса: библиотека openssl вернула: %s"
 
-#: src/etc/inc/system.inc:1203
+#: src/etc/inc/system.inc:1209
 #, php-format
 msgid "Generated new self-signed HTTPS certificate (%s)"
 msgstr "Создаю новый самоподписный HTTPS сертификат (%s)"
 
-#: src/etc/inc/system.inc:1211
+#: src/etc/inc/system.inc:1217
 msgid "Starting webConfigurator..."
 msgstr "Запускаю ВебКонфигуратор"
 
-#: src/etc/inc/system.inc:1262 src/etc/inc/system.inc:2209
-#: src/etc/inc/system.inc:2212
+#: src/etc/inc/system.inc:1268 src/etc/inc/system.inc:2215
+#: src/etc/inc/system.inc:2218
 msgid "failed!"
 msgstr "не удалось!"
 
-#: src/etc/inc/system.inc:1534
+#: src/etc/inc/system.inc:1540
 #, php-format
 msgid "Error: cannot open certificate file in system_webgui_start().%s"
 msgstr "Ошибка: не могу открыть файл сертификата в system_webgui_start().%s"
 
-#: src/etc/inc/system.inc:1547
+#: src/etc/inc/system.inc:1553
 #, php-format
 msgid "Error: cannot open certificate key file in system_webgui_start().%s"
 msgstr ""
 "Ошибка: не могу открыть файл ключа сертификата в system_webgui_start().%s"
 
-#: src/etc/inc/system.inc:1574
+#: src/etc/inc/system.inc:1580
 #, php-format
 msgid "Error: cannot open %1$s in system_generate_nginx_config().%2$s"
 msgstr "Ошибка: не могу открыть %1$s в system_generate_nginx_config().%2$s"
 
-#: src/etc/inc/system.inc:1623
+#: src/etc/inc/system.inc:1629
 msgid "Setting timezone..."
 msgstr "Устанавливаю временную зону..."
 
-#: src/etc/inc/system.inc:2041
+#: src/etc/inc/system.inc:2047
 #, php-format
 msgid "Could not open %s/ntpd.conf for writing"
 msgstr "Не удаётся открыть %s/ntpd.conf для записи"
 
-#: src/etc/inc/system.inc:2161
+#: src/etc/inc/system.inc:2167
 #, php-format
 msgid "Error: cannot open dmesg.boot in system_dmesg_save().%s"
 msgstr "Ошибка: не могу открыть dmesg.boot в system_dmesg_save().%s"
 
-#: src/etc/inc/system.inc:2188
+#: src/etc/inc/system.inc:2194
 msgid "Setting hard disk standby... "
 msgstr "Установка режима ожидания жесткого диска ..."
 
-#: src/etc/inc/system.inc:2463
+#: src/etc/inc/system.inc:2469
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2467 src/etc/inc/system.inc:2486
+#: src/etc/inc/system.inc:2473 src/etc/inc/system.inc:2492
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -32045,98 +32052,98 @@ msgstr ""
 msgid "Starting UPnP service... "
 msgstr "Инициализация сервиса UPnP..."
 
-#: src/etc/inc/service-utils.inc:243
+#: src/etc/inc/service-utils.inc:248
 msgid "Router Advertisement Daemon"
 msgstr "Служба Объявления Маршрутизатора (RA)"
 
-#: src/etc/inc/service-utils.inc:263
+#: src/etc/inc/service-utils.inc:268
 msgid "NTP clock sync"
 msgstr "NTP синхронизация времени"
 
-#: src/etc/inc/service-utils.inc:268
+#: src/etc/inc/service-utils.inc:273
 msgid "System Logger Daemon"
 msgstr "Демон системного журнала"
 
-#: src/etc/inc/service-utils.inc:309
+#: src/etc/inc/service-utils.inc:314
 msgid "DHCP Service"
 msgstr "Сервис DHCP"
 
-#: src/etc/inc/service-utils.inc:317
+#: src/etc/inc/service-utils.inc:322
 msgid "Gateway Monitoring Daemon"
 msgstr "Служба Мониторинга Шлюза"
 
-#: src/etc/inc/service-utils.inc:324
+#: src/etc/inc/service-utils.inc:329
 msgid "SNMP Service"
 msgstr "Сервис SNMP"
 
-#: src/etc/inc/service-utils.inc:331
+#: src/etc/inc/service-utils.inc:336
 msgid "IGMP proxy"
 msgstr "IGMP прокси "
 
-#: src/etc/inc/service-utils.inc:338
+#: src/etc/inc/service-utils.inc:343
 msgid "UPnP Service"
 msgstr "Сервис UPnP"
 
-#: src/etc/inc/service-utils.inc:345
+#: src/etc/inc/service-utils.inc:350
 msgid "IPsec VPN"
 msgstr "IPsec VPN"
 
-#: src/etc/inc/service-utils.inc:352
+#: src/etc/inc/service-utils.inc:357
 msgid "Secure Shell Daemon"
 msgstr "Служба Secure Shell "
 
-#: src/etc/inc/service-utils.inc:379
+#: src/etc/inc/service-utils.inc:384
 msgid "Server load balancing daemon"
 msgstr "Служба балансировки нагрузки сервера"
 
-#: src/etc/inc/service-utils.inc:459
+#: src/etc/inc/service-utils.inc:464
 msgid "Not available."
 msgstr "Не доступно"
 
-#: src/etc/inc/service-utils.inc:493
+#: src/etc/inc/service-utils.inc:498
 msgid "Running"
 msgstr "Запускаю"
 
-#: src/etc/inc/service-utils.inc:500
+#: src/etc/inc/service-utils.inc:505
 msgid "Stopped"
 msgstr "Остановлено"
 
-#: src/etc/inc/service-utils.inc:516 src/etc/inc/service-utils.inc:518
+#: src/etc/inc/service-utils.inc:521 src/etc/inc/service-utils.inc:523
 #, php-format
 msgid "%1$s Service is %2$s"
 msgstr "%1$s Сервис %2$s"
 
-#: src/etc/inc/service-utils.inc:520
+#: src/etc/inc/service-utils.inc:525
 #, php-format
 msgid "%1$s, %2$s Service is %3$s"
 msgstr "%1$s, %2$s Сервис %3$s"
 
-#: src/etc/inc/service-utils.inc:567
+#: src/etc/inc/service-utils.inc:572
 #, php-format
 msgid "Restart %sService"
 msgstr "Перезапустить %sСервис"
 
-#: src/etc/inc/service-utils.inc:580
+#: src/etc/inc/service-utils.inc:585
 #, php-format
 msgid "Stop %sService"
 msgstr "Остановить %sСервис"
 
-#: src/etc/inc/service-utils.inc:586
+#: src/etc/inc/service-utils.inc:591
 #, php-format
 msgid "Start %sService"
 msgstr "Запустить %sСервис"
 
-#: src/etc/inc/service-utils.inc:661
+#: src/etc/inc/service-utils.inc:666
 #, php-format
 msgid "%s has been started."
 msgstr "%s был запущен"
 
-#: src/etc/inc/service-utils.inc:743
+#: src/etc/inc/service-utils.inc:748
 #, php-format
 msgid "%s has been stopped."
 msgstr "%s был остановлен"
 
-#: src/etc/inc/service-utils.inc:816
+#: src/etc/inc/service-utils.inc:821
 #, php-format
 msgid "%s has been restarted."
 msgstr "%s был перезапущен"
@@ -33651,11 +33658,11 @@ msgstr "Состояние блокировки (U)SIM карта"
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Состояние блокировки (U)SIM карта по сети"
 
-#: src/etc/inc/vpn.inc:238
+#: src/etc/inc/vpn.inc:220
 msgid "Configuring IPsec VPN... "
 msgstr "Настраиваем IPsec VPN"
 
-#: src/etc/inc/vpn.inc:282
+#: src/etc/inc/vpn.inc:264
 #, php-format
 msgid ""
 "IPsec ERROR: Could not find phase 1 source for connection %s. Omitting from "
@@ -33664,93 +33671,93 @@ msgstr ""
 "Ошибка IPsec: Невозможно найти источник подключения  %s для фазы 1. "
 "Игнорируем конфигурационный файл."
 
-#: src/etc/inc/vpn.inc:311
+#: src/etc/inc/vpn.inc:293
 #, php-format
 msgid "The remote gateway %s already exists on another phase 1 entry"
 msgstr "Удаленный шлюз %s уже используется в другой записи для 1 фазы"
 
-#: src/etc/inc/vpn.inc:624
+#: src/etc/inc/vpn.inc:612
 #, php-format
 msgid "Warning: Missing CRL data for %s"
 msgstr ""
 "Предупреждение: Отсутствуют данные списка аннулированных сертификатов для %s"
 
-#: src/etc/inc/vpn.inc:629
+#: src/etc/inc/vpn.inc:617
 #, php-format
 msgid "Error: Cannot write IPsec CRL file for %s"
 msgstr ""
 "Ошибка: Невозможно записать файл списка аннулированных сертификатов IPsec "
 "для %s"
 
-#: src/etc/inc/vpn.inc:653
+#: src/etc/inc/vpn.inc:641
 #, php-format
 msgid "Error: Invalid phase1 certificate reference for %s"
 msgstr "Ошибка: Невалидная ссылка на сертификат фазы 1 для %s"
 
-#: src/etc/inc/vpn.inc:671
+#: src/etc/inc/vpn.inc:659
 #, php-format
 msgid "Error: Cannot write phase1 key file for %s"
 msgstr "Ошибка: Невозможно записать файл ключа фазы 1 для %s"
 
-#: src/etc/inc/vpn.inc:678
+#: src/etc/inc/vpn.inc:666
 #, php-format
 msgid "Error: Cannot write phase1 certificate file for %s"
 msgstr "Ошибка: Невозможно записать файл сертификата фазы 1 для %s"
 
-#: src/etc/inc/vpn.inc:744
+#: src/etc/inc/vpn.inc:732
 #, php-format
 msgid "Error: Invalid certificate hash info for %s"
 msgstr "Ошибка: Невалидные сведения хэша сертификата для %s"
 
-#: src/etc/inc/vpn.inc:749
+#: src/etc/inc/vpn.inc:737
 #, php-format
 msgid "Error: Cannot write IPsec CA file for %s"
 msgstr "Ошибка: Невозможно записать файл центра сертификации для %s"
 
-#: src/etc/inc/vpn.inc:1457
+#: src/etc/inc/vpn.inc:1439
 #, php-format
 msgid "No phase2 specifications for tunnel with REQID = %s"
 msgstr "Нет данных о фазе 2 для туннеля с REQID = %s"
 
-#: src/etc/inc/vpn.inc:1651
+#: src/etc/inc/vpn.inc:1633
 #, php-format
 msgid "Ignoring IPsec reload since there are no tunnels on interface %s"
 msgstr ""
 "Игнорируем перезагрузку IPsec по причине отсутствия туннелей на интерфейсе "
 "%s"
 
-#: src/etc/inc/vpn.inc:1657
+#: src/etc/inc/vpn.inc:1639
 msgid "Forcefully reloading IPsec"
 msgstr "Принудительная перезагрузка IPsec"
 
-#: src/etc/inc/vpn.inc:1707
+#: src/etc/inc/vpn.inc:1689
 msgid "Configuring PPPoE Server service... "
 msgstr "Настраиваем сервис PPPoE Сервера... "
 
-#: src/etc/inc/vpn.inc:1732
+#: src/etc/inc/vpn.inc:1714
 #, php-format
 msgid "Error: cannot open mpd.conf in vpn_pppoe_configure()."
 msgstr "Ошибка: Невозможно открыть mpd.conf  в vpn_pppoe_configure()."
 
-#: src/etc/inc/vpn.inc:1849
+#: src/etc/inc/vpn.inc:1831
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_pppoe_configure()."
 msgstr "Ошибка: Невозможно открыть mpd.secret в vpn_pppoe_configure()."
 
-#: src/etc/inc/vpn.inc:1883
+#: src/etc/inc/vpn.inc:1865
 msgid "done"
 msgstr "готово"
 
-#: src/etc/inc/vpn.inc:1905
+#: src/etc/inc/vpn.inc:1887
 msgid "Configuring l2tp VPN service... "
 msgstr "Настраиваем сервис l2tp VPN..."
 
-#: src/etc/inc/vpn.inc:1944
+#: src/etc/inc/vpn.inc:1926
 #, php-format
 msgid "Error: cannot open mpd.conf in vpn_l2tp_configure()."
 msgstr "Ошибка: невозможно открыть mpd.conf в vpn_l2tp_configure()."
 
-#: src/etc/inc/vpn.inc:2037
+#: src/etc/inc/vpn.inc:2019
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_l2tp_configure()."
 msgstr "Ошибка: невозможно открыть mpd.secret в vpn_l2tp_configure()."
@@ -38453,31 +38460,31 @@ msgstr "dpinger: не удается подключится к сокету ст
 msgid "dpinger: timeout while retrieving status for gateway %s"
 msgstr "dpinger: таймаут при получении статуса  шлюза %s"
 
-#: src/etc/inc/gwlb.inc:1203
+#: src/etc/inc/gwlb.inc:1207
 #, php-format
 msgid "MONITOR: %1$s is down, omitting from routing group %2$s"
 msgstr "МОНИТОР: %1$s выключен, исключаем из группы маршрутизации %2$s"
 
-#: src/etc/inc/gwlb.inc:1207
+#: src/etc/inc/gwlb.inc:1211
 #, php-format
 msgid "MONITOR: %1$s has packet loss, omitting from routing group %2$s"
 msgstr ""
 "МОНИТОР: в %1$s наблюдается потеря пакетов, исключаем из группы "
 "маршрутизации %2$s"
 
-#: src/etc/inc/gwlb.inc:1211
+#: src/etc/inc/gwlb.inc:1215
 #, php-format
 msgid "MONITOR: %1$s has high latency, omitting from routing group %2$s"
 msgstr ""
 "МОНИТОР: у %1$s высокая задержка пакетов, исключаем из группы маршрутизации "
 "%2$s"
 
-#: src/etc/inc/gwlb.inc:1232
+#: src/etc/inc/gwlb.inc:1236
 #, php-format
 msgid "MONITOR: %1$s is available now, adding to routing group %2$s"
 msgstr "МОНИТОР: %1$s стал доступен, добавляем в группу маршрутизации %2$s"
 
-#: src/etc/inc/gwlb.inc:1255
+#: src/etc/inc/gwlb.inc:1259
 #, php-format
 msgid ""
 "Gateways status could not be determined, considering all as up/active. "
@@ -38486,25 +38493,25 @@ msgstr ""
 "Статус шлюзов невозможно определить, помечаем все шлюзы как активные (Группа "
 "%s)"
 
-#: src/etc/inc/gwlb.inc:1300
+#: src/etc/inc/gwlb.inc:1304
 #, php-format
 msgid "GATEWAYS: Group %1$s did not have any gateways up on tier %2$s!"
 msgstr "ШЛЮЗЫ: Группа %1$s не имеет ни одного активного шлюза на уровне %2$s!"
 
-#: src/etc/inc/gwlb.inc:1372
+#: src/etc/inc/gwlb.inc:1376
 #, php-format
 msgid "Updating gateway group gateway for %1$s - new gateway is %2$s"
 msgstr "Обновляем шлюзы для группы шлюзов %1$s  - новый шлюз %2$s"
 
-#: src/etc/inc/gwlb.inc:1657
+#: src/etc/inc/gwlb.inc:1661
 msgid "gateway"
 msgstr "шлюз"
 
-#: src/etc/inc/gwlb.inc:1686
+#: src/etc/inc/gwlb.inc:1690
 msgid "A valid gateway IP address must be specified."
 msgstr "Должен быть указан действительный IP-адрес шлюза."
 
-#: src/etc/inc/gwlb.inc:1696
+#: src/etc/inc/gwlb.inc:1700
 msgid ""
 "Cannot add IPv4 Gateway Address because no IPv4 address could be found on "
 "the interface."
@@ -38512,14 +38519,14 @@ msgstr ""
 "Не удается добавить адрес шлюза IPv4, поскольку на интерфейсе не может быть "
 "найден IPv4-адрес."
 
-#: src/etc/inc/gwlb.inc:1718 src/etc/inc/gwlb.inc:1751
+#: src/etc/inc/gwlb.inc:1722 src/etc/inc/gwlb.inc:1755
 #, php-format
 msgid ""
 "The gateway address %s does not lie within one of the chosen interface's "
 "subnets."
 msgstr "Адрес шлюза %s не лежит ни в одной из подсетей выбранного интерфейса"
 
-#: src/etc/inc/gwlb.inc:1729
+#: src/etc/inc/gwlb.inc:1733
 msgid ""
 "Cannot add IPv6 Gateway Address because no IPv6 address could be found on "
 "the interface."
@@ -38527,7 +38534,7 @@ msgstr ""
 "Не удается добавить адрес шлюза IPv6, поскольку на интерфейсе не может быть "
 "найден IPv6-адрес."
 
-#: src/etc/inc/gwlb.inc:1759
+#: src/etc/inc/gwlb.inc:1763
 msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv4 "
 "configuration."
@@ -38535,7 +38542,7 @@ msgstr ""
 "Значения динамического шлюза не могут указываться для интерфейсов со "
 "статической конфигурацией IPv4."
 
-#: src/etc/inc/gwlb.inc:1764
+#: src/etc/inc/gwlb.inc:1768
 msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv6 "
 "configuration."
@@ -38543,45 +38550,45 @@ msgstr ""
 "Значения динамического шлюза не могут указываться для интерфейсов со "
 "статической конфигурацией IPv6."
 
-#: src/etc/inc/gwlb.inc:1772
+#: src/etc/inc/gwlb.inc:1776
 msgid "A valid data payload must be specified."
 msgstr "Должна быть указана допустимая полезная нагрузка данных (payload)."
 
-#: src/etc/inc/gwlb.inc:1777
+#: src/etc/inc/gwlb.inc:1781
 #, php-format
 msgid "The IPv6 gateway address '%s' can not be used as a IPv4 gateway."
 msgstr "Адрес шлюза IPv6 '%s' не может использоваться в качестве шлюза IPv4."
 
-#: src/etc/inc/gwlb.inc:1780
+#: src/etc/inc/gwlb.inc:1784
 #, php-format
 msgid "The IPv4 gateway address '%s' can not be used as a IPv6 gateway."
 msgstr "Адрес шлюза IPv4 '%s' не может использоваться в качестве шлюза IPv6."
 
-#: src/etc/inc/gwlb.inc:1786
+#: src/etc/inc/gwlb.inc:1790
 #, php-format
 msgid "The IPv6 monitor address '%s' can not be used on a IPv4 gateway."
 msgstr "Мониторинговый IPv6 адрес '%s' не может  использован на шлюзе IPv4."
 
-#: src/etc/inc/gwlb.inc:1789
+#: src/etc/inc/gwlb.inc:1793
 #, php-format
 msgid "The IPv4 monitor address '%s' can not be used on a IPv6 gateway."
 msgstr "Мониторинговый IPv4 адрес '%s' не может  использован на шлюзе IPv6."
 
-#: src/etc/inc/gwlb.inc:1798
+#: src/etc/inc/gwlb.inc:1802
 msgid "Changing name on a gateway is not allowed."
 msgstr "Изменение имени на шлюзе не разрешено."
 
-#: src/etc/inc/gwlb.inc:1804
+#: src/etc/inc/gwlb.inc:1808
 #, php-format
 msgid "The gateway name \"%s\" already exists."
 msgstr "Имя шлюза  \"%s\" уже существует."
 
-#: src/etc/inc/gwlb.inc:1810
+#: src/etc/inc/gwlb.inc:1814
 #, php-format
 msgid "The gateway IP address \"%s\" already exists."
 msgstr "IP адрес шлюза \"%s\" уже существует."
 
-#: src/etc/inc/gwlb.inc:1816
+#: src/etc/inc/gwlb.inc:1820
 #, php-format
 msgid ""
 "The monitor IP address \"%s\" is already in use. A different monitor IP must "
@@ -38590,85 +38597,85 @@ msgstr ""
 "Мониторинговый IP адрес \"%s\" уже используется.  Другой мониторинговый IP "
 "адрес должен быть выбран."
 
-#: src/etc/inc/gwlb.inc:1829
+#: src/etc/inc/gwlb.inc:1833
 msgid "The low latency threshold needs to be a numeric value."
 msgstr "Значение нижнего  порога  задержки должно быть числом."
 
-#: src/etc/inc/gwlb.inc:1831
+#: src/etc/inc/gwlb.inc:1835
 msgid "The low latency threshold needs to be positive."
 msgstr "Значение  нижнего  порога  задержки должно быть положительным."
 
-#: src/etc/inc/gwlb.inc:1840
+#: src/etc/inc/gwlb.inc:1844
 msgid "The high latency threshold needs to be a numeric value."
 msgstr "Значение верхнего порога задержки должно быть числом."
 
-#: src/etc/inc/gwlb.inc:1842
+#: src/etc/inc/gwlb.inc:1846
 msgid "The high latency threshold needs to be positive."
 msgstr "Значение верхнего порога  задержки должно быть положительным."
 
-#: src/etc/inc/gwlb.inc:1851
+#: src/etc/inc/gwlb.inc:1855
 msgid "The low Packet Loss threshold needs to be a numeric value."
 msgstr "Значение нижнего порога  потерь пакетов должно быть числом."
 
-#: src/etc/inc/gwlb.inc:1853
+#: src/etc/inc/gwlb.inc:1857
 msgid "The low Packet Loss threshold needs to be positive."
 msgstr "Значение нижнего порога потерь пакетов должно быть положительным."
 
-#: src/etc/inc/gwlb.inc:1855
+#: src/etc/inc/gwlb.inc:1859
 msgid "The low Packet Loss threshold needs to be less than 100."
 msgstr "Значение нижнего порога потерь пакетов должно быть меньше, чем 100."
 
-#: src/etc/inc/gwlb.inc:1864
+#: src/etc/inc/gwlb.inc:1868
 msgid "The high Packet Loss threshold needs to be a numeric value."
 msgstr "Значение верхнего порога  потерь пакетов должно быть числом."
 
-#: src/etc/inc/gwlb.inc:1866
+#: src/etc/inc/gwlb.inc:1870
 msgid "The high Packet Loss threshold needs to be positive."
 msgstr "Значение верхнего порога потерь пакетов должно быть положительным."
 
-#: src/etc/inc/gwlb.inc:1868
+#: src/etc/inc/gwlb.inc:1872
 msgid "The high Packet Loss threshold needs to be 100 or less."
 msgstr ""
 "Значение нижнего порога потерь пакетов должно быть меньше или равно 100."
 
-#: src/etc/inc/gwlb.inc:1877
+#: src/etc/inc/gwlb.inc:1881
 msgid ""
 "The time period over which results are averaged needs to be a numeric value."
 msgstr ""
 "Период времени, который будет использоваться для вычисления среднего "
 "значения , должен быть числом."
 
-#: src/etc/inc/gwlb.inc:1879
+#: src/etc/inc/gwlb.inc:1883
 msgid "The time period over which results are averaged needs to be positive."
 msgstr ""
 "Период времени, который будет использоваться для вычисления среднего "
 "значения, должен быть положительным."
 
-#: src/etc/inc/gwlb.inc:1888
+#: src/etc/inc/gwlb.inc:1892
 msgid "The probe interval needs to be a numeric value."
 msgstr "Значение интервала пробы должно быть числом."
 
-#: src/etc/inc/gwlb.inc:1890
+#: src/etc/inc/gwlb.inc:1894
 msgid "The probe interval needs to be positive."
 msgstr "Значение интервала пробы должно быть положительным."
 
-#: src/etc/inc/gwlb.inc:1899
+#: src/etc/inc/gwlb.inc:1903
 msgid "The loss interval needs to be a numeric value."
 msgstr "Значение интервала потерь должно быть числом."
 
-#: src/etc/inc/gwlb.inc:1901
+#: src/etc/inc/gwlb.inc:1905
 msgid "The loss interval setting needs to be positive."
 msgstr "Значение интервала потерь должно быть положительным."
 
-#: src/etc/inc/gwlb.inc:1910
+#: src/etc/inc/gwlb.inc:1914
 msgid "The alert interval needs to be a numeric value."
 msgstr "Значения интервала оповещения должно быть числом."
 
-#: src/etc/inc/gwlb.inc:1912
+#: src/etc/inc/gwlb.inc:1916
 msgid "The alert interval setting needs to be positive."
 msgstr "Значения интервала оповещения должно быть положительным."
 
-#: src/etc/inc/gwlb.inc:1920
+#: src/etc/inc/gwlb.inc:1924
 msgid ""
 "The high latency threshold needs to be greater than the low latency "
 "threshold"
@@ -38676,7 +38683,7 @@ msgstr ""
 "Значение верхнего порога задержки должно быть выше, чем значение нижнего "
 "порога задержки."
 
-#: src/etc/inc/gwlb.inc:1925
+#: src/etc/inc/gwlb.inc:1929
 msgid ""
 "The high packet loss threshold needs to be higher than the low packet loss "
 "threshold"
@@ -38684,7 +38691,7 @@ msgstr ""
 "Значение верхнего порога потерь пакетов должно быть выше, чем значение "
 "нижнего порога потерь пакетов ."
 
-#: src/etc/inc/gwlb.inc:1931
+#: src/etc/inc/gwlb.inc:1935
 msgid ""
 "The loss interval needs to be greater than or equal to the high latency "
 "threshold."
@@ -38692,7 +38699,7 @@ msgstr ""
 "Значение интервала потерь должно быть выше или равно значению верхнего "
 "порога задержки."
 
-#: src/etc/inc/gwlb.inc:1936
+#: src/etc/inc/gwlb.inc:1940
 msgid ""
 "The time period needs to be greater than twice the probe interval plus the "
 "loss interval."
@@ -38700,7 +38707,7 @@ msgstr ""
 "Значение периода времени должно быть более, чем в два раза выше, чем "
 "значение интервала пробы плюс интервал потерь."
 
-#: src/etc/inc/gwlb.inc:1942
+#: src/etc/inc/gwlb.inc:1946
 msgid ""
 "The alert interval needs to be greater than or equal to the probe interval."
 msgstr ""
@@ -40234,7 +40241,7 @@ msgstr ""
 msgid "Deny mode 6 control message trap service (notrap)."
 msgstr "Запретить управление ловушками сообщений в режиме 6 (notrap)."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:531
+#: src/usr/local/www/vpn_ipsec_phase2.php:540
 msgid "Disable this phase 2 entry without removing it from the list. "
 msgstr "Отключите эту фазу 2, не удаляя ее из списка."
 
@@ -40242,67 +40249,67 @@ msgstr "Отключите эту фазу 2, не удаляя ее из спи
 msgid "Automatically refresh the output below"
 msgstr "Автоматически обновлять вывод ниже"
 
-#: src/usr/local/www/interfaces.php:1839
+#: src/usr/local/www/interfaces.php:1844
 msgid "Enable interface"
 msgstr "Включить интерфейс"
 
-#: src/usr/local/www/interfaces.php:1867
+#: src/usr/local/www/interfaces.php:1872
 msgid ""
 "This interface type does not support manual address configuration on this "
 "page. "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1978
+#: src/usr/local/www/interfaces.php:1983
 msgid "IPv6 will use the IPv4 connectivity link (PPPoE)"
 msgstr "IPv6 будет использовать IPv4 линк (PPPoE)"
 
-#: src/usr/local/www/interfaces.php:2077 src/usr/local/www/interfaces.php:2282
+#: src/usr/local/www/interfaces.php:2082 src/usr/local/www/interfaces.php:2287
 msgid "Configuration Override"
 msgstr "Переопределение конфигурации"
 
-#: src/usr/local/www/interfaces.php:2112
+#: src/usr/local/www/interfaces.php:2117
 msgid "Enable dhcpclient VLAN Priority tagging"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2180
+#: src/usr/local/www/interfaces.php:2185
 msgid "FreeBSD default"
 msgstr "Умолчание FreeBSD"
 
-#: src/usr/local/www/interfaces.php:2196
+#: src/usr/local/www/interfaces.php:2201
 msgid "pfSense Default"
 msgstr "Умолчание pfSense "
 
-#: src/usr/local/www/interfaces.php:2204
+#: src/usr/local/www/interfaces.php:2209
 msgid "Saved Cfg"
 msgstr "Сохранен конфиг"
 
-#: src/usr/local/www/interfaces.php:2291
+#: src/usr/local/www/interfaces.php:2296
 msgid "Request a IPv6 prefix/information through the IPv4 connectivity link"
 msgstr ""
 "Запросить IPv6  префикс/информацию через соединение, имеющее IPv4 связность"
 
-#: src/usr/local/www/interfaces.php:2298
+#: src/usr/local/www/interfaces.php:2303
 msgid "Only request an IPv6 prefix, do not request an IPv6 address"
 msgstr "Запрашивает только IPv6 префикс, но не запрашивает IPv6 адрес"
 
-#: src/usr/local/www/interfaces.php:2312
+#: src/usr/local/www/interfaces.php:2317
 msgid ""
 "Send an IPv6 prefix hint to indicate the desired prefix size for delegation"
 msgstr ""
 "Отправить подказку IPv6 префикса, чтобы определить желаемые размер "
 "делегируемого префикса"
 
-#: src/usr/local/www/interfaces.php:2319
+#: src/usr/local/www/interfaces.php:2324
 msgid "Start DHCP6 client in debug mode"
 msgstr "Запустить клиент DHCP6 в режиме отладки"
 
-#: src/usr/local/www/interfaces.php:2325
+#: src/usr/local/www/interfaces.php:2330
 msgid "Required by some ISPs, especially those not using PPPoE"
 msgstr ""
 "Является требованием для некоторых ISP, особенно у тех, которые не "
 "используют PPPoE"
 
-#: src/usr/local/www/interfaces.php:2331
+#: src/usr/local/www/interfaces.php:2336
 msgid ""
 "dhcp6c will send a release to the ISP on exit, some ISPs then release the "
 "allocated address or prefix. This option prevents that signal ever being "
@@ -40312,43 +40319,43 @@ msgstr ""
 "ISP при этом прекращают аренду выделенного адреса или префикса. Данная опция "
 "предупреждает передачу этого сигнала"
 
-#: src/usr/local/www/interfaces.php:2341
+#: src/usr/local/www/interfaces.php:2346
 msgid "Enable dhcp6c VLAN Priority tagging"
 msgstr "Включить приоритетное тэгирование VLAN для dhcp6c"
 
-#: src/usr/local/www/interfaces.php:2375
+#: src/usr/local/www/interfaces.php:2380
 msgid "Exchange Information Only"
 msgstr "Только информация обмена"
 
-#: src/usr/local/www/interfaces.php:2411
+#: src/usr/local/www/interfaces.php:2416
 msgid "Non-Temporary Address Allocation"
 msgstr "Постоянное Назначение Адреса"
 
-#: src/usr/local/www/interfaces.php:2452
+#: src/usr/local/www/interfaces.php:2457
 msgid "Prefix Delegation "
 msgstr "Делегирование Префиксов"
 
-#: src/usr/local/www/interfaces.php:2803 src/usr/local/www/interfaces.php:2935
+#: src/usr/local/www/interfaces.php:2808 src/usr/local/www/interfaces.php:2940
 msgid "Enable Dial-On-Demand mode "
 msgstr "Включить режим Подключение-По-Требованию "
 
-#: src/usr/local/www/interfaces.php:2860
+#: src/usr/local/www/interfaces.php:2865
 msgid "Reset at each month (\"0 0 1 * *\")"
 msgstr "Сбрасывать каждый месяц (\"0 0 1 * *\")"
 
-#: src/usr/local/www/interfaces.php:2868
+#: src/usr/local/www/interfaces.php:2873
 msgid "Reset at each week (\"0 0 * * 0\")"
 msgstr "Сбрасывать каждую неделю (\"0 0 * * 0\")"
 
-#: src/usr/local/www/interfaces.php:2876
+#: src/usr/local/www/interfaces.php:2881
 msgid "Reset at each day (\"0 0 * * *\")"
 msgstr "Сбрасывать каждый день (\"0 0 * * *\")"
 
-#: src/usr/local/www/interfaces.php:2884
+#: src/usr/local/www/interfaces.php:2889
 msgid "Reset at each hour (\"0 * * * *\")"
 msgstr "Сбрасывать каждый час (\"0 * * * *\")"
 
-#: src/usr/local/www/interfaces.php:2973
+#: src/usr/local/www/interfaces.php:2978
 msgid ""
 "Preserve common wireless configuration through interface deletions and "
 "reassignments."
@@ -40356,7 +40363,7 @@ msgstr ""
 "Сохранять обычные беспроводные настройки при удалении интерфейсов и "
 "переназначений."
 
-#: src/usr/local/www/interfaces.php:3173
+#: src/usr/local/www/interfaces.php:3178
 msgid ""
 "Allow packets to pass between wireless clients directly when operating as an "
 "access point"
@@ -40364,11 +40371,11 @@ msgstr ""
 "Разрешить  прямое прохождение пакетов между беспроводными клиентами при "
 "функционировании в режиме точки доступа"
 
-#: src/usr/local/www/interfaces.php:3181
+#: src/usr/local/www/interfaces.php:3186
 msgid "Force the card to use WME (wireless QoS)"
 msgstr "Заставить карту использовать WME (беспроводной QoS) "
 
-#: src/usr/local/www/interfaces.php:3189
+#: src/usr/local/www/interfaces.php:3194
 msgid ""
 "Disable broadcasting of the SSID for this network (This may cause problems "
 "for some clients, and the SSID may still be discovered by other means.)"
@@ -40377,15 +40384,15 @@ msgstr ""
 "некоторым клиентам, и SSID все равно может быть обнаружен другими способами)."
 ""
 
-#: src/usr/local/www/interfaces.php:3202
+#: src/usr/local/www/interfaces.php:3207
 msgid "Enable WPA"
 msgstr "Включить WPA"
 
-#: src/usr/local/www/interfaces.php:3254
+#: src/usr/local/www/interfaces.php:3259
 msgid "Force the AP to rekey whenever a client disassociates"
 msgstr "Принудительное обновление ключа AP при дисассоциации клиента"
 
-#: src/usr/local/www/interfaces.php:3266
+#: src/usr/local/www/interfaces.php:3271
 msgid "Enable 802.1X authentication"
 msgstr "Включить аутентификацию 802.1X"
 
@@ -40496,41 +40503,41 @@ msgstr ""
 "Запускать «net stop dnscache», «net start dnscache», «ipconfig/flushdns» и "
 "«ipconfig/registerdns» при запуске подключения."
 
-#: src/usr/local/www/vpn_ipsec_settings.php:270
+#: src/usr/local/www/vpn_ipsec_settings.php:276
 msgid "Enable IPCompression"
 msgstr "Включить IP сжатие"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:277
+#: src/usr/local/www/vpn_ipsec_settings.php:283
 msgid "Enable strict interface binding"
 msgstr "Включить строгую привязку интерфейса"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:284
+#: src/usr/local/www/vpn_ipsec_settings.php:290
 msgid "Accept unencrypted ID and HASH payloads in IKEv1 Main Mode"
 msgstr ""
 "Принимать нешифрованные Идентификатор и Данные HASH в основном режиме IKEv1"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:296
+#: src/usr/local/www/vpn_ipsec_settings.php:302
 msgid "Enable MSS clamping on VPN traffic"
 msgstr "Включить сжатие MSS для VPN трафика"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:322
+#: src/usr/local/www/vpn_ipsec_settings.php:328
 msgid "Enable Unity Plugin"
 msgstr "Включить плагин Unity"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:329
+#: src/usr/local/www/vpn_ipsec_settings.php:335
 msgid "Enable strict Certificate Revocation List checking"
 msgstr "Включить обязательную проверку Списка Отозванных Сертификатов"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:336
+#: src/usr/local/www/vpn_ipsec_settings.php:342
 msgid "Initiate IKEv2 reauthentication with a make-before-break"
 msgstr ""
 "Инициализировать повторную аутентификацию IKEv2 с помощью make-before-break"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:345
+#: src/usr/local/www/vpn_ipsec_settings.php:351
 msgid "Enable bypass for LAN interface IP"
 msgstr "Включить байпас для интерфейса LAN"
 
-#: src/usr/local/www/vpn_ipsec_settings.php:352
+#: src/usr/local/www/vpn_ipsec_settings.php:358
 msgid "Use asynchronous mode to parallelize multiple cryptography jobs"
 msgstr ""
 

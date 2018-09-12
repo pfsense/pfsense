@@ -633,12 +633,15 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 			foreach ($ca_crl_map[$ca['refid']] as $crl):
 				$tmpcrl = lookup_crl($crl);
 				$internal = is_crl_internal($tmpcrl);
+				if (($internal) && is_array($tmpcrl['cert'])) {
+					$tmpcrl_count = count($tmpcrl['cert']);
+				}
 				$inuse = crl_in_use($tmpcrl['refid']);
 ?>
 					<tr>
 						<td><?=$tmpcrl['descr']; ?></td>
 						<td><i class="fa fa-<?=($internal) ? "check" : "times"; ?>"></i></td>
-						<td><?=($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
+						<td><?=($internal) ? (int)$tmpcrl_count : "Unknown (imported)"; ?></td>
 						<td><i class="fa fa-<?=($inuse) ? "check" : "times"; ?>"></i>
 						<?php echo cert_usedby_description($tmpcrl['refid'], $certificates_used_by_packages); ?>
 						</td>

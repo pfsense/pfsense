@@ -63,6 +63,7 @@ get_version()
 
 get_version
 
+model=$(/bin/kenv -q smbios.system.product)
 boardpn=$(/bin/kenv -q uboot.boardpn)
 if [ "${boardpn%-*}" == "80500-0148" ]; then
 	# Update the boot status on SG-3100, pfSense is loading.
@@ -71,6 +72,9 @@ if [ "${boardpn%-*}" == "80500-0148" ]; then
 	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.pwm=0 > /dev/null
 	/sbin/sysctl -q dev.gpio.${gpiodev}.led.1.pwm=0 > /dev/null
 	/sbin/sysctl -q dev.gpio.${gpiodev}.led.2.pwm=0 > /dev/null
+elif [ "${model}" = "SG-5100" ]; then
+	# Booting (red/green flashing)
+	/usr/local/sbin/SG-5100led 5
 fi
 
 # Setup dumpdev/ddb/savecore"
@@ -488,6 +492,9 @@ if [ "${boardpn%-*}" == "80500-0148" ]; then
 	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.T1-T3=1040 > /dev/null
 	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.T2=520 > /dev/null
 	/sbin/sysctl -q dev.gpio.${gpiodev}.pin.2.T4=3640 > /dev/null
+elif [ "${model}" = "SG-5100" ]; then
+	# Boot finished (green)
+	/usr/local/sbin/SG-5100led 3
 fi
 
 # Reset the cache.  read-only requires this.

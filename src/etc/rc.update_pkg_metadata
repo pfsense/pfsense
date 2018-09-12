@@ -30,11 +30,6 @@ sg3100_gpio_update() {
 	local _update=${1}
 	local _gpiodev=$(sg3100_gpiounit)
 
-	boardpn=$(/bin/kenv -q uboot.boardpn)
-	if [ "${boardpn%-*}" != "80500-0148" ]; then
-		return
-	fi
-
 	if [ ${_update} -eq 1 ]; then
 		/usr/sbin/gpioctl -f /dev/gpioc${_gpiodev} 3 duty 150 > /dev/null
 		/usr/sbin/gpioctl -f /dev/gpioc${_gpiodev} 4 duty 15 > /dev/null
@@ -46,6 +41,31 @@ sg3100_gpio_update() {
 		/usr/sbin/gpioctl -f /dev/gpioc${_gpiodev} 3 duty 0 > /dev/null
 		/usr/sbin/gpioctl -f /dev/gpioc${_gpiodev} 4 duty 0  > /dev/null
 		/sbin/sysctl dev.gpio.${_gpiodev}.led.1.pwm=1 > /dev/null
+	fi
+}
+
+sg5100_led_update() {
+	local _update=${1}
+
+	if [ ${_update} -eq 1 ]; then
+		# updates, green flashing
+		/usr/local/sbin/SG-5100led 4
+	else
+		# No updates, green
+		/usr/local/sbin/SG-5100led 3
+	fi
+}
+
+led_update() {
+	local _update="${1}"
+
+	local _boardpn=$(/bin/kenv -q uboot.boardpn)
+	local _model=$(/bin/kenv -q smbios.system.product)
+
+	if [ "${_boardpn%-*}" = "80500-0148" ]; then
+		sg3100_gpio_update ${_update}
+	elif [ "${_model}" = "SG-5100" ]; then
+		sg5100_led_update ${_update}
 	fi
 }
 
@@ -71,10 +91,10 @@ tmp_version=$(mktemp -q /tmp/${product}_version.XXXXXXXX) \
 		; rm -f ${tmp_version}.tmp \
 		; echo $rc > ${tmp_version}.rc \
 		; if [ $rc -eq 2 ]; then \
-			sg3100_gpio_update 1 \
+			led_update 1 \
 		;	return $rc \
 		; fi \
-		; sg3100_gpio_update 0 \
+		; led_update 0 \
 		; return 0 \
 	) \
 	&& ( \

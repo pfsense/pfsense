@@ -2351,6 +2351,7 @@ function system_check_reset_button() {
 		case 'APU':
 		case 'RCC-VE':
 		case 'RCC':
+		case 'SG-5100':
 			$binprefix = $specplatform['name'];
 			break;
 		default:

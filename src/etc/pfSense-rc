@@ -73,8 +73,8 @@ if [ "${boardpn%-*}" == "80500-0148" ]; then
 	/sbin/sysctl -q dev.gpio.${gpiodev}.led.1.pwm=0 > /dev/null
 	/sbin/sysctl -q dev.gpio.${gpiodev}.led.2.pwm=0 > /dev/null
 elif [ "${model}" = "SG-5100" ]; then
-	# Booting (red/green flashing)
-	/usr/local/sbin/SG-5100led 5
+	# Booting (red)
+	/usr/local/sbin/SG-5100led 1
 fi
 
 # Setup dumpdev/ddb/savecore"

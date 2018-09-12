@@ -633,6 +633,9 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 			foreach ($ca_crl_map[$ca['refid']] as $crl):
 				$tmpcrl = lookup_crl($crl);
 				$internal = is_crl_internal($tmpcrl);
+				if ($internal && (!isset($tmpcrl['cert']) || empty($tmpcrl['cert'])) ) {
+					$tmpcrl['cert'] = array();
+				}
 				$inuse = crl_in_use($tmpcrl['refid']);
 ?>
 					<tr>

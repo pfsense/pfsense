@@ -669,6 +669,8 @@
 		   If the existing DHCP range on LAN is not in the new subnet or
 		   is invalid, then replace the range with a newly crafted one.
 		*/
+		init_config_arr(array('dhcpd', 'lan', 'range', 'from'));
+		init_config_arr(array('dhcpd', 'lan', 'range', 'to'));
 		if (!ip_in_subnet($config['dhcpd']['lan']['range']['from'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}") ||
 		    !ip_in_subnet($config['dhcpd']['lan']['range']['to'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}")) {
 

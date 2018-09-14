@@ -1246,7 +1246,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		system("echo \"Reading {$loader_conf_file}...\" >> /conf/upgrade_log.txt");
 	}
 
-	$data = load_loader_conf($loader_conf_file);
+	$data = load_loader_conf($loader_conf_file, false);
 	if ($serial_only === true) {
 		$data[] = 'boot_serial="YES"';
 		$data[] = 'console="comconsole"';

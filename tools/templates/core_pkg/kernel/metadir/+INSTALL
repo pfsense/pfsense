@@ -18,6 +18,7 @@ if [ ! -f "${NEW_CONF}" ]; then
 	exit 0
 fi
 
+echo "===> Updating /boot/loader.rc.local"
 CUR_CONF="/boot/loader.rc.local"
 
 if [ ! -f "${CUR_CONF}" ]; then
@@ -25,6 +26,6 @@ if [ ! -f "${CUR_CONF}" ]; then
 fi
 
 TMP_CONF=/tmp/loader.rc.local
-cat ${CUR_CONF} ${NEW_CONF} >> ${TMP_CONF}
+cat ${CUR_CONF} ${NEW_CONF} > ${TMP_CONF} 2>/dev/null
 sort -u ${TMP_CONF} > ${CUR_CONF}
 rm -f ${TMP_CONF}

@@ -1182,8 +1182,15 @@ function load_loader_conf($loader_conf = NULL) {
 		if (empty($line)) {
 			continue;
 		}
+		$skip = false;
 		list($name, $value) = explode('=', $line, 2);
-		if (!in_array(trim($name), $remove)) {
+		foreach($remove as $rid => $rkey) {
+			if (strncasecmp(trim($name), $rkey, strlen($rkey)) != 0) {
+				$skip = true;
+				break;
+			}
+		}
+		if (!$skip) {
 			$data[] = $line;
 		}
 	}
@@ -1257,7 +1264,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		system("echo \"Reading {$loader_conf_file}...\" >> /conf/upgrade_log.txt");
 	}
 
-	$data = load_loader_conf($loader_conf_file);
+	$data = load_loader_conf($loader_conf_file, false);
 	if ($serial_efi_only === true) {
 		$data[] = 'boot_serial="YES"';
 		$data[] = 'comconsole_speed="' . $serialspeed . '"';

@@ -1149,7 +1149,7 @@ function reload_all_sync() {
 	send_event("service restart webgui");
 }
 
-function load_loader_conf($loader_conf = NULL) {
+function load_loader_conf($loader_conf = NULL, $local = false) {
 
 	if ($loader_conf == NULL) {
 		return (NULL);

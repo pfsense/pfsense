@@ -1174,8 +1174,15 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 		if (empty($line)) {
 			continue;
 		}
+		$skip = false;
 		list($name, $value) = explode('=', $line, 2);
-		if (!in_array(trim($name), $remove)) {
+		foreach($remove as $rid => $rkey) {
+			if (strncasecmp(trim($name), $rkey, strlen($rkey)) != 0) {
+				$skip = true;
+				break;
+			}
+		}
+		if (!$skip) {
 			$data[] = $line;
 		}
 	}

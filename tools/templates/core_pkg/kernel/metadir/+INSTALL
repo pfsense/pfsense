@@ -6,7 +6,7 @@ fi
 
 PKGNAME="${1}"
 FLAVOR=$(echo "${PKGNAME}" | \
-    sed -E 's/^%%PRODUCT_NAME%%-kernel-//; s/%%PRODUCT_NAME%%-//; s/([azAZ]*-[0-9]*)-.*/\1/')
+    sed -E 's/^%%PRODUCT_NAME%%-kernel-//; s/%%PRODUCT_NAME%%-//; s/([a-zA-Z]*(-[0-9]{4,})?)-.*/\1/')
 
 if [ -z "${FLAVOR}" ]; then
 	exit 0

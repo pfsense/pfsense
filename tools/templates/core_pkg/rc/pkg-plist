@@ -1,5 +1,5 @@
 share/%%PRODUCT_NAME%%/rc/SG-3100/loader.rc.local
-share/%%PRODUCT_NAME%%/rc/SG-1000/loader.rc.local
+share/%%PRODUCT_NAME%%/rc/uFW/loader.rc.local
 /etc/pfSense-rc
 /etc/pfSense-rc.shutdown
 /etc/rc

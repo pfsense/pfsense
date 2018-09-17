@@ -33,7 +33,20 @@
 
 require_once("guiconfig.inc");
 
-if (!isset($config['ntpd']['noquery'])) {
+$allow_query = !isset($config['ntpd']['noquery']);
+
+if (is_ipaddr($_SERVER['REMOTE_ADDR']) && !empty($config['ntpd']['restrictions']['row']) && is_array($config['ntpd']['restrictions']['row'])) {
+	foreach ($config['ntpd']['restrictions']['row'] as $v) {
+		if (isset($v['noquery'])) {
+			continue;
+		}
+		if (ip_in_subnet($_SERVER['REMOTE_ADDR'], $v['acl_network'].'/'.$v['mask'])) {
+			$allow_query = true;
+		}
+	}
+}
+
+if ($allow_query) {
 	if (isset($config['system']['ipv6allow'])) {
 		$inet_version = "";
 	} else {
@@ -192,9 +205,9 @@ if ($_REQUEST['ajax']) {
 }
 
 function print_status() {
-	global $config, $ntpq_servers;
+	global $config, $ntpq_servers, $allow_query;
 
-	if (isset($config['ntpd']['noquery'])):
+	if (!$allow_query):
 
 		print("<tr>\n");
 		print('<td class="warning" colspan="11">');

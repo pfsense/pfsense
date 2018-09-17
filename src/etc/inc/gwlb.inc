@@ -588,6 +588,10 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 	/* Process/add all the configured gateways. */
 	if (is_array($config['gateways']) && is_array($config['gateways']['gateway_item'])) {
 		foreach ($config['gateways']['gateway_item'] as $gateway) {
+			if (!is_array($gateway) || empty($gateway)) {
+				continue;
+			}
+			
 			/* Increment it here to do not skip items */
 			$i++;
 			if (isset($gateway['defaultgw'])) {

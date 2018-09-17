@@ -1177,7 +1177,7 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 		$skip = false;
 		list($name, $value) = explode('=', $line, 2);
 		foreach($remove as $rid => $rkey) {
-			if (strncasecmp(trim($name), $rkey, strlen($rkey)) != 0) {
+			if (strncasecmp(trim($name), $rkey, strlen($rkey)) == 0) {
 				$skip = true;
 				break;
 			}

@@ -106,6 +106,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		}
 	}
 	if (!$input_errors) {
+		init_config_arr(array('syslog'));
 		$config['syslog']['reverse'] = $_POST['reverse'] ? true : false;
 		$config['syslog']['nentries'] = (int)$_POST['nentries'];
 		$pconfig['nentries'] = $config['syslog']['nentries'];

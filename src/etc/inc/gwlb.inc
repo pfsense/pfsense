@@ -1105,7 +1105,9 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 				if ($gwgroupitem['gwip'] == $currentdefaultgwip) {
 					$set_dfltgwname = $gwgroupitem['gw'];
 					$found_current = true;
-					log_error("Keep current gateway, its already part of the group members.");
+					if (isset($config['system']['gw-debug'])) {
+						log_error("Keep current gateway, its already part of the group members.");
+					}
 					break;
 				}
 			}
@@ -1256,10 +1258,12 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 	if ($tiers_count == 0) {
 		/* Oh dear, we have no members! Engage Plan B */
 		if (!platform_booting()) {
-			$msg = sprintf(gettext('Gateways status could not be determined, considering all as up/active. (Group: %s)'), $group['name']);
-			log_error($msg);
-			notify_via_growl($msg);
-			//notify_via_smtp($msg);
+			if (isset($config['system']['gw-debug'])) {
+				$msg = sprintf(gettext('Gateways status could not be determined, considering all as up/active. (Group: %s)'), $group['name']);
+				log_error($msg);
+				notify_via_growl($msg);
+				//notify_via_smtp($msg);
+			}
 		}
 		$tiers = $backupplan;
 	}

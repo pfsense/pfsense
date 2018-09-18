@@ -35,7 +35,7 @@ require_once("guiconfig.inc");
 
 $allow_query = !isset($config['ntpd']['noquery']);
 
-if (is_ipaddr($_SERVER['REMOTE_ADDR']) && !empty($config['ntpd']['restrictions']['row']) && is_array($config['ntpd']['restrictions']['row'])) {
+if (!empty($config['ntpd']['restrictions']['row']) && is_array($config['ntpd']['restrictions']['row'])) {
 	foreach ($config['ntpd']['restrictions']['row'] as $v) {
 		if (isset($v['noquery'])) {
 			continue;

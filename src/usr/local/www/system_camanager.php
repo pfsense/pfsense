@@ -101,6 +101,7 @@ if ($act == "edit") {
 		pfSenseHeader("system_camanager.php");
 		exit;
 	}
+	$pconfig['method'] = 'existing';
 	$pconfig['descr']  = $a_ca[$id]['descr'];
 	$pconfig['refid']  = $a_ca[$id]['refid'];
 	$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);

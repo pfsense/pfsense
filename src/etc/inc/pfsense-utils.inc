@@ -934,10 +934,29 @@ function restore_config_section($section_name, $new_contents) {
 	if ($section_xml === -1) {
 		return false;
 	}
+
+	/* Save current pkg repo to re-add on new config */
+	unset($pkg_repo_conf_path);
+	if ($section_name == "system" &&
+	    isset($config['system']['pkg_repo_conf_path'])) {
+		$pkg_repo_conf_path = $config['system']['pkg_repo_conf_path'];
+	}
+
 	$config[$section_name] = &$section_xml;
 	if (file_exists("{$g['tmp_path']}/config.cache")) {
 		unlink("{$g['tmp_path']}/config.cache");
 	}
+
+	/* Restore previously pkg repo configured */
+	if ($section_name == "system") {
+		if (isset($pkg_repo_conf_path)) {
+			$config['system']['pkg_repo_conf_path'] =
+			    $pkg_repo_conf_path;
+		} elseif (isset($config['system']['pkg_repo_conf_path'])) {
+			unset($config['system']['pkg_repo_conf_path']);
+		}
+	}
+
 	write_config(sprintf(gettext("Restored %s of config file (maybe from CARP partner)"), $section_name));
 	disable_security_checks();
 	return true;

@@ -287,6 +287,12 @@ if ($_POST) {
 							/* restore the entire configuration */
 							file_put_contents($_FILES['conffile']['tmp_name'], $data);
 							if (config_install($_FILES['conffile']['tmp_name']) == 0) {
+								/* Save current pkg repo to re-add on new config */
+								unset($pkg_repo_conf_path);
+								if (isset($config['system']['pkg_repo_conf_path'])) {
+									$pkg_repo_conf_path = $config['system']['pkg_repo_conf_path'];
+								}
+
 								/* this will be picked up by /index.php */
 								mark_subsystem_dirty("restore");
 								touch("/conf/needs_package_sync");
@@ -295,6 +301,22 @@ if ($_POST) {
 									unlink("{$g['tmp_path']}/config.cache");
 								}
 								$config = parse_config(true);
+
+								/* Restore previously pkg repo configured */
+								$pkg_repo_restored = false;
+								if (isset($pkg_repo_conf_path)) {
+									$config['system']['pkg_repo_conf_path'] =
+									    $pkg_repo_conf_path;
+									$pkg_repo_restored = true;
+								} elseif (isset($config['system']['pkg_repo_conf_path'])) {
+									unset($config['system']['pkg_repo_conf_path']);
+									$pkg_repo_restored = true;
+								}
+
+								if ($pkg_repo_restored) {
+									write_config(gettext("Removing pkg repository set after restoring full configuration"));
+								}
+
 								if (file_exists("/boot/loader.conf")) {
 									$loaderconf = file_get_contents("/boot/loader.conf");
 									if (strpos($loaderconf, "console=\"comconsole")) {

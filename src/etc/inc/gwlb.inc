@@ -545,6 +545,13 @@ function return_gateways_status_text($byname = false, $brief = false) {
 }
 
 function compare_gateway_order_configured($a, $b) {
+	/* XXX WAN always has precedence */
+	if ($a['friendlyiface'] == "wan") {
+		return -1;
+	} elseif ($b['friendlyiface'] == "wan") {
+		return 1;
+	}
+
 	if ($a['attribute'] === $b['attribute']) {
 		if ($a['attribute'] === 'system') {
 			$res = (($a['name'] < $b['name'])) ? -1 : 1;

@@ -34,12 +34,14 @@ $repos = pkg_list_repos();
 
 if ($_POST) {
 
+	init_config_arr(array('system', 'firmware'));
 	if ($_POST['disablecheck'] == "yes") {
 		$config['system']['firmware']['disablecheck'] = true;
 	} elseif (isset($config['system']['firmware']['disablecheck'])) {
 		unset($config['system']['firmware']['disablecheck']);
 	}
 
+	init_config_arr(array('system', 'gitsync'));
 	if ($_POST['synconupgrade'] == "yes") {
 		$config['system']['gitsync']['synconupgrade'] = true;
 	} elseif (isset($config['system']['gitsync']['synconupgrade'])) {
@@ -87,6 +89,12 @@ if ($_POST) {
 		unset($config['system']['gitsync']['dryrun']);
 	}
 
+	if (empty($config['system']['firmware'])) {
+		unset($config['system']['firmware']);
+	}
+	if (empty($config['system']['gitsync'])) {
+		unset($config['system']['gitsync']);
+	}
 	write_config(gettext("Saved system update settings."));
 
 	$savemsg = gettext("Changes have been saved successfully");

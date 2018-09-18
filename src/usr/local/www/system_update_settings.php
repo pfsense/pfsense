@@ -36,10 +36,6 @@ if ($_POST) {
 
 	init_config_arr(array('system', 'firmware'));
 	if ($_POST['disablecheck'] == "yes") {
-		if (!is_array($config['system']['firmware'])) {
-			$config['system']['firmware'] = array();
-		}
-
 		$config['system']['firmware']['disablecheck'] = true;
 	} elseif (isset($config['system']['firmware']['disablecheck'])) {
 		unset($config['system']['firmware']['disablecheck']);

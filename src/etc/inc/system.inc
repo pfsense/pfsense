@@ -2401,14 +2401,13 @@ function system_get_serial() {
 		$_gb = exec('/bin/kenv uboot.boardsn 2>/dev/null', $output);
 		$serial = $output[0];
 	} else {
-		foreach (array("system", "planar") as $key) {
-			$serial = "";
+		foreach (array('system', 'planar', 'chassis') as $key) {
+			unset($output);
 			$_gb = exec("/bin/kenv -q smbios.{$key}.serial",
 			    $output);
-			$serial = $output[0];
-
-			if ($serial != "0123456789" &&
-			    preg_match('/^[\w\d]{10,16}$/', $serial) == 1) {
+			if (!empty($output[0]) && $output[0] != "0123456789" &&
+			    preg_match('/^[\w\d]{10,16}$/', $output[0]) === 1) {
+				$serial = $output[0];
 				break;
 			}
 		}

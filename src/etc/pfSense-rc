@@ -32,17 +32,6 @@ HOME=/
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
 export HOME PATH
 
-sg3100_gpiounit()
-{
-	local _boardrev=$(/bin/kenv -q uboot.boardrev)
-
-	if [ "${_boardrev}" == "R100" ]; then
-		echo "1"
-	else
-		echo "0"
-	fi
-}
-
 get_version()
 {
 	# Set our current version
@@ -63,19 +52,12 @@ get_version()
 
 get_version
 
-model=$(/bin/kenv -q smbios.system.product)
-boardpn=$(/bin/kenv -q uboot.boardpn)
-if [ "${boardpn%-*}" == "80500-0148" ]; then
-	# Update the boot status on SG-3100, pfSense is loading.
-	gpiodev=$(sg3100_gpiounit)
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 2 duty 200 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.pwm=0 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.1.pwm=0 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.2.pwm=0 > /dev/null
-elif [ "${model}" = "SG-5100" ]; then
-	# Booting (red)
-	/usr/local/sbin/SG-5100led 1
-fi
+# Read product_name from $g, defaults to pfSense
+# Use php -n here because we are not ready to load extensions yet
+product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+
+# Update the LED status, pfSense is loading.
+/usr/local/sbin/${product}-led.sh booting
 
 # Setup dumpdev/ddb/savecore"
 echo "Configuring crash dumps..."
@@ -210,10 +192,6 @@ if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
 	ln -sf ../../root/var/db/pkg /var/db/pkg
 	ln -sf ../../root/var/cache/pkg /var/cache/pkg
 fi
-
-# Read product_name from $g, defaults to pfSense
-# Use php -n here because we are not ready to load extensions yet
-product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
 
 # Setup ddb on all platforms.
 if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
@@ -481,21 +459,9 @@ echo "$product ${version}${version_patch} $ARCH $BUILDTIME"
 echo "Bootup complete"
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
-if [ "${boardpn%-*}" == "80500-0148" ]; then
-	# Update the boot status on SG-3100, pfSense is running.
-	gpiodev=$(sg3100_gpiounit)
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 2 duty 100 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 5 duty 0 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 8 duty 0 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.1.pwm=1 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.2.pwm=1 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.T1-T3=1040 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.T2=520 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.pin.2.T4=3640 > /dev/null
-elif [ "${model}" = "SG-5100" ]; then
-	# Boot finished (green)
-	/usr/local/sbin/SG-5100led 3
-fi
+
+# Update the LED status, pfSense is running.
+/usr/local/sbin/${product}-led.sh ready
 
 # Reset the cache.  read-only requires this.
 /bin/rm -f /tmp/config.cache

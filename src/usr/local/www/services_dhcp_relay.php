@@ -107,6 +107,7 @@ if ($_POST) {
 	$pconfig['server'] = $svrlist;
 
 	if (!$input_errors) {
+		init_config_arr(array('dhcrelay'));
 		$config['dhcrelay']['enable'] = $_POST['enable'] ? true : false;
 		$config['dhcrelay']['interface'] = implode(",", $_POST['interface']);
 		$config['dhcrelay']['agentoption'] = $_POST['agentoption'] ? true : false;

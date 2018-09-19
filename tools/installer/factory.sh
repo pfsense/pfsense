@@ -420,7 +420,7 @@ else
 fi
 
 # XXX is it really necessary?
-if [ "${serial}" = "123456789" ]; then
+if [ "${serial}" = "123456789" -o "${serial}" = "0123456789" ]; then
 	serial=""
 fi
 

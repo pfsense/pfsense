@@ -2336,7 +2336,8 @@ function system_get_serial() {
 			unset($output);
 			$_gb = exec("/bin/kenv -q smbios.{$key}.serial",
 			    $output);
-			if (!empty($output[0]) && $output[0] != "0123456789") {
+			if (!empty($output[0]) && $output[0] != "0123456789" &&
+			    preg_match('/^[\w\d]{10,16}$/', $output[0]) === 1) {
 				$serial = $output[0];
 				break;
 			}

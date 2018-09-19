@@ -391,7 +391,7 @@ elif [ "${cur_model}" == "SG-3100" ]; then
 
 elif [ "${machine_arch}" == "amd64" ]; then
 	for key in system planar chassis; do
-		serial=$(kenv -q smbios.system.serial | \
+		serial=$(kenv -q smbios.${key}.serial | \
 		    grep -E '^[a-zA-Z0-9]{10,16}$')
 
 		if [ -n "$serial" -a "$serial" != "0123456789" ]; then

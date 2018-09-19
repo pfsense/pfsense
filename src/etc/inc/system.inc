@@ -2332,8 +2332,15 @@ function system_get_serial() {
 			$serial = str_replace(":", "", $if_info['hwaddr']);
 		}
 	} else {
-		$_gb = exec('/bin/kenv smbios.system.serial 2>/dev/null', $output);
-		$serial = $output[0];
+		foreach (array('system', 'planar', 'chassis') as $key) {
+			unset($output);
+			$_gb = exec("/bin/kenv -q smbios.{$key}.serial",
+			    $output);
+			if (!empty($output[0]) && $output[0] != "0123456789") {
+				$serial = $output[0];
+				break;
+			}
+		}
 	}
 
 	$vm_guest = get_single_sysctl('kern.vm_guest');

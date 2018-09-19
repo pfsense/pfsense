@@ -525,7 +525,7 @@ if ($_POST['save']) {
 				write_config();
 			}
 
-			if ($userid && !$input_errors) {
+			if ((isset($userid) && is_numeric($userid)) && !$input_errors) {
 				post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
 				exit;
 			}

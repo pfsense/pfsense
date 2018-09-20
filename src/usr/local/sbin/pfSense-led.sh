@@ -203,13 +203,18 @@ if [ "${1}" == update -a ${2} -ne 0 -a ${2} -ne 1 ]; then
 	usage
 fi
 
-_boardpn=$(/bin/kenv -q uboot.boardpn)
-_model=$(/bin/kenv -q smbios.system.product)
+_boardpn=$(/bin/kenv -q uboot.boardpn 2>/dev/null)
+_model=$(/bin/kenv -q smbios.system.product 2>/dev/null)
 SYSTEM=""
 if [ "${_boardpn%-*}" = "80500-0148" ]; then
 	SYSTEM="SG-3100"
 elif [ "${_model}" = "SG-5100" ]; then
 	SYSTEM="SG-5100"
+elif [ "${_model}" = "mvebu_armada-37xx" ]; then
+	_type=$(/usr/sbin/ofwdump -P model -R / 2>/dev/null)
+	if [ "${_type}" = "Netgate SG-1100" ]; then
+		SYSTEM="SG-1100"
+	fi
 fi
 if [ -z "${SYSTEM}" ]; then
 	exit 1

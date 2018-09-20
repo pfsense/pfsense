@@ -370,20 +370,20 @@ if (! $input_errors) {
 
 		print("</td>");
 
-	if (isset($swinfo['switch_caps']) && $swinfo['switch_caps']['PSTATE'] == 1) {
+		if (isset($swinfo['switch_caps']) && $swinfo['switch_caps']['PSTATE'] == 1) {
 
-		print("<td>");
+			print("<td>");
 
-		$comma = false;
-		foreach ($port['state'] as $state => $val) {
-			if ($comma)
-				echo ",";
-			echo "$state";
-			$comma = true;
+			$comma = false;
+			foreach ($port['state'] as $state => $val) {
+				if ($comma)
+					echo ",";
+				echo "$state";
+				$comma = true;
+			}
+
+			print("</td>");
 		}
-
-		print("</td>");
-	}
 
 		print("<td>");
 

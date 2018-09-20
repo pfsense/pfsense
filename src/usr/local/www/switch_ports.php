@@ -76,6 +76,8 @@ function build_mediaopts_list($mediaopts_list) {
 	return($list);
 }
 
+$platform = system_identify_specific_platform();
+
 // List the available switches
 $swdevices = switch_get_devices();
 $swtitle = switch_get_title();
@@ -393,7 +395,7 @@ if (! $input_errors) {
 			echo "<br>";
 		}
 
-		if (!isset($port['flags']['HOST'])) {
+		if (!isset($port['flags']['HOST']) && $platform['name'] != 'uFW') {
 			$mediaopts = array();
 			$mediaopts_list = array();
 			exec("/sbin/etherswitchcfg -m port{$port['port']} | grep \"media \"", $mediaopts);

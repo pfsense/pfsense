@@ -18,7 +18,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#
+# SG-1100
+#
+sg1100_led_booting() {
+	echo f1 > /dev/led/ok
+}
 
+sg1100_led_ready() {
+	echo 1 > /dev/led/ok
+}
+
+sg1100_led_update() {
+	echo f5 > /dev/led/ok
+}
+
+sg1100_led_update_off() {
+	echo 1 > /dev/led/ok
+}
+
+#
+# SG-3100
+#
 sg3100_gpiounit() {
 	local _boardrev=$(/bin/kenv -q uboot.boardrev)
 
@@ -70,6 +91,9 @@ sg3100_led_update_off() {
 	/sbin/sysctl dev.gpio.${_gpiodev}.led.1.pwm=1 > /dev/null
 }
 
+#
+# SG-5100
+#
 sg5100_led_booting() {
 	# Booting (red)
 	/usr/local/sbin/SG-5100led 1
@@ -90,8 +114,14 @@ sg5100_led_update_off() {
 	/usr/local/sbin/SG-5100led 3
 }
 
+#
+# Common code
+#
 led_booting() {
 	case "$SYSTEM" in
+	"SG-1100")
+		sg1100_led_booting
+		;;
 	"SG-3100")
 		sg3100_led_booting
 		;;
@@ -106,6 +136,9 @@ led_booting() {
 
 led_ready() {
 	case "$SYSTEM" in
+	"SG-1100")
+		sg1100_led_ready
+		;;
 	"SG-3100")
 		sg3100_led_ready
 		;;
@@ -120,6 +153,9 @@ led_ready() {
 
 led_update() {
 	case "$SYSTEM" in
+	"SG-1100")
+		sg1100_led_update
+		;;
 	"SG-3100")
 		sg3100_led_update
 		;;
@@ -134,6 +170,9 @@ led_update() {
 
 led_update_off() {
 	case "$SYSTEM" in
+	"SG-1100")
+		sg1100_led_update_off
+		;;
 	"SG-3100")
 		sg3100_led_update_off
 		;;

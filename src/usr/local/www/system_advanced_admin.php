@@ -55,6 +55,7 @@ $pconfig['primaryconsole'] = $config['system']['primaryconsole'];
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sshdkeyonly'] = isset($config['system']['ssh']['sshdkeyonly']);
+$pconfig['sshdagentforwarding'] = isset($config['system']['ssh']['sshdagentforwarding']);
 $pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
 
 $a_cert =& $config['cert'];
@@ -107,6 +108,12 @@ if ($_POST) {
 		$config['system']['ssh']['sshdkeyonly'] = "enabled";
 	} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
 		unset($config['system']['ssh']['sshdkeyonly']);
+	}
+
+	if ($_POST['sshdagentforwarding'] == "yes") {
+		$config['system']['ssh']['sshdagentforwarding'] = "enabled";
+	} else if (isset($config['system']['ssh']['sshdagentforwarding'])) {
+		unset($config['system']['ssh']['sshdagentforwarding']);
 	}
 
 	ob_flush();
@@ -238,6 +245,13 @@ if ($_POST) {
 			unset($config['system']['sshdkeyonly']);
 		}
 
+		$sshd_agentforwarding = isset($config['system']['sshdagentforwarding']);
+		if ($_POST['sshdagentforwarding']) {
+			$config['system']['sshdagentforwarding'] = true;
+		} else {
+			unset($config['system']['sshdagentforwarding']);
+		}
+
 		$sshd_port = $config['system']['ssh']['port'];
 		if ($_POST['sshport']) {
 			$config['system']['ssh']['port'] = $_POST['sshport'];
@@ -247,6 +261,7 @@ if ($_POST) {
 
 		if (($sshd_enabled != $config['system']['enablesshd']) ||
 		    ($sshd_keyonly != $config['system']['sshdkeyonly']) ||
+		    ($sshd_agentforwarding != $config['system']['sshdagentforwarding']) ||
 		    ($sshd_port != $config['system']['ssh']['port'])) {
 			$restart_sshd = true;
 		}
@@ -487,6 +502,13 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('When enabled, authorized keys need to be configured for each '.
 	'%1$suser%2$s that has been granted secure shell '.
 	'access.', '<a href="system_usermanager.php">', '</a>');
+
+$section->addInput(new Form_Checkbox(
+	'sshdagentforwarding',
+	'Allow Agent Forwarding',
+	'Enables ssh-agent forwarding support.',
+	isset($pconfig['sshdagentforwarding'])
+));
 
 $section->addInput(new Form_Input(
 	'sshport',

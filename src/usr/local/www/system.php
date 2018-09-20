@@ -139,11 +139,11 @@ foreach ($timezonedesc as $idx => $desc) {
 	    sprintf(ngettext('(%1$s hour %2$s GMT)', '(%1$s hours %2$s GMT)', intval($hr_offset)), $hr_offset, $direction_str);
 }
 
-$multiwan = false;
+$multiwan = 0;
 $interfaces = get_configured_interface_list();
 foreach ($interfaces as $interface) {
 	if (interface_has_gateway($interface)) {
-		$multiwan = true;
+		$multiwan++;
 	}
 }
 
@@ -221,7 +221,7 @@ if ($_POST) {
 		if ($_POST[$dnsgwname] && ($_POST[$dnsgwname] <> "none")) {
 			foreach ($direct_networks_list as $direct_network) {
 				if (ip_in_subnet($_POST[$dnsname], $direct_network)) {
-					$input_errors[] = sprintf(gettext("A gateway can not be assigned to DNS '%s' server which is on a directly connected network."), $_POST[$dnsname]);
+					$input_errors[] = sprintf(gettext("A gateway cannot be specified for %s because that IP is part of a directly connected subnet %s. To use that nameserver, change its Gateway to `none`."), $_POST[$dnsname], $direct_network);
 				}
 			}
 		}
@@ -242,6 +242,22 @@ if ($_POST) {
 		// Put the user-entered list back into place so it will be redisplayed for correction.
 		$pconfig['dnsserver'] = $dnslist;
 	} else {
+		// input validation passed, so we can proceed with removing static routes for dead DNS gateways
+		if (is_array($config['system']['dnsserver'])) {
+		  	$dns_servers_arr = $config['system']['dnsserver'];
+	 		foreach ($dns_servers_arr as $arr_index => $this_dnsserver) {
+	   			$i = (int)$arr_index + 1;
+	   			$this_dnsgw = $config['system']['dns'.$i.'gw'];
+				unset($gatewayip);
+				unset($inet6);
+				if ((!empty($this_dnsgw)) && ($this_dnsgw != 'none') && (!empty($this_dnsserver))) {
+					$gatewayip = lookup_gateway_ip_by_name($this_dnsgw);
+					$inet6 = is_ipaddrv6($gatewayip) ? '-inet6 ' : '';
+					mwexec("/sbin/route -q delete -host {$inet6}{$this_dnsserver} {$gatewayip}");
+				}
+			}
+		}
+
 		update_if_changed("hostname", $config['system']['hostname'], $_POST['hostname']);
 		update_if_changed("domain", $config['system']['domain'], $_POST['domain']);
 		update_if_changed("timezone", $config['system']['timezone'], $_POST['timezone']);
@@ -393,20 +409,24 @@ if ($_POST) {
 				}
 				$outdnscounter++;
 			}
-			if (($olddnsgwname != "") && ($olddnsgwname != "none") && (($olddnsgwname != $thisdnsgwname) || ($olddnsservers[$dnscounter] != $_POST[$dnsname]))) {
-				// A previous DNS GW name was specified. It has now gone or changed, or the DNS server address has changed.
-				// Remove the route. Later calls will add the correct new route if needed.
-				if (is_ipaddrv4($olddnsservers[$dnscounter])) {
-					mwexec("/sbin/route delete " . escapeshellarg($olddnsservers[$dnscounter-1]));
-				} else if (is_ipaddrv6($olddnsservers[$dnscounter])) {
-					mwexec("/sbin/route delete -inet6 " . escapeshellarg($olddnsservers[$dnscounter-1]));
-				}
-			}
 
 			$dnscounter++;
 			// The $_POST array key of the DNS IP (starts from 0)
 			$dnsname = "dns{$dnscounter}";
 		}
+
+		// clean up dnsgw orphans
+		$oldgwcounter = 1;
+		$olddnsgwconfigname = "dns{$oldgwcounter}gw";
+		while (isset($config['system'][$olddnsgwconfigname])) {
+			if (empty($config['system']['dnsserver'][$oldgwcounter - 1])) {
+				unset($config['system'][$olddnsgwconfigname]);
+			}
+			$oldgwcounter++;
+			$olddnsgwconfigname = "dns{$oldgwcounter}gw";
+		}
+		unset($oldgwcounter);
+		unset($olddnsgwconfigname);
 
 		if ($changecount > 0) {
 			write_config($changedesc);
@@ -506,7 +526,7 @@ foreach ($pconfig['dnsserver'] as $dnsserver) {
 		$dnsserver
 	))->setHelp(($is_last_dnsserver) ? $dnsserver_help:null);
 
-	if ($multiwan)	{
+	if ($multiwan > 1)	{
 		$options = array('none' => 'none');
 
 		foreach ($arr_gateways as $gwname => $gwitem) {
@@ -526,7 +546,7 @@ foreach ($pconfig['dnsserver'] as $dnsserver) {
 			'Gateway',
 			$pconfig['dnsgw' . $dnsserver_num],
 			$options
-		))->setHelp(($is_last_dnsserver) ? $dnsgw_help:null);;
+		))->setWidth(4)->setHelp(($is_last_dnsserver) ? $dnsgw_help:null);
 	}
 
 	$group->add(new Form_Button(
@@ -534,7 +554,7 @@ foreach ($pconfig['dnsserver'] as $dnsserver) {
 		'Delete',
 		null,
 		'fa-trash'
-	))->addClass('btn-warning');
+	))->setWidth(2)->addClass('btn-warning');
 
 	$section->add($group);
 	$dnsserver_num++;

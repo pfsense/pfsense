@@ -545,10 +545,10 @@ function return_gateways_status_text($byname = false, $brief = false) {
 }
 
 function compare_gateway_order_configured($a, $b) {
-	/* XXX WAN always has precedence */
-	if ($a['friendlyiface'] == "wan") {
+	/* XXX automaticly added WAN gateway always precedence unless the user specifically puts it at a lower place on the list */
+	if ($a['friendlyiface'] == "wan" && $a['attribute'] === 'system') {
 		return -1;
-	} elseif ($b['friendlyiface'] == "wan") {
+	} elseif ($b['friendlyiface'] == "wan" && $b['attribute'] === 'system') {
 		return 1;
 	}
 

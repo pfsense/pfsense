@@ -38,7 +38,7 @@ tmp_version=$(mktemp -q /tmp/${product}_version.XXXXXXXX) \
 		; rm -f ${tmp_version}.tmp \
 		; echo $rc > ${tmp_version}.rc \
 		; if [ $rc -eq 2 ]; then \
-		;	/usr/local/sbin/${product}-led.sh update 1 \
+			/usr/local/sbin/${product}-led.sh update 1 \
 		;	return $rc \
 		; fi \
 		; /usr/local/sbin/${product}-led.sh update 0 \

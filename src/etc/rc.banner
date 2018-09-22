@@ -43,13 +43,51 @@ if (is_writable("/etc")) {
 
 $platform = system_identify_specific_platform();
 $serial = system_get_serial();
-if (isset($platform['descr'])) {
-	printf("%s - ", $platform['descr']);
+if ($machine == "arm64") {
+        $thothid = system_get_thothid();
+
+	$len = 80;
+	if (isset($platform['descr'])) {
+		printf("%s", $platform['descr']);
+		$len -= strlen($platform['descr']);
+	}
+	$nid = sprintf("%s: %s", gettext("Netgate Device ID"), system_get_uniqueid());
+	$len -= strlen($nid);
+	if ($len < 1) {
+		$len = 1;
+	}
+	while ($len-- > 0) {
+		printf(" ");
+	}
+	printf("%s\n", $nid);
+
+	$len = 80;
+	if (!empty($serial)) {
+		$sn = sprintf("%s: %s", gettext("Serial"), $serial);
+		printf("%s", $sn);
+		$len -= strlen($sn);
+	}
+	if (!empty($thothid)) {
+		$tid = sprintf("%s: %s", gettext("Netgate Crypto ID"), chop($thothid));
+			$len -= strlen($tid);
+		if ($len < 1) {
+			$len = 1;
+		}
+		while ($len-- > 0) {
+			printf(" ");
+		}
+		printf("%s", $tid);
+	}
+	printf("\n\n");
+} else {
+	if (isset($platform['descr'])) {
+		printf("%s - ", $platform['descr']);
+	}
+	if (!empty($serial)) {
+		printf("%s: %s - ", gettext("Serial"), $serial);
+	}
+	printf("%s: %s\n\n", gettext("Netgate Device ID"), system_get_uniqueid());
 }
-if (!empty($serial)) {
-	printf("%s: %s - ", gettext("Serial"), $serial);
-}
-printf("%s: %s\n\n", gettext("Netgate Device ID"), system_get_uniqueid());
 
 print "*** Welcome to {$product} {$g['product_version_string']} ({$machine}) on {$hostname} ***\n";
 

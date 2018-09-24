@@ -2400,6 +2400,12 @@ function system_get_serial() {
 	} elseif ($platform['name'] == 'ROGUE-1') {
 		$_gb = exec('/bin/kenv uboot.boardsn 2>/dev/null', $output);
 		$serial = $output[0];
+	} elseif ($platform['name'] == 'SG-1100') {
+		$_gb = exec('/usr/sbin/ofwdump -P sn -R / 2>/dev/null', $fdtSerial);
+		$blank = "00000000000000000000";
+		if (strncmp($fdtSerial[0], $blank, strlen($blank)) != 0) {
+			$serial = $fdtSerial[0];
+		}
 	} else {
 		foreach (array('system', 'planar', 'chassis') as $key) {
 			unset($output);
@@ -2415,7 +2421,8 @@ function system_get_serial() {
 
 	$vm_guest = get_single_sysctl('kern.vm_guest');
 
-	if (strlen($serial) >= 10 && strlen($serial) <= 16 &&
+	$serial = chop($serial);
+	if (strlen($serial) >= 10 && strlen($serial) <= 18 &&
 	    $vm_guest == 'none') {
 		return $serial;
 	}

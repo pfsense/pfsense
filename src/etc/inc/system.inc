@@ -2458,7 +2458,7 @@ function system_get_thothid() {
 			$g['thothid'] = @file_get_contents($thothid_file);
 		}
 	}
-	return ($g['thothid'] ?: '');
+	return (chop($g['thothid']) ?: '');
 }
 
 /*

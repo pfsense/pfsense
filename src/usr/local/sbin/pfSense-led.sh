@@ -199,8 +199,10 @@ fi
 if [ "${1}" == update -a ${#} -lt 2 ]; then
 	usage
 fi
-if [ "${1}" == update -a ${2} -ne 0 -a ${2} -ne 1 ]; then
-	usage
+if [ "${1}" == update ]; then
+	if [ ${2} -ne 0 -a ${2} -ne 1 ]; then
+		usage
+	fi
 fi
 
 _boardpn=$(/bin/kenv -q uboot.boardpn 2>/dev/null)

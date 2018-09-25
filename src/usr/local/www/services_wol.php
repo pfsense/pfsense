@@ -132,6 +132,11 @@ if ($savemsg) {
 	print_info_box($savemsg, $class);
 }
 
+$selected_if = (empty($if) ? 'lan' : $if);
+if (!isset(get_configured_interface_list(false)[$selected_if])) {
+	$selected_if = null;
+}
+
 $form = new Form(false);
 
 $section = new Form_Section('Wake-on-LAN');
@@ -139,7 +144,7 @@ $section = new Form_Section('Wake-on-LAN');
 $section->addInput(new Form_Select(
 	'if',
 	'*Interface',
-	(link_interface_to_bridge($if) ? null : $if),
+	$selected_if,
 	get_configured_interface_with_descr()
 ))->setHelp('Choose which interface the host to be woken up is connected to.');
 

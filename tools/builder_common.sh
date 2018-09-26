@@ -1844,13 +1844,18 @@ EOF
 			continue
 		fi
 
+		_ref_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}.ref.${jail_arch}
+		rm -rf ${_ref_bulk} ${_ref_bulk}.tmp
+		touch ${_ref_bulk}.tmp
 		if [ -f "${POUDRIERE_BULK}.${jail_arch}" ]; then
-			_ref_bulk="${POUDRIERE_BULK}.${jail_arch}"
-		else
-			_ref_bulk="${POUDRIERE_BULK}"
+			cat "${POUDRIERE_BULK}.${jail_arch}" >> ${_ref_bulk}.tmp
 		fi
+		if [ -f "${POUDRIERE_BULK}" ]; then
+			cat "${POUDRIERE_BULK}" >> ${_ref_bulk}.tmp
+		fi
+		cat ${_ref_bulk}.tmp | sort -u > ${_ref_bulk}
 
-		_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}
+		_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}.${jail_arch}
 		sed -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" ${_ref_bulk} > ${_bulk}
 
 		local _exclude_bulk="${POUDRIERE_BULK}.exclude.${jail_arch}"

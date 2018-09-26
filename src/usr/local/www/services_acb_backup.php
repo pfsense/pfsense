@@ -18,15 +18,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-require("globals.inc");
-require("guiconfig.inc");
-require("acb.inc");
+require_once("globals.inc");
+require_once("guiconfig.inc");
+require_once("acb.inc");
 
 if ($_POST) {
 
 	if ($_REQUEST['nooverwrite']) {
 		touch("/tmp/acb_nooverwrite");
 	}
+
+	touch("/tmp/forceacb");
 
 	if ($_REQUEST['reason']) {
 		if (write_config($_REQUEST['reason'])) {

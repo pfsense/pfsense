@@ -926,10 +926,10 @@ $section->addInput(new Form_StaticText(
 ));
 
 $section->addInput(new Form_Checkbox(
-	'shownetboot',
+	'netboot',
 	'Network booting',
 	'Enable Network Booting',
-	$pconfig['shownetboot']
+	$pconfig['netboot']
 ));
 
 $section->addInput(new Form_Input(
@@ -1232,7 +1232,7 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (!$pconfig['shownetboot'] && empty($pconfig['bootfile_url'])) {
+			if (!$pconfig['netboot'] && empty($pconfig['bootfile_url'])) {
 				$showadv = false;
 			} else {
 				$showadv = true;
@@ -1244,7 +1244,7 @@ events.push(function() {
 			showadvnetboot = !showadvnetboot;
 		}
 
-		hideCheckbox('shownetboot', !showadvnetboot);
+		hideCheckbox('netboot', !showadvnetboot);
 		hideInput('bootfile_url', !showadvnetboot);
 
 		if (showadvnetboot) {

@@ -258,7 +258,7 @@ $group->add(new Form_Input(
 	'hours',
 	'Hour',
 	'text',
-	(isset($pconfig['hours']) ? $pconfig['hours']:'*')
+	(isset($pconfig['hours']) ? $pconfig['hours']:'0')
 ))->setHelp("Hours (0-23)");
 
 $group->add(new Form_Input(

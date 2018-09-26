@@ -1847,8 +1847,8 @@ EOF
 		_ref_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}.ref.${jail_arch}
 		rm -rf ${_ref_bulk} ${_ref_bulk}.tmp
 		touch ${_ref_bulk}.tmp
-		if [ -f "${POUDRIERE_BULK}.${jail_arch}" ]; then
-			cat "${POUDRIERE_BULK}.${jail_arch}" >> ${_ref_bulk}.tmp
+		if [ -f "${POUDRIERE_BULK}.${jail_arch#*.}" ]; then
+			cat "${POUDRIERE_BULK}.${jail_arch#*.}" >> ${_ref_bulk}.tmp
 		fi
 		if [ -f "${POUDRIERE_BULK}" ]; then
 			cat "${POUDRIERE_BULK}" >> ${_ref_bulk}.tmp

@@ -1257,13 +1257,11 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 	$tiers_count = count($tiers);
 	if ($tiers_count == 0) {
 		/* Oh dear, we have no members! Engage Plan B */
-		if (!platform_booting()) {
-			if (isset($config['system']['gw-debug'])) {
-				$msg = sprintf(gettext('Gateways status could not be determined, considering all as up/active. (Group: %s)'), $group['name']);
-				log_error($msg);
-				notify_via_growl($msg);
-				//notify_via_smtp($msg);
-			}
+		if (isset($config['system']['gw-debug']) && (!platform_booting())) {
+			$msg = sprintf(gettext('Gateways status could not be determined, considering all as up/active. (Group: %s)'), $group['name']);
+			log_error($msg);
+			notify_via_growl($msg);
+			//notify_via_smtp($msg);
 		}
 		$tiers = $backupplan;
 	}

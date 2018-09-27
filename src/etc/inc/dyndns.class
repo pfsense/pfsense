@@ -604,8 +604,8 @@
 					break;
 				case 'freedns':
 				case 'freedns-v6':
-					$needIP = FALSE;
-					curl_setopt($ch, CURLOPT_URL, 'https://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass);
+					$needIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass . '&address=' . $this->_dnsIP);
 					break;
 				case 'dnsexit':
 					$needsIP = TRUE;

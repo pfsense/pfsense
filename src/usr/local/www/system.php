@@ -221,7 +221,7 @@ if ($_POST) {
 		if ($_POST[$dnsgwname] && ($_POST[$dnsgwname] <> "none")) {
 			foreach ($direct_networks_list as $direct_network) {
 				if (ip_in_subnet($_POST[$dnsname], $direct_network)) {
-					$input_errors[] = sprintf(gettext("A gateway cannot be specified for %s because that IP is part of a directly connected subnet %s. To use that nameserver, change its Gateway to `none`."), $_POST[$dnsname], $direct_network);
+					$input_errors[] = sprintf(gettext("A gateway cannot be specified for %s because that IP address is part of a directly connected subnet %s. To use that nameserver, change its Gateway to `none`."), $_POST[$dnsname], $direct_network);
 				}
 			}
 		}
@@ -253,7 +253,7 @@ if ($_POST) {
 				if ((!empty($this_dnsgw)) && ($this_dnsgw != 'none') && (!empty($this_dnsserver))) {
 					$gatewayip = lookup_gateway_ip_by_name($this_dnsgw);
 					$inet6 = is_ipaddrv6($gatewayip) ? '-inet6 ' : '';
-					mwexec("/sbin/route -q delete -host {$inet6}{$this_dnsserver} {$gatewayip}");
+					mwexec("/sbin/route -q delete -host {$inet6}{$this_dnsserver}");
 				}
 			}
 		}
@@ -526,7 +526,7 @@ foreach ($pconfig['dnsserver'] as $dnsserver) {
 		$dnsserver
 	))->setHelp(($is_last_dnsserver) ? $dnsserver_help:null);
 
-	if ($multiwan > 1)	{
+	if ($multiwan > 1) {
 		$options = array('none' => 'none');
 
 		foreach ($arr_gateways as $gwname => $gwitem) {
@@ -636,7 +636,7 @@ gen_disablealiaspopupdetail_field($section, $pconfig['disablealiaspopupdetail'])
 $section->addInput(new Form_Checkbox(
 	'roworderdragging',
 	'Disable dragging',
-	'Disable dragging of firewall/nat rules.',
+	'Disable dragging of firewall/NAT rules',
 	$pconfig['roworderdragging']
 ))->setHelp('Disables dragging rows to allow selecting and copying row contents and avoid accidental changes.');
 

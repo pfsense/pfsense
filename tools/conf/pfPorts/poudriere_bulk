@@ -95,6 +95,7 @@ sysutils/stress
 sysutils/tmux
 sysutils/vm-bhyve
 sysutils/xe-guest-utilities
+textproc/jq
 www/%%PRODUCT_NAME%%-pkg-Lightsquid
 www/%%PRODUCT_NAME%%-pkg-squid
 www/%%PRODUCT_NAME%%-pkg-squidGuard

@@ -37,6 +37,7 @@ if (!is_array($config['dnsmasq']['hosts'])) {
 	$config['dnsmasq']['hosts'] = array();
 }
 
+init_config_arr(array('dnsmasq', 'hosts'));
 $a_hosts = &$config['dnsmasq']['hosts'];
 
 if (is_numericint($_REQUEST['id'])) {

@@ -88,20 +88,8 @@ if (isset($_POST['save'])) {
 	}
 
 	if ($_POST['frequency'] === 'cron') {
-		if(!preg_match('/^[0-9\*\/]+$/', $_POST['hours'])) {
-			$input_errors[] = gettext("Schedule hours may only contain numbers '*' or '/'");
-		}
-
-		if(!preg_match('/^[0-9\*\/]+$/', $_POST['day'])) {
-			$input_errors[] = gettext("Schedule days may only contain numbers '*' or '/'");
-		}
-
-		if(!preg_match('/^[0-9\*\/]+$/', $_POST['month'])) {
-			$input_errors[] = gettext("Schedule month may only contain numbers '*' or '/'");
-		}
-
-		if(!preg_match('/^[0-9\*\/]+$/', $_POST['dow'])) {
-			$input_errors[] = gettext("Schedule day of week may only contain numbers '*' or '/'");
+		if (!preg_match('/^[0-9\*\/\-\,]+$/', $_POST['hours'] . $_POST['day'] . $_POST['month'] . $_POST['dow']))  {
+			$input_errors[] = gettext("Schedule values may only contain 0-9 - , / *");
 		}
 	}
 

@@ -328,6 +328,12 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 	$showblockbogons = true;
 }
 
+if (isset($config['system']['webgui']['roworderdragging'])) {
+	$rules_header_text = gettext("Rules");
+} else {
+	$rules_header_text = gettext("Rules (Drag to Change Order)");
+}
+
 /* Load the counter data of each pf rule. */
 $rulescnt = pfSense_get_pf_rules();
 
@@ -347,7 +353,7 @@ $columns_in_table = 13;
 <form method="post">
 	<input name="if" id="if" type="hidden" value="<?=$if?>" />
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to Change Order)")?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=$rules_header_text?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
 			<table id="ruletable" class="table table-hover table-striped table-condensed" style="overflow-x: 'visible'">
 				<thead>

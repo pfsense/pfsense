@@ -37,6 +37,7 @@ if (!is_array($config['dnsmasq']['domainoverrides'])) {
 	   $config['dnsmasq']['domainoverrides'] = array();
 }
 
+init_config_arr(array('dnsmasq', 'domainoverrides'));
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
 if (is_numericint($_REQUEST['id'])) {

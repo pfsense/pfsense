@@ -108,7 +108,21 @@ main() {
 		reboot
 	fi
 
+	# Found available label for the DTB FAT slice.
+	idx=0
+	while [ -e "/dev/label/DTBFAT${idx}" ]; do
+		idx=$((idx+1))
+	done
+	DTBFAT_LABEL="DTBFAT${idx}"
+	if ! /sbin/glabel label ${DTBFAT_LABEL} "/dev/${DISKID}s2"; then
+		echo
+		echo "error setting the DTB FAT label.  aborting."
+		sleep 5
+		reboot
+	fi
+
 	/usr/bin/sed -i '' \
+		-e "/[[:blank:]]\/boot\/msdos[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/label/${DTBFAT_LABEL}," \
 		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s3," \
 		/mnt/etc/fstab
 

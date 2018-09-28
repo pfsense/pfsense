@@ -22,31 +22,27 @@
 # SG-1100
 #
 sg1100_led_booting() {
-	if [ ! -c /dev/led/ok ]; then
-		return
+	if [ -c /dev/led/ok ]; then
+		echo f1 > /dev/led/ok
 	fi
-	echo f1 > /dev/led/ok
 }
 
 sg1100_led_ready() {
-	if [ ! -c /dev/led/ok ]; then
-		return
+	if [ -c /dev/led/ok ]; then
+		echo 1 > /dev/led/ok
 	fi
-	echo 1 > /dev/led/ok
 }
 
 sg1100_led_update() {
-	if [ ! -c /dev/led/ok ]; then
-		return
+	if [ -c /dev/led/ok ]; then
+		echo f5 > /dev/led/ok
 	fi
-	echo f5 > /dev/led/ok
 }
 
 sg1100_led_update_off() {
-	if [ ! -c /dev/led/ok ]; then
-		return
+	if [ -c /dev/led/ok ]; then
+		echo 1 > /dev/led/ok
 	fi
-	echo 1 > /dev/led/ok
 }
 
 #

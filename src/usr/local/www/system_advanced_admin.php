@@ -243,21 +243,13 @@ if ($_POST) {
 			unset($config['system']['ssh']['enable']);
 		}
 
+		$sshd_keyonly = $config['system']['ssh']['sshdkeyonly'];
 		if ($_POST['sshdkeyonly'] == "enabled") {
 			$config['system']['ssh']['sshdkeyonly'] = "enabled";
 		} else if ($_POST['sshdkeyonly'] == "both") {
 			$config['system']['ssh']['sshdkeyonly'] = "both";
 		} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
 			unset($config['system']['ssh']['sshdkeyonly']);
-		}
-
-		$sshd_keyonly = $config['system']['sshd']['sshdkeyonly'];
-		if ($_POST['sshdkeyonly'] == "enabled") {
-			$config['system']['sshd']['sshdkeyonly'] = "enabled";
-		} elseif ($_POST['sshdkeyonly'] == "both") {
-			$config['system']['sshd']['sshdkeyonly'] = "both";
-		} elseif (is_array($config['system']['sshd']) && isset($config['system']['sshd']['sshdkeyonly'])) {
-			unset($config['system']['sshd']['sshdkeyonly']);
 		}
 
 		$sshd_port = $config['system']['ssh']['port'];

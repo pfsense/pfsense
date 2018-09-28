@@ -5919,6 +5919,21 @@ function upgrade_187_to_188() {
 	}
 }
 
+function upgrade_188_to_189() {
+	global $config;
+
+	/* Migrate ssh setting to new location */
+	if (isset($config['system']['enablesshd'])) {
+		$config['system']['ssh']['enable'] = "enabled";
+		unset($config['system']['enablesshd']);
+	}
+	/* Remove accidentally duplicated ssh config
+	 * See https://redmine.pfsense.org/issues/8974 */
+	if (isset($config['system']['sshd'])) {
+		$config['system']['sshd'];
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

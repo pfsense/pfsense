@@ -93,7 +93,7 @@ if (!is_array($config['dnsmasq']['domainoverrides'])) {
 	$config['dnsmasq']['domainoverrides'] = array();
 }
 
-init_config_arr(array('dnsmasq'' ,hosts'));
+init_config_arr(array('dnsmasq', 'hosts'));
 $a_hosts = &$config['dnsmasq']['hosts'];
 
 // Add a temporary index so we don't lose the order after sorting

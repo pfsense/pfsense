@@ -144,6 +144,9 @@ $interfaces = get_configured_interface_list();
 foreach ($interfaces as $interface) {
 	if (interface_has_gateway($interface)) {
 		$multiwan++;
+		if ($multiwan > 1) {
+			break;
+		}
 	}
 }
 

@@ -28,11 +28,11 @@ require_once("filter.inc");
 
 $fp = fopen('php://stdin', 'r');
 
-if (isset($config['system']['enablesshd'])) {
+if (isset($config['system']['ssh']['enable'])) {
 	echo "SSHD is currently enabled.  Would you like to disable? [y/n]? ";
 	$yn = chop(fgets($fp));
 	if ($yn[0] == "y") {
-		unset($config['system']['enablesshd']);
+		unset($config['system']['ssh']['enable']);
 		echo "\nWriting configuration...";
 		write_config(gettext("Disabled SSHD from console menu."));
 		echo " done.\n";
@@ -48,7 +48,8 @@ if (isset($config['system']['enablesshd'])) {
 	echo "SSHD is currently disabled.  Would you like to enable? [y/n]? ";
 	$yn = chop(fgets($fp));
 	if ($yn[0] == "y") {
-		$config['system']['enablesshd'] = true;
+		init_config_arr(array('system', 'ssh'));
+		$config['system']['ssh']['enable'] = "enabled";
 		echo "\nWriting configuration...";
 		write_config(gettext("Enabled SSHD from console menu."));
 		echo " done.\n";

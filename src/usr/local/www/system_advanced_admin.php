@@ -36,6 +36,9 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+init_config_arr(array('system', 'webgui'));
+init_config_arr(array('system', 'ssh'));
+
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
@@ -53,7 +56,7 @@ $pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['serialspeed'] = $config['system']['serialspeed'];
 $pconfig['primaryconsole'] = $config['system']['primaryconsole'];
-$pconfig['enablesshd'] = $config['system']['enablesshd'];
+$pconfig['enablesshd'] = $config['system']['ssh']['enable'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sshdkeyonly'] = $config['system']['ssh']['sshdkeyonly'];
 $pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
@@ -102,14 +105,6 @@ if ($_POST) {
 		if (!is_port($_POST['sshport'])) {
 			$input_errors[] = gettext("A valid port number must be specified");
 		}
-	}
-
-	if ($_POST['sshdkeyonly'] == "enabled") {
-		$config['system']['ssh']['sshdkeyonly'] = "enabled";
-	} else if ($_POST['sshdkeyonly'] == "both") {
-		$config['system']['ssh']['sshdkeyonly'] = "both";
-	} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
-		unset($config['system']['ssh']['sshdkeyonly']);
 	}
 
 	ob_flush();
@@ -241,20 +236,20 @@ if ($_POST) {
 			unset($config['system']['webgui']['althostnames']);
 		}
 
-		$sshd_enabled = $config['system']['enablesshd'];
+		$sshd_enabled = $config['system']['ssh']['enable'];
 		if ($_POST['enablesshd']) {
-			$config['system']['enablesshd'] = "enabled";
+			$config['system']['ssh']['enable'] = "enabled";
 		} else {
-			unset($config['system']['enablesshd']);
+			unset($config['system']['ssh']['enable']);
 		}
 
-		$sshd_keyonly = $config['system']['sshd']['sshdkeyonly'];
+		$sshd_keyonly = $config['system']['ssh']['sshdkeyonly'];
 		if ($_POST['sshdkeyonly'] == "enabled") {
-			$config['system']['sshd']['sshdkeyonly'] = "enabled";
-		} elseif ($_POST['sshdkeyonly'] == "both") {
-			$config['system']['sshd']['sshdkeyonly'] = "both";
-		} elseif (is_array($config['system']['sshd']) && isset($config['system']['sshd']['sshdkeyonly'])) {
-			unset($config['system']['sshd']['sshdkeyonly']);
+			$config['system']['ssh']['sshdkeyonly'] = "enabled";
+		} else if ($_POST['sshdkeyonly'] == "both") {
+			$config['system']['ssh']['sshdkeyonly'] = "both";
+		} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
+			unset($config['system']['ssh']['sshdkeyonly']);
 		}
 
 		$sshd_port = $config['system']['ssh']['port'];
@@ -264,7 +259,7 @@ if ($_POST) {
 			unset($config['system']['ssh']['port']);
 		}
 
-		if (($sshd_enabled != $config['system']['enablesshd']) ||
+		if (($sshd_enabled != $config['system']['ssh']['enable']) ||
 		    ($sshd_keyonly != $config['system']['ssh']['sshdkeyonly']) ||
 		    ($sshd_port != $config['system']['ssh']['port'])) {
 			$restart_sshd = true;
@@ -617,7 +612,7 @@ if ($restart_sshd) {
 	killbyname("sshd");
 	log_error(gettext("secure shell configuration has changed. Stopping sshd."));
 
-	if ($config['system']['enablesshd']) {
+	if ($config['system']['ssh']['enable']) {
 		log_error(gettext("secure shell configuration has changed. Restarting sshd."));
 		send_event("service restart sshd");
 	}

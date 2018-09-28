@@ -136,7 +136,7 @@ $show_help_text = <<<EOF
 	print_r(get_wireless_modes(\"ath0\"));
 
 	/* to enable SSH */
-	\$config['system']['enablesshd'] = true;
+	\$config['system']['ssh']['enable'] = "enabled";
 
 	/* change OPTX to the OPT interface name such as BACKHAUL */
 	\$config['interfaces']['optx']['wireless']['standard'] = "11a";

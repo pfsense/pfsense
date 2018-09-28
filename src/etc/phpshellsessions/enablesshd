@@ -19,14 +19,15 @@
  */
 
 global $config;
-echo "Starting enablesshd...";
+echo "Enabling sshd...";
 require("config.inc");
 echo ".";
 $config = parse_config(true);
 echo ".";
-$config['system']['enablesshd'] = true;
+init_config_arr(array('system', 'ssh'));
+$config['system']['ssh']['enable'] = "enabled";
 echo ".";
 write_config("pfSsh.php enabled sshd");
-echo "\nEnabling SSHD, please wait...";
+echo "\nRestarting sshd, please wait...";
 send_event("service reload sshd");
 echo "\n\n";

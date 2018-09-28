@@ -4450,7 +4450,7 @@ function filter_get_antilockout_ports($wantarray = false) {
 		$lockoutports[] = "80";
 	}
 
-	if (isset($config['system']['enablesshd'])) {
+	if (isset($config['system']['ssh']['enable'])) {
 		$lockoutports[] = empty($config['system']['ssh']['port']) ? "22" : $config['system']['ssh']['port'];
 	}
 

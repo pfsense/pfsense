@@ -45,6 +45,10 @@ sg1100_led_update_off() {
 	fi
 }
 
+sg1100_led_updating() {
+	sg5100_led_update
+}
+
 #
 # SG-3100
 #
@@ -99,27 +103,36 @@ sg3100_led_update_off() {
 	/sbin/sysctl dev.gpio.${_gpiodev}.led.1.pwm=1 > /dev/null
 }
 
+sg3100_led_updating() {
+	sg3100_led_update
+}
+
 #
 # SG-5100
 #
 sg5100_led_booting() {
 	# Booting (red)
-	/usr/local/sbin/SG-5100led 1
+	/usr/local/sbin/SG-5100led 1 >/dev/null 2>&1
 }
 
 sg5100_led_ready() {
 	# Boot finished (green)
-	/usr/local/sbin/SG-5100led 3
+	/usr/local/sbin/SG-5100led 3 >/dev/null 2>&1
 }
 
 sg5100_led_update() {
 	# updates, green flashing
-	/usr/local/sbin/SG-5100led 4
+	/usr/local/sbin/SG-5100led 4 >/dev/null 2>&1
 }
 
 sg5100_led_update_off() {
 	# No updates, green
-	/usr/local/sbin/SG-5100led 3
+	/usr/local/sbin/SG-5100led 3 >/dev/null 2>&1
+}
+
+sg5100_led_updating() {
+	# Upgrade running during boot (LED blinking red)
+	/usr/local/sbin/SG-5100led 2 >/dev/null 2>&1
 }
 
 #
@@ -193,11 +206,29 @@ led_update_off() {
 	esac
 }
 
+led_updating() {
+	case "$SYSTEM" in
+	"SG-1100")
+		sg1100_led_updating
+		;;
+	"SG-3100")
+		sg3100_led_updating
+		;;
+	"SG-5100")
+		sg5100_led_updating
+		;;
+	*)
+		usage
+		;;
+	esac
+}
+
 usage() {
 	echo "usage:"
 	echo "pfSense-LED booting"
 	echo "pfSense-LED ready"
 	echo "pfSense-LED update [1|0]"
+	echo "pfSense-LED updating"
 	exit 1
 }
 
@@ -237,6 +268,10 @@ booting)
 	;;
 ready)
 	led_ready
+	exit 0
+	;;
+updating)
+	led_updating
 	exit 0
 	;;
 update)

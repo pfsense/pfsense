@@ -149,7 +149,7 @@ case "${machine_arch}" in
 	aarch64)
 		model=$(/usr/sbin/ofwdump -P model -R /)
 		product=$(/bin/kenv -q smbios.system.product)
-		serial=$(/bin/kenv -q uboot.boardsn)
+		serial=$(/usr/sbin/ofwdump -P sn -R /)
 		;;
 	*)
 		echo "Unsuported platform"
@@ -179,7 +179,7 @@ if [ -z "${serial}" ]; then
 	echo
 	echo "unsupported system: no serial number.  aborting."
 	sleep 5
-#	reboot
+	reboot
 fi
 
 echo "Serial: ${serial}"

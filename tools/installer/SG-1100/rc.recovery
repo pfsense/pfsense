@@ -121,6 +121,7 @@ main() {
 		reboot
 	fi
 
+	/bin/mkdir -p /mnt/boot/msdos
 	/usr/bin/sed -i '' \
 		-e "/[[:blank:]]\/boot\/msdos[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/label/${DTBFAT_LABEL}," \
 		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s3," \

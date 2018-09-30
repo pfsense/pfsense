@@ -162,11 +162,6 @@ if [ "${serial}" = "123456789" ]; then
 	serial=""
 fi
 
-# Bad serial
-if ! echo "${serial}" | egrep -q '^[0-9]*$'; then
-	serial=""
-fi
-
 echo "Netgate SG-1100 firmware recovery"
 
 if [ -z "${product}" -o "${product}" != "mvebu_armada-37xx" -o -z "${model}" -o "${model}" != "Netgate SG-1100" ]; then

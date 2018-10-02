@@ -5121,6 +5121,7 @@ function DHCP_Config_File_Advanced($interface, $ifcfg, $realif) {
 
 	$dhclientconf  = "interface \"{$realif}\" {\n";
 	$dhclientconf .= "\n";
+	$dhclientconf .= "\tsupersede interface-mtu 0;\n";
 	$dhclientconf .= "# DHCP Protocol Timing Values\n";
 	$dhclientconf .= "{$adv_dhcp_pt_timeout}";
 	$dhclientconf .= "{$adv_dhcp_pt_retry}";

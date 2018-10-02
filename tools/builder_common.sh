@@ -1661,6 +1661,12 @@ KEEP_OLD_PACKAGES=yes
 KEEP_OLD_PACKAGES_COUNT=5
 EOF
 
+	if pkg info -e ccache; then
+	cat <<EOF >>/usr/local/etc/poudriere.conf
+CCACHE_DIR=/var/cache/ccache
+EOF
+	fi
+
 	# Create specific items conf
 	[ ! -d /usr/local/etc/poudriere.d ] \
 		&& mkdir -p /usr/local/etc/poudriere.d

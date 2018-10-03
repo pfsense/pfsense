@@ -42,6 +42,19 @@ require_once("gwlb.inc");
 $output_path = "/tmp/status_output/";
 $output_file = "/tmp/status_output.tgz";
 
+$filtered_tags = array(
+	'accountkey', 'authorizedkeys', 'auth_pass', 'auth_user', 'bcrypt-hash',
+	'crypto_password', 'crypto_password2', 'dns_nsupdatensupdate_key',
+	'gold_encryption_password', 'gold_password', 'ipsecpsk', 'ldap_bindpw',
+	'lighttpd_ls_password', 'lighttpd_ls_password', 'md5-hash',
+	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'passphrase',
+	'password', 'passwordagain', 'pre-shared-key', 'proxypass',
+	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radius_secret',
+	'redis_password', 'redis_passwordagain', 'rocommunity', 'secret',
+	'shared_key', 'tls', 'varclientpasswordinput', 'varclientsharedsecret',
+	'varsyncpassword', 'varusersmotpinitsecret', 'varusersmotppin'
+);
+
 if ($_POST['submit'] == "DOWNLOAD" && file_exists($output_file)) {
 	session_cache_limiter('public');
 	$fd = fopen($output_file, "rb");
@@ -69,7 +82,7 @@ unlink_if_exists($output_file);
 mkdir($output_path);
 
 function doCmdT($title, $command, $method) {
-	global $output_path, $output_file;
+	global $output_path, $output_file, $filtered_tags;
 	/* Fixup output directory */
 
 	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
@@ -87,39 +100,9 @@ function doCmdT($title, $command, $method) {
 			while (!feof($fd)) {
 				$line = fgets($fd);
 				/* remove sensitive contents */
-				$line = preg_replace("/<authorizedkeys>.*?<\\/authorizedkeys>/", "<authorizedkeys>xxxxx</authorizedkeys>", $line);
-				$line = preg_replace("/<secret>.*?<\\/secret>/", "<secret>xxxxx</secret>", $line);
-				$line = preg_replace("/<bcrypt-hash>.*?<\\/bcrypt-hash>/", "<bcrypt-hash>xxxxx</bcrypt-hash>", $line);
-				$line = preg_replace("/<password>.*?<\\/password>/", "<password>xxxxx</password>", $line);
-				$line = preg_replace("/<auth_user>.*?<\\/auth_user>/", "<auth_user>xxxxx</auth_user>", $line);
-				$line = preg_replace("/<auth_pass>.*?<\\/auth_pass>/", "<auth_pass>xxxxx</auth_pass>", $line);
-				$line = preg_replace("/<proxy_user>.*?<\\/proxy_user>/", "<proxy_user>xxxxx</proxy_user>", $line);
-				$line = preg_replace("/<proxy_passwd>.*?<\\/proxy_passwd>/", "<proxy_passwd>xxxxx</proxy_passwd>", $line);
-				$line = preg_replace("/<proxyuser>.*?<\\/proxyuser>/", "<proxyuser>xxxxx</proxyuser>", $line);
-				$line = preg_replace("/<proxypass>.*?<\\/proxypass>/", "<proxypass>xxxxx</proxypass>", $line);
-				$line = preg_replace("/<pre-shared-key>.*?<\\/pre-shared-key>/", "<pre-shared-key>xxxxx</pre-shared-key>", $line);
-				$line = preg_replace("/<rocommunity>.*?<\\/rocommunity>/", "<rocommunity>xxxxx</rocommunity>", $line);
-				$line = preg_replace("/<prv>.*?<\\/prv>/", "<prv>xxxxx</prv>", $line);
-				$line = preg_replace("/<shared_key>.*?<\\/shared_key>/", "<shared_key>xxxxx</shared_key>", $line);
-				$line = preg_replace("/<tls>.*?<\\/tls>/", "<tls>xxxxx</tls>", $line);
-				$line = preg_replace("/<ipsecpsk>.*?<\\/ipsecpsk>/", "<ipsecpsk>xxxxx</ipsecpsk>", $line);
-				$line = preg_replace("/<md5-hash>.*?<\\/md5-hash>/", "<md5-hash>xxxxx</md5-hash>", $line);
-				$line = preg_replace("/<md5password>.*?<\\/md5password>/", "<md5password>xxxxx</md5password>", $line);
-				$line = preg_replace("/<nt-hash>.*?<\\/nt-hash>/", "<nt-hash>xxxxx</nt-hash>", $line);
-				$line = preg_replace("/<radius_secret>.*?<\\/radius_secret>/", "<radius_secret>xxxxx</radius_secret>", $line);
-				$line = preg_replace("/<ldap_bindpw>.*?<\\/ldap_bindpw>/", "<ldap_bindpw>xxxxx</ldap_bindpw>", $line);
-				$line = preg_replace("/<passwordagain>.*?<\\/passwordagain>/", "<passwordagain>xxxxx</passwordagain>", $line);
-				$line = preg_replace("/<crypto_password>.*?<\\/crypto_password>/", "<crypto_password>xxxxx</crypto_password>", $line);
-				$line = preg_replace("/<crypto_password2>.*?<\\/crypto_password2>/", "<crypto_password2>xxxxx</crypto_password2>", $line);
-				$line = preg_replace("/<md5sigpass>.*?<\\/md5sigpass>/", "<md5sigpass>xxxxx</md5sigpass>", $line);
-				$line = preg_replace("/<md5sigkey>.*?<\\/md5sigkey>/", "<md5sigkey>xxxxx</md5sigkey>", $line);
-				$line = preg_replace("/<lighttpd_ls_password>.*?<\\/lighttpd_ls_password>/", "<lighttpd_ls_password>xxxxx</lighttpd_ls_password>", $line);
-				$line = preg_replace("/<redis_password>.*?<\\/redis_password>/", "<redis_password>xxxxx</redis_password>", $line);
-				$line = preg_replace("/<redis_passwordagain>.*?<\\/redis_passwordagain>/", "<redis_passwordagain>xxxxx</redis_passwordagain>", $line);
-				$line = preg_replace("/<varclientsharedsecret>.*?<\\/varclientsharedsecret>/", "<varclientsharedsecret>xxxxx</varclientsharedsecret>", $line);
-				$line = preg_replace("/<varclientpasswordinput>.*?<\\/varclientpasswordinput>/", "<varclientpasswordinput>xxxxx</varclientpasswordinput>", $line);
-				$line = preg_replace("/<varusersmotpinitsecret>.*?<\\/varusersmotpinitsecret>/", "<varusersmotpinitsecret>xxxxx</varusersmotpinitsecret>", $line);
-				$line = preg_replace("/<varusersmotppin>.*?<\\/varusersmotppin>/", "<varusersmotppin>xxxxx</varusersmotppin>", $line);
+				foreach ($filtered_tags as $tag) {
+					$line = preg_replace("/<{$tag}>.*?<\\/{$tag}>/", "<{$tag}>xxxxx</{$tag}>", $line);
+				}
 				$line = str_replace("\t", "    ", $line);
 				echo htmlspecialchars($line, ENT_NOQUOTES);
 				fwrite($ofd, $line);

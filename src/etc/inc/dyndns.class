@@ -259,6 +259,7 @@
 				if (!$dnsTTL) $this->_error(9);
 				break;
 			case 'custom':
+			case 'custom-v6':
 				if (!$dnsUpdateURL) $this->_error(7);
 				break;
 			default:

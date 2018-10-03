@@ -205,6 +205,12 @@ if ($_POST) {
 				if ($_POST['backuparea'] !== "rrddata" && !$_POST['donotbackuprrd']) {
 					$rrd_data_xml = rrd_data_xml();
 					$closing_tag = "</" . $g['xml_rootobj'] . ">";
+
+					/* If the config on disk had rrddata tags already, remove that section first.
+					 * See https://redmine.pfsense.org/issues/8994 */
+					$data = preg_replace("/<rrddata>.*<\\/rrddata>/", "", $data);
+					$data = preg_replace("/<rrddata\\/>/", "", $data);
+
 					$data = str_replace($closing_tag, $rrd_data_xml . $closing_tag, $data);
 				}
 
@@ -261,6 +267,13 @@ if ($_POST) {
 						$data = str_replace("m0n0wall", "pfsense", $data);
 						$m0n0wall_upgrade = true;
 					}
+
+					/* If the config on disk had empty rrddata tags, remove them to
+					 * avoid an XML parsing error.
+					 * See https://redmine.pfsense.org/issues/8994 */
+					$data = preg_replace("/<rrddata><\\/rrddata>/", "", $data);
+					$data = preg_replace("/<rrddata\\/>/", "", $data);
+
 					if ($_POST['restorearea']) {
 						/* restore a specific area of the configuration */
 						if (!stristr($data, "<" . $_POST['restorearea'] . ">")) {

@@ -41,13 +41,7 @@ require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"));
 
-if (!is_array($config['schedules'])) {
-	$config['schedules'] = array();
-}
-if (!is_array($config['schedules']['schedule'])) {
-	$config['schedules']['schedule'] = array();
-}
-
+init_config_arr(array('schedules', 'schedule'));
 $a_schedules = &$config['schedules']['schedule'];
 
 if ($_POST['act'] == "del") {

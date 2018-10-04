@@ -57,10 +57,7 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firew
 $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 
-if (!is_array($config['schedules']['schedule'])) {
-	$config['schedules']['schedule'] = array();
-}
-
+init_config_arr(array('schedules', 'schedule'));
 $a_schedules = &$config['schedules']['schedule'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {

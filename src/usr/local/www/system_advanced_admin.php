@@ -261,7 +261,7 @@ if ($_POST) {
 
 		$sshd_agentforwarding = isset($config['system']['ssh']['sshdagentforwarding']);
 		if ($_POST['sshdagentforwarding']) {
-			$config['system']['ssh']['sshdagentforwarding'] = true;
+			$config['system']['ssh']['sshdagentforwarding'] = 'enabled';
 		} else {
 			unset($config['system']['ssh']['sshdagentforwarding']);
 		}

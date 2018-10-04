@@ -172,8 +172,25 @@ print $form;
 		<h2 class="panel-title"><?=gettext("Wake-on-LAN Devices");?></h2>
 	</div>
 
+<?php
+	// Add top buttons if more than 24 entries in the table
+	if (is_array($a_wol) && (count($a_wol) > 24)) {
+?>
+	<div class="panel-footer">
+		<a class="btn btn-success" href="services_wol_edit.php">
+			<i class="fa fa-plus icon-embed-btn"></i>
+			<?=gettext("Add");?>
+		</a>
+
+		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary">
+			<i class="fa fa-power-off icon-embed-btn"></i>
+			<?=gettext("Wake All Devices")?>
+		</a>
+	</div>
+<?php } ?>
+
 	<div class="panel-body">
-		<p><?=gettext("Click the MAC address to wake up an individual device.")?></p>
+		<p class="text-danger" style="margin-left: 8px;margin-bottom:0px;"><?=gettext("Click the MAC address to wake up an individual device.")?></p>
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-rowdblclickedit">
 				<thead>

@@ -57,36 +57,14 @@ if (isset($_REQUEST['closenotice'])) {
 	sleep(1);
 }
 
-if ($g['disablecrashreporter'] != true) {
-	// Check to see if we have a crash report
-	$x = 0;
-	if (file_exists("/tmp/PHP_errors.log")) {
-		$total = `/bin/cat /tmp/PHP_errors.log | /usr/bin/wc -l | /usr/bin/awk '{ print $1 }'`;
-		if ($total > 0) {
-			$x++;
-		}
+if (($g['disablecrashreporter'] != true) && (system_has_crash_data() || system_has_php_errors())) {
+	$savemsg = sprintf(gettext("%s has detected a crash report or programming bug."), $g['product_name']) . " ";
+	if (isAllowedPage("/crash_reporter.php")) {
+		$savemsg .= sprintf(gettext('Click %1$shere%2$s for more information.'), '<a href="crash_reporter.php">', '</a>');
+	} else {
+		$savemsg .= sprintf(gettext("Contact a firewall administrator for more information."));
 	}
-
-	$crash = glob("/var/crash/*");
-	$skip_files = array(".", "..", "minfree", "");
-
-	if (is_array($crash)) {
-		foreach ($crash as $c) {
-			if (!in_array(basename($c), $skip_files)) {
-				$x++;
-			}
-		}
-
-		if ($x > 0) {
-			$savemsg = sprintf(gettext("%s has detected a crash report or programming bug."), $g['product_name']) . " ";
-			if (isAllowedPage("/crash_reporter.php")) {
-				$savemsg .= sprintf(gettext('Click %1$shere%2$s for more information.'), '<a href="crash_reporter.php">', '</a>');
-			} else {
-				$savemsg .= sprintf(gettext("Contact a firewall administrator for more information."));
-			}
-			$class = "warning";
-		}
-	}
+	$class = "warning";
 }
 
 ## Include each widget php include file.

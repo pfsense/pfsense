@@ -829,8 +829,9 @@ if ($_POST['apply']) {
 			$input_errors[] = gettext("A valid IPv6 gateway must be specified.");
 		}
 	}
-	if (($_POST['provider'] && !is_domain($_POST['provider']))) {
-		$input_errors[] = gettext("The service name contains invalid characters.");
+
+	if (($_POST['provider'] && (strpos($_POST['provider'], "\"")))) {
+		$input_errors[] = gettext("The service name may not contain quote characters.");
 	}
 	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) {
 		$input_errors[] = gettext("The idle timeout value must be an integer.");

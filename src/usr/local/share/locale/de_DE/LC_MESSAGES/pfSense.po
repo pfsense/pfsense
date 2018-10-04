@@ -1566,7 +1566,7 @@ msgstr "Begrenzer:"
 #: src/usr/local/www/diag_limiter_info.php:43
 #: src/usr/local/www/status_queues.php:50 src/usr/local/www/head.inc:360
 msgid "Queues"
-msgstr "Warteschlangen:"
+msgstr "Warteschlangen"
 
 #: src/usr/local/www/diag_limiter_info.php:80
 msgid "Limiter Information"

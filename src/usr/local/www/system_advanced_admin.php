@@ -273,7 +273,6 @@ if ($_POST) {
 			unset($config['system']['ssh']['port']);
 		}
 
-
 		if (($sshd_enabled != $config['system']['ssh']['enable']) ||
 		    ($sshd_keyonly != $config['system']['ssh']['sshdkeyonly']) ||
 		    ($sshd_agentforwarding != $config['system']['ssh']['sshdagentforwarding']) ||

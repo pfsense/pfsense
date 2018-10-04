@@ -997,6 +997,27 @@ function ldap_test_connection($authcfg) {
 function ldap_setup_caenv($authcfg) {
 	global $g;
 	require_once("certs.inc");
+	$cert_path = "{$g['varrun_path']}/certs";
+
+	if (!empty($authcfg['ldap_certref'])) {
+		$certref = lookup_cert($authcfg['ldap_certref']);
+		if (!$certref) {
+			log_error(sprintf(gettext("LDAP: Could not lookup client cert by reference (%s)."), $authcfg['ldap_certref']));
+			return;
+		}
+
+		safe_mkdir($cert_path);
+		unlink_if_exists("{$cert_path}/{$certref['refid']}.crt");
+		unlink_if_exists("{$cert_path}/{$certref['refid']}.key");
+
+		file_put_contents("{$cert_path}/{$certref['refid']}.crt", base64_decode($certref['crt']));
+		@chmod("{$cert_path}/{$certref['refid']}.crt", 0600);
+		file_put_contents("{$cert_path}/{$certref['refid']}.key", base64_decode($certref['prv']));
+		@chmod("{$cert_path}/{$certref['refid']}.key", 0600);
+
+		putenv("LDAPTLS_CERT={$cert_path}/{$certref['refid']}.crt");
+		putenv("LDAPTLS_KEY={$cert_path}/{$certref['refid']}.key");
+	}
 
 	unset($caref);
 	if (empty($authcfg['ldap_caref']) || strstr($authcfg['ldap_urltype'], "Standard")) {
@@ -1016,18 +1037,16 @@ function ldap_setup_caenv($authcfg) {
 			putenv('LDAPTLS_REQCERT=hard');
 			return;
 		}
-		if (!is_dir("{$g['varrun_path']}/certs")) {
-			@mkdir("{$g['varrun_path']}/certs");
-		}
-		if (file_exists("{$g['varrun_path']}/certs/{$caref['refid']}.ca")) {
-			@unlink("{$g['varrun_path']}/certs/{$caref['refid']}.ca");
-		}
-		file_put_contents("{$g['varrun_path']}/certs/{$caref['refid']}.ca", $cachain);
-		@chmod("{$g['varrun_path']}/certs/{$caref['refid']}.ca", 0600);
+
+		safe_mkdir($cert_path);
+		unlink_if_exists("{$cert_path}/{$caref['refid']}.ca");
+		file_put_contents("{$cert_path}/{$caref['refid']}.ca", $cachain);
+		@chmod("{$cert_path}/{$caref['refid']}.ca", 0600);
+
 		putenv('LDAPTLS_REQCERT=hard');
 		/* XXX: Probably even the hashed link should be created for this? */
-		putenv("LDAPTLS_CACERTDIR={$g['varrun_path']}/certs");
-		putenv("LDAPTLS_CACERT={$g['varrun_path']}/certs/{$caref['refid']}.ca");
+		putenv("LDAPTLS_CACERTDIR={$cert_path}");
+		putenv("LDAPTLS_CACERT={$cert_path}/{$caref['refid']}.ca");
 	}
 }
 

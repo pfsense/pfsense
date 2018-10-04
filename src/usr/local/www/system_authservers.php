@@ -47,7 +47,8 @@ if ($_REQUEST['ajax']) {
 	$authcfg['ldap_urltype'] = $_REQUEST['urltype'];
 	$authcfg['ldap_protver'] = $_REQUEST['proto'];
 	$authcfg['ldap_authcn'] = explode(";", $_REQUEST['authcn']);
-	$authcfg['ldap_caref'] = $_REQUEST['cert'];
+	$authcfg['ldap_caref'] = $_REQUEST['cacert'];
+	$authcfg['ldap_certref'] = $_REQUEST['cert'];
 
 	$ous = ldap_get_user_ous(true, $authcfg);
 
@@ -110,7 +111,10 @@ if (!is_array($config['ca'])) {
 	$config['ca'] = array();
 }
 
+init_config_arr(array('ca'));
 $a_ca =& $config['ca'];
+init_config_arr(array('cert'));
+$a_cert =& $config['cert'];
 
 $act = $_REQUEST['act'];
 
@@ -145,6 +149,7 @@ if ($act == "edit") {
 
 		if ($pconfig['type'] == "ldap") {
 			$pconfig['ldap_caref'] = $a_server[$id]['ldap_caref'];
+			$pconfig['ldap_certref'] = $a_server[$id]['ldap_certref'];
 			$pconfig['ldap_host'] = $a_server[$id]['host'];
 			$pconfig['ldap_port'] = $a_server[$id]['ldap_port'];
 			$pconfig['ldap_timeout'] = $a_server[$id]['ldap_timeout'];
@@ -307,6 +312,9 @@ if ($_POST['save']) {
 
 			if (!empty($pconfig['ldap_caref'])) {
 				$server['ldap_caref'] = $pconfig['ldap_caref'];
+			}
+			if (!empty($pconfig['ldap_certref'])) {
+				$server['ldap_certref'] = $pconfig['ldap_certref'];
 			}
 			$server['host'] = $pconfig['ldap_host'];
 			$server['ldap_port'] = $pconfig['ldap_port'];
@@ -566,18 +574,16 @@ $section->addInput(new Form_Select(
 	array_combine(array_keys($ldap_urltypes), array_keys($ldap_urltypes))
 ));
 
-if (empty($a_ca))
-{
+if (empty($a_ca)) {
 	$section->addInput(new Form_StaticText(
 		'Peer Certificate Authority',
 		'No Certificate Authorities defined.<br/>Create one under <a href="system_camanager.php">System &gt; Cert. Manager</a>.'
 	));
-}
-else
-{
+} else {
 	$ldapCaRef = array( 'global' => 'Global Root CA List' );
-	foreach ($a_ca as $ca)
+	foreach ($a_ca as $ca) {
 		$ldapCaRef[ $ca['refid'] ] = $ca['descr'];
+	}
 
 	$section->addInput(new Form_Select(
 		'ldap_caref',
@@ -586,7 +592,28 @@ else
 		$ldapCaRef
 	))->setHelp('This option is used if \'SSL Encrypted\' '.
 		'or \'TCP - STARTTLS\' options are chosen. '.
-		'It must match with the CA in the AD otherwise problems will arise.');
+		'It must match the CA used to sign the server certificate.');
+}
+
+if (empty($a_cert)) {
+	$section->addInput(new Form_StaticText(
+		'Client Certificate',
+		'No Certificates defined.<br/>Create one under <a href="system_certmanager.php">System &gt; Cert. Manager</a>.'
+	));
+} else {
+	$ldap_certs = array('' => 'None');
+	foreach ($a_cert as $cert) {
+		$ldap_certs[ $cert['refid'] ] = $cert['descr'];
+	}
+
+	$section->addInput(new Form_Select(
+		'ldap_certref',
+		'Client Certificate',
+		$pconfig['ldap_certref'],
+		$ldap_certs
+	))->setHelp('This option is used if \'SSL Encrypted\' '.
+		'or \'TCP - STARTTLS\' options are chosen and the LDAP server requires a client certificate. '.
+		'It must match with the CA the server uses to validate connecting clients.');
 }
 
 $section->addInput(new Form_Select(
@@ -869,13 +896,21 @@ events.push(function() {
 
 		var ajaxRequest;
 		var authserver = $('#authmode').val();
-		var cert;
+		var cacert;
 
 <?php if (count($a_ca) > 0): ?>
-			cert = $('#ldap_caref').val();
+			cacert = $('#ldap_caref').val();
+<?php else: ?>
+			cacert = '';
+<?php endif; ?>
+		var cert;
+
+<?php if (count($a_cert) > 0): ?>
+			cert = $('#ldap_certref').val();
 <?php else: ?>
 			cert = '';
 <?php endif; ?>
+
 /*
 		$('#containers').modal('show');
 		$('#serverlist').parent('div').prev('label').remove();
@@ -897,6 +932,7 @@ events.push(function() {
 					urltype:$('#ldap_urltype').val(),
 					proto:  $('#ldap_protver').val(),
 					authcn: $('#ldapauthcontainers').val(),
+					cacert: cacert,
 					cert:   cert
 				}
 			}

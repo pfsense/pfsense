@@ -668,6 +668,12 @@ $group->add($f2);
 
 $section->add($group);
 
+exec("/usr/local/sbin/clog /var/log/dhcpd.log | /usr/bin/awk '/IA_PD prefix:\ /{print $8}' | tail -n1", $ia_pd);
+$section->addInput(new Form_StaticText(
+	'Last PD Received',
+    $ia_pd ? implode($ia_pd):'No IA_PD found. Try a DHCP release/renew on your WAN interface.'
+    ));
+
 $f1 = new Form_Input(
 	'prefixrange_from',
 	null,

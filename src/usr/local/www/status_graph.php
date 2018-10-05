@@ -36,6 +36,9 @@
 require_once("guiconfig.inc");
 require_once("ipsec.inc");
 
+if (is_array($config["traffic_graphs"])){
+	$pconfig = $config["traffic_graphs"];
+}
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
 if (ipsec_enabled()) {
@@ -54,8 +57,9 @@ foreach (array('server', 'client') as $mode) {
 
 $ifdescrs = array_merge($ifdescrs, interface_ipsec_vti_list_all());
 
-if ($_REQUEST['if']) {
-	$curif = $_REQUEST['if'];
+if (!empty($_POST)) {
+	// update view if settings are changed or saved
+	$curif = $_POST['if'];
 	$found = false;
 	foreach ($ifdescrs as $descr => $ifdescr) {
 		if ($descr == $curif) {
@@ -67,44 +71,53 @@ if ($_REQUEST['if']) {
 		header("Location: status_graph.php");
 		exit;
 	}
-} else {
-	if (empty($ifdescrs["wan"])) {
-		/* Handle the case when WAN has been disabled. Use the first key in ifdescrs. */
-		reset($ifdescrs);
-		$curif = key($ifdescrs);
-	} else {
-		$curif = "wan";
+	$cursort = $_POST['sort'];
+	$curfilter = $_POST['filter'];
+	$curhostipformat = $_POST['hostipformat'];
+	$curbackgroundupdate = $_POST['backgroundupdate'];
+	$curinvert = $_POST['invert'];
+	$cursmoothing = $_POST['smoothfactor'];
+
+	// Save data to config
+	if (isset($_POST['save'])) {
+		$pconfig = array();
+		$pconfig["if"] = $curif;
+		$pconfig["sort"] = $cursort;
+		$pconfig["filter"] = $curfilter;
+		$pconfig["hostipformat"] = $curhostipformat;
+		$pconfig["backgroundupdate"] = $curbackgroundupdate;
+		$pconfig["smoothfactor"] = $cursmoothing;
+		$pconfig["invert"] = $curinvert;
+		$config["traffic_graphs"] = array();
+		$config["traffic_graphs"] = $pconfig;
+		write_config("Traffic Graphs settings updated");
 	}
-}
-if ($_REQUEST['sort']) {
-	$cursort = $_REQUEST['sort'];
 } else {
-	$cursort = "";
-}
-if ($_REQUEST['filter']) {
-	$curfilter = $_REQUEST['filter'];
-} else {
-	$curfilter = "";
-}
-if ($_REQUEST['hostipformat']) {
-	$curhostipformat = $_REQUEST['hostipformat'];
-} else {
-	$curhostipformat = "";
-}
-if ($_REQUEST['backgroundupdate']) {
-	$curbackgroundupdate = $_REQUEST['backgroundupdate'];
-} else {
-	$curbackgroundupdate = "";
-}
-if (isset($_REQUEST['smoothfactor'])){
-	$cursmoothing = $_REQUEST['smoothfactor'];
-} else {
-	$cursmothing = 0;
-}
-if ($_REQUEST['invert']){
-	$curinvert = $_REQUEST['invert'];
-} else {
-	$curinvert = "";
+	// default settings from config
+	if (is_array($pconfig)) {
+		$curif = $pconfig['if'];
+		$cursort = $pconfig['sort'];
+		$curfilter = $pconfig['filter'];
+		$curhostipformat = $pconfig['hostipformat'];
+		$curbackgroundupdate = $pconfig['backgroundupdate'];
+		$cursmoothing = $pconfig['smoothfactor'];
+		$curinvert = $pconfig['invert'];
+	} else {
+		// initialize when no config details are present
+		if (empty($ifdescrs["wan"])) {
+			/* Handle the case when WAN has been disabled. Use the first key in ifdescrs. */
+			reset($ifdescrs);
+			$curif = key($ifdescrs);
+		} else {
+			$curif = "wan";
+		}
+		$cursort = "";
+		$curfilter = "";
+		$curhostipformat = "";
+		$curbackgroundupdate = "";
+		$cursmoothing = 0;
+		$curinvert = "";
+	}
 }
 
 function iflist() {
@@ -123,7 +136,7 @@ $pgtitle = array(gettext("Status"), gettext("Traffic Graph"));
 
 include("head.inc");
 
-$form = new Form(false);
+$form = new Form();
 $form->addClass('auto-submit');
 
 $section = new Form_Section('Graph Settings');

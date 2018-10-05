@@ -362,7 +362,7 @@ $status_menu[] = array(gettext("Package Logs"), "/status_pkglogs.php");
 $status_menu[] = array(gettext("Queues"), "/status_queues.php");
 $status_menu[] = array(gettext("Services"), "/status_services.php");
 $status_menu[] = array(gettext("System Logs"), "/status_logs.php");
-$status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php?if=wan");
+$status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php");
 
 if (count($config['interfaces']) > 1) {
 	$status_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/status_upnp.php");

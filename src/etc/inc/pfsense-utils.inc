@@ -1890,20 +1890,7 @@ function add_hostname_to_watch($hostname) {
 }
 
 function is_fqdn($fqdn) {
-	$hostname = false;
-	if (preg_match("/[-A-Z0-9\.]+\.[-A-Z0-9\.]+/i", $fqdn)) {
-		$hostname = true;
-	}
-	if (preg_match("/\.\./", $fqdn)) {
-		$hostname = false;
-	}
-	if (preg_match("/^\./i", $fqdn)) {
-		$hostname = false;
-	}
-	if (preg_match("/\//i", $fqdn)) {
-		$hostname = false;
-	}
-	return($hostname);
+	return (bool) filter_var($fqdn, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME);
 }
 
 function pfsense_default_state_size() {
@@ -3418,12 +3405,12 @@ function compare_by_name($a, $b) {
  * NAME
  *   getarraybyref
  * INPUTS
- *   $array the array of which a items array needs to be found. 
+ *   $array the array of which a items array needs to be found.
  *   $args.. the sub-items to be retrieved/created
  * RESULT
  *   returns the array that was retrieved from configuration, its created if it does not exist
  * NOTES
- *   Used by haproxy / acme / others.?. . 
+ *   Used by haproxy / acme / others.?. .
  *   can be used like this:  $a_certificates = getarraybyref($config, 'installedpackages', 'acme', 'certificates', 'item');
  ******/
 function &getarraybyref(&$array) {

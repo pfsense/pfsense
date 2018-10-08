@@ -659,7 +659,7 @@ elif [ "${selected_model}" = "SG-1100" ]; then
 
 	echo "Writing the firmware to eMMC..."
 	echo "(this may take a few minutes to complete)"
-	/usr/bin/bunzip2 -c ${IMG} | /bin/dd of=/dev/${MMCDEV} bs=4m
+	/usr/bin/bzcat ${IMG} | /bin/dd of=/dev/${MMCDEV} bs=4m
 	if [ $? -ne 0 ]; then
 		echo "Error: Failed to write the image to disk"
 		exit 1

@@ -472,9 +472,12 @@ if (strlen($pti) > 0) {
 	$section->addInput(new Form_Checkbox(
 		'pti_disabled',
 		'Kernel PTI',
-		'Disable the kernel PTI',
+		'Forcefully disable the kernel PTI',
 		$pconfig['pti_disabled']
-	))->setHelp('Meltdown workaround.  If disabled the kernel memory can be accessed by unprivileged users on affected CPUs.');
+	))->setHelp('Meltdown workaround. If disabled the kernel memory can be accessed by unprivileged users on affected CPUs. ' .
+		    'This option forces the workaround off, and requires a reboot to activate. %1$s%1$s' .
+		    'PTI is active by default only on affected CPUs, if PTI is disabled by default then this option will have no effect. %1$s' .
+		    'Current PTI status: %2$s', "<br/>", ($pti == "1") ? "Enabled" : "Disabled");
 	$form->add($section);
 }
 $section = new Form_Section('Schedules');

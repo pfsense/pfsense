@@ -467,6 +467,7 @@ $helppages = array(
 	'tftp_files.php' => 'https://doc.pfsense.org/index.php/Tftpd_package',
 	'tinc_hosts.xml' => 'https://doc.pfsense.org/index.php/Tinc_package',
 	'tinc.xml' => 'https://doc.pfsense.org/index.php/Tinc_package',
+	'vpc_vpn_wizard.xml' => 'https://www.netgate.com/docs/pfsense/solutions/aws-vpn-appliance/vpc-wizard-guide.html',
 	'zabbix-agent-lts.xml' => 'https://doc.pfsense.org/index.php/Zabbix_Agent_package',
 	'zabbix-proxy-lts.xml' => 'https://doc.pfsense.org/index.php/Zabbix_Proxy_package',
 );

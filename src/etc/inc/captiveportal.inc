@@ -1666,17 +1666,17 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 					if ($context === 'radmac' && $login == mac_format($clientmac) || $authcfg['type'] === 'none' && empty($login)) {
 						$login = "unauthenticated";
 					}
-					// We determine a flag
-					if ($result === true) {
-						$val = 3;
-					} elseif ($result === false && !empty($attributes['reply_message'])) {
-						$val = 2;
-						$msg = $attributes['reply_message'];
-					} elseif ($result === false) {
-						$val = 1;
-					} elseif ($result === null) {
-						$val = 0;
-					}
+				}
+				// We determine a flag
+				if ($result === true) {
+					$val = 3;
+				} elseif ($result === false && !empty($attributes['reply_message'])) {
+					$val = 2;
+					$msg = $attributes['reply_message'];
+				} elseif ($result === false) {
+					$val = 1;
+				} elseif ($result === null) {
+					$val = 0;
 				}
 
 				if ($val >= $auth_val) {

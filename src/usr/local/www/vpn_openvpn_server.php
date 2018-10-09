@@ -104,6 +104,7 @@ if ($act == "new") {
 	$pconfig['ncp-ciphers'] = "AES-128-GCM";
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
+	$pconfig['tlsauth_keydir'] = "";
 	$pconfig['autotls_enable'] = "yes";
 	$pconfig['dh_length'] = 2048;
 	$pconfig['dev_mode'] = "tun";
@@ -149,6 +150,7 @@ if ($act == "edit") {
 				$pconfig['tlsauth_enable'] = "yes";
 				$pconfig['tls'] = base64_decode($a_server[$id]['tls']);
 				$pconfig['tls_type'] = $a_server[$id]['tls_type'];
+				$pconfig['tlsauth_keydir'] = $a_client[$id]['tlsauth_keydir'];
 			}
 
 			$pconfig['caref'] = $a_server[$id]['caref'];
@@ -529,6 +531,7 @@ if ($_POST['save']) {
 				}
 				$server['tls'] = base64_encode($pconfig['tls']);
 				$server['tls_type'] = $pconfig['tls_type'];
+				$pconfig['tlsauth_keydir'] = $a_client[$id]['tlsauth_keydir'];
 			}
 			$server['caref'] = $pconfig['caref'];
 			$server['crlref'] = $pconfig['crlref'];
@@ -805,6 +808,15 @@ if ($act=="new" || $act=="edit"):
 		))->setHelp('In Authentication mode the TLS key is used only as HMAC authentication for the control channel, protecting the peers from unauthorized connections. %1$s' .
 		    'Encryption and Authentication mode also encrypts control channel communication, providing more privacy and traffic control channel obfuscation.',
 			'<br/>');
+
+	$section->addInput(new Form_Select(
+		'tlsauth_keydir',
+		'*TLS keydir direction',
+		$pconfig['tlsauth_keydir'],
+		openvpn_get_keydirlist()
+        ))->setHelp('The TLS Key Direction must be set to complementary values on the client and server. ' .
+			'For example, if the server is set to 0, the client must be set to 1. ' .
+			'Both may be set to omit the direction, in which case the TLS Key will be used bidirectionally.');
 
 	if (count($a_ca)) {
 

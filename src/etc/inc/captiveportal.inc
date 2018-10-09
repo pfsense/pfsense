@@ -1619,10 +1619,9 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 				$msg = null;
 
 				/* Radius MAC authentication */
-				if ($cpcfg['auth_method'] === 'radmac' && $clientmac) {
+				if ($context === 'radmac' && $clientmac) {
 					if ($authcfg['type'] === 'radius') {
 						$login = mac_format($clientmac);
-						$password = $cpcfg['radmac_secret'];
 						$status = "MACHINE LOGIN";
 					} else {
 						/* Trying to perform a Radius MAC authentication on a non-radius server - shouldn't happen! - bail out */
@@ -1650,6 +1649,9 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 							$msg = gettext("Access Denied");
 						}
 					}
+					if ($context === 'radmac' && $result === null && empty($attributes['reply_message'])) {
+						$msg = gettext("RADIUS MAC Authentication Failed.");
+					}
 
 					if (empty($status)) {
 						if ($result === true) {
@@ -1661,7 +1663,7 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 						}
 					}
 
-					if ($cpcfg['auth_method'] === 'radmac' && $login == mac_format($clientmac) || $authcfg['type'] === 'none' && empty($login)) {
+					if ($context === 'radmac' && $login == mac_format($clientmac) || $authcfg['type'] === 'none' && empty($login)) {
 						$login = "unauthenticated";
 					}
 					// We determine a flag

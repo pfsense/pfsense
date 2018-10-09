@@ -184,7 +184,11 @@ EOD;
 
 } elseif ($_POST['accept'] || $cpcfg['auth_method'] === 'radmac') {
 	
-		if (!empty($_POST['auth_user2'])) { 
+		if ($cpcfg['auth_method'] === 'radmac' && !isset($_POST['accept'])) {
+			$user = $clientmac; 
+			$passwd = $cpcfg['radmac_secret'];
+			$context = 'radmac'; // Radius MAC authentication
+		} elseif (!empty($_POST['auth_user2'])) { 
 			$user = $_POST['auth_user2'];
 			$passwd = $_POST['auth_pass2'];
 			$context = 'second'; // Assume users to use the first context if auth_user2 is empty/does not exist
@@ -232,11 +236,9 @@ EOD;
 		
 		captiveportal_logportalauth($user, $clientmac, $clientip, $auth_result['login_status'], $replymsg);
 
-		/*Radius MAC authentication. */
-		if ($cpcfg['auth_method'] === 'radmac' && $type !== 'redir') {
-			echo gettext("RADIUS MAC Authentication Failed.");
-			ob_flush();
-			exit();
+		/* Radius MAC authentication. */
+		if ($context === 'radmac' && $type !== 'redir' && !isset($cpcfg['radmac_fallback'])) {
+			echo $replymsg;
 		} else {
 			portal_reply_page($redirurl, $type, $replymsg);
 		}

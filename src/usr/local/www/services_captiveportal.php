@@ -158,6 +158,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radacct_server'] = $a_cp[$cpzone]['radacct_server'];
 	$pconfig['radacct_enable'] = isset($a_cp[$cpzone]['radacct_enable']);
 	$pconfig['radmac_secret'] = $a_cp[$cpzone]['radmac_secret'];
+	$pconfig['radmac_fallback'] = isset($a_cp[$cpzone]['radmac_fallback']);
 	$pconfig['reauthenticate'] = isset($a_cp[$cpzone]['reauthenticate']);
 	$pconfig['reauthenticateacct'] = $a_cp[$cpzone]['reauthenticateacct'];
 	$pconfig['httpslogin_enable'] = isset($a_cp[$cpzone]['httpslogin']);
@@ -361,6 +362,7 @@ if ($_POST['save']) {
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
 		$newcp['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
 		$newcp['radmac_secret'] = $_POST['radmac_secret'] ? $_POST['radmac_secret'] : false;
+		$newcp['radmac_fallback'] = $_POST['radmac_fallback'] ? true : false;
 		$newcp['reauthenticateacct'] = $_POST['reauthenticateacct'];
 		if ($_POST['httpslogin_enable']) {
 			$newcp['httpslogin'] = true;
@@ -956,6 +958,13 @@ $section->addInput(new Form_Input(
 ))->setHelp('RADIUS MAC will automatically try to authenticate devices with their MAC address as username, and the password entered below as password. Devices will still need to make one HTTP request to get connected, throught.');
 
 $section->addInput(new Form_Checkbox(
+	'radmac_fallback',
+	'Login page Fallback',
+	'Display the login page as fallback if RADIUS MAC authentication failed.',
+	$pconfig['radmac_fallback']
+))->setHelp('When enabled, users will be redirected to the captive portal login page when RADIUS MAC authentication failed.');
+
+$section->addInput(new Form_Checkbox(
 	'radiussession_timeout',
 	'Session timeout',
 	'Use RADIUS Session-Timeout attributes',
@@ -1230,6 +1239,7 @@ events.push(function() {
 			hideCheckbox('reauthenticate', false);
 			hideClass('auth_server', false);
 			hideInput('radmac_secret', true);
+			hideCheckbox('radmac_fallback', true);
 			$('.auth_server .vouchers_helptext').removeClass('hidden');
 		}
 		else if(auth_method.indexOf("radmac") === 0) {
@@ -1244,6 +1254,7 @@ events.push(function() {
 			hideCheckbox('reauthenticate', false);
 			hideClass('auth_server', false);
 			hideInput('radmac_secret', false);
+			hideCheckbox('radmac_fallback', false);
 			$('.auth_server .vouchers_helptext').addClass('hidden');
 		} else {
 			// if "none" is selected : we hide most of authentication settings
@@ -1251,6 +1262,7 @@ events.push(function() {
 			hideCheckbox('reauthenticate', true);
 			hideClass('auth_server', true);
 			hideInput('radmac_secret', true);
+			hideCheckbox('radmac_fallback', true);
 		}
 
 

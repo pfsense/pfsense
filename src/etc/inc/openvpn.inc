@@ -504,7 +504,7 @@ function openvpn_get_keydirlist() {
 		''  => gettext('Use default direction'),
 		'0' => gettext('Direction 0'),
 		'1' => gettext('Direction 1'),
-		'2' => gettext('No keydir direction'),
+		'2' => gettext('Both irections'),
 	);
 	return $keydirs;
 }

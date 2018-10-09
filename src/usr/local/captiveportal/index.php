@@ -63,7 +63,7 @@ $cpsession = captiveportal_isip_logged($clientip);
 $ourhostname = portal_hostname_from_client_ip($clientip);
 /* Automatically switching to the logout page requires a custom logout page to be present. */
 if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['logouttext']))) {
-	/* if client already logged in so show logout page */
+	/* if client already connected and a custom logout page is set : show logout page */
 	$protocol = (isset($config['captiveportal'][$cpzone]['httpslogin'])) ? 'https://' : 'http://';
 	$logouturl = "{$protocol}{$ourhostname}/";
 
@@ -77,8 +77,9 @@ if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['l
 	include("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 	ob_flush();
 	return;
-} elseif (!empty($cpsession)) {
-	/*If someone try to access captive portal page while already connected*/	
+} elseif (!empty($cpsession) && (!isset($_POST['logout_id']) || !isset($config['captiveportal'][$cpzone]['logoutwin_enable']))) {
+	/* If client try to access captive portal page while already connected, 
+		but no custom logout page does exist and logout popup is disabled */	
 	echo gettext("You are connected.");
 	ob_flush();
 	return;

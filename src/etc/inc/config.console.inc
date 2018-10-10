@@ -700,7 +700,7 @@ function netgate_hardware_setup() {
 		} elseif (does_interface_exist('igb4')) {
 			/* It has 4 port ethernet addon */
 			$config['interfaces']['wan']['if'] = 'igb4';
-			$config['interfaces']['lan']['if'] = 'igb4';
+			$config['interfaces']['lan']['if'] = 'igb5';
 			$config['interfaces']['opt1'] = array(
 				'enable' => true,
 				'if' => 'ix0',

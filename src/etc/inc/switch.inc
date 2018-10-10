@@ -351,12 +351,8 @@ function switch_set_vlan_mode($swdev = NULL, $vlanmode = NULL) {
 function sg1100_switch_initial_setup() {
 	global $config;
 
-	if (!isset($config['switches']['switch']) || !is_array($config['switches']['switch'])) {
-		unset($config['switches']['switch']);
-		$config['switches']['switch'] = array();
-	}
-
 	/* Default settings for the SG-1100 switch. */
+	init_config_arr(array('switches', 'switch'));
 	$switches = &$config['switches']['switch'];
 	$switch = array();
 	$switch['device'] = "/dev/etherswitch0";
@@ -412,12 +408,8 @@ function sg1100_switch_initial_setup() {
 function plccb_switch_initial_setup() {
 	global $config;
 
-	if (!isset($config['switches']['switch']) || !is_array($config['switches']['switch'])) {
-		unset($config['switches']['switch']);
-		$config['switches']['switch'] = array();
-	}
-
 	/* Default settings for the XG-7100 switch. */
+	init_config_arr(array('switches', 'switch'));
 	$switches = &$config['switches']['switch'];
 	$switch = array();
 	$switch['device'] = "/dev/etherswitch0";
@@ -475,12 +467,8 @@ function plccb_switch_initial_setup() {
 function r1_switch_initial_setup() {
 	global $config;
 
-	if (!isset($config['switches']['switch']) || !is_array($config['switches']['switch'])) {
-		unset($config['switches']['switch']);
-		$config['switches']['switch'] = array();
-	}
-
 	/* Default settings for the SG-3100 switch. */
+	init_config_arr(array('switches', 'switch'));
 	$switches = &$config['switches']['switch'];
 	$switch = array();
 	$switch['device'] = "/dev/etherswitch0";

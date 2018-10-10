@@ -5924,13 +5924,14 @@ function upgrade_188_to_189() {
 
 	/* Migrate ssh setting to new location */
 	if (isset($config['system']['enablesshd'])) {
+		init_config_arr(array('system', 'ssh'));
 		$config['system']['ssh']['enable'] = "enabled";
 		unset($config['system']['enablesshd']);
 	}
 	/* Remove accidentally duplicated ssh config
 	 * See https://redmine.pfsense.org/issues/8974 */
 	if (isset($config['system']['sshd'])) {
-		$config['system']['sshd'];
+		unset($config['system']['sshd']);
 	}
 }
 

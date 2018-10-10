@@ -108,12 +108,6 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['sshdagentforwarding'] == "yes") {
-		$config['system']['ssh']['sshdagentforwarding'] = "enabled";
-	} else if (isset($config['system']['ssh']['sshdagentforwarding'])) {
-		unset($config['system']['ssh']['sshdagentforwarding']);
-	}
-
 	ob_flush();
 	flush();
 
@@ -262,7 +256,7 @@ if ($_POST) {
 		$sshd_agentforwarding = isset($config['system']['ssh']['sshdagentforwarding']);
 		if ($_POST['sshdagentforwarding']) {
 			$config['system']['ssh']['sshdagentforwarding'] = 'enabled';
-		} else {
+		} else if (isset($config['system']['ssh']['sshdagentforwarding'])) {
 			unset($config['system']['ssh']['sshdagentforwarding']);
 		}
 
@@ -537,7 +531,7 @@ $section->addInput(new Form_Checkbox(
 	'sshdagentforwarding',
 	'Allow Agent Forwarding',
 	'Enables ssh-agent forwarding support.',
-	isset($pconfig['sshdagentforwarding'])
+	$pconfig['sshdagentforwarding']
 ));
 
 $section->addInput(new Form_Input(

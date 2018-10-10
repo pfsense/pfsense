@@ -180,6 +180,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
 	$pconfig['reverseacct'] = isset($a_cp[$cpzone]['reverseacct']);
 	$pconfig['includeidletime'] = isset($a_cp[$cpzone]['includeidletime']);
+	$pconfig['radiusnasid'] = $a_cp[$cpzone]['radiusnasid'];
 	$pconfig['page'] = array();
 	if ($a_cp[$cpzone]['page']['htmltext']) {
 		$pconfig['page']['htmltext'] = $a_cp[$cpzone]['page']['htmltext'];
@@ -312,6 +313,9 @@ if ($_POST['save']) {
 	if (isset($_POST['radacct_enable']) && !in_array($_POST['reauthenticateacct'], array('none', 'stopstart', 'stopstartfreeradius', 'interimupdate'))) {
 		$input_errors[] = gettext("You need to select an option for Accounting Updates !");
 	}
+	if (trim($_POST['radiusnasid']) !== "" && !preg_match("/^[\x21-\x7e]{3,253}$/i", trim($_POST['radiusnasid']))) {
+		$input_errors[] = gettext("The NAS-Identifier must be 3-253 characters long and should only contain ASCII characters.");
+	}
 
 	if (!$input_errors) {
 		$newcp =& $a_cp[$cpzone];
@@ -390,6 +394,7 @@ if ($_POST['save']) {
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
 		$newcp['includeidletime'] = $_POST['includeidletime'] ? true : false;
+		$newcp['radiusnasid'] = trim($_POST['radiusnasid']);
 		if ($_POST['customhtml']) {
 			$newcp['customhtml'] = true;
 		} else {
@@ -916,6 +921,13 @@ $group->add(new Form_Select(
 			"This setting is useful if you want to provide multiple authentication method to your users. If you don't need multiple authentication method, then leave this setting empty.");
 $section->add($group);
 
+$section->addInput(new Form_Input(
+	'radiusnasid',
+	'NAS Identifier',
+	'text',
+	$pconfig['radiusnasid']
+))->setHelp('Specify a NAS identifier to override the default value (CaptivePortal-%s)', $cpzone);
+
 $section->addInput(new Form_Checkbox(
 	'reauthenticate',
 	'Reauthenticate Users',
@@ -1141,6 +1153,7 @@ events.push(function() {
 		hideInput('radmac_format', hide);
 		hideCheckbox('radiusperuserbw', hide);
 		hideCheckbox('radiustraffic_quota', hide);
+		hideInput('radiusnasid', hide);
 	}
 
 	function hideHTTPS() {

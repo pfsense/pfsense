@@ -1890,7 +1890,7 @@ function add_hostname_to_watch($hostname) {
 }
 
 function is_fqdn($fqdn) {
-	return (bool) preg_match('/^(?:(?!-)[-_a-z0-9]+(?<!-)\.)*(?!-)[a-z0-9\-]+(?<!-)\.(?:xn--)?[a-z]+[\.]?$/i', $str);
+	return (bool) preg_match('/^(?:(?!-)[-_a-z0-9]+(?<!-)\.)*(?!-)[a-z0-9\-]+(?<!-)\.(?:xn--)?[a-z]+[\.]?$/i', $fqdn);
 }
 
 function pfsense_default_state_size() {

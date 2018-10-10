@@ -1606,7 +1606,7 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 		foreach ($auth_servers as $authcfg) {
 			if ($authlevel < 3) {
 				$radmac_error = false;
-				$attributes = array("nas_identifier" => "CaptivePortal-{$cpzone}",
+				$attributes = array("nas_identifier" => empty($cpcfg["radiusnasid"]) ? "CaptivePortal-{$cpzone}" : $cpcfg["radiusnasid"],
 					"nas_port_type" => RADIUS_ETHERNET,
 					"nas_port" => $pipeno,
 					"framed_ip" => $clientip);
@@ -2683,7 +2683,8 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 	}
 	$nasmac = get_interface_mac(find_ip_interface($nasip));
 	$racct->putAttribute(RADIUS_NAS_IP_ADDRESS, $nasip, "addr");
-	$racct->putAttribute(RADIUS_NAS_IDENTIFIER, "CaptivePortal-{$cpzone}");
+
+	$racct->putAttribute(RADIUS_NAS_IDENTIFIER, empty($cpcfg["radiusnasid"]) ? "CaptivePortal-{$cpzone}" : $cpcfg["radiusnasid"] );
 
 	if (is_int($ruleno)) {
 		$racct->putAttribute(RADIUS_NAS_PORT_TYPE, RADIUS_ETHERNET);

@@ -2455,10 +2455,16 @@ function system_get_thothid() {
 			mwexec("/usr/local/sbin/ping-auth -s > {$g['thoth_path']}/thothid 2>/dev/null");
 		}
 		if (file_exists($thothid_file)) {
-			$g['thothid'] = @file_get_contents($thothid_file);
+			$thothid = chop(@file_get_contents($thothid_file));
+			if (preg_match("/[^A-Za-z0-9]/", $thothid)) {
+				unlink($thothid_file);
+			} else {
+				$g['thothid'] = $thothid;
+			}
+			unset($thothid);
 		}
 	}
-	return (chop($g['thothid']) ?: '');
+	return ($g['thothid'] ?: '');
 }
 
 /*

@@ -136,9 +136,11 @@ main() {
 machine_arch=$(uname -p)
 case "${machine_arch}" in
 	aarch64)
-		model=$(/usr/sbin/ofwdump -P model -R /)
-		product=$(/bin/kenv -q smbios.system.product)
-		serial=$(/usr/sbin/ofwdump -P sn -R /)
+		model=$(/usr/sbin/ofwdump -P model -R / 2> /dev/null)
+		product=$(/bin/kenv -q smbios.system.product 2> /dev/null)
+		serial=$(/usr/sbin/ofwdump -P sn -R / 2> /dev/null)
+		thothid=$(/usr/local/sbin/ping-auth -s 2> /dev/null)
+		thotherr=$?
 		;;
 	*)
 		echo "Unsuported platform"
@@ -166,7 +168,15 @@ if [ -z "${serial}" ]; then
 	reboot
 fi
 
+if [ $thotherr -ne 0 ]; then
+	echo
+	echo "unsupported system: no Thoth module found.  aborting.
+	sleep 5
+	reboot
+fi
+
 echo "Serial: ${serial}"
+echo "Netgate Crypto ID: ${thothid}"
 
 # Find the boot device
 rootdev=$(/sbin/mount | /usr/bin/grep "on / " | /usr/bin/awk '{ printf $1 }')

@@ -168,9 +168,9 @@ if [ -z "${serial}" ]; then
 	reboot
 fi
 
-if [ $thotherr -ne 0 ]; then
+if [ ${thotherr} -ne 0 ]; then
 	echo
-	echo "unsupported system: no Thoth module found.  aborting.
+	echo "unsupported system: no Thoth module found.  aborting."
 	sleep 5
 	reboot
 fi

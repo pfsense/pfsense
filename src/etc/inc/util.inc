@@ -2602,7 +2602,7 @@ function get_smart_drive_list() {
 	foreach ($disk_list as $id => $disk) {
 		// We only want certain kinds of disks for S.M.A.R.T.
 		// 1 is a match, 0 is no match, False is any problem processing the regex
-		if (preg_match("/^(ad|da|ada|nvme).*[0-9]{1,2}$/", $disk) !== 1) {
+		if (preg_match("/^(ad|da|ada).*[0-9]{1,2}$/", $disk) !== 1) {
 			unset($disk_list[$id]);
 		}
 	}

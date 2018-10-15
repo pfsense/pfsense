@@ -148,7 +148,7 @@ case "${machine_arch}" in
 esac
 
 # XXX is it really necessary?
-if [ "${serial}" = "123456789" ]; then
+if [ "${serial}" = "123456789" -o "${serial}" = "0" ]; then
 	serial=""
 fi
 

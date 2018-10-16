@@ -3842,7 +3842,7 @@ class dnpipe_class extends dummynet_class {
 			$input_errors[] = gettext("Selected scheduler not recognized.");
 		}
 		$selectedAqm = getAQMs()[$data['aqm']];
-		if (!$selectedAqm) {
+		if (!empty($data['aqm']) && !$selectedAqm) {
 			$input_errors[] = gettext("Selected AQM not recognized.");
 		}
 		if ($data['ecn'] && $data['ecn'] == 'on' && !$selectedScheduler["ecn"] && !$selectedAqm["ecn"]) {
@@ -4531,7 +4531,7 @@ class dnqueue_class extends dummynet_class {
 
 		/* Limiter patch */
 		$selectedAqm = getAQMs()[$data['aqm']];
-		if (!$selectedAqm) {
+		if (!empty($data['aqm']) && !$selectedAqm) {
 			$input_errors[] = gettext("Selected AQM not recognized.");
 		}
 		if ($data['ecn'] && $data['ecn'] == 'on' && !$selectedAqm["ecn"]) {

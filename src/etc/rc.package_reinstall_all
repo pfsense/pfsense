@@ -26,7 +26,6 @@ $ntries = 1;
 $max_tries = 5;
 
 mark_subsystem_dirty('packagelock');
-unlink_if_exists("{$g['conf_path']}/needs_package_sync");
 
 /* If it's still booting, give it a few seconds before start */
 if (platform_booting()) {
@@ -41,12 +40,15 @@ while($ntries <= $max_tries) {
 	$ntries++;
 }
 
+unlink_if_exists("{$g['conf_path']}/needs_package_sync");
+
 if ($ntries > $max_tries) {
 	file_notice(gettext("Package reinstall"), gettext("Package reinstall " .
 	    "process was ABORTED due to lack of internet connectivity"));
 } else {
 	file_notice(gettext("Package reinstall"), gettext("Package reinstall " .
 	    "process finished successfully"));
+	mwexec_bg("{$g['etc_path']}/rc.start_packages");
 }
 
 /* Detect installed binary pkgs that are not registered in the system */

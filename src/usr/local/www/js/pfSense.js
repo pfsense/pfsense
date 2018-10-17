@@ -221,7 +221,9 @@ $(function() {
 			all.prop('checked', (all.length != checked.length));
 		});
 
-		a.appendTo($(this));
+		if ( ! $(this).parent().hasClass("notoggleall")) {
+			a.appendTo($(this));
+		}
 	});
 
 	// The need to NOT hide the advanced options if the elements therein are not set to the system

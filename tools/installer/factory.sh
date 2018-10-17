@@ -625,6 +625,10 @@ if [ "${selected_model}" = "SG-1000" ]; then
 	touch /mnt/root/factory_boot
 elif [ "${selected_model}" = "SG-1100" ]; then
 
+	# XXX - Not used for now.
+	# XXX - This is broken, do not use it without fix the partition table/fstab.
+	# XXX - 2018-10-17
+
 	# Identify the SDHCI devices
 	for DEV in mmcsd0 mmcsd1
 	do

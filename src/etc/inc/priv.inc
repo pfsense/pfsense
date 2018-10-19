@@ -239,7 +239,7 @@ function getAllowedPages($username, &$attributes = array()) {
 	}
 
 	$allowed_pages = array();
-	$allowed_groups = array();
+	$allowed_groups = array('all');
 
  	phpsession_begin();
 	if ($_SESSION['remoteauth']) {

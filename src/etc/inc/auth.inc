@@ -331,7 +331,7 @@ function get_user_privileges(& $user) {
 	global $config, $_SESSION;
 
 	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-	$allowed_groups = array();
+	$allowed_groups = array('all');
 
 	$privs = $user['priv'];
 	if (!is_array($privs)) {

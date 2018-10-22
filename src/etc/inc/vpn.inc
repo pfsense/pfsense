@@ -1502,22 +1502,18 @@ EOD;
 					if (strlen($mkent['pool_address']) < 1 || !is_ipaddr($mkent['pool_address'])) {
 						continue;
 					}
-
+					$clientid = ($mkent['ident_type'] == "none") ? "\"{$mkent['ident']}\"" : "{$mkent['ident_type']}:{$mkent['ident']}";
+					$clienteapid = ($ph1ent['authentication_method'] == "eap-mschapv2") ? $clientid : '%identity';
 					$ipsecfin .= "\nconn mobile-{$mobilekey_counter}\n";
 					$ipsecfin .= "\talso = con-mobile\n";
-					$ipsecfin .= "\teap_identity = %identity\n";
+					$ipsecfin .= "\teap_identity = {$clienteapid}\n";
 					$ipsecfin .= "\trightsourceip = {$mkent['pool_address']}/{$mkent['pool_netbits']}\n";
 
 					if (isset($mkent['dns_address']) && strlen($mkent['dns_address']) > 0 && is_ipaddr($mkent['dns_address'])) {
 						$ipsecfin .= "\trightdns = {$mkent['dns_address']}\n";
 					}
 
-					if ($mkent['ident_type'] == "none") {
-						$ipsecfin .= "\trightid = \"{$mkent['ident']}\"\n";
-					}
-					else {
-						$ipsecfin .= "\trightid = {$mkent['ident_type']}:{$mkent['ident']}\n";
-					}
+					$ipsecfin .= "\trightid = {$clientid}\n";
 
 					// optional: define left|rightid more granular
 					// supported: ipv4, ipv6, rfc822, email, userfqdn, fqdn, dns, asn1dn, asn1gn, keyid

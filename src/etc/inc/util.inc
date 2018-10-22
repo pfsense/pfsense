@@ -28,8 +28,8 @@ define('VIP_CARP', 2);
 define('VIP_IPALIAS', 3);
 
 /* kill a process by pid file */
-function killbypid($pidfile) {
-	return sigkillbypid($pidfile, "TERM");
+function killbypid($pidfile, $waitfor = 0) {
+	return sigkillbypid($pidfile, "TERM", $waitfor);
 }
 
 function isvalidpid($pidfile) {
@@ -52,12 +52,18 @@ function isvalidproc($proc) {
 	return is_process_running($proc);
 }
 
-/* sigkill a process by pid file */
+/* sigkill a process by pid file, and wait for it to terminate or remove the .pid file for $waitfor seconds */
 /* return 1 for success and 0 for a failure */
-function sigkillbypid($pidfile, $sig) {
+function sigkillbypid($pidfile, $sig, $waitfor = 0) {
 	if (isvalidpid($pidfile)) {
-		return mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
+		$result = mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
 		    " -F {$pidfile}", true);
+		$waitcounter = $waitfor * 10;
+		while(isvalidpid($pidfile) && $waitcounter > 0) {
+			$waitcounter = $waitcounter - 1;
+			usleep(100000);
+		}
+		return $result;
 	}
 
 	return 0;

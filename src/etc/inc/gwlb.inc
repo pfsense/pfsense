@@ -82,7 +82,7 @@ function stop_dpinger($gwname = '') {
 		}
 
 		if (isvalidpid($process['pidfile'])) {
-			killbypid($process['pidfile']);
+			killbypid($process['pidfile'], 3);
 		} else {
 			@unlink($process['pidfile']);
 		}

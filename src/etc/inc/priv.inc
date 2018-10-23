@@ -239,7 +239,7 @@ function getAllowedPages($username, &$attributes = array()) {
 	}
 
 	$allowed_pages = array();
-	$allowed_groups = array('all');
+	$allowed_groups = array();
 
  	phpsession_begin();
 	if ($_SESSION['remoteauth']) {
@@ -281,6 +281,12 @@ function getAllowedPages($username, &$attributes = array()) {
 			getPrivPages($local_user, $allowed_pages);
 			$allowed_groups = local_user_get_groups($local_user);
 		}
+	}
+
+	if (!is_array($allowed_groups)) {
+		$allowed_groups = array('all');
+	} else {
+		$allowed_groups[] = 'all';
 	}
 
 	// build a list of allowed pages

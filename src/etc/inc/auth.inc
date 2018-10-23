@@ -331,7 +331,7 @@ function get_user_privileges(& $user) {
 	global $config, $_SESSION;
 
 	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-	$allowed_groups = array('all');
+	$allowed_groups = array();
 
 	$privs = $user['priv'];
 	if (!is_array($privs)) {
@@ -369,12 +369,16 @@ function get_user_privileges(& $user) {
 		$allowed_groups = local_user_get_groups($user, true);
 	}
 
-	if (is_array($allowed_groups)) {
-		foreach ($allowed_groups as $name) {
-			$group = getGroupEntry($name);
-			if (is_array($group['priv'])) {
-				$privs = array_merge($privs, $group['priv']);
-			}
+	if (!is_array($allowed_groups)) {
+		$allowed_groups = array('all');
+	} else {
+		$allowed_groups[] = 'all';
+	}
+
+	foreach ($allowed_groups as $name) {
+		$group = getGroupEntry($name);
+		if (is_array($group['priv'])) {
+			$privs = array_merge($privs, $group['priv']);
 		}
 	}
 

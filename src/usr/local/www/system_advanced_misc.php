@@ -38,6 +38,13 @@ require_once("shaper.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
 
+$powerd_modes = array(
+	'hadp' => gettext('Hiadaptive'),
+	'adp' => gettext('Adaptive'),
+	'min' => gettext('Minimum'),
+	'max' => gettext('Maximum'),
+);
+
 $pconfig['proxyurl'] = $config['system']['proxyurl'];
 $pconfig['proxyport'] = $config['system']['proxyport'];
 $pconfig['proxyuser'] = $config['system']['proxyuser'];
@@ -122,6 +129,16 @@ if ($_POST) {
 
 	if ($_POST['proxypass'] != $_POST['proxypass_confirm']) {
 		$input_errors[] = gettext("Proxy password and confirmation must match.");
+	}
+
+	if (!in_array($_POST['powerd_ac_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid AC Power mode.");
+	}
+	if (!in_array($_POST['powerd_battery_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid Battery Power mode.");
+	}
+	if (!in_array($_POST['powerd_normal_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid Unknown Power mode.");
 	}
 
 	if (!$input_errors) {
@@ -409,32 +426,25 @@ $section->addInput(new Form_Checkbox(
 	'power consumption.	 It raises frequency faster, drops slower and keeps twice '.
 	'lower CPU load.');
 
-$modes = array(
-	'hadp' => gettext('Hiadaptive'),
-	'adp' => gettext('Adaptive'),
-	'min' => gettext('Minimum'),
-	'max' => gettext('Maximum'),
-);
-
 $section->addInput(new Form_Select(
 	'powerd_ac_mode',
 	'AC Power',
 	$pconfig['powerd_ac_mode'],
-	$modes
+	$powerd_modes
 ));
 
 $section->addInput(new Form_Select(
 	'powerd_battery_mode',
 	'Battery Power',
 	$pconfig['powerd_battery_mode'],
-	$modes
+	$powerd_modes
 ));
 
 $section->addInput(new Form_Select(
 	'powerd_normal_mode',
 	'Unknown Power',
 	$pconfig['powerd_normal_mode'],
-	$modes
+	$powerd_modes
 ));
 
 $form->add($section);

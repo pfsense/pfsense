@@ -306,7 +306,8 @@ function is_package_installed($package_name) {
 function get_package_id($package_name) {
 	global $config;
 
-	if (!is_array($config['installedpackages']['package'])) {
+	if (!isset($config['installedpackages']['package']) ||
+	    !is_array($config['installedpackages']['package'])) {
 		return -1;
 	}
 
@@ -583,7 +584,8 @@ function resync_all_package_configs($show_message = false) {
 
 	log_error(gettext("Resyncing configuration for all packages."));
 
-	if (!is_array($config['installedpackages']['package'])) {
+	if (!isset($config['installedpackages']['package']) ||
+	    !is_array($config['installedpackages']['package'])) {
 		return;
 	}
 
@@ -787,10 +789,12 @@ function install_package_xml($package_name) {
 	$pkgid = get_package_id($pkg_info['name']);
 	update_status(gettext("Saving updated package information...") . "\n");
 	if ($pkgid == -1) {
+		init_config_arr(array('installedpackages', 'package'));
 		$config['installedpackages']['package'][] = $pkg_info;
 		$changedesc = sprintf(gettext("Installed %s package."), $pkg_info['name']);
 		$to_output = gettext("done.") . "\n";
 	} else {
+		init_config_arr(array('installedpackages', 'package', $pkgid));
 		$config['installedpackages']['package'][$pkgid] = $pkg_info;
 		$changedesc = sprintf(gettext("Overwrote previous installation of %s."), $pkg_info['name']);
 		$to_output = gettext("overwrite!") . "\n";
@@ -946,10 +950,14 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	pkg_debug(sprintf(gettext("Removing %s package... "), $package_name));
 	update_status(sprintf(gettext("Removing %s components..."), $package_name) . "\n");
 	/* parse package configuration */
+	init_config_arr(array('installedpackages', 'package'));
 	$packages = &$config['installedpackages']['package'];
-	$menus =& $config['installedpackages']['menu'];
+	init_config_arr(array('installedpackages', 'menu'));
+	$menus = &$config['installedpackages']['menu'];
+	init_config_arr(array('installedpackages', 'service'));
 	$services = &$config['installedpackages']['service'];
-	$pkg_info =& $packages[$pkgid];
+	init_config_arr(array('installedpackages', 'package', $pkgid));
+	$pkg_info = &$packages[$pkgid];
 	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
 		/* remove menu items */
@@ -1181,7 +1189,8 @@ function stop_packages() {
 		}
 	}
 
-	if (is_array($config['installedpackages']['package'])) {
+	if (isset($config['installedpackages']['package']) &&
+	    is_array($config['installedpackages']['package'])) {
 		foreach ($config['installedpackages']['package'] as $package) {
 			echo " Stopping package {$package['name']}...";
 			$internal_name = get_package_internal_name($package);

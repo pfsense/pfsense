@@ -1691,7 +1691,7 @@ function openvpn_get_server_status($server, $socket) {
 			}
 
 			/* parse end of output line */
-			if (strstr($line, "END") || strstr($line, "ERROR")) {
+			if (strstr($line, "END\n") || strstr($line, "ERROR")) {
 				break;
 			}
 

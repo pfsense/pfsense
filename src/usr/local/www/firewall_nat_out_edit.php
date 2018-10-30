@@ -35,27 +35,10 @@ require_once("ipsec.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['nat'])) {
-	$config['nat'] = array();
-}
-if (!is_array($config['nat']['outbound'])) {
-	$config['nat']['outbound'] = array();
-}
-
-if (!is_array($config['nat']['outbound']['rule'])) {
-	$config['nat']['outbound']['rule'] = array();
-}
-
+init_config_arr(array('nat', 'outbound', 'rule'));
 $a_out = &$config['nat']['outbound']['rule'];
 
-if (!is_array($config['aliases'])) {
-	$config['aliases'] = array();
-}
-
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
-
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {

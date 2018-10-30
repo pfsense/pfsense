@@ -290,11 +290,15 @@ if ($_POST['save']) {
 				}
 
 				if (file_exists("{$temp_filename}/aliases")) {
-					$address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 5000);
-					if ($address == null) {
+					$t_address = array();
+					$t_address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 5000);
+					if ($t_address == null) {
 						/* nothing was found */
 						$input_errors[] = sprintf(gettext("A valid URL must be provided. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
+					} else {
+						array_push($address, ...$t_address);
 					}
+					unset($t_address);
 					mwexec("/bin/rm -rf " . escapeshellarg($temp_filename));
 				} else {
 					$input_errors[] = sprintf(gettext("URL '%s' is not valid."), $_POST['address' . $x]);

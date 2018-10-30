@@ -36,13 +36,8 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("itemid.inc");
 
-if (!is_array($config['nat'])) {
-	$config['nat'] = array();
-}
-if (!is_array($config['nat']['rule'])) {
-	$config['nat']['rule'] = array();
-}
-
+init_config_arr(array('nat', 'separator'));
+init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */

@@ -36,10 +36,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['nat']['npt'])) {
-	$config['nat']['npt'] = array();
-}
-
+init_config_arr(array('nat', 'npt'));
 $a_npt = &$config['nat']['npt'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */

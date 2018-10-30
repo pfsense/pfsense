@@ -50,10 +50,7 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['nat']['onetoone'])) {
-	$config['nat']['onetoone'] = array();
-}
-
+init_config_arr(array('nat', 'onetoone'));
 $a_1to1 = &$config['nat']['onetoone'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {

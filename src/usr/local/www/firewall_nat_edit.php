@@ -46,10 +46,8 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['nat']['rule'])) {
-	$config['nat']['rule'] = array();
-}
-
+init_config_arr(array('nat', 'separator'));
+init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {

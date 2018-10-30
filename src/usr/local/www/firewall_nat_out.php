@@ -38,17 +38,7 @@ require_once("shaper.inc");
 global $FilterIflist;
 global $GatewaysList;
 
-if (!is_array($config['nat'])) {
-	$config['nat'] = array();
-}
-if (!is_array($config['nat']['outbound'])) {
-	$config['nat']['outbound'] = array();
-}
-
-if (!is_array($config['nat']['outbound']['rule'])) {
-	$config['nat']['outbound']['rule'] = array();
-}
-
+init_config_arr(array('nat', 'outbound', 'rule'));
 $a_out = &$config['nat']['outbound']['rule'];
 
 // update rule order, POST[rule] is an array of ordered IDs

@@ -626,7 +626,9 @@ $section->addinput(new form_input(
 $counter = 0;
 $addresses = explode(' ', $pconfig['sshguard_whitelist']);
 
-while ($counter < count($addresses)) {
+$numaddrs = count($addresses);
+
+while ($counter < $numaddrs) {
 	list($address, $address_subnet) = explode("/", $addresses[$counter]);
 
 	$group = new Form_Group($counter == 0 ? 'Whitelist' : '');
@@ -644,7 +646,12 @@ while ($counter < count($addresses)) {
 		'Delete',
 		null,
 		'fa-trash'
-	))->addClass('btn-warning');
+	))->addClass('btn-warning btn-xs');
+
+	if ($counter == ($numaddrs - 1)) {
+		$group->setHelp(gettext(sprintf("%sAddresses added to the whitelist will bypass login protection.%s", 
+			'<span class="text-danger">', '</span>')));
+	}
 
 	$section->add($group);
 	$counter++;
@@ -712,8 +719,9 @@ print $form;
 //<![CDATA[
 events.push(function() {
 
-	// ---------- On initial page load ------------------------------------------------------------
+	checkLastRow();
 
+	// ---------- On initial page load ------------------------------------------------------------
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('ocsp-staple', "<?php 
@@ -722,7 +730,6 @@ events.push(function() {
 			?>" === "true");
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
-
 	 $('[name=webguiproto]').click(function () {
 		hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 		hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');

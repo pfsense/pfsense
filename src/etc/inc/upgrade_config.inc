@@ -5489,9 +5489,13 @@ function upgrade_173_to_174() {
  */
 function upgrade_174_to_175() {
 	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
 	if (is_array($config['ipsec']['phase1'])) {
 		$a_phase1 = &$config['ipsec']['phase1'];
 		foreach($a_phase1 as &$phase1) {
+			if (empty($phase1)) {
+				continue;
+			}
 			$item = array();
 			$item['encryption-algorithm'] = $phase1['encryption-algorithm'];
 			$item['hash-algorithm'] = $phase1['hash-algorithm'];

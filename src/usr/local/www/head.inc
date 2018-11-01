@@ -70,6 +70,7 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	<script type="text/javascript">
 	//<![CDATA[
 	var events = events || [];
+	var newSeperator = false;
 	//]]>
 	</script>
 </head>

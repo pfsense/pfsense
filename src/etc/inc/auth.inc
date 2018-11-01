@@ -1837,7 +1837,7 @@ function auth_get_authserver($name) {
 		}
 	}
 	if ($name == "Local Database") {
-		return array("name" => gettext("Local Database"), "type" => "Local Auth", "host" => $config['system']['hostname']);
+		return array("name" => "Local Database", "type" => "Local Auth", "host" => $config['system']['hostname']);
 	}
 }
 
@@ -1853,7 +1853,7 @@ function auth_get_authserver_list() {
 		}
 	}
 
-	$list["Local Database"] = array("name" => gettext("Local Database"), "type" => "Local Auth", "host" => $config['system']['hostname']);
+	$list["Local Database"] = array("name" => "Local Database", "type" => "Local Auth", "host" => $config['system']['hostname']);
 	return $list;
 }
 
@@ -1953,12 +1953,12 @@ function session_auth() {
 			$_SESSION['remoteauth'] = $remoteauth;
 			if ($remoteauth) {
 				if (empty($authcfg['type']) || ($authcfg['type'] == "Local Auth")) {
-					$_SESSION['authsource'] = gettext("Local Database");
+					$_SESSION['authsource'] = "Local Database";
 				} else {
-					$_SESSION['authsource'] = strtoupper(gettext($authcfg['type'])) . "/{$authcfg['name']}";
+					$_SESSION['authsource'] = strtoupper($authcfg['type']) . "/{$authcfg['name']}";
 				}
 			} else {
-				$_SESSION['authsource'] = gettext('Local Database Fallback') ;
+				$_SESSION['authsource'] = 'Local Database Fallback';
 			}
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['user_radius_attributes'] = $attributes;

@@ -658,6 +658,7 @@ function manage_log_code() {
 			if (isset($config['syslog'][$specific_log])) {
 				unset($config['syslog'][$specific_log]);
 			}
+			init_config_arr(array('syslog', $specific_log));
 
 		// Common to All Logs
 			if ($cronorder != '') { # if not using the general logging options setting (global)

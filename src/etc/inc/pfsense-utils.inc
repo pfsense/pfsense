@@ -1221,6 +1221,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$hdmi_only = false;
 	$serial_only = false;
 	$specific_platform = system_identify_specific_platform();
+	$video_console_type = (get_single_sysctl("machdep.bootmethod") == "UEFI") ? "efi" : "vidconsole";
 	if ($specific_platform['name'] == 'XG-1540') {
 		$vga_only = true;
 	} elseif ($specific_platform['name'] == 'Turbot Dual-E') {
@@ -1271,7 +1272,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'console="comconsole"';
 		$data[] = 'comconsole_speed="' . $serialspeed . '"';
 	} elseif ($vga_only === true) {
-		$data[] = 'console="vidconsole"';
+		$data[] = "console=\"{$video_console_type}\"";
 	} elseif (is_serial_enabled()) {
 		$data[] = 'boot_multicons="YES"';
 		$data[] = 'boot_serial="YES"';
@@ -1280,11 +1281,11 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		    $config['system']['primaryconsole'];
 		switch ($primaryconsole) {
 			case "video":
-				$data[] = 'console="vidconsole,comconsole"';
+				$data[] = "console=\"{$video_console_type},comconsole\"";
 				break;
 			case "serial":
 			default:
-				$data[] = 'console="comconsole,vidconsole"';
+				$data[] = "console=\"comconsole,{$video_console_type}\"";
 		}
 		$data[] = 'comconsole_speed="' . $serialspeed . '"';
 	}

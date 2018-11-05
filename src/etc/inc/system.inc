@@ -870,6 +870,7 @@ function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = tru
 		touch($logfile);
 	} else {
 		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
+		$log_size = ($log_size < (2**32)/2) ? $log_size : "511488";
 		$log_size = isset($config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize']) ? $config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize'] : $log_size;
 		exec("/usr/local/sbin/clog -i -s {$log_size} " . escapeshellarg($logfile));
 	}

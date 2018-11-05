@@ -649,6 +649,8 @@ function manage_log_code() {
 		if (isset($logfilesize) && (strlen($logfilesize) > 0)) {
 			if (!is_numeric($logfilesize) || ($logfilesize < 100000)) {
 				$input_errors[] = gettext("Log file size must be numeric and greater than or equal to 100000.");
+			} elseif ($logfilesize >= (2**32)/2) {
+				$input_errors[] = gettext("Log file size is too large. Set a smaller value.");
 			}
 		}
 

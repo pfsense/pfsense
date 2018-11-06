@@ -931,7 +931,10 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$existCerts = array();
 
-	foreach ($config['cert'] as $cert)	{
+	foreach ($config['cert'] as $cert) {
+		if (!is_array($cert) || empty($cert)) {
+			continue;
+		}
 		if (is_array($config['system']['user'][$userid]['cert'])) { // Could be MIA!
 			if (isset($userid) && in_array($cert['refid'], $config['system']['user'][$userid]['cert'])) {
 				continue;
@@ -1128,6 +1131,9 @@ $pluginparams['event'] = 'used_certificates';
 $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
 $i = 0;
 foreach ($a_cert as $i => $cert):
+	if (!is_array($cert) || empty($cert)) {
+		continue;
+	}
 	$name = htmlspecialchars($cert['descr']);
 	$sans = array();
 	if ($cert['crt']) {

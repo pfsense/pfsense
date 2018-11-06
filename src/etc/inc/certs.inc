@@ -680,9 +680,19 @@ function cert_get_dates($str_crt, $decode = true) {
 	$crt_details = openssl_x509_parse($str_crt);
 	if ($crt_details['validFrom_time_t'] > 0) {
 		$start = date('r', $crt_details['validFrom_time_t']);
+	} else {
+		$dt = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validFrom'], 'Z'));
+		if ($dt !== false) {
+			$start = $dt->format(DateTimeInterface::RFC2822);
+		}
 	}
 	if ($crt_details['validTo_time_t'] > 0) {
 		$end = date('r', $crt_details['validTo_time_t']);
+	} else {
+		$dt = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validTo'], 'Z'));
+		if ($dt !== false) {
+			$end = $dt->format(DateTimeInterface::RFC2822);
+		}
 	}
 	return array($start, $end);
 }

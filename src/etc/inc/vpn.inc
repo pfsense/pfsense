@@ -1426,14 +1426,18 @@ EOD;
 						//if (!empty($reqids[$idx])) {
 						//	$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
 						//}
+						$rightadd = "";
+						$leftadd = "";
 						if (!empty($vtireq[$idx])) {
 							$ipsecfin .= "\treqid = {$ph1ent['ikeid']}00{$idx}\n";
 							/* This interface will be a valid IPsec interface, so remove it from the cleanup list. */
 							$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array("ipsec{$ph1ent['ikeid']}00{$idx}"));
+							$rightadd = ",0.0.0.0/0";
+							$leftadd = ",0.0.0.0/0";
 						}
 						$ipsecfin .= $ipsecconnect;
-						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
-						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "\n";
+						$ipsecfin .= "\trightsubnet = {$rsubnet}{$rightadd}\n";
+						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "{$leftadd}\n";
 					}
 				} else {
 					log_error(sprintf(gettext("No phase2 specifications for tunnel with REQID = %s"), $ikeid));
@@ -1448,10 +1452,14 @@ EOD;
 				//if (!empty($reqids[$idx])) {
 				//	$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				//}
+				$rightadd = "";
+				$leftadd = "";
 				if (!empty($vtireq[0])) {
 					$ipsecfin .= "\treqid = {$ph1ent['ikeid']}000\n";
 					/* This interface will be a valid IPsec interface, so remove it from the cleanup list. */
 					$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array("ipsec{$ph1ent['ikeid']}000"));
+					$rightadd = ",0.0.0.0/0";
+					$leftadd = ",0.0.0.0/0";
 				}
 				$ipsecfin .= $ipsecconnect;
 				if (!isset($ph1ent['mobile']) && !empty($rightsubnet_spec)) {
@@ -1459,7 +1467,7 @@ EOD;
 					foreach ($rightsubnet_spec as $rightsubnet) {
 						$tempsubnets[$rightsubnet] = $rightsubnet;
 					}
-					$ipsecfin .= "\trightsubnet = " . join(",", $tempsubnets) . "\n";
+					$ipsecfin .= "\trightsubnet = " . join(",", $tempsubnets) . "{$rightadd}\n";
 					unset($tempsubnets, $rightsubnet);
 				}
 				if (!empty($leftsubnet_spec)) {
@@ -1467,7 +1475,7 @@ EOD;
 					foreach ($leftsubnet_spec as $leftsubnet) {
 						$tempsubnets[$leftsubnet] = $leftsubnet;
 					}
-					$ipsecfin .= "\tleftsubnet = " . join(",", $tempsubnets) . "\n";
+					$ipsecfin .= "\tleftsubnet = " . join(",", $tempsubnets) . "{$leftadd}\n";
 					unset($tempsubnets, $leftsubnet);
 				}
 			}

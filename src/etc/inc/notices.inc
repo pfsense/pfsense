@@ -396,6 +396,10 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		'persist' => false
 	);
 
+	if ($config['notifications']['smtp']['sslvalidate'] == "disabled") {
+		$params['socket_options'] = array('ssl' => array('verify_peer_name' => false));
+	}
+
 	if ($config['notifications']['smtp']['fromaddress']) {
 		$from = $config['notifications']['smtp']['fromaddress'];
 	} else {

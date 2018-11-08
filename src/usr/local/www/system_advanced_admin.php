@@ -160,7 +160,7 @@ if ($_POST) {
 
 			$config['system']['webgui']['disablehttpredirect'] = true;
 		} else {
-			if ($config['system']['webgui']['disablehttpredirect'] == true) {
+			if (isset($config['system']['webgui']['disablehttpredirect'])) {
 				$restart_webgui = true;
 			}
 
@@ -174,7 +174,7 @@ if ($_POST) {
 
 			$config['system']['webgui']['disablehsts'] = true;
 		} else {
-			if ($config['system']['webgui']['disablehsts'] == true) {
+			if (isset($config['system']['webgui']['disablehsts'])) {
 				$restart_webgui = true;
 			}
 
@@ -188,11 +188,11 @@ if ($_POST) {
 
 			$config['system']['webgui']['ocsp-staple'] = true;
 		} else {
-			if ($config['system']['webgui']['ocsp-staple'] == true) {
+			if (isset($config['system']['webgui']['ocsp-staple'])) {
 				$restart_webgui = true;
 			}
 
-			$config['system']['webgui']['ocsp-staple'] = false;
+			unset($config['system']['webgui']['ocsp-staple']);
 		}
 		
 		if ($_POST['webgui-login-messages'] == "yes") {

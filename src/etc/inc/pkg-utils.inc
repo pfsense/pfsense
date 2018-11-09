@@ -147,7 +147,7 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 		$read = array($pipes[1], $pipes[2]);
 		$except = array();
 
-		$stream = stream_select($read, $write, $except, $timeout);
+		$stream = @stream_select($read, $write, $except, $timeout);
 		if ($stream !== FALSE && $stream > 0) {
 			foreach ($read as $pipe) {
 				$content = stream_get_contents($pipe);

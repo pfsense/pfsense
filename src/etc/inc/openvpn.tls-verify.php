@@ -1,4 +1,3 @@
-#!/usr/local/bin/php-cgi -f
 <?php
 /*
  * openvpn.tls-verify.php

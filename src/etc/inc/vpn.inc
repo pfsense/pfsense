@@ -478,7 +478,7 @@ EOD;
 	$user_sources = explode(',', $config['ipsec']['client']['user_source']);
 	foreach ($user_sources as $user_source) {
 		$auth_server = auth_get_authserver($user_source);
-		$nice_user_source = strtolower(preg_replace('/\s+/', '_', $user_source));
+		$nice_user_source = strtolower(preg_replace('/[\s+\.]/', '_', $user_source));
 		if ($auth_server && $auth_server['type'] === 'radius') {
 			$radius_server_txt .= <<<EOD
 				{$nice_user_source} {

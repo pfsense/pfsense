@@ -29,14 +29,7 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-if (!is_array($config['qinqs'])) {
-	$config['qinqs'] = array();
-}
-
-if (!is_array($config['qinqs']['qinqentry'])) {
-	$config['qinqs']['qinqentry'] = array();
-}
-
+init_config_arr(array('qinqs', 'qinqentry'));
 $a_qinqs = &$config['qinqs']['qinqentry'];
 
 if ($_POST['act'] == "del") {

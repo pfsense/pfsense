@@ -32,10 +32,7 @@ $shortcut_section = "interfaces";
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['qinqs']['qinqentry'])) {
-	$config['qinqs']['qinqentry'] = array();
-}
-
+init_config_arr(array('qinqs', 'qinqentry'));
 $a_qinqs = &$config['qinqs']['qinqentry'];
 
 $portlist = get_interface_list();

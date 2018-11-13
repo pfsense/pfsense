@@ -1393,9 +1393,7 @@ function interface_ipsec_vti_configure($ph1ent) {
 				file_put_contents("/tmp/{$ipsecif}_router{$gwtype}", $addr['right']);
 			}
 		}
-		if (!platform_booting()) {
-			system_routing_configure(convert_real_interface_to_friendly_interface_name($ipsecif));
-		}
+		system_routing_configure(convert_real_interface_to_friendly_interface_name($ipsecif));
 	}
 }
 

@@ -151,9 +151,6 @@ if ($_POST) {
 	if ($_POST["nopackages"] <> "") {
 		$options = "nopackages";
 	}
-	if ($_POST["ver"] <> "") {
-		$ver2restore = $_POST["ver"];
-	}
 	if ($mode) {
 		if ($mode == "download") {
 			if ($_POST['encrypt']) {

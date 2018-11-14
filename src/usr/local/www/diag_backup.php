@@ -179,10 +179,7 @@ if ($_POST) {
 						$data = backup_config_section($_POST['backuparea']);
 						$name = "{$_POST['backuparea']}-{$name}";
 					}
-					$sfn = "{$g['tmp_path']}/config.xml.nopkg";
-					file_put_contents($sfn, $data);
-					exec("sed '/<installedpackages>/,/<\/installedpackages>/d' {$sfn} > {$sfn}-new");
-					$data = file_get_contents($sfn . "-new");
+					$data = preg_replace('/\t*<installedpackages>.*<\/installedpackages>\n/sm', '', $data);
 				} else {
 					if (!$_POST['backuparea']) {
 						/* backup entire configuration */

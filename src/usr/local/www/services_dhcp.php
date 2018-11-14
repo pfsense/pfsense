@@ -41,17 +41,6 @@ if (!$g['services_dhcp_server_enable']) {
 }
 
 $if = $_REQUEST['if'];
-
-/* if OLSRD is enabled, allow WAN to house DHCP. */
-if ($config['installedpackages']['olsrd']) {
-	foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-		if ($olsrd['enable']) {
-			$is_olsr_enabled = true;
-			break;
-		}
-	}
-}
-
 $iflist = get_configured_interface_with_descr();
 
 /* set the starting interface */
@@ -940,15 +929,6 @@ $section->addInput(new Form_StaticText(
 	'Available range',
 	$rangestr
 ));
-
-if ($is_olsr_enabled) {
-	$section->addInput(new Form_Select(
-		'netmask',
-		'Subnet mask',
-		$pconfig['netmask'],
-		array_combine(range(32, 1, -1), range(32, 1, -1))
-	));
-}
 
 $group = new Form_Group('*Range');
 

@@ -479,19 +479,6 @@ function services_dhcpdv4_configure() {
 		return 0;
 	}
 
-	/* if OLSRD is enabled, allow WAN to house DHCP. */
-	if (!function_exists('is_package_installed')) {
-		require_once('pkg-utils.inc');
-	}
-	if (is_package_installed('olsrd') && isset($config['installedpackages']['olsrd'])) {
-		foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-			if (isset($olsrd['enable']) && $olsrd['enable'] == "on") {
-				$is_olsr_enabled = true;
-				break;
-			}
-		}
-	}
-
 	$syscfg = $config['system'];
 	if (!is_array($config['dhcpd'])) {
 		$config['dhcpd'] = array();
@@ -670,12 +657,6 @@ EOPP;
 
 		if (!is_ipaddr($subnet)) {
 			continue;
-		}
-
-		if ($is_olsr_enabled == true) {
-			if ($dhcpifconf['netmask']) {
-				$subnetmask = gen_subnet_mask($dhcpifconf['netmask']);
-			}
 		}
 
 		$all_pools = array();
@@ -1406,12 +1387,6 @@ EOD;
 		// (LAN, OPT1, OPT2...) as multiple /64 subnets. So the size
 		// of each subnet here is always /64.
 		$pdlen = 64;
-
-		if ($is_olsr_enabled == true) {
-			if ($dhcpv6ifconf['netmask']) {
-				$subnetmask = gen_subnet_maskv6($dhcpv6ifconf['netmask']);
-			}
-		}
 
 		$dnscfgv6 = "";
 

@@ -101,17 +101,6 @@ if (!$g['services_dhcp_server_enable']) {
 }
 
 $if = $_REQUEST['if'];
-
-/* if OLSRD is enabled, allow WAN to house DHCP. */
-if ($config['installedpackages']['olsrd']) {
-	foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-		if ($olsrd['enable']) {
-			$is_olsr_enabled = true;
-			break;
-		}
-	}
-}
-
 $iflist = get_configured_interface_with_descr();
 $iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 
@@ -633,15 +622,6 @@ if (is_ipaddrv6($ifcfgip)) {
 		'Available Range',
 		$range_from = gen_subnetv6($ifcfgip, $ifcfgsn) . ' to ' . gen_subnetv6_max($ifcfgip, $ifcfgsn)
 		))->setHelp($trackifname ? 'Prefix Delegation subnet will be appended to the beginning of the defined range':'');
-}
-
-if ($is_olsr_enabled) {
-	$section->addInput(new Form_Select(
-	'netmask',
-	'Subnet Mask',
-	$pconfig['netmask'],
-	array_combine(range(128, 1, -1), range(128, 1, -1))
-	));
 }
 
 $f1 = new Form_Input(

@@ -104,6 +104,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	}
 
 	filter_rules_sort();
+	init_config_arr(array('filter', 'rule'));
 	$a_filter = &$config['filter']['rule'];
 
 	/* Make up a new rule */
@@ -126,6 +127,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$tmpif = $int;
 
 	// Update the separators
+	init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 	$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 	$ridx = ifridx($tmpif, $after);	// get rule index within interface
 	$mvnrows = +1;
@@ -163,6 +165,7 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 		$config['aliases']['alias'] = array();
 	}
 
+	init_config_arr(array('aliases', 'alias'));
 	$a_aliases = &$config['aliases']['alias'];
 
 	/* Try to get the ID if the alias already exists */
@@ -289,6 +292,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	}
 
 	filter_rules_sort();
+	init_config_arr(array('filter', 'rule'));
 	$a_filter = &$config['filter']['rule'];
 
 	/* Make up a new rule */
@@ -392,6 +396,7 @@ function easyrule_parse_unblock($int, $host, $ipproto = "inet") {
 			return gettext("No block rules set on interface:") . ' ' . htmlspecialchars($int);
 		}
 
+		init_config_arr(array('aliases', 'alias', $id));
 		$alias = &$config['aliases']['alias'][$id];
 
 		if (is_subnet($host)) {

@@ -139,7 +139,7 @@ EOD;
 	$safe_logout_id = SQLite3::escapeString($_POST['logout_id']);
 	captiveportal_disconnect_client($safe_logout_id);
 
-} elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac') && $macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
+} elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac' || !empty($cpcfg['blockedmacsurl'])) && $macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
 	captiveportal_logportalauth($clientmac, $clientmac, $clientip, "Blocked MAC address");
 	if (!empty($cpcfg['blockedmacsurl'])) {
 		portal_reply_page($cpcfg['blockedmacsurl'], "redir");

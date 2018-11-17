@@ -2664,7 +2664,9 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 		$acctcfg['radius_secret'], $acctcfg['radius_timeout']);
 
 	$racct->authentic = RADIUS_AUTH_RADIUS;
-	if (!empty($username)) {
+	if ($cpcfg['auth_method'] === 'radmac' && $username === "unauthenticated" && !empty($clientmac)) {
+		$racct->username = mac_format($clientmac);
+	} elseif (!empty($username)) {
 		$racct->username = $username;
 	}
 

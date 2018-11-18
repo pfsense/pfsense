@@ -900,7 +900,7 @@ $group->add(new Form_Select(
 	true
 ))->setHelp("You can add a remote authentication server in the <a href=\"/system_authservers.php\">User Manager</a>.<br/>".
 	"<span class=\"vouchers_helptext\">Vouchers could also be used, please go to ".
-	"the <a href=\"services_captiveportal_vouchers.php?zone={$cpzone}\">Voutchers Page</a> to enable them.</span>");
+	"the <a href=\"services_captiveportal_vouchers.php?zone={$cpzone}\">Vouchers Page</a> to enable them.</span>");
 $section->add($group);
 
 $group = new Form_Group('Secondary authentication Server');
@@ -941,7 +941,7 @@ $section->addInput(new Form_Input(
 	'RADIUS MAC Secret',
 	'text',
 	$pconfig['radmac_secret']
-))->setHelp('RADIUS MAC will automatically try to authenticate devices with their MAC address as username, and the password entered below as password. Devices will still need to make one HTTP request to get connected, throught.');
+))->setHelp('RADIUS MAC will automatically try to authenticate devices with their MAC address as username, and the password entered below as password. Devices will still need to make one HTTP request to get connected, through.');
 
 $section->addInput(new Form_Checkbox(
 	'radiussession_timeout',
@@ -1107,7 +1107,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['nohttpsforwards']
 ))->setHelp('If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites will not be forwarded to the captive portal. ' .
 			'This prevents certificate errors from being presented to the user even if HTTPS logins are enabled. ' .
-			'Users must attempt a connecton to an HTTP (Port 80) site to get forwarded to the captive portal. ' .
+			'Users must attempt a connection to an HTTP (Port 80) site to get forwarded to the captive portal. ' .
 			'If HTTPS logins are enabled, the user will be redirected to the HTTPS login page.');
 
 $form->add($section);
@@ -1267,7 +1267,7 @@ events.push(function() {
 				else if(value.indexOf("Local Auth") === 0) {
 					shouldHideLocal = false;
 				}
-				if($('#auth_method').val().indexOf("authserver") === 0) { // There is no second auth possiblity when none/radmac are selected
+				if($('#auth_method').val().indexOf("authserver") === 0) { // There is no second auth possibility when none/radmac are selected
 					shouldHideSecondAuth = false;
 				}
 			});

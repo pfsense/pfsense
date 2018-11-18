@@ -2654,7 +2654,7 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 	} elseif ($type === 'update') {
         $racct = new Auth_RADIUS_Acct_Update;
 		if (!is_int($stop_time)) {
-			$stop_time = time(); // "top time" here will be used only for calcuating session time.
+			$stop_time = time(); // "top time" here will be used only for calculating session time.
 		}
 	} else {
 		return null;

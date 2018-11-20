@@ -1814,7 +1814,7 @@ function interfaces_carp_set_maintenancemode($carp_maintenancemode) {
 	if (is_array($viparr)) {
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] == "carp") {
-				interface_carp_configure($vip);
+				interface_carp_configure($vip, true);
 			}
 		}
 	}
@@ -2821,7 +2821,7 @@ function interface_ipalias_configure(&$vip) {
 	unset($iface, $af, $realif, $carpvip, $vhid);
 }
 
-function interface_carp_configure(&$vip) {
+function interface_carp_configure(&$vip, $maintenancemode_only = false) {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -2869,16 +2869,18 @@ function interface_carp_configure(&$vip) {
 	mwexec("/sbin/ifconfig {$realif} vhid " . escapeshellarg($vip['vhid']) .
 	    " {$advskew} {$advbase} {$password}");
 
-	if (is_ipaddrv4($vip['subnet'])) {
-		mwexec("/sbin/ifconfig {$realif} " .
-		    escapeshellarg($vip['subnet']) . "/" .
-		    escapeshellarg($vip['subnet_bits']) .
-		    " alias vhid " . escapeshellarg($vip['vhid']));
-	} else if (is_ipaddrv6($vip['subnet'])) {
-		mwexec("/sbin/ifconfig {$realif} inet6 " .
-		    escapeshellarg($vip['subnet']) . " prefixlen " .
-		    escapeshellarg($vip['subnet_bits']) . " alias vhid " .
-		    escapeshellarg($vip['vhid']));
+	if (!$maintenancemode_only) {
+		if (is_ipaddrv4($vip['subnet'])) {
+			mwexec("/sbin/ifconfig {$realif} " .
+			    escapeshellarg($vip['subnet']) . "/" .
+			    escapeshellarg($vip['subnet_bits']) .
+			    " alias vhid " . escapeshellarg($vip['vhid']));
+		} else if (is_ipaddrv6($vip['subnet'])) {
+			mwexec("/sbin/ifconfig {$realif} inet6 " .
+			    escapeshellarg($vip['subnet']) . " prefixlen " .
+			    escapeshellarg($vip['subnet_bits']) .
+			    " alias vhid " . escapeshellarg($vip['vhid']));
+		}
 	}
 
 	return $realif;

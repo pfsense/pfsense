@@ -202,7 +202,10 @@ function build_member_list() {
 			continue;
 		}
 
-		$memberlist['list'][$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
+		$hwaddr = get_interface_vendor_mac($ifn);
+
+		$memberlist['list'][$ifn] = $ifn . ' (' . $ifinfo['mac'] .
+		    ($hwaddr != $ifinfo['mac'] ? " | hw: {$hwaddr}" : '') . ')';
 
 		if (in_array($ifn, explode(",", $pconfig['members']))) {
 			array_push($memberlist['selected'], $ifn);

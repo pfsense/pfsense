@@ -354,7 +354,7 @@ if (is_array($config['hasync'])) {
 		$sections[] = 'voucher';
 	}
 
-	if (count($sections) <= 0) {
+	if (is_array($sections) && count($sections) <= 0) {
 		log_error("Nothing has been configured to be synched. Skipping....");
 		return;
 	}

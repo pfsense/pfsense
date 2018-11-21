@@ -139,10 +139,7 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['filter']['rule'])) {
-	$config['filter']['rule'] = array();
-}
-
+init_config_arr(array('filter', 'rule'));
 filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
@@ -608,7 +605,7 @@ if ($_POST['save']) {
 	}
 
 	if ($_POST['proto'] == "icmp") {
-		$t =& $_POST['icmptype'];
+		$t = $_POST['icmptype'];
 		if (isset($t) && !is_array($t)) {
 			// shouldn't happen but avoids making assumptions for data-sanitising
 			$input_errors[] = gettext("ICMP types expected to be a list if present, but is not.");
@@ -965,6 +962,7 @@ if ($_POST['save']) {
 				$a_filter[$id] = $filterent;
 			} else {							// rule moved to different interface
 				// Update the separators of previous interface.
+				init_config_arr(array('filter', 'separator', strtolower($if)));
 				$a_separators = &$config['filter']['separator'][strtolower($if)];
 				$ridx = ifridx($if, $id);		// get rule index within interface
 				$mvnrows = -1;
@@ -973,6 +971,7 @@ if ($_POST['save']) {
 				$a_filter[$id] = $filterent;	// save edited rule to new interface
 
 				// Update the separators of new interface.
+				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 				$ridx = ifridx($tmpif, $id);	// get rule index within interface
 				if ($ridx == 0) {				// rule was placed at the top
@@ -1004,6 +1003,7 @@ if ($_POST['save']) {
 				}
 
 				// Update the separators
+				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 				$ridx = ifridx($tmpif, $after);	// get rule index within interface
 				$mvnrows = +1;

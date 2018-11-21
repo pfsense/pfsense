@@ -33,16 +33,13 @@ require_once("util.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_pool.php');
 
-if (!is_array($config['load_balancer']['lbpool'])) {
-	$config['load_balancer']['lbpool'] = array();
-}
-
+init_config_arr(array('load_balancer', 'lbpool'));
 $a_pool = &$config['load_balancer']['lbpool'];
 
 $id = $_REQUEST['id'];
 
-
 if (isset($id) && $a_pool[$id]) {
+	init_config_arr(array('load_balancer', 'lbpool', $id));
 	$pconfig['name'] = $a_pool[$id]['name'];
 	$pconfig['mode'] = $a_pool[$id]['mode'];
 	$pconfig['descr'] = $a_pool[$id]['descr'];

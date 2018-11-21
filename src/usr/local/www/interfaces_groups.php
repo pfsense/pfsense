@@ -29,14 +29,7 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-if (!is_array($config['ifgroups'])) {
-	$config['ifgroups'] = array();
-}
-
-if (!is_array($config['ifgroups']['ifgroupentry'])) {
-	$config['ifgroups']['ifgroupentry'] = array();
-}
-
+init_config_arr(array('ifgroups', 'ifgroupentry'));
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
 
 if ($_POST['act'] == "del") {

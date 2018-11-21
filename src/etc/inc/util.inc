@@ -1268,7 +1268,9 @@ function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
 	global $config;
 
 	$list = array();
-	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip'])) {
+	if (!is_array($config['virtualip']) ||
+	    !is_array($config['virtualip']['vip']) ||
+	    empty($config['virtualip']['vip'])) {
 		return ($list);
 	}
 
@@ -1328,7 +1330,9 @@ function get_configured_vip_subnetv6($vipinterface = '') {
 function get_configured_vip_detail($vipinterface = '', $family = 'inet', $what = 'ip') {
 	global $config;
 
-	if (empty($vipinterface) || !is_array($config['virtualip']['vip']) ||
+	if (empty($vipinterface) ||
+	    !is_array($config['virtualip']) ||
+	    !is_array($config['virtualip']['vip']) ||
 	    empty($config['virtualip']['vip'])) {
 		return (NULL);
 	}

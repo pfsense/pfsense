@@ -31,10 +31,7 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("unbound.inc");
 
-if (!is_array($config['unbound']['acls'])) {
-	$config['unbound']['acls'] = array();
-}
-
+init_config_arr(array('unbound', 'acls'));
 $a_acls = &$config['unbound']['acls'];
 
 $id = $_REQUEST['id'];

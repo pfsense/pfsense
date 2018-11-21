@@ -179,6 +179,7 @@ function build_interface_list() {
 	return($iflist);
 }
 
+init_config_arr(array('ntpd'));
 $pconfig = &$config['ntpd'];
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();

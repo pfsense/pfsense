@@ -55,13 +55,7 @@ if (empty($tab)) {
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
 $pglinks = array("", "firewall_aliases.php?tab=" . $tab, "@self");
 
-if (!is_array($config['aliases'])) {
-	$config['aliases'] = array();
-}
-
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
 if ($_POST) {

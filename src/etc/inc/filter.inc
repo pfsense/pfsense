@@ -212,7 +212,7 @@ function filter_delete_states_for_down_gateways() {
 			if (empty($a_gateways[$gateway['monitor']])) {
 				continue;
 			}
-			$gwstatus =& $a_gateways[$gateway['monitor']];
+			$gwstatus = &$a_gateways[$gateway['monitor']];
 			if (strstr($gwstatus['status'], "down")) {
 				$any_gateway_down = true;
 				break;
@@ -1612,7 +1612,7 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	foreach (get_staticroutes(false, false, true) as $route) {
 		$netip = explode("/", $route['network']);
 		if (isset($GatewaysList[$route['gateway']])) {
-			$gateway =& $GatewaysList[$route['gateway']];
+			$gateway = &$GatewaysList[$route['gateway']];
 			if (!interface_has_gateway($gateway['interface']) && is_private_ip($netip[0])) {
 				$tonathosts[] = $route['network'];
 				$descriptions[] = gettext("static route");

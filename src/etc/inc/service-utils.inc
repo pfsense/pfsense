@@ -52,7 +52,7 @@ function write_rcfile($params) {
 	$towrite .= "\t{$params['start']}\n";
 	$towrite .= "}\n\n";
 	if (!empty($params['stop'])) {
-		$tokill =& $params['stop'];
+		$tokill = &$params['stop'];
 	} else if (!empty($params['executable'])) {
 		/* just nuke the executable */
 		$tokill = "/usr/bin/killall " . escapeshellarg($params['executable']);
@@ -92,7 +92,7 @@ function start_service($name, $after_sync = false) {
 				if ($service['rcfile']) {
 					$prefix = RCFILEPREFIX;
 					if (!empty($service['prefix'])) {
-						$prefix =& $service['prefix'];
+						$prefix = &$service['prefix'];
 					}
 					if (file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
 						mwexec_bg("{$prefix}{$service['rcfile']} start");
@@ -120,7 +120,7 @@ function stop_service($name) {
 				if ($service['rcfile']) {
 					$prefix = RCFILEPREFIX;
 					if (!empty($service['prefix'])) {
-						$prefix =& $service['prefix'];
+						$prefix = &$service['prefix'];
 					}
 					if (file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
 						mwexec("{$prefix}{$service['rcfile']} stop");

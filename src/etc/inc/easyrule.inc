@@ -98,13 +98,8 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 		return true;
 	}
 
-	/* No rules, start a new array */
-	if (!is_array($config['filter']['rule'])) {
-		$config['filter']['rule'] = array();
-	}
-
-	filter_rules_sort();
 	init_config_arr(array('filter', 'rule'));
+	filter_rules_sort();
 	$a_filter = &$config['filter']['rule'];
 
 	/* Make up a new rule */
@@ -158,11 +153,6 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 	$host = trim($host, "[]");
 	if (!is_ipaddr($host) && !is_subnet($host)) {
 		return false;
-	}
-
-	/* If there are no aliases, start an array */
-	if (!is_array($config['aliases']['alias'])) {
-		$config['aliases']['alias'] = array();
 	}
 
 	init_config_arr(array('aliases', 'alias'));
@@ -286,13 +276,8 @@ function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
 function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipproto) {
 	global $config;
 
-	/* No rules, start a new array */
-	if (!is_array($config['filter']['rule'])) {
-		$config['filter']['rule'] = array();
-	}
-
-	filter_rules_sort();
 	init_config_arr(array('filter', 'rule'));
+	filter_rules_sort();
 	$a_filter = &$config['filter']['rule'];
 
 	/* Make up a new rule */

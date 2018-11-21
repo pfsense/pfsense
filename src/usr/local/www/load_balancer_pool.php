@@ -32,10 +32,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['load_balancer']['lbpool'])) {
-	$config['load_balancer']['lbpool'] = array();
-}
-
+init_config_arr(array('load_balancer', 'lbpool'));
 $a_pool = &$config['load_balancer']['lbpool'];
 
 $pconfig = $_POST;

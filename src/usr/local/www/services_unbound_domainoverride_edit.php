@@ -34,10 +34,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['unbound']['domainoverrides'])) {
-	$config['unbound']['domainoverrides'] = array();
-}
-
+init_config_arr(array('unbound', 'domainoverrides'));
 $a_domainOverrides = &$config['unbound']['domainoverrides'];
 $id = $_REQUEST['id'];
 

@@ -105,12 +105,8 @@ if (!is_array($config['system']['authserver'])) {
 
 $a_server = array_values(auth_get_authserver_list());
 
-
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
-
-$a_ca =& $config['ca'];
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
 $act = $_REQUEST['act'];
 

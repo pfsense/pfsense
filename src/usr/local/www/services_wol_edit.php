@@ -42,14 +42,7 @@ function wol_sort() {
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['wol'])) {
-	$config['wol'] = array();
-}
-
-if (!is_array($config['wol']['wolentry'])) {
-	$config['wol']['wolentry'] = array();
-}
-
+init_config_arr(array('wol', 'wolentry'));
 $a_wol = &$config['wol']['wolentry'];
 
 if (is_numericint($_REQUEST['id'])) {

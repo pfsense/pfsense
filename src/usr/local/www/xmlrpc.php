@@ -449,6 +449,7 @@ class pfsense_xmlrpc_server {
 					continue;
 				}
 				$l_roll_idx = $l_rolls[$zone][$roll['number']];
+				init_config_arr(array('voucher', $zone));
 				$l_vouchers = &$config['voucher'][$zone];
 				$l_roll = $l_vouchers['roll'][$l_roll_idx];
 				if (!isset($l_roll['lastsync'])) {

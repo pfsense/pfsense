@@ -30,9 +30,7 @@
 require_once("guiconfig.inc");
 require_once("filter.inc");
 
-if (!is_array($config['load_balancer']['monitor_type'])) {
-	$config['load_balancer']['monitor_type'] = array();
-}
+init_config_arr(array('load_balancer', 'monitor_type'));
 $a_monitor = &$config['load_balancer']['monitor_type'];
 
 $pconfig = $_POST;

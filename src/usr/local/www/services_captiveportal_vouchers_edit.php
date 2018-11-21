@@ -41,27 +41,16 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+init_config_arr(array('voucher', $cpzone, 'roll'));
+$a_cp = &$config['captiveportal'];
+$a_roll = &$config['voucher'][$cpzone]['roll'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Vouchers"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_vouchers.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
-if (!is_array($config['voucher'])) {
-	$config['voucher'] = array();
-}
-
-if (!is_array($config['voucher'][$cpzone]['roll'])) {
-	$config['voucher'][$cpzone]['roll'] = array();
-}
-
-$a_roll = &$config['voucher'][$cpzone]['roll'];
 $id = $_REQUEST['id'];
-
 
 if (isset($id) && $a_roll[$id]) {
 	$pconfig['zone'] = $a_roll[$id]['zone'];

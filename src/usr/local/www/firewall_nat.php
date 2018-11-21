@@ -39,6 +39,7 @@ require_once("itemid.inc");
 init_config_arr(array('nat', 'separator'));
 init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
+$a_separators = &$config['nat']['separator'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
 if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($natent['interface'])) {
@@ -107,7 +108,6 @@ if (($_POST['act'] == "del") && have_natpfruleint_access($natent['interface'])) 
 		unset($a_nat[$_POST['id']]);
 
 		// Update the separators
-		$a_separators = &$config['nat']['separator'];
 		$ridx = $_POST['id'];
 		$mvnrows = -1;
 		move_separators($a_separators, $ridx, $mvnrows);
@@ -128,7 +128,6 @@ if (isset($_POST['del_x']) && have_natpfruleint_access($natent['interface'])) {
 
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		$a_separators = &$config['nat']['separator'];
 		$num_deleted = 0;
 
 		foreach ($_POST['rule'] as $rulei) {

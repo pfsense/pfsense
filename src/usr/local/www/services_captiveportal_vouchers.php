@@ -55,15 +55,9 @@ if (empty($cpzone)) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
-
-if (!is_array($config['voucher'])) {
-	$config['voucher'] = array();
-}
+init_config_arr(array('captiveportal'));
+init_config_arr(array('voucher', $cpzone, 'roll'));
+$a_cp = &$config['captiveportal'];
 
 if (empty($a_cp[$cpzone])) {
 	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));

@@ -34,10 +34,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("util.inc");
 
-if (!is_array($config['load_balancer']['setting'])) {
-	$config['load_balancer']['setting'] = array();
-}
-
+init_config_arr(array('load_balancer', 'setting'));
 $lbsetting = &$config['load_balancer']['setting'];
 
 if ($_POST) {

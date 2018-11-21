@@ -28,13 +28,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['gifs'])) {
-	$config['gifs'] = array();
-}
-if (!is_array($config['gifs']['gif'])) {
-	$config['gifs']['gif'] = array();
-}
-
+init_config_arr(array('gifs', 'gif'));
 $a_gifs = &$config['gifs']['gif'] ;
 
 function gif_inuse($num) {

@@ -1972,12 +1972,7 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 function save_gateway($gateway_settings, $realid = "") {
 	global $config;
 
-	if (!is_array($config['gateways'])) {
-		$config['gateways'] = array();
-	}
-	if (!is_array($config['gateways']['gateway_item'])) {
-		$config['gateways']['gateway_item'] = array();
-	}
+	init_config_arr(array('gateways', 'gateway_item'));
 	$a_gateway_item = &$config['gateways']['gateway_item'];
 	$reloadif = "";
 	$gateway = array();

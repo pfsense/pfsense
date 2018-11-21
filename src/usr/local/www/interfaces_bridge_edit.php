@@ -28,14 +28,6 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['bridges'])) {
-	$config['bridges'] = array();
-}
-
-if (!is_array($config['bridges']['bridged'])) {
-	$config['bridges']['bridged'] = array();
-}
-
 function is_aoadv_used($pconfig) {
 	if (($pconfig['static'] !="") ||
 	    ($pconfig['private'] != "") ||
@@ -60,6 +52,7 @@ function is_aoadv_used($pconfig) {
 	return false;
 }
 
+init_config_arr(array('bridges', 'bridged'));
 $a_bridges = &$config['bridges']['bridged'];
 
 $ifacelist = get_configured_interface_with_descr();

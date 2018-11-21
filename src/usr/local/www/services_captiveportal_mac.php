@@ -47,11 +47,9 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'passthrumac'));
+$a_cp = &$config['captiveportal'];
+$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
@@ -81,19 +79,10 @@ if ($_POST['save']) {
 	}
 
 	if ($_POST['postafterlogin']) {
-		if (!is_array($a_passthrumacs)) {
+		if (empty($a_passthrumacs)) {
 			echo gettext("No entry exists yet!") ."\n";
 			exit;
 		}
-
-		if (empty($_POST['zone'])) {
-			echo gettext("Please set the zone on which the operation should be allowed");
-			exit;
-		}
-		if (!is_array($a_cp[$cpzone]['passthrumac'])) {
-			$a_cp[$cpzone]['passthrumac'] = array();
-		}
-		$a_passthrumacs =& $a_cp[$cpzone]['passthrumac'];
 
 		if ($_POST['username']) {
 			$mac = captiveportal_passthrumac_findbyname($_POST['username']);
@@ -131,8 +120,6 @@ if ($_POST['save']) {
 }
 
 if ($_POST['act'] == "del") {
-	$a_passthrumacs =& $a_cp[$cpzone]['passthrumac'];
-
 	if ($a_passthrumacs[$_POST['id']]) {
 		$cpzoneid = $a_cp[$cpzone]['zoneid'];
 		$rules = captiveportal_passthrumac_delete_entry($a_passthrumacs[$_POST['id']]);

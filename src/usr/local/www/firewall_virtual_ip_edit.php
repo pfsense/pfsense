@@ -35,14 +35,7 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['virtualip'])) {
-		$config['virtualip'] = array();
-}
-
-if (!is_array($config['virtualip']['vip'])) {
-		$config['virtualip']['vip'] = array();
-}
-
+init_config_arr(array('virtualip', 'vip'));
 $a_vip = &$config['virtualip']['vip'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {

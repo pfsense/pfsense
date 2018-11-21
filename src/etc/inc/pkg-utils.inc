@@ -668,7 +668,7 @@ function sync_package($package_name) {
 		return;	 // No package belongs to the pkg_id passed to this function.
 	}
 
-	$package =& $config['installedpackages']['package'][$pkg_id];
+	$package = &$config['installedpackages']['package'][$pkg_id];
 	if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		log_error(sprintf(gettext("The %s package is missing its configuration file and must be reinstalled."), $package['name']));
 		delete_package_xml($package['name']);
@@ -950,14 +950,13 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	pkg_debug(sprintf(gettext("Removing %s package... "), $package_name));
 	update_status(sprintf(gettext("Removing %s components..."), $package_name) . "\n");
 	/* parse package configuration */
-	init_config_arr(array('installedpackages', 'package'));
+	init_config_arr(array('installedpackages', 'package', $pkgid));
 	$packages = &$config['installedpackages']['package'];
+	$pkg_info = &$packages[$pkgid];
 	init_config_arr(array('installedpackages', 'menu'));
 	$menus = &$config['installedpackages']['menu'];
 	init_config_arr(array('installedpackages', 'service'));
 	$services = &$config['installedpackages']['service'];
-	init_config_arr(array('installedpackages', 'package', $pkgid));
-	$pkg_info = &$packages[$pkgid];
 	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
 		/* remove menu items */

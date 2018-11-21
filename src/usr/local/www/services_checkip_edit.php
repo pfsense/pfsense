@@ -28,14 +28,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['checkipservices'])) {
-	$config['checkipservices'] = array();
-}
-
-if (!is_array($config['checkipservices']['checkipservice'])) {
-	$config['checkipservices']['checkipservice'] = array();
-}
-
+init_config_arr(array('checkipservices', 'checkipservice'));
 $a_checkip = &$config['checkipservices']['checkipservice'];
 
 if (is_numericint($_REQUEST['id'])) {

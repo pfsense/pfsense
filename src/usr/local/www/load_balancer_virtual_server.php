@@ -33,10 +33,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("vslb.inc");
 
-if (!is_array($config['load_balancer']['virtual_server'])) {
-	$config['load_balancer']['virtual_server'] = array();
-}
-
+init_config_arr(array('load_balancer', 'virtual_server'));
 $a_vs = &$config['load_balancer']['virtual_server'];
 
 $pconfig = $_POST;

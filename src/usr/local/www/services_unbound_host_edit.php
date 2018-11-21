@@ -48,10 +48,7 @@ function hosts_sort() {
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['unbound']['hosts'])) {
-	$config['unbound']['hosts'] = array();
-}
-
+init_config_arr(array('unbound', 'hosts'));
 $a_hosts = &$config['unbound']['hosts'];
 $id = $_REQUEST['id'];
 

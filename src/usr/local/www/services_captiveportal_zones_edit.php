@@ -36,11 +36,8 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Add Zo
 $pglinks = array("", "services_captiveportal_zones.php", "@self");
 $shortcut_section = "captiveportal";
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 if ($_POST['Submit']) {
 	unset($input_errors);

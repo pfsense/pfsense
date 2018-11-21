@@ -413,6 +413,7 @@ function console_configure_dhcpd($version = 4) {
 			} while (!$is_ipaddr || !$is_inrange);
 		} while ($not_inorder);
 		$restart_dhcpd = true;
+		init_config_arr(array($dhcpd, $interface, 'range'));
 		$config[$dhcpd][$interface]['enable'] = true;
 		$config[$dhcpd][$interface]['range']['from'] = $dhcpstartip;
 		$config[$dhcpd][$interface]['range']['to'] = $dhcpendip;

@@ -660,7 +660,7 @@ while ($counter < $numaddrs) {
 
 $section->addInput(new Form_Button(
 	'addrow',
-	'Add whitelist',
+	'Add address',
 	null,
 	'fa-plus'
 ))->addClass('btn-success addbtn');

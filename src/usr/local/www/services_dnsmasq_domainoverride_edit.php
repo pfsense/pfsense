@@ -66,7 +66,7 @@ if ($_POST['save']) {
 			return (substr($haystack, 0, strlen($needle)) == $needle);
 		}
 
-		if (String_Begins_With(_msdcs, $_POST['domain'])) {
+		if (String_Begins_With('_msdcs', $_POST['domain'])) {
 			$subdomainstr = substr($_POST['domain'], 7);
 
 			if ($subdomainstr && !is_domain($subdomainstr)) {

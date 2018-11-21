@@ -56,27 +56,12 @@ if (!$if) {
 	exit;
 }
 
-if (!is_array($config['dhcpd'])) {
-	$config['dhcpd'] = array();
-}
-
-if (!is_array($config['dhcpd'][$if])) {
-	$config['dhcpd'][$if] = array();
-}
-
-if (!is_array($config['dhcpd'][$if]['staticmap'])) {
-	$config['dhcpd'][$if]['staticmap'] = array();
-}
-
-if (!is_array($config['dhcpd'][$if]['pool'])) {
-	$config['dhcpd'][$if]['pool'] = array();
-}
-
+init_config_arr(array('dhcpd', $if, 'staticmap'));
+init_config_arr(array('dhcpd', $if, 'pool'));
+$a_maps = &$config['dhcpd'][$if]['staticmap'];
 $a_pools = &$config['dhcpd'][$if]['pool'];
-
 $static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
 $netboot_enabled=isset($config['dhcpd'][$if]['netboot']);
-$a_maps = &$config['dhcpd'][$if]['staticmap'];
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);

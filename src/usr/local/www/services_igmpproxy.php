@@ -32,15 +32,9 @@
 
 require_once("guiconfig.inc");
 
-if(!is_array($config['igmpproxy'])){
-	$config['igmpproxy'] = array();
-}
-
-if (!is_array($config['igmpproxy']['igmpentry'])) {
-	$config['igmpproxy']['igmpentry'] = array();
-}
-
 //igmpproxy_sort();
+
+init_config_arr(array('igmpproxy', 'igmpentry'));
 $a_igmpproxy = &$config['igmpproxy']['igmpentry'];
 
 if ($_POST['apply']) {

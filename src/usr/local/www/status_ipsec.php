@@ -35,13 +35,7 @@ require_once("ipsec.inc");
 
 global $g;
 
-if(!is_array($config['ipsec'])){
-	$config['ipsec'] = array();
-}
-
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
-}
+init_config_arr(array('ipsec', 'phase1'));
 
 // If this is just an AJAX call to update the table body, just generate the body and quit
 if ($_REQUEST['ajax']) {

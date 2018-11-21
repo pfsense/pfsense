@@ -65,7 +65,7 @@ function step1_submitphpaction() {
 function step2_stepbeforeformdisplay() {
 	global $pkg, $stepid;
 
-	$fields =& $pkg['step'][1]['fields']['field'];
+	$fields = &$pkg['step'][1]['fields']['field'];
 
 	$found = false;
 	$authlist = auth_get_authserver_list();
@@ -127,7 +127,7 @@ function step3_submitphpaction() {
 function step4_stepbeforeformdisplay() {
 	global $pkg, $stepid;
 
-	$fields =& $pkg['step'][3]['fields']['field'];
+	$fields = &$pkg['step'][3]['fields']['field'];
 
 	$found = false;
 	$authlist = auth_get_authserver_list();
@@ -277,7 +277,7 @@ function step9_stepbeforeformdisplay() {
 		$city = $cavl['L'];
 		$org = $cavl['O'];
 	}
-	$fields =& $pkg['step'][$stepid]['fields']['field'];
+	$fields = &$pkg['step'][$stepid]['fields']['field'];
 
 	foreach ($fields as $idx => $field) {
 		switch ($field['name']) {

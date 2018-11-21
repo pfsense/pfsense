@@ -28,14 +28,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['laggs'])) {
-	$config['laggs'] = array();
-}
-
-if (!is_array($config['laggs']['lagg'])) {
-	$config['laggs']['lagg'] = array();
-}
-
+init_config_arr(array('laggs', 'lagg'));
 $a_laggs = &$config['laggs']['lagg'] ;
 
 function lagg_inuse($num) {

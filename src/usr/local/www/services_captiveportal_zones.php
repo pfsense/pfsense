@@ -35,9 +35,7 @@ require_once("captiveportal.inc");
 global $cpzone;
 global $cpzoneid;
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
+init_config_arr(array('captiveportal'));
 $a_cp = &$config['captiveportal'];
 
 if ($_POST['act'] == "del" && !empty($_POST['zone'])) {

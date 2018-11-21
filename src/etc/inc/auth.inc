@@ -829,7 +829,7 @@ function local_user_set_groups($user, $new_groups = NULL) {
 		if ($groupname == '' || in_array($groupname, $cur_groups)) {
 			continue;
 		}
-		$group = & $config['system']['group'][$groupindex[$groupname]];
+		$group = &$config['system']['group'][$groupindex[$groupname]];
 		$group['member'][] = $user['uid'];
 		$mod_groups[] = $group;
 
@@ -851,7 +851,7 @@ function local_user_set_groups($user, $new_groups = NULL) {
 		if (!isset($config['system']['group'][$groupindex[$groupname]])) {
 			continue;
 		}
-		$group = & $config['system']['group'][$groupindex[$groupname]];
+		$group = &$config['system']['group'][$groupindex[$groupname]];
 		if (is_array($group['member'])) {
 			$index = array_search($user['uid'], $group['member']);
 			array_splice($group['member'], $index, 1);

@@ -30,10 +30,8 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {

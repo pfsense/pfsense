@@ -39,10 +39,7 @@ require_once("pfsense-utils.inc");
 $logging_level = LOG_WARNING;
 $logging_prefix = gettext("Local User Database");
 
-if (!is_array($config['system']['group'])) {
-	$config['system']['group'] = array();
-}
-
+init_config_arr(array('system', 'group'));
 $a_group = &$config['system']['group'];
 
 unset($id);
@@ -239,6 +236,7 @@ if (isset($_POST['save'])) {
 		 * changed.
 		 */
 		if (is_array($group['member'])) {
+			init_config_arr(array('system', 'user'));
 			$a_user = &$config['system']['user'];
 			foreach ($a_user as & $user) {
 				if (in_array($user['uid'], $group['member'])) {

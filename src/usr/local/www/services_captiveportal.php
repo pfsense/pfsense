@@ -54,11 +54,8 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Configuration"));
 $pglinks = array("", "services_captiveportal_zones.php", "@self", "@self");
@@ -126,17 +123,11 @@ if ($_REQUEST['act'] == "viewhtml") {
 	exit;
 }
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$a_ca =& $config['ca'];
-
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 
 if ($a_cp[$cpzone]) {
 	$cpzoneid = $pconfig['zoneid'] = $a_cp[$cpzone]['zoneid'];
@@ -319,7 +310,8 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		$newcp =& $a_cp[$cpzone];
+		init_config_arr(array('captiveportal', $cpzone));
+		$newcp = &$a_cp[$cpzone];
 		//$newcp['zoneid'] = $a_cp[$cpzone]['zoneid'];
 		if (empty($newcp['zoneid'])) {
 			$newcp['zoneid'] = 2;

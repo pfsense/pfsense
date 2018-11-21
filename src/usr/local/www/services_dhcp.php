@@ -118,10 +118,7 @@ if (is_array($config['dhcpd'][$if])) {
 		exit;
 	}
 
-	if (!is_array($config['dhcpd'][$if]['pool'])) {
-		$config['dhcpd'][$if]['pool'] = array();
-	}
-
+	init_config_arr(array('dhcpd', $if, 'pool'));
 	$a_pools = &$config['dhcpd'][$if]['pool'];
 
 	if (is_numeric($pool) && $a_pools[$pool]) {
@@ -132,10 +129,7 @@ if (is_array($config['dhcpd'][$if])) {
 		$dhcpdconf = &$config['dhcpd'][$if];
 	}
 
-	if (!is_array($config['dhcpd'][$if]['staticmap'])) {
-		$dhcpdconf['staticmap'] = array();
-	}
-
+	init_config_arr(array('dhcpd', $if, 'staticmap'));
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
 }
 

@@ -48,6 +48,7 @@ function delete_id($id, &$array) {
 	unset($array[$delete_index]);
 
 	// Update the separators
+	init_config_arr(array('filter', 'separator', strtolower($if)));
 	$a_separators = &$config['filter']['separator'][strtolower($if)];
 	// get rule index within interface
 	$ridx = ifridx($if, $delete_index);

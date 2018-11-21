@@ -1204,14 +1204,10 @@ EOD;
 function system_webgui_create_certificate() {
 	global $config, $g;
 
-	if (!is_array($config['ca'])) {
-		$config['ca'] = array();
-	}
-	$a_ca =& $config['ca'];
-	if (!is_array($config['cert'])) {
-		$config['cert'] = array();
-	}
-	$a_cert =& $config['cert'];
+	init_config_arr(array('ca'));
+	$a_ca = &$config['ca'];
+	init_config_arr(array('cert'));
+	$a_cert = &$config['cert'];
 	log_error(gettext("Creating SSL Certificate for this host"));
 
 	$cert = array();

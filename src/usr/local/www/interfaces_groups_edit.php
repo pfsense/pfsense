@@ -34,14 +34,7 @@ $pgtitle = array(gettext("Interfaces"), gettext("Interface Groups"), gettext("Ed
 $pglinks = array("", "interfaces_groups.php", "@self");
 $shortcut_section = "interfaces";
 
-if (!is_array($config['ifgroups'])) {
-	$config['ifgroups'] = array();
-}
-
-if (!is_array($config['ifgroups']['ifgroupentry'])) {
-	$config['ifgroups']['ifgroupentry'] = array();
-}
-
+init_config_arr(array('ifgroups', 'ifgroupentry'));
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
 $id = $_REQUEST['id'];
 

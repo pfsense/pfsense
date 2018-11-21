@@ -31,10 +31,7 @@ require_once("guiconfig.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_monitor.php');
 
-if (!is_array($config['load_balancer']['monitor_type'])) {
-	$config['load_balancer']['monitor_type'] = array();
-}
-
+init_config_arr(array('load_balancer', 'monitor_type'));
 $a_monitor = &$config['load_balancer']['monitor_type'];
 $id = $_REQUEST['id'];
 

@@ -26,7 +26,7 @@ require_once("util.inc");
 function step1_stepbeforeformdisplay() {
 	global $stepid, $savemsg, $pkg;
 
-	$fields =& $pkg['step'][0]['fields']['field'];
+	$fields = &$pkg['step'][0]['fields']['field'];
 
 	$wans = 0;
 	$lans = 0;
@@ -91,7 +91,7 @@ function step2_stepbeforeformdisplay() {
 
 	$cfgname = "traffic_shaper_wizard_dedicated.xml";
 
-	$fields =& $pkg['step'][1]['fields']['field'];
+	$fields = &$pkg['step'][1]['fields']['field'];
 
 	/*
 	unset($config['ezshaper']['step2']);
@@ -338,9 +338,8 @@ function step3_stepbeforeformdisplay() {
 
 	$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
 
-	$fields =& $pkg['step'][1]['fields']['field'];
-
-	$voipfields =& $pkg['step'][2]['fields']['field'];
+	$fields = &$pkg['step'][1]['fields']['field'];
+	$voipfields = &$pkg['step'][2]['fields']['field'];
 
 	$voipfields = array();
 	$enablefields = array();

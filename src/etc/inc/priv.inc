@@ -214,18 +214,12 @@ function getPrivPages(& $entry, & $allowed_pages) {
 	}
 
 	foreach ($entry['priv'] as $pname) {
-		if (strncmp($pname, "page-", 5)) {
+		if (strncmp($pname, "page-", 5) ||
+		    !is_array($priv_list[$pname]) ||
+		    !is_array($priv_list[$pname]['match'])) {
 			continue;
 		}
-		$priv = &$priv_list[$pname];
-		if (!is_array($priv)) {
-			continue;
-		}
-		$matches = &$priv['match'];
-		if (!is_array($matches)) {
-			continue;
-		}
-		foreach ($matches as $match) {
+		foreach ($priv_list[$pname]['match'] as $match) {
 			$allowed_pages[] = $match;
 		}
 	}

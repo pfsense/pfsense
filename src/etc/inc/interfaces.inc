@@ -1808,7 +1808,7 @@ function interfaces_carp_set_maintenancemode($carp_maintenancemode) {
 		$config["virtualip_carp_maintenancemode"] = true;
 		write_config(gettext("Enter CARP maintenance mode"));
 	}
-
+	init_config_arr(array('virtualip', 'vip'));
 	$viparr = &$config['virtualip']['vip'];
 
 	if (is_array($viparr)) {
@@ -5278,6 +5278,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan", $
 	global $config;
 
 	/* XXX: For speed reasons reference directly the interface array */
+	init_config_arr(array('interfaces'));
 	$ifdescrs = &$config['interfaces'];
 	//$ifdescrs = get_configured_interface_list(true);
 

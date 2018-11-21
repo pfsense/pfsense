@@ -807,6 +807,7 @@ function remove_text_from_file($file, $text) {
 function after_sync_bump_adv_skew() {
 	global $config, $g;
 	$processed_skew = 1;
+	init_config_arr(array('virtualip', 'vip'));
 	$a_vip = &$config['virtualip']['vip'];
 	foreach ($a_vip as $vipent) {
 		if ($vipent['advskew'] <> "") {
@@ -2704,7 +2705,7 @@ function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
 					$current[$tag . '_attr'] = $attributes_data;
 				}
 				$repeated_tag_index[$tag . '_' . $level] = 1;
-				$current = & $current[$tag];
+				$current = &$current[$tag];
 			} else {
 				if (isset ($current[$tag][0])) {
 					$current[$tag][$repeated_tag_index[$tag . '_' . $level]] = $result;
@@ -2721,7 +2722,7 @@ function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
 					}
 				}
 				$last_item_index = $repeated_tag_index[$tag . '_' . $level] - 1;
-				$current = & $current[$tag][$last_item_index];
+				$current = &$current[$tag][$last_item_index];
 			}
 		} elseif ($type == "complete") {
 			if (!isset ($current[$tag])) {
@@ -2756,7 +2757,7 @@ function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
 				}
 			}
 		} elseif ($type == 'close') {
-			$current = & $parent[$level -1];
+			$current = &$parent[$level -1];
 		}
 	}
 	return ($xml_array);

@@ -34,14 +34,7 @@ require_once("pkg-utils.inc");
 
 global $openvpn_tls_server_modes;
 
-if (!is_array($config['openvpn'])) {
-	$config['openvpn'] = array();
-}
-
-if (!is_array($config['openvpn']['openvpn-csc'])) {
-	$config['openvpn']['openvpn-csc'] = array();
-}
-
+init_config_arr(array('openvpn', 'openvpn-csc'));
 $a_csc = &$config['openvpn']['openvpn-csc'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {

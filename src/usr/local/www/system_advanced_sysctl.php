@@ -34,13 +34,7 @@
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
-if (!is_array($config['sysctl'])) {
-	$config['sysctl'] = array();
-}
-if (!is_array($config['sysctl']['item'])) {
-	$config['sysctl']['item'] = array();
-}
-
+init_config_arr(array('sysctl', 'item'));
 $a_tunable = &$config['sysctl']['item'];
 $tunables = system_get_sysctls();
 

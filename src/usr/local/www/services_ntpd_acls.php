@@ -170,6 +170,7 @@ if ($_POST) {
 	}
 }
 
+init_config_arr(array('ntpd'));
 $pconfig = &$config['ntpd'];
 
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("ACLs"));

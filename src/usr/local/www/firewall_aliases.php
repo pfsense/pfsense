@@ -35,14 +35,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['aliases'])) {
-	$config['aliases'] = array();
-}
-
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
-
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
 $tab = ($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/", "", $_REQUEST['tab']));

@@ -97,6 +97,7 @@ if ($_POST) {
 	}
 }
 
+init_config_arr(array('ntpd', 'pps'));
 $pconfig = &$config['ntpd']['pps'];
 
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("PPS"));

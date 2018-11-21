@@ -43,7 +43,8 @@ $groupid = $_REQUEST['groupid'];
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"), gettext("Edit"), gettext("Add Privileges"));
 $pglinks = array("", "system_usermanager.php", "system_groupmanager.php", "system_groupmanager.php?act=edit&groupid=" . $groupid, "@self");
 
-$a_group = & $config['system']['group'][$groupid];
+init_config_arr(array('system', 'group', $groupid));
+$a_group = &$config['system']['group'][$groupid];
 
 if (!is_array($a_group)) {
 	pfSenseHeader("system_groupmanager.php?id={$groupid}");

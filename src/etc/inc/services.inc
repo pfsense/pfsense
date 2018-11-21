@@ -1751,7 +1751,8 @@ function services_dhcrelay_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay.pid");
 
-	$dhcrelaycfg =& $config['dhcrelay'];
+	init_config_arr(array('dhcrelay'));
+	$dhcrelaycfg = &$config['dhcrelay'];
 
 	/* DHCPRelay enabled on any interfaces? */
 	if (!isset($dhcrelaycfg['enable'])) {
@@ -1826,7 +1827,8 @@ function services_dhcrelay6_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay6.pid");
 
-	$dhcrelaycfg =& $config['dhcrelay6'];
+	init_config_arr(array('dhcrelay6'));
+	$dhcrelaycfg = &$config['dhcrelay6'];
 
 	/* DHCPv6 Relay enabled on any interfaces? */
 	if (!isset($dhcrelaycfg['enable'])) {
@@ -2756,7 +2758,7 @@ function configure_cron() {
 	$crontab_contents = file("/etc/crontab", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
 	for ($i = 0; $i < count($crontab_contents); $i++) {
-		$cron_item =& $crontab_contents[$i];
+		$cron_item = &$crontab_contents[$i];
 		if (strpos($cron_item, "# pfSense specific crontab entries") !== false) {
 			array_splice($crontab_contents, $i - 1);
 			break;

@@ -171,6 +171,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 	if (!is_array($config['dhcpdv6'][$if]['staticmap'])) {
 		$config['dhcpdv6'][$if]['staticmap'] = array();
 	}
+	init_config_arr(array('dhcpdv6', $if, 'staticmap'));
 	$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 }
 

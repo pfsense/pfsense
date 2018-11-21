@@ -28,14 +28,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['dnsupdates'])) {
-	$config['dnsupdates'] = array();
-}
-
-if (!is_array($config['dnsupdates']['dnsupdate'])) {
-	$config['dnsupdates']['dnsupdate'] = array();
-}
-
+init_config_arr(array('dnsupdates', 'dnsupdate'));
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
 if ($_POST['act'] == "del") {

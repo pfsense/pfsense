@@ -38,10 +38,19 @@ include_once("interfaces.inc");//required for convert_real_interface_to_friendly
 // List of schedulers ('type' command on scheduler/pipe) that dummynet/ipfw is supposed to support
 function getSchedulers() {
 	return array(
+		"wf2q+" => array(
+			"name" => "Worst-case Weighted fair Queueing (default)",
+			"parameter_format" => "type wf2q+",
+			"description" => "Worst-case Weighted fair Queueing (WF2Q+) schedules flows with an associated weight. ".
+					 "WF2Q+ is the default algorithm used by previous versions.",
+			"parameters" => array(),
+			"ecn" => false
+		),
 		"fifo" => array(
 			"name" => "FIFO",
 			"parameter_format" => "type fifo",
-			"description" => "First-in-First-out is a fundamental queueing discipline which ensures packet sequence.",
+			"description" => "First-in-First-out is a fundamental queueing discipline which ensures packet sequence. ".
+					 "Dynamic queues are not supported with the FIFO scheduler (all packets are stored in a single queue).",
 			"parameters" => array(),
 			"ecn" => false
 		),
@@ -56,13 +65,6 @@ function getSchedulers() {
 			"name" => "Round Robin",
 			"parameter_format" => "type rr",
 			"description" => "Round Robin (RR) schedules packets in a round-robin fashion.",
-			"parameters" => array(),
-			"ecn" => false
-		),
-		"wf2q+" => array(
-			"name" => "Worst-case Weighted fair Queueing",
-			"parameter_format" => "type wf2q+",
-			"description" => "Worst-case Weighted fair Queueing (WF2Q+) schedules flows with an associated weight.",
 			"parameters" => array(),
 			"ecn" => false
 		),

@@ -38,6 +38,11 @@ if ($_REQUEST['getactivity']) {
 	}
 	echo gettext("Limiters:") . "\n";
 	echo $text;
+	$text = `/sbin/ipfw sched show`;
+	if ($text != "") {
+		echo "\n\n" . gettext("Schedulers") . ":\n";
+		echo $text;
+	}
 	$text = `/sbin/ipfw queue show`;
 	if ($text != "") {
 		echo "\n\n" . gettext("Queues") . ":\n";

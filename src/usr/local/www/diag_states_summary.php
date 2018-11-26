@@ -129,11 +129,8 @@ function build_port_info($portarr, $proto) {
 }
 
 function print_summary_table($label, $iparr, $sort = TRUE) {
-    foreach ($iparr as $ip => $ipinfo) {
-        $iparr[$ip]['ip'] = $ip;
-    }
 	if ($sort) {
-		usort($iparr, "sort_by_seen");
+		uasort($iparr, "sort_by_seen");
 	}
 
 ?>
@@ -170,7 +167,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 	}
 ?>
 						<tr>
-							<td<?= $rowSpan ?>><?=$ipinfo['ip'];?></td>
+							<td<?= $rowSpan ?>><?=$ip;?></td>
 							<td<?= $rowSpan ?> class="text-center"><?=$ipinfo['seen'];?></td>
 
 

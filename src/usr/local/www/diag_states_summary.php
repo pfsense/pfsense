@@ -27,6 +27,8 @@
 ##|*MATCH=diag_states_summary.php*
 ##|-PRIV
 
+ini_set('memory_limit','1024M');
+
 exec("/sbin/pfctl -s state", $states);
 
 $srcipinfo = array();
@@ -111,6 +113,10 @@ function sort_by_ip($a, $b) {
 	return ip2ulong($a) < ip2ulong($b) ? -1 : 1;
 }
 
+function sort_by_seen($a, $b) {
+	return $a['seen'] > $b['seen'] ? -1 : 1;
+}
+
 function build_port_info($portarr, $proto) {
 	if (!$portarr) {
 		return '';
@@ -129,8 +135,12 @@ function build_port_info($portarr, $proto) {
 }
 
 function print_summary_table($label, $iparr, $sort = TRUE) {
+    foreach ($iparr as $ip => $ipinfo) {
+        $iparr[$ip]['ip'] = $ip;
+    }
 	if ($sort) {
-		uksort($iparr, "sort_by_ip");
+		usort($iparr, "sort_by_seen");
+		//uksort($iparr, "sort_by_ip");
 	}
 
 ?>
@@ -157,7 +167,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 						</tr>
 					</thead>
 					<tbody>
-<?php foreach ($iparr as $ip => $ipinfo):
+<?php foreach ($iparr as $index => $ipinfo):
 	$protocolCount = count($ipinfo['protos']);
 	$rowSpan = '';
 	$i = 0;
@@ -167,8 +177,9 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 	}
 ?>
 						<tr>
-							<td<?= $rowSpan ?>><?=$ip;?></td>
+							<td<?= $rowSpan ?>><?=$ipinfo['ip'];?></td>
 							<td<?= $rowSpan ?> class="text-center"><?=$ipinfo['seen'];?></td>
+
 
 <?php foreach ($ipinfo['protos'] as $proto => $protoinfo): ?>
 <?php if ($protocolCount > 1 && $i > 0): ?>

@@ -157,7 +157,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 						</tr>
 					</thead>
 					<tbody>
-<?php foreach ($iparr as $index => $ipinfo):
+<?php foreach ($iparr as $ip => $ipinfo):
 	$protocolCount = count($ipinfo['protos']);
 	$rowSpan = '';
 	$i = 0;

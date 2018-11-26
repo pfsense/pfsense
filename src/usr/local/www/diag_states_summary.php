@@ -27,8 +27,6 @@
 ##|*MATCH=diag_states_summary.php*
 ##|-PRIV
 
-ini_set('memory_limit','1024M');
-
 exec("/sbin/pfctl -s state", $states);
 
 $srcipinfo = array();
@@ -109,10 +107,6 @@ if (count($states) > 0) {
 	}
 }
 
-function sort_by_ip($a, $b) {
-	return ip2ulong($a) < ip2ulong($b) ? -1 : 1;
-}
-
 function sort_by_seen($a, $b) {
 	return $a['seen'] > $b['seen'] ? -1 : 1;
 }
@@ -140,7 +134,6 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
     }
 	if ($sort) {
 		usort($iparr, "sort_by_seen");
-		//uksort($iparr, "sort_by_ip");
 	}
 
 ?>

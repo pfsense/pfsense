@@ -361,6 +361,66 @@ function interface_set_macaddr($interface, $mac_addr) {
 	}
 }
 
+function interface_is_parent($if, $parent_check) {
+
+	$parent_array = get_parent_interface($if);
+	if (count($parent_array) > 1) {
+		$parent = $parent_array;
+	} else {
+		$parent = $parent_array[0];
+	}
+	if (is_array($parent)) {
+		foreach ($parent as $parentif) {
+			if (strcasecmp($parent_check, $parentif) == 0) {
+				return (TRUE);
+			}
+		}
+	} else {
+		$realif = get_real_interface($parent);
+		if (strcasecmp($parent_check, $realif) == 0) {
+			return (TRUE);
+		}
+	}
+	return (FALSE);
+}
+
+function interface_has_clones($if) {
+	global $config;
+
+	/* Check LAGGs. */
+	if (isset($config['laggs']) && isset($config['laggs']['lagg']) &&
+	    is_array($config['laggs']['lagg'])) {
+		foreach ($config['laggs']['lagg'] as $lagg) {
+			if (interface_is_parent($lagg['laggif'], $if)) {
+				return (TRUE);
+			}
+		}
+	}
+	/* Check VLANs. */
+	if (isset($config['vlans']) && isset($config['vlans']['vlan']) &&
+	    is_array($config['vlans']['vlan'])) {
+		foreach ($config['vlans']['vlan'] as $vlan) {
+			if (interface_is_parent($vlan['if'], $if)) {
+				return (TRUE);
+			}
+		}
+	}
+	/* Check bridges. */
+	if (isset($config['bridges']) && isset($config['bridges']['bridged']) &&
+	    is_array($config['bridges']['bridged'])) {
+		foreach ($config['bridges']['bridged'] as $bridge) {
+			$members = explode(',', $bridge['members']);
+			foreach ($members as $member) {
+				if (interface_is_parent($member, $if)) {
+					return (TRUE);
+				}
+			}
+		}
+	}
+
+	return (FALSE);
+}
+
 function interfaces_vlan_configure($realif = "") {
 	global $config, $g;
 	if (platform_booting()) {

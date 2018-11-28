@@ -96,6 +96,7 @@ sysutils/lsof
 sysutils/pstree
 sysutils/stress
 sysutils/tmux
+sysutils/usb_modeswitch
 sysutils/vm-bhyve
 sysutils/xe-guest-utilities
 www/%%PRODUCT_NAME%%-pkg-Lightsquid

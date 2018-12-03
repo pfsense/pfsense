@@ -3060,6 +3060,7 @@ function get_locale_list() {
 		"en_US" => gettext("English"),
 		"fr" => gettext("French"),
 		"de_DE" => gettext("German (Germany)"),
+		"ko" => gettext("Korean"),
 		"nb" => gettext("Norwegian Bokmål"),
 		"pl" => gettext("Polish"),
 		"pt_PT" => gettext("Portuguese"),

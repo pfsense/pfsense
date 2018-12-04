@@ -2049,7 +2049,8 @@ function filter_nat_rules_generate() {
 
 			/* Do not form an invalid NPt rule.
 			 * See https://redmine.pfsense.org/issues/8575 */
-			if (!is_subnetv6($srcaddr) || !is_subnetv6($dstaddr)) {
+			if (!(is_subnetv6($srcaddr) || is_ipaddrv6($srcaddr)) ||
+			    !(is_subnetv6($dstaddr) || is_ipaddrv6($dstaddr))) {
 				continue;
 			}
 

@@ -113,6 +113,8 @@ if ($_POST['save'] || $_POST['force']) {
 			$host_to_check = $_POST['domainname'];
 		} elseif ((($pconfig['type'] == "godaddy") || ($pconfig['type'] == "godaddy-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
+		} elseif (($pconfig['type'] == "digitalocean") && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
+			$host_to_check = $_POST['domainname'];
 		} else {
 			$host_to_check = $_POST['host'];
 
@@ -300,7 +302,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
 			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
-			'Cloudflare: Enter @ as the hostname to indicate an empty field.', '<br />');
+			'Cloudflare and DigitalOcean: Enter @ as the hostname to indicate an empty field.', '<br />');
 
 $section->add($group);
 

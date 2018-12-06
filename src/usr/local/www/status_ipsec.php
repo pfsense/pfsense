@@ -1,60 +1,26 @@
 <?php
 /*
-	status_ipsec.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  portions Copyright (c) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
+ * status_ipsec.php
  *
- *  Parts of this code originally based on vpn_ipsec_sad.php from m0n0wall,
- *  Copyright (c) 2003-2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -69,9 +35,7 @@ require_once("ipsec.inc");
 
 global $g;
 
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
-}
+init_config_arr(array('ipsec', 'phase1'));
 
 // If this is just an AJAX call to update the table body, just generate the body and quit
 if ($_REQUEST['ajax']) {
@@ -79,62 +43,83 @@ if ($_REQUEST['ajax']) {
 	exit;
 }
 
-if ($_GET['act'] == 'connect') {
-	if (ctype_digit($_GET['ikeid'])) {
-		$ph1ent = ipsec_get_phase1($_GET['ikeid']);
+if ($_POST['act'] == 'connect') {
+	if (ctype_digit($_POST['ikeid'])) {
+		$ph1ent = ipsec_get_phase1($_POST['ikeid']);
 		if (!empty($ph1ent)) {
 			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn'])) {
-				$ph2entries = ipsec_get_number_of_phase2($_GET['ikeid']);
+				$ph2entries = ipsec_get_number_of_phase2($_POST['ikeid']);
 				for ($i = 0; $i < $ph2entries; $i++) {
-					$connid = escapeshellarg("con{$_GET['ikeid']}00{$i}");
+					$connid = escapeshellarg("con{$_POST['ikeid']}00{$i}");
 					mwexec_bg("/usr/local/sbin/ipsec down {$connid}");
 					mwexec_bg("/usr/local/sbin/ipsec up {$connid}");
 				}
 			} else {
-				mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
-				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_GET['ikeid']));
+				mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_POST['ikeid'] . '000'));
+				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_POST['ikeid'] . '000'));
 			}
 		}
 	}
-} else if ($_GET['act'] == 'ikedisconnect') {
-	if (ctype_digit($_GET['ikeid'])) {
-		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid'])) {
-			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "[" . escapeshellarg($_GET['ikesaid']) . "]");
-		} else {
-			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
-		}
+} else if ($_POST['act'] == 'ikedisconnect') {
+
+	if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
+		mwexec_bg("/usr/local/sbin/ipsec down " ."'" . escapeshellarg($_POST['ikeid']) . "[" . escapeshellarg($_POST['ikesaid']) . "]" . "'");
+	} else {
+		mwexec_bg("/usr/local/sbin/ipsec down " . escapeshellarg($_POST['ikeid']));
 	}
-} else if ($_GET['act'] == 'childdisconnect') {
-	if (ctype_digit($_GET['ikeid'])) {
-		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid'])) {
-			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "{" . escapeshellarg($_GET['ikesaid']) . "}");
+} else if ($_POST['act'] == 'childdisconnect') {
+	//pull out number from id
+		if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
+			mwexec_bg("/usr/local/sbin/ipsec down " . escapeshellarg($_POST['ikeid']) . "{" . escapeshellarg($_POST['ikesaid']) . "}");
 		}
-	}
 }
 
 // Table body is composed here so that it can be more easily updated via AJAX
 function print_ipsec_body() {
 	global $config;
-
 	$a_phase1 = &$config['ipsec']['phase1'];
 	$status = ipsec_list_sa();
 	$ipsecconnected = array();
-
 	if (is_array($status)) {
 		foreach ($status as $ikeid => $ikesa) {
-			$con_id = substr($ikeid, 3);
-
+			//check which array format
+			if(isset($ikesa['con-id'])){
+				$con_id = substr($ikesa['con-id'],3);
+			}else{
+				$con_id = filter_var($ikeid, FILTER_SANITIZE_NUMBER_INT);
+			}
 			if ($ikesa['version'] == 1) {
 				$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
 				$ipsecconnected[$ph1idx] = $ph1idx;
 			} else {
-				$ipsecconnected[$con_id] = $ph1idx = $con_id;
+				if (!ipsec_ikeid_used($con_id)) {
+					// probably a v2 with split connection then
+					$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
+					$ipsecconnected[$ph1idx] = $ph1idx;
+				} else {
+					$ipsecconnected[$con_id] = $ph1idx = $con_id;
+				}
 			}
 
 			print("<tr>\n");
+
 			print("<td>\n");
+			print(htmlspecialchars($ikesa['con-id'])) . ":\n";
+			print('#' . htmlspecialchars($ikesa['uniqueid']));
+			print("</td>\n");
+
+			print("<td>\n");
+			if (is_array($a_phase1) && htmlspecialchars(ipsec_get_descr($ph1idx)) == "") {
+				foreach ($a_phase1 as $ph1) {
+					if($con_id == $ph1['ikeid'] && isset($ph1['mobile']) ){
+						print(htmlspecialchars($ph1['descr']));
+						break;
+					}
+				}
+			}
 			print(htmlspecialchars(ipsec_get_descr($ph1idx)));
 			print("</td>\n");
+
 			print("<td>\n");
 
 			if (!empty($ikesa['local-id'])) {
@@ -245,23 +230,22 @@ function print_ipsec_body() {
 			print(ucfirst(htmlspecialchars($ikesa['state'])));
 
 			if ($ikesa['state'] == 'ESTABLISHED') {
-				print("<br/>" . htmlspecialchars($ikesa['established']) . gettext(" seconds (") . convert_seconds_to_dhms($ikesa['established']) . gettext(") ago"));
+				print("<br/>");
+				printf(gettext('%1$s seconds (%2$s) ago'), htmlspecialchars($ikesa['established']), convert_seconds_to_dhms($ikesa['established']));
 			}
 
-			print("</span>");
-			print("</td>\n");
-			print("<td>\n");
+			print("</span><br /><br />");
 
 			if ($ikesa['state'] != 'ESTABLISHED') {
 
-				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '" >');
+				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '&amp;ikesaid=' .$ikesa['uniqueid'] . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '" usepost>');
 				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
 				print(gettext("Connect VPN"));
 				print("</a>\n");
 
 			} else {
 
-				print('<a href="status_ipsec.php?act=ikedisconnect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-danger" data-toggle="tooltip" title="' . gettext("Disconnect VPN") . '">');
+				print('<a href="status_ipsec.php?act=ikedisconnect&amp;ikeid=' . $ikesa['con-id']. '&amp;ikesaid=' .$ikesa['uniqueid'] . '"class="btn btn-xs btn-danger" data-toggle="tooltip" title="' . gettext("Disconnect VPN") . '" usepost>');
 				print('<i class="fa fa-trash icon-embed-btn"></i>');
 				print(gettext("Disconnect"));
 				print("</a><br />\n");
@@ -274,23 +258,29 @@ function print_ipsec_body() {
 			print("<td colspan = 10>\n");
 
 			if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
+				$child_key = "";
+				foreach ($ikesa['child-sas'] as $key => $val){
+					$child_key = $key;
+					break;
+				}
 
 				print('<div>');
-				print('<a type="button" id="btnchildsa-' . $ikeid .  '" class="btn btn-sm btn-info">');
+				print('<a type="button" id="btnchildsa-'. $child_key .  '" class="btn btn-sm btn-info">');
 				print('<i class="fa fa-plus-circle icon-embed-btn"></i>');
 				print(gettext('Show child SA entries'));
 				print("</a>\n");
 				print("	</div>\n");
 
-				print('<table class="table table-hover table-condensed" id="childsa-' . $ikeid . '" style="display:none">');
+				print('<table class="table table-hover table-condensed" id="childsa-'.$child_key . '" style="display:none">');
 				print("<thead>\n");
 				print('<tr class="bg-info">');
-				print('<th><?=gettext("Local subnets")?></th>');
-				print('<th><?=gettext("Local SPI(s)")?></th>');
-				print('<th><?=gettext("Remote subnets")?></th>');
-				print('<th><?=gettext("Times")?></th>');
-				print('<th><?=gettext("Algo")?></th>');
-				print('<th><?=gettext("Stats")?></th>');
+				print('<th>' . gettext("IPsec ID") . '</th>');
+				print('<th>' . gettext("Local subnets") . '</th>');
+				print('<th>' . gettext("Local SPI(s)") . '</th>');
+				print('<th>' . gettext("Remote subnets") . '</th>');
+				print('<th>' . gettext("Times") . '</th>');
+				print('<th>' . gettext("Algo") . '</th>');
+				print('<th>' . gettext("Stats") . '</th>');
 				print('<th><!-- Buttons --></th>');
 				print("</tr\n");
 				print("</thead>\n");
@@ -298,6 +288,10 @@ function print_ipsec_body() {
 
 				foreach ($ikesa['child-sas'] as $childid => $childsa) {
 					print("<tr>");
+					print("<td>\n");
+					print($childsa['name'] . ":<br />");
+					print("#" . $childsa['uniqueid']);
+					print("</td>\n");
 					print("<td>\n");
 
 					if (is_array($childsa['local-ts'])) {
@@ -333,9 +327,11 @@ function print_ipsec_body() {
 					print("</td>\n");
 					print("<td>\n");
 
-					print(gettext("Rekey: ") . htmlspecialchars($childsa['rekey-time']) . gettext(" seconds (") . convert_seconds_to_dhms($childsa['rekey-time']) . ")");
-					print('<br/>' . gettext('Life: ') . htmlspecialchars($childsa['life-time']) . gettext(" seconds (") . convert_seconds_to_dhms($childsa['life-time']) . ")");
-					print('<br/>' . gettext('Install: ') .htmlspecialchars($childsa['install-time']) . gettext(" seconds (") . convert_seconds_to_dhms($childsa['install-time']) . ")");
+					printf(gettext('Rekey: %1$s seconds (%2$s)'), htmlspecialchars($childsa['rekey-time']), convert_seconds_to_dhms($childsa['rekey-time']));
+					print('<br/>');
+					printf(gettext('Life: %1$s seconds (%2$s)'), htmlspecialchars($childsa['life-time']), convert_seconds_to_dhms($childsa['life-time']));
+					print('<br/>');
+					printf(gettext('Install: %1$s seconds (%2$s)'), htmlspecialchars($childsa['install-time']), convert_seconds_to_dhms($childsa['install-time']));
 
 
 					print("</td>\n");
@@ -373,7 +369,7 @@ function print_ipsec_body() {
 
 					print("</td>\n");
 					print("<td>\n");
-					print('<a href="status_ipsec.php?act=childdisconnect&amp;ikeid=' . $con_id . '&amp;ikesaid=' . $childsa['uniqueid'] . '" class="btn btn-xs btn-warning" data-toggle="tooltip" title="' . gettext('Disconnect Child SA') . '">');
+					print('<a href="status_ipsec.php?act=childdisconnect&amp;ikeid=' . $childsa['name'] . '&amp;ikesaid=' . $childsa['uniqueid'] . '" class="btn btn-xs btn-warning" data-toggle="tooltip" title="' . gettext('Disconnect Child SA') . '" usepost>');
 					print('<i class="fa fa-trash icon-embed-btn"></i>');
 					print(gettext("Disconnect"));
 					print("</a>\n");
@@ -408,8 +404,8 @@ function print_ipsec_body() {
 			}
 
 			print("<tr>\n");
+			print("<td></td>\n");
 			print("<td>\n");
-
 			print(htmlspecialchars($ph1ent['descr']));
 			print("</td>\n");
 			print("<td>\n");
@@ -473,7 +469,7 @@ function print_ipsec_body() {
 				print(gettext("Disconnected"));
 				print("</td>\n");
 				print("<td>\n");
-				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $ph1ent['ikeid'] . '" class="btn btn-xs btn-success">');
+				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $ph1ent['ikeid'] . '" class="btn btn-xs btn-success" usepost>');
 				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
 				print(gettext("Connect VPN"));
 				print("</a>\n");
@@ -488,6 +484,7 @@ function print_ipsec_body() {
 }
 
 $pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("Overview"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -506,6 +503,7 @@ display_top_tabs($tab_array);
 		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
+					<th><?=gettext("IPsec ID")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Local ID")?></th>
 					<th><?=gettext("Local IP")?></th>
@@ -521,7 +519,7 @@ display_top_tabs($tab_array);
 			<tbody id="ipsec-body">
 				<tr>
 					<td colspan="10">
-						<?=print_info_box(gettext("Collecting IPsec status information."), warning, "")?>
+						<?=print_info_box(gettext("Collecting IPsec status information."), "warning", "")?>
 					</td>
 				</tr>
 			</tbody>
@@ -548,7 +546,7 @@ print_info_box(sprintf(gettext('IPsec can be configured %1$shere%2$s.'), '<a hre
 events.push(function() {
 	ajax_lock = false;		// Mutex so we don't make a call until the previous call is finished
 	sa_open = new Array();	// Array in which to keep the child SA show/hide state
-
+	tryCount = 3;
 	// Fetch the tbody contents from the server
 	function update_table() {
 		if (ajax_lock) {
@@ -563,15 +561,26 @@ events.push(function() {
 				type: "post",
 				data: {
 					ajax: 	"ajax"
+				},
+				error: function(xhr, textStatus, errorThrown){
+					//alert("error.... retrying");
+					if (tryCount > 0){
+						tryCount --;
+						ajax_lock = false;
+						update_table();
+					}
+					return;
 				}
 			}
 		);
 
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
-
+			if(textStatus === "success"){
+				tryCount =3;
+			}
 			if (!response) {
-				response = '<tr><td colspan="10"><?=print_info_box(gettext("No IPsec status information available."), warning, "")?></td></tr>';
+				response = '<tr><td colspan="10"><?=print_info_box(addslashes(gettext("No IPsec status information available.")), "warning", "")?></td></tr>';
 			}
 
 			$('#ipsec-body').html(response);
@@ -579,17 +588,20 @@ events.push(function() {
 
 			// Update "Show child SA" handlers
 			$('[id^=btnchildsa-]').click(function () {
-				show_childsa($(this).prop("id").replace( /^\D+/g, ''));
+				show_childsa($(this).prop("id").replace( 'btnchildsa-', ''));
 			});
 
 			// Check the sa_open array for child SAs that have been opened
-			$('[id^=childsa-con]').each(function(idx) {
-				sa_idx = $(this).prop("id").replace( /^\D+/g, '');
+			$('[id^=childsa-]').each(function(idx) {
+				sa_idx = $(this).prop("id").replace( 'childsa-', '');
 
 				if (sa_open[sa_idx]) {
 					show_childsa(sa_idx);
 				}
 			});
+
+			// re-attached the GET to POST handler
+			interceptGET();
 
 			// and do it again
 			setTimeout(update_table, 5000);
@@ -598,7 +610,7 @@ events.push(function() {
 
 	function show_childsa(said) {
 		sa_open[said] = true;
-		$('#childsa-con' + said).show();
+		$('#childsa-' + said).show();
 		$('#btnchildsa-con' + said).hide();
 	}
 

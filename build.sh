@@ -2,78 +2,48 @@
 #
 # build.sh
 #
-# Copyright (c) 2004-2015 Electric Sheep Fencing, LLC. All rights reserved.
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# 1. Redistributions of source code must retain the above copyright notice,
-#    this list of conditions and the following disclaimer.
+# http://www.apache.org/licenses/LICENSE-2.0
 #
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in
-#    the documentation and/or other materials provided with the
-#    distribution.
-#
-# 3. All advertising materials mentioning features or use of this software
-#    must display the following acknowledgment:
-#    "This product includes software developed by the pfSense Project
-#    for use in the pfSense® software distribution. (http://www.pfsense.org/).
-#
-# 4. The names "pfSense" and "pfSense Project" must not be used to
-#    endorse or promote products derived from this software without
-#    prior written permission. For written permission, please contact
-#    coreteam@pfsense.org.
-#
-# 5. Products derived from this software may not be called "pfSense"
-#    nor may "pfSense" appear in their names without prior written
-#    permission of the Electric Sheep Fencing, LLC.
-#
-# 6. Redistributions of any form whatsoever must retain the following
-#    acknowledgment:
-#
-# "This product includes software developed by the pfSense Project
-# for use in the pfSense software distribution (http://www.pfsense.org/).
-#
-# THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-# EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-# ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-# NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-# STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-# OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 set +e
 usage() {
-	echo "Usage $0 [options] [ iso | nanobsd | ova | nanobsd-vga | memstick | memstickserial | memstickadi | all | none ]"
-	echo "		all = iso nanobsd nanobsd-vga memstick memstickserial memstickadi"
+	echo "Usage $0 [options] [ iso | ova | memstick | memstickserial | memstickadi | all | none ]"
+	echo "		all = memstick memstickserial memstickadi"
 	echo "		none = upgrade only pkg repo"
 	echo "	[ options ]: "
-	echo "		--flash-size|-f size(s) - a list of flash sizes to build with nanobsd i.e. '2g 4g'. Default: 2g"
 	echo "		--no-buildworld|-c - Will set NO_BUILDWORLD NO_BUILDKERNEL to not build kernel and world"
-	echo "		--no-cleanobjdir|--no-cleanrepos|-d - Will not clean FreeBSD object built dir to allow restarting a build with NO_CLEAN"
+	echo "		--no-cleanobjdir|-d - Will not clean FreeBSD object built dir to allow restarting a build with NO_CLEAN"
 	echo "		--resume-image-build|-r - Includes -c -d and also will just move directly to image creation using pre-staged data"
 	echo "		--setup - Install required repo and ports builder require to work"
 	echo "		--update-sources - Refetch FreeBSD sources"
 	echo "		--rsync-repos - rsync pkg repos"
+	echo "		--rsync-snapshots - rsync snapshots images and pkg repos"
 	echo "		--clean-builder - clean all builder used data/resources"
 	echo "		--build-kernels - build all configured kernels"
 	echo "		--build-kernel argument - build specified kernel. Example --build-kernel KERNEL_NAME"
 	echo "		--install-extra-kernels argument - Put extra kernel(s) under /kernel image directory. Example --install-extra-kernels KERNEL_NAME_WRAP"
-	echo "		--snapshots - Build snapshots and upload them to RSYNCIP"
+	echo "		--snapshots - Build snapshots"
 	echo "		--poudriere-snapshots - Update poudriere packages and send them to PKG_RSYNC_HOSTNAME"
 	echo "		--setup-poudriere - Install poudriere and create necessary jails and ports tree"
 	echo "		--create-unified-patch - Create a big patch with all changes done on FreeBSD"
 	echo "		--update-poudriere-jails [-a ARCH_LIST] - Update poudriere jails using current patch versions"
-	echo "		--update-poudriere-ports [-a ARCH_LIST]- Update poudriere ports tree"
+	echo "		--update-poudriere-ports [-a ARCH_LIST] - Update poudriere ports tree"
 	echo "		--update-pkg-repo [-a ARCH_LIST]- Rebuild necessary ports on poudriere and update pkg repo"
-	echo "		--do-not-upload|-u - Do not upload pkgs or snapshots"
+	echo "		--upload|-U - Upload pkgs and/or snapshots"
+	echo "		--skip-final-rsync|-i - Skip rsync to final server"
 	echo "		-V VARNAME - print value of variable VARNAME"
 	exit 1
 }
@@ -85,7 +55,7 @@ unset _SKIP_REBUILD_PRESTAGE
 unset _USE_OLD_DATESTRING
 unset pfPORTTOBUILD
 unset IMAGETYPE
-unset DO_NOT_UPLOAD
+unset UPLOAD
 unset SNAPSHOTS
 unset POUDRIERE_SNAPSHOTS
 unset ARCH_LIST
@@ -98,24 +68,14 @@ while test "$1" != ""; do
 			export NO_BUILDWORLD=YES
 			export NO_BUILDKERNEL=YES
 			;;
-		--no-cleanobjdir|--no-cleanrepos|-d)
+		--no-cleanobjdir|-d)
 			export NO_CLEAN_FREEBSD_OBJ=YES
-			export NO_CLEAN_FREEBSD_SRC=YES
-			;;
-		--flash-size|-f)
-			shift
-			if [ $# -eq 0 ]; then
-				echo "--flash-size needs extra parameter."
-				echo
-				usage
-			fi
-			export FLASH_SIZE="${1}"
 			;;
 		--resume-image-build|-r)
 			export NO_BUILDWORLD=YES
 			export NO_BUILDKERNEL=YES
 			export NO_CLEAN_FREEBSD_OBJ=YES
-			export NO_CLEAN_FREEBSD_SRC=YES
+			export DO_NOT_SIGN_PKG_REPO=YES
 			_SKIP_REBUILD_PRESTAGE=YES
 			_USE_OLD_DATESTRING=YES
 			;;
@@ -124,6 +84,11 @@ while test "$1" != ""; do
 			;;
 		--rsync-repos)
 			BUILDACTION="rsync_repos"
+			export DO_NOT_SIGN_PKG_REPO=YES
+			;;
+		--rsync-snapshots)
+			BUILDACTION="rsync_snapshots"
+			export DO_NOT_SIGN_PKG_REPO=YES
 			;;
 		--build-kernels)
 			BUILDACTION="buildkernels"
@@ -183,10 +148,13 @@ while test "$1" != ""; do
 		--update-pkg-repo)
 			BUILDACTION="update_pkg_repo"
 			;;
-		--do-not-upload|-u)
-			export DO_NOT_UPLOAD=1
+		--upload|-U)
+			export UPLOAD=1
 			;;
-		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*)
+		--skip-final-rsync|-i)
+			export SKIP_FINAL_RSYNC=1
+			;;
+		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*)
 			BUILDACTION="images"
 			IMAGETYPE="${1}"
 			;;
@@ -211,6 +179,10 @@ done
 
 # Suck in local vars
 . ${BUILDER_TOOLS}/builder_defaults.sh
+
+# Let user define ARCH_LIST in build.conf
+[ -z "${ARCH_LIST}" -a -n "${DEFAULT_ARCH_LIST}" ] \
+	&& ARCH_LIST="${DEFAULT_ARCH_LIST}"
 
 # Suck in script helper functions
 . ${BUILDER_TOOLS}/builder_common.sh
@@ -267,11 +239,15 @@ case $BUILDACTION in
 		poudriere_update_ports
 	;;
 	rsync_repos)
-		unset SKIP_FINAL_RSYNC
+		export UPLOAD=1
 		pkg_repo_rsync "${CORE_PKG_PATH}"
 	;;
+	rsync_snapshots)
+		export UPLOAD=1
+		snapshots_scp_files
+	;;
 	update_pkg_repo)
-		if [ -z "${DO_NOT_UPLOAD}" -a ! -f /usr/local/bin/rsync ]; then
+		if [ -n "${UPLOAD}" -a ! -f /usr/local/bin/rsync ]; then
 			echo "ERROR: rsync is not installed, aborting..."
 			exit 1
 		fi
@@ -287,12 +263,11 @@ if [ "${BUILDACTION}" != "images" ]; then
 	exit 0
 fi
 
-if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
+if [ -n "${SNAPSHOTS}" -a -n "${UPLOAD}" ]; then
 	_required=" \
 		RSYNCIP \
 		RSYNCUSER \
 		RSYNCPATH \
-		RSYNCLOGS \
 		PKG_RSYNC_HOSTNAME \
 		PKG_RSYNC_USERNAME \
 		PKG_RSYNC_SSH_PORT \
@@ -336,9 +311,12 @@ fi
 if [ "$IMAGETYPE" = "none" ]; then
 	_IMAGESTOBUILD=""
 elif [ "$IMAGETYPE" = "all" ]; then
-	_IMAGESTOBUILD="iso nanobsd nanobsd-vga memstick memstickserial"
+	_IMAGESTOBUILD="memstick memstickserial"
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstickadi"
+		if [ -n "${_IS_RELEASE}"  ]; then
+			_IMAGESTOBUILD="${_IMAGESTOBUILD} ova"
+		fi
 	fi
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"
@@ -347,8 +325,6 @@ fi
 echo ">>> Building image type(s): ${_IMAGESTOBUILD}"
 
 if [ -n "${SNAPSHOTS}" ]; then
-	snapshots_rotate_logfile
-
 	snapshots_update_status ">>> Starting snapshot build operations"
 
 	if pkg update -r ${PRODUCT_NAME} >/dev/null 2>&1; then
@@ -358,8 +334,6 @@ if [ -n "${SNAPSHOTS}" ]; then
 fi
 
 if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
-	[ -n "${CORE_PKG_TMP}" -a -d "${CORE_PKG_TMP}" ] \
-		&& rm -rf ${CORE_PKG_TMP}
 	[ -n "${CORE_PKG_PATH}" -a -d "${CORE_PKG_PATH}" ] \
 		&& rm -rf ${CORE_PKG_PATH}
 
@@ -371,28 +345,26 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	git_last_commit
 
 	# Ensure binaries are present that builder system requires
-	builder_setup
+	depend_check
 
 	# Build world, kernel and install
-	echo ">>> Building world for ISO... $FREEBSD_BRANCH ..."
 	make_world
 
 	# Build kernels
-	echo ">>> Building kernel configs: $BUILD_KERNELS for FreeBSD: $FREEBSD_BRANCH ..."
 	build_all_kernels
 
 	# Install kernel on installer
-	installkernel ${INSTALLER_CHROOT_DIR}
+	installkernel ${INSTALLER_CHROOT_DIR} ${PRODUCT_NAME}
 
 	# Prepare pre-final staging area
 	clone_to_staging_area
 
 	# Install packages needed for Product
 	install_pkg_install_ports
-fi
 
-# Create core repo
-core_pkg_create_repo
+	# Create core repo
+	core_pkg_create_repo
+fi
 
 # Send core repo to staging area
 pkg_repo_rsync "${CORE_PKG_PATH}" ignore_final_rsync
@@ -409,7 +381,13 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 
 	case "${_IMGTOBUILD}" in
 		iso)
-			create_iso_image
+			if [ -n "${ISO_VARIANTS}" ]; then
+				for _variant in ${ISO_VARIANTS}; do
+					create_iso_image ${_variant}
+				done
+			else
+				create_iso_image
+			fi
 			;;
 		memstick)
 			if [ -n "${MEMSTICK_VARIANTS}" ]; then
@@ -425,9 +403,6 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			;;
 		memstickadi)
 			create_memstick_adi_image
-			;;
-		nanobsd|nanobsd-vga)
-			create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
 			;;
 		ova)
 			old_custom_package_list="${custom_package_list}"
@@ -465,12 +440,12 @@ if [ -n "${_bg_pids}" ]; then
 fi
 
 if [ -n "${SNAPSHOTS}" ]; then
-	if [ "${IMAGETYPE}" = "none" -a -z "${DO_NOT_UPLOAD}" ]; then
+	if [ "${IMAGETYPE}" = "none" -a -n "${UPLOAD}" ]; then
 		pkg_repo_rsync "${CORE_PKG_PATH}"
 	elif [ "${IMAGETYPE}" != "none" ]; then
 		snapshots_create_sha256
 		# SCP files to snapshot web hosting area
-		if [ -z "${DO_NOT_UPLOAD}" ]; then
+		if [ -n "${UPLOAD}" ]; then
 			snapshots_scp_files
 		fi
 	fi
@@ -479,7 +454,7 @@ if [ -n "${SNAPSHOTS}" ]; then
 fi
 
 echo ">>> ${IMAGES_FINAL_DIR} now contains:"
-ls -lah ${IMAGES_FINAL_DIR}
+(cd ${IMAGES_FINAL_DIR} && find ${IMAGES_FINAL_DIR} -type f)
 
 set -e
 # Run final finish routines

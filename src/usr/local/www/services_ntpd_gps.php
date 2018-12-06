@@ -1,57 +1,23 @@
 <?php
 /*
-	services_ntpd_gps.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2013 Dagorlad
+ * services_ntpd_gps.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013 Dagorlad
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -86,6 +52,100 @@ function set_default_gps() {
 	write_config(gettext("Setting default NTPd settings"));
 }
 
+function parse_ublox(&$nmeaset, $splitline) {
+	$id_idx = 1;
+	$msg_idx = 2;
+	$usart1_idx = 4;
+	if ($splitline[$id_idx] == '40' && $splitline[$usart1_idx]) {
+		$nmeaset['GP' . $splitline[$msg_idx]] = 1;
+	}
+}
+
+function parse_garmin(&$nmeaset, $splitline) {
+	$msg_idx = 1;
+	$mode_idx = 2;
+	if ($splitline[$mode_idx] == '1') {
+		$nmeaset[$splitline[$msg_idx]] = 1;
+	}
+}
+
+function parse_mtk(&$nmeaset, $splitline) {
+	$nmeamap = [
+		1 => 'GPGLL',
+		2 => 'GPRMC',
+		3 => 'GPVTG',
+		4 => 'GPGGA',
+		5 => 'GPGSA',
+		6 => 'GPGSV',
+		7 => 'GPGRS',
+		8 => 'GPGST',
+	];
+	for ($x = 1; $x < 9; $x++) {
+		if($splitline[$x]) {
+			$nmeaset[$nmeamap[$x]] = 1;
+		}
+	}
+}
+
+function parse_sirf(&$nmeaset, $splitline) {
+	$msg_idx = 1;
+	$mode_idx = 2;
+	$rate_idx = 3;
+	$nmeamap = [
+		0 => 'GPGGA',
+		1 => 'GPGLL',
+		2 => 'GPGSA',
+		3 => 'GPGSV',
+		4 => 'GPRMC',
+		5 => 'GPVTG',
+	];
+	if (!(int)$splitline[$mode_idx] && (int)$splitline[$rate_idx]) {
+		$nmeaset[$nmeamap[(int)$splitline[$msg_idx]]] = 1;
+	}
+}
+
+function parse_initcmd(&$nmeaset, $initcmd) {
+	$type_idx = 0;
+	$nmeaset = [];
+	$split_initcmd = preg_split('/[\s]+/', $initcmd);
+	foreach ($split_initcmd as $line) {
+		$splitline = preg_split('/[,\*]+/', $line);
+		if ($splitline[$type_idx] == '$PUBX') {
+			parse_ublox($nmeaset, $splitline);
+		} elseif ($splitline[$type_idx] == '$PGRMO') {
+			parse_garmin($nmeaset, $splitline);
+		} elseif ($splitline[$type_idx] == '$PMTK314') {
+			parse_mtk($nmeaset, $splitline);
+		} elseif ($splitline[$type_idx] == '$PSRF103') {
+			parse_sirf($nmeaset, $splitline);
+		}
+	}
+}
+
+function NMEAChecksum($cmd) {
+	$checksum = 0;
+	for ($i=0; $i<strlen($cmd); $i++) {
+		$checksum = ($checksum ^ ord($cmd[$i]));
+	}
+	return strtoupper(str_pad(dechex($checksum), 2, '0', STR_PAD_LEFT));
+}
+
+function autocorrect_initcmd($initcmd) {
+	$cmds = '';
+	$split_initcmd = preg_split('/[\s]+/', $initcmd);
+	foreach ($split_initcmd as $line) {
+		if (!strlen($line)) {
+			continue;
+		}
+		$begin = ($line[0] == '$') ? 1 : 0;
+		$astpos = strrpos($line, '*');
+		$end = ($astpos !== false) ? $astpos : strlen($line);
+		$trimline = substr($line, $begin, $end-$begin);
+		$cmds = $cmds . '$' . $trimline . '*' . NMEAChecksum($trimline) . "\r\n";
+	}
+	return $cmds;
+}
+
 if ($_POST) {
 	unset($input_errors);
 
@@ -112,6 +172,12 @@ if ($_POST) {
 		$config['ntpd']['gps']['nmea'] = "0";
 	} else {
 		$config['ntpd']['gps']['nmea'] = strval(array_sum($_POST['gpsnmea']));
+	}
+
+	if (!empty($_POST['processpgrmf'])) {
+		$config['ntpd']['gps']['processpgrmf'] = $_POST['processpgrmf'];
+	} elseif (isset($config['ntpd']['gps']['processpgrmf'])) {
+		unset($config['ntpd']['gps']['processpgrmf']);
 	}
 
 	if (!empty($_POST['gpsfudge1'])) {
@@ -180,16 +246,35 @@ if ($_POST) {
 		unset($config['ntpd']['gps']['refid']);
 	}
 
+	if (!empty($_POST['extstatus'])) {
+		$config['ntpd']['gps']['extstatus'] = $_POST['extstatus'];
+	} elseif (isset($config['ntpd']['gps']['extstatus'])) {
+		unset($config['ntpd']['gps']['extstatus']);
+	}
+
+	if (!empty($_POST['autocorrect_initcmd'])) {
+		$config['ntpd']['gps']['autocorrect_initcmd'] = $_POST['autocorrect_initcmd'];
+	} elseif (isset($config['ntpd']['gps']['autocorrect_initcmd'])) {
+		unset($config['ntpd']['gps']['autocorrect_initcmd']);
+	}
+
 	if (!empty($_POST['gpsinitcmd'])) {
-		$config['ntpd']['gps']['initcmd'] = base64_encode($_POST['gpsinitcmd']);
+		$initcmd = $_POST['gpsinitcmd'];
+		if ($config['ntpd']['gps']['autocorrect_initcmd']) {
+			$initcmd = autocorrect_initcmd($initcmd);
+		}
+		$config['ntpd']['gps']['initcmd'] = base64_encode($initcmd);
+		parse_initcmd($config['ntpd']['gps']['nmeaset'], $initcmd);
 	} elseif (isset($config['ntpd']['gps']['initcmd'])) {
 		unset($config['ntpd']['gps']['initcmd']);
+		unset($config['ntpd']['gps']['nmeaset']);
 	}
 
 	write_config(gettext("Updated NTP GPS Settings"));
 
-	$retval = system_ntp_configure();
-	$savemsg = get_std_save_message($retval);
+	$changes_applied = true;
+	$retval = 0;
+	$retval |= system_ntp_configure();
 } else {
 	/* set defaults if they do not already exist */
 	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
@@ -221,10 +306,16 @@ function build_nmea_list() {
 	return($nmealist);
 }
 
+init_config_arr(array('ntpd', 'gps'));
 $pconfig = &$config['ntpd']['gps'];
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
+$pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
+
+if ($changes_applied) {
+	print_apply_result_box($retval);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Settings"), false, "services_ntpd.php");
@@ -254,8 +345,8 @@ $section->addInput(new Form_Select(
 	$pconfig['type'],
 	array_combine($gpstypes, $gpstypes)
 ))->setHelp('This option allows a predefined configuration to be selected. ' .
-			'Default is the configuration of pfSense 2.1 and earlier (not recommended). Select Generic if the GPS is not listed.' . '<br /><br />' .
-			'The predefined configurations assume the GPS has already been set to NMEA mode.');
+			'Default is the configuration of pfSense 2.1 and earlier (not recommended). Select Generic if the GPS is not listed.%1$s' .
+			'The predefined configurations assume the GPS has already been set to NMEA mode.', '<br /><br />');
 
 $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
 
@@ -292,6 +383,13 @@ $section->addInput(new Form_Select(
 	$nmealist['options'],
 	true
 ))->setHelp('By default NTP will listen for all supported NMEA sentences. One or more sentences to listen for may be specified.');
+
+$section->addInput(new Form_Checkbox(
+	'processpgrmf',
+	null,
+	'Process PGRMF. Ignores ALL other NMEA sentences. (default: unchecked).',
+	$pconfig['processpgrmf']
+));
 
 $section->addInput(new Form_Input(
 	'gpsfudge1',
@@ -363,6 +461,13 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['subsec']
 ))->setHelp('Enabling this will rapidly fill the log, but is useful for tuning Fudge time 2.');
 
+$section->addInput(new Form_Checkbox(
+	'extstatus',
+	null,
+	'Display extended GPS status (default: checked).',
+	$pconfig['extstatus']
+))->setHelp('Enable extended GPS status if GPGSV or GPGGA are explicitly enabled by GPS initialization commands.');
+
 $section->addInput(new Form_Input(
 	'gpsrefid',
 	'Clock ID',
@@ -391,6 +496,13 @@ $section->addInput(new Form_Textarea(
 	null,
 	base64_decode($pconfig['initcmd'])
 ))->setHelp('Commands entered here will be sent to the GPS during initialization. Please read and understand the GPS documentation before making any changes here.');
+
+$section->addInput(new Form_Checkbox(
+	'autocorrect_initcmd',
+	null,
+	'Auto correct malformed initialization commands. (default: unchecked).',
+	$pconfig['autocorrect_initcmd']
+))->setHelp('Calculates and appends checksum and missing special characters "$" and "*". May not work with some GPS models.');
 
 $group = new Form_Group('NMEA Checksum Calculator');
 
@@ -490,6 +602,7 @@ events.push(function() {
 
 	function set_gps_default(type) {
 		$('#gpsnmea').val(0);
+		$('#processpgrmf').prop('checked', false);
 		$('#gpsspeed').val(0);
 		$('#gpsfudge1').val(0);
 		$('#gpsinitcmd').val(get_gps_string(type));
@@ -537,6 +650,8 @@ events.push(function() {
 		$('#gpsflag3').prop('checked', true);
 		$('#gpsflag4').prop('checked', false);
 		$('#gpssubsec').prop('checked', false);
+		$('#extstatus').prop('checked', true);
+		$('#autocorrect_initcmd').prop('checked', false);
 	}
 
 	// Show advanced GPS options ==============================================
@@ -560,6 +675,7 @@ events.push(function() {
 		}
 
 		hideInput('gpsinitcmd', !showadvgps);
+		hideInput('autocorrect_initcmd', !showadvgps);
 		hideClass('calculator', !showadvgps);
 
 		if (showadvgps) {
@@ -585,7 +701,9 @@ events.push(function() {
 	// When the 'GPS' selector is changed, we set the gps defaults
 	$('#gpstype').on('change', function() {
 		set_gps_default($(this).val());
+		hideInput('processpgrmf', ($(this).val() !== "Garmin" && $(this).val() !== "Custom"));
 	});
+	hideInput('processpgrmf', ('<?=$pconfig['type']?>' !== "Garmin" && '<?=$pconfig['type']?>' !== "Custom"));
 
 	if ('<?=$pconfig['initcmd']?>' == '') {
 		set_gps_default('<?=$pconfig['type']?>');

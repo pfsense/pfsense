@@ -1,59 +1,26 @@
 <?php
 /*
-	status_interfaces.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * status_interfaces.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -64,12 +31,16 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("shaper.inc");
-require_once("filter.inc");
+require_once("interfaces.inc");
+require_once("pfsense-utils.inc");
+require_once("util.inc");
 
-if ($_POST['if'] && $_POST['submit']) {
-	$interface = $_POST['if'];
+if ($_POST['ifdescr'] && $_POST['submit']) {
+	$interface = $_POST['ifdescr'];
 	if ($_POST['status'] == "up") {
+		if ($_POST['relinquish_lease']) {
+			dhcp_relinquish_lease($_POST['if'], $_POST['ifdescr'], $_POST['ipv']);
+		}
 		interface_bring_down($interface);
 	} else {
 		interface_configure($interface);
@@ -79,13 +50,14 @@ if ($_POST['if'] && $_POST['submit']) {
 }
 
 $formtemplate = '<form name="%s" action="status_interfaces.php" method="post">' .
-					'<input type="hidden" name="if" value="%s" />' .
+					'<input type="hidden" name="ifdescr" value="%s" />' .
 					'<input type="hidden" name="status" value="%s" />' .
 					'%s' .
 					'<button type="submit" name="submit" class="btn btn-warning btn-xs" value="%s">' .
 					'<i class="fa fa-refresh icon-embed-btn"></i>' .
 					'%s' .
 					'</button>' .
+					'%s' .
 					'</form>';
 
 // Display a term/definition pair
@@ -97,14 +69,29 @@ function showDef($show, $term, $def) {
 }
 
 // Display a term/definition pair with a button
-function showDefBtn($show, $term, $def, $ifval, $btnlbl) {
+function showDefBtn($show, $term, $def, $ifdescr, $btnlbl, $chkbox_relinquish_lease) {
 	global $formtemplate;
 
 	if ($show) {
 		print('<dt>' . $term . '</dt>');
 		print('<dd>');
-		printf($formtemplate, $term, $ifval, $show, htmlspecialchars($def)	. ' ', $btnlbl, $btnlbl);
+		printf($formtemplate, $term, $ifdescr, $show, htmlspecialchars($def)	. ' ', $btnlbl, $btnlbl, $chkbox_relinquish_lease);
 		print('</dd>');
+	}
+}
+
+// Relinquish the DHCP lease from the server.
+function dhcp_relinquish_lease($if, $ifdescr, $ipv) {
+	$leases_db = '/var/db/dhclient.leases.' . $if;
+	$conf_file = '/var/etc/dhclient_'.$ifdescr.'.conf';
+	$script_file = '/usr/local/sbin/pfSense-dhclient-script';
+	$ipv = ((int) $ipv == 6) ? '-6' : '-4';
+
+	if (file_exists($leases_db) && file_exists($script_file)) {
+		mwexec('/usr/local/sbin/dhclient {$ipv} -d -r' .
+			' -lf ' . escapeshellarg($leases_db) .
+			' -cf ' . escapeshellarg($conf_file) .
+			' -sf ' . escapeshellarg($script_file));
 	}
 }
 
@@ -112,11 +99,17 @@ $pgtitle = array(gettext("Status"), gettext("Interfaces"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
-$ifdescrs = get_configured_interface_with_descr(false, true);
+$ifdescrs = get_configured_interface_with_descr(true);
 
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
 	$mac_man = load_mac_manufacturer_table();
+
+	$chkbox_relinquish_lease = 	'&nbsp;&nbsp;&nbsp;' .
+								'<input type="checkbox" name="relinquish_lease" value="true" title="' . gettext("Send a gratuitous DHCP release packet to the server.") . '" /> ' . gettext("Relinquish Lease") .
+								'<input type="hidden" name="if" value='.$ifinfo['if'].' />';
+	$chkbox_relinquish_lease_v4 = $chkbox_relinquish_lease . '<input type="hidden" name="ipv" value=4 />';
+	$chkbox_relinquish_lease_v6 = $chkbox_relinquish_lease . '<input type="hidden" name="ipv" value=6 />';
 ?>
 
 <div class="panel panel-default">
@@ -124,14 +117,14 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	<div class="panel-body">
 		<dl class="dl-horizontal">
 <?php
-		showDef(true, gettext("Status"), $ifinfo['status']);
-		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, $ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew"));
-		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, $ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew"));
-		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, $ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
-		showDefBtn($ifinfo['pptplink'], 'PPTP', $ifinfo['pptplink'], $ifdescr, $ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
-		showDefBtn($ifinfo['l2tplink'], 'L2TP', $ifinfo['l2tplink'], $ifdescr, $ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
-		showDefBtn($ifinfo['ppplink'], 'PPP', $ifinfo['ppplink'], $ifdescr, ($ifinfo['ppplink'] == "up" && !$ifinfo['nodevice']) ? gettext("Disconnect") : gettext("Connect"));
-		showDef($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated'], gettext("Uptime") . ' ' . ($ifinfo['ppp_uptime_accumulated'] ? '(historical)':''), $ifinfo['ppp_uptime'] . $ifinfo['ppp_uptime_accumulated']);
+		showDef(true, gettext("Status"), $ifinfo['enable'] ? $ifinfo['status'] : gettext('disabled'));
+		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, $ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew"), $ifinfo['dhcplink'] == "up" ? $chkbox_relinquish_lease_v4 : '');
+		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, $ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew"), $ifinfo['dhcp6link'] == "up" ? $chkbox_relinquish_lease_v6 : '');
+		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, $ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
+		showDefBtn($ifinfo['pptplink'], 'PPTP', $ifinfo['pptplink'], $ifdescr, $ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
+		showDefBtn($ifinfo['l2tplink'], 'L2TP', $ifinfo['l2tplink'], $ifdescr, $ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
+		showDefBtn($ifinfo['ppplink'], 'PPP', $ifinfo['ppplink'], $ifdescr, ($ifinfo['ppplink'] == "up" && !$ifinfo['nodevice']) ? gettext("Disconnect") : gettext("Connect"), '');
+		showDef($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated'], gettext("Uptime") . ' ' . ($ifinfo['ppp_uptime_accumulated'] ? gettext('(historical)'):''), $ifinfo['ppp_uptime'] . $ifinfo['ppp_uptime_accumulated']);
 		showDef($ifinfo['cell_rssi'], gettext("Cell Signal (RSSI)"), $ifinfo['cell_rssi']);
 		showDef($ifinfo['cell_mode'], gettext("Cell Mode"), $ifinfo['cell_mode']);
 		showDef($ifinfo['cell_simstate'], gettext("Cell SIM State"), $ifinfo['cell_simstate']);
@@ -157,7 +150,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				showDef($ifinfo['subnetv6'], gettext('Subnet mask IPv6'), $ifinfo['subnetv6']);
 				showDef($ifinfo['gatewayv6'], gettext("Gateway IPv6"), $config['interfaces'][$ifdescr]['gatewayv6'] . " " . $ifinfo['gatewayv6']);
 
-				if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/resolv.conf")) {
+				if ($ifdescr == "wan" && file_exists("{$g['etc_path']}/resolv.conf")) {
 					$dns_servers = get_dns_servers();
 					$dnscnt = 0;
 					foreach ($dns_servers as $dns) {
@@ -186,7 +179,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			showDef(isset($ifinfo['collisions']), gettext("Collisions"), $ifinfo['collisions']);
 		} // e-o-if ($ifinfo['status'] != "down")
 
-		showDef($ifinfo['bridge'], gettext('Bridge (') . $ifinfo['bridgeint'] . ')', $ifinfo['bridge']);
+		showDef($ifinfo['bridge'], sprintf(gettext('Bridge (%1$s)'), $ifinfo['bridgeint']), $ifinfo['bridge']);
 
 		if (file_exists("/usr/bin/vmstat")) {
 			$real_interface = "";
@@ -214,10 +207,10 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 <?php
 	endforeach;
 
-print_info_box(gettext("Using dial-on-demand will bring the connection up again if any packet ".
-	    "triggers it. To substantiate this point: disconnecting manually ".
-	    "will <strong>not</strong> prevent dial-on-demand from making connections ".
-	    "to the outside! Don't use dial-on-demand if the line ".
-	    "is to be kept disconnected."), 'warning', false);
+print_info_box(sprintf(gettext('Using dial-on-demand will bring the connection up again if any packet ' .
+	    'triggers it. To substantiate this point: disconnecting manually ' .
+	    'will %1$snot%2$s prevent dial-on-demand from making connections ' .
+	    'to the outside! Don\'t use dial-on-demand if the line ' .
+	    'is to be kept disconnected.'), '<strong>', '</strong>'), 'warning', false);
 include("foot.inc");
 ?>

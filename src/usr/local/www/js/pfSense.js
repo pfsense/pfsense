@@ -1,4 +1,24 @@
 /*
+ * pfSense.js
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
  * This file should only contain functions that will be used on more than 2 pages
  */
 
@@ -93,25 +113,68 @@ $(function() {
 		});
 	})();
 
+	// Add +/- buttons to certain Groups; to allow adding multiple entries
+	(function()
+	{
+		var groups = $('div.form-listitem.user-duplication');
+		var fg = $('<div class="form-group"></div>');
+		var controlsContainer = $('<div class="col-sm-10 col-sm-offset-2 controls"></div>');
+		var plus = $('<a class="btn btn-xs btn-success"><i class="fa fa-plus icon-embed-btn"></i>Add</a>');
+		var minus = $('<a class="btn btn-xs btn-warning"><i class="fa fa-trash icon-embed-btn"></i>Delete</a>');
+
+		minus.on('click', function(){
+			var groups = $('div.form-listitem.user-duplication');
+			if (groups.length > 1) {
+				$(this).parents('div.form-listitem').remove();
+			}
+		});
+
+		plus.on('click', function(){
+			var group = $(this).parents('div.form-listitem');
+			var clone = group.clone(true);
+			bump_input_id(clone);
+			clone.appendTo(group.parent());
+		});
+
+		groups.each(function(idx, group){
+			var fgClone = fg.clone(true).appendTo(group);
+			var controlsClone = controlsContainer.clone(true).appendTo(fgClone);
+			minus.clone(true).appendTo(controlsClone);
+			plus.clone(true).appendTo(controlsClone);
+		});
+	})();
+
 	// Automatically change IpAddress mask selectors to 128/32 options for IPv6/IPv4 addresses
 	$('span.pfIpMask + select').each(function (idx, select){
 		var input = $(select).prevAll('input[type=text]');
 
 		input.on('change', function(e){
 			var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
+
 			if (!isV6)
 				max = 32;
 
-			if (input.val() == "")
+			if (input.val() == "") {
 				return;
+			}
 
-			// Eat all of the options with a value greater than max. We don't want them to be available
-			while (select.options[0].value > max)
-				select.remove(0);
+			var attr = $(select).attr('disabled');
 
-			if (select.options.length < max) {
-				for (var i=select.options.length; i<=max; i++)
-					select.options.add(new Option(i, i), 0);
+			// Don't do anything if the mask selector is disabled
+			if (typeof attr === typeof undefined || attr === false) {
+				// Eat all of the options with a value greater than max. We don't want them to be available
+				while (select.options[0].value > max)
+					select.remove(0);
+
+				if (select.options.length < max) {
+					for (var i=select.options.length; i<=max; i++)
+						select.options.add(new Option(i, i), 0);
+
+					if (isV6) {
+						// Make sure index 0 is selected otherwise it will stay in "32" for V6
+						select.options.selectedIndex = "0";
+					}
+				}
 			}
 		});
 
@@ -123,20 +186,25 @@ $(function() {
 	// Use element title in the confirmation message, or if not available
 	// the element value
 	$('.btn-danger, .fa-trash').on('click', function(e){
-		if(!($(this).hasClass('no-confirm'))) {
-			var msg = $.trim(this.textContent);
+		if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn'))) {
+			// Anchors using the automatic get2post system (pfSenseHelpers.js) perform the confirmation dialog
+			// in those functions
+			var attr = $(this).attr('usepost');
+			if (typeof attr === typeof undefined || attr === false) {
+				var msg = $.trim(this.textContent).toLowerCase();
 
-			if(!msg)
-				var msg = $.trim(this.value).toLowerCase();
+				if (!msg)
+					var msg = $.trim(this.value).toLowerCase();
 
-			var q = 'Are you sure you wish to '+ msg +'?';
+				var q = 'Are you sure you wish to '+ msg +'?';
 
-			if ($(this).attr('title') != undefined)
-				q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
+				if ($(this).attr('title') != undefined)
+					q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
 
-			if (!confirm(q)) {
-				e.preventDefault();
-				e.stopPropagation();	// Don't leave ancestor(s) selected.
+				if (!confirm(q)) {
+					e.preventDefault();
+					e.stopPropagation();	// Don't leave ancestor(s) selected.
+				}
 			}
 		}
 	});
@@ -153,7 +221,9 @@ $(function() {
 			all.prop('checked', (all.length != checked.length));
 		});
 
-		a.appendTo($(this));
+		if ( ! $(this).parent().hasClass("notoggleall")) {
+			a.appendTo($(this));
+		}
 	});
 
 	// The need to NOT hide the advanced options if the elements therein are not set to the system
@@ -181,7 +251,7 @@ $(function() {
 
 	  originalLeave.call(this, obj);
 
-	  if(self.$tip && self.$tip.length) {
+	  if (self.$tip && self.$tip.length) {
 	    container = self.$tip;
 	    timeout = self.timeout;
 	    container.one('mouseenter', function(){
@@ -210,9 +280,14 @@ $(function() {
 	$('.table-rowdblclickedit>tbody>tr').dblclick(function () {
 		$(this).find(".fa-pencil")[0].click();
 	});
-	
+
 	// Focus first input
 	$(':input:enabled:visible:first').focus();
+
+	$(".resizable").each(function() {
+		$(this).css('height', 80).resizable({minHeight: 80, minWidth: 200}).parent().css('padding-bottom', 0);
+		$(this).css('height', 78);
+	});
 
 	// Run in-page defined events
 	while (func = window.events.shift())

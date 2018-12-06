@@ -1,57 +1,23 @@
 <?php
 /*
-	xmlrpc.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2005 Colin Smith
+ * xmlrpc.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005 Colin Smith
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -63,232 +29,527 @@
 
 require_once("config.inc");
 require_once("functions.inc");
+require_once("auth.inc");
 require_once("filter.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("captiveportal.inc");
 require_once("shaper.inc");
-require_once("xmlrpc_server.inc");
-require_once("xmlrpc.inc");
+require_once("XML/RPC2/Server.php");
 
-function xmlrpc_loop_detect() {
-	global $config;
+class pfsense_xmlrpc_server {
 
-	/* grab sync to ip if enabled */
-	if ($config['hasync']) {
-		$synchronizetoip = $config['hasync']['synchronizetoip'];
+	private $loop_detected = false;
+	private $remote_addr;
+
+	private function auth() {
+		global $config;
+		$username = $_SERVER['PHP_AUTH_USER'];
+		$password = $_SERVER['PHP_AUTH_PW'];
+
+		$login_ok = false;
+		if (!empty($username) && !empty($password)) {
+			$attributes = array();
+			$authcfg = auth_get_authserver(
+			    $config['system']['webgui']['authmode']);
+
+			if (authenticate_user($username, $password,
+			    $authcfg, $attributes) ||
+			    authenticate_user($username, $password)) {
+				$login_ok = true;
+			}
+		}
+
+		if (!$login_ok) {
+			log_auth("webConfigurator authentication error for '" .
+			    $username . "' from " . $this->remote_addr);
+
+			require_once("XML/RPC2/Exception.php");
+			throw new XML_RPC2_FaultException(gettext(
+			    'Authentication failed: Invalid username or password'),
+			    -1);
+		}
+
+		$user_entry = getUserEntry($username);
+		/*
+		 * admin (uid = 0) is allowed
+		 * or regular user with necessary privilege
+		 */
+		if (isset($user_entry['uid']) && $user_entry['uid'] != '0' &&
+		    !userHasPrivilege($user_entry, 'system-xmlrpc-ha-sync')) {
+			log_auth("webConfigurator authentication error for '" .
+			    $username . "' from " . $this->remote_addr .
+			    " not enough privileges");
+
+			require_once("XML/RPC2/Exception.php");
+			throw new XML_RPC2_FaultException(gettext(
+			    'Authentication failed: not enough privileges'),
+			    -2);
+		}
+
+		return;
 	}
-	if ($synchronizetoip) {
-		if ($synchronizetoip == $_SERVER['REMOTE_ADDR']) {
+
+	private function array_overlay($a1, $a2) {
+		foreach ($a1 as $k => $v) {
+			if (!array_key_exists($k, $a2)) {
+				continue;
+			}
+			if (is_array($v) && is_array($a2[$k])) {
+				$a1[$k] = $this->array_overlay($v, $a2[$k]);
+			} else {
+				$a1[$k] = $a2[$k];
+			}
+		}
+
+		return $a1;
+	}
+
+	public function __construct() {
+		global $config;
+
+		$this->remote_addr = $_SERVER['REMOTE_ADDR'];
+
+		/* grab sync to ip if enabled */
+		if (isset($config['hasync']['synchronizetoip']) &&
+		    $config['hasync']['synchronizetoip'] == $this->remote_addr) {
+			$this->loop_detected = true;
+		}
+	}
+
+	/**
+	 * Get host version information
+	 *
+	 * @return array
+	 */
+	public function host_firmware_version($dummy = 1) {
+		$this->auth();
+		return host_firmware_version();
+	}
+
+	/**
+	 * Executes a PHP block of code
+	 *
+	 * @param string $code
+	 *
+	 * @return bool
+	 */
+	public function exec_php($code) {
+		$this->auth();
+
+		eval($code);
+		if ($toreturn) {
+			return $toreturn;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Executes shell commands
+	 *
+	 * @param string $code
+	 *
+	 * @return bool
+	 */
+	public function exec_shell($code) {
+		$this->auth();
+
+		mwexec($code);
+		return true;
+	}
+
+	/**
+	 * Backup chosen config sections
+	 *
+	 * @param array $section
+	 *
+	 * @return array
+	 */
+	public function backup_config_section($section) {
+		$this->auth();
+
+		global $config;
+
+		return array_intersect_key($config, array_flip($section));
+	}
+
+	/**
+	 * Restore defined config section into local config
+	 *
+	 * @param array $sections
+	 *
+	 * @return bool
+	 */
+	public function restore_config_section($sections) {
+		$this->auth();
+
+		global $config, $cpzone, $cpzoneid;
+
+		$old_config = $config;
+		$old_ipsec_enabled = ipsec_enabled();
+
+		if ($this->loop_detected) {
+			log_error("Disallowing CARP sync loop");
 			return true;
 		}
-	}
 
-	return false;
-}
+		/*
+		 * Some sections should just be copied and not merged or we end
+		 * up unable to sync the deletion of the last item in a section
+		 */
+		$sync_full_sections = array(
+			'aliases',
+			'ca',
+			'cert',
+			'crl',
+			'dhcpd',
+			'dhcpv6',
+			'dnsmasq',
+			'filter',
+			'ipsec',
+			'load_balancer',
+			'nat',
+			'openvpn',
+			'schedules',
+			'unbound',
+			'wol',
+		);
 
-$xmlrpc_g = array(
-	"return" => array(
-		"true" => new XML_RPC_Response(new XML_RPC_Value(true, $XML_RPC_Boolean)),
-		"false" => new XML_RPC_Response(new XML_RPC_Value(false, $XML_RPC_Boolean)),
-		"authfail" => new XML_RPC_Response(new XML_RPC_Value(gettext("Authentication failed"), $XML_RPC_String))
-	)
-);
+		$syncd_full_sections = array();
 
-/*
- *   pfSense XMLRPC errors
- *   $XML_RPC_erruser + 1 = Auth failure
- */
-$XML_RPC_erruser = 200;
+		foreach ($sync_full_sections as $section) {
+			if (!isset($sections[$section])) {
+				continue;
+			}
 
-/* EXPOSED FUNCTIONS */
-$exec_php_doc = gettext("XMLRPC wrapper for eval(). This method must be called with two parameters: a string containing the local system\'s password followed by the PHP code to evaluate.");
-$exec_php_sig = array(
-	array(
-		$XML_RPC_Boolean, // First signature element is return value.
-		$XML_RPC_String, // password
-		$XML_RPC_String, // shell code to exec
-	)
-);
-
-function xmlrpc_authfail() {
-	log_auth("webConfigurator authentication error for 'admin' from {$_SERVER['REMOTE_ADDR']}");
-}
-
-function exec_php_xmlrpc($raw_params) {
-	global $config, $xmlrpc_g;
-
-	$params = xmlrpc_params_to_php($raw_params);
-	if (!xmlrpc_auth($params)) {
-		xmlrpc_authfail();
-		return $xmlrpc_g['return']['authfail'];
-	}
-	$exec_php = $params[0];
-	eval($exec_php);
-	if ($toreturn) {
-		$response = XML_RPC_encode($toreturn);
-		return new XML_RPC_Response($response);
-	} else {
-		return $xmlrpc_g['return']['true'];
-	}
-}
-
-/*****************************/
-$exec_shell_doc = gettext("XMLRPC wrapper for mwexec(). This method must be called with two parameters: a string containing the local system\'s password followed by an shell command to execute.");
-$exec_shell_sig = array(
-	array(
-		$XML_RPC_Boolean, // First signature element is return value.
-		$XML_RPC_String, // password
-		$XML_RPC_String, // shell code to exec
-	)
-);
-
-function exec_shell_xmlrpc($raw_params) {
-	global $config, $xmlrpc_g;
-
-	$params = xmlrpc_params_to_php($raw_params);
-	if (!xmlrpc_auth($params)) {
-		xmlrpc_authfail();
-		return $xmlrpc_g['return']['authfail'];
-	}
-	$shell_cmd = $params[0];
-	mwexec($shell_cmd);
-
-	return $xmlrpc_g['return']['true'];
-}
-
-/*****************************/
-$backup_config_section_doc = gettext("XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by an array containing the keys to be backed up.");
-$backup_config_section_sig = array(
-	array(
-		$XML_RPC_Struct, // First signature element is return value.
-		$XML_RPC_String,
-		$XML_RPC_Array
-	)
-);
-
-function backup_config_section_xmlrpc($raw_params) {
-	global $config, $xmlrpc_g;
-
-	if (xmlrpc_loop_detect()) {
-		log_error("Disallowing CARP sync loop");
-		return;
-	}
-
-	$params = xmlrpc_params_to_php($raw_params);
-	if (!xmlrpc_auth($params)) {
-		xmlrpc_authfail();
-		return $xmlrpc_g['return']['authfail'];
-	}
-	$val = array_intersect_key($config, array_flip($params[0]));
-
-	return new XML_RPC_Response(XML_RPC_encode($val));
-}
-
-/*****************************/
-$restore_config_section_doc = gettext("XMLRPC wrapper for restore_config_section. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.");
-$restore_config_section_sig = array(
-	array(
-		$XML_RPC_Boolean,
-		$XML_RPC_String,
-		$XML_RPC_Struct
-	)
-);
-
-function restore_config_section_xmlrpc($raw_params) {
-	global $config, $xmlrpc_g;
-
-	$old_config = $config;
-	$old_ipsec_enabled = ipsec_enabled();
-
-	if (xmlrpc_loop_detect()) {
-		log_error("Disallowing CARP sync loop");
-		return;
-	}
-
-	$params = xmlrpc_params_to_php($raw_params);
-	if (!xmlrpc_auth($params)) {
-		xmlrpc_authfail();
-		return $xmlrpc_g['return']['authfail'];
-	}
-
-	// Some sections should just be copied and not merged or we end
-	//   up unable to sync the deletion of the last item in a section
-	$sync_full = array('dnsmasq', 'unbound', 'ipsec', 'aliases', 'wol', 'load_balancer', 'openvpn', 'cert', 'ca', 'crl', 'schedules', 'filter', 'nat', 'dhcpd', 'dhcpv6');
-	$sync_full_done = array();
-	foreach ($sync_full as $syncfull) {
-		if (isset($params[0][$syncfull])) {
-			$config[$syncfull] = $params[0][$syncfull];
-			unset($params[0][$syncfull]);
-			$sync_full_done[] = $syncfull;
+			$config[$section] = $sections[$section];
+			unset($sections[$section]);
+			$syncd_full_sections[] = $section;
 		}
-	}
 
-	$vipbackup = array();
-	$oldvips = array();
-	if (isset($params[0]['virtualip'])) {
-		if (is_array($config['virtualip']['vip'])) {
-			foreach ($config['virtualip']['vip'] as $vipindex => $vip) {
+		/* Create a list of CP zones to be deleted locally */
+		$cp_to_del = array();
+		if (is_array($config['captiveportal'])) {
+			if (is_array($sections['captiveportal'])) {
+				$remote_cp = $sections['captiveportal'];
+			} else {
+				$remote_cp = array();
+			}
+			foreach ($config['captiveportal'] as $zone => $item) {
+				if (!isset($remote_cp[$zone])) {
+					$cp_to_del[] = $zone;
+				}
+			}
+			unset($remote_cp);
+		}
+
+		/* Only touch users if users are set to synchronize from the primary node
+		 * See https://redmine.pfsense.org/issues/8450
+		 */
+		if ($sections['system']['user'] && $sections['system']['group']) {
+			$g2add = array();
+			$g2del = array();
+			$g2del_idx = array();
+			$g2keep = array();
+			if (is_array($sections['system']['group'])) {
+				$local_groups = isset($config['system']['group'])
+				    ? $config['system']['group']
+				    : array();
+
+				foreach ($sections['system']['group'] as $group) {
+					$idx = array_search($group['name'],
+					    array_column($local_groups, 'name'));
+
+					if ($idx === false) {
+						$g2add[] = $group;
+					} else if ($group['gid'] < 1999) {
+						$g2keep[] = $idx;
+					} else if ($group != $local_groups[$idx]) {
+						$g2add[] = $group;
+						$g2del[] = $group;
+						$g2del_idx[] = $idx;
+					} else {
+						$g2keep[] = $idx;
+					}
+				}
+			}
+			if (is_array($config['system']['group'])) {
+				foreach ($config['system']['group'] as $idx => $group) {
+					if (array_search($idx, $g2keep) === false &&
+					    array_search($idx, $g2del_idx) === false) {
+						$g2del[] = $group;
+						$g2del_idx[] = $idx;
+					}
+				}
+			}
+			unset($sections['system']['group'], $g2keep, $g2del_idx);
+
+			$u2add = array();
+			$u2del = array();
+			$u2del_idx = array();
+			$u2keep = array();
+			if (is_array($sections['system']['user'])) {
+				$local_users = isset($config['system']['user'])
+				    ? $config['system']['user']
+				    : array();
+
+				foreach ($sections['system']['user'] as $user) {
+					$idx = array_search($user['name'],
+					    array_column($local_users, 'name'));
+
+					if ($idx === false) {
+						$u2add[] = $user;
+					} else if ($user['uid'] < 2000) {
+						$u2keep[] = $idx;
+					} else if ($user != $local_users[$idx]) {
+						$u2add[] = $user;
+						$u2del[] = $user;
+						$u2del_idx[] = $idx;
+					} else {
+						$u2keep[] = $idx;
+					}
+				}
+			}
+			if (is_array($config['system']['user'])) {
+				foreach ($config['system']['user'] as $idx => $user) {
+					if (array_search($idx, $u2keep) === false &&
+					    array_search($idx, $u2del_idx) === false) {
+						$u2del[] = $user;
+						$u2del_idx[] = $idx;
+					}
+				}
+			}
+			unset($sections['system']['user'], $u2keep, $u2del_idx);
+		}
+
+		$voucher = array();
+		if (is_array($sections['voucher'])) {
+			/* Save voucher rolls to process after merge */
+			$voucher = $sections['voucher'];
+
+			foreach($sections['voucher'] as $zone => $item) {
+				unset($sections['voucher'][$zone]['roll']);
+				if (isset($config['voucher'][$zone]['vouchersyncdbip'])) {
+					$sections['voucher'][$zone]['vouchersyncdbip'] =
+					    $config['voucher'][$zone]['vouchersyncdbip'];
+				} else {
+					unset($sections['voucher'][$zone]['vouchersyncdbip']);
+				}
+				if (isset($config['voucher'][$zone]['vouchersyncport'])) {
+					$sections['voucher'][$zone]['vouchersyncport'] =
+					    $config['voucher'][$zone]['vouchersyncport'];
+				} else {
+					unset($sections['voucher'][$zone]['vouchersyncport']);
+				}
+				if (isset($config['voucher'][$zone]['vouchersyncusername'])) {
+					$sections['voucher'][$zone]['vouchersyncusername'] =
+					    $config['voucher'][$zone]['vouchersyncusername'];
+				} else {
+					unset($sections['voucher'][$zone]['vouchersyncusername']);
+				}
+				if (isset($config['voucher'][$zone]['vouchersyncpass'])) {
+					$sections['voucher'][$zone]['vouchersyncpass'] =
+					    $config['voucher'][$zone]['vouchersyncpass'];
+				} else {
+					unset($sections['voucher'][$zone]['vouchersyncpass']);
+				}
+			}
+		}
+
+		$vipbackup = array();
+		$oldvips = array();
+		if (isset($sections['virtualip']) &&
+		    is_array($config['virtualip']['vip'])) {
+			foreach ($config['virtualip']['vip'] as $vip) {
 				if ($vip['mode'] == "carp") {
-					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"]['content'] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}";
-					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"]['interface'] = $vip['interface'];
-					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"]['subnet'] = $vip['subnet'];
-				} else if ($vip['mode'] == "ipalias" && (substr($vip['interface'], 0, 4) == '_vip' || strstr($vip['interface'], "lo0"))) {
-					$oldvips[$vip['subnet']]['content'] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}";
-					$oldvips[$vip['subnet']]['interface'] = $vip['interface'];
-					$oldvips[$vip['subnet']]['subnet'] = $vip['subnet'];
-				} else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && !(substr($vip['interface'], 0, 4) == '_vip') || strstr($vip['interface'], "lo0")) {
+					$key = $vip['interface'] .
+					    "_vip" . $vip['vhid'];
+
+					$oldvips[$key]['content'] =
+					    $vip['password'] .
+					    $vip['advskew'] .
+					    $vip['subnet'] .
+					    $vip['subnet_bits'] .
+					    $vip['advbase'];
+					$oldvips[$key]['interface'] =
+					    $vip['interface'];
+					$oldvips[$key]['subnet'] =
+					    $vip['subnet'];
+				} else if ($vip['mode'] == "ipalias" &&
+				    (substr($vip['interface'], 0, 4) == '_vip'
+				    || strstr($vip['interface'], "lo0"))) {
+					$oldvips[$vip['subnet']]['content'] =
+					    $vip['interface'] .
+					    $vip['subnet'] .
+					    $vip['subnet_bits'];
+					$oldvips[$vip['subnet']]['interface'] =
+					    $vip['interface'];
+					$oldvips[$vip['subnet']]['subnet'] =
+					    $vip['subnet'];
+				} else if (($vip['mode'] == "ipalias" ||
+				    $vip['mode'] == 'proxyarp') &&
+				    !(substr($vip['interface'], 0, 4) == '_vip')
+				    || strstr($vip['interface'], "lo0")) {
 					$vipbackup[] = $vip;
 				}
 			}
 		}
-	}
 
-	// For vip section, first keep items sent from the master
-	$config = array_merge_recursive_unique($config, $params[0]);
+		/* For vip section, first keep items sent from the master */
+		$config = array_merge_recursive_unique($config, $sections);
 
-	/* Then add ipalias and proxyarp types already defined on the backup */
-	if (is_array($vipbackup) && !empty($vipbackup)) {
-		if (!is_array($config['virtualip'])) {
-			$config['virtualip'] = array();
-		}
-		if (!is_array($config['virtualip']['vip'])) {
-			$config['virtualip']['vip'] = array();
-		}
-		foreach ($vipbackup as $vip) {
-			array_unshift($config['virtualip']['vip'], $vip);
-		}
-	}
-
-	/* Log what happened */
-	$mergedkeys = implode(",", array_merge(array_keys($params[0]), $sync_full_done));
-	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."), $mergedkeys));
-
-	/*
-	 * The real work on handling the vips specially
-	 * This is a copy of intefaces_vips_configure with addition of not reloading existing/not changed carps
-	 */
-	if (isset($params[0]['virtualip']) && is_array($config['virtualip']) && is_array($config['virtualip']['vip'])) {
-		$carp_setuped = false;
-		$anyproxyarp = false;
-		foreach ($config['virtualip']['vip'] as $vip) {
-			if ($vip['mode'] == "carp" && isset($oldvips["{$vip['interface']}_vip{$vip['vhid']}"])) {
-				if ($oldvips["{$vip['interface']}_vip{$vip['vhid']}"]['content'] == "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}") {
-					if (does_vip_exist($vip)) {
-						unset($oldvips["{$vip['interface']}_vip{$vip['vhid']}"]);
-						continue; // Skip reconfiguring this vips since nothing has changed.
-					}
-				}
-			} else if ($vip['mode'] == "ipalias" && strstr($vip['interface'], "_vip") && isset($oldvips[$vip['subnet']])) {
-				if ($oldvips[$vip['subnet']]['content'] == "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}") {
-					if (does_vip_exist($vip)) {
-						unset($oldvips[$vip['subnet']]);
-						continue; // Skip reconfiguring this vips since nothing has changed.
-					}
-				}
-				unset($oldvips[$vip['subnet']]);
+		/* Remove local CP zones removed remote */
+		foreach ($cp_to_del as $zone) {
+			$cpzone = $zone;
+			$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
+			unset($config['captiveportal'][$cpzone]['enable']);
+			captiveportal_configure_zone(
+			    $config['captiveportal'][$cpzone]);
+			unset($config['captiveportal'][$cpzone]);
+			if (isset($config['voucher'][$cpzone])) {
+				unset($config['voucher'][$cpzone]);
 			}
+		}
 
-			switch ($vip['mode']) {
+		/* Remove locally items removed remote */
+		foreach ($voucher as $zone => $item) {
+			/* No rolls on master, delete local ones */
+			if (!is_array($item['roll'])) {
+				unset($config['voucher'][$zone]['roll']);
+			}
+		}
+
+		$l_rolls = array();
+		if (is_array($config['voucher'])) {
+			foreach ($config['voucher'] as $zone => $item) {
+				if (!is_array($item['roll'])) {
+					continue;
+				}
+				foreach ($item['roll'] as $idx => $roll) {
+					/* Make it easy to find roll by # */
+					$l_rolls[$zone][$roll['number']] = $idx;
+				}
+			}
+		}
+
+		/*
+		 * Process vouchers sent by primary node and:
+		 * - Add new items
+		 * - Update existing items based on 'lastsync' field
+		 */
+		foreach ($voucher as $zone => $item) {
+			if (!is_array($item['roll'])) {
+				continue;
+			}
+			foreach ($item['roll'] as $idx => $roll) {
+				if (!isset($l_rolls[$zone][$roll['number']])) {
+					$config['voucher'][$zone]['roll'][] =
+					    $roll;
+					continue;
+				}
+				$l_roll_idx = $l_rolls[$zone][$roll['number']];
+				init_config_arr(array('voucher', $zone));
+				$l_vouchers = &$config['voucher'][$zone];
+				$l_roll = $l_vouchers['roll'][$l_roll_idx];
+				if (!isset($l_roll['lastsync'])) {
+					$l_roll['lastsync'] = 0;
+				}
+
+				if (isset($roll['lastsync']) &&
+				    $roll['lastsync'] != $l_roll['lastsync']) {
+					$l_vouchers['roll'][$l_roll_idx] =
+					    $roll;
+					unset($l_rolls[$zone][$roll['number']]);
+				}
+			}
+		}
+
+		/*
+		 * At this point $l_rolls contains only items that are not
+		 * present on primary node. They must be removed
+		 */
+		foreach ($l_rolls as $zone => $item) {
+			foreach ($item as $number => $idx) {
+				unset($config['voucher'][$zone][$idx]);
+			}
+		}
+
+		/*
+		 * Then add ipalias and proxyarp types already defined
+		 * on the backup
+		 */
+		if (is_array($vipbackup) && !empty($vipbackup)) {
+			if (!is_array($config['virtualip'])) {
+				$config['virtualip'] = array();
+			}
+			if (!is_array($config['virtualip']['vip'])) {
+				$config['virtualip']['vip'] = array();
+			}
+			foreach ($vipbackup as $vip) {
+				array_unshift($config['virtualip']['vip'], $vip);
+			}
+		}
+
+		/* Log what happened */
+		$mergedkeys = implode(", ", array_merge(array_keys($sections),
+		    $syncd_full_sections));
+		write_config(sprintf(gettext(
+		    "Merged in config (%s sections) from XMLRPC client."),
+		    $mergedkeys));
+
+		/*
+		 * The real work on handling the vips specially
+		 * This is a copy of intefaces_vips_configure with addition of
+		 * not reloading existing/not changed carps
+		 */
+		if (isset($sections['virtualip']) &&
+		    is_array($config['virtualip']) &&
+		    is_array($config['virtualip']['vip'])) {
+			$carp_setuped = false;
+			$anyproxyarp = false;
+
+			foreach ($config['virtualip']['vip'] as $vip) {
+				$key = "{$vip['interface']}_vip{$vip['vhid']}";
+
+				if ($vip['mode'] == "carp" &&
+				    isset($oldvips[$key])) {
+					if ($oldvips[$key]['content'] ==
+					    $vip['password'] .
+					    $vip['advskew'] .
+					    $vip['subnet'] .
+					    $vip['subnet_bits'] .
+					    $vip['advbase'] &&
+					    does_vip_exist($vip)) {
+						unset($oldvips[$key]);
+						/*
+						 * Skip reconfiguring this vips
+						 * since nothing has changed.
+						 */
+						continue;
+					}
+
+				} elseif ($vip['mode'] == "ipalias" &&
+				    (substr($vip['interface'], 0, 4) == '_vip'
+				    || strstr($vip['interface'], "lo0")) &&
+				    isset($oldvips[$vip['subnet']])) {
+					$key = $vip['subnet'];
+					if ($oldvips[$key]['content'] ==
+					    $vip['interface'] .
+					    $vip['subnet'] .
+					    $vip['subnet_bits'] &&
+					    does_vip_exist($vip)) {
+						unset($oldvips[$key]);
+						/*
+						 * Skip reconfiguring this vips
+						 * since nothing has changed.
+						 */
+						continue;
+					}
+					unset($oldvips[$key]);
+				}
+
+				switch ($vip['mode']) {
 				case "proxyarp":
 					$anyproxyarp = true;
 					break;
@@ -296,308 +557,216 @@ function restore_config_section_xmlrpc($raw_params) {
 					interface_ipalias_configure($vip);
 					break;
 				case "carp":
-					if ($carp_setuped == false) {
-						$carp_setuped = true;
-					}
+					$carp_setuped = true;
 					interface_carp_configure($vip);
 					break;
-			}
-		}
-		/* Cleanup remaining old carps */
-		foreach ($oldvips as $oldvipar) {
-			$oldvipif = get_real_interface($oldvipar['interface']);
-			if (!empty($oldvipif)) {
-				if (is_ipaddrv6($oldvipar['subnet'])) {
-					 mwexec("/sbin/ifconfig " . escapeshellarg($oldvipif) . " inet6 " . escapeshellarg($oldvipar['subnet']) . " delete");
-				} else {
-					pfSense_interface_deladdress($oldvipif, $oldvipar['subnet']);
 				}
 			}
+
+			/* Cleanup remaining old carps */
+			foreach ($oldvips as $oldvipar) {
+				$oldvipif = get_real_interface(
+				    $oldvipar['interface']);
+
+				if (empty($oldvipif)) {
+					continue;
+				}
+
+				if (is_ipaddrv6($oldvipar['subnet'])) {
+					 mwexec("/sbin/ifconfig " .
+					     escapeshellarg($oldvipif) .
+					     " inet6 " .
+					     escapeshellarg($oldvipar['subnet']) .
+					     " delete");
+				} else {
+					pfSense_interface_deladdress($oldvipif,
+					    $oldvipar['subnet']);
+				}
+			}
+			if ($carp_setuped == true) {
+				interfaces_sync_setup();
+			}
+			if ($anyproxyarp == true) {
+				interface_proxyarp_configure();
+			}
 		}
-		if ($carp_setuped == true) {
-			interfaces_sync_setup();
+
+		if ($old_ipsec_enabled !== ipsec_enabled()) {
+			vpn_ipsec_configure();
 		}
-		if ($anyproxyarp == true) {
-			interface_proxyarp_configure();
-		}
+
+		unset($old_config);
+
+		local_sync_accounts($u2add, $u2del, $g2add, $g2del);
+		$this->filter_configure(false);
+
+		return true;
 	}
 
-	if ($old_ipsec_enabled !== ipsec_enabled()) {
-		vpn_ipsec_configure();
-	}
-
-	unset($old_config);
-
-	return $xmlrpc_g['return']['true'];
-}
-
-/*****************************/
-$merge_installedpackages_section_doc = gettext("XMLRPC wrapper for merging package sections. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.");
-$merge_installedpackages_section_sig = array(
-	array(
-		$XML_RPC_Boolean,
-		$XML_RPC_String,
-		$XML_RPC_Struct
-	)
-);
-
-function merge_installedpackages_section_xmlrpc($raw_params) {
-	global $config, $xmlrpc_g;
-
-	if (xmlrpc_loop_detect()) {
-		log_error("Disallowing CARP sync loop");
-		return;
-	}
-
-	$params = xmlrpc_params_to_php($raw_params);
-	if (!xmlrpc_auth($params)) {
-		xmlrpc_authfail();
-		return $xmlrpc_g['return']['authfail'];
-	}
-	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
-	$mergedkeys = implode(",", array_keys($params[0]));
-	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."), $mergedkeys));
-
-	return $xmlrpc_g['return']['true'];
-}
-
-/*****************************/
-$merge_config_section_doc = gettext("XMLRPC wrapper for merge_config_section. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.");
-$merge_config_section_sig = array(
-	array(
-		$XML_RPC_Boolean,
-		$XML_RPC_String,
-		$XML_RPC_Struct
-	)
-);
-
-function merge_config_section_xmlrpc($raw_params) {
-	global $config, $xmlrpc_g;
-
-	if (xmlrpc_loop_detect()) {
-		log_error("Disallowing CARP sync loop");
-		return;
-	}
-
-	$params = xmlrpc_params_to_php($raw_params);
-	if (!xmlrpc_auth($params)) {
-		xmlrpc_authfail();
-		return $xmlrpc_g['return']['authfail'];
-	}
-	$config_new = array_overlay($config, $params[0]);
-	$config = $config_new;
-	$mergedkeys = implode(",", array_keys($params[0]));
-	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."), $mergedkeys));
-	return $xmlrpc_g['return']['true'];
-}
-
-/*****************************/
-$filter_configure_doc = gettext("Basic XMLRPC wrapper for filter_configure. This method must be called with one parameter: a string containing the local system\'s password. This function returns true upon completion.");
-$filter_configure_sig = array(
-	array(
-		$XML_RPC_Boolean,
-		$XML_RPC_String
-	)
-);
-
-function filter_configure_xmlrpc($raw_params) {
-	global $xmlrpc_g, $g, $config;
-
-	$params = xmlrpc_params_to_php($raw_params);
-	if (!xmlrpc_auth($params)) {
-		xmlrpc_authfail();
-		return $xmlrpc_g['return']['authfail'];
-	}
-	filter_configure();
-	system_routing_configure();
-	setup_gateways_monitor();
-	relayd_configure();
-	require_once("openvpn.inc");
-	openvpn_resync_all();
-
-	/* The DNS Resolver and the DNS Forwarder may both be active so long as
-	 * they are running on different ports. See ticket #5882
+	/**
+	 * Merge items into installedpackages config section
+	 *
+	 * @param array $section
+	 *
+	 * @return bool
 	 */
-	$need_dhcp_start = true;
-	if (isset($config['dnsmasq']['enable'])) {
-		/* Configure dnsmasq but tell it NOT to restart DHCP */
-		services_dnsmasq_configure(false);
-	} else {
-		/* kill any running dnsmasq since it is not enabled. */
-		if (file_exists("{$g['varrun_path']}/dnsmasq.pid")) {
-			sigkillbypid("{$g['varrun_path']}/dnsmasq.pid", "TERM");
+	public function merge_installedpackages_section($section) {
+		$this->auth();
+
+		global $config;
+
+		if ($this->loop_detected) {
+			log_error("Disallowing CARP sync loop");
+			return true;
 		}
-	}
-	if (isset($config['unbound']['enable'])) {
-		/* Configure unbound but tell it NOT to restart DHCP */
-		services_unbound_configure(false);
-	} else {
-		/* kill any running Unbound instance since it is not enabled. */
-		if (file_exists("{$g['varrun_path']}/unbound.pid")) {
-			sigkillbypid("{$g['varrun_path']}/unbound.pid", "TERM");
-		}
+
+		$config['installedpackages'] = array_merge(
+		    $config['installedpackages'], $section);
+		$mergedkeys = implode(", ", array_keys($section));
+		write_config(sprintf(gettext(
+		    "Merged in config (%s sections) from XMLRPC client."),
+		    $mergedkeys));
+
+		return true;
 	}
 
-	/* Call this separately since the above are manually set to skip the DHCP restart they normally perform.
-	 * This avoids restarting dhcpd twice as described on ticket #3797
+	/**
+	 * Merge items into config
+	 *
+	 * @param array $section
+	 *
+	 * @return bool
 	 */
-	services_dhcpd_configure();
+	public function merge_config_section($section) {
+		$this->auth();
 
-	local_sync_accounts();
+		global $config;
 
-	return $xmlrpc_g['return']['true'];
-}
-
-/*****************************/
-$carp_configure_doc = gettext("Basic XMLRPC wrapper for configuring CARP interfaces.");
-$carp_configure_sig = array(
-	array(
-		$XML_RPC_Boolean,
-		$XML_RPC_String
-	)
-);
-
-function interfaces_carp_configure_xmlrpc($raw_params) {
-	global $xmlrpc_g;
-
-	if (xmlrpc_loop_detect()) {
-		log_error("Disallowing CARP sync loop");
-		return;
-	}
-
-	$params = xmlrpc_params_to_php($raw_params);
-	if (!xmlrpc_auth($params)) {
-		xmlrpc_authfail();
-		return $xmlrpc_g['return']['authfail'];
-	}
-	interfaces_vips_configure();
-
-	return $xmlrpc_g['return']['true'];
-}
-
-/*****************************/
-$pfsense_firmware_version_doc = gettext("Basic XMLRPC wrapper for host_firmware_version. This function will return the output of host_firmware_version upon completion.");
-
-$pfsense_firmware_version_sig = array (
-	array (
-		$XML_RPC_Struct,
-		$XML_RPC_String
-	)
-);
-
-function pfsense_firmware_version_xmlrpc($raw_params) {
-		global $xmlrpc_g;
-
-		$params = xmlrpc_params_to_php($raw_params);
-		if (!xmlrpc_auth($params)) {
-			xmlrpc_authfail();
-			return $xmlrpc_g['return']['authfail'];
+		if ($this->loop_detected) {
+			log_error("Disallowing CARP sync loop");
+			return true;
 		}
-		return new XML_RPC_Response(XML_RPC_encode(host_firmware_version()));
+
+		$config_new = $this->array_overlay($config, $section);
+		$config = $config_new;
+		$mergedkeys = implode(", ", array_keys($section));
+		write_config(sprintf(gettext(
+		    "Merged in config (%s sections) from XMLRPC client."),
+		    $mergedkeys));
+
+		return true;
+	}
+
+	/**
+	 * Wrapper for filter_configure()
+	 *
+	 * @return bool
+	 */
+	public function filter_configure($reset_accounts = true) {
+		$this->auth();
+
+		global $g, $config;
+
+		filter_configure();
+		system_routing_configure();
+		setup_gateways_monitor();
+		relayd_configure();
+		require_once("openvpn.inc");
+		openvpn_resync_all();
+
+		/*
+		 * The DNS Resolver and the DNS Forwarder may both be active so
+		 * long as * they are running on different ports.
+		 * See ticket #5882
+		 */
+		if (isset($config['dnsmasq']['enable'])) {
+			/* Configure dnsmasq but tell it NOT to restart DHCP */
+			services_dnsmasq_configure(false);
+		} else {
+			/* kill any running dnsmasq instance */
+			if (isvalidpid("{$g['varrun_path']}/dnsmasq.pid")) {
+				sigkillbypid("{$g['varrun_path']}/dnsmasq.pid",
+				    "TERM");
+			}
+		}
+		if (isset($config['unbound']['enable'])) {
+			/* Configure unbound but tell it NOT to restart DHCP */
+			services_unbound_configure(false);
+		} else {
+			/* kill any running Unbound instance */
+			if (isvalidpid("{$g['varrun_path']}/unbound.pid")) {
+				sigkillbypid("{$g['varrun_path']}/unbound.pid",
+				    "TERM");
+			}
+		}
+
+		/*
+		 * Call this separately since the above are manually set to
+		 * skip the DHCP restart they normally perform.
+		 * This avoids restarting dhcpd twice as described on
+		 * ticket #3797
+		 */
+		services_dhcpd_configure();
+
+		if ($reset_accounts) {
+			local_reset_accounts();
+		}
+
+		captiveportal_configure();
+
+		return true;
+	}
+
+	/**
+	 * Wrapper for configuring CARP interfaces
+	 *
+	 * @return bool
+	 */
+	public function interfaces_carp_configure() {
+		$this->auth();
+
+		if ($this->loop_detected) {
+			log_error("Disallowing CARP sync loop");
+			return true;
+		}
+
+		interfaces_vips_configure();
+
+		return true;
+	}
+
+	/**
+	 * Wrapper for rc.reboot
+	 *
+	 * @return bool
+	 */
+	public function reboot() {
+		$this->auth();
+
+		mwexec_bg("/etc/rc.reboot");
+
+		return true;
+	}
 }
 
-/*****************************/
-$reboot_doc = gettext("Basic XMLRPC wrapper for rc.reboot.");
-$reboot_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
-function reboot_xmlrpc($raw_params) {
-	global $xmlrpc_g;
-
-	$params = xmlrpc_params_to_php($raw_params);
-	if (!xmlrpc_auth($params)) {
-		xmlrpc_authfail();
-		return $xmlrpc_g['return']['authfail'];
-	}
-	mwexec_bg("/etc/rc.reboot");
-
-	return $xmlrpc_g['return']['true'];
-}
-
-/*****************************/
-$get_notices_sig = array(
-	array(
-		$XML_RPC_Array,
-		$XML_RPC_String
-	),
-	array(
-		$XML_RPC_Array
-	)
-);
-
-function get_notices_xmlrpc($raw_params) {
-	global $g, $xmlrpc_g;
-
-	$params = xmlrpc_params_to_php($raw_params);
-	if (!xmlrpc_auth($params)) {
-		xmlrpc_authfail();
-		return $xmlrpc_g['return']['authfail'];
-	}
-	if (!function_exists("get_notices")) {
-		require_once("notices.inc");
-	}
-	if (!$params) {
-		$toreturn = get_notices();
-	} else {
-		$toreturn = get_notices($params);
-	}
-	$response = new XML_RPC_Response(XML_RPC_encode($toreturn));
-
-	return $response;
-}
+// run script untill its done and can 'unlock' the xmlrpc.lock, this prevents hanging php-fpm / webgui
+ignore_user_abort(true);
+set_time_limit(0);
 
 $xmlrpclockkey = lock('xmlrpc', LOCK_EX);
 
-/*****************************/
-$server = new XML_RPC_Server(
-	array(
-		'pfsense.exec_shell' => array('function' => 'exec_shell_xmlrpc',
-			'signature' => $exec_shell_sig,
-			'docstring' => $exec_shell_doc),
-		'pfsense.exec_php' => array('function' => 'exec_php_xmlrpc',
-			'signature' => $exec_php_sig,
-			'docstring' => $exec_php_doc),
-		'pfsense.filter_configure' => array('function' => 'filter_configure_xmlrpc',
-			'signature' => $filter_configure_sig,
-			'docstring' => $filter_configure_doc),
-		'pfsense.interfaces_carp_configure' => array('function' => 'interfaces_carp_configure_xmlrpc',
-			'signature' => $carp_configure_sig,
-			'docstring' => $carp_configure_doc),
-		'pfsense.backup_config_section' => array('function' => 'backup_config_section_xmlrpc',
-			'signature' => $backup_config_section_sig,
-			'docstring' => $backup_config_section_doc),
-		'pfsense.restore_config_section' => array('function' => 'restore_config_section_xmlrpc',
-			'signature' => $restore_config_section_sig,
-			'docstring' => $restore_config_section_doc),
-		'pfsense.merge_config_section' => array('function' => 'merge_config_section_xmlrpc',
-			'signature' => $merge_config_section_sig,
-			'docstring' => $merge_config_section_doc),
-		'pfsense.merge_installedpackages_section_xmlrpc' => array('function' => 'merge_installedpackages_section_xmlrpc',
-			'signature' => $merge_installedpackages_section_sig,
-			'docstring' => $merge_installedpackages_section_doc),
-		'pfsense.host_firmware_version' => array('function' => 'pfsense_firmware_version_xmlrpc',
-			'signature' => $pfsense_firmware_version_sig,
-			'docstring' => $pfsense_firmware_version_doc),
-		'pfsense.reboot' => array('function' => 'reboot_xmlrpc',
-			'signature' => $reboot_sig,
-			'docstring' => $reboot_doc),
-		'pfsense.get_notices' => array('function' => 'get_notices_xmlrpc',
-			'signature' => $get_notices_sig)
-	)
+XML_RPC2_Backend::setBackend('php');
+$HTTP_RAW_POST_DATA = file_get_contents('php://input');
+
+$options = array(
+	'prefix' => 'pfsense.',
+	'encoding' => 'utf-8',
+	'autoDocument' => false,
 );
 
-unlock($xmlrpclockkey);
+$server = XML_RPC2_Server::create(new pfsense_xmlrpc_server(), $options);
+$server->handleCall();
 
-function array_overlay($a1, $a2) {
-	foreach ($a1 as $k => $v) {
-		if (!array_key_exists($k, $a2)) {
-			continue;
-		}
-		if (is_array($v) && is_array($a2[$k])) {
-			$a1[$k] = array_overlay($v, $a2[$k]);
-		} else {
-			$a1[$k] = $a2[$k];
-		}
-	}
-	return $a1;
-}
+unlock($xmlrpclockkey);
 
 ?>

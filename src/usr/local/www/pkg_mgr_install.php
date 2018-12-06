@@ -1,57 +1,23 @@
 <?php
 /*
-	pkg_mgr_install.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2005 Colin Smith
+ * pkg_mgr_install.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005 Colin Smith
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *	   this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *	   notice, this list of conditions and the following disclaimer in
- *	   the documentation and/or other materials provided with the
- *	   distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *	   must display the following acknowledgment:
- *	   "This product includes software developed by the pfSense Project
- *	   for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *	   endorse or promote products derived from this software without
- *	   prior written permission. For written permission, please contact
- *	   coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *	   nor may "pfSense" appear in their names without prior written
- *	   permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *	   acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -88,56 +54,82 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 //		log:
 //		exitcode:
 //		data:{current:, total}
+//		notice:
 //
 // Todo:
 //		Respect next_log_line and append log to output window rather than writing it
 
+$gui_pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade-GUI.pid';
+$gui_mode = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade-GUI.mode';
+$sock_file = "{$g['tmp_path']}/{$g['product_name']}-upgrade.sock";
+$pfsense_upgrade = "/usr/local/sbin/{$g['product_name']}-upgrade";
+$repos = pkg_list_repos();
+
+$pkgname = '';
+
+if (!empty($_REQUEST['pkg'])) {
+	$pkgname = $_REQUEST['pkg'];
+}
 
 if ($_REQUEST['ajax']) {
 	$response = "";
 	$code = 0;
+	$postlog = "";
 
-	// If this is an ajax call to get the installed and newst versions, call that function,
+	if (isset($_REQUEST['logfilename'])) {
+		if ($_REQUEST['logfilename'] == "UPGR") {
+			$postlog = $g['cf_conf_path'] . '/upgrade_log';
+		}
+
+		if ($_REQUEST['logfilename'] == "PKG") {
+			$postlog = $g['cf_conf_path'] . '/pkg_log_' . $pkgname;
+		}
+	}
+
+	// If this is an ajax call to get the installed and newest versions, call that function,
 	// JSON encode the result, print it and exit
 	if ($_REQUEST['getversion']) {
-		$firmwareversions = get_system_pkg_version(true);
+		$firmwareversions = get_system_pkg_version(true, false);
 		print(json_encode($firmwareversions));
 		exit;
 	}
 
 	// Check to see if our process is still running
-	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 	$running = "running";
 
 	// When we do a reinstallall, it is technically possible that we might catch the system in-between
 	// packages, hence the de-bounce here
-	if (!isvalidpid($pidfile)) {
-		usleep(100000);
-		if (!isvalidpid($pidfile)) {
-			$running = "stopped";
-			// The log files may not be complete when the process terminates so we need wait until we see the
-			// exit status (__RC=x)
-			waitfor_string_in_file($_REQUEST['logfilename'] . '.txt', "__RC=", 10);
-			filter_configure();
-			send_event("service restart packages");
-		}
+	for ($idx=0;$idx<5 && !isvalidpid($gui_pidfile); $idx++) {
+		usleep(200000);
+	}
+
+	if (!isvalidpid($gui_pidfile)) {
+		$running = "stopped";
+		// The log files may not be complete when the process terminates so we need wait until we see the
+		// exit status (__RC=x)
+		waitfor_string_in_file($postlog . '.txt', "__RC=", 10);
+		filter_configure();
+		send_event("service restart packages");
 	}
 
 	$pidarray = array('pid' => $running);
 
 	// Process log file -----------------------------------------------------------------------------------------------
-	$logfile = @fopen($_REQUEST['logfilename'] . '.txt', "r");
+	$logfile = @fopen($postlog . '.txt', "r");
 
 	if ($logfile != FALSE) {
 		$resparray = array();
 		$statusarray = array();
 		$code = array();
+		$notice = array('notice' => "");
 
 		// Log file is read a line at a time so that we can detect/modify certain entries
 		while (($logline = fgets($logfile)) !== false) {
 			// Check for return codes and replace with suitable strings
-			if (strpos($logline, "__RC=") !== false) {
-				$code = explode(" ", $logline);
+			$rc_pos = strpos($logline, "__RC=");
+			if ($rc_pos !== false) {
+				$rc_string = substr($logline, $rc_pos);
+				$code = explode(" ", $rc_string);
 
 				$rc = str_replace("__RC=", "", $code[0]);
 
@@ -173,7 +165,7 @@ if ($_REQUEST['ajax']) {
 	$progress = "";
 	$progarray = array();
 
-	$JSONfile = @fopen($_REQUEST['logfilename'] . '.json', "r");
+	$JSONfile = @fopen($postlog . '.json', "r");
 
 	if ($JSONfile != FALSE) {
 		while (($logline = fgets($JSONfile)) !== false) {
@@ -191,8 +183,16 @@ if ($_REQUEST['ajax']) {
 		}
 	}
 
+	//
+	$ui_notice = "/tmp/package_ui_notice";
+
+	if (file_exists($ui_notice)) {
+		$notice['notice'] = file_get_contents($ui_notice);
+	}
+
 	// Glob all the arrays we have made together, and convert to JSON
-	print(json_encode($resparray + $pidarray + $statusarray + $progarray));
+	print(json_encode($resparray + $pidarray + $statusarray + $progarray + $notice));
+
 	exit;
 }
 
@@ -244,6 +244,34 @@ $confirmed = isset($_POST['confirmed']) && $_POST['confirmed'] == 'true';
 $completed = isset($_POST['completed']) && $_POST['completed'] == 'true';
 $reboot_needed = isset($_POST['reboot_needed']) && $_POST['reboot_needed'] == "yes";
 
+$postlog = "";
+
+if (isvalidpid($gui_pidfile) && file_exists($sock_file)) {
+	$progbar = true;
+	$mode = "firmwareupdate";
+	if (file_exists($gui_mode)) {
+		$mode = file($gui_mode);
+		if (isset($mode[1])) {
+			$pkgname = $mode[1];
+		}
+		$mode = $mode[0];
+	}
+	switch ($mode) {
+	case 'firmwareupdate':
+		$logfilename = $g['cf_conf_path'] . '/upgrade_log';
+		$postlog = "UPGR";
+		break;
+	case 'reinstallall':
+		$progbar = false;
+	default:
+		$logfilename = $g['cf_conf_path'] . '/pkg_log_' . $pkgname;
+		$postlog = "PKG";
+	}
+
+	$start_polling = true;
+	$confirmed = true;
+}
+
 if (!empty($_REQUEST['id'])) {
 	if ($_REQUEST['id'] != "firmware") {
 		header("Location: pkg_mgr_installed.php");
@@ -251,15 +279,25 @@ if (!empty($_REQUEST['id'])) {
 	}
 
 	$firmwareupdate = true;
+
+	// If the user changes the firmware branch to sync to, switch to the newly selected repo
+	// and save their choice
+	if ($_REQUEST['refrbranch']) {
+		foreach ($repos as $repo) {
+			if ($repo['name'] == $_POST['fwbranch']) {
+				$config['system']['pkg_repo_conf_path'] = $repo['path'];
+				pkg_switch_repo($repo['path']);
+				write_config(gettext("Saved firmware branch setting."));
+				break;
+			}
+		}
+	}
 } elseif (!$completed && empty($_REQUEST['pkg']) && $pkgmode != 'reinstallall') {
 	header("Location: pkg_mgr_installed.php");
 	return;
 }
 
-$pkgname = '';
 if (!empty($_REQUEST['pkg'])) {
-	$pkgname = $_REQUEST['pkg'];
-
 	if (!pkg_valid_name($pkgname)) {
 		header("Location: pkg_mgr_installed.php");
 		return;
@@ -270,10 +308,12 @@ $tab_array = array();
 
 if ($firmwareupdate) {
 	$pgtitle = array(gettext("System"), gettext("Update"), gettext("System Update"));
-	$tab_array[] = array(gettext("System Update"), true, "");
+	$pglinks = array("", "@self", "@self");
+	$tab_array[] = array(gettext("System Update"), true, "pkg_mgr_install.php?id=firmware");
 	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 } else {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Package Installer"));
+	$pglinks = array("", "pkg_mgr_installed.php", "@self");
 	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
 	$tab_array[] = array(gettext("Package Installer"), true, "");
@@ -295,7 +335,7 @@ if ($input_errors) {
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
 <?php
 
-if (!$confirmed && !$completed &&
+if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
     ($firmwareupdate || $pkgmode == 'reinstallall' || !empty($pkgname))):
 	switch ($pkgmode) {
 		case 'reinstallpkg':
@@ -309,6 +349,7 @@ if (!$confirmed && !$completed &&
 			$pkgtxt = sprintf(gettext('Confirmation Required to install package %s.'), $pkgname);
 			break;
 	}
+
 ?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -318,9 +359,9 @@ if (!$confirmed && !$completed &&
 ?>
 				<?=gettext("Confirmation Required to reinstall all packages.");?>
 <?php
-			elseif ($_GET['from'] && $_GET['to']):
+			elseif ($_REQUEST['from'] && $_REQUEST['to']):
 ?>
-				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, $_GET['from'], $_GET['to'])?>
+				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, htmlspecialchars($_REQUEST['from']), htmlspecialchars($_REQUEST['to']))?>
 <?php
 			elseif ($firmwareupdate):
 ?>
@@ -334,11 +375,39 @@ if (!$confirmed && !$completed &&
 ?>
 			</h2>
 		</div>
+
 		<div class="panel-body">
 			<div class="content">
 				<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
 <?php
+	// Draw a selector to allow the user to select a different firmware branch
+	// If the selection is changed, the page will be reloaded and the new choice displayed.
 	if ($firmwareupdate):
+
+		// Check to see if any new repositories have become available. This data is cached and
+		// refreshed evrey 24 hours
+		update_repos();
+		$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
+		$helpfilename = "{$repopath}/{$g['product_name']}-repo-custom.help";
+
+		$group = new Form_Group("Branch");
+
+		$field = new Form_Select(
+			'fwbranch',
+			'*Branch',
+			pkg_get_repo_name($config['system']['pkg_repo_conf_path']),
+			pkg_build_repo_list()
+		);
+
+		if (file_exists($helpfilename)) {
+			$field->setHelp(file_get_contents($helpfilename));
+		} else {
+			$field->setHelp('Please select the branch from which to update the system firmware. %1$s' .
+							'Use of the development version is at your own risk!', '<br />');
+		}
+
+		$group->add($field);
+		print($group);
 ?>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">
@@ -362,7 +431,7 @@ if (!$confirmed && !$completed &&
 					</label>
 					<div class="col-sm-10">
 						<input type="hidden" name="id" value="firmware" />
-						<input type="hidden" name="confirmed" value="true" />
+						<input type="hidden" name="confirmed" id="confirmed" value="true" />
 						<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>" style="display: none">
 							<i class="fa fa-check icon-embed-btn"></i>
 							<?=gettext("Confirm")?>
@@ -396,10 +465,14 @@ endif;
 if ($_POST) {
 	if ($firmwareupdate) {
 		$logfilename = $g['cf_conf_path'] . '/upgrade_log';
+		$postlog = "UPGR";
 	} else {
 		$logfilename = $g['cf_conf_path'] . '/pkg_log_' . $pkgname;
+		$postlog = "PKG";
 	}
 }
+
+$pkgname_bold = '<b>' . $pkgname . '</b>';
 
 if ($firmwareupdate) {
 	$panel_heading_txt = gettext("Updating System");
@@ -408,9 +481,9 @@ if ($firmwareupdate) {
 	$pkg_wait_txt = gettext('Please wait while the system update completes.');
 } else if ($pkgmode == 'delete') {
 	$panel_heading_txt = gettext("Package Removal");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> removal successfully completed.'), $pkgname);
-	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> removal failed!'), $pkgname);
-	$pkg_wait_txt = sprintf(gettext('Please wait while the removal of <b>%1$s</b> completes.'), $pkgname);
+	$pkg_success_txt = sprintf(gettext('%1$s removal successfully completed.'), $pkgname_bold);
+	$pkg_fail_txt = sprintf(gettext('%1$s removal failed!'), $pkgname_bold);
+	$pkg_wait_txt = sprintf(gettext('Please wait while the removal of %1$s completes.'), $pkgname_bold);
 } else if ($pkgmode == 'reinstallall') {
 	$panel_heading_txt = gettext("Packages Reinstallation");
 	$pkg_success_txt = gettext('All packages reinstallation successfully completed.');
@@ -418,26 +491,24 @@ if ($firmwareupdate) {
 	$pkg_wait_txt = gettext('Please wait while the reinstallation of all packages completes.');
 } else if ($pkgmode == 'reinstallpkg') {
 	$panel_heading_txt = gettext("Package Reinstallation");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> reinstallation successfully completed.'), $pkgname);
-	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> reinstallation failed!'), $pkgname);
-	$pkg_wait_txt = sprintf(gettext('Please wait while the reinstallation of <b>%1$s</b> completes.'), $pkgname);
+	$pkg_success_txt = sprintf(gettext('%1$s reinstallation successfully completed.'), $pkgname_bold);
+	$pkg_fail_txt = sprintf(gettext('%1$s reinstallation failed!'), $pkgname_bold);
+	$pkg_wait_txt = sprintf(gettext('Please wait while the reinstallation of %1$s completes.'), $pkgname_bold);
 } else {
 	$panel_heading_txt = gettext("Package Installation");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> installation successfully completed.'), $pkgname);
-	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> installation failed!'), $pkgname);
-	$pkg_wait_txt = sprintf(gettext('Please wait while the installation of <b>%1$s</b> completes.'), $pkgname);
+	$pkg_success_txt = sprintf(gettext('%1$s installation successfully completed.'), $pkgname_bold);
+	$pkg_fail_txt = sprintf(gettext('%1$s installation failed!'), $pkgname_bold);
+	$pkg_wait_txt = sprintf(gettext('Please wait while the installation of %1$s completes.'), $pkgname_bold);
 }
 
-if ($confirmed):
-	// XXX: What if the user navigates away from this page and then comes back via his/her "Back" button?
-	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
-
-	if (isvalidpid($pidfile)) {
+if ($confirmed || isvalidpid($gui_pidfile)):
+	if (isvalidpid($gui_pidfile)) {
 		$start_polling = true;
 	}
 ?>
 	<input type="hidden" name="id" value="<?=$_REQUEST['id']?>" />
 	<input type="hidden" name="mode" value="<?=$pkgmode?>" />
+	<input type="hidden" name="pkg" value="<?=$pkgname?>" />
 	<input type="hidden" name="completed" value="true" />
 	<input type="hidden" name="confirmed" value="true" />
 	<input type="hidden" id="reboot_needed" name="reboot_needed" value="no" />
@@ -454,7 +525,23 @@ if ($confirmed):
 		</div>
 
 		<div class="panel-body">
-			<textarea rows="15" class="form-control" id="output" name="output"><?=$_POST['output']?></textarea>
+			<textarea rows="15" class="form-control" id="output" name="output"><?=($completed ? htmlspecialchars($_POST['output']) : gettext("Please wait while the update system initializes"))?></textarea>
+		</div>
+	</div>
+
+
+	<!-- Modal used to display installation notices -->
+	<div id="notice" name="notice" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body" id="noticebody" name="noticebody" style="background-color:#1e3f75; color:white;">
+				</div>
+				<div class="modal-footer" style="background-color:#1e3f75; color:white;">
+					<button type="button" id="modalbtn" name="modalbtn" class="btn btn-xs btn-success" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">Accept</span>
+					</button>
+				</div>
+			</div>
 		</div>
 	</div>
 <?php
@@ -466,45 +553,87 @@ endif;
 
 ob_flush();
 
-if ($confirmed && !$completed) {
+if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 	/* Write out configuration to create a backup prior to pkg install. */
-	write_config(gettext("Creating restore point before package installation."));
+	if ($firmwareupdate) {
+		write_config(gettext("Creating restore point before upgrade."));
+	} else {
+		write_config(gettext("Creating restore point before package installation."));
+	}
 
 	$progbar = true;
-	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -y -l {$logfilename}.txt -p {$g['tmp_path']}/{$g['product_name']}-upgrade.sock";
 
+	// Remove the log file before starting
+	unlink_if_exists($logfilename . ".txt");
+
+	unset($params);
+	$mode = array();
 	switch ($pkgmode) {
 		case 'delete':
-			mwexec_bg("{$upgrade_script} -r {$pkgname}");
-			$start_polling = true;
+			$params = "-r {$pkgname}";
+			$mode[] = "delete";
+			$mode[] = $pkgname;
 			break;
 
 		case 'reinstallall':
-			if (is_array($config['installedpackages']) && is_array($config['installedpackages']['package'])) {
-				$progbar = false; // We don't show the progress bar for reinstallall. It would be far too confusing
-				mwexec_bg("{$upgrade_script} -i ALL_PACKAGES -f");
-				$start_polling = true;
+			if (is_array($config['installedpackages']) &&
+			    is_array($config['installedpackages']['package'])) {
+				/*
+				 * We don't show the progress bar for
+				 * reinstallall. It would be far too confusing
+				 */
+				$progbar = false;
+				$params = "-i ALL_PACKAGES -f";
+				$mode[] = "reinstallall";
 			}
 
 			break;
 		case 'reinstallpkg':
-			mwexec_bg("{$upgrade_script} -i {$pkgname} -f");
-			$start_polling = true;
+			$params =  "-i {$pkgname} -f";
+			$mode[] = "reinstallpkg";
+			$mode[] = $pkgname;
 			break;
 
 		case 'installed':
-		default:
+		default:	// Updating system
 			if ($firmwareupdate) {
-				mwexec_bg("{$upgrade_script}");
+				$params = "";
+				$mode[] = "firmwareupdate";
 			} else {
-				mwexec_bg("{$upgrade_script} -i {$pkgname}");
+				$params = "-i {$pkgname}";
+				$mode[] = "installpkg";
+				$mode[] = $pkgname;
 			}
-			$start_polling = true;
 			break;
+	}
+
+	if (isset($params)) {
+		$upgrade_script = "{$pfsense_upgrade} -y -l " .
+		    "{$logfilename}.txt -p {$sock_file}";
+
+		for ($idx = 0; $idx < 3; $idx++) {
+			unlink_if_exists($sock_file);
+			$execpid = mwexec_bg("{$upgrade_script} {$params}");
+
+			// Make sure the upgrade process starts
+			while (posix_kill($execpid, 0) && !file_exists(
+			    $sock_file)) {
+				sleep(1);
+			}
+
+			if (posix_kill($execpid, 0) && file_exists(
+			    $sock_file)) {
+				$start_polling = true;
+				@file_put_contents($gui_pidfile, $execpid);
+				@file_put_contents($gui_mode, $mode);
+				break;
+			}
+		}
 	}
 }
 
 $uptodatemsg = gettext("Up to date.");
+$newerversionmsg = gettext("Running a newer version.");
 $confirmlabel = gettext("Confirm Update");
 $sysmessage = gettext("Status");
 
@@ -512,13 +641,14 @@ $sysmessage = gettext("Status");
 // that were installed
 if ($completed):
 	unlink_if_exists($logfilename . ".json");
+	unlink_if_exists($gui_mode);
 
 	// If this was a firmware update and a reboot was initiated, display the "Rebooting" message
 	// and start the countdown timer
 	if ($firmwareupdate && $reboot_needed):
 
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 	time = "<?=$guitimeout?>";
@@ -532,7 +662,7 @@ endif;
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 // Update the progress indicator
 // transition = true allows the bar to move at default speed, false = instantaneous
@@ -574,7 +704,7 @@ function show_info() {
 	$('#final').addClass("alert-info");
 	if ("<?=$pkgmode?>" != "reinstallall") {
 		$('#final').html("<p><?=$pkg_wait_txt?>" + "</p><p>" +
-			"<?=gettext("This may take several minutes!")?>" + "</p>");
+			"<?=gettext("This may take several minutes. Do not leave or refresh the page!")?>" + "</p>");
 	} else {
 		$('#final').html("<p><?=gettext('Please wait while the reinstallation of all packages completes.')?>" + "</p><p>" +
 			"<?=gettext("This may take several minutes!")?>" + "</p>");
@@ -582,8 +712,7 @@ function show_info() {
 	$('#final').show();
 }
 
-function get_firmware_versions()
-{
+function get_firmware_versions() {
 	var ajaxVersionRequest;
 
 	// Retrieve the version information
@@ -602,19 +731,24 @@ function get_firmware_versions()
 
 		json = jQuery.parseJSON(response);
 
-		if(json) {
+		if (json) {
 			$('#installed_version').text(json.installed_version);
 			$('#version').text(json.version);
 
 			// If the installed and latest versions are the same, print an "Up to date" message
-			if (json.installed_version == json.version) {
+			if (json.pkg_version_compare == '=') {
 				$('#confirmlabel').text("<?=$sysmessage?>");
 				$('#uptodate').html('<span class="text-success">' + '<?=$uptodatemsg?>' + "</span>");
+			} else if (json.pkg_version_compare == '>') {
+				$('#confirmlabel').text("<?=$sysmessage?>");
+				$('#uptodate').html('<span class="text-success">' + '<?=$newerversionmsg?>' + "</span>");
 			} else { // If they differ display the "Confirm" button
 				$('#uptodate').hide();
 				$('#confirmlabel').text( "<?=$confirmlabel?>");
 				$('#pkgconfirm').show();
 			}
+		} else {
+			$('#uptodate').html('<span class="text-danger">' + 'Unable to check for updates' + "</span>");
 		}
 	});
 }
@@ -630,8 +764,9 @@ function getLogsStatus() {
 			url: "pkg_mgr_install.php",
 			type: "post",
 			data: { ajax: "ajax",
-					logfilename: "<?=$logfilename?>",
-					next_log_line: "0"
+					logfilename: "<?=$postlog?>",
+					next_log_line: "0",
+					pkg: "<?=$pkgname?>"
 			}
 		});
 
@@ -643,7 +778,7 @@ function getLogsStatus() {
 
 //		alert("JSON data: " + JSON.stringify(json));
 
-		if (json.log != "not ready") {
+		if (json.log != "not_ready") {
 			// Write the log file to the "output" textarea
 			$('#output').html(json.log);
 			scrollToBottom();
@@ -683,7 +818,15 @@ function getLogsStatus() {
 					$('#reboot_needed').val("yes");
 				}
 
-				$('form').submit();
+				// Display any UI notice the package installer may have created
+				if (json.notice.length > 0) {
+					var modalheader = "<div align=\"center\" style=\"font-size:24px;\"><strong>NOTICE</strong></div><br>";
+
+					$('#noticebody').html(modalheader + json.notice);
+					$('#notice').modal('show');
+				} else {
+					$('form').submit();
+				}
 			}
 
 			if ((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
@@ -718,7 +861,7 @@ function checkonline() {
 function startCountdown() {
 	setInterval(function() {
 		if (time == "<?=$guitimeout?>") {
-			$('#countdown').html('<h4><?=sprintf(gettext("Rebooting%sPage will automatically reload in %s seconds"), "<br />", "<span id=\"secs\"></span>");?></h4>');
+			$('#countdown').html('<h4><?=sprintf(gettext('Rebooting%1$sPage will automatically reload in %2$s seconds'), "<br />", "<span id=\"secs\"></span>");?></h4>');
 		}
 
 		if (time > 0) {
@@ -726,17 +869,16 @@ function startCountdown() {
 			time--;
 		} else {
 			time = "<?=$guiretry?>";
-			$('#countdown').html('<h4><?=sprintf(gettext("Not yet ready%s Retrying in another %s seconds"), "<br />", "<span id=\"secs\"></span>");?></h4>');
+			$('#countdown').html('<h4><?=sprintf(gettext('Not yet ready%1$s Retrying in another %2$s seconds'), "<br />", "<span id=\"secs\"></span>");?></h4>');
 			$('#secs').html(time);
 			checkonline();
 		}
 	}, 1000);
 }
 
-
 events.push(function() {
 	if ("<?=$start_polling?>") {
-		setTimeout(getLogsStatus, 1000);
+		setTimeout(getLogsStatus, 3000);
 		show_info();
 	}
 
@@ -753,7 +895,24 @@ events.push(function() {
 		get_firmware_versions();
 	}
 
+	// If the user changes the firmware branch selection, submit the form to record that choice
+	$('#fwbranch').on('change', function() {
+		$('#confirmed').val("false");
+
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'refrbranch',
+			value: 'true'
+		}).appendTo('form');
+
+		$('form').submit();
+	});
+
+	$('#modalbtn').click(function() {
+		$('form').submit();
+	});
 });
+
 //]]>
 </script>
 

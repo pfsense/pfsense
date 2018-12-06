@@ -1,56 +1,22 @@
 <?php
 /*
-	vpn_ipsec_settings.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * vpn_ipsec_settings.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -67,16 +33,7 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-$def_loglevel = '1';
-
-foreach (array_keys($ipsec_log_cats) as $cat) {
-	if (isset($config['ipsec']['logging'][$cat])) {
-		$pconfig[$cat] = $config['ipsec']['logging'][$cat];
-	} else {
-		$pconfig[$cat] = $def_loglevel;
-	}
-}
-
+$pconfig['logging'] = ipsec_get_loglevels();
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
 $pconfig['strictcrlpolicy'] = isset($config['ipsec']['strictcrlpolicy']);
 $pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
@@ -88,13 +45,15 @@ $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	foreach ($ipsec_log_cats as $cat => $desc) {
-		if (!in_array(intval($pconfig[$cat]), array_keys($ipsec_log_sevs), true)) {
+		if (!in_array(intval($pconfig['logging_' . $cat]), array_keys($ipsec_log_sevs), true)) {
 			$input_errors[] = sprintf(gettext("A valid value must be specified for %s debug."), $desc);
+		} else {
+			$pconfig['logging'][$cat] = $pconfig['logging_' . $cat];
 		}
 	}
 
@@ -113,12 +72,13 @@ if ($_POST) {
 		 * get set when we save, even if it's to the default level.
 		 */
 		foreach (array_keys($ipsec_log_cats) as $cat) {
-			if (!isset($pconfig[$cat])) {
+			if (!isset($pconfig['logging'][$cat])) {
 				continue;
 			}
-			if ($pconfig[$cat] != $config['ipsec']['logging'][$cat]) {
-				$config['ipsec']['logging'][$cat] = $pconfig[$cat];
-				vpn_update_daemon_loglevel($cat, $pconfig[$cat]);
+			if ($pconfig['logging'][$cat] != $config['ipsec']['logging'][$cat]) {
+				init_config_arr(array('ipsec', 'logging'));
+				$config['ipsec']['logging'][$cat] = $pconfig['logging'][$cat];
+				vpn_update_daemon_loglevel($cat, $pconfig['logging'][$cat]);
 			}
 		}
 
@@ -176,6 +136,12 @@ if ($_POST) {
 			$config['ipsec']['noshuntlaninterfaces'] = true;
 		}
 
+		if ($_POST['async_crypto'] == "yes") {
+			$config['ipsec']['async_crypto'] = "enabled";
+		} else {
+			$config['ipsec']['async_crypto'] = "disabled";
+		}
+
 		if ($_POST['acceptunencryptedmainmode'] == "yes") {
 			if (!isset($config['ipsec']['acceptunencryptedmainmode'])) {
 				$needsrestart = true;
@@ -204,25 +170,16 @@ if ($_POST) {
 			}
 		}
 
-		write_config();
+		write_config(gettext("Saved IPsec advanced settings."));
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = filter_configure();
-		if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message(gettext($retval));
-			$class = 'success';
-		} else {
-			$savemsg = gettext($retval);
-			$class = 'warning';
-		}
+		$retval |= filter_configure();
 
 		vpn_ipsec_configure($needsrestart);
-
-		header("Location: vpn_ipsec_settings.php");
-		return;
 	}
 
-	// The logic value sent by $POST for autoexcludelanaddress is opposite to
+	// The logic value sent by $_POST for autoexcludelanaddress is opposite to
 	// the way it is stored in the config as noshuntlaninterfaces.
 	// Reset the $pconfig value so it reflects the opposite of what was $POSTed.
 	// This helps a redrawn UI page after Save to correctly display the most recently entered setting.
@@ -233,7 +190,14 @@ if ($_POST) {
 	}
 }
 
+if (isset($config['ipsec']['async_crypto'])) {
+	$pconfig['async_crypto'] = $config['ipsec']['async_crypto'];
+} else {
+	$pconfig['async_crypto'] = "disabled";
+}
+
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Advanced Settings"));
+$pglinks = array("", "vpn_ipsec.php", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -254,8 +218,8 @@ function maxmss_checked(obj) {
 </script>
 
 <?php
-if ($savemsg) {
-	print_info_box($savemsg, $class);
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 if ($input_errors) {
@@ -275,9 +239,9 @@ $section = new Form_Section('IPsec Logging Controls');
 
 foreach ($ipsec_log_cats as $cat => $desc) {
 	$section->addInput(new Form_Select(
-		$cat,
+		'logging_' . $cat,
 		$desc,
-		$pconfig[$cat],
+		$pconfig['logging'][$cat],
 		$ipsec_log_sevs
 	))->setWidth(2);
 }
@@ -299,10 +263,11 @@ $section->addInput(new Form_Select(
 	'Whether a particular participant ID should be kept unique, with any new IKE_SA using an ID ' .
 	'deemed to replace all old ones using that ID. Participant IDs normally are unique, so a new ' .
 	'IKE_SA using the same ID is almost invariably intended to replace an old one. ' .
-	'The difference between <b>no</b> and <b>never</b> is that the old IKE_SAs will be replaced when receiving an ' .
-	'INITIAL_CONTACT notify if the option is no but will ignore these notifies if <b>never</b> is configured. ' .
-	'The daemon also accepts the value <b>keep</b> to reject ' .
-	'new IKE_SA setups and keep the duplicate established earlier. Defaults to Yes.'
+	'The difference between %1$sno%2$s and %1$snever%2$s is that the old IKE_SAs will be replaced when receiving an ' .
+	'INITIAL_CONTACT notify if the option is no but will ignore these notifies if %1$snever%2$s is configured. ' .
+	'The daemon also accepts the value %1$skeep%2$s to reject ' .
+	'new IKE_SA setups and keep the duplicate established earlier. Defaults to Yes.',
+	'<b>', '</b>'
 );
 
 $section->addInput(new Form_Checkbox(
@@ -386,6 +351,14 @@ $section->addInput(new Form_Checkbox(
 	'Enable bypass for LAN interface IP',
 	!$pconfig['noshuntlaninterfaces']
 ))->setHelp('Exclude traffic from LAN subnet to LAN IP address from IPsec.');
+
+$section->addInput(new Form_Checkbox(
+	'async_crypto',
+	'Asynchronous Cryptography',
+	'Use asynchronous mode to parallelize multiple cryptography jobs',
+	($pconfig['async_crypto'] == "enabled")
+))->setHelp('Allow crypto(9) jobs to be dispatched multi-threaded to increase performance. ' .
+		'Jobs are handled in the order they are received so that packets will be reinjected in the correct order.');
 
 $form->add($section);
 

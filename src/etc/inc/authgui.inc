@@ -1,68 +1,41 @@
 <?php
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2005-2006 Bill Marquette <bill.marquette@gmail.com>
- *	Copyright (c)  2006 Paul Taylor <paultaylor@winn-dixie.com>.
- *	Copyright (c)  2003-2006 Manuel Kasper <mk@neon1.net>.
+/*
+ * authgui.inc
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>
+ * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
+ * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 include_once("auth.inc");
 include_once("priv.inc");
 if (!function_exists('platform_booting')) {
 	require_once('globals.inc');
 }
+require_once('pfsense-utils.inc');
 
 /* Authenticate user - exit if failed */
 if (!session_auth()) {
 	display_login_form();
 	exit;
 }
+
+phpsession_begin();
 
 /*
  * Once here, the user has authenticated with the web server.
@@ -92,15 +65,15 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 		require_once("functions.inc");
 		pfSenseHeader("/{$page}");
 
-		$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
-		if (!empty($_SERVER['REMOTE_ADDR'])) {
-			$username .= '@' . $_SERVER['REMOTE_ADDR'];
-		}
+		$username = get_config_user();
 		log_error("{$username} attempted to access {$_SERVER['SCRIPT_NAME']} but does not have access to that page. Redirecting to {$page}.");
 
 		exit;
 	} else {
+		// add this so they don't get stuck on the logout page when they have no permissions.
+		$_SESSION["Logged_In"] = false;
 		display_error_form("201", gettext("No page assigned to this user! Click here to logout."));
+
 		exit;
 	}
 } else {
@@ -120,9 +93,9 @@ if (!$_SESSION['Post_Login']) {
 
 /*
  * Close session data to allow other scripts from same host to come in.
- * A session can be reactivated from calling session_start again
+ * A session can be reactivated from calling phpsession_begin again
  */
-session_commit();
+phpsession_end(true);
 
 /*
  * determine if the user is allowed access to the requested page
@@ -135,33 +108,59 @@ function display_error_form($http_code, $desc) {
 		return;
 	}
 
-	$cssfile = "/css/pfSense.css";
-
-	if (isset($user_settings['webgui']['webguicss'])) {
-		if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['webguicss'])) {
-			$cssfile = "/css/" . $user_settings['webgui']['webguicss'];
-		}
-	}
-
+	$logincssfile = "#770101";
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="<?=$cssfile?>" />
-	<title><?=gettext("Error: not allowed"); ?></title>
-</head>
-<body id="error" class="no-menu">
-	<div id="jumbotron">
-		<div class="container">
-			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
-				<!-- FIXME: We really need to POST the logout action -->
-				<div class="alert alert-danger" role="alert"><a href="index.php?logout"><?=$desc;?></a></div>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
+	    <link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">
+		<title><?=gettext("Error"); ?></title>
+	</head>
+
+	<body id="error" >
+		<div id="total">
+			<header>
+				<div id="headerrow">
+					<div class="row">
+						<div class="col-sm-4">
+							<div id="logodiv" style="text-align:center" class="nowarning">
+								<?php include("/usr/local/www/logo.svg"); ?>
+							</div>
+						</div>
+						<div class="col-sm-8 nowarning msgbox text-center">
+							<span id="hostspan">
+							</span>
+						</div>
+					</div>
+				</div>
+			</header>
+
+			<div style="background: <?=$logincssfile?>;" class="pagebody">
+				<div class="col-sm-2"></div>
+
+				<div class="col-sm-8 offset-md-4 logoCol">
+					<div class="loginCont center-block error-panel">
+						<a href="index.php?logout"><?=$desc;?></a>
+					</div>
+				</div>
+
+			<div class="col-sm-2"></div>
 			</div>
+
+			<footer id="3">
+			<div id="footertext">
+					<p class="text-muted">
+						<?=print_credit()?>
+					</p>
+				</div>
+			</footer>
 		</div>
-	</div>
-</body>
+	</body>
 </html>
+
 <?php
 
 } // end function
@@ -185,133 +184,189 @@ function display_login_form() {
 				printf("showajaxmessage('" . gettext("This device is currently being maintained by: %s.") . "');", $whom);
 			}
 		}
+		//If session ended
+		echo "SESSION_TIMEOUT";
 		exit;
 	}
 
-/* Check against locally configured IP addresses, which will catch when someone
-   port forwards WebGUI access from WAN to an internal IP on the router. */
-global $FilterIflist, $nifty_background;
-$local_ip = false;
-if (strpos($_SERVER['HTTP_HOST'], ":") === FALSE) {
-	$http_host_port = explode(":", $_SERVER['HTTP_HOST']);
-	$http_host = $http_host_port[0];
-} else {
-	$http_host = $_SERVER['HTTP_HOST'];
-}
-if (empty($FilterIflist)) {
-	require_once('filter.inc');
-	require_once('shaper.inc');
-	filter_generate_optcfg_array();
-}
-foreach ($FilterIflist as $iflist) {
-	if ($iflist['ip'] == $http_host) {
-		$local_ip = true;
-	} else if ($iflist['ipv6'] == $http_host) {
-		$local_ip = true;
-	} else if (is_array($iflist['vips'])) {
-		foreach ($iflist['vips'] as $vip) {
-			if ($vip['ip'] == $http_host) {
-				$local_ip = true;
-				break;
-			}
-		}
-		unset($vip);
-	}
-	if ($local_ip == true) {
-		break;
-	}
-}
-unset($FilterIflist);
-unset($iflist);
+	/* Check against locally configured IP addresses, which will catch when someone
+	   port forwards WebGUI access from WAN to an internal IP on the router. */
+	global $FilterIflist, $nifty_background;
 
-if ($local_ip == false) {
-	if (is_array($config['openvpn']['openvpn-server'])) {
-		foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
-			if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
-				$local_ip = true;
-			} else if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
-				$local_ip = true;
+	$local_ip = false;
+
+	if (strpos($_SERVER['HTTP_HOST'], ":") === FALSE) {
+		$http_host_port = explode(":", $_SERVER['HTTP_HOST']);
+		$http_host = $http_host_port[0];
+	} else {
+		$http_host = $_SERVER['HTTP_HOST'];
+	}
+
+	if (empty($FilterIflist)) {
+		require_once('filter.inc');
+		require_once('shaper.inc');
+		filter_generate_optcfg_array();
+	}
+
+	foreach ($FilterIflist as $iflist) {
+		if ($iflist['ip'] == $http_host) {
+			$local_ip = true;
+		} else if ($iflist['ipv6'] == $http_host) {
+			$local_ip = true;
+		} else if (is_array($iflist['vips'])) {
+			foreach ($iflist['vips'] as $vip) {
+				if ($vip['ip'] == $http_host) {
+					$local_ip = true;
+					break;
+				}
 			}
-			if ($local_ip == true) {
-				break;
-			}
+
+			unset($vip);
+		}
+
+		if ($local_ip == true) {
+			break;
 		}
 	}
-}
 
-// For the login form, get the settings of no particular user.
-// That ensures we will use the system default theme for the login form.
-$user_settings = get_user_settings("");
-$cssfile = "/css/pfSense.css";
+	unset($FilterIflist);
+	unset($iflist);
 
-if (isset($user_settings['webgui']['webguicss'])) {
-	if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['webguicss'])) {
-		$cssfile = "/css/" . $user_settings['webgui']['webguicss'];
+	if ($local_ip == false) {
+		if (is_array($config['openvpn']['openvpn-server'])) {
+			foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+				if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
+					$local_ip = true;
+				} else if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
+					$local_ip = true;
+				}
+
+				if ($local_ip == true) {
+					break;
+				}
+			}
+		}
 	}
-}
 
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="<?=$cssfile?>" />
-	<title><?=gettext("Login"); ?></title>
-	<script type="text/javascript">
-	//<![CDATA{
-	var events = events || [];
-	//]]>
-	</script>
-</head>
-<body id="login" class="no-menu">
-	<div id="jumbotron">
-		<div class="container">
-			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
-<?php
-	if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
-		$nifty_background = "#999";
-		print_info_box(gettext("The IP address being used to access this router is not configured locally, which may be forwarded by NAT or other means. <br /><br />If this forwarding is unexpected, it should be verified that a man-in-the-middle attack is not taking place."));
+	// For the login form, get the settings of no particular user.
+	// That ensures we will use the system default theme for the login form.
+	$user_settings = get_user_settings("");
+	$cssfile = "/css/pfSense.css";
+
+	if (isset($user_settings['webgui']['webguicss'])) {
+		if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['webguicss'])) {
+			$cssfile = "/css/" . $user_settings['webgui']['webguicss'];
+		}
+	}
+
+	$logincssfile = "#1e3f75";
+
+	if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui']['logincss']) == 6) {
+		$logincssfile = "#" . $user_settings['webgui']['logincss'];
+	}
+
+	if (isset($config['system']['webgui']['loginshowhost'])) {
+		$loginbannerstr = sprintf(gettext('%1$s.%2$s'), htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
+	} else {
+		$loginbannerstr = sprintf(gettext('Login to %1$s'), $g['product_name']);
 	}
 
 	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
+
+	if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
+		$warnclass = "pagebodywarn";	// Make room for a warning display row
+	} else {
+		$warnclass = "pagebody";
+	}
 ?>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
+	    <link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">
+		<title><?=gettext("Login"); ?></title>
+		<script type="text/javascript">
+			//<![CDATA{
+			var events = events || [];
+			//]]>
+		</script>
+	</head>
 
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h2 class="panel-title"><?=sprintf(gettext("Login to %s"), $g['product_name'])?></h2>
+	<body id="login" >
+		<div id="total">
+			<header>
+				<div id="headerrow">
+					<div class="row">
+						<!-- Header left logo box -->
+						<div class="col-sm-4">
+							<div id="logodiv" style="text-align:center" class="nowarning">
+								<?php include("/usr/local/www/logo.svg"); ?>
+							</div>
+						</div>
+
+						<!-- Header center message box -->
+						<div class="col-sm-4 nowarning msgbox text-center text-danger">
+<?php
+						if (!empty($_POST['usernamefld'])) {
+							print("<h4>" . $_SESSION['Login_Error'] . "</h4>");
+						}
+?>
+						</div>
+
+						<!-- Header right message box (hostname or msg)-->
+						<div class="col-sm-4 nowarning msgbox text-center">
+							<span id="hostspan">
+								<a><h4><?=$loginbannerstr?></h4></a>
+							</span>
+						</div>
 					</div>
-
-					<div class="panel-body">
-<?php if (!empty($_SESSION['Login_Error'])): ?>
-						<div class="alert alert-danger" role="alert"><?=$_SESSION['Login_Error'];?></div>
-<?php endif ?>
-						<div class="alert alert-warning hidden" id="no_cookies"><?= gettext("The browser must support cookies to login."); ?></div>
-
-						<form method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>" class="form-horizontal">
-							<div class="form-group">
-								<label for="usernamefld" class="col-sm-3 control-label"><?=gettext("Username")?></label>
-								<div class="col-sm-9 col-md-7">
-									<input type="text" class="form-control" name="usernamefld" id="usernamefld" placeholder="<?=gettext("Enter your username")?>" autocorrect="off" autocapitalize="none" spellcheck="false">
-								</div>
+<?php
+	if ($warnclass == "pagebodywarn") {
+?>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="alert alert-warning <?=$warnclass?>">
+								<?=gettext("The IP address being used to access this router is not configured locally, which may be forwarded by NAT or other means.
+								If this forwarding is unexpected, it should be verified that a man-in-the-middle attack is not taking place.")?>
 							</div>
-
-							<div class="form-group">
-								<label for="passwordfld" class="col-sm-3 control-label"><?=gettext("Password")?></label>
-								<div class="col-sm-9 col-md-7">
-									<input type="password" class="form-control" name="passwordfld" id="passwordfld" placeholder="<?=gettext("Enter your password")?>">
-								</div>
-							</div>
-
-							<div class="form-group">
-								<div class="col-sm-offset-3 col-sm-9 col-md-7">
-									<button type="submit" class="btn btn-primary" name="login"><?=gettext("Login")?></button>
-								</div>
-							</div>
-						</form>
+						</div>
 					</div>
-				</div>
-			</div>
-		</div>
+<?php
+	}
+?>
+	            </div>
+	        </header>
+
+	        <div style="background: <?=$logincssfile?>;" class="<?=$warnclass?>">
+	        	<div class="col-sm-4"></div>
+
+	        	<div class="col-sm-4 offset-md-4 logoCol">
+					<div class="loginCont center-block">
+		                <form method="post" <?=$loginautocomplete?> class="login">
+			                <p class="form-title">Sign In</p>
+			                <input name="usernamefld" id="usernamefld" type="text" placeholder="Username" autocorrect="off" autocapitalize="none"/>
+			                <input name="passwordfld" id="passwordfld" type="password" placeholder="Password" />
+			                <input type="submit" name="login" value="Sign In" class="btn btn-success btn-sm" />
+		                </form>
+					</div>
+	            </div>
+
+	        	<div class="col-sm-4"></div>
+	        </div>
+
+	        <footer id="3">
+	            <div id="footertext">
+					<p class="text-muted">
+						<?=print_credit()?>
+					</p>
+	            </div>
+	        </footer>
+	    </div>
+
+		<script src="/vendor/jquery/jquery-1.12.0.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-1.12.0.min.js')?>"></script>
+		<script src="/vendor/bootstrap/js/bootstrap.min.js?v=<?=filemtime('/usr/local/www/vendor/bootstrap/js/bootstrap.min.js')?>"></script>
+		<script src="/js/pfSense.js?v=<?=filemtime('/usr/local/www/js/pfSense.js')?>"></script>
 
 		<script type="text/javascript">
 		//!<[CDATA[
@@ -320,17 +375,18 @@ if (isset($user_settings['webgui']['webguicss'])) {
 				"cookie_test=1" +
 				"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
 
-			if (document.cookie.indexOf("cookie_test") == -1)
-				document.getElementById("no_cookies").style.display="";
-			else
-				document.getElementById("no_cookies").style.display="none";
+			if (document.cookie.indexOf("cookie_test") == -1) {
+				alert("<?=gettext('The browser must support cookies to login.')?>");
+			}
 
 			// Delete it
 			document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
 		});
 		//]]>
 		</script>
-<?php
-require_once('foot.inc');
 
+	</body>
+</html>
+
+<?php
 } // end function

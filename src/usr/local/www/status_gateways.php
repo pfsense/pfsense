@@ -1,57 +1,23 @@
 <?php
 /*
-	status_gateways.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
+ * status_gateways.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -63,16 +29,11 @@
 
 require_once("guiconfig.inc");
 
-define('COLOR', true);
-
 $a_gateways = return_gateways_array();
-$gateways_status = array();
 $gateways_status = return_gateways_status(true);
 
-$now = time();
-$year = date("Y");
-
-$pgtitle = array(gettext("Status"), gettext("Gateways"), gettext("Gateways"));
+$pgtitle = array(gettext("Status"), gettext("Gateways"));
+$pglinks = array("", "@self");
 $shortcut_section = "gateways";
 include("head.inc");
 
@@ -101,40 +62,36 @@ display_top_tabs($tab_array);
 			</tr>
 		</thead>
 		<tbody>
-<?php		foreach ($a_gateways as $gname => $gateway) {
+<?php		foreach ($a_gateways as $i => $gateway) {
 ?>
 			<tr>
 				<td>
 					<?=htmlspecialchars($gateway['name']);?>
+<?php		
+					if (isset($gateway['isdefaultgw'])) {
+						echo " <strong>(default)</strong>";
+					}
+?>			
 				</td>
 				<td>
-					<?=lookup_gateway_ip_by_name($gname);?>
+					<?=lookup_gateway_ip_by_name($i);?>
 				</td>
 				<td>
 <?php
-					if ($gateways_status[$gname]) {
-						echo $gateways_status[$gname]['monitorip'];
-					} else {
-						echo htmlspecialchars($gateway['monitorip']);
+					if ($gateways_status[$i]) {
+						if ($gateway['monitor_disable'] || ($gateway['monitorip'] == "none")) {
+							echo "(unmonitored)";
+						} else {
+							echo $gateways_status[$i]['monitorip'];
+						}
 					}
 ?>
 				</td>
 				<td>
 <?php
-					if ($gateways_status[$gname]) {
+					if ($gateways_status[$i]) {
 						if (!isset($gateway['monitor_disable'])) {
-							echo $gateways_status[$gname]['delay'];
-						} 
-					} else {
-						echo gettext("Pending");
-					}
-?>
-				</td>
-				<td>
-<?php
-					if ($gateways_status[$gname]) {
-						if (!isset($gateway['monitor_disable'])) {
-							echo $gateways_status[$gname]['stddev'];
+							echo $gateways_status[$i]['delay'];
 						}
 					} else {
 						echo gettext("Pending");
@@ -143,9 +100,20 @@ display_top_tabs($tab_array);
 				</td>
 				<td>
 <?php
-					if ($gateways_status[$gname]) {
+					if ($gateways_status[$i]) {
 						if (!isset($gateway['monitor_disable'])) {
-							echo $gateways_status[$gname]['loss'];
+							echo $gateways_status[$i]['stddev'];
+						}
+					} else {
+						echo gettext("Pending");
+					}
+?>
+				</td>
+				<td>
+<?php
+					if ($gateways_status[$i]) {
+						if (!isset($gateway['monitor_disable'])) {
+							echo $gateways_status[$i]['loss'];
 						}
 					} else {
 						echo gettext("Pending");
@@ -153,46 +121,44 @@ display_top_tabs($tab_array);
 ?>
 				</td>
 <?php
-				if ($gateways_status[$gname]) {
-					$status = $gateways_status[$gname];
-					if (stristr($status['status'], "force_down")) {
-						$online = gettext("Offline (forced)");
-						$bgcolor = "bg-danger";
-					} elseif (stristr($status['status'], "down")) {
-						$online = gettext("Offline");
-						$bgcolor = "bg-danger";
-					} elseif (stristr($status['status'], "loss")) {
-						$online = gettext("Warning, Packetloss") . ': ' . $status['loss'];
-						$bgcolor = "bg-warning";
-					} elseif (stristr($status['status'], "delay")) {
-						$online = gettext("Warning, Latency") . ': ' . $status['delay'];
-						$bgcolor = "bg-warning";
-					} elseif ($status['status'] == "none") {
-						$online = gettext("Online");
-						$bgcolor = "bg-success";
+					$status = $gateways_status[$i];
+					switch ($status['status']) {
+						case "force_down":
+							$online = gettext("Offline (forced)");
+							$bgcolor = "bg-danger";
+							break;
+						case "down":
+							$online = gettext("Offline");
+							$bgcolor = "bg-danger";
+							break;
+						case "highloss":
+							$online = gettext("Danger, Packetloss") . ': ' . $status['loss'];
+							$bgcolor = "bg-danger";
+							break;
+						case "loss":
+							$online = gettext("Warning, Packetloss") . ': ' . $status['loss'];
+							$bgcolor = "bg-warning";
+							break;
+						case "highdelay":
+							$online = gettext("Danger, Latency") . ': ' . $status['delay'];
+							$bgcolor = "bg-danger";
+							break;
+						case "delay":
+							$online = gettext("Warning, Latency") . ': ' . $status['delay'];
+							$bgcolor = "bg-warning";
+							break;
+						case "none":
+							$online = gettext("Online");
+							$bgcolor = "bg-success";
+							break;
+						default:
+							$online = gettext("Pending");
+							$bgcolor = "bg-info";
 					}
-				} else if (isset($gateway['monitor_disable'])) {
-						$online = gettext("Online");
-						$bgcolor = "bg-success";
-				} else {
-					$online = gettext("Pending");
-					$bgcolor = "bg-info";
-				}
-
-				$lastchange = $gateways_status[$gname]['lastcheck'];
-
-				if (!COLOR) {
-				   $bgcolor = "";
-				}
 ?>
-
 				<td class="<?=$bgcolor?>">
-					<strong><?=$online?></strong> <?php
-					if (!empty($lastchange)) { ?>
-						<br /><i><?=gettext("Last checked")?> <?=$lastchange?></i>
-<?php				} ?>
+					<strong><?=$online?></strong>
 				</td>
-
 				<td>
 					<?=htmlspecialchars($gateway['descr']); ?>
 				</td>

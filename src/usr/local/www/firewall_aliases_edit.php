@@ -1,59 +1,26 @@
 <?php
 /*
-	firewall_aliases_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_aliases_edit.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -68,38 +35,28 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Edit"));
-
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];
 } else {
 	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 }
 
-// Keywords not allowed in names
-$reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
+// Keywords not allowed in names, see globals.inc for list.
+global $pf_reserved_keywords;
 
-// Add all Load balance names to reserved_keywords
+// Add all Load balance names to pf_reserved_keywords
 if (is_array($config['load_balancer']['lbpool'])) {
 	foreach ($config['load_balancer']['lbpool'] as $lbpool) {
-		$reserved_keywords[] = $lbpool['name'];
+		$pf_reserved_keywords[] = $lbpool['name'];
 	}
 }
 
-$reserved_ifs = get_configured_interface_list(false, true);
-$reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
+$reserved_ifs = get_configured_interface_list(true);
+$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 $max_alias_addresses = 5000;
 
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
-
-$tab = $_REQUEST['tab'];
-
-if ($_POST) {
-	$origname = $_POST['origname'];
-}
 
 // Debugging
 if ($debug) {
@@ -136,11 +93,8 @@ function alias_same_type($name, $type) {
 	return true;
 }
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && $a_aliases[$id]) {
@@ -164,7 +118,31 @@ if (isset($id) && $a_aliases[$id]) {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
+	// Remember the original name on an attempt to save
+	$origname = $_POST['origname'];
+} else {
+	// Set the original name on edit (or add, when this will be blank)
+	$origname = $pconfig['name'];
+}
+
+$tab = $_REQUEST['tab'];
+
+if (empty($tab)) {
+	if (preg_match("/url/i", $pconfig['type'])) {
+		$tab = 'url';
+	} else if ($pconfig['type'] == 'host') {
+		$tab = 'ip';
+	} else {
+		$tab = $pconfig['type'];
+	}
+}
+
+$pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Edit"));
+$pglinks = array("", "firewall_aliases.php?tab=" . $tab, "@self");
+
+if ($_POST['save']) {
+
 	unset($input_errors);
 	$vertical_bar_err_text = gettext("Vertical bars (|) at start or end, or double in the middle of descriptions not allowed. Descriptions have been cleaned. Check and save again.");
 
@@ -188,18 +166,43 @@ if ($_POST) {
 	}
 
 	/* Check for reserved keyword names */
-	foreach ($reserved_keywords as $rk) {
+	foreach ($pf_reserved_keywords as $rk) {
 		if ($rk == $_POST['name']) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an alias name: %s"), $rk);
 		}
 	}
 
+	/*
+	 * Packages (e.g. tinc) create interface groups, reserve this
+	 * namespace pkg_ for them.
+	 * One namespace is shared by Interfaces, Interface Groups and Aliases.
+	 */
+	if (substr($_POST['name'], 0, 4) == 'pkg_') {
+		$input_errors[] = gettext("The alias name cannot start with pkg_");
+	}
+
 	/* check for name interface description conflicts */
 	foreach ($config['interfaces'] as $interface) {
-		if ($interface['descr'] == $_POST['name']) {
+		if (strcasecmp($interface['descr'], $_POST['name']) == 0) {
 			$input_errors[] = gettext("An interface description with this name already exists.");
 			break;
 		}
+	}
+
+	/* Is the description already used as an interface group name? */
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
+			if ($ifgroupentry['ifname'] == $_POST['name']) {
+				$input_errors[] = gettext("Sorry, an interface group with this name already exists.");
+			}
+		}
+	}
+
+	/* To prevent infinite loops make sure the alias name does not equal the value. */
+	for($i = 0; isset($_POST['address' . $i]); $i++) {
+			if($_POST['address' . $i] == $_POST['name']){
+				$input_errors[] = gettext("Alias value cannot be the same as the alias name: `" . $_POST['name'] . " and " . $_POST['address' . $i] . "`");
+			}
 	}
 
 	$alias = array();
@@ -209,7 +212,7 @@ if ($_POST) {
 	$alias['type'] = $_POST['type'];
 
 	if (preg_match("/urltable/i", $_POST['type'])) {
-		$address = "";
+		$address = array();
 
 		/* item is a url table type */
 		if ($_POST['address0']) {
@@ -221,7 +224,7 @@ if ($_POST) {
 			if (!is_URL($alias['url']) || empty($alias['url'])) {
 				$input_errors[] = gettext("A valid URL must be provided.");
 			} elseif (!process_alias_urltable($alias['name'], $alias['type'], $alias['url'], 0, true, true)) {
-				$input_errors[] = gettext("Unable to fetch usable data from URL") . " " . htmlspecialchars($alias['url']);
+				$input_errors[] = sprintf(gettext("Unable to fetch usable data from URL %s"), htmlspecialchars($alias['url']));
 			}
 			if ($_POST["detail0"] <> "") {
 				if ((strpos($_POST["detail0"], "||") === false) && (substr($_POST["detail0"], 0, 1) != "|") && (substr($_POST["detail0"], -1, 1) != "|")) {
@@ -249,6 +252,7 @@ if ($_POST) {
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
 				if (!download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl)) {
+					$input_errors[] = sprintf(gettext("Could not fetch the URL '%s'."), $_POST['address' . $x]);
 					continue;
 				}
 
@@ -434,7 +438,7 @@ if ($_POST) {
 					}
 				}
 			} else if ($_POST['type'] == "port") {
-				if (!is_port($input_address) && !is_portrange($input_address)) {
+				if (!is_port_or_range($input_address)) {
 					$input_errors[] = sprintf(gettext("%s is not a valid port or alias."), $input_address);
 				}
 			} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
@@ -451,7 +455,7 @@ if ($_POST) {
 					$tmpaddress .= "/" . $input_address_subnet[$idx];
 				}
 			}
-			$address[] = $tmpaddress;
+			$address[] = addrtolower($tmpaddress);
 		}
 		unset($desc_fmt_err_found);
 		if ($wrongaliases <> "") {
@@ -473,31 +477,8 @@ if ($_POST) {
 		/*	 Check to see if alias name needs to be
 		 *	 renamed on referenced rules and such
 		 */
-		if ($_POST['name'] <> $_POST['origname']) {
-			// Firewall rules
-			update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('filter', 'rule'), array('source', 'port'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'port'), $_POST['name'], $origname);
-			// NAT Rules
-			update_alias_names_upon_change(array('nat', 'rule'), array('source', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'rule'), array('source', 'port'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'port'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'rule'), array('target'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'rule'), array('local-port'), $_POST['name'], $origname);
-			// NAT 1:1 Rules
-			//update_alias_names_upon_change(array('nat', 'onetoone'), array('external'), $_POST['name'], $origname);
-			//update_alias_names_upon_change(array('nat', 'onetoone'), array('source', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'onetoone'), array('destination', 'address'), $_POST['name'], $origname);
-			// NAT Outbound Rules
-			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('source', 'network'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('sourceport'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('destination', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('dstport'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $_POST['name'], $origname);
-			// Alias in an alias
-			update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $_POST['name'], $origname);
+		if ($_POST['name'] <> $origname) {
+			update_alias_name($_POST['name'], $origname);
 		}
 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/pre_write_config");
@@ -528,7 +509,7 @@ if ($_POST) {
 		// Sort list
 		$a_aliases = msort($a_aliases, "name");
 
-		if (write_config()) {
+		if (write_config(gettext("Edited a firewall alias."))) {
 			mark_subsystem_dirty('aliases');
 		}
 
@@ -543,7 +524,7 @@ if ($_POST) {
 		//we received input errors, copy data to prevent retype
 		$pconfig['name'] = $_POST['name'];
 		$pconfig['descr'] = $_POST['descr'];
-		if (($_POST['type'] == 'url') || ($_POST['type'] == 'url_ports')) {
+		if (isset($alias['aliasurl']) && ($_POST['type'] == 'url') || ($_POST['type'] == 'url_ports')) {
 			$pconfig['address'] = implode(" ", $alias['aliasurl']);
 		} else {
 			$pconfig['address'] = implode(" ", $address);
@@ -616,6 +597,26 @@ $pattern_str = array(
 	'urltable_ports'	=> '.*'					// Alias Name or URL
 );
 
+$title_str = array(
+	'network'			=> 'An IPv4 network address like 1.2.3.0, an IPv6 network address like 1:2a:3b:ffff::0, IP address range, FQDN or an alias',
+	'host'				=> 'An IPv4 address like 1.2.3.4, an IPv6 address like 1:2a:3b:ffff::1, IP address range, FQDN or an alias',
+	'port'				=> 'A port number, port number range or an alias',
+	'url'				=> 'URL',
+	'url_ports'			=> 'URL',
+	'urltable'			=> 'URL',
+	'urltable_ports'	=> 'URL'
+);
+
+$placeholder_str = array(
+	'network'			=> 'Address',
+	'host'				=> 'Address',
+	'port'				=> 'Port',
+	'url'				=> 'URL',
+	'url_ports'			=> 'URL',
+	'urltable'			=> 'URL',
+	'urltable_ports'	=> 'URL'
+);
+
 $types = array(
 	'host'	=> gettext("Host(s)"),
 	'network' => gettext("Network(s)"),
@@ -625,16 +626,6 @@ $types = array(
 	'urltable' => gettext("URL Table (IPs)"),
 	'urltable_ports' => gettext("URL Table (Ports)"),
 );
-
-if (empty($tab)) {
-	if (preg_match("/url/i", $pconfig['type'])) {
-		$tab = 'url';
-	} else if ($pconfig['type'] == 'host') {
-		$tab = 'ip';
-	} else {
-		$tab = $pconfig['type'];
-	}
-}
 
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -653,7 +644,7 @@ $form->addGlobal(new Form_Input(
 	'origname',
 	null,
 	'hidden',
-	$pconfig['name']
+	$origname
 ));
 
 if (isset($id) && $a_aliases[$id]) {
@@ -667,9 +658,11 @@ if (isset($id) && $a_aliases[$id]) {
 
 $section = new Form_Section('Properties');
 
+// Experiment: Pre-pending the input title/label with '*' causes the element-required class to be added to the label
+// which adds text decoration to indicate this is a required field. See pfSense.css
 $section->addInput(new Form_Input(
 	'name',
-	'Name',
+	'*Name',
 	'text',
 	$pconfig['name']
 ))->setPattern('[a-zA-Z0-9_]+')->setHelp('The name of the alias may only consist '.
@@ -684,7 +677,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'type',
-	'Type',
+	'*Type',
 	isset($pconfig['type']) ? $pconfig['type'] : $tab,
 	$types
 ));
@@ -728,8 +721,9 @@ while ($counter < count($addresses)) {
 
 	$group->add(new Form_IpAddress(
 		'address' . $counter,
-		$tab == 'port' ? 'Port':'Address',
-		$address
+		'Address',
+		$address,
+		'ALIASV4V6'
 	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern($pattern_str[$tab]);
 
 	$group->add(new Form_Input(
@@ -799,9 +793,15 @@ events.push(function() {
 
 		// Set the input field pattern by tab type
 		var patternstr = <?=json_encode($pattern_str);?>;
-		for (i = 0; i < <?=$counter;?>; i++) {
-			$('#address' + i).prop('pattern', patternstr[tab]);
-		}
+		var titlestr = <?=json_encode($title_str);?>;
+		var placeholderstr = <?=json_encode($placeholder_str);?>;
+		$("[id^='address']").each(function () {
+			if (/^address[0-9]+$/.test(this.id)) {
+				$('#' + this.id).prop('pattern', patternstr[tab]);
+				$('#' + this.id).prop('title', titlestr[tab]);
+				$('#' + this.id).prop('placeholder', placeholderstr[tab]);
+			}
+		});
 
 		// Hide and disable rows other than the first
 		hideRowsAfter(1, (tab == 'urltable') || (tab == 'urltable_ports'));

@@ -1,60 +1,27 @@
 <?php
 /*
-	firewall_virtual_ip_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2005 Bill Marquette <bill.marquette@gmail.com>
+ * firewall_virtual_ip_edit.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005 Bill Marquette <bill.marquette@gmail.com>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -68,17 +35,11 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['virtualip']['vip'])) {
-		$config['virtualip']['vip'] = array();
-}
-
+init_config_arr(array('virtualip', 'vip'));
 $a_vip = &$config['virtualip']['vip'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 function return_first_two_octets($ip) {
@@ -105,7 +66,6 @@ if (isset($id) && $a_vip[$id]) {
 	$pconfig['advskew'] = $a_vip[$id]['advskew'];
 	$pconfig['advbase'] = $a_vip[$id]['advbase'];
 	$pconfig['password'] = $a_vip[$id]['password'];
-	$pconfig['range'] = $a_vip[$id]['range'];
 	$pconfig['subnet'] = $a_vip[$id]['subnet'];
 	$pconfig['subnet_bits'] = $a_vip[$id]['subnet_bits'];
 	$pconfig['noexpand'] = $a_vip[$id]['noexpand'];
@@ -120,7 +80,7 @@ if (isset($id) && $a_vip[$id]) {
 	$pconfig['uniqid'] = uniqid();
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -243,21 +203,14 @@ if ($_POST) {
 		$vipent['mode'] = $_POST['mode'];
 		$vipent['interface'] = $_POST['interface'];
 
-		/* ProxyARP specific fields */
-		if ($_POST['mode'] === "proxyarp") {
-			if ($_POST['type'] == "range") {
-				$vipent['range']['from'] = $_POST['range_from'];
-				$vipent['range']['to'] = $_POST['range_to'];
-
-			}
-
+		/* ProxyARP & Other specific fields */
+		if (($_POST['mode'] === "proxyarp") || ($_POST['mode'] === "other")) {
 			$vipent['noexpand'] = isset($_POST['noexpand']);
 		}
 
 		/* CARP specific fields */
 		if ($_POST['mode'] === "carp") {
 			$vipent['vhid'] = $_POST['vhid'];
-			$vipent['uniqid'] = $_POST['uniqid'];
 			$vipent['advskew'] = $_POST['advskew'];
 			$vipent['advbase'] = $_POST['advbase'];
 
@@ -268,9 +221,14 @@ if ($_POST) {
 			}
 		}
 
-		/* IPalias specific fields */
-		if ($_POST['mode'] === "ipalias") {
-			$vipent['uniqid'] = $_POST['uniqid'];
+		/* IPalias and CARP should have a uniqid */
+		if ($_POST['mode'] === "carp" || $_POST['mode'] === "ipalias") {
+			if (empty($_POST['uniqid'])) {
+				// if we changed a 'parp' or 'other' alias to 'carp'/'ipalias' it needs a uniqid
+				$vipent['uniqid'] = uniqid();
+			} else {
+				$vipent['uniqid'] = $_POST['uniqid'];
+			}
 		}
 
 		/* Common fields */
@@ -313,7 +271,7 @@ if ($_POST) {
 
 		$a_vip[$id] = $vipent;
 
-		if (write_config()) {
+		if (write_config(gettext("Saved/edited a virtual IP."))) {
 			mark_subsystem_dirty('vip');
 			file_put_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply", serialize($toapplylist));
 		}
@@ -327,12 +285,13 @@ $ipaliashelp = gettext('The mask must be the network\'s subnet mask. It does not
 $proxyarphelp = gettext('Enter a CIDR block of proxy ARP addresses.');
 
 $pgtitle = array(gettext("Firewall"), gettext("Virtual IPs"), gettext("Edit"));
+$pglinks = array("", "firewall_virtual_ip.php", "@self");
 include("head.inc");
 
 function build_if_list() {
 	$list = array();
 
-	$interfaces = get_configured_interface_with_descr(false, true);
+	$interfaces = get_configured_interface_with_descr(true);
 	$carplist = get_configured_vip_list('all', VIP_CARP);
 
 	foreach ($carplist as $vipname => $address) {
@@ -360,7 +319,7 @@ $form = new Form();
 
 $section = new Form_Section('Edit Virtual IP');
 
-$group = new Form_Group('Type');
+$group = new Form_Group('*Type');
 
 $group->add(new Form_Checkbox(
 	'mode',
@@ -398,7 +357,7 @@ $section->add($group);
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	build_if_list()
 ));
@@ -406,7 +365,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'type',
 	'Address type',
-	((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['subnet']))) ? 'single':'network',
+	(!isset($pconfig['subnet'])) ? 'single':'network',
 	array(
 		'single' => gettext('Single address'),
 		'network' => gettext('Network')
@@ -415,9 +374,9 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_IpAddress(
 	'subnet',
-	'Address(es)',
+	'*Address(es)',
 	$pconfig['subnet']
-))->addMask('subnet_bits', $pconfig['subnet_bits'])->setHelp('<span id="address_note"></span>');
+))->addMask('subnet_bits', $pconfig['subnet_bits'])->setHelp('%s', '<span id="address_note"></span>');
 
 $section->addInput(new Form_Checkbox(
 	'noexpand',
@@ -466,7 +425,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if (isset($id) && $a_vip[$id]){
+if (isset($id) && $a_vip[$id]) {
 	$section->addInput(new Form_Input(
 		'id',
 		null,
@@ -522,10 +481,21 @@ events.push(function() {
 		disableInput('password', true);
 		disableInput('password_confirm', true);
 		hideCheckbox('noexpand', true);
+		setRequired('password', false);
+		setRequired('vhid', false);
+		setRequired('advbase', false);
+
+		// Make sure the type is selected before allowing address to be selected.
+		if(mode == undefined){
+			disableInput('subnet', true);
+		}else{
+			disableInput('subnet', false);
+		}
 
 		if (mode == 'ipalias') {
 			$('#address_note').html("<?=$ipaliashelp?>");
 			$('#type').val('single');
+			setRequired('type', false);
 			disableInput('subnet_bits', false);
 
 		} else if (mode == 'carp') {
@@ -537,14 +507,22 @@ events.push(function() {
 			disableInput('password_confirm', false);
 			disableInput('subnet_bits', false);
 			$('#type').val('single');
+			setRequired('type', false);
+			setRequired('password', true);
+			setRequired('vhid', true);
+			setRequired('advbase', true);
 		} else if (mode == 'proxyarp') {
 			$('#address_note').html("<?=$proxyarphelp?>");
 			disableInput('type', false);
+			setRequired('type', true);
 			disableInput('subnet_bits', ($('#type').val() == 'single'));
+			hideCheckbox('noexpand', false);
 		} else {
 			$('#address_note').html('');
 			disableInput('type', false);
+			setRequired('type', true);
 			disableInput('subnet_bits', ($('#type').val() == 'single'));
+			hideCheckbox('noexpand', false);
 		}
 	}
 

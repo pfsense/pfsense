@@ -1,59 +1,26 @@
 <?php
 /*
-	vpn_ipsec.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * vpn_ipsec.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -70,189 +37,217 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
-}
-
-if (!is_array($config['ipsec']['phase2'])) {
-	$config['ipsec']['phase2'] = array();
-}
-
+init_config_arr(array('ipsec', 'phase1'));
+init_config_arr(array('ipsec', 'phase2'));
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-if ($_POST) {
-	if ($_POST['apply']) {
-		$retval = vpn_ipsec_configure();
-		/* reload the filter in the background */
-		filter_configure();
-		$savemsg = get_std_save_message($retval);
-		if ($retval >= 0) {
-			if (is_subsystem_dirty('ipsec')) {
-				clear_subsystem_dirty('ipsec');
-			}
+
+if ($_POST['apply']) {
+	$ipsec_dynamic_hosts = vpn_ipsec_configure();
+	/* reload the filter in the background */
+	$retval = 0;
+	$retval |= filter_configure();
+	if ($ipsec_dynamic_hosts >= 0) {
+		if (is_subsystem_dirty('ipsec')) {
+			clear_subsystem_dirty('ipsec');
 		}
-	} else if (isset($_POST['del'])) {
-		/* delete selected p1 entries */
-		if (is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
-			foreach ($_POST['p1entry'] as $p1entrydel) {
-				unset($a_phase1[$p1entrydel]);
-			}
-			if (write_config()) {
-				mark_subsystem_dirty('ipsec');
-			}
+	}
+} else if (isset($_POST['del'])) {
+	/* delete selected p1 entries */
+	if (is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
+		foreach ($_POST['p1entry'] as $p1entrydel) {
+			unset($a_phase1[$p1entrydel]);
 		}
-	} else if (isset($_POST['delp2'])) {
-		/* delete selected p2 entries */
-		if (is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
-			foreach ($_POST['p2entry'] as $p2entrydel) {
+		if (write_config(gettext("Deleted selected IPsec Phase 1 entries."))) {
+			mark_subsystem_dirty('ipsec');
+		}
+	}
+} else if (isset($_POST['delp2'])) {
+	/* delete selected p2 entries */
+	if (is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
+		foreach ($_POST['p2entry'] as $p2entrydel) {
+			if (is_interface_ipsec_vti_assigned($a_phase2[$p2entrydel])) {
+				$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
+			} else {
 				unset($a_phase2[$p2entrydel]);
 			}
-			if (write_config()) {
-				mark_subsystem_dirty('ipsec');
+		}
+		if (write_config(gettext("Deleted selected IPsec Phase 2 entries."))) {
+			mark_subsystem_dirty('ipsec');
+		}
+	}
+} else  {
+	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
+
+	// TODO: this. is. nasty.
+	unset($delbtn, $delbtnp2, $movebtn, $movebtnp2, $togglebtn, $togglebtnp2);
+	foreach ($_POST as $pn => $pd) {
+		if (preg_match("/del_(\d+)/", $pn, $matches)) {
+			$delbtn = $matches[1];
+		} else if (preg_match("/delp2_(\d+)/", $pn, $matches)) {
+			$delbtnp2 = $matches[1];
+		} else if (preg_match("/move_(\d+)/", $pn, $matches)) {
+			$movebtn = $matches[1];
+		} else if (preg_match("/movep2_(\d+)/", $pn, $matches)) {
+			$movebtnp2 = $matches[1];
+		} else if (preg_match("/toggle_(\d+)/", $pn, $matches)) {
+			$togglebtn = $matches[1];
+		} else if (preg_match("/togglep2_(\d+)/", $pn, $matches)) {
+			$togglebtnp2 = $matches[1];
+		}
+	}
+
+	$save = 1;
+
+	/* move selected p1 entries before this */
+	if (isset($movebtn) && is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
+		$a_phase1_new = array();
+
+		/* copy all p1 entries < $movebtn and not selected */
+		for ($i = 0; $i < $movebtn; $i++) {
+			if (!in_array($i, $_POST['p1entry'])) {
+				$a_phase1_new[] = $a_phase1[$i];
 			}
 		}
-	} else {
-		/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
 
-		// TODO: this. is. nasty.
-		unset($delbtn, $delbtnp2, $movebtn, $movebtnp2, $togglebtn, $togglebtnp2);
-		foreach ($_POST as $pn => $pd) {
-			if (preg_match("/del_(\d+)/", $pn, $matches)) {
-				$delbtn = $matches[1];
-			} else if (preg_match("/delp2_(\d+)/", $pn, $matches)) {
-				$delbtnp2 = $matches[1];
-			} else if (preg_match("/move_(\d+)/", $pn, $matches)) {
-				$movebtn = $matches[1];
-			} else if (preg_match("/movep2_(\d+)/", $pn, $matches)) {
-				$movebtnp2 = $matches[1];
-			} else if (preg_match("/toggle_(\d+)/", $pn, $matches)) {
-				$togglebtn = $matches[1];
-			} else if (preg_match("/togglep2_(\d+)/", $pn, $matches)) {
-				$togglebtnp2 = $matches[1];
+		/* copy all selected p1 entries */
+		for ($i = 0; $i < count($a_phase1); $i++) {
+			if ($i == $movebtn) {
+				continue;
+			}
+			if (in_array($i, $_POST['p1entry'])) {
+				$a_phase1_new[] = $a_phase1[$i];
 			}
 		}
 
-		$save = 1;
+		/* copy $movebtn p1 entry */
+		if ($movebtn < count($a_phase1)) {
+			$a_phase1_new[] = $a_phase1[$movebtn];
+		}
 
-		/* move selected p1 entries before this */
-		if (isset($movebtn) && is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
-			$a_phase1_new = array();
-
-			/* copy all p1 entries < $movebtn and not selected */
-			for ($i = 0; $i < $movebtn; $i++) {
-				if (!in_array($i, $_POST['p1entry'])) {
-					$a_phase1_new[] = $a_phase1[$i];
-				}
+		/* copy all p1 entries > $movebtn and not selected */
+		for ($i = $movebtn+1; $i < count($a_phase1); $i++) {
+			if (!in_array($i, $_POST['p1entry'])) {
+				$a_phase1_new[] = $a_phase1[$i];
 			}
+		}
+		if (count($a_phase1_new) > 0) {
+			$a_phase1 = $a_phase1_new;
+		}
 
-			/* copy all selected p1 entries */
-			for ($i = 0; $i < count($a_phase1); $i++) {
-				if ($i == $movebtn) {
-					continue;
-				}
-				if (in_array($i, $_POST['p1entry'])) {
-					$a_phase1_new[] = $a_phase1[$i];
-				}
-			}
+	} else if (isset($movebtnp2) && is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
+		/* move selected p2 entries before this */
+		$a_phase2_new = array();
 
-			/* copy $movebtn p1 entry */
-			if ($movebtn < count($a_phase1)) {
-				$a_phase1_new[] = $a_phase1[$movebtn];
+		/* copy all p2 entries < $movebtnp2 and not selected */
+		for ($i = 0; $i < $movebtnp2; $i++) {
+			if (!in_array($i, $_POST['p2entry'])) {
+				$a_phase2_new[] = $a_phase2[$i];
 			}
+		}
 
-			/* copy all p1 entries > $movebtn and not selected */
-			for ($i = $movebtn+1; $i < count($a_phase1); $i++) {
-				if (!in_array($i, $_POST['p1entry'])) {
-					$a_phase1_new[] = $a_phase1[$i];
-				}
+		/* copy all selected p2 entries */
+		for ($i = 0; $i < count($a_phase2); $i++) {
+			if ($i == $movebtnp2) {
+				continue;
 			}
-			if (count($a_phase1_new) > 0) {
-				$a_phase1 = $a_phase1_new;
+			if (in_array($i, $_POST['p2entry'])) {
+				$a_phase2_new[] = $a_phase2[$i];
 			}
+		}
 
-		} else if (isset($movebtnp2) && is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
-			/* move selected p2 entries before this */
-			$a_phase2_new = array();
+		/* copy $movebtnp2 p2 entry */
+		if ($movebtnp2 < count($a_phase2)) {
+			$a_phase2_new[] = $a_phase2[$movebtnp2];
+		}
 
-			/* copy all p2 entries < $movebtnp2 and not selected */
-			for ($i = 0; $i < $movebtnp2; $i++) {
-				if (!in_array($i, $_POST['p2entry'])) {
-					$a_phase2_new[] = $a_phase2[$i];
-				}
+		/* copy all p2 entries > $movebtnp2 and not selected */
+		for ($i = $movebtnp2+1; $i < count($a_phase2); $i++) {
+			if (!in_array($i, $_POST['p2entry'])) {
+				$a_phase2_new[] = $a_phase2[$i];
 			}
+		}
+		if (count($a_phase2_new) > 0) {
+			$a_phase2 = $a_phase2_new;
+		}
 
-			/* copy all selected p2 entries */
-			for ($i = 0; $i < count($a_phase2); $i++) {
-				if ($i == $movebtnp2) {
-					continue;
-				}
-				if (in_array($i, $_POST['p2entry'])) {
-					$a_phase2_new[] = $a_phase2[$i];
-				}
-			}
-
-			/* copy $movebtnp2 p2 entry */
-			if ($movebtnp2 < count($a_phase2)) {
-				$a_phase2_new[] = $a_phase2[$movebtnp2];
-			}
-
-			/* copy all p2 entries > $movebtnp2 and not selected */
-			for ($i = $movebtnp2+1; $i < count($a_phase2); $i++) {
-				if (!in_array($i, $_POST['p2entry'])) {
-					$a_phase2_new[] = $a_phase2[$i];
-				}
-			}
-			if (count($a_phase2_new) > 0) {
-				$a_phase2 = $a_phase2_new;
-			}
-
-		} else if (isset($togglebtn)) {
-			if (isset($a_phase1[$togglebtn]['disabled'])) {
-				unset($a_phase1[$togglebtn]['disabled']);
+	} else if (isset($togglebtn)) {
+		if (isset($a_phase1[$togglebtn]['disabled'])) {
+			unset($a_phase1[$togglebtn]['disabled']);
+		} else {
+			if (ipsec_vti($a_phase1[$togglebtn])) {
+				$input_errors[] = gettext("Cannot disable a Phase 1 with a child Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
 			} else {
 				$a_phase1[$togglebtn]['disabled'] = true;
 			}
-		} else if (isset($togglebtnp2)) {
-			if (isset($a_phase2[$togglebtnp2]['disabled'])) {
-				unset($a_phase2[$togglebtnp2]['disabled']);
+		}
+	} else if (isset($togglebtnp2)) {
+		if (isset($a_phase2[$togglebtnp2]['disabled'])) {
+			unset($a_phase2[$togglebtnp2]['disabled']);
+		} else {
+			if (is_interface_ipsec_vti_assigned($a_phase2[$togglebtnp2])) {
+				$input_errors[] = gettext("Cannot disable a VTI Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
 			} else {
 				$a_phase2[$togglebtnp2]['disabled'] = true;
 			}
-		} else if (isset($delbtn)) {
-			/* remove static route if interface is not WAN */
-			if ($a_phase1[$delbtn]['interface'] <> "wan") {
-				mwexec("/sbin/route delete -host {$a_phase1[$delbtn]['remote-gateway']}");
-			}
-
-			/* remove all phase2 entries that match the ikeid */
-			$ikeid = $a_phase1[$delbtn]['ikeid'];
-			foreach ($a_phase2 as $p2index => $ph2tmp) {
-				if ($ph2tmp['ikeid'] == $ikeid) {
-					unset($a_phase2[$p2index]);
-				}
-			}
-			unset($a_phase1[$delbtn]);
-
-		} else if (isset($delbtnp2)) {
-			unset($a_phase2[$delbtnp2]);
-
-		} else {
-			$save = 0;
+		}
+	} else if (isset($delbtn)) {
+		/* remove static route if interface is not WAN */
+		if ($a_phase1[$delbtn]['interface'] <> "wan") {
+			mwexec("/sbin/route delete -host {$a_phase1[$delbtn]['remote-gateway']}");
 		}
 
-		if ($save === 1) {
-			if (write_config()) {
-				mark_subsystem_dirty('ipsec');
+		/* remove all phase2 entries that match the ikeid */
+		$ikeid = $a_phase1[$delbtn]['ikeid'];
+		$p1_has_vti = false;
+		$delp2ids = array();
+		foreach ($a_phase2 as $p2index => $ph2tmp) {
+			if ($ph2tmp['ikeid'] == $ikeid) {
+				if (is_interface_ipsec_vti_assigned($ph2tmp)) {
+					$p1_has_vti = true;
+				} else {
+					$delp2ids[] = $p2index;
+				}
 			}
+		}
+
+		if ($p1_has_vti) {
+			$input_errors[] = gettext("Cannot delete a Phase 1 which contains an active VTI Phase 2 with an interface assigned. Remove the interface assignment before deleting this P1.");
+		} else {
+			foreach ($delp2ids as $dp2idx) {
+				unset($a_phase2[$dp2idx]);
+			}
+			unset($a_phase1[$delbtn]);
+		}
+
+	} else if (isset($delbtnp2)) {
+		if (is_interface_ipsec_vti_assigned($a_phase2[$delbtnp2])) {
+			$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
+		} else {
+			unset($a_phase2[$delbtnp2]);
+		}
+	} else {
+		$save = 0;
+	}
+
+	if ($save === 1) {
+		if (write_config(gettext("Saved configuration changes for IPsec tunnels."))) {
+			mark_subsystem_dirty('ipsec');
 		}
 	}
 }
 
+
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
@@ -261,13 +256,13 @@ $tab_array[] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
 
-	if ($savemsg) {
-		print_info_box($savemsg, 'success');
-	}
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
+}
 
-	if (is_subsystem_dirty('ipsec')) {
-		print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
-	}
+if (is_subsystem_dirty('ipsec')) {
+	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
+}
 ?>
 
 <form name="mainform" method="post">
@@ -284,13 +279,33 @@ display_top_tabs($tab_array);
 						<th><?=gettext("Mode")?></th>
 						<th><?=gettext("P1 Protocol")?></th>
 						<th><?=gettext("P1 Transforms")?></th>
+						<th><?=gettext("P1 DH-Group")?></th>
 						<th><?=gettext("P1 Description")?></th>
 						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody class="p1-entries">
-<?php $i = 0; foreach ($a_phase1 as $ph1ent): ?>
 <?php
+$iflabels = get_configured_interface_with_descr(false, true);
+$viplist = get_configured_vip_list();
+foreach ($viplist as $vip => $address) {
+	$iflabels[$vip] = $address;
+	if (get_vip_descr($address)) {
+		$iflabels[$vip] .= " (". get_vip_descr($address) .")";
+	}
+}
+$grouplist = return_gateway_groups_array();
+foreach ($grouplist as $name => $group) {
+	if ($group[0]['vip'] != "") {
+		$vipif = $group[0]['vip'];
+	} else {
+		$vipif = $group[0]['int'];
+	}
+	$iflabels[$name] = "GW Group {$name}";
+}
+
+$i = 0; foreach ($a_phase1 as $ph1ent):
+
 	$iconfn = "pass";
 
 	$entryStatus = (isset($ph1ent['disabled']) ? 'disabled' : 'enabled');
@@ -321,26 +336,11 @@ display_top_tabs($tab_array);
 						<td>
 <?php
 			if ($ph1ent['interface']) {
-				$iflabels = get_configured_interface_with_descr();
-
-				$viplist = get_configured_vip_list();
-				foreach ($viplist as $vip => $address) {
-					$iflabels[$vip] = $address;
-					if (get_vip_descr($address)) {
-						$iflabels[$vip] .= " (". get_vip_descr($address) .")";
-					}
+				if (isset($iflabels[$ph1ent['interface']])) {
+					$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
+				} else {
+					$if = sprintf("Interface not found: '%s'", $ph1ent['interface']);
 				}
-
-				$grouplist = return_gateway_groups_array();
-				foreach ($grouplist as $name => $group) {
-					if ($group[0]['vip'] != "") {
-						$vipif = $group[0]['vip'];
-					} else {
-						$vipif = $group[0]['int'];
-					}
-					$iflabels[$name] = "GW Group {$name}";
-				}
-				$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
 			} else {
 				$if = "WAN";
 			}
@@ -362,19 +362,47 @@ display_top_tabs($tab_array);
 					<?=$spane?>
 				</td>
 				<td id="frd<?=$i?>">
-					<?=$p1_ealgos[$ph1ent['encryption-algorithm']['name']]['name']?>
 <?php
-			if ($ph1ent['encryption-algorithm']['keylen']) {
-				if ($ph1ent['encryption-algorithm']['keylen'] == "auto") {
-					echo " (" . gettext("auto") . ")";
-				} else {
-					echo " ({$ph1ent['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
+				$first = true;
+				if (is_array($ph1ent['encryption']['item'])) {
+					foreach($ph1ent['encryption']['item'] as $p1algo) {
+						if (!$first) {
+							echo "<br/>";
+						}
+						echo $p1_ealgos[$p1algo['encryption-algorithm']['name']]['name'];
+						if ($p1algo['encryption-algorithm']['keylen']) {
+							echo " ({$p1algo['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
+						}
+						$first = false;
+					}
 				}
-			}
 ?>
 						</td>
 						<td>
-							<?=$p1_halgos[$ph1ent['hash-algorithm']]?>
+<?php			$first = true;
+				if (is_array($ph1ent['encryption']['item'])) {
+					foreach($ph1ent['encryption']['item'] as $p1algo) {
+						if (!$first) {
+							echo "<br/>";
+						}
+						echo $p1_halgos[$p1algo['hash-algorithm']];
+						$first = false;
+					}
+				}
+				?>
+						</td>
+						<td>
+<?php			$first = true;
+				if (is_array($ph1ent['encryption']['item'])) {
+					foreach($ph1ent['encryption']['item'] as $p1algo) {
+						if (!$first) {
+							echo "<br/>";
+						}
+						echo str_replace(" ","&nbsp;",$p1_dhgroups[$p1algo['dhgroup']]);
+						$first = false;
+					}
+				}
+				?>
 						</td>
 						<td>
 							<?=htmlspecialchars($ph1ent['descr'])?>
@@ -395,8 +423,8 @@ display_top_tabs($tab_array);
 						<td colspan="2"></td>
 						<td colspan="7" class="contains-table">
 <?php
-			if (isset($_POST["tdph2-{$i}-visible"])) {
-				$tdph2_visible = htmlspecialchars($_POST["tdph2-{$i}-visible"]);
+			if (isset($_REQUEST["tdph2-{$i}-visible"])) {
+				$tdph2_visible = htmlspecialchars($_REQUEST["tdph2-{$i}-visible"]);
 			} else {
 				$tdph2_visible = 0;
 			}
@@ -460,7 +488,7 @@ display_top_tabs($tab_array);
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 												<?=$ph2ent['mode']?>
 											</td>
-<?php if (($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
+<?php if (($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6") or ($ph2ent['mode'] == "vti")): ?>
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 												<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
 											</td>
@@ -543,7 +571,7 @@ display_top_tabs($tab_array);
 <?php endif;
 */
 ?>
-		<a href="vpn_ipsec_phase1.php" class="btn btn-success btn-sm">
+		<a href="vpn_ipsec_phase1.php" class="btn btn-success btn-sm"  usepost>
 			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext("Add P1")?>
 		</a>
@@ -557,9 +585,9 @@ display_top_tabs($tab_array);
 </form>
 
 <div class="infoblock">
-	<?php print_info_box(sprintf(gettext("The IPsec status can be checked at %s%s%s."), '<a href="status_ipsec.php">', gettext("Status:IPsec"), '</a>') . '<br />' .
-	sprintf(gettext("IPsec debug mode can be enabled at %s%s%s."), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>') . '<br />' .
-	sprintf(gettext("IPsec can be set to prefer older SAs at %s%s%s."), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>'), 'info', false); ?>
+	<?php print_info_box(sprintf(gettext('The IPsec status can be checked at %1$s%2$s%3$s.'), '<a href="status_ipsec.php">', gettext("Status:IPsec"), '</a>') . '<br />' .
+	sprintf(gettext('IPsec debug mode can be enabled at %1$s%2$s%3$s.'), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>') . '<br />' .
+	sprintf(gettext('IPsec can be set to prefer older SAs at %1$s%2$s%3$s.'), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>'), 'info', false); ?>
 </div>
 
 <script type="text/javascript">

@@ -1,63 +1,29 @@
 <?php
 /*
-	services_captiveportal_vouchers.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2007 Marcel Wiget <mwiget@mac.com>
+ * services_captiveportal_vouchers.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-vouchers
-##|*NAME=Services: Captive portal Vouchers
-##|*DESCR=Allow access to the 'Services: Captive portal Vouchers' page.
+##|*NAME=Services: Captive Portal Vouchers
+##|*DESCR=Allow access to the 'Services: Captive Portal Vouchers' page.
 ##|*MATCH=services_captiveportal_vouchers.php*
 ##|-PRIV
 
@@ -72,12 +38,7 @@ require_once("shaper.inc");
 require_once("captiveportal.inc");
 require_once("voucher.inc");
 
-$cpzone = $_GET['zone'];
-
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower($cpzone);
+$cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
 if ($_REQUEST['generatekey']) {
 	exec("/usr/bin/openssl genrsa 64 > /tmp/key64.private");
@@ -94,14 +55,9 @@ if (empty($cpzone)) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-$a_cp =& $config['captiveportal'];
-
-if (!is_array($config['voucher'])) {
-	$config['voucher'] = array();
-}
+init_config_arr(array('captiveportal'));
+init_config_arr(array('voucher', $cpzone, 'roll'));
+$a_cp = &$config['captiveportal'];
 
 if (empty($a_cp[$cpzone])) {
 	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));
@@ -110,6 +66,7 @@ if (empty($a_cp[$cpzone])) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Vouchers"));
+$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
 if (!is_array($config['voucher'][$cpzone]['roll'])) {
@@ -161,14 +118,15 @@ if (!isset($config['voucher'][$cpzone]['publickey'])) {
 if (!isset($config['voucher'][$cpzone]['descrmsgnoaccess'])) {
 	$config['voucher'][$cpzone]['descrmsgnoaccess'] = gettext("Voucher invalid");
 }
+
 if (!isset($config['voucher'][$cpzone]['descrmsgexpired'])) {
 	$config['voucher'][$cpzone]['descrmsgexpired'] = gettext("Voucher expired");
 }
 
 $a_roll = &$config['voucher'][$cpzone]['roll'];
 
-if ($_GET['act'] == "del") {
-	$id = $_GET['id'];
+if ($_POST['act'] == "del") {
+	$id = $_POST['id'];
 	if ($a_roll[$id]) {
 		$roll = $a_roll[$id]['number'];
 		$voucherlck = lock("voucher{$cpzone}");
@@ -179,7 +137,7 @@ if ($_GET['act'] == "del") {
 	}
 	header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
 	exit;
-} else if ($_GET['act'] == "csv") {
+} else if ($_REQUEST['act'] == "csv") {
 	/* print all vouchers of the selected roll */
 	$privkey = base64_decode($config['voucher'][$cpzone]['privatekey']);
 	if (strstr($privkey, "BEGIN RSA PRIVATE KEY")) {
@@ -191,7 +149,7 @@ if ($_GET['act'] == "del") {
 			fwrite($fd, $privkey);
 			fclose($fd);
 			$a_voucher = &$config['voucher'][$cpzone]['roll'];
-			$id = $_GET['id'];
+			$id = $_REQUEST['id'];
 			if (isset($id) && $a_voucher[$id]) {
 				$number = $a_voucher[$id]['number'];
 				$count = $a_voucher[$id]['count'];
@@ -227,7 +185,7 @@ $pconfig['vouchersyncport'] = $config['voucher'][$cpzone]['vouchersyncport'];
 $pconfig['vouchersyncpass'] = $config['voucher'][$cpzone]['vouchersyncpass'];
 $pconfig['vouchersyncusername'] = $config['voucher'][$cpzone]['vouchersyncusername'];
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 
 	if ($_POST['postafterlogin']) {
@@ -313,6 +271,8 @@ if ($_POST) {
 			$config['voucher'][$cpzone] = $newvoucher;
 			write_config();
 			voucher_configure_zone();
+			// Refresh captivportal login to show voucher changes
+			captiveportal_configure_zone($config['captiveportal'][$cpzone]);
 		} else {
 			$newvoucher['vouchersyncdbip'] = $_POST['vouchersyncdbip'];
 			$newvoucher['vouchersyncport'] = $_POST['vouchersyncport'];
@@ -324,96 +284,67 @@ if ($_POST) {
 			}
 			if ($newvoucher['vouchersyncpass'] && $newvoucher['vouchersyncusername'] &&
 			    $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
+
 				// Synchronize the voucher DB from the master node
-				require_once("xmlrpc.inc");
-
-				$protocol = "http";
-				if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
-				    $config['system']['webgui']['protocol'] == "https") {
-					$protocol = "https";
-				}
-				if ($protocol == "https" || $newvoucher['vouchersyncport'] == "443") {
-					$url = "https://{$newvoucher['vouchersyncdbip']}";
-				} else {
-					$url = "http://{$newvoucher['vouchersyncdbip']}";
-				}
-
 				$execcmd = <<<EOF
+				global \$config;
 				\$toreturn = array();
 				\$toreturn['voucher'] = \$config['voucher']['$cpzone'];
 				unset(\$toreturn['vouchersyncport'], \$toreturn['vouchersyncpass'], \$toreturn['vouchersyncusername'], \$toreturn['vouchersyncdbip']);
 
 EOF;
-
-				/* assemble xmlrpc payload */
-				$params = array(
-					XML_RPC_encode($newvoucher['vouchersyncpass']),
-					XML_RPC_encode($execcmd)
-				);
-				$port = $newvoucher['vouchersyncport'];
-				log_error(sprintf(gettext("voucher XMLRPC sync data %s:%d"), $url, $port));
-				$msg = new XML_RPC_Message('pfsense.exec_php', $params);
-				$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-				$cli->setCredentials($newvoucher['vouchersyncusername'], $newvoucher['vouchersyncpass']);
-				$resp = $cli->send($msg, "250");
-				if (!is_object($resp)) {
-					$error = sprintf(gettext("A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with %s:%d (pfsense.exec_php)."), $url, $port);
-					log_error($error);
-					file_notice("CaptivePortalVoucherSync", $error, gettext("Communications error occurred"), "");
-					$input_errors[] = $error;
-				} elseif ($resp->faultCode()) {
-					$cli->setDebug(1);
-					$resp = $cli->send($msg, "250");
-					$error = sprintf(gettext("An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with %s:%d - Code %d: %s"), $url, $port, $resp->faultCode(), $resp->faultString());
-					log_error($error);
-					file_notice("CaptivePortalVoucherSync", $error, gettext("Error code received"), "");
-					$input_errors[] = $error;
-				} else {
-					log_error(sprintf(gettext("The Captive Portal voucher database has been synchronized with %s:%d (pfsense.exec_php)."), $url, $port));
+				require_once("xmlrpc_client.inc");
+				$rpc_client = new pfsense_xmlrpc_client();
+				$rpc_client->setConnectionData(
+						$newvoucher['vouchersyncdbip'], $newvoucher['vouchersyncport'],
+						$newvoucher['vouchersyncusername'], $newvoucher['vouchersyncpass']);
+				$rpc_client->set_noticefile("CaptivePortalVoucherSync");
+				$resp = $rpc_client->xmlrpc_exec_php($execcmd);
+				if ($resp == null) {
+					$input_errors[] = $rpc_client->get_error();
 				}
+
 				if (!$input_errors) {
-					$toreturn = XML_RPC_Decode($resp->value());
-					if (!is_array($toreturn)) {
-						if ($toreturn == "Authentication failed") {
-							$input_errors[] = gettext("Could not synchronize the voucher database: Authentication Failed.");
-						}
-					} else {
+					if (is_array($resp)) {
+						log_error(sprintf(gettext("The Captive Portal voucher database has been synchronized with %s (pfsense.exec_php)."), $url));
 						// If we received back the voucher roll and other information then store it.
-						if ($toreturn['voucher']['roll']) {
-							$newvoucher['roll'] = $toreturn['voucher']['roll'];
+						if ($resp['voucher']['roll']) {
+							$newvoucher['roll'] = $resp['voucher']['roll'];
 						}
-						if ($toreturn['voucher']['rollbits']) {
-							$newvoucher['rollbits'] = $toreturn['voucher']['rollbits'];
+						if ($resp['voucher']['rollbits']) {
+							$newvoucher['rollbits'] = $resp['voucher']['rollbits'];
 						}
-						if ($toreturn['voucher']['ticketbits']) {
-							$newvoucher['ticketbits'] = $toreturn['voucher']['ticketbits'];
+						if ($resp['voucher']['ticketbits']) {
+							$newvoucher['ticketbits'] = $resp['voucher']['ticketbits'];
 						}
-						if ($toreturn['voucher']['checksumbits']) {
-							$newvoucher['checksumbits'] = $toreturn['voucher']['checksumbits'];
+						if ($resp['voucher']['checksumbits']) {
+							$newvoucher['checksumbits'] = $resp['voucher']['checksumbits'];
 						}
-						if ($toreturn['voucher']['magic']) {
-							$newvoucher['magic'] = $toreturn['voucher']['magic'];
+						if ($resp['voucher']['magic']) {
+							$newvoucher['magic'] = $resp['voucher']['magic'];
 						}
-						if ($toreturn['voucher']['exponent']) {
-							$newvoucher['exponent'] = $toreturn['voucher']['exponent'];
+						if ($resp['voucher']['exponent']) {
+							$newvoucher['exponent'] = $resp['voucher']['exponent'];
 						}
-						if ($toreturn['voucher']['publickey']) {
-							$newvoucher['publickey'] = $toreturn['voucher']['publickey'];
+						if ($resp['voucher']['publickey']) {
+							$newvoucher['publickey'] = $resp['voucher']['publickey'];
 						}
-						if ($toreturn['voucher']['privatekey']) {
-							$newvoucher['privatekey'] = $toreturn['voucher']['privatekey'];
+						if ($resp['voucher']['privatekey']) {
+							$newvoucher['privatekey'] = $resp['voucher']['privatekey'];
 						}
-						if ($toreturn['voucher']['descrmsgnoaccess']) {
-							$newvoucher['descrmsgnoaccess'] = $toreturn['voucher']['descrmsgnoaccess'];
+						if ($resp['voucher']['descrmsgnoaccess']) {
+							$newvoucher['descrmsgnoaccess'] = $resp['voucher']['descrmsgnoaccess'];
 						}
-						if ($toreturn['voucher']['descrmsgexpired']) {
-							$newvoucher['descrmsgexpired'] = $toreturn['voucher']['descrmsgexpired'];
+						if ($resp['voucher']['descrmsgexpired']) {
+							$newvoucher['descrmsgexpired'] = $resp['voucher']['descrmsgexpired'];
 						}
-						$savemsg = sprintf(gettext('Voucher database has been synchronized from %1$s:%2$s'), $url, $port);
+						$savemsg = sprintf(gettext('Voucher database has been synchronized from %1$s'), $url);
 
 						$config['voucher'][$cpzone] = $newvoucher;
 						write_config();
 						voucher_configure_zone(true);
+						// Refresh captivportal login to show voucher changes
+						captiveportal_configure_zone($config['captiveportal'][$cpzone]);
 					}
 				}
 			}
@@ -425,6 +356,7 @@ EOF;
 		}
 	}
 }
+
 include("head.inc");
 
 if ($input_errors) {
@@ -450,7 +382,7 @@ display_top_tabs($tab_array, true);
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Voucher Rolls");?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
+			<table class="table table-striped table-hover table-condensed table-rowdblclickedit sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext("Roll #")?></th>
@@ -466,22 +398,14 @@ $i = 0;
 foreach ($a_roll as $rollent):
 ?>
 					<tr>
-						<td>
-							<?=htmlspecialchars($rollent['number']); ?>&nbsp;
-						</td>
-						<td>
-							<?=htmlspecialchars($rollent['minutes'])?>&nbsp;
-						</td>
-						<td>
-							<?=htmlspecialchars($rollent['count'])?>&nbsp;
-						</td>
-						<td>
-							<?=htmlspecialchars($rollent['descr']); ?>&nbsp;
-						</td>
+						<td><?=htmlspecialchars($rollent['number']); ?></td>
+						<td><?=htmlspecialchars($rollent['minutes'])?></td>
+						<td><?=htmlspecialchars($rollent['count'])?></td>
+						<td><?=htmlspecialchars($rollent['descr']); ?></td>
 						<td>
 							<!-- These buttons are hidden/shown on checking the 'enable' checkbox -->
 							<a class="fa fa-pencil"		title="<?=gettext("Edit voucher roll"); ?>" href="services_captiveportal_vouchers_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i; ?>"></a>
-							<a class="fa fa-trash"		title="<?=gettext("Delete voucher roll")?>" href="services_captiveportal_vouchers.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i; ?>"></a>
+							<a class="fa fa-trash"		title="<?=gettext("Delete voucher roll")?>" href="services_captiveportal_vouchers.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i; ?>" usepost></a>
 							<a class="fa fa-file-excel-o"	title="<?=gettext("Export vouchers for this roll to a .csv file")?>" href="services_captiveportal_vouchers.php?zone=<?=$cpzone?>&amp;act=csv&amp;id=<?=$i; ?>"></a>
 						</td>
 					</tr>
@@ -596,8 +520,8 @@ $section->addInput(new Form_IpAddress(
 	'vouchersyncdbip',
 	'Synchronize Voucher Database IP',
 	$pconfig['vouchersyncdbip']
-))->setHelp('IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from.' . '<br />' .
-			'NOTE: this should be setup on the slave nodes and not the primary node!');
+))->setHelp('IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from.%1$s' .
+			'NOTE: this should be setup on the slave nodes and not the primary node!', '<br />');
 
 $section->addInput(new Form_Input(
 	'vouchersyncport',

@@ -1,59 +1,26 @@
 <?php
 /*
-	status_graph.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * status_graph.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -69,18 +36,9 @@
 require_once("guiconfig.inc");
 require_once("ipsec.inc");
 
-if ($_POST['width']) {
-	$width = $_POST['width'];
-} else {
-	$width = "100%";
+if (is_array($config["traffic_graphs"])){
+	$pconfig = $config["traffic_graphs"];
 }
-
-if ($_POST['height']) {
-	$height = $_POST['height'];
-} else {
-	$height = "200";
-}
-
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
 if (ipsec_enabled()) {
@@ -97,22 +55,10 @@ foreach (array('server', 'client') as $mode) {
 	}
 }
 
-// Compatiblity to restore GET parameters used pre-2.3
-// Useful to save a URL for a given graph configuration
-if (isset($_GET['if']) && !isset($_POST['if'])) {
-	$_POST['if'] = $_GET['if'];
-}
-if (isset($_GET['sort']) && !isset($_POST['sort'])) {
-	$_POST['sort'] = $_GET['sort'];
-}
-if (isset($_GET['filter']) && !isset($_POST['filter'])) {
-	$_POST['filter'] = $_GET['filter'];
-}
-if (isset($_GET['hostipformat']) && !isset($_POST['hostipformat'])) {
-	$_POST['hostipformat'] = $_GET['hostipformat'];
-}
+$ifdescrs = array_merge($ifdescrs, interface_ipsec_vti_list_all());
 
-if ($_POST['if']) {
+if (!empty($_POST)) {
+	// update view if settings are changed or saved
 	$curif = $_POST['if'];
 	$found = false;
 	foreach ($ifdescrs as $descr => $ifdescr) {
@@ -125,29 +71,53 @@ if ($_POST['if']) {
 		header("Location: status_graph.php");
 		exit;
 	}
-} else {
-	if (empty($ifdescrs["wan"])) {
-		/* Handle the case when WAN has been disabled. Use the first key in ifdescrs. */
-		reset($ifdescrs);
-		$curif = key($ifdescrs);
-	} else {
-		$curif = "wan";
-	}
-}
-if ($_POST['sort']) {
 	$cursort = $_POST['sort'];
-} else {
-	$cursort = "";
-}
-if ($_POST['filter']) {
 	$curfilter = $_POST['filter'];
-} else {
-	$curfilter = "";
-}
-if ($_POST['hostipformat']) {
 	$curhostipformat = $_POST['hostipformat'];
+	$curbackgroundupdate = $_POST['backgroundupdate'];
+	$curinvert = $_POST['invert'];
+	$cursmoothing = $_POST['smoothfactor'];
+
+	// Save data to config
+	if (isset($_POST['save'])) {
+		$pconfig = array();
+		$pconfig["if"] = $curif;
+		$pconfig["sort"] = $cursort;
+		$pconfig["filter"] = $curfilter;
+		$pconfig["hostipformat"] = $curhostipformat;
+		$pconfig["backgroundupdate"] = $curbackgroundupdate;
+		$pconfig["smoothfactor"] = $cursmoothing;
+		$pconfig["invert"] = $curinvert;
+		$config["traffic_graphs"] = array();
+		$config["traffic_graphs"] = $pconfig;
+		write_config("Traffic Graphs settings updated");
+	}
 } else {
-	$curhostipformat = "";
+	// default settings from config
+	if (is_array($pconfig)) {
+		$curif = $pconfig['if'];
+		$cursort = $pconfig['sort'];
+		$curfilter = $pconfig['filter'];
+		$curhostipformat = $pconfig['hostipformat'];
+		$curbackgroundupdate = $pconfig['backgroundupdate'];
+		$cursmoothing = $pconfig['smoothfactor'];
+		$curinvert = $pconfig['invert'];
+	} else {
+		// initialize when no config details are present
+		if (empty($ifdescrs["wan"])) {
+			/* Handle the case when WAN has been disabled. Use the first key in ifdescrs. */
+			reset($ifdescrs);
+			$curif = key($ifdescrs);
+		} else {
+			$curif = "wan";
+		}
+		$cursort = "";
+		$curfilter = "";
+		$curhostipformat = "";
+		$curbackgroundupdate = "";
+		$cursmoothing = 0;
+		$curinvert = "";
+	}
 }
 
 function iflist() {
@@ -166,12 +136,12 @@ $pgtitle = array(gettext("Status"), gettext("Traffic Graph"));
 
 include("head.inc");
 
-$form = new Form(false);
+$form = new Form();
 $form->addClass('auto-submit');
 
 $section = new Form_Section('Graph Settings');
 
-$group = new Form_Group('');
+$group = new Form_Group('Traffic Graph');
 
 $group->add(new Form_Select(
 	'if',
@@ -215,13 +185,89 @@ $group->add(new Form_Select(
 
 $section->add($group);
 
+$group2 = new Form_Group('Controls');
+
+$group2->add(new Form_Select(
+	'backgroundupdate',
+	null,
+	$curbackgroundupdate,
+	array (
+		'false'	=> gettext('Clear graphs when not visible.'),
+		'true'	=> gettext('Keep graphs updated on inactive tab. (increases cpu usage)'),
+	)
+))->setHelp('Background updates');
+
+$group2->add(new Form_Select(
+	'invert',
+	null,
+	$curinvert,
+	array (
+		'true'	=> gettext('On'),
+		'false'	=> gettext('Off'),
+	)
+))->setHelp('Invert in/out');
+
+$group2->add(new Form_Input(
+	'smoothfactor',
+	null,
+	'range',
+	$cursmoothing,
+	array (
+		'min' => 0,
+		'max' => 5,
+		'step' => 1
+		)
+
+))->setHelp('Graph Smoothing');
+
+$section->add($group2);
+
 $form->add($section);
 print $form;
 
+$realif = get_real_interface($curif);
 ?>
+
+<script src="/vendor/d3/d3.min.js?v=<?=filemtime('/usr/local/www/vendor/d3/d3.min.js')?>"></script>
+<script src="/vendor/nvd3/nv.d3.js?v=<?=filemtime('/usr/local/www/vendor/nvd3/nv.d3.js')?>"></script>
+<script src="/vendor/visibility/visibility-1.2.3.min.js?v=<?=filemtime('/usr/local/www/vendor/visibility/visibility-1.2.3.min.js')?>"></script>
+
+<link href="/vendor/nvd3/nv.d3.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+<script type="text/javascript">
+
+
+//<![CDATA[
+events.push(function() {
+
+	var InterfaceString = "<?=$curif?>";
+	var RealInterfaceString = "<?=$realif?>";
+    window.graph_backgroundupdate = $('#backgroundupdate').val() === "true";
+	window.smoothing = $('#smoothfactor').val();
+	window.interval = 1;
+	window.invert = $('#invert').val() === "true";
+	window.size = 8;
+	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
+	window.realinterfaces = RealInterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
+
+	graph_init();
+	graph_visibilitycheck();
+
+});
+//]]>
+</script>
+
+<script src="/js/traffic-graphs.js?v=<?=filemtime('/usr/local/www/js/traffic-graphs.js')?>"></script>
+
 <script type="text/javascript">
 //<![CDATA[
 
+var graph_interfacenames = <?php
+	foreach ($ifdescrs as $ifname => $ifdescr) {
+		$iflist[$ifname] = $ifdescr;
+	}
+	echo json_encode($iflist);
+?>;
 function updateBandwidth() {
 	$.ajax(
 		'/bandwidth_by_ip.php',
@@ -274,13 +320,9 @@ if (ipsec_enabled()) {
 	</div>
 	<div class="panel-body">
 		<div class="col-sm-6">
-			<object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
-				<param name="id" value="graph" />
-				<param name="type" value="image/svg+xml" />
-				<param name="width" value="<?=$width;?>" />
-				<param name="height" value="<?=$height;?>" />
-				<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
-			</object>
+			<div id="traffic-chart-<?=$curif?>" class="d3-chart traffic-widget-chart">
+				<svg></svg>
+			</div>
 		</div>
 		<div class="col-sm-6">
 			<table class="table table-striped table-condensed">

@@ -1,56 +1,22 @@
 <?php
 /*
-	diag_dns.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * diag_dns.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -65,11 +31,7 @@ require_once("guiconfig.inc");
 
 $host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
 
-/* If this section of config.xml has not been populated yet we need to set it up
-*/
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
 $aliasname = substr(str_replace(array(".", "-"), "_", $host), 0, 31);
@@ -89,15 +51,15 @@ function resolve_host_addresses($host) {
 	$resolved = array();
 	$errreporting = error_reporting();
 	error_reporting($errreporting & ~E_WARNING);// dns_get_record throws a warning if nothing is resolved..
-	foreach($recordtypes as $recordtype) {
+	foreach ($recordtypes as $recordtype) {
 		$tmp = dns_get_record($host, $recordtype);
 		if (is_array($tmp)) {
 			$dnsresult = array_merge($dnsresult, $tmp);
 		}
 	}
 	error_reporting($errreporting);// restore original php warning/error settings.
-	
-	foreach($dnsresult as $item) {
+
+	foreach ($dnsresult as $item) {
 		$newitem = array();
 		$newitem['type'] = $item['type'];
 		switch ($item['type']) {
@@ -113,18 +75,18 @@ function resolve_host_addresses($host) {
 				$newitem['data'] = $item['ipv6'];
 				$resolved[] = $newitem;
 				break;
-				
 		}
 	}
 	return $resolved;
 }
 
-if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
+if (isAllowedPage('firewall_aliases_edit.php') && isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 	$resolved = gethostbyname($host);
 	$type = "hostname";
 	if ($resolved) {
 		$resolved = resolve_host_addresses($host);
 		$isfirst = true;
+		$addresses = "";
 		foreach ($resolved as $re) {
 			if ($re['data'] != "") {
 				if (!$isfirst) {
@@ -142,18 +104,24 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 				$isfirst = false;
 			}
 		}
-		$newalias = array();
-		$newalias['name'] = $aliasname;
-		$newalias['type'] = "network";
-		$newalias['address'] = $addresses;
-		$newalias['descr'] = gettext("Created from Diagnostics-> DNS Lookup");
-		if ($alias_exists) {
-			$a_aliases[$id] = $newalias;
+		if ($addresses == "") {
+			$couldnotcreatealias = true;
 		} else {
-			$a_aliases[] = $newalias;
+			$newalias = array();
+			$newalias['name'] = $aliasname;
+			$newalias['type'] = "network";
+			$newalias['address'] = $addresses;
+			$newalias['descr'] = gettext("Created from Diagnostics-> DNS Lookup");
+			if ($alias_exists) {
+				$a_aliases[$id] = $newalias;
+			} else {
+				$a_aliases[] = $newalias;
+			}
+			write_config(gettext("Created an alias from Diagnostics - DNS Lookup page."));
+			$createdalias = true;
 		}
-		write_config();
-		$createdalias = true;
+	} else {
+		$couldnotcreatealias = true;
 	}
 }
 
@@ -186,9 +154,8 @@ if ($_POST) {
 	}
 
 	$type = "unknown";
-	$resolved = "";
+	$resolved = array();
 	$ipaddr = "";
-	$hostname = "";
 	if (!$input_errors) {
 		if (is_ipaddr($host)) {
 			$type = "ip";
@@ -202,32 +169,23 @@ if ($_POST) {
 			}
 		} elseif (is_hostname($host)) {
 			$type = "hostname";
-			$resolved = gethostbyname($host);
-			if ($resolved) {
-				$resolved = resolve_host_addresses($host);
-			}
-			$hostname = $host;
-			if ($host != $resolved) {
-				$ipaddr = $resolved[0];
-			}
-		}
-
-		if ($host == $resolved) {
-			$resolved = gettext("No record found");
+			$ipaddr = gethostbyname($host);
+			$resolved = resolve_host_addresses($host);
 		}
 	}
 }
 
-if (($_POST['host']) && ($_POST['dialog_output'])) {
-	display_host_results ($host, $resolved, $dns_speeds);
+if ($_POST['host'] && $_POST['dialog_output']) {
+	$host = (isset($resolvedptr) ? $resolvedptr : $host);
+	display_host_results ($ipaddr, $host, $dns_speeds);
 	exit;
 }
 
 function display_host_results ($address, $hostname, $dns_speeds) {
 	$map_lengths = function($element) { return strlen($element[0]); };
 
-	echo gettext("IP Address") . ": {$address} \n";
-	echo gettext("Host Name") . ": {$hostname} \n";
+	echo gettext("IP Address") . ": " . htmlspecialchars($address) . " \n";
+	echo gettext("Host Name") . ": " . htmlspecialchars($hostname) .  " \n";
 	echo "\n";
 	$text_table = array();
 	$text_table[] = array(gettext("Server"), gettext("Query Time"));
@@ -257,6 +215,16 @@ if ($createdalias) {
 	} else {
 		print_info_box(gettext("Alias was created successfully."), 'success');
 	}
+
+	$alias_exists = true;
+}
+
+if ($couldnotcreatealias) {
+	if ($alias_exists) {
+		print_info_box(sprintf(gettext("Could not update alias for %s"), $host), 'warning', false);
+	} else {
+		print_info_box(sprintf(gettext("Could not create alias for %s"), $host), 'warning', false);
+	}
 }
 
 $form = new Form(false);
@@ -264,7 +232,7 @@ $section = new Form_Section('DNS Lookup');
 
 $section->addInput(new Form_Input(
 	'host',
-	'Hostname',
+	'*Hostname',
 	'text',
 	$host,
 	['placeholder' => 'Hostname to look up.']
@@ -279,7 +247,7 @@ $form->addGlobal(new Form_Button(
         'fa-search'
 ))->addClass('btn-primary');
 
-if (!empty($resolved)) {
+if (!empty($resolved) && isAllowedPage('firewall_aliases_edit.php')) {
 	if ($alias_exists) {
 		$button_text = gettext("Update alias");
 	} else {
@@ -301,7 +269,7 @@ if (!$input_errors && $type) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Results')?></h2></div>
 	<div class="panel-body">
-		
+
 		<table class="table">
 		<thead>
 			<tr>
@@ -312,7 +280,7 @@ if (!$input_errors && $type) {
 		<tbody>
 <?php foreach ((array)$resolved as $hostitem):?>
 		<tr>
-			<td><?=$hostitem['data']?></td><td><?=$hostitem['type']?></td>
+			<td><?=htmlspecialchars($hostitem['data'])?></td><td><?=htmlspecialchars($hostitem['type'])?></td>
 		</tr>
 <?php endforeach; ?>
 		</tbody>
@@ -336,7 +304,7 @@ if (!$input_errors && $type) {
 		<tbody>
 <?php foreach ((array)$dns_speeds as $qt):?>
 		<tr>
-			<td><?=$qt['dns_server']?></td><td><?=$qt['query_time']?></td>
+			<td><?=htmlspecialchars($qt['dns_server'])?></td><td><?=htmlspecialchars($qt['query_time'])?></td>
 		</tr>
 <?php endforeach; ?>
 		</tbody>
@@ -361,4 +329,23 @@ if (!$input_errors && $type) {
 </div>
 <?php
 }
+if (!$input_errors):
+?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	var original_host = <?=json_encode($host);?>;
+
+	$('input[name="host"]').on('input', function() {
+		if ($('#host').val() == original_host) {
+			disableInput('create_alias', false);
+		} else {
+			disableInput('create_alias', true);
+		}
+	});
+});
+//]]>
+</script>
+<?php
+endif;
 include("foot.inc");

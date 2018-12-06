@@ -1,60 +1,27 @@
 <?php
 /*
-	vpn_ipsec_mobile.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2008 Shrew Soft Inc
+ * vpn_ipsec_mobile.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -70,16 +37,10 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
-}
-
+init_config_arr(array('ipsec', 'phase1'));
 $a_phase1 = &$config['ipsec']['phase1'];
 
-if (!is_array($config['ipsec']['client'])) {
-	$config['ipsec']['client'] = array();
-}
-
+init_config_arr(array('ipsec', 'client'));
 $a_client = &$config['ipsec']['client'];
 
 if (count($a_client)) {
@@ -155,16 +116,15 @@ if (count($a_client)) {
 	}
 }
 
-if ($_POST['create']) {
+if ($_REQUEST['create']) {
 	header("Location: vpn_ipsec_phase1.php?mobile=true");
 }
 
 if ($_POST['apply']) {
 	$retval = 0;
 	/* NOTE: #4353 Always restart ipsec when mobile clients settings change */
-	$retval = vpn_ipsec_configure(true);
-	$savemsg = get_std_save_message($retval);
-	if ($retval >= 0) {
+	$ipsec_dynamic_hosts = vpn_ipsec_configure(true);
+	if ($ipsec_dynamic_hosts >= 0) {
 		if (is_subsystem_dirty('ipsec')) {
 			clear_subsystem_dirty('ipsec');
 		}
@@ -274,10 +234,11 @@ if ($_POST['save']) {
 		if ($pconfig['enable']) {
 			$client['enable'] = true;
 		}
-
 		if (!empty($pconfig['user_source'])) {
 			$client['user_source'] = implode(",", $pconfig['user_source']);
+			$client['user_source'] = htmlentities($client['user_source'],ENT_COMPAT,'UTF-8');
 		}
+
 		$client['group_source'] = $pconfig['group_source'];
 
 		if ($pconfig['pool_enable']) {
@@ -325,10 +286,9 @@ if ($_POST['save']) {
 		if ($pconfig['login_banner_enable']) {
 			$client['login_banner'] = $pconfig['login_banner'];
 		}
-
 		$a_client = $client;
 
-		write_config();
+		write_config(gettext("Saved IPsec Mobile Clients configuration."));
 		mark_subsystem_dirty('ipsec');
 
 		header("Location: vpn_ipsec_mobile.php");
@@ -337,6 +297,7 @@ if ($_POST['save']) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"));
+$pglinks = array("", "vpn_ipsec.php", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -433,8 +394,8 @@ include("head.inc");
 	</script>
 
 <?php
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 if (is_subsystem_dirty('ipsec')) {
 	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
@@ -475,13 +436,13 @@ $section = new Form_Section('Extended Authentication (Xauth)');
 
 $authServers = array();
 
-foreach (auth_get_authserver_list() as $authServer) {
-	$authServers[$authServer['name']] = $authServer['name']; // Value == name
+foreach (auth_get_authserver_list() as $key => $authServer) {
+	$authServers[$key] = $authServer['name']; // Value == name
 }
 
 $section->addInput(new Form_Select(
 	'user_source',
-	'User Authentication',
+	'*User Authentication',
 	explode(",", $pconfig['user_source']),
 	$authServers,
 	true
@@ -489,7 +450,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'group_source',
-	'Group Authentication',
+	'*Group Authentication',
 	$pconfig['group_source'],
 	array(
 		'none' => gettext('none'),
@@ -705,7 +666,7 @@ $group->add(new Form_Select(
 	'Group',
 	$pconfig['pfs_group'],
 	$p2_pfskeygroups
-))->setWidth(2);
+))->setHelp('Note: Groups 1, 2, 22, 23, and 24 provide weak security and should be avoided.');
 
 $section->add($group);
 

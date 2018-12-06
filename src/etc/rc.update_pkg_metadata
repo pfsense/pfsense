@@ -1,0 +1,48 @@
+#!/bin/sh
+#
+# rc.update_pkg_metadata
+#
+# Copyright (c) 2017-2018 Rubicon Communications, LLC (Netgate). All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+if [ "$1" = "now" ]; then
+	sleep_time=0
+else
+	sleep_time=$(jot -r 1 1 86399)
+fi
+
+# Read product_name from $g, defaults to pfSense
+product=$(/usr/local/sbin/read_global_var product_name pfSense)
+
+tmp_version=$(mktemp -q /tmp/${product}_version.XXXXXXXX) \
+	|| exit 1
+
+( \
+	sleep $sleep_time \
+	&& /usr/local/sbin/${product}-upgrade -uf \
+	&& ( \
+		/usr/local/sbin/${product}-upgrade -Uc > ${tmp_version}.tmp \
+		; rc=$? \
+		; tail -n 1 ${tmp_version}.tmp > $tmp_version \
+		; rm -f ${tmp_version}.tmp \
+		; echo $rc > ${tmp_version}.rc \
+		; test $rc -eq 2 && return 0 || return $rc \
+	) \
+	&& ( \
+		mv $tmp_version /var/run/${product}_version \
+		&& mv ${tmp_version}.rc /var/run/${product}_version.rc \
+	) || rm -f $tmp_version ${tmp_version}.rc
+) >/dev/null 2>&1 &
+
+exit 0

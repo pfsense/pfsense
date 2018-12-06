@@ -1,102 +1,41 @@
 /*
-	thermal_sensors.js
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * thermal_sensors.js
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-warningTemp = 9999;
-criticalTemp = 100;
+var warningTemp = 9999;
+var criticalTemp = 100;
+var widgetUnit = 'C';
 ajaxBusy = false;
 
-//should be called from "thermal_sensors.widget.php"
-function showThermalSensorsData() {
-	if(!ajaxBusy) {
-		ajaxBusy = true;
-		//get data from thermal_sensors.widget.php
-		url = "/widgets/widgets/thermal_sensors.widget.php?getThermalSensorsData=1"
-				//IE fix to disable cache when using http:// , just append timespan
-				+ new Date().getTime();
-
-		$.ajax(url, {
-			type: 'get',
-			success: function(data) {
-				var thermalSensorsData = data || "";
-				buildThermalSensorsData(thermalSensorsData);
-			},
-			error: function(jqXHR, status, error) {
-				warningTemp = 9999;
-				buildThermalSensorsDataRaw('<span class="alert-danger">Temperature data could not be read.</span>');
-			}
-		});
-
-		ajaxBusy = false;
-	}
-	//call itself in 11 seconds
-	window.setTimeout(showThermalSensorsData, 11000);
-}
-
-function buildThermalSensorsData(thermalSensorsData) {
-	//NOTE: variable thermal_sensors_widget_showRawOutput is declared/set in "thermal_sensors.widget.php"
-	if (thermal_sensors_widget_showRawOutput) {
-		buildThermalSensorsDataRaw(thermalSensorsData);
+function buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams, firstTime) {
+	if (tsParams.showRawOutput) {
+		buildThermalSensorsDataRaw(thermalSensorsData, widgetKey);
 	} else {
-		if(warningTemp == 9999) {
-			buildThermalSensorsDataGraph(thermalSensorsData);
+		if (firstTime) {
+			buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
 		}
 
-		updateThermalSensorsDataGraph(thermalSensorsData);
+		updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
 	}
 }
 
-function buildThermalSensorsDataRaw(thermalSensorsData) {
+function buildThermalSensorsDataRaw(thermalSensorsData, widgetKey) {
 
 	var thermalSensorsContent = "";
 
@@ -105,20 +44,20 @@ function buildThermalSensorsDataRaw(thermalSensorsData) {
 		//rawData = thermalSensorsData.split("|").join("<br />");
 	}
 
-	loadThermalSensorsContainer(thermalSensorsContent);
+	loadThermalSensorsContainer(thermalSensorsContent, widgetKey);
 }
 
-function loadThermalSensorsContainer (thermalSensorsContent) {
+function loadThermalSensorsContainer (thermalSensorsContent, widgetKey) {
 
 	if (thermalSensorsContent && thermalSensorsContent != "") {
 		//load generated graph (or raw data) into thermalSensorsContainer (thermalSensorsContainer DIV defined in "thermal_sensors.widget.php")
-		$('#thermalSensorsContainer').html(thermalSensorsContent);
+		$('#thermalSensorsContainer-' + widgetKey).html(thermalSensorsContent);
 	} else {
-		$('#thermalSensorsContainer').html("No Thermal Sensors data available.");
+		$('#thermalSensorsContainer-' + widgetKey).html("No Thermal Sensors data available.");
 	}
 }
 
-function buildThermalSensorsDataGraph(thermalSensorsData) {
+function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 
 	var thermalSensorsArray = new Array();
 
@@ -137,26 +76,30 @@ function buildThermalSensorsDataGraph(thermalSensorsData) {
 
 		//set thresholds
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
-			warningTemp = thermal_sensors_widget_coreWarningTempThreshold;
-			criticalTemp = thermal_sensors_widget_coreCriticalTempThreshold;
+			warningTemp = tsParams.coreWarningTempThreshold;
+			criticalTemp = tsParams.coreCriticalTempThreshold;
 		} else { //assuming sensor is for a zone, check Zone Threshold config settings
-			warningTemp = thermal_sensors_widget_zoneWarningTempThreshold;
-			criticalTemp = thermal_sensors_widget_zoneCriticalTempThreshold;
+			warningTemp = tsParams.zoneWarningTempThreshold;
+			criticalTemp = tsParams.zoneCriticalTempThreshold;
 		}
 
-		//NOTE: variable thermal_sensors_widget_showFullSensorName is declared/set in "thermal_sensors.widget.php"
-		if (!thermal_sensors_widget_showFullSensorName) {
+		if (!tsParams.showFullSensorName) {
 			sensorName = getSensorFriendlyName(sensorName);
+		}
+
+		if (tsParams.showFahrenheit) {
+			widgetUnit = 'F';
+			thermalSensorValue = getFahrenheitValue(thermalSensorValue);
 		}
 
 		//build temperature item/row for a sensor
 
 		var thermalSensorRow =	'<div class="progress">' +
-									'<div id="temperaturebarL' + i + '" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1" style="width: 1%"></div>' +
-									'<div id="temperaturebarM' + i + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
-									'<div id="temperaturebarH' + i + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
-								'</div>' +
-								'<span><b>' + sensorName + ': </b></span>' + '<span id="temperaturemsg' + i + '">' + thermalSensorValue + ' &deg;C</span>';
+						'<div id="temperaturebarL' + i + widgetKey + '" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1" style="width: 1%"></div>' +
+						'<div id="temperaturebarM' + i + widgetKey + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
+						'<div id="temperaturebarH' + i + widgetKey + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
+					'</div>' +
+					'<span><b>' + sensorName + ': </b></span>' + '<span id="temperaturemsg' + i + widgetKey + '">' + thermalSensorValue + '</span> &deg;' + widgetUnit;
 
 
 		thermalSensorsHTMLContent = thermalSensorsHTMLContent + thermalSensorRow;
@@ -164,12 +107,12 @@ function buildThermalSensorsDataGraph(thermalSensorsData) {
 	}
 
 	//load generated graph into thermalSensorsContainer (DIV defined in "thermal_sensors.widget.php")
-	loadThermalSensorsContainer(thermalSensorsHTMLContent);
+	loadThermalSensorsContainer(thermalSensorsHTMLContent, widgetKey);
 
 
 }
 
-function updateThermalSensorsDataGraph(thermalSensorsData) {
+function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 	var thermalSensorsArray = new Array();
 
 	if (thermalSensorsData && thermalSensorsData != "") {
@@ -186,19 +129,18 @@ function updateThermalSensorsDataGraph(thermalSensorsData) {
 
 		//set thresholds
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
-			warningTemp = thermal_sensors_widget_coreWarningTempThreshold;
-			criticalTemp = thermal_sensors_widget_coreCriticalTempThreshold;
+			warningTemp = tsParams.coreWarningTempThreshold;
+			criticalTemp = tsParams.coreCriticalTempThreshold;
 		} else { //assuming sensor is for a zone, check Zone Threshold config settings
-			warningTemp = thermal_sensors_widget_zoneWarningTempThreshold;
-			criticalTemp = thermal_sensors_widget_zoneCriticalTempThreshold;
+			warningTemp = tsParams.zoneWarningTempThreshold;
+			criticalTemp = tsParams.zoneCriticalTempThreshold;
 		}
 
-		//NOTE: variable thermal_sensors_widget_showFullSensorName is declared/set in "thermal_sensors.widget.php"
-		if (!thermal_sensors_widget_showFullSensorName) {
+		if (!tsParams.showFullSensorName) {
 			sensorName = getSensorFriendlyName(sensorName);
 		}
 
-	setTempProgress(i, thermalSensorValue);
+		setTempProgress(i, thermalSensorValue, widgetKey);
 	}
 }
 
@@ -221,16 +163,24 @@ function getThermalSensorValue(stringValue) {
 	return (+parseFloat(stringValue) || 0).toFixed(1);
 }
 
+function getFahrenheitValue(cels) {
+        return Math.ceil((cels * 1.8) + 32);
+}
+
+function getCelsiusValue(fahr) {
+        return Math.floor((fahr - 32) / 1.8);
+}
+
 // Update the progress indicator
 // transition = true allows the bar to move at default speed, false = instantaneous
-function setTempProgress(bar, percent) {
+function setTempProgress(bar, percent, widgetKey) {
 	var barTempL, barTempM, barTempH;
 
-	if(percent <= warningTemp) {
+	if (percent <= warningTemp) {
 		barTempL = percent;
 		barTempM = 0;
 		barTempH = 0;
-	} else if(percent <= criticalTemp) {
+	} else if (percent <= criticalTemp) {
 		barTempL = warningTemp;
 		barTempM = percent - warningTemp;
 		barTempH = 0;
@@ -240,10 +190,9 @@ function setTempProgress(bar, percent) {
 		barTempH = percent - criticalTemp;
 	}
 
+	$('#' + 'temperaturebarL' + bar + widgetKey).css('width', barTempL + '%').attr('aria-valuenow', barTempL);
+	$('#' + 'temperaturebarM' + bar + widgetKey).css('width', barTempM + '%').attr('aria-valuenow', barTempM);
+	$('#' + 'temperaturebarH' + bar + widgetKey).css('width', barTempH + '%').attr('aria-valuenow', barTempH);
 
-	$('#' + 'temperaturebarL' + bar).css('width', barTempL + '%').attr('aria-valuenow', barTempL);
-	$('#' + 'temperaturebarM' + bar).css('width', barTempM + '%').attr('aria-valuenow', barTempM);
-	$('#' + 'temperaturebarH' + bar).css('width', barTempH + '%').attr('aria-valuenow', barTempH);
-
-	$('#' + 'temperaturemsg' + bar).html(percent + ' &deg;C');
+	$('#' + 'temperaturemsg' + bar + widgetKey).html(widgetUnit === 'F' ? getFahrenheitValue(percent) : percent);
 }

@@ -1,57 +1,23 @@
 <?php
 /*
-	system_gateway_groups.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
+ * system_gateway_groups.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -67,53 +33,49 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("openvpn.inc");
 
-if (!is_array($config['gateways']['gateway_group'])) {
-	$config['gateways']['gateway_group'] = array();
-}
-
+init_config_arr(array('gateways', 'gateway_group'));
 $a_gateway_groups = &$config['gateways']['gateway_group'];
+
+init_config_arr(array('gateways', 'gateway_item'));
 $a_gateways = &$config['gateways']['gateway_item'];
 $changedesc = gettext("Gateway Groups") . ": ";
 
-if ($_POST) {
 
-	$pconfig = $_POST;
+$pconfig = $_REQUEST;
 
-	if ($_POST['apply']) {
+if ($_POST['apply']) {
 
-		$retval = 0;
+	$retval = 0;
 
-		$retval = system_routing_configure();
-		send_multiple_events(array("service reload dyndnsall", "service reload ipsecdns", "filter reload"));
+	$retval |= system_routing_configure();
+	send_multiple_events(array("service reload dyndnsall", "service reload ipsecdns", "filter reload"));
 
-		/* reconfigure our gateway monitor */
-		setup_gateways_monitor();
+	/* reconfigure our gateway monitor */
+	setup_gateways_monitor();
 
-		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
-			clear_subsystem_dirty('staticroutes');
-		}
+	if ($retval == 0) {
+		clear_subsystem_dirty('staticroutes');
+	}
 
-		foreach ($a_gateway_groups as $gateway_group) {
-			$gw_subsystem = 'gwgroup.' . $gateway_group['name'];
-			if (is_subsystem_dirty($gw_subsystem)) {
-				openvpn_resync_gwgroup($gateway_group['name']);
-				clear_subsystem_dirty($gw_subsystem);
-			}
+	foreach ($a_gateway_groups as $gateway_group) {
+		$gw_subsystem = 'gwgroup.' . $gateway_group['name'];
+		if (is_subsystem_dirty($gw_subsystem)) {
+			openvpn_resync_gwgroup($gateway_group['name']);
+			clear_subsystem_dirty($gw_subsystem);
 		}
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_gateway_groups[$_GET['id']]) {
-		$changedesc .= sprintf(gettext("removed gateway group %s"), $_GET['id']);
+if ($_POST['act'] == "del") {
+	if ($a_gateway_groups[$_POST['id']]) {
+		$changedesc .= sprintf(gettext("removed gateway group %s"), $_POST['id']);
 		foreach ($config['filter']['rule'] as $idx => $rule) {
-			if ($rule['gateway'] == $a_gateway_groups[$_GET['id']]['name']) {
+			if ($rule['gateway'] == $a_gateway_groups[$_REQUEST['id']]['name']) {
 				unset($config['filter']['rule'][$idx]['gateway']);
 			}
 		}
 
-		unset($a_gateway_groups[$_GET['id']]);
+		unset($a_gateway_groups[$_POST['id']]);
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
 		header("Location: system_gateway_groups.php");
@@ -136,12 +98,13 @@ function gateway_exists($gwname) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateway Groups"));
+$pglinks = array("", "system_gateways.php", "@self");
 $shortcut_section = "gateway-groups";
 
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('staticroutes')) {
@@ -203,7 +166,7 @@ foreach ($a_gateway_groups as $gateway_group):
 						<td>
 							<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway group')?>"></a>
 							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway group')?>"></a>
-							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway group')?>"></a>
+							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway group')?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -224,9 +187,9 @@ endforeach;
 </nav>
 
 <div class="infoblock">
-	<?php print_info_box(gettext('Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, ' .
-						   'or policy-based routing.' . '<br />' .
-						   'Without rules directing traffic into the Gateway Groups, they will not be used.'), 'info', false); ?>
+	<?php print_info_box(sprintf(gettext('Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, ' .
+						   'or policy-based routing.%1$s' .
+						   'Without rules directing traffic into the Gateway Groups, they will not be used.'), '<br />'), 'info', false); ?>
 </div>
 <?php
 include("foot.inc");

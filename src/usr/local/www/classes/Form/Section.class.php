@@ -1,31 +1,24 @@
 <?php
 /*
-	Section.class.php
-
-	Copyright (C) 2015 Sjon Hortensius
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
+ * Section.class.php
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2015 Sjon Hortensius
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 class Form_Section extends Form_Element
 {
@@ -45,6 +38,7 @@ class Form_Section extends Form_Element
 		if (!empty($id)) {
 			$this->_attributes['id'] = $id;
 		}
+
 		$this->_title = $title;
 		$this->_collapsible = $collapsible;
 	}
@@ -69,12 +63,12 @@ class Form_Section extends Form_Element
 	}
 
 	// Shortcut, adds a group with a password and a confirm password field.
-	// The confirm password element is created by apprnding "_confirm" to the name supplied
+	// The confirm password element is created by appending "_confirm" to the name supplied
 	// The value is overwritten with a default pattern (So the user cannot see it)
 	public function addPassword(Form_Input $input)
 	{
 		$group = new Form_Group($input->getTitle());
-		if($input->getValue() != "") {
+		if ($input->getValue() != "") {
 			$input->setValue(DMYPWD);
 		}
 
@@ -101,14 +95,15 @@ class Form_Section extends Form_Element
 		$body = implode('', $this->_groups);
 		$hdricon = "";
 		$bodyclass = '<div class="panel-body">';
+		$id = $this->_attributes['id'];
 
-		if ($this->_collapsible & COLLAPSIBLE) {
+		if (intval($this->_collapsible) & COLLAPSIBLE) {
 			$hdricon = '<span class="widget-heading-icon">' .
-				'<a data-toggle="collapse" href="#' . $this->_attributes['id'] . '_panel-body">' .
+				'<a data-toggle="collapse" href="#' . $id . '_panel-body">' .
 					'<i class="fa fa-plus-circle"></i>' .
 				'</a>' .
 			'</span>';
-			$bodyclass = '<div id="' . $this->_attributes['id'] . '_panel-body" class="panel-body collapse ';
+			$bodyclass = '<div id="' . $id . '_panel-body" class="panel-body collapse ';
 			if (($this->_collapsible & SEC_CLOSED)) {
 				$bodyclass .= 'out">';
 			} else {
@@ -116,7 +111,16 @@ class Form_Section extends Form_Element
 			}
 		}
 
-		return <<<EOT
+		if ($title == "NOTITLE") {
+			return <<<EOT
+	{$element}
+		{$bodyclass}
+			{$body}
+		</div>
+	</div>
+EOT;
+		} else if ($id == "") {
+			return <<<EOT2
 	{$element}
 		<div class="panel-heading">
 			<h2 class="panel-title">{$title}{$hdricon}</h2>
@@ -125,6 +129,21 @@ class Form_Section extends Form_Element
 			{$body}
 		</div>
 	</div>
-EOT;
+EOT2;
+		} else {
+		// If an ID has been specified for this section, include an anchor tag in the header named with the ID
+		// so that hrefs can jump directly to it
+
+			return <<<EOT3
+	{$element}
+		<div class="panel-heading">
+			<h2 class="panel-title"><a name="{$id}">{$title}</a>{$hdricon}</h2>
+		</div>
+		{$bodyclass}
+			{$body}
+		</div>
+	</div>
+EOT3;
+		}
 	}
 }

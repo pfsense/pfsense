@@ -1,56 +1,22 @@
 <?php
 /*
-	interfaces_bridge_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * interfaces_bridge_edit.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -62,13 +28,10 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['bridges']['bridged'])) {
-	$config['bridges']['bridged'] = array();
-}
-
 function is_aoadv_used($pconfig) {
 	if (($pconfig['static'] !="") ||
 	    ($pconfig['private'] != "") ||
+	    $pconfig['ip6linklocal'] ||
 	    ($pconfig['stp'] != "") ||
 	    ($pconfig['span'] != "") ||
 	    ($pconfig['edge'] != "") ||
@@ -89,6 +52,7 @@ function is_aoadv_used($pconfig) {
 	return false;
 }
 
+init_config_arr(array('bridges', 'bridged'));
 $a_bridges = &$config['bridges']['bridged'];
 
 $ifacelist = get_configured_interface_with_descr();
@@ -99,15 +63,11 @@ foreach ($ifacelist as $bif => $bdescr) {
 	}
 }
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_bridges[$id]) {
 	$pconfig['enablestp'] = isset($a_bridges[$id]['enablestp']);
+	$pconfig['ip6linklocal'] = isset($a_bridges[$id]['ip6linklocal']);
 	$pconfig['descr'] = $a_bridges[$id]['descr'];
 	$pconfig['bridgeif'] = $a_bridges[$id]['bridgeif'];
 	$pconfig['members'] = $a_bridges[$id]['members'];
@@ -172,7 +132,7 @@ if (isset($id) && $a_bridges[$id]) {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -225,7 +185,7 @@ if ($_POST) {
 	if (is_array($_POST['static'])) {
 		foreach ($_POST['static'] as $ifstatic) {
 			if (is_array($_POST['members']) && !in_array($ifstatic, $_POST['members'])) {
-				$input_errors[] = gettext("Sticky interface ($ifstatic) is not part of the bridge. Remove the sticky interface to continue.");
+				$input_errors[] = sprintf(gettext('Sticky interface (%s) is not part of the bridge. Remove the sticky interface to continue.'), $ifacelist[$ifstatic]);
 			}
 		}
 		$pconfig['static'] = implode(',', $_POST['static']);
@@ -233,7 +193,7 @@ if ($_POST) {
 	if (is_array($_POST['private'])) {
 		foreach ($_POST['private'] as $ifprivate) {
 			if (is_array($_POST['members']) && !in_array($ifprivate, $_POST['members'])) {
-				$input_errors[] = gettext("Private interface ($ifprivate) is not part of the bridge. Remove the private interface to continue.");
+				$input_errors[] = sprintf(gettext('Private interface (%s) is not part of the bridge. Remove the private interface to continue.'), $ifacelist[$ifprivate]);
 			}
 		}
 		$pconfig['private'] = implode(',', $_POST['private']);
@@ -241,7 +201,7 @@ if ($_POST) {
 	if (is_array($_POST['stp'])) {
 		foreach ($_POST['stp'] as $ifstp) {
 			if (is_array($_POST['members']) && !in_array($ifstp, $_POST['members'])) {
-				$input_errors[] = gettext("STP interface ($ifstp) is not part of the bridge. Remove the STP interface to continue.");
+				$input_errors[] = sprintf(gettext('STP interface (%s) is not part of the bridge. Remove the STP interface to continue.'), $ifacelist[$ifstp]);
 			}
 		}
 		$pconfig['stp'] = implode(',', $_POST['stp']);
@@ -252,7 +212,7 @@ if ($_POST) {
 	if (is_array($_POST['edge'])) {
 		foreach ($_POST['edge'] as $ifedge) {
 			if (is_array($_POST['members']) && !in_array($ifedge, $_POST['members'])) {
-				$input_errors[] = gettext("Edge interface ($ifedge) is not part of the bridge. Remove the edge interface to continue.");
+				$input_errors[] = sprintf(gettext('Edge interface (%s) is not part of the bridge. Remove the edge interface to continue.'), $ifacelist[$ifedge]);
 			}
 		}
 		$pconfig['edge'] = implode(',', $_POST['edge']);
@@ -260,7 +220,7 @@ if ($_POST) {
 	if (is_array($_POST['autoedge'])) {
 		foreach ($_POST['autoedge'] as $ifautoedge) {
 			if (is_array($_POST['members']) && !in_array($ifautoedge, $_POST['members'])) {
-				$input_errors[] = gettext("Auto Edge interface ($ifautoedge) is not part of the bridge. Remove the auto edge interface to continue.");
+				$input_errors[] = sprintf(gettext('Auto Edge interface (%s) is not part of the bridge. Remove the auto edge interface to continue.'), $ifacelist[$ifautoedge]);
 			}
 		}
 		$pconfig['autoedge'] = implode(',', $_POST['autoedge']);
@@ -268,7 +228,7 @@ if ($_POST) {
 	if (is_array($_POST['ptp'])) {
 		foreach ($_POST['ptp'] as $ifptp) {
 			if (is_array($_POST['members']) && !in_array($ifptp, $_POST['members'])) {
-				$input_errors[] = gettext("PTP interface ($ifptp) is not part of the bridge. Remove the PTP interface to continue.");
+				$input_errors[] = sprintf(gettext('PTP interface (%s) is not part of the bridge. Remove the PTP interface to continue.'), $ifacelist[$ifptp]);
 			}
 		}
 		$pconfig['ptp'] = implode(',', $_POST['ptp']);
@@ -276,7 +236,7 @@ if ($_POST) {
 	if (is_array($_POST['autoptp'])) {
 		foreach ($_POST['autoptp'] as $ifautoptp) {
 			if (is_array($_POST['members']) && !in_array($ifautoptp, $_POST['members'])) {
-				$input_errors[] = gettext("Auto PTP interface ($ifautoptp) is not part of the bridge. Remove the auto PTP interface to continue.");
+				$input_errors[] = sprintf(gettext('Auto PTP interface (%s) is not part of the bridge. Remove the auto PTP interface to continue.'), $ifacelist[$ifautoptp]);
 			}
 		}
 		$pconfig['autoptp'] = implode(',', $_POST['autoptp']);
@@ -294,7 +254,7 @@ if ($_POST) {
 				$input_errors[] = gettext("Bridging a wireless interface is only possible in hostap mode.");
 			}
 			if (is_array($_POST['span']) && in_array($ifmembers, $_POST['span'])) {
-				$input_errors[] = gettext("Span interface ($ifmembers) cannot be part of the bridge. Remove the span interface from bridge members to continue.");
+				$input_errors[] = sprintf(gettext('Span interface (%s) cannot be part of the bridge. Remove the span interface from bridge members to continue.'), $ifacelist[$ifmembers]);
 			}
 			foreach ($a_bridges as $a_bridge) {
 				if ($_POST['bridgeif'] === $a_bridge['bridgeif']) {
@@ -303,7 +263,7 @@ if ($_POST) {
 				$a_members = explode(',', $a_bridge['members']);
 				foreach ($a_members as $a_member) {
 					if ($ifmembers === $a_member) {
-						$input_errors[] = sprintf(gettext("%s is part of another bridge. Remove the interface from bridge members to continue."), $ifmembers);
+						$input_errors[] = sprintf(gettext("%s is part of another bridge. Remove the interface from bridge members to continue."), $ifacelist[$ifmembers]);
 					}
 				}
 			}
@@ -327,6 +287,10 @@ if ($_POST) {
 		$i = 0;
 		$ifpriority = "";
 		$ifpathcost = "";
+
+		if ($_POST['ip6linklocal']) {
+			$bridge['ip6linklocal'] = true;
+		}
 
 		foreach ($ifacelist as $ifn => $ifdescr) {
 			if ($_POST[$ifn] <> "") {
@@ -373,10 +337,12 @@ if ($_POST) {
 		}
 
 		$bridge['bridgeif'] = $_POST['bridgeif'];
+
 		interface_bridge_configure($bridge);
 		if ($bridge['bridgeif'] == "" || !stristr($bridge['bridgeif'], "bridge")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
+
 			if (isset($id) && $a_bridges[$id]) {
 				$a_bridges[$id] = $bridge;
 			} else {
@@ -416,6 +382,7 @@ function build_port_list($selecton) {
 }
 
 $pgtitle = array(gettext("Interfaces"), gettext("Bridges"), gettext("Edit"));
+$pglinks = array("", "interfaces_bridge.php", "@self");
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -431,7 +398,7 @@ $memberslist = build_port_list($pconfig['members']);
 
 $section->addInput(new Form_Select(
 	'members',
-	'Member Interfaces',
+	'*Member Interfaces',
 	$memberslist['selected'],
 	$memberslist['list'],
 	true // Allow multiples
@@ -488,8 +455,8 @@ $section->addInput(new Form_Select(
 	$spanlist['list'],
 	true
 ))->setHelp('Add the interface named by interface as a span port on the bridge. Span ports transmit a copy of every frame received by the bridge. ' .
-			'This is most useful for snooping a bridged network passively on another host connected to one of the span ports of the bridge. <br />' .
-			'%sThe span interface cannot be part of the bridge member interfaces.%s', ['<strong>', '</strong>']);
+			'This is most useful for snooping a bridged network passively on another host connected to one of the span ports of the bridge. %1$s' .
+			'%2$sThe span interface cannot be part of the bridge member interfaces.%3$s', '<br />', '<strong>', '</strong>');
 
 $edgelist = build_port_list($pconfig['edge']);
 
@@ -510,7 +477,7 @@ $section->addInput(new Form_Select(
 	$edgelist['list'],
 	true
 ))->setHelp('Allow interface to automatically detect edge status. This is the default for all interfaces added to a bridge.' .
-			'%sThis will disable the autoedge status of interfaces. %s', ['<strong>', '</strong>']);
+			'%1$sThis will disable the autoedge status of interfaces. %2$s', '<strong>', '</strong>');
 
 $edgelist = build_port_list($pconfig['ptp']);
 
@@ -531,7 +498,7 @@ $section->addInput(new Form_Select(
 	$edgelist['list'],
 	true
 ))->setHelp('Automatically detect the point-to-point status on interface by checking the full duplex link status. This is the default for interfaces added to the bridge.' .
-			'%sThe interfaces selected here will be removed from default autoedge status. %s', ['<strong>', '</strong>']);
+			'%1$sThe interfaces selected here will be removed from default autoedge status. %2$s', '<strong>', '</strong>');
 
 $edgelist = build_port_list($pconfig['static']);
 
@@ -553,6 +520,13 @@ $section->addInput(new Form_Select(
 	$edgelist['list'],
 	true
 ))->setHelp('Mark an interface as a "private" interface. A private interface does not forward any traffic to any other port that is also a private interface. ');
+
+$section->addInput(new Form_Checkbox(
+	'ip6linklocal',
+	'Enable IPv6 auto linklocal',
+	null,
+	$pconfig['ip6linklocal']
+))->setHelp('When enabled, the AUTO_LINKLOCAL flag is set on the bridge interface and cleared on every member interface. This is required when the bridge interface is used for stateless autoconfiguration. ');
 
 //	STP section
 // ToDo: - Should disable spanning tree section when not checked

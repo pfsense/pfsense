@@ -1,56 +1,22 @@
 <?php
 /*
-	system_advanced_notifications.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * system_advanced_notifications.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -62,6 +28,11 @@
 
 require_once("guiconfig.inc");
 require_once("notices.inc");
+require_once("pfsense-utils.inc");
+
+$pconfig = array();
+init_config_arr(array('notifications', 'smtp'));
+init_config_arr(array('notifications', 'growl'));
 
 // Growl
 $pconfig['disable_growl'] = isset($config['notifications']['growl']['disable']);
@@ -81,7 +52,7 @@ if ($config['notifications']['growl']['notification_name']) {
 if ($config['notifications']['growl']['name']) {
 	$pconfig['name'] = $config['notifications']['growl']['name'];
 } else {
-  $pconfig['name'] = 'PHP-Growl';
+  $pconfig['name'] = 'pfSense-Growl';
 }
 
 
@@ -96,8 +67,9 @@ if ($config['notifications']['smtp']['port']) {
 if (isset($config['notifications']['smtp']['ssl'])) {
 	$pconfig['smtpssl'] = true;
 }
-if (isset($config['notifications']['smtp']['tls'])) {
-	$pconfig['smtptls'] = true;
+$pconfig['sslvalidate'] = ($config['notifications']['smtp']['sslvalidate'] != "disabled");
+if (!empty($config['notifications']['smtp']['timeout'])) {
+	$pconfig['smtptimeout'] = $config['notifications']['smtp']['timeout'];
 }
 if ($config['notifications']['smtp']['notifyemailaddress']) {
 	$pconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
@@ -122,7 +94,9 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (isset($_POST['save'])) {
+	$testgrowl = isset($_POST['test-growl']);
+	$testsmtp = isset($_POST['test-smtp']);
+	if (isset($_POST['save']) || $testsmtp || $testgrowl) {
 
 		// Growl
 		$config['notifications']['growl']['ipaddress'] = $_POST['ipaddress'];
@@ -130,7 +104,10 @@ if ($_POST) {
 			if ($_POST['password'] == $_POST['password_confirm']) {
 				$config['notifications']['growl']['password'] = $_POST['password'];
 			} else {
-				$input_errors[] = gettext("Growl passwords must match");
+				// Bug #7129 - do not nag people about passwords mismatch when growl is disabled
+				if ($_POST['disable_growl'] != "yes") {
+					$input_errors[] = gettext("Growl passwords must match");
+				}
 			}
 		}
 
@@ -152,12 +129,13 @@ if ($_POST) {
 			unset($config['notifications']['smtp']['ssl']);
 		}
 
-		if (isset($_POST['smtptls'])) {
-			$config['notifications']['smtp']['tls'] = true;
+		if (isset($_POST['sslvalidate'])) {
+			$config['notifications']['smtp']['sslvalidate'] = "enabled";
 		} else {
-			unset($config['notifications']['smtp']['tls']);
+			$config['notifications']['smtp']['sslvalidate'] = "disabled";
 		}
 
+		$config['notifications']['smtp']['timeout'] = $_POST['smtptimeout'];
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 
@@ -165,7 +143,10 @@ if ($_POST) {
 			if ($_POST['smtppassword'] == $_POST['smtppassword_confirm']) {
 				$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
 			} else {
-				$input_errors[] = gettext("SMTP passwords must match");
+				if ($_POST['disable_smtp'] != "yes") {
+					// Bug #7129 - do not nag people about passwords mismatch when SMTP notifications are disabled
+					$input_errors[] = gettext("SMTP passwords must match");
+				}
 			}
 		}
 
@@ -185,7 +166,7 @@ if ($_POST) {
 			unset($config['system']['disablebeep']);
 		}
 
-		if (!$input_errors) {
+		if (!$input_errors && !$testsmtp && !$testgrowl) {
 			write_config();
 
 			pfSenseHeader("system_advanced_notifications.php");
@@ -194,33 +175,46 @@ if ($_POST) {
 
 	}
 
-	if (isset($_POST['test-growl'])) {
+	if ($testgrowl) {
 		// Send test message via growl
 		if (isset($config['notifications']['growl']['ipaddress'])) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
 			register_via_growl();
-			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
+			$test_result = notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
+			if (empty($test_result)) {
+				$test_result = gettext("Growl testing notification successfully sent");
+				$test_class = 'success';
+			} else {
+				$test_class = 'danger';
+			}
 		}
 	}
 
-	if (isset($_POST['test-smtp'])) {
+	if ($testsmtp) {
 		// Send test message via smtp
 		if (file_exists("/var/db/notices_lastmsg.txt")) {
 			unlink("/var/db/notices_lastmsg.txt");
 		}
-		$savemsg = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_name']), true);
+		$test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_name']), true);
+		if (empty($test_result)) {
+			$test_result = gettext("SMTP testing e-mail successfully sent");
+			$test_class = 'success';
+		} else {
+			$test_class = 'danger';
+		}
 	}
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Notifications"));
+$pglinks = array("", "system_advanced_admin.php", "@self");
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($test_result) {
+	print_info_box($test_result, $test_class);
 }
 
 $tab_array = array();
@@ -234,56 +228,6 @@ display_top_tabs($tab_array);
 
 $form = new Form;
 
-$section = new Form_Section('Growl');
-
-$section->addInput(new Form_Checkbox(
-	'disable_growl',
-	'Disable Growl',
-	'Disable Growl Notifications',
-	$pconfig['disable_growl']
-))->setHelp('Check this option to disable growl notifications but preserve the '.
-	'settings below.');
-
-$section->addInput(new Form_Input(
-	'name',
-	'Registration Name',
-	'text',
-	$pconfig['name'],
-	['placeholder' => 'PHP-Growl']
-))->setHelp('Enter the name to register with the Growl server.');
-
-$section->addInput(new Form_Input(
-	'notification_name',
-	'Notification Name',
-	'text',
-	$pconfig['notification_name'],
-	['placeholder' => $g["product_name"].' growl alert']
-
-))->setHelp('Enter a name for the Growl notifications.');
-
-$section->addInput(new Form_Input(
-	'ipaddress',
-	'IP Address',
-	'text',
-	$pconfig['ipaddress']
-))->setHelp('This is the IP address to send growl notifications to.');
-
-$section->addPassword(new Form_Input(
-	'password',
-	'Password',
-	'text',
-	$pconfig['password']
-))->setHelp('Enter the password of the remote growl notification device.');
-
-$section->addInput(new Form_Button(
-	'test-growl',
-	'Test Growl Settings',
-	null,
-	'fa-rss'
-))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
-	'marked as disabled.');
-
-$form->add($section);
 $section = new Form_Section('E-Mail');
 
 $section->addInput(new Form_Checkbox(
@@ -311,6 +255,13 @@ $section->addInput(new Form_Input(
 ))->setHelp('This is the port of the SMTP E-Mail server, typically 25, 587 '.
 	'(submission) or 465 (smtps).');
 
+$section->addInput(new Form_Input(
+	'smtptimeout',
+	'Connection timeout to E-Mail server',
+	'number',
+	$pconfig['smtptimeout']
+))->setHelp('This is how many seconds it will wait for the SMTP server to connect. Default is 20s.');
+
 $group = new Form_Group('Secure SMTP Connection');
 $group->add(new Form_Checkbox(
 	'smtpssl',
@@ -319,14 +270,15 @@ $group->add(new Form_Checkbox(
 	isset($pconfig['smtpssl'])
 ));
 
-$group->add(new Form_Checkbox(
-	'smtptls',
-	'Secure STARTTLS',
-	'Enable STARTTLS',
-	isset($pconfig['smtptls'])
-));
-
 $section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'sslvalidate',
+	'Validate SSL/TLS',
+	'Validate the SSL/TLS certificate presented by the server',
+	$pconfig['sslvalidate']
+))->setHelp('When disabled, the server certificate will not be validated. ' .
+	'Encryption will still be used if available, but the identity of the server will not be confirmed.');
 
 $section->addInput(new Form_Input(
 	'smtpfromaddress',
@@ -384,6 +336,57 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['disablebeep']
 ))->setHelp('When this is checked, startup and shutdown sounds will no longer '.
 	'play.');
+
+$form->add($section);
+
+$section = new Form_Section('Growl');
+
+$section->addInput(new Form_Checkbox(
+	'disable_growl',
+	'Disable Growl',
+	'Disable Growl Notifications',
+	$pconfig['disable_growl']
+))->setHelp('Check this option to disable growl notifications but preserve the '.
+	'settings below.');
+
+$section->addInput(new Form_Input(
+	'name',
+	'Registration Name',
+	'text',
+	$pconfig['name'],
+	['placeholder' => 'pfSense-Growl']
+))->setHelp('Enter the name to register with the Growl server.');
+
+$section->addInput(new Form_Input(
+	'notification_name',
+	'Notification Name',
+	'text',
+	$pconfig['notification_name'],
+	['placeholder' => $g["product_name"].' growl alert']
+
+))->setHelp('Enter a name for the Growl notifications.');
+
+$section->addInput(new Form_Input(
+	'ipaddress',
+	'IP Address',
+	'text',
+	$pconfig['ipaddress']
+))->setHelp('This is the IP address to send growl notifications to.');
+
+$section->addPassword(new Form_Input(
+	'password',
+	'Password',
+	'text',
+	$pconfig['password']
+))->setHelp('Enter the password of the remote growl notification device.');
+
+$section->addInput(new Form_Button(
+	'test-growl',
+	'Test Growl Settings',
+	null,
+	'fa-rss'
+))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
+	'marked as disabled.');
 
 $form->add($section);
 print($form);

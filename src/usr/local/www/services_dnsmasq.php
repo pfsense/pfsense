@@ -1,60 +1,27 @@
 <?php
 /*
-	services_dnsmasq.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net
+ * services_dnsmasq.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2003-2004 Bob Zoller <bob@kludgebox.com>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -67,8 +34,39 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
+require_once("pfsense-utils.inc");
 require_once("shaper.inc");
 require_once("system.inc");
+
+// Sort host entries for display in alphabetical order
+function hostcmp($a, $b) {
+	return strcasecmp($a['host'], $b['host']);
+}
+
+function hosts_sort() {
+	global $a_hosts;
+
+	if (!is_array($a_hosts)) {
+		return;
+	}
+
+	uasort($a_hosts, "hostcmp");
+}
+
+// Sort domain entries for display in alphabetical order
+function domaincmp($a, $b) {
+	return strcasecmp($a['domain'], $b['domain']);
+}
+
+function domains_sort() {
+	global $a_domainOverrides;
+
+	if (!is_array($a_domainOverrides)) {
+		return;
+	}
+
+	uasort($a_domainOverrides, "domaincmp");
+}
 
 $pconfig['enable'] = isset($config['dnsmasq']['enable']);
 $pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
@@ -79,107 +77,121 @@ $pconfig['domain_needed'] = isset($config['dnsmasq']['domain_needed']);
 $pconfig['no_private_reverse'] = isset($config['dnsmasq']['no_private_reverse']);
 $pconfig['port'] = $config['dnsmasq']['port'];
 $pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
-
 $pconfig['strictbind'] = isset($config['dnsmasq']['strictbind']);
+
 if (!empty($config['dnsmasq']['interface'])) {
 	$pconfig['interface'] = explode(",", $config['dnsmasq']['interface']);
 } else {
 	$pconfig['interface'] = array();
 }
 
-if (!is_array($config['dnsmasq']['hosts'])) {
-	$config['dnsmasq']['hosts'] = array();
-}
-
-if (!is_array($config['dnsmasq']['domainoverrides'])) {
-	$config['dnsmasq']['domainoverrides'] = array();
-}
-
+init_config_arr(array('dnsmasq', 'hosts'));
 $a_hosts = &$config['dnsmasq']['hosts'];
+
+// Add a temporary index so we don't lose the order after sorting
+for ($idx=0; $idx<count($a_hosts); $idx++) {
+	$a_hosts[$idx]['idx'] = $idx;
+}
+
+hosts_sort();
+
+init_config_arr(array('dnsmasq', 'domainoverrides'));
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
-if ($_POST) {
-	if ($_POST['apply']) {
-		$retval = 0;
-		$retval = services_dnsmasq_configure();
-		$savemsg = get_std_save_message($retval);
+// Add a temporary index so we don't lose the order after sorting
+for ($idx=0; $idx<count($a_domainOverrides); $idx++) {
+	$a_domainOverrides[$idx]['idx'] = $idx;
+}
 
-		// Reload filter (we might need to sync to CARP hosts)
-		filter_configure();
-		/* Update resolv.conf in case the interface bindings exclude localhost. */
-		system_resolvconf_generate();
-		/* Start or restart dhcpleases when it's necessary */
-		system_dhcpleases_configure();
+domains_sort();
 
-		if ($retval == 0) {
-			clear_subsystem_dirty('hosts');
-		}
-	} else {
-		$pconfig = $_POST;
-		unset($input_errors);
 
-		$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
-		$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
-		$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
-		$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
-		$config['dnsmasq']['strict_order'] = ($_POST['strict_order']) ? true : false;
-		$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
-		$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
-		$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
-		$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
+if ($_POST['apply']) {
+	$retval = 0;
+	$retval |= services_dnsmasq_configure();
 
-		if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
-			if ($_POST['port'] == $config['unbound']['port']) {
-				$input_errors[] = gettext("The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.");
-			}
-		}
+	// Reload filter (we might need to sync to CARP hosts)
+	filter_configure();
+	/* Update resolv.conf in case the interface bindings exclude localhost. */
+	system_resolvconf_generate();
+	/* Start or restart dhcpleases when it's necessary */
+	system_dhcpleases_configure();
 
-		if ($_POST['port']) {
-			if (is_port($_POST['port'])) {
-				$config['dnsmasq']['port'] = $_POST['port'];
-			} else {
-				$input_errors[] = gettext("A valid port number must be specified.");
-			}
-		} else if (isset($config['dnsmasq']['port'])) {
-			unset($config['dnsmasq']['port']);
-		}
-
-		if (is_array($_POST['interface'])) {
-			$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
-		} elseif (isset($config['dnsmasq']['interface'])) {
-			unset($config['dnsmasq']['interface']);
-		}
-
-		if ($config['dnsmasq']['custom_options']) {
-			$args = '';
-			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
-				$args .= escapeshellarg("--{$c}") . " ";
-			}
-			exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
-			if ($rc != 0) {
-				$input_errors[] = gettext("Invalid custom options");
-			}
-		}
-
-		if (!$input_errors) {
-			write_config();
-			mark_subsystem_dirty('hosts');
-		}
+	if ($retval == 0) {
+		clear_subsystem_dirty('hosts');
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($_GET['type'] == 'host') {
-		if ($a_hosts[$_GET['id']]) {
-			unset($a_hosts[$_GET['id']]);
+if ($_POST['save']) {
+	$pconfig = $_POST;
+	unset($input_errors);
+
+	$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
+	$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
+	$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
+	$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
+	$config['dnsmasq']['strict_order'] = ($_POST['strict_order']) ? true : false;
+	$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
+	$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
+	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
+	$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
+
+	if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
+		if ($_POST['port'] == $config['unbound']['port']) {
+			$input_errors[] = gettext("The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.");
+		}
+	}
+
+	if ((isset($_POST['regdhcp']) || isset($_POST['regdhcpstatic']) || isset($_POST['dhcpfirst'])) && !is_dhcp_server_enabled()) {
+		$input_errors[] = gettext("DHCP Server must be enabled for DHCP Registration to work in DNS Forwarder.");
+	}
+
+	if ($_POST['port']) {
+		if (is_port($_POST['port'])) {
+			$config['dnsmasq']['port'] = $_POST['port'];
+		} else {
+			$input_errors[] = gettext("A valid port number must be specified.");
+		}
+	} else if (isset($config['dnsmasq']['port'])) {
+		unset($config['dnsmasq']['port']);
+	}
+
+	if (is_array($_POST['interface'])) {
+		$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
+	} elseif (isset($config['dnsmasq']['interface'])) {
+		unset($config['dnsmasq']['interface']);
+	}
+
+	if ($config['dnsmasq']['custom_options']) {
+		$args = '';
+		foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
+			$args .= escapeshellarg("--{$c}") . " ";
+		}
+		exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
+		if ($rc != 0) {
+			$input_errors[] = gettext("Invalid custom options");
+		}
+	}
+
+	if (!$input_errors) {
+		write_config();
+		mark_subsystem_dirty('hosts');
+	}
+}
+
+
+if ($_POST['act'] == "del") {
+	if ($_POST['type'] == 'host') {
+		if ($a_hosts[$_POST['id']]) {
+			unset($a_hosts[$_POST['id']]);
 			write_config();
 			mark_subsystem_dirty('hosts');
 			header("Location: services_dnsmasq.php");
 			exit;
 		}
-	} elseif ($_GET['type'] == 'doverride') {
-		if ($a_domainOverrides[$_GET['id']]) {
-			unset($a_domainOverrides[$_GET['id']]);
+	} elseif ($_POST['type'] == 'doverride') {
+		if ($a_domainOverrides[$_POST['id']]) {
+			unset($a_domainOverrides[$_POST['id']]);
 			write_config();
 			mark_subsystem_dirty('hosts');
 			header("Location: services_dnsmasq.php");
@@ -220,8 +232,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('hosts')) {
@@ -244,11 +256,11 @@ $section->addInput(new Form_Checkbox(
 	'DHCP Registration',
 	'Register DHCP leases in DNS forwarder',
 	$pconfig['regdhcp']
-))->setHelp(sprintf("If this option is set, then machines that specify".
-			" their hostname when requesting a DHCP lease will be registered".
-			" in the DNS forwarder, so that their name can be resolved.".
-			" The domain in %sSystem: General Setup%s should also".
-			" be set to the proper value.",'<a href="system.php">','</a>'))
+))->setHelp('If this option is set machines that specify'.
+			' their hostname when requesting a DHCP lease will be registered'.
+			' in the DNS forwarder, so that their name can be resolved.'.
+			' The domain in %1$sSystem: General Setup%2$s should also'.
+			' be set to the proper value.', '<a href="system.php">', '</a>')
 	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(
@@ -256,10 +268,10 @@ $section->addInput(new Form_Checkbox(
 	'Static DHCP',
 	'Register DHCP static mappings in DNS forwarder',
 	$pconfig['regdhcpstatic']
-))->setHelp(sprintf("If this option is set, then DHCP static mappings will ".
-					"be registered in the DNS forwarder, so that their name can be ".
-					"resolved. The domain in %sSystem: General Setup%s should also ".
-					"be set to the proper value.",'<a href="system.php">','</a>'))
+))->setHelp('If this option is set, IPv4 DHCP static mappings will '.
+					'be registered in the DNS forwarder so that their name can be '.
+					'resolved. The domain in %1$sSystem: General Setup%2$s should also '.
+					'be set to the proper value.', '<a href="system.php">', '</a>')
 	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(
@@ -267,9 +279,9 @@ $section->addInput(new Form_Checkbox(
 	'Prefer DHCP',
 	'Resolve DHCP mappings first',
 	$pconfig['dhcpfirst']
-))->setHelp(sprintf("If this option is set, then DHCP mappings will ".
+))->setHelp("If this option is set DHCP mappings will ".
 					"be resolved before the manual list of names below. This only ".
-					"affects the name given for a reverse lookup (PTR)."))
+					"affects the name given for a reverse lookup (PTR).")
 	->addClass('toggle-dhcp');
 
 $group = new Form_Group('DNS Query Forwarding');
@@ -279,28 +291,28 @@ $group->add(new Form_Checkbox(
 	'DNS Query Forwarding',
 	'Query DNS servers sequentially',
 	$pconfig['strict_order']
-))->setHelp(sprintf("If this option is set, %s DNS Forwarder (dnsmasq) will ".
-					"query the DNS servers sequentially in the order specified (<i>System - General Setup - DNS Servers</i>), ".
-					"rather than all at once in parallel. ", $g['product_name']));
+))->setHelp('If this option is set %1$s DNS Forwarder (dnsmasq) will '.
+					'query the DNS servers sequentially in the order specified (%2$sSystem - General Setup - DNS Servers%3$s), '.
+					'rather than all at once in parallel. ', $g['product_name'], '<i>', '</i>');
 
 $group->add(new Form_Checkbox(
 	'domain_needed',
 	null,
 	'Require domain',
 	$pconfig['domain_needed']
-))->setHelp(sprintf("If this option is set, %s DNS Forwarder (dnsmasq) will ".
+))->setHelp("If this option is set %s DNS Forwarder (dnsmasq) will ".
 					"not forward A or AAAA queries for plain names, without dots or domain parts, to upstream name servers.	 ".
-					"If the name is not known from /etc/hosts or DHCP then a \"not found\" answer is returned. ", $g['product_name']));
+					"If the name is not known from /etc/hosts or DHCP then a \"not found\" answer is returned. ", $g['product_name']);
 
 $group->add(new Form_Checkbox(
 	'no_private_reverse',
 	null,
 	'Do not forward private reverse lookups',
 	$pconfig['no_private_reverse']
-))->setHelp(sprintf("If this option is set, %s DNS Forwarder (dnsmasq) will ".
+))->setHelp("If this option is set %s DNS Forwarder (dnsmasq) will ".
 					"not forward reverse DNS lookups (PTR) for private addresses (RFC 1918) to upstream name servers.  ".
 					"Any entries in the Domain Overrides section forwarding private \"n.n.n.in-addr.arpa\" names to a specific server are still forwarded. ".
-					"If the IP to name is not known from /etc/hosts, DHCP or a specific domain override then a \"not found\" answer is immediately returned. ", $g['product_name']));
+					"If the IP to name is not known from /etc/hosts, DHCP or a specific domain override then a \"not found\" answer is immediately returned. ", $g['product_name']);
 
 $section->add($group);
 
@@ -316,7 +328,7 @@ $iflist = build_if_list();
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interfaces',
+	'*Interfaces',
 	$iflist['selected'],
 	$iflist['options'],
 	true
@@ -329,8 +341,8 @@ $section->addInput(new Form_Checkbox(
 	'Strict interface binding',
 	$pconfig['strictbind']
 ))->setHelp('If this option is set, the DNS forwarder will only bind to the interfaces containing the IP addresses selected above, ' .
-					'rather than binding to all interfaces and discarding queries to other addresses.' . '<br /><br />' .
-					'This option does NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses.');
+					'rather than binding to all interfaces and discarding queries to other addresses.%1$s' .
+					'This option does NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses.', '<br /><br />');
 
 $section->addInput(new Form_Textarea(
 	'custom_options',
@@ -374,8 +386,8 @@ foreach ($a_hosts as $i => $hostent):
 						<?=htmlspecialchars($hostent['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_dnsmasq_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>"	href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_dnsmasq_edit.php?id=<?=$hostent['idx']?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>"	href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$hostent['idx']?>" usepost></a>
 					</td>
 				</tr>
 
@@ -446,8 +458,8 @@ foreach ($a_domainOverrides as $i => $doment):
 						<?=htmlspecialchars($doment['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_dnsmasq_domainoverride_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_dnsmasq_domainoverride_edit.php?id=<?=$doment['idx']?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$doment['idx']?>" usepost></a>
 					</td>
 				</tr>
 <?php

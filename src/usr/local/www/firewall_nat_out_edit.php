@@ -1,59 +1,26 @@
 <?php
 /*
-	firewall_nat_out_edit.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_nat_out_edit.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -68,41 +35,23 @@ require_once("ipsec.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['nat']['outbound'])) {
-	$config['nat']['outbound'] = array();
-}
-
-if (!is_array($config['nat']['outbound']['rule'])) {
-	$config['nat']['outbound']['rule'] = array();
-}
-
+init_config_arr(array('nat', 'outbound', 'rule'));
 $a_out = &$config['nat']['outbound']['rule'];
 
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
-
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['after']) && (is_numericint($_REQUEST['after']) || $_REQUEST['after'] == "-1")) {
+	$after = $_REQUEST['after'];
 }
 
-if (is_numericint($_GET['after']) || $_GET['after'] == "-1") {
-	$after = $_GET['after'];
-}
-
-if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
-	$after = $_POST['after'];
-}
-
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$after = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_out[$id]) {
@@ -114,6 +63,7 @@ if (isset($id) && $a_out[$id]) {
 		$pconfig['updated'] = $a_out[$id]['updated'];
 	}
 
+	$pconfig['ipprotocol'] = $a_out[$id]['ipprotocol'];
 	$pconfig['protocol'] = $a_out[$id]['protocol'];
 	list($pconfig['source'], $pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
 	if (!is_numeric($pconfig['source_subnet'])) {
@@ -127,9 +77,24 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['dstport'] = $a_out[$id]['dstport'];
 	$pconfig['natport'] = $a_out[$id]['natport'];
 	$pconfig['target'] = $a_out[$id]['target'];
+	if (strlen($pconfig['target']) > 0) {
+		// Deduce the target type and add to the front of the target string.
+		if (is_subnet($pconfig['target'])) {
+			$target_type = "S";
+		} elseif (is_ipaddr($pconfig['target'])) {
+			$target_type = "I";
+		} elseif (is_alias($pconfig['target'])) {
+			$target_type = "H";
+		} else {
+			$target_type = "O";
+		}
+		$pconfig['target'] = $target_type . $pconfig['target'];
+	}
+
 	$pconfig['targetip'] = $a_out[$id]['targetip'];
 	$pconfig['targetip_subnet'] = $a_out[$id]['targetip_subnet'];
 	$pconfig['poolopts'] = $a_out[$id]['poolopts'];
+	$pconfig['source_hash_key'] = $a_out[$id]['source_hash_key'];
 	$pconfig['interface'] = $a_out[$id]['interface'];
 
 	if (!$pconfig['interface']) {
@@ -148,11 +113,11 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	if ($_POST['destination_type'] == "any") {
 		$_POST['destination'] = "any";
 		$_POST['destination_subnet'] = 24;
@@ -172,6 +137,10 @@ if ($_POST) {
 	 *  cannot think he is slick and perform a XSS attack on the unwilling
 	 */
 	foreach ($_POST as $key => $value) {
+		if ($key == 'descr') {
+			continue;
+		}
+
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 		if ($newpost <> $temp) {
@@ -206,15 +175,20 @@ if ($_POST) {
 		$_POST['natport'] = trim($_POST['natport']);
 	}
 
-	if ($protocol_uses_ports && $_POST['sourceport'] <> "" && !(is_portoralias($_POST['sourceport']) || is_portrange($_POST['sourceport']))) {
+	if (strlen($_POST['target']) > 0) {
+		// Strip the target code 1-char code from the front before validating and saving.
+		$_POST['target'] = substr($_POST['target'], 1);
+	}
+
+	if ($protocol_uses_ports && $_POST['sourceport'] <> "" && !is_port_or_range_or_alias($_POST['sourceport'])) {
 		$input_errors[] = gettext("A valid port or port alias must be supplied for the source port entry.");
 	}
 
-	if ($protocol_uses_ports && $_POST['dstport'] <> "" && !(is_portoralias($_POST['dstport']) || is_portrange($_POST['dstport']))) {
+	if ($protocol_uses_ports && $_POST['dstport'] <> "" && !is_port_or_range_or_alias($_POST['dstport'])) {
 		$input_errors[] = gettext("A valid port or port alias must be supplied for the destination port entry.");
 	}
 
-	if ($protocol_uses_ports && $_POST['natport'] <> "" && !(is_portoralias($_POST['natport']) || is_portrange($_POST['natport'])) && !isset($_POST['nonat'])) {
+	if ($protocol_uses_ports && $_POST['natport'] <> "" && !is_port_or_range_or_alias($_POST['natport']) && !isset($_POST['nonat'])) {
 		$input_errors[] = gettext("A valid port must be supplied for the NAT port entry.");
 	}
 
@@ -260,6 +234,7 @@ if ($_POST) {
 
 	/* Verify Pool Options */
 	$poolopts = "";
+	$source_hash_key = "";
 	if ($_POST['poolopts']) {
 		if (is_subnet($_POST['target']) || ($_POST['target'] == "other-subnet")) {
 			$poolopts = $_POST['poolopts'];
@@ -268,6 +243,18 @@ if ($_POST) {
 				$poolopts = $_POST['poolopts'];
 			} else {
 				$input_errors[] = gettext("Only Round Robin pool options may be chosen when selecting an alias.");
+			}
+		}
+		/* If specified, verify valid source-hash key or generate a valid key using md5 */
+		if ($_POST['source_hash_key']) {
+			if (substr($_POST['source_hash_key'],0,2) == "0x") {
+				if (ctype_xdigit(substr($_POST['source_hash_key'],2)) && strlen($_POST['source_hash_key']) == 34) {
+					$source_hash_key = $_POST['source_hash_key'];
+				} else {
+					$input_errors[] = gettext("Incorrect format for source-hash key, \"0x\" must be followed by exactly 32 hexadecimal characters.");
+				}
+			} else {
+				$source_hash_key = "0x".md5($_POST['source_hash_key']);
 			}
 		}
 	}
@@ -312,6 +299,7 @@ if ($_POST) {
 		$natent['targetip_subnet'] = (!isset($_POST['nonat'])) ? $_POST['targetip_subnet'] : "";
 		$natent['interface'] = $_POST['interface'];
 		$natent['poolopts'] = $poolopts;
+		$natent['source_hash_key'] = $source_hash_key;
 
 		/* static-port */
 		if (isset($_POST['staticnatport']) && $protocol_uses_ports && !isset($_POST['nonat'])) {
@@ -333,6 +321,12 @@ if ($_POST) {
 			unset($natent['nonat']);
 		}
 
+		if ($_POST['ipprotocol'] && $_POST['ipprotocol'] != "inet46") {
+			$natent['ipprotocol'] = $_POST['ipprotocol'];
+		} else {
+			unset($natent['ipprotocol']);
+		}
+		
 		if ($_POST['protocol'] && $_POST['protocol'] != "any") {
 			$natent['protocol'] = $_POST['protocol'];
 		} else {
@@ -385,7 +379,7 @@ if ($_POST) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Outbound - saved/edited outbound NAT mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_out.php");
@@ -394,46 +388,61 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"), gettext("Edit"));
+$pglinks = array("", "firewall_nat.php", "firewall_nat_out.php", "@self");
 include("head.inc");
 
 function build_target_list() {
 	global $config, $sn, $a_aliases;
 	$list = array();
+	// Target list entries are made to start with the following characters:
+	// "" (blank) - the interface address of the selected interface
+	// S - a subnet
+	// I - an ordinary IP address
+	// H - a host alias
+	// O - other subnet
+	// The prefix letter makes it easy for the JavaScript to distinguish
+	// the type of entry based on the first letter of the value.
+	// The prefix letter is removed before saving in the config,
+	// and added back when reading from the config.
 
 	$list[""] = gettext('Interface Address');
 
+	//Temporary array so we can sort IPs
+	$templist = array();
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
-			if (isset($sn['noexpand'])) {
-				continue;
-			}
-
-			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
+				$templist['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+				if (isset($sn['noexpand'])) {
+					continue;
+				}
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
 				$len = $end - $start;
-				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
-
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
 
-					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
+					$templist['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
 			} else {
-				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+				$templist['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
 	}
+	asort($templist);
+	//Append sorted IP array onto main array
+	$list = array_merge($list, $templist);
+	unset($templist);
 
 	foreach ($a_aliases as $alias) {
 		if ($alias['type'] != "host") {
 			continue;
 		}
 
-		$list[$alias['name']] = gettext('Host Alias: ') . $alias['name'] . ' (' . $alias['descr'] . ')';
+		$list['H' . $alias['name']] = gettext('Host Alias: ') . $alias['name'] . ' (' . $alias['descr'] . ')';
 	}
 
-	$list['other-subnet'] = gettext('Other Subnet (Enter Below)');
+	$list['Oother-subnet'] = gettext('Other Subnet (Enter Below)');
 
 	return($list);
 }
@@ -460,51 +469,34 @@ $section->addInput(new Form_Checkbox(
 	isset($pconfig['nonat'])
 ))->setHelp('In most cases this option is not required.');
 
-$iflist = get_configured_interface_with_descr(false, true);
-
-foreach ($iflist as $if => $ifdesc) {
-	if (have_ruleint_access($if)) {
-		$interfaces[$if] = $ifdesc;
-	}
-}
-
-if ($config['l2tp']['mode'] == "server") {
-	if (have_ruleint_access("l2tp")) {
-		$interfaces['l2tp'] = "L2TP VPN";
-	}
-}
-
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-	$interfaces['pppoe'] = "PPPoE Server";
-}
-
-/* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$interfaces["enc0"] = "IPsec";
-}
-
-/* add openvpn/tun interfaces */
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$interfaces["openvpn"] = "OpenVPN";
-}
-
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
-	$interfaces
-))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
+	create_interface_list()
+))->setHelp('The interface on which traffic is matched as it exits the firewall. In most cases this is "WAN" or another externally-connected interface.');
+
+$section->addInput(new Form_Select(
+	'ipprotocol',
+	'*Address Family',
+	$pconfig['ipprotocol'],
+	array(
+		'inet' => 'IPv4',
+		'inet6' => 'IPv6',
+		'' => 'IPv4+IPv6',
+	)
+))->setHelp('Select the Internet Protocol version this rule applies to.');
 
 $protocols = "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync";
 
 $section->addInput(new Form_Select(
 	'protocol',
-	'Protocol',
+	'*Protocol',
 	$pconfig['protocol'],
 	array_combine(explode(" ", strtolower($protocols)), explode(" ", $protocols))
 ))->setHelp('Choose which protocol this rule should match. In most cases "any" is specified.');
 
-$group = new Form_Group('Source');
+$group = new Form_Group('*Source');
 
 $group->add(new Form_Select(
 	'source_type',
@@ -516,19 +508,20 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'source',
 	null,
-	$pconfig['source']
-))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9\_\.\:]+');
+	$pconfig['source'],
+	'ALIASV4V6'
+))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.');
 
 $group->add(new Form_Input(
 	'sourceport',
 	null,
 	'text',
 	$pconfig['sourceport']
-))->setHelp('Port')->setWidth('2');
+))->setHelp('Port or Range')->setWidth('2');
 
 $section->add($group);
 
-$group = new Form_Group('Destination');
+$group = new Form_Group('*Destination');
 
 $group->add(new Form_Select(
 	'destination_type',
@@ -540,15 +533,16 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'destination',
 	null,
-	$pconfig['destination'] == "any" ? "":$pconfig['destination']
-))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9\_\.\:]+');
+	$pconfig['destination'] == "any" ? "":$pconfig['destination'],
+	'ALIASV4V6'
+))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.');
 
 $group->add(new Form_Input(
 	'dstport',
 	null,
 	'text',
 	$pconfig['dstport']
-))->setHelp('Port')->setWidth('2');
+))->setHelp('Port or Range')->setWidth('2');
 
 $section->add($group);
 
@@ -566,21 +560,20 @@ $section->addClass('translation');
 
 $section->addInput(new Form_Select(
 	'target',
-	'Address',
+	'*Address',
 	$pconfig['target'],
 	build_target_list()
-));
+))->setHelp('Connections matching this rule will be mapped to the specified %1$sAddress%2$s.%3$s' .
+		'The %1$sAddress%2$s can be an Interface, a Host-type Alias, or a %4$sVirtual IP%5$s address.',
+		'<b>', '</b>', '<br />', '<a href="firewall_virtual_ip.php">', '</a>');
 
 $section->addInput(new Form_IpAddress(
 	'targetip',
 	'Other subnet',
 	$pconfig['targetip']
-))->addMask('targetip_subnet', $pconfig['targetip_subnet'])->addClass('othersubnet')->setHelp(
-		'Packets matching this rule will be mapped to the IP address given here.' . '<br />' .
-		'To apply this rule to a different IP address than the IP address of the interface chosen above, ' .
-		'select it here (' .
-		'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> ' .
-		'addresses need to be defined on the interface first)');
+))->addMask('targetip_subnet', $pconfig['targetip_subnet'])->setHelp(
+		'This subnet must be routed to the firewall or each address in the subnet must be defined in one or more %1$sVirtual IP%2$s addresses.',
+		'<a href="firewall_virtual_ip.php">', '</a>');
 
 $section->addInput(new Form_Select(
 	'poolopts',
@@ -595,16 +588,24 @@ $section->addInput(new Form_Select(
 		'source-hash' => gettext('Source hash'),
 		'bitmask' => gettext('Bit mask')
 	)
-))->setHelp('Only Round Robin types work with Host Aliases. Any type can be used with a Subnet.' . '<br />' .
-			'</span><ul class="help-block">' .
-				'<li>' . 'Round Robin: Loops through the translation addresses.' . '</li>' .
-				'<li>' . 'Random: Selects an address from the translation address pool at random.' . '</li>' .
-				'<li>' . 'Source Hash: Uses a hash of the source address to determine the translation address, ensuring that the redirection address is always the same for a given source.' . '</li>' .
-				'<li>' . 'Bitmask: Applies the subnet mask and keeps the last portion identical; 10.0.1.50 -&gt; x.x.x.50.' . '</li>' .
-				'<li>' . 'Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.' . '</li>' .
+))->setHelp('%s',
+			gettext('Only Round Robin types work with Host Aliases. Any type can be used with a Subnet.') .
+			'<br /></span><ul class="help-block">' .
+				'<li>' . gettext('Round Robin: Loops through the translation addresses.') . '</li>' .
+				'<li>' . gettext('Random: Selects an address from the translation address pool at random.') . '</li>' .
+				'<li>' . gettext('Source Hash: Uses a hash of the source address to determine the translation address, ensuring that the redirection address is always the same for a given source.') . '</li>' .
+				'<li>' . gettext('Bitmask: Applies the subnet mask and keeps the last portion identical; 10.0.1.50 -&gt; x.x.x.50.') . '</li>' .
+				'<li>' . gettext('Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.') . '</li>' .
 			'</ul><span class="help-block">');
 
-$group = new Form_Group('Port');
+$section->addInput(new Form_Input(
+	'source_hash_key',
+	'Source Hash Key',
+	'text',
+	$pconfig['source_hash_key']
+))->setHelp('The key that is fed to the hashing algorithm in hex format, preceeded by "0x", or any string. A non-hex string is hashed using md5 to a hexadecimal key. Defaults to a randomly generated value.')->setWidth(10);
+
+$group = new Form_Group('Port or Range');
 $group->addClass('natportgrp');
 
 $group->add(new Form_Input(
@@ -612,12 +613,15 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['natport']
-))->setHelp('Enter the source port or range for the outbound NAT mapping.');
+))->setHelp('Enter the external source %1$sPort or Range%2$s used for remapping '.
+		'the original source port on connections matching the rule. %3$s'.
+		'Port ranges are a low port and high port number separated by ":".%4$s'.
+		'Leave blank when %1$sStatic Port%2$s is checked.', '<b>', '</b>', '<br/><br/>', '<br/>');
 
 $group->add(new Form_Checkbox(
 	'staticnatport',
 	null,
-	'Static port',
+	'Static Port',
 	$pconfig['staticnatport']
 ));
 
@@ -660,28 +664,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$has_created_time = (isset($a_out[$id]['created']) && is_array($a_out[$id]['created']));
-$has_updated_time = (isset($a_out[$id]['updated']) && is_array($a_out[$id]['updated']));
-
-if ($has_created_time || $has_updated_time) {
-	$section = new Form_Section('Rule Information');
-
-	if ($has_created_time) {
-		$section->addInput(new Form_StaticText(
-			'Created',
-			date(gettext("n/j/y H:i:s"), $a_out[$id]['created']['time']) . gettext(" by ") . $a_out[$id]['created']['username']
-		));
-	}
-
-	if ($has_updated_time) {
-		$section->addInput(new Form_StaticText(
-			'Updated',
-			date(gettext("n/j/y H:i:s"), $a_out[$id]['updated']['time']) . gettext(" by ") . $a_out[$id]['updated']['username']
-		));
-	}
-
-	$form->add($section);
-}
+gen_created_updated_fields($form, $a_out[$id]['created'], $a_out[$id]['updated']);
 
 print($form);
 
@@ -745,19 +728,27 @@ events.push(function() {
 	}
 
 	function poolopts_change() {
-		if ($('#target option:selected').text().trim().substring(0,4) == "Host") {
+		if ($('#target option:selected').val().substring(0,1) == "H") {
 			hideInput('poolopts', false);
-			hideGroupClass('othersubnet', true);
-		} else if ($('#target option:selected').text().trim().substring(0,6) == "Subnet") {
+			hideInput('source_hash_key', true);
+			hideIpAddress('targetip', true);
+		} else if ($('#target option:selected').val().substring(0,1) == "S") {
 			hideInput('poolopts', false);
-			hideGroupClass('othersubnet', true);
-		} else if ($('#target option:selected').text().trim().substring(0,5) == "Other") {
+			hideInput('source_hash_key', true);
+			hideIpAddress('targetip', true);
+		} else if ($('#target option:selected').val().substring(0,1) == "O") {
 			hideInput('poolopts', false);
-			hideGroupClass('othersubnet', false);
+			hideIpAddress('targetip', false);
+			if ($('#poolopts option:selected').val() == "source-hash") {
+				hideInput('source_hash_key', false);
+			} else {
+				hideInput('source_hash_key', true);
+			}
 		} else {
 			$('#poolopts').prop('selectedIndex',0);
 			hideInput('poolopts', true);
-			hideGroupClass('othersubnet', true);
+			hideInput('source_hash_key', true);
+			hideIpAddress('targetip', true);
 			$('#targetip').val('');
 			$('#targetip_subnet').val('0');
 		}
@@ -785,6 +776,10 @@ events.push(function() {
 	});
 
 	$('#target').on('change', function() {
+		poolopts_change();
+	});
+
+	$('#poolopts').on('change', function() {
 		poolopts_change();
 	});
 

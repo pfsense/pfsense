@@ -1,60 +1,27 @@
 <?php
 /*
-	system_advanced_network.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2008 Shrew Soft Inc
+ * system_advanced_network.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -73,12 +40,14 @@ require_once("shaper.inc");
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
 $pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
+$pconfig['ipv6dontcreatelocaldns'] = isset($config['system']['ipv6dontcreatelocaldns']);
+$pconfig['global-v6duid'] = $config['system']['global-v6duid'];
 $pconfig['prefer_ipv4'] = isset($config['system']['prefer_ipv4']);
-$pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 $pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
+$pconfig['ip_change_kill_states'] = $config['system']['ip_change_kill_states'];
 
 if ($_POST) {
 
@@ -87,6 +56,47 @@ if ($_POST) {
 
 	if ($_POST['ipv6nat_enable'] && !is_ipaddr($_POST['ipv6nat_ipaddr'])) {
 		$input_errors[] = gettext("An IP address to NAT IPv6 packets must be specified.");
+	}
+
+	switch ($_POST['ipv6duidtype']) {
+	case 1:
+		if (!empty($_POST['ipv6duidllt_time']) && !empty($_POST['ipv6duidllt_ll'])) {
+			$_POST['global-v6duid'] = format_duid(1, $_POST['ipv6duidllt_time'], $_POST['ipv6duidllt_ll']);
+		}
+		break;
+	case 2:
+		if (!empty($_POST['ipv6duiden_en']) && !empty($_POST['ipv6duiden_id'])) {
+			$_POST['global-v6duid'] = format_duid(2, $_POST['ipv6duiden_en'], $_POST['ipv6duiden_id']);
+		}
+		break;
+	case 3:
+		if (!empty($_POST['ipv6duidll'])) {
+			$_POST['global-v6duid'] = format_duid(3, $_POST['ipv6duidll']);
+		}
+		break;
+	case 4:
+		if (!empty($_POST['ipv6duiduuid'])) {
+			$_POST['global-v6duid'] = format_duid(4, $_POST['ipv6duiduuid']);
+		}
+		break;
+	}
+
+	if (!empty($_POST['global-v6duid'])) {
+		$_POST['global-v6duid'] = format_duid(0, $_POST['global-v6duid']);
+		if (is_duid($_POST['global-v6duid'])) {
+			$pconfig['global-v6duid'] = $_POST['global-v6duid'];
+		} else {
+			$input_errors[] = gettext("A valid DUID must be specified.");
+		}
+	}
+
+	if ($_POST['ipv6allow'] == "yes" && is_bogonsv6_used(true) &&
+	    (!isset($config['system']['maximumtableentries']) ||
+	     $config['system']['maximumtableentries'] <
+	     $g['minimumtableentries_bogonsv6'])) {
+		$input_errors[] = sprintf(gettext(
+		    "In order enable IPv6 and block bogon networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s."),
+		    $g['minimumtableentries_bogonsv6']);
 	}
 
 	ob_flush();
@@ -111,10 +121,22 @@ if ($_POST) {
 			unset($config['system']['ipv6allow']);
 		}
 
+		if ($_POST['ipv6dontcreatelocaldns'] == "yes") {
+			$config['system']['ipv6dontcreatelocaldns'] = true;
+		} else {
+			unset($config['system']['ipv6dontcreatelocaldns']);
+		}
+
 		if ($_POST['prefer_ipv4'] == "yes") {
 			$config['system']['prefer_ipv4'] = true;
 		} else {
 			unset($config['system']['prefer_ipv4']);
+		}
+
+		if (!empty($_POST['global-v6duid'])) {
+			$config['system']['global-v6duid'] = $_POST['global-v6duid'];
+		} else {
+			unset($config['system']['global-v6duid']);
 		}
 
 		if ($_POST['sharednet'] == "yes") {
@@ -123,14 +145,6 @@ if ($_POST) {
 		} else {
 			unset($config['system']['sharednet']);
 			system_enable_arp_wrong_if();
-		}
-
-		if ($_POST['polling_enable'] == "yes") {
-			$config['system']['polling'] = true;
-			setup_polling();
-		} else {
-			unset($config['system']['polling']);
-			setup_polling();
 		}
 
 		if ($_POST['disablechecksumoffloading'] == "yes") {
@@ -151,6 +165,12 @@ if ($_POST) {
 			unset($config['system']['disablelargereceiveoffloading']);
 		}
 
+		if ($_POST['ip_change_kill_states'] == "yes") {
+			$config['system']['ip_change_kill_states'] = true;
+		} else {
+			unset($config['system']['ip_change_kill_states']);
+		}
+
 		setup_microcode();
 
 		// Write out configuration (config.xml)
@@ -159,25 +179,22 @@ if ($_POST) {
 		// Set preferred protocol
 		prefer_ipv4_or_ipv6();
 
-		$retval = filter_configure();
-		if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message(gettext($retval));
-			$class = 'success';
-		} else {
-			$savemsg = gettext($retval);
-			$class = 'warning';
-		}
+		$changes_applied = true;
+		$retval = 0;
+		$retval |= filter_configure();
 	}
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Networking"));
+$pglinks = array("", "system_advanced_admin.php", "@self");
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-if ($savemsg) {
-	print_info_box($savemsg, $class);
+
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 $tab_array = array();
@@ -187,6 +204,7 @@ $tab_array[] = array(gettext("Networking"), true, "system_advanced_network.php")
 $tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
 $tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
 $tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
+$duid = get_duid_from_file();
 display_top_tabs($tab_array);
 
 $form = new Form;
@@ -200,59 +218,144 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('NOTE: This does not disable any IPv6 features on the firewall, it only '.
 	'blocks traffic.');
 
-$group = new Form_Group('IPv6 over IPv4 Tunneling');
-$group->add(new Form_Checkbox(
+$section->addInput(new Form_Checkbox(
 	'ipv6nat_enable',
 	'IPv6 over IPv4 Tunneling',
-	'Enable IPv4 NAT encapsulation of IPv6 packets',
+	'Enable IPv6 over IPv4 tunneling',
 	$pconfig['ipv6nat_enable']
-));
+))->setHelp('These options create an RFC 2893 compatible mechanism for IPv4 NAT encapsulation of IPv6 packets, ' .
+	'that can be used to tunnel IPv6 packets over IPv4 routing infrastructures. ' .
+	'IPv6 firewall rules are %1$salso required%2$s, to control and pass encapsulated traffic.', '<a href="firewall_rules.php">', '</a>');
 
-$group->add(new Form_Input(
+$section->addInput(new Form_Input(
 	'ipv6nat_ipaddr',
-	'IP address',
+	'IPv4 address of Tunnel Peer',
 	'text',
 	$pconfig['ipv6nat_ipaddr']
-))->setHelp('Enable IPv4 NAT encapsulation of IPv6 packets. <br/>This provides an '.
-	'RFC 2893 compatibility mechanism that can be used to tunneling IPv6 packets over '.
-	'IPv4 routing infrastructures. If enabled, don\'t forget to add a firewall rule to '.
-	'permit IPv6 packets.');
-
-$section->add($group);
+));
 
 $section->addInput(new Form_Checkbox(
 	'prefer_ipv4',
 	'Prefer IPv4 over IPv6',
 	'Prefer to use IPv4 even if IPv6 is available',
 	$pconfig['prefer_ipv4']
-))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '. 
+))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '.
 	'IPv6 will be used. If this option is selected, IPv4 will be preferred over IPv6.');
+
+$section->addInput(new Form_Checkbox(
+	'ipv6dontcreatelocaldns',
+	'IPv6 DNS entry',
+	'Do not generate local IPv6 DNS entries for LAN interfaces',
+	$pconfig['ipv6dontcreatelocaldns']
+))->setHelp('If a LAN interface\'s IPv6 configuration is set to Track, and the tracked interface loses connectivity, '.
+	'it can cause connections to this firewall that were established via hostname to fail. This can happen '.
+	'unintentionally when accessing the firewall by hostname, since by default both IPv4 and IPv6 entries are added '.
+	'to the system\'s DNS. Enabling this option prevents those IPv6 records from being created.');
+
+$section->addInput(new Form_Select(
+	'ipv6duidtype',
+	'DHCP6 DUID',
+	'$ipv6duidtype',
+	array('0' => gettext('Raw DUID: As stored in DUID file or seen in firewall logs'),
+		'1' => gettext('DUID-LLT: Based on Link-layer Address Plus Time'),
+		'2' => gettext('DUID-EN: Assigned by Vendor based on Enterprise Number'),
+		'3' => gettext('DUID-LL: Based on Link-layer Address'),
+		'4' => gettext('DUID-UUID: Based on Universally Unique Identifier')
+	)
+))->setHelp('A DHCPv6 Unique Identifier (DUID) is used by the firewall when requesting an IPv6 address.%1$s%1$s' .
+		'By default, the firewall automatically creates a dynamic DUID-LLT which is not saved in the firewall configuration. '.
+		'To ensure that the same DUID is retained by the firewall at all times, enter a DUID in this section. ' .
+		'The new DUID will take effect after a reboot or when the WAN interface(s) are reconfigured by the firewall.%1$s%1$s' .
+		'If the firewall is configured to use a RAM disk for /var, the best practice is to store a DUID here; otherwise, the DUID will change on each reboot.', '<br />');
+
+$group = new Form_Group('Raw DUID');
+
+$group->add(new Form_Textarea(
+	'global-v6duid',
+	'DHCP6 DUID',
+	$pconfig['global-v6duid']
+	));
+
+$btncopyduid = new Form_Button(
+	'btncopyduid',
+	'Copy DUID',
+	null,
+	'fa-clone'
+	);
+
+$btncopyduid->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$group->add($btncopyduid);
+
+$group->setHelp('You may use the Copy DUID button to copy the system detected DUID shown in the placeholder.');
+
+$section->add($group);
+
+$group = new Form_Group('DUID-LLT');
+
+$group->add(new Form_Input(
+	'ipv6duidllt_time',
+	'DUID-LLT',
+	'text',
+	$ipv6duidllt_time
+))->setHelp('Time (seconds) since midnight, Jan 1, 2000 UTC');
+
+$group->add(new Form_Input(
+	'ipv6duidllt_ll',
+	'Link-layer address',
+	'text',
+	$ipv6duidllt_ll,
+	[ 'placeholder' => 'xx:xx:xx:xx:xx:xx' ]
+))->setHelp('Link-layer address');
+
+$section->add($group);
+
+$group = new Form_Group('DUID-EN');
+
+$group->add(new Form_Input(
+	'ipv6duiden_en',
+	'DUID-EN',
+	'number',
+	$ipv6duiden_en,
+	[ 'placeholder' => 'Enterprise Number' ]
+))->setHelp('IANA Private Enterprise Number');
+
+$group->add(new Form_Textarea(
+	'ipv6duiden_id',
+	'Identifier',
+	$ipv6duiden_id
+))->setHelp('Identifier (variable length)');
+
+$section->add($group);
+
+$section->addInput(new Form_Input(
+	'ipv6duidll',
+	'DUID-LL',
+	'text',
+	$ipv6duidll,
+	[ 'placeholder' => 'xx:xx:xx:xx:xx:xx' ]
+))->setHelp('Link-layer address');
+
+$section->addInput(new Form_Input(
+	'ipv6duiduuid',
+	'DUID-UUID',
+	'text',
+	$ipv6duiduuid,
+	[ 'placeholder' => '00000000-0000-0000-0000-000000000000' ]
+))->setHelp('Universally Unique Identifier');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');
-
-$section->addInput(new Form_Checkbox(
-	'polling_enable',
-	'Device polling',
-	'Enable device polling',
-	$pconfig['polling_enable']
-))->setHelp('Device polling is a technique that lets the system periodically poll '.
-	'network devices for new data instead of relying on interrupts. This prevents '.
-	'the webConfigurator, SSH, etc. from being inaccessible due to interrupt floods '.
-	'when under extreme load. Generally this is not recommended. Not all NICs support '.
-	'polling; see the %s homepage for a list of supported cards.', [$g["product_name"]]);
-
 
 $section->addInput(new Form_Checkbox(
 	'disablechecksumoffloading',
 	'Hardware Checksum Offloading',
 	'Disable hardware checksum offload',
 	isset($config['system']['disablechecksumoffloading'])
-))->setHelp('Checking this option will disable hardware checksum offloading.<br/>'.
+))->setHelp('Checking this option will disable hardware checksum offloading.%1$s'.
 	'Checksum offloading is broken in some hardware, particularly some Realtek cards. '.
 	'Rarely, drivers may have problems with checksum offloading and some specific '.
 	'NICs. This will take effect after a machine reboot or re-configure of each '.
-	'interface.');
+	'interface.', '<br/>');
 
 $section->addInput(new Form_Checkbox(
 	'disablesegmentationoffloading',
@@ -282,6 +385,14 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('This option will suppress ARP log messages when multiple interfaces '.
 	'reside on the same broadcast domain.');
 
+$section->addInput(new Form_Checkbox(
+	'ip_change_kill_states',
+	'Reset All States',
+	'Reset all states if WAN IP Address changes',
+	isset($pconfig['ip_change_kill_states'])
+))->setHelp('This option resets all states when a WAN IP Address changes instead of only '.
+    'states associated with the previous IP Address.');
+
 if (get_freebsd_version() == 8) {
 	$section->addInput(new Form_Checkbox(
 		'flowtable',
@@ -294,5 +405,82 @@ if (get_freebsd_version() == 8) {
 
 $form->add($section);
 print $form;
+?>
 
-include("foot.inc");
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+
+	// Show/hide IPv4 address of Tunnel Peer input field
+	function showHideIpv6nat() {
+		hideInput('ipv6nat_ipaddr', !$('#ipv6nat_enable').prop('checked'));
+	}
+
+	// Set placeholder on raw DUID and DUID-EN Identifier Textareas, time for DUID-LLT
+	// Parse DUID if set in config and set corresponding DUID type and input values on page
+	function setIpv6duid() {
+		$('#global-v6duid').attr('placeholder', '<?=$duid?>');
+		$('#ipv6duidllt_time').val((Date.now() / 1000 | 0) - 946684800);
+		$('#ipv6duiden_id').attr('placeholder', 'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx');
+		<?php if (isset($pconfig['global-v6duid'])): ?>
+		var duid = '<?=$pconfig['global-v6duid']?>';
+		var duidtype = parseInt(duid.substr(6, 5).replace(':', ''), 16);
+		switch (duidtype) {
+		case 1:
+			$('#ipv6duidllt_time').val(parseInt(duid.substr(18, 11).replace(/:/g, ''), 16));
+			$('#ipv6duidllt_ll').val(duid.substr(-17));
+			break;
+		case 2:
+			$('#ipv6duiden_en').val(parseInt(duid.substr(12, 11).replace(/:/g, ''), 16));
+			$('#ipv6duiden_id').val(duid.substr(24));
+			break;
+		case 3:
+			$('#ipv6duidll').val(duid.substr(-17));
+			break;
+		case 4:
+			var uuid = duid.substr(-47).replace(/:/g, '');
+			$('#ipv6duiduuid').val(uuid.substr(0, 8) + '-' + uuid.substr(8, 4) + '-' + uuid.substr(12, 4) + '-' + uuid.substr(16, 4) + '-' + uuid.substr(20));
+			break;
+		default:
+		}
+		if (0 < duidtype && duidtype < 5)
+			$('#ipv6duidtype').val(duidtype);
+		<?php endif; ?>
+	}
+
+	// Show/hide DUID type subsections
+	function showHideIpv6duid() {
+		hideInput('global-v6duid', $('#ipv6duidtype').prop('value') != '0');
+		hideInput('ipv6duidllt_time', $('#ipv6duidtype').prop('value') != '1');
+		hideInput('ipv6duiden_en', $('#ipv6duidtype').prop('value') != '2');
+		hideInput('ipv6duidll', $('#ipv6duidtype').prop('value') != '3');
+		hideInput('ipv6duiduuid', $('#ipv6duidtype').prop('value') != '4');
+	}
+
+	// On changing selection for DUID type
+	$('#ipv6duidtype').change(function() {
+		showHideIpv6duid();
+	});
+
+	// On click, copy the placeholder DUID to the input field
+	$('#btncopyduid').click(function() {
+		if ('<?=$duid?>' != '--:--:--:--:--:--:--:--:--:--:--:--:--:--:--:--')
+			$('#global-v6duid').val('<?=$duid?>');
+	});
+
+	// On clicking IPv6 over IPv4 Tunneling checkbox
+	$('#ipv6nat_enable').click(function () {
+		showHideIpv6nat();
+	});
+
+	// On page load
+	showHideIpv6nat();
+	setIpv6duid();
+	showHideIpv6duid();
+
+
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

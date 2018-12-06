@@ -1,59 +1,26 @@
 <?php
 /*
-	firewall_nat_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_nat_edit.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -79,29 +46,23 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['nat']['rule'])) {
-	$config['nat']['rule'] = array();
-}
-
+init_config_arr(array('filter', 'rule'));
+init_config_arr(array('nat', 'separator'));
+init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
+$a_separators = &$config['nat']['separator'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (is_numericint($_GET['after']) || $_GET['after'] == "-1") {
-	$after = $_GET['after'];
-}
-if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
-	$after = $_POST['after'];
+if (isset($_REQUEST['after']) && (is_numericint($_REQUEST['after']) || $_REQUEST['after'] == "-1")) {
+	$after = $_REQUEST['after'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$after = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_nat[$id]) {
@@ -143,7 +104,7 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['srcendport'] = "any";
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);
 }
 
@@ -153,15 +114,19 @@ if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 unset($input_errors);
 
 foreach ($_POST as $key => $value) {
+	if ($key == 'descr') {
+		continue;
+	}
+
 	$temp = $value;
 	$newpost = htmlentities($temp);
+
 	if ($newpost != $temp) {
 		$input_errors[] = sprintf(gettext("Invalid characters detected %s. Please remove invalid characters and save again."), $temp);
 	}
 }
 
-if ($_POST) {
-
+if ($_POST['save']) {
 	if (strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") {
 		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport']) {
 			$_POST['srcbeginport'] = trim($_POST['srcbeginport_cust']);
@@ -285,6 +250,10 @@ if ($_POST) {
 		$_POST['localip'] = trim($_POST['localip']);
 	}
 
+	if (!array_key_exists($_POST['interface'], create_interface_list())) {
+		$input_errors[] = gettext("The submitted interface does not exist.");
+	}
+
 	if (!isset($_POST['nordr']) && ($_POST['localip'] && !is_ipaddroralias($_POST['localip']))) {
 		$input_errors[] = sprintf(gettext("\"%s\" is not a valid redirect target IP address or host alias."), $_POST['localip']);
 	}
@@ -293,21 +262,21 @@ if ($_POST) {
 		$input_errors[] = sprintf(gettext("Redirect target IP must be IPv4."));
 	}
 
-	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) {
+	if ($_POST['srcbeginport'] && !is_port_or_alias($_POST['srcbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcbeginport']);
 	}
-	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport'])) {
+	if ($_POST['srcendport'] && !is_port_or_alias($_POST['srcendport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid end source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcendport']);
 	}
-	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport'])) {
+	if ($_POST['dstbeginport'] && !is_port_or_alias($_POST['dstbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstbeginport']);
 	}
-	if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport'])) {
+	if ($_POST['dstendport'] && !is_port_or_alias($_POST['dstendport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstendport']);
 	}
 
-	if ((strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") && (!isset($_POST['nordr']) && !is_portoralias($_POST['localbeginport']))) {
-		$input_errors[] = sprintf(gettext("A valid redirect target port must be specified. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
+	if ((strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") && (!isset($_POST['nordr']) && !is_port_or_alias($_POST['localbeginport']))) {
+		$input_errors[] = sprintf(gettext("%s is not a valid redirect target port. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */
@@ -355,7 +324,7 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		if (!isset($_POST['nordr']) && ($_POST['dstendport'] - $_POST['dstbeginport'] + $_POST['localbeginport']) > 65535) {
+		if (!isset($_POST['nordr']) && ((int) $_POST['dstendport'] - (int) $_POST['dstbeginport'] + (int) $_POST['localbeginport']) > 65535) {
 			$input_errors[] = gettext("The target port range must be an integer between 1 and 65535.");
 		}
 	}
@@ -391,8 +360,13 @@ if ($_POST) {
 
 		$natent = array();
 
-		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
-		$natent['nordr'] = isset($_POST['nordr']) ? true:false;
+		if (isset($_POST['disabled'])) {
+			$natent['disabled'] = true;
+		}
+
+		if (isset($_POST['nordr'])) {
+			$natent['nordr'] = true;
+		}
 
 		if ($natent['nordr']) {
 			$_POST['associated-rule-id'] = '';
@@ -409,7 +383,7 @@ if ($_POST) {
 
 		$natent['protocol'] = $_POST['proto'];
 
-		if (!$natent['nordr']) {
+		if (!isset($natent['nordr'])) {
 			$natent['target'] = $_POST['localip'];
 			$natent['local-port'] = $_POST['localbeginport'];
 		}
@@ -483,8 +457,12 @@ if ($_POST) {
 			$filterent['protocol'] = $_POST['proto'];
 			$filterent['destination']['address'] = $_POST['localip'];
 
+			if (isset($_POST['disabled'])) {
+				$filterent['disabled'] = true;
+			}
+
 			$dstpfrom = $_POST['localbeginport'];
-			$dstpto = $dstpfrom + $_POST['dstendport'] - $_POST['dstbeginport'];
+			$dstpto = (int) $dstpfrom + (int) $_POST['dstendport'] - (int) $_POST['dstbeginport'];
 
 			if ($dstpfrom == $dstpto) {
 				$filterent['destination']['port'] = $dstpfrom;
@@ -520,6 +498,15 @@ if ($_POST) {
 
 		// Update the NAT entry now
 		if (isset($id) && $a_nat[$id]) {
+
+			if (isset($natent['associated-rule-id']) &&
+			    (isset($a_nat[$id]['disabled']) !== isset($natent['disabled']))) {
+				// Check for filter rule associations
+				toggle_id($natent['associated-rule-id'],
+				    $config['filter']['rule'],
+				    !isset($natent['disabled']));
+				mark_subsystem_dirty('filter');
+			}
 			$a_nat[$id] = $natent;
 		} else {
 			$natent['created'] = make_config_revision_entry();
@@ -527,7 +514,6 @@ if ($_POST) {
 				array_splice($a_nat, $after+1, 0, array($natent));
 
 				// Update the separators
-				$a_separators = &$config['nat']['separator'];
 				$ridx = $after;
 				$mvnrows = +1;
 				move_separators($a_separators, $ridx, $mvnrows);
@@ -536,7 +522,7 @@ if ($_POST) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Port Forward - saved/edited a port forward rule."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -605,12 +591,15 @@ function build_dsttype_list() {
 		}
 	}
 
+	//Temporary array so we can sort IPs
+	$templist = array();
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
 			if (is_ipaddrv6($sn['subnet'])) {
 				continue;
 			}
-			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
+				$templist[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
 				if (isset($sn['noexpand'])) {
 					continue;
 				}
@@ -621,15 +610,18 @@ function build_dsttype_list() {
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
 
-					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
+					$templist[$snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
-
-				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			} else {
-				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+				$templist[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
 	}
+
+	//Sort temp IP array and append onto main array
+	asort($templist);
+	$list = array_merge($list, $templist);
+	unset($templist);
 
 	return($list);
 }
@@ -652,6 +644,7 @@ function dsttype_selected() {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"), gettext("Edit"));
+$pglinks = array("", "firewall_nat.php", "firewall_nat.php", "@self");
 include("head.inc");
 
 if ($input_errors) {
@@ -676,46 +669,18 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['nordr']
 ))->setHelp('This option is rarely needed. Don\'t use this without thorough knowledge of the implications.');
 
-$iflist = get_configured_interface_with_descr(false, true);
-
-foreach ($iflist as $if => $ifdesc) {
-	if (have_ruleint_access($if)) {
-		$interfaces[$if] = $ifdesc;
-	}
-}
-
-if ($config['l2tp']['mode'] == "server") {
-	if (have_ruleint_access("l2tp")) {
-		$interfaces['l2tp'] = gettext("L2TP VPN");
-	}
-}
-
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-	$interfaces['pppoe'] = gettext("PPPoE Server");
-}
-
-/* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$interfaces["enc0"] = gettext("IPsec");
-}
-
-/* add openvpn/tun interfaces */
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$interfaces["openvpn"] = gettext("OpenVPN");
-}
-
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
-	$interfaces
+	filter_get_interface_list()
 ))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
 
 $protocols = "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP PIM OSPF";
 
 $section->addInput(new Form_Select(
 	'proto',
-	'Protocol',
+	'*Protocol',
 	$pconfig['proto'],
 	array_combine(explode(" ", strtolower($protocols)), explode(" ", $protocols))
 ))->setHelp('Choose which protocol this rule should match. In most cases "TCP" is specified.');
@@ -754,8 +719,9 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'src',
 	null,
-	is_specialnet($pconfig['src']) ? '': $pconfig['src']
-))->setPattern('[.a-zA-Z0-9_:]+')->addMask('srcmask', $pconfig['srcmask'])->setHelp('Address/mask');
+	is_specialnet($pconfig['src']) ? '': $pconfig['src'],
+	'ALIASV4V6'
+))->addMask('srcmask', $pconfig['srcmask'])->setHelp('Address/mask');
 
 $section->add($group);
 
@@ -802,7 +768,7 @@ $group->setHelp('Specify the source port or port range for this rule. This is us
 
 $section->add($group);
 
-$group = new Form_Group('Destination');
+$group = new Form_Group('*Destination');
 
 $group->add(new Form_Checkbox(
 	'dstnot',
@@ -821,12 +787,13 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'dst',
 	null,
-	is_specialnet($pconfig['dst']) ? '': $pconfig['dst']
-))->setPattern('[.a-zA-Z0-9_:]+')->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
+	is_specialnet($pconfig['dst']) ? '': $pconfig['dst'],
+	'ALIASV4V6'
+))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
 
 $section->add($group);
 
-$group = new Form_Group('Destination port range');
+$group = new Form_Group('*Destination port range');
 $group->addClass('dstportrange');
 
 $group->add(new Form_Select(
@@ -864,12 +831,12 @@ $section->add($group);
 
 $section->addInput(new Form_IpAddress(
 	'localip',
-	'Redirect target IP',
-	$pconfig['localip']
-))->setPattern('[.a-zA-Z0-9_:]+')->setHelp('Enter the internal IP address of the server on which to map the ports.' . '<br />' .
-			'e.g.: 192.168.1.12');
+	'*Redirect target IP',
+	$pconfig['localip'],
+	'ALIASV4V6'
+))->setHelp('Enter the internal IP address of the server on which to map the ports.%s e.g.: 192.168.1.12', '<br />');
 
-$group = new Form_Group('Redirect target port');
+$group = new Form_Group('*Redirect target port');
 $group->addClass('lclportrange');
 
 $group->add(new Form_Select(
@@ -880,8 +847,8 @@ $group->add(new Form_Select(
 ))->setHelp('Port');
 
 $group->setHelp('Specify the port on the machine with the IP address entered above. In case of a port range, specify the ' .
-				'beginning port of the range (the end port will be calculated automatically).' . '<br />' .
-				'This is usually identical to the "From port" above.');
+				'beginning port of the range (the end port will be calculated automatically).%s' .
+				'This is usually identical to the "From port" above.', '<br />');
 
 $group->add(new Form_Input(
 	'localbeginport_cust',
@@ -920,7 +887,7 @@ $section->addInput(new Form_Select(
 	)
 ));
 
-if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['dup']))) {
+if (isset($id) && $a_nat[$id] && (!isset($_POST['dup']) || !is_numericint($_POST['dup']))) {
 
 	$hlpstr = '';
 	$rulelist = array('' => gettext('None'), 'pass' => gettext('Pass'));
@@ -965,28 +932,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 
 $form->add($section);
 
-$has_created_time = (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created']));
-$has_updated_time = (isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['updated']));
-
-if ($has_created_time || $has_updated_time) {
-	$section = new Form_Section('Rule Information');
-
-	if ($has_created_time) {
-		$section->addInput(new Form_StaticText(
-			'Created',
-			date(gettext("n/j/y H:i:s"), $a_nat[$id]['created']['time']) . gettext(" by ") . $a_nat[$id]['created']['username']
-		));
-	}
-
-	if ($has_updated_time) {
-		$section->addInput(new Form_StaticText(
-			'Updated',
-			date(gettext("n/j/y H:i:s"), $a_nat[$id]['updated']['time']) . gettext(" by ") . $a_nat[$id]['updated']['username']
-		));
-	}
-
-	$form->add($section);
-}
+gen_created_updated_fields($form, $a_nat[$id]['created'], $a_nat[$id]['updated']);
 
 if (isset($id) && $a_nat[$id]) {
 	$form->addGlobal(new Form_Input(
@@ -1084,49 +1030,14 @@ events.push(function() {
 	function check_for_aliases() {
 		//	if External port range is an alias, then disallow
 		//	entry of Local port
-		//
 		for (i = 0; i < customarray.length; i++) {
-			if ($('#dstbeginport_cust').val() == customarray[i]) {
+			if (($('#dstbeginport_cust').val() == customarray[i]) || ($('#dstendport_cust').val() == customarray[i])) {
 				$('#dstendport_cust').val(customarray[i]);
 				$('#localbeginport_cust').val(customarray[i]);
-				disableInput('dstendport_cust', true);
-				disableInput('localbeginport', true);
-				disableInput('localbeginport_cust', true);
 				disableInput('dstendport_cust', false);
 				disableInput('localbeginport', false);
 				disableInput('localbeginport_cust', false);
 			}
-			if ($('#dstbeginport').val() == customarray[i]) {
-				$('#dstendport_cust').val(customarray[i]);
-				$('#localbeginport_cust').val(customarray[i]);
-				disableInput('dstendport_cust', true);
-				disableInput('localbeginport', true);
-				disableInput('localbeginport_cust', true);
-				disableInput('dstendport_cust', false);
-				disableInput('localbeginport', false);
-				disableInput('localbeginport_cust', false);
-			}
-			if ($('#dstendport_cust').val() == customarray[i]) {
-				$('#dstendport_cust').val(customarray[i]);
-				$('#localbeginport_cust').val(customarray[i]);
-				disableInput('dstendport_cust', true);
-				disableInput('localbeginport', true);
-				disableInput('localbeginport_cust', true);
-				disableInput('dstendport_cust', false);
-				disableInput('localbeginport', false);
-				disableInput('localbeginport_cust', false);
-			}
-			if ($('#dstendport').val() == customarray[i]) {
-				$('#dstendport_cust').val(customarray[i]);
-				$('#localbeginport_cust').val(customarray[i]);
-				disableInput('dstendport_cust', true);
-				disableInput('localbeginport', true);
-				disableInput('localbeginport_cust', true);
-				disableInput('dstendport_cust', false);
-				ddisableInput('localbeginport', false);
-				disableInput('localbeginport_cust', false);
-			}
-
 		}
 	}
 
@@ -1270,7 +1181,13 @@ events.push(function() {
 
 	hideSource(!srcenabled);
 	ext_change();
-	dst_change($('#interface').val(),'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
+<?php
+if (!$_POST) {
+?>
+	dst_change($('#interface').val(),'<?=htmlspecialchars(addslashes($pconfig['interface']))?>','<?=htmlspecialchars($pconfig['dst'])?>');
+<?php
+}
+?>
 	iface_old = $('#interface').val();
 	typesel_change();
 	proto_change();

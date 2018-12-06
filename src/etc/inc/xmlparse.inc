@@ -1,60 +1,27 @@
 <?php
 /*
-	xmlparse.inc
-	functions to parse/dump configuration files in XML format
-
-	part of pfSense (https://www.pfsense.org)
-	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC.
-	All rights reserved.
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in
-	   the documentation and/or other materials provided with the
-	   distribution.
-
-	3. All advertising materials mentioning features or use of this software
-	   must display the following acknowledgment:
-	   "This product includes software developed by the pfSense Project
-	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
-
-	4. The names "pfSense" and "pfSense Project" must not be used to
-	   endorse or promote products derived from this software without
-	   prior written permission. For written permission, please contact
-	   coreteam@pfsense.org.
-
-	5. Products derived from this software may not be called "pfSense"
-	   nor may "pfSense" appear in their names without prior written
-	   permission of the Electric Sheep Fencing, LLC.
-
-	6. Redistributions of any form whatsoever must retain the following
-	   acknowledgment:
-
-	"This product includes software developed by the pfSense Project
-	for use in the pfSense software distribution (http://www.pfsense.org/).
-
-	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-	OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * xmlparse.inc
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * originally part of m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /* The following items will be treated as arrays in config.xml */
 function listtags() {
@@ -80,8 +47,8 @@ function listtags() {
 		'qinqentry', 'queue',
 		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
 		'schedule', 'service', 'servernat', 'servers',
-		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue',
-		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan',
+		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue', 'switch', 'swport',
+		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'vlangroup',
 		'winsserver', 'wolentry', 'widget'
 	);
 	return array_flip($ret);
@@ -117,7 +84,8 @@ function startElement($parser, $name, $attrs) {
 
 	} else if (isset($ptr)) {
 		/* multiple entries not allowed for this element, bail out */
-		die(sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
+		throw new Exception(
+		    sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
 		    $name,
 		    xml_get_current_line_number($parser)));
 	}
@@ -245,6 +213,19 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	}
 }
 
+/* Return true if a field should be cdata encoded */
+function is_cdata_entity($ent) {
+	$cdata_fields = array(
+		'auth_prompt', 'certca', 'certname', 'city', 'common_name',
+		'descr', 'detail', 'email', 'ldap_attr', 'ldap_authcn',
+		'ldap_basedn', 'ldap_bind', 'ldap_extended_query',
+		'login_banner', 'organization', 'state', 'text'
+	);
+
+	/* Check if the entity name starts with any of the strings above */
+	return preg_match('/(^' . implode('|^', $cdata_fields) . ')/', $ent) === 1;
+}
+
 function dump_xml_config_sub($arr, $indent) {
 
 	global $listtags;
@@ -259,7 +240,7 @@ function dump_xml_config_sub($arr, $indent) {
 					if (is_array($cval)) {
 						if (empty($cval)) {
 							$xmlconfig .= str_repeat("\t", $indent);
-							$xmlconfig .= "<$ent/>\n";
+							$xmlconfig .= "<$ent></$ent>\n";
 						} else {
 							$xmlconfig .= str_repeat("\t", $indent);
 							$xmlconfig .= "<$ent>\n";
@@ -273,15 +254,8 @@ function dump_xml_config_sub($arr, $indent) {
 						}
 						$xmlconfig .= str_repeat("\t", $indent);
 						if ((is_bool($cval) && $cval == true) || ($cval === "")) {
-							$xmlconfig .= "<$ent/>\n";
-						} else if ((substr($ent, 0, 5) == "descr") ||
-						    (substr($ent, 0, 6) == "detail") ||
-						    (substr($ent, 0, 12) == "login_banner") ||
-						    (substr($ent, 0, 9) == "ldap_attr") ||
-						    (substr($ent, 0, 9) == "ldap_bind") ||
-						    (substr($ent, 0, 11) == "ldap_basedn") ||
-						    (substr($ent, 0, 18) == "ldap_authcn") ||
-						    (substr($ent, 0, 19) == "ldap_extended_query")) {
+							$xmlconfig .= "<$ent></$ent>\n";
+						} else if (is_cdata_entity($ent)) {
 							$xmlconfig .= "<$ent><![CDATA[" . htmlentities($cval) . "]]></$ent>\n";
 						} else {
 							$xmlconfig .= "<$ent>" . htmlentities($cval) . "</$ent>\n";
@@ -290,7 +264,7 @@ function dump_xml_config_sub($arr, $indent) {
 				}
 			} else if (empty($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent/>\n";
+				$xmlconfig .= "<$ent></$ent>\n";
 			} else {
 				/* it's an array */
 				$xmlconfig .= str_repeat("\t", $indent);
@@ -302,18 +276,10 @@ function dump_xml_config_sub($arr, $indent) {
 		} else {
 			if ((is_bool($val) && ($val == true)) || ($val === "")) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent/>\n";
+				$xmlconfig .= "<$ent></$ent>\n";
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				if ((substr($ent, 0, 5) == "descr") ||
-				    (substr($ent, 0, 6) == "detail") ||
-				    (substr($ent, 0, 12) == "login_banner") ||
-				    (substr($ent, 0, 9) == "ldap_attr") ||
-				    (substr($ent, 0, 9) == "ldap_bind") ||
-				    (substr($ent, 0, 11) == "ldap_basedn") ||
-				    (substr($ent, 0, 18) == "ldap_authcn") ||
-				    (substr($ent, 0, 19) == "ldap_extended_query") ||
-				    (substr($ent, 0, 5) == "text")) {
+				if (is_cdata_entity($ent)) {
 					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
 				} else {
 					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";

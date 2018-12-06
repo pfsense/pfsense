@@ -1,4 +1,30 @@
 #!/bin/sh
+#
+# rc.php-fpm-restart
+#
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2014-2018 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
+#
+# originally based on m0n0wall (http://neon1.net/m0n0wall)
+# Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+echo ">>> Killing check_reload_status"
+/bin/pkill -9 check_reload_status
+sleep 2
 
 echo ">>> Killing php-fpm"
 /bin/pkill -F /var/run/php-fpm.pid
@@ -6,7 +32,6 @@ sleep 2
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini
-/etc/rc.conf_mount_rw
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt
 /bin/rm -f /var/run/php-fpm.pid 2>/dev/null
 /bin/rm -f /var/run/php-fpm.socket 2>/dev/null
@@ -15,8 +40,10 @@ if [ -f /tmp/xmlrpc.lock ]; then
 	echo ">>> Found XMLRPC lock. Removing." | /usr/bin/logger -p daemon.info -i -t rc.php-fpm_restart
 	rm /tmp/xmlrpc.lock
 fi
-/etc/rc.conf_mount_ro
 echo ">>> Restarting php-fpm" | /usr/bin/logger -p daemon.info -i -t rc.php-fpm_restart
 echo ">>> Starting php-fpm"
 /usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 
+# restart check_reload_status
+echo ">>> Starting check_reload_status"
+/usr/bin/nice -n20 /usr/local/sbin/check_reload_status

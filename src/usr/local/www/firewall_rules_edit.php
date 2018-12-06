@@ -1,59 +1,26 @@
 <?php
 /*
-	firewall_rules_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_rules_edit.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -68,6 +35,32 @@ require_once("ipsec.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+/* build icmptypes valid for IPv4, IPv6 and IPv<any> */
+$icmptypes4 = array('any' => gettext('any'));
+$icmptypes6 = array('any' => gettext('any'));
+$icmptypes46 = array('any' => gettext('any'));
+
+// ICMP descriptions may be translated, so require escaping to handle single quotes (in particular)
+foreach ($icmptypes as $k => $v) {
+	$description = addslashes($v['descrip']);
+
+	if ($v['valid4']) {
+		$icmptypes4[$k] = $description;
+		if ($v['valid6']) {
+			$icmptypes6[$k] = $description;
+			$icmptypes46[$k] = $description;
+		}
+	} else {
+		$icmptypes6[$k] = $description;
+	}
+}
+
+$icmplookup = array(
+	'inet' => array('name' => 'IPv4', 'icmptypes' => $icmptypes4, 'helpmsg' => gettext('For ICMP rules on IPv4, one or more of these ICMP subtypes may be specified.')),
+	'inet6' => array('name' => 'IPv6', 'icmptypes' => $icmptypes6, 'helpmsg' => gettext('For ICMP rules on IPv6, one or more of these ICMP subtypes may be specified.')),
+	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46, 'helpmsg' => sprintf(gettext('For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be specified. (Other ICMP subtypes are only valid under IPv4 %1$sor%2$s IPv6, not both)'), '<i>', '</i>'))
+);
+
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];
 } else {
@@ -75,8 +68,8 @@ if (isset($_POST['referer'])) {
 }
 
 function is_posnumericint($arg) {
-	// Note that to be safe we do not allow any leading zero - "01", "007"
-	return (is_numericint($arg) && $arg[0] != '0' && $arg > 0);
+	// Integer > 0? (Note that to be safe we do not allow any leading zero - "01", "007")
+	return (is_numericint($arg) && $arg[0] != '0');
 }
 
 function is_aoadv_used($rule_config) {
@@ -140,34 +133,27 @@ if (count($ostypes) > 2) {
 
 $specialsrcdst = explode(" ", "any (self) pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
+
 foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}";
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['filter']['rule'])) {
-	$config['filter']['rule'] = array();
-}
+init_config_arr(array('filter', 'rule'));
 filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (is_numericint($_GET['after']) || $_GET['after'] == "-1") {
-	$after = $_GET['after'];
-}
-if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
-	$after = $_POST['after'];
+if (isset($_REQUEST['after']) && (is_numericint($_REQUEST['after']) || $_REQUEST['after'] == "-1")) {
+	$after = $_REQUEST['after'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$after = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_filter[$id]) {
@@ -208,6 +194,8 @@ if (isset($id) && $a_filter[$id]) {
 
 	if (isset($a_filter[$id]['ipprotocol'])) {
 		$pconfig['ipprotocol'] = $a_filter[$id]['ipprotocol'];
+	} else {
+		$pconfig['ipprotocol'] = 'inet';
 	}
 
 	if (isset($a_filter[$id]['protocol'])) {
@@ -296,7 +284,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['sched'] = (($a_filter[$id]['sched'] == "none") ? '' : $a_filter[$id]['sched']);
 	$pconfig['vlanprio'] = (($a_filter[$id]['vlanprio'] == "none") ? '' : $a_filter[$id]['vlanprio']);
 	$pconfig['vlanprioset'] = (($a_filter[$id]['vlanprioset'] == "none") ? '' : $a_filter[$id]['vlanprioset']);
-	if (!isset($_GET['dup']) || !is_numericint($_GET['dup'])) {
+	if (!isset($_REQUEST['dup']) || !is_numericint($_REQUEST['dup'])) {
 		$pconfig['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 	}
 
@@ -304,17 +292,19 @@ if (isset($id) && $a_filter[$id]) {
 
 } else {
 	/* defaults */
-	if ($_GET['if']) {
-		$pconfig['interface'] = $_GET['if'];
+	if ($_REQUEST['if']) {
+		$pconfig['interface'] = $_REQUEST['if'];
 	}
+	$pconfig['ipprotocol'] = "inet"; // other things depend on this, set a sensible default
 	$pconfig['type'] = "pass";
+	$pconfig['proto'] = "tcp"; // for new blank rules, default=tcp, also ensures ports fields are visible
 	$pconfig['src'] = "any";
 	$pconfig['dst'] = "any";
 }
 /* Allow the FloatingRules to work */
 $if = $pconfig['interface'];
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);
 }
 
@@ -324,9 +314,26 @@ read_dummynet_config(); /* XXX: */
 $dnqlist =& get_unique_dnqueue_list();
 $a_gatewaygroups = return_gateway_groups_array();
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
+
+	if (!array_key_exists($_POST['ipprotocol'], $icmplookup)) {
+		$input_errors[] = gettext("The IP protocol is not recognized.");
+		unset($_POST['ipprotocol']);
+	}
+
+	// add validation + input error for $_POST['interface']
+
+	$valid = ($_POST['interface'] == "FloatingRules" || isset($_POST['floating'])) ? ['pass','block','reject', 'match'] : ['pass','block','reject'];
+	if (!(is_string($_POST['type'])  && in_array($_POST['type'], $valid))) {
+		$input_errors[] = gettext("A valid rule type is not selected.");
+		unset($_POST['type']);
+	}
+
+	if (isset($_POST['tracker']) && !is_numericint($_POST['tracker'])) {
+		unset($_POST['tracker']);	// silently unset hidden input if invalid
+	}
 
 	if (isset($a_filter[$id]['associated-rule-id'])) {
 		$_POST['proto'] = $pconfig['proto'];
@@ -335,41 +342,31 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
+	if (isset($_POST['ipprotocol']) && $_POST['gateway'] <> '') {
 		if (is_array($config['gateways']['gateway_group'])) {
 			foreach ($config['gateways']['gateway_group'] as $gw_group) {
-				if ($gw_group['name'] == $_POST['gateway']) {
-					$family = $a_gatewaygroups[$_POST['gateway']]['ipprotocol'];
-					if ($_POST['ipprotocol'] == $family) {
-						continue;
-					}
-					if (($_POST['ipprotocol'] == "inet46") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("A gateway can not be assigned to a rule that applies to IPv4 and IPv6");
-					}
-					if (($_POST['ipprotocol'] == "inet6") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("An IPv4 gateway group can not be assigned on an IPv6 Address Family rule");
-					}
-					if (($_POST['ipprotocol'] == "inet") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("An IPv6 gateway group can not be assigned on an IPv4 Address Family rule");
+				if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
+					if ($_POST['ipprotocol'] == "inet46") {
+						$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
+					} elseif ($_POST['ipprotocol'] == "inet6") {
+						$input_errors[] = gettext("An IPv4 gateway group can not be assigned in IPv6 rules.");
+					} elseif ($_POST['ipprotocol'] == "inet") {
+						$input_errors[] = gettext("An IPv6 gateway group can not be assigned in IPv4 rules.");
 					}
 				}
 			}
 		}
-	}
-	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "") && (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-		if (($_POST['ipprotocol'] == "inet46") && ($_POST['gateway'] <> "")) {
-			$input_errors[] = gettext("A gateway can not be assigned to a rule that applies to IPv4 and IPv6");
-		}
-		if (($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-			$input_errors[] = gettext("An IPv4 Gateway can not be assigned to an IPv6 Filter rule");
-		}
-		if (($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-			$input_errors[] = gettext("An IPv6 Gateway can not be assigned to an IPv4 Filter rule");
-		}
-	}
-	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] <> "")) {
-		if ($_POST['ipprotocol'] == "inet46") {
-			$input_errors[] = gettext("An ICMP type can not be assigned to a rule that applies to IPv4 and IPv6");
+		if ($iptype = is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway']))) {
+			// this also implies that  $_POST['gateway'] was set and not empty
+			if ($_POST['ipprotocol'] == "inet46") {
+				$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
+			}
+			if (($_POST['ipprotocol'] == "inet6") && ($iptype != 6)) {
+				$input_errors[] = gettext("An IPv4 gateway can not be assigned in IPv6 rules.");
+			}
+			if (($_POST['ipprotocol'] == "inet") && ($iptype != 4)) {
+				$input_errors[] = gettext("An IPv6 gateway can not be assigned in IPv4 rules.");
+			}
 		}
 	}
 
@@ -440,6 +437,17 @@ if ($_POST) {
 
 	$pconfig = $_POST;
 
+	if (!isset($pconfig['ipprotocol'])) {
+		// other things depend on this, so ensure a valid value if none provided
+		$pconfig['ipprotocol'] = "inet";
+	}
+
+	if (($_POST['proto'] == "icmp") && count($_POST['icmptype'])) {
+		$pconfig['icmptype'] = implode(',', $_POST['icmptype']);
+	} else {
+		unset($pconfig['icmptype']);
+	}
+
 	/* input validation */
 	$reqdfields = explode(" ", "type proto");
 	if (isset($a_filter[$id]['associated-rule-id']) === false) {
@@ -483,16 +491,16 @@ if ($_POST) {
 		$_POST['dstendport'] = 0;
 	}
 
-	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) {
+	if ($_POST['srcbeginport'] && !is_port_or_alias($_POST['srcbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcbeginport']);
 	}
-	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport'])) {
+	if ($_POST['srcendport'] && !is_port_or_alias($_POST['srcendport'])) {
 			$input_errors[] = sprintf(gettext("%s is not a valid end source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcendport']);
 	}
-	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport'])) {
+	if ($_POST['dstbeginport'] && !is_port_or_alias($_POST['dstbeginport'])) {
 			$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstbeginport']);
 	}
-	if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport'])) {
+	if ($_POST['dstendport'] && !is_port_or_alias($_POST['dstendport'])) {
 			$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstendport']);
 	}
 	if (!$_POST['srcbeginport_cust'] && $_POST['srcendport_cust']) {
@@ -501,7 +509,7 @@ if ($_POST) {
 		}
 	}
 	if ($_POST['srcbeginport_cust'] && $_POST['srcendport_cust']) {
-		if (is_alias($_POST['srcendport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust']) {
+		if (is_alias($_POST['srcbeginport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust']) {
 			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
 		}
 		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust'] != '')) ||
@@ -515,7 +523,7 @@ if ($_POST) {
 		}
 	}
 	if ($_POST['dstbeginport_cust'] && $_POST['dstendport_cust']) {
-		if (is_alias($_POST['dstendport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust']) {
+		if (is_alias($_POST['dstbeginport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust']) {
 			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
 		}
 		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust'] != '')) ||
@@ -525,10 +533,10 @@ if ($_POST) {
 	}
 
 	if ($_POST['src']) {
-		$_POST['src'] = trim($_POST['src']);
+		$_POST['src'] = addrtolower(trim($_POST['src']));
 	}
 	if ($_POST['dst']) {
-		$_POST['dst'] = trim($_POST['dst']);
+		$_POST['dst'] = addrtolower(trim($_POST['dst']));
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */
@@ -561,18 +569,18 @@ if ($_POST) {
 	}
 	if ((is_ipaddr($_POST['src']) && is_ipaddr($_POST['dst']))) {
 		if (!validate_address_family($_POST['src'], $_POST['dst'])) {
-			$input_errors[] = sprintf(gettext("The Source IP address %s Address Family differs from the destination %s."), $_POST['src'], $_POST['dst']);
+			$input_errors[] = gettext("The source and destination IP addresses must have the same family (IPv4 / IPv6).");
 		}
 	}
 	if ((is_ipaddrv6($_POST['src']) || is_ipaddrv6($_POST['dst'])) && ($_POST['ipprotocol'] == "inet")) {
-		$input_errors[] = gettext("IPv6 addresses cannot be used in IPv4 rules.");
+		$input_errors[] = gettext("IPv6 addresses cannot be used in IPv4 rules (except within an alias).");
 	}
 	if ((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6")) {
-		$input_errors[] = gettext("IPv4 addresses can not be used in IPv6 rules.");
+		$input_errors[] = gettext("IPv4 addresses can not be used in IPv6 rules (except within an alias).");
 	}
 
 	if ((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46")) {
-		$input_errors[] = gettext("An IPv4 or IPv6 address can not be used in combined IPv4 + IPv6 rules.");
+		$input_errors[] = gettext("IPv4 and IPv6 addresses can not be used in rules that apply to both IPv4 and IPv6 (except within an alias).");
 	}
 
 	if ($_POST['srcbeginport'] > $_POST['srcendport']) {
@@ -594,6 +602,36 @@ if ($_POST) {
 		if (!in_array($_POST['os'], $ostypes)) {
 			$input_errors[] = gettext("Invalid OS detection selection. Please select a valid OS.");
 		}
+	}
+
+	if ($_POST['proto'] == "icmp") {
+		$t = $_POST['icmptype'];
+		if (isset($t) && !is_array($t)) {
+			// shouldn't happen but avoids making assumptions for data-sanitising
+			$input_errors[] = gettext("ICMP types expected to be a list if present, but is not.");
+		} elseif (!isset($t) || count($t) == 0) {
+			// not specified or none selected
+			unset($_POST['icmptype']);
+		} elseif (isset($_POST['ipprotocol'])) {
+			// check data; if ipprotocol invalid then safe to skip this (we can't determine valid icmptypes, but input error already raised for ipprotocol)
+			$bad_types = array();
+			if ((count($t) == 1 && !isset($t['any'])) || count($t) > 1) {
+				// Only need to check valid if just one selected != "any", or >1 selected
+				$p = $_POST['ipprotocol'];
+				foreach ($t as $type) {
+					if (($p == 'inet' && !array_key_exists($type, $icmptypes4)) ||
+					    ($p == 'inet6' && !array_key_exists($type, $icmptypes6)) ||
+					    ($p == 'inet46' && !array_key_exists($type, $icmptypes46))) {
+							$bad_types[] = $type;
+					}
+				}
+			}
+			if (count($bad_types) > 0) {
+				$input_errors[] = sprintf(gettext("Invalid ICMP subtype: %s can not be used with %s."), implode(';', $bad_types),  $t['name']);
+			}
+		}
+	} else {
+		unset($_POST['icmptype']); // field not applicable, might hold junk from old hidden selections. Unset it.
 	}
 
 	if ($_POST['ackqueue'] != "") {
@@ -623,7 +661,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Please select a gateway, normally the interface selected gateway, so the limiters work correctly");
 		}
 	}
-	if (!empty($_POST['ruleid']) && !ctype_digit($_POST['ruleid'])) {
+	if (!empty($_POST['ruleid']) && !is_numericint($_POST['ruleid'])) {
 		$input_errors[] = gettext('ID must be an integer');
 	}
 
@@ -736,13 +774,12 @@ if ($_POST) {
 		$filterent['tracker'] = empty($_POST['tracker']) ? (int)microtime(true) : $_POST['tracker'];
 
 		$filterent['type'] = $_POST['type'];
+
 		if (isset($_POST['interface'])) {
 			$filterent['interface'] = $_POST['interface'];
-		}
+		} // FIXME: can $_POST['interface'] be unset at this point, if so then what?
 
-		if (isset($_POST['ipprotocol'])) {
-			$filterent['ipprotocol'] = $_POST['ipprotocol'];
-		}
+		$filterent['ipprotocol'] = $_POST['ipprotocol'];
 
 		if ($_POST['tcpflags_any']) {
 			$filterent['tcpflags_any'] = true;
@@ -828,14 +865,10 @@ if ($_POST) {
 			unset($filterent['protocol']);
 		}
 
-		if ($_POST['proto'] == "icmp") {
-			if ($filterent['ipprotocol'] == 'inet6' && $_POST['icmp6type']) {
-				$filterent['icmptype'] = $_POST['icmp6type'];
-			} else if ($filterent['ipprotocol'] != 'inet6' && $_POST['icmptype']) {
-				$filterent['icmptype'] = $_POST['icmptype'];
-			} else {
-				unset($filterent['icmptype']);
-			}
+		// Convert array of selected ICMP types to comma-separated string, for backwards compatibility (previously only allowed one type per rule)
+		if ($_POST['proto'] == "icmp" && is_array($_POST['icmptype']) && !isset($_POST['icmptype']['any']) && count($_POST['icmptype']) > 0) {
+			//if any of these conditions not met, rule would apply to all icmptypes, so we would unset
+			$filterent['icmptype'] = implode(',', $_POST['icmptype']);
 		} else {
 			unset($filterent['icmptype']);
 		}
@@ -863,7 +896,8 @@ if ($_POST) {
 		} else {
 			unset($filterent['log']);
 		}
-		strncpy($filterent['descr'], $_POST['descr'], 52);
+
+		$filterent['descr'] = trim($_POST['descr']);
 
 		if ($_POST['gateway'] != "") {
 			$filterent['gateway'] = $_POST['gateway'];
@@ -928,6 +962,7 @@ if ($_POST) {
 				$a_filter[$id] = $filterent;
 			} else {							// rule moved to different interface
 				// Update the separators of previous interface.
+				init_config_arr(array('filter', 'separator', strtolower($if)));
 				$a_separators = &$config['filter']['separator'][strtolower($if)];
 				$ridx = ifridx($if, $id);		// get rule index within interface
 				$mvnrows = -1;
@@ -936,6 +971,7 @@ if ($_POST) {
 				$a_filter[$id] = $filterent;	// save edited rule to new interface
 
 				// Update the separators of new interface.
+				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 				$ridx = ifridx($tmpif, $id);	// get rule index within interface
 				if ($ridx == 0) {				// rule was placed at the top
@@ -967,6 +1003,7 @@ if ($_POST) {
 				}
 
 				// Update the separators
+				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 				$ridx = ifridx($tmpif, $after);	// get rule index within interface
 				$mvnrows = +1;
@@ -978,7 +1015,7 @@ if ($_POST) {
 
 		filter_rules_sort();
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: Rules - saved/edited a firewall rule."))) {
 			mark_subsystem_dirty('filter');
 		}
 
@@ -1032,53 +1069,21 @@ function build_flag_table() {
 	return($flagtable);
 }
 
-function build_if_list() {
-	global $config;
-
-	$iflist = array();
-
-	// add group interfaces
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
-			if (have_ruleint_access($ifgen['ifname'])) {
-				$iflist[$ifgen['ifname']] = $ifgen['ifname'];
-			}
-		}
-	}
-
-	foreach (get_configured_interface_with_descr() as $ifent => $ifdesc) {
-		if (have_ruleint_access($ifent)) {
-			$iflist[$ifent] = $ifdesc;
-		}
-	}
-
-	if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp")) {
-		$iflist['l2tp'] = gettext('L2TP VPN');
-	}
-
-	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-		$iflist['pppoe'] = gettext("PPPoE Server");
-	}
-
-	// add ipsec interfaces
-	if (ipsec_enabled() && have_ruleint_access("enc0")) {
-		$iflist["enc0"] = gettext("IPsec");
-	}
-
-	// add openvpn/tun interfaces
-	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-		$iflist["openvpn"] = gettext("OpenVPN");
-	}
-
-	return($iflist);
-}
-
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
+$pglinks = array("");
 
 if ($if == "FloatingRules" || isset($pconfig['floating'])) {
+	$pglinks[] = "firewall_rules.php?if=FloatingRules";
 	$pgtitle[] = gettext('Floating');
+	$pglinks[] = "firewall_rules.php?if=FloatingRules";
+} elseif (!empty($if)) {
+	$pglinks = array("", "firewall_rules.php?if=" . $if);
+} else {
+	$pglinks = array("", "firewall_rules.php");
 }
+
 $pgtitle[] = gettext("Edit");
+$pglinks[] = "@self";
 $shortcut_section = "firewall";
 
 $page_filename = "firewall_rules_edit.php";
@@ -1138,14 +1143,14 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 
 $section->addInput(new Form_Select(
 	'type',
-	'Action',
+	'*Action',
 	$pconfig['type'],
 	$values
 ))->setHelp('Choose what to do with packets that match the criteria specified '.
-	'below.<br/>Hint: the difference between block and reject is that with '.
+	'below.%sHint: the difference between block and reject is that with '.
 	'reject, a packet (TCP RST or ICMP port unreachable for UDP) is returned '.
 	'to the sender, whereas with block the packet is dropped silently. In '.
-	'either case, the original packet is discarded.');
+	'either case, the original packet is discarded.', '<br/>');
 
 $section->addInput(new Form_Checkbox(
 	'disabled',
@@ -1204,24 +1209,24 @@ if ($edit_disabled) {
 if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 	$section->addInput($input = new Form_Select(
 		'interface',
-		'Interface',
+		'*Interface',
 		$pconfig['interface'],
-		build_if_list(),
+		filter_get_interface_list(),
 		true
 	))->setHelp('Choose the interface(s) for this rule.');
 } else {
 	$section->addInput($input = new Form_Select(
 		'interface',
-		'Interface',
+		'*Interface',
 		$pconfig['interface'],
-		build_if_list()
+		filter_get_interface_list()
 	))->setHelp('Choose the interface from which packets must come to match this rule.');
 }
 
 if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 	$section->addInput(new Form_Select(
 		'direction',
-		'Direction',
+		'*Direction',
 		$pconfig['direction'],
 		array(
 			'any' => gettext('any'),
@@ -1230,7 +1235,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		)
 	));
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'floating',
 		'Floating',
 		'hidden',
@@ -1240,7 +1245,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 
 $section->addInput(new Form_Select(
 	'ipprotocol',
-	'Address Family',
+	'*Address Family',
 	$pconfig['ipprotocol'],
 	array(
 		'inet' => 'IPv4',
@@ -1251,9 +1256,10 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'proto',
-	'Protocol',
+	'*Protocol',
 	$pconfig['proto'],
 	array(
+		'any' => gettext('Any'),
 		'tcp' => 'TCP',
 		'udp' => 'UDP',
 		'tcp/udp' => 'TCP/UDP',
@@ -1266,34 +1272,31 @@ $section->addInput(new Form_Select(
 		'pim' => 'PIM',
 		'ospf' => 'OSPF',
 		'sctp' => 'SCTP',
-		'any' => gettext('any'),
 		'carp' => 'CARP',
 		'pfsync' => 'PFSYNC',
 	)
 ))->setHelp('Choose which IP protocol this rule should match.');
 
-$section->addInput(new Form_Select(
+$group = new Form_Group("ICMP Subtypes");
+$group->add(new Form_Select(
 	'icmptype',
-	'ICMP type',
-	$pconfig['icmptype'],
-	$icmptypes
-))->setHelp('If ICMP is selected for the protocol above, an ICMP type may be specified here.');
+	'ICMP subtypes',
+	((isset($pconfig['icmptype']) && strlen($pconfig['icmptype']) > 0) ? explode(',', $pconfig['icmptype']) : 'any'),
+	isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['icmptypes'] : array('any' => gettext('any')),
+	true
+))->setHelp('%s', '<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['helpmsg'] : '') . '</div>');
+$group->addClass('icmptype_section');
 
-$section->addInput(new Form_Select(
-	'icmp6type',
-	'ICMPv6 type',
-	$pconfig['icmptype'],
-	$icmp6types
-))->setHelp('If ICMP is selected for the protocol above, an ICMP type may be specified here.');
+$section->add($group);
 
 $form->add($section);
 
 // Source and destination share a lot of logic. Loop over the two
 // ToDo: Unfortunately they seem to differ more than they share. This needs to be unrolled
-foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
+foreach (['src' => gettext('Source'), 'dst' => gettext('Destination')] as $type => $name) {
 	$section = new Form_Section($name);
 
-	$group = new Form_Group($name);
+	$group = new Form_Group('*' . $name);
 	$group->add(new Form_Checkbox(
 		$type .'not',
 		$name .' not',
@@ -1303,7 +1306,10 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 
 	// The rule type dropdown on the GUI can be one of the special names like
 	// "any" "LANnet" "LAN address"... or "Single host or alias" or "Network"
-	if (is_specialnet($pconfig[$type])) {
+	if ($pconfig[$type.'type']) {
+		// The rule type came from the $_POST array, after input errors, so keep it.
+		$ruleType = $pconfig[$type.'type'];
+	} elseif (is_specialnet($pconfig[$type])) {
 		// It is one of the special names, let it through as-is.
 		$ruleType = $pconfig[$type];
 	} elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||
@@ -1355,27 +1361,30 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$group->add(new Form_IpAddress(
 		$type,
 		$name .' Address',
-		$pconfig[$type]
-	))->addMask($type .'mask', $pconfig[$type.'mask'])->setPattern('[a-zA-Z0-9\_\.\:]+');
+		$pconfig[$type],
+		'ALIASV4V6'
+	))->addMask($type .'mask', $pconfig[$type.'mask']);
 
 	$section->add($group);
 
 	if ($type == 'src') {
 		$section->addInput(new Form_Button(
-			'btnsrcadv',
-			'Display Advanced',
+			'btnsrctoggle',
+			'',
 			null,
 			'fa-cog'
-		))->setAttribute('type','button')->addClass('btn-info btn-sm');
+		))->setAttribute('type','button')->addClass('btn-info btn-sm')->setHelp(
+			'The %1$sSource Port Range%2$s for a connection is typically random '.
+			'and almost never equal to the destination port. '.
+			'In most cases this setting must remain at its default value, %1$sany%2$s.', '<b>', '</b>');
 	}
 
 	$portValues = ['' => gettext('(other)'), 'any' => gettext('any')];
-
 	foreach ($wkports as $port => $portName) {
 		$portValues[$port] = $portName.' ('. $port .')';
 	}
 
-	$group = new Form_Group($name .' port range');
+	$group = new Form_Group($type == 'src' ? gettext('Source Port Range') : gettext('Destination Port Range'));
 
 	$group->addClass($type . 'portrange');
 
@@ -1407,16 +1416,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport'])
 	))->setHelp('Custom');
 
-
-	if ($type == 'src')
-		$group->setHelp('Specify the source port or port range for this rule. This is '.
-			'usually random and almost never equal to the destination port range (and '.
-			'should usually be <b>any</b>).  The "To" field may be left '.
-			'empty if only filtering a single port.');
-	else
-		$group->setHelp('Specify the destination port or port range for this rule. ' .
-			'The "To" field may be left empty if only filtering a '.
-			'single port.');
+	$group->setHelp('Specify the %s port or port range for this rule. The "To" field may be left empty if only filtering a single port.', strtolower($name));
 
 	$group->addClass(($type == 'src') ? 'srcprtr':'dstprtr');
 	$section->add($group);
@@ -1431,15 +1431,16 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['log']
 ))->setHelp('Hint: the firewall has limited local log space. Don\'t turn on logging '.
 	'for everything. If doing a lot of logging, consider using a remote '.
-	'syslog server (see the <a href="status_logs_settings.php">Status: System Logs: '.
-	'Settings</a> page).');
+	'syslog server (see the %1$sStatus: System Logs: Settings%2$s page).', '<a href="status_logs_settings.php">', '</a>');
 
 $section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('A description may be entered here for administrative reference.');
+))->setHelp('A description may be entered here for administrative reference. ' .
+	'A maximum of %s characters will be used in the ruleset and displayed in the firewall log.',
+	user_rule_descr_maxlen());
 
 $btnadv = new Form_Button(
 	'btnadvopts',
@@ -1495,7 +1496,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['tag']
 ))->setHelp('A packet matching this rule can be marked and this mark used to match '.
-	'on other NAT/filter rules. It is called <b>Policy filtering</b>.');
+	'on other NAT/filter rules. It is called %1$sPolicy filtering%2$s.', '<b>', '</b>');
 
 $section->addInput(new Form_Input(
 	'tagged',
@@ -1552,7 +1553,7 @@ $section->addInput(new Form_Input(
 	'State timeout',
 	'number',
 	$pconfig['statetimeout'],
-	['min' => 1, 'max' => 3600]
+	['min' => 1]
 ))->setHelp('State Timeout in seconds (TCP only)');
 
 $section->addInput(new Form_StaticText(
@@ -1577,8 +1578,8 @@ $section->addInput(new Form_Select(
 		'synproxy state' => gettext('Synproxy'),
 		'none' => gettext('None'),
 	)
-))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state.' . '<br />' .
-			'<span></span>');
+))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state.%1$s',
+			'<br /><span></span>');
 
 $section->addInput(new Form_Checkbox(
 	'nosync',
@@ -1587,7 +1588,16 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['nosync']
 ))->setHelp('This does NOT prevent the rule from being overwritten on Slave.');
 
-$vlanprio = array("" => "none", "be" => "BE", "bk" => "BK", "ee" => "EE", "ca" => "CA", "vi" => "VI", "vo" => "VO", "ic" => "IC", "nc" => "NC");
+$vlanprio = array(
+	"" => "none",
+	"bk" => "Background (BK, 0)",
+	"be" => "Best Effort (BE, 1)",
+	"ee" => "Excellent Effort (EE, 2)",
+	"ca" => "Critical Applications (CA, 3)",
+	"vi" => "Video (VI, 4)",
+	"vo" => "Voice (VO, 5)",
+	"ic" => "Internetwork Control (IC, 6)",
+	"nc" => "Network Control (NC, 7)");
 
 $section->addInput(new Form_Select(
 	'vlanprio',
@@ -1617,37 +1627,35 @@ $section->addInput(new Form_Select(
 	['' => gettext('none')] + array_combine($schedules, $schedules)
 ))->setHelp('Leave as \'none\' to leave the rule enabled all the time.');
 
-$gateways = array("" => gettext('default'));
-foreach (return_gateways_array() as $gwname => $gw) {
-	if (($pconfig['ipprotocol'] == "inet46")) {
-		continue;
-	}
-	if (($pconfig['ipprotocol'] == "inet6") && !(($gw['ipprotocol'] == "inet6") || (is_ipaddrv6($gw['gateway'])))) {
-		continue;
-	}
-	if (($pconfig['ipprotocol'] == "inet") && !(($gw['ipprotocol'] == "inet") || (is_ipaddrv4($gw['gateway'])))) {
-		continue;
-	}
-	if ($gw == "") {
-		continue;
-	}
+// Build the gateway lists in JSON so the selector can be populated in JS
+$gwjson = '[{"name":"", "gateway":"Default", "family":"inet46"}';
 
-	$gateways[ $gwname ] = $gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gw['gateway']) . (empty($gw['descr'])? '' : ' - '. $gw['descr']);
+foreach (return_gateways_array() as $gwname => $gw) {
+	$gwjson = $gwjson . "," .'{"name":' . json_encode($gwname) . ', "gateway":' .
+	json_encode($gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gw['gateway']) . (empty($gw['descr'])? '' : ' - '. $gw['descr'])) . ',"family":' .
+	json_encode($gw['ipprotocol']) . '}';
 }
 
 foreach ((array)$a_gatewaygroups as $gwg_name => $gwg_data) {
-	if ((empty($pconfig['ipprotocol'])) || ($pconfig['ipprotocol'] == $gwg_data['ipprotocol'])) {
-		$gateways[ $gwg_name ] = $gwg_name . (empty($gwg_data['descr'])? '' : ' - '. $gwg_data['descr']);
-	}
+	$gwjson = $gwjson . "," .'{"name":' . json_encode($gwg_name) . ', "gateway":' .
+	json_encode($gwg_data['name'] . $gwg_name . (empty($gwg_data['descr'])? '' : ' - '. $gwg_data['descr'])) . ',"family":' .
+	json_encode($gwg_data['ipprotocol']) . '}';
+	$firstgw = false;
 }
 
+$gwjson .= ']';
+$gwselected = $pconfig['gateway'];
+
+// print($gwjson);
+
+// Gateway selector is populated by JavaScript updateGWselect() function
 $section->addInput(new Form_Select(
 	'gateway',
 	'Gateway',
-	$pconfig['gateway'],
-	$gateways
+	'',
+	[]
 ))->setHelp('Leave as \'default\' to use the system routing table. Or choose a '.
-	'gateway to utilize policy based routing.');
+	'gateway to utilize policy based routing. %sGateway selection is not valid for "IPV4+IPV6" address family.', '<br />');
 
 $group = new Form_Group('In / Out pipe');
 
@@ -1668,9 +1676,10 @@ $group->add(new Form_Select(
 $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '.
 	'In is also selected. The Out selection is applied to traffic leaving '.
 	'the interface where the rule is created, the In selection is applied to traffic coming '.
-	'into the chosen interface.<br />If creating a floating rule, if the '.
+	'into the chosen interface.%1$sIf creating a floating rule, if the '.
 	'direction is In then the same rules apply, if the direction is Out the '.
-	'selections are reversed, Out is for incoming and In is for outgoing.'
+	'selections are reversed, Out is for incoming and In is for outgoing.',
+	'<br />'
 );
 
 $group = new Form_Group('Ackqueue / Queue');
@@ -1706,30 +1715,10 @@ $section->add($group)->setHelp('Choose the Acknowledge Queue only if there is a 
 	'selected Queue.'
 );
 
-$has_created_time = (isset($a_filter[$id]['created']) && is_array($a_filter[$id]['created']));
-$has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]['updated']));
-
-
-if ($has_created_time || $has_updated_time) {
-	$form->add($section);
-	$section = new Form_Section('Rule Information');
-
-	if ($has_created_time) {
-		$section->addInput(new Form_StaticText(
-			'Created',
-			date('n/j/y H:i:s', $a_filter[$id]['created']['time']) . gettext(' by ') .'<b>'. $a_filter[$id]['created']['username'] .'</b>'
-		));
-	}
-
-	if ($has_updated_time) {
-		$section->addInput(new Form_StaticText(
-			'Updated',
-			date('n/j/y H:i:s', $a_filter[$id]['updated']['time']) . gettext(' by ') .'<b>'. $a_filter[$id]['updated']['username'] .'</b>'
-		));
-	}
-}
-
 $form->add($section);
+
+gen_created_updated_fields($form, $a_filter[$id]['created'], $a_filter[$id]['updated'], $a_filter[$id]['tracker']);
+
 echo $form;
 ?>
 
@@ -1744,6 +1733,9 @@ events.push(function() {
 	// Show advanced additional opts options ======================================================
 	var showadvopts = false;
 
+	// Remove focus on page load
+	document.activeElement.blur()
+	
 	function show_advopts(ispageload) {
 		var text;
 		// On page load decide the initial state based on the data.
@@ -1836,10 +1828,16 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnsrcadv').html('<i class="fa fa-cog"></i> ' + text);
+
+		$('#btnsrctoggle').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
 	function typesel_change() {
+		src_typesel_change();
+		dst_typesel_change();
+	}
+
+	function src_typesel_change() {
 		if (editenabled) {
 			switch ($('#srctype').find(":selected").index()) {
 				case 1: // single
@@ -1858,6 +1856,11 @@ events.push(function() {
 					disableInput('srcmask', true);
 					break;
 			}
+		}
+	}
+
+	function dst_typesel_change() {
+		if (editenabled) {
 			switch ($('#dsttype').find(":selected").index()) {
 				case 1: // single
 					disableInput('dst', false);
@@ -1878,51 +1881,66 @@ events.push(function() {
 		}
 	}
 
+	// Populate the "gateway" selector from a JSON array composed in the PHP
+	function updateGWselect() {
+		var selected = "<?=$gwselected?>";
+		var protocol = $('#ipprotocol').val();
+		var json = JSON.parse(<?=json_encode($gwjson)?>);
+
+		// Remove all of the existing optns
+		$('#gateway').find('option').remove();
+
+		// Add new ones as appropriate for the address family
+		json.forEach(function(gwobj) {
+			if (((gwobj.family == protocol) || (gwobj.family == "inet46")) && (protocol != "inet46")) {
+				$('#gateway').append($('<option>', {
+				    text: gwobj.gateway,
+				    value: gwobj.name
+				}));
+			}
+		});
+
+		// Add "selected" attribute as needed
+		$('#gateway').val(selected);
+
+		// Gateway selection is not permitted for "IPV4+IPV6"
+		$('#gateway').prop("disabled", protocol == "inet46");
+
+	}
+
 	function proto_change() {
-		if ($('#proto').find(":selected").index() < 3) {
-			portsenabled = 1;
-			hideClass('tcpflags', false);
-		} else {
-			portsenabled = 0;
-			hideClass('tcpflags', true);
-		}
+		var is_tcpudp = (jQuery.inArray($('#proto :selected').val(), ['tcp','udp', 'tcp/udp']) != -1);
+		portsenabled = (is_tcpudp ? 1 : 0);
+		hideClass('tcpflags', !is_tcpudp);
 
 		// Disable OS if the proto is not TCP.
-		if ($('#proto').find(":selected").index() < 1) {
-			disableInput('os', false);
-		} else {
-			disableInput('os', true);
+		disableInput('os', ($('#proto :selected').val() != 'tcp'));
+
+		// Hide ICMP types if not icmp rule
+		hideClass('icmptype_section', $('#proto').val() != 'icmp');
+		// Update ICMP help msg to match current IP protocol
+		$('#icmptype_help').html(icmphelp[$('#ipprotocol').val()]);
+		// Update ICMP types available for current IP protocol, copying over any still-valid selections
+		var listid = "#icmptype\\[\\]"; // for ease of use
+		var current_sel = ($(listid).val() || ['any']); // Ensures we get correct array when none selected
+		var new_options = icmptypes[$('#ipprotocol').val()];
+		var new_html = '';
+		//remove and re-create the select element (otherwise the options can disappear in Safari)
+		$(listid).remove();
+		var select = $("<select></select>").attr("id", "icmptype[]").attr("name", "icmptype[]").addClass("form-control").attr("multiple", "multiple");
+		$('div.icmptype_section > div.col-sm-10').prepend(select);
+
+		for (var key in new_options) {
+			new_html += '<option value="' + key + (jQuery.inArray(key, current_sel) != -1 ? '" selected="selected">' : '">') + new_options[key] + '</option>\n';
 		}
 
-		if ($('#proto').find(":selected").index() == 3) {
-			disableInput('icmptype', false);
-			disableInput('icmp6type', false);
-		} else {
-			disableInput('icmptype', true);
-			disableInput('icmp6type', true);
-		}
+		$(listid).html(new_html);
 
 		ext_change();
 
-		if ($('#proto').find(":selected").index() == 3 || $('#proto').find(":selected").index() == 4) {
-			if ($('#ipprotocol').find(":selected").index() == 0) { // IPv4
-				hideInput('icmptype', false);
-				hideInput('icmp6type', true);
-			} else if ($('#ipprotocol').find(":selected").index() == 1) { // IPv6
-				hideInput('icmptype', true);
-				hideInput('icmp6type', false);
-			} else { // IPv4 + IPv6
-				hideInput('icmptype', true);
-				hideInput('icmp6type', true);
-			}
-		} else {
-			hideInput('icmptype', true);
-			hideInput('icmp6type', true);
-		}
-
-		if ($('#proto').find(":selected").index() <= 2) {
+		if (is_tcpudp) {
 			hideClass('dstprtr', false);
-			hideInput('btnsrcadv', false);
+			hideInput('btnsrctoggle', false);
 			if ((($('#srcbeginport').val() == "any") || ($('#srcbeginport').val() == "")) &&
 			    (($('#srcendport').val() == "any") || ($('#srcendport').val() == ""))) {
 				srcportsvisible = false;
@@ -1931,11 +1949,26 @@ events.push(function() {
 			}
 		} else {
 			hideClass('dstprtr', true);
-			hideInput('btnsrcadv', true);
+			hideInput('btnsrctoggle', true);
 			srcportsvisible = false;
 		}
 
 		show_source_port_range();
+
+		updateGWselect();
+	}
+
+	function icmptype_change() {
+		var listid = "#icmptype\\[\\]"; // for ease of use
+		var current_sel = ($(listid).val() || ['any']); // Ensures we get correct array when none selected
+		if (jQuery.inArray('any', current_sel) != -1) {
+			// "any" negates all selections
+			$(listid).find('option').not('[value="any"]').removeAttr('selected');
+		}
+		if ($(listid + ' option:selected').length == 0) {
+			// no selection = select "any"
+			$(listid + ' option[value="any"]').prop('selected', true);
+		}
 	}
 
 	function src_rep_change() {
@@ -1947,6 +1980,23 @@ events.push(function() {
 	}
 
 	// On initial page load
+
+<?php
+	// Generate icmptype data used in form JS
+	$out1 = "var icmptypes = [];\n";
+	$out2 = "var icmphelp = [];\n";
+	foreach ($icmplookup as $k => $v) {
+		$a = array();
+		foreach ($v['icmptypes'] as $icmp_k => $icmp_v) {
+			$a[] = sprintf("'%s':'%s'", $icmp_k, $icmp_v);
+		}
+		$out1 .= "icmptypes['{$k}'] = {\n\t" . implode(",\n\t", $a) . "\n};\n";
+		$out2 .= "icmphelp['{$k}'] = '" . str_replace("'", '&apos;', $v['helpmsg']) . "';\n";
+	}
+	echo $out1;
+	echo $out2;
+?>
+
 	proto_change();
 
 	ext_change();
@@ -1967,7 +2017,7 @@ events.push(function() {
 		ext_change();
 	});
 
-	$('#btnsrcadv').click(function() {
+	$('#btnsrctoggle').click(function() {
 		srcportsvisible = !srcportsvisible;
 		show_source_port_range();
 	});
@@ -1990,19 +2040,23 @@ events.push(function() {
 	});
 
 	$('#srctype').on('change', function() {
-		typesel_change();
+		src_typesel_change();
 	});
 
 	$('#dsttype').on('change', function() {
-		typesel_change();
+		dst_typesel_change();
+	});
+
+	$('#ipprotocol').on('change', function() {
+		proto_change();
 	});
 
 	$('#proto').on('change', function() {
 		proto_change();
 	});
 
-	$('#ipprotocol').on('change', function() {
-		proto_change();
+	$('#icmptype\\[\\]').on('change', function() {
+			icmptype_change();
 	});
 
 	$('#tcpflags_any').click(function () {
@@ -2014,10 +2068,6 @@ events.push(function() {
 	});
 
 	// Change help text based on the selector value
-	function setHelpText(id, text) {
-		$('#' + id).parent().parent('div').find('span').find('span').html(text);
-	}
-
 	function setOptText(target, val) {
 		var dispstr = '<span class="text-success">';
 
@@ -2039,7 +2089,7 @@ events.push(function() {
 	// fields are disabled
 	function disable_most(disable) {
 		var elementsToDisable = [
-			'interface', 'proto', 'icmptype', 'icmp6type', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
+			'interface', 'proto', 'icmptype\\[\\]', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
 			'srcendport_cust', 'dstnot', 'dsttype', 'dst', 'dstmask', 'dstbeginport', 'dstbeginport_cust', 'dstendport', 'dstendport_cust'];
 
 		for (var idx=0, len = elementsToDisable.length; idx<len; idx++) {

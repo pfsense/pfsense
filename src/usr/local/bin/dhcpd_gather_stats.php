@@ -1,28 +1,24 @@
 #!/usr/local/bin/php-cgi -q
 <?php
-/* $Id$ */
 /*
-	dhcpd_gather_stats.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
+ * dhcpd_gather_stats.php
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2013-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 require_once("config.inc");
 require_once("interfaces.inc");
@@ -37,7 +33,7 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 
 	$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
 	$leases_contents = file($leasesfile);
-	$dhcpif = $argv[1] ; 
+	$dhcpif = $argv[1] ;
 
 	function remove_duplicate($array, $field) {
 		foreach ($array as $sub) {
@@ -193,20 +189,19 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 	$result['range'] = ip_range_size_v4(
 	    $config['dhcpd'][$dhcpif]['range']['from'],
 	    $config['dhcpd'][$dhcpif]['range']['to']);
-	
+
 	foreach ($leases as $data) {
 		if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
 			continue;
 		if ($data['act'] != "static") {
 			if (is_inrange_v4($data['ip'], $config['dhcpd'][$dhcpif]['range']['from'], $config['dhcpd'][$dhcpif]['range']['to'])) {
-					$result['active'] = $result['active'] + 1;
+					$result['active'] = intval($result['active']) + 1;
 			}
-		}
-		else {
+		} else {
 			if (is_inrange_v4($data['ip'], $subnet_start, $subnet_end)) {
-				$result['static'] = $result['static'] + 1;
+				$result['static'] = intval($result['static']) + 1;
 			}
 		}
 	}
 }
-echo $result['active'].":".$result['static'].":".$result['range'] ; 
+echo $result['active'].":".$result['static'].":".$result['range'] ;

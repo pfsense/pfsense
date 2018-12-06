@@ -1,68 +1,36 @@
 <?php
 /*
-	system_authservers.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2008 Shrew Soft Inc.
+ * system_authservers.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-system-authservers
 ##|*NAME=System: Authentication Servers
 ##|*DESCR=Allow access to the 'System: Authentication Servers' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=system_authservers.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
 require_once("auth.inc");
+require_once("pfsense-utils.inc");
 
 // Have we been called to populate the "Select a container" modal?
 if ($_REQUEST['ajax']) {
@@ -129,42 +97,28 @@ if ($_REQUEST['ajax']) {
 	exit;
 }
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (!is_array($config['system']['authserver'])) {
 	$config['system']['authserver'] = array();
 }
 
-$a_servers = auth_get_authserver_list();
-foreach ($a_servers as $servers) {
-	$a_server[] = $servers;
-}
+$a_server = array_values(auth_get_authserver_list());
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
-$a_ca =& $config['ca'];
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$act = $_GET['act'];
-if ($_POST['act']) {
-	$act = $_POST['act'];
-}
+$act = $_REQUEST['act'];
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 
-	if (!$a_server[$_GET['id']]) {
+	if (!$a_server[$_POST['id']]) {
 		pfSenseHeader("system_authservers.php");
 		exit;
 	}
 
 	/* Remove server from main list. */
-	$serverdeleted = $a_server[$_GET['id']]['name'];
+	$serverdeleted = $a_server[$_POST['id']]['name'];
 	foreach ($config['system']['authserver'] as $k => $as) {
 		if ($config['system']['authserver'][$k]['name'] == $serverdeleted) {
 			unset($config['system']['authserver'][$k]);
@@ -172,7 +126,8 @@ if ($act == "del") {
 	}
 
 	/* Remove server from temp list used later on this page. */
-	unset($a_server[$_GET['id']]);
+	unset($a_server[$_POST['id']]);
+	$a_server = array_values($a_server);
 
 	$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
 	write_config($savemsg);
@@ -212,7 +167,9 @@ if ($act == "edit") {
 		}
 
 		if ($pconfig['type'] == "radius") {
+			$pconfig['radius_protocol'] = $a_server[$id]['radius_protocol'];
 			$pconfig['radius_host'] = $a_server[$id]['host'];
+			$pconfig['radius_nasip_attribute'] = $a_server[$id]['radius_nasip_attribute'];
 			$pconfig['radius_auth_port'] = $a_server[$id]['radius_auth_port'];
 			$pconfig['radius_acct_port'] = $a_server[$id]['radius_acct_port'];
 			$pconfig['radius_secret'] = $a_server[$id]['radius_secret'];
@@ -242,12 +199,13 @@ if ($act == "edit") {
 if ($act == "new") {
 	$pconfig['ldap_protver'] = 3;
 	$pconfig['ldap_anon'] = true;
+	$pconfig['radius_protocol'] = "MSCHAPv2";
 	$pconfig['radius_srvcs'] = "both";
 	$pconfig['radius_auth_port'] = "1812";
 	$pconfig['radius_acct_port'] = "1813";
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -281,21 +239,22 @@ if ($_POST) {
 	}
 
 	if ($pconfig['type'] == "radius") {
-		$reqdfields = explode(" ", "name type radius_host radius_srvcs");
+		$reqdfields = explode(" ", "name type radius_protocol radius_host radius_srvcs");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Type"),
+			gettext("Radius Protocol"),
 			gettext("Hostname or IP"),
 			gettext("Services"));
 
-		if ($pconfig['radisu_srvcs'] == "both" ||
-			$pconfig['radisu_srvcs'] == "auth") {
+		if ($pconfig['radius_srvcs'] == "both" ||
+			$pconfig['radius_srvcs'] == "auth") {
 			$reqdfields[] = "radius_auth_port";
 			$reqdfieldsn[] = gettext("Authentication port");
 		}
 
-		if ($pconfig['radisu_srvcs'] == "both" ||
-			$pconfig['radisu_srvcs'] == "acct") {
+		if ($pconfig['radius_srvcs'] == "both" ||
+			$pconfig['radius_srvcs'] == "acct") {
 			$reqdfields[] = "radius_acct_port";
 			$reqdfieldsn[] = gettext("Accounting port");
 		}
@@ -320,6 +279,13 @@ if ($_POST) {
 		$to_field = "{$pconfig['type']}_timeout";
 		if (isset($_POST[$to_field]) && !empty($_POST[$to_field]) && (!is_numeric($_POST[$to_field]) || (is_numeric($_POST[$to_field]) && ($_POST[$to_field] <= 0)))) {
 			$input_errors[] = sprintf(gettext("%s Timeout value must be numeric and positive."), strtoupper($pconfig['type']));
+		}
+	}
+
+	// https://redmine.pfsense.org/issues/4154
+	if ($pconfig['type'] == "radius") {
+		if (is_ipaddrv6($_POST['radius_host'])) {
+			$input_errors[] = gettext("IPv6 does not work for RADIUS authentication, see Bug #4154.");
 		}
 	}
 
@@ -387,7 +353,9 @@ if ($_POST) {
 
 		if ($server['type'] == "radius") {
 
+			$server['radius_protocol'] = $pconfig['radius_protocol'];
 			$server['host'] = $pconfig['radius_host'];
+			$server['radius_nasip_attribute'] = $pconfig['radius_nasip_attribute'];
 
 			if ($pconfig['radius_secret']) {
 				$server['radius_secret'] = $pconfig['radius_secret'];
@@ -427,17 +395,51 @@ if ($_POST) {
 	}
 }
 
+function build_radiusnas_list() {
+	global $config;
+	$list = array();
+
+	$iflist = get_configured_interface_with_descr();
+	foreach ($iflist as $ifdesc => $ifdescr) {
+		$ipaddr = get_interface_ip($ifdesc);
+		if (is_ipaddr($ipaddr)) {
+			$list[$ifdesc] = $ifdescr . ' - ' . $ipaddr;
+		}
+	}
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $sn) {
+			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+				$len = $end - $start;
+
+				for ($i = 0; $i <= $len; $i++) {
+					$snip = long2ip32($start+$i);
+					$list[$snip] = $sn['descr'] . ' - ' . $snip;
+				}
+			} else {
+				$list[$sn['subnet']] = $sn['descr'] . ' - ' . $sn['subnet'];
+			}
+		}
+	}
+
+	return($list);
+}
+
 // On error, restore the form contents so the user doesn't have to re-enter too much
-if($_POST && $input_errors) {
+if ($_POST && $input_errors) {
 	$pconfig = $_POST;
 	$pconfig['ldap_authcn'] = $_POST['ldapauthcontainers'];
 	$pconfig['ldap_template'] = $_POST['ldap_tmpltype'];
 }
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Authentication Servers"));
+$pglinks = array("", "system_usermanager.php", "system_authservers.php");
 
 if ($act == "new" || $act == "edit" || $input_errors) {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 $shortcut_section = "authentication";
 include("head.inc");
@@ -473,7 +475,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 					</tr>
 				</thead>
 				<tbody>
-			<?php foreach($a_server as $i => $server): ?>
+			<?php foreach ($a_server as $i => $server): ?>
 					<tr>
 						<td><?=htmlspecialchars($server['name'])?></td>
 						<td><?=htmlspecialchars($auth_server_types[$server['type']])?></td>
@@ -481,7 +483,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 						<td>
 						<?php if ($i < (count($a_server) - 1)): ?>
 							<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>"></a>
-							<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>" usepost></a>
 						<?php endif?>
 						</td>
 					</tr>
@@ -517,14 +519,14 @@ $section = new Form_Section('Server Settings');
 
 $section->addInput($input = new Form_Input(
 	'name',
-	'Descriptive name',
+	'*Descriptive name',
 	'text',
 	$pconfig['name']
 ));
 
 $section->addInput($input = new Form_Select(
 	'type',
-	'Type',
+	'*Type',
 	$pconfig['type'],
 	$auth_server_types
 ))->toggles();
@@ -540,22 +542,22 @@ if (!isset($pconfig['type']) || $pconfig['type'] == 'ldap')
 
 $section->addInput(new Form_Input(
 	'ldap_host',
-	'Hostname or IP address',
+	'*Hostname or IP address',
 	'text',
 	$pconfig['ldap_host']
-))->setHelp('NOTE: When using SSL, this hostname MUST match the Common Name '.
+))->setHelp('NOTE: When using SSL or STARTTLS, this hostname MUST match the Common Name '.
 	'(CN) of the LDAP server\'s SSL Certificate.');
 
 $section->addInput(new Form_Input(
 	'ldap_port',
-	'Port value',
+	'*Port value',
 	'number',
 	$pconfig['ldap_port']
 ));
 
 $section->addInput(new Form_Select(
 	'ldap_urltype',
-	'Transport',
+	'*Transport',
 	$pconfig['ldap_urltype'],
 	array_combine(array_keys($ldap_urltypes), array_keys($ldap_urltypes))
 ));
@@ -569,7 +571,7 @@ if (empty($a_ca))
 }
 else
 {
-	$ldapCaRef = [];
+	$ldapCaRef = array( 'global' => 'Global Root CA List' );
 	foreach ($a_ca as $ca)
 		$ldapCaRef[ $ca['refid'] ] = $ca['descr'];
 
@@ -578,13 +580,14 @@ else
 		'Peer Certificate Authority',
 		$pconfig['ldap_caref'],
 		$ldapCaRef
-	))->setHelp('This option is used if \'SSL Encrypted\' option is choosen. '.
+	))->setHelp('This option is used if \'SSL Encrypted\' '.
+		'or \'TCP - STARTTLS\' options are chosen. '.
 		'It must match with the CA in the AD otherwise problems will arise.');
 }
 
 $section->addInput(new Form_Select(
 	'ldap_protver',
-	'Protocol version',
+	'*Protocol version',
 	$pconfig['ldap_protver'],
 	array_combine($ldap_protvers, $ldap_protvers)
 ));
@@ -601,7 +604,7 @@ $group = new Form_Group('Search scope');
 
 $SSF = new Form_Select(
 	'ldap_scope',
-	'Level',
+	'*Level',
 	$pconfig['ldap_scope'],
 	$ldap_scopes
 );
@@ -619,7 +622,7 @@ $section->addInput(new Form_StaticText(
 	'Level ' . $SSF . '<br />' . 'Base DN' . $SSB
 ));
 
-$group = new Form_Group('Authentication containers');
+$group = new Form_Group('*Authentication containers');
 $group->add(new Form_Input(
 	'ldapauthcontainers',
 	'Containers',
@@ -627,7 +630,7 @@ $group->add(new Form_Input(
 	$pconfig['ldap_authcn']
 ))->setHelp('Note: Semi-Colon separated. This will be prepended to the search '.
 	'base dn above or the full container path can be specified containing a dc= '.
-	'component.<br/>Example: CN=Users;DC=example,DC=com or OU=Staff;OU=Freelancers');
+	'component.%1$sExample: CN=Users;DC=example,DC=com or OU=Staff;OU=Freelancers', '<br/>');
 
 $group->add(new Form_Button(
 	'Select',
@@ -653,7 +656,7 @@ $group->add(new Form_Input(
 	'Query',
 	'text',
 	$pconfig['ldap_extended_query']
-))->setHelp('Example: &amp;(objectClass=inetOrgPerson)(mail=*@example.com)');
+))->setHelp('Example: memberOf=CN=Groupname,OU=MyGroups,DC=example,DC=com');
 
 $section->add($group);
 
@@ -664,7 +667,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['ldap_anon']
 ));
 
-$group = new Form_Group('Bind credentials');
+$group = new Form_Group('*Bind credentials');
 $group->addClass('ldapanon');
 
 $group->add(new Form_Input(
@@ -677,7 +680,7 @@ $group->add(new Form_Input(
 $group->add(new Form_Input(
 	'ldap_bindpw',
 	'Password',
-	'text',
+	'password',
 	$pconfig['ldap_bindpw']
 ));
 $section->add($group);
@@ -685,7 +688,7 @@ $section->add($group);
 if (!isset($id)) {
 	$template_list = array();
 
-	foreach($ldap_templates as $option => $template) {
+	foreach ($ldap_templates as $option => $template) {
 		$template_list[$option] = $template['desc'];
 	}
 
@@ -699,21 +702,21 @@ if (!isset($id)) {
 
 $section->addInput(new Form_Input(
 	'ldap_attr_user',
-	'User naming attribute',
+	'*User naming attribute',
 	'text',
 	$pconfig['ldap_attr_user']
 ));
 
 $section->addInput(new Form_Input(
 	'ldap_attr_group',
-	'Group naming attribute',
+	'*Group naming attribute',
 	'text',
 	$pconfig['ldap_attr_group']
 ));
 
 $section->addInput(new Form_Input(
 	'ldap_attr_member',
-	'Group member attribute',
+	'*Group member attribute',
 	'text',
 	$pconfig['ldap_attr_member']
 ));
@@ -757,23 +760,30 @@ $form->add($section);
 $section = new Form_Section('RADIUS Server Settings');
 $section->addClass('toggle-radius collapse');
 
+$section->addInput(new Form_Select(
+	'radius_protocol',
+	'*Protocol',
+	$pconfig['radius_protocol'],
+	$radius_protocol
+));
+
 $section->addInput(new Form_Input(
 	'radius_host',
-	'Hostname or IP address',
+	'*Hostname or IP address',
 	'text',
 	$pconfig['radius_host']
 ));
 
 $section->addInput(new Form_Input(
 	'radius_secret',
-	'Shared Secret',
-	'text',
+	'*Shared Secret',
+	'password',
 	$pconfig['radius_secret']
 ));
 
 $section->addInput(new Form_Select(
 	'radius_srvcs',
-	'Services offered',
+	'*Services offered',
 	$pconfig['radius_srvcs'],
 	$radius_srvcs
 ));
@@ -802,6 +812,14 @@ $section->addInput(new Form_Input(
 	'default value is 5 seconds. NOTE: If using an interactive two-factor '.
 	'authentication system, increase this timeout to account for how long it will '.
 	'take the user to receive and enter a token.');
+
+$section->addInput(new Form_Select(
+	'radius_nasip_attribute',
+	'RADIUS NAS IP Attribute',
+	$pconfig['radius_nasip_attribute'],
+	build_radiusnas_list()
+))->setHelp('Enter the IP to use for the "NAS-IP-Address" attribute during RADIUS Acccess-Requests.<br />'.
+			'Please note that this choice won\'t change the interface used for contacting the RADIUS server.');
 
 if (isset($id) && $a_server[$id])
 {
@@ -914,15 +932,28 @@ events.push(function() {
 	}
 
 	function set_ldap_port() {
-		if($('#ldap_urltype').find(":selected").index() == 0)
-			$('#ldap_port').val('389');
-		else
+		if ($('#ldap_urltype').find(":selected").index() == 2)
 			$('#ldap_port').val('636');
+		else
+			$('#ldap_port').val('389');
+	}
+
+	function set_required_port_fields() {
+		if (document.getElementById("radius_srvcs").value == 'auth') {
+			setRequired('radius_auth_port', true);
+			setRequired('radius_acct_port', false);
+		} else if (document.getElementById("radius_srvcs").value == 'acct') {
+			setRequired('radius_auth_port', false);
+			setRequired('radius_acct_port', true);
+		} else { // both
+			setRequired('radius_auth_port', true);
+			setRequired('radius_acct_port', true);
+		}
 	}
 
 	// Hides all elements of the specified class. This will usually be a section
 	function hideClass(s_class, hide) {
-		if(hide)
+		if (hide)
 			$('.' + s_class).hide();
 		else
 			$('.' + s_class).show();
@@ -954,19 +985,20 @@ events.push(function() {
 
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
 	hideClass('extended', !$('#ldap_extended_enabled').prop('checked'));
+	set_required_port_fields();
 
-	if($('#ldap_port').val() == "")
+	if ($('#ldap_port').val() == "")
 		set_ldap_port();
 
 <?php
-	if($act == 'edit') {
+	if ($act == 'edit') {
 ?>
 		$('#type option:not(:selected)').each(function(){
 			$(this).attr('disabled', 'disabled');
 		});
 
 <?php
-		if(!$input_errors) {
+		if (!$input_errors) {
 ?>
 		$('#name').prop("readonly", true);
 <?php
@@ -993,6 +1025,10 @@ events.push(function() {
 
 	$('#ldap_extended_enabled').click(function () {
 		hideClass('extended', !this.checked);
+	});
+
+	$('#radius_srvcs').on('change', function() {
+		set_required_port_fields();
 	});
 
 });

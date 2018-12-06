@@ -2,57 +2,47 @@
 #
 # build_snapshots.sh
 #
-# Copyright (c) 2007-2015 Electric Sheep Fencing, LLC
-# All rights reserved
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
+# http://www.apache.org/licenses/LICENSE-2.0
 #
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-# EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-# ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-# NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-# STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-# OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 usage() {
-	echo "Usage: $(basename $0) [-l] [-n] [-r] [-u] [-p]"
+	echo "Usage: $(basename $0) [-l] [-n] [-r] [-U] [-p] [-i]"
 	echo "	-l: Build looped operations"
 	echo "	-n: Do not build images, only core pkg repo"
 	echo "	-p: Update poudriere repo"
 	echo "	-r: Do not reset local changes"
-	echo "	-u: Do not upload snapshots"
+	echo "	-U: Upload snapshots"
+	echo "	-i: Skip rsync to final server"
 }
 
 export BUILDER_TOOLS=$(realpath $(dirname ${0}))
 export BUILDER_ROOT=$(realpath "${BUILDER_TOOLS}/..")
 
-NO_IMAGES=""
+IMAGES="all"
 NO_RESET=""
-NO_UPLOAD=""
+UPLOAD=""
+_SKIP_FINAL_RSYNC=""
 LOOPED_SNAPSHOTS=""
 POUDRIERE_SNAPSHOTS=""
 
 # Handle command line arguments
-while getopts lnpru opt; do
+while getopts lnprUi opt; do
 	case ${opt} in
 		n)
-			NO_IMAGES="none"
+			IMAGES="none"
 			;;
 		l)
 			LOOPED_SNAPSHOTS=1
@@ -63,8 +53,11 @@ while getopts lnpru opt; do
 		r)
 			NO_RESET=1
 			;;
-		u)
-			NO_UPLOAD="-u"
+		U)
+			UPLOAD="-U"
+			;;
+		i)
+			_SKIP_FINAL_RSYNC="-i"
 			;;
 		*)
 			usage
@@ -88,8 +81,25 @@ export COUNTER=0
 export _sleeping=0
 
 snapshot_update_status() {
-	${BUILDER_ROOT}/build.sh ${NO_UPLOAD} ${POUDRIERE_SNAPSHOTS} \
-		--snapshot-update-status "$*"
+	${BUILDER_ROOT}/build.sh ${_SKIP_FINAL_RSYNC} ${UPLOAD} \
+		${POUDRIERE_SNAPSHOTS} --snapshot-update-status "$*"
+}
+
+exec_and_update_status() {
+	local _cmd="${@}"
+
+	[ -z "${_cmd}" ] \
+		&& return 1
+
+	# Ref. https://stackoverflow.com/a/30658405
+	exec 4>&1
+	local _result=$( \
+	    { { ${_cmd} 2>&1 3>&-; printf $? 1>&3; } 4>&- \
+	    | while read -r LINE; do \
+	    snapshot_update_status "${LINE}"; done 1>&4; } 3>&1)
+	exec 4>&-
+
+	return ${_result}
 }
 
 git_last_commit() {
@@ -174,32 +184,37 @@ while [ /bin/true ]; do
 
 	git_last_commit
 
+	OIFS=${IFS}
+	IFS="
+"
 	if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
-		(${BUILDER_ROOT}/build.sh --update-poudriere-ports 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		exec_and_update_status \
+		    ${BUILDER_ROOT}/build.sh --update-poudriere-ports
+		rc=$?
 
-		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --update-pkg-repo 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		if [ $rc -eq 0 ]; then
+			exec_and_update_status \
+			    ${BUILDER_ROOT}/build.sh ${_SKIP_FINAL_RSYNC} \
+			    ${UPLOAD} --update-pkg-repo
+			rc=$?
+		fi
 	else
-		(${BUILDER_ROOT}/build.sh --clean-builder 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		exec_and_update_status \
+		    ${BUILDER_ROOT}/build.sh --clean-builder
+		rc=$?
 
-		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '2g 4g' \
-		    --snapshots ${NO_IMAGES} "memstick memstickadi memstickserial" 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		if [ $rc -eq 0 ]; then
+			exec_and_update_status \
+			    ${BUILDER_ROOT}/build.sh ${_SKIP_FINAL_RSYNC} \
+			    ${UPLOAD} --snapshots ${IMAGES}
+			rc=$?
+		fi
 	fi
+	IFS=${OIFS}
 
 	if [ -z "${LOOPED_SNAPSHOTS}" ]; then
 		# only one build required, exiting
-		exit
+		exit ${rc}
 	fi
 
 	# Count some sheep or wait until a new commit turns up

@@ -1,70 +1,43 @@
 <?php
 /*
-	guiconfig.inc
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * guiconfig.inc
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
+header("X-Frame-Options: SAMEORIGIN");
+include_once('phpsessionmanager.inc');
 if (!$nocsrf) {
 	function csrf_startup() {
+		global $config;
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
 		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
 		csrf_conf('expires', $timeout_minutes * 60);
 	}
 	require_once("csrf/csrf-magic.php");
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		phpsession_end(true);
+	}
 }
 
 /* make sure nothing is cached */
@@ -75,7 +48,6 @@ if (!$omit_nocacheheaders) {
 	header("Pragma: no-cache");
 }
 
-header("X-Frame-Options: SAMEORIGIN");
 require_once("authgui.inc");
 
 /* parse the configuration and include all configuration functions */
@@ -115,7 +87,7 @@ $reserved_table_names = array(
 	"bogonsv6",
 	"negate_networks",
 	"snort2c",
-	"sshlockout",
+	"sshguard",
 	"tonatsubnets",
 	"virusprot",
 	"vpn_networks",
@@ -154,6 +126,7 @@ $auth_server_types = array(
 
 $ldap_urltypes = array(
 	'TCP - Standard' => 389,
+	'TCP - STARTTLS' => 389,
 	'SSL - Encrypted' => 636);
 
 $ldap_scopes = array(
@@ -188,6 +161,12 @@ $radius_srvcs = array(
 	'both' => gettext("Authentication and Accounting"),
 	'auth' => gettext("Authentication"),
 	'acct' => gettext("Accounting"));
+
+$radius_protocol = array(
+	'PAP' => "PAP",
+	'CHAP_MD5' => "MD5-CHAP",
+	'MSCHAPv1' => "MS-CHAPv1",
+	'MSCHAPv2' => "MS-CHAPv2");
 
 $netbios_nodetypes = array(
 	'0' => "none",
@@ -251,7 +230,7 @@ $specialnets = array(
 	"pppoe" => gettext("PPPoE clients"),
 	"l2tp" => gettext("L2TP clients"));
 
-$spiflist = get_configured_interface_with_descr(false, true);
+$spiflist = get_configured_interface_with_descr(true);
 foreach ($spiflist as $ifgui => $ifdesc) {
 	$specialnets[$ifgui] = $ifdesc . " net";
 	$specialnets[$ifgui . 'ip'] = $ifdesc . " address";
@@ -278,9 +257,11 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 		}
 	}
 
-	for ($i = 0; $i < count($reqdfields); $i++) {
-		if ($_POST[$reqdfields[$i]] == "" && $_REQUEST[$reqdfields[$i]] == "") {
-			$input_errors[] = sprintf(gettext("The field %s is required."), $reqdfieldsn[$i]);
+	if (is_array($reqdfields)) {
+		for ($i = 0; $i < count($reqdfields); $i++) {
+			if ($postdata[$reqdfields[$i]] == "") {
+				$input_errors[] = sprintf(gettext("The field %s is required."), $reqdfieldsn[$i]);
+			}
 		}
 	}
 }
@@ -307,13 +288,15 @@ function verify_gzip_file($fname) {
 	}
 }
 
-// print_info_box() has been updated so that any required button is explicitly created, rather than relying on the detection of certain
+// sprint_info_box() returns a string with a formatted informational box, it does not print the box.
+// To format and print in one step, call print_info_box() as usual.
+// Any required button is explicitly created, rather than relying on the detection of certain
 // strings in the message (such as "apply"). print_info_box_np() has been exterminated.
 // $class = the bootstrap style class (default, info, warning, success, danger)
 // $btnname and btntext describe the optional button and its display text, the default is an 'x' Close button.
 // Note that there is also a shortcut function print_apply_box here that creates a standard "apply" box for you.
 // In many cases just substitute that for print_info_box_np() to easily get a warning style "Apply changes" box.
-function print_info_box($msg, $class="alert-warning", $btnname = "close", $btntext = "", $btnicon = "", $btnclass = "default") {
+function sprint_info_box($msg, $class="alert-warning", $btnname = "close", $btntext = "", $btnicon = "", $btnclass = "default") {
 
 	if (strpos($class, "alert-") !== 0) {
 		$class = 'alert-' . $class;
@@ -333,18 +316,44 @@ function print_info_box($msg, $class="alert-warning", $btnname = "close", $btnte
 
 		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-' . $btnclass . '" name="'. $btnname . '" value="' . $btntext . '">' . $btnicon . $btntext . '</button>';
 
-		if ($_POST['if']) {
+		if ( isset($_POST['if']) && !empty($_POST['if'])) {
 			$msg .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 		}
 
 		$msg .= '</form>';
 	}
 
-	echo '<div class="alert ' . $class . ' clearfix" role="alert">' . $msg . '</div>';
+	return '<div class="alert ' . $class . ' clearfix" role="alert">' . $msg . '</div>';
+}
+
+// Format and print an info box. See sprint_info_box() for details.
+function print_info_box($msg, $class="alert-warning", $btnname = "close", $btntext = "", $btnicon = "", $btnclass = "default") {
+	echo sprint_info_box($msg, $class, $btnname, $btntext, $btnicon, $btnclass);
 }
 
 function print_apply_box($msg) {
 	print_info_box($msg, "warning", "apply", gettext("Apply Changes"), 'fa-check', 'success');
+}
+
+// Format and print a box reporting that changes have been applied
+// $retval = status value from the functions called to apply the changes
+// 0 is good
+// non-zero is a problem
+// $extra_text = optional extra text to display after the standard message
+function print_apply_result_box($retval, $extra_text="") {
+	$result_msg = get_std_save_message($retval);
+	if ($retval === 0) {
+		// 0 is success
+		$severity = "success";
+	} else {
+		// non-zero means there was some problem
+		$severity = "warning";
+	}
+
+	if (strlen($extra_text) > 0) {
+		$result_msg .= " " . $extra_text;
+	}
+	print_info_box($result_msg, $severity);
 }
 
 /*
@@ -374,17 +383,24 @@ function print_callout($msg, $class = 'info', $heading = '') {
 	echo $callout;
 }
 
-function get_std_save_message($ok) {
+function get_std_save_message($retval) {
 	$filter_related = false;
-	$filter_pages = array("nat", "filter");
-	$to_return = gettext("The changes have been applied successfully.");
+	$filter_pages = array("firewall_aliases", "firewall_nat", "firewall_rules", "status_logs_filter");
+	if ($retval === 0) {
+		// 0 is success
+		$to_return = gettext("The changes have been applied successfully.");
+	} else {
+		// non-zero means there was some problem
+		$to_return = sprintf(gettext('There was a problem applying the changes. See the %1$sSystem Logs%2$s.'), '<a href="status_logs.php">', '</a>');
+	}
 	foreach ($filter_pages as $fp) {
 		if (stristr($_SERVER['SCRIPT_FILENAME'], $fp)) {
 			$filter_related = true;
 		}
 	}
 	if ($filter_related) {
-		$to_return .= "<br />" . gettext("<a href=\"status_filter_reload.php\">Monitor</a> the filter reload progress.");
+		$to_return .= " " . gettext("The firewall rules are now reloading in the background.") . "<br />" .
+		    sprintf(gettext('%1$sMonitor%2$s the filter reload progress.'), "<a href='status_filter_reload.php'>", "</a>");
 	}
 	return $to_return;
 }
@@ -427,6 +443,10 @@ function pprint_port($port) {
 	}
 
 	return $pport;
+}
+
+function insert_word_breaks_in_domain_name($domain_name) {
+	return str_replace('.', '<wbr>.', $domain_name);
 }
 
 function firewall_check_for_advanced_options(&$item) {
@@ -516,15 +536,44 @@ function gentitle($title) {
 	}
 }
 
-function genhtmltitle($title) {
+function genhtmltitle($title, $links=true) {
+	if (is_array($title)) {
+		$num_crumbs = count($title);
+	} else if ($title != NULL) {
+		$num_crumbs = 1;
+	} else {
+		$num_crumbs = 0;
+	}
 
 	// If the array contains only one element, there are no breadcrumbs, so don't
 	// add anything else
-	if (count($title) > 1) {
+	if ($num_crumbs > 1) {
 		$bc = '<ol class="breadcrumb">';
 
-		foreach ($title as $el) {
-			$bc .= '<li>'.$el.'</li>';
+		if (!is_array($links)) {
+			$gen_default = ($links === true);
+			$links = array_fill(0, $num_crumbs, '');
+			// If no links passed, then default to a link to self on the last entry.
+			if ($gen_default) {
+				$links[$num_crumbs-1] = '@self';
+			}
+		}
+
+		foreach ($title as $idx => $el) {
+			$href = $links[$idx];
+			if (strlen($href) > 0) {
+				// For convenience, if the caller specifies '@self' then make a link
+				// to the current page, including any query string.
+				if ($href == '@self') {
+					$href = $_SERVER['REQUEST_URI'];
+				}
+				if (substr($href, 0, 1) != '/') {
+					$href = '/' . $href;
+				}
+				$bc .= '<li><a href="' . htmlentities($href) . '">' . $el . '</a></li>';
+			} else {
+				$bc .= '<li>' . $el . '</li>';
+			}
 		}
 
 		$bc .= '</ol>';
@@ -532,7 +581,26 @@ function genhtmltitle($title) {
 		$bc = "";
 	}
 
-	return $heading . $bc;
+	return $bc;
+}
+
+function gen_customwidgettitle_div($widgettitle) {
+	$divstr = '<div class="form-group">';
+	$divstr .= '  <label for="descr" class="col-sm-4 control-label">' . gettext('Widget title'). '</label>';
+	$divstr .= '  <div class="col-sm-4">';
+	$divstr .= '    <input type="text" name="descr" id="descr" value="'. $widgettitle . '" class="form-control" />';
+	$divstr .= '  </div>';
+	$divstr .= '</div>';
+
+	return $divstr;
+}
+
+function set_customwidgettitle(& $user_settings) {
+	if ($_POST['descr']) {
+		$user_settings['widgets'][$_POST['widgetkey']]['descr'] = trim($_POST['descr']);
+	} else {
+		unset($user_settings['widgets'][$_POST['widgetkey']]['descr']);
+	}
 }
 
 /* update the changedesc and changecount(er) variables */
@@ -764,7 +832,12 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0
 		}
 	}
 
-	if (is_alias($pbeginport)) {
+	/*
+	 * If the port is still unset, then it must not be numeric, but could
+	 * be an alias or a well-known/registered service.
+	 * See https://redmine.pfsense.org/issues/8410
+	 */
+	if (!isset($adr['port']) && is_port_or_alias($pbeginport)) {
 		$adr['port'] = $pbeginport;
 	}
 }
@@ -955,7 +1028,7 @@ function echo_array($array, $return_me = false) {
  * RESULT
  *	 null
  ******/
-function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') {
+function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', $usepost = "") {
 	global $config;
 	global $g;
 	global $tab_array_indent;
@@ -978,7 +1051,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 	}
 
 	if ($tab_array_char_limit == '') {
-		$tab_array_char_limit = 92;
+		$tab_array_char_limit = 256;
 	}
 
 	foreach ($tab_array as $tab_id => $ta) {
@@ -1022,7 +1095,11 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 		echo "</select>\n<p>&nbsp;</p>";
 		echo "<script type=\"text/javascript\">";
 		echo "\n//<![CDATA[\n";
-		echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
+		if ($usepost == 'usepost') {
+			echo " function tabs_will_go(obj){ var target = obj.value.split(\"?\"); postSubmit(get2post(target[1]),target[0]); }\n";
+		} else {
+			echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
+		}
 		echo "//]]>\n";
 		echo "</script>";
 	} else {
@@ -1034,7 +1111,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 				echo ' class="active"';
 			}
 
-			echo '><a href="' . $ta[2] . '">' . $ta[0] . '</a></li>';
+			echo '><a href="' . $ta[2] . '" ' . $usepost . '>' . $ta[0] . '</a></li>';
 		}
 
 		echo '</ul>';
@@ -1049,13 +1126,14 @@ function add_package_tabs($tabgroup, &$tab_array) {
 	}
 
 	foreach ($config['installedpackages']['package'] as $pkg) {
-		$pkg_config = read_package_configurationfile($pkg['name']);
-
-		if (!isset($pkg_config['tabs']['tab'])) {
+		if (!is_array($pkg['tabs']['tab'])) {
 			continue;
 		}
 
-		foreach ($pkg_config['tabs']['tab'] as $tab) {
+		foreach ($pkg['tabs']['tab'] as $tab) {
+			if ($tab['tabgroup'] != $tabgroup) {
+				continue;
+			}
 			$tab_entry = array();
 			if ($tab['name']) {
 				$tab_entry[] = $tab['name'];
@@ -1068,7 +1146,7 @@ function add_package_tabs($tabgroup, &$tab_array) {
 }
 
 function alias_info_popup($alias_id) {
-	global $config;
+	global $config, $user_settings;
 
 	if (!is_array($config['aliases']['alias'][$alias_id])) {
 		return;
@@ -1078,7 +1156,13 @@ function alias_info_popup($alias_id) {
 	$alias = $config['aliases']['alias'][$alias_id];
 	$content = "";
 
-	if ($alias['url']) {
+	if ($user_settings['webgui']['disablealiaspopupdetail']) {
+		if (strlen($alias['descr']) >= $maxlength) {
+			$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
+		}
+
+		$content .= $alias['descr'];
+	} else if ($alias['url']) {
 		// TODO: Change it when pf supports tables with ports
 		if ($alias['type'] == "urltable") {
 			exec("/sbin/pfctl -t {$alias['name']} -T show | wc -l", $total_entries);
@@ -1120,10 +1204,6 @@ function alias_info_popup($alias_id) {
 
 		$content .= "</tbody>\n";
 		$content .= "<table>\n";
-	}
-
-	if (strlen($alias['descr']) >= $maxlength) {
-		$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
 	}
 
 	return $content;
@@ -1174,18 +1254,20 @@ var_dump($content);die;
 }
 
 function set_flash_message($class, $msg) {
-	@session_start();
+	@phpsession_begin();
 	$_SESSION['flash_messages'][$class][] = $msg;
+	@phpsession_end(true);
 }
 
 function get_flash_message() {
-	@session_start();
+	@phpsession_begin();
 	if (isset($_SESSION['flash_messages']) && !empty($_SESSION['flash_messages'])) {
 		foreach ($_SESSION['flash_messages'] as $class => $flash_message) {
 			print_info_box(implode("<br />", $flash_message), $class);
 		}
 		unset($_SESSION['flash_messages']);
 	}
+	@phpsession_end(true);
 }
 
 /* Retrieve GET or POST Value/State
@@ -1214,6 +1296,39 @@ if (isset($config['system']['timezone']) &&
 	$timezone = $g['default_timezone'];
 } else {
 	$timezone = "Etc/UTC";
+}
+
+/* Remove files we do not want to see in a crash report */
+function cleanup_crash_file_list() {
+	$files = glob("/var/crash/*");
+	if (!is_array($files) || empty($files)) {
+		return array();
+	}
+
+	$exclude_patterns = array(
+		'.*.last',
+		'bounds',
+		'minfree'
+	);
+
+	foreach ($files as $idx => $fb) {
+		if (preg_match('/' . implode('|', $exclude_patterns) . '/', basename($fb)) == 1) {
+			unset($files[$idx]);
+		}
+	}
+
+	return $files;
+}
+
+function system_has_crash_data() {
+	/* Test if there are any crash data files present */
+	return count(cleanup_crash_file_list()) > 0;
+}
+
+function system_has_php_errors() {
+	/* Check if the PHP error log is empty. Cast to int in case the file
+	 * does not exist and filesize() returns false. */
+	return (int) @filesize("/tmp/PHP_errors.log") > 0;
 }
 
 date_default_timezone_set($timezone);

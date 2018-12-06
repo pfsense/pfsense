@@ -1,55 +1,24 @@
 <?php
 /*
-	easyrule.inc
-
-	part of pfSense (https://www.pfsense.org)
-	Originally Sponsored By Anathematic @ pfSense Forums
-	Copyright (c) 2009-2010 Electric Sheep Fencing, LLC. All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in
-	   the documentation and/or other materials provided with the
-	   distribution.
-
-	3. All advertising materials mentioning features or use of this software
-	   must display the following acknowledgment:
-	   "This product includes software developed by the pfSense Project
-	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
-
-	4. The names "pfSense" and "pfSense Project" must not be used to
-	   endorse or promote products derived from this software without
-	   prior written permission. For written permission, please contact
-	   coreteam@pfsense.org.
-
-	5. Products derived from this software may not be called "pfSense"
-	   nor may "pfSense" appear in their names without prior written
-	   permission of the Electric Sheep Fencing, LLC.
-
-	6. Redistributions of any form whatsoever must retain the following
-	   acknowledgment:
-
-	"This product includes software developed by the pfSense Project
-	for use in the pfSense software distribution (http://www.pfsense.org/).
-
-	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-	OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * easyrule.inc
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2009-2018 Rubicon Communications, LLC (Netgate)
+ * Originally Sponsored By Anathematic @ pfSense Forums
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 $blockaliasname = 'EasyRuleBlockHosts';
 $protocols_with_ports = array('tcp', 'udp');
@@ -61,7 +30,7 @@ require_once("config.inc");
 function easyrule_find_rule_interface($int) {
 	global $config;
 	/* Borrowed from firewall_rules.php */
-	$iflist = get_configured_interface_with_descr(false, true);
+	$iflist = get_configured_interface_with_descr(true);
 
 	if ($config['pppoe']['mode'] == "server") {
 		$iflist['pppoe'] = "PPPoE Server";
@@ -88,6 +57,9 @@ function easyrule_find_rule_interface($int) {
 
 	if (substr($int, 0, 4) == "ovpn") {
 		return "openvpn";
+	}
+	if (substr($int, 0, 5) == "ipsec") {
+		return "ipsec";
 	}
 
 	return false;
@@ -126,11 +98,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 		return true;
 	}
 
-	/* No rules, start a new array */
-	if (!is_array($config['filter']['rule'])) {
-		$config['filter']['rule'] = array();
-	}
-
+	init_config_arr(array('filter', 'rule'));
 	filter_rules_sort();
 	$a_filter = &$config['filter']['rule'];
 
@@ -144,6 +112,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$filterent['descr'] = gettext("Easy Rule: Blocked from Firewall Log View");
 	/* Do not translate this, it's considered a username which cannot contain international characters */
 	$filterent['created'] = make_config_revision_entry(null, "Easy Rule");
+	$filterent['tracker'] = (int)microtime(true);
 
 	// Refer to firewall_rules_edit.php separators updating code.
 	// Using same code, variables, and techniques here.
@@ -153,6 +122,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$tmpif = $int;
 
 	// Update the separators
+	init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 	$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 	$ridx = ifridx($tmpif, $after);	// get rule index within interface
 	$mvnrows = +1;
@@ -185,11 +155,7 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 		return false;
 	}
 
-	/* If there are no aliases, start an array */
-	if (!is_array($config['aliases']['alias'])) {
-		$config['aliases']['alias'] = array();
-	}
-
+	init_config_arr(array('aliases', 'alias'));
 	$a_aliases = &$config['aliases']['alias'];
 
 	/* Try to get the ID if the alias already exists */
@@ -294,7 +260,7 @@ function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
 
 	/* If needed, write the config and reload the filter */
 	if ($dirty) {
-		write_config();
+		write_config(sprintf(gettext("Blocked host %s via easy rule"), $host));
 		$retval = filter_configure();
 		if (!empty($_SERVER['DOCUMENT_ROOT'])) {
 			header("Location: firewall_aliases.php");
@@ -310,11 +276,7 @@ function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
 function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipproto) {
 	global $config;
 
-	/* No rules, start a new array */
-	if (!is_array($config['filter']['rule'])) {
-		$config['filter']['rule'] = array();
-	}
-
+	init_config_arr(array('filter', 'rule'));
 	filter_rules_sort();
 	$a_filter = &$config['filter']['rule'];
 
@@ -366,6 +328,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 
 	/* Do not translate this, it's considered a username which cannot contain international characters */
 	$filterent['created'] = make_config_revision_entry(null, "Easy Rule");
+	$filterent['tracker'] = (int)microtime(true);
 	$a_filter[] = $filterent;
 
 	write_config($filterent['descr']);
@@ -418,6 +381,7 @@ function easyrule_parse_unblock($int, $host, $ipproto = "inet") {
 			return gettext("No block rules set on interface:") . ' ' . htmlspecialchars($int);
 		}
 
+		init_config_arr(array('aliases', 'alias', $id));
 		$alias = &$config['aliases']['alias'][$id];
 
 		if (is_subnet($host)) {
@@ -444,7 +408,7 @@ function easyrule_parse_unblock($int, $host, $ipproto = "inet") {
 			$config['aliases']['alias'][$id]['detail'] = join("||", $a_detail);
 
 			// Update config
-			write_config();
+			write_config(sprintf(gettext("Unblocked host %s via easy rule"), $host));
 			$retval = filter_configure();
 			if (!empty($_SERVER['DOCUMENT_ROOT'])) {
 				header("Location: firewall_aliases.php");

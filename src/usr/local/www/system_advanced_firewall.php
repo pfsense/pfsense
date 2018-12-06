@@ -1,60 +1,27 @@
 <?php
 /*
-	system_advanced_firewall.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2008 Shrew Soft Inc
+ * system_advanced_firewall.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -112,13 +79,13 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ((empty($_POST['adaptivestart']) && !empty($_POST['adaptiveend'])) || (!empty($_POST['adaptivestart']) && empty($_POST['adaptiveend']))) {
+	if ((isset($_POST['adaptivestart']) && !isset($_POST['adaptiveend'])) || (!isset($_POST['adaptivestart']) && isset($_POST['adaptiveend']))) {
 		$input_errors[] = gettext("The Firewall Adaptive values must be set together.");
 	}
-	if (!empty($_POST['adaptivestart']) && !is_numericint($_POST['adaptivestart'])) {
+	if (isset($_POST['adaptivestart']) && (strlen($_POST['adaptivestart']) > 0) && !is_numericint($_POST['adaptivestart'])) {
 		$input_errors[] = gettext("The Firewall Adaptive Start value must be an integer.");
 	}
-	if (!empty($_POST['adaptive-end']) && !is_numericint($_POST['adaptive-end'])) {
+	if (isset($_POST['adaptive-end']) && (strlen($_POST['adaptive-end']) > 0) && !is_numericint($_POST['adaptive-end'])) {
 		$input_errors[] = gettext("The Firewall Adaptive End value must be an integer.");
 	}
 	if ($_POST['firewall-maximum-states'] && !is_numericint($_POST['firewall-maximum-states'])) {
@@ -182,6 +149,20 @@ if ($_POST) {
 		$input_errors[] = gettext("The Other multiple timeout value must be an integer.");
 	}
 
+	if ($_POST['maximumtableentries']) {
+		$maximumtableentries = $_POST['maximumtableentries'];
+	} else {
+		$maximumtableentries = pfsense_default_table_entries_size();
+	}
+	if (!is_numericint($maximumtableentries)) {
+		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
+	} else if (is_bogonsv6_used() &&
+	    $maximumtableentries < $g['minimumtableentries_bogonsv6']) {
+		$input_errors[] = sprintf(gettext(
+		    "The Firewall Maximum Table Entries value must be greater than %s when block bogons is enabled."),
+		    $g['minimumtableentries_bogonsv6']);
+	}
+
 	ob_flush();
 	flush();
 
@@ -216,12 +197,12 @@ if ($_POST) {
 			unset($config['system']['scrubrnid']);
 		}
 
-		if (!empty($_POST['adaptiveend'])) {
+		if (is_numericint($_POST['adaptiveend'])) {
 			$config['system']['adaptiveend'] = $_POST['adaptiveend'];
 		} else {
 			unset($config['system']['adaptiveend']);
 		}
-		if (!empty($_POST['adaptivestart'])) {
+		if (is_numericint($_POST['adaptivestart'])) {
 			$config['system']['adaptivestart'] = $_POST['adaptivestart'];
 		} else {
 			unset($config['system']['adaptivestart']);
@@ -368,20 +349,20 @@ if ($_POST) {
 		if ($_POST['bogonsinterval'] != $config['system']['bogons']['interval']) {
 			switch ($_POST['bogonsinterval']) {
 				case 'daily':
-					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "*");
+					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "*", "root", false);
 					break;
 				case 'weekly':
-					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "0");
+					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "0", "root", false);
 					break;
 				case 'monthly':
 					// fall through
 				default:
-					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "1", "*", "*");
+					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "1", "*", "*", "root", false);
 			}
 			$config['system']['bogons']['interval'] = $_POST['bogonsinterval'];
 		}
 
-		write_config();
+		write_config(gettext("Changed Advanced Firewall/NAT settings."));
 
 		// Kill filterdns when value changes, filter_configure() will restart it
 		if (($old_aliasesresolveinterval != $config['system']['aliasesresolveinterval']) &&
@@ -389,26 +370,22 @@ if ($_POST) {
 			killbypid("{$g['varrun_path']}/filterdns.pid");
 		}
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = filter_configure();
-		if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message($retval);
-			$class = 'success';
-		} else {
-			$savemsg = $retval;
-			$class = 'warning';
-		}
+		$retval |= filter_configure();
 	}
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), htmlspecialchars(gettext("Firewall & NAT")));
+$pglinks = array("", "system_advanced_admin.php", "@self");
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-if ($savemsg) {
-	print_info_box($savemsg, $class);
+
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 $tab_array = array();
@@ -462,10 +439,9 @@ $section->addInput(new Form_Checkbox(
 	'Disable Firewall',
 	'Disable all packet filtering.',
 	isset($config['system']['disablefilter'])
-))->setHelp('Note: This converts %s into a routing only platform!<br/>'.
+))->setHelp('Note: This converts %1$s into a routing only platform!%2$s'.
 	'Note: This will also turn off NAT! To only disable NAT, '.
-	'and not firewall rules, visit the <a href="firewall_nat_out.php">Outbound '.
-	'NAT</a> page.', [$g["product_name"]]);
+	'and not firewall rules, visit the %3$sOutbound NAT%4$s page.', $g["product_name"], '<br/>', '<a href="firewall_nat_out.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'disablescrub',
@@ -481,24 +457,27 @@ $group->add(new Form_Input(
 	'Adaptive start',
 	'number',
 	$pconfig['adaptivestart'],
-	['min' => 1]
+	['min' => 0]
 ))->setHelp('When the number of state entries exceeds this value, adaptive '.
 	'scaling begins.  All timeout values are scaled linearly with factor '.
-	'(adaptive.end - number of states) / (adaptive.end - adaptive.start).');
+	'(adaptive.end - number of states) / (adaptive.end - adaptive.start). '.
+	'Defaults to 60% of the Firewall Maximum States value');
 
 $group->add(new Form_Input(
 	'adaptiveend',
 	'Adaptive end',
 	'number',
 	$pconfig['adaptiveend'],
-	['min' => 1]
+	['min' => 0]
 ))->setHelp('When reaching this number of state entries, all timeout values '.
 	'become zero, effectively purging all state entries immediately.  This '.
 	'value is used to define the scale factor, it should not actually be '.
-	'reached (set a lower state limit, see below).');
+	'reached (set a lower state limit, see below). '.
+	'Defaults to 120% of the Firewall Maximum States value');
 
 $group->setHelp('Timeouts for states can be scaled adaptively as the number of '.
-	'state table entries grows. Leave blank for the default (0)');
+	'state table entries grows. Leave blank to use default values, set to '.
+	'0 to disable Adaptive Timeouts.');
 
 $section->add($group);
 
@@ -508,9 +487,9 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['maximumstates'],
 	['min' => 1, 'placeholder' => pfsense_default_state_size()]
-))->setHelp('Maximum number of connections to hold in the firewall state table. '.
-	'<br/>Note: Leave this blank for the default. On this system the default '.
-	'size is: %d', [pfsense_default_state_size()]);
+))->setHelp('Maximum number of connections to hold in the firewall state table. %1$s'.
+	'Note: Leave this blank for the default. On this system the default '.
+	'size is: %2$d', '<br/>', pfsense_default_state_size());
 
 $section->addInput(new Form_Input(
 	'maximumtableentries',
@@ -519,9 +498,10 @@ $section->addInput(new Form_Input(
 	$pconfig['maximumtableentries'],
 	['placeholder' => pfsense_default_table_entries_size()]
 ))->setHelp('Maximum number of table entries for systems such as aliases, '.
-	'sshlockout, snort, etc, combined.<br/>Note: Leave this blank for the '.
-	'default. On this system the default size is: %d',
-	[pfsense_default_table_entries_size()]);
+	'sshguard, snort, etc, combined.%1$sNote: Leave this blank for the '.
+	'default. On this system the default size is: %2$d',
+	'<br/>',
+	pfsense_default_table_entries_size());
 
 $section->addInput(new Form_Input(
 	'maximumfrags',
@@ -573,8 +553,8 @@ $section->addInput(new Form_Input(
 	$pconfig['aliasesresolveinterval'],
 	['placeholder' => '300']
 ))->setHelp('Interval, in seconds, that will be used to resolve hostnames '.
-	'configured on aliases. <br/>Note:	 Leave this blank for the default '.
-	'(300s).');
+	'configured on aliases. %1$sNote:	 Leave this blank for the default '.
+	'(300s).', '<br/>');
 
 $section->addInput(new Form_Checkbox(
 	'checkaliasesurlcert',
@@ -621,21 +601,22 @@ if (count($config['interfaces']) > 1) {
 			'proxy' => gettext('NAT + proxy'),
 			'purenat' => gettext('Pure NAT'),
 		)
-	))->setHelp('</span><ul class="help-block"><li>The pure NAT mode uses a set of NAT rules to direct '.
+	))->setHelp('%1$sThe pure NAT mode uses a set of NAT rules to direct '.
 		'packets to the target of the port forward. It has better scalability, '.
 		'but it must be possible to accurately determine the interface and '.
 		'gateway IP used for communication with the target at the time the '.
 		'rules are loaded. There are no inherent limits to the number of ports '.
 		'other than the limits of the protocols.  All protocols available for '.
-		'port forwards are supported.</li><li>The NAT + proxy mode uses a '.
+		'port forwards are supported.%2$sThe NAT + proxy mode uses a '.
 		'helper program to send packets to the target of the port forward. '.
 		'It is useful in setups where the interface and/or gateway IP used '.
 		'for communication with the target cannot be accurately determined at '.
 		'the time the rules are loaded. Reflection rules are not created for '.
 		'ranges larger than 500 ports and will not be used for more than 1000 '.
 		'ports total between all port forwards. Only TCP and UDP protocols are '.
-		'supported.</li></ul><span class="help-block">Individual rules may be configured to override '.
-		'this system setting on a per-rule basis.');
+		'supported.%3$sIndividual rules may be configured to override '.
+		'this system setting on a per-rule basis.',
+		'</span><ul class="help-block"><li>', '</li><li>', '</li></ul><span class="help-block">');
 
 	$section->addInput(new Form_Input(
 		'reflectiontimeout',
@@ -643,8 +624,8 @@ if (count($config['interfaces']) > 1) {
 		'number',
 		$config['system']['reflectiontimeout'],
 		['min' => 1]
-	))->setHelp('Enter value for Reflection timeout in seconds.<br/>Note: Only '.
-		'applies to Reflection on port forwards in NAT + proxy mode.');
+	))->setHelp('Enter value for Reflection timeout in seconds.%1$sNote: Only '.
+		'applies to Reflection on port forwards in NAT + proxy mode.', '<br/>');
 
 	$section->addInput(new Form_Checkbox(
 		'enablebinatreflection',
@@ -733,10 +714,6 @@ print $form;
 //<![CDATA[
 events.push(function() {
 	// Change help text based on the selector value
-	function setHelpText(id, text) {
-		$('#' + id).parent().parent('div').find('span').html(text);
-	}
-
 	function setOptText(val) {
 		var htext = '<span class="text-success">';
 

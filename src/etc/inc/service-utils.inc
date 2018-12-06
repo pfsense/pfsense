@@ -1,64 +1,34 @@
 <?php
 /*
-	service-utils.inc
+ * service-utils.inc
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2005-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005-2006 Colin Smith (ethethlay@gmail.com)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-	part of pfSense (https://www.pfsense.org)
-	Copyright (C) 2005-2006 Colin Smith (ethethlay@gmail.com)
-	Copyright (c) 2005-2016 Electric Sheep Fencing, LLC.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in
-	   the documentation and/or other materials provided with the
-	   distribution.
-
-	3. All advertising materials mentioning features or use of this software
-	   must display the following acknowledgment:
-	   "This product includes software developed by the pfSense Project
-	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
-
-	4. The names "pfSense" and "pfSense Project" must not be used to
-	   endorse or promote products derived from this software without
-	   prior written permission. For written permission, please contact
-	   coreteam@pfsense.org.
-
-	5. Products derived from this software may not be called "pfSense"
-	   nor may "pfSense" appear in their names without prior written
-	   permission of the Electric Sheep Fencing, LLC.
-
-	6. Redistributions of any form whatsoever must retain the following
-	   acknowledgment:
-
-	"This product includes software developed by the pfSense Project
-	for use in the pfSense software distribution (http://www.pfsense.org/).
-
-	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-	OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-require_once("globals.inc");
 require_once("captiveportal.inc");
-require_once("openvpn.inc");
+require_once("globals.inc");
+require_once("gwlb.inc");
 require_once("ipsec.inc");
+require_once("openvpn.inc");
+require_once("system.inc");
+require_once("util.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
-require_once("gwlb.inc");
 
 define("RCFILEPREFIX", "/usr/local/etc/rc.d/");
 function write_rcfile($params) {
@@ -82,7 +52,7 @@ function write_rcfile($params) {
 	$towrite .= "\t{$params['start']}\n";
 	$towrite .= "}\n\n";
 	if (!empty($params['stop'])) {
-		$tokill =& $params['stop'];
+		$tokill = &$params['stop'];
 	} else if (!empty($params['executable'])) {
 		/* just nuke the executable */
 		$tokill = "/usr/bin/killall " . escapeshellarg($params['executable']);
@@ -104,7 +74,7 @@ function write_rcfile($params) {
 	return;
 }
 
-function start_service($name) {
+function start_service($name, $after_sync = false) {
 	global $config;
 
 	if (empty($name)) {
@@ -114,10 +84,15 @@ function start_service($name) {
 	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
 		foreach ($config['installedpackages']['service'] as $service) {
 			if (strtolower($service['name']) == strtolower($name)) {
+				/* Avoid starting twice if this is called just after a
+				 * package sync which starts the service itself. */
+				if ($after_sync && isset($service['starts_on_sync'])) {
+					break;
+				}
 				if ($service['rcfile']) {
 					$prefix = RCFILEPREFIX;
 					if (!empty($service['prefix'])) {
-						$prefix =& $service['prefix'];
+						$prefix = &$service['prefix'];
 					}
 					if (file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
 						mwexec_bg("{$prefix}{$service['rcfile']} start");
@@ -145,7 +120,7 @@ function stop_service($name) {
 				if ($service['rcfile']) {
 					$prefix = RCFILEPREFIX;
 					if (!empty($service['prefix'])) {
-						$prefix =& $service['prefix'];
+						$prefix = &$service['prefix'];
 					}
 					if (file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
 						mwexec("{$prefix}{$service['rcfile']} stop");
@@ -293,6 +268,11 @@ function get_services() {
 	$pconfig['description'] = gettext("NTP clock sync");
 	$services[] = $pconfig;
 
+	$pconfig = array();
+	$pconfig['name'] = "syslogd";
+	$pconfig['description'] = gettext("System Logger Daemon");
+	$services[] = $pconfig;
+
 	if (is_array($config['captiveportal'])) {
 		foreach ($config['captiveportal'] as $zone => $setting) {
 			if (isset($setting['enable'])) {
@@ -371,7 +351,7 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['system']['enablesshd'])) {
+	if (isset($config['system']['ssh']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "sshd";
 		$pconfig['description'] = gettext("Secure Shell Daemon");
@@ -394,12 +374,17 @@ function get_services() {
 		}
 	}
 
-	if (count($config['load_balancer']['virtual_server']) && count($config['load_balancer']['lbpool'])) {
+	if (!is_array($config['load_balancer']['lbpool'])) {
+		$config['load_balancer']['lbpool'] = array();
+	}
+
+	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server']) && count($config['load_balancer']['lbpool'])) {
 		$pconfig = array();
 		$pconfig['name'] = "relayd";
 		$pconfig['description'] = gettext("Server load balancing daemon");
 		$services[] = $pconfig;
 	}
+
 	return $services;
 }
 
@@ -433,18 +418,38 @@ function find_service_by_cp_zone($zone) {
 	return array();
 }
 
-function service_name_compare($a, $b) {
-	if (strtolower($a['name']) == strtolower($b['name'])) {
+function service_description_compare($a, $b) {
+	if (strtolower($a['description']) == strtolower($b['description'])) {
 		return 0;
+	}
+	return (strtolower($a['description']) < strtolower($b['description'])) ? -1 : 1;
+}
+
+function service_name_compare($a, $b) {
+	/* If the names are equal, fall back to sorting by description */
+	if (strtolower($a['name']) == strtolower($b['name'])) {
+		return service_description_compare($a, $b);
 	}
 	return (strtolower($a['name']) < strtolower($b['name'])) ? -1 : 1;
 }
 
 function service_dispname_compare($a, $b) {
-	if (strtolower($a['dispname']) == strtolower($b['dispname'])) {
-		return 0;
+	/* If two items have an instance suffix, perform an integer comparison to avoid awkward sorting */
+	if ((strpos($a['dispname'], '_') > 0) && (strpos($b['dispname'], '_') > 0)) {
+		list($adn1, $adn2) = explode('_', $a['dispname'], 2);
+		list($bdn1, $bdn2) = explode('_', $b['dispname'], 2);
+		if (($adn1 == $bdn1) && is_numeric($adn2) && is_numeric($bdn2)) {
+			if ($adn2 == $bdn2) {
+				return 0;
+			}
+			return ((int)$adn2 < (int)$bdn2) ? -1 : 1;
+		}
 	}
-	return (strtolower($a['name']) < strtolower($b['name'])) ? -1 : 1;
+	/* If the display names are equal, compare the internal name */
+	if (strtolower($a['dispname']) == strtolower($b['dispname'])) {
+		return service_name_compare($a, $b);
+	}
+	return (strtolower($a['dispname']) < strtolower($b['dispname'])) ? -1 : 1;
 }
 
 function get_pkg_descr($package_name) {
@@ -486,85 +491,55 @@ function get_service_status($service) {
 	return $running;
 }
 
-function get_service_status_icon($service, $withtext = true, $smallicon = false) {
-	global $g;
+function get_service_status_icon($service, $withtext = true, $smallicon = false, $withthumbs = false, $title = "service_state") {
 	$output = "";
+
 	if (get_service_status($service)) {
 		$statustext = gettext("Running");
-		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
-		$output .= ($smallicon) ? "fa fa-play" : "fa fa-lg fa-play";
-		$output .= "\" ></i></a>";
-		if ($withtext) {
-			$output .= "&nbsp;" . $statustext;
-		}
+		$text_class = "text-success";
+		$fa_class = "fa fa-check-circle";
+		$fa_class_thumbs = "fa fa-thumbs-o-up";
+		$Thumbs_UpDown = "Thumbs up";
 	} else {
-		$service_enabled = is_service_enabled($service['name']);
-		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
-		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
-		$output .= ($smallicon) ? "fa fa-times" : "fa fa-lg fa-times";
-		$output .= "\" ></i></a>";
-		if ($withtext) {
-			$output .= "&nbsp;" . $statustext;
+		if (is_service_enabled($service['name'])) {
+			$statustext = gettext("Stopped");
+			$text_class = "text-danger";
+			$fa_class = "fa fa-times-circle";
+		} else {
+			$statustext = gettext("Disabled");
+			$text_class = "text-warning";
+			$fa_class = "fa fa-ban";
 		}
+		$fa_class_thumbs = "fa fa-thumbs-o-down";
+		$Thumbs_UpDown = "Thumbs down";
 	}
-	return $output;
-}
+	$fa_size = ($smallicon) ? "fa-1x" : "fa-lg";
 
-/* This function is no longer required since services now use the POST method via JavaScript
-   Commenting out for now. It should be removed in the next version
-
-// This version proved GET formatted links
-function get_service_control_GET_links($service, $addname = false) {
-	global $g;
-	$output = "";
-	$stitle = ($addname) ? $service['name'] . " " : "";
-
-	switch ($service['name']) {
-		case "openvpn":
-			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service='.$service['name'] . '&amp;vpnmode=' . $service['mode'] . '&amp;id=' . $service['vpnid'] . '">';
-		break;
-		case "captiveportal":
-			$link = '<a title="%s" href="status_services.php?mode=%s&amp;service=' . $service['name'] . '&amp;zone=' . $service['zone'] . '">';
-		break;
-		default:
-			$link = '<a title="%s" href="/status_services.php?mode=%s&amp;service=' . $service['name'] . '">';
+	if ($title == "state") {
+		$title = $statustext;
+	} elseif ($title == "service_state") {
+		$title = sprintf(gettext('%1$s Service is %2$s'), $service["name"], $statustext);
+	} elseif ($title == "description_state") {
+		$title = sprintf(gettext('%1$s Service is %2$s'), $service["description"], $statustext);
+	} elseif ($title == "description_service_state") {
+		$title = sprintf(gettext('%1$s, %2$s Service is %3$s'), $service["description"], $service["name"], $statustext);
 	}
 
-	if (get_service_status($service)) {
-		switch ($service['name']) {
-			case "openvpn":
-				$output .= "<a href=\"status_services.php?mode=restartservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}\">";
-				break;
-			case "captiveportal":
-				$output .= "<a href=\"status_services.php?mode=restartservice&amp;service={$service['name']}&amp;zone={$service['zone']}\">";
-				break;
-			default:
-				$output .= "<a href=\"/status_services.php?mode=restartservice&amp;service={$service['name']}\">";
-		}
-		$output .= "<i class=\"fa fa-repeat\" title=\"" . sprintf(gettext("Restart %sService"), $stitle) . "\"></i></a>\n";
-		switch ($service['name']) {
-			case "openvpn":
-				$output .= "<a href=\"status_services.php?mode=stopservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}\">";
-				break;
-			case "captiveportal":
-				$output .= "<a href=\"status_services.php?mode=stopservice&amp;service={$service['name']}&amp;zone={$service['zone']}\">";
-				break;
-			default:
-				$output .= "<a href=\"/status_services.php?mode=stopservice&amp;service={$service['name']}\">";
-		}
-		$output .= "<i class=\"fa fa-stop-circle-o\" title=\"" . sprintf(gettext("Stop %sService"), $stitle) . "\"></i></a>";
-	} else {
-		$service_enabled = is_service_enabled($service['name']);
+	$spacer = ($withthumbs || $withtext) ? " " : "";
 
-		if ($service['name'] == 'openvpn' || $service['name'] == 'captiveportal' || $service_enabled) {
-			$output .= sprintf($link, sprintf(gettext("Start %sService"), $stitle), 'startservice');
-			$output .= '<i class="fa fa-play-circle"></i></a> ';
-		}
+	$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"{$title}\"><span style=\"display: none\">{$statustext}</span></i>{$spacer}";
+
+	$spacer = ($withtext) ? " " : "";
+	if ($withthumbs) {
+		$output .= "<i class=\"{$text_class} {$fa_class_thumbs} {$fa_size}\" title=\"{$Thumbs_UpDown}\"></i>{$spacer}";
+	}
+
+	if ($withtext) {
+		$output .= "<span class=\"" . $text_class . "\">" . $statustext . "</span>";
 	}
 
 	return $output;
 }
-*/
 
 function get_service_control_links($service, $addname = false) {
 	global $g;
@@ -632,7 +607,6 @@ function service_control_start($name, $extras) {
 			captiveportal_init_webgui_zonename($zone);
 			break;
 		case 'ntpd':
-		case 'openntpd':
 			system_ntp_configure();
 			break;
 		case 'dpinger':
@@ -680,6 +654,10 @@ function service_control_start($name, $extras) {
 			break;
 		case 'relayd':
 			relayd_configure();
+			filter_configure();
+			break;
+		case 'syslogd':
+			system_syslogd_start();
 			break;
 		default:
 			start_service($name);
@@ -749,7 +727,19 @@ function service_control_stop($name, $extras) {
 			}
 			break;
 		case 'relayd':
-			mwexec('pkill relayd');
+			sigkillbyname("relayd", "TERM");
+			break;
+		case 'syslogd':
+			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+				sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
+				usleep(100000);
+			}
+			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+				sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+				usleep(100000);
+			}
+			/* Make sure sshguard stops as well */
+			sigkillbyname("sshguard", "TERM");
 			break;
 		default:
 			stop_service($name);
@@ -819,6 +809,10 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'relayd':
 			relayd_configure(true);
+			filter_configure();
+			break;
+		case 'syslogd':
+			system_syslogd_start();
 			break;
 		default:
 			restart_service($name);

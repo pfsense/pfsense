@@ -1,60 +1,27 @@
 <?php
 /*
-	firewall_virtual_ip.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2005 Bill Marquette <bill.marquette@gmail.com>
+ * firewall_virtual_ip.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005 Bill Marquette <bill.marquette@gmail.com>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -69,62 +36,54 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['virtualip']['vip'])) {
-	$config['virtualip']['vip'] = array();
-}
-
+init_config_arr(array('virtualip', 'vip'));
 $a_vip = &$config['virtualip']['vip'];
 
-if ($_POST) {
-	$pconfig = $_POST;
-
-	if ($_POST['apply']) {
-		$check_carp = false;
-		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
-			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
-			foreach ($toapplylist as $vid => $ovip) {
-				if (!empty($ovip)) {
-					interface_vip_bring_down($ovip);
-				}
-				if ($a_vip[$vid]) {
-					switch ($a_vip[$vid]['mode']) {
-						case "ipalias":
-							interface_ipalias_configure($a_vip[$vid]);
-							break;
-						case "proxyarp":
-							interface_proxyarp_configure($a_vip[$vid]['interface']);
-							break;
-						case "carp":
-							$check_carp = true;
-							interface_carp_configure($a_vip[$vid]);
-							break;
-						default:
-							break;
-					}
+if ($_POST['apply']) {
+	$check_carp = false;
+	if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
+		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
+		foreach ($toapplylist as $vid => $ovip) {
+			if (!empty($ovip)) {
+				interface_vip_bring_down($ovip);
+			}
+			if ($a_vip[$vid]) {
+				switch ($a_vip[$vid]['mode']) {
+					case "ipalias":
+						interface_ipalias_configure($a_vip[$vid]);
+						break;
+					case "proxyarp":
+						interface_proxyarp_configure($a_vip[$vid]['interface']);
+						break;
+					case "carp":
+						$check_carp = true;
+						interface_carp_configure($a_vip[$vid]);
+						break;
+					default:
+						break;
 				}
 			}
-			@unlink("{$g['tmp_path']}/.firewall_virtual_ip.apply");
 		}
-		/* Before changing check #4633 */
-		if ($check_carp === true && !get_carp_status()) {
-			set_single_sysctl("net.inet.carp.allow", "1");
-		}
-
-		$retval = 0;
-		$retval |= filter_configure();
-		$savemsg = get_std_save_message($retval);
-
-		clear_subsystem_dirty('vip');
+		@unlink("{$g['tmp_path']}/.firewall_virtual_ip.apply");
 	}
+	/* Before changing check #4633 */
+	if ($check_carp === true && !get_carp_status()) {
+		set_single_sysctl("net.inet.carp.allow", "1");
+	}
+
+	$retval = 0;
+	$retval |= filter_configure();
+
+	clear_subsystem_dirty('vip');
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_vip[$_GET['id']]) {
+if ($_POST['act'] == "del") {
+	if ($a_vip[$_POST['id']]) {
 		/* make sure no inbound NAT mappings reference this entry */
 		if (is_array($config['nat']['rule'])) {
 			foreach ($config['nat']['rule'] as $rule) {
 				if ($rule['destination']['address'] != "") {
-					if ($rule['destination']['address'] == $a_vip[$_GET['id']]['subnet']) {
+					if ($rule['destination']['address'] == $a_vip[$_POST['id']]['subnet']) {
 						$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one NAT mapping.");
 						break;
 					}
@@ -138,13 +97,13 @@ if ($_GET['act'] == "del") {
 			if (is_array($config['openvpn'][$openvpn_type])) {
 				foreach ($config['openvpn'][$openvpn_type] as $openvpn) {
 					if ($openvpn['ipaddr'] <> "") {
-						if ($openvpn['ipaddr'] == $a_vip[$_GET['id']]['subnet']) {
+						if ($openvpn['ipaddr'] == $a_vip[$_POST['id']]['subnet']) {
 							if (strlen($openvpn['description'])) {
 								$openvpn_desc = $openvpn['description'];
 							} else {
 								$openvpn_desc = $openvpn['ipaddr'] . ":" . $openvpn['local_port'];
 							}
-							$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by OpenVPN %s %s."), $openvpn_type_text, $openvpn_desc);
+							$input_errors[] = sprintf(gettext('This entry cannot be deleted because it is still referenced by OpenVPN %1$s %2$s.'), $openvpn_type_text, $openvpn_desc);
 							break;
 						}
 					}
@@ -152,24 +111,27 @@ if ($_GET['act'] == "del") {
 			}
 		}
 
-		if (is_ipaddrv6($a_vip[$_GET['id']]['subnet'])) {
+		if (is_ipaddrv6($a_vip[$_POST['id']]['subnet'])) {
 			$is_ipv6 = true;
-			$subnet = gen_subnetv6($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']);
-			$if_subnet_bits = get_interface_subnetv6($a_vip[$_GET['id']]['interface']);
-			$if_subnet = gen_subnetv6(get_interface_ipv6($a_vip[$_GET['id']]['interface']), $if_subnet_bits);
+			$subnet = gen_subnetv6($a_vip[$_POST['id']]['subnet'], $a_vip[$_POST['id']]['subnet_bits']);
+			$if_subnet_bits = get_interface_subnetv6($a_vip[$_POST['id']]['interface']);
+			$if_subnet = gen_subnetv6(get_interface_ipv6($a_vip[$_POST['id']]['interface']), $if_subnet_bits);
 		} else {
 			$is_ipv6 = false;
-			$subnet = gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']);
-			$if_subnet_bits = get_interface_subnet($a_vip[$_GET['id']]['interface']);
-			$if_subnet = gen_subnet(get_interface_ip($a_vip[$_GET['id']]['interface']), $if_subnet_bits);
+			$subnet = gen_subnet($a_vip[$_POST['id']]['subnet'], $a_vip[$_POST['id']]['subnet_bits']);
+			$if_subnet_bits = get_interface_subnet($a_vip[$_POST['id']]['interface']);
+			$if_subnet = gen_subnet(get_interface_ip($a_vip[$_POST['id']]['interface']), $if_subnet_bits);
 		}
 
-		$subnet .= "/" . $a_vip[$_GET['id']]['subnet_bits'];
+		$subnet .= "/" . $a_vip[$_POST['id']]['subnet_bits'];
 		$if_subnet .= "/" . $if_subnet_bits;
 
+		/* Determine if this VIP is in the same subnet as any gateway
+		 * which can only be reached by VIPs */
+		$viponlygws = array();
 		if (is_array($config['gateways']['gateway_item'])) {
 			foreach ($config['gateways']['gateway_item'] as $gateway) {
-				if ($a_vip[$_GET['id']]['interface'] != $gateway['interface']) {
+				if ($a_vip[$_POST['id']]['interface'] != $gateway['interface']) {
 					continue;
 				}
 				if ($is_ipv6 && $gateway['ipprotocol'] == 'inet') {
@@ -181,17 +143,38 @@ if ($_GET['act'] == "del") {
 				if (ip_in_subnet($gateway['gateway'], $if_subnet)) {
 					continue;
 				}
-
-
 				if (ip_in_subnet($gateway['gateway'], $subnet)) {
-					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one Gateway.");
-					break;
+					$viponlygws[] = $gateway;
 				}
 			}
 		}
 
-		if ($a_vip[$_GET['id']]['mode'] == "ipalias") {
-			$subnet = gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']) . "/" . $a_vip[$_GET['id']]['subnet_bits'];
+		/*
+		 * If gateways for this subnet are only reachable via VIPs,
+		 * make sure this is not the last VIP through which that gateway
+		 * can be reached. See https://redmine.pfsense.org/issues/4438
+		 */
+		foreach ($viponlygws as $vgw) {
+			$numrefs = 0;
+			foreach ($a_vip as $refvip) {
+				if (($refvip['interface'] != $vgw['interface']) ||
+				    (is_ipaddrv4($refvip['subnet']) && ($vgw['ipprotocol'] == 'inet6')) ||
+				    (is_ipaddrv6($refvip['subnet']) && ($vgw['ipprotocol'] == 'inet'))) {
+					continue;
+				}
+				if (ip_in_subnet($vgw['gateway'],
+				    gen_subnet($refvip['subnet'], $refvip['subnet_bits']) . '/' . $refvip['subnet_bits'])) {
+					$numrefs++;
+				}
+			}
+			if ($numrefs <= 1) {
+				$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is required to reach Gateway: %s."), $vgw['name']);
+				break;
+			}
+		}
+
+		if ($a_vip[$_POST['id']]['mode'] == "ipalias") {
+			$subnet = gen_subnet($a_vip[$_POST['id']]['subnet'], $a_vip[$_POST['id']]['subnet_bits']) . "/" . $a_vip[$_POST['id']]['subnet_bits'];
 			$found_if = false;
 			$found_carp = false;
 			$found_other_alias = false;
@@ -200,10 +183,10 @@ if ($_GET['act'] == "del") {
 				$found_if = true;
 			}
 
-			$vipiface = $a_vip[$_GET['id']]['interface'];
+			$vipiface = $a_vip[$_POST['id']]['interface'];
 
 			foreach ($a_vip as $vip_id => $vip) {
-				if ($vip_id == $_GET['id']) {
+				if ($vip_id == $_POST['id']) {
 					continue;
 				}
 
@@ -219,8 +202,8 @@ if ($_GET['act'] == "del") {
 			if ($found_carp === true && $found_other_alias === false && $found_if === false) {
 				$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description %s."), $vip['descr']);
 			}
-		} else if ($a_vip[$_GET['id']]['mode'] == "carp") {
-			$vipiface = "{$a_vip[$_GET['id']]['interface']}_vip{$a_vip[$_GET['id']]['vhid']}";
+		} else if ($a_vip[$_POST['id']]['mode'] == "carp") {
+			$vipiface = "{$a_vip[$_POST['id']]['interface']}_vip{$a_vip[$_POST['id']]['vhid']}";
 			foreach ($a_vip as $vip) {
 				if ($vipiface == $vip['interface'] && $vip['mode'] == "ipalias") {
 					$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by an IP alias entry with the description %s."), $vip['descr']);
@@ -229,37 +212,36 @@ if ($_GET['act'] == "del") {
 		}
 
 		if (!$input_errors) {
-			if (!session_id()) {
-				session_start();
-			}
+			phpsession_begin();
 			$user = getUserEntry($_SESSION['Username']);
 
 			if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
 				header("Location: firewall_virtual_ip.php");
+				phpsession_end();
 				exit;
 			}
+			phpsession_end();
 
-			session_commit();
 
 			// Special case since every proxyarp vip is handled by the same daemon.
-			if ($a_vip[$_GET['id']]['mode'] == "proxyarp") {
-				$viface = $a_vip[$_GET['id']]['interface'];
-				unset($a_vip[$_GET['id']]);
+			if ($a_vip[$_POST['id']]['mode'] == "proxyarp") {
+				$viface = $a_vip[$_POST['id']]['interface'];
+				unset($a_vip[$_POST['id']]);
 				interface_proxyarp_configure($viface);
 			} else {
-				interface_vip_bring_down($a_vip[$_GET['id']]);
-				unset($a_vip[$_GET['id']]);
+				interface_vip_bring_down($a_vip[$_POST['id']]);
+				unset($a_vip[$_POST['id']]);
 			}
 			if (count($config['virtualip']['vip']) == 0) {
 				unset($config['virtualip']['vip']);
 			}
-			write_config();
+			write_config(gettext("Deleted a virtual IP."));
 			header("Location: firewall_virtual_ip.php");
 			exit;
 		}
 	}
-} else if ($_GET['changes'] == "mods" && is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
+} else if ($_REQUEST['changes'] == "mods" && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 $types = array('proxyarp' => gettext('Proxy ARP'),
@@ -273,8 +255,8 @@ include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-} else if ($savemsg) {
-	print_info_box($savemsg, 'success');
+} else if ($_POST['apply']) {
+	print_apply_result_box($retval);
 } else if (is_subsystem_dirty('vip')) {
 	print_apply_box(gettext("The VIP configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
@@ -289,7 +271,7 @@ display_top_tabs($tab_array);
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Virtual IP Address')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
+		<table class="table table-striped table-hover table-condensed table-rowdblclickedit sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Virtual IP address")?></th>
@@ -301,7 +283,7 @@ display_top_tabs($tab_array);
 			</thead>
 			<tbody>
 <?php
-$interfaces = get_configured_interface_with_descr(false, true);
+$interfaces = get_configured_interface_with_descr(true);
 $viplist = get_configured_vip_list();
 
 foreach ($viplist as $vipname => $address) {
@@ -352,7 +334,7 @@ foreach ($a_vip as $vipent):
 					</td>
 					<td>
 						<a class="fa fa-pencil" title="<?=gettext("Edit virtual ip"); ?>" href="firewall_virtual_ip_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext("Delete virtual ip")?>" href="firewall_virtual_ip.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext("Delete virtual ip")?>" href="firewall_virtual_ip.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php

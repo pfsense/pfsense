@@ -1,56 +1,22 @@
 <?php
 /*
-	vpn_l2tp_users.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * vpn_l2tp_users.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -61,38 +27,35 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("Users"));
+$pglinks = array("", "vpn_l2tp.php", "@self");
 $shortcut_section = "l2tps";
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['l2tp']['user'])) {
-	$config['l2tp']['user'] = array();
-}
+init_config_arr(array('l2tp', 'user'));
 $a_secret = &$config['l2tp']['user'];
 
-if ($_POST) {
 
-	$pconfig = $_POST;
+$pconfig = $_POST;
 
-	if ($_POST['apply']) {
-		$retval = 0;
-		if (!is_subsystem_dirty('rebootreq')) {
-			$retval = vpn_l2tp_configure();
-		}
-		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
-			if (is_subsystem_dirty('l2tpusers')) {
-				clear_subsystem_dirty('l2tpusers');
-			}
+if ($_POST['apply']) {
+	$retval = 0;
+	if (!is_subsystem_dirty('rebootreq')) {
+		$retval |= vpn_l2tp_configure();
+	}
+	if ($retval == 0) {
+		if (is_subsystem_dirty('l2tpusers')) {
+			clear_subsystem_dirty('l2tpusers');
 		}
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_secret[$_GET['id']]) {
-		unset($a_secret[$_GET['id']]);
-		write_config();
+if ($_POST['act'] == "del") {
+	if ($a_secret[$_POST['id']]) {
+		unset($a_secret[$_POST['id']]);
+		write_config(gettext("Deleted a L2TP VPN user."));
 		mark_subsystem_dirty('l2tpusers');
 		pfSenseHeader("vpn_l2tp_users.php");
 		exit;
@@ -101,8 +64,8 @@ if ($_GET['act'] == "del") {
 
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (isset($config['l2tp']['radius']['enable'])) {
@@ -143,7 +106,7 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit user')?>"	href="vpn_l2tp_users_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete user')?>"	href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete user')?>"	href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php $i++; endforeach?>

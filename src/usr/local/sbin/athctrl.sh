@@ -38,4 +38,3 @@ ATHN=`echo $DEV | sed 's/ath//'`
 sysctl dev.ath.$ATHN.slottime=$slottime
 sysctl dev.ath.$ATHN.acktimeout=$timeout
 sysctl dev.ath.$ATHN.ctstimeout=$timeout
-

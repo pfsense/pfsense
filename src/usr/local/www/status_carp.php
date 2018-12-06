@@ -1,56 +1,22 @@
 <?php
 /*
-	status_carp.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * status_carp.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -86,41 +52,36 @@ function find_ipalias($carpif) {
 
 $status = get_carp_status();
 
-if ($_POST['carp_maintenancemode'] != "") {
+if ($status != 0 && $_POST['carp_maintenancemode'] != "") {
 	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
 }
 
 if ($_POST['disablecarp'] != "") {
-	if ($status > 0) {
+	init_config_arr(array('virtualip', 'vip'));
+	$viparr = &$config['virtualip']['vip'];
+	if ($status != 0) {
 		set_single_sysctl('net.inet.carp.allow', '0');
-		if (is_array($config['virtualip']['vip'])) {
-			$viparr = &$config['virtualip']['vip'];
-			foreach ($viparr as $vip) {
-				if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
-					continue;
-				if ($vip['mode'] == "ipalias" && substr($vip['interface'], 0, 4) != "_vip")
-					continue;
-
-				interface_vip_bring_down($vip);
-			}
+		foreach ($viparr as $vip) {
+			if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
+				continue;
+			if ($vip['mode'] == "ipalias" && substr($vip['interface'], 0, 4) != "_vip")
+				continue;
+			interface_vip_bring_down($vip);
 		}
 		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot and some configuration changes will re-enable."), $carp_counter);
 		$status = 0;
 	} else {
 		$savemsg = gettext("CARP has been enabled.");
-		if (is_array($config['virtualip']['vip'])) {
-			$viparr = &$config['virtualip']['vip'];
-			foreach ($viparr as $vip) {
-				switch ($vip['mode']) {
-					case "carp":
-						interface_carp_configure($vip);
-						break;
-					case 'ipalias':
-						if (substr($vip['interface'], 0, 4) == "_vip") {
-							interface_ipalias_configure($vip);
-						}
-						break;
-				}
+		foreach ($viparr as $vip) {
+			switch ($vip['mode']) {
+				case "carp":
+					interface_carp_configure($vip);
+					break;
+				case 'ipalias':
+					if (substr($vip['interface'], 0, 4) == "_vip") {
+						interface_ipalias_configure($vip);
+					}
+					break;
 			}
 		}
 		interfaces_sync_setup();
@@ -132,7 +93,7 @@ if ($_POST['disablecarp'] != "") {
 $carp_detected_problems = get_single_sysctl("net.inet.carp.demotion");
 
 if (!empty($_POST['resetdemotion'])) {
-	set_single_sysctl("net.inet.carp.demotion", "-{$carp_detected_problems}");
+	set_single_sysctl("net.inet.carp.demotion", 0 - $carp_detected_problems);
 	sleep(1);
 	$carp_detected_problems = get_single_sysctl("net.inet.carp.demotion");
 }
@@ -143,6 +104,10 @@ $shortcut_section = "carp";
 include("head.inc");
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
+
+if ($status == 0 && $_POST['carp_maintenancemode'] != "") {
+	print_info_box('Please enable CARP before setting the maintenance mode.');
 }
 
 $carpcount = 0;
@@ -167,25 +132,24 @@ if ($carpcount == 0) {
 ?>
 <form action="status_carp.php" method="post">
 <?php
-	if ($status > 0) {
+	if ($status != 0) {
 		$carp_enabled = true;
 	} else {
 		$carp_enabled = false;
 	}
 
 	// Sadly this needs to be here so that it is inside the form
-	if ($carp_detected_problems > 0) {
+	if ($carp_detected_problems != 0) {
 		print_info_box(
-			gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") .
+			gettext("CARP has detected a problem and this unit has a non-zero demotion status.") .
 			"<br/>" .
-			gettext("Check the link status on all interfaces with configured CARP VIPs.") .
-			"<br/>" .
-			sprintf(gettext('Search the %1$sSystem Log%2$s for CARP demotion-related events.'), "<a href=\"/status_logs.php?filtertext=carp%3A+demoted+by\">", "</a>") .
+			gettext("Check the link status on all interfaces configured with CARP VIPs and ") .
+			sprintf(gettext('search the %1$sSystem Log%2$s for CARP demotion-related events.'), "<a href=\"/status_logs.php?filtertext=carp%3A+demoted+by\">", "</a>") .
 			"<br/><br/>" .
 			'<button type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
-			gettext("Reset CARP Demotion Status.") .
+			gettext("Reset CARP Demotion Status") .
 			'"><i class="fa fa-undo icon-embed-btn"></i>' .
-			gettext("Reset CARP Demotion Status.") .
+			gettext("Reset CARP Demotion Status") .
 			'</button>',
 			'danger'
 		);
@@ -215,6 +179,7 @@ if ($carpcount == 0) {
 			continue;
 		}
 
+		$icon = '';
 		$vhid = $carp['vhid'];
 		$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 		$aliases = find_ipalias("_vip{$carp['uniqid']}");

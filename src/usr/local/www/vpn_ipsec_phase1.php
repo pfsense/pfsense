@@ -1,60 +1,27 @@
 <?php
 /*
-	vpn_ipsec_phase1.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2008 Shrew Soft Inc
+ * vpn_ipsec_phase1.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -70,31 +37,30 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
+if ($_REQUEST['generatekey']) {
+	$keyoutput = "";
+	$keystatus = "";
+	exec("/bin/dd status=none if=/dev/random bs=4096 count=1 | /usr/bin/openssl sha224 | /usr/bin/cut -f2 -d' '", $keyoutput, $keystatus);
+	print json_encode(['pskey' => $keyoutput[0]]);
+	exit;
 }
 
-if (!is_array($config['ipsec']['phase2'])) {
-	$config['ipsec']['phase2'] = array();
-}
-
+init_config_arr(array('ipsec', 'phase1'));
+init_config_arr(array('ipsec', 'phase2'));
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-if (is_numericint($_GET['p1index'])) {
-	$p1index = $_GET['p1index'];
-}
-if (isset($_POST['p1index']) && is_numericint($_POST['p1index'])) {
-	$p1index = $_POST['p1index'];
+if (is_numericint($_REQUEST['p1index'])) {
+	$p1index = $_REQUEST['p1index'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$p1index = $_GET['dup'];
+if (is_numericint($_REQUEST['dup'])) {
+	$p1index = $_REQUEST['dup'];
 }
 
 if (isset($p1index) && $a_phase1[$p1index]) {
 	// don't copy the ikeid on dup
-	if (!isset($_GET['dup']) || !is_numericint($_GET['dup'])) {
+	if (!isset($_REQUEST['dup']) || !is_numericint($_REQUEST['dup'])) {
 		$pconfig['ikeid'] = $a_phase1[$p1index]['ikeid'];
 	}
 
@@ -127,9 +93,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['myid_data'] = $a_phase1[$p1index]['myid_data'];
 	$pconfig['peerid_type'] = $a_phase1[$p1index]['peerid_type'];
 	$pconfig['peerid_data'] = $a_phase1[$p1index]['peerid_data'];
-	$pconfig['ealgo'] = $a_phase1[$p1index]['encryption-algorithm'];
-	$pconfig['halgo'] = $a_phase1[$p1index]['hash-algorithm'];
-	$pconfig['dhgroup'] = $a_phase1[$p1index]['dhgroup'];
+	$pconfig['encryption'] = $a_phase1[$p1index]['encryption'];
 	$pconfig['lifetime'] = $a_phase1[$p1index]['lifetime'];
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
 
@@ -148,9 +112,15 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	if (isset($a_phase1[$p1index]['reauth_enable'])) {
 		$pconfig['reauth_enable'] = true;
 	}
+
 	if (isset($a_phase1[$p1index]['rekey_enable'])) {
 		$pconfig['rekey_enable'] = true;
 	}
+
+	if ($a_phase1[$p1index]['margintime']) {
+		$pconfig['margintime'] = $a_phase1[$p1index]['margintime'];
+	}
+
 	if (isset($a_phase1[$p1index]['responderonly'])) {
 		$pconfig['responderonly'] = true;
 	}
@@ -183,9 +153,6 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['myid_type'] = "myaddress";
 	$pconfig['peerid_type'] = "peeraddress";
 	$pconfig['authentication_method'] = "pre_shared_key";
-	$pconfig['ealgo'] = array(name => "aes");
-	$pconfig['halgo'] = "sha1";
-	$pconfig['dhgroup'] = "2";
 	$pconfig['lifetime'] = "28800";
 	$pconfig['nat_traversal'] = 'on';
 	$pconfig['mobike'] = 'off';
@@ -193,30 +160,52 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['iketype'] = "ikev1";
 
 	/* mobile client */
-	if ($_GET['mobile']) {
+	if ($_REQUEST['mobile']) {
 		$pconfig['mobile'] = true;
 		$pconfig['mode'] = "aggressive";
 	}
 }
+// default value for new P1 and failsafe to always have at least 1 encryption item for the Form_ListItem
+if (!is_array($pconfig['encryption']['item']) || count($pconfig['encryption']['item']) == 0) {
+	$item = array();
+	$item['encryption-algorithm'] = array('name' => "aes", 'keylen' => 128);
+	$item['hash-algorithm'] = "sha256";
+	$item['dhgroup'] = "14";
+	$pconfig['encryption']['item'][] = $item;
+}
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($p1index);
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	for($i = 0; $i < 100; $i++) {
+		if (isset($_POST['ealgo_algo'.$i])) {
+			$item = array();
+			$item['encryption-algorithm']['name'] = $_POST['ealgo_algo'.$i];
+			$item['encryption-algorithm']['keylen'] = $_POST['ealgo_keylen'.$i];
+			$item['hash-algorithm'] = $_POST['halgo'.$i];
+			$item['dhgroup'] = $_POST['dhgroup'.$i];
+			$pconfig['encryption']['item'][] = $item;
+		}
+	}
 
 	/* input validation */
 
 	$method = $pconfig['authentication_method'];
+
 	// Unset ca and cert if not required to avoid storing in config
 	if ($method == "pre_shared_key" || $method == "xauth_psk_server") {
 		unset($pconfig['certref']);
 	}
+
 	if ($method != "rsasig" && $method != "xauth_rsa_server" && $method != "eap-tls") {
 		unset($pconfig['caref']);
 	}
+
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
 	// For RSA methods, require the CA/Cert.
 	switch ($method) {
@@ -246,13 +235,15 @@ if ($_POST) {
 			$reqdfieldsn = array(gettext("Pre-Shared Key"));
 			$validate_pskey = true;
 			break;
-		case "hybrid_rsa_server":
 		case "xauth_rsa_server":
 		case "rsasig":
 			$reqdfields = explode(" ", "caref certref");
 			$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 			break;
+		default:
+			/* Other types do not use this validation mechanism. */
 	}
+
 	if (!$pconfig['mobile']) {
 		$reqdfields[] = "remotegw";
 		$reqdfieldsn[] = gettext("Remote gateway");
@@ -269,12 +260,20 @@ if ($_POST) {
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");
 	}
 
+	if (!isset($pconfig['rekey_enable']) && $pconfig['margintime']) {
+		if(!is_numericint($pconfig['margintime'])){
+			 $input_errors[] = gettext("The margintime must be an integer.");
+		} else if(intval($pconfig['margintime']) >= intval($pconfig['lifetime'])){
+			 $input_errors[] = gettext("The margintime must be smaller than the P1 lifetime.");
+		}
+	}
+
 	if ($pconfig['remotegw']) {
 		if (!is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw'])) {
 			$input_errors[] = gettext("A valid remote gateway address or host name must be specified.");
-		} elseif (is_ipaddrv4($pconfig['remotegw']) && ($pconfig['protocol'] != "inet")) {
+		} elseif (is_ipaddrv4($pconfig['remotegw']) && ($pconfig['protocol'] == "inet6")) {
 			$input_errors[] = gettext("A valid remote gateway IPv4 address must be specified or protocol needs to be changed to IPv6");
-		} elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] != "inet6")) {
+		} elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] == "inet")) {
 			$input_errors[] = gettext("A valid remote gateway IPv6 address must be specified or protocol needs to be changed to IPv4");
 		}
 	}
@@ -424,14 +423,11 @@ if ($_POST) {
 		$input_errors[] = gettext("Valid arguments for IKE type are v1, v2 or auto");
 	}
 
-	if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
-		if ($config['system']['crypto_hardware'] == "glxsb") {
-			if ($_POST['ealgo'] == "aes" && $_POST['ealgo_keylen'] != "128") {
-				$input_errors[] = gettext("Only 128 bit AES can be used where the glxsb crypto accelerator is enabled.");
-			}
+	foreach($pconfig['encryption']['item'] as $p1algo) {
+		if (preg_match("/aes\d+gcm/", $p1algo['encryption-algorithm']['name']) && $_POST['iketype'] != "ikev2") {
+			$input_errors[] = gettext("Encryption Algorithm AES-GCM can only be used with IKEv2");
 		}
 	}
-
 	/* auth backend for mobile eap-radius VPNs should be a RADIUS server */
 	if (($pconfig['authentication_method'] == 'eap-radius') && $pconfig['mobile']) {
 		if (!empty($config['ipsec']['client']['user_source'])) {
@@ -444,12 +440,8 @@ if ($_POST) {
 			}
 		}
 	}
-
-	/* build our encryption algorithms array */
-	$pconfig['ealgo'] = array();
-	$pconfig['ealgo']['name'] = $_POST['ealgo'];
-	if ($pconfig['ealgo_keylen']) {
-		$pconfig['ealgo']['keylen'] = $_POST['ealgo_keylen'];
+	if (is_array($old_ph1ent) && ipsec_vti($old_ph1ent) && $pconfig['disabled']) {
+		$input_errors[] = gettext("Cannot disable a Phase 1 with a child Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
 	}
 
 	if (!$input_errors) {
@@ -483,9 +475,7 @@ if ($_POST) {
 		$ph1ent['peerid_type'] = $pconfig['peerid_type'];
 		$ph1ent['peerid_data'] = $pconfig['peerid_data'];
 
-		$ph1ent['encryption-algorithm'] = $pconfig['ealgo'];
-		$ph1ent['hash-algorithm'] = $pconfig['halgo'];
-		$ph1ent['dhgroup'] = $pconfig['dhgroup'];
+		$ph1ent['encryption'] = $pconfig['encryption'];
 		$ph1ent['lifetime'] = $pconfig['lifetime'];
 		$ph1ent['pre-shared-key'] = $pconfig['pskey'];
 		$ph1ent['private-key'] = base64_encode($pconfig['privatekey']);
@@ -501,10 +491,17 @@ if ($_POST) {
 		} else {
 			unset($ph1ent['reauth_enable']);
 		}
+
 		if (isset($pconfig['rekey_enable'])) {
 			$ph1ent['rekey_enable'] = true;
 		} else {
 			unset($ph1ent['rekey_enable']);
+		}
+
+		if (!isset($pconfig['rekey_enable'])) {
+			$ph1ent['margintime'] = $pconfig['margintime'];
+		} else {
+			unset($ph1ent['margintime']);
 		}
 
 		if (isset($pconfig['responderonly'])) {
@@ -543,7 +540,7 @@ if ($_POST) {
 			$a_phase1[] = $ph1ent;
 		}
 
-		write_config();
+		write_config(gettext("Saved IPsec tunnel Phase 1 configuration."));
 		mark_subsystem_dirty('ipsec');
 
 		header("Location: vpn_ipsec.php");
@@ -662,8 +659,10 @@ function build_eal_list() {
 
 if ($pconfig['mobile']) {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"), gettext("Edit Phase 1"));
+	$pglinks = array("", "vpn_ipsec.php", "vpn_ipsec_mobile.php", "@self");
 } else {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"), gettext("Edit Phase 1"));
+	$pglinks = array("", "vpn_ipsec.php", "vpn_ipsec.php", "@self");
 }
 
 $shortcut_section = "ipsec";
@@ -694,21 +693,21 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'iketype',
-	'Key Exchange version',
+	'*Key Exchange version',
 	$pconfig['iketype'],
-	array("ikev1" => "V1", "ikev2" => "V2", "auto" => gettext("Auto"))
+	array("ikev1" => "IKEv1", "ikev2" => "IKEv2", "auto" => gettext("Auto"))
 ))->setHelp('Select the Internet Key Exchange protocol version to be used. Auto uses IKEv2 when initiator, and accepts either IKEv1 or IKEv2 as responder.');
 
 $section->addInput(new Form_Select(
 	'protocol',
-	'Internet Protocol',
+	'*Internet Protocol',
 	$pconfig['protocol'],
-	array("inet" => "IPv4", "inet6" => "IPv6")
+	array("inet" => "IPv4", "inet6" => "IPv6", "both" => "Both (Dual Stack)")
 ))->setHelp('Select the Internet Protocol family.');
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	build_interface_list()
 ))->setHelp('Select the interface for the local endpoint of this phase1 entry.');
@@ -716,7 +715,7 @@ $section->addInput(new Form_Select(
 if (!$pconfig['mobile']) {
 	$section->addInput(new Form_Input(
 		'remotegw',
-		'Remote Gateway',
+		'*Remote Gateway',
 		'text',
 		$pconfig['remotegw']
 	))->setHelp('Enter the public IP address or host name of the remote gateway.');
@@ -735,19 +734,19 @@ $section = new Form_Section('Phase 1 Proposal (Authentication)');
 
 $section->addInput(new Form_Select(
 	'authentication_method',
-	'Authentication Method',
+	'*Authentication Method',
 	$pconfig['authentication_method'],
 	build_auth_method_list()
 ))->setHelp('Must match the setting chosen on the remote side.');
 
 $section->addInput(new Form_Select(
 	'mode',
-	'Negotiation mode',
+	'*Negotiation mode',
 	$pconfig['mode'],
 	array("main" => gettext("Main"), "aggressive" => gettext("Aggressive"))
 ))->setHelp('Aggressive is more flexible, but less secure.');
 
-$group = new Form_Group('My identifier');
+$group = new Form_Group('*My identifier');
 
 $group->add(new Form_Select(
 	'myid_type',
@@ -765,7 +764,7 @@ $group->add(new Form_Input(
 
 $section->add($group);
 
-$group = new Form_Group('Peer identifier');
+$group = new Form_Group('*Peer identifier');
 $group->addClass('peeridgroup');
 
 $group->add(new Form_Select(
@@ -790,64 +789,88 @@ $section->add($group);
 
 $section->addInput(new Form_Input(
 	'pskey',
-	'Pre-Shared Key',
+	'*Pre-Shared Key',
 	'text',
 	$pconfig['pskey']
-))->setHelp('Enter the Pre-Shared Key string.');
+))->setHelp('Enter the Pre-Shared Key string. This key must match on both peers. %1$sThis key should be long and random to protect the tunnel and its contents. A weak Pre-Shared Key can lead to a tunnel compromise.%1$s', '<br/>');
 
 $section->addInput(new Form_Select(
 	'certref',
-	'My Certificate',
+	'*My Certificate',
 	$pconfig['certref'],
 	build_cert_list()
 ))->setHelp('Select a certificate previously configured in the Certificate Manager.');
 
 $section->addInput(new Form_Select(
 	'caref',
-	'Peer Certificate Authority',
+	'*Peer Certificate Authority',
 	$pconfig['caref'],
 	build_ca_list()
 ))->setHelp('Select a certificate authority previously configured in the Certificate Manager.');
 
 $form->add($section);
 
-$section = new Form_Section('Phase 1 Proposal (Algorithms)');
+$rowcount = count($pconfig['encryption']['item']);
+$section = new Form_Section('Phase 1 Proposal (Encryption Algorithm)');
+foreach($pconfig['encryption']['item'] as $key => $p1enc) {
+	$lastrow = ($counter == $rowcount - 1);
+	$group = new Form_Group($counter == 0 ? '*Encryption Algorithm' : '');
+	$group->addClass("repeatable");
 
-$group = new Form_Group('Encryption Algorithm');
+	$group->add(new Form_Select(
+		'ealgo_algo'.$key,
+		null,
+		$p1enc['encryption-algorithm']['name'],
+		build_eal_list()
+	))->setHelp($lastrow ? 'Algorithm' : '');
 
-$group->add(new Form_Select(
-	'ealgo',
+	$group->add(new Form_Select(
+		'ealgo_keylen'.$key,
+		null,
+		$p1enc['encryption-algorithm']['keylen'],
+		array()
+	))->setHelp($lastrow ? 'Key length' : '');
+
+	$group->add(new Form_Select(
+		'halgo'.$key,
+		'*Hash Algorithm',
+		$p1enc['hash-algorithm'],
+		$p1_halgos
+	))->setHelp($lastrow ? 'Hash' : '');
+
+	$group->add(new Form_Select(
+		'dhgroup'.$key,
+		'*DH Group',
+		$p1enc['dhgroup'],
+		$p1_dhgroups
+	))->setHelp($lastrow ? 'DH Group' : '');
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
+
+	$section->add($group);
+	$counter += 1;
+}
+$section->addInput(new Form_StaticText('', ''))->setHelp('Note: Blowfish, 3DES, CAST128, MD5, SHA1, and DH groups 1, 2, 22, 23, and 24 provide weak security and should be avoided.');
+$form->add($section);
+
+$btnaddopt = new Form_Button(
+	'algoaddrow',
+	'Add Algorithm',
 	null,
-	$pconfig['ealgo']['name'],
-	build_eal_list()
-));
+	'fa-plus'
+);
+$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$section->addInput($btnaddopt);
 
-$group->add(new Form_Select(
-	'ealgo_keylen',
-	null,
-	$pconfig['ealgo_keylen'],
-	array()
-));
-
-$section->add($group);
-
-$section->addInput(new Form_Select(
-	'halgo',
-	'Hash Algorithm',
-	$pconfig['halgo'],
-	$p1_halgos
-))->setHelp('Must match the setting chosen on the remote side.');
-
-$section->addInput(new Form_Select(
-	'dhgroup',
-	'DH Group',
-	$pconfig['dhgroup'],
-	$p1_dhgroups
-))->setHelp('Must match the setting chosen on the remote side.');
-
+$section = new Form_Section('NOTITLE');
 $section->addInput(new Form_Input(
 	'lifetime',
-	'Lifetime (Seconds)',
+	'*Lifetime (Seconds)',
 	'number',
 	$pconfig['lifetime']
 ));
@@ -862,6 +885,13 @@ $section->addInput(new Form_Checkbox(
 	'Disables renegotiation when a connection is about to expire.',
 	$pconfig['rekey_enable']
 ));
+
+$section->addInput(new Form_Input(
+	'margintime',
+	'Margintime (Seconds)',
+	'number',
+	$pconfig['margintime']
+))->setHelp('How long before connection expiry or keying-channel expiry should attempt to negotiate a replacement begin.');
 
 $section->addInput(new Form_Checkbox(
 	'reauth_enable',
@@ -944,7 +974,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		'p1index',
 		null,
 		'hidden',
-		$pconfig['$p1index']
+		$p1index
 	));
 }
 
@@ -968,13 +998,6 @@ $form->add($section);
 
 print($form);
 
-/* determine if we should init the key length */
-$keyset = '';
-if (isset($pconfig['ealgo']['keylen'])) {
-	if (is_numericint($pconfig['ealgo']['keylen'])) {
-		$keyset = $pconfig['ealgo']['keylen'];
-	}
-}
 ?>
 
 
@@ -983,6 +1006,19 @@ if (isset($pconfig['ealgo']['keylen'])) {
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
+	$('[id^=algoaddrow]').prop('type','button');
+
+	$('[id^=algoaddrow]').click(function() {
+		add_row();
+
+		var lastRepeatableGroup = $('.repeatable:last');
+		$(lastRepeatableGroup).find('[id^=ealgo_algo]select').change(function () {
+			id = getStringInt(this.id);
+			ealgosel_change(id, '');
+		});
+		$(lastRepeatableGroup).find('[id^=ealgo_algo]select').change();
+	});
 
 	function myidsel_change() {
 		hideGroupInput('myid_data', ($('#myid_type').val() == 'myaddress'));
@@ -1058,18 +1094,18 @@ events.push(function() {
 	}
 
 	/* PHP generates javascript case statements for variable length keys */
-	function ealgosel_change(bits) {
+	function ealgosel_change(id, bits) {
 
-		$("select[name='ealgo_keylen']").find('option').remove().end();
+		$("select[name='ealgo_keylen"+id+"']").find('option').remove().end();
 
-		switch ($('#ealgo').find(":selected").index().toString()) {
+		switch ($('#ealgo_algo'+id).find(":selected").index().toString()) {
 <?php
 	$i = 0;
 	foreach ($p1_ealgos as $algo => $algodata) {
 		if (is_array($algodata['keysel'])) {
 ?>
 			case '<?=$i?>':
-				hideGroupInput('ealgo_keylen', false);
+				invisibleGroupInput('ealgo_keylen'+id, false);
 <?php
 			$key_hi = $algodata['keysel']['hi'];
 			$key_lo = $algodata['keysel']['lo'];
@@ -1077,7 +1113,7 @@ events.push(function() {
 
 			for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
 ?>
-				$("select[name='ealgo_keylen']").append($('<option value="<?=$keylen?>"><?=$keylen?> bits</option>'));
+				$("select[name='ealgo_keylen"+id+"']").append($('<option value="<?=$keylen?>"><?=$keylen?> bits</option>'));
 <?php
 			}
 ?>
@@ -1086,7 +1122,7 @@ events.push(function() {
 		} else {
 ?>
 			case '<?=$i?>':
-				hideGroupInput('ealgo_keylen', true);
+				invisibleGroupInput('ealgo_keylen'+id, true);
 			break;
 <?php
 		}
@@ -1096,9 +1132,15 @@ events.push(function() {
 		}
 
 		if (bits) {
-			$('#ealgo_keylen').val(bits);
+			$('#ealgo_keylen'+id).val(bits);
 		}
 	}
+
+	function rekeychkbox_change() {
+		hide = $('#rekey_enable').prop('checked');
+
+		hideInput('margintime', hide);
+  }
 
 	function dpdchkbox_change() {
 		hide = !$('#dpd_enable').prop('checked');
@@ -1122,6 +1164,11 @@ events.push(function() {
 	//}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ----------
+
+	 // Enable Rekey
+	$('#rekey_enable').click(function () {
+		rekeychkbox_change();
+	});
 
 	 // Enable DPD
 	$('#dpd_enable').click(function () {
@@ -1149,13 +1196,14 @@ events.push(function() {
 	});
 
 	 // authentication method
-	$('#authentication_method').click(function () {
+	$('#authentication_method').change(function () {
 		methodsel_change();
 	});
 
-	 // authentication method
-	$('#ealgo').change(function () {
-		ealgosel_change(<?=$keyset?>);
+	 // algorithm
+	$('[id^=ealgo_algo]select').change(function () {
+		id = getStringInt(this.id);
+		ealgosel_change(id, 0);
 	});
 
 	// On ititial page load
@@ -1163,12 +1211,34 @@ events.push(function() {
 	peeridsel_change();
 	iketype_change();
 	methodsel_change();
-	ealgosel_change(<?=$keyset?>);
+	rekeychkbox_change();
 	dpdchkbox_change();
+<?php
+foreach($pconfig['encryption']['item'] as $key => $p1enc) {
+	$keylen = $p1enc['encryption-algorithm']['keylen'];
+	if (!is_numericint($keylen)) {
+		$keylen = "''";
+	}
+	echo "ealgosel_change({$key}, {$keylen});";
+}
+?>
 
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideInput('ikeid', true);
+
+	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new Pre-Shared Key");?></a>');
+	generateButton.on('click', function() {
+		$.ajax({
+			type: 'get',
+			url: 'vpn_ipsec_phase1.php?generatekey=true',
+			dataType: 'json',
+			success: function(data) {
+				$('#pskey').val(data.pskey.replace(/\\n/g, '\n'));
+			}
+		});
+	});
+	generateButton.appendTo($('#pskey + .help-block')[0]);
 });
 //]]>
 </script>

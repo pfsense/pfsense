@@ -1,59 +1,26 @@
 <?php
 /*
-	firewall_aliases.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_aliases.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -68,40 +35,29 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
 $tab = ($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/", "", $_REQUEST['tab']));
 
-if ($_POST) {
+if ($_POST['apply']) {
+	$retval = 0;
 
-	if ($_POST['apply']) {
-		$retval = 0;
+	/* reload all components that use aliases */
+	$retval |= filter_configure();
 
-		/* reload all components that use aliases */
-		$retval = filter_configure();
-
-		if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message($retval);
-			$class = "success";
-		} else {
-			$savemsg = $retval;
-			$class = "danger";
-		}
-		if ($retval == 0) {
-			clear_subsystem_dirty('aliases');
-		}
+	if ($retval == 0) {
+		clear_subsystem_dirty('aliases');
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_aliases[$_GET['id']]) {
+
+if ($_POST['act'] == "del") {
+	if ($a_aliases[$_POST['id']]) {
 		/* make sure rule is not being referenced by any nat or filter rules */
 		$is_alias_referenced = false;
 		$referenced_by = false;
-		$alias_name = $a_aliases[$_GET['id']]['name'];
+		$alias_name = $a_aliases[$_POST['id']]['name'];
 		// Firewall rules
 		find_alias_reference(array('filter', 'rule'), array('source', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
 		find_alias_reference(array('filter', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
@@ -132,15 +88,14 @@ if ($_GET['act'] == "del") {
 		// Static routes
 		find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
 		if ($is_alias_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars($referenced_by));
-			$class = "danger";
+			$delete_error = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars($referenced_by));
 		} else {
-			if (preg_match("/urltable/i", $a_aliases[$_GET['id']]['type'])) {
+			if (preg_match("/urltable/i", $a_aliases[$_POST['id']]['type'])) {
 				// this is a URL table type alias, delete its file as well
-				unlink_if_exists("/var/db/aliastables/" . $a_aliases[$_GET['id']]['name'] . ".txt");
+				unlink_if_exists("/var/db/aliastables/" . $a_aliases[$_POST['id']]['name'] . ".txt");
 			}
-			unset($a_aliases[$_GET['id']]);
-			if (write_config()) {
+			unset($a_aliases[$_POST['id']]);
+			if (write_config(gettext("Deleted a firewall alias."))) {
 				filter_configure();
 				mark_subsystem_dirty('aliases');
 			}
@@ -202,12 +157,16 @@ foreach ($tab_array as $dtab) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), $bctab);
+$pglinks = array("", "firewall_aliases.php", "@self");
 $shortcut_section = "aliases";
 
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, $class);
+if ($delete_error) {
+	print_info_box($delete_error, 'danger');
+}
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('aliases')) {
@@ -273,7 +232,7 @@ display_top_tabs($tab_array);
 		if (is_array($alias["aliasurl"])) {
 			$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
 			echo $aliasurls;
-			if (count($aliasurls) > 10) {
+			if (is_array($aliasurls) && (count($aliasurls) > 10)) {
 				echo "&hellip;<br />";
 			}
 			echo "<br />\n";
@@ -292,7 +251,7 @@ display_top_tabs($tab_array);
 			</td>
 			<td>
 				<a class="fa fa-pencil" title="<?=gettext("Edit alias"); ?>" href="firewall_aliases_edit.php?id=<?=$i?>"></a>
-				<a class="fa fa-trash"	title="<?=gettext("Delete alias")?>" href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>"></a>
+				<a class="fa fa-trash"	title="<?=gettext("Delete alias")?>" href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>" usepost></a>
 			</td>
 		</tr>
 <?php endif?>
@@ -326,9 +285,9 @@ endif
 <div>
 	<div class="infoblock">
 		<?php print_info_box(gettext('Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
-			'of changes that have to be made if a host, network or port changes. <br />' .
-			'The name of an alias can be entered instead of the host, network or port where indicated. The alias will be resolved according to the list above.' . '<br />' .
-			'If an alias cannot be resolved (e.g. because it was deleted), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), 'info', false); ?>
+			'of changes that have to be made if a host, network or port changes.') . '<br />' .
+			gettext('The name of an alias can be entered instead of the host, network or port where indicated. The alias will be resolved according to the list above.') . '<br />' .
+			gettext('If an alias cannot be resolved (e.g. because it was deleted), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), 'info', false); ?>
 	</div>
 </div>
 

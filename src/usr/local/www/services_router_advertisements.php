@@ -1,60 +1,27 @@
 <?php
 /*
-	services_router_advertisements.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
+ * services_router_advertisements.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -71,28 +38,10 @@ if (!$g['services_dhcp_server_enable']) {
 	exit;
 }
 
-/*	Fix failover DHCP problem
- *	http://article.gmane.org/gmane.comp.security.firewalls.pfsense.support/18749
- */
-ini_set("memory_limit", "64M");
+$if = $_REQUEST['if'];
 
-$if = $_GET['if'];
-if ($_POST['if']) {
-	$if = $_POST['if'];
-}
-
-/* if OLSRD is enabled, allow WAN to house DHCP. */
-if ($config['installedpackages']['olsrd']) {
-	foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-		if ($olsrd['enable']) {
-			$is_olsr_enabled = true;
-			break;
-		}
-	}
-}
-
-if (!$_GET['if']) {
-	$savemsg = gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses.") . "<br />" .
+if (!$_REQUEST['if']) {
+	$info_msg = gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses.") . "<br />" .
 	    gettext("Only interfaces configured with a static IP will be shown.");
 }
 
@@ -143,11 +92,11 @@ if (!is_array($pconfig['subnets'])) {
 
 $advertise_modes = array(
 	"disabled" => 	gettext("Disabled"),
-	"router" => 	gettext("Router Only"),
-	"unmanaged" => 	gettext("Unmanaged"),
-	"managed" => 	gettext("Managed"),
-	"assist" => 	gettext("Assisted"),
-	"stateless_dhcp" => gettext("Stateless DHCP"));
+	"router" => 	gettext("Router Only - RA Flags [none], Prefix Flags [router]"),
+	"unmanaged" => 	gettext("Unmanaged - RA Flags [none], Prefix Flags [onlink, auto, router]"),
+	"managed" => 	gettext("Managed - RA Flags [managed, other stateful], Prefix Flags [onlink, router]"),
+	"assist" => 	gettext("Assisted - RA Flags [managed, other stateful], Prefix Flags [onlink, auto, router]"),
+	"stateless_dhcp" => gettext("Stateless DHCP - RA Flags [other stateful], Prefix Flags [onlink, auto, router]"));
 $priority_modes = array(
 	"low" => 	gettext("Low"),
 	"medium" => gettext("Normal"),
@@ -160,7 +109,21 @@ $subnets_help = '<span class="help-block">' .
 		"If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned.") .
 	'</span>';
 
-if ($_POST) {
+// THe use of <div class="infoblock"> here causes the text to be hidden until the user clicks the "info" icon
+$ramode_help = gettext('Select the Operating Mode for the Router Advertisement (RA) Daemon.') .
+	'<div class="infoblock">' .
+	'<dl class="dl-horizontal responsive">' .
+	'<dt>' . gettext('Disabled') . 		 '</dt><dd>' . gettext('RADVD will not be enabled on this interface.') . '</dd>' .
+	'<dt>' . gettext('Router Only') . 	 '</dt><dd>' . gettext('Will advertise this router.') . '</dd>' .
+	'<dt>' . gettext('Unmanaged') . 	 '</dt><dd>' . gettext('Will advertise this router with stateless autoconfig.') . '</dd>' .
+	'<dt>' . gettext('Managed') . 		 '</dt><dd>' . gettext('Will advertise this router with all configuration through a DHCPv6 server.') . '</dd>' .
+	'<dt>' . gettext('Assisted') . 		 '</dt><dd>' . gettext('Will advertise this router with configuration through a DHCPv6 server and/or stateless autoconfig.') . '</dd>' .
+	'<dt>' . gettext('Stateless DHCP') . '</dt><dd>' . gettext('Will advertise this router with stateless autoconfig and other configuration information available via DHCPv6.') . '</dd>' .
+	'</dl>' .
+	gettext('It is not required to activate DHCPv6 server on pfSense when set to "Managed", "Assisted" or "Stateless DHCP", it can be another host on the network.') .
+	'</div>';
+
+if ($_POST['save']) {
 	unset($input_errors);
 
 	$pconfig = $_POST;
@@ -184,7 +147,7 @@ if ($_POST) {
 		} else {
 			$pconfig['subnets'][] = $address . "/" . $bits;
 			if (!is_ipaddrv6($address)) {
-				$input_errors[] = sprintf(gettext("An invalid subnet or alias was specified. [%s/%s]"), $address, $bits);
+				$input_errors[] = sprintf(gettext('An invalid subnet or alias was specified. [%1$s/%2$s]'), $address, $bits);
 			}
 		}
 	}
@@ -228,10 +191,14 @@ if ($_POST) {
 		}
 	}
 	if ($_POST['raadvdefaultlifetime'] && !is_numericint($_POST['raadvdefaultlifetime'])) {
-		$input_errors[] = gettext("Router lifetime must be an integer between 1 and 9000.");
+		$input_errors[] = gettext("Router lifetime must be an integer between 0 and 9000.");
 	}
 
 	if (!$input_errors) {
+		if (!is_array($config['dhcpdv6'])) {
+			$config['dhcpdv6'] = array();
+		}
+
 		if (!is_array($config['dhcpdv6'][$if])) {
 			$config['dhcpdv6'][$if] = array();
 		}
@@ -267,17 +234,21 @@ if ($_POST) {
 		}
 
 		write_config();
-		$retval = services_radvd_configure();
-		$savemsg = get_std_save_message($retval);
+		$changes_applied = true;
+		$retval = 0;
+		$retval |= services_radvd_configure();
 	}
 }
 
 $pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")));
+$pglinks = array("", "services_dhcpv6.php");
 
 if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
+	$pglinks[] = "services_dhcpv6.php?if=" . $if;
 }
 $pgtitle[] = gettext("Router Advertisements");
+$pglinks[] = "@self";
 
 include("head.inc");
 
@@ -285,8 +256,12 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
+}
+
+if ($info_msg) {
+	print_info_box($info_msg, 'success');
 }
 
 /* active tabs */
@@ -328,19 +303,14 @@ $section = new Form_Section('Advertisements');
 
 $section->addInput(new Form_Select(
 	'ramode',
-	'Router mode',
+	'*Router mode',
 	$pconfig['ramode'],
 	$advertise_modes
-))->setHelp('Select the Operating Mode for the Router Advertisement (RA) Daemon. Use:' . '<br />' .
-			'&nbsp;<strong>Router Only</strong> to only advertise this router' . '<br />' .
-			'&nbsp;<strong>Unmanaged</strong> for Router Advertising with Stateless Autoconfig' . '<br />' .
-			'&nbsp;<strong>Managed</strong> for assignment through a DHCPv6 Server' . '<br />' .
-			'&nbsp;<strong>Assisted</strong> for DHCPv6 Server assignment combined with Stateless Autoconfig. ' .
-			'It is not required to activate this DHCPv6 server when set to "Managed", this can be another host on the network');
+))->setHelp($ramode_help);
 
 $section->addInput(new Form_Select(
 	'rapriority',
-	'Router priority',
+	'*Router priority',
 	$pconfig['rapriority'],
 	$priority_modes
 ))->setHelp('Select the Priority for the Router Advertisement (RA) Daemon.');
@@ -349,8 +319,8 @@ $carplist = get_configured_vip_list("inet6", VIP_CARP);
 
 $carplistif = array();
 
-if(count($carplist) > 0) {
-	foreach($carplist as $ifname => $vip) {
+if (count($carplist) > 0) {
+	foreach ($carplist as $ifname => $vip) {
 		if (get_configured_vip_interface($ifname) == $if) {
 			$carplistif[$ifname] = $vip;
 		}
@@ -360,8 +330,8 @@ if(count($carplist) > 0) {
 if (count($carplistif) > 0) {
 	$iflist = array();
 
-	$iflist['interface'] = strtoupper($if);
-	foreach($carplistif as $ifname => $vip) {
+	$iflist['interface'] = convert_friendly_interface_to_friendly_descr($if);
+	foreach ($carplistif as $ifname => $vip) {
 		$iflist[$ifname] = get_vip_descr($vip) . " - " . $vip;
 	}
 
@@ -379,16 +349,16 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['ravalidlifetime'],
 	['min' => 1, 'max' => 655350]
-))->setHelp('The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.' . ' <br />' .
-'The default is 86400 seconds.');
+))->setHelp('The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.%1$s' .
+'The default is 86400 seconds.', '<br />');
 
 $section->addInput(new Form_Input(
 	'rapreferredlifetime',
 	'Default preferred lifetime',
 	'text',
 	$pconfig['rapreferredlifetime']
-))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.' . ' <br />' .
-			'The default is 14400 seconds.');
+))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.%1$s' .
+			'The default is 14400 seconds.', '<br />');
 
 $section->addInput(new Form_Input(
 	'raminrtradvinterval',
@@ -411,7 +381,7 @@ $section->addInput(new Form_Input(
 	'Router lifetime',
 	'number',
 	$pconfig['raadvdefaultlifetime'],
-	['min' => 1, 'max' => 9000]
+	['min' => 0, 'max' => 9000]
 ))->setHelp('The lifetime associated with the default router in seconds.');
 
 $section->addInput(new Form_StaticText(
@@ -436,7 +406,8 @@ foreach ($pconfig['subnets'] as $subnet) {
 	$group->add(new Form_IpAddress(
 		$address_name,
 		null,
-		$address
+		$address,
+		'V6'
 	))->addMask($bits_name, $subnet);
 
 	$group->add(new Form_Button(
@@ -468,8 +439,9 @@ for ($idx=1; $idx<=3; $idx++) {
 	$section->addInput(new Form_IpAddress(
 		'radns' . $idx,
 		'Server ' . $idx,
-		$pconfig['radns' . $idx]
-	))->setPattern('[a-zA-Z0-9\_\.\:]+')->setHelp(($idx < 3) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
+		$pconfig['radns' . $idx],
+		'ALIASV6'
+	))->setHelp(($idx < 3) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
 }
 
 $section->addInput(new Form_Input(

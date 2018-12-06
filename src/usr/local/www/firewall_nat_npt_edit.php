@@ -1,57 +1,23 @@
 <?php
 /*
-	firewall_nat_npt_edit.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2011 Seth Mos <seth.mos@dds.nl>
+ * firewall_nat_npt_edit.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -75,27 +41,20 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['nat']['npt'])) {
-	$config['nat']['npt'] = array();
-}
-
+init_config_arr(array('nat', 'npt'));
 $a_npt = &$config['nat']['npt'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-$after = $_GET['after'];
-if (isset($_POST['after'])) {
-	$after = $_POST['after'];
+if (isset($_REQUEST['after'])) {
+	$after = $_REQUEST['after'];
 }
 
-if (isset($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+if (isset($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$after = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_npt[$id]) {
@@ -119,11 +78,11 @@ if (isset($id) && $a_npt[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_GET['dup'])) {
+if (isset($_REQUEST['dup'])) {
 	unset($id);
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -137,6 +96,13 @@ if ($_POST) {
 	$reqdfieldsn[] = gettext("Destination prefix");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (!is_ipaddrv6(trim($_POST['src']))) {
+		$input_errors[] = gettext("The specified source address is not a valid IPv6 prefix");
+	}
+	if (!is_ipaddrv6(trim($_POST['dst']))) {
+		$input_errors[] = gettext("The specified destination address is not a valid IPv6 prefix");
+	}
 
 	if (!$input_errors) {
 		$natent = array();
@@ -166,7 +132,7 @@ if ($_POST) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: NPt - saved/edited NPt mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -175,41 +141,8 @@ if ($_POST) {
 	}
 }
 
-function build_if_list() {
-	global $ifdisp;
-
-	foreach ($ifdisp as $if => $ifdesc) {
-		if (have_ruleint_access($if)) {
-			$interfaces[$if] = $ifdesc;
-		}
-	}
-
-	if ($config['l2tp']['mode'] == "server") {
-		if (have_ruleint_access("l2tp")) {
-			$interfaces['l2tp'] = gettext("L2TP VPN");
-		}
-	}
-
-	if ($config['pppoe']['mode'] == "server") {
-		if (have_ruleint_access("pppoe")) {
-			$interfaces['pppoe'] = gettext("PPPoE Server");
-		}
-	}
-
-	/* add ipsec interfaces */
-	if (ipsec_enabled() && have_ruleint_access("enc0")) {
-		$interfaces["enc0"] = gettext("IPsec");
-	}
-
-	/* add openvpn/tun interfaces */
-	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-		$interfaces["openvpn"] = gettext("OpenVPN");
-	}
-
-	return($interfaces);
-}
-
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"), gettext("Edit"));
+$pglinks = array("", "firewall_nat.php", "firewall_nat_npt.php", "@self");
 include("head.inc");
 
 if ($input_errors) {
@@ -229,11 +162,11 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
-	build_if_list()
-))->setHelp('Choose which interface this rule applies to.' . '<br />' .
-			'Hint: Typically the "WAN" is used here.');
+	create_interface_list()
+))->setHelp('Choose which interface this rule applies to.%s' .
+			'Hint: Typically the "WAN" is used here.', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'srcnot',
@@ -244,7 +177,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_IpAddress(
 	'src',
-	'Address',
+	'*Address',
 	$pconfig['src'],
 	'V6'
 ))->addMask('srcmask', $pconfig['srcmask'])->setHelp('Internal (LAN) ULA IPv6 Prefix for the Network Prefix translation. ' .
@@ -259,7 +192,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_IpAddress(
 	'dst',
-	'Address',
+	'*Address',
 	$pconfig['dst'],
 	'V6'
 ))->addMask('dstmask', $pconfig['dstmask'])->setHelp('Global Unicast routable IPv6 prefix');

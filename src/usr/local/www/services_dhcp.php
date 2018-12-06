@@ -1,59 +1,26 @@
 <?php
 /*
-	services_dhcp.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * services_dhcp.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -73,21 +40,7 @@ if (!$g['services_dhcp_server_enable']) {
 	exit;
 }
 
-$if = $_GET['if'];
-if (!empty($_POST['if'])) {
-	$if = $_POST['if'];
-}
-
-/* if OLSRD is enabled, allow WAN to house DHCP. */
-if ($config['installedpackages']['olsrd']) {
-	foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-		if ($olsrd['enable']) {
-			$is_olsr_enabled = true;
-			break;
-		}
-	}
-}
-
+$if = $_REQUEST['if'];
 $iflist = get_configured_interface_with_descr();
 
 /* set the starting interface */
@@ -96,15 +49,22 @@ if (!$if || !isset($iflist[$if])) {
 	// First look for an interface with DHCP already enabled.
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if (is_array($config['dhcpd'][$ifent]) && isset($config['dhcpd'][$ifent]['enable']) && (is_ipaddrv4($oc['ipaddr']))) {
+		if (is_array($config['dhcpd'][$ifent]) &&
+		    isset($config['dhcpd'][$ifent]['enable']) &&
+		    is_ipaddrv4($oc['ipaddr']) && $oc['subnet'] < 31) {
 			$if = $ifent;
 			$found_starting_if = true;
 			break;
 		}
 	}
 
-	// If there is no DHCP-enabled interface and LAN is a candidate, then choose LAN.
-	if (!$found_starting_if && isset($iflist['lan']) && is_ipaddrv4($config['interfaces']['lan']['ipaddr'])) {
+	/*
+	 * If there is no DHCP-enabled interface and LAN is a candidate,
+	 * then choose LAN.
+	 */
+	if (!$found_starting_if && isset($iflist['lan']) &&
+	    is_ipaddrv4($config['interfaces']['lan']['ipaddr']) &&
+	    $config['interfaces']['lan']['subnet'] < 31) {
 		$if = 'lan';
 		$found_starting_if = true;
 	}
@@ -113,8 +73,15 @@ if (!$if || !isset($iflist[$if])) {
 	if (!$found_starting_if) {
 		foreach ($iflist as $ifent => $ifname) {
 			$oc = $config['interfaces'][$ifent];
-			if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
-				(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
+
+			/* Not static IPv4 or subnet >= 31 */
+			if (!is_ipaddrv4($oc['ipaddr']) ||
+			    empty($oc['subnet']) || $oc['subnet'] < 31) {
+				continue;
+			}
+
+			if (!is_array($config['dhcpd'][$ifent]) ||
+			    !isset($config['dhcpd'][$ifent]['enable'])) {
 				continue;
 			}
 
@@ -124,15 +91,12 @@ if (!$if || !isset($iflist[$if])) {
 	}
 }
 
-$act = $_GET['act'];
-if (!empty($_POST['act'])) {
-	$act = $_POST['act'];
-}
+$act = $_REQUEST['act'];
 
 $a_pools = array();
 
 if (is_array($config['dhcpd'][$if])) {
-	$pool = $_GET['pool'];
+	$pool = $_REQUEST['pool'];
 	if (is_numeric($_POST['pool'])) {
 		$pool = $_POST['pool'];
 	}
@@ -143,10 +107,7 @@ if (is_array($config['dhcpd'][$if])) {
 		exit;
 	}
 
-	if (!is_array($config['dhcpd'][$if]['pool'])) {
-		$config['dhcpd'][$if]['pool'] = array();
-	}
-
+	init_config_arr(array('dhcpd', $if, 'pool'));
 	$a_pools = &$config['dhcpd'][$if]['pool'];
 
 	if (is_numeric($pool) && $a_pools[$pool]) {
@@ -157,12 +118,10 @@ if (is_array($config['dhcpd'][$if])) {
 		$dhcpdconf = &$config['dhcpd'][$if];
 	}
 
-	if (!is_array($config['dhcpd'][$if]['staticmap'])) {
-		$dhcpdconf['staticmap'] = array();
-	}
-
+	init_config_arr(array('dhcpd', $if, 'staticmap'));
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
 }
+
 if (is_array($dhcpdconf)) {
 	// Global Options
 	if (!is_numeric($pool) && !($act == "newpool")) {
@@ -200,13 +159,17 @@ if (is_array($dhcpdconf)) {
 	$pconfig['domainsearchlist'] = $dhcpdconf['domainsearchlist'];
 	list($pconfig['wins1'], $pconfig['wins2']) = $dhcpdconf['winsserver'];
 	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $dhcpdconf['dnsserver'];
+	$pconfig['ignorebootp'] = isset($dhcpdconf['ignorebootp']);
 	$pconfig['denyunknown'] = isset($dhcpdconf['denyunknown']);
+	$pconfig['ignoreclientuids'] = isset($dhcpdconf['ignoreclientuids']);
 	$pconfig['nonak'] = isset($dhcpdconf['nonak']);
 	$pconfig['ddnsdomain'] = $dhcpdconf['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $dhcpdconf['ddnsdomainprimary'];
 	$pconfig['ddnsdomainkeyname'] = $dhcpdconf['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkeyalgorithm'] = $dhcpdconf['ddnsdomainkeyalgorithm'];
 	$pconfig['ddnsdomainkey'] = $dhcpdconf['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($dhcpdconf['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($dhcpdconf['ddnsforcehostname']);
 	$pconfig['mac_allow'] = $dhcpdconf['mac_allow'];
 	$pconfig['mac_deny'] = $dhcpdconf['mac_deny'];
 	list($pconfig['ntp1'], $pconfig['ntp2']) = $dhcpdconf['ntpserver'];
@@ -221,6 +184,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['netmask'] = $dhcpdconf['netmask'];
 	$pconfig['numberoptions'] = $dhcpdconf['numberoptions'];
 	$pconfig['statsgraph'] = $dhcpdconf['statsgraph'];
+	$pconfig['ddnsclientupdates'] = $dhcpdconf['ddnsclientupdates'];
 }
 
 $ifcfgip = $config['interfaces'][$if]['ipaddr'];
@@ -251,6 +215,10 @@ if (isset($_POST['save'])) {
 	$numberoptions = array();
 	for ($x = 0; $x < 99; $x++) {
 		if (isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
+			if ($_POST["number{$x}"] < 1 || $_POST["number{$x}"] > 254) {
+				$input_errors[] = gettext("The DHCP option must be a number between 1 and 254.");
+				continue;
+			}
 			$numbervalue = array();
 			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
 			$numbervalue['type'] = htmlspecialchars($_POST["itemtype{$x}"]);
@@ -263,220 +231,261 @@ if (isset($_POST['save'])) {
 	$pconfig['numberoptions'] = $numberoptions;
 
 	/* input validation */
+
+	// Note: if DHCP Server is not enabled, then it is OK to adjust other parameters without specifying range from-to.
 	if ($_POST['enable'] || is_numeric($pool) || $act == "newpool") {
 		$reqdfields = explode(" ", "range_from range_to");
 		$reqdfieldsn = array(gettext("Range begin"), gettext("Range end"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+	}
 
-		if (($_POST['nonak']) && !empty($_POST['failover_peerip'])) {
-			$input_errors[] = gettext("Ignore Denied Clients may not be used when a Failover Peer IP is defined.");
+	if (($_POST['nonak']) && !empty($_POST['failover_peerip'])) {
+		$input_errors[] = gettext("Ignore Denied Clients may not be used when a Failover Peer IP is defined.");
+	}
+
+	if ($_POST['range_from'] && !is_ipaddrv4($_POST['range_from'])) {
+		$input_errors[] = gettext("A valid IPv4 address must be specified for range from.");
+	}
+	if ($_POST['range_to'] && !is_ipaddrv4($_POST['range_to'])) {
+		$input_errors[] = gettext("A valid IPv4 address must be specified for range to.");
+	}
+	if (($_POST['range_from'] && !$_POST['range_to']) || ($_POST['range_to'] && !$_POST['range_from'])) {
+		$input_errors[] = gettext("Range From and Range To must both be entered.");
+	}
+	if (($_POST['gateway'] && $_POST['gateway'] != "none" && !is_ipaddrv4($_POST['gateway']))) {
+		$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
+	}
+	if (($_POST['wins1'] && !is_ipaddrv4($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv4($_POST['wins2']))) {
+		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary WINS servers.");
+	}
+	$parent_ip = get_interface_ip($_POST['if']);
+	if (is_ipaddrv4($parent_ip) && $_POST['gateway'] && $_POST['gateway'] != "none") {
+		$parent_sn = get_interface_subnet($_POST['if']);
+		if (!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway'])) {
+			$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
+		}
+	}
+
+	if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])) || ($_POST['dns3'] && !is_ipaddrv4($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddrv4($_POST['dns4']))) {
+		$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
+	}
+
+	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
+		$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
+	}
+
+	if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
+		$deftime = 7200; // Default value if it's empty
+		if (is_numeric($_POST['deftime'])) {
+			$deftime = $_POST['deftime'];
 		}
 
-		if (($_POST['range_from'] && !is_ipaddrv4($_POST['range_from']))) {
-			$input_errors[] = gettext("A valid range must be specified.");
-		}
-		if (($_POST['range_to'] && !is_ipaddrv4($_POST['range_to']))) {
-			$input_errors[] = gettext("A valid range must be specified.");
-		}
-		if (($_POST['gateway'] && $_POST['gateway'] != "none" && !is_ipaddrv4($_POST['gateway']))) {
-			$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
-		}
-		if (($_POST['wins1'] && !is_ipaddrv4($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv4($_POST['wins2']))) {
-			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary WINS servers.");
-		}
-		$parent_ip = get_interface_ip($_POST['if']);
-		if (is_ipaddrv4($parent_ip) && $_POST['gateway'] && $_POST['gateway'] != "none") {
-			$parent_sn = get_interface_subnet($_POST['if']);
-			if (!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway'])) {
-				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
+		foreach ($config['captiveportal'] as $cpZone => $cpdata) {
+			if (!isset($cpdata['enable'])) {
+				continue;
+			}
+			if (!isset($cpdata['timeout']) || !is_numeric($cpdata['timeout'])) {
+				continue;
+			}
+			$cp_ifs = explode(',', $cpdata['interface']);
+			if (!in_array($if, $cp_ifs)) {
+				continue;
+			}
+			if ($cpdata['timeout'] > $deftime) {
+				$input_errors[] = sprintf(gettext(
+					'The Captive Portal zone (%1$s) has Hard Timeout parameter set to a value bigger than Default lease time (%2$s).'), $cpZone, $deftime);
 			}
 		}
+	}
 
-		if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])) || ($_POST['dns3'] && !is_ipaddrv4($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddrv4($_POST['dns4']))) {
-			$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
-		}
-
-		if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
-			$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
-		}
-
-		if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
-			$deftime = 7200; // Default value if it's empty
-			if (is_numeric($_POST['deftime'])) {
-				$deftime = $_POST['deftime'];
+	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
+		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
+	}
+	if ($_POST['ddnsupdate'] && !is_domain($_POST['ddnsdomain'])) {
+		$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
+	}
+	if ($_POST['ddnsupdate'] && !is_ipaddrv4($_POST['ddnsdomainprimary'])) {
+		$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
+	}
+	if ($_POST['ddnsupdate'] && (!$_POST['ddnsdomainkeyname'] || !$_POST['ddnsdomainkeyalgorithm'] || !$_POST['ddnsdomainkey'])) {
+		$input_errors[] = gettext("A valid domain key name, algorithm and secret must be specified.");
+	}
+	if ($_POST['domainsearchlist']) {
+		$domain_array = preg_split("/[ ;]+/", $_POST['domainsearchlist']);
+		foreach ($domain_array as $curdomain) {
+			if (!is_domain($curdomain)) {
+				$input_errors[] = gettext("A valid domain search list must be specified.");
+				break;
 			}
+		}
+	}
 
-			foreach ($config['captiveportal'] as $cpZone => $cpdata) {
-				if (!isset($cpdata['enable'])) {
+	// Validate MACs
+	if (!empty($_POST['mac_allow']) && !validate_partial_mac_list($_POST['mac_allow'])) {
+		$input_errors[] = gettext("If a mac allow list is specified, it must contain only valid partial MAC addresses.");
+	}
+	if (!empty($_POST['mac_deny']) && !validate_partial_mac_list($_POST['mac_deny'])) {
+		$input_errors[] = gettext("If a mac deny list is specified, it must contain only valid partial MAC addresses.");
+	}
+
+	if (($_POST['ntp1'] && (!is_ipaddrv4($_POST['ntp1']) && !is_hostname($_POST['ntp1']))) || ($_POST['ntp2'] && (!is_ipaddrv4($_POST['ntp2']) && !is_hostname($_POST['ntp2'])))) {
+		$input_errors[] = gettext("A valid IP address or hostname must be specified for the primary/secondary NTP servers.");
+	}
+	if (($_POST['domain'] && !is_domain($_POST['domain']))) {
+		$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
+	}
+	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
+		$input_errors[] = gettext("A valid IP address, hostname or URL must be specified for the TFTP server.");
+	}
+	if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver']))) {
+		$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");
+	}
+
+	if (gen_subnet($ifcfgip, $ifcfgsn) == $_POST['range_from']) {
+		$input_errors[] = gettext("The network address cannot be used in the starting subnet range.");
+	}
+	if (gen_subnet_max($ifcfgip, $ifcfgsn) == $_POST['range_to']) {
+		$input_errors[] = gettext("The broadcast address cannot be used in the ending subnet range.");
+	}
+
+	// Disallow a range that includes the virtualip
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $vip) {
+			if ($vip['interface'] == $if) {
+				if ($vip['subnet'] && is_inrange_v4($vip['subnet'], $_POST['range_from'], $_POST['range_to'])) {
+					$input_errors[] = sprintf(gettext("The subnet range cannot overlap with virtual IP address %s."), $vip['subnet']);
+				}
+			}
+		}
+	}
+
+	$noip = false;
+	if (is_array($a_maps)) {
+		foreach ($a_maps as $map) {
+			if (empty($map['ipaddr'])) {
+				$noip = true;
+			}
+		}
+	}
+
+	if ($_POST['staticarp'] && $noip) {
+		$input_errors[] = gettext("Cannot enable static ARP when there are static map entries without IP addresses. Ensure all static maps have IP addresses and try again.");
+	}
+
+	if (is_array($pconfig['numberoptions']['item'])) {
+		foreach ($pconfig['numberoptions']['item'] as $numberoption) {
+			$numberoption_value = base64_decode($numberoption['value']);
+			if ($numberoption['type'] == 'text' && strstr($numberoption_value, '"')) {
+				$input_errors[] = gettext("Text type cannot include quotation marks.");
+			} else if ($numberoption['type'] == 'string' && !preg_match('/^"[^"]*"$/', $numberoption_value) && !preg_match('/^[0-9a-f]{2}(?:\:[0-9a-f]{2})*$/i', $numberoption_value)) {
+				$input_errors[] = gettext("String type must be enclosed in quotes like \"this\" or must be a series of octets specified in hexadecimal, separated by colons, like 01:23:45:67:89:ab:cd:ef");
+			} else if ($numberoption['type'] == 'boolean' && $numberoption_value != 'true' && $numberoption_value != 'false' && $numberoption_value != 'on' && $numberoption_value != 'off') {
+				$input_errors[] = gettext("Boolean type must be true, false, on, or off.");
+			} else if ($numberoption['type'] == 'unsigned integer 8' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 255)) {
+				$input_errors[] = gettext("Unsigned 8-bit integer type must be a number in the range 0 to 255.");
+			} else if ($numberoption['type'] == 'unsigned integer 16' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 65535)) {
+				$input_errors[] = gettext("Unsigned 16-bit integer type must be a number in the range 0 to 65535.");
+			} else if ($numberoption['type'] == 'unsigned integer 32' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 4294967295)) {
+				$input_errors[] = gettext("Unsigned 32-bit integer type must be a number in the range 0 to 4294967295.");
+			} else if ($numberoption['type'] == 'signed integer 8' && (!is_numeric($numberoption_value) || $numberoption_value < -128 || $numberoption_value > 127)) {
+				$input_errors[] = gettext("Signed 8-bit integer type must be a number in the range -128 to 127.");
+			} else if ($numberoption['type'] == 'signed integer 16' && (!is_numeric($numberoption_value) || $numberoption_value < -32768 || $numberoption_value > 32767)) {
+				$input_errors[] = gettext("Signed 16-bit integer type must be a number in the range -32768 to 32767.");
+			} else if ($numberoption['type'] == 'signed integer 32' && (!is_numeric($numberoption_value) || $numberoption_value < -2147483648 || $numberoption_value > 2147483647)) {
+				$input_errors[] = gettext("Signed 32-bit integer type must be a number in the range -2147483648 to 2147483647.");
+			} else if ($numberoption['type'] == 'ip-address' && !is_ipaddrv4($numberoption_value) && !is_hostname($numberoption_value)) {
+				$input_errors[] = gettext("IP address or host type must be an IP address or host name.");
+			}
+		}
+	}
+
+	if ((!isset($pool) || !is_numeric($pool)) && $act != "newpool") {
+		/* If enabling DHCP Server, make sure that the DHCP Relay isn't enabled on this interface */
+		if ($_POST['enable'] && isset($config['dhcrelay']['enable']) &&
+		    (stristr($config['dhcrelay']['interface'], $if) !== false)) {
+			$input_errors[] = sprintf(gettext(
+			    "The DHCP relay on the %s interface must be disabled before enabling the DHCP server."),
+			    $iflist[$if]);
+		}
+
+		/* If disabling DHCP Server, make sure that DHCP registration isn't enabled for DNS forwarder/resolver */
+		if (!$_POST['enable']) {
+			/* Find out how many other interfaces have DHCP enabled. */
+			$dhcp_enabled_count = 0;
+			foreach ($config['dhcpd'] as $dhif => $dhcps) {
+				if ($dhif == $if) {
+					/* Skip this interface, we only want to know how many others are enabled. */
 					continue;
 				}
-				if (!isset($cpdata['timeout']) || !is_numeric($cpdata['timeout'])) {
-					continue;
+				if (isset($dhcps['enable'])) {
+					$dhcp_enabled_count++;
 				}
-				$cp_ifs = explode(',', $cpdata['interface']);
-				if (!in_array($if, $cp_ifs)) {
-					continue;
-				}
-				if ($cpdata['timeout'] > $deftime) {
-					$input_errors[] = sprintf(gettext(
-						'The Captive Portal zone (%1$s) has Hard Timeout parameter set to a value bigger than Default lease time (%2$s).'), $cpZone, $deftime);
-				}
+			}
+
+			if (isset($config['dnsmasq']['enable']) &&
+			    ($dhcp_enabled_count == 0) &&
+			    (isset($config['dnsmasq']['regdhcp']) ||
+			    isset($config['dnsmasq']['regdhcpstatic']) ||
+			    isset($config['dnsmasq']['dhcpfirst']))) {
+				$input_errors[] = gettext(
+				    "DHCP Registration features in the DNS Forwarder are active and require at least one enabled DHCP Server.");
+			}
+			if (isset($config['unbound']['enable']) &&
+			    ($dhcp_enabled_count == 0) &&
+			    (isset($config['unbound']['regdhcp']) ||
+			    isset($config['unbound']['regdhcpstatic']))) {
+				$input_errors[] = gettext(
+				    "DHCP Registration features in the DNS Resolver are active and require at least one enabled DHCP Server.");
+			}
+		}
+	}
+
+	// If nothing is wrong so far, and we have range from and to, then check conditions related to the values of range from and to.
+	if (!$input_errors && $_POST['range_from'] && $_POST['range_to']) {
+		/* make sure the range lies within the current subnet */
+		if (ip_greater_than($_POST['range_from'], $_POST['range_to'])) {
+			$input_errors[] = gettext("The range is invalid (first element higher than second element).");
+		}
+
+		if (!is_inrange_v4($_POST['range_from'], $subnet_start, $subnet_end) ||
+			!is_inrange_v4($_POST['range_to'], $subnet_start, $subnet_end)) {
+			$input_errors[] = gettext("The specified range lies outside of the current subnet.");
+		}
+
+		if (is_numeric($pool) || ($act == "newpool")) {
+			if (is_inrange_v4($_POST['range_from'],
+				$config['dhcpd'][$if]['range']['from'],
+				$config['dhcpd'][$if]['range']['to']) ||
+				is_inrange_v4($_POST['range_to'],
+				$config['dhcpd'][$if]['range']['from'],
+				$config['dhcpd'][$if]['range']['to'])) {
+				$input_errors[] = gettext("The specified range must not be within the DHCP range for this interface.");
 			}
 		}
 
-		if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
-			$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
-		}
-		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain']))) {
-			$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
-		}
-		if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary']))) {
-			$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
-		}
-		if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
-		    ($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
-			$input_errors[] = gettext("Both a valid domain key and key name must be specified.");
-		}
-		if ($_POST['domainsearchlist']) {
-			$domain_array = preg_split("/[ ;]+/", $_POST['domainsearchlist']);
-			foreach ($domain_array as $curdomain) {
-				if (!is_domain($curdomain)) {
-					$input_errors[] = gettext("A valid domain search list must be specified.");
-					break;
-				}
+		foreach ($a_pools as $id => $p) {
+			if (is_numeric($pool) && ($id == $pool)) {
+				continue;
+			}
+
+			if (is_inrange_v4($_POST['range_from'],
+				$p['range']['from'], $p['range']['to']) ||
+				is_inrange_v4($_POST['range_to'],
+				$p['range']['from'], $p['range']['to'])) {
+				$input_errors[] = gettext("The specified range must not be within the range configured on a DHCP pool for this interface.");
+				break;
 			}
 		}
 
-		// Validate MACs
-		if (!empty($_POST['mac_allow']) && !validate_partial_mac_list($_POST['mac_allow'])) {
-			$input_errors[] = gettext("If a mac allow list is specified, it must contain only valid partial MAC addresses.");
-		}
-		if (!empty($_POST['mac_deny']) && !validate_partial_mac_list($_POST['mac_deny'])) {
-			$input_errors[] = gettext("If a mac deny list is specified, it must contain only valid partial MAC addresses.");
-		}
-
-		if (($_POST['ntp1'] && (!is_ipaddrv4($_POST['ntp1']) && !is_hostname($_POST['ntp1']))) || ($_POST['ntp2'] && (!is_ipaddrv4($_POST['ntp2']) && !is_hostname($_POST['ntp2'])))) {
-			$input_errors[] = gettext("A valid IP address or hostname must be specified for the primary/secondary NTP servers.");
-		}
-		if (($_POST['domain'] && !is_domain($_POST['domain']))) {
-			$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
-		}
-		if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !is_URL($_POST['tftp'])) {
-			$input_errors[] = gettext("A valid IP address or hostname must be specified for the TFTP server.");
-		}
-		if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver']))) {
-			$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");
-		}
-
-		if (gen_subnet($ifcfgip, $ifcfgsn) == $_POST['range_from']) {
-			$input_errors[] = gettext("The network address cannot be used in the starting subnet range.");
-		}
-		if (gen_subnet_max($ifcfgip, $ifcfgsn) == $_POST['range_to']) {
-			$input_errors[] = gettext("The broadcast address cannot be used in the ending subnet range.");
-		}
-
-		// Disallow a range that includes the virtualip
-		if (is_array($config['virtualip']['vip'])) {
-			foreach ($config['virtualip']['vip'] as $vip) {
-				if ($vip['interface'] == $if) {
-					if ($vip['subnet'] && is_inrange_v4($vip['subnet'], $_POST['range_from'], $_POST['range_to'])) {
-						$input_errors[] = sprintf(gettext("The subnet range cannot overlap with virtual IP address %s."), $vip['subnet']);
-					}
-				}
-			}
-		}
-
-		$noip = false;
 		if (is_array($a_maps)) {
 			foreach ($a_maps as $map) {
 				if (empty($map['ipaddr'])) {
-					$noip = true;
-				}
-			}
-		}
-
-		if ($_POST['staticarp'] && $noip) {
-			$input_errors[] = gettext("Cannot enable static ARP when there are static map entries without IP addresses. Ensure all static maps have IP addresses and try again.");
-		}
-
-		if (is_array($pconfig['numberoptions']['item'])) {
-			foreach ($pconfig['numberoptions']['item'] as $numberoption) {
-				$numberoption_value = base64_decode($numberoption['value']);
-				if ($numberoption['type'] == 'text' && strstr($numberoption_value, '"')) {
-					$input_errors[] = gettext("Text type cannot include quotation marks.");
-				} else if ($numberoption['type'] == 'string' && !preg_match('/^"[^"]*"$/', $numberoption_value) && !preg_match('/^[0-9a-f]{2}(?:\:[0-9a-f]{2})*$/i', $numberoption_value)) {
-					$input_errors[] = gettext("String type must be enclosed in quotes like \"this\" or must be a series of octets specified in hexadecimal, separated by colons, like 01:23:45:67:89:ab:cd:ef");
-				} else if ($numberoption['type'] == 'boolean' && $numberoption_value != 'true' && $numberoption_value != 'false' && $numberoption_value != 'on' && $numberoption_value != 'off') {
-					$input_errors[] = gettext("Boolean type must be true, false, on, or off.");
-				} else if ($numberoption['type'] == 'unsigned integer 8' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 255)) {
-					$input_errors[] = gettext("Unsigned 8-bit integer type must be a number in the range 0 to 255.");
-				} else if ($numberoption['type'] == 'unsigned integer 16' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 65535)) {
-					$input_errors[] = gettext("Unsigned 16-bit integer type must be a number in the range 0 to 65535.");
-				} else if ($numberoption['type'] == 'unsigned integer 32' && (!is_numeric($numberoption_value) || $numberoption_value < 0 || $numberoption_value > 4294967295)) {
-					$input_errors[] = gettext("Unsigned 32-bit integer type must be a number in the range 0 to 4294967295.");
-				} else if ($numberoption['type'] == 'signed integer 8' && (!is_numeric($numberoption_value) || $numberoption_value < -128 || $numberoption_value > 127)) {
-					$input_errors[] = gettext("Signed 8-bit integer type must be a number in the range -128 to 127.");
-				} else if ($numberoption['type'] == 'signed integer 16' && (!is_numeric($numberoption_value) || $numberoption_value < -32768 || $numberoption_value > 32767)) {
-					$input_errors[] = gettext("Signed 16-bit integer type must be a number in the range -32768 to 32767.");
-				} else if ($numberoption['type'] == 'signed integer 32' && (!is_numeric($numberoption_value) || $numberoption_value < -2147483648 || $numberoption_value > 2147483647)) {
-					$input_errors[] = gettext("Signed 32-bit integer type must be a number in the range -2147483648 to 2147483647.");
-				} else if ($numberoption['type'] == 'ip-address' && !is_ipaddrv4($numberoption_value) && !is_hostname($numberoption_value)) {
-					$input_errors[] = gettext("IP address or host type must be an IP address or host name.");
-				}
-			}
-		}
-
-		if (!$input_errors) {
-			/* make sure the range lies within the current subnet */
-			if (ip_greater_than($_POST['range_from'], $_POST['range_to'])) {
-				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
-			}
-
-			if (!is_inrange_v4($_POST['range_from'], $subnet_start, $subnet_end) ||
-			    !is_inrange_v4($_POST['range_to'], $subnet_start, $subnet_end)) {
-				$input_errors[] = gettext("The specified range lies outside of the current subnet.");
-			}
-
-			if (is_numeric($pool) || ($act == "newpool")) {
-				if (is_inrange_v4($_POST['range_from'],
-				    $config['dhcpd'][$if]['range']['from'],
-				    $config['dhcpd'][$if]['range']['to']) ||
-				    is_inrange_v4($_POST['range_to'],
-				    $config['dhcpd'][$if]['range']['from'],
-				    $config['dhcpd'][$if]['range']['to'])) {
-					$input_errors[] = gettext("The specified range must not be within the DHCP range for this interface.");
-				}
-			}
-
-			foreach ($a_pools as $id => $p) {
-				if (is_numeric($pool) && ($id == $pool)) {
 					continue;
 				}
-
-				if (is_inrange_v4($_POST['range_from'],
-				    $p['range']['from'], $p['range']['to']) ||
-				    is_inrange_v4($_POST['range_to'],
-				    $p['range']['from'], $p['range']['to'])) {
-					$input_errors[] = gettext("The specified range must not be within the range configured on a DHCP pool for this interface.");
+				if (is_inrange_v4($map['ipaddr'], $_POST['range_from'], $_POST['range_to'])) {
+					$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
 					break;
-				}
-			}
-
-			/* make sure that the DHCP Relay isn't enabled on this interface */
-			if (isset($config['dhcrelay']['enable']) && (stristr($config['dhcrelay']['interface'], $if) !== false)) {
-				$input_errors[] = sprintf(gettext("The DHCP relay on the %s interface must be disabled before enabling the DHCP server."), $iflist[$if]);
-			}
-
-			if (is_array($a_maps)) {
-				foreach ($a_maps as $map) {
-					if (empty($map['ipaddr'])) {
-						continue;
-					}
-					if (is_inrange_v4($map['ipaddr'], $_POST['range_from'], $_POST['range_to'])) {
-						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
-						break;
-					}
 				}
 			}
 		}
@@ -487,6 +496,9 @@ if (isset($_POST['save'])) {
 			if ($act == "newpool") {
 				$dhcpdconf = array();
 			} else {
+				if (!is_array($config['dhcpd'])) {
+					$config['dhcpd']= array();
+				}
 				if (!is_array($config['dhcpd'][$if])) {
 					$config['dhcpd'][$if] = array();
 				}
@@ -500,6 +512,9 @@ if (isset($_POST['save'])) {
 				header("Location: services_dhcp.php");
 				exit;
 			}
+		}
+		if (!is_array($dhcpdconf)) {
+			$dhcpdconf = array();
 		}
 		if (!is_array($dhcpdconf['range'])) {
 			$dhcpdconf['range'] = array();
@@ -565,15 +580,20 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['gateway'] = $_POST['gateway'];
 		$dhcpdconf['domain'] = $_POST['domain'];
 		$dhcpdconf['domainsearchlist'] = $_POST['domainsearchlist'];
+		$dhcpdconf['ignorebootp'] = ($_POST['ignorebootp']) ? true : false;
 		$dhcpdconf['denyunknown'] = ($_POST['denyunknown']) ? true : false;
+		$dhcpdconf['ignoreclientuids'] = ($_POST['ignoreclientuids']) ? true : false;
 		$dhcpdconf['nonak'] = ($_POST['nonak']) ? true : false;
 		$dhcpdconf['ddnsdomain'] = $_POST['ddnsdomain'];
 		$dhcpdconf['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
 		$dhcpdconf['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
+		$dhcpdconf['ddnsdomainkeyalgorithm'] = $_POST['ddnsdomainkeyalgorithm'];
 		$dhcpdconf['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$dhcpdconf['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$dhcpdconf['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
 		$dhcpdconf['mac_allow'] = $_POST['mac_allow'];
 		$dhcpdconf['mac_deny'] = $_POST['mac_deny'];
+		$dhcpdconf['ddnsclientupdates'] = $_POST['ddnsclientupdates'];
 
 		unset($dhcpdconf['ntpserver']);
 		if ($_POST['ntp1']) {
@@ -617,44 +637,68 @@ if (isset($_POST['save'])) {
 }
 
 if ((isset($_POST['save']) || isset($_POST['apply'])) && (!$input_errors)) {
+	$changes_applied = true;
 	$retval = 0;
 	$retvaldhcp = 0;
 	$retvaldns = 0;
 	/* dnsmasq_configure calls dhcpd_configure */
 	/* no need to restart dhcpd twice */
 	if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
-		$retvaldns = services_dnsmasq_configure();
+		$retvaldns |= services_dnsmasq_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('hosts');
 			clear_subsystem_dirty('staticmaps');
 		}
 	} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
-		$retvaldns = services_unbound_configure();
+		$retvaldns |= services_unbound_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('unbound');
 			clear_subsystem_dirty('hosts');
 			clear_subsystem_dirty('staticmaps');
 		}
 	} else {
-		$retvaldhcp = services_dhcpd_configure();
+		$retvaldhcp |= services_dhcpd_configure();
 		if ($retvaldhcp == 0) {
 			clear_subsystem_dirty('staticmaps');
 		}
 	}
+	/* BIND package - Bug #3710 */
+	if (!function_exists('is_package_installed')) {
+		require_once('pkg-utils.inc');
+	}
+	if (is_package_installed('pfSense-pkg-bind') && isset($config['installedpackages']['bind']['config'][0]['enable_bind'])) {
+		$reloadbind = false;
+		if (is_array($config['installedpackages']['bindzone'])) {
+			$bindzone = $config['installedpackages']['bindzone']['config'];
+		} else {
+			$bindzone = array();
+		}
+		for ($x = 0; $x < sizeof($bindzone); $x++) {
+			$zone = $bindzone[$x];
+			if ($zone['regdhcpstatic'] == 'on') {
+				$reloadbind = true;
+				break;
+			}
+		}
+		if ($reloadbind === true) {
+			if (file_exists("/usr/local/pkg/bind.inc")) {
+				require_once("/usr/local/pkg/bind.inc");
+				bind_sync();
+			}
+		}
+	}
 	if ($dhcpd_enable_changed) {
-		$retvalfc = filter_configure();
+		$retvalfc |= filter_configure();
 	}
 
 	if ($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1) {
 		$retval = 1;
 	}
-
-	$savemsg = get_std_save_message($retval);
 }
 
 if ($act == "delpool") {
-	if ($a_pools[$_GET['id']]) {
-		unset($a_pools[$_GET['id']]);
+	if ($a_pools[$_POST['id']]) {
+		unset($a_pools[$_POST['id']]);
 		write_config();
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
@@ -662,8 +706,12 @@ if ($act == "delpool") {
 }
 
 if ($act == "del") {
-	if ($a_maps[$_GET['id']]) {
-		unset($a_maps[$_GET['id']]);
+	if (isset($a_maps[$_POST['id']])) {
+		/* Remove static ARP entry, if necessary */
+		if (isset($a_maps[$_POST['id']]['arp_table_static_entry'])) {
+			mwexec("/usr/sbin/arp -d " . escapeshellarg($a_maps[$_POST['id']]['ipaddr']));
+		}
+		unset($a_maps[$_POST['id']]);
 		write_config();
 		if (isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
@@ -709,7 +757,7 @@ function build_pooltable() {
 
 				$pooltbl .= '<td><a class="fa fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
 
-				$pooltbl .= ' <a class="fa fa-trash" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '"></a></td>';
+				$pooltbl .= ' <a class="fa fa-trash" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
 				$pooltbl .= '</tr>';
 			}
 		$i++;
@@ -724,9 +772,11 @@ function build_pooltable() {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DHCP Server"));
+$pglinks = array("", "services_dhcp.php");
 
-if (!empty($if) && !isset($config['dhcrelay']['enable']) && isset($iflist[$if])) {
+if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
+	$pglinks[] = "@self";
 }
 $shortcut_section = "dhcp";
 
@@ -736,14 +786,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
-}
-
-if (isset($config['dhcrelay']['enable'])) {
-	print_info_box(gettext("DHCP Relay is currently enabled. Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface."));
-	include("foot.inc");
-	exit;
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('staticmaps')) {
@@ -754,11 +798,19 @@ if (is_subsystem_dirty('staticmaps')) {
 $tab_array = array();
 $tabscounter = 0;
 $i = 0;
+$have_small_subnet = false;
 
 foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
-	if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
-	    (!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
+
+	/* Not static IPv4 or subnet >= 31 */
+	if ($oc['subnet'] >= 31) {
+		$have_small_subnet = true;
+		$example_name = $ifname;
+		$example_cidr = $oc['subnet'];
+		continue;
+	}
+	if (!is_ipaddrv4($oc['ipaddr']) || empty($oc['subnet'])) {
 		continue;
 	}
 
@@ -773,7 +825,12 @@ foreach ($iflist as $ifent => $ifname) {
 }
 
 if ($tabscounter == 0) {
-	print_info_box(gettext("The DHCP Server can only be enabled on interfaces configured with a static IPv4 address. This system has none."));
+	if ($have_small_subnet) {
+		$sentence2 = sprintf(gettext('%1$s has a CIDR mask of %2$s, which does not contain enough addresses.'), htmlspecialchars($example_name), htmlspecialchars($example_cidr));
+	} else {
+		$sentence2 = gettext("This system has no interfaces configured with a static IPv4 address.");
+	}
+	print_info_box(gettext("The DHCP Server requires a static IPv4 subnet large enough to serve addresses to clients.") . " " . $sentence2);
 	include("foot.inc");
 	exit;
 }
@@ -785,15 +842,31 @@ $form = new Form();
 $section = new Form_Section('General Options');
 
 if (!is_numeric($pool) && !($act == "newpool")) {
-	$section->addInput(new Form_Checkbox(
-		'enable',
-		'Enable',
-		sprintf(gettext("Enable DHCP server on %s interface"), htmlspecialchars($iflist[$if])),
-		$pconfig['enable']
-	));
+	if (isset($config['dhcrelay']['enable'])) {
+		$section->addInput(new Form_Checkbox(
+			'enable',
+			'Enable',
+			gettext("DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP Relay is enabled on any interface."),
+			$pconfig['enable']
+		))->setAttribute('disabled', true);
+	} else {
+		$section->addInput(new Form_Checkbox(
+			'enable',
+			'Enable',
+			sprintf(gettext("Enable DHCP server on %s interface"), htmlspecialchars($iflist[$if])),
+			$pconfig['enable']
+		));
+	}
 } else {
 	print_info_box(gettext('Editing pool-specific options. To return to the Interface, click its tab above.'), 'info', false);
 }
+
+$section->addInput(new Form_Checkbox(
+	'ignorebootp',
+	'BOOTP',
+	'Ignore BOOTP queries',
+	$pconfig['ignorebootp']
+));
 
 $section->addInput(new Form_Checkbox(
 	'denyunknown',
@@ -808,6 +881,13 @@ $section->addInput(new Form_Checkbox(
 	'Denied clients will be ignored rather than rejected.',
 	$pconfig['nonak']
 ))->setHelp("This option is not compatible with failover and cannot be enabled when a Failover Peer IP address is configured.");
+
+$section->addInput(new Form_Checkbox(
+	'ignoreclientuids',
+	'Ignore client identifiers',
+	'If a client includes a unique identifier in its DHCP request, that UID will not be recorded in its lease.',
+	$pconfig['ignoreclientuids']
+))->setHelp("This option may be useful when a client can dual boot using different client identifiers but the same hardware (MAC) address.  Note that the resulting server behavior violates the official DHCP specification.");
 
 
 if (is_numeric($pool) || ($act == "newpool")) {
@@ -850,27 +930,20 @@ $section->addInput(new Form_StaticText(
 	$rangestr
 ));
 
-if ($is_olsr_enabled) {
-	$section->addInput(new Form_Select(
-		'netmask',
-		'Subnet mask',
-		$pconfig['netmask'],
-		array_combine(range(32, 1, -1), range(32, 1, -1))
-	));
-}
-
-$group = new Form_Group('Range');
+$group = new Form_Group('*Range');
 
 $group->add(new Form_IpAddress(
 	'range_from',
 	null,
-	$pconfig['range_from']
+	$pconfig['range_from'],
+	'V4'
 ))->setHelp('From');
 
 $group->add(new Form_IpAddress(
 	'range_to',
 	null,
-	$pconfig['range_to']
+	$pconfig['range_to'],
+	'V4'
 ))->setHelp('To');
 
 $section->add($group);
@@ -908,21 +981,24 @@ $section = new Form_Section('Servers');
 $section->addInput(new Form_IpAddress(
 	'wins1',
 	'WINS servers',
-	$pconfig['wins1']
-))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'WINS Server 1');
+	$pconfig['wins1'],
+	'V4'
+))->setAttribute('placeholder', 'WINS Server 1');
 
 $section->addInput(new Form_IpAddress(
 	'wins2',
 	null,
-	$pconfig['wins2']
-))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'WINS Server 2');
+	$pconfig['wins2'],
+	'V4'
+))->setAttribute('placeholder', 'WINS Server 2');
 
 for ($idx=1; $idx<=4; $idx++) {
 	$section->addInput(new Form_IpAddress(
 		'dns' . $idx,
 		($idx == 1) ? 'DNS servers':null,
-		$pconfig['dns' . $idx]
-	))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the System / General Setup page.':'');
+		$pconfig['dns' . $idx],
+		'V4'
+	))->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the System / General Setup page.':'');
 }
 
 $form->add($section);
@@ -932,7 +1008,8 @@ $section = new Form_Section('Other Options');
 $section->addInput(new Form_IpAddress(
 	'gateway',
 	'Gateway',
-	$pconfig['gateway']
+	$pconfig['gateway'],
+	'V4'
 ))->setPattern('[.a-zA-Z0-9_]+')
   ->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network. Type "none" for no gateway assignment.');
 
@@ -968,7 +1045,8 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	$section->addInput(new Form_IpAddress(
 		'failover_peerip',
 		'Failover peer IP',
-		$pconfig['failover_peerip']
+		$pconfig['failover_peerip'],
+		'V4'
 	))->setHelp('Leave blank to disable. Enter the interface IP address of the other machine. Machines must be using CARP. ' .
 				'Interface\'s advskew determines whether the DHCPd process is Primary or Secondary. Ensure one machine\'s advskew &lt; 20 (and the other is &gt; 20).');
 }
@@ -1023,13 +1101,20 @@ $section->addInput(new Form_Input(
 	'DDNS Domain',
 	'text',
 	$pconfig['ddnsdomain']
-))->setHelp('Leave blank to disable dynamic DNS registration.' . '<br />' .
-			'Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
+))->setHelp('Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
+
+$section->addInput(new Form_Checkbox(
+	'ddnsforcehostname',
+	'DDNS Hostnames',
+	'Force dynamic DNS hostname to be the same as configured hostname for Static Mappings',
+	$pconfig['ddnsforcehostname']
+))->setHelp('Default registers host name option supplied by DHCP client.');
 
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'Primary DDNS address',
-	$pconfig['ddnsdomainprimary']
+	$pconfig['ddnsdomainprimary'],
+	'V4'
 ))->setHelp('Primary domain name server IP address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
@@ -1039,12 +1124,39 @@ $section->addInput(new Form_Input(
 	$pconfig['ddnsdomainkeyname']
 ))->setHelp('Dynamic DNS domain key name which will be used to register client names in the DNS server.');
 
+$section->addInput(new Form_Select(
+	'ddnsdomainkeyalgorithm',
+	'Key algorithm',
+	$pconfig['ddnsdomainkeyalgorithm'],
+	array(
+		'hmac-md5' => 'HMAC-MD5 (legacy default)',
+		'hmac-sha1' => 'HMAC-SHA1',
+		'hmac-sha224' => 'HMAC-SHA224',
+		'hmac-sha256' => 'HMAC-SHA256 (current bind9 default)',
+		'hmac-sha384' => 'HMAC-SHA384',
+		'hmac-sha512' => 'HMAC-SHA512 (most secure)',
+	)
+));
+
 $section->addInput(new Form_Input(
 	'ddnsdomainkey',
 	'DNS Domain key secret',
 	'text',
 	$pconfig['ddnsdomainkey']
 ))->setHelp('Dynamic DNS domain key secret which will be used to register client names in the DNS server.');
+
+$section->addInput(new Form_Select(
+	'ddnsclientupdates',
+	'DDNS Client Updates',
+	$pconfig['ddnsclientupdates'],
+	array(
+	    'allow' => gettext('Allow'),
+	    'deny' => gettext('Deny'),
+	    'ignore' => gettext('Ignore'))
+))->setHelp('How Forward entries are handled when client indicates they wish to update DNS.  ' .
+	    'Allow prevents DHCP from updating Forward entries, Deny indicates that DHCP will ' .
+	    'do the updates and the client should not, Ignore specifies that DHCP will do the ' .
+	    'update and the client can also attempt the update usually using a different domain name.');
 
 // Advanced MAC
 $btnadv = new Form_Button(
@@ -1093,14 +1205,16 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_IpAddress(
 	'ntp1',
 	'NTP Server 1',
-	$pconfig['ntp1']
-))->setPattern('[.a-zA-Z0-9_]+');
+	$pconfig['ntp1'],
+	'HOSTV4'
+));
 
 $section->addInput(new Form_IpAddress(
 	'ntp2',
 	'NTP Server 2',
-	$pconfig['ntp2']
-))->setPattern('[.a-zA-Z0-9_]+');
+	$pconfig['ntp2'],
+	'HOSTV4'
+));
 
 // Advanced TFTP
 $btnadv = new Form_Button(
@@ -1117,11 +1231,12 @@ $section->addInput(new Form_StaticText(
 	$btnadv
 ));
 
-$section->addInput(new Form_IpAddress(
+$section->addInput(new Form_Input(
 	'tftp',
 	'TFTP Server',
+	'text',
 	$pconfig['tftp']
-))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server.')->setPattern('[.a-zA-Z0-9_-]+');
+))->setHelp('Leave blank to disable. Enter a valid IP address, hostname or URL for the TFTP server.');
 
 // Advanced LDAP
 $btnadv = new Form_Button(
@@ -1144,6 +1259,64 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['ldap']
 ))->setHelp('Leave blank to disable. Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com ');
+
+// Advanced Network Booting options
+$btnadv = new Form_Button(
+	'btnadvnwkboot',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
+
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'Network Booting',
+	$btnadv
+));
+
+$section->addInput(new Form_Checkbox(
+	'netboot',
+	'Enable',
+	'Enables network booting',
+	$pconfig['netboot']
+));
+
+$section->addInput(new Form_IpAddress(
+	'nextserver',
+	'Next Server',
+	$pconfig['nextserver'],
+	'V4'
+))->setHelp('Enter the IP address of the next server');
+
+$section->addInput(new Form_Input(
+	'filename',
+	'Default BIOS file name',
+	'text',
+	$pconfig['filename']
+));
+
+$section->addInput(new Form_Input(
+	'filename32',
+	'UEFI 32 bit file name',
+	'text',
+	$pconfig['filename32']
+));
+
+$section->addInput(new Form_Input(
+	'filename64',
+	'UEFI 64 bit file name',
+	'text',
+	$pconfig['filename64']
+))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
+			'All three filenames and a configured boot server are necessary for UEFI to work! ');
+
+$section->addInput(new Form_Input(
+	'rootpath',
+	'Root path',
+	'text',
+	$pconfig['rootpath']
+))->setHelp('string-format: iscsi:(servername):(protocol):(port):(LUN):targetname ');
 
 // Advanced Additional options
 $btnadv = new Form_Button(
@@ -1168,10 +1341,11 @@ $section->addClass('adnlopts');
 $section->addInput(new Form_StaticText(
 	null,
 	'<div class="alert alert-info"> ' . gettext('Enter the DHCP option number and the value for each item to include in the DHCP lease information.') . ' ' .
-	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s'), '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a>.</div>')
+	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s.%3$s'), '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a>', '</div>')
 ));
 
 if (!$pconfig['numberoptions']) {
+	$pconfig['numberoptions'] = array();
 	$pconfig['numberoptions']['item']  = array(array('number' => '', 'type' => 'text', 'value' => ''));
 }
 
@@ -1197,8 +1371,9 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 	$group->add(new Form_Input(
 		'number' . $counter,
 		null,
-		'text',
-		$number
+		'number',
+		$number,
+		['min'=>'1', 'max'=>'254']
 	))->setHelp($numrows == $counter ? 'Number':null);
 
 
@@ -1237,57 +1412,6 @@ $section->addInput(new Form_Button(
 
 $form->add($section);
 
-if ($pconfig['netboot']) {
-	$sectate = COLLAPSIBLE|SEC_OPEN;
-} else {
-	$sectate = COLLAPSIBLE|SEC_CLOSED;
-}
-$section = new Form_Section("Network Booting", nwkbootsec, $sectate);
-
-$section->addInput(new Form_Checkbox(
-	'netboot',
-	'Enable',
-	'Enables network booting',
-	$pconfig['netboot']
-));
-
-$section->addInput(new Form_IpAddress(
-	'nextserver',
-	'Next Server',
-	$pconfig['nextserver']
-))->setHelp('Enter the IP address of the next server');
-
-$section->addInput(new Form_Input(
-	'filename',
-	'Default BIOS file name',
-	'text',
-	$pconfig['filename']
-));
-
-$section->addInput(new Form_Input(
-	'filename32',
-	'UEFI 32 bit file name',
-	'text',
-	$pconfig['filename32']
-));
-
-$section->addInput(new Form_Input(
-	'filename64',
-	'UEFI 64 bit file name',
-	'text',
-	$pconfig['filename64']
-))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
-			'All three filenames and a configured boot server are necessary for UEFI to work! ');
-
-$section->addInput(new Form_Input(
-	'rootpath',
-	'Root path',
-	'text',
-	$pconfig['rootpath']
-))->setHelp('string-format: iscsi:(servername):(protocol):(port):(LUN):targetname ');
-
-$form->add($section);
-
 if ($act == "newpool") {
 	$form->addGlobal(new Form_Input(
 		'act',
@@ -1318,6 +1442,17 @@ print($form);
 // DHCP Static Mappings table
 
 if (!is_numeric($pool) && !($act == "newpool")) {
+
+	// Decide whether display of the Client Id column is needed.
+	$got_cid = false;
+	if (is_array($a_maps)) {
+		foreach ($a_maps as $map) {
+			if (!empty($map['cid'])) {
+				$got_cid = true;
+				break;
+			}
+		}
+	}
 ?>
 
 <div class="panel panel-default">
@@ -1328,6 +1463,13 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 					<tr>
 						<th><?=gettext("Static ARP")?></th>
 						<th><?=gettext("MAC address")?></th>
+<?php
+	if ($got_cid):
+?>
+						<th><?=gettext("Client Id")?></th>
+<?php
+	endif;
+?>
 						<th><?=gettext("IP address")?></th>
 						<th><?=gettext("Hostname")?></th>
 						<th><?=gettext("Description")?></th>
@@ -1351,6 +1493,15 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
 							<?=htmlspecialchars($mapent['mac'])?>
 						</td>
+<?php
+			if ($got_cid):
+?>
+						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+							<?=htmlspecialchars($mapent['cid'])?>
+						</td>
+<?php
+			endif;
+?>
 						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
 							<?=htmlspecialchars($mapent['ipaddr'])?>
 						</td>
@@ -1362,7 +1513,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -1399,8 +1550,14 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (!$pconfig['ddnsupdate'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
-			    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey'])) {
+			if (!$pconfig['ddnsupdate'] &&
+				!$pconfig['ddnsforcehostname'] &&
+				empty($pconfig['ddnsdomain']) &&
+				empty($pconfig['ddnsdomainprimary']) &&
+			    empty($pconfig['ddnsdomainkeyname']) &&
+			    (empty($pconfig['ddnsdomainkeyalgorithm']) || ($pconfig['ddnsdomainkeyalgorithm'] == "hmac-md5")) &&
+			    (empty($pconfig['ddnsclientupdates']) || ($pconfig['ddnsclientupdates'] == "allow")) &&
+			    empty($pconfig['ddnsdomainkey'])) {
 				$showadv = false;
 			} else {
 				$showadv = true;
@@ -1414,9 +1571,12 @@ events.push(function() {
 
 		hideCheckbox('ddnsupdate', !showadvdns);
 		hideInput('ddnsdomain', !showadvdns);
+		hideCheckbox('ddnsforcehostname', !showadvdns);
 		hideInput('ddnsdomainprimary', !showadvdns);
 		hideInput('ddnsdomainkeyname', !showadvdns);
+		hideInput('ddnsdomainkeyalgorithm', !showadvdns);
 		hideInput('ddnsdomainkey', !showadvdns);
+		hideInput('ddnsclientupdates', !showadvdns);
 
 		if (showadvdns) {
 			text = "<?=gettext('Hide Advanced');?>";
@@ -1603,6 +1763,45 @@ events.push(function() {
 		show_advopts();
 	});
 
+	// Show advanced Network Booting options ===========================================================================
+	var showadvnwkboot = false;
+
+	function show_advnwkboot(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['netboot'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvnwkboot = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvnwkboot = !showadvnwkboot;
+		}
+
+		hideCheckbox('netboot', !showadvnwkboot);
+		hideInput('nextserver', !showadvnwkboot);
+		hideInput('filename', !showadvnwkboot);
+		hideInput('filename32', !showadvnwkboot);
+		hideInput('filename64', !showadvnwkboot);
+		hideInput('rootpath', !showadvnwkboot);
+
+		if (showadvnwkboot) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvnwkboot').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvnwkboot').click(function(event) {
+		show_advnwkboot();
+	});
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	show_advdns(true);
@@ -1611,6 +1810,7 @@ events.push(function() {
 	show_advtftp(true);
 	show_advldap(true);
 	show_advopts(true);
+	show_advnwkboot(true);
 
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();

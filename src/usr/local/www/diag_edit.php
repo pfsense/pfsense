@@ -1,62 +1,29 @@
 <?php
 /*
-	diag_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * diag_edit.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-edit
 ##|*NAME=Diagnostics: Edit File
 ##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=diag_edit.php*
 ##|*MATCH=browser.php*
 ##|*MATCH=vendor/filebrowser/browser.php*
@@ -99,10 +66,8 @@ if ($_POST['action']) {
 				print_info_box(gettext("No file name specified."), 'danger');
 				print('|');
 			} else {
-				conf_mount_rw();
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
 				$ret = file_put_contents($_POST['file'], $_POST['data']);
-				conf_mount_ro();
 				if ($_POST['file'] == "/conf/config.xml" || $_POST['file'] == "/cf/conf/config.xml") {
 					if (file_exists("/tmp/config.cache")) {
 						unlink("/tmp/config.cache");
@@ -143,7 +108,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 	<div class="panel-body">
 		<div class="content">
 			<form>
-				<p><input type="text" class="form-control" id="fbTarget"/></p>
+				<p><input type="text" class="form-control" id="fbTarget" placeholder="<?=gettext('Path to file to be edited')?>"/></p>
 				<div class="btn-group">
 					<p>
 						<button type="button" class="btn btn-default btn-sm" onclick="loadFile();"	value="<?=gettext('Load')?>">
@@ -190,8 +155,8 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 
 			// calculate start/end
 			var startPos = 0, endPos = tarea.value.length;
-			for(var x = 0; x < lines.length; x++) {
-				if(x == lineNum) {
+			for (var x = 0; x < lines.length; x++) {
+				if (x == lineNum) {
 					break;
 				}
 				startPos += (lines[x].length+1);
@@ -203,7 +168,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 			// do selection
 			// Chrome / Firefox
 
-			if(typeof(tarea.selectionStart) != "undefined") {
+			if (typeof(tarea.selectionStart) != "undefined") {
 				tarea.focus();
 				tarea.selectionStart = startPos;
 				tarea.selectionEnd = endPos;
@@ -227,11 +192,32 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 
 		$("#btngoto").prop('type','button');
 
+		//On clicking the GoTo button, validate the entered value
+		// and highlight the required line
 		$('#btngoto').click(function() {
 			var tarea = document.getElementById("fileContent");
-			showLine(tarea, $('#gotoline').val());
+			var gtl = $('#gotoline').val();
+			var lines = $("#fileContent").val().split(/\r|\r\n|\n/).length;
+
+			if (gtl < 1) {
+				gtl = 1;
+			}
+
+			if (gtl > lines) {
+				gtl = lines;
+			}
+
+			showLine(tarea, gtl);
 		});
-	});
+
+		// Goto the specified line on pressing the Enter key within the "Goto line" input element
+		$('#gotoline').keyup(function(e) {
+			if(e.keyCode == 13) {
+				$('#btngoto').click();
+			}
+		});
+
+	}); // e-o-events.push()
 
 	function loadFile() {
 		$("#fileStatus").html("");
@@ -252,7 +238,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 
 		if (values.shift() == "0") {
 			var file = values.shift();
-			var fileContent = window.atob(values.join("|"));
+			var fileContent = window.Base64.decode(values.join("|"));
 
 			$("#fileContent").val(fileContent);
 		} else {
@@ -422,12 +408,13 @@ var Base64 = {
 
 };
 
-	<?php if ($_GET['action'] == "load"): ?>
+	<?php if ($_POST['action'] == "load"): ?>
 		events.push(function() {
-			$("#fbTarget").val("<?=htmlspecialchars($_GET['path'])?>");
+			$("#fbTarget").val("<?=htmlspecialchars($_POST['path'])?>");
 			loadFile();
 		});
 	<?php endif; ?>
+
 //]]>
 </script>
 

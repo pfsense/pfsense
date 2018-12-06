@@ -1,66 +1,33 @@
 <?php
 /*
-	services_captiveportal_ip.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2004 Dinesh Nair <dinesh@alphaque.com>
+ * services_captiveportal_ip.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-allowedips
-##|*NAME=Services: Captive portal: Allowed IPs
-##|*DESCR=Allow access to the 'Services: Captive portal: Allowed IPs' page.
+##|*NAME=Services: Captive Portal: Allowed IPs
+##|*DESCR=Allow access to the 'Services: Captive Portal: Allowed IPs' page.
 ##|*MATCH=services_captiveportal_ip.php*
 ##|-PRIV
 
@@ -72,50 +39,47 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower($cpzone);
+$cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 	$cpzoneid = $a_cp[$cpzone]['zoneid'];
 }
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed IP Addresses"));
+$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
-	$a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
+if ($_POST['act'] == "del" && !empty($cpzone)) {
+	init_config_arr(array('captiveportal', $cpzone, 'allowedip'));
+	$a_allowedips = &$config['captiveportal'][$cpzone]['allowedip'];
 
-	if ($a_allowedips[$_GET['id']]) {
-		$ipent = $a_allowedips[$_GET['id']];
+	if ($a_allowedips[$_POST['id']]) {
+		$ipent = $a_allowedips[$_POST['id']];
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			$mask = (!empty($ipent['sn'])) ? $ipent['sn'] : 32;
 
-			$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 3, $ipent['ip']);
-			pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 3, $ipent['ip'], $mask);
-			pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 4, $ipent['ip'], $mask);
+			$rule = pfSense_ipfw_table_lookup("{$cpzone}_allowed_up", "{$ipent['ip']}/{$mask}");
 
-			if (is_array($ipfw)) {
-				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
-				pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
-				pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
+			pfSense_ipfw_table("{$cpzone}_allowed_up", IP_FW_TABLE_XDEL, "{$ipent['ip']}/{$mask}");
+			pfSense_ipfw_table("{$cpzone}_allowed_down", IP_FW_TABLE_XDEL, "{$ipent['ip']}/{$mask}");
+
+			if (is_array($rule) && !empty($rule['pipe'])) {
+				captiveportal_free_dn_ruleno($rule['pipe']);
+				pfSense_ipfw_pipe("pipe delete {$rule['pipe']}");
+				pfSense_ipfw_pipe("pipe delete " . ($rule['pipe']+1));
 			}
 		}
 
-		unset($a_allowedips[$_GET['id']]);
+		unset($a_allowedips[$_POST['id']]);
 		write_config();
 		header("Location: services_captiveportal_ip.php?zone={$cpzone}");
 		exit;
@@ -123,10 +87,6 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 }
 
 include("head.inc");
-
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
-}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), false, "services_captiveportal.php?zone={$cpzone}");
@@ -139,12 +99,12 @@ display_top_tabs($tab_array, true);
 
 ?>
 <div class="table-responsive">
-	<table class="table table-hover table-striped table-condensed table-rowdblclickedit">
+	<table class="table table-hover table-striped table-condensed table-rowdblclickedit sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><?=gettext("IP Addresses"); ?></th>
 				<th><?=gettext("Description"); ?></th>
-				<th><?=gettext("Actions"); ?></th>
+				<th data-sortable="false"><?=gettext("Actions"); ?></th>
 			</tr>
 		</thead>
 
@@ -164,7 +124,7 @@ if (is_array($a_cp[$cpzone]['allowedip'])): ?>
 				</td>
 				<td>
 					<a class="fa fa-pencil"	title="<?=gettext("Edit IP"); ?>" href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext("Delete IP")?>" href="services_captiveportal_ip.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"></a>
+					<a class="fa fa-trash"	title="<?=gettext("Delete IP")?>" href="services_captiveportal_ip.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 				</td>
 			</tr>
 <?php
@@ -173,9 +133,9 @@ if (is_array($a_cp[$cpzone]['allowedip'])): ?>
 		<tbody>
 	</table>
 
-	<?=$directionicons['to']   . ' = ' . sprintf(gettext('All connections %sto%s the address are allowed'), '<u>', '</u>') . ', '?>
-	<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %sfrom%s the address are allowed'), '<u>', '</u>') . ', '?>
-	<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %sto or from%s are allowed'), '<u>', '</u>')?>
+	<?=$directionicons['to']   . ' = ' . sprintf(gettext('All connections %1$sto%2$s the address are allowed'), '<u>', '</u>') . ', '?>
+	<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %1$sfrom%2$s the address are allowed'), '<u>', '</u>') . ', '?>
+	<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %1$sto or from%2$s are allowed'), '<u>', '</u>')?>
 <?php
 else:
 ?>

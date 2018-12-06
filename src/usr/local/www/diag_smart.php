@@ -1,57 +1,23 @@
 <?php
 /*
-	diag_smart.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2006 Eric Friesen
+ * diag_smart.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2006 Eric Friesen
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -65,18 +31,18 @@ require_once("guiconfig.inc");
 
 // What page, aka. action is being wanted
 // If they "get" a page but don't pass all arguments, smartctl will throw an error
-$action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
+$action = $_POST['action'];
 
 $pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Status"));
+$pglinks = array("", "@self", "@self");
 
 if ($action != 'config') {
 	$pgtitle[] = htmlspecialchars(gettext('Information & Tests'));
 } else {
 	$pgtitle[] = gettext('Config');
 }
+
 $smartctl = "/usr/local/sbin/smartctl";
-$smartd = "/usr/local/sbin/smartd";
-$start_script = "/usr/local/etc/rc.d/smartd.sh";
 
 $valid_test_types = array("offline", "short", "long", "conveyance");
 $valid_info_types = array("i", "H", "c", "A", "a");
@@ -98,30 +64,6 @@ function add_colors($string) {
 	return preg_replace($patterns, $replacements, $string);
 }
 
-// Edits smartd.conf file, adds or removes email for failed disk reporting
-function update_email($email) {
-	/* Bail if an e-mail address is invalid */
-	if (!empty($email) && (filter_var($email, FILTER_VALIDATE_EMAIL) === false)) {
-		return;
-	}
-
-	if (!file_exists("/usr/local/etc/smartd.conf") && file_exists("/usr/local/etc/smartd.conf.sample")) {
-		copy("/usr/local/etc/smartd.conf.sample", "/usr/local/etc/smartd.conf");
-	}
-	// Did they pass an email?
-	if (!empty($email)) {
-		// Put it in the smartd.conf file
-		shell_exec("/usr/bin/sed -i .old " . escapeshellarg("s/^DEVICESCAN.*/DEVICESCAN -H -m {$email}/") . " /usr/local/etc/smartd.conf");
-	} else {
-		// Remove email flags in smartd.conf
-		shell_exec("/usr/bin/sed -i .old 's/^DEVICESCAN.*/DEVICESCAN/' /usr/local/etc/smartd.conf");
-	}
-}
-
-function smartmonctl($action) {
-	global $start_script;
-	shell_exec($start_script . escapeshellarg($action));
-}
 $targetdev = basename($_POST['device']);
 
 if (!file_exists('/dev/' . $targetdev)) {
@@ -129,14 +71,9 @@ if (!file_exists('/dev/' . $targetdev)) {
 	return;
 }
 
-$tab_array = array();
-$tab_array[0] = array(htmlspecialchars(gettext("Information & Tests")), ($action != 'config'), $_SERVER['PHP_SELF'] . "?action=default");
-$tab_array[1] = array(gettext("Config"), ($action == 'config'), $_SERVER['PHP_SELF'] . "?action=config");
-display_top_tabs($tab_array);
-
 $specplatform = system_identify_specific_platform();
-if ($specplatform['name'] == "Hyper-V") {
-	echo gettext("S.M.A.R.T. is not supported in Hyper-V guests.");
+if (($specplatform['name'] == "Hyper-V") || ($specplatform['name'] == "uFW")) {
+	echo sprintf(gettext("S.M.A.R.T. is not supported on this system (%s)."), $specplatform['descr']);
 	include("foot.inc");
 	exit;
 }
@@ -249,75 +186,6 @@ switch ($action) {
 		</div>
 <?php
 		break;
-	}
-
-	// Config changes, users email in xml config and write changes to smartd.conf
-	case 'config':
-	{
-		if (isset($_POST['test'])) {
-
-// FIXME				shell_exec($smartd . " -M test -m " . $config['system']['smartmonemail']);
-			$savemsg = sprintf(gettext("Email sent to %s"), $config['system']['smartmonemail']);
-			smartmonctl("stop");
-			smartmonctl("start");
-			$style = 'warning';
-		} else if (isset($_POST['save'])) {
-			if (!empty($_POST['smartmonemail']) && (filter_var($_POST['smartmonemail'], FILTER_VALIDATE_EMAIL) === false)) {
-				$savemsg = "The supplied e-mail address is invalid.";
-				$style = 'danger';
-			} else {
-				$config['system']['smartmonemail'] = $_POST['smartmonemail'];
-				write_config();
-				$retval = 0;
-				config_lock();
-				if (stristr($retval, "error") != true) {
-					$savemsg = get_std_save_message($retval);
-					$style = 'success';
-				} else {
-					$savemsg = $retval;
-					$style='danger';
-				}
-				config_unlock();
-				// Write the changes to the smartd.conf file
-				update_email($_POST['smartmonemail']);
-				// Send sig HUP to smartd, rereads the config file
-				shell_exec("/usr/bin/killall -HUP smartd");
-			}
-		}
-
-	// Was the config changed? if so, print the message
-	if ($savemsg) {
-		print_info_box($savemsg, $style);
-	}
-
-	// Get users email from the xml file
-	$pconfig['smartmonemail'] = $config['system']['smartmonemail'];
-
-	$form = new Form();
-
-	$section = new Form_Section('Configuration');
-
-	$section->addInput(new Form_Input(
-		'smartmonemail',
-		'Email Address',
-		'text',
-		$pconfig['smartmonemail']
-	 ));
-
-	$form->add($section);
-
-	if (!empty($pconfig['smartmonemail'])) {
-		$form->addGlobal(new Form_Button(
-			'test',
-			'Send test email',
-			null,
-			'fa-send'
-		))->addClass('btn-info');
-	}
-
-	print($form);
-
-	break;
 	}
 
 	// Default page, prints the forms to view info, test, etc...

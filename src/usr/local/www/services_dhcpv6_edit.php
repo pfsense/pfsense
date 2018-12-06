@@ -1,60 +1,27 @@
 <?php
 /*
-	services_dhcpv6_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2011 Seth Mos <seth.mos@dds.nl>
+ * services_dhcpv6_edit.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -83,38 +50,21 @@ if (!$g['services_dhcp_server_enable']) {
 
 require_once("guiconfig.inc");
 
-$if = $_GET['if'];
-if ($_POST['if']) {
-	$if = $_POST['if'];
-}
+$if = $_REQUEST['if'];
 
 if (!$if) {
 	header("Location: services_dhcpv6.php");
 	exit;
 }
 
-if (!is_array($config['dhcpdv6'])) {
-	$config['dhcpdv6'] = array();
-}
-if (!is_array($config['dhcpdv6'][$if])) {
-	$config['dhcpdv6'][$if] = array();
-}
-if (!is_array($config['dhcpdv6'][$if]['staticmap'])) {
-	$config['dhcpdv6'][$if]['staticmap'] = array();
-}
-
+init_config_arr(array('dhcpdv6', $if, 'staticmap'));
 $netboot_enabled = isset($config['dhcpdv6'][$if]['netboot']);
 $a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 $ifcfgipv6 = get_interface_ipv6($if);
 $ifcfgsnv6 = get_interface_subnetv6($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_maps[$id]) {
 	$pconfig['duid'] = $a_maps[$id]['duid'];
@@ -124,14 +74,14 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
 	$pconfig['descr'] = $a_maps[$id]['descr'];
 } else {
-	$pconfig['duid'] = $_GET['duid'];
-	$pconfig['hostname'] = $_GET['hostname'];
-	$pconfig['filename'] = $_GET['filename'];
+	$pconfig['duid'] = $_REQUEST['duid'];
+	$pconfig['hostname'] = $_REQUEST['hostname'];
+	$pconfig['filename'] = $_REQUEST['filename'];
 	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
-	$pconfig['descr'] = $_GET['descr'];
+	$pconfig['descr'] = $_REQUEST['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -155,6 +105,7 @@ if ($_POST) {
 			}
 		}
 	}
+
 	if ($_POST['ipaddrv6']) {
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
@@ -164,8 +115,8 @@ if ($_POST) {
 			$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
 			if (!Net_IPv6::isInNetmask($_POST['ipaddrv6'], '::', $pdlen)) {
 				$input_errors[] = sprintf(gettext(
-				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
-				    $pdlen, dhcpv6_pd_str_help($ifcfgsn));
+				    'The prefix (upper %1$s bits) must be zero.  Use the form %2$s'),
+				    $pdlen, dhcpv6_pd_str_help($ifcfgsnv6));
 			}
 		}
 	}
@@ -232,6 +183,7 @@ if (!empty($if) && isset($iflist[$if])) {
 	$ifname = $iflist[$if];
 }
 $pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")), $ifname, gettext("DHCPv6 Server"), gettext("Edit Static Mapping"));
+$pglinks = array("", "services_dhcpv6.php", "services_dhcpv6.php?if={$if}", "services_dhcpv6.php?if={$if}", "@self");
 $shortcut_section = "dhcp6";
 
 include("head.inc");
@@ -246,11 +198,11 @@ $section = new Form_Section('Static DHCPv6 Mapping');
 
 $section->addInput(new Form_Input(
 	'duid',
-	'DUID',
+	'*DUID',
 	'text',
 	$pconfig['duid'],
 	['placeholder' => 'DUID-LLT - ETH -- TIME --- ---- address ---- xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx']
-))->setHelp(gettext('Enter a DUID in the following format: ') . '<br />' .
+))->setHelp('Enter a DUID in the following format: %1$s %2$s', '<br />',
 			'DUID-LLT - ETH -- TIME --- ---- address ---- ' .
 			'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx');
 
@@ -259,8 +211,8 @@ $section->addInput(new Form_Input(
 	'IPv6 address',
 	'text',
 	$pconfig['ipaddrv6']
-))->setHelp('If an IPv6 address is entered, the address must be outside of the pool.' . '<br />' .
-			'If no IPv6 address is given, one will be dynamically allocated from the pool.');
+))->setHelp('If an IPv6 address is entered, the address must be outside of the pool.%1$s' .
+			'If no IPv6 address is given, one will be dynamically allocated from the pool.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',
@@ -276,7 +228,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if($netboot_enabled) {
+if ($netboot_enabled) {
 	$section->addInput(new Form_Input(
 		'filename',
 		'Netboot filename',

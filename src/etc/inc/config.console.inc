@@ -1,59 +1,40 @@
 <?php
 /*
-	config.console.inc
+ * config.console.inc
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * originally part of m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-	part of pfSense (https://www.pfsense.org)
-	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC. All rights reserved.
+require_once("config.inc");
+require_once("globals.inc");
+require_once("interfaces.inc");
+require_once("util.inc");
 
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in
-	   the documentation and/or other materials provided with the
-	   distribution.
-
-	3. All advertising materials mentioning features or use of this software
-	   must display the following acknowledgment:
-	   "This product includes software developed by the pfSense Project
-	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
-
-	4. The names "pfSense" and "pfSense Project" must not be used to
-	   endorse or promote products derived from this software without
-	   prior written permission. For written permission, please contact
-	   coreteam@pfsense.org.
-
-	5. Products derived from this software may not be called "pfSense"
-	   nor may "pfSense" appear in their names without prior written
-	   permission of the Electric Sheep Fencing, LLC.
-
-	6. Redistributions of any form whatsoever must retain the following
-	   acknowledgment:
-
-	"This product includes software developed by the pfSense Project
-	for use in the pfSense software distribution (http://www.pfsense.org/).
-
-	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-	OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
+/*
+ * returns:
+ * -2: error
+ * -1: no interface found
+ *  0: interface(s) assigned
+ *  1: user quit
+ */
 function set_networking_interfaces_ports() {
 	global $noreboot;
 	global $config;
@@ -69,8 +50,8 @@ function set_networking_interfaces_ports() {
 	if ($physmem < $g['minimum_ram_warning']) {
 		echo "\n\n\n";
 		echo gettext("DANGER!  WARNING!  ACHTUNG!") . "\n\n";
-		printf(gettext("%s requires *AT LEAST* %s RAM to function correctly.%s"), $g['product_name'], $g['minimum_ram_warning_text'], "\n");
-		printf(gettext("Only (%s) MB RAM has been detected, with (%s) available to %s.%s"), $realmem, $physmem, $g['product_name'], "\n");
+		printf(gettext('%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s'), $g['product_name'], $g['minimum_ram_warning_text'], "\n");
+		printf(gettext('Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s'), $realmem, $physmem, $g['product_name'], "\n");
 		echo "\n" . gettext("Press ENTER to continue.") . " ";
 		fgets($fp);
 		echo "\n";
@@ -78,13 +59,8 @@ function set_networking_interfaces_ports() {
 
 	$iflist = get_interface_list();
 
-	/* Function flow is based on $key and $auto_assign or the lack thereof */
+	/* Function flow is based on $key or the lack thereof */
 	$key = null;
-
-	/* Only present auto interface option if running from the installer media and interface mismatch*/
-	if ((preg_match("/cdrom/", $g['platform'])) && is_interface_mismatch()) {
-		$auto_assign = false;
-	}
 
 	echo <<<EOD
 
@@ -95,28 +71,21 @@ EOD;
 
 	if (!is_array($iflist)) {
 		echo gettext("No interfaces found!") . "\n";
-		$iflist = array();
+		return (-1);
 	} else {
+		// ifsmallist is kept with spaces at the beginning and end to assist with str_replace() operations
+		$ifsmallist = " ";
 		foreach ($iflist as $iface => $ifa) {
-			$friendly = convert_real_interface_to_friendly_interface_name($iface);	
+			$friendly = convert_real_interface_to_friendly_interface_name($iface);
 			$ifstatus = pfSense_get_interface_addresses($config['interfaces'][$friendly]['if']);
 			if (is_array($ifstatus) && $ifstatus['linkstateup'])
 				$status = "  (up)";
 			else
 				$status = "(down)";
-			$ifsmallist = trim($ifsmallist . " " . $iface);
-			echo sprintf("% -7s%s %s %s\n", $iface, $ifa['mac'],
-				$status, substr($ifa['dmesg'], 0, 48));
+			$ifsmallist = $ifsmallist . $iface. " ";
+			echo sprintf("%-7s %s %s %s\n", $iface, $ifa['mac'],
+				$status, substr($ifa['dmesg'], 0, 46));
 		}
-	}
-
-	if ($auto_assign) {
-		echo <<<EOD
-
-		!!! Installation Media Detected: Auto Interface Option !!!!
-BEGIN MANUAL CONFIGURATION OR THE SYSTEM WILL PROCEED WITH AUTO CONFIGURATION.
-
-EOD;
 	}
 
 	echo "\n" . gettext("Do VLANs need to be set up first?");
@@ -127,90 +96,27 @@ EOD;
 		"\n";
 	echo "\n" . gettext("Should VLANs be set up now [y|n]?") . " ";
 
-	if ($auto_assign) {
-		$key = timeout();
-	} else {
-		$key = chop(fgets($fp));
+	$key = chop(fgets($fp));
+
+	//Manually assign interfaces
+	if (in_array($key, array('y', 'Y'))) {
+		vlan_setup();
 	}
 
-	if (!isset($key) and $auto_assign) {	// Auto Assign Interfaces
-		do {
-			echo <<<EOD
+	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 
-   !!! Auto Assigning Interfaces !!!
+		echo "\n\n" . gettext("VLAN interfaces:") . "\n\n";
+		foreach ($config['vlans']['vlan'] as $vlan) {
 
-For setup purposes, there must be at least one NIC connected for
-the LAN. If a second NIC is connected, it will be assigned to the
-WAN. Otherwise, WAN will be temporarily assigned to the next
-available NIC found regardless of activity. The WAN interface
-should then be assigned and configured as required.
+			echo sprintf("% -16s%s\n", vlan_interface($vlan),
+				"VLAN tag {$vlan['tag']}, parent interface {$vlan['if']}");
 
-Please make the pfSense NIC connections now.
-The system will continue checking until they have been made.
-
-Searching for active interfaces...
-
-EOD;
-			unset($wanif, $lanif);
-
-			$media_iflist = $plugged_in = array();
-			$media_iflist = get_interface_list("media");
-			foreach ($media_iflist as $iface => $ifa) {
-				if ($ifa['up']) {
-					$plugged_in[] = $iface;
-				}
-			}
-
-			$lanif = array_shift($plugged_in);
-			$wanif = array_shift($plugged_in);
-
-			if (isset($lanif) && !isset($wanif)) {
-				foreach ($iflist as $iface => $ifa) {
-					if ($iface != $lanif) {
-						$wanif = $iface;
-						break;
-					}
-				}
-			}
-
-			echo <<<EOD
-
-Assigned WAN to : $wanif
-Assigned LAN to : $lanif
-
-If these assignments are not suitable,
-press any key to go back to manual configuration.
-
-EOD;
-			$key = timeout(20);
-			if (isset($key)) {
-				return;
-			}
-		} while (!isset($wanif));
-
-		$config['system']['enablesshd'] = 'enabled';
-		$key = 'y';
-
-	} else {
-		//Manually assign interfaces
-		if (in_array($key, array('y', 'Y'))) {
-			vlan_setup();
+			$iflist[vlan_interface($vlan)] = array();
+			$ifsmallist = $ifsmallist . vlan_interface($vlan) . " ";
 		}
+	}
 
-		if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-
-			echo "\n\n" . gettext("VLAN interfaces:") . "\n\n";
-			foreach ($config['vlans']['vlan'] as $vlan) {
-
-				echo sprintf("% -16s%s\n", "{$vlan['if']}_vlan{$vlan['tag']}",
-					"VLAN tag {$vlan['tag']}, parent interface {$vlan['if']}");
-
-				$iflist[$vlan['if'] . '_vlan' . $vlan['tag']] = array();
-				$ifsmallist = trim($ifsmallist . " " . $vlan['if'] . '_vlan' . $vlan['tag']);
-			}
-		}
-
-		echo <<<EOD
+	echo <<<EOD
 
 If the names of the interfaces are not known, auto-detection can
 be used instead. To use auto-detection, please disconnect all
@@ -218,120 +124,119 @@ interfaces before pressing 'a' to begin the process.
 
 EOD;
 
-		do {
-			echo "\n" . gettext("Enter the WAN interface name or 'a' for auto-detection") . " ";
-			printf(gettext("%s(%s or a): "), "\n", $ifsmallist);
-			$wanif = chop(fgets($fp));
-			if ($wanif === "") {
-				return;
-			}
-			if ($wanif === "a") {
-				$wanif = autodetect_interface("WAN", $fp);
-			} else if (!array_key_exists($wanif, $iflist)) {
-				printf(gettext("%sInvalid interface name '%s'%s"), "\n", $wanif, "\n");
-				unset($wanif);
-				continue;
-			}
-			$ifsmallist = trim(str_replace("  ", " ", str_replace($wanif, "", $ifsmallist)));
-		} while (!$wanif);
+	do {
+		echo "\n" . gettext("Enter the WAN interface name or 'a' for auto-detection") . " ";
+		printf(gettext('%1$s(%2$s or a): '), "\n", trim($ifsmallist));
+		$wanif = chop(fgets($fp));
+		if ($wanif === "") {
+			return (1);
+		}
+		if ($wanif === "a") {
+			$wanif = autodetect_interface("WAN", $fp);
+		} else if (!array_key_exists($wanif, $iflist)) {
+			printf(gettext('%1$sInvalid interface name \'%2$s\'%3$s'), "\n", $wanif, "\n");
+			unset($wanif);
+			continue;
+		}
+		$ifsmallist = str_replace(" " . $wanif . " ", " ", $ifsmallist);
+	} while (!$wanif);
 
-		do {
-			printf(gettext("%sEnter the LAN interface name or 'a' for auto-detection %s" .
-				"NOTE: this enables full Firewalling/NAT mode.%s" .
-				"(%s a or nothing if finished):%s"), "\n", "\n", "\n", $ifsmallist, " ");
+	do {
+		printf(gettext('%1$sEnter the LAN interface name or \'a\' for auto-detection %2$s' .
+			'NOTE: this enables full Firewalling/NAT mode.%3$s' .
+			'(%4$s a or nothing if finished):%5$s'), "\n", "\n", "\n", trim($ifsmallist), " ");
 
-			$lanif = chop(fgets($fp));
+		$lanif = chop(fgets($fp));
 
-			if ($lanif == "exit") {
-				exit;
-			}
-
-			if ($lanif == "") {
-				/* It is OK to have just a WAN, without a LAN so break if the user does not want LAN. */
-				break;
-			}
-
-			if ($lanif === "a") {
-				$lanif = autodetect_interface("LAN", $fp);
-			} else if (!array_key_exists($lanif, $iflist)) {
-				printf(gettext("%sInvalid interface name '%s'%s"), "\n", $lanif, "\n");
-				unset($lanif);
-				continue;
-			}
-			$ifsmallist = trim(str_replace("  ", " ", str_replace($lanif, "", $ifsmallist)));
-		} while (!$lanif);
-
-		/* optional interfaces */
-		$i = 0;
-		$optif = array();
-
-		if ($lanif <> "") {
-			while (1) {
-				if ($optif[$i]) {
-					$i++;
-				}
-				$io = $i + 1;
-
-				if ($config['interfaces']['opt' . $io]['descr']) {
-					printf(gettext("%sOptional interface %s description found: %s"), "\n", $io, $config['interfaces']['opt' . $io]['descr']);
-				}
-
-				printf(gettext("%sEnter the Optional %s interface name or 'a' for auto-detection%s" .
-					"(%s a or nothing if finished):%s"), "\n", $io, "\n", $ifsmallist, " ");
-
-				$optif[$i] = chop(fgets($fp));
-
-				if ($optif[$i]) {
-					if ($optif[$i] === "a") {
-						$ad = autodetect_interface(gettext("Optional") . " " . $io, $fp);
-						if ($ad) {
-							$optif[$i] = $ad;
-						} else {
-							unset($optif[$i]);
-						}
-					} else if (!array_key_exists($optif[$i], $iflist)) {
-						printf(gettext("%sInvalid interface name '%s'%s"), "\n", $optif[$i], "\n");
-						unset($optif[$i]);
-						continue;
-					}
-					$ifsmallist = trim(str_replace("  ", " ", str_replace($optif[$i], "", $ifsmallist)));
-				} else {
-					unset($optif[$i]);
-					break;
-				}
-			}
+		if ($lanif == "exit") {
+			exit;
 		}
 
-		/* check for double assignments */
-		$ifarr = array_merge(array($lanif, $wanif), $optif);
+		if ($lanif == "") {
+			/* It is OK to have just a WAN, without a LAN so break if the user does not want LAN. */
+			break;
+		}
 
-		for ($i = 0; $i < (count($ifarr)-1); $i++) {
-			for ($j = ($i+1); $j < count($ifarr); $j++) {
-				if ($ifarr[$i] == $ifarr[$j]) {
-					echo <<<EOD
+		if ($lanif === "a") {
+			$lanif = autodetect_interface("LAN", $fp);
+		} else if (!array_key_exists($lanif, $iflist)) {
+			printf(gettext('%1$sInvalid interface name \'%2$s\'%3$s'), "\n", $lanif, "\n");
+			unset($lanif);
+			continue;
+		}
+		$ifsmallist = str_replace(" " . $lanif . " ", " ", $ifsmallist);
+	} while (!$lanif);
+
+	/* optional interfaces */
+	$i = 0;
+	$optif = array();
+
+	if ($lanif <> "") {
+		while (strlen(trim($ifsmallist)) > 0) {
+			if (!empty($optif[$i])) {
+				$i++;
+			}
+			$io = $i + 1;
+
+			if ($config['interfaces']['opt' . $io]['descr']) {
+				printf(gettext('%1$sOptional interface %2$s description found: %3$s'), "\n", $io, $config['interfaces']['opt' . $io]['descr']);
+			}
+
+			printf(gettext('%1$sEnter the Optional %2$s interface name or \'a\' for auto-detection%3$s' .
+				'(%4$s a or nothing if finished):%5$s'), "\n", $io, "\n", trim($ifsmallist), " ");
+
+			$optif[$i] = chop(fgets($fp));
+
+			if ($optif[$i]) {
+				if ($optif[$i] === "a") {
+					$ad = autodetect_interface(gettext("Optional") . " " . $io, $fp);
+					if ($ad) {
+						$optif[$i] = $ad;
+					} else {
+						unset($optif[$i]);
+					}
+				} else if (!array_key_exists($optif[$i], $iflist)) {
+					printf(gettext('%1$sInvalid interface name \'%2$s\'%3$s'), "\n", $optif[$i], "\n");
+					unset($optif[$i]);
+					continue;
+				}
+				$ifsmallist = str_replace(" " . $optif[$i] . " ", " ", $ifsmallist);
+			} else {
+				unset($optif[$i]);
+				break;
+			}
+		}
+	}
+
+	/* check for double assignments */
+	$ifarr = array_merge(array($lanif, $wanif), $optif);
+
+	for ($i = 0; $i < (count($ifarr)-1); $i++) {
+		for ($j = ($i+1); $j < count($ifarr); $j++) {
+			if ($ifarr[$i] == $ifarr[$j]) {
+				echo <<<EOD
 
 Error: The same interface name cannot be assigned twice!
 
 EOD;
-					fclose($fp);
-					return;
-				}
+				fclose($fp);
+				return (-2);
 			}
 		}
-
-		echo "\n" . gettext("The interfaces will be assigned as follows:") . "\n\n";
-
-		echo "WAN  -> " . $wanif . "\n";
-		if ($lanif != "") {
-			echo "LAN  -> " . $lanif . "\n";
-		}
-		for ($i = 0; $i < count($optif); $i++) {
-			echo "OPT" . ($i+1) . " -> " . $optif[$i] . "\n";
-		}
-
-		echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
-		$key = chop(fgets($fp));
 	}
+
+	echo "\n" . gettext("The interfaces will be assigned as follows:") . "\n\n";
+
+	echo "WAN  -> " . $wanif . "\n";
+	if ($lanif != "") {
+		echo "LAN  -> " . $lanif . "\n";
+	}
+	for ($i = 0; $i < count($optif); $i++) {
+		echo "OPT" . ($i+1) . " -> " . $optif[$i] . "\n";
+	}
+
+	echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
+	$key = chop(fgets($fp));
 
 	if (in_array($key, array('y', 'Y'))) {
 		if ($lanif) {
@@ -345,7 +250,7 @@ EOD;
 			}
 			$config['interfaces']['lan']['if'] = $lanif;
 			$config['interfaces']['lan']['enable'] = true;
-		} elseif (!platform_booting() && !$auto_assign) {
+		} elseif (!platform_booting()) {
 
 			echo "\n" . gettext("You have chosen to remove the LAN interface.") . "\n";
 			echo "\n" . gettext("Would you like to remove the LAN IP address and \nunload the interface now [y|n]?") . " ";
@@ -388,6 +293,9 @@ EOD;
 			}
 			if (isset($config['dhcpd']['lan'])) {
 				unset($config['dhcpd']['lan']);
+			}
+			if (isset($config['dhcpdv6']['lan'])) {
+				unset($config['dhcpdv6']['lan']);
 			}
 			if (isset($config['interfaces']['lan']['if'])) {
 				unset($config['interfaces']['lan']['if']);
@@ -475,15 +383,17 @@ EOD;
 
 		fclose($fp);
 
-		if (platform_booting()) {
-			return;
-		}
-
 		echo gettext("One moment while the settings are reloading...");
-		echo gettext(" done!") . "\n";
-
 		touch("{$g['tmp_path']}/assign_complete");
 
+		if (file_exists("{$g['conf_path']}/trigger_initial_wizard")) {
+			// Let the system know that the interface assign part of initial setup has been done.
+			touch("{$g['conf_path']}/assign_complete");
+		}
+
+		echo gettext(" done!") . "\n";
+
+		return (0);
 	}
 }
 
@@ -500,7 +410,7 @@ EOD;
 
 	foreach ($iflist_prev as $ifn => $ifa) {
 		if (!$ifa['up'] && $iflist[$ifn]['up']) {
-			printf(gettext("Detected link-up on interface %s.%s"), $ifn, "\n");
+			printf(gettext('Detected link-up on interface %1$s.%2$s'), $ifn, "\n");
 			return $ifn;
 		}
 	}
@@ -561,9 +471,9 @@ function vlan_setup() {
 		$vlan['if'] = chop(fgets($fp));
 
 		if ($vlan['if']) {
-			if (!array_key_exists($vlan['if'], $iflist) or
+			if (!array_key_exists($vlan['if'], $iflist) ||
 			    !is_jumbo_capable($vlan['if'])) {
-				printf(gettext("%sInvalid interface name '%s'%s"), "\n", $vlan['if'], "\n");
+				printf(gettext('%1$sInvalid interface name \'%2$s\'%3$s'), "\n", $vlan['if'], "\n");
 				continue;
 			}
 		} else {
@@ -572,9 +482,9 @@ function vlan_setup() {
 
 		echo gettext("Enter the VLAN tag (1-4094):") . " ";
 		$vlan['tag'] = chop(fgets($fp));
-		$vlan['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
+		$vlan['vlanif'] = vlan_interface($vlan);
 		if (!is_numericint($vlan['tag']) || ($vlan['tag'] < 1) || ($vlan['tag'] > 4094)) {
-			printf(gettext("%sInvalid VLAN tag '%s'%s"), "\n", $vlan['tag'], "\n");
+			printf(gettext('%1$sInvalid VLAN tag \'%2$s\'%3$s'), "\n", $vlan['tag'], "\n");
 			continue;
 		}
 
@@ -613,8 +523,18 @@ function check_for_alternate_interfaces() {
 			$default_device['lan'] = "re2";
 			break;
 		case 'RCC-VE':
-			$default_device['wan'] = "igb0";
-			$default_device['lan'] = "igb1";
+			/* SG-4860 or SG-8860 */
+			if (does_interface_exist('igb4')) {
+				$config['interfaces']['wan']['if'] = 'igb1';
+				$config['interfaces']['lan']['if'] = 'igb0';
+			} else {
+				$config['interfaces']['wan']['if'] = 'igb0';
+				$config['interfaces']['lan']['if'] = 'igb1';
+			}
+			break;
+		case 'Turbot Dual-E':
+			$config['interfaces']['wan']['if'] = 'igb0';
+			$config['interfaces']['lan']['if'] = 'igb1';
 			break;
 		default:
 			$default_device['wan'] = "";

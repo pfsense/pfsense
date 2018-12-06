@@ -1,56 +1,22 @@
 <?php
 /*
-	vpn_l2tp.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * vpn_l2tp.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -63,9 +29,7 @@
 require_once("guiconfig.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['l2tp']['radius'])) {
-	$config['l2tp']['radius'] = array();
-}
+init_config_arr(array('l2tp', 'radius'));
 $l2tpcfg = &$config['l2tp'];
 
 $pconfig['remoteip'] = $l2tpcfg['remoteip'];
@@ -84,7 +48,7 @@ $pconfig['n_l2tp_units'] = $l2tpcfg['n_l2tp_units'];
 $pconfig['paporchap'] = $l2tpcfg['paporchap'];
 $pconfig['secret'] = $l2tpcfg['secret'];
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -136,6 +100,17 @@ if ($_POST) {
 				$input_errors[] = gettext("The specified server address is equal to the LAN interface address.");
 			}
 		}
+
+		if (!empty($_POST['l2tp_dns1']) && !is_ipaddrv4(trim($_POST['l2tp_dns1']))) {
+			$input_errors[] = gettext("The field 'Primary L2TP DNS Server' must contain a valid IPv4 address.");
+		}
+		if (!empty($_POST['l2tp_dns2']) && !is_ipaddrv4(trim($_POST['l2tp_dns2']))) {
+			$input_errors[] = gettext("The field 'Secondary L2TP DNS Server' must contain a valid IPv4 address.");
+		}
+		if (!empty($_POST['l2tp_dns2']) && empty($_POST['l2tp_dns1'])) {
+			$input_errors[] = gettext("The Secondary L2TP DNS Server cannot be set when the Primary L2TP DNS Server is empty.");
+		}
+
 	}
 
 	if (!$input_errors) {
@@ -191,20 +166,16 @@ if ($_POST) {
 			unset($l2tpcfg['radius']['radiusissueips']);
 		}
 
-		write_config();
+		write_config(gettext("L2TP VPN configuration changed."));
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = vpn_l2tp_configure();
-		$savemsg = get_std_save_message($retval);
-
-		/* if ajax is calling, give them an update message */
-		if (isAjax()) {
-			print_info_box($savemsg, 'success');
-		}
+		$retval |= vpn_l2tp_configure();
 	}
 }
 
 $pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("Configuration"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "l2tps";
 include("head.inc");
 
@@ -212,8 +183,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 $tab_array = array();
@@ -228,7 +199,7 @@ $section = new Form_Section("Enable L2TP");
 $section->addInput(new Form_Checkbox(
 	'mode',
 	'Enable',
-	'Enable LT2P server',
+	'Enable L2TP server',
 	($pconfig['mode'] == "server"),
 	'server'
 ));
@@ -246,30 +217,30 @@ $section->addClass('toggle-l2tp-enable');
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	$iflist
 ));
 
 $section->addInput(new Form_Input(
 	'localip',
-	'Server address',
+	'*Server address',
 	'text',
 	$pconfig['localip']
-))->setHelp('Enter the IP address the L2TP server should give to clients for use as their "gateway". ' . '<br />' .
-			'Typically this is set to an unused IP just outside of the client range.' . '<br /><br />' .
-			'NOTE: This should NOT be set to any IP address currently in use on this firewall.');
+))->setHelp('Enter the IP address the L2TP server should give to clients for use as their "gateway". %1$s' .
+			'Typically this is set to an unused IP just outside of the client range.%1$s%1$s' .
+			'NOTE: This should NOT be set to any IP address currently in use on this firewall.', '<br />');
 
 $section->addInput(new Form_IpAddress(
-	'remoteip',
-	'Remote address range',
-	$pconfig['remoteip']
-))->addMask(l2tp_subnet, $pconfig['l2tp_subnet'])
+        'remoteip',
+        '*Remote address range',
+        $pconfig['remoteip']
+))->addMask('l2tp_subnet', $pconfig['l2tp_subnet'])
   ->setHelp('Specify the starting address for the client IP address subnet.');
 
 $section->addInput(new Form_Select(
 	'n_l2tp_units',
-	'Number of L2TP users',
+	'*Number of L2TP users',
 	$pconfig['n_l2tp_units'],
 	array_combine(range(1, 255, 1), range(1, 255, 1))
 ));
@@ -283,7 +254,7 @@ $section->addPassword(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'paporchap',
-	'Authentication type',
+	'*Authentication type',
 	$pconfig['paporchap'],
 	array(
 		'chap' => 'CHAP',
@@ -327,13 +298,13 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_IpAddress(
 	'radiusserver',
-	'Server',
+	'*Server',
 	$pconfig['radiusserver']
 ))->setHelp('Enter the IP address of the RADIUS server.');
 
 $section->addPassword(new Form_Input(
 	'radiussecret',
-	'Secret',
+	'*Secret',
 	'password',
 	$pconfig['radiussecret']
 ))->setHelp('Enter the shared secret that will be used to authenticate to the RADIUS server.');

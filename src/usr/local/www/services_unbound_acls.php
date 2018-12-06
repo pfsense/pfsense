@@ -1,57 +1,23 @@
 <?php
 /*
-	services_unbound_acls.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2011 Warren Baker <warren@decoy.co.za>
+ * services_unbound_acls.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014 Warren Baker (warren@pfsense.org)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -62,15 +28,13 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 require_once("unbound.inc");
 
-if (!is_array($config['unbound']['acls'])) {
-	$config['unbound']['acls'] = array();
-}
-
+init_config_arr(array('unbound', 'acls'));
 $a_acls = &$config['unbound']['acls'];
 
-$id = $_GET['id'];
+$id = $_REQUEST['id'];
 
 if (isset($_POST['aclid'])) {
 	$id = $_POST['aclid'];
@@ -81,20 +45,16 @@ if (!empty($id) && !is_numeric($id)) {
 	exit;
 }
 
-$act = $_GET['act'];
+$act = $_REQUEST['act'];
 
-if (isset($_POST['act'])) {
-	$act = $_POST['act'];
-}
-
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 	if (!$a_acls[$id]) {
 		pfSenseHeader("services_unbound_acls.php");
 		exit;
 	}
 
 	unset($a_acls[$id]);
-	write_config();
+	write_config(gettext("Access list deleted from DNS Resolver."));
 	mark_subsystem_dirty('unbound');
 }
 
@@ -118,94 +78,86 @@ if ($act == 'new') {
 	$networkacl = array('0' => array('acl_network' => '', 'mask' => '', 'description' => ''));
 }
 
-if ($_POST) {
+if ($_POST['apply']) {
+	$retval = 0;
+	$retval |= services_unbound_configure();
+	if ($retval == 0) {
+		clear_subsystem_dirty('unbound');
+	}
+}
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 	$deleting = false;
 
-	// Delete a row from the networks table
-	for ($idx = 0; $idx < 50; $idx++) {
-		if ($pconfig['dlt' . $idx] == 'Delete') {
-			unset($networkacl[$idx]);
-			$deleting = true;
-			break;
+	// input validation - only allow 50 entries in a single ACL
+	for ($x = 0; $x < 50; $x++) {
+		if (isset($pconfig["acl_network{$x}"])) {
+			$networkacl[$x] = array();
+			$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];
+			$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
+			$networkacl[$x]['description'] = $pconfig["description{$x}"];
+			if (!is_ipaddr($networkacl[$x]['acl_network'])) {
+				$input_errors[] = gettext("A valid IP address must be entered for each row under Networks.");
+			}
+
+			if (is_ipaddr($networkacl[$x]['acl_network'])) {
+				if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
+					$input_errors[] = gettext("A valid IPv4 netmask must be entered for each IPv4 row under Networks.");
+				}
+			} else if (function_exists("is_ipaddrv6")) {
+				if (!is_ipaddrv6($networkacl[$x]['acl_network'])) {
+					$input_errors[] = gettext("A valid IPv6 address must be entered for {$networkacl[$x]['acl_network']}.");
+				} else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
+					$input_errors[] = gettext("A valid IPv6 netmask must be entered for each IPv6 row under Networks.");
+				}
+			} else {
+				$input_errors[] = gettext("A valid IP address must be entered for each row under Networks.");
+			}
+		} else if (isset($networkacl[$x])) {
+			unset($networkacl[$x]);
 		}
 	}
 
-	if ($_POST['apply']) {
-		$retval = services_unbound_configure();
-		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
-			clear_subsystem_dirty('unbound');
-		}
-	} else if (!$deleting) {
+	if (!$input_errors) {
+		if (strtolower($pconfig['save']) == strtolower(gettext("save"))) {
+			$acl_entry = array();
+			$acl_entry['aclid'] = $pconfig['aclid'];
+			$acl_entry['aclname'] = $pconfig['aclname'];
+			$acl_entry['aclaction'] = $pconfig['aclaction'];
+			$acl_entry['description'] = $pconfig['description'];
+			$acl_entry['aclid'] = $pconfig['aclid'];
+			$acl_entry['row'] = array();
 
-		// input validation - only allow 50 entries in a single ACL
-		for ($x = 0; $x < 50; $x++) {
-			if (isset($pconfig["acl_network{$x}"])) {
-				$networkacl[$x] = array();
-				$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];
-				$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
-				$networkacl[$x]['description'] = $pconfig["description{$x}"];
-				if (!is_ipaddr($networkacl[$x]['acl_network'])) {
-					$input_errors[] = gettext("A valid IP address must be entered for each row under Networks.");
-				}
-
-				if (is_ipaddr($networkacl[$x]['acl_network'])) {
-					if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
-						$input_errors[] = gettext("A valid IPv4 netmask must be entered for each IPv4 row under Networks.");
-					}
-				} else if (function_exists("is_ipaddrv6")) {
-					if (!is_ipaddrv6($networkacl[$x]['acl_network'])) {
-						$input_errors[] = gettext("A valid IPv6 address must be entered for {$networkacl[$x]['acl_network']}.");
-					} else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
-						$input_errors[] = gettext("A valid IPv6 netmask must be entered for each IPv6 row under Networks.");
-					}
-				} else {
-					$input_errors[] = gettext("A valid IP address must be entered for each row under Networks.");
-				}
-			} else if (isset($networkacl[$x])) {
-				unset($networkacl[$x]);
+			foreach ($networkacl as $acl) {
+				$acl_entry['row'][] = $acl;
 			}
-		}
 
-		if (!$input_errors) {
-			if (strtolower($pconfig['save']) == gettext("save")) {
-				$acl_entry = array();
-				$acl_entry['aclid'] = $pconfig['aclid'];
-				$acl_entry['aclname'] = $pconfig['aclname'];
-				$acl_entry['aclaction'] = $pconfig['aclaction'];
-				$acl_entry['description'] = $pconfig['description'];
-				$acl_entry['aclid'] = $pconfig['aclid'];
-				$acl_entry['row'] = array();
-
-				foreach ($networkacl as $acl) {
-					$acl_entry['row'][] = $acl;
-				}
-
-				if (isset($id) && $a_acls[$id]) {
-					$a_acls[$id] = $acl_entry;
-				} else {
-					$a_acls[] = $acl_entry;
-				}
-
-				mark_subsystem_dirty("unbound");
-				write_config();
-
-				pfSenseHeader("/services_unbound_acls.php");
-				exit;
+			if (isset($id) && $a_acls[$id]) {
+				$a_acls[$id] = $acl_entry;
+			} else {
+				$a_acls[] = $acl_entry;
 			}
+
+			mark_subsystem_dirty("unbound");
+			write_config(gettext("Access list configured for DNS Resolver."));
+
+			pfSenseHeader("/services_unbound_acls.php");
+			exit;
 		}
 	}
 }
 
 $actionHelp =
-					sprintf(gettext('%sDeny:%s Stops queries from hosts within the netblock defined below.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
-					sprintf(gettext('%sRefuse:%s Stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
-					sprintf(gettext('%sAllow:%s Allow queries from hosts within the netblock defined below.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
-					sprintf(gettext('%sAllow Snoop:%s Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for the administrative host.'), '<span class="text-success"><strong>', '</strong></span>'); 
+	sprintf(gettext('%1$sDeny:%2$s Stops queries from hosts within the netblock defined below.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+	sprintf(gettext('%1$sRefuse:%2$s Stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+	sprintf(gettext('%1$sAllow:%2$s Allow queries from hosts within the netblock defined below.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+	sprintf(gettext('%1$sAllow Snoop:%2$s Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for the administrative host.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+	sprintf(gettext('%1$sDeny Nonlocal:%2$s Allow only authoritative local-data queries from hosts within the netblock defined below. Messages that are disallowed are dropped.%3$s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+	sprintf(gettext('%1$sRefuse Nonlocal:%2$s Allow only authoritative local-data queries from hosts within the netblock defined below. Sends a DNS rcode REFUSED error message back to the client for messages that are disallowed.'), '<span class="text-success"><strong>', '</strong></span>');
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access Lists"));
+$pglinks = array("", "services_unbound.php", "@self");
 
 if ($act == "new" || $act == "edit") {
 	$pgtitle[] = gettext('Edit');
@@ -217,8 +169,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('unbound')) {
@@ -260,9 +212,9 @@ if ($act == "new" || $act == "edit") {
 
 	$section->addInput(new Form_Select(
 		'aclaction',
-		'Action',
+		'*Action',
 		strtolower($pconfig['aclaction']),
-		array('allow' => gettext('Allow'), 'deny' => gettext('Deny'), 'refuse' => gettext('Refuse'), 'allow snoop' => gettext('Allow Snoop'))
+		array('allow' => gettext('Allow'), 'deny' => gettext('Deny'), 'refuse' => gettext('Refuse'), 'allow snoop' => gettext('Allow Snoop'), 'deny nonlocal' => gettext('Deny Nonlocal'), 'refuse nonlocal' => gettext('Refuse Nonlocal'))
 	))->setHelp($actionHelp);
 
 	$section->addInput(new Form_Input(
@@ -280,7 +232,7 @@ if ($act == "new" || $act == "edit") {
 		$cidr = $item['mask'];
 		$description = $item['description'];
 
-		$group = new Form_Group($counter == 0 ? 'Networks':'');
+		$group = new Form_Group($counter == 0 ? '*Networks':'');
 
 		$group->add(new Form_IpAddress(
 			'acl_network'.$counter,
@@ -350,7 +302,7 @@ if ($act == "new" || $act == "edit") {
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit ACL')?>" href="services_unbound_acls.php?act=edit&amp;id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete ACL')?>" href="services_unbound_acls.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete ACL')?>" href="services_unbound_acls.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -370,15 +322,20 @@ if ($act == "new" || $act == "edit") {
 	</a>
 </nav>
 
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	// Suppress "Delete row" button if there are fewer than two rows
-	checkLastRow();
-});
-//]]>
-</script>
 <?php
 }
 
+?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
+
+});
+//]]>
+</script>
+
+<?php
 include("foot.inc");

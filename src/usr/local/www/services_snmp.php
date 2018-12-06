@@ -1,59 +1,26 @@
 <?php
 /*
-	services_snmp.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * services_snmp.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -104,7 +71,11 @@ $pconfig['hostres'] = isset($config['snmpd']['modules']['hostres']);
 $pconfig['bridge'] = isset($config['snmpd']['modules']['bridge']);
 $pconfig['ucd'] = isset($config['snmpd']['modules']['ucd']);
 $pconfig['regex'] = isset($config['snmpd']['modules']['regex']);
-$pconfig['bindip'] = $config['snmpd']['bindip'];
+if (empty($config['snmpd']['bindip'])) {
+	$pconfig['bindip'] = array();
+} else {
+	$pconfig['bindip'] = explode(",", $config['snmpd']['bindip']);
+}
 
 if ($_POST) {
 
@@ -184,27 +155,40 @@ if ($_POST) {
 		$config['snmpd']['modules']['bridge'] = $_POST['bridge'] ? true : false;
 		$config['snmpd']['modules']['ucd'] = $_POST['ucd'] ? true : false;
 		$config['snmpd']['modules']['regex'] = $_POST['regex'] ? true : false;
-		$config['snmpd']['bindip'] = $_POST['bindip'];
+		if (is_array($_POST['bindip']) && !empty($_POST['bindip'])) {
+			$config['snmpd']['bindip'] = implode(",", $_POST['bindip']);
+		}
 
 		write_config();
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = services_snmpd_configure();
-		$savemsg = get_std_save_message($retval);
+		$retval |= services_snmpd_configure();
 	}
 }
 
-function build_iplist() {
-	$listenips = get_possible_listen_ips();
-	$iplist = array();
-	$iplist[''] = 'All';
+function build_if_list($selectedifs) {
+	$interface_addresses = get_possible_listen_ips(true);
+	$iflist = array('options' => array(), 'selected' => array());
 
-	foreach ($listenips as $lip => $ldescr) {
-		$iplist[$lip] = $ldescr;
+	$iflist['options']['all']	= gettext("All");
+	if (empty($selectedifs) || empty($selectedifs[0]) || in_array("all", $selectedifs)) {
+		array_push($iflist['selected'], "all");
 	}
-	unset($listenips);
 
-	return($iplist);
+	foreach ($interface_addresses as $laddr => $ldescr) {
+		if (is_ipaddr(get_interface_ip($laddr))) {
+			$iflist['options'][$laddr] = htmlspecialchars($ldescr);
+		}
+
+		if ($selectedifs && in_array($laddr, $selectedifs)) {
+			array_push($iflist['selected'], $laddr);
+		}
+	}
+
+	unset($interface_addresses);
+
+	return($iflist);
 }
 
 $pgtitle = array(gettext("Services"), gettext("SNMP"));
@@ -216,8 +200,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 $form = new Form();
@@ -358,11 +342,14 @@ $form->add($section);
 
 $section = new Form_Section('Interface Binding');
 
+$iflist = build_if_list($pconfig['bindip']);
+
 $section->addInput(new Form_Select(
 	'bindip',
-	'Bind Interface',
-	$pconfig['bindip'],
-	build_iplist()
+	'Bind Interfaces',
+	$iflist['selected'],
+	$iflist['options'],
+	true
 ));
 
 $form->add($section);
@@ -379,7 +366,20 @@ events.push(function() {
 	noMibii = false;
 
 	$('#junk').hide();
+	enableChange();
+	trapenableChange();
 	hostresChange();
+
+	function enableChange() {
+		setRequired('pollport', $('#enable').prop('checked'));
+		setRequired('rocommunity', $('#enable').prop('checked'));
+	}
+
+	function trapenableChange() {
+		setRequired('trapserver', $('#trapenable').prop('checked'));
+		setRequired('trapserverport', $('#trapenable').prop('checked'));
+		setRequired('trapstring', $('#trapenable').prop('checked'));
+	}
 
 	function hostresChange() {
 		if ($('#hostres').prop('checked')) {
@@ -390,10 +390,17 @@ events.push(function() {
 		}
 	}
 
+	$('#enable').change(function() {
+		enableChange();
+	});
+
+	$('#trapenable').change(function() {
+		trapenableChange();
+	});
+
 	$('#hostres').change(function() {
 		hostresChange();
 	});
-
 
 	$('#mibii').change(function() {
 		if (noMibii) {

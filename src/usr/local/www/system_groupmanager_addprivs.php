@@ -1,81 +1,50 @@
 <?php
 /*
-	system_groupmanager_addprivs.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2006 Daniel S. Haischt.
+ * system_groupmanager_addprivs.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2006 Daniel S. Haischt.
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-system-groupmanager-addprivs
 ##|*NAME=System: Group Manager: Add Privileges
 ##|*DESCR=Allow access to the 'System: Group Manager: Add Privileges' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=system_groupmanager_addprivs.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
+
+$logging_level = LOG_WARNING;
+$logging_prefix = gettext("Local User Database");
+
+$groupid = $_REQUEST['groupid'];
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"), gettext("Edit"), gettext("Add Privileges"));
+$pglinks = array("", "system_usermanager.php", "system_groupmanager.php", "system_groupmanager.php?act=edit&groupid=" . $groupid, "@self");
 
-if (is_numericint($_GET['groupid'])) {
-	$groupid = $_GET['groupid'];
-}
-if (isset($_POST['groupid']) && is_numericint($_POST['groupid'])) {
-	$groupid = $_POST['groupid'];
-}
-
-$a_group = & $config['system']['group'][$groupid];
+init_config_arr(array('system', 'group', $groupid));
+$a_group = &$config['system']['group'][$groupid];
 
 if (!is_array($a_group)) {
 	pfSenseHeader("system_groupmanager.php?id={$groupid}");
@@ -88,8 +57,9 @@ if (!is_array($a_group['priv'])) {
 
 // Make a local copy and sort it
 $spriv_list = $priv_list;
+uasort($spriv_list, "compare_by_name");
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -121,17 +91,13 @@ if ($_POST) {
 			}
 		}
 
-		$retval = write_config();
-		$savemsg = get_std_save_message($retval);
+		$savemsg = sprintf(gettext("Privileges changed for group: %s"), $a_group['name']);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 
 		pfSenseHeader("system_groupmanager.php?act=edit&groupid={$groupid}");
 		exit;
 	}
-}
-
-/* if ajax is calling, give them an update message */
-if (isAjax()) {
-	print_info_box($savemsg, 'success');
 }
 
 function build_priv_list() {
@@ -150,14 +116,24 @@ function build_priv_list() {
 	return($list);
 }
 
+function get_root_priv_item_text() {
+	global $priv_list;
+
+	$priv_text = "";
+
+	foreach ($priv_list as $pname => $pdata) {
+		if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
+			$priv_text .= '<br/>' . $pdata['name'];
+		}
+	}
+
+	return($priv_text);
+}
+
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-}
-
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();
@@ -177,11 +153,21 @@ if (isset($groupid)) {
 	));
 }
 
-$section = new Form_Section('Add Privileges for '. $a_group['name']);
+$section = new Form_Section('Group Privileges');
+
+$name_string = $a_group['name'];
+if (!empty($a_group['descr'])) {
+	$name_string .= " ({$a_group['descr']})";
+}
+
+$section->addInput(new Form_StaticText(
+	'Group',
+	$name_string
+));
 
 $section->addInput(new Form_Select(
 	'sysprivs',
-	'Assigned privileges',
+	'*Assigned privileges',
 	$a_group['priv'],
 	build_priv_list(),
 	true
@@ -203,6 +189,19 @@ $section->addInput(new Form_Input(
 	'text',
 	null
 ))->setHelp('Show only the choices containing this term');
+
+$section->addInput(new Form_StaticText(
+	gettext('Privilege information'),
+	'<span class="help-block">'.
+	gettext('The following privileges effectively give administrator-level access to users in the group' .
+		' because the user gains access to execute general commands, edit system files, ' .
+		' modify users, change passwords or similar:') .
+	'<br/>' .
+	get_root_priv_item_text() .
+	'<br/><br/>' .
+	gettext('Please take care when granting these privileges.') .
+	'</span>'
+));
 
 $btnfilter = new Form_Button(
 	'btnfilter',
@@ -248,7 +247,11 @@ events.push(function() {
 				continue;
 			}
 
-			$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
+			$desc = preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']);
+			if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
+				$desc .= ' ' . gettext('(This privilege effectively gives administrator-level access to users in the group)');
+			}
+			$desc = addslashes($desc);
 			$jdescs .= "descs[{$id}] = '{$desc}';\n";
 			$id++;
 		}
@@ -301,7 +304,7 @@ events.push(function() {
 	});
 
 	$('#filtertxt').keypress(function(e) {
-		if(e.which == 13) {
+		if (e.which == 13) {
 			e.preventDefault();
 			$('#btnfilter').trigger('click');
 		}

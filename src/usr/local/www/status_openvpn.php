@@ -1,57 +1,23 @@
 <?php
 /*
-	status_openvpn.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2008 Shrew Soft Inc.
+ * status_openvpn.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -70,10 +36,10 @@ require_once("shortcuts.inc");
 require_once("service-utils.inc");
 
 /* Handle AJAX */
-if ($_GET['action']) {
-	if ($_GET['action'] == "kill") {
-		$port  = $_GET['port'];
-		$remipp  = $_GET['remipp'];
+if ($_REQUEST['action']) {
+	if ($_REQUEST['action'] == "kill") {
+		$port  = $_REQUEST['port'];
+		$remipp  = $_REQUEST['remipp'];
 		if (!empty($port) and !empty($remipp)) {
 			$retval = openvpn_kill_client($port, $remipp);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
@@ -112,11 +78,11 @@ include("head.inc"); ?>
 	function killComplete(req) {
 		var values = req.responseText.split("|");
 		if (values[3] != "0") {
-			alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
+	//		alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
 			return;
 		}
 
-		$('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
+		$('tr[id="r:' + values[1] + ":" + values[2] + '"]').each(
 			function(index,row) { $(row).fadeOut(1000); }
 		);
 	}
@@ -138,8 +104,7 @@ include("head.inc"); ?>
 						<th><?=gettext("Real Address")?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
-						<th><?=gettext("Bytes Sent")?></th>
-						<th><?=gettext("Bytes Received")?></th>
+						<th><?=gettext("Bytes Sent/Received")?></th>
 						<th><!-- Icons --></th>
 					</tr>
 				</thead>
@@ -149,12 +114,25 @@ include("head.inc"); ?>
 							foreach ($server['conns'] as $conn):
 					?>
 					<tr id="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>">
-						<td><?=$conn['common_name'];?></td>
+						<td>
+							<?=$conn['common_name'];?>
+					<?php if (!empty($conn['common_name']) && !empty($conn['user_name']) && ($conn['user_name'] != "UNDEF")): ?>
+							<br />
+					<?php endif; ?>
+					<?php if (!empty($conn['user_name']) && ($conn['user_name'] != "UNDEF")): ?>
+							<?=$conn['user_name'];?>
+					<?php endif; ?>
+						</td>
 						<td><?=$conn['remote_host'];?></td>
-						<td><?=$conn['virtual_addr'];?></td>
+						<td>
+							<?=$conn['virtual_addr'];?>
+					<?php if (!empty($conn['virtual_addr']) && !empty($conn['virtual_addr6'])): ?>
+							<br />
+					<?php endif; ?>
+							<?=$conn['virtual_addr6'];?>
+						</td>
 						<td><?=$conn['connect_time'];?></td>
-						<td><?=format_bytes($conn['bytes_sent']);?></td>
-						<td><?=format_bytes($conn['bytes_recv']);?></td>
+						<td><?=format_bytes($conn['bytes_sent']);?> / <?=format_bytes($conn['bytes_recv']);?></td>
 						<td>
 							<a
 							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>');" style="cursor:pointer;"
@@ -173,10 +151,12 @@ include("head.inc"); ?>
 						<td colspan="2">
 							<table>
 								<tr>
-									<td>
 										<?php $ssvc = find_service_by_openvpn_vpnid($server['vpnid']); ?>
-										<?= get_service_status_icon($ssvc, true, true); ?>
-										<?= get_service_control_links($ssvc); ?>
+									<td>
+										<?= gettext("Status") . ": " . get_service_status_icon($ssvc, false, true, false, "service_state"); ?>
+									</td>
+									<td>
+										<?= gettext("Actions") . ": " . get_service_control_links($ssvc); ?>
 									</td>
 								</tr>
 							</table>
@@ -258,8 +238,7 @@ include("head.inc"); ?>
 						<th><?=gettext("Connected Since"); ?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
-						<th><?=gettext("Bytes Sent"); ?></th>
-						<th><?=gettext("Bytes Received"); ?></th>
+						<th><?=gettext("Bytes Sent / Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -272,10 +251,15 @@ include("head.inc"); ?>
 						<td><?=htmlspecialchars($sk_server['name']);?></td>
 						<td><?=$sk_server['status'];?></td>
 						<td><?=$sk_server['connect_time'];?></td>
-						<td><?=$sk_server['virtual_addr'];?></td>
+						<td>
+							<?=$sk_server['virtual_addr'];?>
+					<?php if (!empty($sk_server['virtual_addr']) && !empty($sk_server['virtual_addr6'])): ?>
+							<br />
+					<?php endif; ?>
+							<?=$sk_server['virtual_addr6'];?>
+						</td>
 						<td><?=$sk_server['remote_host'];?></td>
-						<td><?=format_bytes($sk_server['bytes_sent']);?></td>
-						<td><?=format_bytes($sk_server['bytes_recv']);?></td>
+						<td><?=format_bytes($sk_server['bytes_sent']);?> / <?=format_bytes($sk_server['bytes_recv']);?></td>
 						<td>
 							<table>
 								<tr>
@@ -312,10 +296,10 @@ include("head.inc"); ?>
 						<th><?=gettext("Name"); ?></th>
 						<th><?=gettext("Status"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
+						<th><?=gettext("Local Address"); ?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
-						<th><?=gettext("Bytes Sent"); ?></th>
-						<th><?=gettext("Bytes Received"); ?></th>
+						<th><?=gettext("Bytes Sent/Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -328,10 +312,28 @@ include("head.inc"); ?>
 						<td><?=htmlspecialchars($client['name']);?></td>
 						<td><?=$client['status'];?></td>
 						<td><?=$client['connect_time'];?></td>
-						<td><?=$client['virtual_addr'];?></td>
-						<td><?=$client['remote_host'];?></td>
-						<td><?=format_bytes($client['bytes_sent']);?></td>
-						<td><?=format_bytes($client['bytes_recv']);?></td>
+						<td>
+					<?php if (empty($client['local_host']) && empty($client['local_port'])): ?>
+							(pending)
+					<?php else: ?>
+							<?=$client['local_host'];?>:<?=$client['local_port'];?>
+					<?php endif; ?>
+						</td>
+						<td>
+							<?=$client['virtual_addr'];?>
+					<?php if (!empty($client['virtual_addr']) && !empty($client['virtual_addr6'])): ?>
+							<br />
+					<?php endif; ?>
+							<?=$client['virtual_addr6'];?>
+						</td>
+						<td>
+					<?php if (empty($client['remote_host']) && empty($client['remote_port'])): ?>
+							(pending)
+					<?php else: ?>
+							<?=$client['remote_host'];?>:<?=$client['remote_port'];?>
+					<?php endif; ?>
+						</td>
+						<td><?=format_bytes($client['bytes_sent']);?> / <?=format_bytes($client['bytes_recv']);?></td>
 						<td>
 							<table>
 								<tr>

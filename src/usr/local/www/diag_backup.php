@@ -1,65 +1,33 @@
 <?php
 /*
-	diag_backup.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * diag_backup.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-backup-restore
 ##|*NAME=Diagnostics: Backup & Restore
 ##|*DESCR=Allow access to the 'Diagnostics: Backup & Restore' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=diag_backup.php*
 ##|-PRIV
 
@@ -73,6 +41,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pkg-utils.inc");
 
 $rrddbpath = "/var/db/rrd";
 $rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
@@ -150,38 +119,6 @@ function restore_rrddata() {
 	}
 }
 
-function add_base_packages_menu_items() {
-	global $g, $config;
-	$base_packages = explode(",", $g['base_packages']);
-	$modified_config = false;
-	foreach ($base_packages as $bp) {
-		$basepkg_path = "/usr/local/pkg/{$bp}";
-		$tmpinfo = pathinfo($basepkg_path, PATHINFO_EXTENSION);
-		if ($tmpinfo['extension'] == "xml" && file_exists($basepkg_path)) {
-			$pkg_config = parse_xml_config_pkg($basepkg_path, "packagegui");
-			if ($pkg_config['menu'] != "") {
-				if (is_array($pkg_config['menu'])) {
-					foreach ($pkg_config['menu'] as $menu) {
-						if (is_array($config['installedpackages']['menu'])) {
-							foreach ($config['installedpackages']['menu'] as $amenu) {
-								if ($amenu['name'] == $menu['name']) {
-									continue;
-								}
-							}
-						}
-						$config['installedpackages']['menu'][] = $menu;
-						$modified_config = true;
-					}
-				}
-			}
-		}
-	}
-	if ($modified_config) {
-		write_config(gettext("Restored base_package menus after configuration restore."));
-		$config = parse_config(true);
-	}
-}
-
 function remove_bad_chars($string) {
 	return preg_replace('/[^a-z_0-9]/i', '', $string);
 }
@@ -197,30 +134,23 @@ function check_and_returnif_section_exists($section) {
 if ($_POST['apply']) {
 	ob_flush();
 	flush();
-	conf_mount_rw();
 	clear_subsystem_dirty("restore");
-	conf_mount_ro();
 	exit;
 }
 
 if ($_POST) {
 	unset($input_errors);
-	if (stristr($_POST['Submit'], gettext("Restore configuration"))) {
+	if ($_POST['restore']) {
 		$mode = "restore";
-	} else if (stristr($_POST['Submit'], gettext("Reinstall"))) {
+	} else if ($_POST['reinstallpackages']) {
 		$mode = "reinstallpackages";
-	} else if (stristr($_POST['Submit'], gettext("Clear Package Lock"))) {
+	} else if ($_POST['clearpackagelock']) {
 		$mode = "clearpackagelock";
-	} else if (stristr($_POST['Submit'], gettext("Download"))) {
+	} else if ($_POST['download']) {
 		$mode = "download";
-	} else if (stristr($_POST['Submit'], gettext("Restore version"))) {
-		$mode = "restore_ver";
 	}
 	if ($_POST["nopackages"] <> "") {
 		$options = "nopackages";
-	}
-	if ($_POST["ver"] <> "") {
-		$ver2restore = $_POST["ver"];
 	}
 	if ($mode) {
 		if ($mode == "download") {
@@ -247,10 +177,7 @@ if ($_POST) {
 						$data = backup_config_section($_POST['backuparea']);
 						$name = "{$_POST['backuparea']}-{$name}";
 					}
-					$sfn = "{$g['tmp_path']}/config.xml.nopkg";
-					file_put_contents($sfn, $data);
-					exec("sed '/<installedpackages>/,/<\/installedpackages>/d' {$sfn} > {$sfn}-new");
-					$data = file_get_contents($sfn . "-new");
+					$data = preg_replace('/\t*<installedpackages>.*<\/installedpackages>\n/sm', '', $data);
 				} else {
 					if (!$_POST['backuparea']) {
 						/* backup entire configuration */
@@ -273,6 +200,12 @@ if ($_POST) {
 				if ($_POST['backuparea'] !== "rrddata" && !$_POST['donotbackuprrd']) {
 					$rrd_data_xml = rrd_data_xml();
 					$closing_tag = "</" . $g['xml_rootobj'] . ">";
+
+					/* If the config on disk had rrddata tags already, remove that section first.
+					 * See https://redmine.pfsense.org/issues/8994 */
+					$data = preg_replace("/<rrddata>.*<\\/rrddata>/", "", $data);
+					$data = preg_replace("/<rrddata\\/>/", "", $data);
+
 					$data = str_replace($closing_tag, $rrd_data_xml . $closing_tag, $data);
 				}
 
@@ -329,6 +262,13 @@ if ($_POST) {
 						$data = str_replace("m0n0wall", "pfsense", $data);
 						$m0n0wall_upgrade = true;
 					}
+
+					/* If the config on disk had empty rrddata tags, remove them to
+					 * avoid an XML parsing error.
+					 * See https://redmine.pfsense.org/issues/8994 */
+					$data = preg_replace("/<rrddata><\\/rrddata>/", "", $data);
+					$data = preg_replace("/<rrddata\\/>/", "", $data);
+
 					if ($_POST['restorearea']) {
 						/* restore a specific area of the configuration */
 						if (!stristr($data, "<" . $_POST['restorearea'] . ">")) {
@@ -341,10 +281,8 @@ if ($_POST) {
 									restore_rrddata();
 									unset($config['rrddata']);
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
-									write_config();
-									add_base_packages_menu_items();
+									write_config(sprintf(gettext("Unset RRD data from configuration after restoring %s configuration area"), $_POST['restorearea']));
 									convert_config();
-									conf_mount_ro();
 								}
 								filter_configure();
 								$savemsg = gettext("The configuration area has been restored. The firewall may need to be rebooted.");
@@ -357,17 +295,47 @@ if ($_POST) {
 							/* restore the entire configuration */
 							file_put_contents($_FILES['conffile']['tmp_name'], $data);
 							if (config_install($_FILES['conffile']['tmp_name']) == 0) {
+								/* Save current pkg repo to re-add on new config */
+								unset($pkg_repo_conf_path);
+								if (isset($config['system']['pkg_repo_conf_path'])) {
+									$pkg_repo_conf_path = $config['system']['pkg_repo_conf_path'];
+								}
+
 								/* this will be picked up by /index.php */
-								conf_mount_rw();
 								mark_subsystem_dirty("restore");
-								touch("/conf/needs_package_sync_after_reboot");
+								touch("/conf/needs_package_sync");
 								/* remove cache, we will force a config reboot */
 								if (file_exists("{$g['tmp_path']}/config.cache")) {
 									unlink("{$g['tmp_path']}/config.cache");
 								}
 								$config = parse_config(true);
+
+								/* Restore previously pkg repo configured */
+								$pkg_repo_restored = false;
+								if (isset($pkg_repo_conf_path)) {
+									$config['system']['pkg_repo_conf_path'] =
+									    $pkg_repo_conf_path;
+									$pkg_repo_restored = true;
+								} elseif (isset($config['system']['pkg_repo_conf_path'])) {
+									unset($config['system']['pkg_repo_conf_path']);
+									$pkg_repo_restored = true;
+								}
+
+								if ($pkg_repo_restored) {
+									write_config(gettext("Removing pkg repository set after restoring full configuration"));
+									pkg_update(true);
+								}
+
 								if (file_exists("/boot/loader.conf")) {
 									$loaderconf = file_get_contents("/boot/loader.conf");
+									if (strpos($loaderconf, "console=\"comconsole")) {
+										$config['system']['enableserial'] = true;
+										write_config(gettext("Restore serial console enabling in configuration."));
+									}
+									unset($loaderconf);
+								}
+								if (file_exists("/boot/loader.conf.local")) {
+									$loaderconf = file_get_contents("/boot/loader.conf.local");
 									if (strpos($loaderconf, "console=\"comconsole")) {
 										$config['system']['enableserial'] = true;
 										write_config(gettext("Restore serial console enabling in configuration."));
@@ -379,10 +347,8 @@ if ($_POST) {
 									restore_rrddata();
 									unset($config['rrddata']);
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
-									write_config();
-									add_base_packages_menu_items();
+									write_config(gettext("Unset RRD data from configuration after restoring full configuration"));
 									convert_config();
-									conf_mount_ro();
 								}
 								if ($m0n0wall_upgrade == true) {
 									if ($config['system']['gateway'] <> "") {
@@ -390,7 +356,7 @@ if ($_POST) {
 									}
 									unset($config['shaper']);
 									/* optional if list */
-									$ifdescrs = get_configured_interface_list(true, true);
+									$ifdescrs = get_configured_interface_list(true);
 									/* remove special characters from interface descriptions */
 									if (is_array($ifdescrs)) {
 										foreach ($ifdescrs as $iface) {
@@ -401,17 +367,8 @@ if ($_POST) {
 									if (is_array($ifdescrs)) {
 										foreach ($ifdescrs as $iface) {
 											if (is_alias($config['interfaces'][$iface]['descr'])) {
-												// Firewall rules
 												$origname = $config['interfaces'][$iface]['descr'];
-												$newname = $config['interfaces'][$iface]['descr'] . "Alias";
-												update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $newname, $origname);
-												update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $newname, $origname);
-												// NAT Rules
-												update_alias_names_upon_change(array('nat', 'rule'), array('source', 'address'), $newname, $origname);
-												update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'address'), $newname, $origname);
-												update_alias_names_upon_change(array('nat', 'rule'), array('target'), $newname, $origname);
-												// Alias in an alias
-												update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $newname, $origname);
+												update_alias_name($origname . "Alias", $origname);
 											}
 										}
 									}
@@ -434,56 +391,15 @@ if ($_POST) {
 									}
 									// Convert icmp types
 									// http://www.openbsd.org/cgi-bin/man.cgi?query=icmp&sektion=4&arch=i386&apropos=0&manpath=OpenBSD+Current
-									for ($i = 0; isset($config["filter"]["rule"][$i]); $i++) {
-										if ($config["filter"]["rule"][$i]['icmptype']) {
-											switch ($config["filter"]["rule"][$i]['icmptype']) {
-												case "echo":
-													$config["filter"]["rule"][$i]['icmptype'] = "echoreq";
-													break;
-												case "unreach":
-													$config["filter"]["rule"][$i]['icmptype'] = "unreach";
-													break;
-												case "echorep":
-													$config["filter"]["rule"][$i]['icmptype'] = "echorep";
-													break;
-												case "squench":
-													$config["filter"]["rule"][$i]['icmptype'] = "squench";
-													break;
-												case "redir":
-													$config["filter"]["rule"][$i]['icmptype'] = "redir";
-													break;
-												case "timex":
-													$config["filter"]["rule"][$i]['icmptype'] = "timex";
-													break;
-												case "paramprob":
-													$config["filter"]["rule"][$i]['icmptype'] = "paramprob";
-													break;
-												case "timest":
-													$config["filter"]["rule"][$i]['icmptype'] = "timereq";
-													break;
-												case "timestrep":
-													$config["filter"]["rule"][$i]['icmptype'] = "timerep";
-													break;
-												case "inforeq":
-													$config["filter"]["rule"][$i]['icmptype'] = "inforeq";
-													break;
-												case "inforep":
-													$config["filter"]["rule"][$i]['icmptype'] = "inforep";
-													break;
-												case "maskreq":
-													$config["filter"]["rule"][$i]['icmptype'] = "maskreq";
-													break;
-												case "maskrep":
-													$config["filter"]["rule"][$i]['icmptype'] = "maskrep";
-													break;
-											}
+									$convert = array('echo' => 'echoreq', 'timest' => 'timereq', 'timestrep' => 'timerep');
+									foreach ($config["filter"]["rule"] as $ruleid => &$ruledata) {
+										if ($convert[$ruledata['icmptype']]) {
+											$ruledata['icmptype'] = $convert[$ruledata['icmptype']];
 										}
 									}
 									$config['diag']['ipv6nat'] = true;
-									write_config();
-									add_base_packages_menu_items();
+									write_config(gettext("Imported m0n0wall configuration"));
 									convert_config();
-									conf_mount_ro();
 									$savemsg = gettext("The m0n0wall configuration has been restored and upgraded to pfSense.");
 									mark_subsystem_dirty("restore");
 								}
@@ -528,18 +444,6 @@ if ($_POST) {
 		} else if ($mode == "clearpackagelock") {
 			clear_subsystem_dirty('packagelock');
 			$savemsg = "Package lock cleared.";
-		} else if ($mode == "restore_ver") {
-			$input_errors[] = gettext("XXX - this feature may hose the config (do NOT backrev configs!) - billm");
-			if ($ver2restore <> "") {
-				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
-				if (config_install($conf_file) == 0) {
-					mark_subsystem_dirty("restore");
-				} else {
-					$input_errors[] = gettext("The configuration could not be restored.");
-				}
-			} else {
-				$input_errors[] = gettext("No version selected.");
-			}
 		}
 	}
 }
@@ -594,6 +498,7 @@ function build_area_list($showall) {
 }
 
 $pgtitle = array(gettext("Diagnostics"), htmlspecialchars(gettext("Backup & Restore")), htmlspecialchars(gettext("Backup & Restore")));
+$pglinks = array("", "@self", "@self");
 include("head.inc");
 
 if ($input_errors) {
@@ -663,7 +568,7 @@ $section->addInput(new Form_Input(
 $group = new Form_Group('');
 // Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 $group->add(new Form_Button(
-	'Submit',
+	'download',
 	'Download configuration as XML',
 	null,
 	'fa-download'
@@ -711,7 +616,7 @@ $section->addInput(new Form_Input(
 $group = new Form_Group('');
 // Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 $group->add(new Form_Button(
-	'Submit',
+	'restore',
 	'Restore Configuration',
 	null,
 	'fa-undo'
@@ -728,7 +633,7 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 		$group = new Form_Group('');
 		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(
-			'Submit',
+			'reinstallpackages',
 			'Reinstall Packages',
 			null,
 			'fa-retweet'
@@ -741,7 +646,7 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 		$group = new Form_Group('');
 		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(
-			'Submit',
+			'clearpackagelock',
 			'Clear Package Lock',
 			null,
 			'fa-wrench'

@@ -1,56 +1,22 @@
 <?php
 /*
-	pkg.php
-/*
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * pkg.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -71,6 +37,7 @@ $xml = $_REQUEST['xml'];
 
 if ($xml == "") {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
+	$pglinks = array("", "@self");
 	include("head.inc");
 	print_info_box(gettext("No valid package defined."), 'danger', false);
 	include("foot.inc");
@@ -123,30 +90,30 @@ if ($_REQUEST['display_maximum_rows']) {
 
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
-if ($_GET['act'] == "update") {
+if ($_REQUEST['act'] == "update") {
 
 	if (is_array($config['installedpackages'][$pkg['name']]) && $pkg['name'] != "" && $_REQUEST['ids'] !="") {
-		#get current values
+		// get current values
 		$current_values=$config['installedpackages'][$pkg['name']]['config'];
-		#get updated ids
+		// get updated ids
 		parse_str($_REQUEST['ids'], $update_list);
-		#sort ids to know what to change
-		#useful to do not lose data when using sorting and paging
+		// sort ids to know what to change
+		// useful to do not lose data when using sorting and paging
 		$sort_list=$update_list['ids'];
 		sort($sort_list);
-		#apply updates
+		// apply updates
 		foreach ($update_list['ids'] as $key=> $value) {
 			$config['installedpackages'][$pkg['name']]['config'][$sort_list[$key]]=$current_values[$update_list['ids'][$key]];
 		}
-		#save current config
-		write_config();
-		#sync package
+		// save current config
+		write_config(gettext("Package configuration changes saved from package settings page."));
+		// sync package
 		eval ("{$pkg['custom_php_resync_config_command']}");
 	}
-	#function called via jquery, no need to continue after save changes.
+	// function called via jquery, no need to continue after save changes.
 	exit;
 }
-if ($_GET['act'] == "del") {
+if ($_REQUEST['act'] == "del") {
 	// loop through our fieldnames and automatically setup the fieldnames
 	// in the environment.	ie: a fieldname of username with a value of
 	// testuser would automatically eval $username = "testuser";
@@ -158,11 +125,12 @@ if ($_GET['act'] == "del") {
 		}
 	}
 
+	init_config_arr(array('installedpackages', xml_safe_fieldname($pkg['name']), 'config'));
 	$a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
-	if ($a_pkg[$_GET['id']]) {
-		unset($a_pkg[$_GET['id']]);
-		write_config();
+	if ($a_pkg[$_REQUEST['id']]) {
+		unset($a_pkg[$_REQUEST['id']]);
+		write_config(gettext("Package configuration item deleted from package settings page."));
 		if ($pkg['custom_delete_php_command'] != "") {
 			if ($pkg['custom_php_command_before_form'] != "") {
 				eval($pkg['custom_php_command_before_form']);
@@ -176,7 +144,7 @@ if ($_GET['act'] == "del") {
 
 ob_start();
 
-$iflist = get_configured_interface_with_descr(false, true);
+$iflist = get_configured_interface_with_descr(true);
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if ($pkg['custom_php_global_functions'] != "") {
@@ -190,19 +158,22 @@ if ($pkg['custom_php_command_before_form'] != "") {
 // Breadcrumb
 if ($pkg['title'] != "") {
 	/*if (!$only_edit) {						// Is any package still making use of this?? Is this something that is still wanted, considering the breadcrumb policy https://redmine.pfsense.org/issues/5527
- 		$pkg['title'] = $pkg['title'] . '/Edit';		// If this needs to live on, then it has to be moved to run AFTER "foreach ($pkg['tabs']['tab'] as $tab)"-loop. This due to $pgtitle[] = $tab['text']; 
+ 		$pkg['title'] = $pkg['title'] . '/Edit';		// If this needs to live on, then it has to be moved to run AFTER "foreach ($pkg['tabs']['tab'] as $tab)"-loop. This due to $pgtitle[] = $tab['text'];
 	}*/
 	if (strpos($pkg['title'], '/')) {
 		$title = explode('/', $pkg['title']);
 
 		foreach ($title as $subtitle) {
 			$pgtitle[] = gettext($subtitle);
+			$pglinks[] = "@self";
 		}
 	} else {
 		$pgtitle = array(gettext("Package"), gettext($pkg['title']));
+		$pglinks = array("", "@self");
 	}
 } else {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
+	$pglinks = array("", "@self");
 }
 
 if ($pkg['tabs'] != "") {
@@ -216,11 +187,9 @@ if ($pkg['tabs'] != "") {
 		if (isset($tab['active'])) {
 			$active = true;
 			$pgtitle[] = $tab['text'];
+			$pglinks[] = "@self";
 		} else {
 			$active = false;
-		}
-		if (isset($tab['no_drop_down'])) {
-			$no_drop_down = true;
 		}
 		$urltmp = "";
 		if ($tab['url'] != "") {
@@ -254,7 +223,7 @@ if ($pkg['tabs'] != "") {
 include("head.inc");
 if (isset($tab_array)) {
 	foreach ($tab_array as $tabid => $tab) {
-		display_top_tabs($tab); //, $no_drop_down, $tabid);
+		display_top_tabs($tab);
 	}
 }
 
@@ -315,8 +284,8 @@ function save_changes_to_xml(xml) {
 </script>
 
 <?php
-if ($_GET['savemsg'] != "") {
-	$savemsg = htmlspecialchars($_GET['savemsg']);
+if ($_REQUEST['savemsg'] != "") {
+	$savemsg = htmlspecialchars($_REQUEST['savemsg']);
 }
 
 if ($savemsg) {
@@ -375,7 +344,7 @@ if ($savemsg) {
 					echo "</select>";
 				}
 				if ($include_filtering_inputbox) {
-					echo '&nbsp;&nbsp;' . gettext("Filter text: ") . '<input id="pkg_filter" name="pkg_filter" value="' . $_REQUEST['pkg_filter'] . '" />';
+					echo '&nbsp;&nbsp;' . gettext("Filter text: ") . '<input id="pkg_filter" name="pkg_filter" value="' . htmlspecialchars($_REQUEST['pkg_filter']) . '" />';
 					echo '&nbsp;<button type="submit" value="Filter" class="btn btn-primary btn-xs">';
 					echo '<i class="fa fa-filter icon-embed-btn"></i>';
 					echo gettext("Filter");
@@ -440,7 +409,7 @@ if ($savemsg) {
 <?php
 	$i = 0;
 	$pagination_counter = 0;
-	if ($evaledvar) {
+	if ($evaledvar && is_array($evaledvar)) {
 		foreach ($evaledvar as $ip) {
 			if ($startdisplayingat) {
 				if ($i < $startdisplayingat) {

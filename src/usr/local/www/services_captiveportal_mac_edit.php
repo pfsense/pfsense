@@ -1,66 +1,33 @@
 <?php
 /*
-	services_captiveportal_mac_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2004 Dinesh Nair <dinesh@alphaque.com>
+ * services_captiveportal_mac_edit.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editmacaddresses
-##|*NAME=Services: Captive portal: Edit MAC Addresses
-##|*DESCR=Allow access to the 'Services: Captive portal: Edit MAC Addresses' page.
+##|*NAME=Services: Captive Portal: Edit MAC Addresses
+##|*DESCR=Allow access to the 'Services: Captive Portal: Edit MAC Addresses' page.
 ##|*MATCH=services_captiveportal_mac_edit.php*
 ##|-PRIV
 
@@ -83,36 +50,24 @@ require_once("captiveportal.inc");
 global $cpzone;
 global $cpzoneid;
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower($cpzone);
+$cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'passthrumac'));
+$a_cp = &$config['captiveportal'];
+$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"), gettext("Edit"));
+$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_mac.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
-
-if (!is_array($a_cp[$cpzone]['passthrumac'])) {
-	$a_cp[$cpzone]['passthrumac'] = array();
-}
-$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 if (isset($id) && $a_passthrumacs[$id]) {
 	$pconfig['action'] = $a_passthrumacs[$id]['action'];
@@ -123,7 +78,7 @@ if (isset($id) && $a_passthrumacs[$id]) {
 	$pconfig['username'] = $a_passthrumacs[$id]['username'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -145,7 +100,7 @@ if ($_POST) {
 				}
 			}
 		} else {
-			$input_errors[] = sprintf("%s. [%s]", gettext("A valid MAC address must be specified"), $_POST['mac']);
+			$input_errors[] = sprintf(gettext('A valid MAC address must be specified. [%s]'), $_POST['mac']);
 		}
 	}
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up'])) {
@@ -158,7 +113,7 @@ if ($_POST) {
 		$input_errors[] = gettext("Upload speed must be between 1 and 999999");
 	}
 	if ($_POST['bw_down'] && ($_POST['bw_down'] > 999999 || $_POST['bw_down'] < 1)) {
-		$input_errors[] = gettext("Download speed must be between 1 and 999999"); 
+		$input_errors[] = gettext("Download speed must be between 1 and 999999");
 	}
 
 	foreach ($a_passthrumacs as $macent) {
@@ -167,7 +122,7 @@ if ($_POST) {
 		}
 
 		if ($macent['mac'] == $_POST['mac']) {
-			$input_errors[] = sprintf("[%s] %s.", $_POST['mac'], gettext("already exists"));
+			$input_errors[] = sprintf(gettext('[%s] already exists.'), $_POST['mac']);
 			break;
 		}
 	}
@@ -205,7 +160,7 @@ if ($_POST) {
 			$rules .= captiveportal_passthrumac_configure_entry($mac);
 			$uniqid = uniqid("{$cpzone}_macedit");
 			file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-			mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 			unset($cpzoneid);
 		}
@@ -232,7 +187,7 @@ $section = new Form_Section('Edit MAC Address Rules');
 
 $section->addInput(new Form_Select(
 	'action',
-	'Action',
+	'*Action',
 	strtolower($pconfig['action']),
 	array('pass' => gettext('Pass'), 'block' => gettext('Block'))
 ))->setHelp('Choose what to do with packets coming from this MAC address.');
@@ -254,7 +209,7 @@ $btnmymac = new Form_Button(
 
 $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
-$group = new Form_Group('MAC Address');
+$group = new Form_Group('*MAC Address');
 $group->add($macaddress);
 $group->add($btnmymac);
 $group->setHelp('6 hex octets separated by colons');

@@ -1,89 +1,50 @@
 <?php
 /*
-	system_groupmanager.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2005 Paul Taylor <paultaylor@winn-dixie.com>
- *	Copyright (c)  2008 Shrew Soft Inc
+ * system_groupmanager.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
+ * Copyright (c) 2008 Shrew Soft Inc
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-system-groupmanager
-##|*NAME=System: Group manager
-##|*DESCR=Allow access to the 'System: Group manager' page.
+##|*NAME=System: Group Manager
+##|*DESCR=Allow access to the 'System: Group Manager' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=system_groupmanager.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
-if (!is_array($config['system']['group'])) {
-	$config['system']['group'] = array();
-}
+$logging_level = LOG_WARNING;
+$logging_prefix = gettext("Local User Database");
 
+init_config_arr(array('system', 'group'));
 $a_group = &$config['system']['group'];
 
 unset($id);
-
-if (isset($_POST['groupid']) && is_numericint($_POST['groupid'])) {
-	$id = $_POST['groupid'];
-}
-
-if (isset($_GET['groupid']) && is_numericint($_GET['groupid'])) {
-	$id = $_GET['groupid'];
-}
-
-$act = (isset($_GET['act']) ? $_GET['act'] : '');
+$id = $_REQUEST['groupid'];
+$act = (isset($_REQUEST['act']) ? $_REQUEST['act'] : '');
 
 function cpusercmp($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
@@ -99,31 +60,40 @@ function admin_groups_sort() {
 	usort($a_group, "cpusercmp");
 }
 
-if ($act == "delgroup") {
+if ($_POST['act'] == "delgroup") {
 
-	if (!isset($id) || !isset($_GET['groupname']) || !isset($a_group[$id]) || ($_GET['groupname'] != $a_group[$id]['name'])) {
+	if (!isset($id) || !isset($_REQUEST['groupname']) ||
+	    !isset($a_group[$id]) ||
+	    ($_REQUEST['groupname'] != $a_group[$id]['name'])) {
 		pfSenseHeader("system_groupmanager.php");
 		exit;
 	}
 
-	conf_mount_rw();
 	local_group_del($a_group[$id]);
-	conf_mount_ro();
 	$groupdeleted = $a_group[$id]['name'];
 	unset($a_group[$id]);
-	write_config();
-	$savemsg = sprintf(gettext("Group %s successfully deleted."), $groupdeleted);
+	/*
+	 * Reindex the array to avoid operating on an incorrect index
+	 * https://redmine.pfsense.org/issues/7733
+	 */
+	$a_group = array_values($a_group);
+
+	$savemsg = sprintf(gettext("Successfully deleted group: %s"),
+	    $groupdeleted);
+	write_config($savemsg);
+	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 }
 
-if ($act == "delpriv") {
+if ($_POST['act'] == "delpriv") {
 
 	if (!isset($id) || !isset($a_group[$id])) {
 		pfSenseHeader("system_groupmanager.php");
 		exit;
 	}
 
-	$privdeleted = $priv_list[$a_group[$id]['priv'][$_POST['privid']]]['name'];
-	unset($a_group[$id]['priv'][$_GET['privid']]);
+	$privdeleted =
+	    $priv_list[$a_group[$id]['priv'][$_REQUEST['privid']]]['name'];
+	unset($a_group[$id]['priv'][$_REQUEST['privid']]);
 
 	if (is_array($a_group[$id]['member'])) {
 		foreach ($a_group[$id]['member'] as $uid) {
@@ -134,37 +104,52 @@ if ($act == "delpriv") {
 		}
 	}
 
-	write_config();
+	$savemsg = sprintf(gettext("Removed Privilege \"%s\" from group %s"),
+	    $privdeleted, $a_group[$id]['name']);
+	write_config($savemsg);
+	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
+
 	$act = "edit";
-	$savemsg = sprintf(gettext("Privilege %s successfully deleted."), $privdeleted);
 }
 
 if ($act == "edit") {
 	if (isset($id) && isset($a_group[$id])) {
 		$pconfig['name'] = $a_group[$id]['name'];
 		$pconfig['gid'] = $a_group[$id]['gid'];
-		$pconfig['gtype'] = empty($a_group[$id]['scope']) ? "local" : $a_group[$id]['scope'];
+		$pconfig['gtype'] = empty($a_group[$id]['scope'])
+		    ? "local" : $a_group[$id]['scope'];
 		$pconfig['description'] = $a_group[$id]['description'];
 		$pconfig['members'] = $a_group[$id]['member'];
 		$pconfig['priv'] = $a_group[$id]['priv'];
 	}
 }
 
-if (isset($_GET['dellall_x'])) {
+if (isset($_POST['dellall_x'])) {
 
-	$del_groups = $_GET['delete_check'];
+	$del_groups = $_POST['delete_check'];
+	$deleted_groups = array();
 
 	if (!empty($del_groups)) {
 		foreach ($del_groups as $groupid) {
-			if (isset($a_group[$groupid]) && $a_group[$groupid]['scope'] != "system") {
-				conf_mount_rw();
+			if (isset($a_group[$groupid]) &&
+			    $a_group[$groupid]['scope'] != "system") {
+				$deleted_groups[] = $a_group[$groupid]['name'];
 				local_group_del($a_group[$groupid]);
-				conf_mount_ro();
 				unset($a_group[$groupid]);
 			}
 		}
-		$savemsg = gettext("Selected groups removed successfully.");
+
+		$savemsg = sprintf(gettext("Successfully deleted %s: %s"),
+		    (count($deleted_groups) == 1)
+		    ? gettext("group") : gettext("groups"),
+		    implode(', ', $deleted_groups));
+		/*
+		 * Reindex the array to avoid operating on an incorrect index
+		 * https://redmine.pfsense.org/issues/7733
+		 */
+		$a_group = array_values($a_group);
 		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	}
 }
 
@@ -180,23 +165,30 @@ if (isset($_POST['save'])) {
 
 	if ($_POST['gtype'] != "remote") {
 		if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['groupname'])) {
-			$input_errors[] = sprintf(gettext("The (%s) group name contains invalid characters."), $_POST['gtype']);
+			$input_errors[] = sprintf(gettext(
+			    "The (%s) group name contains invalid characters."),
+			    $_POST['gtype']);
 		}
 	} else {
 		if (preg_match("/[^a-zA-Z0-9\.\- _]/", $_POST['groupname'])) {
-			$input_errors[] = sprintf(gettext("The (%s) group name contains invalid characters."), $_POST['gtype']);
+			$input_errors[] = sprintf(gettext(
+			    "The (%s) group name contains invalid characters."),
+			    $_POST['gtype']);
 		}
 	}
 
 	if (strlen($_POST['groupname']) > 16) {
-		$input_errors[] = gettext("The group name is longer than 16 characters.");
+		$input_errors[] = gettext(
+		    "The group name is longer than 16 characters.");
 	}
 
 	/* Check the POSTed members to ensure they are valid and exist */
-	if(is_array($_POST['members'])) {
+	if (is_array($_POST['members'])) {
 		foreach ($_POST['members'] as $newmember) {
-			if (!is_numeric($newmember) || empty(getUserEntryByUID($newmember))) {
-				$input_errors[] = gettext("One or more invalid group members was submitted.");
+			if (!is_numeric($newmember) ||
+			    empty(getUserEntryByUID($newmember))) {
+				$input_errors[] = gettext("One or more " .
+				    "invalid group members was submitted.");
 			}
 		}
 	}
@@ -205,7 +197,8 @@ if (isset($_POST['save'])) {
 		/* make sure there are no dupes */
 		foreach ($a_group as $group) {
 			if ($group['name'] == $_POST['groupname']) {
-				$input_errors[] = gettext("Another entry with the same group name already exists.");
+				$input_errors[] = gettext("Another entry " .
+				    "with the same group name already exists.");
 				break;
 			}
 		}
@@ -236,12 +229,14 @@ if (isset($_POST['save'])) {
 
 		admin_groups_sort();
 
-		conf_mount_rw();
 		local_group_set($group);
-		conf_mount_ro();
 
-		/* Refresh users in this group since their privileges may have changed. */
+		/*
+		 * Refresh users in this group since their privileges may have
+		 * changed.
+		 */
 		if (is_array($group['member'])) {
+			init_config_arr(array('system', 'user'));
 			$a_user = &$config['system']['user'];
 			foreach ($a_user as & $user) {
 				if (in_array($user['uid'], $group['member'])) {
@@ -250,7 +245,16 @@ if (isset($_POST['save'])) {
 			}
 		}
 
-		write_config();
+		/* Sort it alphabetically */
+		usort($config['system']['group'], function($a, $b) {
+			return strcmp($a['name'], $b['name']);
+		});
+
+		$savemsg = sprintf(gettext("Successfully %s group %s"),
+		    (strlen($id) > 0) ? gettext("edited") : gettext("created"),
+		    $group['name']);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 
 		header("Location: system_groupmanager.php");
 		exit;
@@ -273,11 +277,29 @@ function build_priv_table() {
 	$privhtml .=		'</thead>';
 	$privhtml .=		'<tbody>';
 
+	$user_has_root_priv = false;
+
 	foreach (get_user_privdesc($a_group[$id]) as $i => $priv) {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
-		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
-		$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '"></a></td>';
+		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']);
+		if (isset($priv['warn']) && ($priv['warn'] == 'standard-warning-root')) {
+			$privhtml .=			' ' . gettext('(admin privilege)');
+			$user_has_root_priv = true;
+		}
+		$privhtml .=			'</td>';
+		$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
+		$privhtml .=		'</tr>';
+
+	}
+
+	if ($user_has_root_priv) {
+		$privhtml .=		'<tr>';
+		$privhtml .=			'<td colspan="2">';
+		$privhtml .=				'<b>' . gettext('Security notice: Users in this group effectively have administrator-level access') . '</b>';
+		$privhtml .=			'</td>';
+		$privhtml .=			'<td>';
+		$privhtml .=			'</td>';
 		$privhtml .=		'</tr>';
 
 	}
@@ -294,9 +316,11 @@ function build_priv_table() {
 }
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
+$pglinks = array("", "system_usermanager.php", "system_groupmanager.php");
 
 if ($act == "new" || $act == "edit") {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 
 include("head.inc");
@@ -316,7 +340,7 @@ $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.ph
 $tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
-if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
+if (!($act == "new" || $act == "edit")) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Groups')?></h2></div>
@@ -336,8 +360,10 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
 	foreach ($a_group as $i => $group):
 		if ($group["name"] == "all") {
 			$groupcount = count($config['system']['user']);
-		} else {
+		} elseif (is_array($group['member'])) {
 			$groupcount = count($group['member']);
+		} else {
+			$groupcount = 0;
 		}
 ?>
 					<tr>
@@ -353,7 +379,7 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
 							<?php if ($group['scope'] != "system"): ?>
-								<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>"></a>
+								<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" usepost></a>
 							<?php endif;?>
 						</td>
 					</tr>
@@ -386,7 +412,7 @@ $form->addGlobal(new Form_Input(
 	$id
 ));
 
-if (isset($id) && $a_group[$id]){
+if (isset($id) && $a_group[$id]) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,
@@ -406,7 +432,7 @@ $section = new Form_Section('Group Properties');
 
 $section->addInput($input = new Form_Input(
 	'groupname',
-	'Group name',
+	'*Group name',
 	'text',
 	$pconfig['name']
 ));
@@ -416,17 +442,19 @@ if ($pconfig['gtype'] == "system") {
 
 	$section->addInput(new Form_Input(
 		'gtype',
-		'Scope',
+		'*Scope',
 		'text',
 		$pconfig['gtype']
 	))->setReadonly();
 } else {
 	$section->addInput(new Form_Select(
 		'gtype',
-		'Scope',
+		'*Scope',
 		$pconfig['gtype'],
 		["local" => gettext("Local"), "remote" => gettext("Remote")]
-	));
+	))->setHelp("<span class=\"text-danger\">Warning: Changing this " .
+	    "setting may affect the local groups file, in which case a " .
+	    "reboot may be required for the changes to take effect.</span>");
 }
 
 $section->addInput(new Form_Input(
@@ -436,30 +464,36 @@ $section->addInput(new Form_Input(
 	$pconfig['description']
 ))->setHelp('Group description, for administrative information only');
 
-
 $form->add($section);
-if ($pconfig['gid'] != 1998) { // all users group
 
-	// ==== Group membership ==================================================
+/* all users group */
+if ($pconfig['gid'] != 1998) {
+	/* Group membership */
 	$group = new Form_Group('Group membership');
 
-	// Make a list of all the groups configured on the system, and a list of
-	// those which this user is a member of
+	/*
+	 * Make a list of all the groups configured on the system, and a list of
+	 * those which this user is a member of
+	 */
 	$systemGroups = array();
 	$usersGroups = array();
 
 	foreach ($config['system']['user'] as $user) {
-		if (is_array($pconfig['members']) && in_array($user['uid'], $pconfig['members'])) {
-			$usersGroups[ $user['uid'] ] = $user['name'];	// Add it to the user's list
+		if (is_array($pconfig['members']) && in_array($user['uid'],
+		    $pconfig['members'])) {
+			/* Add it to the user's list */
+			$usersGroups[ $user['uid'] ] = $user['name'];
 		} else {
-			$systemGroups[ $user['uid'] ] = $user['name']; // Add it to the 'not a member of' list
+			/* Add it to the 'not a member of' list */
+			$systemGroups[ $user['uid'] ] = $user['name'];
 		}
 	}
 
 	$group->add(new Form_Select(
 		'notmembers',
 		null,
-		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
+		array_combine((array)$pconfig['groups'],
+		    (array)$pconfig['groups']),
 		$systemGroups,
 		true
 	))->setHelp('Not members');
@@ -467,7 +501,8 @@ if ($pconfig['gid'] != 1998) { // all users group
 	$group->add(new Form_Select(
 		'members',
 		null,
-		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
+		array_combine((array)$pconfig['groups'],
+		    (array)$pconfig['groups']),
 		$usersGroups,
 		true
 	))->setHelp('Members');
@@ -481,21 +516,24 @@ if ($pconfig['gid'] != 1998) { // all users group
 		'Move to "Members"',
 		null,
 		'fa-angle-double-right'
-	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
+	))->setAttribute('type','button')->removeClass('btn-primary')->addClass(
+	    'btn-info btn-sm');
 
 	$group->add(new Form_Button(
 		'movetodisabled',
 		'Move to "Not members',
 		null,
 		'fa-angle-double-left'
-	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
+	))->setAttribute('type','button')->removeClass('btn-primary')->addClass(
+	    'btn-info btn-sm');
 
-	$group->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');
+	$group->setHelp(
+	    'Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');
 	$section->add($group);
 
 }
 
-if ($_GET['act'] != "new") {
+if (isset($pconfig['gid'])) {
 	$section = new Form_Section('Assigned Privileges');
 
 	$section->addInput(new Form_StaticText(
@@ -515,11 +553,13 @@ events.push(function() {
 
 	// On click . .
 	$("#movetodisabled").click(function() {
-		moveOptions($('[name="members[]"] option'), $('[name="notmembers[]"]'));
+		moveOptions($('[name="members[]"] option'),
+		    $('[name="notmembers[]"]'));
 	});
 
 	$("#movetoenabled").click(function() {
-		moveOptions($('[name="notmembers[]"] option'), $('[name="members[]"]'));
+		moveOptions($('[name="notmembers[]"] option'),
+		    $('[name="members[]"]'));
 	});
 
 	// On submit mark all the user's groups as "selected"

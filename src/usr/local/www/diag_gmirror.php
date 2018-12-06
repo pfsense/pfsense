@@ -1,56 +1,22 @@
 <?php
 /*
-	diag_gmirror.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * diag_gmirror.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -196,7 +162,7 @@ foreach ($unused_disks as $disk) {
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-if ($_GET["error"] && ($_GET["error"] != 0)) {
+if ($_REQUEST["error"] && ($_REQUEST["error"] != 0)) {
 	print_info_box(gettext("There was an error performing the chosen mirror operation. Check the System Log for details."));
 }
 
@@ -205,26 +171,26 @@ if ($_GET["error"] && ($_GET["error"] != 0)) {
 
 <!-- Confirmation screen -->
 <?php
-if ($_GET["action"]):  ?>
+if ($_REQUEST["action"]):  ?>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Confirm Action')?></h2></div>
 		<div class="panel-body">
 			<strong><?=gettext('Please confirm the selected action: '); ?></strong>
-			<span style="color:green"><?=$action_list[$_GET["action"]]; ?></span>
-			<input type="hidden" name="action" value="<?=htmlspecialchars($_GET['action']); ?>" />
+			<span style="color:green"><?=$action_list[$_REQUEST["action"]]; ?></span>
+			<input type="hidden" name="action" value="<?=htmlspecialchars($_REQUEST['action']); ?>" />
 <?php
-	if (!empty($_GET["mirror"])): ?>
+	if (!empty($_REQUEST["mirror"])): ?>
 			<br /><strong><?=gettext("Mirror: "); ?></strong>
-			<?=htmlspecialchars($_GET['mirror']); ?>
-			<input type="hidden" name="mirror" value="<?=htmlspecialchars($_GET['mirror']); ?>" />
+			<?=htmlspecialchars($_REQUEST['mirror']); ?>
+			<input type="hidden" name="mirror" value="<?=htmlspecialchars($_REQUEST['mirror']); ?>" />
 <?php
 	endif; ?>
 
 <?php
-	if (!empty($_GET["consumer"])): ?>
+	if (!empty($_REQUEST["consumer"])): ?>
 			<br /><strong><?=gettext("Consumer"); ?>:</strong>
-			<?=htmlspecialchars($_GET["consumer"]); ?>
-			<input type="hidden" name="consumer" value="<?=htmlspecialchars($_GET["consumer"]); ?>" />
+			<?=htmlspecialchars($_REQUEST["consumer"]); ?>
+			<input type="hidden" name="consumer" value="<?=htmlspecialchars($_REQUEST["consumer"]); ?>" />
 <?php
 	endif; ?>
 			<br />
@@ -249,7 +215,7 @@ else:
 <?php
 	if (count($mirror_status) > 0): ?>
 
-			<table class="table table-striped stable-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
 						<th><?=gettext("Name"); ?></th>
@@ -330,7 +296,7 @@ else:
 		<div class="panel-body table-responsive">
 <?php
 	if (count($unused_consumers) > 0): ?>
-			<table class="table table-striped stable-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
 						<th><?=gettext("Name"); ?></th>
@@ -357,7 +323,7 @@ else:
 			if ($oldmirror): ?>
 							<a class="btn btn-xs btn-success" href="diag_gmirror.php?action=activate&amp;consumer=<?=htmlspecialchars($consumer['name']); ?>&amp;mirror=<?=htmlspecialchars($oldmirror); ?>">
 								<i class="fa fa-chain icon-embed-btn"></i>
-								<?=gettext("Reactivate on") . ' ' . htmlspecialchars($oldmirror); ?>
+								<?=sprintf(gettext("Reactivate on %s"), htmlspecialchars($oldmirror)); ?>
 							</a>
 
 							<a class="btn btn-xs btn-danger" href="diag_gmirror.php?action=clear&amp;consumer=<?=htmlspecialchars($consumer['name']); ?>">

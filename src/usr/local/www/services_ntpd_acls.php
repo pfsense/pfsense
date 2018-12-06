@@ -1,57 +1,23 @@
 <?php
 /*
-	services_ntpd_acls.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2016  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2013 Dagorlad
+ * services_ntpd_acls.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013 Dagorlad
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -62,6 +28,7 @@
 ##|-PRIV
 
 define('NUMACLS', 50); // The maximum number of configurable ACLs
+
 require_once("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
@@ -69,6 +36,7 @@ require_once("shaper.inc");
 if (!is_array($config['ntpd'])) {
 	$config['ntpd'] = array();
 }
+
 if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restrictions']['row'])) {
 	$networkacl = $config['ntpd']['restrictions']['row'];
 } else {
@@ -76,8 +44,15 @@ if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restr
 }
 
 if ($_POST) {
+
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	for ($x=0, $numacls=0; $x < NUMACLS; $x++) {
+		if (array_key_exists("acl_network{$x}", $_POST)) {
+			$numacls++;
+		}
+	}
 
 	for ($x = 0; $x < NUMACLS; $x++) {
 		if (isset($pconfig["acl_network{$x}"])) {
@@ -86,53 +61,58 @@ if ($_POST) {
 			$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
 
 			/* ACL Flags */
-			if (!empty($pconfig["kod{$x}"])) {
-				$networkacl[$x]['kod'] = $pconfig["kod{$x}"];
+			if (array_key_exists("kod{$x}", $pconfig)) {
+				$networkacl[$x]['kod'] = "yes";
 			} elseif (isset($networkacl[$x]['kod'])) {
 				unset($networkacl[$x]['kod']);
 			}
-			if (!empty($pconfig["nomodify{$x}"])) {
-				$networkacl[$x]['nomodify'] = $pconfig["nomodify{$x}"];
+
+			if (array_key_exists("nomodify{$x}", $pconfig)) {
+				$networkacl[$x]['nomodify'] = "yes";
 			} elseif (isset($networkacl[$x]['nomodify'])) {
 				unset($networkacl[$x]['nomodify']);
 			}
-			if (!empty($pconfig["noquery{$x}"])) {
-				$networkacl[$x]['noquery'] = $pconfig["noquery{$x}"];
+
+			if (array_key_exists("noquery{$x}", $pconfig)) {
+				$networkacl[$x]['noquery'] = "yes";
 			} elseif (isset($networkacl[$x]['noquery'])) {
 				unset($networkacl[$x]['noquery']);
 			}
-			if (!empty($pconfig["noserve{$x}"])) {
-				$networkacl[$x]['noserve'] = $pconfig["noserve{$x}"];
+
+			if (array_key_exists("noserve{$x}", $pconfig)) {
+				$networkacl[$x]['noserve'] = "yes";
 			} elseif (isset($networkacl[$x]['noserve'])) {
 				unset($networkacl[$x]['noserve']);
 			}
-			if (!empty($pconfig["nopeer{$x}"])) {
-				$networkacl[$x]['nopeer'] = $pconfig["nopeer{$x}"];
+
+			if (array_key_exists("nopeer{$x}", $pconfig)) {
+				$networkacl[$x]['nopeer'] = "yes";
 			} elseif (isset($networkacl[$x]['nopeer'])) {
 				unset($networkacl[$x]['nopeer']);
 			}
-			if (!empty($pconfig["notrap{$x}"])) {
-				$networkacl[$x]['notrap'] = $pconfig["notrap{$x}"];
+
+			if (array_key_exists("notrap{$x}", $pconfig)) {
+				$networkacl[$x]['notrap'] = "yes";
 			} elseif (isset($networkacl[$x]['notrap'])) {
 				unset($networkacl[$x]['notrap']);
 			}
 			/* End ACL Flags */
 
-			if (!is_ipaddr($networkacl[$x]['acl_network'])) {
-				$input_errors[] = gettext("A valid IP address must be entered for each row under Networks.");
-			}
-			if (is_ipaddr($networkacl[$x]['acl_network'])) {
-				if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
-					$input_errors[] = gettext("A valid IPv4 netmask must be entered for each IPv4 row under Networks.");
+			if (isset($networkacl[$x]['notrap']) || isset($networkacl[$x]['kod']) || isset($networkacl[$x]['nomodify'])
+			   || isset($networkacl[$x]['noquery']) || isset($networkacl[$x]['nopeer']) || isset($networkacl[$x]['noserve'])) {
+				if (!is_ipaddr($networkacl[$x]['acl_network'])) {
+					$input_errors[] = sprintf(gettext("A valid IP address must be entered for row %s under Networks."), $networkacl[$x]['acl_network']);
+				} else {
+					if (is_ipaddrv4($networkacl[$x]['acl_network'])) {
+						if (!is_subnetv4($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
+							$input_errors[] = sprintf(gettext("A valid IPv4 netmask must be entered for IPv4 row %s under Networks."), $networkacl[$x]['acl_network']);
+						}
+					} else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
+						$input_errors[] = sprintf(gettext("A valid IPv6 netmask must be entered for IPv6 row %s under Networks."), $networkacl[$x]['acl_network']);
+					}
 				}
-			} else if (function_exists("is_ipaddrv6")) {
-				if (!is_ipaddrv6($networkacl[$x]['acl_network'])) {
-					$input_errors[] = gettext("A valid IPv6 address must be entered for {$networkacl[$x]['acl_network']}.");
-				} else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
-					$input_errors[] = gettext("A valid IPv6 netmask must be entered for each IPv6 row under Networks.");
-				}
-			} else {
-				$input_errors[] = gettext("A valid IP address must be entered for each row under Networks.");
+			} else if ((strlen($networkacl[$x]['acl_network']) == 0) && ($numacls > 1)) {
+				unset($networkacl[$x]);
 			}
 		} else if (isset($networkacl[$x])) {
 			unset($networkacl[$x]);
@@ -184,23 +164,26 @@ if ($_POST) {
 
 		write_config("Updated NTP ACL Settings");
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = system_ntp_configure();
-		$savemsg = get_std_save_message($retval);
+		$retval |= system_ntp_configure();
 	}
 }
 
+init_config_arr(array('ntpd'));
 $pconfig = &$config['ntpd'];
 
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("ACLs"));
+$pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 $tab_array = array();
@@ -267,11 +250,13 @@ $counter = 0;
 foreach ($networkacl as $item) {
 	$group = new Form_Group($counter == 0 ? 'Networks':'');
 
+	$helptext = ($counter == $numrows) ? gettext('Network/mask'):"";
+
 	$group->add(new Form_IpAddress(
 		'acl_network' . $counter,
 		null,
 		$item['acl_network']
-	))->addMask('mask' . $counter, $item['mask'])->setWidth(3)->setHelp(($counter == $numrows) ? 'Network/mask':null);
+	))->addMask('mask' . $counter, $item['mask'])->setWidth(3)->setHelp($helptext);
 
 	$group->add(new Form_Checkbox(
 		'kod' . $counter,
@@ -279,35 +264,35 @@ foreach ($networkacl as $item) {
 		null,
 		$item['kod']
 	))->setHelp('KOD');
-	
+
 	$group->add(new Form_Checkbox(
 		'nomodify' . $counter,
 		null,
 		null,
 		$item['nomodify']
 	))->setHelp('nomodify');
-	
+
 	$group->add(new Form_Checkbox(
 		'noquery' . $counter,
 		null,
 		null,
 		$item['noquery']
 	))->setHelp('noquery');
-	
+
 	$group->add(new Form_Checkbox(
 		'noserve' . $counter,
 		null,
 		null,
 		$item['noserve']
 	))->setHelp('noserve');
-	
+
 	$group->add(new Form_Checkbox(
 		'nopeer' . $counter,
 		null,
 		null,
 		$item['nopeer']
 	))->setHelp('nopeer');
-	
+
 	$group->add(new Form_Checkbox(
 		'notrap' . $counter,
 		null,
@@ -320,9 +305,10 @@ foreach ($networkacl as $item) {
 		'Delete',
 		null,
 		'fa-trash'
-	))->addClass('btn-warning');
+	))->addClass('btn-warning btn-xs')->addClass("nowarn");
 
 	$group->addClass('repeatable');
+
 	$section->add($group);
 
 	$counter++;
@@ -343,9 +329,10 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-	// If this variable is declared, any help text will not be deleted when rows are added
-	// IOW the help text will appear on every row
-	retainhelp = true;
+events.push(function(){
+	retainhelp = false;
+});
+//]]>
 </script>
 
 <?php include("foot.inc");

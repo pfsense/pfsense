@@ -1,56 +1,22 @@
 <?php
 /*
-	system_crlmanager.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * system_crlmanager.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -63,7 +29,14 @@
 require_once("guiconfig.inc");
 require_once("certs.inc");
 require_once("openvpn.inc");
+require_once("pfsense-utils.inc");
 require_once("vpn.inc");
+
+$max_lifetime = crl_get_max_lifetime();
+$default_lifetime = 3650;
+if ($max_lifetime < $default_lifetime) {
+	$default_lifetime = $max_lifetime;
+}
 
 global $openssl_crl_status;
 
@@ -71,30 +44,18 @@ $crl_methods = array(
 	"internal" => gettext("Create an internal Certificate Revocation List"),
 	"existing" => gettext("Import an existing Certificate Revocation List"));
 
-if (ctype_alnum($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && ctype_alnum($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$a_ca =& $config['ca'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
-
-if (!is_array($config['crl'])) {
-	$config['crl'] = array();
-}
-
-$a_crl =& $config['crl'];
+init_config_arr(array('crl'));
+$a_crl = &$config['crl'];
 
 foreach ($a_crl as $cid => $acrl) {
 	if (!isset($acrl['refid'])) {
@@ -102,10 +63,8 @@ foreach ($a_crl as $cid => $acrl) {
 	}
 }
 
-$act = $_GET['act'];
-if ($_POST['act']) {
-	$act = $_POST['act'];
-}
+$act = $_REQUEST['act'];
+
 
 if (!empty($id)) {
 	$thiscrl =& lookup_crl($id);
@@ -116,12 +75,14 @@ if (!$thiscrl && (($act != "") && ($act != "new"))) {
 	pfSenseHeader("system_crlmanager.php");
 	$act="";
 	$savemsg = gettext("Invalid CRL reference.");
+	$class = "danger";
 }
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 	$name = htmlspecialchars($thiscrl['descr']);
 	if (crl_in_use($id)) {
 		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted."), $name);
+		$class = "danger";
 	} else {
 		foreach ($a_crl as $cid => $acrl) {
 			if ($acrl['refid'] == $thiscrl['refid']) {
@@ -130,13 +91,14 @@ if ($act == "del") {
 		}
 		write_config("Deleted CRL {$name}.");
 		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted."), $name);
+		$class = "success";
 	}
 }
 
 if ($act == "new") {
-	$pconfig['method'] = $_GET['method'];
-	$pconfig['caref'] = $_GET['caref'];
-	$pconfig['lifetime'] = "9999";
+	$pconfig['method'] = $_REQUEST['method'];
+	$pconfig['caref'] = $_REQUEST['caref'];
+	$pconfig['lifetime'] = $default_lifetime;
 	$pconfig['serial'] = "0";
 }
 
@@ -154,40 +116,39 @@ if ($act == "exp") {
 }
 
 if ($act == "addcert") {
-	if ($_POST) {
-		unset($input_errors);
-		$pconfig = $_POST;
 
-		if (!$pconfig['crlref'] || !$pconfig['certref']) {
-			pfSenseHeader("system_crlmanager.php");
-			exit;
-		}
+	unset($input_errors);
+	$pconfig = $_REQUEST;
 
-		// certref, crlref
-		$crl =& lookup_crl($pconfig['crlref']);
-		$cert = lookup_cert($pconfig['certref']);
+	if (!$pconfig['crlref'] || !$pconfig['certref']) {
+		pfSenseHeader("system_crlmanager.php");
+		exit;
+	}
 
-		if (!$crl['caref'] || !$cert['caref']) {
-			$input_errors[] = gettext("Both the Certificate and CRL must be specified.");
-		}
+	// certref, crlref
+	$crl =& lookup_crl($pconfig['crlref']);
+	$cert = lookup_cert($pconfig['certref']);
 
-		if ($crl['caref'] != $cert['caref']) {
-			$input_errors[] = gettext("CA mismatch between the Certificate and CRL. Unable to Revoke.");
-		}
-		if (!is_crl_internal($crl)) {
-			$input_errors[] = gettext("Cannot revoke certificates for an imported/external CRL.");
-		}
+	if (!$crl['caref'] || !$cert['caref']) {
+		$input_errors[] = gettext("Both the Certificate and CRL must be specified.");
+	}
 
-		if (!$input_errors) {
-			$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
-			cert_revoke($cert, $crl, $reason);
-			// refresh IPsec and OpenVPN CRLs
-			openvpn_refresh_crls();
-			vpn_ipsec_configure();
-			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
-			pfSenseHeader("system_crlmanager.php");
-			exit;
-		}
+	if ($crl['caref'] != $cert['caref']) {
+		$input_errors[] = gettext("CA mismatch between the Certificate and CRL. Unable to Revoke.");
+	}
+	if (!is_crl_internal($crl)) {
+		$input_errors[] = gettext("Cannot revoke certificates for an imported/external CRL.");
+	}
+
+	if (!$input_errors) {
+		$reason = (empty($pconfig['crlreason'])) ? 0 : $pconfig['crlreason'];
+		cert_revoke($cert, $crl, $reason);
+		// refresh IPsec and OpenVPN CRLs
+		openvpn_refresh_crls();
+		vpn_ipsec_configure();
+		write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
+		pfSenseHeader("system_crlmanager.php");
+		exit;
 	}
 }
 
@@ -198,7 +159,7 @@ if ($act == "delcert") {
 	}
 	$found = false;
 	foreach ($thiscrl['cert'] as $acert) {
-		if ($acert['refid'] == $_GET['certref']) {
+		if ($acert['refid'] == $_REQUEST['certref']) {
 			$found = true;
 			$thiscert = $acert;
 		}
@@ -210,18 +171,20 @@ if ($act == "delcert") {
 	$certname = htmlspecialchars($thiscert['descr']);
 	$crlname = htmlspecialchars($thiscrl['descr']);
 	if (cert_unrevoke($thiscert, $thiscrl)) {
-		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s."), $certname, $crlname);
+		$savemsg = sprintf(gettext('Deleted Certificate %1$s from CRL %2$s.'), $certname, $crlname);
+		$class = "success";
 		// refresh IPsec and OpenVPN CRLs
 		openvpn_refresh_crls();
 		vpn_ipsec_configure();
 		write_config($savemsg);
 	} else {
-		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s."), $certname, $crlname);
+		$savemsg = sprintf(gettext('Failed to delete Certificate %1$s from CRL %2$s.'), $certname, $crlname);
+		$class = "danger";
 	}
 	$act="edit";
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	$input_errors = array();
 	$pconfig = $_POST;
 
@@ -243,6 +206,9 @@ if ($_POST) {
 
 	if (preg_match("/[\?\>\<\&\/\\\"\']/", $pconfig['descr'])) {
 		array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
+	}
+	if ($pconfig['lifetime'] > $max_lifetime) {
+		$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
 	}
 
 	/* save modifications */
@@ -268,7 +234,7 @@ if ($_POST) {
 
 		if ($pconfig['method'] == "internal") {
 			$crl['serial'] = empty($pconfig['serial']) ? 9999 : $pconfig['serial'];
-			$crl['lifetime'] = empty($pconfig['lifetime']) ? 9999 : $pconfig['lifetime'];
+			$crl['lifetime'] = empty($pconfig['lifetime']) ? $default_lifetime : $pconfig['lifetime'];
 			$crl['cert'] = array();
 		}
 
@@ -285,9 +251,11 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificate Revocation"));
+$pglinks = array("", "system_camanager.php", "system_crlmanager.php");
 
 if ($act == "new" || $act == gettext("Save") || $input_errors || $act == "edit") {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 include("head.inc");
 ?>
@@ -317,12 +285,12 @@ function method_change() {
 <?php
 
 function build_method_list() {
-	global $_GET, $crl_methods;
+	global $_POST, $crl_methods;
 
 	$list = array();
 
 	foreach ($crl_methods as $method => $desc) {
-		if (($_GET['importonly'] == "yes") && ($method != "existing")) {
+		if (($_POST['importonly'] == "yes") && ($method != "existing")) {
 			continue;
 		}
 
@@ -349,7 +317,7 @@ function build_cacert_list() {
 
 	$list = array();
 
-	foreach($ca_certs as $cert) {
+	foreach ($ca_certs as $cert) {
 		$list[$cert['refid']] = $cert['descr'];
 	}
 
@@ -361,7 +329,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg, 'success');
+	print_info_box($savemsg, $class);
 }
 
 $tab_array = array();
@@ -378,7 +346,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 		$section->addInput(new Form_Select(
 			'method',
-			'Method',
+			'*Method',
 			$pconfig['method'],
 			build_method_list()
 		));
@@ -387,14 +355,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$section->addInput(new Form_Input(
 		'descr',
-		'Descriptive name',
+		'*Descriptive name',
 		'text',
 		$pconfig['descr']
 	));
 
 	$section->addInput(new Form_Select(
 		'caref',
-		'Certificate Authority',
+		'*Certificate Authority',
 		$pconfig['caref'],
 		build_ca_list()
 	));
@@ -406,7 +374,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$section->addInput(new Form_Textarea(
 		'crltext',
-		'CRL data',
+		'*CRL data',
 		$pconfig['crltext']
 		))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
 
@@ -420,7 +388,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		'Lifetime (Days)',
 		'number',
 		$pconfig['lifetime'],
-		[max => '9999']
+		['max' => $max_lifetime]
 	));
 
 	$section->addInput(new Form_Input(
@@ -452,14 +420,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$section->addInput(new Form_Input(
 		'descr',
-		'Descriptive name',
+		'*Descriptive name',
 		'text',
 		$pconfig['descr']
 	));
 
 	$section->addInput(new Form_Textarea(
 		'crltext',
-		'CRL data',
+		'*CRL data',
 		$pconfig['crltext']
 	))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
 
@@ -520,7 +488,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 							<?=date("D M j G:i:s T Y", $cert["revoke_time"]); ?>
 						</td>
 						<td class="list">
-							<a href="system_crlmanager.php?act=delcert&amp;id=<?=$crl['refid']; ?>&amp;certref=<?=$cert['refid']; ?>">
+							<a href="system_crlmanager.php?act=delcert&amp;id=<?=$crl['refid']; ?>&amp;certref=<?=$cert['refid']; ?>" usepost>
 								<i class="fa fa-trash" title="<?=gettext("Delete this certificate from the CRL")?>" alt="<?=gettext("Delete this certificate from the CRL")?>"></i>
 							</a>
 						</td>
@@ -539,7 +507,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$ca_certs = array();
 	foreach ($a_cert as $cert) {
-		if ($cert['caref'] == $crl['caref']) {
+		if ($cert['caref'] == $crl['caref'] && !is_cert_revoked($cert, $id)) {
 			$ca_certs[] = $cert;
 		}
 	}
@@ -616,6 +584,10 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 				</thead>
 				<tbody>
 <?php
+	$pluginparams = array();
+	$pluginparams['type'] = 'certificates';
+	$pluginparams['event'] = 'used_crl';
+	$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
 	// Map CRLs to CAs in one pass
 	$ca_crl_map = array();
 	foreach ($a_crl as $crl) {
@@ -661,15 +633,20 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 			foreach ($ca_crl_map[$ca['refid']] as $crl):
 				$tmpcrl = lookup_crl($crl);
 				$internal = is_crl_internal($tmpcrl);
+				if ($internal && (!isset($tmpcrl['cert']) || empty($tmpcrl['cert'])) ) {
+					$tmpcrl['cert'] = array();
+				}
 				$inuse = crl_in_use($tmpcrl['refid']);
 ?>
 					<tr>
 						<td><?=$tmpcrl['descr']; ?></td>
 						<td><i class="fa fa-<?=($internal) ? "check" : "times"; ?>"></i></td>
 						<td><?=($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
-						<td><i class="fa fa-<?=($inuse) ? "check" : "times"; ?>"></i></td>
+						<td><i class="fa fa-<?=($inuse) ? "check" : "times"; ?>"></i>
+						<?php echo cert_usedby_description($tmpcrl['refid'], $certificates_used_by_packages); ?>
+						</td>
 						<td>
-							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-download" title="<?=gettext("Export CRL")?>"></a>
+							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-download" title="<?=gettext("Export CRL")?>" ></a>
 <?php
 				if ($internal): ?>
 							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>"></a>
@@ -680,7 +657,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 <?php			endif;
 				if (!$inuse):
 ?>
-							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-trash" title="<?=gettext("Delete CRL")?>"></a>
+							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-trash" title="<?=gettext("Delete CRL")?>" usepost></a>
 <?php
 				endif;
 ?>
@@ -703,7 +680,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 }
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 
@@ -729,4 +706,3 @@ events.push(function() {
 </script>
 
 <?php include("foot.inc");
-

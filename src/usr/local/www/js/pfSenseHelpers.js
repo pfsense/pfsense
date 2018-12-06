@@ -1,55 +1,32 @@
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+/*
+ * pfSenseHelpers.js
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 // These helper functions are used on many/most UI pages to hide/show/disable/enable form elements where required
+
+// Cause the input to be displayed as a required field by adding the element-required class to the label
+function setRequired(id, req) {
+	if (req)
+		$('#' + id).parent().parent('div').find('span:first').addClass('element-required');
+	else
+		$('#' + id).parent().parent('div').find('span:first').removeClass('element-required');
+}
 
 // Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
 function hideInput(id, hide) {
@@ -66,6 +43,13 @@ function hideGroupInput(id, hide) {
 		$('#' + id).parent('div').addClass('hidden');
 	else
 		$('#' + id).parent('div').removeClass('hidden');
+}
+
+function invisibleGroupInput(id, hide) {
+	if (hide)
+		$('#' + id).addClass('invisible');
+	else
+		$('#' + id).removeClass('invisible');
 }
 
 // Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
@@ -89,14 +73,6 @@ function hideClass(s_class, hide) {
 		$('.' + s_class).show();
 }
 
-// Hides all elements of the specified class assigned to a group. This will usually be a group
-function hideGroupClass(s_class, hide) {
-	if (hide)
-		$('.' + s_class).parent().parent().parent().hide();
-	else
-		$('.' + s_class).parent().parent().parent().show();
-}
-
 function hideSelect(id, hide) {
 	if (hide)
 		$('#' + id).parent('div').parent('div').addClass('hidden');
@@ -111,7 +87,7 @@ function hideMultiCheckbox(id, hide) {
 		$("[name=" + id + "]").parent().removeClass('hidden');
 }
 
-// Hides the <div> in which the specified IP address element lives so that the input, its label and help text are hidden
+// Hides the <div> in which the specified IP address element lives so that the input, any mask selector, its label and help text are hidden
 function hideIpAddress(id, hide) {
 	if (hide)
 		$('#' + id).parent().parent().parent('div').addClass('hidden');
@@ -140,7 +116,7 @@ function hideLabel(text, hide) {
 
 // Hides the '/' and the subnet mask of an Ip_Address/subnet_mask group
 function hideMask(name, hide) {
-	if(hide) {
+	if (hide) {
 		$('[id^=' + name + ']').hide();
 		$('[id^=' + name + ']').prev('span').hide();
 		$('[id^=' + name + ']').parent('div').removeClass('input-group');
@@ -149,6 +125,11 @@ function hideMask(name, hide) {
 		$('[id^=' + name + ']').prev('span').show();
 		$('[id^=' + name + ']').parent('div').addClass('input-group');
 	}
+}
+
+// Set the help text for a given input
+function setHelpText(id, text) {
+	$('#' + id).parent().parent('div').find('span:nth-child(2)').html(text);
 }
 
 // Toggle table row checkboxes and background colors on the pages that use sortable tables:
@@ -220,10 +201,12 @@ function setMasks() {
 // Complicated function to move all help text associated with this input id to the same id
 // on the row above. That way if you delete the last row, you don't lose the help
 function moveHelpText(id) {
-	$('#' + id).parent('div').parent('div').find('input, select, checkbox').each(function() {	 // For each <span></span>
+
+	$('#' + id).parent('div').parent('div').find('input, select, checkbox, button').each(function() {	 // For each <span></span>
 		var fromId = this.id;
 		var toId = decrStringInt(fromId);
 		var helpSpan;
+
 
 		if (!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
 			if ($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
@@ -231,6 +214,7 @@ function moveHelpText(id) {
 			} else {
 				helpSpan = $('#' + fromId).parent('div').find('span:last').clone();
 			}
+
 			if ($(helpSpan).hasClass('help-block')) {
 				if ($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
 					$('#' + decrStringInt(fromId)).parent('div').after(helpSpan);
@@ -240,6 +224,12 @@ function moveHelpText(id) {
 			}
 		}
 	});
+}
+
+// Increment the number at the end of the string
+function getStringInt( str )	{
+  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
+  return Number( data[ 2 ] );
 }
 
 // Increment the number at the end of the string
@@ -279,6 +269,11 @@ function renumber() {
 			$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
 		});
 
+		$(this).find('button').each(function() {
+			$(this).prop("id", this.id.replace(/\d+$/, "") + idx);
+			$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
+		});
+
 //		$(this).find('label').attr('for', $(this).find('label').attr('for').replace(/\d+$/, "") + idx);
 
 		idx++;
@@ -289,34 +284,29 @@ function delete_row(rowDelBtn) {
 	var rowLabel;
 
 	// If we are deleting row zero, we need to save/restore the label
-	if (rowDelBtn == "deleterow0") {
-		rowLabel = $('#' + rowDelBtn).parent('div').parent('div').find('label').text();
+	if ( (rowDelBtn == "deleterow0") && ((typeof retainhelp) == "undefined")) {
+		rowLabel = $('#' + rowDelBtn).parent('div').parent('div').find('label:first').text();
 	}
 
 	$('#' + rowDelBtn).parent('div').parent('div').remove();
+
 	renumber();
 	checkLastRow();
 
 	if (rowDelBtn == "deleterow0") {
-		$('#' + rowDelBtn).parent('div').parent('div').find('label').text(rowLabel);
+		$('#' + rowDelBtn).parent('div').parent('div').find('label:first').text(rowLabel);
 	}
 }
 
 function checkLastRow() {
-	if ($('.repeatable').length <= 1) {
+	if (($('.repeatable').length <= 1) && (! $('#deleterow0').hasClass("nowarn"))) {
 		$('#deleterow0').hide();
 	} else {
 		$('[id^=deleterow]').show();
 	}
 }
 
-function add_row() {
-	// Find the last repeatable group
-	var lastRepeatableGroup = $('.repeatable:last');
-
-	// Clone it
-	var newGroup = lastRepeatableGroup.clone();
-	// Increment the suffix number for each input element in the new group
+function bump_input_id(newGroup) {
 	$(newGroup).find('input').each(function() {
 		$(this).prop("id", bumpStringInt(this.id));
 		$(this).prop("name", bumpStringInt(this.name));
@@ -346,11 +336,30 @@ function add_row() {
 			}
 		}
 	});
+}
+function add_row() {
+	// Find the last repeatable group
+	var lastRepeatableGroup = $('.repeatable:last');
+
+	// If the number of repeats exceeds the maximum, do not add another clone
+	if ($('.repeatable').length >= lastRepeatableGroup.attr('max_repeats')) {
+		// Alert user if alert message is specified
+		if (typeof lastRepeatableGroup.attr('max_repeats_alert') !== 'undefined') {
+			alert(lastRepeatableGroup.attr('max_repeats_alert'));
+		}
+		return;
+	}
+
+	// Clone it
+	var newGroup = lastRepeatableGroup.clone();
+
+	// Increment the suffix number for each input element in the new group
+	bump_input_id(newGroup);
 
 	// And for "for" tags
 //	$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
 
-	$(newGroup).find('label').text(""); // Clear the label. We only want it on the very first row
+	$(newGroup).find('label:first').text(""); // Clear the label. We only want it on the very first row
 
 	// Insert the updated/cloned row
 	$(lastRepeatableGroup).after(newGroup);
@@ -382,14 +391,15 @@ function add_row() {
 	$('[id^=delete]').click(function(event) {
 		if ($('.repeatable').length > 1) {
 			if ((typeof retainhelp) == "undefined")
-				moveHelpText(event.target.id);
+				moveHelpText($(this).attr("id"));
 
-			delete_row(event.target.id);
+			delete_row($(this).attr("id"));
+		} else if ($(this).hasClass("nowarn")) {
+			clearRow0();
 		} else {
 			alert('The last row may not be deleted.');
 		}
 	});
-
 }
 
 // These are action buttons, not submit buttons
@@ -404,13 +414,20 @@ $('[id^=addrow]').click(function() {
 $('[id^=delete]').click(function(event) {
 	if ($('.repeatable').length > 1) {
 		if ((typeof retainhelp) == "undefined")
-			moveHelpText(event.target.id);
+			moveHelpText($(this).attr("id"));
 
-		delete_row(event.target.id);
-	} else {
-		alert('The last row may not be deleted.');
-	}
+		delete_row($(this).attr("id"));
+		} else if ($(this).hasClass("nowarn")) {
+			clearRow0();
+		} else {
+			alert('The last row may not be deleted.');
+		}
 });
+
+function clearRow0() {
+	$('#deleterow0').parent('div').parent().find('input[type=text]').val('');
+	$('#deleterow0').parent('div').parent().find('input[type=checkbox]:checked').removeAttr('checked');
+}
 
 // "More information" handlers --------------------------------------------------------------------
 
@@ -436,16 +453,16 @@ $('.infoblock').each(function() {
 // Show the help on clicking the info icon
 $('[id^="showinfo"]').click(function() {
 	var id = $(this).attr("id");
-
 	$('.' + "infoblock" + id.substr(8)).toggle();
 	document.getSelection().removeAllRanges();		// Ensure the text is un-selected (Chrome browser quirk)
 });
 // ------------------------------------------------------------------------------------------------
 
 // Put a dummy row into any empty table to keep IE happy
-$('tbody').each(function(){
-	$(this).html($.trim($(this).html()))
-});
+// Commented out due to https://redmine.pfsense.org/issues/7504
+//$('tbody').each(function(){
+//	$(this).html($.trim($(this).html()))
+//});
 
 $('tbody:empty').html("<tr><td></td></tr>");
 
@@ -660,7 +677,6 @@ function moveOptions(From, To)	{
 	}
 }
 
-
 // ------------- Service start/stop/restart functions.
 // If a start/stop/restart button is clicked, parse the button name and make a POST via AJAX
 $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(function(event) {
@@ -672,14 +688,15 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 		name = args[0];
 		mode_zone = args[2];
 		id = args[3];
-	} else if (args[0] == "cpativeportal") {
+	} else if (args[0] == "captiveportal") {
 		action = args[1];
 		name = args[0];
 		mode_zone = args[2];
 		id = args[3];
 	} else {
 		action = args[0];
-		name = args[1];
+		args.shift();
+		name = args.join('-');
 	}
 
 	$(this).children('i').removeClass().addClass('fa fa-cog fa-spin text-success');
@@ -705,3 +722,85 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 		location.reload(true);
 	});
 });
+
+// The scripts that follow are an EXPERIMENT in using jQuery/Javascript to automatically convert
+// GET calls to POST calls
+// Any anchor with the attribute "usepost" usses these functions.
+
+// Any time an anchor is clicked and the "usepost" attibute is present, convert the href attribute
+// to POST format, make a POST form and submit it
+
+interceptGET();
+
+function interceptGET() {
+	$('a').click(function(e) {
+		// Does the clicked anchor have the "usepost" attribute?
+		var attr = $(this).attr('usepost');
+
+		if (typeof attr !== typeof undefined && attr !== false) {
+			// Automatically apply a confirmation dialog to "Delete" icons
+			if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn')) &&
+			   ($(this).hasClass('fa-trash'))) {
+				var msg = $.trim(this.textContent).toLowerCase();
+
+				if (!msg)
+					var msg = $.trim(this.value).toLowerCase();
+
+				var q = 'Are you sure you wish to '+ msg +'?';
+
+				if ($(this).attr('title') != undefined)
+					q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
+
+				if (!confirm(q)) {
+					return false;
+				}
+			}
+
+			var target = $(this).attr("href").split("?");
+
+			postSubmit(get2post(target[1]),target[0]);
+			return false;
+		}
+	});
+}
+
+// Convert a GET argument list such as ?name=fred&action=delete into an object of POST
+// parameters such as {name : fred, action : delete}
+function get2post(getargs) {
+	var argdict = {};
+	var argarray = getargs.split('&');
+
+	argarray.forEach(function(arg) {
+		arg = arg.split('=');
+		argdict[arg[0]] = arg[1];
+	});
+
+	return argdict;
+}
+
+// Create a form, add, the POST data and submit it
+function postSubmit(data, target) {
+	var $form = $('<form>');
+
+	for (var name in data) {
+		$form.append(
+			$("<input>")
+				.attr("type", "hidden")
+				.attr("name", name)
+				.val(data[name])
+		);
+    }
+
+	$form
+		.attr("method", "POST")
+		.attr("action", target)
+		// The CSRF magic is required because we will be viewing the results of the POST
+		.append(
+			$("<input>")
+				.attr("type", "hidden")
+				.attr("name", "__csrf_magic")
+				.val(csrfMagicToken)
+		)
+		.appendTo('body')
+		.submit();
+}

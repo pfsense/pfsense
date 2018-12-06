@@ -1,60 +1,27 @@
 <?php
 /*
-	status_ntpd.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2013 Dagorlad
+ * status_ntpd.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013 Dagorlad
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -66,7 +33,16 @@
 
 require_once("guiconfig.inc");
 
-if (!isset($config['ntpd']['noquery'])) {
+$allow_query = !isset($config['ntpd']['noquery']);
+if (!empty($config['ntpd']['restrictions']['row']) && is_array($config['ntpd']['restrictions']['row'])) {
+	foreach ($config['ntpd']['restrictions']['row'] as $v) {
+		if (ip_in_subnet($_SERVER['REMOTE_ADDR'], "{$v['acl_network']}/{$v['mask']}")) {
+			$allow_query = !isset($v['noquery']);
+		}
+	}
+}
+
+if ($allow_query) {
 	if (isset($config['system']['ipv6allow'])) {
 		$inet_version = "";
 	} else {
@@ -78,10 +54,28 @@ if (!isset($config['ntpd']['noquery'])) {
 	$ntpq_servers = array();
 	foreach ($ntpq_output as $line) {
 		$server = array();
+		$status_char = substr($line, 0, 1);
+		$line = substr($line, 1);
+		$peerinfo = preg_split("/[\s\t]+/", $line);
 
-		switch (substr($line, 0, 1)) {
+		$server['server'] = $peerinfo[0];
+		$server['refid'] = $peerinfo[1];
+		$server['stratum'] = $peerinfo[2];
+		$server['type'] = $peerinfo[3];
+		$server['when'] = $peerinfo[4];
+		$server['poll'] = $peerinfo[5];
+		$server['reach'] = $peerinfo[6];
+		$server['delay'] = $peerinfo[7];
+		$server['offset'] = $peerinfo[8];
+		$server['jitter'] = $peerinfo[9];
+
+		switch ($status_char) {
 			case " ":
-				$server['status'] = gettext("Unreach/Pending");
+				if ($server['refid'] == ".POOL.") {
+					$server['status'] = gettext("Pool Placeholder");
+				} else {
+					$server['status'] = gettext("Unreach/Pending");
+				}
 				break;
 			case "*":
 				$server['status'] = gettext("Active Peer");
@@ -106,20 +100,6 @@ if (!isset($config['ntpd']['noquery'])) {
 				break;
 		}
 
-		$line = substr($line, 1);
-		$peerinfo = preg_split("/[\s\t]+/", $line);
-
-		$server['server'] = $peerinfo[0];
-		$server['refid'] = $peerinfo[1];
-		$server['stratum'] = $peerinfo[2];
-		$server['type'] = $peerinfo[3];
-		$server['when'] = $peerinfo[4];
-		$server['poll'] = $peerinfo[5];
-		$server['reach'] = $peerinfo[6];
-		$server['delay'] = $peerinfo[7];
-		$server['offset'] = $peerinfo[8];
-		$server['jitter'] = $peerinfo[9];
-
 		$ntpq_servers[] = $server;
 	}
 
@@ -132,53 +112,78 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_vars = explode(",", $tmp);
 				$gps_ok = ($gps_vars[2] == "A");
 				$gps_lat_deg = substr($gps_vars[3], 0, 2);
-				$gps_lat_min = substr($gps_vars[3], 2) / 60.0;
+				$gps_lat_min = substr($gps_vars[3], 2);
 				$gps_lon_deg = substr($gps_vars[5], 0, 3);
-				$gps_lon_min = substr($gps_vars[5], 3) / 60.0;
-				$gps_lat = $gps_lat_deg + $gps_lat_min;
+				$gps_lon_min = substr($gps_vars[5], 3);
+				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min;
+				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
+				$gps_lat_dir = $gps_vars[4];
+				$gps_lon_dir = $gps_vars[6];
 			} elseif (substr($tmp, 0, 6) == '$GPGGA') {
 				$gps_vars = explode(",", $tmp);
 				$gps_ok = $gps_vars[6];
 				$gps_lat_deg = substr($gps_vars[2], 0, 2);
-				$gps_lat_min = substr($gps_vars[2], 2) / 60.0;
+				$gps_lat_min = substr($gps_vars[2], 2);
 				$gps_lon_deg = substr($gps_vars[4], 0, 3);
-				$gps_lon_min = substr($gps_vars[4], 3) / 60.0;
-				$gps_lat = $gps_lat_deg + $gps_lat_min;
+				$gps_lon_min = substr($gps_vars[4], 3);
+				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[3] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min;
+				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[5] == "E") ? 1 : -1);
 				$gps_alt = $gps_vars[9];
 				$gps_alt_unit = $gps_vars[10];
-				$gps_sat = $gps_vars[7];
+				$gps_sat = (int)$gps_vars[7];
+				$gps_lat_dir = $gps_vars[3];
+				$gps_lon_dir = $gps_vars[5];
 			} elseif (substr($tmp, 0, 6) == '$GPGLL') {
-				$gps_vars = explode(",", $tmp);
+				$gps_vars = preg_split('/[,\*]+/', $tmp);
 				$gps_ok = ($gps_vars[6] == "A");
 				$gps_lat_deg = substr($gps_vars[1], 0, 2);
-				$gps_lat_min = substr($gps_vars[1], 2) / 60.0;
+				$gps_lat_min = substr($gps_vars[1], 2);
 				$gps_lon_deg = substr($gps_vars[3], 0, 3);
-				$gps_lon_min = substr($gps_vars[3], 3) / 60.0;
-				$gps_lat = $gps_lat_deg + $gps_lat_min;
+				$gps_lon_min = substr($gps_vars[3], 3);
+				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[2] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min;
+				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[4] == "E") ? 1 : -1);
+				$gps_lat_dir = $gps_vars[2];
+				$gps_lon_dir = $gps_vars[4];
+			} elseif (substr($tmp, 0, 6) == '$PGRMF') {
+				$gps_vars = preg_split('/[,\*]+/', $tmp);
+				$gps_ok = $gps_vars[11];
+				$gps_lat_deg = substr($gps_vars[6], 0, 2);
+				$gps_lat_min = substr($gps_vars[6], 2);
+				$gps_lon_deg = substr($gps_vars[8], 0, 3);
+				$gps_lon_min = substr($gps_vars[8], 3);
+				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = $gps_lat * (($gps_vars[7] == "N") ? 1 : -1);
+				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = $gps_lon * (($gps_vars[9] == "E") ? 1 : -1);
+				$gps_lat_dir = $gps_vars[7];
+				$gps_lon_dir = $gps_vars[9];
 			}
 		}
 	}
 }
 
-if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 'SureGPS') && (isset($gps_ok))) {
-	//GSV message is only enabled by init commands in services_ntpd_gps.php for SureGPS board
-	$gpsport = fopen("/dev/gps0", "r+");
-	while ($gpsport) {
+if (isset($gps_ok) && isset($config['ntpd']['gps']['extstatus']) && ($config['ntpd']['gps']['nmeaset']['gpgsv'] || $config['ntpd']['gps']['nmeaset']['gpgga'])) {
+	$lookfor['GPGSV'] = $config['ntpd']['gps']['nmeaset']['gpgsv'];
+	$lookfor['GPGGA'] = !isset($gps_sat) && $config['ntpd']['gps']['nmeaset']['gpgga'];
+	$gpsport = fopen('/dev/gps0', 'r+');
+	while ($gpsport && ($lookfor['GPGSV'] || $lookfor['GPGGA'])) {
 		$buffer = fgets($gpsport);
-		if (substr($buffer, 0, 6) == '$GPGSV') {
-			//echo $buffer."\n";
+		if ($lookfor['GPGSV'] && substr($buffer, 0, 6) == '$GPGSV') {
 			$gpgsv = explode(',', $buffer);
-			$gps_satview = $gpgsv[3];
-			break;
+			$gps_satview = (int)$gpgsv[3];
+			$lookfor['GPGSV'] = 0;
+		} elseif ($lookfor['GPGGA'] && substr($buffer, 0, 6) == '$GPGGA') {
+			$gpgga = explode(',', $buffer);
+			$gps_sat = (int)$gpgga[7];
+			$gps_alt = $gpgga[9];
+			$gps_alt_unit = $gpgga[10];
+			$lookfor['GPGGA'] = 0;
 		}
 	}
 }
@@ -196,19 +201,19 @@ if ($_REQUEST['ajax']) {
 }
 
 function print_status() {
-	global $config, $ntpq_servers;
+	global $config, $ntpq_servers, $allow_query;
 
-	if (isset($config['ntpd']['noquery'])):
+	if (!$allow_query):
 
 		print("<tr>\n");
 		print('<td class="warning" colspan="11">');
-		printf(gettext("Statistics unavailable because ntpq and ntpdc queries are disabled in the %sNTP service settings%s"), '<a href="services_ntpd.php">', '</a>');
+		printf(gettext('Statistics unavailable because ntpq and ntpdc queries are disabled in the %1$sNTP service settings%2$s'), '<a href="services_ntpd.php">', '</a>');
 		print("</td>\n");
 		print("</tr>\n");
 	elseif (count($ntpq_servers) == 0):
 		print("<tr>\n");
 		print('<td class="warning" colspan="11">');
-		printf(gettext("No peers found, %sis the ntp service running?%s"), '<a href="status_services.php">', '</a>');
+		printf(gettext('No peers found, %1$sis the ntp service running?%2$s'), '<a href="status_services.php">', '</a>');
 		print("</td>\n");
 		print("</tr>\n");
 	else:
@@ -234,7 +239,7 @@ function print_status() {
 }
 
 function print_gps() {
-	global 	$gps_lat, $gps_lon, $gps_lat_deg, $gps_lon_deg, $gps_lat_min, $gps_lon_min, $gps_vars,
+	global 	$gps_lat, $gps_lon, $gps_lat_deg, $gps_lon_deg, $gps_lat_min, $gps_lon_min, $gps_lat_dir, $gps_lon_dir,
 			$gps_alt, $gps_alt_unit, $gps_sat, $gps_satview, $gps_goo_lnk;
 
 	print("<tr>\n");
@@ -242,16 +247,16 @@ function print_gps() {
 	printf("%.5f", $gps_lat);
 	print(" (");
 	printf("%d%s", $gps_lat_deg, "&deg;");
-	printf("%.5f", $gps_lat_min*60);
-	print($gps_vars[4]);
+	printf("%.5f", $gps_lat_min);
+	print($gps_lat_dir);
 	print(")");
 	print("</td>\n");
 	print("<td>\n");
 	printf("%.5f", $gps_lon);
 	print(" (");
 	printf("%d%s", $gps_lon_deg, "&deg;");
-	printf("%.5f", $gps_lon_min*60);
-	print($gps_vars[6]);
+	printf("%.5f", $gps_lon_min);
+	print($gps_lon_dir);
 	print(")");
 	print("</td>\n");
 
@@ -262,7 +267,7 @@ function print_gps() {
 	}
 
 	if (isset($gps_sat) || isset($gps_satview)) {
-		print('<td class="text-center">');
+		print('<td>');
 
 		if (isset($gps_satview)) {
 			print(gettext('in view ') . intval($gps_satview));

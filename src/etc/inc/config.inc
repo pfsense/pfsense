@@ -1,58 +1,27 @@
 <?php
 /*
-	config.inc
-
-	part of pfSense (https://www.pfsense.org)
-	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC. All rights reserved.
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in
-	   the documentation and/or other materials provided with the
-	   distribution.
-
-	3. All advertising materials mentioning features or use of this software
-	   must display the following acknowledgment:
-	   "This product includes software developed by the pfSense Project
-	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
-
-	4. The names "pfSense" and "pfSense Project" must not be used to
-	   endorse or promote products derived from this software without
-	   prior written permission. For written permission, please contact
-	   coreteam@pfsense.org.
-
-	5. Products derived from this software may not be called "pfSense"
-	   nor may "pfSense" appear in their names without prior written
-	   permission of the Electric Sheep Fencing, LLC.
-
-	6. Redistributions of any form whatsoever must retain the following
-	   acknowledgment:
-
-	"This product includes software developed by the pfSense Project
-	for use in the pfSense software distribution (http://www.pfsense.org/).
-
-	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-	OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * config.inc
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * originally part of m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 if (!function_exists('platform_booting')) {
 	require_once('globals.inc');
@@ -79,7 +48,7 @@ if ($ARCH == "amd64") {
 /* include globals from notices.inc /utility/XML parser files */
 require_once("notices.inc");
 require_once("util.inc");
-require_once("IPv6.inc");
+require_once("Net/IPv6.php");
 require_once('config.lib.inc');
 if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlreader.inc");
@@ -87,13 +56,6 @@ if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlparse.inc");
 }
 require_once("crypt.inc");
-
-/* read platform */
-if (file_exists("{$g['etc_path']}/platform")) {
-	$g['platform'] = chop(file_get_contents("{$g['etc_path']}/platform"));
-} else {
-	$g['platform'] = "unknown";
-}
 
 /* if /debugging exists, lets set $debugging
    so we can output more information */
@@ -114,9 +76,7 @@ if (platform_booting(true)) {
 			if (!config_validate("{$g['conf_path']}/config.xml")) {
 				log_error(gettext("ERROR!  Could not convert m0n0wall -> pfsense in config.xml"));
 			}
-			conf_mount_rw();
 			file_put_contents("/cf/conf/config.xml", $config_contents);
-			conf_mount_ro();
 		}
 		unset($config_contents);
 	}
@@ -129,63 +89,44 @@ if (platform_booting(true)) {
 		/* check if there's already an fstab (NFS booting?) */
 		if (!file_exists("{$g['etc_path']}/fstab")) {
 			echo ".";
-			if (strstr($g['platform'], "cdrom")) {
-				/* config is on floppy disk for CD-ROM version */
-				$cfgdevice = $cfgpartition = "fd0";
-				$_gb = exec('/sbin/dmesg -a', $dmesg);
-				if (preg_match("/da0/", $dmesg) == true) {
-					$cfgdevice = $cfgpartition = "da0" ;
-					if (mwexec("/sbin/mount -r /dev/{$cfgdevice} /cf")) {
-						/* could not mount, fallback to floppy */
-						$cfgdevice = $cfgpartition = "fd0";
+			/* probe kernel known disks until we find one with config.xml */
+			$disks = explode(" ", get_single_sysctl("kern.disks"));
+			foreach ($disks as $mountdisk) {
+				/* skip mfs mounted filesystems */
+				if (strstr($mountdisk, "md")) {
+					continue;
+				}
+				if (mwexec("/sbin/mount -r /dev/{$mountdisk}a {$g['cf_path']}") == 0) {
+					if (file_exists("{$g['cf_conf_path']}/config.xml")) {
+						/* found it */
+						$cfgdevice = $mountdisk;
+						$cfgpartition = $cfgdevice . "a";
+						$cfgfstype = "ufs";
+						printf(gettext('Found configuration on %1$s.%2$s'), $cfgdevice, "\n");
+					}
+
+					mwexec("/sbin/umount -f {$g['cf_path']}");
+
+					if ($cfgdevice) {
+						break;
 					}
 				}
-				unset($dmesg);
-				$cfgfstype = "msdosfs";
-				echo gettext("CDROM build") . "\n";
-				echo "   " . gettext("CFG:") . " {$cfgpartition}\n";
-				echo "  " . gettext("TYPE:") . " {$cfgfstype}\n";
-			} else {
-				echo ".";
-				/* probe kernel known disks until we find one with config.xml */
-				$disks = explode(" ", get_single_sysctl("kern.disks"));
-				foreach ($disks as $mountdisk) {
-					/* skip mfs mounted filesystems */
-					if (strstr($mountdisk, "md")) {
-						continue;
+				if (mwexec("/sbin/mount -r /dev/{$mountdisk}d {$g['cf_path']}") == 0) {
+					if (platform_booting()) {
+						echo ".";
 					}
-					if (mwexec("/sbin/mount -r /dev/{$mountdisk}a {$g['cf_path']}") == 0) {
-						if (file_exists("{$g['cf_conf_path']}/config.xml")) {
-							/* found it */
-							$cfgdevice = $mountdisk;
-							$cfgpartition = $cfgdevice . "a";
-							$cfgfstype = "ufs";
-							printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
-						}
-
-						mwexec("/sbin/umount -f {$g['cf_path']}");
-
-						if ($cfgdevice) {
-							break;
-						}
+					if (file_exists("{$g['cf_conf_path']}/config.xml")) {
+						/* found it */
+						$cfgdevice = $mountdisk;
+						$cfgpartition = $cfgdevice . "d";
+						$cfgfstype = "ufs";
+						printf(gettext('Found configuration on %1$s.%2$s'), $cfgdevice, "\n");
 					}
-					if (mwexec("/sbin/mount -r /dev/{$mountdisk}d {$g['cf_path']}") == 0) {
-						if (platform_booting()) {
-							echo ".";
-						}
-						if (file_exists("{$g['cf_conf_path']}/config.xml")) {
-							/* found it */
-							$cfgdevice = $mountdisk;
-							$cfgpartition = $cfgdevice . "d";
-							$cfgfstype = "ufs";
-							printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
-						}
 
-						mwexec("/sbin/umount -f {$g['cf_path']}");
+					mwexec("/sbin/umount -f {$g['cf_path']}");
 
-						if ($cfgdevice) {
-							break;
-						}
+					if ($cfgdevice) {
+						break;
 					}
 				}
 			}

@@ -1,56 +1,24 @@
 <?php
 /*
-	ipsec.inc
-
-	part of pfSense (https://www.pfsense.org)
-	Copyright (c) 2007-2016 Electric Sheep Fencing, LLC.
-	Copyright (C) 2008 Shrew Soft Inc.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in
-	   the documentation and/or other materials provided with the
-	   distribution.
-
-	3. All advertising materials mentioning features or use of this software
-	   must display the following acknowledgment:
-	   "This product includes software developed by the pfSense Project
-	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
-
-	4. The names "pfSense" and "pfSense Project" must not be used to
-	   endorse or promote products derived from this software without
-	   prior written permission. For written permission, please contact
-	   coreteam@pfsense.org.
-
-	5. Products derived from this software may not be called "pfSense"
-	   nor may "pfSense" appear in their names without prior written
-	   permission of the Electric Sheep Fencing, LLC.
-
-	6. Redistributions of any form whatsoever must retain the following
-	   acknowledgment:
-
-	"This product includes software developed by the pfSense Project
-	for use in the pfSense software distribution (http://www.pfsense.org/).
-
-	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-	OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * ipsec.inc
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2008 Shrew Soft Inc.
+ * Copyright (c) 2007-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /* IPsec defines */
 global $ipsec_loglevels;
@@ -103,6 +71,21 @@ $ipsec_log_cats = array(
 	"lib" => gettext("StrongSwan Lib")
 );
 
+global $ipsec_identifier_list;
+$ipsec_identifier_list = array(
+	// 'ipv4' => array('desc' => gettext('IPv4 address'), 'mobile' => true),
+	// 'ipv6' => array('desc' => gettext('IPv6 address'), 'mobile' => true),
+	// 'rfc822' => array('desc' => gettext('RFC822'), 'mobile' => true),
+	'none' => array('desc' => '', 'mobile' => true),
+	'email' => array('desc' => gettext('E-mail address'), 'mobile' => true),
+	'userfqdn' => array('desc' => gettext('User Fully Qualified Domain Name'), 'mobile' => true)
+	// 'fqdn' => array('desc' => gettext('Fully Qualified Domain Name'), 'mobile' => true),
+	// 'dns' => array('desc' => gettext('DNS'), 'mobile' => true),
+	// 'asn1dn' => array('desc' => gettext('ASN.1 Distinguished Name'), 'mobile' => true),
+	// 'asn1gn' => array('desc' => gettext('ASN.1 GN'), 'mobile' => true),
+	// 'keyid' => array('desc' => gettext('KeyID'), 'mobile' => true)
+);
+
 global $my_identifier_list;
 $my_identifier_list = array(
 	'myaddress' => array('desc' => gettext('My IP address'), 'mobile' => true),
@@ -133,6 +116,9 @@ $ipsec_idhandling = array(
 global $p1_ealgos;
 $p1_ealgos = array(
 	'aes' => array('name' => 'AES', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
+	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
+	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
 	'3des' => array('name' => '3DES'),
 	'cast128' => array('name' => 'CAST128')
@@ -212,7 +198,8 @@ global $p2_modes;
 $p2_modes = array(
 	'tunnel' => gettext('Tunnel IPv4'),
 	'tunnel6' => gettext('Tunnel IPv6'),
-	'transport' => gettext('Transport')
+	'transport' => gettext('Transport'),
+	'vti' => gettext('Routed (VTI)')
 );
 
 global $p2_protos;
@@ -235,6 +222,9 @@ $p2_pfskeygroups = array(
 	19 => gettext('19 (nist ecp256)'),
 	20 => gettext('20 (nist ecp384)'),
 	21 => gettext('21 (nist ecp521)'),
+	22 => gettext('22 (1024(sub 160) bit)'),
+	23 => gettext('23 (2048(sub 224) bit)'),
+	24 => gettext('24 (2048(sub 256) bit)'),
 	28 => gettext('28 (brainpool ecp256)'),
 	29 => gettext('29 (brainpool ecp384)'),
 	30 => gettext('30 (brainpool ecp512)')
@@ -303,10 +293,21 @@ function ipsec_get_phase1_src(& $ph1ent) {
 	} else {
 		$if = "wan";
 	}
+	$ip6 = get_interface_ipv6($if);
+	$ip4 = get_interface_ip($if);
 	if ($ph1ent['protocol'] == "inet6") {
-		$interfaceip = get_interface_ipv6($if);
-	} else {
-		$interfaceip = get_interface_ip($if);
+		$interfaceip = $ip6;
+	} elseif ($ph1ent['protocol'] == "inet") {
+		$interfaceip = $ip4;
+	} elseif ($ph1ent['protocol'] == "both") {
+		$ifips = array();
+		if (!empty($ip4)) {
+			$ifips[] = $ip4;
+		}
+		if (!empty($ip6)) {
+			$ifips[] = $ip6;
+		}
+		$interfaceip = implode(',', $ifips);
 	}
 
 	return $interfaceip;
@@ -626,7 +627,11 @@ function ipsec_dump_sad() {
  * Return dump of mobile user list
  */
 function ipsec_dump_mobile() {
-	global $g;
+	global $g, $config;
+
+	if(!isset($config['ipsec']['client']['enable'])) {
+		return array();
+	}
 
 	$_gb = exec("/usr/local/sbin/ipsec leases 2>/dev/null", $output, $rc);
 
@@ -739,7 +744,7 @@ function ipsec_get_phase1($ikeid) {
 
 function ipsec_fixup_ip($ipaddr) {
 	if (is_ipaddrv6($ipaddr) || is_subnetv6($ipaddr)) {
-		return Net_IPv6::compress(Net_IPv6::uncompress($ipaddr));
+		return text_to_compressed_ip6($ipaddr);
 	} else {
 		return $ipaddr;
 	}
@@ -754,6 +759,9 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 		if (!$addr) {
 			return array();
 		}
+		/* When automatically guessing, use the first address. */
+		$addr = explode(',', $addr);
+		$addr = $addr[0];
 	} elseif ($side == "peer") {
 		$id_type = $ph1ent['peerid_type'];
 		$id_data = $ph1ent['peerid_data'];
@@ -842,6 +850,51 @@ function ipsec_new_reqid() {
 	unlock($ipsecreqid);
 
 	return $keyid;
+}
+
+function ipsec_get_loglevels() {
+	global $config, $ipsec_log_cats;
+	$def_loglevel = '1';
+
+	$levels = array();
+
+	foreach (array_keys($ipsec_log_cats) as $cat) {
+		if (isset($config['ipsec']['logging'][$cat])) {
+			$levels[$cat] = $config['ipsec']['logging'][$cat];
+		} elseif (in_array($cat, array('ike', 'chd', 'cfg'))) {
+			$levels[$cat] = "2";
+		} else {
+			$levels[$cat] = $def_loglevel;
+		}
+	}
+	return $levels;
+}
+
+function ipsec_vti($ph1ent, $returnaddresses = false) {
+	global $config;
+	if (empty($ph1ent) || !is_array($ph1ent) || !is_array($config['ipsec']['phase2'])) {
+		return false;
+	}
+
+	$is_vti = false;
+	$vtisubnet_spec = array();
+
+	foreach ($config['ipsec']['phase2'] as $ph2ent) {
+		if ($ph1ent['ikeid'] != $ph2ent['ikeid']) {
+			continue;
+		}
+		if ($ph2ent['mode'] == 'vti') {
+			if ($returnaddresses) {
+				$vtisubnet_spec[] = array(
+					'left' => ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']),
+					'right' => ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']),
+					'descr' => $ph2ent['descr'],
+				);
+			}
+			$is_vti = true;
+		}
+	}
+	return ($returnaddresses) ? $vtisubnet_spec : $is_vti;
 }
 
 ?>

@@ -1,57 +1,23 @@
 <?php
 /*
-	system_gateway_groups_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
+ * system_gateway_groups_edit.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -65,10 +31,7 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['gateways']['gateway_group'])) {
-	$config['gateways']['gateway_group'] = array();
-}
-
+init_config_arr(array('gateways', 'gateway_group'));
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
 
@@ -78,15 +41,12 @@ $categories = array(
 	'downlatency' => gettext("High Latency"),
 	'downlosslatency' => gettext("Packet Loss or High Latency"));
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$id = $_GET['dup'];
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_gateway_groups[$id]) {
@@ -96,11 +56,11 @@ if (isset($id) && $a_gateway_groups[$id]) {
 	$pconfig['trigger'] = $a_gateway_groups[$id]['trigger'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);
 }
 
-if ($_POST) {
+if (isset($_POST['save'])) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -179,6 +139,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateway Groups"), gettext("Edit"));
+$pglinks = array("", "system_gateways.php", "system_gateway_groups.php", "@self");
 $shortcut_section = "gateway-groups";
 
 function build_gateway_protocol_map (&$a_gateways) {
@@ -239,7 +200,7 @@ $section = new Form_Section('Edit Gateway Group Entry');
 
 $section->addInput(new Form_Input(
 	'name',
-	'Group Name',
+	'*Group Name',
 	'text',
 	$pconfig['name']
 ));
@@ -247,14 +208,14 @@ $section->addInput(new Form_Input(
 $row = 0;
 $numrows = count($a_gateways) - 1;
 
-$group = new Form_Group('Gateway Priority');
+$group = new Form_Group('*Gateway Priority');
 $group->add(new Form_StaticText('', ''))->setReadonly();
 $group->add(new Form_StaticText('', ''))->setReadonly();
 $group->add(new Form_StaticText('', ''))->setReadonly();
 $group->add(new Form_StaticText('', ''))->setWidth(3)->setReadonly();
 $section->add($group);
 
-// Determine the protocol familily this group pertains to. We loop through every item
+// Determine the protocol family this group pertains to. We loop through every item
 // just in case any have been removed and so have no family (orphans?)
 
 if (is_array($pconfig['item'])) {
@@ -356,14 +317,9 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_Select(
 	'trigger',
-	'Trigger Level',
+	'*Trigger Level',
 	$pconfig['trigger'],
-	array(
-		'0' => gettext('Member down'),
-		'1' => gettext('Packet Loss'),
-		'2' => gettext('High Latency'),
-		'3' => gettext('Packet Loss or High latency')
-	)
+	$categories
 ))->setHelp('When to trigger exclusion of a member');
 
 $section->addInput(new Form_Input(
@@ -373,7 +329,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if (isset($id) && $a_gateway_groups[$id]){
+if (isset($id) && $a_gateway_groups[$id]) {
 	$section->addInput(new Form_Input(
 	'id',
 	null,

@@ -6,10 +6,11 @@ comment: <<EOD
 EOD
 maintainer: development@pfsense.org
 prefix: /
+vital: true
 deps: {
 
 }
 categories [ security,  ]
 licenselogic: single
-licenses: [ ESF,  ]
+licenses: [ APACHE20,  ]
 options: {  }

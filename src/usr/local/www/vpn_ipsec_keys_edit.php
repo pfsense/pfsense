@@ -1,59 +1,26 @@
 <?php
 /*
-	vpn_ipsec_keys_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * vpn_ipsec_keys_edit.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -68,26 +35,25 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['ipsec']['mobilekey'])) {
-	$config['ipsec']['mobilekey'] = array();
-}
+init_config_arr(array('ipsec', 'mobilekey'));
 ipsec_mobilekey_sort();
 $a_secret = &$config['ipsec']['mobilekey'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && $a_secret[$id]) {
 	$pconfig['ident'] = $a_secret[$id]['ident'];
 	$pconfig['type'] = $a_secret[$id]['type'];
 	$pconfig['psk'] = $a_secret[$id]['pre-shared-key'];
+	$pconfig['ident_type'] = $a_secret[$id]['ident_type'];
+	$pconfig['pool_address'] = $a_secret[$id]['pool_address'];
+	$pconfig['pool_netbits'] = $a_secret[$id]['pool_netbits'];
+	$pconfig['dns_address'] = $a_secret[$id]['dns_address'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	$userids = array();
 	foreach ($config['system']['user'] as $uid => $user) {
 		$userids[$user['name']] = $uid;
@@ -115,6 +81,14 @@ if ($_POST) {
 		$input_errors[] = gettext("Pre-Shared Key contains invalid characters.");
 	}
 
+	if (isset($_POST['pool_address']) && strlen($_POST['pool_address']) > 1 && !is_ipaddr($_POST['pool_address'])) {
+		$input_errors[] = gettext("A valid IP address for 'Virtual Address Pool' must be specified.");
+	}
+
+	if (isset($_POST['dns_address']) && strlen($_POST['dns_address']) > 1 && !is_ipaddr($_POST['dns_address'])) {
+		$input_errors[] = gettext("A valid IP address for 'DNS Server' must be specified.");
+	}
+
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
 		/* make sure there are no dupes */
 		foreach ($a_secret as $secretent) {
@@ -134,6 +108,10 @@ if ($_POST) {
 		$secretent['ident'] = $_POST['ident'];
 		$secretent['type'] = $_POST['type'];
 		$secretent['pre-shared-key'] = $_POST['psk'];
+		$secretent['ident_type'] = $_POST['ident_type'];
+		$secretent['pool_address'] = $_POST['pool_address'];
+		$secretent['pool_netbits'] = $_POST['pool_netbits'];
+		$secretent['dns_address'] = $_POST['dns_address'];
 		$text = "";
 
 		if (isset($id) && $a_secret[$id]) {
@@ -152,7 +130,20 @@ if ($_POST) {
 	}
 }
 
+function build_ipsecid_list() {
+	global $ipsec_identifier_list;
+
+	$list = array();
+
+	foreach ($ipsec_identifier_list as $id_type => $id_params) {
+		$list[$id_type] = htmlspecialchars($id_params['desc']);
+	}
+
+	return($list);
+}
+
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Pre-Shared Keys"), gettext("Edit"));
+$pglinks = array("", "vpn_ipsec.php", "vpn_ipsec_keys.php", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -166,24 +157,43 @@ $section = new Form_Section('Edit Pre-Shared-Secret');
 
 $section->addInput(new Form_Input(
 	'ident',
-	'Identifier',
+	'*Identifier',
 	'text',
 	$pconfig['ident']
 ))->setHelp('This can be either an IP address, fully qualified domain name or an e-mail address.');
 
 $section->addInput(new Form_Select(
 	'type',
-	'Secret type',
+	'*Secret type',
 	$pconfig['type'],
 	$ipsec_preshared_key_type
 ))->setWidth(2);
 
 $section->addInput(new Form_Input(
 	'psk',
-	'Pre-Shared Key',
+	'*Pre-Shared Key',
 	'text',
 	$pconfig['psk']
 ));
+
+$section->addInput(new Form_Select(
+	'ident_type',
+	'Identifier type',
+	$pconfig['ident_type'],
+	build_ipsecid_list()
+))->setWidth(4)->setHelp('Optional: specify identifier type for strongswan');
+
+$section->addInput(new Form_IpAddress(
+	'pool_address',
+	'Virtual Address Pool',
+	$pconfig['pool_address']
+))->setWidth(4)->setHelp('Optional. If used, must be IPv4 address. If left blank, "Virtual Address Pool" of "Mobile Clients" will be used.')->addMask('pool_netbits', $pconfig['pool_netbits'], 32, 0);
+
+$section->addInput(new Form_IpAddress(
+	'dns_address',
+	'DNS Server',
+	$pconfig['dns_address']
+))->setWidth(4)->setHelp('Optional. If used, must be IPv4 address. Individual DNS server only for this user. If left blank, "DNS Servers" of "Mobile Clients" will be used.');
 
 if (isset($id) && $a_secret[$id]) {
 	$form->addGlobal(new Form_Input(

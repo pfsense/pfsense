@@ -1,60 +1,27 @@
 <?php
 /*
-	system_advanced_misc.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2008 Shrew Soft Inc
+ * system_advanced_misc.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -71,6 +38,13 @@ require_once("shaper.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
 
+$powerd_modes = array(
+	'hadp' => gettext('Hiadaptive'),
+	'adp' => gettext('Adaptive'),
+	'min' => gettext('Minimum'),
+	'max' => gettext('Maximum'),
+);
+
 $pconfig['proxyurl'] = $config['system']['proxyurl'];
 $pconfig['proxyport'] = $config['system']['proxyport'];
 $pconfig['proxyuser'] = $config['system']['proxyuser'];
@@ -78,17 +52,20 @@ $pconfig['proxypass'] = $config['system']['proxypass'];
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['srctrack'] = $config['system']['srctrack'];
-$pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
+$pconfig['pti_disabled'] = isset($config['system']['pti_disabled']);
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['gw_down_kill_states'] = isset($config['system']['gw_down_kill_states']);
 $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
-$pconfig['do_not_send_host_uuid'] = isset($config['system']['do_not_send_host_uuid']);
+$pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid']);
+
+$use_mfs_tmpvar_before = isset($config['system']['use_mfs_tmpvar']) ? true : false;
+$use_mfs_tmpvar_after = $use_mfs_tmpvar_before;
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode'])) {
@@ -106,8 +83,10 @@ if (!empty($config['system']['powerd_normal_mode'])) {
 }
 
 $crypto_modules = array(
-	'glxsb' => gettext("AMD Geode LX Security Block"),
-	'aesni' => gettext("AES-NI CPU-based Acceleration"));
+	'aesni' => gettext("AES-NI CPU-based Acceleration"),
+	'cryptodev' => gettext("BSD Crypto Device (cryptodev)"),
+	'aesni_cryptodev' => gettext("AES-NI and BSD Crypto Device (aesni, cryptodev)"),
+);
 
 $thermal_hardware_modules = array(
 	'coretemp' => gettext("Intel Core* CPU on-die thermal sensor"),
@@ -148,8 +127,18 @@ if ($_POST) {
 		$input_errors[] = gettext("The proxy username contains invalid characters.");
 	}
 
-	if($_POST['proxypass'] != $_POST['proxypass_confirm']) {
+	if ($_POST['proxypass'] != $_POST['proxypass_confirm']) {
 		$input_errors[] = gettext("Proxy password and confirmation must match.");
+	}
+
+	if (!in_array($_POST['powerd_ac_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid AC Power mode.");
+	}
+	if (!in_array($_POST['powerd_battery_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid Battery Power mode.");
+	}
+	if (!in_array($_POST['powerd_normal_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid Unknown Power mode.");
 	}
 
 	if (!$input_errors) {
@@ -204,22 +193,16 @@ if ($_POST) {
 			}
 		}
 
-		if ($_POST['gw_switch_default'] == "yes") {
-			$config['system']['gw_switch_default'] = true;
-		} else {
-			unset($config['system']['gw_switch_default']);
-		}
-
 		if ($_POST['pkg_nochecksig'] == "yes") {
 			$config['system']['pkg_nochecksig'] = true;
 		} elseif (isset($config['system']['pkg_nochecksig'])) {
 			unset($config['system']['pkg_nochecksig']);
 		}
 
-		if ($_POST['do_not_send_host_uuid'] == "yes") {
-			$config['system']['do_not_send_host_uuid'] = true;
+		if ($_POST['do_not_send_uniqueid'] == "yes") {
+			$config['system']['do_not_send_uniqueid'] = true;
 		} else {
-			unset($config['system']['do_not_send_host_uuid']);
+			unset($config['system']['do_not_send_uniqueid']);
 		}
 
 		if ($_POST['powerd_enable'] == "yes") {
@@ -244,6 +227,13 @@ if ($_POST) {
 			unset($config['system']['thermal_hardware']);
 		}
 
+		$old_pti_state = isset($config['system']['pti_disabled']);
+		if ($_POST['pti_disabled'] == "yes") {
+			$config['system']['pti_disabled'] = true;
+		} else {
+			unset($config['system']['pti_disabled']);
+		}
+
 		if ($_POST['schedule_states'] == "yes") {
 			$config['system']['schedule_states'] = true;
 		} else {
@@ -264,8 +254,10 @@ if ($_POST) {
 
 		if ($_POST['use_mfs_tmpvar'] == "yes") {
 			$config['system']['use_mfs_tmpvar'] = true;
+			$use_mfs_tmpvar_after = true;
 		} else {
 			unset($config['system']['use_mfs_tmpvar']);
+			$use_mfs_tmpvar_after = false;
 		}
 
 		$config['system']['use_mfs_tmp_size'] = $_POST['use_mfs_tmp_size'];
@@ -285,29 +277,39 @@ if ($_POST) {
 				unset($config['system']['dhcpbackup']);
 			}
 		}
+		if (isset($_POST['logsbackup'])) {
+			if (($_POST['logsbackup'] > 0) && ($_POST['logsbackup'] <= 24)) {
+				$config['system']['logsbackup'] = intval($_POST['logsbackup']);
+			} else {
+				unset($config['system']['logsbackup']);
+			}
+		}
 
 		// Add/Remove RAM disk periodic backup cron jobs according to settings and installation type.
 		// Remove the cron jobs on full install if not using RAM disk.
 		// Add the cron jobs on all others if the periodic backup option is set.  Otherwise the cron job is removed.
-		if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
-			install_cron_job("/etc/rc.backup_rrd.sh", false);
-			install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
+		if (!isset($config['system']['use_mfs_tmpvar'])) {
+			/* See #7146 for detail on why the extra parameters are needed for the time being. */
+			install_cron_job("/etc/rc.backup_rrd.sh", false, null, null, null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", false, null, null, null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_logs.sh", false, null, null, null, null, null, null, false);
 		} else {
-			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
-			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
+			/* See #7146 for detail on why the extra parameters are needed for the time being. */
+			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}", '*', '*', '*', 'root', false);
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}", '*', '*', '*', 'root', false);
+			install_cron_job("/etc/rc.backup_logs.sh", ($config['system']['logsbackup'] > 0), $minute="0", "*/{$config['system']['logsbackup']}", '*', '*', '*', 'root', false);
 		}
 
 		write_config();
 
+		$changes_applied = true;
 		$retval = 0;
 		system_resolvconf_generate(true);
-		$retval = filter_configure();
-		if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message(gettext($retval));
-		} else {
-			$savemsg = gettext($retval);
-		}
+		$retval |= filter_configure();
 
+		if ($old_pti_state != isset($config['system']['pti_disabled'])) {
+			setup_loader_settings();
+		}
 		activate_powerd();
 		load_crypto();
 		load_thermal_hardware();
@@ -318,15 +320,15 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Miscellaneous"));
+$pglinks = array("", "system_advanced_admin.php", "@self");
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-	unset($pconfig['doreboot']);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 $tab_array = array();
@@ -402,15 +404,6 @@ $group->add(new Form_Input(
 
 $section->add($group);
 
-$section->addInput(new Form_Checkbox(
-	'gw_switch_default',
-	'Default gateway switching',
-	'Enable default gateway switching',
-	$pconfig['gw_switch_default']
-))->setHelp('If the default gateway goes down, switch the default gateway to '.
-	'another available one. This is not enabled by default, as it\'s unnecessary in '.
-	'most all scenarios, which instead use gateway groups.');
-
 $form->add($section);
 $section = new Form_Section('Power Savings');
 
@@ -433,32 +426,25 @@ $section->addInput(new Form_Checkbox(
 	'power consumption.	 It raises frequency faster, drops slower and keeps twice '.
 	'lower CPU load.');
 
-$modes = array(
-	'hadp' => gettext('Hiadaptive'),
-	'adp' => gettext('Adaptive'),
-	'min' => gettext('Minimum'),
-	'max' => gettext('Maximum'),
-);
-
 $section->addInput(new Form_Select(
 	'powerd_ac_mode',
 	'AC Power',
 	$pconfig['powerd_ac_mode'],
-	$modes
+	$powerd_modes
 ));
 
 $section->addInput(new Form_Select(
 	'powerd_battery_mode',
 	'Battery Power',
 	$pconfig['powerd_battery_mode'],
-	$modes
+	$powerd_modes
 ));
 
 $section->addInput(new Form_Select(
 	'powerd_normal_mode',
 	'Unknown Power',
 	$pconfig['powerd_normal_mode'],
-	$modes
+	$powerd_modes
 ));
 
 $form->add($section);
@@ -469,15 +455,12 @@ $section->addInput(new Form_Select(
 	'Cryptographic Hardware',
 	$pconfig['crypto_hardware'],
 	['' => gettext('None')] + $crypto_modules
-))->setHelp('A cryptographic '.
-	'accelerator module will use hardware support to speed up some cryptographic '.
-	'functions on systems which have the chip. Do not enable this option with '.
-	'a Hifn cryptographic acceleration card, as this will take precedence and the '.
-	'Hifn card will not be used. Acceleration should be automatic for IPsec when '.
-	'using a cipher supported by the chip, such as AES-128. OpenVPN should be set '.
-	'for AES-128-CBC and have cryptodev enabled for hardware acceleration. If there '.
-	'is not a crypto chip in the system, this option will have no effect. To '.
-	'unload the selected module, set this option to "none" and then reboot.');
+))->setHelp('A cryptographic accelerator module will use hardware support to speed up some cryptographic '.
+	'functions on systems which have the chip. '.
+	'Loading the BSD Crypto Device module will allow access to acceleration devices using drivers '.
+	'built into the kernel, such as Hifn or ubsec chipsets. '.
+	'If the firewall does not contain a crypto chip, this option will have no effect. '.
+	'To unload the selected module, set this option to "none" and then reboot.');
 
 $section->addInput(new Form_Select(
 	'thermal_hardware',
@@ -493,6 +476,20 @@ $section->addInput(new Form_Select(
 	'"none" and then reboot.');
 
 $form->add($section);
+$pti = get_single_sysctl('vm.pmap.pti');
+if (strlen($pti) > 0) {
+	$section = new Form_Section('Kernel Page Table Isolation');
+	$section->addInput(new Form_Checkbox(
+		'pti_disabled',
+		'Kernel PTI',
+		'Forcefully disable the kernel PTI',
+		$pconfig['pti_disabled']
+	))->setHelp('Meltdown workaround. If disabled the kernel memory can be accessed by unprivileged users on affected CPUs. ' .
+		    'This option forces the workaround off, and requires a reboot to activate. %1$s%1$s' .
+		    'PTI is active by default only on affected CPUs, if PTI is disabled by default then this option will have no effect. %1$s' .
+		    'Current PTI status: %2$s', "<br/>", ($pti == "1") ? "Enabled" : "Disabled");
+	$form->add($section);
+}
 $section = new Form_Section('Schedules');
 
 $section->addInput(new Form_Checkbox(
@@ -531,107 +528,106 @@ $section->addInput(new Form_Checkbox(
 	'use_mfs_tmpvar',
 	'Use RAM Disks',
 	'Use memory file system for /tmp and /var',
-	($pconfig['use_mfs_tmpvar'] || $g['platform'] != $g['product_name'])
+	$pconfig['use_mfs_tmpvar']
 ))->setHelp('Set this to use /tmp and /var as RAM disks (memory file '.
 	'system disks) on a full install rather than use the hard disk. Setting this will '.
-	'cause the data in /tmp and /var to be lost, including log data. RRD '.
-	'and DHCP Leases will be retained. Changing this setting will cause the firewall to reboot after clicking "Save".');
+	'cause the data in /tmp and /var to be lost. RRD, '.
+	'DHCP leases and log directory will be retained. Changing this setting will cause the firewall to reboot after clicking "Save".');
 
-$section->addInput(new Form_Input(
+$group = new Form_Group('RAM Disk Size');
+
+$group->add(new Form_Input(
 	'use_mfs_tmp_size',
 	'/tmp RAM Disk Size',
 	'number',
 	$pconfig['use_mfs_tmp_size'],
 	['placeholder' => 40]
-))->setHelp('Set the size, in MiB, for the /tmp '.
-	'RAM disk. Leave blank for 40MiB. Do not set lower than 40.');
+))->setHelp('/tmp RAM Disk<br />Do not set lower than 40.');
 
-$section->addInput(new Form_Input(
+$group->add(new Form_Input(
 	'use_mfs_var_size',
 	'/var RAM Disk Size',
 	'number',
 	$pconfig['use_mfs_var_size'],
 	['placeholder' => 60]
-))->setHelp('Set the size, in MiB, for the /var '.
-	'RAM disk. Leave blank for 60MiB. Do not set lower than 60.');
+))->setHelp('/var RAM Disk<br />Do not set lower than 60.');
 
-$section->addInput(new Form_Input(
+$group->setHelp('Sets the size, in MiB, for the RAM disks.');
+
+$section->add($group);
+
+$group = new Form_Group('Periodic RAM Disk Data Backups');
+
+$group->add(new Form_Input(
 	'rrdbackup',
 	'Periodic RRD Backup',
 	'number',
 	$config['system']['rrdbackup'],
-	['min' => 0, 'max' => 24, 'placeholder' => 'Period between 1 and 24 hours']
-))->setHelp('This will periodically backup the RRD data so '.
-	'it can be restored automatically on the next boot. Keep in mind that the more '.
-	'frequent the backup, the more writes will happen to the media.');
+	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
+))->setHelp('RRD Data');
 
-$section->addInput(new Form_Input(
+$group->add(new Form_Input(
 	'dhcpbackup',
 	'Periodic DHCP Leases Backup',
 	'number',
 	$config['system']['dhcpbackup'],
-	['min' => 0, 'max' => 24, 'placeholder' => 'Period between 1 and 24 hours']
-))->setHelp('This will periodically backup the DHCP leases so '.
-	'it can be restored automatically on the next boot. Keep in mind that the more '.
+	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
+))->setHelp('DHCP Leases');
+
+$group->add(new Form_Input(
+	'logsbackup',
+	'Periodic Logs Backup',
+	'number',
+	$config['system']['logsbackup'],
+	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
+))->setHelp('Log Directory');
+
+$group->setHelp('Sets the interval, in hours, to periodically backup these portions of RAM disk data so '.
+	'they can be restored automatically on the next boot. Keep in mind that the more '.
 	'frequent the backup, the more writes will happen to the media.');
+
+$section->add($group);
 
 $form->add($section);
 
-if ($g['platform'] == "pfSense") {
-	$section = new Form_Section('Hardware Settings');
+$section = new Form_Section('Hardware Settings');
 
-	$opts = array(0.5,  1, 2,  3,  4,  5,  7.5,  10,  15,  20,  30,  60);
-	$vals = array(  6, 12, 24, 36, 48, 60,  90, 120, 180, 240, 241, 242);
+$opts = array(0.5,  1, 2,  3,  4,  5,  7.5,  10,  15,  20,  30,  60);
+$vals = array(  6, 12, 24, 36, 48, 60,  90, 120, 180, 240, 241, 242);
 
-	$section->addInput(new Form_Select(
-		'harddiskstandby',
-		'Hard disk standby time',
-		$pconfig['harddiskstandby'],
-		['' => gettext("Always on")] + array_combine($opts, $vals)
-	))->setHelp("Puts the hard disk into standby mode when the selected number of minutes has elapsed since the last access." . "<br />" .
-				"<strong> Do not set this for CF cards.</strong>");
+$section->addInput(new Form_Select(
+	'harddiskstandby',
+	'Hard disk standby time',
+	$pconfig['harddiskstandby'],
+	['' => gettext("Always on")] + array_combine($opts, $vals)
+))->setHelp('Puts the hard disk into standby mode when the selected number of minutes has elapsed since the last access.%1$s' .
+			'%2$sDo not set this for CF cards.%3$s', '<br />', '<strong>', '</strong>');
 
-	$form->add($section);
-}
+$form->add($section);
 
 $section = new Form_Section('Installation Feedback');
 
 $section->addInput(new Form_Checkbox(
-	'do_not_send_host_uuid',
-	'Host UUID',
-	'Do NOT send HOST UUID with user agent',
-	$pconfig['do_not_send_host_uuid']
-))->setHelp('Enable this option to not send HOST UUID to pfSense as part of User-Agent header.');
+	'do_not_send_uniqueid',
+	'Netgate Device ID',
+	'Do NOT send Netgate Device ID with user agent',
+	$pconfig['do_not_send_uniqueid']
+))->setHelp('Enable this option to not send Netgate Device ID to pfSense as part of User-Agent header.');
 
 $form->add($section);
 
 print $form;
 
-$ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This will cause the firewall\nto reboot immediately after the new setting is saved.\n\nPlease confirm.');?>
+$ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This requires the firewall\nto reboot.\n\nReboot now ?');
+$use_mfs_tmpvar_changed = (($use_mfs_tmpvar_before !== $use_mfs_tmpvar_after) && !$input_errors);
+?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	// Record the state of the Use Ramdisk checkbox on page load
-	use_ramdisk = $('#use_mfs_tmpvar').prop('checked');
-
-	$('form').submit(function(event) {
-		// Has the Use ramdisk checkbox changed state?
-		if ($('#use_mfs_tmpvar').prop('checked') != use_ramdisk) {
-			if (confirm("<?=$ramdisk_msg?>")) {
-				$('form').append('<input type="hidden" name="doreboot" id="doreboot" value="yes"/>');
-			} else {
-				event.preventDefault();
-			}
-		}
-	});
-
-    drb = "<?=$pconfig['doreboot']?>";
-
-	if (drb == "yes") {
-		$('form').append("<input type=\"hidden\" name=\"override\" value=\"yes\" />");
-		$('form').get(0).setAttribute('action', 'diag_reboot.php');
-		$(form).submit();
+	// Has the Use ramdisk checkbox changed state?
+	if (<?=(int)$use_mfs_tmpvar_changed?> && confirm("<?=$ramdisk_msg?>")) {
+		postSubmit({override : 'yes'}, 'diag_reboot.php')
 	}
 
 	// source track timeout field is disabled if sticky connections not enabled

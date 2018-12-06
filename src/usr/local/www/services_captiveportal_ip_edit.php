@@ -1,66 +1,33 @@
 <?php
 /*
-	services_captiveportal_ip_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2004 Dinesh Nair <dinesh@alphaque.com>
+ * services_captiveportal_ip_edit.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editallowedips
-##|*NAME=Services: Captive portal: Edit Allowed IPs
-##|*DESCR=Allow access to the 'Services: Captive portal: Edit Allowed IPs' page.
+##|*NAME=Services: Captive Portal: Edit Allowed IPs
+##|*DESCR=Allow access to the 'Services: Captive Portal: Edit Allowed IPs' page.
 ##|*MATCH=services_captiveportal_ip_edit.php*
 ##|-PRIV
 
@@ -80,36 +47,21 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower($cpzone);
+$cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'allowedip'));
+$a_cp = &$config['captiveportal'];
+$a_allowedips = &$config['captiveportal'][$cpzone]['allowedip'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed IP Addresses"), gettext("Edit"));
+$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_ip.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
-
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
-
-if (!is_array($config['captiveportal'][$cpzone]['allowedip'])) {
-	$config['captiveportal'][$cpzone]['allowedip'] = array();
-}
-$a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_allowedips[$id]) {
 	$pconfig['ip'] = $a_allowedips[$id]['ip'];
@@ -120,7 +72,7 @@ if (isset($id) && $a_allowedips[$id]) {
 	$pconfig['descr'] = $a_allowedips[$id]['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -160,7 +112,7 @@ if ($_POST) {
 		}
 
 		if ($ipent['ip'] == $_POST['ip']) {
-			$input_errors[] = sprintf("[%s] %s.", $_POST['ip'], gettext("already allowed")) ;
+			$input_errors[] = sprintf(gettext('[%s] already allowed.'), $_POST['ip']);
 			break ;
 		}
 	}
@@ -200,25 +152,28 @@ if ($_POST) {
 		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
 			$rules = "";
 			$cpzoneid = $a_cp[$cpzone]['zoneid'];
-			unset($ipfw);
+
+			unset($rule);
 			if (isset($oldip) && isset($oldmask)) {
-				$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 3, $oldip);
-				$rules .= "table 3 delete {$oldip}/{$oldmask}\n";
-				$rules .= "table 4 delete {$oldip}/{$oldmask}\n";
-				if (is_array($ipfw)) {
-					$rules .= "pipe delete {$ipfw['dnpipe']}\n";
-					$rules .= "pipe delete " . ($ipfw['dnpipe']+1 . "\n");
+				$rule = pfSense_ipfw_table_lookup("{$cpzone}_allowed_up", "{$oldip}/{$oldmask}");
+
+				$rules .= "table {$cpzone}_allowed_up delete {$oldip}/{$oldmask}\n";
+				$rules .= "table {$cpzone}_allowed_down delete {$oldip}/{$oldmask}\n";
+
+				if (is_array($rule) && !empty($rule['pipe'])) {
+					$rules .= "pipe delete {$rule['pipe']}\n";
+					$rules .= "pipe delete " . ($rule['pipe']+1 . "\n");
 				}
 			}
 
 			$rules .= captiveportal_allowedip_configure_entry($ip);
-			if (is_array($ipfw)) {
-				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
+			if (is_array($rule) && !empty($rule['pipe'])) {
+				captiveportal_free_dn_ruleno($rule['pipe']);
 			}
 
 			$uniqid = uniqid("{$cpzone}_allowed");
 			@file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-			mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		}
 
@@ -250,9 +205,9 @@ $section = new Form_Section('Edit Captive Portal IP Rule');
 
 $section->addInput(new Form_IpAddress(
 	'ip',
-	'IP Address',
+	'*IP Address',
 	$pconfig['ip']
-))->addMask(sn, $pconfig['sn'], 32);
+))->addMask('sn', $pconfig['sn'], 32);
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -263,7 +218,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'dir',
-	'Direction',
+	'*Direction',
 	strtolower($pconfig['dir']),
 	build_dir_list()
 ))->setHelp('Use "From" to always allow access to an address through the captive portal (without authentication). ' .

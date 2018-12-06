@@ -1,56 +1,22 @@
 <?php
 /*
-	firewall_aliases_import.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_aliases_import.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -61,41 +27,40 @@
 ##|-PRIV
 
 
-// Keywords not allowed in names
-$reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
+// Keywords not allowed in names, see globals.inc for list.
+global $pf_reserved_keywords;
 
 require_once("guiconfig.inc");
 require_once("util.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
-
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 
-// Add all Load balance names to reserved_keywords
+// Add all Load balance names to pf_reserved_keywords
 if (is_array($config['load_balancer']['lbpool'])) {
 	foreach ($config['load_balancer']['lbpool'] as $lbpool) {
-		$reserved_keywords[] = $lbpool['name'];
+		$pf_reserved_keywords[] = $lbpool['name'];
 	}
 }
 
-$reserved_ifs = get_configured_interface_list(false, true);
-$reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
+$reserved_ifs = get_configured_interface_list(true);
+$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 
 $tab = $_REQUEST['tab'];
 if (empty($tab)) {
 	$tab = 'ip';
 }
 
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
+$pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
+$pglinks = array("", "firewall_aliases.php?tab=" . $tab, "@self");
+
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
-if ($_POST['aliasimport'] != "") {
+if ($_POST) {
 	$reqdfields = explode(" ", "name aliasimport");
-	$reqdfieldsn = array(gettext("Name"), gettext("Aliases"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Aliases to import"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -110,7 +75,7 @@ if ($_POST['aliasimport'] != "") {
 
 
 	/* Check for reserved keyword names */
-	foreach ($reserved_keywords as $rk) {
+	foreach ($pf_reserved_keywords as $rk) {
 		if ($rk == $_POST['name']) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an alias name: %s"), $rk);
 		}
@@ -121,6 +86,15 @@ if ($_POST['aliasimport'] != "") {
 		if ($interface['descr'] == $_POST['name']) {
 			$input_errors[] = gettext("An interface description with this name already exists.");
 			break;
+		}
+	}
+
+	/* Is the description already used as an interface group name? */
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
+			if ($ifgroupentry['ifname'] == $_POST['name']) {
+				$input_errors[] = gettext("Sorry, an interface group with this name already exists.");
+			}
 		}
 	}
 
@@ -145,7 +119,7 @@ if ($_POST['aliasimport'] != "") {
 					if ($tab == "port") {
 						// Port alias
 						if (!empty($impip)) {
-							if (is_port($impip) || is_portrange($impip)) {
+							if (is_port_or_range($impip)) {
 								$imported_ips[] = $impip;
 								$imported_descs[] = $impdesc;
 							} else {
@@ -207,7 +181,7 @@ if ($_POST['aliasimport'] != "") {
 		// Sort list
 		$a_aliases = msort($a_aliases, "name");
 
-		if (write_config()) {
+		if (write_config(gettext("Imported a firewall alias."))) {
 			mark_subsystem_dirty('aliases');
 		}
 
@@ -239,25 +213,43 @@ if ($tab == "port") {
 	$sectiontext = gettext('Port Alias Details');
 	$helptext = gettext('Paste in the ports to import separated by a carriage return. ' .
 		'The list may contain port numbers, port ranges, blank lines (ignored) and ' .
-		'an optional description after each port. e.g.:</span>' .
-		'<ul><li>22</li><li>1234:1250</li><li>443 HTTPS port</li><li>4000:4099 Description of a port range</li>' .
-		'</ul><span class="help-block">');
+		'an optional description after each port. e.g.:') .
+		'</span><ul><li>' .
+		'22' .
+		'</li><li>' .
+		'1234:1250' .
+		'</li><li>' .
+		gettext('443 HTTPS port') .
+		'</li><li>' .
+		gettext('4000:4099 Description of a port range') .
+		'</li></ul><span class="help-block">';
 } else {
 	$sectiontext = gettext('IP Alias Details');
 	$helptext = gettext('Paste in the aliases to ' .
 		'import separated by a carriage return. Common examples are lists of IPs, ' .
 		'networks, blacklists, etc. The list may contain IP addresses, with or without ' .
 		'CIDR prefix, IP ranges, blank lines (ignored) and an optional description after ' .
-		'each IP. e.g.:</span><ul><li>172.16.1.2</li><li>172.16.0.0/24</li><li>10.11.12.100-' .
-		'10.11.12.200</li><li>192.168.1.254 Home router</li><li>10.20.0.0/16 Office ' .
-		'network</li><li>10.40.1.10-10.40.1.19 Managed switches</li></ul><span class="help-block">');
+		'each IP. e.g.:') .
+		'</span><ul><li>' .
+		'172.16.1.2' .
+		'</li><li>' .
+		'172.16.0.0/24' .
+		'</li><li>' .
+		'10.11.12.100-10.11.12.200' .
+		'</li><li>' .
+		gettext('192.168.1.254 Home router') .
+		'</li><li>' .
+		gettext('10.20.0.0/16 Office network') .
+		'</li><li>' .
+		gettext('10.40.1.10-10.40.1.19 Managed switches') .
+		'</li></ul><span class="help-block">';
 }
 
 $section = new Form_Section($sectiontext);
 
 $section->addInput(new Form_Input(
 	'name',
-	'Alias Name',
+	'*Alias Name',
 	'text',
 	$_POST['name']
 ))->setPattern('[a-zA-Z0-9_]+')->setHelp('The name of the alias may only consist '.
@@ -272,7 +264,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Textarea(
 	'aliasimport',
-	'Aliases to import',
+	'*Aliases to import',
 	$_POST["aliasimport"]
 ))->setHelp($helptext);
 

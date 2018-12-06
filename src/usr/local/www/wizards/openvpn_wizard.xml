@@ -2,32 +2,24 @@
 <pfsensewizard>
 <copyright>
 /*
-	part of pfSense (https://www.pfsense.org/)
-
-	Copyright (C) 2010 Ermal Luçi
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
+ * openvpn_wizard.xml
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 </copyright>
 <totalsteps>12</totalsteps>
 <step>
@@ -66,6 +58,7 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitbeforesave>step1_stepsubmitbeforesave();</stepsubmitbeforesave>
 	<stepsubmitphpaction>step1_submitphpaction();</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
 </step>
@@ -128,7 +121,7 @@
 			<displayname>Hostname or IP address</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->ip</bindstofield>
-			<description>Address of the LDAP server.</description>
+			<description>Address of the LDAP server. When using SSL or STARTTLS, this hostname must match the LDAP server certificate.</description>
 		</field>
 		<field>
 			<name>port</name>
@@ -136,7 +129,7 @@
 			<type>input</type>
 			<size>8</size>
 			<bindstofield>ovpnserver->step2->port</bindstofield>
-			<description>LDAP Server port, leave blank for the default (389 for TCP, 636 for SSL).</description>
+			<description>LDAP Server port, leave blank for the default (389 for TCP or STARTTLS, 636 for SSL).</description>
 		</field>
 		<field>
 			<name>transport</name>
@@ -146,14 +139,50 @@
 			<options>
 				<option>
 					<name>TCP - Standard</name>
-					<value>tcp</value>
+					<value>TCP - Standard</value>
+				</option>
+				<option>
+					<name>TCP - STARTTLS</name>
+					<value>TCP - STARTTLS</value>
 				</option>
 				<option>
 					<name>SSL - Encrypted</name>
-					<value>ssl</value>
+					<value>SSL - Encrypted</value>
 				</option>
 			</options>
-			<description>&lt;br/&gt;The protocol used by the LDAP server. It can either be standard TCP or SSL encrypted.</description>
+			<description>&lt;br/&gt;The transport used by the LDAP server. It can either be standard TCP or SSL encrypted.</description>
+		</field>
+		<field>
+			<type>certca_selection</type>
+			<name>ldap_caref</name>
+			<displayname>Peer Certificate Authority</displayname>
+			<bindstofield>ovpnserver->step2->ldap_caref</bindstofield>
+			<description>&lt;br/&gt;The Certificate Authority for the LDAP server certificate. Used for SSL and STARTTLS.</description>
+			<add_to_certca_selection>global</add_to_certca_selection>
+		</field>
+		<field>
+			<name>ldap_protver</name>
+			<displayname>Protocol Version</displayname>
+			<type>select</type>
+			<options>
+				<option>
+					<name>3</name>
+					<value>3</value>
+				</option>
+				<option>
+					<name>2</name>
+					<value>2</value>
+				</option>
+			</options>
+			<bindstofield>ovpnserver->step2->ldap_protver</bindstofield>
+		</field>
+		<field>
+			<name>ldap_timeout</name>
+			<displayname>Server Timeout</displayname>
+			<type>input</type>
+			<size>40</size>
+			<value>25</value>
+			<bindstofield>ovpnserver->step2->ldap_timeout</bindstofield>
 		</field>
 		<field>
 			<name>scope</name>
@@ -161,12 +190,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>One Level</name>
-					<value>one</value>
-				</option>
-				<option>
 					<name>Entire Subtree</name>
 					<value>subtree</value>
+				</option>
+				<option>
+					<name>One Level</name>
+					<value>one</value>
 				</option>
 			</options>
 			<bindstofield>ovpnserver->step2->scope</bindstofield>
@@ -185,6 +214,21 @@
 			<size>40</size>
 			<bindstofield>ovpnserver->step2->authscope</bindstofield>
 			<description>Semi-Colon separated. This will be prepended to the search base dn above or full container path can be specified.&lt;br/&gt;EXAMPLE: CN=Users;DC=example&lt;br/&gt;EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com </description>
+		</field>
+		<field>
+			<name>ldap_extended_enabled</name>
+			<displayname>Enable Extended Query</displayname>
+			<type>checkbox</type>
+			<typehint>Enable extended query.</typehint>
+			<bindstofield>ovpnserver->step2->ldap_extended_enabled</bindstofield>
+		</field>
+		<field>
+			<name>ldap_extended_query</name>
+			<displayname>Extended Query</displayname>
+			<type>input</type>
+			<size>40</size>
+			<description>Example: memberOf=CN=Groupname,OU=MyGroups,DC=example,DC=com</description>
+			<bindstofield>ovpnserver->step2->ldap_extended_query</bindstofield>
 		</field>
 		<field>
 			<name>userdn</name>
@@ -207,6 +251,7 @@
 			<displayname>User Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->nameattr</bindstofield>
+			<value>cn</value>
 			<description>Typically "cn" (OpenLDAP, Novell eDirectory), "samAccountName" (Microsoft AD)</description>
 		</field>
 		<field>
@@ -214,6 +259,7 @@
 			<displayname>Group Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->groupattr</bindstofield>
+			<value>cn</value>
 			<description>Typically "cn" (OpenLDAP, Microsoft AD, and Novell eDirectory)</description>
 		</field>
 		<field>
@@ -221,7 +267,40 @@
 			<displayname>Member Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->memberattr</bindstofield>
+			<value>member</value>
 			<description>Typically "member" (OpenLDAP), "memberOf" (Microsoft AD), "uniqueMember" (Novell eDirectory)</description>
+		</field>
+		<field>
+			<name>ldap_rfc2307</name>
+			<displayname>RFC 2307 Groups</displayname>
+			<type>checkbox</type>
+			<typehint>LDAP Server uses RFC 2307 style group membership.</typehint>
+			<description>RFC 2307 style group membership has members listed on the group object rather than using groups listed on user object. Leave unchecked for Active Directory style group membership (RFC 2307bis).</description>
+			<bindstofield>ovpnserver->step2->ldap_rfc2307</bindstofield>
+		</field>
+		<field>
+			<name>ldap_attr_groupobj</name>
+			<displayname>Group Object Class</displayname>
+			<type>input</type>
+			<value>posixGroup</value>
+			<bindstofield>ovpnserver->step2->ldap_attr_groupobj</bindstofield>
+			<description>Object class used for groups in RFC2307 mode. Typically "posixGroup" or "group".</description>
+		</field>
+		<field>
+			<name>ldap_utf8</name>
+			<displayname>UTF8 Encode</displayname>
+			<type>checkbox</type>
+			<typehint>UTF8 encode LDAP parameters before sending them to the server.</typehint>
+			<description>Required to support international characters, but may not be supported by every LDAP server.</description>
+			<bindstofield>ovpnserver->step2->ldap_utf8</bindstofield>
+		</field>
+		<field>
+			<name>ldap_nostrip_at</name>
+			<displayname>Username Alterations</displayname>
+			<type>checkbox</type>
+			<typehint>Do not strip away parts of the username after the @ symbol.</typehint>
+			<description>e.g. user@host becomes user when unchecked.</description>
+			<bindstofield>ovpnserver->step2->ldap_nostrip_at</bindstofield>
 		</field>
 		<field>
 			<type>submit</type>
@@ -373,10 +452,6 @@
 			<bindstofield>ovpnserver->step6->keylength</bindstofield>
 			<options>
 				<option>
-					<name>512 bit</name>
-					<value>512</value>
-				</option>
-				<option>
 					<name>1024 bit</name>
 					<value>1024</value>
 				</option>
@@ -391,6 +466,10 @@
 				<option>
 					<name>4096 bit</name>
 					<value>4096</value>
+				</option>
+				<option>
+					<name>6144 bit</name>
+					<value>6144</value>
 				</option>
 				<option>
 					<name>7680 bit</name>
@@ -452,14 +531,6 @@
 			<bindstofield>ovpnserver->step6->organization</bindstofield>
 		</field>
 		<field>
-			<name>email</name>
-			<displayname>E-mail</displayname>
-			<description>E-mail address for the Certificate contact. Often the e-mail of the person generating the certificate.</description>
-			<type>input</type>
-			<size>30</size>
-			<bindstofield>ovpnserver->step6->email</bindstofield>
-		</field>
-		<field>
 			<name>Add new CA</name>
 			<type>submit</type>
 		</field>
@@ -518,26 +589,46 @@
 		<field>
 			<name>keylength</name>
 			<displayname>Key length</displayname>
-			<description>&lt;br/&gt;Size of the key which will be generated. The larger the key, the more security it offers, but larger keys are generally slower to use.</description>
+			<description>&lt;br/&gt;Size of the key which will be generated. The larger the key, the more security it offers, but larger keys take considerably more time to generate, and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. For more information see &lt;a href="https://keylength.com"&gt;keylength.com&lt;/a&gt;</description>
 			<type>select</type>
 			<value>2048</value>
 			<bindstofield>ovpnserver->step9->keylength</bindstofield>
 			<options>
 				<option>
-					<name>512 bits</name>
-					<value>512</value>
-				</option>
-				<option>
-					<name>1024 bits</name>
+					<name>1024 bit</name>
 					<value>1024</value>
 				</option>
 				<option>
-					<name>2048 bits</name>
+					<name>2048 bit</name>
 					<value>2048</value>
 				</option>
 				<option>
-					<name>4096 bits</name>
+					<name>3072 bit</name>
+					<value>3072</value>
+				</option>
+				<option>
+					<name>4096 bit</name>
 					<value>4096</value>
+				</option>
+				<option>
+					<name>6144 bit</name>
+					<value>6144</value>
+				</option>
+				<option>
+					<name>7680 bit</name>
+					<value>7680</value>
+				</option>
+				<option>
+					<name>8192 bit</name>
+					<value>8192</value>
+				</option>
+				<option>
+					<name>15360 bit</name>
+					<value>15360</value>
+				</option>
+				<option>
+					<name>16384 bit</name>
+					<value>16384</value>
 				</option>
 			</options>
 		</field>
@@ -583,14 +674,6 @@
 			<bindstofield>ovpnserver->step9->organization</bindstofield>
 		</field>
 		<field>
-			<name>email</name>
-			<displayname>E-mail</displayname>
-			<description>E-mail address for the Certificate contact. Often the e-mail of the person generating the certificate.</description>
-			<type>input</type>
-			<size>30</size>
-			<bindstofield>ovpnserver->step9->email</bindstofield>
-		</field>
-		<field>
 			<name>Create new Certificate</name>
 			<type>submit</type>
 		</field>
@@ -622,11 +705,27 @@
 			<bindstofield>ovpnserver->step10->protocol</bindstofield>
 			<options>
 				<option>
-					<name>UDP</name>
+					<name>UDP on IPv4 only</name>
+					<value>UDP4</value>
+				</option>
+				<option>
+					<name>UDP on IPv6 only</name>
+					<value>UDP6</value>
+				</option>
+				<option>
+					<name>TCP on IPv4 only</name>
+					<value>TCP4</value>
+				</option>
+				<option>
+					<name>TCP on IPv6 only</name>
+					<value>TCP6</value>
+				</option>
+				<option>
+					<name>UDP IPv4 and IPv6 on all interfaces (multihome)</name>
 					<value>UDP</value>
 				</option>
 				<option>
-					<name>TCP</name>
+					<name>TCP IPv4 and IPv6 on all interfaces (multihome)</name>
 					<value>TCP</value>
 				</option>
 			</options>
@@ -693,18 +792,42 @@
 					<value>2048</value>
 				</option>
 				<option>
+					<name>3072 bit</name>
+					<value>3072</value>
+				</option>
+				<option>
 					<name>4096 bit</name>
 					<value>4096</value>
 				</option>
+				<option>
+					<name>6144 bit</name>
+					<value>6144</value>
+				</option>
+				<option>
+					<name>7680 bit</name>
+					<value>7680</value>
+				</option>
+				<option>
+					<name>8192 bit</name>
+					<value>8192</value>
+				</option>
+				<option>
+					<name>15360 bit</name>
+					<value>15360</value>
+				</option>
+				<option>
+					<name>16384 bit</name>
+					<value>16384</value>
+				</option>
 			</options>
-			<description>&lt;br/&gt;Length of Diffie-Hellman (DH) key exchange parameters, used for establishing a secure communications channel. As with other such settings, the larger values are more secure, but may be slower in operation.</description>
+			<description>&lt;br/&gt;Length of Diffie-Hellman (DH) key exchange parameters, used for establishing a secure communications channel. The DH parameters are different from key sizes, but as with other such settings, the larger the key, the more security it offers, but larger keys take considerably more time to generate. As of 2016, 2048 bit is a common and typical selection.</description>
 		</field>
 		<field>
 			<name>crypto</name>
 			<type>select</type>
 			<displayname>Encryption Algorithm</displayname>
 			<bindstofield>ovpnserver->step10->crypto</bindstofield>
-			<value>AES-256-CBC</value>
+			<value>AES-128-CBC</value>
 			<options>
 				<option>
 					<name>dummy</name>
@@ -724,7 +847,7 @@
 					<value>dummy</value>
 				</option>
 			</options>
-			<value>SHA1</value>
+			<value>SHA256</value>
 			<description>&lt;br/&gt;The method used to authenticate traffic between endpoints. This setting must match on the client and server side, but is otherwise set however desired.</description>
 		</field>
 		<field>
@@ -750,7 +873,7 @@
 			<type>input</type>
 			<size>20</size>
 			<bindstofield>ovpnserver->step10->tunnelnet</bindstofield>
-			<description>This is the virtual network used for private communications between this server and client hosts expressed using CIDR notation (eg. 10.0.8.0/24). The first network address will be assigned to the server virtual interface. The remaining network addresses can optionally be assigned to connecting clients. (see Address Pool)</description>
+			<description>This is the virtual network used for private communications between this server and client hosts expressed using CIDR notation (eg. 10.0.8.0/24). The first network address will be assigned to the server virtual interface. The remaining network addresses will be assigned to connecting clients.</description>
 		</field>
 		<field>
 			<displayname>Redirect Gateway</displayname>
@@ -820,14 +943,6 @@
 			<value>on</value>
 			<description>Allow connected clients to retain their connections if their IP address changes.</description>
 			<bindstofield>ovpnserver->step10->dynip</bindstofield>
-		</field>
-		<field>
-			<displayname>Address Pool</displayname>
-			<name>addrpool</name>
-			<type>checkbox</type>
-			<value>on</value>
-			<description>Provide a virtual adapter IP address to clients (see Tunnel Network).</description>
-			<bindstofield>ovpnserver->step10->addrpool</bindstofield>
 		</field>
 		<field>
 			<displayname>Topology</displayname>

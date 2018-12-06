@@ -1,59 +1,26 @@
 <?php
 /*
-	firewall_schedule.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_schedule.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -74,18 +41,15 @@ require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"));
 
-if (!is_array($config['schedules']['schedule'])) {
-	$config['schedules']['schedule'] = array();
-}
-
+init_config_arr(array('schedules', 'schedule'));
 $a_schedules = &$config['schedules']['schedule'];
 
-if ($_GET['act'] == "del") {
-	if ($a_schedules[$_GET['id']]) {
+if ($_POST['act'] == "del") {
+	if ($a_schedules[$_POST['id']]) {
 		/* make sure rule is not being referenced by any nat or filter rules */
 		$is_schedule_referenced = false;
 		$referenced_by = false;
-		$schedule_name = $a_schedules[$_GET['id']]['name'];
+		$schedule_name = $a_schedules[$_POST['id']]['name'];
 
 		if (is_array($config['filter']['rule'])) {
 			foreach ($config['filter']['rule'] as $rule) {
@@ -101,8 +65,8 @@ if ($_GET['act'] == "del") {
 		if ($is_schedule_referenced == true) {
 			$savemsg = sprintf(gettext("Cannot delete schedule. Currently in use by %s."), $referenced_by);
 		} else {
-			unset($a_schedules[$_GET['id']]);
-			write_config();
+			unset($a_schedules[$_POST['id']]);
+			write_config(gettext("Firewall schedule deleted."));
 			header("Location: firewall_schedule.php");
 			exit;
 		}
@@ -242,7 +206,7 @@ foreach ($a_schedules as $schedule):
 			}
 
 			$timeFriendly = $starttime . "-" . $stoptime;
-			$description = $timerange['rangedescr'];
+			$description = htmlspecialchars($timerange['rangedescr']);
 
 			print(($first ? '':'<br />') . $dayFriendly . ' / ' . $timeFriendly . ' / ' . $description);
 		}
@@ -257,7 +221,7 @@ foreach ($a_schedules as $schedule):
 
 					<td>
 						<a class="fa fa-pencil" title="<?=gettext("Edit schedule"); ?>" href="firewall_schedule_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash" title="<?=gettext("Delete schedule")?>" href="firewall_schedule.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash" title="<?=gettext("Delete schedule")?>" href="firewall_schedule.php?act=del&amp;id=<?=$i?>" usepost></a>
 
 					</td>
 				</tr>

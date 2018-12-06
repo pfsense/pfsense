@@ -1,55 +1,23 @@
 <?php
 /*
-	notices.inc
-
-	part of pfSense (https://www.pfsense.org)
-	Copyright (C) 2005 Colin Smith (ethethlay@gmail.com)
-	Copyright (c) 2005-2016 Electric Sheep Fencing, LLC.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in
-	   the documentation and/or other materials provided with the
-	   distribution.
-
-	3. All advertising materials mentioning features or use of this software
-	   must display the following acknowledgment:
-	   "This product includes software developed by the pfSense Project
-	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
-
-	4. The names "pfSense" and "pfSense Project" must not be used to
-	   endorse or promote products derived from this software without
-	   prior written permission. For written permission, please contact
-	   coreteam@pfsense.org.
-
-	5. Products derived from this software may not be called "pfSense"
-	   nor may "pfSense" appear in their names without prior written
-	   permission of the Electric Sheep Fencing, LLC.
-
-	6. Redistributions of any form whatsoever must retain the following
-	   acknowledgment:
-
-	"This product includes software developed by the pfSense Project
-	for use in the pfSense software distribution (http://www.pfsense.org/).
-
-	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-	OF THE POSSIBILITY OF SUCH DAMAGE.
+ * notices.inc
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2005 Colin Smith (ethethlay@gmail.com)
+ * Copyright (c) 2005-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 require_once("globals.inc");
@@ -117,8 +85,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	led_normalize();
 	led_morse(1, 'sos');
 	if (!$local_only) {
-		notify_via_growl($notice);
-		notify_via_smtp($notice);
+		notify_all_remote($notice);
 	}
 	return $queuekey;
 }
@@ -232,61 +199,6 @@ function dump_xml_notices() {
 	return $xml;
 }
 
-/****f* notices/print_notices
- * NAME
- *   print_notices
- * INPUTS
- *	 $notices, $category
- * RESULT
- *   prints notices to the GUI
- ******/
-function print_notices($notices, $category = "all") {
-	foreach ($notices as $notice) {
-		if ($category != "all") {
-			if (in_array($notice['category'], $category)) {
-				$categories[] = $notice['category'];
-			}
-		} else {
-			$categories[] = $notice['category'];
-		}
-	}
-	$categories = array_unique($categories);
-	sort($categories);
-	foreach ($categories as $category) {
-		$toreturn .= "<ul><li>{$category}<ul>";
-		foreach ($notices as $notice) {
-			if (strtolower($notice['category']) == strtolower($category)) {
-				if ($notice['id'] != "") {
-					if ($notice['url'] != "") {
-						$toreturn .= "<li><a href={$notice['url']}>{$notice['id']}</a> - {$notice['notice']}</li>";
-					} else {
-						$toreturn .= "<li>{$notice['id']} - {$notice['notice']}</li>";
-					}
-				}
-			}
-		}
-		$toreturn .= "</ul></li></ul>";
-	}
-	return $toreturn;
-}
-
-/****f* notices/print_notice_box
- * NAME
- *   print_notice_box
- * INPUTS
- *	 $category
- * RESULT
- *   prints an info box to the GUI
- ******/
-function print_notice_box($category = "all") {
-	$notices = get_notices();
-	if (!$notices) {
-		return;
-	}
-	print_info_box(print_notices($notices, $category));
-	return;
-}
-
 /****f* notices/are_notices_pending
  * NAME
  *   are_notices_pending
@@ -301,6 +213,98 @@ function are_notices_pending($category = "all") {
 		return true;
 	}
 	return false;
+}
+
+function notices_sendqueue() {
+	global $g;
+	$nothing_done_count = 0;
+	$messagequeue = array();
+	$growlerrorcount = 0;
+	$growlskipped = 0;
+
+	while(true) {
+		$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
+		$nothing_done_count++;
+		$smptcount = 0;
+		$messages = array();
+		if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
+			$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
+			$messagequeue = $messages;
+			$messages['mails']['item'] = array(); // clear all items to be send
+			file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+			unset($messages);
+		}
+		// clear lock before trying to send messages, so new one's can be added
+		unlock($notifyqueue_lck);
+
+		if (is_array($messagequeue['mails']['item'])) {
+			$smtpmessage = "";
+			$growlqueue = array();
+			foreach($messagequeue['mails']['item'] as $mail) {
+				switch ($mail['type']) {
+					case 'mail':
+						$smptcount++;
+						$smtpmessage .= "\r\n" . date("G:i:s",$mail['time']) . " " . $mail['msg'];
+						break;
+					case 'growl':
+						$message = date("G:i:s",$mail['time']) . " " . $mail['msg'];
+						$nothing_done_count = 0;
+						$growlqueue[] = $message;
+						break;
+					default:
+						break;
+				}
+			}
+			if (!empty($smtpmessage)) {
+				$smtpmessageheader = sprintf(gettext("Notifications in this message: %s"), $smptcount);
+				$smtpmessageheader .= "\n" . str_repeat('=', strlen($smtpmessageheader)) . "\n";
+				$nothing_done_count = 0;
+				notify_via_smtp($smtpmessageheader . $smtpmessage, true);
+			}
+			if (count($growlqueue) > 0) {
+				$nothing_done_count = 0;
+				foreach($growlqueue as $message) {
+					if ($growlerrorcount < 3) {
+						$ret = notify_via_growl($message, true);
+						if (!empty($ret)) {
+							$growlerrorcount++;
+						}
+					} else {
+						$growlskipped++;
+					}
+				}
+			}
+		}
+		if ($nothing_done_count > 6) {
+			break;
+		} else {
+			sleep(10);
+		}
+	}
+	if ($growlskipped > 0) {
+		log_error("{$growlskipped} growl notifications were skipped due to to many errors: {$growlerrorcount}.");
+	}
+}
+
+function notify_via_queue_add($message, $type='mail') {
+	global $g;
+	$mail = array();
+	$mail['time'] = time();
+	$mail['type'] = $type;
+	$mail['msg'] = $message;
+	$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
+	$messages = array();
+	if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
+		$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
+	}
+	if(is_array($messages)) {
+		$messages['mails']['item'][] = $mail;
+		file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+	}
+	unset($messages);
+
+	mwexec_bg('/usr/local/bin/notify_monitor.php');
+	unlock($notifyqueue_lck);
 }
 
 /****f* notices/notify_via_smtp
@@ -330,18 +334,20 @@ function notify_via_smtp($message, $force = false) {
 	}
 
 	/* Store last message sent to avoid spamming */
-	$fd = fopen("/var/db/notices_lastmsg.txt", "w");
-	fwrite($fd, $message);
-	fclose($fd);
+	@file_put_contents("/var/db/notices_lastmsg.txt", $message);
+	if (!$force) {
+		notify_via_queue_add($message, 'mail');
+		$ret = true;
+	} else {
+		$ret = send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification", $force);
+	}
 
-	send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification", $force);
-	return;
+	return $ret;
 }
 
 function send_smtp_message($message, $subject = "(no subject)", $force = false) {
 	global $config, $g;
-	require_once("sasl.inc");
-	require_once("smtp.inc");
+	require_once("Mail.php");
 
 	if (isset($config['notifications']['smtp']['disable']) && !$force) {
 		return;
@@ -355,51 +361,71 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		return;
 	}
 
-	$smtp = new smtp_class;
-
-	$from = "pfsense@{$config['system']['hostname']}.{$config['system']['domain']}";
 	$to = $config['notifications']['smtp']['notifyemailaddress'];
 
-	$smtp->host_name = $config['notifications']['smtp']['ipaddress'];
-	$smtp->host_port = empty($config['notifications']['smtp']['port']) ? 25 : $config['notifications']['smtp']['port'];
+	if (empty($config['notifications']['smtp']['username']) ||
+	    empty($config['notifications']['smtp']['password'])) {
+		$auth = false;
+		$username = '';
+		$password = '';
+	} else {
+		$auth = isset($config['notifications']['smtp']['authentication_mechanism'])
+		    ? $config['notifications']['smtp']['authentication_mechanism']
+		    : 'PLAIN';
+		$username = $config['notifications']['smtp']['username'];
+		$password = $config['notifications']['smtp']['password'];
+	}
 
-	$smtp->direct_delivery = 0;
-	$smtp->ssl = (isset($config['notifications']['smtp']['ssl'])) ? 1 : 0;
-	$smtp->start_tls = (isset($config['notifications']['smtp']['tls'])) ? 1 : 0;
-	$smtp->debug = 0;
-	$smtp->html_debug = 0;
-	$smtp->localhost = $config['system']['hostname'] . "." . $config['system']['domain'];
+	$params = array(
+		'host' => (isset($config['notifications']['smtp']['ssl'])
+		    ? 'ssl://'
+		    : '')
+		    . $config['notifications']['smtp']['ipaddress'],
+		'port' => empty($config['notifications']['smtp']['port'])
+		    ? 25
+		    : $config['notifications']['smtp']['port'],
+		'auth' => $auth,
+		'username' => $username,
+		'password' => $password,
+		'localhost' => $config['system']['hostname'] . "." .
+		    $config['system']['domain'],
+		'timeout' => !empty($config['notifications']['smtp']['timeout'])
+		    ? $config['notifications']['smtp']['timeout']
+		    : 20,
+		'debug' => false,
+		'persist' => false
+	);
+
+	if ($config['notifications']['smtp']['sslvalidate'] == "disabled") {
+		$params['socket_options'] = array('ssl' => array('verify_peer_name' => false));
+	}
 
 	if ($config['notifications']['smtp']['fromaddress']) {
 		$from = $config['notifications']['smtp']['fromaddress'];
-	}
-
-	// Use SMTP Auth if fields are filled out
-	if ($config['notifications']['smtp']['username'] &&
-	    $config['notifications']['smtp']['password']) {
-		if (isset($config['notifications']['smtp']['authentication_mechanism'])) {
-			$smtp->authentication_mechanism = $config['notifications']['smtp']['authentication_mechanism'];
-		} else {
-			$smtp->authentication_mechanism = "PLAIN";
-		}
-		$smtp->user = $config['notifications']['smtp']['username'];
-		$smtp->password = $config['notifications']['smtp']['password'];
+	} else {
+		$from = "pfsense@{$config['system']['hostname']}.{$config['system']['domain']}";
 	}
 
 	$headers = array(
-		"From: {$from}",
-		"To: {$to}",
-		"Subject: {$subject}",
-		"Date: " . date("r")
+		"From"    => $from,
+		"To"      => $to,
+		"Subject" => $subject,
+		"Date"    => date("r")
 	);
 
-	if ($smtp->SendMessage($from, preg_split('/\s*,\s*/', trim($to)), $headers, $message)) {
-		log_error(sprintf(gettext("Message sent to %s OK"), $to));
-		return;
-	} else {
-		log_error(sprintf(gettext('Could not send the message to %1$s -- Error: %2$s'), $to, $smtp->error));
-		return(sprintf(gettext('Could not send the message to %1$s -- Error: %2$s'), $to, $smtp->error));
+	$smtp =& Mail::factory('smtp', $params);
+	$mail = $smtp->send($to, $headers, $message);
+
+	if (PEAR::isError($mail)) {
+		$err_msg = sprintf(gettext(
+		    'Could not send the message to %1$s -- Error: %2$s'),
+		    $to, $mail->getMessage());
+		log_error($err_msg);
+		return($err_msg);
 	}
+
+	log_error(sprintf(gettext("Message sent to %s OK"), $to));
+	return;
 }
 
 /****f* notices/notify_via_growl
@@ -411,10 +437,15 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
  *   returns true if message was sent
  ******/
 function notify_via_growl($message, $force=false) {
-	require_once("growl.class");
+	require_once("Net/Growl/Autoload.php");
+
 	global $config, $g;
 
 	if (isset($config['notifications']['growl']['disable']) && !$force) {
+		return;
+	}
+
+	if (empty($config['notifications']['growl']['ipaddress'])) {
 		return;
 	}
 
@@ -425,27 +456,48 @@ function notify_via_growl($message, $force=false) {
 			return;
 		}
 	}
+	/* Store last message sent to avoid spamming */
+	@file_put_contents("/var/db/growlnotices_lastmsg.txt", $message);
 
-	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
-	$growl_ip = $config['notifications']['growl']['ipaddress'];
-	$growl_password = $config['notifications']['growl']['password'];
-	$growl_name = $config['notifications']['growl']['name'];
-	$growl_notification = $config['notifications']['growl']['notification_name'];
-
-	if (!empty($growl_ip)) {
-		if (is_ipaddr($growl_ip) || dns_check_record($growl_ip, A) || dns_check_record($growl_ip, AAAA)) {
-			$growl = new Growl($growl_ip, $growl_password, $growl_name);
-			$growl->notify("{$growl_notification}", gettext(sprintf("%s (%s) - Notification", $g['product_name'], $hostname)), "{$message}");
-		} else {
-			// file_notice to local only to prevent file_notice from calling back to growl in a loop
-			file_notice("growl", gettext("Growl IP Address is invalid. Check the setting in System Advanced Notifications."), "General", "", 1, true);
-		}
+	if (!$force) {
+		notify_via_queue_add($message, 'growl');
+		return;
 	}
 
-	/* Store last message sent to avoid spamming */
-	$fd = fopen("/var/db/growlnotices_lastmsg.txt", "w");
-	fwrite($fd, $message);
-	fclose($fd);
+	$ip = $config['notifications']['growl']['ipaddress'];
+
+	if (!is_ipaddr($ip) && !(dns_check_record($ip, A) || dns_check_record($ip, AAAA))) {
+		$err_msg = gettext(
+		    "Growl IP Address is invalid. Check the setting in System Advanced Notifications.");
+		log_error($err_msg);
+		return($err_msg);
+	}
+
+	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
+	$password = $config['notifications']['growl']['password'];
+	$name = $config['notifications']['growl']['name'];
+	$notification = $config['notifications']['growl']['notification_name'];
+
+	$options  = array(
+		'host' => $ip,
+		'protocol' => 'gntp',
+		'timeout' => 20
+	);
+
+	try {
+		$growl = Net_Growl::singleton($name, null, $password, $options);
+		//$name = 'GROWL_NOTIFY_STATUS';
+		$title = sprintf(gettext('%1$s (%2$s) - Notification'), $g['product_name'], $hostname);
+		$growl->publish($name, $title, $message);
+	} catch (Net_Growl_Exception $e) {
+		$err_msg = sprintf(gettext(
+		    'Could not send Growl notification to %1$s -- Error: %2$s'),
+		    $ip, $e->getMessage());
+		log_error($err_msg);
+		return($err_msg);
+	}
+
+	return;
 }
 
 /****f* notices/register_via_growl
@@ -457,23 +509,50 @@ function notify_via_growl($message, $force=false) {
  *   none
  ******/
 function register_via_growl() {
-	require_once("growl.class");
-	global $config;
-	$growl_ip = $config['notifications']['growl']['ipaddress'];
-	$growl_password = $config['notifications']['growl']['password'];
-	$growl_name = $config['notifications']['growl']['name'];
-	$growl_notification = $config['notifications']['growl']['notification_name'];
+	require_once("Net/Growl/Autoload.php");
 
-	if (!empty($growl_ip)) {
-		if (is_ipaddr($growl_ip) || dns_check_record($growl_ip, A) || dns_check_record($growl_ip, AAAA)) {
-			$growl = new Growl($growl_ip, $growl_password, $growl_name);
-			$growl->addNotification($growl_notification);
-			$growl->register();
-		} else {
-			// file_notice to local only to prevent file_notice from calling back to growl in a loop
-			file_notice("growl", gettext("Growl IP Address is invalid. Check the setting in System Advanced Notifications."), "General", "", 1, true);
-		}
+	global $config;
+
+	if (empty($config['notifications']['growl']['ipaddress'])) {
+		return;
 	}
+
+	$ip = $config['notifications']['growl']['ipaddress'];
+
+	if (!is_ipaddr($ip) && !(dns_check_record($ip, A) || dns_check_record($ip, AAAA))) {
+		$err_msg = gettext(
+		    "Growl IP Address is invalid. Check the setting in System Advanced Notifications.");
+		log_error($err_msg);
+		return($err_msg);
+	}
+
+	$name = $config['notifications']['growl']['name'];
+	$password = $config['notifications']['growl']['password'];
+
+	$app = new Net_Growl_Application(
+		$name,
+		null,
+		$password
+	);
+
+	$options = array(
+		'host' => $ip,
+		'protocol' => 'gntp',
+		'timeout' => 20
+	);
+
+	try {
+		$growl = Net_Growl::singleton($app, null, null, $options);
+		$growl->register();
+	} catch (Net_Growl_Exception $e) {
+		$err_msg = sprintf(gettext(
+		    'Could not send register Growl on %1$s -- Error: %2$s'),
+		    $ip, $e->getMessage());
+		log_error($err_msg);
+		return($err_msg);
+	}
+
+	return;
 }
 
 /* Notify via remote methods only - not via GUI. */

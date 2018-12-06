@@ -1,64 +1,30 @@
 <?php
 /*
-	installed_packages.widget.php
-*/
-/*
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  Scott Dale
- *	Copyright (c)  2004-2005 T. Lechat <dev@lechat.org>
- *	Copyright (c)  Manuel Kasper <mk@neon1.net>
- *	Copyright (c)  Jonathan Watt <jwatt@jwatt.org>
+ * installed_packages.widget.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) Scott Dale
+ * Copyright (c) 2004-2005 T. Lechat <dev@lechat.org>
+ * Copyright (c) Jonathan Watt <jwatt@jwatt.org>
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally part of m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
-$nocsrf = true;
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
@@ -66,21 +32,20 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/installed_packages.inc");
 require_once("pkg-utils.inc");
 
-if ($_REQUEST && $_REQUEST['ajax']) {
-	$package_list = get_pkg_info();
+function get_pkg_stats() {
+	$package_list = get_pkg_info('all', true, true);
 	$installed_packages = array_filter($package_list, function($v) {
 		return (isset($v['installed']) || isset($v['broken']));
 	});
 
 	if (empty($installed_packages)) {
-		print_info_box(gettext("No packages installed.") . " " . gettext('Packages can be installed <a href="pkg_mgr.php" class="alert-link">here</a>.'), 'warning', false);
-		exit;
+		print_info_box(gettext("No packages installed."), 'warning', false);
+		return;
 	}
 
 	print("<thead>\n");
 	print(	"<tr>\n");
 	print(		"<th>" . gettext("Name")     . "</th>\n");
-	print(		"<th>" . gettext("Category") . "</th>\n");
 	print(		"<th>" . gettext("Version")  . "</th>\n");
 	print(		"<th>" . gettext("Actions")  . "</th>\n");
 	print(	"</tr>\n");
@@ -132,7 +97,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 		print("<tr>\n");
 		print(		'<td><span class="' . $txtcolor . '">' . $pkg['shortname'] . "</span></td>\n");
-		print(		"<td>" . implode(' ', $pkg['categories']) . "</td>\n");
 		print(		"<td>\n");
 		print(			'<i title="' . $status . '" class="fa fa-' . $statusicon . '"></i> ');
 
@@ -166,43 +130,15 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 	print("</tbody>\n");
 
-	exit;
 }
 ?>
 
 <div class="table-responsive">
 	<table id="pkgtbl" class="table table-striped table-hover table-condensed">
-		<tr><td><?=gettext("Retrieving package data")?>&nbsp;<i class="fa fa-cog fa-spin"></i></td></tr>
+		<?php get_pkg_stats(); ?>
 	</table>
 </div>
 
 <p class="text-center">
 	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php"><?=gettext("System")?> -&gt; <?=gettext("Packages")?></a>
 </p>
-
-<script type="text/javascript">
-//<![CDATA[
-
-	function get_pkg_stats() {
-		var ajaxRequest;
-
-		ajaxRequest = $.ajax({
-				url: "/widgets/widgets/installed_packages.widget.php",
-				type: "post",
-				data: { ajax: "ajax"}
-			});
-
-		// Deal with the results of the above ajax call
-		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#pkgtbl').html(response);
-
-			// and do it again
-			setTimeout(get_pkg_stats, 5000);
-		});
-	}
-
-	events.push(function(){
-		get_pkg_stats();
-	});
-//]]>
-</script>

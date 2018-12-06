@@ -1,88 +1,53 @@
 <?php
 /*
-	system_usermanager.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2008 Shrew Soft Inc.
- *	Copyright (c)  2005 Paul Taylor <paultaylor@winn-dixie.com>
+ * system_usermanager.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc.
+ * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager
 ##|*NAME=System: User Manager
 ##|*DESCR=Allow access to the 'System: User Manager' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=system_usermanager.php*
 ##|-PRIV
 
 require_once("certs.inc");
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
+
+$logging_level = LOG_WARNING;
+$logging_prefix = gettext("Local User Database");
 
 // start admin user code
-if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
-	$id = $_POST['userid'];
+if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
+	$id = $_REQUEST['userid'];
 }
 
-if (isset($_GET['userid']) && is_numericint($_GET['userid'])) {
-	$id = $_GET['userid'];
-}
-
-if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
-	$config['system']['user'] = array();
-}
-
+init_config_arr(array('system', 'user'));
 $a_user = &$config['system']['user'];
-$act = $_GET['act'];
+$act = $_REQUEST['act'];
 
 if (isset($_SERVER['HTTP_REFERER'])) {
 	$referer = $_SERVER['HTTP_REFERER'];
@@ -99,11 +64,13 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['webguifixedmenu'] = $a_user[$id]['webguifixedmenu'];
 	$pconfig['webguihostnamemenu'] = $a_user[$id]['webguihostnamemenu'];
 	$pconfig['dashboardcolumns'] = $a_user[$id]['dashboardcolumns'];
+	$pconfig['interfacessort'] = isset($a_user[$id]['interfacessort']);
 	$pconfig['dashboardavailablewidgetspanel'] = isset($a_user[$id]['dashboardavailablewidgetspanel']);
 	$pconfig['systemlogsfilterpanel'] = isset($a_user[$id]['systemlogsfilterpanel']);
 	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
 	$pconfig['statusmonitoringsettingspanel'] = isset($a_user[$id]['statusmonitoringsettingspanel']);
 	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
+	$pconfig['disablealiaspopupdetail'] = isset($a_user[$id]['disablealiaspopupdetail']);
 	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
 	$pconfig['groups'] = local_user_get_groups($a_user[$id]);
 	$pconfig['utype'] = $a_user[$id]['scope'];
@@ -114,24 +81,26 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['disabled'] = isset($a_user[$id]['disabled']);
 }
 
-if ($_GET['act'] == "deluser") {
+if ($_POST['act'] == "deluser") {
 
-	if (!isset($_GET['username']) || !isset($a_user[$id]) || ($_GET['username'] != $a_user[$id]['name'])) {
+	if (!isset($_POST['username']) || !isset($a_user[$id]) || ($_POST['username'] != $a_user[$id]['name'])) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
 
-	if ($_GET['username'] == $_SESSION['Username']) {
-		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_GET['username']);
+	if ($_POST['username'] == $_SESSION['Username']) {
+		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_POST['username']);
 	} else {
-		conf_mount_rw();
 		local_user_del($a_user[$id]);
-		conf_mount_ro();
 		$userdeleted = $a_user[$id]['name'];
 		unset($a_user[$id]);
-		write_config();
-		$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
+		/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
+		$a_user = array_values($a_user);
+		$savemsg = sprintf(gettext("Successfully deleted user: %s"), $userdeleted);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	}
+
 } else if ($act == "new") {
 	/*
 	 * set this value cause the text field is read only
@@ -140,14 +109,24 @@ if ($_GET['act'] == "deluser") {
 	 */
 	$pconfig['utype'] = "user";
 	$pconfig['lifetime'] = 3650;
+
+	$nonPrvCas = array();
+	if (is_array($config['ca']) && count($config['ca']) > 0) {
+		foreach ($config['ca'] as $ca) {
+			if (!$ca['prv']) {
+				continue;
+			}
+
+			$nonPrvCas[ $ca['refid'] ] = $ca['descr'];
+		}
+	}
+
 }
 
 if (isset($_POST['dellall'])) {
 
 	$del_users = $_POST['delete_check'];
-	$deleted_users = "";
-	$deleted_count = 0;
-	$comma = "";
+	$deleted_users = array();
 
 	if (!empty($del_users)) {
 		foreach ($del_users as $userid) {
@@ -155,12 +134,8 @@ if (isset($_POST['dellall'])) {
 				if ($a_user[$userid]['name'] == $_SESSION['Username']) {
 					$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $a_user[$userid]['name']);
 				} else {
-					conf_mount_rw();
-					$deleted_users = $deleted_users . $comma . $a_user[$userid]['name'];
-					$comma = ", ";
-					$deleted_count++;
+					$deleted_users[] = $a_user[$userid]['name'];
 					local_user_del($a_user[$userid]);
-					conf_mount_ro();
 					unset($a_user[$userid]);
 				}
 			} else {
@@ -168,13 +143,12 @@ if (isset($_POST['dellall'])) {
 			}
 		}
 
-		if ($deleted_count > 0) {
-			if ($deleted_count == 1) {
-				$savemsg = sprintf(gettext("User %s successfully deleted."), $deleted_users);
-			} else {
-				$savemsg = sprintf(gettext("Users %s successfully deleted."), $deleted_users);
-			}
+		if (count($deleted_users) > 0) {
+			$savemsg = sprintf(gettext("Successfully deleted %s: %s"), (count($deleted_users) == 1) ? gettext("user") : gettext("users"), implode(', ', $deleted_users));
+			/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
+			$a_user = array_values($a_user);
 			write_config($savemsg);
+			syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 		}
 	}
 }
@@ -189,18 +163,20 @@ if ($_POST['act'] == "delcert") {
 	$certdeleted = lookup_cert($a_user[$id]['cert'][$_POST['certid']]);
 	$certdeleted = $certdeleted['descr'];
 	unset($a_user[$id]['cert'][$_POST['certid']]);
-	write_config();
+	$savemsg = sprintf(gettext("Removed certificate association \"%s\" from user %s"), $certdeleted, $a_user[$id]['name']);
+	write_config($savemsg);
+	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	$_POST['act'] = "edit";
-	$savemsg = sprintf(gettext("Certificate %s association removed."), $certdeleted);
 }
 
 if ($_POST['act'] == "delprivid") {
 	$privdeleted = $priv_list[$a_user[$id]['priv'][$_POST['privid']]]['name'];
 	unset($a_user[$id]['priv'][$_POST['privid']]);
 	local_user_set($a_user[$id]);
-	write_config();
+	$savemsg = sprintf(gettext("Removed Privilege \"%s\" from user %s"), $privdeleted, $a_user[$id]['name']);
+	write_config($savemsg);
+	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 	$_POST['act'] = "edit";
-	$savemsg = sprintf(gettext("Privilege %s removed."), $privdeleted);
 }
 
 if ($_POST['save']) {
@@ -235,8 +211,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The username contains invalid characters.");
 	}
 
-	if (strlen($_POST['usernamefld']) > 16) {
-		$input_errors[] = gettext("The username is longer than 16 characters.");
+	if (strlen($_POST['usernamefld']) > 32) {
+		$input_errors[] = gettext("The username is longer than 32 characters.");
 	}
 
 	if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2'])) {
@@ -248,7 +224,7 @@ if ($_POST['save']) {
 	}
 
 	/* Check the POSTed groups to ensure they are valid and exist */
-	if(is_array($_POST['groups'])) {
+	if (is_array($_POST['groups'])) {
 		foreach ($_POST['groups'] as $newgroup) {
 			if (empty(getGroupEntry($newgroup))) {
 				$input_errors[] = gettext("One or more invalid groups was submitted.");
@@ -306,10 +282,13 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
 		}
 	}
+	validate_webguicss_field($input_errors, $_POST['webguicss']);
+	validate_webguifixedmenu_field($input_errors, $_POST['webguifixedmenu']);
+	validate_webguihostnamemenu_field($input_errors, $_POST['webguihostnamemenu']);
+	validate_dashboardcolumns_field($input_errors, $_POST['dashboardcolumns']);
 
 	if (!$input_errors) {
 
-		conf_mount_rw();
 		$userent = array();
 		if (isset($id) && $a_user[$id]) {
 			$userent = $a_user[$id];
@@ -369,6 +348,12 @@ if ($_POST['save']) {
 			unset($userent['webguihostnamemenu']);
 		}
 
+		if ($_POST['interfacessort']) {
+			$userent['interfacessort'] = true;
+		} else {
+			unset($userent['interfacessort']);
+		}
+
 		if ($_POST['dashboardavailablewidgetspanel']) {
 			$userent['dashboardavailablewidgetspanel'] = true;
 		} else {
@@ -399,6 +384,12 @@ if ($_POST['save']) {
 			unset($userent['webguileftcolumnhyper']);
 		}
 
+		if ($_POST['disablealiaspopupdetail']) {
+			$userent['disablealiaspopupdetail'] = true;
+		} else {
+			unset($userent['disablealiaspopupdetail']);
+		}
+
 		if ($_POST['pagenamefirst']) {
 			$userent['pagenamefirst'] = true;
 		} else {
@@ -415,15 +406,29 @@ if ($_POST['save']) {
 
 				$cert['descr'] = $_POST['name'];
 
-				$subject = cert_get_subject_array($ca['crt']);
+				$subject = cert_get_subject_hash($ca['crt']);
 
-				$dn = array(
-					'countryName' => $subject[0]['v'],
-					'stateOrProvinceName' => $subject[1]['v'],
-					'localityName' => $subject[2]['v'],
-					'organizationName' => $subject[3]['v'],
-					'emailAddress' => $subject[4]['v'],
-					'commonName' => $userent['name']);
+				$dn = array();
+				if (!empty($subject['C'])) {
+					$dn['countryName'] = $subject['C'];
+				}
+				if (!empty($subject['ST'])) {
+					$dn['stateOrProvinceName'] = $subject['ST'];
+				}
+				if (!empty($subject['L'])) {
+					$dn['localityName'] = $subject['L'];
+				}
+				if (!empty($subject['O'])) {
+					$dn['organizationName'] = $subject['O'];
+				}
+				if (!empty($subject['OU'])) {
+					$dn['organizationalUnit'] = $subject['OU'];
+				}
+				$dn['commonName'] = $userent['name'];
+				$cn_altname = cert_add_altname_type($userent['name']);
+				if (!empty($cn_altname)) {
+					$dn['subjectAltName'] = $cn_altname;
+				}
 
 				cert_create($cert, $_POST['caref'], $_POST['keylen'],
 					(int)$_POST['lifetime'], $dn);
@@ -449,18 +454,19 @@ if ($_POST['save']) {
 			$a_user[] = $userent;
 		}
 
-		/* Add user to groups so PHP can see the memberships properly or else the user's shell account does not get proper permissions (if applicable) See #5152. */
+		/* Sort it alphabetically */
+		usort($config['system']['user'], function($a, $b) {
+			return strcmp($a['name'], $b['name']);
+		});
+
 		local_user_set_groups($userent, $_POST['groups']);
 		local_user_set($userent);
-		/* Add user to groups again to ensure they are set everywhere, otherwise the user may not appear to be a member of the group. See commit:5372d26d9d25d751d16865ed9d46869d3b0ec5e1. */
-		local_user_set_groups($userent, $_POST['groups']);
-		write_config();
-
+		$savemsg = sprintf(gettext("Successfully %s user %s"), (isset($id)) ? gettext("edited") : gettext("created"), $userent['name']);
+		write_config($savemsg);
+		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 		if (is_dir("/etc/inc/privhooks")) {
 			run_plugins("/etc/inc/privhooks");
 		}
-
-		conf_mount_ro();
 
 		pfSenseHeader("system_usermanager.php");
 	}
@@ -482,6 +488,7 @@ function build_priv_table() {
 	$privhtml .=		'<tbody>';
 
 	$i = 0;
+	$user_has_root_priv = false;
 
 	foreach (get_user_privdesc($a_user[$id]) as $priv) {
 		$group = false;
@@ -492,7 +499,12 @@ function build_priv_table() {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['group']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
-		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
+		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']);
+		if (isset($priv['warn']) && ($priv['warn'] == 'standard-warning-root')) {
+			$privhtml .=			' ' . gettext('(admin privilege)');
+			$user_has_root_priv = true;
+		}
+		$privhtml .=			'</td>';
 		$privhtml .=			'<td>';
 		if (!$group) {
 			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a>';
@@ -504,6 +516,17 @@ function build_priv_table() {
 		if (!$group) {
 			$i++;
 		}
+	}
+
+	if ($user_has_root_priv) {
+		$privhtml .=		'<tr>';
+		$privhtml .=			'<td colspan="3">';
+		$privhtml .=				'<b>' . gettext('Security notice: This user effectively has administrator-level access') . '</b>';
+		$privhtml .=			'</td>';
+		$privhtml .=			'<td>';
+		$privhtml .=			'</td>';
+		$privhtml .=		'</tr>';
+
 	}
 
 	$privhtml .=		'</tbody>';
@@ -564,10 +587,13 @@ function build_cert_table() {
 }
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"));
+$pglinks = array("", "system_usermanager.php", "system_usermanager.php");
 
 if ($act == "new" || $act == "edit" || $input_errors) {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
+
 include("head.inc");
 
 if ($delete_errors) {
@@ -602,7 +628,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 						<th>&nbsp;</th>
 						<th><?=gettext("Username")?></th>
 						<th><?=gettext("Full name")?></th>
-						<th><?=gettext("Disabled")?></th>
+						<th><?=gettext("Status")?></th>
 						<th><?=gettext("Groups")?></th>
 						<th><?=gettext("Actions")?></th>
 					</tr>
@@ -627,12 +653,12 @@ foreach ($a_user as $i => $userent):
 							<?=htmlspecialchars($userent['name'])?>
 						</td>
 						<td><?=htmlspecialchars($userent['descr'])?></td>
-						<td><?php if (isset($userent['disabled'])) echo "*"?></td>
+						<td><i class="fa fa-<?= (isset($userent['disabled'])) ? 'ban" title="' . gettext("Disabled") . '"' : 'check" title="' . gettext("Enabled") . '"' ; ?>><span style='display: none'><?= (isset($userent['disabled'])) ? gettext("Disabled") : gettext("Enabled") ; ?></span></i></td>
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
 <?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username'])): ?>
-							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" usepost></a>
 <?php endif; ?>
 						</td>
 					</tr>
@@ -652,6 +678,7 @@ foreach ($a_user as $i => $userent):
 		<i class="fa fa-trash icon-embed-btn"></i>
 		<?=gettext("Delete")?>
 	</button>
+
 </nav>
 </form>
 <div class="infoblock">
@@ -662,7 +689,10 @@ foreach ($a_user as $i => $userent):
 		'<p>' . gettext("Accounts added here are also used for other parts of the system " .
 		"such as OpenVPN, IPsec, and Captive Portal.") . '</p>'
 	);
-?></div><?php
+
+?></div>
+
+<?php
 	include("foot.inc");
 	exit;
 }
@@ -727,7 +757,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$section->addInput($input = new Form_Input(
 		'usernamefld',
-		'Username',
+		'*Username',
 		'text',
 		$pconfig['usernamefld']
 	));
@@ -743,7 +773,13 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		$pconfig['usernamefld']
 	));
 
-	$group = new Form_Group('Password');
+	if ($act == "edit") {
+		$pwd_required = "";
+	} else {
+		$pwd_required = "*";
+	}
+
+	$group = new Form_Group($pwd_required . 'Password');
 	$group->add(new Form_Input(
 		'passwordfld1',
 		'Password',
@@ -774,7 +810,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'text',
 		$pconfig['expires']
 	))->setHelp('Leave blank if the account shouldn\'t expire, otherwise enter '.
-		'the expiration date');
+		'the expiration date as MM/DD/YYYY');
 
 	$section->addInput(new Form_Checkbox(
 		'customsettings',
@@ -797,7 +833,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	foreach ($config['system']['group'] as $Ggroup) {
 		if ($Ggroup['name'] != "all") {
-			if (($act == 'edit') && $Ggroup['member'] && in_array($pconfig['uid'], $Ggroup['member'])) {
+			if (($act == 'edit' || $input_errors) && $Ggroup['member'] && in_array($a_user[$id]['uid'], $Ggroup['member'])) {
 				$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list
 			} else {
 				$systemGroups[ $Ggroup['name'] ] = $Ggroup['name']; // Add it to the 'not a member of' list
@@ -844,12 +880,20 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	// ==== Button for adding user certificate ================================
 	if ($act == 'new') {
-		$section->addInput(new Form_Checkbox(
-			'showcert',
-			'Certificate',
-			'Click to create a user certificate',
-			false
-		));
+		if (count($nonPrvCas) > 0) {
+			$section->addInput(new Form_Checkbox(
+				'showcert',
+				'Certificate',
+				'Click to create a user certificate',
+				false
+			));
+		} else {
+			$section->addInput(new Form_StaticText(
+				'Certificate',
+				gettext('No private CAs found. A private CA is required to create a new user certificate. ' .
+					'Save the user first to import an external certificate.')
+			));
+		}
 	}
 
 	$form->add($section);
@@ -884,15 +928,6 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		$section = new Form_Section('Create Certificate for User');
 		$section->addClass('cert-options');
 
-		$nonPrvCas = array();
-		foreach($config['ca'] as $ca) {
-			if (!$ca['prv']) {
-				continue;
-			}
-
-			$nonPrvCas[ $ca['refid'] ] = $ca['descr'];
-		}
-
 		if (!empty($nonPrvCas)) {
 			$section->addInput(new Form_Input(
 				'name',
@@ -923,7 +958,10 @@ if ($act == "new" || $act == "edit" || $input_errors):
 					15360 => '15360 bits',
 					16384 => '16384 bits'
 				)
-			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. For more information see &lt;a href="https://keylength.com"&gt;keylength.com&lt;/a&gt;.');
+			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, ' .
+				'and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). ' .
+				'As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. ' .
+				'For more information see %1$s.', '<a href="https://keylength.com">keylength.com</a>');
 
 			$section->addInput(new Form_Input(
 				'lifetime',
@@ -977,11 +1015,13 @@ events.push(function() {
 		hideInput('webguifixedmenu', !adv);
 		hideInput('webguihostnamemenu', !adv);
 		hideInput('dashboardcolumns', !adv);
+		hideCheckbox('interfacessort', !adv);
 		hideCheckbox('dashboardavailablewidgetspanel', !adv);
 		hideCheckbox('systemlogsfilterpanel', !adv);
 		hideCheckbox('systemlogsmanagelogpanel', !adv);
 		hideCheckbox('statusmonitoringsettingspanel', !adv);
 		hideCheckbox('webguileftcolumnhyper', !adv);
+		hideCheckbox('disablealiaspopupdetail', !adv);
 		hideCheckbox('pagenamefirst', !adv);
 	}
 
@@ -1053,6 +1093,7 @@ events.push(function() {
 	$('form').submit(function() {
 		AllServers($('[name="groups[]"] option'), true);
 	});
+
 });
 //]]>
 </script>

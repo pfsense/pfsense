@@ -1,60 +1,27 @@
 <?php
 /*
-	firewall_nat_npt.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>
+ * firewall_nat_npt.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
+ * All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -69,25 +36,22 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['nat']['npt'])) {
-	$config['nat']['npt'] = array();
-}
-
+init_config_arr(array('nat', 'npt'));
 $a_npt = &$config['nat']['npt'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if (array_key_exists('order-store', $_POST)) {
-	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+if (array_key_exists('order-store', $_REQUEST)) {
+	if (is_array($_POST['rule']) && !empty($_REQUEST['rule'])) {
 		$a_npt_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id) {
+		foreach ($_REQUEST['rule'] as $id) {
 			$a_npt_new[] = $a_npt[$id];
 		}
 
 		$a_npt = $a_npt_new;
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: NPt - reordered NPt mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -96,25 +60,20 @@ if (array_key_exists('order-store', $_POST)) {
 	}
 }
 
-if ($_POST) {
-	$pconfig = $_POST;
+if ($_POST['apply']) {
+	$retval = 0;
+	$retval |= filter_configure();
 
-	if ($_POST['apply']) {
-		$retval = 0;
-		$retval |= filter_configure();
-		$savemsg = get_std_save_message($retval);
-
-		if ($retval == 0) {
-			clear_subsystem_dirty('natconf');
-			clear_subsystem_dirty('filter');
-		}
+	if ($retval == 0) {
+		clear_subsystem_dirty('natconf');
+		clear_subsystem_dirty('filter');
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_npt[$_GET['id']]) {
-		unset($a_npt[$_GET['id']]);
-		if (write_config()) {
+if ($_POST['act'] == "del") {
+	if ($a_npt[$_POST['id']]) {
+		unset($a_npt[$_POST['id']]);
+		if (write_config(gettext("Firewall: NAT: NPt - deleted NPt mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_npt.php");
@@ -129,7 +88,7 @@ if (isset($_POST['del_x'])) {
 			unset($a_npt[$rulei]);
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: NPt - deleted selected NPt mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -137,14 +96,16 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 
-} else if ($_GET['act'] == "toggle") {
-	if ($a_npt[$_GET['id']]) {
-		if (isset($a_npt[$_GET['id']]['disabled'])) {
-			unset($a_npt[$_GET['id']]['disabled']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_npt[$_POST['id']]) {
+		if (isset($a_npt[$_POST['id']]['disabled'])) {
+			unset($a_npt[$_POST['id']]['disabled']);
+			$wc_msg = gettext('Firewall: NAT: NPt - enabled NPt rule.');
 		} else {
-			$a_npt[$_GET['id']]['disabled'] = true;
+			$a_npt[$_POST['id']]['disabled'] = true;
+			$wc_msg = gettext('Firewall: NAT: NPt - disabled NPt rule.');
 		}
-		if (write_config(gettext("Firewall: NAT: NPt, enable/disable NAT rule"))) {
+		if (write_config($wc_msg)) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_npt.php");
@@ -153,10 +114,11 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"));
+$pglinks = array("", "firewall_nat.php", "@self");
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('natconf')) {
@@ -175,10 +137,10 @@ display_top_tabs($tab_array);
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('NPt Mappings')?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table class="table table-striped table-hover table-condensed">
+			<table id="ruletable" class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th><!-- checkbox --></th>
+						<th><input type="checkbox" id="selectAll" name="selectAll" /></th>
 						<th><!-- icon --></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("External Prefix")?></th>
@@ -208,7 +170,7 @@ display_top_tabs($tab_array);
 							<input type="checkbox" id="frc<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
 						<td>
-							<a href="?act=toggle&amp;id=<?=$i?>">
+							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
 								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 							</a>
 						</td>
@@ -241,7 +203,7 @@ display_top_tabs($tab_array);
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_npt_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_npt_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -276,6 +238,8 @@ endforeach;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
+<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
 	// Make rules draggable/sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
@@ -284,6 +248,7 @@ events.push(function() {
 			dirty = true;
 		}
 	});
+<?php endif; ?>
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
@@ -304,6 +269,13 @@ events.push(function() {
 		} else {
 			return undefined;
 		}
+	});
+
+	$('#selectAll').click(function() {
+		var checkedStatus = this.checked;
+		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
+		$(this).prop('checked', checkedStatus);
+		});
 	});
 });
 //]]>

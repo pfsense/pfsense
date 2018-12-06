@@ -1,15 +1,41 @@
 #!/usr/local/bin/php-cgi -f
-
 <?php
+/*
+ * pfSsh
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 require_once("globals.inc");
-echo "Starting the {$g['product_name']} developer shell";
+if ($argc < 2) {
+	echo "Starting the {$g['product_name']} developer shell";
+}
 require_once("functions.inc");
-echo ".";
+if ($argc < 2) {
+	echo ".";
+}
 require_once("config.inc");
-echo ".";
+if ($argc < 2) {
+	echo ".";
+}
 require_once("util.inc");
-echo ".";
+if ($argc < 2) {
+	echo ".";
+}
 
 $shell_cmds = array("alias", "alloc", "bg", "bind", "bindkey", "break",
 	 "breaksw", "builtins", "case", "cd", "chdir", "command", "complete", "continue", "default",
@@ -110,7 +136,7 @@ $show_help_text = <<<EOF
 	print_r(get_wireless_modes(\"ath0\"));
 
 	/* to enable SSH */
-	\$config['system']['enablesshd'] = true;
+	\$config['system']['ssh']['enable'] = "enabled";
 
 	/* change OPTX to the OPT interface name such as BACKHAUL */
 	\$config['interfaces']['optx']['wireless']['standard'] = "11a";
@@ -148,7 +174,9 @@ EOF;
 
 $fp = fopen('php://stdin', 'r');
 
-echo ".\n\n";
+if ($argc < 2) {
+	echo ".\n\n";
+}
 
 $pkg_interface='console';
 
@@ -250,7 +278,6 @@ while ($shell_active == true) {
 			fwrite($recording_fd, $playbackbuffer);
 			fclose($recording_fd);
 			$command = "";
-			conf_mount_ro();
 			echo "Recording stopped.\n";
 			$recording = false;
 		} else {
@@ -274,7 +301,6 @@ while ($shell_active == true) {
 			$command = "";
 		} else {
 			/* time to record */
-			conf_mount_rw();
 			safe_mkdir("/etc/phpshellsessions");
 			$recording_fn = basename($command_split[1]);
 			$recording_fd = fopen("/etc/phpshellsessions/{$recording_fn}","w");

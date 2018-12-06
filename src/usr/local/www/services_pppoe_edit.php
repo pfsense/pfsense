@@ -1,56 +1,22 @@
 <?php
 /*
-	services_pppoe_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * services_pppoe_edit.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -80,17 +46,11 @@ function vpn_pppoe_get_id() {
 	return $vpnid;
 }
 
-if (!is_array($config['pppoes']['pppoe'])) {
-	$config['pppoes']['pppoe'] = array();
-}
-
+init_config_arr(array('pppoes', 'pppoe'));
 $a_pppoes = &$config['pppoes']['pppoe'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && $a_pppoes[$id]) {
@@ -132,7 +92,7 @@ if (isset($id) && $a_pppoes[$id]) {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -165,7 +125,7 @@ if ($_POST) {
 			$input_errors[] = gettext("User Max Logins must be between 1 and 255");
 		}
 		if (!is_numericint($_POST['pppoe_subnet']) || $_POST['pppoe_subnet'] > 32) {
-			$input_errors[] = gettext("Subnet mask must be an interger between 0 and 32");
+			$input_errors[] = gettext("Subnet mask must be an integer between 0 and 32");
 		}
 
 		$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pppoe_subnet']);
@@ -312,15 +272,12 @@ function build_interface_list() {
 }
 
 $pgtitle = array(gettext("Services"), gettext("PPPoE Server"), gettext("Edit"));
+$pglinks = array("", "services_pppoe.php", "@self");
 $shortcut_section = "pppoes";
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-}
-
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
 }
 
 $form = new Form();
@@ -337,7 +294,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	build_interface_list()
 
@@ -345,35 +302,35 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'n_pppoe_units',
-	'Total User Count',
+	'*Total User Count',
 	$pconfig['n_pppoe_units'],
 	array_combine(range(1, 255, 1), range(1, 255, 1))
 ))->setHelp('The number of PPPoE users allowed to connect to this server simultaneously.');
 
 $section->addInput(new Form_Select(
 	'n_pppoe_maxlogin',
-	'User Max Logins',
+	'*User Max Logins',
 	$pconfig['n_pppoe_maxlogin'],
 	array_combine(range(1, 255, 1), range(1, 255, 1))
 ))->setHelp('The number of times a single user may be logged in at the same time.');
 
 $section->addInput(new Form_IpAddress(
 	'localip',
-	'Server Address',
+	'*Server Address',
 	$pconfig['localip']
-))->setHelp('Enter the IP address the PPPoE server should give to clients for use as their "gateway".' . '<br />' .
-			'Typically this is set to an unused IP just outside of the client range.'. '<br />' .
-			'NOTE: This should NOT be set to any IP address currently in use on this firewall.');
+))->setHelp('Enter the IP address the PPPoE server should give to clients for use as their "gateway".%1$s' .
+			'Typically this is set to an unused IP just outside of the client range.%1$s' .
+			'NOTE: This should NOT be set to any IP address currently in use on this firewall.', '<br />');
 
 $section->addInput(new Form_IpAddress(
 	'remoteip',
-	'Remote Address Range',
+	'*Remote Address Range',
 	$pconfig['remoteip']
 ))->setHelp('Specify the starting address for the client IP address subnet.');
 
 $section->addInput(new Form_Select(
 	'pppoe_subnet',
-	'Subnet mask',
+	'*Subnet mask',
 	$pconfig['pppoe_subnet'],
 	array_combine(range(0, 32, 1), range(0, 32, 1))
 ))->setHelp('Hint: 24 is 255.255.255.0');
@@ -622,6 +579,8 @@ events.push(function() {
 		disableInput('radius_nasip', hide);
 		disableInput('radius_acct_update', hide);
 		disableInput('radiussecenable', hide);
+		setRequired('radiusserver', !hide);
+		setRequired('radiussecret', !hide);
 		hide_radius2(hide);
 	}
 	// show/hide radius server 2 controls
@@ -631,6 +590,8 @@ events.push(function() {
 		disableInput('radiussecret2_confirm', hide);
 		disableInput('radiusserver2port', hide);
 		disableInput('radiusserver2acctport', hide);
+		setRequired('radiusserver2', !hide);
+		setRequired('radiussecret2', !hide);
 	}
 
 	// When the RADIUS checkbox is clicked . .

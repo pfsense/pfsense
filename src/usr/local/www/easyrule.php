@@ -1,57 +1,23 @@
 <?php
 /*
-	easyrule.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Originally Sponsored By Anathematic @ pfSense Forums
+ * easyrule.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Originally Sponsored By Anathematic @ pfSense Forums
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -61,7 +27,6 @@
 ##|*MATCH=easyrule.php*
 ##|-PRIV
 
-$pgtitle = gettext("Firewall: EasyRule");
 require_once("guiconfig.inc");
 require_once("easyrule.inc");
 require_once("filter.inc");
@@ -69,17 +34,23 @@ require_once("shaper.inc");
 
 $retval = 0;
 $message = "";
-$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
+$confirmed = isset($_POST['confirmed']) && $_POST['confirmed'] == 'true';
 
-if ($_GET && isset($_GET['action'])) {
-	switch ($_GET['action']) {
+/* $specialsrcdst must be a defined global for functions being called. */
+global $specialsrcdst;
+$specialsrcdst = explode(" ", "any pppoe l2tp openvpn");
+
+if ($_POST && $confirmed && isset($_POST['action'])) {
+	switch ($_POST['action']) {
 		case 'block':
 			/* Check that we have a valid host */
-			easyrule_parse_block($_GET['int'], $_GET['src'], $_GET['ipproto']);
+			$message = easyrule_parse_block($_POST['int'], $_POST['src'], $_POST['ipproto']);
 			break;
 		case 'pass':
-			easyrule_parse_pass($_GET['int'], $_GET['proto'], $_GET['src'], $_GET['dst'], $_GET['dstport'], $_GET['ipproto']);
+			$message = easyrule_parse_pass($_POST['int'], $_POST['proto'], $_POST['src'], $_POST['dst'], $_POST['dstport'], $_POST['ipproto']);
 			break;
+		default:
+			$message = gettext("Invalid action specified.");
 	}
 }
 
@@ -87,23 +58,62 @@ if (stristr($retval, "error") == true) {
 	$message = $retval;
 }
 
+$pgtitle = array(gettext("Firewall"), gettext("Easy Rule"));
 include("head.inc");
-?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td>
-<?php
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
+?>
+<form action="easyrule.php" method="post">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h2 class="panel-title">
+				<?=gettext("Confirmation Required to Add Easy Rule");?>
+			</h2>
+		</div>
+		<div class="panel-body">
+			<div class="content">
+<?php
+if (!$confirmed && !empty($_REQUEST['action'])) { ?>
+	<?php if ($_REQUEST['action'] == 'block'): ?>
+				<b><?=gettext("Rule Type")?>:</b> <?=htmlspecialchars(ucfirst(gettext($_REQUEST['action'])))?>
+				<br/><b><?=gettext("Interface")?>:</b> <?=htmlspecialchars(strtoupper($_REQUEST['int']))?>
+				<input type="hidden" name="int" value="<?=htmlspecialchars($_REQUEST['int'])?>" />
+				<br/><b><?= gettext("Source") ?>:</b> <?=htmlspecialchars($_REQUEST['src'])?>
+				<input type="hidden" name="src" value="<?=htmlspecialchars($_REQUEST['src'])?>" />
+				<br/><b><?=gettext("IP Protocol")?>:</b> <?=htmlspecialchars(ucfirst($_REQUEST['ipproto']))?>
+				<input type="hidden" name="ipproto" value="<?=htmlspecialchars($_REQUEST['ipproto'])?>" />
+	<?php elseif ($_REQUEST['action'] == 'pass'): ?>
+				<b><?=gettext("Rule Type")?>:</b> <?=htmlspecialchars(ucfirst(gettext($_REQUEST['action'])))?>
+				<br/><b><?=gettext("Interface")?>:</b> <?=htmlspecialchars(strtoupper($_REQUEST['int']))?>
+				<input type="hidden" name="int" value="<?=htmlspecialchars($_REQUEST['int'])?>" />
+				<br/><b><?=gettext("Protocol")?>:</b> <?=htmlspecialchars(strtoupper($_REQUEST['proto']))?>
+				<input type="hidden" name="proto" value="<?=htmlspecialchars($_REQUEST['proto'])?>" />
+				<br/><b><?=gettext("Source")?>:</b> <?=htmlspecialchars($_REQUEST['src'])?>
+				<input type="hidden" name="src" value="<?=htmlspecialchars($_REQUEST['src'])?>" />
+				<br/><b><?=gettext("Destination")?>:</b> <?=htmlspecialchars($_REQUEST['dst'])?>
+				<input type="hidden" name="dst" value="<?=htmlspecialchars($_REQUEST['dst'])?>" />
+				<br/><b><?=gettext("Destination Port")?>:</b> <?=htmlspecialchars($_REQUEST['dstport'])?>
+				<input type="hidden" name="dstport" value="<?=htmlspecialchars($_REQUEST['dstport'])?>" />
+				<br/><b><?=gettext("IP Protocol")?>:</b> <?=htmlspecialchars(ucfirst($_REQUEST['ipproto']))?>
+				<input type="hidden" name="ipproto" value="<?=htmlspecialchars($_REQUEST['ipproto'])?>" />
+	<?php	else:
+			$message = gettext("Invalid action specified.");
+		endif; ?>
+				<br/><br/>
+	<?php if (empty($message)): ?>
+				<input type="hidden" name="action" value="<?=htmlspecialchars($_REQUEST['action'])?>" />
+				<input type="hidden" name="confirmed" value="true" />
+				<button type="submit" class="btn btn-success" name="erconfirm" id="erconfirm" value="<?=gettext("Confirm")?>">
+					<i class="fa fa-check icon-embed-btn"></i>
+					<?=gettext("Confirm")?>
+				</button>
+	<?php endif;
+}
 
 if ($message) {
-?>
-<br />
-<?=gettext("Message"); ?>: <?=$message;?>
-<br />
-<?php
-} else {
+	print_info_box($message);
+} elseif (empty($_REQUEST['action'])) {
 	print_info_box(
 		gettext('This is the Easy Rule status page, mainly used to display errors when adding rules.') . ' ' .
 		gettext('There apparently was not an error, and this page was navigated to directly without any instructions for what it should do.') .
@@ -112,7 +122,8 @@ if ($message) {
 		', <a href="status_logs_filter.php">' . gettext("Status") . ' &gt; ' . gettext('System Logs') . ', ' . gettext('Firewall Tab') . '</a>.<br />');
 }
 ?>
-		</td>
-	</tr>
-</table>
+			</div>
+		</div>
+	</div>
+</form>
 <?php include("foot.inc"); ?>

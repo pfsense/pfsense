@@ -102,7 +102,6 @@ add_new_address() {
 		netmask $new_subnet_mask \
 		broadcast $new_broadcast_address \
 		$medium
-	$IFCONFIG $interface setfirst $new_ip_address
 
 	$LOGGER "New IP Address ($interface): $new_ip_address"
 	$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"
@@ -217,9 +216,8 @@ add_new_routes() {
 	fi
 
 	ADDED_ROUTE=no
-	EXISTSGW=`/bin/ls -l /tmp/*_defaultgw | /usr/bin/wc -l`
 	# Only allow the default route to be overridden if it's on our own interface
-	if [ -f "/tmp/${interface}_defaultgw" -o $EXISTSGW -eq 0 ]; then
+	if [ -f "/tmp/${interface}_defaultgw" ]; then
 		$ROUTE delete default
 		for router in $new_routers; do
 			if [ "$new_ip_address" = "$router" -o "$router" = "255.255.255.255" ]; then
@@ -352,7 +350,7 @@ BOUND|RENEW|REBIND|REBOOT)
 	fi
 	;;
 
-EXPIRE|FAIL)
+EXPIRE|FAIL|RELEASE)
 	delete_old_alias
 	if [ -n "$old_ip_address" ]; then
 		delete_old_address

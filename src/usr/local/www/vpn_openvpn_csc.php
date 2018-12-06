@@ -1,57 +1,23 @@
 <?php
 /*
-	vpn_openvpn_csc.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2008 Shrew Soft Inc.
+ * vpn_openvpn_csc.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -63,42 +29,36 @@
 
 require_once("guiconfig.inc");
 require_once("openvpn.inc");
+require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 
 global $openvpn_tls_server_modes;
 
-if (!is_array($config['openvpn']['openvpn-csc'])) {
-	$config['openvpn']['openvpn-csc'] = array();
-}
-
+init_config_arr(array('openvpn', 'openvpn-csc'));
 $a_csc = &$config['openvpn']['openvpn-csc'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-$act = $_GET['act'];
-if (isset($_POST['act'])) {
-	$act = $_POST['act'];
+if (isset($_REQUEST['act'])) {
+	$act = $_REQUEST['act'];
 }
 
-if ($_GET['act'] == "del") {
+if ($_POST['act'] == "del") {
 	if (!$a_csc[$id]) {
 		pfSenseHeader("vpn_openvpn_csc.php");
 		exit;
 	}
 
+	$wc_msg = sprintf(gettext('Deleted OpenVPN client specific override %1$s %2$s'), $a_csc[$id]['common_name'], $a_csc[$id]['description']);
 	openvpn_delete_csc($a_csc[$id]);
 	unset($a_csc[$id]);
-	write_config();
+	write_config($wc_msg);
 	$savemsg = gettext("Client specific override successfully deleted.");
 }
 
-if ($_GET['act'] == "edit") {
-
+if ($act == "edit") {
 	if (isset($id) && $a_csc[$id]) {
 		$pconfig['server_list'] = explode(",", $a_csc[$id]['server_list']);
 		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
@@ -108,6 +68,7 @@ if ($_GET['act'] == "edit") {
 		$pconfig['description'] = $a_csc[$id]['description'];
 
 		$pconfig['tunnel_network'] = $a_csc[$id]['tunnel_network'];
+		$pconfig['tunnel_networkv6'] = $a_csc[$id]['tunnel_networkv6'];
 		$pconfig['local_network'] = $a_csc[$id]['local_network'];
 		$pconfig['local_networkv6'] = $a_csc[$id]['local_networkv6'];
 		$pconfig['remote_network'] = $a_csc[$id]['remote_network'];
@@ -160,13 +121,16 @@ if ($_GET['act'] == "edit") {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'Tunnel network')) {
+	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network')) {
+		$input_errors[] = $result;
+	}
+	if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6")) {
 		$input_errors[] = $result;
 	}
 
@@ -253,6 +217,7 @@ if ($_POST) {
 		$csc['block'] = $pconfig['block'];
 		$csc['description'] = $pconfig['description'];
 		$csc['tunnel_network'] = $pconfig['tunnel_network'];
+		$csc['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
 		$csc['local_network'] = $pconfig['local_network'];
 		$csc['local_networkv6'] = $pconfig['local_networkv6'];
 		$csc['remote_network'] = $pconfig['remote_network'];
@@ -294,15 +259,17 @@ if ($_POST) {
 		if (isset($id) && $a_csc[$id]) {
 			$old_csc = $a_csc[$id];
 			$a_csc[$id] = $csc;
+			$wc_msg = sprintf(gettext('Updated OpenVPN client specific override %1$s %2$s'), $csc['common_name'], $csc['description']);
 		} else {
 			$a_csc[] = $csc;
+			$wc_msg = sprintf(gettext('Added OpenVPN client specific override %1$s %2$s'), $csc['common_name'], $csc['description']);
 		}
 
 		if (!empty($old_csc['common_name'])) {
 			openvpn_delete_csc($old_csc);
 		}
 		openvpn_resync_csc($csc);
-		write_config();
+		write_config($wc_msg);
 
 		header("Location: vpn_openvpn_csc.php");
 		exit;
@@ -310,9 +277,11 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client Specific Overrides"));
+$pglinks = array("", "vpn_openvpn_server.php", "vpn_openvpn_csc.php");
 
 if ($act=="new" || $act=="edit") {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 $shortcut_section = "openvpn";
 
@@ -354,7 +323,7 @@ if ($act == "new" || $act == "edit"):
 		$pconfig['server_list'],
 		$serveroptionlist,
 		true
-		))->setHelp('Select the servers for which the override will apply. Selecting no servers will also apply the override to all servers.');
+		))->setHelp('Select the servers that will utilize this override. When no servers are selected, the override will apply to all servers.');
 
 
 	$section->addInput(new Form_Checkbox(
@@ -366,24 +335,24 @@ if ($act == "new" || $act == "edit"):
 
 	$section->addInput(new Form_Input(
 		'common_name',
-		'Common name',
+		'*Common Name',
 		'text',
 		$pconfig['common_name']
-	))->setHelp('Enter the client\'s X.509 common name.');
+	))->setHelp('Enter the X.509 common name for the client certificate, or the username for VPNs utilizing password authentication. This match is case sensitive.');
 
 	$section->addInput(new Form_Input(
 		'description',
 		'Description',
 		'text',
 		$pconfig['description']
-	))->setHelp('A description may be entered here for administrative reference (not parsed). ');
+	))->setHelp('A description for administrative reference (not parsed).');
 
 	$section->addInput(new Form_Checkbox(
 		'block',
 		'Connection blocking',
-		'Block this client connection based on its common name. ',
+		'Block this client connection based on its common name.',
 		$pconfig['block']
-	))->setHelp('Don\'t use this option to permanently disable a client due to a compromised key or password. Use a CRL (certificate revocation list) instead. ');
+	))->setHelp('Prevents the client from connecting to this server. Do not use this option to permanently disable a client due to a compromised key or password. Use a CRL (certificate revocation list) instead.');
 
 	$form->add($section);
 
@@ -391,45 +360,60 @@ if ($act == "new" || $act == "edit"):
 
 	$section->addInput(new Form_Input(
 		'tunnel_network',
-		'Tunnel Network',
+		'IPv4 Tunnel Network',
 		'text',
 		$pconfig['tunnel_network']
-	))->setHelp('This is the virtual network used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.0/24). ' .
-				'The first network address is assumed to be the server address and the second network address will be assigned to the client virtual interface. ');
+	))->setHelp('The virtual IPv4 network used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.5/24). %1$s' .
+		    'With subnet topology, enter the client IP address and the subnet mask must match the IPv4 Tunnel Network on the server. %1$s' .
+		    'With net30 topology, the first network address of the /30 is assumed to be the server address and the second network address will be assigned to the client.',
+			'<br />');
+
+	$section->addInput(new Form_Input(
+		'tunnel_networkv6',
+		'IPv6 Tunnel Network',
+		'text',
+		$pconfig['tunnel_networkv6']
+	))->setHelp('The virtual IPv6 network used for private communications between this client and the server expressed using prefix (e.g. 2001:db9:1:1::100/64). %1$s' .
+		    'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ',
+			'<br />');
 
 	$section->addInput(new Form_Input(
 		'local_network',
 		'IPv4 Local Network/s',
 		'text',
 		$pconfig['local_network']
-	))->setHelp('These are the IPv4 networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR ranges. ' . '<br />' .
-				'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.');
+	))->setHelp('These are the IPv4 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR networks. %1$s' .
+		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
+			'<br />');
 
 	$section->addInput(new Form_Input(
 		'local_networkv6',
 		'IPv6 Local Network/s',
 		'text',
 		$pconfig['local_networkv6']
-	))->setHelp('These are the IPv4 networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks.' . '<br />' .
-				'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.');
+	))->setHelp('These are the IPv6 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks.%1$s' .
+		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
+			'<br />');
 
 	$section->addInput(new Form_Input(
 		'remote_network',
 		'IPv4 Remote Network/s',
 		'text',
 		$pconfig['remote_network']
-	))->setHelp('These are the IPv4 networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
-				'Expressed as a comma-separated list of one or more CIDR ranges. May be left blank if there are no client-side networks to be routed.' . '<br />' .
-				'NOTE: Remember to add these subnets to the IPv4 Remote Networks list on the corresponding OpenVPN server settings.');
+	))->setHelp('These are the IPv4 client-side networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
+		    'Expressed as a comma-separated list of one or more CIDR ranges. May be left blank if there are no client-side networks to be routed.%1$s' .
+		    'NOTE: Remember to add these subnets to the IPv4 Remote Networks list on the corresponding OpenVPN server settings.',
+			'<br />');
 
 	$section->addInput(new Form_Input(
 		'remote_networkv6',
 		'IPv6 Remote Network/s',
 		'text',
 		$pconfig['remote_networkv6']
-	))->setHelp('These are the IPv4 networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
-				'Expressed as a comma-separated list of one or more IP/PREFIX networks. May be left blank if there are no client-side networks to be routed.' . '<br />' .
-				'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.');
+	))->setHelp('These are the IPv6 client-side networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
+		    'Expressed as a comma-separated list of one or more IP/PREFIX networks. May be left blank if there are no client-side networks to be routed.%1$s' .
+		    'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.',
+			'<br />');
 
 	$section->addInput(new Form_Checkbox(
 		'gwredir',
@@ -593,8 +577,9 @@ if ($act == "new" || $act == "edit"):
 		'custom_options',
 		'Advanced',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options to add for this client specific override, separated by a semicolon. ' . '<br />' .
-				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"; ');
+	))->setHelp('Enter any additional options to add for this client specific override, separated by a semicolon. %1$s' .
+				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"; ',
+				'<br />');
 
 	// The hidden fields
 	$section->addInput(new Form_Input(
@@ -694,7 +679,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 					</td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php

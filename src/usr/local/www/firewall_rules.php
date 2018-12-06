@@ -1,59 +1,26 @@
 <?php
 /*
-	firewall_rules.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_rules.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -72,7 +39,6 @@ require_once("shaper.inc");
 $XmoveTitle = gettext("Move checked rules above this one. Shift+Click to move checked rules below.");
 $ShXmoveTitle = gettext("Move checked rules below this one. Release shift to move checked rules above.");
 
-$pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
 
 function get_pf_rules($rules, $tracker) {
@@ -117,12 +83,13 @@ function print_states($tracker) {
 		}
 	}
 
+	$trackertext = !empty($tracker) ? "Tracking ID: {$tracker}<br>" : "";
 	printf("<a href=\"diag_dump_states.php?ruleid=%s\" data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"%s\" ",
 	    $rulesid, gettext("States details"));
-	printf("data-content=\"evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\">",
+	printf("data-content=\"{$trackertext}evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\" usepost>",
 	    format_number($evaluations), format_number($packets), format_bytes($bytes),
 	    format_number($states), format_number($stcreations));
-	printf("%d/%s</a><br>", format_number($states), format_bytes($bytes));
+	printf("%s/%s</a><br>", format_number($states), format_bytes($bytes));
 }
 
 function delete_nat_association($id) {
@@ -141,100 +108,48 @@ function delete_nat_association($id) {
 	}
 }
 
-if (!is_array($config['filter']['rule'])) {
-	$config['filter']['rule'] = array();
-}
-
+init_config_arr(array('filter', 'rule'));
 filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
-$if = $_GET['if'];
-
-if ($_POST['if']) {
-	$if = $_POST['if'];
+if ($_REQUEST['if']) {
+	$if = $_REQUEST['if'];
 }
 
 $ifdescs = get_configured_interface_with_descr();
 
-/* add group interfaces */
-if (is_array($config['ifgroups']['ifgroupentry'])) {
-	foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
-		if (have_ruleint_access($ifgen['ifname'])) {
-			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
-		}
-	}
-}
-
-foreach ($ifdescs as $ifent => $ifdesc) {
-	if (have_ruleint_access($ifent)) {
-		$iflist[$ifent] = $ifdesc;
-	}
-}
-
-if ($config['l2tp']['mode'] == "server") {
-	if (have_ruleint_access("l2tp")) {
-		$iflist['l2tp'] = gettext("L2TP VPN");
-	}
-}
-
-if (is_array($config['pppoes']['pppoe'])) {
-	foreach ($config['pppoes']['pppoe'] as $pppoes) {
-		if (($pppoes['mode'] == 'server') && have_ruleint_access("pppoe")) {
-			$iflist['pppoe'] = gettext("PPPoE Server");
-		}
-	}
-}
-
-/* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$iflist["enc0"] = gettext("IPsec");
-}
-
-/* add openvpn/tun interfaces */
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$iflist["openvpn"] = gettext("OpenVPN");
-}
+$iflist = filter_get_interface_list();
 
 if (!$if || !isset($iflist[$if])) {
-	if ("any" == $if) {
+	if ($if != "any" && $if != "FloatingRules" && isset($iflist['wan'])) {
+		$if = "wan";
+	} else {
 		$if = "FloatingRules";
-	} else if ("FloatingRules" != $if) {
-		if (isset($iflist['wan'])) {
-			$if = "wan";
-		} else {
-			$if = "FloatingRules";
-		}
 	}
 }
 
-if ($_POST) {
-	$pconfig = $_POST;
+if ($_POST['apply']) {
+	$retval = 0;
+	$retval |= filter_configure();
 
-	if ($_POST['apply']) {
-		$retval = 0;
-		$retval = filter_configure();
-
-		clear_subsystem_dirty('filter');
-
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />%s Monitor %s the reload progress."),
-									"<a href='status_filter_reload.php'>", "</a>");
-	}
+	clear_subsystem_dirty('filter');
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_filter[$_GET['id']]) {
-		if (!empty($a_filter[$_GET['id']]['associated-rule-id'])) {
-			delete_nat_association($a_filter[$_GET['id']]['associated-rule-id']);
+if ($_POST['act'] == "del") {
+	if ($a_filter[$_POST['id']]) {
+		if (!empty($a_filter[$_POST['id']]['associated-rule-id'])) {
+			delete_nat_association($a_filter[$_POST['id']]['associated-rule-id']);
 		}
-		unset($a_filter[$_GET['id']]);
+		unset($a_filter[$_POST['id']]);
 
 		// Update the separators
+		init_config_arr(array('filter', 'separator', strtolower($if)));
 		$a_separators = &$config['filter']['separator'][strtolower($if)];
-		$ridx = ifridx($if, $_GET['id']);	// get rule index within interface
+		$ridx = ifridx($if, $_POST['id']);	// get rule index within interface
 		$mvnrows = -1;
 		move_separators($a_separators, $ridx, $mvnrows);
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: Rules - deleted a firewall rule."))) {
 			mark_subsystem_dirty('filter');
 		}
 
@@ -253,7 +168,9 @@ if (isset($_POST['del_x'])) {
 	$deleted = false;
 
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
+		init_config_arr(array('filter', 'separator', strtolower($if)));
 		$a_separators = &$config['filter']['separator'][strtolower($if)];
+		$num_deleted = 0;
 
 		foreach ($_POST['rule'] as $rulei) {
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
@@ -261,13 +178,15 @@ if (isset($_POST['del_x'])) {
 			$deleted = true;
 
 			// Update the separators
-			$ridx = ifridx($if, $rulei);	// get rule index within interface
+			// As rules are deleted, $ridx has to be decremented or separator position will break
+			$ridx = ifridx($if, $rulei) - $num_deleted;	// get rule index within interface
 			$mvnrows = -1;
 			move_separators($a_separators, $ridx, $mvnrows);
+			$num_deleted++;
 		}
 
 		if ($deleted) {
-			if (write_config()) {
+			if (write_config(gettext("Firewall: Rules - deleted selected firewall rules."))) {
 				mark_subsystem_dirty('filter');
 			}
 		}
@@ -275,14 +194,16 @@ if (isset($_POST['del_x'])) {
 		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}
-} else if ($_GET['act'] == "toggle") {
-	if ($a_filter[$_GET['id']]) {
-		if (isset($a_filter[$_GET['id']]['disabled'])) {
-			unset($a_filter[$_GET['id']]['disabled']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_filter[$_POST['id']]) {
+		if (isset($a_filter[$_POST['id']]['disabled'])) {
+			unset($a_filter[$_POST['id']]['disabled']);
+			$wc_msg = gettext('Firewall: Rules - enabled a firewall rule.');
 		} else {
-			$a_filter[$_GET['id']]['disabled'] = true;
+			$a_filter[$_POST['id']]['disabled'] = true;
+			$wc_msg = gettext('Firewall: Rules - disabled a firewall rule.');
 		}
-		if (write_config()) {
+		if (write_config($wc_msg)) {
 			mark_subsystem_dirty('filter');
 		}
 
@@ -328,12 +249,20 @@ if (isset($_POST['del_x'])) {
 
 		if ($_POST['separator']) {
 			$idx = 0;
+			if (!is_array($config['filter']['separator'])) {
+				$config['filter']['separator'] = array();
+			}
+
 			foreach ($_POST['separator'] as $separator) {
+				if (!is_array($config['filter']['separator'][strtolower($separator['if'])]))  {
+					$config['filter']['separator'][strtolower($separator['if'])] = array();
+				}
+
 				$config['filter']['separator'][strtolower($separator['if'])]['sep' . $idx++] = $separator;
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: Rules - reordered firewall rules."))) {
 			mark_subsystem_dirty('filter');
 		}
 
@@ -356,6 +285,7 @@ foreach ($tab_array as $dtab) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"), $bctab);
+$pglinks = array("", "firewall_rules.php", "@self");
 $shortcut_section = "firewall";
 
 include("head.inc");
@@ -365,11 +295,15 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
+}
+
 if (is_subsystem_dirty('filter')) {
 	print_apply_box(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
-display_top_tabs($tab_array);
+display_top_tabs($tab_array, false, 'pills');
 
 $showantilockout = false;
 $showprivate = false;
@@ -389,6 +323,12 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 	$showblockbogons = true;
 }
 
+if (isset($config['system']['webgui']['roworderdragging'])) {
+	$rules_header_text = gettext("Rules");
+} else {
+	$rules_header_text = gettext("Rules (Drag to Change Order)");
+}
+
 /* Load the counter data of each pf rule. */
 $rulescnt = pfSense_get_pf_rules();
 
@@ -396,14 +336,24 @@ $rulescnt = pfSense_get_pf_rules();
 $columns_in_table = 13;
 
 ?>
+<!-- Allow table to scroll when dragging outside of the display window -->
+<style>
+.table-responsive {
+    clear: both;
+    overflow-x: visible;
+    margin-bottom: 0px;
+}
+</style>
+
 <form method="post">
+	<input name="if" id="if" type="hidden" value="<?=$if?>" />
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to Change Order)")?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=$rules_header_text?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table id="ruletable" class="table table-hover table-striped table-condensed">
+			<table id="ruletable" class="table table-hover table-striped table-condensed" style="overflow-x: 'visible'">
 				<thead>
 					<tr>
-						<th><!-- checkbox --></th>
+						<th><input type="checkbox" id="selectAll" name="selectAll" /></th>
 						<th><!-- status icons --></th>
 						<th><?=gettext("States")?></th>
 						<th><?=gettext("Protocol")?></th>
@@ -460,7 +410,7 @@ $columns_in_table = 13;
 						<td></td>
 						<td><?=gettext("Block private networks");?></td>
 						<td>
-							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>" usepost><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
 <?php 	endif;?>
@@ -479,7 +429,7 @@ $columns_in_table = 13;
 						<td></td>
 						<td><?=gettext("Block bogon networks");?></td>
 						<td>
-							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>" usepost><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
 <?php 	endif;?>
@@ -524,7 +474,7 @@ foreach ($a_filter as $filteri => $filterent):
 		}
 	?>
 						<td title="<?=$title_text?>">
-							<a href="?if=<?=htmlspecialchars($if);?>&amp;act=toggle&amp;id=<?=$filteri;?>">
+							<a href="?if=<?=htmlspecialchars($if);?>&amp;act=toggle&amp;id=<?=$filteri;?>" usepost>
 								<i class="fa fa-<?=$iconfn?>" title="<?=gettext("click to toggle enabled/disabled status");?>"></i>
 							</a>
 	<?php
@@ -551,6 +501,7 @@ foreach ($a_filter as $filteri => $filterent):
 		);
 
 		//build Schedule popup box
+		init_config_arr(array('schedules', 'schedule'));
 		$a_schedules = &$config['schedules']['schedule'];
 		$schedule_span_begin = "";
 		$schedule_span_end = "";
@@ -713,20 +664,27 @@ foreach ($a_filter as $filteri => $filterent):
 			echo strtoupper($filterent['protocol']);
 
 			if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
-				echo ' <span style="cursor: help;" title="' . gettext('ICMP type') . ': ' .
-					($filterent['ipprotocol'] == "inet6" ? $icmp6types[$filterent['icmptype']] : $icmptypes[$filterent['icmptype']]) .
-					'"><u>';
-				echo $filterent['icmptype'];
-				echo '</u></span>';
+				// replace each comma-separated icmptype item by its (localised) full description
+				$t = 	implode(', ',
+						array_map(
+						        function($type) {
+								global $icmptypes;
+								return $icmptypes[$type]['descrip'];
+							},
+							explode(',', $filterent['icmptype'])
+						)
+					);
+				echo sprintf('<br /><div style="cursor:help;padding:1px;line-height:1.1em;max-height:2.5em;max-width:180px;overflow-y:auto;overflow-x:hidden" title="%s:%s%s"><small><u>%s</u></small></div>', gettext('ICMP subtypes'), chr(13), $t, str_replace(',', '</u>, <u>',$filterent['icmptype']));
 			}
-		} else echo "*";
-
+		} else {
+			echo " *";
+		}
 	?>
 						</td>
 						<td>
 							<?php if (isset($alias['src'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
-									<?=str_replace('_', ' ', htmlspecialchars(pprint_address($filterent['source'])))?>
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['source'])))?>
 								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($filterent['source']))?>
@@ -735,7 +693,7 @@ foreach ($a_filter as $filteri => $filterent):
 						<td>
 							<?php if (isset($alias['srcport'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
-									<?=str_replace('_', ' ', htmlspecialchars(pprint_port($filterent['source']['port'])))?>
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($filterent['source']['port'])))?>
 								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_port($filterent['source']['port']))?>
@@ -744,7 +702,7 @@ foreach ($a_filter as $filteri => $filterent):
 						<td>
 							<?php if (isset($alias['dst'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
-									<?=str_replace('_', ' ', htmlspecialchars(pprint_address($filterent['destination'])))?>
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['destination'])))?>
 								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($filterent['destination']))?>
@@ -753,7 +711,7 @@ foreach ($a_filter as $filteri => $filterent):
 						<td>
 							<?php if (isset($alias['dstport'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
-									<?=str_replace('_', ' ', htmlspecialchars(pprint_port($filterent['destination']['port'])))?>
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($filterent['destination']['port'])))?>
 								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_port($filterent['destination']['port']))?>
@@ -761,7 +719,7 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td>
 							<?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])):?>
-								<?=str_replace('_', ' ', htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']))?>
+								<?=str_replace('_', '_<wbr>', htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']))?>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_port($filterent['gateway']))?>
 							<?php endif; ?>
@@ -771,10 +729,10 @@ foreach ($a_filter as $filteri => $filterent):
 								if (isset($filterent['ackqueue']) && isset($filterent['defaultqueue'])) {
 									$desc = str_replace('_', ' ', $filterent['ackqueue']);
 									echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['ackqueue']}&amp;action=show\">{$desc}</a>";
-									$desc = str_replace('_', ' ', $filterent['defaultqueue']);
+									$desc = str_replace('_', '_<wbr>', $filterent['defaultqueue']);
 									echo "/<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\">{$desc}</a>";
 								} else if (isset($filterent['defaultqueue'])) {
-									$desc = str_replace('_', ' ', $filterent['defaultqueue']);
+									$desc = str_replace('_', '_<wbr>', $filterent['defaultqueue']);
 									echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\">{$desc}</a>";
 								} else {
 									echo gettext("none");
@@ -785,7 +743,7 @@ foreach ($a_filter as $filteri => $filterent):
 							<?php if ($printicon) { ?>
 								<i class="fa fa-<?=$image?> <?=$dispcolor?>" title="<?=$alttext;?>"></i>
 							<?php } ?>
-							<?=$schedule_span_begin;?><?=str_replace('_', ' ', htmlspecialchars($filterent['sched']));?>&nbsp;<?=$schedule_span_end;?>
+							<?=$schedule_span_begin;?><?=str_replace('_', '_<wbr>', htmlspecialchars($filterent['sched']));?>&nbsp;<?=$schedule_span_end;?>
 						</td>
 						<td>
 							<?=htmlspecialchars($filterent['descr']);?>
@@ -797,13 +755,13 @@ foreach ($a_filter as $filteri => $filterent):
 							<a href="firewall_rules_edit.php?dup=<?=$filteri;?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 <?php if (isset($filterent['disabled'])) {
 ?>
-							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
+							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>" usepost></a>
 <?php } else {
 ?>
-							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
+							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-ban" title="<?=gettext('Disable')?>" usepost></a>
 <?php }
 ?>
-							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-trash" title="<?=gettext('Delete this rule')?>"></a>
+							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-trash" title="<?=gettext('Delete this rule')?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -888,8 +846,8 @@ if ($seprows[$nrules]) {
 			"chosen. If no rule here matches, the per-interface or default rules are used. "));
 	}
 
-	printf(gettext("%sClick the anchor icon %s to move checked rules before the clicked row. Hold down " .
-			"the shift key and click to move the rules after the clicked row."), '<br /><br />', '<i class="fa fa-anchor"></i>')
+	printf(gettext('%1$sClick the anchor icon %2$s to move checked rules before the clicked row. Hold down ' .
+			'the shift key and click to move the rules after the clicked row.'), '<br /><br />', '<i class="fa fa-anchor"></i>')
 ?>
 	</div>
 	</div>
@@ -962,7 +920,7 @@ events.push(function() {
 			}
 		});
 
-		// If so, change the icon to show the insetion point
+		// If so, change the icon to show the insertion point
 		if (ruleselected) {
 			if (e.shiftKey) {
 				$(this).removeClass().addClass("fa fa-lg fa-arrow-down text-danger");
@@ -974,12 +932,16 @@ events.push(function() {
 		$(this).removeClass().addClass("fa fa-anchor");
 	});
 
+<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
 	// Make rules sortable. Hiding the table before applying sortable, then showing it again is
 	// a work-around for very slow sorting on FireFox
 	$('table tbody.user-entries').hide();
 
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
+		scroll: true,
+		overflow: 'scroll',
+		scrollSensitivity: 100,
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
 			reindex_rules(ui.item.parent('tbody'));
@@ -988,6 +950,7 @@ events.push(function() {
 	});
 
 	$('table tbody.user-entries').show();
+<?php endif; ?>
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
@@ -1015,6 +978,13 @@ events.push(function() {
 		} else {
 			$('[id^=Xmove_]').attr("title", "<?=$XmoveTitle?>");
 		}
+	});
+
+	$('#selectAll').click(function() {
+		var checkedStatus = this.checked;
+		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
+		$(this).prop('checked', checkedStatus);
+		});
 	});
 });
 //]]>

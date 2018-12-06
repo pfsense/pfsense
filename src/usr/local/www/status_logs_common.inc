@@ -1,59 +1,26 @@
 <?php
 /*
-	status_logs_common.inc
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * status_logs_common.inc
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 require_once("guiconfig.inc");
@@ -173,15 +140,15 @@ function system_log_table_panel_title() {
 
 	if ($rawfilter) {
 		if (($filtersubmit) || ($filterlogentries_submit)) {
-			$rtnstr .= sprintf(gettext("%s Matched %s Log Entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+			$rtnstr .= sprintf(gettext('%1$s Matched %2$s Log Entries.'), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
 		} else {
-			$rtnstr .= sprintf(gettext("Last %s %s Log Entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+			$rtnstr .= sprintf(gettext('Last %1$s %2$s Log Entries.'), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
 		}
 	} else {
 		if (($filtersubmit) || ($filterlogentries_submit)) {
-			$rtnstr .= sprintf(gettext("%d Matched %s Log Entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
+			$rtnstr .= sprintf(gettext('%1$d Matched %2$s Log Entries.'), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
 		} else {
-			$rtnstr .= sprintf(gettext("Last %d %s Log Entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
+			$rtnstr .= sprintf(gettext('Last %1$d %2$s Log Entries.'), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
 		}
 	}
 
@@ -579,7 +546,7 @@ function filter_form_firewall() {
 
 
 function status_logs_build_if_list() {
-	$iflist = get_configured_interface_with_descr(false, true);
+	$iflist = get_configured_interface_with_descr(true);
 	//$iflist = get_interface_list();
 	// Allow extending of the firewall edit interfaces
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_interfaces_edit");
@@ -617,8 +584,10 @@ function manage_log_code() {
 		return;
 	}
 
-	global $logfile, $specific_log, $config, $pconfig, $save_settings, $input_errors, $savemsg;
+	global $logfile, $specific_log, $config, $pconfig, $save_settings, $input_errors, $extra_save_msg, $retval, $changes_applied;
 
+	$changes_applied = false;
+	$extra_save_msg = "";
 	$specific_log = basename($logfile) . '_settings';
 
 	// Common to All Logs
@@ -680,6 +649,8 @@ function manage_log_code() {
 		if (isset($logfilesize) && (strlen($logfilesize) > 0)) {
 			if (!is_numeric($logfilesize) || ($logfilesize < 100000)) {
 				$input_errors[] = gettext("Log file size must be numeric and greater than or equal to 100000.");
+			} elseif ($logfilesize >= (2**32)/2) {
+				$input_errors[] = gettext("Log file size is too large. Set a smaller value.");
 			}
 		}
 
@@ -689,6 +660,7 @@ function manage_log_code() {
 			if (isset($config['syslog'][$specific_log])) {
 				unset($config['syslog'][$specific_log]);
 			}
+			init_config_arr(array('syslog', $specific_log));
 
 		// Common to All Logs
 			if ($cronorder != '') { # if not using the general logging options setting (global)
@@ -744,28 +716,27 @@ function manage_log_code() {
 				}
 			}
 
+			$retval = 0;
+			$changes_applied = true;
 
 		// If any of the logging settings were changed then backup and sync (standard write_config).  Otherwise only write config (don't backup, don't sync).
-		if ($logging_changed) {
-			write_config($desc = gettext("Log Display Settings Saved: ") . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
-			$retval = 0;
-			$retval = system_syslogd_start();
-			$savemsg = gettext("The changes have been applied successfully.");
-		} else {
-			write_config($desc = gettext("Log Display Settings Saved (no backup, no sync): ") . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
-			$savemsg = '';
-		}
+			if ($logging_changed) {
+				write_config($desc = gettext("Log Display Settings Saved: ") . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
+				system_syslogd_start();
+			} else {
+				write_config($desc = gettext("Log Display Settings Saved (no backup, no sync): ") . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
+			}
 
 		// Specific to System General (main) Log
-		if ($logfile == 'system') {
-			if ($nginx_logging_changed) {
-				ob_flush();
-				flush();
-				log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
-				send_event("service restart webgui");
-				$savemsg .= "<br />" . gettext("WebGUI process is restarting.");
+			if ($logfile == 'system') {
+				if ($nginx_logging_changed) {
+					ob_flush();
+					flush();
+					log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
+					send_event("service restart webgui");
+					$extra_save_msg = gettext("WebGUI process is restarting.");
+				}
 			}
-		}
 
 		// Specific to Firewall Log
 			if ($logfile == 'filter') {
@@ -773,8 +744,6 @@ function manage_log_code() {
 					require_once("filter.inc");
 					$retval |= filter_configure();
 					filter_pflog_start(true);
-
-					$savemsg = get_std_save_message($retval);
 				}
 			}
 		}
@@ -813,7 +782,7 @@ function manage_log_section() {
 	$form = new Form(false);
 	$form->setAttribute('id', 'manage-log-form')->addClass('collapse ' . $panel_state);
 
-	$section = new Form_Section(gettext('Manage') . ' ' . gettext($allowed_logs[$logfile]["name"]) . ' ' . gettext('Log'), 'manage-log-panel', COLLAPSIBLE|$panel_body_state);
+	$section = new Form_Section(sprintf(gettext('Manage %1$s Log'), gettext($allowed_logs[$logfile]["name"])), 'manage-log-panel', COLLAPSIBLE|$panel_body_state);
 
 	$section->addInput(new Form_StaticText(
 		'',
@@ -875,9 +844,9 @@ function manage_log_section() {
 		$pconfig['logfilesize'],
 		['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : "511488"]
 	))->setWidth(2);
-	$group->setHelp("The log is held in a constant-size circular log file. This field controls how large the log file is, and thus how many entries may exist inside the log. The default is approximately 500KB." .
-						'<br /><br />' .
-				"NOTE: The log size is changed the next time it is cleared. To immediately change the log size, first save the options to set the size, then clear the log using the \"Clear Log\" action below. ");
+	$group->setHelp('The log is held in a constant-size circular log file. This field controls how large the log file is, and thus how many entries may exist inside the log. The default is approximately 500KB.%1$s' .
+				'NOTE: The log size is changed the next time it is cleared. To immediately change the log size, first save the options to set the size, then clear the log using the "Clear Log" action below. ',
+				'<br /><br />');
 	$section->add($group);
 
 	$group = new Form_Group('Formatted/Raw Display');
@@ -960,8 +929,9 @@ function manage_log_section() {
 				'1' => gettext('Display as column'),
 				'2' => gettext('Display as second row')
 			)
-		))->setHelp('Show the applied rule description below or in the firewall log rows.' . '<br />' .
-					'Displaying rule descriptions for all lines in the log might affect performance with large rule sets.');
+		))->setHelp('Show the applied rule description below or in the firewall log rows.%1$s' .
+					'Displaying rule descriptions for all lines in the log might affect performance with large rule sets.',
+					'<br />');
 	}
 
 

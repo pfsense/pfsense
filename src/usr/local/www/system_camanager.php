@@ -1,57 +1,23 @@
 <?php
 /*
-	system_camanager.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2008 Shrew Soft Inc.
+ * system_camanager.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -63,59 +29,49 @@
 
 require_once("guiconfig.inc");
 require_once("certs.inc");
+require_once("pfsense-utils.inc");
 
 $ca_methods = array(
-	"existing" => gettext("Import an existing Certificate Authority"),
 	"internal" => gettext("Create an internal Certificate Authority"),
+	"existing" => gettext("Import an existing Certificate Authority"),
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
-$ca_keylens = array("512", "1024", "2048", "3072", "4096", "7680", "8192", "15360", "16384");
-$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
+$ca_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
+global $openssl_digest_algs;
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
+
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
+
+init_config_arr(array('crl'));
+$a_crl = &$config['crl'];
+
+if ($_REQUEST['act']) {
+	$act = $_REQUEST['act'];
 }
 
-$a_ca =& $config['ca'];
-
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
-
-if (!is_array($config['crl'])) {
-	$config['crl'] = array();
-}
-
-$a_crl =& $config['crl'];
-
-$act = $_GET['act'];
-if ($_POST['act']) {
-	$act = $_POST['act'];
-}
-
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 
 	if (!isset($a_ca[$id])) {
 		pfSenseHeader("system_camanager.php");
 		exit;
 	}
 
+	/* Only remove CA reference when deleting. It can be reconnected if a new matching CA is imported */
 	$index = count($a_cert) - 1;
 	for (;$index >= 0; $index--) {
 		if ($a_cert[$index]['caref'] == $a_ca[$id]['refid']) {
-			unset($a_cert[$index]);
+			unset($a_cert[$index]['caref']);
 		}
 	}
 
+	/* Remove any CRLs for this CA, there is no way to recover the connection once the CA has been removed. */
 	$index = count($a_crl) - 1;
 	for (;$index >= 0; $index--) {
 		if ($a_crl[$index]['caref'] == $a_ca[$id]['refid']) {
@@ -136,6 +92,7 @@ if ($act == "edit") {
 		pfSenseHeader("system_camanager.php");
 		exit;
 	}
+	$pconfig['method'] = 'existing';
 	$pconfig['descr']  = $a_ca[$id]['descr'];
 	$pconfig['refid']  = $a_ca[$id]['refid'];
 	$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);
@@ -146,7 +103,7 @@ if ($act == "edit") {
 }
 
 if ($act == "new") {
-	$pconfig['method'] = $_GET['method'];
+	$pconfig['method'] = $_POST['method'];
 	$pconfig['keylen'] = "2048";
 	$pconfig['digest_alg'] = "sha256";
 	$pconfig['lifetime'] = "3650";
@@ -189,7 +146,7 @@ if ($act == "expkey") {
 	exit;
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$input_errors = array();
@@ -207,36 +164,36 @@ if ($_POST) {
 		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED")) {
 			$input_errors[] = gettext("Encrypted private keys are not yet supported.");
 		}
+		if (!$input_errors && !empty($_POST['key']) && cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
+			$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
+		}
+		/* we must ensure the certificate is capable of acting as a CA
+		 * https://redmine.pfsense.org/issues/7885
+		 */
+		if (!$input_errors) {
+			$purpose = cert_get_purpose($_POST['cert'], false);
+			if ($purpose['ca'] != 'Yes') {
+				$input_errors[] = gettext("The submitted certificate does not appear to be a Certificate Authority, import it on the Certificates tab instead.");
+			}
+		}
 	}
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",
-			"descr keylen lifetime dn_country dn_state dn_city ".
-			"dn_organization dn_email dn_commonname");
+			"descr keylen lifetime dn_commonname");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Key length"),
 			gettext("Lifetime"),
-			gettext("Distinguished name Country Code"),
-			gettext("Distinguished name State or Province"),
-			gettext("Distinguished name City"),
-			gettext("Distinguished name Organization"),
-			gettext("Distinguished name Email Address"),
 			gettext("Distinguished name Common Name"));
 	}
 	if ($pconfig['method'] == "intermediate") {
 		$reqdfields = explode(" ",
-			"descr caref keylen lifetime dn_country dn_state dn_city ".
-			"dn_organization dn_email dn_commonname");
+			"descr caref keylen lifetime dn_commonname");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Signing Certificate Authority"),
 			gettext("Key length"),
 			gettext("Lifetime"),
-			gettext("Distinguished name Country Code"),
-			gettext("Distinguished name State or Province"),
-			gettext("Distinguished name City"),
-			gettext("Distinguished name Organization"),
-			gettext("Distinguished name Email Address"),
 			gettext("Distinguished name Common Name"));
 	}
 
@@ -245,20 +202,6 @@ if ($_POST) {
 		/* Make sure we do not have invalid characters in the fields for the certificate */
 		if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
 			array_push($input_errors, gettext("The field 'Descriptive Name' contains invalid characters."));
-		}
-
-		for ($i = 0; $i < count($reqdfields); $i++) {
-			if ($reqdfields[$i] == 'dn_email') {
-				if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_email"])) {
-					array_push($input_errors, gettext("The field 'Distinguished name Email Address' contains invalid characters."));
-				}
-			} else if ($reqdfields[$i] == 'dn_commonname') {
-				if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_commonname"])) {
-					array_push($input_errors, gettext("The field 'Distinguished name Common Name' contains invalid characters."));
-				}
-			} else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"])) {
-				array_push($input_errors, sprintf(gettext("The field '%s' contains invalid characters."), $reqdfieldsn[$i]));
-			}
 		}
 		if (!in_array($_POST["keylen"], $ca_keylens)) {
 			array_push($input_errors, gettext("Please select a valid Key Length."));
@@ -296,32 +239,53 @@ if ($_POST) {
 			if ($pconfig['method'] == "existing") {
 				ca_import($ca, $pconfig['cert'], $pconfig['key'], $pconfig['serial']);
 			} else if ($pconfig['method'] == "internal") {
-				$dn = array(
-					'countryName' => $pconfig['dn_country'],
-					'stateOrProvinceName' => $pconfig['dn_state'],
-					'localityName' => $pconfig['dn_city'],
-					'organizationName' => $pconfig['dn_organization'],
-					'emailAddress' => $pconfig['dn_email'],
-					'commonName' => $pconfig['dn_commonname']);
+				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+				if (!empty($pconfig['dn_country'])) {
+					$dn['countryName'] = $pconfig['dn_country'];
+				}
+				if (!empty($pconfig['dn_state'])) {
+					$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['dn_state']);
+				}
+				if (!empty($pconfig['dn_city'])) {
+					$dn['localityName'] = cert_escape_x509_chars($pconfig['dn_city']);
+				}
+				if (!empty($pconfig['dn_organization'])) {
+					$dn['organizationName'] = cert_escape_x509_chars($pconfig['dn_organization']);
+				}
+				if (!empty($pconfig['dn_organizationalunit'])) {
+					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
+				}
 				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])) {
+					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
-						$input_errors = array();
-						array_push($input_errors, "openssl library returns: " . $ssl_err);
+						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+							array_push($input_errors, "openssl library returns: " . $ssl_err);
+						}
 					}
 				}
 			} else if ($pconfig['method'] == "intermediate") {
-				$dn = array(
-					'countryName' => $pconfig['dn_country'],
-					'stateOrProvinceName' => $pconfig['dn_state'],
-					'localityName' => $pconfig['dn_city'],
-					'organizationName' => $pconfig['dn_organization'],
-					'emailAddress' => $pconfig['dn_email'],
-					'commonName' => $pconfig['dn_commonname']);
-
+				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+				if (!empty($pconfig['dn_country'])) {
+					$dn['countryName'] = $pconfig['dn_country'];
+				}
+				if (!empty($pconfig['dn_state'])) {
+					$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['dn_state']);
+				}
+				if (!empty($pconfig['dn_city'])) {
+					$dn['localityName'] = cert_escape_x509_chars($pconfig['dn_city']);
+				}
+				if (!empty($pconfig['dn_organization'])) {
+					$dn['organizationName'] = cert_escape_x509_chars($pconfig['dn_organization']);
+				}
+				if (!empty($pconfig['dn_organizationalunit'])) {
+					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
+				}
 				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])) {
+					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
-						$input_errors = array();
-						array_push($input_errors, "openssl library returns: " . $ssl_err);
+						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+							array_push($input_errors, "openssl library returns: " . $ssl_err);
+						}
 					}
 				}
 			}
@@ -336,16 +300,17 @@ if ($_POST) {
 
 		if (!$input_errors) {
 			write_config();
+			pfSenseHeader("system_camanager.php");
 		}
-
-		pfSenseHeader("system_camanager.php");
 	}
 }
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("CAs"));
+$pglinks = array("", "system_camanager.php", "system_camanager.php");
 
 if ($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors) {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 include("head.inc");
 
@@ -361,6 +326,7 @@ if ($savemsg) {
 $dn_cc = array();
 if (file_exists("/etc/ca_countries")) {
 	$dn_cc_file=file("/etc/ca_countries");
+	$dn_cc[''] = gettext("None");
 	foreach ($dn_cc_file as $line) {
 		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
 			$dn_cc[$matches[1]] = $matches[1];
@@ -388,11 +354,17 @@ if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_error
 					<th><?=gettext("Issuer")?></th>
 					<th><?=gettext("Certificates")?></th>
 					<th><?=gettext("Distinguished Name")?></th>
+					<th><?=gettext("In Use")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>
 <?php
+$pluginparams = array();
+$pluginparams['type'] = 'certificates';
+$pluginparams['event'] = 'used_ca';
+$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
+
 foreach ($a_ca as $i => $ca):
 	$name = htmlspecialchars($ca['descr']);
 	$subj = cert_get_subject($ca['crt']);
@@ -403,7 +375,7 @@ foreach ($a_ca as $i => $ca):
 	} else {
 		$issuer_name = gettext("external");
 	}
-	$subj = htmlspecialchars($subj);
+	$subj = htmlspecialchars(cert_escape_x509_chars($subj, true));
 	$issuer = htmlspecialchars($issuer);
 	$certcount = 0;
 
@@ -436,13 +408,30 @@ foreach ($a_ca as $i => $ca):
 							<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
 						</small>
 					</td>
-					<td>
+					<td class="text-nowrap">
+						<?php if (is_openvpn_server_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Server")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_client_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Client")?><br/>
+						<?php endif?>
+						<?php if (is_ipsec_peer_ca($ca['refid'])): ?>
+							<?=gettext("IPsec Tunnel")?><br/>
+						<?php endif?>
+						<?php if (is_ldap_peer_ca($ca['refid'])): ?>
+							<?=gettext("LDAP Server")?>
+						<?php endif?>
+						<?php echo cert_usedby_description($ca['refid'], $certificates_used_by_packages); ?>
+					</td>
+					<td class="text-nowrap">
 						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
 						<a class="fa fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
 					<?php if ($ca['prv']): ?>
 						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
 					<?php endif?>
-						<a class="fa fa-trash" 	title="<?=gettext("Delete CA")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>"></a>
+					<?php if (!ca_in_use($ca['refid'])): ?>
+						<a class="fa fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>" usepost ></a>
+					<?php endif?>
 					</td>
 				</tr>
 <?php endforeach; ?>
@@ -487,7 +476,7 @@ $section = new Form_Section('Create / Edit CA');
 
 $section->addInput(new Form_Input(
 	'descr',
-	'Descriptive name',
+	'*Descriptive name',
 	'text',
 	$pconfig['descr']
 ));
@@ -495,7 +484,7 @@ $section->addInput(new Form_Input(
 if (!isset($id) || $act == "edit") {
 	$section->addInput(new Form_Select(
 		'method',
-		'Method',
+		'*Method',
 		$pconfig['method'],
 		$ca_methods
 	))->toggles();
@@ -508,7 +497,7 @@ $section->addClass('toggle-existing collapse');
 
 $section->addInput(new Form_Textarea(
 	'cert',
-	'Certificate data',
+	'*Certificate data',
 	$pconfig['cert']
 ))->setHelp('Paste a certificate in X.509 PEM format here.');
 
@@ -542,7 +531,7 @@ foreach ($a_ca as $ca) {
 	$allCas[ $ca['refid'] ] = $ca['descr'];
 }
 
-$group = new Form_Group('Signing Certificate Authority');
+$group = new Form_Group('*Signing Certificate Authority');
 $group->addClass('toggle-intermediate', 'collapse');
 $group->add(new Form_Select(
 	'caref',
@@ -554,14 +543,14 @@ $section->add($group);
 
 $section->addInput(new Form_Select(
 	'keylen',
-	'Key length (bits)',
+	'*Key length (bits)',
 	$pconfig['keylen'],
 	array_combine($ca_keylens, $ca_keylens)
 ));
 
 $section->addInput(new Form_Select(
 	'digest_alg',
-	'Digest Algorithm',
+	'*Digest Algorithm',
 	$pconfig['digest_alg'],
 	array_combine($openssl_digest_algs, $openssl_digest_algs)
 ))->setHelp('NOTE: It is recommended to use an algorithm stronger than SHA1 '.
@@ -569,9 +558,22 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'lifetime',
-	'Lifetime (days)',
+	'*Lifetime (days)',
 	'number',
 	$pconfig['lifetime']
+));
+
+$section->addInput(new Form_Input(
+	'dn_commonname',
+	'*Common Name',
+	'text',
+	$pconfig['dn_commonname'],
+	['placeholder' => 'e.g. internal-ca']
+));
+
+$section->addInput(new Form_StaticText(
+	null,
+	gettext('The following certificate authority subject components are optional and may be left blank.')
 ));
 
 $section->addInput(new Form_Select(
@@ -602,23 +604,15 @@ $section->addInput(new Form_Input(
 	'Organization',
 	'text',
 	$pconfig['dn_organization'],
-	['placeholder' => 'e.g. My Company Inc.']
+	['placeholder' => 'e.g. My Company Inc']
 ));
 
 $section->addInput(new Form_Input(
-	'dn_email',
-	'Email Address',
-	'email',
-	$pconfig['dn_email'],
-	['placeholder' => 'e.g. admin@mycompany.com']
-));
-
-$section->addInput(new Form_Input(
-	'dn_commonname',
-	'Common Name',
+	'dn_organizationalunit',
+	'Organizational Unit',
 	'text',
-	$pconfig['dn_commonname'],
-	['placeholder' => 'e.g. internal-ca']
+	$pconfig['dn_organizationalunit'],
+	['placeholder' => 'e.g. My Department Name (optional)']
 ));
 
 $form->add($section);

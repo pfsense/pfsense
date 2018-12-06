@@ -1,34 +1,21 @@
 <?php
 /*
-	external config loader
-	Copyright (C) 2010 Scott Ullrich
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-
-	Currently supported file system types: MS-Dos, FreeBSD UFS
-
-*/
+ * ecl.php
+ *
+ * Copyright (c) 2010-2018 Rubicon Communications, LLC (Netgate). All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 require_once("globals.inc");
 require_once("functions.inc");
@@ -69,7 +56,9 @@ function get_disks() {
 
 function discover_config($mountpoint) {
 	global $g, $debug;
-	$locations_to_check = array("/", "/config");
+	/* List of locations to check. Requires trailing slash.
+	 * See https://redmine.pfsense.org/issues/9066 */
+	$locations_to_check = array("/", "/config/");
 	foreach ($locations_to_check as $ltc) {
 		$tocheck = "/tmp/mnt/cf{$ltc}config.xml";
 		if ($debug) {
@@ -165,6 +154,11 @@ function find_config_xml() {
 							backup_config();
 							echo "Restoring [{$slice}] {$config_location}...\n";
 							restore_backup($config_location);
+							if (file_exists('/cf/conf/trigger_initial_wizard')) {
+								echo "First boot after install, setting flag for package sync and disabling wizard...\n";
+								touch('/cf/conf/needs_package_sync');
+								@unlink('/cf/conf/trigger_initial_wizard');
+							}
 							echo "Cleaning up...\n";
 							exec("/sbin/umount /tmp/mnt/cf");
 							exit;

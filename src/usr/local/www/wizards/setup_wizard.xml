@@ -1,55 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <pfsensewizard>
 <copyright>
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+/*
+ * setup_wizard.xml
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 </copyright>
 <totalsteps>10</totalsteps>
@@ -57,7 +26,16 @@
 	<id>1</id>
 	<title>pfSense Setup</title>
 	<disableheader>true</disableheader>
-	<description>This wizard will provide guidance through the initial configuration of pfSense.&lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.</description>
+	<description>
+		<![CDATA[
+		<p><h4>Welcome to pfSense® software!</h4></p>
+		<p>This wizard will provide guidance through the initial configuration of pfSense.</p>
+		<p>The wizard may be stopped at any time by clicking the logo image at the top of the screen.</p>
+		<p><strong>pfSense® software is developed and maintained by Netgate®<strong></p>
+		<br />
+		<p><a href="https://www.netgate.com/pfw1" class="btn btn-info" target="_blank">Learn more</a></p>
+		]]>
+	</description>
 	<fields>
 		<field>
 			<name>Next</name>
@@ -65,16 +43,29 @@
 		</field>
 	</fields>
 	<stepbeforeformdisplay>
-		conf_mount_rw();
-		unlink_if_exists('/conf/trigger_initial_wizard');
-		conf_mount_ro();
+		unlink_if_exists("{$g['conf_path']}/trigger_initial_wizard");
+		unlink_if_exists("{$g['conf_path']}/assign_complete");
 	</stepbeforeformdisplay>
 </step>
 <step>
 	<id>2</id>
-	<title>Bling your pfSense with pfSense Gold</title>
+	<title>Netgate® Global Support is available 24/7</title>
 	<disableheader>true</disableheader>
-	<description>Feel the power of a pfSense Gold subscription. Receive special benefits while supporting ongoing development of the Open Source pfSense project.&lt;br/&gt; &lt;br/&gt; Benefits include access to our AutoConfigBackup secure cloud based backup service for up to 10 hosts, pre-publication access to the updated pfSense: The Definitive Guide book in PDF, fully updated for the pfSense 2.1 release, and a monthly online MeetUp! Video conference to discuss and demonstrate advanced features and architectures using pfSense. &lt;br/&gt; &lt;br/&gt; Go to &lt;a href="https://www.pfsense.org/gold" target="_blank"&gt; pfSense Gold Subscriptions&lt;/a&gt; to sign up now. &lt;br/&gt; &lt;br/&gt; </description>
+	<description>
+	<![CDATA[
+		<p>Our 24/7 worldwide team of support engineers are the most qualified to diagnose your issue and resolve it quickly, from branch office to enterprise — on premises to cloud.</p>
+		<p>We offer several support subscription plans tailored to fit different environment sizes and requirements. Many companies around the world choose Netgate support because:</p>
+		<p>
+		<ul>
+			<li>Support is available 24 hours a day, seven days a week, including holidays.</li>
+			<li>Support engineers are located around the world, ensuring that no support call is missed.</li>
+			<li>Our support engineers hold many prestigious network engineer certificates and have years of hands-on experience with networking.</li>
+		</ul>
+		</p>
+		<br />
+		<p><a href="https://www.netgate.com/pfw2" class="btn btn-info" target="_blank">Learn more</a></p>
+    ]]>
+  </description>
 	<fields>
 		<field>
 			<name>Next</name>
@@ -139,36 +130,35 @@
 	</fields>
 	<stepbeforeformdisplay>
 		<![CDATA[
-		$config['wizardtemp'] = array();
-		$config['wizardtemp']['system'] = array();
+		init_config_arr(array('wizardtemp', 'system'));
 		$config['wizardtemp']['system']['hostname'] = $config['system']['hostname'];
 		$config['wizardtemp']['system']['domain'] = $config['system']['domain'];
 		]]>
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if(empty($_POST['hostname']) || !is_unqualified_hostname($_POST['hostname'])) {
+		if (empty($_POST['hostname']) || !is_unqualified_hostname($_POST['hostname'])) {
 			include("head.inc");
 			$input_errors[] = "Hostname is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(empty($_POST['domain']) || !is_domain($_POST['domain'])) {
+		if (empty($_POST['domain']) || !is_domain($_POST['domain'])) {
 			include("head.inc");
 			$input_errors[] = "Domain is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['primarydnsserver']) && !is_ipaddr($_POST['primarydnsserver'])) {
+		if (!empty($_POST['primarydnsserver']) && !is_ipaddr($_POST['primarydnsserver'])) {
 			include("head.inc");
 			$input_errors[] = "Primary DNS server is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['secondarydnsserver']) && !is_ipaddr($_POST['secondarydnsserver'])) {
+		if (!empty($_POST['secondarydnsserver']) && !is_ipaddr($_POST['secondarydnsserver'])) {
 			include("head.inc");
 			$input_errors[] = "Second DNS server is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
@@ -214,21 +204,22 @@
 </step>
 <step>
 	<id>5</id>
+	<skip_flavors>ec2,ec2-ic</skip_flavors>
 	<disableallfieldsbydefault>true</disableallfieldsbydefault>
 	<title>Configure WAN Interface</title>
 	<description>On this screen the Wide Area Network information will be configured.</description>
 	<javascriptafterformdisplay>
 		var selectedItem = 0;
-		if(document.forms[0].ipaddress.value == 'dhcp') {
+		if (document.forms[0].ipaddress.value == 'dhcp') {
 			selectedItem = 1;
 			document.forms[0].ipaddress.value = '';
-		} else if(document.forms[0].ipaddress.value == 'pppoe') {
+		} else if (document.forms[0].ipaddress.value == 'pppoe') {
 			selectedItem = 2;
 			document.forms[0].ipaddress.value = '';
-		} else if(document.forms[0].ipaddress.value == 'pptp') {
+		} else if (document.forms[0].ipaddress.value == 'pptp') {
 			selectedItem = 3;
 			document.forms[0].ipaddress.value = '';
-		} else if(document.forms[0].ipaddress.value == 'ppp' || document.forms[0].ipaddress.value == 'l2tp') {
+		} else if (document.forms[0].ipaddress.value == 'ppp' || document.forms[0].ipaddress.value == 'l2tp') {
 			document.forms[0].ipaddress.value = '';
 		} else {
 			selectedItem = 0;
@@ -238,7 +229,7 @@
 
 		events.push(function(){
 			$('#showpppoepassword').click(function(event) {
-				if(this.checked) {
+				if (this.checked) {
 					$('#pppoepassword').attr('type', 'text');
 				} else {
 					$('#pppoepassword').attr('type', 'password');
@@ -246,7 +237,7 @@
 			});
 
 			$('#showpptppassword').click(function(event) {
-				if(this.checked) {
+				if (this.checked) {
 					$('#pptppassword').attr('type', 'text');
 				} else {
 					$('#pptppassword').attr('type', 'password');
@@ -487,21 +478,21 @@
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if(!empty($_POST['mtu']) && ($_POST['mtu'] < 576)) {
+		if (!empty($_POST['mtu']) && ($_POST['mtu'] < 576)) {
 			include("head.inc");
 			$input_errors[] = "MTU Must be at least 576 (Per RFC 791). Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['macaddress']) && !is_macaddr($_POST['macaddress'])) {
+		if (!empty($_POST['macaddress']) && !is_macaddr($_POST['macaddress'])) {
 			include("head.inc");
 			$input_errors[] = "Invalid MAC Address. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['ipaddress']) && ($_POST['selectedtype'] == "Static")) {
+		if (!empty($_POST['ipaddress']) && ($_POST['selectedtype'] == "Static")) {
 			if (!is_ipaddr($_POST['ipaddress'])) {
 				include("head.inc");
 				$input_errors[] = "Invalid WAN IP Address. Please press back in the browser window and correct.";
@@ -519,21 +510,21 @@
 				die;
 			}
 		}
-		if(!empty($_POST['dhcphostname']) && !is_hostname($_POST['dhcphostname'])) {
+		if (!empty($_POST['dhcphostname']) && !is_hostname($_POST['dhcphostname'])) {
 			include("head.inc");
 			$input_errors[] = "Invalid DHCP Hostname. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['pptplocalipaddress']) && !is_ipaddr($_POST['pptplocalipaddress'])) {
+		if (!empty($_POST['pptplocalipaddress']) && !is_ipaddr($_POST['pptplocalipaddress'])) {
 		    include("head.inc");
 			$input_errors[] = "Invalid PPTP Local IP Address. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
+		if (!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
 			include("head.inc");
 			$input_errors[] = "Invalid PPTP Remote IP Address. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
@@ -542,8 +533,7 @@
 		}
 		$type = $_POST['selectedtype'];
 
-		if (!is_array($config['ppps']['ppp']))
-			$config['ppps']['ppp'] = array();
+		init_config_arr(array('ppps', 'ppp'));
 		if (count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 				if ($ppp['ptpid'] == "0") {
@@ -583,14 +573,14 @@
 	</stepsubmitphpaction>
 	<stepsubmitbeforesave>
 		<![CDATA[
-			if($_POST['selectedtype'] == "Static") {
+			if ($_POST['selectedtype'] == "Static") {
 
 			} else {
 				$_POST['ipaddress'] = $_POST['selectedtype'];
 				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
-				write_config();
+				write_config(gettext("WAN interface configuration saved via pfSense setup wizard."));
 			}
-			if(!$config['interfaces']['lan']) {
+			if (!$config['interfaces']['lan']) {
 				header("Location: /wizard.php?xml=setup_wizard.xml&stepid=6&next=Next");
 			}
 		]]>
@@ -598,6 +588,7 @@
 </step>
 <step>
 	<id>6</id>
+	<skip_flavors>ec2,ec2-ic</skip_flavors>
 	<title>Configure LAN Interface</title>
 	<description>On this screen the Local Area Network information will be configured.</description>
 	<fields>
@@ -606,7 +597,8 @@
 			<type>input</type>
 			<bindstofield>interfaces->lan->ipaddr</bindstofield>
 			<description>Type dhcp if this interface uses DHCP to obtain its IP address.</description>
-			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<validate>^(dhcp|DHCP|(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$</validate>
+
 			<message>LAN IP Address field is invalid</message>
 		</field>
 				<field>
@@ -619,9 +611,22 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitbeforesave>
+		<![CDATA[
+		/*
+		 * Store the old LAN IP address so it doesn't trip up the security checks
+		 * between the time it is saved here and applied at the end of the wizard.
+		 * See https://redmine.pfsense.org/issues/8524
+		 */
+		$althosts_before = $config['system']['webgui']['althostnames'];
+		$althosts = explode(' ', $config['system']['webgui']['althostnames']);
+		$althosts[] = get_interface_ip('lan');
+		$config['system']['webgui']['althostnames'] = implode(' ', $althosts);
+		]]>
+	</stepsubmitbeforesave>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if(empty($_POST['lanipaddress']) || !is_ipaddr($_POST['lanipaddress'])) {
+		if (empty($_POST['lanipaddress']) || (!is_ipaddr($_POST['lanipaddress']) && (strtolower($_POST['lanipaddress']) != "dhcp"))) {
 			print_info_box("Invalid LAN IP address. Please press back in the browser window and correct.");
 			die;
 		}
@@ -652,32 +657,41 @@
 			die;
 		}
 
-		$ipaddresses_before = ip_range_size_v4($lowestip, $_POST['lanipaddress']);
-		$ipaddresses_after = ip_range_size_v4($_POST['lanipaddress'], $highestip);
+		/*
+		   If the existing DHCP range on LAN is not in the new subnet or
+		   is invalid, then replace the range with a newly crafted one.
+		*/
+		init_config_arr(array('dhcpd', 'lan', 'range', 'from'));
+		init_config_arr(array('dhcpd', 'lan', 'range', 'to'));
+		if (!ip_in_subnet($config['dhcpd']['lan']['range']['from'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}") ||
+		    !ip_in_subnet($config['dhcpd']['lan']['range']['to'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}")) {
 
-		if ($ipaddresses_after >= $ipaddresses_before) {
-			// The LAN IP is in the 1st half of the subnet, so put DHCP in the 2nd half.
-			if ($ipaddresses_after > 30) {
-				// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
-				// This case will work out like the old defaults if the user has specified the ".1" address.
-				// The range will be something like ".10" to ".245"
-				$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress'], 9);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($highestip, 10);
+			$ipaddresses_before = ip_range_size_v4($lowestip, $_POST['lanipaddress']);
+			$ipaddresses_after = ip_range_size_v4($_POST['lanipaddress'], $highestip);
+			if ($ipaddresses_after >= $ipaddresses_before) {
+				// The LAN IP is in the 1st half of the subnet, so put DHCP in the 2nd half.
+				if ($ipaddresses_after > 30) {
+					// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
+					// This case will work out like the old defaults if the user has specified the ".1" address.
+					// The range will be something like ".10" to ".245"
+					$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress'], 9);
+					$config['dhcpd']['lan']['range']['to'] = ip_before($highestip, 10);
+				} else {
+					// There is not much space in the subnet, so allocate everything above the LAN IP to DHCP.
+					$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress']);
+					$config['dhcpd']['lan']['range']['to'] = ip_before($highestip);
+				}
 			} else {
-				// There is not much space in the subnet, so allocate everything above the LAN IP to DHCP.
-				$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress']);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($highestip);
-			}
-		} else {
-			// The LAN IP is in the 2nd half of the subnet, so put DHCP in the 1st half.
-			if ($ipaddresses_before > 30) {
-				// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
-				$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip, 10);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress'], 9);
-			} else {
-				// There is not much space in the subnet, so allocate everything below the LAN IP to DHCP.
-				$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress']);
+				// The LAN IP is in the 2nd half of the subnet, so put DHCP in the 1st half.
+				if ($ipaddresses_before > 30) {
+					// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
+					$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip, 10);
+					$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress'], 9);
+				} else {
+					// There is not much space in the subnet, so allocate everything below the LAN IP to DHCP.
+					$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip);
+					$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress']);
+				}
 			}
 		}
 		]]>
@@ -703,12 +717,12 @@
 	</fields>
 	<stepsubmitphpaction>
 	<![CDATA[
-	if($_POST['adminpassword'] != "") {
-		if($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
+	if ($_POST['adminpassword'] != "") {
+		if ($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
 			$admin_user =& getUserEntryByUID(0);
 			local_user_set_password($admin_user, $_POST['adminpassword']);
 			local_user_set($admin_user);
-			write_config();
+			write_config(gettext("Admin WebGUI password saved via pfSense setup wizard."));
 		} else {
 			print_info_box("Passwords do not match! Please press back in the browser window and correct.");
 			die;
@@ -743,8 +757,7 @@
 		$config['system']['hostname'] = $config['wizardtemp']['system']['hostname'];
 		$config['system']['domain'] = $config['wizardtemp']['system']['domain'];
 		if (!empty($config['wizardtemp']['wangateway'])) {
-			if (!is_array($config['gateways']['gateway_item']))
-				$config['gateways']['gateway_item'] = array();
+			init_config_arr(array('gateways', 'gateway_item'));
 			$found = false;
 			$defaultgw_found = false;
 			foreach ($config['gateways']['gateway_item'] as & $gw) {
@@ -771,9 +784,12 @@
 			}
 		}
 		unset($config['wizardtemp']);
-		write_config();
+		/* See https://redmine.pfsense.org/issues/8524 */
+		$config['system']['webgui']['althostnames'] = $althosts_before;
+		write_config(gettext("Configuration saved on completion of the pfSense setup wizard."));
 		reload_all();
 		mwexec_bg("/etc/rc.update_bogons.sh now");
+		touch("{$g['cf_conf_path']}/copynotice_display");
 		]]>
 	</stepafterformdisplay>
 </step>
@@ -782,7 +798,7 @@
 	<title>Wizard completed.</title>
 	<stepbeforeformdisplay>
 	<![CDATA[
-		if($g['product_name'] <> 'pfSense') {
+		if ($g['product_name'] <> 'pfSense') {
 			header("Location: " . fixup_string("\$myurl"));
 			exit;
 		}
@@ -790,10 +806,29 @@
 	</stepbeforeformdisplay>
 	<description>
 	<![CDATA[
-		Congratulations!  pfSense is now configured.<p>
-		Please consider contributing back to the project!</p><p>
-		Click <a target='_blank' href='https://www.pfsense.org/get-involved/index.html'>here</a> to purchase services offered by the pfSense team and find other ways to contribute.</p><p>
-		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.</p>
+	<div style="padding-right:25px;">
+		<p><h4>Congratulations! pfSense is now configured.</h4></p>
+		<p>
+		We recommend that you check to see if there are any software updates available. Keeping your software up to date is
+		one of the most important things you can do to maintain the security of your network.</p>
+		<input type="button" onclick="window.location.href='$myurlpkg_mgr_install.php?id=firmware'" class="btn btn-xs btn-success" value="Check for updates"/>
+		</br></br>
+		<p><h4>Remember, we're here to help.</h4></p>
+		<p><a target='_blank' href='https://www.netgate.com/pfw2'><strong><span style="font-size:16px"> Click here</span></strong></a> to learn about Netgate 24/7/365 support services.</p>
+		</br>
+		<p><h4>Useful resources.</h4></p>
+		<p>
+			<ul>
+				<li>Learn more about Netgate's product line, services, and pfSense software from our <a target='_blank' href='https://www.netgate.com/pfw3'>website</a></li>
+				<li>To learn about Netgate appliances and other offers, <a target='_blank' href='https://www.netgate.com/pfw4'>visit our store</a></li>
+				<li>Become part of the pfSense community. Visit our <a target='_blank' href='https://www.netgate.com/pfw5'>forum</a></li>
+				<li>Subscribe to our <a target='_blank' href='https://www.netgate.com/pfw6'>newsletter</a> for ongoing product information, software announcements and special offers.</li>
+			</ul>
+		</p>
+		</br>
+		<input type="button" onclick="window.location.href='$myurl'" class="btn btn-sm btn-primary" value="Finish"/>
+		</p>
+	</div>
 	]]>
 	</description>
 </step>

@@ -1,56 +1,22 @@
 <?php
 /*
-	diag_packet_capture.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * diag_packet_capture.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -106,6 +72,28 @@ function fixup_host($value, $position) {
 		return "{$andor}host {$not}" . $host;
 	} elseif (is_subnet($host)) {
 		return "{$andor}net {$not}" . $host;
+	} elseif (is_macaddr($host, false)) {
+		return "{$andor}ether host {$not}" . $host;
+	} elseif (is_macaddr($host, true)) {
+		/* Try to match a partial MAC address. tcpdump only allows
+		 * matching 1, 2, or 4 byte chunks so enforce that limit
+		 */
+		$searchmac = "0x";
+		$partcount = 0;
+		/* is_macaddr will fail a partial match that has empty sections
+		 * but sections may only have one digit (leading 0) so add a
+		 * left 0 pad.
+		 */
+		foreach (explode(':', $host) as $mp) {
+			$searchmac .= str_pad($mp, 2, "0", STR_PAD_LEFT);
+			$partcount++;
+		}
+		if (!in_array($partcount, array(1, 2, 4))) {
+			return "";
+		}
+		$eq = has_not($value) ? "!=" : "==";
+		// ether[0:2] == 0x0090 or ether[6:2] == 0x0090
+		return "{$andor} ( ether[0:{$partcount}] {$eq} {$searchmac} or ether[6:{$partcount}] {$eq} {$searchmac} )";
 	} else {
 		return "";
 	}
@@ -135,16 +123,19 @@ $interfaces = get_configured_interface_with_descr();
 if (ipsec_enabled()) {
 	$interfaces['enc0'] = "IPsec";
 }
+$interfaces['lo0'] = "Localhost";
 
-foreach (array('server', 'client') as $mode) {
+foreach (array('server' => gettext('OpenVPN Server'), 'client' => gettext('OpenVPN Client')) as $mode => $mode_descr) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
 			if (!isset($setting['disable'])) {
-				$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+				$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = $mode_descr . ": ".htmlspecialchars($setting['description']);
 			}
 		}
 	}
 }
+
+$interfaces = array_merge($interfaces, interface_ipsec_vti_list_all());
 
 if ($_POST) {
 	$host = $_POST['host'];
@@ -191,8 +182,16 @@ if ($_POST) {
 		}
 
 		foreach ($hosts as $h) {
-			if (!is_subnet(strip_host_logic($h)) && !is_ipaddr(strip_host_logic($h))) {
-				$input_errors[] = sprintf(gettext("A valid IP address or CIDR block must be specified. [%s]"), $h);
+			$h = strip_host_logic($h);
+			if (!is_subnet($h) && !is_ipaddr($h) && !is_macaddr($h, true)) {
+				$input_errors[] = sprintf(gettext("A valid IP address, CIDR block, or MAC address must be specified. [%s]"), $h);
+			}
+			/* Check length of partial MAC */
+			if (!is_macaddr($h, false) && is_macaddr($h, true)) {
+				$mac_parts = explode(':', $h);
+				if (!in_array(count($mac_parts), array(1, 2, 4))) {
+					$input_errors[] = gettext("Partial MAC addresses can only be matched using 1, 2, or 4 MAC segments (bytes).");
+				}
 			}
 		}
 	}
@@ -222,7 +221,6 @@ if ($_POST) {
 	if (!count($input_errors)) {
 		$do_tcpdump = true;
 
-		conf_mount_rw();
 
 		if ($_POST['promiscuous']) {
 			//if promiscuous mode is checked
@@ -310,7 +308,7 @@ $section = new Form_Section('Packet Capture Options');
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$selectedif,
 	$interfaces
 ))->setHelp('Select the interface on which to capture traffic. ');
@@ -320,14 +318,27 @@ $section->addInput(new Form_Checkbox(
 	'Promiscuous',
 	'Enable promiscuous mode',
 	$promiscuous
-))->setHelp('The packet capture will be performed using promiscuous mode.<br />' .
-			'Note: Some network adapters do not support or work well in promiscuous mode.'. '<br />' .
-			'More: ' . '<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html">' .
-			'Packet capture' . '</a>');
+))->setHelp('%1$sNon-promiscuous mode captures only traffic that is directly relevant to the host (sent by it, sent or broadcast to it, or routed through it) and ' .
+	'does not show packets that are ignored at network adapter level.%2$s%3$sPromiscuous mode%4$s ("sniffing") captures all data seen by the adapter, whether ' .
+	'or not it is valid or related to the host, but in some cases may have undesirable side effects and not all adapters support this option. Click Info for details %5$s' .
+	'Promiscuous mode requires more kernel processing of packets. This puts a slightly higher demand on system resources, especially ' .
+	'on very busy networks or low power processors. The change in packet processing may allow a hostile host to detect that an adapter is in promiscuous mode ' .
+	'or to \'fingerprint\' the kernel (see %6$s). Some network adapters may not support or work well in promiscuous mode (see %7$s).%8$s',
+
+	'<p style="margin-bottom:2px;padding-bottom:0px">',
+	'</p><p style="margin:0px;padding:0px">',
+	'<a href="https://en.wikipedia.org/wiki/Promiscuous_mode">',
+	'</a>',
+	'<span class="infoblock" style="font-size:90%"><br />',
+	'&nbsp;<a target="_blank" href="https://security.stackexchange.com/questions/3630/how-to-find-out-that-a-nic-is-in-promiscuous-mode-on-a-lan">[1]</a>' .
+		'&nbsp;<a href="https://nmap.org/nsedoc/scripts/sniffer-detect.html">[2]</a>',
+	'&nbsp;<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+11.0-stable&amp;arch=default&amp;format=html">[3]</a>',
+	'</span></p>'
+);
 
 $section->addInput(new Form_Select(
 	'fam',
-	'Address Family',
+	'*Address Family',
 	$fam,
 	array('' => 'Any',
 		  'ip' => gettext('IPv4 Only'),
@@ -337,7 +348,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'proto',
-	'Protocol',
+	'*Protocol',
 	$proto,
 	$protocollist
 ))->setHelp('Select the protocol to capture, or "Any". ');
@@ -347,10 +358,12 @@ $section->addInput(new Form_Input(
 	'Host Address',
 	'text',
 	$host
-))->setHelp('This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.' . '<br />' .
+))->setHelp('This value is either the Source or Destination IP address, subnet in CIDR notation, or MAC address.%1$s' .
 			'Matching can be negated by preceding the value with "!". Multiple IP addresses or CIDR subnets may be specified. Comma (",") separated values perform a boolean "AND". ' .
-			'Separating with a pipe ("|") performs a boolean "OR".' . '<br />' .
-			'If this field is left blank, all packets on the specified interface will be captured.');
+			'Separating with a pipe ("|") performs a boolean "OR".%1$s' .
+			'MAC addresses must be entered in colon-separated format, such as xx:xx:xx:xx:xx:xx or a partial address consisting of one (xx), two (xx:xx), or four (xx:xx:xx:xx) segments.%1$s' .
+			'If this field is left blank, all packets on the specified interface will be captured.',
+			'<br />');
 
 $section->addInput(new Form_Input(
 	'port',
@@ -373,8 +386,9 @@ $section->addInput(new Form_Input(
 	'Count',
 	'text',
 	$count
-))->setHelp('This is the number of packets the packet capture will grab. Default value is 100.' . '<br />' .
-			'Enter 0 (zero) for no count limit.');
+))->setHelp('This is the number of packets the packet capture will grab. Default value is 100.%s' .
+			'Enter 0 (zero) for no count limit.',
+			'<br />');
 
 $section->addInput(new Form_Select(
 	'detail',
@@ -385,16 +399,18 @@ $section->addInput(new Form_Select(
 		  'high' => gettext('High'),
 		  'full' => gettext('Full'),
 	)
-))->setHelp('This is the level of detail that will be displayed after hitting "Stop" when the packets have been captured.' . '<br />' .
-			'This option does not affect the level of detail when downloading the packet capture. ');
+))->setHelp('This is the level of detail that will be displayed after hitting "Stop" when the packets have been captured.%s' .
+			'This option does not affect the level of detail when downloading the packet capture. ',
+			'<br />');
 
 $section->addInput(new Form_Checkbox(
 	'dnsquery',
 	'Reverse DNS Lookup',
 	'Do reverse DNS lookup',
 	$_POST['dnsquery']
-))->setHelp('The packet capture will perform a reverse DNS lookup associated with all IP addresses.' . '<br />' .
-			'This option can cause delays for large packet captures.');
+))->setHelp('The packet capture will perform a reverse DNS lookup associated with all IP addresses.%s' .
+			'This option can cause delays for large packet captures.',
+			'<br />');
 
 $form->add($section);
 
@@ -525,7 +541,6 @@ if ($do_tcpdump) :
 		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} {$iscarp} -r {$fp}{$fn}");
 		print('</textarea>');
 
-		conf_mount_ro();
 ?>
 		</div>
 	</div>

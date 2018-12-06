@@ -1,56 +1,22 @@
 <?php
 /*
-	services_rfc2136.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * services_rfc2136.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -62,25 +28,22 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['dnsupdates']['dnsupdate'])) {
-	$config['dnsupdates']['dnsupdate'] = array();
-}
-
+init_config_arr(array('dnsupdates', 'dnsupdate'));
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
-if ($_GET['act'] == "del") {
-	unset($a_rfc2136[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	unset($a_rfc2136[$_POST['id']]);
 
 	write_config();
 
 	header("Location: services_rfc2136.php");
 	exit;
-} else if ($_GET['act'] == "toggle") {
-	if ($a_rfc2136[$_GET['id']]) {
-		if (isset($a_rfc2136[$_GET['id']]['enable'])) {
-			unset($a_rfc2136[$_GET['id']]['enable']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_rfc2136[$_POST['id']]) {
+		if (isset($a_rfc2136[$_POST['id']]['enable'])) {
+			unset($a_rfc2136[$_POST['id']]['enable']);
 		} else {
-			$a_rfc2136[$_GET['id']]['enable'] = true;
+			$a_rfc2136[$_POST['id']]['enable'] = true;
 		}
 		write_config();
 
@@ -90,6 +53,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Clients"));
+$pglinks = array("", "services_dyndns.php", "@self");
 include("head.inc");
 
 $tab_array = array();
@@ -155,6 +119,7 @@ foreach ($a_rfc2136 as $rfc2136):
 							<td>
 <?php
 	$filename = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}.cache";
+	$filename_v6 = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}_v6.cache";
 	$if = get_failover_interface($rfc2136['interface']);
 
 	if (file_exists($filename)) {
@@ -182,10 +147,10 @@ foreach ($a_rfc2136 as $rfc2136):
 
 	print('<br />');
 
-	if (file_exists("{$filename}.ipv6")) {
+	if (file_exists($filename_v6)) {
 		print('IPv6: ');
 		$ipaddr = get_interface_ipv6($if);
-		$cached_ip_s = explode("|", file_get_contents("{$filename}.ipv6"));
+		$cached_ip_s = explode("|", file_get_contents($filename_v6));
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr != $cached_ip) {
@@ -209,13 +174,13 @@ foreach ($a_rfc2136 as $rfc2136):
 						<a class="fa fa-pencil" title="<?=gettext('Edit client')?>" href="services_rfc2136_edit.php?id=<?=$i?>"></a>
 					<?php if (isset($rfc2136['enable'])) {
 					?>
-						<a	class="fa fa-ban" title="<?=gettext('Disable client')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+						<a	class="fa fa-ban" title="<?=gettext('Disable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 					<?php } else {
 					?>
-						<a class="fa fa-check-square-o" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+						<a class="fa fa-check-square-o" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 					<?php }
 					?>
-						<a class="fa fa-trash" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 					</tr>
 <?php

@@ -1,59 +1,26 @@
 <?php
 /*
-	firewall_nat_1to1.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_nat_1to1.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -68,10 +35,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['nat']['onetoone'])) {
-	$config['nat']['onetoone'] = array();
-}
-
+init_config_arr(array('nat', 'onetoone'));
 $a_1to1 = &$config['nat']['onetoone'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
@@ -86,7 +50,7 @@ if (array_key_exists('order-store', $_POST)) {
 
 		$a_1to1 = $a_1to1_new;
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: 1:1 - reordered NAT 1:1 mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -95,25 +59,21 @@ if (array_key_exists('order-store', $_POST)) {
 	}
 }
 
-if ($_POST) {
-	$pconfig = $_POST;
 
-	if ($_POST['apply']) {
-		$retval = 0;
-		$retval |= filter_configure();
-		$savemsg = get_std_save_message($retval);
+if ($_POST['apply']) {
+	$retval = 0;
+	$retval |= filter_configure();
 
-		if ($retval == 0) {
-			clear_subsystem_dirty('natconf');
-			clear_subsystem_dirty('filter');
-		}
+	if ($retval == 0) {
+		clear_subsystem_dirty('natconf');
+		clear_subsystem_dirty('filter');
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_1to1[$_GET['id']]) {
-		unset($a_1to1[$_GET['id']]);
-		if (write_config()) {
+if ($_POST['act'] == "del") {
+	if ($a_1to1[$_POST['id']]) {
+		unset($a_1to1[$_POST['id']]);
+		if (write_config(gettext("Firewall: NAT: 1:1 - deleted NAT 1:1 mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -129,7 +89,7 @@ if (isset($_POST['del_x'])) {
 			unset($a_1to1[$rulei]);
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -137,14 +97,16 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 
-} else if ($_GET['act'] == "toggle") {
-	if ($a_1to1[$_GET['id']]) {
-		if (isset($a_1to1[$_GET['id']]['disabled'])) {
-			unset($a_1to1[$_GET['id']]['disabled']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_1to1[$_POST['id']]) {
+		if (isset($a_1to1[$_POST['id']]['disabled'])) {
+			unset($a_1to1[$_POST['id']]['disabled']);
+			$wc_msg = gettext('Firewall: NAT: 1:1 - enabled a NAT 1:1 rule.');
 		} else {
-			$a_1to1[$_GET['id']]['disabled'] = true;
+			$a_1to1[$_POST['id']]['disabled'] = true;
+			$wc_msg = gettext('Firewall: NAT: 1:1 - disabled a NAT 1:1 rule.');
 		}
-		if (write_config(gettext("Firewall: NAT: 1:1, enable/disable NAT rule"))) {
+		if (write_config($wc_msg)) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_1to1.php");
@@ -153,10 +115,11 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("1:1"));
+$pglinks = array("", "firewall_nat.php", "@self");
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('natconf')) {
@@ -170,15 +133,16 @@ $tab_array[] = array(gettext("1:1"), true, "firewall_nat_1to1.php");
 $tab_array[] = array(gettext("Outbound"), false, "firewall_nat_out.php");
 $tab_array[] = array(gettext("NPt"), false, "firewall_nat_npt.php");
 display_top_tabs($tab_array);
+
 ?>
 <form action="firewall_nat_1to1.php" method="post">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("NAT 1:1 Mappings")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table class="table table-striped table-hover table-condensed">
+			<table id="ruletable" class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th><!-- checkbox --></th>
+						<th><input type="checkbox" id="selectAll" name="selectAll" /></th>
 						<th><!-- icon --></th>
 						<th><?=gettext("Interface"); ?></th>
 						<th><?=gettext("External IP"); ?></th>
@@ -190,24 +154,28 @@ display_top_tabs($tab_array);
 				</thead>
 				<tbody class="user-entries">
 <?php
-		$textse = "</span>";
 		$i = 0;
 		foreach ($a_1to1 as $natent):
 			if (isset($natent['disabled'])) {
-				$textss = "<span class=\"gray\">";
 				$iconfn = "pass_d";
 			} else {
-				$textss = "<span>";
 				$iconfn = "pass";
 			}
+
+			$alias = rule_columns_with_alias(
+			$natent['source']['address'],
+			pprint_port($natent['source']['port']),
+			$natent['destination']['address'],
+			pprint_port($natrent['destination']['port'])
+);
 ?>
-					<tr id="fr<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
+					<tr id="fr<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';" <?=(isset($natent['disabled']) ? ' class="disabled"' : '')?>>
 						<td >
 							<input type="checkbox" id="frc<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
 
 						<td>
-							<a href="?act=toggle&amp;id=<?=$i?>">
+							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
 								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 <?php 				if (isset($natent['nobinat'])) { ?>
 								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
@@ -216,42 +184,44 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 <?php
-					echo $textss;
 					if (!$natent['interface']) {
 						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
 					} else {
 						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
 					}
-					echo $textse;
 ?>
 						</td>
 						<td>
 <?php
 					$source_net = pprint_address($natent['source']);
 					$source_cidr = strstr($source_net, '/');
-					echo $textss . $natent['external'] . $source_cidr . $textse;
+					echo $natent['external'] . $source_cidr;
 ?>
 						</td>
 						<td>
 <?php
-					echo $textss . $source_net . $textse;
+					echo $source_net;
 ?>
 						</td>
 						<td>
-<?php
-					echo $textss . pprint_address($natent['destination']) . $textse;
-?>
+							<?php if (isset($alias['dst'])): ?>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'])))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($natent['destination']))?>
+							<?php endif; ?>
 						</td>
 						<td>
 <?php
-					echo $textss . htmlspecialchars($natent['descr']) . '&nbsp;' . $textse;
+					echo htmlspecialchars($natent['descr']) . '&nbsp;';
 ?>
 						</td>
 
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_1to1_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 
 					</tr>
@@ -285,8 +255,8 @@ display_top_tabs($tab_array);
 </form>
 
 <div class="infoblock">
-<?php print_info_box(gettext('Depending on the way the WAN connection is setup, this may also need a ') . '<a href="firewall_virtual_ip.php">' .
-			   gettext("Virtual IP") . '</a>.' . '<br />' .
+<?php print_info_box(sprintf(gettext('Depending on the way the WAN connection is setup, this may also need a %1$sVirtual IP%2$s.'), '<a href="firewall_virtual_ip.php">', '</a>') .
+			   '<br />' .
 			   gettext('If a 1:1 NAT entry is added for any of the interface IPs on this system, ' .
 					   'it will make this system inaccessible on that IP address. i.e. if ' .
 					   'the WAN IP address is used, any services on this system (IPsec, OpenVPN server, etc.) ' .
@@ -298,6 +268,7 @@ display_top_tabs($tab_array);
 //<![CDATA[
 events.push(function() {
 
+<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
@@ -306,6 +277,7 @@ events.push(function() {
 			dirty = true;
 		}
 	});
+<?php endif; ?>
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
@@ -326,6 +298,13 @@ events.push(function() {
 		} else {
 			return undefined;
 		}
+	});
+
+	$('#selectAll').click(function() {
+		var checkedStatus = this.checked;
+		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
+		$(this).prop('checked', checkedStatus);
+		});
 	});
 });
 //]]>

@@ -1,33 +1,28 @@
 #!/usr/local/bin/php-cgi -q
 <?php
 /*
-	rc.initial.setlanip
-	part of m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
+ * rc.initial.setlanip
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * originally part of m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 $options = getopt("hn", array("dry-run", "help"));
 
@@ -106,7 +101,7 @@ function prompt_for_enable_dhcp_server($version = 4) {
 
 	$label_DHCP = ($version === 6) ? "DHCP6" : "DHCP";
 	$upperifname = strtoupper($interface);
-	return console_prompt_for_yn (sprintf(gettext("Do you want to enable the %s server on %s?"), $label_DHCP, $upperifname));
+	return console_prompt_for_yn (sprintf(gettext('Do you want to enable the %1$s server on %2$s?'), $label_DHCP, $upperifname));
 }
 
 function get_interface_config_description($iface) {
@@ -139,7 +134,7 @@ function get_interface_config_description($iface) {
 $fp = fopen('php://stdin', 'r');
 
 /* build an interface collection */
-$ifdescrs = get_configured_interface_with_descr(false, true);
+$ifdescrs = get_configured_interface_with_descr(true);
 $count = count($ifdescrs);
 
 /* grab interface that we will operate on, unless there is only one interface */
@@ -206,20 +201,14 @@ function next_unused_gateway_name($interface) {
 
 function add_gateway_to_config($interface, $gatewayip, $inet_type) {
 	global $g, $config, $dry_run;
-	if (!is_array($config['gateways']['gateway_item'])) {
-		$config['gateways']['gateway_item'] = array();
-	}
+	init_config_arr(array('gateways', 'gateway_item'));
 	$a_gateways = &$config['gateways']['gateway_item'];
 	if ($dry_run) {
 		print_r($a_gateways);
 	}
 	$new_name = '';
-	$is_default = true;
 	foreach ($a_gateways as $item) {
 		if ($item['ipprotocol'] === $inet_type) {
-			if (isset($item['defaultgw'])) {
-				$is_default = false;
-			}
 			if (($item['interface'] === $interface) && ($item['gateway'] === $gatewayip)) {
 				$new_name = $item['name'];
 			}
@@ -234,13 +223,20 @@ function add_gateway_to_config($interface, $gatewayip, $inet_type) {
 			"weight" => 1,
 			"ipprotocol" => $inet_type,
 			"interval" => true,
-			"descr" => "Interface $interface Gateway",
-			"defaultgw" => $is_default
+			"descr" => "Interface $interface Gateway"
 		);
 		if ($dry_run) {
 			print_r($item);
 		}
 		$a_gateways[] = $item;
+	}
+
+	//set the new GW as the default if there isnt one set yet
+	if ($item['ipprotocol'] == "inet" && empty(isset($config['gateways']['defaultgw4']))) {
+		$config['gateways']['defaultgw4'] = $new_name;
+	}
+	if ($item['ipprotocol'] == "inet6" && empty(isset($config['gateways']['defaultgw6']))) {
+		$config['gateways']['defaultgw6'] = $new_name;
 	}
 
 	return $new_name;
@@ -256,7 +252,7 @@ function console_configure_ip_address($version) {
 	$upperifname = strtoupper($interface);
 
 	if ($interface == "wan") {
-		if (console_prompt_for_yn (sprintf(gettext("Configure %s address %s interface via %s?"), $label_IPvX, $upperifname, $label_DHCP))) {
+		if (console_prompt_for_yn (sprintf(gettext('Configure %1$s address %2$s interface via %3$s?'), $label_IPvX, $upperifname, $label_DHCP))) {
 			$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
 			if (!empty($ifppp)) {
 				$ifaceassigned = $ifppp;
@@ -271,9 +267,14 @@ function console_configure_ip_address($version) {
 	if ($isintdhcp == false or $interface <> "wan") {
 		while (true) {
 			do {
-				echo "\n" . sprintf(gettext("Enter the new %s %s address.  Press <ENTER> for none:"),
+				echo "\n" . sprintf(gettext('Enter the new %1$s %2$s address.  Press <ENTER> for none:'),
 							$upperifname, $label_IPvX) . "\n> ";
 				$intip = chop(fgets($fp));
+				$intbits_ok = false;
+				if (strstr($intip, "/")) {
+					list($intip, $intbits) = explode("/", $intip);
+					$intbits_ok = (is_numeric($intbits) && (($intbits >= 1) && ($intbits <= $maxbits))) ? true : false;
+				}
 				$is_ipaddr = ($version === 6) ? is_ipaddrv6($intip) : is_ipaddrv4($intip);
 				if ($is_ipaddr && is_ipaddr_configured($intip, $interface, true)) {
 					$ip_conflict = true;
@@ -282,23 +283,25 @@ function console_configure_ip_address($version) {
 					$ip_conflict = false;
 				}
 			} while (($ip_conflict === true) || !($is_ipaddr || $intip == ''));
-			if ($intip != '') {
-				echo "\n" . sprintf(gettext("Subnet masks are entered as bit counts (as in CIDR notation) in %s."),
+			if ($is_ipaddr && $intip != '') {
+				if ($intbits_ok == false) {
+					echo "\n" . sprintf(gettext("Subnet masks are entered as bit counts (as in CIDR notation) in %s."),
 							$g['product_name']) . "\n";
-				if ($version === 6) {
-					echo "e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00 = 120\n";
-					echo "     ffff:ffff:ffff:ffff:ffff:ffff:ffff:0    = 112\n";
-					echo "     ffff:ffff:ffff:ffff:ffff:ffff:0:0       =  96\n";
-					echo "     ffff:ffff:ffff:ffff:ffff:0:0:0          =  80\n";
-					echo "     ffff:ffff:ffff:ffff:0:0:0:0             =  64\n";
-				} else {
-					echo "e.g. 255.255.255.0 = 24\n";
-					echo "     255.255.0.0   = 16\n";
-					echo "     255.0.0.0     = 8\n";
+					if ($version === 6) {
+						echo "e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00 = 120\n";
+						echo "     ffff:ffff:ffff:ffff:ffff:ffff:ffff:0    = 112\n";
+						echo "     ffff:ffff:ffff:ffff:ffff:ffff:0:0       =  96\n";
+						echo "     ffff:ffff:ffff:ffff:ffff:0:0:0          =  80\n";
+						echo "     ffff:ffff:ffff:ffff:0:0:0:0             =  64\n";
+					} else {
+						echo "e.g. 255.255.255.0 = 24\n";
+						echo "     255.255.0.0   = 16\n";
+						echo "     255.0.0.0     = 8\n";
+					}
 				}
-				do {
+				while ($intbits_ok == false) {
 					$upperifname = strtoupper($interface);
-					echo "\n" . sprintf(gettext("Enter the new %s %s subnet bit count (1 to %s):"),
+					echo "\n" . sprintf(gettext('Enter the new %1$s %2$s subnet bit count (1 to %3$s):'),
 								$upperifname, $label_IPvX, $maxbits) . "\n> ";
 					$intbits = chop(fgets($fp));
 					$intbits_ok = is_numeric($intbits) && (($intbits >= 1) && ($intbits <= $maxbits));
@@ -315,7 +318,7 @@ function console_configure_ip_address($version) {
 							$intbits_ok = false;
 						}
 					}
-				} while (!$intbits_ok);
+				}
 
 				if ($version === 6) {
 					$subnet = gen_subnetv6($intip, $intbits);
@@ -323,7 +326,7 @@ function console_configure_ip_address($version) {
 					$subnet = gen_subnet($intip, $intbits);
 				}
 				do {
-					echo "\n" . sprintf(gettext("For a WAN, enter the new %s %s upstream gateway address."), $upperifname, $label_IPvX) . "\n" .
+					echo "\n" . sprintf(gettext('For a WAN, enter the new %1$s %2$s upstream gateway address.'), $upperifname, $label_IPvX) . "\n" .
 								gettext("For a LAN, press <ENTER> for none:") . "\n> ";
 					$gwip = chop(fgets($fp));
 					$is_ipaddr = ($version === 6) ? is_ipaddrv6($gwip) : is_ipaddrv4($gwip);
@@ -410,6 +413,7 @@ function console_configure_dhcpd($version = 4) {
 			} while (!$is_ipaddr || !$is_inrange);
 		} while ($not_inorder);
 		$restart_dhcpd = true;
+		init_config_arr(array($dhcpd, $interface, 'range'));
 		$config[$dhcpd][$interface]['enable'] = true;
 		$config[$dhcpd][$interface]['range']['from'] = $dhcpstartip;
 		$config[$dhcpd][$interface]['range']['to'] = $dhcpendip;
@@ -496,21 +500,19 @@ if (!$dry_run) {
 
 if ($intip != '') {
 	if (is_ipaddr($intip)) {
-		echo "\n\n" . sprintf(gettext("The IPv4 %s address has been set to %s"),
-							  $upperifname, "{$intip}/{$intbits}") . "\n";
+		$intipstr = "{$intip}/{$intbits}";
 	} else {
-		echo "\n\n" . sprintf(gettext("The IPv4 %s address has been set to %s"),
-							  $upperifname, $intip) . "\n";
+		$intipstr = $intip;
 	}
+	echo "\n\n" . sprintf(gettext('The IPv4 %1$s address has been set to %2$s'), $upperifname, $intipstr) . "\n";
 }
 if ($intip6 != '') {
 	if (is_ipaddr($intip6)) {
-		echo "\n\n" . sprintf(gettext("The IPv6 %s address has been set to %s"),
-							  $upperifname, "${intip6}/${intbits6}") . "\n";
+		$intip6str = "${intip6}/${intbits6}";
 	} else {
-		echo "\n\n" . sprintf(gettext("The IPv6 %s address has been set to %s"),
-							  $upperifname, $intip6) . "\n";
+		$intip6str = $intip6;
 	}
+	echo "\n\n" . sprintf(gettext('The IPv6 %1$s address has been set to %2$s'), $upperifname, $intip6str) . "\n";
 }
 
 if ($intip != '' || $intip6 != '') {

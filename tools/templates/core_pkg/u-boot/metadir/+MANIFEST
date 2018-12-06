@@ -1,0 +1,16 @@
+name: "%%PRODUCT_NAME%%-u-boot%%FLAVOR%%"
+version: "%%VERSION%%"
+origin: "sysutil/%%PRODUCT_NAME%%-u-boot"
+comment: <<EOD
+%%PRODUCT_NAME%% u-boot%%FLAVOR_DESC%%
+EOD
+maintainer: development@pfsense.org
+prefix: /
+vital: true
+deps: {
+"%%PRODUCT_NAME%%-rc": {origin: "security/%%PRODUCT_NAME%%-rc", version: "%%VERSION%%"}
+}
+categories [ sysutil,  ]
+licenselogic: single
+licenses: [ APACHE20,  ]
+options: {  }

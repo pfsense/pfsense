@@ -1,56 +1,22 @@
 <?php
 /*
-	interfaces_groups_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * interfaces_groups_edit.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -65,20 +31,12 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 
 $pgtitle = array(gettext("Interfaces"), gettext("Interface Groups"), gettext("Edit"));
+$pglinks = array("", "interfaces_groups.php", "@self");
 $shortcut_section = "interfaces";
 
-if (!is_array($config['ifgroups']['ifgroupentry'])) {
-	$config['ifgroups']['ifgroupentry'] = array();
-}
-
+init_config_arr(array('ifgroups', 'ifgroupentry'));
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
-
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_ifgroups[$id]) {
 	$pconfig['ifname'] = $a_ifgroups[$id]['ifname'];
@@ -86,28 +44,61 @@ if (isset($id) && $a_ifgroups[$id]) {
 	$pconfig['descr'] = html_entity_decode($a_ifgroups[$id]['descr']);
 }
 
-$interface_list = get_configured_interface_with_descr();
-$interface_list_disabled = get_configured_interface_with_descr(false, true);
+$interface_list = get_configured_interface_with_descr(true);
+$interface_list_disabled = get_configured_interface_with_descr(true);
+$ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9) and '_' are allowed.");
+$ifname_no_digit_text = gettext("The group name cannot end with a digit.");
 
-if ($_POST) {
+
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (!isset($id)) {
-		foreach ($a_ifgroups as $groupentry) {
-			if ($groupentry['ifname'] == $_POST['ifname']) {
+	/* input validation */
+	$reqdfields = explode(" ", "ifname");
+	$reqdfieldsn = array(gettext("Group Name"));
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (!$input_errors) {
+		foreach ($a_ifgroups as $groupid => $groupentry) {
+			if ((!isset($id) || ($groupid != $id)) && ($groupentry['ifname'] == $_POST['ifname'])) {
 				$input_errors[] = gettext("Group name already exists!");
 			}
 		}
-	}
 
-	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match)) {
-		$input_errors[] = gettext("Only letters A-Z are allowed as the group name.");
-	}
+		if (strlen($_POST['ifname']) > 16) {
+			$input_errors[] = gettext("Group name cannot have more than 16 characters.");
+		}
 
-	foreach ($interface_list as $gif => $gdescr) {
-		if ($gdescr == $_POST['ifname'] || $gif == $_POST['ifname']) {
-			$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
+		if (preg_match("/([^a-zA-Z0-9_])+/", $_POST['ifname'])) {
+			$input_errors[] = $ifname_allowed_chars_text . " " . gettext("Please choose another group name.");
+		}
+
+		if (preg_match("/[0-9]$/", $_POST['ifname'])) {
+			$input_errors[] = $ifname_no_digit_text;
+		}
+
+		/*
+		 * Packages (e.g. tinc) create interface groups, reserve this
+		 * namespace pkg_ for them
+		 */
+		if (substr($_POST['ifname'], 0, 4) == 'pkg_') {
+			$input_errors[] = gettext("Group name cannot start with pkg_");
+		}
+
+		foreach ($interface_list_disabled as $gif => $gdescr) {
+			if ((strcasecmp($gdescr, $_POST['ifname']) == 0) || (strcasecmp($gif, $_POST['ifname']) == 0)) {
+				$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
+			}
+		}
+
+		/* Is the description already used as an alias name? */
+		if (is_array($config['aliases']['alias'])) {
+			foreach ($config['aliases']['alias'] as $alias) {
+				if ($alias['name'] == $_POST['ifname']) {
+					$input_errors[] = gettext("An alias with this name already exists.");
+				}
+			}
 		}
 	}
 
@@ -211,12 +202,11 @@ $section = new Form_Section('Interface Group Configuration');
 
 $section->addInput(new Form_Input(
 	'ifname',
-	'Group Name',
+	'*Group Name',
 	'text',
 	$pconfig['ifname'],
-	['placeholder' => 'Group Name']
-))->setWidth(6)->setHelp('No numbers or spaces are allowed. '.
-	'Only characters: a-zA-Z');
+	['placeholder' => 'Group Name', 'maxlength' => "16"]
+))->setWidth(6)->setHelp($ifname_allowed_chars_text . " " . $ifname_no_digit_text);
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -235,8 +225,8 @@ $section->addInput(new Form_Select(
 	true
 ))->setWidth(6)->setHelp('NOTE: Rules for WAN type '.
 	'interfaces in groups do not contain the reply-to mechanism upon which '.
-	'Multi-WAN typically relies. '.
-	'<a href="https://doc.pfsense.org/index.php/ifgroups">More Information</a>');
+	'Multi-WAN typically relies. %1$sMore Information%2$s',
+	'<a href="https://doc.pfsense.org/index.php/Interface_Groups">', '</a>');
 
 if (isset($id) && $a_ifgroups[$id]) {
 	$form->addGlobal(new Form_Input(

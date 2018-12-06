@@ -1,60 +1,27 @@
 <?php
 /*
-	system_advanced_admin.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2008 Shrew Soft Inc
+ * system_advanced_admin.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -69,11 +36,16 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+init_config_arr(array('system', 'webgui'));
+init_config_arr(array('system', 'ssh'));
+
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
 $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
 $pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttpredirect']);
+$pconfig['disablehsts'] = isset($config['system']['webgui']['disablehsts']);
+$pconfig['ocsp-staple'] = $config['system']['webgui']['ocsp-staple'];
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
@@ -84,12 +56,18 @@ $pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['serialspeed'] = $config['system']['serialspeed'];
 $pconfig['primaryconsole'] = $config['system']['primaryconsole'];
-$pconfig['enablesshd'] = $config['system']['enablesshd'];
+$pconfig['enablesshd'] = $config['system']['ssh']['enable'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
-$pconfig['sshdkeyonly'] = isset($config['system']['ssh']['sshdkeyonly']);
+$pconfig['sshdkeyonly'] = $config['system']['ssh']['sshdkeyonly'];
+$pconfig['sshdagentforwarding'] = isset($config['system']['ssh']['sshdagentforwarding']);
 $pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
+$pconfig['sshguard_threshold'] = $config['system']['sshguard_threshold'] ?? '';
+$pconfig['sshguard_blocktime'] = $config['system']['sshguard_blocktime'] ?? '';
+$pconfig['sshguard_detection_time'] = $config['system']['sshguard_detection_time'] ?? '';
+$pconfig['sshguard_whitelist'] = $config['system']['sshguard_whitelist'] ?? '';
 
-$a_cert =& $config['cert'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 $certs_available = false;
 
 if (is_array($a_cert) && count($a_cert)) {
@@ -135,11 +113,25 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['sshdkeyonly'] == "yes") {
-		$config['system']['ssh']['sshdkeyonly'] = "enabled";
-	} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
-		unset($config['system']['ssh']['sshdkeyonly']);
+	$whitelist_addresses = array();
+	for ($i = 0; isset($_POST['address' . $i]); $i++) {
+		/* Ignore blank fields */
+		if (empty($_POST['address' . $i])) {
+			continue;
+		}
+
+		$whitelist_address = $_POST['address' . $i] . '/' .
+		    $_POST['address_subnet'. $i];
+
+		if (!is_subnet($whitelist_address)) {
+			$input_errors[] = sprintf(gettext(
+			    "Invalid subnet '%s' added to Login Protection Whitelist"),
+			    $whitelist_address);
+			break;
+		}
+		$whitelist_addresses[] = $whitelist_address;
 	}
+	$pconfig['sshguard_whitelist'] = implode(' ', $whitelist_addresses);
 
 	ob_flush();
 	flush();
@@ -169,13 +161,41 @@ if ($_POST) {
 
 			$config['system']['webgui']['disablehttpredirect'] = true;
 		} else {
-			if ($config['system']['webgui']['disablehttpredirect'] == true) {
+			if (isset($config['system']['webgui']['disablehttpredirect'])) {
 				$restart_webgui = true;
 			}
 
 			unset($config['system']['webgui']['disablehttpredirect']);
 		}
 
+		if ($_POST['webgui-hsts'] == "yes") {
+			if ($config['system']['webgui']['disablehsts'] != true) {
+				$restart_webgui = true;
+			}
+
+			$config['system']['webgui']['disablehsts'] = true;
+		} else {
+			if (isset($config['system']['webgui']['disablehsts'])) {
+				$restart_webgui = true;
+			}
+
+			unset($config['system']['webgui']['disablehsts']);
+		}
+
+		if ($_POST['ocsp-staple'] == "yes") {
+			if ($config['system']['webgui']['ocsp-staple'] != true) {
+				$restart_webgui = true;
+			}
+
+			$config['system']['webgui']['ocsp-staple'] = true;
+		} else {
+			if (isset($config['system']['webgui']['ocsp-staple'])) {
+				$restart_webgui = true;
+			}
+
+			unset($config['system']['webgui']['ocsp-staple']);
+		}
+		
 		if ($_POST['webgui-login-messages'] == "yes") {
 			$config['system']['webgui']['quietlogin'] = true;
 		} else {
@@ -242,18 +262,27 @@ if ($_POST) {
 			unset($config['system']['webgui']['althostnames']);
 		}
 
-		$sshd_enabled = $config['system']['enablesshd'];
+		$sshd_enabled = $config['system']['ssh']['enable'];
 		if ($_POST['enablesshd']) {
-			$config['system']['enablesshd'] = "enabled";
+			$config['system']['ssh']['enable'] = "enabled";
 		} else {
-			unset($config['system']['enablesshd']);
+			unset($config['system']['ssh']['enable']);
 		}
 
-		$sshd_keyonly = isset($config['system']['sshdkeyonly']);
-		if ($_POST['sshdkeyonly']) {
-			$config['system']['sshdkeyonly'] = true;
-		} else {
-			unset($config['system']['sshdkeyonly']);
+		$sshd_keyonly = $config['system']['ssh']['sshdkeyonly'];
+		if ($_POST['sshdkeyonly'] == "enabled") {
+			$config['system']['ssh']['sshdkeyonly'] = "enabled";
+		} else if ($_POST['sshdkeyonly'] == "both") {
+			$config['system']['ssh']['sshdkeyonly'] = "both";
+		} else if (isset($config['system']['ssh']['sshdkeyonly'])) {
+			unset($config['system']['ssh']['sshdkeyonly']);
+		}
+
+		$sshd_agentforwarding = isset($config['system']['ssh']['sshdagentforwarding']);
+		if ($_POST['sshdagentforwarding']) {
+			$config['system']['ssh']['sshdagentforwarding'] = 'enabled';
+		} else if (isset($config['system']['ssh']['sshdagentforwarding'])) {
+			unset($config['system']['ssh']['sshdagentforwarding']);
 		}
 
 		$sshd_port = $config['system']['ssh']['port'];
@@ -263,8 +292,9 @@ if ($_POST) {
 			unset($config['system']['ssh']['port']);
 		}
 
-		if (($sshd_enabled != $config['system']['enablesshd']) ||
-		    ($sshd_keyonly != $config['system']['sshdkeyonly']) ||
+		if (($sshd_enabled != $config['system']['ssh']['enable']) ||
+		    ($sshd_keyonly != $config['system']['ssh']['sshdkeyonly']) ||
+		    ($sshd_agentforwarding != $config['system']['ssh']['sshdagentforwarding']) ||
 		    ($sshd_port != $config['system']['ssh']['port'])) {
 			$restart_sshd = true;
 		}
@@ -294,16 +324,41 @@ if ($_POST) {
 			}
 		}
 
-		write_config();
-
-		$retval = filter_configure();
-		$savemsg = get_std_save_message($retval);
-
-		if ($restart_webgui) {
-			$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."), $url);
+		$restart_sshguard = false;
+		if (update_if_changed("login protection threshold",
+		    $config['system']['sshguard_threshold'],
+		    $pconfig['sshguard_threshold'])) {
+			$restart_sshguard = true;
+		}
+		if (update_if_changed("login protection blocktime",
+		    $config['system']['sshguard_blocktime'],
+		    $pconfig['sshguard_blocktime'])) {
+			$restart_sshguard = true;
+		}
+		if (update_if_changed("login protection detection_time",
+		    $config['system']['sshguard_detection_time'],
+		    $pconfig['sshguard_detection_time'])) {
+			$restart_sshguard = true;
+		}
+		if (update_if_changed("login protection whitelist",
+		    $config['system']['sshguard_whitelist'],
+		    $pconfig['sshguard_whitelist'])) {
+			$restart_sshguard = true;
 		}
 
-		conf_mount_rw();
+		write_config();
+
+		$changes_applied = true;
+		$retval = 0;
+		$retval |= filter_configure();
+		if ($restart_sshguard) {
+			$retval |= system_syslogd_start(true);
+		}
+
+		if ($restart_webgui) {
+			$extra_save_msg = sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."), $url);
+		}
+
 		setup_serial_port();
 		// Restart DNS in case dns rebinding toggled
 		if (isset($config['dnsmasq']['enable'])) {
@@ -311,19 +366,19 @@ if ($_POST) {
 		} elseif (isset($config['unbound']['enable'])) {
 			services_unbound_configure();
 		}
-		conf_mount_ro();
 	}
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Admin Access"));
+$pglinks = array("", "@self", "@self");
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval, $extra_save_msg);
 }
 
 $tab_array = array();
@@ -357,8 +412,10 @@ $group->add(new Form_Checkbox(
 	'https'
 ))->displayAsRadio();
 
-$group->setHelp($certs_available ? '':'No Certificates have been defined. A certificate is required before SSL can be enabled. '.
-	'<a href="system_certmanager.php">'. gettext("Create or Import").'</a> '.' a Certificate.');
+if (!$certs_available) {
+	$group->setHelp('No Certificates have been defined. A certificate is required before SSL can be enabled. %1$s Create or Import %2$s a Certificate.',
+		'<a href="system_certmanager.php">', '</a>');
+}
 
 $section->add($group);
 
@@ -403,6 +460,26 @@ $section->addInput(new Form_Checkbox(
 	'Check this box to disable this automatically added redirect rule.');
 
 $section->addInput(new Form_Checkbox(
+	'webgui-hsts',
+	'HSTS',
+	'Disable HTTP Strict Transport Security',
+	$pconfig['disablehsts']
+))->setHelp('When this is unchecked, Strict-Transport-Security HTTPS response header '.
+	'is sent by the webConfigurator to the browser. This will force the browser to use '.
+	'only HTTPS for future requests to the firewall FQDN. Check this box to disable HSTS. '.
+	'(NOTE: Browser-specific steps are required for disabling to take effect when the browser '.
+	'already visited the FQDN while HSTS was enabled.)');
+	
+$section->addInput(new Form_Checkbox(
+	'ocsp-staple',
+	'OCSP Must-Staple',
+	'Force OCSP Stapling in nginx',
+	$pconfig['ocsp-staple']
+))->setHelp('When this is checked, OCSP Stapling is forced on in nginx. Remember to '.
+	'upload your certificate as a full chain, not just the certificate, or this option '.
+	'will be ignored by nginx.');
+
+$section->addInput(new Form_Checkbox(
 	'loginautocomplete',
 	'WebGUI Login Autocomplete',
 	'Enable webConfigurator login autocomplete',
@@ -433,23 +510,23 @@ $section->addInput(new Form_Checkbox(
 	'Disable webConfigurator anti-lockout rule',
 	$pconfig['noantilockout']
 ))->setHelp('When this is '.
-	'unchecked, access to the webConfigurator on the %s interface is always '.
+	'unchecked, access to the webConfigurator on the %1$s interface is always '.
 	'permitted, regardless of the user-defined firewall rule set. Check this box to '.
 	'disable this automatically added rule, so access to the webConfigurator is '.
 	'controlled by the user-defined firewall rules (ensure a firewall rule is '.
-	'in place that allows access, to avoid being locked out!) <em>Hint: the &quot;Set interface(s) IP address&quot; '.
-	'option in the console menu resets this setting as well.</em>', [$lockout_interface]);
+	'in place that allows access, to avoid being locked out!) %2$sHint: the &quot;Set interface(s) IP address&quot; '.
+	'option in the console menu resets this setting as well.%3$s', $lockout_interface, '<em>', '</em>');
 
 $section->addInput(new Form_Checkbox(
 	'nodnsrebindcheck',
 	'DNS Rebind Check',
 	'Disable DNS Rebinding Checks',
 	$pconfig['nodnsrebindcheck']
-))->setHelp('When this is unchecked, the system is protected against <a '.
-	'href="http://en.wikipedia.org/wiki/DNS_rebinding">DNS Rebinding attacks</a>. '.
+))->setHelp('When this is unchecked, the system is protected against %1$sDNS Rebinding attacks%2$s. '.
 	'This blocks private IP responses from the configured DNS servers. Check this '.
 	'box to disable this protection if it interferes with webConfigurator access or '.
-	'name resolution in the environment.');
+	'name resolution in the environment.',
+	'<a href="http://en.wikipedia.org/wiki/DNS_rebinding">', '</a>');
 
 $section->addInput(new Form_Input(
 	'althostnames',
@@ -469,8 +546,8 @@ $section->addInput(new Form_Checkbox(
 	'against HTTP_REFERER redirection attempts. Check this box to disable this '.
 	'protection if it interferes with webConfigurator access in certain '.
 	'corner cases such as using external scripts to interact with this system. More '.
-	'information on HTTP_REFERER is available from <a target="_blank" '.
-	'href="http://en.wikipedia.org/wiki/HTTP_referrer">Wikipedia</a>.');
+	'information on HTTP_REFERER is available from %1$sWikipedia%2$s',
+	'<a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_referrer">', '</a>.');
 
 gen_pagenamefirst_field($section, $pconfig['pagenamefirst']);
 
@@ -484,14 +561,28 @@ $section->addInput(new Form_Checkbox(
 	isset($pconfig['enablesshd'])
 ));
 
-$section->addInput(new Form_Checkbox(
+$section->addInput(new Form_Select(
 	'sshdkeyonly',
-	'Authentication Method',
-	'Disable password login for Secure Shell (RSA/DSA key only)',
-	$pconfig['sshdkeyonly']
-))->setHelp('When enabled, authorized keys need to be configured for each <a '.
-	'href="system_usermanager.php">user</a> that has been granted secure shell '.
-	'access.');
+	'SSHd Key Only',
+	$pconfig['sshdkeyonly'],
+	array(
+		"disabled" => "Password or Public Key",
+		"enabled" => "Public Key Only",
+		"both" => "Require Both Password and Public Key",
+	)
+))->setHelp('When set to %3$sPublic Key Only%4$s, SSH access requires authorized keys and these '.
+	'keys must be configured for each %1$suser%2$s that has been granted secure shell access. '.
+	'If set to %3$sRequire Both Password and Public Key%4$s, the SSH daemon requires both authorized keys ' .
+	'%5$sand%6$s valid passwords to gain access. The default %3$sPassword or Public Key%4$s setting allows '.
+	'either a valid password or a valid authorized key to login.',
+	'<a href="system_usermanager.php">', '</a>', '<i>', '</i>', '<b>', '</b>');
+
+$section->addInput(new Form_Checkbox(
+	'sshdagentforwarding',
+	'Allow Agent Forwarding',
+	'Enables ssh-agent forwarding support.',
+	$pconfig['sshdagentforwarding']
+));
 
 $section->addInput(new Form_Input(
 	'sshport',
@@ -501,6 +592,78 @@ $section->addInput(new Form_Input(
 	['min' => 1, 'max' => 65535, 'placeholder' => 22]
 ))->setHelp('Note: Leave this blank for the default of 22.');
 
+$form->add($section);
+$section = new Form_Section('Login Protection');
+
+$section->addinput(new form_input(
+	'sshguard_threshold',
+	'Threshold',
+	'number',
+	$pconfig['sshguard_threshold'],
+	['min' => 10, 'step' => 10, 'placeholder' => 30]
+))->setHelp('Block attackers when their cumulative attack score exceeds '.
+	'threshold.  Most attacks have a score of 10.');
+
+$section->addinput(new form_input(
+	'sshguard_blocktime',
+	'Blocktime',
+	'number',
+	$pconfig['sshguard_blocktime'],
+	['min' => 10, 'step' => 10, 'placeholder' => 120]
+))->setHelp('Block attackers for initially blocktime seconds after exceeding '.
+	'threshold. Subsequent blocks increase by a factor of 1.5.%s'.
+	'Attacks are unblocked at random intervals, so actual block '.
+	'times will be longer.', '<br />');
+
+$section->addinput(new form_input(
+	'sshguard_detection_time',
+	'Detection time',
+	'number',
+	$pconfig['sshguard_detection_time'],
+	['min' => 10, 'step' => 10, 'placeholder' => 1800]
+))->setHelp('Remember potential attackers for up to detection_time seconds '.
+	'before resetting their score.');
+
+$counter = 0;
+$addresses = explode(' ', $pconfig['sshguard_whitelist']);
+
+$numaddrs = count($addresses);
+
+while ($counter < $numaddrs) {
+	list($address, $address_subnet) = explode("/", $addresses[$counter]);
+
+	$group = new Form_Group($counter == 0 ? 'Whitelist' : '');
+	$group->addClass('repeatable');
+
+	$group->add(new Form_IpAddress(
+		'address' . $counter,
+		'Address',
+		$address,
+		'BOTH'
+	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4);
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning btn-xs');
+
+	if ($counter == ($numaddrs - 1)) {
+		$group->setHelp(gettext(sprintf("%sAddresses added to the whitelist will bypass login protection.%s", 
+			'<span class="text-danger">', '</span>')));
+	}
+
+	$section->add($group);
+	$counter++;
+}
+
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add address',
+	null,
+	'fa-plus'
+))->addClass('btn-success addbtn');
 
 $form->add($section);
 $section = new Form_Section('Serial Communications');
@@ -513,8 +676,8 @@ if (!$g['enableserial_force']) {
 		isset($pconfig['enableserial'])
 	))->setHelp('Note:	This will redirect the console output and messages to '.
 		'the serial port. The console menu can still be accessed from the internal video '.
-		'card/keyboard. A <b>null modem</b> serial cable or adapter is required to use the '.
-		'serial console.');
+		'card/keyboard. A %1$snull modem%2$s serial cable or adapter is required to use the '.
+		'serial console.', '<b>', '</b>');
 }
 
 $section->addInput(new Form_Select(
@@ -557,14 +720,20 @@ print $form;
 //<![CDATA[
 events.push(function() {
 
-	// ---------- On initial page load ------------------------------------------------------------
+	checkLastRow();
 
+	// ---------- On initial page load ------------------------------------------------------------
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
+	hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
+	hideCheckbox('ocsp-staple', "<?php 
+			$cert_temp = lookup_cert($config['system']['webgui']['ssl-certref']);
+			echo (cert_get_ocspstaple($cert_temp['crt']) ? "true" : "false");
+			?>" === "true");
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
-
 	 $('[name=webguiproto]').click(function () {
 		hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
+		hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
 	});
 });
 //]]>
@@ -581,7 +750,7 @@ if ($restart_sshd) {
 	killbyname("sshd");
 	log_error(gettext("secure shell configuration has changed. Stopping sshd."));
 
-	if ($config['system']['enablesshd']) {
+	if ($config['system']['ssh']['enable']) {
 		log_error(gettext("secure shell configuration has changed. Restarting sshd."));
 		send_event("service restart sshd");
 	}

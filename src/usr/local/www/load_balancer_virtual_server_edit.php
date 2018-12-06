@@ -1,57 +1,23 @@
 <?php
 /*
-	load_balancer_virtual_server_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2005-2008 Bill Marquette <bill.marquette@gmail.com>
+ * load_balancer_virtual_server_edit.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005-2008 Bill Marquette <bill.marquette@gmail.com>
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -69,17 +35,12 @@ if (isset($_POST['referer'])) {
 	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_virtual_server.php');
 }
 
-if (!is_array($config['load_balancer']['virtual_server'])) {
-	$config['load_balancer']['virtual_server'] = array();
-}
+init_config_arr(array('load_balancer', 'virtual_server'));
 $a_vs = &$config['load_balancer']['virtual_server'];
+init_config_arr(array('load_balancer', 'lbpool'));
+$a_pool = &$config['load_balancer']['lbpool'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_vs[$id]) {
   $pconfig = $a_vs[$id];
@@ -93,7 +54,7 @@ $changecount = 0;
 
 $allowed_protocols = array("tcp", "dns");
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -127,7 +88,7 @@ if ($_POST) {
 		$input_errors[] = gettext("The 'name' field must be 32 characters or less.");
 	}
 
-	if ($_POST['port'] != "" && !is_portoralias($_POST['port'])) {
+	if ($_POST['port'] != "" && !is_port_or_alias($_POST['port'])) {
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535, a port alias, or left blank.");
 	}
 
@@ -191,6 +152,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Virtual Servers"), gettext("Edit"));
+$pglinks = array("", "load_balancer_pool.php", "load_balancer_virtual_server.php", "@self");
 $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");
@@ -207,7 +169,7 @@ $section = new Form_Section('Edit Load Balancer - Virtual Server Entry');
 
 $section->addInput(new Form_Input(
 	'name',
-	'Name',
+	'*Name',
 	'text',
 	$pconfig['name']
 ));
@@ -221,7 +183,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'ipaddr',
-	'IP Address',
+	'*IP Address',
 	'text',
 	$pconfig['ipaddr']
 ))->setHelp('This is normally the WAN IP address for the server to listen on. ' .
@@ -290,7 +252,7 @@ $section->addInput(new Form_Select(
 	['tcp' => 'TCP', 'dns' => 'DNS']
 ));
 
-if (isset($id) && $a_vs[$id] && $_GET['act'] != 'dup') {
+if (isset($id) && $a_vs[$id] && $_REQUEST['act'] != 'dup') {
 	$section->addInput(new Form_Input(
 		'id',
 		null,

@@ -1,56 +1,24 @@
 <?php
 /*
-	rrd.inc
-
-	part of pfSense (https://www.pfsense.org)
-	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>
-	Copyright (c) 2010-2016 Electric Sheep Fencing, LLC.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in
-	   the documentation and/or other materials provided with the
-	   distribution.
-
-	3. All advertising materials mentioning features or use of this software
-	   must display the following acknowledgment:
-	   "This product includes software developed by the pfSense Project
-	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
-
-	4. The names "pfSense" and "pfSense Project" must not be used to
-	   endorse or promote products derived from this software without
-	   prior written permission. For written permission, please contact
-	   coreteam@pfsense.org.
-
-	5. Products derived from this software may not be called "pfSense"
-	   nor may "pfSense" appear in their names without prior written
-	   permission of the Electric Sheep Fencing, LLC.
-
-	6. Redistributions of any form whatsoever must retain the following
-	   acknowledgment:
-
-	"This product includes software developed by the pfSense Project
-	for use in the pfSense software distribution (http://www.pfsense.org/).
-
-	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-	OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * rrd.inc
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
+ * Copyright (c) 2010-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /* include all configuration functions */
 
@@ -64,54 +32,6 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 		log_error(sprintf(gettext('RRD dump failed exited with %1$s, the error is: %2$s'), $dumpret, $dumpout));
 	}
 	return($dumpret);
-}
-
-function restore_rrd() {
-	global $g, $config;
-
-	$rrddbpath = "{$g['vardb_path']}/rrd/";
-	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-
-	$rrdrestore = "";
-	$rrdreturn = "";
-	if (file_exists("{$g['cf_conf_path']}/rrd.tgz") && (isset($config['system']['use_mfs_tmpvar']) || $g['platform'] != $g['product_name'])) {
-		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
-			@unlink($xml_file);
-		}
-		unset($rrdrestore);
-		$_gb = exec("cd /;LANG=C /usr/bin/tar -tf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
-		if ($rrdreturn != 0) {
-			log_error(sprintf(gettext('RRD restore failed exited with %1$s, the error is: %2$s'), $rrdreturn, $rrdrestore));
-			return;
-		}
-		foreach ($rrdrestore as $xml_file) {
-			$rrd_file = '/' . substr($xml_file, 0, -4) . '.rrd';
-			if (file_exists("{$rrd_file}")) {
-				@unlink($rrd_file);
-			}
-			file_put_contents("{$g['tmp_path']}/rrd_restore", $xml_file);
-			$_gb = exec("cd /;LANG=C /usr/bin/tar -xf {$g['cf_conf_path']}/rrd.tgz -T {$g['tmp_path']}/rrd_restore");
-			if (!file_exists("/{$xml_file}")) {
-				log_error(sprintf(gettext("Could not extract %s RRD xml file from archive!"), $xml_file));
-				continue;
-			}
-			$_gb = exec("$rrdtool restore -f '/{$xml_file}' '{$rrd_file}'", $output, $status);
-			if ($status) {
-				log_error(sprintf(gettext("rrdtool restore -f '%1\$s' '%2\$s' failed returning %3\$s."), $xml_file, $rrd_file, $status));
-				continue;
-			}
-			unset($output);
-			@unlink("/{$xml_file}");
-		}
-		unset($rrdrestore);
-		@unlink("{$g['tmp_path']}/rrd_restore");
-		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-		if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
-			unlink_if_exists("{$g['cf_conf_path']}/rrd.tgz");
-		}
-		return true;
-	}
-	return false;
 }
 
 function create_new_rrd($rrdcreatecmd) {
@@ -313,10 +233,6 @@ function enable_rrd_graphing() {
 		}
 		chown($rrddbpath, "nobody");
 
-		if (platform_booting()) {
-			restore_rrd();
-		}
-
 		/* db update script */
 		$rrdupdatesh = "#!/bin/sh\n";
 		$rrdupdatesh .= "\n";
@@ -339,14 +255,6 @@ function enable_rrd_graphing() {
 				$serverid = "ovpns" . $server['vpnid'];
 				$ifdescrs[$serverid] = "{$server['description']}";
 			}
-		}
-
-		if (platform_booting()) {
-			if (!is_dir($rrddbpath)) {
-				mkdir($rrddbpath, 0775);
-			}
-
-			@chown($rrddbpath, "nobody");
 		}
 
 		/* process all real and pseudo interfaces */
@@ -726,7 +634,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* the Memory stats gathering function. */
-		$rrdupdatesh .= "MEM=`$sysctl -n vm.stats.vm.v_page_count vm.stats.vm.v_active_count vm.stats.vm.v_inactive_count vm.stats.vm.v_free_count vm.stats.vm.v_cache_count vm.stats.vm.v_wire_count | ";
+		$rrdupdatesh .= "MEM=`$sysctl -qn vm.stats.vm.v_page_count vm.stats.vm.v_active_count vm.stats.vm.v_inactive_count vm.stats.vm.v_free_count vm.stats.vm.v_cache_count vm.stats.vm.v_wire_count | ";
 		$rrdupdatesh .= " $awk '{getline active;getline inactive;getline free;getline cache;getline wire;printf ";
 		$rrdupdatesh .= "((active/$0) * 100)\":\"((inactive/$0) * 100)\":\"((free/$0) * 100)\":\"((cache/$0) * 100)\":\"(wire/$0 * 100)}'`\n";
 		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$mem N:\${MEM}\n";

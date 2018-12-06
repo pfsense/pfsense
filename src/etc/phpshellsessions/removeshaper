@@ -1,3 +1,23 @@
+/*
+ * removeshaper
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2016-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 require("config.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -8,7 +28,10 @@ require_once("rrd.inc");
 
 echo gettext("Removing shaper settings...\n");
 
-unset($config['shaper']['queue']);
+if (is_array($config['shaper'])) {
+	unset($config['shaper']['queue']);
+}
+
 unset($queue);
 unset($altq);
 
@@ -17,7 +40,7 @@ foreach ($config['filter']['rule'] as $key => $rule) {
 		unset($config['filter']['rule'][$key]);
 	}
 }
-if (write_config()) {
+if (write_config(gettext("pfSsh.php removed shaper settings"))) {
 	echo gettext("Shaper Successfully Removed.\n");
 } else {
 	echo gettext("Unable to write config.xml (Access Denied?)\n");

@@ -1,76 +1,28 @@
 #!/usr/local/bin/php-cgi -f
 <?php
 /*
-	rc.bootup
-	part of pfSense by Scott Ullrich
-	originally based on m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2004-2009 Scott Ullrich <sullrich@pfsense.org>.
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	Copyright (C) 2009 Erik Kristensen
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
+ * rc.bootup
+ *
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * Copyright (c) 2009 Erik Kristensen
+ * Copyright (c) 2005-2018 Rubicon Communications, LLC (Netgate). All rights reserved.
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 require_once("pkg-utils.inc");
-
-function rescue_detect_keypress() {
-	// How long do you want the script to wait before moving on (in seconds)
-	$timeout=9;
-	echo "\n";
-	echo "[ Press R to enter recovery mode or ]\n";
-	echo "[  press I to launch the installer  ]\n\n";
-	echo "(R)ecovery mode can assist by rescuing config.xml\n";
-	echo "from a broken hard disk installation, etc.\n\n";
-	echo "(I)nstaller will be invoked\n\n";
-	echo "Timeout before auto boot continues (seconds): {$timeout}";
-	$key = null;
-	exec("/bin/stty erase " . chr(8));
-	while (!in_array($key, array("r", "R", "i", "I"))) {
-		echo chr(8) . "{$timeout}";
-		`/bin/stty -icanon min 0 time 25`;
-		$key = trim(`KEY=\`dd count=1 2>/dev/null\`; echo \$KEY`);
-		`/bin/stty icanon`;
-		// Decrement our timeout value
-		$timeout--;
-		// If we have reached 0 exit and continue on
-		if ($timeout == 0) {
-			break;
-		}
-	}
-	// If R or I was pressed do our logic here
-	if (in_array($key, array("r", "R"))) {
-		putenv("TERM=xterm");
-		echo "\n\nRecovery mode selected...\n";
-		passthru("/usr/bin/env TERM=xterm /bin/tcsh");
-	} else {
-		putenv("TERM=xterm");
-		echo "\n\nInstaller mode selected...\n";
-		passthru("/usr/bin/env TERM=xterm /bin/tcsh -c /scripts/lua_installer");
-	}
-
-	passthru("/etc/rc.reboot");
-	exit;
-}
 
 echo " done.\n";
 
@@ -121,7 +73,6 @@ $physmem = $memory[0];
 $realmem = $memory[1];
 echo " done.\n";
 
-conf_mount_rw();
 
 /* save dmesg output to file */
 system_dmesg_save();
@@ -134,16 +85,10 @@ if (file_exists("/root/firmware.tgz")) {
 	unlink("/root/firmware.tgz");
 }
 
-/* Reinstall of packages after reboot has been requested */
-if (file_exists('/conf/needs_package_sync_after_reboot')) {
-	touch('/conf/needs_package_sync');
-	@unlink('/conf/needs_package_sync_after_reboot');
-}
-
 /* Triggering of the initial setup wizard after reboot has been requested */
-if (file_exists('/conf/trigger_initial_wizard_after_reboot')) {
-	touch('/conf/trigger_initial_wizard');
-	@unlink('/conf/trigger_initial_wizard_after_reboot');
+if (file_exists("{$g['conf_path']}/trigger_initial_wizard_after_reboot")) {
+	touch("{$g['conf_path']}/trigger_initial_wizard");
+	@unlink("{$g['conf_path']}/trigger_initial_wizard_after_reboot");
 }
 
 /* start devd (dhclient now uses it) */
@@ -154,21 +99,28 @@ set_device_perms();
 unmute_kernel_msgs();
 echo "done.\n";
 
-// Display rescue configuration option
-if ($g['platform'] == "cdrom") {
-	rescue_detect_keypress();
-}
-
 echo "Loading configuration...";
 parse_config_bootup();
 echo "done.\n";
 
+mwexec("/usr/sbin/gnid > {$g['vardb_path']}/uniqueid 2>/dev/null");
+
 /* run any early shell commands specified in config.xml */
 system_do_shell_commands(1);
 
-if (file_exists("/conf/trigger_initial_wizard")) {
+// Only do the alternate interface checks if:
+// 1) The user has not yet run the initial wizard; and
+// 2) The user has not used the console menu to setup interface assignments
+if (file_exists("{$g['conf_path']}/trigger_initial_wizard") && !file_exists("{$g['conf_path']}/assign_complete")) {
 	check_for_alternate_interfaces();
 }
+
+/* Convert configuration
+ * This must happen before the interface mismatch test, see
+ * https://redmine.pfsense.org/issues/7809 */
+echo "Updating configuration...";
+convert_config();
+echo "done.\n";
 
 /*
  *	Determine if we need to throw a interface exception
@@ -191,16 +143,17 @@ while (is_interface_mismatch() == true) {
 			interfaces_bring_up($iface);
 		}
 	}
-	set_networking_interfaces_ports();
+	if (set_networking_interfaces_ports() == -1) {
+		echo "\npfSense cannot continue without at least one Network Interface Card.\n";
+		echo "\nHalting the system.\n";
+		system("/sbin/shutdown -h now");
+		exit(0);
+	}
+	reload_interfaces_sync();
 	led_kitt();
 }
 
-/* convert config and clean backups */
-echo "Updating configuration...";
-convert_config();
-echo "done.\n";
-
-echo "Cleaning backup cache...";
+echo "Checking config backups consistency...";
 cleanup_backupcache(true);
 echo "done.\n";
 
@@ -230,22 +183,29 @@ interfaces_loopback_configure();
 /* start syslogd */
 system_syslogd_start();
 
-/* restore alias tables */
-restore_aliastables();
+/* Log the RAM disk restore messages. */
+if (file_exists("/var/log/restore_ramdisk_store.boot")) {
+	exec("logger -f /var/log/restore_ramdisk_store.boot");
+}
 
 echo "Starting Secure Shell Services...";
 send_event("service reload sshd");
-echo "done.\n";
-
-/* setup polling */
-echo "Setting up polling defaults...";
-setup_polling();
 echo "done.\n";
 
 /* setup interface microcode which improves tcp/ip speed */
 echo "Setting up interfaces microcode...";
 setup_microcode();
 echo "done.\n";
+
+/* remove leftover dhcp6c lock files if they exist */
+foreach ($config['interfaces'] as $interface) {
+        if ($interface['ipaddrv6'] == "dhcp6") {
+            if (file_exists("/tmp/dhcp6c_" . $interface['if'] . "_lock")) {
+                @unlink("/tmp/dhcp6c_" . $interface['if'] . "_lock");
+                echo("Removed leftover dhcp6c lock file: " . "/tmp/dhcp6c_" . $interface['if'] . "_lock\n");
+            }
+         }
+     }
 
 /* set up interfaces */
 if (!$debugging) {
@@ -281,8 +241,20 @@ echo "Setting up gateway monitors...";
 setup_gateways_monitor();
 echo "done.\n";
 
+/* set up static routes */
+echo "Setting up static routes...";
+system_routing_configure();
+echo "done.\n";
+
+echo "Setting up DNSs...\n";
+/* start dnsmasq service */
+services_dnsmasq_configure();
+
+/* start unbound service */
+services_unbound_configure();
+
 echo "Synchronizing user settings...";
-local_sync_accounts();
+local_reset_accounts();
 echo "done.\n";
 
 if ($realmem > 0 and $realmem < 65) {
@@ -299,17 +271,8 @@ echo "Configuring CRON...";
 configure_cron();
 echo "done.\n";
 
-/* set up static routes */
-system_routing_configure();
-
 /* enable routing */
 system_routing_enable();
-
-/* start dnsmasq service */
-services_dnsmasq_configure();
-
-/* start unbound service */
-services_unbound_configure();
 
 /* Enable ntpd */
 echo "Starting NTP time client...";
@@ -406,23 +369,12 @@ activate_powerd();
 /* Set preferred protocol */
 prefer_ipv4_or_ipv6();
 
-/* Remove the old shutdown binary if we kept it. */
-if (file_exists("/sbin/shutdown.old")) {
-	@unlink("/sbin/shutdown.old");
-}
-
 /* Resync / Reinstall packages if need be */
-if (file_exists('/conf/needs_package_sync') &&
-    ($g['platform'] == $g['product_name'] || $g['platform'] == "nanobsd")) {
-	mark_subsystem_dirty('packagelock');
-	if (package_reinstall_all()) {
-		@unlink('/conf/needs_package_sync');
-	}
-	clear_subsystem_dirty('packagelock');
-}
-
-/* Detect installed binary pkgs that are not registered in the system */
-if ($g['platform'] != "cdrom") {
+if (file_exists("{$g['conf_path']}/needs_package_sync")) {
+	echo "Triggering packages reinstallation in background\n";
+	mwexec_bg("{$g['etc_path']}/rc.package_reinstall_all");
+} else {
+	/* Detect installed binary pkgs that are not registered in the system */
 	register_all_installed_packages();
 }
 
@@ -444,6 +396,5 @@ if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 
 led_normalize();
 
-conf_mount_ro();
-
+notify_all_remote("Bootup complete");
 ?>

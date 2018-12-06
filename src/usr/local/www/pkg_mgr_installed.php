@@ -1,56 +1,22 @@
 <?php
 /*
-	pkg_mgr_installed.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * pkg_mgr_installed.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -66,43 +32,33 @@ require_once("pkg-utils.inc");
 /* if upgrade in progress, alert user */
 if (is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"));
+	$pglinks = array("", "@self");
 	include("head.inc");
 	print_info_box("Please wait while packages are reinstalled in the background.");
 	include("foot.inc");
 	exit;
 }
 
-// We are being called only to get the pacakge data, not to display anything
+// We are being called only to get the package data, not to display anything
 if (($_REQUEST) && ($_REQUEST['ajax'])) {
 	print(get_pkg_table());
 	exit;
 }
 
 function get_pkg_table() {
-	$installed_packages = array();
-	$package_list = get_pkg_info();
+	$installed_packages = get_pkg_info('all', false, true);
 
-	if (!$package_list) {
+	if (is_array($input_errors)) {
 		print("error");
 		exit;
 	}
-
-	foreach ($package_list as $pkg) {
-		if (!isset($pkg['installed']) && !isset($pkg['broken'])) {
-			continue;
-		}
-		$installed_packages[] = $pkg;
-	}
-
-	$pkgtbl = "";
 
 	if (empty($installed_packages)) {
 		print ("nopkg");
 		exit;
 	}
 
-	$pkgtbl .='	<div class="panel panel-default">';
-	$pkgtbl .='		<div class="panel-heading"><h2 class="panel-title">' . gettext('Installed Packages') . '</h2></div>';
+	$pkgtbl = "";
 	$pkgtbl .='		<div class="table-responsive">';
 	$pkgtbl .='		<table class="table table-striped table-hover table-condensed">';
 	$pkgtbl .='			<thead>';
@@ -133,6 +89,11 @@ function get_pkg_table() {
 			$txtcolor = "text-danger";
 			$missing = true;
 			$status = gettext('Package is configured, but not installed!');
+		} else if (isset($pkg['obsolete'])) {
+			// package is configured, but does not exist in the system
+			$txtcolor = "text-danger";
+			$missing = true;
+			$status = gettext('Package is installed, but is not available on remote repository!');
 		} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
 			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);
 
@@ -196,14 +157,13 @@ function get_pkg_table() {
 		}
 		$pkgtbl .='					</td>';
 		$pkgtbl .='					<td>';
-		$pkgtbl .='						<div class="row">';
 		$pkgtbl .='							<a title="' . sprintf(gettext("Remove package %s"), $pkg['name']) .
 		    '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '" class="fa fa-trash"></a>';
 
 		if ($upgradeavail) {
 			$pkgtbl .='						<a title="' . sprintf(gettext("Update package %s"), $pkg['name']) .
 			    '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '" class="fa fa-refresh"></a>';
-		} else {
+		} else if (!isset($pkg['obsolete'])) {
 			$pkgtbl .='						<a title="' . sprintf(gettext("Reinstall package %s"), $pkg['name']) .
 			    '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '" class="fa fa-retweet"></a>';
 		}
@@ -212,7 +172,6 @@ function get_pkg_table() {
 			$pkgtbl .='						<a target="_blank" title="' . gettext("View more information") . '" href="' .
 			    htmlspecialchars($pkg['www']) . '" class="fa fa-info"></a>';
 		}
-		$pkgtbl .='						</div>';
 		$pkgtbl .='					</td>';
 		$pkgtbl .='				</tr>';
 	}
@@ -221,25 +180,12 @@ function get_pkg_table() {
 	$pkgtbl .='		</table>';
 	$pkgtbl .='		</div>';
 	$pkgtbl .='	</div>';
-	$pkgtbl .='	<br />';
-	$pkgtbl .='	<div class="text-center">';
-	$pkgtbl .='		<p>';
-	$pkgtbl .='			<i class="fa fa-refresh"></i> = ' . gettext('Update') . ' &nbsp;';
-	$pkgtbl .='			<i class="fa fa-check"></i> = ' . gettext('Current') . ' &nbsp;';
-	$pkgtbl .='		</p>';
-	$pkgtbl .='		<p>';
-	$pkgtbl .='			<i class="fa fa-trash"></i> = ' . gettext('Remove') . ' &nbsp;';
-	$pkgtbl .='			<i class="fa fa-info"></i> = ' . gettext('Information') . ' &nbsp;';
-	$pkgtbl .='			<i class="fa fa-retweet"></i> = ' . gettext('Reinstall');
-	$pkgtbl .='		</p>';
-	$pkgtbl .='		<p><span class="text-warning">' . gettext("Newer version available") . '</span></p>';
-	$pkgtbl .='		<p><span class="text-danger">' . gettext("Package is configured but not (fully) installed") . '</span></p>';
-	$pkgtbl .='	</div>';
 
 	return $pkgtbl;
 }
 
 $pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Installed Packages"));
+$pglinks = array("", "@self", "@self");
 include("head.inc");
 
 $tab_array = array();
@@ -250,8 +196,8 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packages')?></h2></div>
-	<div id="pkgtbl" class="panel-body table-responsive">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed Packages')?></h2></div>
+	<div id="pkgtbl" class="panel-body">
 		<div id="waitmsg">
 			<?php print_info_box(gettext("Please wait while the list of packages is retrieved and formatted.") . '&nbsp;<i class="fa fa-cog fa-spin"></i>'); ?>
 		</div>
@@ -264,15 +210,35 @@ display_top_tabs($tab_array);
 			<?php print_info_box(gettext("There are no packages currently installed."), 'warning', false); ?>
 		</div>
 	</div>
+
+	<div id="legend" class="alert-info text-center">
+		<p>
+		<i class="fa fa-refresh"></i> = <?=gettext('Update')?>  &nbsp;
+		<i class="fa fa-check"></i> = <?=gettext('Current')?> &nbsp;
+		</p>
+		<p>
+		<i class="fa fa-trash"></i> = <?=gettext('Remove')?> &nbsp;
+		<i class="fa fa-info"></i> = <?=gettext('Information')?> &nbsp;
+		<i class="fa fa-retweet"></i> = <?=gettext('Reinstall')?>
+		</p>
+		<p>
+		<span class="text-warning"><?=gettext("Newer version available")?></span>
+		</p>
+		<span class="text-danger"><?=gettext("Package is configured but not (fully) installed or deprecated")?></span>
+	</div>
 </div>
+
 <script type="text/javascript">
 //<![CDATA[
 
 events.push(function() {
 
-	// Retrieve the table formatted pacakge information and display it in the "Packages" panel
+	// Retrieve the table formatted package information and display it in the "Packages" panel
 	// (Or display an appropriate error message)
 	var ajaxRequest;
+
+	$('#legend').hide();
+	$('#nopkg').hide();
 
 	$.ajax({
 		url: "/pkg_mgr_installed.php",
@@ -281,7 +247,6 @@ events.push(function() {
 		success: function(data) {
 			if (data == "error") {
 				$('#waitmsg').hide();
-				$('#nopkg').hide();
 				$('#errmsg').show();
 			} else if (data == "nopkg") {
 				$('#waitmsg').hide();
@@ -289,11 +254,11 @@ events.push(function() {
 				$('#errmsg').hide();
 			} else {
 				$('#pkgtbl').html(data);
+				$('#legend').show();
 			}
 		},
 		error: function() {
 			$('#waitmsg').hide();
-			$('#nopkg').hide();
 			$('#errmsg').show();
 		}
 	});

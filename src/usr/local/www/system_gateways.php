@@ -1,57 +1,23 @@
 <?php
 /*
-	system_gateways.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
+ * system_gateways.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -65,42 +31,59 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("gwlb.inc");
 
-$a_gateways = return_gateways_array(true, false, true);
-$a_gateways_arr = array();
-foreach ($a_gateways as $gw) {
-	$a_gateways_arr[] = $gw;
-}
-$a_gateways = $a_gateways_arr;
+$simplefields = array('defaultgw4', 'defaultgw6');
 
-if (!is_array($config['gateways']['gateway_item'])) {
-	$config['gateways']['gateway_item'] = array();
-}
-
+init_config_arr(array('gateways', 'gateway_item'));
 $a_gateway_item = &$config['gateways']['gateway_item'];
 
-if ($_POST) {
+$pconfig = $_REQUEST;
 
+if ($_POST['order-store']) {
+	// Include the rules of this (the selected) interface.
+	// If a rule is not in POST[rule], it has been deleted by the user
+	$a_gateway_item_new = array();
+	//print "<pre>";
+	foreach ($_POST['row'] as $id) {
+		//print " $id";
+		$a_gateway_item_new[] = $a_gateway_item[$id];
+	}
+	//print_r($a_gateway_item);
+	//print_r($a_gateway_item_new);
+	//print "</pre>";
+	$a_gateway_item = $a_gateway_item_new;
+	//mark_subsystem_dirty('staticroutes');
+	write_config("System - Gateways: save default gateway");
+} else if ($_POST['save']) {
+	unset($input_errors);
 	$pconfig = $_POST;
+	foreach($simplefields as $field) {
+		$config['gateways'][$field] = $pconfig[$field];
+	}
+	mark_subsystem_dirty('staticroutes');
+	write_config("System - Gateways: save default gateway");
+}
 
-	if ($_POST['apply']) {
+$a_gateways = return_gateways_array(true, false, true, true);
 
-		$retval = 0;
+if ($_POST['apply']) {
 
-		$retval = system_routing_configure();
-		$retval |= system_resolvconf_generate();
-		$retval |= filter_configure();
-		/* reconfigure our gateway monitor */
-		setup_gateways_monitor();
-		/* Dynamic DNS on gw groups may have changed */
-		send_event("service reload dyndnsall");
+	$retval = 0;
 
-		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
-			clear_subsystem_dirty('staticroutes');
-		}
+	$retval |= system_routing_configure();
+	$retval |= system_resolvconf_generate();
+	$retval |= filter_configure();
+	/* reconfigure our gateway monitor */
+	setup_gateways_monitor();
+	/* Dynamic DNS on gw groups may have changed */
+	send_event("service reload dyndnsall");
+
+	if ($retval == 0) {
+		clear_subsystem_dirty('staticroutes');
 	}
 }
+
 
 function can_delete_disable_gateway_item($id, $disable = false) {
 	global $config, $input_errors, $a_gateways;
@@ -153,12 +136,22 @@ function delete_gateway_item($id) {
 		return;
 	}
 
+	/* If the removed gateway was the default route, remove the default route */
+	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) &&
+	    !isset($a_gateways[$id]['disabled']) &&
+	    isset($a_gateways[$id]['isdefaultgw'])) {
+		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? '-inet6' : '-inet');
+		file_put_contents("/dev/console", "\n[".getmypid()."] DEL_GW, route= delete {$inet} default");
+		mwexec("/sbin/route delete {$inet} default");
+	}
+
 	/* NOTE: Cleanup static routes for the interface route if any */
 	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) &&
 	    $gateway['gateway'] != $a_gateways[$id]['gateway'] &&
 	    isset($a_gateways[$id]["nonlocalgateway"])) {
 		$realif = get_real_interface($a_gateways[$id]['interface']);
 		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? "-inet6" : "-inet");
+		file_put_contents("/dev/console", "\n[".getmypid()."] DEL_GW, route= $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif));
 		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif);
 		mwexec($cmd);
 	}
@@ -181,10 +174,10 @@ function delete_gateway_item($id) {
 }
 
 unset($input_errors);
-if ($_GET['act'] == "del") {
-	if (can_delete_disable_gateway_item($_GET['id'])) {
-		$realid = $a_gateways[$_GET['id']]['attribute'];
-		delete_gateway_item($_GET['id']);
+if ($_REQUEST['act'] == "del") {
+	if (can_delete_disable_gateway_item($_REQUEST['id'])) {
+		$realid = $a_gateways[$_REQUEST['id']]['attribute'];
+		delete_gateway_item($_REQUEST['id']);
 		write_config("Gateways: removed gateway {$realid}");
 		mark_subsystem_dirty('staticroutes');
 		header("Location: system_gateways.php");
@@ -192,10 +185,10 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-if (isset($_POST['del_x'])) {
+if (isset($_REQUEST['del_x'])) {
 	/* delete selected items */
-	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		foreach ($_POST['rule'] as $rulei) {
+	if (is_array($_REQUEST['rule']) && count($_REQUEST['rule'])) {
+		foreach ($_REQUEST['rule'] as $rulei) {
 			if (!can_delete_disable_gateway_item($rulei)) {
 				break;
 			}
@@ -203,7 +196,7 @@ if (isset($_POST['del_x'])) {
 
 		if (!isset($input_errors)) {
 			$items_deleted = "";
-			foreach ($_POST['rule'] as $rulei) {
+			foreach ($_REQUEST['rule'] as $rulei) {
 				delete_gateway_item($rulei);
 				$items_deleted .= "{$rulei} ";
 			}
@@ -216,22 +209,18 @@ if (isset($_POST['del_x'])) {
 		}
 	}
 
-} else if ($_GET['act'] == "toggle" && $a_gateways[$_GET['id']]) {
-	$realid = $a_gateways[$_GET['id']]['attribute'];
+} else if ($_REQUEST['act'] == "toggle" && $a_gateways[$_REQUEST['id']]) {
+	$realid = $a_gateways[$_REQUEST['id']]['attribute'];
 	$disable_gw = !isset($a_gateway_item[$realid]['disabled']);
 	if ($disable_gw) {
 		// The user wants to disable the gateway, so check if that is OK.
-		$ok_to_toggle = can_delete_disable_gateway_item($_GET['id'], $disable_gw);
+		$ok_to_toggle = can_delete_disable_gateway_item($_REQUEST['id'], $disable_gw);
 	} else {
 		// The user wants to enable the gateway. That is always OK.
 		$ok_to_toggle = true;
 	}
 	if ($ok_to_toggle) {
-		if ($disable_gw) {
-			$a_gateway_item[$realid]['disabled'] = true;
-		} else {
-			unset($a_gateway_item[$realid]['disabled']);
-		}
+		gateway_set_enabled($a_gateway_item[$realid]['name'], !$disable_gw);
 
 		if (write_config("Gateways: enable/disable")) {
 			mark_subsystem_dirty('staticroutes');
@@ -242,7 +231,45 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
+foreach($simplefields as $field) {
+	$pconfig[$field] = $config['gateways'][$field];
+}
+
+function gateway_displaygwtiername($gwname) {
+	global $config;
+	$gw = lookup_gateway_or_group_by_name($gwname);
+	if ($config['gateways']['defaultgw4'] == $gwname || $config['gateways']['defaultgw6'] == $gwname) {
+		$result = "Default";
+	} else {
+		if ($gw['ipprotocol'] == 'inet') {
+			$defgw = lookup_gateway_or_group_by_name($config['gateways']['defaultgw4']);
+		} else {
+			$defgw = lookup_gateway_or_group_by_name($config['gateways']['defaultgw6']);
+		}
+		if ($defgw['type'] == "gatewaygroup") {
+			$detail = gateway_is_gwgroup_member($gwname, true);
+			foreach($detail as $gwitem) {
+				if ($gwitem['name'] == $defgw['name']) {
+					if (isset($gwitem['tier'])) {
+						$result = "Tier " . $gwitem['tier'];
+						break;
+					}
+				}
+			}
+		}
+	}
+	if (!empty($result)) {
+		if ($gw['ipprotocol'] == "inet") {
+			$result .= " (IPv4)";
+		} elseif ($gw['ipprotocol'] == "inet6") {
+			$result .= " (IPv6)";
+		}
+	}
+	return $result;
+}
+
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "gateways";
 
 include("head.inc");
@@ -250,8 +277,9 @@ include("head.inc");
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('staticroutes')) {
@@ -265,15 +293,18 @@ $tab_array[2] = array(gettext("Gateway Groups"), false, "system_gateway_groups.p
 display_top_tabs($tab_array);
 
 ?>
+<form method="post">
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Gateways')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped tabel-hover table-condensed table-rowdblclickedit">
+			<table id="gateways" class="table table-striped table-hover table-condensed table-rowdblclickedit">
 				<thead>
 					<tr>
 						<th></th>
+						<th></th>
 						<th><?=gettext("Name")?></th>
+						<th><?=gettext("Default")?></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Gateway")?></th>
 						<th><?=gettext("Monitor IP")?></th>
@@ -297,16 +328,27 @@ foreach ($a_gateways as $i => $gateway):
 	} else {
 		$title = '';
 	}
+	$id = $gateway['attribute'];
 ?>
-				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
+				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?> onClick="fr_toggle(<?=$id;?>)" id="fr<?=$id;?>">
+					<td style="white-space: nowrap;">
+						<?php 
+						if (is_numeric($id)) :?>
+							<input type='checkbox' id='frc<?=$id?>' onClick='fr_toggle(<?=$id?>)' name='row[]' value='<?=$id?>'/>
+							<a class='fa fa-anchor' id='Xmove_<?=$id?>' title='"<?=gettext("Move checked entries to here")?>"'></a>
+						<?php endif; ?>
+					</td>
 					<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
 					<td>
 						<?=htmlspecialchars($gateway['name'])?>
 <?php
-			if (isset($gateway['defaultgw'])) {
-				echo " <strong>(default)</strong>";
-			}
+						if (isset($gateway['isdefaultgw'])) {
+							echo " <strong>(default)</strong>";
+						}
 ?>
+						</td>
+						<td>
+							<?=gateway_displaygwtiername($gateway['name'])?>
 						</td>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>
@@ -320,20 +362,20 @@ foreach ($a_gateways as $i => $gateway):
 						<td>
 							<?=htmlspecialchars($gateway['descr'])?>
 						</td>
-						<td>
+						<td style="white-space: nowrap;">
 							<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway');?>"></a>
 							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway')?>"></a>
 
 <?php if (is_numeric($gateway['attribute'])): ?>
 	<?php if (isset($gateway['disabled'])) {
 	?>
-							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable gateway')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable gateway')?>" usepost></a>
 	<?php } else {
 	?>
-							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable gateway')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable gateway')?>" usepost></a>
 	<?php }
 	?>
-							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway')?>"></a>
+							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway')?>" usepost></a>
 
 <?php endif; ?>
 						</td>
@@ -346,11 +388,95 @@ foreach ($a_gateways as $i => $gateway):
 </div>
 
 <nav class="action-buttons">
+	<button type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled title="<?=gettext('Save rule order')?>">
+		<i class="fa fa-save icon-embed-btn"></i>
+		<?=gettext("Save")?>
+	</button>
 	<a href="system_gateways_edit.php" role="button" class="btn btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>
 </nav>
+</form>
 <?php
 
-include("foot.inc");
+$form = new Form;
+$section = new Form_Section('Default gateway');
+
+$items4 = array();
+$items6 = array();
+$items4[''] = "Automatic";
+$items6[''] = "Automatic";
+foreach($a_gateways as $gw) {
+	$gwn = $gw['name'];
+	if ($gw['ipprotocol'] == "inet6") {
+		$items6[$gwn] = $gwn;
+	} else {
+		$items4[$gwn] = $gwn;
+	}
+}
+$groups = return_gateway_groups_array();
+foreach ($groups as $key => $group) {
+	$gwn = $group['descr'];
+	if ($group['ipprotocol'] == "inet6") {
+		$items6[$key] = "$key ($gwn)";
+	} else {
+		$items4[$key] = "$key ($gwn)";
+	}
+}
+$items4['-'] = "None";
+$items6['-'] = "None";
+
+$section->addInput(new Form_Select(
+	'defaultgw4',
+	'Default gateway IPv4',
+	$pconfig['defaultgw4'],
+	$items4
+))->setHelp('Select the gateway or gatewaygroup to use as the default gateway.');
+
+$section->addInput(new Form_Select(
+	'defaultgw6',
+	'Default gateway IPv6',
+	$pconfig['defaultgw6'],
+	$items6
+))->setHelp('Select the gateway or gatewaygroup to use as the default gateway.');
+
+$form->add($section);
+print $form;
+
+?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$('#order-store').click(function () {
+		// Check all of the rule checkboxes so that their values are posted
+	   $('[id^=frc]').prop('checked', true);
+	});
+
+	$('[id^=Xmove_]').click(function (event) {
+		// anchor click to move gateways around..
+		moveRowUpAboveAnchor(event.target.id.slice(6),"gateways");
+		return false;
+	});
+	$('[id^=Xmove_]').css('cursor', 'pointer');
+});
+	function moveRowUpAboveAnchor(rowId, tableId) {
+		var table = $('#'+tableId);
+		var viewcheckboxes = $('[id^=frc]input:checked', table);
+		var rowview = $("#fr" + rowId, table);
+		var moveabove = rowview;
+		//var parent = moveabove[0].parentNode;
+		
+		viewcheckboxes.each(function( index ) {
+			var moveid = this.value;
+			console.log( index + ": " + this.id );
+
+			var prevrowview = $("#fr" + moveid, table);
+			prevrowview.insertBefore(moveabove);
+			$('#order-store').removeAttr('disabled');
+		});
+	}
+//]]>
+</script>
+
+<?php include("foot.inc");

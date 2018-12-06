@@ -1,56 +1,22 @@
 <?php
 /*
-	services_checkip.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * services_checkip.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -62,41 +28,44 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['checkipservices']['checkipservice'])) {
-	$config['checkipservices']['checkipservice'] = array();
-}
-
+init_config_arr(array('checkipservices', 'checkipservice'));
 $a_checkipservice = &$config['checkipservices']['checkipservice'];
 
 $dirty = false;
-if ($_GET['act'] == "del") {
-	unset($a_checkipservice[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	unset($a_checkipservice[$_POST['id']]);
+	$wc_msg = gettext('Deleted a check IP service.');
 	$dirty = true;
-} else if ($_GET['act'] == "toggle") {
-	if ($a_checkipservice[$_GET['id']]) {
-		if (isset($a_checkipservice[$_GET['id']]['enable'])) {
-			unset($a_checkipservice[$_GET['id']]['enable']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_checkipservice[$_POST['id']]) {
+		if (isset($a_checkipservice[$_POST['id']]['enable'])) {
+			unset($a_checkipservice[$_POST['id']]['enable']);
+			$wc_msg = gettext('Disabled a check IP service.');
 		} else {
-			$a_checkipservice[$_GET['id']]['enable'] = true;
+			$a_checkipservice[$_POST['id']]['enable'] = true;
+			$wc_msg = gettext('Enabled a check IP service.');
 		}
 		$dirty = true;
-	} else if ($_GET['id'] == count($a_checkipservice)) {
+	} else if ($_POST['id'] == count($a_checkipservice)) {
 		if (isset($config['checkipservices']['disable_factory_default'])) {
 			unset($config['checkipservices']['disable_factory_default']);
+			$wc_msg = gettext('Enabled the default check IP service.');
 		} else {
 			$config['checkipservices']['disable_factory_default'] = true;
+			$wc_msg = gettext('Disabled the default check IP service.');
 		}
 		$dirty = true;
 	}
 }
 if ($dirty) {
-	write_config();
+	write_config($wc_msg);
 
 	header("Location: services_checkip.php");
 	exit;
 }
 
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Check IP Services"));
+$pglinks = array("", "services_dyndns.php", "@self");
 include("head.inc");
 
 $tab_array = array();
@@ -163,13 +132,13 @@ foreach ($a_checkipservice as $checkipservice):
 							<a class="fa fa-pencil <?=$visibility?>" title="<?=gettext('Edit service')?>" href="services_checkip_edit.php?id=<?=$i?>"></a>
 						<?php if (isset($checkipservice['enable'])) {
 						?>
-							<a	class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+							<a	class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 						<?php } else {
 						?>
-							<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+							<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 						<?php }
 						?>
-							<a class="fa fa-trash <?=$visibility?>" title="<?=gettext('Delete service')?>" href="services_checkip.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash <?=$visibility?>" title="<?=gettext('Delete service')?>" href="services_checkip.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -190,9 +159,33 @@ endforeach; ?>
 	</a>
 </nav>
 
-<?php
-print_info_box(gettext('The first (highest in list) enabled check ip service will be used to ' . 
-						'check IP addresses for Dynamic DNS services, and ' .
-						'RFC 2136 entries that have the "Use public IP" option enabled.'));
+<div class="infoblock">
+	<?php print_info_box(gettext('The server must return the client IP address ' .
+	'as a string in the following format: ') .
+	'<pre>Current IP Address: x.x.x.x</pre>' .
+	gettext(
+	'The first (highest in list) enabled check ip service will be used to ' .
+	'check IP addresses for Dynamic DNS services, and ' .
+	'RFC 2136 entries that have the "Use public IP" option enabled.') .
+	'<br/><br/>'
+	, 'info', false);
 
-include("foot.inc");
+	print_info_box(gettext('Sample Server Configurations') .
+	'<br/>' .
+	gettext('nginx with LUA') . ':' .
+	'<pre> location = /ip {
+	default_type text/html;
+	content_by_lua \'
+		ngx.say("' . htmlspecialchars('<html><head><title>Current IP Check</title></head><body>') . 'Current IP Address: ")
+		ngx.say(ngx.var.remote_addr)
+		ngx.say("' . htmlspecialchars('</body></html>') . '")
+	\';
+	}</pre>' .
+	gettext('PHP') .
+	'<pre>' .
+	htmlspecialchars('<html><head><title>Current IP Check</title></head><body>Current IP Address: <?=$_SERVER[\'REMOTE_ADDR\']?></body></html>') .
+	'</pre>'
+	, 'info', false); ?>
+</div>
+
+<?php include("foot.inc");

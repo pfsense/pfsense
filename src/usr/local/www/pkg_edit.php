@@ -1,56 +1,22 @@
 <?php
 /*
-	pkg_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * pkg_edit.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -62,26 +28,21 @@
 
 ini_set('max_execution_time', '0');
 
-require_once("guiconfig.inc");
-require_once("functions.inc");
 require_once("filter.inc");
+require_once("functions.inc");
+require_once("guiconfig.inc");
 require_once("shaper.inc");
 require_once("pkg-utils.inc");
+require_once("pfsense-utils.inc");
+require_once("util.inc");
 
-/* dummy stubs needed by some code that was MFC'd */
-function pfSenseHeader($location) {
-	header("Location: " . $location);
-}
-
-$xml = htmlspecialchars($_GET['xml']);
-if ($_POST['xml']) {
-	$xml = htmlspecialchars($_POST['xml']);
-}
+$xml = htmlspecialchars($_REQUEST['xml']);
 
 $xml_fullpath = realpath('/usr/local/pkg/' . $xml);
 
 if ($xml == "" || $xml_fullpath === false || substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
+	$pglinks = array("", "@self");
 	include("head.inc");
 	print_info_box(gettext("No valid package defined."), 'danger', false);
 	include("foot.inc");
@@ -100,7 +61,7 @@ if (!isset($pkg['adddeleteeditpagefields'])) {
 	$only_edit = false;
 }
 
-$id = $_GET['id'];
+$id = $_REQUEST['id'];
 if (isset($_POST['id'])) {
 	$id = htmlspecialchars($_POST['id']);
 }
@@ -121,21 +82,31 @@ if ($pkg['custom_php_global_functions'] != "") {
 }
 
 // grab the installedpackages->package_name section.
+if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])])) {
+	$config['installedpackages'][xml_safe_fieldname($pkg['name'])] = array();
+}
+
 if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'])) {
 	$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'] = array();
 }
 
-// If the first entry in the array is an empty <config/> tag, kill it.
-if ($config['installedpackages'] &&
-    (count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0) &&
-    ($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0] == "")) {
+/* If the first entry in the array is an empty <config/> tag, kill it.
+ * See the following tickets for more:
+ *  https://redmine.pfsense.org/issues/7624
+ *  https://redmine.pfsense.org/issues/476
+ */
+
+init_config_arr(array('installedpackages', xml_safe_fieldname($pkg['name']), 'config'));
+if ((count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0) &&
+    (empty($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0])) &&
+    is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'])) {
 	array_shift($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']);
 }
 
 $a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
-if ($_GET['savemsg'] != "") {
-	$savemsg = htmlspecialchars($_GET['savemsg']);
+if ($_REQUEST['savemsg'] != "") {
+	$savemsg = htmlspecialchars($_REQUEST['savemsg']);
 }
 
 if ($pkg['custom_php_command_before_form'] != "") {
@@ -195,7 +166,6 @@ if ($_POST) {
 		}
 	}
 
-	// donotsave is enabled.  lets simply exit.
 	if (empty($pkg['donotsave'])) {
 
 		// store values in xml configuration file.
@@ -211,11 +181,24 @@ if ($_POST) {
 							foreach ($_POST as $key => $value) {
 								$matches = array();
 								if (preg_match("/^{$rowhelperfield['fieldname']}(\d+)$/", $key, $matches)) {
-									$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']] = $value;
+									if ($rowhelperfield['type'] == "textarea") {
+										$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']] = unixnewlines($value);
+									} else {
+										$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']] = $value;
+									}
 								}
 							}
 						}
 						break;
+					case "textarea":
+						$fieldname = $fields['fieldname'];
+						$fieldvalue = unixnewlines(trim($_POST[$fieldname]));
+						if ($fields['encoding'] == 'base64') {
+							$fieldvalue = base64_encode($fieldvalue);
+						}
+						if ($fieldname) {
+							$pkgarr[$fieldname] = $fieldvalue;
+						}
 					default:
 						$fieldname = $fields['fieldname'];
 						if ($fieldname == "interface_array") {
@@ -234,7 +217,12 @@ if ($_POST) {
 					}
 			}
 
-			if (isset($id) && $a_pkg[$id]) {
+			/* If the user supplied an ID and it exists, or if id=0
+			 * and the settings are invalid, overwrite.
+			 * See https://redmine.pfsense.org/issues/7624
+			 */
+			if (isset($id) && ($a_pkg[$id] ||
+			   (($id == 0) && !is_array($a_pkg[$id])) )) {
 				$a_pkg[$id] = $pkgarr;
 			} else {
 				$a_pkg[] = $pkgarr;
@@ -279,6 +267,7 @@ if ($_POST) {
 			$get_from_post = true;
 		}
 	} elseif (!$input_errors) {
+		// donotsave is enabled.  lets simply exit.
 		exit;
 	}
 }
@@ -539,12 +528,15 @@ if ($pkg['title'] != "") {
 
 		foreach ($title as $subtitle) {
 			$pgtitle[] = gettext($subtitle);
+			$pglinks[] = ((($subtitle == "Edit") || (strlen($pkg['menu'][0]['url']) == 0)) ? "@self" : $pkg['menu'][0]['url']);
 		}
 	} else {
 		$pgtitle = array(gettext("Package"), gettext($pkg['title']));
+		$pglinks = array("", ((($subtitle == "Edit") || (strlen($pkg['menu'][0]['url']) == 0)) ? "@self" : $pkg['menu'][0]['url']));
 	}
 } else {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
+	$pglinks = array("", "@self");
 }
 
 // Create any required tabs
@@ -560,12 +552,9 @@ if ($pkg['tabs'] != "") {
 		if (isset($tab['active'])) {
 			$active = true;
 			$pgtitle[] = $tab['text'] ;
+			$pglinks[] = ((strlen($tab['url']) > 0) ? $tab['url'] : "@self");
 		} else {
 			$active = false;
-		}
-
-		if (isset($tab['no_drop_down'])) {
-			$no_drop_down = true;
 		}
 
 		$urltmp = "";
@@ -606,7 +595,7 @@ if ($pkg['custom_php_after_head_command']) {
 }
 if (isset($tab_array)) {
 	foreach ($tab_array as $tabid => $tab) {
-		display_top_tabs($tab); //, $no_drop_down, $tabid);
+		display_top_tabs($tab);
 	}
 }
 
@@ -699,7 +688,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			));
 
 			$advfield_count++;
-		}  else {
+		} else {
 			if (isset($section)) {
 				$form->add($section);
 			}
@@ -753,6 +742,12 @@ foreach ($pkg['fields']['field'] as $pkga) {
 	// We can create a section with a generic name to fix that
 	if (!$section) {
 		$section = new Form_Section('General Options');
+	}
+
+	// If this is a required field, pre-pend a "*" to the field description
+	// This tells the system to add "element-required" class text decoration to the field label
+	if (isset($pkga['required'])) {
+		$pkga['fielddescr'] = "*" . $pkga['fielddescr'];
 	}
 
 	switch ($pkga['type']) {
@@ -860,7 +855,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$items = array($value);
 			}
 
-			$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
+			$onchange = (isset($pkga['onchange']) ? "{$pkga['onchange']}" : '');
 
 			foreach ($pkga['options']['option'] as $opt) {
 				$optionlist[$opt['value']] = $opt['name'];
@@ -911,11 +906,14 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$items = array($value);
 			}
 
-			$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
+			$onchange = (isset($pkga['onchange']) ? "{$pkga['onchange']}" : '');
 
 			$source_url = $pkga['source'];
-			eval("\$pkg_source_txt = &$source_url;");
-
+			try{
+				@eval("\$pkg_source_txt = &$source_url;");
+			} catch (\Throwable | \Error | \Exception $e) {
+				//do nothing
+			}
 			#check if show disable option is present on xml
 			if (!is_array($pkg_source_txt)) {
 				$pkg_source_txt = array();
@@ -1104,6 +1102,8 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			// Use xml tag <typealiases> to filter type aliases
 			$size = ($pkga['size'] ? "size=\"{$pkga['size']}\"" : '');
 			$fieldname = $pkga['fieldname'];
+
+			init_config_arr(array('aliases', 'alias'));
 			$a_aliases = &$config['aliases']['alias'];
 			$addrisfirst = 0;
 			$aliasesaddr = "";
@@ -1143,7 +1143,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$grp->setWidth($pkga['width']);
 			}
 
-			if (grouping) {
+			if ($grouping) {
 				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
@@ -1327,7 +1327,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			);
 			$newbtn->addClass($newbtnclass);
 
-			if (grouping) {
+			if ($grouping) {
 				$group->add(new Form_StaticText(
 					null,
 					$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'
@@ -1423,7 +1423,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						$fieldname = $rowhelper['fieldname'];
 						$fielddescr = $rowhelper['fielddescr'];
 
-						// If input validation failed, read the value from the POST data so that hte user's input is not lost
+						// If input validation failed, read the value from the POST data so that the user's input is not lost
 						if ($get_from_post && isset($_POST[$fieldname.$rowcounter])) {
 							$value = $_POST[$fieldname.$rowcounter];
 						} elseif (isset($id) && $a_pkg[$id]) {
@@ -1534,6 +1534,10 @@ if ($pkg['custom_php_after_form_command']) {
 	eval($pkg['custom_php_after_form_command']);
 }
 
+
+$hidemsg = gettext("Show Advanced Options");
+$showmsg = gettext("Hide Advanced Options");
+
 if ($pkg['fields']['field'] != "") { ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -1554,10 +1558,10 @@ if ($pkg['fields']['field'] != "") { ?>
 
 		if (advanced_visible) {
 			$('.advancedoptions').show();
-			$("#showadv").prop('value', 'Hide advanced Options');
+			$("#showadv").html('<i class="fa fa-cog icon-embed-btn"></i>' + "<?=$showmsg?>");
 		} else {
 			$('.advancedoptions').hide();
-			$("#showadv").prop('value', 'Show advanced Options');
+			$("#showadv").html('<i class="fa fa-cog icon-embed-btn"></i>' + "<?=$hidemsg?>");
 		}
 	});
 

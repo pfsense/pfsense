@@ -1,56 +1,22 @@
 <?php
 /*
-	wizard.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * wizard.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -73,19 +39,14 @@ define('DEBUG', false);
 
 global $g;
 
-$stepid = htmlspecialchars($_GET['stepid']);
-if (isset($_POST['stepid'])) {
-	$stepid = htmlspecialchars($_POST['stepid']);
-}
+$stepid = htmlspecialchars($_REQUEST['stepid']);
+
 
 if (!$stepid) {
 	$stepid = "0";
 }
 
-$xml = htmlspecialchars($_GET['xml']);
-if ($_POST['xml']) {
-	$xml = htmlspecialchars($_POST['xml']);
-}
+$xml = htmlspecialchars($_REQUEST['xml']);
 
 if (empty($xml)) {
 	$xml = "not_defined";
@@ -107,13 +68,11 @@ if (empty($xml)) {
 }
 
 if (!is_array($pkg)) {
-	print_info_box(sprintf(gettext("Could not parse %s/wizards/%s file."), $g['www_path'], $xml), 'danger');
+	print_info_box(sprintf(gettext('Could not parse %1$s/wizards/%2$s file.'), $g['www_path'], $xml), 'danger');
 	die;
 }
 
-$title	   = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
-$description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['description']);
-$totalsteps	 = $pkg['totalsteps'];
+$totalsteps = $pkg['totalsteps'];
 
 if ($pkg['includefile']) {
 	require_once($pkg['includefile']);
@@ -155,18 +114,46 @@ if ($_POST && !$input_errors) {
 		eval($pkg['step'][$stepid]['stepsubmitphpaction']);
 	}
 	if (!$input_errors) {
-		write_config();
+		write_config(gettext("Configuration changed via the pfSense wizard subsystem."));
 	}
 
 	$stepid++;
-	if ($stepid > $totalsteps) {
-		$stepid = $totalsteps;
+}
+
+while (!empty($pkg['step'][$stepid]['skip_flavors'])) {
+	$skip = false;
+	foreach (explode(',', $pkg['step'][$stepid]['skip_flavors']) as $flavor) {
+		if ($flavor == $g['default-config-flavor']) {
+			$skip = true;
+			break;
+		}
 	}
+	if ($skip) {
+		$stepid++;
+	} else {
+		break;
+	}
+}
+
+if ($stepid > $totalsteps) {
+	$stepid = $totalsteps;
+}
+
+// Convert a string containing a text version of a PHP array into a real $config array
+// that can then be created. e.g.: config_array_from_str("['apple']['orange']['pear']['bannana']");
+function config_array_from_str( $text) {
+	$t = str_replace("[", "", $text);	// Remove '['
+	$t = str_replace("'", "", $t);		// Remove '
+	$t = str_replace("\"", "", $t);		// Remove "
+	$t = str_replace("]", " ", $t);		// Convert ] to space
+	$a = explode(" ", trim($t));
+	init_config_arr($a);
 }
 
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
 	global $config;
 	$field_split = explode("->", $field);
+	$thisvar = null;
 	foreach ($field_split as $f) {
 		$field_conv .= "['" . $f . "']";
 	}
@@ -190,8 +177,9 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	if ($field_type == "interfaces_selection") {
 		$var = "\$config{$field_conv}";
 		$text = "if (isset({$var})) unset({$var});";
-		$text .= "\$config" . $field_conv . " = \"" . $updatetext . "\";";
+		$text .= "\$thisvar = &\$config" . $field_conv . ";";
 		eval($text);
+		$thisvar = $updatetext;
 		return;
 	}
 
@@ -199,12 +187,22 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
 	}
-	$text = "\$config" . $field_conv . " = \"" . addslashes($updatetext) . "\";";
+
+	// Verify that the needed $config element exists. If not, create it
+	$tsttext = 'return (isset($config' . $field_conv . '));';
+
+	if (!eval($tsttext)) {
+		config_array_from_str($field_conv);
+	}
+
+	$text .= "\$thisvar = &\$config" . $field_conv . ";";
 	eval($text);
+
+	$thisvar = $updatetext;
 }
 
-$title	   = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
-$description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['description']);
+$title	   = $pkg['step'][$stepid]['title'];
+$description = $pkg['step'][$stepid]['description'];
 
 // handle before form display event.
 do {
@@ -215,7 +213,9 @@ do {
 } while ($oldstepid != $stepid);
 
 $pgtitle = array(gettext("Wizard"), gettext($pkg['step'][0]['title']));	//First step is main title of the wizard in the breadcrumb
+$pglinks = array("", "wizard.php?xml=" . $xml);
 $pgtitle[] = ($stepid > 0 ? gettext($pkg['step'][$stepid]['title']):'&nbsp;');		//Following steps are sub-level breadcrumbs.
+$pglinks[] = ($stepid > 0 ? "wizard.php?xml=" . $xml . "&stepid=" . $stepid:'&nbsp;');
 $shortcut_section = "Wizard";
 include("head.inc");
 
@@ -438,21 +438,21 @@ if ($input_errors) {
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
-if ($_GET['message'] != "") {
-	print_info_box(htmlspecialchars($_GET['message']));
-}
-if ($_POST['message'] != "") {
-	print_info_box(htmlspecialchars($_POST['message']));
+if ($_REQUEST['message'] != "") {
+	print_info_box(htmlspecialchars($_REQUEST['message']));
 }
 
 $completion = ($stepid == 0) ? 0:($stepid * 100) / ($totalsteps -1);
+$pbclass = ($completion == 100) ? "progress-bar progress-bar-success":"progress-bar progress-bar-danger";
 ?>
 
 <!-- Draw a progress bar to show step progress -->
 <div class="progress">
-	<div class="progress-bar" role="progressbar" aria-valuenow="<?=$completion?>" aria-valuemin="0" aria-valuemax="100" style="width:<?=$completion?>%">
+	<div class="<?=$pbclass?>" role="progressbar" aria-valuenow="<?=$completion?>" aria-valuemin="0" aria-valuemax="100" style="width:<?=$completion?>%; line-height: 15px;">
+		<?php print(sprintf(gettext("Step %s of %s"), $stepid, $totalsteps-1)); ?>
 	</div>
 </div>
+<br />
 
 <?php
 
@@ -664,6 +664,10 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$options[$field['add_to_certca_selection']] = $field['add_to_certca_selection'];
 				}
 
+				if (!is_array($config['ca'])) {
+					$config['ca'] = array();
+				}
+
 				foreach ($config['ca'] as $ca) {
 					$caname = htmlspecialchars($ca['descr']);
 
@@ -707,6 +711,10 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					}
 
 					$options[$field['add_to_cert_selection']] = $field['add_to_cert_selection'];
+				}
+
+				if (!is_array($config['cert'])) {
+					$config['cert'] = array();
 				}
 
 				foreach ($config['cert'] as $ca) {
@@ -885,8 +893,8 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 				break;
 		} // e-o-switch
-	} // e-o-foreach(package)
-} // e-o- if(we have fields)
+	} // e-o-foreach (package)
+} // e-o-if (we have fields)
 
 $form->add($section);
 print($form);

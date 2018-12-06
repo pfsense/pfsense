@@ -1,59 +1,26 @@
 <?php
 /*
-	util.inc
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * util.inc
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally part of m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 define('VIP_ALL', 1);
@@ -61,14 +28,14 @@ define('VIP_CARP', 2);
 define('VIP_IPALIAS', 3);
 
 /* kill a process by pid file */
-function killbypid($pidfile) {
-	return sigkillbypid($pidfile, "TERM");
+function killbypid($pidfile, $waitfor = 0) {
+	return sigkillbypid($pidfile, "TERM", $waitfor);
 }
 
 function isvalidpid($pidfile) {
 	$output = "";
 	if (file_exists($pidfile)) {
-		exec("/bin/pgrep -nF {$pidfile}", $output, $retval);
+		exec("/bin/pgrep -qnF {$pidfile} 2>/dev/null", $output, $retval);
 		return (intval($retval) == 0);
 	}
 	return false;
@@ -85,11 +52,18 @@ function isvalidproc($proc) {
 	return is_process_running($proc);
 }
 
-/* sigkill a process by pid file */
+/* sigkill a process by pid file, and wait for it to terminate or remove the .pid file for $waitfor seconds */
 /* return 1 for success and 0 for a failure */
-function sigkillbypid($pidfile, $sig) {
-	if (file_exists($pidfile)) {
-		return mwexec("/bin/pkill " . escapeshellarg("-{$sig}") . " -F {$pidfile}", true);
+function sigkillbypid($pidfile, $sig, $waitfor = 0) {
+	if (isvalidpid($pidfile)) {
+		$result = mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
+		    " -F {$pidfile}", true);
+		$waitcounter = $waitfor * 10;
+		while(isvalidpid($pidfile) && $waitcounter > 0) {
+			$waitcounter = $waitcounter - 1;
+			usleep(100000);
+		}
+		return $result;
 	}
 
 	return 0;
@@ -137,16 +111,9 @@ function clear_subsystem_dirty($subsystem = "") {
 	@unlink("{$g['varrun_path']}/{$subsystem}.dirty");
 }
 
-function config_lock() {
-	return;
-}
-function config_unlock() {
-	return;
-}
-
 /* lock configuration file */
 function lock($lock, $op = LOCK_SH) {
-	global $g, $cfglckkeyconsumers;
+	global $g;
 	if (!$lock) {
 		die(gettext("WARNING: A name must be given as parameter to lock() function."));
 	}
@@ -154,7 +121,6 @@ function lock($lock, $op = LOCK_SH) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 		@chmod("{$g['tmp_path']}/{$lock}.lock", 0666);
 	}
-	$cfglckkeyconsumers++;
 	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w")) {
 		if (flock($fp, $op)) {
 			return $fp;
@@ -165,7 +131,7 @@ function lock($lock, $op = LOCK_SH) {
 }
 
 function try_lock($lock, $timeout = 5) {
-	global $g, $cfglckkeyconsumers;
+	global $g;
 	if (!$lock) {
 		die(gettext("WARNING: A name must be given as parameter to try_lock() function."));
 	}
@@ -173,7 +139,6 @@ function try_lock($lock, $timeout = 5) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 		@chmod("{$g['tmp_path']}/{$lock}.lock", 0666);
 	}
-	$cfglckkeyconsumers++;
 	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w")) {
 		$trycounter = 0;
 		while (!flock($fp, LOCK_EX | LOCK_NB)) {
@@ -193,7 +158,7 @@ function try_lock($lock, $timeout = 5) {
 
 /* unlock configuration file */
 function unlock($cfglckkey = 0) {
-	global $g, $cfglckkeyconsumers;
+	global $g;
 	flock($cfglckkey, LOCK_UN);
 	fclose($cfglckkey);
 	return;
@@ -261,82 +226,6 @@ function send_multiple_events($cmds) {
 	}
 }
 
-function refcount_init($reference) {
-	$shmid = @shmop_open($reference, "c", 0644, 10);
-	@shmop_write($shmid, str_pad("0", 10, "\x0", STR_PAD_RIGHT), 0);
-	@shmop_close($shmid);
-}
-
-function refcount_reference($reference) {
-	/* Take out a lock across the shared memory read, increment, write sequence to make it atomic. */
-	$shm_lck = lock("shm{$reference}", LOCK_EX);
-	try {
-		/* NOTE: A warning is generated when shared memory does not exist */
-		$shmid = @shmop_open($reference, "w", 0, 0);
-		if (!$shmid) {
-			refcount_init($reference);
-			$shmid = @shmop_open($reference, "w", 0, 0);
-			if (!$shmid) {
-				log_error(sprintf(gettext("Could not open shared memory %s"), $reference));
-				unlock($shm_lck);
-				return;
-			}
-		}
-		$shm_data = @shmop_read($shmid, 0, 10);
-		$shm_data = intval($shm_data) + 1;
-		@shmop_write($shmid, str_pad($shm_data, 10, "\x0", STR_PAD_RIGHT), 0);
-		@shmop_close($shmid);
-		unlock($shm_lck);
-	} catch (Exception $e) {
-		log_error($e->getMessage());
-		unlock($shm_lck);
-	}
-
-	return $shm_data;
-}
-
-function refcount_unreference($reference) {
-	/* Take out a lock across the shared memory read, decrement, write sequence to make it atomic. */
-	$shm_lck = lock("shm{$reference}", LOCK_EX);
-	try {
-		$shmid = @shmop_open($reference, "w", 0, 0);
-		if (!$shmid) {
-			refcount_init($reference);
-			log_error(sprintf(gettext("Could not open shared memory %s"), $reference));
-			unlock($shm_lck);
-			return;
-		}
-		$shm_data = @shmop_read($shmid, 0, 10);
-		$shm_data = intval($shm_data) - 1;
-		if ($shm_data < 0) {
-			//debug_backtrace();
-			log_error(sprintf(gettext("Reference %s is going negative, not doing unreference."), $reference));
-		} else {
-			@shmop_write($shmid, str_pad($shm_data, 10, "\x0", STR_PAD_RIGHT), 0);
-		}
-		@shmop_close($shmid);
-		unlock($shm_lck);
-	} catch (Exception $e) {
-		log_error($e->getMessage());
-		unlock($shm_lck);
-	}
-
-	return $shm_data;
-}
-
-function refcount_read($reference) {
-	/* This function just reads the current value of the refcount for information. */
-	/* There is no need for locking. */
-	$shmid = @shmop_open($reference, "a", 0, 0);
-	if (!$shmid) {
-		log_error(sprintf(gettext("Could not open shared memory for read %s"), $reference));
-		return -1;
-	}
-	$shm_data = @shmop_read($shmid, 0, 10);
-	@shmop_close($shmid);
-	return $shm_data;
-}
-
 function is_module_loaded($module_name) {
 	$module_name = str_replace(".ko", "", $module_name);
 	$running = 0;
@@ -376,7 +265,7 @@ function gen_subnetv4($ipaddr, $bits) {
 /* same as gen_subnet() but accepts IPv6 only */
 function gen_subnetv6($ipaddr, $bits) {
 	if (is_ipaddrv6($ipaddr) && is_numericint($bits) && $bits <= 128) {
-		return Net_IPv6::compress(Net_IPv6::getNetmask($ipaddr, $bits));
+		return text_to_compressed_ip6(Net_IPv6::getNetmask($ipaddr, $bits));
 	}
 	return "";
 }
@@ -404,8 +293,8 @@ function gen_subnetv4_max($ipaddr, $bits) {
 /* same as gen_subnet_max() but validates IPv6 only */
 function gen_subnetv6_max($ipaddr, $bits) {
 	if (is_ipaddrv6($ipaddr) && is_numericint($bits) && $bits <= 128) {
-		$endip_bin = substr(Net_IPv6::_ip2Bin($ipaddr), 0, $bits) . str_repeat('1', 128 - $bits);
-		return Net_IPv6::compress(Net_IPv6::_bin2Ip($endip_bin));
+		$endip_bin = substr(ip6_to_bin($ipaddr), 0, $bits) . str_repeat('1', 128 - $bits);
+		return bin_to_compressed_ip6($endip_bin);
 	}
 	return "";
 }
@@ -432,7 +321,7 @@ function gen_subnet_mask_v6($bits) {
 	/* Pad right with zeroes to reach the full address length */
 	$bin = str_pad($bin, 128, '0', STR_PAD_RIGHT);
 	/* Convert back to an IPv6 address style notation */
-	return Net_IPv6::_bin2Ip($bin);
+	return bin_to_ip6($bin);
 }
 
 /* Convert long int to IPv4 address
@@ -451,6 +340,75 @@ function ip2long32($ip) {
    Returns '' if not valid IPv4. */
 function ip2ulong($ip) {
 	return sprintf("%u", ip2long32($ip));
+}
+
+/*
+ * Convert IPv6 address to binary
+ *
+ * Obtained from: pear-Net_IPv6
+ */
+function ip6_to_bin($ip) {
+	$binstr = '';
+
+	$ip = Net_IPv6::removeNetmaskSpec($ip);
+	$ip = Net_IPv6::Uncompress($ip);
+
+	$parts = explode(':', $ip);
+
+	foreach ( $parts as $v ) {
+
+		$str     = base_convert($v, 16, 2);
+		$binstr .= str_pad($str, 16, '0', STR_PAD_LEFT);
+
+	}
+
+	return $binstr;
+}
+
+/*
+ * Convert IPv6 binary to uncompressed address
+ *
+ * Obtained from: pear-Net_IPv6
+ */
+function bin_to_ip6($bin) {
+	$ip = "";
+
+	if (strlen($bin) < 128) {
+		$bin = str_pad($bin, 128, '0', STR_PAD_LEFT);
+	}
+
+	$parts = str_split($bin, "16");
+
+	foreach ( $parts as $v ) {
+		$str = base_convert($v, 2, 16);
+		$ip .= $str.":";
+	}
+
+	$ip = substr($ip, 0, -1);
+
+	return $ip;
+}
+
+/*
+ * Convert IPv6 binary to compressed address
+ */
+function bin_to_compressed_ip6($bin) {
+	return text_to_compressed_ip6(bin_to_ip6($bin));
+}
+
+/*
+ * Convert textual IPv6 address string to compressed address
+ */
+function text_to_compressed_ip6($text) {
+	// Force re-compression by passing parameter 2 (force) true.
+	// This ensures that supposedly-compressed formats are uncompressed
+	// first then re-compressed into strictly correct form.
+	// e.g. 2001:0:0:4:0:0:0:1
+	// 2001::4:0:0:0:1 is a strictly-incorrect compression,
+	// but maybe the user entered it like that.
+	// The "force" parameter will ensure it is returned as:
+	// 2001:0:0:4::1
+	return Net_IPv6::compress($text, true);
 }
 
 /* Find out how many IPs are contained within a given IP range
@@ -539,32 +497,32 @@ function ip_range_to_address_array($startip, $endip, $max_size = 5000) {
 	return $rangeaddresses;
 }
 
-/* 	Convert an IPv4 or IPv6 IP range to an array of subnets which can contain the range.
-	Algorithm and embodying code PD'ed by Stilez - enjoy as you like :-)
-
-	Documented on pfsense dev list 19-20 May 2013. Summary:
-
-	The algorithm looks at patterns of 0's and 1's in the least significant bit(s), whether IPv4 or IPv6.
-	These are all that needs checking to identify a _guaranteed_ correct, minimal and optimal subnet array.
-
-	As a result, string/binary pattern matching of the binary IP is very efficient. It uses just 2 pattern-matching rules
-	to chop off increasingly larger subnets at both ends that can't be part of larger subnets, until nothing's left.
-
-	(a) If any range has EITHER low bit 1 (in startip) or 0 (in endip), that end-point is _always guaranteed_ to be optimally
-	represented by its own 'single IP' CIDR; the remaining range then shrinks by one IP up or down, causing the new end-point's
-	low bit to change from 1->0 (startip) or 0->1 (endip). Only one edge case needs checking: if a range contains exactly 2
-	adjacent IPs of this format, then the two IPs themselves are required to span it, and we're done.
-	Once this rule is applied, the remaining range is _guaranteed_ to end in 0's and 1's so rule (b) can now be used, and its
-	low bits can now be ignored.
-
-	(b) If any range has BOTH startip and endip ending in some number of 0's and 1's respectively, these low bits can
-	*always* be ignored and "bit-shifted" for subnet spanning. So provided we remember the bits we've place-shifted, we can
-	_always_ right-shift and chop off those bits, leaving a smaller range that has EITHER startip ending in 1 or endip ending
-	in 0 (ie can now apply (a) again) or the entire range has vanished and we're done.
-	We then loop to redo (a) again on the remaining (place shifted) range until after a few loops, the remaining (place shifted)
-	range 'vanishes' by meeting the exit criteria of (a) or (b), and we're done.
-*/
-
+/*
+ * Convert an IPv4 or IPv6 IP range to an array of subnets which can contain the range.
+ * Algorithm and embodying code PD'ed by Stilez - enjoy as you like :-)
+ *
+ * Documented on pfsense dev list 19-20 May 2013. Summary:
+ *
+ * The algorithm looks at patterns of 0's and 1's in the least significant bit(s), whether IPv4 or IPv6.
+ * These are all that needs checking to identify a _guaranteed_ correct, minimal and optimal subnet array.
+ *
+ * As a result, string/binary pattern matching of the binary IP is very efficient. It uses just 2 pattern-matching rules
+ * to chop off increasingly larger subnets at both ends that can't be part of larger subnets, until nothing's left.
+ *
+ * (a) If any range has EITHER low bit 1 (in startip) or 0 (in endip), that end-point is _always guaranteed_ to be optimally
+ * represented by its own 'single IP' CIDR; the remaining range then shrinks by one IP up or down, causing the new end-point's
+ * low bit to change from 1->0 (startip) or 0->1 (endip). Only one edge case needs checking: if a range contains exactly 2
+ * adjacent IPs of this format, then the two IPs themselves are required to span it, and we're done.
+ * Once this rule is applied, the remaining range is _guaranteed_ to end in 0's and 1's so rule (b) can now be used, and its
+ * low bits can now be ignored.
+ *
+ * (b) If any range has BOTH startip and endip ending in some number of 0's and 1's respectively, these low bits can
+ * *always* be ignored and "bit-shifted" for subnet spanning. So provided we remember the bits we've place-shifted, we can
+ * _always_ right-shift and chop off those bits, leaving a smaller range that has EITHER startip ending in 1 or endip ending
+ * in 0 (ie can now apply (a) again) or the entire range has vanished and we're done.
+ * We then loop to redo (a) again on the remaining (place shifted) range until after a few loops, the remaining (place shifted)
+ * range 'vanishes' by meeting the exit criteria of (a) or (b), and we're done.
+ */
 function ip_range_to_subnet_array($ip1, $ip2) {
 
 	if (is_ipaddrv4($ip1) && is_ipaddrv4($ip2)) {
@@ -575,8 +533,8 @@ function ip_range_to_subnet_array($ip1, $ip2) {
 	} elseif (is_ipaddrv6($ip1) && is_ipaddrv6($ip2)) {
 		$proto = 'ipv6';
 		$bits = 128;
-		$ip1bin = Net_IPv6::_ip2Bin($ip1);
-		$ip2bin = Net_IPv6::_ip2Bin($ip2);
+		$ip1bin = ip6_to_bin($ip1);
+		$ip2bin = ip6_to_bin($ip2);
 	} else {
 		return array();
 	}
@@ -655,7 +613,7 @@ function ip_range_to_subnet_array($ip1, $ip2) {
 			$i = str_split($ip, 8);
 			$out[] = implode('.', array(bindec($i[0]), bindec($i[1]), bindec($i[2]), bindec($i[3]))) . '/' . $netmask;
 		} else {
-			$out[] = Net_IPv6::compress(Net_IPv6::_bin2Ip($ip)) . '/' . $netmask;
+			$out[] = bin_to_compressed_ip6($ip) . '/' . $netmask;
 		}
 	}
 
@@ -695,6 +653,14 @@ function is_ipaddr($ipaddr) {
 /* returns true if $ipaddr is a valid IPv6 address */
 function is_ipaddrv6($ipaddr) {
 	if (!is_string($ipaddr) || empty($ipaddr)) {
+		return false;
+	}
+	/*
+	 * While Net_IPv6::checkIPv6() considers IPv6/mask a valid IPv6,
+	 * is_ipaddrv6() needs to be more strict to keep the compatibility
+	 * with is_ipaddrv4().
+	 */
+	if (strstr($ipaddr, "/")) {
 		return false;
 	}
 	if (strstr($ipaddr, "%") && is_linklocal($ipaddr)) {
@@ -812,6 +778,14 @@ function is_subnet($subnet) {
 	return false;
 }
 
+function is_v4($ip_or_subnet) {
+	return is_ipaddrv4($ip_or_subnet) || is_subnetv4($ip_or_subnet);
+}
+
+function is_v6($ip_or_subnet) {
+	return is_ipaddrv6($ip_or_subnet) || is_subnetv6($ip_or_subnet);
+}
+
 /* same as is_subnet() but accepts IPv4 only */
 function is_subnetv4($subnet) {
 	return (is_subnet($subnet) == 4);
@@ -861,10 +835,10 @@ function subnet_size_by_netmask($iptype, $bits, $exact=false) {
 		return 0;
 	}
 
-	// 2**N returns an exact result as an INT if possible, and a float/double if not. 
+	// 2**N returns an exact result as an INT if possible, and a float/double if not.
 	// Detect this switch, rather than comparing $result<=PHP_MAX_INT or $bits >=8*PHP_INT_SIZE as it's (probably) easier to get completely reliable
 	$result = 2 ** $snsize;
-	
+
 	if ($exact && !is_int($result)) {
 		//exact required but can't represent result exactly as an INT
 		return 0;
@@ -904,8 +878,8 @@ function check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$largest_sn = min($bits1, $bits2);
 	$subnetv4_start1 = gen_subnetv4($subnet1, $largest_sn);
 	$subnetv4_start2 = gen_subnetv4($subnet2, $largest_sn);
-	
-	if($subnetv4_start1 == '' || $subnetv4_start2 == '') {
+
+	if ($subnetv4_start1 == '' || $subnetv4_start2 == '') {
 		// One or both args is not a valid IPv4 subnet
 		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
 		return false;
@@ -919,8 +893,8 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$largest_sn = min($bits1, $bits2);
 	$subnetv6_start1 = gen_subnetv6($subnet1, $largest_sn);
 	$subnetv6_start2 = gen_subnetv6($subnet2, $largest_sn);
-	
-	if($subnetv6_start1 == '' || $subnetv6_start2 == '') {
+
+	if ($subnetv6_start1 == '' || $subnetv6_start2 == '') {
 		// One or both args is not a valid IPv6 subnet
 		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
 		return false;
@@ -1041,8 +1015,24 @@ function is_domain($domain, $allow_wildcard=false) {
 
 /* returns true if $macaddr is a valid MAC address */
 function is_macaddr($macaddr, $partial=false) {
-	$repeat = ($partial) ? '1,5' : '5';
-	return preg_match('/^[0-9A-F]{2}(?:[:][0-9A-F]{2}){'.$repeat.'}$/i', $macaddr) == 1 ? true : false;
+	$values = explode(":", $macaddr);
+
+	/* Verify if the MAC address has a proper amount of parts for either a partial or full match. */
+	if ($partial) {
+		if ((count($values) < 1) || (count($values) > 6)) {
+			return false;
+		}
+	} elseif (count($values) != 6) {
+		return false;
+	}
+	for ($i = 0; $i < count($values); $i++) {
+		if (ctype_xdigit($values[$i]) == false)
+			return false;
+		if (hexdec($values[$i]) < 0 || hexdec($values[$i]) > 255)
+			return false;
+	}
+
+	return true;
 }
 
 /*
@@ -1078,14 +1068,14 @@ function is_validaliasname($name, $return_message = false, $object = "alias") {
 	}
 	if (getprotobyname($name)) {
 		if ($return_message) {
-			return sprintf(gettext('The %1$s name must not be a well-known IP protocol name such as TCP, UDP, ICMP etc.'), $object);
+			return sprintf(gettext('The %1$s name must not be an IP protocol name such as TCP, UDP, ICMP etc.'), $object);
 		} else {
 			return false;
 		}
 	}
 	if (getservbyname($name, "tcp") || getservbyname($name, "udp")) {
 		if ($return_message) {
-			return sprintf(gettext('The %1$s name must not be a well-known TCP or UDP port name such as ssh, smtp, pop3, tftp, http, openvpn etc.'), $object);
+			return sprintf(gettext('The %1$s name must not be a well-known or registered TCP or UDP port name such as ssh, smtp, pop3, tftp, http, openvpn etc.'), $object);
 		} else {
 			return false;
 		}
@@ -1100,6 +1090,35 @@ function is_validaliasname($name, $return_message = false, $object = "alias") {
 /* returns a text message indicating if the alias name is valid, or the reason it is not valid. */
 function invalidaliasnamemsg($name, $object = "alias") {
 	return is_validaliasname($name, true, $object);
+}
+
+/*
+ * returns true if $range is a valid integer range between $min and $max
+ * range delimiter can be ':' or '-'
+ */
+function is_intrange($range, $min, $max) {
+	$values = preg_split("/[:-]/", $range);
+
+	if (!is_array($values) || count($values) != 2) {
+		return false;
+	}
+
+	if (!ctype_digit($values[0]) || !ctype_digit($values[1])) {
+		return false;
+	}
+
+	$values[0] = intval($values[0]);
+	$values[1] = intval($values[1]);
+
+	if ($values[0] >= $values[1]) {
+		return false;
+	}
+
+	if ($values[0] < $min || $values[1] > $max) {
+		return false;
+	}
+
+	return true;
 }
 
 /* returns true if $port is a valid TCP/UDP port */
@@ -1120,8 +1139,13 @@ function is_portrange($portrange) {
 	return (count($ports) == 2 && is_port($ports[0]) && is_port($ports[1]));
 }
 
-/* returns true if $port is a valid port number or an alias thereof */
-function is_portoralias($port) {
+/* returns true if $port is a valid TCP/UDP port number or range ("<port>:<port>") */
+function is_port_or_range($port) {
+	return (is_port($port) || is_portrange($port));
+}
+
+/* returns true if $port is an alias that is a port type */
+function is_portalias($port) {
 	global $config;
 
 	if (is_alias($port)) {
@@ -1132,10 +1156,18 @@ function is_portoralias($port) {
 				}
 			}
 		}
-		return false;
-	} else {
-		return is_port($port);
 	}
+	return false;
+}
+
+/* returns true if $port is a valid port number or an alias thereof */
+function is_port_or_alias($port) {
+	return (is_port($port) || is_portalias($port));
+}
+
+/* returns true if $port is a valid TCP/UDP port number or range ("<port>:<port>") or an alias thereof */
+function is_port_or_range_or_alias($port) {
+	return (is_port($port) || is_portrange($port) || is_portalias($port));
 }
 
 /* create ranges of sequential port numbers (200:215) and remove duplicates */
@@ -1201,20 +1233,30 @@ function is_valid_shaperbw($val) {
 
 /* returns true if $test is in the range between $start and $end */
 function is_inrange_v4($test, $start, $end) {
-	if ((ip2ulong($test) <= ip2ulong($end)) && (ip2ulong($test) >= ip2ulong($start))) {
-		return true;
-	} else {
+	if (!is_ipaddrv4($test) || !is_ipaddrv4($start) || !is_ipaddrv4($end)) {
 		return false;
 	}
+
+	if (ip2ulong($test) <= ip2ulong($end) &&
+	    ip2ulong($test) >= ip2ulong($start)) {
+		return true;
+	}
+
+	return false;
 }
 
 /* returns true if $test is in the range between $start and $end */
 function is_inrange_v6($test, $start, $end) {
-	if ((inet_pton($test) <= inet_pton($end)) && (inet_pton($test) >= inet_pton($start))) {
-		return true;
-	} else {
+	if (!is_ipaddrv6($test) || !is_ipaddrv6($start) || !is_ipaddrv6($end)) {
 		return false;
 	}
+
+	if (inet_pton($test) <= inet_pton($end) &&
+	    inet_pton($test) >= inet_pton($start)) {
+		return true;
+	}
+
+	return false;
 }
 
 /* returns true if $test is in the range between $start and $end */
@@ -1226,7 +1268,9 @@ function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
 	global $config;
 
 	$list = array();
-	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip'])) {
+	if (!is_array($config['virtualip']) ||
+	    !is_array($config['virtualip']['vip']) ||
+	    empty($config['virtualip']['vip'])) {
 		return ($list);
 	}
 
@@ -1286,7 +1330,9 @@ function get_configured_vip_subnetv6($vipinterface = '') {
 function get_configured_vip_detail($vipinterface = '', $family = 'inet', $what = 'ip') {
 	global $config;
 
-	if (empty($vipinterface) || !is_array($config['virtualip']['vip']) ||
+	if (empty($vipinterface) ||
+	    !is_array($config['virtualip']) ||
+	    !is_array($config['virtualip']['vip']) ||
 	    empty($config['virtualip']['vip'])) {
 		return (NULL);
 	}
@@ -1347,16 +1393,13 @@ function compare_interface_friendly_names($a, $b) {
 }
 
 /* return the configured interfaces list. */
-function get_configured_interface_list($only_opt = false, $withdisabled = false) {
+function get_configured_interface_list($withdisabled = false) {
 	global $config;
 
 	$iflist = array();
 
 	/* if list */
 	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if ($only_opt && ($if == "wan" || $if == "lan")) {
-			continue;
-		}
 		if (isset($ifdetail['enable']) || $withdisabled == true) {
 			$iflist[$if] = $if;
 		}
@@ -1366,16 +1409,13 @@ function get_configured_interface_list($only_opt = false, $withdisabled = false)
 }
 
 /* return the configured interfaces list. */
-function get_configured_interface_list_by_realif($only_opt = false, $withdisabled = false) {
+function get_configured_interface_list_by_realif($withdisabled = false) {
 	global $config;
 
 	$iflist = array();
 
 	/* if list */
 	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if ($only_opt && ($if == "wan" || $if == "lan")) {
-			continue;
-		}
 		if (isset($ifdetail['enable']) || $withdisabled == true) {
 			$tmpif = get_real_interface($if);
 			if (!empty($tmpif)) {
@@ -1388,16 +1428,13 @@ function get_configured_interface_list_by_realif($only_opt = false, $withdisable
 }
 
 /* return the configured interfaces list with their description. */
-function get_configured_interface_with_descr($only_opt = false, $withdisabled = false) {
-	global $config;
+function get_configured_interface_with_descr($withdisabled = false) {
+	global $config, $user_settings;
 
 	$iflist = array();
 
 	/* if list */
 	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if ($only_opt && ($if == "wan" || $if == "lan")) {
-			continue;
-		}
 		if (isset($ifdetail['enable']) || $withdisabled == true) {
 			if (empty($ifdetail['descr'])) {
 				$iflist[$if] = strtoupper($if);
@@ -1405,6 +1442,10 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 				$iflist[$if] = strtoupper($ifdetail['descr']);
 			}
 		}
+	}
+
+	if ($user_settings['webgui']['interfacessort']) {
+		asort($iflist);
 	}
 
 	return $iflist;
@@ -1462,14 +1503,14 @@ function get_configured_ipv6_addresses($linklocal_fallback = false) {
 	$interfaces = get_configured_interface_list();
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int) {
-			$ipaddrv6 = get_interface_ipv6($int, false, $linklocal_fallback);
+			$ipaddrv6 = text_to_compressed_ip6(get_interface_ipv6($int, false, $linklocal_fallback));
 			$ipv6_array[$int] = $ipaddrv6;
 		}
 	}
 	$interfaces = get_configured_vip_list('inet6');
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int => $ipaddrv6) {
-			$ipv6_array[$int] = $ipaddrv6;
+			$ipv6_array[$int] = text_to_compressed_ip6($ipaddrv6);
 		}
 	}
 	return $ipv6_array;
@@ -1547,7 +1588,9 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		$ifname = rtrim(trim($alink[0]), '*');
 		/* trim out all numbers before checking for vfaces */
 		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces) &&
-		    !stristr($ifname, "_vlan") && !stristr($ifname, "_wlan")) {
+		    interface_is_vlan($ifname) == NULL &&
+		    interface_is_qinq($ifname) == NULL &&
+		    !stristr($ifname, "_wlan")) {
 			$toput = array(
 					"mac" => trim($alink[1]),
 					"up" => in_array($ifname, $upints)
@@ -1588,6 +1631,21 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		}
 	}
 	return $iflist;
+}
+
+function get_lagg_interface_list() {
+	global $config;
+
+	$plist = array();
+	if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
+		foreach ($config['laggs']['lagg'] as $lagg) {
+			$lagg['mac'] = get_interface_mac($lagg['laggif']);
+			$lagg['islagg'] = true;
+			$plist[$lagg['laggif']] = $lagg;
+		}
+	}
+
+	return ($plist);
 }
 
 /****f* util/log_error
@@ -1687,16 +1745,24 @@ function mwexec_bg($command, $clearsigmask = false) {
 	return mwexec($command, false, $clearsigmask, true);
 }
 
-/* unlink a file, or pattern-match of a file, if it exists
-   if the file/path contains glob() compatible wildcards, all matching files will be unlinked
-   if no matches, no error occurs */
+/*	unlink a file, or pattern-match of a file, if it exists
+	if the file/path contains glob() compatible wildcards, all matching files will be unlinked
+	any warning/errors are suppressed (e.g. no matching files to delete)
+	If there are matching file(s) and they were all unlinked OK, then return true.
+	Otherwise return false (the requested file(s) did not exist, or could not be deleted)
+	This allows the caller to know if they were the one to successfully delete the file(s).
+*/
 function unlink_if_exists($fn) {
 	$to_do = glob($fn);
 	if (is_array($to_do) && count($to_do) > 0) {
-		@array_map("unlink", $to_do);
+		// Returns an array of true/false indicating if each unlink worked
+		$results = @array_map("unlink", $to_do);
+		// If there is no false in the array, then all went well
+		$result = !in_array(false, $results, true);
 	} else {
-		@unlink($fn);
+		$result = @unlink($fn);
 	}
+	return $result;
 }
 /* make a global alias table (for faster lookups) */
 function alias_make_table($config) {
@@ -1758,7 +1824,7 @@ function alias_expand($name) {
 			}
 		}
 		return "\${$name}";
-	} else if (is_ipaddr($name) || is_subnet($name) || is_port($name) || is_portrange($name)) {
+	} else if (is_ipaddr($name) || is_subnet($name) || is_port_or_range($name)) {
 		return "{$name}";
 	} else {
 		return null;
@@ -1789,31 +1855,38 @@ function alias_expand_urltable($name) {
 	return null;
 }
 
-/* obtain MAC address given an IP address by looking at the ARP table */
-function arp_get_mac_by_ip($ip) {
-	mwexec("/sbin/ping -c 1 -t 1 " . escapeshellarg($ip), true);
-	$arpoutput = "";
-	exec("/usr/sbin/arp -n " . escapeshellarg($ip), $arpoutput);
-
-	if ($arpoutput[0]) {
-		$arpi = explode(" ", $arpoutput[0]);
-		$macaddr = $arpi[3];
-		if (is_macaddr($macaddr)) {
-			return $macaddr;
-		} else {
-			return false;
-		}
+/* obtain MAC address given an IP address by looking at the ARP/NDP table */
+function arp_get_mac_by_ip($ip, $do_ping = true) {
+	unset($macaddr);
+	$retval = 1;
+	switch (is_ipaddr($ip)) {
+		case 4:
+			if ($do_ping === true) {
+				mwexec("/sbin/ping -c 1 -t 1 " . escapeshellarg($ip), true);
+			}
+			$macaddr = exec("/usr/sbin/arp -n " . escapeshellarg($ip) . " | /usr/bin/awk '{print $4}'", $output, $retval);
+			break;
+		case 6:
+			if ($do_ping === true) {
+				mwexec("/sbin/ping6 -c 1 -X 1 " . escapeshellarg($ip), true);
+			}
+			$macaddr = exec("/usr/sbin/ndp -n " . escapeshellarg($ip) . " | /usr/bin/awk '{print $2}'", $output, $retval);
+			break;
 	}
-
-	return false;
+	if ($retval == 0 && is_macaddr($macaddr)) {
+		return $macaddr;
+	} else {
+		return false;
+	}
 }
 
 /* return a fieldname that is safe for xml usage */
 function xml_safe_fieldname($fieldname) {
-	$replace = array('/', '-', ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
-			 '_', '+', '=', '{', '}', '[', ']', '|', '/', '<', '>', '?',
-			 ':', ',', '.', '\'', '\\'
-		);
+	$replace = array(
+	    '/', '-', ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
+	    '_', '+', '=', '{', '}', '[', ']', '|', '/', '<', '>', '?',
+	    ':', ',', '.', '\'', '\\'
+	);
 	return strtolower(str_replace($replace, "", $fieldname));
 }
 
@@ -1884,15 +1957,19 @@ function format_number($num, $precision = 3) {
 		$num /= 1000;
 		$i++;
 	}
-	round($num, $precision);
+	$num = round($num, $precision);
 
 	return ("$num {$units[$i]}");
 }
 
-function update_filter_reload_status($text) {
+function update_filter_reload_status($text, $new=false) {
 	global $g;
 
-	file_put_contents("{$g['varrun_path']}/filter_reload_status", $text);
+	if ($new) {
+		file_put_contents("{$g['varrun_path']}/filter_reload_status", $text  . PHP_EOL);
+	} else {
+		file_put_contents("{$g['varrun_path']}/filter_reload_status", $text  . PHP_EOL, FILE_APPEND);
+	}
 }
 
 /****** util/return_dir_as_array
@@ -1972,7 +2049,7 @@ function get_sysctl($names) {
 		$name_list = array(escapeshellarg($names));
 	}
 
-	exec("/sbin/sysctl -i " . implode(" ", $name_list), $output);
+	exec("/sbin/sysctl -iq " . implode(" ", $name_list), $output);
 	$values = array();
 	foreach ($output as $line) {
 		$line = explode(": ", $line, 2);
@@ -2017,12 +2094,12 @@ function set_sysctl($values) {
 		$value_list[] = escapeshellarg($key) . "=" . escapeshellarg($value);
 	}
 
-	exec("/sbin/sysctl -i " . implode(" ", $value_list), $output, $success);
+	exec("/sbin/sysctl -iq " . implode(" ", $value_list), $output, $success);
 
 	/* Retry individually if failed (one or more read-only) */
 	if ($success <> 0 && count($value_list) > 1) {
 		foreach ($value_list as $value) {
-			exec("/sbin/sysctl -i " . $value, $output);
+			exec("/sbin/sysctl -iq " . $value, $output);
 		}
 	}
 
@@ -2072,11 +2149,7 @@ function get_memory() {
 
 function mute_kernel_msgs() {
 	global $g, $config;
-	// Do not mute serial console.  The kernel gets very very cranky
-	// and will start dishing you cannot control tty errors.
-	if ($g['platform'] == 'nanobsd') {
-		return;
-	}
+
 	if ($config['system']['enableserial']) {
 		return;
 	}
@@ -2085,11 +2158,7 @@ function mute_kernel_msgs() {
 
 function unmute_kernel_msgs() {
 	global $g;
-	// Do not mute serial console.  The kernel gets very very cranky
-	// and will start dishing you cannot control tty errors.
-	if ($g['platform'] == 'nanobsd') {
-		return;
-	}
+
 	exec("/sbin/conscontrol mute off");
 }
 
@@ -2127,7 +2196,9 @@ function is_interface_mismatch() {
 	$missing_interfaces = array();
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
-			if (preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
+			if (interface_is_vlan($ifcfg['if']) != NULL ||
+			    interface_is_qinq($ifcfg['if']) != NULL ||
+			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;
@@ -2210,6 +2281,9 @@ function timeout($timer = 9) {
  ******/
 function msort($array, $id = "id", $sort_ascending = true) {
 	$temp_array = array();
+	if (!is_array($array)) {
+		return $temp_array;
+	}
 	while (count($array)>0) {
 		$lowest_id = 0;
 		$index = 0;
@@ -2315,6 +2389,9 @@ function array_merge_recursive_unique($array0, $array1) {
 						$result[$key] = call_user_func_array(__FUNCTION__, $args);
 					} else {
 						foreach ($value as $vkey => $vval) {
+							if (!is_array($result[$key])) {
+								$result[$key] = array();
+							}
 							$result[$key][$vkey] = $vval;
 						}
 					}
@@ -2343,7 +2420,85 @@ function explode_assoc($delimiter, $string) {
 	return $result;
 }
 
-function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false) {
+/*
+ * Given a string of text with some delimiter, look for occurrences
+ * of some string and replace all of those.
+ * $text - the text string (e.g. "abc,defg,x123,ipv4,xyz")
+ * $delimiter - the delimiter (e.g. ",")
+ * $element - the element to match (e.g. "defg")
+ * $replacement - the string to replace it with (e.g. "42")
+ * Returns the resulting delimited string (e.g. "abc,42,x123,ipv4,xyz")
+ */
+function replace_element_in_list($text, $delimiter, $element, $replacement) {
+	$textArray = explode($delimiter, $text);
+	while (($entry = array_search($element, $textArray)) !== false) {
+		$textArray[$entry] = $replacement;
+	}
+	return implode(',', $textArray);
+}
+
+/* Try to change a static route, if it doesn't exist, add it */
+function route_add_or_change($args) {
+	global $config;
+
+	if (empty($args)) {
+		return false;
+	}
+
+	/* First, try to add it */
+	$_gb = exec(escapeshellcmd("/sbin/route add " . $args), $output, $rc);
+		
+	if (isset($config['system']['route-debug'])) {
+		$add_change = 'add';
+		$mt = microtime();
+		log_error("ROUTING debug: $mt - ADD RC={$rc} - $args");
+	}
+
+	if ($rc != 0) {
+		/* If it fails, try to change it */
+		$_gb = exec(escapeshellcmd("/sbin/route change " . $args),
+		    $output, $rc);
+
+		if (isset($config['system']['route-debug'])) {
+			$add_change = 'change';
+			$mt = microtime();
+			log_error("ROUTING debug: $mt - CHG RC={$rc} - $args");
+		}
+	}
+	if (isset($config['system']['route-debug'])) {
+		file_put_contents("/dev/console", "\n[".getmypid()."] ROUTE: {$add_change} {$args} result: {$rc}");
+	}
+
+	return ($rc == 0);
+}
+
+function alias_to_subnets_recursive($name, $returnhostnames = false) {
+	global $aliastable;
+	$result = array();
+	if (!isset($aliastable[$name])) {
+		return $result;
+	}
+	$subnets = preg_split('/\s+/', $aliastable[$name]);
+	foreach ($subnets as $net) {
+		if (is_alias($net)) {
+			$sub = alias_to_subnets_recursive($net, $returnhostnames);
+			$result = array_merge($result, $sub);
+			continue;
+		} elseif (!is_subnet($net)) {
+			if (is_ipaddrv4($net)) {
+				$net .= "/32";
+			} else if (is_ipaddrv6($net)) {
+				$net .= "/128";
+			} else if ($returnhostnames === false || !is_fqdn($net)) {
+				continue;
+			}
+		}
+		$result[] = $net;
+	}
+	return $result;
+}
+
+function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, $returnenabledroutesonly = false) {
 	global $config, $aliastable;
 
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
@@ -2355,22 +2510,12 @@ function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false) 
 	$allsubnets = array();
 	/* Loop through routes and expand aliases as we find them. */
 	foreach ($config['staticroutes']['route'] as $route) {
-		if (is_alias($route['network'])) {
-			if (!isset($aliastable[$route['network']])) {
-				continue;
-			}
+		if ($returnenabledroutesonly && isset($route['disabled'])) {
+			continue;
+		}
 
-			$subnets = preg_split('/\s+/', $aliastable[$route['network']]);
-			foreach ($subnets as $net) {
-				if (!is_subnet($net)) {
-					if (is_ipaddrv4($net)) {
-						$net .= "/32";
-					} else if (is_ipaddrv6($net)) {
-						$net .= "/128";
-					} else if ($returnhostnames === false || !is_fqdn($net)) {
-						continue;
-					}
-				}
+		if (is_alias($route['network'])) {
+			foreach (alias_to_subnets_recursive($route['network'], $returnhostnames) as $net) {
 				$temproute = $route;
 				$temproute['network'] = $net;
 				$allstaticroutes[] = $temproute;
@@ -2463,16 +2608,243 @@ function post_redirect($page, $params) {
 
 /* Locate disks that can be queried for S.M.A.R.T. data. */
 function get_smart_drive_list() {
+	/* SMART supports some disks directly, and some controllers directly,
+	 * See https://redmine.pfsense.org/issues/9042 */
+	$supported_disk_types = array("ad", "da", "ada");
+	$supported_controller_types = array("nvme");
 	$disk_list = explode(" ", get_single_sysctl("kern.disks"));
 	foreach ($disk_list as $id => $disk) {
 		// We only want certain kinds of disks for S.M.A.R.T.
 		// 1 is a match, 0 is no match, False is any problem processing the regex
-		if (preg_match("/^(ad|da|ada).*[0-9]{1,2}$/", $disk) !== 1) {
+		if (preg_match("/^(" . implode("|", $supported_disk_types) . ").*[0-9]{1,2}$/", $disk) !== 1) {
 			unset($disk_list[$id]);
+			continue;
+		}
+	}
+	foreach ($supported_controller_types as $controller) {
+		$devices = glob("/dev/{$controller}*");
+		if (!is_array($devices)) {
+			continue;
+		}
+		foreach ($devices as $device) {
+			$disk_list[] = basename($device);
 		}
 	}
 	sort($disk_list);
 	return $disk_list;
+}
+
+// Validate a network address
+//	$addr: the address to validate
+//	$type: IPV4|IPV6|IPV4V6
+//	$label: the label used by the GUI to display this value. Required to compose an error message
+//	$err_msg: pointer to the callers error message array so that error messages can be added to it here
+//	$alias: are aliases permitted for this address?
+// Returns:
+//	IPV4 - if $addr is a valid IPv4 address
+//	IPV6 - if $addr is a valid IPv6 address
+//	ALIAS - if $alias=true and $addr is an alias
+//	false - otherwise
+
+function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
+	switch ($type) {
+		case IPV4:
+			if (is_ipaddrv4($addr)) {
+				return IPV4;
+			} else if ($alias) {
+				if (is_alias($addr)) {
+					return ALIAS;
+				} else {
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 address or alias."), $label);
+					return false;
+				}
+			} else {
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv4 address."), $label);
+				return false;
+			}
+		break;
+		case IPV6:
+			if (is_ipaddrv6($addr)) {
+				$addr = strtolower($addr);
+				return IPV6;
+			} else if ($alias) {
+				if (is_alias($addr)) {
+					return ALIAS;
+				} else {
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv6 address or alias."), $label);
+					return false;
+				}
+			} else {
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv6 address."), $label);
+				return false;
+			}
+		break;
+		case IPV4V6:
+			if (is_ipaddrv6($addr)) {
+				$addr = strtolower($addr);
+				return IPV6;
+			} else if (is_ipaddrv4($addr)) {
+				return IPV4;
+			} else if ($alias) {
+				if (is_alias($addr)) {
+					return ALIAS;
+				} else {
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 or IPv6 address or alias."), $label);
+					return false;
+				}
+			} else {
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv4 or IPv6 address."), $label);
+				return false;
+			}
+		break;
+	}
+
+	return false;
+}
+
+/* From DUID configuration inputs, format a string that looks (more) like the expected raw DUID format:
+ * 1) For DUIDs entered as a known DUID type, convert to a hexstring and prepend the DUID number, after having done the following:
+ *     a) For DUID-LLT and DUID-EN, convert the time/enterprise ID input to hex and append the link-layer address/identifier input.
+ *     b) For DUID-LLT and DUID-LL, prepend a hardware type of 1.
+ *     c) For DUID-UUID, remove any "-".
+ * 2) Replace any remaining "-" with ":".
+ * 3) If any components are input with just a single char (hex digit hopefully), put a "0" in front.
+ * 4) The first two components should be a 16-bit integer (little- or big-endian, depending on the current machine type) that
+ *    is equal to the number of other components. If not, prepend this as "nn:00" (all pfSense builds are little-endian).
+ *    This is convenience, because the DUID reported by dhcp6c in logs does not include this count, which corresponds to the
+ *    option-len field of DHCPv6's OPTION_CLIENTID option.
+ *
+ * The final result should be closer to:
+ *
+ * "nn:00:00:0n:nn:nn:nn:..."
+ *
+ * This function does not validate the input. is_duid() will do validation.
+ */
+function format_duid($duidtype, $duidpt1, $duidpt2=null) {
+	if ($duidpt2)
+		$duidpt1 = implode(':', str_split(str_pad(dechex($duidpt1), 8, '0', STR_PAD_LEFT), 2)) . ':' . $duidpt2;
+
+	/* Make hexstrings */
+	if ($duidtype) {
+		switch ($duidtype) {
+		/* Add a hardware type to DUID-LLT and DUID-LL; assume Ethernet */
+		case 1:
+		case 3:
+			$duidpt1 = '00:01:' . $duidpt1;
+			break;
+		/* Remove '-' from given UUID and insert ':' every 2 characters */
+		case 4:
+			$duidpt1 = implode(':', str_split(str_replace('-', '', $duidpt1), 2));
+			break;
+		default:
+		}
+		$duidpt1 = '00:0' . $duidtype . ':' . $duidpt1;
+	}
+
+	$values = explode(':', strtolower(str_replace('-', ':', $duidpt1)));
+
+	if (hexdec($values[0]) != count($values) - 2)
+		array_unshift($values, dechex(count($values)), '00');
+
+	array_walk($values, function(&$value) {
+		$value = str_pad($value, 2, '0', STR_PAD_LEFT);
+	});
+
+	return implode(":", $values);
+}
+
+/* Returns true if $dhcp6duid is a valid DUID entry.
+ * Parse the entry to check for valid length according to known DUID types.
+ */
+function is_duid($dhcp6duid) {
+	$values = explode(":", $dhcp6duid);
+	if (hexdec($values[0]) == count($values) - 2) {
+		switch (hexdec($values[2] . $values[3])) {
+		case 0:
+			return false;
+			break;
+		case 1:
+			if (count($values) != 16 || strlen($dhcp6duid) != 47)
+				return false;
+			break;
+		case 3:
+			if (count($values) != 12 || strlen($dhcp6duid) != 35)
+				return false;
+			break;
+		case 4:
+			if (count($values) != 20 || strlen($dhcp6duid) != 59)
+				return false;
+			break;
+		/* DUID is up to 128 octets; allow 2 octets for type code, 2 more for option-len */
+		default:
+			if (count($values) > 132 || strlen($dhcp6duid) != count($values) * 3 - 1)
+				return false;
+		}
+	} else
+		return false;
+
+	for ($i = 0; $i < count($values); $i++) {
+		if (ctype_xdigit($values[$i]) == false)
+			return false;
+		if (hexdec($values[$i]) < 0 || hexdec($values[$i]) > 255)
+			return false;
+	}
+
+	return true;
+}
+
+/* Write the DHCP6 DUID file */
+function write_dhcp6_duid($duidstring) {
+	// Create the hex array from the dhcp6duid config entry and write to file
+	global $g;
+
+	if(!is_duid($duidstring)) {
+		log_error(gettext("Error: attempting to write DUID file - Invalid DUID detected"));
+		return false;
+	}
+	$temp = str_replace(":","",$duidstring);
+	$duid_binstring = pack("H*",$temp);
+	if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "wb")) {
+		fwrite($fd, $duid_binstring);
+		fclose($fd);
+		return true;
+	}
+	log_error(gettext("Error: attempting to write DUID file - File write error"));
+	return false;
+}
+
+/* returns duid string from 'vardb_path']}/dhcp6c_duid' */
+function get_duid_from_file() {
+	global $g;
+
+	$duid_ASCII = "";
+	$count = 0;
+
+	if (file_exists("{$g['vardb_path']}/dhcp6c_duid") &&
+	    ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "r"))) {
+		$fsize = filesize("{$g['vardb_path']}/dhcp6c_duid");
+		if ($fsize <= 132) {
+			$buffer = fread($fd, $fsize);
+			while($count < $fsize) {
+				$duid_ASCII .= bin2hex($buffer[$count]);
+				$count++;
+				if($count < $fsize) {
+					$duid_ASCII .= ":";
+				}
+			}
+		}
+		fclose($fd);
+	}
+	//if no file or error with read then the string returns blanked DUID string
+	if(!is_duid($duid_ASCII)) {
+		return "--:--:--:--:--:--:--:--:--:--:--:--:--:--:--:--";
+	}
+	return($duid_ASCII);
+}
+
+/* Replaces the Mac OS 9 and earlier (\r) and DOS/Windows (\r\n) newlines with the Unix equivalent (\n). */
+function unixnewlines($text) {
+	return preg_replace('/\r\n?/', "\n", $text);
 }
 
 ?>

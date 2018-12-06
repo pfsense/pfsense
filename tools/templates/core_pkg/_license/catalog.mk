@@ -1,5 +1,5 @@
-_LICENSE=ESF
-_LICENSE_NAME=Electric Sheep Fencing License
+_LICENSE=APACHE20
+_LICENSE_NAME=Apache License 2.0
 _LICENSE_PERMS=dist-mirror dist-sell pkg-mirror pkg-sell auto-accept
-_LICENSE_GROUPS=
+_LICENSE_GROUPS=FSF OSI
 _LICENSE_DISTFILES=

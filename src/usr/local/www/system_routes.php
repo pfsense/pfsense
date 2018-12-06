@@ -1,59 +1,26 @@
 <?php
 /*
-	system_routes.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * system_routes.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -68,41 +35,32 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['staticroutes']['route'])) {
-	$config['staticroutes']['route'] = array();
-}
-
+init_config_arr(array('staticroutes', 'route'));
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = return_gateways_array(true, true, true);
 $changedesc_prefix = gettext("Static Routes") . ": ";
 unset($input_errors);
 
-if ($_POST) {
-
+if ($_POST['apply']) {
 	$pconfig = $_POST;
+	$retval = 0;
 
-	if ($_POST['apply']) {
-
-		$retval = 0;
-
-		if (file_exists("{$g['tmp_path']}/.system_routes.apply")) {
-			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
-			foreach ($toapplylist as $toapply) {
-				mwexec("{$toapply}");
-			}
-
-			@unlink("{$g['tmp_path']}/.system_routes.apply");
+	if (file_exists("{$g['tmp_path']}/.system_routes.apply")) {
+		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+		foreach ($toapplylist as $toapply) {
+			mwexec("{$toapply}");
 		}
 
-		$retval = system_routing_configure();
-		$retval |= filter_configure();
-		/* reconfigure our gateway monitor */
-		setup_gateways_monitor();
+		@unlink("{$g['tmp_path']}/.system_routes.apply");
+	}
 
-		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
-			clear_subsystem_dirty('staticroutes');
-		}
+	$retval |= system_routing_configure();
+	$retval |= filter_configure();
+	/* reconfigure our gateway monitor */
+	setup_gateways_monitor();
+
+	if ($retval == 0) {
+		clear_subsystem_dirty('staticroutes');
 	}
 }
 
@@ -138,11 +96,11 @@ function delete_static_route($id) {
 	unset($targets);
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_routes[$_GET['id']]) {
-		$changedesc = $changedesc_prefix . sprintf(gettext("removed route to %s"), $a_routes[$_GET['id']]['network']);
-		delete_static_route($_GET['id']);
-		unset($a_routes[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	if ($a_routes[$_POST['id']]) {
+		$changedesc = $changedesc_prefix . sprintf(gettext("removed route to %s"), $a_routes[$_POST['id']]['network']);
+		delete_static_route($_POST['id']);
+		unset($a_routes[$_POST['id']]);
 		write_config($changedesc);
 		header("Location: system_routes.php");
 		exit;
@@ -164,22 +122,24 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 
-} else if ($_GET['act'] == "toggle") {
-	if ($a_routes[$_GET['id']]) {
+}
+
+if ($_POST['act'] == "toggle") {
+	if ($a_routes[$_POST['id']]) {
 		$do_update_config = true;
-		if (isset($a_routes[$_GET['id']]['disabled'])) {
+		if (isset($a_routes[$_POST['id']]['disabled'])) {
 			// Do not enable a route whose gateway is disabled
-			if (isset($a_gateways[$a_routes[$_GET['id']]['gateway']]['disabled'])) {
+			if (isset($a_gateways[$a_routes[$_POST['id']]['gateway']]['disabled'])) {
 				$do_update_config = false;
-				$input_errors[] = $changedesc_prefix . sprintf(gettext("gateway is disabled, cannot enable route to %s"), $a_routes[$_GET['id']]['network']);
+				$input_errors[] = $changedesc_prefix . sprintf(gettext("gateway is disabled, cannot enable route to %s"), $a_routes[$_POST['id']]['network']);
 			} else {
-				unset($a_routes[$_GET['id']]['disabled']);
-				$changedesc = $changedesc_prefix . sprintf(gettext("enabled route to %s"), $a_routes[$_GET['id']]['network']);
+				unset($a_routes[$_POST['id']]['disabled']);
+				$changedesc = $changedesc_prefix . sprintf(gettext("enabled route to %s"), $a_routes[$_POST['id']]['network']);
 			}
 		} else {
-			delete_static_route($_GET['id']);
-			$a_routes[$_GET['id']]['disabled'] = true;
-			$changedesc = $changedesc_prefix . sprintf(gettext("disabled route to %s"), $a_routes[$_GET['id']]['network']);
+			delete_static_route($_POST['id']);
+			$a_routes[$_POST['id']]['disabled'] = true;
+			$changedesc = $changedesc_prefix . sprintf(gettext("disabled route to %s"), $a_routes[$_POST['id']]['network']);
 		}
 
 		if ($do_update_config) {
@@ -190,7 +150,9 @@ if (isset($_POST['del_x'])) {
 			exit;
 		}
 	}
-} else {
+}
+
+if($_POST['save']) {
 	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
 	unset($movebtn);
 	foreach ($_POST as $pn => $pd) {
@@ -235,7 +197,7 @@ if (isset($_POST['del_x'])) {
 			$a_routes = $a_routes_new;
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Saved static routes configuration."))) {
 			mark_subsystem_dirty('staticroutes');
 		}
 		header("Location: system_routes.php");
@@ -244,6 +206,7 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Static Routes"));
+$pglinks = array("", "system_gateways.php", "@self");
 $shortcut_section = "routing";
 
 include("head.inc");
@@ -251,8 +214,8 @@ include("head.inc");
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 if (is_subsystem_dirty('staticroutes')) {
 	print_apply_box(gettext("The static route configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
@@ -310,13 +273,13 @@ foreach ($a_routes as $i => $route):
 
 				<?php if (isset($route['disabled'])) {
 				?>
-						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable route')?>"></a>
+						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable route')?>" usepost></a>
 				<?php } else {
 				?>
-						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable route')?>"></a>
+						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable route')?>" usepost></a>
 				<?php }
 				?>
-						<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete route')?>"></a>
+						<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete route')?>" usepost></a>
 
 					</td>
 				</tr>

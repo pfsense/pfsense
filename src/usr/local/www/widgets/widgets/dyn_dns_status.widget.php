@@ -1,65 +1,53 @@
 <?php
 /*
-	dyn_dns_status.widget.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2013 Stanley P. Miller \ stan-qaz
+ * dyn_dns_status.widget.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2013 Stanley P. Miller \ stan-qaz
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-$nocsrf = true;
+global $dyndns_split_domain_types;
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/dyn_dns_status.inc");
+
+// Constructs a unique key that will identify a Dynamic DNS entry in the filter list.
+if (!function_exists('get_dyndnsent_key')) {
+	function get_dyndnsent_key($dyndns) {
+		return $dyndns['id'];
+	}
+}
+
+if (!function_exists('get_dyndns_hostname_text')) {
+	function get_dyndns_hostname_text($dyndns) {
+		global $dyndns_split_domain_types;
+		if (in_array($dyndns['type'], $dyndns_split_domain_types)) {
+			return $dyndns['host'] . "." . $dyndns['domainname'];
+		}
+
+		return $dyndns['host'];
+	}
+}
+
+if (!is_array($config['dyndnses'])) {
+	$config['dyndnses'] = array();
+}
 
 if (!is_array($config['dyndnses']['dyndns'])) {
 	$config['dyndnses']['dyndns'] = array();
@@ -67,6 +55,9 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 
 $a_dyndns = $config['dyndnses']['dyndns'];
 
+if (!is_array($config['dnsupdates'])) {
+	$config['dnsupdates'] = array();
+}
 if (!is_array($config['dnsupdates']['dnsupdate'])) {
 	$config['dnsupdates']['dnsupdate'] = array();
 }
@@ -75,54 +66,122 @@ $a_rfc2136 = $config['dnsupdates']['dnsupdate'];
 
 $all_dyndns = array_merge($a_dyndns, $a_rfc2136);
 
+array_walk($all_dyndns, function(&$dyndns) {
+	if (empty($dyndns)) {
+		return;
+	}
+	if (empty($dyndns['type'])) {
+		/* RFC2136, add some dummy values */
+		$dyndns['type'] = '_rfc2136_';
+		$dyndns['id'] = '_' . $dyndns['server'];
+	}
+});
+
 if ($_REQUEST['getdyndnsstatus']) {
+	$skipdyndns = explode(",", $user_settings['widgets'][$_REQUEST['getdyndnsstatus']]['filter']);
 	$first_entry = true;
 	foreach ($all_dyndns as $dyndns) {
+		if (in_array(get_dyndnsent_key($dyndns), $skipdyndns)) {
+			continue;
+		}
+
 		if ($first_entry) {
 			$first_entry = false;
 		} else {
 			// Put a vertical bar delimiter between the echoed HTML for each entry processed.
 			echo "|";
 		}
-		$cache_sep = ":";
-		if ($dyndns['type'] == "namecheap") {
-			$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
-		} elseif (empty($dyndns['type'])) {
-			/* RFC2136, add some dummy values */
-			$dyndns['type'] = '_rfc2136_';
-			$dyndns['id'] = '_' . $dyndns['server'];
-			$hostname = $dyndns['host'];
-			$cache_sep = "|";
-		} else {
-			$hostname = $dyndns['host'];
-		}
 
+		$hostname = get_dyndns_hostname_text($dyndns);
 		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}.cache";
+		$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
 		if (file_exists($filename)) {
-			if (($dyndns['type'] == '_rfc2136_') && (!isset($dyndns['usepublicip']))) {
-				$ipaddr = get_interface_ip(get_failover_interface($dyndns['interface']));
-			} else {
-				$ipaddr = dyndnsCheckIP($dyndns['interface']);
-			}
-			$cached_ip_s = explode($cache_sep, file_get_contents($filename));
+			$ipaddr = dyndnsCheckIP($dyndns['interface']);
+			$cached_ip_s = explode("|", file_get_contents($filename));
 			$cached_ip = $cached_ip_s[0];
-			if (trim($ipaddr) != trim($cached_ip)) {
+
+			if ($ipaddr != $cached_ip) {
 				print('<span class="text-danger">');
 			} else {
 				print('<span class="text-success">');
 			}
+
 			print(htmlspecialchars($cached_ip));
+			print('</span>');
+		} else if (file_exists($filename_v6)) {
+			$ipv6addr = get_interface_ipv6($dyndns['interface']);
+			$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
+			$cached_ipv6 = $cached_ipv6_s[0];
+
+			if ($ipv6addr != $cached_ipv6) {
+				print('<span class="text-danger">');
+			} else {
+				print('<span class="text-success">');
+			}
+
+			print(htmlspecialchars($cached_ipv6));
 			print('</span>');
 		} else {
 			print('N/A ' . date("H:i:s"));
 		}
 	}
+
 	exit;
+} else if ($_POST['widgetkey']) {
+	set_customwidgettitle($user_settings);
+
+	$validNames = array();
+
+	foreach ($all_dyndns as $dyndns) {
+		array_push($validNames, get_dyndnsent_key($dyndns));
+	}
+
+	if (is_array($_POST['show'])) {
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', array_diff($validNames, $_POST['show']));
+	} else {
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', $validNames);
+	}
+
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Dynamic DNS Filter via Dashboard."));
+	header("Location: /index.php");
+}
+
+$iflist = get_configured_interface_with_descr();
+
+if (!function_exists('get_dyndns_interface_text')) {
+	function get_dyndns_interface_text($dyndns_iface) {
+		global $iflist;
+		if (isset($iflist[$dyndns_iface])) {
+			return $iflist[$dyndns_iface];
+		}
+
+		// This will be a gateway group name.
+		return $dyndns_iface;
+	}
+}
+
+$dyndns_providers = array_combine(explode(" ", DYNDNS_PROVIDER_VALUES), explode(",", DYNDNS_PROVIDER_DESCRIPTIONS));
+$skipdyndns = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
+$widgetkey_nodash = str_replace("-", "", $widgetkey);
+
+if (!function_exists('get_dyndns_service_text')) {
+	function get_dyndns_service_text($dyndns_type) {
+		global $dyndns_providers;
+
+		if (isset($dyndns_providers[$dyndns_type])) {
+			return $dyndns_providers[$dyndns_type];
+		} else if ($dyndns_type == '_rfc2136_') {
+			return "RFC 2136";
+		}
+
+		return $dyndns_type;
+	}
 }
 
 ?>
 
-<table id="dyn_dns_status" class="table table-striped table-hover">
+<div class="table-responsive">
+<table id="dyn_dns_status" class="table table-hover table-striped table-condensed">
 	<thead>
 	<tr>
 		<th style="width:5%;"><?=gettext("Int.");?></th>
@@ -132,86 +191,140 @@ if ($_REQUEST['getdyndnsstatus']) {
 	</tr>
 	</thead>
 	<tbody>
-	<?php $dyndnsid = 0; foreach ($all_dyndns as $dyndns):
-
-		if ($dyndns['type'] == "namecheap") {
-			$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
-		} elseif (empty($dyndns['type'])) {
-			/* RFC2136, add some dummy values */
-			$dyndns['type'] = '_rfc2136_';
-			$dyndns['id'] = '_' . $dyndns['server'];
-			$hostname = $dyndns['host'];
+	<?php $dyndnsid = -1; $rfc2136id = -1; $rowid = -1; foreach ($all_dyndns as $dyndns):
+		if ($dyndns['type'] == '_rfc2136_') {
+			$dblclick_location = 'services_rfc2136_edit.php';
+			$rfc2136id++;
+			$locationid = $rfc2136id;
 		} else {
-			$hostname = $dyndns['host'];
-		} ?>
-	<tr ondblclick="document.location='services_dyndns_edit.php?id=<?=$dyndnsid;?>'"<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
-		<td>
-		<?php $iflist = get_configured_interface_with_descr();
-		foreach ($iflist as $if => $ifdesc) {
-			if ($dyndns['interface'] == $if) {
-				print($ifdesc);
-				break;
-			}
+			$dblclick_location = 'services_dyndns_edit.php';
+			$dyndnsid++;
+			$locationid = $dyndnsid;
 		}
-		$groupslist = return_gateway_groups_array();
-		foreach ($groupslist as $if => $group) {
-			if ($dyndns['interface'] == $if) {
-				print($if);
-				break;
-			}
+
+		if (in_array(get_dyndnsent_key($dyndns), $skipdyndns)) {
+			continue;
 		}
-		?>
-		</td>
-		<td>
-		<?php
-		$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
-		$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
-		for ($j = 0; $j < count($vals); $j++) {
-			if ($vals[$j] == $dyndns['type']) {
-				print(htmlspecialchars($types[$j]));
-				break;
-			}
-		}
-		if ($dyndns['type'] == '_rfc2136_') : ?>
-			RFC 2136
-		<?php endif; ?>
-		</td>
-		<td>
-		<?=htmlspecialchars($hostname);?>
-		</td>
-		<td>
-		<div id="dyndnsstatus<?= $dyndnsid;?>"><?= gettext("Checking ...");?></div>
+
+		$rowid++;
+
+	?>
+	<tr ondblclick="document.location='<?=$dblclick_location;?>?id=<?=$locationid;?>'"<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
+		<td><?=get_dyndns_interface_text($dyndns['interface']);?></td>
+<?php
+		if (((get_dyndns_service_text($dyndns['type']) == 'Custom') ||
+			 (get_dyndns_service_text($dyndns['type']) == 'Custom (v6)')) &&
+			 (get_dyndns_service_text($dyndns['descr']) != '')):
+?>
+		<td><?=htmlspecialchars(get_dyndns_service_text($dyndns['descr']));?></td>
+		<?php else:?>
+		<td><?=htmlspecialchars(get_dyndns_service_text($dyndns['type']));?></td>
+		<?php endif;?>
+		<td><?=insert_word_breaks_in_domain_name(htmlspecialchars(get_dyndns_hostname_text($dyndns)));?></td>
+		<td><div id="dyndnsstatus<?= $rowid;?>"><?= gettext("Checking ...");?></div></td>
+	</tr>
+	<?php endforeach;?>
+	<?php if ($rowid == -1):?>
+	<tr>
+		<td colspan="4" class="text-center">
+			<?=gettext('All Dyn DNS entries are hidden.');?>
 		</td>
 	</tr>
-	<?php $dyndnsid++; endforeach;?>
+	<?php endif;?>
 	</tbody>
 </table>
+</div>
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
+
+<form action="/widgets/widgets/dyn_dns_status.widget.php" method="post" class="form-horizontal">
+	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
+    <div class="panel panel-default col-sm-10">
+		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
+			<div class="table responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Interface")?></th>
+							<th><?=gettext("Service")?></th>
+							<th><?=gettext("Hostname")?></th>
+							<th><?=gettext("Show")?></th>
+						</tr>
+					</thead>
+					<tbody>
+<?php
+				$skipdyndns = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
+				foreach ($all_dyndns as $dyndns):
+?>
+						<tr>
+							<td><?=get_dyndns_interface_text($dyndns['interface'])?></td>
+<?php
+							if (((get_dyndns_service_text($dyndns['type']) == 'Custom') ||
+							     (get_dyndns_service_text($dyndns['type']) == 'Custom (v6)')) &&
+								 (get_dyndns_service_text($dyndns['descr']) != '')):
+?>
+							<td><?=htmlspecialchars(get_dyndns_service_text($dyndns['descr']));?></td>
+							<?php else:?>
+							<td><?=get_dyndns_service_text($dyndns['type'])?></td>
+							<?php endif;?>
+							<td><?=get_dyndns_hostname_text($dyndns)?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_dyndnsent_key($dyndns)?>" type="checkbox" <?=(!in_array(get_dyndnsent_key($dyndns), $skipdyndns) ? 'checked':'')?>></td>
+						</tr>
+<?php
+				endforeach;
+?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-6">
+			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+		</div>
+	</div>
+</form>
 
 <script type="text/javascript">
 //<![CDATA[
-	function dyndns_getstatus() {
-		scroll(0,0);
-		var url = "/widgets/widgets/dyn_dns_status.widget.php";
-		var pars = 'getdyndnsstatus=yes';
-		$.ajax(
-			url,
-			{
-				type: 'get',
-				data: pars,
-				complete: dyndnscallback
-			});
-		// Refresh the status every 5 minutes
-		setTimeout('dyndns_getstatus()', 5*60*1000);
-	}
-	function dyndnscallback(transport) {
-		// The server returns a string of statuses separated by vertical bars
-		var responseStrings = transport.responseText.split("|");
-		for (var count=0; count<responseStrings.length; count++) {
-			var divlabel = '#dyndnsstatus' + count;
-			$(divlabel).prop('innerHTML',responseStrings[count]);
+
+	events.push(function(){
+		// --------------------- Centralized widget refresh system ------------------------------
+
+		// Callback function called by refresh system when data is retrieved
+		function dyndnscallback_<?=htmlspecialchars($widgetkey_nodash)?>(s) {
+			// The server returns a string of statuses separated by vertical bars
+			var responseStrings = s.split("|");
+			for (var count=0; count<responseStrings.length; count++) {
+				var divlabel = <?=json_encode('#widget-' . $widgetkey . ' #dyndnsstatus')?> + count;
+				$(divlabel).prop('innerHTML',responseStrings[count]);
+			}
 		}
-	}
-	// Do the first status check 2 seconds after the dashboard opens
-	setTimeout('dyndns_getstatus()', 2000);
+
+		// POST data to send via AJAX
+		var postdata = {
+			ajax: "ajax",
+			getdyndnsstatus : <?=json_encode($widgetkey)?>
+		 };
+
+		// Create an object defining the widget refresh AJAX call
+		var dyndnsObject = new Object();
+		dyndnsObject.name = "DynDNS";
+		dyndnsObject.url = "/widgets/widgets/dyn_dns_status.widget.php";
+		dyndnsObject.callback =  dyndnscallback_<?=htmlspecialchars($widgetkey_nodash)?>;
+		dyndnsObject.parms = postdata;
+		dyndnsObject.freq = 1;
+
+		// Register the AJAX object
+		register_ajax(dyndnsObject);
+
+		// ---------------------------------------------------------------------------------------------------
+
+		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
+	});
+
 //]]>
 </script>

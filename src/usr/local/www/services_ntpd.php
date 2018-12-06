@@ -1,57 +1,23 @@
 <?php
 /*
-	services_ntpd.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2013 Dagorlad
+ * services_ntpd.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013 Dagorlad
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -87,6 +53,10 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	if ((strlen($pconfig['ntporphan']) > 0) && (!is_numericint($pconfig['ntporphan']) || ($pconfig['ntporphan'] < 1) || ($pconfig['ntporphan'] > 15))) {
+		$input_errors[] = gettext("The supplied value for NTP Orphan Mode is invalid.");
+	}
+
 	if (!$input_errors) {
 		if (is_array($_POST['interface'])) {
 			$config['ntpd']['interface'] = implode(",", $_POST['interface']);
@@ -102,6 +72,7 @@ if ($_POST) {
 
 		unset($config['ntpd']['prefer']);
 		unset($config['ntpd']['noselect']);
+		unset($config['ntpd']['ispool']);
 		$timeservers = '';
 
 		for ($i = 0; $i < NUMTIMESERVERS; $i++) {
@@ -114,6 +85,9 @@ if ($_POST) {
 				if (!empty($_POST["servselect{$i}"])) {
 					$config['ntpd']['noselect'] .= "{$tserver} ";
 				}
+				if (!empty($_POST["servispool{$i}"])) {
+					$config['ntpd']['ispool'] .= "{$tserver} ";
+				}
 			}
 		}
 		if (trim($timeservers) == "") {
@@ -121,11 +95,7 @@ if ($_POST) {
 		}
 		$config['system']['timeservers'] = trim($timeservers);
 
-		if (!empty($_POST['ntporphan']) && ($_POST['ntporphan'] < 17) && ($_POST['ntporphan'] != '12')) {
-			$config['ntpd']['orphan'] = $_POST['ntporphan'];
-		} elseif (isset($config['ntpd']['orphan'])) {
-			unset($config['ntpd']['orphan']);
-		}
+		$config['ntpd']['orphan'] = trim($pconfig['ntporphan']);
 
 		if (!empty($_POST['logpeer'])) {
 			$config['ntpd']['logpeer'] = $_POST['logpeer'];
@@ -181,9 +151,9 @@ if ($_POST) {
 
 		write_config("Updated NTP Server Settings");
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = system_ntp_configure();
-		$savemsg = get_std_save_message($retval);
+		$retval |= system_ntp_configure();
 	}
 }
 
@@ -209,6 +179,7 @@ function build_interface_list() {
 	return($iflist);
 }
 
+init_config_arr(array('ntpd'));
 $pconfig = &$config['ntpd'];
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();
@@ -216,14 +187,16 @@ if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = explode(",", $pconfig['interface']);
 }
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Settings"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 $tab_array = array();
@@ -246,15 +219,18 @@ $section->addInput(new Form_Select(
 	$iflist['selected'],
 	$iflist['options'],
 	true
-))->setHelp('Interfaces without an IP address will not be shown.' . '<br />' .
-			'Selecting no interfaces will listen on all interfaces with a wildcard.' . '<br />' .
-			'Selecting all interfaces will explicitly listen on only the interfaces/IPs specified.');
+))->setHelp('Interfaces without an IP address will not be shown.%1$s' .
+			'Selecting no interfaces will listen on all interfaces with a wildcard.%1$s' .
+			'Selecting all interfaces will explicitly listen on only the interfaces/IPs specified.', '<br />');
 
 $timeservers = explode(' ', $config['system']['timeservers']);
 $maxrows = max(count($timeservers), 1);
+$auto_pool_suffix = "pool.ntp.org";
 for ($counter=0; $counter < $maxrows; $counter++) {
 	$group = new Form_Group($counter == 0 ? 'Time Servers':'');
 	$group->addClass('repeatable');
+	$group->setAttribute('max_repeats', NUMTIMESERVERS);
+	$group->setAttribute('max_repeats_alert', sprintf(gettext('%d is the maximum number of configured servers.'), NUMTIMESERVERS));
 
 	$group->add(new Form_Input(
 		'server' . $counter,
@@ -278,6 +254,14 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 		isset($config['ntpd']['noselect']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['noselect'], $timeservers[$counter])
 	 ))->sethelp('No Select');
 
+	$group->add(new Form_Checkbox(
+		'servispool' . $counter,
+		null,
+		null,
+		(substr_compare($timeservers[$counter], $auto_pool_suffix, strlen($timeservers[$counter]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0)
+		 || (isset($config['ntpd']['ispool']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['ispool'], $timeservers[$counter]))
+	 ))->sethelp('Is a Pool');
+
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
 		'Delete',
@@ -298,15 +282,26 @@ $section->addInput(new Form_Button(
 $section->addInput(new Form_StaticText(
 	null,
 	$btnaddrow
-))->setHelp('For best results three to five servers should be configured here.' . '<br />' .
-			'The prefer option indicates that NTP should favor the use of this server more than all others.' . '<br />' .
-			'The no select option indicates that NTP should not use this server for time, but stats for this server will be collected and displayed.');
+))->setHelp(
+	'NTP will only sync if a majority of the servers agree on the time.  For best results you should configure between 3 and 5 servers ' .
+	'(%4$sNTP support pages recommend at least 4 or 5%5$s), or a pool. If only one server is configured, it %2$swill%3$s be believed, and if 2 servers ' .
+	'are configured and they disagree, %2$sneither%3$s will be believed. Options:%1$s' .
+	'%2$sPrefer%3$s - NTP should favor the use of this server more than all others.%1$s' .
+	'%2$sNo Select%3$s - NTP should not use this server for time, but stats for this server will be collected and displayed.%1$s' .
+	'%2$sIs a Pool%3$s - this entry is a pool of NTP servers and not a single address. This is assumed for *.pool.ntp.org.',
+	'<br />',
+	'<b>',
+	'</b>',
+	'<a target="_blank" href="https://support.ntp.org/bin/view/Support/ConfiguringNTP">',
+	'</a>'
+	);
 
 $section->addInput(new Form_Input(
 	'ntporphan',
 	'Orphan Mode',
 	'text',
-	$pconfig['ntporphan']
+	$pconfig['orphan'],
+	['placeholder' => "12"]
 ))->setHelp('Orphan mode allows the system clock to be used when no other clocks are available. ' .
 			'The number here specifies the stratum reported during orphan mode and should normally be set to a number high enough ' .
 			'to insure that any other servers available to clients are preferred over this server (default: 12).');
@@ -330,8 +325,8 @@ $section->addInput(new Form_Checkbox(
 	null,
 	'Log system messages (default: disabled).',
 	$pconfig['logsys']
-))->setHelp('These options enable additional messages from NTP to be written to the System Log ' .
-			'<a href="status_logs.php?logfile=ntpd">' . 'Status > System Logs > NTP' . '</a>.');
+))->setHelp('These options enable additional messages from NTP to be written to the System Log %1$sStatus > System Logs > NTP%2$s',
+			'<a href="status_logs.php?logfile=ntpd">', '</a>.');
 
 // Statistics logging section
 $btnadv = new Form_Button(
@@ -382,8 +377,22 @@ $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 $section->addInput(new Form_StaticText(
 	'Leap seconds',
 	$btnadv
-))->setHelp('A leap second file allows NTP to advertise an upcoming leap second addition or subtraction. ' .
-			'Normally this is only useful if this server is a stratum 1 time server. ');
+))->setHelp(
+	'Leap seconds may be added or subtracted at the end of June or December. Leap seconds are administered by the ' .
+	'%1$sIERS%2$s, who publish them in their Bulletin C approximately 6 - 12 months in advance.  Normally this correction ' .
+	'should only be needed if the server is a stratum 1 NTP server, but many NTP servers do not advertise an upcoming leap ' .
+	'second when other NTP servers synchronise to them.%3$s%4$sIf the leap second is important to your network services, ' .
+	'it is %6$sgood practice%2$s to download and add the leap second file at least a day in advance of any time correction%5$s.%3$s ' .
+	'More information and files for downloading can be found on their %1$swebsite%2$s, and also on the %7$NIST%2$s and %8$sNTP%2$s websites.',
+	'<a target="_blank" href="https://www.iers.org">',
+	'</a>',
+	'<br />',
+	'<b>',
+	'</b>',
+	'<a target="_blank" href="https://support.ntp.org/bin/view/Support/ConfiguringNTP">',
+	'<a target="_blank" href="https://www.nist.gov">',
+	'<a target="_blank" href="https://www.ntp.org">'
+);
 
 $section->addInput(new Form_Textarea(
 	'leaptext',

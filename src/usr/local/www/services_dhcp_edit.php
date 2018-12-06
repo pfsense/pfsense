@@ -1,59 +1,26 @@
 <?php
 /*
-	services_dhcp_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * services_dhcp_edit.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -82,45 +49,24 @@ if (!$g['services_dhcp_server_enable']) {
 
 require_once("guiconfig.inc");
 
-$if = $_GET['if'];
-
-if ($_POST['if']) {
-	$if = $_POST['if'];
-}
+$if = $_REQUEST['if'];
 
 if (!$if) {
 	header("Location: services_dhcp.php");
 	exit;
 }
 
-if (!is_array($config['dhcpd'])) {
-	$config['dhcpd'] = array();
-}
-if (!is_array($config['dhcpd'][$if])) {
-	$config['dhcpd'][$if] = array();
-}
-if (!is_array($config['dhcpd'][$if]['staticmap'])) {
-	$config['dhcpd'][$if]['staticmap'] = array();
-}
-
-if (!is_array($config['dhcpd'][$if]['pool'])) {
-	$config['dhcpd'][$if]['pool'] = array();
-}
+init_config_arr(array('dhcpd', $if, 'staticmap'));
+init_config_arr(array('dhcpd', $if, 'pool'));
+$a_maps = &$config['dhcpd'][$if]['staticmap'];
 $a_pools = &$config['dhcpd'][$if]['pool'];
-
 $static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
 $netboot_enabled=isset($config['dhcpd'][$if]['netboot']);
-$a_maps = &$config['dhcpd'][$if]['staticmap'];
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_maps[$id]) {
 	$pconfig['mac'] = $a_maps[$id]['mac'];
@@ -143,38 +89,40 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($a_maps[$id]['ddnsforcehostname']);
 	list($pconfig['ntp1'], $pconfig['ntp2']) = $a_maps[$id]['ntpserver'];
 	$pconfig['tftp'] = $a_maps[$id]['tftp'];
 } else {
-	$pconfig['mac'] = $_GET['mac'];
-	$pconfig['cid'] = $_GET['cid'];
-	$pconfig['hostname'] = $_GET['hostname'];
-	$pconfig['filename'] = $_GET['filename'];
-	$pconfig['rootpath'] = $_GET['rootpath'];
-	$pconfig['descr'] = $_GET['descr'];
-	$pconfig['arp_table_static_entry'] = $_GET['arp_table_static_entry'];
-	$pconfig['deftime'] = $_GET['defaultleasetime'];
-	$pconfig['maxtime'] = $_GET['maxleasetime'];
-	$pconfig['gateway'] = $_GET['gateway'];
-	$pconfig['domain'] = $_GET['domain'];
-	$pconfig['domainsearchlist'] = $_GET['domainsearchlist'];
-	$pconfig['wins1'] = $_GET['wins1'];
-	$pconfig['wins2'] = $_GET['wins2'];
-	$pconfig['dns1'] = $_GET['dns1'];
-	$pconfig['dns2'] = $_GET['dns2'];
-	$pconfig['dns3'] = $_GET['dns3'];
-	$pconfig['dns4'] = $_GET['dns4'];
-	$pconfig['ddnsdomain'] = $_GET['ddnsdomain'];
-	$pconfig['ddnsdomainprimary'] = $_GET['ddnsdomainprimary'];
-	$pconfig['ddnsdomainkeyname'] = $_GET['ddnsdomainkeyname'];
-	$pconfig['ddnsdomainkey'] = $_GET['ddnsdomainkey'];
-	$pconfig['ddnsupdate'] = isset($_GET['ddnsupdate']);
-	$pconfig['ntp1'] = $_GET['ntp1'];
-	$pconfig['ntp2'] = $_GET['ntp2'];
-	$pconfig['tftp'] = $_GET['tftp'];
+	$pconfig['mac'] = $_REQUEST['mac'];
+	$pconfig['cid'] = $_REQUEST['cid'];
+	$pconfig['hostname'] = $_REQUEST['hostname'];
+	$pconfig['filename'] = $_REQUEST['filename'];
+	$pconfig['rootpath'] = $_REQUEST['rootpath'];
+	$pconfig['descr'] = $_REQUEST['descr'];
+	$pconfig['arp_table_static_entry'] = $_REQUEST['arp_table_static_entry'];
+	$pconfig['deftime'] = $_REQUEST['defaultleasetime'];
+	$pconfig['maxtime'] = $_REQUEST['maxleasetime'];
+	$pconfig['gateway'] = $_REQUEST['gateway'];
+	$pconfig['domain'] = $_REQUEST['domain'];
+	$pconfig['domainsearchlist'] = $_REQUEST['domainsearchlist'];
+	$pconfig['wins1'] = $_REQUEST['wins1'];
+	$pconfig['wins2'] = $_REQUEST['wins2'];
+	$pconfig['dns1'] = $_REQUEST['dns1'];
+	$pconfig['dns2'] = $_REQUEST['dns2'];
+	$pconfig['dns3'] = $_REQUEST['dns3'];
+	$pconfig['dns4'] = $_REQUEST['dns4'];
+	$pconfig['ddnsdomain'] = $_REQUEST['ddnsdomain'];
+	$pconfig['ddnsdomainprimary'] = $_REQUEST['ddnsdomainprimary'];
+	$pconfig['ddnsdomainkeyname'] = $_REQUEST['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkey'] = $_REQUEST['ddnsdomainkey'];
+	$pconfig['ddnsupdate'] = isset($_REQUEST['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($_REQUEST['ddnsforcehostname']);
+	$pconfig['ntp1'] = $_REQUEST['ntp1'];
+	$pconfig['ntp2'] = $_REQUEST['ntp2'];
+	$pconfig['tftp'] = $_REQUEST['tftp'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -206,8 +154,8 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
-		$input_errors[] = gettext("A valid IP address must be specified.");
+	if (($_POST['ipaddr'] && !is_ipaddrv4($_POST['ipaddr']))) {
+		$input_errors[] = gettext("A valid IPv4 address must be specified.");
 	}
 
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
@@ -222,16 +170,9 @@ if ($_POST) {
 		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent)) {
 			continue;
 		}
-		/* The fully qualified hostname (hostname + '.' + domainname) must be unique.
-		 * The unqualified hostname does not have to be unique as long as the fully
-		 * qualified hostname is unique. */
-		$existingFqn = "{$mapent['hostname']}.{$mapent['domain']}";
-		$candidateFqn = "{$_POST['hostname']}.{$_POST['domain']}";
-		if ((($existingFqn == $candidateFqn) && $mapent['hostname']) ||
-		    (($mapent['mac'] == $_POST['mac']) && $mapent['mac']) ||
-		    (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr']) ||
+		if ((($mapent['mac'] == $_POST['mac']) && $mapent['mac']) ||
 		    (($mapent['cid'] == $_POST['cid']) && $mapent['cid'])) {
-			$input_errors[] = gettext("This fully qualified hostname (Hostname + Domainname), IP, MAC address or Client identifier already exists.");
+			$input_errors[] = gettext("This MAC address or Client identifier already exists.");
 			break;
 		}
 	}
@@ -265,13 +206,13 @@ if ($_POST) {
 	}
 
 	if (($_POST['gateway'] && !is_ipaddrv4($_POST['gateway']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the gateway.");
 	}
 	if (($_POST['wins1'] && !is_ipaddrv4($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv4($_POST['wins2']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary WINS servers.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary WINS servers.");
 	}
 
-	$parent_ip = get_interface_ip($POST['if']);
+	$parent_ip = get_interface_ip($_POST['if']);
 	if (is_ipaddrv4($parent_ip) && $_POST['gateway']) {
 		$parent_sn = get_interface_subnet($_POST['if']);
 		if (!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway'])) {
@@ -282,7 +223,7 @@ if ($_POST) {
 	    ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])) ||
 	    ($_POST['dns3'] && !is_ipaddrv4($_POST['dns3'])) ||
 	    ($_POST['dns4'] && !is_ipaddrv4($_POST['dns4']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
+		$input_errors[] = gettext("A valid IPV4 address must be specified for each of the DNS servers.");
 	}
 
 	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
@@ -295,7 +236,7 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
 	}
 	if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary']))) {
-		$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
+		$input_errors[] = gettext("A valid primary domain name server IPv4 address must be specified for the dynamic domain name.");
 	}
 	if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
 	    ($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
@@ -312,13 +253,19 @@ if ($_POST) {
 	}
 
 	if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary NTP servers.");
 	}
-	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !is_URL($_POST['tftp'])) {
-		$input_errors[] = gettext("A valid IP address or hostname must be specified for the TFTP server.");
+	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
+		$input_errors[] = gettext("A valid IPv4 address, hostname or URL must be specified for the TFTP server.");
 	}
 	if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the network boot server.");
+	}
+	if (isset($_POST['arp_table_static_entry']) && empty($_POST['mac'])) {
+		$input_errors[] = gettext("A valid MAC address must be specified for use with static ARP.");
+	}
+	if (isset($_POST['arp_table_static_entry']) && empty($_POST['ipaddr'])) {
+		$input_errors[] = gettext("A valid IPv4 address must be specified for use with static ARP.");
 	}
 
 	if (!$input_errors) {
@@ -364,6 +311,7 @@ if ($_POST) {
 		$mapent['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$mapent['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$mapent['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$mapent['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
 
 		unset($mapent['ntpserver']);
 		if ($_POST['ntp1']) {
@@ -395,6 +343,13 @@ if ($_POST) {
 			}
 		}
 
+		/* Configure static ARP entry, or remove ARP entry if this host is dynamic. See https://redmine.pfsense.org/issues/6821 */
+		if ($mapent['arp_table_static_entry']) {
+			mwexec("/usr/sbin/arp -S " . escapeshellarg($mapent['ipaddr']) . " " . escapeshellarg($mapent['mac']));
+		} else {
+			mwexec("/usr/sbin/arp -d " . escapeshellarg($mapent['ipaddr']));
+		}
+
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
 	}
@@ -402,8 +357,7 @@ if ($_POST) {
 
 // Get our MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
-$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | cut -d" " -f4`;
-$mymac = str_replace("\n", "", $mymac);
+$mymac = arp_get_mac_by_ip($ip, false);
 
 $iflist = get_configured_interface_with_descr();
 $ifname = '';
@@ -412,6 +366,7 @@ if (!empty($if) && isset($iflist[$if])) {
 	$ifname = $iflist[$if];
 }
 $pgtitle = array(gettext("Services"), gettext("DHCP Server"), $ifname, gettext("Edit Static Mapping"));
+$pglinks = array("", "services_dhcp.php", "services_dhcp.php?if={$if}", "@self");
 $shortcut_section = "dhcp";
 
 include("head.inc");
@@ -443,7 +398,9 @@ $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('
 
 $group = new Form_Group('MAC Address');
 $group->add($macaddress);
-$group->add($btnmymac);
+if (!empty($mymac)) {
+	$group->add($btnmymac);
+}
 $group->setHelp('MAC address (6 hex octets separated by colons)');
 $section->add($group);
 
@@ -457,9 +414,11 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
 	'IP Address',
-	$pconfig['ipaddr']
-))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.' . '<br />' .
-			'If no IPv4 address is given, one will be dynamically allocated from the pool.');
+	$pconfig['ipaddr'],
+	'V4'
+))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.%1$s' .
+			'If no IPv4 address is given, one will be dynamically allocated from the pool.%1$s%1$s' .
+			'The same IP address may be assigned to multiple mappings.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',
@@ -611,6 +570,13 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['ddnsupdate']
 ));
 
+$section->addInput(new Form_Checkbox(
+	'ddnsforcehostname',
+	'DDNS Hostname',
+	'Make dynamic DNS registered hostname the same as Hostname above.',
+	$pconfig['ddnsforcehostname']
+));
+
 $section->addInput(new Form_Input(
 	'ddnsdomain',
 	'DDNS Domain',
@@ -621,7 +587,8 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'DDNS Server IP',
-	$pconfig['ddnsdomainprimary']
+	$pconfig['ddnsdomainprimary'],
+	'V4'
 ))->setHelp('Enter the primary domain name server IP address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
@@ -711,7 +678,7 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (!$pconfig['ddnsupdate'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
+			if (!$pconfig['ddnsupdate'] && !$pconfig['ddnsforcehostname'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
 			    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey'])) {
 				$showadv = false;
 			} else {
@@ -725,6 +692,7 @@ events.push(function() {
 		}
 
 		hideCheckbox('ddnsupdate', !showadvdns);
+		hideCheckbox('ddnsforcehostname', !showadvdns);
 		hideInput('ddnsdomain', !showadvdns);
 		hideInput('ddnsdomainprimary', !showadvdns);
 		hideInput('ddnsdomainkeyname', !showadvdns);

@@ -1,56 +1,22 @@
 <?php
 /*
-	crash_reporter.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * crash_reporter.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -63,28 +29,42 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
+require_once("system.inc");
 
 define("FILE_SIZE", 450000);
 
-function upload_crash_report($files) {
-	global $g;
-	$post = array();
-	$counter = 0;
-	foreach ($files as $file) {
-		$post["file{$counter}"] = "@{$file}";
-		$counter++;
+function download_crashdata_file($name) {
+	if (!file_exists($name)) {
+		exit;
 	}
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_VERBOSE, 0);
-	curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
-	curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-	$response = curl_exec($ch);
-	return $response;
+	session_cache_limiter('public');
+	$fd = fopen($name, "rb");
+	header("Content-Type: application/octet-stream");
+	header("Content-Length: " . filesize($name));
+	header("Content-Disposition: attachment; filename=\"" .
+		trim(htmlentities(basename($name))) . "\"");
+	if (isset($_SERVER['HTTPS'])) {
+		header('Pragma: ');
+		header('Cache-Control: ');
+	} else {
+		header("Pragma: private");
+		header("Cache-Control: private, must-revalidate");
+	}
+
+	fpassthru($fd);
+	exit;
+}
+
+if (!empty($_POST['Download'])) {
+	if ($_POST['Download'] == "PHP") {
+		/* Send PHP log */
+		download_crashdata_file("/tmp/PHP_errors.log");
+	} else {
+		$filename = "/var/crash/" . basename($_POST['Download']);
+		if (file_exists($filename)) {
+			download_crashdata_file($filename);
+		}
+	}
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Crash Reporter"));
@@ -96,85 +76,79 @@ $crash_report_header .= php_uname("r") . "\n";
 $crash_report_header .= php_uname("v") . "\n";
 $crash_report_header .= "\nCrash report details:\n";
 
-exec("/bin/cat /tmp/PHP_errors.log", $php_errors);
-
-	if ($_POST['Submit'] == "Yes") {
-		echo gettext("Processing...");
-		if (!is_dir("/var/crash")) {
-			mkdir("/var/crash", 0750, true);
-		}
-		@file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
-		if (file_exists("/tmp/PHP_errors.log")) {
-			copy("/tmp/PHP_errors.log", "/var/crash/PHP_errors.log");
-		}
-		exec("find /var/crash -type l -exec rm {} +");
-		exec("/usr/bin/gzip /var/crash/*");
-		$files_to_upload = glob("/var/crash/*");
-		echo "<br/>";
-		echo gettext("Uploading...");
-		ob_flush();
-		flush();
-		if (is_array($files_to_upload)) {
-			$resp = upload_crash_report($files_to_upload);
-			array_map('unlink', glob("/var/crash/*"));
-			// Erase the contents of the PHP error log
-			fclose(fopen("/tmp/PHP_errors.log", 'w'));
-			echo "<br/>";
-			print_r($resp);
-			echo "<p><a href=\"/\">" . gettext("Continue") . "</a>" . gettext(" and delete crash report files from local disk.") . "</p>";
-		} else {
-			echo gettext("Could not find any crash files.");
-		}
-	} else if ($_POST['Submit'] == "No") {
-		array_map('unlink', glob("/var/crash/*"));
-		// Erase the contents of the PHP error log
-		fclose(fopen("/tmp/PHP_errors.log", 'w'));
-		header("Location: /");
-		exit;
+if ($_POST['Submit'] == "No") {
+	array_map('unlink', glob("/var/crash/*"));
+	// Erase the contents of the PHP error log
+	fclose(fopen("/tmp/PHP_errors.log", 'w'));
+	header("Location: /");
+	exit;
+} else {
+	$crash_reports = $crash_report_header;
+	if (system_has_php_errors()) {
+		$php_errors = file_get_contents("/tmp/PHP_errors.log");
+		$crash_reports .= "\nPHP Errors:\n";
+		$crash_reports .= $php_errors . "\n\n";
 	} else {
-		$crash_files = glob("/var/crash/*");
-		$crash_reports = $crash_report_header;
-		if (count($php_errors) > 0) {
-			$crash_reports .= "\nPHP Errors:\n";
-			$crash_reports .= implode("\n", $php_errors) . "\n\n";
-		}
-		if (is_array($crash_files))	{
-			foreach ($crash_files as $cf) {
-				if (filesize($cf) < FILE_SIZE) {
-					$crash_reports .= "\nFilename: {$cf}\n";
-					$crash_reports .= file_get_contents($cf);
-				}
-			}
-		} else {
-			echo gettext("Could not locate any crash data.");
-		}
-?>
-	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Unfortunately a Programming Bug has been detected")?></h2></div>
-		<div class="panel-body">
-			<div class="content">
-				<p>
-					<?=gettext("The programming debug logs can be submitted to the pfSense developers for inspection.")?>
-					<i><?=gettext("Please double check the contents to ensure this information is acceptable to disclose before submitting.")?></i>
-				</p>
-				<textarea readonly style="width: 100%; height: 350px;">
-					<?=$crash_reports?>
-				</textarea>
-				<br/><br/>
-				<form action="crash_reporter.php" method="post">
-					<button class="btn btn-primary" name="Submit" type="submit" value="Yes">
-						<i class="fa fa-upload"></i>
-						<?=gettext("Yes")?> - <?=gettext("Submit this to the developers for inspection")?>
-					</button>
-					<button class="btn btn-warning" name="Submit" type="submit" value="No">
-						<i class="fa fa-undo"></i>
-						<?=gettext("No")?> - <?=gettext("Just delete the crash report and return to the Dashboard")?>
-					</button>
-				</form>
-			</div>
-		</div>
-<?php
+		$crash_reports .= "\nNo PHP errors found.\n";
 	}
+
+	$crash_files = cleanup_crash_file_list(glob("/var/crash/*"));
+	if (count($crash_files) > 0) {
+		foreach ($crash_files as $cf) {
+			if (filesize($cf) < FILE_SIZE) {
+				$crash_reports .= "\nFilename: {$cf}\n";
+				$crash_reports .= file_get_contents($cf);
+			}
+		}
+	} else {
+		$crash_reports .= "\nNo FreeBSD crash data found.\n";
+	}
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("The firewall has enountered an error")?></h2></div>
+	<div class="panel-body">
+		<div class="content">
+			<p>
+				<?=gettext("Debugging output can be collected to share with pfSense developers or others providing support or assistance.")?>
+				<br/><br/>
+				<i><?=gettext("Inspect the contents to ensure this information is acceptable to disclose before distributing these files.")?></i>
+			</p>
+			<textarea readonly style="width: 100%; height: 350px;">
+<?=$crash_reports?>
+			</textarea>
+			<br/><br/>
+			<form action="crash_reporter.php" method="post">
+				<button class="btn btn-warning" name="Submit" type="submit" value="No">
+					<i class="fa fa-undo"></i>
+					<?=gettext("Delete the crash report data and return to the Dashboard")?>
+				</button>
+			<br/><br/>
+
+<?php	if ((count($crash_files) > 0) || system_has_php_errors()): ?>
+			Click a button below to download an individual debugging data file:
+			<br/><br/>
+	<?php	if (system_has_php_errors()): ?>
+				<button class="btn btn-info" name="Download" type="submit" value="PHP">
+					<i class="fa fa-download"></i>
+					<?=gettext("Download PHP Error Log")?>
+				</button>
+				<br/><br/>
+	<?php	endif;
+		foreach ($crash_files as $cf):
+				$tfn = htmlspecialchars(basename($cf)); ?>
+				<button class="btn btn-info" name="Download" type="submit" value="<?= $tfn ?>">
+					<i class="fa fa-download"></i>
+					<?=gettext("Download")?> <?= $tfn ?>
+				</button>
+				<br/><br/>
+	<?php	endforeach;
+	endif;
+?>
+			</form>
+		</div>
+	</div>
+<?php
+}
 ?>
 
 <?php include("foot.inc")?>

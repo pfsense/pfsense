@@ -1,59 +1,26 @@
 <?php
 /*
-	firewall_nat.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_nat.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -69,15 +36,14 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("itemid.inc");
 
-if (!is_array($config['nat']['rule'])) {
-	$config['nat']['rule'] = array();
-}
-
+init_config_arr(array('nat', 'separator'));
+init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
+$a_separators = &$config['nat']['separator'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if (array_key_exists('order-store', $_POST)) {
-	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($natent['interface'])) {
+	if (is_array($_REQUEST['rule']) && !empty($_REQUEST['rule'])) {
 		$a_nat_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
@@ -92,6 +58,11 @@ if (array_key_exists('order-store', $_POST)) {
 
 		if ($_POST['separator']) {
 			$idx = 0;
+
+			if (!is_array($config['nat']['separator'])) {
+				$config['nat']['separator'] = array();
+			}
+
 			foreach ($_POST['separator'] as $separator) {
 				$config['nat']['separator']['sep' . $idx++] = $separator;
 			}
@@ -107,42 +78,37 @@ if (array_key_exists('order-store', $_POST)) {
 }
 
 /* if a custom message has been passed along, lets process it */
-if ($_GET['savemsg']) {
-	$savemsg = $_GET['savemsg'];
+if ($_REQUEST['savemsg']) {
+	$savemsg = $_REQUEST['savemsg'];
 }
 
-if ($_POST) {
-	$pconfig = $_POST;
+if ($_POST['apply'] && have_natpfruleint_access($natent['interface'])) {
 
-	if ($_POST['apply']) {
+	$retval = 0;
 
-		$retval = 0;
+	$retval |= filter_configure();
 
-		$retval |= filter_configure();
-		$savemsg = get_std_save_message($retval);
+	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/apply");
 
-		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/apply");
-
-		if ($retval == 0) {
-			clear_subsystem_dirty('natconf');
-			clear_subsystem_dirty('filter');
-		}
-
+	if ($retval == 0) {
+		clear_subsystem_dirty('natconf');
+		clear_subsystem_dirty('filter');
 	}
+
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_nat[$_GET['id']]) {
+if (($_POST['act'] == "del") && have_natpfruleint_access($natent['interface'])) {
+	if ($a_nat[$_POST['id']]) {
 
-		if (isset($a_nat[$_GET['id']]['associated-rule-id'])) {
-			delete_id($a_nat[$_GET['id']]['associated-rule-id'], $config['filter']['rule']);
+		if (isset($a_nat[$_POST['id']]['associated-rule-id'])) {
+			delete_id($a_nat[$_POST['id']]['associated-rule-id'], $config['filter']['rule']);
 			$want_dirty_filter = true;
 		}
-		unset($a_nat[$_GET['id']]);
+
+		unset($a_nat[$_POST['id']]);
 
 		// Update the separators
-		$a_separators = &$config['nat']['separator'];
-		$ridx = $_GET['id'];
+		$ridx = $_POST['id'];
 		$mvnrows = -1;
 		move_separators($a_separators, $ridx, $mvnrows);
 
@@ -158,10 +124,11 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-if (isset($_POST['del_x'])) {
+if (isset($_POST['del_x']) && have_natpfruleint_access($natent['interface'])) {
+
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		$a_separators = &$config['nat']['separator'];
+		$num_deleted = 0;
 
 		foreach ($_POST['rule'] as $rulei) {
 			$target = $rule['target'];
@@ -169,16 +136,17 @@ if (isset($_POST['del_x'])) {
 			// Check for filter rule associations
 			if (isset($a_nat[$rulei]['associated-rule-id'])) {
 				delete_id($a_nat[$rulei]['associated-rule-id'], $config['filter']['rule']);
-
 				mark_subsystem_dirty('filter');
 			}
 
 			unset($a_nat[$rulei]);
 
 			// Update the separators
-			$ridx = $rulei;
+			// As rules are deleted, $ridx has to be decremented or separator position will break
+			$ridx = $rulei - $num_deleted;
 			$mvnrows = -1;
 			move_separators($a_separators, $ridx, $mvnrows);
+			$num_deleted++;
 		}
 
 		if (write_config()) {
@@ -188,13 +156,24 @@ if (isset($_POST['del_x'])) {
 		header("Location: firewall_nat.php");
 		exit;
 	}
-} else if ($_GET['act'] == "toggle") {
-	if ($a_nat[$_GET['id']]) {
-		if (isset($a_nat[$_GET['id']]['disabled'])) {
-			unset($a_nat[$_GET['id']]['disabled']);
+} elseif (($_POST['act'] == "toggle") && have_natpfruleint_access($natent['interface'])) {
+	if ($a_nat[$_POST['id']]) {
+		if (isset($a_nat[$_POST['id']]['disabled'])) {
+			unset($a_nat[$_POST['id']]['disabled']);
+			$rule_status = true;
 		} else {
-			$a_nat[$_GET['id']]['disabled'] = true;
+			$a_nat[$_POST['id']]['disabled'] = true;
+			$rule_status = false;
 		}
+
+		// Check for filter rule associations
+		if (isset($a_nat[$_POST['id']]['associated-rule-id'])) {
+			toggle_id($a_nat[$_POST['id']]['associated-rule-id'],
+			    $config['filter']['rule'], $rule_status);
+			unset($rule_status);
+			mark_subsystem_dirty('filter');
+		}
+
 		if (write_config(gettext("Firewall: NAT: Port forward, enable/disable NAT rule"))) {
 			mark_subsystem_dirty('natconf');
 		}
@@ -204,13 +183,14 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"));
+$pglinks = array("", "@self", "@self");
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
-if (is_subsystem_dirty('natconf')) {
+if (is_subsystem_dirty('natconf') && have_natpfruleint_access($natent['interface'])) {
 	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
 					gettext('The changes must be applied for them to take effect.'));
 }
@@ -224,6 +204,14 @@ display_top_tabs($tab_array);
 
 $columns_in_table = 13;
 ?>
+<!-- Allow table to scroll when dragging outside of the display window -->
+<style>
+.table-responsive {
+    clear: both;
+    overflow-x: visible;
+    margin-bottom: 0px;
+}
+</style>
 
 <form action="firewall_nat.php" method="post" name="iform">
 	<div class="panel panel-default">
@@ -232,7 +220,7 @@ $columns_in_table = 13;
 			<table id="ruletable" class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th><!-- Checkbox --></th>
+						<th style="padding-left:10px;">  <input type="checkbox" id="selectAll" name="selectAll" /></th>
 						<th><!-- Icon --></th>
 						<th><!-- Rule type --></th>
 						<th><?=gettext("Interface")?></th>
@@ -282,11 +270,6 @@ foreach ($a_nat as $natent):
 		$localport
 	);
 
-	/* if user does not have access to edit an interface skip on to the next record */
-	if (!have_natpfruleint_access($natent['interface'])) {
-		continue;
-	}
-
 	if (isset($natent['disabled'])) {
 		$iconfn = "pass_d";
 		$trclass = 'class="disabled"';
@@ -298,15 +281,19 @@ foreach ($a_nat as $natent):
 
 					<tr id="fr<?=$nnats;?>" <?=$trclass?> onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$i;?>';">
 						<td >
+<?php	if (have_natpfruleint_access($natent['interface'])): ?>
 							<input type="checkbox" id="frc<?=$nnats;?>" onClick="fr_toggle(<?=$nnats;?>)" name="rule[]" value="<?=$i;?>"/>
+<?php	endif; ?>
 						</td>
 						<td>
-							<a href="?act=toggle&amp;id=<?=$i?>">
-								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+<?php	if (have_natpfruleint_access($natent['interface'])): ?>
+							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
+								<i class="fa fa-check" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+							</a>
+<?php	endif; ?>
 <?php 	if (isset($natent['nordr'])) { ?>
 								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
 <?php 	} ?>
-							</a>
 						</td>
 						<td>
 <?php
@@ -347,7 +334,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_address($natent['source'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'])))?>
 <?php
 	if (isset($alias['src'])):
 ?>
@@ -364,7 +351,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($natent['source']['port'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['source']['port'])))?>
 <?php
 	if (isset($alias['srcport'])):
 ?>
@@ -382,7 +369,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_address($natent['destination'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'])))?>
 <?php
 	if (isset($alias['dst'])):
 ?>
@@ -399,7 +386,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($natent['destination']['port'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['destination']['port'])))?>
 <?php
 	if (isset($alias['dstport'])):
 ?>
@@ -412,12 +399,12 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['target'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true" >
 <?php
 	endif;
 ?>
 
-							<?=str_replace('_', ' ', htmlspecialchars($natent['target']))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['target']))?>
 <?php
 	if (isset($alias['target'])):
 ?>
@@ -434,7 +421,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($localport)))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($localport)))?>
 <?php
 	if (isset($alias['targetport'])):
 ?>
@@ -448,9 +435,13 @@ foreach ($a_nat as $natent):
 							<?=htmlspecialchars($natent['descr'])?>
 						</td>
 						<td>
+<?php	if (have_natpfruleint_access($natent['interface'])): ?>
 							<a class="fa fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" usepost></a>
+<?php	else: ?>
+							-
+<?php	endif; ?>
 						</td>
 					</tr>
 <?php
@@ -469,6 +460,7 @@ if ($seprows[$nnats]) {
 		</div>
 	</div>
 
+<?php	if (have_natpfruleint_access($natent['interface'])): ?>
 	<nav class="action-buttons">
 		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
 			<i class="fa fa-level-up icon-embed-btn"></i>
@@ -491,6 +483,7 @@ if ($seprows[$nnats]) {
 			<?=gettext("Separator")?>
 		</button>
 	</nav>
+<?php	endif; ?>
 </form>
 
 <script type="text/javascript">
@@ -505,6 +498,7 @@ dirty = false;
 
 events.push(function() {
 
+<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
@@ -515,6 +509,7 @@ events.push(function() {
 			dirty = true;
 		}
 	});
+<?php endif; ?>
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
@@ -539,6 +534,13 @@ events.push(function() {
 		} else {
 			return undefined;
 		}
+	});
+
+	$('#selectAll').click(function() {
+		var checkedStatus = this.checked;
+		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
+		$(this).prop('checked', checkedStatus);
+		});
 	});
 });
 //]]>

@@ -1,60 +1,28 @@
 <?php
 /*
-	vpn.inc
-
-	part of pfSense (https://www.pfsense.org)
-	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC.
-	All rights reserved.
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in
-	   the documentation and/or other materials provided with the
-	   distribution.
-
-	3. All advertising materials mentioning features or use of this software
-	   must display the following acknowledgment:
-	   "This product includes software developed by the pfSense Project
-	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
-
-	4. The names "pfSense" and "pfSense Project" must not be used to
-	   endorse or promote products derived from this software without
-	   prior written permission. For written permission, please contact
-	   coreteam@pfsense.org.
-
-	5. Products derived from this software may not be called "pfSense"
-	   nor may "pfSense" appear in their names without prior written
-	   permission of the Electric Sheep Fencing, LLC.
-
-	6. Redistributions of any form whatsoever must retain the following
-	   acknowledgment:
-
-	"This product includes software developed by the pfSense Project
-	for use in the pfSense software distribution (http://www.pfsense.org/).
-
-	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-	OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * vpn.inc
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc
+ * All rights reserved.
+ *
+ * originally part of m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 require_once("ipsec.inc");
 require_once("filter.inc");
@@ -79,10 +47,11 @@ function vpn_logging_cfgtxt() {
 	global $config, $ipsec_log_cats, $ipsec_log_sevs;
 
 	$cfgtext = array();
+	$log_levels = ipsec_get_loglevels();
 	foreach (array_keys($ipsec_log_cats) as $cat) {
-		if (is_numeric($config['ipsec']['logging'][$cat]) &&
-		    in_array(intval($config['ipsec']['logging'][$cat]), array_keys($ipsec_log_sevs), true)) {
-			$cfgtext[] = "${cat} = {$config['ipsec']['logging'][$cat]}";
+		if (is_numeric($log_levels[$cat]) &&
+		    in_array(intval($log_levels[$cat]), array_keys($ipsec_log_sevs), true)) {
+			$cfgtext[] = "${cat} = {$log_levels[$cat]}";
 		}
 	}
 
@@ -165,6 +134,10 @@ function vpn_ipsec_configure($restart = false) {
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
+
+	/* Configure asynchronous crypto. See https://redmine.pfsense.org/issues/8772 */
+	set_sysctl(array('net.inet.ipsec.async_crypto' => (int) (isset($ipseccfg['async_crypto']) && ($ipseccfg['async_crypto'] == "enabled"))));
+
 	if (!ipsec_enabled()) {
 		/* try to stop charon */
 		mwexec("/usr/local/sbin/ipsec stop");
@@ -191,57 +164,37 @@ function vpn_ipsec_configure($restart = false) {
 	$crlpath = "{$g['varetc_path']}/ipsec/ipsec.d/crls";
 
 	mwexec("/sbin/ifconfig enc0 up");
+	$ipsec_vti_cleanup_ifs = array();
 
 	/* needed for config files */
-	if (!is_dir("{$g['varetc_path']}/ipsec")) {
-		mkdir("{$g['varetc_path']}/ipsec");
-	}
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d")) {
-		mkdir("{$g['varetc_path']}/ipsec/ipsec.d");
-	}
+	safe_mkdir("{$g['varetc_path']}/ipsec");
+	safe_mkdir("{$g['varetc_path']}/ipsec/ipsec.d");
+
 	// delete these paths first to ensure old CAs, certs and CRLs aren't left behind. redmine #5238
 	rmdir_recursive($capath);
 	rmdir_recursive($keypath);
 	rmdir_recursive($crlpath);
 	rmdir_recursive($certpath);
-	if (!is_dir($capath)) {
-		mkdir($capath);
-	}
-	if (!is_dir($keypath)) {
-		mkdir($keypath);
-	}
-	if (!is_dir($crlpath)) {
-		mkdir($crlpath);
-	}
-	if (!is_dir($certpath)) {
-		mkdir($certpath);
-	}
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts")) {
-		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts");
-	}
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/acerts")) {
-		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/acerts");
-	}
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/ocspcerts")) {
-		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/ocspcerts");
-	}
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/reqs")) {
-		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
-	}
+
+	safe_mkdir($capath);
+	safe_mkdir($keypath);
+	safe_mkdir($crlpath);
+	safe_mkdir($certpath);
+	safe_mkdir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts");
+	safe_mkdir("{$g['varetc_path']}/ipsec/ipsec.d/acerts");
+	safe_mkdir("{$g['varetc_path']}/ipsec/ipsec.d/ocspcerts");
+	safe_mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
 
 	if (!file_exists("/usr/local/etc/ipsec.d") ||
 	    !is_link("/usr/local/etc/ipsec.d")) {
-		conf_mount_rw();
 		if (file_exists("/usr/local/etc/ipsec.d")) {
 			rmdir_recursive("/usr/local/etc/ipsec.d");
 		}
 		@symlink("{$g['varetc_path']}/ipsec/ipsec.d",
 		    "/usr/local/etc/ipsec.d");
-		conf_mount_ro();
 	}
 	if (!file_exists("{$g['varetc_path']}/etc/strongswan.d") ||
 	    !is_link("{$g['varetc_path']}/etc/strongswan.d")) {
-		conf_mount_rw();
 		if (is_link("{$g['varetc_path']}/etc/strongswan.d")) {
 			@unlink("{$g['varetc_path']}/etc/strongswan.d");
 		} else {
@@ -249,23 +202,18 @@ function vpn_ipsec_configure($restart = false) {
 		}
 		@symlink("/usr/local/etc/strongswan.d",
 		    "{$g['varetc_path']}/ipsec/strongswan.d");
-		conf_mount_ro();
 	}
 	if (!file_exists("/usr/local/etc/strongswan.conf") ||
 	    !is_link("/usr/local/etc/strongswan.conf")) {
-		conf_mount_rw();
 		@unlink("/usr/local/etc/strongswan.conf");
 		@symlink("{$g['varetc_path']}/ipsec/strongswan.conf",
 		    "/usr/local/etc/strongswan.conf");
-		conf_mount_ro();
 	}
 	if (!file_exists("/usr/local/etc/ipsec.conf") ||
 	    !is_link("/usr/local/etc/ipsec.conf")) {
-		conf_mount_rw();
 		@unlink("/usr/local/etc/ipsec.conf");
 		@symlink("{$g['varetc_path']}/ipsec/ipsec.conf",
 		    "/usr/local/etc/ipsec.conf");
-		conf_mount_ro();
 	}
 
 	if (platform_booting()) {
@@ -282,7 +230,7 @@ function vpn_ipsec_configure($restart = false) {
 	$mobile_ipsec_auth = "";
 	if (is_array($a_phase1) && count($a_phase1)) {
 
-		$ipsecpinghosts = "";
+		$ipsecpinghosts = array();
 		/* step through each phase1 entry */
 		foreach ($a_phase1 as $ph1ent) {
 			if (isset($ph1ent['disabled'])) {
@@ -309,6 +257,9 @@ function vpn_ipsec_configure($restart = false) {
 			$ikeid = $ph1ent['ikeid'];
 
 			$ep = ipsec_get_phase1_src($ph1ent);
+			/* When automatically guessing, use the first address. */
+			$ep  = explode(',', $ep);
+			$ep  = $ep[0];
 			if (!is_ipaddr($ep)) {
 				log_error(sprintf(gettext("IPsec ERROR: Could not find phase 1 source for connection %s. Omitting from configuration file."), $ph1ent['descr']));
 				continue;
@@ -344,9 +295,13 @@ function vpn_ipsec_configure($restart = false) {
 			}
 			$rgmap[$ph1ent['remote-gateway']] = $rg;
 
+			$is_vti = false;
 			if (is_array($a_phase2)) {
 				/* step through each phase2 entry */
 				foreach ($a_phase2 as $ph2ent) {
+					if ($ph2ent['mode'] == 'vti') {
+						$is_vti = true;
+					}
 					if (isset($ph2ent['disabled'])) {
 						continue;
 					}
@@ -408,11 +363,20 @@ function vpn_ipsec_configure($restart = false) {
 					}
 				}
 			}
+			if ($is_vti) {
+				interface_ipsec_vti_configure($ph1ent);
+			}
 		}
 		@file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
 		unset($ipsecpinghosts);
 	}
 	unset($iflist);
+	/* Build a list of all IPsec interfaces configured on the firewall at the OS level */
+	foreach (get_interface_arr() as $thisif) {
+		if (substr($thisif, 0, 5) == "ipsec") {
+			$ipsec_vti_cleanup_ifs[] = $thisif;
+		}
+	}
 
 	$accept_unencrypted = "";
 	if (isset($config['ipsec']['acceptunencryptedmainmode'])) {
@@ -514,7 +478,7 @@ EOD;
 	$user_sources = explode(',', $config['ipsec']['client']['user_source']);
 	foreach ($user_sources as $user_source) {
 		$auth_server = auth_get_authserver($user_source);
-		$nice_user_source = strtolower(preg_replace('/\s+/', '_', $user_source));
+		$nice_user_source = strtolower(preg_replace('/[\s\.]+/', '_', $user_source));
 		if ($auth_server && $auth_server['type'] === 'radius') {
 			$radius_server_txt .= <<<EOD
 				{$nice_user_source} {
@@ -528,12 +492,19 @@ EOD;
 		}
 	}
 
+	/* Activate RADIUS accounting if it was selected on the auth server view */
+	$radius_accounting = "";
+	if($auth_server && isset($auth_server['radius_acct_port'])){
+		$radius_accounting = 'accounting = yes';
+	}
+
 	/* write an eap-radius config section if appropriate */
 	if (strlen($radius_server_txt) && ($mobile_ipsec_auth === "eap-radius")) {
 		$strongswan .= <<<EOD
 		eap-radius {
 			class_group = yes
 			eap_start = no
+			{$radius_accounting}
 			servers {
 {$radius_server_txt}
 			}
@@ -544,25 +515,7 @@ EOD;
 
 	if (is_array($a_client) && isset($a_client['enable'])) {
 		$strongswan .= "\t\tattr {\n";
-
-		$cfgservers = array();
-		if (!empty($a_client['dns_server1'])) {
-			$cfgservers[] = $a_client['dns_server1'];
-		}
-		if (!empty($a_client['dns_server2'])) {
-			$cfgservers[] = $a_client['dns_server2'];
-		}
-		if (!empty($a_client['dns_server3'])) {
-			$cfgservers[] = $a_client['dns_server3'];
-		}
-		if (!empty($a_client['dns_server4'])) {
-			$cfgservers[] = $a_client['dns_server4'];
-		}
-
-		if (!empty($cfgservers)) {
-			$strongswan .= "\t\t\tdns = " . implode(",", $cfgservers) . "\n";
-		}
-		unset($cfgservers);
+		
 		$cfgservers = array();
 		if (!empty($a_client['wins_server1'])) {
 			$cfgservers[] = $a_client['wins_server1'];
@@ -743,6 +696,7 @@ EOD;
 				if (!empty($ph1ent['pre-shared-key'])) {
 					$pskconf .= "{$myid} {$peerid} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
 					if (isset($ph1ent['mobile'])) {
+						$pskconf .= "{$myid} %any : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
 						$pskconf .= " : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
 					}
 				}
@@ -836,22 +790,37 @@ EOD;
 		}
 
 		if (!isset($config['ipsec']['noshuntlaninterfaces'])) {
+			$bypassnets = array();
 			if ($config['interfaces']['lan']) {
 				$lanip = get_interface_ip("lan");
 				if (!empty($lanip) && is_ipaddrv4($lanip)) {
 					$lansn = get_interface_subnet("lan");
-					$lansa = gen_subnet($lanip, $lansn);
-					$ipsecconf .= <<<EOD
+					$lansa = gen_subnetv4($lanip, $lansn);
+					if (!empty($lansa) && !empty($lansn)) {
+						$bypassnets[] = "{$lansa}/{$lansn}";
+					}
+				}
+				$lanip6 = get_interface_ipv6("lan");
+				if (!empty($lanip6) && is_ipaddrv6($lanip6)) {
+					$lansn6 = get_interface_subnetv6("lan");
+					$lansa6 = gen_subnetv6($lanip6, $lansn6);
+					if (!empty($lansa6) && !empty($lansn6)) {
+						$bypassnets[] = "{$lansa6}/{$lansn6}";
+					}
+				}
+			}
+			if (!empty($bypassnets)) {
+				$bypass = implode(',', $bypassnets);
+				$ipsecconf .= <<<EOD
 
 conn bypasslan
-	leftsubnet = {$lansa}/{$lansn}
-	rightsubnet = {$lansa}/{$lansn}
+	leftsubnet = {$bypass}
+	rightsubnet = {$bypass}
 	authby = never
 	type = passthrough
 	auto = route
 
 EOD;
-				}
 			}
 		}
 
@@ -894,60 +863,52 @@ EOD;
 				if (is_ipaddr($right_spec)) {
 					$sourcehost = $right_spec;
 				} else {
-					$sourcehost = $rgmap['remote-gateway'];
+					$sourcehost = $rgmap[$right_spec];
 				}
 
-				if ($ph1ent['protocol'] == 'inet') {
-					if (substr($ph1ent['interface'], 0, 4) == "_vip") {
-						$vpninterface = get_configured_vip_interface($ph1ent['interface']);
+				if (substr($ph1ent['interface'], 0, 4) == "_vip") {
+					$vpninterface = get_configured_vip_interface($ph1ent['interface']);
+					if (substr($vpninterface, 0, 4) == "_vip") {
+						// vips are nested if its a ipalias with a carp parent
+						$vpninterface = get_configured_vip_interface($vpninterface);
+					}
+					$ifacesuse = get_real_interface($vpninterface);
+				} else {
+					$ifacesuse = get_failover_interface($ph1ent['interface']);
+					if (substr($ifacesuse, 0, 4) == "_vip") {
+						$vpninterface = get_configured_vip_interface($ifacesuse);
 						$ifacesuse = get_real_interface($vpninterface);
 					} else {
-						$ifacesuse = get_failover_interface($ph1ent['interface']);
-						if (substr($ifacesuse, 0, 4) == "_vip") {
-							$vpninterface = get_configured_vip_interface($ifacesuse);
-							$ifacesuse = get_real_interface($vpninterface);
-						} else {
-							$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
-						}
+						$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
 					}
-
+				}
+				if ($ph1ent['protocol'] == 'inet') {
 					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
 						$gatewayip = get_interface_gateway($vpninterface);
 						$interfaceip = get_interface_ip($vpninterface);
 						$subnet_bits = get_interface_subnet($vpninterface);
 						$subnet_ip = gen_subnetv4($interfaceip, $subnet_bits);
 						/* if the remote gateway is in the local subnet, then don't add a route */
-						if (!ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
+						if (is_ipaddrv4($sourcehost) &&
+						    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
 							if (is_ipaddrv4($gatewayip)) {
 								// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
-								mwexec("/sbin/route change -host {$sourcehost} {$gatewayip}", true);
+								route_add_or_change("-host {$sourcehost} {$gatewayip}");
 							}
 						}
 					}
 				} else if ($ph1ent['protocol'] == 'inet6') {
-					if (substr($ph1ent['interface'], 0, 4) == "_vip") {
-						$vpninterface = get_configured_vip_interface($ph1ent['interface']);
-						$ifacesuse = get_real_interface($vpninterface);
-					} else {
-						$ifacesuse = get_failover_interface($ph1ent['interface']);
-						if (substr($ifacesuse, 0, 4) == "_vip") {
-							$vpninterface = get_configured_vip_interface($ifacesuse);
-							$ifacesuse = get_real_interface($vpninterface);
-						} else {
-							$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
-						}
-					}
-
-					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
+					if (!empty($ifacesuse) && interface_has_gatewayv6($vpninterface)) {
 						$gatewayip = get_interface_gateway_v6($vpninterface);
 						$interfaceip = get_interface_ipv6($vpninterface);
 						$subnet_bits = get_interface_subnetv6($vpninterface);
 						$subnet_ip = gen_subnetv6($interfaceip, $subnet_bits);
 						/* if the remote gateway is in the local subnet, then don't add a route */
-						if (!ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
+						if (is_ipaddrv6($sourcehost) &&
+						    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
 							if (is_ipaddrv6($gatewayip)) {
 								// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
-								mwexec("/sbin/route change -inet6 -host {$sourcehost} {$gatewayip}", true);
+								route_add_or_change("-inet6 -host {$sourcehost} {$gatewayip}");
 							}
 						}
 					}
@@ -991,22 +952,30 @@ EOD;
 				}
 			}
 
-			if (is_array($ph1ent['encryption-algorithm']) && !empty($ph1ent['encryption-algorithm']['name']) && !empty($ph1ent['hash-algorithm'])) {
-				$ealgosp1 = '';
-				$ealg_id = $ph1ent['encryption-algorithm']['name'];
-				$ealg_kl = $ph1ent['encryption-algorithm']['keylen'];
-				if ($ealg_kl) {
-					$ealgosp1 = "ike = {$ealg_id}{$ealg_kl}-{$ph1ent['hash-algorithm']}";
-				} else {
-					$ealgosp1 = "ike = {$ealg_id}-{$ph1ent['hash-algorithm']}";
-				}
+			$ealgosp1 = '';
+			if (is_array($ph1ent['encryption']['item'])) {
+				$ciphers = "";
+				foreach($ph1ent['encryption']['item'] as $p1enc) {
+					if (!is_array($p1enc['encryption-algorithm']) ||
+							empty($p1enc['encryption-algorithm']['name']) ||
+							empty($p1enc['hash-algorithm'])) {
+						continue;
+					}
+					$ciphers .= ",";
+					$ciphers .= $p1enc['encryption-algorithm']['name'];
+					$ealg_kl = $p1enc['encryption-algorithm']['keylen'];
+					if ($ealg_kl) {
+						$ciphers .= "{$ealg_kl}";
+					}
+					$ciphers .= "-{$p1enc['hash-algorithm']}";
 
-				$modp = vpn_ipsec_convert_to_modp($ph1ent['dhgroup']);
-				if (!empty($modp)) {
-					$ealgosp1 .= "-{$modp}";
+					$modp = vpn_ipsec_convert_to_modp($p1enc['dhgroup']);
+					if (!empty($modp)) {
+						$ciphers .= "-{$modp}";
+					}
 				}
-
-				$ealgosp1 .= "!";
+				$ciphers = substr($ciphers, 1);
+				$ealgosp1 = "ike = {$ciphers}!";
 			}
 
 			if ($ph1ent['dpd_delay'] && $ph1ent['dpd_maxfail']) {
@@ -1028,6 +997,7 @@ EOD;
 			}
 
 			$rightsourceip = NULL;
+			$rightdnsserver = NULL;
 			if (isset($ph1ent['mobile'])) {
 				$rightsourceips = array();
 				if (!empty($a_client['pool_address'])) {
@@ -1042,6 +1012,24 @@ EOD;
 				if (count($rightsourceips)) {
 					$rightsourceip = "\trightsourceip = " . implode(',', $rightsourceips) . "\n";
 				}
+
+				$rightdnsservers = array();
+				if (!empty($a_client['dns_server1'])) {
+					$rightdnsservers[] = $a_client['dns_server1'];
+				}
+				if (!empty($a_client['dns_server2'])) {
+					$rightdnsservers[] = $a_client['dns_server2'];
+				}
+				if (!empty($a_client['dns_server3'])) {
+					$rightdnsservers[] = $a_client['dns_server3'];
+				}
+				if (!empty($a_client['dns_server4'])) {
+					$rightdnsservers[] = $a_client['dns_server4'];
+				}
+				
+				if (count($rightdnsservers)) {
+					$rightdnsserver = "\trightdns = " . implode(',', $rightdnsservers) . "\n";
+				}
 			}
 
 			if (!empty($ph1ent['caref'])) {
@@ -1053,7 +1041,16 @@ EOD;
 						if (empty($casub)) {
 							$casub = "/";
 						}
-						$casub .= "{$casubfield['a']}={$casubfield['v']}/";
+						/* The subfield value could be an array. To avoid duplicating code,
+						 * always make it an array then iterate.
+						 * See https://redmine.pfsense.org/issues/7929
+						 */
+						if (!is_array($casubfield['v'])) {
+							$casubfield['v'] = array($casubfield['v']);
+						}
+						foreach ($casubfield['v'] as $casubval) {
+							$casub .= "{$casubfield['a']}={$casubval}/";
+						}
 					}
 
 				}
@@ -1150,10 +1147,14 @@ EOD;
 			} else {
 				$reauth = "reauth = yes";
 			}
+
 			if (isset($ph1ent['rekey_enable'])) {
-				$rekey = "rekey = no";
+				$rekeyline = "rekey = no";
 			} else {
-				$rekey = "rekey = yes";
+				$rekeyline = "rekey = yes";
+				if(!empty($ph1ent['margintime'])){
+					$rekeyline .= "\n\tmargintime = {$ph1ent['margintime']}s";
+				}
 			}
 
 			if ($ph1ent['nat_traversal'] == 'off') {
@@ -1182,6 +1183,7 @@ EOD;
 			$rightsubnet_spec = array();
 			$leftsubnet_spec = array();
 			$reqids = array();
+			$vtireq = array();
 			$ealgoAHsp2arr = array();
 			$ealgoESPsp2arr = array();
 			if (is_array($a_phase2) && count($a_phase2)) {
@@ -1200,6 +1202,7 @@ EOD;
 
 					if (($ph2ent['mode'] == 'tunnel') or ($ph2ent['mode'] == 'tunnel6')) {
 						$tunneltype = "type = tunnel";
+						$installpolicy = "installpolicy = yes";
 
 						$localid_type = $ph2ent['localid']['type'];
 						$leftsubnet_data = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);
@@ -1240,8 +1243,21 @@ EOD;
 						} else if (!empty($a_client['pool_address'])) {
 							$rightsubnet_spec[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
 						}
+					} elseif ($ph2ent['mode'] == 'vti') {
+						$tunneltype = "";
+						$installpolicy = "installpolicy = no";
+						$passive = 'start';
+
+						$localid_type = $ph2ent['localid']['type'];
+						$leftsubnet_data = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);
+						$leftsubnet_spec[] = $leftsubnet_data;
+
+						$tmpsubnet = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
+						$rightsubnet_spec[] = $tmpsubnet;
+						$vtireq[] = $ph2ent['reqid'];
 					} else {
 						$tunneltype = "type = transport";
+						$installpolicy = "installpolicy = yes";
 
 						if ((($ph1ent['authentication_method'] == "xauth_psk_server") ||
 						    ($ph1ent['authentication_method'] == "pre_shared_key")) &&
@@ -1335,6 +1351,9 @@ EOD;
 					}
 
 					$reqids[] = $ph2ent['reqid'];
+					if ($ph2ent['mode'] != 'vti') {
+						$vtireq[] = null;
+					}
 
 					if (!empty($ph2ent['lifetime'])) {
 						if ($ipseclifetime == 0 || intval($ipseclifetime) > intval($ph2ent['lifetime'])) {
@@ -1352,8 +1371,8 @@ EOD;
 	{$forceencaps}
 	{$mobike}
 	{$tfc}
-	{$rekey}
-	installpolicy = yes
+	{$rekeyline}
+	{$installpolicy}
 	{$tunneltype}
 	{$dpdline}
 	auto = {$passive}
@@ -1376,6 +1395,9 @@ EOD;
 			}
 			if (!empty($rightsourceip)) {
 				$ipsecconnect .= "{$rightsourceip}";
+			}
+			if (!empty($rightdnsserver)) {
+				$ipsecconnect .= "{$rightdnsserver}";
 			}
 			if (!empty($ealgosp1)) {
 				$ipsecconnect .= "\t{$ealgosp1}\n";
@@ -1404,25 +1426,48 @@ EOD;
 						//if (!empty($reqids[$idx])) {
 						//	$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
 						//}
+						$rightadd = "";
+						$leftadd = "";
+						if (!empty($vtireq[$idx])) {
+							$ipsecfin .= "\treqid = {$ph1ent['ikeid']}00{$idx}\n";
+							/* This interface will be a valid IPsec interface, so remove it from the cleanup list. */
+							$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array("ipsec{$ph1ent['ikeid']}00{$idx}"));
+							$rightadd = ",0.0.0.0/0";
+							$leftadd = ",0.0.0.0/0";
+						}
 						$ipsecfin .= $ipsecconnect;
-						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
-						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "\n";
+						$ipsecfin .= "\trightsubnet = {$rsubnet}{$rightadd}\n";
+						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "{$leftadd}\n";
 					}
 				} else {
 					log_error(sprintf(gettext("No phase2 specifications for tunnel with REQID = %s"), $ikeid));
 				}
 			} else {
-				$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
+				if (isset($ph1ent['mobile'])) {
+					$ipsecfin = "\nconn con-mobile\n";
+				}
+				else {
+					$ipsecfin = "\nconn con{$ph1ent['ikeid']}000\n";
+				}
 				//if (!empty($reqids[$idx])) {
 				//	$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				//}
+				$rightadd = "";
+				$leftadd = "";
+				if (!empty($vtireq[0])) {
+					$ipsecfin .= "\treqid = {$ph1ent['ikeid']}000\n";
+					/* This interface will be a valid IPsec interface, so remove it from the cleanup list. */
+					$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array("ipsec{$ph1ent['ikeid']}000"));
+					$rightadd = ",0.0.0.0/0";
+					$leftadd = ",0.0.0.0/0";
+				}
 				$ipsecfin .= $ipsecconnect;
 				if (!isset($ph1ent['mobile']) && !empty($rightsubnet_spec)) {
 					$tempsubnets = array();
 					foreach ($rightsubnet_spec as $rightsubnet) {
 						$tempsubnets[$rightsubnet] = $rightsubnet;
 					}
-					$ipsecfin .= "\trightsubnet = " . join(",", $tempsubnets) . "\n";
+					$ipsecfin .= "\trightsubnet = " . join(",", $tempsubnets) . "{$rightadd}\n";
 					unset($tempsubnets, $rightsubnet);
 				}
 				if (!empty($leftsubnet_spec)) {
@@ -1430,7 +1475,7 @@ EOD;
 					foreach ($leftsubnet_spec as $leftsubnet) {
 						$tempsubnets[$leftsubnet] = $leftsubnet;
 					}
-					$ipsecfin .= "\tleftsubnet = " . join(",", $tempsubnets) . "\n";
+					$ipsecfin .= "\tleftsubnet = " . join(",", $tempsubnets) . "{$leftadd}\n";
 					unset($tempsubnets, $leftsubnet);
 				}
 			}
@@ -1439,9 +1484,70 @@ EOD;
 		}
 	}
 
+	$a_mobilekey = $config['ipsec']['mobilekey'];
+
+	if (is_array($a_phase1) && count($a_phase1)) {
+		foreach ($a_phase1 as $ph1ent) {
+			if (!isset($ph1ent['mobile'])) {
+				continue;
+			}
+			if (isset($ph1ent['disabled'])) {
+				continue;
+			}
+
+			if (is_array($a_mobilekey) && count($a_mobilekey)) {
+				$ipsecfin = '';
+				$mobilekey_counter = 1;
+				foreach ($a_mobilekey as $mkent) {
+					if ($mkent['type'] != "EAP") {
+						continue;
+					}
+
+					if (!isset($mkent['ident_type']) || !isset($mkent['pool_address']) || !isset($mkent['pool_netbits'])) {
+						continue;
+					}
+
+					if (strlen($mkent['pool_address']) < 1 || !is_ipaddr($mkent['pool_address'])) {
+						continue;
+					}
+					$clientid = ($mkent['ident_type'] == "none") ? "\"{$mkent['ident']}\"" : "{$mkent['ident_type']}:{$mkent['ident']}";
+					$clienteapid = ($ph1ent['authentication_method'] == "eap-mschapv2") ? $clientid : '%identity';
+					$ipsecfin .= "\nconn mobile-{$mobilekey_counter}\n";
+					$ipsecfin .= "\talso = con-mobile\n";
+					$ipsecfin .= "\teap_identity = {$clienteapid}\n";
+					$ipsecfin .= "\trightsourceip = {$mkent['pool_address']}/{$mkent['pool_netbits']}\n";
+
+					if (isset($mkent['dns_address']) && strlen($mkent['dns_address']) > 0 && is_ipaddr($mkent['dns_address'])) {
+						$ipsecfin .= "\trightdns = {$mkent['dns_address']}\n";
+					}
+
+					$ipsecfin .= "\trightid = {$clientid}\n";
+
+					// optional: define left|rightid more granular
+					// supported: ipv4, ipv6, rfc822, email, userfqdn, fqdn, dns, asn1dn, asn1gn, keyid
+					// example: $ipsecfin = "\trightid = email:your@email.address\n";
+
+					// note: comma seperated list for access restriction, regardless of firewall rules
+					// example: $ipsecfin = "\tleftsubnet = 1.1.1.1/32,1.1.1.2/32,2.2.2.0/24\n";
+
+					$mobilekey_counter++;
+				}
+				$ipsecconf .= $ipsecfin;
+				unset($ipsecfin);
+				unset($mobilekey_counter);
+			}
+		}
+	}
+
 	@file_put_contents("{$g['varetc_path']}/ipsec/ipsec.conf", $ipsecconf);
 	unset($ipsecconf);
 	/* end ipsec.conf */
+
+	foreach ($ipsec_vti_cleanup_ifs as $cleanif) {
+		if (does_interface_exist($cleanif)) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($cleanif) . " destroy", false);
+		}
+	}
 
 	if ($enablecompression === true) {
 		set_single_sysctl('net.inet.ipcomp.ipcomp_enable', 1);
@@ -1612,89 +1718,83 @@ function vpn_pppoe_configure(&$pppoecfg) {
 				printf(gettext("Error: cannot open mpd.conf in vpn_pppoe_configure().") . "\n");
 				return 1;
 			}
-			$mpdconf = "\n\n";
-			$mpdconf .= "poes:\n";
 
-			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
-				$mpdconf .= "	load poes{$pppoecfg['pppoeid']}{$i}\n";
+			$issue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 ";
+			if (isset($pppoecfg['radius']['radiusissueips']) && isset($pppoecfg['radius']['server']['enable'])) {
+				$issue_ip_type .= "0.0.0.0/0";
+			} else {
+				$issue_ip_type .= "ippool p0";
 			}
 
-			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
+			$ippool_p0 = ip_after($pppoecfg['remoteip'], $pppoecfg['n_pppoe_units'] - 1);
 
-				$clientip = ip_after($pppoecfg['remoteip'], $i);
-
-				if (isset($pppoecfg['radius']['radiusissueips']) && isset($pppoecfg['radius']['server']['enable'])) {
-					$issue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
-				} else {
-					$issue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32";
-				}
-
-				$mpdconf .=<<<EOD
-
-poes{$pppoecfg['pppoeid']}{$i}:
-	new -i poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i}
-	{$issue_ip_type}
-	load pppoe_standard
-
-EOD;
-			}
 			if (is_numeric($pppoecfg['n_pppoe_maxlogin']) && ($pppoecfg['n_pppoe_maxlogin'] > 0)) {
 				$pppoemaxlogins = $pppoecfg['n_pppoe_maxlogin'];
 			} else {
 				$pppoemaxlogins = 1;
 			}
 
-			$mpdconf .=<<<EOD
+			$ipcp_dns = '';
+			if (!empty($pppoecfg['dns1'])) {
+				$ipcp_dns = "set ipcp dns " . $pppoecfg['dns1'];
+				if (!empty($pppoecfg['dns2'])) {
+					$ipcp_dns .= " " . $pppoecfg['dns2'];
+				}
+			} elseif (isset($config['dnsmasq']['enable']) ||
+			    isset ($config['unbound']['enable'])) {
+				$ipcp_dns = "set ipcp dns " . get_interface_ip("lan");
+				if ($syscfg['dnsserver'][0]) {
+					$ipcp_dns .= " " . $syscfg['dnsserver'][0];
+				}
+			} elseif (is_array($syscfg['dnsserver']) &&
+			    ($syscfg['dnsserver'][0])) {
+				$ipcp_dns = "set ipcp dns " . join(" ", $syscfg['dnsserver']);
+			}
 
-pppoe_standard:
-	set bundle no multilink
+			$mpdconf = <<<EOD
+startup:
+
+poes:
+	set ippool add p0 {$pppoecfg['remoteip']} {$ippool_p0}
+
+	create bundle template poes_b
 	set bundle enable compression
-	set auth max-logins {$pppoemaxlogins}
-	set iface up-script /usr/local/sbin/vpn-linkup
-	set iface down-script /usr/local/sbin/vpn-linkdown
+
+	set ccp yes mppc
+	set mppc yes e40
+	set mppc yes e128
+	set mppc yes stateless
+
+	set iface group pppoe
+	set iface up-script /usr/local/sbin/vpn-linkup-poes
+	set iface down-script /usr/local/sbin/vpn-linkdown-poes
 	set iface idle 0
 	set iface disable on-demand
 	set iface disable proxy-arp
 	set iface enable tcpmssfix
 	set iface mtu 1500
+
+	set ipcp no vjcomp
+	{$issue_ip_type}
+	{$ipcp_dns}
+
+	create link template poes_l pppoe
+	set link action bundle poes_b
+
+	set auth max-logins {$pppoemaxlogins}
+
+	set pppoe iface {$pppoe_interface}
+
+	set link no multilink
 	set link no pap chap
 	{$paporchap}
 	set link keep-alive 60 180
-	set ipcp yes vjcomp
-	set ipcp no vjcomp
 	set link max-redial -1
-	set link mtu 1492
 	set link mru 1492
-	set ccp yes mpp-e40
-	set ccp yes mpp-e128
-	set ccp yes mpp-stateless
 	set link latency 1
-	#set ipcp dns 10.10.1.3
-	#set bundle accept encryption
+	set link enable incoming
 
 EOD;
-
-			if (!empty($pppoecfg['dns1'])) {
-				$mpdconf .= "	set ipcp dns " . $pppoecfg['dns1'];
-				if (!empty($pppoecfg['dns2'])) {
-					$mpdconf .= " " . $pppoecfg['dns2'];
-				}
-				$mpdconf .= "\n";
-			} elseif (isset ($config['dnsmasq']['enable'])) {
-				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0]) {
-					$mpdconf .= " " . $syscfg['dnsserver'][0];
-				}
-				$mpdconf .= "\n";
-			} elseif (isset ($config['unbound']['enable'])) {
-				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0]) {
-					$mpdconf .= " " . $syscfg['dnsserver'][0];
-				}
-				$mpdconf .= "\n";
-			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-					$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
-			}
 
 			if (isset ($pppoecfg['radius']['server']['enable'])) {
 				$radiusport = "";
@@ -1719,7 +1819,7 @@ EOD;
 
 EOD;
 				}
-				if (isset($pppoecfg['radius']['nasip'])) {
+				if (!empty($pppoecfg['radius']['nasip'])) {
 					$mpdconf .= "\tset radius me {$pppoecfg['radius']['nasip']}\n";
 				}
 			}
@@ -1727,32 +1827,6 @@ EOD;
 			fwrite($fd, $mpdconf);
 			fclose($fd);
 			unset($mpdconf);
-
-			/* write mpd.links */
-			$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.links", "w");
-			if (!$fd) {
-				printf(gettext("Error: cannot open mpd.links in vpn_pppoe_configure().") . "\n");
-				return 1;
-			}
-
-			$mpdlinks = "";
-
-			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
-				$mpdlinks .=<<<EOD
-
-poes{$pppoecfg['pppoeid']}{$i}:
-	set phys type pppoe
-	set pppoe iface {$pppoe_interface}
-	set pppoe service "*"
-	set pppoe disable originate
-	set pppoe enable incoming
-
-EOD;
-			}
-
-			fwrite($fd, $mpdlinks);
-			fclose($fd);
-			unset($mpdlinks);
 
 			if ($pppoecfg['username']) {
 				/* write mpd.secret */
@@ -1786,7 +1860,7 @@ EOD;
 			/* Get support for netgraph(4) from the nic */
 			pfSense_ngctl_attach(".", $pppoe_interface);
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
+			mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
 
 			break;
 	}
@@ -1856,87 +1930,77 @@ function vpn_l2tp_configure() {
 				printf(gettext("Error: cannot open mpd.conf in vpn_l2tp_configure().") . "\n");
 				return 1;
 			}
-			$mpdconf = "\n\n";
-			$mpdconf .=<<<EOD
-l2tps:
 
-EOD;
+			$ippool_p0 = ip_after($l2tpcfg['remoteip'], $l2tpcfg['n_l2tp_units'] - 1);
 
-			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
-				$mpdconf .= "	load l2tp{$i}\n";
+			$issue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 ";
+			if (isset($l2tpcfg['radius']['radiusissueips']) && isset($l2tpcfg['radius']['server']['enable'])) {
+				$issue_ip_type .= "0.0.0.0/0";
+			} else {
+				$issue_ip_type .= "ippool p0";
 			}
 
-			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
-
-				$clientip = ip_after($l2tpcfg['remoteip'], $i);
-
-				if (isset ($l2tpcfg['radius']['radiusissueips']) && isset ($l2tpcfg['radius']['enable'])) {
-					$issue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 0.0.0.0/0";
-				} else {
-					$issue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 {$clientip}/32";
+			$ipcp_dns = '';
+			if (is_ipaddr($l2tpcfg['dns1'])) {
+				$ipcp_dns = "set ipcp dns " . $l2tpcfg['dns1'];
+				if (is_ipaddr($l2tpcfg['dns2'])) {
+					$ipcp_dns .= " " . $l2tpcfg['dns2'];
 				}
-
-				$mpdconf .=<<<EOD
-
-l2tp{$i}:
-	new -i l2tp{$i} l2tp{$i} l2tp{$i}
-	{$issue_ip_type}
-	load l2tp_standard
-
-EOD;
+			} elseif (isset ($config['dnsmasq']['enable']) ||
+			    isset ($config['unbound']['enable'])) {
+				$ipcp_dns = "set ipcp dns " . get_interface_ip("lan");
+				if ($syscfg['dnsserver'][0]) {
+					$ipcp_dns .= " " . $syscfg['dnsserver'][0];
+				}
+			} elseif (is_array($syscfg['dnsserver']) &&
+			    ($syscfg['dnsserver'][0])) {
+				$ipcp_dns = "set ipcp dns " . join(" ", $syscfg['dnsserver']);
 			}
 
-			$mpdconf .=<<<EOD
+			$mpdconf =<<<EOD
 
-l2tp_standard:
-	set bundle disable multilink
+startup:
+
+l2tps:
+	set ippool add p0 {$l2tpcfg['remoteip']} {$ippool_p0}
+
+	create bundle template l2tp_b
 	set bundle enable compression
 	set bundle yes crypt-reqd
-	set ipcp yes vjcomp
-	# set ipcp ranges 131.188.69.161/32 131.188.69.170/28
+
 	set ccp yes mppc
+
+	set iface name l2tp
+	set iface group l2tp
+	set iface up-script /usr/local/sbin/vpn-linkup-l2tp
+	set iface down-script /usr/local/sbin/vpn-linkdown-l2tp
 	set iface disable on-demand
 	set iface enable proxy-arp
-	set iface up-script /usr/local/sbin/vpn-linkup
-	set iface down-script /usr/local/sbin/vpn-linkdown
+
+	set ipcp yes vjcomp
+	{$issue_ip_type}
+	{$ipcp_dns}
+
+	create link template l2tp_l l2tp
+	set link action bundle l2tp_b
+
 	set link yes acfcomp protocomp
-	set link no pap chap
+	set link enable multilink
+	set link no pap chap chap-msv2
 	{$paporchap}
 	{$l2tp_listen}
 	set link keep-alive 10 180
+	set link enable incoming
 
 EOD;
 
-			if (is_ipaddr($l2tpcfg['wins'])) {
-				$mpdconf .= "	set ipcp nbns {$l2tpcfg['wins']}\n";
-			}
-			if (is_ipaddr($l2tpcfg['dns1'])) {
-				$mpdconf .= "	set ipcp dns " . $l2tpcfg['dns1'];
-				if (is_ipaddr($l2tpcfg['dns2'])) {
-					$mpdconf .= " " . $l2tpcfg['dns2'];
-				}
-				$mpdconf .= "\n";
-			} elseif (isset ($config['dnsmasq']['enable'])) {
-				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0]) {
-					$mpdconf .= " " . $syscfg['dnsserver'][0];
-				}
-				$mpdconf .= "\n";
-			} elseif (isset ($config['unbound']['enable'])) {
-				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0]) {
-					$mpdconf .= " " . $syscfg['dnsserver'][0];
-				}
-				$mpdconf .= "\n";
-			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-				$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
-			}
 
 			if (isset ($l2tpcfg['radius']['enable'])) {
 				$mpdconf .=<<<EOD
 	set radius server {$l2tpcfg['radius']['server']} "{$l2tpcfg['radius']['secret']}"
 	set radius retries 3
 	set radius timeout 10
+	set auth disable internal
 	set auth enable radius-auth
 
 EOD;
@@ -1952,33 +2016,6 @@ EOD;
 			fwrite($fd, $mpdconf);
 			fclose($fd);
 			unset($mpdconf);
-
-			/* write mpd.links */
-			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.links", "w");
-			if (!$fd) {
-				printf(gettext("Error: cannot open mpd.links in vpn_l2tp_configure().") . "\n");
-				return 1;
-			}
-
-			$mpdlinks = "";
-
-			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
-				$mpdlinks .=<<<EOD
-
-l2tp{$i}:
-	set link type l2tp
-	set l2tp enable incoming
-	set l2tp disable originate
-
-EOD;
-				if (!empty($l2tpcfg['secret'])) {
-					$mpdlinks .= "set l2tp secret {$l2tpcfg['secret']}\n";
-				}
-			}
-
-			fwrite($fd, $mpdlinks);
-			fclose($fd);
-			unset($mpdlinks);
 
 			/* write mpd.secret */
 			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.secret", "w");
@@ -2003,7 +2040,7 @@ EOD;
 			vpn_netgraph_support();
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");
+			mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");
 
 			break;
 

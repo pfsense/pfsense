@@ -1,65 +1,32 @@
 <?php
 /*
-	status_captiveportal.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * status_captiveportal.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal
-##|*NAME=Status: Captive portal
-##|*DESCR=Allow access to the 'Status: Captive portal' page.
+##|*NAME=Status: Captive Portal
+##|*DESCR=Allow access to the 'Status: Captive Portal' page.
 ##|*MATCH=status_captiveportal.php*
 ##|-PRIV
 
@@ -69,16 +36,89 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower($cpzone);
+/*
+Return true if multiple servers type are selected in captiveportal config, false otherwise
+*/
+function mutiple_auth_server_type() {
+	global $config, $cpzone;
+	
+	$auth_types = array();
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
+	$fullauthservers = explode(",", $config['captiveportal'][$cpzone]['auth_server']);
+	foreach($fullauthservers as $authserver) {
+		if(strpos($authserver, ' - ') !== false) {
+			$authserver = explode(' - ', $authserver);
+			$auth_types[array_shift($authserver)] = true;
+		}
+	}
+	$fullauthservers2 = explode(",", $config['captiveportal'][$cpzone]['auth_server2']);
+	foreach($fullauthservers2 as $authserver) {
+		if(strpos($authserver, ' - ') !== false) {
+			$authserver = explode(' - ', $authserver);
+			$auth_types[array_shift($authserver)] = true;
+		}
+	}
+	if($config['captiveportal'][$cpzone]['auth_method'] === 'authserver' && count($auth_types)>1) {
+		return true;
+	} else {
+		return false;
+	}
 }
-$a_cp =& $config['captiveportal'];
+
+function print_details($cpent) {
+	global $config, $cpzone, $cpzoneid;
+
+	printf("<a data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"%s\" data-content=\" ", gettext("Session details"));
+
+	/* print the duration of the session */
+	$session_time = time() - $cpent[0];
+	printf(gettext("Session duration: %s") . "<br>", convert_seconds_to_dhms($session_time));
+
+	/* print the time left before session timeout or session terminate time or the closer of the two if both are set */
+	if (!empty($cpent[7]) && !empty($cpent[9])) {
+		$session_time_left = min($cpent[0] + $cpent[7] - time(),$cpent[9] - time());
+		printf(gettext("Session time left: %s") . "<br>", convert_seconds_to_dhms($session_time_left));
+	} elseif (!empty($cpent[7]) && empty($cpent[9])) {
+		$session_time_left = $cpent[0] + $cpent[7] - time();
+		printf(gettext("Session time left: %s") . "<br>", convert_seconds_to_dhms($session_time_left));
+	} elseif (empty($cpent[7]) && !empty($cpent[9])) {
+		$session_time_left = $cpent[9] - time();
+		printf(gettext("Session time left: %s") . "<br>", convert_seconds_to_dhms($session_time_left));
+	}
+
+	/* print idle time and time left before disconnection if idle timeout is set */
+	if ($_REQUEST['showact']) {
+		$last_act = captiveportal_get_last_activity($cpent[2]);
+
+		/* if the user never sent traffic, set last activity time to the login time */
+		$last_act = $last_act ? $last_act : $cpent[0];
+
+		$idle_time = time() - $last_act;
+		printf(gettext("Idle time: %s") . "<br>", convert_seconds_to_dhms((int)$idle_time));
+
+		if (!empty($cpent[8])) {
+			$idle_time_left = $last_act + $cpent[8] - time();
+			printf(gettext("Idle time left: %s") . "<br>", convert_seconds_to_dhms((int)$idle_time_left));
+		}
+	}
+
+	/* print bytes sent and received, invert the values if reverse accounting is enabled */
+	$volume = getVolume($cpent[2]);
+	$reverse = isset($config['captiveportal'][$cpzone]['reverseacct']) ? true : false;
+	if ($reverse) {
+		printf(gettext("Bytes sent: %s") . "<br>" . gettext("Bytes received: %s") . "\" data-html=\"true\">", format_bytes($volume['output_bytes']), format_bytes($volume['input_bytes']));
+	} else {
+		printf(gettext("Bytes sent: %s") . "<br>" . gettext("Bytes received: %s") . "\" data-html=\"true\">", format_bytes($volume['input_bytes']), format_bytes($volume['output_bytes']));
+	}
+
+	/* print username */
+	printf("%s</a>", htmlspecialchars($cpent[4]));
+}
+
+$cpzone = strtolower($_REQUEST['zone']);
+
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 if (count($a_cp) == 1) {
 	$cpzone = current(array_keys($a_cp));
@@ -93,42 +133,35 @@ if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 	$cpzoneid = $a_cp[$cpzone]['zoneid'];
 }
 
-if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET['id'])) {
-	captiveportal_disconnect_client($_GET['id']);
+if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_POST['id'])) {
+	captiveportal_disconnect_client($_POST['id'], 6, "DISCONNECT - KIKED OUT BY ADMINISTRATOR");
+	/* keep displaying last activity times */
+	if ($_POST['showact']) {
+		header("Location: status_captiveportal.php?zone={$cpzone}&showact=1");
+	} else {
+		header("Location: status_captiveportal.php?zone={$cpzone}");
+	}
+	exit;
+}
+
+if ($_POST['deleteall'] && !empty($cpzone) && isset($cpzoneid)) {
+	captiveportal_disconnect_all();
 	header("Location: status_captiveportal.php?zone={$cpzone}");
 	exit;
 }
 
-function clientcmp($a, $b) {
-	global $order;
-	return strcmp($a[$order], $b[$order]);
-}
+$pgtitle = array(gettext("Status"), gettext("Captive Portal"));
+$pglinks = array("", "status_captiveportal.php");
 
 if (!empty($cpzone)) {
 	$cpdb = captiveportal_read_db();
 
-	if ($_GET['order']) {
-		if ($_GET['order'] == "ip") {
-			$order = 2;
-		} else if ($_GET['order'] == "mac") {
-			$order = 3;
-		} else if ($_GET['order'] == "user") {
-			$order = 4;
-		} else if ($_GET['order'] == "lastact") {
-			$order = 5;
-		} else {
-			$order = 0;
-		}
-		usort($cpdb, "clientcmp");
-	}
-}
-$pgtitle = array(gettext("Status"), gettext("Captive Portal"));
-
-if (!empty($cpzone)) {
-	$pgtitle[] = $a_cp[$cpzone]['zone'];
+	$pgtitle[] = htmlspecialchars($a_cp[$cpzone]['zone']);
+	$pglinks[] = "status_captiveportal.php?zone=" . $cpzone;
 
 	if (isset($config['voucher'][$cpzone]['enable'])) {
 		$pgtitle[] = gettext("Active Users");
+		$pglinks[] = "status_captiveportal.php?zone=" . $cpzone;
 	}
 }
 $shortcut_section = "captiveportal";
@@ -176,84 +209,96 @@ if (!empty($cpzone)): ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext("Users Logged In (%d)"), count($cpdb))?></h2></div>
 	<div class="panel-body table-responsive">
-
-		<table class="table table-striped table-hover table-condensed">
-			<tr>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=ip&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("IP address")?></a>
-				</th>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=mac&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("MAC address")?></a>
-				</th>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=user&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Username")?></a>
-				</th>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=start&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Session start")?></a>
-				</th>
-
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+			<thead>
+				<tr>
+					<th><?=gettext("IP address")?></th>
 <?php
-	if ($_GET['showact']):
+	if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])):
 ?>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=lastact&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Last activity")?></a>
-				</th>
+					<th><?=gettext("MAC address")?></th>
 <?php
 	endif;
 ?>
-				<th><?=gettext("Actions")?></th>
-			</tr>
+					<th><?=gettext("Username")?></th>
+<?php
+	 // if multiple auth method are selected
+	if (mutiple_auth_server_type()): 
+?>
+					<th><?=gettext("Authentication method")?></th>
+<?php
+	endif;
+?>
+					<th><?=gettext("Session start")?></th>
+<?php
+	if ($_REQUEST['showact']):
+?>
+					<th><?=gettext("Last activity")?></th>
+<?php
+	endif;
+?>
+					<th data-sortable="false"><?=gettext("Actions")?></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
 
 	foreach ($cpdb as $cpent): ?>
-			<tr>
-				<td>
-					<?=$cpent[2]?>
-				</td>
-				<td>
+				<tr>
+					<td><?=htmlspecialchars($cpent[2])?></td>
 <?php
-		$mac=trim($cpent[3]);
-		if (!empty($mac)) {
-			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-			print htmlentities($mac);
-			if (isset($mac_man[$mac_hi])) {
-				print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>";
-			}
-		}
-?>	&nbsp;
-				</td>
-				<td>
-					<?=htmlspecialchars($cpent[4])?>&nbsp;
-				</td>
+		if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
+?>
+					<td>
 <?php
-		if ($_GET['showact']):
-			$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]); ?>
-				<td>
-					<?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?>
-				</td>
-				<td>
-<?php
-			if ($last_act != 0) {
-				echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));
+			$mac=trim($cpent[3]);
+			if (!empty($mac)) {
+				$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+				print htmlentities($mac);
+				if (isset($mac_man[$mac_hi])) {
+					print "<br /><font size=\"-2\"><i>" . htmlspecialchars($mac_man[$mac_hi]) . "</i></font>";
+				}
 			}
 ?>
-				</td>
+					</td>
+<?php
+		}
+?>
+					<td><?php print_details($cpent); ?></td>
+<?php
+	if (mutiple_auth_server_type()):
+?>
+					<td><?=htmlspecialchars($cpent[12]);?></td>
+<?php
+	endif;
+?>
+<?php
+		if ($_REQUEST['showact']):
+			$last_act = captiveportal_get_last_activity($cpent[2]);
+			/* if the user never sent traffic, set last activity time to the login time */
+			$last_act = $last_act ? $last_act : $cpent[0];
+?>
+					<td><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?></td>
+					<td>
+<?php
+			echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));
+?>
+					</td>
 <?php
 		else:
 ?>
-				<td>
-					<?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?>
-				</td>
+					<td><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?></td>
 <?php
 		endif;
 ?>
-				<td>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=<?=$_GET['order']?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=$cpent[5]?>"><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
-				</td>
-			</tr>
+					<td>
+						<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=<?=htmlspecialchars($_REQUEST['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>" usepost><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
+					</td>
+				</tr>
 <?php
 	endforeach;
 ?>
+			</tbody>
 		</table>
 	</div>
 </div>
@@ -266,32 +311,30 @@ else:
 endif;
 ?>
 
-
-<form action="status_captiveportal.php" method="get" style="margin: 14px;">
-	<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order'])?>" />
-
+<nav class="action-buttons">
 <?php
 if (!empty($cpzone)):
-	if ($_GET['showact']): ?>
-		<input type="hidden" name="showact" value="0" />
-		<button type="submit" class="btn btn-info" value="<?=gettext("Don't show last activity")?>">
-			<i class="fa fa-minus-circle icon-embed-btn"></i>
-			<?=gettext("Hide Last Activity")?>
-		</button>
+	if ($_REQUEST['showact']): ?>
+	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=0" role="button" class="btn btn-info" title="<?=gettext("Don't show last activity")?>">
+		<i class="fa fa-minus-circle icon-embed-btn"></i>
+		<?=gettext("Hide Last Activity")?>
+	</a>
 <?php
 	else:
 ?>
-		<input type="hidden" name="showact" value="1" />
-		<button type="submit" class="btn btn-info" value="<?=gettext("Show last activity")?>">
-			<i class="fa fa-plus-circle icon-embed-btn"></i>
-			<?=gettext("Show Last Activity")?>
-		</button>
+	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=1" role="button" class="btn btn-info" title="<?=gettext("Show last activity")?>">
+		<i class="fa fa-plus-circle icon-embed-btn"></i>
+		<?=gettext("Show Last Activity")?>
+	</a>
 <?php
 	endif;
 ?>
-	<input type="hidden" name="zone" value="<?=htmlspecialchars($cpzone)?>" />
+	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;deleteall=1" role="button" class="btn btn-danger" title="<?=gettext("Disconnect all active users")?>" usepost>
+		<i class="fa fa-trash icon-embed-btn"></i>
+		<?=gettext("Disconnect All Users")?>
+	</a>
 <?php
 endif;
 ?>
-</form>
+</nav>
 <?php include("foot.inc");

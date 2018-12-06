@@ -1,62 +1,28 @@
 <?php
 /*
-	services_captiveportal_hostname_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * services_captiveportal_hostname_edit.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editallowedhostnames
-##|*NAME=Services: Captive portal: Edit Allowed Hostnames
-##|*DESCR=Allow access to the 'Services: Captive portal: Edit Allowed Hostnames' page.
+##|*NAME=Services: Captive Portal: Edit Allowed Hostnames
+##|*DESCR=Allow access to the 'Services: Captive Portal: Edit Allowed Hostnames' page.
 ##|*MATCH=services_captiveportal_hostname_edit.php*
 ##|-PRIV
 
@@ -77,11 +43,9 @@ require_once("captiveportal.inc");
 
 global $cpzone, $cpzoneid;
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower($cpzone);
+$cpzone = $_REQUEST['zone'];
+
+$cpzone = strtolower(htmlspecialchars($cpzone));
 
 $cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 
@@ -90,25 +54,15 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'allowedhostname'));
+$a_cp = &$config['captiveportal'];
+$a_allowedhostnames = &$a_cp[$cpzone]['allowedhostname'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed Hostnames"), gettext("Edit"));
+$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_hostname.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
-
-if (!is_array($a_cp[$cpzone]['allowedhostname'])) {
-	$a_cp[$cpzone]['allowedhostname'] = array();
-}
-$a_allowedhostnames = &$a_cp[$cpzone]['allowedhostname'];
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_allowedhostnames[$id]) {
 	$pconfig['zone'] = $a_allowedhostnames[$id]['zone'];
@@ -120,7 +74,7 @@ if (isset($id) && $a_allowedhostnames[$id]) {
 	$pconfig['descr'] = $a_allowedhostnames[$id]['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -176,7 +130,7 @@ if ($_POST) {
 
 		$rules = captiveportal_allowedhostname_configure();
 		@file_put_contents("{$g['tmp_path']}/hostname_rules", $rules);
-		mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/hostname_rules", true);
+		mwexec("/sbin/ipfw {$g['tmp_path']}/hostname_rules", true);
 		unset($rules);
 
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
@@ -207,7 +161,7 @@ $section = new Form_Section('Captive Portal Hostname Settings');
 
 $section->addInput(new Form_Select(
 	'dir',
-	'Direction',
+	'*Direction',
 	strtolower($pconfig['dir']),
 	build_dir_list()
 ))->setHelp('Use "From" to always allow a Hostname through the captive portal (without authentication). ' .
@@ -215,7 +169,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'hostname',
-	'Hostname',
+	'*Hostname',
 	'text',
 	$pconfig['hostname']
 ));

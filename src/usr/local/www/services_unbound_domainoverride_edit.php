@@ -1,61 +1,28 @@
 <?php
 /*
-	services_unbound_domainoverride_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2014 Warren Baker (warren@decoy.co.za)
- *	Copyright (c)  2003-2005 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>
+ * services_unbound_domainoverride_edit.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014 Warren Baker (warren@decoy.co.za)
+ * Copyright (c) 2003-2005 Bob Zoller <bob@kludgebox.com>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -67,26 +34,18 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['unbound']['domainoverrides'])) {
-	$config['unbound']['domainoverrides'] = array();
-}
-
+init_config_arr(array('unbound', 'domainoverrides'));
 $a_domainOverrides = &$config['unbound']['domainoverrides'];
-
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_domainOverrides[$id]) {
 	$pconfig['domain'] = $a_domainOverrides[$id]['domain'];
 	$pconfig['ip'] = $a_domainOverrides[$id]['ip'];
 	$pconfig['descr'] = $a_domainOverrides[$id]['descr'];
+	$pconfig['forward_tls_upstream'] = isset($a_domainOverrides[$id]['forward_tls_upstream']);
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -101,7 +60,7 @@ if ($_POST) {
 		return (substr($haystack, 0, strlen($needle)) == $needle);
 	}
 
-	if (String_Begins_With(_msdcs, $_POST['domain'])) {
+	if (String_Begins_With('_msdcs', $_POST['domain'])) {
 		$subdomainstr = substr($_POST['domain'], 7);
 		if ($subdomainstr && !is_domain($subdomainstr)) {
 			$input_errors[] = gettext("A valid domain must be specified after _msdcs.");
@@ -126,6 +85,7 @@ if ($_POST) {
 		$doment['domain'] = $_POST['domain'];
 		$doment['ip'] = $_POST['ip'];
 		$doment['descr'] = $_POST['descr'];
+		$doment['forward_tls_upstream'] = isset($_POST['forward_tls_upstream']);
 
 		if (isset($id) && $a_domainOverrides[$id]) {
 			$a_domainOverrides[$id] = $doment;
@@ -135,7 +95,7 @@ if ($_POST) {
 
 		mark_subsystem_dirty('unbound');
 
-		write_config();
+		write_config(gettext("Domain override configured for DNS Resolver."));
 
 		header("Location: services_unbound.php");
 		exit;
@@ -143,6 +103,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General Settings"), gettext("Edit Domain Override"));
+$pglinks = array("", "services_unbound.php", "services_unbound.php", "@self");
 $shortcut_section = "resolver";
 include("head.inc");
 
@@ -152,21 +113,28 @@ if ($input_errors) {
 
 $form = new Form();
 
-$section = new Form_Section('Domain Override');
+$section = new Form_Section('Domains to Override with Custom Lookup Servers');
 
 $section->addInput(new Form_Input(
 	'domain',
-	'Domain',
+	'*Domain',
 	'text',
 	$pconfig['domain']
-))->setHelp('Domain to override (NOTE: this does not have to be a valid TLD!) e.g.: test or mycompany.localdomain or 1.168.192.in-addr.arpa');
+))->setHelp('Domain whose lookups will be directed to a user-specified DNS lookup server.');
 
 $section->addInput(new Form_IpAddress(
 	'ip',
-	'IP Address',
+	'*IP Address',
 	$pconfig['ip']
-))->setHelp('IP address of the authoritative DNS server for this domain. e.g.: 192.168.100.100' . '<br />' .
-			'To use a non-default port for communication, append an \'@\' with the port number.')->setPattern('[a-zA-Z0-9\@\.\:]+');
+))->setHelp('IPv4 or IPv6 address of the authoritative DNS server for this domain. e.g.: 192.168.100.100%1$s' .
+			'To use a non-default port for communication, append an \'@\' with the port number.', '<br />')->setPattern('[a-zA-Z0-9@.:]+');
+
+$section->addInput(new Form_Checkbox(
+	'forward_tls_upstream',
+	'TLS Queries',
+	'Use SSL/TLS for DNS Queries forwarded to this server',
+	$pconfig['forward_tls_upstream']
+))->setHelp('When set, queries to %1$sall DNS servers for this domain%2$s will be sent using SSL/TLS on the default port of 853.', '<b>', '</b>');
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -183,6 +151,17 @@ if (isset($id) && $a_domainOverrides[$id]) {
 		$id
 	));
 }
+
+$section->addInput(new Form_StaticText(
+	'',
+	'<span class="help-block">' .
+	gettext("This page is used to specify domains for which the resolver's standard DNS lookup process will be overridden, " .
+	"and the resolver will query a different (non-standard) lookup server instead. It is possible to enter 'non-standard', 'invalid' " .
+	"and 'local' domains such as 'test', 'mycompany.localdomain', or '1.168.192.in-addr.arpa', as well as usual publicly resolvable " .
+	"domains such as 'org', 'info', or 'google.co.uk'.  The IP address entered will be treated as the IP address of an authoritative " .
+	"lookup server for the domain (including all of its subdomains), and other lookup servers will not be queried.") .
+	'</span>'
+));
 
 $form->add($section);
 

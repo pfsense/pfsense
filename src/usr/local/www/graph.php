@@ -1,61 +1,28 @@
 <?php
 /*
-	graph.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2004-2006 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
- *							 and Jonathan Watt <jwatt@jwatt.org>
+ * graph.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2006 T. Lechat <dev@lechat.org>
+ * Copyright (c) 2004-2006 Jonathan Watt <jwatt@jwatt.org>
+ * All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -74,10 +41,10 @@ header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP/1.1
 header("Pragma: no-cache"); // HTTP/1.0
 header("Content-type: image/svg+xml");
 
-/********** HTTP GET Based Conf ***********/
-$ifnum = @$_GET["ifnum"];  // BSD / SNMP interface name / number
+/********** HTTP REQUEST Based Conf ***********/
+$ifnum = @$_REQUEST["ifnum"];  // BSD / SNMP interface name / number
 $ifnum = get_real_interface($ifnum);
-$ifname = @$_GET["ifname"]?$_GET["ifname"]:"Interface $ifnum";  //Interface name that will be showed on top right of graph
+$ifname = @$_REQUEST["ifname"]?$_REQUEST["ifname"]:"Interface $ifnum";  //Interface name that will be showed on top right of graph
 
 /********* Other conf *******/
 if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
@@ -87,14 +54,14 @@ if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
 }
 
 $nb_plot=120;                   //NB plot in graph
-if ($_GET["timeint"]) {
-	$time_interval = $_GET["timeint"];		//Refresh time Interval
+if ($_REQUEST["timeint"]) {
+	$time_interval = $_REQUEST["timeint"];		//Refresh time Interval
 } else {
 	$time_interval = 3;
 }
 
-if ($_GET["initdelay"]) {
-	$init_delay = $_GET["initdelay"];		//Initial Delay
+if ($_REQUEST["initdelay"]) {
+	$init_delay = $_REQUEST["initdelay"];		//Initial Delay
 } else {
 	$init_delay = 3;
 }
@@ -141,7 +108,7 @@ print('<?xml version="1.0" encoding="UTF-8"?>' . "\n");?>
 		<text id="graph_out_txt" x="20" y="16" <?=$attribs['out']?>> </text>
 		<text id="ifname" x="<?=$width?>" y="8" <?=$attribs['graphname']?> text-anchor="end"><?=htmlspecialchars($ifname)?></text>
 		<text id="switch_unit" x="<?=$width*0.55?>" y="5" <?=$attribs['switch_unit']?>><?=gettext("Switch to bytes/s"); ?></text>
-		<text id="switch_scale" x="<?=$width*0.55?>" y="11" <?=$attribs['switch_scale']?>><?=gettext("AutoScale"); ?> (<?=$scale_type?>)</text>
+		<text id="switch_scale" x="<?=$width*0.55?>" y="11" <?=$attribs['switch_scale']?>><?=gettext("AutoScale"); ?> (<?=gettext($scale_type);?>)</text>
 		<text id="date" x="<?=$width*0.33?>" y="5" <?=$attribs['legend']?>> </text>
 		<text id="time" x="<?=$width*0.33?>" y="11" <?=$attribs['legend']?>> </text>
 		<text id="graphlast" x="<?=$width*0.55?>" y="17" <?=$attribs['legend']?>><?=sprintf(gettext("Graph shows last %s seconds"), $time_interval*$nb_plot)?></text>
@@ -194,7 +161,7 @@ if (typeof getURL == 'undefined') {
 					contentType : http_request.getResponseHeader("Content-Type") } );
 			}
 		}
-		http_request.open('GET', url, true);
+		http_request.open('REQUEST', url, true);
 		http_request.send(null);
 	}
 }
@@ -211,6 +178,7 @@ var max_num_points = <?=$nb_plot?>;  // maximum number of plot data points
 var step = <?=$width?> / max_num_points ;
 var unit = 'bits';
 var scale_type = '<?=$scale_type?>';
+var scale_type_text = '<?=gettext($scale_type); ?>';
 
 function init(evt) {
 	SVGDoc = evt.target.ownerDocument;
@@ -221,13 +189,14 @@ function init(evt) {
 }
 
 function switch_unit(event) {
-	SVGDoc.getElementById('switch_unit').firstChild.data = '<?=gettext("Switch to"); ?> ' + unit + '/s';
+	SVGDoc.getElementById('switch_unit').firstChild.data = (unit == 'bits') ? '<?=gettext("Switch to bits/s"); ?>' : '<?=gettext("Switch to bytes/s"); ?>';
 	unit = (unit == 'bits') ? 'bytes' : 'bits';
 }
 
 function switch_scale(event) {
-	scale_type = (scale_type == 'up') ? '<?=gettext("follow"); ?>' : '<?=gettext("up"); ?>';
-	SVGDoc.getElementById('switch_scale').firstChild.data = 'AutoScale (' + scale_type + ')';
+	scale_type = (scale_type == 'up') ? 'follow' : 'up';
+	scale_type_text = (scale_type == 'up') ? '<?=gettext("up"); ?>' : '<?=gettext("follow"); ?>';
+	SVGDoc.getElementById('switch_scale').firstChild.data = '<?=gettext("AutoScale"); ?>' + ' (' + scale_type_text + ')';
 }
 
 function fetch_data() {

@@ -1,61 +1,30 @@
 <?php
 /*
-	priv.inc
-
-	part of pfSense (https://www.pfsense.org)
-	Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
-	Copyright (C) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
-	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
-	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in
-	   the documentation and/or other materials provided with the
-	   distribution.
-
-	3. All advertising materials mentioning features or use of this software
-	   must display the following acknowledgment:
-	   "This product includes software developed by the pfSense Project
-	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
-
-	4. The names "pfSense" and "pfSense Project" must not be used to
-	   endorse or promote products derived from this software without
-	   prior written permission. For written permission, please contact
-	   coreteam@pfsense.org.
-
-	5. Products derived from this software may not be called "pfSense"
-	   nor may "pfSense" appear in their names without prior written
-	   permission of the Electric Sheep Fencing, LLC.
-
-	6. Redistributions of any form whatsoever must retain the following
-	   acknowledgment:
-
-	"This product includes software developed by the pfSense Project
-	for use in the pfSense software distribution (http://www.pfsense.org/).
-
-	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-	OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * priv.inc
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
+ * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
+ * Copyright (c) 2008 Shrew Soft Inc
+ * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 require_once("priv.defs.inc");
+require_once("auth_func.inc");
 
 /* Load and process custom privs. */
 function get_priv_files($directory) {
@@ -87,14 +56,15 @@ function get_priv_files($directory) {
 // Load and sort privs
 $dir_array = get_priv_files("/etc/inc/priv");
 foreach ($dir_array as $file) {
-	if (!is_dir("/etc/inc/priv/{$file}") && stristr($file, ".inc")) {
+	if (!is_dir("/etc/inc/priv/{$file}") && substr($file, -4) == ".inc") {
 		include_once("/etc/inc/priv/{$file}");
 	}
 }
 if (is_dir("/usr/local/pkg/priv")) {
 	$dir_array = get_priv_files("/usr/local/pkg/priv");
 	foreach ($dir_array as $file) {
-		if (!is_dir("/usr/local/pkg/priv/{$file}") && stristr($file, ".inc")) {
+		if (!is_dir("/usr/local/pkg/priv/{$file}") &&
+		    substr($file, -4) == ".inc") {
 			include_once("/usr/local/pkg/priv/{$file}");
 		}
 	}
@@ -118,41 +88,6 @@ function cmp_privkeys($a, $b) {
 
 function sort_privs(& $privs) {
 	uksort($privs, "cmp_privkeys");
-}
-
-function cmp_page_matches($page, & $matches, $fullwc = true) {
-
-//	$dbg_matches = implode(",", $matches);
-//	log_error("debug: checking page {$page} match with {$dbg_matches}");
-
-	if (!is_array($matches)) {
-		return false;
-	}
-
-	/* skip any leading fwdslash */
-	$test = strpos($page, "/");
-	if ($test !== false && $test == 0) {
-		$page = substr($page, 1);
-	}
-
-	/* look for a match */
-	foreach ($matches as $match) {
-
-		/* possibly ignore full wildcard match */
-		if (!$fullwc && !strcmp($match , "*")) {
-			continue;
-		}
-
-		/* compare exact or wildcard match */
-		$match = str_replace(array(".", "*", "?"), array("\.", ".*", "\?"), $match);
-		$result = preg_match("@^/{$match}$@", "/{$page}");
-
-		if ($result) {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 function map_page_privname($page) {
@@ -214,7 +149,7 @@ function get_user_privdesc(& $user) {
 	return $privs;
 }
 
-function isAllowed($username, $page) {
+function isAdminUID($username) {
 	global $_SESSION;
 
 	if (!isset($username)) {
@@ -231,6 +166,20 @@ function isAllowed($username, $page) {
 		}
 	}
 
+	return false;
+}
+
+function isAllowed($username, $page) {
+	global $_SESSION;
+
+	if (!isset($username)) {
+		return false;
+	}
+
+	if (isAdminUID($username)) {
+		return true;
+	}
+
 	/* user privilege access check */
 	if (cmp_page_matches($page, $_SESSION['page-match'])) {
 		return true;
@@ -238,7 +187,6 @@ function isAllowed($username, $page) {
 
 	return false;
 }
-
 
 function isAllowedPage($page) {
 	global $_SESSION;
@@ -250,14 +198,8 @@ function isAllowedPage($page) {
 		return false;
 	}
 
-	/* admin/root access check */
-	$user = getUserEntry($username);
-	if (isset($user)) {
-		if (isset($user['uid'])) {
-			if ($user['uid'] == 0) {
-				return true;
-			}
-		}
+	if (isAdminUID($username)) {
+		return true;
 	}
 
 	/* user privilege access check */
@@ -272,18 +214,12 @@ function getPrivPages(& $entry, & $allowed_pages) {
 	}
 
 	foreach ($entry['priv'] as $pname) {
-		if (strncmp($pname, "page-", 5)) {
+		if (strncmp($pname, "page-", 5) ||
+		    !is_array($priv_list[$pname]) ||
+		    !is_array($priv_list[$pname]['match'])) {
 			continue;
 		}
-		$priv = &$priv_list[$pname];
-		if (!is_array($priv)) {
-			continue;
-		}
-		$matches = &$priv['match'];
-		if (!is_array($matches)) {
-			continue;
-		}
-		foreach ($matches as $match) {
+		foreach ($priv_list[$pname]['match'] as $match) {
 			$allowed_pages[] = $match;
 		}
 	}
@@ -299,12 +235,36 @@ function getAllowedPages($username, &$attributes = array()) {
 	$allowed_pages = array();
 	$allowed_groups = array();
 
-	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-	// obtain ldap groups if we are in ldap mode
-	if ($authcfg['type'] == "ldap") {
-		$allowed_groups = @ldap_get_groups($username, $authcfg);
-	} elseif ($authcfg['type'] == "radius") {
-		$allowed_groups = @radius_get_groups($attributes);
+ 	phpsession_begin();
+	if ($_SESSION['remoteauth']) {
+		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+		// cache auth results for a short time to ease load on auth services & logs
+		if (isset($config['system']['webgui']['auth_refresh_time'])) {
+			$recheck_time = $config['system']['webgui']['auth_refresh_time'];
+		} else {
+			$recheck_time = 30;
+		}
+		// obtain ldap groups if we are in ldap mode
+		if ($authcfg['type'] == "ldap") {
+			if (isset($_SESSION["ldap_allowed_groups"]) &&
+			    (time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
+				$allowed_groups = $_SESSION["ldap_allowed_groups"];
+			} else {
+				$allowed_groups = @ldap_get_groups($username, $authcfg);
+				$_SESSION["ldap_allowed_groups"] = $allowed_groups;
+				$_SESSION["auth_check_time"] = time();
+			}
+		} elseif ($authcfg['type'] == "radius") {
+			if (isset($_SESSION["radius_allowed_groups"]) &&
+			    (time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
+				$allowed_groups = $_SESSION["radius_allowed_groups"];
+			} else {
+				$allowed_groups = @radius_get_groups($attributes);
+				$_SESSION["radius_allowed_groups"] = $allowed_groups;
+				$_SESSION["auth_check_time"] = time();
+			}
+		}
+
 	}
 	if (!$allowed_groups) {
 		// search for a local user by name
@@ -315,6 +275,12 @@ function getAllowedPages($username, &$attributes = array()) {
 			getPrivPages($local_user, $allowed_pages);
 			$allowed_groups = local_user_get_groups($local_user);
 		}
+	}
+
+	if (!is_array($allowed_groups)) {
+		$allowed_groups = array('all');
+	} else {
+		$allowed_groups[] = 'all';
 	}
 
 	// build a list of allowed pages
@@ -332,7 +298,7 @@ function getAllowedPages($username, &$attributes = array()) {
 //	log_error("debug: user {$username} pages = {$dbg_pages}");
 
 	$_SESSION['page-match'] = $allowed_pages;
-
+	phpsession_end(true);
 	return $allowed_pages;
 }
 

@@ -1,59 +1,26 @@
 <?php
 /*
-	services_wol.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * services_wol.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -64,12 +31,11 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-if (!is_array($config['wol']['wolentry'])) {
-	$config['wol']['wolentry'] = array();
-}
+
+init_config_arr(array('wol', 'wolentry'));
 $a_wol = &$config['wol']['wolentry'];
 
-if ($_GET['wakeall'] != "") {
+if ($_REQUEST['wakeall'] != "") {
 	$i = 0;
 	$savemsg = "";
 	foreach ($a_wol as $wolent) {
@@ -92,25 +58,20 @@ if ($_GET['wakeall'] != "") {
 	}
 }
 
-if ($_POST || $_GET['mac']) {
+if ($_POST['Submit'] || $_POST['mac']) {
 	unset($input_errors);
 
-	if ($_GET['mac']) {
+	if ($_POST['mac']) {
 		/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
-		$_GET['mac'] = strtolower(str_replace("-", ":", $_GET['mac']));
-		$mac = $_GET['mac'];
-		$if = $_GET['if'];
-	} else {
-		/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
-		$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
-		$mac = $_POST['mac'];
-		$if = $_POST['interface'];
+		$mac = strtolower(str_replace("-", ":", $_POST['mac']));
+		$if = $_POST['if'];
 	}
 
 	/* input validation */
 	if (!$mac || !is_macaddr($mac)) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
+
 	if (!$if) {
 		$input_errors[] = gettext("A valid interface must be specified.");
 	}
@@ -134,10 +95,10 @@ if ($_POST || $_GET['mac']) {
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_wol[$_GET['id']]) {
-		unset($a_wol[$_GET['id']]);
-		write_config();
+if ($_POST['act'] == "del") {
+	if ($a_wol[$_POST['id']]) {
+		unset($a_wol[$_POST['id']]);
+		write_config(gettext("Deleted a device from WOL configuration."));
 		header("Location: services_wol.php");
 		exit;
 	}
@@ -164,23 +125,28 @@ if ($savemsg) {
 	print_info_box($savemsg, $class);
 }
 
+$selected_if = (empty($if) ? 'lan' : $if);
+if (!isset(get_configured_interface_list(false)[$selected_if])) {
+	$selected_if = null;
+}
+
 $form = new Form(false);
 
 $section = new Form_Section('Wake-on-LAN');
 
 $section->addInput(new Form_Select(
-	'interface',
-	'Interface',
-	(link_interface_to_bridge($if) ? null : $if),
+	'if',
+	'*Interface',
+	$selected_if,
 	get_configured_interface_with_descr()
 ))->setHelp('Choose which interface the host to be woken up is connected to.');
 
 $section->addInput(new Form_Input(
 	'mac',
-	'MAC address',
+	'*MAC address',
 	'text',
 	$mac
-))->setHelp(gettext('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx'));
+))->setHelp('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx');
 
 $form->add($section);
 
@@ -199,8 +165,25 @@ print $form;
 		<h2 class="panel-title"><?=gettext("Wake-on-LAN Devices");?></h2>
 	</div>
 
+<?php
+	// Add top buttons if more than 24 entries in the table
+	if (is_array($a_wol) && (count($a_wol) > 24)) {
+?>
+	<div class="panel-footer">
+		<a class="btn btn-success" href="services_wol_edit.php">
+			<i class="fa fa-plus icon-embed-btn"></i>
+			<?=gettext("Add");?>
+		</a>
+
+		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary">
+			<i class="fa fa-power-off icon-embed-btn"></i>
+			<?=gettext("Wake All Devices")?>
+		</a>
+	</div>
+<?php } ?>
+
 	<div class="panel-body">
-		<p><?=gettext("Click the MAC address to wake up an individual device.")?></p>
+		<p class="text-danger" style="margin-left: 8px;margin-bottom:0px;"><?=gettext("Click the MAC address to wake up an individual device.")?></p>
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-rowdblclickedit">
 				<thead>
@@ -218,15 +201,15 @@ print $form;
 								<?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>
 							</td>
 							<td>
-								<a href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>
+								<a href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>" usepost><?=strtolower($wolent['mac']);?></a>
 							</td>
 							<td>
 								<?=htmlspecialchars($wolent['descr']);?>
 							</td>
 							<td>
 								<a class="fa fa-pencil"	title="<?=gettext('Edit Device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
-								<a class="fa fa-trash"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>"></a>
-								<a class="fa fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>"></a>
+								<a class="fa fa-trash"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>" usepost></a>
+								<a class="fa fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>" usepost></a>
 							</td>
 						</tr>
 					<?php endforeach?>

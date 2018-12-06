@@ -1,60 +1,27 @@
 <?php
 /*
-	interfaces.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c) 2006 Daniel S. Haischt
+ * interfaces.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2006 Daniel S. Haischt
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *	  this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *	  notice, this list of conditions and the following disclaimer in
- *	  the documentation and/or other materials provided with the
- *	  distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *	  must display the following acknowledgment:
- *	  "This product includes software developed by the pfSense Project
- *	   for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *	   endorse or promote products derived from this software without
- *	   prior written permission. For written permission, please contact
- *	   coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *	  nor may "pfSense" appear in their names without prior written
- *	  permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *	  acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -74,6 +41,10 @@ require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
 
+function remove_bad_chars($string) {
+	return preg_replace('/[^a-z_0-9]/i', '', $string);
+}
+
 define("ANTENNAS", false);
 
 if (isset($_POST['referer'])) {
@@ -83,9 +54,10 @@ if (isset($_POST['referer'])) {
 }
 
 // Get configured interface list
-$ifdescrs = get_configured_interface_with_descr(false, true);
+$ifdescrs = get_configured_interface_with_descr(true);
 
 $if = "wan";
+
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
 }
@@ -104,24 +76,25 @@ if (!is_array($pconfig)) {
 	$pconfig = array();
 }
 
-if (!is_array($config['ppps'])) {
-	$config['ppps'] = array();
-}
-if (!is_array($config['ppps']['ppp'])) {
-	$config['ppps']['ppp'] = array();
-}
+init_config_arr(array('ppps', 'ppp'));
 $a_ppps = &$config['ppps']['ppp'];
 
-function remove_bad_chars($string) {
-	return preg_replace('/[^a-z_0-9]/i', '', $string);
-}
-
-if (!is_array($config['gateways']['gateway_item'])) {
-	$config['gateways']['gateway_item'] = array();
-}
-
+init_config_arr(array('gateways', 'gateway_item'));
 $a_gateways = &$config['gateways']['gateway_item'];
 
+$interfaces = get_configured_interface_with_descr();
+/* Interfaces which have addresses configired elsewhere and should not be
+ * configured here. See https://redmine.pfsense.org/issues/8687 */
+$no_address_interfaces = array("ovpn", "ipsec", "gif", "gre");
+$show_address_controls = true;
+$realifname = get_real_interface($if);
+foreach ($no_address_interfaces as $ifbl) {
+	if (substr($realifname, 0, strlen($ifbl)) == $ifbl) {
+		$show_address_controls = false;
+	}
+}
+
+init_config_arr(array('interfaces', $if));
 $wancfg = &$config['interfaces'][$if];
 $old_wancfg = $wancfg;
 $old_wancfg['realif'] = get_real_interface($if);
@@ -260,6 +233,7 @@ $pconfig['adv_dhcp6_id_assoc_statement_prefix_vltime'] = $wancfg['adv_dhcp6_id_a
 
 $pconfig['adv_dhcp6_prefix_interface_statement_sla_id'] = $wancfg['adv_dhcp6_prefix_interface_statement_sla_id'];
 $pconfig['adv_dhcp6_prefix_interface_statement_sla_len'] = $wancfg['adv_dhcp6_prefix_interface_statement_sla_len'];
+$pconfig['adv_dhcp6_prefix_selected_interface'] = $wancfg['adv_dhcp6_prefix_selected_interface'];
 
 $pconfig['adv_dhcp6_authentication_statement_authname'] = $wancfg['adv_dhcp6_authentication_statement_authname'];
 $pconfig['adv_dhcp6_authentication_statement_protocol'] = $wancfg['adv_dhcp6_authentication_statement_protocol'];
@@ -283,6 +257,8 @@ $pconfig['enable'] = isset($wancfg['enable']);
 switch ($wancfg['ipaddr']) {
 	case "dhcp":
 		$pconfig['type'] = "dhcp";
+		$pconfig['dhcpvlanenable'] = isset($wancfg['dhcpvlanenable']);
+		$pconfig['dhcpcvpt'] = $wancfg['dhcpcvpt'];
 		break;
 	case "pppoe":
 	case "pptp":
@@ -317,6 +293,10 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
 		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
+		$pconfig['dhcp6withoutra'] = isset($wancfg['dhcp6withoutra']);
+		$pconfig['dhcp6norelease'] = isset($wancfg['dhcp6norelease']);
+		$pconfig['dhcp6vlanenable'] = isset($wancfg['dhcp6vlanenable']);
+		$pconfig['dhcp6cvpt'] = $wancfg['dhcp6cvpt'];
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -343,6 +323,7 @@ switch ($wancfg['ipaddrv6']) {
 	default:
 		if (is_ipaddrv6($wancfg['ipaddrv6'])) {
 			$pconfig['type6'] = "staticv6";
+			$pconfig['ipv6usev4iface'] = isset($wancfg['ipv6usev4iface']);
 			$pconfig['ipaddrv6'] = $wancfg['ipaddrv6'];
 			$pconfig['subnetv6'] = $wancfg['subnetv6'];
 			$pconfig['gatewayv6'] = $wancfg['gatewayv6'];
@@ -438,14 +419,18 @@ if (isset($wancfg['wireless'])) {
 
 }
 
+$changes_applied = false;
+
 if ($_POST['apply']) {
 	unset($input_errors);
 	if (!is_subsystem_dirty('interfaces')) {
 		$input_errors[] = gettext("The settings have already been applied!");
 	} else {
+		$retval = 0;
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
 
+		$vlan_redo = false;
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
 			foreach ($toapplylist as $ifapply => $ifcfgo) {
@@ -468,38 +453,49 @@ if ($_POST['apply']) {
 						services_dhcpd_configure();
 					}
 				}
+				if (interface_has_clones(get_real_interface($ifapply))) {
+					$vlan_redo = true;
+				}
 			}
 		}
+
+		/*
+		 * If the parent interface has changed above, the VLANs needs to be
+		 * redone.
+		 */
+		if ($vlan_redo) {
+			interfaces_vlan_configure();
+		}
+
 		/* restart snmp so that it binds to correct address */
-		services_snmpd_configure();
+		$retval |= services_snmpd_configure();
 
 		/* sync filter configuration */
 		setup_gateways_monitor();
 
 		clear_subsystem_dirty('interfaces');
 
-		filter_configure();
+		$retval |= filter_configure();
 
 		enable_rrd_graphing();
+
+		$changes_applied = true;
 
 		if (is_subsystem_dirty('staticroutes') && (system_routing_configure() == 0)) {
 			clear_subsystem_dirty('staticroutes');
 		}
 	}
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
-	header("Location: interfaces.php?if={$if}");
-	exit;
-} else if ($_POST) {
+} else if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
+	if (ctype_xdigit($_POST['track6-prefix-id--hex'])) {
 		$pconfig['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);
 	} else {
 		$pconfig['track6-prefix-id'] = 0;
 	}
-	conf_mount_rw();
 
 	/* filter out spaces from descriptions */
 	$_POST['descr'] = remove_bad_chars($_POST['descr']);
@@ -517,38 +513,77 @@ if ($_POST['apply']) {
 		unset($_POST['pppoe_resetdate']);
 		unset($_POST['pppoe_pr_preset_val']);
 	}
-	/* description unique? */
-	foreach ($ifdescrs as $ifent => $ifdescr) {
-		if ($if != $ifent && $ifdescr == $_POST['descr']) {
-			$input_errors[] = gettext("An interface with the specified description already exists.");
-			break;
-		}
-	}
 
-	/* Is the description already used as an alias name? */
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if ($alias['name'] == $_POST['descr']) {
-				$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
-			}
-		}
-	}
-
-	/* Is the description already used as an interface group name? */
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
-			if ($ifgroupentry['ifname'] == $_POST['descr']) {
-				$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $wancfg['descr']);
-			}
-		}
-	}
-
-	if (is_numeric($_POST['descr'])) {
-		$input_errors[] = gettext("The interface description cannot contain only numbers.");
-	}
 	/* input validation */
-	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && (!preg_match("/^staticv4/", $_POST['type']))) {
-		$input_errors[] = gettext("The DHCP Server is active on this interface and it can be used only with a static IP configuration. Please disable the DHCP Server service on this interface first, then change the interface configuration.");
+	$reqdfields = explode(" ", "descr");
+	$reqdfieldsn = array(gettext("Description"));
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (!$input_errors) {
+		/* description unique? */
+		foreach ($ifdescrs as $ifent => $ifdescr) {
+			if ($if != $ifent && (strcasecmp($ifdescr, $_POST['descr']) == 0)) {
+				$input_errors[] = gettext("An interface with the specified description already exists.");
+				break;
+			}
+		}
+
+		/* Is the description already used as an alias name? */
+		if (is_array($config['aliases']['alias'])) {
+			foreach ($config['aliases']['alias'] as $alias) {
+				if (strcasecmp($alias['name'], $_POST['descr']) == 0) {
+					$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
+				}
+			}
+		}
+
+		/* Is the description already used as an interface group name? */
+		if (is_array($config['ifgroups']['ifgroupentry'])) {
+			foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
+				if (strcasecmp($ifgroupentry['ifname'], $_POST['descr']) == 0) {
+					$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $_POST['descr']);
+				}
+			}
+		}
+
+		if (is_numeric($_POST['descr'])) {
+			$input_errors[] = gettext("The interface description cannot contain only numbers.");
+		}
+
+		/*
+		 * Packages (e.g. tinc) create interface groups, reserve this
+		 * namespace pkg_ for them.
+		 * One namespace is shared by Interfaces, Interface Groups and Aliases.
+		 */
+		if (substr($_POST['descr'], 0, 4) == 'pkg_') {
+			$input_errors[] = gettext("The interface description cannot start with pkg_");
+		}
+	}
+
+	if ($_POST['blockbogons'] == "yes" &&
+	    isset($config['system']['ipv6allow']) &&
+	    (!isset($config['system']['maximumtableentries']) ||
+	     $config['system']['maximumtableentries'] <
+	     $g['minimumtableentries_bogonsv6'])) {
+		$input_errors[] = sprintf(gettext(
+		    "In order to block bogon networks the Firewall Maximum Table Entries value in System / Advanced / Firewall must be increased at least to %s."),
+		    $g['minimumtableentries_bogonsv6']);
+	}
+
+	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable'])) {
+		if (!preg_match("/^staticv4/", $_POST['type'])) {
+			$input_errors[] = gettext("The DHCP Server is active " .
+			    "on this interface and it can be used only with " .
+			    "a static IP configuration. Please disable the " .
+			    "DHCP Server service on this interface first, " .
+			    "then change the interface configuration.");
+		} elseif (!empty($_POST['subnet']) && $_POST['subnet'] >= 31) {
+			$input_errors[] = gettext("The DHCP Server is active " .
+			    "on this interface and it can be used only with " .
+			    "IPv4 subnet < 31. Please disable the " .
+			    "DHCP Server service on this interface first, " .
+			    "then change the interface configuration.");
+		}
 	}
 	if (isset($config['dhcpdv6']) && isset($config['dhcpdv6'][$if]['enable']) && ($_POST['type6'] != "staticv6" && $_POST['type6'] != "track6")) {
 		$input_errors[] = gettext("The DHCP6 Server is active on this interface and it can be used only with a static IPv6 configuration. Please disable the DHCPv6 Server service on this interface first, then change the interface configuration.");
@@ -630,15 +665,15 @@ if ($_POST['apply']) {
 			break;
 		case "6rd":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && ($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6'])) {
-					if ($config[interfaces][$ifent]['prefix-6rd'] == $_POST['prefix-6rd']) {
+				if ($if != $ifent && ($config['interfaces'][$ifent]['ipaddrv6'] == $_POST['type6'])) {
+					if ($config['interfaces'][$ifent]['prefix-6rd'] == $_POST['prefix-6rd']) {
 						$input_errors[] = gettext("Only one interface can be configured within a single 6rd prefix.");
 						break;
 					}
 				}
 			}
 			if (!is_ipaddrv4($_POST['gateway-6rd'])) {
-				$input_errors[] = gettext("6RD Border Gateway must be an IPv4 address.");
+				$input_errors[] = gettext("6RD Border Relay must be an IPv4 address.");
 			}
 			if (in_array($wancfg['ipaddrv6'], array())) {
 				$input_errors[] = sprintf(gettext("The interface must be reassigned to configure as %s."), $_POST['type6']);
@@ -646,7 +681,7 @@ if ($_POST['apply']) {
 			break;
 		case "6to4":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && ($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6'])) {
+				if ($if != $ifent && ($config['interfaces'][$ifent]['ipaddrv6'] == $_POST['type6'])) {
 					$input_errors[] = sprintf(gettext("Only one interface can be configured as 6to4."), $_POST['type6']);
 					break;
 				}
@@ -665,7 +700,7 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("A valid interface to track must be selected.");
 			}
 
-			if ($_POST['track6-prefix-id--hex'] != "" && !is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
+			if ($_POST['track6-prefix-id--hex'] != "" && !ctype_xdigit($_POST['track6-prefix-id--hex'])) {
 				$input_errors[] = gettext("A valid hexadecimal number must be entered for the IPv6 prefix ID.");
 			} else {
 				$track6_prefix_id = intval($_POST['track6-prefix-id--hex'], 16);
@@ -691,7 +726,7 @@ if ($_POST['apply']) {
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$staticroutes = get_staticroutes(true);
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
-	if ($_POST['ipaddr']) {
+	if (($_POST['type'] == 'staticv4') && $_POST['ipaddr']) {
 		if (!is_ipaddrv4($_POST['ipaddr'])) {
 			$input_errors[] = gettext("A valid IPv4 address must be specified.");
 		} else {
@@ -723,7 +758,9 @@ if ($_POST['apply']) {
 			}
 		}
 	}
-	if ($_POST['ipaddrv6']) {
+	if (($_POST['type6'] == 'staticv6') && $_POST['ipaddrv6']) {
+		$_POST['ipaddrv6'] = addrtolower($_POST['ipaddrv6']);
+
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
 		} else {
@@ -761,27 +798,37 @@ if ($_POST['apply']) {
 	if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet']))) {
 		$input_errors[] = gettext("A valid alias subnet bit count must be specified.");
 	}
-	if ($_POST['dhcprejectfrom'] && !is_ipaddrv4($_POST['dhcprejectfrom'])) {
-		$input_errors[] = gettext("A valid alias IP address must be specified to reject DHCP Leases from.");
+	if ($_POST['dhcprejectfrom'] && !validate_ipv4_list($_POST['dhcprejectfrom'])) {
+		$input_errors[] = gettext("An invalid IP address was detected in the 'Reject leases from' field.");
 	}
-	if (($_POST['gateway'] != "none") || ($_POST['gatewayv6'] != "none")) {
+
+	// Only check the IPv4 gateway already exists if it is not "none" and it is not a gateway that the user is adding
+	if (($_POST['gateway'] != "none") && (!$_POST['gatewayip4'] || ($_POST['gateway'] != $_POST['gatewayname4']))) {
 		$match = false;
 		foreach ($a_gateways as $gateway) {
 			if (in_array($_POST['gateway'], $gateway)) {
 				$match = true;
 			}
 		}
+		if (!$match) {
+			$input_errors[] = gettext("A valid IPv4 gateway must be specified.");
+		}
+	}
+	// Only check the IPv6 gateway already exists if it is not "none" and it is not a gateway that the user is adding
+	if (($_POST['gatewayv6'] != "none") && (!$_POST['gatewayip6'] || ($_POST['gatewayv6'] != $_POST['gatewayname6']))) {
+		$match = false;
 		foreach ($a_gateways as $gateway) {
 			if (in_array($_POST['gatewayv6'], $gateway)) {
 				$match = true;
 			}
 		}
 		if (!$match) {
-			$input_errors[] = gettext("A valid gateway must be specified.");
+			$input_errors[] = gettext("A valid IPv6 gateway must be specified.");
 		}
 	}
-	if (($_POST['provider'] && !is_domain($_POST['provider']))) {
-		$input_errors[] = gettext("The service name contains invalid characters.");
+
+	if (($_POST['provider'] && (strpos($_POST['provider'], "\"")))) {
+		$input_errors[] = gettext("The service name may not contain quote characters.");
 	}
 	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) {
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
@@ -830,7 +877,7 @@ if ($_POST['apply']) {
 
 		unset($min_mtu, $max_mtu);
 
-		if (stristr($wancfg['if'], "_vlan")) {
+		if (interface_is_vlan($wancfg['if']) != NULL) {
 			$realhwif_array = get_parent_interface($wancfg['if']);
 			// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 			$parent_realhwif = $realhwif_array[0];
@@ -844,7 +891,7 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("The MTU of a VLAN cannot be greater than that of its parent interface.");
 		} else {
 			foreach ($config['interfaces'] as $idx => $ifdata) {
-				if (($idx == $if) || !preg_match('/_vlan[0-9]/', $ifdata['if'])) {
+				if (($idx == $if) || interface_is_vlan($ifdata['if']) == NULL) {
 					continue;
 				}
 
@@ -969,6 +1016,38 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("PTPP Password and confirmed password must match!");
 	}
 
+	if ($_POST['gatewayip4']) {
+		// The user wants to add an IPv4 gateway - validate the settings
+		$gateway_settings4 = array();
+
+		$gateway_settings4['name'] = $_POST['gatewayname4'];
+		$gateway_settings4['interface'] = $_POST['if'];
+		$gateway_settings4['gateway'] = $_POST['gatewayip4'];
+		$gateway_settings4['descr'] = $_POST['gatewaydescr4'];
+		$gateway_settings4['defaultgw'] = $_POST['defaultgw4'];
+		$gateway_settings4['ipprotocol'] = 'inet';
+		$gw_input_errors = validate_gateway($gateway_settings4, '', $_POST['ipaddr'], $_POST['subnet']);
+		foreach ($gw_input_errors as $input_error_text) {
+			$input_errors[] = $input_error_text;
+		}
+	}
+
+	if ($_POST['gatewayip6']) {
+		// The user wants to add an IPv6 gateway - validate the settings
+		$gateway_settings6 = array();
+
+		$gateway_settings6['name'] = $_POST['gatewayname6'];
+		$gateway_settings6['interface'] = $_POST['if'];
+		$gateway_settings6['gateway'] = $_POST['gatewayip6'];
+		$gateway_settings6['descr'] = $_POST['gatewaydescr6'];
+		$gateway_settings6['defaultgw'] = $_POST['defaultgw6'];
+		$gateway_settings6['ipprotocol'] = 'inet6';
+		$gw_input_errors = validate_gateway($gateway_settings6, '', $_POST['ipaddrv6'], $_POST['subnetv6']);
+		foreach ($gw_input_errors as $input_error_text) {
+			$input_errors[] = $input_error_text;
+		}
+	}
+
 	if (!$input_errors) {
 		// These 3 fields can be a list of multiple data items when used for MLPPP.
 		// The UI in this code only processes the first of the list, so save the data here then we can preserve any other entries.
@@ -984,10 +1063,7 @@ if ($_POST['apply']) {
 				kill_dhclient_process($wancfg['if']);
 			}
 			if ($wancfg['ipaddrv6'] == "dhcp6") {
-				$pid = find_dhcp6c_process($wancfg['if']);
-				if ($pid) {
-					posix_kill($pid, SIGTERM);
-				}
+				kill_dhcp6client_process($wancfg['if'],true);
 			}
 		}
 		$ppp = array();
@@ -1008,12 +1084,20 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6-ia-pd-send-hint']);
 		unset($wancfg['dhcp6prefixonly']);
 		unset($wancfg['dhcp6usev4iface']);
+		unset($wancfg['ipv6usev4iface']);
 		unset($wancfg['dhcp6debug']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
+		unset($wancfg['dhcp6withoutra']);
+		unset($wancfg['dhcp6norelease']);
+		unset($wancfg['dhcp6vlanenable']);
+		unset($wancfg['dhcp6cvpt']);
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
+
+		unset($wancfg['dhcpvlanenable']);
+		unset($wancfg['dhcpcvpt']);
 
 		unset($wancfg['adv_dhcp_pt_timeout']);
 		unset($wancfg['adv_dhcp_pt_retry']);
@@ -1052,6 +1136,7 @@ if ($_POST['apply']) {
 
 		unset($wancfg['adv_dhcp6_prefix_interface_statement_sla_id']);
 		unset($wancfg['adv_dhcp6_prefix_interface_statement_sla_len']);
+		unset($wancfg['adv_dhcp6_prefix_selected_interface']);
 
 		unset($wancfg['adv_dhcp6_authentication_statement_authname']);
 		unset($wancfg['adv_dhcp6_authentication_statement_protocol']);
@@ -1140,6 +1225,14 @@ if ($_POST['apply']) {
 				$wancfg['dhcp_plus'] = $_POST['dhcp_plus'] == "yes" ? true : false;
 				if ($gateway_item) {
 					$a_gateways[] = $gateway_item;
+				}
+				if ($_POST['dhcpvlanenable'] == "yes") {
+					$wancfg['dhcpvlanenable'] = true;
+				}
+				if (!empty($_POST['dhcpcvpt'])) {
+					$wancfg['dhcpcvpt'] = $_POST['dhcpcvpt'];
+				} else {
+					unset($wancfg['dhcpcvpt']);
 				}
 				break;
 			case "ppp":
@@ -1234,6 +1327,9 @@ if ($_POST['apply']) {
 			case "staticv6":
 				$wancfg['ipaddrv6'] = $_POST['ipaddrv6'];
 				$wancfg['subnetv6'] = $_POST['subnetv6'];
+				if ($_POST['ipv6usev4iface'] == "yes") {
+					$wancfg['ipv6usev4iface'] = true;
+				}
 				if ($_POST['gatewayv6'] != "none") {
 					$wancfg['gatewayv6'] = $_POST['gatewayv6'];
 				}
@@ -1256,6 +1352,21 @@ if ($_POST['apply']) {
 				}
 				if ($_POST['dhcp6debug'] == "yes") {
 					$wancfg['dhcp6debug'] = true;
+				}
+
+				if ($_POST['dhcp6withoutra'] == "yes") {
+					$wancfg['dhcp6withoutra'] = true;
+				}
+				if ($_POST['dhcp6norelease'] == "yes") {
+					$wancfg['dhcp6norelease'] = true;
+				}
+				if ($_POST['dhcp6vlanenable'] == "yes") {
+					$wancfg['dhcp6vlanenable'] = true;
+				}
+				if (!empty($_POST['dhcp6cvpt'])) {
+					$wancfg['dhcp6cvpt'] = $_POST['dhcp6cvpt'];
+				} else {
+					unset($wancfg['dhcp6cvpt']);
 				}
 
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options'])) {
@@ -1309,7 +1420,9 @@ if ($_POST['apply']) {
 				if (is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_len'])) {
 					$wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] = $_POST['adv_dhcp6_prefix_interface_statement_sla_len'];
 				}
-
+				if (!empty($_POST['adv_dhcp6_prefix_selected_interface'])) {
+					$wancfg['adv_dhcp6_prefix_selected_interface'] = $_POST['adv_dhcp6_prefix_selected_interface'];
+				}
 				if (!empty($_POST['adv_dhcp6_authentication_statement_authname'])) {
 					$wancfg['adv_dhcp6_authentication_statement_authname'] = $_POST['adv_dhcp6_authentication_statement_authname'];
 				}
@@ -1370,7 +1483,7 @@ if ($_POST['apply']) {
 				$wancfg['track6-interface'] = $_POST['track6-interface'];
 				if ($_POST['track6-prefix-id--hex'] === "") {
 					$wancfg['track6-prefix-id'] = 0;
-				} else if (is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
+				} else if (ctype_xdigit($_POST['track6-prefix-id--hex'])) {
 					$wancfg['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);
 				} else {
 					$wancfg['track6-prefix-id'] = 0;
@@ -1420,8 +1533,15 @@ if ($_POST['apply']) {
 			handle_wireless_post();
 		}
 
-		conf_mount_ro();
 		write_config();
+
+		if ($_POST['gatewayip4']) {
+			save_gateway($gateway_settings4);
+		}
+
+		if ($_POST['gatewayip6']) {
+			save_gateway($gateway_settings6);
+		}
 
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
@@ -1441,7 +1561,7 @@ if ($_POST['apply']) {
 		exit;
 	}
 
-} // end if ($_POST)
+} // end if ($_POST['save'])
 
 function handle_wireless_post() {
 	global $_POST, $config, $g, $wancfg, $if, $wl_countries_attr, $wlanbaseif;
@@ -1622,7 +1742,7 @@ function check_wireless_mode() {
 		if (!interface_wireless_clone("{$wlanif}_", $wancfg)) {
 			$input_errors[] = sprintf(gettext("Unable to change mode to %s. The maximum number of wireless clones supported in this mode may have been reached."), $wlan_modes[$wancfg['wireless']['mode']]);
 		} else {
-			mwexec("/sbin/ifconfig " . escapeshellarg($wlanif) . "_ destroy");
+			pfSense_interface_destroy("{$wlanif}_");
 		}
 		$wancfg['wireless']['mode'] = $old_wireless_mode;
 	}
@@ -1643,7 +1763,7 @@ foreach ($mediaopts as $mediaopt) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"), $wancfg['descr']);
+$pgtitle = array(gettext("Interfaces"), "{$wancfg['descr']} ({$realifname})");
 $shortcut_section = "interfaces";
 
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP"));
@@ -1653,6 +1773,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 $ip = $_SERVER['REMOTE_ADDR'];
 $mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
 $mymac = str_replace("\n", "", $mymac);
+$defgatewayname4 = $wancfg['descr'] . "GW";
+$defgatewayname6 = $wancfg['descr'] . "GWv6";
 
 function build_mediaopts_list() {
 	global $mediaopts_list;
@@ -1706,10 +1828,9 @@ if (is_subsystem_dirty('interfaces')) {
 					gettext("Don't forget to adjust the DHCP Server range if needed after applying."));
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
-
 
 $form = new Form();
 
@@ -1725,24 +1846,42 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Input(
 	'descr',
-	'Description',
+	'*Description',
 	'text',
 	$pconfig['descr']
 ))->setHelp('Enter a description (name) for the interface here.');
 
-$section->addInput(new Form_Select(
-	'type',
-	'IPv4 Configuration Type',
-	$pconfig['type'],
-	$types4
-));
-
-$section->addInput(new Form_Select(
-	'type6',
-	'IPv6 Configuration Type',
-	$pconfig['type6'],
-	$types6
-));
+if ($show_address_controls) {
+	$section->addInput(new Form_Select(
+		'type',
+		'IPv4 Configuration Type',
+		$pconfig['type'],
+		$types4
+	));
+	$section->addInput(new Form_Select(
+		'type6',
+		'IPv6 Configuration Type',
+		$pconfig['type6'],
+		$types6
+	));
+} else {
+	$section->addInput(new Form_StaticText(
+		'IPv4/IPv6 Configuration',
+		"This interface type does not support manual address configuration on this page. "
+	));
+	$section->addInput(new Form_Input(
+		'type',
+		null,
+		'hidden',
+		'none'
+	));
+	$section->addInput(new Form_Input(
+		'type6',
+		null,
+		'hidden',
+		'none'
+	));
+}
 
 $macaddress = new Form_Input(
 	'spoofmac',
@@ -1752,21 +1891,17 @@ $macaddress = new Form_Input(
 	['placeholder' => 'xx:xx:xx:xx:xx:xx']
 );
 
-$btnmymac = new Form_Button(
-	'btnmymac',
-	'Copy My MAC',
-	null,
-	'fa-clone'
-	);
+if (interface_is_vlan($realifname)) {
+	$macaddress->setDisabled();
+	$macaddress->setHelp('The MAC address of a VLAN interface must be ' .
+	    'set on its parent interface');
+} else {
+	$macaddress->setHelp('This field can be used to modify ("spoof") the ' .
+	    'MAC address of this interface.%sEnter a MAC address in the ' .
+	    'following format: xx:xx:xx:xx:xx:xx or leave blank.', '<br />');
+}
 
-$btnmymac->setAttribute('type','button')->addClass('btn-success btn-sm');
-
-$group = new Form_Group('MAC Address');
-$group->add($macaddress);
-// $group->add($btnmymac);
-$group->setHelp('This field can be used to modify ("spoof") the MAC address of this interface.' . '<br />' .
-				'Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank.');
-$section->add($group);
+$section->addInput($macaddress);
 
 $section->addInput(new Form_Input(
 	'mtu',
@@ -1790,8 +1925,8 @@ if (count($mediaopts_list) > 0) {
 		'Speed and Duplex',
 		rtrim($config['interfaces'][$if]['media'] . ' ' . $config['interfaces'][$if]['mediaopt']),
 		build_mediaopts_list()
-	))->setHelp('Explicitly set speed and duplex mode for this interface.' . '<br />' .
-				'WARNING: MUST be set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.');
+	))->setHelp('Explicitly set speed and duplex mode for this interface.%s' .
+				'WARNING: MUST be set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.', '<br />');
 }
 
 $form->add($section);
@@ -1801,8 +1936,9 @@ $section->addClass('staticv4');
 
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
-	'IPv4 Address',
-	$pconfig['ipaddr']
+	'*IPv4 Address',
+	$pconfig['ipaddr'],
+	'V4'
 ))->addMask('subnet', $pconfig['subnet'], 32);
 
 $group = new Form_Group('IPv4 Upstream gateway');
@@ -1815,15 +1951,15 @@ $group->add(new Form_Select(
 ));
 
 $group->add(new Form_Button(
-	'addgw',
+	'addgw4',
 	'Add a new gateway',
 	null,
 	'fa-plus'
-))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
+))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway4')->setAttribute('data-toggle', 'modal');
 
-$group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
+$group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%1$s' .
 				'On local area network interfaces the upstream gateway should be "none". ' .
-				gettext('Gateways can be managed by ') . '<a target="_blank" href="system_gateways.php">' . gettext(" clicking here") . '</a>.');
+				'Gateways can be managed by %2$sclicking here%3$s.', '<br />', '<a target="_blank" href="system_gateways.php">', '</a>');
 
 $section->add($group);
 
@@ -1834,9 +1970,17 @@ $section->addClass('staticv6');
 
 $section->addInput(new Form_IpAddress(
 	'ipaddrv6',
-	'IPv6 address',
-	$pconfig['ipaddrv6']
+	'*IPv6 address',
+	$pconfig['ipaddrv6'],
+	'V6'
 ))->addMask('subnetv6', $pconfig['subnetv6'], 128);
+
+$section->addInput(new Form_Checkbox(
+	'ipv6usev4iface',
+	'Use IPv4 connectivity as parent interface',
+	'IPv6 will use the IPv4 connectivity link (PPPoE)',
+	$pconfig['ipv6usev4iface']
+));
 
 $group = new Form_Group('IPv6 Upstream gateway');
 
@@ -1854,8 +1998,8 @@ $group->add(new Form_Button(
 	'fa-plus'
 ))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway6')->setAttribute('data-toggle', 'modal');
 
-$group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
-				'On local LANs the upstream gateway should be "none". ');
+$group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%s' .
+				'On local LANs the upstream gateway should be "none". ', '<br />');
 
 $section->add($group);
 $form->add($section);
@@ -1867,26 +2011,28 @@ $modal->addInput(new Form_Checkbox(
 	'defaultgw6',
 	'Default',
 	'Default gateway',
-	($if == "wan" || $if == "WAN")
+	isset($gateway_settings6['defaultgw']) ? $gateway_settings6['defaultgw'] : ($if == "wan" || $if == "WAN")
 ));
 
 $modal->addInput(new Form_Input(
-	'name6',
+	'gatewayname6',
 	'Gateway name',
 	'text',
-	$wancfg['descr'] . "GWv6"
+	($gateway_settings6['name'] == "") ? $defgatewayname6 : $gateway_settings6['name']
 ));
 
 $modal->addInput(new Form_IpAddress(
 	'gatewayip6',
 	'Gateway IPv6',
-	null
+	$gateway_settings6['gateway'],
+	'V6'
 ));
 
 $modal->addInput(new Form_Input(
 	'gatewaydescr6',
 	'Description',
-	'text'
+	'text',
+	$gateway_settings6['descr']
 ));
 
 $btnaddgw6 = new Form_Button(
@@ -1947,7 +2093,8 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'alias-address',
 	'Alias IPv4 address',
-	$pconfig['alias-address']
+	$pconfig['alias-address'],
+	'V4'
 ))->addMask('alias-subnet', $pconfig['alias-subnet'], 32)->setHelp('The value in this field is used as a fixed alias IPv4 address by the DHCP client.');
 
 $section->addInput(new Form_Input(
@@ -1955,8 +2102,29 @@ $section->addInput(new Form_Input(
 	'Reject leases from',
 	'text',
 	$pconfig['dhcprejectfrom']
-))->setHelp('If there is a certain upstream DHCP server that should be ignored, place the IP address or subnet of the DHCP server to be ignored here. ' .
-			'This is useful for rejecting leases from cable modems that offer private IPs when they lose upstream sync.');
+))->setHelp('To have the DHCP client reject offers from specific DHCP servers, enter their IP addresses here ' .
+			'(separate multiple entries with a comma). ' .
+			'This is useful for rejecting leases from cable modems that offer private IP addresses when they lose upstream sync.');
+
+if (interface_is_vlan($wancfg['if']) != NULL) {
+
+	$group = new Form_Group('DHCP VLAN Priority');
+	$group->add(new Form_Checkbox(
+		'dhcpvlanenable',
+		null,
+		'Enable dhcpclient VLAN Priority tagging',
+		$pconfig['dhcpvlanenable']
+	))->setHelp('Normally off unless specifically required by the ISP.');
+
+	$group->add(new Form_Select(
+		'dhcpcvpt',
+		'VLAN Prio',
+		$pconfig['dhcpcvpt'],
+		$vlanprio
+	))->setHelp('Choose 802.1p priority to set.');
+
+	$section->add($group);
+}
 
 $group = new Form_Group('Protocol timing');
 $group->addClass('dhcpadvanced');
@@ -2041,8 +2209,8 @@ $group->add(new Form_Checkbox(
 	'SavedCfg'
 ))->displayAsRadio();
 
-$group->setHelp('The values in these fields are DHCP protocol timings used when requesting a lease.' . '<br />' .
-				'<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING">' . 'See here more information' . '</a>');
+$group->setHelp('The values in these fields are DHCP protocol timings used when requesting a lease.%1$s' .
+				'See %2$shere%3$s for more information', '<br />', '<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING">', '</a>');
 
 $section->add($group);
 
@@ -2051,10 +2219,10 @@ $section->addInput(new Form_Input(
 	'Configuration File Override',
 	'text',
 	$pconfig['adv_dhcp_config_file_override_path']
-))->setWidth(9)->sethelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
-			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
-			'Where C is U(pper) or L(ower) Case, and D is ":-." Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
-			'Some ISPs may require certain options be or not be sent.');
+))->setWidth(9)->sethelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]] %1$s' .
+			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} %1$s'.
+			'Where C is U(pper) or L(ower) Case, and D is ":-." Delimiter (space, colon, hyphen, or period) (omitted for none).%1$s' .
+			'Some ISPs may require certain options be or not be sent.', '<br />');
 
 $form->add($section);
 
@@ -2066,18 +2234,18 @@ $section->addInput(new Form_Input(
 	'Send options',
 	'text',
 	$pconfig['adv_dhcp_send_options']
-))->setWidth(9)->sethelp('The values in this field are DHCP options to be sent when requesting a DHCP lease.	 [option declaration [, ...]]' . '<br />' .
-			'Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
-			'Where C is U(pper) or L(ower) Case, and D is " :-." Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
-			'Some ISPs may require certain options be or not be sent.');
+))->setWidth(9)->sethelp('The values in this field are DHCP options to be sent when requesting a DHCP lease.	 [option declaration [, ...]] %1$s' .
+			'Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} %1$s' .
+			'Where C is U(pper) or L(ower) Case, and D is " :-." Delimiter (space, colon, hyphen, or period) (omitted for none).%1$s' .
+			'Some ISPs may require certain options be or not be sent.', '<br />');
 
 $section->addInput(new Form_Input(
 	'adv_dhcp_request_options',
 	'Request options',
 	'text',
 	$pconfig['adv_dhcp_request_options']
-))->setWidth(9)->sethelp('The values in this field are DHCP option 55 to be sent when requesting a DHCP lease.  [option [, ...]]' . '<br />' .
-			'Some ISPs may require certain options be or not be requested.');
+))->setWidth(9)->sethelp('The values in this field are DHCP option 55 to be sent when requesting a DHCP lease.  [option [, ...]] %1$s' .
+			'Some ISPs may require certain options be or not be requested.', '<br />');
 
 $section->addInput(new Form_Input(
 	'adv_dhcp_required_options',
@@ -2091,9 +2259,9 @@ $section->addInput(new Form_Input(
 	'Option modifiers',
 	'text',
 	$pconfig['adv_dhcp_option_modifiers']
-))->setWidth(9)->sethelp('The values in this field are DHCP option modifiers applied to the obtained DHCP lease.	 [modifier option declaration [, ...]]' . '<br />' .
-			'modifiers: (default, supersede, prepend, append)' . '<br />' .
-			'<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS">' . 'See here more information' . '</a>');
+))->setWidth(9)->sethelp('The values in this field are DHCP option modifiers applied to the obtained DHCP lease.	 [modifier option declaration [, ...]] %1$s' .
+			'modifiers: (default, supersede, prepend, append) %1$s' .
+			'See %2$shere%3$s more information', '<br />', '<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS">', '</a>');
 
 $form->add($section);
 
@@ -2138,7 +2306,7 @@ $section->addInput(new Form_Select(
 	'dhcp6-ia-pd-len',
 	'DHCPv6 Prefix Delegation size',
 	$pconfig['dhcp6-ia-pd-len'],
-	array("none" => "None", 16 => "48", 12 => "52", 8 => "56", 4 => "60", 3 => "61",  2 => "62", 1 => "63", 0 => "64")
+	array("none" => "None", 16 => "48", 12 => "52", 8 => "56", 5 => "59", 4 => "60", 3 => "61",  2 => "62", 1 => "63", 0 => "64")
 ))->setHelp('The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP.');
 
 $section->addInput(new Form_Checkbox(
@@ -2154,16 +2322,48 @@ $section->addInput(new Form_Checkbox(
 	'Start DHCP6 client in debug mode',
 	$pconfig['dhcp6debug']
 ));
+$section->addInput(new Form_Checkbox(
+	'dhcp6withoutra',
+	'Do not wait for a RA',
+	'Required by some ISPs, especially those not using PPPoE',
+	$pconfig['dhcp6withoutra']
+));
+$section->addInput(new Form_Checkbox(
+	'dhcp6norelease',
+	'Do not allow PD/Address release',
+	'dhcp6c will send a release to the ISP on exit, some ISPs then release the allocated address or prefix. This option prevents that signal ever being sent',
+	$pconfig['dhcp6norelease']
+));
+
+if (interface_is_vlan($wancfg['if']) != NULL) {
+	$group = new Form_Group('DHCP6 VLAN Priority');
+
+	$group->add(new Form_Checkbox(
+		'dhcp6vlanenable',
+		null,
+		'Enable dhcp6c VLAN Priority tagging',
+		$pconfig['dhcp6vlanenable']
+	))->setHelp('Normally off unless specifically required by the ISP.');
+
+	$group->add(new Form_Select(
+		'dhcp6cvpt',
+		'VLAN Prio',
+		$pconfig['dhcp6cvpt'],
+		$vlanprio
+	))->setHelp('Choose 802.1p priority to set.');
+
+	$section->add($group);
+}
 
 $section->addInput(new Form_Input(
 	'adv_dhcp6_config_file_override_path',
 	'Configuration File Override',
 	'text',
 	$pconfig['adv_dhcp6_config_file_override_path']
-))->setWidth(9)->setHelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
-			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
-			'Where C is U(pper) or L(ower) Case, and D is " :-." Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
-			'Some ISPs may require certain options be or not be sent.');
+))->setWidth(9)->setHelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]] %1$s' .
+			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} %1$s' .
+			'Where C is U(pper) or L(ower) Case, and D is " :-." Delimiter (space, colon, hyphen, or period) (omitted for none).%1$s' .
+			'Some ISPs may require certain options be or not be sent.', '<br />');
 
 $form->add($section);
 
@@ -2185,26 +2385,26 @@ $section->addInput(new Form_Input(
 	'Send options',
 	'text',
 	$pconfig['adv_dhcp6_interface_statement_send_options']
-))->setWidth(9)->sethelp('DHCP send options to be sent when requesting a DHCP lease.	 [option declaration [, ...]]' . '<br />' .
-			'Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
-			'Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
-			'Some DHCP services may require certain options be or not be sent.');
+))->setWidth(9)->sethelp('DHCP send options to be sent when requesting a DHCP lease.	 [option declaration [, ...]] %1$s' .
+			'Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} %1$s' .
+			'Where C is U(pper) or L(ower) Case, and D is " :-." Delimiter (space, colon, hyphen, or period) (omitted for none).%1$s' .
+			'Some DHCP services may require certain options be or not be sent.', '<br />');
 
 $section->addInput(new Form_Input(
 	'adv_dhcp6_interface_statement_request_options',
 	'Request Options',
 	'text',
 	$pconfig['adv_dhcp6_interface_statement_request_options']
-))->setWidth(9)->sethelp('DHCP request options to be sent when requesting a DHCP lease.	[option [, ...]]' . '<br />' .
-			'Some DHCP services may require certain options be or not be requested.');
+))->setWidth(9)->sethelp('DHCP request options to be sent when requesting a DHCP lease.	[option [, ...]] %1$s' .
+			'Some DHCP services may require certain options be or not be requested.', '<br />');
 
 $section->addInput(new Form_Input(
 	'adv_dhcp6_interface_statement_script',
 	'Scripts',
 	'text',
 	$pconfig['adv_dhcp6_interface_statement_script']
-))->setWidth(9)->sethelp('Absolute path to a script invoked on certain conditions including when a reply message is received.' . '<br />' .
-			'[/[dirname/[.../]]filename[.ext]].');
+))->setWidth(9)->sethelp('Absolute path to a script invoked on certain conditions including when a reply message is received.%1$s' .
+			'[/[dirname/[.../]]filename[.ext]].', '<br />');
 
 $group = new Form_Group('Identity Association Statement');
 
@@ -2226,7 +2426,8 @@ $group->add(new Form_Input(
 $group->add(new Form_IpAddress(
 	'adv_dhcp6_id_assoc_statement_address',
 	null,
-	$pconfig['adv_dhcp6_id_assoc_statement_address']
+	$pconfig['adv_dhcp6_id_assoc_statement_address'],
+	'V6'
 ))->sethelp('IPv6 address');
 
 $group->add(new Form_Input(
@@ -2266,7 +2467,8 @@ $group->add(new Form_Input(
 $group->add(new Form_IpAddress(
 	'adv_dhcp6_id_assoc_statement_prefix',
 	null,
-	$pconfig['adv_dhcp6_id_assoc_statement_prefix']
+	$pconfig['adv_dhcp6_id_assoc_statement_prefix'],
+	'V6'
 ))->sethelp('IPv6 prefix');
 
 $group->add(new Form_Input(
@@ -2302,6 +2504,14 @@ $group->add(new Form_Input(
 ))->sethelp('sla-len');
 
 $section->add($group);
+
+$group = new Form_Group('Select prefix interface');
+$section->addInput(new Form_Select(
+	'adv_dhcp6_prefix_selected_interface',
+	'Prefix Interface',
+	$pconfig['adv_dhcp6_prefix_selected_interface'],
+	$interfaces
+))->setHelp('Select the interface on which to apply the prefix delegation.');
 
 $group = new Form_Group('Authentication statement');
 
@@ -2376,7 +2586,7 @@ $group->add(new Form_Input(
 	$pconfig['adv_dhcp6_key_info_statement_expire']
 ))->sethelp('Expire');
 
-$group->setHelp('<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+10.1-RELEASE+and+Ports#Interface_statement">' . 'See here more information' . '</a>');
+$group->setHelp('See %1$shere%2$s more information', '<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+11.0-RELEASE+and+Ports#Interface_statement">', '</a>');
 
 $section->add($group);
 
@@ -2394,7 +2604,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'gateway-6rd',
-	'6RD Border relay',
+	'*6RD Border relay',
 	'text',
 	$pconfig['gateway-6rd']
 ))->sethelp('6RD IPv4 gateway address assigned by the ISP');
@@ -2417,7 +2627,7 @@ function build_ipv6interface_list() {
 
 	$list = array('' => '');
 
-	$interfaces = get_configured_interface_with_descr(false, true);
+	$interfaces = get_configured_interface_with_descr(true);
 	$dynv6ifs = array();
 
 	foreach ($interfaces as $iface => $ifacename) {
@@ -2427,7 +2637,7 @@ function build_ipv6interface_list() {
 			case "dhcp6":
 				$dynv6ifs[$iface] = array(
 					'name' => $ifacename,
-					'ipv6_num_prefix_ids' => pow(2, calculate_ipv6_delegation_length($iface)) - 1
+					'ipv6_num_prefix_ids' => pow(2, (int) calculate_ipv6_delegation_length($iface)) - 1
 				);
 				break;
 			default:
@@ -2451,7 +2661,7 @@ function build_ipv6interface_list() {
 
 $section->addInput(new Form_Select(
 	'track6-interface',
-	'IPv6 Interface',
+	'*IPv6 Interface',
 	$pconfig['track6-interface'],
 	build_ipv6interface_list()
 ))->setHelp('Selects the dynamic IPv6 WAN interface to track for configuration.');
@@ -2465,7 +2675,7 @@ $section->addInput(new Form_Input(
 	'IPv6 Prefix ID',
 	'text',
 	sprintf("%x", $pconfig['track6-prefix-id'])
-))->setHelp('<span id="track6-prefix-id-range"></span>The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.');
+))->setHelp('(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.', '<b>', '</b>', '<span id="track6-prefix-id-range"></span>');
 
 $section->addInput(new Form_Input(
 	'track6-prefix-id-max',
@@ -2518,7 +2728,7 @@ $section->addPassword(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'phone',
-	'Phone number',
+	'*Phone number',
 	'text',
 	$pconfig['phone']
 ))->setHelp('Typically *99# for GSM networks and #777 for CDMA networks.');
@@ -2551,7 +2761,7 @@ function build_port_list() {
 
 $section->addInput(new Form_Select(
 	'port',
-	"Modem port",
+	"*Modem port",
 	$pconfig['port'],
 	build_port_list()
 ));
@@ -2571,14 +2781,14 @@ $section->addClass('pppoe');
 
 $section->addInput(new Form_Input(
 	'pppoe_username',
-	'Username',
+	'*Username',
 	'text',
 	$pconfig['pppoe_username']
 ));
 
 $section->addPassword(new Form_Input(
 	'pppoe_password',
-	'Password',
+	'*Password',
 	'password',
 	$pconfig['pppoe_password']
 ));
@@ -2696,28 +2906,30 @@ $section->addClass('pptp');
 
 $section->addInput(new Form_Input(
 	'pptp_username',
-	'Username',
+	'*Username',
 	'text',
 	$pconfig['pptp_username']
 ));
 
 $section->addPassword(new Form_Input(
 	'pptp_password',
-	'Password',
+	'*Password',
 	'password',
 	$pconfig['pptp_password']
 ));
 
 $section->addInput(new Form_IpAddress(
 	'pptp_local0',
-	'Local IP address',
-	$pconfig['pptp_localip'][0]
+	'*Local IP address',
+	$pconfig['pptp_localip'][0],
+	'V4'
 ))->addMask('pptp_subnet0', $pconfig['pptp_subnet'][0]);
 
 $section->addInput(new Form_IpAddress(
 	'pptp_remote0',
-	'Remote IP address',
-	$pconfig['pptp_remote'][0]
+	'*Remote IP address',
+	$pconfig['pptp_remote'][0],
+	'HOSTV4'
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -2749,7 +2961,7 @@ $section->addInput(new Form_Button(
 	'Advanced and MLPPP',
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
-))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp($mlppp_text . 'Click for additional PPTP and L2TP configuration options. Save first if changes have been made.');
+))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('%sClick for additional PPTP and L2TP configuration options. Save first if changes have been made.', $mlppp_text);
 
 $form->add($section);
 
@@ -2828,8 +3040,8 @@ if (isset($wancfg['wireless'])) {
 		'Channel',
 		$pconfig['channel'],
 		$mode_list
-	))->setHelp('Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain)' . '<br />' .
-				'Not all channels may be supported by some cards.  Auto may override the wireless standard selected above.');
+	))->setHelp('Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain) %1$s' .
+				'Not all channels may be supported by some cards.  Auto may override the wireless standard selected above.', '<br />');
 
 	if (ANTENNAS) {
 		if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
@@ -2918,10 +3130,10 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['reglocation'],
 		['' => gettext('Default'), 'indoor' => gettext('Indoor'), 'outdoor' => gettext('Outdoor'), 'anywhere' => gettext('Anywhere')]
 	))->setHelp('These settings may affect which channels are available and the maximum transmit power allowed on those channels. ' .
-				'Using the correct settings to comply with local regulatory requirements is recommended.' . '<br />' .
+				'Using the correct settings to comply with local regulatory requirements is recommended.%1$s' .
 				'All wireless networks on this interface will be temporarily brought down when changing regulatory settings.  ' .
 				'Some of the regulatory domains or country codes may not be allowed by some cards.	' .
-				'These settings may not be able to add additional channels that are not already supported.');
+				'These settings may not be able to add additional channels that are not already supported.', '<br />');
 
 	$form->add($section);
 
@@ -3137,8 +3349,8 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['blockbogons'],
 	'yes'
 ))->setHelp('Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should ' .
-			'never appear in the Internet routing table, and so should not appear as the source address in any packets received.' . '<br />' .
-			'Note: The update frequency can be changed under System->Advanced Firewall/NAT settings.');
+			'never appear in the Internet routing table, and so should not appear as the source address in any packets received.%1$s' .
+			'Note: The update frequency can be changed under System > Advanced, Firewall & NAT settings.', '<br />');
 
 $form->add($section);
 
@@ -3167,55 +3379,57 @@ $form->addGlobal(new Form_Input(
 
 
 // Add new gateway modal pop-up
-$modal = new Modal('New Gateway', 'newgateway', 'large');
+$modal = new Modal('New IPv4 Gateway', 'newgateway4', 'large');
 
 $modal->addInput(new Form_Checkbox(
-	'defaultgw',
+	'defaultgw4',
 	'Default',
 	'Default gateway',
-	($if == "wan" || $if == "WAN")
+	isset($gateway_settings4['defaultgw']) ? $gateway_settings4['defaultgw'] : ($if == "wan" || $if == "WAN")
 ));
 
 $modal->addInput(new Form_Input(
-	'name',
+	'gatewayname4',
 	'Gateway name',
 	'text',
-	$wancfg['descr'] . "GW"
+	($gateway_settings4['name'] == "") ? $defgatewayname4 : $gateway_settings4['name']
 ));
 
 $modal->addInput(new Form_IpAddress(
-	'gatewayip',
+	'gatewayip4',
 	'Gateway IPv4',
-	null
+	$gateway_settings4['gateway'],
+	'V4'
 ));
 
 $modal->addInput(new Form_Input(
-	'gatewaydescr',
+	'gatewaydescr4',
 	'Description',
-	'text'
+	'text',
+	$gateway_settings4['descr']
 ));
 
-$btnaddgw = new Form_Button(
-	'add',
+$btnaddgw4 = new Form_Button(
+	'add4',
 	'Add',
 	null,
 	'fa-plus'
 );
 
-$btnaddgw->setAttribute('type','button')->addClass('btn-success');
+$btnaddgw4->setAttribute('type','button')->addClass('btn-success');
 
-$btncnxgw = new Form_Button(
-	'cnx',
+$btncnxgw4 = new Form_Button(
+	'cnx4',
 	'Cancel',
 	null,
 	'fa-undo'
 );
 
-$btncnxgw->setAttribute('type','button')->addClass('btn-warning');
+$btncnxgw4->setAttribute('type','button')->addClass('btn-warning');
 
 $modal->addInput(new Form_StaticText(
 	null,
-	$btnaddgw . $btncnxgw
+	$btnaddgw4 . $btncnxgw4
 ));
 
 $form->add($modal);
@@ -3334,113 +3548,25 @@ events.push(function() {
 		}
 
 		track6_prefix_ids = parseInt(track6_prefix_ids).toString(16);
-		$('#track6-prefix-id-range').html('(<b>hexadecimal</b> from 0 to ' + track6_prefix_ids + ')');
+		$('#track6-prefix-id-range').html(track6_prefix_ids);
 	}
 
-	// Create the new gateway from the data entered in the modal pop-up
-	function hide_add_gatewaysave() {
-		var iface = $('#if').val();
-		name = $('#name').val();
-		var descr = $('#gatewaydescr').val();
-		gatewayip = $('#gatewayip').val();
-
-		var defaultgw = '';
-		if ($('#defaultgw').is(':checked')) {
-			defaultgw = '&defaultgw=on';
-		}
-
-		var url = "system_gateways_edit.php";
-		var pars = 'isAjax=true&ipprotocol=inet' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-		$.ajax(
-			url,
-			{
-				type: 'post',
-				data: pars,
-				error: report_failure,
-				complete: save_callback
-			});
-		}
-
-	function save_callback(response) {
-		if (response) {
-			var gwtext = escape(name) + " - " + gatewayip;
-			addOption($('#gateway'), gwtext, name);
-		} else {
-			report_failure();
-		}
-
-		$("#newgateway").modal('hide');
+	function addOption_v4() {
+		var gwtext_v4 = escape($("#gatewayname4").val()) + " - " + $("#gatewayip4").val();
+		addSelectboxOption($('#gateway'), gwtext_v4, $("#gatewayname4").val());
 	}
 
-	function report_failure(request, textStatus, errorThrown) {
-		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
-			alert(request.responseText);
-		} else {
-			alert("The IPv4 gateway could not be created.");
-		}
-
-		$("#newgateway").modal('hide');
+	function addOption_v6() {
+		var gwtext_v6 = escape($("#gatewayname6").val()) + " - " + $("#gatewayip6").val();
+		addSelectboxOption($('#gatewayv6'), gwtext_v6, $("#gatewayname6").val());
 	}
 
-	function addOption(selectbox, text, value) {
+	function addSelectboxOption(selectbox, text, value) {
 		var optn = document.createElement("OPTION");
 		optn.text = text;
 		optn.value = value;
 		selectbox.append(optn);
 		selectbox.prop('selectedIndex', selectbox.children().length - 1);
-	}
-
-	function hide_add_gatewaysave_v6() {
-
-		var iface = $('#if').val();
-		name = $('#name6').val();
-		var descr = $('#gatewaydescr6').val();
-		gatewayip = $('#gatewayip6').val();
-		var defaultgw = '';
-		if ($('#defaultgw6').is(':checked')) {
-			defaultgw = '&defaultgw=on';
-		}
-		var url_v6 = "system_gateways_edit.php";
-		var pars_v6 = 'isAjax=true&ipprotocol=inet6' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-		$.ajax(
-			url_v6,
-			{
-				type: 'post',
-				data: pars_v6,
-				error: report_failure_v6,
-				success: save_callback_v6
-			});
-	}
-
-
-	function addOption_v6(selectbox, text, value) {
-		var optn = document.createElement("OPTION");
-		optn.text = text;
-		optn.value = value;
-		selectbox.append(optn);
-		selectbox.prop('selectedIndex', selectbox.children().length - 1);
-	}
-
-	function report_failure_v6(request, textStatus, errorThrown) {
-		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
-			alert(request.responseText);
-		} else {
-			alert("The IPv6 gateway could not be created.");
-		}
-
-		$("#newgateway6").modal('hide');
-	}
-
-	function save_callback_v6(response_v6) {
-		if (response_v6) {
-
-			var gwtext_v6 = escape(name) + " - " + gatewayip;
-			addOption_v6($('#gatewayv6'), gwtext_v6, name);
-		} else {
-			report_failure_v6();
-		}
-
-		$("#newgateway6").modal('hide');
 	}
 
 	function country_list() {
@@ -3586,6 +3712,14 @@ events.push(function() {
 		$('#adv_dhcp_pt_initial_interval').val(initialinterval);
 	}
 
+	function setPPPoEDialOnDemandItems() {
+		setRequired('pppoe_idletimeout', $('#pppoe_dialondemand').prop('checked'));
+	}
+
+	function setPPTPDialOnDemandItems() {
+		setRequired('pptp_idletimeout', $('#pptp_dialondemand').prop('checked'));
+	}
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	updateType($('#type').val());
@@ -3594,7 +3728,9 @@ events.push(function() {
 	hideClass('dhcp6advanced', true);
 	hideClass('dhcpadvanced', true);
 	show_dhcp6adv();
-	setDHCPoptions()
+	setDHCPoptions();
+	setPPPoEDialOnDemandItems();
+	setPPTPDialOnDemandItems();
 
 	// Set preset buttons on page load
 	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
@@ -3606,6 +3742,14 @@ events.push(function() {
 
 	// Set preset from value
 	setPresets(sv);
+
+	// If the user wants to add a gateway, then add that to the gateway selection
+	if ($("#gatewayip4").val() != '') {
+		addOption_v4();
+	}
+	if ($("#gatewayip6").val() != '') {
+		addOption_v6();
+	}
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
@@ -3625,19 +3769,29 @@ events.push(function() {
 		show_reset_settings(this.value);
 	});
 
-	$("#add").click(function() {
-		hide_add_gatewaysave();
+	$("#add4").click(function() {
+		addOption_v4();
+		$("#newgateway4").modal('hide');
 	});
 
-	$("#cnx").click(function() {
-		$("#newgateway").modal('hide');
+	$("#cnx4").click(function() {
+		$("#gatewayname4").val('<?=$defgatewayname4;?>');
+		$("#gatewayip4").val('');
+		$("#gatewaydescr4").val('');
+		$("#defaultgw4").prop("checked", false);
+		$("#newgateway4").modal('hide');
 	});
 
 	$("#add6").click(function() {
-		hide_add_gatewaysave_v6();
+		addOption_v6();
+		$("#newgateway6").modal('hide');
 	});
 
 	$("#cnx6").click(function() {
+		$("#gatewayname6").val('<?=$defgatewayname6;?>');
+		$("#gatewayip6").val('');
+		$("#gatewaydescr6").val('');
+		$("#defaultgw6").prop("checked", false);
 		$("#newgateway6").modal('hide');
 	});
 
@@ -3666,6 +3820,14 @@ events.push(function() {
 	});
 
 	// On click . .
+	$('#pppoe_dialondemand').click(function () {
+		setPPPoEDialOnDemandItems();
+	});
+
+	$('#pptp_dialondemand').click(function () {
+		setPPTPDialOnDemandItems();
+	});
+
 	$('[name=adv_dhcp_pt_values]').click(function () {
 	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
 	});

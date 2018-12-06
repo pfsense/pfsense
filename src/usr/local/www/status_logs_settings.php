@@ -1,59 +1,26 @@
 <?php
 /*
-	status_logs_settings.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * status_logs_settings.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -84,6 +51,10 @@ $pconfig['relayd'] = isset($config['syslog']['relayd']);
 $pconfig['hostapd'] = isset($config['syslog']['hostapd']);
 $pconfig['logall'] = isset($config['syslog']['logall']);
 $pconfig['system'] = isset($config['syslog']['system']);
+$pconfig['resolver'] = isset($config['syslog']['resolver']);
+$pconfig['ppp'] = isset($config['syslog']['ppp']);
+$pconfig['routing'] = isset($config['syslog']['routing']);
+$pconfig['ntpd'] = isset($config['syslog']['ntpd']);
 $pconfig['enable'] = isset($config['syslog']['enable']);
 $pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
 $pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
@@ -109,7 +80,7 @@ function is_valid_syslog_server($target) {
 
 if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	clear_all_log_files(true);
-	$savemsg .= gettext("The log files have been reset.");
+	$reset_msg = gettext("The log files have been reset.");
 } elseif ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -132,9 +103,12 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	if (isset($_POST['logfilesize']) && (strlen($_POST['logfilesize']) > 0)) {
 		if (!is_numeric($_POST['logfilesize']) || ($_POST['logfilesize'] < 100000)) {
 			$input_errors[] = gettext("Log file size must be numeric and greater than or equal to 100000.");
+		} elseif ($_POST['logfilesize'] >= (2**32)/2) {
+			$input_errors[] = gettext("Log file size is too large. Set a smaller value.");
 		}
 	}
 	if (!$input_errors) {
+		init_config_arr(array('syslog'));
 		$config['syslog']['reverse'] = $_POST['reverse'] ? true : false;
 		$config['syslog']['nentries'] = (int)$_POST['nentries'];
 		$pconfig['nentries'] = $config['syslog']['nentries'];
@@ -158,6 +132,10 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['hostapd'] = $_POST['hostapd'] ? true : false;
 		$config['syslog']['logall'] = $_POST['logall'] ? true : false;
 		$config['syslog']['system'] = $_POST['system'] ? true : false;
+		$config['syslog']['resolver'] = $_POST['resolver'] ? true : false;
+		$config['syslog']['ppp'] = $_POST['ppp'] ? true : false;
+		$config['syslog']['routing'] = $_POST['routing'] ? true : false;
+		$config['syslog']['ntpd'] = $_POST['ntpd'] ? true : false;
 		$config['syslog']['disablelocallogging'] = $_POST['disablelocallogging'] ? true : false;
 		$config['syslog']['enable'] = $_POST['enable'] ? true : false;
 		$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
@@ -185,10 +163,11 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			unset($config['syslog']['remoteserver3']);
 		}
 
-		write_config();
+		write_config(gettext("Changed system logging options."));
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = system_syslogd_start();
+		system_syslogd_start();
 		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock'])) ||
 		    ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
 		    ($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
@@ -196,14 +175,12 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			$retval |= filter_configure();
 		}
 
-		$savemsg = get_std_save_message($retval);
-
 		if ($oldnolognginx !== isset($config['syslog']['nolognginx'])) {
 			ob_flush();
 			flush();
 			log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
 			send_event("service restart webgui");
-			$savemsg .= "<br />" . gettext("WebGUI process is restarting.");
+			$extra_save_msg = gettext("WebGUI process is restarting.");
 		}
 
 		filter_pflog_start(true);
@@ -211,6 +188,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 }
 
 $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("Settings"));
+$pglinks = array("", "status_logs.php", "@self");
 include("head.inc");
 
 $logfilesizeHelp =	gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") .
@@ -229,8 +207,12 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($reset_msg) {
+	print_info_box($reset_msg, 'success');
+}
+
+if ($changes_applied) {
+	print_apply_result_box($retval, $extra_save_msg);
 }
 
 $tab_array = array();
@@ -279,14 +261,14 @@ $section->addInput(new Form_Checkbox(
 	'Log firewall default blocks',
 	'Log packets matched from the default block rules in the ruleset',
 	$pconfig['logdefaultblock']
-))->setHelp('Log packets that are <strong>blocked</strong> by the implicit default block rule. - Per-rule logging options are still respected.');
+))->setHelp('Log packets that are %1$sblocked%2$s by the implicit default block rule. - Per-rule logging options are still respected.', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'logdefaultpass',
 	null,
 	'Log packets matched from the default pass rules put in the ruleset',
 	$pconfig['logdefaultpass']
-))->setHelp('Log packets that are <strong>allowed</strong> by the implicit default pass rule. - Per-rule logging options are still respected. ');
+))->setHelp('Log packets that are %1$sallowed%2$s by the implicit default pass rule. - Per-rule logging options are still respected. ', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'logbogons',
@@ -314,7 +296,7 @@ $section->addInput(new Form_Checkbox(
 	'Raw Logs',
 	'Show raw filter logs',
 	$pconfig['rawfilter']
-))->setHelp(gettext('If this is checked, filter logs are shown as generated by the packet filter, without any formatting. This will reveal more detailed information, but it is more difficult to read.'));
+))->setHelp('If this is checked, filter logs are shown as generated by the packet filter, without any formatting. This will reveal more detailed information, but it is more difficult to read.');
 
 $section->addINput(new Form_Checkbox(
 	'igmpxverbose',
@@ -332,13 +314,14 @@ $section->addInput(new Form_Select(
 		'1' => gettext('Display as column'),
 		'2' => gettext('Display as second row')
 	)
-))->setHelp('Show the applied rule description below or in the firewall log rows.' . '<br />' .
-			'Displaying rule descriptions for all lines in the log might affect performance with large rule sets.');
+))->setHelp('Show the applied rule description below or in the firewall log rows.%1$s' .
+			'Displaying rule descriptions for all lines in the log might affect performance with large rule sets.',
+			'<br />');
 
 $section->addInput(new Form_Checkbox(
 	'disablelocallogging',
 	'Local Logging',
-	$g['platform'] == $g['product_name'] ? "Disable writing log files to the local disk" : "Disable writing log files to the local RAM disk",
+	"Disable writing log files to the local disk",
 	$pconfig['disablelocallogging']
 ));
 
@@ -370,7 +353,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'ipproto',
 	'IP Protocol',
-	$ipproto,
+	$pconfig['ipproto'],
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
 ))->setHelp('This option is only used when a non-default address is chosen as the source above. ' .
 			'This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried.');
@@ -430,44 +413,72 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $group->add(new Form_MultiCheckbox(
+	'resolver',
+	null,
+	'DNS Events (Resolver/unbound, Forwarder/dnsmasq, filterdns)',
+	$pconfig['resolver']
+));
+
+$group->add(new Form_MultiCheckbox(
 	'dhcp',
 	null,
-	'DHCP service events',
+	'DHCP Events (DHCP Daemon, DHCP Relay, DHCP Client)',
 	$pconfig['dhcp']
+));
+
+$group->add(new Form_MultiCheckbox(
+	'ppp',
+	null,
+	'PPP Events (PPPoE WAN Client, L2TP WAN Client, PPTP WAN Client)',
+	$pconfig['ppp']
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'portalauth',
 	null,
-	'Portal Auth events',
+	'Captive Portal Events',
 	$pconfig['portalauth']
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'vpn',
 	null,
-	'VPN (PPTP, IPsec, OpenVPN) events',
+	'VPN Events (IPsec, OpenVPN, L2TP, PPPoE Server)',
 	$pconfig['vpn']
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'dpinger',
 	null,
-	'Gateway Monitor events',
+	'Gateway Monitor Events',
 	$pconfig['dpinger']
+));
+
+$group->add(new Form_MultiCheckbox(
+	'routing',
+	null,
+	'Routing Daemon Events (RADVD, UPnP, RIP, OSPF, BGP)',
+	$pconfig['routing']
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'relayd',
 	null,
-	'Server Load Balancer events',
+	'Server Load Balancer Events (relayd)',
 	$pconfig['relayd']
+));
+
+$group->add(new Form_MultiCheckbox(
+	'ntpd',
+	null,
+	'Network Time Protocol Events (NTP Daemon, NTP Client)',
+	$pconfig['ntpd']
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'hostapd',
 	null,
-	'Wireless events',
+	'Wireless Events (hostapd)',
 	$pconfig['hostapd']
 ));
 
@@ -511,6 +522,10 @@ events.push(function() {
 		disableInput('dpinger', hide);
 		disableInput('relayd', hide);
 		disableInput('hostapd', hide);
+		disableInput('resolver', hide);
+		disableInput('ppp', hide);
+		disableInput('routing', hide);
+		disableInput('ntpd', hide);
 	}
 
 	// ---------- On initial page load ------------------------------------------------------------

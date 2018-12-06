@@ -1,59 +1,26 @@
 <?php
 /*
-	firewall_nat_1to1_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_nat_1to1_edit.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -71,6 +38,10 @@ require_once("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_1to1.php');
 
+function get_must_be_both_text() {
+	return(" " . gettext("They must be either both IPv4 or both IPv6 addresses."));
+}
+
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
 
@@ -79,27 +50,20 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['nat']['onetoone'])) {
-	$config['nat']['onetoone'] = array();
-}
-
+init_config_arr(array('nat', 'onetoone'));
 $a_1to1 = &$config['nat']['onetoone'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-$after = $_GET['after'];
-if (isset($_POST['after'])) {
-	$after = $_POST['after'];
+if (isset($_REQUEST['after'])) {
+	$after = $_REQUEST['after'];
 }
 
-if (isset($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+if (isset($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$after = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_1to1[$id]) {
@@ -126,18 +90,21 @@ if (isset($id) && $a_1to1[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_GET['dup'])) {
+if (isset($_REQUEST['dup'])) {
 	unset($id);
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
-	$pconfig = $_POST;
 	/*	run through $_POST items encoding HTML entities so that the user
 	 *	cannot think he is slick and perform a XSS attack on the unwilling
 	 */
 	foreach ($_POST as $key => $value) {
+		if ($key == 'descr') {
+			continue;
+		}
+
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 
@@ -195,9 +162,15 @@ if ($_POST) {
 		$_POST['dsttype'] = "single";
 	}
 
+	$pconfig = $_POST;
+
+	$extipaddrtype = false;
+	$srcipaddrtype = false;
+	$dstipaddrtype = false;
+
 	/* For external, user can enter only ip's */
-	if (($_POST['external'] && !is_ipaddr($_POST['external']))) {
-		$input_errors[] = gettext("A valid external subnet must be specified.");
+	if ($_POST['external']) {
+		$extipaddrtype = validateipaddr($_POST['external'], IPV4V6, "External subnet IP", $input_errors, false);
 	}
 
 	/* For dst, if user enters an alias and selects "network" then disallow. */
@@ -205,10 +178,21 @@ if ($_POST) {
 		$input_errors[] = gettext("Alias entries must specify a single host or alias.");
 	}
 
-	/* For src, user can enter only ip's or networks */
+	/* For src, user can enter only ips or networks */
 	if (!is_specialnet($_POST['srctype'])) {
-		if (($_POST['src'] && !is_ipaddr($_POST['src']))) {
-			$input_errors[] = sprintf(gettext("%s is not a valid internal IP address."), $_POST['src']);
+		if ($_POST['src']) {
+			$srcipaddrtype = validateipaddr($_POST['src'], IPV4V6, "Internal address", $input_errors, false);
+			if ($srcipaddrtype) {
+				// It is a valid IP address of some address family.
+				// Check that the address family matches the other IP addresses entered.
+				if ($extipaddrtype && ($srcipaddrtype != $extipaddrtype)) {
+					$input_errors[] = sprintf(
+						gettext('The external IP address (%1$s) and internal IP address (%2$s) are of different address families.') .
+							get_must_be_both_text(),
+						$_POST['external'],
+						$_POST['src']);
+				}
+			}
 		}
 
 		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
@@ -216,10 +200,32 @@ if ($_POST) {
 		}
 	}
 
-	/* For dst, user can enter ip's, networks or aliases */
+	/* For dst, user can enter ips, networks or aliases */
 	if (!is_specialnet($_POST['dsttype'])) {
-		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
-			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
+		if ($_POST['dst']) {
+			$dstipaddrtype = validateipaddr($_POST['dst'], IPV4V6, "Destination address", $input_errors, true);
+			if ($dstipaddrtype == ALIAS) {
+				// It is an alias.
+				// pf does not report "error loading rules" if the address family of items in the alias does not match the external/internal address family.
+				// So that is up to the user to make sensible, we do not try and verify it here.
+			} elseif ($dstipaddrtype) {
+				// It is a valid IP address of some address family.
+				// Check that the address family matches the other IP addresses entered.
+				if ($extipaddrtype && ($dstipaddrtype != $extipaddrtype)) {
+					$input_errors[] = sprintf(
+						gettext('The external IP address (%1$s) and destination IP address (%2$s) are of different address families.') .
+							get_must_be_both_text(),
+						$_POST['external'],
+						$_POST['dst']);
+				}
+				if ($srcipaddrtype && ($dstipaddrtype != $srcipaddrtype)) {
+					$input_errors[] = sprintf(
+						gettext('The internal IP address (%1$s) and destination IP address (%2$s) are of different address families.') .
+							get_must_be_both_text(),
+						$_POST['src'],
+						$_POST['dst']);
+				}
+			}
 		}
 
 		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {
@@ -270,7 +276,7 @@ if ($_POST) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_1to1.php");
@@ -279,6 +285,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("1:1"), gettext("Edit"));
+$pglinks = array("", "firewall_nat.php", "firewall_nat_1to1.php", "@self");
 include("head.inc");
 
 function build_srctype_list() {
@@ -309,6 +316,11 @@ function build_srctype_list() {
 function srctype_selected() {
 	global $pconfig;
 
+	if ($pconfig['srctype']) {
+		// The rule type came from the $_POST array, after input errors, so keep it.
+		return $pconfig['srctype'];
+	}
+
 	$sel = is_specialnet($pconfig['src']);
 
 	if (!$sel) {
@@ -326,7 +338,7 @@ function build_dsttype_list() {
 	global $pconfig, $config, $ifdisp;
 
 	$sel = is_specialnet($pconfig['dst']);
-	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'), '(self)' => gettext('This Firewall (self)'));
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
 
 	if (have_ruleint_access("pppoe")) {
 		$list['pppoe'] = gettext('PPPoE clients');
@@ -345,21 +357,20 @@ function build_dsttype_list() {
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
-			if (isset($sn['noexpand'])) {
-				continue;
-			}
-
-			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
+				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+				if (isset($sn['noexpand'])) {
+					continue;
+				}
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
 				$len = $end - $start;
-
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
 
 					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
-
+			} else {
 				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
@@ -370,6 +381,11 @@ function build_dsttype_list() {
 
 function dsttype_selected() {
 	global $pconfig;
+
+	if ($pconfig['dsttype']) {
+		// The rule type came from the $_POST array, after input errors, so keep it.
+		return $pconfig['dsttype'];
+	}
 
 	$sel = is_specialnet($pconfig['dst']);
 
@@ -410,29 +426,6 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['nobinat']
 ))->setHelp('Excludes the address from a later, more general, rule.');
 
-$iflist = get_configured_interface_with_descr(false, true);
-
-foreach ($iflist as $if => $ifdesc) {
-	if (have_ruleint_access($if)) {
-		$interfaces[$if] = $ifdesc;
-	}
-}
-
-if ($config['l2tp']['mode'] == "server") {
-	if (have_ruleint_access("l2tp")) {
-		$interfaces['l2tp'] = gettext("L2TP VPN");
-	}
-}
-
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-	$interfaces['pppoe'] = gettext("PPPoE Server");
-}
-
-/* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$interfaces["enc0"] = gettext("IPsec");
-}
-
 /* add openvpn/tun interfaces */
 if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 	$interfaces["openvpn"] = gettext("OpenVPN");
@@ -440,19 +433,19 @@ if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
-	$interfaces
+	filter_get_interface_list()
 ))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
 
 $section->addInput(new Form_IpAddress(
 	'external',
-	'External subnet IP',
+	'*External subnet IP',
 	$pconfig['external']
 ))->setHelp('Enter the external (usually on a WAN) subnet\'s starting address for the 1:1 mapping. ' .
 			'The subnet mask from the internal address below will be applied to this IP address.');
 
-$group = new Form_Group('Internal IP');
+$group = new Form_Group('*Internal IP');
 
 $group->add(new Form_Checkbox(
 	'srcnot',
@@ -472,14 +465,14 @@ $group->add(new Form_IpAddress(
 	'src',
 	null,
 	is_specialnet($pconfig['src']) ? '': $pconfig['src']
-))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9\.\:\_]+');
+))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask');
 
 $group->setHelp('Enter the internal (LAN) subnet for the 1:1 mapping. ' .
 				'The subnet size specified for the internal subnet will be applied to the external subnet.');
 
 $section->add($group);
 
-$group = new Form_Group('Destination');
+$group = new Form_Group('*Destination');
 
 $group->add(new Form_Checkbox(
 	'dstnot',
@@ -498,8 +491,9 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'dst',
 	null,
-	is_specialnet($pconfig['dst']) ? '': $pconfig['dst']
-))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9\.\:\_]+');
+	is_specialnet($pconfig['dst']) ? '': $pconfig['dst'],
+	'ALIASV4V6'
+))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
 
 $group->setHelp('The 1:1 mapping will only be used for connections to or from the specified destination. Hint: this is usually "Any".');
 

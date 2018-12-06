@@ -1,59 +1,26 @@
 <?php
 /*
-	interfaces_vlan_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * interfaces_vlan_edit.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -65,26 +32,24 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['vlans']['vlan'])) {
-	$config['vlans']['vlan'] = array();
-}
-
+init_config_arr(array('vlans', 'vlan'));
 $a_vlans = &$config['vlans']['vlan'];
 
 $portlist = get_interface_list();
-
-/* add LAGG interfaces */
-if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-	foreach ($config['laggs']['lagg'] as $lagg) {
-		$portlist[$lagg['laggif']] = $lagg;
+$lagglist = get_lagg_interface_list();
+$portlist = array_merge($portlist, $lagglist);
+foreach ($lagglist as $laggif => $lagg) {
+	/* LAGG members cannot be assigned */
+	$laggmembers = explode(',', $lagg['members']);
+	foreach ($laggmembers as $lagm) {
+		if (isset($portlist[$lagm])) {
+			unset($portlist[$lagm]);
+		}
 	}
 }
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && $a_vlans[$id]) {
@@ -95,7 +60,7 @@ if (isset($id) && $a_vlans[$id]) {
 	$pconfig['descr'] = $a_vlans[$id]['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -106,7 +71,7 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (isset($_POST['tag']) && (!is_numericint($_POST['tag']) || ($_POST['tag'] < '1') || ($_POST['tag'] > '4094'))) {
+	if (isset($_POST['tag']) && !vlan_valid_tag($_POST['tag'])) {
 		$input_errors[] = gettext("The VLAN tag must be an integer between 1 and 4094.");
 	}
 	if (isset($_POST['pcp']) && !empty($_POST['pcp']) && (!is_numericint($_POST['pcp']) || ($_POST['pcp'] < '0') || ($_POST['pcp'] > '7'))) {
@@ -150,11 +115,11 @@ if ($_POST) {
 					// Destroy previous vlan
 					pfSense_interface_destroy($a_vlans[$id]['vlanif']);
 				} else {
-					pfSense_interface_destroy("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
-					$confif = convert_real_interface_to_friendly_interface_name("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
+					pfSense_interface_destroy(vlan_interface($a_vlans[id]));
+					$confif = convert_real_interface_to_friendly_interface_name(vlan_interface($a_vlans[$id]));
 				}
 				if ($confif != "") {
-					$config['interfaces'][$confif]['if'] = "{$_POST['if']}_vlan{$_POST['tag']}";
+					$config['interfaces'][$confif]['if'] = vlan_interface($_POST);
 				}
 			}
 		}
@@ -163,9 +128,10 @@ if ($_POST) {
 		$vlan['tag'] = $_POST['tag'];
 		$vlan['pcp'] = $_POST['pcp'];
 		$vlan['descr'] = $_POST['descr'];
-		$vlan['vlanif'] = "{$_POST['if']}_vlan{$_POST['tag']}";
-		$vlan['vlanif'] = interface_vlan_configure($vlan);
-		if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan")) {
+		$vlan['vlanif'] = vlan_interface($_POST);
+		$vlanif = interface_vlan_configure($vlan);
+		if ($vlanif == NULL || $vlanif != $vlan['vlanif']) {
+			pfSense_interface_destroy($vlan['vlanif']);
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
 			if (isset($id) && $a_vlans[$id]) {
@@ -203,6 +169,7 @@ function build_interfaces_list() {
 }
 
 $pgtitle = array(gettext("Interfaces"), gettext("VLANs"), gettext("Edit"));
+$pglinks = array("", "interfaces_vlan.php", "@self");
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -215,18 +182,18 @@ $section = new Form_Section('VLAN Configuration');
 
 $section->addInput(new Form_Select(
 	'if',
-	'Parent Interface',
+	'*Parent Interface',
 	$pconfig['if'],
 	build_interfaces_list()
 ))->setWidth(6)->setHelp('Only VLAN capable interfaces will be shown.');
 
 $section->addInput(new Form_Input(
 	'tag',
-	'VLAN Tag',
+	'*VLAN Tag',
 	'text',
 	$pconfig['tag'],
 	['placeholder' => '1']
-))->setWidth(6)->setHelp(gettext('802.1Q VLAN tag (between 1 and 4094).'));
+))->setWidth(6)->setHelp('802.1Q VLAN tag (between 1 and 4094).');
 
 $section->addInput(new Form_Input(
 	'pcp',
@@ -234,7 +201,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['pcp'],
 	['placeholder' => '0']
-))->setWidth(6)->setHelp(gettext('802.1Q VLAN Priority (between 0 and 7).'));
+))->setWidth(6)->setHelp('802.1Q VLAN Priority (between 0 and 7).');
 
 $section->addInput(new Form_Input(
 	'descr',

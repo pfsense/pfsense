@@ -1,57 +1,23 @@
 <?php
 /*
-	diag_dump_states.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2005 Colin Smith
+ * diag_dump_states.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005 Colin Smith
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -107,7 +73,9 @@ if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("States"));
+$pglinks = array("", "@self", "@self");
 include("head.inc");
+$delmsg = gettext("Are you sure you wish to delete this state?");
 ?>
 
 <script type="text/javascript">
@@ -117,19 +85,22 @@ events.push(function() {
 		var el = $(this);
 		var data = $(this).data('entry').split('|');
 
-		$.ajax(
-			'/diag_dump_states.php',
-			{
-				type: 'post',
-				data: {
-					action: 'remove',
-					srcip: data[0],
-					dstip: data[1]
-				},
-				success: function() {
-					el.parents('tr').remove();
-				},
-		});
+		if (confirm("<?=$delmsg?>")) {
+
+			$.ajax(
+				'/diag_dump_states.php',
+				{
+					type: 'post',
+					data: {
+						action: 'remove',
+						srcip: data[0],
+						dstip: data[1]
+					},
+					success: function() {
+						el.parents('tr').remove();
+					},
+			});
+		}
 	});
 });
 //]]>
@@ -152,6 +123,7 @@ $form = new Form(false);
 $section = new Form_Section('State Filter', 'secfilter', COLLAPSIBLE|SEC_OPEN);
 
 $iflist = get_configured_interface_with_descr();
+$iflist['enc0'] = "IPsec";
 $iflist['lo0'] = "lo0";
 $iflist['all'] = "all";
 if (isset($_POST['interface']))
@@ -239,20 +211,19 @@ print $form;
 		$arr[] = array("filter" => $_POST['filter']);
 	}
 
-	if (count($arr) > 0) {
-		$res = pfSense_get_pf_states($arr);
+	if (isset($_POST['filter']) || !isset($config['system']['webgui']['requirestatefilter'])) {
+		if (count($arr) > 0) {
+			$res = pfSense_get_pf_states($arr);
+		} else {
+			$res = pfSense_get_pf_states();
+		}
 	} else {
-		$res = pfSense_get_pf_states();
+		$res = NULL;
 	}
 
 	$states = 0;
 	if ($res != NULL && is_array($res)) {
 		$states = count($res);
-	}
-
-	/* XXX - limit to 10.000 states. */
-	if ($states > 10000) {
-		$states = 10000;
 	}
 
 	for ($i = 0; $i < $states; $i++) {
@@ -283,7 +254,7 @@ print $form;
 						    <?= format_bytes($res[$i]['bytes out']) ?></td>
 
 						<td>
-							<a class="btn fa fa-trash" data-entry="<?=$srcip?>|<?=$killdstip?>"
+							<a class="btn fa fa-trash no-confirm" data-entry="<?=$srcip?>|<?=$killdstip?>"
 								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $srcip, $killdstip);?>"></a>
 						</td>
 					</tr>
@@ -300,6 +271,9 @@ print $form;
 if ($states == 0) {
 	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
 		$errmsg = gettext('No states were found that match the current filter.');
+	} else if (!isset($_POST['filter']) && isset($config['system']['webgui']['requirestatefilter'])) {
+		$errmsg = gettext('State display suppressed without filter submission. '.
+		'See System > General Setup, Require State Filter.');
 	} else {
 		$errmsg = gettext('No states were found.');
 	}

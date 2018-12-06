@@ -1,67 +1,34 @@
 <?php
 /*
-	services_captiveportal_filemanager.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2005-2006 Jonathan De Graeve (jonathan.de.graeve@imelda.be)
- *	and Paul Taylor (paultaylor@winn-dixie.com)
+ * services_captiveportal_filemanager.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005-2006 Jonathan De Graeve (jonathan.de.graeve@imelda.be)
+ * Copyright (c) 2005-2006 Paul Taylor (paultaylor@winn-dixie.com)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-filemanager
-##|*NAME=Services: Captive portal: File Manager
-##|*DESCR=Allow access to the 'Services: Captive portal: File Manager' page.
+##|*NAME=Services: Captive Portal: File Manager
+##|*DESCR=Allow access to the 'Services: Captive Portal: File Manager' page.
 ##|*MATCH=services_captiveportal_filemanager.php*
 ##|-PRIV
 
@@ -81,37 +48,42 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower($cpzone);
+$cpzone = $_REQUEST['zone'];
+
+$cpzone = strtolower(htmlspecialchars($cpzone));
 
 if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'element'));
+$a_cp = &$config['captiveportal'];
+$a_element = &$a_cp[$cpzone]['element'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("File Manager"));
+$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
-
-if (!is_array($a_cp[$cpzone]['element'])) {
-	$a_cp[$cpzone]['element'] = array();
-}
-$a_element =& $a_cp[$cpzone]['element'];
 
 // Calculate total size of all files
 $total_size = 0;
-foreach ($a_element as $element) {
-	$total_size += $element['size'];
+for ($i = 0; $i < count($a_element); $i++) {
+
+	// if the image in the directory does not exist remove it from config
+	if(!file_exists("{$g['captiveportal_path']}/" . $a_element[$i]['name'])){
+		@unlink("{$g['captiveportal_element_path']}/" . $a_element[$i]['name']);
+		// remove from list and reorder array.
+		unset($a_element[$i]);
+		$a_element = array_values($a_element);
+		continue;
+	}
+	if(!isset($a_element[$i]['nocontent'])) {
+		$total_size += $a_element[$i]['size'];
+	}
+
 }
 
-if ($_POST) {
+if ($_POST['Submit']) {
 	unset($input_errors);
 
 	if (is_uploaded_file($_FILES['new']['tmp_name'])) {
@@ -152,12 +124,10 @@ if ($_POST) {
 			exit;
 		}
 	}
-} else if (($_GET['act'] == "del") && !empty($cpzone) && $a_element[$_GET['id']]) {
-	conf_mount_rw();
-	@unlink("{$g['captiveportal_element_path']}/" . $a_element[$_GET['id']]['name']);
-	@unlink("{$g['captiveportal_path']}/" . $a_element[$_GET['id']]['name']);
-	conf_mount_ro();
-	unset($a_element[$_GET['id']]);
+} else if (($_POST['act'] == "del") && !empty($cpzone) && $a_element[$_POST['id']]) {
+	@unlink("{$g['captiveportal_element_path']}/" . $a_element[$_POST['id']]['name']);
+	@unlink("{$g['captiveportal_path']}/" . $a_element[$_POST['id']]['name']);
+	unset($a_element[$_POST['id']]);
 	write_config();
 	header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");
 	exit;
@@ -178,7 +148,7 @@ $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_voucher
 $tab_array[] = array(gettext("File Manager"), true, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 
-if ($_GET['act'] == 'add') {
+if ($_REQUEST['act'] == 'add') {
 
 	$form = new Form(false);
 
@@ -234,7 +204,7 @@ if (is_array($a_cp[$cpzone]['element'])):
 							<td><?=htmlspecialchars($element['name'])?></td>
 							<td><?=format_bytes($element['size'])?></td>
 							<td>
-								<a class="fa fa-trash"	title="<?=gettext("Delete file")?>" href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"></a>
+								<a class="fa fa-trash"	title="<?=gettext("Delete file")?>" href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 							</td>
 						</tr>
 <?php
@@ -263,7 +233,7 @@ endif;
 
 ?>
 	   <nav class="action-buttons">
-<?php if (!$_GET['act'] == 'add'): ?>
+<?php if (!$_REQUEST['act'] == 'add'): ?>
 			<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">
 		   		<i class="fa fa-plus icon-embed-btn"></i>
 		   		<?=gettext("Add")?>

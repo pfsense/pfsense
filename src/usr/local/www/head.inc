@@ -1,53 +1,22 @@
 <?php
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+/*
+ * head.inc
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 require_once("globals.inc");
@@ -59,11 +28,12 @@ require_once('notices.inc');
 header('Content-Type: text/html; charset=utf-8');
 
 $pagetitle = gentitle($pgtitle);
+$system_url = $config['system']['hostname'] . "." . $config['system']['domain'];
 
 if ($user_settings['webgui']['pagenamefirst']) {
-	$tabtitle = $pagetitle . " - " . htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
+	$tabtitle = $pagetitle . " - " . htmlspecialchars($system_url);
 } else {
-	$tabtitle = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']) . " - " . $pagetitle;
+	$tabtitle = htmlspecialchars($system_url) . " - " . $pagetitle;
 }
 
 $cssfile = "/css/pfSense.css";
@@ -84,13 +54,23 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 <html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css">
-	<link rel="stylesheet" href="/vendor/sortable/sortable-theme-bootstrap.css">
-	<link rel="stylesheet" href="<?=$cssfile?>" />
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/manifest.json">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="theme-color" content="#ffffff">
+
+	<link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css?v=<?=filemtime('/usr/local/www/vendor/font-awesome/css/font-awesome.min.css')?>">
+	<link rel="stylesheet" href="/vendor/sortable/sortable-theme-bootstrap.css?v=<?=filemtime('/usr/local/www/vendor/sortable/sortable-theme-bootstrap.css')?>">
+	<link rel="stylesheet" href="<?=$cssfile?>?v=<?=filemtime('/usr/local/www/' . $cssfile)?>" />
+
 	<title><?=$tabtitle?></title>
 	<script type="text/javascript">
 	//<![CDATA[
 	var events = events || [];
+	var newSeperator = false;
 	//]]>
 	</script>
 </head>
@@ -174,9 +154,11 @@ function return_ext_menu($section) {
 
 	if ((!empty($config['installedpackages']['package'])) && (!empty($config['installedpackages']['menu']))) {
 		foreach ($config['installedpackages']['menu'] as $menu) {
-//			print('Name: ' . $menu['name'] . ', Pkg category: ' . $menu['category'] . ', Section: ' . $section . '<br />');
-			if ($menu['section'] == $section) {
-				$ext_menu_entries[] = $menu;
+			if ($menu['name'] != "AutoConfigBackup") { // AutoConfigBackup was moved to a built-in function
+	//			print('Name: ' . $menu['name'] . ', Pkg category: ' . $menu['category'] . ', Section: ' . $section . '<br />');
+				if ($menu['section'] == $section) {
+					$ext_menu_entries[] = $menu;
+				}
 			}
 		}
 	}
@@ -214,38 +196,54 @@ function return_ext_menu($section) {
 }
 
 function output_menu($arrayitem, $target = null, $section = "") {
+	$output = "";
+
 	foreach ($arrayitem as $item) {
+
 		/* If the user has access to help pages, also show the full help menu. See #5909 */
-		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" || (($section == "Help") && isAllowedPage("help.php"))) {
+		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" ||
+		    (($section == "Help") && isAllowedPage("help.php")) ||
+		    (substr($item[1], 0, 8) == "https://")) {
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
+
 			if ($target) {
 				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
 			}
+
 			$class = "navlnk";
+
 			if ($item['class']) {
 				$class .= " {$item['class']}";
 			}
+
 			$attr .= sprintf(" class=\"%s\"", htmlentities($class));
+
 			if ($item['style']) {
 				$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
 			}
-			echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
+
+
+			if ($item[0] == '-DIVIDER-') {
+				$output .= ' <li class="divider"></li>';
+			} else {
+				$output .= "<li>". sprintf("<a %s %s>%s</a>", $attr, ($item[1] == "/index.php?logout") ? "usepost":"",$item[0]) . "</li>\n";
+			}
 		}
 	}
+
+	return $output;
 }
 
 $ext_menu_path_data = read_ext_menu_path_data();
 
 // System
 $system_menu = array();
-$system_menu[] = array(gettext("Logout"), "/index.php?logout");
+$system_menu[] = array(gettext("Logout") . " (" . $_SESSION['Username'] . ")", "/index.php?logout");
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
 $system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
 $system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
-if ($g['platform'] == $g['product_name'] or $g['platform'] == "nanobsd") {
-	$system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
-}
+$system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
 $system_menu[] = array(gettext("Cert. Manager"), "/system_camanager.php");
@@ -262,17 +260,40 @@ if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php*
 $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
 // Interfaces
+// NOTE:
+// Now that menus are sorted, adding a DIVIDER must be done after the sorting so an array is formed of the
+// items above the divider and another for below it. These are then sorted and combined with the divider
 $interfaces_menu = array();
+$interfaces_top = array();
+$interfaces_bottom = array();
+
 if (!isset($config['system']['webgui']['noassigninterfaces'])) {
-	$interfaces_menu[] = array(gettext("(assign)"), "/interfaces_assign.php");
+	$interfaces_top[] = array(gettext("Assignments"), "/interfaces_assign.php");
+	$div = true;
 }
-$opts = get_configured_interface_with_descr(false, true);
+
+$platform = system_identify_specific_platform();
+
+if ($platform['name'] == "uFW") {
+	$interfaces_top[] = array(gettext("Switches"), "/switch_system.php");
+}
+
+$opts = get_configured_interface_with_descr(true);
+
 foreach ($opts as $oif => $odescr) {
 	if (!isset($config['interfaces'][$oif]['ovpn'])) {
-		$interfaces_menu[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
+		$interfaces_bottom[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
 	}
 }
-$interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")), 0);
+
+$interfaces_bottom = array_merge($interfaces_bottom, return_ext_menu("Interfaces"));
+
+if ($user_settings['webgui']['interfacessort']) {
+	$interfaces_bottom = msort($interfaces_bottom, 0);
+}
+
+// Combine the top section, the divider and the bottom section of this menu
+$interfaces_menu = array_merge($interfaces_top, [array(0 => "-DIVIDER-")], $interfaces_bottom);
 
 // Firewall
 $firewall_menu = array();
@@ -286,6 +307,7 @@ $firewall_menu = msort(array_merge($firewall_menu, return_ext_menu("Firewall")),
 
 // Services
 $services_menu = array();
+$services_menu[] = array(gettext("Auto Config Backup"), "/services_acb.php");
 $services_menu[] = array(gettext("Captive Portal"), "/services_captiveportal.php");
 $services_menu[] = array(gettext("DNS Forwarder"), "/services_dnsmasq.php");
 $services_menu[] = array(gettext("DNS Resolver"), "/services_unbound.php");
@@ -330,26 +352,24 @@ $status_menu[] = array(gettext("Dashboard"), "/index.php");
 $status_menu[] = array(gettext("Gateways"), "/status_gateways.php");
 $status_menu[] = array(gettext("DHCP Leases"), "/status_dhcp_leases.php");
 $status_menu[] = array(gettext("DHCPv6 Leases"), "/status_dhcpv6_leases.php");
-$status_menu[] = array(gettext("Filter Reload"), "/status_filter_reload.php");
+$status_menu[] = array(gettext("DNS Resolver"), "/status_unbound.php");
+$status_menu[] = array(gettext("Filter Reload"), "/status_filter_reload.php?user=true");
 $status_menu[] = array(gettext("Interfaces"), "/status_interfaces.php");
 $status_menu[] = array(gettext("IPsec"), "/status_ipsec.php");
 $status_menu[] = array(gettext("Load Balancer"), "/status_lb_pool.php");
 $status_menu[] = array(gettext("NTP"), "/status_ntpd.php");
 $status_menu[] = array(gettext("OpenVPN"), "/status_openvpn.php");
-
-if ($g['platform'] == $g['product_name']) {
-	$status_menu[] = array(gettext("Package Logs"), "/status_pkglogs.php");
-}
-
+$status_menu[] = array(gettext("Package Logs"), "/status_pkglogs.php");
 $status_menu[] = array(gettext("Queues"), "/status_queues.php");
 $status_menu[] = array(gettext("Services"), "/status_services.php");
 $status_menu[] = array(gettext("System Logs"), "/status_logs.php");
-$status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php?if=wan");
+$status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php");
 
 if (count($config['interfaces']) > 1) {
 	$status_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/status_upnp.php");
 }
 
+$wifdescrs = array();
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
 	if (is_array($config['interfaces'][$ent]['wireless']) &&
@@ -396,14 +416,6 @@ $diagnostics_menu[] = array(gettext("System Activity"), "/diag_system_activity.p
 $diagnostics_menu[] = array(gettext("Traceroute"), "/diag_traceroute.php");
 $diagnostics_menu[] = array(gettext("Packet Capture"), "/diag_packet_capture.php");
 
-if ($g['platform'] == "nanobsd") {
-	$diagnostics_menu[] = array(gettext("NanoBSD"), "/diag_nanobsd.php");
-}
-
-if (isset($config['system']['developer'])) {
-	$diagnostics_menu[] = array(gettext("Restart HTTPD"), "/restart_httpd.php", "style" => "font-weight: bold; color: yellow;");
-}
-
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")), 0);
 
 $gold_menu = array();
@@ -419,8 +431,7 @@ if (!$g['disablehelpmenu']) {
 
 	$help_menu[] = array(gettext("User Forum"), "https://www.pfsense.org/j.php?jumpto=forum");
 	$help_menu[] = array(gettext("Documentation"), "https://www.pfsense.org/j.php?jumpto=doc");
-	$help_menu[] = array(gettext("Developers Wiki"), "https://www.pfsense.org/j.php?jumpto=devwiki");
-	$help_menu[] = array(gettext("Paid Support"), "https://www.pfsense.org/j.php?jumpto=portal");
+	$help_menu[] = array(gettext("Paid Support"), "https://www.netgate.com/support");
 	$help_menu[] = array(gettext("pfSense Book"), "https://www.pfsense.org/j.php?jumpto=book");
 	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://www.pfsense.org/j.php?jumpto=fbsdhandbook");
 	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")), 0);
@@ -432,10 +443,24 @@ if ($user_settings['webgui']['webguifixedmenu'] == "fixed") {
 	$menuclass = "fixed";
 }
 
-$numColumns = $user_settings['webgui']['dashboardcolumns'];
+$numColumns = (int) $user_settings['webgui']['dashboardcolumns'];
 
 if (($pagename === "index.php") && ($numColumns > 2)) {
 	$columnsContainer = 'style="max-width: ' . 585*$numColumns . 'px;width: 100%"';
+}
+
+$display_notices = false;
+$allow_clear_notices = false;
+
+if (are_notices_pending()) {
+	// Evaluate user privs to determine if notices should be displayed, and if the user can clear them.
+	$user_entry = getUserEntry($_SESSION['Username']);
+	if (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "user-view-clear-notices") || userHasPrivilege($user_entry, "page-all")) {
+		$display_notices = true;
+		$allow_clear_notices = true;
+	} elseif (userHasPrivilege($user_entry, "user-view-notices")) {
+		$display_notices = true;
+	}
 }
 ?>
 <body id="<?=$numColumns?>">
@@ -448,7 +473,10 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/"><img src="/logo.png" alt="pfSense" title="<?=$config['system']['hostname'] . '.' . $config['system']['domain']?>"/></a>
+			<a class="navbar-brand" href="/">
+				<?php include("/usr/local/www/logo.svg"); ?>
+				<span style="color:white;font-size:.5em;text-transform:uppercase;letter-spacing:1px;">Community Edition</span>
+			</a>
 		</div>
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
@@ -457,7 +485,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
                     $help_menu_title = htmlspecialchars($config['system']['hostname']);
                 }
                 elseif ($user_settings['webgui']['webguihostnamemenu'] == 'fqdn') {
-                    $help_menu_title = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
+                    $help_menu_title = htmlspecialchars($system_url);
                 }
                 else {
                     $help_menu_title = 'Help';
@@ -470,23 +498,31 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 					['name' => 'VPN',		     'menu' => $vpn_menu,		  'href' => null],
 					['name' => 'Status',	     'menu' => $status_menu,	  'href' => null],
 					['name' => 'Diagnostics',    'menu' => $diagnostics_menu, 'href' => null],
-					['name' => 'Gold',		     'menu' => $gold_menu,		  'href' => '_blank'],
+//					['name' => 'Gold',		     'menu' => $gold_menu,		  'href' => '_blank'],
                     ['name' => $help_menu_title, 'menu' => $help_menu,		  'href' => '_blank']
 				] as $item):
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;
-					} ?>
+					}
+
+					$menu_output = output_menu($item['menu'], $item['href'], $item['name']);
+
+					if (strlen($menu_output) > 0):
+?>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<?=gettext($item['name'])?>
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'], $item['name'])?></ul>
+					<ul class="dropdown-menu" role="menu"><?=$menu_output?></ul>
 				</li>
-			<?php endforeach?>
+
+<?php
+					endif;
+			 	endforeach?>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<?php if (are_notices_pending()):?>
+				<?php if ($display_notices):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
 						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false">
@@ -498,8 +534,8 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 					endif;
 				?>
 					<li class="dropdown">
-						<a href="/index.php?logout">
-							<i class="fa fa-sign-out" title="<?=gettext("Log out")?>"></i>
+						<a href="/index.php?logout" usepost>
+							<i class="fa fa-sign-out" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
 						</a>
 					</li>
 			</ul>
@@ -508,6 +544,24 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 </nav>
 
 <div class="container <?=$menuclass?>" <?=$columnsContainer?>>
+
+<?php
+	// Print a warning if current user = admin and the password hash is still set to the default value
+	if ($_SESSION['Username'] == "admin") {
+		$cu = getUserEntry("admin");
+
+		$hash = (empty($cu['bcrypt-hash']) ? $cu['password'] : $cu['bcrypt-hash']);
+
+		if (password_verify($g['factory_shipped_password'], $hash)) {
+			print('<div class="alert alert-danger">' .
+				sprintf(gettext('%sWARNING:%s The \'admin\' account password is set to the default value. ' .
+				' %s Change the password in the User Manager.%s'),
+				'<strong>', '</strong>', '<a href="/system_usermanager.php?act=edit&userid=' . $cu['uid'] . '">', '</a>') .
+				'</div>');
+		}
+	}
+?>
+
 	<header class="header">
 
 <?php
@@ -516,7 +570,11 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		print('<br />');
 		unset($notitle);
 	} else {
-		print(genhtmltitle($pgtitle));
+		if (isset($pglinks)) {
+			print(genhtmltitle($pgtitle, $pglinks));
+		} else {
+			print(genhtmltitle($pgtitle));
+		}
 	}
 ?>
 		<ul class="context-links">
@@ -572,6 +630,11 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 				<i class="fa fa-repeat icon-pointer"></i>
 			</a>
 		</li>
+		<li>
+			<a class="export-graph" id="export-graph" title="<?=gettext("Export Graph")?>">
+				<i class="fa fa-download icon-pointer"></i>
+			</a>
+		</li>
 	<?php endif?>
 
 <?php
@@ -606,7 +669,7 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 }
 
 ?>
-	<?php if (!$g['disablehelpicon']): ?>
+	<?php if (!$g['disablehelpicon'] && isAllowedPage("help.php")): ?>
 		<li>
 			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>">
 				<i class="fa fa-question-circle"></i>
@@ -617,15 +680,26 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 	</header>
 <?php
 /* if upgrade in progress, alert user */
-if (is_subsystem_dirty('packagelock') || (file_exists('/conf/needs_package_sync') && platform_booting())) {
-	if (file_exists('/conf/needs_package_sync') && platform_booting()) {
-		$warning_text = sprintf(gettext("<p>%s is booting, then packages will be reinstalled in the background.</p><p>Do not make changes in the GUI until this is complete.</p>"), $g['product_name']);
-	} else {
-		$pgtitle = array(gettext("System"), gettext("Package Manager"));
-		$warning_text = gettext("<p>Packages are currently being reinstalled in the background.</p><p>Do not make changes in the GUI until this is complete.</p>");
-		$warning_text .= sprintf(gettext('<p>If the above message is still displayed after a couple of hours, use the \'Clear Package Lock\' button on the <a href="diag_backup.php" title="%1$s &gt; %2$s">%1$s &gt; %2$s</a> page and reinstall packages manually.</p>'), gettext('Diagnostics'), htmlspecialchars(gettext('Backup & Restore')));
-	}
+$warning_text = "";
+if (file_exists('/conf/needs_package_sync') && platform_booting()) {
+	$warning_text = sprintf(gettext(
+	    '%1$s%3$s is booting, then packages will be reinstalled in the ' .
+	    'background.%2$s%1$sDo not make changes in the GUI until this is ' .
+	    'complete.%2$s'), '<p>', '</p>', $g['product_name']);
+} elseif (is_subsystem_dirty('packagelock')) {
+	$pgtitle = array(gettext("System"), gettext("Package Manager"));
+	$warning_text = sprintf(gettext('%1$sPackages are currently being ' .
+	    'reinstalled in the background.%2$s%1$sDo not make changes in ' .
+	    'the GUI until this is complete.%2$s'), '<p>', '</p>');
+	$warning_text .= sprintf(gettext('%1$sIf the above message is still ' .
+	    'displayed after a couple of hours, use the \'Clear Package ' .
+	    'Lock\' button on the %3$s page and reinstall packages manually.' .
+	    '%2$s'), '<p>', '</p>', sprintf('<a href="diag_backup.php" ' .
+	    'title="%1$s &gt; %2$s">%1$s &gt; %2$s</a>', gettext('Diagnostics'),
+	    htmlspecialchars(gettext('Backup & Restore'))));
+}
 
+if (!empty($warning_text)) {
 	print_info_box($warning_text);
 }
 
@@ -642,7 +716,8 @@ if ($config['remote_managed_pages']['item']) {
 
 // Modal notices window
 // The notices modal needs to be outside of the page display div or things get messy
-if (are_notices_pending()):?>
+if ($display_notices):
+?>
 
 <div id="notices" class="modal fade" role="dialog">
 	<div class="modal-dialog">
@@ -682,7 +757,7 @@ if (are_notices_pending()):?>
 							<a href="<?=htmlspecialchars($notice['url'])?>"><?=htmlspecialchars($notice['id'])?></a> -
 <?php endif;?>
 						</b>
-						<?=htmlspecialchars($notice['notice'])?>
+						<?=str_replace("\n", "<br/>", htmlspecialchars($notice['notice']))?>
 						<i>@ <?=date('Y-m-d H:i:s', $notice['time'])?></i>
 					</li>
 <?php	endforeach;?>
@@ -692,7 +767,9 @@ if (are_notices_pending()):?>
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
+<?php if ($allow_clear_notices && isAllowedPage("/index.php")):?>
 				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash-o icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
+<?php endif;?>
 			</div>
 		</div>
 	</div>
@@ -718,7 +795,8 @@ if (are_notices_pending()):?>
 //]]>
 </script>
 
-<?php endif;
+<?php
+endif; // ($display_notices)
 
 // Get the flash Messages
 get_flash_message();

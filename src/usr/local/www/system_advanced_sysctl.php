@@ -1,60 +1,27 @@
 <?php
 /*
-	system_advanced_sysctl.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2008 Shrew Soft Inc
+ * system_advanced_sysctl.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008 Shrew Soft Inc
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -65,28 +32,17 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
-if (!is_array($config['sysctl'])) {
-	$config['sysctl'] = array();
-}
-if (!is_array($config['sysctl']['item'])) {
-	$config['sysctl']['item'] = array();
-}
-
+init_config_arr(array('sysctl', 'item'));
 $a_tunable = &$config['sysctl']['item'];
 $tunables = system_get_sysctls();
 
-if (isset($_GET['id'])) {
-	$id = htmlspecialchars_decode($_GET['id']);
-}
-if (isset($_POST['id'])) {
-	$id = htmlspecialchars_decode($_POST['id']);
+if (isset($_REQUEST['id'])) {
+	$id = htmlspecialchars_decode($_REQUEST['id']);
 }
 
-$act = $_GET['act'];
-if (isset($_POST['act'])) {
-	$act = $_POST['act'];
-}
+$act = $_REQUEST['act'];
 
 if ($act == "edit") {
 	if (isset($a_tunable[$id])) {
@@ -101,7 +57,7 @@ if ($act == "edit") {
 	}
 }
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 	if ($a_tunable[$id]) {
 		if (!$input_errors) {
 			unset($a_tunable[$id]);
@@ -113,14 +69,13 @@ if ($act == "del") {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save'] || $_POST['apply']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
 		$retval = 0;
 		system_setup_sysctl();
-		$savemsg = get_std_save_message($retval);
 		clear_subsystem_dirty('sysctl');
 	}
 
@@ -152,18 +107,21 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("System Tunables"));
+$pglinks = array("", "system_advanced_admin.php", "system_advanced_sysctl.php");
 
 if ($act == "edit") {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
+
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('sysctl') && ($act != "edit" )) {
@@ -215,7 +173,7 @@ if ($act != "edit"): ?>
 					<td>
 					<a class="fa fa-pencil" title="<?=gettext("Edit tunable"); ?>" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"></a>
 						<?php if (isset($tunable['modified'])): ?>
-						<a class="fa fa-trash" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>"></a>
+						<a class="fa fa-trash" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" usepost></a>
 						<?php endif; ?>
 					</td>
 				</tr>
@@ -234,14 +192,14 @@ if ($act != "edit"): ?>
 
 	$section->addInput(new Form_Input(
 		'tunable',
-		'Tunable',
+		'*Tunable',
 		'text',
 		$pconfig['tunable']
 	))->setWidth(4);
 
 	$section->addInput(new Form_Input(
 		'value',
-		'Value',
+		'*Value',
 		'text',
 		$pconfig['value']
 	))->setWidth(4);

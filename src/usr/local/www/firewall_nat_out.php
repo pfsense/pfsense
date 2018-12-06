@@ -1,59 +1,26 @@
 <?php
 /*
-	firewall_nat_out.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_nat_out.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -71,31 +38,24 @@ require_once("shaper.inc");
 global $FilterIflist;
 global $GatewaysList;
 
-if (!is_array($config['nat']['outbound'])) {
-	$config['nat']['outbound'] = array();
-}
-
-if (!is_array($config['nat']['outbound']['rule'])) {
-	$config['nat']['outbound']['rule'] = array();
-}
-
+init_config_arr(array('nat', 'outbound', 'rule'));
 $a_out = &$config['nat']['outbound']['rule'];
 
 // update rule order, POST[rule] is an array of ordered IDs
 // All rule are 'checked' before posting
-if (isset($_POST['order-store'])) {
-	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+if (isset($_REQUEST['order-store'])) {
+	if (is_array($_REQUEST['rule']) && !empty($_REQUEST['rule'])) {
 
 		$a_out_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id) {
+		foreach ($_REQUEST['rule'] as $id) {
 			$a_out_new[] = $a_out[$id];
 		}
 
 		$a_out = $a_out_new;
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Outbound - reordered outbound NAT mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -114,12 +74,6 @@ $mode = $config['nat']['outbound']['mode'];
 if ($_POST['apply']) {
 	$retval = 0;
 	$retval |= filter_configure();
-
-	if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message($retval);
-	} else {
-		$savemsg = $retval;
-	}
 
 	if ($retval == 0) {
 		clear_subsystem_dirty('natconf');
@@ -172,13 +126,13 @@ if ($_POST['save']) {
 				}
 			}
 		}
-		$savemsg = gettext("Default rules for each interface have been created.");
+		$default_rules_msg = gettext("Default rules for each interface have been created.");
 		unset($FilterIflist, $GatewaysList);
 	}
 
 	$config['nat']['outbound']['mode'] = $_POST['mode'];
 
-	if (write_config()) {
+	if (write_config(gettext("Firewall: NAT: Outbound - saved outbound NAT settings."))) {
 		mark_subsystem_dirty('natconf');
 	}
 
@@ -187,11 +141,11 @@ if ($_POST['save']) {
 }
 
 //	Delete a single rule/map
-if ($_GET['act'] == "del") {
+if ($_POST['act'] == "del") {
 
-	if ($a_out[$_GET['id']]) {
-		unset($a_out[$_GET['id']]);
-		if (write_config()) {
+	if ($a_out[$_POST['id']]) {
+		unset($a_out[$_POST['id']]);
+		if (write_config(gettext("Firewall: NAT: Outbound - deleted outbound NAT mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -212,7 +166,7 @@ if (isset($_POST['del_x'])) {
 			unset($a_out[$rulei]);
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Outbound - deleted selected outbound NAT mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -220,14 +174,16 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 
-} else if ($_GET['act'] == "toggle") {
-	if ($a_out[$_GET['id']]) {
-		if (isset($a_out[$_GET['id']]['disabled'])) {
-			unset($a_out[$_GET['id']]['disabled']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_out[$_POST['id']]) {
+		if (isset($a_out[$_POST['id']]['disabled'])) {
+			unset($a_out[$_POST['id']]['disabled']);
+			$wc_msg = gettext('Firewall: NAT: Outbound - enabled outbound NAT rule.');
 		} else {
-			$a_out[$_GET['id']]['disabled'] = true;
+			$a_out[$_POST['id']]['disabled'] = true;
+			$wc_msg = gettext('Firewall: NAT: Outbound - disabled outbound NAT rule.');
 		}
-		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule")) {
+		if (write_config($wc_msg)) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -237,10 +193,15 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"));
+$pglinks = array("", "firewall_nat.php", "@self");
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($default_rules_msg) {
+	print_info_box($default_rules_msg, 'success');
+}
+
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('natconf')) {
@@ -257,7 +218,7 @@ display_top_tabs($tab_array);
 
 $form = new Form();
 
-$section = new Form_Section('General Logging Options');
+$section = new Form_Section('Outbound NAT Mode');
 
 $group = new Form_Group('Mode');
 
@@ -267,7 +228,7 @@ $group->add(new Form_Checkbox(
 	null,
 	$mode == 'automatic',
 	'automatic'
-))->displayAsRadio()->setHelp('Automatic outbound NAT rule generation.' . '<br />' . '(IPsec passthrough included)');
+))->displayAsRadio()->setHelp('Automatic outbound NAT rule generation.%s(IPsec passthrough included)', '<br />');
 
 $group->add(new Form_Checkbox(
 	'mode',
@@ -275,7 +236,7 @@ $group->add(new Form_Checkbox(
 	null,
 	$mode == 'hybrid',
 	'hybrid'
-))->displayAsRadio()->setHelp('Hybrid Outbound NAT rule generation.' . '<br />' . '(Automatic Outbound NAT + rules below)');
+))->displayAsRadio()->setHelp('Hybrid Outbound NAT rule generation.%s(Automatic Outbound NAT + rules below)', '<br />');
 
 $group->add(new Form_Checkbox(
 	'mode',
@@ -283,7 +244,7 @@ $group->add(new Form_Checkbox(
 	null,
 	$mode == 'advanced',
 	'advanced'
-))->displayAsRadio()->setHelp('Manual Outbound NAT rule generation.' . '<br />' . '(AON - Advanced Outbound NAT)');
+))->displayAsRadio()->setHelp('Manual Outbound NAT rule generation.%s(AON - Advanced Outbound NAT)', '<br />');
 
 $group->add(new Form_Checkbox(
 	'mode',
@@ -291,7 +252,7 @@ $group->add(new Form_Checkbox(
 	null,
 	$mode == 'disabled',
 	'disabled'
-))->displayAsRadio()->setHelp('Disable Outbound NAT rule generation.' . '<br />' . '(No Outbound NAT rules)');
+))->displayAsRadio()->setHelp('Disable Outbound NAT rule generation.%s(No Outbound NAT rules)', '<br />');
 
 $section->add($group);
 
@@ -303,10 +264,10 @@ print($form);
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Mappings')?></h2></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-hover table-striped table-condensed">
+			<table id="ruletable" class="table table-hover table-striped table-condensed">
 				<thead>
 					<tr>
-						<th><!-- checkbox	  --></th>
+						<th><input type="checkbox" id="selectAll" name="selectAll" /></th>
 						<th><!-- status	  --></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Source")?></th>
@@ -337,10 +298,10 @@ print($form);
 
 
 				$alias = rule_columns_with_alias(
-					$natent['source']['address'],
-					pprint_port($natent['source']['port']),
+					$natent['source']['network'],
+					pprint_port($natent['sourceport']),
 					$natent['destination']['address'],
-					pprint_port($natent['destination']['port'])
+					pprint_port($natent['dstport'])
 				);
 ?>
 
@@ -357,7 +318,7 @@ print($form);
 <?php
 				else:
 ?>
-							<a href="?act=toggle&amp;id=<?=$i?>">
+							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
 								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
 							</a>
 
@@ -380,11 +341,11 @@ print($form);
 
 						if (isset($alias['src'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
 <?php
 						endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars($natent['source']['network']))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['source']['network']))?>
 <?php
 						if (isset($alias['src'])):
 ?>
@@ -403,11 +364,11 @@ print($form);
 
 							if (isset($alias['srcport'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
 <?php
 							endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars($natent['sourceport']))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['sourceport'])))?>
 <?php
 							if (isset($alias['srcport'])):
 ?>
@@ -430,11 +391,11 @@ print($form);
 
 							if (isset($alias['dst'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
 <?php
 							endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars($natent['destination']['address']))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['destination']['address']))?>
 <?php
 							if (isset($alias['dst'])):
 ?>
@@ -454,11 +415,11 @@ print($form);
 						} else {
 							if (isset($alias['dstport'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
 <?php
 							endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars($natent['dstport']))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['dstport'])))?>
 <?php
 							if (isset($alias['dstport'])):
 ?>
@@ -510,7 +471,7 @@ print($form);
 						<td>
 							<a class="fa fa-pencil"	 title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -666,15 +627,21 @@ endif;
 
 <div class="infoblock">
 <?php
-	print_info_box(gettext('If automatic outbound NAT is selected, a mapping is automatically generated for each interface\'s subnet (except WAN-type connections) and the rules ' .
-							'on the "Mappings" section of this page are ignored.' . '<br />' .
-							'If manual outbound NAT is selected, outbound NAT rules will not be automatically generated and only the mappings specified on this page ' .
-							'will be used.' . '<br />' .
-							'If hybrid outbound NAT is selected, mappings specified on this page will be used, followed by the automatically generated ones.' . '<br />' .
-							'If disable outbound NAT is selected, no rules will be used.' . '<br />' .
-							'If a target address other than an interface\'s IP address is used, then depending on the way the WAN connection is setup, a ') .
-							'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a>' . gettext(" may also be required."),
-				   'info', false);
+	print_info_box(
+		gettext('If automatic outbound NAT is selected, a mapping is automatically generated for each interface\'s subnet (except WAN-type connections) and the rules on the "Mappings" section of this page are ignored.') .
+			'<br />' .
+			gettext('If manual outbound NAT is selected, outbound NAT rules will not be automatically generated and only the mappings specified on this page will be used.') .
+			'<br />' .
+			gettext('If hybrid outbound NAT is selected, mappings specified on this page will be used, followed by the automatically generated ones.') .
+			'<br />' .
+			gettext('If disable outbound NAT is selected, no rules will be used.') .
+			'<br />' .
+			sprintf(
+				gettext('If a target address other than an interface\'s IP address is used, then depending on the way the WAN connection is setup, a %1$sVirtual IP%2$s may also be required.'),
+				'<a href="firewall_virtual_ip.php">',
+				'</a>'),
+		'info',
+		false);
 ?>
 </div>
 
@@ -682,6 +649,7 @@ endif;
 //<![CDATA[
 events.push(function() {
 
+<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
 	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
@@ -690,6 +658,7 @@ events.push(function() {
 			dirty = true;
 		}
 	});
+<?php endif; ?>
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
@@ -710,6 +679,13 @@ events.push(function() {
 		} else {
 			return undefined;
 		}
+	});
+
+	$('#selectAll').click(function() {
+		var checkedStatus = this.checked;
+		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
+		$(this).prop('checked', checkedStatus);
+		});
 	});
 });
 //]]>

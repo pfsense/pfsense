@@ -1,11 +1,35 @@
 #!/bin/sh
-
-# Update bogons file
-# Part of the pfSense project
-# https://www.pfsense.org
+#
+# rc.update_bogons.sh
+#
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
+#
+# Based on src/etc/rc.d/savecore from FreeBSD
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 # Global variables
 proc_error=""
+
+do_not_send_uniqueid=$(/usr/local/sbin/read_xml_tag.sh boolean system/do_not_send_uniqueid)
+if [ "${do_not_send_uniqueid}" != "true" ]; then
+	uniqueid=$(/usr/sbin/gnid)
+	export HTTP_USER_AGENT="${product}/${product_version}:${uniqueid}"
+else
+	export HTTP_USER_AGENT="${product}/${product_version}"
+fi
 
 # Download and extract if necessary
 process_url() {
@@ -90,9 +114,6 @@ BOGON_V6_CKSUM=`/usr/bin/fetch -T 30 -q -o - "${v6urlcksum}" | awk '{ print $4 }
 ON_DISK_V6_CKSUM=`md5 /tmp/bogonsv6 | awk '{ print $4 }'`
 
 if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DISK_V6_CKSUM" ]; then
-	# At least one of the downloaded checksums matches, so mount RW
-	/etc/rc.conf_mount_rw
-
 	ENTRIES_MAX=`pfctl -s memory | awk '/table-entries/ { print $4 }'`
 
 	if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ]; then
@@ -138,9 +159,6 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 		echo "Could not download ${v6url} (checksum mismatch)" | logger
 		checksum_error="true"
 	fi
-
-	# We mounted RW, so switch back to RO
-	/etc/rc.conf_mount_ro
 fi
 
 if [ "$checksum_error" != "" ]; then

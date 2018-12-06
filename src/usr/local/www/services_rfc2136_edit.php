@@ -1,56 +1,22 @@
 <?php
 /*
-	services_rfc2136_edit.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * services_rfc2136_edit.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -62,17 +28,20 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['dnsupdates']['dnsupdate'])) {
-	$config['dnsupdates']['dnsupdate'] = array();
-}
+$tsig_key_algos = array(
+	'hmac-md5'    => 'HMAC-MD5 (legacy default)',
+	'hmac-sha1'   => 'HMAC-SHA1',
+	'hmac-sha224' => 'HMAC-SHA224',
+	'hmac-sha256' => 'HMAC-SHA256 (current bind9 default)',
+	'hmac-sha384' => 'HMAC-SHA384',
+	'hmac-sha512' => 'HMAC-SHA512 (most secure)',
+);
 
+init_config_arr(array('dnsupdates', 'dnsupdate'));
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && isset($a_rfc2136[$id])) {
@@ -82,14 +51,13 @@ if (isset($id) && isset($a_rfc2136[$id])) {
 	if (!$pconfig['ttl']) {
 		$pconfig['ttl'] = 60;
 	}
-	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
 	$pconfig['keyname'] = $a_rfc2136[$id]['keyname'];
-	$pconfig['keytype'] = $a_rfc2136[$id]['keytype'];
-	if (!$pconfig['keytype']) {
-		$pconfig['keytype'] = "zone";
-	}
+	$pconfig['keyalgorithm'] = $a_rfc2136[$id]['keyalgorithm'];
+	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
 	$pconfig['server'] = $a_rfc2136[$id]['server'];
 	$pconfig['interface'] = $a_rfc2136[$id]['interface'];
+	$pconfig['updatesource'] = $a_rfc2136[$id]['updatesource'];
+	$pconfig['updatesourcefamily'] = $a_rfc2136[$id]['updatesourcefamily'];
 	$pconfig['usetcp'] = isset($a_rfc2136[$id]['usetcp']);
 	$pconfig['usepublicip'] = isset($a_rfc2136[$id]['usepublicip']);
 	$pconfig['recordtype'] = $a_rfc2136[$id]['recordtype'];
@@ -100,27 +68,28 @@ if (isset($id) && isset($a_rfc2136[$id])) {
 
 }
 
-if ($_POST) {
+if ($_POST['save'] || $_POST['force']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = array();
-	$reqdfieldsn = array();
-	$reqdfields = array_merge($reqdfields, explode(" ", "host ttl keyname keydata"));
-	$reqdfieldsn = array_merge($reqdfieldsn, array(gettext("Hostname"), gettext("TTL"), gettext("Key name"), gettext("Key")));
+	$reqdfields = array('host', 'ttl', 'keyname', 'keydata');
+	$reqdfieldsn = array(gettext("Hostname"), gettext("TTL"), gettext("Key name"), gettext("Key"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($_POST['host'] && !is_domain($_POST['host']))) {
+	if ($_POST['host'] && !is_domain($_POST['host'])) {
 		$input_errors[] = gettext("The DNS update host name contains invalid characters.");
 	}
-	if (($_POST['ttl'] && !is_numericint($_POST['ttl']))) {
+	if ($_POST['ttl'] && !is_numericint($_POST['ttl'])) {
 		$input_errors[] = gettext("The DNS update TTL must be an integer.");
 	}
-	if (($_POST['keyname'] && !is_domain($_POST['keyname']))) {
+	if ($_POST['keyname'] && !is_domain($_POST['keyname'])) {
 		$input_errors[] = gettext("The DNS update key name contains invalid characters.");
+	}
+	if ($_POST['keyalgorithm'] && !array_key_exists($_POST['keyalgorithm'], $tsig_key_algos)) {
+		$input_errors[] = gettext("The DNS update key algorithm is invalid.");
 	}
 
 	if (!$input_errors) {
@@ -129,13 +98,15 @@ if ($_POST) {
 		$rfc2136['host'] = $_POST['host'];
 		$rfc2136['ttl'] = $_POST['ttl'];
 		$rfc2136['keyname'] = $_POST['keyname'];
-		$rfc2136['keytype'] = $_POST['keytype'];
+		$rfc2136['keyalgorithm'] = $_POST['keyalgorithm'];
 		$rfc2136['keydata'] = $_POST['keydata'];
 		$rfc2136['server'] = $_POST['server'];
 		$rfc2136['usetcp'] = $_POST['usetcp'] ? true : false;
 		$rfc2136['usepublicip'] = $_POST['usepublicip'] ? true : false;
 		$rfc2136['recordtype'] = $_POST['recordtype'];
 		$rfc2136['interface'] = $_POST['interface'];
+		$rfc2136['updatesource'] = $_POST['updatesource'];
+		$rfc2136['updatesourcefamily'] = $_POST['updatesourcefamily'];
 		$rfc2136['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_rfc2136[$id]) {
@@ -179,15 +150,21 @@ function build_if_list() {
 	return($list);
 }
 
+function build_us_list() {
+	$list = array(
+		'' => 'Default (use Interface above)',
+		'none' => 'Do not specify',
+	);
+
+	return(array_merge($list, get_possible_listen_ips()));
+}
+
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Clients"), gettext("Edit"));
+$pglinks = array("", "services_dyndns.php", "services_rfc2136.php", "@self");
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-}
-
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
 }
 
 $form = new Form;
@@ -201,72 +178,49 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['enable']
 ));
 
-$optionlist = array();
-
 $iflist = build_if_list();
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	$iflist
-));
+))->setHelp('Interface to monitor for updates. The address of this interface will be used in the updated DNS record.');
 
 $section->addInput(new Form_Input(
 	'host',
-	'Hostname',
+	'*Hostname',
 	'text',
 	$pconfig['host']
 ))->setHelp('Fully qualified hostname of the host to be updated.');
 
 $section->addInput(new Form_Input(
 	'ttl',
-	'TTL (seconds)',
+	'*TTL (seconds)',
 	'number',
 	$pconfig['ttl']
 ));
 
 $section->addInput(new Form_Input(
 	'keyname',
-	'Key name',
+	'*Key name',
 	'text',
 	$pconfig['keyname']
 ))->setHelp('This must match the setting on the DNS server.');
 
-$group = new Form_Group('Key Type');
-
-$group->add(new Form_Checkbox(
-	'keytype',
-	'Key Type',
-	'Zone',
-	($pconfig['keytype'] == 'zone'),
-	'zone'
-))->displayAsRadio();
-
-$group->add(new Form_Checkbox(
-	'keytype',
-	'Key Type',
-	'Host',
-	($pconfig['keytype'] == 'host'),
-	'host'
-))->displayAsRadio();
-
-$group->add(new Form_Checkbox(
-	'keytype',
-	'Key Type',
-	'User',
-	($pconfig['keytype'] == 'user'),
-	'user'
-))->displayAsRadio();
-
-$section->add($group);
+$section->addInput(new Form_Select(
+	'keyalgorithm',
+	'*Key algorithm',
+	$pconfig['keyalgorithm'],
+	$tsig_key_algos
+));
 
 $section->addInput(new Form_Input(
 	'keydata',
-	'Key',
+	'*Key',
 	'text',
 	$pconfig['keydata']
-))->setHelp('Paste an HMAC-MD5 key here.');
+))->setHelp('Secret TSIG domain key.');
 
 $section->addInput(new Form_Input(
 	'server',
@@ -289,7 +243,27 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['usepublicip']
 ));
 
-$group = new Form_Group('Record Type');
+$uslist = build_us_list();
+
+$section->addInput(new Form_Select(
+	'updatesource',
+	'Update Source',
+	$pconfig['updatesource'],
+	$uslist
+))->setHelp('Interface or address from which the firewall will send the DNS update request.');
+
+$section->addInput(new Form_Select(
+	'updatesourcefamily',
+	'Update Source Family',
+	$pconfig['updatesourcefamily'],
+	array(
+		'' => 'Default',
+		'inet' => 'IPv4',
+		'inet6' => 'IPv6',
+	)
+))->setHelp('Address family to use for sourcing updates.');
+
+$group = new Form_Group('*Record Type');
 
 $group->add(new Form_Checkbox(
 	'recordtype',

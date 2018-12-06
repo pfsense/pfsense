@@ -1,57 +1,23 @@
 <?php
 /*
-	system_update_settings.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2005 Colin Smith
+ * system_update_settings.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2005 Colin Smith
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -68,21 +34,14 @@ $repos = pkg_list_repos();
 
 if ($_POST) {
 
-	// Set the firmware branch, but only if we are not using it already
-	if ($_POST['fwbranch']) {
-		if (($_POST['fwbranch'] == "development") && !is_pkg_installed($g['product_name'] . "-repo-devel")) {
-			pkg_switch_repo(true);
-		} else if (($_POST['fwbranch'] == "stable") && !is_pkg_installed($g['product_name'] . "-repo")) {
-			pkg_switch_repo(false);
-		}
-	}
-
+	init_config_arr(array('system', 'firmware'));
 	if ($_POST['disablecheck'] == "yes") {
 		$config['system']['firmware']['disablecheck'] = true;
 	} elseif (isset($config['system']['firmware']['disablecheck'])) {
 		unset($config['system']['firmware']['disablecheck']);
 	}
 
+	init_config_arr(array('system', 'gitsync'));
 	if ($_POST['synconupgrade'] == "yes") {
 		$config['system']['gitsync']['synconupgrade'] = true;
 	} elseif (isset($config['system']['gitsync']['synconupgrade'])) {
@@ -100,7 +59,43 @@ if ($_POST) {
 		}
 	}
 
-	write_config();
+	if ($_POST['minimal'] == "yes") {
+		$config['system']['gitsync']['minimal'] = true;
+	} else {
+		unset($config['system']['gitsync']['minimal']);
+	}
+
+	if ($_POST['diff'] == "yes") {
+		$config['system']['gitsync']['diff'] = true;
+	} else {
+		unset($config['system']['gitsync']['diff']);
+	}
+
+	if ($_POST['show_files'] == "yes") {
+		$config['system']['gitsync']['show_files'] = true;
+	} else {
+		unset($config['system']['gitsync']['show_files']);
+	}
+
+	if ($_POST['show_command'] == "yes") {
+		$config['system']['gitsync']['show_command'] = true;
+	} else {
+		unset($config['system']['gitsync']['show_command']);
+	}
+
+	if ($_POST['dryrun'] == "yes") {
+		$config['system']['gitsync']['dryrun'] = true;
+	} else {
+		unset($config['system']['gitsync']['dryrun']);
+	}
+
+	if (empty($config['system']['firmware'])) {
+		unset($config['system']['firmware']);
+	}
+	if (empty($config['system']['gitsync'])) {
+		unset($config['system']['gitsync']);
+	}
+	write_config(gettext("Saved system update settings."));
 
 	$savemsg = gettext("Changes have been saved successfully");
 }
@@ -109,37 +104,7 @@ $curcfg = $config['system']['firmware'];
 $gitcfg = $config['system']['gitsync'];
 
 $pgtitle = array(gettext("System"), gettext("Update"), gettext("Update Settings"));
-
-exec("/usr/bin/fetch -q -o {$g['tmp_path']}/manifest \"{$g['update_manifest']}\"");
-if (file_exists("{$g['tmp_path']}/manifest")) {
-	$preset_urls_split = explode("\n", file_get_contents("{$g['tmp_path']}/manifest"));
-}
-
-// Create an array of repo names and descriptions to populate the "Branch" selector
-function build_repo_list() {
-	global $repos;
-
-	$list = array();
-
-	foreach ($repos as $repo) {
-		$list[$repo['name']] = $repo['descr'];
-	}
-
-	return($list);
-}
-
-function get_repo_name($path) {
-	global $repos;
-
-	foreach ($repos as $repo) {
-		if ($repo['path'] == $path) {
-			return $repo['name'];
-		}
-	}
-
-	/* Default */
-	return $repos[0]['name'];
-}
+$pglinks = array("", "pkg_mgr_install.php?id=firmware", "@self");
 
 include("head.inc");
 
@@ -156,17 +121,31 @@ $tab_array[] = array(gettext("System Update"), false, "pkg_mgr_install.php?id=fi
 $tab_array[] = array(gettext("Update Settings"), true, "system_update_settings.php");
 display_top_tabs($tab_array);
 
+// Check to see if any new repositories have become available. This data is cached and
+// refreshed evrey 24 hours
+update_repos();
+$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
+$helpfilename = "{$repopath}/{$g['product_name']}-repo-custom.help";
+
 $form = new Form();
 
 $section = new Form_Section('Firmware Branch');
 
-$section->addInput(new Form_Select(
-	fwbranch,
-	'Branch',
-	get_repo_name($config['system']['pkg_repo_conf_path']),
-	build_repo_list()
-))->setHelp('Please select the stable, or the development branch from which to update the system firmware. ' . ' <br />' .
-			'Use of the development version is at your own risk!');
+$field = new Form_Select(
+	'fwbranch',
+	'*Branch',
+	pkg_get_repo_name($config['system']['pkg_repo_conf_path']),
+	pkg_build_repo_list()
+);
+
+if (file_exists($helpfilename)) {
+	$field->setHelp(file_get_contents($helpfilename));
+} else {
+	$field->setHelp('Please select the branch from which to update the system firmware. %1$s' .
+					'Use of the development version is at your own risk!', '<br />');
+}
+
+$section->addInput($field);
 
 $form->add($section);
 
@@ -175,13 +154,13 @@ $section = new Form_Section('Updates');
 $section->addInput(new Form_Checkbox(
 	'disablecheck',
 	'Dashboard check',
-	'Disable the automatic dashboard auto-update check',
+	'Disable the Dashboard auto-update check',
 	isset($curcfg['disablecheck'])
 	));
 
 $form->add($section);
 
-if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
+if (file_exists("/usr/local/bin/git")) {
 	$section = new Form_Section('GitSync');
 
 	$section->addInput(new Form_Checkbox(
@@ -204,7 +183,7 @@ if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 		'Repository URL',
 		'text',
 		($gitcfg['repositoryurl'] ? $gitcfg['repositoryurl'] : '')
-		))->setHelp('The most recently used repository was %s. This repository will be used if the field is left blank.', [$lastrepositoryurl]);
+		))->setHelp('The most recently used repository was %s. This repository will be used if the field is left blank.', $lastrepositoryurl);
 
 	if (is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
 		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git branch", $output_str);
@@ -225,11 +204,51 @@ if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 		'Branch name',
 		'text',
 		($gitcfg['branch'] ? $gitcfg['branch'] : '')
-		))->setHelp('The most recently used branch was "%s". (Usually the branch name is master)' .
-					'<br />Note: Sync will not be performed if a branch is not specified.', [$lastbranch]);
+		))->setHelp('The most recently used branch was "%1$s". (Usually the branch name is master)' .
+					'%2$sNote: Sync will not be performed if a branch is not specified.', $lastbranch, '<br />');
+
+	$group = new Form_Group('Sync options');
+
+	$group->add(new Form_Checkbox(
+		'minimal',
+		null,
+		'Minimal',
+		isset($gitcfg['minimal'])
+		))->setHelp('Copy of only the updated files.');
+
+	$group->add(new Form_Checkbox(
+		'diff',
+		null,
+		'Diff',
+		isset($gitcfg['diff'])
+		))->setHelp('Copy of only the different or missing files.');
+
+	$group->add(new Form_Checkbox(
+		'show_files',
+		null,
+		'Show Files',
+		isset($gitcfg['show_files'])
+		))->setHelp('Show different and missing files.%1$sWith \'Diff/Minimal\' option.', '<br />');
+
+	$group->add(new Form_Checkbox(
+		'show_command',
+		null,
+		'Show Command',
+		isset($gitcfg['show_command'])
+		))->setHelp('Show constructed command.%1$sWith \'Diff/Minimal\' option.', '<br />');
+
+	$group->add(new Form_Checkbox(
+		'dryrun',
+		null,
+		'Dry Run',
+		isset($gitcfg['dryrun'])
+		))->setHelp('Dry-run only.%1$sNo files copied.', '<br />');
+
+	$group->setHelp('See "playback gitsync --help" in console "PHP Shell + pfSense tools" for additional information.');
+	$section->add($group);
 
 	$form->add($section);
-} // e-o-if(file_exista()
+} // e-o-if (file_exists())
 
 print($form);
 

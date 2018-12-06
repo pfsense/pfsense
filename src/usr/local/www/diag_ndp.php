@@ -1,60 +1,27 @@
 <?php
 /*
-	diag_ndp.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
+ * diag_ndp.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
+ * All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -66,10 +33,28 @@
 
 @ini_set('zlib.output_compression', 0);
 @ini_set('implicit_flush', 1);
-
+define('NDP_BINARY_PATH', '/usr/sbin/ndp');
 require_once("guiconfig.inc");
 
-exec("/usr/sbin/ndp -na", $rawdata);
+// Delete ndp entry.
+if (isset($_POST['deleteentry'])) {
+	$ip = $_POST['deleteentry'];
+	if (is_ipaddrv6($ip)) {
+		$commandReturnValue = mwexec(NDP_BINARY_PATH . " -d " . escapeshellarg($ip), true);
+		$deleteSucceededFlag = ($commandReturnValue == 0);
+	} else {
+		$deleteSucceededFlag = false;
+	}
+
+	$deleteResultMessage = ($deleteSucceededFlag)
+		? sprintf(gettext("The NDP entry for %s has been deleted."), $ip)
+		: sprintf(gettext("%s is not a valid IPv6 address or could not be deleted."), $ip);
+	$deleteResultMessageType = ($deleteSucceededFlag)
+		? 'success'
+		: 'alert-warning';
+}
+
+exec(NDP_BINARY_PATH . " -na", $rawdata);
 
 $i = 0;
 
@@ -80,9 +65,15 @@ foreach ($ifdescrs as $key =>$interface) {
 	$hwif[$config['interfaces'][$key]['if']] = $interface;
 }
 
-/* Array ( [0] => Neighbor [1] => Linklayer [2] => Address
-[3] => Netif [4] => Expire [5] => S
-[6] => Flags ) */
+/*
+ * Key map for each element in $rawdata
+ * 0 => Neighbor IP
+ * 1 => Physical address (MAC)
+ * 2 => Interface
+ * 3 => Expiration
+ * 4 => State
+ * 5 => Flags
+ */
 $data = array();
 array_shift($rawdata);
 foreach ($rawdata as $line) {
@@ -92,6 +83,7 @@ foreach ($rawdata as $line) {
 	$ndpent['ipv6'] = trim($elements[0]);
 	$ndpent['mac'] = trim($elements[1]);
 	$ndpent['interface'] = trim($elements[2]);
+	$ndpent['expiration'] = trim($elements[3]);
 	$data[] = $ndpent;
 }
 
@@ -128,6 +120,11 @@ $mac_man = load_mac_manufacturer_table();
 
 $pgtitle = array(gettext("Diagnostics"), gettext("NDP Table"));
 include("head.inc");
+
+// Show message if defined.
+if (isset($deleteResultMessage, $deleteResultMessageType)) {
+	print_info_box(htmlentities($deleteResultMessage), $deleteResultMessageType);
+}
 ?>
 
 <div class="panel panel-default">
@@ -138,10 +135,12 @@ include("head.inc");
 	<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
-				<th><?= gettext("IPv6 address"); ?></th>
-				<th><?= gettext("MAC address"); ?></th>
-				<th><?= gettext("Hostname"); ?></th>
-				<th><?= gettext("Interface"); ?></th>
+				<th><?=gettext("IPv6 address")?></th>
+				<th><?=gettext("MAC address")?></th>
+				<th><?=gettext("Hostname")?></th>
+				<th><?=gettext("Interface")?></th>
+				<th><?=gettext("Expiration")?></th>
+				<th data-sortable="false"><?=gettext("Actions")?></th>
 			</tr>
 	</thead>
 	<tbody>
@@ -171,6 +170,12 @@ include("head.inc");
 							echo $entry['interface'];
 						}
 						?>
+					</td>
+					<td>
+						<?=$entry['expiration']?>
+					</td>
+					<td>
+						<a class="fa fa-trash" title="<?=gettext('Delete NDP entry')?>"	href="diag_ndp.php?deleteentry=<?=$entry['ipv6']?>" usepost></a>
 					</td>
 				</tr>
 			<?php endforeach; ?>

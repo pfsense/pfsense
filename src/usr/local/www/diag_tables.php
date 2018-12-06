@@ -1,57 +1,22 @@
 <?php
 /*
-	diag_tables.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Portions borrowed from diag_dump_states.php
+ * diag_tables.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -66,11 +31,17 @@ $shortcut_section = "aliases";
 
 require_once("guiconfig.inc");
 
-// Set default table
-$tablename = "sshlockout";
+exec("/sbin/pfctl -sT", $tables);
 
-if ($_REQUEST['type']) {
+// Set default table
+$tablename = "sshguard";
+
+if ($_REQUEST['type'] && in_array($_REQUEST['type'], $tables)) {
 	$tablename = $_REQUEST['type'];
+} else {
+	/* Invalid 'type' passed, do not take any actions that use the 'type' field. */
+	unset($_REQUEST['type']);
+	$_REQUEST['delete'];
 }
 
 // Gather selected alias metadata.
@@ -142,12 +113,11 @@ if ($_POST['Download'] && ($bogons || $urltable)) {
 		sleep(1);
 	}
 	if ($maxtimetowait < 90) {
-		$savemsg = sprintf(gettext("The %s database has been updated."), $db_name);
+		$savemsg = sprintf(gettext("The %s file contents have been updated."), $db_name);
 	}
 }
 
 exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
-exec("/sbin/pfctl -sT", $tables);
 
 include("head.inc");
 
@@ -171,7 +141,9 @@ $group->add(new Form_Select(
 	null,
 	$tablename,
 	array_combine($tables, $tables)
-));
+))->setHelp('Select a user-defined alias name or system table name to view its contents. %s' .
+	'Aliases become Tables when loaded into the active firewall ruleset. ' .
+	'The contents displayed on this page reflect the current addresses inside tables used by the firewall.', '<br/><br/>');
 
 if ($bogons || $urltable || !empty($entries)) {
 	if ($bogons || $urltable) {
@@ -262,7 +234,7 @@ events.push(function() {
 			{
 				type: 'post',
 				data: {
-					type: '<?=htmlspecialchars($tablename)?>',
+					type: '<?=htmlspecialchars(addslashes($tablename))?>',
 					delete: $(this).data('entry')
 				},
 				success: function() {

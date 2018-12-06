@@ -1,4 +1,23 @@
 <?php
+/*
+ * prefixes.php
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 $leases_file = "/var/dhcpd/var/db/dhcpd6.leases";
 if (!file_exists($leases_file)) {
@@ -10,7 +29,7 @@ $fd = fopen($leases_file, 'r');
 $duid_arr = array();
 while (( $line = fgets($fd, 4096)) !== false) {
 	// echo "$line";
-	
+
 	/* Originally: preg_match("/^(ia-[np][ad])[ ]+\"(.*?)\"/i", $line, $duidmatch)
 	   That is: \"(.*?)\"
 	   , which is a non-greedy matching. However that does not go well with the legal
@@ -79,7 +98,8 @@ foreach ($duid_arr as $entry) {
 // echo "add routes\n";
 if (count($routes) > 0) {
 	foreach ($routes as $address => $prefix) {
-		echo "/sbin/route change -inet6 {$prefix} {$address}\n";
+		echo "/sbin/route change -inet6 {$prefix} {$address} " .
+		    "|| /sbin/route add -inet6 {$prefix} {$address}\n";
 	}
 }
 

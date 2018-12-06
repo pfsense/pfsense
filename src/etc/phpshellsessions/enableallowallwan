@@ -1,27 +1,42 @@
+/*
+ * enableallowallwan
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2016-2018 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 global $config;
 require_once("filter.inc");
 require("shaper.inc");
 $config = parse_config(true);
 echo "Adding allow all rule...\n";
-$filterent = array();
-$filterent["type"] = "pass";
-$filterent["interface"] = "wan";
-$filterent["source"]["any"] = "";
-$filterent["destination"]["any"] = "";
-$filterent["statetype"] = "keep state";
-$filterent["os"] = "";
-$filterent["descr"] = "Allow all ipv4 via pfSsh.php";
-$config["filter"]["rule"][] = $filterent;
-$filterent = array();
-$filterent["type"] = "pass";
-$filterent["ipprotocol"] = "inet6";
-$filterent["interface"] = "wan";
-$filterent["source"]["any"] = "";
-$filterent["destination"]["any"] = "";
-$filterent["statetype"] = "keep state";
-$filterent["os"] = "";
-$filterent["descr"] = "Allow all ipv6 via pfSsh.php";
-$config["filter"]["rule"][] = $filterent;
+
+$config["filter"]["rule"][] = array(
+	"tracker" => (int)microtime(true),
+	"type" => "pass",
+	"interface" => "wan",
+	"ipprotocol" => "inet46",
+	"statetype" => "keep state",
+	"os" => "",
+	"source" => array("any" => ""),
+	"destination" => array("any" => ""),
+	"descr" => "Allow all ipv4+ipv6 via pfSsh.php",
+	"created" => make_config_revision_entry(null, "pfSsh.php added allow all wan rule")
+);
+
 echo "Turning off block private networks (if on)...\n";
 unset($config["interfaces"]["wan"]["blockpriv"]);
 echo "Turning off block bogon networks (if on)...\n";

@@ -1,36 +1,35 @@
 #!/bin/sh
 #
-#	rc.php_ini_setup
-#	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
-#	All rights reserved.
+# rc.php_ini_setup
 #
-#	Redistribution and use in source and binary forms, with or without
-#	modification, are permitted provided that the following conditions are met:
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2014-2018 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
 #
-#	1. Redistributions of source code must retain the above copyright notice,
-#	   this list of conditions and the following disclaimer.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-#	2. Redistributions in binary form must reproduce the above copyright
-#	   notice, this list of conditions and the following disclaimer in the
-#	   documentation and/or other materials provided with the distribution.
+# http://www.apache.org/licenses/LICENSE-2.0
 #
-#	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-#	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-#	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-#	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-#	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-#	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-#	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-#	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-#	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-#	POSSIBILITY OF SUCH DAMAGE.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 # Set our operating platform
-PLATFORM=`/bin/cat /etc/platform`
 VERSION=`/bin/cat /etc/version`
 MIN_REALMEM_FOR_OPCACHE=512
 
-EXTENSIONSDIR="/usr/local/lib/php/20131226/"
+if pkg info -e php72; then
+	PHP_VER=7
+	EXTENSIONSDIR="/usr/local/lib/php/20170718/"
+else
+	PHP_VER=5
+	EXTENSIONSDIR="/usr/local/lib/php/20131226/"
+fi
 
 # Grab amount of memory that is detected
 if [ -f /var/log/dmesg.boot ]; then
@@ -40,13 +39,13 @@ else
 fi
 
 if [ -z "$AVAILMEM" ]; then
-	MEM=`/sbin/sysctl hw.physmem | cut -d':' -f2`
+	MEM=`/sbin/sysctl -q hw.physmem | cut -d':' -f2`
 	AVAILMEM=`/bin/expr $MEM / 1048576`
 fi
 
 
 # Get amount of ram installed on this system
-REALMEM=`/sbin/sysctl hw.realmem | /usr/bin/awk '{print $2/1048576}' | /usr/bin/awk -F '.' '{print $1}'`
+REALMEM=`/sbin/sysctl -q hw.realmem | /usr/bin/awk '{print $2/1048576}' | /usr/bin/awk -F '.' '{print $1}'`
 export REALMEM
 export LOWMEM
 
@@ -75,14 +74,8 @@ else
 	fi
 fi
 
-/usr/bin/sort -u -o /usr/local/etc/php/extensions.ini /usr/local/etc/php/extensions.ini
-
 # Set upload directory
-if [ "$PLATFORM" = "nanobsd" ]; then
-	UPLOADTMPDIR=$(/usr/local/sbin/read_global_var upload_path "/root")
-else
-	UPLOADTMPDIR="/tmp"
-fi
+UPLOADTMPDIR="/tmp"
 
 # Define php modules.  Do not add .so, it will
 # be done automatically by the script below.
@@ -105,8 +98,10 @@ PHPMODULES="$PHPMODULES posix"
 PHPMODULES="$PHPMODULES readline"
 # Login sessions
 PHPMODULES="$PHPMODULES session"
-# Extra sanity seatbelts
-PHPMODULES="$PHPMODULES suhosin"
+if [ $PHP_VER -eq 5 ]; then
+	# Extra sanity seatbelts
+	PHPMODULES="$PHPMODULES suhosin"
+fi
 # Firewall rules edit
 PHPMODULES="$PHPMODULES ctype"
 # firewall_rules_edit.php
@@ -123,8 +118,6 @@ PHPMODULES="$PHPMODULES sqlite3"
 PHPMODULES="$PHPMODULES radius"
 # ZeroMQ
 PHPMODULES="$PHPMODULES zmq"
-# SSH2
-PHPMODULES="$PHPMODULES ssh2"
 # pfSense extensions
 PHPMODULES="$PHPMODULES pfSense"
 # json
@@ -204,7 +197,7 @@ post_max_size = 200M
 html_errors = Off
 zlib.output_compression = Off
 zlib.output_compression_level = 1
-include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg:/usr/local/www/classes:/usr/local/www/classes/Form"
+include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg:/usr/local/www/classes:/usr/local/www/classes/Form:/usr/local/share/pear:/usr/local/share/openssl_x509_crl/"
 display_startup_errors=on
 display_errors=on
 log_errors=on
@@ -262,6 +255,7 @@ opcache.enabled="0"
 EOF
 fi
 
+if [ $PHP_VER -eq 5 ]; then
 	/bin/cat >>/usr/local/etc/php.ini <<EOF
 
 [suhosin]
@@ -274,16 +268,28 @@ suhosin.post.max_value_length = 500000
 suhosin.request.max_array_index_length = 256
 suhosin.request.max_vars = 5000
 suhosin.request.max_value_length = 500000
-suhosin.memory_limit = 536870912
+suhosin.memory_limit = 805306368
 
 EOF
-
+fi
 
 PHPFPMMAX=3
+PHPFPMIDLE=30
+PHPFPMSTART=1
+PHPFPMSPARE=2
+PHPFPMREQ=500
 if [ $REALMEM -lt 250 ]; then
 	PHPFPMMAX=2
+       PHPFPMIDLE=5
+       PHPFPMSTART=1
+       PHPFPMSPARE=1
+       PHPFPMREQ=500
 elif [ ${REALMEM} -gt 1000 ]; then
-	PHPFPMMAX=4
+       PHPFPMMAX=8
+       PHPFPMIDLE=3600
+       PHPFPMSTART=2
+       PHPFPMSPARE=7
+       PHPFPMREQ=5000
 fi
 
 /bin/cat > /usr/local/lib/php-fpm.conf <<EOF
@@ -320,22 +326,21 @@ if [ $REALMEM -lt 350 ]; then
 	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
 
 pm = ondemand
-pm.process_idle_timeout = 5
+pm.process_idle_timeout = $PHPFPMIDLE
 pm.max_children = $PHPFPMMAX
-pm.max_requests = 500
-
+pm.max_requests = $PHPFPMREQ
 EOF
 
 elif [ $REALMEM -gt 1000 ]; then
 	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
 
 pm = dynamic
-pm.process_idle_timeout = 5
+pm.process_idle_timeout = $PHPFPMIDLE
 pm.max_children = $PHPFPMMAX
-pm.start_servers = 1
-pm.max_requests = 500
+pm.start_servers = $PHPFPMSTART
+pm.max_requests = $PHPFPMREQ
 pm.min_spare_servers=1
-pm.max_spare_servers=1
+pm.max_spare_servers= $PHPFPMSPARE
 
 EOF
 else
@@ -344,11 +349,16 @@ else
 
 pm = static
 pm.max_children = $PHPFPMMAX
-pm.max_requests = 500
-
+pm.max_requests = $PHPFPMREQ
 EOF
 
 fi
+
+# Add status url for php-fpm this will only be made available from localhost through nginx 'allow 127.0.0.1'
+	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
+pm.status_path = /status
+
+EOF
 
 # Remove old log file if it exists.
 if [ -f /var/run/php_modules_load_errors.txt ]; then

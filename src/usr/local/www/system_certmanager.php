@@ -331,21 +331,30 @@ if ($_POST['save']) {
 				array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
 			}
 
-			if (($pconfig['method'] != "external") && isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
-				array_push($input_errors, gettext("Please select a valid Key Length."));
-			}
-			if (($pconfig['method'] != "external") && !in_array($_POST["digest_alg"], $openssl_digest_algs)) {
-				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
-			}
-
-			if (($pconfig['method'] == "external") && isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
-				array_push($input_errors, gettext("Please select a valid Key Length."));
-			}
-			if (($pconfig['method'] == "external") && !in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
-				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
-			}
-			if (($pconfig['method'] == "sign") && !in_array($_POST["csrsign_digest_alg"], $openssl_digest_algs)) {
-				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+			switch ($pconfig['method']) {
+				case "internal":
+					if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
+						array_push($input_errors, gettext("Please select a valid Key Length."));
+					}
+					if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
+						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+					}
+					break;
+				case "external":
+					if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
+						array_push($input_errors, gettext("Please select a valid Key Length."));
+					}
+					if (!in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
+						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+					}
+					break;
+				case "sign":
+					if (!in_array($_POST["csrsign_digest_alg"], $openssl_digest_algs)) {
+						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+					}
+					break;
+				default:
+					break;
 			}
 		}
 

@@ -100,7 +100,8 @@ if (!is_array($authmodes)) {
 
 $attributes = array("nas_identifier" => "openVPN",
 	"nas_port_type" => RADIUS_VIRTUAL,
-	"nas_port" => $_GET['nas_port']);
+	"nas_port" => $_GET['nas_port'],
+	"calling_station_id" => get_interface_ip() . ":" . $_GET['nas_port']);
 	
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);

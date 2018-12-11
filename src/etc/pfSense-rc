@@ -235,9 +235,18 @@ echo
 
 /sbin/conscontrol mute off >/dev/null
 
-SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
+SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1 | /usr/bin/head -n 1`
 if [ -n "${SWAPDEVICE}" ]; then
-	/sbin/swapon -a 2>/dev/null >/dev/null
+	/bin/rm -f /tmp/fstab.swap
+	if ! [ -c ${SWAPDEVICE} ]; then
+		# The swap device in fstab does not exist, look for a valid one and update fstab
+		for SWAPLABEL in /dev/label/swap*; do
+			echo "${SWAPLABEL}	none	swap	sw	0	0" >> /tmp/fstab.swap
+		done
+	else
+		/bin/cp /etc/fstab /tmp/fstab.swap
+	fi
+	/sbin/swapon -F /tmp/fstab.swap -a 2>/dev/null >/dev/null
 	/etc/rc.savecore
 fi
 

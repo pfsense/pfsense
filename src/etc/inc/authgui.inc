@@ -267,8 +267,10 @@ function display_login_form() {
 
 	if (isset($config['system']['webgui']['loginshowhost'])) {
 		$loginbannerstr = sprintf(gettext('%1$s.%2$s'), htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
+		$login_title = gettext(htmlspecialchars($config['system']['hostname'] . " - Login"));
 	} else {
 		$loginbannerstr = sprintf(gettext('Login to %1$s'), $g['product_name']);
+		$login_title = gettext("pfSense - Login");
 	}
 
 	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
@@ -285,7 +287,7 @@ function display_login_form() {
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
 	    <link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">
-		<title><?=gettext("Login"); ?></title>
+		<title><?=$login_title; ?></title>
 		<script type="text/javascript">
 			//<![CDATA{
 			var events = events || [];

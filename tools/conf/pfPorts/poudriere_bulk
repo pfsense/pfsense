@@ -16,6 +16,7 @@ ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
 ftp/%%PRODUCT_NAME%%-pkg-tftpd
 graphics/drm-next-kmod
 graphics/drm-stable-kmod
+lang/rust
 mail/%%PRODUCT_NAME%%-pkg-mailreport
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 net-mgmt/%%PRODUCT_NAME%%-pkg-arpwatch

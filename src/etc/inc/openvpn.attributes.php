@@ -19,12 +19,7 @@
  * limitations under the License.
  */
 
-global $username;
-
-$devname = getenv("dev");
-if (empty($devname)) {
-	$devname = "openvpn";
-}
+global $username, $dev, $untrusted_port;
 
 function cisco_to_cidr($addr) {
 	if (!is_ipaddr($addr)) {
@@ -51,7 +46,7 @@ function cisco_extract_index($prule) {
 }
 
 function parse_cisco_acl($attribs) {
-	global $devname, $attributes;
+	global $dev, $attributes;
 	if (!is_array($attribs)) {
 		return "";
 	}
@@ -87,11 +82,11 @@ function parse_cisco_acl($attribs) {
 			$index = 0;
 			$isblock = false;
 			if ($rule[$index] == "permit") {
-				$tmprule = "pass {$dir} quick on {$devname} ";
+				$tmprule = "pass {$dir} quick on {$dev} ";
 			} else if ($rule[$index] == "deny") {
 				//continue;
 				$isblock = true;
-				$tmprule = "block {$dir} quick on {$devname} ";
+				$tmprule = "block {$dir} quick on {$dev} ";
 			} else {
 				continue;
 			}
@@ -181,11 +176,8 @@ function parse_cisco_acl($attribs) {
 
 $rules = parse_cisco_acl($attributes);
 if (!empty($rules)) {
-	$pid = posix_getpid();
-	$filename = "{$g['tmp_path']}/ovpn_{$pid}{$username}.rules";
+	$filename = "{$g['tmp_path']}/ovpn_{$dev}_{$username}_{$untrusted_port}.rules";
 	@file_put_contents($filename, $rules);
-	mwexec("/sbin/pfctl -a " . escapeshellarg("openvpn/{$username}") . " -f " . escapeshellarg($filename));
-	@unlink($filename);
 }
 
 ?>

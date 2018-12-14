@@ -60,7 +60,7 @@ username=$(printf "%s" "${username}" | "${openssl}" enc -base64 | \
 # ---------- Perform Check
 auth_credentials="username=${username}&password=${password}"
 # Note that common_name is also assumed to be set by the environment
-auth_server_1="cn=${common_name}&strictcn=${strictcn}&authcfg=${authcfg}"
+auth_server_1="cn=${common_name}&strictcn=${strictcn}&authcfg=${authcfg}&dev=${dev}&untrusted_port=${untrusted_port}"
 auth_server_2="modeid=${modeid}&nas_port=${nas_port}"
 auth_args="${auth_credentials}&${auth_server_1}&${auth_server_2}"
 

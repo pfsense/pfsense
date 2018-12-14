@@ -18,16 +18,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+lockfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.lock"
+rulesfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.rules"
+anchorname="openvpn/${dev}_${username}_${trusted_port}"
+
 if [ "$script_type" = "client-connect" ]; then
-	if [ -f /tmp/$common_name ]; then
-		/bin/cat /tmp/$common_name > $1
-		/bin/rm /tmp/$common_name
-	fi
+    while [ -f "${lockfile}" ];
+    do
+        sleep 1
+    done
+    touch "${lockfile}"
+
+    /sbin/pfctl -a "openvpn/${dev}_${username}_${trusted_port}" -f "${rulesfile}"
+    rm "${rulesfile}"
+
+    if [ -f /tmp/$common_name ]; then
+        /bin/cat /tmp/$common_name > $1
+        /bin/rm /tmp/$common_name
+    fi
+
+        rm "${lockfile}"
 elif [ "$script_type" = "client-disconnect" ]; then
-	command="/sbin/pfctl -a 'openvpn/$common_name' -F rules"
-	eval $command
-	/sbin/pfctl -k $ifconfig_pool_remote_ip
-	/sbin/pfctl -K $ifconfig_pool_remote_ip
+    while [ -f "${lockfile}" ];
+    do
+        sleep 1
+    done
+    touch "${lockfile}"
+
+    command="/sbin/pfctl -a '${anchorname}' -F rules"
+    eval $command
+    /sbin/pfctl -k $ifconfig_pool_remote_ip
+    /sbin/pfctl -K $ifconfig_pool_remote_ip
+
+    rm "${lockfile}"
 fi
 
 exit 0

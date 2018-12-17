@@ -30,6 +30,7 @@ if [ "$script_type" = "client-connect" ]; then
     done
     touch "${lockfile}"
 
+    cat "${rulesfile}" | sed "s/{clientip}/${ifconfig_pool_remote_ip}/g" > "${rulesfile}.tmp" && mv "${rulesfile}.tmp" "${rulesfile}"
     /sbin/pfctl -a "openvpn/${dev}_${username}_${trusted_port}" -f "${rulesfile}"
     rm "${rulesfile}"
 
@@ -38,7 +39,7 @@ if [ "$script_type" = "client-connect" ]; then
         /bin/rm /tmp/$common_name
     fi
 
-        rm "${lockfile}"
+    rm "${lockfile}"
 elif [ "$script_type" = "client-disconnect" ]; then
     while [ -f "${lockfile}" ];
     do

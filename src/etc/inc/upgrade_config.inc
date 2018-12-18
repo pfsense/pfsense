@@ -5921,6 +5921,19 @@ function upgrade_188_to_189() {
 	}
 }
 
+/* Older pre-existing IPsec P1 entries may not have had the protocol explicitly
+ * defined. Fill in the default value of 'inet'.
+ * https://redmine.pfsense.org/issues/9207 */
+function upgrade_189_to_190() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent['protocol'])) {
+			$ph1ent['protocol'] = 'inet';
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

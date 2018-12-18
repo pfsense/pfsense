@@ -882,11 +882,13 @@ function captiveportal_prune_old() {
 
 		/* traffic quota, value retrieved from the radius attribute if the option is enabled */
 		if (isset($cpcfg['radiustraffic_quota'])) {
-			$trafficquota = (is_numeric($cpentry[11])) ? $cpentry[11] : $trafficquota;
+			$utrafficquota = (is_numeric($cpentry[11])) ? $cpentry[11] : $trafficquota;
+		} else {
+			$utrafficquota = $trafficquota;
 		}
-		if (!$timedout && $trafficquota > 0) {
+		if (!$timedout && $utrafficquota > 0) {
 			$volume = getVolume($cpentry[2], $cpentry[3]);
-			if (($volume['input_bytes'] + $volume['output_bytes']) > $trafficquota) {
+			if (($volume['input_bytes'] + $volume['output_bytes']) > $utrafficquota) {
 				$timedout = true;
 				$term_cause = 10; // NAS-Request
 				$logout_cause = 'QUOTA EXCEEDED';

@@ -830,10 +830,12 @@ function captiveportal_prune_old() {
 		$term_cause = 1;
 		/* hard timeout or session_timeout from radius if enabled */
 		if (isset($cpcfg['radiussession_timeout'])) {
-			$timeout = (is_numeric($cpentry[7])) ? $cpentry[7] : $timeout;
+			$utimeout = (is_numeric($cpentry[7])) ? $cpentry[7] : $timeout;
+		} else {
+			$utimeout = $timeout;
 		}
-		if ($timeout) {
-			if (($pruning_time - $cpentry[0]) >= $timeout) {
+		if ($utimeout) {
+			if (($pruning_time - $cpentry[0]) >= $utimeout) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
 				$logout_cause = 'SESSION TIMEOUT';

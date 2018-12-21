@@ -45,10 +45,7 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$id = $_REQUEST['userid'];
 }
 
-if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
-	$config['system']['user'] = array();
-}
-
+init_config_arr(array('system', 'user'));
 $a_user = &$config['system']['user'];
 $act = $_REQUEST['act'];
 

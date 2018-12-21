@@ -57,11 +57,9 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'passthrumac'));
+$a_cp = &$config['captiveportal'];
+$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_mac.php?zone=" . $cpzone, "@self");
@@ -70,12 +68,6 @@ $shortcut_section = "captiveportal";
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
-
-if (!is_array($a_cp[$cpzone]['passthrumac'])) {
-	$a_cp[$cpzone]['passthrumac'] = array();
-}
-
-$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 if (isset($id) && $a_passthrumacs[$id]) {
 	$pconfig['action'] = $a_passthrumacs[$id]['action'];

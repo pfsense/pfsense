@@ -28,8 +28,8 @@ define('VIP_CARP', 2);
 define('VIP_IPALIAS', 3);
 
 /* kill a process by pid file */
-function killbypid($pidfile) {
-	return sigkillbypid($pidfile, "TERM");
+function killbypid($pidfile, $waitfor = 0) {
+	return sigkillbypid($pidfile, "TERM", $waitfor);
 }
 
 function isvalidpid($pidfile) {
@@ -52,12 +52,18 @@ function isvalidproc($proc) {
 	return is_process_running($proc);
 }
 
-/* sigkill a process by pid file */
+/* sigkill a process by pid file, and wait for it to terminate or remove the .pid file for $waitfor seconds */
 /* return 1 for success and 0 for a failure */
-function sigkillbypid($pidfile, $sig) {
+function sigkillbypid($pidfile, $sig, $waitfor = 0) {
 	if (isvalidpid($pidfile)) {
-		return mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
+		$result = mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
 		    " -F {$pidfile}", true);
+		$waitcounter = $waitfor * 10;
+		while(isvalidpid($pidfile) && $waitcounter > 0) {
+			$waitcounter = $waitcounter - 1;
+			usleep(100000);
+		}
+		return $result;
 	}
 
 	return 0;
@@ -1262,7 +1268,9 @@ function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
 	global $config;
 
 	$list = array();
-	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip'])) {
+	if (!is_array($config['virtualip']) ||
+	    !is_array($config['virtualip']['vip']) ||
+	    empty($config['virtualip']['vip'])) {
 		return ($list);
 	}
 
@@ -1322,7 +1330,9 @@ function get_configured_vip_subnetv6($vipinterface = '') {
 function get_configured_vip_detail($vipinterface = '', $family = 'inet', $what = 'ip') {
 	global $config;
 
-	if (empty($vipinterface) || !is_array($config['virtualip']['vip']) ||
+	if (empty($vipinterface) ||
+	    !is_array($config['virtualip']) ||
+	    !is_array($config['virtualip']['vip']) ||
 	    empty($config['virtualip']['vip'])) {
 		return (NULL);
 	}
@@ -2598,12 +2608,26 @@ function post_redirect($page, $params) {
 
 /* Locate disks that can be queried for S.M.A.R.T. data. */
 function get_smart_drive_list() {
+	/* SMART supports some disks directly, and some controllers directly,
+	 * See https://redmine.pfsense.org/issues/9042 */
+	$supported_disk_types = array("ad", "da", "ada");
+	$supported_controller_types = array("nvme");
 	$disk_list = explode(" ", get_single_sysctl("kern.disks"));
 	foreach ($disk_list as $id => $disk) {
 		// We only want certain kinds of disks for S.M.A.R.T.
 		// 1 is a match, 0 is no match, False is any problem processing the regex
-		if (preg_match("/^(ad|da|ada).*[0-9]{1,2}$/", $disk) !== 1) {
+		if (preg_match("/^(" . implode("|", $supported_disk_types) . ").*[0-9]{1,2}$/", $disk) !== 1) {
 			unset($disk_list[$id]);
+			continue;
+		}
+	}
+	foreach ($supported_controller_types as $controller) {
+		$devices = glob("/dev/{$controller}*");
+		if (!is_array($devices)) {
+			continue;
+		}
+		foreach ($devices as $device) {
+			$disk_list[] = basename($device);
 		}
 	}
 	sort($disk_list);

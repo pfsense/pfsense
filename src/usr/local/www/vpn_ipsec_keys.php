@@ -36,17 +36,12 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-if (!is_array($config['ipsec'])) {
-	$config['ipsec'] = array();
-}
-
-if (!is_array($config['ipsec']['mobilekey'])) {
-	$config['ipsec']['mobilekey'] = array();
-}
+init_config_arr(array('ipsec', 'mobilekey'));
 ipsec_mobilekey_sort();
 $a_secret = &$config['ipsec']['mobilekey'];
 
 $userkeys = array();
+init_config_arr(array('system', 'user'));
 foreach ($config['system']['user'] as $id => $user) {
 	if (!empty($user['ipsecpsk'])) {
 		$userkeys[] = array('ident' => $user['name'], 'type' => 'PSK', 'pre-shared-key' => $user['ipsecpsk'], 'id' => $id);;

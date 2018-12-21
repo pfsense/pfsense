@@ -1606,7 +1606,7 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 		foreach ($auth_servers as $authcfg) {
 			if ($authlevel < 3) {
 				$radmac_error = false;
-				$attributes = array("nas_identifier" => "CaptivePortal",
+				$attributes = array("nas_identifier" => empty($cpcfg["radiusnasid"]) ? "CaptivePortal-{$cpzone}" : $cpcfg["radiusnasid"],
 					"nas_port_type" => RADIUS_ETHERNET,
 					"nas_port" => $pipeno,
 					"framed_ip" => $clientip);
@@ -1619,10 +1619,9 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 				$msg = null;
 
 				/* Radius MAC authentication */
-				if ($cpcfg['auth_method'] === 'radmac' && $clientmac) {
+				if ($context === 'radmac' && $clientmac) {
 					if ($authcfg['type'] === 'radius') {
 						$login = mac_format($clientmac);
-						$password = $cpcfg['radmac_secret'];
 						$status = "MACHINE LOGIN";
 					} else {
 						/* Trying to perform a Radius MAC authentication on a non-radius server - shouldn't happen! - bail out */
@@ -1650,6 +1649,9 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 							$msg = gettext("Access Denied");
 						}
 					}
+					if ($context === 'radmac' && $result === null && empty($attributes['reply_message'])) {
+						$msg = gettext("RADIUS MAC Authentication Failed.");
+					}
 
 					if (empty($status)) {
 						if ($result === true) {
@@ -1661,20 +1663,20 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 						}
 					}
 
-					if ($cpcfg['auth_method'] === 'radmac' && $login == mac_format($clientmac) || $authcfg['type'] === 'none' && empty($login)) {
+					if ($context === 'radmac' && $login == mac_format($clientmac) || $authcfg['type'] === 'none' && empty($login)) {
 						$login = "unauthenticated";
 					}
-					// We determine a flag
-					if ($result === true) {
-						$val = 3;
-					} elseif ($result === false && !empty($attributes['reply_message'])) {
-						$val = 2;
-						$msg = $attributes['reply_message'];
-					} elseif ($result === false) {
-						$val = 1;
-					} elseif ($result === null) {
-						$val = 0;
-					}
+				}
+				// We determine a flag
+				if ($result === true) {
+					$val = 3;
+				} elseif ($result === false && !empty($attributes['reply_message'])) {
+					$val = 2;
+					$msg = $attributes['reply_message'];
+				} elseif ($result === false) {
+					$val = 1;
+				} elseif ($result === null) {
+					$val = 0;
 				}
 
 				if ($val >= $auth_val) {
@@ -2654,7 +2656,7 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 	} elseif ($type === 'update') {
         $racct = new Auth_RADIUS_Acct_Update;
 		if (!is_int($stop_time)) {
-			$stop_time = time(); // "top time" here will be used only for calcuating session time.
+			$stop_time = time(); // "top time" here will be used only for calculating session time.
 		}
 	} else {
 		return null;
@@ -2664,7 +2666,9 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 		$acctcfg['radius_secret'], $acctcfg['radius_timeout']);
 
 	$racct->authentic = RADIUS_AUTH_RADIUS;
-	if (!empty($username)) {
+	if ($cpcfg['auth_method'] === 'radmac' && $username === "unauthenticated" && !empty($clientmac)) {
+		$racct->username = mac_format($clientmac);
+	} elseif (!empty($username)) {
 		$racct->username = $username;
 	}
 
@@ -2683,7 +2687,8 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 	}
 	$nasmac = get_interface_mac(find_ip_interface($nasip));
 	$racct->putAttribute(RADIUS_NAS_IP_ADDRESS, $nasip, "addr");
-	$racct->putAttribute(RADIUS_NAS_IDENTIFIER, 'CaptivePortal');
+
+	$racct->putAttribute(RADIUS_NAS_IDENTIFIER, empty($cpcfg["radiusnasid"]) ? "CaptivePortal-{$cpzone}" : $cpcfg["radiusnasid"] );
 
 	if (is_int($ruleno)) {
 		$racct->putAttribute(RADIUS_NAS_PORT_TYPE, RADIUS_ETHERNET);

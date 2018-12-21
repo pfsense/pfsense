@@ -52,9 +52,7 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 
 if (isset($userid)) {
 	$cert_methods["existing"] = gettext("Choose an existing certificate");
-	if (!is_array($config['system']['user'])) {
-		$config['system']['user'] = array();
-	}
+	init_config_arr(array('system', 'user'));
 	$a_user =& $config['system']['user'];
 }
 
@@ -62,17 +60,11 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$a_ca =& $config['ca'];
-
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 
 $internal_ca_count = 0;
 foreach ($a_ca as $ca) {
@@ -339,21 +331,30 @@ if ($_POST['save']) {
 				array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
 			}
 
-			if (($pconfig['method'] != "external") && isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
-				array_push($input_errors, gettext("Please select a valid Key Length."));
-			}
-			if (($pconfig['method'] != "external") && !in_array($_POST["digest_alg"], $openssl_digest_algs)) {
-				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
-			}
-
-			if (($pconfig['method'] == "external") && isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
-				array_push($input_errors, gettext("Please select a valid Key Length."));
-			}
-			if (($pconfig['method'] == "external") && !in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
-				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
-			}
-			if (($pconfig['method'] == "sign") && !in_array($_POST["csrsign_digest_alg"], $openssl_digest_algs)) {
-				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+			switch ($pconfig['method']) {
+				case "internal":
+					if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
+						array_push($input_errors, gettext("Please select a valid Key Length."));
+					}
+					if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
+						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+					}
+					break;
+				case "external":
+					if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
+						array_push($input_errors, gettext("Please select a valid Key Length."));
+					}
+					if (!in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
+						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+					}
+					break;
+				case "sign":
+					if (!in_array($_POST["csrsign_digest_alg"], $openssl_digest_algs)) {
+						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+					}
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -931,7 +932,10 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$existCerts = array();
 
-	foreach ($config['cert'] as $cert)	{
+	foreach ($config['cert'] as $cert) {
+		if (!is_array($cert) || empty($cert)) {
+			continue;
+		}
 		if (is_array($config['system']['user'][$userid]['cert'])) { // Could be MIA!
 			if (isset($userid) && in_array($cert['refid'], $config['system']['user'][$userid]['cert'])) {
 				continue;
@@ -1128,6 +1132,9 @@ $pluginparams['event'] = 'used_certificates';
 $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
 $i = 0;
 foreach ($a_cert as $i => $cert):
+	if (!is_array($cert) || empty($cert)) {
+		continue;
+	}
 	$name = htmlspecialchars($cert['descr']);
 	$sans = array();
 	if ($cert['crt']) {

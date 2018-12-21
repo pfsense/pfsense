@@ -28,10 +28,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['hasync'])) {
-	$config['hasync'] = array();
-}
-
+init_config_arr(array('hasync'));
 $a_hasync = &$config['hasync'];
 
 $checkbox_names = array(

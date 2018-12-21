@@ -306,6 +306,7 @@ function build_nmea_list() {
 	return($nmealist);
 }
 
+init_config_arr(array('ntpd', 'gps'));
 $pconfig = &$config['ntpd']['gps'];
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $pglinks = array("", "services_ntpd.php", "@self");

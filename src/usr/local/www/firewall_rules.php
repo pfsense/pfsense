@@ -108,14 +108,7 @@ function delete_nat_association($id) {
 	}
 }
 
-if (!is_array($config['filter'])) {
-	$config['filter'] = array();
-}
-
-if (!is_array($config['filter']['rule'])) {
-	$config['filter']['rule'] = array();
-}
-
+init_config_arr(array('filter', 'rule'));
 filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
@@ -150,6 +143,7 @@ if ($_POST['act'] == "del") {
 		unset($a_filter[$_POST['id']]);
 
 		// Update the separators
+		init_config_arr(array('filter', 'separator', strtolower($if)));
 		$a_separators = &$config['filter']['separator'][strtolower($if)];
 		$ridx = ifridx($if, $_POST['id']);	// get rule index within interface
 		$mvnrows = -1;
@@ -174,6 +168,7 @@ if (isset($_POST['del_x'])) {
 	$deleted = false;
 
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
+		init_config_arr(array('filter', 'separator', strtolower($if)));
 		$a_separators = &$config['filter']['separator'][strtolower($if)];
 		$num_deleted = 0;
 
@@ -505,14 +500,8 @@ foreach ($a_filter as $filteri => $filterent):
 			pprint_port($filterent['destination']['port'])
 		);
 
-		if (!is_array($config['schedules'])) {
-			$config['schedules'] = array();
-		}
-
-		if (!is_array($config['schedules']['schedule'])) {
-			$config['schedules']['schedule'] = array();
-		}
 		//build Schedule popup box
+		init_config_arr(array('schedules', 'schedule'));
 		$a_schedules = &$config['schedules']['schedule'];
 		$schedule_span_begin = "";
 		$schedule_span_end = "";

@@ -28,14 +28,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['laggs'])) {
-	$config['laggs'] = array();
-}
-
-if (!is_array($config['laggs']['lagg'])) {
-	$config['laggs']['lagg'] = array();
-}
-
+init_config_arr(array('laggs', 'lagg'));
 $a_laggs = &$config['laggs']['lagg'];
 
 $portlist = get_interface_list();
@@ -202,7 +195,10 @@ function build_member_list() {
 			continue;
 		}
 
-		$memberlist['list'][$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
+		$hwaddr = get_interface_vendor_mac($ifn);
+
+		$memberlist['list'][$ifn] = $ifn . ' (' . $ifinfo['mac'] .
+		    ($hwaddr != $ifinfo['mac'] ? " | hw: {$hwaddr}" : '') . ')';
 
 		if (in_array($ifn, explode(",", $pconfig['members']))) {
 			array_push($memberlist['selected'], $ifn);

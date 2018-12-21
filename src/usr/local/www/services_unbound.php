@@ -32,22 +32,10 @@ require_once("unbound.inc");
 require_once("pfsense-utils.inc");
 require_once("system.inc");
 
-if (!is_array($config['unbound'])) {
-	$config['unbound'] = array();
-}
-
-$a_unboundcfg =& $config['unbound'];
-
-if (!is_array($a_unboundcfg['hosts'])) {
-	$a_unboundcfg['hosts'] = array();
-}
-
-$a_hosts =& $a_unboundcfg['hosts'];
-
-if (!is_array($a_unboundcfg['domainoverrides'])) {
-	$a_unboundcfg['domainoverrides'] = array();
-}
-
+init_config_arr(array('unbound', 'hosts'));
+init_config_arr(array('unbound', 'domainoverrides'));
+$a_unboundcfg = &$config['unbound'];
+$a_hosts = &$a_unboundcfg['hosts'];
 $a_domainOverrides = &$a_unboundcfg['domainoverrides'];
 
 if (isset($a_unboundcfg['enable'])) {
@@ -98,7 +86,8 @@ if (empty($a_unboundcfg['system_domain_local_zone_type'])) {
 	$pconfig['system_domain_local_zone_type'] = $a_unboundcfg['system_domain_local_zone_type'];
 }
 
-$a_cert =& $config['cert'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 $certs_available = false;
 
 if (is_array($a_cert) && count($a_cert)) {

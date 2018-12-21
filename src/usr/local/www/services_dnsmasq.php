@@ -85,14 +85,6 @@ if (!empty($config['dnsmasq']['interface'])) {
 	$pconfig['interface'] = array();
 }
 
-if (!is_array($config['dnsmasq']['hosts'])) {
-	$config['dnsmasq']['hosts'] = array();
-}
-
-if (!is_array($config['dnsmasq']['domainoverrides'])) {
-	$config['dnsmasq']['domainoverrides'] = array();
-}
-
 init_config_arr(array('dnsmasq', 'hosts'));
 $a_hosts = &$config['dnsmasq']['hosts'];
 

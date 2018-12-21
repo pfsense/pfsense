@@ -54,11 +54,8 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Configuration"));
 $pglinks = array("", "services_captiveportal_zones.php", "@self", "@self");
@@ -126,17 +123,11 @@ if ($_REQUEST['act'] == "viewhtml") {
 	exit;
 }
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$a_ca =& $config['ca'];
-
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 
 if ($a_cp[$cpzone]) {
 	$cpzoneid = $pconfig['zoneid'] = $a_cp[$cpzone]['zoneid'];
@@ -158,6 +149,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radacct_server'] = $a_cp[$cpzone]['radacct_server'];
 	$pconfig['radacct_enable'] = isset($a_cp[$cpzone]['radacct_enable']);
 	$pconfig['radmac_secret'] = $a_cp[$cpzone]['radmac_secret'];
+	$pconfig['radmac_fallback'] = isset($a_cp[$cpzone]['radmac_fallback']);
 	$pconfig['reauthenticate'] = isset($a_cp[$cpzone]['reauthenticate']);
 	$pconfig['reauthenticateacct'] = $a_cp[$cpzone]['reauthenticateacct'];
 	$pconfig['httpslogin_enable'] = isset($a_cp[$cpzone]['httpslogin']);
@@ -180,6 +172,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
 	$pconfig['reverseacct'] = isset($a_cp[$cpzone]['reverseacct']);
 	$pconfig['includeidletime'] = isset($a_cp[$cpzone]['includeidletime']);
+	$pconfig['radiusnasid'] = $a_cp[$cpzone]['radiusnasid'];
 	$pconfig['page'] = array();
 	if ($a_cp[$cpzone]['page']['htmltext']) {
 		$pconfig['page']['htmltext'] = $a_cp[$cpzone]['page']['htmltext'];
@@ -312,9 +305,13 @@ if ($_POST['save']) {
 	if (isset($_POST['radacct_enable']) && !in_array($_POST['reauthenticateacct'], array('none', 'stopstart', 'stopstartfreeradius', 'interimupdate'))) {
 		$input_errors[] = gettext("You need to select an option for Accounting Updates !");
 	}
+	if (trim($_POST['radiusnasid']) !== "" && !preg_match("/^[\x21-\x7e]{3,253}$/i", trim($_POST['radiusnasid']))) {
+		$input_errors[] = gettext("The NAS-Identifier must be 3-253 characters long and should only contain ASCII characters.");
+	}
 
 	if (!$input_errors) {
-		$newcp =& $a_cp[$cpzone];
+		init_config_arr(array('captiveportal', $cpzone));
+		$newcp = &$a_cp[$cpzone];
 		//$newcp['zoneid'] = $a_cp[$cpzone]['zoneid'];
 		if (empty($newcp['zoneid'])) {
 			$newcp['zoneid'] = 2;
@@ -357,6 +354,7 @@ if ($_POST['save']) {
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
 		$newcp['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
 		$newcp['radmac_secret'] = $_POST['radmac_secret'] ? $_POST['radmac_secret'] : false;
+		$newcp['radmac_fallback'] = $_POST['radmac_fallback'] ? true : false;
 		$newcp['reauthenticateacct'] = $_POST['reauthenticateacct'];
 		if ($_POST['httpslogin_enable']) {
 			$newcp['httpslogin'] = true;
@@ -390,6 +388,7 @@ if ($_POST['save']) {
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
 		$newcp['includeidletime'] = $_POST['includeidletime'] ? true : false;
+		$newcp['radiusnasid'] = trim($_POST['radiusnasid']);
 		if ($_POST['customhtml']) {
 			$newcp['customhtml'] = true;
 		} else {
@@ -900,7 +899,7 @@ $group->add(new Form_Select(
 	true
 ))->setHelp("You can add a remote authentication server in the <a href=\"/system_authservers.php\">User Manager</a>.<br/>".
 	"<span class=\"vouchers_helptext\">Vouchers could also be used, please go to ".
-	"the <a href=\"services_captiveportal_vouchers.php?zone={$cpzone}\">Voutchers Page</a> to enable them.</span>");
+	"the <a href=\"services_captiveportal_vouchers.php?zone={$cpzone}\">Vouchers Page</a> to enable them.</span>");
 $section->add($group);
 
 $group = new Form_Group('Secondary authentication Server');
@@ -915,6 +914,13 @@ $group->add(new Form_Select(
 ))->setHelp("You can optionally select a second set of servers to to authenticate users. Users will then be able to login using separated HTML inputs.<br />".
 			"This setting is useful if you want to provide multiple authentication method to your users. If you don't need multiple authentication method, then leave this setting empty.");
 $section->add($group);
+
+$section->addInput(new Form_Input(
+	'radiusnasid',
+	'NAS Identifier',
+	'text',
+	$pconfig['radiusnasid']
+))->setHelp('Specify a NAS identifier to override the default value (CaptivePortal-%s)', $cpzone);
 
 $section->addInput(new Form_Checkbox(
 	'reauthenticate',
@@ -941,7 +947,14 @@ $section->addInput(new Form_Input(
 	'RADIUS MAC Secret',
 	'text',
 	$pconfig['radmac_secret']
-))->setHelp('RADIUS MAC will automatically try to authenticate devices with their MAC address as username, and the password entered below as password. Devices will still need to make one HTTP request to get connected, throught.');
+))->setHelp('RADIUS MAC will automatically try to authenticate devices with their MAC address as username, and the password entered below as password. Devices will still need to make one HTTP request to get connected, through.');
+
+$section->addInput(new Form_Checkbox(
+	'radmac_fallback',
+	'Login page Fallback',
+	'Display the login page as fallback if RADIUS MAC authentication failed.',
+	$pconfig['radmac_fallback']
+))->setHelp('When enabled, users will be redirected to the captive portal login page when RADIUS MAC authentication failed.');
 
 $section->addInput(new Form_Checkbox(
 	'radiussession_timeout',
@@ -1107,7 +1120,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['nohttpsforwards']
 ))->setHelp('If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites will not be forwarded to the captive portal. ' .
 			'This prevents certificate errors from being presented to the user even if HTTPS logins are enabled. ' .
-			'Users must attempt a connecton to an HTTP (Port 80) site to get forwarded to the captive portal. ' .
+			'Users must attempt a connection to an HTTP (Port 80) site to get forwarded to the captive portal. ' .
 			'If HTTPS logins are enabled, the user will be redirected to the HTTPS login page.');
 
 $form->add($section);
@@ -1141,6 +1154,7 @@ events.push(function() {
 		hideInput('radmac_format', hide);
 		hideCheckbox('radiusperuserbw', hide);
 		hideCheckbox('radiustraffic_quota', hide);
+		hideInput('radiusnasid', hide);
 	}
 
 	function hideHTTPS() {
@@ -1217,6 +1231,7 @@ events.push(function() {
 			hideCheckbox('reauthenticate', false);
 			hideClass('auth_server', false);
 			hideInput('radmac_secret', true);
+			hideCheckbox('radmac_fallback', true);
 			$('.auth_server .vouchers_helptext').removeClass('hidden');
 		}
 		else if(auth_method.indexOf("radmac") === 0) {
@@ -1231,6 +1246,7 @@ events.push(function() {
 			hideCheckbox('reauthenticate', false);
 			hideClass('auth_server', false);
 			hideInput('radmac_secret', false);
+			hideCheckbox('radmac_fallback', false);
 			$('.auth_server .vouchers_helptext').addClass('hidden');
 		} else {
 			// if "none" is selected : we hide most of authentication settings
@@ -1238,6 +1254,7 @@ events.push(function() {
 			hideCheckbox('reauthenticate', true);
 			hideClass('auth_server', true);
 			hideInput('radmac_secret', true);
+			hideCheckbox('radmac_fallback', true);
 		}
 
 
@@ -1267,7 +1284,7 @@ events.push(function() {
 				else if(value.indexOf("Local Auth") === 0) {
 					shouldHideLocal = false;
 				}
-				if($('#auth_method').val().indexOf("authserver") === 0) { // There is no second auth possiblity when none/radmac are selected
+				if($('#auth_method').val().indexOf("authserver") === 0) { // There is no second auth possibility when none/radmac are selected
 					shouldHideSecondAuth = false;
 				}
 			});

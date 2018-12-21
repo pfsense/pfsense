@@ -479,19 +479,6 @@ function services_dhcpdv4_configure() {
 		return 0;
 	}
 
-	/* if OLSRD is enabled, allow WAN to house DHCP. */
-	if (!function_exists('is_package_installed')) {
-		require_once('pkg-utils.inc');
-	}
-	if (is_package_installed('olsrd') && isset($config['installedpackages']['olsrd'])) {
-		foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-			if (isset($olsrd['enable']) && $olsrd['enable'] == "on") {
-				$is_olsr_enabled = true;
-				break;
-			}
-		}
-	}
-
 	$syscfg = $config['system'];
 	if (!is_array($config['dhcpd'])) {
 		$config['dhcpd'] = array();
@@ -670,12 +657,6 @@ EOPP;
 
 		if (!is_ipaddr($subnet)) {
 			continue;
-		}
-
-		if ($is_olsr_enabled == true) {
-			if ($dhcpifconf['netmask']) {
-				$subnetmask = gen_subnet_mask($dhcpifconf['netmask']);
-			}
 		}
 
 		$all_pools = array();
@@ -1407,12 +1388,6 @@ EOD;
 		// of each subnet here is always /64.
 		$pdlen = 64;
 
-		if ($is_olsr_enabled == true) {
-			if ($dhcpv6ifconf['netmask']) {
-				$subnetmask = gen_subnet_maskv6($dhcpv6ifconf['netmask']);
-			}
-		}
-
 		$dnscfgv6 = "";
 
 		if ($dhcpv6ifconf['domain']) {
@@ -1751,7 +1726,8 @@ function services_dhcrelay_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay.pid");
 
-	$dhcrelaycfg =& $config['dhcrelay'];
+	init_config_arr(array('dhcrelay'));
+	$dhcrelaycfg = &$config['dhcrelay'];
 
 	/* DHCPRelay enabled on any interfaces? */
 	if (!isset($dhcrelaycfg['enable'])) {
@@ -1826,7 +1802,8 @@ function services_dhcrelay6_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay6.pid");
 
-	$dhcrelaycfg =& $config['dhcrelay6'];
+	init_config_arr(array('dhcrelay6'));
+	$dhcrelaycfg = &$config['dhcrelay6'];
 
 	/* DHCPv6 Relay enabled on any interfaces? */
 	if (!isset($dhcrelaycfg['enable'])) {
@@ -2756,7 +2733,7 @@ function configure_cron() {
 	$crontab_contents = file("/etc/crontab", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
 	for ($i = 0; $i < count($crontab_contents); $i++) {
-		$cron_item =& $crontab_contents[$i];
+		$cron_item = &$crontab_contents[$i];
 		if (strpos($cron_item, "# pfSense specific crontab entries") !== false) {
 			array_splice($crontab_contents, $i - 1);
 			break;

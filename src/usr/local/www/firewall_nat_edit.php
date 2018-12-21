@@ -46,11 +46,11 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['nat']['rule'])) {
-	$config['nat']['rule'] = array();
-}
-
+init_config_arr(array('filter', 'rule'));
+init_config_arr(array('nat', 'separator'));
+init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
+$a_separators = &$config['nat']['separator'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -514,7 +514,6 @@ if ($_POST['save']) {
 				array_splice($a_nat, $after+1, 0, array($natent));
 
 				// Update the separators
-				$a_separators = &$config['nat']['separator'];
 				$ridx = $after;
 				$mvnrows = +1;
 				move_separators($a_separators, $ridx, $mvnrows);

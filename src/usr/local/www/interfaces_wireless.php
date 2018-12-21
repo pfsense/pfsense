@@ -29,13 +29,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['wireless'])) {
-	$config['wireless'] = array();
-}
-if (!is_array($config['wireless']['clone'])) {
-	$config['wireless']['clone'] = array();
-}
-
+init_config_arr(array('wireless', 'clone'));
 $a_clones = &$config['wireless']['clone'];
 
 function clone_inuse($num) {

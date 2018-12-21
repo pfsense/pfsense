@@ -125,6 +125,7 @@ if ($_REQUEST['act'] == "del") {
 		}
 	}
 
+	init_config_arr(array('installedpackages', xml_safe_fieldname($pkg['name']), 'config'));
 	$a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 	if ($a_pkg[$_REQUEST['id']]) {

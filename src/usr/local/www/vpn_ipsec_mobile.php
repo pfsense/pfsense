@@ -37,20 +37,10 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-if (!is_array($config['ipsec'])) {
-	$config['ipsec'] = array();
-}
-
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
-}
-
+init_config_arr(array('ipsec', 'phase1'));
 $a_phase1 = &$config['ipsec']['phase1'];
 
-if (!is_array($config['ipsec']['client'])) {
-	$config['ipsec']['client'] = array();
-}
-
+init_config_arr(array('ipsec', 'client'));
 $a_client = &$config['ipsec']['client'];
 
 if (count($a_client)) {

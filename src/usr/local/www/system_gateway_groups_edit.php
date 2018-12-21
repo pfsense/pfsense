@@ -31,13 +31,7 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['gateways'])) {
-	$config['gateways'] = array();
-}
-if (!is_array($config['gateways']['gateway_group'])) {
-	$config['gateways']['gateway_group'] = array();
-}
-
+init_config_arr(array('gateways', 'gateway_group'));
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
 

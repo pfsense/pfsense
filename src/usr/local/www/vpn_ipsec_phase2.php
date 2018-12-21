@@ -36,20 +36,10 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['ipsec']['client'])) {
-	$config['ipsec']['client'] = array();
-}
-
+init_config_arr(array('ipsec', 'client'));
 $a_client = &$config['ipsec']['client'];
-
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
-}
-
-if (!is_array($config['ipsec']['phase2'])) {
-	$config['ipsec']['phase2'] = array();
-}
-
+init_config_arr(array('ipsec', 'phase1'));
+init_config_arr(array('ipsec', 'phase2'));
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 

@@ -369,12 +369,16 @@ function get_user_privileges(& $user) {
 		$allowed_groups = local_user_get_groups($user, true);
 	}
 
-	if (is_array($allowed_groups)) {
-		foreach ($allowed_groups as $name) {
-			$group = getGroupEntry($name);
-			if (is_array($group['priv'])) {
-				$privs = array_merge($privs, $group['priv']);
-			}
+	if (!is_array($allowed_groups)) {
+		$allowed_groups = array('all');
+	} else {
+		$allowed_groups[] = 'all';
+	}
+
+	foreach ($allowed_groups as $name) {
+		$group = getGroupEntry($name);
+		if (is_array($group['priv'])) {
+			$privs = array_merge($privs, $group['priv']);
 		}
 	}
 
@@ -825,7 +829,7 @@ function local_user_set_groups($user, $new_groups = NULL) {
 		if ($groupname == '' || in_array($groupname, $cur_groups)) {
 			continue;
 		}
-		$group = & $config['system']['group'][$groupindex[$groupname]];
+		$group = &$config['system']['group'][$groupindex[$groupname]];
 		$group['member'][] = $user['uid'];
 		$mod_groups[] = $group;
 
@@ -847,7 +851,7 @@ function local_user_set_groups($user, $new_groups = NULL) {
 		if (!isset($config['system']['group'][$groupindex[$groupname]])) {
 			continue;
 		}
-		$group = & $config['system']['group'][$groupindex[$groupname]];
+		$group = &$config['system']['group'][$groupindex[$groupname]];
 		if (is_array($group['member'])) {
 			$index = array_search($user['uid'], $group['member']);
 			array_splice($group['member'], $index, 1);
@@ -1833,7 +1837,7 @@ function auth_get_authserver($name) {
 		}
 	}
 	if ($name == "Local Database") {
-		return array("name" => gettext("Local Database"), "type" => "Local Auth", "host" => $config['system']['hostname']);
+		return array("name" => "Local Database", "type" => "Local Auth", "host" => $config['system']['hostname']);
 	}
 }
 
@@ -1849,7 +1853,7 @@ function auth_get_authserver_list() {
 		}
 	}
 
-	$list["Local Database"] = array("name" => gettext("Local Database"), "type" => "Local Auth", "host" => $config['system']['hostname']);
+	$list["Local Database"] = array("name" => "Local Database", "type" => "Local Auth", "host" => $config['system']['hostname']);
 	return $list;
 }
 
@@ -1949,12 +1953,12 @@ function session_auth() {
 			$_SESSION['remoteauth'] = $remoteauth;
 			if ($remoteauth) {
 				if (empty($authcfg['type']) || ($authcfg['type'] == "Local Auth")) {
-					$_SESSION['authsource'] = gettext("Local Database");
+					$_SESSION['authsource'] = "Local Database";
 				} else {
-					$_SESSION['authsource'] = strtoupper(gettext($authcfg['type'])) . "/{$authcfg['name']}";
+					$_SESSION['authsource'] = strtoupper($authcfg['type']) . "/{$authcfg['name']}";
 				}
 			} else {
-				$_SESSION['authsource'] = gettext('Local Database Fallback') ;
+				$_SESSION['authsource'] = 'Local Database Fallback';
 			}
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['user_radius_attributes'] = $attributes;

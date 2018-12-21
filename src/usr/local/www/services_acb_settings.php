@@ -56,6 +56,8 @@ function index_of_command() {
 }
 
 $croncmd = "/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/execacb.php";
+
+init_config_arr(array('cron', 'item'));
 $a_cron = &$config['cron']['item'];
 $pconfig = $config['system']['acb'];
 

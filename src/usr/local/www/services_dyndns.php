@@ -28,14 +28,7 @@
 
 require_once("guiconfig.inc");
 
-if(!is_array($config['dyndnses'])){
-	$config['dyndnses'] = array();
-}
-
-if (!is_array($config['dyndnses']['dyndns'])) {
-	$config['dyndnses']['dyndns'] = array();
-}
-
+init_config_arr(array('dyndnses', 'dyndns'));
 $a_dyndns = &$config['dyndnses']['dyndns'];
 global $dyndns_split_domain_types;
 

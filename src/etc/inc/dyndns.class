@@ -998,7 +998,9 @@
 						$output->domain_records = array();
 					}
 					foreach($output->domain_records as $dnsRecord) {
-						if ($this->_dnsHost == $dnsRecord->name) {
+						// NS records are named @ in DO's API, so check type as well 
+						// https://redmine.pfsense.org/issues/9171
+						if ($this->_dnsHost == $dnsRecord->name && $dnsRecord->type == 'A') {
 							$recordID = $dnsRecord->id;
 							break;
 						}
@@ -1845,7 +1847,9 @@
 					}
 					break;
 				case 'digitalocean':
-					if (preg_match("/\s200\sOK/i", $header)) {
+					// Creating new records returns an HTTP 201, updating existing records get 200
+					// https://redmine.pfsense.org/issues/9171
+					if (preg_match("/HTTP\/2\s20[0,1]/i", $header)) {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
 					} else {

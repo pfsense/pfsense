@@ -31,6 +31,7 @@
 
 $pgtitle = array(gettext("System"), gettext("User Settings"));
 
+init_config_arr(array('system', 'user'));
 $a_user = &$config['system']['user'];
 
 if (isset($_SESSION['Username']) && isset($userindex[$_SESSION['Username']])) {

@@ -34,9 +34,7 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['l2tp']['user'])) {
-	$config['l2tp']['user'] = array();
-}
+init_config_arr(array('l2tp', 'user'));
 $a_secret = &$config['l2tp']['user'];
 
 

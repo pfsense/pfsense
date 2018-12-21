@@ -39,6 +39,11 @@ if (file_exists("{$g['tmp_path']}/.rc.start_packages.running")) {
 	}
 }
 
+if (file_exists("{$g['conf_path']}/needs_package_sync")) {
+	log_error("Skipping STARTing packages process because package reinstallation is pending.");
+	return;
+}
+
 @file_put_contents("{$g['tmp_path']}/.rc.start_packages.running", "");
 
 log_error("Restarting/Starting all packages.");

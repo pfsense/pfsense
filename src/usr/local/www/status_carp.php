@@ -57,36 +57,31 @@ if ($status != 0 && $_POST['carp_maintenancemode'] != "") {
 }
 
 if ($_POST['disablecarp'] != "") {
+	init_config_arr(array('virtualip', 'vip'));
+	$viparr = &$config['virtualip']['vip'];
 	if ($status != 0) {
 		set_single_sysctl('net.inet.carp.allow', '0');
-		if (is_array($config['virtualip']['vip'])) {
-			$viparr = &$config['virtualip']['vip'];
-			foreach ($viparr as $vip) {
-				if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
-					continue;
-				if ($vip['mode'] == "ipalias" && substr($vip['interface'], 0, 4) != "_vip")
-					continue;
-
-				interface_vip_bring_down($vip);
-			}
+		foreach ($viparr as $vip) {
+			if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
+				continue;
+			if ($vip['mode'] == "ipalias" && substr($vip['interface'], 0, 4) != "_vip")
+				continue;
+			interface_vip_bring_down($vip);
 		}
 		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot and some configuration changes will re-enable."), $carp_counter);
 		$status = 0;
 	} else {
 		$savemsg = gettext("CARP has been enabled.");
-		if (is_array($config['virtualip']['vip'])) {
-			$viparr = &$config['virtualip']['vip'];
-			foreach ($viparr as $vip) {
-				switch ($vip['mode']) {
-					case "carp":
-						interface_carp_configure($vip);
-						break;
-					case 'ipalias':
-						if (substr($vip['interface'], 0, 4) == "_vip") {
-							interface_ipalias_configure($vip);
-						}
-						break;
-				}
+		foreach ($viparr as $vip) {
+			switch ($vip['mode']) {
+				case "carp":
+					interface_carp_configure($vip);
+					break;
+				case 'ipalias':
+					if (substr($vip['interface'], 0, 4) == "_vip") {
+						interface_ipalias_configure($vip);
+					}
+					break;
 			}
 		}
 		interfaces_sync_setup();

@@ -201,9 +201,7 @@ function next_unused_gateway_name($interface) {
 
 function add_gateway_to_config($interface, $gatewayip, $inet_type) {
 	global $g, $config, $dry_run;
-	if (!is_array($config['gateways']['gateway_item'])) {
-		$config['gateways']['gateway_item'] = array();
-	}
+	init_config_arr(array('gateways', 'gateway_item'));
 	$a_gateways = &$config['gateways']['gateway_item'];
 	if ($dry_run) {
 		print_r($a_gateways);
@@ -415,6 +413,7 @@ function console_configure_dhcpd($version = 4) {
 			} while (!$is_ipaddr || !$is_inrange);
 		} while ($not_inorder);
 		$restart_dhcpd = true;
+		init_config_arr(array($dhcpd, $interface, 'range'));
 		$config[$dhcpd][$interface]['enable'] = true;
 		$config[$dhcpd][$interface]['range']['from'] = $dhcpstartip;
 		$config[$dhcpd][$interface]['range']['to'] = $dhcpendip;

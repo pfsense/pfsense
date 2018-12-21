@@ -46,11 +46,14 @@ if (isset($_POST['save'])) {
 	if ($_POST['passwordfld1'] != $_POST['passwordfld2']) {
 		$input_errors[] = gettext("The passwords do not match.");
 	}
+	if (!isset($config['system']['user'][$userindex[$_SESSION['Username']]]) ||
+	    !is_array($config['system']['user'][$userindex[$_SESSION['Username']]])) {
+		$input_errors[] = gettext("Could not locate this user.");
+	}
 
 	if (!$input_errors) {
 		phpsession_begin();
 		// all values are okay --> saving changes
-
 		$userent =& $config['system']['user'][$userindex[$_SESSION['Username']]];
 		local_user_set_password($userent, $_POST['passwordfld1']);
 		local_user_set($userent);

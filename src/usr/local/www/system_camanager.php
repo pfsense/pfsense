@@ -43,23 +43,14 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$a_ca =& $config['ca'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
-
-if (!is_array($config['crl'])) {
-	$config['crl'] = array();
-}
-
-$a_crl =& $config['crl'];
+init_config_arr(array('crl'));
+$a_crl = &$config['crl'];
 
 if ($_REQUEST['act']) {
 	$act = $_REQUEST['act'];

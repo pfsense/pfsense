@@ -30,6 +30,10 @@ require_once("guiconfig.inc");
 require_once("notices.inc");
 require_once("pfsense-utils.inc");
 
+$pconfig = array();
+init_config_arr(array('notifications', 'smtp'));
+init_config_arr(array('notifications', 'growl'));
+
 // Growl
 $pconfig['disable_growl'] = isset($config['notifications']['growl']['disable']);
 if ($config['notifications']['growl']['password']) {
@@ -63,6 +67,7 @@ if ($config['notifications']['smtp']['port']) {
 if (isset($config['notifications']['smtp']['ssl'])) {
 	$pconfig['smtpssl'] = true;
 }
+$pconfig['sslvalidate'] = ($config['notifications']['smtp']['sslvalidate'] != "disabled");
 if (!empty($config['notifications']['smtp']['timeout'])) {
 	$pconfig['smtptimeout'] = $config['notifications']['smtp']['timeout'];
 }
@@ -122,6 +127,12 @@ if ($_POST) {
 			$config['notifications']['smtp']['ssl'] = true;
 		} else {
 			unset($config['notifications']['smtp']['ssl']);
+		}
+
+		if (isset($_POST['sslvalidate'])) {
+			$config['notifications']['smtp']['sslvalidate'] = "enabled";
+		} else {
+			$config['notifications']['smtp']['sslvalidate'] = "disabled";
 		}
 
 		$config['notifications']['smtp']['timeout'] = $_POST['smtptimeout'];
@@ -260,6 +271,14 @@ $group->add(new Form_Checkbox(
 ));
 
 $section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'sslvalidate',
+	'Validate SSL/TLS',
+	'Validate the SSL/TLS certificate presented by the server',
+	$pconfig['sslvalidate']
+))->setHelp('When disabled, the server certificate will not be validated. ' .
+	'Encryption will still be used if available, but the identity of the server will not be confirmed.');
 
 $section->addInput(new Form_Input(
 	'smtpfromaddress',

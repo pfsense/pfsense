@@ -41,6 +41,10 @@ require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
 
+function remove_bad_chars($string) {
+	return preg_replace('/[^a-z_0-9]/i', '', $string);
+}
+
 define("ANTENNAS", false);
 
 if (isset($_POST['referer'])) {
@@ -72,26 +76,10 @@ if (!is_array($pconfig)) {
 	$pconfig = array();
 }
 
-if (!is_array($config['ppps'])) {
-	$config['ppps'] = array();
-}
-if (!is_array($config['ppps']['ppp'])) {
-	$config['ppps']['ppp'] = array();
-}
+init_config_arr(array('ppps', 'ppp'));
 $a_ppps = &$config['ppps']['ppp'];
 
-function remove_bad_chars($string) {
-	return preg_replace('/[^a-z_0-9]/i', '', $string);
-}
-
-if (!is_array($config['gateways'])) {
-	$config['gateways'] = array();
-}
-
-if (!is_array($config['gateways']['gateway_item'])) {
-	$config['gateways']['gateway_item'] = array();
-}
-
+init_config_arr(array('gateways', 'gateway_item'));
 $a_gateways = &$config['gateways']['gateway_item'];
 
 $interfaces = get_configured_interface_with_descr();
@@ -106,6 +94,7 @@ foreach ($no_address_interfaces as $ifbl) {
 	}
 }
 
+init_config_arr(array('interfaces', $if));
 $wancfg = &$config['interfaces'][$if];
 $old_wancfg = $wancfg;
 $old_wancfg['realif'] = get_real_interface($if);
@@ -441,6 +430,7 @@ if ($_POST['apply']) {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
 
+		$vlan_redo = false;
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
 			foreach ($toapplylist as $ifapply => $ifcfgo) {
@@ -463,13 +453,20 @@ if ($_POST['apply']) {
 						services_dhcpd_configure();
 					}
 				}
-				/*
-				 * If the parent interface has changed above, the VLANs needs to be
-				 * redone.
-				 */
-				interfaces_vlan_configure();
+				if (interface_has_clones(get_real_interface($ifapply))) {
+					$vlan_redo = true;
+				}
 			}
 		}
+
+		/*
+		 * If the parent interface has changed above, the VLANs needs to be
+		 * redone.
+		 */
+		if ($vlan_redo) {
+			interfaces_vlan_configure();
+		}
+
 		/* restart snmp so that it binds to correct address */
 		$retval |= services_snmpd_configure();
 

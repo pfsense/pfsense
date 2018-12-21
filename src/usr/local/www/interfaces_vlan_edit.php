@@ -32,13 +32,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['vlans'])) {
-	$config['vlans'] = array();
-}
-if (!is_array($config['vlans']['vlan'])) {
-	$config['vlans']['vlan'] = array();
-}
-
+init_config_arr(array('vlans', 'vlan'));
 $a_vlans = &$config['vlans']['vlan'];
 
 $portlist = get_interface_list();

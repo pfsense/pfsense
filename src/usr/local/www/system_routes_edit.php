@@ -37,14 +37,7 @@ require_once("gwlb.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
 
-if (!is_array($config['staticroutes'])) {
-	$config['staticroutes'] = array();
-}
-
-if (!is_array($config['staticroutes']['route'])) {
-	$config['staticroutes']['route'] = array();
-}
-
+init_config_arr(array('staticroutes', 'route'));
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = return_gateways_array(true, true);
 

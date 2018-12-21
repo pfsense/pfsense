@@ -28,15 +28,8 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['bridges'])) {
-	$config['bridges'] = array();
-}
-
-if (!is_array($config['bridges']['bridged'])) {
-	$config['bridges']['bridged'] = array();
-}
-
-$a_bridges = &$config['bridges']['bridged'] ;
+init_config_arr(array('bridges', 'bridged'));
+$a_bridges = &$config['bridges']['bridged'];
 
 function bridge_inuse($num) {
 	global $config, $a_bridges;

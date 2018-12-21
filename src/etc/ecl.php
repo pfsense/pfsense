@@ -56,7 +56,9 @@ function get_disks() {
 
 function discover_config($mountpoint) {
 	global $g, $debug;
-	$locations_to_check = array("/", "/config");
+	/* List of locations to check. Requires trailing slash.
+	 * See https://redmine.pfsense.org/issues/9066 */
+	$locations_to_check = array("/", "/config/");
 	foreach ($locations_to_check as $ltc) {
 		$tocheck = "/tmp/mnt/cf{$ltc}config.xml";
 		if ($debug) {

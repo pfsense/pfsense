@@ -37,14 +37,7 @@ $tsig_key_algos = array(
 	'hmac-sha512' => 'HMAC-SHA512 (most secure)',
 );
 
-if (!is_array($config['dnsupdates'])) {
-	$config['dnsupdates'] = array();
-}
-
-if (!is_array($config['dnsupdates']['dnsupdate'])) {
-	$config['dnsupdates']['dnsupdate'] = array();
-}
-
+init_config_arr(array('dnsupdates', 'dnsupdate'));
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
 if (is_numericint($_REQUEST['id'])) {

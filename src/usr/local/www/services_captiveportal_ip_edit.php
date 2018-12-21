@@ -54,22 +54,14 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'allowedip'));
+$a_cp = &$config['captiveportal'];
+$a_allowedips = &$config['captiveportal'][$cpzone]['allowedip'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed IP Addresses"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_ip.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 $id = $_REQUEST['id'];
-
-if (!is_array($config['captiveportal'][$cpzone]['allowedip'])) {
-	$config['captiveportal'][$cpzone]['allowedip'] = array();
-}
-
-$a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
 
 if (isset($id) && $a_allowedips[$id]) {
 	$pconfig['ip'] = $a_allowedips[$id]['ip'];

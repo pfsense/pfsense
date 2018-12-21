@@ -807,6 +807,7 @@ function remove_text_from_file($file, $text) {
 function after_sync_bump_adv_skew() {
 	global $config, $g;
 	$processed_skew = 1;
+	init_config_arr(array('virtualip', 'vip'));
 	$a_vip = &$config['virtualip']['vip'];
 	foreach ($a_vip as $vipent) {
 		if ($vipent['advskew'] <> "") {
@@ -1218,13 +1219,13 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
 
 	$vga_only = false;
-	$hdmi_only = false;
 	$serial_only = false;
 	$specific_platform = system_identify_specific_platform();
+	$video_console_type = (get_single_sysctl("machdep.bootmethod") == "UEFI") ? "efi" : "vidconsole";
 	if ($specific_platform['name'] == 'XG-1540') {
 		$vga_only = true;
 	} elseif ($specific_platform['name'] == 'Turbot Dual-E') {
-		$hdmi_only = true;
+		$g['primaryconsole_force'] = "video";
 	} elseif ($specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
 	    $specific_platform['name'] == 'SG-2220' ||
@@ -1271,7 +1272,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'console="comconsole"';
 		$data[] = 'comconsole_speed="' . $serialspeed . '"';
 	} elseif ($vga_only === true) {
-		$data[] = 'console="vidconsole"';
+		$data[] = "console=\"{$video_console_type}\"";
 	} elseif (is_serial_enabled()) {
 		$data[] = 'boot_multicons="YES"';
 		$data[] = 'boot_serial="YES"';
@@ -1280,11 +1281,11 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		    $config['system']['primaryconsole'];
 		switch ($primaryconsole) {
 			case "video":
-				$data[] = 'console="vidconsole,comconsole"';
+				$data[] = "console=\"{$video_console_type},comconsole\"";
 				break;
 			case "serial":
 			default:
-				$data[] = 'console="comconsole,vidconsole"';
+				$data[] = "console=\"comconsole,{$video_console_type}\"";
 		}
 		$data[] = 'comconsole_speed="' . $serialspeed . '"';
 	}
@@ -2691,7 +2692,7 @@ function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
 					$current[$tag . '_attr'] = $attributes_data;
 				}
 				$repeated_tag_index[$tag . '_' . $level] = 1;
-				$current = & $current[$tag];
+				$current = &$current[$tag];
 			} else {
 				if (isset ($current[$tag][0])) {
 					$current[$tag][$repeated_tag_index[$tag . '_' . $level]] = $result;
@@ -2708,7 +2709,7 @@ function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
 					}
 				}
 				$last_item_index = $repeated_tag_index[$tag . '_' . $level] - 1;
-				$current = & $current[$tag][$last_item_index];
+				$current = &$current[$tag][$last_item_index];
 			}
 		} elseif ($type == "complete") {
 			if (!isset ($current[$tag])) {
@@ -2743,7 +2744,7 @@ function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
 				}
 			}
 		} elseif ($type == 'close') {
-			$current = & $parent[$level -1];
+			$current = &$parent[$level -1];
 		}
 	}
 	return ($xml_array);
@@ -3046,6 +3047,7 @@ function get_locale_list() {
 		"en_US" => gettext("English"),
 		"fr" => gettext("French"),
 		"de_DE" => gettext("German (Germany)"),
+		"ko" => gettext("Korean"),
 		"nb" => gettext("Norwegian Bokmål"),
 		"pl" => gettext("Polish"),
 		"pt_PT" => gettext("Portuguese"),

@@ -41,14 +41,7 @@ function is_dyndns_username($uname) {
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['dyndnses'])) {
-	$config['dyndnses'] = array();
-}
-
-if (!is_array($config['dyndnses']['dyndns'])) {
-	$config['dyndnses']['dyndns'] = array();
-}
-
+init_config_arr(array('dyndnses', 'dyndns'));
 $a_dyndns = &$config['dyndnses']['dyndns'];
 
 $id = $_REQUEST['id'];
@@ -80,7 +73,7 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean") && $_POST['username'] == "") {
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean") && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
 
@@ -119,6 +112,8 @@ if ($_POST['save'] || $_POST['force']) {
 		} elseif ((($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
 		} elseif ((($pconfig['type'] == "godaddy") || ($pconfig['type'] == "godaddy-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
+			$host_to_check = $_POST['domainname'];
+		} elseif (($pconfig['type'] == "digitalocean") && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
 		} else {
 			$host_to_check = $_POST['host'];
@@ -307,7 +302,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
 			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
-			'Cloudflare: Enter @ as the hostname to indicate an empty field.', '<br />');
+			'Cloudflare and DigitalOcean: Enter @ as the hostname to indicate an empty field.', '<br />');
 
 $section->add($group);
 
@@ -361,7 +356,7 @@ $section->addInput(new Form_Input(
 	'Username',
 	'text',
 	$pconfig['username']
-))->setHelp('Username is required for all types except Namecheap, FreeDNS and Custom Entries.%1$s' .
+))->setHelp('Username is required for all types except Namecheap, FreeDNS , FreeDNS-v6, DigitalOcean and Custom Entries.%1$s' .
 	                'Azure: Enter your Azure AD application ID%1$s' .
 			'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .

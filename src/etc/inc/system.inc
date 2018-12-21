@@ -45,7 +45,10 @@ function activate_powerd() {
 			$normal_mode = $config['system']['powerd_normal_mode'];
 		}
 
-		mwexec("/usr/sbin/powerd -b $battery_mode -a $ac_mode -n $normal_mode");
+		mwexec("/usr/sbin/powerd" .
+			" -b " . escapeshellarg($battery_mode) .
+			" -a " . escapeshellarg($ac_mode) .
+			" -n " . escapeshellarg($normal_mode));
 	}
 }
 
@@ -126,6 +129,7 @@ function system_resolvconf_generate($dynupdate = false) {
 		$resolvconf .= "nameserver $dns_ns\n";
 	}
 
+	$ns = array();
 	if (isset($syscfg['dnsallowoverride'])) {
 		/* get dynamically assigned DNS servers (if any) */
 		$ns = array_unique(get_searchdomains());
@@ -134,8 +138,8 @@ function system_resolvconf_generate($dynupdate = false) {
 				$resolvconf .= "search {$searchserver}\n";
 			}
 		}
-	} else {
-		$ns = array();
+	}
+	if (empty($ns)) {
 		// Do not create blank search/domain lines, it can break tools like dig.
 		if ($syscfg['domain']) {
 			$resolvconf .= "search {$syscfg['domain']}\n";
@@ -644,18 +648,6 @@ function system_routing_configure($interface = "") {
 		echo "system_routing_configure() being called $mt\n";
 	}
 
-	$dont_add_route = false;
-	/* if OLSRD is enabled, allow WAN to house DHCP. */
-	if (is_array($config['installedpackages']['olsrd'])) {
-		foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-			if (($olsrd['enabledyngw'] == "on") && ($olsrd['enable'] == "on")) {
-				$dont_add_route = true;
-				log_error(gettext("Not adding default route because OLSR dynamic gateway is enabled."));
-				break;
-			}
-		}
-	}
-
 	$gateways_arr = return_gateways_array(false, true);
 	foreach ($gateways_arr as $gateway) {
 		// setup static interface routes for nonlocal gateways
@@ -670,11 +662,9 @@ function system_routing_configure($interface = "") {
 		}
 	}
 
-	if ($dont_add_route == false) {
-		$gateways_status = return_gateways_status(true);
-		fixup_default_gateway("inet", $gateways_status, $gateways_arr);
-		fixup_default_gateway("inet6", $gateways_status, $gateways_arr);
-	}
+	$gateways_status = return_gateways_status(true);
+	fixup_default_gateway("inet", $gateways_status, $gateways_arr);
+	fixup_default_gateway("inet6", $gateways_status, $gateways_arr);
 
 	system_staticroutes_configure($interface, false);
 
@@ -866,6 +856,7 @@ function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = tru
 		touch($logfile);
 	} else {
 		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
+		$log_size = ($log_size < (2**32)/2) ? $log_size : "511488";
 		$log_size = isset($config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize']) ? $config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize'] : $log_size;
 		exec("/usr/local/sbin/clog -i -s {$log_size} " . escapeshellarg($logfile));
 	}
@@ -933,7 +924,7 @@ function system_syslogd_start($sighup = false) {
 
 	$syslogd_extra = "";
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'relayd', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'olsrd', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'miniupnpd', 'filterlog');
+		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'relayd', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'miniupnpd', 'filterlog');
 		$syslogconf = "";
 		if ($config['installedpackages']['package']) {
 			foreach ($config['installedpackages']['package'] as $package) {
@@ -947,7 +938,7 @@ function system_syslogd_start($sighup = false) {
 			}
 		}
 		$facilitylist = implode(',', array_unique($separatelogfacilities));
-		$syslogconf .= "!radvd,routed,olsrd,zebra,ospfd,ospf6d,bgpd,miniupnpd\n";
+		$syslogconf .= "!radvd,routed,zebra,ospfd,ospf6d,bgpd,miniupnpd\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/routing.log\n";
 		}
@@ -1141,10 +1132,34 @@ EOD;
 		$sighup = false;
 	}
 
+	$sshguard_whitelist = array();
+	if (!empty($config['system']['sshguard_whitelist'])) {
+		$sshguard_whitelist = explode(' ',
+		    $config['system']['sshguard_whitelist']);
+	}
+
 	$sshguard_config = array();
 	$sshguard_config[] = 'BACKEND="/usr/local/libexec/sshg-fw-pf"' . "\n";
-	/* XXX Add a GUI option to user to define it? */
-	$sshguard_config[] = 'DETECTION_TIME=3600' . "\n";
+	if (!empty($config['system']['sshguard_threshold'])) {
+		$sshguard_config[] = 'THRESHOLD=' .
+		    $config['system']['sshguard_threshold'] . "\n";
+	}
+	if (!empty($config['system']['sshguard_blocktime'])) {
+		$sshguard_config[] = 'BLOCK_TIME=' .
+		    $config['system']['sshguard_blocktime'] . "\n";
+	}
+	if (!empty($config['system']['sshguard_detection_time'])) {
+		$sshguard_config[] = 'DETECTION_TIME=' .
+		    $config['system']['sshguard_detection_time'] . "\n";
+	}
+	if (!empty($sshguard_whitelist)) {
+		@file_put_contents("/usr/local/etc/sshguard.whitelist",
+		    implode(PHP_EOL, $sshguard_whitelist));
+		$sshguard_config[] =
+		    'WHITELIST_FILE=/usr/local/etc/sshguard.whitelist' . "\n";
+	} else {
+		unlink_if_exists("/usr/local/etc/sshguard.whitelist");
+	}
 	file_put_contents("/usr/local/etc/sshguard.conf", $sshguard_config);
 
 	if (!$sighup) {
@@ -1175,14 +1190,10 @@ EOD;
 function system_webgui_create_certificate() {
 	global $config, $g;
 
-	if (!is_array($config['ca'])) {
-		$config['ca'] = array();
-	}
-	$a_ca =& $config['ca'];
-	if (!is_array($config['cert'])) {
-		$config['cert'] = array();
-	}
-	$a_cert =& $config['cert'];
+	init_config_arr(array('ca'));
+	$a_ca = &$config['ca'];
+	init_config_arr(array('cert'));
+	$a_cert = &$config['cert'];
 	log_error(gettext("Creating SSL Certificate for this host"));
 
 	$cert = array();
@@ -1272,7 +1283,7 @@ function system_webgui_start() {
 	return $res;
 }
 
-function get_dns_nameservers() {
+function get_dns_nameservers($add_v6_brackets = false) {
 	global $config;
 
 	$dns_nameservers = array();
@@ -1303,14 +1314,20 @@ function get_dns_nameservers() {
 		}
 		foreach ($ns as $nameserver) {
 			if ($nameserver) {
-				$dns_nameservers[] = "$nameserver";
+				if ($add_v6_brackets && is_ipaddrv6($nameserver)) {
+					$nameserver = "[{$nameserver}]";
+				}
+				$dns_nameservers[] = $nameserver;
 			}
 		}
 	}
 	if (is_array($syscfg['dnsserver'])) {
 		foreach ($syscfg['dnsserver'] as $sys_dnsserver) {
 			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
-				$dns_nameservers[] = "$sys_dnsserver";
+				if ($add_v6_brackets && is_ipaddrv6($sys_dnsserver)) {
+					$sys_dnsserver = "[{$sys_dnsserver}]";
+				}
+				$dns_nameservers[] = $sys_dnsserver;
 			}
 		}
 	}
@@ -1461,7 +1478,7 @@ EOD;
 		    (cert_get_ocspstaple($cert_temp['crt']) == true)) {
 			$nginx_config .= "\t\tssl_stapling on;\n";
 			$nginx_config .= "\t\tssl_stapling_verify on;\n";
-			$nginx_config .= "\t\tresolver " . implode(" ", get_dns_nameservers()) . " valid=300s;\n";
+			$nginx_config .= "\t\tresolver " . implode(" ", get_dns_nameservers(true)) . " valid=300s;\n";
 			$nginx_config .= "\t\tresolver_timeout 5s;\n";
 		}
 	} else {

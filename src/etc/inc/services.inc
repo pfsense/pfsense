@@ -2316,10 +2316,17 @@ trap := "{$config['snmpd']['trapstring']}"
 
 EOD;
 		}
-
-		$sysDescr = "{$g['product_name']} " . php_uname("n") .
-			" {$g['product_version']} {$g['platform']} " . php_uname("s") .
-			" " . php_uname("r") . " " . php_uname("m");
+		
+		if ($g['product_version_string']) {
+			$sysDescr = "{$g['product_name']} {$config['system']['hostname']}.{$config['system']['domain']}" .
+				" {$g['product_version_string']} {$g['platform']} " . php_uname("s") .
+				" " . php_uname("r") . " " . php_uname("m");
+		}
+		else {
+			$sysDescr = "{$g['product_name']} {$config['system']['hostname']}.{$config['system']['domain']}" .
+				" {$g['product_version']} {$g['platform']} " . php_uname("s") .
+				" " . php_uname("r") . " " . php_uname("m");
+		}
 
 		$snmpdconf .= <<<EOD
 system := 1     # pfSense

@@ -167,7 +167,7 @@ if ($_POST['save']) {
 
 	/* Check for reserved keyword names */
 	foreach ($pf_reserved_keywords as $rk) {
-		if ($rk == $_POST['name']) {
+		if (strcasecmp($rk, $_POST['name']) == 0) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an alias name: %s"), $rk);
 		}
 	}

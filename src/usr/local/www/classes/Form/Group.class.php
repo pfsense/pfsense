@@ -112,7 +112,18 @@ EOT;
 	public function __toString()
 	{
 		global $config, $user_settings;
-
+		$hidden = true;
+		
+		foreach ($this->_inputs as $input) {
+			// Check if all inputs of this group are hidden inputs
+			if ($input->getType() != 'hidden') {
+				$hidden = false;
+			}
+		}
+		if ($hidden) {
+			unset($this->_attributes['class']['form-group']);
+		}
+		
 		$element = parent::__toString();
 
 		// Automatically determine width for inputs without explicit set
@@ -126,18 +137,17 @@ EOT;
 
 			$width = $input->getWidth();
 
-			if (isset($width))
+			if (isset($width)) {
 				$spaceLeft -= $width;
-			else
+			} elseif ($input->getType() != 'hidden') {
 				array_push($missingWidth, $input);
+			}
 		}
 
 		foreach ($missingWidth as $input) {
-			$input->setWidth($spaceLeft / count($missingWidth));
-		}
-
-		if (strtolower($this->_labelTarget->getType()) == 'hidden') {
-			$hidden = true;
+			if ($input->getType() != 'hidden') {
+				$input->setWidth($spaceLeft / count($missingWidth));
+			}
 		}
 
 		$form_controls = array('input', 'select', 'button', 'textarea', 'option', 'optgroup', 'fieldset', 'label');
@@ -152,28 +162,35 @@ EOT;
 		if (!$user_settings['webgui']['webguileftcolumnhyper']) {
 			$target = null;
 		}
+		if (!$hidden) {
+			$label = new Form_Element('label', false, ['for' => $target]);
+			$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');
 
-		$label = new Form_Element('label', false, ['for' => $target]);
-		$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');
+			if (!empty(trim($this->_title)) || is_numeric($this->_title)) {
+				$title = htmlspecialchars(gettext($this->_title));
 
-		if (!empty(trim($this->_title)) || is_numeric($this->_title)) {
-			$title = htmlspecialchars(gettext($this->_title));
-
-			// If the element tile (label) begins with a '*', remove the '*' and add a span with class
-			// 'element-required'. Text decoration can then be added in the CSS to indicate that this is a
-			// required field
-			if (substr($title, 0, 1 ) === "*" ) {
-				$title = '<span class="element-required">' . substr($title, 1) . '</span>';
-			} else {
-				$title = '<span>' . $title . '</span>';
+				// If the element tile (label) begins with a '*', remove the '*' and add a span with class
+				// 'element-required'. Text decoration can then be added in the CSS to indicate that this is a
+				// required field
+				if (substr($title, 0, 1 ) === "*") {
+					$title = '<span class="element-required">' . substr($title, 1) . '</span>';
+				} else {
+					$title = '<span>' . $title . '</span>';
+				}
 			}
+			$label_end = "</label>";
+		}
+		else {
+			$label = "";
+			$label_end = "";
+			$title = "";
 		}
 
 		return <<<EOT
 	{$element}
 		{$label}
 			{$title}
-		</label>
+		{$label_end}
 		{$inputs}
 		{$help}
 	</div>

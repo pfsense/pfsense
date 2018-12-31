@@ -114,10 +114,10 @@ $awk = "/usr/bin/awk";
 /* this pattern sticks comments into a single array item */
 $cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
 /* We then split the leases file by } */
-$splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
+$splitpattern = "'BEGIN{ RS=\"#\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
 
 /* stuff the leases file in a proper format into a array by line */
-exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
+exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | sed 's/^}/#/g' | {$awk} {$splitpattern}", $leases_content);
 $leases_count = count($leases_content);
 exec("/usr/sbin/arp -an", $rawdata);
 $arpdata_ip = array();

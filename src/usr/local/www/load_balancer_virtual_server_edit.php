@@ -3,7 +3,7 @@
  * load_balancer_virtual_server_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2008 Bill Marquette <bill.marquette@gmail.com>
  * All rights reserved.
  *

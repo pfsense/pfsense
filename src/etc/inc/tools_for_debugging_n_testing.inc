@@ -2,7 +2,7 @@
 /*
  * tools_for_debugging_n_testing.inc
  *
- * Copyright (c) 2017-2018 Anders Lind (anders.lind@gmail.com)
+ * Copyright (c) 2017-2019 Anders Lind (anders.lind@gmail.com)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

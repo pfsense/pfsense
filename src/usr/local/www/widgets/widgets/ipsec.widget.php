@@ -3,7 +3,7 @@
  * ipsec.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004-2005 T. Lechat <dev@lechat.org> (BSD 2 clause)
  * Copyright (c) 2007 Jonathan Watt <jwatt@jwatt.org> (BSD 2 clause)
  * Copyright (c) 2007 Scott Dale (BSD 2 clause)

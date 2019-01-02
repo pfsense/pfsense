@@ -3,7 +3,7 @@
  * voucher.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2007-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2007-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *

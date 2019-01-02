@@ -3,7 +3,7 @@
  * wizardapp.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Bill Marquette - bill.marquette@gmail.com.
  * All rights reserved.
  *

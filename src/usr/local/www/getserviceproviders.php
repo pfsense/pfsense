@@ -3,7 +3,7 @@
  * getserviceproviders.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Vinicius Coque <vinicius.coque@bluepex.com>
  * All rights reserved.
  *

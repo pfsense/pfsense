@@ -14,8 +14,7 @@ editors/vim-console
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
 ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
 ftp/%%PRODUCT_NAME%%-pkg-tftpd
-graphics/drm-next-kmod
-graphics/drm-stable-kmod
+graphics/drm-kmod
 lang/rust
 mail/%%PRODUCT_NAME%%-pkg-mailreport
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf

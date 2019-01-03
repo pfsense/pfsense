@@ -18,14 +18,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ATAIDLE=/usr/local/sbin/ataidle
+CAMCONTROL=/sbin/camcontrol
 for i in /dev/ad?; do
 	if [ ! -e ${i} ]; then
 		continue;
 	fi
-	SUPPORTED=`${ATAIDLE} ${i} | grep "APM Supported" | awk '{print $3;}'`
-	if [ "${SUPPORTED}" = "yes" ] ; then
+
+	ENABLED=$(${CAMCONTROL} identify ${i} \
+	    | grep "advanced power management" | awk '{print $5}')
+
+	if [ "${ENABLED}" = "no" ]; then
+		continue
+	fi
+
+	SUPPORTED=$(${CAMCONTROL} identify ${i} \
+	    | grep "advanced power management" | awk '{print $4}')
+
+	if [ "${SUPPORTED}" != "no" ]; then
 		echo Disabling APM on $i
-		${ATAIDLE} -P 0 ${i}
+		${CAMCONTROL} apm ${i}
 	fi
 done

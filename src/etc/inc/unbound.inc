@@ -115,6 +115,17 @@ function test_unbound_config($unboundcfg, &$output) {
 	unbound_remote_control_setup($cfgsubdir);
 	do_as_unbound_user("unbound-anchor", $cfgsubdir);
 
+	// Copy the Python files to the test folder
+	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script'])) {
+		$python_files = glob("{$g['unbound_chroot_path']}/{$unboundcfg['python_script']}.*");
+		if (is_array($python_files)) {
+			foreach ($python_files as $file) {
+				$file = pathinfo($file, PATHINFO_BASENAME);
+				@copy("{$g['unbound_chroot_path']}/{$file}", "{$cfgdir}/{$file}");
+			}
+		}
+	}
+
 	$rv = 0;
 	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1",
 	    $output, $rv);
@@ -156,13 +167,25 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 	// Setup optimization
 	$optimization = unbound_optimization();
 
+	$module_config = '';
+
+	// Setup Python module (pre validator)
+	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script']) && $unboundcfg['python_order'] == 'pre_validator') {
+		$module_config .= 'python ';
+	}
+
 	// Setup DNSSEC support
 	if (isset($unboundcfg['dnssec'])) {
-		$module_config = "validator iterator";
+		$module_config .= 'validator ';
 		$anchor_file = "auto-trust-anchor-file: {$g['unbound_chroot_path']}{$cfgsubdir}/root.key";
-	} else {
-		$module_config = "iterator";
 	}
+
+	// Setup Python module (post validator)
+	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script']) && $unboundcfg['python_order'] == 'post_validator') {
+		$module_config .= 'python ';
+	}
+
+	$module_config .= 'iterator';
 
 	// Setup DNS Rebinding
 	if (!isset($config['system']['webgui']['nodnsrebindcheck'])) {
@@ -371,6 +394,15 @@ EOD;
 		}
 	}
 
+	$python_module = '';
+	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script'])) {
+		$python_path = '';
+		if (!empty($cfgsubdir)) {
+			$python_path = "{$g['unbound_chroot_path']}{$cfgsubdir}/";
+		}
+		$python_module = "\n# Python Module\npython:\npython-script: {$python_path}{$unboundcfg['python_script']}.py";
+	}
+
 	$unboundconf = <<<EOD
 ##########################
 # Unbound Configuration
@@ -455,6 +487,7 @@ include: {$g['unbound_chroot_path']}{$cfgsubdir}/domainoverrides.conf
 # Remote Control Config
 ###
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf
+{$python_module}
 
 EOD;
 

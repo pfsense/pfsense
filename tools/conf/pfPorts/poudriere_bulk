@@ -59,7 +59,6 @@ net/%%PRODUCT_NAME%%-pkg-routed
 net/%%PRODUCT_NAME%%-pkg-siproxd
 net/bird
 net/hping
-net/libmaxminddb
 net/mosh
 net/py-speedtest-cli
 net/trafshow

@@ -225,8 +225,6 @@ function captiveportal_configure() {
 function captiveportal_configure_zone($cpcfg) {
 	global $config, $g, $cpzone, $cpzoneid;
 
-	$captiveportallck = lock("captiveportal{$cpzone}", LOCK_EX);
-
 	if (isset($cpcfg['enable'])) {
 
 		if (platform_booting()) {
@@ -235,8 +233,8 @@ function captiveportal_configure_zone($cpcfg) {
 			captiveportal_syslog("Reconfiguring captive portal({$cpcfg['zone']}).");
 		}
 
-		/* (re)init ipfw rules. Cause all users to disconnect */
-		captiveportal_init_rules(true);
+		/* (re)init ipfw rules */
+		captiveportal_init_rules();
 
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
@@ -373,9 +371,6 @@ EOD;
 		mwexec("/usr/local/bin/minicron $croninterval {$g['varrun_path']}/cp_prunedb_{$cpzone}.pid " .
 			"/etc/rc.prunecaptiveportal {$cpzone}");
 
-		/* delete outdated radius server database if exist */
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
-
 		if (platform_booting()) {
 			/* send Accounting-On to server */
 			captiveportal_send_server_accounting('on');
@@ -396,8 +391,6 @@ EOD;
 
 		/* remove old information */
 		unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
 		/* Release allocated pipes for this zone */
 		$pipes_to_remove = captiveportal_free_dnrules();
 
@@ -421,8 +414,6 @@ EOD;
 			}
 		}
 	}
-
-	unlock($captiveportallck);
 
 	return 0;
 }
@@ -572,10 +563,6 @@ function captiveportal_init_rules($reinit = false) {
 	captiveportal_load_modules();
 	captiveportal_init_general_rules();
 
-	/* Cleanup so nothing is leaked */
-	captiveportal_free_dnrules();
-	unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
-
 	$skipto = captiveportal_ipfw_ruleno($cpzoneid);
 
 	$cprules = '';
@@ -616,10 +603,6 @@ function captiveportal_init_rules($reinit = false) {
 		$cpactive = true;
 	} else {
 		return false;
-	}
-
-	if ($reinit == false) {
-		$captiveportallck = lock("captiveportal{$cpzone}");
 	}
 
 	$rulenum = $skipto;
@@ -715,17 +698,45 @@ function captiveportal_init_rules($reinit = false) {
 	/* allowed ipfw rules to make allowed hostnames work */
 	$cprules .= captiveportal_allowedhostname_configure();
 
+	/* if reinit : flush pipes, so nothing is leaked. if not reinit, just destroy tables without flushing pipes */
+	if ($reinit) {
+		$pipes_to_remove = captiveportal_free_dnrules();
+		captiveportal_delete_rules($pipes_to_remove);
+	} else {
+		captiveportal_delete_rules();
+	}
+
 	/* load rules */
-	captiveportal_delete_rules();
+	$captiveportallck = lock("captiveportal{$cpzone}");
 	file_put_contents("{$g['tmp_path']}/ipfw_{$cpzone}.cp.rules", $cprules);
 	mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw_{$cpzone}.cp.rules", true);
 	@unlink("{$g['tmp_path']}/ipfw_{$cpzone}.cp.rules");
 	unset($cprules);
 
 	captiveportal_filterdns_configure();
+	unlock($captiveportallck);
 
-	if ($reinit == false) {
-		unlock($captiveportallck);
+	if ($reinit) {
+		unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
+	} else {
+		foreach (captiveportal_read_db() as $user) {
+			$bw_up = intval($user['bw_up']);
+			$bw_down = intval($user['bw_down']);
+			$clientip = $user['ip'];
+			$clientmac = $user['mac'];
+			$bw_up_pipeno = $user['pipeno'];
+			$bw_down_pipeno = $user['pipeno'] + 1;
+
+			$rule_entry = "{$clientip}/" . (is_ipaddrv6($clientip) ? "128" : "32");
+			if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
+				$rule_entry .= ",{$clientmac}";
+			}
+			$_gb = @pfSense_ipfw_pipe("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
+			$_gb = @pfSense_ipfw_pipe("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
+
+			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_up", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_up_pipeno);
+			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_down_pipeno);
+		}
 	}
 }
 
@@ -1208,14 +1219,7 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 
 	captiveportal_radius_stop_all($term_cause, $logoutReason);
 
-	/* remove users from the database */
-	$cpdb = captiveportal_read_db();
-	$unsetindexes = array_column($cpdb,5);
-	if (!empty($unsetindexes)) {
-		captiveportal_remove_entries($unsetindexes);
-	}
-
-	/* reinit ipfw rules */
+	/* reinit ipfw rules, flush user database */
 	captiveportal_init_rules(true);
 
 	unlock($cpdblck);

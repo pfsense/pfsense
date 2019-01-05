@@ -268,7 +268,7 @@ if (!empty($cpzone)): ?>
 <?php
 	if (mutiple_auth_server_type()):
 ?>
-					<td><?=htmlspecialchars($cpent[12]);?></td>
+					<td><?=htmlspecialchars($cpent['authmethod']);?></td>
 <?php
 	endif;
 ?>

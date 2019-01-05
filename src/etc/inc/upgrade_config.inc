@@ -6004,6 +6004,16 @@ function upgrade_192_to_193() {
 	}
 }
 
+function upgrade_193_to_194() {
+	global $config, $g;
+
+	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone => $cp) {
+			unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

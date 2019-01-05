@@ -972,7 +972,7 @@ function captiveportal_prune_old() {
 					if ($cpentry['authmethod'] !== $auth_result['auth_method']) {
 						// if the user got authenticated against another server type:  we update the database
 						if (!empty($cpentry[5])) {
-							captiveportal_write_db("UPDATE captiveportal SET authmethod = '{$auth_result['auth_method']}' WHERE sessionid = '{$cpentry[5]}'");
+							captiveportal_update_entry($cpentry['sessionid'], $auth_result['auth_method'], 'authmethod');
 							captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "CHANGED AUTHENTICATION SERVER", $auth_list['reply_message']);
 						}
 						// User was logged on a RADIUS server, but is now logged in by another server type : we send an accounting Stop
@@ -2204,11 +2204,24 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 	$bw_up_pipeno = $cpentry[1];
 	$bw_down_pipeno = $cpentry[1]+1;
 
-	$_gb = @pfSense_ipfw_pipe("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
-	$_gb = @pfSense_ipfw_pipe("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
-	//captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
-
+	if ($cpentry['bw_up'] !== $bw_up) {
+		$_gb = @pfSense_ipfw_pipe("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
+		captiveportal_update_entry($cpentry['sessionid'], $bw_up, 'bw_up');
+	}
+	if ($cpentry['bw_down'] !== $bw_down) {
+		$_gb = @pfSense_ipfw_pipe("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
+		captiveportal_update_entry($cpentry['sessionid'], $bw_down, 'bw_down');
+	}
 	unset($bw_up_pipeno, $bw_down_pipeno, $bw_up, $bw_down);
+}
+
+function captiveportal_update_entry($sessionid, $new_value, $field_to_update) {
+	global $config, $cpzone, $g;
+
+	if (!intval($new_value)) {
+		$new_value = "'{$new_value}'";
+	}
+	captiveportal_write_db("UPDATE captiveportal SET {$field_to_update} = {$new_value} WHERE sessionid = '{$sessionid}'");
 }
 
 function portal_allow($clientip, $clientmac, $username, $password = null, $attributes = null, $pipeno = null, $authmethod = null, $context = 'first') {

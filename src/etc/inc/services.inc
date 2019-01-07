@@ -2213,10 +2213,10 @@ function services_unbound_configure($restart_dhcp = true) {
 				// Add DNS Resolver python integration
 				if (empty($validate)) {
 					if (!is_dir("{$g['unbound_chroot_path']}{$base_folder}{$dir}")) {
-						exec("/bin/mkdir -p {$g['unbound_chroot_path']}{$base_folder}{$dir} 2>&1");
+						safe_mkdir("{$g['unbound_chroot_path']}{$base_folder}{$dir}");
 					}
-					exec("/sbin/mount_nullfs -o ro /usr/local{$dir} {$g['unbound_chroot_path']}{$base_folder}{$dir} 2>&1", $output, $retval);
-
+					exec("/sbin/mount_nullfs -o ro " . escapeshellarg("/usr/local{$dir}") . " " . escapeshellarg("{$g['unbound_chroot_path']}{$base_folder}{$dir}") . " 2>&1", $output, $retval);
+					
 					// Disable Unbound python on mount failure
 					if ($retval != 0) {
 						$config['unbound']['python'] = '';
@@ -2229,10 +2229,10 @@ function services_unbound_configure($restart_dhcp = true) {
 
 			// Remove DNS Resolver python integration
 			elseif (!empty($validate)) {
-				exec("/sbin/umount -t nullfs {$g['unbound_chroot_path']}{$base_folder}{$dir} 2>&1", $output, $retval);
+				exec("/sbin/umount -t nullfs " . escapeshellarg("{$g['unbound_chroot_path']}{$base_folder}{$dir}") . " 2>&1", $output, $retval);
 				if ($retval == 0) {
 					foreach (array( "/usr/local{$dir}", '/usr/local', '/usr') as $folder) {
-						if (is_dir("{$g['unbound_chroot_path']}{$folder}")) {
+						if (!empty($g['unbound_chroot_path']) && $g['unbound_chroot_path'] != '/' && is_dir("{$g['unbound_chroot_path']}{$folder}")) {
 							rmdir("{$g['unbound_chroot_path']}{$folder}");
 						}
 

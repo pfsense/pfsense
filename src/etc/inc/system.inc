@@ -2113,15 +2113,17 @@ function system_reboot_sync($reroot=false) {
 }
 
 function system_reboot_cleanup() {
-	global $config, $cpzone, $cpzoneid;
+	global $g, $config, $cpzone;
 
 	mwexec("/usr/local/bin/beep.sh stop");
 	require_once("captiveportal.inc");
 	if (is_array($config['captiveportal'])) {
 		foreach ($config['captiveportal'] as $cpzone=>$cp) {
-			/* send Accounting-Stop packet for all clients, termination cause 'Admin-Reboot' */
-			$cpzoneid = $cp['zoneid'];
-			captiveportal_radius_stop_all(7); // Admin-Reboot
+			if (!isset($cp['preservedb'])) {
+				/* send Accounting-Stop packet for all clients, termination cause 'Admin-Reboot' */
+				captiveportal_radius_stop_all(7); // Admin-Reboot
+				unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
+			}
 			/* Send Accounting-Off packet to the RADIUS server */
 			captiveportal_send_server_accounting('off');
 		}

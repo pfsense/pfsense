@@ -198,7 +198,7 @@ EOD;
 			$context = 'first';
 		}
 	
-	$pipeno = captiveportal_get_next_dn_ruleno();
+	$pipeno = captiveportal_get_next_dn_ruleno('auth');
 	/* if the pool is empty, return appropriate message and exit */
 	if (is_null($pipeno)) {
 		$replymsg = gettext("System reached maximum login capacity");

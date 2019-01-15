@@ -1136,7 +1136,7 @@
 					));
 
 					// get domain id
-					curl_setopt($ch, CURLOPT_URL, "$linode_api/domains");
+					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains");
 					$domains_output = curl_exec($ch);
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ( $http_code == 401 && preg_match('/invalid oauth token/i', $domains_output) ) {
@@ -1147,7 +1147,7 @@
 						return false;
 					} else if ( $http_code != 200 ) {
 						log_error("$err_prefix " . gettext("querying domains") . ": " .
-							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP $http_code" ) );
+							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" ) );
 						return false;
 					}
 
@@ -1158,7 +1158,7 @@
 						}
 					}
 					if ( ! $domain_id ) {
-						log_error("$err_prefix " . gettext("no domain ID for domain") . ": '{$this->_dnsDomain}'");
+						log_error("{$err_prefix} " . gettext("no domain ID for domain") . ": '{$this->_dnsDomain}'");
 						return false;
 					}
 					if ($this->_dnsVerboseLog) {
@@ -1166,13 +1166,13 @@
 					}
 
 					// get existing record if present
-					curl_setopt($ch, CURLOPT_URL, "$linode_api/domains/$domain_id/records");
+					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records");
 					$records_output = curl_exec($ch);
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ( $http_code != 200 )
 					{
 						log_error("$err_prefix " . gettext("querying domains") . ": " .
-							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP $http_code" ) );
+							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" ) );
 						return false;
 					}
 
@@ -1193,7 +1193,7 @@
 						$record["ttl_sec"] = (int) $this->_dnsTTL; // linode may round this up, 0 = zone default
 						curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($record));
 						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-						curl_setopt($ch, CURLOPT_URL, "$linode_api/domains/$domain_id/records/" . $record["id"]);
+						curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records/" . $record["id"]);
 					} else {
 						// create a new record
 						$record = array(
@@ -1204,7 +1204,7 @@
 						);
 						curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($record));
 						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-						curl_setopt($ch, CURLOPT_URL, "$linode_api/domains/$domain_id/records");
+						curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records");
 					}
 
 					break;
@@ -2208,7 +2208,7 @@
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
 					} else {
 						$status = $status_intro . $error_str .
-							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP $http_code" );
+							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" );
 					}
 					break;
 				default:

@@ -73,7 +73,7 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean") && $_POST['username'] == "") {
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6") && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
 
@@ -106,6 +106,7 @@ if ($_POST['save'] || $_POST['force']) {
 	}
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
+		$allow_wildcard = false;
 		/* Namecheap can have a @. and *. in hostname */
 		if ($pconfig['type'] == "namecheap" && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
@@ -115,6 +116,9 @@ if ($_POST['save'] || $_POST['force']) {
 			$host_to_check = $_POST['domainname'];
 		} elseif (($pconfig['type'] == "digitalocean") && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
+		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6")) {
+			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
+			$allow_wildcard = true;
 		} else {
 			$host_to_check = $_POST['host'];
 
@@ -130,7 +134,7 @@ if ($_POST['save'] || $_POST['force']) {
 		}
 
 		if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
-			if (!is_domain($host_to_check)) {
+			if (!is_domain($host_to_check, $allow_wildcard)) {
 				$input_errors[] = gettext("The hostname contains invalid characters.");
 			}
 		}
@@ -301,8 +305,8 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
-			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
-			'Cloudflare and DigitalOcean: Enter @ as the hostname to indicate an empty field.', '<br />');
+			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy, Linode: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
+			'Cloudflare, DigitalOcean, Linode: Enter @ as the hostname to indicate an empty field.', '<br />');
 
 $section->add($group);
 
@@ -356,7 +360,7 @@ $section->addInput(new Form_Input(
 	'Username',
 	'text',
 	$pconfig['username']
-))->setHelp('Username is required for all types except Namecheap, FreeDNS , FreeDNS-v6, DigitalOcean and Custom Entries.%1$s' .
+))->setHelp('Username is required for all types except Namecheap, FreeDNS, FreeDNS-v6, DigitalOcean, Linode and Custom Entries.%1$s' .
 	                'Azure: Enter your Azure AD application ID%1$s' .
 			'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
@@ -381,6 +385,7 @@ $section->addPassword(new Form_Input(
 			'Dreamhost: Enter the API Key.%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
 			'DNSimple: Enter the API token.%1$s' .
+			'Linode: Enter the Personal Access Token.%1$s' .
 			'Cloudflare: Enter the Global API Key.', '<br />');
 
 $section->addInput(new Form_Input(
@@ -587,6 +592,21 @@ events.push(function() {
 				hideCheckbox('wildcard', true);
 				hideCheckbox('proxied', true);
 				hideInput('zoneid', false);
+				hideInput('ttl', false);
+				break;
+			case "linode-v6":
+			case "linode":
+				hideGroupInput('domainname', false);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('host', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideCheckbox('proxied', true);
+				hideInput('zoneid', true);
 				hideInput('ttl', false);
 				break;
 			default:

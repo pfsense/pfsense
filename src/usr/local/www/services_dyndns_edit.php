@@ -362,7 +362,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['username']
 ))->setHelp('Username is required for all types except Namecheap, FreeDNS, FreeDNS-v6, DigitalOcean, Linode and Custom Entries.%1$s' .
-	                'Azure: Enter your Azure AD application ID%1$s' .
+			'Azure: Enter your Azure AD application ID%1$s' .
 			'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
 			'Route 53: Enter the Access Key ID.%1$s' .
@@ -377,7 +377,7 @@ $section->addPassword(new Form_Input(
 	'password',
 	$pconfig['password']
 ))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
-	                'Azure: client secret of the AD application%1$s' .
+			'Azure: client secret of the AD application%1$s' .
 			'DNS Made Easy: Dynamic DNS Password%1$s' .
 			'DNSimple: User account token%1$s' .
 			'DigitalOcean: Enter API token%1$s' .
@@ -395,7 +395,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['zoneid']
 ))->setHelp('Route53: Enter AWS Zone ID.%1$s' .
-	                'Azure: Enter the resource id of the of the DNS Zone%1$s' .
+			'Azure: Enter the resource id of the of the DNS Zone%1$s' .
 			'DNSimple: Enter the Record ID of record to update.', '<br />');
 
 $section->addInput(new Form_Input(

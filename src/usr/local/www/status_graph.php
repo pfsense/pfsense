@@ -77,7 +77,8 @@ if (!empty($_POST)) {
 	$curbackgroundupdate = $_POST['backgroundupdate'];
 	$curinvert = $_POST['invert'];
 	$cursmoothing = $_POST['smoothfactor'];
-
+	$curmode = $_POST['mode'];
+	
 	// Save data to config
 	if (isset($_POST['save'])) {
 		$pconfig = array();
@@ -88,6 +89,7 @@ if (!empty($_POST)) {
 		$pconfig["backgroundupdate"] = $curbackgroundupdate;
 		$pconfig["smoothfactor"] = $cursmoothing;
 		$pconfig["invert"] = $curinvert;
+		$pconfig["mode"] = $curmode;
 		$config["traffic_graphs"] = array();
 		$config["traffic_graphs"] = $pconfig;
 		write_config("Traffic Graphs settings updated");
@@ -102,6 +104,7 @@ if (!empty($_POST)) {
 		$curbackgroundupdate = $pconfig['backgroundupdate'];
 		$cursmoothing = $pconfig['smoothfactor'];
 		$curinvert = $pconfig['invert'];
+		$curmode = $pconfig['mode'];;
 	} else {
 		// initialize when no config details are present
 		if (empty($ifdescrs["wan"])) {
@@ -117,6 +120,7 @@ if (!empty($_POST)) {
 		$curbackgroundupdate = "";
 		$cursmoothing = 0;
 		$curinvert = "";
+		$curmode = "";
 	}
 }
 
@@ -183,6 +187,16 @@ $group->add(new Form_Select(
 	)
 ))->setHelp('Display');
 
+$group->add(new Form_Select(
+    'mode',
+    null,
+    $curmode,
+    array (
+        'rate'		=> gettext('rate (standard)'),
+        'iftop'	    => gettext('iftop (experimental)')
+    )
+))->setHelp('Mode');
+    
 $section->add($group);
 
 $group2 = new Form_Group('Controls');

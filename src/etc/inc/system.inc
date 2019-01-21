@@ -151,6 +151,11 @@ function system_resolvconf_generate($dynupdate = false) {
 		$resolvconf .= "options edns0\n";
 	}
 
+	// Add options
+	if (isset($config['system']['resolvconfoptions']) && !empty($config['system']['resolvconfoptions'])) {
+	    $resolvconf .= base64_decode($config['system']['resolvconfoptions']);
+	}
+	
 	$dnslock = lock('resolvconf', LOCK_EX);
 
 	$fd = fopen("{$g['etc_path']}/resolv.conf", "w");

@@ -132,9 +132,9 @@ if ($mode == "iftop") {
     }
     
     // order and group by
-    $arr_in=array();
-    $arr_out=array();
-    foreach ($listedIPs as $k => $line){
+    $arr_in = array();
+    $arr_out = array();
+    foreach ($listedIPs as $k => $line) {
         if ($line != "") {
             $arrLine = explode (";", $line);
             $ip  = $arrLine[0];

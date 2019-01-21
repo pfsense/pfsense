@@ -112,6 +112,7 @@ $fp = "/root/";
 $fn = "packetcapture.cap";
 $snaplen = 0;//default packet length
 $count = 100;//default number of packets to capture
+$max_display_size = 50*1024*1024; // 50MB limit on GUI capture display. See https://redmine.pfsense.org/issues/9239
 
 $fams = array('ip', 'ip6');
 $protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp', 'pfsync',
@@ -259,14 +260,19 @@ if ($_POST) {
 				$process_id = substr($process, 0, $process_id_pos);
 				exec("kill $process_id");
 			}
-
 		} elseif ($_POST['downloadbtn'] != "") {
 			//download file
 			$fs = filesize($fp.$fn);
 			header("Content-Type: application/octet-stream");
-			header("Content-Disposition: attachment; filename=$fn");
-			header("Content-Length: $fs");
+			header("Content-Disposition: attachment; filename={$fn}");
+			header("Content-Length: {$fs}");
+			/* Ensure output buffering is off so PHP does not consume
+			 * memory in readfile(). https://redmine.pfsense.org/issues/9239 */
+			while (ob_get_level()) {
+				@ob_end_clean();
+			}
 			readfile($fp.$fn);
+			@ob_end_flush();
 			exit;
 		}
 	}
@@ -398,6 +404,7 @@ $section->addInput(new Form_Select(
 		  'medium' => gettext('Medium'),
 		  'high' => gettext('High'),
 		  'full' => gettext('Full'),
+		  'none' => gettext('None'),
 	)
 ))->setHelp('This is the level of detail that will be displayed after hitting "Stop" when the packets have been captured.%s' .
 			'This option does not affect the level of detail when downloading the packet capture. ',
@@ -538,7 +545,15 @@ if ($do_tcpdump) :
 		}
 
 		print('<textarea class="form-control" rows="20" style="font-size: 13px; font-family: consolas,monaco,roboto mono,liberation mono,courier;">');
-		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} {$iscarp} -r {$fp}{$fn}");
+		if (filesize($fp.$fn) > $max_display_size)
+			print(gettext("Packet capture file is too large to display in the GUI.") .
+			    "\n" .
+			    gettext("Download the file, or view it in the console or ssh shell."));
+		elseif ($detail == 'none') {
+			print(gettext("Select a detail level to view the contents of the packet capture."));
+		} else {
+			system("/usr/sbin/tcpdump {$disabledns} {$detail_args} {$iscarp} -r {$fp}{$fn}");
+		}
 		print('</textarea>');
 
 ?>

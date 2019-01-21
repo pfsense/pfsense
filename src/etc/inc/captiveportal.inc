@@ -235,8 +235,8 @@ function captiveportal_configure_zone($cpcfg) {
 			captiveportal_syslog("Reconfiguring captive portal({$cpcfg['zone']}).");
 		}
 
-		/* (re)init ipfw rules. Cause all users to disconnect */
-		captiveportal_init_rules(true);
+		/* init ipfw rules */
+		captiveportal_init_rules();
 
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
@@ -600,7 +600,7 @@ function captiveportal_init_rules($reinit = false) {
 	captiveportal_init_general_rules();
 
 	/* Cleanup so nothing is leaked */
-	captiveportal_free_dnrules();
+	captiveportal_free_dnrules(2000, 64500, false, $reinit);
 	unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
 
 	$skipto = captiveportal_ipfw_ruleno($cpzoneid);
@@ -749,7 +749,7 @@ function captiveportal_init_rules($reinit = false) {
 	$cprules .= captiveportal_allowedhostname_configure();
 
 	/* load rules */
-	captiveportal_delete_rules();
+	captiveportal_delete_rules(array(), $reinit);
 	file_put_contents("{$g['tmp_path']}/ipfw_{$cpzone}.cp.rules", $cprules);
 	mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw_{$cpzone}.cp.rules", true);
 	@unlink("{$g['tmp_path']}/ipfw_{$cpzone}.cp.rules");

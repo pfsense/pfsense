@@ -104,6 +104,7 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		if ($_POST['ipv6nat_enable'] == "yes") {
+			init_config_arr(array('diag', 'ipv6nat'));
 			$config['diag']['ipv6nat']['enable'] = true;
 			$config['diag']['ipv6nat']['ipaddr'] = $_POST['ipv6nat_ipaddr'];
 		} else {

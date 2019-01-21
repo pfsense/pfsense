@@ -133,7 +133,7 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (!is_hostname($host) && !is_ipaddr($host)) {
+	if (!is_hostname(rtrim($host, '.')) && !is_ipaddr($checkhost)) {
 		$input_errors[] = gettext("Host must be a valid hostname or IP address.");
 	} else {
 		// Test resolution speed of each DNS server.
@@ -167,7 +167,7 @@ if ($_POST) {
 				$tmpresolved['data'] = $resolvedptr;
 				$resolved[] = $tmpresolved;
 			}
-		} elseif (is_hostname($host)) {
+		} elseif (is_hostname(rtrim($host, '.'))) {
 			$type = "hostname";
 			$ipaddr = gethostbyname($host);
 			$resolved = resolve_host_addresses($host);

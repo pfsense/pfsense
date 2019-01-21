@@ -320,11 +320,6 @@ if (!$input_errors && $type) {
 			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;count=3"><?=gettext("Ping")?></a></li>
 			<li class="list-group-item"><a href="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute")?></a></li>
 		</ul>
-		<h5><?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?></h5>
-		<ul class="list-group">
-			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?=$ipaddr;?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a></li>
-			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?=$ipaddr;?>"><?=gettext("IP Info @ DNS Stuff");?></a></li>
-		</ul>
 	</div>
 </div>
 <?php

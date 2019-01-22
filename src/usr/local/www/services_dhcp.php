@@ -184,7 +184,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['netmask'] = $dhcpdconf['netmask'];
 	$pconfig['numberoptions'] = $dhcpdconf['numberoptions'];
 	$pconfig['statsgraph'] = $dhcpdconf['statsgraph'];
-	$pconfig['pingcheck'] = $dhcpdconf['pingcheck'];
+	$pconfig['disablepingcheck'] = $dhcpdconf['disablepingcheck'];
 	$pconfig['ddnsclientupdates'] = $dhcpdconf['ddnsclientupdates'];
 }
 
@@ -617,9 +617,9 @@ if (isset($_POST['save'])) {
 			$dhcpdconf['statsgraph'] = $_POST['statsgraph'];
 			enable_rrd_graphing();
 		}
-		unset($dhcpdconf['pingcheck']);
-		if ($_POST['pingcheck']) {
-			$dhcpdconf['pingcheck'] = $_POST['pingcheck'];
+		unset($dhcpdconf['disablepingcheck']);
+		if ($_POST['disablepingcheck']) {
+			$dhcpdconf['disablepingcheck'] = $_POST['disablepingcheck'];
 		}
 
 		// Handle the custom options rowhelper
@@ -1078,10 +1078,10 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		$pconfig['statsgraph']
 	))->setHelp('Enable this to add DHCP leases statistics to the RRD graphs. Disabled by default.');
 	$section->addInput(new Form_Checkbox(
-		'pingcheck',
+		'disablepingcheck',
 		'Ping check',
 		'Disable ping check',
-		$pconfig['pingcheck']
+		$pconfig['disablepingcheck']
 	))->setHelp('When enabled dhcpd sends a ping to the address being assigned, and if no response has been heard, it assigns the address. Enabled by default.');
 }
 

@@ -546,7 +546,7 @@ update-conflict-detection false;
 
 EOD;
 
-	if (!isset($dhcpifconf['pingcheck'])) {
+	if (!isset($dhcpifconf['disablepingcheck'])) {
 		$dhcpdconf .= "ping-check true;\n";
 	} else {
 		$dhcpdconf .= "ping-check false;\n";

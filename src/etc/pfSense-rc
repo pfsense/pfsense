@@ -239,9 +239,13 @@ SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1 | /usr/b
 if [ -n "${SWAPDEVICE}" ]; then
 	/bin/rm -f /tmp/fstab.swap
 	if ! [ -c ${SWAPDEVICE} ]; then
-		# The swap device in fstab does not exist, look for a valid one and update fstab
-		for SWAPLABEL in /dev/label/swap*; do
-			echo "${SWAPLABEL}	none	swap	sw	0	0" >> /tmp/fstab.swap
+		# Keep the original device, in case it is special, such as encrypted+mirrored zfs swap
+		echo "${SWAPDEVICE}	none	swap	sw	0	0" >> /tmp/fstab.swap
+		# The swap device in fstab does not exist, look for other valid entries and update fstab
+		for SWAPLABEL in /dev/label/swap* /dev/mirror/swap*; do
+			if [ -c ${SWAPLABEL} ]; then
+				echo "${SWAPLABEL}	none	swap	sw	0	0" >> /tmp/fstab.swap
+			fi
 		done
 	else
 		/bin/cp /etc/fstab /tmp/fstab.swap

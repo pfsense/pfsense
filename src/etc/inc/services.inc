@@ -542,10 +542,15 @@ max-lease-time 86400;
 log-facility local7;
 one-lease-per-client true;
 deny duplicates;
-ping-check true;
 update-conflict-detection false;
 
 EOD;
+
+	if (!isset($dhcpifconf['pingcheck'])) {
+		$dhcpdconf .= "ping-check true;\n";
+	} else {
+		$dhcpdconf .= "ping-check false;\n";
+	}
 
 	if (!isset($dhcpifconf['disableauthoritative'])) {
 		$dhcpdconf .= "authoritative;\n";

@@ -243,7 +243,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizeopenvpn',
 	'Synchronize OpenVPN',
-	'OpenVPN configuration ',
+	'OpenVPN configuration (Implies CA/Cert/CRL Sync) ',
 	($pconfig['synchronizeopenvpn'] === 'on'),
 	'on'
 ));

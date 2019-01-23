@@ -1652,7 +1652,6 @@ BASEFS=/usr/local/poudriere
 USE_PORTLINT=no
 USE_TMPFS=yes
 NOLINUX=yes
-DISTFILES_CACHE=/usr/ports/distfiles
 CHECK_CHANGED_OPTIONS=yes
 CHECK_CHANGED_DEPS=yes
 ATOMIC_PACKAGE_REPOSITORY=yes
@@ -1670,11 +1669,6 @@ EOF
 	# Create specific items conf
 	[ ! -d /usr/local/etc/poudriere.d ] \
 		&& mkdir -p /usr/local/etc/poudriere.d
-
-	# Create DISTFILES_CACHE if it doesn't exist
-	if [ ! -d /usr/ports/distfiles ]; then
-		mkdir -p /usr/ports/distfiles
-	fi
 
 	# Remove old jails
 	for jail_arch in ${_archs}; do

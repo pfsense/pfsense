@@ -341,7 +341,7 @@ if ($_POST) {
 		} else {
 			unset($config['system']['dnslocalhost']);
 		}
-		
+
 		/* which interface should the dns servers resolve through? */
 		$dnscounter = 0;
 		// The $_POST array key of the DNS IP (starts from 0)

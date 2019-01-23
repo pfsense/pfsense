@@ -254,9 +254,8 @@ case "${PRODUCT_VERSION##*-}" in
 esac
 
 export BUILDER_PKG_DEPENDENCIES="devel/git ftp/curl net/rsync sysutils/screen \
-    sysutils/vmdktool sysutils/py-salt security/sudo www/nginx \
-    emulators/qemu-user-static security/sssd security/pam_ldap \
-    security/pam_mkhomedir archivers/gtar textproc/xmlstarlet"
+    sysutils/vmdktool security/sudo www/nginx emulators/qemu-user-static \
+    archivers/gtar textproc/xmlstarlet"
 
 STAGING_HOSTNAME=${STAGING_HOSTNAME:-"release-staging.nyi.netgate.com"}
 

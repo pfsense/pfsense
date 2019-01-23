@@ -77,7 +77,6 @@ $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['system
 $pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
 $pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
-$pconfig['resolvconfoptions'] = isset($config['system']['resolvconfoptions']) ? base64_decode($config['system']['resolvconfoptions']) : '';
 //$pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
 $pconfig['roworderdragging'] = isset($config['system']['webgui']['roworderdragging']);
 $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
@@ -343,12 +342,6 @@ if ($_POST) {
 			unset($config['system']['dnslocalhost']);
 		}
 		
-		if ($_POST['resolvconfoptions']) {
-		    $config['system']['resolvconfoptions'] = base64_encode(trim($_POST['resolvconfoptions']));
-		} else {
-		    unset($config['system']['resolvconfoptions']);
-		}
-		
 		/* which interface should the dns servers resolve through? */
 		$dnscounter = 0;
 		// The $_POST array key of the DNS IP (starts from 0)
@@ -573,12 +566,6 @@ $section->addInput(new Form_Checkbox(
 	'server where the DNS Forwarder or DNS Resolver is enabled and set to '.
 	'listen on localhost, so system can use the local DNS service to perform '.
 	'lookups. Checking this box omits localhost from the list of DNS servers in resolv.conf.');
-
-$section->addInput(new Form_Textarea(
-    'resolvconfoptions',
-    'Add options in resolv.conf ',
-    $pconfig['resolvconfoptions']
-))->setHelp('Add here options for resolv.conf file. They will be added at the end of the /etc/resolv.conf file.<br/>Example : <br/>options timeout:1<br/>options attempts:1');
 
 $form->add($section);
 

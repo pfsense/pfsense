@@ -48,6 +48,8 @@ $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksum
 $pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 $pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
 $pconfig['ip_change_kill_states'] = $config['system']['ip_change_kill_states'];
+$pconfig['resolvconfoptions'] = isset($config['system']['resolvconfoptions']) ? base64_decode($config['system']['resolvconfoptions']) : '';
+
 
 if ($_POST) {
 
@@ -171,6 +173,13 @@ if ($_POST) {
 			unset($config['system']['ip_change_kill_states']);
 		}
 
+        if (!empty(trim($_POST['resolvconfoptions']))) {
+            $config['system']['resolvconfoptions'] = base64_encode(trim($_POST['resolvconfoptions']));
+        } else {
+            unset($config['system']['resolvconfoptions']);
+        }
+		
+		
 		setup_microcode();
 
 		// Write out configuration (config.xml)
@@ -404,6 +413,18 @@ if (get_freebsd_version() == 8) {
 }
 
 $form->add($section);
+
+// section resolv.conf options
+$section = new Form_Section('Add persistent resolv.conf configuration options');
+
+$section->addInput(new Form_Textarea(
+    'resolvconfoptions',
+    'Add configuration options',
+    $pconfig['resolvconfoptions']
+))->setHelp('You can add persistent configuration options here.<br/>Lines will be added at the end of the /etc/resolv.conf file.<br/>Example (<a href="https://www.freebsd.org/cgi/man.cgi?query=resolv.conf" target="_new" title="FreeBSD man" >man resolv.conf</a>): <br/>options timeout:1<br/>options attempts:1');
+
+$form->add($section);
+
 print $form;
 ?>
 

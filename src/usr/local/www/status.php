@@ -35,8 +35,25 @@
  * showing the results.
  */
 
+global $console;
+global $show_output;
+
+$console = false;
+$show_output = !isset($_GET['archiveonly']);
+
+if ((php_sapi_name() == 'cli') || (defined('STDIN'))) {
+	/* Running from console/shell, not web */
+	$console = true;
+	$show_output = false;
+	parse_str($argv[1], $_GET);
+}
+
 /* include all configuration functions */
-require_once("guiconfig.inc");
+if ($console) {
+	require_once("config.inc");
+} else {
+	require_once("guiconfig.inc");
+}
 require_once("functions.inc");
 require_once("gwlb.inc");
 $output_path = "/tmp/status_output/";
@@ -82,16 +99,17 @@ unlink_if_exists($output_file);
 mkdir($output_path);
 
 function doCmdT($title, $command, $method) {
-	global $output_path, $output_file, $filtered_tags;
+	global $output_path, $output_file, $filtered_tags, $show_output;
 	/* Fixup output directory */
 
-	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
-	echo "\n<a name=\"" . str_replace($rubbish, '', $title) . "\" id=\"" . str_replace($rubbish, '', $title) . "\"></a>\n";
-
-	print('<div class="panel panel-default">');
-	print('<div class="panel-heading"><h2 class="panel-title">' . $title . '</h2></div>');
-	print('<div class="panel-body">');
-	print('<pre>');
+	if ($show_output) {
+		$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
+		echo "\n<a name=\"" . str_replace($rubbish, '', $title) . "\" id=\"" . str_replace($rubbish, '', $title) . "\"></a>\n";
+		print('<div class="panel panel-default">');
+		print('<div class="panel-heading"><h2 class="panel-title">' . $title . '</h2></div>');
+		print('<div class="panel-body">');
+		print('<pre>');
+	}
 
 	if ($command == "dumpconfigxml") {
 		$ofd = @fopen("{$output_path}/config-sanitized.xml", "w");
@@ -103,35 +121,43 @@ function doCmdT($title, $command, $method) {
 				foreach ($filtered_tags as $tag) {
 					$line = preg_replace("/<{$tag}>.*?<\\/{$tag}>/", "<{$tag}>xxxxx</{$tag}>", $line);
 				}
-				$line = str_replace("\t", "    ", $line);
-				echo htmlspecialchars($line, ENT_NOQUOTES);
+				if ($show_output) {
+					echo htmlspecialchars(str_replace("\t", "    ", $line), ENT_NOQUOTES);
+				}
 				fwrite($ofd, $line);
 			}
 		}
 		fclose($fd);
 		fclose($ofd);
 	} else {
-		$ofd = @fopen("{$output_path}/{$title}.txt", "w");
 		$execOutput = "";
 		$execStatus = "";
+		$fn = "{$output_path}/{$title}.txt";
 		if ($method == "exec") {
-			exec($command . " 2>&1", $execOutput, $execStatus);
-		} elseif ($method == "php_func") {
-			$execOutput = explode("\n", $command());
-		}
-		for ($i = 0; isset($execOutput[$i]); $i++) {
-			if ($i > 0) {
-				echo "\n";
+			exec($command . " > " . escapeshellarg($fn) . " 2>&1", $execOutput, $execStatus);
+			if ($show_output) {
+				$ofd = @fopen($fn, "r");
+				if ($ofd) {
+					while (!feof($ofd)) {
+						echo htmlspecialchars(fgets($ofd), ENT_NOQUOTES);
+					}
+				}
+				fclose($ofd);
 			}
-			echo htmlspecialchars($execOutput[$i], ENT_NOQUOTES);
-			fwrite($ofd, $execOutput[$i] . "\n");
+		} elseif ($method == "php_func") {
+			$execOutput = $command();
+			if ($show_output) {
+				echo htmlspecialchars($execOutput, ENT_NOQUOTES);
+			}
+			file_put_contents($fn, $execOutput);
 		}
-		fclose($ofd);
 	}
 
-	print('</pre>');
-	print('</div>');
-	print('</div>');
+	if ($show_output) {
+		print('</pre>');
+		print('</div>');
+		print('</div>');
+	}
 }
 
 /* Define a command, with a title, to be executed later. */
@@ -188,6 +214,13 @@ function get_firewall_info() {
 		}
 	}
 
+	if (function_exists("system_get_thothid")) {
+		$thothid = system_get_thothid();
+		if (!empty($thothid)) {
+			$firewall_info .= "<br/>Netgate Crypto ID: " . htmlspecialchars(chop($thothid));
+		}
+	}
+
 	$serial = system_get_serial();
 	if (!empty($serial)) {
 		$firewall_info .= "<br/>Serial: " . htmlspecialchars($serial);
@@ -234,7 +267,7 @@ global $g, $config;
 
 /* OS stats/info */
 defCmdT("OS-Uptime", "/usr/bin/uptime");
-defCmdT("Network-Interfaces", "/sbin/ifconfig -va");
+defCmdT("Network-Interfaces", "/sbin/ifconfig -vvvvvam");
 defCmdT("Network-Interface Statistics", "/usr/bin/netstat -nWi");
 defCmdT("Process-Top Usage", "/usr/bin/top | /usr/bin/head -n5");
 defCmdT("Process-List", "/bin/ps xauwwd");
@@ -245,6 +278,7 @@ defCmdT("Network-Gateway Status", 'get_gateway_status', "php_func");
 defCmdT("Network-Mbuf Usage", "/usr/bin/netstat -mb");
 defCmdT("Network-Protocol Statistics", "/usr/bin/netstat -s");
 defCmdT("Network-Buffer and Timer Statistics", "/usr/bin/netstat -nWx");
+defCmdT("Network-Listen Queues", "/usr/bin/netstat -LaAn");
 defCmdT("Network-Sockets", "/usr/bin/sockstat");
 defCmdT("Network-ARP Table", "/usr/sbin/arp -an");
 defCmdT("Network-NDP Table", "/usr/sbin/ndp -na");
@@ -334,6 +368,7 @@ defCmdT("OS-Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
 defCmdT("OS-sysctl values", "/sbin/sysctl -aq");
 defCmdT("OS-Kernel Environment", "/bin/kenv");
 defCmdT("OS-Installed Packages", "/usr/sbin/pkg info");
+defCmdT("OS-Package Manager Configuration", "/usr/sbin/pkg -vv");
 defCmdT("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");
 defCmdT("Hardware-USB Devices", "/usr/sbin/usbconfig dump_device_desc");
 
@@ -349,14 +384,16 @@ exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
 $pgtitle = array($g['product_name'], "Status");
+
+if (!$console):
 include("head.inc"); ?>
 
 <form action="status.php" method="post">
 
 <?php print_info_box(
-	gettext("Make sure all sensitive information is removed! (Passwords, etc.) before posting information from this page in public places (like mailing lists).") .
+	gettext("Make sure all sensitive information is removed! (Passwords, etc.) before posting information from this page in public places such as forum or social media sites.") .
 	'<br />' .
-	gettext("Common password fields in config.xml have been automatically redacted.") .
+	gettext("Common password and other private fields in config.xml have been automatically redacted.") .
 	'<br />' .
 	sprintf(gettext('When the page has finished loading, the output is stored in %1$s. It may be downloaded via scp or using this button: '), $output_file) .
 	' <button name="submit" type="submit" class="btn btn-primary btn-sm" id="download" value="DOWNLOAD">' .
@@ -368,17 +405,32 @@ include("head.inc"); ?>
 
 <?php print_info_box(get_firewall_info(), 'info', false);
 
-listCmds();
+if ($show_output) {
+	listCmds();
+} else {
+	print_info_box(gettext("Status output suppressed. Download archive to view."), 'info', false);
+}
+
+endif;
+
+if ($console) {
+	print(gettext("Gathering status data...") . "\n");
+}
 execCmds();
 
 print(gettext("Saving output to archive..."));
 
 if (is_dir($output_path)) {
 	mwexec("/usr/bin/tar czpf " . escapeshellarg($output_file) . " -C " . escapeshellarg(dirname($output_path)) . " " . escapeshellarg(basename($output_path)));
-	unlink_if_exists("{$output_path}/*");
-	@rmdir($output_path);
+
+	if (!isset($_GET["nocleanup"])) {
+		unlink_if_exists("{$output_path}/*");
+		@rmdir($output_path);
+	}
 }
 
-print(gettext("Done."));
+print(gettext("Done.") . "\n");
 
-include("foot.inc");
+if (!$console) {
+	include("foot.inc");
+}

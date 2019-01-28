@@ -81,31 +81,31 @@ if ($_POST) {
 }
 
 if (isset($user_settings['widgets']['traffic_graphs']['refreshinterval'])) {
-	$tg_refreshinterval = $user_settings['widgets']['traffic_graphs']['refreshinterval'];
+	$tg_refreshinterval = (int)$user_settings['widgets']['traffic_graphs']['refreshinterval'];
 } else {
 	$tg_refreshinterval = 1;
 }
 
 if (isset($user_settings['widgets']['traffic_graphs']['size'])) {
-	$tg_size = $user_settings['widgets']['traffic_graphs']['size'];
+	$tg_size = (int)$user_settings['widgets']['traffic_graphs']['size'];
 } else {
 	$tg_size = 1;
 }
 
 if (isset($user_settings['widgets']['traffic_graphs']['invert'])) {
-	$tg_invert = $user_settings['widgets']['traffic_graphs']['invert'];
+	$tg_invert = (boolean)$user_settings['widgets']['traffic_graphs']['invert'];
 } else {
-	$tg_invert = 'true';
+	$tg_invert = true;
 }
 
 if (isset($user_settings['widgets']['traffic_graphs']['backgroundupdate'])) {
-	$tg_backgroundupdate = $user_settings['widgets']['traffic_graphs']['backgroundupdate'];
+	$tg_backgroundupdate = (boolean)$user_settings['widgets']['traffic_graphs']['backgroundupdate'];
 } else {
-	$tg_backgroundupdate = 'true';
+	$tg_backgroundupdate = true;
 }
 
 if (isset($user_settings['widgets']['traffic_graphs']['smoothfactor'])) {
-	$tg_smoothfactor = $user_settings['widgets']['traffic_graphs']['smoothfactor'];
+	$tg_smoothfactor = (int)$user_settings['widgets']['traffic_graphs']['smoothfactor'];
 } else {
 	$tg_smoothfactor = 0;
 }
@@ -169,7 +169,7 @@ $tg_displayed_realifsarray = [];
 			<div class="col-sm-9">
 				<select class="form-control" id="invert" name="invert">
 				<?php
-					if ($tg_invert === "true") {
+					if ($tg_invert === true) {
 						echo '<option value="true" selected>On</option>';
 						echo '<option value="false">Off</option>';
 					} else {
@@ -186,7 +186,7 @@ $tg_displayed_realifsarray = [];
 			<div class="col-sm-9">
 				<select class="form-control" id="size" name="size">
 				<?php
-					if ($tg_size === "8") {
+					if ($tg_size === 8) {
 						echo '<option value="8" selected>Bits</option>';
 						echo '<option value="1">Bytes</option>';
 					} else {
@@ -203,7 +203,7 @@ $tg_displayed_realifsarray = [];
 			<div class="col-sm-9">
 				<select class="form-control" id="backgroundupdate" name="backgroundupdate">
 				<?php
-					if ($tg_backgroundupdate === "true") {
+					if ($tg_backgroundupdate === true) {
 						echo '<option value="true" selected>Keep graphs updated on inactive tab. (increases cpu usage)</option>';
 						echo '<option value="false">Clear graphs when not visible.</option>';
 					} else {

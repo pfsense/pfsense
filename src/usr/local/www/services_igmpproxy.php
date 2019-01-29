@@ -135,7 +135,7 @@ foreach ($a_igmpproxy as $igmpentry):
 							<td>
 <?php
 	$addresses = implode(", ", array_slice(explode(" ", $igmpentry['address']), 0, 10));
-	print($addresses);
+	print(htmlspecialchars($addresses));
 
 	if (!is_array($igmpentry['address']) || count($igmpentry['address']) < 10) {
 		print(' ');

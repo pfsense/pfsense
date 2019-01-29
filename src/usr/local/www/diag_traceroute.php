@@ -112,7 +112,7 @@ if ($do_traceroute) {
 	$result = shell_exec($cmd);
 
 	if (!$result) {
-		print_info_box(sprintf(gettext('Error: %s could not be traced/resolved'), $host));
+		print_info_box(sprintf(gettext('Error: %s could not be traced/resolved'), htmlspecialchars($host)));
 	}
 }
 

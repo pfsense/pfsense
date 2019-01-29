@@ -61,6 +61,24 @@ $icmplookup = array(
 	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46, 'helpmsg' => sprintf(gettext('For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be specified. (Other ICMP subtypes are only valid under IPv4 %1$sor%2$s IPv6, not both)'), '<i>', '</i>'))
 );
 
+$statetype_values = array(
+	'keep state' => gettext('Keep'),
+	'sloppy state' => gettext('Sloppy'),
+	'synproxy state' => gettext('Synproxy'),
+	'none' => gettext('None'),
+);
+
+$vlanprio = array(
+	"" => "none",
+	"bk" => "Background (BK, 0)",
+	"be" => "Best Effort (BE, 1)",
+	"ee" => "Excellent Effort (EE, 2)",
+	"ca" => "Critical Applications (CA, 3)",
+	"vi" => "Video (VI, 4)",
+	"vo" => "Voice (VO, 5)",
+	"ic" => "Internetwork Control (IC, 6)",
+	"nc" => "Network Control (NC, 7)");
+
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];
 } else {
@@ -310,6 +328,20 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 
 read_altq_config(); /* XXX: */
 $qlist =& get_unique_queue_list();
+
+$list = array('' => 'none');
+if (!is_array($qlist)) {
+	$qlist = array();
+}
+
+foreach ($qlist as $q => $qkey) {
+	if (isset($ifdisp[$q])) {
+		$list[$q] = $ifdisp[$q];
+	} else {
+		$list[$q] = $q;
+	}
+}
+
 read_dummynet_config(); /* XXX: */
 $dnqlist =& get_unique_dnqueue_list();
 $a_gatewaygroups = return_gateway_groups_array();
@@ -762,6 +794,39 @@ if ($_POST['save']) {
 		if (empty($outoftcpflags) && !empty($settcpflags)) {
 			$input_errors[] = gettext("If TCP flags that should be set is specified, then out of which flags should be specified as well.");
 		}
+	}
+
+	if ($_POST['dscp'] && !in_array($_POST['dscp'], $firewall_rules_dscp_types)) {
+		$input_errors[] = gettext("Invalid DSCP value.");
+	}
+	if ($_POST['tag'] && !is_validaliasname($_POST['tag'])) {
+		$input_errors[] = gettext("Invalid tag value.");
+	}
+	if ($_POST['tagged'] && !is_validaliasname($_POST['tagged'])) {
+		$input_errors[] = gettext("Invalid tagged value.");
+	}
+	if ($_POST['statetype'] && !array_key_exists($_POST['statetype'], $statetype_values)) {
+		$input_errors[] = gettext("Invalid State Type.");
+	}
+	if ($_POST['vlanprio'] && !in_array($_POST['vlanprio'], $vlanprio)) {
+		$input_errors[] = gettext("Invalid VLAN Prio.");
+	}
+	if ($_POST['vlanprioset'] && !in_array($_POST['vlanprioset'], $vlanprio)) {
+		$input_errors[] = gettext("Invalid VLAN Prio Set.");
+	}
+
+	if ($_POST['ackqueue'] && !array_key_exists($_POST['ackqueue'], $list)) {
+		$input_errors[] = gettext("Invalid ACK Queue.");
+	}
+	if ($_POST['defaultqueue'] && !array_key_exists($_POST['defaultqueue'], $list)) {
+		$input_errors[] = gettext("Invalid Default Queue.");
+	}
+
+	if ($_POST['dnpipe'] && !in_array($_POST['dnpipe'], $dnqlist)) {
+		$input_errors[] = gettext("Invalid In Pipe.");
+	}
+	if ($_POST['pdnpipe'] && !in_array($_POST['pdnpipe'], $dnqlist)) {
+		$input_errors[] = gettext("Invalid Out Pipe.");
 	}
 
 	// Allow extending of the firewall edit page and include custom input validation
@@ -1572,12 +1637,7 @@ $section->addInput(new Form_Select(
 	'statetype',
 	'State type',
 	(isset($pconfig['statetype'])) ? $pconfig['statetype'] : "keep state",
-	array(
-		'keep state' => gettext('Keep'),
-		'sloppy state' => gettext('Sloppy'),
-		'synproxy state' => gettext('Synproxy'),
-		'none' => gettext('None'),
-	)
+	$statetype_values
 ))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state.%1$s',
 			'<br /><span></span>');
 
@@ -1587,17 +1647,6 @@ $section->addInput(new Form_Checkbox(
 	'Prevent the rule on Master from automatically syncing to other CARP members',
 	$pconfig['nosync']
 ))->setHelp('This does NOT prevent the rule from being overwritten on Slave.');
-
-$vlanprio = array(
-	"" => "none",
-	"bk" => "Background (BK, 0)",
-	"be" => "Best Effort (BE, 1)",
-	"ee" => "Excellent Effort (EE, 2)",
-	"ca" => "Critical Applications (CA, 3)",
-	"vi" => "Video (VI, 4)",
-	"vo" => "Voice (VO, 5)",
-	"ic" => "Internetwork Control (IC, 6)",
-	"nc" => "Network Control (NC, 7)");
 
 $section->addInput(new Form_Select(
 	'vlanprio',
@@ -1683,19 +1732,6 @@ $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '
 );
 
 $group = new Form_Group('Ackqueue / Queue');
-
-$list = array('' => 'none');
-if (!is_array($qlist)) {
-	$qlist = array();
-}
-
-foreach ($qlist as $q => $qkey) {
-	if (isset($ifdisp[$q])) {
-		$list[$q] = $ifdisp[$q];
-	} else {
-		$list[$q] = $q;
-	}
-}
 
 $group->add(new Form_Select(
 	'ackqueue',

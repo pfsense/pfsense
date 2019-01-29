@@ -452,67 +452,67 @@ function insert_word_breaks_in_domain_name($domain_name) {
 function firewall_check_for_advanced_options(&$item) {
 	$item_set = "";
 	if ($item['os']) {
-			$item_set .= "os {$item['os']} ";
+			$item_set .= "os " . htmlspecialchars($item['os']) . " ";
 	}
 	if ($item['dscp']) {
-		$item_set .= "dscp {$item['dscp']} ";
+		$item_set .= "dscp " . htmlspecialchars($item['dscp']) . " ";
 	}
 	if ($item['max']) {
-		$item_set .= "max {$item['max']} ";
+		$item_set .= "max " . htmlspecialchars($item['max']) . " ";
 	}
 	if ($item['max-src-nodes']) {
-		$item_set .= "max-src-nodes {$item['max-src-nodes']} ";
+		$item_set .= "max-src-nodes " . htmlspecialchars($item['max-src-nodes']) . " ";
 	}
 	if ($item['max-src-conn']) {
-		$item_set .= "max-src-conn {$item['max-src-conn']} ";
+		$item_set .= "max-src-conn " . htmlspecialchars($item['max-src-conn']) . " ";
 	}
 	if ($item['max-src-states']) {
-		$item_set .= "max-src-states {$item['max-src-states']} ";
+		$item_set .= "max-src-states " . htmlspecialchars($item['max-src-states']) . " ";
 	}
 	if (isset($item['nopfsync'])) {
 		$item_set .= "nopfsync ";
 	}
 	if ($item['statetype'] != "keep state" && $item['statetype'] != "") {
-		$item_set .= "statetype {$item['statetype']} ";
+		$item_set .= "statetype " . htmlspecialchars($item['statetype']) . " ";
 	}
 	if ($item['statetimeout']) {
-		$item_set .= "statetimeout {$item['statetimeout']} ";
+		$item_set .= "statetimeout " . htmlspecialchars($item['statetimeout']) . " ";
 	}
 	if (isset($item['nosync'])) {
 		$item_set .= "no XMLRPC Sync ";
 	}
 	if ($item['max-src-conn-rate']) {
-		$item_set .= "max-src-conn-rate {$item['max-src-conn-rate']} ";
+		$item_set .= "max-src-conn-rate " . htmlspecialchars($item['max-src-conn-rate']) . " ";
 	}
 	if ($item['max-src-conn-rates']) {
-		$item_set .= "max-src-conn-rates {$item['max-src-conn-rates']} ";
+		$item_set .= "max-src-conn-rates " . htmlspecialchars($item['max-src-conn-rates']) . " ";
 	}
 	if ($item['vlanprio']) {
-		$item_set .= "vlanprio {$item['vlanprio']} ";
+		$item_set .= "vlanprio " . htmlspecialchars($item['vlanprio']) . " ";
 	}
 	if ($item['vlanprioset']) {
-		$item_set .= "vlanprioset {$item['vlanprioset']} ";
+		$item_set .= "vlanprioset " . htmlspecialchars($item['vlanprioset']) . " ";
 	}
 	if ($item['gateway']) {
-		$item_set .= "gateway {$item['gateway']} ";
+		$item_set .= "gateway " . htmlspecialchars($item['gateway']) . " ";
 	}
 	if ($item['dnpipe']) {
-		$item_set .= "limiter {$item['dnpipe']} ";
+		$item_set .= "limiter " . htmlspecialchars($item['dnpipe']) . " ";
 	}
 	if ($item['pdnpipe']) {
-		$item_set .= "limiter {$item['pdnpipe']} ";
+		$item_set .= "limiter " . htmlspecialchars($item['pdnpipe']) . " ";
 	}
 	if ($item['ackqueue']) {
-		$item_set .= "ackqueue {$item['ackqueue']} ";
+		$item_set .= "ackqueue " . htmlspecialchars($item['ackqueue']) . " ";
 	}
 	if ($item['defaultqueue']) {
-		$item_set .= "defaultqueue {$item['defaultqueue']} ";
+		$item_set .= "defaultqueue " . htmlspecialchars($item['defaultqueue']) . " ";
 	}
 	if ($item['tag']) {
-		$item_set .= "tag {$item['tag']} ";
+		$item_set .= "tag " . htmlspecialchars($item['tag']) . " ";
 	}
 	if ($item['tagged']) {
-		$item_set .= "tagged {$item['tagged']} ";
+		$item_set .= "tagged " . htmlspecialchars($item['tagged']) . " ";
 	}
 	if (isset($item['allowopts'])) {
 		$item_set .= "allowopts ";

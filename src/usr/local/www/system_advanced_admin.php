@@ -39,6 +39,8 @@ require_once("shaper.inc");
 init_config_arr(array('system', 'webgui'));
 init_config_arr(array('system', 'ssh'));
 
+$valid_webguiproto = array('http', 'https');
+
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
@@ -86,6 +88,11 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
+
+	if (!in_array($pconfig['webguiproto'], $valid_webguiproto)) {
+		$input_errors[] = gettext("A valid webConfigurator protocol must be specified");
+	}
+
 	if ($_POST['webguiport']) {
 		if (!is_port($_POST['webguiport'])) {
 			$input_errors[] = gettext("A valid webConfigurator port number must be specified");
@@ -315,7 +322,7 @@ if ($_POST) {
 			} else {
 				list($host) = explode(":", $_SERVER['HTTP_HOST']);
 			}
-			$prot = $config['system']['webgui']['protocol'];
+			$prot = in_array($config['system']['webgui']['protocol'], $valid_webguiproto) ? $config['system']['webgui']['protocol'] : 'http' ;
 			$port = $config['system']['webgui']['port'];
 			if ($port) {
 				$url = "{$prot}://{$host}:{$port}/system_advanced_admin.php";

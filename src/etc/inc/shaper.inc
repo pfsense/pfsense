@@ -1600,13 +1600,13 @@ class priq_queue {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper.php?interface=". $this->GetInterface()."&amp;queue=". $this->GetQname()."&amp;action=show";
+		$tree = " <li><a href=\"firewall_shaper.php?interface=". $this->GetInterface()."&amp;queue=". htmlspecialchars($this->GetQname())."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = $this->GetDefault();
 		if (!empty($tmpvalue)) {
 			$tree .= " class=\"navlnk\"";
 		}
-		$tree .= " >" . $this->GetQname() . "</a>";
+		$tree .= " >" . htmlspecialchars($this->GetQname()) . "</a>";
 		/*
 		 * Not needed here!
 		 * if (is_array($queues) {
@@ -2369,13 +2369,13 @@ class hfsc_queue extends priq_queue {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface() ."&amp;queue=" . $this->GetQname()."&amp;action=show";
+		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface() ."&amp;queue=" . htmlspecialchars($this->GetQname())."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = $this->GetDefault();
 		if (!empty($tmpvalue)) {
 			$tree .= " class=\"navlnk\"";
 		}
-		$tree .= " >" . $this->GetQname() . "</a>";
+		$tree .= " >" . htmlspecialchars($this->GetQname()) . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
 			foreach ($this->subqueues as $q) {
@@ -2971,13 +2971,13 @@ class cbq_queue extends priq_queue {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface()."&amp;queue=" . $this->GetQname()."&amp;action=show";
+		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface()."&amp;queue=" . htmlspecialchars($this->GetQname())."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = trim($this->GetDefault());
 		if (!empty($tmpvalue)) {
 			$tree .= " class=\"navlnk\"";
 		}
-		$tree .= " >" . $this->GetQname() . "</a>";
+		$tree .= " >" . htmlspecialchars($this->GetQname()) . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
 			foreach ($this->subqueues as $q) {
@@ -3259,13 +3259,13 @@ class fairq_queue extends priq_queue {
 
 	function build_tree() {
 		$tree = " <li><a href=\"firewall_shaper.php?interface=" .
-		$this->GetInterface()."&amp;queue=" . $this->GetQname()."&amp;action=show";
+		$this->GetInterface()."&amp;queue=" . htmlspecialchars($this->GetQname())."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = trim($this->GetDefault());
 		if (!empty($tmpvalue)) {
 			$tree .= " class=\"navlnk\"";
 		}
-		$tree .= " >" . $this->GetQname() . "</a>";
+		$tree .= " >" . htmlspecialchars($this->GetQname()) . "</a>";
 		$tree .= "</li>";
 		return $tree;
 	}
@@ -3979,8 +3979,8 @@ class dnpipe_class extends dummynet_class {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . $this->GetQname() ."&amp;queue=".$this->GetQname() ."&amp;action=show\">";
-		$tree .= $this->GetQname() . "</a>";
+		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . htmlspecialchars($this->GetQname()) ."&amp;queue=".htmlspecialchars($this->GetQname()) ."&amp;action=show\">";
+		$tree .= htmlspecialchars($this->GetQname()) . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
 			foreach ($this->subqueues as $q) {
@@ -4650,8 +4650,8 @@ class dnqueue_class extends dummynet_class {
 
 	function build_tree() {
 		$parent =& $this->GetParent();
-		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . $parent->GetQname() ."&amp;queue=" . $this->GetQname() ."&amp;action=show\">";
-		$tree .= $this->GetQname() . "</a>";
+		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . htmlspecialchars($parent->GetQname()) ."&amp;queue=" . htmlspecialchars($this->GetQname()) ."&amp;action=show\">";
+		$tree .= htmlspecialchars($this->GetQname()) . "</a>";
 		$tree .= "</li>";
 
 		return $tree;

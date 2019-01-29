@@ -251,7 +251,11 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 	build a list of port-to-interface mappings in portifmap */
 	foreach ($_POST as $ifname => $ifport) {
 		if (($ifname == 'lan') || ($ifname == 'wan') || (substr($ifname, 0, 3) == 'opt')) {
-			$portifmap[$ifport][] = strtoupper($ifname);
+			if (array_key_exists($ifport, $portlist)) {
+				$portifmap[$ifport][] = strtoupper($ifname);
+			} else {
+				$input_errors[] = sprintf(gettext('Cannot set port %1$s because the submitted interface does not exist.'), $ifname);
+			}
 		}
 	}
 

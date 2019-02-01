@@ -53,9 +53,9 @@ nas_port=$5
 # Single quoting $password breaks getting the value from the variable.
 # Base64 and urlEncode usernames and passwords
 password=$(printf "%s" "${password}" | "${openssl}" enc -base64 | \
-    "${sed}" -e 's_=_%3D_g;s_+_%2B_g;s_/_%2F_g')
+	"${sed}" -e 's_=_%3D_g;s_+_%2B_g;s_/_%2F_g')
 username=$(printf "%s" "${username}" | "${openssl}" enc -base64 | \
-    "${sed}" -e 's_=_%3D_g;s_+_%2B_g;s_/_%2F_g')
+	"${sed}" -e 's_=_%3D_g;s_+_%2B_g;s_/_%2F_g')
 
 # ---------- Perform Check
 auth_credentials="username=${username}&password=${password}"
@@ -70,7 +70,7 @@ result=$("${fcgicli}" -f "${auth_user_php}" -d "${auth_args}")
 
 auth_result="${auth_failure}"
 if [ "${result}" = "OK" ]; then
-    auth_result="${auth_success}"
+	auth_result="${auth_success}"
 fi
 
 # The output file path should be set in the environment

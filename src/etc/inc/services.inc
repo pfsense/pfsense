@@ -602,8 +602,8 @@ EOD;
 							/* this is the interface! */
 							if (is_numeric($vipent['advskew']) && (intval($vipent['advskew']) < 20)) {
 								$skew = 0;
-								break;
 							}
+							break;
 						}
 					}
 				}

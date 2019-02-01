@@ -21,7 +21,15 @@
 
 global $username, $dev, $untrusted_port;
 
+if (empty($dev)) {
+    $dev = "openvpn";
+}
+
 function cisco_to_cidr($addr) {
+    if (!is_ipaddr($addr)) {
+        throw new Exception('Invalid IP Addr');
+    }
+
     $mask = decbin(~ip2long($addr));
     $mask = substr($mask, -32);
     $k = 0;

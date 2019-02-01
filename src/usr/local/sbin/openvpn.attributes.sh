@@ -24,35 +24,47 @@ rulesfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.rules"
 anchorname="openvpn/${dev}_${username}_${trusted_port}"
 
 if [ "$script_type" = "client-connect" ]; then
-    while [ -f "${lockfile}" ];
-    do
-        sleep 1
-    done
-    touch "${lockfile}"
+    i=1
+    while [ -f "${lockfile}" ]; do
+        if [ $i -ge 30 ]; then
+            /bin/echo "Timeout while waiting for lockfile"
+            exit 1
+        fi
 
-    cat "${rulesfile}" | sed "s/{clientip}/${ifconfig_pool_remote_ip}/g" > "${rulesfile}.tmp" && mv "${rulesfile}.tmp" "${rulesfile}"
+        /bin/sleep 1
+        i=$(( i + 1 ))
+    done
+    /usr/bin/touch "${lockfile}"
+
+    /bin/cat "${rulesfile}" | sed "s/{clientip}/${ifconfig_pool_remote_ip}/g" > "${rulesfile}.tmp" && mv "${rulesfile}.tmp" "${rulesfile}"
     /sbin/pfctl -a "openvpn/${dev}_${username}_${trusted_port}" -f "${rulesfile}"
-    rm "${rulesfile}"
+    /bin/rm "${rulesfile}"
 
     if [ -f /tmp/$common_name ]; then
         /bin/cat /tmp/$common_name > $1
         /bin/rm /tmp/$common_name
     fi
 
-    rm "${lockfile}"
+    /bin/rm "${lockfile}"
 elif [ "$script_type" = "client-disconnect" ]; then
-    while [ -f "${lockfile}" ];
-    do
-        sleep 1
+    i=1
+    while [ -f "${lockfile}" ]; do
+        if [ $i -ge 30 ]; then
+            /bin/echo "Timeout while waiting for lockfile"
+            exit 1
+        fi
+
+        /bin/sleep 1
+        i=$(( i + 1 ))
     done
-    touch "${lockfile}"
+    /usr/bin/touch "${lockfile}"
 
     command="/sbin/pfctl -a '${anchorname}' -F rules"
     eval $command
     /sbin/pfctl -k $ifconfig_pool_remote_ip
     /sbin/pfctl -K $ifconfig_pool_remote_ip
 
-    rm "${lockfile}"
+    /bin/rm "${lockfile}"
 fi
 
 exit 0

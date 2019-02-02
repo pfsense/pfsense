@@ -130,6 +130,9 @@ if (isset($id) && $a_ppps[$id]) {
 			if (isset($a_ppps[$id]['provider']) and empty($a_ppps[$id]['provider'])) {
 				$pconfig['null_service'] = true;
 			}
+			if (isset($a_ppps[$id]['pppoe_host-uniq'])) {
+				$pconfig['pppoe_host-uniq'] = $a_ppps[$id]['pppoe_host-uniq'];
+			}
 			/* ================================================ */
 			/* = force a connection reset at a specific time? = */
 			/* ================================================ */
@@ -244,6 +247,9 @@ if ($_POST['save']) {
 	}
 	if ($_POST['provider'] && $_POST['null_service']) {
 		$input_errors[] = gettext("Do not specify both a Service name and a NULL Service name.");
+	}
+	if (!empty($_POST['pppoe_host-uniq']) && !preg_match('/^[a-z0-9]+$/i', $_POST['pppoe_host-uniq'])) {
+		$input_errors[] = gettext("Host-Uniq value can only be hexadecimal or letters and numbers.");
 	}
 	if (($_POST['idletimeout'] != "") && !is_numericint($_POST['idletimeout'])) {
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
@@ -388,6 +394,9 @@ if ($_POST['save']) {
 				} else {
 					unset($ppp['provider']);
 					$ppp['provider'] = $_POST['null_service'] ? true : false;
+				}
+				if (!empty($_POST['pppoe_host-uniq'])) {
+					$ppp['pppoe_host-uniq'] = $_POST['pppoe_host-uniq'];
 				}
 				if (!empty($_POST['pppoe-reset-type'])) {
 					$ppp['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
@@ -671,6 +680,13 @@ if ($pconfig['type'] == 'pppoe') {
 					'Check the "Configure NULL" box to configure a blank Service name.');
 
 	$section->add($group);
+
+	$section->addInput(new Form_Input(
+		'pppoe_host-uniq',
+		'Host-Uniq',
+		'text',
+		$pconfig['pppoe_host-uniq']
+	))->setHelp('This field can usually be left empty.');
 }
 
 $section->addInput(new Form_Select(

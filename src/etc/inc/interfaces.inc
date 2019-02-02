@@ -2482,10 +2482,19 @@ EOD;
 EOD;
 		}
 		if ($type == "pppoe") {
+			// ng_pppoe.c:955 check ourmsg->data[hupos] == '0' && ourmsg->data[hupos + 1] == 'x'
+			$hostuniq = '';
+			if (isset($ppp['pppoe_host-uniq'])) {
+				if (preg_match('/^0x[a-f0-9]+$/', $ppp['pppoe_host-uniq'])) {
+					$hostuniq = $ppp['pppoe_host-uniq'] .'|';
+				} else if (preg_match('/^[a-z0-9]+$/i', $ppp['pppoe_host-uniq'])) {
+					$hostuniq = '0x' .bin2hex($ppp['pppoe_host-uniq']) .'|';
+				}
+			}
 			// Send a null service name if none is set.
 			$provider = isset($ppp['provider']) ? $ppp['provider'] : "";
 			$mpdconf .= <<<EOD
-	set pppoe service "{$provider}"
+	set pppoe service "{$hostuniq}{$provider}"
 
 EOD;
 		}

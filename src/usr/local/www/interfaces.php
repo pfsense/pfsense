@@ -130,6 +130,9 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 		$pconfig['pppoe_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pppoe_password'] = base64_decode($a_ppps[$pppid]['password']);
 		$pconfig['provider'] = $a_ppps[$pppid]['provider'];
+		if (isset($a_ppps[$pppid]['pppoe_host-uniq'])) {
+			$pconfig['pppoe_host-uniq'] = $a_ppps[$pppid]['pppoe_host-uniq'];
+		}
 		$pconfig['pppoe_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
 		$pconfig['pppoe_idletimeout'] = $a_ppps[$pppid]['idletimeout'];
 
@@ -830,6 +833,9 @@ if ($_POST['apply']) {
 	if (($_POST['provider'] && (strpos($_POST['provider'], "\"")))) {
 		$input_errors[] = gettext("The service name may not contain quote characters.");
 	}
+	if (!empty($_POST['pppoe_host-uniq']) && !preg_match('/^[a-z0-9]+$/i', $_POST['pppoe_host-uniq'])) {
+		$input_errors[] = gettext("Host-Uniq value can only be hexadecimal or letters and numbers.");
+	}
 	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) {
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
 	}
@@ -1157,6 +1163,9 @@ if ($_POST['apply']) {
 		unset($wancfg['pptp_username']);
 		unset($wancfg['pptp_password']);
 		unset($wancfg['provider']);
+		if (isset($wancfg['pppoe_host-uniq'])) {
+			unset($wancfg['pppoe_host-uniq']);
+		}
 		unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
 		if (empty($wancfg['pppoe']['pppoe-reset-type'])) {
@@ -1267,6 +1276,9 @@ if ($_POST['apply']) {
 					$a_ppps[$pppid]['provider'] = $_POST['provider'];
 				} else {
 					$a_ppps[$pppid]['provider'] = true;
+				}
+				if (!empty($_POST['pppoe_host-uniq'])) {
+					$a_ppps[$pppid]['pppoe_host-uniq'] = $_POST['pppoe_host-uniq'];
 				}
 				$a_ppps[$pppid]['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 				if (!empty($_POST['pppoe_idletimeout'])) {
@@ -2798,6 +2810,13 @@ $section->addInput(new Form_Input(
 	'Service name',
 	'text',
 	$pconfig['provider']
+))->setHelp('This field can usually be left empty.');
+
+$section->addInput(new Form_Input(
+	'pppoe_host-uniq',
+	'Host-Uniq',
+	'text',
+	$pconfig['pppoe_host-uniq']
 ))->setHelp('This field can usually be left empty.');
 
 $section->addInput(new Form_Checkbox(

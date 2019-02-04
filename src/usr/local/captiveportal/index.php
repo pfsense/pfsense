@@ -188,7 +188,7 @@ EOD;
 			$user = $clientmac; 
 			$passwd = $cpcfg['radmac_secret'];
 			$context = 'radmac'; // Radius MAC authentication
-		} elseif (!empty($_POST['auth_user2'])) { 
+		} elseif (!empty(trim($_POST['auth_user2']))) { 
 			$user = trim($_POST['auth_user2']);
 			$passwd = $_POST['auth_pass2'];
 			$context = 'second'; // Assume users to use the first context if auth_user2 is empty/does not exist

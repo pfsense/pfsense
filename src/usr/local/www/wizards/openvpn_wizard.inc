@@ -26,16 +26,7 @@ require_once("openvpn.inc");
 require_once("util.inc");
 
 // Load valid country codes
-$dn_cc = array();
-if (file_exists("/etc/ca_countries")) {
-	$dn_cc_file=file("/etc/ca_countries");
-	$dn_cc[''] = gettext("None");
-	foreach ($dn_cc_file as $line) {
-		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
-			$dn_cc[$matches[1]] = $matches[1];
-		}
-	}
-}
+$dn_cc = get_cert_country_codes();
 
 function step1_stepsubmitbeforesave() {
 	global $stepid, $config;

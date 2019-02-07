@@ -2763,7 +2763,7 @@ function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
 	return ($xml_array);
 }
 
-function get_country_name($country_code) {
+function get_country_name($country_code = "ALL") {
 	if ($country_code != "ALL" && strlen($country_code) != 2) {
 		return "";
 	}

@@ -2790,6 +2790,25 @@ function get_country_name($country_code = "ALL") {
 	return "";
 }
 
+/* Return the list of country codes to be used on CAs and certs */
+function get_cert_country_codes() {
+	$countries = get_country_name();
+
+	$country_codes = array();
+	foreach ($countries as $country) {
+		$country_codes[$country['code']] = $country['code'];
+	}
+
+	/* Preserve historical order: None, US, CA, other countries */
+	$first_items[''] = gettext("None");
+	$first_items['US'] = $country_codes['US'];
+	$first_items['CA'] = $country_codes['CA'];
+	unset($country_codes['US']);
+	unset($country_codes['CA']);
+
+	return array_merge($first_items, $country_codes);
+}
+
 /* sort by interface only, retain the original order of rules that apply to
    the same interface */
 function filter_rules_sort() {

@@ -473,7 +473,7 @@ function build_country_list() {
 	$list = array();
 
 	// get_country_name is in pfSense-utils.inc
-	$country_list = get_country_name("ALL");
+	$country_list = get_country_name();
 
 	foreach ($country_list as $country) {
 		$list[$country['code']] = $country['name'];

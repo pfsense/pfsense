@@ -48,7 +48,7 @@ function get_country_providers($country) {
 
 function country_list() {
 	global $serviceproviders;
-	$country_list = get_country_name("ALL");
+	$country_list = get_country_name();
 	foreach ($serviceproviders as $sp) {
 		foreach ($country_list as $country) {
 			if (strtoupper($sp['attr']['code']) == $country['code']) {

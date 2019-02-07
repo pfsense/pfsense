@@ -2798,6 +2798,7 @@ function get_cert_country_codes() {
 	foreach ($countries as $country) {
 		$country_codes[$country['code']] = $country['code'];
 	}
+	ksort($country_codes);
 
 	/* Preserve historical order: None, US, CA, other countries */
 	$first_items[''] = gettext("None");

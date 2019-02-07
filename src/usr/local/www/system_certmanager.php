@@ -610,18 +610,6 @@ $tab_array[] = array(gettext("Certificates"), true, "system_certmanager.php");
 $tab_array[] = array(gettext("Certificate Revocation"), false, "system_crlmanager.php");
 display_top_tabs($tab_array);
 
-// Load valid country codes
-$dn_cc = array();
-if (file_exists("/etc/ca_countries")) {
-	$dn_cc_file=file("/etc/ca_countries");
-	$dn_cc[''] = gettext("None");
-	foreach ($dn_cc_file as $line) {
-		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
-			$dn_cc[$matches[1]] = $matches[1];
-		}
-	}
-}
-
 if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$form = new Form();
 	$form->setAction('system_certmanager.php?act=edit');
@@ -820,7 +808,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'dn_country',
 		'Country Code',
 		$pconfig['dn_country'],
-		$dn_cc
+		get_cert_country_codes()
 	));
 
 	$section->addInput(new Form_Input(
@@ -891,7 +879,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'csr_dn_country',
 		'Country Code',
 		$pconfig['csr_dn_country'],
-		$dn_cc
+		get_cert_country_codes()
 	));
 
 	$section->addInput(new Form_Input(

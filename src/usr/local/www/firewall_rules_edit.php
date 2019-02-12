@@ -822,10 +822,10 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Invalid Default Queue.");
 	}
 
-	if ($_POST['dnpipe'] && !in_array($_POST['dnpipe'], $dnqlist)) {
+	if ($_POST['dnpipe'] && !array_key_exists($_POST['dnpipe'], $dnqlist)) {
 		$input_errors[] = gettext("Invalid In Pipe.");
 	}
-	if ($_POST['pdnpipe'] && !in_array($_POST['pdnpipe'], $dnqlist)) {
+	if ($_POST['pdnpipe'] && !array_key_exists($_POST['pdnpipe'], $dnqlist)) {
 		$input_errors[] = gettext("Invalid Out Pipe.");
 	}
 

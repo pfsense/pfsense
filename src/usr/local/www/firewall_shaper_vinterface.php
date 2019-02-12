@@ -412,12 +412,14 @@ if (!$dfltmsg) {
 				$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&action=delete';
 			}
 
-			$sform->addGlobal(new Form_Button(
-				'delete',
-				($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
-				$url,
-				'fa-trash'
-			))->addClass('btn-danger');
+			if ($sform) {
+				$sform->addGlobal(new Form_Button(
+					'delete',
+					($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
+					$url,
+					'fa-trash'
+				))->addClass('btn-danger');
+			}
 		}
 	}
 

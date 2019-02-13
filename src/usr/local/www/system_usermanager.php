@@ -422,7 +422,7 @@ if ($_POST['save']) {
 					$dn['organizationName'] = $subject['O'];
 				}
 				if (!empty($subject['OU'])) {
-					$dn['organizationalUnit'] = $subject['OU'];
+					$dn['organizationalUnitName'] = $subject['OU'];
 				}
 				$dn['commonName'] = $userent['name'];
 				$cn_altname = cert_add_altname_type($userent['name']);

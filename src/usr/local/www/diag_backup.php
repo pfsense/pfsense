@@ -329,7 +329,7 @@ if ($_POST) {
 								if (file_exists("/boot/loader.conf")) {
 									$loaderconf = file_get_contents("/boot/loader.conf");
 									if (strpos($loaderconf, "console=\"comconsole") ||
-									    strpos($loaderconf, "boot_serial=\"YES") {
+									    strpos($loaderconf, "boot_serial=\"YES")) {
 										$config['system']['enableserial'] = true;
 										write_config(gettext("Restore serial console enabling in configuration."));
 									}
@@ -338,7 +338,7 @@ if ($_POST) {
 								if (file_exists("/boot/loader.conf.local")) {
 									$loaderconf = file_get_contents("/boot/loader.conf.local");
 									if (strpos($loaderconf, "console=\"comconsole") ||
-									    strpos($loaderconf, "boot_serial=\"YES") {
+									    strpos($loaderconf, "boot_serial=\"YES")) {
 										$config['system']['enableserial'] = true;
 										write_config(gettext("Restore serial console enabling in configuration."));
 									}

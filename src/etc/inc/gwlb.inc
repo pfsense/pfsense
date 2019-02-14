@@ -1109,7 +1109,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			$currentdefaultgwip = getcurrentdefaultgatewayip($ipprotocol);
 			$found_current = false;
 			foreach($gwg_members as $gwgroupitem) {
-				if ($gwgroupitem['gwip'] == $currentdefaultgwip) {
+				if (!empty($currentdefaultgwip) && ($gwgroupitem['gwip'] == $currentdefaultgwip)) {
 					$set_dfltgwname = $gwgroupitem['gw'];
 					$found_current = true;
 					if (isset($config['system']['gw-debug'])) {

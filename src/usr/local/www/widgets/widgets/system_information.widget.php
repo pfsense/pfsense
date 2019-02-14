@@ -38,6 +38,7 @@ $sysinfo_items = array(
 	'version' => gettext('Version'),
 	'cpu_type' => gettext('CPU Type'),
 	'hwcrypto' => gettext('Hardware Crypto'),
+	'kernel_pti' => gettext('Kernel PTI'),
 	'uptime' => gettext('Uptime'),
 	'current_datetime' => gettext('Current Date/Time'),
 	'dns_servers' => gettext('DNS Server(s)'),
@@ -278,15 +279,18 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<?php endif; ?>
 <?php
 	endif;
-	$pti = get_single_sysctl('vm.pmap.pti');
-	if (strlen($pti) > 0) {
+	if (!in_array('kernel_pti', $skipsysinfoitems)):
+		$rows_displayed = true;
+		$pti = get_single_sysctl('vm.pmap.pti');
+		if (strlen($pti) > 0) {
 ?>
-		<tr>
-			<th><?=gettext("Kernel PTI");?></th>
-			<td><?=($pti == 0) ? gettext("Disabled") : gettext("Enabled");?></td>
-		</tr>
+			<tr>
+				<th><?=gettext("Kernel PTI");?></th>
+				<td><?=($pti == 0) ? gettext("Disabled") : gettext("Enabled");?></td>
+			</tr>
 <?php
-	}
+		}
+	endif;
 	if (!in_array('uptime', $skipsysinfoitems)):
 		$rows_displayed = true;
 ?>

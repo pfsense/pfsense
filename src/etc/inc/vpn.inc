@@ -434,6 +434,7 @@ starter {
 charon {
 # number of worker threads in charon
 	threads = 16
+	max_ikev1_exchanges = 22
 	ikesa_table_size = 32
 	ikesa_table_segments = 4
 	init_limit_half_open = 1000

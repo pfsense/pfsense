@@ -41,6 +41,7 @@ $pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces'
 $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
+$pconfig['maxexchange'] = $config['ipsec']['maxexchange'];
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
@@ -64,6 +65,10 @@ if ($_POST['save']) {
 		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535) {
 			$input_errors[] = gettext("An integer between 576 and 65535 must be specified for Maximum MSS");
 		}
+	}
+
+	if ($_POST['maxexchange'] && (!is_numeric($_POST['maxexchange']) || ($_POST['maxexchange'] < 3) || ($_POST['maxexchange'] > 64))) {
+		$input_errors[] = gettext("The number of IKEv1 phase 2 exchanges must be between 3 and 64.");
 	}
 
 	if (!$input_errors) {
@@ -150,6 +155,19 @@ if ($_POST['save']) {
 		} elseif (isset($config['ipsec']['acceptunencryptedmainmode'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['acceptunencryptedmainmode']);
+		}
+
+		if (isset($_POST['maxexchange']) && (strlen($_POST['maxexchange']) > 0)) {
+			if (!isset($config['ipsec']['maxexchange'])) {
+				$needsrestart = true;
+			} elseif ($pconfig['maxexchange'] != $config['ipsec']['maxexchange']) {
+				$needsrestart = true;
+			}
+			$config['ipsec']['maxexchange'] = (int)$_POST['maxexchange'];
+			$pconfig['maxexchange'] = $config['ipsec']['maxexchange'];
+		} elseif (isset($config['ipsec']['maxexchange'])) {
+			$needsrestart = true;
+			unset($config['ipsec']['maxexchange']);
 		}
 
 		if (!empty($_POST['uniqueids'])) {
@@ -294,6 +312,18 @@ $section->addInput(new Form_Checkbox(
 	'This is very similar to Aggressive Mode, and has the same security implications: ' .
 	'A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload. ' .
 	'It is recommended to keep this option to no, unless the exact implications are known and compatibility is required for such devices (for example, some SonicWall boxes).'
+);
+
+$section->addInput(new Form_Input(
+	'maxexchange',
+	'Maximum IKEv1 Phase 2 Exchanges',
+	'number',
+	$pconfig['maxexchange'],
+	['placeholder' => '3']
+))->setHelp(
+	'IKEv1 phase 2 rekeying for one VPN gateway can be initiated in parallel. By default only 3 parallel rekeys are allowed. ' .
+	'Too low values can break VPN connections with many tunnel definitions. ' .
+	'If unsure set this value to the VPN connection with the maximum number of tunnels.'
 );
 
 $section->addInput(new Form_Checkbox(

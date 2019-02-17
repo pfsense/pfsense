@@ -383,6 +383,11 @@ function vpn_ipsec_configure($restart = false) {
 		$accept_unencrypted = "accept_unencrypted_mainmode_messages = yes";
 	}
 
+	$ikev1_maxexchange = "";
+	if (isset($config['ipsec']['maxexchange'])) {
+		$ikev1_maxexchange = "max_ikev1_exchanges = " . $config['ipsec']['maxexchange'];
+	}
+
 	$stronconf = '';
 	if (file_exists("{$g['varetc_path']}/ipsec/strongswan.conf")) {
 		$stronconf = file_get_contents("{$g['varetc_path']}/ipsec/strongswan.conf");
@@ -442,6 +447,7 @@ charon {
 	ignore_acquire_ts = yes
 	{$i_dont_care_about_security_and_use_aggressive_mode_psk}
 	{$accept_unencrypted}
+	{$ikev1_maxexchange}
 	cisco_unity = {$unity_enabled}
 	{$ifacesuse}
 	{$makebeforebreak}

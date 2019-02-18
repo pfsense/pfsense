@@ -322,8 +322,8 @@ $section->addInput(new Form_Input(
 	['placeholder' => '3']
 ))->setHelp(
 	'IKEv1 phase 2 rekeying for one VPN gateway can be initiated in parallel. By default only 3 parallel rekeys are allowed. ' .
-	'Too low values can break VPN connections with many tunnel definitions. ' .
-	'If unsure set this value to the VPN connection with the maximum number of tunnels.'
+	'Undersized values can break VPN connections with many phase 2 definitions. ' .
+	'If unsure, set this value to match the largest number of phase 2 entries on any phase 1.'
 );
 
 $section->addInput(new Form_Checkbox(

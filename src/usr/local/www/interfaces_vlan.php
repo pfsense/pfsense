@@ -27,7 +27,7 @@
 ##|*IDENT=page-interfaces-vlan
 ##|*NAME=Interfaces: VLAN
 ##|*DESCR=Allow access to the 'Interfaces: VLAN' page.
-##|*MATCH=interfaces_vlan_new_prof.php*
+##|*MATCH=interfaces_vlan.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");

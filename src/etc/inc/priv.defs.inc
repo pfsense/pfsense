@@ -332,6 +332,12 @@ $priv_list['page-firewall-virtualipaddress-edit']['descr'] = gettext("Allow acce
 $priv_list['page-firewall-virtualipaddress-edit']['match'] = array();
 $priv_list['page-firewall-virtualipaddress-edit']['match'][] = "firewall_virtual_ip_edit.php*";
 
+$priv_list['page-getqueuestats'] = array();
+$priv_list['page-getqueuestats']['name'] = gettext("WebCfg - AJAX: Get Queue Stats");
+$priv_list['page-getqueuestats']['descr'] = gettext("Allow access to the 'AJAX: Get Stats' page.");
+$priv_list['page-getqueuestats']['match'] = array();
+$priv_list['page-getqueuestats']['match'][] = "getqueuestats.php*";
+
 $priv_list['page-getserviceproviders'] = array();
 $priv_list['page-getserviceproviders']['name'] = gettext("WebCfg - AJAX: Get Service Providers");
 $priv_list['page-getserviceproviders']['descr'] = gettext("Allow access to the 'AJAX: Service Providers' page.");
@@ -489,12 +495,6 @@ $priv_list['page-interfaces-wireless-edit']['descr'] = gettext("Allow access to 
 $priv_list['page-interfaces-wireless-edit']['match'] = array();
 $priv_list['page-interfaces-wireless-edit']['match'][] = "interfaces_wireless_edit.php*";
 
-$priv_list['page-system-license'] = array();
-$priv_list['page-system-license']['name'] = gettext("WebCfg - System: License");
-$priv_list['page-system-license']['descr'] = gettext("Allow access to the 'System: License' page.");
-$priv_list['page-system-license']['match'] = array();
-$priv_list['page-system-license']['match'][] = "license.php*";
-
 $priv_list['page-services-loadbalancer-monitor'] = array();
 $priv_list['page-services-loadbalancer-monitor']['name'] = gettext("WebCfg - Services: Load Balancer: Monitors");
 $priv_list['page-services-loadbalancer-monitor']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Monitors' page.");
@@ -566,6 +566,12 @@ $priv_list['page-system-packagemanager-installed']['name'] = gettext("WebCfg - S
 $priv_list['page-system-packagemanager-installed']['descr'] = gettext("Allow access to the 'System: Package Manager: Installed' page.");
 $priv_list['page-system-packagemanager-installed']['match'] = array();
 $priv_list['page-system-packagemanager-installed']['match'][] = "pkg_mgr_installed.php*";
+
+$priv_list['page-system-autoconfigbackup'] = array();
+$priv_list['page-system-autoconfigbackup']['name'] = gettext("WebCfg - System: Auto COnfig Backup");
+$priv_list['page-system-autoconfigbackup']['descr'] = gettext("Configure the auto config backup system.");
+$priv_list['page-system-autoconfigbackup']['match'] = array();
+$priv_list['page-system-autoconfigbackup']['match'][] = "autoconfigbackup-settings.php*";
 
 $priv_list['page-services-captiveportal'] = array();
 $priv_list['page-services-captiveportal']['name'] = gettext("WebCfg - Services: Captive Portal");
@@ -1025,6 +1031,12 @@ $priv_list['page-status-services']['name'] = gettext("WebCfg - Status: Services"
 $priv_list['page-status-services']['descr'] = gettext("Allow access to the 'Status: Services' page.");
 $priv_list['page-status-services']['match'] = array();
 $priv_list['page-status-services']['match'][] = "status_services.php*";
+
+$priv_list['page-status-dns-resolver'] = array();
+$priv_list['page-status-dns-resolver']['name'] = gettext("WebCfg - Status: DNS Resolver");
+$priv_list['page-status-dns-resolver']['descr'] = gettext("Allow access to the 'Status: DNS Resolver' page.");
+$priv_list['page-status-dns-resolver']['match'] = array();
+$priv_list['page-status-dns-resolver']['match'][] = "status_unbound.php*";
 
 $priv_list['page-status-upnpstatus'] = array();
 $priv_list['page-status-upnpstatus']['name'] = gettext("WebCfg - Status: UPnP Status");

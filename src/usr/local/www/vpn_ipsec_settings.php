@@ -158,9 +158,7 @@ if ($_POST['save']) {
 		}
 
 		if (isset($_POST['maxexchange']) && (strlen($_POST['maxexchange']) > 0)) {
-			if (!isset($config['ipsec']['maxexchange'])) {
-				$needsrestart = true;
-			} elseif ($pconfig['maxexchange'] != $config['ipsec']['maxexchange']) {
+			if (!isset($config['ipsec']['maxexchange']) || ($pconfig['maxexchange'] != $config['ipsec']['maxexchange'])) {
 				$needsrestart = true;
 			}
 			$config['ipsec']['maxexchange'] = (int)$_POST['maxexchange'];

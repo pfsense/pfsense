@@ -645,9 +645,7 @@ function captiveportal_init_rules($reinit = false) {
 		return false;
 	}
 
-	if ($reinit == false) {
-		$captiveportallck = lock("captiveportal{$cpzone}");
-	}
+	$captiveportallck = try_lock("captiveportal{$cpzone}", 0);
 
 	$tables = captiveportal_get_ipfw_table_names();
 
@@ -757,7 +755,7 @@ function captiveportal_init_rules($reinit = false) {
 
 	captiveportal_filterdns_configure();
 
-	if ($reinit == false) {
+	if ($captiveportallck) {
 		unlock($captiveportallck);
 	}
 }

@@ -268,11 +268,7 @@ make_world() {
 		|| print_error_pfS
 
 	# Use the builder cross compiler from obj to produce the final binary.
-	if [ "${TARGET_ARCH}" == "$(uname -p)" ]; then
-		BUILD_CC="${MAKEOBJDIRPREFIX}/${FREEBSD_SRC_DIR}/tmp/usr/bin/cc"
-	else
-		BUILD_CC="${MAKEOBJDIRPREFIX}/${TARGET}.${TARGET_ARCH}${FREEBSD_SRC_DIR}/tmp/usr/bin/cc"
-	fi
+	BUILD_CC="${MAKEOBJDIRPREFIX}${FREEBSD_SRC_DIR}/${TARGET}.${TARGET_ARCH}/tmp/usr/bin/cc"
 
 	[ -f "${BUILD_CC}" ] || print_error_pfS
 

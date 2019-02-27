@@ -989,7 +989,7 @@ get_altabi_arch() {
 	elif [ "${_target_arch}" = "i386" ]; then
 		echo "x86:32"
 	elif [ "${_target_arch}" = "armv7" ]; then
-		echo "32:el:eabi:hardfp"
+		echo "32:el:eabi:softfp"
 	else
 		echo ">>> ERROR: Invalid arch"
 		print_error_pfS

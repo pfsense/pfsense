@@ -35,6 +35,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $pconfig['disablefilter'] = $config['system']['disablefilter'];
 $pconfig['scrubnodf'] = $config['system']['scrubnodf'];
@@ -47,6 +48,7 @@ $pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval']
 $old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
 $pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
+$old_maximumtableentries = $config['system']['maximumtableentries'];
 $pconfig['maximumfrags'] = $config['system']['maximumfrags'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
@@ -73,6 +75,11 @@ $pconfig['icmperrortimeout'] = $config['system']['icmperrortimeout'];
 $pconfig['otherfirsttimeout'] = $config['system']['otherfirsttimeout'];
 $pconfig['othersingletimeout'] = $config['system']['othersingletimeout'];
 $pconfig['othermultipletimeout'] = $config['system']['othermultipletimeout'];
+
+$show_reboot_msg = false;
+$reboot_msg = gettext('The \"Firewall Maximum Table Entries\" setting has ' .
+    'been changed to a value bigger than system can support without a ' .
+    'reboot.\n\nReboot now ?');
 
 if ($_POST) {
 
@@ -375,6 +382,20 @@ if ($_POST) {
 		if (($old_aliasesresolveinterval != $config['system']['aliasesresolveinterval']) &&
 		    isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
 			killbypid("{$g['varrun_path']}/filterdns.pid");
+		}
+
+		/* Update loader.conf when necessary */
+		if ($old_maximumtableentries !=
+		    $config['system']['maximumtableentries']) {
+			setup_loader_settings();
+			$cur_maximumtableentries = get_single_sysctl(
+			    'net.pf.request_maxcount');
+
+
+			if ($config['system']['maximumtableentries'] >
+			    $cur_maximumtableentries) {
+				$show_reboot_msg = true;
+			}
 		}
 
 		$changes_applied = true;
@@ -754,6 +775,10 @@ events.push(function() {
 	// ---------- On initial page load ------------------------------------------------------------
 
 	setOptText($('#optimization').val())
+
+	if (<?=(int)$show_reboot_msg?> && confirm("<?=$reboot_msg?>")) {
+		postSubmit({override : 'yes'}, 'diag_reboot.php')
+	}
 });
 //]]>
 </script>

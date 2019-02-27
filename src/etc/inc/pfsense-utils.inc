@@ -1182,7 +1182,8 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	/* These values should be removed from loader.conf and loader.conf.local
 	 * As they will be replaced when necessary. */
 	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
-	    "hw.e6000sw.default_disabled", "vm.pmap.pti");
+	    "hw.e6000sw.default_disabled", "vm.pmap.pti",
+	    "net.pf.request_maxcount");
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
 		$remove = array_merge($remove,
@@ -1302,6 +1303,13 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	if (isset($config['system']['pti_disabled'])) {
 		$data[] = 'vm.pmap.pti="0"';
 	}
+
+	if (isset($config['system']['maximumtableentries'])) {
+		$maximumtableentries = $config['system']['maximumtableentries'];
+	} else {
+		$maximumtableentries = pfsense_default_table_entries_size();
+	}
+	$data[] = 'net.pf.request_maxcount="' .  $maximumtableentries . '"';
 
 	safe_write_file($loader_conf_file, $data);
 

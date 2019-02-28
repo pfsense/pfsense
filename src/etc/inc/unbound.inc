@@ -572,7 +572,7 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			mwexec("echo '/usr/local/sbin/unbound-anchor -a {$root_key_file}' | /usr/bin/su -m unbound", true);
 			// Only sync the file if this is the real (default) one, not a test one.
 			if ($param1 == "") {
-				pfSense_fsync($root_key_file);
+				//pfSense_fsync($root_key_file);
 			}
 			break;
 		case "unbound-control-setup":

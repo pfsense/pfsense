@@ -290,7 +290,6 @@ if ($_POST['save']) {
 				}
 
 				if (file_exists("{$temp_filename}/aliases")) {
-					$t_address = array();
 					$t_address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 5000);
 					if ($t_address == null) {
 						/* nothing was found */

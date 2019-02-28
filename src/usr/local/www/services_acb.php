@@ -221,7 +221,6 @@ if ($_REQUEST['newver'] != "") {
 	}
 
 	if (!$input_errors && $data) {
-		conf_mount_rw();
 		if (config_restore("/tmp/config_restore.xml") == 0) {
 			$savemsg = "Successfully reverted the pfSense configuration to revision " . urldecode($_REQUEST['newver']) . ".";
 			$savemsg .= <<<EOF
@@ -239,7 +238,6 @@ EOF;
 		log_error("There was an error when restoring the AutoConfigBackup item");
 	}
 	unlink_if_exists("/tmp/config_restore.xml");
-	conf_mount_ro();
 }
 
 if ($_REQUEST['download']) {

@@ -41,9 +41,7 @@ if ($_POST) {
 	}
 
 	$config = parse_config(true);
-	conf_mount_rw();
 	unlink_if_exists("/cf/conf/lastpfSbackup.txt");
-	conf_mount_ro();
 
 	/* The config write above will trigger a fresh upload with the given reason.
 	 * This manual upload appears to be a relic of an older time (1.2.x)

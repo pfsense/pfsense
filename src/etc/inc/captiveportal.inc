@@ -380,6 +380,33 @@ EOD;
 			/* send Accounting-On to server */
 			captiveportal_send_server_accounting('on');
 			echo "done\n";
+
+			if (isset($cpcfg['preservedb'])) {
+				$connected_users = captiveportal_read_db();
+				if (!empty($connected_users)) {
+					echo "Reconnecting users to captive portal {$cpcfg['zone']}... ";
+					foreach ($connected_users as $user) {
+						captiveportal_reserve_ruleno($user['pipeno']);
+						$bw_up = intval($user['bw_up']);
+						$bw_down = intval($user['bw_down']);
+						$clientip = $user['ip'];
+						$clientmac = $user['mac'];
+						$bw_up_pipeno = $user['pipeno'];
+						$bw_down_pipeno = $user['pipeno'] + 1;
+
+						$rule_entry = "{$clientip}/" . (is_ipaddrv6($clientip) ? "128" : "32");
+						if (!isset($cpcfg['nomacfilter'])) {
+							$rule_entry .= ",{$clientmac}";
+						}
+
+						$_gb = @pfSense_ipfw_pipe("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
+						$_gb = @pfSense_ipfw_pipe("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
+						$_gb = @pfSense_ipfw_table("{$cpzone}_auth_up", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_up_pipeno);
+						$_gb = @pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_down_pipeno);
+					}
+					echo "done\n";
+				}
+			}
 		}
 
 	} else {
@@ -1927,6 +1954,26 @@ function captiveportal_free_dnrules($rulenos_start = 2000,
 	unset($rules);
 
 	return $removed_pipes;
+}
+
+function captiveportal_reserve_ruleno($ruleno) {
+	global $g, $cpzone;
+
+	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
+		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+	} else {
+		$rules = array_pad(array(), 64500, false);
+	}
+	$rules[$ruleno] = $cpzone;
+	$ruleno++;
+	$rules[$ruleno] = $cpzone;
+
+	file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+	unlock($cpruleslck);
+	unset($rules);
+
+	return $ruleno;
 }
 
 function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_max = 64500) {

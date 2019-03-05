@@ -744,7 +744,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							break;
 						default:
 							// unknown ovpn type
-							continue 2;
+							continue 3;
 					}
 					$ovpnid = substr($ifcfg['if'], 5);
 					if (is_array($config['openvpn'][$ovpntype])) {
@@ -752,11 +752,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							if ($ovpnconf['vpnid'] == $ovpnid) {
 								// skip IPv6-only interfaces
 								if ($ovpnconf['create_gw'] == "v6only") {
-									continue 3;
+									continue 4;
 								}
 								// skip tap interfaces
 								if ($ovpnconf['dev_mode'] == "tap") {
-									continue 3;
+									continue 4;
 								}
 							}
 						}
@@ -886,7 +886,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							break;
 						default:
 							// unknown ovpn type
-							continue 2;
+							continue 3;
 					}
 					$ovpnid = substr($ifcfg['if'], 5);
 					if (is_array($config['openvpn'][$ovpntype])) {
@@ -894,11 +894,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							if ($ovpnconf['vpnid'] == $ovpnid) {
 								// skip IPv4-only interfaces
 								if ($ovpnconf['create_gw'] == "v4only") {
-									continue 3;
+									continue 4;
 								}
 								// skip tap interfaces
 								if ($ovpnconf['dev_mode'] == "tap") {
-									continue 3;
+									continue 4;
 								}
 							}
 						}

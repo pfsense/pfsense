@@ -23,8 +23,9 @@
 VERSION=`/bin/cat /etc/version`
 MIN_REALMEM_FOR_OPCACHE=512
 
-if pkg info -e php72; then
-	PHP_VER=7
+if pkg info -e php73; then
+	EXTENSIONSDIR="/usr/local/lib/php/20180731/"
+elif pkg info -e php72; then
 	EXTENSIONSDIR="/usr/local/lib/php/20170718/"
 fi
 

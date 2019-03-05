@@ -85,7 +85,7 @@ $g = array(
 	"language" => "en_US",
 	"default_config_backup_count" => 30,
 	"minimumtableentries_bogonsv6" => 400000,
-	"alternativemetaports" => array("vmware", "php72")
+	"alternativemetaports" => array("vmware", "php72", "php73")
 );
 
 /* IP TOS flags */

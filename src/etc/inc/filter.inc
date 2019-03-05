@@ -1241,7 +1241,7 @@ function filter_generate_optcfg_array() {
 		$FilterIflist['openvpn'] = $oic;
 	}
 	/* add interface groups */
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
+	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
 			$oc = array();
 			$oc['if'] = $ifgen['ifname'];
@@ -3490,7 +3490,7 @@ EOD;
 		$tracker = $saved_tracker;
 
 		$isbridged = false;
-		if (is_array($config['bridges']['bridged'])) {
+		if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged'])) {
 			foreach ($config['bridges']['bridged'] as $oc2) {
 				if (stristr($oc2['members'], $on)) {
 					$isbridged = true;

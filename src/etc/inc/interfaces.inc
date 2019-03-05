@@ -677,7 +677,7 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 	global $config;
 
 	$i = 0;
-	if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+	if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
 		foreach ($config['bridges']['bridged'] as $bridge) {
 			if (empty($bridge['bridgeif'])) {
 				$bridge['bridgeif'] = "bridge{$i}";
@@ -5267,7 +5267,7 @@ function DHCP_Config_File_Substitutions($ifcfg, $realif, $dhclientconf) {
 function interfaces_group_setup() {
 	global $config;
 
-	if (!is_array($config['ifgroups']['ifgroupentry'])) {
+	if (!isset($config['ifgroups']['ifgroupentry']) || !is_array($config['ifgroups']['ifgroupentry'])) {
 		return;
 	}
 
@@ -5298,7 +5298,7 @@ function interface_group_setup(&$groupname /* The parameter is an array */) {
 function is_interface_group($if) {
 	global $config;
 
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
+	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $groupentry) {
 			if ($groupentry['ifname'] === $if) {
 				return true;
@@ -5421,7 +5421,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 			} else if (substr($interface, 0, 5) == '_lloc') {
 				return get_interface_linklocal($interface);
 			} else {
-				if (is_array($config['ifgroups']['ifgroupentry'])) {
+				if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 					foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
 						if ($ifgen['ifname'] === $interface) {
 							return $ifgen['ifname'];
@@ -6006,7 +6006,7 @@ function link_interface_to_vips($int, $action = "", $vhid = '') {
 function link_interface_to_bridge($int) {
 	global $config;
 
-	if (is_array($config['bridges']['bridged'])) {
+	if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged'])) {
 		foreach ($config['bridges']['bridged'] as $bridge) {
 			if (in_array($int, explode(',', $bridge['members']))) {
 				return "{$bridge['bridgeif']}";
@@ -6020,7 +6020,7 @@ function link_interface_to_group($int) {
 
 	$result = array();
 
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
+	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $group) {
 			if (in_array($int, explode(" ", $group['members']))) {
 				$result[$group['ifname']] = $int;
@@ -7065,7 +7065,7 @@ function create_interface_list() {
 	$iflist = array();
 
 	// add group interfaces
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
+	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
 			if (have_ruleint_access($ifgen['ifname'])) {
 				$iflist[$ifgen['ifname']] = $ifgen['ifname'];

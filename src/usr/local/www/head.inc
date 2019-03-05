@@ -154,9 +154,9 @@ function return_ext_menu($section) {
 
 	if ((!empty($config['installedpackages']['package'])) && (!empty($config['installedpackages']['menu']))) {
 		foreach ($config['installedpackages']['menu'] as $menu) {
-			if ($menu['name'] != "AutoConfigBackup") { // AutoConfigBackup was moved to a built-in function
+			if (isset($menu['name']) && ($menu['name'] != "AutoConfigBackup")) { // AutoConfigBackup was moved to a built-in function
 	//			print('Name: ' . $menu['name'] . ', Pkg category: ' . $menu['category'] . ', Section: ' . $section . '<br />');
-				if ($menu['section'] == $section) {
+				if (isset($menu['section']) && ($menu['section'] == $section)) {
 					$ext_menu_entries[] = $menu;
 				}
 			}

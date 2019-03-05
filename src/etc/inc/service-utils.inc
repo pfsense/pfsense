@@ -83,7 +83,7 @@ function start_service($name, $after_sync = false) {
 
 	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
 		foreach ($config['installedpackages']['service'] as $service) {
-			if (strtolower($service['name']) == strtolower($name)) {
+			if (isset($service['name']) && (strtolower($service['name']) == strtolower($name))) {
 				/* Avoid starting twice if this is called just after a
 				 * package sync which starts the service itself. */
 				if ($after_sync && isset($service['starts_on_sync'])) {
@@ -207,7 +207,7 @@ function is_service_running($service, $ps = "") {
 
 	if (is_array($config['installedpackages']['service'])) {
 		foreach ($config['installedpackages']['service'] as $aservice) {
-			if (strtolower($service) == strtolower($aservice['name'])) {
+			if (isset($aservice['name']) && (strtolower($service) == strtolower($aservice['name']))) {
 				if ($aservice['custom_php_service_status_command'] <> "") {
 					eval("\$rc={$aservice['custom_php_service_status_command']};");
 					return $rc;

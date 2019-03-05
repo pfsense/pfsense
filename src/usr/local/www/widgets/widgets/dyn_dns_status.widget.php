@@ -30,38 +30,25 @@ require_once("/usr/local/www/widgets/include/dyn_dns_status.inc");
 // Constructs a unique key that will identify a Dynamic DNS entry in the filter list.
 if (!function_exists('get_dyndnsent_key')) {
 	function get_dyndnsent_key($dyndns) {
-		return $dyndns['id'];
+		return isset($dyndns['id']) ? $dyndns['id'] : null;
 	}
 }
 
 if (!function_exists('get_dyndns_hostname_text')) {
 	function get_dyndns_hostname_text($dyndns) {
 		global $dyndns_split_domain_types;
-		if (in_array($dyndns['type'], $dyndns_split_domain_types)) {
+		if (isset($dyndns['type']) && is_array($dyndns['type']) && in_array($dyndns['type'], $dyndns_split_domain_types)) {
 			return $dyndns['host'] . "." . $dyndns['domainname'];
 		}
 
-		return $dyndns['host'];
+		return isset($dyndns['host']) ? $dyndns['host'] : null;
 	}
 }
 
-if (!is_array($config['dyndnses'])) {
-	$config['dyndnses'] = array();
-}
-
-if (!is_array($config['dyndnses']['dyndns'])) {
-	$config['dyndnses']['dyndns'] = array();
-}
-
+init_config_arr(array('dyndnses', 'dyndns'));
 $a_dyndns = $config['dyndnses']['dyndns'];
 
-if (!is_array($config['dnsupdates'])) {
-	$config['dnsupdates'] = array();
-}
-if (!is_array($config['dnsupdates']['dnsupdate'])) {
-	$config['dnsupdates']['dnsupdate'] = array();
-}
-
+init_config_arr(array('dnsupdates', 'dnsupdate'));
 $a_rfc2136 = $config['dnsupdates']['dnsupdate'];
 
 $all_dyndns = array_merge($a_dyndns, $a_rfc2136);
@@ -192,7 +179,7 @@ if (!function_exists('get_dyndns_service_text')) {
 	</thead>
 	<tbody>
 	<?php $dyndnsid = -1; $rfc2136id = -1; $rowid = -1; foreach ($all_dyndns as $dyndns):
-		if ($dyndns['type'] == '_rfc2136_') {
+		if (isset($dyndns['type']) && ($dyndns['type'] == '_rfc2136_')) {
 			$dblclick_location = 'services_rfc2136_edit.php';
 			$rfc2136id++;
 			$locationid = $rfc2136id;

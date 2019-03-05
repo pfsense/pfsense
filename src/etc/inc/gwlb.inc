@@ -752,11 +752,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							if ($ovpnconf['vpnid'] == $ovpnid) {
 								// skip IPv6-only interfaces
 								if ($ovpnconf['create_gw'] == "v6only") {
-									continue 4;
+									continue 3;
 								}
 								// skip tap interfaces
 								if ($ovpnconf['dev_mode'] == "tap") {
-									continue 4;
+									continue 3;
 								}
 							}
 						}
@@ -894,11 +894,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							if ($ovpnconf['vpnid'] == $ovpnid) {
 								// skip IPv4-only interfaces
 								if ($ovpnconf['create_gw'] == "v4only") {
-									continue 4;
+									continue 3;
 								}
 								// skip tap interfaces
 								if ($ovpnconf['dev_mode'] == "tap") {
-									continue 4;
+									continue 3;
 								}
 							}
 						}

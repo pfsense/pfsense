@@ -139,7 +139,7 @@ foreach ($timezonedesc as $idx => $desc) {
 		$direction_str = gettext('BEHIND');
 		break;
 	default:
-		continue;
+		continue 2;
 	}
 
 	$hr_offset = substr($desc, 8);

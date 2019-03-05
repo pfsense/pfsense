@@ -2641,7 +2641,7 @@ function build_ipv6interface_list() {
 				);
 				break;
 			default:
-				continue;
+				continue 2;
 		}
 	}
 

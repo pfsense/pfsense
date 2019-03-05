@@ -38,7 +38,7 @@ if (empty($config['dhcrelay']['interface'])) {
 }
 
 $pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
-$pconfig['server'] = $config['dhcrelay']['server'];
+$pconfig['server'] = isset($config['dhcrelay']['server']) ? $config['dhcrelay']['server'] : null;
 
 $iflist = array_intersect_key(
 	get_configured_interface_with_descr(),

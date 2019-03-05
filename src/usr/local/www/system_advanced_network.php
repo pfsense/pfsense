@@ -38,16 +38,16 @@ require_once("shaper.inc");
 
 
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
-$pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
+$pconfig['ipv6nat_ipaddr'] = isset($config['diag']['ipv6nat']['ipaddr']) ? $config['diag']['ipv6nat']['ipaddr'] : null;
 $pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
 $pconfig['ipv6dontcreatelocaldns'] = isset($config['system']['ipv6dontcreatelocaldns']);
-$pconfig['global-v6duid'] = $config['system']['global-v6duid'];
+$pconfig['global-v6duid'] = isset($config['system']['global-v6duid']) ? $config['system']['global-v6duid'] : null;
 $pconfig['prefer_ipv4'] = isset($config['system']['prefer_ipv4']);
-$pconfig['sharednet'] = $config['system']['sharednet'];
+$pconfig['sharednet'] = isset($config['system']['sharednet']) ? $config['system']['sharednet'] : null;
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 $pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
-$pconfig['ip_change_kill_states'] = $config['system']['ip_change_kill_states'];
+$pconfig['ip_change_kill_states'] = isset($config['system']['ip_change_kill_states']) ? $config['system']['ip_change_kill_states'] : null;
 
 if ($_POST) {
 

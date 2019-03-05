@@ -67,9 +67,9 @@ function status_logs_common_code() {
 	}
 
 	// Formatted/Raw Display
-	if ($config['syslog'][$specific_log]['format'] == 'formatted') {
+	if (isset($config['syslog'][$specific_log]['format']) && ($config['syslog'][$specific_log]['format'] == 'formatted')) {
 		$rawfilter = false;
-	} else if ($config['syslog'][$specific_log]['format'] == 'raw') {
+	} elseif (isset($config['syslog'][$specific_log]['format']) && ($config['syslog'][$specific_log]['format'] == 'raw')) {
 		$rawfilter = true;
 	} else {	//  Use the general logging options setting (global).
 		$rawfilter = isset($config['syslog']['rawfilter']);
@@ -591,10 +591,10 @@ function manage_log_code() {
 	$specific_log = basename($logfile) . '_settings';
 
 	// Common to All Logs
-	$pconfig['cronorder'] = $config['syslog'][$specific_log]['cronorder'];
-	$pconfig['nentries'] = $config['syslog'][$specific_log]['nentries'];
-	$pconfig['logfilesize'] = $config['syslog'][$specific_log]['logfilesize'];
-	$pconfig['format'] = $config['syslog'][$specific_log]['format'];
+	$pconfig['cronorder'] = isset($config['syslog'][$specific_log]['cronorder']) ? $config['syslog'][$specific_log]['cronorder'] : "forward";
+	$pconfig['nentries'] = isset($config['syslog'][$specific_log]['nentries']) ? $config['syslog'][$specific_log]['nentries'] : 50;
+	$pconfig['logfilesize'] = isset($config['syslog'][$specific_log]['logfilesize']) ? $config['syslog'][$specific_log]['logfilesize'] : 511488;
+	$pconfig['format'] = isset($config['syslog'][$specific_log]['format']) ? $config['syslog'][$specific_log]['format'] : "formatted";
 
 	// Specific to System General (main) Log
 	if ($logfile == 'system') {
@@ -607,7 +607,7 @@ function manage_log_code() {
 		$pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
 		$pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
 		$pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
-		$pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
+		$pconfig['filterdescriptions'] = isset($config['syslog']['filterdescriptions']) ? $config['syslog']['filterdescriptions'] : 1;
 	}
 
 	$save_settings = getGETPOSTsettingvalue('save_settings', null);
@@ -923,7 +923,7 @@ function manage_log_section() {
 		$section->addInput(new Form_Select(
 			'filterdescriptions',
 			'Where to show rule descriptions',
-			!isset($pconfig['filterdescriptions']) ? '0':$pconfig['filterdescriptions'],
+			isset($pconfig['filterdescriptions']) ? $pconfig['filterdescriptions'] : '1',
 			array(
 				'0' => gettext('Dont load descriptions'),
 				'1' => gettext('Display as column'),

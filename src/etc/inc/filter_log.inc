@@ -150,8 +150,8 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
 	$reverse = isset($config['syslog']['reverse']);
 	$specific_log = basename($logfile, '.log') . '_settings';
-	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
-	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+	if (isset($config['syslog'][$specific_log]['cronorder']) && ($config['syslog'][$specific_log]['cronorder'] == 'forward')) $reverse = false;
+	if (isset($config['syslog'][$specific_log]['cronorder']) && ($config['syslog'][$specific_log]['cronorder'] == 'reverse')) $reverse = true;
 
 	return ($reverse) ? $filterlog : array_reverse($filterlog);
 }

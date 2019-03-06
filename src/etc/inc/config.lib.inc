@@ -282,6 +282,29 @@ EOD;
 	alias_make_table($config);
 }
 
+/****f* config/conf_mount_rw
+ * NAME
+ *   conf_mount_rw - Mount filesystems read/write.
+ * RESULT
+ *   null
+ ******/
+/* mount flash card read/write */
+function conf_mount_rw() {
+	/* Obsoleted. Keep it here untill all calls are removed */
+	return;
+}
+
+/****f* config/conf_mount_ro
+ * NAME
+ *   conf_mount_ro - Mount filesystems readonly.
+ * RESULT
+ *   null
+ ******/
+function conf_mount_ro() {
+	/* Obsoleted. Keep it here untill all calls are removed */
+	return;
+}
+
 /****f* config/convert_config
  * NAME
  *   convert_config - Attempt to update config.xml.

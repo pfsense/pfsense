@@ -225,6 +225,8 @@ if ($_POST) {
 					header("Pragma: private");
 					header("Cache-Control: private, must-revalidate");
 				}
+
+				$GLOBALS['csrf']['rewrite-js'] = false;
 				echo $data;
 
 				exit;

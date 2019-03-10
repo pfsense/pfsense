@@ -225,8 +225,12 @@ if ($_POST) {
 					header("Pragma: private");
 					header("Cache-Control: private, must-revalidate");
 				}
-				echo $data;
 
+				while (ob_get_level()) {
+					@ob_end_clean();
+				}
+				echo $data;
+				@ob_end_flush();
 				exit;
 			}
 		}

@@ -41,6 +41,7 @@ if (function_exists("display_error_form")) {
 	 * lockout table before processing a request */
 
 	/* Fetch the contents of the lockout table. */
+	$entries = array();
 	exec("/sbin/pfctl -t 'sshguard' -T show", $entries);
 
 	/* If the client is in the lockout table, print an error, kill states, and exit */

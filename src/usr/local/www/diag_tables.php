@@ -76,6 +76,7 @@ if ($_REQUEST['delete']) {
 }
 
 if ($_POST['clearall']) {
+	$entries = array();
 	exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
 	if (is_array($entries)) {
 		foreach ($entries as $entryA) {
@@ -117,6 +118,7 @@ if ($_POST['Download'] && ($bogons || $urltable)) {
 	}
 }
 
+$entries = array();
 exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
 
 include("head.inc");

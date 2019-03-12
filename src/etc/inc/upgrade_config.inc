@@ -5934,6 +5934,14 @@ function upgrade_189_to_190() {
 	}
 }
 
+/* sshguard cron jobs are not necessary.
+ * See https://redmine.pfsense.org/issues/9223 */
+function upgrade_190_to_191() {
+	global $config;
+	install_cron_job("/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshguard", false, null, null, null, null, null, null, false);
+	install_cron_job("/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 webConfiguratorlockout", false, null, null, null, null, null, null, false);
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

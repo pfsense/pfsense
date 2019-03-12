@@ -751,7 +751,6 @@ function filter_generate_aliases() {
 
 	$aliases .= "\n#SSH Lockout Table\n";
 	$aliases .= "table <sshguard> persist\n";
-	$aliases .= "table <webConfiguratorlockout> persist\n";
 
 	$aliases .= "#Snort tables\n";
 	$aliases .= "table <snort2c>\n";
@@ -3364,7 +3363,7 @@ EOD;
 		$webConfiguratorlockoutport = $config['system']['webgui']['port'];
 	}
 	if ($webConfiguratorlockoutport) {
-		$ipfrules .= "block in {$log['block']} quick proto tcp from <webConfiguratorlockout> to (self) port {$webConfiguratorlockoutport} tracker {$increment_tracker($tracker)} label \"webConfiguratorlockout\"\n";
+		$ipfrules .= "block in {$log['block']} quick proto tcp from <sshguard> to (self) port {$webConfiguratorlockoutport} tracker {$increment_tracker($tracker)} label \"GUI Lockout\"\n";
 	}
 
 	$saved_tracker += 100;

@@ -125,8 +125,8 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
-if ($tablename == "webConfiguratorlockout") {
-	$displayname = gettext("webConfigurator Lockout Table");
+if ($tablename == "sshguard") {
+	$displayname = gettext("SSH and GUI Lockout Table");
 } else {
 	$displayname = sprintf(gettext("%s Table"), ucfirst($tablename));
 }

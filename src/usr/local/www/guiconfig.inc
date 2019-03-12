@@ -91,7 +91,6 @@ $reserved_table_names = array(
 	"tonatsubnets",
 	"virusprot",
 	"vpn_networks",
-	"webConfiguratorlockout"
 );
 
 $firewall_rules_dscp_types = array(

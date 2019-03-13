@@ -289,12 +289,6 @@ if (is_array($config['hasync'])) {
 		}
 		$sections[] = 'virtualip';
 	}
-	if ($hasync['synchronizelb'] != "") {
-		if (!is_array($config['load_balancer'])) {
-			$config['load_balancer'] = array();
-		}
-		$sections[] = 'load_balancer';
-	}
 	if ($hasync['synchronizeipsec'] != "") {
 		if (!is_array($config['ipsec'])) {
 			$config['ipsec'] = array();

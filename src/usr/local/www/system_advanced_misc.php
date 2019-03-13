@@ -36,7 +36,6 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("vpn.inc");
-require_once("vslb.inc");
 
 $powerd_modes = array(
 	'hadp' => gettext('Hiadaptive'),
@@ -176,20 +175,16 @@ if ($_POST) {
 			unset($config['system']['proxypass']);
 		}
 
-		$need_relayd_restart = false;
 		if ($_POST['lb_use_sticky'] == "yes") {
 			if (!isset($config['system']['lb_use_sticky'])) {
 				$config['system']['lb_use_sticky'] = true;
-				$need_relayd_restart = true;
 			}
 			if ($config['system']['srctrack'] != $_POST['srctrack']) {
 				$config['system']['srctrack'] = $_POST['srctrack'];
-				$need_relayd_restart = true;
 			}
 		} else {
 			if (isset($config['system']['lb_use_sticky'])) {
 				unset($config['system']['lb_use_sticky']);
-				$need_relayd_restart = true;
 			}
 		}
 
@@ -313,9 +308,6 @@ if ($_POST) {
 		activate_powerd();
 		load_crypto();
 		load_thermal_hardware();
-		if ($need_relayd_restart) {
-			relayd_configure();
-		}
 	}
 }
 

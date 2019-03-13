@@ -37,6 +37,7 @@
 /etc/inc/smtp.inc
 /etc/inc/sysctl.inc
 /etc/inc/uuid.php
+/etc/inc/vslb.inc
 /etc/inc/xmlrpc.inc
 /etc/inc/xmlrpc_server.inc
 /etc/inc/zeromq.inc
@@ -898,8 +899,8 @@
 /usr/local/www/carp_status.php
 /usr/local/www/classes/maintable.inc
 /usr/local/www/code-syntax-highlighter
-/usr/local/www/copynotice.old
 /usr/local/www/copynotice.inc
+/usr/local/www/copynotice.old
 /usr/local/www/copyright-master.txt
 /usr/local/www/csrf/csrf-secret.php
 /usr/local/www/css/table.css
@@ -1003,10 +1004,17 @@
 /usr/local/www/javascript
 /usr/local/www/jquery
 /usr/local/www/license.php
+/usr/local/www/load_balancer_monitor.php
+/usr/local/www/load_balancer_monitor_edit.php
+/usr/local/www/load_balancer_pool.php
+/usr/local/www/load_balancer_pool_edit.php
 /usr/local/www/load_balancer_relay_action.php
 /usr/local/www/load_balancer_relay_action_edit.php
 /usr/local/www/load_balancer_relay_protocol.php
 /usr/local/www/load_balancer_relay_protocol_edit.php
+/usr/local/www/load_balancer_setting.php
+/usr/local/www/load_balancer_virtual_server.php
+/usr/local/www/load_balancer_virtual_server_edit.php
 /usr/local/www/logo-black.png
 /usr/local/www/logo.png
 /usr/local/www/logobig.jpg
@@ -1039,6 +1047,8 @@
 /usr/local/www/shortcuts/pkg_upnp.php
 /usr/local/www/sortable
 /usr/local/www/sortable/sortable.min.js
+/usr/local/www/status_lb_pool.php
+/usr/local/www/status_lb_vs.php
 /usr/local/www/status_rrd_graph.php
 /usr/local/www/status_rrd_graph_img.php
 /usr/local/www/status_rrd_graph_settings.php
@@ -1089,8 +1099,10 @@
 /usr/local/www/vpn_pppoe_edit.php
 /usr/local/www/vpn_pppoe_users.php
 /usr/local/www/vpn_pppoe_users_edit.php
+/usr/local/www/widgets/include/load_balancer.inc
 /usr/local/www/widgets/include/thermal_sensors.inc
 /usr/local/www/widgets/widgets/deactivated
+/usr/local/www/widgets/widgets/load_balancer_status.widget.php
 /usr/local/www/widgets/widgets/support.widget.php
 /usr/local/www/wizards/traffic_shaper_wizard.inc
 /usr/local/www/wizards/traffic_shaper_wizard.xml

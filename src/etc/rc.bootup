@@ -279,9 +279,6 @@ echo "Starting NTP time client...";
 system_ntp_configure();
 echo "done.\n";
 
-/* start load balancer daemon */
-relayd_configure();
-
 /* Configure console (and serial port - if necessary). */
 console_configure();
 

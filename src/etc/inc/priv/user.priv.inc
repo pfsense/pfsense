@@ -132,12 +132,6 @@ $priv_list['page-status-systemlogs-ppp']['descr'] = gettext("Allow access to the
 $priv_list['page-status-systemlogs-ppp']['match'] = array();
 $priv_list['page-status-systemlogs-ppp']['match'][] = "status_logs.php?logfile=ppp";
 
-$priv_list['page-status-systemlogs-loadbalancer'] = array();
-$priv_list['page-status-systemlogs-loadbalancer']['name'] = gettext("WebCfg - Status: System Logs: Load Balancer");
-$priv_list['page-status-systemlogs-loadbalancer']['descr'] = gettext("Allow access to the 'Status: System Logs: Load Balancer' page.");
-$priv_list['page-status-systemlogs-loadbalancer']['match'] = array();
-$priv_list['page-status-systemlogs-loadbalancer']['match'][] = "status_logs.php?logfile=relayd";
-
 $priv_list['page-status-systemlogs-routing'] = array();
 $priv_list['page-status-systemlogs-routing']['name'] = gettext("WebCfg - Status: System Logs: Routing");
 $priv_list['page-status-systemlogs-routing']['descr'] = gettext("Allow access to the 'Status: System Logs: System: Routing' page.");

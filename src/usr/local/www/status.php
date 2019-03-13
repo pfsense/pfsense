@@ -311,12 +311,6 @@ defCmdT("Firewall-IPFW Rules for Captive Portal", "/sbin/ipfw show");
 defCmdT("Firewall-IPFW Limiter Info", "/sbin/ipfw pipe show");
 defCmdT("Firewall-IPFW Queue Info", "/sbin/ipfw queue show");
 
-if (is_array($config['load_balancer']['lbpool']) && is_array($config['load_balancer']['virtual_server'])) {
-	defCmdT("Load Balancer-Redirects", "/usr/local/sbin/relayctl show redirects");
-	defCmdT("Load Balancer-Relays", "/usr/local/sbin/relayctl show relays");
-	defCmdT("Load Balancer-Summary", "/usr/local/sbin/relayctl show summary");
-}
-
 /* Configuration Files */
 defCmdT("Disk-Contents of var run", "/bin/ls /var/run");
 defCmdT("Disk-Contents of conf", "/bin/ls /conf");
@@ -354,7 +348,6 @@ defCmdT("Log-OpenVPN-Last 1000 entries", "/usr/local/sbin/clog /var/log/openvpn.
 defCmdT("Log-Captive Portal Authentication-Last 1000 entries", "/usr/local/sbin/clog /var/log/portalauth.log 2>&1 | tail -n 1000");
 defCmdT("Log-PPP-Last 1000 entries", "/usr/local/sbin/clog /var/log/ppp.log 2>&1 | tail -n 1000");
 defCmdT("Log-PPPoE Server-Last 1000 entries", "/usr/local/sbin/clog /var/log/poes.log 2>&1 | tail -n 1000");
-defCmdT("Log-relayd-Last 1000 entries", "/usr/local/sbin/clog /var/log/relayd.log 2>&1 | tail -n 1000");
 defCmdT("Log-DNS-Last 1000 entries", "/usr/local/sbin/clog /var/log/resolver.log 2>&1 | tail -n 1000");
 defCmdT("Log-Routing-Last 1000 entries", "/usr/local/sbin/clog /var/log/routing.log 2>&1 | tail -n 1000");
 defCmdT("Log-Wireless-Last 1000 entries", "/usr/local/sbin/clog /var/log/wireless.log 2>&1 | tail -n 1000");

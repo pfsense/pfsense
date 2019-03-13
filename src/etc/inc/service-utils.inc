@@ -28,7 +28,6 @@ require_once("openvpn.inc");
 require_once("system.inc");
 require_once("util.inc");
 require_once("vpn.inc");
-require_once("vslb.inc");
 
 define("RCFILEPREFIX", "/usr/local/etc/rc.d/");
 function write_rcfile($params) {
@@ -374,17 +373,6 @@ function get_services() {
 		}
 	}
 
-	if (!is_array($config['load_balancer']['lbpool'])) {
-		$config['load_balancer']['lbpool'] = array();
-	}
-
-	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server']) && count($config['load_balancer']['lbpool'])) {
-		$pconfig = array();
-		$pconfig['name'] = "relayd";
-		$pconfig['description'] = gettext("Server load balancing daemon");
-		$services[] = $pconfig;
-	}
-
 	return $services;
 }
 
@@ -655,10 +643,6 @@ function service_control_start($name, $extras) {
 				}
 			}
 			break;
-		case 'relayd':
-			relayd_configure();
-			filter_configure();
-			break;
 		case 'syslogd':
 			system_syslogd_start();
 			break;
@@ -728,9 +712,6 @@ function service_control_stop($name, $extras) {
 				$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
 				killbypid($pidfile);
 			}
-			break;
-		case 'relayd':
-			sigkillbyname("relayd", "TERM");
 			break;
 		case 'syslogd':
 			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
@@ -809,10 +790,6 @@ function service_control_restart($name, $extras) {
 					openvpn_restart_by_vpnid($vpnmode, $id);
 				}
 			}
-			break;
-		case 'relayd':
-			relayd_configure(true);
-			filter_configure();
 			break;
 		case 'syslogd':
 			system_syslogd_start();

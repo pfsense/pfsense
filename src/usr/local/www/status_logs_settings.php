@@ -47,7 +47,6 @@ $pconfig['dhcp'] = isset($config['syslog']['dhcp']);
 $pconfig['portalauth'] = isset($config['syslog']['portalauth']);
 $pconfig['vpn'] = isset($config['syslog']['vpn']);
 $pconfig['dpinger'] = isset($config['syslog']['dpinger']);
-$pconfig['relayd'] = isset($config['syslog']['relayd']);
 $pconfig['hostapd'] = isset($config['syslog']['hostapd']);
 $pconfig['logall'] = isset($config['syslog']['logall']);
 $pconfig['system'] = isset($config['syslog']['system']);
@@ -128,7 +127,6 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['portalauth'] = $_POST['portalauth'] ? true : false;
 		$config['syslog']['vpn'] = $_POST['vpn'] ? true : false;
 		$config['syslog']['dpinger'] = $_POST['dpinger'] ? true : false;
-		$config['syslog']['relayd'] = $_POST['relayd'] ? true : false;
 		$config['syslog']['hostapd'] = $_POST['hostapd'] ? true : false;
 		$config['syslog']['logall'] = $_POST['logall'] ? true : false;
 		$config['syslog']['system'] = $_POST['system'] ? true : false;
@@ -223,7 +221,6 @@ $tab_array[] = array(gettext("Captive Portal Auth"), false, "status_logs.php?log
 $tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
 $tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
 $tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "status_logs.php?logfile=relayd");
 $tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
 $tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
 $tab_array[] = array(gettext("Settings"), true, "status_logs_settings.php");
@@ -462,13 +459,6 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $group->add(new Form_MultiCheckbox(
-	'relayd',
-	null,
-	'Server Load Balancer Events (relayd)',
-	$pconfig['relayd']
-));
-
-$group->add(new Form_MultiCheckbox(
 	'ntpd',
 	null,
 	'Network Time Protocol Events (NTP Daemon, NTP Client)',
@@ -520,7 +510,6 @@ events.push(function() {
 		disableInput('portalauth', hide);
 		disableInput('vpn', hide);
 		disableInput('dpinger', hide);
-		disableInput('relayd', hide);
 		disableInput('hostapd', hide);
 		disableInput('resolver', hide);
 		disableInput('ppp', hide);

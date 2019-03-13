@@ -44,13 +44,6 @@ if (isset($_POST['referer'])) {
 // Keywords not allowed in names, see globals.inc for list.
 global $pf_reserved_keywords;
 
-// Add all Load balance names to pf_reserved_keywords
-if (is_array($config['load_balancer']['lbpool'])) {
-	foreach ($config['load_balancer']['lbpool'] as $lbpool) {
-		$pf_reserved_keywords[] = $lbpool['name'];
-	}
-}
-
 $reserved_ifs = get_configured_interface_list(true);
 $pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 $max_alias_addresses = 5000;

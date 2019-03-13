@@ -2224,10 +2224,6 @@ function filter_nat_rules_generate() {
 		unset($tonathosts, $tonathosts_array, $numberofnathosts);
 	}
 
-	/* load balancer anchor */
-	$natrules .= "\n# Load balancing anchor\n";
-	$natrules .= "rdr-anchor \"relayd/*\"\n";
-
 	update_filter_reload_status(gettext("Setting up TFTP helper"));
 	$natrules .= "# TFTP proxy\n";
 	$natrules .= "rdr-anchor \"tftp-proxy/*\"\n";
@@ -3227,8 +3223,6 @@ function filter_rules_generate() {
 	$ipfrules = "";
 	$ipfrules .= discover_pkg_rules("pfearly");
 
-	/* relayd */
-	$ipfrules .= "anchor \"relayd/*\"\n";
 	/* OpenVPN user rules from radius */
 	$ipfrules .= "anchor \"openvpn/*\"\n";
 	/* IPsec user rules from radius */

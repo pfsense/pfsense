@@ -941,8 +941,6 @@ function upgrade_045_to_046() {
 	if (count($config['load_balancer']) == 0) {
 		unset($config['load_balancer']);
 	}
-	mwexec('/usr/sbin/pw groupadd -n _relayd -g 913');
-	mwexec('/usr/sbin/pw useradd -n _relayd -c "Relay Daemon" -d /var/empty -s /usr/sbin/nologin -u 913 -g 913');
 }
 
 
@@ -5940,6 +5938,61 @@ function upgrade_190_to_191() {
 	global $config;
 	install_cron_job("/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshguard", false, null, null, null, null, null, null, false);
 	install_cron_job("/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 webConfiguratorlockout", false, null, null, null, null, null, null, false);
+}
+
+/* Deprecate relayd Load Balancer
+ * See https://redmine.pfsense.org/issues/9386 */
+function upgrade_191_to_192() {
+	global $config;
+
+	/* Backup LB config */
+	$backup_file = "/conf/deprecated_load_balancer.xml";
+	unlink_if_exists($backup_file);
+	file_put_contents($backup_file, backup_config_section('load_balancer'));
+
+	/* Determine if LB was active and notify (or log if not) */
+	$deprecation_notice = sprintf(gettext("The built-in Load Balancer service has been deprecated. The active Load Balancer configuration has been stored in %s. Consider migrating to the HAProxy package."), $backup_file);
+	if (is_array($config['load_balancer']['virtual_server']) &&
+	    count($config['load_balancer']['virtual_server']) &&
+	    count($config['load_balancer']['lbpool'])) {
+
+		if (!function_exists("file_notice")) {
+			require_once("notices.inc");
+		}
+		file_notice("Load Balancer", $deprecation_notice);
+	} else {
+		log_error("INFO: {$deprecation_notice}");
+	}
+
+	/* Clear old config */
+	unset($config['load_balancer']);
+
+	/* Remove LB HA Sync Config */
+	if (isset($config['hasync']) &&
+	    is_array($config['hasync']) &&
+	    isset($config['hasync']['synchronizelb'])) {
+		unset($config['hasync']['synchronizelb']);
+	}
+	
+	/* If the LB widget is present, remove it*/
+	if (isset($config['widgets']) &&
+	    isset($config['widgets']['sequence']) &&
+	    (strpos($config['widgets']['sequence'], 'load_balancer_status') !== false)) {
+		$widgets = explode(',', trim($config['widgets']['sequence']));
+		foreach ($widgets as $idx => &$widget) {
+			if (substr( $widget, 0, 20 ) === "load_balancer_status") {
+				unset($widgets[$idx]);
+			}
+		}
+		$config['widgets']['sequence'] = implode(',', $widgets);
+	}
+
+	/* Per-log settings */
+	if (isset($config['syslog']) &&
+	    is_array($config['syslog']) &&
+	    isset($config['syslog']['relayd_settings'])) {
+		unset($config['syslog']['relayd_settings']);
+	}
 }
 
 /*

@@ -208,7 +208,6 @@ class pfsense_xmlrpc_server {
 			'dnsmasq',
 			'filter',
 			'ipsec',
-			'load_balancer',
 			'nat',
 			'openvpn',
 			'schedules',
@@ -670,7 +669,6 @@ class pfsense_xmlrpc_server {
 		filter_configure();
 		system_routing_configure();
 		setup_gateways_monitor();
-		relayd_configure();
 		require_once("openvpn.inc");
 		openvpn_resync_all();
 

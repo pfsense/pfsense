@@ -48,8 +48,6 @@ $allowed_logs = array(
 		    "shortcut" => "ipsec"),
 	"ppp" => array("name" => gettext("PPP"),
 		    "shortcut" => ""),
-	"relayd" => array("name" => gettext("Load Balancer"),
-		    "shortcut" => "relayd"),
 	"openvpn" => array("name" => gettext("OpenVPN"),
 		    "shortcut" => "openvpn"),
 	"ntpd" => array("name" => gettext("NTP"),

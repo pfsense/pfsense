@@ -2165,6 +2165,30 @@ function unmute_kernel_msgs() {
 function start_devd() {
 	global $g;
 
+	/* Generate hints for the kernel loader. */
+	$module_paths = explode(";", get_single_sysctl("kern.module_path"));
+	foreach ($module_paths as $id => $path) {
+		if (file_exists("$path/linker.hints")) {
+			continue;
+		}
+		if (($files = scandir($path)) == false) {
+			continue;
+		}
+		$found = false;
+		foreach ($files as $id => $file) {
+			if (strlen($file) > 3 &&
+			    strcasecmp(substr($file, -3), ".ko") == 0) {
+				$found = true;
+				break;
+			}
+		}
+		if ($found == false) {
+			continue;
+		}
+		$_gb = exec("/usr/sbin/kldxref $path");
+		unset($_gb);
+	}
+
 	/* Use the undocumented -q options of devd to quiet its log spamming */
 	$_gb = exec("/sbin/devd -q -f /etc/{$g['product_name']}-devd.conf");
 	sleep(1);

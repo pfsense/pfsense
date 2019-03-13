@@ -618,7 +618,7 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	if (!$lock) {
 		unlock($lockkey);
 	}
-	setup_serial_port();
+	console_configure();
 	return 0;
 }
 

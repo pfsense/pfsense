@@ -366,7 +366,7 @@ if ($_POST) {
 			$extra_save_msg = sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."), $url);
 		}
 
-		setup_serial_port();
+		console_configure();
 		// Restart DNS in case dns rebinding toggled
 		if (isset($config['dnsmasq']['enable'])) {
 			services_dnsmasq_configure();

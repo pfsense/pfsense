@@ -282,8 +282,8 @@ echo "done.\n";
 /* start load balancer daemon */
 relayd_configure();
 
-/* configure console menu and serial port*/
-setup_serial_port();
+/* Configure console (and serial port - if necessary). */
+console_configure();
 
 /* start DHCP service */
 services_dhcpd_configure();

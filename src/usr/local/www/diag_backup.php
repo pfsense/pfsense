@@ -418,7 +418,7 @@ if ($_POST) {
 										}
 									}
 								}
-								setup_serial_port();
+								console_configure();
 								if (is_interface_mismatch() == true) {
 									touch("/var/run/interface_mismatch_reboot_needed");
 									clear_subsystem_dirty("restore");

@@ -1324,7 +1324,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 
 }
 
-function setup_serial_port($when = "save", $path = "") {
+function console_configure($when = "save", $path = "") {
 	global $config;
 	$ttys_file = "{$path}/etc/ttys";
 
@@ -1348,7 +1348,7 @@ function setup_serial_port($when = "save", $path = "") {
 
 	$console_line = "console\tnone\t\t\t\tunknown\toff\tsecure";
 	$ttyv0_line =
-	    "ttyv0\t\"/usr/libexec/getty {$console_type}\"\txterm\ton\tsecure";
+	    "ttyv0\t\"/usr/libexec/getty {$console_type}\"\txterm\tonifexists secure";
 	$ttyu_line =
 	    "\"/usr/libexec/getty {$serial_type}\"\tvt100\t{$on_off}\tsecure";
 

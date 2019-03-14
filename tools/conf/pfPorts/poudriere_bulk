@@ -59,6 +59,7 @@ net/%%PRODUCT_NAME%%-pkg-siproxd
 net/bird
 net/hping
 net/mosh
+net/nss_ldap
 net/py-speedtest-cli
 net/trafshow
 net/trafshow3

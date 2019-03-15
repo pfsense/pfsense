@@ -2168,7 +2168,7 @@ function start_devd() {
 	/* Generate hints for the kernel loader. */
 	$module_paths = explode(";", get_single_sysctl("kern.module_path"));
 	foreach ($module_paths as $id => $path) {
-		if (file_exists("$path/linker.hints")) {
+		if (!is_dir($path) || file_exists("{$path}/linker.hints")) {
 			continue;
 		}
 		if (($files = scandir($path)) == false) {

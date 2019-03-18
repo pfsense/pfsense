@@ -44,4 +44,5 @@ mdmfs -S -M -s ${varsize} md /var
 
 # Ensure vi's recover directory is present
 /bin/mkdir -p /var/tmp/vi.recover/
+/bin/mkdir -p /var/crash/
 echo " done."

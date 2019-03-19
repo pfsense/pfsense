@@ -470,7 +470,6 @@ foreach ($a_ca as $i => $ca):
 		<?=gettext("Add")?>
 	</a>
 </nav>
-?>
 <script type="text/javascript">
 //<![CDATA[
 

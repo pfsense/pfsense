@@ -83,7 +83,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 	# Construct RegEx for specific log file type.
 	if ($logfile_type == 'firewall') {
-		$pattern = "filterlog:";
+		$pattern = "filterlog";
 	}
 	else if ($logfile_type == 'system') {
 		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$";
@@ -303,7 +303,7 @@ function parse_firewall_log_line($line) {
 	$flent = array();
 	$log_split = "";
 
-	if (!preg_match("/(.*)\s(.*)\sfilterlog:\s(.*)$/", $line, $log_split)) {
+	if (!preg_match("/(.*)\s(.*)\sfilterlog\[[0-9]+\]:\s(.*)$/", $line, $log_split)) {
 		return "";
 	}
 
@@ -419,6 +419,8 @@ function parse_firewall_log_line($line) {
 			$flent['version'] = $rule_data[$field++];
 			$flent['advskew'] = $rule_data[$field++];
 			$flent['advbase'] = $rule_data[$field++];
+			$flent['src'] = $flent['srcip'];
+			$flent['dst'] = $flent['dstip'];
 		}
 	} else {
 		if ($g['debug']) {

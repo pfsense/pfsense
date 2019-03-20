@@ -251,6 +251,20 @@ if (!$rawfilter) {
 <?php
 		if ($filterent['proto'] == "TCP") {
 			$filterent['proto'] .= ":{$filterent['tcpflags']}";
+		} elseif ($filterent['protoid'] == '112') {
+			$carp_details = array();
+			if (strlen($filterent['vhid'])) {
+				$carp_details[] = $filterent['vhid'];
+			}
+			if (strlen($filterent['advskew'])) {
+				$carp_details[] = $filterent['advskew'];
+			}
+			if (strlen($filterent['advbase'])) {
+				$carp_details[] = $filterent['advbase'];
+			}
+			if (!empty($carp_details)) {
+				$filterent['proto'] .= " " . implode("/", $carp_details);
+			}
 		}
 ?>
 					<td>

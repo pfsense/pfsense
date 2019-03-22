@@ -27,7 +27,7 @@
 	function crypt_data($val, $pass, $opt) {
 		$file = tempnam("/tmp", "php-encrypt");
 		file_put_contents("{$file}.dec", $val);
-		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -k " . escapeshellarg($pass));
+		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -pass pass:" . escapeshellarg($pass));
 		if (file_exists("{$file}.enc")) {
 			$result = file_get_contents("{$file}.enc");
 		} else {

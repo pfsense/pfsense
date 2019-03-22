@@ -24,28 +24,46 @@
  * limitations under the License.
  */
 
-	function crypt_data($val, $pass, $opt) {
+	function crypt_data($val, $pass, $opt, $legacy = false) {
 		$file = tempnam("/tmp", "php-encrypt");
+		/* Ensure the files do not already exist */
+		unlink_if_exists($file);
+		unlink_if_exists("{$file}.dec");
+		unlink_if_exists("{$file}.enc");
+
 		file_put_contents("{$file}.dec", $val);
-		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -pass pass:" . escapeshellarg($pass));
-		if (file_exists("{$file}.enc")) {
+
+		/* Use PBKDF2 Key Derivation (https://en.wikipedia.org/wiki/PBKDF2)
+		 *  unless we need to read old data encrypted without it. */
+		$keyder = ($legacy) ? "" : "-pbkdf2";
+
+		$output = "";
+		$exitcode = "";
+		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -pass pass:" . escapeshellarg($pass) . " -salt -md sha256 {$keyder} 2> /dev/null", $output, $exitcode);
+
+		if (($exitcode == 0) && file_exists("{$file}.enc") && (filesize("{$file}.enc") > 0)) {
 			$result = file_get_contents("{$file}.enc");
+		} elseif ($legacy === false) {
+			/* Operation failed without new options, try old. */
+			$result = crypt_data($val, $pass, $opt, true);
 		} else {
 			$result = "";
 			log_error(gettext("Failed to encrypt/decrypt data!"));
 		}
-		@unlink($file);
-		@unlink("{$file}.dec");
-		@unlink("{$file}.enc");
+
+		/* Cleanup */
+		unlink_if_exists($file);
+		unlink_if_exists("{$file}.dec");
+		unlink_if_exists("{$file}.enc");
 		return $result;
 	}
 
-	function encrypt_data(& $data, $pass) {
-		return base64_encode(crypt_data($data, $pass, "-e"));
+	function encrypt_data(& $data, $pass, $legacy = false) {
+		return base64_encode(crypt_data($data, $pass, "-e", $legacy));
 	}
 
-	function decrypt_data(& $data, $pass) {
-		return crypt_data(base64_decode($data), $pass, "-d");
+	function decrypt_data(& $data, $pass, $legacy = false) {
+		return crypt_data(base64_decode($data), $pass, "-d", $legacy);
 	}
 
 	function tagfile_reformat($in, & $out, $tag) {

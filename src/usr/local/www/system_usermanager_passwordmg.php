@@ -88,6 +88,13 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
+$tab_array = array();
+$tab_array[] = array(gettext("User Password"), true, "system_usermanager_passwordmg.php");
+$tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
+$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
+$tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
+display_top_tabs($tab_array);
+
 if ($islocal == false) {
 	echo gettext("The password cannot be changed for a non-local user.");
 	include("foot.inc");

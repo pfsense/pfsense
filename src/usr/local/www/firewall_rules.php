@@ -513,7 +513,8 @@ foreach ($a_filter as $filteri => $filterent):
 		if ($config['schedules']['schedule'] != "" && is_array($config['schedules']['schedule'])) {
 			$idx = 0;
 			foreach ($a_schedules as $schedule) {
-				if ($schedule['name'] == $filterent['sched']) {
+				if (!empty($schedule['name']) &&
+				    $schedule['name'] == $filterent['sched']) {
 					$schedstatus = filter_get_time_based_rule_status($schedule);
 
 					foreach ($schedule['timerange'] as $timerange) {

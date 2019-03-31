@@ -603,7 +603,7 @@ function cert_get_issuer($str_crt, $decode = true) {
 }
 
 /* Works for both RSA and ECC (crt) and key (prv) */
-function cert_get_publickey($str_crt, $decode = true, $type = "crt") {
+function cert_get_publickey($str_crt, $decode = true, $type = "crt", $password = "") {
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
 	}
@@ -611,7 +611,19 @@ function cert_get_publickey($str_crt, $decode = true, $type = "crt") {
 	file_put_contents($certfn, $str_crt);
 	switch ($type) {
 		case 'prv':
-			exec("/usr/bin/openssl pkey -in {$certfn} -pubout", $out);
+			if ($password) {
+				$passfn = tempnam('/tmp', 'CGPKP');
+				file_put_contents($passfn, $password);
+
+				exec("/usr/bin/openssl pkey -in {$certfn} -passin file:{$passfn} -pubout 2>/dev/null", $out, $status);
+
+				unlink_if_exists($passfn);
+				if ($status != 0) {
+					$out = false;
+				}
+			} else {
+				exec("/usr/bin/openssl pkey -in {$certfn} -pubout", $out);
+			}
 			break;
 		case 'crt':
 			exec("/usr/bin/openssl x509 -in {$certfn} -inform pem -noout -pubkey", $out);
@@ -623,7 +635,41 @@ function cert_get_publickey($str_crt, $decode = true, $type = "crt") {
 			$out = array();
 			break;
 	}
-	unlink($certfn);
+	unlink_if_exists($certfn);
+	return (($out !== false) ? implode("\n", $out) : false);
+}
+
+function cert_encrypt_key($str_key, $password, $decode = true) {
+	if ($decode) {
+		$str_key = base64_decode($str_key);
+	}
+
+	$keyfn = tempnam('/tmp', 'CEK');
+	$passfn = tempnam('/tmp', 'CEKP');
+	file_put_contents($keyfn, $str_key);
+	file_put_contents($passfn, $password);
+
+	exec("/usr/bin/openssl pkey -in {$keyfn} -aes256 -passout file:{$passfn} 2>/dev/null", $out);
+
+	unlink_if_exists($keyfn);
+	unlink_if_exists($passfn);
+	return implode("\n", $out);
+}
+
+function cert_decrypt_key($str_key, $password, $decode = true) {
+	if ($decode) {
+		$str_key = base64_decode($str_key);
+	}
+
+	$keyfn = tempnam('/tmp', 'CDK');
+	$passfn = tempnam('/tmp', 'CDKP');
+	file_put_contents($keyfn, $str_key);
+	file_put_contents($passfn, $password);
+
+	exec("/usr/bin/openssl pkey -in {$keyfn} -passin file:{$passfn} 2>/dev/null", $out);
+
+	unlink_if_exists($keyfn);
+	unlink_if_exists($passfn);
 	return implode("\n", $out);
 }
 
@@ -789,6 +835,13 @@ function ca_in_use($caref) {
 		is_openvpn_client_ca($caref) ||
 		is_ipsec_peer_ca($caref) ||
 		is_ldap_peer_ca($caref));
+}
+
+function is_encrypted_key($str_key, $decode = true) {
+	if ($decode) {
+		$str_key = base64_decode($str_key);
+	}
+	return openssl_pkey_get_private($str_key) === false;
 }
 
 function is_user_cert($certref) {

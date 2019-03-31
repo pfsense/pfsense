@@ -101,6 +101,7 @@ if ($act == "edit") {
 	$pconfig['serial'] = $a_ca[$id]['serial'];
 	if (!empty($a_ca[$id]['prv'])) {
 		$pconfig['key'] = base64_decode($a_ca[$id]['prv']);
+		$pconfig['encryptkey'] = is_encrypted_key($pconfig['key'], false);
 	}
 }
 
@@ -160,14 +161,12 @@ if ($_POST['save']) {
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Certificate data"));
+		if ($_POST['key'] && (is_encrypted_key($_POST['key'], false) || $_POST['encryptkey'])) {
+			$reqdfields[] = 'password1_existing';
+			$reqdfieldsn[] = gettext('Private Key Password');
+		}
 		if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
 			$input_errors[] = gettext("This certificate does not appear to be valid.");
-		}
-		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED")) {
-			$input_errors[] = gettext("Encrypted private keys are not yet supported.");
-		}
-		if (!$input_errors && !empty($_POST['key']) && cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
-			$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 		}
 		/* we must ensure the certificate is capable of acting as a CA
 		 * https://redmine.pfsense.org/issues/7885
@@ -200,7 +199,26 @@ if ($_POST['save']) {
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	if ($pconfig['method'] != "existing") {
+	if ($pconfig['method'] == "existing") {
+		$pass = $_POST['password1_existing'];
+		if ($pass) {
+			if ($pass != $_POST['password2_existing']) {
+				$input_errors[] = gettext("The passwords do not match.");
+			} elseif (strlen($pass) < 4 || strlen($pass) > 1023) {
+				// OpenSSL will silently accept a short password for encrypting
+				// a key, but will then fail to decrypt the key
+				$input_errors[] = gettext("The password must be between 4 and 1023 characters long.");
+			}
+		}
+		if (!$input_errors && $_POST['key']) {
+			$pubkey = cert_get_publickey($_POST['key'], false, 'prv', $pass);
+			if ($pubkey === false) {
+				$input_errors[] = gettext("The password does not match the submitted private key.");
+			} elseif ($pubkey != cert_get_publickey($_POST['cert'], false)) {
+				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
+			}
+		}
+	} else {
 		/* Make sure we do not have invalid characters in the fields for the certificate */
 		if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
 			array_push($input_errors, gettext("The field 'Descriptive Name' contains invalid characters."));
@@ -227,6 +245,15 @@ if ($_POST['save']) {
 		}
 
 		$ca['descr'] = $pconfig['descr'];
+
+		if ($pconfig['method'] == "existing" && $pconfig['key']) {
+			$is_encrypted = is_encrypted_key($pconfig['key'], false);
+			if ($is_encrypted && !$pconfig['encryptkey']) {
+				$pconfig['key'] = cert_decrypt_key($pconfig['key'], $pconfig['password1_existing'], false);
+			} elseif (!$is_encrypted && $pconfig['encryptkey']) {
+				$pconfig['key'] = cert_encrypt_key($pconfig['key'], $pconfig['password1_existing'], false);
+			}
+		}
 
 		if ($act == "edit") {
 			$ca['descr']  = $pconfig['descr'];
@@ -588,6 +615,32 @@ $section->addInput(new Form_Textarea(
 	'optional in most cases, but is required when generating a '.
 	'Certificate Revocation List (CRL).');
 
+$pwd_required = ($pconfig['encryptkey'] ? '*' : '');
+$group = new Form_Group($pwd_required . 'Private Key Password');
+$group->setHelp('Enter the private key password when pasting an encrypted key '.
+	'and when storing the key in encrypted form.');
+
+$group->add(new Form_Input(
+	'password1_existing',
+	'Password',
+	'password'
+));
+$group->add(new Form_Input(
+	'password2_existing',
+	'Confirm Password',
+	'password'
+));
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'encryptkey',
+	'Encrypt private key',
+	'Store the private key in encrypted form',
+	$pconfig['encryptkey']
+))->setHelp('When the private key is stored in encrypted form, operations like '.
+	'creating or signing certificates require the password to be entered.');
+
 $section->addInput(new Form_Input(
 	'serial',
 	'Serial for next certificate',
@@ -704,6 +757,24 @@ foreach ($a_ca as $ca) {
 		$internal_ca_count++;
 	}
 }
+?>
 
-include('foot.inc');
+<script type="text/javascript">
+//<![CDATA[
+
+events.push(function() {
+	encryptkeyChange();
+
+	function encryptkeyChange() {
+		setRequired('password1_existing', $('#encryptkey').prop('checked'));
+	}
+
+	$('#encryptkey').change(function() {
+		encryptkeyChange();
+	});
+});
+//]]>
+</script>
+
+<?php include('foot.inc');
 ?>

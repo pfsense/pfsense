@@ -319,7 +319,10 @@ function cert_import(& $cert, $crt_str, $key_str) {
 	return true;
 }
 
-function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $digest_alg = "sha256") {
+function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $digest_alg = "sha256", $capass = "", $keypass = null) {
+	if (empty($keypass)) {
+		$keypass = null;
+	}
 
 	$cert['type'] = $type;
 
@@ -333,7 +336,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 		$ca_str_crt = base64_decode($ca['crt']);
 		$ca_str_key = base64_decode($ca['prv']);
 		$ca_res_crt = openssl_x509_read($ca_str_crt);
-		$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
+		$ca_res_key = openssl_pkey_get_private($ca_str_key, $capass);
 		if (!$ca_res_key) {
 			return false;
 		}
@@ -389,7 +392,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 	}
 
 	// export our certificate data
-	if (!openssl_pkey_export($res_key, $str_key) ||
+	if (!openssl_pkey_export($res_key, $str_key, $keypass) ||
 	    !openssl_x509_export($res_crt, $str_crt)) {
 		return false;
 	}
@@ -401,7 +404,10 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 	return true;
 }
 
-function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha256") {
+function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha256", $keypass = null) {
+	if (empty($keypass)) {
+		$keypass = null;
+	}
 
 	$cert_type = cert_type_config_section($type);
 
@@ -434,7 +440,7 @@ function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha2
 	}
 
 	// export our request data
-	if (!openssl_pkey_export($res_key, $str_key) ||
+	if (!openssl_pkey_export($res_key, $str_key, $keypass) ||
 	    !openssl_csr_export($res_csr, $str_csr)) {
 		return false;
 	}
@@ -446,14 +452,14 @@ function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha2
 	return true;
 }
 
-function csr_sign($csr, & $ca, $duration, $type = "user", $altnames, $digest_alg = "sha256") {
+function csr_sign($csr, & $ca, $duration, $type = "user", $altnames, $digest_alg = "sha256", $capass = "") {
 	global $config;
 	$old_err_level = error_reporting(0);
 
 	// Gather the information required for signed cert
 	$ca_str_crt = base64_decode($ca['crt']);
 	$ca_str_key = base64_decode($ca['prv']);
-	$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
+	$ca_res_key = openssl_pkey_get_private($ca_str_key, $capass);
 	if (!$ca_res_key) {
 		return false;
 	}
@@ -476,7 +482,7 @@ function csr_sign($csr, & $ca, $duration, $type = "user", $altnames, $digest_alg
 	);
 
 	// Sign the new cert and export it in x509 format
-	openssl_x509_export(openssl_csr_sign($csr, $ca_str_crt, $ca_str_key, $duration, $args, $ca_serial), $n509);
+	openssl_x509_export(openssl_csr_sign($csr, $ca_str_crt, $ca_res_key, $duration, $args, $ca_serial), $n509);
 	error_reporting($old_err_level);
 
 	return $n509;

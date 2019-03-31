@@ -173,7 +173,7 @@ if ($act == "p12") {
 	}
 
 	$res_crt = openssl_x509_read(base64_decode($a_cert[$id]['crt']));
-	$res_key = openssl_pkey_get_private(array(0 => base64_decode($a_cert[$id]['prv']) , 1 => ""));
+	$res_key = openssl_pkey_get_private(base64_decode($a_cert[$id]['prv']));
 
 	$exp_data = "";
 	openssl_pkcs12_export($res_crt, $exp_data, $res_key, null, $args);
@@ -197,6 +197,20 @@ if ($act == "csr") {
 }
 
 if ($_POST['save']) {
+	// If passwords are given, check that they match and verify their length
+	function validatePasswords(& $input_errors, $pw1, $pw2) {
+		if (!$pw1 && !$pw2) {
+			return;
+		}
+
+		if ($pw1 != $pw2) {
+			$input_errors[] = gettext("The passwords do not match.");
+		} elseif (strlen($pw1) < 4 || strlen($pw1) > 1023) {
+			// OpenSSL will silently accept a short password for encrypting
+			// a key, but will then fail to decrypt the key
+			$input_errors[] = gettext("The password must be between 4 and 1023 characters long.");
+		}
+	}
 
 	if ($_POST['save'] == gettext("Save")) {
 		$input_errors = array();
@@ -216,11 +230,15 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("This signing request does not appear to be valid.");
 			}
 
-			if ( (($_POST['csrtosign'] === "new") && (strlen($_POST['keypaste']) > 0)) && (!strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") || !strstr($_POST['keypaste'], "END PRIVATE KEY"))) {
-				$input_errors[] = gettext("This private does not appear to be valid.");
-				$input_errors[] = gettext("Key data field should be blank, or a valid x509 private key");
+			if ($_POST['csrtosign'] === "new" && $_POST['keypaste']) {
+				if (strpos($_POST['keypaste'], "ENCRYPTED") !== false || $_POST['encryptkey_paste']) {
+					$reqdfields[] = "password1_paste";
+					$reqdfieldsn[] = gettext("Private Key Password");
+				} elseif (strpos($_POST['keypaste'], "PRIVATE KEY") === false) {
+					$input_errors[] = gettext("This private does not appear to be valid.");
+					$input_errors[] = gettext("Key data field should be blank, or a valid x509 private key");
+				}
 			}
-
 		}
 
 		if ($pconfig['method'] == "import") {
@@ -230,12 +248,13 @@ if ($_POST['save']) {
 				gettext("Descriptive name"),
 				gettext("Certificate data"),
 				gettext("Key data"));
-			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
-				$input_errors[] = gettext("This certificate does not appear to be valid.");
+			if ($_POST['key'] && (strpos($_POST['key'], "ENCRYPTED") !== false || $_POST['encryptkey_existing'])) {
+				$reqdfields[] = 'password1_existing';
+				$reqdfieldsn[] = gettext('Private Key Password');
 			}
 
-			if (cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
-				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
+			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
+				$input_errors[] = gettext("This certificate does not appear to be valid.");
 			}
 		}
 
@@ -249,6 +268,8 @@ if ($_POST['save']) {
 				gettext("Certificate Type"),
 				gettext("Lifetime"),
 				gettext("Common Name"));
+
+			validatePasswords($input_errors, $_POST['password1_internal'], $_POST['password2_internal']);
 		}
 
 		if ($pconfig['method'] == "external") {
@@ -258,6 +279,8 @@ if ($_POST['save']) {
 				gettext("Descriptive name"),
 				gettext("Key length"),
 				gettext("Common Name"));
+
+			validatePasswords($input_errors, $_POST['password1_external'], $_POST['password2_external']);
 		}
 
 		if ($pconfig['method'] == "existing") {
@@ -341,6 +364,15 @@ if ($_POST['save']) {
 					if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 					}
+
+					$ca =& lookup_ca($_POST['caref']);
+					if ($ca && $ca['prv'] && strpos(base64_decode($ca['prv']), "ENCRYPTED") !== false) {
+						if (!$_POST['ca_password']) {
+							$input_errors[] = gettext("Password required for the selected Certificate Authority.");
+						} elseif (cert_get_publickey($ca['prv'], true, 'prv', $_POST['ca_password']) === false) {
+							$input_errors[] = gettext("Password does not match the selected Certificate Authority.");
+						}
+					}
 					break;
 				case "external":
 					if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
@@ -354,9 +386,39 @@ if ($_POST['save']) {
 					if (!in_array($_POST["csrsign_digest_alg"], $openssl_digest_algs)) {
 						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 					}
+
+					$signing_ca =& lookup_ca($_POST['catosignwith']);
+					if ($signing_ca && $signing_ca['prv'] && strpos(base64_decode($signing_ca['prv']), "ENCRYPTED") !== false) {
+						if (!$_POST['signca_password']) {
+							$input_errors[] = gettext("Password required for the selected Certificate Authority.");
+						} elseif (cert_get_publickey($signing_ca['prv'], true, 'prv', $_POST['signca_password']) === false) {
+							$input_errors[] = gettext("Password does not match the selected Certificate Authority.");
+						}
+					}
 					break;
 				default:
 					break;
+			}
+		}
+
+		if ($pconfig['method'] == "import") {
+			validatePasswords($input_errors, $_POST['password1_existing'], $_POST['password2_existing']);
+			if (!$input_errors && $_POST['key']) {
+				$pubkey = cert_get_publickey($_POST['key'], false, 'prv', $_POST['password1_existing']);
+				if ($pubkey === false) {
+					$input_errors[] = gettext("The password does not match the submitted private key.");
+				} elseif ($pubkey != cert_get_publickey($_POST['cert'], false)) {
+					$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
+				}
+			}
+		}
+
+		if ($pconfig['method'] == "sign") {
+			validatePasswords($input_errors, $_POST['password1_paste'], $_POST['password2_paste']);
+			if (!$input_errors && $_POST['keypaste']) {
+				if (cert_get_publickey($_POST['keypaste'], false, 'prv', $_POST['password1_paste']) === false) {
+					$input_errors[] = gettext("The password does not match the submitted private key.");
+				}
 			}
 		}
 
@@ -385,7 +447,7 @@ if ($_POST['save']) {
 					$altname_str = implode(",", $altnames_tmp);
 				}
 
-				$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], $pconfig['type'], $altname_str, $pconfig['csrsign_digest_alg']);
+				$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], $pconfig['type'], $altname_str, $pconfig['csrsign_digest_alg'], $pconfig['signca_password']);
 
 				if ($n509) {
 					// Gather the details required to save the new cert
@@ -397,6 +459,14 @@ if ($_POST['save']) {
 					$newcert['crt'] = base64_encode($n509);
 
 					if ($pconfig['csrtosign'] === "new") {
+						if ($pconfig['keypaste']) {
+							$is_encrypted = (strpos($pconfig['keypaste'], "ENCRYPTED") !== false);
+							if ($is_encrypted && !$pconfig['encryptkey_paste']) {
+								$pconfig['keypaste'] = cert_decrypt_key($pconfig['keypaste'], $pconfig['password1_paste'], false);
+							} elseif (!$is_encrypted && $pconfig['encryptkey_paste']) {
+								$pconfig['keypaste'] = cert_encrypt_key($pconfig['keypaste'], $pconfig['password1_paste'], false);
+							}
+						}
 						$newcert['prv'] = base64_encode($pconfig['keypaste']);
 					} else {
 						$newcert['prv'] = $csrid['prv'];
@@ -418,6 +488,13 @@ if ($_POST['save']) {
 				$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 
 				if ($pconfig['method'] == "import") {
+					$is_encrypted = (strpos($pconfig['key'], "ENCRYPTED") !== false);
+					if ($is_encrypted && !$pconfig['encryptkey_existing']) {
+						$pconfig['key'] = cert_decrypt_key($pconfig['key'], $pconfig['password1_existing'], false);
+					} elseif (!$is_encrypted && $pconfig['encryptkey_existing']) {
+						$pconfig['key'] = cert_encrypt_key($pconfig['key'], $pconfig['password1_existing'], false);
+					}
+
 					cert_import($cert, $pconfig['cert'], $pconfig['key']);
 				}
 
@@ -456,7 +533,7 @@ if ($_POST['save']) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 
-					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'])) {
+					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'], $pconfig['ca_password'], $pconfig['password1_internal'])) {
 						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
 							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -501,7 +578,7 @@ if ($_POST['save']) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 
-					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'])) {
+					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'], $pconfig['password1_external'])) {
 						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
 							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -685,12 +762,19 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$section = new Form_Section('Sign CSR');
 	$section->addClass('toggle-sign collapse');
 
-	$section->AddInput(new Form_Select(
+	$group = new Form_Group('*Certificate Authority');
+	$group->add(new Form_Select(
 		'catosignwith',
 		'*CA to sign with',
 		$pconfig['catosignwith'],
 		list_cas()
 	));
+	$group->add(new Form_Input(
+		'signca_password',
+		'CA Password',
+		'password'
+	));
+	$section->add($group);
 
 	$section->AddInput(new Form_Select(
 		'csrtosign',
@@ -710,6 +794,32 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'Key data',
 		$pconfig['keypaste']
 	))->setHelp('Optionally paste a private key here. The key will be associated with the newly signed certificate in pfSense');
+
+	$pwd_required = ($pconfig['encryptkey_paste'] ? '*' : '');
+	$group = new Form_Group($pwd_required . 'Private Key Password');
+	$group->setAttribute('id', 'password_paste');
+	$group->setHelp('Enter the private key password when pasting an encrypted key '.
+		'and when storing the key in encrypted form.');
+
+	$group->add(new Form_Input(
+		'password1_paste',
+		'Password',
+		'password'
+	));
+	$group->add(new Form_Input(
+		'password2_paste',
+		'Confirm Password',
+		'password'
+	));
+
+	$section->add($group);
+
+	$section->addInput(new Form_Checkbox(
+		'encryptkey_paste',
+		'Encrypt private key',
+		'Store the private key in encrypted form',
+		$pconfig['encryptkey_paste']
+	))->setHelp('This can be used for certificates that are meant to be exported.');
 
 	$section->addInput(new Form_Input(
 		'csrsign_lifetime',
@@ -742,6 +852,31 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		$pconfig['key']
 	))->setHelp('Paste a private key in X.509 PEM format here.');
 
+	$pwd_required = ($pconfig['encryptkey_existing'] ? '*' : '');
+	$group = new Form_Group($pwd_required . 'Private Key Password');
+	$group->setHelp('Enter the private key password when pasting an encrypted key '.
+		'and when storing the key in encrypted form.');
+
+	$group->add(new Form_Input(
+		'password1_existing',
+		'Password',
+		'password'
+	));
+	$group->add(new Form_Input(
+		'password2_existing',
+		'Confirm Password',
+		'password'
+	));
+
+	$section->add($group);
+
+	$section->addInput(new Form_Checkbox(
+		'encryptkey_existing',
+		'Encrypt private key',
+		'Store the private key in encrypted form',
+		$pconfig['encryptkey_existing']
+	))->setHelp('This can be used for certificates that are meant to be exported.');
+
 	$form->add($section);
 	$section = new Form_Section('Internal Certificate');
 	$section->addClass('toggle-internal collapse');
@@ -763,12 +898,19 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 			$allCas[ $ca['refid'] ] = $ca['descr'];
 		}
 
-		$section->addInput(new Form_Select(
+		$group = new Form_Group('*Certificate Authority');
+		$group->add(new Form_Select(
 			'caref',
-			'*Certificate authority',
+			null,
 			$pconfig['caref'],
 			$allCas
 		));
+		$group->add(new Form_Input(
+			'ca_password',
+			'CA Password',
+			'password'
+		));
+		$section->add($group);
 	}
 
 	$section->addInput(new Form_Select(
@@ -777,6 +919,23 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		$pconfig['keylen'],
 		array_combine($cert_keylens, $cert_keylens)
 	));
+
+	$group = new Form_Group('Private Key Password');
+	$group->setHelp('Enter a password to store the private key in encrypted form. '.
+		'This can be used for certificates that are meant to be exported.');
+
+	$group->add(new Form_Input(
+		'password1_internal',
+		'Password',
+		'password'
+	));
+	$group->add(new Form_Input(
+		'password2_internal',
+		'Confirm Password',
+		'password'
+	));
+
+	$section->add($group);
 
 	$section->addInput(new Form_Select(
 		'digest_alg',
@@ -855,6 +1014,23 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		$pconfig['csr_keylen'],
 		array_combine($cert_keylens, $cert_keylens)
 	));
+
+	$group = new Form_Group('Private Key Password');
+	$group->setHelp('Enter a password to store the private key in encrypted form. '.
+		'This can be used for certificates that are meant to be exported.');
+
+	$group->add(new Form_Input(
+		'password1_external',
+		'Password',
+		'password'
+	));
+	$group->add(new Form_Input(
+		'password2_external',
+		'Confirm Password',
+		'password'
+	));
+
+	$section->add($group);
 
 	$section->addInput(new Form_Select(
 		'csr_digest_alg',
@@ -1375,6 +1551,13 @@ events.push(function() {
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+	function encryptkeyExistingChange() {
+		setRequired('password1_existing', $('#encryptkey_existing').prop('checked'));
+	}
+
+	function encryptkeyPasteChange() {
+		setRequired('password1_paste', $('#encryptkey_paste').prop('checked'));
+	}
 
 <?php if ($internal_ca_count): ?>
 	function internalca_change() {
@@ -1408,10 +1591,21 @@ events.push(function() {
 
 		$('#csrpaste').attr('readonly', !newcsr);
 		$('#keypaste').attr('readonly', !newcsr);
+		$('#password1_paste').attr('readonly', !newcsr);
+		$('#password2_paste').attr('readonly', !newcsr);
+		$('#encryptkey_paste').prop('disabled', !newcsr);
 		setRequired('csrpaste', newcsr);
 	}
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
+
+	$('#encryptkey_existing').change(function() {
+		encryptkeyExistingChange();
+	});
+
+	$('#encryptkey_paste').change(function() {
+		encryptkeyPasteChange();
+	})
 
 	$('#caref').on('change', function() {
 		internalca_change();
@@ -1423,6 +1617,8 @@ events.push(function() {
 
 	// ---------- On initial page load ------------------------------------------------------------
 
+	encryptkeyExistingChange();
+	encryptkeyPasteChange();
 	internalca_change();
 	set_csr_ro();
 

@@ -229,6 +229,25 @@ if ($_POST['save']) {
 		if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 			array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 		}
+		if ($pass = $_POST['password1_internal']) {
+			if ($pass != $_POST['password2_internal']) {
+				$input_errors[] = gettext("The passwords do not match.");
+			} elseif (strlen($pass) < 4 || strlen($pass) > 1023) {
+				// OpenSSL will silently accept a short password for encrypting
+				// a key, but will then fail to decrypt the key
+				$input_errors[] = gettext("The password must be between 4 and 1023 characters long.");
+			}
+		}
+	}
+	if ($pconfig['method'] == "intermediate") {
+		$signing_ca =& lookup_ca($_POST['caref']);
+		if ($signing_ca && $signing_ca['prv'] && is_encrypted_key($signing_ca['prv'])) {
+			if (!$_POST['ca_password']) {
+				$input_errors[] = gettext("Password required for the selected Certificate Authority.");
+			} elseif (cert_get_publickey($signing_ca['prv'], true, 'prv', $_POST['ca_password']) === false) {
+				$input_errors[] = gettext("Password does not match the selected Certificate Authority.");
+			}
+		}
 	}
 
 	/* save modifications */
@@ -284,7 +303,7 @@ if ($_POST['save']) {
 				if (!empty($pconfig['dn_organizationalunit'])) {
 					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 				}
-				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])) {
+				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'], $pconfig['password1_internal'])) {
 					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
 						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -309,7 +328,7 @@ if ($_POST['save']) {
 				if (!empty($pconfig['dn_organizationalunit'])) {
 					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 				}
-				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])) {
+				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'], $pconfig['ca_password'], $pconfig['password1_internal'])) {
 					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
 						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -671,6 +690,11 @@ $group->add(new Form_Select(
 	$pconfig['caref'],
 	$allCas
 ));
+$group->add(new Form_Input(
+	'ca_password',
+	'CA Password',
+	'password'
+));
 $section->add($group);
 
 $section->addInput(new Form_Select(
@@ -679,6 +703,23 @@ $section->addInput(new Form_Select(
 	$pconfig['keylen'],
 	array_combine($ca_keylens, $ca_keylens)
 ));
+
+$group = new Form_Group('Private Key Password');
+$group->setHelp('Enter a password to store the private key in encrypted form. '.
+	'Operations like creating or signing certificates will require the password to be entered.');
+
+$group->add(new Form_Input(
+	'password1_internal',
+	'Password',
+	'password'
+));
+$group->add(new Form_Input(
+	'password2_internal',
+	'Confirm Password',
+	'password'
+));
+
+$section->add($group);
 
 $section->addInput(new Form_Select(
 	'digest_alg',

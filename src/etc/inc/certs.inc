@@ -199,7 +199,10 @@ function ca_import(& $ca, $str, $key = "", $serial = "") {
 	return true;
 }
 
-function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256") {
+function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256", $password = null) {
+	if (empty($password)) {
+		$password = null;
+	}
 
 	$args = array(
 		"x509_extensions" => "v3_ca",
@@ -227,7 +230,7 @@ function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256") {
 	}
 
 	// export our certificate data
-	if (!openssl_pkey_export($res_key, $str_key) ||
+	if (!openssl_pkey_export($res_key, $str_key, $password) ||
 	    !openssl_x509_export($res_crt, $str_crt)) {
 		return false;
 	}
@@ -240,7 +243,11 @@ function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256") {
 	return true;
 }
 
-function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "sha256") {
+function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "sha256", $capass = "", $keypass = null) {
+	if (empty($keypass)) {
+		$keypass = null;
+	}
+
 	// Create Intermediate Certificate Authority
 	$signing_ca =& lookup_ca($caref);
 	if (!$signing_ca) {
@@ -248,7 +255,7 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 	}
 
 	$signing_ca_res_crt = openssl_x509_read(base64_decode($signing_ca['crt']));
-	$signing_ca_res_key = openssl_pkey_get_private(array(0 => base64_decode($signing_ca['prv']) , 1 => ""));
+	$signing_ca_res_key = openssl_pkey_get_private(base64_decode($signing_ca['prv']), $capass);
 	if (!$signing_ca_res_crt || !$signing_ca_res_key) {
 		return false;
 	}
@@ -280,7 +287,7 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 	}
 
 	// export our certificate data
-	if (!openssl_pkey_export($res_key, $str_key) ||
+	if (!openssl_pkey_export($res_key, $str_key, $keypass) ||
 	    !openssl_x509_export($res_crt, $str_crt)) {
 		return false;
 	}

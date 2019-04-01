@@ -235,6 +235,16 @@ if ($_POST['save'] && !$read_only) {
 		$input_errors[] = gettext("The passwords do not match.");
 	}
 
+	if ($pass = $_POST['certpassword1']) {
+		if ($pass != $_POST['certpassword2']) {
+			$input_errors[] = gettext("The private key passwords do not match.");
+		} elseif (strlen($pass) < 4 || strlen($pass) > 1023) {
+			// OpenSSL will silently accept a short password for encrypting
+			// a key, but will then fail to decrypt the key
+			$input_errors[] = gettext("The private key password must be between 4 and 1023 characters long.");
+		}
+	}
+
 	if (isset($_POST['ipsecpsk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['ipsecpsk'])) {
 		$input_errors[] = gettext("IPsec Pre-Shared Key contains invalid characters.");
 	}
@@ -296,6 +306,12 @@ if ($_POST['save'] && !$read_only) {
 		$ca = lookup_ca($_POST['caref']);
 		if (!$ca) {
 			$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
+		} elseif ($ca['prv'] && is_encrypted_key($ca['prv'])) {
+			if (!$_POST['ca_password']) {
+				$input_errors[] = gettext("Password required for the selected Certificate Authority.");
+			} elseif (cert_get_publickey($ca['prv'], true, 'prv', $_POST['ca_password']) === false) {
+				$input_errors[] = gettext("Password does not match the selected Certificate Authority.");
+			}
 		}
 	}
 	validate_webguicss_field($input_errors, $_POST['webguicss']);
@@ -446,8 +462,8 @@ if ($_POST['save'] && !$read_only) {
 					$dn['subjectAltName'] = $cn_altname;
 				}
 
-				cert_create($cert, $_POST['caref'], $_POST['keylen'],
-					(int)$_POST['lifetime'], $dn);
+				cert_create($cert, $_POST['caref'], $_POST['keylen'], (int)$_POST['lifetime'],
+					$dn, "user", "sha256", $_POST['ca_password'], $_POST['certpassword1']);
 
 				if (!is_array($config['cert'])) {
 					$config['cert'] = array();
@@ -730,7 +746,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'act',
 		null,
 		'hidden',
-		''
+		$act
 	));
 
 	$form->addGlobal(new Form_Input(
@@ -910,8 +926,8 @@ if ($act == "new" || $act == "edit" || $input_errors):
 				'showcert',
 				'Certificate',
 				'Click to create a user certificate',
-				false
-			));
+				$pconfig['showcert']
+			))->toggles('.cert-options');
 		} else {
 			$section->addInput(new Form_StaticText(
 				'Certificate',
@@ -951,7 +967,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	// ==== Add user certificate for a new user
 	if (is_array($config['ca']) && count($config['ca']) > 0) {
 		$section = new Form_Section('Create Certificate for User');
-		$section->addClass('cert-options');
+		$section->addClass('cert-options', $pconfig['showcert'] ? 'in' :' collapse');
 
 		if (!empty($nonPrvCas)) {
 			$section->addInput(new Form_Input(
@@ -961,12 +977,19 @@ if ($act == "new" || $act == "edit" || $input_errors):
 				$pconfig['name']
 			));
 
-			$section->addInput(new Form_Select(
+			$group = new Form_Group('Certificate Authority');
+			$group->add(new Form_Select(
 				'caref',
-				'Certificate authority',
 				null,
+				$pconfig['caref'],
 				$nonPrvCas
 			));
+			$group->add(new Form_Input(
+				'ca_password',
+				'CA Password',
+				'password'
+			));
+			$section->add($group);
 
 			$section->addInput(new Form_Select(
 				'keylen',
@@ -987,6 +1010,22 @@ if ($act == "new" || $act == "edit" || $input_errors):
 				'and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). ' .
 				'As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. ' .
 				'For more information see %1$s.', '<a href="https://keylength.com">keylength.com</a>');
+
+			$group = new Form_Group('Private Key Password');
+			$group->setHelp('Enter a password to store the private key in encrypted form.');
+
+			$group->add(new Form_Input(
+				'certpassword1',
+				'Password',
+				'password'
+			));
+			$group->add(new Form_Input(
+				'certpassword2',
+				'Confirm Password',
+				'password'
+			));
+
+			$section->add($group);
 
 			$section->addInput(new Form_Input(
 				'lifetime',
@@ -1078,10 +1117,6 @@ events.push(function() {
 		moveOptions($('[name="sysgroups[]"] option'), $('[name="groups[]"]'));
 	});
 
-	$("#showcert").click(function() {
-		hideClass('cert-options', !this.checked);
-	});
-
 	$("#showkey").click(function() {
 		hideInput('authorizedkeys', false);
 		hideCheckbox('showkey', true);
@@ -1109,7 +1144,6 @@ events.push(function() {
 
 	// ---------- On initial page load ------------------------------------------------------------
 
-	hideClass('cert-options', true);
 	//hideInput('authorizedkeys', true);
 	hideCheckbox('showkey', true);
 	setcustomoptions();

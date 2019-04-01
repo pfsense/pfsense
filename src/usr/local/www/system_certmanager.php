@@ -231,7 +231,7 @@ if ($_POST['save']) {
 			}
 
 			if ($_POST['csrtosign'] === "new" && $_POST['keypaste']) {
-				if (strpos($_POST['keypaste'], "ENCRYPTED") !== false || $_POST['encryptkey_paste']) {
+				if (is_encrypted_key($_POST['keypaste'], false) || $_POST['encryptkey_paste']) {
 					$reqdfields[] = "password1_paste";
 					$reqdfieldsn[] = gettext("Private Key Password");
 				} elseif (strpos($_POST['keypaste'], "PRIVATE KEY") === false) {
@@ -248,7 +248,7 @@ if ($_POST['save']) {
 				gettext("Descriptive name"),
 				gettext("Certificate data"),
 				gettext("Key data"));
-			if ($_POST['key'] && (strpos($_POST['key'], "ENCRYPTED") !== false || $_POST['encryptkey_existing'])) {
+			if ($_POST['key'] && (is_encrypted_key($_POST['key'], false) || $_POST['encryptkey_existing'])) {
 				$reqdfields[] = 'password1_existing';
 				$reqdfieldsn[] = gettext('Private Key Password');
 			}
@@ -366,7 +366,7 @@ if ($_POST['save']) {
 					}
 
 					$ca =& lookup_ca($_POST['caref']);
-					if ($ca && $ca['prv'] && strpos(base64_decode($ca['prv']), "ENCRYPTED") !== false) {
+					if ($ca && $ca['prv'] && is_encrypted_key($ca['prv'])) {
 						if (!$_POST['ca_password']) {
 							$input_errors[] = gettext("Password required for the selected Certificate Authority.");
 						} elseif (cert_get_publickey($ca['prv'], true, 'prv', $_POST['ca_password']) === false) {
@@ -388,7 +388,7 @@ if ($_POST['save']) {
 					}
 
 					$signing_ca =& lookup_ca($_POST['catosignwith']);
-					if ($signing_ca && $signing_ca['prv'] && strpos(base64_decode($signing_ca['prv']), "ENCRYPTED") !== false) {
+					if ($signing_ca && $signing_ca['prv'] && is_encrypted_key($signing_ca['prv'])) {
 						if (!$_POST['signca_password']) {
 							$input_errors[] = gettext("Password required for the selected Certificate Authority.");
 						} elseif (cert_get_publickey($signing_ca['prv'], true, 'prv', $_POST['signca_password']) === false) {
@@ -460,7 +460,7 @@ if ($_POST['save']) {
 
 					if ($pconfig['csrtosign'] === "new") {
 						if ($pconfig['keypaste']) {
-							$is_encrypted = (strpos($pconfig['keypaste'], "ENCRYPTED") !== false);
+							$is_encrypted = is_encrypted_key($pconfig['keypaste'], false);
 							if ($is_encrypted && !$pconfig['encryptkey_paste']) {
 								$pconfig['keypaste'] = cert_decrypt_key($pconfig['keypaste'], $pconfig['password1_paste'], false);
 							} elseif (!$is_encrypted && $pconfig['encryptkey_paste']) {
@@ -488,7 +488,7 @@ if ($_POST['save']) {
 				$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 
 				if ($pconfig['method'] == "import") {
-					$is_encrypted = (strpos($pconfig['key'], "ENCRYPTED") !== false);
+					$is_encrypted = is_encrypted_key($pconfig['key'], false);
 					if ($is_encrypted && !$pconfig['encryptkey_existing']) {
 						$pconfig['key'] = cert_decrypt_key($pconfig['key'], $pconfig['password1_existing'], false);
 					} elseif (!$is_encrypted && $pconfig['encryptkey_existing']) {

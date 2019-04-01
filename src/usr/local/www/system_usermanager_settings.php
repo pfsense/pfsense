@@ -180,7 +180,7 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-if (!isAllowedPage("system_usermanager.php*")) {
+if (!isAllowedPage("system_usermanager.php")) {
        $tab_array[] = array(gettext("User Password"), false, "system_usermanager_passwordmg.php");
 } else {
        $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");

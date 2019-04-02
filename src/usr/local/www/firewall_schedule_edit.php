@@ -442,7 +442,7 @@ $group->add(new Form_Button(
 $section->add($group);
 
 if (isset($id) && $a_schedules[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -618,7 +618,7 @@ if ($getSchedule) {
 				'fa-trash'
 			))->setAttribute('type','button')->addClass('btn-xs btn-warning');
 
-			$group->add(new Form_Input(
+			$form->addGlobal(new Form_Input(
 				'schedule' . $counter,
 				null,
 				'hidden',

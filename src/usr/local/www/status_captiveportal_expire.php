@@ -84,7 +84,7 @@ $section->addInput(new Form_Textarea(
 	$_POST['vouchers']
 ))->setHelp('Enter multiple vouchers separated by space or newline. All valid vouchers will be marked as expired.');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',

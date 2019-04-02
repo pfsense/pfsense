@@ -999,7 +999,7 @@ $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
 $section->addInput($btnaddopt);
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'if',
 	null,
 	'hidden',

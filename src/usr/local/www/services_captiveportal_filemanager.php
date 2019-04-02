@@ -156,7 +156,7 @@ if ($_REQUEST['act'] == 'add') {
 
 	$section = new Form_Section('Upload a New File');
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'zone',
 		null,
 		'hidden',

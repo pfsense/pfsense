@@ -220,7 +220,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'gifif',
 	null,
 	'hidden',
@@ -228,7 +228,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_gifs[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

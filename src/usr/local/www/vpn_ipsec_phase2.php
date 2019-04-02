@@ -717,7 +717,7 @@ $section->addInput(new Form_IpAddress(
 
 // Hidden inputs
 if ($pconfig['mobile']) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'mobile',
 		null,
 		'hidden',
@@ -725,7 +725,7 @@ if ($pconfig['mobile']) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'ikeid',
 	null,
 	'hidden',
@@ -733,7 +733,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (!empty($pconfig['reqid'])) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'reqid',
 		null,
 		'hidden',
@@ -741,7 +741,7 @@ if (!empty($pconfig['reqid'])) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'uniqid',
 	null,
 	'hidden',

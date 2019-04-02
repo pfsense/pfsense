@@ -424,7 +424,7 @@ $section->addInput(new Form_Input(
 			'This field will be used in the Dynamic DNS Status Widget for Custom services.', '<br />');
 
 if (isset($id) && $a_dyndns[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

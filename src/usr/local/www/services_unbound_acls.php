@@ -189,14 +189,14 @@ if ($act == "new" || $act == "edit") {
 
 	$section = new Form_Section('New Access List');
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'aclid',
 		null,
 		'hidden',
 		$id
 	));
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'act',
 		null,
 		'hidden',

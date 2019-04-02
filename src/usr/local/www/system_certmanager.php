@@ -1068,21 +1068,21 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	))->setWidth(7)
 	  ->setHelp('Paste the certificate received from the certificate authority here.');
 
-	 if (isset($id) && $a_cert[$id]) {
-		 $section->addInput(new Form_Input(
+	if (isset($id) && $a_cert[$id]) {
+		$form->addGlobal(new Form_Input(
 			'id',
 			null,
 			'hidden',
 			$id
-		 ));
+		));
 
-		 $section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'act',
 			null,
 			'hidden',
 			'csr'
-		 ));
-	 }
+		));
+	}
 
 	$form->add($section);
 

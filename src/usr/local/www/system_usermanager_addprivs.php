@@ -210,7 +210,7 @@ $btnclear->setAttribute('type','button')->addClass('btn btn-warning');
 $form->addGlobal($btnclear);
 
 if (isset($userid)) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 	'userid',
 	null,
 	'hidden',

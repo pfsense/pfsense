@@ -184,7 +184,7 @@ $section->addInput(new Form_Input(
 			'This setting is optional, and by default the threshold is 1.');
 
 if (isset($id) && $a_igmpproxy[$id]) {
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

@@ -544,14 +544,14 @@ $section->addPassword(new Form_Input(
 	$pconfig['vouchersyncpass']
 ))->setHelp('This is the password of the master voucher nodes webConfigurator.');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',
 	$cpzone
 ));
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'exponent',
 	null,
 	'hidden',

@@ -338,18 +338,17 @@ $tab_array[] = array(gettext("Certificate Revocation"), true, "system_crlmanager
 display_top_tabs($tab_array);
 
 if ($act == "new" || $act == gettext("Save") || $input_errors) {
+	$form = new Form();
+
+	$section = new Form_Section('Create new Revocation List');
+
 	if (!isset($id)) {
-		$form = new Form();
-
-		$section = new Form_Section('Create new Revocation List');
-
 		$section->addInput(new Form_Select(
 			'method',
 			'*Method',
 			$pconfig['method'],
 			build_method_list()
 		));
-
 	}
 
 	$section->addInput(new Form_Input(

@@ -222,12 +222,8 @@ if ($_POST['save']) {
 		}
 
 		if ($pconfig['method'] == "import") {
-			$reqdfields = explode(" ",
-				"descr cert key");
-			$reqdfieldsn = array(
-				gettext("Descriptive name"),
-				gettext("Certificate data"),
-				gettext("Key data"));
+			$reqdfields = array("descr");
+			$reqdfieldsn = array(gettext("Descriptive name"));
 			$pkcs12_data = '';
 			if (empty($_FILES['pkcs12_cert'])) {
 				if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
@@ -238,8 +234,8 @@ if ($_POST['save']) {
 					$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 				}
 			} else {
-				$pkcs12_data = file_get_contents($_FILES['pkcs12_cert']['tmp_name']);
-				if (!openssl_pkcs12_read($pkcs12_data, $data, $_POST['pkcs12_pass'])) {
+				$pkcs12_file = file_get_contents($_FILES['pkcs12_cert']['tmp_name']);
+				if (!openssl_pkcs12_read($pkcs12_file, $pkcs12_data, $_POST['pkcs12_pass'])) {
 					$input_errors[] = gettext("The submitted password does not unlock the submitted PKCS #12 certificate.");
 				}
 			}
@@ -424,9 +420,9 @@ if ($_POST['save']) {
 				$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 
 				if ($pconfig['method'] == "import") {
-					if ($pkcs12_data && openssl_pkcs12_read($pkcs12_data, $data, $pconfig['pkcs12_pass'])) {
-						$pconfig['cert'] = $data['cert'];
-						$pconfig['key'] = $data['pkey'];
+					if ($pkcs12_data) {
+						$pconfig['cert'] = $pkcs12_data['cert'];
+						$pconfig['key'] = $pkcs12_data['pkey'];
 					}
 					cert_import($cert, $pconfig['cert'], $pconfig['key']);
 				}
@@ -742,19 +738,19 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Textarea(
 		'cert',
-		'*Certificate data',
+		'Certificate data',
 		$pconfig['cert']
 	))->setHelp('Paste a certificate in X.509 PEM format here.');
 
 	$section->addInput(new Form_Textarea(
 		'key',
-		'*Private key data',
+		'Private key data',
 		$pconfig['key']
 	))->setHelp('Paste a private key in X.509 PEM format here.');
 
 	$section->addInput(new Form_Input(
 		'pkcs12_cert',
-		'*PKCS #12 certificate',
+		'PKCS #12 certificate',
 		'file',
 		$pconfig['pkcs12_cert']
 	))->setHelp('Upload a PKCS #12 certificate store here.');

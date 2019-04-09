@@ -620,7 +620,7 @@ display_top_tabs($tab_array);
 
 if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$form = new Form();
-	$form->setAction('system_certmanager.php?act=edit');
+	$form->setAction('system_certmanager.php?act=edit')->setMultipartEncoding();
 
 	if (isset($userid) && $a_user) {
 		$form->addGlobal(new Form_Input(
@@ -736,6 +736,26 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$section = new Form_Section('Import Certificate');
 	$section->addClass('toggle-import collapse');
 
+	$group = new Form_Group('Certificate Type');
+
+	$group->add(new Form_Checkbox(
+		'import_type',
+		'Certificate Type',
+		'X.509 (PEM)',
+		true,
+		'x509'
+	))->displayAsRadio()->addClass('import_type_toggle');
+
+	$group->add(new Form_Checkbox(
+		'import_type',
+		'Certificate Type',
+		'PKCS #12 (PFX)',
+		false,
+		'pkcs12'
+	))->displayAsRadio()->addClass('import_type_toggle');
+
+	$section->add($group);
+
 	$section->addInput(new Form_Textarea(
 		'cert',
 		'Certificate data',
@@ -753,12 +773,12 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'PKCS #12 certificate',
 		'file',
 		$pconfig['pkcs12_cert']
-	))->setHelp('Upload a PKCS #12 certificate store here.');
+	))->setHelp('Select a PKCS #12 certificate store.');
 
 	$section->addInput(new Form_Input(
 		'pkcs12_pass',
 		'PKCS #12 certificate password',
-		'text'
+		'text'                                              
 	))->setHelp('Enter the password to unlock the PKCS #12 certificate store.');
 
 	$form->add($section);
@@ -1394,6 +1414,16 @@ events.push(function() {
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
+	$('.import_type_toggle').click(function() {
+		var x509 = (this.value === 'x509');
+		hideInput('cert', !x509);
+		hideInput('key', !x509);
+		hideInput('pkcs12_cert', x509);
+		hideInput('pkcs12_pass', x509);
+	});
+	hideInput('pkcs12_cert', true);
+	hideInput('pkcs12_pass', true);
 
 <?php if ($internal_ca_count): ?>
 	function internalca_change() {

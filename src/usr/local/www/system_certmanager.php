@@ -432,9 +432,10 @@ if ($_POST['save']) {
 						$pconfig['key'] = $pkcs12_data['pkey'];
 						if ($_POST['pkcs_intermediate'] && is_array($pkcs12_data['extracerts'])) {
 							foreach ($pkcs12_data['extracerts'] as $intermediate) {
-								if (!openssl_x509_parse($intermediate)) continue;
-								$cn = cert_get_cn($intermediate);
-								$int_ca = array('descr' => $cn);
+								$int_data = openssl_x509_parse($intermediate);
+								if (!$int_data) continue;
+								$cn = $int_data['subject']['CN'];
+								$int_ca = array('descr' => $cn, 'refid' => uniqid());
 								ca_import($int_ca, $intermediate);
 								$a_ca[] = $int_ca;
 							}
@@ -1444,9 +1445,11 @@ events.push(function() {
 		hideInput('key', !x509);
 		hideInput('pkcs12_cert', x509);
 		hideInput('pkcs12_pass', x509);
+		hideInput('pkcs12_intermediate', x509);
 	});
 	hideInput('pkcs12_cert', true);
 	hideInput('pkcs12_pass', true);
+	hideInput('pkcs12_intermediate', true);
 
 <?php if ($internal_ca_count): ?>
 	function internalca_change() {

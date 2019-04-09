@@ -798,6 +798,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'pkcs12_pass',
 		'PKCS #12 certificate password',
 		'password'
+		$pconfig['pkcs12_pass']
 	))->setHelp('Enter the password to unlock the PKCS #12 certificate store.');
 
 	$section->addInput(new Form_Checkbox(
@@ -1444,18 +1445,27 @@ events.push(function() {
 	$('.import_type_toggle').click(function() {
 		var x509 = (this.value === 'x509');
 		hideInput('cert', !x509);
+		setRequired('cert', x509);
 		hideInput('key', !x509);
+		setRequired('key', x509);
 		hideInput('pkcs12_cert', x509);
+		setRequired('pkcs12_cert', !x509);
 		hideInput('pkcs12_pass', x509);
-		hideInput('pkcs12_intermediate', x509);
+		hideCheckbox('pkcs12_intermediate', x509);
 	});
 	if ($('input[name=import_type]:checked').val() == 'x509') {
 		hideInput('pkcs12_cert', true);
+		setRequired('pkcs12_cert', false);
 		hideInput('pkcs12_pass', true);
-		hideInput('pkcs12_intermediate', true);
+		hideCheckbox('pkcs12_intermediate', true);
+		setRequired('cert', true);
+		setRequired('key', true);
 	} else {
 		hideInput('cert', true);
+		setRequired('cert', false);
 		hideInput('key', true);
+		setRequired('key', false);
+		setRequired('pkcs12_cert', false);
 	}
 
 <?php if ($internal_ca_count): ?>

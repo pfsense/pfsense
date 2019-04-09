@@ -222,10 +222,13 @@ if ($_POST['save']) {
 		}
 
 		if ($pconfig['method'] == "import") {
-			$reqdfields = array("descr");
-			$reqdfieldsn = array(gettext("Descriptive name"));
 			$pkcs12_data = '';
-			if (empty($_FILES['pkcs12_cert'])) {
+			if ($_POST['import_type'] == 'x509') {
+				$reqdfields = explode(" ", "descr cert key");
+				$reqdfieldsn = array(
+					gettext("Descriptive name"),
+					gettext("Certificate data"),
+					gettext("Key data"));
 				if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
 					$input_errors[] = gettext("This certificate does not appear to be valid.");
 				}
@@ -234,9 +237,13 @@ if ($_POST['save']) {
 					$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 				}
 			} else {
-				$pkcs12_file = file_get_contents($_FILES['pkcs12_cert']['tmp_name']);
-				if (!openssl_pkcs12_read($pkcs12_file, $pkcs12_data, $_POST['pkcs12_pass'])) {
-					$input_errors[] = gettext("The submitted password does not unlock the submitted PKCS #12 certificate.");
+				if (!empty($_FILES['pkcs12_cert']) && is_uploaded_file($_FILES['pkcs12_cert']['tmp_name'])) {
+					$pkcs12_file = file_get_contents($_FILES['pkcs12_cert']['tmp_name']);
+					if (!openssl_pkcs12_read($pkcs12_file, $pkcs12_data, $_POST['pkcs12_pass'])) {
+						$input_errors[] = gettext("The submitted password does not unlock the submitted PKCS #12 certificate.");
+					}
+				} else {
+					$input_errors[] = gettext("A PKCS #12 certificate store was not uploaded.");
 				}
 			}
 		}

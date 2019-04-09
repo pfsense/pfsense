@@ -237,6 +237,8 @@ if ($_POST['save']) {
 					$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 				}
 			} else {
+				$reqdfields = array('descr');
+				$reqdfieldsn = array(gettext("Descriptive name"));
 				if (!empty($_FILES['pkcs12_cert']) && is_uploaded_file($_FILES['pkcs12_cert']['tmp_name'])) {
 					$pkcs12_file = file_get_contents($_FILES['pkcs12_cert']['tmp_name']);
 					if (!openssl_pkcs12_read($pkcs12_file, $pkcs12_data, $_POST['pkcs12_pass'])) {
@@ -430,7 +432,7 @@ if ($_POST['save']) {
 					if ($pkcs12_data) {
 						$pconfig['cert'] = $pkcs12_data['cert'];
 						$pconfig['key'] = $pkcs12_data['pkey'];
-						if ($_POST['pkcs_intermediate'] && is_array($pkcs12_data['extracerts'])) {
+						if ($_POST['pkcs12_intermediate'] && is_array($pkcs12_data['extracerts'])) {
 							foreach ($pkcs12_data['extracerts'] as $intermediate) {
 								$int_data = openssl_x509_parse($intermediate);
 								if (!$int_data) continue;
@@ -799,7 +801,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	))->setHelp('Enter the password to unlock the PKCS #12 certificate store.');
 
 	$section->addInput(new Form_Checkbox(
-		'pkcs_intermediate',
+		'pkcs12_intermediate',
 		'Intermediates',
 		'Import intermediate CAs',
 		false

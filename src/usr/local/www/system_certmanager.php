@@ -761,7 +761,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'import_type',
 		'Certificate Type',
 		'X.509 (PEM)',
-		true,
+		(!isset($pconfig['import_type']) || $pconfig['import_type'] == 'x509'),
 		'x509'
 	))->displayAsRadio()->addClass('import_type_toggle');
 
@@ -769,7 +769,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'import_type',
 		'Certificate Type',
 		'PKCS #12 (PFX)',
-		false,
+		(isset($pconfig['import_type']) && $pconfig['import_type'] == 'pkcs12'),
 		'pkcs12'
 	))->displayAsRadio()->addClass('import_type_toggle');
 
@@ -797,14 +797,14 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$section->addInput(new Form_Input(
 		'pkcs12_pass',
 		'PKCS #12 certificate password',
-		'text'                                              
+		'password'
 	))->setHelp('Enter the password to unlock the PKCS #12 certificate store.');
 
 	$section->addInput(new Form_Checkbox(
 		'pkcs12_intermediate',
 		'Intermediates',
 		'Import intermediate CAs',
-		false
+		isset($pconfig['pkcs12_intermediate'])
 	))->setHelp('Import any intermediate certificate authorities found in the PKCS #12 certificate store.');
 
 	$form->add($section);
@@ -1449,9 +1449,14 @@ events.push(function() {
 		hideInput('pkcs12_pass', x509);
 		hideInput('pkcs12_intermediate', x509);
 	});
-	hideInput('pkcs12_cert', true);
-	hideInput('pkcs12_pass', true);
-	hideInput('pkcs12_intermediate', true);
+	if ($('input[name=import_type]:checked').val() == 'x509') {
+		hideInput('pkcs12_cert', true);
+		hideInput('pkcs12_pass', true);
+		hideInput('pkcs12_intermediate', true);
+	} else {
+		hideInput('cert', true);
+		hideInput('key', true);
+	}
 
 <?php if ($internal_ca_count): ?>
 	function internalca_change() {

@@ -797,7 +797,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$section->addInput(new Form_Input(
 		'pkcs12_pass',
 		'PKCS #12 certificate password',
-		'password'
+		'password',
 		$pconfig['pkcs12_pass']
 	))->setHelp('Enter the password to unlock the PKCS #12 certificate store.');
 

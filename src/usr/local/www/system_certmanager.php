@@ -430,6 +430,15 @@ if ($_POST['save']) {
 					if ($pkcs12_data) {
 						$pconfig['cert'] = $pkcs12_data['cert'];
 						$pconfig['key'] = $pkcs12_data['pkey'];
+						if ($_POST['pkcs_intermediate'] && is_array($pkcs12_data['extracerts'])) {
+							foreach ($pkcs12_data['extracerts'] as $intermediate) {
+								if (!openssl_x509_parse($intermediate)) continue;
+								$cn = cert_get_cn($intermediate);
+								$int_ca = array('descr' => $cn);
+								ca_import($int_ca, $intermediate);
+								$a_ca[] = $int_ca;
+							}
+						}
 					}
 					cert_import($cert, $pconfig['cert'], $pconfig['key']);
 				}
@@ -787,6 +796,13 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'PKCS #12 certificate password',
 		'text'                                              
 	))->setHelp('Enter the password to unlock the PKCS #12 certificate store.');
+
+	$section->addInput(new Form_Checkbox(
+		'pkcs_intermediate',
+		'Intermediates',
+		'Import intermediate CAs',
+		false
+	))->setHelp('Import any intermediate certificate authorities found in the PKCS #12 certificate store.');
 
 	$form->add($section);
 	$section = new Form_Section('Internal Certificate');

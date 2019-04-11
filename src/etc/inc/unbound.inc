@@ -484,7 +484,9 @@ EOD;
 function unbound_remote_control_setup($cfgsubdir = "") {
 	global $g;
 
-	if (!file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf") || !file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/unbound_control.key")) {
+	if (!file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf") ||
+	    (filesize("{$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf") == 0) ||
+	    !file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/unbound_control.key")) {
 		$remotcfg = <<<EOF
 remote-control:
 	control-enable: yes

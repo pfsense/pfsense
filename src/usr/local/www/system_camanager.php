@@ -200,18 +200,9 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	if ($pconfig['method'] == "existing") {
-		$pass = $_POST['password1_existing'];
-		if ($pass) {
-			if ($pass != $_POST['password2_existing']) {
-				$input_errors[] = gettext("The passwords do not match.");
-			} elseif (strlen($pass) < 4 || strlen($pass) > 1023) {
-				// OpenSSL will silently accept a short password for encrypting
-				// a key, but will then fail to decrypt the key
-				$input_errors[] = gettext("The password must be between 4 and 1023 characters long.");
-			}
-		}
+		validate_cert_passwords($_POST['password1_existing'], $_POST['password2_existing'], $input_errors);
 		if (!$input_errors && $_POST['key']) {
-			$pubkey = cert_get_publickey($_POST['key'], false, 'prv', $pass);
+			$pubkey = cert_get_publickey($_POST['key'], false, 'prv', $_POST['password1_existing']);
 			if ($pubkey === false) {
 				$input_errors[] = gettext("The password does not match the submitted private key.");
 			} elseif ($pubkey != cert_get_publickey($_POST['cert'], false)) {
@@ -229,15 +220,7 @@ if ($_POST['save']) {
 		if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 			array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 		}
-		if ($pass = $_POST['password1_internal']) {
-			if ($pass != $_POST['password2_internal']) {
-				$input_errors[] = gettext("The passwords do not match.");
-			} elseif (strlen($pass) < 4 || strlen($pass) > 1023) {
-				// OpenSSL will silently accept a short password for encrypting
-				// a key, but will then fail to decrypt the key
-				$input_errors[] = gettext("The password must be between 4 and 1023 characters long.");
-			}
-		}
+		validate_cert_passwords($_POST['password1_internal'], $_POST['password2_internal'], $input_errors);
 	}
 	if ($pconfig['method'] == "intermediate") {
 		$signing_ca =& lookup_ca($_POST['caref']);

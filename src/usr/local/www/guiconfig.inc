@@ -267,6 +267,21 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 	}
 }
 
+// If passwords for certificate private keys are given, check that they match and verify their length
+function validate_cert_passwords($pw1, $pw2, &$input_errors) {
+	if (!$pw1 && !$pw2) {
+		return;
+	}
+
+	if ($pw1 != $pw2) {
+		$input_errors[] = gettext("The passwords do not match.");
+	} elseif (strlen($pw1) < 4 || strlen($pw1) > 1023) {
+		// OpenSSL will silently accept a short password for encrypting
+		// a key, but will then fail to decrypt the key
+		$input_errors[] = gettext("The password must be between 4 and 1023 characters long.");
+	}
+}
+
 function print_input_errors($input_errors) {
 	echo '<div class="alert alert-danger input-errors">';
 	echo '<p>' . gettext('The following input errors were detected:') . '</p>';

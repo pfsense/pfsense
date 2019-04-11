@@ -197,21 +197,6 @@ if ($act == "csr") {
 }
 
 if ($_POST['save']) {
-	// If passwords are given, check that they match and verify their length
-	function validatePasswords(& $input_errors, $pw1, $pw2) {
-		if (!$pw1 && !$pw2) {
-			return;
-		}
-
-		if ($pw1 != $pw2) {
-			$input_errors[] = gettext("The passwords do not match.");
-		} elseif (strlen($pw1) < 4 || strlen($pw1) > 1023) {
-			// OpenSSL will silently accept a short password for encrypting
-			// a key, but will then fail to decrypt the key
-			$input_errors[] = gettext("The password must be between 4 and 1023 characters long.");
-		}
-	}
-
 	if ($_POST['save'] == gettext("Save")) {
 		$input_errors = array();
 		$pconfig = $_POST;
@@ -269,7 +254,7 @@ if ($_POST['save']) {
 				gettext("Lifetime"),
 				gettext("Common Name"));
 
-			validatePasswords($input_errors, $_POST['password1_internal'], $_POST['password2_internal']);
+			validate_cert_passwords($_POST['password1_internal'], $_POST['password2_internal'], $input_errors);
 		}
 
 		if ($pconfig['method'] == "external") {
@@ -280,7 +265,7 @@ if ($_POST['save']) {
 				gettext("Key length"),
 				gettext("Common Name"));
 
-			validatePasswords($input_errors, $_POST['password1_external'], $_POST['password2_external']);
+			validate_cert_passwords($_POST['password1_external'], $_POST['password2_external'], $input_errors);
 		}
 
 		if ($pconfig['method'] == "existing") {
@@ -402,7 +387,7 @@ if ($_POST['save']) {
 		}
 
 		if ($pconfig['method'] == "import") {
-			validatePasswords($input_errors, $_POST['password1_existing'], $_POST['password2_existing']);
+			validate_cert_passwords($_POST['password1_existing'], $_POST['password2_existing'], $input_errors);
 			if (!$input_errors && $_POST['key']) {
 				$pubkey = cert_get_publickey($_POST['key'], false, 'prv', $_POST['password1_existing']);
 				if ($pubkey === false) {
@@ -414,7 +399,7 @@ if ($_POST['save']) {
 		}
 
 		if ($pconfig['method'] == "sign") {
-			validatePasswords($input_errors, $_POST['password1_paste'], $_POST['password2_paste']);
+			validate_cert_passwords($_POST['password1_paste'], $_POST['password2_paste'], $input_errors);
 			if (!$input_errors && $_POST['keypaste']) {
 				if (cert_get_publickey($_POST['keypaste'], false, 'prv', $_POST['password1_paste']) === false) {
 					$input_errors[] = gettext("The password does not match the submitted private key.");

@@ -57,7 +57,7 @@ function updatecopyright() {
 			if ($status == 200) {
 				// Save to a temporary file
 				file_put_contents($tmpfile, $response);
-				// If the file contents are not the same as the existing file, create the trigger to display hte new copyright
+				// If the file contents are not the same as the existing file, create the trigger to display the new copyright
 				if (!file_exists($copyrightfile) || (md5_file($copyrightfile) != md5_file($tmpfile))) {
 					touch("{$g['cf_conf_path']}/copynotice_display");
 				}

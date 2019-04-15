@@ -253,7 +253,7 @@ function get_firewall_info() {
 		}
 	}
 
-	file_put_contents("{$output_path}/Product Info.txt", str_replace("<br/>", "\n", $firewall_info) . "\n");
+	file_put_contents("{$output_path}/Product-Info.txt", str_replace("<br/>", "\n", $firewall_info) . "\n");
 	return $firewall_info;
 }
 
@@ -266,6 +266,13 @@ global $g, $config;
 /* Set up all of the commands we want to execute. */
 
 /* OS stats/info */
+if (function_exists("system_get_thothid")) {
+	$thothid = system_get_thothid();
+	if (!empty($thothid)) {
+		defCmdT("Product-Public Key", "/usr/bin/openssl ec -in /etc/thoth/key.pem -noout -text | /usr/bin/sed -n '/pub:/,\$p'");
+	}
+}
+
 defCmdT("OS-Uptime", "/usr/bin/uptime");
 defCmdT("Network-Interfaces", "/sbin/ifconfig -vvvvvam");
 defCmdT("Network-Interface Statistics", "/usr/bin/netstat -nWi");
@@ -408,6 +415,7 @@ endif;
 
 if ($console) {
 	print(gettext("Gathering status data...") . "\n");
+	get_firewall_info();
 }
 execCmds();
 

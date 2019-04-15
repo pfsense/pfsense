@@ -31,7 +31,7 @@
 ##|-PRIV
 
 /*
- * This file deisplays the copyright modal when required. (New version installed or completion of hte setup wizard)
+ * This file deisplays the copyright modal when required. (New version installed or completion of the setup wizard)
  * The copyright text may have been downloaded from the Netgate server, but if not the default text defined here
  * is used
  */

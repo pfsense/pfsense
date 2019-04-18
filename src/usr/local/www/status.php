@@ -269,7 +269,7 @@ global $g, $config;
 if (function_exists("system_get_thothid")) {
 	$thothid = system_get_thothid();
 	if (!empty($thothid)) {
-		defCmdT("Product-Public Key", "/usr/bin/openssl ec -in /etc/thoth/key.pem -noout -text | /usr/bin/sed -n '/pub:/,\$p'");
+		defCmdT("Product-Public Key", "/usr/local/sbin/ping-auth -p");
 	}
 }
 

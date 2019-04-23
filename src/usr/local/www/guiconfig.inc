@@ -1330,6 +1330,30 @@ function system_has_php_errors() {
 	return (int) @filesize("/tmp/PHP_errors.log") > 0;
 }
 
+/* multi array order by */
+function multiArrayOrderBy($array, $field) {
+	$newArray = [];
+	$orderedArray = [];
+
+	if ($array != []) {
+		foreach ($array as $key => $value)
+			if (is_array($key)) {
+				foreach ($key as $key2 => $value2)
+					if ($key2 == $field)
+						$orderedArray[$key] = $value2;
+			}
+			else
+				$orderedArray[$key] = $value;
+
+		asort($orderedArray);
+
+		foreach ($orderedArray as $key => $value)
+			$newArray[$key] = $array[$key];
+	}
+
+	return $newArray;
+}
+
 date_default_timezone_set($timezone);
 
 ?>

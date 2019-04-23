@@ -499,6 +499,8 @@ foreach ($portlist as $portname => $portinfo) {
 	</thead>
 	<tbody>
 <?php
+	$config['interfaces'] = multiArrayOrderBy($config['interfaces'], 'descr');
+
 	$i=0;
 	foreach ($config['interfaces'] as $ifname => $iface):
 		if ($iface['descr']) {

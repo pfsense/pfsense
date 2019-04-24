@@ -2204,19 +2204,35 @@ function services_unbound_configure($restart_dhcp = true) {
 			}
 		}
 
+		$python_mode = false;
+		if (isset($config['unbound']['python']) && !empty($config['unbound']['python_script'])) {
+			$python_mode = true;
+		}
+
+		/* Include any additional functions as defined by python script include file */
+		if (file_exists("{$g['unbound_chroot_path']}/{$config['unbound']['python_script']}_include.inc")) {
+			exec("/usr/local/bin/php -l " . escapeshellarg("{$g['unbound_chroot_path']}/{$config['unbound']['python_script']}_include.inc")
+				. " 2>&1", $py_output, $py_retval);
+			if ($py_retval == 0) {
+				require_once("{$g['unbound_chroot_path']}/{$config['unbound']['python_script']}_include.inc");
+			}
+		}
+
 		/* DNS Resolver python integration */
 		$base_folder = '/usr/local';
 		foreach (array('/bin', '/lib') as $dir) {
-			$validate = exec("/sbin/mount | /usr/bin/grep '{$g['unbound_chroot_path']}{$base_folder}{$dir}' 2>&1");
-			if (isset($config['unbound']['python']) && !empty($config['unbound']['python_script'])) {
+			$validate = exec("/sbin/mount | /usr/bin/grep " . escapeshellarg("{$g['unbound_chroot_path']}{$base_folder}{$dir} (nullfs") . " 2>&1");
+			if ($python_mode) {
 
 				// Add DNS Resolver python integration
 				if (empty($validate)) {
 					if (!is_dir("{$g['unbound_chroot_path']}{$base_folder}{$dir}")) {
 						safe_mkdir("{$g['unbound_chroot_path']}{$base_folder}{$dir}");
 					}
-					exec("/sbin/mount_nullfs -o ro " . escapeshellarg("/usr/local{$dir}") . " " . escapeshellarg("{$g['unbound_chroot_path']}{$base_folder}{$dir}") . " 2>&1", $output, $retval);
-					
+					$output = $retval = '';
+					exec("/sbin/mount_nullfs -o ro " . escapeshellarg("/usr/local{$dir}") . ' '
+					    . escapeshellarg("{$g['unbound_chroot_path']}{$base_folder}{$dir}") . " 2>&1", $output, $retval);
+
 					// Disable Unbound python on mount failure
 					if ($retval != 0) {
 						$config['unbound']['python'] = '';
@@ -2233,7 +2249,7 @@ function services_unbound_configure($restart_dhcp = true) {
 				if ($retval == 0) {
 					foreach (array( "/usr/local{$dir}", '/usr/local', '/usr') as $folder) {
 						if (!empty($g['unbound_chroot_path']) && $g['unbound_chroot_path'] != '/' && is_dir("{$g['unbound_chroot_path']}{$folder}")) {
-							rmdir("{$g['unbound_chroot_path']}{$folder}");
+							@rmdir(escapeshellarg("{$g['unbound_chroot_path']}{$folder}"));
 						}
 
 						// Delete remaining subfolders on next loop

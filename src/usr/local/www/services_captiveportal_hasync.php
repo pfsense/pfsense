@@ -111,6 +111,39 @@ if ($_POST['save']) {
 			$rpc_client = new pfsense_xmlrpc_client();
 			$rpc_client->setConnectionData($newcp['backwardsyncip'], $port, $newcp['backwardsyncuser'], $newcp['backwardsyncpassword']);
 
+			$resp = $rpc_client->xmlrpc_method('captive_portal_sync', array('op' => 'get_databases', 'zone' => $cpzone));
+
+			if (!is_array($resp)) {
+				if ($rpc_client->get_error() != '') {
+					$input_errors[] = $rpc_client->get_error();
+				} else {
+					$input_errors[] = gettext('Error during communication with pfSense primary node.');
+				}
+			} else {
+				$connected_users = unserialize(base64_decode($resp['connected_users'])); // Contains array of connected users (will be stored in SQLite DB)
+				$active_vouchers = unserialize(base64_decode($resp['active_vouchers'])); // Contains array of active vouchers (will be stored in active vouchers db)
+				$expired_vouchers = unserialize(base64_decode($resp['expired_vouchers'])); // Contain bitmask of both in use and expired vouchers (will be stored in "used vouchers" db)
+
+				foreach ($connected_users as $id => $user) {
+					$pipeno = captiveportal_get_next_dn_ruleno('auth');
+					$attributes = array();
+					$attributes['allow_time'] = $user['allow_time'];
+					$attributes['session_timeout'] = $user['session_timeout'];
+					$attributes['idle_timeout'] = $user['idle_timeout'];
+					$attributes['session_terminate_time'] = $user['session_terminate_time'];
+					$attributes['interim_interval'] = $user['interim_interval'];
+					$attributes['maxbytes'] = $user['traffic_quota'];
+
+					portal_allow($user['ip'], $user['mac'], $user['username'], base64_decode($user['bpassword']), $attributes,
+					$pipeno, $user['authmethod'], $user['context'], $user['sessionid'], true);
+				}
+				foreach ($expired_vouchers as $roll => $vdb) {
+					voucher_write_used_db($roll, $vdb);
+				}
+				foreach ($active_vouchers as $roll => $vouchers) {
+					voucher_write_active_db($roll, $vouchers);
+				}
+			}
 			if (!$input_errors) {
 				$savemsg = sprintf(gettext('Connected users and used vouchers are now synchronized with %1$s'), $newcp['backwardsyncip']);
 			}

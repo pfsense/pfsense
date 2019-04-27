@@ -384,7 +384,9 @@ EOD;
 			captiveportal_send_server_accounting('on');
 			echo "done\n";
 
-			if (isset($cpcfg['preservedb'])) {
+			if (isset($cpcfg['preservedb']) ||
+			    captiveportal_xmlrpc_sync_get_details($syncip, $syncport, $syncuser, $syncpass)) {
+
 				$connected_users = captiveportal_read_db();
 				if (!empty($connected_users)) {
 					echo "Reconnecting users to captive portal {$cpcfg['zone']}... ";

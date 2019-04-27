@@ -120,9 +120,12 @@ if ($_POST['save']) {
 					$input_errors[] = gettext('Error during communication with pfSense primary node.');
 				}
 			} else {
-				$connected_users = unserialize(base64_decode($resp['connected_users'])); // Contains array of connected users (will be stored in SQLite DB)
-				$active_vouchers = unserialize(base64_decode($resp['active_vouchers'])); // Contains array of active vouchers (will be stored in active vouchers db)
-				$expired_vouchers = unserialize(base64_decode($resp['expired_vouchers'])); // Contain bitmask of both in use and expired vouchers (will be stored in "used vouchers" db)
+				// Contains array of connected users (will be stored in SQLite DB)
+				$connected_users = unserialize(base64_decode($resp['connected_users']));
+				// Contains array of active vouchers (will be stored in active vouchers db)
+				$active_vouchers = unserialize(base64_decode($resp['active_vouchers']));
+				// Contain bitmask of both in use and expired vouchers (will be stored in "used vouchers" db)
+				$expired_vouchers = unserialize(base64_decode($resp['expired_vouchers']));
 
 				foreach ($connected_users as $id => $user) {
 					$pipeno = captiveportal_get_next_dn_ruleno('auth');
@@ -134,8 +137,8 @@ if ($_POST['save']) {
 					$attributes['interim_interval'] = $user['interim_interval'];
 					$attributes['maxbytes'] = $user['traffic_quota'];
 
-					portal_allow($user['ip'], $user['mac'], $user['username'], base64_decode($user['bpassword']), $attributes,
-					$pipeno, $user['authmethod'], $user['context'], $user['sessionid'], true);
+					portal_allow($user['ip'], $user['mac'], $user['username'], base64_decode($user['bpassword']), null,
+					    $attributes, $pipeno, $user['authmethod'], $user['context'], $user['sessionid'], true);
 				}
 				foreach ($expired_vouchers as $roll => $vdb) {
 					voucher_write_used_db($roll, $vdb);

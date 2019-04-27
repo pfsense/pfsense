@@ -190,7 +190,7 @@ function voucher_expire($voucher_received, $ha_forward_to_other_node = true) {
 		}
 		unset($active_vouchers);
 
-		/* Trigger a sync of the vouchers on config */
+		/* perform in-use vouchers expiration using check_reload_status */
 		send_event("service sync vouchers");
 	}
 
@@ -394,7 +394,7 @@ function voucher_auth($voucher_received, $test = 0, $carp_loop = false) {
 		);
 	}
 
-	/* Trigger a sync of the vouchers on config */
+	/* perform in-use vouchers expiration using check_reload_status */
 	send_event("service sync vouchers");
 
 	unlock($voucherlck);
@@ -402,7 +402,7 @@ function voucher_auth($voucher_received, $test = 0, $carp_loop = false) {
 	return $total_minutes;
 }
 
-function voucher_configure($sync = false) {
+function voucher_configure() {
 	global $config, $g, $cpzone;
 
 	if (is_array($config['voucher'])) {
@@ -411,7 +411,7 @@ function voucher_configure($sync = false) {
 				echo gettext("Enabling voucher support... ");
 			}
 			$cpzone = $voucherzone;
-			$error = voucher_configure_zone($sync);
+			$error = voucher_configure_zone();
 			if (platform_booting()) {
 				if ($error) {
 					echo "error\n";
@@ -423,15 +423,11 @@ function voucher_configure($sync = false) {
 	}
 }
 
-function voucher_configure_zone($sync = false) {
+function voucher_configure_zone() {
 	global $config, $g, $cpzone;
 
 	if (!isset($config['voucher'][$cpzone]['enable'])) {
 		return 0;
-	}
-
-	if ($sync == true) {
-		captiveportal_syslog("Writing voucher db from sync data...");
 	}
 
 	$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
@@ -459,38 +455,6 @@ function voucher_configure_zone($sync = false) {
 	fclose($fd);
 	@chmod("{$g['varetc_path']}/voucher_{$cpzone}.cfg", 0600);
 	unlock($voucherlck);
-
-	if ((platform_booting() || $sync == true) && is_array($config['voucher'][$cpzone]['roll'])) {
-
-		$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
-
-		// create active and used DB per roll on ramdisk from config
-		foreach ($config['voucher'][$cpzone]['roll'] as $rollent) {
-
-			$roll = $rollent['number'];
-			$len = ($rollent['count'] >> 3) + 1;
-			if (strlen(base64_decode($rollent['used'])) != $len) {
-				$rollent['used'] = base64_encode(str_repeat("\000", $len));
-			}
-			voucher_write_used_db($roll, $rollent['used']);
-			$minutes = $rollent['minutes'];
-			$active_vouchers = array();
-			$a_active = &$rollent['active'];
-			if (is_array($a_active)) {
-				foreach ($a_active as $activent) {
-					$voucher = $activent['voucher'];
-					$timestamp = $activent['timestamp'];
-					$minutes = $activent['minutes'];
-					// its tempting to check for expired timestamps, but during
-					// bootup, we most likely don't have the correct time.
-					$active_vouchers[$voucher] = "$timestamp,$minutes";
-				}
-			}
-			voucher_write_active_db($roll, $active_vouchers);
-		}
-
-		unlock($voucherlck);
-	}
 
 	return 0;
 }
@@ -534,11 +498,8 @@ function voucher_read_active_db($roll) {
 				}
 			}
 			fclose($fd);
-			if ($dirty) { // if we found expired entries, lets save our snapshot
+			if ($dirty) { // if we found expired entries, lets remove them
 				voucher_write_active_db($roll, $active);
-
-				/* Trigger a sync of the vouchers on config */
-				send_event("service sync vouchers");
 			}
 		}
 	}
@@ -613,59 +574,22 @@ function voucher_log($priority, $message) {
 	closelog();
 }
 
-/* Save active and used voucher DB into XML config and write it to flash
+/* Perform natural expiration of vouchers
  * Called during reboot -> system_reboot_cleanup() and every active voucher change
  */
 function voucher_save_db_to_config() {
-	global $config, $g, $cpzone;
+	global $config, $g;
 
 	if (is_array($config['voucher'])) {
-		foreach ($config['voucher'] as $voucherzone => $vcfg) {
-			$cpzone = $voucherzone;
-			voucher_save_db_to_config_zone();
+		foreach ($config['voucher'] as $zone => $vcfg) {
+			if (isset($config['voucher'][$zone]['enable']) && is_array($config['voucher'][$zone]['roll'])) {
+				foreach ($config['voucher'][$zone]['roll'] as $key => $rollent) {
+					// read_active_db will remove expired vouchers that are still active
+					voucher_read_active_db($rollent['number']);
+				}
+			}
 		}
 	}
-}
-
-function voucher_save_db_to_config_zone() {
-	global $config, $g, $cpzone;
-
-	if (!isset($config['voucher'][$cpzone]['enable'])) {
-		return;   // no vouchers or don't want to save DB's
-	}
-
-	if (!is_array($config['voucher'][$cpzone]['roll'])) {
-		return;
-	}
-
-	$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
-
-	// walk all active rolls and save runtime DB's to flash
-	$a_roll = &$config['voucher'][$cpzone]['roll'];
-	while (list($key, $value) = each($a_roll)) {
-		$rollent = &$a_roll[$key];
-		$roll = $rollent['number'];
-		$bitmask = voucher_read_used_db($roll);
-		$rollent['used'] = base64_encode($bitmask);
-		$active_vouchers = voucher_read_active_db($roll);
-		$db = array();
-		$dbi = 1;
-		foreach ($active_vouchers as $voucher => $line) {
-			list($timestamp, $minutes) = explode(",", $line);
-			$activent['voucher'] = $voucher;
-			$activent['timestamp'] = $timestamp;
-			$activent['minutes'] = $minutes;
-			$db["v{$dbi}"] = $activent;
-			$dbi++;
-		}
-		$rollent['active'] = $db;
-		unset($active_vouchers);
-	}
-
-	unlock($voucherlck);
-
-	write_config(gettext("Syncing vouchers"));
-	return;
 }
 
 ?>

@@ -803,6 +803,10 @@ class pfsense_xmlrpc_server {
 			$entries = unserialize(base64_decode($arguments['entries']));
 
 			return captiveportal_remove_entries($entries, true);
+		} elseif ($arguments['op'] === 'disconnect_all') {
+			$arguments = unserialize(base64_decode($arguments['arguments']));
+
+			return captiveportal_disconnect_all($arguments['term_cause'], $arguments['logout_reason'], true);
 		}
 	}
 

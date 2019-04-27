@@ -593,7 +593,7 @@ function captiveportal_ipfw_ruleno($id) {
 
 /* reinit will disconnect all users, be careful! */
 function captiveportal_init_rules($reinit = false) {
-	global $config, $g, $cpzone, $cpzoneid;
+	global $config, $g, $cpzone;
 
 	if (!isset($config['captiveportal'][$cpzone]['enable'])) {
 		return;
@@ -606,6 +606,7 @@ function captiveportal_init_rules($reinit = false) {
 	captiveportal_free_dnrules(2000, 64500, false, $reinit);
 	unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
 
+	$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 	$skipto = captiveportal_ipfw_ruleno($cpzoneid);
 
 	$cprules = '';
@@ -765,7 +766,9 @@ function captiveportal_init_rules($reinit = false) {
 
 /* Delete all rules related to specific cpzone */
 function captiveportal_delete_rules($pipes_to_remove = array(), $clear_auth_rules = true) {
-	global $g, $cpzoneid, $cpzone;
+	global $g, $config, $cpzone;
+
+	$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 
 	$skipto1 = captiveportal_ipfw_ruleno($cpzoneid);
 	$skipto2 = $skipto1 + $g['captiveportal_rules_interval'];
@@ -1246,9 +1249,26 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 }
 
 /* remove all clients */
-function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNECT") {
+function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNECT", $carp_loop = false) {
 	global $g, $config, $cpzone, $cpzoneid;
 
+	if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport, $syncuser, $syncpass, $carp_loop)) {
+		$rpc_client = new pfsense_xmlrpc_client();
+		$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+		$rpc_client->set_noticefile("CaptivePortalUserSync");
+		$arguments = array(
+			'term_cause' => $term_cause,
+			'logout_reason' => $logoutReason
+		);
+
+		$rpc_client->xmlrpc_method('captive_portal_sync',
+			array(
+				'op' => 'disconnect_all',
+				'zone' => $cpzone,
+				'arguments' => base64_encode(serialize($arguments))
+			)
+		);
+	}
 	/* check if we're pruning old entries and eventually wait */
 	$rcprunelock = try_lock("rcprunecaptiveportal{$cpzone}", 15);
 
@@ -1268,7 +1288,8 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 	$cpdb = captiveportal_read_db();
 	$unsetindexes = array_column($cpdb,5);
 	if (!empty($unsetindexes)) {
-		captiveportal_remove_entries($unsetindexes);
+		// High Availability : do not sync removed entries
+		captiveportal_remove_entries($unsetindexes, true);
 	}
 
 	/* reinit ipfw rules */
@@ -1276,6 +1297,7 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 
 	unlock($cpdblck);
 	unlock($rcprunelock);
+	return true;
 }
 
 /* send RADIUS acct stop for all current clients connected with RADIUS servers */

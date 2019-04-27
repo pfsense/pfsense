@@ -1655,6 +1655,7 @@ function openvpn_resync_all($interface = "") {
 		$config['openvpn'] = array();
 	}
 
+	openlog("", LOG_PID, LOG_LOCAL0);
 	if ($interface <> "") {
 		log_error(sprintf(gettext("Resyncing OpenVPN instances for interface %s."), convert_friendly_interface_to_friendly_descr($interface)));
 	} else {

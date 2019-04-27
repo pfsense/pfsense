@@ -1200,9 +1200,9 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null) {
 		}
 	}
 
-	// XMLRPC Call over to the master Voucher node
+	// XMLRPC Call over to the Voucher node in standby
 	if (xmlrpc_sync_voucher_details($syncip, $syncport,
-	    $vouchersyncusername, $syncpass)) {
+	    $vouchersyncusername, $syncpass) && !captiveportal_ha_is_node_in_backup_mode()) {
 		$remote_status = xmlrpc_sync_voucher_disconnect($dbent, $syncip,
 		    $syncport, $syncpass, $vouchersyncusername, $term_cause,
 		    $stop_time);
@@ -2840,5 +2840,25 @@ function captiveportal_isip_logged($clientip) {
 	foreach ($cpdb as $cpentry) {
 		return $cpentry;
 	}
+}
+
+// Return true if the CARP status of at least one interface of a captive portal zone is in backup mode
+function captiveportal_ha_is_node_in_backup_mode() {
+	global $config, $cpzone;
+
+	$cpinterfaces = explode(",", $config['captiveportal'][$cpzone]['interface']);
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($cpinterfaces as $interface) {
+			foreach ($config['virtualip']['vip'] as $vip) {
+				if ($vip['interface'] == $interface && $vip['mode'] == "carp") {
+					if (get_carp_interface_status("_vip{$vip['uniqid']}") != "MASTER") {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 ?>

@@ -32,7 +32,7 @@ if (!function_exists('captiveportal_syslog')) {
 }
 
 function xmlrpc_sync_voucher_details(&$syncip, &$port, &$username, &$password) {
-	global $config;
+	global $config, $cpzone;
 
 	if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
 		$syncip = $config['voucher'][$cpzone]['vouchersyncdbip'];
@@ -79,7 +79,7 @@ function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $usern
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
 	\$cpzone = "$cpzone";
-	return voucher_expire("$vouchers");
+	return voucher_expire("$vouchers", false);
 
 EOF;
 	$rpc_client = new pfsense_xmlrpc_client();
@@ -153,12 +153,12 @@ EOF;
 	return $resp['timeleft'];
 }
 
-function voucher_expire($voucher_received) {
+function voucher_expire($voucher_received, $ha_forward_to_other_node = true) {
 	global $g, $config, $cpzone, $cpzoneid;
 
-	// XMLRPC Call over to the master Voucher node
+	// XMLRPC Call over to the other Voucher node (not necessarily the one in standby) 
 	if (xmlrpc_sync_voucher_details($syncip, $syncport,
-	    $vouchersyncusername, $syncpass)) {
+	    $vouchersyncusername, $syncpass) && $ha_forward_to_other_node) {
 		xmlrpc_sync_voucher_expire($voucher_received, $syncip,
 		    $syncport, $syncpass, $vouchersyncusername);
 	}
@@ -285,9 +285,9 @@ function voucher_auth($voucher_received, $test = 0) {
 		return 0;
 	}
 
-	// XMLRPC Call over to the master Voucher node
+	// XMLRPC Call over to the Voucher node in standby
 	if (xmlrpc_sync_voucher_details($syncip, $syncport,
-	    $vouchersyncusername, $syncpass)) {
+	    $vouchersyncusername, $syncpass) && !captiveportal_ha_is_node_in_backup_mode()) {
 		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received,
 		    $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}

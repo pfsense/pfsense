@@ -744,6 +744,54 @@ class pfsense_xmlrpc_server {
 	}
 
 	/**
+	 * Wrapper for captiveportal connected users and
+	 * active/expired vouchers synchronization
+	 *
+	 * @param array $arguments
+	 *
+	 * @return array
+	 */
+	public function captive_portal_sync($arguments) {
+		$this->auth();
+		// Note : no protection against CARP loop is done here, and this is in purpose.
+		// This function is used for bi-directionnal sync, which is precisely what CARP loop protection is supposed to prevent.
+		// CARP loop has to be managed within functions using captive_portal_sync()
+		global $g, $config, $cpzone;
+
+		if (empty($arguments['op']) || empty($arguments['zone']) || empty($config['captiveportal'][$arguments['zone']])) {
+			return false;
+		}
+		$cpzone = $arguments['zone'];
+
+		if ($arguments['op'] === 'get_databases') {
+			$active_vouchers = array();
+			$expired_vouchers = array();
+
+			if (is_array($config['voucher'][$cpzone]['roll'])) {
+				foreach($config['voucher'][$cpzone]['roll'] as $id => $roll) {
+					$expired_vouchers[$roll['number']] = base64_encode(voucher_read_used_db($roll['number']));
+					$active_vouchers[$roll['number']] = voucher_read_active_db($roll['number']);
+				}
+			}
+			// base64 is here for safety reasons, as we don't fully control
+			// the content of these arrays.
+			$returndata = array('connected_users' => base64_encode(serialize(captiveportal_read_db())),
+			'active_vouchers' => base64_encode(serialize($active_vouchers)),
+			'expired_vouchers' => base64_encode(serialize($expired_vouchers)));
+
+			return $returndata;
+		} elseif ($arguments['op'] === 'connect_user') {
+			$user = unserialize(base64_decode($arguments['user']));
+			$user['attributes']['allow_time'] = $user['allow_time'];
+
+			// pipeno might be different between primary and secondary
+			$pipeno = captiveportal_get_next_dn_ruleno('auth');
+			return portal_allow($user['clientip'], $user['clientmac'], $user['username'], $user['password'], null,
+			    $user['attributes'], $pipeno, $user['authmethod'], $user['context'], $user['sessionid']);
+		}
+	}
+
+	/**
 	 * Wrapper for configuring CARP interfaces
 	 *
 	 * @return bool

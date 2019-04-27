@@ -31,10 +31,11 @@ if (!function_exists('captiveportal_syslog')) {
 	require_once("captiveportal.inc");
 }
 
-function captiveportal_xmlrpc_sync_get_details(&$syncip, &$port, &$username, &$password) {
+function captiveportal_xmlrpc_sync_get_details(&$syncip, &$port, &$username, &$password, $carp_loop = false) {
 	global $config, $cpzone;
 
-	if (isset($config['captiveportal'][$cpzone]['enablebackwardsync'])) {
+	if (isset($config['captiveportal'][$cpzone]['enablebackwardsync']) && !$carp_loop
+	    && captiveportal_ha_is_node_in_backup_mode($cpzone)) {
 		$syncip = $config['captiveportal'][$cpzone]['backwardsyncip'];
 		$username = $config['captiveportal'][$cpzone]['backwardsyncuser'];
 		$password = $config['captiveportal'][$cpzone]['backwardsyncpassword'];
@@ -51,7 +52,8 @@ function captiveportal_xmlrpc_sync_get_details(&$syncip, &$port, &$username, &$p
 
 	if (!is_array($config['hasync']) ||
 	    empty($config['hasync']['synchronizetoip']) ||
-	    $config['hasync']['synchronizecaptiveportal'] == "") {
+	    $config['hasync']['synchronizecaptiveportal'] == "" ||
+	    $carp_loop == true) {
 		return false;
 	}
 

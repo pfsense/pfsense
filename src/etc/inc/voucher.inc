@@ -100,44 +100,6 @@ EOF;
 	return $resp;
 }
 
-function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
-	global $config, $cpzone;
-	require_once("xmlrpc_client.inc");
-
-	/* Construct code that is run on remote machine */
-	$execcmd = <<<EOF
-	global \$cpzone, \$config;
-	require_once('/etc/inc/voucher.inc');
-	\$cpzone = "$cpzone";
-	\$timeleft = voucher_auth("$voucher_received");
-	\$toreturn = array();
-	\$toreturn['timeleft'] = \$timeleft;
-	\$toreturn['voucher'] = array();
-	if (is_array(\$config['voucher'][\$cpzone]['roll'])) {
-		\$toreturn['voucher']['roll'] = \$config['voucher'][\$cpzone]['roll'];
-	}
-
-EOF;
-	$rpc_client = new pfsense_xmlrpc_client();
-	$rpc_client->setConnectionData($syncip, $port, $username, $password);
-	$resp = $rpc_client->xmlrpc_exec_php($execcmd);
-
-	if (!is_array($config['voucher'])) {
-		$config['voucher'] = array();
-	}
-
-	if (is_array($resp['voucher']['roll'])) {
-		$config['voucher'][$cpzone]['roll'] = $resp['voucher']['roll'];
-		write_config(sprintf(gettext('Captive Portal Voucher database synchronized with %1$s:%2$s'), $syncip, $port));
-		voucher_configure_zone(true);
-		unset($resp['voucher']);
-	} else if (!isset($resp['timeleft'])) {
-		return 0;
-	}
-
-	return $resp['timeleft'];
-}
-
 function voucher_expire($voucher_received, $ha_forward_to_other_node = true) {
 	global $g, $config, $cpzone, $cpzoneid;
 
@@ -263,18 +225,11 @@ function voucher_expire($voucher_received, $ha_forward_to_other_node = true) {
  * If $test is set, simply test the voucher. Don't change anything
  * but return a more verbose error and result message back
  */
-function voucher_auth($voucher_received, $test = 0) {
+function voucher_auth($voucher_received, $test = 0, $carp_loop = false) {
 	global $g, $config, $cpzone, $dbc;
 
 	if (!isset($config['voucher'][$cpzone]['enable'])) {
 		return 0;
-	}
-
-	// XMLRPC Call over to the node in backup mode
-	if (xmlrpc_sync_get_details($syncip, $syncport,
-	    $vouchersyncusername, $syncpass) && !captiveportal_ha_is_node_in_backup_mode($cpzone)) {
-		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received,
-		    $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}
 
 	$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
@@ -389,15 +344,6 @@ function voucher_auth($voucher_received, $test = 0) {
 		return $total_minutes;       // well, at least one voucher had errors. Say NO ACCESS
 	}
 
-	// If we did a XMLRPC sync earlier check the timeleft
-	if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
-		if (!is_null($remote_time_used)) {
-			$total_minutes = $remote_time_used;
-		} else if ($remote_time_used < $total_minutes) {
-			$total_minutes -= $remote_time_used;
-		}
-	}
-
 	// All given vouchers were valid and this isn't simply a test.
 	// Write back the used DB's
 	if (is_array($bitstring)) {
@@ -425,6 +371,28 @@ function voucher_auth($voucher_received, $test = 0) {
 
 	$active_vouchers[$first_voucher_roll][$first_voucher] = "$timestamp,$minutes";
 	voucher_write_active_db($first_voucher_roll, $active_vouchers[$first_voucher_roll]);
+
+	// XMLRPC Call over to the other node
+	if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport,
+	    $syncuser, $syncpass, $carp_loop)) {
+		$rpc_client = new pfsense_xmlrpc_client();
+		$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+		$rpc_client->set_noticefile("CaptivePortalVouchersSync");
+		$arguments = array(
+			'active_and_used_vouchers_bitmasks' => $bitstring,
+			'active_vouchers' => array(
+				$first_voucher_roll => $active_vouchers[$first_voucher_roll]
+			)
+		);
+
+		$rpc_client->xmlrpc_method('captive_portal_sync',
+			array(
+				'op' => 'write_vouchers',
+				'zone' => $cpzone,
+				'arguments' => base64_encode(serialize($arguments))
+			)
+		);
+	}
 
 	/* Trigger a sync of the vouchers on config */
 	send_event("service sync vouchers");

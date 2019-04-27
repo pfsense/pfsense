@@ -807,6 +807,24 @@ class pfsense_xmlrpc_server {
 			$arguments = unserialize(base64_decode($arguments['arguments']));
 
 			return captiveportal_disconnect_all($arguments['term_cause'], $arguments['logout_reason'], true);
+		} elseif ($arguments['op'] === 'write_vouchers') {
+			$arguments = unserialize(base64_decode($arguments['arguments']));
+
+			if (is_array($arguments['active_and_used_vouchers_bitmasks'])) {
+				foreach ($arguments['active_and_used_vouchers_bitmasks'] as $roll => $used) {
+					if (is_array($used)) {
+						foreach ($used as $u) {
+							voucher_write_used_db($roll, base64_encode($u));
+						}
+					} else {
+						voucher_write_used_db($roll, base64_encode($used));
+					}
+				}
+			}
+			foreach ($arguments['active_vouchers'] as $roll => $active_vouchers) {
+				voucher_write_active_db($roll, $active_vouchers);
+			}
+			return true;
 		}
 	}
 

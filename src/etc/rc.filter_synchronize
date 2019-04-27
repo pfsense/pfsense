@@ -354,7 +354,10 @@ if (is_array($config['hasync'])) {
 		}
 		$sections[] = 'schedules';
 	}
-	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['captiveportal'])) {
+	if ($hasync['synchronizecaptiveportal'] != "") {
+		if (!is_array($config['captiveportal'])) {
+			$config['captiveportal'] = array();
+		}
 		$sections[] = 'captiveportal';
 	}
 	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['voucher'])) {

@@ -232,22 +232,6 @@ class pfsense_xmlrpc_server {
 			$syncd_full_sections[] = $section;
 		}
 
-		/* Create a list of CP zones to be deleted locally */
-		$cp_to_del = array();
-		if (is_array($config['captiveportal'])) {
-			if (is_array($sections['captiveportal'])) {
-				$remote_cp = $sections['captiveportal'];
-			} else {
-				$remote_cp = array();
-			}
-			foreach ($config['captiveportal'] as $zone => $item) {
-				if (!isset($remote_cp[$zone])) {
-					$cp_to_del[] = $zone;
-				}
-			}
-			unset($remote_cp);
-		}
-
 		/* Only touch users if users are set to synchronize from the primary node
 		 * See https://redmine.pfsense.org/issues/8450
 		 */
@@ -428,18 +412,6 @@ class pfsense_xmlrpc_server {
 		/* For vip section, first keep items sent from the master */
 		$config = array_merge_recursive_unique($config, $sections);
 
-		/* Remove local CP zones removed remote */
-		foreach ($cp_to_del as $zone) {
-			$cpzone = $zone;
-			$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
-			unset($config['captiveportal'][$cpzone]['enable']);
-			captiveportal_configure_zone(
-			    $config['captiveportal'][$cpzone]);
-			unset($config['captiveportal'][$cpzone]);
-			if (isset($config['voucher'][$cpzone])) {
-				unset($config['voucher'][$cpzone]);
-			}
-		}
 
 		/* Remove locally items removed remote */
 		foreach ($voucher as $zone => $item) {

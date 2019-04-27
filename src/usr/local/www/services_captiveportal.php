@@ -611,12 +611,21 @@ $section->addInput(new Form_Input(
 	$pconfig['blockedmacsurl']
 ))->setHelp('Blocked MAC addresses will be redirected to this URL when attempting access.');
 
-$section->addInput(new Form_Checkbox(
+if (captiveportal_xmlrpc_sync_get_details($tmpsyncip, $tmpport, $tmpusername, $tmppassword)) {
+	$section->addInput(new Form_Checkbox(
+	'preservedb_disabled',
+	'Preserve users database',
+	'Preserve connected users across reboot',
+	'yes'
+	))->setDisabled()->setHelp("If enabled, connected users won't be disconnected during a pfSense reboot. This setting is not editable because High Availability is enabled.");
+} else {
+	$section->addInput(new Form_Checkbox(
 	'preservedb',
 	'Preserve users database',
 	'Preserve connected users across reboot',
 	$pconfig['preservedb']
-))->setHelp("If enabled, connected users won't be disconnected during a pfSense reboot.");
+	))->setHelp("If enabled, connected users won't be disconnected during a pfSense reboot.");
+}
 
 $section->addInput(new Form_Checkbox(
 	'noconcurrentlogins',
@@ -1164,6 +1173,7 @@ events.push(function() {
 		hideInput('redirurl', hide);
 		hideInput('blockedmacsurl', hide);
 		hideCheckbox('preservedb', hide);
+		hideCheckbox('preservedb_disabled', hide);
 		hideCheckbox('noconcurrentlogins', hide);
 		hideCheckbox('nomacfilter', hide);
 		hideCheckbox('passthrumacadd', hide);

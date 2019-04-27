@@ -232,6 +232,21 @@ class pfsense_xmlrpc_server {
 			$syncd_full_sections[] = $section;
 		}
 
+		/* If captive portal sync is enabled on primary node, remove local CP on the secondary */
+		if (is_array($config['captiveportal']) && is_array($sections['captiveportal'])) {
+			foreach ($config['captiveportal'] as $zone => $item) {
+				if (!isset($sections['captiveportal'][$zone])) {
+					$cpzone = $zone;
+					unset($config['captiveportal'][$cpzone]['enable']);
+					captiveportal_configure_zone($config['captiveportal'][$cpzone]);
+					unset($config['captiveportal'][$cpzone]);
+					if (isset($config['voucher'][$cpzone])) {
+						unset($config['voucher'][$cpzone]);
+					}
+				}
+			}
+		}
+
 		/* Only touch users if users are set to synchronize from the primary node
 		 * See https://redmine.pfsense.org/issues/8450
 		 */

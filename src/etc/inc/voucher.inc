@@ -78,37 +78,8 @@ function captiveportal_xmlrpc_sync_get_details(&$syncip, &$port, &$username, &$p
 	return true;
 }
 
-function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $username) {
-	global $cpzone;
-	require_once("xmlrpc_client.inc");
-
-	/* Construct code that is run on remote machine */
-	$execcmd = <<<EOF
-	global \$cpzone;
-	require_once('/etc/inc/captiveportal.inc');
-	require_once('/etc/inc/voucher.inc');
-	\$cpzone = "$cpzone";
-	return voucher_expire("$vouchers", false);
-
-EOF;
-	$rpc_client = new pfsense_xmlrpc_client();
-	$rpc_client->setConnectionData($syncip, $port, $username, $password);
-	$resp = $rpc_client->xmlrpc_exec_php($execcmd);
-	if (empty($resp)) {
-		return false;
-	}
-	return $resp;
-}
-
-function voucher_expire($voucher_received, $ha_forward_to_other_node = true) {
+function voucher_expire($voucher_received, $carp_loop = false) {
 	global $g, $config, $cpzone, $cpzoneid;
-
-	// XMLRPC Call over to the other node (not necessarily the one in standby) 
-	if (xmlrpc_sync_get_details($syncip, $syncport,
-	    $vouchersyncusername, $syncpass) && $ha_forward_to_other_node) {
-		xmlrpc_sync_voucher_expire($voucher_received, $syncip,
-		    $syncport, $syncpass, $vouchersyncusername);
-	}
 
 	$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
 
@@ -188,10 +159,10 @@ function voucher_expire($voucher_received, $ha_forward_to_other_node = true) {
 		foreach ($active_vouchers as $roll => $active) {
 			voucher_write_active_db($roll, $active);
 		}
-		unset($active_vouchers);
-
 		/* perform in-use vouchers expiration using check_reload_status */
 		send_event("service sync vouchers");
+	} else {
+		$active_vouchers = array();
 	}
 
 	// Write back the used DB's
@@ -205,7 +176,6 @@ function voucher_expire($voucher_received, $ha_forward_to_other_node = true) {
 				voucher_write_used_db($roll, base64_encode($used));
 			}
 		}
-		unset($bitstring);
 	}
 
 	unlock($voucherlck);
@@ -215,6 +185,25 @@ function voucher_expire($voucher_received, $ha_forward_to_other_node = true) {
 		captiveportal_remove_entries($unsetindexes);
 	}
 
+	// XMLRPC Call over to the other node
+	if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport,
+	    $syncuser, $syncpass, $carp_loop)) {
+		$rpc_client = new pfsense_xmlrpc_client();
+		$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+		$rpc_client->set_noticefile("CaptivePortalVouchersSync");
+		$arguments = array(
+			'active_and_used_vouchers_bitmasks' => $bitstring,
+			'active_vouchers' => $active_vouchers
+		);
+
+		$rpc_client->xmlrpc_method('captive_portal_sync',
+			array(
+				'op' => 'write_vouchers',
+				'zone' => $cpzone,
+				'arguments' => base64_encode(serialize($arguments))
+			)
+		);
+	}
 	return true;
 }
 

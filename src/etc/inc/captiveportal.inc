@@ -1057,7 +1057,7 @@ function captiveportal_prune_old() {
 	captiveportal_prune_old_automac();
 
 	if ($voucher_needs_sync == true) {
-		/* Trigger a sync of the vouchers on config */
+		/* perform in-use vouchers expiration using check_reload_status */
 		send_event("service sync vouchers");
 	}
 
@@ -1127,7 +1127,7 @@ function captiveportal_prune_old_automac() {
 }
 
 /* remove a single client according to the DB entry */
-function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null) {
+function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null, $carp_loop = false) {
 	global $g, $config, $cpzone, $cpzoneid;
 
 	$stop_time = (empty($stop_time)) ? time() : $stop_time;
@@ -1203,13 +1203,26 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null) {
 	}
 
 	// XMLRPC Call over to the backup node if necessary
-	if (xmlrpc_sync_get_details($syncip, $syncport,
-	    $vouchersyncusername, $syncpass) && !captiveportal_ha_is_node_in_backup_mode($cpzone)) {
-		$remote_status = xmlrpc_sync_voucher_disconnect($dbent, $syncip,
-		    $syncport, $syncpass, $vouchersyncusername, $term_cause,
-		    $stop_time);
-	}
+	if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport,
+	    $syncuser, $syncpass, $carp_loop)) {
+		$rpc_client = new pfsense_xmlrpc_client();
+		$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+		$rpc_client->set_noticefile("CaptivePortalUserSync");
+		$arguments = array(
+			'sessionid' => $dbent[5],
+			'term_cause' => $term_cause,
+			'stop_time' => $stop_time
+		);
 
+		$rpc_client->xmlrpc_method('captive_portal_sync',
+			array(
+				'op' => 'disconnect_user',
+				'zone' => $cpzone,
+				'session' => base64_encode(serialize($arguments))
+			)
+		);
+	}
+	return true;
 }
 
 /* remove a single client by sessionid */
@@ -1853,7 +1866,8 @@ function captiveportal_read_db($query = "") {
 	return $cpdb;
 }
 
-function captiveportal_remove_entries($remove) {
+function captiveportal_remove_entries($remove, $carp_loop = false) {
+	global $cpzone;
 
 	if (!is_array($remove) || empty($remove)) {
 		return;
@@ -1868,6 +1882,20 @@ function captiveportal_remove_entries($remove) {
 	}
 	$query .= ")";
 	captiveportal_write_db($query);
+
+	if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport, $syncuser, $syncpass, $carp_loop)) {
+		$rpc_client = new pfsense_xmlrpc_client();
+		$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+		$rpc_client->set_noticefile("CaptivePortalUserSync");
+		$rpc_client->xmlrpc_method('captive_portal_sync',
+			array(
+				'op' => 'remove_entries',
+				'zone' => $cpzone,
+				'entries' => base64_encode(serialize($remove))
+			)
+		);
+	}
+	return true;
 }
 
 /* write captive portal DB */

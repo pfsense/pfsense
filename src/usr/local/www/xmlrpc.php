@@ -788,6 +788,21 @@ class pfsense_xmlrpc_server {
 			$pipeno = captiveportal_get_next_dn_ruleno('auth');
 			return portal_allow($user['clientip'], $user['clientmac'], $user['username'], $user['password'], null,
 			    $user['attributes'], $pipeno, $user['authmethod'], $user['context'], $user['sessionid']);
+		} elseif ($arguments['op'] === 'disconnect_user') {
+			$session = unserialize(base64_decode($arguments['session']));
+			/* read database again, as pipeno might be different between primary & secondary */
+			$sessionid = SQLite3::escapeString($session['sessionid']);
+			$local_dbentry = captiveportal_read_db("WHERE sessionid = '{$sessionid}'");
+
+			if (!empty($local_dbentry) && count($local_dbentry) == 1) {
+				return captiveportal_disconnect($local_dbentry[0], $session['term_cause'], $session['stop_time'], true);
+			} else {
+				return false;
+			}
+		} elseif ($arguments['op'] === 'remove_entries') {
+			$entries = unserialize(base64_decode($arguments['entries']));
+
+			return captiveportal_remove_entries($entries, true);
 		}
 	}
 

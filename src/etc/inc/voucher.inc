@@ -100,30 +100,6 @@ EOF;
 	return $resp;
 }
 
-function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $username, $term_cause = 1, $stop_time = null) {
-	global $cpzone;
-	require_once("xmlrpc_client.inc");
-	/* Construct code that is run on remote machine */
-	$dbent_str = addslashes(serialize($dbent));
-	$tmp_stop_time = (isset($stop_time)) ? $stop_time : "null";
-	$execcmd = <<<EOF
-	global \$cpzone;
-	require_once('/etc/inc/captiveportal.inc');
-	require_once('/etc/inc/voucher.inc');
-	\$cpzone = "$cpzone";
-	\$dbent = unserialize("$dbent_str");
-	return captiveportal_disconnect(\$dbent, $term_cause, $tmp_stop_time);
-
-EOF;
-	$rpc_client = new pfsense_xmlrpc_client();
-	$rpc_client->setConnectionData($syncip, $port, $username, $password);
-	$resp = $rpc_client->xmlrpc_exec_php($execcmd);
-	if (empty($resp)) {
-		return false;
-	}
-	return $resp;
-}
-
 function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
 	global $config, $cpzone;
 	require_once("xmlrpc_client.inc");

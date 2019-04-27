@@ -739,6 +739,7 @@ class pfsense_xmlrpc_server {
 		}
 
 		captiveportal_configure();
+		voucher_configure();
 
 		return true;
 	}

@@ -31,14 +31,21 @@ if (!function_exists('captiveportal_syslog')) {
 	require_once("captiveportal.inc");
 }
 
-function xmlrpc_sync_voucher_details(&$syncip, &$port, &$username, &$password) {
+function captiveportal_xmlrpc_sync_get_details(&$syncip, &$port, &$username, &$password) {
 	global $config, $cpzone;
 
-	if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
-		$syncip = $config['voucher'][$cpzone]['vouchersyncdbip'];
-		$port = $config['voucher'][$cpzone]['vouchersyncport'];
-		$username = $config['voucher'][$cpzone]['vouchersyncusername'];
-		$password = $config['voucher'][$cpzone]['vouchersyncpass'];
+	if (isset($config['captiveportal'][$cpzone]['enablebackwardsync'])) {
+		$syncip = $config['captiveportal'][$cpzone]['backwardsyncip'];
+		$username = $config['captiveportal'][$cpzone]['backwardsyncuser'];
+		$password = $config['captiveportal'][$cpzone]['backwardsyncpassword'];
+		$port = $config['system']['webgui']['port'];
+		if (empty($port)) { // if port is empty lets rely on the protocol selection
+			if ($config['system']['webgui']['protocol'] == "http") {
+				$port = "80";
+			} else {
+				$port = "443";
+			}
+		}
 		return true;
 	}
 
@@ -156,8 +163,8 @@ EOF;
 function voucher_expire($voucher_received, $ha_forward_to_other_node = true) {
 	global $g, $config, $cpzone, $cpzoneid;
 
-	// XMLRPC Call over to the other Voucher node (not necessarily the one in standby) 
-	if (xmlrpc_sync_voucher_details($syncip, $syncport,
+	// XMLRPC Call over to the other node (not necessarily the one in standby) 
+	if (xmlrpc_sync_get_details($syncip, $syncport,
 	    $vouchersyncusername, $syncpass) && $ha_forward_to_other_node) {
 		xmlrpc_sync_voucher_expire($voucher_received, $syncip,
 		    $syncport, $syncpass, $vouchersyncusername);
@@ -285,8 +292,8 @@ function voucher_auth($voucher_received, $test = 0) {
 		return 0;
 	}
 
-	// XMLRPC Call over to the Voucher node in standby
-	if (xmlrpc_sync_voucher_details($syncip, $syncport,
+	// XMLRPC Call over to the node in backup mode
+	if (xmlrpc_sync_get_details($syncip, $syncport,
 	    $vouchersyncusername, $syncpass) && !captiveportal_ha_is_node_in_backup_mode()) {
 		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received,
 		    $syncip, $syncport, $syncpass, $vouchersyncusername);

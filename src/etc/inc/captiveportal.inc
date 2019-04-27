@@ -1200,8 +1200,8 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null) {
 		}
 	}
 
-	// XMLRPC Call over to the Voucher node in standby
-	if (xmlrpc_sync_voucher_details($syncip, $syncport,
+	// XMLRPC Call over to the backup node if necessary
+	if (xmlrpc_sync_get_details($syncip, $syncport,
 	    $vouchersyncusername, $syncpass) && !captiveportal_ha_is_node_in_backup_mode()) {
 		$remote_status = xmlrpc_sync_voucher_disconnect($dbent, $syncip,
 		    $syncport, $syncpass, $vouchersyncusername, $term_cause,

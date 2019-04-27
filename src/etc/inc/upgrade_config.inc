@@ -6177,6 +6177,25 @@ function upgrade_202_to_203() {
 	}
 }
 
+function upgrade_203_to_204() {
+	global $config, $g;
+
+	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone => $cp) {
+			unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
+
+			if (is_array($config['voucher'][$cpzone])) {
+				if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
+					$config['captiveportal'][$cpzone]['enablebackwardsync'] = '';
+					$config['captiveportal'][$cpzone]['backwardsyncip'] = $config['voucher'][$cpzone]['vouchersyncdbip'];
+					$config['captiveportal'][$cpzone]['backwardsyncuser'] = $config['voucher'][$cpzone]['vouchersyncusername'];
+					$config['captiveportal'][$cpzone]['backwardsyncpassword'] = $config['voucher'][$cpzone]['vouchersyncpass'];
+				}
+			}
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

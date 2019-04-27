@@ -841,10 +841,11 @@ function captiveportal_prune_old() {
 		$trafficquota = $cpcfg['trafficquota'] * 1048576;
 	}
 
-	/* Is there any job to do? */
-	if (!$timeout && !$idletimeout && !$trafficquota && !isset($cpcfg['reauthenticate']) &&
+	/* Is there any job to do? If we are in High Availability sync, are we in backup mode ? */
+	if ((!$timeout && !$idletimeout && !$trafficquota && !isset($cpcfg['reauthenticate']) &&
 	    !isset($cpcfg['radiussession_timeout']) && !isset($cpcfg['radiustraffic_quota']) &&
-	    !isset($vcpcfg['enable']) && !isset($cpcfg['radacct_enable'])) {
+	    !isset($vcpcfg['enable']) && !isset($cpcfg['radacct_enable'])) ||
+	    captiveportal_ha_is_node_in_backup_mode($cpzone)) {
 		return;
 	}
 
@@ -1202,7 +1203,7 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null) {
 
 	// XMLRPC Call over to the backup node if necessary
 	if (xmlrpc_sync_get_details($syncip, $syncport,
-	    $vouchersyncusername, $syncpass) && !captiveportal_ha_is_node_in_backup_mode()) {
+	    $vouchersyncusername, $syncpass) && !captiveportal_ha_is_node_in_backup_mode($cpzone)) {
 		$remote_status = xmlrpc_sync_voucher_disconnect($dbent, $syncip,
 		    $syncport, $syncpass, $vouchersyncusername, $term_cause,
 		    $stop_time);
@@ -2713,7 +2714,8 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 	$cpcfg = $config['captiveportal'][$cpzone];
 	$acctcfg = auth_get_authserver($cpcfg['radacct_server']);
 
-	if (!isset($cpcfg['radacct_enable']) || empty($acctcfg)) {
+	if (!isset($cpcfg['radacct_enable']) || empty($acctcfg) ||
+	    captiveportal_ha_is_node_in_backup_mode($cpzone)) {
 		return null;
 	}
 
@@ -2842,23 +2844,4 @@ function captiveportal_isip_logged($clientip) {
 	}
 }
 
-// Return true if the CARP status of at least one interface of a captive portal zone is in backup mode
-function captiveportal_ha_is_node_in_backup_mode() {
-	global $config, $cpzone;
-
-	$cpinterfaces = explode(",", $config['captiveportal'][$cpzone]['interface']);
-
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($cpinterfaces as $interface) {
-			foreach ($config['virtualip']['vip'] as $vip) {
-				if ($vip['interface'] == $interface && $vip['mode'] == "carp") {
-					if (get_carp_interface_status("_vip{$vip['uniqid']}") != "MASTER") {
-						return true;
-					}
-				}
-			}
-		}
-	}
-	return false;
-}
 ?>

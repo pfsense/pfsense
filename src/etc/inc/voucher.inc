@@ -294,7 +294,7 @@ function voucher_auth($voucher_received, $test = 0) {
 
 	// XMLRPC Call over to the node in backup mode
 	if (xmlrpc_sync_get_details($syncip, $syncport,
-	    $vouchersyncusername, $syncpass) && !captiveportal_ha_is_node_in_backup_mode()) {
+	    $vouchersyncusername, $syncpass) && !captiveportal_ha_is_node_in_backup_mode($cpzone)) {
 		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received,
 		    $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}

@@ -38,7 +38,7 @@ if (file_exists("{$g['varrun_path']}/filter_reload_status")) {
 }
 
 if ($_REQUEST['getstatus']) {
-	echo "|{$status}|";
+	echo "|" . htmlspecialchars($status) . "|";
 	exit;
 }
 if ($_POST['reloadfilter']) {

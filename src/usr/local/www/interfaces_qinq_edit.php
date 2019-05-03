@@ -219,6 +219,7 @@ if ($_POST['save']) {
 				$gentry['ifname'] = "QinQ";
 				$gentry['members'] = "{$additions}";
 				$gentry['descr'] = gettext("QinQ VLANs group");
+				init_config_arr(array('ifgroups', 'ifgroupentry'));
 				$config['ifgroups']['ifgroupentry'][] = $gentry;
 			}
 		}

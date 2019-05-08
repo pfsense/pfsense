@@ -84,7 +84,7 @@ if (count($wolcomputers) > 0):
 		?>
 		<tr>
 			<td>
-				<?= $wolent['descr'] ?><br />
+				<?= htmlspecialchars($wolent['descr']) ?><br />
 				<?= $wolent['mac'] ?>
 			</td>
 			<td>
@@ -161,7 +161,7 @@ if (is_array($config['dhcpd'])) {
 				foreach ($wolcomputers as $wolent):
 ?>
 						<tr>
-							<td><?=$wolent['descr']?></td>
+							<td><?=htmlspecialchars($wolent['descr'])?></td>
 							<td><?=convert_friendly_interface_to_friendly_descr($wolent['interface'])?></td>
 							<td><?=$wolent['mac']?></td>
 							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_wolent_key($wolent)?>" type="checkbox" <?=(!in_array(get_wolent_key($wolent), $skipwols) ? 'checked':'')?>></td>

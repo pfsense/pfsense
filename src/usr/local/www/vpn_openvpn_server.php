@@ -24,6 +24,7 @@
 ##|*IDENT=page-openvpn-server
 ##|*NAME=OpenVPN: Servers
 ##|*DESCR=Allow access to the 'OpenVPN: Servers' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=vpn_openvpn_server.php*
 ##|-PRIV
 

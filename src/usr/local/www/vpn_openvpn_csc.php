@@ -24,6 +24,7 @@
 ##|*IDENT=page-openvpn-csc
 ##|*NAME=OpenVPN: Client Specific Override
 ##|*DESCR=Allow access to the 'OpenVPN: Client Specific Override' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=vpn_openvpn_csc.php*
 ##|-PRIV
 

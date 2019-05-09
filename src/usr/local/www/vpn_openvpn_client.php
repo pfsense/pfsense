@@ -24,6 +24,7 @@
 ##|*IDENT=page-openvpn-client
 ##|*NAME=OpenVPN: Clients
 ##|*DESCR=Allow access to the 'OpenVPN: Clients' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=vpn_openvpn_client.php*
 ##|-PRIV
 

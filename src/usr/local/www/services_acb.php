@@ -18,6 +18,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+##|+PRIV
+##|*IDENT=page-services-acb
+##|*NAME=Services: Auto Config Backup: Restore
+##|*DESCR=Restore from auto config backup.
+##|*MATCH=services_acb.php*
+##|-PRIV
+
 require("guiconfig.inc");
 require("acb.inc");
 

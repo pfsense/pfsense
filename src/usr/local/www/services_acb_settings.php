@@ -24,10 +24,10 @@
  */
 
 ##|+PRIV
-##|*IDENT=page-system-autoconfigbackup
-##|*NAME=System: Auto COnfig Backup
+##|*IDENT=page-services-acb-settings
+##|*NAME=Services: Auto Config Backup: Settings
 ##|*DESCR=Configure the auto config backup system.
-##|*MATCH=autoconfigbackup-settings.php*
+##|*MATCH=services_acb_settings.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");

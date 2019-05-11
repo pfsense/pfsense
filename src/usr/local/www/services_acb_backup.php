@@ -18,6 +18,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+##|+PRIV
+##|*IDENT=page-services-acb-backup
+##|*NAME=Services: Auto Config Backup: Backup Now
+##|*DESCR=Create a new auto config backup entry.
+##|*MATCH=services_acb_backup.php*
+##|-PRIV
+
 require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("acb.inc");

@@ -24,7 +24,6 @@
 ##|*IDENT=page-openvpn-csc
 ##|*NAME=OpenVPN: Client Specific Override
 ##|*DESCR=Allow access to the 'OpenVPN: Client Specific Override' page.
-##|*WARN=standard-warning-root
 ##|*MATCH=vpn_openvpn_csc.php*
 ##|-PRIV
 
@@ -46,17 +45,24 @@ if (isset($_REQUEST['act'])) {
 	$act = $_REQUEST['act'];
 }
 
+$user_entry = getUserEntry($_SESSION['Username']);
+$user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-csc-advanced") || userHasPrivilege($user_entry, "page-all"));
+
 if ($_POST['act'] == "del") {
 	if (!$a_csc[$id]) {
 		pfSenseHeader("vpn_openvpn_csc.php");
 		exit;
 	}
 
-	$wc_msg = sprintf(gettext('Deleted OpenVPN client specific override %1$s %2$s'), $a_csc[$id]['common_name'], $a_csc[$id]['description']);
-	openvpn_delete_csc($a_csc[$id]);
-	unset($a_csc[$id]);
-	write_config($wc_msg);
-	$savemsg = gettext("Client specific override successfully deleted.");
+	if (!$user_can_edit_advanced && !empty($a_csc[$id]['custom_options'])) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to delete an instance with Advanced options set.");
+	} else {
+		$wc_msg = sprintf(gettext('Deleted OpenVPN client specific override %1$s %2$s'), $a_csc[$id]['common_name'], $a_csc[$id]['description']);
+		openvpn_delete_csc($a_csc[$id]);
+		unset($a_csc[$id]);
+		write_config($wc_msg);
+		$savemsg = gettext("Client specific override successfully deleted.");
+	}
 }
 
 if ($act == "edit") {
@@ -128,6 +134,15 @@ if ($_POST['save']) {
 	$pconfig = $_POST;
 
 	/* input validation */
+	if (isset($pconfig['custom_options']) &&
+	    ($pconfig['custom_options'] != $a_csc[$id]['custom_options']) &&
+	    !$user_can_edit_advanced) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
+	}
+	if (!$user_can_edit_advanced && !empty($a_csc[$id]['custom_options'])) {
+		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
+	}
+
 	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network')) {
 		$input_errors[] = $result;
 	}
@@ -574,11 +589,15 @@ if ($act == "new" || $act == "edit"):
 
 	$section->add($group);
 
-	$section->addInput(new Form_Textarea(
+	$custops = new Form_Textarea(
 		'custom_options',
 		'Advanced',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options to add for this client specific override, separated by a semicolon. %1$s' .
+	);
+	if (!$user_can_edit_advanced) {
+		$custops->setDisabled();
+	}
+	$section->addInput($custops)->setHelp('Enter any additional options to add for this client specific override, separated by a semicolon. %1$s' .
 				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"; ',
 				'<br />');
 

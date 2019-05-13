@@ -24,7 +24,6 @@
 ##|*IDENT=page-openvpn-server
 ##|*NAME=OpenVPN: Servers
 ##|*DESCR=Allow access to the 'OpenVPN: Servers' page.
-##|*WARN=standard-warning-root
 ##|*MATCH=vpn_openvpn_server.php*
 ##|-PRIV
 
@@ -61,6 +60,9 @@ if (isset($_REQUEST['act'])) {
 	$act = $_REQUEST['act'];
 }
 
+$user_entry = getUserEntry($_SESSION['Username']);
+$user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-server-advanced") || userHasPrivilege($user_entry, "page-all"));
+
 if (isset($id) && $a_server[$id]) {
 	$vpnid = $a_server[$id]['vpnid'];
 } else {
@@ -73,15 +75,20 @@ if ($_POST['act'] == "del") {
 		pfSenseHeader("vpn_openvpn_server.php");
 		exit;
 	}
-	if (!empty($a_server[$id])) {
+
+	if (empty($a_server[$id])) {
+		$wc_msg = gettext('Deleted empty OpenVPN server');
+	} elseif (!$user_can_edit_advanced && !empty($a_server[$id]['custom_options'])) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to delete an instance with Advanced options set.");
+	} else {
 		openvpn_delete('server', $a_server[$id]);
 		$wc_msg = sprintf(gettext('Deleted OpenVPN server from %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($a_server[$id]['interface']), $a_server[$id]['local_port'], $a_server[$id]['description']);
-	} else {
-		$wc_msg = gettext('Deleted empty OpenVPN server');
 	}
-	unset($a_server[$id]);
-	write_config($wc_msg);
-	$savemsg = gettext("Server successfully deleted.");
+	if (!empty($wc_msg)) {
+		unset($a_server[$id]);
+		write_config($wc_msg);
+		$savemsg = gettext("Server successfully deleted.");
+	}
 }
 
 if ($act == "new") {
@@ -255,6 +262,15 @@ if ($_POST['save']) {
 		$vpnid = $a_server[$id]['vpnid'];
 	} else {
 		$vpnid = 0;
+	}
+
+	if (isset($pconfig['custom_options']) &&
+	    ($pconfig['custom_options'] != $a_server[$id]['custom_options']) &&
+	    !$user_can_edit_advanced) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
+	}
+	if (!$user_can_edit_advanced && !empty($a_server[$id]['custom_options'])) {
+		$pconfig['custom_options'] = $a_server[$id]['custom_options'];
 	}
 
 	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
@@ -1295,11 +1311,15 @@ if ($act=="new" || $act=="edit"):
 
 	$section = new Form_Section('Advanced Configuration');
 
-	$section->addInput(new Form_Textarea(
+	$custops = new Form_Textarea(
 		'custom_options',
 		'Custom options',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options to add to the OpenVPN server configuration here, separated by semicolon.%1$s' .
+	);
+	if (!$user_can_edit_advanced) {
+		$custops->setDisabled();
+	}
+	$section->addInput($custops)->setHelp('Enter any additional options to add to the OpenVPN server configuration here, separated by semicolon.%1$s' .
 				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"', '<br />');
 
 	$section->addInput(new Form_Checkbox(

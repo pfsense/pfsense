@@ -595,7 +595,6 @@ function step12_submitphpaction() {
 	if (strlen($pconfig['step10']['descr']) > 30)
 		$pconfig['step10']['descr'] = substr($pconfig['step10']['descr'], 0, 30);
 	$server['description'] = $pconfig['step10']['descr'];
-	$server['custom_options'] = $pconfig['step10']['advanced'];
 	if (isset($pconfig['step10']['tlsauth'])) {
 		if (isset($pconfig['step10']['gentlskey']))
 			$tlskey = openvpn_create_key();

@@ -24,7 +24,6 @@
 ##|*IDENT=page-openvpn-client
 ##|*NAME=OpenVPN: Clients
 ##|*DESCR=Allow access to the 'OpenVPN: Clients' page.
-##|*WARN=standard-warning-root
 ##|*MATCH=vpn_openvpn_client.php*
 ##|-PRIV
 
@@ -59,21 +58,29 @@ if (isset($id) && $a_client[$id]) {
 	$vpnid = 0;
 }
 
+$user_entry = getUserEntry($_SESSION['Username']);
+$user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-client-advanced") || userHasPrivilege($user_entry, "page-all"));
+
 if ($_POST['act'] == "del") {
 
 	if (!isset($a_client[$id])) {
 		pfSenseHeader("vpn_openvpn_client.php");
 		exit;
 	}
-	if (!empty($a_client[$id])) {
+
+	if (empty($a_client[$id])) {
+		$wc_msg = gettext('Deleted empty OpenVPN client');
+	} elseif (!$user_can_edit_advanced && !empty($a_client[$id]['custom_options'])) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to delete an instance with Advanced options set.");
+	} else {
 		openvpn_delete('client', $a_client[$id]);
 		$wc_msg = sprintf(gettext('Deleted OpenVPN client to server %1$s:%2$s %3$s'), $a_client[$id]['server_addr'], $a_client[$id]['server_port'], $a_client[$id]['description']);
-	} else {
-		$wc_msg = gettext('Deleted empty OpenVPN client');
 	}
-	unset($a_client[$id]);
-	write_config($wc_msg);
-	$savemsg = gettext("Client successfully deleted.");
+	if (!empty($wc_msg)) {
+		unset($a_client[$id]);
+		write_config($wc_msg);
+		$savemsg = gettext("Client successfully deleted.");
+	}
 }
 
 if ($act == "new") {
@@ -184,6 +191,15 @@ if ($_POST['save']) {
 		$vpnid = $a_client[$id]['vpnid'];
 	} else {
 		$vpnid = 0;
+	}
+
+	if (isset($pconfig['custom_options']) &&
+	    ($pconfig['custom_options'] != $a_client[$id]['custom_options']) &&
+	    !$user_can_edit_advanced) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
+	}
+	if (!$user_can_edit_advanced && !empty($a_client[$id]['custom_options'])) {
+		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
 	}
 
 	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
@@ -887,11 +903,15 @@ if ($act=="new" || $act=="edit"):
 	$section = new Form_Section('Advanced Configuration');
 	$section->addClass('advanced');
 
-	$section->addInput(new Form_Textarea(
+	$custops = new Form_Textarea(
 		'custom_options',
 		'Custom options',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options to add to the OpenVPN client configuration here, separated by semicolon.');
+	);
+	if (!$user_can_edit_advanced) {
+		$custops->setDisabled();
+	}
+	$section->addInput($custops)->setHelp('Enter any additional options to add to the OpenVPN client configuration here, separated by semicolon.');
 
 	$section->addInput(new Form_Checkbox(
 		'udp_fast_io',

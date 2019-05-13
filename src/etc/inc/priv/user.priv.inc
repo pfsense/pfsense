@@ -150,4 +150,19 @@ $priv_list['page-services-upnp']['descr'] = gettext("Allow access to the 'Servic
 $priv_list['page-services-upnp']['match'] = array();
 $priv_list['page-services-upnp']['match'][] = "pkg_edit.php?xml=miniupnpd.xml";
 
+$priv_list['page-openvpn-server-advanced'] = array();
+$priv_list['page-openvpn-server-advanced']['name'] = gettext("WebCfg - OpenVPN: Clients Edit Advanced");
+$priv_list['page-openvpn-server-advanced']['descr'] = gettext("Allow edit access to the 'OpenVPN: Clients' Advanced settings field.");
+$priv_list['page-openvpn-server-advanced']['warn'] = "standard-warning-root";
+
+$priv_list['page-openvpn-csc-advanced'] = array();
+$priv_list['page-openvpn-csc-advanced']['name'] = gettext("WebCfg - OpenVPN: Client Specific Override Edit Advanced");
+$priv_list['page-openvpn-csc-advanced']['descr'] = gettext("Allow edit access to the 'OpenVPN: Client Specific Override' advanced settings field.");
+$priv_list['page-openvpn-csc-advanced']['warn'] = "standard-warning-root";
+
+$priv_list['page-openvpn-client-advanced'] = array();
+$priv_list['page-openvpn-client-advanced']['name'] = gettext("WebCfg - OpenVPN: Servers Edit Advanced");
+$priv_list['page-openvpn-client-advanced']['descr'] = gettext("Allow edit access to the 'OpenVPN: Servers' Advanced settings field.");
+$priv_list['page-openvpn-client-advanced']['warn'] = "standard-warning-root";
+
 ?>

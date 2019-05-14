@@ -96,7 +96,7 @@ if (!empty($new_domain_name_servers)) {
 		}
 	}
 
-	if (count($valid_ns > 0)) {
+	if (count($valid_ns) > 0) {
 		file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
 	}
 }
@@ -132,11 +132,12 @@ link_interface_to_track6($interface, "update");
 /* regenerate resolv.conf if DNS overrides are allowed */
 system_resolvconf_generate(true);
 
+/* reconfigure our gateway monitor, dpinger results need to be 
+ * available when configuring the default gateway */
+setup_gateways_monitor();
+
 /* reconfigure static routes (kernel may have deleted them) */
 system_routing_configure($interface);
-
-/* reconfigure our gateway monitor */
-setup_gateways_monitor();
 
 if (platform_booting()) {
 	// avoid race conditions in many of the below functions that occur during boot

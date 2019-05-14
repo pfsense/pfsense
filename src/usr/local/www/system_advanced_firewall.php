@@ -3,7 +3,7 @@
  * system_advanced_firewall.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -35,6 +35,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $pconfig['disablefilter'] = $config['system']['disablefilter'];
 $pconfig['scrubnodf'] = $config['system']['scrubnodf'];
@@ -47,6 +48,7 @@ $pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval']
 $old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
 $pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
+$old_maximumtableentries = $config['system']['maximumtableentries'];
 $pconfig['maximumfrags'] = $config['system']['maximumfrags'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
@@ -72,6 +74,11 @@ $pconfig['icmperrortimeout'] = $config['system']['icmperrortimeout'];
 $pconfig['otherfirsttimeout'] = $config['system']['otherfirsttimeout'];
 $pconfig['othersingletimeout'] = $config['system']['othersingletimeout'];
 $pconfig['othermultipletimeout'] = $config['system']['othermultipletimeout'];
+
+$show_reboot_msg = false;
+$reboot_msg = gettext('The \"Firewall Maximum Table Entries\" setting has ' .
+    'been changed to a value bigger than system can support without a ' .
+    'reboot.\n\nReboot now ?');
 
 if ($_POST) {
 
@@ -147,6 +154,20 @@ if ($_POST) {
 	}
 	if ($_POST['othermultipletimeout'] && !is_numericint($_POST['othermultipletimeout'])) {
 		$input_errors[] = gettext("The Other multiple timeout value must be an integer.");
+	}
+
+	if ($_POST['maximumtableentries']) {
+		$maximumtableentries = $_POST['maximumtableentries'];
+	} else {
+		$maximumtableentries = pfsense_default_table_entries_size();
+	}
+	if (!is_numericint($maximumtableentries)) {
+		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
+	} else if (is_bogonsv6_used() &&
+	    $maximumtableentries < $g['minimumtableentries_bogonsv6']) {
+		$input_errors[] = sprintf(gettext(
+		    "The Firewall Maximum Table Entries value must be greater than %s when block bogons is enabled."),
+		    $g['minimumtableentries_bogonsv6']);
 	}
 
 	ob_flush();
@@ -356,6 +377,20 @@ if ($_POST) {
 			killbypid("{$g['varrun_path']}/filterdns.pid");
 		}
 
+		/* Update loader.conf when necessary */
+		if ($old_maximumtableentries !=
+		    $config['system']['maximumtableentries']) {
+			setup_loader_settings();
+			$cur_maximumtableentries = get_single_sysctl(
+			    'net.pf.request_maxcount');
+
+
+			if ($config['system']['maximumtableentries'] >
+			    $cur_maximumtableentries) {
+				$show_reboot_msg = true;
+			}
+		}
+
 		$changes_applied = true;
 		$retval = 0;
 		$retval |= filter_configure();
@@ -484,7 +519,7 @@ $section->addInput(new Form_Input(
 	$pconfig['maximumtableentries'],
 	['placeholder' => pfsense_default_table_entries_size()]
 ))->setHelp('Maximum number of table entries for systems such as aliases, '.
-	'sshlockout, snort, etc, combined.%1$sNote: Leave this blank for the '.
+	'sshguard, snort, etc, combined.%1$sNote: Leave this blank for the '.
 	'default. On this system the default size is: %2$d',
 	'<br/>',
 	pfsense_default_table_entries_size());
@@ -726,6 +761,10 @@ events.push(function() {
 	// ---------- On initial page load ------------------------------------------------------------
 
 	setOptText($('#optimization').val())
+
+	if (<?=(int)$show_reboot_msg?> && confirm("<?=$reboot_msg?>")) {
+		postSubmit({override : 'yes'}, 'diag_reboot.php')
+	}
 });
 //]]>
 </script>

@@ -3,7 +3,7 @@
  * firewall_nat_out.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -38,14 +38,7 @@ require_once("shaper.inc");
 global $FilterIflist;
 global $GatewaysList;
 
-if (!is_array($config['nat']['outbound'])) {
-	$config['nat']['outbound'] = array();
-}
-
-if (!is_array($config['nat']['outbound']['rule'])) {
-	$config['nat']['outbound']['rule'] = array();
-}
-
+init_config_arr(array('nat', 'outbound', 'rule'));
 $a_out = &$config['nat']['outbound']['rule'];
 
 // update rule order, POST[rule] is an array of ordered IDs
@@ -271,10 +264,10 @@ print($form);
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Mappings')?></h2></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-hover table-striped table-condensed">
+			<table id="ruletable" class="table table-hover table-striped table-condensed">
 				<thead>
 					<tr>
-						<th><!-- checkbox	  --></th>
+						<th><input type="checkbox" id="selectAll" name="selectAll" /></th>
 						<th><!-- status	  --></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Source")?></th>
@@ -348,11 +341,11 @@ print($form);
 
 						if (isset($alias['src'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
 <?php
 						endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars($natent['source']['network']))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['source']['network']))?>
 <?php
 						if (isset($alias['src'])):
 ?>
@@ -371,11 +364,11 @@ print($form);
 
 							if (isset($alias['srcport'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true" >
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
 <?php
 							endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars($natent['sourceport']))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['sourceport'])))?>
 <?php
 							if (isset($alias['srcport'])):
 ?>
@@ -398,11 +391,11 @@ print($form);
 
 							if (isset($alias['dst'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true" >
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
 <?php
 							endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars($natent['destination']['address']))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['destination']['address']))?>
 <?php
 							if (isset($alias['dst'])):
 ?>
@@ -422,11 +415,11 @@ print($form);
 						} else {
 							if (isset($alias['dstport'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true" >
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
 <?php
 							endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars($natent['dstport']))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['dstport'])))?>
 <?php
 							if (isset($alias['dstport'])):
 ?>
@@ -686,6 +679,13 @@ events.push(function() {
 		} else {
 			return undefined;
 		}
+	});
+
+	$('#selectAll').click(function() {
+		var checkedStatus = this.checked;
+		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
+		$(this).prop('checked', checkedStatus);
+		});
 	});
 });
 //]]>

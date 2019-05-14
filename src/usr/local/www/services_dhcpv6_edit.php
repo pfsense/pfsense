@@ -3,7 +3,7 @@
  * services_dhcpv6_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -57,16 +57,7 @@ if (!$if) {
 	exit;
 }
 
-if (!is_array($config['dhcpdv6'])) {
-	$config['dhcpdv6'] = array();
-}
-if (!is_array($config['dhcpdv6'][$if])) {
-	$config['dhcpdv6'][$if] = array();
-}
-if (!is_array($config['dhcpdv6'][$if]['staticmap'])) {
-	$config['dhcpdv6'][$if]['staticmap'] = array();
-}
-
+init_config_arr(array('dhcpdv6', $if, 'staticmap'));
 $netboot_enabled = isset($config['dhcpdv6'][$if]['netboot']);
 $a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 $ifcfgipv6 = get_interface_ipv6($if);

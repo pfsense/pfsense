@@ -3,7 +3,7 @@
  * xmlparse_attr.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2010-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2010-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Erik Fonnesbeck
  * All rights reserved.
  *

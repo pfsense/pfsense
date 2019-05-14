@@ -1,10 +1,14 @@
-#!/usr/local/bin/php-cgi -f
 <?php
 /*
- * rc.conf_mount_ro
+ * execacb.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2009 Erik Kristensen
+ * All rights reserved.
+ *
+ * originally part of m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +24,15 @@
  * limitations under the License.
  */
 
-/* Do nothing */
+ // Called from cron, this script makes a remote backup of the current configuration
+ // via the ACB system
 
-?>
+ require_once("config.inc");
+ require_once("acb.inc");
+
+ if ($config['system']['acb']['enable'] == "yes") {
+ 	write_config("Scheduled backup");
+ 	upload_config();
+ }
+
+ ?>

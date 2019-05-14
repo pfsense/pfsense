@@ -3,7 +3,7 @@
  * config.lib.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2009 Erik Kristensen
  * All rights reserved.
  *
@@ -62,7 +62,7 @@ function encrypted_configxml() {
 				exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
 				echo "\n" . gettext("Config.xml unlocked.") . "\n";
 				fclose($fp);
-				pfSense_fsync("{$g['conf_path']}/config.xml");
+				//pfSense_fsync("{$g['conf_path']}/config.xml");
 			} else {
 				echo "\n" . gettext("Invalid password entered.  Please try again.") . "\n";
 			}
@@ -169,7 +169,7 @@ function generate_config_cache($config) {
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
-	pfSense_fsync("{$g['tmp_path']}/config.cache");
+	//pfSense_fsync("{$g['tmp_path']}/config.cache");
 
 	unset($configcache);
 	/* Used for config.extra.xml */
@@ -177,7 +177,7 @@ function generate_config_cache($config) {
 		$configcacheextra = fopen($g['tmp_path'] . '/config.extra.cache', "w");
 		fwrite($configcacheextra, serialize($config_extra));
 		fclose($configcacheextra);
-		pfSense_fsync("{$g['tmp_path']}/config.extra.cache");
+		//pfSense_fsync("{$g['tmp_path']}/config.extra.cache");
 		unset($configcacheextra);
 	}
 }
@@ -202,8 +202,8 @@ function restore_backup($file) {
 	if (file_exists($file)) {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		copy("$file", "/cf/conf/config.xml");
-		pfSense_fsync("/cf/conf/config.xml");
-		pfSense_fsync($g['conf_path']);
+		//pfSense_fsync("/cf/conf/config.xml");
+		//pfSense_fsync($g['conf_path']);
 		disable_security_checks();
 		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file));
 		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file), "pfSenseConfigurator", "");
@@ -434,14 +434,17 @@ function safe_write_file($file, $content, $force_binary = false) {
 	fflush($fd);
 	fclose($fd);
 
-	if (!pfSense_fsync($tmp_file) || !rename($tmp_file, $file)) {
+	/* XXX Re-add pfSense_fsync() call here after it's fixed */
+	// if (!pfSense_fsync($tmp_file) || !rename($tmp_file, $file)) {
+	if (!rename($tmp_file, $file)) {
 		// Unable to move temporary file to original
 		@unlink($tmp_file);
 		return false;
 	}
 
 	// Sync file before returning
-	return pfSense_fsync($file);
+	//return pfSense_fsync($file);
+	return true;
 }
 
 /****f* config/write_config
@@ -466,7 +469,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		if (!empty($_SESSION['Username']) && ($_SESSION['Username'] != "admin")) {
 			$user = getUserEntry($_SESSION['Username']);
 			if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
-				syslog(LOG_AUTHPRIV, sprintf(gettext("Save config permission denied by the 'User - Config: Deny Config Write' permission for user '%s'."), $_SESSION['Username']));
+				syslog(LOG_AUTHPRIV, sprintf(gettext("Save config permission denied by the 'User - Config: Deny Config Write' permission for user '%s'."), get_config_user()));
 				phpsession_end(true);
 				return false;
 			}
@@ -544,6 +547,16 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		run_plugins("/usr/local/pkg/write_config/");
 	}
 
+	// Try the core AutoConfigBackup system
+	if (is_array($config['system']['acb']) && $config['system']['acb']['enable'] == "yes" &&
+	    (!isset($config['system']['acb']['frequency']) || $config['system']['acb']['frequency'] == "every") || file_exists("/tmp/forceacb")) {
+		require_once("acb.inc");
+		upload_config();
+		if (file_exists("/tmp/forceacb")) {
+			unlink("/tmp/forceacb");
+		}
+	}
+
 	return $config;
 }
 
@@ -556,10 +569,9 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 function reset_factory_defaults($lock = false, $reboot_required = true) {
 	global $config, $g;
 
-
 	/* Remove all additional packages */
 	mwexec("/bin/sh /usr/local/sbin/{$g['product_name']}-upgrade " .
-	    "-r ALL_PACKAGES");
+	    "-r ALL_PACKAGES -f");
 
 	if (!$lock) {
 		$lockkey = lock('config', LOCK_EX);
@@ -606,7 +618,7 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	if (!$lock) {
 		unlock($lockkey);
 	}
-	setup_serial_port();
+	console_configure();
 	return 0;
 }
 
@@ -807,7 +819,7 @@ function cleanup_backupcache($lock = false) {
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($tocache));
 	fclose($bakout);
-	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
+	//pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 
 	if (!$lock) {
 		unlock($lockkey);
@@ -863,7 +875,7 @@ function backup_config() {
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($backupcache));
 	fclose($bakout);
-	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
+	//pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 
 
 	return true;
@@ -898,7 +910,7 @@ function get_config_user() {
 	}
 
 	if (!empty($_SERVER['REMOTE_ADDR'])) {
-		$username .= '@' . $_SERVER['REMOTE_ADDR'];
+		$username .= '@' . get_user_remote_address() . get_user_remote_authsource();
 	}
 
 	return $username;
@@ -971,6 +983,24 @@ function pfSense_clear_globals() {
 	}
 
 	unset($config);
+}
+
+/* Initialize a config array multiple levels deep only if unset
+ * Pass it an array of keys to test and create
+ * init_config_arr(array('virtualip', 'vip'));
+ */
+function init_config_arr($keys) {
+	global $config;
+	$c = &$config;
+	if (!is_array($keys)) {
+		return null;
+	}
+	foreach ($keys as $k) {
+		if (!is_array($c[$k])) {
+			$c[$k] = array();
+		}
+		$c = &$c[$k];
+	}
 }
 
 register_shutdown_function('pfSense_clear_globals');

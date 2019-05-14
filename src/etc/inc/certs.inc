@@ -3,7 +3,7 @@
  * certs.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2008-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc. All rights reserved.
  * All rights reserved.
  *
@@ -28,15 +28,17 @@ global $openssl_digest_algs;
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 global $openssl_crl_status;
+/* Numbers are set in the RFC: https://www.ietf.org/rfc/rfc5280.txt */
 $openssl_crl_status = array(
-	OCSP_REVOKED_STATUS_NOSTATUS              => "No Status (default)",
-	OCSP_REVOKED_STATUS_UNSPECIFIED           => "Unspecified",
-	OCSP_REVOKED_STATUS_KEYCOMPROMISE         => "Key Compromise",
-	OCSP_REVOKED_STATUS_CACOMPROMISE          => "CA Compromise",
-	OCSP_REVOKED_STATUS_AFFILIATIONCHANGED    => "Affiliation Changed",
-	OCSP_REVOKED_STATUS_SUPERSEDED            => "Superseded",
-	OCSP_REVOKED_STATUS_CESSATIONOFOPERATION  => "Cessation of Operation",
-	OCSP_REVOKED_STATUS_CERTIFICATEHOLD       => "Certificate Hold"
+	-1 => "No Status (default)",
+	0  => "Unspecified",
+	1 => "Key Compromise",
+	2 => "CA Compromise",
+	3 => "Affiliation Changed",
+	4 => "Superseded",
+	5 => "Cessation of Operation",
+	6 => "Certificate Hold",
+	9 => 'Privilege Withdrawn',
 );
 
 global $cert_altname_types;
@@ -660,6 +662,18 @@ function cert_get_purpose($str_crt, $decode = true) {
 	return $purpose;
 }
 
+function cert_get_ocspstaple($str_crt, $decode = true) {
+	if ($decode) {
+		$str_crt = base64_decode($str_crt);
+	}
+	$crt_details = openssl_x509_parse($str_crt);
+	if (($crt_details['extensions']['tlsfeature'] == "status_request") ||
+	    !empty($crt_details['extensions']['1.3.6.1.5.5.7.1.24'])) {
+		return true;
+	}
+	return false;
+}
+
 function cert_get_dates($str_crt, $decode = true) {
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
@@ -667,9 +681,19 @@ function cert_get_dates($str_crt, $decode = true) {
 	$crt_details = openssl_x509_parse($str_crt);
 	if ($crt_details['validFrom_time_t'] > 0) {
 		$start = date('r', $crt_details['validFrom_time_t']);
+	} else {
+		$dt = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validFrom'], 'Z'));
+		if ($dt !== false) {
+			$start = $dt->format(DateTimeInterface::RFC2822);
+		}
 	}
 	if ($crt_details['validTo_time_t'] > 0) {
 		$end = date('r', $crt_details['validTo_time_t']);
+	} else {
+		$dt = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validTo'], 'Z'));
+		if ($dt !== false) {
+			$end = $dt->format(DateTimeInterface::RFC2822);
+		}
 	}
 	return array($start, $end);
 }
@@ -891,8 +915,22 @@ function cert_usedby_description($refid, $certificates_used_by_packages) {
 	return $result;
 }
 
-function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 9999) {
+/* Detect a rollover at 2038 on some platforms (e.g. ARM)
+ * See: https://redmine.pfsense.org/issues/9098 */
+function crl_get_max_lifetime($max = 9999) {
+	if ($max <= 0) {
+		return 0;
+	}
+	$current_time = time();
+	while ((int)($current_time + ($max * 24 * 60 * 60)) < 0) {
+		$max--;
+	}
+	return $max;
+}
+
+function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 3650) {
 	global $config;
+	$max_lifetime = crl_get_max_lifetime();
 	$ca =& lookup_ca($caref);
 	if (!$ca) {
 		return false;
@@ -900,15 +938,36 @@ function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 9999) {
 	$crl['descr'] = $name;
 	$crl['caref'] = $caref;
 	$crl['serial'] = $serial;
-	$crl['lifetime'] = $lifetime;
+	$crl['lifetime'] = ($lifetime > $max_lifetime) ? $max_lifetime : $lifetime;
 	$crl['cert'] = array();
-	$crl_res = crl_update($crl);
 	$config['crl'][] = $crl;
-	return $crl_res;
+	return $crl;
 }
 
 function crl_update(& $crl) {
+	require_once('ASN1.php');
+	require_once('ASN1_UTF8STRING.php');
+	require_once('ASN1_ASCIISTRING.php');
+	require_once('ASN1_BITSTRING.php');
+	require_once('ASN1_BOOL.php');
+	require_once('ASN1_GENERALTIME.php');
+	require_once('ASN1_INT.php');
+	require_once('ASN1_ENUM.php');
+	require_once('ASN1_NULL.php');
+	require_once('ASN1_OCTETSTRING.php');
+	require_once('ASN1_OID.php');
+	require_once('ASN1_SEQUENCE.php');
+	require_once('ASN1_SET.php');
+	require_once('ASN1_SIMPLE.php');
+	require_once('ASN1_TELETEXSTRING.php');
+	require_once('ASN1_UTCTIME.php');
+	require_once('OID.php');
+	require_once('X509.php');
+	require_once('X509_CERT.php');
+	require_once('X509_CRL.php');
+
 	global $config;
+	$max_lifetime = crl_get_max_lifetime();
 	$ca =& lookup_ca($crl['caref']);
 	if (!$ca) {
 		return false;
@@ -918,17 +977,31 @@ function crl_update(& $crl) {
 		return false;
 	}
 	$crl['serial']++;
-	$ca_str_crt = base64_decode($ca['crt']);
-	$ca_str_key = base64_decode($ca['prv']);
-	$crl_res = openssl_crl_new($ca_str_crt, $crl['serial'], $crl['lifetime']);
+	$ca_cert = \Ukrbublik\openssl_x509_crl\X509::pem2der(base64_decode($ca['crt']));
+	$ca_pkey = openssl_pkey_get_private(base64_decode($ca['prv']));
+
+	$crlconf = array(
+		'no' => $crl['serial'],
+		'version' => 2,
+		'days' => ($crl['lifetime'] > $max_lifetime) ? $max_lifetime : $crl['lifetime'],
+		'alg' => OPENSSL_ALGO_SHA1,
+		'revoked' => array()
+	);
+
 	if (is_array($crl['cert']) && (count($crl['cert']) > 0)) {
 		foreach ($crl['cert'] as $cert) {
-			openssl_crl_revoke_cert($crl_res, base64_decode($cert["crt"]), $cert["revoke_time"], $cert["reason"]);
+			$crlconf['revoked'][] = array(
+				'serial' => cert_get_serial($cert["crt"], true),
+				'rev_date' => $cert["revoke_time"],
+				'reason' => ($cert["reason"] == -1) ? null : (int) $cert["reason"],
+			);
 		}
 	}
-	openssl_crl_export($crl_res, $crl_text, $ca_str_key);
-	$crl['text'] = base64_encode($crl_text);
-	return $crl_res;
+
+	$crl_data = \Ukrbublik\openssl_x509_crl\X509_CRL::create($crlconf, $ca_pkey, $ca_cert);
+	$crl['text'] = base64_encode(\Ukrbublik\openssl_x509_crl\X509::der2pem4crl($crl_data));
+
+	return $crl['text'];
 }
 
 function cert_revoke($cert, & $crl, $reason = OCSP_REVOKED_STATUS_UNSPECIFIED) {

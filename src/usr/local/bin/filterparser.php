@@ -4,7 +4,7 @@
  * filterparser.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2009-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2009-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally based on m0n0wall (http://m0n0.ch/wall)

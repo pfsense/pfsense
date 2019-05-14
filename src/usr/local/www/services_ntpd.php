@@ -3,7 +3,7 @@
  * services_ntpd.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -179,6 +179,7 @@ function build_interface_list() {
 	return($iflist);
 }
 
+init_config_arr(array('ntpd'));
 $pconfig = &$config['ntpd'];
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();
@@ -288,10 +289,10 @@ $section->addInput(new Form_StaticText(
 	'%2$sPrefer%3$s - NTP should favor the use of this server more than all others.%1$s' .
 	'%2$sNo Select%3$s - NTP should not use this server for time, but stats for this server will be collected and displayed.%1$s' .
 	'%2$sIs a Pool%3$s - this entry is a pool of NTP servers and not a single address. This is assumed for *.pool.ntp.org.',
-	'<br />', 
-	'<b>', 
-	'</b>', 
-	'<a target="_blank" href="https://support.ntp.org/bin/view/Support/ConfiguringNTP">', 
+	'<br />',
+	'<b>',
+	'</b>',
+	'<a target="_blank" href="https://support.ntp.org/bin/view/Support/ConfiguringNTP">',
 	'</a>'
 	);
 

@@ -3,7 +3,7 @@
  * firewall_virtual_ip_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Bill Marquette <bill.marquette@gmail.com>
  * All rights reserved.
  *
@@ -35,10 +35,7 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['virtualip']['vip'])) {
-		$config['virtualip']['vip'] = array();
-}
-
+init_config_arr(array('virtualip', 'vip'));
 $a_vip = &$config['virtualip']['vip'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
@@ -487,6 +484,13 @@ events.push(function() {
 		setRequired('password', false);
 		setRequired('vhid', false);
 		setRequired('advbase', false);
+
+		// Make sure the type is selected before allowing address to be selected.
+		if(mode == undefined){
+			disableInput('subnet', true);
+		}else{
+			disableInput('subnet', false);
+		}
 
 		if (mode == 'ipalias') {
 			$('#address_note').html("<?=$ipaliashelp?>");

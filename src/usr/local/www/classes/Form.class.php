@@ -3,7 +3,7 @@
  * Form.class.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -84,7 +84,7 @@ class Form extends Form_Element
 		return $this;
 	}
 
-	protected function _setParent()
+	protected function _setParent(Form_Element $parent)
 	{
 		throw new Exception('Form does not have a parent');
 	}

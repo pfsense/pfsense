@@ -3,7 +3,7 @@
  * system_camanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -32,34 +32,25 @@ require_once("certs.inc");
 require_once("pfsense-utils.inc");
 
 $ca_methods = array(
-	"existing" => gettext("Import an existing Certificate Authority"),
 	"internal" => gettext("Create an internal Certificate Authority"),
+	"existing" => gettext("Import an existing Certificate Authority"),
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
-$ca_keylens = array("512", "1024", "2048", "3072", "4096", "7680", "8192", "15360", "16384");
+$ca_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
 global $openssl_digest_algs;
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$a_ca =& $config['ca'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
-
-if (!is_array($config['crl'])) {
-	$config['crl'] = array();
-}
-
-$a_crl =& $config['crl'];
+init_config_arr(array('crl'));
+$a_crl = &$config['crl'];
 
 if ($_REQUEST['act']) {
 	$act = $_REQUEST['act'];
@@ -101,6 +92,7 @@ if ($act == "edit") {
 		pfSenseHeader("system_camanager.php");
 		exit;
 	}
+	$pconfig['method'] = 'existing';
 	$pconfig['descr']  = $a_ca[$id]['descr'];
 	$pconfig['refid']  = $a_ca[$id]['refid'];
 	$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);
@@ -187,33 +179,21 @@ if ($_POST['save']) {
 	}
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",
-			"descr keylen lifetime dn_country dn_state dn_city ".
-			"dn_organization dn_email dn_commonname");
+			"descr keylen lifetime dn_commonname");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Key length"),
 			gettext("Lifetime"),
-			gettext("Distinguished name Country Code"),
-			gettext("Distinguished name State or Province"),
-			gettext("Distinguished name City"),
-			gettext("Distinguished name Organization"),
-			gettext("Distinguished name Email Address"),
 			gettext("Distinguished name Common Name"));
 	}
 	if ($pconfig['method'] == "intermediate") {
 		$reqdfields = explode(" ",
-			"descr caref keylen lifetime dn_country dn_state dn_city ".
-			"dn_organization dn_email dn_commonname");
+			"descr caref keylen lifetime dn_commonname");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Signing Certificate Authority"),
 			gettext("Key length"),
 			gettext("Lifetime"),
-			gettext("Distinguished name Country Code"),
-			gettext("Distinguished name State or Province"),
-			gettext("Distinguished name City"),
-			gettext("Distinguished name Organization"),
-			gettext("Distinguished name Email Address"),
 			gettext("Distinguished name Common Name"));
 	}
 
@@ -222,14 +202,6 @@ if ($_POST['save']) {
 		/* Make sure we do not have invalid characters in the fields for the certificate */
 		if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
 			array_push($input_errors, gettext("The field 'Descriptive Name' contains invalid characters."));
-		}
-
-		for ($i = 0; $i < count($reqdfields); $i++) {
-			if ($reqdfields[$i] == 'dn_email') {
-				if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_email"])) {
-					array_push($input_errors, gettext("The field 'Distinguished name Email Address' contains invalid characters."));
-				}
-			}
 		}
 		if (!in_array($_POST["keylen"], $ca_keylens)) {
 			array_push($input_errors, gettext("Please select a valid Key Length."));
@@ -267,13 +239,19 @@ if ($_POST['save']) {
 			if ($pconfig['method'] == "existing") {
 				ca_import($ca, $pconfig['cert'], $pconfig['key'], $pconfig['serial']);
 			} else if ($pconfig['method'] == "internal") {
-				$dn = array(
-					'countryName' => $pconfig['dn_country'],
-					'stateOrProvinceName' => cert_escape_x509_chars($pconfig['dn_state']),
-					'localityName' => cert_escape_x509_chars($pconfig['dn_city']),
-					'organizationName' => cert_escape_x509_chars($pconfig['dn_organization']),
-					'emailAddress' => cert_escape_x509_chars($pconfig['dn_email']),
-					'commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+				if (!empty($pconfig['dn_country'])) {
+					$dn['countryName'] = $pconfig['dn_country'];
+				}
+				if (!empty($pconfig['dn_state'])) {
+					$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['dn_state']);
+				}
+				if (!empty($pconfig['dn_city'])) {
+					$dn['localityName'] = cert_escape_x509_chars($pconfig['dn_city']);
+				}
+				if (!empty($pconfig['dn_organization'])) {
+					$dn['organizationName'] = cert_escape_x509_chars($pconfig['dn_organization']);
+				}
 				if (!empty($pconfig['dn_organizationalunit'])) {
 					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 				}
@@ -286,13 +264,19 @@ if ($_POST['save']) {
 					}
 				}
 			} else if ($pconfig['method'] == "intermediate") {
-				$dn = array(
-					'countryName' => $pconfig['dn_country'],
-					'stateOrProvinceName' => cert_escape_x509_chars($pconfig['dn_state']),
-					'localityName' => cert_escape_x509_chars($pconfig['dn_city']),
-					'organizationName' => cert_escape_x509_chars($pconfig['dn_organization']),
-					'emailAddress' => cert_escape_x509_chars($pconfig['dn_email']),
-					'commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+				if (!empty($pconfig['dn_country'])) {
+					$dn['countryName'] = $pconfig['dn_country'];
+				}
+				if (!empty($pconfig['dn_state'])) {
+					$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['dn_state']);
+				}
+				if (!empty($pconfig['dn_city'])) {
+					$dn['localityName'] = cert_escape_x509_chars($pconfig['dn_city']);
+				}
+				if (!empty($pconfig['dn_organization'])) {
+					$dn['organizationName'] = cert_escape_x509_chars($pconfig['dn_organization']);
+				}
 				if (!empty($pconfig['dn_organizationalunit'])) {
 					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 				}
@@ -338,17 +322,6 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
-// Load valid country codes
-$dn_cc = array();
-if (file_exists("/etc/ca_countries")) {
-	$dn_cc_file=file("/etc/ca_countries");
-	foreach ($dn_cc_file as $line) {
-		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
-			$dn_cc[$matches[1]] = $matches[1];
-		}
-	}
-}
-
 $tab_array = array();
 $tab_array[] = array(gettext("CAs"), true, "system_camanager.php");
 $tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
@@ -357,11 +330,46 @@ display_top_tabs($tab_array);
 
 if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors)) {
 ?>
+<div class="panel panel-default" id="search-panel">
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<?=gettext('Search')?>
+			<span class="widget-heading-icon pull-right">
+				<a data-toggle="collapse" href="#search-panel_panel-body">
+					<i class="fa fa-plus-circle"></i>
+				</a>
+			</span>
+		</h2>
+	</div>
+	<div id="search-panel_panel-body" class="panel-body collapse in">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+				<?=gettext("Search term")?>
+			</label>
+			<div class="col-sm-5"><input class="form-control" name="searchstr" id="searchstr" type="text"/></div>
+			<div class="col-sm-2">
+				<select id="where" class="form-control">
+					<option value="0"><?=gettext("Name")?></option>
+					<option value="1"><?=gettext("Distinguished Name")?></option>
+					<option value="2" selected><?=gettext("Both")?></option>
+				</select>
+			</div>
+			<div class="col-sm-3">
+				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
+			</div>
+			<div class="col-sm-10 col-sm-offset-2">
+				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to search certificate names and distinguished names.')?></span>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Certificate Authorities')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-		<table class="table table-striped table-hover table-rowdblclickedit">
+		<table id="catable" class="table table-striped table-hover table-rowdblclickedit sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Name")?></th>
@@ -462,6 +470,60 @@ foreach ($a_ca as $i => $ca):
 		<?=gettext("Add")?>
 	</a>
 </nav>
+<script type="text/javascript">
+//<![CDATA[
+
+events.push(function() {
+
+	// Make these controls plain buttons
+	$("#btnsearch").prop('type', 'button');
+	$("#btnclear").prop('type', 'button');
+
+	// Search for a term in the entry name and/or dn
+	$("#btnsearch").click(function() {
+		var searchstr = $('#searchstr').val().toLowerCase();
+		var table = $("table tbody");
+		var where = $('#where').val();
+
+		table.find('tr').each(function (i) {
+			var $tds = $(this).find('td'),
+				shortname = $tds.eq(0).text().trim().toLowerCase(),
+				dn = $tds.eq(4).text().trim().toLowerCase();
+
+			regexp = new RegExp(searchstr);
+			if (searchstr.length > 0) {
+				if (!(regexp.test(shortname) && (where != 1)) && !(regexp.test(dn) && (where != 0))) {
+					$(this).hide();
+				} else {
+					$(this).show();
+				}
+			} else {
+				$(this).show();	// A blank search string shows all
+			}
+		});
+	});
+
+	// Clear the search term and unhide all rows (that were hidden during a previous search)
+	$("#btnclear").click(function() {
+		var table = $("table tbody");
+
+		$('#searchstr').val("");
+
+		table.find('tr').each(function (i) {
+			$(this).show();
+		});
+	});
+
+	// Hitting the enter key will do the same as clicking the search button
+	$("#searchstr").on("keyup", function (event) {
+		if (event.keyCode == 13) {
+			$("#btnsearch").get(0).click();
+		}
+	});
+});
+//]]>
+</script>
+
 <?php
 	include("foot.inc");
 	exit;
@@ -578,16 +640,29 @@ $section->addInput(new Form_Input(
 	$pconfig['lifetime']
 ));
 
+$section->addInput(new Form_Input(
+	'dn_commonname',
+	'*Common Name',
+	'text',
+	$pconfig['dn_commonname'],
+	['placeholder' => 'e.g. internal-ca']
+));
+
+$section->addInput(new Form_StaticText(
+	null,
+	gettext('The following certificate authority subject components are optional and may be left blank.')
+));
+
 $section->addInput(new Form_Select(
 	'dn_country',
-	'*Country Code',
+	'Country Code',
 	$pconfig['dn_country'],
-	$dn_cc
+	get_cert_country_codes()
 ));
 
 $section->addInput(new Form_Input(
 	'dn_state',
-	'*State or Province',
+	'State or Province',
 	'text',
 	$pconfig['dn_state'],
 	['placeholder' => 'e.g. Texas']
@@ -595,7 +670,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'dn_city',
-	'*City',
+	'City',
 	'text',
 	$pconfig['dn_city'],
 	['placeholder' => 'e.g. Austin']
@@ -603,7 +678,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'dn_organization',
-	'*Organization',
+	'Organization',
 	'text',
 	$pconfig['dn_organization'],
 	['placeholder' => 'e.g. My Company Inc']
@@ -615,22 +690,6 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['dn_organizationalunit'],
 	['placeholder' => 'e.g. My Department Name (optional)']
-));
-
-$section->addInput(new Form_Input(
-	'dn_email',
-	'*Email Address',
-	'email',
-	$pconfig['dn_email'],
-	['placeholder' => 'e.g. admin@mycompany.com']
-));
-
-$section->addInput(new Form_Input(
-	'dn_commonname',
-	'*Common Name',
-	'text',
-	$pconfig['dn_commonname'],
-	['placeholder' => 'e.g. internal-ca']
 ));
 
 $form->add($section);

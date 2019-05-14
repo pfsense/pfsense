@@ -3,7 +3,7 @@
  * services_captiveportal_hostname_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,24 +54,15 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'allowedhostname'));
+$a_cp = &$config['captiveportal'];
+$a_allowedhostnames = &$a_cp[$cpzone]['allowedhostname'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed Hostnames"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_hostname.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
 $id = $_REQUEST['id'];
-
-
-if (!is_array($a_cp[$cpzone]['allowedhostname'])) {
-	$a_cp[$cpzone]['allowedhostname'] = array();
-}
-
-$a_allowedhostnames = &$a_cp[$cpzone]['allowedhostname'];
 
 if (isset($id) && $a_allowedhostnames[$id]) {
 	$pconfig['zone'] = $a_allowedhostnames[$id]['zone'];

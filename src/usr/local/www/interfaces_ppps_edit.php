@@ -3,7 +3,7 @@
  * interfaces_ppps_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Gabriel B. <gnoahb@gmail.com>
  * All rights reserved.
  *
@@ -39,10 +39,7 @@ define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 
-if (!is_array($config['ppps']['ppp'])) {
-	$config['ppps']['ppp'] = array();
-}
-
+init_config_arr(array('ppps', 'ppp'));
 $a_ppps = &$config['ppps']['ppp'];
 
 $iflist = get_configured_interface_with_descr();
@@ -95,6 +92,12 @@ if (isset($id) && $a_ppps[$id]) {
 	}
 	if (isset($a_ppps[$id]['protocomp'])) {
 		$pconfig['protocomp'] = true;
+	}
+	if (isset($a_ppps[$id]['pppoe-multilink-over-singlelink'])) {
+		$pconfig['pppoe-multilink-over-singlelink'] = true;
+	}
+	if (isset($a_ppps[$id]['mtu-override'])) {
+		$pconfig['mtu-override'] = true;
 	}
 	if (isset($a_ppps[$id]['vjcomp'])) {
 		$pconfig['vjcomp'] = true;
@@ -407,6 +410,10 @@ if ($_POST['save']) {
 		$ppp['shortseq'] = $_POST['shortseq'] ? true : false;
 		$ppp['acfcomp'] = $_POST['acfcomp'] ? true : false;
 		$ppp['protocomp'] = $_POST['protocomp'] ? true : false;
+		$ppp['pppoe-multilink-over-singlelink'] =
+		    $_POST['pppoe-multilink-over-singlelink'] ? true : false;
+		$ppp['mtu-override'] =
+		    $_POST['mtu-override'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
 		if (is_array($port_data['bandwidth'])) {
@@ -456,7 +463,6 @@ $types = array("select" => gettext("Select"), "ppp" => gettext("PPP"), "pppoe" =
 $serviceproviders_xml = "/usr/local/share/mobile-broadband-provider-info/serviceproviders.xml";
 $serviceproviders_contents = file_get_contents($serviceproviders_xml);
 $serviceproviders_attr = xml2array($serviceproviders_contents, 1, "attr");
-
 $serviceproviders = &$serviceproviders_attr['serviceproviders']['country'];
 
 //print_r($serviceproviders);
@@ -467,7 +473,7 @@ function build_country_list() {
 	$list = array();
 
 	// get_country_name is in pfSense-utils.inc
-	$country_list = get_country_name("ALL");
+	$country_list = get_country_name();
 
 	foreach ($country_list as $country) {
 		$list[$country['code']] = $country['name'];
@@ -823,6 +829,20 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['protocomp']
 ))->setHelp('Protocol field compression. This option saves one byte per frame for most frames.');
 
+$section->addInput(new Form_Checkbox(
+	'pppoe-multilink-over-singlelink',
+	'Multilink over single link',
+	'Multilink extensions over single link',
+	$pconfig['pppoe-multilink-over-singlelink']
+))->setHelp('Enable if the provider supports LCP multilink extensions over single link (will ignore MTU / MRU settings)');
+
+$section->addInput(new Form_Checkbox(
+	'mtu-override',
+	'Force MTU',
+	'Force MTU value to a known higher value',
+	$pconfig['mtu-override']
+))->setHelp('Overwrite the result of LCP negotiation with a known working higher value. WARNING: This option violates RFC 1661 and can break connectivity.');
+
 // Display the Link parameters. We will hide this by default, then un-hide the selected ones on clicking 'Advanced'
 $j = 0;
 foreach ($linklist['list'] as $ifnm => $nm) {
@@ -936,6 +956,8 @@ events.push(function() {
 			    (!$pconfig['tcpmssfix']) &&
 			    (!$pconfig['shortseq']) &&
 			    (!$pconfig['acfcomp']) &&
+			    (!$pconfig['pppoe-multilink-over-singlelink']) &&
+			    (!$pconfig['mtu-override']) &&
 			    (!$pconfig['protocomp'])) {
 				$showadv = false;
 			} else {
@@ -967,6 +989,8 @@ events.push(function() {
 		hideClass('pppoe', !pppoetype);
 		hideResetDisplay(!(showadvopts && pppoetype));
 		hideInput('pppoe-reset-type', !(showadvopts && pppoetype));
+		hideCheckbox('pppoe-multilink-over-singlelink', !(showadvopts && pppoetype));
+		hideCheckbox('mtu-override', !(showadvopts && pppoetype));
 
 		hideInterfaces();
 
@@ -975,6 +999,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
+
 		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
 	} // e-o-show_advopts
 

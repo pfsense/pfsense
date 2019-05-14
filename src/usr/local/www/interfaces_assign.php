@@ -59,13 +59,13 @@ $gettextArray = array('add'=>gettext('Add'),'addif'=>gettext('Add interface'),'d
 /* get list without VLAN interfaces */
 $portlist = get_interface_list();
 
-/*another *_fast function from interfaces_fast.inc. These functions are basically the same as the 
+/*another *_fast function from interfaces_fast.inc. These functions are basically the same as the
 ones they're named after, except they (usually) take an array and (always) return an array. This means that they only
 need to be called once per script run, the returned array contains all the data necessary for repeated use */
 $friendlyifnames = convert_real_interface_to_friendly_interface_name_fast();
 
 /* add wireless clone interfaces */
-if (is_array($config['wireless']['clone']) && count($config['wireless']['clone'])) {
+if (isset($config['wireless']['clone']) && is_array($config['wireless']['clone']) && count($config['wireless']['clone'])) {
 	foreach ($config['wireless']['clone'] as $clone) {
 		$portlist[$clone['cloneif']] = $clone;
 		$portlist[$clone['cloneif']]['iswlclone'] = true;
@@ -73,7 +73,7 @@ if (is_array($config['wireless']['clone']) && count($config['wireless']['clone']
 }
 
 /* add VLAN interfaces */
-if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+if (isset($config['vlans']['vlan']) && is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 	//$timea = microtime(true);
 	foreach ($config['vlans']['vlan'] as $vlan) {
 		$portlist[$vlan['vlanif']] = $vlan;
@@ -82,7 +82,7 @@ if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 }
 
 /* add Bridge interfaces */
-if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
 	foreach ($config['bridges']['bridged'] as $bridge) {
 		$portlist[$bridge['bridgeif']] = $bridge;
 		$portlist[$bridge['bridgeif']]['isbridge'] = true;
@@ -90,7 +90,7 @@ if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged
 }
 
 /* add GIF interfaces */
-if (is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
+if (isset($config['gifs']['gif']) && is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
 	foreach ($config['gifs']['gif'] as $gif) {
 		$portlist[$gif['gifif']] = $gif;
 		$portlist[$gif['gifif']]['isgif'] = true;
@@ -98,7 +98,7 @@ if (is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
 }
 
 /* add GRE interfaces */
-if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
+if (isset($config['gres']['gre']) && is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
 	foreach ($config['gres']['gre'] as $gre) {
 		$portlist[$gre['greif']] = $gre;
 		$portlist[$gre['greif']]['isgre'] = true;
@@ -106,7 +106,7 @@ if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
 }
 
 /* add LAGG interfaces */
-if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
+if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 	foreach ($config['laggs']['lagg'] as $lagg) {
 		$portlist[$lagg['laggif']] = $lagg;
 		$portlist[$lagg['laggif']]['islagg'] = true;
@@ -121,21 +121,21 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 }
 
 /* add QinQ interfaces */
-if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
+if (isset($config['qinqs']['qinqentry']) && is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
 	foreach ($config['qinqs']['qinqentry'] as $qinq) {
 		$portlist["{$qinq['vlanif']}"]['descr'] = "VLAN {$qinq['tag']} on {$qinq['if']}";
 		$portlist["{$qinq['vlanif']}"]['isqinq'] = true;
 		/* QinQ members */
 		$qinqifs = explode(' ', $qinq['members']);
 		foreach ($qinqifs as $qinqif) {
-			$portlist["{$qinq['vlanif']}_{$qinqif}"]['descr'] = "QinQ {$qinqif} on VLAN {$qinq['tag']} on {$qinq['if']}";
-			$portlist["{$qinq['vlanif']}_{$qinqif}"]['isqinq'] = true;
+			$portlist["{$qinq['vlanif']}.{$qinqif}"]['descr'] = "QinQ {$qinqif} on VLAN {$qinq['tag']} on {$qinq['if']}";
+			$portlist["{$qinq['vlanif']}.{$qinqif}"]['isqinq'] = true;
 		}
 	}
 }
 
 /* add PPP interfaces */
-if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+if (isset($config['ppps']['ppp']) && is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 	foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 		$portname = $ppp['if'];
 		$portlist[$portname] = $ppp;
@@ -152,21 +152,27 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 }
 
 $ovpn_descrs = array();
-if (is_array($config['openvpn'])) {
-	if (is_array($config['openvpn']['openvpn-server'])) {
+if (isset($config['openvpn']) && is_array($config['openvpn'])) {
+	if (isset($config['openvpn']['openvpn-server']) && is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $s) {
 			$portname = "ovpns{$s['vpnid']}";
 			$portlist[$portname] = $s;
 			$ovpn_descrs[$s['vpnid']] = $s['description'];
 		}
 	}
-	if (is_array($config['openvpn']['openvpn-client'])) {
+	if (isset($config['openvpn']['openvpn-client']) && is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as $c) {
 			$portname = "ovpnc{$c['vpnid']}";
 			$portlist[$portname] = $c;
 			$ovpn_descrs[$c['vpnid']] = $c['description'];
 		}
 	}
+}
+
+global $ipsec_descrs;
+$ipsec_descrs = interface_ipsec_vti_list_all();
+foreach ($ipsec_descrs as $ifname => $ifdescr) {
+	$portlist[$ifname] = array('descr' => $ifdescr);
 }
 
 
@@ -185,8 +191,8 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 	if ($portused === false) {
 		/* find next free optional interface number */
 		if (!$config['interfaces']['lan']) {
-			$newifname = gettext("lan");
-			$descr = gettext("LAN");
+			$newifname = "lan";
+			$descr = "LAN";
 		} else {
 			for ($i = 1; $i <= count($config['interfaces']); $i++) {
 				if (!$config['interfaces']["opt{$i}"]) {
@@ -196,7 +202,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			$newifname = 'opt' . $i;
 			$descr = "OPT" . $i;
 		}
-		
+
 		$config['interfaces'][$newifname] = array();
 		$config['interfaces'][$newifname]['descr'] = $descr;
 		$config['interfaces'][$newifname]['if'] = $_POST['if_add'];
@@ -205,7 +211,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			interface_sync_wireless_clones($config['interfaces'][$newifname], false);
 		}
 
-		
+
 		uksort($config['interfaces'], "compare_interface_friendly_names");
 
 		/* XXX: Do not remove this. */
@@ -245,7 +251,11 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 	build a list of port-to-interface mappings in portifmap */
 	foreach ($_POST as $ifname => $ifport) {
 		if (($ifname == 'lan') || ($ifname == 'wan') || (substr($ifname, 0, 3) == 'opt')) {
-			$portifmap[$ifport][] = strtoupper($ifname);
+			if (array_key_exists($ifport, $portlist)) {
+				$portifmap[$ifport][] = strtoupper($ifname);
+			} else {
+				$input_errors[] = sprintf(gettext('Cannot set port %1$s because the submitted interface does not exist.'), $ifname);
+			}
 		}
 	}
 
@@ -466,13 +476,13 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
-/*Generate the port select box only once. 
+/*Generate the port select box only once.
 Not indenting the HTML to produce smaller code
 and faster page load times */
 
 $portselect='';
 foreach ($portlist as $portname => $portinfo) {
-	$portselect.='<option value="'.$portname.'"'; 
+	$portselect.='<option value="'.$portname.'"';
 	$portselect.=">".$ifdescrs[$portname]."</option>\n";
 }
 
@@ -501,7 +511,7 @@ foreach ($portlist as $portname => $portinfo) {
 			<td><a href="/interfaces.php?if=<?=$ifname?>"><?=$ifdescr?></a></td>
 			<td>
 				<select name="<?=$ifname?>" id="<?=$ifname?>" class="form-control">
-<?php 
+<?php
 /*port select menu generation loop replaced with pre-prepared select menu to reduce page generation time */
 echo str_replace('value="'.$iface['if'].'">','value="'.$iface['if'].'" selected>',$portselect);
 ?>
@@ -516,7 +526,7 @@ echo str_replace('value="'.$iface['if'].'">','value="'.$iface['if'].'" selected>
 <?php endif;?>
 			</td>
 		</tr>
-<?php $i++; 
+<?php $i++;
 endforeach;
 	if (count($config['interfaces']) < count($portlist)):
 ?>

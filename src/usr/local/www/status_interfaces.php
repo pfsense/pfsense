@@ -3,7 +3,7 @@
  * status_interfaces.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -85,9 +85,13 @@ function dhcp_relinquish_lease($if, $ifdescr, $ipv) {
 	$leases_db = '/var/db/dhclient.leases.' . $if;
 	$conf_file = '/var/etc/dhclient_'.$ifdescr.'.conf';
 	$script_file = '/usr/local/sbin/pfSense-dhclient-script';
+	$ipv = ((int) $ipv == 6) ? '-6' : '-4';
 
 	if (file_exists($leases_db) && file_exists($script_file)) {
-		mwexec('/usr/local/sbin/dhclient -'.$ipv.' -d -r -lf '.$leases_db.' -cf '.$conf_file.' -sf '.$script_file);
+		mwexec('/usr/local/sbin/dhclient {$ipv} -d -r' .
+			' -lf ' . escapeshellarg($leases_db) .
+			' -cf ' . escapeshellarg($conf_file) .
+			' -sf ' . escapeshellarg($script_file));
 	}
 }
 

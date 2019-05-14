@@ -3,7 +3,7 @@
  * guiconfig.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -87,11 +87,10 @@ $reserved_table_names = array(
 	"bogonsv6",
 	"negate_networks",
 	"snort2c",
-	"sshlockout",
+	"sshguard",
 	"tonatsubnets",
 	"virusprot",
 	"vpn_networks",
-	"webConfiguratorlockout"
 );
 
 $firewall_rules_dscp_types = array(
@@ -257,9 +256,11 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 		}
 	}
 
-	for ($i = 0; $i < count($reqdfields); $i++) {
-		if ($postdata[$reqdfields[$i]] == "") {
-			$input_errors[] = sprintf(gettext("The field %s is required."), $reqdfieldsn[$i]);
+	if (is_array($reqdfields)) {
+		for ($i = 0; $i < count($reqdfields); $i++) {
+			if ($postdata[$reqdfields[$i]] == "") {
+				$input_errors[] = sprintf(gettext("The field %s is required."), $reqdfieldsn[$i]);
+			}
 		}
 	}
 }
@@ -450,67 +451,67 @@ function insert_word_breaks_in_domain_name($domain_name) {
 function firewall_check_for_advanced_options(&$item) {
 	$item_set = "";
 	if ($item['os']) {
-			$item_set .= "os {$item['os']} ";
+			$item_set .= "os " . htmlspecialchars($item['os']) . " ";
 	}
 	if ($item['dscp']) {
-		$item_set .= "dscp {$item['dscp']} ";
+		$item_set .= "dscp " . htmlspecialchars($item['dscp']) . " ";
 	}
 	if ($item['max']) {
-		$item_set .= "max {$item['max']} ";
+		$item_set .= "max " . htmlspecialchars($item['max']) . " ";
 	}
 	if ($item['max-src-nodes']) {
-		$item_set .= "max-src-nodes {$item['max-src-nodes']} ";
+		$item_set .= "max-src-nodes " . htmlspecialchars($item['max-src-nodes']) . " ";
 	}
 	if ($item['max-src-conn']) {
-		$item_set .= "max-src-conn {$item['max-src-conn']} ";
+		$item_set .= "max-src-conn " . htmlspecialchars($item['max-src-conn']) . " ";
 	}
 	if ($item['max-src-states']) {
-		$item_set .= "max-src-states {$item['max-src-states']} ";
+		$item_set .= "max-src-states " . htmlspecialchars($item['max-src-states']) . " ";
 	}
 	if (isset($item['nopfsync'])) {
 		$item_set .= "nopfsync ";
 	}
 	if ($item['statetype'] != "keep state" && $item['statetype'] != "") {
-		$item_set .= "statetype {$item['statetype']} ";
+		$item_set .= "statetype " . htmlspecialchars($item['statetype']) . " ";
 	}
 	if ($item['statetimeout']) {
-		$item_set .= "statetimeout {$item['statetimeout']} ";
+		$item_set .= "statetimeout " . htmlspecialchars($item['statetimeout']) . " ";
 	}
 	if (isset($item['nosync'])) {
 		$item_set .= "no XMLRPC Sync ";
 	}
 	if ($item['max-src-conn-rate']) {
-		$item_set .= "max-src-conn-rate {$item['max-src-conn-rate']} ";
+		$item_set .= "max-src-conn-rate " . htmlspecialchars($item['max-src-conn-rate']) . " ";
 	}
 	if ($item['max-src-conn-rates']) {
-		$item_set .= "max-src-conn-rates {$item['max-src-conn-rates']} ";
+		$item_set .= "max-src-conn-rates " . htmlspecialchars($item['max-src-conn-rates']) . " ";
 	}
 	if ($item['vlanprio']) {
-		$item_set .= "vlanprio {$item['vlanprio']} ";
+		$item_set .= "vlanprio " . htmlspecialchars($item['vlanprio']) . " ";
 	}
 	if ($item['vlanprioset']) {
-		$item_set .= "vlanprioset {$item['vlanprioset']} ";
+		$item_set .= "vlanprioset " . htmlspecialchars($item['vlanprioset']) . " ";
 	}
 	if ($item['gateway']) {
-		$item_set .= "gateway {$item['gateway']} ";
+		$item_set .= "gateway " . htmlspecialchars($item['gateway']) . " ";
 	}
 	if ($item['dnpipe']) {
-		$item_set .= "limiter {$item['dnpipe']} ";
+		$item_set .= "limiter " . htmlspecialchars($item['dnpipe']) . " ";
 	}
 	if ($item['pdnpipe']) {
-		$item_set .= "limiter {$item['pdnpipe']} ";
+		$item_set .= "limiter " . htmlspecialchars($item['pdnpipe']) . " ";
 	}
 	if ($item['ackqueue']) {
-		$item_set .= "ackqueue {$item['ackqueue']} ";
+		$item_set .= "ackqueue " . htmlspecialchars($item['ackqueue']) . " ";
 	}
 	if ($item['defaultqueue']) {
-		$item_set .= "defaultqueue {$item['defaultqueue']} ";
+		$item_set .= "defaultqueue " . htmlspecialchars($item['defaultqueue']) . " ";
 	}
 	if ($item['tag']) {
-		$item_set .= "tag {$item['tag']} ";
+		$item_set .= "tag " . htmlspecialchars($item['tag']) . " ";
 	}
 	if ($item['tagged']) {
-		$item_set .= "tagged {$item['tagged']} ";
+		$item_set .= "tagged " . htmlspecialchars($item['tagged']) . " ";
 	}
 	if (isset($item['allowopts'])) {
 		$item_set .= "allowopts ";
@@ -535,8 +536,13 @@ function gentitle($title) {
 }
 
 function genhtmltitle($title, $links=true) {
-
-	$num_crumbs = count($title);
+	if (is_array($title)) {
+		$num_crumbs = count($title);
+	} else if ($title != NULL) {
+		$num_crumbs = 1;
+	} else {
+		$num_crumbs = 0;
+	}
 
 	// If the array contains only one element, there are no breadcrumbs, so don't
 	// add anything else
@@ -825,7 +831,12 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0
 		}
 	}
 
-	if (is_alias($pbeginport)) {
+	/*
+	 * If the port is still unset, then it must not be numeric, but could
+	 * be an alias or a well-known/registered service.
+	 * See https://redmine.pfsense.org/issues/8410
+	 */
+	if (!isset($adr['port']) && is_port_or_alias($pbeginport)) {
 		$adr['port'] = $pbeginport;
 	}
 }
@@ -1284,6 +1295,39 @@ if (isset($config['system']['timezone']) &&
 	$timezone = $g['default_timezone'];
 } else {
 	$timezone = "Etc/UTC";
+}
+
+/* Remove files we do not want to see in a crash report */
+function cleanup_crash_file_list() {
+	$files = glob("/var/crash/*");
+	if (!is_array($files) || empty($files)) {
+		return array();
+	}
+
+	$exclude_patterns = array(
+		'.*.last',
+		'bounds',
+		'minfree'
+	);
+
+	foreach ($files as $idx => $fb) {
+		if (preg_match('/' . implode('|', $exclude_patterns) . '/', basename($fb)) == 1) {
+			unset($files[$idx]);
+		}
+	}
+
+	return $files;
+}
+
+function system_has_crash_data() {
+	/* Test if there are any crash data files present */
+	return count(cleanup_crash_file_list()) > 0;
+}
+
+function system_has_php_errors() {
+	/* Check if the PHP error log is empty. Cast to int in case the file
+	 * does not exist and filesize() returns false. */
+	return (int) @filesize("/tmp/PHP_errors.log") > 0;
 }
 
 date_default_timezone_set($timezone);

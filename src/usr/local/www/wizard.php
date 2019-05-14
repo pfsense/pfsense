@@ -3,7 +3,7 @@
  * wizard.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -139,8 +139,16 @@ if ($stepid > $totalsteps) {
 	$stepid = $totalsteps;
 }
 
-$title = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
-$description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['description']);
+// Convert a string containing a text version of a PHP array into a real $config array
+// that can then be created. e.g.: config_array_from_str("['apple']['orange']['pear']['bannana']");
+function config_array_from_str( $text) {
+	$t = str_replace("[", "", $text);	// Remove '['
+	$t = str_replace("'", "", $t);		// Remove '
+	$t = str_replace("\"", "", $t);		// Remove "
+	$t = str_replace("]", " ", $t);		// Convert ] to space
+	$a = explode(" ", trim($t));
+	init_config_arr($a);
+}
 
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
 	global $config;
@@ -179,13 +187,22 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
 	}
+
+	// Verify that the needed $config element exists. If not, create it
+	$tsttext = 'return (isset($config' . $field_conv . '));';
+
+	if (!eval($tsttext)) {
+		config_array_from_str($field_conv);
+	}
+
 	$text .= "\$thisvar = &\$config" . $field_conv . ";";
 	eval($text);
+
 	$thisvar = $updatetext;
 }
 
-$title	   = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
-$description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['description']);
+$title	   = $pkg['step'][$stepid]['title'];
+$description = $pkg['step'][$stepid]['description'];
 
 // handle before form display event.
 do {
@@ -647,6 +664,10 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$options[$field['add_to_certca_selection']] = $field['add_to_certca_selection'];
 				}
 
+				if (!is_array($config['ca'])) {
+					$config['ca'] = array();
+				}
+
 				foreach ($config['ca'] as $ca) {
 					$caname = htmlspecialchars($ca['descr']);
 
@@ -690,6 +711,10 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					}
 
 					$options[$field['add_to_cert_selection']] = $field['add_to_cert_selection'];
+				}
+
+				if (!is_array($config['cert'])) {
+					$config['cert'] = array();
 				}
 
 				foreach ($config['cert'] as $ca) {

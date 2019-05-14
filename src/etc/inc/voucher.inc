@@ -3,7 +3,7 @@
  * voucher.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2007-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2007-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -70,7 +70,7 @@ function xmlrpc_sync_voucher_details(&$syncip, &$port, &$username, &$password) {
 function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $username) {
 	global $cpzone;
 	require_once("xmlrpc_client.inc");
-	
+
 	/* Construct code that is run on remote machine */
 	$execcmd = <<<EOF
 	global \$cpzone;
@@ -100,9 +100,8 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
 	\$cpzone = "$cpzone";
-	\$radiusservers = captiveportal_get_radius_servers();
 	\$dbent = unserialize("$dbent_str");
-	return captiveportal_disconnect(\$dbent, \$radiusservers, $term_cause, $tmp_stop_time);
+	return captiveportal_disconnect(\$dbent, $term_cause, $tmp_stop_time);
 
 EOF;
 	$rpc_client = new pfsense_xmlrpc_client();
@@ -135,7 +134,7 @@ EOF;
 	$rpc_client = new pfsense_xmlrpc_client();
 	$rpc_client->setConnectionData($syncip, $port, $username, $password);
 	$resp = $rpc_client->xmlrpc_exec_php($execcmd);
-	
+
 	if (!is_array($config['voucher'])) {
 		$config['voucher'] = array();
 	}
@@ -222,7 +221,7 @@ function voucher_expire($voucher_received) {
 						$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 					}
 					$cpentry = $cpentry[0];
-					captiveportal_disconnect($cpentry, null, 13);
+					captiveportal_disconnect($cpentry, 13);
 					captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "FORCLY TERMINATING VOUCHER {$voucher} SESSION");
 					$unsetindexes[] = $cpentry[5];
 				}

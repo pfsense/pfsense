@@ -3,7 +3,7 @@
  * interfaces_qinq_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,10 +32,7 @@ $shortcut_section = "interfaces";
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['qinqs']['qinqentry'])) {
-	$config['qinqs']['qinqentry'] = array();
-}
-
+init_config_arr(array('qinqs', 'qinqentry'));
 $a_qinqs = &$config['qinqs']['qinqentry'];
 
 $portlist = get_interface_list();
@@ -222,6 +219,7 @@ if ($_POST['save']) {
 				$gentry['ifname'] = "QinQ";
 				$gentry['members'] = "{$additions}";
 				$gentry['descr'] = gettext("QinQ VLANs group");
+				init_config_arr(array('ifgroups', 'ifgroupentry'));
 				$config['ifgroups']['ifgroupentry'][] = $gentry;
 			}
 		}

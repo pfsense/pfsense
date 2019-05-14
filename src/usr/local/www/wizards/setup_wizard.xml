@@ -26,7 +26,16 @@
 	<id>1</id>
 	<title>pfSense Setup</title>
 	<disableheader>true</disableheader>
-	<description>This wizard will provide guidance through the initial configuration of pfSense.&lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.</description>
+	<description>
+		<![CDATA[
+		<p><h4>Welcome to pfSense® software!</h4></p>
+		<p>This wizard will provide guidance through the initial configuration of pfSense.</p>
+		<p>The wizard may be stopped at any time by clicking the logo image at the top of the screen.</p>
+		<p><strong>pfSense® software is developed and maintained by Netgate®<strong></p>
+		<br />
+		<p><a href="https://www.netgate.com/pfw1" class="btn btn-info" target="_blank">Learn more</a></p>
+		]]>
+	</description>
 	<fields>
 		<field>
 			<name>Next</name>
@@ -40,19 +49,22 @@
 </step>
 <step>
 	<id>2</id>
-	<title>Netgate Global Support is available</title>
+	<title>Netgate® Global Support is available 24/7</title>
 	<disableheader>true</disableheader>
 	<description>
-    pfSense firewalls are known for their reliability, manageability, and flexibility.
-    &lt;br/&gt; &lt;br/&gt;
-    You know that network security is crucial, now more than ever.
-    Support provides peace-of-mind and help if you need it.
-    &lt;br/&gt; &lt;br/&gt;
-    Netgate offers 24/7/365 world-class support subscriptions that cover every need, from SOHO to Enterprise.
-    &lt;br/&gt; &lt;br/&gt;
-    &lt;a href="https://netgate.com/more-support-info/" target="_blank"&gt;
-    &lt;span class="btn btn-info" "&gt;Learn More &lt;/button&gt;&lt;/a&gt;
-    &lt;br/&gt; &lt;br/&gt;
+	<![CDATA[
+		<p>Our 24/7 worldwide team of support engineers are the most qualified to diagnose your issue and resolve it quickly, from branch office to enterprise — on premises to cloud.</p>
+		<p>We offer several support subscription plans tailored to fit different environment sizes and requirements. Many companies around the world choose Netgate support because:</p>
+		<p>
+		<ul>
+			<li>Support is available 24 hours a day, seven days a week, including holidays.</li>
+			<li>Support engineers are located around the world, ensuring that no support call is missed.</li>
+			<li>Our support engineers hold many prestigious network engineer certificates and have years of hands-on experience with networking.</li>
+		</ul>
+		</p>
+		<br />
+		<p><a href="https://www.netgate.com/pfw2" class="btn btn-info" target="_blank">Learn more</a></p>
+    ]]>
   </description>
 	<fields>
 		<field>
@@ -118,8 +130,7 @@
 	</fields>
 	<stepbeforeformdisplay>
 		<![CDATA[
-		$config['wizardtemp'] = array();
-		$config['wizardtemp']['system'] = array();
+		init_config_arr(array('wizardtemp', 'system'));
 		$config['wizardtemp']['system']['hostname'] = $config['system']['hostname'];
 		$config['wizardtemp']['system']['domain'] = $config['system']['domain'];
 		]]>
@@ -522,8 +533,7 @@
 		}
 		$type = $_POST['selectedtype'];
 
-		if (!is_array($config['ppps']['ppp']))
-			$config['ppps']['ppp'] = array();
+		init_config_arr(array('ppps', 'ppp'));
 		if (count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 				if ($ppp['ptpid'] == "0") {
@@ -601,6 +611,19 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitbeforesave>
+		<![CDATA[
+		/*
+		 * Store the old LAN IP address so it doesn't trip up the security checks
+		 * between the time it is saved here and applied at the end of the wizard.
+		 * See https://redmine.pfsense.org/issues/8524
+		 */
+		$althosts_before = $config['system']['webgui']['althostnames'];
+		$althosts = explode(' ', $config['system']['webgui']['althostnames']);
+		$althosts[] = get_interface_ip('lan');
+		$config['system']['webgui']['althostnames'] = implode(' ', $althosts);
+		]]>
+	</stepsubmitbeforesave>
 	<stepsubmitphpaction>
 		<![CDATA[
 		if (empty($_POST['lanipaddress']) || (!is_ipaddr($_POST['lanipaddress']) && (strtolower($_POST['lanipaddress']) != "dhcp"))) {
@@ -638,6 +661,8 @@
 		   If the existing DHCP range on LAN is not in the new subnet or
 		   is invalid, then replace the range with a newly crafted one.
 		*/
+		init_config_arr(array('dhcpd', 'lan', 'range', 'from'));
+		init_config_arr(array('dhcpd', 'lan', 'range', 'to'));
 		if (!ip_in_subnet($config['dhcpd']['lan']['range']['from'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}") ||
 		    !ip_in_subnet($config['dhcpd']['lan']['range']['to'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}")) {
 
@@ -732,8 +757,7 @@
 		$config['system']['hostname'] = $config['wizardtemp']['system']['hostname'];
 		$config['system']['domain'] = $config['wizardtemp']['system']['domain'];
 		if (!empty($config['wizardtemp']['wangateway'])) {
-			if (!is_array($config['gateways']['gateway_item']))
-				$config['gateways']['gateway_item'] = array();
+			init_config_arr(array('gateways', 'gateway_item'));
 			$found = false;
 			$defaultgw_found = false;
 			foreach ($config['gateways']['gateway_item'] as & $gw) {
@@ -760,6 +784,8 @@
 			}
 		}
 		unset($config['wizardtemp']);
+		/* See https://redmine.pfsense.org/issues/8524 */
+		$config['system']['webgui']['althostnames'] = $althosts_before;
 		write_config(gettext("Configuration saved on completion of the pfSense setup wizard."));
 		reload_all();
 		mwexec_bg("/etc/rc.update_bogons.sh now");
@@ -780,10 +806,29 @@
 	</stepbeforeformdisplay>
 	<description>
 	<![CDATA[
-		<p>Congratulations! pfSense is now configured.</p>
-		Remember, we're here to help.</p><p>
-		Click <a target='_blank' href='https://www.netgate.com/more-support-info/'>here</a> to learn about Netgate 24/7/365 support.</p><p>
-		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.</p>
+	<div style="padding-right:25px;">
+		<p><h4>Congratulations! pfSense is now configured.</h4></p>
+		<p>
+		We recommend that you check to see if there are any software updates available. Keeping your software up to date is
+		one of the most important things you can do to maintain the security of your network.</p>
+		<input type="button" onclick="window.location.href='$myurlpkg_mgr_install.php?id=firmware'" class="btn btn-xs btn-success" value="Check for updates"/>
+		</br></br>
+		<p><h4>Remember, we're here to help.</h4></p>
+		<p><a target='_blank' href='https://www.netgate.com/pfw2'><strong><span style="font-size:16px"> Click here</span></strong></a> to learn about Netgate 24/7/365 support services.</p>
+		</br>
+		<p><h4>Useful resources.</h4></p>
+		<p>
+			<ul>
+				<li>Learn more about Netgate's product line, services, and pfSense software from our <a target='_blank' href='https://www.netgate.com/pfw3'>website</a></li>
+				<li>To learn about Netgate appliances and other offers, <a target='_blank' href='https://www.netgate.com/pfw4'>visit our store</a></li>
+				<li>Become part of the pfSense community. Visit our <a target='_blank' href='https://www.netgate.com/pfw5'>forum</a></li>
+				<li>Subscribe to our <a target='_blank' href='https://www.netgate.com/pfw6'>newsletter</a> for ongoing product information, software announcements and special offers.</li>
+			</ul>
+		</p>
+		</br>
+		<input type="button" onclick="window.location.href='$myurl'" class="btn btn-sm btn-primary" value="Finish"/>
+		</p>
+	</div>
 	]]>
 	</description>
 </step>

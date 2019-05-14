@@ -3,7 +3,7 @@
  * copyget.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ function updatecopyright() {
 
 	if (file_exists($idfile)) {
 		if (function_exists('curl_version')) {
-			$post = ['uid' => file_get_contents($idfile), 'language' => '0', 'edition' => 'community'];
+			$post = ['uid' => file_get_contents($idfile), 'language' => '0', 'edition' => 'community', 'version' => '1'];
 			$url = $FQDN;
 
 			$ch = curl_init();
@@ -57,7 +57,7 @@ function updatecopyright() {
 			if ($status == 200) {
 				// Save to a temporary file
 				file_put_contents($tmpfile, $response);
-				// If the file contents are not the same as the existing file, create the trigger to display hte new copyright
+				// If the file contents are not the same as the existing file, create the trigger to display the new copyright
 				if (!file_exists($copyrightfile) || (md5_file($copyrightfile) != md5_file($tmpfile))) {
 					touch("{$g['cf_conf_path']}/copynotice_display");
 				}
@@ -71,11 +71,5 @@ function updatecopyright() {
 // Retrieve the copyright data from Netgate.com if the support data file does not exist,
 // or if it is more than a day old
 if (!file_exists($copyrightfile) || ( time()-filemtime($copyrightfile) > $refreshinterval)) {
-	if (file_exists($copyrightfile)) {
-		unlink($copyrightfile);
-	}
-
 	updateCopyright();
 }
-
-

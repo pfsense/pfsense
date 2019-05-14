@@ -3,7 +3,7 @@
  * services_dhcp.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -41,17 +41,6 @@ if (!$g['services_dhcp_server_enable']) {
 }
 
 $if = $_REQUEST['if'];
-
-/* if OLSRD is enabled, allow WAN to house DHCP. */
-if ($config['installedpackages']['olsrd']) {
-	foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-		if ($olsrd['enable']) {
-			$is_olsr_enabled = true;
-			break;
-		}
-	}
-}
-
 $iflist = get_configured_interface_with_descr();
 
 /* set the starting interface */
@@ -118,10 +107,7 @@ if (is_array($config['dhcpd'][$if])) {
 		exit;
 	}
 
-	if (!is_array($config['dhcpd'][$if]['pool'])) {
-		$config['dhcpd'][$if]['pool'] = array();
-	}
-
+	init_config_arr(array('dhcpd', $if, 'pool'));
 	$a_pools = &$config['dhcpd'][$if]['pool'];
 
 	if (is_numeric($pool) && $a_pools[$pool]) {
@@ -132,10 +118,7 @@ if (is_array($config['dhcpd'][$if])) {
 		$dhcpdconf = &$config['dhcpd'][$if];
 	}
 
-	if (!is_array($config['dhcpd'][$if]['staticmap'])) {
-		$dhcpdconf['staticmap'] = array();
-	}
-
+	init_config_arr(array('dhcpd', $if, 'staticmap'));
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
 }
 
@@ -232,6 +215,10 @@ if (isset($_POST['save'])) {
 	$numberoptions = array();
 	for ($x = 0; $x < 99; $x++) {
 		if (isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
+			if ($_POST["number{$x}"] < 1 || $_POST["number{$x}"] > 254) {
+				$input_errors[] = gettext("The DHCP option must be a number between 1 and 254.");
+				continue;
+			}
 			$numbervalue = array();
 			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
 			$numbervalue['type'] = htmlspecialchars($_POST["itemtype{$x}"]);
@@ -424,18 +411,32 @@ if (isset($_POST['save'])) {
 
 		/* If disabling DHCP Server, make sure that DHCP registration isn't enabled for DNS forwarder/resolver */
 		if (!$_POST['enable']) {
+			/* Find out how many other interfaces have DHCP enabled. */
+			$dhcp_enabled_count = 0;
+			foreach ($config['dhcpd'] as $dhif => $dhcps) {
+				if ($dhif == $if) {
+					/* Skip this interface, we only want to know how many others are enabled. */
+					continue;
+				}
+				if (isset($dhcps['enable'])) {
+					$dhcp_enabled_count++;
+				}
+			}
+
 			if (isset($config['dnsmasq']['enable']) &&
+			    ($dhcp_enabled_count == 0) &&
 			    (isset($config['dnsmasq']['regdhcp']) ||
 			    isset($config['dnsmasq']['regdhcpstatic']) ||
 			    isset($config['dnsmasq']['dhcpfirst']))) {
 				$input_errors[] = gettext(
-				    "Disable DHCP Registration features in DNS Forwarder before disabling DHCP Server.");
+				    "DHCP Registration features in the DNS Forwarder are active and require at least one enabled DHCP Server.");
 			}
 			if (isset($config['unbound']['enable']) &&
+			    ($dhcp_enabled_count == 0) &&
 			    (isset($config['unbound']['regdhcp']) ||
 			    isset($config['unbound']['regdhcpstatic']))) {
 				$input_errors[] = gettext(
-				    "Disable DHCP Registration features in DNS Resolver before disabling DHCP Server.");
+				    "DHCP Registration features in the DNS Resolver are active and require at least one enabled DHCP Server.");
 			}
 		}
 	}
@@ -495,6 +496,9 @@ if (isset($_POST['save'])) {
 			if ($act == "newpool") {
 				$dhcpdconf = array();
 			} else {
+				if (!is_array($config['dhcpd'])) {
+					$config['dhcpd']= array();
+				}
 				if (!is_array($config['dhcpd'][$if])) {
 					$config['dhcpd'][$if] = array();
 				}
@@ -508,6 +512,9 @@ if (isset($_POST['save'])) {
 				header("Location: services_dhcp.php");
 				exit;
 			}
+		}
+		if (!is_array($dhcpdconf)) {
+			$dhcpdconf = array();
 		}
 		if (!is_array($dhcpdconf['range'])) {
 			$dhcpdconf['range'] = array();
@@ -922,15 +929,6 @@ $section->addInput(new Form_StaticText(
 	'Available range',
 	$rangestr
 ));
-
-if ($is_olsr_enabled) {
-	$section->addInput(new Form_Select(
-		'netmask',
-		'Subnet mask',
-		$pconfig['netmask'],
-		array_combine(range(32, 1, -1), range(32, 1, -1))
-	));
-}
 
 $group = new Form_Group('*Range');
 
@@ -1347,6 +1345,7 @@ $section->addInput(new Form_StaticText(
 ));
 
 if (!$pconfig['numberoptions']) {
+	$pconfig['numberoptions'] = array();
 	$pconfig['numberoptions']['item']  = array(array('number' => '', 'type' => 'text', 'value' => ''));
 }
 
@@ -1372,8 +1371,9 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 	$group->add(new Form_Input(
 		'number' . $counter,
 		null,
-		'text',
-		$number
+		'number',
+		$number,
+		['min'=>'1', 'max'=>'254']
 	))->setHelp($numrows == $counter ? 'Number':null);
 
 
@@ -1555,7 +1555,7 @@ events.push(function() {
 				empty($pconfig['ddnsdomain']) &&
 				empty($pconfig['ddnsdomainprimary']) &&
 			    empty($pconfig['ddnsdomainkeyname']) &&
-			    empty($pconfig['ddnsdomainkeyalgorithm']) &&
+			    (empty($pconfig['ddnsdomainkeyalgorithm']) || ($pconfig['ddnsdomainkeyalgorithm'] == "hmac-md5")) &&
 			    (empty($pconfig['ddnsclientupdates']) || ($pconfig['ddnsclientupdates'] == "allow")) &&
 			    empty($pconfig['ddnsdomainkey'])) {
 				$showadv = false;

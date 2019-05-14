@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* Recursively check anchors for rules/nat and also for anchors inside anchors (like those used by relayd) */
+/* Recursively check anchors for rules/nat and also for anchors inside anchors (like those used by UPnP) */
 function anchor_recurse($name = '') {
 	$anchor_list = "";
 	if ($name) {

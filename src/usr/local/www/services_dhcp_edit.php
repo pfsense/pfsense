@@ -3,7 +3,7 @@
  * services_dhcp_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -56,27 +56,12 @@ if (!$if) {
 	exit;
 }
 
-if (!is_array($config['dhcpd'])) {
-	$config['dhcpd'] = array();
-}
-
-if (!is_array($config['dhcpd'][$if])) {
-	$config['dhcpd'][$if] = array();
-}
-
-if (!is_array($config['dhcpd'][$if]['staticmap'])) {
-	$config['dhcpd'][$if]['staticmap'] = array();
-}
-
-if (!is_array($config['dhcpd'][$if]['pool'])) {
-	$config['dhcpd'][$if]['pool'] = array();
-}
-
+init_config_arr(array('dhcpd', $if, 'staticmap'));
+init_config_arr(array('dhcpd', $if, 'pool'));
+$a_maps = &$config['dhcpd'][$if]['staticmap'];
 $a_pools = &$config['dhcpd'][$if]['pool'];
-
 $static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
 $netboot_enabled=isset($config['dhcpd'][$if]['netboot']);
-$a_maps = &$config['dhcpd'][$if]['staticmap'];
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);

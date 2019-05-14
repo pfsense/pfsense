@@ -3,7 +3,7 @@
  * system_advanced_misc.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -36,7 +36,13 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("vpn.inc");
-require_once("vslb.inc");
+
+$powerd_modes = array(
+	'hadp' => gettext('Hiadaptive'),
+	'adp' => gettext('Adaptive'),
+	'min' => gettext('Minimum'),
+	'max' => gettext('Maximum'),
+);
 
 $pconfig['proxyurl'] = $config['system']['proxyurl'];
 $pconfig['proxyport'] = $config['system']['proxyport'];
@@ -45,7 +51,6 @@ $pconfig['proxypass'] = $config['system']['proxypass'];
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['srctrack'] = $config['system']['srctrack'];
-$pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
@@ -125,6 +130,16 @@ if ($_POST) {
 		$input_errors[] = gettext("Proxy password and confirmation must match.");
 	}
 
+	if (!in_array($_POST['powerd_ac_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid AC Power mode.");
+	}
+	if (!in_array($_POST['powerd_battery_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid Battery Power mode.");
+	}
+	if (!in_array($_POST['powerd_normal_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid Unknown Power mode.");
+	}
+
 	if (!$input_errors) {
 
 		if ($_POST['harddiskstandby'] <> "") {
@@ -160,27 +175,17 @@ if ($_POST) {
 			unset($config['system']['proxypass']);
 		}
 
-		$need_relayd_restart = false;
 		if ($_POST['lb_use_sticky'] == "yes") {
 			if (!isset($config['system']['lb_use_sticky'])) {
 				$config['system']['lb_use_sticky'] = true;
-				$need_relayd_restart = true;
 			}
 			if ($config['system']['srctrack'] != $_POST['srctrack']) {
 				$config['system']['srctrack'] = $_POST['srctrack'];
-				$need_relayd_restart = true;
 			}
 		} else {
 			if (isset($config['system']['lb_use_sticky'])) {
 				unset($config['system']['lb_use_sticky']);
-				$need_relayd_restart = true;
 			}
-		}
-
-		if ($_POST['gw_switch_default'] == "yes") {
-			$config['system']['gw_switch_default'] = true;
-		} else {
-			unset($config['system']['gw_switch_default']);
 		}
 
 		if ($_POST['pkg_nochecksig'] == "yes") {
@@ -303,9 +308,6 @@ if ($_POST) {
 		activate_powerd();
 		load_crypto();
 		load_thermal_hardware();
-		if ($need_relayd_restart) {
-			relayd_configure();
-		}
 	}
 }
 
@@ -394,15 +396,6 @@ $group->add(new Form_Input(
 
 $section->add($group);
 
-$section->addInput(new Form_Checkbox(
-	'gw_switch_default',
-	'Default gateway switching',
-	'Enable default gateway switching',
-	$pconfig['gw_switch_default']
-))->setHelp('If the default gateway goes down, switch the default gateway to '.
-	'another available one. This is not enabled by default, as it\'s unnecessary in '.
-	'most all scenarios, which instead use gateway groups.');
-
 $form->add($section);
 $section = new Form_Section('Power Savings');
 
@@ -425,32 +418,25 @@ $section->addInput(new Form_Checkbox(
 	'power consumption.	 It raises frequency faster, drops slower and keeps twice '.
 	'lower CPU load.');
 
-$modes = array(
-	'hadp' => gettext('Hiadaptive'),
-	'adp' => gettext('Adaptive'),
-	'min' => gettext('Minimum'),
-	'max' => gettext('Maximum'),
-);
-
 $section->addInput(new Form_Select(
 	'powerd_ac_mode',
 	'AC Power',
 	$pconfig['powerd_ac_mode'],
-	$modes
+	$powerd_modes
 ));
 
 $section->addInput(new Form_Select(
 	'powerd_battery_mode',
 	'Battery Power',
 	$pconfig['powerd_battery_mode'],
-	$modes
+	$powerd_modes
 ));
 
 $section->addInput(new Form_Select(
 	'powerd_normal_mode',
 	'Unknown Power',
 	$pconfig['powerd_normal_mode'],
-	$modes
+	$powerd_modes
 ));
 
 $form->add($section);
@@ -488,9 +474,12 @@ if (strlen($pti) > 0) {
 	$section->addInput(new Form_Checkbox(
 		'pti_disabled',
 		'Kernel PTI',
-		'Disable the kernel PTI',
+		'Forcefully disable the kernel PTI',
 		$pconfig['pti_disabled']
-	))->setHelp('Meltdown workaround.  If disabled the kernel memory can be accessed by unprivileged users on affected CPUs.');
+	))->setHelp('Meltdown workaround. If disabled the kernel memory can be accessed by unprivileged users on affected CPUs. ' .
+		    'This option forces the workaround off, and requires a reboot to activate. %1$s%1$s' .
+		    'PTI is active by default only on affected CPUs, if PTI is disabled by default then this option will have no effect. %1$s' .
+		    'Current PTI status: %2$s', "<br/>", ($pti == "1") ? "Enabled" : "Disabled");
 	$form->add($section);
 }
 $section = new Form_Section('Schedules');

@@ -3,7 +3,7 @@
  * Section.class.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -38,6 +38,7 @@ class Form_Section extends Form_Element
 		if (!empty($id)) {
 			$this->_attributes['id'] = $id;
 		}
+
 		$this->_title = $title;
 		$this->_collapsible = $collapsible;
 	}
@@ -96,7 +97,7 @@ class Form_Section extends Form_Element
 		$bodyclass = '<div class="panel-body">';
 		$id = $this->_attributes['id'];
 
-		if ($this->_collapsible & COLLAPSIBLE) {
+		if (intval($this->_collapsible) & COLLAPSIBLE) {
 			$hdricon = '<span class="widget-heading-icon">' .
 				'<a data-toggle="collapse" href="#' . $id . '_panel-body">' .
 					'<i class="fa fa-plus-circle"></i>' .

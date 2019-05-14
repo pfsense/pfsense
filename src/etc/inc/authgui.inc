@@ -6,7 +6,7 @@
  * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,15 +65,12 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 		require_once("functions.inc");
 		pfSenseHeader("/{$page}");
 
-		$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
-		if (!empty($_SERVER['REMOTE_ADDR'])) {
-			$username .= '@' . $_SERVER['REMOTE_ADDR'];
-		}
+		$username = get_config_user();
 		log_error("{$username} attempted to access {$_SERVER['SCRIPT_NAME']} but does not have access to that page. Redirecting to {$page}.");
 
 		exit;
 	} else {
-		// add this so they don't get stuck on the logout page when they have no permissions. 
+		// add this so they don't get stuck on the logout page when they have no permissions.
 		$_SESSION["Logged_In"] = false;
 		display_error_form("201", gettext("No page assigned to this user! Click here to logout."));
 
@@ -156,9 +153,7 @@ function display_error_form($http_code, $desc) {
 			<footer id="3">
 			<div id="footertext">
 					<p class="text-muted">
-						<a target="_blank" href="https://www.pfsense.org/?gui=bootstrap">pfSense</a> is &copy;
-						2004 - 2018 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
-						[<a href="/license.php" class="tblnk">view license</a>]
+						<?=print_credit()?>
 					</p>
 				</div>
 			</footer>
@@ -272,8 +267,10 @@ function display_login_form() {
 
 	if (isset($config['system']['webgui']['loginshowhost'])) {
 		$loginbannerstr = sprintf(gettext('%1$s.%2$s'), htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
+		$login_title = gettext(htmlspecialchars($config['system']['hostname'] . " - Login"));
 	} else {
 		$loginbannerstr = sprintf(gettext('Login to %1$s'), $g['product_name']);
+		$login_title = gettext("pfSense - Login");
 	}
 
 	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
@@ -290,7 +287,7 @@ function display_login_form() {
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
 	    <link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">
-		<title><?=gettext("Login"); ?></title>
+		<title><?=$login_title; ?></title>
 		<script type="text/javascript">
 			//<![CDATA{
 			var events = events || [];
@@ -363,9 +360,7 @@ function display_login_form() {
 	        <footer id="3">
 	            <div id="footertext">
 					<p class="text-muted">
-						<a target="_blank" href="https://www.pfsense.org/?gui=bootstrap">pfSense</a> is &copy;
-						2004 - 2018 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
-						[<a href="/license.php" class="tblnk">view license</a>]
+						<?=print_credit()?>
 					</p>
 	            </div>
 	        </footer>

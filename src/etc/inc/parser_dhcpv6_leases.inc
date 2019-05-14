@@ -2,7 +2,7 @@
 /*
  * parser_dhcpv6_leases.inc
  *
- * Copyright (c) 2017-2018 Anders Lind (anders.lind@gmail.com)
+ * Copyright (c) 2017-2019 Anders Lind (anders.lind@gmail.com)
  * All rights reserved.
  *
  * part of pfSense (https://www.pfsense.org)
@@ -82,7 +82,7 @@ const IA_TA = 3;
  * returns false if it was not possible to parse the leases.
  */
 function gui_parse_leases(&$pools, &$leases, &$prefixes, &$mappings, $raw_leases, $ndpdata, $lang_pack) {
-	$amount_of_matches = preg_match_all('/'.base_regex.'/i', $raw_leases, $lease_array, PREG_SET_ORDER);
+	$amount_of_matches = preg_match_all('/'.base_regex.'/i', (string) $raw_leases, $lease_array, PREG_SET_ORDER);
 
 	if ($amount_of_matches == false) {
 		return false;

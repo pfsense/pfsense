@@ -3,7 +3,7 @@
  * functions.inc.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2013-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -177,7 +177,7 @@ function disk_usage($slice = '/') {
 }
 
 function swap_usage() {
-	exec("/usr/sbin/swapinfo", $swap_info);
+	exec("/usr/sbin/swapinfo | /usr/bin/tail -1", $swap_info);
 	$swap_used = "";
 	foreach ($swap_info as $line) {
 		if (preg_match('/(\d+)%$/', $line, $matches)) {

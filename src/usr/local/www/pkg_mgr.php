@@ -3,7 +3,7 @@
  * pkg_mgr.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Marcello Coutinho
  * All rights reserved.
  *
@@ -71,7 +71,8 @@ function get_pkg_table() {
 	$pkgtbl .= 		'<tbody>' . "\n";
 
 	foreach ($pkg_info as $index) {
-		if (isset($index['installed'])) {
+		//AutoConfigBackup not to be installed >= v 2.4.4
+		if (isset($index['installed']) || ($index['shortname'] == "AutoConfigBackup")) {
 			continue;
 		}
 

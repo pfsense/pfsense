@@ -3,7 +3,7 @@
  * system_usermanager_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Bill Marquette <bill.marquette@gmail.com>
  * All rights reserved.
  *
@@ -157,7 +157,7 @@ if ($_POST) {
 		} else {
 			unset($config['system']['webgui']['authmode']);
 		}
-		
+
 		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
 			$config['system']['webgui']['auth_refresh_time'] = intval($_POST['auth_refresh_time']);
 		} else {

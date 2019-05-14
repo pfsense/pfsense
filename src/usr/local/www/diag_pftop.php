@@ -3,7 +3,7 @@
  * diag_pftop.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -105,14 +105,14 @@ $form->addGlobal(new Form_Input(
 $section = new Form_Section('pfTop Configuration');
 
 $validViews = array(
-	'default' => gettext('default'), 
-	'label' => gettext('label'), 
+	'default' => gettext('default'),
+	'label' => gettext('label'),
 	'long' => gettext('long'),
-	'queue' => gettext('queue'), 
-	'rules' => gettext('rules'), 
+	'queue' => gettext('queue'),
+	'rules' => gettext('rules'),
 	'size' => gettext('size'),
-	'speed' => gettext('speed'), 
-	'state' => gettext('state'), 
+	'speed' => gettext('speed'),
+	'state' => gettext('state'),
 	'time' => gettext('time'),
 );
 $section->addInput(new Form_Select(
@@ -206,6 +206,13 @@ events.push(function() {
 			$("#sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').hide();
 		} else {
 			$("#sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').show();
+		}
+	});
+	$('#filter').on('keypress keyup', function(event) {
+		var keyPressed = event.keyCode || event.which;
+		if (keyPressed === 13) {
+			event.preventDefault();
+			return false;
 		}
 	});
 });

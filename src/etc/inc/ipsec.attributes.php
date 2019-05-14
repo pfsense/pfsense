@@ -3,7 +3,7 @@
  * ipsec.attributes.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2011-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2011-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -117,10 +117,10 @@ function parse_cisco_acl($attribs) {
 					$isblock = false;
 				}
 			} else if (trim($rule[$index]) == "any") {
-				$tmprule .= "from any";
+				$tmprule .= "from any ";
 				$index++;
 			} else {
-				$tmprule .= "from {$rule[$index]}";
+				$tmprule .= "from {$rule[$index]} ";
 				$index++;
 				$netmask = cisco_to_cidr($rule[$index]);
 				$tmprule .= "/{$netmask} ";

@@ -3,7 +3,7 @@
  * services_dnsmasq_domainoverride_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
  *
@@ -33,10 +33,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['dnsmasq']['domainoverrides'])) {
-	   $config['dnsmasq']['domainoverrides'] = array();
-}
-
+init_config_arr(array('dnsmasq', 'domainoverrides'));
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
 if (is_numericint($_REQUEST['id'])) {
@@ -69,7 +66,7 @@ if ($_POST['save']) {
 			return (substr($haystack, 0, strlen($needle)) == $needle);
 		}
 
-		if (String_Begins_With(_msdcs, $_POST['domain'])) {
+		if (String_Begins_With('_msdcs', $_POST['domain'])) {
 			$subdomainstr = substr($_POST['domain'], 7);
 
 			if ($subdomainstr && !is_domain($subdomainstr)) {

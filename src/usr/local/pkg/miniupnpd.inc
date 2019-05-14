@@ -205,8 +205,8 @@
 					$config_text .= "ext_ip={$upnp_config['overridewanip']}\n";
 				}
 
-				$download = $upnp_config['download']*1000;
-				$upload = $upnp_config['upload']*1000;
+				$download = (int)$upnp_config['download'] * 1000;
+				$upload = (int)$upnp_config['upload'] * 1000;
 
 				/* set upload and download bitrates */
 				if (!empty($download) && !empty($upload)) {

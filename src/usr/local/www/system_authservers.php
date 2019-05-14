@@ -3,7 +3,7 @@
  * system_authservers.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -105,12 +105,8 @@ if (!is_array($config['system']['authserver'])) {
 
 $a_server = array_values(auth_get_authserver_list());
 
-
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
-
-$a_ca =& $config['ca'];
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
 $act = $_REQUEST['act'];
 
@@ -173,6 +169,7 @@ if ($act == "edit") {
 		if ($pconfig['type'] == "radius") {
 			$pconfig['radius_protocol'] = $a_server[$id]['radius_protocol'];
 			$pconfig['radius_host'] = $a_server[$id]['host'];
+			$pconfig['radius_nasip_attribute'] = $a_server[$id]['radius_nasip_attribute'];
 			$pconfig['radius_auth_port'] = $a_server[$id]['radius_auth_port'];
 			$pconfig['radius_acct_port'] = $a_server[$id]['radius_acct_port'];
 			$pconfig['radius_secret'] = $a_server[$id]['radius_secret'];
@@ -358,6 +355,7 @@ if ($_POST['save']) {
 
 			$server['radius_protocol'] = $pconfig['radius_protocol'];
 			$server['host'] = $pconfig['radius_host'];
+			$server['radius_nasip_attribute'] = $pconfig['radius_nasip_attribute'];
 
 			if ($pconfig['radius_secret']) {
 				$server['radius_secret'] = $pconfig['radius_secret'];
@@ -395,6 +393,38 @@ if ($_POST['save']) {
 
 		pfSenseHeader("system_authservers.php");
 	}
+}
+
+function build_radiusnas_list() {
+	global $config;
+	$list = array();
+
+	$iflist = get_configured_interface_with_descr();
+	foreach ($iflist as $ifdesc => $ifdescr) {
+		$ipaddr = get_interface_ip($ifdesc);
+		if (is_ipaddr($ipaddr)) {
+			$list[$ifdesc] = $ifdescr . ' - ' . $ipaddr;
+		}
+	}
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $sn) {
+			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+				$len = $end - $start;
+
+				for ($i = 0; $i <= $len; $i++) {
+					$snip = long2ip32($start+$i);
+					$list[$snip] = $sn['descr'] . ' - ' . $snip;
+				}
+			} else {
+				$list[$sn['subnet']] = $sn['descr'] . ' - ' . $sn['subnet'];
+			}
+		}
+	}
+
+	return($list);
 }
 
 // On error, restore the form contents so the user doesn't have to re-enter too much
@@ -782,6 +812,14 @@ $section->addInput(new Form_Input(
 	'default value is 5 seconds. NOTE: If using an interactive two-factor '.
 	'authentication system, increase this timeout to account for how long it will '.
 	'take the user to receive and enter a token.');
+
+$section->addInput(new Form_Select(
+	'radius_nasip_attribute',
+	'RADIUS NAS IP Attribute',
+	$pconfig['radius_nasip_attribute'],
+	build_radiusnas_list()
+))->setHelp('Enter the IP to use for the "NAS-IP-Address" attribute during RADIUS Acccess-Requests.<br />'.
+			'Please note that this choice won\'t change the interface used for contacting the RADIUS server.');
 
 if (isset($id) && $a_server[$id])
 {

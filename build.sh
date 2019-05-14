@@ -21,7 +21,7 @@
 set +e
 usage() {
 	echo "Usage $0 [options] [ iso | ova | memstick | memstickserial | memstickadi | all | none ]"
-	echo "		all = iso memstick memstickserial memstickadi"
+	echo "		all = memstick memstickserial memstickadi"
 	echo "		none = upgrade only pkg repo"
 	echo "	[ options ]: "
 	echo "		--no-buildworld|-c - Will set NO_BUILDWORLD NO_BUILDKERNEL to not build kernel and world"
@@ -311,7 +311,7 @@ fi
 if [ "$IMAGETYPE" = "none" ]; then
 	_IMAGESTOBUILD=""
 elif [ "$IMAGETYPE" = "all" ]; then
-	_IMAGESTOBUILD="iso memstick memstickserial"
+	_IMAGESTOBUILD="memstick memstickserial"
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstickadi"
 		if [ -n "${_IS_RELEASE}"  ]; then
@@ -345,7 +345,7 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	git_last_commit
 
 	# Ensure binaries are present that builder system requires
-	builder_setup
+	depend_check
 
 	# Build world, kernel and install
 	make_world

@@ -5,7 +5,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008 Shrew Soft Inc
- * Copyright (c) 2008-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,42 +29,10 @@
 
 require_once("globals.inc");
 require_once("config.inc");
-require_once("radius.inc");
 require_once("auth.inc");
 require_once("interfaces.inc");
 
-/**
- * Get the NAS-Identifier
- *
- * We will use our local hostname to make up the nas_id
- */
-if (!function_exists("getNasID")) {
-function getNasID() {
-	global $g;
 
-	$nasId = gethostname();
-	if (empty($nasId)) {
-		$nasId = $g['product_name'];
-	}
-	return $nasId;
-}
-}
-
-/**
- * Get the NAS-IP-Address based on the current wan address
- *
- * Use functions in interfaces.inc to find this out
- *
- */
-if (!function_exists("getNasIP")) {
-function getNasIP() {
-	$nasIp = get_interface_ip();
-	if (!$nasIp) {
-		$nasIp = "0.0.0.0";
-	}
-	return $nasIp;
-}
-}
 /* setup syslog logging */
 openlog("charon", LOG_ODELAY, LOG_AUTH);
 
@@ -107,7 +75,7 @@ if (($strictusercn === true) && ($common_name != $username)) {
 	}
 }
 
-$attributes = array();
+$attributes = array("nas_identifier" => "xauthIPsec");
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
 	if (!$authcfg && $authmode != "Local Database") {

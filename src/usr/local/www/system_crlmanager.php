@@ -3,7 +3,7 @@
  * system_crlmanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +32,12 @@ require_once("openvpn.inc");
 require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
+$max_lifetime = crl_get_max_lifetime();
+$default_lifetime = 3650;
+if ($max_lifetime < $default_lifetime) {
+	$default_lifetime = $max_lifetime;
+}
+
 global $openssl_crl_status;
 
 $crl_methods = array(
@@ -42,23 +48,14 @@ if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$a_ca =& $config['ca'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
-
-if (!is_array($config['crl'])) {
-	$config['crl'] = array();
-}
-
-$a_crl =& $config['crl'];
+init_config_arr(array('crl'));
+$a_crl = &$config['crl'];
 
 foreach ($a_crl as $cid => $acrl) {
 	if (!isset($acrl['refid'])) {
@@ -101,7 +98,7 @@ if ($_POST['act'] == "del") {
 if ($act == "new") {
 	$pconfig['method'] = $_REQUEST['method'];
 	$pconfig['caref'] = $_REQUEST['caref'];
-	$pconfig['lifetime'] = "9999";
+	$pconfig['lifetime'] = $default_lifetime;
 	$pconfig['serial'] = "0";
 }
 
@@ -144,7 +141,7 @@ if ($act == "addcert") {
 	}
 
 	if (!$input_errors) {
-		$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
+		$reason = (empty($pconfig['crlreason'])) ? 0 : $pconfig['crlreason'];
 		cert_revoke($cert, $crl, $reason);
 		// refresh IPsec and OpenVPN CRLs
 		openvpn_refresh_crls();
@@ -210,6 +207,9 @@ if ($_POST['save']) {
 	if (preg_match("/[\?\>\<\&\/\\\"\']/", $pconfig['descr'])) {
 		array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
 	}
+	if ($pconfig['lifetime'] > $max_lifetime) {
+		$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
+	}
 
 	/* save modifications */
 	if (!$input_errors) {
@@ -234,7 +234,7 @@ if ($_POST['save']) {
 
 		if ($pconfig['method'] == "internal") {
 			$crl['serial'] = empty($pconfig['serial']) ? 9999 : $pconfig['serial'];
-			$crl['lifetime'] = empty($pconfig['lifetime']) ? 9999 : $pconfig['lifetime'];
+			$crl['lifetime'] = empty($pconfig['lifetime']) ? $default_lifetime : $pconfig['lifetime'];
 			$crl['cert'] = array();
 		}
 
@@ -388,7 +388,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		'Lifetime (Days)',
 		'number',
 		$pconfig['lifetime'],
-		[max => '9999']
+		['max' => $max_lifetime]
 	));
 
 	$section->addInput(new Form_Input(
@@ -633,6 +633,9 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 			foreach ($ca_crl_map[$ca['refid']] as $crl):
 				$tmpcrl = lookup_crl($crl);
 				$internal = is_crl_internal($tmpcrl);
+				if ($internal && (!isset($tmpcrl['cert']) || empty($tmpcrl['cert'])) ) {
+					$tmpcrl['cert'] = array();
+				}
 				$inuse = crl_in_use($tmpcrl['refid']);
 ?>
 					<tr>
@@ -703,4 +706,3 @@ events.push(function() {
 </script>
 
 <?php include("foot.inc");
-

@@ -3,7 +3,7 @@
  * system.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -50,6 +50,14 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 // set default language if unset
 if (!isset($config['system']['language'])) {
 	$config['system']['language'] = $g['language'];
+}
+
+$dnshost_counter = 1;
+
+while (isset($config["system"]["dns{$dnshost_counter}host"])) {
+	$pconfig_dnshost_counter = $dnshost_counter - 1;
+	$pconfig["dnshost{$pconfig_dnshost_counter}"] = $config["system"]["dns{$dnshost_counter}host"];
+	$dnshost_counter++;
 }
 
 $dnsgw_counter = 1;
@@ -131,12 +139,12 @@ foreach ($timezonedesc as $idx => $desc) {
 		$direction_str = gettext('BEHIND');
 		break;
 	default:
-		continue;
+		continue 2;
 	}
 
 	$hr_offset = substr($desc, 8);
 	$timezonedesc[$idx] = $desc . " " .
-	    sprintf(ngettext('(%1$s hour %2$s GMT)', '(%1$s hours %2$s GMT)', $hr_offset), $hr_offset, $direction_str);
+	    sprintf(ngettext('(%1$s hour %2$s GMT)', '(%1$s hours %2$s GMT)', intval($hr_offset)), $hr_offset, $direction_str);
 }
 
 $multiwan = false;
@@ -160,46 +168,6 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-//	if ($_POST['dashboardperiod']) {
-//		$config['widgets']['period'] = $_POST['dashboardperiod'];
-//	}
-
-	if ($_POST['webguicss']) {
-		$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
-	} else {
-		unset($config['system']['webgui']['webguicss']);
-	}
-	
-	$config['system']['webgui']['roworderdragging'] = $_POST['roworderdragging'] ? true:false;
-
-	if ($_POST['logincss']) {
-		$config['system']['webgui']['logincss'] = $_POST['logincss'];
-	} else {
-		unset($config['system']['webgui']['logincss']);
-	}
-
-	$config['system']['webgui']['loginshowhost'] = $_POST['loginshowhost'] ? true:false;
-
-	if ($_POST['webguifixedmenu']) {
-		$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
-	} else {
-		unset($config['system']['webgui']['webguifixedmenu']);
-	}
-
-	if ($_POST['webguihostnamemenu']) {
-		$config['system']['webgui']['webguihostnamemenu'] = $_POST['webguihostnamemenu'];
-	} else {
-		unset($config['system']['webgui']['webguihostnamemenu']);
-	}
-
-	if ($_POST['dashboardcolumns']) {
-		$config['system']['webgui']['dashboardcolumns'] = $_POST['dashboardcolumns'];
-	} else {
-		unset($config['system']['webgui']['dashboardcolumns']);
-	}
-
-	$config['system']['webgui']['requirestatefilter'] = $_POST['requirestatefilter'] ? true : false;
-
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {
 			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'. It may not start or end with '-'.");
@@ -212,6 +180,10 @@ if ($_POST) {
 	if ($_POST['domain'] && !is_domain($_POST['domain'])) {
 		$input_errors[] = gettext("The domain may only contain the characters a-z, 0-9, '-' and '.'.");
 	}
+	validate_webguicss_field($input_errors, $_POST['webguicss']);
+	validate_webguifixedmenu_field($input_errors, $_POST['webguifixedmenu']);
+	validate_webguihostnamemenu_field($input_errors, $_POST['webguihostnamemenu']);
+	validate_dashboardcolumns_field($input_errors, $_POST['dashboardcolumns']);
 
 	$dnslist = $ignore_posted_dnsgw = array();
 
@@ -220,11 +192,15 @@ if ($_POST) {
 
 	while (isset($_POST[$dnsname])) {
 		$dnsgwname = "dnsgw{$dnscounter}";
+		$dnshostname = "dnshost{$dnscounter}";
 		$dnslist[] = $_POST[$dnsname];
 
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
 			$input_errors[] = sprintf(gettext("A valid IP address must be specified for DNS server %s."), $dnscounter+1);
 		} else {
+			if (!empty($_POST[$dnshostname]) && !is_hostname($_POST[$dnshostname])) {
+				$input_errors[] = sprintf(gettext('The hostname provided for DNS server "%1$s" is not valid.'), $_POST[$dnsname]);
+			}
 			if (($_POST[$dnsgwname] <> "") && ($_POST[$dnsgwname] <> "none")) {
 				// A real gateway has been selected.
 				if (is_ipaddr($_POST[$dnsname])) {
@@ -309,6 +285,46 @@ if ($_POST) {
 		unset($config['system']['webgui']['statusmonitoringsettingspanel']);
 		$config['system']['webgui']['statusmonitoringsettingspanel'] = $_POST['statusmonitoringsettingspanel'] ? true : false;
 
+//		if ($_POST['dashboardperiod']) {
+//			$config['widgets']['period'] = $_POST['dashboardperiod'];
+//		}
+
+		if ($_POST['webguicss']) {
+			$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
+		} else {
+			unset($config['system']['webgui']['webguicss']);
+		}
+
+		$config['system']['webgui']['roworderdragging'] = $_POST['roworderdragging'] ? true:false;
+
+		if ($_POST['logincss']) {
+			$config['system']['webgui']['logincss'] = $_POST['logincss'];
+		} else {
+			unset($config['system']['webgui']['logincss']);
+		}
+
+		$config['system']['webgui']['loginshowhost'] = $_POST['loginshowhost'] ? true:false;
+
+		if ($_POST['webguifixedmenu']) {
+			$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
+		} else {
+			unset($config['system']['webgui']['webguifixedmenu']);
+		}
+
+		if ($_POST['webguihostnamemenu']) {
+			$config['system']['webgui']['webguihostnamemenu'] = $_POST['webguihostnamemenu'];
+		} else {
+			unset($config['system']['webgui']['webguihostnamemenu']);
+		}
+
+		if ($_POST['dashboardcolumns']) {
+			$config['system']['webgui']['dashboardcolumns'] = $_POST['dashboardcolumns'];
+		} else {
+			unset($config['system']['webgui']['dashboardcolumns']);
+		}
+
+		$config['system']['webgui']['requirestatefilter'] = $_POST['requirestatefilter'] ? true : false;
+
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
 		unset($config['system']['dnsserver']);
@@ -346,22 +362,29 @@ if ($_POST) {
 		while (isset($_POST[$dnsname])) {
 			// The $_POST array key of the corresponding gateway (starts from 0)
 			$dnsgwname = "dnsgw{$dnscounter}";
-			// The numbering of DNS GW entries in the config starts from 1
+			$dnshostname = "dnshost{$dnscounter}";
+			// The numbering of DNS GW/host entries in the config starts from 1
 			$dnsgwconfigcounter = $dnscounter + 1;
+			$dnshostconfigcounter = $dnscounter + 1;
 			// So this is the array key of the DNS GW entry in $config['system']
 			$dnsgwconfigname = "dns{$dnsgwconfigcounter}gw";
+			$dnshostconfigname = "dns{$dnshostconfigcounter}host";
 
 			$olddnsgwname = $config['system'][$dnsgwconfigname];
+			$olddnshostname = $config['system'][$dnshostconfigname];
 
 			if ($ignore_posted_dnsgw[$dnsgwname]) {
 				$thisdnsgwname = "none";
 			} else {
 				$thisdnsgwname = $pconfig[$dnsgwname];
 			}
+			$thisdnshostname = $pconfig[$dnshostname];
 
 			// "Blank" out the settings for this index, then we set them below using the "outdnscounter" index.
 			$config['system'][$dnsgwconfigname] = "none";
 			$pconfig[$dnsgwname] = "none";
+			$config['system'][$dnshostconfigname] = "";
+			$pconfig[$dnshostname] = "";
 			$pconfig[$dnsname] = "";
 
 			if ($_POST[$dnsname]) {
@@ -373,19 +396,28 @@ if ($_POST) {
 				$outdnsname = "dns{$outdnscounter}";
 				// The $pconfig array key of the corresponding gateway (starts from 0)
 				$outdnsgwname = "dnsgw{$outdnscounter}";
-				// The numbering of DNS GW entries in the config starts from 1
+				// The $pconfig array key of the corresponding hostname (starts from 0)
+				$outdnshostname = "dnshost{$outdnscounter}";
+
+				// The numbering of DNS GW/host entries in the config starts from 1
 				$outdnsgwconfigcounter = $outdnscounter + 1;
+				$outdnshostconfigcounter = $outdnscounter + 1;
 				// So this is the array key of the output DNS GW entry in $config['system']
 				$outdnsgwconfigname = "dns{$outdnsgwconfigcounter}gw";
+				$outdnshostconfigname = "dns{$outdnshostconfigcounter}host";
 
 				$pconfig[$outdnsname] = $_POST[$dnsname];
 				if ($_POST[$dnsgwname]) {
 					$config['system'][$outdnsgwconfigname] = $thisdnsgwname;
 					$pconfig[$outdnsgwname] = $thisdnsgwname;
+					$config['system'][$outdnshostconfigname] = $thisdnshostname;
+					$pconfig[$outdnshostname] = $thisdnshostname;
 				} else {
 					// Note: when no DNS GW name is chosen, the entry is set to "none", so actually this case never happens.
 					unset($config['system'][$outdnsgwconfigname]);
 					$pconfig[$outdnsgwname] = "";
+					unset($config['system'][$outdnshostconfigname]);
+					$pconfig[$outdnshostname] = "";
 				}
 				$outdnscounter++;
 			}
@@ -481,6 +513,7 @@ $dnsserver_count = count($pconfig['dnsserver']);
 $dnsserver_num = 0;
 $dnsserver_help = gettext("Address") . '<br/>' . gettext("Enter IP addresses to be used by the system for DNS resolution.") . " " .
 	gettext("These are also used for the DHCP service, DNS Forwarder and DNS Resolver when it has DNS Query Forwarding enabled.");
+$dnshost_help = gettext("Hostname") . '<br/>' . gettext("Enter the DNS Server Hostname for TLS Verification in the DNS Resolver (optional).");
 $dnsgw_help = gettext("Gateway") . '<br/>'. gettext("Optionally select the gateway for each DNS server.") . " " .
 	gettext("When using multiple WAN connections there should be at least one unique DNS server per gateway.");
 
@@ -501,6 +534,13 @@ foreach ($pconfig['dnsserver'] as $dnsserver) {
 		'text',
 		$dnsserver
 	))->setHelp(($is_last_dnsserver) ? $dnsserver_help:null);
+
+	$group->add(new Form_Input(
+		'dnshost' . $dnsserver_num,
+		'DNS Hostname',
+		'text',
+		$pconfig['dnshost' . $dnsserver_num]
+	))->setHelp(($is_last_dnsserver) ? $dnshost_help:null);
 
 	if ($multiwan)	{
 		$options = array('none' => 'none');

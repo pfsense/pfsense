@@ -3,7 +3,7 @@
  * vpn_l2tp.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,9 +29,7 @@
 require_once("guiconfig.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['l2tp']['radius'])) {
-	$config['l2tp']['radius'] = array();
-}
+init_config_arr(array('l2tp', 'radius'));
 $l2tpcfg = &$config['l2tp'];
 
 $pconfig['remoteip'] = $l2tpcfg['remoteip'];
@@ -234,10 +232,10 @@ $section->addInput(new Form_Input(
 			'NOTE: This should NOT be set to any IP address currently in use on this firewall.', '<br />');
 
 $section->addInput(new Form_IpAddress(
-	'remoteip',
-	'*Remote address range',
-	$pconfig['remoteip']
-))->addMask(l2tp_subnet, $pconfig['l2tp_subnet'])
+        'remoteip',
+        '*Remote address range',
+        $pconfig['remoteip']
+))->addMask('l2tp_subnet', $pconfig['l2tp_subnet'])
   ->setHelp('Specify the starting address for the client IP address subnet.');
 
 $section->addInput(new Form_Select(

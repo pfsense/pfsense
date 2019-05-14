@@ -3,7 +3,7 @@
  * vpn_ipsec.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -37,14 +37,8 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
-}
-
-if (!is_array($config['ipsec']['phase2'])) {
-	$config['ipsec']['phase2'] = array();
-}
-
+init_config_arr(array('ipsec', 'phase1'));
+init_config_arr(array('ipsec', 'phase2'));
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
@@ -73,7 +67,11 @@ if ($_POST['apply']) {
 	/* delete selected p2 entries */
 	if (is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
 		foreach ($_POST['p2entry'] as $p2entrydel) {
-			unset($a_phase2[$p2entrydel]);
+			if (is_interface_ipsec_vti_assigned($a_phase2[$p2entrydel])) {
+				$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
+			} else {
+				unset($a_phase2[$p2entrydel]);
+			}
 		}
 		if (write_config(gettext("Deleted selected IPsec Phase 2 entries."))) {
 			mark_subsystem_dirty('ipsec');
@@ -178,13 +176,21 @@ if ($_POST['apply']) {
 		if (isset($a_phase1[$togglebtn]['disabled'])) {
 			unset($a_phase1[$togglebtn]['disabled']);
 		} else {
-			$a_phase1[$togglebtn]['disabled'] = true;
+			if (ipsec_vti($a_phase1[$togglebtn])) {
+				$input_errors[] = gettext("Cannot disable a Phase 1 with a child Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
+			} else {
+				$a_phase1[$togglebtn]['disabled'] = true;
+			}
 		}
 	} else if (isset($togglebtnp2)) {
 		if (isset($a_phase2[$togglebtnp2]['disabled'])) {
 			unset($a_phase2[$togglebtnp2]['disabled']);
 		} else {
-			$a_phase2[$togglebtnp2]['disabled'] = true;
+			if (is_interface_ipsec_vti_assigned($a_phase2[$togglebtnp2])) {
+				$input_errors[] = gettext("Cannot disable a VTI Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
+			} else {
+				$a_phase2[$togglebtnp2]['disabled'] = true;
+			}
 		}
 	} else if (isset($delbtn)) {
 		/* remove static route if interface is not WAN */
@@ -194,16 +200,33 @@ if ($_POST['apply']) {
 
 		/* remove all phase2 entries that match the ikeid */
 		$ikeid = $a_phase1[$delbtn]['ikeid'];
+		$p1_has_vti = false;
+		$delp2ids = array();
 		foreach ($a_phase2 as $p2index => $ph2tmp) {
 			if ($ph2tmp['ikeid'] == $ikeid) {
-				unset($a_phase2[$p2index]);
+				if (is_interface_ipsec_vti_assigned($ph2tmp)) {
+					$p1_has_vti = true;
+				} else {
+					$delp2ids[] = $p2index;
+				}
 			}
 		}
-		unset($a_phase1[$delbtn]);
+
+		if ($p1_has_vti) {
+			$input_errors[] = gettext("Cannot delete a Phase 1 which contains an active VTI Phase 2 with an interface assigned. Remove the interface assignment before deleting this P1.");
+		} else {
+			foreach ($delp2ids as $dp2idx) {
+				unset($a_phase2[$dp2idx]);
+			}
+			unset($a_phase1[$delbtn]);
+		}
 
 	} else if (isset($delbtnp2)) {
-		unset($a_phase2[$delbtnp2]);
-
+		if (is_interface_ipsec_vti_assigned($a_phase2[$delbtnp2])) {
+			$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
+		} else {
+			unset($a_phase2[$delbtnp2]);
+		}
 	} else {
 		$save = 0;
 	}
@@ -221,6 +244,10 @@ $pglinks = array("", "@self", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
@@ -277,7 +304,7 @@ foreach ($grouplist as $name => $group) {
 	$iflabels[$name] = "GW Group {$name}";
 }
 
-$i = 0; foreach ($a_phase1 as $ph1ent): 
+$i = 0; foreach ($a_phase1 as $ph1ent):
 
 	$iconfn = "pass";
 
@@ -461,7 +488,7 @@ $i = 0; foreach ($a_phase1 as $ph1ent):
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 												<?=$ph2ent['mode']?>
 											</td>
-<?php if (($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
+<?php if (($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6") or ($ph2ent['mode'] == "vti")): ?>
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 												<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
 											</td>

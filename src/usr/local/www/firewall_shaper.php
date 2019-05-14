@@ -3,7 +3,7 @@
  * firewall_shaper.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -217,7 +217,7 @@ if ($_POST) {
 	unset($input_errors);
 
 	if ($addnewaltq) {
-		$altq =& new altq_root_queue();
+		$__tmp_altq = new altq_root_queue(); $altq =& $__tmp_altq;
 		$altq->SetInterface($interface);
 		$altq->ReadConfig($_POST);
 		$altq->validate_input($_POST, $input_errors);

@@ -3,7 +3,7 @@
 /*
  * parser_dhcpv6_lease_tester.php
  *
- * Copyright (c) 2017-2018 Anders Lind (anders.lind@gmail.com)
+ * Copyright (c) 2017-2019 Anders Lind (anders.lind@gmail.com)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,13 @@ if ($is_pfSense) {
 	 * Get from this file back to 'src' so we can use 'src/etc/inc/'.
 	 */
 	define('__ROOT__', dirname(dirname(dirname(dirname(__FILE__)))));
-	require_once(__ROOT__.'/etc/inc/parser_dhcpv6_leases.inc'); 
+	require_once(__ROOT__.'/etc/inc/parser_dhcpv6_leases.inc');
 }
 
 if (isset($argv[1])) {
 	$leasesfile = $argv[1];
 } elseif ($is_pfSense) {
-	require_once("globals.inc"); 
+	require_once("globals.inc");
 	$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases";
 } else {
 	echo 'Please pass the filename of the lease file.' . PHP_EOL;

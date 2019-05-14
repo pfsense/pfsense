@@ -39,6 +39,11 @@ if (file_exists("{$g['tmp_path']}/.rc.start_packages.running")) {
 	}
 }
 
+if (file_exists("{$g['conf_path']}/needs_package_sync")) {
+	log_error("Skipping STARTing packages process because package reinstallation is pending.");
+	return;
+}
+
 @file_put_contents("{$g['tmp_path']}/.rc.start_packages.running", "");
 
 log_error("Restarting/Starting all packages.");
@@ -58,7 +63,7 @@ if (is_array($config['installedpackages']['package'])) {
 		echo " Starting package {$package['name']}...";
 		sync_package($package['name']);
 		$internal_name = get_package_internal_name($package);
-		start_service($internal_name);
+		start_service($internal_name, true);
 		unset($rcfiles[RCFILEPREFIX . strtolower($internal_name) . ".sh"]);
 		echo "done.\n";
 	}

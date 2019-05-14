@@ -3,7 +3,7 @@
 /*
  * parser_ipv6_tester.php
  *
- * Copyright (c) 2017-2018 Anders Lind (anders.lind@gmail.com)
+ * Copyright (c) 2017-2019 Anders Lind (anders.lind@gmail.com)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,8 +36,8 @@ if ($is_pfSense) {
 	 * Get from this file back to 'src' so we can use 'src/etc/inc/'.
 	 */
 	define('__ROOT__', dirname(dirname(dirname(dirname(__FILE__)))));
-	require_once(__ROOT__.'/etc/inc/tools_for_debugging_n_testing.inc'); 
-	require_once(__ROOT__.'/etc/inc/parser_ipv6.inc'); 
+	require_once(__ROOT__.'/etc/inc/tools_for_debugging_n_testing.inc');
+	require_once(__ROOT__.'/etc/inc/parser_ipv6.inc');
 }
 
 /*

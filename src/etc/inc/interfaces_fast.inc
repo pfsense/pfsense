@@ -33,10 +33,10 @@
  * usage somewhat, but it shouldn't be significant in the grand scheme of things.
  *
  *
- * Functions in this file may not require/use parameters when called, however 
- * in most cases they will accept parameters as per their original forms, for 
+ * Functions in this file may not require/use parameters when called, however
+ * in most cases they will accept parameters as per their original forms, for
  * consistency.
- 
+
  */
 require_once('interfaces.inc');
 /*
@@ -61,13 +61,14 @@ function convert_real_interface_to_friendly_interface_name_fast() {
 
 	$out = array();
 	/* XXX: For speed reasons reference directly the interface array */
+	init_config_arr(array('interfaces'));
 	$ifdescrs = &$config['interfaces'];
 	$iffriendlynames = array_keys($ifdescrs);
 	$out = array_flip(get_real_interface_fast($iffriendlynames));
 	return $out;
 }
 
-/* 
+/*
  * get_real_interface_fast($interfaces, ...)
  * Exactly the same as it's namesake, except it takes an array of interfaces and returns an array
  *
@@ -196,13 +197,13 @@ function get_real_interface_fast($interfaces = array(), $family = "all", $realv6
  *
  * I created this version of the function because in interfaces_assign.php
  * the interface_assign_description() function is used twice, in both cases
- * being called for every iteration through the array of interfaces, and 
- * was seemingly dragging the performance of the HTML generation code down 
+ * being called for every iteration through the array of interfaces, and
+ * was seemingly dragging the performance of the HTML generation code down
  * when faced with a large number of VLAN interfaces.
  *
  * Although this function internally recreates the loop that its namesake was
  * called in; the fact it's only called once rather than once per interface * 2
- * has resulted in a significant speed gain with a large number of optional 
+ * has resulted in a significant speed gain with a large number of optional
  * interfaces configured.
  *
  * $portlist is the same $portlist as defined in interfaces_assign.php, call this
@@ -216,7 +217,7 @@ function get_real_interface_fast($interfaces = array(), $family = "all", $realv6
  *
  */
 function interface_assign_description_fast($portlist, $friendlyifnames) {
-	global $ovpn_descrs;
+	global $ovpn_descrs, $ipsec_descrs;
 	$out = array();
 	$gettext = gettext('on');
 	foreach($portlist as $portname => $portinfo) {
@@ -260,6 +261,8 @@ function interface_assign_description_fast($portlist, $friendlyifnames) {
 			$descr = $portinfo['descr'];
 		} elseif (substr($portname, 0, 4) == 'ovpn') {
 			$descr = $portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")";
+		} elseif (substr($portname, 0, 5) == 'ipsec') {
+			$descr = $portname . " (" . $ipsec_descrs[$portname] . ")";
 		} else {
 			$descr = $portname . " (" . $portinfo['mac'] . ")";
 		}

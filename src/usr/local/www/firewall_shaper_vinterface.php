@@ -3,7 +3,7 @@
  * firewall_shaper_vinterface.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -217,7 +217,7 @@ if ($_POST) {
 		if (!empty($dummynet_pipe_list[$qname])) {
 			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter.");
 		} else {
-			$dnpipe =& new dnpipe_class();
+			$__tmp_dnpipe = new dnpipe_class(); $dnpipe =& $__tmp_dnpipe;
 
 			$dnpipe->ReadConfig($_POST);
 			$dnpipe->validate_input($_POST, $input_errors);
@@ -412,12 +412,14 @@ if (!$dfltmsg) {
 				$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&action=delete';
 			}
 
-			$sform->addGlobal(new Form_Button(
-				'delete',
-				($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
-				$url,
-				'fa-trash'
-			))->addClass('btn-danger');
+			if ($sform) {
+				$sform->addGlobal(new Form_Button(
+					'delete',
+					($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
+					$url,
+					'fa-trash'
+				))->addClass('btn-danger');
+			}
 		}
 	}
 

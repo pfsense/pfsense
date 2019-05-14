@@ -3,7 +3,7 @@
  * firewall_aliases_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -41,23 +41,14 @@ if (isset($_POST['referer'])) {
 	$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 }
 
-// Keywords not allowed in names
-$reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
-
-// Add all Load balance names to reserved_keywords
-if (is_array($config['load_balancer']['lbpool'])) {
-	foreach ($config['load_balancer']['lbpool'] as $lbpool) {
-		$reserved_keywords[] = $lbpool['name'];
-	}
-}
+// Keywords not allowed in names, see globals.inc for list.
+global $pf_reserved_keywords;
 
 $reserved_ifs = get_configured_interface_list(true);
-$reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
+$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 $max_alias_addresses = 5000;
 
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
 // Debugging
@@ -168,8 +159,8 @@ if ($_POST['save']) {
 	}
 
 	/* Check for reserved keyword names */
-	foreach ($reserved_keywords as $rk) {
-		if ($rk == $_POST['name']) {
+	foreach ($pf_reserved_keywords as $rk) {
+		if (strcasecmp($rk, $_POST['name']) == 0) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an alias name: %s"), $rk);
 		}
 	}
@@ -200,6 +191,13 @@ if ($_POST['save']) {
 		}
 	}
 
+	/* To prevent infinite loops make sure the alias name does not equal the value. */
+	for($i = 0; isset($_POST['address' . $i]); $i++) {
+			if($_POST['address' . $i] == $_POST['name']){
+				$input_errors[] = gettext("Alias value cannot be the same as the alias name: `" . $_POST['name'] . " and " . $_POST['address' . $i] . "`");
+			}
+	}
+
 	$alias = array();
 	$address = array();
 	$final_address_details = array();
@@ -207,7 +205,7 @@ if ($_POST['save']) {
 	$alias['type'] = $_POST['type'];
 
 	if (preg_match("/urltable/i", $_POST['type'])) {
-		$address = "";
+		$address = array();
 
 		/* item is a url table type */
 		if ($_POST['address0']) {

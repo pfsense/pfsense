@@ -3,7 +3,7 @@
  * firewall_rules_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -60,6 +60,24 @@ $icmplookup = array(
 	'inet6' => array('name' => 'IPv6', 'icmptypes' => $icmptypes6, 'helpmsg' => gettext('For ICMP rules on IPv6, one or more of these ICMP subtypes may be specified.')),
 	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46, 'helpmsg' => sprintf(gettext('For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be specified. (Other ICMP subtypes are only valid under IPv4 %1$sor%2$s IPv6, not both)'), '<i>', '</i>'))
 );
+
+$statetype_values = array(
+	'keep state' => gettext('Keep'),
+	'sloppy state' => gettext('Sloppy'),
+	'synproxy state' => gettext('Synproxy'),
+	'none' => gettext('None'),
+);
+
+$vlanprio = array(
+	"" => "none",
+	"bk" => "Background (BK, 0)",
+	"be" => "Best Effort (BE, 1)",
+	"ee" => "Excellent Effort (EE, 2)",
+	"ca" => "Critical Applications (CA, 3)",
+	"vi" => "Video (VI, 4)",
+	"vo" => "Voice (VO, 5)",
+	"ic" => "Internetwork Control (IC, 6)",
+	"nc" => "Network Control (NC, 7)");
 
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];
@@ -139,10 +157,7 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['filter']['rule'])) {
-	$config['filter']['rule'] = array();
-}
-
+init_config_arr(array('filter', 'rule'));
 filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
@@ -313,6 +328,20 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 
 read_altq_config(); /* XXX: */
 $qlist =& get_unique_queue_list();
+
+$list = array('' => 'none');
+if (!is_array($qlist)) {
+	$qlist = array();
+}
+
+foreach ($qlist as $q => $qkey) {
+	if (isset($ifdisp[$q])) {
+		$list[$q] = $ifdisp[$q];
+	} else {
+		$list[$q] = $q;
+	}
+}
+
 read_dummynet_config(); /* XXX: */
 $dnqlist =& get_unique_dnqueue_list();
 $a_gatewaygroups = return_gateway_groups_array();
@@ -608,7 +637,7 @@ if ($_POST['save']) {
 	}
 
 	if ($_POST['proto'] == "icmp") {
-		$t =& $_POST['icmptype'];
+		$t = $_POST['icmptype'];
 		if (isset($t) && !is_array($t)) {
 			// shouldn't happen but avoids making assumptions for data-sanitising
 			$input_errors[] = gettext("ICMP types expected to be a list if present, but is not.");
@@ -765,6 +794,39 @@ if ($_POST['save']) {
 		if (empty($outoftcpflags) && !empty($settcpflags)) {
 			$input_errors[] = gettext("If TCP flags that should be set is specified, then out of which flags should be specified as well.");
 		}
+	}
+
+	if ($_POST['dscp'] && !in_array($_POST['dscp'], $firewall_rules_dscp_types)) {
+		$input_errors[] = gettext("Invalid DSCP value.");
+	}
+	if ($_POST['tag'] && !is_validaliasname($_POST['tag'])) {
+		$input_errors[] = gettext("Invalid tag value.");
+	}
+	if ($_POST['tagged'] && !is_validaliasname($_POST['tagged'])) {
+		$input_errors[] = gettext("Invalid tagged value.");
+	}
+	if ($_POST['statetype'] && !array_key_exists($_POST['statetype'], $statetype_values)) {
+		$input_errors[] = gettext("Invalid State Type.");
+	}
+	if ($_POST['vlanprio'] && !in_array($_POST['vlanprio'], $vlanprio)) {
+		$input_errors[] = gettext("Invalid VLAN Prio.");
+	}
+	if ($_POST['vlanprioset'] && !in_array($_POST['vlanprioset'], $vlanprio)) {
+		$input_errors[] = gettext("Invalid VLAN Prio Set.");
+	}
+
+	if ($_POST['ackqueue'] && !array_key_exists($_POST['ackqueue'], $list)) {
+		$input_errors[] = gettext("Invalid ACK Queue.");
+	}
+	if ($_POST['defaultqueue'] && !array_key_exists($_POST['defaultqueue'], $list)) {
+		$input_errors[] = gettext("Invalid Default Queue.");
+	}
+
+	if ($_POST['dnpipe'] && !array_key_exists($_POST['dnpipe'], $dnqlist)) {
+		$input_errors[] = gettext("Invalid In Pipe.");
+	}
+	if ($_POST['pdnpipe'] && !array_key_exists($_POST['pdnpipe'], $dnqlist)) {
+		$input_errors[] = gettext("Invalid Out Pipe.");
 	}
 
 	// Allow extending of the firewall edit page and include custom input validation
@@ -965,6 +1027,7 @@ if ($_POST['save']) {
 				$a_filter[$id] = $filterent;
 			} else {							// rule moved to different interface
 				// Update the separators of previous interface.
+				init_config_arr(array('filter', 'separator', strtolower($if)));
 				$a_separators = &$config['filter']['separator'][strtolower($if)];
 				$ridx = ifridx($if, $id);		// get rule index within interface
 				$mvnrows = -1;
@@ -973,6 +1036,7 @@ if ($_POST['save']) {
 				$a_filter[$id] = $filterent;	// save edited rule to new interface
 
 				// Update the separators of new interface.
+				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 				$ridx = ifridx($tmpif, $id);	// get rule index within interface
 				if ($ridx == 0) {				// rule was placed at the top
@@ -1004,6 +1068,7 @@ if ($_POST['save']) {
 				}
 
 				// Update the separators
+				init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 				$ridx = ifridx($tmpif, $after);	// get rule index within interface
 				$mvnrows = +1;
@@ -1067,47 +1132,6 @@ function build_flag_table() {
 	$flagtable .= '<strong>' . gettext(" Any flags.") . '</strong>';
 
 	return($flagtable);
-}
-
-function build_if_list() {
-	global $config;
-
-	$iflist = array();
-
-	// add group interfaces
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
-			if (have_ruleint_access($ifgen['ifname'])) {
-				$iflist[$ifgen['ifname']] = $ifgen['ifname'];
-			}
-		}
-	}
-
-	foreach (get_configured_interface_with_descr() as $ifent => $ifdesc) {
-		if (have_ruleint_access($ifent)) {
-			$iflist[$ifent] = $ifdesc;
-		}
-	}
-
-	if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp")) {
-		$iflist['l2tp'] = gettext('L2TP VPN');
-	}
-
-	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-		$iflist['pppoe'] = gettext("PPPoE Server");
-	}
-
-	// add ipsec interfaces
-	if (ipsec_enabled() && have_ruleint_access("enc0")) {
-		$iflist["enc0"] = gettext("IPsec");
-	}
-
-	// add openvpn/tun interfaces
-	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-		$iflist["openvpn"] = gettext("OpenVPN");
-	}
-
-	return($iflist);
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
@@ -1252,7 +1276,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		'interface',
 		'*Interface',
 		$pconfig['interface'],
-		build_if_list(),
+		filter_get_interface_list(),
 		true
 	))->setHelp('Choose the interface(s) for this rule.');
 } else {
@@ -1260,7 +1284,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		'interface',
 		'*Interface',
 		$pconfig['interface'],
-		build_if_list()
+		filter_get_interface_list()
 	))->setHelp('Choose the interface from which packets must come to match this rule.');
 }
 
@@ -1613,12 +1637,7 @@ $section->addInput(new Form_Select(
 	'statetype',
 	'State type',
 	(isset($pconfig['statetype'])) ? $pconfig['statetype'] : "keep state",
-	array(
-		'keep state' => gettext('Keep'),
-		'sloppy state' => gettext('Sloppy'),
-		'synproxy state' => gettext('Synproxy'),
-		'none' => gettext('None'),
-	)
+	$statetype_values
 ))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state.%1$s',
 			'<br /><span></span>');
 
@@ -1628,17 +1647,6 @@ $section->addInput(new Form_Checkbox(
 	'Prevent the rule on Master from automatically syncing to other CARP members',
 	$pconfig['nosync']
 ))->setHelp('This does NOT prevent the rule from being overwritten on Slave.');
-
-$vlanprio = array(
-	"" => "none",
-	"bk" => "Background (BK, 0)",
-	"be" => "Best Effort (BE, 1)",
-	"ee" => "Excellent Effort (EE, 2)",
-	"ca" => "Critical Applications (CA, 3)",
-	"vi" => "Video (VI, 4)",
-	"vo" => "Voice (VO, 5)",
-	"ic" => "Internetwork Control (IC, 6)",
-	"nc" => "Network Control (NC, 7)");
 
 $section->addInput(new Form_Select(
 	'vlanprio',
@@ -1672,15 +1680,15 @@ $section->addInput(new Form_Select(
 $gwjson = '[{"name":"", "gateway":"Default", "family":"inet46"}';
 
 foreach (return_gateways_array() as $gwname => $gw) {
-	$gwjson = $gwjson . "," .'{"name":"' . $gwname . '", "gateway":"' .
-	$gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gw['gateway']) . (empty($gw['descr'])? '' : ' - '. $gw['descr']) . '","family":"' .
-	$gw['ipprotocol'] . '"}';
+	$gwjson = $gwjson . "," .'{"name":' . json_encode($gwname) . ', "gateway":' .
+	json_encode($gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gw['gateway']) . (empty($gw['descr'])? '' : ' - '. $gw['descr'])) . ',"family":' .
+	json_encode($gw['ipprotocol']) . '}';
 }
 
 foreach ((array)$a_gatewaygroups as $gwg_name => $gwg_data) {
-	$gwjson = $gwjson . "," .'{"name":"' . $gwg_name . '", "gateway":"' .
-	$gwg_data['name'] . $gwg_name . (empty($gwg_data['descr'])? '' : ' - '. $gwg_data['descr']) . '","family":"' .
-	$gwg_data['ipprotocol'] . '"}';
+	$gwjson = $gwjson . "," .'{"name":' . json_encode($gwg_name) . ', "gateway":' .
+	json_encode($gwg_data['name'] . $gwg_name . (empty($gwg_data['descr'])? '' : ' - '. $gwg_data['descr'])) . ',"family":' .
+	json_encode($gwg_data['ipprotocol']) . '}';
 	$firstgw = false;
 }
 
@@ -1725,19 +1733,6 @@ $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '
 
 $group = new Form_Group('Ackqueue / Queue');
 
-$list = array('' => 'none');
-if (!is_array($qlist)) {
-	$qlist = array();
-}
-
-foreach ($qlist as $q => $qkey) {
-	if (isset($ifdisp[$q])) {
-		$list[$q] = $ifdisp[$q];
-	} else {
-		$list[$q] = $q;
-	}
-}
-
 $group->add(new Form_Select(
 	'ackqueue',
 	'Ackqueue',
@@ -1774,6 +1769,9 @@ events.push(function() {
 	// Show advanced additional opts options ======================================================
 	var showadvopts = false;
 
+	// Remove focus on page load
+	document.activeElement.blur()
+	
 	function show_advopts(ispageload) {
 		var text;
 		// On page load decide the initial state based on the data.
@@ -1942,9 +1940,8 @@ events.push(function() {
 		$('#gateway').val(selected);
 
 		// Gateway selection is not permitted for "IPV4+IPV6"
-		if (protocol == "inet46") {
-			$('#gateway').prop("disabled", true);
-		}
+		$('#gateway').prop("disabled", protocol == "inet46");
+
 	}
 
 	function proto_change() {

@@ -25,6 +25,7 @@ require_once("util.inc");
 
 set_single_sysctl("net.inet.carp.allow", "0");
 if (is_array($config['virtualip']['vip'])) {
+	init_config_arr(array('virtualip', 'vip'));
 	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
 		switch ($vip['mode']) {

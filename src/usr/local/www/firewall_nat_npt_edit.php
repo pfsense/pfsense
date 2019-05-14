@@ -3,7 +3,7 @@
  * firewall_nat_npt_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -41,10 +41,7 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['nat']['npt'])) {
-	$config['nat']['npt'] = array();
-}
-
+init_config_arr(array('nat', 'npt'));
 $a_npt = &$config['nat']['npt'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
@@ -100,6 +97,13 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+	if (!is_ipaddrv6(trim($_POST['src']))) {
+		$input_errors[] = gettext("The specified source address is not a valid IPv6 prefix");
+	}
+	if (!is_ipaddrv6(trim($_POST['dst']))) {
+		$input_errors[] = gettext("The specified destination address is not a valid IPv6 prefix");
+	}
+
 	if (!$input_errors) {
 		$natent = array();
 
@@ -137,40 +141,6 @@ if ($_POST['save']) {
 	}
 }
 
-function build_if_list() {
-	global $ifdisp;
-
-	foreach ($ifdisp as $if => $ifdesc) {
-		if (have_ruleint_access($if)) {
-			$interfaces[$if] = $ifdesc;
-		}
-	}
-
-	if ($config['l2tp']['mode'] == "server") {
-		if (have_ruleint_access("l2tp")) {
-			$interfaces['l2tp'] = gettext("L2TP VPN");
-		}
-	}
-
-	if ($config['pppoe']['mode'] == "server") {
-		if (have_ruleint_access("pppoe")) {
-			$interfaces['pppoe'] = gettext("PPPoE Server");
-		}
-	}
-
-	/* add ipsec interfaces */
-	if (ipsec_enabled() && have_ruleint_access("enc0")) {
-		$interfaces["enc0"] = gettext("IPsec");
-	}
-
-	/* add openvpn/tun interfaces */
-	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-		$interfaces["openvpn"] = gettext("OpenVPN");
-	}
-
-	return($interfaces);
-}
-
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"), gettext("Edit"));
 $pglinks = array("", "firewall_nat.php", "firewall_nat_npt.php", "@self");
 include("head.inc");
@@ -194,7 +164,7 @@ $section->addInput(new Form_Select(
 	'interface',
 	'*Interface',
 	$pconfig['interface'],
-	build_if_list()
+	create_interface_list()
 ))->setHelp('Choose which interface this rule applies to.%s' .
 			'Hint: Typically the "WAN" is used here.', '<br />');
 

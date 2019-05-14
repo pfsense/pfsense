@@ -3,7 +3,7 @@
  * firewall_nat.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -36,14 +36,14 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("itemid.inc");
 
-if (!is_array($config['nat']['rule'])) {
-	$config['nat']['rule'] = array();
-}
-
+init_config_arr(array('filter', 'rule'));
+init_config_arr(array('nat', 'separator'));
+init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
+$a_separators = &$config['nat']['separator'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if (array_key_exists('order-store', $_REQUEST)) {
+if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($natent['interface'])) {
 	if (is_array($_REQUEST['rule']) && !empty($_REQUEST['rule'])) {
 		$a_nat_new = array();
 
@@ -59,6 +59,11 @@ if (array_key_exists('order-store', $_REQUEST)) {
 
 		if ($_POST['separator']) {
 			$idx = 0;
+
+			if (!is_array($config['nat']['separator'])) {
+				$config['nat']['separator'] = array();
+			}
+
 			foreach ($_POST['separator'] as $separator) {
 				$config['nat']['separator']['sep' . $idx++] = $separator;
 			}
@@ -78,7 +83,7 @@ if ($_REQUEST['savemsg']) {
 	$savemsg = $_REQUEST['savemsg'];
 }
 
-if ($_POST['apply']) {
+if ($_POST['apply'] && have_natpfruleint_access($natent['interface'])) {
 
 	$retval = 0;
 
@@ -93,7 +98,7 @@ if ($_POST['apply']) {
 
 }
 
-if ($_POST['act'] == "del") {
+if (($_POST['act'] == "del") && have_natpfruleint_access($natent['interface'])) {
 	if ($a_nat[$_POST['id']]) {
 
 		if (isset($a_nat[$_POST['id']]['associated-rule-id'])) {
@@ -104,7 +109,6 @@ if ($_POST['act'] == "del") {
 		unset($a_nat[$_POST['id']]);
 
 		// Update the separators
-		$a_separators = &$config['nat']['separator'];
 		$ridx = $_POST['id'];
 		$mvnrows = -1;
 		move_separators($a_separators, $ridx, $mvnrows);
@@ -121,11 +125,10 @@ if ($_POST['act'] == "del") {
 	}
 }
 
-if (isset($_POST['del_x'])) {
+if (isset($_POST['del_x']) && have_natpfruleint_access($natent['interface'])) {
 
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		$a_separators = &$config['nat']['separator'];
 		$num_deleted = 0;
 
 		foreach ($_POST['rule'] as $rulei) {
@@ -154,7 +157,7 @@ if (isset($_POST['del_x'])) {
 		header("Location: firewall_nat.php");
 		exit;
 	}
-} else if ($_POST['act'] == "toggle") {
+} elseif (($_POST['act'] == "toggle") && have_natpfruleint_access($natent['interface'])) {
 	if ($a_nat[$_POST['id']]) {
 		if (isset($a_nat[$_POST['id']]['disabled'])) {
 			unset($a_nat[$_POST['id']]['disabled']);
@@ -188,7 +191,7 @@ if ($_POST['apply']) {
 	print_apply_result_box($retval);
 }
 
-if (is_subsystem_dirty('natconf')) {
+if (is_subsystem_dirty('natconf') && have_natpfruleint_access($natent['interface'])) {
 	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
 					gettext('The changes must be applied for them to take effect.'));
 }
@@ -218,7 +221,7 @@ $columns_in_table = 13;
 			<table id="ruletable" class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th><!-- Checkbox --></th>
+						<th style="padding-left:10px;">  <input type="checkbox" id="selectAll" name="selectAll" /></th>
 						<th><!-- Icon --></th>
 						<th><!-- Rule type --></th>
 						<th><?=gettext("Interface")?></th>
@@ -268,11 +271,6 @@ foreach ($a_nat as $natent):
 		$localport
 	);
 
-	/* if user does not have access to edit an interface skip on to the next record */
-	if (!have_natpfruleint_access($natent['interface'])) {
-		continue;
-	}
-
 	if (isset($natent['disabled'])) {
 		$iconfn = "pass_d";
 		$trclass = 'class="disabled"';
@@ -284,15 +282,19 @@ foreach ($a_nat as $natent):
 
 					<tr id="fr<?=$nnats;?>" <?=$trclass?> onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$i;?>';">
 						<td >
+<?php	if (have_natpfruleint_access($natent['interface'])): ?>
 							<input type="checkbox" id="frc<?=$nnats;?>" onClick="fr_toggle(<?=$nnats;?>)" name="rule[]" value="<?=$i;?>"/>
+<?php	endif; ?>
 						</td>
 						<td>
+<?php	if (have_natpfruleint_access($natent['interface'])): ?>
 							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
 								<i class="fa fa-check" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+							</a>
+<?php	endif; ?>
 <?php 	if (isset($natent['nordr'])) { ?>
 								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
 <?php 	} ?>
-							</a>
 						</td>
 						<td>
 <?php
@@ -434,9 +436,13 @@ foreach ($a_nat as $natent):
 							<?=htmlspecialchars($natent['descr'])?>
 						</td>
 						<td>
+<?php	if (have_natpfruleint_access($natent['interface'])): ?>
 							<a class="fa fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
 							<a class="fa fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" usepost></a>
+<?php	else: ?>
+							-
+<?php	endif; ?>
 						</td>
 					</tr>
 <?php
@@ -455,6 +461,7 @@ if ($seprows[$nnats]) {
 		</div>
 	</div>
 
+<?php	if (have_natpfruleint_access($natent['interface'])): ?>
 	<nav class="action-buttons">
 		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
 			<i class="fa fa-level-up icon-embed-btn"></i>
@@ -477,6 +484,7 @@ if ($seprows[$nnats]) {
 			<?=gettext("Separator")?>
 		</button>
 	</nav>
+<?php	endif; ?>
 </form>
 
 <script type="text/javascript">
@@ -527,6 +535,13 @@ events.push(function() {
 		} else {
 			return undefined;
 		}
+	});
+
+	$('#selectAll').click(function() {
+		var checkedStatus = this.checked;
+		$('#ruletable tbody tr').find('td:first :checkbox').each(function() {
+		$(this).prop('checked', checkedStatus);
+		});
 	});
 });
 //]]>

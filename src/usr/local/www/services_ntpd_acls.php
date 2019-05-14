@@ -3,7 +3,7 @@
  * services_ntpd_acls.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -170,6 +170,7 @@ if ($_POST) {
 	}
 }
 
+init_config_arr(array('ntpd'));
 $pconfig = &$config['ntpd'];
 
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("ACLs"));

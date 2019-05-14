@@ -3,7 +3,7 @@
  * services_unbound_host_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@decoy.co.za)
  * Copyright (c) 2003-2005 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
@@ -48,10 +48,7 @@ function hosts_sort() {
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['unbound']['hosts'])) {
-	$config['unbound']['hosts'] = array();
-}
-
+init_config_arr(array('unbound', 'hosts'));
 $a_hosts = &$config['unbound']['hosts'];
 $id = $_REQUEST['id'];
 
@@ -246,6 +243,9 @@ $form->add($section);
 
 $section = new Form_Section('Additional Names for this Host');
 
+if (!$pconfig['aliases']) {
+	$pconfig['aliases'] = array();
+}
 if (!$pconfig['aliases']['item']) {
 	$pconfig['aliases']['item'] = array('host' => "");
 }

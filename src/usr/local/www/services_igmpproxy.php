@@ -3,7 +3,7 @@
  * services_igmpproxy.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -32,11 +32,9 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['igmpproxy']['igmpentry'])) {
-	$config['igmpproxy']['igmpentry'] = array();
-}
-
 //igmpproxy_sort();
+
+init_config_arr(array('igmpproxy', 'igmpentry'));
 $a_igmpproxy = &$config['igmpproxy']['igmpentry'];
 
 if ($_POST['apply']) {
@@ -106,7 +104,7 @@ $form->add($section);
 
 print($form);
 
-?>	
+?>
 <form action="services_igmpproxy.php" method="post">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IGMP Proxy')?></h2></div>
@@ -137,9 +135,9 @@ foreach ($a_igmpproxy as $igmpentry):
 							<td>
 <?php
 	$addresses = implode(", ", array_slice(explode(" ", $igmpentry['address']), 0, 10));
-	print($addresses);
+	print(htmlspecialchars($addresses));
 
-	if (count($addresses) < 10) {
+	if (!is_array($igmpentry['address']) || count($igmpentry['address']) < 10) {
 		print(' ');
 	} else {
 		print('...');

@@ -3,7 +3,7 @@
  * index.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -57,36 +57,14 @@ if (isset($_REQUEST['closenotice'])) {
 	sleep(1);
 }
 
-if ($g['disablecrashreporter'] != true) {
-	// Check to see if we have a crash report
-	$x = 0;
-	if (file_exists("/tmp/PHP_errors.log")) {
-		$total = `/bin/cat /tmp/PHP_errors.log | /usr/bin/wc -l | /usr/bin/awk '{ print $1 }'`;
-		if ($total > 0) {
-			$x++;
-		}
+if (($g['disablecrashreporter'] != true) && (system_has_crash_data() || system_has_php_errors())) {
+	$savemsg = sprintf(gettext("%s has detected a crash report or programming bug."), $g['product_name']) . " ";
+	if (isAllowedPage("/crash_reporter.php")) {
+		$savemsg .= sprintf(gettext('Click %1$shere%2$s for more information.'), '<a href="crash_reporter.php">', '</a>');
+	} else {
+		$savemsg .= sprintf(gettext("Contact a firewall administrator for more information."));
 	}
-
-	$crash = glob("/var/crash/*");
-	$skip_files = array(".", "..", "minfree", "");
-
-	if (is_array($crash)) {
-		foreach ($crash as $c) {
-			if (!in_array(basename($c), $skip_files)) {
-				$x++;
-			}
-		}
-
-		if ($x > 0) {
-			$savemsg = sprintf(gettext("%s has detected a crash report or programming bug."), $g['product_name']) . " ";
-			if (isAllowedPage("/crash_reporter.php")) {
-				$savemsg .= sprintf(gettext('Click %1$shere%2$s for more information.'), '<a href="crash_reporter.php">', '</a>');
-			} else {
-				$savemsg .= sprintf(gettext("Contact a firewall administrator for more information."));
-			}
-			$class = "warning";
-		}
-	}
+	$class = "warning";
 }
 
 ## Include each widget php include file.
@@ -204,22 +182,6 @@ if (file_exists("/usr/sbin/swapinfo")) {
 	if (stristr($swapinfo, '%') == true) $showswap=true;
 }
 
-## User recently restored his config.
-## If packages are installed lets resync
-if (file_exists('/conf/needs_package_sync')) {
-	if ($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
-		## If the user has logged into webGUI quickly while the system is booting then do not redirect them to
-		## the package reinstall page. That is about to be done by the boot script anyway.
-		## The code in head.inc will put up a notice to the user.
-		if (!platform_booting()) {
-			header('Location: pkg_mgr_install.php?mode=reinstallall');
-			exit;
-		}
-	} else {
-		@unlink('/conf/needs_package_sync');
-	}
-}
-
 ## If it is the first time webConfigurator has been
 ## accessed since initial install show this stuff.
 if (file_exists('/conf/trigger_initial_wizard')) {
@@ -273,7 +235,7 @@ if ($fd) {
 
 ##build widget saved list information
 if ($user_settings['widgets']['sequence'] != "") {
-	$dashboardcolumns = isset($user_settings['webgui']['dashboardcolumns']) ? $user_settings['webgui']['dashboardcolumns'] : 2;
+	$dashboardcolumns = isset($user_settings['webgui']['dashboardcolumns']) ? (int) $user_settings['webgui']['dashboardcolumns'] : 2;
 	$pconfig['sequence'] = $user_settings['widgets']['sequence'];
 	$widgetsfromconfig = array();
 
@@ -708,7 +670,7 @@ events.push(function() {
 	// results back to the widget's callback function
 	function executewidget() {
 		if (ajaxspecs.length > 0) {
-			var freq = ajaxspecs[ajaxidx].freq;	// widget can specifify it should be called freq times around hte loop
+			var freq = ajaxspecs[ajaxidx].freq;	// widget can specify it should be called freq times around the loop
 
 			if (!ajaxmutex) {
 				if (((ajaxcntr % freq) === 0) && (typeof ajaxspecs[ajaxidx].callback === "function" )) {

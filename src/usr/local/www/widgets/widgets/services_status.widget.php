@@ -3,7 +3,7 @@
  * services_status.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Sam Wenham
  * All rights reserved.
  *
@@ -32,6 +32,9 @@ $services = get_services();
 $numsvcs = count($services);
 
 for ($idx=0; $idx<$numsvcs; $idx++) {
+	if (!is_array($services[$idx])) {
+		$services[$idx] = array();
+	}
 	$services[$idx]['dispname'] = $services[$idx]['name'];
 }
 

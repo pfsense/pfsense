@@ -3,7 +3,7 @@
  * interfaces_wireless.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Erik Fonnesbeck
  * All rights reserved.
  *
@@ -29,13 +29,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['wireless'])) {
-	$config['wireless'] = array();
-}
-if (!is_array($config['wireless']['clone'])) {
-	$config['wireless']['clone'] = array();
-}
-
+init_config_arr(array('wireless', 'clone'));
 $a_clones = &$config['wireless']['clone'];
 
 function clone_inuse($num) {

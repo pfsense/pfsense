@@ -23,7 +23,11 @@
 VERSION=`/bin/cat /etc/version`
 MIN_REALMEM_FOR_OPCACHE=512
 
-EXTENSIONSDIR="/usr/local/lib/php/20131226/"
+if pkg info -e php73; then
+	EXTENSIONSDIR="/usr/local/lib/php/20180731/"
+elif pkg info -e php72; then
+	EXTENSIONSDIR="/usr/local/lib/php/20170718/"
+fi
 
 # Grab amount of memory that is detected
 if [ -f /var/log/dmesg.boot ]; then
@@ -92,8 +96,6 @@ PHPMODULES="$PHPMODULES posix"
 PHPMODULES="$PHPMODULES readline"
 # Login sessions
 PHPMODULES="$PHPMODULES session"
-# Extra sanity seatbelts
-PHPMODULES="$PHPMODULES suhosin"
 # Firewall rules edit
 PHPMODULES="$PHPMODULES ctype"
 # firewall_rules_edit.php
@@ -189,7 +191,7 @@ post_max_size = 200M
 html_errors = Off
 zlib.output_compression = Off
 zlib.output_compression_level = 1
-include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg:/usr/local/www/classes:/usr/local/www/classes/Form:/usr/local/share/pear"
+include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg:/usr/local/www/classes:/usr/local/www/classes/Form:/usr/local/share/pear:/usr/local/share/openssl_x509_crl/"
 display_startup_errors=on
 display_errors=on
 log_errors=on
@@ -247,23 +249,6 @@ opcache.enabled="0"
 EOF
 fi
 
-	/bin/cat >>/usr/local/etc/php.ini <<EOF
-
-[suhosin]
-suhosin.get.max_array_index_length = 256
-suhosin.get.max_vars = 5000
-suhosin.get.max_value_length = 500000
-suhosin.post.max_array_index_length = 256
-suhosin.post.max_vars = 5000
-suhosin.post.max_value_length = 500000
-suhosin.request.max_array_index_length = 256
-suhosin.request.max_vars = 5000
-suhosin.request.max_value_length = 500000
-suhosin.memory_limit = 805306368
-
-EOF
-
-
 PHPFPMMAX=3
 PHPFPMIDLE=30
 PHPFPMSTART=1
@@ -280,7 +265,7 @@ elif [ ${REALMEM} -gt 1000 ]; then
        PHPFPMIDLE=3600
        PHPFPMSTART=2
        PHPFPMSPARE=7
-       PHPFPMREQ=5000				 
+       PHPFPMREQ=5000
 fi
 
 /bin/cat > /usr/local/lib/php-fpm.conf <<EOF

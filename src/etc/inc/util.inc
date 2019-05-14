@@ -3,7 +3,7 @@
  * util.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -28,8 +28,8 @@ define('VIP_CARP', 2);
 define('VIP_IPALIAS', 3);
 
 /* kill a process by pid file */
-function killbypid($pidfile) {
-	return sigkillbypid($pidfile, "TERM");
+function killbypid($pidfile, $waitfor = 0) {
+	return sigkillbypid($pidfile, "TERM", $waitfor);
 }
 
 function isvalidpid($pidfile) {
@@ -52,12 +52,18 @@ function isvalidproc($proc) {
 	return is_process_running($proc);
 }
 
-/* sigkill a process by pid file */
+/* sigkill a process by pid file, and wait for it to terminate or remove the .pid file for $waitfor seconds */
 /* return 1 for success and 0 for a failure */
-function sigkillbypid($pidfile, $sig) {
+function sigkillbypid($pidfile, $sig, $waitfor = 0) {
 	if (isvalidpid($pidfile)) {
-		return mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
+		$result = mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
 		    " -F {$pidfile}", true);
+		$waitcounter = $waitfor * 10;
+		while(isvalidpid($pidfile) && $waitcounter > 0) {
+			$waitcounter = $waitcounter - 1;
+			usleep(100000);
+		}
+		return $result;
 	}
 
 	return 0;
@@ -772,6 +778,14 @@ function is_subnet($subnet) {
 	return false;
 }
 
+function is_v4($ip_or_subnet) {
+	return is_ipaddrv4($ip_or_subnet) || is_subnetv4($ip_or_subnet);
+}
+
+function is_v6($ip_or_subnet) {
+	return is_ipaddrv6($ip_or_subnet) || is_subnetv6($ip_or_subnet);
+}
+
 /* same as is_subnet() but accepts IPv4 only */
 function is_subnetv4($subnet) {
 	return (is_subnet($subnet) == 4);
@@ -1054,14 +1068,14 @@ function is_validaliasname($name, $return_message = false, $object = "alias") {
 	}
 	if (getprotobyname($name)) {
 		if ($return_message) {
-			return sprintf(gettext('The %1$s name must not be a well-known IP protocol name such as TCP, UDP, ICMP etc.'), $object);
+			return sprintf(gettext('The %1$s name must not be an IP protocol name such as TCP, UDP, ICMP etc.'), $object);
 		} else {
 			return false;
 		}
 	}
 	if (getservbyname($name, "tcp") || getservbyname($name, "udp")) {
 		if ($return_message) {
-			return sprintf(gettext('The %1$s name must not be a well-known TCP or UDP port name such as ssh, smtp, pop3, tftp, http, openvpn etc.'), $object);
+			return sprintf(gettext('The %1$s name must not be a well-known or registered TCP or UDP port name such as ssh, smtp, pop3, tftp, http, openvpn etc.'), $object);
 		} else {
 			return false;
 		}
@@ -1254,7 +1268,9 @@ function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
 	global $config;
 
 	$list = array();
-	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip'])) {
+	if (!is_array($config['virtualip']) ||
+	    !is_array($config['virtualip']['vip']) ||
+	    empty($config['virtualip']['vip'])) {
 		return ($list);
 	}
 
@@ -1314,7 +1330,9 @@ function get_configured_vip_subnetv6($vipinterface = '') {
 function get_configured_vip_detail($vipinterface = '', $family = 'inet', $what = 'ip') {
 	global $config;
 
-	if (empty($vipinterface) || !is_array($config['virtualip']['vip']) ||
+	if (empty($vipinterface) ||
+	    !is_array($config['virtualip']) ||
+	    !is_array($config['virtualip']['vip']) ||
 	    empty($config['virtualip']['vip'])) {
 		return (NULL);
 	}
@@ -2147,6 +2165,30 @@ function unmute_kernel_msgs() {
 function start_devd() {
 	global $g;
 
+	/* Generate hints for the kernel loader. */
+	$module_paths = explode(";", get_single_sysctl("kern.module_path"));
+	foreach ($module_paths as $id => $path) {
+		if (!is_dir($path) || file_exists("{$path}/linker.hints")) {
+			continue;
+		}
+		if (($files = scandir($path)) == false) {
+			continue;
+		}
+		$found = false;
+		foreach ($files as $id => $file) {
+			if (strlen($file) > 3 &&
+			    strcasecmp(substr($file, -3), ".ko") == 0) {
+				$found = true;
+				break;
+			}
+		}
+		if ($found == false) {
+			continue;
+		}
+		$_gb = exec("/usr/sbin/kldxref $path");
+		unset($_gb);
+	}
+
 	/* Use the undocumented -q options of devd to quiet its log spamming */
 	$_gb = exec("/sbin/devd -q -f /etc/{$g['product_name']}-devd.conf");
 	sleep(1);
@@ -2180,7 +2222,7 @@ function is_interface_mismatch() {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
 			if (interface_is_vlan($ifcfg['if']) != NULL ||
 			    interface_is_qinq($ifcfg['if']) != NULL ||
-			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
+			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;
@@ -2263,6 +2305,9 @@ function timeout($timer = 9) {
  ******/
 function msort($array, $id = "id", $sort_ascending = true) {
 	$temp_array = array();
+	if (!is_array($array)) {
+		return $temp_array;
+	}
 	while (count($array)>0) {
 		$lowest_id = 0;
 		$index = 0;
@@ -2368,6 +2413,9 @@ function array_merge_recursive_unique($array0, $array1) {
 						$result[$key] = call_user_func_array(__FUNCTION__, $args);
 					} else {
 						foreach ($value as $vkey => $vval) {
+							if (!is_array($result[$key])) {
+								$result[$key] = array();
+							}
 							$result[$key][$vkey] = $vval;
 						}
 					}
@@ -2423,8 +2471,9 @@ function route_add_or_change($args) {
 
 	/* First, try to add it */
 	$_gb = exec(escapeshellcmd("/sbin/route add " . $args), $output, $rc);
-
+		
 	if (isset($config['system']['route-debug'])) {
+		$add_change = 'add';
 		$mt = microtime();
 		log_error("ROUTING debug: $mt - ADD RC={$rc} - $args");
 	}
@@ -2435,9 +2484,13 @@ function route_add_or_change($args) {
 		    $output, $rc);
 
 		if (isset($config['system']['route-debug'])) {
+			$add_change = 'change';
 			$mt = microtime();
 			log_error("ROUTING debug: $mt - CHG RC={$rc} - $args");
 		}
+	}
+	if (isset($config['system']['route-debug'])) {
+		file_put_contents("/dev/console", "\n[".getmypid()."] ROUTE: {$add_change} {$args} result: {$rc}");
 	}
 
 	return ($rc == 0);
@@ -2579,12 +2632,26 @@ function post_redirect($page, $params) {
 
 /* Locate disks that can be queried for S.M.A.R.T. data. */
 function get_smart_drive_list() {
+	/* SMART supports some disks directly, and some controllers directly,
+	 * See https://redmine.pfsense.org/issues/9042 */
+	$supported_disk_types = array("ad", "da", "ada");
+	$supported_controller_types = array("nvme");
 	$disk_list = explode(" ", get_single_sysctl("kern.disks"));
 	foreach ($disk_list as $id => $disk) {
 		// We only want certain kinds of disks for S.M.A.R.T.
 		// 1 is a match, 0 is no match, False is any problem processing the regex
-		if (preg_match("/^(ad|da|ada).*[0-9]{1,2}$/", $disk) !== 1) {
+		if (preg_match("/^(" . implode("|", $supported_disk_types) . ").*[0-9]{1,2}$/", $disk) !== 1) {
 			unset($disk_list[$id]);
+			continue;
+		}
+	}
+	foreach ($supported_controller_types as $controller) {
+		$devices = glob("/dev/{$controller}*");
+		if (!is_array($devices)) {
+			continue;
+		}
+		foreach ($devices as $device) {
+			$disk_list[] = basename($device);
 		}
 	}
 	sort($disk_list);

@@ -3,7 +3,7 @@
  * easyrule.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2009-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2009-2019 Rubicon Communications, LLC (Netgate)
  * Originally Sponsored By Anathematic @ pfSense Forums
  * All rights reserved.
  *
@@ -58,6 +58,9 @@ function easyrule_find_rule_interface($int) {
 	if (substr($int, 0, 4) == "ovpn") {
 		return "openvpn";
 	}
+	if (substr($int, 0, 5) == "ipsec") {
+		return "ipsec";
+	}
 
 	return false;
 }
@@ -95,11 +98,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 		return true;
 	}
 
-	/* No rules, start a new array */
-	if (!is_array($config['filter']['rule'])) {
-		$config['filter']['rule'] = array();
-	}
-
+	init_config_arr(array('filter', 'rule'));
 	filter_rules_sort();
 	$a_filter = &$config['filter']['rule'];
 
@@ -123,6 +122,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$tmpif = $int;
 
 	// Update the separators
+	init_config_arr(array('filter', 'separator', strtolower($tmpif)));
 	$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 	$ridx = ifridx($tmpif, $after);	// get rule index within interface
 	$mvnrows = +1;
@@ -155,11 +155,7 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 		return false;
 	}
 
-	/* If there are no aliases, start an array */
-	if (!is_array($config['aliases']['alias'])) {
-		$config['aliases']['alias'] = array();
-	}
-
+	init_config_arr(array('aliases', 'alias'));
 	$a_aliases = &$config['aliases']['alias'];
 
 	/* Try to get the ID if the alias already exists */
@@ -280,11 +276,7 @@ function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
 function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipproto) {
 	global $config;
 
-	/* No rules, start a new array */
-	if (!is_array($config['filter']['rule'])) {
-		$config['filter']['rule'] = array();
-	}
-
+	init_config_arr(array('filter', 'rule'));
 	filter_rules_sort();
 	$a_filter = &$config['filter']['rule'];
 
@@ -389,6 +381,7 @@ function easyrule_parse_unblock($int, $host, $ipproto = "inet") {
 			return gettext("No block rules set on interface:") . ' ' . htmlspecialchars($int);
 		}
 
+		init_config_arr(array('aliases', 'alias', $id));
 		$alias = &$config['aliases']['alias'][$id];
 
 		if (is_subnet($host)) {

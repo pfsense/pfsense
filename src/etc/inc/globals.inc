@@ -3,7 +3,7 @@
  * globals.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,18 +63,13 @@ $g = array(
 	"admin_group" => "admins",
 	"product_name" => "pfSense",
 	"product_version" => trim(file_get_contents("/etc/version"), " \n"),
-	"product_copyright" => "Rubicon Communications, LLC (Netgate)",
-	"product_copyright_url" => "https://pfsense.org/license",
 	"product_copyright_years" => "2004 - ".date("Y"),
-	"product_website" => "www.pfsense.org",
-	"product_website_footer" => "https://www.pfsense.org/?gui=bootstrap",
-	"product_email" => "coreteam@pfsense.org",
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "17.9",
+	"latest_config" => "19.2",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -88,7 +83,9 @@ $g = array(
 	"pkg_prefix" => "pfSense-pkg-",
 	"default_timezone" => "Etc/UTC",
 	"language" => "en_US",
-	"default_config_backup_count" => 30
+	"default_config_backup_count" => 30,
+	"minimumtableentries_bogonsv6" => 400000,
+	"alternativemetaports" => array("vmware", "php72", "php73")
 );
 
 /* IP TOS flags */
@@ -166,6 +163,11 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"kern.corefile" => "/root/%N.core" /* Write all core files to /root/ so they do not consume space on other slices */
 );
 
+$machine_type = php_uname('m');
+if (($machine_type == 'arm') || ($machine_type == 'arm64')) {
+	$sysctls['kern.shutdown.secure_halt'] = 1;
+}
+
 /* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */
 if (file_exists("/etc/inc/globals_override.inc")) {
 	@include_once("globals_override.inc");
@@ -208,4 +210,45 @@ $factory_default_checkipservice = array(
 );
 
 $dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns", "godaddy", "godaddy-v6");
+
+/* pf tokens from FreeBSD source sbin/pfctl/parse.y (plus our custom entries at the end)*/
+global $pf_reserved_keywords;
+$pf_reserved_keywords = array(
+	"pass", "block", "scrub", "return", "in", "os", "out", "log", "quick", "on", "from", "to", "flags", "returnrst",
+	"returnicmp", "returnicmp6", "proto", "inet", "inet6", "all", "any", "icmptype", "icmp6type", "code", "keep",
+	"modulate", "state", "port", "rdr", "nat", "binat", "arrow", "nodf", "minttl", "error", "allowopts", "fastroute",
+	"filename", "routeto", "dupto", "replyto", "no", "label", "noroute", "urpffailed", "fragment", "user", "group",
+	"maxmss", "maximum", "ttl", "tos", "drop", "table", "reassemble", "fragdrop", "fragcrop", "anchor", "natanchor",
+	"rdranchor", "binatanchor", "set", "optimization", "timeout", "limit", "loginterface", "blockpolicy", "randomid",
+	"requireorder", "synproxy", "fingerprints", "nosync", "debug", "skip", "hostid", "antispoof", "for", "include",
+	"bitmask", "random", "sourcehash", "roundrobin", "staticport", "probability", "altq", "cbq", "codel", "priq",
+	"hfsc", "fairq", "bandwidth", "tbrsize", "linkshare", "realtime", "upperlimit", "queue", "priority", "qlimit",
+	"hogs", "buckets", "rtable", "target", "interval", "load", "ruleset_optimization", "prio", "stickyaddress",
+	"maxsrcstates", "maxsrcnodes", "sourcetrack", "global", "rule", "maxsrcconn", "maxsrcconnrate", "overload",
+	"flush", "sloppy", "tagged", "tag", "ifbound", "floating", "statepolicy", "statedefaults", "route", "settos",
+	"divertto", "divertreply", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
+
+/* VLAN Prio values. */
+$vlanprio_values = array(
+	"bk" => 0,
+	"be" => 1,
+	"ee" => 2,
+	"ca" => 3,
+	"vi" => 4,
+	"vo" => 5,
+	"ic" => 6,
+	"nc" => 7
+);
+
+$vlanprio = array(
+	"bk" => "Background (BK, 0)",
+	"be" => "Best Effort (BE, 1)",
+	"ee" => "Excellent Effort (EE, 2)",
+	"ca" => "Critical Applications (CA, 3)",
+	"vi" => "Video (VI, 4)",
+	"vo" => "Voice (VO, 5)",
+	"ic" => "Internetwork Control (IC, 6)",
+	"nc" => "Network Control (NC, 7)"
+);
+
 ?>

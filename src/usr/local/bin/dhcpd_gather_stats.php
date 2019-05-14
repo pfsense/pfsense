@@ -4,7 +4,7 @@
  * dhcpd_gather_stats.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2013-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 
 	$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
 	$leases_contents = file($leasesfile);
-	$dhcpif = $argv[1] ; 
+	$dhcpif = $argv[1] ;
 
 	function remove_duplicate($array, $field) {
 		foreach ($array as $sub) {
@@ -189,20 +189,19 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 	$result['range'] = ip_range_size_v4(
 	    $config['dhcpd'][$dhcpif]['range']['from'],
 	    $config['dhcpd'][$dhcpif]['range']['to']);
-	
+
 	foreach ($leases as $data) {
 		if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
 			continue;
 		if ($data['act'] != "static") {
 			if (is_inrange_v4($data['ip'], $config['dhcpd'][$dhcpif]['range']['from'], $config['dhcpd'][$dhcpif]['range']['to'])) {
-					$result['active'] = $result['active'] + 1;
+					$result['active'] = intval($result['active']) + 1;
 			}
-		}
-		else {
+		} else {
 			if (is_inrange_v4($data['ip'], $subnet_start, $subnet_end)) {
-				$result['static'] = $result['static'] + 1;
+				$result['static'] = intval($result['static']) + 1;
 			}
 		}
 	}
 }
-echo $result['active'].":".$result['static'].":".$result['range'] ; 
+echo $result['active'].":".$result['static'].":".$result['range'] ;

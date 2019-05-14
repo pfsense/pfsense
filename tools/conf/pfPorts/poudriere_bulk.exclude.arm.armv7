@@ -1,0 +1,12 @@
+devel/aws-sdk-php
+emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
+graphics/drm-kmod
+sysutils/%%PRODUCT_NAME%%-builder
+sysutils/%%PRODUCT_NAME%%-pkg-LCDproc
+sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Coreboot_Upgrade
+sysutils/%%PRODUCT_NAME%%-pkg-blinkled
+sysutils/%%PRODUCT_NAME%%-pkg-gwled
+sysutils/devcpu-data
+sysutils/flashrom
+sysutils/vm-bhyve
+sysutils/xe-guest-utilities

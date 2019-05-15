@@ -3,7 +3,7 @@
  * services.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -919,7 +919,7 @@ EOPP;
 			// Handle pool-specific options
 			$dhcpdconf .= "\n";
 			// Ignore the first pool, which is the "overall" pool when $all_pools_idx is 0 - those are put outside the pool block later
-			if ($poolconf['numberoptions']['item'] && ($all_pools_idx > 0)) {
+			if (isset($poolconf['numberoptions']['item']) && is_array($poolconf['numberoptions']['item']) && ($all_pools_idx > 0)) {
 				// Use the "real" pool index from the config, excluding the "overall" pool, and based from 0.
 				// This matches the way $poolidx was used when generating the $custoptions string earlier.
 				$poolidx = $all_pools_idx - 1;
@@ -1041,7 +1041,7 @@ EOD;
 
 		// Handle option, number rowhelper values
 		$dhcpdconf .= "\n";
-		if ($dhcpifconf['numberoptions']['item']) {
+		if (isset($dhcpifconf['numberoptions']['item']) && is_array($dhcpifconf['numberoptions']['item'])) {
 			foreach ($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
 				$item_value = base64_decode($item['value']);
 				if (empty($item['type']) || $item['type'] == "text") {
@@ -1097,7 +1097,7 @@ EOD;
 				}
 
 				if ($sm['cid']) {
-					$dhcpdconf .= "	option dhcp-client-identifier \"{$sm['cid']}\";\n";
+					$dhcpdconf .= " option dhcp-client-identifier \"{$sm['cid']}\";\n";
 				}
 
 				if ($sm['ipaddr']) {
@@ -1533,7 +1533,7 @@ EOD;
 
 		// Handle option, number rowhelper values
 		$dhcpdv6conf .= "\n";
-		if ($dhcpv6ifconf['numberoptions']['item']) {
+		if (isset($dhcpv6ifconf['numberoptions']['item']) && is_array($dhcpv6ifconf['numberoptions']['item'])) {
 			foreach ($dhcpv6ifconf['numberoptions']['item'] as $itemv6idx => $itemv6) {
 				$itemv6_value = base64_decode($itemv6['value']);
 				$dhcpdv6conf .= "	option custom-{$dhcpv6if}-{$itemv6idx} \"{$itemv6_value}\";\n";
@@ -1917,7 +1917,11 @@ function services_dyndns_configure($int = "") {
 		echo "services_dyndns_configure() being called $mt\n";
 	}
 
-	$dyndnscfg = $config['dyndnses']['dyndns'];
+	if (isset($config['dyndnses']['dyndns']) && is_array($config['dyndnses']['dyndns'])) {
+		$dyndnscfg = $config['dyndnses']['dyndns'];
+	} else {
+		return 0;
+	}
 	$gwgroups = return_gateway_groups_array(true);
 	if (is_array($dyndnscfg)) {
 		if (platform_booting()) {

@@ -3,7 +3,7 @@
  * services_dhcp.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -160,7 +160,17 @@ if (is_array($dhcpdconf)) {
 	list($pconfig['wins1'], $pconfig['wins2']) = $dhcpdconf['winsserver'];
 	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $dhcpdconf['dnsserver'];
 	$pconfig['ignorebootp'] = isset($dhcpdconf['ignorebootp']);
-	$pconfig['denyunknown'] = isset($dhcpdconf['denyunknown']);
+
+	if (isset($dhcpdconf['denyunknown'])) {
+		if ($dhcpdconf['denyunknown'] == "") {
+			$pconfig['denyunknown'] = "enabled";
+		} else {
+			$pconfig['denyunknown'] = $dhcpdconf['denyunknown'];
+		}
+	} else {
+		$pconfig['denyunknown'] = "disabled";
+	}
+
 	$pconfig['ignoreclientuids'] = isset($dhcpdconf['ignoreclientuids']);
 	$pconfig['nonak'] = isset($dhcpdconf['nonak']);
 	$pconfig['ddnsdomain'] = $dhcpdconf['ddnsdomain'];
@@ -581,7 +591,15 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['domain'] = $_POST['domain'];
 		$dhcpdconf['domainsearchlist'] = $_POST['domainsearchlist'];
 		$dhcpdconf['ignorebootp'] = ($_POST['ignorebootp']) ? true : false;
-		$dhcpdconf['denyunknown'] = ($_POST['denyunknown']) ? true : false;
+
+		if ($_POST['denyunknown'] == "enabled") {
+			$dhcpdconf['denyunknown'] = "enabled";
+		} else if ($_POST['denyunknown'] == "class") {
+			$dhcpdconf['denyunknown'] = "class";
+		} else if (isset($_POST['denyunknown'])) {
+			unset($dhcpdconf['denyunknown']);
+		}
+
 		$dhcpdconf['ignoreclientuids'] = ($_POST['ignoreclientuids']) ? true : false;
 		$dhcpdconf['nonak'] = ($_POST['nonak']) ? true : false;
 		$dhcpdconf['ddnsdomain'] = $_POST['ddnsdomain'];
@@ -868,12 +886,19 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['ignorebootp']
 ));
 
-$section->addInput(new Form_Checkbox(
+$section->addInput(new Form_Select(
 	'denyunknown',
 	'Deny unknown clients',
-	'Only the clients defined below will get DHCP leases from this server.',
-	$pconfig['denyunknown']
-));
+	$pconfig['denyunknown'],
+	array(
+		"disabled" => "Allow Any (any MACs, including any not listed anywhere)",
+		"enabled" => "Allow Known Clients (MACs listed on ANY interface)",
+		"class" => "Allow Only Listed Below (only MACs listed below)",
+	)
+))->setHelp('When set to %3$sAllow Any%4$s, any DHCP client will get an IP address within this scope/range on this interface. '.
+	'If set to %3$sAllow Known Clients%4$s, any DHCP client with a MAC address listed on %1$s%3$sany%4$s%2$s scope(s)/interface(s) will get an IP address. ' .
+	'If set to %3$sAllow Only Listed Below%4$s, only MAC addresses listed below (i.e. for this interface) will get an IP address within this scope/range.',
+	'<i>', '</i>', '<b>', '</b>');
 
 $section->addInput(new Form_Checkbox(
 	'nonak',

@@ -3,7 +3,7 @@
  * services.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -770,6 +770,9 @@ EOPP;
 			}
 		}
 
+		// instantiate class before pool definition
+		$dhcpdconf .= "class \"s_{$dhcpif}\" {\n	match hardware;\n}\n";
+
 		$dhcpdconf .= "subnet {$subnet} netmask {$subnetmask} {\n";
 
 		// Setup pool options
@@ -841,7 +844,12 @@ EOPP;
 				$dhcpdconf .= "		$deny_action dynamic bootp clients;\n";
 			}
 
-			if (isset($poolconf['denyunknown'])) {
+			// set pool MAC limitations
+			if ($poolconf['denyunknown'] == "class") {
+				$dhcpdconf .= "		allow members of \"s_{$dhcpif}\";\n";
+				$dhcpdconf .= "		$deny_action known-clients;\n";
+				$dhcpdconf .= "		$deny_action unknown-clients;\n";
+			} else if (isset($poolconf['denyunknown'])) {
 				$dhcpdconf .= "		$deny_action unknown-clients;\n";
 			}
 
@@ -911,7 +919,7 @@ EOPP;
 			// Handle pool-specific options
 			$dhcpdconf .= "\n";
 			// Ignore the first pool, which is the "overall" pool when $all_pools_idx is 0 - those are put outside the pool block later
-			if (isset($poolconf['numberoptions']['item']) && is_array($poolconf['numberoptions']['item']) && ($all_pools_idx > 0)) {
+			if ($poolconf['numberoptions']['item'] && ($all_pools_idx > 0)) {
 				// Use the "real" pool index from the config, excluding the "overall" pool, and based from 0.
 				// This matches the way $poolidx was used when generating the $custoptions string earlier.
 				$poolidx = $all_pools_idx - 1;
@@ -1033,7 +1041,7 @@ EOD;
 
 		// Handle option, number rowhelper values
 		$dhcpdconf .= "\n";
-		if (isset($dhcpifconf['numberoptions']['item']) && is_array($dhcpifconf['numberoptions']['item'])) {
+		if ($dhcpifconf['numberoptions']['item']) {
 			foreach ($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
 				$item_value = base64_decode($item['value']);
 				if (empty($item['type']) || $item['type'] == "text") {
@@ -1085,11 +1093,11 @@ EOD;
 				$dhcpdconf .= "host s_{$dhcpif}_{$i} {\n";
 
 				if ($sm['mac']) {
-					$dhcpdconf .= "        hardware ethernet {$sm['mac']};\n";
+					$dhcpdconf .= "	hardware ethernet {$sm['mac']};\n";
 				}
 
 				if ($sm['cid']) {
-					$dhcpdconf .= "        option dhcp-client-identifier \"{$sm['cid']}\";\n";
+					$dhcpdconf .= "	option dhcp-client-identifier \"{$sm['cid']}\";\n";
 				}
 
 				if ($sm['ipaddr']) {
@@ -1165,6 +1173,12 @@ EOD;
 				}
 
 				$dhcpdconf .= "}\n";
+
+				// subclass for DHCP limiting
+				// unknown if the "1:" prefix is still needed, so adding it just in case
+				$dhcpdconf .= "subclass \"s_{$dhcpif}\" 1:{$sm['mac']};\n";
+				$dhcpdconf .= "subclass \"s_{$dhcpif}\" {$sm['mac']};\n";
+
 				$i++;
 			}
 		}
@@ -1519,7 +1533,7 @@ EOD;
 
 		// Handle option, number rowhelper values
 		$dhcpdv6conf .= "\n";
-		if (isset($dhcpv6ifconf['numberoptions']['item']) && is_array($dhcpv6ifconf['numberoptions']['item'])) {
+		if ($dhcpv6ifconf['numberoptions']['item']) {
 			foreach ($dhcpv6ifconf['numberoptions']['item'] as $itemv6idx => $itemv6) {
 				$itemv6_value = base64_decode($itemv6['value']);
 				$dhcpdv6conf .= "	option custom-{$dhcpv6if}-{$itemv6idx} \"{$itemv6_value}\";\n";
@@ -1903,11 +1917,7 @@ function services_dyndns_configure($int = "") {
 		echo "services_dyndns_configure() being called $mt\n";
 	}
 
-	if (isset($config['dyndnses']['dyndns']) && is_array($config['dyndnses']['dyndns'])) {
-		$dyndnscfg = $config['dyndnses']['dyndns'];
-	} else {
-		return 0;
-	}
+	$dyndnscfg = $config['dyndnses']['dyndns'];
 	$gwgroups = return_gateway_groups_array(true);
 	if (is_array($dyndnscfg)) {
 		if (platform_booting()) {

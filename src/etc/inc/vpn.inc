@@ -117,6 +117,9 @@ function vpn_ipsec_convert_to_modp($index) {
 		case '31':
 			$conversion = "curve25519";
 			break;
+		case '32':
+			$conversion = "curve448";
+			break;
 	}
 
 	return $conversion;

@@ -166,7 +166,8 @@ $p1_dhgroups = array(
 	27 => '27 (brainpool ecp224)',
 	28 => '28 (brainpool ecp256)',
 	29 => '29 (brainpool ecp384)',
-	30 => '30 (brainpool ecp512)'
+	30 => '30 (brainpool ecp512)',
+	31 => '31 (Elliptic Curve 25519, 256 bit)',
 );
 
 global $p2_halgos;
@@ -242,7 +243,8 @@ $p2_pfskeygroups = array(
 	27 => gettext('27 (brainpool ecp224)'),
 	28 => gettext('28 (brainpool ecp256)'),
 	29 => gettext('29 (brainpool ecp384)'),
-	30 => gettext('30 (brainpool ecp512)')
+	30 => gettext('30 (brainpool ecp512)'),
+	31 => gettext('31 (Elliptic Curve 25519, 256 bit)'),
 );
 
 function ipsec_enabled() {

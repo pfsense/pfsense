@@ -123,6 +123,9 @@ function vpn_ipsec_convert_to_modp($index) {
 		case '30':
 			$conversion = "ecp512bp";
 			break;
+		case '31':
+			$conversion = "curve25519";
+			break;
 	}
 
 	return $conversion;
@@ -478,6 +481,10 @@ charon {
 
 		unity {
 			load = {$unity_enabled}
+		}
+
+		curve25519 {
+			load = yes
 		}
 
 EOD;

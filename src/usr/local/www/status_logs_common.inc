@@ -583,11 +583,12 @@ function manage_log_code() {
 		return;
 	}
 
-	global $logfile, $specific_log, $config, $pconfig, $save_settings, $input_errors, $extra_save_msg, $retval, $changes_applied;
+	global $logfile, $specific_log, $config, $pconfig, $save_settings, $input_errors, $extra_save_msg, $retval, $changes_applied, $allowed_logs;
 
 	$changes_applied = false;
 	$extra_save_msg = "";
 	$specific_log = basename($logfile) . '_settings';
+	init_config_arr(array('syslog', $specific_log));
 
 	// Common to All Logs
 	$pconfig['cronorder'] = isset($config['syslog'][$specific_log]['cronorder']) ? $config['syslog'][$specific_log]['cronorder'] : "forward";
@@ -719,11 +720,12 @@ function manage_log_code() {
 			$changes_applied = true;
 
 		// If any of the logging settings were changed then backup and sync (standard write_config).  Otherwise only write config (don't backup, don't sync).
+			$log_friendly_name = empty($allowed_logs[$logfile]["name"]) ? $logfile : $allowed_logs[$logfile]["name"];
 			if ($logging_changed) {
-				write_config($desc = gettext("Log Display Settings Saved: ") . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
+				write_config($desc = gettext("Log Display Settings Saved: ") . gettext($log_friendly_name), $backup = true, $write_config_only = false);
 				system_syslogd_start();
 			} else {
-				write_config($desc = gettext("Log Display Settings Saved (no backup, no sync): ") . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
+				write_config($desc = gettext("Log Display Settings Saved (no backup, no sync): ") . gettext($log_friendly_name), $backup = false, $write_config_only = true);
 			}
 
 		// Specific to System General (main) Log

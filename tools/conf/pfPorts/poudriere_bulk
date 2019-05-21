@@ -87,6 +87,7 @@ sysutils/%%PRODUCT_NAME%%-pkg-filer
 sysutils/%%PRODUCT_NAME%%-pkg-gwled
 sysutils/%%PRODUCT_NAME%%-pkg-nut
 sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
+sysutils/ccze
 sysutils/devcpu-data
 sysutils/flashrom
 sysutils/htop

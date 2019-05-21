@@ -219,6 +219,12 @@ function carp_sync_xml($sections) {
 	if ($resp != null) {
 		$url = $rpc_client->getUrl();
 		update_filter_reload_status("XMLRPC sync successfully completed with {$url}.");
+        if (isset($config['hasync']['new_password'])) {
+                update_filter_reload_status("Updating XMLRPC sync password.");
+                $config['hasync']['password'] = $config['hasync']['new_password'];
+                unset($config['hasync']['new_password']);
+                write_config("Update XMLRPC sync password.");
+        }
 		return true;
 	}
 	return false;

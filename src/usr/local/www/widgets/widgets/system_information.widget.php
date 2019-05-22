@@ -38,6 +38,8 @@ $sysinfo_items = array(
 	'version' => gettext('Version'),
 	'cpu_type' => gettext('CPU Type'),
 	'hwcrypto' => gettext('Hardware Crypto'),
+	'pti' => gettext('Kernel PTI'),
+	'mds' => gettext('MDS Mitigation'),
 	'uptime' => gettext('Uptime'),
 	'current_datetime' => gettext('Current Date/Time'),
 	'dns_servers' => gettext('DNS Server(s)'),
@@ -279,14 +281,25 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 <?php
 	endif;
 	$pti = get_single_sysctl('vm.pmap.pti');
-	if (strlen($pti) > 0) {
+	if ((strlen($pti) > 0) && !in_array('pti', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Kernel PTI");?></th>
 			<td><?=($pti == 0) ? gettext("Disabled") : gettext("Enabled");?></td>
 		</tr>
 <?php
-	}
+	endif;
+	$mds = get_single_sysctl('hw.mds_disable_state');
+	if ((strlen($mds) > 0) && !in_array('mds', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("MDS Mitigation");?></th>
+			<td><?=ucwords(htmlspecialchars($mds));?></td>
+		</tr>
+<?php
+	endif;
 	if (!in_array('uptime', $skipsysinfoitems)):
 		$rows_displayed = true;
 ?>

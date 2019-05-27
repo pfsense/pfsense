@@ -6750,30 +6750,6 @@ function generate_random_mac_address() {
 	return $mac;
 }
 
-/****f* interfaces/is_jumbo_capable
- * NAME
- *   is_jumbo_capable - Test if interface is jumbo frame capable.  Useful for determining VLAN capability.
- * INPUTS
- *   $int             - string containing interface name
- * RESULT
- *   boolean          - true or false
- ******/
-function is_jumbo_capable($iface) {
-	$iface = trim($iface);
-	$capable = pfSense_get_interface_addresses($iface);
-
-	if (isset($capable['caps']['vlanmtu'])) {
-		return true;
-	}
-
-	// hack for some lagg modes missing vlanmtu, but work fine w/VLANs
-	if (substr($iface, 0, 4) == "lagg") {
-		return true;
-	}
-
-	return false;
-}
-
 function interface_setup_pppoe_reset_file($pppif, $iface="") {
 	global $g;
 

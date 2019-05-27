@@ -5995,6 +5995,15 @@ function upgrade_191_to_192() {
 	}
 }
 
+/* Deprecate growl notifications */
+function upgrade_192_to_193() {
+	global $config;
+
+	if (isset($config['notifications']['growl'])) {
+		unset($config['notifications']['growl']);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

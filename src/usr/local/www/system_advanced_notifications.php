@@ -32,29 +32,6 @@ require_once("pfsense-utils.inc");
 
 $pconfig = array();
 init_config_arr(array('notifications', 'smtp'));
-init_config_arr(array('notifications', 'growl'));
-
-// Growl
-$pconfig['disable_growl'] = isset($config['notifications']['growl']['disable']);
-if ($config['notifications']['growl']['password']) {
-	$pconfig['password'] = $config['notifications']['growl']['password'];
-}
-if ($config['notifications']['growl']['ipaddress']) {
-	$pconfig['ipaddress'] = $config['notifications']['growl']['ipaddress'];
-}
-
-if ($config['notifications']['growl']['notification_name']) {
-	$pconfig['notification_name'] = $config['notifications']['growl']['notification_name'];
-} else {
-  $pconfig['notification_name'] = "{$g['product_name']} growl alert";
-}
-
-if ($config['notifications']['growl']['name']) {
-	$pconfig['name'] = $config['notifications']['growl']['name'];
-} else {
-  $pconfig['name'] = 'pfSense-Growl';
-}
-
 
 // SMTP
 $pconfig['disable_smtp'] = isset($config['notifications']['smtp']['disable']);
@@ -94,31 +71,8 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	$testgrowl = isset($_POST['test-growl']);
 	$testsmtp = isset($_POST['test-smtp']);
-	if (isset($_POST['save']) || $testsmtp || $testgrowl) {
-
-		// Growl
-		$config['notifications']['growl']['ipaddress'] = $_POST['ipaddress'];
-		if ($_POST['password'] != DMYPWD) {
-			if ($_POST['password'] == $_POST['password_confirm']) {
-				$config['notifications']['growl']['password'] = $_POST['password'];
-			} else {
-				// Bug #7129 - do not nag people about passwords mismatch when growl is disabled
-				if ($_POST['disable_growl'] != "yes") {
-					$input_errors[] = gettext("Growl passwords must match");
-				}
-			}
-		}
-
-		$config['notifications']['growl']['name'] = $_POST['name'];
-		$config['notifications']['growl']['notification_name'] = $_POST['notification_name'];
-
-		if ($_POST['disable_growl'] == "yes") {
-			$config['notifications']['growl']['disable'] = true;
-		} else {
-			unset($config['notifications']['growl']['disable']);
-		}
+	if (isset($_POST['save']) || $testsmtp) {
 
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
@@ -166,28 +120,13 @@ if ($_POST) {
 			unset($config['system']['disablebeep']);
 		}
 
-		if (!$input_errors && !$testsmtp && !$testgrowl) {
+		if (!$input_errors && !$testsmtp) {
 			write_config();
 
 			pfSenseHeader("system_advanced_notifications.php");
 			return;
 		}
 
-	}
-
-	if ($testgrowl) {
-		// Send test message via growl
-		if (isset($config['notifications']['growl']['ipaddress'])) {
-			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
-			register_via_growl();
-			$test_result = notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
-			if (empty($test_result)) {
-				$test_result = gettext("Growl testing notification successfully sent");
-				$test_class = 'success';
-			} else {
-				$test_class = 'danger';
-			}
-		}
 	}
 
 	if ($testsmtp) {
@@ -339,56 +278,6 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 
-$section = new Form_Section('Growl');
-
-$section->addInput(new Form_Checkbox(
-	'disable_growl',
-	'Disable Growl',
-	'Disable Growl Notifications',
-	$pconfig['disable_growl']
-))->setHelp('Check this option to disable growl notifications but preserve the '.
-	'settings below.');
-
-$section->addInput(new Form_Input(
-	'name',
-	'Registration Name',
-	'text',
-	$pconfig['name'],
-	['placeholder' => 'pfSense-Growl']
-))->setHelp('Enter the name to register with the Growl server.');
-
-$section->addInput(new Form_Input(
-	'notification_name',
-	'Notification Name',
-	'text',
-	$pconfig['notification_name'],
-	['placeholder' => $g["product_name"].' growl alert']
-
-))->setHelp('Enter a name for the Growl notifications.');
-
-$section->addInput(new Form_Input(
-	'ipaddress',
-	'IP Address',
-	'text',
-	$pconfig['ipaddress']
-))->setHelp('This is the IP address to send growl notifications to.');
-
-$section->addPassword(new Form_Input(
-	'password',
-	'Password',
-	'text',
-	$pconfig['password']
-))->setHelp('Enter the password of the remote growl notification device.');
-
-$section->addInput(new Form_Button(
-	'test-growl',
-	'Test Growl Settings',
-	null,
-	'fa-rss'
-))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
-	'marked as disabled.');
-
-$form->add($section);
 print($form);
 
 include("foot.inc");

@@ -1268,7 +1268,6 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 			$msg = sprintf(gettext('Gateways status could not be determined, considering all as up/active. (Group: %s)'), $group['name']);
 			log_error($msg);
 			notify_via_growl($msg);
-			//notify_via_smtp($msg);
 		}
 		$tiers = $backupplan;
 	}

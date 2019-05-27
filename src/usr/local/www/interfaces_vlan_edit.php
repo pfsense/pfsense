@@ -157,11 +157,10 @@ function build_interfaces_list() {
 	$list = array();
 
 	foreach ($portlist as $ifn => $ifinfo) {
-		if (is_jumbo_capable($ifn)) {
-			$list[$ifn] = $ifn . " (" . $ifinfo['mac'] . ")";
-			$iface = convert_real_interface_to_friendly_interface_name($ifn);
-			if (isset($iface) && strlen($iface) > 0)
-				$list[$ifn] .= " - $iface";
+		$list[$ifn] = $ifn . " (" . $ifinfo['mac'] . ")";
+		$iface = convert_real_interface_to_friendly_interface_name($ifn);
+		if (isset($iface) && strlen($iface) > 0) {
+			$list[$ifn] .= " - $iface";
 		}
 	}
 

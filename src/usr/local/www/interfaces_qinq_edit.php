@@ -241,9 +241,7 @@ function build_parent_list() {
 	$list = array();
 
 	foreach ($portlist as $ifn => $ifinfo) {
-		if (is_jumbo_capable($ifn)) {
-			$list[$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
-		}
+		$list[$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
 	}
 
 	return($list);

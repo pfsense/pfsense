@@ -107,7 +107,7 @@ switch ($action) {
 	// Testing devices
 	case 'test':
 	{
-		$test = $_POST['testType'];
+		$test = $_POST['type'];
 		if (!in_array($test, array_keys($test_types))) {
 			echo gettext("Invalid test type, bailing.");
 			return;

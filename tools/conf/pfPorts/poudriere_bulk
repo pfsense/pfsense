@@ -7,7 +7,7 @@ databases/php72-pdo_mysql
 databases/php72-pgsql
 devel/aws-sdk-php
 devel/gdb
-dns/%%PRODUCT_NAME%%-pkg-bind9
+dns/%%PRODUCT_NAME%%-pkg-bind
 dns/dnstop
 editors/nano
 editors/vim-console

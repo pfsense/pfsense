@@ -37,10 +37,9 @@ if (!function_exists('get_dyndnsent_key')) {
 if (!function_exists('get_dyndns_hostname_text')) {
 	function get_dyndns_hostname_text($dyndns) {
 		global $dyndns_split_domain_types;
-		if (isset($dyndns['type']) && is_array($dyndns['type']) && in_array($dyndns['type'], $dyndns_split_domain_types)) {
+		if (is_array($dyndns) && isset($dyndns['type']) && in_array($dyndns['type'], $dyndns_split_domain_types)) {
 			return $dyndns['host'] . "." . $dyndns['domainname'];
 		}
-
 		return isset($dyndns['host']) ? $dyndns['host'] : null;
 	}
 }

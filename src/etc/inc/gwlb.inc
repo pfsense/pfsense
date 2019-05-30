@@ -671,11 +671,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			}
 
 			if ($gateway['ipprotocol'] == "inet" &&
-					($config['gateways']['defaultgw4'] == $gateway['name'] || $gateway['gateway'] == $cgw4)) {
+					($gateway['gateway'] == $cgw4)) {
 				$gateway['isdefaultgw'] = true;
 				$found_defaultv4 = 1;
 			} else if ($gateway['ipprotocol'] == "inet6" &&
-					($config['gateways']['defaultgw6'] == $gateway['name'] || $gateway['gateway'] == $cgw6)) {
+					($gateway['gateway'] == $cgw6)) {
 				$gateway['isdefaultgw'] = true;
 				$found_defaultv6 = 1;
 			}

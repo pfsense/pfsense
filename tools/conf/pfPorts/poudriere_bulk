@@ -7,7 +7,6 @@ databases/php72-pdo_mysql
 databases/php72-pgsql
 devel/aws-sdk-php
 devel/gdb
-devel/hyperscan
 dns/%%PRODUCT_NAME%%-pkg-bind9
 dns/dnstop
 editors/nano

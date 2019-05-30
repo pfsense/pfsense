@@ -1679,8 +1679,8 @@ function captiveportal_authenticate_user(&$login = '', &$password = '', $clientm
 					$val = 0;
 				}
 
-				if ($val >= $auth_val) {
-					$auth_val = $val;
+				if ($val >= $authlevel) {
+					$authlevel = $val;
 					$auth_method = $authcfg['type'];
 					$login_status = $status;
 					$login_msg = $msg;

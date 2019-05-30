@@ -151,6 +151,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radmac_secret'] = $a_cp[$cpzone]['radmac_secret'];
 	$pconfig['radmac_fallback'] = isset($a_cp[$cpzone]['radmac_fallback']);
 	$pconfig['reauthenticate'] = isset($a_cp[$cpzone]['reauthenticate']);
+	$pconfig['preservedb'] = isset($a_cp[$cpzone]['preservedb']);
 	$pconfig['reauthenticateacct'] = $a_cp[$cpzone]['reauthenticateacct'];
 	$pconfig['httpslogin_enable'] = isset($a_cp[$cpzone]['httpslogin']);
 	$pconfig['httpsname'] = $a_cp[$cpzone]['httpsname'];
@@ -353,6 +354,7 @@ if ($_POST['save']) {
 		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
 		$newcp['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
+		$newcp['preservedb'] = $_POST['preservedb'] ? true : false;
 		$newcp['radmac_secret'] = $_POST['radmac_secret'] ? $_POST['radmac_secret'] : false;
 		$newcp['radmac_fallback'] = $_POST['radmac_fallback'] ? true : false;
 		$newcp['reauthenticateacct'] = $_POST['reauthenticateacct'];
@@ -632,6 +634,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['blockedmacsurl']
 ))->setHelp('Blocked MAC addresses will be redirected to this URL when attempting access.');
+
+$section->addInput(new Form_Checkbox(
+	'preservedb',
+	'Preserve users database',
+	'Preserve connected users across reboot',
+	$pconfig['preservedb']
+))->setHelp("If enabled, connected users won't be disconnected during a pfSense reboot.");
 
 $section->addInput(new Form_Checkbox(
 	'noconcurrentlogins',
@@ -1178,6 +1187,7 @@ events.push(function() {
 		hideInput('preauthurl', hide);
 		hideInput('redirurl', hide);
 		hideInput('blockedmacsurl', hide);
+		hideCheckbox('preservedb', hide);
 		hideCheckbox('noconcurrentlogins', hide);
 		hideCheckbox('nomacfilter', hide);
 		hideCheckbox('passthrumacadd', hide);

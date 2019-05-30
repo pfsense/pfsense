@@ -1100,7 +1100,7 @@
 					// Update the DNS record
 				if ($this->_useIPv6) {
 					$url = "https://management.azure.com" . $resourceid . "/AAAA/" . $hostname . "?api-version=2017-09-01";
-					$body = '{"properties":{"TTL":"' . $newttl . '", "AaaaRecords":[{"ipv6Address":"' . $newip . '"}]}}';
+					$body = '{"properties":{"TTL":"' . $newttl . '", "AAAARecords":[{"ipv6Address":"' . $newip . '"}]}}';
 				} else {
 					$url = "https://management.azure.com" . $resourceid . "/A/" . $hostname . "?api-version=2017-09-01";
 					$body = '{"properties":{"TTL":"' . $newttl . '", "ARecords":[{"ipv4Address":"' . $newip . '"}]}}';

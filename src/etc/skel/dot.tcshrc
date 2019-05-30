@@ -37,6 +37,11 @@ if ($term == "xterm" || $term == "vt100" || $term == "vt102" || $term == "vt220"
 
 	bindkey "\e[7~" beginning-of-line  # Home rxvt/konsole
 	bindkey "\e[8~" end-of-line        # End rxvt/konsole
+
+	set termtype=`echo ${tty} | /usr/bin/sed 's/[[:digit:]]*$//'`
+	if ("${termtype}" == "ttyu") then
+		alias postcmd '/usr/bin/resizewin'
+	endif
 endif
 
 set http_proxy=`/usr/local/sbin/read_xml_tag.sh string system/proxyurl`

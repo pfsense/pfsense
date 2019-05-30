@@ -30,6 +30,7 @@ else
 fi
 
 if [ -n "${_interactive}" ]; then
+	/usr/bin/resizewin -z
 	/etc/rc.initial
 	exit
 fi

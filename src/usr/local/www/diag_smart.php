@@ -231,7 +231,7 @@ switch ($action) {
 
 		$section = new Form_Section('Information');
 		$group = new Form_Group('Select a drive and type:');
-		$group->add(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'action',
 			null,
 			'hidden',
@@ -274,7 +274,7 @@ switch ($action) {
 
 		$section = new Form_Section('View Logs');
 		$group = new Form_Group('Select a device and log');
-		$group->add(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'action',
 			null,
 			'hidden',
@@ -318,7 +318,7 @@ switch ($action) {
 
 		$section = new Form_Section('Perform self-tests');
 		$group = new Form_Group('Select a drive and test');
-		$group->add(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'action',
 			null,
 			'hidden',
@@ -363,7 +363,7 @@ switch ($action) {
 
 		$section = new Form_Section('Abort Tests');
 
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'action',
 			null,
 			'hidden',

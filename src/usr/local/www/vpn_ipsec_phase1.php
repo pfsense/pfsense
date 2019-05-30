@@ -970,7 +970,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Number of consecutive failures allowed before disconnect. ');
 
 if (isset($p1index) && $a_phase1[$p1index]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'p1index',
 		null,
 		'hidden',
@@ -979,7 +979,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 }
 
 if ($pconfig['mobile']) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'mobile',
 		null,
 		'hidden',
@@ -987,7 +987,7 @@ if ($pconfig['mobile']) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'ikeid',
 	null,
 	'hidden',

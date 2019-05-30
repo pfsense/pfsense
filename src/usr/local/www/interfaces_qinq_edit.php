@@ -293,7 +293,7 @@ $section->addInput(new Form_StaticText(
 ));
 
 if (isset($id) && $a_qinqs[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

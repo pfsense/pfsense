@@ -238,7 +238,7 @@ $section->addInput(new Form_Input(
 	$pconfig['bw_down']
 ))->setHelp('Enter a download limit to be enforced on this address in Kbit/s');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',
@@ -246,7 +246,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_allowedips[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

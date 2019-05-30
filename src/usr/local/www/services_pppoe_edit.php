@@ -538,7 +538,7 @@ $section->addInput(new Form_StaticText(
 
 // Hidden fields
 if (isset($id)) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -547,7 +547,7 @@ if (isset($id)) {
 }
 
 if (isset($pconfig['pppoeid'])) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'pppoeid',
 		null,
 		'hidden',

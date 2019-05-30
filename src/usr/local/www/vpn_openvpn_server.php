@@ -1382,7 +1382,7 @@ if ($act=="new" || $act=="edit"):
 					'5: Output R and W characters to the console for each packet read and write. Uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets.%1$s' .
 					'6-11: Debug info range', '<br />');
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'act',
 		null,
 		'hidden',
@@ -1390,7 +1390,7 @@ if ($act=="new" || $act=="edit"):
 	));
 
 	if (isset($id) && $a_server[$id]) {
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'id',
 			null,
 			'hidden',

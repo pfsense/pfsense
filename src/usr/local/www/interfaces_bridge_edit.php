@@ -625,7 +625,7 @@ foreach ($ifacelist as $ifn => $ifdescr) {
 	$i++;
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'bridgeif',
 	null,
 	'hidden',
@@ -633,7 +633,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_bridges[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

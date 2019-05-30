@@ -819,7 +819,7 @@ if ($pconfig['page']['logouttext']) {
 	))->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
 	$section->add($group);
 }
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',

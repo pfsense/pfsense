@@ -236,7 +236,7 @@ $section->addInput(new Form_Input(
 	$pconfig['bw_down']
 ))->setHelp('Enter a download limit to be enforced on this MAC in Kbit/s');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',
@@ -244,7 +244,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_passthrumacs[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -253,7 +253,7 @@ if (isset($id) && $a_passthrumacs[$id]) {
 }
 
 if (isset($pconfig['username']) && $pconfig['username']) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'username',
 		null,
 		'hidden',

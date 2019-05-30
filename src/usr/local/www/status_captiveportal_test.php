@@ -88,7 +88,7 @@ $section->addInput(new Form_Textarea(
 	$_POST['vouchers']
 ))->setHelp('Enter multiple vouchers separated by space or newline. The remaining time, if valid, will be shown for each voucher.');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',

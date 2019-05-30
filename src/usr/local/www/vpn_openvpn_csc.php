@@ -602,7 +602,7 @@ if ($act == "new" || $act == "edit"):
 				'<br />');
 
 	// The hidden fields
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'act',
 		null,
 		'hidden',
@@ -610,7 +610,7 @@ if ($act == "new" || $act == "edit"):
 	));
 
 	if (isset($id) && $a_csc[$id]) {
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'id',
 			null,
 			'hidden',

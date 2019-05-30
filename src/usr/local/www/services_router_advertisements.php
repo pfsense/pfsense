@@ -458,7 +458,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['rasamednsasdhcp6']
 ));
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'if',
 	null,
 	'hidden',

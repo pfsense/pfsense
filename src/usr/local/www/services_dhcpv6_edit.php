@@ -245,7 +245,7 @@ if ($netboot_enabled) {
 }
 
 if (isset($id) && $a_maps[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -253,7 +253,7 @@ if (isset($id) && $a_maps[$id]) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'if',
 	null,
 	'hidden',

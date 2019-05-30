@@ -827,7 +827,7 @@ $section->addInput(new Form_Select(
 
 if (isset($id) && $a_server[$id])
 {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

@@ -191,7 +191,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('Can be used to further identify this roll. Ignored by the system.');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',
@@ -199,7 +199,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_roll[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

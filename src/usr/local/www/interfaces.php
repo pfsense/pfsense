@@ -1869,13 +1869,13 @@ if ($show_address_controls) {
 		'IPv4/IPv6 Configuration',
 		"This interface type does not support manual address configuration on this page. "
 	));
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'type',
 		null,
 		'hidden',
 		'none'
 	));
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'type6',
 		null,
 		'hidden',
@@ -2648,7 +2648,7 @@ function build_ipv6interface_list() {
 	foreach ($dynv6ifs as $iface => $ifacedata) {
 		$list[$iface] = $ifacedata['name'];
 
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'ipv6-num-prefix-ids-' . $iface,
 			null,
 			'hidden',
@@ -2677,7 +2677,7 @@ $section->addInput(new Form_Input(
 	sprintf("%x", $pconfig['track6-prefix-id'])
 ))->setHelp('(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.', '<b>', '</b>', '<span id="track6-prefix-id-range"></span>');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'track6-prefix-id-max',
 	null,
 	'hidden',
@@ -3005,7 +3005,7 @@ if (isset($wancfg['wireless'])) {
 			['off' => gettext('Off'), 'cts' => gettext('CTS to self'), 'rtscts' => gettext('RTS and CTS')]
 		))->setHelp('For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network.');
 	} else {
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'protmode',
 			null,
 			'hidden',

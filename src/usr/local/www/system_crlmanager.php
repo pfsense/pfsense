@@ -116,7 +116,6 @@ if ($act == "exp") {
 }
 
 if ($act == "addcert") {
-
 	unset($input_errors);
 	$pconfig = $_REQUEST;
 
@@ -339,18 +338,17 @@ $tab_array[] = array(gettext("Certificate Revocation"), true, "system_crlmanager
 display_top_tabs($tab_array);
 
 if ($act == "new" || $act == gettext("Save") || $input_errors) {
+	$form = new Form();
+
+	$section = new Form_Section('Create new Revocation List');
+
 	if (!isset($id)) {
-		$form = new Form();
-
-		$section = new Form_Section('Create new Revocation List');
-
 		$section->addInput(new Form_Select(
 			'method',
 			'*Method',
 			$pconfig['method'],
 			build_method_list()
 		));
-
 	}
 
 	$section->addInput(new Form_Input(
@@ -402,7 +400,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 	$form->add($section);
 
 	if (isset($id) && $thiscrl) {
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'id',
 			null,
 			'hidden',
@@ -431,14 +429,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		$pconfig['crltext']
 	))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
 		$id
 	));
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'act',
 		null,
 		'hidden',
@@ -541,21 +539,21 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 		$section->add($group);
 
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'id',
 			null,
 			'hidden',
 			$crl['refid']
 		));
 
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'act',
 			null,
 			'hidden',
 			'addcert'
 		));
 
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'crlref',
 			null,
 			'hidden',

@@ -73,7 +73,7 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6") && $_POST['username'] == "") {
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6") || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6") && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
 
@@ -115,8 +115,7 @@ if ($_POST['save'] || $_POST['force']) {
 			$allow_wildcard = true;
 		} elseif ((($pconfig['type'] == "godaddy") || ($pconfig['type'] == "godaddy-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
-		} elseif (($pconfig['type'] == "digitalocean") && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
-			$host_to_check = $_POST['domainname'];
+		} elseif ((($pconfig['type'] == "digitalocean") || ($pconfig['type'] == "digitalocean-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;
@@ -567,6 +566,7 @@ events.push(function() {
 				hideInput('ttl', true);
 				break;
 			case "digitalocean":
+		        case "digitalocean-v6":
 				hideGroupInput('domainname', false);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);

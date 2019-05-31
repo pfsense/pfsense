@@ -245,6 +245,8 @@
 				if (!$dnsTTL) $this->_error(9);
 				break;
 			case 'digitalocean':
+			case 'linode':
+			case 'linode-v6':
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
 				if (!$dnsDomain) $this->_error(5);
@@ -279,6 +281,7 @@
 				case 'dreamhost-v6':
 				case 'godaddy-v6':
 				case 'azurev6':
+				case 'linode-v6':
 					$this->_useIPv6 = true;
 					break;
 				default:
@@ -371,6 +374,8 @@
 					case 'godaddy-v6':
 					case  'azure':
 					case  'azurev6':
+					case 'linode':
+					case 'linode-v6':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -1117,7 +1122,92 @@
 				curl_setopt($ch, CURLOPT_HEADER, 1);
 				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
 				break;
+				case 'linode':
+				case 'linode-v6':
+					$linode_api = "https://api.linode.com/v4";
+					$record_type = $this->_useIPv6 ? "AAAA" : "A";
+					$record_name = $this->_dnsHost == "@" ? "" : $this->_dnsHost;
+					$err_prefix = gettext("Dynamic DNS") . " {$this->_dnsService} ({$this->_FQDN}): (" . gettext("Error") . ")";
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+						'Accept: application/json',
+						'Content-Type: application/json',
+						'Authorization: Bearer ' . $this->_dnsPass
+					));
 
+					// get domain id
+					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains");
+					$domains_output = curl_exec($ch);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ( $http_code == 401 && preg_match('/invalid oauth token/i', $domains_output) ) {
+						log_error("$err_prefix " . gettext("querying domains") . ": " . gettext("User Authentication Failed"));
+						return false;
+					} else if ( $http_code == 401 ) {
+						log_error("$err_prefix " . gettext("querying domains") . ": " . gettext("User Authorization Failed"));
+						return false;
+					} else if ( $http_code != 200 ) {
+						log_error("$err_prefix " . gettext("querying domains") . ": " .
+							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" ) );
+						return false;
+					}
+
+					$domains_result = json_decode($domains_output, TRUE);
+					foreach($domains_result["data"] as $domains_entry) {
+						if ($domains_entry["domain"] == $this->_dnsDomain) {
+							$domain_id = $domains_entry["id"];
+						}
+					}
+					if ( ! $domain_id ) {
+						log_error("{$err_prefix} " . gettext("no domain ID for domain") . ": '{$this->_dnsDomain}'");
+						return false;
+					}
+					if ($this->_dnsVerboseLog) {
+						log_error("_update(): " . sprintf(gettext("found domain id: %s"), $domain_id));
+					}
+
+					// get existing record if present
+					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records");
+					$records_output = curl_exec($ch);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ( $http_code != 200 )
+					{
+						log_error("$err_prefix " . gettext("querying domains") . ": " .
+							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" ) );
+						return false;
+					}
+
+					$records_result = json_decode($records_output, TRUE);
+					foreach($records_result["data"] as $records_entry) {
+						if ( $records_entry["type"] == $record_type && $records_entry["name"] == $record_name ) {
+							// not adding support for pagination at this time, hope you have < 100 records!
+							$record = $records_entry;
+						}
+					}
+					if ($this->_dnsVerboseLog) {
+						log_error("_update(): " . ( $record ? sprintf(gettext("found existing record id: %s"), $record["id"]) : gettext("no matching record found") ));
+					}
+
+					if (is_array($record)) {
+						// update existing record
+						$record["target"] = $this->_dnsIP;
+						$record["ttl_sec"] = (int) $this->_dnsTTL; // linode may round this up, 0 = zone default
+						curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($record));
+						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+						curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records/" . $record["id"]);
+					} else {
+						// create a new record
+						$record = array(
+							"type"    => $record_type,
+							"name"    => $record_name,
+							"target"  => $this->_dnsIP,
+							"ttl_sec" => (int) $this->_dnsTTL, // linode may round this up, 0 = zone default
+						);
+						curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($record));
+						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+						curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records");
+					}
+
+					break;
 			default:
 				break;
 			}
@@ -2101,6 +2191,24 @@
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $http_code);
 						$this->_debug($data);
+					}
+					break;
+				case 'linode':
+				case 'linode-v6':
+					$status_intro = gettext("Dynamic DNS") . " {$this->_dnsService} ({$this->_FQDN}): ";
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					$result = json_decode($data,true);
+					if ($this->_dnsVerboseLog) {
+						log_error(sprintf(gettext('_checkStatus() results: %1$s'), $data));
+					}
+					if ($http_code == 200 && isset($result["id"]) && ! isset($result["errors"])) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+						$successful_update = true;
+					} else if ( $http_code == 401 && preg_match('/not authorized to use/i', $data) ) {
+						$status = $status_intro . $error_str . gettext("User Authorization Failed");
+					} else {
+						$status = $status_intro . $error_str .
+							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" );
 					}
 					break;
 				default:

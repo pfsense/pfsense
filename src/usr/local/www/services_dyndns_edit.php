@@ -110,8 +110,9 @@ if ($_POST['save'] || $_POST['force']) {
 		/* Namecheap can have a @. and *. in hostname */
 		if ($pconfig['type'] == "namecheap" && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
-		} elseif ((($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
-			$host_to_check = $_POST['domainname'];
+		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
+			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
+			$allow_wildcard = true;
 		} elseif ((($pconfig['type'] == "godaddy") || ($pconfig['type'] == "godaddy-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
 		} elseif (($pconfig['type'] == "digitalocean") && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
@@ -543,8 +544,8 @@ events.push(function() {
 				hideCheckbox('curl_ipresolve_v4', true);
 				hideCheckbox('curl_ssl_verifypeer', true);
 				hideInput('host', false);
-				hideInput('mx', false);
-				hideCheckbox('wildcard', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
 				hideCheckbox('proxied', false);
 				hideInput('zoneid', true);
 				hideInput('ttl', true);

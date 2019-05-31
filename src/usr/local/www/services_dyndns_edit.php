@@ -120,6 +120,9 @@ if ($_POST['save'] || $_POST['force']) {
 		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;
+		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
+			$host_to_check = $_POST['host'];
+			$allow_wildcard = true;
 		} else {
 			$host_to_check = $_POST['host'];
 
@@ -475,8 +478,6 @@ events.push(function() {
 				break;
 
 			case "dnsimple":
-			case "route53-v6":
-			case "route53":
 				hideGroupInput('domainname', true);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);
@@ -486,6 +487,21 @@ events.push(function() {
 				hideInput('host', false);
 				hideInput('mx', false);
 				hideCheckbox('wildcard', false);
+				hideCheckbox('proxied', true);
+				hideInput('zoneid', false);
+				hideInput('ttl', false);
+				break;
+			case "route53-v6":
+			case "route53":
+				hideGroupInput('domainname', true);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', false);
+				hideInput('host', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
 				hideCheckbox('proxied', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);

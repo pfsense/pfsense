@@ -119,18 +119,26 @@ $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i;
 /* stuff the leases file in a proper format into a array by line */
 exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
 $leases_count = count($leases_content);
-exec("/usr/sbin/arp -an", $rawdata);
-$arpdata_ip = array();
-$arpdata_mac = array();
-foreach ($rawdata as $line) {
-	$elements = explode(' ', $line);
-	if ($elements[3] != "(incomplete)") {
-		$arpent = array();
-		$arpdata_ip[] = trim(str_replace(array('(', ')'), '', $elements[1]));
-		$arpdata_mac[] = strtolower(trim($elements[3]));
+
+$arp_table = array();
+$_gb = exec("/usr/sbin/arp --libxo json -an", $rawdata, $rc);
+if ($rc == 0) {
+	$arp_table = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
+	if ($rc == 0) {
+		$arp_table = $arp_table['arp']['arp-cache'];
 	}
 }
-unset($rawdata);
+
+$arpdata_ip = array();
+$arpdata_mac = array();
+foreach ($arp_table as $arp_entry) {
+	if (isset($arpentry['incomplete'])) {
+		continue;
+	}
+	$arpdata_ip[] = $arp_entry['ip-address'];
+	$arpdata_mac[] = $arp_entry['mac-address'];
+}
+unset($rawdata, $arp_table);
 $pools = array();
 $leases = array();
 $i = 0;

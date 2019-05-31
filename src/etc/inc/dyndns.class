@@ -245,6 +245,7 @@
 				if (!$dnsTTL) $this->_error(9);
 				break;
 			case 'digitalocean':
+			case 'digitalocean-v6':
 			case 'linode':
 			case 'linode-v6':
 				if (!$dnsPass) $this->_error(4);
@@ -272,6 +273,7 @@
 
 			switch ($dnsService) {
 				case 'he-net-v6':
+				case 'digitalocean-v6':
 				case 'custom-v6':
 				case 'spdyn-v6':
 				case 'route53-v6':
@@ -370,6 +372,7 @@
 					case 'cloudns':
 					case 'hover':
 					case 'digitalocean':
+					case 'digitalocean-v6':
 					case 'godaddy':
 					case 'godaddy-v6':
 					case 'azure':
@@ -993,8 +996,10 @@
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
 				case 'digitalocean':
+				case 'digitalocean-v6':
 					// Get record ID
 					$server = 'https://api.digitalocean.com/v2/domains/';
+					$isv6 = ($this->_dnsService === 'digitalocean-v6');
 					$url = $server . $this->_dnsDomain . '/records';
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer {$this->_dnsPass}"));
 					curl_setopt($ch, CURLOPT_URL, $url);
@@ -1018,7 +1023,7 @@
 						$url = $server . $this->_dnsDomain . '/records/' . $recordID;
 						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 					}
-					$post_data['type'] = 'A';
+					$post_data['type'] = $isv6 ? 'AAAA' : 'A';
 					$post_data['ttl'] = $this->_dnsTTL;
 					$post_data['name'] = $this->_dnsHost;
 					$post_data['data'] = $this->_dnsIP;
@@ -1937,6 +1942,7 @@
 					}
 					break;
 				case 'digitalocean':
+				case 'digitalocean-v6':
 					// Creating new records returns an HTTP 201, updating existing records get 200
 					// https://redmine.pfsense.org/issues/9171
 					if (preg_match("/HTTP\/2\s20[0,1]/i", $header)) {

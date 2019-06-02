@@ -126,10 +126,7 @@ if ($_REQUEST['act'] == "viewhtml") {
 }
 
 init_config_arr(array('ca'));
-$a_ca = &$config['ca'];
-
 init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
 
 if ($a_cp[$cpzone]) {
 	$cpzoneid = $pconfig['zoneid'] = $a_cp[$cpzone]['zoneid'];
@@ -227,6 +224,8 @@ if ($_POST['save']) {
 		if ($_POST['httpslogin_enable']) {
 			if (!$_POST['certref']) {
 				$input_errors[] = gettext("Certificate must be specified for HTTPS login.");
+			} elseif (!is_valid_firewall_cert($_POST['certref'])) {
+				$input_errors[] = gettext("Certificate for HTTPS login must not be encrypted.");
 			}
 			if (!$_POST['httpsname'] || !is_domain($_POST['httpsname'])) {
 				$input_errors[] = gettext("The HTTPS server name must be specified for HTTPS login.");
@@ -482,18 +481,6 @@ if ($_POST['save']) {
 			$pconfig['cinterface'] = implode(",", $_POST['cinterface']);
 		}
 	}
-}
-
-function build_cert_list() {
-	global $a_cert;
-
-	$list = array();
-
-	foreach ($a_cert as $cert) {
-		$list[$cert['refid']] = $cert['descr'];
-	}
-
-	return($list);
 }
 
 function build_authserver_list() {
@@ -1121,7 +1108,7 @@ $section->addInput(new Form_Select(
 	'certref',
 	'*SSL Certificate',
 	$pconfig['certref'],
-	build_cert_list()
+	get_cert_list()
 ))->setHelp('If no certificates are defined, one may be defined here: %1$sSystem &gt; Cert. Manager%2$s', '<a href="system_certmanager.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(

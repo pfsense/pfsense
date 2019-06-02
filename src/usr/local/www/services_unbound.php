@@ -94,14 +94,7 @@ if (empty($a_unboundcfg['system_domain_local_zone_type'])) {
 }
 
 init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
-$certs_available = false;
-
-if (is_array($a_cert) && count($a_cert)) {
-	$certs_available = true;
-} else {
-	$a_cert = array();
-}
+$certs = get_cert_list();
 
 if ($_POST['apply']) {
 	$retval = 0;
@@ -125,8 +118,12 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (isset($pconfig['enablessl']) && (!$certs_available || empty($pconfig['sslcertref']))) {
-		$input_errors[] = gettext("Acting as an SSL/TLS server requires a valid server certificate");
+	if (isset($pconfig['enablessl'])) {
+		if (empty($certs) || empty($pconfig['sslcertref'])) {
+			$input_errors[] = gettext("Acting as an SSL/TLS server requires a valid server certificate");
+		} elseif (!is_valid_firewall_cert($pconfig['sslcertref'])) {
+			$input_errors[] = gettext("Server certificate must not be encrytped");
+		}
 	}
 
 	// forwarding mode requires having valid DNS servers
@@ -338,17 +335,12 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Configures the DNS Resolver to act as a DNS over SSL/TLS server which can answer queries from clients which also support DNS over TLS. ' .
 		'Activating this option disables automatic interface response routing behavior, thus it works best with specific interface bindings.' );
 
-if ($certs_available) {
-	$values = array();
-	foreach ($a_cert as $cert) {
-		$values[ $cert['refid'] ] = $cert['descr'];
-	}
-
+if (!empty($certs)) {
 	$section->addInput($input = new Form_Select(
 		'sslcertref',
 		'SSL/TLS Certificate',
 		$pconfig['sslcertref'],
-		$values
+		$certs
 	))->setHelp('The server certificate to use for SSL/TLS service. The CA chain will be determined automatically.');
 } else {
 	$section->addInput(new Form_StaticText(

@@ -420,7 +420,7 @@ if ($_POST['save']) {
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
-		if (empty(trim($pconfig['certref']))) {
+		if (!is_valid_firewall_cert($pconfig['certref'])) {
 			$input_errors[] = gettext("The selected certificate is not valid");
 		}
 

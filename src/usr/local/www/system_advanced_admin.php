@@ -71,16 +71,9 @@ $pconfig['sshguard_detection_time'] = $config['system']['sshguard_detection_time
 $pconfig['sshguard_whitelist'] = $config['system']['sshguard_whitelist'] ?? '';
 
 init_config_arr(array('cert'));
-$a_cert = &$config['cert'];
-$certs_available = false;
+$certs = get_cert_list();
 
-if (is_array($a_cert) && count($a_cert)) {
-	$certs_available = true;
-} else {
-	$a_cert = array();
-}
-
-if (!$pconfig['webguiproto'] || !$certs_available) {
+if (!$pconfig['webguiproto'] || empty($certs)) {
 	$pconfig['webguiproto'] = "http";
 }
 
@@ -421,23 +414,18 @@ $group->add(new Form_Checkbox(
 	'https'
 ))->displayAsRadio();
 
-if (!$certs_available) {
+if (empty($certs)) {
 	$group->setHelp('No Certificates have been defined. A certificate is required before SSL can be enabled. %1$s Create or Import %2$s a Certificate.',
 		'<a href="system_certmanager.php">', '</a>');
 }
 
 $section->add($group);
 
-$values = array();
-foreach ($a_cert as $cert) {
-	$values[ $cert['refid'] ] = $cert['descr'];
-}
-
 $section->addInput($input = new Form_Select(
 	'ssl-certref',
 	'SSL Certificate',
 	$pconfig['ssl-certref'],
-	$values
+	$certs
 ));
 
 $section->addInput(new Form_Input(

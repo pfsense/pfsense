@@ -106,6 +106,22 @@ function & lookup_cert_by_name($name) {
 	}
 }
 
+// Get a map from ID to description for all certs with a private key,
+// optionally including certificates with an encrypted private key.
+function get_cert_list($include_encrypted = false) {
+	global $config;
+
+	$result = array();
+	if (is_array($config['cert'])) {
+		foreach ($config['cert'] as $cert) {
+			if ($cert['prv'] && ($include_encrypted || !is_encrypted_key($cert['prv']))) {
+				$result[$cert['refid']] = $cert['descr'];
+			}
+		}
+	}
+	return $result;
+}
+
 function & lookup_crl($refid) {
 	global $config;
 
@@ -855,6 +871,22 @@ function is_encrypted_key($str_key, $decode = true) {
 		$str_key = base64_decode($str_key);
 	}
 	return openssl_pkey_get_private($str_key) === false;
+}
+
+// Check whether the cert with the specified ID is valid for use on the firewall,
+// i.e. it exists and has a private key that is not encrypted.
+function is_valid_firewall_cert($certref) {
+	if (empty($certref)) {
+		return false;
+	}
+	
+	$cert = lookup_cert($certref);
+	if (!$cert || !$cert['prv']) {
+		return false;
+	} elseif (is_encrypted_key($cert['prv'])) {
+		return false;
+	}
+	return true;
 }
 
 function is_user_cert($certref) {

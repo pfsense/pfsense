@@ -248,6 +248,10 @@ function openvpn_build_cert_list($include_none = false, $prioritize_server_certs
 	}
 
 	foreach ($a_cert as $cert) {
+		if (!$cert['prv'] || is_encrypted_key($cert['prv'])) {
+			continue;
+		}
+
 		$properties = array();
 		$propstr = "";
 		$ca = lookup_ca($cert['caref']);

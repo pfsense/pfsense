@@ -348,8 +348,12 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($pconfig['mode'] != "p2p_shared_key") && empty($pconfig['certref']) && empty($pconfig['auth_user']) && empty($pconfig['auth_pass'])) {
-		$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
+	if ($pconfig['mode'] != "p2p_shared_key") {
+		if (empty($pconfig['certref']) && empty($pconfig['auth_user']) && empty($pconfig['auth_pass'])) {
+			$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
+		} elseif (!empty($pconfig['certref']) && !is_valid_firewall_cert($pconfig['certref'])) {
+			$input_errors[] = gettext("The selected certificate is not valid");
+		}
 	}
 
 	if ($pconfig['auth_pass'] != $pconfig['auth_pass_confirm']) {

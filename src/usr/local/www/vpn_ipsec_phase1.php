@@ -617,20 +617,6 @@ function build_peerid_list() {
 	return($list);
 }
 
-function build_cert_list() {
-	global $config;
-
-	$list = array();
-
-	if (is_array($config['cert'])) {
-		foreach ($config['cert'] as $cert) {
-			$list[$cert['refid']] = $cert['descr'];
-		}
-	}
-
-	return($list);
-}
-
 function build_ca_list() {
 	global $config;
 
@@ -800,7 +786,7 @@ $section->addInput(new Form_Select(
 	'certref',
 	'*My Certificate',
 	$pconfig['certref'],
-	build_cert_list()
+	get_cert_list()
 ))->setHelp('Select a certificate previously configured in the Certificate Manager.');
 
 $section->addInput(new Form_Select(

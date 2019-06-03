@@ -2620,7 +2620,7 @@ $section = new Form_Section('Track IPv6 Interface');
 $section->addClass('track6');
 
 function build_ipv6interface_list() {
-	global $config, $section;
+	global $config, $form;
 
 	$list = array('' => '');
 

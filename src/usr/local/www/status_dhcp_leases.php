@@ -132,7 +132,7 @@ foreach ($arp_table as $arp_entry) {
 	$arpdata_ip[] = $arp_entry['ip-address'];
 	$arpdata_mac[] = $arp_entry['mac-address'];
 }
-unset($rawdata, $arp_table);
+unset($arp_table);
 $pools = array();
 $leases = array();
 $i = 0;

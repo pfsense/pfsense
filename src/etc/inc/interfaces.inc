@@ -1453,6 +1453,21 @@ function interface_ipsec_vti_configure($ph1ent) {
 				file_put_contents("/tmp/{$ipsecif}_router{$gwtype}", $addr['right']);
 			}
 		}
+		/* Check/set the MTU if the user configured a custom value.
+		 * https://redmine.pfsense.org/issues/9111 */
+		$currentvtimtu = get_interface_mtu($ipsecif);
+		foreach ($config['interfaces'] as $tmpinterface) {
+			if ($tmpinterface['if'] == $ipsecif) {
+				if (isset($tmpinterface['mtu']) && is_numericint($tmpinterface['mtu'])) {
+					$vtimtu = $tmpinterface['mtu'];
+				}
+			}
+		}
+		if (is_numericint($vtimtu)) {
+			if ($vtimtu != $currentvtimtu) {
+				mwexec("/sbin/ifconfig {$ipsecif} mtu {$vtimtu}");
+			}
+		}
 		system_routing_configure(convert_real_interface_to_friendly_interface_name($ipsecif));
 	}
 }

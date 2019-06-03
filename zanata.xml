@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns="http://zanata.org/namespace/config/">
-    <url>https://translate.zanata.org/</url>
+    <url>https://zanata.netgate.com/</url>
     <project>pfsense</project>
-    <project-version>2.4</project-version>
+    <project-version>2.5</project-version>
     <project-type>gettext</project-type>
     <src-dir>src/usr/local/share/locale/pot</src-dir>
     <trans-dir>src/usr/local/share/locale</trans-dir>

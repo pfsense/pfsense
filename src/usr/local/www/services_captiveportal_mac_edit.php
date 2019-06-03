@@ -172,8 +172,13 @@ if ($_POST['save']) {
 
 // Get the MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
-$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
-$mymac = str_replace("\n", "", $mymac);
+$arp_table = system_get_arp_table();
+if (($key = array_search($ip, array_column($arp_table, 'ip-address')))
+    !== FALSE) {
+	if (!empty($arp_table[$key]['mac-address'])) {
+		$mymac = $arp_table[$key]['mac-address'];
+	}
+}
 
 include("head.inc");
 

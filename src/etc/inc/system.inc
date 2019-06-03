@@ -2522,4 +2522,23 @@ function system_get_dmesg_boot() {
 	return file_get_contents("{$g['varlog_path']}/dmesg.boot");
 }
 
+function system_get_arp_table($resolve_hostnames = false) {
+	$params="-a";
+	if (!$resolve_hostnames) {
+		$params .= "n";
+	}
+
+	$arp_table = array();
+	$_gb = exec("/usr/sbin/arp --libxo json {$params}", $rawdata, $rc);
+	if ($rc == 0) {
+		$arp_table = json_decode(implode(" ", $rawdata),
+		    JSON_OBJECT_AS_ARRAY);
+		if ($rc == 0) {
+			$arp_table = $arp_table['arp']['arp-cache'];
+		}
+	}
+
+	return $arp_table;
+}
+
 ?>

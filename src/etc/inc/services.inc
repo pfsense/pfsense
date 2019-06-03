@@ -1742,6 +1742,7 @@ function services_dhcrelay_configure() {
 
 	$iflist = get_configured_interface_list();
 
+	$dhcrelayifs = array();
 	$dhcifaces = explode(",", $dhcrelaycfg['interface']);
 	foreach ($dhcifaces as $dhcrelayif) {
 		if (!isset($iflist[$dhcrelayif]) ||
@@ -1753,6 +1754,7 @@ function services_dhcrelay_configure() {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 		}
 	}
+	$dhcrelayifs = array_unique($dhcrelayifs);
 
 	/*
 	 * In order for the relay to work, it needs to be active
@@ -1763,22 +1765,31 @@ function services_dhcrelay_configure() {
 		log_error(gettext("No destination IP has been configured!"));
 		return;
 	}
-
+	$srvifaces = array();
 	foreach ($srvips as $srcidx => $srvip) {
 		$destif = guess_interface_from_ip($srvip);
 		if (!empty($destif)) {
-			$dhcrelayifs[] = $destif;
+			$srvifaces[] = $destif;
 		}
 	}
-	$dhcrelayifs = array_unique($dhcrelayifs);
+	$srvifaces = array_unique($srvifaces);
+
+	/* The server interface(s) should not be in this list */
+	$dhcrelayifs = array_diff($dhcrelayifs, $srvifaces);
 
 	/* fire up dhcrelay */
 	if (empty($dhcrelayifs)) {
-		log_error(gettext("No suitable interface found for running dhcrelay!"));
+		log_error(gettext("No suitable downstream interfaces found for running dhcrelay!"));
+		return; /* XXX */
+	}
+	if (empty($srvifaces)) {
+		log_error(gettext("No suitable upstream interfaces found for running dhcrelay!"));
 		return; /* XXX */
 	}
 
-	$cmd = "/usr/local/sbin/dhcrelay -i " . implode(" -i ", $dhcrelayifs);
+	$cmd = "/usr/local/sbin/dhcrelay";
+	$cmd .= " -id " . implode(" -id ", $dhcrelayifs);
+	$cmd .= " -iu " . implode(" -iu ", $srvifaces);
 
 	if (isset($dhcrelaycfg['agentoption'])) {
 		$cmd .= " -a -m replace";

@@ -32,6 +32,7 @@
 
 require_once("guiconfig.inc");
 require_once("config.inc");
+require_once("system.inc");
 
 $pgtitle = array(gettext("Status"), gettext("DHCP Leases"));
 $shortcut_section = "dhcp";
@@ -120,14 +121,7 @@ $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i;
 exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
 $leases_count = count($leases_content);
 
-$arp_table = array();
-$_gb = exec("/usr/sbin/arp --libxo json -an", $rawdata, $rc);
-if ($rc == 0) {
-	$arp_table = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
-	if ($rc == 0) {
-		$arp_table = $arp_table['arp']['arp-cache'];
-	}
-}
+$arp_table = system_get_arp_table();
 
 $arpdata_ip = array();
 $arpdata_mac = array();

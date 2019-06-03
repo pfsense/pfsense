@@ -152,11 +152,9 @@ while ($i < $leases_count) {
 						break;
 					case "free":
 						$leases[$l]['act'] = "expired";
-						$leases[$l]['online'] = "offline";
 						break;
 					case "backup":
 						$leases[$l]['act'] = "reserved";
-						$leases[$l]['online'] = "offline";
 						break;
 				}
 				$f = $f+1;
@@ -171,15 +169,6 @@ while ($i < $leases_count) {
 				break;
 			case "hardware":
 				$leases[$l]['mac'] = $data[$f+2];
-				/* check if it's online and the lease is active */
-				if ($leases[$l]['act'] == "active") {
-					$online = exec("/usr/sbin/arp -an |/usr/bin/awk '/{$leases[$l]['ip']}/ {print}'|wc -l");
-					if ($online == 1) {
-						$leases[$l]['online'] = 'online';
-					} else {
-						$leases[$l]['online'] = 'offline';
-					}
-				}
 				$f = $f+2;
 				break;
 			case "client-hostname":

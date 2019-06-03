@@ -198,7 +198,7 @@ foreach ($leases as $value) {
 	$dhcpip[$value['ip']] = $value['hostname'];
 }
 
-exec("/usr/sbin/arp -an", $rawdata);
+$arp_table = system_get_arp_table();
 
 $i = 0;
 
@@ -210,18 +210,6 @@ foreach ($ifdescrs as $key => $interface) {
 	if (!empty($thisif)) {
 		$hwif[$thisif] = $interface;
 	}
-}
-
-$data = array();
-foreach ($rawdata as $line) {
-	$elements = explode(' ', $line, 7);
-	$arpent = array();
-	$arpent['ip'] = trim(str_replace(array('(', ')'), '', $elements[1]));
-	$arpent['mac'] = trim($elements[3]);
-	$arpent['interface'] = trim($elements[5]);
-	$arpent['status'] = trim(substr($elements[6], 0, strrpos($elements[6], ' ')));
-	$arpent['linktype'] = trim(str_replace(array('[', ']'), '', strrchr($elements[6], ' ')));
-	$data[] = $arpent;
 }
 
 function _getHostName($mac, $ip) {
@@ -277,9 +265,10 @@ if ($dns == "") {
 	}
 }
 
-foreach ($data as &$entry) {
-	if ($dnsavailable) {
-		$dns = trim(_getHostName($entry['mac'], $entry['ip']));
+foreach ($arp_table as &$entry) {
+	if ($dnsavailable && !empty($entry['mac-address'])) {
+		$dns = trim(_getHostName($entry['mac-address'],
+		    $entry['ip-address']));
 	} else {
 		$dns="";
 	}
@@ -292,7 +281,7 @@ foreach ($data as &$entry) {
 unset($entry);
 
 // Sort the data alpha first
-$data = msort($data, "dnsresolve");
+$arp_table = msort($arp_table, "dnsresolve");
 
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
@@ -317,29 +306,48 @@ $mac_man = load_mac_manufacturer_table();
 		<tbody>
 
 <?php
-		foreach ($data as $entry): ?>
+		foreach ($arp_table as $entry): ?>
 			<tr>
 				<td><?=$hwif[$entry['interface']]?></td>
-				<td><?=$entry['ip']?></td>
-				<td>
-					<?=trim($entry['mac'])?>
-				<?php
-					$mac = trim($entry['mac']);
-					$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+				<td><?=$entry['ip-address']?></td>
+<?php
+				if (empty($entry['mac-address'])) {
+					$mac = '(' . gettext("Incomplete") .')';
+					print "<td>{$mac}</td>";
+				} else {
+					$mac = trim($entry['mac-address']);
+					print "<td>{$mac}";
+					$mac_hi = strtoupper($mac[0] . $mac[1] .
+					    $mac[3] . $mac[4] . $mac[6] .
+					    $mac[7]);
 
 					if (isset($mac_man[$mac_hi])) {
-						print '<small>('. $mac_man[$mac_hi] .')</small>';
+						print '<small>('.
+						    $mac_man[$mac_hi] .
+						    ')</small>';
 					}
-	?>
+				}
+
+				$status = '';
+				if (!empty($entry['expires'])) {
+					$status = sprintf(gettext(
+					    "Expires in %d seconds"),
+					    $entry['expires']);
+				} else if (!empty($entry['permanent'])) {
+					$status = gettext("Permanent");
+				}
+?>
 				</td>
 				<td><?=trim(str_replace("Z_ ", "", $entry['dnsresolve']))?></td>
-				<td><?=ucfirst($entry['status'])?></td>
-				<td><?=$entry['linktype']?></td>
+				<td><?=ucfirst($status)?></td>
+				<td><?=$entry['type']?></td>
 				<td>
-					<a class="fa fa-trash" title="<?=gettext('Delete arp cache entry')?>"	href="diag_arp.php?deleteentry=<?=$entry['ip']?>" usepost></a>
+					<a class="fa fa-trash" title="<?=gettext('Delete arp cache entry')?>"	href="diag_arp.php?deleteentry=<?=$entry['ip-address']?>" usepost></a>
 				</td>
 			</tr>
-		<?php endforeach?>
+<?php
+		endforeach
+?>
 		</tbody>
 	</table>
 </div>

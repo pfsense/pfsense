@@ -88,7 +88,6 @@ $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i;
 exec("cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
 $leases_count = count($leases_content);
 
-$pools = array();
 $leases = array();
 $i = 0;
 $l = 0;
@@ -108,13 +107,6 @@ while ($i < $leases_count) {
 	while ($f < $fcount) {
 		switch ($data[$f]) {
 			case "failover":
-				$pools[$p]['name'] = $data[$f+2];
-				$pools[$p]['mystate'] = $data[$f+7];
-				$pools[$p]['peerstate'] = $data[$f+14];
-				$pools[$p]['mydate'] = $data[$f+10];
-				$pools[$p]['mydate'] .= " " . $data[$f+11];
-				$pools[$p]['peerdate'] = $data[$f+17];
-				$pools[$p]['peerdate'] .= " " . $data[$f+18];
 				$p++;
 				$i++;
 				continue 3;
@@ -195,11 +187,6 @@ while ($i < $leases_count) {
 /* remove duplicate items by mac address */
 if (count($leases) > 0) {
 	$leases = remove_duplicate($leases, "ip");
-}
-
-if (count($pools) > 0) {
-	$pools = remove_duplicate($pools, "name");
-	asort($pools);
 }
 
 // Put this in an easy to use form

@@ -118,6 +118,7 @@ if ($_POST['save'] || $_POST['force']) {
 		} elseif ((($pconfig['type'] == "godaddy") || ($pconfig['type'] == "godaddy-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
 		} elseif ((($pconfig['type'] == "digitalocean") || ($pconfig['type'] == "digitalocean-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
+			$host_to_check = $_POST['domainname'];
 		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;

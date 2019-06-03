@@ -21,6 +21,7 @@
  */
 
 require_once("guiconfig.inc");
+require_once("system.inc");
 require_once("/usr/local/www/widgets/include/wake_on_lan.inc");
 
 if (isset($config['wol']['wolentry']) && is_array($config['wol']['wolentry'])) {
@@ -73,13 +74,28 @@ $skipwols = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 if (count($wolcomputers) > 0):
 	$wol_entry_is_displayed = false;
 
+	$arp_table = system_get_arp_table();
 	foreach ($wolcomputers as $wolent):
 		if (in_array(get_wolent_key($wolent), $skipwols)) {
 			continue;
 		}
 
 		$wol_entry_is_displayed = true;
-		$status = exec("/usr/sbin/arp -an | /usr/bin/awk '$4 == \"{$wolent['mac']}\" { print $7 }'");
+
+		$status = '';
+		foreach ($arp_table as $entry) {
+			if (empty($entry['mac-address']) ||
+			    $entry['mac-address'] != $wolent['mac']) {
+				continue;
+			}
+
+			if (!empty($entry['expires'])) {
+				$status = 'expires';
+			} else if (!empty($entry['permanent'])) {
+				$status = 'permanent';
+			}
+			break;
+		}
 		?>
 		<tr>
 			<td>

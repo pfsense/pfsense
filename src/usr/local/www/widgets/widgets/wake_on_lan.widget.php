@@ -79,7 +79,6 @@ if (count($wolcomputers) > 0):
 		}
 
 		$wol_entry_is_displayed = true;
-		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 		$status = exec("/usr/sbin/arp -an | /usr/bin/awk '$4 == \"{$wolent['mac']}\" { print $7 }'");
 		?>
 		<tr>

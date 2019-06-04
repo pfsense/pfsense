@@ -1659,7 +1659,8 @@ ATOMIC_PACKAGE_REPOSITORY=yes
 COMMIT_PACKAGES_ON_FAILURE=no
 KEEP_OLD_PACKAGES=yes
 KEEP_OLD_PACKAGES_COUNT=5
-ALLOW_MAKE_JOBS_PACKAGES="rust* gcc* llvm* perl* py* cmake* binutils* hyperscan* squid* snort* icu*"
+ALLOW_MAKE_JOBS=yes
+PARALLEL_JOBS=8
 EOF
 
 	if pkg info -e ccache; then

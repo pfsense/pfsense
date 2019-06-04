@@ -52,15 +52,6 @@ if (isset($_POST['deleteentry'])) {
 	}
 }
 
-function leasecmp($a, $b) {
-	return strcmp($a[$_REQUEST['order']], $b[$_REQUEST['order']]);
-}
-
-function adjust_gmt($dt) {
-	$ts = strtotime($dt . " GMT");
-	return strftime("%Y/%m/%d %H:%M:%S", $ts);
-}
-
 function remove_duplicate($array, $field) {
 	foreach ($array as $sub) {
 		$cmp[] = $sub[$field];

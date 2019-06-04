@@ -34,6 +34,7 @@
 require_once("guiconfig.inc");
 require_once("config.inc");
 require_once("parser_dhcpv6_leases.inc");
+require_once("util.inc");
 
 $pgtitle = array(gettext("Status"), gettext("DHCPv6 Leases"));
 $shortcut_section = "dhcp6";
@@ -108,17 +109,6 @@ function adjust_gmt($dt) {
 	return $dt;
 }
 
-function remove_duplicate($array, $field) {
-	foreach ($array as $sub) {
-		$cmp[] = $sub[$field];
-	}
-	$unique = array_unique(array_reverse($cmp, true));
-	foreach ($unique as $k => $rien) {
-		$new[] = $array[$k];
-	}
-	return $new;
-}
-
 if (is_file($leasesfile)) {
 	$leases_content = file_get_contents ($leasesfile);
 	$leasesfile_found = true;
@@ -152,15 +142,15 @@ gui_parse_leases ($pools, $leases, $prefixes, $mappings, $leases_content,
 		  $ndpdata, $lang_pack);
 
 if (count($leases) > 0) {
-	$leases = remove_duplicate($leases, "ip");
+	$leases = array_remove_duplicate($leases, "ip");
 }
 
 if (count($prefixes) > 0) {
-	$prefixes = remove_duplicate($prefixes, "prefix");
+	$prefixes = array_remove_duplicate($prefixes, "prefix");
 }
 
 if (count($pools) > 0) {
-	$pools = remove_duplicate($pools, "name");
+	$pools = array_remove_duplicate($pools, "name");
 	asort($pools);
 }
 

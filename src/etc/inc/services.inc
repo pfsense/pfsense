@@ -849,7 +849,9 @@ EOPP;
 				$dhcpdconf .= "		allow members of \"s_{$dhcpif}\";\n";
 				$dhcpdconf .= "		$deny_action known-clients;\n";
 				$dhcpdconf .= "		$deny_action unknown-clients;\n";
-			} else if (isset($poolconf['denyunknown'])) {
+			} else if ($poolconf['denyunknown'] == "disabled") {
+				// add nothing to $dhcpdconf; condition added to prevent next condition applying if ever engine changes such that: isset("disabled") == true
+			} else if (isset($poolconf['denyunknown'])) {	// "catch-all" covering "enabled" value post-PR#4066, and covering non-upgraded boolean option (i.e. literal value "enabled")
 				$dhcpdconf .= "		$deny_action unknown-clients;\n";
 			}
 

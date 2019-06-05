@@ -988,8 +988,6 @@ events.push(function() {
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
-	hideInput('ikeid', true);
-	hideInput('uniqid', true);
 
 	change_mode();
 	change_protocol();

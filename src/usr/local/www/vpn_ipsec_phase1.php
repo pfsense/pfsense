@@ -1225,8 +1225,6 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 
 	// ---------- On initial page load ------------------------------------------------------------
 
-	hideInput('ikeid', true);
-
 	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new Pre-Shared Key");?></a>');
 	generateButton.on('click', function() {
 		$.ajax({

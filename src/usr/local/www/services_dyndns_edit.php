@@ -73,8 +73,7 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6") ||
-	    ($pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6")
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns")
 	    && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
@@ -117,7 +116,7 @@ if ($_POST['save'] || $_POST['force']) {
 			$allow_wildcard = true;
 		} elseif ((($pconfig['type'] == "godaddy") || ($pconfig['type'] == "godaddy-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
-		} elseif ((($pconfig['type'] == "digitalocean") || ($pconfig['type'] == "digitalocean-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
+		} elseif (($pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "gandi-livedns") && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
 		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
@@ -389,6 +388,7 @@ $section->addPassword(new Form_Input(
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
+			'Gandi LiveDNS: Enter API token%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
 			'DNSimple: Enter the API token.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
@@ -622,6 +622,21 @@ events.push(function() {
 				hideInput('requestif', true);
 				hideCheckbox('curl_ipresolve_v4', true);
 				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('host', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideCheckbox('proxied', true);
+				hideInput('zoneid', true);
+				hideInput('ttl', false);
+				break;
+			case "gandi-livedns": // NOTE: same as digitalocean
+				hideGroupInput('domainname', false);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('username', true);
 				hideInput('host', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);

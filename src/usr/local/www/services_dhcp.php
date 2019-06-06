@@ -592,11 +592,9 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['domainsearchlist'] = $_POST['domainsearchlist'];
 		$dhcpdconf['ignorebootp'] = ($_POST['ignorebootp']) ? true : false;
 
-		if ($_POST['denyunknown'] == "enabled") {
-			$dhcpdconf['denyunknown'] = "enabled";
-		} else if ($_POST['denyunknown'] == "class") {
-			$dhcpdconf['denyunknown'] = "class";
-		} else if (isset($_POST['denyunknown'])) {
+		if (in_array($_POST['denyunknown'], array("enabled", "class"))) {
+			$dhcpdconf['denyunknown'] = $_POST['denyunknown'];
+		} else {
 			unset($dhcpdconf['denyunknown']);
 		}
 
@@ -891,13 +889,13 @@ $section->addInput(new Form_Select(
 	'Deny unknown clients',
 	$pconfig['denyunknown'],
 	array(
-		"disabled" => "Allow Any (any MACs, including any not listed anywhere)",
-		"enabled" => "Allow Known Clients (MACs listed on ANY interface)",
-		"class" => "Allow Only Listed Below (only MACs listed below)",
+		"disabled" => "Allow all clients",
+		"enabled" => "Allow known clients from any interface",
+		"class" => "Allow known clients from only this interface",
 	)
-))->setHelp('When set to %3$sAllow Any%4$s, any DHCP client will get an IP address within this scope/range on this interface. '.
-	'If set to %3$sAllow Known Clients%4$s, any DHCP client with a MAC address listed on %1$s%3$sany%4$s%2$s scope(s)/interface(s) will get an IP address. ' .
-	'If set to %3$sAllow Only Listed Below%4$s, only MAC addresses listed below (i.e. for this interface) will get an IP address within this scope/range.',
+))->setHelp('When set to %3$sAllow all clients%4$s, any DHCP client will get an IP address within this scope/range on this interface. '.
+	'If set to %3$sAllow known clients from any interface%4$s, any DHCP client with a MAC address listed on %1$s%3$sany%4$s%2$s scope(s)/interface(s) will get an IP address. ' .
+	'If set to %3$sAllow known clients from only this interface%4$s, only MAC addresses listed below (i.e. for this interface) will get an IP address within this scope/range.',
 	'<i>', '</i>', '<b>', '</b>');
 
 $section->addInput(new Form_Checkbox(

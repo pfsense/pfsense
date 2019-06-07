@@ -2005,10 +2005,12 @@
 					   Responds with HTTP 4xx on error.
 					   Returns JSON data as body */
 ;
-					if (preg_match("/\s200\sOK/i", $header)) {
+                                        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					
+					if ($code == "200") {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
-					} else if (preg_match("/\s4\d\d\s/i", $header)) {
+					} else if (preg_match("/4\d\d/i", $code)) {
 						$arrbody = json_decode($data, true);
 						$message = $arrbody['message'] . ".";
 						if (isset($arrbody['errors']['content'])) {
@@ -2018,7 +2020,7 @@
 						}
 						$status = $status_intro . $error_str . $message;
 					} else {
-						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $code .")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 						$this->_debug($data);
 					}

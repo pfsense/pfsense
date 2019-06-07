@@ -183,17 +183,16 @@ if (isset($_POST['save']) && !$read_only) {
 			    "The (%s) group name contains invalid characters."),
 			    $_POST['gtype']);
 		}
+		if (strlen($_POST['groupname']) > 16) {
+			$input_errors[] = gettext(
+			    "The group name is longer than 16 characters.");
+		}
 	} else {
 		if (preg_match("/[^a-zA-Z0-9\.\- _]/", $_POST['groupname'])) {
 			$input_errors[] = sprintf(gettext(
 			    "The (%s) group name contains invalid characters."),
 			    $_POST['gtype']);
 		}
-	}
-
-	if (strlen($_POST['groupname']) > 16) {
-		$input_errors[] = gettext(
-		    "The group name is longer than 16 characters.");
 	}
 
 	/* Check the POSTed members to ensure they are valid and exist */

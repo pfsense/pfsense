@@ -62,6 +62,7 @@ net/%%PRODUCT_NAME%%-pkg-siproxd
 net/bird
 net/hping
 net/mosh
+net/ng_etf-kmod
 net/py-speedtest-cli
 net/trafshow
 net/trafshow3

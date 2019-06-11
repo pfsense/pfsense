@@ -440,7 +440,7 @@ function vlan_setup() {
 		}
 	}
 
-	$config['vlans']['vlan'] = array();
+	init_config_arr(array('vlans', 'vlan'));
 	echo "\n";
 
 	$vlanif = 0;

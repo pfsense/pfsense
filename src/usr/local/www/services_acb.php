@@ -507,7 +507,7 @@ if (!$legacy) {
 			</option>
 			<?endforeach?>
 			<? if ($host_not_found) { ?>
-				<option value='<?=$hostname?>' SELECTED><?=$hostname?></option>
+				<option value='<?=urlencode($hostname)?>' SELECTED><?=htmlspecialchars($hostname)?></option>
 			<? } ?>
 		</select>
 <?php }

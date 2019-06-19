@@ -1205,8 +1205,6 @@ function openvpn_reconfigure($mode, $settings) {
 							case '2':
 								$tlsopt = '';
 								break;
-							case '':
-							case '0':
 							default:
 								$tlsopt = 0;
 								break;
@@ -1219,8 +1217,6 @@ function openvpn_reconfigure($mode, $settings) {
 							case '2':
 								$tlsopt = '';
 								break;
-							case '':
-							case '1':
 							default:
 								$tlsopt = 1;
 								break;

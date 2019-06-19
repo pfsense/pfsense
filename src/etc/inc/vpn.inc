@@ -3,7 +3,7 @@
  * vpn.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -113,6 +113,12 @@ function vpn_ipsec_convert_to_modp($index) {
 			break;
 		case '30':
 			$conversion = "ecp512bp";
+			break;
+		case '31':
+			$conversion = "curve25519";
+			break;
+		case '32':
+			$conversion = "curve448";
 			break;
 	}
 
@@ -471,6 +477,10 @@ charon {
 			load = {$unity_enabled}
 		}
 
+		curve25519 {
+			load = yes
+		}
+
 EOD;
 
 	/* Find RADIUS servers designated for Mobile IPsec user auth */
@@ -478,7 +488,7 @@ EOD;
 	$user_sources = explode(',', $config['ipsec']['client']['user_source']);
 	foreach ($user_sources as $user_source) {
 		$auth_server = auth_get_authserver($user_source);
-		$nice_user_source = strtolower(preg_replace('/\s+/', '_', $user_source));
+		$nice_user_source = strtolower(preg_replace('/[\s\.]+/', '_', $user_source));
 		if ($auth_server && $auth_server['type'] === 'radius') {
 			$radius_server_txt .= <<<EOD
 				{$nice_user_source} {
@@ -1426,14 +1436,18 @@ EOD;
 						//if (!empty($reqids[$idx])) {
 						//	$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
 						//}
+						$rightadd = "";
+						$leftadd = "";
 						if (!empty($vtireq[$idx])) {
 							$ipsecfin .= "\treqid = {$ph1ent['ikeid']}00{$idx}\n";
 							/* This interface will be a valid IPsec interface, so remove it from the cleanup list. */
 							$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array("ipsec{$ph1ent['ikeid']}00{$idx}"));
+							$rightadd = ",0.0.0.0/0";
+							$leftadd = ",0.0.0.0/0";
 						}
 						$ipsecfin .= $ipsecconnect;
-						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
-						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "\n";
+						$ipsecfin .= "\trightsubnet = {$rsubnet}{$rightadd}\n";
+						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "{$leftadd}\n";
 					}
 				} else {
 					log_error(sprintf(gettext("No phase2 specifications for tunnel with REQID = %s"), $ikeid));
@@ -1448,10 +1462,14 @@ EOD;
 				//if (!empty($reqids[$idx])) {
 				//	$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				//}
+				$rightadd = "";
+				$leftadd = "";
 				if (!empty($vtireq[0])) {
 					$ipsecfin .= "\treqid = {$ph1ent['ikeid']}000\n";
 					/* This interface will be a valid IPsec interface, so remove it from the cleanup list. */
 					$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array("ipsec{$ph1ent['ikeid']}000"));
+					$rightadd = ",0.0.0.0/0";
+					$leftadd = ",0.0.0.0/0";
 				}
 				$ipsecfin .= $ipsecconnect;
 				if (!isset($ph1ent['mobile']) && !empty($rightsubnet_spec)) {
@@ -1459,7 +1477,7 @@ EOD;
 					foreach ($rightsubnet_spec as $rightsubnet) {
 						$tempsubnets[$rightsubnet] = $rightsubnet;
 					}
-					$ipsecfin .= "\trightsubnet = " . join(",", $tempsubnets) . "\n";
+					$ipsecfin .= "\trightsubnet = " . join(",", $tempsubnets) . "{$rightadd}\n";
 					unset($tempsubnets, $rightsubnet);
 				}
 				if (!empty($leftsubnet_spec)) {
@@ -1467,7 +1485,7 @@ EOD;
 					foreach ($leftsubnet_spec as $leftsubnet) {
 						$tempsubnets[$leftsubnet] = $leftsubnet;
 					}
-					$ipsecfin .= "\tleftsubnet = " . join(",", $tempsubnets) . "\n";
+					$ipsecfin .= "\tleftsubnet = " . join(",", $tempsubnets) . "{$leftadd}\n";
 					unset($tempsubnets, $leftsubnet);
 				}
 			}
@@ -1502,22 +1520,18 @@ EOD;
 					if (strlen($mkent['pool_address']) < 1 || !is_ipaddr($mkent['pool_address'])) {
 						continue;
 					}
-
+					$clientid = ($mkent['ident_type'] == "none") ? "\"{$mkent['ident']}\"" : "{$mkent['ident_type']}:{$mkent['ident']}";
+					$clienteapid = ($ph1ent['authentication_method'] == "eap-mschapv2") ? $clientid : '%identity';
 					$ipsecfin .= "\nconn mobile-{$mobilekey_counter}\n";
 					$ipsecfin .= "\talso = con-mobile\n";
-					$ipsecfin .= "\teap_identity = %identity\n";
+					$ipsecfin .= "\teap_identity = {$clienteapid}\n";
 					$ipsecfin .= "\trightsourceip = {$mkent['pool_address']}/{$mkent['pool_netbits']}\n";
 
 					if (isset($mkent['dns_address']) && strlen($mkent['dns_address']) > 0 && is_ipaddr($mkent['dns_address'])) {
 						$ipsecfin .= "\trightdns = {$mkent['dns_address']}\n";
 					}
 
-					if ($mkent['ident_type'] == "none") {
-						$ipsecfin .= "\trightid = \"{$mkent['ident']}\"\n";
-					}
-					else {
-						$ipsecfin .= "\trightid = {$mkent['ident_type']}:{$mkent['ident']}\n";
-					}
+					$ipsecfin .= "\trightid = {$clientid}\n";
 
 					// optional: define left|rightid more granular
 					// supported: ipv4, ipv6, rfc822, email, userfqdn, fqdn, dns, asn1dn, asn1gn, keyid

@@ -3,7 +3,7 @@
  * vpn_openvpn_server.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -34,33 +34,17 @@ require_once("pkg-utils.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes;
 
-if (!is_array($config['openvpn'])) {
-	$config['openvpn'] = array();
-}
-
-if (!is_array($config['openvpn']['openvpn-server'])) {
-	$config['openvpn']['openvpn-server'] = array();
-}
-
+init_config_arr(array('openvpn', 'openvpn-server'));
 $a_server = &$config['openvpn']['openvpn-server'];
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$a_ca =& $config['ca'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
-
-if (!is_array($config['crl'])) {
-	$config['crl'] = array();
-}
-
-$a_crl =& $config['crl'];
+init_config_arr(array('crl'));
+$a_crl = &$config['crl'];
 
 foreach ($a_crl as $cid => $acrl) {
 	if (!isset($acrl['refid'])) {
@@ -76,6 +60,9 @@ if (isset($_REQUEST['act'])) {
 	$act = $_REQUEST['act'];
 }
 
+$user_entry = getUserEntry($_SESSION['Username']);
+$user_can_edit_advanced = (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "page-openvpn-server-advanced") || userHasPrivilege($user_entry, "page-all"));
+
 if (isset($id) && $a_server[$id]) {
 	$vpnid = $a_server[$id]['vpnid'];
 } else {
@@ -88,15 +75,20 @@ if ($_POST['act'] == "del") {
 		pfSenseHeader("vpn_openvpn_server.php");
 		exit;
 	}
-	if (!empty($a_server[$id])) {
+
+	if (empty($a_server[$id])) {
+		$wc_msg = gettext('Deleted empty OpenVPN server');
+	} elseif (!$user_can_edit_advanced && !empty($a_server[$id]['custom_options'])) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to delete an instance with Advanced options set.");
+	} else {
 		openvpn_delete('server', $a_server[$id]);
 		$wc_msg = sprintf(gettext('Deleted OpenVPN server from %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($a_server[$id]['interface']), $a_server[$id]['local_port'], $a_server[$id]['description']);
-	} else {
-		$wc_msg = gettext('Deleted empty OpenVPN server');
 	}
-	unset($a_server[$id]);
-	write_config($wc_msg);
-	$savemsg = gettext("Server successfully deleted.");
+	if (!empty($wc_msg)) {
+		unset($a_server[$id]);
+		write_config($wc_msg);
+		$savemsg = gettext("Server successfully deleted.");
+	}
 }
 
 if ($act == "new") {
@@ -272,6 +264,15 @@ if ($_POST['save']) {
 		$vpnid = $a_server[$id]['vpnid'];
 	} else {
 		$vpnid = 0;
+	}
+
+	if (isset($pconfig['custom_options']) &&
+	    ($pconfig['custom_options'] != $a_server[$id]['custom_options']) &&
+	    !$user_can_edit_advanced) {
+		$input_errors[] = gettext("This user does not have sufficient privileges to edit Advanced options on this instance.");
+	}
+	if (!$user_can_edit_advanced && !empty($a_server[$id]['custom_options'])) {
+		$pconfig['custom_options'] = $a_server[$id]['custom_options'];
 	}
 
 	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
@@ -1322,11 +1323,15 @@ if ($act=="new" || $act=="edit"):
 
 	$section = new Form_Section('Advanced Configuration');
 
-	$section->addInput(new Form_Textarea(
+	$custops = new Form_Textarea(
 		'custom_options',
 		'Custom options',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options to add to the OpenVPN server configuration here, separated by semicolon.%1$s' .
+	);
+	if (!$user_can_edit_advanced) {
+		$custops->setDisabled();
+	}
+	$section->addInput($custops)->setHelp('Enter any additional options to add to the OpenVPN server configuration here, separated by semicolon.%1$s' .
 				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"', '<br />');
 
 	$section->addInput(new Form_Checkbox(
@@ -1389,7 +1394,7 @@ if ($act=="new" || $act=="edit"):
 					'5: Output R and W characters to the console for each packet read and write. Uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets.%1$s' .
 					'6-11: Debug info range', '<br />');
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'act',
 		null,
 		'hidden',
@@ -1397,7 +1402,7 @@ if ($act=="new" || $act=="edit"):
 	));
 
 	if (isset($id) && $a_server[$id]) {
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'id',
 			null,
 			'hidden',

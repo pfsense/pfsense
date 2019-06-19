@@ -3,7 +3,7 @@
  * firewall_schedule_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -442,7 +442,7 @@ $group->add(new Form_Button(
 $section->add($group);
 
 if (isset($id) && $a_schedules[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -618,7 +618,7 @@ if ($getSchedule) {
 				'fa-trash'
 			))->setAttribute('type','button')->addClass('btn-xs btn-warning');
 
-			$group->add(new Form_Input(
+			$form->addGlobal(new Form_Input(
 				'schedule' . $counter,
 				null,
 				'hidden',

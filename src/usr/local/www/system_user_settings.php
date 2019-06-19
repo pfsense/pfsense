@@ -3,7 +3,7 @@
  * system_user_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +31,7 @@
 
 $pgtitle = array(gettext("System"), gettext("User Settings"));
 
+init_config_arr(array('system', 'user'));
 $a_user = &$config['system']['user'];
 
 if (isset($_SESSION['Username']) && isset($userindex[$_SESSION['Username']])) {

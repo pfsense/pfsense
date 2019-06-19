@@ -3,7 +3,7 @@
  * services_dhcp_relay.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Justin Ellison <justin@techadvise.com>
  * All rights reserved.
  *
@@ -38,7 +38,7 @@ if (empty($config['dhcrelay']['interface'])) {
 }
 
 $pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
-$pconfig['server'] = $config['dhcrelay']['server'];
+$pconfig['server'] = isset($config['dhcrelay']['server']) ? $config['dhcrelay']['server'] : null;
 
 $iflist = array_intersect_key(
 	get_configured_interface_with_descr(),

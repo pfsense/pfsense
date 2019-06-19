@@ -3,7 +3,7 @@
  * status_ipsec.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -35,13 +35,7 @@ require_once("ipsec.inc");
 
 global $g;
 
-if(!is_array($config['ipsec'])){
-	$config['ipsec'] = array();
-}
-
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
-}
+init_config_arr(array('ipsec', 'phase1'));
 
 // If this is just an AJAX call to update the table body, just generate the body and quit
 if ($_REQUEST['ajax']) {

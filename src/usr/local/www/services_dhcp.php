@@ -3,7 +3,7 @@
  * services_dhcp.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -41,17 +41,6 @@ if (!$g['services_dhcp_server_enable']) {
 }
 
 $if = $_REQUEST['if'];
-
-/* if OLSRD is enabled, allow WAN to house DHCP. */
-if ($config['installedpackages']['olsrd']) {
-	foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-		if ($olsrd['enable']) {
-			$is_olsr_enabled = true;
-			break;
-		}
-	}
-}
-
 $iflist = get_configured_interface_with_descr();
 
 /* set the starting interface */
@@ -118,10 +107,7 @@ if (is_array($config['dhcpd'][$if])) {
 		exit;
 	}
 
-	if (!is_array($config['dhcpd'][$if]['pool'])) {
-		$config['dhcpd'][$if]['pool'] = array();
-	}
-
+	init_config_arr(array('dhcpd', $if, 'pool'));
 	$a_pools = &$config['dhcpd'][$if]['pool'];
 
 	if (is_numeric($pool) && $a_pools[$pool]) {
@@ -132,10 +118,7 @@ if (is_array($config['dhcpd'][$if])) {
 		$dhcpdconf = &$config['dhcpd'][$if];
 	}
 
-	if (!is_array($config['dhcpd'][$if]['staticmap'])) {
-		$dhcpdconf['staticmap'] = array();
-	}
-
+	init_config_arr(array('dhcpd', $if, 'staticmap'));
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
 }
 
@@ -201,6 +184,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['netmask'] = $dhcpdconf['netmask'];
 	$pconfig['numberoptions'] = $dhcpdconf['numberoptions'];
 	$pconfig['statsgraph'] = $dhcpdconf['statsgraph'];
+	$pconfig['disablepingcheck'] = $dhcpdconf['disablepingcheck'];
 	$pconfig['ddnsclientupdates'] = $dhcpdconf['ddnsclientupdates'];
 }
 
@@ -633,6 +617,10 @@ if (isset($_POST['save'])) {
 			$dhcpdconf['statsgraph'] = $_POST['statsgraph'];
 			enable_rrd_graphing();
 		}
+		unset($dhcpdconf['disablepingcheck']);
+		if ($_POST['disablepingcheck']) {
+			$dhcpdconf['disablepingcheck'] = $_POST['disablepingcheck'];
+		}
 
 		// Handle the custom options rowhelper
 		if (isset($dhcpdconf['numberoptions']['item'])) {
@@ -947,15 +935,6 @@ $section->addInput(new Form_StaticText(
 	$rangestr
 ));
 
-if ($is_olsr_enabled) {
-	$section->addInput(new Form_Select(
-		'netmask',
-		'Subnet mask',
-		$pconfig['netmask'],
-		array_combine(range(32, 1, -1), range(32, 1, -1))
-	));
-}
-
 $group = new Form_Group('*Range');
 
 $group->add(new Form_IpAddress(
@@ -1098,6 +1077,12 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		'Enable RRD statistics graphs',
 		$pconfig['statsgraph']
 	))->setHelp('Enable this to add DHCP leases statistics to the RRD graphs. Disabled by default.');
+	$section->addInput(new Form_Checkbox(
+		'disablepingcheck',
+		'Ping check',
+		'Disable ping check',
+		$pconfig['disablepingcheck']
+	))->setHelp('When enabled dhcpd sends a ping to the address being assigned, and if no response has been heard, it assigns the address. Enabled by default.');
 }
 
 // DDNS

@@ -41,6 +41,12 @@ while read dev mp type more ; do
 	dumpon_try "${dev}" && works=true
 done </etc/fstab
 if [ "${works}" != "true" ]; then
-	echo "No suitable dump device was found." 1>&2
-	exit
+	# fstab entries did not work, try swap labels
+	for dev in /dev/label/swap*; do
+		dumpon_try "${dev}" && works=true
+	done
+	if [ "${works}" != "true" ]; then
+		echo "No suitable dump device was found." 1>&2
+		exit
+	fi
 fi

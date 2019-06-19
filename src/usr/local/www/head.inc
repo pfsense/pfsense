@@ -3,7 +3,7 @@
  * head.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -70,6 +70,7 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	<script type="text/javascript">
 	//<![CDATA[
 	var events = events || [];
+	var newSeperator = false;
 	//]]>
 	</script>
 </head>
@@ -153,9 +154,9 @@ function return_ext_menu($section) {
 
 	if ((!empty($config['installedpackages']['package'])) && (!empty($config['installedpackages']['menu']))) {
 		foreach ($config['installedpackages']['menu'] as $menu) {
-			if ($menu['name'] != "AutoConfigBackup") { // AutoConfigBackup was moved to a built-in function
+			if (isset($menu['name']) && ($menu['name'] != "AutoConfigBackup")) { // AutoConfigBackup was moved to a built-in function
 	//			print('Name: ' . $menu['name'] . ', Pkg category: ' . $menu['category'] . ', Section: ' . $section . '<br />');
-				if ($menu['section'] == $section) {
+				if (isset($menu['section']) && ($menu['section'] == $section)) {
 					$ext_menu_entries[] = $menu;
 				}
 			}
@@ -246,13 +247,13 @@ $system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
 $system_menu[] = array(gettext("Cert. Manager"), "/system_camanager.php");
-if (!isAllowedPage("system_usermanager.php*")) {
+if (!isAllowedPage("system_usermanager.php")) {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager_passwordmg.php");
 } else {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager.php");
 }
 
-if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php*")) {
+if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php")) {
 	$system_menu[] = array(gettext("User Settings"), "/system_user_settings.php");
 }
 
@@ -320,7 +321,6 @@ if ($g['services_dhcp_server_enable']) {
 
 $services_menu[] = array(gettext("Dynamic DNS"), "/services_dyndns.php");
 $services_menu[] = array(gettext("IGMP Proxy"), "/services_igmpproxy.php");
-$services_menu[] = array(gettext("Load Balancer"), "/load_balancer_pool.php");
 $services_menu[] = array(gettext("NTP"), "/services_ntpd.php");
 $services_menu[] = array(gettext("PPPoE Server"), "/services_pppoe.php");
 $services_menu[] = array(gettext("SNMP"), "/services_snmp.php");
@@ -355,7 +355,6 @@ $status_menu[] = array(gettext("DNS Resolver"), "/status_unbound.php");
 $status_menu[] = array(gettext("Filter Reload"), "/status_filter_reload.php?user=true");
 $status_menu[] = array(gettext("Interfaces"), "/status_interfaces.php");
 $status_menu[] = array(gettext("IPsec"), "/status_ipsec.php");
-$status_menu[] = array(gettext("Load Balancer"), "/status_lb_pool.php");
 $status_menu[] = array(gettext("NTP"), "/status_ntpd.php");
 $status_menu[] = array(gettext("OpenVPN"), "/status_openvpn.php");
 $status_menu[] = array(gettext("Package Logs"), "/status_pkglogs.php");

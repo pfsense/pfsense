@@ -49,6 +49,7 @@
 	 *    - Cloudflare (www.cloudflare.com)
 	 *    - Cloudflare IPv6 (www.cloudflare.com)
 	 *    - Eurodns (eurodns.com)
+	 *    - Gandi LiveDNS (www.gandi.net)
 	 *    - GratisDNS (gratisdns.dk)
 	 *    - City Network (citynetwork.se)
 	 *    - GleSYS (glesys.com)
@@ -126,6 +127,7 @@
 	 *  GoDaddy IPv6    - Last Tested: 22 November 2017
 	 *  DigitalOcean    - Not Yet Tested
 	 *  Azure DNS       - Last Tested: 08 March 2018
+	 *  Gandi LiveDNS   - Not Yet Tested
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -245,6 +247,9 @@
 				if (!$dnsTTL) $this->_error(9);
 				break;
 			case 'digitalocean':
+			case 'digitalocean-v6':
+			case 'linode':
+			case 'linode-v6':
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
 				if (!$dnsDomain) $this->_error(5);
@@ -258,6 +263,12 @@
 				if (!$dnsZoneID) $this->_error(8);
 				if (!$dnsTTL) $this->_error(9);
 				break;
+			case 'gandi-livedns': // NOTE: same as digitalocean
+				if (!$dnsPass) $this->_error(4);//API key
+				if (!$dnsHost) $this->_error(5); //DNS Record to update
+				if (!$dnsDomain) $this->_error(5);//domain
+				if (!$dnsTTL) $this->_error(9);//ttl
+				break;
 			case 'custom':
 			case 'custom-v6':
 				if (!$dnsUpdateURL) $this->_error(7);
@@ -270,6 +281,7 @@
 
 			switch ($dnsService) {
 				case 'he-net-v6':
+				case 'digitalocean-v6':
 				case 'custom-v6':
 				case 'spdyn-v6':
 				case 'route53-v6':
@@ -279,6 +291,7 @@
 				case 'dreamhost-v6':
 				case 'godaddy-v6':
 				case 'azurev6':
+				case 'linode-v6':
 					$this->_useIPv6 = true;
 					break;
 				default:
@@ -367,10 +380,14 @@
 					case 'cloudns':
 					case 'hover':
 					case 'digitalocean':
+					case 'digitalocean-v6':
 					case 'godaddy':
 					case 'godaddy-v6':
-					case  'azure':
-					case  'azurev6':
+					case 'azure':
+					case 'azurev6':
+					case 'linode':
+					case 'linode-v6':
+					case 'gandi-livedns':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -988,8 +1005,10 @@
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
 				case 'digitalocean':
+				case 'digitalocean-v6':
 					// Get record ID
 					$server = 'https://api.digitalocean.com/v2/domains/';
+					$isv6 = ($this->_dnsService === 'digitalocean-v6');
 					$url = $server . $this->_dnsDomain . '/records';
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer {$this->_dnsPass}"));
 					curl_setopt($ch, CURLOPT_URL, $url);
@@ -998,7 +1017,9 @@
 						$output->domain_records = array();
 					}
 					foreach($output->domain_records as $dnsRecord) {
-						if ($this->_dnsHost == $dnsRecord->name) {
+						// NS records are named @ in DO's API, so check type as well 
+						// https://redmine.pfsense.org/issues/9171
+						if ($this->_dnsHost == $dnsRecord->name && $dnsRecord->type == 'A') {
 							$recordID = $dnsRecord->id;
 							break;
 						}
@@ -1011,7 +1032,7 @@
 						$url = $server . $this->_dnsDomain . '/records/' . $recordID;
 						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 					}
-					$post_data['type'] = 'A';
+					$post_data['type'] = $isv6 ? 'AAAA' : 'A';
 					$post_data['ttl'] = $this->_dnsTTL;
 					$post_data['name'] = $this->_dnsHost;
 					$post_data['data'] = $this->_dnsIP;
@@ -1047,77 +1068,199 @@
 					curl_setopt($ch, CURLOPT_URL, $url);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
-			case 'azurev6':
-			case 'azure':
-				$hostname = "{$this->_dnsHost}";
-				$resourceid = trim($this->_dnsZoneID);
-				$app_id = $this->_dnsUser;
-				$client_secret = $this->_dnsPass;
-				$newip = $this->_dnsIP;
-				$newttl = $this->_dnsTTL;
-					// ensure resourceid starts with / and has no trailing /
-				$resourceid = '/' . trim($resourceid, '/');
-					// extract subscription id from resource id
-				preg_match('/\\/subscriptions\\/(?<sid>[^\\/]*)/', $resourceid, $result);
-				$subscriptionid = isset($result['sid']) ? $result['sid'] : '';
-				if (isset($result['sid'])) {
-					$subscriptionid = $result['sid'];
-				} else {
-					log_error("Azure subscription id not found in resource id");
-					return false;
+				case 'azurev6':
+				case 'azure':
+					$hostname = "{$this->_dnsHost}";
+					$resourceid = trim($this->_dnsZoneID);
+					$app_id = $this->_dnsUser;
+					$client_secret = $this->_dnsPass;
+					$newip = $this->_dnsIP;
+					$newttl = $this->_dnsTTL;
+						// ensure resourceid starts with / and has no trailing /
+					$resourceid = '/' . trim($resourceid, '/');
+						// extract subscription id from resource id
+					preg_match('/\\/subscriptions\\/(?<sid>[^\\/]*)/', $resourceid, $result);
+					$subscriptionid = isset($result['sid']) ? $result['sid'] : '';
+					if (isset($result['sid'])) {
+						$subscriptionid = $result['sid'];
+					} else {
+						log_error("Azure subscription id not found in resource id");
+						return false;
+					}
+						// find tenant id from subscription id
+					curl_setopt($ch, CURLOPT_URL, "https://management.azure.com/subscriptions/" . $subscriptionid . "?api-version=2016-09-01");
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($ch, CURLOPT_HEADER, 1);
+					curl_setopt($ch, CURLOPT_NOBODY, 1);
+					$output = curl_exec($ch);
+					$pattern = '/Bearer authorization_uri="https:\\/\\/login.windows.net\\/(?<tid>[^"]*)/i';
+					preg_match($pattern, $output, $result);
+					if (isset($result['tid'])) {
+						$tenantid = $result['tid'];
+					} else {
+						log_error("Tenant ID not found");
+						return false;
+					}
+						// get an bearer token
+					curl_setopt($ch, CURLOPT_URL, "https://login.microsoftonline.com/" . $tenantid . "/oauth2/token");
+					curl_setopt($ch, CURLOPT_POST, 1);
+					$body = "resource=" . urlencode("https://management.core.windows.net/") . "&grant_type=client_credentials&client_id=" . $app_id . "&client_secret=" . urlencode($client_secret);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					$server_output = curl_exec($ch);
+					$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					preg_match("/\"access_token\":\"(?<tok>[^\"]*)\"/", $server_output, $result);
+					if (isset($result['tok'])) {
+						$bearertoken = $result['tok'];
+					} else {
+						log_error("no valid bearer token");
+						return false;
+					}
+						// Update the DNS record
+					if ($this->_useIPv6) {
+						$url = "https://management.azure.com" . $resourceid . "/AAAA/" . $hostname . "?api-version=2017-09-01";
+						$body = '{"properties":{"TTL":"' . $newttl . '", "AAAARecords":[{"ipv6Address":"' . $newip . '"}]}}';
+					} else {
+						$url = "https://management.azure.com" . $resourceid . "/A/" . $hostname . "?api-version=2017-09-01";
+						$body = '{"properties":{"TTL":"' . $newttl . '", "ARecords":[{"ipv4Address":"' . $newip . '"}]}}';
+					}
+					$request_headers = array();
+					$request_headers[] = 'Accept: application/json';
+					$request_headers[] = 'Authorization: Bearer ' . $bearertoken;
+					$request_headers[] = 'Content-Type: application/json';
+					curl_setopt($ch, CURLOPT_URL, $url);
+					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					curl_setopt($ch, CURLOPT_HEADER, 1);
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+					break;
+				case 'linode':
+				case 'linode-v6':
+					$linode_api = "https://api.linode.com/v4";
+					$record_type = $this->_useIPv6 ? "AAAA" : "A";
+					$record_name = $this->_dnsHost == "@" ? "" : $this->_dnsHost;
+					$err_prefix = gettext("Dynamic DNS") . " {$this->_dnsService} ({$this->_FQDN}): (" . gettext("Error") . ")";
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+						'Accept: application/json',
+						'Content-Type: application/json',
+						'Authorization: Bearer ' . $this->_dnsPass
+					));
+
+					// get domain id
+					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains");
+					$domains_output = curl_exec($ch);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ( $http_code == 401 && preg_match('/invalid oauth token/i', $domains_output) ) {
+						log_error("$err_prefix " . gettext("querying domains") . ": " . gettext("User Authentication Failed"));
+						return false;
+					} else if ( $http_code == 401 ) {
+						log_error("$err_prefix " . gettext("querying domains") . ": " . gettext("User Authorization Failed"));
+						return false;
+					} else if ( $http_code != 200 ) {
+						log_error("$err_prefix " . gettext("querying domains") . ": " .
+							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" ) );
+						return false;
+					}
+
+					$domains_result = json_decode($domains_output, TRUE);
+					foreach($domains_result["data"] as $domains_entry) {
+						if ($domains_entry["domain"] == $this->_dnsDomain) {
+							$domain_id = $domains_entry["id"];
+						}
+					}
+					if ( ! $domain_id ) {
+						log_error("{$err_prefix} " . gettext("no domain ID for domain") . ": '{$this->_dnsDomain}'");
+						return false;
+					}
+					if ($this->_dnsVerboseLog) {
+						log_error("_update(): " . sprintf(gettext("found domain id: %s"), $domain_id));
+					}
+
+					// get existing record if present
+					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records");
+					$records_output = curl_exec($ch);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ( $http_code != 200 )
+					{
+						log_error("$err_prefix " . gettext("querying domains") . ": " .
+							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" ) );
+						return false;
+					}
+
+					$records_result = json_decode($records_output, TRUE);
+					foreach($records_result["data"] as $records_entry) {
+						if ( $records_entry["type"] == $record_type && $records_entry["name"] == $record_name ) {
+							// not adding support for pagination at this time, hope you have < 100 records!
+							$record = $records_entry;
+						}
+					}
+					if ($this->_dnsVerboseLog) {
+						log_error("_update(): " . ( $record ? sprintf(gettext("found existing record id: %s"), $record["id"]) : gettext("no matching record found") ));
+					}
+
+					if (is_array($record)) {
+						// update existing record
+						$record["target"] = $this->_dnsIP;
+						$record["ttl_sec"] = (int) $this->_dnsTTL; // linode may round this up, 0 = zone default
+						curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($record));
+						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+						curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records/" . $record["id"]);
+					} else {
+						// create a new record
+						$record = array(
+							"type"    => $record_type,
+							"name"    => $record_name,
+							"target"  => $this->_dnsIP,
+							"ttl_sec" => (int) $this->_dnsTTL, // linode may round this up, 0 = zone default
+						);
+						curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($record));
+						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+						curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records");
+					}
+
+				break;
+			case 'gandi-livedns':
+				// NOTE: quite similar to digitalocean case but with json content like azure case
+				// Get record href
+				$server = 'https://dns.api.gandi.net/api/v5/domains/';
+				$url = $server . $this->_dnsDomain . '/records';
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array("X-Api-Key: {$this->_dnsPass}"));
+				curl_setopt($ch, CURLOPT_URL, $url);
+				$output = json_decode(curl_exec($ch));
+				if (!is_array($output)) {
+					$output = array();
 				}
-					// find tenant id from subscription id
-				curl_setopt($ch, CURLOPT_URL, "https://management.azure.com/subscriptions/" . $subscriptionid . "?api-version=2016-09-01");
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($ch, CURLOPT_HEADER, 1);
-				curl_setopt($ch, CURLOPT_NOBODY, 1);
-				$output = curl_exec($ch);
-				$pattern = '/Bearer authorization_uri="https:\\/\\/login.windows.net\\/(?<tid>[^"]*)/i';
-				preg_match($pattern, $output, $result);
-				if (isset($result['tid'])) {
-					$tenantid = $result['tid'];
-				} else {
-					log_error("Tenant ID not found");
-					return false;
-				}
-					// get an bearer token
-				curl_setopt($ch, CURLOPT_URL, "https://login.microsoftonline.com/" . $tenantid . "/oauth2/token");
-				curl_setopt($ch, CURLOPT_POST, 1);
-				$body = "resource=" . urlencode("https://management.core.windows.net/") . "&grant_type=client_credentials&client_id=" . $app_id . "&client_secret=" . urlencode($client_secret);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				$server_output = curl_exec($ch);
-				$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				preg_match("/\"access_token\":\"(?<tok>[^\"]*)\"/", $server_output, $result);
-				if (isset($result['tok'])) {
-					$bearertoken = $result['tok'];
-				} else {
-					log_error("no valid bearer token");
-					return false;
-				}
-					// Update the DNS record
-				if ($this->_useIPv6) {
-					$url = "https://management.azure.com" . $resourceid . "/AAAA/" . $hostname . "?api-version=2017-09-01";
-					$body = '{"properties":{"TTL":"' . $newttl . '", "AaaaRecords":[{"ipv6Address":"' . $newip . '"}]}}';
-				} else {
-					$url = "https://management.azure.com" . $resourceid . "/A/" . $hostname . "?api-version=2017-09-01";
-					$body = '{"properties":{"TTL":"' . $newttl . '", "ARecords":[{"ipv4Address":"' . $newip . '"}]}}';
+				foreach($output as $dnsRecord) {
+					// NS records are named @ in DO's API, so check type as well
+					if ($this->_dnsHost == $dnsRecord->rrset_name && $dnsRecord->rrset_type == 'A') {
+						$recordHref = $dnsRecord->rrset_href;
+						break;
+					}
 				}
 				$request_headers = array();
-				$request_headers[] = 'Accept: application/json';
-				$request_headers[] = 'Authorization: Bearer ' . $bearertoken;
+				//$request_headers[] = 'Accept: application/json';
+				$request_headers[] = 'X-Api-Key: ' .$this->_dnsPass;
 				$request_headers[] = 'Content-Type: application/json';
+				//create or update record
+				if ($recordHref == null) {
+					//create record
+					$url = $server . $this->_dnsDomain . '/records';
+					$body = '{"rrset_type": "A", "rrset_ttl": ' . $this->_dnsTTL . ', "rrset_name": "' . $this->_dnsHost . '", "rrset_values": ["' . $this->_dnsIP . '"]}';
+				} else {
+					//update record
+					$url = $recordHref;
+					$body = '{"rrset_ttl": ' . $this->_dnsTTL . ', "rrset_values": ["' . $this->_dnsIP . '"]}';
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+				}
 				curl_setopt($ch, CURLOPT_URL, $url);
-				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_HEADER, 1);
-				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-				break;
-
-			default:
-				break;
+					break;
+				default:
+					break;
 			}
 			if ($this->_dnsService != 'ods') {
 				curl_setopt($ch, CURLOPT_HEADER, 1);
@@ -1845,7 +1988,10 @@
 					}
 					break;
 				case 'digitalocean':
-					if (preg_match("/\s200\sOK/i", $header)) {
+				case 'digitalocean-v6':
+					// Creating new records returns an HTTP 201, updating existing records get 200
+					// https://redmine.pfsense.org/issues/9171
+					if (preg_match("/HTTP\/2\s20[0,1]/i", $header)) {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
 					} else {
@@ -2084,6 +2230,42 @@
 					}
 				case 'azure':
 				case 'azurev6':
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if ($http_code == 401) {
+						$status = $status_intro . $error_str . gettext("User Authorization Failed");
+					} else if ($http_code == 201) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+						$successful_update = true;
+					} else if ($http_code == 200) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $http_code);
+						$this->_debug($data);
+					}
+					break;
+				case 'linode':
+				case 'linode-v6':
+					$status_intro = gettext("Dynamic DNS") . " {$this->_dnsService} ({$this->_FQDN}): ";
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					$result = json_decode($data,true);
+					if ($this->_dnsVerboseLog) {
+						log_error(sprintf(gettext('_checkStatus() results: %1$s'), $data));
+					}
+					if ($http_code == 200 && isset($result["id"]) && ! isset($result["errors"])) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+						$successful_update = true;
+					} else if ( $http_code == 401 && preg_match('/not authorized to use/i', $data) ) {
+						$status = $status_intro . $error_str . gettext("User Authorization Failed");
+					} else {
+						$status = $status_intro . $error_str .
+							( isset($domains_result["errors"][0]["reason"]) ? $domains_result["errors"][0]["reason"] : "HTTP {$http_code}" );
+					}
+					break;
+				case 'gandi-livedns':
+					// NOTE: same as azure
+					// Creating new records returns an HTTP 201, updating existing records get 200
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ($http_code == 401) {
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");

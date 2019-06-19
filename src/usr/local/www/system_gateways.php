@@ -3,7 +3,7 @@
  * system_gateways.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -35,14 +35,7 @@ require_once("gwlb.inc");
 
 $simplefields = array('defaultgw4', 'defaultgw6');
 
-if (!is_array($config['gateways'])) {
-	$config['gateways'] = array();
-}
-
-if (!is_array($config['gateways']['gateway_item'])) {
-	$config['gateways']['gateway_item'] = array();
-}
-
+init_config_arr(array('gateways', 'gateway_item'));
 $a_gateway_item = &$config['gateways']['gateway_item'];
 
 $pconfig = $_REQUEST;
@@ -72,8 +65,6 @@ if ($_POST['order-store']) {
 	write_config("System - Gateways: save default gateway");
 }
 
-$a_gateways = return_gateways_array(true, false, true, true);
-
 if ($_POST['apply']) {
 
 	$retval = 0;
@@ -91,6 +82,7 @@ if ($_POST['apply']) {
 	}
 }
 
+$a_gateways = return_gateways_array(true, false, true, true);
 
 function can_delete_disable_gateway_item($id, $disable = false) {
 	global $config, $input_errors, $a_gateways;
@@ -350,7 +342,7 @@ foreach ($a_gateways as $i => $gateway):
 						<?=htmlspecialchars($gateway['name'])?>
 <?php
 						if (isset($gateway['isdefaultgw'])) {
-							echo " <strong>(default)</strong>";
+							echo ' <i class="fa fa-globe"></i>';
 						}
 ?>
 						</td>
@@ -452,6 +444,13 @@ $form->add($section);
 print $form;
 
 ?>
+<div class="infoblock">
+<?php
+print_info_box(
+	sprintf(gettext('%1$s%2$s%3$s is the current default route as present in the current routing table of the operating system'), '<strong>', '<i class="fa fa-globe"></i>', '</strong>')
+	);
+?>
+</div>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {

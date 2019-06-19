@@ -3,7 +3,7 @@
  * interfaces_vlan_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -32,13 +32,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['vlans'])) {
-	$config['vlans'] = array();
-}
-if (!is_array($config['vlans']['vlan'])) {
-	$config['vlans']['vlan'] = array();
-}
-
+init_config_arr(array('vlans', 'vlan'));
 $a_vlans = &$config['vlans']['vlan'];
 
 $portlist = get_interface_list();
@@ -163,11 +157,10 @@ function build_interfaces_list() {
 	$list = array();
 
 	foreach ($portlist as $ifn => $ifinfo) {
-		if (is_jumbo_capable($ifn)) {
-			$list[$ifn] = $ifn . " (" . $ifinfo['mac'] . ")";
-			$iface = convert_real_interface_to_friendly_interface_name($ifn);
-			if (isset($iface) && strlen($iface) > 0)
-				$list[$ifn] .= " - $iface";
+		$list[$ifn] = $ifn . " (" . $ifinfo['mac'] . ")";
+		$iface = convert_real_interface_to_friendly_interface_name($ifn);
+		if (isset($iface) && strlen($iface) > 0) {
+			$list[$ifn] .= " - $iface";
 		}
 	}
 

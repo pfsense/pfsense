@@ -18,6 +18,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+##|+PRIV
+##|*IDENT=page-services-acb
+##|*NAME=Services: Auto Config Backup: Restore
+##|*DESCR=Restore from auto config backup.
+##|*MATCH=services_acb.php*
+##|-PRIV
+
 require("guiconfig.inc");
 require("acb.inc");
 
@@ -221,7 +229,6 @@ if ($_REQUEST['newver'] != "") {
 	}
 
 	if (!$input_errors && $data) {
-		conf_mount_rw();
 		if (config_restore("/tmp/config_restore.xml") == 0) {
 			$savemsg = "Successfully reverted the pfSense configuration to revision " . urldecode($_REQUEST['newver']) . ".";
 			$savemsg .= <<<EOF
@@ -239,7 +246,6 @@ EOF;
 		log_error("There was an error when restoring the AutoConfigBackup item");
 	}
 	unlink_if_exists("/tmp/config_restore.xml");
-	conf_mount_ro();
 }
 
 if ($_REQUEST['download']) {
@@ -373,7 +379,7 @@ if ($_REQUEST['download']) {
 $tab_array[1] = array("Restore", $active, "/services_acb.php");
 
 if ($_REQUEST['download']) {
-	$tab_array[] = array("Revision", true, "/services_acb.php?download={$_REQUEST['download']}");
+	$tab_array[] = array("Revision", true, "/services_acb.php?download=" . htmlspecialchars($_REQUEST['download']));
 }
 
 $tab_array[] = array("Backup now", false, "/services_acb_backup.php");
@@ -499,7 +505,7 @@ if (!$legacy) {
 			</option>
 			<?endforeach?>
 			<? if ($host_not_found) { ?>
-				<option value='<?=$hostname?>' SELECTED><?=$hostname?></option>
+				<option value='<?=urlencode($hostname)?>' SELECTED><?=htmlspecialchars($hostname)?></option>
 			<? } ?>
 		</select>
 <?php }

@@ -3,7 +3,7 @@
  * system_groupmanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
@@ -39,10 +39,7 @@ require_once("pfsense-utils.inc");
 $logging_level = LOG_WARNING;
 $logging_prefix = gettext("Local User Database");
 
-if (!is_array($config['system']['group'])) {
-	$config['system']['group'] = array();
-}
-
+init_config_arr(array('system', 'group'));
 $a_group = &$config['system']['group'];
 
 unset($id);
@@ -172,17 +169,16 @@ if (isset($_POST['save'])) {
 			    "The (%s) group name contains invalid characters."),
 			    $_POST['gtype']);
 		}
+		if (strlen($_POST['groupname']) > 16) {
+			$input_errors[] = gettext(
+			    "The group name is longer than 16 characters.");
+		}
 	} else {
 		if (preg_match("/[^a-zA-Z0-9\.\- _]/", $_POST['groupname'])) {
 			$input_errors[] = sprintf(gettext(
 			    "The (%s) group name contains invalid characters."),
 			    $_POST['gtype']);
 		}
-	}
-
-	if (strlen($_POST['groupname']) > 16) {
-		$input_errors[] = gettext(
-		    "The group name is longer than 16 characters.");
 	}
 
 	/* Check the POSTed members to ensure they are valid and exist */
@@ -239,6 +235,7 @@ if (isset($_POST['save'])) {
 		 * changed.
 		 */
 		if (is_array($group['member'])) {
+			init_config_arr(array('system', 'user'));
 			$a_user = &$config['system']['user'];
 			foreach ($a_user as & $user) {
 				if (in_array($user['uid'], $group['member'])) {
@@ -336,7 +333,11 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+if (!isAllowedPage("system_usermanager.php")) {
+	$tab_array[] = array(gettext("User Password"), false, "system_usermanager_passwordmg.php");
+} else {
+	$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+}
 $tab_array[] = array(gettext("Groups"), true, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
 $tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");

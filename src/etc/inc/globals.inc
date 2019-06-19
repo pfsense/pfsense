@@ -3,7 +3,7 @@
  * globals.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,7 +69,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "18.9",
+	"latest_config" => "19.4",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -85,7 +85,7 @@ $g = array(
 	"language" => "en_US",
 	"default_config_backup_count" => 30,
 	"minimumtableentries_bogonsv6" => 400000,
-	"alternativemetaports" => array("vmware", "php72")
+	"alternativemetaports" => array("vmware", "php72", "php73")
 );
 
 /* IP TOS flags */
@@ -209,7 +209,7 @@ $factory_default_checkipservice = array(
 	"descr" => 'Default Check IP Service'
 );
 
-$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns", "godaddy", "godaddy-v6");
+$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns", "godaddy", "godaddy-v6", "linode", "linode-v6");
 
 /* pf tokens from FreeBSD source sbin/pfctl/parse.y (plus our custom entries at the end)*/
 global $pf_reserved_keywords;

@@ -3,7 +3,7 @@
  * diag_limiter_info.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,6 +38,11 @@ if ($_REQUEST['getactivity']) {
 	}
 	echo gettext("Limiters:") . "\n";
 	echo $text;
+	$text = `/sbin/ipfw sched show`;
+	if ($text != "") {
+		echo "\n\n" . gettext("Schedulers") . ":\n";
+		echo $text;
+	}
 	$text = `/sbin/ipfw queue show`;
 	if ($text != "") {
 		echo "\n\n" . gettext("Queues") . ":\n";

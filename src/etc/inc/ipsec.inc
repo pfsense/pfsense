@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008 Shrew Soft Inc.
- * Copyright (c) 2007-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2007-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -163,7 +163,9 @@ $p1_dhgroups = array(
 	24 => '24 (2048(sub 256) bit)',
 	28 => '28 (brainpool ecp256)',
 	29 => '29 (brainpool ecp384)',
-	30 => '30 (brainpool ecp512)'
+	30 => '30 (brainpool ecp512)',
+	31 => '31 (Elliptic Curve 25519, 256 bit)',
+	32 => '32 (Elliptic Curve 25519, 448 bit)',
 );
 
 global $p2_halgos;
@@ -227,7 +229,9 @@ $p2_pfskeygroups = array(
 	24 => gettext('24 (2048(sub 256) bit)'),
 	28 => gettext('28 (brainpool ecp256)'),
 	29 => gettext('29 (brainpool ecp384)'),
-	30 => gettext('30 (brainpool ecp512)')
+	30 => gettext('30 (brainpool ecp512)'),
+	31 => gettext('31 (Elliptic Curve 25519, 256 bit)'),
+	32 => gettext('32 (Elliptic Curve 25519, 448 bit)'),
 );
 
 function ipsec_enabled() {

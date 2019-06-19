@@ -3,7 +3,7 @@
  * services_ntpd.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -179,6 +179,7 @@ function build_interface_list() {
 	return($iflist);
 }
 
+init_config_arr(array('ntpd'));
 $pconfig = &$config['ntpd'];
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();

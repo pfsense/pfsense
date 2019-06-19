@@ -1053,14 +1053,6 @@
 			<description>A Windows Internet Name Service (WINS) server IP to provide to connecting clients. Not desirable in most all modern networks.</description>
 		</field>
 		<field>
-			<name>Advanced</name>
-			<type>textarea</type>
-			<cols>30</cols>
-			<rows>5</rows>
-			<description>Enter any additional options to add to the OpenVPN server configuration here, separated by a semicolon. EXAMPLE: push "route 10.0.0.0 255.255.255.0"</description>
-			<bindstofield>ovpnserver->step10->advanced</bindstofield>
-		</field>
-		<field>
 			<name>Next</name>
 			<type>submit</type>
 		</field>

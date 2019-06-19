@@ -61,6 +61,7 @@ function convert_real_interface_to_friendly_interface_name_fast() {
 
 	$out = array();
 	/* XXX: For speed reasons reference directly the interface array */
+	init_config_arr(array('interfaces'));
 	$ifdescrs = &$config['interfaces'];
 	$iffriendlynames = array_keys($ifdescrs);
 	$out = array_flip(get_real_interface_fast($iffriendlynames));

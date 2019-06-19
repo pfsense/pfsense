@@ -3,7 +3,7 @@
  * autoconfigbackup_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -24,10 +24,10 @@
  */
 
 ##|+PRIV
-##|*IDENT=page-system-autoconfigbackup
-##|*NAME=System: Auto COnfig Backup
+##|*IDENT=page-services-acb-settings
+##|*NAME=Services: Auto Config Backup: Settings
 ##|*DESCR=Configure the auto config backup system.
-##|*MATCH=autoconfigbackup-settings.php*
+##|*MATCH=services_acb_settings.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
@@ -56,6 +56,8 @@ function index_of_command() {
 }
 
 $croncmd = "/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/execacb.php";
+
+init_config_arr(array('cron', 'item'));
 $a_cron = &$config['cron']['item'];
 $pconfig = $config['system']['acb'];
 

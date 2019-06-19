@@ -3,7 +3,7 @@
  * interfaces_groups.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,14 +29,7 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-if (!is_array($config['ifgroups'])) {
-	$config['ifgroups'] = array();
-}
-
-if (!is_array($config['ifgroups']['ifgroupentry'])) {
-	$config['ifgroups']['ifgroupentry'] = array();
-}
-
+init_config_arr(array('ifgroups', 'ifgroupentry'));
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
 
 if ($_POST['act'] == "del") {

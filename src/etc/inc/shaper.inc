@@ -3,7 +3,7 @@
  * shaper.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -38,10 +38,19 @@ include_once("interfaces.inc");//required for convert_real_interface_to_friendly
 // List of schedulers ('type' command on scheduler/pipe) that dummynet/ipfw is supposed to support
 function getSchedulers() {
 	return array(
+		"wf2q+" => array(
+			"name" => "Worst-case Weighted fair Queueing (default)",
+			"parameter_format" => "type wf2q+",
+			"description" => "Worst-case Weighted fair Queueing (WF2Q+) schedules flows with an associated weight. ".
+					 "WF2Q+ is the default algorithm used by previous versions.",
+			"parameters" => array(),
+			"ecn" => false
+		),
 		"fifo" => array(
 			"name" => "FIFO",
 			"parameter_format" => "type fifo",
-			"description" => "First-in-First-out is a fundamental queueing discipline which ensures packet sequence.",
+			"description" => "First-in-First-out is a fundamental queueing discipline which ensures packet sequence. ".
+					 "Dynamic queues are not supported with the FIFO scheduler (all packets are stored in a single queue).",
 			"parameters" => array(),
 			"ecn" => false
 		),
@@ -56,13 +65,6 @@ function getSchedulers() {
 			"name" => "Round Robin",
 			"parameter_format" => "type rr",
 			"description" => "Round Robin (RR) schedules packets in a round-robin fashion.",
-			"parameters" => array(),
-			"ecn" => false
-		),
-		"wf2q+" => array(
-			"name" => "Worst-case Weighted fair Queueing",
-			"parameter_format" => "type wf2q+",
-			"description" => "Worst-case Weighted fair Queueing (WF2Q+) schedules flows with an associated weight.",
 			"parameters" => array(),
 			"ecn" => false
 		),
@@ -308,7 +310,8 @@ function get_queue_stats() {
 function &get_reference_to_me_in_config(&$mypath) {
 	global $config;
 
-	$ptr =& $config['shaper'];
+	init_config_arr(array('shaper'));
+	$ptr = &$config['shaper'];
 	foreach ($mypath as $indeks) {
 		if (!is_array($ptr)) {
 			$ptr = array();
@@ -319,7 +322,7 @@ function &get_reference_to_me_in_config(&$mypath) {
 		if (!is_array($ptr['queue'][$indeks])) {
 			$ptr['queue'][$indeks] = array();
 		}
-		$ptr =& $ptr['queue'][$indeks];
+		$ptr = &$ptr['queue'][$indeks];
 	}
 
 	return $ptr;
@@ -328,9 +331,10 @@ function &get_reference_to_me_in_config(&$mypath) {
 function unset_object_by_reference(&$mypath) {
 	global $config;
 
-	$ptr =& $config['shaper'];
+	init_config_arr(array('shaper'));
+	$ptr = &$config['shaper'];
 	for ($i = 0; $i < count($mypath) - 1; $i++) {
-		$ptr =& $ptr['queue'][$mypath[$i]];
+		$ptr = &$ptr['queue'][$mypath[$i]];
 	}
 	unset($ptr['queue'][$mypath[$i]]);
 }
@@ -338,9 +342,10 @@ function unset_object_by_reference(&$mypath) {
 function &get_dn_reference_to_me_in_config(&$mypath) {
 	global $config;
 
-	$ptr =& $config['dnshaper'];
+	init_config_arr(array('dnshaper'));
+	$ptr = &$config['dnshaper'];
 	foreach ($mypath as $indeks) {
-		$ptr =& $ptr['queue'][$indeks];
+		$ptr = &$ptr['queue'][$indeks];
 	}
 
 	return $ptr;
@@ -349,9 +354,10 @@ function &get_dn_reference_to_me_in_config(&$mypath) {
 function unset_dn_object_by_reference(&$mypath) {
 	global $config;
 
-	$ptr =& $config['dnshaper'];
+	init_config_arr(array('dnshaper'));
+	$ptr = &$config['dnshaper'];
 	for ($i = 0; $i < count($mypath) - 1; $i++) {
-		$ptr =& $ptr['queue'][$mypath[$i]];
+		$ptr = &$ptr['queue'][$mypath[$i]];
 	}
 	unset($ptr['queue'][$mypath[$i]]);
 }
@@ -522,8 +528,8 @@ function get_interface_bandwidth($object) {
 	global $altq_list_queues;
 
 	$int = $object->GetInterface();
-	$altq =& $altq_list_queues[$int];
-	if ($altq) {
+	if (isset($altq_list_queues[$int])) {
+		$altq = &$altq_list_queues[$int];
 		$bw_3 = $altq->GetBandwidth();
 		$bw_3 = $bw_3 * get_bandwidthtype_scale($altq->GetBwscale());
 		return floatval($bw_3);
@@ -1594,13 +1600,13 @@ class priq_queue {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper.php?interface=". $this->GetInterface()."&amp;queue=". $this->GetQname()."&amp;action=show";
+		$tree = " <li><a href=\"firewall_shaper.php?interface=". $this->GetInterface()."&amp;queue=". htmlspecialchars($this->GetQname())."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = $this->GetDefault();
 		if (!empty($tmpvalue)) {
 			$tree .= " class=\"navlnk\"";
 		}
-		$tree .= " >" . $this->GetQname() . "</a>";
+		$tree .= " >" . htmlspecialchars($this->GetQname()) . "</a>";
 		/*
 		 * Not needed here!
 		 * if (is_array($queues) {
@@ -2363,13 +2369,13 @@ class hfsc_queue extends priq_queue {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface() ."&amp;queue=" . $this->GetQname()."&amp;action=show";
+		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface() ."&amp;queue=" . htmlspecialchars($this->GetQname())."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = $this->GetDefault();
 		if (!empty($tmpvalue)) {
 			$tree .= " class=\"navlnk\"";
 		}
-		$tree .= " >" . $this->GetQname() . "</a>";
+		$tree .= " >" . htmlspecialchars($this->GetQname()) . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
 			foreach ($this->subqueues as $q) {
@@ -2965,13 +2971,13 @@ class cbq_queue extends priq_queue {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface()."&amp;queue=" . $this->GetQname()."&amp;action=show";
+		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface()."&amp;queue=" . htmlspecialchars($this->GetQname())."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = trim($this->GetDefault());
 		if (!empty($tmpvalue)) {
 			$tree .= " class=\"navlnk\"";
 		}
-		$tree .= " >" . $this->GetQname() . "</a>";
+		$tree .= " >" . htmlspecialchars($this->GetQname()) . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
 			foreach ($this->subqueues as $q) {
@@ -3253,13 +3259,13 @@ class fairq_queue extends priq_queue {
 
 	function build_tree() {
 		$tree = " <li><a href=\"firewall_shaper.php?interface=" .
-		$this->GetInterface()."&amp;queue=" . $this->GetQname()."&amp;action=show";
+		$this->GetInterface()."&amp;queue=" . htmlspecialchars($this->GetQname())."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = trim($this->GetDefault());
 		if (!empty($tmpvalue)) {
 			$tree .= " class=\"navlnk\"";
 		}
-		$tree .= " >" . $this->GetQname() . "</a>";
+		$tree .= " >" . htmlspecialchars($this->GetQname()) . "</a>";
 		$tree .= "</li>";
 		return $tree;
 	}
@@ -3842,7 +3848,7 @@ class dnpipe_class extends dummynet_class {
 			$input_errors[] = gettext("Selected scheduler not recognized.");
 		}
 		$selectedAqm = getAQMs()[$data['aqm']];
-		if (!$selectedAqm) {
+		if (!empty($data['aqm']) && !$selectedAqm) {
 			$input_errors[] = gettext("Selected AQM not recognized.");
 		}
 		if ($data['ecn'] && $data['ecn'] == 'on' && !$selectedScheduler["ecn"] && !$selectedAqm["ecn"]) {
@@ -3973,8 +3979,8 @@ class dnpipe_class extends dummynet_class {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . $this->GetQname() ."&amp;queue=".$this->GetQname() ."&amp;action=show\">";
-		$tree .= $this->GetQname() . "</a>";
+		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . htmlspecialchars($this->GetQname()) ."&amp;queue=".htmlspecialchars($this->GetQname()) ."&amp;action=show\">";
+		$tree .= htmlspecialchars($this->GetQname()) . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
 			foreach ($this->subqueues as $q) {
@@ -4531,7 +4537,7 @@ class dnqueue_class extends dummynet_class {
 
 		/* Limiter patch */
 		$selectedAqm = getAQMs()[$data['aqm']];
-		if (!$selectedAqm) {
+		if (!empty($data['aqm']) && !$selectedAqm) {
 			$input_errors[] = gettext("Selected AQM not recognized.");
 		}
 		if ($data['ecn'] && $data['ecn'] == 'on' && !$selectedAqm["ecn"]) {
@@ -4644,8 +4650,8 @@ class dnqueue_class extends dummynet_class {
 
 	function build_tree() {
 		$parent =& $this->GetParent();
-		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . $parent->GetQname() ."&amp;queue=" . $this->GetQname() ."&amp;action=show\">";
-		$tree .= $this->GetQname() . "</a>";
+		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . htmlspecialchars($parent->GetQname()) ."&amp;queue=" . htmlspecialchars($this->GetQname()) ."&amp;action=show\">";
+		$tree .= htmlspecialchars($this->GetQname()) . "</a>";
 		$tree .= "</li>";
 
 		return $tree;
@@ -5014,12 +5020,7 @@ function read_altq_config() {
 	global $altq_list_queues, $config;
 	$path = array();
 
-	if (!is_array($config['shaper'])) {
-		$config['shaper'] = array();
-	}
-	if (!is_array($config['shaper']['queue'])) {
-		$config['shaper']['queue'] = array();
-	}
+	init_config_arr(array('shaper', 'queue'));
 	$a_int = &$config['shaper']['queue'];
 
 	$altq_list_queues = array();
@@ -5055,18 +5056,12 @@ function read_dummynet_config() {
 	global $dummynet_pipe_list, $config;
 	$path = array();
 
-	if (!is_array($config['dnshaper'])) {
-		$config['dnshaper'] = array();
-	}
-	if (!is_array($config['dnshaper']['queue'])) {
-		$config['dnshaper']['queue'] = array();
-	}
+	init_config_arr(array('dnshaper', 'queue'));
 	$a_int = &$config['dnshaper']['queue'];
 
 	$dummynet_pipe_list = array();
 
-	if (!is_array($config['dnshaper']['queue']) ||
-	    !count($config['dnshaper']['queue'])) {
+	if (!count($config['dnshaper']['queue'])) {
 		return;
 	}
 

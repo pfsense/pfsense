@@ -3,7 +3,7 @@
  * services_dnsmasq_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
  *
@@ -32,10 +32,6 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-
-if (!is_array($config['dnsmasq']['hosts'])) {
-	$config['dnsmasq']['hosts'] = array();
-}
 
 init_config_arr(array('dnsmasq', 'hosts'));
 $a_hosts = &$config['dnsmasq']['hosts'];
@@ -229,7 +225,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_hosts[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

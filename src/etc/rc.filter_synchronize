@@ -289,12 +289,6 @@ if (is_array($config['hasync'])) {
 		}
 		$sections[] = 'virtualip';
 	}
-	if ($hasync['synchronizelb'] != "") {
-		if (!is_array($config['load_balancer'])) {
-			$config['load_balancer'] = array();
-		}
-		$sections[] = 'load_balancer';
-	}
 	if ($hasync['synchronizeipsec'] != "") {
 		if (!is_array($config['ipsec'])) {
 			$config['ipsec'] = array();
@@ -354,7 +348,7 @@ if (is_array($config['hasync'])) {
 		$sections[] = 'voucher';
 	}
 
-	if (count($sections) <= 0) {
+	if (is_array($sections) && count($sections) <= 0) {
 		log_error("Nothing has been configured to be synched. Skipping....");
 		return;
 	}

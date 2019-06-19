@@ -3,7 +3,7 @@
  * services_ntpd_gps.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -28,6 +28,8 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+
+$gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
 
 function set_default_gps() {
 	global $config;
@@ -147,7 +149,19 @@ function autocorrect_initcmd($initcmd) {
 }
 
 if ($_POST) {
-	unset($input_errors);
+	$input_errors = array();
+	if (!in_array($_POST['gpstype'], $gpstypes)) {
+		$input_errors[] = gettext("The submitted GPS type is invalid.");
+	}
+} else {
+	/* set defaults if they do not already exist */
+	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
+		set_default_gps();
+	}
+}
+
+
+if ($_POST && empty($input_errors)) {
 
 	if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport'])) {
 		$config['ntpd']['gps']['port'] = $_POST['gpsport'];
@@ -275,11 +289,6 @@ if ($_POST) {
 	$changes_applied = true;
 	$retval = 0;
 	$retval |= system_ntp_configure();
-} else {
-	/* set defaults if they do not already exist */
-	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
-		set_default_gps();
-	}
 }
 
 function build_nmea_list() {
@@ -306,11 +315,16 @@ function build_nmea_list() {
 	return($nmealist);
 }
 
+init_config_arr(array('ntpd', 'gps'));
 $pconfig = &$config['ntpd']['gps'];
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 if ($changes_applied) {
 	print_apply_result_box($retval);
@@ -335,8 +349,6 @@ $section->addInput(new Form_StaticText(
 	'<a href="services_ntpd.php">Services > NTP > Settings</a>' .
 	' to minimize clock drift if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when providing time to clients.'
 ));
-
-$gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
 
 $section->addInput(new Form_Select(
 	'gpstype',
@@ -702,10 +714,10 @@ events.push(function() {
 		set_gps_default($(this).val());
 		hideInput('processpgrmf', ($(this).val() !== "Garmin" && $(this).val() !== "Custom"));
 	});
-	hideInput('processpgrmf', ('<?=$pconfig['type']?>' !== "Garmin" && '<?=$pconfig['type']?>' !== "Custom"));
+	hideInput('processpgrmf', (<?=json_encode($pconfig['type'])?> !== "Garmin" && <?=json_encode($pconfig['type'])?> !== "Custom"));
 
 	if ('<?=$pconfig['initcmd']?>' == '') {
-		set_gps_default('<?=$pconfig['type']?>');
+		set_gps_default(<?=json_encode($pconfig['type'])?>);
 	}
 
 	//	Checkboxes gpsprefer and gpsnoselect are mutually exclusive

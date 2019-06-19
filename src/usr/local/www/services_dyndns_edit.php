@@ -3,7 +3,7 @@
  * services_dyndns_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,14 +41,7 @@ function is_dyndns_username($uname) {
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['dyndnses'])) {
-	$config['dyndnses'] = array();
-}
-
-if (!is_array($config['dyndnses']['dyndns'])) {
-	$config['dyndnses']['dyndns'] = array();
-}
-
+init_config_arr(array('dyndnses', 'dyndns'));
 $a_dyndns = &$config['dyndnses']['dyndns'];
 
 $id = $_REQUEST['id'];
@@ -80,7 +73,8 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean") && $_POST['username'] == "") {
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns")
+	    && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
 
@@ -113,13 +107,23 @@ if ($_POST['save'] || $_POST['force']) {
 	}
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
+		$allow_wildcard = false;
 		/* Namecheap can have a @. and *. in hostname */
 		if ($pconfig['type'] == "namecheap" && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
-		} elseif ((($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
-			$host_to_check = $_POST['domainname'];
+		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
+			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
+			$allow_wildcard = true;
 		} elseif ((($pconfig['type'] == "godaddy") || ($pconfig['type'] == "godaddy-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
+		} elseif (($pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "gandi-livedns") && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
+			$host_to_check = $_POST['domainname'];
+		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6")) {
+			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
+			$allow_wildcard = true;
+		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
+			$host_to_check = $_POST['host'];
+			$allow_wildcard = true;
 		} else {
 			$host_to_check = $_POST['host'];
 
@@ -135,7 +139,7 @@ if ($_POST['save'] || $_POST['force']) {
 		}
 
 		if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
-			if (!is_domain($host_to_check)) {
+			if (!is_domain($host_to_check, $allow_wildcard)) {
 				$input_errors[] = gettext("The hostname contains invalid characters.");
 			}
 		}
@@ -306,8 +310,8 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
-			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
-			'Cloudflare: Enter @ as the hostname to indicate an empty field.', '<br />');
+			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy, Linode: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
+			'Cloudflare, DigitalOcean, Linode: Enter @ as the hostname to indicate an empty field.', '<br />');
 
 $section->add($group);
 
@@ -361,8 +365,8 @@ $section->addInput(new Form_Input(
 	'Username',
 	'text',
 	$pconfig['username']
-))->setHelp('Username is required for all types except Namecheap, FreeDNS and Custom Entries.%1$s' .
-	                'Azure: Enter your Azure AD application ID%1$s' .
+))->setHelp('Username is required for all types except Namecheap, FreeDNS, FreeDNS-v6, DigitalOcean, Linode and Custom Entries.%1$s' .
+			'Azure: Enter your Azure AD application ID%1$s' .
 			'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
 			'Route 53: Enter the Access Key ID.%1$s' .
@@ -377,15 +381,17 @@ $section->addPassword(new Form_Input(
 	'password',
 	$pconfig['password']
 ))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
-	                'Azure: client secret of the AD application%1$s' .
+			'Azure: client secret of the AD application%1$s' .
 			'DNS Made Easy: Dynamic DNS Password%1$s' .
 			'DNSimple: User account token%1$s' .
 			'DigitalOcean: Enter API token%1$s' .
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
+			'Gandi LiveDNS: Enter API token%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
 			'DNSimple: Enter the API token.%1$s' .
+			'Linode: Enter the Personal Access Token.%1$s' .
 			'Cloudflare: Enter the Global API Key.', '<br />');
 
 $section->addInput(new Form_Input(
@@ -394,7 +400,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['zoneid']
 ))->setHelp('Route53: Enter AWS Zone ID.%1$s' .
-	                'Azure: Enter the resource id of the of the DNS Zone%1$s' .
+			'Azure: Enter the resource id of the of the DNS Zone%1$s' .
 			'DNSimple: Enter the Record ID of record to update.', '<br />');
 
 $section->addInput(new Form_Input(
@@ -429,7 +435,7 @@ $section->addInput(new Form_Input(
 			'This field will be used in the Dynamic DNS Status Widget for Custom services.', '<br />');
 
 if (isset($id) && $a_dyndns[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -474,8 +480,6 @@ events.push(function() {
 				break;
 
 			case "dnsimple":
-			case "route53-v6":
-			case "route53":
 				hideGroupInput('domainname', true);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);
@@ -485,6 +489,21 @@ events.push(function() {
 				hideInput('host', false);
 				hideInput('mx', false);
 				hideCheckbox('wildcard', false);
+				hideCheckbox('proxied', true);
+				hideInput('zoneid', false);
+				hideInput('ttl', false);
+				break;
+			case "route53-v6":
+			case "route53":
+				hideGroupInput('domainname', true);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', false);
+				hideInput('host', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
 				hideCheckbox('proxied', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
@@ -543,13 +562,14 @@ events.push(function() {
 				hideCheckbox('curl_ipresolve_v4', true);
 				hideCheckbox('curl_ssl_verifypeer', true);
 				hideInput('host', false);
-				hideInput('mx', false);
-				hideCheckbox('wildcard', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
 				hideCheckbox('proxied', false);
 				hideInput('zoneid', true);
 				hideInput('ttl', true);
 				break;
 			case "digitalocean":
+		        case "digitalocean-v6":
 				hideGroupInput('domainname', false);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);
@@ -592,6 +612,36 @@ events.push(function() {
 				hideCheckbox('wildcard', true);
 				hideCheckbox('proxied', true);
 				hideInput('zoneid', false);
+				hideInput('ttl', false);
+				break;
+			case "linode-v6":
+			case "linode":
+				hideGroupInput('domainname', false);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('host', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideCheckbox('proxied', true);
+				hideInput('zoneid', true);
+				hideInput('ttl', false);
+				break;
+			case "gandi-livedns": // NOTE: same as digitalocean
+				hideGroupInput('domainname', false);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('username', true);
+				hideInput('host', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideCheckbox('proxied', true);
+				hideInput('zoneid', true);
 				hideInput('ttl', false);
 				break;
 			default:

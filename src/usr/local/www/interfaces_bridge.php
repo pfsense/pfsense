@@ -3,7 +3,7 @@
  * interfaces_bridge.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,15 +28,8 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['bridges'])) {
-	$config['bridges'] = array();
-}
-
-if (!is_array($config['bridges']['bridged'])) {
-	$config['bridges']['bridged'] = array();
-}
-
-$a_bridges = &$config['bridges']['bridged'] ;
+init_config_arr(array('bridges', 'bridged'));
+$a_bridges = &$config['bridges']['bridged'];
 
 function bridge_inuse($num) {
 	global $config, $a_bridges;

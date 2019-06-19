@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008 Shrew Soft Inc
- * Copyright (c) 2008-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -100,7 +100,8 @@ if (!is_array($authmodes)) {
 
 $attributes = array("nas_identifier" => "openVPN",
 	"nas_port_type" => RADIUS_VIRTUAL,
-	"nas_port" => $_GET['nas_port']);
+	"nas_port" => $_GET['nas_port'],
+	"calling_station_id" => get_interface_ip() . ":" . $_GET['nas_port']);
 	
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);

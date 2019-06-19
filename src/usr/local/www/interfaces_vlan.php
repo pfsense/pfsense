@@ -27,7 +27,7 @@
 ##|*IDENT=page-interfaces-vlan
 ##|*NAME=Interfaces: VLAN
 ##|*DESCR=Allow access to the 'Interfaces: VLAN' page.
-##|*MATCH=interfaces_vlan_new_prof.php*
+##|*MATCH=interfaces_vlan.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
@@ -35,15 +35,8 @@ require_once("interfaces_fast.inc");
 
 global $profile;
 
-if (!is_array($config['vlans'])) {
-	$config['vlans'] = array();
-}
-
-if (!is_array($config['vlans']['vlan'])) {
-	$config['vlans']['vlan'] = array();
-}
-
-$a_vlans = &$config['vlans']['vlan'] ;
+init_config_arr(array('vlans', 'vlan'));
+$a_vlans = &$config['vlans']['vlan'];
 
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {

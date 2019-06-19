@@ -18,6 +18,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+##|+PRIV
+##|*IDENT=page-services-acb-backup
+##|*NAME=Services: Auto Config Backup: Backup Now
+##|*DESCR=Create a new auto config backup entry.
+##|*MATCH=services_acb_backup.php*
+##|-PRIV
+
 require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("acb.inc");
@@ -41,9 +49,7 @@ if ($_POST) {
 	}
 
 	$config = parse_config(true);
-	conf_mount_rw();
 	unlink_if_exists("/cf/conf/lastpfSbackup.txt");
-	conf_mount_ro();
 
 	/* The config write above will trigger a fresh upload with the given reason.
 	 * This manual upload appears to be a relic of an older time (1.2.x)

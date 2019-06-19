@@ -3,7 +3,7 @@
  * services.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -24,8 +24,8 @@
  */
 
 
-define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 digitalocean dnsexit dnsimple dnsmadeeasy dnsomatic dreamhost dreamhost-v6 duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover loopia namecheap noip noip-free ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),DigitalOcean,DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dreamhost dreamhost-v6 duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys gandi-livedns godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia namecheap noip noip-free ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Gandi Live DNS,GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -479,19 +479,6 @@ function services_dhcpdv4_configure() {
 		return 0;
 	}
 
-	/* if OLSRD is enabled, allow WAN to house DHCP. */
-	if (!function_exists('is_package_installed')) {
-		require_once('pkg-utils.inc');
-	}
-	if (is_package_installed('olsrd') && isset($config['installedpackages']['olsrd'])) {
-		foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-			if (isset($olsrd['enable']) && $olsrd['enable'] == "on") {
-				$is_olsr_enabled = true;
-				break;
-			}
-		}
-	}
-
 	$syscfg = $config['system'];
 	if (!is_array($config['dhcpd'])) {
 		$config['dhcpd'] = array();
@@ -555,10 +542,15 @@ max-lease-time 86400;
 log-facility local7;
 one-lease-per-client true;
 deny duplicates;
-ping-check true;
 update-conflict-detection false;
 
 EOD;
+
+	if (!isset($dhcpifconf['disablepingcheck'])) {
+		$dhcpdconf .= "ping-check true;\n";
+	} else {
+		$dhcpdconf .= "ping-check false;\n";
+	}
 
 	if (!isset($dhcpifconf['disableauthoritative'])) {
 		$dhcpdconf .= "authoritative;\n";
@@ -670,12 +662,6 @@ EOPP;
 
 		if (!is_ipaddr($subnet)) {
 			continue;
-		}
-
-		if ($is_olsr_enabled == true) {
-			if ($dhcpifconf['netmask']) {
-				$subnetmask = gen_subnet_mask($dhcpifconf['netmask']);
-			}
 		}
 
 		$all_pools = array();
@@ -930,7 +916,7 @@ EOPP;
 			// Handle pool-specific options
 			$dhcpdconf .= "\n";
 			// Ignore the first pool, which is the "overall" pool when $all_pools_idx is 0 - those are put outside the pool block later
-			if ($poolconf['numberoptions']['item'] && ($all_pools_idx > 0)) {
+			if (isset($poolconf['numberoptions']['item']) && is_array($poolconf['numberoptions']['item']) && ($all_pools_idx > 0)) {
 				// Use the "real" pool index from the config, excluding the "overall" pool, and based from 0.
 				// This matches the way $poolidx was used when generating the $custoptions string earlier.
 				$poolidx = $all_pools_idx - 1;
@@ -1052,7 +1038,7 @@ EOD;
 
 		// Handle option, number rowhelper values
 		$dhcpdconf .= "\n";
-		if ($dhcpifconf['numberoptions']['item']) {
+		if (isset($dhcpifconf['numberoptions']['item']) && is_array($dhcpifconf['numberoptions']['item'])) {
 			foreach ($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
 				$item_value = base64_decode($item['value']);
 				if (empty($item['type']) || $item['type'] == "text") {
@@ -1407,12 +1393,6 @@ EOD;
 		// of each subnet here is always /64.
 		$pdlen = 64;
 
-		if ($is_olsr_enabled == true) {
-			if ($dhcpv6ifconf['netmask']) {
-				$subnetmask = gen_subnet_maskv6($dhcpv6ifconf['netmask']);
-			}
-		}
-
 		$dnscfgv6 = "";
 
 		if ($dhcpv6ifconf['domain']) {
@@ -1544,7 +1524,7 @@ EOD;
 
 		// Handle option, number rowhelper values
 		$dhcpdv6conf .= "\n";
-		if ($dhcpv6ifconf['numberoptions']['item']) {
+		if (isset($dhcpv6ifconf['numberoptions']['item']) && is_array($dhcpv6ifconf['numberoptions']['item'])) {
 			foreach ($dhcpv6ifconf['numberoptions']['item'] as $itemv6idx => $itemv6) {
 				$itemv6_value = base64_decode($itemv6['value']);
 				$dhcpdv6conf .= "	option custom-{$dhcpv6if}-{$itemv6idx} \"{$itemv6_value}\";\n";
@@ -1751,7 +1731,8 @@ function services_dhcrelay_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay.pid");
 
-	$dhcrelaycfg =& $config['dhcrelay'];
+	init_config_arr(array('dhcrelay'));
+	$dhcrelaycfg = &$config['dhcrelay'];
 
 	/* DHCPRelay enabled on any interfaces? */
 	if (!isset($dhcrelaycfg['enable'])) {
@@ -1766,6 +1747,7 @@ function services_dhcrelay_configure() {
 
 	$iflist = get_configured_interface_list();
 
+	$dhcrelayifs = array();
 	$dhcifaces = explode(",", $dhcrelaycfg['interface']);
 	foreach ($dhcifaces as $dhcrelayif) {
 		if (!isset($iflist[$dhcrelayif]) ||
@@ -1777,6 +1759,7 @@ function services_dhcrelay_configure() {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 		}
 	}
+	$dhcrelayifs = array_unique($dhcrelayifs);
 
 	/*
 	 * In order for the relay to work, it needs to be active
@@ -1787,22 +1770,31 @@ function services_dhcrelay_configure() {
 		log_error(gettext("No destination IP has been configured!"));
 		return;
 	}
-
+	$srvifaces = array();
 	foreach ($srvips as $srcidx => $srvip) {
 		$destif = guess_interface_from_ip($srvip);
 		if (!empty($destif)) {
-			$dhcrelayifs[] = $destif;
+			$srvifaces[] = $destif;
 		}
 	}
-	$dhcrelayifs = array_unique($dhcrelayifs);
+	$srvifaces = array_unique($srvifaces);
+
+	/* The server interface(s) should not be in this list */
+	$dhcrelayifs = array_diff($dhcrelayifs, $srvifaces);
 
 	/* fire up dhcrelay */
 	if (empty($dhcrelayifs)) {
-		log_error(gettext("No suitable interface found for running dhcrelay!"));
+		log_error(gettext("No suitable downstream interfaces found for running dhcrelay!"));
+		return; /* XXX */
+	}
+	if (empty($srvifaces)) {
+		log_error(gettext("No suitable upstream interfaces found for running dhcrelay!"));
 		return; /* XXX */
 	}
 
-	$cmd = "/usr/local/sbin/dhcrelay -i " . implode(" -i ", $dhcrelayifs);
+	$cmd = "/usr/local/sbin/dhcrelay";
+	$cmd .= " -id " . implode(" -id ", $dhcrelayifs);
+	$cmd .= " -iu " . implode(" -iu ", $srvifaces);
 
 	if (isset($dhcrelaycfg['agentoption'])) {
 		$cmd .= " -a -m replace";
@@ -1826,7 +1818,8 @@ function services_dhcrelay6_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay6.pid");
 
-	$dhcrelaycfg =& $config['dhcrelay6'];
+	init_config_arr(array('dhcrelay6'));
+	$dhcrelaycfg = &$config['dhcrelay6'];
 
 	/* DHCPv6 Relay enabled on any interfaces? */
 	if (!isset($dhcrelaycfg['enable'])) {
@@ -1926,7 +1919,11 @@ function services_dyndns_configure($int = "") {
 		echo "services_dyndns_configure() being called $mt\n";
 	}
 
-	$dyndnscfg = $config['dyndnses']['dyndns'];
+	if (isset($config['dyndnses']['dyndns']) && is_array($config['dyndnses']['dyndns'])) {
+		$dyndnscfg = $config['dyndnses']['dyndns'];
+	} else {
+		return 0;
+	}
 	$gwgroups = return_gateway_groups_array(true);
 	if (is_array($dyndnscfg)) {
 		if (platform_booting()) {
@@ -2340,8 +2337,8 @@ trap := "{$config['snmpd']['trapstring']}"
 EOD;
 		}
 
-		$sysDescr = "{$g['product_name']} " . php_uname("n") .
-			" {$g['product_version']} {$g['platform']} " . php_uname("s") .
+		$sysDescr = "{$g['product_name']} {$config['system']['hostname']}.{$config['system']['domain']}" .
+			" {$g['product_version_string']} {$g['platform']} " . php_uname("s") .
 			" " . php_uname("r") . " " . php_uname("m");
 
 		$snmpdconf .= <<<EOD
@@ -2756,7 +2753,7 @@ function configure_cron() {
 	$crontab_contents = file("/etc/crontab", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
 	for ($i = 0; $i < count($crontab_contents); $i++) {
-		$cron_item =& $crontab_contents[$i];
+		$cron_item = &$crontab_contents[$i];
 		if (strpos($cron_item, "# pfSense specific crontab entries") !== false) {
 			array_splice($crontab_contents, $i - 1);
 			break;

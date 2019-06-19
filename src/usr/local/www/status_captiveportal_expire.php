@@ -3,7 +3,7 @@
  * status_captiveportal_expire.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -40,7 +40,8 @@ if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
 
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 /* If the zone does not exist, do not display the invalid zone */
 if (!array_key_exists($cpzone, $a_cp)) {
@@ -83,7 +84,7 @@ $section->addInput(new Form_Textarea(
 	$_POST['vouchers']
 ))->setHelp('Enter multiple vouchers separated by space or newline. All valid vouchers will be marked as expired.');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',

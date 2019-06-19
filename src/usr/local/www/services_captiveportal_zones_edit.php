@@ -3,7 +3,7 @@
  * services_captiveportal_zones_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,11 +36,8 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Add Zo
 $pglinks = array("", "services_captiveportal_zones.php", "@self");
 $shortcut_section = "captiveportal";
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 if ($_POST['Submit']) {
 	unset($input_errors);

@@ -3,7 +3,7 @@
  * interfaces_gif.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,13 +28,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['gifs'])) {
-	$config['gifs'] = array();
-}
-if (!is_array($config['gifs']['gif'])) {
-	$config['gifs']['gif'] = array();
-}
-
+init_config_arr(array('gifs', 'gif'));
 $a_gifs = &$config['gifs']['gif'] ;
 
 function gif_inuse($num) {

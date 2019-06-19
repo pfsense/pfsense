@@ -130,8 +130,7 @@
 	</fields>
 	<stepbeforeformdisplay>
 		<![CDATA[
-		$config['wizardtemp'] = array();
-		$config['wizardtemp']['system'] = array();
+		init_config_arr(array('wizardtemp', 'system'));
 		$config['wizardtemp']['system']['hostname'] = $config['system']['hostname'];
 		$config['wizardtemp']['system']['domain'] = $config['system']['domain'];
 		]]>
@@ -534,14 +533,7 @@
 		}
 		$type = $_POST['selectedtype'];
 
-		if (!is_array($config['ppps'])) {
-			$config['ppps'] = array();
-		}
-
-		if (!is_array($config['ppps']['ppp'])) {
-			$config['ppps']['ppp'] = array();
-		}
-
+		init_config_arr(array('ppps', 'ppp'));
 		if (count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 				if ($ppp['ptpid'] == "0") {
@@ -765,8 +757,7 @@
 		$config['system']['hostname'] = $config['wizardtemp']['system']['hostname'];
 		$config['system']['domain'] = $config['wizardtemp']['system']['domain'];
 		if (!empty($config['wizardtemp']['wangateway'])) {
-			if (!is_array($config['gateways']['gateway_item']))
-				$config['gateways']['gateway_item'] = array();
+			init_config_arr(array('gateways', 'gateway_item'));
 			$found = false;
 			$defaultgw_found = false;
 			foreach ($config['gateways']['gateway_item'] as & $gw) {

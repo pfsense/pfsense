@@ -3,7 +3,7 @@
  * services_pppoe_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,10 +46,7 @@ function vpn_pppoe_get_id() {
 	return $vpnid;
 }
 
-if (!is_array($config['pppoes']['pppoe'])) {
-	$config['pppoes']['pppoe'] = array();
-}
-
+init_config_arr(array('pppoes', 'pppoe'));
 $a_pppoes = &$config['pppoes']['pppoe'];
 
 if (is_numericint($_REQUEST['id'])) {
@@ -541,7 +538,7 @@ $section->addInput(new Form_StaticText(
 
 // Hidden fields
 if (isset($id)) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -550,7 +547,7 @@ if (isset($id)) {
 }
 
 if (isset($pconfig['pppoeid'])) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'pppoeid',
 		null,
 		'hidden',

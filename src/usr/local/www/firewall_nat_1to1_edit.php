@@ -3,7 +3,7 @@
  * firewall_nat_1to1_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -50,10 +50,7 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['nat']['onetoone'])) {
-	$config['nat']['onetoone'] = array();
-}
-
+init_config_arr(array('nat', 'onetoone'));
 $a_1to1 = &$config['nat']['onetoone'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {

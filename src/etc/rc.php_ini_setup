@@ -23,12 +23,10 @@
 VERSION=`/bin/cat /etc/version`
 MIN_REALMEM_FOR_OPCACHE=512
 
-if pkg info -e php72; then
-	PHP_VER=7
+if pkg info -e php73; then
+	EXTENSIONSDIR="/usr/local/lib/php/20180731/"
+elif pkg info -e php72; then
 	EXTENSIONSDIR="/usr/local/lib/php/20170718/"
-else
-	PHP_VER=5
-	EXTENSIONSDIR="/usr/local/lib/php/20131226/"
 fi
 
 # Grab amount of memory that is detected
@@ -98,10 +96,6 @@ PHPMODULES="$PHPMODULES posix"
 PHPMODULES="$PHPMODULES readline"
 # Login sessions
 PHPMODULES="$PHPMODULES session"
-if [ $PHP_VER -eq 5 ]; then
-	# Extra sanity seatbelts
-	PHPMODULES="$PHPMODULES suhosin"
-fi
 # Firewall rules edit
 PHPMODULES="$PHPMODULES ctype"
 # firewall_rules_edit.php
@@ -252,24 +246,6 @@ else
 	/bin/cat >>/usr/local/etc/php.ini <<EOF
 ; opcache Settings
 opcache.enabled="0"
-EOF
-fi
-
-if [ $PHP_VER -eq 5 ]; then
-	/bin/cat >>/usr/local/etc/php.ini <<EOF
-
-[suhosin]
-suhosin.get.max_array_index_length = 256
-suhosin.get.max_vars = 5000
-suhosin.get.max_value_length = 500000
-suhosin.post.max_array_index_length = 256
-suhosin.post.max_vars = 5000
-suhosin.post.max_value_length = 500000
-suhosin.request.max_array_index_length = 256
-suhosin.request.max_vars = 5000
-suhosin.request.max_value_length = 500000
-suhosin.memory_limit = 805306368
-
 EOF
 fi
 

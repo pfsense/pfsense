@@ -3,7 +3,7 @@
  * vpn_ipsec_phase2.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -36,20 +36,10 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['ipsec']['client'])) {
-	$config['ipsec']['client'] = array();
-}
-
+init_config_arr(array('ipsec', 'client'));
 $a_client = &$config['ipsec']['client'];
-
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
-}
-
-if (!is_array($config['ipsec']['phase2'])) {
-	$config['ipsec']['phase2'] = array();
-}
-
+init_config_arr(array('ipsec', 'phase1'));
+init_config_arr(array('ipsec', 'phase2'));
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
@@ -727,7 +717,7 @@ $section->addInput(new Form_IpAddress(
 
 // Hidden inputs
 if ($pconfig['mobile']) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'mobile',
 		null,
 		'hidden',
@@ -735,7 +725,7 @@ if ($pconfig['mobile']) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'ikeid',
 	null,
 	'hidden',
@@ -743,7 +733,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (!empty($pconfig['reqid'])) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'reqid',
 		null,
 		'hidden',
@@ -751,7 +741,7 @@ if (!empty($pconfig['reqid'])) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'uniqid',
 	null,
 	'hidden',
@@ -998,8 +988,6 @@ events.push(function() {
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
-	hideInput('ikeid', true);
-	hideInput('uniqid', true);
 
 	change_mode();
 	change_protocol();

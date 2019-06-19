@@ -3,7 +3,7 @@
  * diag_command.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved

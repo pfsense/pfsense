@@ -2,7 +2,7 @@
 /*
  * parser_dhcpv6_leases.inc
  *
- * Copyright (c) 2017-2018 Anders Lind (anders.lind@gmail.com)
+ * Copyright (c) 2017-2019 Anders Lind (anders.lind@gmail.com)
  * All rights reserved.
  *
  * part of pfSense (https://www.pfsense.org)

@@ -3,7 +3,7 @@
  * interfaces_bridge_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,14 +27,6 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-
-if (!is_array($config['bridges'])) {
-	$config['bridges'] = array();
-}
-
-if (!is_array($config['bridges']['bridged'])) {
-	$config['bridges']['bridged'] = array();
-}
 
 function is_aoadv_used($pconfig) {
 	if (($pconfig['static'] !="") ||
@@ -60,6 +52,7 @@ function is_aoadv_used($pconfig) {
 	return false;
 }
 
+init_config_arr(array('bridges', 'bridged'));
 $a_bridges = &$config['bridges']['bridged'];
 
 $ifacelist = get_configured_interface_with_descr();
@@ -632,7 +625,7 @@ foreach ($ifacelist as $ifn => $ifdescr) {
 	$i++;
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'bridgeif',
 	null,
 	'hidden',
@@ -640,7 +633,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_bridges[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

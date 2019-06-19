@@ -34,7 +34,7 @@ $GITSYNC_MERGE = "/root/.gitsync_merge";
 
 /* NOTE: Set branches here */
 $branches = array(
-	"master" => "2.4.5 development branch",
+	"master" => "2.5.0 development branch",
 	"build_commit" => "The commit originally used to build the image"
 );
 

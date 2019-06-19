@@ -3,7 +3,7 @@
  * interfaces_gre_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,13 +29,7 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-if (!is_array($config['gres'])) {
-	$config['gres'] = array();
-}
-if (!is_array($config['gres']['gre'])) {
-	$config['gres']['gre'] = array();
-}
-
+init_config_arr(array('gres', 'gre'));
 $a_gres = &$config['gres']['gre'];
 $id = $_REQUEST['id'];
 
@@ -212,7 +206,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'greif',
 	null,
 	'hidden',
@@ -220,7 +214,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_gres[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

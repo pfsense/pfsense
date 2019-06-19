@@ -3,7 +3,7 @@
  * services_checkip.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,14 +28,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['checkipservices'])) {
-	$config['checkipservices'] = array();
-}
-
-if (!is_array($config['checkipservices']['checkipservice'])) {
-	$config['checkipservices']['checkipservice'] = array();
-}
-
+init_config_arr(array('checkipservices', 'checkipservice'));
 $a_checkipservice = &$config['checkipservices']['checkipservice'];
 
 $dirty = false;

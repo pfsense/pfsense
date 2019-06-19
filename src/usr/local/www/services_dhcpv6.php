@@ -3,7 +3,7 @@
  * services_dhcpv6.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -101,17 +101,6 @@ if (!$g['services_dhcp_server_enable']) {
 }
 
 $if = $_REQUEST['if'];
-
-/* if OLSRD is enabled, allow WAN to house DHCP. */
-if ($config['installedpackages']['olsrd']) {
-	foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
-		if ($olsrd['enable']) {
-			$is_olsr_enabled = true;
-			break;
-		}
-	}
-}
-
 $iflist = get_configured_interface_with_descr();
 $iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 
@@ -171,6 +160,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 	if (!is_array($config['dhcpdv6'][$if]['staticmap'])) {
 		$config['dhcpdv6'][$if]['staticmap'] = array();
 	}
+	init_config_arr(array('dhcpdv6', $if, 'staticmap'));
 	$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 }
 
@@ -634,15 +624,6 @@ if (is_ipaddrv6($ifcfgip)) {
 		))->setHelp($trackifname ? 'Prefix Delegation subnet will be appended to the beginning of the defined range':'');
 }
 
-if ($is_olsr_enabled) {
-	$section->addInput(new Form_Select(
-	'netmask',
-	'Subnet Mask',
-	$pconfig['netmask'],
-	array_combine(range(128, 1, -1), range(128, 1, -1))
-	));
-}
-
 $f1 = new Form_Input(
 	'range_from',
 	null,
@@ -1018,7 +999,7 @@ $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
 $section->addInput($btnaddopt);
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'if',
 	null,
 	'hidden',

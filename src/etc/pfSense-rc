@@ -235,9 +235,22 @@ echo
 
 /sbin/conscontrol mute off >/dev/null
 
-SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
+SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1 | /usr/bin/head -n 1`
 if [ -n "${SWAPDEVICE}" ]; then
-	/sbin/swapon -a 2>/dev/null >/dev/null
+	/bin/rm -f /tmp/fstab.swap
+	if ! [ -c ${SWAPDEVICE} ]; then
+		# Keep the original device, in case it is special, such as encrypted+mirrored zfs swap
+		echo "${SWAPDEVICE}	none	swap	sw	0	0" >> /tmp/fstab.swap
+		# The swap device in fstab does not exist, look for other valid entries and update fstab
+		for SWAPLABEL in /dev/label/swap* /dev/mirror/swap*; do
+			if [ -c ${SWAPLABEL} ]; then
+				echo "${SWAPLABEL}	none	swap	sw	0	0" >> /tmp/fstab.swap
+			fi
+		done
+	else
+		/bin/cp /etc/fstab /tmp/fstab.swap
+	fi
+	/sbin/swapon -F /tmp/fstab.swap -a 2>/dev/null >/dev/null
 	/etc/rc.savecore
 fi
 
@@ -298,7 +311,7 @@ trap "echo 'Reboot interrupted'; exit 1" 3
 
 echo -n "."
 DISABLESYSLOGCLOG=$(/usr/local/sbin/read_xml_tag.sh boolean system/disablesyslogclog)
-LOG_FILES="system filter dhcpd vpn poes l2tps openvpn portalauth ipsec ppp relayd wireless nginx ntpd gateways resolver routing"
+LOG_FILES="system filter dhcpd vpn poes l2tps openvpn portalauth ipsec ppp wireless nginx ntpd gateways resolver routing"
 
 DEFAULT_LOG_FILE_SIZE=$(/usr/local/sbin/read_xml_tag.sh string syslog/logfilesize)
 DEFAULT_LOG_FILE_SIZE=${DEFAULT_LOG_FILE_SIZE:-"511488"}

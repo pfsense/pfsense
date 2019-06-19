@@ -197,6 +197,11 @@ echo "Setting up interfaces microcode...";
 setup_microcode();
 echo "done.\n";
 
+if (isset($config['system']['mds_disable']) &&
+    (strlen($config['system']['mds_disable']) > 0)) {
+	set_single_sysctl("hw.mds_disable" , (int)$config['system']['mds_disable']);
+}
+
 /* remove leftover dhcp6c lock files if they exist */
 foreach ($config['interfaces'] as $interface) {
         if ($interface['ipaddrv6'] == "dhcp6") {
@@ -279,11 +284,8 @@ echo "Starting NTP time client...";
 system_ntp_configure();
 echo "done.\n";
 
-/* start load balancer daemon */
-relayd_configure();
-
-/* configure console menu and serial port*/
-setup_serial_port();
+/* Configure console (and serial port - if necessary). */
+console_configure();
 
 /* start DHCP service */
 services_dhcpd_configure();

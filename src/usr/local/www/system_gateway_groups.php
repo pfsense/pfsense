@@ -3,7 +3,7 @@
  * system_gateway_groups.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -33,15 +33,10 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("openvpn.inc");
 
-if (!is_array($config['gateways'])) {
-	$config['gateways'] = array();
-}
-
-if (!is_array($config['gateways']['gateway_group'])) {
-	$config['gateways']['gateway_group'] = array();
-}
-
+init_config_arr(array('gateways', 'gateway_group'));
 $a_gateway_groups = &$config['gateways']['gateway_group'];
+
+init_config_arr(array('gateways', 'gateway_item'));
 $a_gateways = &$config['gateways']['gateway_item'];
 $changedesc = gettext("Gateway Groups") . ": ";
 

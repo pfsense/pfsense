@@ -268,11 +268,7 @@ make_world() {
 		|| print_error_pfS
 
 	# Use the builder cross compiler from obj to produce the final binary.
-	if [ "${TARGET_ARCH}" == "$(uname -p)" ]; then
-		BUILD_CC="${MAKEOBJDIRPREFIX}/${FREEBSD_SRC_DIR}/tmp/usr/bin/cc"
-	else
-		BUILD_CC="${MAKEOBJDIRPREFIX}/${TARGET}.${TARGET_ARCH}${FREEBSD_SRC_DIR}/tmp/usr/bin/cc"
-	fi
+	BUILD_CC="${MAKEOBJDIRPREFIX}${FREEBSD_SRC_DIR}/${TARGET}.${TARGET_ARCH}/tmp/usr/bin/cc"
 
 	[ -f "${BUILD_CC}" ] || print_error_pfS
 
@@ -992,8 +988,8 @@ get_altabi_arch() {
 		echo "x86:64"
 	elif [ "${_target_arch}" = "i386" ]; then
 		echo "x86:32"
-	elif [ "${_target_arch}" = "armv6" ]; then
-		echo "32:el:eabi:hardfp"
+	elif [ "${_target_arch}" = "armv7" ]; then
+		echo "32:el:eabi:softfp"
 	else
 		echo ">>> ERROR: Invalid arch"
 		print_error_pfS
@@ -1456,7 +1452,7 @@ poudriere_possible_archs() {
 	local _arch=$(uname -m)
 	local _archs=""
 
-	# If host is amd64, we'll create both repos, and if possible armv6
+	# If host is amd64, we'll create both repos, and if possible armv7
 	if [ "${_arch}" = "amd64" ]; then
 		_archs="amd64.amd64"
 
@@ -1464,8 +1460,8 @@ poudriere_possible_archs() {
 			# Make sure binmiscctl is ok
 			/usr/local/etc/rc.d/qemu_user_static forcestart >/dev/null 2>&1
 
-			if binmiscctl lookup armv6 >/dev/null 2>&1; then
-				_archs="${_archs} arm.armv6"
+			if binmiscctl lookup armv7 >/dev/null 2>&1; then
+				_archs="${_archs} arm.armv7"
 			fi
 		fi
 	fi
@@ -1659,6 +1655,8 @@ ATOMIC_PACKAGE_REPOSITORY=yes
 COMMIT_PACKAGES_ON_FAILURE=no
 KEEP_OLD_PACKAGES=yes
 KEEP_OLD_PACKAGES_COUNT=5
+ALLOW_MAKE_JOBS=yes
+PARALLEL_JOBS=8
 EOF
 
 	if pkg info -e ccache; then
@@ -1697,7 +1695,7 @@ EOF
 	for jail_arch in ${_archs}; do
 		jail_name=$(poudriere_jail_name ${jail_arch})
 
-		if [ "${jail_arch}" = "arm.armv6" ]; then
+		if [ "${jail_arch}" = "arm.armv7" ]; then
 			native_xtools="-x"
 		else
 			native_xtools=""
@@ -1735,7 +1733,7 @@ poudriere_update_jails() {
 			_create_or_update_text="Creating"
 		fi
 
-		if [ "${jail_arch}" = "arm.armv6" ]; then
+		if [ "${jail_arch}" = "arm.armv7" ]; then
 			native_xtools="-x"
 		else
 			native_xtools=""

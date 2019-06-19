@@ -3,7 +3,7 @@
  * system_usermanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
  * All rights reserved.
@@ -45,10 +45,7 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$id = $_REQUEST['userid'];
 }
 
-if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
-	$config['system']['user'] = array();
-}
-
+init_config_arr(array('system', 'user'));
 $a_user = &$config['system']['user'];
 $act = $_REQUEST['act'];
 
@@ -425,7 +422,7 @@ if ($_POST['save']) {
 					$dn['organizationName'] = $subject['O'];
 				}
 				if (!empty($subject['OU'])) {
-					$dn['organizationalUnit'] = $subject['OU'];
+					$dn['organizationalUnitName'] = $subject['OU'];
 				}
 				$dn['commonName'] = $userent['name'];
 				$cn_altname = cert_add_altname_type($userent['name']);

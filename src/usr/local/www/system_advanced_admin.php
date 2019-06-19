@@ -3,7 +3,7 @@
  * system_advanced_admin.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -39,6 +39,8 @@ require_once("shaper.inc");
 init_config_arr(array('system', 'webgui'));
 init_config_arr(array('system', 'ssh'));
 
+$valid_webguiproto = array('http', 'https');
+
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
@@ -59,9 +61,15 @@ $pconfig['primaryconsole'] = $config['system']['primaryconsole'];
 $pconfig['enablesshd'] = $config['system']['ssh']['enable'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sshdkeyonly'] = $config['system']['ssh']['sshdkeyonly'];
+$pconfig['sshdagentforwarding'] = isset($config['system']['ssh']['sshdagentforwarding']);
 $pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
+$pconfig['sshguard_threshold'] = $config['system']['sshguard_threshold'] ?? '';
+$pconfig['sshguard_blocktime'] = $config['system']['sshguard_blocktime'] ?? '';
+$pconfig['sshguard_detection_time'] = $config['system']['sshguard_detection_time'] ?? '';
+$pconfig['sshguard_whitelist'] = $config['system']['sshguard_whitelist'] ?? '';
 
-$a_cert =& $config['cert'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 $certs_available = false;
 
 if (is_array($a_cert) && count($a_cert)) {
@@ -80,6 +88,11 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
+
+	if (!in_array($pconfig['webguiproto'], $valid_webguiproto)) {
+		$input_errors[] = gettext("A valid webConfigurator protocol must be specified");
+	}
+
 	if ($_POST['webguiport']) {
 		if (!is_port($_POST['webguiport'])) {
 			$input_errors[] = gettext("A valid webConfigurator port number must be specified");
@@ -106,6 +119,26 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid port number must be specified");
 		}
 	}
+
+	$whitelist_addresses = array();
+	for ($i = 0; isset($_POST['address' . $i]); $i++) {
+		/* Ignore blank fields */
+		if (empty($_POST['address' . $i])) {
+			continue;
+		}
+
+		$whitelist_address = $_POST['address' . $i] . '/' .
+		    $_POST['address_subnet'. $i];
+
+		if (!is_subnet($whitelist_address)) {
+			$input_errors[] = sprintf(gettext(
+			    "Invalid subnet '%s' added to Login Protection Whitelist"),
+			    $whitelist_address);
+			break;
+		}
+		$whitelist_addresses[] = $whitelist_address;
+	}
+	$pconfig['sshguard_whitelist'] = implode(' ', $whitelist_addresses);
 
 	ob_flush();
 	flush();
@@ -135,7 +168,7 @@ if ($_POST) {
 
 			$config['system']['webgui']['disablehttpredirect'] = true;
 		} else {
-			if ($config['system']['webgui']['disablehttpredirect'] == true) {
+			if (isset($config['system']['webgui']['disablehttpredirect'])) {
 				$restart_webgui = true;
 			}
 
@@ -149,7 +182,7 @@ if ($_POST) {
 
 			$config['system']['webgui']['disablehsts'] = true;
 		} else {
-			if ($config['system']['webgui']['disablehsts'] == true) {
+			if (isset($config['system']['webgui']['disablehsts'])) {
 				$restart_webgui = true;
 			}
 
@@ -163,11 +196,11 @@ if ($_POST) {
 
 			$config['system']['webgui']['ocsp-staple'] = true;
 		} else {
-			if ($config['system']['webgui']['ocsp-staple'] == true) {
+			if (isset($config['system']['webgui']['ocsp-staple'])) {
 				$restart_webgui = true;
 			}
 
-			$config['system']['webgui']['ocsp-staple'] = false;
+			unset($config['system']['webgui']['ocsp-staple']);
 		}
 		
 		if ($_POST['webgui-login-messages'] == "yes") {
@@ -252,6 +285,13 @@ if ($_POST) {
 			unset($config['system']['ssh']['sshdkeyonly']);
 		}
 
+		$sshd_agentforwarding = isset($config['system']['ssh']['sshdagentforwarding']);
+		if ($_POST['sshdagentforwarding']) {
+			$config['system']['ssh']['sshdagentforwarding'] = 'enabled';
+		} else if (isset($config['system']['ssh']['sshdagentforwarding'])) {
+			unset($config['system']['ssh']['sshdagentforwarding']);
+		}
+
 		$sshd_port = $config['system']['ssh']['port'];
 		if ($_POST['sshport']) {
 			$config['system']['ssh']['port'] = $_POST['sshport'];
@@ -261,6 +301,7 @@ if ($_POST) {
 
 		if (($sshd_enabled != $config['system']['ssh']['enable']) ||
 		    ($sshd_keyonly != $config['system']['ssh']['sshdkeyonly']) ||
+		    ($sshd_agentforwarding != $config['system']['ssh']['sshdagentforwarding']) ||
 		    ($sshd_port != $config['system']['ssh']['port'])) {
 			$restart_sshd = true;
 		}
@@ -281,7 +322,7 @@ if ($_POST) {
 			} else {
 				list($host) = explode(":", $_SERVER['HTTP_HOST']);
 			}
-			$prot = $config['system']['webgui']['protocol'];
+			$prot = in_array($config['system']['webgui']['protocol'], $valid_webguiproto) ? $config['system']['webgui']['protocol'] : 'http' ;
 			$port = $config['system']['webgui']['port'];
 			if ($port) {
 				$url = "{$prot}://{$host}:{$port}/system_advanced_admin.php";
@@ -290,17 +331,42 @@ if ($_POST) {
 			}
 		}
 
+		$restart_sshguard = false;
+		if (update_if_changed("login protection threshold",
+		    $config['system']['sshguard_threshold'],
+		    $pconfig['sshguard_threshold'])) {
+			$restart_sshguard = true;
+		}
+		if (update_if_changed("login protection blocktime",
+		    $config['system']['sshguard_blocktime'],
+		    $pconfig['sshguard_blocktime'])) {
+			$restart_sshguard = true;
+		}
+		if (update_if_changed("login protection detection_time",
+		    $config['system']['sshguard_detection_time'],
+		    $pconfig['sshguard_detection_time'])) {
+			$restart_sshguard = true;
+		}
+		if (update_if_changed("login protection whitelist",
+		    $config['system']['sshguard_whitelist'],
+		    $pconfig['sshguard_whitelist'])) {
+			$restart_sshguard = true;
+		}
+
 		write_config();
 
 		$changes_applied = true;
 		$retval = 0;
 		$retval |= filter_configure();
+		if ($restart_sshguard) {
+			$retval |= system_syslogd_start(true);
+		}
 
 		if ($restart_webgui) {
 			$extra_save_msg = sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."), $url);
 		}
 
-		setup_serial_port();
+		console_configure();
 		// Restart DNS in case dns rebinding toggled
 		if (isset($config['dnsmasq']['enable'])) {
 			services_dnsmasq_configure();
@@ -518,6 +584,13 @@ $section->addInput(new Form_Select(
 	'either a valid password or a valid authorized key to login.',
 	'<a href="system_usermanager.php">', '</a>', '<i>', '</i>', '<b>', '</b>');
 
+$section->addInput(new Form_Checkbox(
+	'sshdagentforwarding',
+	'Allow Agent Forwarding',
+	'Enables ssh-agent forwarding support.',
+	$pconfig['sshdagentforwarding']
+));
+
 $section->addInput(new Form_Input(
 	'sshport',
 	'SSH port',
@@ -526,6 +599,78 @@ $section->addInput(new Form_Input(
 	['min' => 1, 'max' => 65535, 'placeholder' => 22]
 ))->setHelp('Note: Leave this blank for the default of 22.');
 
+$form->add($section);
+$section = new Form_Section('Login Protection');
+
+$section->addinput(new form_input(
+	'sshguard_threshold',
+	'Threshold',
+	'number',
+	$pconfig['sshguard_threshold'],
+	['min' => 10, 'step' => 10, 'placeholder' => 30]
+))->setHelp('Block attackers when their cumulative attack score exceeds '.
+	'threshold.  Most attacks have a score of 10.');
+
+$section->addinput(new form_input(
+	'sshguard_blocktime',
+	'Blocktime',
+	'number',
+	$pconfig['sshguard_blocktime'],
+	['min' => 10, 'step' => 10, 'placeholder' => 120]
+))->setHelp('Block attackers for initially blocktime seconds after exceeding '.
+	'threshold. Subsequent blocks increase by a factor of 1.5.%s'.
+	'Attacks are unblocked at random intervals, so actual block '.
+	'times will be longer.', '<br />');
+
+$section->addinput(new form_input(
+	'sshguard_detection_time',
+	'Detection time',
+	'number',
+	$pconfig['sshguard_detection_time'],
+	['min' => 10, 'step' => 10, 'placeholder' => 1800]
+))->setHelp('Remember potential attackers for up to detection_time seconds '.
+	'before resetting their score.');
+
+$counter = 0;
+$addresses = explode(' ', $pconfig['sshguard_whitelist']);
+
+$numaddrs = count($addresses);
+
+while ($counter < $numaddrs) {
+	list($address, $address_subnet) = explode("/", $addresses[$counter]);
+
+	$group = new Form_Group($counter == 0 ? 'Whitelist' : '');
+	$group->addClass('repeatable');
+
+	$group->add(new Form_IpAddress(
+		'address' . $counter,
+		'Address',
+		$address,
+		'BOTH'
+	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4);
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning btn-xs');
+
+	if ($counter == ($numaddrs - 1)) {
+		$group->setHelp(gettext(sprintf("%sAddresses added to the whitelist will bypass login protection.%s", 
+			'<span class="text-danger">', '</span>')));
+	}
+
+	$section->add($group);
+	$counter++;
+}
+
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add address',
+	null,
+	'fa-plus'
+))->addClass('btn-success addbtn');
 
 $form->add($section);
 $section = new Form_Section('Serial Communications');
@@ -582,8 +727,9 @@ print $form;
 //<![CDATA[
 events.push(function() {
 
-	// ---------- On initial page load ------------------------------------------------------------
+	checkLastRow();
 
+	// ---------- On initial page load ------------------------------------------------------------
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');
 	hideCheckbox('ocsp-staple', "<?php 
@@ -592,7 +738,6 @@ events.push(function() {
 			?>" === "true");
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
-
 	 $('[name=webguiproto]').click(function () {
 		hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 		hideCheckbox('webgui-hsts', $('input[name=webguiproto]:checked').val() == 'http');

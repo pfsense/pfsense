@@ -58,26 +58,28 @@ if (!empty($local_ip)) {
 if (isset($config['system']['gw_down_kill_states'])) {
 	if (!empty($local_ip)) {
 		log_error("rc.kill_states: Removing states for IP {$local_ip}/{$subnet_bits}");
-		$nat_states = exec_command("/sbin/pfctl -i {$interface} -ss | " .
-			"/usr/bin/egrep '\-> +{$local_ip}:[0-9]+ +\->'");
-
+		$filter = array(
+			array('interface' => $interface),
+			array('filter' => $local_ip)
+		);
+		$states = pfSense_get_pf_states($filter);
 		$cleared_states = array();
-		foreach (explode("\n", $nat_states) as $nat_state) {
-			if (preg_match_all('/([\d\.]+):[\d]+[\s->]+/i', $nat_state, $matches, PREG_SET_ORDER) != 3) {
+		foreach ($states as $state) {
+			/* Locate and kill states for sources that NAT out through $local_ip */
+			list($src, $srcport) = explode(":", $state['src']);
+			list($dst, $dstport) = explode(":", $state['dst']);
+			list($osrc, $osrcport) = explode(":", $state['src-orig']);
+			/* If the local IP address isn't the source, or if this isn't
+			 * a NAT state, or if we've already cleared this, skip it. */
+			if (($src != $local_ip) ||
+			    empty($state['src-orig']) ||
+			    in_array("{$osrc},{$dst}", $cleared_states)) {
 				continue;
 			}
 
-			$src = $matches[0][1];
-			$dst = $matches[2][1];
-
-			if (empty($src) || empty($dst) || in_array("{$src},{$dst}", $cleared_states)) {
-				continue;
-			}
-
-			$cleared_states[] = "{$src},{$dst}";
-			pfSense_kill_states($src, $dst);
+			$cleared_states[] = "{$osrc},{$dst}";
+			pfSense_kill_states($osrc, $dst);
 		}
-
 		pfSense_kill_states("0.0.0.0/0", "{$local_ip}/{$subnet_bits}");
 		pfSense_kill_states("{$local_ip}/{$subnet_bits}");
 		pfSense_kill_srcstates("{$local_ip}/{$subnet_bits}");

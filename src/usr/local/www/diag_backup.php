@@ -3,7 +3,7 @@
  * diag_backup.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -41,6 +41,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pkg-utils.inc");
 
 $rrddbpath = "/var/db/rrd";
 $rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
@@ -151,9 +152,6 @@ if ($_POST) {
 	if ($_POST["nopackages"] <> "") {
 		$options = "nopackages";
 	}
-	if ($_POST["ver"] <> "") {
-		$ver2restore = $_POST["ver"];
-	}
 	if ($mode) {
 		if ($mode == "download") {
 			if ($_POST['encrypt']) {
@@ -179,10 +177,7 @@ if ($_POST) {
 						$data = backup_config_section($_POST['backuparea']);
 						$name = "{$_POST['backuparea']}-{$name}";
 					}
-					$sfn = "{$g['tmp_path']}/config.xml.nopkg";
-					file_put_contents($sfn, $data);
-					exec("sed '/<installedpackages>/,/<\/installedpackages>/d' {$sfn} > {$sfn}-new");
-					$data = file_get_contents($sfn . "-new");
+					$data = preg_replace('/\t*<installedpackages>.*<\/installedpackages>\n/sm', '', $data);
 				} else {
 					if (!$_POST['backuparea']) {
 						/* backup entire configuration */
@@ -230,8 +225,12 @@ if ($_POST) {
 					header("Pragma: private");
 					header("Cache-Control: private, must-revalidate");
 				}
-				echo $data;
 
+				while (ob_get_level()) {
+					@ob_end_clean();
+				}
+				echo $data;
+				@ob_end_flush();
 				exit;
 			}
 		}
@@ -328,11 +327,13 @@ if ($_POST) {
 
 								if ($pkg_repo_restored) {
 									write_config(gettext("Removing pkg repository set after restoring full configuration"));
+									pkg_update(true);
 								}
 
 								if (file_exists("/boot/loader.conf")) {
 									$loaderconf = file_get_contents("/boot/loader.conf");
-									if (strpos($loaderconf, "console=\"comconsole")) {
+									if (strpos($loaderconf, "console=\"comconsole") ||
+									    strpos($loaderconf, "boot_serial=\"YES")) {
 										$config['system']['enableserial'] = true;
 										write_config(gettext("Restore serial console enabling in configuration."));
 									}
@@ -340,7 +341,8 @@ if ($_POST) {
 								}
 								if (file_exists("/boot/loader.conf.local")) {
 									$loaderconf = file_get_contents("/boot/loader.conf.local");
-									if (strpos($loaderconf, "console=\"comconsole")) {
+									if (strpos($loaderconf, "console=\"comconsole") ||
+									    strpos($loaderconf, "boot_serial=\"YES")) {
 										$config['system']['enableserial'] = true;
 										write_config(gettext("Restore serial console enabling in configuration."));
 									}
@@ -416,7 +418,7 @@ if ($_POST) {
 										}
 									}
 								}
-								setup_serial_port();
+								console_configure();
 								if (is_interface_mismatch() == true) {
 									touch("/var/run/interface_mismatch_reboot_needed");
 									clear_subsystem_dirty("restore");

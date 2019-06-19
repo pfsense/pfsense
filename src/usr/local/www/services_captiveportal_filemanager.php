@@ -3,7 +3,7 @@
  * services_captiveportal_filemanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Jonathan De Graeve (jonathan.de.graeve@imelda.be)
  * Copyright (c) 2005-2006 Paul Taylor (paultaylor@winn-dixie.com)
  * All rights reserved.
@@ -57,21 +57,13 @@ if (empty($cpzone)) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'element'));
+$a_cp = &$config['captiveportal'];
+$a_element = &$a_cp[$cpzone]['element'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("File Manager"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
-
-if (!is_array($a_cp[$cpzone]['element'])) {
-	$a_cp[$cpzone]['element'] = array();
-}
-
-$a_element =& $a_cp[$cpzone]['element'];
 
 // Calculate total size of all files
 $total_size = 0;
@@ -164,7 +156,7 @@ if ($_REQUEST['act'] == 'add') {
 
 	$section = new Form_Section('Upload a New File');
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'zone',
 		null,
 		'hidden',

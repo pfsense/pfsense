@@ -3,7 +3,7 @@
  * services_dnsmasq.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
  *
@@ -83,14 +83,6 @@ if (!empty($config['dnsmasq']['interface'])) {
 	$pconfig['interface'] = explode(",", $config['dnsmasq']['interface']);
 } else {
 	$pconfig['interface'] = array();
-}
-
-if (!is_array($config['dnsmasq']['hosts'])) {
-	$config['dnsmasq']['hosts'] = array();
-}
-
-if (!is_array($config['dnsmasq']['domainoverrides'])) {
-	$config['dnsmasq']['domainoverrides'] = array();
 }
 
 init_config_arr(array('dnsmasq', 'hosts'));

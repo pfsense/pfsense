@@ -3,7 +3,7 @@
  * firewall_aliases_import.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,13 +37,6 @@ require_once("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 
-// Add all Load balance names to pf_reserved_keywords
-if (is_array($config['load_balancer']['lbpool'])) {
-	foreach ($config['load_balancer']['lbpool'] as $lbpool) {
-		$pf_reserved_keywords[] = $lbpool['name'];
-	}
-}
-
 $reserved_ifs = get_configured_interface_list(true);
 $pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
 
@@ -55,13 +48,7 @@ if (empty($tab)) {
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
 $pglinks = array("", "firewall_aliases.php?tab=" . $tab, "@self");
 
-if (!is_array($config['aliases'])) {
-	$config['aliases'] = array();
-}
-
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
 if ($_POST) {

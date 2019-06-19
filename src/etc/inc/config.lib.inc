@@ -3,7 +3,7 @@
  * config.lib.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2009 Erik Kristensen
  * All rights reserved.
  *
@@ -62,7 +62,7 @@ function encrypted_configxml() {
 				exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
 				echo "\n" . gettext("Config.xml unlocked.") . "\n";
 				fclose($fp);
-				pfSense_fsync("{$g['conf_path']}/config.xml");
+				//pfSense_fsync("{$g['conf_path']}/config.xml");
 			} else {
 				echo "\n" . gettext("Invalid password entered.  Please try again.") . "\n";
 			}
@@ -169,7 +169,7 @@ function generate_config_cache($config) {
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
-	pfSense_fsync("{$g['tmp_path']}/config.cache");
+	//pfSense_fsync("{$g['tmp_path']}/config.cache");
 
 	unset($configcache);
 	/* Used for config.extra.xml */
@@ -177,7 +177,7 @@ function generate_config_cache($config) {
 		$configcacheextra = fopen($g['tmp_path'] . '/config.extra.cache', "w");
 		fwrite($configcacheextra, serialize($config_extra));
 		fclose($configcacheextra);
-		pfSense_fsync("{$g['tmp_path']}/config.extra.cache");
+		//pfSense_fsync("{$g['tmp_path']}/config.extra.cache");
 		unset($configcacheextra);
 	}
 }
@@ -202,8 +202,8 @@ function restore_backup($file) {
 	if (file_exists($file)) {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		copy("$file", "/cf/conf/config.xml");
-		pfSense_fsync("/cf/conf/config.xml");
-		pfSense_fsync($g['conf_path']);
+		//pfSense_fsync("/cf/conf/config.xml");
+		//pfSense_fsync($g['conf_path']);
 		disable_security_checks();
 		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file));
 		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file), "pfSenseConfigurator", "");
@@ -434,14 +434,17 @@ function safe_write_file($file, $content, $force_binary = false) {
 	fflush($fd);
 	fclose($fd);
 
-	if (!pfSense_fsync($tmp_file) || !rename($tmp_file, $file)) {
+	/* XXX Re-add pfSense_fsync() call here after it's fixed */
+	// if (!pfSense_fsync($tmp_file) || !rename($tmp_file, $file)) {
+	if (!rename($tmp_file, $file)) {
 		// Unable to move temporary file to original
 		@unlink($tmp_file);
 		return false;
 	}
 
 	// Sync file before returning
-	return pfSense_fsync($file);
+	//return pfSense_fsync($file);
+	return true;
 }
 
 /****f* config/write_config
@@ -615,7 +618,7 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	if (!$lock) {
 		unlock($lockkey);
 	}
-	setup_serial_port();
+	console_configure();
 	return 0;
 }
 
@@ -816,7 +819,7 @@ function cleanup_backupcache($lock = false) {
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($tocache));
 	fclose($bakout);
-	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
+	//pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 
 	if (!$lock) {
 		unlock($lockkey);
@@ -872,7 +875,7 @@ function backup_config() {
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($backupcache));
 	fclose($bakout);
-	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
+	//pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 
 
 	return true;

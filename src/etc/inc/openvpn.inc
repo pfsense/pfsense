@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2006 Fernando Lemos
- * Copyright (c) 2006-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2006-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * This file was rewritten from scratch by Fernando Lemos but

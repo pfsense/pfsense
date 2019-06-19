@@ -3,7 +3,7 @@
  * system_certmanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -52,9 +52,7 @@ if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 
 if (isset($userid)) {
 	$cert_methods["existing"] = gettext("Choose an existing certificate");
-	if (!is_array($config['system']['user'])) {
-		$config['system']['user'] = array();
-	}
+	init_config_arr(array('system', 'user'));
 	$a_user =& $config['system']['user'];
 }
 
@@ -62,17 +60,11 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$a_ca =& $config['ca'];
-
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 
 $internal_ca_count = 0;
 foreach ($a_ca as $ca) {
@@ -339,21 +331,30 @@ if ($_POST['save']) {
 				array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
 			}
 
-			if (($pconfig['method'] != "external") && isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
-				array_push($input_errors, gettext("Please select a valid Key Length."));
-			}
-			if (($pconfig['method'] != "external") && !in_array($_POST["digest_alg"], $openssl_digest_algs)) {
-				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
-			}
-
-			if (($pconfig['method'] == "external") && isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
-				array_push($input_errors, gettext("Please select a valid Key Length."));
-			}
-			if (($pconfig['method'] == "external") && !in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
-				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
-			}
-			if (($pconfig['method'] == "sign") && !in_array($_POST["csrsign_digest_alg"], $openssl_digest_algs)) {
-				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+			switch ($pconfig['method']) {
+				case "internal":
+					if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
+						array_push($input_errors, gettext("Please select a valid Key Length."));
+					}
+					if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
+						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+					}
+					break;
+				case "external":
+					if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
+						array_push($input_errors, gettext("Please select a valid Key Length."));
+					}
+					if (!in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
+						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+					}
+					break;
+				case "sign":
+					if (!in_array($_POST["csrsign_digest_alg"], $openssl_digest_algs)) {
+						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+					}
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -609,18 +610,6 @@ $tab_array[] = array(gettext("Certificates"), true, "system_certmanager.php");
 $tab_array[] = array(gettext("Certificate Revocation"), false, "system_crlmanager.php");
 display_top_tabs($tab_array);
 
-// Load valid country codes
-$dn_cc = array();
-if (file_exists("/etc/ca_countries")) {
-	$dn_cc_file=file("/etc/ca_countries");
-	$dn_cc[''] = gettext("None");
-	foreach ($dn_cc_file as $line) {
-		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
-			$dn_cc[$matches[1]] = $matches[1];
-		}
-	}
-}
-
 if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$form = new Form();
 	$form->setAction('system_certmanager.php?act=edit');
@@ -819,7 +808,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'dn_country',
 		'Country Code',
 		$pconfig['dn_country'],
-		$dn_cc
+		get_cert_country_codes()
 	));
 
 	$section->addInput(new Form_Input(
@@ -890,7 +879,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'csr_dn_country',
 		'Country Code',
 		$pconfig['csr_dn_country'],
-		$dn_cc
+		get_cert_country_codes()
 	));
 
 	$section->addInput(new Form_Input(
@@ -931,7 +920,10 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$existCerts = array();
 
-	foreach ($config['cert'] as $cert)	{
+	foreach ($config['cert'] as $cert) {
+		if (!is_array($cert) || empty($cert)) {
+			continue;
+		}
 		if (is_array($config['system']['user'][$userid]['cert'])) { // Could be MIA!
 			if (isset($userid) && in_array($cert['refid'], $config['system']['user'][$userid]['cert'])) {
 				continue;
@@ -1076,21 +1068,21 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	))->setWidth(7)
 	  ->setHelp('Paste the certificate received from the certificate authority here.');
 
-	 if (isset($id) && $a_cert[$id]) {
-		 $section->addInput(new Form_Input(
+	if (isset($id) && $a_cert[$id]) {
+		$form->addGlobal(new Form_Input(
 			'id',
 			null,
 			'hidden',
 			$id
-		 ));
+		));
 
-		 $section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'act',
 			null,
 			'hidden',
 			'csr'
-		 ));
-	 }
+		));
+	}
 
 	$form->add($section);
 
@@ -1104,11 +1096,45 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	print($form);
 } else {
 ?>
+<div class="panel panel-default" id="search-panel">
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<?=gettext('Search')?>
+			<span class="widget-heading-icon pull-right">
+				<a data-toggle="collapse" href="#search-panel_panel-body">
+					<i class="fa fa-plus-circle"></i>
+				</a>
+			</span>
+		</h2>
+	</div>
+	<div id="search-panel_panel-body" class="panel-body collapse in">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+				<?=gettext("Search term")?>
+			</label>
+			<div class="col-sm-5"><input class="form-control" name="searchstr" id="searchstr" type="text"/></div>
+			<div class="col-sm-2">
+				<select id="where" class="form-control">
+					<option value="0"><?=gettext("Name")?></option>
+					<option value="1"><?=gettext("Distinguished Name")?></option>
+					<option value="2" selected><?=gettext("Both")?></option>
+				</select>
+			</div>
+			<div class="col-sm-3">
+				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><i class="fa fa-search icon-embed-btn"></i><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-info btn-sm"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Clear")?></a>
+			</div>
+			<div class="col-sm-10 col-sm-offset-2">
+				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to search certificate names and distinguished names.')?></span>
+			</div>
+		</div>
+	</div>
+</div>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Certificates')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-		<table class="table table-striped table-hover">
+		<table class="table table-striped table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Name")?></th>
@@ -1128,6 +1154,9 @@ $pluginparams['event'] = 'used_certificates';
 $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
 $i = 0;
 foreach ($a_cert as $i => $cert):
+	if (!is_array($cert) || empty($cert)) {
+		continue;
+	}
 	$name = htmlspecialchars($cert['descr']);
 	$sans = array();
 	if ($cert['crt']) {
@@ -1281,6 +1310,59 @@ foreach ($a_cert as $i => $cert):
 		<?=gettext("Add/Sign")?>
 	</a>
 </nav>
+<script type="text/javascript">
+//<![CDATA[
+
+events.push(function() {
+
+	// Make these controls plain buttons
+	$("#btnsearch").prop('type', 'button');
+	$("#btnclear").prop('type', 'button');
+
+	// Search for a term in the entry name and/or dn
+	$("#btnsearch").click(function() {
+		var searchstr = $('#searchstr').val().toLowerCase();
+		var table = $("table tbody");
+		var where = $('#where').val();
+
+		table.find('tr').each(function (i) {
+			var $tds = $(this).find('td'),
+				shortname = $tds.eq(0).text().trim().toLowerCase(),
+				dn = $tds.eq(2).text().trim().toLowerCase();
+
+			regexp = new RegExp(searchstr);
+			if (searchstr.length > 0) {
+				if (!(regexp.test(shortname) && (where != 1)) && !(regexp.test(dn) && (where != 0))) {
+					$(this).hide();
+				} else {
+					$(this).show();
+				}
+			} else {
+				$(this).show();	// A blank search string shows all
+			}
+		});
+	});
+
+	// Clear the search term and unhide all rows (that were hidden during a previous search)
+	$("#btnclear").click(function() {
+		var table = $("table tbody");
+
+		$('#searchstr').val("");
+
+		table.find('tr').each(function (i) {
+			$(this).show();
+		});
+	});
+
+	// Hitting the enter key will do the same as clicking the search button
+	$("#searchstr").on("keyup", function (event) {
+		if (event.keyCode == 13) {
+			$("#btnsearch").get(0).click();
+		}
+	});
+});
+//]]>
+</script>
 <?php
 	include("foot.inc");
 	exit;

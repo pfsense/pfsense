@@ -3,7 +3,7 @@
  * index.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -670,7 +670,7 @@ events.push(function() {
 	// results back to the widget's callback function
 	function executewidget() {
 		if (ajaxspecs.length > 0) {
-			var freq = ajaxspecs[ajaxidx].freq;	// widget can specifify it should be called freq times around hte loop
+			var freq = ajaxspecs[ajaxidx].freq;	// widget can specify it should be called freq times around the loop
 
 			if (!ajaxmutex) {
 				if (((ajaxcntr % freq) === 0) && (typeof ajaxspecs[ajaxidx].callback === "function" )) {

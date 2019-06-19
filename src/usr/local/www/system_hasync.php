@@ -3,7 +3,7 @@
  * system_hasync.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,10 +28,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['hasync'])) {
-	$config['hasync'] = array();
-}
-
+init_config_arr(array('hasync'));
 $a_hasync = &$config['hasync'];
 
 $checkbox_names = array(
@@ -48,7 +45,6 @@ $checkbox_names = array(
 	'synchronizedhcpd',
 	'synchronizewol',
 	'synchronizestaticroutes',
-	'synchronizelb',
 	'synchronizevirtualip',
 	'synchronizetrafficshaper',
 	'synchronizetrafficshaperlimiter',
@@ -246,7 +242,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'synchronizeopenvpn',
 	'Synchronize OpenVPN',
-	'OpenVPN configuration ',
+	'OpenVPN configuration (Implies CA/Cert/CRL Sync) ',
 	($pconfig['synchronizeopenvpn'] === 'on'),
 	'on'
 ));
@@ -272,14 +268,6 @@ $group->add(new Form_MultiCheckbox(
 	'Synchronize Static Routes',
 	'Static Route configuration ',
 	($pconfig['synchronizestaticroutes'] === 'on'),
-	'on'
-));
-
-$group->add(new Form_MultiCheckbox(
-	'synchronizelb',
-	'Synchronize Load Balancer',
-	'Load Balancer configuration ',
-	($pconfig['synchronizelb'] === 'on'),
 	'on'
 ));
 

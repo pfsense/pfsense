@@ -253,7 +253,7 @@ foreach ($leases['lease'] as $data):
 <?php endif; ?>
 
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
-						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=htmlspecialchars($data['ip'])?>&amp;all=<?=intval($_POST['all'])?>" usepost></a>
+						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=htmlspecialchars($data['ip'])?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
 <?php endif; ?>
 					</td>
 				</tr>

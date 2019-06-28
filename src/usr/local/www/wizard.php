@@ -638,7 +638,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				if ($field['displayname']) {
 					$etitle = $field['displayname'];
 				} else if (!$field['dontdisplayname']) {
-					$etitle =  fixup_string($field['name']);
+					$etitle = fixup_string($field['name']);
 				}
 
 				$section->addInput(new Form_Input(
@@ -721,6 +721,9 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 				foreach ($config['cert'] as $ca) {
 					if (stristr($ca['descr'], "webconf")) {
+						continue;
+					}
+					if ($ca['prv'] && is_encrypted_key($ca['prv'])) {
 						continue;
 					}
 

@@ -537,6 +537,21 @@ function step12_submitphpaction() {
 	}
 
 	if (isset($pconfig['step9']['uselist'])) {
+		$capass = $pconfig['step9']['capass'];
+		if ($ca['prv'] && is_encrypted_key($ca['prv'])) {
+			if (!$capass) {
+				$message = gettext("Password required for the selected Certificate Authority.");
+				header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=8&message={$message}");
+				exit;
+			} elseif (cert_get_publickey($ca['prv'], true, 'prv', $capass) === false) {
+				$message = gettext("Password does not match the selected Certificate Authority.");
+				header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=8&message={$message}");
+				exit;
+			}
+		} else {
+			$capass = "";
+		}
+
 		$cert = array();
 		$cert['refid'] = uniqid();
 		$cert['descr'] = $pconfig['step9']['certname'];
@@ -558,7 +573,7 @@ function step12_submitphpaction() {
 			$dn['organizationName'] = cert_escape_x509_chars($pconfig['step9']['organization']);
 		}
 
-		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn, 'server', "sha256");
+		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn, 'server', "sha256", $capass);
 		if (!is_array($config['cert']))
 			$config['cert'] = array();
 
@@ -567,7 +582,8 @@ function step12_submitphpaction() {
 		$message = "Please choose a Certificate.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");
 		exit;
-	} else if (!($cert = lookup_cert($pconfig['step9']['authcertname']))) {
+	} else if (!($cert = lookup_cert($pconfig['step9']['authcertname'])) ||
+	           ($cert['prv'] && is_encrypted_key($cert['prv']))) {
 		$message = "An invalid Certificate has been specified.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");
 		exit;

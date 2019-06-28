@@ -676,6 +676,14 @@
 			<bindstofield>ovpnserver->step9->organization</bindstofield>
 		</field>
 		<field>
+			<name>capass</name>
+			<displayname>CA Password</displayname>
+			<description>If an encrypted Certificate Authority was selected, enter the CA password.</description>
+			<type>password</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step9->capass</bindstofield>
+		</field>
+		<field>
 			<name>Create new Certificate</name>
 			<type>submit</type>
 		</field>

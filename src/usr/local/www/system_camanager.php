@@ -452,7 +452,12 @@ foreach ($a_ca as $i => $ca):
 ?>
 				<tr>
 					<td><?=$name?></td>
-					<td><i class="fa fa-<?= (!empty($ca['prv'])) ? "check" : "times" ; ?>"></i></td>
+					<td>
+						<i class="fa fa-<?= (!empty($ca['prv'])) ? "check" : "times" ; ?>"></i>
+						<?php if ($ca['prv'] && is_encrypted_key($ca['prv'])): ?>
+							<i class="fa fa-lock" title="<?=gettext("Encrypted private key")?>"></i>
+						<?php endif?>
+					</td>
 					<td><i><?=$issuer_name?></i></td>
 					<td><?=$certcount?></td>
 					<td>

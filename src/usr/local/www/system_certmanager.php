@@ -1358,7 +1358,11 @@ foreach ($a_cert as $i => $cert):
 ?>
 				<tr>
 					<td>
-						<?=$name?><br />
+						<?php if ($cert['prv'] && is_encrypted_key($cert['prv'])): ?>
+							<?=$name?>&nbsp;<i class="fa fa-lock" title="<?=gettext("Encrypted private key")?>"></i>
+						<?php else: ?>
+							<?=$name?>
+						<?php endif?><br />
 						<?php if ($cert['type']): ?>
 							<i><?=$cert_types[$cert['type']]?></i><br />
 						<?php endif?>

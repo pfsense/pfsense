@@ -1658,7 +1658,7 @@ EOD;
 		$nginx_config .= "\t\tkeepalive_timeout       70;\n";
 		$nginx_config .= "\t\tssl_session_cache       shared:SSL:10m;\n";
 		if ($captive_portal !== false) {
-			// leave TLSv1.0 for CP for now for compatibility
+			// leave TLSv1.1 for CP for now for compatibility
 			$nginx_config .= "\t\tssl_protocols   TLSv1.1 TLSv1.2 TLSv1.3;\n";
 		} else {
 			$nginx_config .= "\t\tssl_protocols   TLSv1.2 TLSv1.3;\n";

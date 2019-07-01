@@ -89,7 +89,7 @@ if ($_POST['save']) {
 			if (!empty($mac)) {
 				$_POST['delmac'] = $mac['mac'];
 			} else {
-				echo gettext("No entry exists for this username:") . " " . $_POST['username'] . "\n";
+				echo gettext("No entry exists for this username:") . " " . htmlspecialchars($_POST['username']) . "\n";
 			}
 		}
 
@@ -112,7 +112,7 @@ if ($_POST['save']) {
 				write_config();
 				echo gettext("The entry was successfully deleted") . "\n";
 			} else {
-				echo gettext("No entry exists for this mac address:") . " " . $_POST['delmac'] . "\n";
+				echo gettext("No entry exists for this mac address:") . " " . htmlspecialchars($_POST['delmac']) . "\n";
 			}
 		}
 		exit;

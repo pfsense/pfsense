@@ -25,18 +25,42 @@ require_once("functions.inc");
 
 
 if ($_GET['getpic']=="true") {
-	$pic_type_s = explode(".", $user_settings['widgets'][$_GET['widgetkey']]['picturewidget_filename']);
-	$pic_type = $pic_type_s[1];
+	$wk = basename($_GET['widgetkey']);
+	$image_filename = "/conf/widget_image.{$wk}";
+	if (empty($wk) ||
+	    !isset($user_settings['widgets'][$wk]) ||
+	    !is_array($user_settings['widgets'][$wk]) ||
+	    !file_exists($image_filename)) {
+		echo null;
+		exit;
+	}
 
-	if ($user_settings['widgets'][$_GET['widgetkey']]['picturewidget']) {
-		if (file_exists("/conf/widget_image." . $_GET['widgetkey'])) {
-			$data = file_get_contents("/conf/widget_image." . $_GET['widgetkey']);
+	/* Do not rely on filename to determine image type. */
+	$img_info =getimagesize($image_filename);
+	switch ($img_info[2]) {
+		case IMAGETYPE_GIF:
+			$pic_type = "gif";
+			break;
+		case IMAGETYPE_JPEG:
+			$pic_type = "jpg";
+			break;
+		case IMAGETYPE_PNG:
+			$pic_type = "png";
+			break;
+		default:
+			echo null;
+			exit;
+	}
+
+	if ($user_settings['widgets'][$wk]['picturewidget']) {
+		if (file_exists($image_filename)) {
+			$data = file_get_contents($image_filename);
 		} else {
 			$data = "";
 		}
 	}
 
-	header("Content-Disposition: inline; filename=\"{$user_settings['widgets'][$_GET['widgetkey']]['picturewidget_filename']}\"");
+	header("Content-Disposition: inline; filename=\"" . basename($image_filename) . "\"");
 	header("Content-Type: image/{$pic_type}");
 	header("Content-Length: " . strlen($data));
 	echo $data;
@@ -44,6 +68,7 @@ if ($_GET['getpic']=="true") {
 }
 
 if ($_POST['widgetkey']) {
+	$wk = basename($_POST['widgetkey']);
 	set_customwidgettitle($user_settings);
 	if (is_uploaded_file($_FILES['pictfile']['tmp_name'])) {
 		/* read the file contents */
@@ -66,9 +91,9 @@ if ($_POST['widgetkey']) {
 				die("Not a gif/jpg/png");
 			}
 			$picname = basename($_FILES['uploadedfile']['name']);
-			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget'] = "/conf/widget_image";
-			file_put_contents("/conf/widget_image." . $_POST['widgetkey'], $data);
-			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget_filename'] = $_FILES['pictfile']['name'];
+			$user_settings['widgets'][$wk]['picturewidget'] = "/conf/widget_image";
+			file_put_contents("/conf/widget_image.{$wk}", $data);
+			$user_settings['widgets'][$wk]['picturewidget_filename'] = $_FILES['pictfile']['name'];
 		}
 	}
 

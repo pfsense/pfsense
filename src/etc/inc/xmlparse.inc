@@ -230,6 +230,10 @@ function dump_xml_config_sub($arr, $indent) {
 
 	global $listtags;
 
+	if (!is_array($arr)) {
+		return null;
+	}
+
 	$xmlconfig = "";
 
 	foreach ($arr as $ent => $val) {

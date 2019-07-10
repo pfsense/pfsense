@@ -184,7 +184,14 @@ function setMasks() {
 			if (input.val() == "")
 				return;
 
-			while (select.options.length > max)
+			// Sometimes the mask includes '0' (e.g. for VPNs), sometimes it does not
+			if (select.options[select.options.length - 1].value == 0) {
+				var mm = max + 1;
+			} else {
+				var mm = max;
+			}
+
+			while (select.options.length > mm)
 				select.remove(0);
 
 			if (select.options.length < max) {

@@ -3,7 +3,7 @@
 
   This file is part of the GraphLink software.
   GraphLink is distributed under the MIT License.
-  Copyright (C) 2005-2006 Max Khitrov <max@mxsoft.org>
+  Copyright (c) 2005-2006 Max Khitrov <max@mxsoft.org>
  ******************************************************************************/
 
 /***** Global data ************************************************************/

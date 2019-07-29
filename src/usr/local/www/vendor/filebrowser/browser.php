@@ -3,6 +3,7 @@
 require_once("guiconfig.inc");
 
 /*
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
  * Copyright (c) 2013-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  */

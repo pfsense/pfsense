@@ -1,5 +1,7 @@
 # Language translation for pfSense project.
-# Copyright (c) 2011-2015 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2011-2013 BSD Perimeter
+# Copyright (c) 2013-2016 Electric Sheep Fencing
+# Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
 # This file is distributed under the same license as the pfSense package.
 # Kiyo Takami and Isaac (.ike) Levy, 2013.
 # Administrator <sbeaver@netgate.com>, 2019. #zanata

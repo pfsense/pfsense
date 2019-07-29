@@ -5,6 +5,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2011 Warren Baker
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
  * Copyright (c) 2013-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *

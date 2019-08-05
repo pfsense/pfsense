@@ -66,3 +66,5 @@ $config = parse_config();
 vpn_ipsec_configure();
 
 unlock($ipseclck);
+
+send_event("service reload packages");

@@ -69,4 +69,4 @@ vpn_ipsec_configure();
 
 unlock($ipseclck);
 
-send_event("service reload packages");
+ipsec_reload_package_hook();

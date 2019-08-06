@@ -188,6 +188,12 @@ if (is_array($dhcpdconf)) {
 	$pconfig['statsgraph'] = $dhcpdconf['statsgraph'];
 	$pconfig['disablepingcheck'] = $dhcpdconf['disablepingcheck'];
 	$pconfig['ddnsclientupdates'] = $dhcpdconf['ddnsclientupdates'];
+
+	// OMAPI Settings
+	if(isset($dhcpdconf['omapi_port'])) {
+		$pconfig['omapi_port'] = $dhcpdconf['omapi_port'];
+		$pconfig['omapi_key'] = $dhcpdconf['omapi_key'];
+	}
 }
 
 $ifcfgip = $config['interfaces'][$if]['ipaddr'];
@@ -234,6 +240,52 @@ if (isset($_POST['save'])) {
 	$pconfig['numberoptions'] = $numberoptions;
 
 	/* input validation */
+
+	/*
+	 * Check the OMAPI settings
+	 * - Make sure that if the port is defined, that it is valid and isn't in use
+	 * - Make sure the key length is at least 256bit (45 characters)
+	 * - Generate a new key if selected
+	 */
+	if($_POST['omapi_port'] && $_POST['omapi_port'] != "") {
+		// Check the port entry
+		if(in_array($_POST['omapi_port'], range(1, 65535))) {
+			// Get the list of open or listening ports locally
+			exec("/usr/bin/netstat -an4p tcp | awk '{print $4}' | egrep -o '*([0-9]{1,5})$' | sort | uniq", $port_info);
+
+			// Check to see if the port is in the list
+			if(in_array($_POST['omapi_port'], $port_info) && $_POST['omapi_port'] != 7911){
+				$input_errors[] = gettext("Specified port number for OMAPI is in use. Please choose another port or consider using the default.");
+			}
+		} else {
+			$input_errors[] = gettext("The specified OMAPI port number is invalid. Port number must be between 1 and 65635.");
+		}
+
+		// Check the key entry
+		if($_POST['omapi_key'] && $_POST['omapi_key'] != "") {
+			if (strlen($_POST['omapi_key']) < 45) {
+				$input_errors[] = gettext("OMAPI key must be at least 256 bits.");
+			}
+		} elseif($_POST['omapi_gen_key'] == "yes") {
+			//Build the command to generate and capture the key
+			$cmd = "/usr/local/sbin/dnssec-keygen -r /dev/urandom -a HMAC-MD5 -b 512 -n HOST omapi_key; "; //Generate the key
+			$cmd .= "/bin/cat Komapi_key.+*.private | /usr/bin/grep ^Key | /usr/bin/cut -d ' ' -f2-; "; //Capture the key
+			$cmd .= "/bin/rm -f Komapi_key*"; //Cleanup key files
+
+			//Execute the command
+			exec($cmd, $cmd_output);
+
+			//Set the key
+			$_POST['omapi_key'] = $cmd_output[1];
+			$pconfig['omapi_key'] = $cmd_output[1];
+
+			//Uncheck the generate box
+			unset($_POST['omapi_gen_key']);
+			unset($pconfig['omapi_gen_key']);
+		} else {
+			$input_errors[] = gettext("A key is required when OMAPI is enabled (port specified).");
+		}
+	}
 
 	// Note: if DHCP Server is not enabled, then it is OK to adjust other parameters without specifying range from-to.
 	if ($_POST['enable'] || is_numeric($pool) || $act == "newpool") {
@@ -639,7 +691,19 @@ if (isset($_POST['save'])) {
 			$config['dhcpd'][$if] = $dhcpdconf;
 		}
 
-		write_config();
+		// OMAPI Settings
+		if($_POST['omapi_port'] == ""){
+			unset($dhcpdconf['omapi_port']);
+			unset($dhcpdconf['omapi_key']);
+			unset($pconfig['omapi_port']);
+			unset($pconfig['omapi_key']);
+		} else {
+			$dhcpdconf['omapi_port'] = $_POST['omapi_port'];
+			$dhcpdconf['omapi_key'] = $_POST['omapi_key'];
+		}
+
+
+		write_config(gettext("DHCP Server - Settings changed for interface " . strtoupper($if)));
 	}
 }
 
@@ -1007,6 +1071,36 @@ for ($idx=1; $idx<=4; $idx++) {
 		'V4'
 	))->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the System / General Setup page.':'');
 }
+
+$form->add($section);
+
+//OMAPI
+$section = new Form_Section('OMAPI');
+
+$section->addInput(new Form_Input(
+	'omapi_port',
+	'OMAPI Port',
+	'text',
+	$pconfig['omapi_port']
+))->setHelp('Set the port that OMAPI will listen on. The default port is 7911, leave blank to disable.');
+
+$group = new Form_Group('OMAPI Key');
+
+$group->add(new Form_Input(
+	'omapi_key',
+	'OMAPI Key',
+	'text',
+	$pconfig['omapi_key']
+))->setHelp('Set the key used to secure the connection to the OMAPI endpoint. The minimum key length is 256 bits.');
+
+$group->add(new Form_Checkbox(
+	'omapi_gen_key',
+	'',
+	'Generate New Key',
+	$pconfig['omapi_gen_key']
+))->setHelp('Key Bits: 512<br />Algorithm: HMAC-MD5');
+
+$section->add($group);
 
 $form->add($section);
 

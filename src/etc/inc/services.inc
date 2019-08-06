@@ -562,6 +562,20 @@ EOD;
 		$dhcpdconf .= "always-broadcast on\n";
 	}
 
+	// OMAPI Settings
+	if (isset($dhcpifconf['omapi_port']) && is_numeric($dhcpifconf['omapi_port'])) {
+		$dhcpdconf .= <<<EOD
+
+omapi-port {$dhcpifconf['omapi_port']};
+key omapi_key {
+  algorithm HMAC-MD5;
+  secret "{$dhcpifconf['omapi_key']}";
+};
+omapi-key omapi_key;
+\n
+EOD;
+	}
+
 	$dhcpdifs = array();
 	$enable_add_routers = false;
 	$gateways_arr = return_gateways_array();

@@ -61,8 +61,9 @@ class pfsense_xmlrpc_server {
 		}
 
 		if (!$login_ok) {
-			log_auth("webConfigurator authentication error for '" .
-			    $username . "' from " . $this->remote_addr);
+			log_auth(sprintf(gettext("webConfigurator authentication error for user '%1\$s' from: %2\$s"),
+			    $username,
+			    $this->remote_addr));
 
 			require_once("XML/RPC2/Exception.php");
 			throw new XML_RPC2_FaultException(gettext(

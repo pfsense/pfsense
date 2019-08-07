@@ -267,12 +267,12 @@ if (isset($_POST['save'])) {
 				$input_errors[] = gettext("OMAPI key must be at least 256 bits.");
 			}
 		} elseif($_POST['omapi_gen_key'] == "yes") {
-		    // Set the output directory
-            $output_dir = "/tmp/dnssec-keygen";
+			// Set the output directory
+			$output_dir = "/tmp/dnssec-keygen";
 
 			// Build the command to generate and capture the key
-            $cmd = "/bin/mkdir {$output_dir}; "; // Create output directory
-            $cmd .= "/usr/local/sbin/dnssec-keygen -r /dev/urandom -K {$output_dir} -a HMAC-MD5 -b 512 -n HOST omapi_key; "; // Generate the key
+			$cmd = "/bin/mkdir {$output_dir}; "; // Create output directory
+			$cmd .= "/usr/local/sbin/dnssec-keygen -r /dev/urandom -K {$output_dir} -a HMAC-MD5 -b 512 -n HOST omapi_key; "; // Generate the key
 			$cmd .= "/bin/cat {$output_dir}/Komapi_key.+*.private | /usr/bin/grep ^Key | /usr/bin/cut -d ' ' -f2-; "; // Capture the key
 			$cmd .= "/bin/rm -Rf {$output_dir}"; // Cleanup key files
 

@@ -36,6 +36,7 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
+require_once("util.inc");
 
 if (!$g['services_dhcp_server_enable']) {
 	header("Location: /");
@@ -249,9 +250,9 @@ if (isset($_POST['save'])) {
 	 */
 	if($_POST['omapi_port'] && $_POST['omapi_port'] != "") {
 		// Check the port entry
-		if(in_array($_POST['omapi_port'], range(1, 65535))) {
+		if(is_port($_POST['omapi_port'])) {
 			// Get the list of open or listening ports locally
-			exec("/usr/bin/netstat -an4p tcp | awk '{print $4}' | egrep -o '*([0-9]{1,5})$' | sort | uniq", $port_info);
+			exec("/usr/bin/netstat -an4p tcp | /usr/bin/awk '{print $4}' | /usr/bin/egrep -o '*([0-9]{1,5})$' | /usr/bin/sort -u", $port_info);
 
 			// Check to see if the port is in the list
 			if(in_array($_POST['omapi_port'], $port_info) && $_POST['omapi_port'] != 7911){
@@ -267,11 +268,14 @@ if (isset($_POST['save'])) {
 				$input_errors[] = gettext("OMAPI key must be at least 256 bits.");
 			}
 		} elseif($_POST['omapi_gen_key'] == "yes") {
+			// Generate a random folder name for the key generation
+			$rand = substr(md5(microtime()),rand(0,26),25);
+
 			// Set the output directory
-			$output_dir = "/tmp/dnssec-keygen";
+			$output_dir = "/tmp/{$rand}";
 
 			// Build the command to generate and capture the key
-			$cmd = "/bin/mkdir {$output_dir}; "; // Create output directory
+			$cmd = "/bin/mkdir -p {$output_dir}; "; // Create output directory
 			$cmd .= "/usr/local/sbin/dnssec-keygen -r /dev/urandom -K {$output_dir} -a HMAC-MD5 -b 512 -n HOST omapi_key; "; // Generate the key
 			$cmd .= "/bin/cat {$output_dir}/Komapi_key.+*.private | /usr/bin/grep ^Key | /usr/bin/cut -d ' ' -f2-; "; // Capture the key
 			$cmd .= "/bin/rm -Rf {$output_dir}"; // Cleanup key files

@@ -438,8 +438,9 @@ if ($_POST['save']) {
 								if (!$int_data) continue;
 								$cn = $int_data['subject']['CN'];
 								$int_ca = array('descr' => $cn, 'refid' => uniqid());
-								ca_import($int_ca, $intermediate);
-								$a_ca[] = $int_ca;
+								if (ca_import($int_ca, $intermediate)) {
+									$a_ca[] = $int_ca;
+								}
 							}
 						}
 					}

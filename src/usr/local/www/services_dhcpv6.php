@@ -328,7 +328,9 @@ if (isset($_POST['apply'])) {
 		}
 	}
 
-	if (($_POST['ntp1'] && !is_ipaddrv6($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv6($_POST['ntp2'])) || ($_POST['ntp3'] && !is_ipaddrv6($_POST['ntp3']))) {
+	if (($_POST['ntp1'] && !is_ipaddrv6($_POST['ntp1'])) || 
+	    ($_POST['ntp2'] && !is_ipaddrv6($_POST['ntp2'])) || 
+	    ($_POST['ntp3'] && !is_ipaddrv6($_POST['ntp3']))) {
 		$input_errors[] = gettext("A valid IPv6 address must be specified for the primary/secondary NTP servers.");
 	}
 	if (($_POST['domain'] && !is_domain($_POST['domain']))) {

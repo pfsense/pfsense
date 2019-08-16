@@ -139,7 +139,7 @@ if ($_POST) {
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 
-		if ($_POST['smtppassword'] != DMYPWD) {
+		if (strcmp($_POST['smtppassword'], DMYPWD)!= 0) {
 			if ($_POST['smtppassword'] == $_POST['smtppassword_confirm']) {
 				$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
 			} else {

@@ -2,7 +2,8 @@
  * restartallwans
  * 
  * This script looks for all WAN interfaces by checking whitch has gateways
- * then it simply disable and then enable them
+ * and then it simply disable / enable them
+ * useful for testing configuration
  *
  */
 

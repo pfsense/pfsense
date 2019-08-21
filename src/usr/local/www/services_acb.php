@@ -33,20 +33,8 @@ require("acb.inc");
 $oper_sep = "\|\|";
 $exp_sep = '||';
 
-// $legacy is used to determine whether to work with the old "Gold" ACB system, or the
-// current system
-$legacy = false;
-
-if (isset($_REQUEST['legacy'])) {
-	$legacy = true;
-}
-
 // Encryption password
-if (!$legacy) {
-	$decrypt_password = $config['system']['acb']['encryption_password'];
-} else {
-	$decrypt_password = $config['system']['acb']['gold_encryption_password'];
-}
+$decrypt_password = $config['system']['acb']['encryption_password'];
 
 // Defined username. Username must be sent lowercase. See Redmine #7127 and Netgate Redmine #163
 $username = strtolower($config['system']['acb']['gold_username']);
@@ -131,18 +119,11 @@ function get_hostnames() {
 
 if ($_REQUEST['rmver'] != "") {
 	$curl_session = curl_init();
-	if ($legacy) {
-		curl_setopt($curl_session, CURLOPT_URL, $del_url);
-		curl_setopt($curl_session, CURLOPT_HTTPHEADER, array("Authorization: Basic " . base64_encode("{$username}:{$password}")));
-		curl_setopt($curl_session, CURLOPT_POSTFIELDS, "action=delete" . "&hostname=" . urlencode($hostname) . "&revision=" . urlencode($_REQUEST['rmver']));
-	} else {
-		curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/rmbkp");
-		curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
+	curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/rmbkp");
+	curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
 		"&revision=" . urlencode($_REQUEST['rmver']) .
 		"&version=" . $g['product_version'] .
 		"&uid=" . urlencode($uniqueID));
-	}
-
 	curl_setopt($curl_session, CURLOPT_POST, 3);
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
@@ -169,18 +150,12 @@ if ($_REQUEST['rmver'] != "") {
 if ($_REQUEST['newver'] != "") {
 	// Phone home and obtain backups
 	$curl_session = curl_init();
-	if ($legacy) {
-		curl_setopt($curl_session, CURLOPT_URL, $get_url);
-		curl_setopt($curl_session, CURLOPT_HTTPHEADER, array("Authorization: Basic " . base64_encode("{$username}:{$password}")));
-		curl_setopt($curl_session, CURLOPT_POSTFIELDS, "action=restore" . "&hostname=" . urlencode($hostname) . "&revision=" . urlencode($_REQUEST['newver']));
-	} else {
-		curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/getbkp");
-		curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
-			"&revision=" . urlencode($_REQUEST['newver']) .
-			"&version=" . $g['product_version'] .
-			"&uid=" . urlencode($uniqueID));
-	}
 
+	curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/getbkp");
+	curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
+		"&revision=" . urlencode($_REQUEST['newver']) .
+		"&version=" . $g['product_version'] .
+		"&uid=" . urlencode($uniqueID));
 	curl_setopt($curl_session, CURLOPT_POST, 3);
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
@@ -254,20 +229,8 @@ if ($_REQUEST['download']) {
 	// Phone home and obtain backups
 	$curl_session = curl_init();
 
-	if ($legacy) {
-
-		curl_setopt($curl_session, CURLOPT_URL, $get_url);
-		curl_setopt($curl_session, CURLOPT_HTTPHEADER, array("Authorization: Basic " . base64_encode("{$username}:{$password}")));
-		curl_setopt($curl_session, CURLOPT_POSTFIELDS, "action=restore" .
-			"&hostname=" . urlencode($hostname) .
-			"&revision=" . urlencode($_REQUEST['download']) .
-			"&version=" . $g['product_version'] .
-			"&uid=" . urlencode($uniqueID));
-	} else {
-		curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/getbkp");
-		curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey . "&revision=" . urlencode($_REQUEST['download']));
-	}
-
+	curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/getbkp");
+	curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey . "&revision=" . urlencode($_REQUEST['download']));
 	curl_setopt($curl_session, CURLOPT_POST, 3);
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
@@ -278,11 +241,7 @@ if ($_REQUEST['download']) {
 	$data = curl_exec($curl_session);
 
 	if (!tagfile_deformat($data, $data1, "config.xml")) {
-		if ($legacy) {
-			$input_errors[] = "The downloaded file does not appear to contain an encrypted pfSense configuration.";
-		} else {
-			$input_errors[] = "The downloaded file does not appear to contain an encrypted pfSense configuration.";
-		}
+		$input_errors[] = "The downloaded file does not appear to contain an encrypted pfSense configuration.";
 	} else {
 		$ds = explode('++++', $data);
 		$revision = $_REQUEST['download'];
@@ -308,18 +267,11 @@ if ( !($_REQUEST['download']) || $input_errors) {
 	// Populate available backups
 	$curl_session = curl_init();
 
-	if ($legacy) {
-		curl_setopt($curl_session, CURLOPT_URL, $get_url);
-		curl_setopt($curl_session, CURLOPT_HTTPHEADER, array("Authorization: Basic " . base64_encode("{$username}:{$password}")));
-		curl_setopt($curl_session, CURLOPT_POSTFIELDS, "action=showbackups&hostname={$hostname}");
-	} else {
-		curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/list");
-		curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
-			"&uid=eb6a4e6f76c10734b636" .
-			"&version=" . $g['product_version'] .
-			"&uid=" . urlencode($uniqueID));
-	}
-
+	curl_setopt($curl_session, CURLOPT_URL, "https://acb.netgate.com/list");
+	curl_setopt($curl_session, CURLOPT_POSTFIELDS, "userkey=" . $userkey .
+		"&uid=eb6a4e6f76c10734b636" .
+		"&version=" . $g['product_version'] .
+		"&uid=" . urlencode($uniqueID));
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_POST, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
@@ -402,15 +354,6 @@ $form = new Form(false);
 
 $section = new Form_Section('Backup Details');
 
-if ($legacy) {
-	$section->addInput(new Form_Input(
-		'hostname',
-		'Hostname',
-		'text',
-		$hostname
-	))->setWidth(7)->setReadOnly();
-}
-
 $section->addInput(new Form_Input(
 	'download',
 	'Revision date/time',
@@ -453,72 +396,46 @@ print($form);
 
 <?php else:
 
-if (!$legacy) {
-	$section2 = new Form_Section('Device key');
-	$group = new Form_Group("Device key");
+$section2 = new Form_Section('Device key');
+$group = new Form_Group("Device key");
 
-	$group->add(new Form_Input(
-		'devkey',
-		'Device key',
-		'text',
-		$userkey
-	))->setWidth(7)->setHelp("ID used to identify this firewall (derived from the SSH public key.) " .
-		"See help below for more details. %sPlease make a safe copy of this ID value.%s If it is lost, your backups will" .
-		" be lost too!", "<strong>", "</strong>");
+$group->add(new Form_Input(
+	'devkey',
+	'Device key',
+	'text',
+	$userkey
+))->setWidth(7)->setHelp("ID used to identify this firewall (derived from the SSH public key.) " .
+	"See help below for more details. %sPlease make a safe copy of this ID value.%s If it is lost, your backups will" .
+	" be lost too!", "<strong>", "</strong>");
 
-	$group->add(new Form_Button(
-		'upduserkey',
-		'Submit',
-		null,
-		'fa-save'
-	))->addClass('btn-success btn-xs');
+$group->add(new Form_Button(
+	'upduserkey',
+	'Submit',
+	null,
+	'fa-save'
+))->addClass('btn-success btn-xs');
 
-	$group->add(new Form_Button(
-		'restore',
-		'Reset',
-		null,
-		'fa-refresh'
-	))->addClass('btn-info btn-xs');
+$group->add(new Form_Button(
+	'restore',
+	'Reset',
+	null,
+	'fa-refresh'
+))->addClass('btn-info btn-xs');
 
-	$section2->add($group);
-	print($section2);
+$section2->add($group);
+print($section2);
 
-	print('<div class="infoblock">');
-	print_info_box(gettext("The Device key listed above is derived from the SSH public key of the firewall. When a configuration is saved, it is identified by this value." .
-		" If you are restoring the configuration of another firewall, paste the Device key from that firewall into the Device ID field above and click \"Submit\"." .
-		" This will temporarily override the ID for this session."), 'info', false);
-	print('</div>');
-}
+print('<div class="infoblock">');
+print_info_box(gettext("The Device key listed above is derived from the SSH public key of the firewall. When a configuration is saved, it is identified by this value." .
+	" If you are restoring the configuration of another firewall, paste the Device key from that firewall into the Device ID field above and click \"Submit\"." .
+	" This will temporarily override the ID for this session."), 'info', false);
+print('</div>');
 
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Automatic Configuration Backups")?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-<?php if ($legacy)	{ ?>
-		<strong>Hostname:</strong>
-		<select id="hostname" name="hostname" onchange="document.location='services_acb.php?hostname=' + this.value + '&legacy=true';">
-			<?
-			$host_not_found = true;
-			foreach ($hostnames as $hn):
-			?>
-			<option value='<?=$hn?>' <? if ($hn == $hostname) {echo " selected=\"selected\""; $host_not_found = false;} ?>>
-				<?=$hn?>
-			</option>
-			<?endforeach?>
-			<? if ($host_not_found) { ?>
-				<option value='<?=urlencode($hostname)?>' SELECTED><?=htmlspecialchars($hostname)?></option>
-			<? } ?>
-		</select>
-<?php }
-	if ($legacy): ?>
-		<span class="pull-right">&nbsp;</span>
-		<button id="nolegacy" class="btn btn-xs btn-warning pull-right" data-toggle="tooltip" title="<?=gettext('Exit the legacy backup system')?>">Exit legacy repository</button>
-<?php else:  ?>
-		<span class="pull-right">&nbsp;</span>
-		<button id="legacy" class="btn btn-xs btn-success pull-right" data-toggle="tooltip" title="<?=gettext('Switch to the legacy backup system provided as part of the Gold program')?>">Use legacy "Gold" repository</button>
-<?php endif; ?>
-
 		</div>
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed" id="backups">
@@ -539,12 +456,12 @@ if (!$legacy) {
 						<td><?= $cv['localtime']; ?></td>
 						<td><?= $cv['reason']; ?></td>
 						<td>
-							<a class="fa fa-undo"		title="<?=gettext('Restore this revision')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&newver=<?=urlencode($cv['time'])?><?=($legacy ? "&legacy=true":"")?>"	onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"></a>
-							<a class="fa fa-download"	title="<?=gettext('Show info')?>"	href="services_acb.php?download=<?=urlencode($cv['time'])?>&hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&reason=<?=urlencode($cv['reason'])?><?=($legacy ? "&legacy=true":"")?> "></a>
+							<a class="fa fa-undo"		title="<?=gettext('Restore this revision')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&newver=<?=urlencode($cv['time'])?>"	onclick="return confirm('<?=gettext("Are you sure you want to restore {$cv['localtime']}?")?>')"></a>
+							<a class="fa fa-download"	title="<?=gettext('Show info')?>"	href="services_acb.php?download=<?=urlencode($cv['time'])?>&hostname=<?=urlencode($hostname)?>&userkey=<?=urlencode($userkey)?>&reason=<?=urlencode($cv['reason'])?>"></a>
 <?php
 		if ($userkey == $origkey) {
 ?>
-							<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?><?=($legacy ? "&legacy=true":"")?>"></a>
+							<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="services_acb.php?hostname=<?=urlencode($hostname)?>&rmver=<?=urlencode($cv['time'])?>"></a>
 <?php 	} ?>
 						</td>
 					</tr>
@@ -560,14 +477,10 @@ if (!$legacy) {
 				<?php else: ?>
 					<tr>
 						<td colspan="3" align="center">
-<?php if ($legacy) { ?>
-							<br /><?=gettext("Current count of hosted backups for this hostname on portal.pfsense.org")?> : <?= $counter ?>
-<?php } else { ?>
 							<br /><?=gettext("Current count of hosted backups")?> : <?= $counter ?>
-<?php } ?>
 						</td>
 					</tr>
-<?php endif; ?>
+				<?php endif; ?>
 				</tbody>
 			</table>
 		</div>
@@ -579,88 +492,10 @@ endif; ?>
 
 </form>
 
-<div id="legacynotice" class="modal fade" role="dialog">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-body">
-<?php
-
-		print(gettext("<p align=\"center\"><strong>pfSense&copy; &quot;Gold&quot; configuration backup system access.</strong>
-			</p>
-			<p>The &quot;Gold&quot; backup system may be available to allow the retrieval of older backups</p>
-			<p>Note that because these backups were stored by hostname AND username, the configured username, hostname and password will be transmitted (via HTTPS) to the server. By clicking &quot;OK&quot;
-			you agree that you authorize this action. The backup data is encrypted (AES-256) and the encryption key is neither transmitted, nor known outside of the firewall</p>
-			</div>"));
-?>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-xs btn-default" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">Cancel</span>
-				</button>
-				<button id="legacyok" type="button" class="btn btn-xs btn-success" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">OK</span>
-				</button>
-			</div>
-
-		</div>
-	</div>
-</div>
-
-<?php
-
-	if ((strlen($username) == 0) || (strlen($password) == 0) ||
-	   (strlen($config['system']['acb']['gold_encryption_password']) == 0) ||
-	   ($config['system']['acb']['gold_encryption_password'] == "********" )) {
-		$legacyready = "no";
-	} else {
-		$legacyready = "yes";
-	}
-
-	$legacynotready = gettext("Please configure your \"Gold\" membership settings on the Settings page " .
-		"before accessing the legacy backup features");
-?>
-
 <script type="text/javascript">
 //<![CDATA[
 events.push(function(){
 	$('#loading').hide();
-
-	// Show the acceptance modal if the user wants to use the legacy system
-	$('#legacy').click(function() {
-		if ("<?=$legacyready?>" == "yes") {
-			$('#legacynotice').modal('show');
-		} else {
-			alert('<?=$legacynotready?>');
-		}
-	});
-
-	// Redraw the page if they cancel
-	$('#nolegacy').click(function() {
-		window.location.replace('/services_acb.php');
-	});
-
-	// On clicking "OK", reload the page but with a POST parameter "legacy" set
-	$('#legacyok').click(function() {
-		var $form = $('<form>');
-
-		$form
-			.attr("method", "POST")
-			.attr("action", '/services_acb.php')
-			// The CSRF magic is required because we will be viewing the results of the POST
-			.append(
-				$("<input>")
-					.attr("type", "hidden")
-					.attr("name", "__csrf_magic")
-					.val(csrfMagicToken)
-			)
-			.append(
-			$("<input>")
-				.attr("type", "hidden")
-				.attr("name", 'legacy')
-				.val("Yes")
-			)
-			.appendTo('body')
-			.submit();
-	});
 
 	// On clicking Submit", reload the page but with a POST parameter "userkey" set
 	$('#upduserkey').click(function() {

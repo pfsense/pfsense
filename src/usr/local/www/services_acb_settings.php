@@ -97,44 +97,6 @@ if (isset($_POST['save'])) {
 		}
 	}
 
-	// Validate legacy settings
-	// All blank is allowed, otherwise they must be valid
-	if ($pconfig['legacy'] == 'yes') {
-		if (empty($_POST['gold_password']) && empty($_POST['gold_username']) && empty($_POST['gold_password_confirm']) &&
-		    empty($_POST['gold_encryption_password']) && empty($_POST['gold_encryption_password_confirm'])) {
-			$update_gep = true;
-			$pconfig['legacy'] = 'no';
-		} else {
-			if ($_POST['gold_password'] != "********") {
-				if ($_POST['gold_password'] != $_POST['gold_password_confirm']) {
-					$input_errors[] = gettext("Legacy Gold password and confirmation do not match");
-				} else {
-					$update_gp = true;
-				}
-			}
-
-			if ($_POST['gold_encryption_password'] != "********") {
-				if ($_POST['gold_encryption_password'] != $_POST['gold_encryption_password_confirm']) {
-					$input_errors[] = gettext("Legacy Gold encryption password and confirmation do not match");
-				} else {
-					$update_gep = true;
-				}
-			}
-
-			if (empty($_POST['gold_username'])) {
-				$input_errors[] = gettext("Legacy Gold username may not be blank");
-			}
-
-			if (empty($_POST['gold_password'])) {
-				$input_errors[] = gettext("Legacy Gold password may not be blank");
-			}
-
-			if (empty($_POST['gold_encryption_password'])) {
-				$input_errors[] = gettext("Legacy Gold encryption password may not be blank");
-			}
-		}
-	}
-
 	if (!$input_errors) {
 		if($update_ep) {
 			$config['system']['acb']['encryption_password'] = $pconfig['encryption_password'];
@@ -199,13 +161,6 @@ display_top_tabs($tab_array);
 
 $form = new Form;
 $section = new Form_Section('Auto Config Backup');
-
-$section->addInput(new Form_Input(
-	'legacy',
-	'',
-	"hidden",
-	$pconfig['legacy']
-));
 
 $section->addInput(new Form_Checkbox(
 	'enable',
@@ -288,45 +243,13 @@ $section->addPassword(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'hint',
-	'Identifier',
+	'Hint/Identifier',
 	'text',
 	$pconfig['hint']
 ))->setHelp("You may optionally provide an identifier which will be stored in plain text along with each encrypted backup. " .
 			"This may allow the Netgate support team to locate your key should you lose it.");
 
 $form->add($section);
-
-$section = new Form_Section('Legacy "Gold" settings', 'legacy_panel');
-
-$section->addInput(new Form_Input(
-	'gold_username',
-	'*Username',
-	'text',
-	$pconfig['gold_username']
-));
-
-$section->addPassword(new Form_Input(
-	'gold_password',
-	'*Password',
-	'password',
-	$pconfig['gold_password']
-));
-
-$section->addPassword(new Form_Input(
-	'gold_encryption_password',
-	'*Encryption password',
-	'password',
-	$pconfig['gold_encryption_password']
-));
-
-$form->add($section);
-
-$form->addGlobal(new Form_Button(
-	'btnlegacy',
-	'Legacy "Gold" settings',
-	null,
-	null
-))->removeClass('btn-primary')->addClass('btn-success btn-xs pull-right');
 
 print $form;
 
@@ -336,24 +259,6 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function() {
-		$('#btnlegacy').prop('type', 'button');
-
-		// Hide/show the legacy settings on page load
-		if ($('#legacy').val() != 'yes') {
-			$('#legacy_panel').addClass('hidden');
-		}
-
-		// On clicking "legacy" button
-		$('#btnlegacy').click(function() {
-			if ($('#legacy').val() != "yes") {
-				$('#legacy_panel').removeClass('hidden');
-				$('#legacy').val('yes');
-			} else {
-				$('#legacy_panel').addClass('hidden');
-				$('#legacy').val('no');
-			}
-		});
-
 		$('input:radio[name=frequency]').click(function() {
 			hideClass("cronsched", ($(this).val() != 'cron'));
 		});

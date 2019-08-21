@@ -2306,7 +2306,7 @@ $section->addInput(new Form_Select(
 	'dhcp6-ia-pd-len',
 	'DHCPv6 Prefix Delegation size',
 	$pconfig['dhcp6-ia-pd-len'],
-	array("none" => "None", 16 => "48", 12 => "52", 8 => "56", 5 => "59", 4 => "60", 3 => "61",  2 => "62", 1 => "63", 0 => "64")
+	array("none" => "None", 16 => "48", 15 => "49", 14 => "50", 13 => "51", 12 => "52", 11 => "53", 10 => "54", 9 => "55", 8 => "56", 7 => "57", 6 => "58", 5 => "59", 4 => "60", 3 => "61", 2 => "62", 1 => "63", 0 => "64")
 ))->setHelp('The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP.');
 
 $section->addInput(new Form_Checkbox(

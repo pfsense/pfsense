@@ -95,6 +95,10 @@ if (isset($_POST['save'])) {
 		}
 	}
 
+	if ((int)$_POST['numman'] > (int)"50" ) {
+		$input_errors[] = gettext("You may not retain more than 50 manual backups.");
+	}
+
 	if (!$input_errors) {
 		if($update_ep) {
 			$config['system']['acb']['encryption_password'] = $pconfig['encryption_password'];
@@ -117,6 +121,7 @@ if (isset($_POST['save'])) {
 		$config['system']['acb']['month'] = $pconfig['month'];
 		$config['system']['acb']['day'] = $pconfig['day'];
 		$config['system']['acb']['dow'] = $pconfig['dow'];
+		$config['system']['acb']['numman'] = $pconfig['numman'];
 
 		// Remove any existing cron jobs
 		$cronid = index_of_command();
@@ -246,6 +251,14 @@ $section->addInput(new Form_Input(
 	$pconfig['hint']
 ))->setHelp("You may optionally provide an identifier which will be stored in plain text along with each encrypted backup. " .
 			"This may allow the Netgate support team to locate your key should you lose it.");
+
+$section->addInput(new Form_Input(
+	'numman',
+	'Manual backups to keep',
+	'number',
+	$pconfig['numman']
+))->setHelp("It may be useful to specify how many manual backups are retained on the server so that automatic backups do not overwrite them." .
+			"A maximum of 50 retained manual backups (of the 100 total backups) is permitted.");
 
 $form->add($section);
 

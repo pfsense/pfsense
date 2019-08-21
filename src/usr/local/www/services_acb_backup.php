@@ -39,10 +39,10 @@ if ($_POST) {
 	touch("/tmp/forceacb");
 
 	if ($_REQUEST['reason']) {
-		if (write_config($_REQUEST['reason'])) {
+		if (write_config($_REQUEST['reason'] . " MaNuAlBaCkUp")) {
 			$savemsg = "Backup completed successfully.";
 		}
-	} elseif (write_config("Backup invoked via Auto Config Backup.")) {
+	} elseif (write_config("Backup invoked via Auto Config Backup." . "-MaNuAlBaCkUp")) {
 			$savemsg = "Backup completed successfully.";
 	} else {
 		$savemsg = "Backup not completed - write_config() failed.";
@@ -52,12 +52,6 @@ if ($_POST) {
 	conf_mount_rw();
 	unlink_if_exists("/cf/conf/lastpfSbackup.txt");
 	conf_mount_ro();
-
-	/* The config write above will trigger a fresh upload with the given reason.
-	 * This manual upload appears to be a relic of an older time (1.2.x)
-	 * Leaving it just in case it needs to be resurrected
-	 */
-	//upload_config($_REQUEST['reason']);
 
 	$donotshowheader = true;
 }

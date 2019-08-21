@@ -461,6 +461,32 @@ function safe_write_file($file, $content, $force_binary = false) {
 function write_config($desc="Unknown", $backup = true, $write_config_only = false) {
 	global $config, $g;
 
+	// Certain strings may be embedded in the $desc (reason) parameter to trigger certain behavior.
+	// If detected, those strings are reomved and a variable set.
+	$doacb = true;
+	$manual_acb = false;
+	$rcnt = 0;
+
+	$desc = str_replace("-MaNuAlBaCkUp", "", $desc, $rcnt);
+	if ($rcnt > 0) {
+		$manual_acb = true; // Manual backups require special processing on the server
+	}
+
+	$rcnt = 0;
+	$desc = str_replace("-NoReMoTeBaCkUp", "", $desc, $rcnt);
+	if ($rcnt > 0) {
+		$doacb = false; // No ACB will be performed if this string is detected
+	}
+
+	/*
+	* Syncing vouchers happens every minute and sometimes multiple times. We don't
+	* want to fill up our db with a lot of the same config so just ignore that case.
+	*/
+	if((strpos($desc, 'Syncing vouchers') !== false ||
+		strpos($desc, 'Captive Portal Voucher database synchronized') !== false) ) {
+		$doacb = false;
+	}
+
 	if (!empty($_SERVER['REMOTE_ADDR'])) {
 		@phpsession_begin();
 		if (!empty($_SESSION['Username']) && ($_SESSION['Username'] != "admin")) {
@@ -547,8 +573,11 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	// Try the core AutoConfigBackup system
 	if (is_array($config['system']['acb']) && $config['system']['acb']['enable'] == "yes" &&
 	    (!isset($config['system']['acb']['frequency']) || $config['system']['acb']['frequency'] == "every") || file_exists("/tmp/forceacb")) {
-		require_once("acb.inc");
-		upload_config();
+	    if ($doacb) {
+			require_once("acb.inc");
+			upload_config($manual_acb);
+		}
+
 		if (file_exists("/tmp/forceacb")) {
 			unlink("/tmp/forceacb");
 		}

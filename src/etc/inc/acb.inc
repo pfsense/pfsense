@@ -187,7 +187,7 @@ function test_connection($post) {
 	return;
 }
 
-function upload_config($reasonm = "") {
+function upload_config($manual = flase) {
 	global $config, $g, $input_errors, $userkey, $uniqueID;
 
 	if (empty($userkey)) {
@@ -226,22 +226,13 @@ function upload_config($reasonm = "") {
 
 	$last_config_change = $config['revision']['time'];
 	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
+	$reason	= $config['revision']['description'];
 
-	if ($reasonm) {
-		$reason = $reasonm;
+	if ($manual && array_key_exists('numman', $config['system']['acb'])) {
+		$manmax = $config['system']['acb']['numman'];
 	} else {
-		$reason	= $config['revision']['description'];
+		$manmax = "0";
 	}
-
-	/*
-	* Syncing vouchers happens every minute and sometimes multiple times. We don't
-	* want to fill up our db with a lot of the same config so just ignore that case.
-	*/
-	if((strpos($reason, 'Syncing vouchers') !== false ||
-		strpos($reason, 'Captive Portal Voucher database synchronized') !== false) ) {
-		return;
-	}
-
 
 	$encryptpw = $config['system']['acb']['encryption_password'];
 
@@ -279,7 +270,8 @@ function upload_config($reasonm = "") {
 				'userkey' => htmlspecialchars($userkey),
 				'sha256_hash' => $raw_config_sha256_hash,
 				'version' => $g['product_version'],
-				'hint' => $config['system']['acb']['hint']
+				'hint' => $config['system']['acb']['hint'],
+				'manmax' => $manmax
 			);
 
 			// Check configuration into the ESF repo

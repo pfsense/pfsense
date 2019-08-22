@@ -790,13 +790,21 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 				}
 
-				$section->addInput(new Form_Select(
+				$tmpselect = new Form_Select(
 					$name,
 					$etitle,
 					($multiple) ? $selected:$selected[0],
 					$options,
 					$multiple
-				))->setHelp($field['description'])->setOnchange($onchange);
+				);
+
+				$tmpselect->setHelp($field['description'])->setOnchange($onchange);
+
+				if (is_set($field['size'])) {
+					$tmpselect->setAttribute('size', $field['size']);
+				}
+
+				$section->addInput($tmpselect);
 
 				break;
 			case "textarea":

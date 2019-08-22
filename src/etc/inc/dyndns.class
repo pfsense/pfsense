@@ -95,7 +95,7 @@
 	 *  ODS             - Last Tested: 02 August 2005
 	 *  FreeDNS         - Last Tested: 01 May 2016
 	 *  FreeDNS IPv6    - Last Tested: 01 May 2016
-	 *  Loopia          - Last Tested: NEVER
+	 *  Loopia          - Last Tested: 21 August 2019
 	 *  StaticCling     - Last Tested: 27 April 2006
 	 *  DNSexit         - Last Tested: 20 July 2008
 	 *  OpenDNS         - Last Tested: 4 August 2008
@@ -633,9 +633,13 @@
 					break;
 				case 'loopia':
 					$needsIP = TRUE;
-					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					curl_setopt($ch, CURLOPT_URL, 'https://dns.loopia.se/XDynDNSServer/XDynDNS.php?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard);
+					if(isset($this->_dnsWildcard) && $this->_dnsWildcard == TRUE) {
+						$this->_dnsWildcard = "ON";
+					} else {
+						$this->_dnsWildcard = "OFF";
+					}
+					curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
+					curl_setopt($ch, CURLOPT_URL, "https://dyndns.loopia.se/?system=custom&hostname={$this->_dnsHost}&myip={$this->_dnsIP}&wildcard={$this->_dnsWildcard}&mx={$this->_dnsMX}&backmx=NO");
 					break;
 				case 'opendns':
 					$needsIP = FALSE;

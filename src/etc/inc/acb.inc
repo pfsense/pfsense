@@ -189,7 +189,7 @@ function test_connection($post) {
 	return;
 }
 
-function upload_config($manual = flase) {
+function upload_config($manual = false) {
 	global $config, $g, $input_errors, $userkey, $uniqueID;
 
 	if (empty($userkey)) {

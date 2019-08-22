@@ -41,7 +41,7 @@ if ($_POST) {
 	touch("/tmp/forceacb");
 
 	if ($_REQUEST['reason']) {
-		if (write_config($_REQUEST['reason'] . " MaNuAlBaCkUp")) {
+		if (write_config($_REQUEST['reason'] . "-MaNuAlBaCkUp")) {
 			$savemsg = "Backup completed successfully.";
 		}
 	} elseif (write_config("Backup invoked via Auto Config Backup." . "-MaNuAlBaCkUp")) {

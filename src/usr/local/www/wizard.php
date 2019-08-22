@@ -798,7 +798,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 				$tmpselect->setHelp($field['description'])->setOnchange($onchange);
 
-				if (is_set($field['size'])) {
+				if (isset($field['size'])) {
 					$tmpselect->setAttribute('size', $field['size']);
 				}
 

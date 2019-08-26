@@ -1907,14 +1907,28 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 	$authenticated = false;
 	switch ($authcfg['type']) {
 		case 'ldap':
-			$authenticated = ldap_backed($username, $password, $authcfg, $attributes);
+			try {
+				$authenticated = ldap_backed($username, $password, $authcfg, $attributes);
+			} catch (Exception $e) {
+				log_error(sprintf(gettext("LDAP authentication error: %s"), $e->getMessage()));
+			}
+			break;
+
 			break;
 		case 'radius':
-			$authenticated = radius_backed($username, $password, $authcfg, $attributes);
+			try {
+				$authenticated = radius_backed($username, $password, $authcfg, $attributes);
+			} catch (Exception $e) {
+				log_error(sprintf(gettext("RADIUS authentication error: %s"), $e->getMessage()));
+			}
 			break;
 		default:
 			/* lookup user object by name */
-			$authenticated = local_backed($username, $password, $attributes);
+			try {
+				$authenticated = local_backed($username, $password, $attributes);
+			} catch (Exception $e) {
+				log_error(sprintf(gettext("Local authentication error: %s"), $e->getMessage()));
+			}
 			break;
 		}
 

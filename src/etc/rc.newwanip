@@ -203,18 +203,6 @@ if (platform_booting() && !in_array(substr($interface_real, 0, 3), array("ppp", 
  * could be failing back in which case we need to switch IPs back anyhow.
  */
 if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interfaces'][$interface]['ipaddr'])) {
-	/* IP changed, kill states accordingly */
-	if ($curwanip != $oldip) {
-		if (isset($config['system']['ip_change_kill_states'])) {
-			log_error("IP Address has changed, killing all states (ip_change_kill_states is set).");
-			pfSense_kill_states($oldip);
-			filter_flush_state_table();
-		} else {
-			log_error("IP Address has changed, killing states on former IP Address $oldip.");
-			pfSense_kill_states($oldip);
-		}
-	}
-
 	/*
 	 * Some services (e.g. dyndns, see ticket #4066) depend on
 	 * filter_configure() to be called before, otherwise pass out
@@ -229,6 +217,18 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 
 	/* reconfigure static routes (kernel may have deleted them) */
 	system_routing_configure($interface);
+
+	/* If the IP address changed, kill old states after rules and routing have been updated */
+	if ($curwanip != $oldip) {
+		if (isset($config['system']['ip_change_kill_states'])) {
+			log_error("IP Address has changed, killing all states (ip_change_kill_states is set).");
+			pfSense_kill_states($oldip);
+			filter_flush_state_table();
+		} else {
+			log_error("IP Address has changed, killing states on former IP Address $oldip.");
+			pfSense_kill_states($oldip);
+		}
+	}
 
 	/* reload unbound */
 	services_unbound_configure();

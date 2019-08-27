@@ -64,14 +64,15 @@ $output_file = "/tmp/status_output.tgz";
 $filtered_tags = array(
 	'accountkey', 'authorizedkeys', 'auth_pass', 'auth_user', 'bcrypt-hash',
 	'crypto_password', 'crypto_password2', 'dns_nsupdatensupdate_key',
-	'gold_encryption_password', 'gold_password', 'ipsecpsk', 'ldap_bindpw',
-	'lighttpd_ls_password', 'lighttpd_ls_password', 'md5-hash',
-	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'passphrase',
-	'password', 'passwordagain', 'pre-shared-key', 'proxypass',
-	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radius_secret',
-	'redis_password', 'redis_passwordagain', 'rocommunity', 'secret',
-	'shared_key', 'tls', 'varclientpasswordinput', 'varclientsharedsecret',
-	'varsyncpassword', 'varusersmotpinitsecret', 'varusersmotppin'
+	'encryption_password', 'gold_encryption_password', 'gold_password',
+	'ipsecpsk', 'ldap_bindpw', 'lighttpd_ls_password',
+	'lighttpd_ls_password', 'md5-hash', 'md5password', 'md5sigkey',
+	'md5sigpass', 'nt-hash', 'passphrase', 'password', 'passwordagain',
+	'pre-shared-key', 'proxypass', 'proxy_passwd', 'proxyuser',
+	'proxy_user', 'prv', 'radius_secret', 'redis_password',
+	'redis_passwordagain', 'rocommunity', 'secret', 'shared_key', 'tls',
+	'varclientpasswordinput', 'varclientsharedsecret', 'varsyncpassword',
+	'varusersmotpinitsecret', 'varusersmotppin'
 );
 
 if ($_POST['submit'] == "DOWNLOAD" && file_exists($output_file)) {

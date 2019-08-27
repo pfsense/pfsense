@@ -184,7 +184,7 @@ if ($_POST['save']) {
 			gettext("Descriptive name"),
 			gettext("Key length"),
 			gettext("Lifetime"),
-			gettext("Distinguished name Common Name"));
+			gettext("Common Name"));
 	}
 	if ($pconfig['method'] == "intermediate") {
 		$reqdfields = explode(" ",
@@ -194,7 +194,7 @@ if ($_POST['save']) {
 			gettext("Signing Certificate Authority"),
 			gettext("Key length"),
 			gettext("Lifetime"),
-			gettext("Distinguished name Common Name"));
+			gettext("Common Name"));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);

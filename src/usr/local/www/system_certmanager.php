@@ -246,7 +246,7 @@ if ($_POST['save']) {
 				gettext("Key length"),
 				gettext("Certificate Type"),
 				gettext("Lifetime"),
-				gettext("Distinguished name Common Name"));
+				gettext("Common Name"));
 		}
 
 		if ($pconfig['method'] == "external") {
@@ -255,7 +255,7 @@ if ($_POST['save']) {
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Key length"),
-				gettext("Distinguished name Common Name"));
+				gettext("Common Name"));
 		}
 
 		if ($pconfig['method'] == "existing") {

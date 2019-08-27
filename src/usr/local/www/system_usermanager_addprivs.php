@@ -56,7 +56,21 @@ if (!is_array($a_user['priv'])) {
 $spriv_list = $priv_list;
 uasort($spriv_list, "compare_by_name");
 
-if ($_POST['save']) {
+/*
+ * Check user privileges to test if the user is allowed to make changes.
+ * Otherwise users can end up in an inconsistent state where some changes are
+ * performed and others denied. See https://redmine.pfsense.org/issues/9259
+ */
+phpsession_begin();
+$guiuser = getUserEntry($_SESSION['Username']);
+$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+phpsession_end();
+
+if (!empty($_POST) && $read_only) {
+	$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+}
+
+if ($_POST['save'] && !$read_only) {
 	unset($input_errors);
 	$pconfig = $_POST;
 

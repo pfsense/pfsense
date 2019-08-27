@@ -81,7 +81,21 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['disabled'] = isset($a_user[$id]['disabled']);
 }
 
-if ($_POST['act'] == "deluser") {
+/*
+ * Check user privileges to test if the user is allowed to make changes.
+ * Otherwise users can end up in an inconsistent state where some changes are
+ * performed and others denied. See https://redmine.pfsense.org/issues/9259
+ */
+phpsession_begin();
+$guiuser = getUserEntry($_SESSION['Username']);
+$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+phpsession_end();
+
+if (!empty($_POST) && $read_only) {
+	$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+}
+
+if (($_POST['act'] == "deluser") && !$read_only) {
 
 	if (!isset($_POST['username']) || !isset($a_user[$id]) || ($_POST['username'] != $a_user[$id]['name'])) {
 		pfSenseHeader("system_usermanager.php");
@@ -123,7 +137,7 @@ if ($_POST['act'] == "deluser") {
 
 }
 
-if (isset($_POST['dellall'])) {
+if (isset($_POST['dellall']) && !$read_only) {
 
 	$del_users = $_POST['delete_check'];
 	$deleted_users = array();
@@ -153,7 +167,7 @@ if (isset($_POST['dellall'])) {
 	}
 }
 
-if ($_POST['act'] == "delcert") {
+if (($_POST['act'] == "delcert") && !$read_only) {
 
 	if (!$a_user[$id]) {
 		pfSenseHeader("system_usermanager.php");
@@ -169,7 +183,7 @@ if ($_POST['act'] == "delcert") {
 	$_POST['act'] = "edit";
 }
 
-if ($_POST['act'] == "delprivid") {
+if (($_POST['act'] == "delprivid") && !$read_only) {
 	$privdeleted = $priv_list[$a_user[$id]['priv'][$_POST['privid']]]['name'];
 	unset($a_user[$id]['priv'][$_POST['privid']]);
 	local_user_set($a_user[$id]);
@@ -179,7 +193,7 @@ if ($_POST['act'] == "delprivid") {
 	$_POST['act'] = "edit";
 }
 
-if ($_POST['save']) {
+if ($_POST['save'] && !$read_only) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -473,7 +487,7 @@ if ($_POST['save']) {
 }
 
 function build_priv_table() {
-	global $a_user, $id;
+	global $a_user, $id, $read_only;
 
 	$privhtml = '<div class="table-responsive">';
 	$privhtml .=	'<table class="table table-striped table-hover table-condensed">';
@@ -506,7 +520,7 @@ function build_priv_table() {
 		}
 		$privhtml .=			'</td>';
 		$privhtml .=			'<td>';
-		if (!$group) {
+		if (!$group && !$read_only) {
 			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a>';
 		}
 
@@ -534,14 +548,16 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	if (!$read_only) {
+		$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	}
 	$privhtml .= '</nav>';
 
 	return($privhtml);
 }
 
 function build_cert_table() {
-	global $a_user, $id;
+	global $a_user, $id, $read_only;
 
 	$certhtml = '<div class="table-responsive">';
 	$certhtml .=	'<table class="table table-striped table-hover table-condensed">';
@@ -566,8 +582,10 @@ function build_cert_table() {
 			$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . $revokedstr . '</td>';
 			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
 			$certhtml .=		'<td>';
-			$certhtml .=			'<a id="delcert' . $i .'" class="fa fa-trash no-confirm icon-pointer" title="';
-			$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '"></a>';
+			if (!$read_only) {
+				$certhtml .=			'<a id="delcert' . $i .'" class="fa fa-trash no-confirm icon-pointer" title="';
+				$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '"></a>';
+			}
 			$certhtml .=		'</td>';
 			$certhtml .=	'</tr>';
 			$i++;
@@ -580,7 +598,9 @@ function build_cert_table() {
 	$certhtml .= '</div>';
 
 	$certhtml .= '<nav class="action-buttons">';
-	$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	if (!$read_only) {
+		$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	}
 	$certhtml .= '</nav>';
 
 	return($certhtml);
@@ -657,7 +677,7 @@ foreach ($a_user as $i => $userent):
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
-<?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username'])): ?>
+<?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username']) && !$read_only): ?>
 							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" usepost></a>
 <?php endif; ?>
 						</td>
@@ -669,6 +689,8 @@ foreach ($a_user as $i => $userent):
 	</div>
 </div>
 <nav class="action-buttons">
+	<?php if (!$read_only): ?>
+
 	<a href="?act=new" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
@@ -678,6 +700,7 @@ foreach ($a_user as $i => $userent):
 		<i class="fa fa-trash icon-embed-btn"></i>
 		<?=gettext("Delete")?>
 	</button>
+	<?php endif; ?>
 
 </nav>
 </form>

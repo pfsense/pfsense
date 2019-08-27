@@ -370,6 +370,7 @@ defCmdT("OS-Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
 /* OS/Hardware Status */
 defCmdT("OS-sysctl values", "/sbin/sysctl -aq");
 defCmdT("OS-Kernel Environment", "/bin/kenv");
+defCmdT("OS-Kernel Memory Usage", "/usr/local/sbin/kmemusage.sh");
 defCmdT("OS-Installed Packages", "/usr/sbin/pkg info");
 defCmdT("OS-Package Manager Configuration", "/usr/sbin/pkg -vv");
 defCmdT("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");

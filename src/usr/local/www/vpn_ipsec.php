@@ -67,7 +67,7 @@ if ($_POST['apply']) {
 	/* delete selected p2 entries */
 	if (is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
 		foreach ($_POST['p2entry'] as $p2entrydel) {
-			if (is_interface_ipsec_vti_assigned($a_phase2[$p2entrydel])) {
+			if (is_interface_ipsec_vti_assigned($a_phase2[$p2entrydel]) && ($a_phase2[$p2entrydel]['mode'] == 'vti')) {
 				$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
 			} else {
 				unset($a_phase2[$p2entrydel]);
@@ -186,7 +186,7 @@ if ($_POST['apply']) {
 		if (isset($a_phase2[$togglebtnp2]['disabled'])) {
 			unset($a_phase2[$togglebtnp2]['disabled']);
 		} else {
-			if (is_interface_ipsec_vti_assigned($a_phase2[$togglebtnp2])) {
+			if (is_interface_ipsec_vti_assigned($a_phase2[$togglebtnp2]) && ($a_phase2[$togglebtnp2]['mode'] == 'vti')) {
 				$input_errors[] = gettext("Cannot disable a VTI Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
 			} else {
 				$a_phase2[$togglebtnp2]['disabled'] = true;
@@ -222,7 +222,7 @@ if ($_POST['apply']) {
 		}
 
 	} else if (isset($delbtnp2)) {
-		if (is_interface_ipsec_vti_assigned($a_phase2[$delbtnp2])) {
+		if (is_interface_ipsec_vti_assigned($a_phase2[$delbtnp2]) && ($a_phase2[$delbtnp2]['mode'] == 'vti')) {
 			$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
 		} else {
 			unset($a_phase2[$delbtnp2]);

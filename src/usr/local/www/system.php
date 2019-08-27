@@ -660,9 +660,11 @@ $section->addInput(new Form_Select(
 	'logincss',
 	'Login page color',
 	$pconfig['logincss'],
-	["1e3f75;" => gettext("Blue"), "003300" => gettext("Green"), "770101" => gettext("Red"),
+	["1e3f75;" => gettext("Dark Blue"), "003300" => gettext("Dark green"), "770101" => gettext("Crimson red"),
 	 "4b1263" => gettext("Purple"), "424142" => gettext("Gray"), "333333" => gettext("Dark gray"),
-	 "633215" => gettext("Brown" ), "bf7703" => gettext("Orange")]
+	 "000000" => gettext("Black"), "633215" => gettext("Dark brown"), "bf7703" => gettext("Brown"), 
+	 "008000" => gettext("Green"), "007faa" => gettext("Light Blue"), "dc2a2a" => gettext("Red"),
+	 "9b59b6" => gettext("Violet")]
 ))->setHelp('Choose a color for the login page');
 
 $section->addInput(new Form_Checkbox(

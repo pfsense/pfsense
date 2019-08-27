@@ -275,6 +275,11 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("An authentication server with the same name already exists.");
 	}
 
+	if (isset($id) && $config['system']['authserver'][$id] &&
+	   ($config['system']['authserver'][$id]['name'] != $pconfig['name'])) {
+		$input_errors[] = gettext("The name of an authentication server cannot be changed.");
+	}
+
 	if (($pconfig['type'] == "ldap") || ($pconfig['type'] == "radius")) {
 		$to_field = "{$pconfig['type']}_timeout";
 		if (isset($_POST[$to_field]) && !empty($_POST[$to_field]) && (!is_numeric($_POST[$to_field]) || (is_numeric($_POST[$to_field]) && ($_POST[$to_field] <= 0)))) {

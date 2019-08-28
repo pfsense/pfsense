@@ -847,7 +847,6 @@ EOPP;
 			// set pool MAC limitations
 			if ($poolconf['denyunknown'] == "class") {
 				$dhcpdconf .= "		allow members of \"s_{$dhcpif}\";\n";
- 			//	$dhcpdconf .= "		$deny_action known-clients;\n";        // in combination with above and below options, this will disable all entries WITHOUT FIXED IPs!
 				$dhcpdconf .= "		$deny_action unknown-clients;\n";
 			} else if ($poolconf['denyunknown'] == "disabled") {
 				// add nothing to $dhcpdconf; condition added to prevent next condition applying if ever engine changes such that: isset("disabled") == true

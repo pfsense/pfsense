@@ -169,6 +169,7 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 		// Private-addresses for DNS Rebinding
 		$private_addr = <<<EOF
 # For DNS Rebinding prevention
+private-address: 127.0.0.0/8
 private-address: 10.0.0.0/8
 private-address: ::ffff:a00:0/104
 private-address: 172.16.0.0/12

@@ -817,6 +817,36 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 	return array($thisid_type, $thisid_data);
 }
 
+/*
+ * Fixup ID type/data to include prefix when necessary, add quotes, etc.
+ */
+function ipsec_fixup_id($type, $data) {
+	/* List of types to pass through as-is without changes or adding prefix */
+	$auto_types = array('address');
+	/* List of types which need the resulting string double quoted. */
+	$quote_types = array('keyid', 'asn1dn');
+
+	/* If the first character of asn1dn type data is not #, then rely on
+	 * automatic parsing https://redmine.pfsense.org/issues/4792 */
+	if (($type == 'asn1dn') && !empty($data) && ($data[0] != '#')) {
+		$auto_types[] = 'asn1dn';
+	}
+
+	if ($type == 'any') {
+		$idstring = "";
+	} elseif (!in_array($type, $auto_types)) {
+		$idstring = "{$type}:{$data}";
+	} else {
+		$idstring = $data;
+	}
+
+	if (in_array($type, $quote_types)) {
+		$idstring = "\"{$idstring}\"";
+	}
+
+	return $idstring;
+}
+
 function ipsec_fixup_network($network) {
 	if (substr($network, -3) == '|/0') {
 		$result = substr($network, 0, -3);

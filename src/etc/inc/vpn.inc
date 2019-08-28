@@ -928,19 +928,9 @@ EOD;
 			}
 
 			list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
-			if ($myid_type != 'address' && $myid_type != 'keyid' && $myid_type != 'asn1dn') {
-				$myid_data = "{$myid_type}:{$myid_data}";
-			} elseif ($myid_type == "asn1dn" && !empty($myid_data)) {
-				if ($myid_data[0] == '#') {
-				/* asn1dn needs double quotes */
-					$myid_data = "\"{$myid_type}:{$myid_data}\"";
-				} else {
-					$myid_data = "\"{$myid_data}\"";
-				}
-			}
-			$leftid = '';
-			if (!empty($myid_data)) {
-				$leftid = "leftid = {$myid_data}";
+			$leftid = ipsec_fixup_id($myid_type, $myid_data);
+			if (!empty($leftid)) {
+				$leftid = "leftid = {$leftid}";
 			}
 
 			$peerid_spec = '';
@@ -948,20 +938,7 @@ EOD;
 				// Only specify peer ID if we are not dealing with mobile PSK
 			} else {
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
-				if ($peerid_type == 'any') {
-					$peerid_spec = '';
-				} elseif ($peerid_type != 'address' && $peerid_type != 'keyid' && $peerid_type != 'asn1dn') {
-					$peerid_spec = "{$peerid_type}:{$peerid_data}";
-				} elseif ($peerid_type == "asn1dn") {
-					/* asn1dn needs double quotes */
-					if ($peerid_data[0] == '#') {
-						$peerid_spec = "\"{$peerid_type}:{$peerid_data}\"";
-					} elseif (!empty($peerid_data)) {
-						$peerid_spec = "\"{$peerid_data}\"";
-					}
-				} else {
-					$peerid_spec = $peerid_data;
-				}
+				$peerid_spec = ipsec_fixup_id($peerid_type, $peerid_data);
 			}
 
 			$ealgosp1 = '';

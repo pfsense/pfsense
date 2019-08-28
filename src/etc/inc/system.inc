@@ -1857,6 +1857,49 @@ function system_timezone_configure() {
 	}
 }
 
+/* Generate list of possible NTP poll values
+ * https://redmine.pfsense.org/issues/9439 */
+global $ntp_poll_min_value, $ntp_poll_max_value;
+global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
+global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
+global $ntp_poll_min_default, $ntp_poll_max_default;
+$ntp_poll_min_value = 4;
+$ntp_poll_max_value = 17;
+$ntp_poll_min_default_gps = 4;
+$ntp_poll_max_default_gps = 4;
+$ntp_poll_min_default_pps = 4;
+$ntp_poll_max_default_pps = 4;
+$ntp_poll_min_default = 'omit';
+$ntp_poll_max_default = 9;
+
+function system_ntp_poll_values() {
+	global $ntp_poll_min_value, $ntp_poll_max_value;
+	$poll_values = array("" => gettext('Default'));
+
+	for ($i = $ntp_poll_min_value; $i <= $ntp_poll_max_value; $i++) {
+		$sec = 2 ** $i;
+		$poll_values[$i] = $i . ': ' . number_format($sec) . ' ' . gettext('seconds') .
+					' (' . convert_seconds_to_dhms($sec) . ')';
+	}
+
+	$poll_values['omit'] = gettext('Omit (Do not set)');
+	return $poll_values;
+}
+
+function system_ntp_fixup_poll_value($type, $configvalue, $default) {
+	$pollstring = "";
+
+	if (empty($configvalue)) {
+		$configvalue = $default;
+	}
+
+	if ($configvalue != 'omit') {
+		$pollstring = " {$type} {$configvalue}";
+	}
+
+	return $pollstring;
+}
+
 function system_ntp_setup_gps($serialport) {
 	global $config, $g;
 	$gps_device = '/dev/gps0';
@@ -1935,6 +1978,9 @@ function system_ntp_setup_pps($serialport) {
 
 function system_ntp_configure() {
 	global $config, $g;
+	global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
+	global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
+	global $ntp_poll_min_default, $ntp_poll_max_default;
 
 	$driftfile = "/var/db/ntpd.drift";
 	$statsdir = "/var/log/ntp";
@@ -1968,7 +2014,8 @@ function system_ntp_configure() {
 		$ntpcfg .= "\n";
 		$ntpcfg .= "# PPS Setup\n";
 		$ntpcfg .= 'server 127.127.22.0';
-		$ntpcfg .= ' minpoll 4 maxpoll 4';
+		$ntpcfg .= system_ntp_fixup_poll_value('minpoll', $config['ntpd']['pps']['ppsminpoll'], $ntp_poll_min_default_pps);
+		$ntpcfg .= system_ntp_fixup_poll_value('maxpoll', $config['ntpd']['pps']['ppsmaxpoll'], $ntp_poll_max_default_pps);
 		if (empty($config['ntpd']['pps']['prefer'])) { /*note: this one works backwards */
 			$ntpcfg .= ' prefer';
 		}
@@ -2024,7 +2071,9 @@ function system_ntp_configure() {
 		} else {
 			$ntpcfg .= '0';
 		}
-		$ntpcfg .= ' minpoll 4 maxpoll 4';
+		$ntpcfg .= system_ntp_fixup_poll_value('minpoll', $config['ntpd']['gps']['gpsminpoll'], $ntp_poll_min_default_gps);
+		$ntpcfg .= system_ntp_fixup_poll_value('maxpoll', $config['ntpd']['gps']['gpsmaxpoll'], $ntp_poll_max_default_gps);
+
 		if (empty($config['ntpd']['gps']['prefer'])) { /*note: this one works backwards */
 			$ntpcfg .= ' prefer';
 		}
@@ -2091,7 +2140,11 @@ function system_ntp_configure() {
 			$ntpcfg .= 'server ';
 		}
 
-		$ntpcfg .= "{$ts} iburst maxpoll 9";
+		$ntpcfg .= "{$ts} iburst";
+
+		$ntpcfg .= system_ntp_fixup_poll_value('minpoll', $config['ntpd']['ntpminpoll'], $ntp_poll_min_default);
+		$ntpcfg .= system_ntp_fixup_poll_value('maxpoll', $config['ntpd']['ntpmaxpoll'], $ntp_poll_max_default);
+
 		if (substr_count($config['ntpd']['prefer'], $ts)) {
 			$ntpcfg .= ' prefer';
 		}

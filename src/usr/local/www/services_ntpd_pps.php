@@ -31,6 +31,9 @@
 
 require_once("guiconfig.inc");
 
+global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
+$ntp_poll_values = system_ntp_poll_values();
+
 if (!is_array($config['ntpd'])) {
 	$config['ntpd'] = array();
 }
@@ -40,6 +43,20 @@ if (!is_array($config['ntpd']['pps'])) {
 
 if ($_POST) {
 	unset($input_errors);
+
+	if (!array_key_exists($pconfig['ppsminpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is invalid.");
+	}
+
+	if (!array_key_exists($pconfig['ppsmaxpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
+	}
+
+	if (is_numericint($pconfig['ppsminpoll']) &&
+	    is_numericint($pconfig['ppsmaxpoll']) ||
+	    ($pconfig['ppsmaxpoll'] < $pconfig['ppsminpoll'])) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is higher than Maximum Poll Interval.");
+	}
 
 	if (!$input_errors) {
 		if (!empty($_POST['ppsport']) && file_exists('/dev/'.$_POST['ppsport'])) {
@@ -90,6 +107,8 @@ if ($_POST) {
 		} elseif (isset($config['ntpd']['pps']['refid'])) {
 			unset($config['ntpd']['pps']['refid']);
 		}
+		$config['ntpd']['pps']['ppsminpoll'] = $_POST['ppsminpoll'];
+		$config['ntpd']['pps']['ppsmaxpoll'] = $_POST['ppsmaxpoll'];
 
 		write_config("Updated NTP PPS Settings");
 
@@ -101,7 +120,6 @@ if ($_POST) {
 
 init_config_arr(array('ntpd', 'pps'));
 $pconfig = &$config['ntpd']['pps'];
-
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("PPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
@@ -166,6 +184,20 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['stratum']
 ))->setHelp('This may be used to change the PPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock and just monitor this source.');
+
+$section->addInput(new Form_Select(
+	'ppsminpoll',
+	'Minimum Poll Interval',
+	$pconfig['ppsminpoll'],
+	$ntp_poll_values,
+))->setHelp('Minimum poll interval for NTP messages. If set, must be less than or equal to Maximum Poll Interval.');
+
+$section->addInput(new Form_Select(
+	'ppsmaxpoll',
+	'Maximum Poll Interval',
+	$pconfig['ppsmaxpoll'],
+	$ntp_poll_values,
+))->setHelp('Maximum poll interval for NTP messages. If set, must be greater than or equal to Minimum Poll Interval.');
 
 $section->addInput(new Form_Checkbox(
 	'ppsflag2',

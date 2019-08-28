@@ -33,6 +33,9 @@ require_once("guiconfig.inc");
 
 $gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
 
+global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
+$ntp_poll_values = system_ntp_poll_values();
+
 function set_default_gps() {
 	global $config;
 
@@ -155,6 +158,21 @@ if ($_POST) {
 	if (!in_array($_POST['gpstype'], $gpstypes)) {
 		$input_errors[] = gettext("The submitted GPS type is invalid.");
 	}
+
+	if (!array_key_exists($pconfig['gpsminpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is invalid.");
+	}
+
+	if (!array_key_exists($pconfig['gpsmaxpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
+	}
+
+	if (is_numericint($pconfig['gpsminpoll']) &&
+	    is_numericint($pconfig['gpsmaxpoll']) ||
+	    ($pconfig['gpsmaxpoll'] < $pconfig['gpsminpoll'])) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is higher than Maximum Poll Interval.");
+	}
+
 } else {
 	/* set defaults if they do not already exist */
 	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
@@ -285,6 +303,9 @@ if ($_POST && empty($input_errors)) {
 		unset($config['ntpd']['gps']['initcmd']);
 		unset($config['ntpd']['gps']['nmeaset']);
 	}
+
+	$config['ntpd']['gps']['gpsminpoll'] = $_POST['gpsminpoll'];
+	$config['ntpd']['gps']['gpsmaxpoll'] = $_POST['gpsmaxpoll'];
 
 	write_config(gettext("Updated NTP GPS Settings"));
 
@@ -424,6 +445,20 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['stratum']
 ))->setHelp('This may be used to change the GPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock.');
+
+$section->addInput(new Form_Select(
+	'gpsminpoll',
+	'Minimum Poll Interval',
+	$pconfig['gpsminpoll'],
+	$ntp_poll_values,
+))->setHelp('Minimum poll interval for NTP messages. If set, must be less than or equal to Maximum Poll Interval.');
+
+$section->addInput(new Form_Select(
+	'gpsmaxpoll',
+	'Maximum Poll Interval',
+	$pconfig['gpsmaxpoll'],
+	$ntp_poll_values,
+))->setHelp('Maximum poll interval for NTP messages. If set, must be greater than or equal to Minimum Poll Interval.');
 
 $section->addInput(new Form_Checkbox(
 	'gpsprefer',

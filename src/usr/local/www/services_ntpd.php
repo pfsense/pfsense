@@ -34,6 +34,9 @@ require_once("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
 
+global $ntp_poll_min_default, $ntp_poll_max_default;
+$ntp_poll_values = system_ntp_poll_values();
+
 if (!is_array($config['ntpd'])) {
 	$config['ntpd'] = array();
 }
@@ -57,6 +60,20 @@ if ($_POST) {
 
 	if ((strlen($pconfig['ntporphan']) > 0) && (!is_numericint($pconfig['ntporphan']) || ($pconfig['ntporphan'] < 1) || ($pconfig['ntporphan'] > 15))) {
 		$input_errors[] = gettext("The supplied value for NTP Orphan Mode is invalid.");
+	}
+
+	if (!array_key_exists($pconfig['ntpminpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is invalid.");
+	}
+
+	if (!array_key_exists($pconfig['ntpmaxpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
+	}
+
+	if (is_numericint($pconfig['ntpminpoll']) &&
+	    is_numericint($pconfig['ntpmaxpoll']) &&
+	    ($pconfig['ntpmaxpoll'] < $pconfig['ntpminpoll'])) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is higher than NTP Maximum Poll Interval.");
 	}
 
 	if (!$input_errors) {
@@ -98,6 +115,8 @@ if ($_POST) {
 		$config['system']['timeservers'] = trim($timeservers);
 
 		$config['ntpd']['orphan'] = trim($pconfig['ntporphan']);
+		$config['ntpd']['ntpminpoll'] = $pconfig['ntpminpoll'];
+		$config['ntpd']['ntpmaxpoll'] = $pconfig['ntpmaxpoll'];
 
 		if (!empty($_POST['logpeer'])) {
 			$config['ntpd']['logpeer'] = $_POST['logpeer'];
@@ -307,6 +326,20 @@ $section->addInput(new Form_Input(
 ))->setHelp('Orphan mode allows the system clock to be used when no other clocks are available. ' .
 			'The number here specifies the stratum reported during orphan mode and should normally be set to a number high enough ' .
 			'to insure that any other servers available to clients are preferred over this server (default: 12).');
+
+$section->addInput(new Form_Select(
+	'ntpminpoll',
+	'Minimum Poll Interval',
+	$pconfig['ntpminpoll'],
+	$ntp_poll_values,
+))->setHelp('Minimum poll interval for NTP messages. If set, must be less than or equal to Maximum Poll Interval.');
+
+$section->addInput(new Form_Select(
+	'ntpmaxpoll',
+	'Maximum Poll Interval',
+	$pconfig['ntpmaxpoll'],
+	$ntp_poll_values,
+))->setHelp('Maximum poll interval for NTP messages. If set, must be greater than or equal to Minimum Poll Interval.');
 
 $section->addInput(new Form_Checkbox(
 	'statsgraph',

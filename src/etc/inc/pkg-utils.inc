@@ -1474,7 +1474,6 @@ function update_repos() {
 				// Gather some information about the system so the proper repo can be returned
 				$nid = file_get_contents($idfile);
 				$serial = system_get_serial();
-				$arch = php_uname('p');
 
 				$base_pkg = get_base_pkg_name();
 
@@ -1488,10 +1487,19 @@ function update_repos() {
 						}
 					}
 
-				$version = $pkg_info['installed_version'];
+				// Compose a version string in JSON format
+				$os = php_uname('s');
+				$osver = php_uname('r');
+				$v = php_uname('v');
+
+				$ed =  (strpos($v, 'factory') !== false) ? "Factory":"Community";
+
+				$version = "{\"os\":\"" . $os . "\",\"osver\":\"" . $osver . "\",\"prod\":\"pfSense\"," . "\"ver\":\"" . $info[0]['version'] . "\",\"ed\":\"" . $ed . "\"}";
+
+				// Compose an architecture string in JSON format
+				$arch =  php_uname('m');
+
 				$locale = $config['system']['language'];
-				// Architecture comes from the last word in the uname output
-				$arch = array_pop(explode(' ', php_uname('p')));
 
 				$post = ['uid' => $nid,
 						 'language' => $locale,

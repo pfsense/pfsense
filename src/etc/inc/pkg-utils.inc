@@ -1490,15 +1490,11 @@ function update_repos() {
 				// Compose a version string in JSON format
 				$os = php_uname('s');
 				$osver = php_uname('r');
-				$v = php_uname('v');
-
+				$v = strtolower(php_uname('v'));
 				$ed =  (strpos($v, 'factory') !== false) ? "Factory":"Community";
-
 				$version = "{\"os\":\"" . $os . "\",\"osver\":\"" . $osver . "\",\"prod\":\"pfSense\"," . "\"ver\":\"" . $info[0]['version'] . "\",\"ed\":\"" . $ed . "\"}";
 
-				// Compose an architecture string in JSON format
 				$arch =  php_uname('m');
-
 				$locale = $config['system']['language'];
 
 				$post = ['uid' => $nid,

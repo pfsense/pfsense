@@ -1448,6 +1448,20 @@ pkg_repo_rsync() {
 					echo ">>> ERROR: An error occurred sending repo to final hostname"
 					print_error_pfS
 				fi
+
+				if [ -z "${PKG_POST_RSYNC_COMMAND}" ]; then
+					continue
+				fi
+
+				echo -n ">>> Running post rsync command at ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
+				if script -aq ${_logfile} ssh -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+				    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} "${PKG_POST_RSYNC_COMMAND}"; then
+					echo "Done!" | tee -a ${_logfile}
+				else
+					echo "Failed!" | tee -a ${_logfile}
+					echo ">>> ERROR: An error occurred executing post command at pkg final hostname"
+					print_error_pfS
+				fi
 			done
 		fi
 	done

@@ -3,9 +3,7 @@
  * diag_routes.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2013 BSD Perimeter
- * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Fernando Lamos
  * All rights reserved.
  *
@@ -225,5 +223,6 @@ events.push(function() {
 		</table>
 	</div>
 </div>
+<span class="help-block">Flags: 1 - Protocol specific routing flag, H - Host entry, G - Destination requires	forwarding by intermediary, S - Manually added, U - Route usable.<a target="_blank" href="https://docs.netgate.com/pfsense/en/latest/routing/list-of-routing-table-flags.html"> See full list of Routing Table Flags</a></span>
 
 <?php include("foot.inc");

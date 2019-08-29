@@ -46,7 +46,8 @@ $iflist = array_intersect_key(
 		array_filter(
 			array_keys(get_configured_interface_with_descr()),
 			function($if) {
-				return is_ipaddr(get_interface_ip($if));
+				return (is_ipaddr(get_interface_ip($if)) &&
+				    (substr(convert_friendly_interface_to_real_interface_name($if), 0, 4) != 'ovpn'));
 			}
 		)
 	)

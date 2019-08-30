@@ -1449,19 +1449,25 @@ pkg_repo_rsync() {
 					print_error_pfS
 				fi
 
-				if [ -z "${PKG_POST_RSYNC_COMMAND}" ]; then
+				if [ -z "${PKG_FINAL_S3_PATH}" ]; then
 					continue
 				fi
 
-				echo -n ">>> Running post rsync command at ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
-				if script -aq ${_logfile} ssh -p ${PKG_FINAL_RSYNC_SSH_PORT} \
-				    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} "${PKG_POST_RSYNC_COMMAND}"; then
-					echo "Done!" | tee -a ${_logfile}
-				else
-					echo "Failed!" | tee -a ${_logfile}
-					echo ">>> ERROR: An error occurred executing post command at pkg final hostname"
-					print_error_pfS
-				fi
+				local _repos=$(ssh -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+				    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
+				    "ls -1d ${PKG_FINAL_RSYNC_DESTDIR}/${_repo_base%%-core}*")
+				for _repo in ${_repos}; do
+					echo -n ">>> Sending updated packages to AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
+					if script -aq ${_logfile} ssh -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+					    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
+					    "aws s3 sync ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
+						echo "Done!" | tee -a ${_logfile}
+					else
+						echo "Failed!" | tee -a ${_logfile}
+						echo ">>> ERROR: An error occurred sending files to AWS S3"
+						print_error_pfS
+					fi
+				done
 			done
 		fi
 	done

@@ -1460,7 +1460,7 @@ pkg_repo_rsync() {
 					echo -n ">>> Sending updated packages to AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
 					if script -aq ${_logfile} ssh -p ${PKG_FINAL_RSYNC_SSH_PORT} \
 					    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
-					    "aws s3 sync ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
+					    "aws s3 sync --quiet ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
 						echo "Done!" | tee -a ${_logfile}
 					else
 						echo "Failed!" | tee -a ${_logfile}

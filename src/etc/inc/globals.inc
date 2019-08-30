@@ -71,7 +71,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "19.4",
+	"latest_config" => "19.6",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -252,5 +252,11 @@ $vlanprio = array(
 	"ic" => "Internetwork Control (IC, 6)",
 	"nc" => "Network Control (NC, 7)"
 );
+
+global $system_log_files;
+$system_log_files = array(
+	"system", "filter", "dhcpd", "vpn", "poes", "l2tps", "openvpn",
+	"portalauth", "ipsec", "ppp", "wireless", "nginx", "ntpd", "gateways",
+	"resolver", "routing");
 
 ?>

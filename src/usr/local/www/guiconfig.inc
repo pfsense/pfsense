@@ -613,8 +613,8 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
-// This version of dump_clog() does not output <td></td> or any other table elements.
-function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
+// This version of dump_log() does not output <td></td> or any other table elements.
+function dump_log_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	$specific_log = basename($logfile, '.log') . '_settings';
@@ -638,11 +638,7 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array(gettext("Log file started."));
 	} else {
-		if ($config['system']['disablesyslogclog']) {
-			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		} else {
-			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		}
+		exec('/usr/bin/bzcat -f ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	}
 	echo "\n";
 
@@ -665,7 +661,7 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 	return($rows);
 }
 
-function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
+function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	$specific_log = basename($logfile, '.log') . '_settings';
@@ -689,11 +685,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array(gettext("Log file started."));
 	} else {
-		if ($config['system']['disablesyslogclog']) {
-			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		} else {
-			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		}
+		exec('/usr/bin/bzcat -f ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	}
 
 	$rows = 0;
@@ -715,7 +707,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	return($rows);
 }
 
-function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
+function return_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
 	global $g, $config;
 	$sor = (isset($config['syslog']['reverse']) || $grepreverse) ? "-r" : "";
 	$specific_log = basename($logfile, '.log') . '_settings';
@@ -729,12 +721,20 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	}
-	if ($config['system']['disablesyslogclog']) {
-		exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-	} else {
-		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-	}
+	exec('/usr/bin/bzcat -f ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	return($logarr);
+}
+
+/* Compatibility stubs for old clog functions until packages catch up.
+ * Remove once packages all use the new function names. */
+function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
+	return dump_log_no_table($logfile, $tail, $withorig, $grepfor, $grepinvert);
+}
+function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
+	return dump_log($logfile, $tail, $withorig, $grepfor, $grepinvert);
+}
+function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
+	return return_log($logfile, $tail, $withorig, $grepfor, $grepinvert, $grepreverse);
 }
 
 /* Check if variable has changed, update and log if it has

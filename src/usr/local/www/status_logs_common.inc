@@ -166,9 +166,9 @@ function system_log_filter() {
 
 	if ($rawfilter) {
 		if (($filtersubmit) || ($filterlogentries_submit)) {
-			$rows = dump_clog($logfile_path, $nentries, true, array("$filtertext"), $inverse);
+			$rows = dump_log($logfile_path, $nentries, true, array("$filtertext"), $inverse);
 		} else {
-			$rows = dump_clog($logfile_path, $nentries, true, array(), $inverse);
+			$rows = dump_log($logfile_path, $nentries, true, array(), $inverse);
 		}
 	} else {
 		if (($filtersubmit) || ($filterlogentries_submit)) {

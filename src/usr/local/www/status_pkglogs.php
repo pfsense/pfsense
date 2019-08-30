@@ -106,7 +106,7 @@ if ($pkgwithlogging == false) {
 			<pre>
 <?php
 			$package = $config['installedpackages']['package'][$apkgid];
-			dump_clog_no_table($g['varlog_path'] . '/' . $package['logging']['logfilename'], $nentries, true, array());
+			dump_log_no_table($g['varlog_path'] . '/' . $package['logging']['logfilename'], $nentries, true, array());
 ?>
 			</pre>
 		</div>

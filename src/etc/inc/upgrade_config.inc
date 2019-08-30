@@ -6017,6 +6017,29 @@ function upgrade_193_to_194() {
 }
 
 /*
+ * Reset all log files, including package logs, on upgrade since old logs are in
+ * binary clog format.
+ * Conversion is not possible since the clog binary will not be present.
+ * https://redmine.pfsense.org/issues/8350
+ */
+function upgrade_194_to_195() {
+	global $g;
+
+	$logfiles = system_syslogd_get_all_logfilenames();
+
+	foreach ($logfiles as $logfile) {
+		$logpath = "{$g['varlog_path']}/{$logfile}.log";
+		exec("/usr/bin/truncate -s 0 " . escapeshellarg($logpath));
+	}
+}
+
+/* Add newsyslog cron job */
+function upgrade_195_to_196() {
+	global $g, $config;
+
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.
@@ -6025,7 +6048,7 @@ function upgrade_193_to_194() {
  *     version
  */
 function additional_config_upgrade() {
-	global $config;
+	install_cron_job('/usr/sbin/newsyslog', true, "*/1", '*', '*', '*', '*', 'root', false);
 }
 
 ?>

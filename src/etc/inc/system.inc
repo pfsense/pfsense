@@ -1050,23 +1050,56 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 	return $remote_servers;
 }
 
-function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true) {
+function system_syslogd_get_all_logfilenames() {
+	global $config, $g, $system_log_files;
+
+	if ($config['installedpackages']['package']) {
+		foreach ($config['installedpackages']['package'] as $package) {
+			if (isset($package['logging']['logfilename'])) {
+				$system_log_files[] = $package['logging']['logfilename'];
+			}
+		}
+	}
+
+	return $system_log_files;
+}
+
+/* For a given log filename prefix, return a list with the filename and
+ * rotated copies sorted in a way that utilities such as cat/bzcat/bzgrep will
+ * see all log entries in chronological order (e.g. name.log.2 name.log.1 name.log)
+ */
+function sort_related_log_files($logfile = "/var/log/system.log", $string = true, $escape = false) {
+	$related_files = glob("{$logfile}*");
+	usort($related_files, "rsort_log_filename");
+
+	if ($escape) {
+		$related_files = array_map("escapeshellarg", $related_files);
+	}
+
+	if ($string) {
+		$related_files = implode(" ", $related_files);
+	}
+
+	return $related_files;
+}
+
+function rsort_log_filename($a, $b) {
+	list($abasename, $anumber, $aext) = explode('.', $a);
+	list($bbasename, $bnumber, $bext) = explode('.', $b);
+	return ($anumber > $bnumber) ? -1 : 1;
+}
+
+function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true, $remove_rotated = true) {
 	global $config, $g;
 
 	if ($restart_syslogd) {
-		/* syslogd does not react well to clog rewriting the file while it is running. */
 		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
 			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
 		}
 	}
-	if (isset($config['system']['disablesyslogclog'])) {
-		unlink($logfile);
-		touch($logfile);
-	} else {
-		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
-		$log_size = ($log_size < (2**32)/2) ? $log_size : "511488";
-		$log_size = isset($config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize']) ? $config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize'] : $log_size;
-		exec("/usr/local/sbin/clog -i -s {$log_size} " . escapeshellarg($logfile));
+	exec("/usr/bin/truncate -s 0 " . escapeshellarg($logfile));
+	if ($remove_rotated) {
+		unlink_if_exists("{$logfile}.*");
 	}
 	if ($restart_syslogd) {
 		system_syslogd_start();
@@ -1078,16 +1111,14 @@ function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = tru
 }
 
 function clear_all_log_files($restart = false) {
-	global $g;
+	global $g,$system_log_files;
 	if ($restart) {
-		/* syslogd does not react well to clog rewriting the file while it is running. */
 		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
 			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
 		}
 	}
 
-	$log_files = array("system", "filter", "dhcpd", "vpn", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "wireless", "nginx", "ntpd", "gateways", "resolver", "routing");
-	foreach ($log_files as $lfile) {
+	foreach ($system_log_files as $lfile) {
 		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
 	}
 
@@ -1119,36 +1150,44 @@ function system_syslogd_start($sighup = false) {
 		echo gettext("Starting syslog...");
 	}
 
-	// Which logging type are we using this week??
-	if (isset($config['system']['disablesyslogclog'])) {
-		$log_directive = "";
-		$log_create_directive = "/usr/bin/touch ";
-		$log_size = "";
-	} else { // Defaults to CLOG
-		$log_directive = "%";
-		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "10240";
-		$log_create_directive = "/usr/local/sbin/clog -i -s ";
+	$mainsyslogconf = <<<EOD
+# Automatically generated, do not edit!
+# Place configuration files in {$g['varetc_path']}/syslog.d
+!*\n
+include						{$g['varetc_path']}/syslog.d
+# /* Manually added files with non-conflicting names will not be automatically removed */
+
+EOD;
+
+	if (!@file_put_contents("{$g['etc_path']}/syslog.conf", $mainsyslogconf)) {
+		printf(gettext("Error: cannot open syslog.conf in system_syslogd_start().%s"), "\n");
+		unset($syslogconf);
+		return 1;
 	}
+	safe_mkdir("{$g['varetc_path']}/syslog.d");
 
 	$syslogd_extra = "";
 	if (isset($syslogcfg)) {
 		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'miniupnpd', 'filterlog');
-		$syslogconf = "";
+		$syslogconf = "# Automatically generated, do not edit!\n";
+
 		if ($config['installedpackages']['package']) {
 			foreach ($config['installedpackages']['package'] as $package) {
 				if (isset($package['logging']['facilityname']) && isset($package['logging']['logfilename'])) {
 					array_push($separatelogfacilities, $package['logging']['facilityname']);
 					if (!is_file($g['varlog_path'].'/'.$package['logging']['logfilename'])) {
-						mwexec("{$log_create_directive} {$log_size} {$g['varlog_path']}/{$package['logging']['logfilename']}");
+						mwexec("/usr/bin/touch {$g['varlog_path']}/{$package['logging']['logfilename']}");
 					}
-					$syslogconf .= "!{$package['logging']['facilityname']}\n*.*\t\t\t\t\t\t {$log_directive}{$g['varlog_path']}/{$package['logging']['logfilename']}\n";
+					$pkgsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
+					$pkgsyslogconf .= "!{$package['logging']['facilityname']}\n*.*\t\t\t\t\t\t {$g['varlog_path']}/{$package['logging']['logfilename']}\n";
+					@file_put_contents("{$g['varetc_path']}/syslog.d/" . basename($package['logging']['logfilename']) . ".conf", $pkgsyslogconf);
 				}
 			}
 		}
 		$facilitylist = implode(',', array_unique($separatelogfacilities));
 		$syslogconf .= "!radvd,routed,zebra,ospfd,ospf6d,bgpd,miniupnpd\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/routing.log\n";
+			$syslogconf .= "*.*								{$g['varlog_path']}/routing.log\n";
 		}
 		if (isset($syslogcfg['routing'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1156,7 +1195,7 @@ function system_syslogd_start($sighup = false) {
 
 		$syslogconf .= "!ntp,ntpd,ntpdate\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/ntpd.log\n";
+			$syslogconf .= "*.*								{$g['varlog_path']}/ntpd.log\n";
 		}
 		if (isset($syslogcfg['ntpd'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1164,7 +1203,7 @@ function system_syslogd_start($sighup = false) {
 
 		$syslogconf .= "!ppp\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/ppp.log\n";
+			$syslogconf .= "*.*								{$g['varlog_path']}/ppp.log\n";
 		}
 		if (isset($syslogcfg['ppp'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1172,7 +1211,7 @@ function system_syslogd_start($sighup = false) {
 
 		$syslogconf .= "!poes\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/poes.log\n";
+			$syslogconf .= "*.*								{$g['varlog_path']}/poes.log\n";
 		}
 		if (isset($syslogcfg['vpn'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1180,7 +1219,7 @@ function system_syslogd_start($sighup = false) {
 
 		$syslogconf .= "!l2tps\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/l2tps.log\n";
+			$syslogconf .= "*.*								{$g['varlog_path']}/l2tps.log\n";
 		}
 		if (isset($syslogcfg['vpn'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1188,7 +1227,7 @@ function system_syslogd_start($sighup = false) {
 
 		$syslogconf .= "!charon,ipsec_starter\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/ipsec.log\n";
+			$syslogconf .= "*.*								{$g['varlog_path']}/ipsec.log\n";
 		}
 		if (isset($syslogcfg['vpn'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1196,7 +1235,7 @@ function system_syslogd_start($sighup = false) {
 
 		$syslogconf .= "!openvpn\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/openvpn.log\n";
+			$syslogconf .= "*.*								{$g['varlog_path']}/openvpn.log\n";
 		}
 		if (isset($syslogcfg['vpn'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1204,7 +1243,7 @@ function system_syslogd_start($sighup = false) {
 
 		$syslogconf .= "!dpinger\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/gateways.log\n";
+			$syslogconf .= "*.*								{$g['varlog_path']}/gateways.log\n";
 		}
 		if (isset($syslogcfg['dpinger'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1212,7 +1251,7 @@ function system_syslogd_start($sighup = false) {
 
 		$syslogconf .= "!dnsmasq,named,filterdns,unbound\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/resolver.log\n";
+			$syslogconf .= "*.*								{$g['varlog_path']}/resolver.log\n";
 		}
 		if (isset($syslogcfg['resolver'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1220,7 +1259,7 @@ function system_syslogd_start($sighup = false) {
 
 		$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/dhcpd.log\n";
+			$syslogconf .= "*.*								{$g['varlog_path']}/dhcpd.log\n";
 		}
 		if (isset($syslogcfg['dhcp'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1228,7 +1267,7 @@ function system_syslogd_start($sighup = false) {
 
 		$syslogconf .= "!hostapd\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.* 								{$log_directive}{$g['varlog_path']}/wireless.log\n";
+			$syslogconf .= "*.* 								{$g['varlog_path']}/wireless.log\n";
 		}
 		if (isset($syslogcfg['hostapd'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1236,7 +1275,7 @@ function system_syslogd_start($sighup = false) {
 
 		$syslogconf .= "!filterlog\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.* 								{$log_directive}{$g['varlog_path']}/filter.log\n";
+			$syslogconf .= "*.* 								{$g['varlog_path']}/filter.log\n";
 		}
 		if (isset($syslogcfg['filter'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
@@ -1245,11 +1284,11 @@ function system_syslogd_start($sighup = false) {
 		$syslogconf .= "!-{$facilitylist}\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
-local3.*							{$log_directive}{$g['varlog_path']}/vpn.log
-local4.*							{$log_directive}{$g['varlog_path']}/portalauth.log
-local5.*							{$log_directive}{$g['varlog_path']}/nginx.log
-local7.*							{$log_directive}{$g['varlog_path']}/dhcpd.log
-*.notice;kern.debug;lpr.info;mail.crit;daemon.none;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$log_directive}{$g['varlog_path']}/system.log
+local3.*							{$g['varlog_path']}/vpn.log
+local4.*							{$g['varlog_path']}/portalauth.log
+local5.*							{$g['varlog_path']}/nginx.log
+local7.*							{$g['varlog_path']}/dhcpd.log
+*.notice;kern.debug;lpr.info;mail.crit;daemon.none;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$g['varlog_path']}/system.log
 auth.info;authpriv.info 					|exec /usr/local/sbin/sshguard
 *.emerg								*
 
@@ -1279,9 +1318,9 @@ EOD;
 
 EOD;
 		}
-		/* write syslog.conf */
-		if (!@file_put_contents("{$g['etc_path']}/syslog.conf", $syslogconf)) {
-			printf(gettext("Error: cannot open syslog.conf in system_syslogd_start().%s"), "\n");
+		/* write syslog config to pfSense.conf */
+		if (!@file_put_contents("{$g['varetc_path']}/syslog.d/pfSense.conf", $syslogconf)) {
+			printf(gettext("Error: cannot open pfSense.conf in system_syslogd_start().%s"), "\n");
 			unset($syslogconf);
 			return 1;
 		}
@@ -1326,6 +1365,9 @@ EOD;
 		safe_mkdir($logpath);
 		$syslogd_sockets .= " -l {$log_socket}";
 	}
+
+	/* Setup log rotation */
+	system_log_rotation_setup();
 
 	/* If HUP was requested, but syslogd is not running, restart it instead. */
 	if ($sighup && !isvalidpid("{$g['varrun_path']}/syslog.pid")) {
@@ -1385,6 +1427,68 @@ EOD;
 	}
 
 	return $retval;
+}
+
+/* Setup newsyslog log rotation */
+function system_log_rotation_setup() {
+	global $config, $g, $system_log_files;
+	$syslogcfg = $config['syslog'];
+
+	$mainnewsyslogconf = <<<EOD
+# Automatically generated, do not edit!
+# Place configuration files in {$g['varetc_path']}/newsyslog.conf.d
+<include> {$g['varetc_path']}/newsyslog.conf.d/*
+# /* Manually added files with non-conflicting names will not be automatically removed */
+
+EOD;
+
+	file_put_contents("{$g['etc_path']}/newsyslog.conf", $mainnewsyslogconf);
+	safe_mkdir("{$g['varetc_path']}/newsyslog.conf.d");
+	$log_size = isset($syslogcfg['logfilesize']) ? $syslogcfg['logfilesize'] : "511488";
+	$log_size = ($log_size < (2**32)/2) ? $log_size : "511488";
+	$log_size = (int)$log_size/1024;
+
+	if (isset($syslogcfg)) {
+		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'miniupnpd', 'filterlog');
+		$newsyslogconf = <<<EOD
+/var/log/userlog			600	3	{$log_size}	*	B
+/var/log/utx.log			644	3	{$log_size}	*	B
+/var/log/nginx/error.log		644	7	{$log_size}	*	JC /var/run/nginx.pid 30
+
+EOD;
+
+		if ($config['installedpackages']['package']) {
+			foreach ($config['installedpackages']['package'] as $package) {
+				if (isset($package['logging']['rotation']) && isset($package['logging']['logfilename'])) {
+					$pkgnewsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
+					$pkgnewsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$package['logging']['logfilename']}");
+					@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/" . basename($package['logging']['logfilename']) . ".conf", $pkgnewsyslogconf);
+				}
+			}
+		}
+
+		foreach($system_log_files as $logfile) {
+			$log_size = isset($syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize']) ? (int) $syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize'] / 1024: $log_size;
+			$newsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$logfile}.log", 600, 7, $log_size);
+		}
+
+		if (!@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/pfSense.conf", $newsyslogconf)) {
+			printf(gettext("Error: cannot open pfSense.conf in system_log_rotation_setup().%s"), "\n");
+		}
+		unset($newsyslogconf);
+	}
+}
+
+function system_log_rotation_make_line($filename, $mode='644', $count=7, $size=1000, $time='*', $flags='JC') {
+	/* TODO: Fix default size, flags, etc. */
+	$nslline = $filename;
+	$nslline .= "			{$mode}";
+	$nslline .= "	{$count}";
+	$nslline .= "	{$size}";
+	$nslline .= "	{$time}";
+	$nslline .= "	{$flags}";
+	$nslline .= "\n";
+	return $nslline;
 }
 
 function system_webgui_create_certificate() {

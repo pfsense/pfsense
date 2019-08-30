@@ -27,8 +27,8 @@
 /*
  * A quick CLI log parser.
  * Examples:
- *  clog /var/log/filter.log | tail -50 | /usr/local/www/filterparser.php
- *  clog -f /var/log/filter.log | /usr/local/www/filterparser.php
+ *  tail -50 /var/log/filter.log | /usr/local/www/filterparser.php
+ *  tail -F /var/log/filter.log | /usr/local/www/filterparser.php
  */
 
 include_once("functions.inc");

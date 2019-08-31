@@ -1584,6 +1584,8 @@ function openvpn_resync_all($interface = "") {
 				if (trim(file_get_contents($fpath), " \t\n") != get_failover_interface($settings['interface'])) {
 					openvpn_resync('server', $settings);
 				}
+			} else {
+				openvpn_resync('server', $settings);
 			}
 		}
 	}
@@ -1595,6 +1597,8 @@ function openvpn_resync_all($interface = "") {
 				if (trim(file_get_contents($fpath), " \t\n") != get_failover_interface($settings['interface'])) {
 					openvpn_resync('client', $settings);
 				}
+			} else {
+				openvpn_resync('client', $settings);
 			}
 		}
 	}

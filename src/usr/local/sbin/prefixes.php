@@ -21,6 +21,8 @@
  * limitations under the License.
  */
 
+require_once('system.inc');
+
 $leases_file = "/var/dhcpd/var/db/dhcpd6.leases";
 if (!file_exists($leases_file)) {
 	exit(1);

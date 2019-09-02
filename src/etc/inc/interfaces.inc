@@ -94,6 +94,53 @@ function does_interface_exist($interface, $flush = true) {
 }
 
 /*
+ * $ipsecifnum = get_ipsecifnum($ikeid,$idx);
+ * locates or creates and returns an ipsecifnum in the config.
+ */
+function get_ipsecifnum($ikeid,$idx) {
+	global $config;
+
+	$existing = array_filter($config['ipsec']['vtimaps'], function($val) use($ikeid, $idx){
+              return ($val['reqid']==$ikeid and $val['index']==$idx);
+	})[1]['ifnum'];
+	if (isset($existing)) {
+		return $existing;
+	}
+	
+	if (($ikeid < 33) && ($idx < 10)) {
+		$oldformat = "{$ikeid}00{$idx}";
+		$config['ipsec']['vtimaps'][]=array(
+			"reqid" => $ikeid,
+			"index" => $idx,
+			"ifnum" => $oldformat
+		);
+		write_config(gettext("New ipsec vtimap added"));
+		return $oldformat;
+	}
+	
+	$assigned = array_column($config['ipsec']['vtimaps'], 'ifnum'); 
+	asort($assigned, SORT_NUMERIC);
+	$new = 1;
+	foreach($assinged as $ipsecifnum) {
+		if ($ipsecifnum != $new) {
+			$config['ipsec']['vtimaps'][]=array(
+				"reqid" => $ikeid,
+				"index" => $idx,
+				"ifnum" => $new
+			);
+			write_config(gettext("New ipsec vtimap added"));
+			return $new;
+		}
+		if ($new <= 32767) {
+			$new++;
+		} else {
+			log_error(gettext("All 32767 ipsec interface numbers have been assigned!"));
+			return(NULL);
+		}
+	}
+}
+	
+/*
  * does_vip_exist($vip): return true or false if a vip is
  * configured.
  */
@@ -1324,11 +1371,11 @@ function interface_ipsec_vti_list_p1($ph1ent) {
 	/* With IKEv1 or v2+Split, each P2 gets its own conn/reqid/interface */
 	if (!isset($ph1ent['mobile']) && ($ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn']))) {
 		foreach ($vtisubnet_spec as $idx => $vtisub) {
-			$iface_list["ipsec{$ph1ent['ikeid']}00{$idx}"] = gettext("IPsec VTI") . ": ".htmlspecialchars($ph1ent['descr'] . " / " . $vtisub['descr']);
+			$iface_list["ipsec".get_ipsecifnum($ph1ent['ikeid'],$idx)] = gettext("IPsec VTI") . ": ".htmlspecialchars($ph1ent['descr'] . " / " . $vtisub['descr']);
 		}
 	} else {
 		/* For IKEv2, only create one interface with additional addresses as aliases */
-		$iface_list["ipsec{$ph1ent['ikeid']}000"] = gettext("IPsec VTI") . ": ".htmlspecialchars($ph1ent['descr']);
+		$iface_list["ipsec".get_ipsecifnum($ph1ent['ikeid'],0)] = gettext("IPsec VTI") . ": ".htmlspecialchars($ph1ent['descr']);
 	}
 	return $iface_list;
 }
@@ -1357,11 +1404,11 @@ function is_interface_ipsec_vti_assigned($phase2) {
 				/* Is this for this P2? */
 				if (($vtisub['left'] == ipsec_idinfo_to_cidr($phase2['localid'], true, $phase2['mode'])) &&
 				    ($vtisub['right'] == ipsec_idinfo_to_cidr($phase2['remoteid'], false, $phase2['mode']))) {
-					$vti_interface = "ipsec{$phase1['ikeid']}00{$idx}";
+					$vti_interface = "ipsec".get_ipsecifnum($ph1ent['ikeid'],$idx);
 				}
 			}
 		} else {
-			$vti_interface = "ipsec{$phase1['ikeid']}000";
+			$vti_interface = "ipsec".get_ipsecifnum($ph1ent['ikeid'],0);
 		}
 	}
 	/* Check if this interface is assigned */
@@ -1388,7 +1435,7 @@ function interface_ipsec_vti_configure($ph1ent) {
 	if (!isset($ph1ent['mobile']) && ($ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn']))) {
 		/* Form a single interface for each P2 entry */
 		foreach ($vtisubnet_spec as $idx => $vtisub) {
-			$ipsecifnum = "{$ph1ent['ikeid']}00{$idx}";
+			$ipsecifnum = get_ipsecifnum($ph1ent['ikeid'],$idx);
 			if (!is_array($iface_addrs[$ipsecifnum])) {
 				$iface_addrs[$ipsecifnum] = array();
 			}
@@ -1397,7 +1444,7 @@ function interface_ipsec_vti_configure($ph1ent) {
 		}
 	} else {
 		/* For IKEv2, only create one interface with additional addresses as aliases */
-		$ipsecifnum = "{$ph1ent['ikeid']}000";
+		$ipsecifnum = get_ipsecifnum($ph1ent['ikeid'],0);
 		if (!is_array($iface_addrs[$ipsecifnum])) {
 			$iface_addrs[$ipsecifnum] = array();
 		}

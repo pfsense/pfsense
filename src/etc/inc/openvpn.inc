@@ -1575,16 +1575,17 @@ function openvpn_resync_all($interface = "") {
 		log_error(gettext("Resyncing OpenVPN instances."));
 	}
 
-	// Check if OpenVPN clients and servers are running on the correct interfaces.
+	// Check if OpenVPN clients and servers require a resync.
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
 			$mode_id = "server" . $settings['vpnid'];
 			$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.interface";
+			$gw_group_change = FALSE;
+			$ip_change = ($interface === $settings['interface']);
 			if (file_exists($fpath)) {
-				if (trim(file_get_contents($fpath), " \t\n") != get_failover_interface($settings['interface'])) {
-					openvpn_resync('server', $settings);
-				}
-			} else {
+				$gw_group_change = (trim(file_get_contents($fpath), " \t\n") != get_failover_interface($settings['interface']));
+			}
+			if ($interface === "" || $ip_change || $gw_group_change) {
 				openvpn_resync('server', $settings);
 			}
 		}
@@ -1593,11 +1594,12 @@ function openvpn_resync_all($interface = "") {
 		foreach ($config['openvpn']['openvpn-client'] as & $settings) {
 			$mode_id = "client" . $settings['vpnid'];
 			$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.interface";
+			$gw_group_change = FALSE;
+			$ip_change = ($interface === $settings['interface']);
 			if (file_exists($fpath)) {
-				if (trim(file_get_contents($fpath), " \t\n") != get_failover_interface($settings['interface'])) {
-					openvpn_resync('client', $settings);
-				}
-			} else {
+				$gw_group_change = (trim(file_get_contents($fpath), " \t\n") != get_failover_interface($settings['interface']));
+			}
+			if ($interface === "" || $ip_change || $gw_group_change) {
 				openvpn_resync('client', $settings);
 			}
 		}

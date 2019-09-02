@@ -1336,9 +1336,6 @@ pkg_repo_rsync() {
 	# Sanitize path
 	_repo_path=$(realpath ${_repo_path_param})
 
-	# Trigger file to be used to sync files to S3
-	touch ${_repo_path}/.sync_to_s3
-
 	local _repo_dir=$(dirname ${_repo_path})
 	local _repo_base=$(basename ${_repo_path})
 

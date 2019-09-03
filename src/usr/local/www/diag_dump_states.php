@@ -228,7 +228,7 @@ print $form;
 		$states = count($res);
 	}
 
-	for ($i = 0; $i < $states; $i++) {
+	for ($i = 0; $i < $states; $i++):
 		$info = $res[$i]['src'];
 		$srcip = get_ip($res[$i]['src']);
 		$dstip = get_ip($res[$i]['dst']);
@@ -260,8 +260,8 @@ print $form;
 								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $srcip, $killdstip);?>"></a>
 						</td>
 					</tr>
-<?
-	}
+<?php
+	endfor;
 ?>
 				</tbody>
 			</table>

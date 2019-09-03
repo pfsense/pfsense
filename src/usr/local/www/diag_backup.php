@@ -3,7 +3,9 @@
  * diag_backup.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -225,8 +227,12 @@ if ($_POST) {
 					header("Pragma: private");
 					header("Cache-Control: private, must-revalidate");
 				}
-				echo $data;
 
+				while (ob_get_level()) {
+					@ob_end_clean();
+				}
+				echo $data;
+				@ob_end_flush();
 				exit;
 			}
 		}
@@ -328,7 +334,8 @@ if ($_POST) {
 
 								if (file_exists("/boot/loader.conf")) {
 									$loaderconf = file_get_contents("/boot/loader.conf");
-									if (strpos($loaderconf, "console=\"comconsole")) {
+									if (strpos($loaderconf, "console=\"comconsole") ||
+									    strpos($loaderconf, "boot_serial=\"YES")) {
 										$config['system']['enableserial'] = true;
 										write_config(gettext("Restore serial console enabling in configuration."));
 									}
@@ -336,7 +343,8 @@ if ($_POST) {
 								}
 								if (file_exists("/boot/loader.conf.local")) {
 									$loaderconf = file_get_contents("/boot/loader.conf.local");
-									if (strpos($loaderconf, "console=\"comconsole")) {
+									if (strpos($loaderconf, "console=\"comconsole") ||
+									    strpos($loaderconf, "boot_serial=\"YES")) {
 										$config['system']['enableserial'] = true;
 										write_config(gettext("Restore serial console enabling in configuration."));
 									}
@@ -412,7 +420,7 @@ if ($_POST) {
 										}
 									}
 								}
-								setup_serial_port();
+								console_configure();
 								if (is_interface_mismatch() == true) {
 									touch("/var/run/interface_mismatch_reboot_needed");
 									clear_subsystem_dirty("restore");

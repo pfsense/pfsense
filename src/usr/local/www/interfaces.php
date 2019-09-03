@@ -3,7 +3,9 @@
  * interfaces.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt
  * All rights reserved.
  *
@@ -1770,9 +1772,6 @@ $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"),
 $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "slaac" => gettext("SLAAC"), "6rd" => gettext("6rd Tunnel"), "6to4" => gettext("6to4 Tunnel"), "track6" => gettext("Track Interface"));
 
 // Get the MAC address
-$ip = $_SERVER['REMOTE_ADDR'];
-$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
-$mymac = str_replace("\n", "", $mymac);
 $defgatewayname4 = $wancfg['descr'] . "GW";
 $defgatewayname6 = $wancfg['descr'] . "GWv6";
 
@@ -1869,13 +1868,13 @@ if ($show_address_controls) {
 		'IPv4/IPv6 Configuration',
 		"This interface type does not support manual address configuration on this page. "
 	));
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'type',
 		null,
 		'hidden',
 		'none'
 	));
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'type6',
 		null,
 		'hidden',
@@ -2623,7 +2622,7 @@ $section = new Form_Section('Track IPv6 Interface');
 $section->addClass('track6');
 
 function build_ipv6interface_list() {
-	global $config, $section;
+	global $config, $form;
 
 	$list = array('' => '');
 
@@ -2641,14 +2640,14 @@ function build_ipv6interface_list() {
 				);
 				break;
 			default:
-				continue;
+				continue 2;
 		}
 	}
 
 	foreach ($dynv6ifs as $iface => $ifacedata) {
 		$list[$iface] = $ifacedata['name'];
 
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'ipv6-num-prefix-ids-' . $iface,
 			null,
 			'hidden',
@@ -2677,7 +2676,7 @@ $section->addInput(new Form_Input(
 	sprintf("%x", $pconfig['track6-prefix-id'])
 ))->setHelp('(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.', '<b>', '</b>', '<span id="track6-prefix-id-range"></span>');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'track6-prefix-id-max',
 	null,
 	'hidden',
@@ -3005,7 +3004,7 @@ if (isset($wancfg['wireless'])) {
 			['off' => gettext('Off'), 'cts' => gettext('CTS to self'), 'rtscts' => gettext('RTS and CTS')]
 		))->setHelp('For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network.');
 	} else {
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'protmode',
 			null,
 			'hidden',

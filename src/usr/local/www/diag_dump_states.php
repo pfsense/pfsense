@@ -3,7 +3,9 @@
  * diag_dump_states.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -226,7 +228,7 @@ print $form;
 		$states = count($res);
 	}
 
-	for ($i = 0; $i < $states; $i++) {
+	for ($i = 0; $i < $states; $i++):
 		$info = $res[$i]['src'];
 		$srcip = get_ip($res[$i]['src']);
 		$dstip = get_ip($res[$i]['dst']);
@@ -258,8 +260,8 @@ print $form;
 								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $srcip, $killdstip);?>"></a>
 						</td>
 					</tr>
-<?
-	}
+<?php
+	endfor;
 ?>
 				</tbody>
 			</table>

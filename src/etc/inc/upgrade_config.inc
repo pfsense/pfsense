@@ -3,7 +3,9 @@
  * upgrade_config.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -941,8 +943,6 @@ function upgrade_045_to_046() {
 	if (count($config['load_balancer']) == 0) {
 		unset($config['load_balancer']);
 	}
-	mwexec('/usr/sbin/pw groupadd -n _relayd -g 913');
-	mwexec('/usr/sbin/pw useradd -n _relayd -c "Relay Daemon" -d /var/empty -s /usr/sbin/nologin -u 913 -g 913');
 }
 
 
@@ -5921,6 +5921,124 @@ function upgrade_188_to_189() {
 	}
 }
 
+/* Older pre-existing IPsec P1 entries may not have had the protocol explicitly
+ * defined. Fill in the default value of 'inet'.
+ * https://redmine.pfsense.org/issues/9207 */
+function upgrade_189_to_190() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent['protocol'])) {
+			$ph1ent['protocol'] = 'inet';
+		}
+	}
+}
+
+/* sshguard cron jobs are not necessary.
+ * See https://redmine.pfsense.org/issues/9223 */
+function upgrade_190_to_191() {
+	global $config;
+	install_cron_job("/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshguard", false, null, null, null, null, null, null, false);
+	install_cron_job("/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 webConfiguratorlockout", false, null, null, null, null, null, null, false);
+}
+
+/* Deprecate relayd Load Balancer
+ * See https://redmine.pfsense.org/issues/9386 */
+function upgrade_191_to_192() {
+	global $config;
+
+	/* Backup LB config */
+	$backup_file = "/conf/deprecated_load_balancer.xml";
+	unlink_if_exists($backup_file);
+	file_put_contents($backup_file, backup_config_section('load_balancer'));
+
+	/* Determine if LB was active and notify (or log if not) */
+	$deprecation_notice = sprintf(gettext("The built-in Load Balancer service has been deprecated. The active Load Balancer configuration has been stored in %s. Consider migrating to the HAProxy package."), $backup_file);
+	if (is_array($config['load_balancer']['virtual_server']) &&
+	    count($config['load_balancer']['virtual_server']) &&
+	    count($config['load_balancer']['lbpool'])) {
+
+		if (!function_exists("file_notice")) {
+			require_once("notices.inc");
+		}
+		file_notice("Load Balancer", $deprecation_notice);
+	} else {
+		log_error("INFO: {$deprecation_notice}");
+	}
+
+	/* Clear old config */
+	unset($config['load_balancer']);
+
+	/* Remove LB HA Sync Config */
+	if (isset($config['hasync']) &&
+	    is_array($config['hasync']) &&
+	    isset($config['hasync']['synchronizelb'])) {
+		unset($config['hasync']['synchronizelb']);
+	}
+	
+	/* If the LB widget is present, remove it*/
+	if (isset($config['widgets']) &&
+	    isset($config['widgets']['sequence']) &&
+	    (strpos($config['widgets']['sequence'], 'load_balancer_status') !== false)) {
+		$widgets = explode(',', trim($config['widgets']['sequence']));
+		foreach ($widgets as $idx => &$widget) {
+			if (substr( $widget, 0, 20 ) === "load_balancer_status") {
+				unset($widgets[$idx]);
+			}
+		}
+		$config['widgets']['sequence'] = implode(',', $widgets);
+	}
+
+	/* Per-log settings */
+	if (isset($config['syslog']) &&
+	    is_array($config['syslog']) &&
+	    isset($config['syslog']['relayd_settings'])) {
+		unset($config['syslog']['relayd_settings']);
+	}
+}
+
+/* Deprecate growl notifications */
+function upgrade_192_to_193() {
+	global $config;
+
+	if (isset($config['notifications']['growl'])) {
+		unset($config['notifications']['growl']);
+	}
+}
+
+function upgrade_193_to_194() {
+	global $config, $g;
+
+	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone => $cp) {
+			unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
+		}
+	}
+}
+
+/*
+ * Reset all log files, including package logs, on upgrade since old logs are in
+ * binary clog format.
+ * Conversion is not possible since the clog binary will not be present.
+ * https://redmine.pfsense.org/issues/8350
+ */
+function upgrade_194_to_195() {
+	global $g;
+
+	$logfiles = system_syslogd_get_all_logfilenames();
+
+	foreach ($logfiles as $logfile) {
+		$logpath = "{$g['varlog_path']}/{$logfile}.log";
+		exec("/usr/bin/truncate -s 0 " . escapeshellarg($logpath));
+	}
+}
+
+/* Add newsyslog cron job */
+function upgrade_195_to_196() {
+	global $g, $config;
+
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
@@ -5930,7 +6048,7 @@ function upgrade_188_to_189() {
  *     version
  */
 function additional_config_upgrade() {
-	global $config;
+	install_cron_job('/usr/sbin/newsyslog', true, "*/1", '*', '*', '*', '*', 'root', false);
 }
 
 ?>

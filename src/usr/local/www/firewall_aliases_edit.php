@@ -3,7 +3,9 @@
  * firewall_aliases_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -43,13 +45,6 @@ if (isset($_POST['referer'])) {
 
 // Keywords not allowed in names, see globals.inc for list.
 global $pf_reserved_keywords;
-
-// Add all Load balance names to pf_reserved_keywords
-if (is_array($config['load_balancer']['lbpool'])) {
-	foreach ($config['load_balancer']['lbpool'] as $lbpool) {
-		$pf_reserved_keywords[] = $lbpool['name'];
-	}
-}
 
 $reserved_ifs = get_configured_interface_list(true);
 $pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
@@ -167,7 +162,7 @@ if ($_POST['save']) {
 
 	/* Check for reserved keyword names */
 	foreach ($pf_reserved_keywords as $rk) {
-		if ($rk == $_POST['name']) {
+		if (strcasecmp($rk, $_POST['name']) == 0) {
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an alias name: %s"), $rk);
 		}
 	}
@@ -283,11 +278,14 @@ if ($_POST['save']) {
 				}
 
 				if (file_exists("{$temp_filename}/aliases")) {
-					$address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 5000);
-					if ($address == null) {
+					$t_address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 5000);
+					if ($t_address == null) {
 						/* nothing was found */
 						$input_errors[] = sprintf(gettext("A valid URL must be provided. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
+					} else {
+						array_push($address, ...$t_address);
 					}
+					unset($t_address);
 					mwexec("/bin/rm -rf " . escapeshellarg($temp_filename));
 				} else {
 					$input_errors[] = sprintf(gettext("URL '%s' is not valid."), $_POST['address' . $x]);

@@ -3,7 +3,9 @@
  * certs.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2008-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc. All rights reserved.
  * All rights reserved.
  *
@@ -667,7 +669,8 @@ function cert_get_ocspstaple($str_crt, $decode = true) {
 		$str_crt = base64_decode($str_crt);
 	}
 	$crt_details = openssl_x509_parse($str_crt);
-	if (!empty($crt_details['extensions']['1.3.6.1.5.5.7.1.24'])) {
+	if (($crt_details['extensions']['tlsfeature'] == "status_request") ||
+	    !empty($crt_details['extensions']['1.3.6.1.5.5.7.1.24'])) {
 		return true;
 	}
 	return false;

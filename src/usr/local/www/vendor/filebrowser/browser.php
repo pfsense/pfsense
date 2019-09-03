@@ -3,9 +3,10 @@
 require_once("guiconfig.inc");
 
 /*
-	Copyright (C) 2013-2018 Rubicon Communications, LLC (Netgate)
-
-*/
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2013-2019 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ */
 // Fetch a list of directories and files inside a given directory
 function get_content($dir) {
 	$dirs  = array();

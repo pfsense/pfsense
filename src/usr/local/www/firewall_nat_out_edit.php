@@ -3,7 +3,9 @@
  * firewall_nat_out_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -647,7 +649,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_out[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -655,7 +657,7 @@ if (isset($id) && $a_out[$id]) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'after',
 	null,
 	'hidden',

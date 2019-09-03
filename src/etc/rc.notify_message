@@ -4,7 +4,9 @@
  * rc.notify_message
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2010-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2010-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,19 +26,15 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("notices.inc");
 
-$arguments = getopt("egm:");
+$arguments = getopt("em:");
 
 $send_email = false;
-$send_growl = false;
 $message = "";
 
 foreach ($arguments as $item => $arg) {
 	switch ($item) {
 		case "e":
 			$send_email = true;
-			break;
-		case "g":
-			$send_growl = true;
 			break;
 		case "m":
 			$message = $arg;
@@ -47,9 +45,6 @@ foreach ($arguments as $item => $arg) {
 if ($message) {
 	if ($send_email) {
 		notify_via_smtp($message);
-	}
-	if ($send_growl) {
-		notify_via_growl($message);
 	}
 }
 

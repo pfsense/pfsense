@@ -3,7 +3,9 @@
  * firewall_rules.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -513,7 +515,8 @@ foreach ($a_filter as $filteri => $filterent):
 		if ($config['schedules']['schedule'] != "" && is_array($config['schedules']['schedule'])) {
 			$idx = 0;
 			foreach ($a_schedules as $schedule) {
-				if ($schedule['name'] == $filterent['sched']) {
+				if (!empty($schedule['name']) &&
+				    $schedule['name'] == $filterent['sched']) {
 					$schedstatus = filter_get_time_based_rule_status($schedule);
 
 					foreach ($schedule['timerange'] as $timerange) {

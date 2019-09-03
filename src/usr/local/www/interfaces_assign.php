@@ -3,7 +3,9 @@
  * interfaces_assign.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -65,7 +67,7 @@ need to be called once per script run, the returned array contains all the data 
 $friendlyifnames = convert_real_interface_to_friendly_interface_name_fast();
 
 /* add wireless clone interfaces */
-if (is_array($config['wireless']['clone']) && count($config['wireless']['clone'])) {
+if (isset($config['wireless']['clone']) && is_array($config['wireless']['clone']) && count($config['wireless']['clone'])) {
 	foreach ($config['wireless']['clone'] as $clone) {
 		$portlist[$clone['cloneif']] = $clone;
 		$portlist[$clone['cloneif']]['iswlclone'] = true;
@@ -73,7 +75,7 @@ if (is_array($config['wireless']['clone']) && count($config['wireless']['clone']
 }
 
 /* add VLAN interfaces */
-if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+if (isset($config['vlans']['vlan']) && is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 	//$timea = microtime(true);
 	foreach ($config['vlans']['vlan'] as $vlan) {
 		$portlist[$vlan['vlanif']] = $vlan;
@@ -82,7 +84,7 @@ if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 }
 
 /* add Bridge interfaces */
-if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
 	foreach ($config['bridges']['bridged'] as $bridge) {
 		$portlist[$bridge['bridgeif']] = $bridge;
 		$portlist[$bridge['bridgeif']]['isbridge'] = true;
@@ -90,7 +92,7 @@ if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged
 }
 
 /* add GIF interfaces */
-if (is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
+if (isset($config['gifs']['gif']) && is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
 	foreach ($config['gifs']['gif'] as $gif) {
 		$portlist[$gif['gifif']] = $gif;
 		$portlist[$gif['gifif']]['isgif'] = true;
@@ -98,7 +100,7 @@ if (is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
 }
 
 /* add GRE interfaces */
-if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
+if (isset($config['gres']['gre']) && is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
 	foreach ($config['gres']['gre'] as $gre) {
 		$portlist[$gre['greif']] = $gre;
 		$portlist[$gre['greif']]['isgre'] = true;
@@ -106,7 +108,7 @@ if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
 }
 
 /* add LAGG interfaces */
-if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
+if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 	foreach ($config['laggs']['lagg'] as $lagg) {
 		$portlist[$lagg['laggif']] = $lagg;
 		$portlist[$lagg['laggif']]['islagg'] = true;
@@ -121,7 +123,7 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 }
 
 /* add QinQ interfaces */
-if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
+if (isset($config['qinqs']['qinqentry']) && is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
 	foreach ($config['qinqs']['qinqentry'] as $qinq) {
 		$portlist["{$qinq['vlanif']}"]['descr'] = "VLAN {$qinq['tag']} on {$qinq['if']}";
 		$portlist["{$qinq['vlanif']}"]['isqinq'] = true;
@@ -135,7 +137,7 @@ if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry
 }
 
 /* add PPP interfaces */
-if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+if (isset($config['ppps']['ppp']) && is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 	foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 		$portname = $ppp['if'];
 		$portlist[$portname] = $ppp;
@@ -152,15 +154,15 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 }
 
 $ovpn_descrs = array();
-if (is_array($config['openvpn'])) {
-	if (is_array($config['openvpn']['openvpn-server'])) {
+if (isset($config['openvpn']) && is_array($config['openvpn'])) {
+	if (isset($config['openvpn']['openvpn-server']) && is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $s) {
 			$portname = "ovpns{$s['vpnid']}";
 			$portlist[$portname] = $s;
 			$ovpn_descrs[$s['vpnid']] = $s['description'];
 		}
 	}
-	if (is_array($config['openvpn']['openvpn-client'])) {
+	if (isset($config['openvpn']['openvpn-client']) && is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as $c) {
 			$portname = "ovpnc{$c['vpnid']}";
 			$portlist[$portname] = $c;
@@ -251,7 +253,11 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 	build a list of port-to-interface mappings in portifmap */
 	foreach ($_POST as $ifname => $ifport) {
 		if (($ifname == 'lan') || ($ifname == 'wan') || (substr($ifname, 0, 3) == 'opt')) {
-			$portifmap[$ifport][] = strtoupper($ifname);
+			if (array_key_exists($ifport, $portlist)) {
+				$portifmap[$ifport][] = strtoupper($ifname);
+			} else {
+				$input_errors[] = sprintf(gettext('Cannot set port %1$s because the submitted interface does not exist.'), $ifname);
+			}
 		}
 	}
 

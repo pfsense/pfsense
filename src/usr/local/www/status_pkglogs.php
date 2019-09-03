@@ -3,7 +3,9 @@
  * status_pkglogs.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -104,7 +106,7 @@ if ($pkgwithlogging == false) {
 			<pre>
 <?php
 			$package = $config['installedpackages']['package'][$apkgid];
-			dump_clog_no_table($g['varlog_path'] . '/' . $package['logging']['logfilename'], $nentries, true, array());
+			dump_log_no_table($g['varlog_path'] . '/' . $package['logging']['logfilename'], $nentries, true, array());
 ?>
 			</pre>
 		</div>

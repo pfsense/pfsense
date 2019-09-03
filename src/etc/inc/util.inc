@@ -3,7 +3,9 @@
  * util.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -2165,6 +2167,30 @@ function unmute_kernel_msgs() {
 function start_devd() {
 	global $g;
 
+	/* Generate hints for the kernel loader. */
+	$module_paths = explode(";", get_single_sysctl("kern.module_path"));
+	foreach ($module_paths as $id => $path) {
+		if (!is_dir($path) || file_exists("{$path}/linker.hints")) {
+			continue;
+		}
+		if (($files = scandir($path)) == false) {
+			continue;
+		}
+		$found = false;
+		foreach ($files as $id => $file) {
+			if (strlen($file) > 3 &&
+			    strcasecmp(substr($file, -3), ".ko") == 0) {
+				$found = true;
+				break;
+			}
+		}
+		if ($found == false) {
+			continue;
+		}
+		$_gb = exec("/usr/sbin/kldxref $path");
+		unset($_gb);
+	}
+
 	/* Use the undocumented -q options of devd to quiet its log spamming */
 	$_gb = exec("/sbin/devd -q -f /etc/{$g['product_name']}-devd.conf");
 	sleep(1);
@@ -2845,6 +2871,40 @@ function get_duid_from_file() {
 /* Replaces the Mac OS 9 and earlier (\r) and DOS/Windows (\r\n) newlines with the Unix equivalent (\n). */
 function unixnewlines($text) {
 	return preg_replace('/\r\n?/', "\n", $text);
+}
+
+function array_remove_duplicate($array, $field) {
+	foreach ($array as $sub) {
+		if (isset($sub[$field])) {
+			$cmp[] = $sub[$field];
+		}
+	}
+	$unique = array_unique(array_reverse($cmp, true));
+	foreach ($unique as $k => $rien) {
+		$new[] = $array[$k];
+	}
+	return $new;
+}
+
+function dhcpd_date_adjust_gmt($dt) {
+	global $config;
+
+	init_config_arr(array('dhcpd'));
+
+	foreach ($config['dhcpd'] as $dhcpditem) {
+		if ($dhcpditem['dhcpleaseinlocaltime'] == "yes") {
+			$ts = strtotime($dt . " GMT");
+			if ($ts !== false) {
+				return strftime("%Y/%m/%d %H:%M:%S", $ts);
+			}
+		}
+	}
+
+	/*
+	 * If we did not need to convert to local time or the conversion
+	 * failed, just return the input.
+	 */
+	return $dt;
 }
 
 ?>

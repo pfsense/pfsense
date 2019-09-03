@@ -3,7 +3,9 @@
  * status_logs.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -48,8 +50,6 @@ $allowed_logs = array(
 		    "shortcut" => "ipsec"),
 	"ppp" => array("name" => gettext("PPP"),
 		    "shortcut" => ""),
-	"relayd" => array("name" => gettext("Load Balancer"),
-		    "shortcut" => "relayd"),
 	"openvpn" => array("name" => gettext("OpenVPN"),
 		    "shortcut" => "openvpn"),
 	"ntpd" => array("name" => gettext("NTP"),

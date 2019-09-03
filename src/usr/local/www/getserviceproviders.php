@@ -3,7 +3,9 @@
  * getserviceproviders.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Vinicius Coque <vinicius.coque@bluepex.com>
  * All rights reserved.
  *
@@ -48,7 +50,7 @@ function get_country_providers($country) {
 
 function country_list() {
 	global $serviceproviders;
-	$country_list = get_country_name("ALL");
+	$country_list = get_country_name();
 	foreach ($serviceproviders as $sp) {
 		foreach ($country_list as $country) {
 			if (strtoupper($sp['attr']['code']) == $country['code']) {

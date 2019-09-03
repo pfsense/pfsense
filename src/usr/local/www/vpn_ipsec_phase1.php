@@ -3,7 +3,9 @@
  * vpn_ipsec_phase1.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -970,7 +972,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Number of consecutive failures allowed before disconnect. ');
 
 if (isset($p1index) && $a_phase1[$p1index]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'p1index',
 		null,
 		'hidden',
@@ -979,7 +981,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 }
 
 if ($pconfig['mobile']) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'mobile',
 		null,
 		'hidden',
@@ -987,7 +989,7 @@ if ($pconfig['mobile']) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'ikeid',
 	null,
 	'hidden',
@@ -1029,14 +1031,12 @@ events.push(function() {
 		if ($('#iketype').val() == 'ikev2') {
 			hideInput('mode', true);
 			hideInput('mobike', false);
-			hideInput('nat_traversal', true);
 			//hideCheckbox('tfc_enable', false);
 			hideCheckbox('reauth_enable', false);
 			hideCheckbox('splitconn', false);
 		} else {
 			hideInput('mode', false);
 			hideInput('mobike', true);
-			hideInput('nat_traversal', false);
 			//hideCheckbox('tfc_enable', true);
 			//hideInput('tfc_bytes', true);
 			hideCheckbox('reauth_enable', true);
@@ -1224,8 +1224,6 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 ?>
 
 	// ---------- On initial page load ------------------------------------------------------------
-
-	hideInput('ikeid', true);
 
 	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new Pre-Shared Key");?></a>');
 	generateButton.on('click', function() {

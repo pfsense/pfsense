@@ -3,7 +3,9 @@
  * firewall_aliases_import.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,13 +38,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
-
-// Add all Load balance names to pf_reserved_keywords
-if (is_array($config['load_balancer']['lbpool'])) {
-	foreach ($config['load_balancer']['lbpool'] as $lbpool) {
-		$pf_reserved_keywords[] = $lbpool['name'];
-	}
-}
 
 $reserved_ifs = get_configured_interface_list(true);
 $pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);

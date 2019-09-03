@@ -3,7 +3,9 @@
  * pfsense-utils.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1182,7 +1184,8 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	/* These values should be removed from loader.conf and loader.conf.local
 	 * As they will be replaced when necessary. */
 	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
-	    "hw.e6000sw.default_disabled", "vm.pmap.pti");
+	    "hw.e6000sw.default_disabled", "vm.pmap.pti",
+	    "net.pf.request_maxcount");
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
 		$remove = array_merge($remove,
@@ -1303,6 +1306,13 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'vm.pmap.pti="0"';
 	}
 
+	if (isset($config['system']['maximumtableentries'])) {
+		$maximumtableentries = $config['system']['maximumtableentries'];
+	} else {
+		$maximumtableentries = pfsense_default_table_entries_size();
+	}
+	$data[] = 'net.pf.request_maxcount="' .  $maximumtableentries . '"';
+
 	safe_write_file($loader_conf_file, $data);
 
 	/* Filter loader.conf.local to avoid duplicate settings. */
@@ -1316,7 +1326,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 
 }
 
-function setup_serial_port($when = "save", $path = "") {
+function console_configure($when = "save", $path = "") {
 	global $config;
 	$ttys_file = "{$path}/etc/ttys";
 
@@ -1340,7 +1350,7 @@ function setup_serial_port($when = "save", $path = "") {
 
 	$console_line = "console\tnone\t\t\t\tunknown\toff\tsecure";
 	$ttyv0_line =
-	    "ttyv0\t\"/usr/libexec/getty {$console_type}\"\txterm\ton\tsecure";
+	    "ttyv0\t\"/usr/libexec/getty {$console_type}\"\txterm\tonifexists secure";
 	$ttyu_line =
 	    "\"/usr/libexec/getty {$serial_type}\"\tvt100\t{$on_off}\tsecure";
 
@@ -1891,20 +1901,7 @@ function add_hostname_to_watch($hostname) {
 }
 
 function is_fqdn($fqdn) {
-	$hostname = false;
-	if (preg_match("/[-A-Z0-9\.]+\.[-A-Z0-9\.]+/i", $fqdn)) {
-		$hostname = true;
-	}
-	if (preg_match("/\.\./", $fqdn)) {
-		$hostname = false;
-	}
-	if (preg_match("/^\./i", $fqdn)) {
-		$hostname = false;
-	}
-	if (preg_match("/\//i", $fqdn)) {
-		$hostname = false;
-	}
-	return($hostname);
+	return (bool) preg_match('/^(?:(?!-)[-_a-z0-9]+(?<!-)\.)*(?!-)[a-z0-9\-]+(?<!-)\.(?:xn--)?[a-z]+[\.]?$/i', $fqdn);
 }
 
 function pfsense_default_state_size() {
@@ -2763,7 +2760,7 @@ function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
 	return ($xml_array);
 }
 
-function get_country_name($country_code) {
+function get_country_name($country_code = "ALL") {
 	if ($country_code != "ALL" && strlen($country_code) != 2) {
 		return "";
 	}
@@ -2788,6 +2785,26 @@ function get_country_name($country_code) {
 		}
 	}
 	return "";
+}
+
+/* Return the list of country codes to be used on CAs and certs */
+function get_cert_country_codes() {
+	$countries = get_country_name();
+
+	$country_codes = array();
+	foreach ($countries as $country) {
+		$country_codes[$country['code']] = $country['code'];
+	}
+	ksort($country_codes);
+
+	/* Preserve historical order: None, US, CA, other countries */
+	$first_items[''] = gettext("None");
+	$first_items['US'] = $country_codes['US'];
+	$first_items['CA'] = $country_codes['CA'];
+	unset($country_codes['US']);
+	unset($country_codes['CA']);
+
+	return array_merge($first_items, $country_codes);
 }
 
 /* sort by interface only, retain the original order of rules that apply to
@@ -3420,12 +3437,12 @@ function compare_by_name($a, $b) {
  * NAME
  *   getarraybyref
  * INPUTS
- *   $array the array of which a items array needs to be found. 
+ *   $array the array of which a items array needs to be found.
  *   $args.. the sub-items to be retrieved/created
  * RESULT
  *   returns the array that was retrieved from configuration, its created if it does not exist
  * NOTES
- *   Used by haproxy / acme / others.?. . 
+ *   Used by haproxy / acme / others.?. .
  *   can be used like this:  $a_certificates = getarraybyref($config, 'installedpackages', 'acme', 'certificates', 'item');
  ******/
 function &getarraybyref(&$array) {

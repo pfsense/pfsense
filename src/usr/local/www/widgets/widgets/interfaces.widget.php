@@ -3,7 +3,9 @@
  * interfaces.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c)  2007 Scott Dale
  * All rights reserved.
  *
@@ -115,7 +117,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			<?php endif; ?>
 		</td>
 		<td>
-			<?php if ($ifinfo['pppoelink'] == "up" || $ifinfo['pptplink'] == "up" || $ifinfo['l2tplink'] == "up"):?>
+			<?php if ($ifinfo['pppoelink'] == "up" || $ifinfo['pptplink'] == "up" || $ifinfo['l2tplink'] == "up" || $ifinfo['ppplink'] == "up"):?>
 				<?=sprintf(gettext("Uptime: %s"), htmlspecialchars($ifinfo['ppp_uptime']));?>
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['media']);?>

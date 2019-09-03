@@ -3,7 +3,9 @@
  * system_gateway_groups_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -330,7 +332,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_gateway_groups[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 	'id',
 	null,
 	'hidden',

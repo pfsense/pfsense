@@ -3,7 +3,9 @@
  * status_queues.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,7 +53,7 @@ $pgtitle = array(gettext("Status"), gettext("Queues"));
 $shortcut_section = "trafficshaper";
 include("head.inc");
 
-if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
+if (!isset($config['shaper']['queue']) || !is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
 	print_info_box(gettext("Traffic shaping is not configured."));
 	include("foot.inc");
 	exit;

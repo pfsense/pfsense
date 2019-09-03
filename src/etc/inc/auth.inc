@@ -6,7 +6,9 @@
  * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +43,8 @@ if (function_exists("display_error_form")) {
 	 * lockout table before processing a request */
 
 	/* Fetch the contents of the lockout table. */
-	exec("/sbin/pfctl -t 'webConfiguratorlockout' -T show", $entries);
+	$entries = array();
+	exec("/sbin/pfctl -t 'sshguard' -T show", $entries);
 
 	/* If the client is in the lockout table, print an error, kill states, and exit */
 	if (in_array($_SERVER['REMOTE_ADDR'], array_map('trim', $entries))) {
@@ -959,7 +962,7 @@ function ldap_test_connection($authcfg) {
 	}
 
 	/* Setup CA environment if needed. */
-	ldap_setup_caenv($authcfg);
+	ldap_setup_caenv($ldap, $authcfg);
 
 	/* connect and see if server is up */
 	$error = false;
@@ -975,7 +978,7 @@ function ldap_test_connection($authcfg) {
 	return true;
 }
 
-function ldap_setup_caenv($authcfg) {
+function ldap_setup_caenv($ldap, $authcfg) {
 	global $g;
 	require_once("certs.inc");
 
@@ -997,14 +1000,13 @@ function ldap_setup_caenv($authcfg) {
 			putenv('LDAPTLS_REQCERT=hard');
 			return;
 		}
-		if (!is_dir("{$g['varrun_path']}/certs")) {
-			@mkdir("{$g['varrun_path']}/certs");
-		}
-		if (file_exists("{$g['varrun_path']}/certs/{$caref['refid']}.ca")) {
-			@unlink("{$g['varrun_path']}/certs/{$caref['refid']}.ca");
-		}
-		file_put_contents("{$g['varrun_path']}/certs/{$caref['refid']}.ca", $cachain);
-		@chmod("{$g['varrun_path']}/certs/{$caref['refid']}.ca", 0600);
+
+		$cert_path = "{$g['varrun_path']}/certs";
+		safe_mkdir($cert_path);
+		unlink_if_exists("{$cert_path}/{$caref['refid']}.ca");
+		file_put_contents("{$cert_path}/{$caref['refid']}.ca", $cachain);
+		@chmod("{$cert_path}/{$caref['refid']}.ca", 0600);
+
 		putenv('LDAPTLS_REQCERT=hard');
 		/* XXX: Probably even the hashed link should be created for this? */
 		putenv("LDAPTLS_CACERTDIR={$g['varrun_path']}/certs");
@@ -1046,7 +1048,7 @@ function ldap_test_bind($authcfg) {
 	}
 
 	/* Setup CA environment if needed. */
-	ldap_setup_caenv($authcfg);
+	ldap_setup_caenv($ldap, $authcfg);
 
 	/* connect and see if server is up */
 	$error = false;
@@ -1134,7 +1136,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	}
 
 	/* Setup CA environment if needed. */
-	ldap_setup_caenv($authcfg);
+	ldap_setup_caenv($ldap, $authcfg);
 
 	/* connect and see if server is up */
 	$error = false;
@@ -1279,7 +1281,7 @@ function ldap_get_groups($username, $authcfg) {
 	$memberof = array();
 
 	/* Setup CA environment if needed. */
-	ldap_setup_caenv($authcfg);
+	ldap_setup_caenv($ldap, $authcfg);
 
 	/* connect and see if server is up */
 	$error = false;
@@ -1432,7 +1434,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	}
 
 	/* Setup CA environment if needed. */
-	ldap_setup_caenv($authcfg);
+	ldap_setup_caenv($ldap, $authcfg);
 
 	/* Make sure we can connect to LDAP */
 	$error = false;
@@ -1906,14 +1908,28 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 	$authenticated = false;
 	switch ($authcfg['type']) {
 		case 'ldap':
-			$authenticated = ldap_backed($username, $password, $authcfg, $attributes);
+			try {
+				$authenticated = ldap_backed($username, $password, $authcfg, $attributes);
+			} catch (Exception $e) {
+				log_error(sprintf(gettext("LDAP authentication error: %s"), $e->getMessage()));
+			}
+			break;
+
 			break;
 		case 'radius':
-			$authenticated = radius_backed($username, $password, $authcfg, $attributes);
+			try {
+				$authenticated = radius_backed($username, $password, $authcfg, $attributes);
+			} catch (Exception $e) {
+				log_error(sprintf(gettext("RADIUS authentication error: %s"), $e->getMessage()));
+			}
 			break;
 		default:
 			/* lookup user object by name */
-			$authenticated = local_backed($username, $password, $attributes);
+			try {
+				$authenticated = local_backed($username, $password, $attributes);
+			} catch (Exception $e) {
+				log_error(sprintf(gettext("Local authentication error: %s"), $e->getMessage()));
+			}
 			break;
 		}
 
@@ -1942,7 +1958,7 @@ function session_auth() {
 	}
 
 	/* Validate incoming login request */
-	$attributes = array();
+	$attributes = array('nas_identifier' => 'webConfigurator-' . gethostname());
 	if (isset($_POST['login']) && !empty($_POST['usernamefld']) && !empty($_POST['passwordfld'])) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 		$remoteauth = authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg, $attributes);

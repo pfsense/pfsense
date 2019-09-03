@@ -3,7 +3,9 @@
  * system_usermanager_passwordmg.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -87,6 +89,13 @@ if ($input_errors) {
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
+
+$tab_array = array();
+$tab_array[] = array(gettext("User Password"), true, "system_usermanager_passwordmg.php");
+$tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
+$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
+$tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
+display_top_tabs($tab_array);
 
 if ($islocal == false) {
 	echo gettext("The password cannot be changed for a non-local user.");

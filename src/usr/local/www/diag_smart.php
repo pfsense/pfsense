@@ -3,7 +3,9 @@
  * diag_smart.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Eric Friesen
  * All rights reserved.
  *
@@ -44,9 +46,34 @@ if ($action != 'config') {
 
 $smartctl = "/usr/local/sbin/smartctl";
 
-$valid_test_types = array("offline", "short", "long", "conveyance");
-$valid_info_types = array("i", "H", "c", "A", "a");
-$valid_log_types = array("error", "selftest");
+$test_types = array(
+	'offline' => gettext('Offline Test'),
+	'short' => gettext('Short Test'),
+	'long' => gettext('Long Test'),
+	'conveyance' => gettext('Conveyance Test')
+);
+$info_types = array(
+	'x' => gettext('All SMART and Non-SMART Information'),
+	'a' => gettext('All SMART Information'),
+	'i' => gettext('Device Information'),
+	'H' => gettext('Device Health'),
+	'c' => gettext('SMART Capabilities'),
+	'A' => gettext('SMART Attributes'),
+);
+$log_types = array(
+	'error' => gettext('Summary Error Log'),
+	'xerror' => gettext('Extended Error Log'),
+	'selftest' => gettext('SMART Self-Test Log'),
+	'xselftest' => gettext('Extended Self-Test Log'),
+	'selective' => gettext('Selective Self-Test Log'),
+	'directory' => gettext('Log Directory'),
+	'scttemp' => gettext('Device Temperature Log (ATA Only)'),
+	'devstat' => gettext('Device Statistics (ATA Only)'),
+	'sataphy' => gettext('SATA PHY Events (SATA Only)'),
+	'sasphy' => gettext('SAS PHY Events (SAS Only)'),
+	'nvmelog' => gettext('NVMe Log (NVMe Only)'),
+	'ssd' => gettext('SSD Device Statistics (ATA/SCSI)'),
+);
 
 include("head.inc");
 
@@ -82,8 +109,8 @@ switch ($action) {
 	// Testing devices
 	case 'test':
 	{
-		$test = $_POST['testType'];
-		if (!in_array($test, $valid_test_types)) {
+		$test = $_POST['type'];
+		if (!in_array($test, array_keys($test_types))) {
 			echo gettext("Invalid test type, bailing.");
 			return;
 		}
@@ -101,7 +128,7 @@ switch ($action) {
 			<input type="hidden" name="device" value="<?=$targetdev?>" />
 			<input type="hidden" name="action" value="abort" />
 			<nav class="action-buttons">
-				<button type="submit" name="submit" class="btn btn-danger" value="<?=gettext("Abort")?>">
+				<button type="submit" name="submit" class="btn btn-danger" value="<?=gettext("Abort Tests")?>">
 					<i class="fa fa-times icon-embed-btn"></i>
 					<?=gettext("Abort Test")?>
 				</button>
@@ -121,7 +148,7 @@ switch ($action) {
 	{
 		$type = $_POST['type'];
 
-		if (!in_array($type, $valid_info_types)) {
+		if (!in_array($type, array_keys($info_types))) {
 			print_info_box(gettext("Invalid info type, bailing."), 'danger');
 			return;
 		}
@@ -149,7 +176,7 @@ switch ($action) {
 	case 'logs':
 	{
 		$type = $_POST['type'];
-		if (!in_array($type, $valid_log_types)) {
+		if (!in_array($type, array_keys($log_types))) {
 			print_info_box(gettext("Invalid log type, bailing."), 'danger');
 			return;
 		}
@@ -205,143 +232,33 @@ switch ($action) {
 		$btnview->setAttribute('id');
 
 		$section = new Form_Section('Information');
-
-		$section->addInput(new Form_Input(
+		$group = new Form_Group('Select a drive and type:');
+		$form->addGlobal(new Form_Input(
 			'action',
 			null,
 			'hidden',
 			'info'
 		))->setAttribute('id');
 
-		$group = new Form_Group('Info type');
-
-		$group->add(new Form_Checkbox(
-			'type',
-			null,
-			'Info',
-			false,
-			'i'
-		))->displayAsRadio();
-
-		$group->add(new Form_Checkbox(
-			'type',
-			null,
-			'Health',
-			true,
-			'H'
-		))->displayAsRadio();
-
-		$group->add(new Form_Checkbox(
-			'type',
-			null,
-			'S.M.A.R.T. Capabilities',
-			false,
-			'c'
-		))->displayAsRadio();
-
-		$group->add(new Form_Checkbox(
-			'type',
-			null,
-			'Attributes',
-			false,
-			'A'
-		))->displayAsRadio();
-
-		$group->add(new Form_Checkbox(
-			'type',
-			null,
-			'All',
-			false,
-			'a'
-		))->displayAsRadio();
-
-		$section->add($group);
-
-		$section->addInput(new Form_Select(
+		$group->add(new Form_Select(
 			'device',
 			'Device: /dev/',
 			false,
 			array_combine($devs, $devs)
-		))->setAttribute('id');
+		))->setHelp(gettext("Device: /dev/"));
 
-		$section->addInput(new Form_StaticText(
+		$group->add(new Form_Select(
+			'type',
+			'Type',
+			false,
+			$info_types
+		))->setHelp(gettext("Information Type"));
+
+		$group->add(new Form_StaticText(
 			'',
 			$btnview
 		));
-
-		$form->add($section);
-		print($form);
-
-// Tests
-		$form = new Form(false);
-
-		$btntest = new Form_Button(
-			'submit',
-			'Test',
-			null,
-			'fa-wrench'
-		);
-		$btntest->addClass('btn-primary');
-		$btntest->setAttribute('id');
-
-		$section = new Form_Section('Perform self-tests');
-
-		$section->addInput(new Form_Input(
-			'action',
-			null,
-			'hidden',
-			'test'
-		))->setAttribute('id');
-
-		$group = new Form_Group('Test type');
-
-		$group->add(new Form_Checkbox(
-			'testType',
-			null,
-			'Offline',
-			false,
-			'offline'
-		))->displayAsRadio();
-
-		$group->add(new Form_Checkbox(
-			'testType',
-			null,
-			'Short',
-			true,
-			'short'
-		))->displayAsRadio();
-
-		$group->add(new Form_Checkbox(
-			'testType',
-			null,
-			'Long',
-			false,
-			'long'
-		))->displayAsRadio();
-
-		$group->add(new Form_Checkbox(
-			'testType',
-			null,
-			'Conveyance',
-			false,
-			'conveyance'
-		))->displayAsRadio();
-
-		$group->setHelp('Select "Conveyance" for ATA disks only.');
 		$section->add($group);
-
-		$section->addInput(new Form_Select(
-			'device',
-			'Device: /dev/',
-			false,
-			array_combine($devs, $devs)
-		))->setAttribute('id');
-
-		$section->addInput(new Form_StaticText(
-			'',
-			$btntest
-		));
-
 		$form->add($section);
 		print($form);
 
@@ -358,53 +275,86 @@ switch ($action) {
 		$btnview->setAttribute('id');
 
 		$section = new Form_Section('View Logs');
-
-		$section->addInput(new Form_Input(
+		$group = new Form_Group('Select a device and log');
+		$form->addGlobal(new Form_Input(
 			'action',
 			null,
 			'hidden',
 			'logs'
 		))->setAttribute('id');
 
-		$group = new Form_Group('Log type');
-
-		$group->add(new Form_Checkbox(
-			'type',
-			null,
-			'Error',
-			true,
-			'error'
-		))->displayAsRadio();
-
-		$group->add(new Form_Checkbox(
-			'type',
-			null,
-			'Self-test',
-			false,
-			'selftest'
-		))->displayAsRadio();
-
-		$section->add($group);
-
-		$section->addInput(new Form_Select(
+		$group->add(new Form_Select(
 			'device',
 			'Device: /dev/',
 			false,
 			array_combine($devs, $devs)
-		))->setAttribute('id');
+		))->setHelp(gettext("Device: /dev/"));
 
-		$section->addInput(new Form_StaticText(
+		$group->add(new Form_Select(
+			'type',
+			'Log',
+			false,
+			$log_types
+		))->setHelp(gettext("Log"));
+
+		$group->add(new Form_StaticText(
 			'',
 			$btnview
 		));
 
+		$section->add($group);
+		$form->add($section);
+		print($form);
+
+// Tests
+		$form = new Form(false);
+
+		$btntest = new Form_Button(
+			'submit',
+			'Test',
+			null,
+			'fa-wrench'
+		);
+		$btntest->addClass('btn-primary');
+		$btntest->setAttribute('id');
+
+		$section = new Form_Section('Perform self-tests');
+		$group = new Form_Group('Select a drive and test');
+		$form->addGlobal(new Form_Input(
+			'action',
+			null,
+			'hidden',
+			'test'
+		))->setAttribute('id');
+
+		$group->add(new Form_Select(
+			'device',
+			'Device: /dev/',
+			false,
+			array_combine($devs, $devs)
+		))->setHelp(gettext("Device: /dev/"));
+
+		$group->add(new Form_Select(
+			'type',
+			'Test',
+			false,
+			$test_types
+		))->setHelp(gettext("Self-Test Type"));
+
+		$group->add(new Form_StaticText(
+			'',
+			$btntest
+		));
+
+		$group->setHelp('Select "Conveyance" for ATA disks only.');
+		$section->add($group);
 		$form->add($section);
 		print($form);
 
 // Abort
 		$btnabort = new Form_Button(
 			'submit',
-			'Abort',
+			'Abort Tests',
 			null,
 			'fa-times'
 		);
@@ -413,9 +363,9 @@ switch ($action) {
 
 		$form = new Form(false);
 
-		$section = new Form_Section('Abort');
+		$section = new Form_Section('Abort Tests');
 
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'action',
 			null,
 			'hidden',
@@ -427,7 +377,7 @@ switch ($action) {
 			'Device: /dev/',
 			false,
 			array_combine($devs, $devs)
-		))->setAttribute('id');
+		))->setHelp(gettext("Aborts all self-tests running on the selected device."));
 
 		$section->addInput(new Form_StaticText(
 			'',

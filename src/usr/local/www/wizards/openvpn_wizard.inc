@@ -3,7 +3,9 @@
  * openvpn_wizard.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,16 +28,7 @@ require_once("openvpn.inc");
 require_once("util.inc");
 
 // Load valid country codes
-$dn_cc = array();
-if (file_exists("/etc/ca_countries")) {
-	$dn_cc_file=file("/etc/ca_countries");
-	$dn_cc[''] = gettext("None");
-	foreach ($dn_cc_file as $line) {
-		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
-			$dn_cc[$matches[1]] = $matches[1];
-		}
-	}
-}
+$dn_cc = get_cert_country_codes();
 
 function step1_stepsubmitbeforesave() {
 	global $stepid, $config;
@@ -604,7 +597,6 @@ function step12_submitphpaction() {
 	if (strlen($pconfig['step10']['descr']) > 30)
 		$pconfig['step10']['descr'] = substr($pconfig['step10']['descr'], 0, 30);
 	$server['description'] = $pconfig['step10']['descr'];
-	$server['custom_options'] = $pconfig['step10']['advanced'];
 	if (isset($pconfig['step10']['tlsauth'])) {
 		if (isset($pconfig['step10']['gentlskey']))
 			$tlskey = openvpn_create_key();

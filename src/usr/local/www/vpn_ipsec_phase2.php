@@ -3,7 +3,9 @@
  * vpn_ipsec_phase2.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -717,7 +719,7 @@ $section->addInput(new Form_IpAddress(
 
 // Hidden inputs
 if ($pconfig['mobile']) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'mobile',
 		null,
 		'hidden',
@@ -725,7 +727,7 @@ if ($pconfig['mobile']) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'ikeid',
 	null,
 	'hidden',
@@ -733,7 +735,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (!empty($pconfig['reqid'])) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'reqid',
 		null,
 		'hidden',
@@ -741,7 +743,7 @@ if (!empty($pconfig['reqid'])) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'uniqid',
 	null,
 	'hidden',
@@ -988,8 +990,6 @@ events.push(function() {
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
-	hideInput('ikeid', true);
-	hideInput('uniqid', true);
 
 	change_mode();
 	change_protocol();

@@ -3,7 +3,9 @@
  * filter_log.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,7 +60,6 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	else if ($logfile == "{$g['varlog_path']}/poes.log")		{ $logfile_type = "vpn_service"; }
 	else if ($logfile == "{$g['varlog_path']}/l2tps.log")		{ $logfile_type = "vpn_service"; }
 
-	else if ($logfile == "{$g['varlog_path']}/relayd.log")		{ $logfile_type = "system"; }
 	else if ($logfile == "{$g['varlog_path']}/openvpn.log")		{ $logfile_type = "system"; }
 	else if ($logfile == "{$g['varlog_path']}/ntpd.log")		{ $logfile_type = "system"; }
 
@@ -84,7 +85,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 	# Construct RegEx for specific log file type.
 	if ($logfile_type == 'firewall') {
-		$pattern = "filterlog:";
+		$pattern = "filterlog\[[0-9]+\]:";
 	}
 	else if ($logfile_type == 'system') {
 		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$";
@@ -111,7 +112,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 
 	# Get a bunch of log entries.
-	exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | /usr/bin/grep -v \"\033\" | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
+	exec('/usr/bin/bzcat -f ' . sort_related_log_files($logfile, true, true) . " | /usr/bin/grep -E {$pattern} | /usr/bin/tail -r -n {$tail}", $logarr);
 
 
 	# Remove escapes and fix up the pattern for preg_match.
@@ -150,8 +151,8 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
 	$reverse = isset($config['syslog']['reverse']);
 	$specific_log = basename($logfile, '.log') . '_settings';
-	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
-	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+	if (isset($config['syslog'][$specific_log]['cronorder']) && ($config['syslog'][$specific_log]['cronorder'] == 'forward')) $reverse = false;
+	if (isset($config['syslog'][$specific_log]['cronorder']) && ($config['syslog'][$specific_log]['cronorder'] == 'reverse')) $reverse = true;
 
 	return ($reverse) ? $filterlog : array_reverse($filterlog);
 }
@@ -304,7 +305,7 @@ function parse_firewall_log_line($line) {
 	$flent = array();
 	$log_split = "";
 
-	if (!preg_match("/(.*)\s(.*)\sfilterlog:\s(.*)$/", $line, $log_split)) {
+	if (!preg_match("/(.*)\s(.*)\sfilterlog\[[0-9]+\]:\s(.*)$/", $line, $log_split)) {
 		return "";
 	}
 
@@ -420,6 +421,8 @@ function parse_firewall_log_line($line) {
 			$flent['version'] = $rule_data[$field++];
 			$flent['advskew'] = $rule_data[$field++];
 			$flent['advbase'] = $rule_data[$field++];
+			$flent['src'] = $flent['srcip'];
+			$flent['dst'] = $flent['dstip'];
 		}
 	} else {
 		if ($g['debug']) {

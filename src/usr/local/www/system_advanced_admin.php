@@ -3,7 +3,9 @@
  * system_advanced_admin.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -38,6 +40,8 @@ require_once("shaper.inc");
 
 init_config_arr(array('system', 'webgui'));
 init_config_arr(array('system', 'ssh'));
+
+$valid_webguiproto = array('http', 'https');
 
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
@@ -86,6 +90,11 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
+
+	if (!in_array($pconfig['webguiproto'], $valid_webguiproto)) {
+		$input_errors[] = gettext("A valid webConfigurator protocol must be specified");
+	}
+
 	if ($_POST['webguiport']) {
 		if (!is_port($_POST['webguiport'])) {
 			$input_errors[] = gettext("A valid webConfigurator port number must be specified");
@@ -315,7 +324,7 @@ if ($_POST) {
 			} else {
 				list($host) = explode(":", $_SERVER['HTTP_HOST']);
 			}
-			$prot = $config['system']['webgui']['protocol'];
+			$prot = in_array($config['system']['webgui']['protocol'], $valid_webguiproto) ? $config['system']['webgui']['protocol'] : 'http' ;
 			$port = $config['system']['webgui']['port'];
 			if ($port) {
 				$url = "{$prot}://{$host}:{$port}/system_advanced_admin.php";
@@ -359,7 +368,7 @@ if ($_POST) {
 			$extra_save_msg = sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."), $url);
 		}
 
-		setup_serial_port();
+		console_configure();
 		// Restart DNS in case dns rebinding toggled
 		if (isset($config['dnsmasq']['enable'])) {
 			services_dnsmasq_configure();

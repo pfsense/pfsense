@@ -3,7 +3,9 @@
  * index.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -188,12 +190,12 @@ EOD;
 			$user = $clientmac; 
 			$passwd = $cpcfg['radmac_secret'];
 			$context = 'radmac'; // Radius MAC authentication
-		} elseif (!empty($_POST['auth_user2'])) { 
-			$user = $_POST['auth_user2'];
+		} elseif (!empty(trim($_POST['auth_user2']))) { 
+			$user = trim($_POST['auth_user2']);
 			$passwd = $_POST['auth_pass2'];
 			$context = 'second'; // Assume users to use the first context if auth_user2 is empty/does not exist
 		} else {
-			$user = $_POST['auth_user'];
+			$user = trim($_POST['auth_user']);
 			$passwd = $_POST['auth_pass'];
 			$context = 'first';
 		}

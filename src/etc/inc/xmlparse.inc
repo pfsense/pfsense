@@ -3,7 +3,9 @@
  * xmlparse.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -217,9 +219,10 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 function is_cdata_entity($ent) {
 	$cdata_fields = array(
 		'auth_prompt', 'certca', 'certname', 'city', 'common_name',
-		'descr', 'detail', 'email', 'ldap_attr', 'ldap_authcn',
-		'ldap_basedn', 'ldap_bind', 'ldap_extended_query',
-		'login_banner', 'organization', 'state', 'text'
+		'descr', 'detail', 'email', 'encryption_password', 'ldap_attr',
+		'ldap_authcn', 'ldap_basedn', 'ldap_bind',
+		'ldap_extended_query', 'login_banner', 'organization', 'state',
+		'text'
 	);
 
 	/* Check if the entity name starts with any of the strings above */
@@ -229,6 +232,10 @@ function is_cdata_entity($ent) {
 function dump_xml_config_sub($arr, $indent) {
 
 	global $listtags;
+
+	if (!is_array($arr)) {
+		return null;
+	}
 
 	$xmlconfig = "";
 

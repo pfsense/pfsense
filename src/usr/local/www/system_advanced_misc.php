@@ -3,7 +3,9 @@
  * system_advanced_misc.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -36,13 +38,19 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("vpn.inc");
-require_once("vslb.inc");
 
 $powerd_modes = array(
 	'hadp' => gettext('Hiadaptive'),
 	'adp' => gettext('Adaptive'),
 	'min' => gettext('Minimum'),
 	'max' => gettext('Maximum'),
+);
+$mds_modes = array(
+	'' => gettext('Default'),
+	0 => gettext('Mitigation disabled'),
+	1 => gettext('VERW instruction (microcode) mitigation enabled'),
+	2 => gettext('Software sequence mitigation enabled (not recommended)'),
+	3 => gettext('Automatic VERW or Software selection'),
 );
 
 $pconfig['proxyurl'] = $config['system']['proxyurl'];
@@ -56,6 +64,7 @@ $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['pti_disabled'] = isset($config['system']['pti_disabled']);
+$pconfig['mds_disable'] = $config['system']['mds_disable'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['gw_down_kill_states'] = isset($config['system']['gw_down_kill_states']);
 $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
@@ -140,6 +149,9 @@ if ($_POST) {
 	if (!in_array($_POST['powerd_normal_mode'], array_keys($powerd_modes))) {
 		$input_errors[] = gettext("Invalid Unknown Power mode.");
 	}
+	if (!in_array($_POST['mds_disable'], array_keys($mds_modes))) {
+		$input_errors[] = gettext("Invalid MDS Mode.");
+	}
 
 	if (!$input_errors) {
 
@@ -176,20 +188,16 @@ if ($_POST) {
 			unset($config['system']['proxypass']);
 		}
 
-		$need_relayd_restart = false;
 		if ($_POST['lb_use_sticky'] == "yes") {
 			if (!isset($config['system']['lb_use_sticky'])) {
 				$config['system']['lb_use_sticky'] = true;
-				$need_relayd_restart = true;
 			}
 			if ($config['system']['srctrack'] != $_POST['srctrack']) {
 				$config['system']['srctrack'] = $_POST['srctrack'];
-				$need_relayd_restart = true;
 			}
 		} else {
 			if (isset($config['system']['lb_use_sticky'])) {
 				unset($config['system']['lb_use_sticky']);
-				$need_relayd_restart = true;
 			}
 		}
 
@@ -232,6 +240,11 @@ if ($_POST) {
 			$config['system']['pti_disabled'] = true;
 		} else {
 			unset($config['system']['pti_disabled']);
+		}
+		if (isset($_POST['mds_disable']) && (strlen($_POST['mds_disable']) > 0)) {
+			$config['system']['mds_disable'] = $_POST['mds_disable'];
+		} else {
+			unset($config['system']['mds_disable']);
 		}
 
 		if ($_POST['schedule_states'] == "yes") {
@@ -310,12 +323,13 @@ if ($_POST) {
 		if ($old_pti_state != isset($config['system']['pti_disabled'])) {
 			setup_loader_settings();
 		}
+		if (isset($config['system']['mds_disable']) &&
+		    (strlen($config['system']['mds_disable']) > 0)) {
+			set_single_sysctl("hw.mds_disable" , (int)$config['system']['mds_disable']);
+		}
 		activate_powerd();
 		load_crypto();
 		load_thermal_hardware();
-		if ($need_relayd_restart) {
-			relayd_configure();
-		}
 	}
 }
 
@@ -476,6 +490,7 @@ $section->addInput(new Form_Select(
 	'"none" and then reboot.');
 
 $form->add($section);
+
 $pti = get_single_sysctl('vm.pmap.pti');
 if (strlen($pti) > 0) {
 	$section = new Form_Section('Kernel Page Table Isolation');
@@ -490,6 +505,21 @@ if (strlen($pti) > 0) {
 		    'Current PTI status: %2$s', "<br/>", ($pti == "1") ? "Enabled" : "Disabled");
 	$form->add($section);
 }
+
+$mds = get_single_sysctl('hw.mds_disable_state');
+if (strlen($mds) > 0) {
+	$section = new Form_Section('Microarchitectural Data Sampling Mitigation');
+	$section->addInput(new Form_Select(
+		'mds_disable',
+		'MDS Mode',
+		$pconfig['mds_disable'],
+		$mds_modes
+	))->setHelp('Microarchitectural Data Sampling mitigation. If disabled the kernel memory can be accessed by unprivileged users on affected CPUs. ' .
+		    'This option controls which method of MDS mitigation is used, if any. %1$s%1$s' .
+		    'Current MDS status: %2$s', "<br/>", ucwords(htmlspecialchars($mds)));
+	$form->add($section);
+}
+
 $section = new Form_Section('Schedules');
 
 $section->addInput(new Form_Checkbox(

@@ -3,7 +3,9 @@
  * interfaces.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -677,7 +679,7 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 	global $config;
 
 	$i = 0;
-	if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+	if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
 		foreach ($config['bridges']['bridged'] as $bridge) {
 			if (empty($bridge['bridgeif'])) {
 				$bridge['bridgeif'] = "bridge{$i}";
@@ -1451,6 +1453,21 @@ function interface_ipsec_vti_configure($ph1ent) {
 			/* If alias is empty, this is the first address on the interface and should be used as the gateway. */
 			if (empty($addr['alias'])) {
 				file_put_contents("/tmp/{$ipsecif}_router{$gwtype}", $addr['right']);
+			}
+		}
+		/* Check/set the MTU if the user configured a custom value.
+		 * https://redmine.pfsense.org/issues/9111 */
+		$currentvtimtu = get_interface_mtu($ipsecif);
+		foreach ($config['interfaces'] as $tmpinterface) {
+			if ($tmpinterface['if'] == $ipsecif) {
+				if (isset($tmpinterface['mtu']) && is_numericint($tmpinterface['mtu'])) {
+					$vtimtu = $tmpinterface['mtu'];
+				}
+			}
+		}
+		if (is_numericint($vtimtu)) {
+			if ($vtimtu != $currentvtimtu) {
+				mwexec("/sbin/ifconfig {$ipsecif} mtu {$vtimtu}");
 			}
 		}
 		system_routing_configure(convert_real_interface_to_friendly_interface_name($ipsecif));
@@ -5267,7 +5284,7 @@ function DHCP_Config_File_Substitutions($ifcfg, $realif, $dhclientconf) {
 function interfaces_group_setup() {
 	global $config;
 
-	if (!is_array($config['ifgroups']['ifgroupentry'])) {
+	if (!isset($config['ifgroups']['ifgroupentry']) || !is_array($config['ifgroups']['ifgroupentry'])) {
 		return;
 	}
 
@@ -5298,7 +5315,7 @@ function interface_group_setup(&$groupname /* The parameter is an array */) {
 function is_interface_group($if) {
 	global $config;
 
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
+	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $groupentry) {
 			if ($groupentry['ifname'] === $if) {
 				return true;
@@ -5421,7 +5438,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 			} else if (substr($interface, 0, 5) == '_lloc') {
 				return get_interface_linklocal($interface);
 			} else {
-				if (is_array($config['ifgroups']['ifgroupentry'])) {
+				if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 					foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
 						if ($ifgen['ifname'] === $interface) {
 							return $ifgen['ifname'];
@@ -6006,7 +6023,7 @@ function link_interface_to_vips($int, $action = "", $vhid = '') {
 function link_interface_to_bridge($int) {
 	global $config;
 
-	if (is_array($config['bridges']['bridged'])) {
+	if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged'])) {
 		foreach ($config['bridges']['bridged'] as $bridge) {
 			if (in_array($int, explode(',', $bridge['members']))) {
 				return "{$bridge['bridgeif']}";
@@ -6020,7 +6037,7 @@ function link_interface_to_group($int) {
 
 	$result = array();
 
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
+	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $group) {
 			if (in_array($int, explode(" ", $group['members']))) {
 				$result[$group['ifname']] = $int;
@@ -6750,30 +6767,6 @@ function generate_random_mac_address() {
 	return $mac;
 }
 
-/****f* interfaces/is_jumbo_capable
- * NAME
- *   is_jumbo_capable - Test if interface is jumbo frame capable.  Useful for determining VLAN capability.
- * INPUTS
- *   $int             - string containing interface name
- * RESULT
- *   boolean          - true or false
- ******/
-function is_jumbo_capable($iface) {
-	$iface = trim($iface);
-	$capable = pfSense_get_interface_addresses($iface);
-
-	if (isset($capable['caps']['vlanmtu'])) {
-		return true;
-	}
-
-	// hack for some lagg modes missing vlanmtu, but work fine w/VLANs
-	if (substr($iface, 0, 4) == "lagg") {
-		return true;
-	}
-
-	return false;
-}
-
 function interface_setup_pppoe_reset_file($pppif, $iface="") {
 	global $g;
 
@@ -7065,7 +7058,7 @@ function create_interface_list() {
 	$iflist = array();
 
 	// add group interfaces
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
+	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
 			if (have_ruleint_access($ifgen['ifname'])) {
 				$iflist[$ifgen['ifname']] = $ifgen['ifname'];

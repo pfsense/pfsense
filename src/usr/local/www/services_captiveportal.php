@@ -3,7 +3,9 @@
  * services_captiveportal.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -151,6 +153,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radmac_secret'] = $a_cp[$cpzone]['radmac_secret'];
 	$pconfig['radmac_fallback'] = isset($a_cp[$cpzone]['radmac_fallback']);
 	$pconfig['reauthenticate'] = isset($a_cp[$cpzone]['reauthenticate']);
+	$pconfig['preservedb'] = isset($a_cp[$cpzone]['preservedb']);
 	$pconfig['reauthenticateacct'] = $a_cp[$cpzone]['reauthenticateacct'];
 	$pconfig['httpslogin_enable'] = isset($a_cp[$cpzone]['httpslogin']);
 	$pconfig['httpsname'] = $a_cp[$cpzone]['httpsname'];
@@ -353,6 +356,7 @@ if ($_POST['save']) {
 		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
 		$newcp['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
+		$newcp['preservedb'] = $_POST['preservedb'] ? true : false;
 		$newcp['radmac_secret'] = $_POST['radmac_secret'] ? $_POST['radmac_secret'] : false;
 		$newcp['radmac_fallback'] = $_POST['radmac_fallback'] ? true : false;
 		$newcp['reauthenticateacct'] = $_POST['reauthenticateacct'];
@@ -634,6 +638,13 @@ $section->addInput(new Form_Input(
 ))->setHelp('Blocked MAC addresses will be redirected to this URL when attempting access.');
 
 $section->addInput(new Form_Checkbox(
+	'preservedb',
+	'Preserve users database',
+	'Preserve connected users across reboot',
+	$pconfig['preservedb']
+))->setHelp("If enabled, connected users won't be disconnected during a pfSense reboot.");
+
+$section->addInput(new Form_Checkbox(
 	'noconcurrentlogins',
 	'Concurrent user logins',
 	'Disable Concurrent user logins',
@@ -819,7 +830,7 @@ if ($pconfig['page']['logouttext']) {
 	))->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
 	$section->add($group);
 }
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',
@@ -1178,6 +1189,7 @@ events.push(function() {
 		hideInput('preauthurl', hide);
 		hideInput('redirurl', hide);
 		hideInput('blockedmacsurl', hide);
+		hideCheckbox('preservedb', hide);
 		hideCheckbox('noconcurrentlogins', hide);
 		hideCheckbox('nomacfilter', hide);
 		hideCheckbox('passthrumacadd', hide);

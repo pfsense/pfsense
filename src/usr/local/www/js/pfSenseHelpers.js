@@ -2,7 +2,9 @@
  * pfSenseHelpers.js
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -184,7 +186,14 @@ function setMasks() {
 			if (input.val() == "")
 				return;
 
-			while (select.options.length > max)
+			// Sometimes the mask includes '0' (e.g. for VPNs), sometimes it does not
+			if (select.options[select.options.length - 1].value == 0) {
+				var mm = max + 1;
+			} else {
+				var mm = max;
+			}
+
+			while (select.options.length > mm)
 				select.remove(0);
 
 			if (select.options.length < max) {

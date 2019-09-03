@@ -3,7 +3,9 @@
  * diag_dns.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -133,7 +135,7 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (!is_hostname($host) && !is_ipaddr($host)) {
+	if (!is_hostname(rtrim($host, '.')) && !is_ipaddr($host)) {
 		$input_errors[] = gettext("Host must be a valid hostname or IP address.");
 	} else {
 		// Test resolution speed of each DNS server.
@@ -167,7 +169,7 @@ if ($_POST) {
 				$tmpresolved['data'] = $resolvedptr;
 				$resolved[] = $tmpresolved;
 			}
-		} elseif (is_hostname($host)) {
+		} elseif (is_hostname(rtrim($host, '.'))) {
 			$type = "hostname";
 			$ipaddr = gethostbyname($host);
 			$resolved = resolve_host_addresses($host);
@@ -319,11 +321,6 @@ if (!$input_errors && $type) {
 		<ul class="list-group">
 			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;count=3"><?=gettext("Ping")?></a></li>
 			<li class="list-group-item"><a href="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute")?></a></li>
-		</ul>
-		<h5><?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?></h5>
-		<ul class="list-group">
-			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?=$ipaddr;?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a></li>
-			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?=$ipaddr;?>"><?=gettext("IP Info @ DNS Stuff");?></a></li>
 		</ul>
 	</div>
 </div>

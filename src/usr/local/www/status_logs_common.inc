@@ -847,8 +847,8 @@ function manage_log_section() {
 		$pconfig['logfilesize'],
 		['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : "511488"]
 	))->setWidth(2);
-	$group->setHelp('The log is held in a constant-size circular log file. This field controls how large the log file is, and thus how many entries may exist inside the log. The default is approximately 500KB.%1$s' .
-				'NOTE: The log size is changed the next time it is cleared. To immediately change the log size, first save the options to set the size, then clear the log using the "Clear Log" action below. ',
+	$group->setHelp('This field controls the size at which logs will be rotated. By default this is approximately 500KB per log file.%1$s' .
+				'NOTE: Log file sizes are checked once per minute to determine if rotation is necessary, so a very rapidly growing log file may exceed this value. ',
 				'<br /><br />');
 	$section->add($group);
 

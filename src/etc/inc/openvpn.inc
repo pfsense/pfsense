@@ -1581,11 +1581,11 @@ function openvpn_resync_all($interface = "") {
 			$mode_id = "server" . $settings['vpnid'];
 			$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.interface";
 			$gw_group_change = FALSE;
-			$ip_change = ($interface === $settings['interface']);
-			if (file_exists($fpath)) {
+			$ip_change = ($interface === "") || ($interface === $settings['interface']);
+			if (!$ip_change && file_exists($fpath)) {
 				$gw_group_change = (trim(file_get_contents($fpath), " \t\n") != get_failover_interface($settings['interface']));
 			}
-			if ($interface === "" || $ip_change || $gw_group_change) {
+			if ($ip_change || $gw_group_change) {
 				openvpn_resync('server', $settings);
 			}
 		}
@@ -1595,11 +1595,11 @@ function openvpn_resync_all($interface = "") {
 			$mode_id = "client" . $settings['vpnid'];
 			$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.interface";
 			$gw_group_change = FALSE;
-			$ip_change = ($interface === $settings['interface']);
-			if (file_exists($fpath)) {
+			$ip_change = ($interface === "") || ($interface === $settings['interface']);
+			if (!$ip_change && file_exists($fpath)) {
 				$gw_group_change = (trim(file_get_contents($fpath), " \t\n") != get_failover_interface($settings['interface']));
 			}
-			if ($interface === "" || $ip_change || $gw_group_change) {
+			if ($ip_change || $gw_group_change) {
 				openvpn_resync('client', $settings);
 			}
 		}

@@ -1111,14 +1111,14 @@ function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = tru
 }
 
 function clear_all_log_files($restart = false) {
-	global $g,$system_log_files;
+	global $g, $system_log_files;
 	if ($restart) {
 		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
 			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
 		}
 	}
 
-	foreach ($system_log_files as $lfile) {
+	foreach (system_syslogd_get_all_logfilenames() as $lfile) {
 		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
 	}
 
@@ -1429,9 +1429,26 @@ EOD;
 	return $retval;
 }
 
+function system_log_get_compression() {
+	global $config, $g, $system_log_compression_types;
+	/* Default is bzip2 */
+	if (empty($config['syslog']['logcompressiontype']) ||
+	    !array_key_exists($config['syslog']['logcompressiontype'], $system_log_compression_types)) {
+		$compressiontype = 'bzip2';
+	} else {
+		$compressiontype = $config['syslog']['logcompressiontype'];
+	}
+	return $compressiontype;
+}
+
+function system_log_get_cat() {
+	global $system_log_compression_types;
+	return $system_log_compression_types[system_log_get_compression()]['cat'];
+}
+
 /* Setup newsyslog log rotation */
 function system_log_rotation_setup() {
-	global $config, $g, $system_log_files;
+	global $config, $g, $system_log_files, $system_log_compression_types;
 	$syslogcfg = $config['syslog'];
 
 	$mainnewsyslogconf = <<<EOD
@@ -1448,12 +1465,15 @@ EOD;
 	$log_size = ($log_size < (2**32)/2) ? $log_size : "511488";
 	$log_size = (int)$log_size/1024;
 
+	$compression_flag = $system_log_compression_types[system_log_get_compression()]['flag'];
+
+
 	if (isset($syslogcfg)) {
 		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'miniupnpd', 'filterlog');
 		$newsyslogconf = <<<EOD
 /var/log/userlog			600	3	{$log_size}	*	B
 /var/log/utx.log			644	3	{$log_size}	*	B
-/var/log/nginx/error.log		644	7	{$log_size}	*	JC /var/run/nginx.pid 30
+/var/log/nginx/error.log		644	7	{$log_size}	*	{$compression_flag}C /var/run/nginx.pid 30
 
 EOD;
 
@@ -1461,7 +1481,7 @@ EOD;
 			foreach ($config['installedpackages']['package'] as $package) {
 				if (isset($package['logging']['rotation']) && isset($package['logging']['logfilename'])) {
 					$pkgnewsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
-					$pkgnewsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$package['logging']['logfilename']}");
+					$pkgnewsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$package['logging']['logfilename']}", 600, 7, $log_size, '*', "{$compression_flag}C");
 					@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/" . basename($package['logging']['logfilename']) . ".conf", $pkgnewsyslogconf);
 				}
 			}
@@ -1469,7 +1489,7 @@ EOD;
 
 		foreach($system_log_files as $logfile) {
 			$log_size = isset($syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize']) ? (int) $syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize'] / 1024: $log_size;
-			$newsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$logfile}.log", 600, 7, $log_size);
+			$newsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$logfile}.log", 600, 7, $log_size, '*', "{$compression_flag}C");
 		}
 
 		if (!@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/pfSense.conf", $newsyslogconf)) {
@@ -1479,7 +1499,7 @@ EOD;
 	}
 }
 
-function system_log_rotation_make_line($filename, $mode='644', $count=7, $size=1000, $time='*', $flags='JC') {
+function system_log_rotation_make_line($filename, $mode='644', $count=7, $size=1000, $time='*', $flags='C') {
 	/* TODO: Fix default size, flags, etc. */
 	$nslline = $filename;
 	$nslline .= "			{$mode}";

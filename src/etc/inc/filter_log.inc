@@ -112,7 +112,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 
 	# Get a bunch of log entries.
-	exec('/usr/bin/bzcat -f ' . sort_related_log_files($logfile, true, true) . " | /usr/bin/grep -E {$pattern} | /usr/bin/tail -r -n {$tail}", $logarr);
+	exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . " | /usr/bin/grep -E {$pattern} | /usr/bin/tail -r -n {$tail}", $logarr);
 
 
 	# Remove escapes and fix up the pattern for preg_match.

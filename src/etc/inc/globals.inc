@@ -259,4 +259,33 @@ $system_log_files = array(
 	"portalauth", "ipsec", "ppp", "wireless", "nginx", "ntpd", "gateways",
 	"resolver", "routing");
 
+global $system_log_compression_types;
+$system_log_compression_types = array(
+	'bzip2' => array(
+			'flag' => 'J',
+			'cat' => '/usr/bin/bzcat -f',
+			'ext' => 'bz2',
+		),
+	'gzip' => array(
+			'flag' => 'Z',
+			'cat' => '/usr/bin/zcat -f',
+			'ext' => 'gz',
+		),
+	'xz' => array(
+			'flag' => 'X',
+			'cat' => '/usr/bin/xzcat -f',
+			'ext' => 'xz',
+		),
+	'zstd' => array(
+			'flag' => 'Y',
+			'cat' => '/usr/bin/zstdcat -f',
+			'ext' => 'zst',
+		),
+	'none' => array(
+			'flag' => '',
+			'cat' => '/usr/bin/cat',
+			'ext' => '',
+		),
+);
+
 ?>

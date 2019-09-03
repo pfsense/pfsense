@@ -37,6 +37,8 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+global $system_log_compression_types;
+
 $pconfig['reverse'] = isset($config['syslog']['reverse']);
 $pconfig['nentries'] = $config['syslog']['nentries'];
 $pconfig['remoteserver'] = $config['syslog']['remoteserver'];
@@ -66,6 +68,7 @@ $pconfig['rawfilter'] = isset($config['syslog']['rawfilter']);
 $pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
 $pconfig['logfilesize'] = $config['syslog']['logfilesize'];
+$pconfig['logcompressiontype'] = $config['syslog']['logcompressiontype'];
 $pconfig['igmpxverbose'] = isset($config['syslog']['igmpxverbose']);
 
 if (!$pconfig['nentries']) {
@@ -108,6 +111,11 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			$input_errors[] = gettext("Log file size is too large. Set a smaller value.");
 		}
 	}
+
+	if (!array_key_exists($_POST['logcompressiontype'], $system_log_compression_types)) {
+		$input_errors[] = gettext("Invalid log compression type.");
+	}
+
 	if (!$input_errors) {
 		init_config_arr(array('syslog'));
 		$config['syslog']['reverse'] = $_POST['reverse'] ? true : false;
@@ -119,6 +127,23 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		} else {
 			unset($config['syslog']['logfilesize']);
 		}
+
+		if (isset($_POST['logcompressiontype'])) {
+			/* If the non-default compression type changed and the
+			 * old type was not 'none', then remove the old log files. */
+
+			if ((!isset($config['syslog']['logcompressiontype']) && ($_POST['logcompressiontype'] != 'bzip2')) ||
+			    (isset($config['syslog']['logcompressiontype']) &&
+			    ($config['syslog']['logcompressiontype'] != 'none') &&
+			    ($config['syslog']['logcompressiontype'] != $_POST['logcompressiontype']))) {
+				/* Clear old rotated log files */
+				foreach (system_syslogd_get_all_logfilenames() as $lfile) {
+					unlink_if_exists("{$g['varlog_path']}/{$lfile}.log.*");
+				}
+			}
+			$config['syslog']['logcompressiontype'] = $_POST['logcompressiontype'];
+		}
+
 		$config['syslog']['remoteserver'] = $_POST['remoteserver'];
 		$config['syslog']['remoteserver2'] = $_POST['remoteserver2'];
 		$config['syslog']['remoteserver3'] = $_POST['remoteserver3'];
@@ -254,6 +279,14 @@ $section->addInput(new Form_Input(
 	$pconfig['logfilesize'],
 	['placeholder' => 'Bytes']
 ))->setHelp($logfilesizeHelp);
+
+$section->addInput(new Form_Select(
+	'logcompressiontype',
+	'Log compression',
+	!isset($pconfig['logcompressiontype']) ? 'bzip2' : $pconfig['logcompressiontype'],
+	array_combine(array_keys($system_log_compression_types), array_keys($system_log_compression_types)),
+))->setHelp('The type of compression to use when rotating log files.%s' .
+	' WARNING: Changing this value will remove previously rotated compressed log files!', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'logdefaultblock',

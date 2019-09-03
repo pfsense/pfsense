@@ -638,7 +638,7 @@ function dump_log_no_table($logfile, $tail, $withorig = true, $grepfor = "", $gr
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array(gettext("Log file started."));
 	} else {
-		exec('/usr/bin/bzcat -f ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
+		exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	}
 	echo "\n";
 
@@ -685,7 +685,7 @@ function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert 
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array(gettext("Log file started."));
 	} else {
-		exec('/usr/bin/bzcat -f ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
+		exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	}
 
 	$rows = 0;
@@ -721,7 +721,7 @@ function return_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinver
 	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	}
-	exec('/usr/bin/bzcat -f ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
+	exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	return($logarr);
 }
 

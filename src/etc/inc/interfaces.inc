@@ -94,6 +94,53 @@ function does_interface_exist($interface, $flush = true) {
 }
 
 /*
+ * $ipsecifnum = get_ipsecifnum($ikeid,$idx);
+ * locates or creates and returns an ipsecifnum in the config.
+ */
+function get_ipsecifnum($ikeid,$idx) {
+	global $config;
+
+	$existing = array_filter($config['ipsec']['vtimaps'], function($val) use($ikeid, $idx){
+              return ($val['reqid']==$ikeid and $val['index']==$idx);
+	})[1]['ifnum'];
+	if (isset($existing)) {
+		return $existing;
+	}
+	
+	if (($ikeid < 33) && ($idx < 10)) {
+		$oldformat = "{$ikeid}00{$idx}";
+		$config['ipsec']['vtimaps'][]=array(
+			"reqid" => $ikeid,
+			"index" => $idx,
+			"ifnum" => $oldformat
+		);
+		write_config(gettext("New ipsec vtimap added"));
+		return $oldformat;
+	}
+	
+	$assigned = array_column($config['ipsec']['vtimaps'], 'ifnum'); 
+	asort($assigned, SORT_NUMERIC);
+	$new = 1;
+	foreach($assinged as $ipsecifnum) {
+		if ($ipsecifnum != $new) {
+			$config['ipsec']['vtimaps'][]=array(
+				"reqid" => $ikeid,
+				"index" => $idx,
+				"ifnum" => $new
+			);
+			write_config(gettext("New ipsec vtimap added"));
+			return $new;
+		}
+		if ($new <= 32767) {
+			$new++;
+		} else {
+			log_error(gettext("All 32767 ipsec interface numbers have been assigned!"));
+			return(NULL);
+		}
+	}
+}
+	
+/*
  * does_vip_exist($vip): return true or false if a vip is
  * configured.
  */

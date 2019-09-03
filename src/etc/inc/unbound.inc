@@ -4,7 +4,8 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2015 Warren Baker <warren@percol8.co.za>
- * Copyright (c) 2015-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2015-2016 Electric Sheep Fencing
+ * Copyright (c) 2015-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -115,6 +116,17 @@ function test_unbound_config($unboundcfg, &$output) {
 	unbound_remote_control_setup($cfgsubdir);
 	do_as_unbound_user("unbound-anchor", $cfgsubdir);
 
+	// Copy the Python files to the test folder
+	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script'])) {
+		$python_files = glob("{$g['unbound_chroot_path']}/{$unboundcfg['python_script']}.*");
+		if (is_array($python_files)) {
+			foreach ($python_files as $file) {
+				$file = pathinfo($file, PATHINFO_BASENAME);
+				@copy("{$g['unbound_chroot_path']}/{$file}", "{$cfgdir}/{$file}");
+			}
+		}
+	}
+
 	$rv = 0;
 	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1",
 	    $output, $rv);
@@ -156,19 +168,32 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 	// Setup optimization
 	$optimization = unbound_optimization();
 
+	$module_config = '';
+
+	// Setup Python module (pre validator)
+	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script']) && $unboundcfg['python_order'] == 'pre_validator') {
+		$module_config .= 'python ';
+	}
+
 	// Setup DNSSEC support
 	if (isset($unboundcfg['dnssec'])) {
-		$module_config = "validator iterator";
+		$module_config .= 'validator ';
 		$anchor_file = "auto-trust-anchor-file: {$g['unbound_chroot_path']}{$cfgsubdir}/root.key";
-	} else {
-		$module_config = "iterator";
 	}
+
+	// Setup Python module (post validator)
+	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script']) && $unboundcfg['python_order'] == 'post_validator') {
+		$module_config .= 'python ';
+	}
+
+	$module_config .= 'iterator';
 
 	// Setup DNS Rebinding
 	if (!isset($config['system']['webgui']['nodnsrebindcheck'])) {
 		// Private-addresses for DNS Rebinding
 		$private_addr = <<<EOF
 # For DNS Rebinding prevention
+private-address: 127.0.0.0/8
 private-address: 10.0.0.0/8
 private-address: ::ffff:a00:0/104
 private-address: 172.16.0.0/12
@@ -183,7 +208,7 @@ EOF;
 	}
 
 	// Determine interfaces where unbound will bind
-	$sslport = is_numeric($unboundcfg['sslport']) ? $unboundcfg['sslport'] : "853";
+	$tlsport = is_numeric($unboundcfg['tlsport']) ? $unboundcfg['tlsport'] : "853";
 	$bindintcfg = "";
 	$bindints = array();
 	$active_interfaces = explode(",", $unboundcfg['active_interface']);
@@ -210,18 +235,19 @@ EOF;
 	foreach ($bindints as $bindint) {
 		$bindintcfg .= "interface: {$bindint}\n";
 		if (isset($unboundcfg['enablessl'])) {
-			$bindintcfg .= "interface: {$bindint}@{$sslport}\n";
+			$bindintcfg .= "interface: {$bindint}@{$tlsport}\n";
 		}
 	}
 
-	// SSL Configuration
-	$sslconfig = "";
+	// TLS Configuration
+	$tlsconfig = "tls-cert-bundle: \"/etc/ssl/cert.pem\"\n";
+
 	if (isset($unboundcfg['enablessl'])) {
-		$sslcert_path = "{$g['unbound_chroot_path']}/sslcert.crt";
-		$sslkey_path = "{$g['unbound_chroot_path']}/sslcert.key";
+		$tlscert_path = "{$g['unbound_chroot_path']}/sslcert.crt";
+		$tlskey_path = "{$g['unbound_chroot_path']}/sslcert.key";
 
 		// Enable SSL on the chosen or default port
-		$sslconfig .= "ssl-port: {$sslport}\n";
+		$tlsconfig .= "tls-port: {$tlsport}\n";
 
 		// Lookup CA and Server Cert
 		$cert = lookup_cert($unboundcfg['sslcertref']);
@@ -232,14 +258,14 @@ EOF;
 		}
 
 		// Write CA and Server Cert
-		file_put_contents($sslcert_path, $cert_chain);
-		chmod($sslcert_path, 0644);
-		file_put_contents($sslkey_path, base64_decode($cert['prv']));
-		chmod($sslkey_path, 0600);
+		file_put_contents($tlscert_path, $cert_chain);
+		chmod($tlscert_path, 0644);
+		file_put_contents($tlskey_path, base64_decode($cert['prv']));
+		chmod($tlskey_path, 0600);
 
 		// Add config for CA and Server Cert
-		$sslconfig .= "ssl-service-pem: \"{$sslcert_path}\"\n";
-		$sslconfig .= "ssl-service-key: \"{$sslkey_path}\"\n";
+		$tlsconfig .= "tls-service-pem: \"{$tlscert_path}\"\n";
+		$tlsconfig .= "tls-service-key: \"{$tlskey_path}\"\n";
 	}
 
 	// Determine interfaces to run on
@@ -345,10 +371,29 @@ EOD;
 			if (isset($unboundcfg['forward_tls_upstream'])) {
 				$forward_conf .= "\tforward-tls-upstream: yes\n";
 			}
+
+			/* Build DNS server hostname list. See https://redmine.pfsense.org/issues/8602 */
+			$dns_hostnames = array();
+			$dnshost_counter = 1;
+			while (isset($config["system"]["dns{$dnshost_counter}host"])) {
+				$pconfig_dnshost_counter = $dnshost_counter - 1;
+				if (!empty($config["system"]["dns{$dnshost_counter}host"]) &&
+				    isset($config["system"]["dnsserver"][$pconfig_dnshost_counter]))
+				$dns_hostnames[$config["system"]["dnsserver"][$pconfig_dnshost_counter]] = $config["system"]["dns{$dnshost_counter}host"];
+				$dnshost_counter++;
+			}
+
 			foreach ($dnsservers as $dnsserver) {
+				$fwdport = "";
+				$fwdhost = "";
 				if (is_ipaddr($dnsserver) && !ip_in_subnet($dnsserver, "127.0.0.0/8")) {
-					$fwdport = isset($unboundcfg['forward_tls_upstream']) ? "@853" : "";
-					$forward_conf .= "\tforward-addr: {$dnsserver}{$fwdport}\n";
+					if (isset($unboundcfg['forward_tls_upstream'])) {
+						$fwdport = "@853";
+						if (array_key_exists($dnsserver, $dns_hostnames)) {
+							$fwdhost = "#{$dns_hostnames[$dnsserver]}";
+						}
+					}
+					$forward_conf .= "\tforward-addr: {$dnsserver}{$fwdport}{$fwdhost}\n";
 				}
 			}
 		}
@@ -369,6 +414,15 @@ EOD;
 		if (isset($unboundcfg['qname-minimisation-strict'])) {
 			$qname_min .= "qname-minimisation-strict: yes\n";
 		}
+	}
+
+	$python_module = '';
+	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script'])) {
+		$python_path = '';
+		if (!empty($cfgsubdir)) {
+			$python_path = "{$g['unbound_chroot_path']}{$cfgsubdir}/";
+		}
+		$python_module = "\n# Python Module\npython:\npython-script: {$python_path}{$unboundcfg['python_script']}.py";
 	}
 
 	$unboundconf = <<<EOD
@@ -425,8 +479,8 @@ use-caps-for-id: {$use_caps}
 serve-expired: {$dns_record_cache}
 # Statistics
 {$statistics}
-# SSL Configuration
-{$sslconfig}
+# TLS Configuration
+{$tlsconfig}
 # Interface IP(s) to bind to
 {$bindintcfg}
 {$outgoingints}
@@ -455,6 +509,7 @@ include: {$g['unbound_chroot_path']}{$cfgsubdir}/domainoverrides.conf
 # Remote Control Config
 ###
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf
+{$python_module}
 
 EOD;
 
@@ -464,7 +519,9 @@ EOD;
 function unbound_remote_control_setup($cfgsubdir = "") {
 	global $g;
 
-	if (!file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf") || !file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/unbound_control.key")) {
+	if (!file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf") ||
+	    (filesize("{$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf") == 0) ||
+	    !file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/unbound_control.key")) {
 		$remotcfg = <<<EOF
 remote-control:
 	control-enable: yes
@@ -552,7 +609,7 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			mwexec("echo '/usr/local/sbin/unbound-anchor -a {$root_key_file}' | /usr/bin/su -m unbound", true);
 			// Only sync the file if this is the real (default) one, not a test one.
 			if ($param1 == "") {
-				pfSense_fsync($root_key_file);
+				//pfSense_fsync($root_key_file);
 			}
 			break;
 		case "unbound-control-setup":
@@ -571,6 +628,7 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 	$sorted_domains = msort($domains, "domain");
 	$result = array();
 	$tls_domains = array();
+	$tls_hostnames = array();
 	foreach ($sorted_domains as $domain) {
 		$domain_key = current($domain);
 		if (!isset($result[$domain_key])) {
@@ -580,6 +638,7 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 		/* If any entry for a domain has TLS set, it will be active for all entries. */
 		if (isset($domain['forward_tls_upstream'])) {
 			$tls_domains[] = $domain_key;
+			$tls_hostnames[$domain['ip']] = $domain['tls_hostname'];
 		}
 	}
 
@@ -594,20 +653,25 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 				$domain_entries .= "local-zone: \"$domain\" typetransparent\n";
 			}
 		} else {
+			$use_tls = in_array($domain, $tls_domains);
 			$domain_entries .= "forward-zone:\n";
 			$domain_entries .= "\tname: \"$domain\"\n";
 			$fwdport = "";
 			/* Enable TLS forwarding for this domain if needed. */
-			if (in_array($domain, $tls_domains)) {
+			if ($use_tls) {
 				$domain_entries .= "\tforward-tls-upstream: yes\n";
 				$fwdport = "@853";
 			}
 			foreach ($ips as $ip) {
+				$fwdhost = "";
 				/* If an IP address already contains a port specification, do not add another. */
 				if (strstr($ip, '@') !== false) {
 					$fwdport = "";
 				}
-				$domain_entries .= "\tforward-addr: {$ip}{$fwdport}\n";
+				if ($use_tls && array_key_exists($ip, $tls_hostnames)) {
+					$fwdhost = "#{$tls_hostnames[$ip]}";
+				}
+				$domain_entries .= "\tforward-addr: {$ip}{$fwdport}{$fwdhost}\n";
 			}
 		}
 	}

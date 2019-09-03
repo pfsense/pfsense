@@ -3,7 +3,9 @@
  * status_logs_common.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -67,9 +69,9 @@ function status_logs_common_code() {
 	}
 
 	// Formatted/Raw Display
-	if ($config['syslog'][$specific_log]['format'] == 'formatted') {
+	if (isset($config['syslog'][$specific_log]['format']) && ($config['syslog'][$specific_log]['format'] == 'formatted')) {
 		$rawfilter = false;
-	} else if ($config['syslog'][$specific_log]['format'] == 'raw') {
+	} elseif (isset($config['syslog'][$specific_log]['format']) && ($config['syslog'][$specific_log]['format'] == 'raw')) {
 		$rawfilter = true;
 	} else {	//  Use the general logging options setting (global).
 		$rawfilter = isset($config['syslog']['rawfilter']);
@@ -92,7 +94,6 @@ function tab_array_logs_common() {
 	$tab_array[] = array(gettext("IPsec"), ($logfile == 'ipsec'), "status_logs.php?logfile=ipsec");
 	$tab_array[] = array(gettext("PPP"), ($logfile == 'ppp'), "status_logs.php?logfile=ppp");
 	$tab_array[] = array(gettext("VPN"), $is_pppoe_l2tp_vpn_log, "status_logs_vpn.php");
-	$tab_array[] = array(gettext("Load Balancer"), ($logfile == 'relayd'), "status_logs.php?logfile=relayd");
 	$tab_array[] = array(gettext("OpenVPN"), ($logfile == 'openvpn'), "status_logs.php?logfile=openvpn");
 	$tab_array[] = array(gettext("NTP"), ($logfile == 'ntpd'), "status_logs.php?logfile=ntpd");
 	$tab_array[] = array(gettext("Settings"), false, "status_logs_settings.php");
@@ -165,9 +166,9 @@ function system_log_filter() {
 
 	if ($rawfilter) {
 		if (($filtersubmit) || ($filterlogentries_submit)) {
-			$rows = dump_clog($logfile_path, $nentries, true, array("$filtertext"), $inverse);
+			$rows = dump_log($logfile_path, $nentries, true, array("$filtertext"), $inverse);
 		} else {
-			$rows = dump_clog($logfile_path, $nentries, true, array(), $inverse);
+			$rows = dump_log($logfile_path, $nentries, true, array(), $inverse);
 		}
 	} else {
 		if (($filtersubmit) || ($filterlogentries_submit)) {
@@ -584,17 +585,18 @@ function manage_log_code() {
 		return;
 	}
 
-	global $logfile, $specific_log, $config, $pconfig, $save_settings, $input_errors, $extra_save_msg, $retval, $changes_applied;
+	global $logfile, $specific_log, $config, $pconfig, $save_settings, $input_errors, $extra_save_msg, $retval, $changes_applied, $allowed_logs;
 
 	$changes_applied = false;
 	$extra_save_msg = "";
 	$specific_log = basename($logfile) . '_settings';
+	init_config_arr(array('syslog', $specific_log));
 
 	// Common to All Logs
-	$pconfig['cronorder'] = $config['syslog'][$specific_log]['cronorder'];
-	$pconfig['nentries'] = $config['syslog'][$specific_log]['nentries'];
-	$pconfig['logfilesize'] = $config['syslog'][$specific_log]['logfilesize'];
-	$pconfig['format'] = $config['syslog'][$specific_log]['format'];
+	$pconfig['cronorder'] = isset($config['syslog'][$specific_log]['cronorder']) ? $config['syslog'][$specific_log]['cronorder'] : "forward";
+	$pconfig['nentries'] = isset($config['syslog'][$specific_log]['nentries']) ? $config['syslog'][$specific_log]['nentries'] : 50;
+	$pconfig['logfilesize'] = isset($config['syslog'][$specific_log]['logfilesize']) ? $config['syslog'][$specific_log]['logfilesize'] : 511488;
+	$pconfig['format'] = isset($config['syslog'][$specific_log]['format']) ? $config['syslog'][$specific_log]['format'] : "formatted";
 
 	// Specific to System General (main) Log
 	if ($logfile == 'system') {
@@ -607,7 +609,7 @@ function manage_log_code() {
 		$pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
 		$pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
 		$pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
-		$pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
+		$pconfig['filterdescriptions'] = isset($config['syslog']['filterdescriptions']) ? $config['syslog']['filterdescriptions'] : 1;
 	}
 
 	$save_settings = getGETPOSTsettingvalue('save_settings', null);
@@ -649,6 +651,8 @@ function manage_log_code() {
 		if (isset($logfilesize) && (strlen($logfilesize) > 0)) {
 			if (!is_numeric($logfilesize) || ($logfilesize < 100000)) {
 				$input_errors[] = gettext("Log file size must be numeric and greater than or equal to 100000.");
+			} elseif ($logfilesize >= (2**32)/2) {
+				$input_errors[] = gettext("Log file size is too large. Set a smaller value.");
 			}
 		}
 
@@ -658,6 +662,7 @@ function manage_log_code() {
 			if (isset($config['syslog'][$specific_log])) {
 				unset($config['syslog'][$specific_log]);
 			}
+			init_config_arr(array('syslog', $specific_log));
 
 		// Common to All Logs
 			if ($cronorder != '') { # if not using the general logging options setting (global)
@@ -717,11 +722,12 @@ function manage_log_code() {
 			$changes_applied = true;
 
 		// If any of the logging settings were changed then backup and sync (standard write_config).  Otherwise only write config (don't backup, don't sync).
+			$log_friendly_name = empty($allowed_logs[$logfile]["name"]) ? $logfile : $allowed_logs[$logfile]["name"];
 			if ($logging_changed) {
-				write_config($desc = gettext("Log Display Settings Saved: ") . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
+				write_config($desc = gettext("Log Display Settings Saved: ") . gettext($log_friendly_name), $backup = true, $write_config_only = false);
 				system_syslogd_start();
 			} else {
-				write_config($desc = gettext("Log Display Settings Saved (no backup, no sync): ") . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
+				write_config($desc = gettext("Log Display Settings Saved (no backup, no sync): ") . gettext($log_friendly_name), $backup = false, $write_config_only = true);
 			}
 
 		// Specific to System General (main) Log
@@ -920,7 +926,7 @@ function manage_log_section() {
 		$section->addInput(new Form_Select(
 			'filterdescriptions',
 			'Where to show rule descriptions',
-			!isset($pconfig['filterdescriptions']) ? '0':$pconfig['filterdescriptions'],
+			isset($pconfig['filterdescriptions']) ? $pconfig['filterdescriptions'] : '1',
 			array(
 				'0' => gettext('Dont load descriptions'),
 				'1' => gettext('Display as column'),

@@ -3,7 +3,9 @@
  * vpn_ipsec_phase1.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -45,18 +47,8 @@ if ($_REQUEST['generatekey']) {
 	exit;
 }
 
-if (!is_array($config['ipsec'])) {
-	$config['ipsec'] = array();
-}
-
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
-}
-
-if (!is_array($config['ipsec']['phase2'])) {
-	$config['ipsec']['phase2'] = array();
-}
-
+init_config_arr(array('ipsec', 'phase1'));
+init_config_arr(array('ipsec', 'phase2'));
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
@@ -980,7 +972,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Number of consecutive failures allowed before disconnect. ');
 
 if (isset($p1index) && $a_phase1[$p1index]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'p1index',
 		null,
 		'hidden',
@@ -989,7 +981,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 }
 
 if ($pconfig['mobile']) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'mobile',
 		null,
 		'hidden',
@@ -997,7 +989,7 @@ if ($pconfig['mobile']) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'ikeid',
 	null,
 	'hidden',
@@ -1039,14 +1031,12 @@ events.push(function() {
 		if ($('#iketype').val() == 'ikev2') {
 			hideInput('mode', true);
 			hideInput('mobike', false);
-			hideInput('nat_traversal', true);
 			//hideCheckbox('tfc_enable', false);
 			hideCheckbox('reauth_enable', false);
 			hideCheckbox('splitconn', false);
 		} else {
 			hideInput('mode', false);
 			hideInput('mobike', true);
-			hideInput('nat_traversal', false);
 			//hideCheckbox('tfc_enable', true);
 			//hideInput('tfc_bytes', true);
 			hideCheckbox('reauth_enable', true);
@@ -1234,8 +1224,6 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 ?>
 
 	// ---------- On initial page load ------------------------------------------------------------
-
-	hideInput('ikeid', true);
 
 	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new Pre-Shared Key");?></a>');
 	generateButton.on('click', function() {

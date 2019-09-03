@@ -3,7 +3,9 @@
  * globals.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,7 +71,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "18.8",
+	"latest_config" => "19.6",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -78,14 +80,14 @@ $g = array(
 	"captiveportal_element_sizelimit" => 1048576,
 	"captiveportal_rules_interval" => 50,
 	"services_dhcp_server_enable" => true,
-	"wireless_regex" => "/^(ath|bwi|bwn|ipw|iwi|iwm|iwn|malo|mwl|ral|rsu|rum|run|uath|upgt|ural|urtw|urtwn|wi|wpi|wtap|zyd)[0-9]+/",
+	"wireless_regex" => "/^(ath|athp|bwi|bwn|ipw|iwi|iwm|iwn|malo|mwl|ral|rsu|rum|run|uath|upgt|ural|urtw|urtwn|wi|wpi|wtap|zyd)[0-9]+/",
 	"help_base_url" => "/help.php",
 	"pkg_prefix" => "pfSense-pkg-",
 	"default_timezone" => "Etc/UTC",
 	"language" => "en_US",
 	"default_config_backup_count" => 30,
 	"minimumtableentries_bogonsv6" => 400000,
-	"alternativemetaports" => array("vmware", "php72")
+	"alternativemetaports" => array("vmware", "php72", "php73")
 );
 
 /* IP TOS flags */
@@ -209,7 +211,7 @@ $factory_default_checkipservice = array(
 	"descr" => 'Default Check IP Service'
 );
 
-$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns", "godaddy", "godaddy-v6");
+$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns", "godaddy", "godaddy-v6", "linode", "linode-v6");
 
 /* pf tokens from FreeBSD source sbin/pfctl/parse.y (plus our custom entries at the end)*/
 global $pf_reserved_keywords;
@@ -250,5 +252,11 @@ $vlanprio = array(
 	"ic" => "Internetwork Control (IC, 6)",
 	"nc" => "Network Control (NC, 7)"
 );
+
+global $system_log_files;
+$system_log_files = array(
+	"system", "filter", "dhcpd", "vpn", "poes", "l2tps", "openvpn",
+	"portalauth", "ipsec", "ppp", "wireless", "nginx", "ntpd", "gateways",
+	"resolver", "routing");
 
 ?>

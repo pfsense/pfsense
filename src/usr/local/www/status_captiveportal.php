@@ -3,7 +3,9 @@
  * status_captiveportal.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -117,11 +119,8 @@ function print_details($cpent) {
 
 $cpzone = strtolower($_REQUEST['zone']);
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal'));
+$a_cp = &$config['captiveportal'];
 
 if (count($a_cp) == 1) {
 	$cpzone = current(array_keys($a_cp));
@@ -271,7 +270,7 @@ if (!empty($cpzone)): ?>
 <?php
 	if (mutiple_auth_server_type()):
 ?>
-					<td><?=htmlspecialchars($cpent[12]);?></td>
+					<td><?=htmlspecialchars($cpent['authmethod']);?></td>
 <?php
 	endif;
 ?>

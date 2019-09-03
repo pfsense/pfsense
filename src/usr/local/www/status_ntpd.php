@@ -3,7 +3,9 @@
  * status_ntpd.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -33,7 +35,16 @@
 
 require_once("guiconfig.inc");
 
-if (!isset($config['ntpd']['noquery'])) {
+$allow_query = !isset($config['ntpd']['noquery']);
+if (!empty($config['ntpd']['restrictions']['row']) && is_array($config['ntpd']['restrictions']['row'])) {
+	foreach ($config['ntpd']['restrictions']['row'] as $v) {
+		if (ip_in_subnet($_SERVER['REMOTE_ADDR'], "{$v['acl_network']}/{$v['mask']}")) {
+			$allow_query = !isset($v['noquery']);
+		}
+	}
+}
+
+if ($allow_query) {
 	if (isset($config['system']['ipv6allow'])) {
 		$inet_version = "";
 	} else {
@@ -106,9 +117,9 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lat_min = substr($gps_vars[3], 2);
 				$gps_lon_deg = substr($gps_vars[5], 0, 3);
 				$gps_lon_min = substr($gps_vars[5], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[4];
 				$gps_lon_dir = $gps_vars[6];
@@ -119,9 +130,9 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lat_min = substr($gps_vars[2], 2);
 				$gps_lon_deg = substr($gps_vars[4], 0, 3);
 				$gps_lon_min = substr($gps_vars[4], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[3] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[5] == "E") ? 1 : -1);
 				$gps_alt = $gps_vars[9];
 				$gps_alt_unit = $gps_vars[10];
@@ -135,9 +146,9 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lat_min = substr($gps_vars[1], 2);
 				$gps_lon_deg = substr($gps_vars[3], 0, 3);
 				$gps_lon_min = substr($gps_vars[3], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[2] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[4] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[2];
 				$gps_lon_dir = $gps_vars[4];
@@ -148,9 +159,9 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lat_min = substr($gps_vars[6], 2);
 				$gps_lon_deg = substr($gps_vars[8], 0, 3);
 				$gps_lon_min = substr($gps_vars[8], 3);
-				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = (float) $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[7] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = (float) $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[9] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[7];
 				$gps_lon_dir = $gps_vars[9];
@@ -192,9 +203,9 @@ if ($_REQUEST['ajax']) {
 }
 
 function print_status() {
-	global $config, $ntpq_servers;
+	global $config, $ntpq_servers, $allow_query;
 
-	if (isset($config['ntpd']['noquery'])):
+	if (!$allow_query):
 
 		print("<tr>\n");
 		print('<td class="warning" colspan="11">');

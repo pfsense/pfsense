@@ -3,7 +3,9 @@
  * guiconfig.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -91,7 +93,6 @@ $reserved_table_names = array(
 	"tonatsubnets",
 	"virusprot",
 	"vpn_networks",
-	"webConfiguratorlockout"
 );
 
 $firewall_rules_dscp_types = array(
@@ -452,67 +453,67 @@ function insert_word_breaks_in_domain_name($domain_name) {
 function firewall_check_for_advanced_options(&$item) {
 	$item_set = "";
 	if ($item['os']) {
-			$item_set .= "os {$item['os']} ";
+			$item_set .= "os " . htmlspecialchars($item['os']) . " ";
 	}
 	if ($item['dscp']) {
-		$item_set .= "dscp {$item['dscp']} ";
+		$item_set .= "dscp " . htmlspecialchars($item['dscp']) . " ";
 	}
 	if ($item['max']) {
-		$item_set .= "max {$item['max']} ";
+		$item_set .= "max " . htmlspecialchars($item['max']) . " ";
 	}
 	if ($item['max-src-nodes']) {
-		$item_set .= "max-src-nodes {$item['max-src-nodes']} ";
+		$item_set .= "max-src-nodes " . htmlspecialchars($item['max-src-nodes']) . " ";
 	}
 	if ($item['max-src-conn']) {
-		$item_set .= "max-src-conn {$item['max-src-conn']} ";
+		$item_set .= "max-src-conn " . htmlspecialchars($item['max-src-conn']) . " ";
 	}
 	if ($item['max-src-states']) {
-		$item_set .= "max-src-states {$item['max-src-states']} ";
+		$item_set .= "max-src-states " . htmlspecialchars($item['max-src-states']) . " ";
 	}
 	if (isset($item['nopfsync'])) {
 		$item_set .= "nopfsync ";
 	}
 	if ($item['statetype'] != "keep state" && $item['statetype'] != "") {
-		$item_set .= "statetype {$item['statetype']} ";
+		$item_set .= "statetype " . htmlspecialchars($item['statetype']) . " ";
 	}
 	if ($item['statetimeout']) {
-		$item_set .= "statetimeout {$item['statetimeout']} ";
+		$item_set .= "statetimeout " . htmlspecialchars($item['statetimeout']) . " ";
 	}
 	if (isset($item['nosync'])) {
 		$item_set .= "no XMLRPC Sync ";
 	}
 	if ($item['max-src-conn-rate']) {
-		$item_set .= "max-src-conn-rate {$item['max-src-conn-rate']} ";
+		$item_set .= "max-src-conn-rate " . htmlspecialchars($item['max-src-conn-rate']) . " ";
 	}
 	if ($item['max-src-conn-rates']) {
-		$item_set .= "max-src-conn-rates {$item['max-src-conn-rates']} ";
+		$item_set .= "max-src-conn-rates " . htmlspecialchars($item['max-src-conn-rates']) . " ";
 	}
 	if ($item['vlanprio']) {
-		$item_set .= "vlanprio {$item['vlanprio']} ";
+		$item_set .= "vlanprio " . htmlspecialchars($item['vlanprio']) . " ";
 	}
 	if ($item['vlanprioset']) {
-		$item_set .= "vlanprioset {$item['vlanprioset']} ";
+		$item_set .= "vlanprioset " . htmlspecialchars($item['vlanprioset']) . " ";
 	}
 	if ($item['gateway']) {
-		$item_set .= "gateway {$item['gateway']} ";
+		$item_set .= "gateway " . htmlspecialchars($item['gateway']) . " ";
 	}
 	if ($item['dnpipe']) {
-		$item_set .= "limiter {$item['dnpipe']} ";
+		$item_set .= "limiter " . htmlspecialchars($item['dnpipe']) . " ";
 	}
 	if ($item['pdnpipe']) {
-		$item_set .= "limiter {$item['pdnpipe']} ";
+		$item_set .= "limiter " . htmlspecialchars($item['pdnpipe']) . " ";
 	}
 	if ($item['ackqueue']) {
-		$item_set .= "ackqueue {$item['ackqueue']} ";
+		$item_set .= "ackqueue " . htmlspecialchars($item['ackqueue']) . " ";
 	}
 	if ($item['defaultqueue']) {
-		$item_set .= "defaultqueue {$item['defaultqueue']} ";
+		$item_set .= "defaultqueue " . htmlspecialchars($item['defaultqueue']) . " ";
 	}
 	if ($item['tag']) {
-		$item_set .= "tag {$item['tag']} ";
+		$item_set .= "tag " . htmlspecialchars($item['tag']) . " ";
 	}
 	if ($item['tagged']) {
-		$item_set .= "tagged {$item['tagged']} ";
+		$item_set .= "tagged " . htmlspecialchars($item['tagged']) . " ";
 	}
 	if (isset($item['allowopts'])) {
 		$item_set .= "allowopts ";
@@ -612,8 +613,8 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
-// This version of dump_clog() does not output <td></td> or any other table elements.
-function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
+// This version of dump_log() does not output <td></td> or any other table elements.
+function dump_log_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	$specific_log = basename($logfile, '.log') . '_settings';
@@ -637,11 +638,7 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array(gettext("Log file started."));
 	} else {
-		if ($config['system']['disablesyslogclog']) {
-			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		} else {
-			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		}
+		exec('/usr/bin/bzcat -f ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	}
 	echo "\n";
 
@@ -664,7 +661,7 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 	return($rows);
 }
 
-function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
+function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	$specific_log = basename($logfile, '.log') . '_settings';
@@ -688,11 +685,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array(gettext("Log file started."));
 	} else {
-		if ($config['system']['disablesyslogclog']) {
-			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		} else {
-			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		}
+		exec('/usr/bin/bzcat -f ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	}
 
 	$rows = 0;
@@ -714,7 +707,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	return($rows);
 }
 
-function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
+function return_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
 	global $g, $config;
 	$sor = (isset($config['syslog']['reverse']) || $grepreverse) ? "-r" : "";
 	$specific_log = basename($logfile, '.log') . '_settings';
@@ -728,12 +721,20 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	}
-	if ($config['system']['disablesyslogclog']) {
-		exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-	} else {
-		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-	}
+	exec('/usr/bin/bzcat -f ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	return($logarr);
+}
+
+/* Compatibility stubs for old clog functions until packages catch up.
+ * Remove once packages all use the new function names. */
+function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
+	return dump_log_no_table($logfile, $tail, $withorig, $grepfor, $grepinvert);
+}
+function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
+	return dump_log($logfile, $tail, $withorig, $grepfor, $grepinvert);
+}
+function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
+	return return_log($logfile, $tail, $withorig, $grepfor, $grepinvert, $grepreverse);
 }
 
 /* Check if variable has changed, update and log if it has
@@ -1296,6 +1297,39 @@ if (isset($config['system']['timezone']) &&
 	$timezone = $g['default_timezone'];
 } else {
 	$timezone = "Etc/UTC";
+}
+
+/* Remove files we do not want to see in a crash report */
+function cleanup_crash_file_list() {
+	$files = glob("/var/crash/*");
+	if (!is_array($files) || empty($files)) {
+		return array();
+	}
+
+	$exclude_patterns = array(
+		'.*.last',
+		'bounds',
+		'minfree'
+	);
+
+	foreach ($files as $idx => $fb) {
+		if (preg_match('/' . implode('|', $exclude_patterns) . '/', basename($fb)) == 1) {
+			unset($files[$idx]);
+		}
+	}
+
+	return $files;
+}
+
+function system_has_crash_data() {
+	/* Test if there are any crash data files present */
+	return count(cleanup_crash_file_list()) > 0;
+}
+
+function system_has_php_errors() {
+	/* Check if the PHP error log is empty. Cast to int in case the file
+	 * does not exist and filesize() returns false. */
+	return (int) @filesize("/tmp/PHP_errors.log") > 0;
 }
 
 date_default_timezone_set($timezone);

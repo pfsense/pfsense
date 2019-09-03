@@ -3,7 +3,9 @@
  * system_authservers.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -105,12 +107,8 @@ if (!is_array($config['system']['authserver'])) {
 
 $a_server = array_values(auth_get_authserver_list());
 
-
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
-
-$a_ca =& $config['ca'];
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
 $act = $_REQUEST['act'];
 
@@ -277,6 +275,11 @@ if ($_POST['save']) {
 
 	if (auth_get_authserver($pconfig['name']) && !isset($id)) {
 		$input_errors[] = gettext("An authentication server with the same name already exists.");
+	}
+
+	if (isset($id) && $config['system']['authserver'][$id] &&
+	   ($config['system']['authserver'][$id]['name'] != $pconfig['name'])) {
+		$input_errors[] = gettext("The name of an authentication server cannot be changed.");
 	}
 
 	if (($pconfig['type'] == "ldap") || ($pconfig['type'] == "radius")) {
@@ -457,7 +460,11 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+if (!isAllowedPage("system_usermanager.php")) {
+       $tab_array[] = array(gettext("User Password"), false, "system_usermanager_passwordmg.php");
+} else {
+       $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+}
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
 $tab_array[] = array(gettext("Authentication Servers"), true, "system_authservers.php");
@@ -827,7 +834,7 @@ $section->addInput(new Form_Select(
 
 if (isset($id) && $a_server[$id])
 {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

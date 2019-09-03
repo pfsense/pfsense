@@ -3,7 +3,9 @@
  * services_captiveportal_vouchers.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -41,11 +43,15 @@ require_once("voucher.inc");
 $cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
 if ($_REQUEST['generatekey']) {
-	exec("/usr/bin/openssl genrsa 64 > /tmp/key64.private");
-	exec("/usr/bin/openssl rsa -pubout < /tmp/key64.private > /tmp/key64.public");
-	$privatekey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.private"));
-	$publickey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.public"));
-	exec("rm /tmp/key64.private /tmp/key64.public");
+	include_once("phpseclib/Math/BigInteger.php");
+	include_once("phpseclib/Crypt/Hash.php");
+	include_once("phpseclib/Crypt/RSA.php");
+
+	$rsa = new phpseclib\Crypt\RSA();
+	$key = $rsa->createKey(64);
+	$privatekey = $key["privatekey"];
+	$publickey = $key["publickey"];
+
 	print json_encode(['public' => $publickey, 'private' => $privatekey]);
 	exit;
 }
@@ -55,15 +61,9 @@ if (empty($cpzone)) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
-
-if (!is_array($config['voucher'])) {
-	$config['voucher'] = array();
-}
+init_config_arr(array('captiveportal'));
+init_config_arr(array('voucher', $cpzone, 'roll'));
+$a_cp = &$config['captiveportal'];
 
 if (empty($a_cp[$cpzone])) {
 	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));
@@ -550,14 +550,14 @@ $section->addPassword(new Form_Input(
 	$pconfig['vouchersyncpass']
 ))->setHelp('This is the password of the master voucher nodes webConfigurator.');
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'zone',
 	null,
 	'hidden',
 	$cpzone
 ));
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'exponent',
 	null,
 	'hidden',

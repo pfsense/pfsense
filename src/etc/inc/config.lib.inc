@@ -3,7 +3,9 @@
  * config.lib.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2009 Erik Kristensen
  * All rights reserved.
  *
@@ -62,7 +64,7 @@ function encrypted_configxml() {
 				exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
 				echo "\n" . gettext("Config.xml unlocked.") . "\n";
 				fclose($fp);
-				pfSense_fsync("{$g['conf_path']}/config.xml");
+				//pfSense_fsync("{$g['conf_path']}/config.xml");
 			} else {
 				echo "\n" . gettext("Invalid password entered.  Please try again.") . "\n";
 			}
@@ -169,7 +171,7 @@ function generate_config_cache($config) {
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
-	pfSense_fsync("{$g['tmp_path']}/config.cache");
+	//pfSense_fsync("{$g['tmp_path']}/config.cache");
 
 	unset($configcache);
 	/* Used for config.extra.xml */
@@ -177,7 +179,7 @@ function generate_config_cache($config) {
 		$configcacheextra = fopen($g['tmp_path'] . '/config.extra.cache', "w");
 		fwrite($configcacheextra, serialize($config_extra));
 		fclose($configcacheextra);
-		pfSense_fsync("{$g['tmp_path']}/config.extra.cache");
+		//pfSense_fsync("{$g['tmp_path']}/config.extra.cache");
 		unset($configcacheextra);
 	}
 }
@@ -202,8 +204,8 @@ function restore_backup($file) {
 	if (file_exists($file)) {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		copy("$file", "/cf/conf/config.xml");
-		pfSense_fsync("/cf/conf/config.xml");
-		pfSense_fsync($g['conf_path']);
+		//pfSense_fsync("/cf/conf/config.xml");
+		//pfSense_fsync($g['conf_path']);
 		disable_security_checks();
 		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file));
 		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file), "pfSenseConfigurator", "");
@@ -434,14 +436,17 @@ function safe_write_file($file, $content, $force_binary = false) {
 	fflush($fd);
 	fclose($fd);
 
-	if (!pfSense_fsync($tmp_file) || !rename($tmp_file, $file)) {
+	/* XXX Re-add pfSense_fsync() call here after it's fixed */
+	// if (!pfSense_fsync($tmp_file) || !rename($tmp_file, $file)) {
+	if (!rename($tmp_file, $file)) {
 		// Unable to move temporary file to original
 		@unlink($tmp_file);
 		return false;
 	}
 
 	// Sync file before returning
-	return pfSense_fsync($file);
+	//return pfSense_fsync($file);
+	return true;
 }
 
 /****f* config/write_config
@@ -460,6 +465,32 @@ function safe_write_file($file, $content, $force_binary = false) {
 /* save the system configuration */
 function write_config($desc="Unknown", $backup = true, $write_config_only = false) {
 	global $config, $g;
+
+	// Certain strings may be embedded in the $desc (reason) parameter to trigger certain behavior.
+	// If detected, those strings are reomved and a variable set.
+	$doacb = true;
+	$manual_acb = false;
+	$rcnt = 0;
+
+	$desc = str_replace("-MaNuAlBaCkUp", "", $desc, $rcnt);
+	if ($rcnt > 0) {
+		$manual_acb = true; // Manual backups require special processing on the server
+	}
+
+	$rcnt = 0;
+	$desc = str_replace("-NoReMoTeBaCkUp", "", $desc, $rcnt);
+	if ($rcnt > 0) {
+		$doacb = false; // No ACB will be performed if this string is detected
+	}
+
+	/*
+	* Syncing vouchers happens every minute and sometimes multiple times. We don't
+	* want to fill up our db with a lot of the same config so just ignore that case.
+	*/
+	if((strpos($desc, 'Syncing vouchers') !== false ||
+		strpos($desc, 'Captive Portal Voucher database synchronized') !== false) ) {
+		$doacb = false;
+	}
 
 	if (!empty($_SERVER['REMOTE_ADDR'])) {
 		@phpsession_begin();
@@ -545,9 +576,16 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	}
 
 	// Try the core AutoConfigBackup system
-	if (is_array($config['system']['acb']) && $config['system']['acb']['enable'] == "yes") {
-		require_once("acb.inc");
-		upload_config();
+	if (is_array($config['system']['acb']) && $config['system']['acb']['enable'] == "yes" &&
+	    (!isset($config['system']['acb']['frequency']) || $config['system']['acb']['frequency'] == "every") || file_exists("/tmp/forceacb")) {
+	    if ($doacb) {
+			require_once("acb.inc");
+			upload_config($manual_acb);
+		}
+
+		if (file_exists("/tmp/forceacb")) {
+			unlink("/tmp/forceacb");
+		}
 	}
 
 	return $config;
@@ -611,7 +649,7 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	if (!$lock) {
 		unlock($lockkey);
 	}
-	setup_serial_port();
+	console_configure();
 	return 0;
 }
 
@@ -812,7 +850,7 @@ function cleanup_backupcache($lock = false) {
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($tocache));
 	fclose($bakout);
-	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
+	//pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 
 	if (!$lock) {
 		unlock($lockkey);
@@ -868,7 +906,7 @@ function backup_config() {
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($backupcache));
 	fclose($bakout);
-	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
+	//pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 
 
 	return true;

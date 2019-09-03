@@ -3,7 +3,9 @@
  * wake_on_lan.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c)  2010 Yehuda Katz
  * All rights reserved.
  *
@@ -21,9 +23,10 @@
  */
 
 require_once("guiconfig.inc");
+require_once("system.inc");
 require_once("/usr/local/www/widgets/include/wake_on_lan.inc");
 
-if (is_array($config['wol']['wolentry'])) {
+if (isset($config['wol']['wolentry']) && is_array($config['wol']['wolentry'])) {
 	$wolcomputers = $config['wol']['wolentry'];
 } else {
 	$wolcomputers = array();
@@ -73,18 +76,32 @@ $skipwols = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 if (count($wolcomputers) > 0):
 	$wol_entry_is_displayed = false;
 
+	$arp_table = system_get_arp_table();
 	foreach ($wolcomputers as $wolent):
 		if (in_array(get_wolent_key($wolent), $skipwols)) {
 			continue;
 		}
 
 		$wol_entry_is_displayed = true;
-		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
-		$status = exec("/usr/sbin/arp -an | /usr/bin/awk '$4 == \"{$wolent['mac']}\" { print $7 }'");
+
+		$status = '';
+		foreach ($arp_table as $entry) {
+			if (empty($entry['mac-address']) ||
+			    $entry['mac-address'] != $wolent['mac']) {
+				continue;
+			}
+
+			if (!empty($entry['expires'])) {
+				$status = 'expires';
+			} else if (!empty($entry['permanent'])) {
+				$status = 'permanent';
+			}
+			break;
+		}
 		?>
 		<tr>
 			<td>
-				<?= $wolent['descr'] ?><br />
+				<?= htmlspecialchars($wolent['descr']) ?><br />
 				<?= $wolent['mac'] ?>
 			</td>
 			<td>
@@ -161,7 +178,7 @@ if (is_array($config['dhcpd'])) {
 				foreach ($wolcomputers as $wolent):
 ?>
 						<tr>
-							<td><?=$wolent['descr']?></td>
+							<td><?=htmlspecialchars($wolent['descr'])?></td>
 							<td><?=convert_friendly_interface_to_friendly_descr($wolent['interface'])?></td>
 							<td><?=$wolent['mac']?></td>
 							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_wolent_key($wolent)?>" type="checkbox" <?=(!in_array(get_wolent_key($wolent), $skipwols) ? 'checked':'')?>></td>

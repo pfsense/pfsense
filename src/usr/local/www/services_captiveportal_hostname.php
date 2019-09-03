@@ -3,7 +3,9 @@
  * services_captiveportal_hostname.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,11 +51,9 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'allowedhostname'));
+$a_cp = &$config['captiveportal'];
+$a_allowedhostnames = &$a_cp[$cpzone]['allowedhostname'];
 
 if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 	$cpzoneid = $a_cp[$cpzone]['zoneid'];
@@ -64,7 +64,6 @@ $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal
 $shortcut_section = "captiveportal";
 
 if ($_POST['act'] == "del" && !empty($cpzone)) {
-	$a_allowedhostnames =& $a_cp[$cpzone]['allowedhostname'];
 	if ($a_allowedhostnames[$_POST['id']]) {
 		$ipent = $a_allowedhostnames[$_POST['id']];
 

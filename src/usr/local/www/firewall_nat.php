@@ -3,7 +3,9 @@
  * firewall_nat.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -36,14 +38,11 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("itemid.inc");
 
-if (!is_array($config['nat'])) {
-	$config['nat'] = array();
-}
-if (!is_array($config['nat']['rule'])) {
-	$config['nat']['rule'] = array();
-}
-
+init_config_arr(array('filter', 'rule'));
+init_config_arr(array('nat', 'separator'));
+init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
+$a_separators = &$config['nat']['separator'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
 if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($natent['interface'])) {
@@ -112,7 +111,6 @@ if (($_POST['act'] == "del") && have_natpfruleint_access($natent['interface'])) 
 		unset($a_nat[$_POST['id']]);
 
 		// Update the separators
-		$a_separators = &$config['nat']['separator'];
 		$ridx = $_POST['id'];
 		$mvnrows = -1;
 		move_separators($a_separators, $ridx, $mvnrows);
@@ -133,7 +131,6 @@ if (isset($_POST['del_x']) && have_natpfruleint_access($natent['interface'])) {
 
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		$a_separators = &$config['nat']['separator'];
 		$num_deleted = 0;
 
 		foreach ($_POST['rule'] as $rulei) {

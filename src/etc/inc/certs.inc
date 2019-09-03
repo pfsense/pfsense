@@ -3,7 +3,9 @@
  * certs.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2008-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc. All rights reserved.
  * All rights reserved.
  *
@@ -667,7 +669,8 @@ function cert_get_ocspstaple($str_crt, $decode = true) {
 		$str_crt = base64_decode($str_crt);
 	}
 	$crt_details = openssl_x509_parse($str_crt);
-	if (!empty($crt_details['extensions']['1.3.6.1.5.5.7.1.24'])) {
+	if (($crt_details['extensions']['tlsfeature'] == "status_request") ||
+	    !empty($crt_details['extensions']['1.3.6.1.5.5.7.1.24'])) {
 		return true;
 	}
 	return false;
@@ -680,9 +683,19 @@ function cert_get_dates($str_crt, $decode = true) {
 	$crt_details = openssl_x509_parse($str_crt);
 	if ($crt_details['validFrom_time_t'] > 0) {
 		$start = date('r', $crt_details['validFrom_time_t']);
+	} else {
+		$dt = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validFrom'], 'Z'));
+		if ($dt !== false) {
+			$start = $dt->format(DateTimeInterface::RFC2822);
+		}
 	}
 	if ($crt_details['validTo_time_t'] > 0) {
 		$end = date('r', $crt_details['validTo_time_t']);
+	} else {
+		$dt = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validTo'], 'Z'));
+		if ($dt !== false) {
+			$end = $dt->format(DateTimeInterface::RFC2822);
+		}
 	}
 	return array($start, $end);
 }
@@ -904,8 +917,22 @@ function cert_usedby_description($refid, $certificates_used_by_packages) {
 	return $result;
 }
 
-function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 9999) {
+/* Detect a rollover at 2038 on some platforms (e.g. ARM)
+ * See: https://redmine.pfsense.org/issues/9098 */
+function crl_get_max_lifetime($max = 9999) {
+	if ($max <= 0) {
+		return 0;
+	}
+	$current_time = time();
+	while ((int)($current_time + ($max * 24 * 60 * 60)) < 0) {
+		$max--;
+	}
+	return $max;
+}
+
+function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 3650) {
 	global $config;
+	$max_lifetime = crl_get_max_lifetime();
 	$ca =& lookup_ca($caref);
 	if (!$ca) {
 		return false;
@@ -913,7 +940,7 @@ function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 9999) {
 	$crl['descr'] = $name;
 	$crl['caref'] = $caref;
 	$crl['serial'] = $serial;
-	$crl['lifetime'] = $lifetime;
+	$crl['lifetime'] = ($lifetime > $max_lifetime) ? $max_lifetime : $lifetime;
 	$crl['cert'] = array();
 	$config['crl'][] = $crl;
 	return $crl;
@@ -942,6 +969,7 @@ function crl_update(& $crl) {
 	require_once('X509_CRL.php');
 
 	global $config;
+	$max_lifetime = crl_get_max_lifetime();
 	$ca =& lookup_ca($crl['caref']);
 	if (!$ca) {
 		return false;
@@ -957,7 +985,7 @@ function crl_update(& $crl) {
 	$crlconf = array(
 		'no' => $crl['serial'],
 		'version' => 2,
-		'days' => $crl['lifetime'],
+		'days' => ($crl['lifetime'] > $max_lifetime) ? $max_lifetime : $crl['lifetime'],
 		'alg' => OPENSSL_ALGO_SHA1,
 		'revoked' => array()
 	);

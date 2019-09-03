@@ -3,7 +3,9 @@
  * services_unbound_acls.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@pfsense.org)
  * All rights reserved.
  *
@@ -31,10 +33,7 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("unbound.inc");
 
-if (!is_array($config['unbound']['acls'])) {
-	$config['unbound']['acls'] = array();
-}
-
+init_config_arr(array('unbound', 'acls'));
 $a_acls = &$config['unbound']['acls'];
 
 $id = $_REQUEST['id'];
@@ -192,14 +191,14 @@ if ($act == "new" || $act == "edit") {
 
 	$section = new Form_Section('New Access List');
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'aclid',
 		null,
 		'hidden',
 		$id
 	));
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'act',
 		null,
 		'hidden',

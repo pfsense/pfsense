@@ -5,7 +5,9 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005 Bill Marquette
  * Copyright (c) 2006 Peter Allgeyer
- * Copyright (c) 2008-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -212,7 +214,7 @@ function filter_delete_states_for_down_gateways() {
 			if (empty($a_gateways[$gateway['monitor']])) {
 				continue;
 			}
-			$gwstatus =& $a_gateways[$gateway['monitor']];
+			$gwstatus = &$a_gateways[$gateway['monitor']];
 			if (strstr($gwstatus['status'], "down")) {
 				$any_gateway_down = true;
 				break;
@@ -751,7 +753,6 @@ function filter_generate_aliases() {
 
 	$aliases .= "\n#SSH Lockout Table\n";
 	$aliases .= "table <sshguard> persist\n";
-	$aliases .= "table <webConfiguratorlockout> persist\n";
 
 	$aliases .= "#Snort tables\n";
 	$aliases .= "table <snort2c>\n";
@@ -1241,7 +1242,7 @@ function filter_generate_optcfg_array() {
 		$FilterIflist['openvpn'] = $oic;
 	}
 	/* add interface groups */
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
+	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
 			$oc = array();
 			$oc['if'] = $ifgen['ifname'];
@@ -1370,7 +1371,7 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 				/* Do not generate a rule with an interface source if that interface has no IP address.
 				 * See https://redmine.pfsense.org/issues/8604 */
 				if (!empty(get_interface_ip($subnet_if))) {
-					$natrules .= "no nat on {$subnet_if}{$protocol_text} from {$subnet_if} to {$target}\n";
+					$natrules .= "no nat on {$subnet_if}{$protocol_text} from ({$subnet_if}) to {$target}\n";
 				}
 				$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";
 			}
@@ -1612,7 +1613,7 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	foreach (get_staticroutes(false, false, true) as $route) {
 		$netip = explode("/", $route['network']);
 		if (isset($GatewaysList[$route['gateway']])) {
-			$gateway =& $GatewaysList[$route['gateway']];
+			$gateway = &$GatewaysList[$route['gateway']];
 			if (!interface_has_gateway($gateway['interface']) && is_private_ip($netip[0])) {
 				$tonathosts[] = $route['network'];
 				$descriptions[] = gettext("static route");
@@ -2049,7 +2050,8 @@ function filter_nat_rules_generate() {
 
 			/* Do not form an invalid NPt rule.
 			 * See https://redmine.pfsense.org/issues/8575 */
-			if (!is_subnetv6($srcaddr) || !is_subnetv6($dstaddr)) {
+			if (!(is_subnetv6($srcaddr) || is_ipaddrv6($srcaddr)) ||
+			    !(is_subnetv6($dstaddr) || is_ipaddrv6($dstaddr))) {
 				continue;
 			}
 
@@ -2223,10 +2225,6 @@ function filter_nat_rules_generate() {
 		}
 		unset($tonathosts, $tonathosts_array, $numberofnathosts);
 	}
-
-	/* load balancer anchor */
-	$natrules .= "\n# Load balancing anchor\n";
-	$natrules .= "rdr-anchor \"relayd/*\"\n";
 
 	update_filter_reload_status(gettext("Setting up TFTP helper"));
 	$natrules .= "# TFTP proxy\n";
@@ -3227,8 +3225,6 @@ function filter_rules_generate() {
 	$ipfrules = "";
 	$ipfrules .= discover_pkg_rules("pfearly");
 
-	/* relayd */
-	$ipfrules .= "anchor \"relayd/*\"\n";
 	/* OpenVPN user rules from radius */
 	$ipfrules .= "anchor \"openvpn/*\"\n";
 	/* IPsec user rules from radius */
@@ -3363,7 +3359,7 @@ EOD;
 		$webConfiguratorlockoutport = $config['system']['webgui']['port'];
 	}
 	if ($webConfiguratorlockoutport) {
-		$ipfrules .= "block in {$log['block']} quick proto tcp from <webConfiguratorlockout> to (self) port {$webConfiguratorlockoutport} tracker {$increment_tracker($tracker)} label \"webConfiguratorlockout\"\n";
+		$ipfrules .= "block in {$log['block']} quick proto tcp from <sshguard> to (self) port {$webConfiguratorlockoutport} tracker {$increment_tracker($tracker)} label \"GUI Lockout\"\n";
 	}
 
 	$saved_tracker += 100;
@@ -3489,7 +3485,7 @@ EOD;
 		$tracker = $saved_tracker;
 
 		$isbridged = false;
-		if (is_array($config['bridges']['bridged'])) {
+		if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged'])) {
 			foreach ($config['bridges']['bridged'] as $oc2) {
 				if (stristr($oc2['members'], $on)) {
 					$isbridged = true;
@@ -4450,7 +4446,7 @@ function filter_get_antilockout_ports($wantarray = false) {
 		$lockoutports[] = "80";
 	}
 
-	if (isset($config['system']['enablesshd'])) {
+	if (isset($config['system']['ssh']['enable'])) {
 		$lockoutports[] = empty($config['system']['ssh']['port']) ? "22" : $config['system']['ssh']['port'];
 	}
 

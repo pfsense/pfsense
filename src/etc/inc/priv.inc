@@ -3,7 +3,9 @@
  * priv.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
  * Copyright (c) 2008 Shrew Soft Inc
@@ -214,18 +216,12 @@ function getPrivPages(& $entry, & $allowed_pages) {
 	}
 
 	foreach ($entry['priv'] as $pname) {
-		if (strncmp($pname, "page-", 5)) {
+		if (strncmp($pname, "page-", 5) ||
+		    !is_array($priv_list[$pname]) ||
+		    !is_array($priv_list[$pname]['match'])) {
 			continue;
 		}
-		$priv = &$priv_list[$pname];
-		if (!is_array($priv)) {
-			continue;
-		}
-		$matches = &$priv['match'];
-		if (!is_array($matches)) {
-			continue;
-		}
-		foreach ($matches as $match) {
+		foreach ($priv_list[$pname]['match'] as $match) {
 			$allowed_pages[] = $match;
 		}
 	}
@@ -281,6 +277,12 @@ function getAllowedPages($username, &$attributes = array()) {
 			getPrivPages($local_user, $allowed_pages);
 			$allowed_groups = local_user_get_groups($local_user);
 		}
+	}
+
+	if (!is_array($allowed_groups)) {
+		$allowed_groups = array('all');
+	} else {
+		$allowed_groups[] = 'all';
 	}
 
 	// build a list of allowed pages

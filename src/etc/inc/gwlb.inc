@@ -4,7 +4,9 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008 Bill Marquette, Seth Mos
- * Copyright (c) 2008-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -82,7 +84,7 @@ function stop_dpinger($gwname = '') {
 		}
 
 		if (isvalidpid($process['pidfile'])) {
-			killbypid($process['pidfile']);
+			killbypid($process['pidfile'], 3);
 		} else {
 			@unlink($process['pidfile']);
 		}
@@ -671,11 +673,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			}
 
 			if ($gateway['ipprotocol'] == "inet" &&
-					($config['gateways']['defaultgw4'] == $gateway['name'] || $gateway['gateway'] == $cgw4)) {
+					($gateway['gateway'] == $cgw4)) {
 				$gateway['isdefaultgw'] = true;
 				$found_defaultv4 = 1;
 			} else if ($gateway['ipprotocol'] == "inet6" &&
-					($config['gateways']['defaultgw6'] == $gateway['name'] || $gateway['gateway'] == $cgw6)) {
+					($gateway['gateway'] == $cgw6)) {
 				$gateway['isdefaultgw'] = true;
 				$found_defaultv6 = 1;
 			}
@@ -744,7 +746,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							break;
 						default:
 							// unknown ovpn type
-							continue 2;
+							continue 3;
 					}
 					$ovpnid = substr($ifcfg['if'], 5);
 					if (is_array($config['openvpn'][$ovpntype])) {
@@ -886,7 +888,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							break;
 						default:
 							// unknown ovpn type
-							continue 2;
+							continue 3;
 					}
 					$ovpnid = substr($ifcfg['if'], 5);
 					if (is_array($config['openvpn'][$ovpntype])) {
@@ -1109,10 +1111,12 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			$currentdefaultgwip = getcurrentdefaultgatewayip($ipprotocol);
 			$found_current = false;
 			foreach($gwg_members as $gwgroupitem) {
-				if ($gwgroupitem['gwip'] == $currentdefaultgwip) {
+				if (!empty($currentdefaultgwip) && ($gwgroupitem['gwip'] == $currentdefaultgwip)) {
 					$set_dfltgwname = $gwgroupitem['gw'];
 					$found_current = true;
-					log_error("Keep current gateway, its already part of the group members.");
+					if (isset($config['system']['gw-debug'])) {
+						log_error("Keep current gateway, its already part of the group members.");
+					}
 					break;
 				}
 			}
@@ -1248,7 +1252,6 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 			}
 			if ($statuschanged) {
 				log_error($msg);
-				notify_via_growl($msg);
 				notify_via_smtp($msg);
 				if (isset($gateways_arr[$gwname]['interface'])) {
 					$pluginparams['interface'] = $gateways_arr[$gwname]['interface'];
@@ -1262,11 +1265,9 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 	$tiers_count = count($tiers);
 	if ($tiers_count == 0) {
 		/* Oh dear, we have no members! Engage Plan B */
-		if (!platform_booting()) {
+		if (isset($config['system']['gw-debug']) && (!platform_booting())) {
 			$msg = sprintf(gettext('Gateways status could not be determined, considering all as up/active. (Group: %s)'), $group['name']);
 			log_error($msg);
-			notify_via_growl($msg);
-			//notify_via_smtp($msg);
 		}
 		$tiers = $backupplan;
 	}
@@ -1970,12 +1971,7 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 function save_gateway($gateway_settings, $realid = "") {
 	global $config;
 
-	if (!is_array($config['gateways'])) {
-		$config['gateways'] = array();
-	}
-	if (!is_array($config['gateways']['gateway_item'])) {
-		$config['gateways']['gateway_item'] = array();
-	}
+	init_config_arr(array('gateways', 'gateway_item'));
 	$a_gateway_item = &$config['gateways']['gateway_item'];
 	$reloadif = "";
 	$gateway = array();

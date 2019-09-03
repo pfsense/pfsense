@@ -3,7 +3,9 @@
  * interfaces_lagg_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,14 +30,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['laggs'])) {
-	$config['laggs'] = array();
-}
-
-if (!is_array($config['laggs']['lagg'])) {
-	$config['laggs']['lagg'] = array();
-}
-
+init_config_arr(array('laggs', 'lagg'));
 $a_laggs = &$config['laggs']['lagg'];
 
 $portlist = get_interface_list();
@@ -202,7 +197,10 @@ function build_member_list() {
 			continue;
 		}
 
-		$memberlist['list'][$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
+		$hwaddr = get_interface_vendor_mac($ifn);
+
+		$memberlist['list'][$ifn] = $ifn . ' (' . $ifinfo['mac'] .
+		    ($hwaddr != $ifinfo['mac'] ? " | hw: {$hwaddr}" : '') . ')';
 
 		if (in_array($ifn, explode(",", $pconfig['members']))) {
 			array_push($memberlist['selected'], $ifn);
@@ -249,7 +247,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp("Enter a description here for reference only (Not parsed).");
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'laggif',
 	null,
 	'hidden',
@@ -257,7 +255,7 @@ $section->addInput(new Form_Input(
 ));
 
 if (isset($id) && $a_laggs[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

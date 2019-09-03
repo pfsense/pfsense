@@ -172,24 +172,6 @@
 			<command>/usr/bin/nice -n20 /etc/rc.update_bogons.sh</command>
 		</item>
 		<item>
-			<minute>*/60</minute>
-			<hour>*</hour>
-			<mday>*</mday>
-			<month>*</month>
-			<wday>*</wday>
-			<who>root</who>
-			<command>/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshguard</command>
-		</item>
-		<item>
-			<minute>*/60</minute>
-			<hour>*</hour>
-			<mday>*</mday>
-			<month>*</month>
-			<wday>*</wday>
-			<who>root</who>
-			<command>/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 webConfiguratorlockout</command>
-		</item>
-		<item>
 			<minute>1</minute>
 			<hour>1</hour>
 			<mday>*</mday>
@@ -230,49 +212,6 @@
 	<rrd>
 		<enable/>
 	</rrd>
-	<load_balancer>
-		<monitor_type>
-			<name>ICMP</name>
-			<type>icmp</type>
-			<descr><![CDATA[ICMP]]></descr>
-			<options/>
-		</monitor_type>
-		<monitor_type>
-			<name>TCP</name>
-			<type>tcp</type>
-			<descr><![CDATA[Generic TCP]]></descr>
-			<options/>
-		</monitor_type>
-		<monitor_type>
-			<name>HTTP</name>
-			<type>http</type>
-			<descr><![CDATA[Generic HTTP]]></descr>
-			<options>
-				<path>/</path>
-				<host/>
-				<code>200</code>
-			</options>
-		</monitor_type>
-		<monitor_type>
-			<name>HTTPS</name>
-			<type>https</type>
-			<descr><![CDATA[Generic HTTPS]]></descr>
-			<options>
-				<path>/</path>
-				<host/>
-				<code>200</code>
-			</options>
-		</monitor_type>
-		<monitor_type>
-			<name>SMTP</name>
-			<type>send</type>
-			<descr><![CDATA[Generic SMTP]]></descr>
-			<options>
-				<send/>
-				<expect>220 *</expect>
-			</options>
-		</monitor_type>
-	</load_balancer>
 	<widgets>
 		<sequence>system_information:col1:show,netgate_services_and_support:col2:show,interfaces:col2:show</sequence>
 		<period>10</period>

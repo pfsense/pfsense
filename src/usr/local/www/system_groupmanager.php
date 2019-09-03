@@ -3,7 +3,9 @@
  * system_groupmanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
@@ -39,10 +41,7 @@ require_once("pfsense-utils.inc");
 $logging_level = LOG_WARNING;
 $logging_prefix = gettext("Local User Database");
 
-if (!is_array($config['system']['group'])) {
-	$config['system']['group'] = array();
-}
-
+init_config_arr(array('system', 'group'));
 $a_group = &$config['system']['group'];
 
 unset($id);
@@ -63,7 +62,21 @@ function admin_groups_sort() {
 	usort($a_group, "cpusercmp");
 }
 
-if ($_POST['act'] == "delgroup") {
+/*
+ * Check user privileges to test if the user is allowed to make changes.
+ * Otherwise users can end up in an inconsistent state where some changes are
+ * performed and others denied. See https://redmine.pfsense.org/issues/9259
+ */
+phpsession_begin();
+$guiuser = getUserEntry($_SESSION['Username']);
+$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+phpsession_end();
+
+if (!empty($_POST) && $read_only) {
+	$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+}
+
+if (($_POST['act'] == "delgroup") && !$read_only) {
 
 	if (!isset($id) || !isset($_REQUEST['groupname']) ||
 	    !isset($a_group[$id]) ||
@@ -87,7 +100,7 @@ if ($_POST['act'] == "delgroup") {
 	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
 }
 
-if ($_POST['act'] == "delpriv") {
+if (($_POST['act'] == "delpriv") && !$read_only) {
 
 	if (!isset($id) || !isset($a_group[$id])) {
 		pfSenseHeader("system_groupmanager.php");
@@ -127,7 +140,7 @@ if ($act == "edit") {
 	}
 }
 
-if (isset($_POST['dellall_x'])) {
+if (isset($_POST['dellall_x']) && !$read_only) {
 
 	$del_groups = $_POST['delete_check'];
 	$deleted_groups = array();
@@ -156,7 +169,7 @@ if (isset($_POST['dellall_x'])) {
 	}
 }
 
-if (isset($_POST['save'])) {
+if (isset($_POST['save']) && !$read_only) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -172,17 +185,16 @@ if (isset($_POST['save'])) {
 			    "The (%s) group name contains invalid characters."),
 			    $_POST['gtype']);
 		}
+		if (strlen($_POST['groupname']) > 16) {
+			$input_errors[] = gettext(
+			    "The group name is longer than 16 characters.");
+		}
 	} else {
 		if (preg_match("/[^a-zA-Z0-9\.\- _]/", $_POST['groupname'])) {
 			$input_errors[] = sprintf(gettext(
 			    "The (%s) group name contains invalid characters."),
 			    $_POST['gtype']);
 		}
-	}
-
-	if (strlen($_POST['groupname']) > 16) {
-		$input_errors[] = gettext(
-		    "The group name is longer than 16 characters.");
 	}
 
 	/* Check the POSTed members to ensure they are valid and exist */
@@ -239,6 +251,7 @@ if (isset($_POST['save'])) {
 		 * changed.
 		 */
 		if (is_array($group['member'])) {
+			init_config_arr(array('system', 'user'));
 			$a_user = &$config['system']['user'];
 			foreach ($a_user as & $user) {
 				if (in_array($user['uid'], $group['member'])) {
@@ -266,7 +279,7 @@ if (isset($_POST['save'])) {
 }
 
 function build_priv_table() {
-	global $a_group, $id;
+	global $a_group, $id, $read_only;
 
 	$privhtml = '<div class="table-responsive">';
 	$privhtml .=	'<table class="table table-striped table-hover table-condensed">';
@@ -290,7 +303,9 @@ function build_priv_table() {
 			$user_has_root_priv = true;
 		}
 		$privhtml .=			'</td>';
-		$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
+		if (!$read_only) {
+			$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
+		}
 		$privhtml .=		'</tr>';
 
 	}
@@ -311,7 +326,9 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	if (!$read_only) {
+		$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	}
 	$privhtml .= '</nav>';
 
 	return($privhtml);
@@ -336,7 +353,11 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+if (!isAllowedPage("system_usermanager.php")) {
+	$tab_array[] = array(gettext("User Password"), false, "system_usermanager_passwordmg.php");
+} else {
+	$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+}
 $tab_array[] = array(gettext("Groups"), true, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
 $tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
@@ -380,7 +401,7 @@ if (!($act == "new" || $act == "edit")) {
 						</td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
-							<?php if ($group['scope'] != "system"): ?>
+							<?php if (($group['scope'] != "system") && !$read_only): ?>
 								<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" usepost></a>
 							<?php endif;?>
 						</td>
@@ -395,10 +416,12 @@ if (!($act == "new" || $act == "edit")) {
 </div>
 
 <nav class="action-buttons">
+	<?php if (!$read_only): ?>
 	<a href="?act=new" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
+	<?php endif; ?>
 </nav>
 <?php
 	include('foot.inc');

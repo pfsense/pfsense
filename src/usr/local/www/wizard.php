@@ -3,7 +3,9 @@
  * wizard.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -788,13 +790,21 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 				}
 
-				$section->addInput(new Form_Select(
+				$tmpselect = new Form_Select(
 					$name,
 					$etitle,
 					($multiple) ? $selected:$selected[0],
 					$options,
 					$multiple
-				))->setHelp($field['description'])->setOnchange($onchange);
+				);
+
+				$tmpselect->setHelp($field['description'])->setOnchange($onchange);
+
+				if (isset($field['size'])) {
+					$tmpselect->setAttribute('size', $field['size']);
+				}
+
+				$section->addInput($tmpselect);
 
 				break;
 			case "textarea":

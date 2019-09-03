@@ -2,7 +2,9 @@
  * pfSense.js
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -221,7 +223,9 @@ $(function() {
 			all.prop('checked', (all.length != checked.length));
 		});
 
-		a.appendTo($(this));
+		if ( ! $(this).parent().hasClass("notoggleall")) {
+			a.appendTo($(this));
+		}
 	});
 
 	// The need to NOT hide the advanced options if the elements therein are not set to the system

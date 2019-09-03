@@ -3,7 +3,9 @@
  * autoconfigbackup_backup.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2008-2015 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +20,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-require("globals.inc");
-require("guiconfig.inc");
-require("acb.inc");
+
+##|+PRIV
+##|*IDENT=page-services-acb-backup
+##|*NAME=Services: Auto Config Backup: Backup Now
+##|*DESCR=Create a new auto config backup entry.
+##|*MATCH=services_acb_backup.php*
+##|-PRIV
+
+require_once("globals.inc");
+require_once("guiconfig.inc");
+require_once("acb.inc");
 
 if ($_POST) {
 
@@ -28,26 +38,20 @@ if ($_POST) {
 		touch("/tmp/acb_nooverwrite");
 	}
 
+	touch("/tmp/forceacb");
+
 	if ($_REQUEST['reason']) {
-		if (write_config($_REQUEST['reason'])) {
+		if (write_config($_REQUEST['reason'] . "-MaNuAlBaCkUp")) {
 			$savemsg = "Backup completed successfully.";
 		}
-	} elseif (write_config("Backup invoked via Auto Config Backup.")) {
+	} elseif (write_config("Backup invoked via Auto Config Backup." . "-MaNuAlBaCkUp")) {
 			$savemsg = "Backup completed successfully.";
 	} else {
 		$savemsg = "Backup not completed - write_config() failed.";
 	}
 
 	$config = parse_config(true);
-	conf_mount_rw();
 	unlink_if_exists("/cf/conf/lastpfSbackup.txt");
-	conf_mount_ro();
-
-	/* The config write above will trigger a fresh upload with the given reason.
-	 * This manual upload appears to be a relic of an older time (1.2.x)
-	 * Leaving it just in case it needs to be resurrected
-	 */
-	//upload_config($_REQUEST['reason']);
 
 	$donotshowheader = true;
 }

@@ -3,7 +3,9 @@
  * vpn_ipsec_keys.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -36,17 +38,12 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("filter.inc");
 
-if (!is_array($config['ipsec'])) {
-	$config['ipsec'] = array();
-}
-
-if (!is_array($config['ipsec']['mobilekey'])) {
-	$config['ipsec']['mobilekey'] = array();
-}
+init_config_arr(array('ipsec', 'mobilekey'));
 ipsec_mobilekey_sort();
 $a_secret = &$config['ipsec']['mobilekey'];
 
 $userkeys = array();
+init_config_arr(array('system', 'user'));
 foreach ($config['system']['user'] as $id => $user) {
 	if (!empty($user['ipsecpsk'])) {
 		$userkeys[] = array('ident' => $user['name'], 'type' => 'PSK', 'pre-shared-key' => $user['ipsecpsk'], 'id' => $id);;

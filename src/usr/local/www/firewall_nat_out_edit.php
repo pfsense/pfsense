@@ -3,7 +3,9 @@
  * firewall_nat_out_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -35,27 +37,10 @@ require_once("ipsec.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['nat'])) {
-	$config['nat'] = array();
-}
-if (!is_array($config['nat']['outbound'])) {
-	$config['nat']['outbound'] = array();
-}
-
-if (!is_array($config['nat']['outbound']['rule'])) {
-	$config['nat']['outbound']['rule'] = array();
-}
-
+init_config_arr(array('nat', 'outbound', 'rule'));
 $a_out = &$config['nat']['outbound']['rule'];
 
-if (!is_array($config['aliases'])) {
-	$config['aliases'] = array();
-}
-
-if (!is_array($config['aliases']['alias'])) {
-	$config['aliases']['alias'] = array();
-}
-
+init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
@@ -664,7 +649,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_out[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
@@ -672,7 +657,7 @@ if (isset($id) && $a_out[$id]) {
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'after',
 	null,
 	'hidden',

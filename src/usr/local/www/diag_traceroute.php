@@ -3,7 +3,9 @@
  * diag_traceroute.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Paul Taylor (paultaylor@winndixie.com)
  * All rights reserved.
  *
@@ -112,7 +114,7 @@ if ($do_traceroute) {
 	$result = shell_exec($cmd);
 
 	if (!$result) {
-		print_info_box(sprintf(gettext('Error: %s could not be traced/resolved'), $host));
+		print_info_box(sprintf(gettext('Error: %s could not be traced/resolved'), htmlspecialchars($host)));
 	}
 }
 

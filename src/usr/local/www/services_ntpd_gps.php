@@ -3,7 +3,9 @@
  * services_ntpd_gps.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -28,6 +30,11 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+
+$gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
+
+global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
+$ntp_poll_values = system_ntp_poll_values();
 
 function set_default_gps() {
 	global $config;
@@ -147,7 +154,34 @@ function autocorrect_initcmd($initcmd) {
 }
 
 if ($_POST) {
-	unset($input_errors);
+	$input_errors = array();
+	if (!in_array($_POST['gpstype'], $gpstypes)) {
+		$input_errors[] = gettext("The submitted GPS type is invalid.");
+	}
+
+	if (!array_key_exists($pconfig['gpsminpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is invalid.");
+	}
+
+	if (!array_key_exists($pconfig['gpsmaxpoll'], $ntp_poll_values)) {
+		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
+	}
+
+	if (is_numericint($pconfig['gpsminpoll']) &&
+	    is_numericint($pconfig['gpsmaxpoll']) ||
+	    ($pconfig['gpsmaxpoll'] < $pconfig['gpsminpoll'])) {
+		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is higher than Maximum Poll Interval.");
+	}
+
+} else {
+	/* set defaults if they do not already exist */
+	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
+		set_default_gps();
+	}
+}
+
+
+if ($_POST && empty($input_errors)) {
 
 	if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport'])) {
 		$config['ntpd']['gps']['port'] = $_POST['gpsport'];
@@ -270,16 +304,14 @@ if ($_POST) {
 		unset($config['ntpd']['gps']['nmeaset']);
 	}
 
+	$config['ntpd']['gps']['gpsminpoll'] = $_POST['gpsminpoll'];
+	$config['ntpd']['gps']['gpsmaxpoll'] = $_POST['gpsmaxpoll'];
+
 	write_config(gettext("Updated NTP GPS Settings"));
 
 	$changes_applied = true;
 	$retval = 0;
 	$retval |= system_ntp_configure();
-} else {
-	/* set defaults if they do not already exist */
-	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
-		set_default_gps();
-	}
 }
 
 function build_nmea_list() {
@@ -306,11 +338,16 @@ function build_nmea_list() {
 	return($nmealist);
 }
 
+init_config_arr(array('ntpd', 'gps'));
 $pconfig = &$config['ntpd']['gps'];
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 if ($changes_applied) {
 	print_apply_result_box($retval);
@@ -335,8 +372,6 @@ $section->addInput(new Form_StaticText(
 	'<a href="services_ntpd.php">Services > NTP > Settings</a>' .
 	' to minimize clock drift if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when providing time to clients.'
 ));
-
-$gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
 
 $section->addInput(new Form_Select(
 	'gpstype',
@@ -410,6 +445,20 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['stratum']
 ))->setHelp('This may be used to change the GPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock.');
+
+$section->addInput(new Form_Select(
+	'gpsminpoll',
+	'Minimum Poll Interval',
+	$pconfig['gpsminpoll'],
+	$ntp_poll_values,
+))->setHelp('Minimum poll interval for NTP messages. If set, must be less than or equal to Maximum Poll Interval.');
+
+$section->addInput(new Form_Select(
+	'gpsmaxpoll',
+	'Maximum Poll Interval',
+	$pconfig['gpsmaxpoll'],
+	$ntp_poll_values,
+))->setHelp('Maximum poll interval for NTP messages. If set, must be greater than or equal to Minimum Poll Interval.');
 
 $section->addInput(new Form_Checkbox(
 	'gpsprefer',
@@ -702,10 +751,10 @@ events.push(function() {
 		set_gps_default($(this).val());
 		hideInput('processpgrmf', ($(this).val() !== "Garmin" && $(this).val() !== "Custom"));
 	});
-	hideInput('processpgrmf', ('<?=$pconfig['type']?>' !== "Garmin" && '<?=$pconfig['type']?>' !== "Custom"));
+	hideInput('processpgrmf', (<?=json_encode($pconfig['type'])?> !== "Garmin" && <?=json_encode($pconfig['type'])?> !== "Custom"));
 
 	if ('<?=$pconfig['initcmd']?>' == '') {
-		set_gps_default('<?=$pconfig['type']?>');
+		set_gps_default(<?=json_encode($pconfig['type'])?>);
 	}
 
 	//	Checkboxes gpsprefer and gpsnoselect are mutually exclusive

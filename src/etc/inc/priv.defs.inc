@@ -332,6 +332,12 @@ $priv_list['page-firewall-virtualipaddress-edit']['descr'] = gettext("Allow acce
 $priv_list['page-firewall-virtualipaddress-edit']['match'] = array();
 $priv_list['page-firewall-virtualipaddress-edit']['match'][] = "firewall_virtual_ip_edit.php*";
 
+$priv_list['page-getqueuestats'] = array();
+$priv_list['page-getqueuestats']['name'] = gettext("WebCfg - AJAX: Get Queue Stats");
+$priv_list['page-getqueuestats']['descr'] = gettext("Allow access to the 'AJAX: Get Stats' page.");
+$priv_list['page-getqueuestats']['match'] = array();
+$priv_list['page-getqueuestats']['match'][] = "getqueuestats.php*";
+
 $priv_list['page-getserviceproviders'] = array();
 $priv_list['page-getserviceproviders']['name'] = gettext("WebCfg - AJAX: Get Service Providers");
 $priv_list['page-getserviceproviders']['descr'] = gettext("Allow access to the 'AJAX: Service Providers' page.");
@@ -489,54 +495,6 @@ $priv_list['page-interfaces-wireless-edit']['descr'] = gettext("Allow access to 
 $priv_list['page-interfaces-wireless-edit']['match'] = array();
 $priv_list['page-interfaces-wireless-edit']['match'][] = "interfaces_wireless_edit.php*";
 
-$priv_list['page-system-license'] = array();
-$priv_list['page-system-license']['name'] = gettext("WebCfg - System: License");
-$priv_list['page-system-license']['descr'] = gettext("Allow access to the 'System: License' page.");
-$priv_list['page-system-license']['match'] = array();
-$priv_list['page-system-license']['match'][] = "license.php*";
-
-$priv_list['page-services-loadbalancer-monitor'] = array();
-$priv_list['page-services-loadbalancer-monitor']['name'] = gettext("WebCfg - Services: Load Balancer: Monitors");
-$priv_list['page-services-loadbalancer-monitor']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Monitors' page.");
-$priv_list['page-services-loadbalancer-monitor']['match'] = array();
-$priv_list['page-services-loadbalancer-monitor']['match'][] = "load_balancer_monitor.php*";
-
-$priv_list['page-services-loadbalancer-monitor-edit'] = array();
-$priv_list['page-services-loadbalancer-monitor-edit']['name'] = gettext("WebCfg - Services: Load Balancer: Monitor: Edit");
-$priv_list['page-services-loadbalancer-monitor-edit']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Monitor: Edit' page.");
-$priv_list['page-services-loadbalancer-monitor-edit']['match'] = array();
-$priv_list['page-services-loadbalancer-monitor-edit']['match'][] = "load_balancer_monitor_edit.php*";
-
-$priv_list['page-loadbalancer-pool'] = array();
-$priv_list['page-loadbalancer-pool']['name'] = gettext("WebCfg - Load Balancer: Pool");
-$priv_list['page-loadbalancer-pool']['descr'] = gettext("Allow access to the 'Load Balancer: Pool' page.");
-$priv_list['page-loadbalancer-pool']['match'] = array();
-$priv_list['page-loadbalancer-pool']['match'][] = "load_balancer_pool.php*";
-
-$priv_list['page-loadbalancer-pool-edit'] = array();
-$priv_list['page-loadbalancer-pool-edit']['name'] = gettext("WebCfg - Load Balancer: Pool: Edit");
-$priv_list['page-loadbalancer-pool-edit']['descr'] = gettext("Allow access to the 'Load Balancer: Pool: Edit' page.");
-$priv_list['page-loadbalancer-pool-edit']['match'] = array();
-$priv_list['page-loadbalancer-pool-edit']['match'][] = "load_balancer_pool_edit.php*";
-
-$priv_list['page-services-loadbalancer-setting'] = array();
-$priv_list['page-services-loadbalancer-setting']['name'] = gettext("WebCfg - Services: Load Balancer: Settings");
-$priv_list['page-services-loadbalancer-setting']['descr'] = gettext("Allow access to the 'Settings: Load Balancer: Settings' page.");
-$priv_list['page-services-loadbalancer-setting']['match'] = array();
-$priv_list['page-services-loadbalancer-setting']['match'][] = "load_balancer_setting.php*";
-
-$priv_list['page-services-loadbalancer-virtualservers'] = array();
-$priv_list['page-services-loadbalancer-virtualservers']['name'] = gettext("WebCfg - Services: Load Balancer: Virtual Servers");
-$priv_list['page-services-loadbalancer-virtualservers']['descr'] = gettext("Allow access to the 'Services: Load Balancer: Virtual Servers' page.");
-$priv_list['page-services-loadbalancer-virtualservers']['match'] = array();
-$priv_list['page-services-loadbalancer-virtualservers']['match'][] = "load_balancer_virtual_server.php*";
-
-$priv_list['page-loadbalancer-virtualserver-edit'] = array();
-$priv_list['page-loadbalancer-virtualserver-edit']['name'] = gettext("WebCfg - Load Balancer: Virtual Server: Edit");
-$priv_list['page-loadbalancer-virtualserver-edit']['descr'] = gettext("Allow access to the 'Load Balancer: Virtual Server: Edit' page.");
-$priv_list['page-loadbalancer-virtualserver-edit']['match'] = array();
-$priv_list['page-loadbalancer-virtualserver-edit']['match'][] = "load_balancer_virtual_server_edit.php*";
-
 $priv_list['page-package-settings'] = array();
 $priv_list['page-package-settings']['name'] = gettext("WebCfg - Package: Settings");
 $priv_list['page-package-settings']['descr'] = gettext("Allow access to the 'Package: Settings' page.");
@@ -566,6 +524,24 @@ $priv_list['page-system-packagemanager-installed']['name'] = gettext("WebCfg - S
 $priv_list['page-system-packagemanager-installed']['descr'] = gettext("Allow access to the 'System: Package Manager: Installed' page.");
 $priv_list['page-system-packagemanager-installed']['match'] = array();
 $priv_list['page-system-packagemanager-installed']['match'][] = "pkg_mgr_installed.php*";
+
+$priv_list['page-services-acb'] = array();
+$priv_list['page-services-acb']['name'] = gettext("WebCfg - Services: Auto Config Backup: Restore");
+$priv_list['page-services-acb']['descr'] = gettext("Restore from auto config backup.");
+$priv_list['page-services-acb']['match'] = array();
+$priv_list['page-services-acb']['match'][] = "services_acb.php*";
+
+$priv_list['page-services-acb-backup'] = array();
+$priv_list['page-services-acb-backup']['name'] = gettext("WebCfg - Services: Auto Config Backup: Backup Now");
+$priv_list['page-services-acb-backup']['descr'] = gettext("Create a new auto config backup entry.");
+$priv_list['page-services-acb-backup']['match'] = array();
+$priv_list['page-services-acb-backup']['match'][] = "services_acb_backup.php*";
+
+$priv_list['page-services-acb-settings'] = array();
+$priv_list['page-services-acb-settings']['name'] = gettext("WebCfg - Services: Auto Config Backup: Settings");
+$priv_list['page-services-acb-settings']['descr'] = gettext("Configure the auto config backup system.");
+$priv_list['page-services-acb-settings']['match'] = array();
+$priv_list['page-services-acb-settings']['match'][] = "services_acb_settings.php*";
 
 $priv_list['page-services-captiveportal'] = array();
 $priv_list['page-services-captiveportal']['name'] = gettext("WebCfg - Services: Captive Portal");
@@ -948,18 +924,6 @@ $priv_list['page-status-ipsec-spd']['descr'] = gettext("Allow access to the 'Sta
 $priv_list['page-status-ipsec-spd']['match'] = array();
 $priv_list['page-status-ipsec-spd']['match'][] = "status_ipsec_spd.php*";
 
-$priv_list['page-status-loadbalancer-pool'] = array();
-$priv_list['page-status-loadbalancer-pool']['name'] = gettext("WebCfg - Status: Load Balancer: Pool");
-$priv_list['page-status-loadbalancer-pool']['descr'] = gettext("Allow access to the 'Status: Load Balancer: Pool' page.");
-$priv_list['page-status-loadbalancer-pool']['match'] = array();
-$priv_list['page-status-loadbalancer-pool']['match'][] = "status_lb_pool.php*";
-
-$priv_list['page-status-loadbalancer-virtualserver'] = array();
-$priv_list['page-status-loadbalancer-virtualserver']['name'] = gettext("WebCfg - Status: Load Balancer: Virtual Server");
-$priv_list['page-status-loadbalancer-virtualserver']['descr'] = gettext("Allow access to the 'Status: Load Balancer: Virtual Server' page.");
-$priv_list['page-status-loadbalancer-virtualserver']['match'] = array();
-$priv_list['page-status-loadbalancer-virtualserver']['match'][] = "status_lb_vs.php*";
-
 $priv_list['page-diagnostics-logs-system'] = array();
 $priv_list['page-diagnostics-logs-system']['name'] = gettext("WebCfg - Status: Logs: System");
 $priv_list['page-diagnostics-logs-system']['descr'] = gettext("Allow access to the 'Status: System Logs: General' page.");
@@ -1025,6 +989,12 @@ $priv_list['page-status-services']['name'] = gettext("WebCfg - Status: Services"
 $priv_list['page-status-services']['descr'] = gettext("Allow access to the 'Status: Services' page.");
 $priv_list['page-status-services']['match'] = array();
 $priv_list['page-status-services']['match'][] = "status_services.php*";
+
+$priv_list['page-status-dns-resolver'] = array();
+$priv_list['page-status-dns-resolver']['name'] = gettext("WebCfg - Status: DNS Resolver");
+$priv_list['page-status-dns-resolver']['descr'] = gettext("Allow access to the 'Status: DNS Resolver' page.");
+$priv_list['page-status-dns-resolver']['match'] = array();
+$priv_list['page-status-dns-resolver']['match'][] = "status_unbound.php*";
 
 $priv_list['page-status-upnpstatus'] = array();
 $priv_list['page-status-upnpstatus']['name'] = gettext("WebCfg - Status: UPnP Status");

@@ -3,7 +3,9 @@
  * system_groupmanager_addprivs.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt.
  * All rights reserved.
  *
@@ -43,7 +45,8 @@ $groupid = $_REQUEST['groupid'];
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"), gettext("Edit"), gettext("Add Privileges"));
 $pglinks = array("", "system_usermanager.php", "system_groupmanager.php", "system_groupmanager.php?act=edit&groupid=" . $groupid, "@self");
 
-$a_group = & $config['system']['group'][$groupid];
+init_config_arr(array('system', 'group', $groupid));
+$a_group = &$config['system']['group'][$groupid];
 
 if (!is_array($a_group)) {
 	pfSenseHeader("system_groupmanager.php?id={$groupid}");
@@ -58,7 +61,21 @@ if (!is_array($a_group['priv'])) {
 $spriv_list = $priv_list;
 uasort($spriv_list, "compare_by_name");
 
-if ($_POST['save']) {
+/*
+ * Check user privileges to test if the user is allowed to make changes.
+ * Otherwise users can end up in an inconsistent state where some changes are
+ * performed and others denied. See https://redmine.pfsense.org/issues/9259
+ */
+phpsession_begin();
+$guiuser = getUserEntry($_SESSION['Username']);
+$read_only = (is_array($guiuser) && userHasPrivilege($guiuser, "user-config-readonly"));
+phpsession_end();
+
+if (!empty($_POST) && $read_only) {
+	$input_errors = array(gettext("Insufficient privileges to make the requested change (read only)."));
+}
+
+if ($_POST['save'] && !$read_only) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -136,7 +153,11 @@ if ($input_errors) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+if (!isAllowedPage("system_usermanager.php")) {
+	$tab_array[] = array(gettext("User Password"), false, "system_usermanager_passwordmg.php");
+} else {
+	$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+}
 $tab_array[] = array(gettext("Groups"), true, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
 $tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");

@@ -4,7 +4,9 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005-2006 Colin Smith (ethethlay@gmail.com)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -147,7 +149,7 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 		$read = array($pipes[1], $pipes[2]);
 		$except = array();
 
-		$stream = stream_select($read, $write, $except, $timeout);
+		$stream = @stream_select($read, $write, $except, $timeout);
 		if ($stream !== FALSE && $stream > 0) {
 			foreach ($read as $pipe) {
 				$content = stream_get_contents($pipe);
@@ -306,7 +308,8 @@ function is_package_installed($package_name) {
 function get_package_id($package_name) {
 	global $config;
 
-	if (!is_array($config['installedpackages']['package'])) {
+	if (!isset($config['installedpackages']['package']) ||
+	    !is_array($config['installedpackages']['package'])) {
 		return -1;
 	}
 
@@ -583,7 +586,8 @@ function resync_all_package_configs($show_message = false) {
 
 	log_error(gettext("Resyncing configuration for all packages."));
 
-	if (!is_array($config['installedpackages']['package'])) {
+	if (!isset($config['installedpackages']['package']) ||
+	    !is_array($config['installedpackages']['package'])) {
 		return;
 	}
 
@@ -666,7 +670,7 @@ function sync_package($package_name) {
 		return;	 // No package belongs to the pkg_id passed to this function.
 	}
 
-	$package =& $config['installedpackages']['package'][$pkg_id];
+	$package = &$config['installedpackages']['package'][$pkg_id];
 	if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		log_error(sprintf(gettext("The %s package is missing its configuration file and must be reinstalled."), $package['name']));
 		delete_package_xml($package['name']);
@@ -787,10 +791,12 @@ function install_package_xml($package_name) {
 	$pkgid = get_package_id($pkg_info['name']);
 	update_status(gettext("Saving updated package information...") . "\n");
 	if ($pkgid == -1) {
+		init_config_arr(array('installedpackages', 'package'));
 		$config['installedpackages']['package'][] = $pkg_info;
 		$changedesc = sprintf(gettext("Installed %s package."), $pkg_info['name']);
 		$to_output = gettext("done.") . "\n";
 	} else {
+		init_config_arr(array('installedpackages', 'package', $pkgid));
 		$config['installedpackages']['package'][$pkgid] = $pkg_info;
 		$changedesc = sprintf(gettext("Overwrote previous installation of %s."), $pkg_info['name']);
 		$to_output = gettext("overwrite!") . "\n";
@@ -946,10 +952,13 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	pkg_debug(sprintf(gettext("Removing %s package... "), $package_name));
 	update_status(sprintf(gettext("Removing %s components..."), $package_name) . "\n");
 	/* parse package configuration */
+	init_config_arr(array('installedpackages', 'package', $pkgid));
 	$packages = &$config['installedpackages']['package'];
-	$menus =& $config['installedpackages']['menu'];
+	$pkg_info = &$packages[$pkgid];
+	init_config_arr(array('installedpackages', 'menu'));
+	$menus = &$config['installedpackages']['menu'];
+	init_config_arr(array('installedpackages', 'service'));
 	$services = &$config['installedpackages']['service'];
-	$pkg_info =& $packages[$pkgid];
 	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
 		/* remove menu items */
@@ -1181,7 +1190,8 @@ function stop_packages() {
 		}
 	}
 
-	if (is_array($config['installedpackages']['package'])) {
+	if (isset($config['installedpackages']['package']) &&
+	    is_array($config['installedpackages']['package'])) {
 		foreach ($config['installedpackages']['package'] as $package) {
 			echo " Stopping package {$package['name']}...";
 			$internal_name = get_package_internal_name($package);
@@ -1464,7 +1474,6 @@ function update_repos() {
 				// Gather some information about the system so the proper repo can be returned
 				$nid = file_get_contents($idfile);
 				$serial = system_get_serial();
-				$arch = php_uname('p');
 
 				$base_pkg = get_base_pkg_name();
 
@@ -1478,10 +1487,15 @@ function update_repos() {
 						}
 					}
 
-				$version = $pkg_info['installed_version'];
+				// Compose a version string in JSON format
+				$os = php_uname('s');
+				$osver = php_uname('r');
+				$v = strtolower(php_uname('v'));
+				$ed =  (strpos($v, 'factory') !== false) ? "Factory":"Community";
+				$version = "{\"os\":\"" . $os . "\",\"osver\":\"" . $osver . "\",\"prod\":\"pfSense\"," . "\"ver\":\"" . $info[0]['version'] . "\",\"ed\":\"" . $ed . "\"}";
+
+				$arch =  php_uname('m');
 				$locale = $config['system']['language'];
-				// Architecture comes from the last word in the uname output
-				$arch = array_pop(explode(' ', php_uname('p')));
 
 				$post = ['uid' => $nid,
 						 'language' => $locale,

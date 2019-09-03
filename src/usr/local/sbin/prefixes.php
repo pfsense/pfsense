@@ -3,7 +3,9 @@
  * prefixes.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +20,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+require_once('system.inc');
 
 $leases_file = "/var/dhcpd/var/db/dhcpd6.leases";
 if (!file_exists($leases_file)) {
@@ -103,11 +107,11 @@ if (count($routes) > 0) {
 	}
 }
 
-/* get clog from dhcpd */
+/* get log from dhcpd */
 $dhcpdlogfile = "/var/log/dhcpd.log";
 $expires = array();
 if (file_exists($dhcpdlogfile)) {
-	$fd = popen("clog $dhcpdlogfile", 'r');
+	$fd = popen('/usr/bin/bzcat -f ' . sort_related_log_files($dhcpdlogfile, true, true), 'r');
 	while (($line = fgets($fd)) !== false) {
 		//echo $line;
 		if (preg_match("/releases[ ]+prefix[ ]+([0-9a-f:]+\/[0-9]+)/i", $line, $expire)) {

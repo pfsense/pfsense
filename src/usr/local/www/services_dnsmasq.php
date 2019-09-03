@@ -3,7 +3,9 @@
  * services_dnsmasq.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
  *
@@ -85,14 +87,7 @@ if (!empty($config['dnsmasq']['interface'])) {
 	$pconfig['interface'] = array();
 }
 
-if (!is_array($config['dnsmasq']['hosts'])) {
-	$config['dnsmasq']['hosts'] = array();
-}
-
-if (!is_array($config['dnsmasq']['domainoverrides'])) {
-	$config['dnsmasq']['domainoverrides'] = array();
-}
-
+init_config_arr(array('dnsmasq', 'hosts'));
 $a_hosts = &$config['dnsmasq']['hosts'];
 
 // Add a temporary index so we don't lose the order after sorting
@@ -102,6 +97,7 @@ for ($idx=0; $idx<count($a_hosts); $idx++) {
 
 hosts_sort();
 
+init_config_arr(array('dnsmasq', 'domainoverrides'));
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
 // Add a temporary index so we don't lose the order after sorting

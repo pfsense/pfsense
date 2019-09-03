@@ -3,7 +3,9 @@
  * shortcuts.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +22,7 @@
  */
 
 // On the page, add in like so:
-//   $shortcut_section = "relayd";
+//   $shortcut_section = "ipsec";
 
 $shortcuts = array();
 
@@ -145,18 +147,6 @@ if (is_dir("/usr/local/pkg/shortcuts")) {
 		}
 	}
 }
-
-$shortcuts['relayd'] = array();
-$shortcuts['relayd']['main'] = "load_balancer_pool.php";
-$shortcuts['relayd']['log'] = "status_logs.php?logfile=relayd";
-$shortcuts['relayd']['status'] = "status_lb_pool.php";
-$shortcuts['relayd']['service'] = "relayd";
-
-$shortcuts['relayd-virtualservers'] = array();
-$shortcuts['relayd-virtualservers']['main'] = "load_balancer_virtual_server.php";
-$shortcuts['relayd-virtualservers']['log'] = "status_logs.php?logfile=relayd";
-$shortcuts['relayd-virtualservers']['status'] = "status_lb_vs.php";
-$shortcuts['relayd-virtualservers']['service'] = "relayd";
 
 $shortcuts['captiveportal'] = array();
 $shortcuts['captiveportal']['main'] = "services_captiveportal_zones.php";

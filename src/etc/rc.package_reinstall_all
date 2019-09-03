@@ -3,7 +3,8 @@
 /*
  * rc.package_reinstall_all
  *
- * Copyright (c) 2018 Rubicon Communications, LLC (Netgate).
+ * Copyright (c) 2018-2019 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +27,6 @@ $ntries = 1;
 $max_tries = 5;
 
 mark_subsystem_dirty('packagelock');
-unlink_if_exists("{$g['conf_path']}/needs_package_sync");
 
 /* If it's still booting, give it a few seconds before start */
 if (platform_booting()) {
@@ -41,12 +41,15 @@ while($ntries <= $max_tries) {
 	$ntries++;
 }
 
+unlink_if_exists("{$g['conf_path']}/needs_package_sync");
+
 if ($ntries > $max_tries) {
 	file_notice(gettext("Package reinstall"), gettext("Package reinstall " .
 	    "process was ABORTED due to lack of internet connectivity"));
 } else {
 	file_notice(gettext("Package reinstall"), gettext("Package reinstall " .
 	    "process finished successfully"));
+	mwexec_bg("{$g['etc_path']}/rc.start_packages");
 }
 
 /* Detect installed binary pkgs that are not registered in the system */

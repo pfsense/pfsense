@@ -3,7 +3,9 @@
  * interfaces_ppps_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Gabriel B. <gnoahb@gmail.com>
  * All rights reserved.
  *
@@ -39,14 +41,7 @@ define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 
-if (!is_array($config['ppps'])) {
-	$config['ppps'] = array();
-}
-
-if (!is_array($config['ppps']['ppp'])) {
-	$config['ppps']['ppp'] = array();
-}
-
+init_config_arr(array('ppps', 'ppp'));
 $a_ppps = &$config['ppps']['ppp'];
 
 $iflist = get_configured_interface_with_descr();
@@ -470,7 +465,6 @@ $types = array("select" => gettext("Select"), "ppp" => gettext("PPP"), "pppoe" =
 $serviceproviders_xml = "/usr/local/share/mobile-broadband-provider-info/serviceproviders.xml";
 $serviceproviders_contents = file_get_contents($serviceproviders_xml);
 $serviceproviders_attr = xml2array($serviceproviders_contents, 1, "attr");
-
 $serviceproviders = &$serviceproviders_attr['serviceproviders']['country'];
 
 //print_r($serviceproviders);
@@ -481,7 +475,7 @@ function build_country_list() {
 	$list = array();
 
 	// get_country_name is in pfSense-utils.inc
-	$country_list = get_country_name("ALL");
+	$country_list = get_country_name();
 
 	foreach ($country_list as $country) {
 		$list[$country['code']] = $country['name'];

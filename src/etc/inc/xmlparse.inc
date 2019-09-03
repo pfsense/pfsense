@@ -3,7 +3,9 @@
  * xmlparse.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -213,9 +215,27 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	}
 }
 
+/* Return true if a field should be cdata encoded */
+function is_cdata_entity($ent) {
+	$cdata_fields = array(
+		'auth_prompt', 'certca', 'certname', 'city', 'common_name',
+		'descr', 'detail', 'email', 'encryption_password', 'ldap_attr',
+		'ldap_authcn', 'ldap_basedn', 'ldap_bind',
+		'ldap_extended_query', 'login_banner', 'organization', 'state',
+		'text'
+	);
+
+	/* Check if the entity name starts with any of the strings above */
+	return preg_match('/(^' . implode('|^', $cdata_fields) . ')/', $ent) === 1;
+}
+
 function dump_xml_config_sub($arr, $indent) {
 
 	global $listtags;
+
+	if (!is_array($arr)) {
+		return null;
+	}
 
 	$xmlconfig = "";
 
@@ -242,21 +262,7 @@ function dump_xml_config_sub($arr, $indent) {
 						$xmlconfig .= str_repeat("\t", $indent);
 						if ((is_bool($cval) && $cval == true) || ($cval === "")) {
 							$xmlconfig .= "<$ent></$ent>\n";
-						} else if ((substr($ent, 0, 5) == "descr") ||
-						    (substr($ent, 0, 6) == "detail") ||
-						    (substr($ent, 0, 12) == "login_banner") ||
-						    (substr($ent, 0, 5) == "state") ||
-						    (substr($ent, 0, 4) == "city") ||
-						    (substr($ent, 0, 12) == "organization") ||
-						    (substr($ent, 0, 5) == "email") ||
-						    (substr($ent, 0, 6) == "certca") ||
-						    (substr($ent, 0, 8) == "certname") ||
-						    (substr($ent, 0, 9) == "auth_prompt") ||
-						    (substr($ent, 0, 9) == "ldap_attr") ||
-						    (substr($ent, 0, 9) == "ldap_bind") ||
-						    (substr($ent, 0, 11) == "ldap_basedn") ||
-						    (substr($ent, 0, 11) == "ldap_authcn") ||
-						    (substr($ent, 0, 19) == "ldap_extended_query")) {
+						} else if (is_cdata_entity($ent)) {
 							$xmlconfig .= "<$ent><![CDATA[" . htmlentities($cval) . "]]></$ent>\n";
 						} else {
 							$xmlconfig .= "<$ent>" . htmlentities($cval) . "</$ent>\n";
@@ -280,22 +286,7 @@ function dump_xml_config_sub($arr, $indent) {
 				$xmlconfig .= "<$ent></$ent>\n";
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				if ((substr($ent, 0, 5) == "descr") ||
-				    (substr($ent, 0, 6) == "detail") ||
-				    (substr($ent, 0, 12) == "login_banner") ||
-				    (substr($ent, 0, 5) == "state") ||
-				    (substr($ent, 0, 4) == "city") ||
-				    (substr($ent, 0, 12) == "organization") ||
-				    (substr($ent, 0, 5) == "email") ||
-				    (substr($ent, 0, 6) == "certca") ||
-				    (substr($ent, 0, 8) == "certname") ||
-				    (substr($ent, 0, 8) == "auth_prompt") ||
-				    (substr($ent, 0, 9) == "ldap_attr") ||
-				    (substr($ent, 0, 9) == "ldap_bind") ||
-				    (substr($ent, 0, 11) == "ldap_basedn") ||
-				    (substr($ent, 0, 11) == "ldap_authcn") ||
-				    (substr($ent, 0, 19) == "ldap_extended_query") ||
-				    (substr($ent, 0, 4) == "text")) {
+				if (is_cdata_entity($ent)) {
 					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
 				} else {
 					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";

@@ -3,7 +3,9 @@
  * services_unbound_domainoverride_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@decoy.co.za)
  * Copyright (c) 2003-2005 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
@@ -34,10 +36,7 @@
 
 require_once("guiconfig.inc");
 
-if (!is_array($config['unbound']['domainoverrides'])) {
-	$config['unbound']['domainoverrides'] = array();
-}
-
+init_config_arr(array('unbound', 'domainoverrides'));
 $a_domainOverrides = &$config['unbound']['domainoverrides'];
 $id = $_REQUEST['id'];
 
@@ -45,6 +44,7 @@ if (isset($id) && $a_domainOverrides[$id]) {
 	$pconfig['domain'] = $a_domainOverrides[$id]['domain'];
 	$pconfig['ip'] = $a_domainOverrides[$id]['ip'];
 	$pconfig['descr'] = $a_domainOverrides[$id]['descr'];
+	$pconfig['tls_hostname'] = $a_domainOverrides[$id]['tls_hostname'];
 	$pconfig['forward_tls_upstream'] = isset($a_domainOverrides[$id]['forward_tls_upstream']);
 }
 
@@ -83,11 +83,16 @@ if ($_POST['save']) {
 		}
 	}
 
+	if (!empty($_POST['tls_hostname']) && !is_hostname($_POST['tls_hostname'])) {
+		$input_errors[] = gettext("The supplied TLS hostname is not valid.");
+	}
+
 	if (!$input_errors) {
 		$doment = array();
 		$doment['domain'] = $_POST['domain'];
 		$doment['ip'] = $_POST['ip'];
 		$doment['descr'] = $_POST['descr'];
+		$doment['tls_hostname'] = $_POST['tls_hostname'];
 		$doment['forward_tls_upstream'] = isset($_POST['forward_tls_upstream']);
 
 		if (isset($id) && $a_domainOverrides[$id]) {
@@ -140,6 +145,13 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('When set, queries to %1$sall DNS servers for this domain%2$s will be sent using SSL/TLS on the default port of 853.', '<b>', '</b>');
 
 $section->addInput(new Form_Input(
+	'tls_hostname',
+	'TLS Hostname',
+	'text',
+	$pconfig['tls_hostname']
+))->setHelp('An optional TLS hostname used to verify the server certificate when performing TLS Queries.');
+
+$section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
@@ -147,7 +159,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_domainOverrides[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',

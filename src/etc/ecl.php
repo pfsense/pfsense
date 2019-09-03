@@ -2,7 +2,10 @@
 /*
  * ecl.php
  *
- * Copyright (c) 2010-2018 Rubicon Communications, LLC (Netgate). All rights reserved.
+ * Copyright (c) 2010-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +59,9 @@ function get_disks() {
 
 function discover_config($mountpoint) {
 	global $g, $debug;
-	$locations_to_check = array("/", "/config");
+	/* List of locations to check. Requires trailing slash.
+	 * See https://redmine.pfsense.org/issues/9066 */
+	$locations_to_check = array("/", "/config/");
 	foreach ($locations_to_check as $ltc) {
 		$tocheck = "/tmp/mnt/cf{$ltc}config.xml";
 		if ($debug) {

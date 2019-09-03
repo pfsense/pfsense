@@ -3,7 +3,9 @@
  * index.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -63,7 +65,7 @@ $cpsession = captiveportal_isip_logged($clientip);
 $ourhostname = portal_hostname_from_client_ip($clientip);
 /* Automatically switching to the logout page requires a custom logout page to be present. */
 if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['logouttext']))) {
-	/* if client already logged in so show logout page */
+	/* if client already connected and a custom logout page is set : show logout page */
 	$protocol = (isset($config['captiveportal'][$cpzone]['httpslogin'])) ? 'https://' : 'http://';
 	$logouturl = "{$protocol}{$ourhostname}/";
 
@@ -77,8 +79,9 @@ if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['l
 	include("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 	ob_flush();
 	return;
-} elseif (!empty($cpsession)) {
-	/*If someone try to access captive portal page while already connected*/	
+} elseif (!empty($cpsession) && (!isset($_POST['logout_id']) || !isset($config['captiveportal'][$cpzone]['logoutwin_enable']))) {
+	/* If client try to access captive portal page while already connected, 
+		but no custom logout page does exist and logout popup is disabled */	
 	echo gettext("You are connected.");
 	ob_flush();
 	return;
@@ -138,7 +141,7 @@ EOD;
 	$safe_logout_id = SQLite3::escapeString($_POST['logout_id']);
 	captiveportal_disconnect_client($safe_logout_id);
 
-} elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac') && $macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
+} elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac' || !empty($cpcfg['blockedmacsurl'])) && $macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
 	captiveportal_logportalauth($clientmac, $clientmac, $clientip, "Blocked MAC address");
 	if (!empty($cpcfg['blockedmacsurl'])) {
 		portal_reply_page($cpcfg['blockedmacsurl'], "redir");
@@ -183,12 +186,16 @@ EOD;
 
 } elseif ($_POST['accept'] || $cpcfg['auth_method'] === 'radmac') {
 	
-		if (!empty($_POST['auth_user2'])) { 
-			$user = $_POST['auth_user2'];
+		if ($cpcfg['auth_method'] === 'radmac' && !isset($_POST['accept'])) {
+			$user = $clientmac; 
+			$passwd = $cpcfg['radmac_secret'];
+			$context = 'radmac'; // Radius MAC authentication
+		} elseif (!empty(trim($_POST['auth_user2']))) { 
+			$user = trim($_POST['auth_user2']);
 			$passwd = $_POST['auth_pass2'];
 			$context = 'second'; // Assume users to use the first context if auth_user2 is empty/does not exist
 		} else {
-			$user = $_POST['auth_user'];
+			$user = trim($_POST['auth_user']);
 			$passwd = $_POST['auth_pass'];
 			$context = 'first';
 		}
@@ -231,11 +238,9 @@ EOD;
 		
 		captiveportal_logportalauth($user, $clientmac, $clientip, $auth_result['login_status'], $replymsg);
 
-		/*Radius MAC authentication. */
-		if ($cpcfg['auth_method'] === 'radmac' && $type !== 'redir') {
-			echo gettext("RADIUS MAC Authentication Failed.");
-			ob_flush();
-			exit();
+		/* Radius MAC authentication. */
+		if ($context === 'radmac' && $type !== 'redir' && !isset($cpcfg['radmac_fallback'])) {
+			echo $replymsg;
 		} else {
 			portal_reply_page($redirurl, $type, $replymsg);
 		}

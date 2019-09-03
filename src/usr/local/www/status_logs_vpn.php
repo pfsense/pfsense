@@ -3,7 +3,9 @@
  * status_logs_vpn.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -227,7 +229,7 @@ if (!$rawfilter) {
 	</div>
 	<div class="panel-body">
 		<pre><?php
-			$rows = dump_clog_no_table($logfile_path, $nentries, true, array($filtertext));
+			$rows = dump_log_no_table($logfile_path, $nentries, true, array($filtertext));
 		?></pre>
 
 <script type="text/javascript">
@@ -251,43 +253,6 @@ events.push(function() {
 # Manage Log - Section/Form
 if (!$system_logs_manage_log_form_hidden) {
 	manage_log_section();
-}
-
-function dump_clog_vpn($logfile, $tail) {
-	global $g, $config, $vpntype;
-
-	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
-	$specific_log = basename($logfile, '.log') . '_settings';
-	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
-	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
-
-	$logarr = "";
-
-	exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
-
-	$rows = 0;
-	foreach ($logarr as $logent) {
-		$rows++;
-		$logent = preg_split("/\s+/", $logent, 6);
-		$llent = explode(",", $logent[5]);
-		$iftype = substr($llent[1], 0, 4);
-		if ($iftype != $vpntype) {
-			continue;
-		}
-		echo "<tr>\n";
-		echo "<td>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
-
-		if ($llent[0] == "login") {
-			echo "<td><i class=\"fa fa-sign-in\" title=\"User Logged In\"></i></td>\n";
-		} else {
-			echo "<td><i class=\"fa fa-sign-out\" title=\"User Logged Out\"></i></td>\n";
-		}
-
-		echo "<td>" . htmlspecialchars($llent[3]) . "</td>\n";
-		echo "<td>" . htmlspecialchars($llent[2]) . "&nbsp;</td>\n";
-		echo "</tr>\n";
-	}
-	return($rows);
 }
 
 // Log Filter Submit - VPN

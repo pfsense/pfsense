@@ -3,7 +3,9 @@
  * pkg.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -125,6 +127,7 @@ if ($_REQUEST['act'] == "del") {
 		}
 	}
 
+	init_config_arr(array('installedpackages', xml_safe_fieldname($pkg['name']), 'config'));
 	$a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 	if ($a_pkg[$_REQUEST['id']]) {

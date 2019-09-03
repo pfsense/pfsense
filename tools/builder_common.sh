@@ -3,7 +3,9 @@
 # builder_common.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2004-2013 BSD Perimeter
+# Copyright (c) 2013-2016 Electric Sheep Fencing
+# Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # FreeSBIE portions of the code
@@ -268,11 +270,7 @@ make_world() {
 		|| print_error_pfS
 
 	# Use the builder cross compiler from obj to produce the final binary.
-	if [ "${TARGET_ARCH}" == "$(uname -p)" ]; then
-		BUILD_CC="${MAKEOBJDIRPREFIX}/${FREEBSD_SRC_DIR}/tmp/usr/bin/cc"
-	else
-		BUILD_CC="${MAKEOBJDIRPREFIX}/${TARGET}.${TARGET_ARCH}${FREEBSD_SRC_DIR}/tmp/usr/bin/cc"
-	fi
+	BUILD_CC="${MAKEOBJDIRPREFIX}${FREEBSD_SRC_DIR}/${TARGET}.${TARGET_ARCH}/tmp/usr/bin/cc"
 
 	[ -f "${BUILD_CC}" ] || print_error_pfS
 
@@ -992,8 +990,8 @@ get_altabi_arch() {
 		echo "x86:64"
 	elif [ "${_target_arch}" = "i386" ]; then
 		echo "x86:32"
-	elif [ "${_target_arch}" = "armv6" ]; then
-		echo "32:el:eabi:hardfp"
+	elif [ "${_target_arch}" = "armv7" ]; then
+		echo "32:el:eabi:softfp"
 	else
 		echo ">>> ERROR: Invalid arch"
 		print_error_pfS
@@ -1325,6 +1323,7 @@ finish() {
 pkg_repo_rsync() {
 	local _repo_path_param="${1}"
 	local _ignore_final_rsync="${2}"
+	local _aws_sync_cmd="aws s3 sync --quiet --exclude '.real*/*' --exclude '.latest/*'"
 
 	if [ -z "${_repo_path_param}" -o ! -d "${_repo_path_param}" ]; then
 		return
@@ -1447,6 +1446,36 @@ pkg_repo_rsync() {
 					echo ">>> ERROR: An error occurred sending repo to final hostname"
 					print_error_pfS
 				fi
+
+				if [ -z "${PKG_FINAL_S3_PATH}" ]; then
+					continue
+				fi
+
+				local _repos=$(ssh -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+				    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
+				    "ls -1d ${PKG_FINAL_RSYNC_DESTDIR}/${_repo_base%%-core}*")
+				for _repo in ${_repos}; do
+					echo -n ">>> Sending updated packages to AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
+					if script -aq ${_logfile} ssh -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+					    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
+					    "${_aws_sync_cmd} ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
+						echo "Done!" | tee -a ${_logfile}
+					else
+						echo "Failed!" | tee -a ${_logfile}
+						echo ">>> ERROR: An error occurred sending files to AWS S3"
+						print_error_pfS
+					fi
+					echo -n ">>> Cleaning up packages at AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
+					if script -aq ${_logfile} ssh -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+					    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
+					    "${_aws_sync_cmd} --delete ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
+						echo "Done!" | tee -a ${_logfile}
+					else
+						echo "Failed!" | tee -a ${_logfile}
+						echo ">>> ERROR: An error occurred sending files to AWS S3"
+						print_error_pfS
+					fi
+				done
 			done
 		fi
 	done
@@ -1456,7 +1485,7 @@ poudriere_possible_archs() {
 	local _arch=$(uname -m)
 	local _archs=""
 
-	# If host is amd64, we'll create both repos, and if possible armv6
+	# If host is amd64, we'll create both repos, and if possible armv7
 	if [ "${_arch}" = "amd64" ]; then
 		_archs="amd64.amd64"
 
@@ -1464,8 +1493,8 @@ poudriere_possible_archs() {
 			# Make sure binmiscctl is ok
 			/usr/local/etc/rc.d/qemu_user_static forcestart >/dev/null 2>&1
 
-			if binmiscctl lookup armv6 >/dev/null 2>&1; then
-				_archs="${_archs} arm.armv6"
+			if binmiscctl lookup armv7 >/dev/null 2>&1; then
+				_archs="${_archs} arm.armv7"
 			fi
 		fi
 	fi
@@ -1659,7 +1688,15 @@ ATOMIC_PACKAGE_REPOSITORY=yes
 COMMIT_PACKAGES_ON_FAILURE=no
 KEEP_OLD_PACKAGES=yes
 KEEP_OLD_PACKAGES_COUNT=5
+ALLOW_MAKE_JOBS=yes
+PARALLEL_JOBS=8
 EOF
+
+	if pkg info -e ccache; then
+	cat <<EOF >>/usr/local/etc/poudriere.conf
+CCACHE_DIR=/var/cache/ccache
+EOF
+	fi
 
 	# Create specific items conf
 	[ ! -d /usr/local/etc/poudriere.d ] \
@@ -1691,7 +1728,7 @@ EOF
 	for jail_arch in ${_archs}; do
 		jail_name=$(poudriere_jail_name ${jail_arch})
 
-		if [ "${jail_arch}" = "arm.armv6" ]; then
+		if [ "${jail_arch}" = "arm.armv7" ]; then
 			native_xtools="-x"
 		else
 			native_xtools=""
@@ -1729,7 +1766,7 @@ poudriere_update_jails() {
 			_create_or_update_text="Creating"
 		fi
 
-		if [ "${jail_arch}" = "arm.armv6" ]; then
+		if [ "${jail_arch}" = "arm.armv7" ]; then
 			native_xtools="-x"
 		else
 			native_xtools=""
@@ -1844,13 +1881,18 @@ EOF
 			continue
 		fi
 
-		if [ -f "${POUDRIERE_BULK}.${jail_arch}" ]; then
-			_ref_bulk="${POUDRIERE_BULK}.${jail_arch}"
-		else
-			_ref_bulk="${POUDRIERE_BULK}"
+		_ref_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}.ref.${jail_arch}
+		rm -rf ${_ref_bulk} ${_ref_bulk}.tmp
+		touch ${_ref_bulk}.tmp
+		if [ -f "${POUDRIERE_BULK}.${jail_arch#*.}" ]; then
+			cat "${POUDRIERE_BULK}.${jail_arch#*.}" >> ${_ref_bulk}.tmp
 		fi
+		if [ -f "${POUDRIERE_BULK}" ]; then
+			cat "${POUDRIERE_BULK}" >> ${_ref_bulk}.tmp
+		fi
+		cat ${_ref_bulk}.tmp | sort -u > ${_ref_bulk}
 
-		_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}
+		_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}.${jail_arch}
 		sed -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" ${_ref_bulk} > ${_bulk}
 
 		local _exclude_bulk="${POUDRIERE_BULK}.exclude.${jail_arch}"

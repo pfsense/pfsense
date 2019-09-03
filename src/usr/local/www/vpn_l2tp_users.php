@@ -3,7 +3,9 @@
  * vpn_l2tp_users.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,9 +36,7 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['l2tp']['user'])) {
-	$config['l2tp']['user'] = array();
-}
+init_config_arr(array('l2tp', 'user'));
 $a_secret = &$config['l2tp']['user'];
 
 

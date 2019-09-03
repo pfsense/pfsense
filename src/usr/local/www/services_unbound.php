@@ -3,7 +3,9 @@
  * services_unbound.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@pfsense.org)
  * All rights reserved.
  *
@@ -32,22 +34,10 @@ require_once("unbound.inc");
 require_once("pfsense-utils.inc");
 require_once("system.inc");
 
-if (!is_array($config['unbound'])) {
-	$config['unbound'] = array();
-}
-
-$a_unboundcfg =& $config['unbound'];
-
-if (!is_array($a_unboundcfg['hosts'])) {
-	$a_unboundcfg['hosts'] = array();
-}
-
-$a_hosts =& $a_unboundcfg['hosts'];
-
-if (!is_array($a_unboundcfg['domainoverrides'])) {
-	$a_unboundcfg['domainoverrides'] = array();
-}
-
+init_config_arr(array('unbound', 'hosts'));
+init_config_arr(array('unbound', 'domainoverrides'));
+$a_unboundcfg = &$config['unbound'];
+$a_hosts = &$a_unboundcfg['hosts'];
 $a_domainOverrides = &$a_unboundcfg['domainoverrides'];
 
 if (isset($a_unboundcfg['enable'])) {
@@ -58,6 +48,9 @@ if (isset($a_unboundcfg['enablessl'])) {
 }
 if (isset($a_unboundcfg['dnssec'])) {
 	$pconfig['dnssec'] = true;
+}
+if (isset($a_unboundcfg['python'])) {
+	$pconfig['python'] = true;
 }
 if (isset($a_unboundcfg['forwarding'])) {
 	$pconfig['forwarding'] = true;
@@ -75,6 +68,8 @@ if (isset($a_unboundcfg['regovpnclients'])) {
 	$pconfig['regovpnclients'] = true;
 }
 
+$pconfig['python_order'] = $a_unboundcfg['python_order'];
+$pconfig['python_script'] = $a_unboundcfg['python_script'];
 $pconfig['port'] = $a_unboundcfg['port'];
 $pconfig['sslport'] = $a_unboundcfg['sslport'];
 $pconfig['sslcertref'] = $a_unboundcfg['sslcertref'];
@@ -98,7 +93,8 @@ if (empty($a_unboundcfg['system_domain_local_zone_type'])) {
 	$pconfig['system_domain_local_zone_type'] = $a_unboundcfg['system_domain_local_zone_type'];
 }
 
-$a_cert =& $config['cert'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 $certs_available = false;
 
 if (is_array($a_cert) && count($a_cert)) {
@@ -209,6 +205,20 @@ if ($_POST['save']) {
 		$a_unboundcfg['sslport'] = $pconfig['sslport'];
 		$a_unboundcfg['sslcertref'] = $pconfig['sslcertref'];
 		$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
+
+		$a_unboundcfg['python'] = isset($pconfig['python']);
+		if (isset($pconfig['python'])) {
+			$a_unboundcfg['python_order'] = $pconfig['python_order'];
+			$a_unboundcfg['python_script'] = $pconfig['python_script'];
+		} else {
+			if (isset($a_unboundcfg['python_order'])) {
+				unset($a_unboundcfg['python_order']);
+			}
+			if (isset($a_unboundcfg['python_script'])) {
+				unset($a_unboundcfg['python_script']);
+			}
+		}
+
 		$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
 		$a_unboundcfg['forward_tls_upstream'] = isset($pconfig['forward_tls_upstream']);
 		$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);
@@ -392,6 +402,39 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $section->addInput(new Form_Checkbox(
+	'python',
+	'Python Module',
+	'Enable Python Module',
+	$pconfig['python']
+))->setHelp('Enable the Python Module.');
+
+$python_files = glob("{$g['unbound_chroot_path']}/*.py");
+$python_scripts = array();
+if (!empty($python_files)) {
+	foreach ($python_files as $file) {
+		$file = pathinfo($file, PATHINFO_FILENAME);
+		$python_scripts[$file] = $file;
+	}
+}
+else {
+	$python_scripts = array('' => 'No Python Module scripts found');
+}
+
+$section->addInput(new Form_Select(
+	'python_order',
+	'Python Module Order',
+	$pconfig['python_order'],
+	[ 'pre_validator' => 'Pre Validator', 'post_validator' => 'Post Validator' ]
+))->setHelp('Select the Python Module ordering.');
+
+$section->addInput(new Form_Select(
+	'python_script',
+	'Python Module Script',
+	$pconfig['python_script'],
+	$python_scripts
+))->setHelp('Select the Python module script to utilize.');
+
+$section->addInput(new Form_Checkbox(
 	'forwarding',
 	'DNS Query Forwarding',
 	'Enable Forwarding Mode',
@@ -516,6 +559,17 @@ events.push(function() {
 
 	hideGeneral();
 	show_advcustom(true);
+
+	// When the Python Module 'enable' is clicked, disable/enable the Python Module options
+	function show_python_script() {
+		var python = $('#python').prop('checked');
+		hideInput('python_order', !python);
+		hideInput('python_script', !python);
+	}
+	show_python_script();
+	$('#python').click(function () {
+		show_python_script();
+	});
 
 });
 //]]>

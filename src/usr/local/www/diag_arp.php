@@ -3,7 +3,9 @@
  * diag_arp.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -52,177 +54,18 @@ if (isset($_POST['deleteentry'])) {
 	}
 }
 
-function leasecmp($a, $b) {
-	return strcmp($a[$_REQUEST['order']], $b[$_REQUEST['order']]);
-}
-
-function adjust_gmt($dt) {
-	$ts = strtotime($dt . " GMT");
-	return strftime("%Y/%m/%d %H:%M:%S", $ts);
-}
-
-function remove_duplicate($array, $field) {
-	foreach ($array as $sub) {
-		$cmp[] = $sub[$field];
-	}
-	$unique = array_unique($cmp);
-	foreach ($unique as $k => $rien) {
-		$new[] = $array[$k];
-	}
-	return $new;
-}
-
-// Define path to AWK
-$awk = "/usr/bin/awk";
-
-// Read in leases file
-$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
-
-/* this pattern sticks comments into a single array item */
-$cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
-
-/* We then split the leases file by } */
-$splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
-
-/* stuff the leases file in a proper format into an array by line */
-exec("cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
-$leases_count = count($leases_content);
-
-$pools = array();
-$leases = array();
-$i = 0;
-$l = 0;
-$p = 0;
-// Put everything together again
-while ($i < $leases_count) {
-	/* split the line by space */
-	$data = explode(" ", $leases_content[$i]);
-	/* walk the fields */
-	$f = 0;
-	$fcount = count($data);
-	/* with less then 20 fields there is nothing useful */
-	if ($fcount < 20) {
-		$i++;
-		continue;
-	}
-	while ($f < $fcount) {
-		switch ($data[$f]) {
-			case "failover":
-				$pools[$p]['name'] = $data[$f+2];
-				$pools[$p]['mystate'] = $data[$f+7];
-				$pools[$p]['peerstate'] = $data[$f+14];
-				$pools[$p]['mydate'] = $data[$f+10];
-				$pools[$p]['mydate'] .= " " . $data[$f+11];
-				$pools[$p]['peerdate'] = $data[$f+17];
-				$pools[$p]['peerdate'] .= " " . $data[$f+18];
-				$p++;
-				$i++;
-				continue 3;
-			case "lease":
-				$leases[$l]['ip'] = $data[$f+1];
-				$leases[$l]['type'] = "dynamic";
-				$f = $f+2;
-				break;
-			case "starts":
-				$leases[$l]['start'] = $data[$f+2];
-				$leases[$l]['start'] .= " " . $data[$f+3];
-				$f = $f+3;
-				break;
-			case "ends":
-				$leases[$l]['end'] = $data[$f+2];
-				$leases[$l]['end'] .= " " . $data[$f+3];
-				$f = $f+3;
-				break;
-			case "tstp":
-				$f = $f+3;
-				break;
-			case "tsfp":
-				$f = $f+3;
-				break;
-			case "atsfp":
-				$f = $f+3;
-				break;
-			case "cltt":
-				$f = $f+3;
-				break;
-			case "binding":
-				switch ($data[$f+2]) {
-					case "active":
-						$leases[$l]['act'] = "active";
-						break;
-					case "free":
-						$leases[$l]['act'] = "expired";
-						$leases[$l]['online'] = "offline";
-						break;
-					case "backup":
-						$leases[$l]['act'] = "reserved";
-						$leases[$l]['online'] = "offline";
-						break;
-				}
-				$f = $f+1;
-				break;
-			case "next":
-				/* skip the next binding statement */
-				$f = $f+3;
-				break;
-			case "rewind":
-				/* skip the rewind binding statement */
-				$f = $f+3;
-				break;
-			case "hardware":
-				$leases[$l]['mac'] = $data[$f+2];
-				/* check if it's online and the lease is active */
-				if ($leases[$l]['act'] == "active") {
-					$online = exec("/usr/sbin/arp -an |/usr/bin/awk '/{$leases[$l]['ip']}/ {print}'|wc -l");
-					if ($online == 1) {
-						$leases[$l]['online'] = 'online';
-					} else {
-						$leases[$l]['online'] = 'offline';
-					}
-				}
-				$f = $f+2;
-				break;
-			case "client-hostname":
-				if ($data[$f+1] <> "") {
-					$leases[$l]['hostname'] = preg_replace('/"/', '', $data[$f+1]);
-				} else {
-					$hostname = gethostbyaddr($leases[$l]['ip']);
-					if ($hostname <> "") {
-						$leases[$l]['hostname'] = $hostname;
-					}
-				}
-				$f = $f+1;
-				break;
-			case "uid":
-				$f = $f+1;
-				break;
-		}
-		$f++;
-	}
-	$l++;
-	$i++;
-}
-
-/* remove duplicate items by mac address */
-if (count($leases) > 0) {
-	$leases = remove_duplicate($leases, "ip");
-}
-
-if (count($pools) > 0) {
-	$pools = remove_duplicate($pools, "name");
-	asort($pools);
-}
+$leases = system_get_dhcpleases();
 
 // Put this in an easy to use form
 $dhcpmac = array();
 $dhcpip = array();
 
-foreach ($leases as $value) {
+foreach ($leases['lease'] as $value) {
 	$dhcpmac[$value['mac']] = $value['hostname'];
 	$dhcpip[$value['ip']] = $value['hostname'];
 }
 
-exec("/usr/sbin/arp -an", $rawdata);
+$arp_table = system_get_arp_table();
 
 $i = 0;
 
@@ -234,18 +77,6 @@ foreach ($ifdescrs as $key => $interface) {
 	if (!empty($thisif)) {
 		$hwif[$thisif] = $interface;
 	}
-}
-
-$data = array();
-foreach ($rawdata as $line) {
-	$elements = explode(' ', $line, 7);
-	$arpent = array();
-	$arpent['ip'] = trim(str_replace(array('(', ')'), '', $elements[1]));
-	$arpent['mac'] = trim($elements[3]);
-	$arpent['interface'] = trim($elements[5]);
-	$arpent['status'] = trim(substr($elements[6], 0, strrpos($elements[6], ' ')));
-	$arpent['linktype'] = trim(str_replace(array('[', ']'), '', strrchr($elements[6], ' ')));
-	$data[] = $arpent;
 }
 
 function _getHostName($mac, $ip) {
@@ -301,9 +132,10 @@ if ($dns == "") {
 	}
 }
 
-foreach ($data as &$entry) {
-	if ($dnsavailable) {
-		$dns = trim(_getHostName($entry['mac'], $entry['ip']));
+foreach ($arp_table as &$entry) {
+	if ($dnsavailable && !empty($entry['mac-address'])) {
+		$dns = trim(_getHostName($entry['mac-address'],
+		    $entry['ip-address']));
 	} else {
 		$dns="";
 	}
@@ -316,7 +148,7 @@ foreach ($data as &$entry) {
 unset($entry);
 
 // Sort the data alpha first
-$data = msort($data, "dnsresolve");
+$arp_table = msort($arp_table, "dnsresolve");
 
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
@@ -341,29 +173,48 @@ $mac_man = load_mac_manufacturer_table();
 		<tbody>
 
 <?php
-		foreach ($data as $entry): ?>
+		foreach ($arp_table as $entry): ?>
 			<tr>
 				<td><?=$hwif[$entry['interface']]?></td>
-				<td><?=$entry['ip']?></td>
-				<td>
-					<?=trim($entry['mac'])?>
-				<?php
-					$mac = trim($entry['mac']);
-					$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+				<td><?=$entry['ip-address']?></td>
+<?php
+				if (empty($entry['mac-address'])) {
+					$mac = '(' . gettext("Incomplete") .')';
+					print "<td>{$mac}</td>";
+				} else {
+					$mac = trim($entry['mac-address']);
+					print "<td>{$mac}";
+					$mac_hi = strtoupper($mac[0] . $mac[1] .
+					    $mac[3] . $mac[4] . $mac[6] .
+					    $mac[7]);
 
 					if (isset($mac_man[$mac_hi])) {
-						print '<small>('. $mac_man[$mac_hi] .')</small>';
+						print '<small>('.
+						    $mac_man[$mac_hi] .
+						    ')</small>';
 					}
-	?>
+				}
+
+				$status = '';
+				if (!empty($entry['expires'])) {
+					$status = sprintf(gettext(
+					    "Expires in %d seconds"),
+					    $entry['expires']);
+				} else if (!empty($entry['permanent'])) {
+					$status = gettext("Permanent");
+				}
+?>
 				</td>
 				<td><?=trim(str_replace("Z_ ", "", $entry['dnsresolve']))?></td>
-				<td><?=ucfirst($entry['status'])?></td>
-				<td><?=$entry['linktype']?></td>
+				<td><?=ucfirst($status)?></td>
+				<td><?=$entry['type']?></td>
 				<td>
-					<a class="fa fa-trash" title="<?=gettext('Delete arp cache entry')?>"	href="diag_arp.php?deleteentry=<?=$entry['ip']?>" usepost></a>
+					<a class="fa fa-trash" title="<?=gettext('Delete arp cache entry')?>"	href="diag_arp.php?deleteentry=<?=$entry['ip-address']?>" usepost></a>
 				</td>
 			</tr>
-		<?php endforeach?>
+<?php
+		endforeach
+?>
 		</tbody>
 	</table>
 </div>

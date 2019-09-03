@@ -3,7 +3,9 @@
  * system_advanced_sysctl.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -34,13 +36,7 @@
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
-if (!is_array($config['sysctl'])) {
-	$config['sysctl'] = array();
-}
-if (!is_array($config['sysctl']['item'])) {
-	$config['sysctl']['item'] = array();
-}
-
+init_config_arr(array('sysctl', 'item'));
 $a_tunable = &$config['sysctl']['item'];
 $tunables = system_get_sysctls();
 

@@ -3,7 +3,9 @@
  * interfaces_fast.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate) (pfSense)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2017 Peter Schofield (parts of this file)
  * All rights reserved.
  *
@@ -61,6 +63,7 @@ function convert_real_interface_to_friendly_interface_name_fast() {
 
 	$out = array();
 	/* XXX: For speed reasons reference directly the interface array */
+	init_config_arr(array('interfaces'));
 	$ifdescrs = &$config['interfaces'];
 	$iffriendlynames = array_keys($ifdescrs);
 	$out = array_flip(get_real_interface_fast($iffriendlynames));

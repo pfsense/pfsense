@@ -3,7 +3,9 @@
  * system_crlmanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +34,12 @@ require_once("openvpn.inc");
 require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
+$max_lifetime = crl_get_max_lifetime();
+$default_lifetime = 3650;
+if ($max_lifetime < $default_lifetime) {
+	$default_lifetime = $max_lifetime;
+}
+
 global $openssl_crl_status;
 
 $crl_methods = array(
@@ -42,23 +50,14 @@ if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
+init_config_arr(array('ca'));
+$a_ca = &$config['ca'];
 
-$a_ca =& $config['ca'];
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
 
-if (!is_array($config['cert'])) {
-	$config['cert'] = array();
-}
-
-$a_cert =& $config['cert'];
-
-if (!is_array($config['crl'])) {
-	$config['crl'] = array();
-}
-
-$a_crl =& $config['crl'];
+init_config_arr(array('crl'));
+$a_crl = &$config['crl'];
 
 foreach ($a_crl as $cid => $acrl) {
 	if (!isset($acrl['refid'])) {
@@ -101,7 +100,7 @@ if ($_POST['act'] == "del") {
 if ($act == "new") {
 	$pconfig['method'] = $_REQUEST['method'];
 	$pconfig['caref'] = $_REQUEST['caref'];
-	$pconfig['lifetime'] = "9999";
+	$pconfig['lifetime'] = $default_lifetime;
 	$pconfig['serial'] = "0";
 }
 
@@ -119,7 +118,6 @@ if ($act == "exp") {
 }
 
 if ($act == "addcert") {
-
 	unset($input_errors);
 	$pconfig = $_REQUEST;
 
@@ -210,6 +208,9 @@ if ($_POST['save']) {
 	if (preg_match("/[\?\>\<\&\/\\\"\']/", $pconfig['descr'])) {
 		array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
 	}
+	if ($pconfig['lifetime'] > $max_lifetime) {
+		$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
+	}
 
 	/* save modifications */
 	if (!$input_errors) {
@@ -234,7 +235,7 @@ if ($_POST['save']) {
 
 		if ($pconfig['method'] == "internal") {
 			$crl['serial'] = empty($pconfig['serial']) ? 9999 : $pconfig['serial'];
-			$crl['lifetime'] = empty($pconfig['lifetime']) ? 9999 : $pconfig['lifetime'];
+			$crl['lifetime'] = empty($pconfig['lifetime']) ? $default_lifetime : $pconfig['lifetime'];
 			$crl['cert'] = array();
 		}
 
@@ -339,18 +340,17 @@ $tab_array[] = array(gettext("Certificate Revocation"), true, "system_crlmanager
 display_top_tabs($tab_array);
 
 if ($act == "new" || $act == gettext("Save") || $input_errors) {
+	$form = new Form();
+
+	$section = new Form_Section('Create new Revocation List');
+
 	if (!isset($id)) {
-		$form = new Form();
-
-		$section = new Form_Section('Create new Revocation List');
-
 		$section->addInput(new Form_Select(
 			'method',
 			'*Method',
 			$pconfig['method'],
 			build_method_list()
 		));
-
 	}
 
 	$section->addInput(new Form_Input(
@@ -388,7 +388,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		'Lifetime (Days)',
 		'number',
 		$pconfig['lifetime'],
-		['max' => '9999']
+		['max' => $max_lifetime]
 	));
 
 	$section->addInput(new Form_Input(
@@ -402,7 +402,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 	$form->add($section);
 
 	if (isset($id) && $thiscrl) {
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'id',
 			null,
 			'hidden',
@@ -431,14 +431,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		$pconfig['crltext']
 	))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
 		$id
 	));
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'act',
 		null,
 		'hidden',
@@ -541,21 +541,21 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 		$section->add($group);
 
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'id',
 			null,
 			'hidden',
 			$crl['refid']
 		));
 
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'act',
 			null,
 			'hidden',
 			'addcert'
 		));
 
-		$section->addInput(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'crlref',
 			null,
 			'hidden',

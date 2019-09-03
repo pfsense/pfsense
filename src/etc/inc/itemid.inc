@@ -3,7 +3,9 @@
  * itemid.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2009-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2009-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2009 Janne Enberg <janne.enberg@lietu.net>
  * All rights reserved.
  *
@@ -48,6 +50,7 @@ function delete_id($id, &$array) {
 	unset($array[$delete_index]);
 
 	// Update the separators
+	init_config_arr(array('filter', 'separator', strtolower($if)));
 	$a_separators = &$config['filter']['separator'][strtolower($if)];
 	// get rule index within interface
 	$ridx = ifridx($if, $delete_index);

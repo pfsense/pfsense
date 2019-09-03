@@ -3,7 +3,9 @@
  * xmlrpc.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -61,8 +63,9 @@ class pfsense_xmlrpc_server {
 		}
 
 		if (!$login_ok) {
-			log_auth("webConfigurator authentication error for '" .
-			    $username . "' from " . $this->remote_addr);
+			log_auth(sprintf(gettext("webConfigurator authentication error for user '%1\$s' from: %2\$s"),
+			    $username,
+			    $this->remote_addr));
 
 			require_once("XML/RPC2/Exception.php");
 			throw new XML_RPC2_FaultException(gettext(
@@ -208,7 +211,6 @@ class pfsense_xmlrpc_server {
 			'dnsmasq',
 			'filter',
 			'ipsec',
-			'load_balancer',
 			'nat',
 			'openvpn',
 			'schedules',
@@ -449,6 +451,7 @@ class pfsense_xmlrpc_server {
 					continue;
 				}
 				$l_roll_idx = $l_rolls[$zone][$roll['number']];
+				init_config_arr(array('voucher', $zone));
 				$l_vouchers = &$config['voucher'][$zone];
 				$l_roll = $l_vouchers['roll'][$l_roll_idx];
 				if (!isset($l_roll['lastsync'])) {
@@ -669,7 +672,6 @@ class pfsense_xmlrpc_server {
 		filter_configure();
 		system_routing_configure();
 		setup_gateways_monitor();
-		relayd_configure();
 		require_once("openvpn.inc");
 		openvpn_resync_all();
 

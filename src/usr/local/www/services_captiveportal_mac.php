@@ -3,7 +3,9 @@
  * services_captiveportal_mac.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
  * All rights reserved.
  *
@@ -47,11 +49,9 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-
-$a_cp =& $config['captiveportal'];
+init_config_arr(array('captiveportal', $cpzone, 'passthrumac'));
+$a_cp = &$config['captiveportal'];
+$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
@@ -81,26 +81,17 @@ if ($_POST['save']) {
 	}
 
 	if ($_POST['postafterlogin']) {
-		if (!is_array($a_passthrumacs)) {
+		if (empty($a_passthrumacs)) {
 			echo gettext("No entry exists yet!") ."\n";
 			exit;
 		}
-
-		if (empty($_POST['zone'])) {
-			echo gettext("Please set the zone on which the operation should be allowed");
-			exit;
-		}
-		if (!is_array($a_cp[$cpzone]['passthrumac'])) {
-			$a_cp[$cpzone]['passthrumac'] = array();
-		}
-		$a_passthrumacs =& $a_cp[$cpzone]['passthrumac'];
 
 		if ($_POST['username']) {
 			$mac = captiveportal_passthrumac_findbyname($_POST['username']);
 			if (!empty($mac)) {
 				$_POST['delmac'] = $mac['mac'];
 			} else {
-				echo gettext("No entry exists for this username:") . " " . $_POST['username'] . "\n";
+				echo gettext("No entry exists for this username:") . " " . htmlspecialchars($_POST['username']) . "\n";
 			}
 		}
 
@@ -123,7 +114,7 @@ if ($_POST['save']) {
 				write_config();
 				echo gettext("The entry was successfully deleted") . "\n";
 			} else {
-				echo gettext("No entry exists for this mac address:") . " " . $_POST['delmac'] . "\n";
+				echo gettext("No entry exists for this mac address:") . " " . htmlspecialchars($_POST['delmac']) . "\n";
 			}
 		}
 		exit;
@@ -131,8 +122,6 @@ if ($_POST['save']) {
 }
 
 if ($_POST['act'] == "del") {
-	$a_passthrumacs =& $a_cp[$cpzone]['passthrumac'];
-
 	if ($a_passthrumacs[$_POST['id']]) {
 		$cpzoneid = $a_cp[$cpzone]['zoneid'];
 		$rules = captiveportal_passthrumac_delete_entry($a_passthrumacs[$_POST['id']]);

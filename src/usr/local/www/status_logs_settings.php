@@ -37,7 +37,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-global $system_log_files, $system_log_compression_types;
+global $system_log_compression_types;
 
 $pconfig['reverse'] = isset($config['syslog']['reverse']);
 $pconfig['nentries'] = $config['syslog']['nentries'];
@@ -69,6 +69,7 @@ $pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
 $pconfig['logfilesize'] = $config['syslog']['logfilesize'];
 $pconfig['logcompressiontype'] = $config['syslog']['logcompressiontype'];
+$pconfig['rotatecount'] = $config['syslog']['rotatecount'];
 $pconfig['igmpxverbose'] = isset($config['syslog']['igmpxverbose']);
 
 if (!$pconfig['nentries']) {
@@ -111,6 +112,13 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			$input_errors[] = gettext("Log file size is too large. Set a smaller value.");
 		}
 	}
+	if (isset($_POST['rotatecount']) && (strlen($_POST['rotatecount']) > 0)) {
+		if (!is_numericint($_POST['rotatecount']) ||
+		    ($_POST['rotatecount'] < 0) ||
+		    ($_POST['rotatecount'] > 99)) {
+			$input_errors[] = gettext("Log Retention Count must be an integer from 0 to 99.");
+		}
+	}
 
 	if (!array_key_exists($_POST['logcompressiontype'], $system_log_compression_types)) {
 		$input_errors[] = gettext("Invalid log compression type.");
@@ -144,6 +152,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			$config['syslog']['logcompressiontype'] = $_POST['logcompressiontype'];
 		}
 
+		$config['syslog']['rotatecount'] = $_POST['rotatecount'];
 		$config['syslog']['remoteserver'] = $_POST['remoteserver'];
 		$config['syslog']['remoteserver2'] = $_POST['remoteserver2'];
 		$config['syslog']['remoteserver3'] = $_POST['remoteserver3'];
@@ -353,7 +362,7 @@ $section = new Form_Section('Log Rotation Options');
 
 $section->addInput(new Form_Input(
 	'logfilesize',
-	'Log file size (Bytes)',
+	'Log Rotation Size (Bytes)',
 	'text',
 	$pconfig['logfilesize'],
 	['placeholder' => 'Bytes']
@@ -364,8 +373,17 @@ $section->addInput(new Form_Select(
 	'Log Compression',
 	!isset($pconfig['logcompressiontype']) ? 'bzip2' : $pconfig['logcompressiontype'],
 	array_combine(array_keys($system_log_compression_types), array_keys($system_log_compression_types)),
-))->setHelp('The type of compression to use when rotating log files.%s' .
+))->setHelp('The type of compression to use when rotating log files. ' .
+	'Compressing rotated log files saves disk space, and the compressed logs remain available for display and searching in the GUI.%s' .
 	' WARNING: Changing this value will remove previously rotated compressed log files!', '<br />');
+
+$section->addInput(new Form_Input(
+	'rotatecount',
+	'Log Retention Count',
+	'number',
+	$pconfig['rotatecount'],
+	['min' => 0, 'max' => 99, 'placeholder' => '7']
+))->setHelp('The number of log files to keep before the oldest copy is removed on rotation.');
 
 $form->add($section);
 $section = new Form_Section('Remote Logging Options');

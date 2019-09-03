@@ -1465,6 +1465,8 @@ EOD;
 	$log_size = ($log_size < (2**32)/2) ? $log_size : "511488";
 	$log_size = (int)$log_size/1024;
 
+	$rotatecount = isset($syslogcfg['rotatecount']) ? $syslogcfg['rotatecount'] : 7;
+
 	$compression_flag = $system_log_compression_types[system_log_get_compression()]['flag'];
 
 
@@ -1473,23 +1475,42 @@ EOD;
 		$newsyslogconf = <<<EOD
 /var/log/userlog			600	3	{$log_size}	*	B
 /var/log/utx.log			644	3	{$log_size}	*	B
-/var/log/nginx/error.log		644	7	{$log_size}	*	{$compression_flag}C /var/run/nginx.pid 30
+/var/log/nginx/error.log		644	{$rotatecount}	{$log_size}	*	{$compression_flag}C /var/run/nginx.pid 30
 
 EOD;
 
 		if ($config['installedpackages']['package']) {
 			foreach ($config['installedpackages']['package'] as $package) {
-				if (isset($package['logging']['rotation']) && isset($package['logging']['logfilename'])) {
+
+				if (isset($package['logging']['logfilename'])) {
+
+					$pkg_log_mode = isset($package['logging']['logmode']) ? $package['logging']['logmode'] : 600;
+					$pkg_rotate_count = isset($package['logging']['rotatecount']) ? (int) $package['logging']['rotatecount'] : $rotatecount;
+					$pkg_log_size = isset($package['logging']['logfilesize']) ? (int) $package['logging']['logfilesize'] / 1024: $log_size;
+					$pkg_rotate_time = isset($package['logging']['rotatetime']) ? $package['logging']['rotatetime'] : '*';
+					$pkg_extra_flags = isset($package['logging']['rotateflags']) ? $package['logging']['rotateflags'] : '';
+					$pkg_pidcmd = isset($package['logging']['pidcmd']) ? $package['logging']['pidcmd'] : '';
+					$pkg_signal = isset($package['logging']['signal']) ? $package['logging']['signal'] : '';
+
 					$pkgnewsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
-					$pkgnewsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$package['logging']['logfilename']}", 600, 7, $log_size, '*', "{$compression_flag}C");
+					$pkgnewsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$package['logging']['logfilename']}",
+												$pkg_log_mode,
+												$pkg_rotate_count,
+												$pkg_log_size,
+												$pkg_rotate_time,
+												"{$compression_flag}C{$pkg_extra_flags}",
+												$pkg_pidcmd,
+												$pkg_signal);
 					@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/" . basename($package['logging']['logfilename']) . ".conf", $pkgnewsyslogconf);
 				}
 			}
 		}
 
 		foreach($system_log_files as $logfile) {
-			$log_size = isset($syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize']) ? (int) $syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize'] / 1024: $log_size;
-			$newsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$logfile}.log", 600, 7, $log_size, '*', "{$compression_flag}C");
+			$local_log_size = isset($syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize']) ? (int) $syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize'] / 1024: $log_size;
+			$local_rotate_count = isset($syslogcfg[basename($logfile, '.log') . '_settings']['rotatecount']) ? (int) $syslogcfg[basename($logfile, '.log') . '_settings']['rotatecount'] : $rotatecount;
+
+			$newsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$logfile}.log", 600, $local_rotate_count, $local_log_size, '*', "{$compression_flag}C");
 		}
 
 		if (!@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/pfSense.conf", $newsyslogconf)) {
@@ -1499,7 +1520,7 @@ EOD;
 	}
 }
 
-function system_log_rotation_make_line($filename, $mode='644', $count=7, $size=1000, $time='*', $flags='C') {
+function system_log_rotation_make_line($filename, $mode='644', $count=7, $size=1000, $time='*', $flags='C', $pidcmd = '', $signal = '') {
 	/* TODO: Fix default size, flags, etc. */
 	$nslline = $filename;
 	$nslline .= "			{$mode}";
@@ -1507,6 +1528,12 @@ function system_log_rotation_make_line($filename, $mode='644', $count=7, $size=1
 	$nslline .= "	{$size}";
 	$nslline .= "	{$time}";
 	$nslline .= "	{$flags}";
+	if (!empty($pidcmd)) {
+		$nslline .= "	{$pidcmd}";
+	}
+	if (!empty($signal)) {
+		$nslline .= "	{$signal}";
+	}
 	$nslline .= "\n";
 	return $nslline;
 }

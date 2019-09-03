@@ -593,10 +593,11 @@ function manage_log_code() {
 	init_config_arr(array('syslog', $specific_log));
 
 	// Common to All Logs
-	$pconfig['cronorder'] = isset($config['syslog'][$specific_log]['cronorder']) ? $config['syslog'][$specific_log]['cronorder'] : "forward";
-	$pconfig['nentries'] = isset($config['syslog'][$specific_log]['nentries']) ? $config['syslog'][$specific_log]['nentries'] : 50;
-	$pconfig['logfilesize'] = isset($config['syslog'][$specific_log]['logfilesize']) ? $config['syslog'][$specific_log]['logfilesize'] : 511488;
-	$pconfig['format'] = isset($config['syslog'][$specific_log]['format']) ? $config['syslog'][$specific_log]['format'] : "formatted";
+	$pconfig['cronorder'] = isset($config['syslog'][$specific_log]['cronorder']) ? $config['syslog'][$specific_log]['cronorder'] : null;
+	$pconfig['nentries'] = isset($config['syslog'][$specific_log]['nentries']) ? $config['syslog'][$specific_log]['nentries'] : null;
+	$pconfig['logfilesize'] = isset($config['syslog'][$specific_log]['logfilesize']) ? $config['syslog'][$specific_log]['logfilesize'] : null;
+	$pconfig['rotatecount'] = isset($config['syslog'][$specific_log]['rotatecount']) ? $config['syslog'][$specific_log]['rotatecount'] : null;
+	$pconfig['format'] = isset($config['syslog'][$specific_log]['format']) ? $config['syslog'][$specific_log]['format'] : null;
 
 	// Specific to System General (main) Log
 	if ($logfile == 'system') {
@@ -609,7 +610,7 @@ function manage_log_code() {
 		$pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
 		$pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
 		$pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
-		$pconfig['filterdescriptions'] = isset($config['syslog']['filterdescriptions']) ? $config['syslog']['filterdescriptions'] : 1;
+		$pconfig['filterdescriptions'] = isset($config['syslog']['filterdescriptions']) ? $config['syslog']['filterdescriptions'] : null;
 	}
 
 	$save_settings = getGETPOSTsettingvalue('save_settings', null);
@@ -620,6 +621,7 @@ function manage_log_code() {
 		$cronorder = getGETPOSTsettingvalue('cronorder',  null);
 		$nentries = getGETPOSTsettingvalue('nentries', null);
 		$logfilesize = getGETPOSTsettingvalue('logfilesize', null);
+		$rotatecount = getGETPOSTsettingvalue('rotatecount', null);
 		$format  = getGETPOSTsettingvalue('format',  null);
 
 		// Specific to System General (main) Log
@@ -655,6 +657,13 @@ function manage_log_code() {
 				$input_errors[] = gettext("Log file size is too large. Set a smaller value.");
 			}
 		}
+		if (isset($rotatecount) && (strlen($rotatecount) > 0)) {
+			if (!is_numericint($rotatecount) ||
+			    ($rotatecount < 0) ||
+			    ($rotatecount > 99)) {
+				$input_errors[] = gettext("Log Retention Count must be an integer from 0 to 99.");
+			}
+		}
 
 		if (!$input_errors) {
 
@@ -675,6 +684,10 @@ function manage_log_code() {
 
 			if (isset($logfilesize) && (strlen($logfilesize) > 0)) {
 				$config['syslog'][$specific_log]['logfilesize'] = (int)$logfilesize;
+			}
+
+			if (isset($rotatecount) && (strlen($rotatecount) > 0)) {
+				$config['syslog'][$specific_log]['rotatecount'] = (int)$rotatecount;
 			}
 
 			if ($format != '') { # if not using the general logging options setting (global)
@@ -837,12 +850,12 @@ function manage_log_section() {
 	$group->setHelp('This is the number of log entries displayed in the GUI. It does not affect how many entries are contained in the log.');
 	$section->add($group);
 
-	$group = new Form_Group('Log file size (Bytes)');
+	$group = new Form_Group('Log Rotation Size (Bytes)');
 
 	// Use the general logging options setting (global) as placeholder.
 	$group->add(new Form_Input(
 		'logfilesize',
-		'Log file size (Bytes)',
+		'Log Rotation Size (Bytes)',
 		'number',
 		$pconfig['logfilesize'],
 		['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : "511488"]
@@ -850,6 +863,18 @@ function manage_log_section() {
 	$group->setHelp('This field controls the size at which logs will be rotated. By default this is approximately 500KB per log file.%1$s' .
 				'NOTE: Log file sizes are checked once per minute to determine if rotation is necessary, so a very rapidly growing log file may exceed this value. ',
 				'<br /><br />');
+	$section->add($group);
+
+	$group = new Form_Group('Log Retention Count');
+	// Use the general logging options setting (global) as placeholder.
+	$group->add(new Form_Input(
+		'rotatecount',
+		'Log Retention Count',
+		'number',
+		$pconfig['rotatecount'],
+		['min' => 0, 'max' => 99, 'placeholder' => $config['syslog']['rotatecount'] ? $config['syslog']['rotatecount'] : 7]
+	))->setWidth(2);
+	$group->setHelp('The number of log files to keep before the oldest copy is removed on rotation.');
 	$section->add($group);
 
 	$group = new Form_Group('Formatted/Raw Display');

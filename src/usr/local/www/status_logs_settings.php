@@ -37,7 +37,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-global $system_log_compression_types;
+global $system_log_files, $system_log_compression_types;
 
 $pconfig['reverse'] = isset($config['syslog']['reverse']);
 $pconfig['nentries'] = $config['syslog']['nentries'];
@@ -216,10 +216,10 @@ $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("Settings"))
 $pglinks = array("", "status_logs.php", "@self");
 include("head.inc");
 
-$logfilesizeHelp =	gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") .
+$logfilesizeHelp =	gettext("This field controls the size at which logs will be rotated. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") .
 					'<br /><br />' .
-					gettext("NOTE: Log sizes are changed the next time a log file is cleared or deleted. To immediately increase the size of the log files, first save the options to set the size, then clear all logs using the \"Reset Log Files\" option farther down this page. ") .
-					gettext("Be aware that increasing this value increases every log file size, so disk usage will increase significantly.") . '<br /><br />' .
+					gettext("NOTE: Increasing this value allows every log file to grow to the specified size, so disk usage may increase significantly.") . '<br />' .
+					gettext("Log file sizes are checked once per minute to determine if rotation is necessary, so a very rapidly growing log file may exceed this value.") . '<br /><br />' .
 					gettext("Disk space currently used by log files is: ") . exec("/usr/bin/du -sh /var/log | /usr/bin/awk '{print $1;}'") .
 					gettext(" Remaining disk space for log files: ") . exec("/bin/df -h /var/log | /usr/bin/awk '{print $4;}'");
 
@@ -271,22 +271,6 @@ $section->addInput(new Form_Input(
 	$pconfig['nentries'],
 	['placeholder' => '']
 ))->setHelp('This is only the number of log entries displayed in the GUI. It does not affect how many entries are contained in the actual log files.');
-
-$section->addInput(new Form_Input(
-	'logfilesize',
-	'Log file size (Bytes)',
-	'text',
-	$pconfig['logfilesize'],
-	['placeholder' => 'Bytes']
-))->setHelp($logfilesizeHelp);
-
-$section->addInput(new Form_Select(
-	'logcompressiontype',
-	'Log compression',
-	!isset($pconfig['logcompressiontype']) ? 'bzip2' : $pconfig['logcompressiontype'],
-	array_combine(array_keys($system_log_compression_types), array_keys($system_log_compression_types)),
-))->setHelp('The type of compression to use when rotating log files.%s' .
-	' WARNING: Changing this value will remove previously rotated compressed log files!', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'logdefaultblock',
@@ -363,6 +347,25 @@ $section->addInput(new Form_Button(
 	null,
 	'fa-trash'
 ))->addClass('btn-danger btn-sm')->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if any setting changes have been made.');
+
+$form->add($section);
+$section = new Form_Section('Log Rotation Options');
+
+$section->addInput(new Form_Input(
+	'logfilesize',
+	'Log file size (Bytes)',
+	'text',
+	$pconfig['logfilesize'],
+	['placeholder' => 'Bytes']
+))->setHelp($logfilesizeHelp);
+
+$section->addInput(new Form_Select(
+	'logcompressiontype',
+	'Log Compression',
+	!isset($pconfig['logcompressiontype']) ? 'bzip2' : $pconfig['logcompressiontype'],
+	array_combine(array_keys($system_log_compression_types), array_keys($system_log_compression_types)),
+))->setHelp('The type of compression to use when rotating log files.%s' .
+	' WARNING: Changing this value will remove previously rotated compressed log files!', '<br />');
 
 $form->add($section);
 $section = new Form_Section('Remote Logging Options');

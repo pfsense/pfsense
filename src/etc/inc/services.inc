@@ -3,7 +3,9 @@
  * services.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -2221,6 +2223,66 @@ function services_unbound_configure($restart_dhcp = true) {
 		for ($i=1; $i <= 30; $i++) {
 			if (is_process_running('unbound')) {
 				sleep(1);
+			}
+		}
+
+		$python_mode = false;
+		if (isset($config['unbound']['python']) && !empty($config['unbound']['python_script'])) {
+			$python_mode = true;
+		}
+
+		/* Include any additional functions as defined by python script include file */
+		if (file_exists("{$g['unbound_chroot_path']}/{$config['unbound']['python_script']}_include.inc")) {
+			exec("/usr/local/bin/php -l " . escapeshellarg("{$g['unbound_chroot_path']}/{$config['unbound']['python_script']}_include.inc")
+				. " 2>&1", $py_output, $py_retval);
+			if ($py_retval == 0) {
+				require_once("{$g['unbound_chroot_path']}/{$config['unbound']['python_script']}_include.inc");
+			}
+		}
+
+		/* DNS Resolver python integration */
+		$base_folder = '/usr/local';
+		foreach (array('/bin', '/lib') as $dir) {
+			$validate = exec("/sbin/mount | /usr/bin/grep " . escapeshellarg("{$g['unbound_chroot_path']}{$base_folder}{$dir} (nullfs") . " 2>&1");
+			if ($python_mode) {
+
+				// Add DNS Resolver python integration
+				if (empty($validate)) {
+					if (!is_dir("{$g['unbound_chroot_path']}{$base_folder}{$dir}")) {
+						safe_mkdir("{$g['unbound_chroot_path']}{$base_folder}{$dir}");
+					}
+					$output = $retval = '';
+					exec("/sbin/mount_nullfs -o ro " . escapeshellarg("/usr/local{$dir}") . ' '
+					    . escapeshellarg("{$g['unbound_chroot_path']}{$base_folder}{$dir}") . " 2>&1", $output, $retval);
+
+					// Disable Unbound python on mount failure
+					if ($retval != 0) {
+						$config['unbound']['python'] = '';
+						$log_msg = "[Unbound-pymod]: Disabling Unbound python due to failed mount";
+						write_config($log_msg);
+						log_error($log_msg);
+					}
+				}
+			}
+
+			// Remove DNS Resolver python integration
+			elseif (!empty($validate)) {
+				exec("/sbin/umount -t nullfs " . escapeshellarg("{$g['unbound_chroot_path']}{$base_folder}{$dir}") . " 2>&1", $output, $retval);
+				if ($retval == 0) {
+					foreach (array( "/usr/local{$dir}", '/usr/local', '/usr') as $folder) {
+						if (!empty($g['unbound_chroot_path']) && $g['unbound_chroot_path'] != '/' && is_dir("{$g['unbound_chroot_path']}{$folder}")) {
+							@rmdir(escapeshellarg("{$g['unbound_chroot_path']}{$folder}"));
+						}
+
+						// Delete remaining subfolders on next loop
+						if ($dir == '/bin') {
+							break;
+						}
+					}
+				}
+				else {
+					log_error("[Unbound-pymod]: Failed to unmount!");
+				}
 			}
 		}
 

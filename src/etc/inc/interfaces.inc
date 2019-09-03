@@ -3,7 +3,9 @@
  * interfaces.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -1471,12 +1473,10 @@ function interface_ipsec_vti_configure($ph1ent) {
 			continue;
 		}
 		// Create IPsec interface
-		if (platform_booting() || !does_interface_exist($ipsecif)) {
+		if (!platform_booting() && does_interface_exist($ipsecif)) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " destroy", false);
-			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " create reqid " . escapeshellarg($ipsecifnum), false);
-		} else {
-			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " create reqid " . escapeshellarg($ipsecifnum), false);
 		}
+		mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " create reqid " . escapeshellarg($ipsecifnum), false);
 
 		/* Apply the outer tunnel addresses to the interface */
 		$inet = is_ipaddrv6($left_spec) ? "inet6" : "inet";

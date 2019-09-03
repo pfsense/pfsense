@@ -3,7 +3,9 @@
  * filter_log.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -110,7 +112,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 
 	# Get a bunch of log entries.
-	exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | /usr/bin/grep -v \"\033\" | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
+	exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . " | /usr/bin/grep -E {$pattern} | /usr/bin/tail -r -n {$tail}", $logarr);
 
 
 	# Remove escapes and fix up the pattern for preg_match.

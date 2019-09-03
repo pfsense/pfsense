@@ -3,7 +3,9 @@
  * services_dhcpv6.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -1099,7 +1101,7 @@ events.push(function() {
 			    empty($pconfig['ddnsdomain']) &&
 			    empty($pconfig['ddnsdomainprimary']) &&
 			    empty($pconfig['ddnsdomainkeyname']) &&
-			    empty($pconfig['ddnsdomainkeyalgorithm']) &&
+			    (empty($pconfig['ddnsdomainkeyalgorithm'])  || ($pconfig['ddnsdomainkeyalgorithm'] == "hmac-md5")) &&
 			    empty($pconfig['ddnsdomainkey']) &&
 			    (empty($pconfig['ddnsclientupdates']) || ($pconfig['ddnsclientupdates'] == "allow")) &&
 			    !$pconfig['ddnsreverse']) {

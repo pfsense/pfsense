@@ -6,7 +6,9 @@
  * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -959,6 +961,9 @@ function ldap_test_connection($authcfg) {
 		return false;
 	}
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($ldap, $authcfg);
+
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -970,9 +975,6 @@ function ldap_test_connection($authcfg) {
 		return false;
 	}
 
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
-
 	return true;
 }
 
@@ -982,12 +984,12 @@ function ldap_setup_caenv($ldap, $authcfg) {
 
 	unset($caref);
 	if (empty($authcfg['ldap_caref']) || strstr($authcfg['ldap_urltype'], "Standard")) {
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
+		putenv('LDAPTLS_REQCERT=never');
 		return;
 	} elseif ($authcfg['ldap_caref'] == "global") {
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_CACERTDIR, "/etc/ssl/");
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_CACERTFILE, "/etc/ssl/cert.pem");
+		putenv('LDAPTLS_REQCERT=hard');
+		putenv("LDAPTLS_CACERTDIR=/etc/ssl/");
+		putenv("LDAPTLS_CACERT=/etc/ssl/cert.pem");
 	} else {
 		$caref = lookup_ca($authcfg['ldap_caref']);
 		$param = array('caref' => $authcfg['ldap_caref']);
@@ -995,7 +997,7 @@ function ldap_setup_caenv($ldap, $authcfg) {
 		if (!$caref) {
 			log_error(sprintf(gettext("LDAP: Could not lookup CA by reference for host %s."), $authcfg['ldap_caref']));
 			/* XXX: Prevent for credential leaking since we cannot setup the CA env. Better way? */
-			ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
+			putenv('LDAPTLS_REQCERT=hard');
 			return;
 		}
 
@@ -1005,10 +1007,10 @@ function ldap_setup_caenv($ldap, $authcfg) {
 		file_put_contents("{$cert_path}/{$caref['refid']}.ca", $cachain);
 		@chmod("{$cert_path}/{$caref['refid']}.ca", 0600);
 
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
+		putenv('LDAPTLS_REQCERT=hard');
 		/* XXX: Probably even the hashed link should be created for this? */
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_CACERTDIR, $cert_path);
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_CACERTFILE, "{$cert_path}/{$caref['refid']}.ca");
+		putenv("LDAPTLS_CACERTDIR={$g['varrun_path']}/certs");
+		putenv("LDAPTLS_CACERT={$g['varrun_path']}/certs/{$caref['refid']}.ca");
 	}
 }
 
@@ -1045,6 +1047,9 @@ function ldap_test_bind($authcfg) {
 		return false;
 	}
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($ldap, $authcfg);
+
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -1055,9 +1060,6 @@ function ldap_test_bind($authcfg) {
 		log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
 		return false;
 	}
-
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
@@ -1133,6 +1135,9 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 		return $ous;
 	}
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($ldap, $authcfg);
+
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -1143,9 +1148,6 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 		log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
 		return $ous;
 	}
-
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
 
 	$ldapfilter = "(|(ou=*)(cn=Users))";
 
@@ -1278,6 +1280,9 @@ function ldap_get_groups($username, $authcfg) {
 	$ldapgroupattribute = strtolower($ldapgroupattribute);
 	$memberof = array();
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($ldap, $authcfg);
+
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -1288,9 +1293,6 @@ function ldap_get_groups($username, $authcfg) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() Could not connect to server %s."), $ldapname));
 		return $memberof;
 	}
-
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
@@ -1431,14 +1433,14 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		return null;
 	}
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($ldap, $authcfg);
+
 	/* Make sure we can connect to LDAP */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
 		$error = true;
 	}
-
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
@@ -1906,14 +1908,28 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 	$authenticated = false;
 	switch ($authcfg['type']) {
 		case 'ldap':
-			$authenticated = ldap_backed($username, $password, $authcfg, $attributes);
+			try {
+				$authenticated = ldap_backed($username, $password, $authcfg, $attributes);
+			} catch (Exception $e) {
+				log_error(sprintf(gettext("LDAP authentication error: %s"), $e->getMessage()));
+			}
+			break;
+
 			break;
 		case 'radius':
-			$authenticated = radius_backed($username, $password, $authcfg, $attributes);
+			try {
+				$authenticated = radius_backed($username, $password, $authcfg, $attributes);
+			} catch (Exception $e) {
+				log_error(sprintf(gettext("RADIUS authentication error: %s"), $e->getMessage()));
+			}
 			break;
 		default:
 			/* lookup user object by name */
-			$authenticated = local_backed($username, $password, $attributes);
+			try {
+				$authenticated = local_backed($username, $password, $attributes);
+			} catch (Exception $e) {
+				log_error(sprintf(gettext("Local authentication error: %s"), $e->getMessage()));
+			}
 			break;
 		}
 

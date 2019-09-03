@@ -3,7 +3,9 @@
  * system_authservers.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -273,6 +275,11 @@ if ($_POST['save']) {
 
 	if (auth_get_authserver($pconfig['name']) && !isset($id)) {
 		$input_errors[] = gettext("An authentication server with the same name already exists.");
+	}
+
+	if (isset($id) && $config['system']['authserver'][$id] &&
+	   ($config['system']['authserver'][$id]['name'] != $pconfig['name'])) {
+		$input_errors[] = gettext("The name of an authentication server cannot be changed.");
 	}
 
 	if (($pconfig['type'] == "ldap") || ($pconfig['type'] == "radius")) {

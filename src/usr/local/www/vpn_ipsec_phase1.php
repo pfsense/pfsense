@@ -3,7 +3,9 @@
  * vpn_ipsec_phase1.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -1029,14 +1031,12 @@ events.push(function() {
 		if ($('#iketype').val() == 'ikev2') {
 			hideInput('mode', true);
 			hideInput('mobike', false);
-			hideInput('nat_traversal', true);
 			//hideCheckbox('tfc_enable', false);
 			hideCheckbox('reauth_enable', false);
 			hideCheckbox('splitconn', false);
 		} else {
 			hideInput('mode', false);
 			hideInput('mobike', true);
-			hideInput('nat_traversal', false);
 			//hideCheckbox('tfc_enable', true);
 			//hideInput('tfc_bytes', true);
 			hideCheckbox('reauth_enable', true);

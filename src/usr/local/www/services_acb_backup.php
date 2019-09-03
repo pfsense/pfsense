@@ -3,7 +3,9 @@
  * autoconfigbackup_backup.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2008-2015 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,10 +41,10 @@ if ($_POST) {
 	touch("/tmp/forceacb");
 
 	if ($_REQUEST['reason']) {
-		if (write_config($_REQUEST['reason'])) {
+		if (write_config($_REQUEST['reason'] . "-MaNuAlBaCkUp")) {
 			$savemsg = "Backup completed successfully.";
 		}
-	} elseif (write_config("Backup invoked via Auto Config Backup.")) {
+	} elseif (write_config("Backup invoked via Auto Config Backup." . "-MaNuAlBaCkUp")) {
 			$savemsg = "Backup completed successfully.";
 	} else {
 		$savemsg = "Backup not completed - write_config() failed.";
@@ -50,12 +52,6 @@ if ($_POST) {
 
 	$config = parse_config(true);
 	unlink_if_exists("/cf/conf/lastpfSbackup.txt");
-
-	/* The config write above will trigger a fresh upload with the given reason.
-	 * This manual upload appears to be a relic of an older time (1.2.x)
-	 * Leaving it just in case it needs to be resurrected
-	 */
-	//upload_config($_REQUEST['reason']);
 
 	$donotshowheader = true;
 }

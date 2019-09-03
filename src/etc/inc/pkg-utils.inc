@@ -4,7 +4,9 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005-2006 Colin Smith (ethethlay@gmail.com)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1472,7 +1474,6 @@ function update_repos() {
 				// Gather some information about the system so the proper repo can be returned
 				$nid = file_get_contents($idfile);
 				$serial = system_get_serial();
-				$arch = php_uname('p');
 
 				$base_pkg = get_base_pkg_name();
 
@@ -1486,10 +1487,15 @@ function update_repos() {
 						}
 					}
 
-				$version = $pkg_info['installed_version'];
+				// Compose a version string in JSON format
+				$os = php_uname('s');
+				$osver = php_uname('r');
+				$v = strtolower(php_uname('v'));
+				$ed =  (strpos($v, 'factory') !== false) ? "Factory":"Community";
+				$version = "{\"os\":\"" . $os . "\",\"osver\":\"" . $osver . "\",\"prod\":\"pfSense\"," . "\"ver\":\"" . $info[0]['version'] . "\",\"ed\":\"" . $ed . "\"}";
+
+				$arch =  php_uname('m');
 				$locale = $config['system']['language'];
-				// Architecture comes from the last word in the uname output
-				$arch = array_pop(explode(' ', php_uname('p')));
 
 				$post = ['uid' => $nid,
 						 'language' => $locale,

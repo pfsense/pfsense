@@ -3,7 +3,9 @@
  * system_advanced_notifications.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -93,7 +95,7 @@ if ($_POST) {
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 
-		if ($_POST['smtppassword'] != DMYPWD) {
+		if (strcmp($_POST['smtppassword'], DMYPWD)!= 0) {
 			if ($_POST['smtppassword'] == $_POST['smtppassword_confirm']) {
 				$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
 			} else {

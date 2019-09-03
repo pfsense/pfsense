@@ -3,7 +3,9 @@
  * system_certmanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -246,7 +248,7 @@ if ($_POST['save']) {
 				gettext("Key length"),
 				gettext("Certificate Type"),
 				gettext("Lifetime"),
-				gettext("Distinguished name Common Name"));
+				gettext("Common Name"));
 		}
 
 		if ($pconfig['method'] == "external") {
@@ -255,7 +257,7 @@ if ($_POST['save']) {
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Key length"),
-				gettext("Distinguished name Common Name"));
+				gettext("Common Name"));
 		}
 
 		if ($pconfig['method'] == "existing") {

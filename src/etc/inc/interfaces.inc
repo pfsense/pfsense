@@ -1325,7 +1325,7 @@ function get_ipsecifnum($ikeid, $idx, $create=true) {
 		return(NULL);
 	}
 	
-	if (($ikeid < 33) && ($idx < 10)) {
+	if ((($ikeid < 33) && ($idx < 10)) || (($ikeid < 10) && ($idx < 100))) {
 		$oldformat = "{$ikeid}00{$idx}";
 		$config['ipsec']['vtimaps'][]=array(
 			"reqid" => $ikeid,

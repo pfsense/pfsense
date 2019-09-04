@@ -488,6 +488,7 @@ EOD;
 
 				if (isset($package['logging']['logfilename'])) {
 
+					$pkg_log_owner = isset($package['logging']['logowner']) ? $package['logging']['logowner'] : 'root:wheel';
 					$pkg_log_mode = isset($package['logging']['logmode']) ? $package['logging']['logmode'] : 600;
 					$pkg_rotate_count = isset($package['logging']['rotatecount']) ? (int) $package['logging']['rotatecount'] : $rotatecount;
 					$pkg_log_size = isset($package['logging']['logfilesize']) ? (int) $package['logging']['logfilesize'] / 1024: $log_size;
@@ -498,6 +499,7 @@ EOD;
 
 					$pkgnewsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
 					$pkgnewsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$package['logging']['logfilename']}",
+												$pkg_log_owner,
 												$pkg_log_mode,
 												$pkg_rotate_count,
 												$pkg_log_size,
@@ -514,7 +516,7 @@ EOD;
 			$local_log_size = isset($syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize']) ? (int) $syslogcfg[basename($logfile, '.log') . '_settings']['logfilesize'] / 1024: $log_size;
 			$local_rotate_count = isset($syslogcfg[basename($logfile, '.log') . '_settings']['rotatecount']) ? (int) $syslogcfg[basename($logfile, '.log') . '_settings']['rotatecount'] : $rotatecount;
 
-			$newsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$logfile}.log", 600, $local_rotate_count, $local_log_size, '*', "{$compression_flag}C");
+			$newsyslogconf .= system_log_rotation_make_line("{$g['varlog_path']}/{$logfile}.log", 'root:wheel', 600, $local_rotate_count, $local_log_size, '*', "{$compression_flag}C");
 		}
 
 		if (!@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/pfSense.conf", $newsyslogconf)) {
@@ -524,10 +526,11 @@ EOD;
 	}
 }
 
-function system_log_rotation_make_line($filename, $mode='644', $count=7, $size=1000, $time='*', $flags='C', $pidcmd = '', $signal = '') {
+function system_log_rotation_make_line($filename, $owner = 'root:wheel', $mode='644', $count=7, $size=1000, $time='*', $flags='C', $pidcmd = '', $signal = '') {
 	/* TODO: Fix default size, flags, etc. */
 	$nslline = $filename;
-	$nslline .= "			{$mode}";
+	$nslline .= "		{$owner}";
+	$nslline .= "	{$mode}";
 	$nslline .= "	{$count}";
 	$nslline .= "	{$size}";
 	$nslline .= "	{$time}";

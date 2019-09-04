@@ -1318,7 +1318,7 @@ function get_ipsecifnum($ikeid, $idx, $create=true) {
 	});
 	$existing = array_pop($matches);
 	if (isset($existing['ifnum'])) {
-		return $existing;
+		return $existing['ifnum'];
 	}
 
 	if (!($create)) {
@@ -1339,7 +1339,7 @@ function get_ipsecifnum($ikeid, $idx, $create=true) {
 	$assigned = array_column($config['ipsec']['vtimaps'], 'ifnum'); 
 	asort($assigned, SORT_NUMERIC);
 	$new = 1;
-	foreach($assinged as $ipsecifnum) {
+	foreach($assigned as $ipsecifnum) {
 		if ($ipsecifnum != $new) {
 			$config['ipsec']['vtimaps'][]=array(
 				"reqid" => $ikeid,

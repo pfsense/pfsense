@@ -1308,10 +1308,10 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 }
 
 /*
- * $ipsecifnum = get_ipsecifnum($ikeid,$idx);
+ * $ipsecifnum = get_ipsecifnum($ikeid, $idx, $create=true);
  * locates or creates and returns an ipsecifnum in the config.
  */
-function get_ipsecifnum($ikeid,$idx) {
+function get_ipsecifnum($ikeid, $idx, $create=true) {
 	global $config;
 	$matches = array_filter($config['ipsec']['vtimaps'], function($val) use($ikeid, $idx){
               return ($val['reqid']==$ikeid and $val['index']==$idx);
@@ -1319,6 +1319,10 @@ function get_ipsecifnum($ikeid,$idx) {
 	$existing = array_pop($matches);
 	if (isset($existing['ifnum'])) {
 		return $existing;
+	}
+
+	if (!($create)) {
+		return(NULL);
 	}
 	
 	if (($ikeid < 33) && ($idx < 10)) {
@@ -1404,11 +1408,11 @@ function is_interface_ipsec_vti_assigned($phase2) {
 				/* Is this for this P2? */
 				if (($vtisub['left'] == ipsec_idinfo_to_cidr($phase2['localid'], true, $phase2['mode'])) &&
 				    ($vtisub['right'] == ipsec_idinfo_to_cidr($phase2['remoteid'], false, $phase2['mode']))) {
-					$vti_interface = "ipsec".get_ipsecifnum($phase1['ikeid'],$idx);
+					$vti_interface = "ipsec".get_ipsecifnum($phase1['ikeid'], $idx, false);
 				}
 			}
 		} else {
-			$vti_interface = "ipsec".get_ipsecifnum($phase1['ikeid'],0);
+			$vti_interface = "ipsec".get_ipsecifnum($phase1['ikeid'], 0, false);
 		}
 	}
 	/* Check if this interface is assigned */

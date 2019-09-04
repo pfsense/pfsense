@@ -1404,11 +1404,11 @@ function is_interface_ipsec_vti_assigned($phase2) {
 				/* Is this for this P2? */
 				if (($vtisub['left'] == ipsec_idinfo_to_cidr($phase2['localid'], true, $phase2['mode'])) &&
 				    ($vtisub['right'] == ipsec_idinfo_to_cidr($phase2['remoteid'], false, $phase2['mode']))) {
-					$vti_interface = "ipsec".get_ipsecifnum($ph1ent['ikeid'],$idx);
+					$vti_interface = "ipsec".get_ipsecifnum($phase1['ikeid'],$idx);
 				}
 			}
 		} else {
-			$vti_interface = "ipsec".get_ipsecifnum($ph1ent['ikeid'],0);
+			$vti_interface = "ipsec".get_ipsecifnum($phase1['ikeid'],0);
 		}
 	}
 	/* Check if this interface is assigned */

@@ -1360,10 +1360,11 @@ function interface_gif_configure(&$gif, $gifkey = "") {
  */
 function get_ipsecifnum($ikeid,$idx) {
 	global $config;
-	$existing = array_filter($config['ipsec']['vtimaps'], function($val) use($ikeid, $idx){
+	$matches = array_filter($config['ipsec']['vtimaps'], function($val) use($ikeid, $idx){
               return ($val['reqid']==$ikeid and $val['index']==$idx);
-	})[1]['ifnum'];
-	if (isset($existing)) {
+	});
+	$existing = array_pop($matches);
+	if (isset($existing['ifnum'])) {
 		return $existing;
 	}
 	

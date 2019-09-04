@@ -36,6 +36,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("status_logs_common.inc");
 
 global $system_log_compression_types;
 
@@ -249,18 +250,7 @@ if ($changes_applied) {
 	print_apply_result_box($retval, $extra_save_msg);
 }
 
-$tab_array = array();
-$tab_array[] = array(gettext("System"), false, "status_logs.php");
-$tab_array[] = array(gettext("Firewall"), false, "status_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "status_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Captive Portal Auth"), false, "status_logs.php?logfile=portalauth");
-$tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
-$tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
-$tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
-$tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
-$tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
-$tab_array[] = array(gettext("Settings"), true, "status_logs_settings.php");
-display_top_tabs($tab_array);
+tab_array_logs_common();
 
 $form = new Form();
 

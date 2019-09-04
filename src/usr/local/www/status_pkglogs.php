@@ -42,6 +42,7 @@
 
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
+require_once("status_logs_common.inc");
 
 if (!($nentries = $config['syslog']['nentries'])) {
 	$nentries = 50;
@@ -78,6 +79,8 @@ if ($pkgwithlogging && !empty($apkg)) {
 	$pglinks[] = "@self";
 }
 include("head.inc");
+
+tab_array_logs_common();
 
 if ($pkgwithlogging == false) {
 	print_info_box(gettext("No packages with logging facilities are currently installed."));

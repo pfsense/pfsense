@@ -44,27 +44,20 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */
 	$logarr = "";
 
-	     if ($logfile == "{$g['varlog_path']}/system.log")		{ $logfile_type = "system"; }
-	else if ($logfile == "{$g['varlog_path']}/gateways.log")	{ $logfile_type = "system"; }
-	else if ($logfile == "{$g['varlog_path']}/routing.log")		{ $logfile_type = "system"; }
-	else if ($logfile == "{$g['varlog_path']}/resolver.log")	{ $logfile_type = "system"; }
-	else if ($logfile == "{$g['varlog_path']}/wireless.log")	{ $logfile_type = "system"; }
-
-	else if ($logfile == "{$g['varlog_path']}/filter.log")		{ $logfile_type = "firewall"; }
-	else if ($logfile == "{$g['varlog_path']}/dhcpd.log")		{ $logfile_type = "system"; }
-	else if ($logfile == "{$g['varlog_path']}/portalauth.log")	{ $logfile_type = "system"; }
-	else if ($logfile == "{$g['varlog_path']}/ipsec.log")		{ $logfile_type = "system"; }
-	else if ($logfile == "{$g['varlog_path']}/ppp.log")			{ $logfile_type = "system"; }
-
-	else if ($logfile == "{$g['varlog_path']}/vpn.log")			{ $logfile_type = "vpn_login"; }
-	else if ($logfile == "{$g['varlog_path']}/poes.log")		{ $logfile_type = "vpn_service"; }
-	else if ($logfile == "{$g['varlog_path']}/l2tps.log")		{ $logfile_type = "vpn_service"; }
-
-	else if ($logfile == "{$g['varlog_path']}/openvpn.log")		{ $logfile_type = "system"; }
-	else if ($logfile == "{$g['varlog_path']}/ntpd.log")		{ $logfile_type = "system"; }
-
-	else 														{ $logfile_type = "unknown"; }
-
+	$logtypecheck = preg_replace('/\.log$/', '', basename($logfile));
+	if (in_array($logtypecheck, array('system', 'gateways', 'routing', 'resolver', 'wireless', 'nginx', 'dmesg.boot', 'portalauth', 'dhcpd', 'ipsec', 'ppp', 'openvpn', 'ntpd', 'userlog'))) {
+		$logfile_type = "system";
+	} elseif (in_array($logtypecheck, array('filter'))) {
+		$logfile_type = "firewall";
+	} elseif (in_array($logtypecheck, array('vpn'))) {
+		$logfile_type = "vpn_login";
+	} elseif (in_array($logtypecheck, array('poes', 'l2tps'))) {
+		$logfile_type = "vpn_service";
+	} elseif (in_array($logtypecheck, array('utx'))) {
+		$logfile_type = "utx";
+	} else {
+		$logfile_type = "unknown";
+	}
 
 # Common Regular Expression Patterns
 	$month_pattern = "[a-zA-Z]{3}";
@@ -110,10 +103,15 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 		$pattern = "^\(.*\)$";
 	}
 
-
-	# Get a bunch of log entries.
-	exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . " | /usr/bin/grep -E {$pattern} | /usr/bin/tail -r -n {$tail}", $logarr);
-
+	if ($logfile_type != 'utx') {
+		# Get a bunch of log entries.
+		exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . " | /usr/bin/grep -E {$pattern} | /usr/bin/tail -r -n {$tail}", $logarr);
+	} else {
+		$_gb = exec("/usr/bin/last --libxo=json", $rawdata, $rc);
+		if ($rc == 0) {
+			$logarr = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
+		}
+	}
 
 	# Remove escapes and fix up the pattern for preg_match.
 	$pattern = '/' . $pattern . '/';
@@ -132,12 +130,29 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 			break;
 		}
 
-		     if ($logfile_type == 'firewall')		{ $flent = parse_firewall_log_line($logent); }
-		else if ($logfile_type == 'system')			{ $flent = parse_system_log_line($logent); }
-		else if ($logfile_type == 'vpn_login')		{ $flent = parse_vpn_login_log_line($logent); }
-		else if ($logfile_type == 'vpn_service')	{ $flent = parse_vpn_service_log_line($logent); }
-		else if ($logfile_type == 'unknown')		{ $flent = parse_unknown_log_line($logent); }
-		else 										{ $flent = array(); }
+		switch($logfile_type) {
+			case 'firewall':
+				$flent = parse_firewall_log_line($logent);
+				break;
+			case 'system':
+				$flent = parse_system_log_line($logent);
+				break;
+			case 'vpn_login':
+				$flent = parse_vpn_login_log_line($logent);
+				break;
+			case 'vpn_service':
+				$flent = parse_vpn_service_log_line($logent);
+				break;
+			case 'utx':
+				$flent = parse_utx_log_line($logent);
+				break;
+			case 'unknown':
+				$flent = parse_unknown_log_line($logent);
+				break;
+			default:
+				$flent = array();
+				break;
+		}
 
 		if (!$filterinterface || ($filterinterface == $flent['interface'])) {
 			if ((($flent != "") && (!is_array($filtertext)) && (match_filter_line($flent, $filtertext))) ||
@@ -251,6 +266,20 @@ function parse_vpn_service_log_line($line) {
 		}
 		return "";
 	}
+}
+
+function parse_utx_log_line($line) {
+	$flent['time'] = "{$line['login-time']}";
+	if ($line['logout-time']) {
+		$flent['time'] .= " - {$line['logout-time']}";
+	}
+	$flent['host'] = $line['from'];
+	$flent['pid'] = $line['tty'];
+	$flent['message'] = $line['user'];
+	if ($line['session-length']) {
+		$flent['message'] .= " {$line['session-length']}";
+	}
+	return $flent;
 }
 
 function parse_unknown_log_line($line) {

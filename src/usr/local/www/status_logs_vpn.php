@@ -229,7 +229,7 @@ if (!$rawfilter) {
 	</div>
 	<div class="panel-body">
 		<pre><?php
-			$rows = dump_log_no_table($logfile_path, $nentries, true, array($filtertext));
+			$rows = dump_log($logfile_path, $nentries, true, array($filtertext), null, 'notable');
 		?></pre>
 
 <script type="text/javascript">

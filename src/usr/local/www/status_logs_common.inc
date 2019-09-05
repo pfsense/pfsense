@@ -34,7 +34,11 @@ function status_logs_common_code() {
 	global $g, $config, $user_settings, $specific_log, $nentries, $rawfilter, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;
 	global $system_logs_filter_form_hidden, $system_logs_manage_log_form_hidden, $view;
 
-	$logfile_path = "{$g['varlog_path']}/" . basename($logfile) . ".log";
+	$logfile_path = "{$g['varlog_path']}/" . basename($logfile);
+	/* Only add .log suffix if necessary */
+	if (!in_array($logfile, array('userlog', 'dmesg.boot'))) {
+		$logfile_path .= ".log";
+	}
 
 	$specific_log = basename($logfile) . '_settings';
 
@@ -82,7 +86,8 @@ function status_logs_common_code() {
 function tab_array_logs_common() {
 	global $tab_array, $logfile, $vpntype, $view;
 
-	$is_system_log = in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless'));
+	$is_system_log = in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless', 'nginx', 'dmesg.boot'));
+	$is_auth_log = in_array($logfile, array('portalauth', 'utx', 'userlog'));
 	$is_filter_log = in_array($logfile, array('filter'));
 	$is_pppoe_l2tp_vpn_log = in_array($logfile, array('poes', 'l2tps', 'vpn'));
 
@@ -90,10 +95,10 @@ function tab_array_logs_common() {
 	$tab_array[] = array(gettext("System"), $is_system_log, "status_logs.php");
 	$tab_array[] = array(gettext("Firewall"), $is_filter_log, "status_logs_filter.php");
 	$tab_array[] = array(gettext("DHCP"), ($logfile == 'dhcpd'), "status_logs.php?logfile=dhcpd");
-	$tab_array[] = array(gettext("Captive Portal Auth"), ($logfile == 'portalauth'), "status_logs.php?logfile=portalauth");
+	$tab_array[] = array(gettext("Authentication"), $is_auth_log, "status_logs.php?logfile=portalauth");
 	$tab_array[] = array(gettext("IPsec"), ($logfile == 'ipsec'), "status_logs.php?logfile=ipsec");
 	$tab_array[] = array(gettext("PPP"), ($logfile == 'ppp'), "status_logs.php?logfile=ppp");
-	$tab_array[] = array(gettext("VPN"), $is_pppoe_l2tp_vpn_log, "status_logs_vpn.php");
+	$tab_array[] = array(gettext("PPPoE/L2TP Server"), $is_pppoe_l2tp_vpn_log, "status_logs_vpn.php");
 	$tab_array[] = array(gettext("OpenVPN"), ($logfile == 'openvpn'), "status_logs.php?logfile=openvpn");
 	$tab_array[] = array(gettext("NTP"), ($logfile == 'ntpd'), "status_logs.php?logfile=ntpd");
 	$tab_array[] = array(gettext("Packages"), (basename($_SERVER["SCRIPT_FILENAME"]) == "status_logs_packages.php"), "status_logs_packages.php");
@@ -107,13 +112,23 @@ function tab_array_logs_common() {
 		$tab_array[] = array(gettext("Routing"), ($logfile == 'routing'), "/status_logs.php?logfile=routing");
 		$tab_array[] = array(gettext("DNS Resolver"), ($logfile == 'resolver'), "/status_logs.php?logfile=resolver");
 		$tab_array[] = array(gettext("Wireless"), ($logfile == 'wireless'), "/status_logs.php?logfile=wireless");
-	}
-	else if ($is_filter_log) {
+		$tab_array[] = array(gettext("GUI Service"), ($logfile == 'nginx'), "/status_logs.php?logfile=nginx");
+		$tab_array[] = array(gettext("OS Boot"), ($logfile == 'dmesg.boot'), "/status_logs.php?logfile=dmesg.boot");
+	} else if ($is_auth_log) {
+		$tab_array[] = array(gettext("Captive Portal Auth"), ($logfile == 'portalauth'), "status_logs.php?logfile=portalauth");
+		$tab_array[] = array(gettext("PPPoE Logins"),
+					(($logfile == 'vpn') && ($vpntype == "poes")),
+					"/status_logs_vpn.php?logfile=vpn&amp;vpntype=poes");
+		$tab_array[] = array(gettext("L2TP Logins"),
+					(($logfile == 'vpn') && ($vpntype == "l2tp")),
+					"/status_logs_vpn.php?logfile=vpn&amp;vpntype=l2tp");
+		$tab_array[] = array(gettext("OS User Events"), ($logfile == 'utx'), "status_logs.php?logfile=utx");
+		$tab_array[] = array(gettext("OS Account Changes"), ($logfile == 'userlog'), "status_logs.php?logfile=userlog");
+	} else if ($is_filter_log) {
 		$tab_array[] = array(gettext("Normal View"), ($view == 'normal'), "/status_logs_filter.php");
 		$tab_array[] = array(gettext("Dynamic View"), ($view == 'dynamic'), "/status_logs_filter_dynamic.php?logfile=filter&amp;view=dynamic");
 		$tab_array[] = array(gettext("Summary View"), ($view == 'summary'), "/status_logs_filter_summary.php?logfile=filter&amp;view=summary");
-	}
-	else if ($is_pppoe_l2tp_vpn_log) {
+	} else if ($is_pppoe_l2tp_vpn_log) {
 		$tab_array[] = array(gettext("PPPoE Logins"),
 					(($logfile == 'vpn') && ($vpntype == "poes")),
 					"/status_logs_vpn.php?logfile=vpn&amp;vpntype=poes");
@@ -165,12 +180,9 @@ function system_log_filter() {
 	global $rawfilter, $filtersubmit, $filterlogentries_submit, $filterlog, $nentries;
 	global $logfile_path, $filtertext, $filterfieldsarray, $interfacefilter, $inverse, $rows;
 
-	if ($rawfilter) {
-		if (($filtersubmit) || ($filterlogentries_submit)) {
-			$rows = dump_log($logfile_path, $nentries, true, array("$filtertext"), $inverse);
-		} else {
-			$rows = dump_log($logfile_path, $nentries, true, array(), $inverse);
-		}
+	if ($rawfilter && (basename($logfile_path) != 'utx.log')) {
+		$filtertext = (($filtersubmit) || ($filterlogentries_submit)) ? $filtertext : null;
+		$rows = dump_log($logfile_path, $nentries, true, array($filtertext), $inverse, 'raw');
 	} else {
 		if (($filtersubmit) || ($filterlogentries_submit)) {
 			$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);

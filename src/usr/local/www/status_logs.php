@@ -62,6 +62,14 @@ $allowed_logs = array(
 		    "shortcut" => "resolver"),
 	"wireless" => array("name" => gettext("Wireless"),
 		    "shortcut" => "wireless"),
+	"nginx" => array("name" => gettext("GUI Service"),
+		    "shortcut" => ""),
+	"dmesg.boot" => array("name" => gettext("OS Boot"),
+		    "shortcut" => ""),
+	"utx" => array("name" => gettext("OS User Events"),
+		    "shortcut" => ""),
+	"userlog" => array("name" => gettext("OS Account Changes"),
+		    "shortcut" => ""),
 );
 
 // The logs to display are specified in a REQUEST argument. Default to 'system' logs
@@ -92,13 +100,21 @@ if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
 }
 
-if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless'))) {
+if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless', 'nginx', 'dmesg.boot'))) {
 	$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("System"), $allowed_logs[$logfile]["name"]);
+	$pglinks = array("", "status_logs.php", "status_logs.php", "@self");
+} elseif (in_array($logfile, array('portalauth', 'utx', 'userlog'))) {
+	$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("Authentication"), $allowed_logs[$logfile]["name"]);
 	$pglinks = array("", "status_logs.php", "status_logs.php", "@self");
 } else {
 	$pgtitle = array(gettext("Status"), gettext("System Logs"), $allowed_logs[$logfile]["name"]);
 	$pglinks = array("", "status_logs.php", "@self");
 }
+
+if (in_array($logfile, array('userlog', 'dmesg.boot'))) {
+	$rawfilter = true;
+}
+
 include("head.inc");
 
 if ($changes_applied) {

@@ -545,101 +545,7 @@ function system_log_rotation_make_line($filename, $owner = 'root:wheel', $mode='
 	return $nslline;
 }
 
-// This version of dump_log() does not output <td></td> or any other table elements.
-function dump_log_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
-	global $g, $config;
-	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
-	$specific_log = basename($logfile, '.log') . '_settings';
-	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
-	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
-	$logarr = array();
-	$grepline = "  ";
-	if (is_array($grepfor)) {
-		$invert = '';
-		if ((strpos($grepfor[0], '!') === 0)) {
-			$grepfor[0] = substr($grepfor[0], 1);
-			$invert = '-v';
-		}
-		$grepline .= " | /usr/bin/egrep {$invert} " . escapeshellarg(implode("|", $grepfor));
-	}
-	if (is_array($grepinvert)) {
-		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
-	}
-	if (is_dir($logfile)) {
-		$logarr = array(sprintf(gettext("File %s is a directory."), $logfile));
-	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
-		$logarr = array(gettext("Log file started."));
-	} else {
-		exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-	}
-	echo "\n";
-
-	$rows = 0;
-	foreach ($logarr as $logent) {
-		$rows++;
-		$logent = preg_split("/\s+/", $logent, 6);
-
-		if ($withorig) {
-				$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-				$entry_text = ($logent[3] ==  $config['system']['hostname']) ? "" : $logent[3] . " ";
-				$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
-				echo "{$entry_date_time}";
-				echo " " . "{$entry_text}"	. "\n";
-		} else {
-				echo htmlspecialchars($logent[5]) . "\n";
-		}
-
-	}
-	return($rows);
-}
-
-function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
-	global $g, $config;
-	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
-	$specific_log = basename($logfile, '.log') . '_settings';
-	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
-	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
-	$logarr = array();
-	$grepline = "  ";
-	if (is_array($grepfor)) {
-		$invert = '';
-		if ((strpos($grepfor[0], '!') === 0)) {
-			$grepfor[0] = substr($grepfor[0], 1);
-			$invert = '-v';
-		}
-		$grepline .= " | /usr/bin/egrep {$invert} " . escapeshellarg(implode("|", $grepfor));
-	}
-	if (is_array($grepinvert)) {
-		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
-	}
-	if (is_dir($logfile)) {
-		$logarr = array(sprintf(gettext("File %s is a directory."), $logfile));
-	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
-		$logarr = array(gettext("Log file started."));
-	} else {
-		exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-	}
-
-	$rows = 0;
-	foreach ($logarr as $logent) {
-		$rows++;
-		$logent = preg_split("/\s+/", $logent, 6);
-		echo "<tr>\n";
-		if ($withorig) {
-			$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-			$entry_text = ($logent[3] == $config['system']['hostname']) ? "" : $logent[3] . " ";
-			$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
-			echo "<td class=\"text-nowrap\">{$entry_date_time}</td>\n";
-			echo "<td style=\"word-wrap:break-word; word-break:break-all; white-space:normal\">{$entry_text}</td>\n";
-		} else {
-				echo "<td>" . htmlspecialchars($logent[5]) . "</td>\n";
-		}
-		echo "</tr>\n";
-	}
-	return($rows);
-}
-
-function return_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
+function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $format = 'table', $grepreverse = false) {
 	global $g, $config;
 	$sor = (isset($config['syslog']['reverse']) || $grepreverse) ? "-r" : "";
 	$specific_log = basename($logfile, '.log') . '_settings';
@@ -648,23 +554,82 @@ function return_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinver
 	$logarr = array();
 	$grepline = "  ";
 	if (is_array($grepfor)) {
-		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
+		$invert = '';
+		if ((strpos($grepfor[0], '!') === 0)) {
+			$grepfor[0] = substr($grepfor[0], 1);
+			$invert = '-v';
+		}
+		$grepline .= " | /usr/bin/egrep {$invert} " . escapeshellarg(implode("|", $grepfor));
 	}
 	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	}
-	exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-	return($logarr);
+	if (is_dir($logfile)) {
+		$logarr = array(sprintf(gettext("File %s is a directory."), $logfile));
+	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
+		$logarr = array(gettext("Log file started."));
+	} else {
+		exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
+	}
+
+	if ($format == 'none') {
+		return($logarr);
+	}
+
+	$rows = 0;
+	foreach ($logarr as $logent) {
+		$rows++;
+
+		/* Determine log entry content */
+		$splitlogent = preg_split("/\s+/", $logent, 6);
+		$entry_date_time = "";
+		if ($format == 'raw') {
+			$entry_text = $logent;
+		} elseif ($withorig) {
+			$entry_date_time = htmlspecialchars(join(" ", array_slice($splitlogent, 0, 3)));
+			$entry_text = ($splitlogent[3] == $config['system']['hostname']) ? "" : $splitlogent[3] . " ";
+			$entry_text .= $splitlogent[4] . " " . $splitlogent[5];
+		} else {
+			$entry_text = $splitlogent[5];
+		}
+		$entry_text = htmlspecialchars($entry_text);
+
+		/* Output content in desired format. */
+		switch ($format) {
+			case 'notable':
+				echo implode(' ', array($entry_date_time, $entry_text)) . "\n";
+				break;
+			case 'raw':
+				$span = 'colspan="2"';
+			case 'table':
+			default:
+				echo "<tr>\n";
+				if (!empty($entry_date_time)) {
+					echo "	<td class=\"text-nowrap\">{$entry_date_time}</td>\n";
+				}
+				echo "	<td {$span} style=\"word-wrap:break-word; word-break:break-all; white-space:normal\">{$entry_text}</td>\n";
+				echo "</tr>\n";
+				break;
+		}
+	}
+
+	return($rows);
 }
 
 /* Compatibility stubs for old clog functions until packages catch up.
  * Remove once packages all use the new function names. */
 function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
-	return dump_log_no_table($logfile, $tail, $withorig, $grepfor, $grepinvert);
+	return dump_log($logfile, $tail, $withorig, $grepfor, $grepinvert, $format = 'notable');
+}
+function dump_log_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
+	return dump_log($logfile, $tail, $withorig, $grepfor, $grepinvert, $format = 'notable');
 }
 function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	return dump_log($logfile, $tail, $withorig, $grepfor, $grepinvert);
 }
 function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
-	return return_log($logfile, $tail, $withorig, $grepfor, $grepinvert, $grepreverse);
+	return dump_log($logfile, $tail, $withorig, $grepfor, $grepinvert, $format = 'none', $grepreverse);
+}
+function return_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
+	return dump_log($logfile, $tail, $withorig, $grepfor, $grepinvert, $format = 'none', $grepreverse);
 }

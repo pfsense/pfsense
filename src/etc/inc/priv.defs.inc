@@ -976,7 +976,7 @@ $priv_list['page-status-packagelogs'] = array();
 $priv_list['page-status-packagelogs']['name'] = gettext("WebCfg - Status: Package logs");
 $priv_list['page-status-packagelogs']['descr'] = gettext("Allow access to the 'Status: Package logs' page.");
 $priv_list['page-status-packagelogs']['match'] = array();
-$priv_list['page-status-packagelogs']['match'][] = "status_pkglogs.php*";
+$priv_list['page-status-packagelogs']['match'][] = "status_logs_packages.php*";
 
 $priv_list['page-status-trafficshaper-queues'] = array();
 $priv_list['page-status-trafficshaper-queues']['name'] = gettext("WebCfg - Status: Traffic Shaper: Queues");

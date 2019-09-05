@@ -1,6 +1,6 @@
 <?php
 /*
- * status_pkglogs.php
+ * status_logs_packages.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
@@ -78,7 +78,7 @@
 ##|*IDENT=page-status-packagelogs
 ##|*NAME=Status: Package logs
 ##|*DESCR=Allow access to the 'Status: Package logs' page.
-##|*MATCH=status_pkglogs.php*
+##|*MATCH=status_logs_packages.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
@@ -129,7 +129,7 @@ if ($filtertext) {
 }
 
 $pgtitle = array(gettext("Status"), gettext("Package Logs"));
-$pglinks = array("", "status_pkglogs.php");
+$pglinks = array("", "status_logs_packages.php");
 
 if ($pkgwithlogging && !empty($apkg)) {
 	$pgtitle[] = $apkg;
@@ -156,9 +156,9 @@ if ($pkgwithlogging == false) {
 
 			if ($apkg == $package['name']) {
 				$curtab = $logtab;
-				$tab_array[] = array(sprintf(gettext("%s"), $logtab), true, "status_pkglogs.php?pkg=".$package['name']);
+				$tab_array[] = array(sprintf(gettext("%s"), $logtab), true, "status_logs_packages.php?pkg=".$package['name']);
 			} else {
-				$tab_array[] = array(sprintf(gettext("%s"), $logtab), false, "status_pkglogs.php?pkg=".$package['name']);
+				$tab_array[] = array(sprintf(gettext("%s"), $logtab), false, "status_logs_packages.php?pkg=".$package['name']);
 			}
 			$allowed_logs[$package['logging']['logfilename']] = array(
 				"name" => gettext($logtab),

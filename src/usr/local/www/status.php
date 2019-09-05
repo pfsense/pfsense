@@ -218,7 +218,8 @@ function get_firewall_info() {
 		}
 	}
 
-	if (function_exists("system_get_thothid")) {
+	if (function_exists("system_get_thothid") &&
+	    (php_uname("m") == "arm64")) {
 		$thothid = system_get_thothid();
 		if (!empty($thothid)) {
 			$firewall_info .= "<br/>Netgate Crypto ID: " . htmlspecialchars(chop($thothid));
@@ -270,7 +271,8 @@ global $g, $config;
 /* Set up all of the commands we want to execute. */
 
 /* OS stats/info */
-if (function_exists("system_get_thothid")) {
+if (function_exists("system_get_thothid") &&
+    (php_uname("m") == "arm64")) {
 	$thothid = system_get_thothid();
 	if (!empty($thothid)) {
 		defCmdT("Product-Public Key", "/usr/local/sbin/ping-auth -p");

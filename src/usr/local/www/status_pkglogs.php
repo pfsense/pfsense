@@ -23,13 +23,54 @@
  */
 
 /*
-	<logging>
-		<logtab>arpwatch</logtab>
-		<grepfor>arpwatch</logtab>
-	</logging>
+	To add logging support to a package, add the following to the info.xml
+	file for a package under files/usr/local/share/<package port name>/info.xml
+	inside the <package>...</package> tag:
 
-		<invertgrep/>
-		<logfile>/var/log/arpwatch.log</logfile>
+	<logging>
+		<!-- Name of the logging tab on this page -->
+		<logtab>arpwatch</logtab>
+
+		<!-- syslog facility name to use in the syslog configuration.
+			Can be multiple values, comma separated (no spaces) -->
+		<facilityname>programname</facilityname>
+
+		<!-- Filename for the package log, relative to /var/log -->
+		<logfilename>filename.log</logfilename>
+
+		<!-- Add a syslogd log socket directory -->
+		<logsocket>/path/to/pkgchroot/var/run/log</logsocket>
+
+		<!-- user:group for the log, set after rotation -->
+		<logowner>root:wheel</logowner>
+
+		<!-- File mode for the log, set after rotation -->
+		<logmode>600</logmode>
+
+		<!-- Total number of log files to keep during rotation -->
+		<rotatecount>7</rotatecount>
+
+		<!-- File size (in bytes) at which to rotate the log, or '*' to
+			disable size-based rotation -->
+		<logfilesize>512000</logfilesize>
+
+		<!-- newsyslog format time (ISO 8601 restricted time format or
+			Day/week/month format) for time-based rotation. Omit or
+			'*' for size-based rotation.
+			See https://www.freebsd.org/cgi/man.cgi?query=newsyslog.conf&apropos=0&sektion=0&manpath=FreeBSD+12.0-RELEASE+and+Ports&arch=default&format=html
+			-->
+		<rotatetime>@T00</rotatetime>
+
+		<!-- Extra newsyslog flags for this log. 'C' is always assumed,
+			and the compression flag is set globally. -->
+		<rotateflags>p</rotateflags>
+
+		<!-- PID to signal, or path to cmd to run after rotation -->
+		<pidcmd>/var/run/program.pid</pidcmd>
+
+		<!-- Signal to send the PID found in pidcmd -->
+		<signal>30</signal>
+	</logging>
 
 */
 
@@ -71,6 +112,22 @@ if (!$apkg) { // If we aren't looking for a specific package, locate the first p
 	}
 }
 
+// Log Filter Submit - System
+log_filter_form_system_submit();
+
+// Status Logs Common - Code
+status_logs_common_code();
+
+/* We do not necessarily know the format of package logs, so assume raw. */
+$rawfilter = true;
+
+/* Hide management icon/form since packages determine their own log settings. */
+$system_logs_manage_log_form_hidden = false;
+
+if ($filtertext) {
+	$filtertextmeta="?filtertext=$filtertext";
+}
+
 $pgtitle = array(gettext("Status"), gettext("Package Logs"));
 $pglinks = array("", "status_pkglogs.php");
 
@@ -81,6 +138,11 @@ if ($pkgwithlogging && !empty($apkg)) {
 include("head.inc");
 
 tab_array_logs_common();
+
+// Filter Section/Form - System
+filter_form_system();
+
+$allowed_logs = array();
 
 if ($pkgwithlogging == false) {
 	print_info_box(gettext("No packages with logging facilities are currently installed."));
@@ -98,22 +160,57 @@ if ($pkgwithlogging == false) {
 			} else {
 				$tab_array[] = array(sprintf(gettext("%s"), $logtab), false, "status_pkglogs.php?pkg=".$package['name']);
 			}
+			$allowed_logs[$package['logging']['logfilename']] = array(
+				"name" => gettext($logtab),
+				"shortcut" => $package['name'],
+			);
 		}
 	}
 	display_top_tabs($tab_array);
+	$logfile = $config['installedpackages']['package'][$apkgid]['logging']['logfilename'];
+	$logfile_path = $g['varlog_path'] . '/' . $logfile;
 ?>
 
-	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext('Last %1$s %2$s Log Entries'), $nentries, $curtab)?></h2></div>
-		<div class="panel-body">
-			<pre>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">
 <?php
-			$package = $config['installedpackages']['package'][$apkgid];
-			dump_log_no_table($g['varlog_path'] . '/' . $package['logging']['logfilename'], $nentries, true, array());
+	print(system_log_table_panel_title());
 ?>
-			</pre>
-		</div>
+		</h2>
 	</div>
+	<div class="table table-responsive">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+			<thead>
+				<tr class="text-nowrap">
+					<th><?=gettext("Time")?></th>
+					<th style="width:100%"><?=gettext("Message")?></th>
+				</tr>
+			</thead>
+			<tbody>
+<?php
+	$inverse = null;
+	system_log_filter();
+?>
+			</tbody>
+		</table>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=$rows?>);
+});
+//]]>
+</script>
+
+<?php
+	if ($rows == 0) {
+		print_info_box(gettext('No logs to display.'));
+	}
+?>
+	</div>
+</div>
+
 
 <?php }
 

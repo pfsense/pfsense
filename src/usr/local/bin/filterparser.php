@@ -32,7 +32,7 @@
  */
 
 include_once("functions.inc");
-include_once("filter_log.inc");
+include_once("syslog.inc");
 
 $log = fopen("php://stdin", "r");
 $lastline = "";

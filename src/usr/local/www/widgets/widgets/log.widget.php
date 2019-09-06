@@ -27,7 +27,7 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
-require_once("filter_log.inc");
+require_once("syslog.inc");
 
 if ($_REQUEST['widgetkey'] && !$_REQUEST['ajax']) {
 	set_customwidgettitle($user_settings);

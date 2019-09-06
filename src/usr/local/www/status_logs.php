@@ -125,33 +125,50 @@ if ($changes_applied) {
 // Tab Array
 tab_array_logs_common();
 
-
 // Manage Log - Section/Form
 if ($system_logs_manage_log_form_hidden) {
 	manage_log_section();
 }
 
-
 // Filter Section/Form - System
 filter_form_system();
-
-
-// Now the forms are complete we can draw the log table and its controls
+if (($logfile == 'resolver') || ($logfile == 'system')) {
+	$inverse = array("ppp");
+} else {
+	$inverse = null;
+}
 if (!$rawfilter) {
 	system_log_filter();
+}
+
 ?>
 
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
-<?php
-	print(system_log_table_panel_title());
-?>
+<?php print(system_log_table_panel_title()); ?>
 		</h2>
 	</div>
 	<div class="panel-body">
-	   <div class="table-responsive">
+	    <div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+<?php if ($logfile == 'utx'): ?>
+			<thead>
+				<tr class="text-nowrap">
+					<th><?=gettext("Login Time")?></th>
+					<th><?=gettext("Duration")?></th>
+					<th><?=gettext("TTY")?></th>
+					<th style="width:100%"><?=gettext("User/Message")?></th>
+				</tr>
+			</thead>
+<?php elseif ($rawfilter): ?>
+			<thead>
+				<tr class="text-nowrap">
+					<th><?=gettext("Time")?></th>
+					<th style="width:100%"><?=gettext("Message")?></th>
+				</tr>
+			</thead>
+<?php else: ?>
 			<thead>
 				<tr class="text-nowrap">
 					<th><?=gettext("Time")?></th>
@@ -160,10 +177,11 @@ if (!$rawfilter) {
 					<th style="width:100%"><?=gettext("Message")?></th>
 				</tr>
 			</thead>
+<?php endif; ?>
+
 			<tbody>
-<?php
-	foreach ($filterlog as $filterent) {
-?>
+<?php if (!$rawfilter): ?>
+<?php	foreach ($filterlog as $filterent): ?>
 				<tr class="text-nowrap">
 					<td>
 						<?=htmlspecialchars($filterent['time'])?>
@@ -178,51 +196,13 @@ if (!$rawfilter) {
 						<?=htmlspecialchars($filterent['message'])?>
 					</td>
 				</tr>
-<?php
-	} // e-o-foreach
-?>
+<?php	endforeach; ?>
+<?php else:
+	system_log_filter(); ?>
+<?php endif; ?>
 			</tbody>
 		</table>
-<?php
-	if (count($filterlog) == 0) {
-		print_info_box(gettext('No logs to display.'));
-	}
-?>
-		</div>
-	</div>
-</div>
-<?php
-} else {
-?>
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h2 class="panel-title">
-<?php
-	print(system_log_table_panel_title());
-?>
-		</h2>
-	</div>
-	<div class="table table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
-			<thead>
-				<tr class="text-nowrap">
-					<th><?=gettext("Time")?></th>
-					<th style="width:100%"><?=gettext("Message")?></th>
-				</tr>
-			</thead>
-			<tbody>
-<?php
-	if (($logfile == 'resolver') || ($logfile == 'system')) {
-		$inverse = array("ppp");
-	} else {
-		$inverse = null;
-	}
-
-	system_log_filter();
-?>
-			</tbody>
-		</table>
-
+<?php if ($rawfilter): ?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
@@ -230,16 +210,18 @@ events.push(function() {
 });
 //]]>
 </script>
-
+<?php else:
+	$rows = count($filterlog); ?>
+<?php endif; ?>
 <?php
 	if ($rows == 0) {
 		print_info_box(gettext('No logs to display.'));
 	}
 ?>
+		</div>
 	</div>
 </div>
 <?php
-}
 
 # Manage Log - Section/Form
 if (!$system_logs_manage_log_form_hidden) {

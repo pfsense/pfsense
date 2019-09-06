@@ -475,7 +475,7 @@ EOD;
 	$log_size = ($log_size < (2**32)/2) ? $log_size : "511488";
 	$log_size = (int)$log_size/1024;
 
-	$rotatecount = isset($syslogcfg['rotatecount']) ? $syslogcfg['rotatecount'] : 7;
+	$rotatecount = is_numericint($syslogcfg['rotatecount']) ? $syslogcfg['rotatecount'] : 7;
 
 	$compression_flag = $system_log_compression_types[system_log_get_compression()]['flag'];
 
@@ -483,9 +483,8 @@ EOD;
 	if (isset($syslogcfg)) {
 		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'miniupnpd', 'filterlog');
 		$newsyslogconf = <<<EOD
-/var/log/userlog			600	3	{$log_size}	*	B
-/var/log/utx.log			644	3	{$log_size}	*	B
-/var/log/nginx/error.log		644	{$rotatecount}	{$log_size}	*	{$compression_flag}C /var/run/nginx.pid 30
+/var/log/userlog		root:wheel	600	3	{$log_size}	*	B
+/var/log/utx.log		root:wheel	644	3	{$log_size}	*	B
 
 EOD;
 

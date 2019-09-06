@@ -69,37 +69,41 @@ if ($_GET['getpic']=="true") {
 
 if ($_POST['widgetkey']) {
 	$wk = basename($_POST['widgetkey']);
-	set_customwidgettitle($user_settings);
-	if (is_uploaded_file($_FILES['pictfile']['tmp_name'])) {
-		/* read the file contents */
-		$fd_pic = fopen($_FILES['pictfile']['tmp_name'], "rb");
-		while (($buf=fread($fd_pic, 8192)) != '') {
-		    // Here, $buf is guaranteed to contain data
-		    $data .= $buf;
-		}
-		fclose($fd_pic);
-		if (!$data) {
-			log_error("Warning, could not read file " . $_FILES['pictfile']['tmp_name']);
-			die("Could not read temporary file");
-		} else {
-			// Make sure they upload an image and not some other file
-			$img_info =getimagesize($_FILES['pictfile']['tmp_name']);
-			if($img_info === FALSE){
-				die("Unable to determine image type of uploaded file");
-			}
-			if(($img_info[2] !== IMAGETYPE_GIF) && ($img_info[2] !== IMAGETYPE_JPEG) && ($img_info[2] !== IMAGETYPE_PNG)){
-				die("Not a gif/jpg/png");
-			}
-			$picname = basename($_FILES['uploadedfile']['name']);
-			$user_settings['widgets'][$wk]['picturewidget'] = "/conf/widget_image";
-			file_put_contents("/conf/widget_image.{$wk}", $data);
-			$user_settings['widgets'][$wk]['picturewidget_filename'] = $_FILES['pictfile']['name'];
-		}
-	}
 
-	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Picture widget saved via Dashboard."));
-	header("Location: /index.php");
-	exit;
+	// Valid widgetkey format is "picture-nnn". Check it looks reasonable
+	if (preg_match('/(?:picture-)[0-9]{1,3}$/', $wk) == 1) {
+		set_customwidgettitle($user_settings);
+		if (is_uploaded_file($_FILES['pictfile']['tmp_name'])) {
+			/* read the file contents */
+			$fd_pic = fopen($_FILES['pictfile']['tmp_name'], "rb");
+			while (($buf=fread($fd_pic, 8192)) != '') {
+			    // Here, $buf is guaranteed to contain data
+			    $data .= $buf;
+			}
+			fclose($fd_pic);
+			if (!$data) {
+				log_error("Warning, could not read file " . $_FILES['pictfile']['tmp_name']);
+				die("Could not read temporary file");
+			} else {
+				// Make sure they upload an image and not some other file
+				$img_info =getimagesize($_FILES['pictfile']['tmp_name']);
+				if($img_info === FALSE){
+					die("Unable to determine image type of uploaded file");
+				}
+				if(($img_info[2] !== IMAGETYPE_GIF) && ($img_info[2] !== IMAGETYPE_JPEG) && ($img_info[2] !== IMAGETYPE_PNG)){
+					die("Not a gif/jpg/png");
+				}
+				$picname = basename($_FILES['uploadedfile']['name']);
+				$user_settings['widgets'][$wk]['picturewidget'] = "/conf/widget_image";
+				file_put_contents("/conf/widget_image.{$wk}", $data);
+				$user_settings['widgets'][$wk]['picturewidget_filename'] = $_FILES['pictfile']['name'];
+			}
+		}
+
+		save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Picture widget saved via Dashboard."));
+		header("Location: /index.php");
+		exit;
+	}
 }
 
 ?>

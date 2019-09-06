@@ -110,6 +110,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 		$_gb = exec("/usr/bin/last --libxo=json", $rawdata, $rc);
 		if ($rc == 0) {
 			$logarr = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
+			$logarr = $logarr['last-information']['last'];
 		}
 	}
 
@@ -277,7 +278,7 @@ function parse_utx_log_line($line) {
 	$flent['pid'] = $line['tty'];
 	$flent['message'] = $line['user'];
 	if ($line['session-length']) {
-		$flent['message'] .= " {$line['session-length']}";
+		$flent['process'] = $line['session-length'];
 	}
 	return $flent;
 }

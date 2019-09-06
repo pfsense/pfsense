@@ -6028,7 +6028,10 @@ function upgrade_194_to_195() {
 	$logfiles = system_syslogd_get_all_logfilenames();
 
 	foreach ($logfiles as $logfile) {
-		$logpath = "{$g['varlog_path']}/{$logfile}.log";
+		if (substr($logfile, -4) != '.log') {
+			$logfile .= ".log";
+		}
+		$logpath = "{$g['varlog_path']}/{$logfile}";
 		exec("/usr/bin/truncate -s 0 " . escapeshellarg($logpath));
 	}
 }

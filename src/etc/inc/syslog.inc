@@ -291,13 +291,28 @@ EOD;
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
+		$syslogconf .= "!logportalauth\n";
+		if (!isset($syslogcfg['disablelocallogging'])) {
+			$syslogconf .= "*.* 								{$g['varlog_path']}/portalauth.log\n";
+		}
+		if (isset($syslogcfg['portalauth'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		}
+
+		$syslogconf .= "!dhclient,dhcpd,dhcpleases\n";
+		if (!isset($syslogcfg['disablelocallogging'])) {
+			$syslogconf .= "*.* 								{$g['varlog_path']}/dhcpd.log\n";
+		}
+		if (isset($syslogcfg['dhcp'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		}
+
+
 		$syslogconf .= "!-{$facilitylist}\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
 local3.*							{$g['varlog_path']}/vpn.log
-local4.*							{$g['varlog_path']}/portalauth.log
 local5.*							{$g['varlog_path']}/nginx.log
-local7.*							{$g['varlog_path']}/dhcpd.log
 *.notice;kern.debug;lpr.info;mail.crit;daemon.none;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$g['varlog_path']}/system.log
 auth.info;authpriv.info 					|exec /usr/local/sbin/sshguard
 *.emerg								*
@@ -306,12 +321,6 @@ EOD;
 		}
 		if (isset($syslogcfg['vpn'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local3.*");
-		}
-		if (isset($syslogcfg['portalauth'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local4.*");
-		}
-		if (isset($syslogcfg['dhcp'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local7.*");
 		}
 		if (isset($syslogcfg['system'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.emerg;*.notice;kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local7.none;security.*;auth.info;authpriv.info;daemon.info");

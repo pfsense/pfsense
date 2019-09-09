@@ -73,7 +73,7 @@ if ($_POST['widgetkey']) {
 	$wk = basename($_POST['widgetkey']);
 
 	// Valid widgetkey format is "picture-nnn". Check it looks reasonable
-	if (preg_match('/(?:picture-)[0-9]{1,3}$/', $wk) == 1) {
+	if (preg_match('/^picture-[0-9]{1,3}$/', $wk) == 1) {
 		set_customwidgettitle($user_settings);
 		if (is_uploaded_file($_FILES['pictfile']['tmp_name'])) {
 			/* read the file contents */
@@ -103,9 +103,10 @@ if ($_POST['widgetkey']) {
 		}
 
 		save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Picture widget saved via Dashboard."));
-		header("Location: /index.php");
-		exit;
 	}
+
+	header("Location: /index.php");
+	exit;
 }
 
 ?>

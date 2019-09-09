@@ -471,8 +471,8 @@ EOD;
 
 	file_put_contents("{$g['etc_path']}/newsyslog.conf", $mainnewsyslogconf);
 	safe_mkdir("{$g['varetc_path']}/newsyslog.conf.d");
-	$log_size = isset($syslogcfg['logfilesize']) ? $syslogcfg['logfilesize'] : "511488";
-	$log_size = ($log_size < (2**32)/2) ? $log_size : "511488";
+	$log_size = isset($syslogcfg['logfilesize']) ? $syslogcfg['logfilesize'] : $g['default_log_size'];
+	$log_size = ($log_size < (2**32)/2) ? $log_size : $g['default_log_size'];
 	$log_size = (int)$log_size/1024;
 
 	$rotatecount = is_numericint($syslogcfg['rotatecount']) ? $syslogcfg['rotatecount'] : 7;
@@ -622,7 +622,7 @@ function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert 
 }
 
 /* format filter logs */
-function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $filterinterface = null) {
+function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $filterinterface = null) {
 	global $config, $g, $pattern;
 
 	/* Make sure this is a number before using it in a system call */

@@ -38,7 +38,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("status_logs_common.inc");
 
-global $system_log_compression_types;
+global $g, $system_log_compression_types;
 
 $pconfig['reverse'] = isset($config['syslog']['reverse']);
 $pconfig['nentries'] = $config['syslog']['nentries'];
@@ -74,7 +74,7 @@ $pconfig['rotatecount'] = $config['syslog']['rotatecount'];
 $pconfig['igmpxverbose'] = isset($config['syslog']['igmpxverbose']);
 
 if (!$pconfig['nentries']) {
-	$pconfig['nentries'] = 50;
+	$pconfig['nentries'] = $g['default_log_entries'];
 }
 
 function is_valid_syslog_server($target) {
@@ -102,8 +102,8 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$input_errors[] = gettext("A valid IP address/hostname or IP/hostname:port must be specified for remote syslog server #3.");
 	}
 
-	if (($_POST['nentries'] < 5) || ($_POST['nentries'] > 2000)) {
-		$input_errors[] = gettext("Number of log entries to show must be between 5 and 2000.");
+	if (($_POST['nentries'] < 5) || ($_POST['nentries'] > 200000)) {
+		$input_errors[] = gettext("Number of log entries to show must be between 5 and 200000.");
 	}
 
 	if (isset($_POST['logfilesize']) && (strlen($_POST['logfilesize']) > 0)) {
@@ -226,7 +226,7 @@ $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("Settings"))
 $pglinks = array("", "status_logs.php", "@self");
 include("head.inc");
 
-$logfilesizeHelp =	gettext("This field controls the size at which logs will be rotated. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") .
+$logfilesizeHelp =	sprintf(gettext("This field controls the size at which logs will be rotated. By default this is %s per log file, and there are nearly 20 such log files."), format_bytes($g['default_log_size'])) .
 					'<br /><br />' .
 					gettext("NOTE: Increasing this value allows every log file to grow to the specified size, so disk usage may increase significantly.") . '<br />' .
 					gettext("Log file sizes are checked once per minute to determine if rotation is necessary, so a very rapidly growing log file may exceed this value.") . '<br /><br />' .
@@ -266,9 +266,9 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Input(
 	'nentries',
 	'GUI Log Entries',
-	'text',
+	'number',
 	$pconfig['nentries'],
-	['placeholder' => '']
+	['min' => 5, 'max' => 200000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : $g['default_log_entries']]
 ))->setHelp('This is only the number of log entries displayed in the GUI. It does not affect how many entries are contained in the actual log files.');
 
 $section->addInput(new Form_Checkbox(
@@ -353,9 +353,9 @@ $section = new Form_Section('Log Rotation Options');
 $section->addInput(new Form_Input(
 	'logfilesize',
 	'Log Rotation Size (Bytes)',
-	'text',
+	'number',
 	$pconfig['logfilesize'],
-	['placeholder' => 'Bytes']
+	['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : $g['default_log_size']]
 ))->setHelp($logfilesizeHelp);
 
 $section->addInput(new Form_Select(

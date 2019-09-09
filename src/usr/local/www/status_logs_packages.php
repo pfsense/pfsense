@@ -85,8 +85,9 @@ require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 require_once("status_logs_common.inc");
 
+global $g;
 if (!($nentries = $config['syslog']['nentries'])) {
-	$nentries = 50;
+	$nentries = $g['default_log_entries'];
 }
 
 $i = 0;

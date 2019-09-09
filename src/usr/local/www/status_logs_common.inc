@@ -50,7 +50,7 @@ function status_logs_common_code() {
 	}
 
 	if (!$nentries || !is_numeric($nentries)) {
-		$nentries = 50;
+		$nentries = $g['default_log_entries'];
 	}
 
 	if ($_POST['clear']) {
@@ -787,7 +787,7 @@ function manage_log_section() {
 		return;
 	}
 
-	global $input_errors, $allowed_logs, $logfile, $config, $pconfig;
+	global $g, $input_errors, $allowed_logs, $logfile, $config, $pconfig;
 	global $system_logs_manage_log_form_hidden;
 
 	if ($input_errors) {
@@ -857,7 +857,7 @@ function manage_log_section() {
 		'GUI Log Entries',
 		'number',
 		$pconfig['nentries'],
-		['min' => 5, 'max' => 2000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : "50"]
+		['min' => 5, 'max' => 200000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : $g['default_log_entries']]
 	))->setWidth(2);
 
 	$group->setHelp('This is the number of log entries displayed in the GUI. It does not affect how many entries are contained in the log.');
@@ -871,11 +871,11 @@ function manage_log_section() {
 		'Log Rotation Size (Bytes)',
 		'number',
 		$pconfig['logfilesize'],
-		['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : "511488"]
+		['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : $g['default_log_size']]
 	))->setWidth(2);
-	$group->setHelp('This field controls the size at which logs will be rotated. By default this is approximately 500KB per log file.%1$s' .
+	$group->setHelp('This field controls the size at which logs will be rotated. By default this is %1 per log file.%2$s' .
 				'NOTE: Log file sizes are checked once per minute to determine if rotation is necessary, so a very rapidly growing log file may exceed this value. ',
-				'<br /><br />');
+				format_bytes($g['default_log_size']), '<br /><br />');
 	$section->add($group);
 
 	$group = new Form_Group('Log Retention Count');

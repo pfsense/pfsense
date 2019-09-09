@@ -30,7 +30,7 @@
 
 require_once("status_logs_common.inc");
 
-$lines = 5000;
+$lines = 10000;
 $entriesperblock = 5;
 
 

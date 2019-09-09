@@ -67,7 +67,8 @@ function status_logs_common_code() {
 	$system_logs_filter_form_hidden = !$user_settings['webgui']['systemlogsfilterpanel'];
 	$system_logs_manage_log_form_hidden = !$user_settings['webgui']['systemlogsmanagelogpanel'];
 
-	if ($logfile == 'filter' && $view == 'summary') {
+	if (($logfile == 'filter' && $view == 'summary') ||
+	    in_array($logfile, array('utx', 'userlog'))) {
 		$system_logs_filter_form_hidden = false;
 		$system_logs_manage_log_form_hidden = false;
 	}
@@ -225,7 +226,7 @@ function log_filter_form_system_submit() {
 // Filter Section/Form - System
 function filter_form_system() {
 
-	global $filter_active, $rawfilter, $filterfieldsarray, $filtertext, $filterlogentries_qty, $nentries, $Include_Act, $interfacefilter;
+	global $logfile, $filter_active, $rawfilter, $filterfieldsarray, $filtertext, $filterlogentries_qty, $nentries, $Include_Act, $interfacefilter;
 	global $system_logs_filter_form_hidden;
 
 	if ($filter_active) {
@@ -242,6 +243,23 @@ function filter_form_system() {
 	}
 
 	if (!$rawfilter) { // Advanced log filter form
+
+		if ($logfile == 'utx') {
+			$filter_form_labels = array(
+				'filterlogentries_time'    => gettext('Login Time'),
+				'filterlogentries_process' => gettext('Duration'),
+				'filterlogentries_pid'     => gettext('TTY'),
+				'filterlogentries_message' => gettext('User/Message'),
+			);
+		} else {
+			$filter_form_labels = array(
+				'filterlogentries_time'    => gettext('Time'),
+				'filterlogentries_process' => gettext('Process'),
+				'filterlogentries_pid'     => gettext('PID'),
+				'filterlogentries_message' => gettext('Message'),
+			);
+		}
+
 		$form = new Form(false);
 		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
@@ -254,21 +272,21 @@ function filter_form_system() {
 			null,
 			'text',
 			$filterfieldsarray['time']
-		))->setWidth(3)->setHelp('Time');
+		))->setWidth(3)->setHelp($filter_form_labels['filterlogentries_time']);
 
 		$group->add(new Form_Input(
 			'filterlogentries_process',
 			null,
 			'text',
 			$filterfieldsarray['process']
-		))->setWidth(2)->setHelp('Process');
+		))->setWidth(2)->setHelp($filter_form_labels['filterlogentries_process']);
 
 		$group->add(new Form_Input(
 			'filterlogentries_pid',
 			null,
 			'text',
 			$filterfieldsarray['pid']
-		))->setWidth(2)->setHelp('PID');
+		))->setWidth(2)->setHelp($filter_form_labels['filterlogentries_pid']);
 
 		$group->add(new Form_Input(
 			'filterlogentries_qty',
@@ -287,7 +305,7 @@ function filter_form_system() {
 			null,
 			'text',
 			$filterfieldsarray['message']
-		))->setWidth(7)->setHelp('Message');
+		))->setWidth(7)->setHelp($filter_form_labels['filterlogentries_message']);
 
 		$btnsubmit = new Form_Button(
 			'filterlogentries_submit',

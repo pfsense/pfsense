@@ -114,17 +114,27 @@ if (isset($id) && $a_ppps[$id]) {
 			$pconfig['apnum'] = $a_ppps[$id]['apnum'];
 			$pconfig['phone'] = $a_ppps[$id]['phone'];
 			$pconfig['connect-timeout'] = $a_ppps[$id]['connect-timeout'];
-			$pconfig['localip'] = explode(",", $a_ppps[$id]['localip']);
-			$pconfig['gateway'] = explode(",", $a_ppps[$id]['gateway']);
+			$localip = explode(",", $a_ppps[$id]['localip']);
+			for ($i = 0; $i < count($localip); $i++)
+				$pconfig['localip'][$pconfig['interfaces'][$i]] = $localip[$i];
+			$gateway = explode(",", $a_ppps[$id]['gateway']);
+			for ($i = 0; $i < count($gateway); $i++)
+				$pconfig['gateway'][$pconfig['interfaces'][$i]] = $gateway[$i];
 			$pconfig['country'] = $a_ppps[$id]['country'];
 			$pconfig['provider'] = $a_ppps[$id]['provider'];
 			$pconfig['providerplan'] = $a_ppps[$id]['providerplan'];
 			break;
 		case "l2tp":
 		case "pptp":
-			$pconfig['localip'] = explode(",", $a_ppps[$id]['localip']);
-			$pconfig['subnet'] = explode(",", $a_ppps[$id]['subnet']);
-			$pconfig['gateway'] = explode(",", $a_ppps[$id]['gateway']);
+			$localip = explode(",", $a_ppps[$id]['localip']);
+			for ($i = 0; $i < count($localip); $i++)
+				$pconfig['localip'][$pconfig['interfaces'][$i]] = $localip[$i];
+			$subnet = explode(",", $a_ppps[$id]['subnet']);
+			for ($i = 0; $i < count($subnet); $i++)
+				$pconfig['subnet'][$pconfig['interfaces'][$i]] = $subnet[$i];
+			$gateway = explode(",", $a_ppps[$id]['gateway']);
+			for ($i = 0; $i < count($gateway); $i++)
+				$pconfig['gateway'][$pconfig['interfaces'][$i]] = $gateway[$i];
 		case "pppoe":
 			$pconfig['provider'] = $a_ppps[$id]['provider'];
 			if (isset($a_ppps[$id]['provider']) and empty($a_ppps[$id]['provider'])) {
@@ -565,7 +575,6 @@ $section->addPassword(new Form_Input(
 
 // These elements are hidden by default, and un-hidden in Javascript
 if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
-	$j = 0;
 	foreach ($linklist['list'] as $ifnm => $nm) {
 
 		$group = new Form_Group('IP/Gateway (' . $ifnm . ')');
@@ -573,17 +582,15 @@ if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 		$group->add(new Form_IpAddress(
 			'localip[' . $ifnm . ']',
 			null,
-			$pconfig['localip'][$j]
-		))->addMask('subnet[' . $ifnm . ']', $pconfig['subnet'][$j], 31)->setHelp('Local IP Address');
+			$pconfig['localip'][$ifnm]
+		))->addMask('subnet[' . $ifnm . ']', $pconfig['subnet'][$ifnm], 31)->setHelp('Local IP Address');
 
 		$group->add(new Form_Input(
 			'gateway[' . $ifnm . ']',
 			null,
 			'text',
-			$pconfig['gateway'][$j]
+			$pconfig['gateway'][$ifnm]
 		))->setHelp('Gateway IP or Hostname');
-
-		$j++;
 
 		$group->addClass('localip')->addClass('localip' . $ifnm);
 		$section->add($group);
@@ -844,7 +851,6 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Overwrite the result of LCP negotiation with a known working higher value. WARNING: This option violates RFC 1661 and can break connectivity.');
 
 // Display the Link parameters. We will hide this by default, then un-hide the selected ones on clicking 'Advanced'
-$j = 0;
 foreach ($linklist['list'] as $ifnm => $nm) {
 
 	$group = new Form_Group('Link Parameters (' . $ifnm . ')');
@@ -876,8 +882,6 @@ foreach ($linklist['list'] as $ifnm => $nm) {
 		'text',
 		$pconfig['mrru'][$ifnm]
 	))->setHelp('MRRU');
-
-	$j++;
 
 	$section->add($group);
 	$group->addClass('localip sec-advanced')->addClass('linkparam' . str_replace('.', '_', $ifnm));

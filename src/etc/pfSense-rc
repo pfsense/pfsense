@@ -455,6 +455,7 @@ ARCH=`uname -m`
 echo "$product ${version}${version_patch} $ARCH $BUILDTIME"
 
 echo "Bootup complete"
+echo "Bootup complete" | /usr/bin/logger
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 

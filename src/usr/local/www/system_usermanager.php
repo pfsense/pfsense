@@ -597,7 +597,11 @@ function build_cert_table() {
 			$revokedstr =	is_cert_revoked($cert) ? '<b> Revoked</b>':'';
 
 			$certhtml .=	'<tr>';
-			$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . $revokedstr . '</td>';
+			$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . $revokedstr;
+			if ($cert['prv'] && is_encrypted_key($cert['prv'])) {
+				$certhtml .= '&nbsp;<i class="fa fa-lock" title="' . gettext("Encrypted private key") . '"></i>';
+			}
+			$certhtml .=		'</td>';
 			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
 			$certhtml .=		'<td>';
 			if (!$read_only) {

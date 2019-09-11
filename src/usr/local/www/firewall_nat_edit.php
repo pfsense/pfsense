@@ -482,12 +482,7 @@ if ($_POST['save']) {
 			if ($_POST['filter-rule-association'] == 'add-associated') {
 				$filterent['associated-rule-id'] = $natent['associated-rule-id'] = get_unique_id();
 				$filterent['tracker'] = (int)microtime(true);
-				/*
-				 * Do not translate this, it's considered a
-				 * username which cannot contain international
-				 * characters
-				 */
-				$filterent['created'] = make_config_revision_entry(null, "NAT Port Forward");
+				$filterent['created'] = make_config_revision_entry(null, gettext("NAT Port Forward"));
 				$config['filter']['rule'][] = $filterent;
 			}
 

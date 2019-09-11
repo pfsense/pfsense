@@ -35,10 +35,6 @@ $config["filter"]["rule"][] = array(
 	"source" => array("any" => ""),
 	"destination" => array("any" => ""),
 	"descr" => "Allow all ipv4+ipv6 via pfSsh.php",
-	/*
-	 * Do not translate this, it's considered a username which cannot
-	 * contain international characters
-	 */
 	"created" => make_config_revision_entry(null, "pfSsh.php added allow all wan rule")
 );
 

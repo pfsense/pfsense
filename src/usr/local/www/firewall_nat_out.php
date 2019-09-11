@@ -108,12 +108,7 @@ if ($_POST['save']) {
 				$natent['descr'] .= sprintf(gettext(' - %1$s to %2$s'),
 					$tonathost['descr'],
 					convert_real_interface_to_friendly_descr($natent['interface']));
-				/*
-				 * Do not translate this, it's considered a
-				 * username which cannot contain international
-				 * characters
-				 */
-				$natent['created'] = make_config_revision_entry(null, "Manual Outbound NAT Switch");
+				$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
 
 				/* Try to detect already auto created rules and avoid duplicating them */
 				$found = false;

@@ -1493,7 +1493,11 @@ function apply_all_chosen_items() {
 			$rule['floating'] = "yes";
 			$rule['wizard'] = "yes";
 			$rule['enabled'] = "on";
-			$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+			/*
+			 * Do not translate this, it's considered a username
+			 * which cannot contain international characters
+			 */
+			$rule['created'] = make_config_revision_entry(null, "Traffic Shaper Wizard");
 			$rule['tracker'] = $tracker++;
 			$config['filter']['rule'][] = $rule;
 		}
@@ -1514,7 +1518,11 @@ function apply_all_chosen_items() {
 			$rule['floating'] = "yes";
 			$rule['wizard'] = "yes";
 			$rule['enabled'] = "on";
-			$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+			/*
+			 * Do not translate this, it's considered a username
+			 * which cannot contain international characters
+			 */
+			$rule['created'] = make_config_revision_entry(null, "Traffic Shaper Wizard");
 			$rule['tracker'] = $tracker++;
 			$config['filter']['rule'][] = $rule;
 
@@ -1529,7 +1537,11 @@ function apply_all_chosen_items() {
 			$rule['floating'] = "yes";
 			$rule['wizard'] = "yes";
 			$rule['enabled'] = "on";
-			$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+			/*
+			 * Do not translate this, it's considered a username
+			 * which cannot contain international characters
+			 */
+			$rule['created'] = make_config_revision_entry(null, "Traffic Shaper Wizard");
 			$rule['tracker'] = $tracker++;
 			$config['filter']['rule'][] = $rule;
 
@@ -1547,7 +1559,11 @@ function apply_all_chosen_items() {
 			$rule['floating'] = "yes";
 			$rule['wizard'] = "yes";
 			$rule['enabled'] = "on";
-			$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+			/*
+			 * Do not translate this, it's considered a username
+			 * which cannot contain international characters
+			 */
+			$rule['created'] = make_config_revision_entry(null, "Traffic Shaper Wizard");
 			$rule['tracker'] = $tracker++;
 			$config['filter']['rule'][] = $rule;
 
@@ -1567,7 +1583,12 @@ function apply_all_chosen_items() {
 				$rule['destination']['port'] = $voip[2]."-".$voip[3];
 				if ($voip[1] != '')
 					$rule['protocol'] = $voip[1];
-				$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+				/*
+				 * Do not translate this, it's considered a
+				 * username which cannot contain international
+				 * characters
+				 */
+				$rule['created'] = make_config_revision_entry(null, "Traffic Shaper Wizard");
 				$rule['tracker'] = $tracker++;
 				$config['filter']['rule'][] = $rule;
 			}
@@ -1592,7 +1613,12 @@ function apply_all_chosen_items() {
 				$rule['destination']['port'] = $p2pclient[2]."-".$p2pclient[3];
 				if ($p2pclient[1] != '')
 					$rule['protocol'] = $p2pclient[1];
-				$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+				/*
+				 * Do not translate this, it's considered a
+				 * username which cannot contain international
+				 * characters
+				 */
+				$rule['created'] = make_config_revision_entry(null, "Traffic Shaper Wizard");
 				$rule['tracker'] = $tracker++;
 				$config['filter']['rule'][] = $rule;
 			}
@@ -1672,7 +1698,12 @@ function apply_all_chosen_items() {
 					}
 					if ($otherclient[1] != '')
 						$rule['protocol'] = $otherclient[1];
-					$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
+					/*
+					 * Do not translate this, it's
+					 * considered a username which cannot
+					 * contain international characters
+					 */
+					$rule['created'] = make_config_revision_entry(null, "Traffic Shaper Wizard");
 					$rule['tracker'] = $tracker++;
 					$config['filter']['rule'][] = $rule;
 				}

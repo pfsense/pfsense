@@ -673,7 +673,11 @@ function step12_submitphpaction() {
 		$rule['type'] = "pass";
 		$rule['enabled'] = "on";
 		$rule['tracker'] = $tracker++;
-		$rule['created'] = make_config_revision_entry(null, gettext("OpenVPN Wizard"));
+		/*
+		 * Do not translate this, it's considered a username which
+		 * cannot contain international characters
+		 */
+		$rule['created'] = make_config_revision_entry(null, "OpenVPN Wizard");
 
 		$config['filter']['rule'][] = $rule;
 	}
@@ -690,7 +694,11 @@ function step12_submitphpaction() {
 		$rule['type'] = "pass";
 		$rule['enabled'] = "on";
 		$rule['tracker'] = $tracker++;
-		$rule['created'] = make_config_revision_entry(null, gettext("OpenVPN Wizard"));
+		/*
+		 * Do not translate this, it's considered a username which
+		 * cannot contain international characters
+		 */
+		$rule['created'] = make_config_revision_entry(null, "OpenVPN Wizard");
 		$config['filter']['rule'][] = $rule;
 	}
 

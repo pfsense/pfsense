@@ -183,24 +183,26 @@ function system_resolvconf_generate($dynupdate = false) {
 		}
 	}
 
-	/* setup static routes for DNS servers. */
+	// set up or tear down static routes for DNS servers
 	$dnscounter = 1;
 	$dnsgw = "dns{$dnscounter}gw";
 	while (isset($config['system'][$dnsgw])) {
 		/* setup static routes for dns servers */
-		if (!(empty($config['system'][$dnsgw]) ||
-		    $config['system'][$dnsgw] == "none")) {
-			$gwname = $config['system'][$dnsgw];
+		$gwname = $config['system'][$dnsgw];
+		unset($gatewayip);
+		unset($inet6);
+		if ((!empty($gwname)) && ($gwname != "none")) {
 			$gatewayip = lookup_gateway_ip_by_name($gwname);
 			$inet6 = is_ipaddrv6($gatewayip) ? '-inet6 ' : '';
-			/* dns server array starts at 0 */
-			$dnsserver = $syscfg['dnsserver'][$dnscounter - 1];
-
+		}
+		/* dns server array starts at 0 */
+		$dnsserver = $syscfg['dnsserver'][$dnscounter - 1];
+		if (!empty($dnsserver)) {
 			if (is_ipaddr($gatewayip)) {
 				route_add_or_change("-host {$inet6}{$dnsserver} {$gatewayip}");
 			} else {
 				/* Remove old route when disable gw */
-				mwexec("/sbin/route delete -host {$inet6}{$dnsserver}");
+				mwexec("/sbin/route -q delete -host {$inet6}{$dnsserver}");
 				if (isset($config['system']['route-debug'])) {
 					$mt = microtime();
 					log_error("ROUTING debug: $mt - route delete -host {$inet6}{$dnsserver}");

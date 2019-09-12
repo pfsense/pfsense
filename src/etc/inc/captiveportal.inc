@@ -237,8 +237,8 @@ function captiveportal_configure_zone($cpcfg) {
 			captiveportal_syslog("Reconfiguring captive portal({$cpcfg['zone']}).");
 		}
 
-		/* (re)init ipfw rules. Cause all users to disconnect */
-		captiveportal_init_rules(true);
+		/* init ipfw rules */
+		captiveportal_init_rules();
 
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
@@ -602,7 +602,7 @@ function captiveportal_init_rules($reinit = false) {
 	captiveportal_init_general_rules();
 
 	/* Cleanup so nothing is leaked */
-	captiveportal_free_dnrules();
+	captiveportal_free_dnrules(2000, 64500, false, $reinit);
 	unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
 
 	$skipto = captiveportal_ipfw_ruleno($cpzoneid);
@@ -647,9 +647,9 @@ function captiveportal_init_rules($reinit = false) {
 		return false;
 	}
 
-	if ($reinit == false) {
-		$captiveportallck = lock("captiveportal{$cpzone}");
-	}
+	$captiveportallck = try_lock("captiveportal{$cpzone}", 0);
+
+	$tables = captiveportal_get_ipfw_table_names();
 
 	$rulenum = $skipto;
 	$cprules .= "table {$cpzone}_pipe_mac create type mac valtype pipe\n";
@@ -699,8 +699,12 @@ function captiveportal_init_rules($reinit = false) {
 	    "pipe tablearg ip from any to table({$cpzone}_allowed_down) out");
 
 	/* Authenticated users rules. */
-	$cprules .= "table {$cpzone}_auth_up create type addr valtype pipe\n";
-	$cprules .= "table {$cpzone}_auth_down create type addr valtype pipe\n";
+	if (!in_array("{$cpzone}_auth_up", $tables)) {
+		$cprules .= "table {$cpzone}_auth_up create type addr valtype pipe\n";
+	}
+	if (!in_array("{$cpzone}_auth_down", $tables)) {
+		$cprules .= "table {$cpzone}_auth_down create type addr valtype pipe\n";
+	}
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
 	    "pipe tablearg ip from table({$cpzone}_auth_up) to any layer2 in");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
@@ -745,7 +749,7 @@ function captiveportal_init_rules($reinit = false) {
 	$cprules .= captiveportal_allowedhostname_configure();
 
 	/* load rules */
-	captiveportal_delete_rules();
+	captiveportal_delete_rules(array(), $reinit);
 	file_put_contents("{$g['tmp_path']}/ipfw_{$cpzone}.cp.rules", $cprules);
 	mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw_{$cpzone}.cp.rules", true);
 	@unlink("{$g['tmp_path']}/ipfw_{$cpzone}.cp.rules");
@@ -753,13 +757,13 @@ function captiveportal_init_rules($reinit = false) {
 
 	captiveportal_filterdns_configure();
 
-	if ($reinit == false) {
+	if ($captiveportallck) {
 		unlock($captiveportallck);
 	}
 }
 
 /* Delete all rules related to specific cpzone */
-function captiveportal_delete_rules($pipes_to_remove = array()) {
+function captiveportal_delete_rules($pipes_to_remove = array(), $clear_auth_rules = true) {
 	global $g, $cpzoneid, $cpzone;
 
 	$skipto1 = captiveportal_ipfw_ruleno($cpzoneid);
@@ -784,7 +788,11 @@ function captiveportal_delete_rules($pipes_to_remove = array()) {
 
 	$delrules = "";
 	foreach ($tables as $table) {
-		$delrules .= "table {$table} destroy\n";
+		if (!$clear_auth_rules && substr($table, 0, strlen($cpzone . '_auth')) == $cpzone . '_auth') {
+			continue;
+		} else {
+			$delrules .= "table {$table} destroy\n";
+		}
 	}
 
 	foreach ($pipes_to_remove as $pipeno) {
@@ -1304,7 +1312,7 @@ function captiveportal_passthrumac_configure_entry($macent, $pipeinrule = false)
 	if ($macent['action'] == 'pass') {
 		$rules = "";
 
-		$pipeno = captiveportal_get_next_dn_ruleno();
+		$pipeno = captiveportal_get_next_dn_ruleno('pipe_mac');
 
 		$pipeup = $pipeno;
 		if ($pipeinrule == true) {
@@ -1435,7 +1443,7 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 		$enBwdown = $config['captiveportal'][$cpzone]['bwdefaultdn'];
 	}
 
-	$pipeup = captiveportal_get_next_dn_ruleno();
+	$pipeup = captiveportal_get_next_dn_ruleno('allowed');
 	$_gb = @pfSense_ipfw_pipe("pipe {$pipeup} config bw {$enBwup}Kbit/s queue 100 buckets 16");
 	$pipedown = $pipeup + 1;
 	$_gb = @pfSense_ipfw_pipe("pipe {$pipedown} config bw {$enBwdown}Kbit/s queue 100 buckets 16");
@@ -1918,7 +1926,7 @@ function captiveportal_write_elements() {
 }
 
 function captiveportal_free_dnrules($rulenos_start = 2000,
-    $rulenos_range_max = 64500, $dry_run = false) {
+    $rulenos_range_max = 64500, $dry_run = false, $clear_auth_pipes = true) {
 	global $g, $cpzone;
 
 	$removed_pipes = array();
@@ -1935,17 +1943,21 @@ function captiveportal_free_dnrules($rulenos_start = 2000,
 	    "{$g['vardb_path']}/captiveportaldn.rules"));
 	$ridx = $rulenos_start;
 	while ($ridx < $rulenos_range_max) {
-		if ($rules[$ridx] == $cpzone) {
-			if (!$dry_run) {
-				$rules[$ridx] = false;
+		if (substr($rules[$ridx], 0, strlen($cpzone . '_')) == $cpzone . '_') {
+			if (!$clear_auth_pipes && substr($rules[$ridx], 0, strlen($cpzone . '_auth')) == $cpzone . '_auth') {
+				$ridx += 2;
+			} else {
+				if (!$dry_run) {
+					$rules[$ridx] = false;
+				}
+				$removed_pipes[] = $ridx;
+				$ridx++;
+				if (!$dry_run) {
+					$rules[$ridx] = false;
+				}
+				$removed_pipes[] = $ridx;
+				$ridx++;
 			}
-			$removed_pipes[] = $ridx;
-			$ridx++;
-			if (!$dry_run) {
-				$rules[$ridx] = false;
-			}
-			$removed_pipes[] = $ridx;
-			$ridx++;
 		} else {
 			$ridx += 2;
 		}
@@ -1971,9 +1983,9 @@ function captiveportal_reserve_ruleno($ruleno) {
 	} else {
 		$rules = array_pad(array(), 64500, false);
 	}
-	$rules[$ruleno] = $cpzone;
+	$rules[$ruleno] = $cpzone . '_auth';
 	$ruleno++;
-	$rules[$ruleno] = $cpzone;
+	$rules[$ruleno] = $cpzone . '_auth';
 
 	file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
 	unlock($cpruleslck);
@@ -1982,7 +1994,7 @@ function captiveportal_reserve_ruleno($ruleno) {
 	return $ruleno;
 }
 
-function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_max = 64500) {
+function captiveportal_get_next_dn_ruleno($rule_type = 'default', $rulenos_start = 2000, $rulenos_range_max = 64500) {
 	global $config, $g, $cpzone;
 
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
@@ -1993,9 +2005,9 @@ function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_
 		while ($ridx < $rulenos_range_max) {
 			if (empty($rules[$ridx])) {
 				$ruleno = $ridx;
-				$rules[$ridx] = $cpzone;
+				$rules[$ridx] = $cpzone . '_' . $rule_type;
 				$ridx++;
-				$rules[$ridx] = $cpzone;
+				$rules[$ridx] = $cpzone . '_' . $rule_type;
 				break;
 			} else {
 				$ridx += 2;
@@ -2004,9 +2016,9 @@ function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_
 	} else {
 		$rules = array_pad(array(), $rulenos_range_max, false);
 		$ruleno = $rulenos_start;
-		$rules[$rulenos_start] = $cpzone;
+		$rules[$rulenos_start] = $cpzone . '_' . $rule_type;
 		$rulenos_start++;
-		$rules[$rulenos_start] = $cpzone;
+		$rules[$rulenos_start] = $cpzone . '_' . $rule_type;
 	}
 	file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
 	unlock($cpruleslck);
@@ -2440,7 +2452,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 		} else {
 			/* See if a pipeno is passed, if not start sessions because this means there isn't one atm */
 			if (is_null($pipeno)) {
-				$pipeno = captiveportal_get_next_dn_ruleno();
+				$pipeno = captiveportal_get_next_dn_ruleno('auth');
 			}
 
 			/* if the pool is empty, return appropriate message and exit */

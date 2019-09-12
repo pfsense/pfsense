@@ -2022,6 +2022,8 @@ function system_reboot_cleanup() {
 			/* Send Accounting-Off packet to the RADIUS server */
 			captiveportal_send_server_accounting('off');
 		}
+		/* Remove the pipe database */
+		unlink_if_exists("{$g['vardb_path']}/captiveportaldn.rules");
 	}
 	require_once("voucher.inc");
 	voucher_save_db_to_config();

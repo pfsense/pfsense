@@ -44,6 +44,8 @@ $allowed_logs = array(
 		    "shortcut" => ""),
 	"dhcpd" => array("name" => gettext("DHCP"),
 		    "shortcut" => "dhcp"),
+	"auth" => array("name" => gettext("General"),
+		    "shortcut" => ""),
 	"portalauth" => array("name" => gettext("Captive Portal Auth"),
 		    "shortcut" => "captiveportal"),
 	"ipsec" => array("name" => gettext("IPsec"),
@@ -103,7 +105,7 @@ if ($filtertext) {
 if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless', 'nginx', 'dmesg.boot'))) {
 	$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("System"), $allowed_logs[$logfile]["name"]);
 	$pglinks = array("", "status_logs.php", "status_logs.php", "@self");
-} elseif (in_array($logfile, array('portalauth', 'utx', 'userlog'))) {
+} elseif (in_array($logfile, array('auth', 'portalauth', 'utx', 'userlog'))) {
 	$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("Authentication"), $allowed_logs[$logfile]["name"]);
 	$pglinks = array("", "status_logs.php", "status_logs.php", "@self");
 } else {

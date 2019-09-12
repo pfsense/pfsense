@@ -88,7 +88,7 @@ function tab_array_logs_common() {
 	global $tab_array, $logfile, $vpntype, $view;
 
 	$is_system_log = in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless', 'nginx', 'dmesg.boot'));
-	$is_auth_log = in_array($logfile, array('portalauth', 'utx', 'userlog'));
+	$is_auth_log = in_array($logfile, array('auth', 'portalauth', 'utx', 'userlog'));
 	$is_filter_log = in_array($logfile, array('filter'));
 	$is_pppoe_l2tp_vpn_log = in_array($logfile, array('poes', 'l2tps', 'vpn'));
 
@@ -96,7 +96,7 @@ function tab_array_logs_common() {
 	$tab_array[] = array(gettext("System"), $is_system_log, "status_logs.php");
 	$tab_array[] = array(gettext("Firewall"), $is_filter_log, "status_logs_filter.php");
 	$tab_array[] = array(gettext("DHCP"), ($logfile == 'dhcpd'), "status_logs.php?logfile=dhcpd");
-	$tab_array[] = array(gettext("Authentication"), $is_auth_log, "status_logs.php?logfile=portalauth");
+	$tab_array[] = array(gettext("Authentication"), $is_auth_log, "status_logs.php?logfile=auth");
 	$tab_array[] = array(gettext("IPsec"), ($logfile == 'ipsec'), "status_logs.php?logfile=ipsec");
 	$tab_array[] = array(gettext("PPP"), ($logfile == 'ppp'), "status_logs.php?logfile=ppp");
 	$tab_array[] = array(gettext("PPPoE/L2TP Server"), $is_pppoe_l2tp_vpn_log, "status_logs_vpn.php");
@@ -116,6 +116,7 @@ function tab_array_logs_common() {
 		$tab_array[] = array(gettext("GUI Service"), ($logfile == 'nginx'), "/status_logs.php?logfile=nginx");
 		$tab_array[] = array(gettext("OS Boot"), ($logfile == 'dmesg.boot'), "/status_logs.php?logfile=dmesg.boot");
 	} else if ($is_auth_log) {
+		$tab_array[] = array(gettext("General"), ($logfile == 'auth'), "status_logs.php?logfile=auth");
 		$tab_array[] = array(gettext("Captive Portal Auth"), ($logfile == 'portalauth'), "status_logs.php?logfile=portalauth");
 		$tab_array[] = array(gettext("PPPoE Logins"),
 					(($logfile == 'vpn') && ($vpntype == "poes")),

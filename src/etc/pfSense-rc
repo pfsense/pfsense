@@ -312,7 +312,7 @@ set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 
 echo -n "."
-LOG_FILES="system filter dhcpd vpn poes l2tps openvpn portalauth ipsec ppp wireless nginx ntpd gateways resolver routing"
+LOG_FILES="system filter dhcpd vpn poes l2tps openvpn auth portalauth ipsec ppp wireless nginx ntpd gateways resolver routing"
 
 for logfile in $LOG_FILES; do
 	/usr/bin/touch /var/log/${logfile}.log

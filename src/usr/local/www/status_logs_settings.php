@@ -49,6 +49,7 @@ $pconfig['sourceip'] = $config['syslog']['sourceip'];
 $pconfig['ipproto'] = $config['syslog']['ipproto'];
 $pconfig['filter'] = isset($config['syslog']['filter']);
 $pconfig['dhcp'] = isset($config['syslog']['dhcp']);
+$pconfig['auth'] = isset($config['syslog']['auth']);
 $pconfig['portalauth'] = isset($config['syslog']['portalauth']);
 $pconfig['vpn'] = isset($config['syslog']['vpn']);
 $pconfig['dpinger'] = isset($config['syslog']['dpinger']);
@@ -161,6 +162,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['ipproto'] = $_POST['ipproto'];
 		$config['syslog']['filter'] = $_POST['filter'] ? true : false;
 		$config['syslog']['dhcp'] = $_POST['dhcp'] ? true : false;
+		$config['syslog']['auth'] = $_POST['auth'] ? true : false;
 		$config['syslog']['portalauth'] = $_POST['portalauth'] ? true : false;
 		$config['syslog']['vpn'] = $_POST['vpn'] ? true : false;
 		$config['syslog']['dpinger'] = $_POST['dpinger'] ? true : false;
@@ -477,6 +479,13 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $group->add(new Form_MultiCheckbox(
+	'auth',
+	null,
+	'General Authentication Events',
+	$pconfig['auth']
+));
+
+$group->add(new Form_MultiCheckbox(
 	'portalauth',
 	null,
 	'Captive Portal Events',
@@ -553,6 +562,7 @@ events.push(function() {
 		disableInput('system', hide);
 		disableInput('filter', hide);
 		disableInput('dhcp', hide);
+		disableInput('auth', hide);
 		disableInput('portalauth', hide);
 		disableInput('vpn', hide);
 		disableInput('dpinger', hide);

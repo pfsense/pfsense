@@ -195,6 +195,15 @@ EOD;
 			}
 		}
 		$facilitylist = implode(',', array_unique($separatelogfacilities));
+
+		$syslogconf .= "!*\n";
+		if (!isset($syslogcfg['disablelocallogging'])) {
+			$syslogconf .= "auth.*;authpriv.* 						{$g['varlog_path']}/auth.log\n";
+		}
+		if (isset($syslogcfg['auth'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		}
+
 		$syslogconf .= "!radvd,routed,zebra,ospfd,ospf6d,bgpd,miniupnpd\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$g['varlog_path']}/routing.log\n";
@@ -648,7 +657,7 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 	$logarr = "";
 
 	$logtypecheck = preg_replace('/\.log$/', '', basename($logfile));
-	if (in_array($logtypecheck, array('system', 'gateways', 'routing', 'resolver', 'wireless', 'nginx', 'dmesg.boot', 'portalauth', 'dhcpd', 'ipsec', 'ppp', 'openvpn', 'ntpd', 'userlog'))) {
+	if (in_array($logtypecheck, array('system', 'gateways', 'routing', 'resolver', 'wireless', 'nginx', 'dmesg.boot', 'portalauth', 'dhcpd', 'ipsec', 'ppp', 'openvpn', 'ntpd', 'userlog', 'auth'))) {
 		$logfile_type = "system";
 	} elseif (in_array($logtypecheck, array('filter'))) {
 		$logfile_type = "firewall";

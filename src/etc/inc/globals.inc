@@ -259,7 +259,7 @@ global $system_log_files;
 $system_log_files = array(
 	"system", "filter", "dhcpd", "vpn", "poes", "l2tps", "openvpn",
 	"portalauth", "ipsec", "ppp", "wireless", "nginx", "ntpd", "gateways",
-	"resolver", "routing");
+	"resolver", "routing", "auth");
 
 global $system_log_compression_types;
 $system_log_compression_types = array(

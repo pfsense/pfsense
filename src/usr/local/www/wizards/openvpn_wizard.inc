@@ -30,6 +30,18 @@ require_once("util.inc");
 // Load valid country codes
 $dn_cc = get_cert_country_codes();
 
+function openvpn_wizard_get_dhparams() {
+	global $openvpn_dh_lengths;
+	$dhparams = array();
+	foreach ($openvpn_dh_lengths as $value => $name) {
+		$dhparams[] = array(
+			"value" => $value,
+			"name" => $name
+		);
+	}
+	return $dhparams;
+}
+
 function step1_stepsubmitbeforesave() {
 	global $stepid, $config;
 	if (($_POST['authtype'] != NULL) && ($_POST['authtype'] != $config['ovpnserver']['step1']['type'])) {

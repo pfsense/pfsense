@@ -807,6 +807,68 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$section->addInput($tmpselect);
 
 				break;
+			case "select_source":
+				if ($field['displayname']) {
+					$etitle = $field['displayname'];
+				} else if (!$field['dontdisplayname']) {
+					$etitle =  fixup_string($name);
+				}
+
+				if ($field['size']) {
+					$size = " size='" . $field['size'] . "' ";
+				}
+
+				if (isset($field['multiple'])) {
+					$items = explode(',', $value);
+					$name .= "[]";
+				} else {
+					$items = array($value);
+				}
+
+				$onchange = (isset($field['onchange']) ? "{$field['onchange']}" : '');
+
+				$source = $field['source'];
+				try{
+					@eval("\$wizard_source_txt = &$source;");
+				} catch (\Throwable | \Error | \Exception $e) {
+					//do nothing
+				}
+				#check if show disable option is present on xml
+				if (!is_array($wizard_source_txt)) {
+					$wizard_source_txt = array();
+				}
+				if (isset($field['show_disable_value'])) {
+					array_push($wizard_source_txt,
+						array(
+							($field['source_name'] ? $field['source_name'] : $name) => $field['show_disable_value'],
+							($field['source_value'] ? $field['source_value'] : $value) => $field['show_disable_value']
+						));
+				}
+
+				$srcoptions = array();
+				$srcselected = array();
+
+				foreach ($wizard_source_txt as $opt) {
+					$source_name = ($field['source_name'] ? $opt[$field['source_name']] : $opt[$name]);
+					$source_value = ($field['source_value'] ? $opt[$field['source_value']] : $opt[$value]);
+					$srcoptions[$source_value] = $source_name;
+
+					if (in_array($source_value, $items)) {
+						array_push($srcselected, $source_value);
+					}
+				}
+
+				$descr = (isset($field['description'])) ? $field['description'] : "";
+
+				$section->addInput(new Form_Select(
+					$name,
+					$etitle,
+					isset($field['multiple']) ? $srcselected : $srcselected[0],
+					$srcoptions,
+					isset($field['multiple'])
+				))->setHelp($descr)->setOnchange($onchange);
+
+				break;
 			case "textarea":
 				if ($field['displayname']) {
 					$etitle = $field['displayname'];

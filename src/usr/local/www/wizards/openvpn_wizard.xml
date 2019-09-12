@@ -779,47 +779,12 @@
 		<field>
 			<displayname>DH Parameters Length</displayname>
 			<name>dhparameters</name>
-			<type>select</type>
+			<type>select_source</type>
+			<source><![CDATA[openvpn_wizard_get_dhparams()]]></source>
+			<source_name>name</source_name>
+			<source_value>value</source_value>
 			<value>2048</value>
 			<bindstofield>ovpnserver->step10->dhkey</bindstofield>
-			<options>
-				<option>
-					<name>1024 bit</name>
-					<value>1024</value>
-				</option>
-				<option>
-					<name>2048 bit</name>
-					<value>2048</value>
-				</option>
-				<option>
-					<name>3072 bit</name>
-					<value>3072</value>
-				</option>
-				<option>
-					<name>4096 bit</name>
-					<value>4096</value>
-				</option>
-				<option>
-					<name>6144 bit</name>
-					<value>6144</value>
-				</option>
-				<option>
-					<name>7680 bit</name>
-					<value>7680</value>
-				</option>
-				<option>
-					<name>8192 bit</name>
-					<value>8192</value>
-				</option>
-				<option>
-					<name>15360 bit</name>
-					<value>15360</value>
-				</option>
-				<option>
-					<name>16384 bit</name>
-					<value>16384</value>
-				</option>
-			</options>
 			<description>&lt;br/&gt;Length of Diffie-Hellman (DH) key exchange parameters, used for establishing a secure communications channel. The DH parameters are different from key sizes, but as with other such settings, the larger the key, the more security it offers, but larger keys take considerably more time to generate. As of 2016, 2048 bit is a common and typical selection.</description>
 		</field>
 		<field>

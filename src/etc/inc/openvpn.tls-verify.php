@@ -61,7 +61,7 @@ foreach ($subj at $s) {
 //<template>
 
 if (isset($allowed_depth) && ($cert_depth > $allowed_depth)) {
-	syslog(LOG_WARNING, "Certificate depth {$cert_depth} exceeded max allowed depth of {$allowed_depth}.\n");
+	syslog(LOG_WARNING, "Certificate depth {$cert_depth} exceeded max allowed depth of {$allowed_depth}.");
 	if (isset($_GET['certdepth'])) {
 		echo "FAILED";
 		closelog();
@@ -73,7 +73,7 @@ if (isset($allowed_depth) && ($cert_depth > $allowed_depth)) {
 }
 
 // Debug
-//syslog(LOG_WARNING, "Found certificate {$argv[2]} with depth {$cert_depth}\n");
+//syslog(LOG_WARNING, "Found certificate {$argv[2]} with depth {$cert_depth}");
 
 closelog();
 if (isset($_GET['certdepth'])) {

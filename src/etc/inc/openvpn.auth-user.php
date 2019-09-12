@@ -76,7 +76,7 @@ if (file_exists("{$g['varetc_path']}/openvpn/{$modeid}.ca")) {
 $authenticated = false;
 
 if (($strictusercn === true) && (mb_strtolower($common_name) !== mb_strtolower($username))) {
-	syslog(LOG_WARNING, "Username does not match certificate common name (\"{$username}\" != \"{$common_name}\"), access denied.\n");
+	syslog(LOG_WARNING, "Username does not match certificate common name (\"{$username}\" != \"{$common_name}\"), access denied.");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
@@ -118,7 +118,7 @@ foreach ($authmodes as $authmode) {
 }
 
 if ($authenticated == false) {
-	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
+	syslog(LOG_WARNING, "user '{$username}' could not authenticate.");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
@@ -161,7 +161,7 @@ if (!empty($content)) {
 	@file_put_contents("{$g['tmp_path']}/{$username}", $content);
 }
 
-syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
+syslog(LOG_NOTICE, "user '{$username}' authenticated");
 closelog();
 
 if (isset($_GET['username'])) {

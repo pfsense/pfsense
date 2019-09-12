@@ -487,7 +487,7 @@ function voucher_configure_zone($sync = false) {
 	$pubkey = base64_decode($config['voucher'][$cpzone]['publickey']);
 	$fd = fopen("{$g['varetc_path']}/voucher_{$cpzone}.public", "w");
 	if (!$fd) {
-		captiveportal_syslog("Voucher error: cannot write voucher.public\n");
+		captiveportal_syslog("Voucher error: cannot write voucher.public");
 		unlock($voucherlck);
 		return 1;
 	}

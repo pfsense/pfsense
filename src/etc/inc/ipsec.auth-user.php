@@ -66,7 +66,7 @@ if (!$username || !$password) {
 $authenticated = false;
 
 if (($strictusercn === true) && ($common_name != $username)) {
-	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
+	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
@@ -90,7 +90,7 @@ foreach ($authmodes as $authmode) {
 			$user = getUserEntry($username);
 			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin")) {
 				$authenticated = false;
-				syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPsec since the required privileges are missing.\n");
+				syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPsec since the required privileges are missing.");
 				continue;
 			}
 		}
@@ -99,7 +99,7 @@ foreach ($authmodes as $authmode) {
 }
 
 if ($authenticated == false) {
-	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
+	syslog(LOG_WARNING, "user '{$username}' could not authenticate.");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
@@ -114,7 +114,7 @@ if (file_exists("/etc/inc/ipsec.attributes.php")) {
 	include_once("/etc/inc/ipsec.attributes.php");
 }
 
-syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
+syslog(LOG_NOTICE, "user '{$username}' authenticated");
 closelog();
 
 if (isset($_GET['username'])) {

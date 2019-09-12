@@ -265,22 +265,22 @@ global $system_log_compression_types;
 $system_log_compression_types = array(
 	'bzip2' => array(
 			'flag' => 'J',
-			'cat' => '/usr/bin/bzcat -f',
+			'cat' => '/usr/bin/bzcat -qf',
 			'ext' => 'bz2',
 		),
 	'gzip' => array(
 			'flag' => 'Z',
-			'cat' => '/usr/bin/zcat -f',
+			'cat' => '/usr/bin/zcat -qf',
 			'ext' => 'gz',
 		),
 	'xz' => array(
 			'flag' => 'X',
-			'cat' => '/usr/bin/xzcat -f',
+			'cat' => '/usr/bin/xzcat -qf',
 			'ext' => 'xz',
 		),
 	'zstd' => array(
 			'flag' => 'Y',
-			'cat' => '/usr/bin/zstdcat -f',
+			'cat' => '/usr/bin/zstdcat -qqf',
 			'ext' => 'zst',
 		),
 	'none' => array(

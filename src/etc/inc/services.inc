@@ -572,7 +572,7 @@ key omapi_key {
   secret "{$dhcpifconf['omapi_key']}";
 };
 omapi-key omapi_key;
-\n
+
 EOD;
 	}
 

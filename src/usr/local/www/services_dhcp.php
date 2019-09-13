@@ -248,48 +248,52 @@ if (isset($_POST['save'])) {
 	 * - Make sure the key length is at least 256bit (45 characters)
 	 * - Generate a new key if selected
 	 */
-	if($_POST['omapi_port'] && $_POST['omapi_port'] != "") {
+	if (!empty($_POST['omapi_port'])) {
 		// Check the port entry
-		if(is_port($_POST['omapi_port'])) {
+		if (is_port($_POST['omapi_port']) && $_POST['omapi_port'] > 1024) {
 			// Get the list of open or listening ports locally
 			exec("/usr/bin/netstat -an4p tcp | /usr/bin/awk '{print $4}' | /usr/bin/egrep -o '*([0-9]{1,5})$' | /usr/bin/sort -u", $port_info);
 
 			// Check to see if the port is in the list
-			if(in_array($_POST['omapi_port'], $port_info) && $_POST['omapi_port'] != 7911){
+			if (in_array($_POST['omapi_port'], $port_info) && $_POST['omapi_port'] != $dhcpdconf['omapi_port']){
 				$input_errors[] = gettext("Specified port number for OMAPI is in use. Please choose another port or consider using the default.");
 			}
 		} else {
-			$input_errors[] = gettext("The specified OMAPI port number is invalid. Port number must be between 1 and 65635.");
+			$input_errors[] = gettext("The specified OMAPI port number is invalid. Port number must be between 1024 and 65635.");
 		}
 
-		// Check the key entry
-		if($_POST['omapi_key'] && $_POST['omapi_key'] != "") {
-			if (strlen($_POST['omapi_key']) < 45) {
-				$input_errors[] = gettext("OMAPI key must be at least 256 bits.");
-			}
-		} elseif($_POST['omapi_gen_key'] == "yes") {
+		// Generate a key if checked
+		if ($_POST['omapi_gen_key'] == "yes") {
 			// Generate a random folder name for the key generation
-			$rand = substr(md5(microtime()),rand(0,26),25);
+			$rand = substr(md5(microtime()), rand(0, 26), 25);
 
 			// Set the output directory
 			$output_dir = "/tmp/{$rand}";
 
+			// Create output directory
+			mkdir($output_dir);
+
 			// Build the command to generate and capture the key
-			$cmd = "/bin/mkdir -p {$output_dir}; "; // Create output directory
-			$cmd .= "/usr/local/sbin/dnssec-keygen -r /dev/urandom -K {$output_dir} -a HMAC-MD5 -b 512 -n HOST omapi_key; "; // Generate the key
+			$cmd = "/usr/local/sbin/dnssec-keygen -r /dev/urandom -K {$output_dir} -a HMAC-MD5 -b 512 -n HOST omapi_key > /dev/null; "; // Generate the key
 			$cmd .= "/bin/cat {$output_dir}/Komapi_key.+*.private | /usr/bin/grep ^Key | /usr/bin/cut -d ' ' -f2-; "; // Capture the key
-			$cmd .= "/bin/rm -Rf {$output_dir}"; // Cleanup key files
 
 			// Execute the command
-			exec($cmd, $cmd_output);
+			$cmd_output = exec_command($cmd);
+
+			// Cleanup key files
+			rmdir_recursive($output_dir);
 
 			// Set the key
-			$_POST['omapi_key'] = $cmd_output[1];
-			$pconfig['omapi_key'] = $cmd_output[1];
+			$_POST['omapi_key'] = $cmd_output;
+			$pconfig['omapi_key'] = $cmd_output;
 
 			// Uncheck the generate box
 			unset($_POST['omapi_gen_key']);
 			unset($pconfig['omapi_gen_key']);
+		} elseif (!empty($_POST['omapi_key'])) { // Check the key if it's not being generated
+			if (strlen($_POST['omapi_key']) < 45) {
+				$input_errors[] = gettext("OMAPI key must be at least 256 bits.");
+			}
 		} else {
 			$input_errors[] = gettext("A key is required when OMAPI is enabled (port specified).");
 		}
@@ -700,7 +704,7 @@ if (isset($_POST['save'])) {
 		}
 
 		// OMAPI Settings
-		if($_POST['omapi_port'] == ""){
+		if ($_POST['omapi_port'] == ""){
 			unset($dhcpdconf['omapi_port']);
 			unset($dhcpdconf['omapi_key']);
 			unset($pconfig['omapi_port']);

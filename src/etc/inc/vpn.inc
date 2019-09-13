@@ -107,6 +107,15 @@ function vpn_ipsec_convert_to_modp($index) {
 		case '24':
 			$conversion = "modp2048s256";
 			break;
+		case '25':
+			$conversion = "ecp192";
+			break;
+		case '26':
+			$conversion = "ecp224";
+			break;
+		case '27':
+			$conversion = "ecp224bp";
+			break;
 		case '28':
 			$conversion = "ecp256bp";
 			break;

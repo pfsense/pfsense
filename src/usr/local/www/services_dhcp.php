@@ -264,35 +264,32 @@ if (isset($_POST['save'])) {
 
 		// Generate a key if checked
 		if ($_POST['omapi_gen_key'] == "yes") {
-			// Generate a random folder name for the key generation
-			$rand = substr(md5(microtime()), rand(0, 26), 25);
-
-			// Set the output directory
-			$output_dir = "/tmp/{$rand}";
-
-			// Create output directory
-			mkdir($output_dir);
-
-			// Build the command to generate and capture the key
-			$cmd = "/usr/local/sbin/dnssec-keygen -r /dev/urandom -K {$output_dir} -a HMAC-MD5 -b 512 -n HOST omapi_key > /dev/null; "; // Generate the key
-			$cmd .= "/bin/cat {$output_dir}/Komapi_key.+*.private | /usr/bin/grep ^Key | /usr/bin/cut -d ' ' -f2-; "; // Capture the key
+			// Check to see if the utility is installed
+			$cmd = "/usr/bin/which ddns-confgen";
 
 			// Execute the command
 			$cmd_output = exec_command($cmd);
 
-			// Cleanup key files
-			rmdir_recursive($output_dir);
+			if (strstr($cmd_output, "ddns-confgen")) {
+				// Generate and capture the key
+				$cmd = "/usr/local/sbin/ddns-confgen -a HMAC-MD5 -k omapi_key -q | /usr/bin/grep secret | /usr/bin/cut -d'\"' -f2;";
 
-			// Set the key
-			$_POST['omapi_key'] = $cmd_output;
-			$pconfig['omapi_key'] = $cmd_output;
+				// Execute the command
+				$cmd_output = exec_command($cmd);
+
+				// Set the key
+				$_POST['omapi_key'] = $cmd_output;
+				$pconfig['omapi_key'] = $cmd_output;
+			} else {
+				$input_errors[] = gettext("Key generation utility not found. Please go to System -> Package Manager and install the bind package.");
+			}
 
 			// Uncheck the generate box
 			unset($_POST['omapi_gen_key']);
 			unset($pconfig['omapi_gen_key']);
 		} elseif (!empty($_POST['omapi_key'])) { // Check the key if it's not being generated
-			if (strlen($_POST['omapi_key']) < 45) {
-				$input_errors[] = gettext("OMAPI key must be at least 256 bits.");
+			if (strlen($_POST['omapi_key']) >= 25) {
+				$input_errors[] = gettext("Please specify a valid OMAPI key. Key must use HMAC-MD5 and be a minimum length of 128bit.");
 			}
 		} else {
 			$input_errors[] = gettext("A key is required when OMAPI is enabled (port specified).");
@@ -1103,14 +1100,14 @@ $group->add(new Form_Input(
 	'OMAPI Key',
 	'text',
 	$pconfig['omapi_key']
-))->setHelp('Set the key used to secure the connection to the OMAPI endpoint. The minimum key length is 256 bits.');
+))->setHelp('Set the key used to secure the connection to the OMAPI endpoint. The minimum HMAC-MD5 key length is 128 bits.');
 
 $group->add(new Form_Checkbox(
 	'omapi_gen_key',
 	'',
 	'Generate New Key',
 	$pconfig['omapi_gen_key']
-))->setHelp('Key Bits: 512<br />Algorithm: HMAC-MD5');
+))->setHelp('Key Bits: 128<br />Algorithm: HMAC-MD5');
 
 $section->add($group);
 

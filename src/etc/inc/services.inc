@@ -568,7 +568,7 @@ EOD;
 
 omapi-port {$dhcpifconf['omapi_port']};
 key omapi_key {
-  algorithm HMAC-MD5;
+  algorithm hmac-md5;
   secret "{$dhcpifconf['omapi_key']}";
 };
 omapi-key omapi_key;

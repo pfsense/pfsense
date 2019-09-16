@@ -808,10 +808,10 @@ if ($_POST['save']) {
 	if ($_POST['statetype'] && !array_key_exists($_POST['statetype'], $statetype_values)) {
 		$input_errors[] = gettext("Invalid State Type.");
 	}
-	if ($_POST['vlanprio'] && !in_array($_POST['vlanprio'], $vlanprio)) {
+	if ($_POST['vlanprio'] && !array_key_exists($_POST['vlanprio'], $vlanprio)) {
 		$input_errors[] = gettext("Invalid VLAN Prio.");
 	}
-	if ($_POST['vlanprioset'] && !in_array($_POST['vlanprioset'], $vlanprio)) {
+	if ($_POST['vlanprioset'] && !array_key_exists($_POST['vlanprioset'], $vlanprio)) {
 		$input_errors[] = gettext("Invalid VLAN Prio Set.");
 	}
 

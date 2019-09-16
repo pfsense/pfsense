@@ -200,8 +200,11 @@ if ($_POST) {
 	}
 
 	if ($port != "") {
-		if (!is_port(strip_not($port))) {
-			$input_errors[] = gettext("Invalid value specified for port.");
+		$ports = explode(" ",$port);
+		foreach($ports as &$port) {
+			if (!is_port(strip_not($port))) {
+				$input_errors[] = gettext("Invalid value specified for port.");
+			}
 		}
 	}
 
@@ -479,7 +482,14 @@ if ($do_tcpdump) :
 	}
 
 	if ($port != "") {
-		$matches[] = "port ".fixup_not($port);
+		for($i = 0; $i < count($ports); $i++){
+                    	 if($i == count($ports)-1) {
+                	                $ports_matches .= "port ".($ports[$i]);
+               	         } else {
+                	                $ports_matches .= "port ".($ports[$i]). " or ";
+                      	 }
+		}
+		$matches[] = $ports_matches;
 	}
 
 	if ($host != "") {

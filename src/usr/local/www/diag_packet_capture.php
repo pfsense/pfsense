@@ -30,16 +30,16 @@
 
 $allowautocomplete = true;
 
-function fixup_host_logic($value) {
+function fixup_logic($value) {
 	return str_replace(array(" ", ",", "+", "|", "!"), array("", "and ", "and ", "or ", "not "), $value);
 }
 
-function strip_host_logic($value) {
+function strip_logic($value) {
 	return str_replace(array(" ", ",", "+", "|", "!"), array("", "", "", "", ""), $value);
 }
 
-function get_host_boolean($value, $host) {
-	$value = str_replace(array("!", $host), array("", ""), $value);
+function get_boolean($value, $entry) {
+	$value = str_replace(array("!", $entry), array("", ""), $value);
 	$andor = "";
 	switch (trim($value)) {
 		case "|":
@@ -67,9 +67,9 @@ function strip_not($value) {
 }
 
 function fixup_host($value, $position) {
-	$host = strip_host_logic($value);
+	$host = strip_logic($value);
 	$not = has_not($value) ? "not " : "";
-	$andor = ($position > 0) ? get_host_boolean($value, $host) : "";
+	$andor = ($position > 0) ? get_boolean($value, $host) : "";
 	if (is_ipaddr($host)) {
 		return "{$andor}host {$not}" . $host;
 	} elseif (is_subnet($host)) {
@@ -99,6 +99,13 @@ function fixup_host($value, $position) {
 	} else {
 		return "";
 	}
+}
+
+function fixup_port($value, $position) {
+	$port = strip_logic($value);
+	$not = has_not($value) ? "not " : "";
+	$andor = ($position > 0) ? get_boolean($value, $port) : "";
+	return "{$andor}port {$not}" . $port;
 }
 
 if ($_POST['downloadbtn'] == gettext("Download Capture")) {
@@ -185,7 +192,7 @@ if ($_POST) {
 		}
 
 		foreach ($hosts as $h) {
-			$h = strip_host_logic($h);
+			$h = strip_logic($h);
 			if (!is_subnet($h) && !is_ipaddr($h) && !is_macaddr($h, true)) {
 				$input_errors[] = sprintf(gettext("A valid IP address, CIDR block, or MAC address must be specified. [%s]"), $h);
 			}
@@ -200,9 +207,17 @@ if ($_POST) {
 	}
 
 	if ($port != "") {
-		$ports = explode(" ",$port);
-		foreach($ports as &$port) {
-			if (!is_port(strip_not($port))) {
+		$port_string = str_replace(array(" ", "|", ","), array("", "#|", "#+"), $port);
+
+		if (strpos($port_string, '#') === false) {
+			$ports = array($port);
+		} else {
+			$ports = explode('#', $port_string);
+		}
+
+		foreach ($ports as $p) {
+			$p = strip_logic($p);
+			if (!is_port(strip_not($p))) {
 				$input_errors[] = gettext("Invalid value specified for port.");
 			}
 		}
@@ -382,6 +397,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$port
 ))->setHelp('The port can be either the source or destination port. The packet capture will look for this port in either field. ' .
+			'Matching can be negated by preceding the value with "!". Multiple ports may be specified. Comma (",") separated values perform a boolean "AND". Separating with a pipe ("|") performs a boolean "OR".' .
 			'Leave blank if not filtering by port.');
 
 $section->addInput(new Form_Input(
@@ -482,14 +498,20 @@ if ($do_tcpdump) :
 	}
 
 	if ($port != "") {
-		for($i = 0; $i < count($ports); $i++){
-                    	 if($i == count($ports)-1) {
-                	                $ports_matches .= "port ".($ports[$i]);
-               	         } else {
-                	                $ports_matches .= "port ".($ports[$i]). " or ";
-                      	 }
+		$portmatch = "";
+		$portcount = 0;
+
+		foreach ($ports as $p) {
+			$p = fixup_port($p, $portcount++);
+
+			if (!empty($p)) {
+				$portmatch .= " " . $p;
+			}
 		}
-		$matches[] = $ports_matches;
+
+		if (!empty($portmatch)) {
+			$matches[] = "({$portmatch})";
+		}
 	}
 
 	if ($host != "") {
@@ -509,6 +531,7 @@ if ($do_tcpdump) :
 		}
 	}
 
+
 	if ($count != "0") {
 		$searchcount = "-c " . $count;
 	} else {
@@ -524,7 +547,7 @@ if ($do_tcpdump) :
 
 		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
 		// Debug
-		//echo $cmd;
+		// echo $cmd;
 		mwexec_bg ($cmd);
 	} else {
 ?>

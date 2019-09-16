@@ -225,6 +225,5 @@ events.push(function() {
 		</table>
 	</div>
 </div>
-<span class="help-block">Flags: 1 - Protocol specific routing flag, H - Host entry, G - Destination requires   forwarding by intermediary, S - Manually added, U - Route usable.<a target="_blank" href="https://docs.netgate.com/pfsense/en/latest/routing/list-of-routing-table-flags.html"> See full list of Routing Table Flags</a></span>
 
 <?php include("foot.inc");

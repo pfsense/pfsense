@@ -182,7 +182,7 @@ if (($_POST['act'] == "delcert") && !$read_only) {
 	$savemsg = sprintf(gettext("Removed certificate association \"%s\" from user %s"), $certdeleted, $a_user[$id]['name']);
 	write_config($savemsg);
 	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
-	$_POST['act'] = "edit";
+	$act = "edit";
 }
 
 if (($_POST['act'] == "delprivid") && !$read_only) {
@@ -192,7 +192,7 @@ if (($_POST['act'] == "delprivid") && !$read_only) {
 	$savemsg = sprintf(gettext("Removed Privilege \"%s\" from user %s"), $privdeleted, $a_user[$id]['name']);
 	write_config($savemsg);
 	syslog($logging_level, "{$logging_prefix}: {$savemsg}");
-	$_POST['act'] = "edit";
+	$act = "edit";
 }
 
 if ($_POST['save'] && !$read_only) {

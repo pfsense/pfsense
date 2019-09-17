@@ -742,307 +742,306 @@ foreach ($a_user as $i => $userent):
 	exit;
 }
 
+// ($act == "new" || $act == "edit" || $input_errors) == true
+
 $form = new Form;
 
-if ($act == "new" || $act == "edit" || $input_errors):
+$form->addGlobal(new Form_Input(
+	'act',
+	null,
+	'hidden',
+	$act
+));
 
-	$form->addGlobal(new Form_Input(
-		'act',
-		null,
-		'hidden',
-		$act
-	));
+$form->addGlobal(new Form_Input(
+	'userid',
+	null,
+	'hidden',
+	isset($id) ? $id:''
+));
 
-	$form->addGlobal(new Form_Input(
-		'userid',
-		null,
-		'hidden',
-		isset($id) ? $id:''
-	));
+$form->addGlobal(new Form_Input(
+	'privid',
+	null,
+	'hidden',
+	''
+));
 
-	$form->addGlobal(new Form_Input(
-		'privid',
-		null,
-		'hidden',
-		''
-	));
+$form->addGlobal(new Form_Input(
+	'certid',
+	null,
+	'hidden',
+	''
+));
 
-	$form->addGlobal(new Form_Input(
-		'certid',
-		null,
-		'hidden',
-		''
-	));
+$ro = "";
+if ($pconfig['utype'] == "system") {
+	$ro = "readonly";
+}
 
-	$ro = "";
-	if ($pconfig['utype'] == "system") {
-		$ro = "readonly";
+$section = new Form_Section('User Properties');
+
+$section->addInput(new Form_StaticText(
+	'Defined by',
+	strtoupper($pconfig['utype'])
+));
+
+$form->addGlobal(new Form_Input(
+	'utype',
+	null,
+	'hidden',
+	$pconfig['utype']
+));
+
+$section->addInput(new Form_Checkbox(
+	'disabled',
+	'Disabled',
+	'This user cannot login',
+	$pconfig['disabled']
+));
+
+$section->addInput($input = new Form_Input(
+	'usernamefld',
+	'*Username',
+	'text',
+	$pconfig['usernamefld']
+));
+
+if ($ro) {
+	$input->setReadonly();
+}
+
+$form->addGlobal(new Form_Input(
+	'oldusername',
+	null,
+	'hidden',
+	$pconfig['usernamefld']
+));
+
+if ($act == "edit") {
+	$pwd_required = "";
+} else {
+	$pwd_required = "*";
+}
+
+$group = new Form_Group($pwd_required . 'Password');
+$group->add(new Form_Input(
+	'passwordfld1',
+	'Password',
+	'password'
+));
+$group->add(new Form_Input(
+	'passwordfld2',
+	'Confirm Password',
+	'password'
+));
+
+$section->add($group);
+
+$section->addInput($input = new Form_Input(
+	'descr',
+	'Full name',
+	'text',
+	htmlspecialchars($pconfig['descr'])
+))->setHelp('User\'s full name, for administrative information only');
+
+if ($ro) {
+	$input->setDisabled();
+}
+
+$section->addInput(new Form_Input(
+	'expires',
+	'Expiration date',
+	'text',
+	$pconfig['expires']
+))->setHelp('Leave blank if the account shouldn\'t expire, otherwise enter '.
+	'the expiration date as MM/DD/YYYY');
+
+$section->addInput(new Form_Checkbox(
+	'customsettings',
+	'Custom Settings',
+	'Use individual customized GUI options and dashboard layout for this user.',
+	$pconfig['customsettings']
+));
+
+gen_user_settings_fields($section, $pconfig);
+
+// ==== Group membership ==================================================
+$group = new Form_Group('Group membership');
+
+// Make a list of all the groups configured on the system, and a list of
+// those which this user is a member of
+$systemGroups = array();
+$usersGroups = array();
+
+$usergid = [$pconfig['usernamefld']];
+
+foreach ($config['system']['group'] as $Ggroup) {
+	if ($Ggroup['name'] != "all") {
+		if (($act == 'edit' || $input_errors) && $Ggroup['member'] && in_array($a_user[$id]['uid'], $Ggroup['member'])) {
+			$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list
+		} else {
+			$systemGroups[ $Ggroup['name'] ] = $Ggroup['name']; // Add it to the 'not a member of' list
+		}
 	}
+}
 
-	$section = new Form_Section('User Properties');
+$group->add(new Form_Select(
+	'sysgroups',
+	null,
+	array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
+	$systemGroups,
+	true
+))->setHelp('Not member of');
+
+$group->add(new Form_Select(
+	'groups',
+	null,
+	array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
+	$usersGroups,
+	true
+))->setHelp('Member of');
+
+$section->add($group);
+
+$group = new Form_Group('');
+
+$group->add(new Form_Button(
+	'movetoenabled',
+	'Move to "Member of" list',
+	null,
+	'fa-angle-double-right'
+))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
+
+$group->add(new Form_Button(
+	'movetodisabled',
+	'Move to "Not member of" list',
+	null,
+	'fa-angle-double-left'
+))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
+
+$group->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');
+$section->add($group);
+
+// ==== Button for adding user certificate ================================
+if ($act == 'new') {
+	if (count($nonPrvCas) > 0) {
+		$section->addInput(new Form_Checkbox(
+			'showcert',
+			'Certificate',
+			'Click to create a user certificate',
+			$pconfig['showcert']
+		))->toggles('.cert-options');
+	} else {
+		$section->addInput(new Form_StaticText(
+			'Certificate',
+			gettext('No private CAs found. A private CA is required to create a new user certificate. ' .
+				'Save the user first to import an external certificate.')
+		));
+	}
+}
+
+$form->add($section);
+
+// ==== Effective privileges section ======================================
+if (isset($id)) {
+	// We are going to build an HTML table and add it to an Input_StaticText. It may be ugly, but it
+	// is the best way to make the display we need.
+
+	$section = new Form_Section('Effective Privileges');
 
 	$section->addInput(new Form_StaticText(
-		'Defined by',
-		strtoupper($pconfig['utype'])
-	));
-
-	$form->addGlobal(new Form_Input(
-		'utype',
 		null,
-		'hidden',
-		$pconfig['utype']
+		build_priv_table()
 	));
-
-	$section->addInput(new Form_Checkbox(
-		'disabled',
-		'Disabled',
-		'This user cannot login',
-		$pconfig['disabled']
-	));
-
-	$section->addInput($input = new Form_Input(
-		'usernamefld',
-		'*Username',
-		'text',
-		$pconfig['usernamefld']
-	));
-
-	if ($ro) {
-		$input->setReadonly();
-	}
-
-	$form->addGlobal(new Form_Input(
-		'oldusername',
-		null,
-		'hidden',
-		$pconfig['usernamefld']
-	));
-
-	if ($act == "edit") {
-		$pwd_required = "";
-	} else {
-		$pwd_required = "*";
-	}
-
-	$group = new Form_Group($pwd_required . 'Password');
-	$group->add(new Form_Input(
-		'passwordfld1',
-		'Password',
-		'password'
-	));
-	$group->add(new Form_Input(
-		'passwordfld2',
-		'Confirm Password',
-		'password'
-	));
-
-	$section->add($group);
-
-	$section->addInput($input = new Form_Input(
-		'descr',
-		'Full name',
-		'text',
-		htmlspecialchars($pconfig['descr'])
-	))->setHelp('User\'s full name, for administrative information only');
-
-	if ($ro) {
-		$input->setDisabled();
-	}
-
-	$section->addInput(new Form_Input(
-		'expires',
-		'Expiration date',
-		'text',
-		$pconfig['expires']
-	))->setHelp('Leave blank if the account shouldn\'t expire, otherwise enter '.
-		'the expiration date as MM/DD/YYYY');
-
-	$section->addInput(new Form_Checkbox(
-		'customsettings',
-		'Custom Settings',
-		'Use individual customized GUI options and dashboard layout for this user.',
-		$pconfig['customsettings']
-	));
-
-	gen_user_settings_fields($section, $pconfig);
-
-	// ==== Group membership ==================================================
-	$group = new Form_Group('Group membership');
-
-	// Make a list of all the groups configured on the system, and a list of
-	// those which this user is a member of
-	$systemGroups = array();
-	$usersGroups = array();
-
-	$usergid = [$pconfig['usernamefld']];
-
-	foreach ($config['system']['group'] as $Ggroup) {
-		if ($Ggroup['name'] != "all") {
-			if (($act == 'edit' || $input_errors) && $Ggroup['member'] && in_array($a_user[$id]['uid'], $Ggroup['member'])) {
-				$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list
-			} else {
-				$systemGroups[ $Ggroup['name'] ] = $Ggroup['name']; // Add it to the 'not a member of' list
-			}
-		}
-	}
-
-	$group->add(new Form_Select(
-		'sysgroups',
-		null,
-		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
-		$systemGroups,
-		true
-	))->setHelp('Not member of');
-
-	$group->add(new Form_Select(
-		'groups',
-		null,
-		array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
-		$usersGroups,
-		true
-	))->setHelp('Member of');
-
-	$section->add($group);
-
-	$group = new Form_Group('');
-
-	$group->add(new Form_Button(
-		'movetoenabled',
-		'Move to "Member of" list',
-		null,
-		'fa-angle-double-right'
-	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
-
-	$group->add(new Form_Button(
-		'movetodisabled',
-		'Move to "Not member of" list',
-		null,
-		'fa-angle-double-left'
-	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
-
-	$group->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');
-	$section->add($group);
-
-	// ==== Button for adding user certificate ================================
-	if ($act == 'new') {
-		if (count($nonPrvCas) > 0) {
-			$section->addInput(new Form_Checkbox(
-				'showcert',
-				'Certificate',
-				'Click to create a user certificate',
-				$pconfig['showcert']
-			))->toggles('.cert-options');
-		} else {
-			$section->addInput(new Form_StaticText(
-				'Certificate',
-				gettext('No private CAs found. A private CA is required to create a new user certificate. ' .
-					'Save the user first to import an external certificate.')
-			));
-		}
-	}
 
 	$form->add($section);
 
-	// ==== Effective privileges section ======================================
-	if (isset($id)) {
-		// We are going to build an HTML table and add it to an Input_StaticText. It may be ugly, but it
-		// is the best way to make the display we need.
+	// ==== Certificate table section =====================================
+	$section = new Form_Section('User Certificates');
 
-		$section = new Form_Section('Effective Privileges');
+	$section->addInput(new Form_StaticText(
+		null,
+		build_cert_table()
+	));
 
-		$section->addInput(new Form_StaticText(
-			null,
-			build_priv_table()
+	$form->add($section);
+}
+
+// ==== Add user certificate for a new user
+if (is_array($config['ca']) && count($config['ca']) > 0) {
+	$section = new Form_Section('Create Certificate for User');
+	$section->addClass('cert-options', $pconfig['showcert'] ? 'in' :' collapse');
+
+	if (!empty($nonPrvCas)) {
+		$section->addInput(new Form_Input(
+			'name',
+			'Descriptive name',
+			'text',
+			$pconfig['name']
 		));
 
-		$form->add($section);
-
-		// ==== Certificate table section =====================================
-		$section = new Form_Section('User Certificates');
-
-		$section->addInput(new Form_StaticText(
+		$group = new Form_Group('Certificate Authority');
+		$group->add(new Form_Select(
+			'caref',
 			null,
-			build_cert_table()
+			$pconfig['caref'],
+			$nonPrvCas
+		));
+		$group->add(new Form_Input(
+			'ca_password',
+			'CA Password',
+			'password'
+		));
+		$section->add($group);
+
+		$section->addInput(new Form_Select(
+			'keylen',
+			'Key length',
+			2048,
+			array(
+				512 => '512 bits',
+				1024 => '1024 bits',
+				2048 => '2048 bits',
+				3072 => '3072 bits',
+				4096 => '4096 bits',
+				7680 => '7680 bits',
+				8192 => '8192 bits',
+				15360 => '15360 bits',
+				16384 => '16384 bits'
+			)
+		))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, ' .
+			'and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). ' .
+			'As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. ' .
+			'For more information see %1$s.', '<a href="https://keylength.com">keylength.com</a>');
+
+		$group = new Form_Group('Private Key Password');
+		$group->setHelp('Enter a password to store the private key in encrypted form.');
+
+		$group->add(new Form_Input(
+			'certpassword1',
+			'Password',
+			'password'
+		));
+		$group->add(new Form_Input(
+			'certpassword2',
+			'Confirm Password',
+			'password'
 		));
 
-		$form->add($section);
+		$section->add($group);
+
+		$section->addInput(new Form_Input(
+			'lifetime',
+			'Lifetime',
+			'number',
+			$pconfig['lifetime']
+		));
 	}
 
-	// ==== Add user certificate for a new user
-	if (is_array($config['ca']) && count($config['ca']) > 0) {
-		$section = new Form_Section('Create Certificate for User');
-		$section->addClass('cert-options', $pconfig['showcert'] ? 'in' :' collapse');
+	$form->add($section);
+}
 
-		if (!empty($nonPrvCas)) {
-			$section->addInput(new Form_Input(
-				'name',
-				'Descriptive name',
-				'text',
-				$pconfig['name']
-			));
-
-			$group = new Form_Group('Certificate Authority');
-			$group->add(new Form_Select(
-				'caref',
-				null,
-				$pconfig['caref'],
-				$nonPrvCas
-			));
-			$group->add(new Form_Input(
-				'ca_password',
-				'CA Password',
-				'password'
-			));
-			$section->add($group);
-
-			$section->addInput(new Form_Select(
-				'keylen',
-				'Key length',
-				2048,
-				array(
-					512 => '512 bits',
-					1024 => '1024 bits',
-					2048 => '2048 bits',
-					3072 => '3072 bits',
-					4096 => '4096 bits',
-					7680 => '7680 bits',
-					8192 => '8192 bits',
-					15360 => '15360 bits',
-					16384 => '16384 bits'
-				)
-			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, ' .
-				'and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). ' .
-				'As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. ' .
-				'For more information see %1$s.', '<a href="https://keylength.com">keylength.com</a>');
-
-			$group = new Form_Group('Private Key Password');
-			$group->setHelp('Enter a password to store the private key in encrypted form.');
-
-			$group->add(new Form_Input(
-				'certpassword1',
-				'Password',
-				'password'
-			));
-			$group->add(new Form_Input(
-				'certpassword2',
-				'Confirm Password',
-				'password'
-			));
-
-			$section->add($group);
-
-			$section->addInput(new Form_Input(
-				'lifetime',
-				'Lifetime',
-				'number',
-				$pconfig['lifetime']
-			));
-		}
-
-		$form->add($section);
-	}
-
-endif;
 // ==== Paste a key for the new user
 $section = new Form_Section('Keys');
 

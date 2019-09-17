@@ -548,12 +548,6 @@ update-conflict-detection false;
 
 EOD;
 
-	if (!isset($dhcpifconf['disablepingcheck'])) {
-		$dhcpdconf .= "ping-check true;\n";
-	} else {
-		$dhcpdconf .= "ping-check false;\n";
-	}
-
 	if (!isset($dhcpifconf['disableauthoritative'])) {
 		$dhcpdconf .= "authoritative;\n";
 	}
@@ -1020,6 +1014,12 @@ EOD;
 		// max-lease-time
 		if ($dhcpifconf['maxleasetime']) {
 			$dhcpdconf .= "	max-lease-time {$dhcpifconf['maxleasetime']};\n";
+		}
+
+		if (!isset($dhcpifconf['disablepingcheck'])) {
+			$dhcpdconf .= "	ping-check true;\n";
+		} else {
+			$dhcpdconf .= "	ping-check false;\n";
 		}
 
 		// netbios-name*

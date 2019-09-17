@@ -1056,9 +1056,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		'V4'
 	))->setHelp('Leave blank to disable. Enter the interface IP address of the other machine. Machines must be using CARP. ' .
 				'Interface\'s advskew determines whether the DHCPd process is Primary or Secondary. Ensure one machine\'s advskew &lt; 20 (and the other is &gt; 20).');
-}
 
-if (!is_numeric($pool) && !($act == "newpool")) {
 	$section->addInput(new Form_Checkbox(
 		'staticarp',
 		'Static ARP',
@@ -1073,12 +1071,14 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		$pconfig['dhcpleaseinlocaltime']
 	))->setHelp('By default DHCP leases are displayed in UTC time.	By checking this box DHCP lease time will be displayed in local time and set to the time zone selected.' .
 				' This will be used for all DHCP interfaces lease time.');
+
 	$section->addInput(new Form_Checkbox(
 		'statsgraph',
 		'Statistics graphs',
 		'Enable RRD statistics graphs',
 		$pconfig['statsgraph']
 	))->setHelp('Enable this to add DHCP leases statistics to the RRD graphs. Disabled by default.');
+
 	$section->addInput(new Form_Checkbox(
 		'disablepingcheck',
 		'Ping check',

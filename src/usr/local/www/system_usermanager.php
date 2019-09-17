@@ -944,7 +944,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	$form->add($section);
 
 	// ==== Effective privileges section ======================================
-	if (isset($pconfig['uid'])) {
+	if (isset($id)) {
 		// We are going to build an HTML table and add it to an Input_StaticText. It may be ugly, but it
 		// is the best way to make the display we need.
 

@@ -108,6 +108,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
 	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];
 	$pconfig['mobike'] = $a_phase1[$p1index]['mobike'];
+	$pconfig['closeaction'] = $a_phase1[$p1index]['closeaction'];
 
 	if (isset($a_phase1[$p1index]['reauth_enable'])) {
 		$pconfig['reauth_enable'] = true;
@@ -258,6 +259,10 @@ if ($_POST['save']) {
 
 	if (($pconfig['lifetime'] && !is_numericint($pconfig['lifetime']))) {
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");
+	}
+
+	if (!empty($pconfig['closeaction']) && !array_key_exists($pconfig['closeaction'], $ipsec_closeactions)) {
+		$input_errors[] = gettext("Invalid Child SA Close Action.");
 	}
 
 	if (!isset($pconfig['rekey_enable']) && $pconfig['margintime']) {
@@ -485,6 +490,7 @@ if ($_POST['save']) {
 		$ph1ent['descr'] = $pconfig['descr'];
 		$ph1ent['nat_traversal'] = $pconfig['nat_traversal'];
 		$ph1ent['mobike'] = $pconfig['mobike'];
+		$ph1ent['closeaction'] = $pconfig['closeaction'];
 
 		if (isset($pconfig['reauth_enable'])) {
 			$ph1ent['reauth_enable'] = true;
@@ -906,6 +912,13 @@ $section->addInput(new Form_Checkbox(
 	'Enable this option to never initiate this connection from this side, only respond to incoming requests.',
 	$pconfig['responderonly']
 ));
+
+$section->addInput(new Form_Select(
+	'closeaction',
+	'Child SA Close Action',
+	$pconfig['closeaction'],
+	$ipsec_closeactions
+))->setHelp('Set this option to control the behavior when the remote peer unexpectedly closes a child SA (P2)');
 
 $section->addInput(new Form_Select(
 	'nat_traversal',

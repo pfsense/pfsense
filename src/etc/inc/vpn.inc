@@ -843,6 +843,12 @@ EOD;
 			$ikeid = $ph1ent['ikeid'];
 			$keyexchange = "ikev1";
 			$passive = "route";
+
+			$closeaction = "";
+			if (!empty($ph1ent['closeaction'])) {
+				$closeaction = "closeaction = {$ph1ent['closeaction']}";
+			}
+
 			if (!empty($ph1ent['iketype'])) {
 				if ($ph1ent['iketype'] == "ikev2") {
 					$keyexchange = "ikev2";
@@ -1375,6 +1381,7 @@ EOD;
 	{$installpolicy}
 	{$tunneltype}
 	{$dpdline}
+	{$closeaction}
 	auto = {$passive}
 	left = {$left_spec}
 	right = {$right_spec}

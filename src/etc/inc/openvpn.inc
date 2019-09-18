@@ -1585,22 +1585,6 @@ function openvpn_resync_all($interface = "") {
 		$config['openvpn'] = array();
 	}
 
-/*
-	if (!$config['openvpn']['dh-parameters']) {
-		echo "Configuring OpenVPN Parameters ...\n";
-		$dh_parameters = openvpn_create_dhparams(1024);
-		$dh_parameters = base64_encode($dh_parameters);
-		$config['openvpn']['dh-parameters'] = $dh_parameters;
-		write_config("OpenVPN DH parameters");
-	}
-
-	$path_ovdh = $g['varetc_path']."/openvpn/dh-parameters";
-	if (!file_exists($path_ovdh)) {
-		$dh_parameters = $config['openvpn']['dh-parameters'];
-		$dh_parameters = base64_decode($dh_parameters);
-		file_put_contents($path_ovdh, $dh_parameters);
-	}
-*/
 	if ($interface <> "") {
 		log_error(sprintf(gettext("Resyncing OpenVPN instances for interface %s."), convert_friendly_interface_to_friendly_descr($interface)));
 	} else {

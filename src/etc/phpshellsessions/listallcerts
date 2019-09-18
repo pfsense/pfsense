@@ -1,0 +1,129 @@
+require_once("config.inc");
+require_once("certs.inc");
+
+global $config;
+
+init_config_arr(array('cert'));
+$a_cert = &$config['cert'];
+
+foreach ($a_cert as $i => $cert) {
+	if (!is_array($cert) || empty($cert)) {
+                continue;
+        }
+
+        $name = htmlspecialchars($cert['descr']);
+        $sans = array();
+
+        if ($cert['crt']) {
+                $subj = cert_get_subject($cert['crt']);
+                $issuer = cert_get_issuer($cert['crt']);
+                $purpose = cert_get_purpose($cert['crt']);
+                $sans = cert_get_sans($cert['crt']);
+                list($startdate, $enddate) = cert_get_dates($cert['crt']);
+
+                if ($subj == $issuer) {
+                        $caname = "self-signed";
+                } else {
+                        $caname = "external";
+                }
+
+                $subj = htmlspecialchars(cert_escape_x509_chars($subj, true));
+        } else {
+                $subj = "";
+                $issuer = "";
+                $purpose = "";
+                $startdate = "";
+                $enddate = "";
+                $caname = "private key only";
+        }
+
+	if ($cert['csr']) {
+                $subj = htmlspecialchars(cert_escape_x509_chars(csr_get_subject($cert['csr']), true));
+                $sans = cert_get_sans($cert['crt']);
+                $caname = "external - signature pending";
+        }
+
+	$ca = lookup_ca($cert['caref']);
+
+        if ($ca) {
+                $caname = $ca['descr'];
+        }
+
+	printf("Name: %s\n", $name);
+
+	if ($cert['type']) {
+		printf("%s", $cert_types[$cert['type']]);
+	}
+
+	if (is_array($purpose)) {
+		printf("Server: %s\n", $purpose['ca']);
+	}
+
+	printf("CA: %s\n", $caname);
+
+	$certserial = cert_get_serial($cert['crt']);
+
+	if (!empty($certserial)) {
+		printf("Serial: %s \n", htmlspecialchars(cert_escape_x509_chars($certserial, true)));
+	}
+
+	$certsig = cert_get_sigtype($cert['crt']);
+
+	if (is_array($certsig) && !empty($certsig) && !empty($certsig['shortname'])) {
+		printf("Signature Digest: %s \n", htmlspecialchars(cert_escape_x509_chars($certsig['shortname'], true)));
+	}
+
+	if (is_array($sans) && !empty($sans)) {
+		printf("SAN: %s\n", htmlspecialchars(implode(', ', cert_escape_x509_chars($sans, true))));
+	}
+
+	if (is_array($purpose) && !empty($purpose['ku'])) {
+		printf("KU: %s \n", htmlspecialchars(implode(', ', $purpose['ku'])));
+	}
+
+	if (is_array($purpose) && !empty($purpose['eku'])) {
+		printf("EKU: %s \n", htmlspecialchars(implode(', ', $purpose['eku'])));
+	}
+
+	if (cert_get_ocspstaple($cert['crt'])) {
+		printf("OCSP: Must Staple \n");
+	}
+
+	if (!empty($startdate) || !empty($enddate)) {
+		printf("Valid From: %s \n", $startdate);
+		printf("Valid Until: %s \n", $enddate);
+	}
+
+	printf("In Use: ");
+
+	if (is_cert_revoked($cert)) {
+		printf("Revoked ");
+	}
+
+	if (is_webgui_cert($cert['refid'])) {
+		printf("webConfigurator" );
+	}
+
+	if (is_user_cert($cert['refid'])) {
+		printf("User Cert ");
+	}
+
+	if (is_openvpn_server_cert($cert['refid'])) {
+		printf("OpenVPN Server ");
+	}
+
+	if (is_openvpn_client_cert($cert['refid'])) {
+		printf("OpenVPN Client ");
+	}
+
+	if (is_ipsec_cert($cert['refid'])) {
+		printf("IPsec Tunnel ");
+	}
+
+	if (is_captiveportal_cert($cert['refid'])) {
+		printf("Captive Portal ");
+	}
+
+	echo cert_usedby_description($cert['refid'], $certificates_used_by_packages);
+	echo "\n\n";
+}

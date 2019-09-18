@@ -742,8 +742,6 @@ foreach ($a_user as $i => $userent):
 	exit;
 }
 
-// ($act == "new" || $act == "edit" || $input_errors) == true
-
 $form = new Form;
 
 $form->addGlobal(new Form_Input(

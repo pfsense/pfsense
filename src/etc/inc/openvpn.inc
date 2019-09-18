@@ -578,7 +578,7 @@ function openvpn_validate_port($value, $name, $first_port = 0) {
 		$first_port = 0;
 	}
 	if (empty($value) || !is_numeric($value) || $value < $first_port || ($value > 65535)) {
-		return sprintf(gettext("The field '%s' must contain a valid port, ranging from {$first_port} to 65535."), $name);
+		return sprintf(gettext("The field '%s' must contain a valid port, ranging from %s to 65535."), $name, $first_port);
 	}
 	return false;
 }

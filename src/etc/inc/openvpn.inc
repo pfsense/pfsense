@@ -142,7 +142,6 @@ global $openvpn_topologies;
 $openvpn_topologies = array(
 	'subnet' => gettext("Subnet -- One IP address per client in a common subnet"),
 	'net30' => gettext("net30 -- Isolated /30 network per client")
-//	'p2p => gettext("Peer to Peer -- One IP address per client peer-to-peer style. Does not work on Windows.")
 );
 
 global $openvpn_tls_modes;

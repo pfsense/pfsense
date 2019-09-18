@@ -74,7 +74,7 @@ foreach ($a_cert as $i => $cert) {
 	}
 
 	if (is_array($sans) && !empty($sans)) {
-		printf("SAN: %s\n", htmlspecialchars(implode(', ', cert_escape_x509_chars($sans, true))));
+		printf("SAN: %s\n", htmlspecialchars(implode(',', cert_escape_x509_chars($sans, true))));
 	}
 
 	if (is_array($purpose) && !empty($purpose['ku'])) {

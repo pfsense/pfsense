@@ -637,6 +637,11 @@ if (are_notices_pending()) {
 	<?php endif?>
 
 <?php
+/* Determine shortcut section for XML-based packages */
+if (empty($shortcut_section) && !empty($xmlfile)) {
+	$shortcut_section = basename($pagename, '.xml');
+}
+
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service']) && isAllowedPage('status_services.php')) {
 	$ssvc = array();
 	switch ($shortcut_section) {

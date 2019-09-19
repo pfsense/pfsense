@@ -1307,7 +1307,9 @@ EOD;
 													if (!empty($modp)) {
 														$tmpealgo .= "-{$modp}";
 													}
-													$ealgoESPsp2arr[] = $tmpealgo;
+													if (!in_array($tmpealgo, $ealgoESPsp2arr)) {
+														$ealgoESPsp2arr[] = $tmpealgo;
+													}
 												}
 											} else {
 												$tmpealgo = "{$ealg_id}{$keylen}";
@@ -1315,7 +1317,9 @@ EOD;
 												if (!empty($modp)) {
 													$tmpealgo .= "-{$modp}";
 												}
-												$ealgoESPsp2arr[] = $tmpealgo;
+												if (!in_array($tmpealgo, $ealgoESPsp2arr)) {
+													$ealgoESPsp2arr[] = $tmpealgo;
+												}
 											}
 										}
 									}
@@ -1328,7 +1332,9 @@ EOD;
 											if (!empty($modp)) {
 												$tmpealgo .= "-{$modp}";
 											}
-											$ealgoESPsp2arr[] = $tmpealgo;
+											if (!in_array($tmpealgo, $ealgoESPsp2arr)) {
+												$ealgoESPsp2arr[] = $tmpealgo;
+											}
 										}
 									} else {
 										$tmpealgo = "{$ealg_id}{$ealg_kl}";
@@ -1336,7 +1342,9 @@ EOD;
 										if (!empty($modp)) {
 											$tmpealgo .= "-{$modp}";
 										}
-										$ealgoESPsp2arr[] = $tmpealgo;
+										if (!in_array($tmpealgo, $ealgoESPsp2arr)) {
+											$ealgoESPsp2arr[] = $tmpealgo;
+										}
 									}
 								}
 							}
@@ -1349,7 +1357,9 @@ EOD;
 								if (!empty($modp)) {
 									$tmpAHalgo = "-{$modp}";
 								}
-								$ealgoAHsp2arr[] = $tmpAHalgo;
+								if (!in_array($tmpAHalgo, $ealgoAHsp2arr)) {
+									$ealgoAHsp2arr[] = $tmpAHalgo;
+								}
 							}
 						}
 					}

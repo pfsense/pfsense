@@ -49,6 +49,17 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
     ($_POST['override'] != "yes"))):
 	if (DEBUG) {
 		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
+	} elseif ($_POST['Submit'] == 'FSCK Reboot') {
+		mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
+		print('<div><pre>');
+		system_reboot();
+		print('</pre></div>');
+	} elseif ($_POST['Submit'] == 'Reroot') {
+		if (!is_module_loaded("zfs.ko")) {
+			print('<div><pre>');
+			system_reboot_sync(true);
+			print('</pre></div>');
+		}
 	} else {
 		print('<div><pre>');
 		system_reboot();
@@ -110,12 +121,33 @@ else:
 	</div>
 	<div class="panel-body">
 		<div class="content">
-			<p><?=gettext('Click "Reboot" to reboot the system immediately, or "Cancel" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)')?></p>
+			<p>
+<?php 
+if (!is_module_loaded("zfs.ko")) {
+	print('Click "Reboot" to reboot the system immediately, "FSCK Reboot" to reboot and run filesystem check, "Reroot" to stop processes, remount disks and re-run startup sequence or "Cancel" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)');
+	} else {
+	print('Click "Reboot" to reboot the system immediately, "FSCK Reboot" to reboot and run filesystem check or "Cancel" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)');
+}
+?>
+</p>
 			<form action="diag_reboot.php" method="post">
 				<button type="submit" class="btn btn-danger pull-center" name="Submit" value="<?=gettext("Reboot")?>" title="<?=gettext("Reboot the system")?>">
 					<i class="fa fa-refresh"></i>
 					<?=gettext("Reboot")?>
 				</button>
+				<button type="submit" class="btn btn-danger pull-center" name="Submit" value="<?=gettext("FSCK Reboot")?>" title="<?=gettext("Reboot and run a filesystem check")?>">
+					<i class="fa fa-refresh"></i>
+					<?=gettext("FSCK Reboot")?>
+				</button>
+<?php
+if (!is_module_loaded("zfs.ko")) {
+				echo '<button type="submit" class="btn btn-danger pull-center" name="Submit" value="Reroot" title="Reroot (Stop processes, remount disks, re-run startup sequence)">
+					<i class="fa fa-refresh"></i>
+					Reroot
+				</button>';
+//        echo "    " . gettext("R/r: Reroot (Stop processes, remount disks, re-run startup sequence)") . "\n";
+}
+?>
 				<a href="/" class="btn btn-info">
 					<i class="fa fa-undo"></i>
 					<?=gettext("Cancel")?>

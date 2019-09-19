@@ -3077,6 +3077,7 @@ function get_locale_list() {
 		"en_US" => gettext("English"),
 		"fr" => gettext("French"),
 		"de_DE" => gettext("German (Germany)"),
+		"it" => gettext("Italian"),
 		"ko" => gettext("Korean"),
 		"nb" => gettext("Norwegian Bokmål"),
 		"pl" => gettext("Polish"),

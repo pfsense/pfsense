@@ -47,7 +47,7 @@ if (!array_key_exists($cpzone, $a_cp)) {
 }
 
 if (empty($cpzone)) {
-	header("Location: services_captiveportal_zones.php");
+	header("Location: status_captiveportal.php");
 	exit;
 }
 

@@ -2008,12 +2008,12 @@ events.push(function() {
 		$('#certtype').html(errmsg);
 	});
 
-	function updateCiphers(mem) {
+	function updateCipher(mem) {
 		var found = false;
 
 		// If the cipher exists, remove it
 		$('[id="ncp-ciphers[]"] option').each(function() {
-			if($(this).val() == mem) {
+			if($(this).val().toString() == mem) {
 				$(this).remove();
 				found = true;
 			}
@@ -2023,6 +2023,10 @@ events.push(function() {
 		if (!found) {
 			$('[id="ncp-ciphers[]"]').append(new Option(mem , mem));
 		}
+	}
+
+	function updateCiphers(mem) {
+		mem.toString().split(",").forEach(updateCipher);
 
 		// Unselect all options
 		$('[id="availciphers[]"] option:selected').removeAttr("selected");

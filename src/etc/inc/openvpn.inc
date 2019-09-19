@@ -150,6 +150,24 @@ $openvpn_tls_modes = array(
 	'crypt' => gettext("TLS Encryption and Authentication")
 );
 
+global $openvpn_ping_method;
+$openvpn_ping_method = array(
+	'keepalive' => gettext("keepalive -- Use keepalive helper to define ping configuration"),
+	'ping' => gettext("ping -- Define ping/ping-exit/ping-restart manually")
+);
+
+global $openvpn_default_keepalive_interval;
+$openvpn_default_keepalive_interval = 10;
+
+global $openvpn_default_keepalive_timeout;
+$openvpn_default_keepalive_timeout = 60;
+
+global $openvpn_ping_action;
+$openvpn_ping_action = array(
+	'ping_restart' => gettext("ping-restart -- Restart OpenVPN after timeout"),
+	'ping_exit' => gettext("ping-exit -- Exit OpenVPN after timeout")
+);
+
 function openvpn_build_mode_list() {
 	global $openvpn_server_modes;
 
@@ -828,7 +846,34 @@ function openvpn_reconfigure($mode, $settings) {
 	$conf .= "#group nobody\n";
 	$conf .= "script-security 3\n";
 	$conf .= "daemon\n";
-	$conf .= "keepalive 10 60\n";
+
+	if (!empty($settings['inactive_seconds'])) {
+		$conf .= "inactive {$settings['inactive_seconds']}\n";
+	}
+
+	if (!empty($settings['ping_method']) &&
+	    $settings['ping_method'] == 'ping') {
+		$conf .= "ping {$settings['ping_seconds']}\n";
+
+		if (!empty($settings['ping_push'])) {
+			$conf .= "push \"ping {$settings['ping_seconds']}\"\n";
+		}
+
+		$action = str_replace("_", "-", $settings['ping_action']);
+		$conf .= "{$action} {$settings['ping_action_seconds']}\n";
+
+		if (!empty($settings['ping_action_push'])) {
+			$conf .= "push \"{$action} " .
+			    "{$settings['ping_action_seconds']}\"\n";
+		}
+	} else {
+		$conf .= "keepalive " .
+		    ($settings['keepalive_interval']
+			?: $openvpn_default_keepalive_interval) . " " .
+		    ($settings['keepalive_timeout']
+			?: $openvpn_default_keepalive_timeout) . "\n";
+	}
+
 	$conf .= "ping-timer-rem\n";
 	$conf .= "persist-tun\n";
 	$conf .= "persist-key\n";

@@ -78,6 +78,12 @@ if [ ! -z "${fsck_forced_iterations}" ]; then
 	done
 fi
 
+# Apply fix for https://www.freebsd.org/security/advisories/FreeBSD-SA-19:10.ufs.asc
+if [ -f /.fix_for_SA-19-10.ufs ]; then
+	echo "Applying fix for FreeBSD-SA-19:10.ufs"
+	/sbin/fsck -t ufs -f -p -T ufs:-z
+fi
+
 FSCK_ACTION_NEEDED=0
 /sbin/fsck -p
 case $? in
@@ -114,6 +120,10 @@ if [ ${mount_rc} -ne 0 ]; then
 	echo "ERROR: Impossible to mount filesystem, use interactive shell to attempt to recover it"
 	/bin/sh
 	/sbin/reboot
+fi
+
+if [ -f /.fix_for_SA-19-10.ufs ]; then
+	rm -f /.fix_for_SA-19-10.ufs
 fi
 
 # Handle ZFS read-only case

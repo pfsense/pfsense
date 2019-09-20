@@ -66,7 +66,7 @@ function strip_not($value) {
 	return ltrim(trim($value), '!');
 }
 
-function fixup_hostport($value, $position, $type='host') {
+function fixup_hostport($value, $position, $type) {
 	$item = strip_logic($value);
 	$not = has_not($value) ? "not " : "";
 	$andor = ($position > 0) ? get_boolean($value, $item) : "";
@@ -100,6 +100,38 @@ function fixup_hostport($value, $position, $type='host') {
 		return "{$andor} ( ether[0:{$partcount}] {$eq} {$searchmac} or ether[6:{$partcount}] {$eq} {$searchmac} )";
 	} else {
 		return "";
+	}
+}
+
+function precheck_hostport($item_array) {
+	$item_string = str_replace(array(" ", "|", ","), array("", "#|", "#+"), $item_array);
+
+	if (strpos($item_string, '#') === false) {
+		$items = array($item_array);
+	} else {
+		$items = explode('#', $item_string);
+	}
+	return $items;
+}
+
+function hostport_array_fixer($items,$type) {
+	$itemmatch = "";
+	$itemcount = 0;
+
+	foreach ($items as $i) {
+		if ($type == 'port') {
+			$i = fixup_hostport($i, $itemcount++,'port');
+		} else {
+			$i = fixup_hostport($i, $itemcount++,'host');
+		}
+
+		if (!empty($i)) {
+			$itemmatch .= " " . $i;
+		}
+	}
+
+	if (!empty($itemmatch)) {
+		return "({$itemmatch})";
 	}
 }
 
@@ -178,14 +210,7 @@ if ($_POST) {
 	}
 
 	if ($host != "") {
-		$host_string = str_replace(array(" ", "|", ","), array("", "#|", "#+"), $host);
-
-		if (strpos($host_string, '#') === false) {
-			$hosts = array($host);
-		} else {
-			$hosts = explode('#', $host_string);
-		}
-
+		$hosts = precheck_hostport($host);
 		foreach ($hosts as $h) {
 			$h = strip_logic($h);
 			if (!is_subnet($h) && !is_ipaddr($h) && !is_macaddr($h, true)) {
@@ -202,14 +227,7 @@ if ($_POST) {
 	}
 
 	if ($port != "") {
-		$port_string = str_replace(array(" ", "|", ","), array("", "#|", "#+"), $port);
-
-		if (strpos($port_string, '#') === false) {
-			$ports = array($port);
-		} else {
-			$ports = explode('#', $port_string);
-		}
-
+		$ports = precheck_hostport($port);
 		foreach ($ports as $p) {
 			$p = strip_logic($p);
 			if (!is_port(strip_not($p))) {
@@ -493,37 +511,11 @@ if ($do_tcpdump) :
 	}
 
 	if ($port != "") {
-		$portmatch = "";
-		$portcount = 0;
-
-		foreach ($ports as $p) {
-			$p = fixup_hostport($p, $portcount++,'port');
-
-			if (!empty($p)) {
-				$portmatch .= " " . $p;
-			}
-		}
-
-		if (!empty($portmatch)) {
-			$matches[] = "({$portmatch})";
-		}
+		$matches[] = hostport_array_fixer($ports,'port');
 	}
 
 	if ($host != "") {
-		$hostmatch = "";
-		$hostcount = 0;
-
-		foreach ($hosts as $h) {
-			$h = fixup_hostport($h, $hostcount++);
-
-			if (!empty($h)) {
-				$hostmatch .= " " . $h;
-			}
-		}
-
-		if (!empty($hostmatch)) {
-			$matches[] = "({$hostmatch})";
-		}
+		$matches[] = hostport_array_fixer($hosts,'host');
 	}
 
 

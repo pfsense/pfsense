@@ -66,17 +66,19 @@ function strip_not($value) {
 	return ltrim(trim($value), '!');
 }
 
-function fixup_host($value, $position) {
-	$host = strip_logic($value);
+function fixup_hostport($value, $position, $type='host') {
+	$item = strip_logic($value);
 	$not = has_not($value) ? "not " : "";
-	$andor = ($position > 0) ? get_boolean($value, $host) : "";
-	if (is_ipaddr($host)) {
-		return "{$andor}host {$not}" . $host;
-	} elseif (is_subnet($host)) {
-		return "{$andor}net {$not}" . $host;
-	} elseif (is_macaddr($host, false)) {
-		return "{$andor}ether host {$not}" . $host;
-	} elseif (is_macaddr($host, true)) {
+	$andor = ($position > 0) ? get_boolean($value, $item) : "";
+	if ($type == 'port') {
+		return "{$andor}port {$not}" . $item;
+	} elseif (is_ipaddr($item)) {
+		return "{$andor}host {$not}" . $item;
+	} elseif (is_subnet($item)) {
+		return "{$andor}net {$not}" . $item;
+	} elseif (is_macaddr($item, false)) {
+		return "{$andor}ether host {$not}" . $item;
+	} elseif (is_macaddr($item, true)) {
 		/* Try to match a partial MAC address. tcpdump only allows
 		 * matching 1, 2, or 4 byte chunks so enforce that limit
 		 */
@@ -86,7 +88,7 @@ function fixup_host($value, $position) {
 		 * but sections may only have one digit (leading 0) so add a
 		 * left 0 pad.
 		 */
-		foreach (explode(':', $host) as $mp) {
+		foreach (explode(':', $item) as $mp) {
 			$searchmac .= str_pad($mp, 2, "0", STR_PAD_LEFT);
 			$partcount++;
 		}
@@ -99,13 +101,6 @@ function fixup_host($value, $position) {
 	} else {
 		return "";
 	}
-}
-
-function fixup_port($value, $position) {
-	$port = strip_logic($value);
-	$not = has_not($value) ? "not " : "";
-	$andor = ($position > 0) ? get_boolean($value, $port) : "";
-	return "{$andor}port {$not}" . $port;
 }
 
 if ($_POST['downloadbtn'] == gettext("Download Capture")) {
@@ -502,7 +497,7 @@ if ($do_tcpdump) :
 		$portcount = 0;
 
 		foreach ($ports as $p) {
-			$p = fixup_port($p, $portcount++);
+			$p = fixup_hostport($p, $portcount++,'port');
 
 			if (!empty($p)) {
 				$portmatch .= " " . $p;
@@ -519,7 +514,7 @@ if ($do_tcpdump) :
 		$hostcount = 0;
 
 		foreach ($hosts as $h) {
-			$h = fixup_host($h, $hostcount++);
+			$h = fixup_hostport($h, $hostcount++);
 
 			if (!empty($h)) {
 				$hostmatch .= " " . $h;

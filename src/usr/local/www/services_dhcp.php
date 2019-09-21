@@ -194,6 +194,7 @@ if (is_array($dhcpdconf)) {
 	if(isset($dhcpdconf['omapi_port'])) {
 		$pconfig['omapi_port'] = $dhcpdconf['omapi_port'];
 		$pconfig['omapi_key'] = $dhcpdconf['omapi_key'];
+		$pconfig['omapi_key_algorithm'] = $dhcpdconf['omapi_key_algorithm'];
 	}
 }
 
@@ -245,7 +246,7 @@ if (isset($_POST['save'])) {
 	/*
 	 * Check the OMAPI settings
 	 * - Make sure that if the port is defined, that it is valid and isn't in use
-	 * - Make sure the key length is at least 256bit (45 characters)
+	 * - Make sure the key is defined and the length is appropriate for the selected algorithm
 	 * - Generate a new key if selected
 	 */
 	if (!empty($_POST['omapi_port'])) {
@@ -262,10 +263,32 @@ if (isset($_POST['save'])) {
 			$input_errors[] = gettext("The specified OMAPI port number is invalid. Port number must be between 1024 and 65635.");
 		}
 
+		// Define the minimum base64 character length for each algorithm
+		$key_char_len_by_alg = array(
+			'hmac-md5' => 24,
+			'hmac-sha1' => 28,
+			'hmac-sha224' => 40,
+			'hmac-sha256' => 44,
+			'hmac-sha384' => 64,
+			'hmac-sha512' => 88
+		);
+
 		// Generate a key if checked
 		if ($_POST['omapi_gen_key'] == "yes") {
-			// Set some vars
-			$key_bit_len = 256;
+			// Figure out the key bits from the selected algorithm
+			switch ($_POST['omapi_key_algorithm']) {
+				case "hmac-md5":
+					$key_bit_len = 128;
+					break;
+				case "hmac-sha1":
+					$key_bit_len = 160;
+					break;
+				default:
+					$key_bit_len = str_replace("hmac-sha","",$_POST['omapi_key_algorithm']);
+					break;
+			}
+
+			// Convert the bits to bytes
 			$key_bytes_len = $key_bit_len / 8; // 8 bits = 1 Byte
 
 			// Generate random bytes based on key length
@@ -282,8 +305,8 @@ if (isset($_POST['save'])) {
 			unset($_POST['omapi_gen_key']);
 			unset($pconfig['omapi_gen_key']);
 		} elseif (!empty($_POST['omapi_key'])) { // Check the key if it's not being generated
-			if (strlen($_POST['omapi_key']) < 44) {
-				$input_errors[] = gettext("Please specify a valid OMAPI key. Key must use HMAC-MD5 and be a minimum length of 256 bits.");
+			if (strlen($_POST['omapi_key']) < $key_char_len_by_alg[$_POST['omapi_key_algorithm']]) {
+				$input_errors[] = gettext("Please specify a valid OMAPI key. Key does not meet the minimum length requirement of {$key_char_len_by_alg[$_POST['omapi_key_algorithm']]} for the selected algorithm {$_POST['omapi_key_algorithm']}.");
 			}
 		} else {
 			$input_errors[] = gettext("A key is required when OMAPI is enabled (port specified).");
@@ -698,11 +721,15 @@ if (isset($_POST['save'])) {
 		if ($_POST['omapi_port'] == ""){
 			unset($dhcpdconf['omapi_port']);
 			unset($dhcpdconf['omapi_key']);
+			unset($dhcpdconf['omapi_key_algorithm']);
+
 			unset($pconfig['omapi_port']);
 			unset($pconfig['omapi_key']);
+			unset($pconfig['omapi_key_algorithm']);
 		} else {
 			$dhcpdconf['omapi_port'] = $_POST['omapi_port'];
 			$dhcpdconf['omapi_key'] = $_POST['omapi_key'];
+			$dhcpdconf['omapi_key_algorithm'] = $_POST['omapi_key_algorithm'];
 		}
 
 
@@ -1085,7 +1112,8 @@ $section->addInput(new Form_Input(
 	'OMAPI Port',
 	'text',
 	$pconfig['omapi_port']
-))->setAttribute('placeholder', 'OMAPI Port')->setHelp('Set the port that OMAPI will listen on. The default port is 7911, leave blank to disable.');
+))->setAttribute('placeholder', 'OMAPI Port')
+  ->setHelp('Set the port that OMAPI will listen on. The default port is 7911, leave blank to disable.');
 
 $group = new Form_Group('OMAPI Key');
 
@@ -1094,16 +1122,31 @@ $group->add(new Form_Input(
 	'OMAPI Key',
 	'text',
 	$pconfig['omapi_key']
-))->setAttribute('placeholder', 'OMAPI Key')->setHelp('Set the key used to secure the connection to the OMAPI endpoint. The minimum HMAC-MD5 key length is 256 bits.');
+))->setAttribute('placeholder', 'OMAPI Key')
+  ->setHelp('Enter a key matching the selected algorithm<br />to secure connections to the OMAPI endpoint.');
 
 $group->add(new Form_Checkbox(
 	'omapi_gen_key',
 	'',
 	'Generate New Key',
 	$pconfig['omapi_gen_key']
-))->setHelp('Key Bits: 256<br />Algorithm: HMAC-MD5');
+))->setHelp('Generate a new key based<br />on the selected algorithm.');
 
 $section->add($group);
+
+$section->addInput(new Form_Select(
+	'omapi_key_algorithm',
+	'Key Algorithm',
+	empty($pconfig['omapi_key_algorithm']) ? 'hmac-sha256' : $pconfig['omapi_key_algorithm'], // Set the default algorithm if not previous defined
+	array(
+		'hmac-md5' => 'HMAC-MD5 (legacy default)',
+		'hmac-sha1' => 'HMAC-SHA1',
+		'hmac-sha224' => 'HMAC-SHA224',
+		'hmac-sha256' => 'HMAC-SHA256 (current bind9 default)',
+		'hmac-sha384' => 'HMAC-SHA384',
+		'hmac-sha512' => 'HMAC-SHA512 (most secure)',
+	)
+))->setHelp('Set the algorithm that OMAPI key will use.');
 
 $form->add($section);
 

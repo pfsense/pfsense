@@ -566,11 +566,11 @@ EOD;
 	if (isset($dhcpifconf['omapi_port']) && is_numeric($dhcpifconf['omapi_port'])) {
 		$dhcpdconf .= <<<EOD
 
-omapi-port {$dhcpifconf['omapi_port']};
 key omapi_key {
-  algorithm hmac-md5;
+  algorithm {$dhcpifconf['omapi_key_algorithm']};
   secret "{$dhcpifconf['omapi_key']}";
 };
+omapi-port {$dhcpifconf['omapi_port']};
 omapi-key omapi_key;
 
 EOD;

@@ -34,7 +34,7 @@ class Form extends Form_Element
 	protected $_sections = array();
 	protected $_global = array();
 
-	public function __construct($submit = null)
+	public function __construct($submit = null, $enabled = true)
 	{
 		if (!isset($submit)) {
 			$submit = gettext('Save');
@@ -47,6 +47,11 @@ class Form extends Form_Element
 				null,
 				'fa-save'
 			);
+
+			if (!$enabled) {
+				$submit->setAttribute("disabled", true);
+			}
+
 			$submit->addClass('btn-primary');
 		}
 

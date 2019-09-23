@@ -49,23 +49,27 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
     ($_POST['override'] != "yes"))):
 	if (DEBUG) {
 		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
-	} elseif ($_POST['Submit'] == 'FSCKReboot') {
-		mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
-		print('<div><pre>');
-		system_reboot();
-		print('</pre></div>');
-	} elseif ($_POST['Submit'] == 'Reroot') {
-		if (!is_module_loaded("zfs.ko")) {
-			print('<div><pre>');
-			system_reboot_sync(true);
-			print('</pre></div>');
-		}
 	} else {
-		print('<div><pre>');
-		system_reboot();
-		print('</pre></div>');
+		switch ($_POST['rebootmode']) {
+			case 'FSCKReboot':
+				mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
+				print('<div><pre>');
+				system_reboot();
+				print('</pre></div>');
+				break;
+			case 'Reroot':
+				if (!is_module_loaded("zfs.ko")) {
+					print('<div><pre>');
+					system_reboot_sync(true);
+					print('</pre></div>');
+				}
+				break;
+			case 'Reboot':
+				print('<div><pre>');
+				system_reboot();
+				print('</pre></div>');
+		}
 	}
-
 ?>
 
 <div id="countdown" class="text-center"></div>
@@ -113,48 +117,40 @@ events.push(function() {
 <?php
 else:
 
-?>
+$form = new Form(false);
 
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h2 class="panel-title"><?=gettext('System Reboot Confirmation')?></h2>
-	</div>
-	<div class="panel-body">
-		<div class="content">
-			<p>
-<?php 
-print('Click "Reboot" to reboot the system immediately, "FSCK Reboot" to reboot and run filesystem check');
+$help = 'Click "Reboot" to reboot the system immediately, "FSCK Reboot" to reboot and run filesystem check';
+$modeslist = ['Reboot' => 'Reboot', 'FSCKReboot' => 'FSCK Reboot'];
 if (!is_module_loaded("zfs.ko")) {
-	print(', "Reroot" to stop processes, remount disks and re-run startup sequence');
+	$help .= ' or "Reroot" to stop processes, remount disks and re-run startup sequence';
+	$modeslist += ['Reroot' => 'Reroot'];
 	} 
-print(' or "Cancel" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)');
-?>
-</p>
-			<form action="diag_reboot.php" method="post">
-				<button type="submit" class="btn btn-danger pull-center" name="Submit" value="<?=gettext("Reboot")?>" title="<?=gettext("Reboot the system")?>">
-					<i class="fa fa-refresh"></i>
-					<?=gettext("Reboot")?>
-				</button>
-				<button type="submit" class="btn btn-danger pull-center" name="Submit" value="<?=gettext("FSCKReboot")?>" title="<?=gettext("Reboot and run a filesystem check")?>">
-					<i class="fa fa-refresh"></i>
-					<?=gettext("FSCK Reboot")?>
-				</button>
-<?php
-if (!is_module_loaded("zfs.ko")) {
-				echo '<button type="submit" class="btn btn-danger pull-center" name="Submit" value="Reroot" title="Reroot (Stop processes, remount disks, re-run startup sequence)">
-					<i class="fa fa-refresh"></i>
-					Reroot
-				</button>';
+$help .= '.';
+
+$section = new Form_Section('Select reboot method');
+
+foreach (auth_get_authserver_list() as $key => $auth_server) {
+        $serverlist[$key] = $auth_server['name'];
 }
+
+$section->addInput(new Form_Select(
+        'rebootmode',
+        '*Reboot method',
+        $rebootmode,
+        $modeslist
+))->setHelp($help);
+
+$form->add($section);
+
+$form->addGlobal(new Form_Button(
+        'Submit',
+        'Submit',
+        null,
+        'fa-wrench'
+))->addClass('btn-primary');
+
+print $form;
 ?>
-				<a href="/" class="btn btn-info">
-					<i class="fa fa-undo"></i>
-					<?=gettext("Cancel")?>
-				</a>
-			</form>
-		</div>
-	</div>
-</div>
 
 <script type="text/javascript">
 //<![CDATA[

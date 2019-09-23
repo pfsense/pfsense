@@ -50,25 +50,23 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
 	if (DEBUG) {
 		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
 	} else {
+		print('<div><pre>');
 		switch ($_POST['rebootmode']) {
 			case 'FSCKReboot':
 				mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
-				print('<div><pre>');
 				system_reboot();
-				print('</pre></div>');
 				break;
 			case 'Reroot':
 				if (!is_module_loaded("zfs.ko")) {
-					print('<div><pre>');
 					system_reboot_sync(true);
-					print('</pre></div>');
 				}
 				break;
 			case 'Reboot':
-				print('<div><pre>');
 				system_reboot();
-				print('</pre></div>');
+				break;
+			default:
 		}
+		print('</pre></div>');
 	}
 ?>
 
@@ -128,10 +126,6 @@ if (!is_module_loaded("zfs.ko")) {
 $help .= '.';
 
 $section = new Form_Section('Select reboot method');
-
-foreach (auth_get_authserver_list() as $key => $auth_server) {
-        $serverlist[$key] = $auth_server['name'];
-}
 
 $section->addInput(new Form_Select(
         'rebootmode',

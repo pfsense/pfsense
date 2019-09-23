@@ -69,10 +69,10 @@ $filtered_tags = array(
 	'influx_pass', 'ipsecpsk', 'ldap_bindpw', 'lighttpd_ls_password',
 	'lighttpd_ls_password', 'md5-hash', 'md5password', 'md5sigkey',
 	'md5sigpass', 'nt-hash', 'oinkcode', 'oincmastercode', 'passphrase',
-	'password', 'passwordagain', 'pre-shared-key', 'proxypass',
-	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radius_secret',
-	'redis_password', 'redis_passwordagain', 'rocommunity', 'secret',
-	'shared_key', 'tls', 'tlspskidentity', 'tlspskfile',
+	'password', 'passwordagain', 'postgresqlpasswordenc', 'pre-shared-key',
+	'proxypass', 'proxy_passwd', 'proxyuser', 'proxy_user', 'prv',
+	'radius_secret', 'redis_password', 'redis_passwordagain', 'rocommunity',
+	'secret', 'shared_key', 'tls', 'tlspskidentity', 'tlspskfile',
 	'varclientpasswordinput', 'varclientsharedsecret', 'varsyncpassword',
 	'varusersmotpinitsecret', 'varusersmotppin'
 );

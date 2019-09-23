@@ -140,9 +140,9 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 			$data->tunnel .= "<td>" . $ipsec['remote-subnet'] . "<br />(" . htmlspecialchars($ipsec['dest']) . ")</td>";
 			$data->tunnel .= "<td>" . htmlspecialchars($ipsec['descr']) . "</td>";
 			if ($ipsec['status'] == "true") {
-				$data->tunnel .= '<td><i class=\"fa fa-arrow-up text-success\"></i></td>';
+				$data->tunnel .= '<td><i class="fa fa-arrow-up text-success"></i></td>';
 			} else {
-				$data->tunnel .= '<td><i class=\"fa fa-arrow-down text-danger\"></i></td>';
+				$data->tunnel .= '<td><i class="fa fa-arrow-down text-danger"></i></td>';
 			}
 			$data->tunnel .= "</tr>";
 		}

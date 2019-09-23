@@ -123,6 +123,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	}
 
 	// Generate JSON formatted data for the widget to update from
+	$data = new stdClass();
 	$data->overview = "<tr>";
 	$data->overview .= "<td>" . $activecounter . "</td>";
 	$data->overview .= "<td>" . $inactivecounter . "</td>";

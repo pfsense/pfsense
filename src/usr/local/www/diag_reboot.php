@@ -119,8 +119,8 @@ else:
 
 $form = new Form(false);
 
-$help = 'Click "Reboot" to reboot the system immediately, "FSCK Reboot" to reboot and run filesystem check';
-$modeslist = ['Reboot' => 'Reboot', 'FSCKReboot' => 'FSCK Reboot'];
+$help = 'Click "Normal reboot" to reboot the system immediately, "Reboot with Filessystem Check" to reboot and run filesystem check';
+$modeslist = ['Reboot' => 'Normal reboot', 'FSCKReboot' => 'Reboot with Filesystem Check'];
 if (!is_module_loaded("zfs.ko")) {
 	$help .= ' or "Reroot" to stop processes, remount disks and re-run startup sequence';
 	$modeslist += ['Reroot' => 'Reroot'];

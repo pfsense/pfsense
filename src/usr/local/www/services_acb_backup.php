@@ -71,7 +71,7 @@ $tab_array[] = array("Restore", false, "/services_acb.php");
 $tab_array[] = array("Backup now", true, "/services_acb_backup.php");
 display_top_tabs($tab_array);
 
-$form = new Form("Backup");
+$form = new Form("Backup", $config['system']['acb']['enable'] === "yes");
 
 $section = new Form_Section('Backup Details');
 

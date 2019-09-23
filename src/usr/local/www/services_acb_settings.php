@@ -79,8 +79,6 @@ if (isset($_POST['save'])) {
 	}
 
 	$update_ep = false;
-	$update_gp = false;
-	$update_gep = false;
 
 	// Validate form contents
 	if ($_POST['encryption_password'] != "********") {
@@ -107,16 +105,6 @@ if (isset($_POST['save'])) {
 		}
 
 		$config['system']['acb']['enable'] = $pconfig['enable'];
-
-		if($update_gp) {
-			$config['system']['acb']['gold_password'] = $pconfig['gold_password'];
-		}
-
-		if ($update_gep) {
-			$config['system']['acb']['gold_encryption_password'] = $pconfig['gold_encryption_password'];
-		}
-
-		$config['system']['acb']['gold_username'] = $pconfig['gold_username'];
 		$config['system']['acb']['hint'] = $pconfig['hint'];
 		$config['system']['acb']['frequency'] = $pconfig['frequency'];
 		$config['system']['acb']['hours'] = $pconfig['hours'];
@@ -183,15 +171,7 @@ $group->add(new Form_MultiCheckbox(
 	(!isset($pconfig['frequency']) || $pconfig['frequency'] === 'every'),
 	'every'
 ))->displayasRadio();
-/*
-$group->add(new Form_MultiCheckbox(
-	'frequency',
-	'',
-	'Backup manually only',
-	($pconfig['frequency'] === 'manual'),
-	'manual'
-))->displayasRadio();
-*/
+
 $group->add(new Form_MultiCheckbox(
 	'frequency',
 	'',

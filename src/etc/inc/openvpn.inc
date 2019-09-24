@@ -752,7 +752,7 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive, $opt = "") 
 }
 
 function openvpn_reconfigure($mode, $settings) {
-	global $g, $config, $openvpn_tls_server_modes, $openvpn_dh_lengths;
+	global $g, $config, $openvpn_tls_server_modes, $openvpn_dh_lengths, $openvpn_default_keepalive_interval, $openvpn_default_keepalive_timeout;
 
 	if (empty($settings)) {
 		return;

@@ -252,11 +252,8 @@ if (isset($_POST['save'])) {
 	if (!empty($_POST['omapi_port'])) {
 		// Check the port entry
 		if (is_port($_POST['omapi_port']) && $_POST['omapi_port'] > 1024) {
-			// Get the list of open or listening ports locally
-			exec("/usr/bin/netstat -an4p tcp | /usr/bin/awk '{print $4}' | /usr/bin/egrep -o '*([0-9]{1,5})$' | /usr/bin/sort -u", $port_info);
-
-			// Check to see if the port is in the list
-			if (in_array($_POST['omapi_port'], $port_info) && $_POST['omapi_port'] != $dhcpdconf['omapi_port']){
+		    // Check to see if the port is in the list
+			if (is_port_in_use($_POST['omapi_port']) && $_POST['omapi_port'] != $dhcpdconf['omapi_port']){
 				$input_errors[] = gettext("Specified port number for OMAPI is in use. Please choose another port or consider using the default.");
 			}
 		} else {
@@ -731,8 +728,7 @@ if (isset($_POST['save'])) {
 			$dhcpdconf['omapi_key'] = $_POST['omapi_key'];
 			$dhcpdconf['omapi_key_algorithm'] = $_POST['omapi_key_algorithm'];
 		}
-
-
+  
 		write_config(gettext("DHCP Server - Settings changed for interface " . strtoupper($if)));
 	}
 }

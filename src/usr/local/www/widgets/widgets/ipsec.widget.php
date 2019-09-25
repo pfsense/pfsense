@@ -125,39 +125,30 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	}
 
 	// Generate JSON formatted data for the widget to update from
-	$jsondata = "{";
+	$data = new stdClass();
+	$data->overview = "<tr>";
+	$data->overview .= "<td>" . $activecounter . "</td>";
+	$data->overview .= "<td>" . $inactivecounter . "</td>";
+	$data->overview .= "<td>" . (is_array($mobile['pool']) ? htmlspecialchars($mobile['pool'][0]['usage']) : '0') . "</td>";
+	$data->overview .= "</tr>";
 
-	$jsondata .= "\"overview\":\"";
-	$jsondata .= "<tr>";
-	$jsondata .= "<td>" . $activecounter . "</td>";
-	$jsondata .= "<td>" . $inactivecounter . "</td>";
-	$jsondata .= "<td>" . (is_array($mobile['pool']) ? htmlspecialchars($mobile['pool'][0]['usage']) : '0') . "</td>";
-	$jsondata .= "</tr>";
-	$jsondata .= "\",\n";
-
-	$jsondata .= "\"tunnel\":\"";
+	$data->tunnel = "";
 	if(is_array($ipsec_detail_array) && !empty($ipsec_detail_array)){
 		foreach ($ipsec_detail_array as $ipsec) {
-			$jsondata .= "<tr>";
-			$jsondata .= "<td>" . htmlspecialchars($ipsec['src']) . "</td>";
-			$jsondata .= "<td>" . $ipsec['remote-subnet'] . "<br />(" . htmlspecialchars($ipsec['dest']) . ")</td>";
-			$jsondata .= "<td>" . htmlspecialchars($ipsec['descr']) . "</td>";
-
+			$data->tunnel .= "<tr>";
+			$data->tunnel .= "<td>" . htmlspecialchars($ipsec['src']) . "</td>";
+			$data->tunnel .= "<td>" . $ipsec['remote-subnet'] . "<br />(" . htmlspecialchars($ipsec['dest']) . ")</td>";
+			$data->tunnel .= "<td>" . htmlspecialchars($ipsec['descr']) . "</td>";
 			if ($ipsec['status'] == "true") {
-				$jsondata .= '<td><i class=\"fa fa-arrow-up text-success\"></i></td>';
+				$data->tunnel .= '<td><i class="fa fa-arrow-up text-success"></i></td>';
 			} else {
-				$jsondata .= '<td><i class=\"fa fa-arrow-down text-danger\"></i></td>';
+				$data->tunnel .= '<td><i class="fa fa-arrow-down text-danger"></i></td>';
 			}
-
-			$jsondata .= "</tr>";
+			$data->tunnel .= "</tr>";
 		}
 	}
-
-	$jsondata .= "\",\n";
-
-
-	$jsondata .= "\"mobile\":\"";
-
+	
+	$data->mobile = "";
 	if (is_array($mobile['pool'])) {
 		foreach ($mobile['pool'] as $pool) {
 			if (!is_array($pool['lease'])) {
@@ -165,18 +156,17 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 			}
 			if(is_array($pool['lease']) && !empty($pool['lease'])){
 				foreach ($pool['lease'] as $muser) {
-					$jsondata .= "<tr>";
-					$jsondata .= "<td>" . htmlspecialchars($muser['id']) . "</td>";
-					$jsondata .= "<td>" . htmlspecialchars($muser['host']) . "</td>";
-					$jsondata .= "<td>" . htmlspecialchars($muser['status']) . "</td>";
-					$jsondata .= "</tr>";
+					$data->mobile .= "<tr>";
+					$data->mobile .= "<td>" . htmlspecialchars($muser['id']) . "</td>";
+					$data->mobile .= "<td>" . htmlspecialchars($muser['host']) . "</td>";
+					$data->mobile .= "<td>" . htmlspecialchars($muser['status']) . "</td>";
+					$data->mobile .= "</tr>";
 				}
 			}
 		}
 	}
-
-	$jsondata .= "\"}";
-	print($jsondata);
+	
+	print(json_encode($data));
 	exit;
 }
 

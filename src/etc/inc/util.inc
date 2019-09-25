@@ -1136,12 +1136,9 @@ function is_port($port) {
 
 /* returns true if $port is in use */
 function is_port_in_use($port, $proto = "tcp", $ip_version = 4) {
-	exec("/usr/bin/netstat -an{$ip_version}p {$proto} | /usr/bin/awk '{print $4}' | /usr/bin/egrep -o '*([0-9]{1,5})$' | /usr/bin/sort -u", $port_info);
+	exec("/usr/bin/netstat -an " . escapeshellarg('-' . $ip_version) . " -p " . escapeshellarg($proto) . " | /usr/bin/awk '{print $4}' | /usr/bin/egrep -o '*([0-9]{1,5})$' | /usr/bin/sort -u", $port_info);
 	
-	if (in_array($port, $port_info)) {
-		return true;
-	}
-	return false;
+	return in_array($port, $port_info);
 }
 
 /* returns true if $portrange is a valid TCP/UDP portrange ("<port>:<port>") */

@@ -518,7 +518,6 @@ if ($do_tcpdump) :
 		$matches[] = hostport_array_fixer($hosts,'host');
 	}
 
-
 	if ($count != "0") {
 		$searchcount = "-c " . $count;
 	} else {
@@ -533,8 +532,6 @@ if ($do_tcpdump) :
 		print_info_box(gettext('Packet capture is running.'), 'info');
 
 		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
-		// Debug
-		// echo $cmd;
 		mwexec_bg ($cmd);
 	} else {
 ?>

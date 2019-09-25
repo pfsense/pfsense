@@ -228,7 +228,7 @@ $mac_man = load_mac_manufacturer_table();
 					    $mac[7]);
 
 					if (isset($mac_man[$mac_hi])) {
-						print '<small>('.
+						print ' <small>('.
 						    $mac_man[$mac_hi] .
 						    ')</small>';
 					}

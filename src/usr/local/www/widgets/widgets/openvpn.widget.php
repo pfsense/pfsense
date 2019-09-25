@@ -46,11 +46,11 @@ if (!function_exists('printPanel')) {
 			$got_ovpn_server = true;
 
 		$opstring .= "<div class=\"widget panel panel-default\">";
+		$opstring .= "<div class=\"panel-heading\"><h2 class=\"panel-title\">" .
+			htmlspecialchars($server['name']);
 		if ($server['conns'][0]['common_name'] != '[error]') {
-			$opstring .=	"<div class=\"panel-heading\"><h2 class=\"panel-title\">" . htmlspecialchars($server['name']) . " " . gettext('Client Connections') . ": " . sizeof($server['conns']) . "</h2></div>";
-		}
-		else {
-			$opstring .=	"<div class=\"panel-heading\"><h2 class=\"panel-title\">" . htmlspecialchars($server['name']) . "</h2></div>";
+			$opstring .=  gettext('Client Connections') . ": " . 
+				sizeof($server['conns']) . "</h2></div>";
 		}
 		$opstring .=	"<div class=\"table-responsive\">";
 		$opstring .=		"<table class=\"table table-striped table-hover table-condensed sortable-theme-bootstrap\" data-sortable>";

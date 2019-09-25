@@ -863,6 +863,7 @@ create_memstick_image() {
 
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
 	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
+	echo 'boot_serial="NO"' >> ${LOADERCONF}
 	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball

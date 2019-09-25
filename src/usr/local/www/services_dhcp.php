@@ -251,13 +251,13 @@ if (isset($_POST['save'])) {
 	 */
 	if (!empty($_POST['omapi_port'])) {
 		// Check the port entry
-		if (is_port($_POST['omapi_port']) &&
-			($_POST['omapi_port'] > 1024) &&
-			is_port_in_use($_POST['omapi_port']) &&
-			($_POST['omapi_port'] != $dhcpdconf['omapi_port'])) {
+		switch(true){
+			case !is_port($_POST['omapi_port']) || $_POST['omapi_port'] <= 1024:
+				$input_errors[] = gettext("The specified OMAPI port number is invalid. Port number must be between 1024 and 65635.");
+				break;
+			case is_port_in_use($_POST['omapi_port']) && $_POST['omapi_port'] != $dhcpdconf['omapi_port']:
 				$input_errors[] = gettext("Specified port number for OMAPI is in use. Please choose another port or consider using the default.");
-		} else {
-			$input_errors[] = gettext("The specified OMAPI port number is invalid. Port number must be between 1024 and 65635.");
+				break;
 		}
 
 		// Define the minimum base64 character length for each algorithm

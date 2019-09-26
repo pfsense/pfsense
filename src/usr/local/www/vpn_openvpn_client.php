@@ -358,12 +358,14 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($pconfig['mode'] != "p2p_shared_key") && empty($pconfig['certref']) && empty($pconfig['auth_user']) && empty($pconfig['auth_pass'])) {
-		$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
-	}
+	if ($pconfig['mode'] != "p2p_shared_key") {
+		if (empty($pconfig['certref']) && empty($pconfig['auth_user']) && empty($pconfig['auth_pass'])) {
+			$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
+		}
 
-	if ($pconfig['auth_pass'] != $pconfig['auth_pass_confirm']) {
-		$input_errors[] = gettext("Password and confirmation must match.");
+		if ($pconfig['auth_pass'] != $pconfig['auth_pass_confirm']) {
+			$input_errors[] = gettext("Password and confirmation must match.");
+		}
 	}
 
 	/* UDP Fast I/O is not compatible with TCP, so toss the option out when

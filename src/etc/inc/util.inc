@@ -1136,7 +1136,16 @@ function is_port($port) {
 
 /* returns true if $port is in use */
 function is_port_in_use($port, $proto = "tcp", $ip_version = 4) {
-	exec("/usr/bin/netstat -an " . escapeshellarg('-' . $ip_version) . " -p " . escapeshellarg($proto) . " | /usr/bin/awk '{print $4}' | /usr/bin/egrep -o '*([0-9]{1,5})$' | /usr/bin/sort -u", $port_info);
+	$port_info = array();
+	exec("/usr/bin/netstat --libxo json -an " . escapeshellarg('-' . $ip_version) . " -p " . escapeshellarg($proto), $rawdata, $rc);
+	if ($rc == 0) {
+		$netstatarr = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
+		$netstatarr = $netstatarr['statistics']['socket'];
+		
+		foreach($netstatarr as $index => $portstats){
+			array_push($port_info, $portstats['local']['port']);
+		}
+	}
 	
 	return in_array($port, $port_info);
 }

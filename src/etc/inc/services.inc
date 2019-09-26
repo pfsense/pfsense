@@ -1955,6 +1955,7 @@ function services_dyndns_configure($int = "") {
 				$dyndns['verboselog'] = isset($dyndns['verboselog']);
 				$dyndns['curl_ipresolve_v4'] = isset($dyndns['curl_ipresolve_v4']);
 				$dyndns['curl_ssl_verifypeer'] = isset($dyndns['curl_ssl_verifypeer']);
+				$dyndns['proxied'] = isset($dyndns['proxied']);
 				services_dyndns_configure_client($dyndns);
 				sleep(1);
 			}

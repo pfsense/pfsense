@@ -285,7 +285,7 @@ if ($_POST['save']) {
 			}
 
 			if ($pconfig['proxy_passwd'] != $pconfig['proxy_passwd_confirm']) {
-				$input_errors[] = gettext("Password and confirmation must match.");
+				$input_errors[] = gettext("Proxy password and confirmation must match.");
 			}
 		}
 	}

@@ -28,13 +28,6 @@ while ($int = current($config['interfaces'])) {
 	next($config['interfaces']);
 }
 
-// disable all those interfaces:
-foreach ($names_restart as $id) {
-	unset($config['interfaces'][$id]['enable']);
-}
-unlink_if_exists("/tmp/config.cache");
-write_config("pfSsh.php disables WAN interfaces");
-
 foreach ($names_restart as $id) {
 	interface_bring_down($id, true, $config['interfaces'][$id]);
 if (isset($config['dhcpd'][$id]['enable']) || 
@@ -45,13 +38,6 @@ if (isset($config['dhcpd'][$id]['enable']) ||
 }
 
 sleep (1);
-
-// enable all those interfaces:
-foreach ($names_restart as $id) {
-	$config['interfaces'][$id]['enable'] = '';
-}
-unlink_if_exists("/tmp/config.cache");
-write_config("pfSsh.php enables WAN interfaces");
 
 foreach ($names_restart as $id) {
 	interface_bring_down($id, false, $config['interfaces'][$id]);

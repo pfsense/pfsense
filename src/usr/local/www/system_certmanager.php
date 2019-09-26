@@ -648,7 +648,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'*Descriptive name',
 		'text',
 		($a_user && empty($pconfig['descr'])) ? $a_user[$userid]['name'] : $pconfig['descr']
-	))->addClass('toggle-existing');
+	))->addClass('toggle-internal toggle-import toggle-external toggle-sign collapse');
 
 	$form->add($section);
 

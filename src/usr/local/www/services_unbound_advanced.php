@@ -68,6 +68,10 @@ if (isset($config['unbound']['dnsrecordcache'])) {
 	$pconfig['dnsrecordcache'] = true;
 }
 
+if (isset($config['unbound']['preferip6'])) {
+	$pconfig['preferip6'] = true;
+}
+
 $pconfig['msgcachesize'] = $config['unbound']['msgcachesize'];
 $pconfig['outgoing_num_tcp'] = isset($config['unbound']['outgoing_num_tcp']) ? $config['unbound']['outgoing_num_tcp'] : '10';
 $pconfig['incoming_num_tcp'] = isset($config['unbound']['incoming_num_tcp']) ? $config['unbound']['incoming_num_tcp'] : '10';
@@ -185,6 +189,11 @@ if ($_POST) {
 			} else {
 				unset($config['unbound']['dnsrecordcache']);
 			}
+			if (isset($_POST['preferip6'])) {
+				$config['unbound']['preferip6'] = true;
+			} else {
+				unset($config['unbound']['preferip6']);
+			}
 			$config['unbound']['msgcachesize'] = $_POST['msgcachesize'];
 			$config['unbound']['outgoing_num_tcp'] = $_POST['outgoing_num_tcp'];
 			$config['unbound']['incoming_num_tcp'] = $_POST['incoming_num_tcp'];
@@ -281,6 +290,13 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 
 $section = new Form_Section('Advanced Resolver Options');
+
+$section->addInput(new Form_Checkbox(
+	'preferip6',
+	'Prefer IPv6',
+	'Prefer IPv6 transport for sending DNS queries to internet nameservers',
+	$pconfig['preferip6']
+))->setHelp('Causes IPv6 transport to be preferred for sending queries, if IPv6 nameserver targets are available.');
 
 $section->addInput(new Form_Checkbox(
 	'prefetch',

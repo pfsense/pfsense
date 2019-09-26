@@ -315,6 +315,7 @@ EOF;
 	$prefetch = isset($unboundcfg['prefetch']) ? "yes" : "no";
 	$prefetch_key = isset($unboundcfg['prefetchkey']) ? "yes" : "no";
 	$dns_record_cache = isset($unboundcfg['dnsrecordcache']) ? "yes" : "no";
+	$prefer_ip6 = isset($unboundcfg['preferip6']) ? "yes" : "no";
 	$outgoing_num_tcp = isset($unboundcfg['outgoing_num_tcp']) ? $unboundcfg['outgoing_num_tcp'] : "10";
 	$incoming_num_tcp = isset($unboundcfg['incoming_num_tcp']) ? $unboundcfg['incoming_num_tcp'] : "10";
 	$edns_buffer_size = (!empty($unboundcfg['edns_buffer_size'])) ? $unboundcfg['edns_buffer_size'] : "4096";
@@ -447,6 +448,7 @@ hide-version: {$hide_version}
 harden-glue: yes
 do-ip4: yes
 do-ip6: {$ipv6_allow}
+prefer-ip6: {$prefer_ip6}
 do-udp: yes
 do-tcp: yes
 do-daemonize: yes

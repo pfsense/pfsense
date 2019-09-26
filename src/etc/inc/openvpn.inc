@@ -1043,7 +1043,8 @@ function openvpn_reconfigure($mode, $settings) {
 				}
 				break;
 		}
-		if (isset($settings['duplicate_cn'])) {
+		if ($settings['mode'] != 'p2p_shared_key' &&
+		    isset($settings['duplicate_cn'])) {
 			$conf .= "duplicate-cn\n";
 		}
 	}

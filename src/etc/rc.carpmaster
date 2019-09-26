@@ -33,6 +33,7 @@ if (isset($_GET['interface'])) {
 } else {
 	$argument = str_replace("\n", "", $argv[1]);
 }
+$argument = ltrim($argument, '$');
 if (!strstr($argument, "@")) {
 	log_error("CARP master event triggered from wrong source {$argument}");
 	exit;

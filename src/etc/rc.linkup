@@ -124,6 +124,8 @@ if (isset($_GET['interface'])) {
 	$action = $argv[1];
 	$realiface = $argv[2];
 }
+$action = ltrim($action, '$');
+$realiface = ltrim($realiface, '$');
 
 switch ($action) {
 	case "start":

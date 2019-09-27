@@ -66,7 +66,7 @@ $filtered_tags = array(
 	'etpro_code', 'etprocode', 'gold_encryption_password', 'gold_password',
 	'influx_pass', 'ipsecpsk', 'ldap_bindpw', 'lighttpd_ls_password',
 	'lighttpd_ls_password', 'md5-hash', 'md5password', 'md5sigkey',
-	'md5sigpass', 'nt-hash', 'oinkcode', 'oincmastercode', 'passphrase',
+	'md5sigpass', 'nt-hash', 'oinkcode', 'oinkmastercode', 'passphrase',
 	'password', 'passwordagain', 'postgresqlpasswordenc', 'pre-shared-key',
 	'proxypass', 'proxy_passwd', 'proxyuser', 'proxy_user', 'prv',
 	'radius_secret', 'redis_password', 'redis_passwordagain', 'rocommunity',

@@ -51,10 +51,23 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
 		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
 	} else {
 		print('<div><pre>');
-		system_reboot();
+		switch ($_POST['rebootmode']) {
+			case 'FSCKReboot':
+				mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
+				system_reboot();
+				break;
+			case 'Reroot':
+				if (!is_module_loaded("zfs.ko")) {
+					system_reboot_sync(true);
+				}
+				break;
+			case 'Reboot':
+				system_reboot();
+				break;
+			default:
+		}
 		print('</pre></div>');
 	}
-
 ?>
 
 <div id="countdown" class="text-center"></div>
@@ -102,28 +115,36 @@ events.push(function() {
 <?php
 else:
 
-?>
+$form = new Form(false);
 
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h2 class="panel-title"><?=gettext('System Reboot Confirmation')?></h2>
-	</div>
-	<div class="panel-body">
-		<div class="content">
-			<p><?=gettext('Click "Reboot" to reboot the system immediately, or "Cancel" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)')?></p>
-			<form action="diag_reboot.php" method="post">
-				<button type="submit" class="btn btn-danger pull-center" name="Submit" value="<?=gettext("Reboot")?>" title="<?=gettext("Reboot the system")?>">
-					<i class="fa fa-refresh"></i>
-					<?=gettext("Reboot")?>
-				</button>
-				<a href="/" class="btn btn-info">
-					<i class="fa fa-undo"></i>
-					<?=gettext("Cancel")?>
-				</a>
-			</form>
-		</div>
-	</div>
-</div>
+$help = 'Click "Normal reboot" to reboot the system immediately, "Reboot with Filessystem Check" to reboot and run filesystem check';
+$modeslist = ['Reboot' => 'Normal reboot', 'FSCKReboot' => 'Reboot with Filesystem Check'];
+if (!is_module_loaded("zfs.ko")) {
+	$help .= ' or "Reroot" to stop processes, remount disks and re-run startup sequence';
+	$modeslist += ['Reroot' => 'Reroot'];
+	} 
+$help .= '.';
+
+$section = new Form_Section('Select reboot method');
+
+$section->addInput(new Form_Select(
+        'rebootmode',
+        '*Reboot method',
+        $rebootmode,
+        $modeslist
+))->setHelp($help);
+
+$form->add($section);
+
+$form->addGlobal(new Form_Button(
+        'Submit',
+        'Submit',
+        null,
+        'fa-wrench'
+))->addClass('btn-primary');
+
+print $form;
+?>
 
 <script type="text/javascript">
 //<![CDATA[

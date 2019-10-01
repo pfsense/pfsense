@@ -311,6 +311,14 @@ if ($_POST['save']) {
 	if (trim($_POST['radiusnasid']) !== "" && !preg_match("/^[\x21-\x7e]{3,253}$/i", trim($_POST['radiusnasid']))) {
 		$input_errors[] = gettext("The NAS-Identifier must be 3-253 characters long and should only contain ASCII characters.");
 	}
+	if (is_uploaded_file($_FILES['logo-img']['tmp_name']) &&
+	    (is_supported_image($_FILES['logo-img']['tmp_name']) === false)) {
+		$input_errors[] = gettext("Unsupported logo image type.");
+	}
+	if (is_uploaded_file($_FILES['background-img']['tmp_name']) &&
+	    (is_supported_image($_FILES['background-img']['tmp_name']) === false)) {
+		$input_errors[] = gettext("Unsupported background image type.");
+	}
 
 	if (!$input_errors) {
 		init_config_arr(array('captiveportal', $cpzone));
@@ -426,8 +434,9 @@ if ($_POST['save']) {
 
 		// Check for uploaded images for the default CP login
 		if (is_uploaded_file($_FILES['logo-img']['tmp_name'])) {
-			$ext = pathinfo($_FILES['logo-img']['name'],PATHINFO_EXTENSION);
-			$logo_name = "captiveportal-logo." . $ext;
+
+			/* Validated above, so returned value is OK */
+			$logo_name = "captiveportal-logo." . image_type_to_extension(is_supported_image($_FILES['logo-img']['tmp_name']));
 			for ($i = 0; $i < count($a_cp[$cpzone]['element']); $i++) {
 				if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-logo.") !== false){
 					// remove old image before replacing it.
@@ -447,8 +456,8 @@ if ($_POST['save']) {
 			move_uploaded_file( $_FILES['logo-img']['tmp_name'], $target);
 		}
 		if (is_uploaded_file($_FILES['background-img']['tmp_name'])) {
-			$ext = pathinfo($_FILES['background-img']['name'],PATHINFO_EXTENSION);
-			$background_name = "captiveportal-background." . $ext;
+			/* Validated above, so returned value is OK */
+			$background_name = "captiveportal-background." . image_type_to_extension(is_supported_image($_FILES['background-img']['tmp_name']));
 			// is there already a file with that name?
 			for ($i = 0; $i < count($a_cp[$cpzone]['element']); $i++) {
 				if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-background.") !== false){

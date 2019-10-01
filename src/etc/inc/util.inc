@@ -2847,4 +2847,25 @@ function unixnewlines($text) {
 	return preg_replace('/\r\n?/', "\n", $text);
 }
 
+global $supported_image_types;
+$supported_image_types = array(
+	IMAGETYPE_JPEG,
+	IMAGETYPE_PNG,
+	IMAGETYPE_GIF,
+	IMAGETYPE_WEBP
+);
+
+function is_supported_image($image_filename) {
+	global $supported_image_types;
+	$img_info = getimagesize($image_filename);
+
+	/* If it's not an image, or it isn't in the supported list, return false */
+	if (($img_info === false) ||
+	    !in_array($img_info[2], array_keys($supported_image_types))) {
+		return false;
+	} else {
+		return $img_info[2];
+	}
+}
+
 ?>

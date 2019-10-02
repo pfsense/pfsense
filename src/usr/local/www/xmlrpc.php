@@ -78,7 +78,7 @@ class pfsense_xmlrpc_server {
 		 * admin (uid = 0) is allowed
 		 * or regular user with necessary privilege
 		 */
-		if (isset($user_entry['uid']) && $user_entry['uid'] != '0' &&
+		if (isset($user_entry['uid']) && $user_entry['uid'] != '0' && //change this ?
 		    !userHasPrivilege($user_entry, 'system-xmlrpc-ha-sync')) {
 			log_auth("webConfigurator authentication error for '" .
 			    $username . "' from " . $this->remote_addr .

@@ -187,7 +187,7 @@ if (!empty($gre)) {
 
 if (platform_booting() && !in_array(substr($interface_real, 0, 3), array("ppp", "ppt", "l2t"))) {
 	// unlike dhcp interfaces which wait until they get an ip, a ppp connection lets the boot continue while 
-	// trying to aquire a ip address so to avoid a race condition where it would be possible that the default
+	// trying to acquire a ip address so to avoid a race condition where it would be possible that the default
 	// route would not be set, this script must continue to use the new assigned ip even while booting
 	// https://redmine.pfsense.org/issues/8561
 	

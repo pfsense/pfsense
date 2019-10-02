@@ -29,11 +29,11 @@
 ##|*IDENT=page-system-copyright
 ##|*NAME=System: Copyright notice
 ##|*DESCR=Copyright and usage notice.
-##|*MATCH=copynitice.inc*
+##|*MATCH=copynotice.inc*
 ##|-PRIV
 
 /*
- * This file deisplays the copyright modal when required. (New version installed or completion of the setup wizard)
+ * This file displays the copyright modal when required. (New version installed or completion of the setup wizard)
  * The copyright text may have been downloaded from the Netgate server, but if not the default text defined here
  * is used
  */

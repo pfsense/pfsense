@@ -446,7 +446,7 @@ NA;
  * This part handles matching properly placed curly braces and semicolons.
  * If in doubt just do experiments! To achieve matching the curly braces we need
  * to check at all levels however we do just capture it all since matching the
- * individual components needs to be handled separatly at each level by other
+ * individual components needs to be handled separately at each level by other
  * regexes.
  * Same idea as with base_regex above, but not expanded to save space.
  */

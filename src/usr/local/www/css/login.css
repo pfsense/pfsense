@@ -182,7 +182,7 @@ form.login a:hover
     height: 100%;
 }
 
-/** Re-style web-kit broswer autocomplete boxes (Fixes Chrome's ugly yellow background) **/
+/** Re-style web-kit browser autocomplete boxes (Fixes Chrome's ugly yellow background) **/
 @-webkit-keyframes autofill {
     to {
         color: white;

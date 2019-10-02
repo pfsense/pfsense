@@ -195,7 +195,7 @@ if ($_REQUEST['newver'] != "") {
 		}
 	}
 	if (curl_errno($curl_session)) {
-		/* If an error occured, log the error in /tmp/ */
+		/* If an error occurred, log the error in /tmp/ */
 		$fd = fopen("/tmp/acb_restoredebug.txt", "w");
 		fwrite($fd, $get_url . "" . "action=restore&hostname={$hostname}&revision=" . urlencode($_REQUEST['newver']) . "\n\n");
 		fwrite($fd, $data);

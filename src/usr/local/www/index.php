@@ -565,7 +565,7 @@ function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
 }
 
 // ---------------------Centralized widget refresh system -------------------------------------------
-// These need to live outsie of the events.push() function to enable the widgets to see them
+// These need to live outside of the events.push() function to enable the widgets to see them
 var ajaxspecs = new Array();	// Array to hold widget refresh specifications (objects )
 var ajaxidx = 0;
 var ajaxmutex = false;

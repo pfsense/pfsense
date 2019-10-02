@@ -926,7 +926,7 @@ a[href]:after {
     content: normal;
 }
 
-/** Text color for diff display when comapring configs */
+/** Text color for diff display when comparing configs */
 .diff-text {
     color: #000000;
 }

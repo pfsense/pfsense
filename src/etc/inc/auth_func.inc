@@ -26,7 +26,7 @@
  */
 
 /*
- * Function put in seperate file to avoid processing priv.inc which is cpu intensive
+ * Function put in separate file to avoid processing priv.inc which is cpu intensive
  * cmp_page_matches is used by both auth_check.inc and priv.inc which is used by guiconfig.inc
  */
 

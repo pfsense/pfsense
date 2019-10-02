@@ -292,7 +292,7 @@ EOD;
  ******/
 /* mount flash card read/write */
 function conf_mount_rw() {
-	/* Obsoleted. Keep it here untill all calls are removed */
+	/* Obsoleted. Keep it here until all calls are removed */
 	return;
 }
 
@@ -303,7 +303,7 @@ function conf_mount_rw() {
  *   null
  ******/
 function conf_mount_ro() {
-	/* Obsoleted. Keep it here untill all calls are removed */
+	/* Obsoleted. Keep it here until all calls are removed */
 	return;
 }
 
@@ -467,7 +467,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	global $config, $g;
 
 	// Certain strings may be embedded in the $desc (reason) parameter to trigger certain behavior.
-	// If detected, those strings are reomved and a variable set.
+	// If detected, those strings are removed and a variable set.
 	$doacb = true;
 	$manual_acb = false;
 	$rcnt = 0;

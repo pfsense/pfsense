@@ -1773,7 +1773,7 @@ events.push(function() {
 
 	// Remove focus on page load
 	document.activeElement.blur()
-	
+
 	function show_advopts(ispageload) {
 		var text;
 		// On page load decide the initial state based on the data.
@@ -2123,7 +2123,7 @@ events.push(function() {
 		setHelpText(target, dispstr);
 	}
 
-	// When editing "associated" rules, everything except the enable, action, address family and desscription
+	// When editing "associated" rules, everything except the enable, action, address family and description
 	// fields are disabled
 	function disable_most(disable) {
 		var elementsToDisable = [

@@ -197,7 +197,7 @@ if ($_REQUEST['updateme']) {
 <?php if ($widget_first_instance): ?>
 <script type="text/javascript">
 //<![CDATA[
-// Have to convet the date to UTC time to match the PHP clock not the local client clock.
+// Have to convert the date to UTC time to match the PHP clock not the local client clock.
 function convertDateToUTC(date,offset) {
 	var hours_offset = offset/3600;
 	var minute_offset = (offset % 3600)/60;

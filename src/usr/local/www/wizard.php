@@ -142,7 +142,7 @@ if ($stepid > $totalsteps) {
 }
 
 // Convert a string containing a text version of a PHP array into a real $config array
-// that can then be created. e.g.: config_array_from_str("['apple']['orange']['pear']['bannana']");
+// that can then be created. e.g.: config_array_from_str("['apple']['orange']['pear']['banana']");
 function config_array_from_str( $text) {
 	$t = str_replace("[", "", $text);	// Remove '['
 	$t = str_replace("'", "", $t);		// Remove '

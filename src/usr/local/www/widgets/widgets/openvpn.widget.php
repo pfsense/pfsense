@@ -49,7 +49,7 @@ if (!function_exists('printPanel')) {
 		$opstring .= "<div class=\"panel-heading\"><h2 class=\"panel-title\">" .
 		    htmlspecialchars($server['name']);
 		if ($server['conns'][0]['common_name'] != '[error]') {
-			$opstring .= gettext('Client Connections') . ": " . 
+			$opstring .= ' ' . gettext('Client Connections') . ": " . 
 			    sizeof($server['conns']);
 		}
 		$opstring .=    "</h2></div>";

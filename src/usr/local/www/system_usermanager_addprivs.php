@@ -332,7 +332,7 @@ events.push(function() {
 	});
 
 	function copyselect(selected) {
-		// Copy all optionsfrom shadow to sysprivs
+		// Copy all options from shadow to sysprivs
 		$('.multiselect').html($('.shadowselect').html());
 
 		if (selected) {

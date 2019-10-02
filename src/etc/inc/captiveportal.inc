@@ -2304,13 +2304,13 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 
 	if ($attributes['voucher']) {
 		$remaining_time = $attributes['session_timeout'];
-		$authmethod = "voucher"; // Set RADIUS-Attribute to Voucher to prevent ReAuth-Reqeuest for Vouchers Bug: #2155
+		$authmethod = "voucher"; // Set RADIUS-Attribute to Voucher to prevent ReAuth-Request for Vouchers Bug: #2155
 		$context = "voucher";
 	}
 
 	$writecfg = false;
-	/* If both "Add MAC addresses of connected users as pass-through MAC" and "Disable concurrent logins" are checked, 
-	then we need to check if the user was already authenticated using another MAC Address, and if so remove the previous Pass-Through MAC. */	
+	/* If both "Add MAC addresses of connected users as pass-through MAC" and "Disable concurrent logins" are checked,
+	then we need to check if the user was already authenticated using another MAC Address, and if so remove the previous Pass-Through MAC. */
 	if ((isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) && ($username != 'unauthenticated') && isset($config['captiveportal'][$cpzone]['passthrumacadd'])) {
 		$mac = captiveportal_passthrumac_findbyname($username);
 		if (!empty($mac)) {

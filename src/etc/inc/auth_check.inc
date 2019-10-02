@@ -19,7 +19,7 @@
  * limitations under the License.
  */
 /*
- * Light weight authentication check thats ment as a substitute for guiconfig.inc
+ * Light weight authentication check that is meant as a substitute for guiconfig.inc
  * in cases where frequent automatic requests are made like graphs and widget pages.
  */
 

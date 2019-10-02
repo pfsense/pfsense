@@ -124,7 +124,7 @@ $tab_array[] = array(gettext("Update Settings"), true, "system_update_settings.p
 display_top_tabs($tab_array);
 
 // Check to see if any new repositories have become available. This data is cached and
-// refreshed evrey 24 hours
+// refreshed every 24 hours
 update_repos();
 $repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
 $helpfilename = "{$repopath}/{$g['product_name']}-repo-custom.help";

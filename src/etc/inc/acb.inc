@@ -134,7 +134,7 @@ function test_connection($post) {
 		return;
 	}
 
-	// Seperator used during client / server communications
+	// Separator used during client / server communications
 	$oper_sep = "\|\|";
 
 	// Encryption password

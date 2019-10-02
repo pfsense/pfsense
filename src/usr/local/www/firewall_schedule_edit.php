@@ -210,7 +210,7 @@ if ($_POST['save']) {
 
 include("head.inc");
 
-// Returns a string containg the HTML to display a calendar table
+// Returns a string containing the HTML to display a calendar table
 function build_date_table() {
 	$tblstr = "";
 

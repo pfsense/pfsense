@@ -243,7 +243,7 @@ endif;
 <?php endif; ?>
 	   </nav>
 <?php
-// The notes displayed on the page are large, the page content comparitively small. A "Note" button
+// The notes displayed on the page are large, the page content comparatively small. A "Note" button
 // is provided so that you only see the notes if you ask for them
 ?>
 <div class="infoblock panel panel-default">

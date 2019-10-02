@@ -31,7 +31,7 @@
  * #  Comment under Free-spacing mode.
  *    If free-spacing mode is not on one can use (?#Some comment)
  *
- * (?(DEFINE)  Subpatthern.
+ * (?(DEFINE)  Subpattern.
  *             Defines a subpattern that we intend to use
  *
  * (?'hexncolon'  A named group.
@@ -62,7 +62,7 @@
  *
  * (?>  Atomic (capturing) group.
  *      When it has a match it throws away all backtracking info it might have
- *      meaning it won't try alternatations if there e.g. is a |.
+ *      meaning it won't try alternations if there e.g. is a |.
  *
  * \G  We use \G once to alternate away from acceptable characters and instead
  *     match from the point where the last match ended. In our case below it is
@@ -181,7 +181,7 @@ IPV6;
  * Enumerated comments/documentation
  *
  * 1.
- * check_noclosingsinglecolon checks with negative lookahed what we 'anti' match
+ * check_noclosingsinglecolon checks with negative lookahead what we 'anti' match
  * (remember we do not capture with negative lookahead).
  * check_noclosingsinglecolon defines inside (the inner check) the opposite of
  * what we match. Therefore 'anti' match.

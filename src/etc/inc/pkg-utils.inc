@@ -140,7 +140,7 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 	stream_set_blocking($pipes[1], 0);
 	stream_set_blocking($pipes[2], 0);
 
-	/* XXX: should be a tunnable? */
+	/* XXX: should be a tunable? */
 	$timeout = 60; // seconds
 	$error_log = '';
 
@@ -277,7 +277,7 @@ function pkg_install($pkg_name, $force = false) {
 	pkg_debug("Installing package {$shortname}\n");
 	if ($force || !is_pkg_installed($pkg_name)) {
 		$result = pkg_call("install -y " . $pkg_force . $pkg_name);
-		/* Cleanup cacke to free disk space */
+		/* Cleanup cache to free disk space */
 		pkg_call("clean -y");
 	}
 
@@ -294,7 +294,7 @@ function pkg_delete($pkg_name) {
 	pkg_debug("Removing package {$shortname}\n");
 	if (is_pkg_installed($pkg_name)) {
 		pkg_call("delete -y " . $pkg_name);
-		/* Cleanup unecessary dependencies */
+		/* Cleanup unnecessary dependencies */
 		pkg_call("autoremove -y");
 	}
 }
@@ -1073,7 +1073,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 }
 
 /*
- * Used during upgrade process or retore backup process, verify all
+ * Used during upgrade process or restore backup process, verify all
  * packages installed in config.xml and install pkg accordingly
  */
 function package_reinstall_all() {

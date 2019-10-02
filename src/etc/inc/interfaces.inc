@@ -4815,7 +4815,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	if (isset($wancfg['dhcp6withoutra'])) {
 		/*
 		 * Start dhcp6c here if we don't want to wait for ra - calls
-		 * seperate function
+		 * separate function
 		 *
 		 * In this mode dhcp6c launches rtsold via its script. RTSOLD
 		 * will then run the configure on receipt of the RA.

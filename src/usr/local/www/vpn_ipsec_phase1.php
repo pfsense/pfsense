@@ -1219,7 +1219,7 @@ events.push(function() {
 		ealgosel_change(id, 0);
 	});
 
-	// On ititial page load
+	// On initial page load
 	myidsel_change();
 	peeridsel_change();
 	iketype_change();

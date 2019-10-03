@@ -1134,6 +1134,22 @@ function is_port($port) {
 	return false;
 }
 
+/* returns true if $port is in use */
+function is_port_in_use($port, $proto = "tcp", $ip_version = 4) {
+	$port_info = array();
+	exec("/usr/bin/netstat --libxo json -an " . escapeshellarg('-' . $ip_version) . " -p " . escapeshellarg($proto), $rawdata, $rc);
+	if ($rc == 0) {
+		$netstatarr = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
+		$netstatarr = $netstatarr['statistics']['socket'];
+
+		foreach($netstatarr as $index => $portstats){
+			array_push($port_info, $portstats['local']['port']);
+		}
+	}
+
+	return in_array($port, $port_info);
+}
+
 /* returns true if $portrange is a valid TCP/UDP portrange ("<port>:<port>") */
 function is_portrange($portrange) {
 	$ports = explode(":", $portrange);

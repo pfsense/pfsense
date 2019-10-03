@@ -816,28 +816,6 @@ function filter_generate_aliases() {
 
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
 				break;
-			case "openvpn":
-				$openvpncfg = array();
-				if ($config['openvpn']['user']) {
-					/* XXX: Check if we have a correct ip? */
-					foreach ($config['openvpn']['user'] as $openvpn) {
-						$openvpncfg[$openvpn['name']] = $openvpn['ip'];
-					}
-				}
-				$vpn_lines = explode("\n", $addrlist);
-				foreach ($vpn_lines as $vpn_line) {
-					$vpn_address_split = explode(" ", $vpn_line);
-					foreach ($vpn_address_split as $vpnsplit) {
-						if (isset($openvpncfg[$vpnsplit])) {
-							$newaddress .= " ";
-							$newaddress .= $openvpn[$vpnsplit];
-							break;
-						}
-					}
-				}
-				$aliases .= "table <{$aliased['name']}> { {$newaddress} } \n";
-				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
-				break;
 			case "urltable":
 				$urlfn = alias_expand_urltable($aliased['name']);
 				if ($urlfn) {
@@ -1786,7 +1764,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	if (!$if_friendly) {
 		return "# Could not convert {$if} to friendly name(alias) {$descr}\n";
 	}
-	
+
 	$inet = "";
 	if (is_v4($src) || is_v4($dst) || is_v4($natip)) {
 		$inet = "inet";
@@ -1804,7 +1782,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	if (!empty($ipprotocol)) {
 		$inet = $ipprotocol; //if ipprotocol is set specifically to ipv4 or ipv6 then that has to be used
 	}
-	
+
 	/* Set tgt4 for IPv4 */
 	if ($inet == "" || $inet == 'inet') {
 		if ($natip != "") {
@@ -1853,7 +1831,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	} else {
 		$protocol = "";
 	}
-	
+
 
 	$tgtport = "";
 	/* Add the hard set source port (useful for ISAKMP) */
@@ -1894,7 +1872,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	if (!empty($descr)) {
 		$descr = " # " . $descr;
 	}
-	
+
 	if (empty($if_friendly) || empty($src) || empty($dst)) {
 		return "# validation of rule properties failed to verify the interface/source/destination" . " in nat rule: {$descr}\n";
 	}
@@ -1910,7 +1888,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 			} else {
 				$natrules .= "nat on \${$if_friendly} inet{$protocol} from {$src} to {$dst} -> {$tgt4}{$tgtport} {$poolopts}{$staticnatport_txt}{$descr}\n";
 			}
-		} 
+		}
 		if ($inet == "" || $inet == 'inet6') {
 			if (empty($tgt6)) {
 				$natrules .= "# validation of rule properties failed to verify the IPv6 target" . " in nat rule: {$descr}\n";
@@ -2788,10 +2766,11 @@ function filter_generate_user_rule($rule) {
 			$aline['interface'] = "";
 		}
 	} else if (!array_key_exists($rule['interface'], $FilterIflist)) {
-			foreach ($FilterIflist as $oc) {
-				$items .= $oc['descr'] . " ";
-			}
-			return "# array key \"{$rule['interface']}\" does not exist for \"" . $rule['descr'] . "\" in array: {{$items}}";
+		$items = "";
+		foreach ($FilterIflist as $oc) {
+			$items .= $oc['descr'] . " ";
+		}
+		return "# array key \"{$rule['interface']}\" does not exist for \"" . $rule['descr'] . "\" in array: {{$items}}";
 	} else if ((array_key_exists($rule['interface'], $FilterIflist)) &&
 	    (is_array($FilterIflist[$rule['interface']])) &&
 	    (is_array($FilterIflist[$rule['interface']][0]))) {
@@ -3278,7 +3257,7 @@ EOD;
 	if (isset($config['system']['ipv6allow'])) {
 		$ipfrules .= <<<EOD
 
-# IPv6 ICMP is not auxilary, it is required for operation
+# IPv6 ICMP is not auxiliary, it is required for operation
 # See man icmp6(4)
 # 1    unreach         Destination unreachable
 # 2    toobig          Packet too big

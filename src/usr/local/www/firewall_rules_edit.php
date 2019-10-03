@@ -2153,7 +2153,7 @@ events.push(function() {
 
 	// ---------- Autocomplete --------------------------------------------------------------------
 
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "url", "urltable"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "url", "urltable"))) ?>;
 	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
 	$('#src, #dst').autocomplete({

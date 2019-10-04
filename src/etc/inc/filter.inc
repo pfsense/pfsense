@@ -5,7 +5,9 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005 Bill Marquette
  * Copyright (c) 2006 Peter Allgeyer
- * Copyright (c) 2008-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2013 BSD Perimeter
+ * Copyright (c) 2013-2016 Electric Sheep Fencing
+ * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1257,7 +1259,7 @@ function filter_generate_optcfg_array() {
 		$FilterIflist['openvpn'] = $oic;
 	}
 	/* add interface groups */
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
+	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
 			$oc = array();
 			$oc['if'] = $ifgen['ifname'];
@@ -2240,10 +2242,6 @@ function filter_nat_rules_generate() {
 		}
 		unset($tonathosts, $tonathosts_array, $numberofnathosts);
 	}
-
-	/* load balancer anchor */
-	$natrules .= "\n# Load balancing anchor\n";
-	$natrules .= "rdr-anchor \"relayd/*\"\n";
 
 	update_filter_reload_status(gettext("Setting up TFTP helper"));
 	$natrules .= "# TFTP proxy\n";
@@ -3244,8 +3242,6 @@ function filter_rules_generate() {
 	$ipfrules = "";
 	$ipfrules .= discover_pkg_rules("pfearly");
 
-	/* relayd */
-	$ipfrules .= "anchor \"relayd/*\"\n";
 	/* OpenVPN user rules from radius */
 	$ipfrules .= "anchor \"openvpn/*\"\n";
 	/* IPsec user rules from radius */
@@ -3506,7 +3502,7 @@ EOD;
 		$tracker = $saved_tracker;
 
 		$isbridged = false;
-		if (is_array($config['bridges']['bridged'])) {
+		if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged'])) {
 			foreach ($config['bridges']['bridged'] as $oc2) {
 				if (stristr($oc2['members'], $on)) {
 					$isbridged = true;

@@ -256,7 +256,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 	update_filter_reload_status(gettext("Creating aliases"));
 	$aliases = filter_generate_aliases();
-
 	$gateways = filter_generate_gateways();
 	if (platform_booting() == true) {
 		echo ".";

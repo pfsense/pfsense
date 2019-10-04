@@ -248,6 +248,8 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdconf .= "\t\tRemoveRoute on;\n";
 		$radvdconf .= "\t};\n";
 
+		$usedefaultvalues = $dhcpv6ifconf['ramode'] == "managed" || $dhcpv6ifconf['ramode'] == "stateless_dhcp" ? false : true;
+
 		/* add DNS servers */
 		$dnslist = array();
 		if (isset($dhcpv6ifconf['rasamednsasdhcp6']) && is_array($dhcpv6ifconf['dnsserver']) && !empty($dhcpv6ifconf['dnsserver'])) {
@@ -262,9 +264,9 @@ function services_radvd_configure($blacklist = array()) {
 					$dnslist[] = $server;
 				}
 			}
-		} elseif (isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable'])) {
+		} elseif ($usedefaultvalues && (isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable']))) {
 			$dnslist[] = get_interface_ipv6($realif);
-		} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
+		} elseif ($usedefaultvalues && (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver']))) {
 			foreach ($config['system']['dnsserver'] as $server) {
 				if (is_ipaddrv6($server)) {
 					$dnslist[] = $server;
@@ -286,13 +288,16 @@ function services_radvd_configure($blacklist = array()) {
 				$searchlist[] = $sd;
 			}
 		}
+		$searchliststring = "";
 		if (count($searchlist) > 0) {
 			$searchliststring = trim(implode(" ", $searchlist));
 		}
-		if (!empty($dhcpv6ifconf['domain'])) {
-			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} {$searchliststring} { };\n";
-		} elseif (!empty($config['system']['domain'])) {
-			$radvdconf .= "\tDNSSL {$config['system']['domain']} {$searchliststring} { };\n";
+		if (isset($dhcpv6ifconf['rasamednsasdhcp6']) && !empty($dhcpv6ifconf['domain'])) {
+			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} { };\n";
+		} elseif (!isset($dhcpv6ifconf['rasamednsasdhcp6']) && !empty($searchliststring)) {
+			$radvdconf .= "\tDNSSL {$searchliststring} { };\n";
+		} elseif ($usedefaultvalues && !empty($config['system']['domain'])) {
+			$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
 		}
 		$radvdconf .= "};\n";
 	}

@@ -5,9 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005 Bill Marquette
  * Copyright (c) 2006 Peter Allgeyer
- * Copyright (c) 2008-2013 BSD Perimeter
- * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2019 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -482,13 +480,12 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	if (!is_bogonsv6_used()) {
 		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill 2>/dev/null");
 	}
-	
+
 	// get aliases names from config
 	$aliasesnames = array();
 	foreach ($config['aliases']['alias'] as $alias) {
 		array_push($aliasesnames, $alias['name']);
 	}
-
 	// get aliases names from pfctl -sT
 	$pftables = explode("\n",shell_exec("/sbin/pfctl -sT"));
 	// compare config and pfctl aliases
@@ -832,6 +829,28 @@ function filter_generate_aliases() {
 					$aliases .= "table <{$aliased['name']}> { {$addrlist} } \n";
 				}
 
+				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
+				break;
+			case "openvpn":
+				$openvpncfg = array();
+				if ($config['openvpn']['user']) {
+					/* XXX: Check if we have a correct ip? */
+					foreach ($config['openvpn']['user'] as $openvpn) {
+						$openvpncfg[$openvpn['name']] = $openvpn['ip'];
+					}
+				}
+				$vpn_lines = explode("\n", $addrlist);
+				foreach ($vpn_lines as $vpn_line) {
+					$vpn_address_split = explode(" ", $vpn_line);
+					foreach ($vpn_address_split as $vpnsplit) {
+						if (isset($openvpncfg[$vpnsplit])) {
+							$newaddress .= " ";
+							$newaddress .= $openvpn[$vpnsplit];
+							break;
+						}
+					}
+				}
+				$aliases .= "table <{$aliased['name']}> { {$newaddress} } \n";
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
 				break;
 			case "urltable":
@@ -1238,7 +1257,7 @@ function filter_generate_optcfg_array() {
 		$FilterIflist['openvpn'] = $oic;
 	}
 	/* add interface groups */
-	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
 			$oc = array();
 			$oc['if'] = $ifgen['ifname'];
@@ -1782,7 +1801,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	if (!$if_friendly) {
 		return "# Could not convert {$if} to friendly name(alias) {$descr}\n";
 	}
-
+	
 	$inet = "";
 	if (is_v4($src) || is_v4($dst) || is_v4($natip)) {
 		$inet = "inet";
@@ -1800,7 +1819,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	if (!empty($ipprotocol)) {
 		$inet = $ipprotocol; //if ipprotocol is set specifically to ipv4 or ipv6 then that has to be used
 	}
-
+	
 	/* Set tgt4 for IPv4 */
 	if ($inet == "" || $inet == 'inet') {
 		if ($natip != "") {
@@ -1849,7 +1868,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	} else {
 		$protocol = "";
 	}
-
+	
 
 	$tgtport = "";
 	/* Add the hard set source port (useful for ISAKMP) */
@@ -1890,7 +1909,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	if (!empty($descr)) {
 		$descr = " # " . $descr;
 	}
-
+	
 	if (empty($if_friendly) || empty($src) || empty($dst)) {
 		return "# validation of rule properties failed to verify the interface/source/destination" . " in nat rule: {$descr}\n";
 	}
@@ -1906,7 +1925,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 			} else {
 				$natrules .= "nat on \${$if_friendly} inet{$protocol} from {$src} to {$dst} -> {$tgt4}{$tgtport} {$poolopts}{$staticnatport_txt}{$descr}\n";
 			}
-		}
+		} 
 		if ($inet == "" || $inet == 'inet6') {
 			if (empty($tgt6)) {
 				$natrules .= "# validation of rule properties failed to verify the IPv6 target" . " in nat rule: {$descr}\n";
@@ -2221,6 +2240,10 @@ function filter_nat_rules_generate() {
 		}
 		unset($tonathosts, $tonathosts_array, $numberofnathosts);
 	}
+
+	/* load balancer anchor */
+	$natrules .= "\n# Load balancing anchor\n";
+	$natrules .= "rdr-anchor \"relayd/*\"\n";
 
 	update_filter_reload_status(gettext("Setting up TFTP helper"));
 	$natrules .= "# TFTP proxy\n";
@@ -2784,11 +2807,10 @@ function filter_generate_user_rule($rule) {
 			$aline['interface'] = "";
 		}
 	} else if (!array_key_exists($rule['interface'], $FilterIflist)) {
-		$items = "";
-		foreach ($FilterIflist as $oc) {
-			$items .= $oc['descr'] . " ";
-		}
-		return "# array key \"{$rule['interface']}\" does not exist for \"" . $rule['descr'] . "\" in array: {{$items}}";
+			foreach ($FilterIflist as $oc) {
+				$items .= $oc['descr'] . " ";
+			}
+			return "# array key \"{$rule['interface']}\" does not exist for \"" . $rule['descr'] . "\" in array: {{$items}}";
 	} else if ((array_key_exists($rule['interface'], $FilterIflist)) &&
 	    (is_array($FilterIflist[$rule['interface']])) &&
 	    (is_array($FilterIflist[$rule['interface']][0]))) {
@@ -3222,6 +3244,8 @@ function filter_rules_generate() {
 	$ipfrules = "";
 	$ipfrules .= discover_pkg_rules("pfearly");
 
+	/* relayd */
+	$ipfrules .= "anchor \"relayd/*\"\n";
 	/* OpenVPN user rules from radius */
 	$ipfrules .= "anchor \"openvpn/*\"\n";
 	/* IPsec user rules from radius */
@@ -3275,7 +3299,7 @@ EOD;
 	if (isset($config['system']['ipv6allow'])) {
 		$ipfrules .= <<<EOD
 
-# IPv6 ICMP is not auxiliary, it is required for operation
+# IPv6 ICMP is not auxilary, it is required for operation
 # See man icmp6(4)
 # 1    unreach         Destination unreachable
 # 2    toobig          Packet too big
@@ -3482,7 +3506,7 @@ EOD;
 		$tracker = $saved_tracker;
 
 		$isbridged = false;
-		if (isset($config['bridges']['bridged']) && is_array($config['bridges']['bridged'])) {
+		if (is_array($config['bridges']['bridged'])) {
 			foreach ($config['bridges']['bridged'] as $oc2) {
 				if (stristr($oc2['members'], $on)) {
 					$isbridged = true;

@@ -53,6 +53,7 @@ if ($_POST['apply']) {
 	}
 }
 
+
 if ($_POST['act'] == "del") {
 	if ($a_aliases[$_POST['id']]) {
 		/* make sure rule is not being referenced by any nat or filter rules */

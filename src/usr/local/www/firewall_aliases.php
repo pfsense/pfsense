@@ -53,7 +53,6 @@ if ($_POST['apply']) {
 	}
 }
 
-
 if ($_POST['act'] == "del") {
 	if ($a_aliases[$_POST['id']]) {
 		/* make sure rule is not being referenced by any nat or filter rules */
@@ -102,6 +101,20 @@ if ($_POST['act'] == "del") {
 			exit;
 		}
 	}
+} 
+
+if ($_REQUEST['act'] == "export") {
+	if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+        	$id = $_REQUEST['id'];
+		print("<pre>");
+		if ($a_aliases[$id]["type"] == "urltable") {
+			print(str_replace(' ',"\n",$a_aliases[$id]['url']));
+		} else {
+			print(str_replace(' ',"\n",$a_aliases[$id]['address']));
+		}
+		print("</pre>");
+	}
+	exit();
 }
 
 function find_alias_reference($section, $field, $origname, &$is_alias_referenced, &$referenced_by) {
@@ -250,7 +263,8 @@ display_top_tabs($tab_array);
 			</td>
 			<td>
 				<a class="fa fa-pencil" title="<?=gettext("Edit alias"); ?>" href="firewall_aliases_edit.php?id=<?=$i?>"></a>
-				<a class="fa fa-trash"	title="<?=gettext("Delete alias")?>" href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>" usepost></a>
+				<a class="fa fa-download" title="<?=gettext("Export alias")?>" href="?act=export&amp;id=<?=$i?>" target="_blank"></a>
+				<a class="fa fa-trash" title="<?=gettext("Delete alias")?>" href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>" usepost></a>
 			</td>
 		</tr>
 <?php endif?>

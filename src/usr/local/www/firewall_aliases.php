@@ -114,8 +114,8 @@ if ($_REQUEST['act'] == "export") {
 			print(str_replace(' ',"\n",$a_aliases[$id]['address']));
 		}
 		print("</pre>");
+		exit();
 	}
-	exit();
 }
 
 function find_alias_reference($section, $field, $origname, &$is_alias_referenced, &$referenced_by) {

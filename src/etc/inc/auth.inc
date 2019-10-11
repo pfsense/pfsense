@@ -1409,13 +1409,19 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		}
 		$ldapauthcont = $authcfg['ldap_authcn'];
 		$ldapnameattribute = strtolower($authcfg['ldap_attr_user']);
+		$ldapgroupattribute = $authcfg['ldap_attr_member'];
 		$ldapextendedqueryenabled = $authcfg['ldap_extended_enabled'];
 		$ldapextendedquery = $authcfg['ldap_extended_query'];
 		$ldapfilter = "";
 		if (!$ldapextendedqueryenabled) {
 			$ldapfilter = "({$ldapnameattribute}={$username})";
 		} else {
-			$ldapfilter = "(&({$ldapnameattribute}={$username})({$ldapextendedquery}))";
+			if (isset($authcfg['ldap_rfc2307'])) {
+				$ldapfilter = "({$ldapnameattribute}={$username})";
+				$ldapgroupfilter = "(&({$ldapgroupattribute}={$username})({$ldapextendedquery}))";
+			} else {
+				$ldapfilter = "(&({$ldapnameattribute}={$username})({$ldapextendedquery}))";
+			}
 		}
 		$ldaptype = "";
 		$ldapver = $authcfg['ldap_protver'];
@@ -1515,12 +1521,29 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		/* Support legacy auth container specification. */
 		if (stristr($ldac_split, "DC=") || empty($ldapbasedn)) {
 			$search = @$ldapfunc($ldap, $ldac_split, $ldapfilter);
+			if (isset($ldapgroupfilter)) {
+				$groupsearch = @$ldapfunc($ldap, $ldac_split, $ldapgroupfilter);
+			}
 		} else {
 			$search = @$ldapfunc($ldap, $ldapsearchbasedn, $ldapfilter);
+			if (isset($ldapgroupfilter)) {
+				$groupsearch = @$ldapfunc($ldap, $ldapsearchbasedn, $ldapgroupfilter);
+			}
+		}
+
+		if (isset($ldapgroupfilter) && !$groupsearch) {
+			log_error(sprintf(gettext("Extended group search resulted in error: %s"), ldap_error($ldap)));
+			continue;
 		}
 		if (!$search) {
 			log_error(sprintf(gettext("Search resulted in error: %s"), ldap_error($ldap)));
 			continue;
+		}
+		if (isset($groupsearch)) {
+			$validgroup = ldap_count_entries($ldap, $groupsearch);
+			if ($debug) {
+				log_auth(sprintf(gettext("LDAP group search: %s results."), $validgroup));
+			}
 		}
 		$info = ldap_get_entries($ldap, $search);
 		$matches = $info['count'];
@@ -1561,8 +1584,16 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		log_auth(sprintf(gettext('Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
 	}
 
+	if ($debug && isset($ldapgroupfilter) && $validgroup < 1) {
+		log_auth(sprintf(gettext('Logged in successfully as %1$s but did not match any field in extended query.'), $username));
+	}
+
 	/* At this point we are bound to LDAP so the user was auth'd okay. Close connection. */
 	@ldap_unbind($ldap);
+
+	if (isset($ldapgroupfilter) && $validgroup < 1) {
+		return false;
+	}
 
 	return true;
 }

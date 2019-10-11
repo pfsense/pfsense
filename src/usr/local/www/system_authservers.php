@@ -667,7 +667,7 @@ $group->add(new Form_Input(
 	'Query',
 	'text',
 	$pconfig['ldap_extended_query']
-))->setHelp('Example: memberOf=CN=Groupname,OU=MyGroups,DC=example,DC=com');
+))->setHelp('Example (MSAD): memberOf=CN=Groupname,OU=MyGroups,DC=example,DC=com<br>Example (2307): |(&(objectClass=posixGroup)(cn=Groupname)(memberUid=*))(&(objectClass=posixGroup)(cn=anotherGroup)(memberUid=*))');
 
 $section->add($group);
 

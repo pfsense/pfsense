@@ -63,10 +63,19 @@ if (file_exists($status_file)) {
 					asort($mirror_status[$mirror]['components']);
 					asort($previous_mirror_status[$mirror]['components']);
 					if ($mirror_status[$mirror]['components'] != $previous_mirror_status[$mirror]['components']) {
-						$notices[] = sprintf(gettext("Mirror %s drive status changed. Old: (%s) New: (%s)"),
-								$mirror,
-								implode(", ", $previous_mirror_status[$mirror]['components']),
-								implode(", ", $mirror_status[$mirror]['components']));
+						// if in SYNC state, only notify in 25% increments
+						foreach ($mirror_status[$mirror]['components'] as $drive) {
+							$drive = preg_replace('/[\(\)\,\%]/', '', $drive);
+							$component_data = explode(" ", $drive);
+							if ($component_data[1] == 'SYNCHRONIZING') {
+								if (($component_data[2] % 25) == 0) {
+									$notices[] = sprintf(gettext("Mirror %s drive status changed. Old: (%s) New: (%s)"),
+										$mirror,
+										implode(", ", $previous_mirror_status[$mirror]['components']),
+										implode(", ", $mirror_status[$mirror]['components']));
+								}
+							}
+						}
 					}
 				}
 			}

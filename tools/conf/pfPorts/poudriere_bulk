@@ -30,10 +30,12 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent22
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent4
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent42
+net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent44
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy22
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy4
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy42
+net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy44
 net-mgmt/dhcp_probe
 net-mgmt/iprange
 net-mgmt/net-snmp

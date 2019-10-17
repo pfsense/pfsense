@@ -442,6 +442,10 @@ if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 		null,
 		'fa-stop-circle'
 	))->addClass('btn-warning');
+	$section->addInput(new Form_StaticText(
+		'Last capture start',
+		date("F jS, Y g:i:s a.", filemtime("/tmp/packetcapture.time"))
+	));
 }
 
 if (file_exists($fp.$fn) and $processisrunning != true) {
@@ -460,7 +464,11 @@ if (file_exists($fp.$fn) and $processisrunning != true) {
 	))->addClass('btn-primary');
 
 	$section->addInput(new Form_StaticText(
-		'Last capture',
+		'Last capture start',
+		date("F jS, Y g:i:s a.", filemtime("/tmp/packetcapture.time"))
+	));
+	$section->addInput(new Form_StaticText(
+		'Last capture stop',
 		date("F jS, Y g:i:s a.", filemtime($fp.$fn))
 	));
 }
@@ -510,9 +518,10 @@ if ($do_tcpdump) :
 	if ($action == gettext("Start")) {
 		$matchstr = implode($matches, " and ");
 
-		print_info_box(gettext('Packet capture is running.'), 'info');
+		print_info_box(gettext('Packet capture is running'), 'info');
 
 		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
+		mwexec ("touch /tmp/packetcapture.time");
 		// Debug
 		//echo $cmd;
 		mwexec_bg ($cmd);

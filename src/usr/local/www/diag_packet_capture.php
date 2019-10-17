@@ -449,7 +449,7 @@ if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 	));
 }
 
-if (file_exists($fp.$fn) and file_exists($fp.$fns) and $processisrunning != true) {
+if (file_exists($fp.$fn) and $processisrunning != true) {
 	$form->addGlobal(new Form_Button(
 		'viewbtn',
 		'View Capture',
@@ -464,10 +464,12 @@ if (file_exists($fp.$fn) and file_exists($fp.$fns) and $processisrunning != true
 		'fa-download'
 	))->addClass('btn-primary');
 
-	$section->addInput(new Form_StaticText(
-		'Last capture start',
-		date("F jS, Y g:i:s a.", filemtime($fp.$fns))
-	));
+	if (file_exists($fp.$fns) {
+		$section->addInput(new Form_StaticText(
+			'Last capture start',
+			date("F jS, Y g:i:s a.", filemtime($fp.$fns))
+		));
+	}
 	$section->addInput(new Form_StaticText(
 		'Last capture stop',
 		date("F jS, Y g:i:s a.", filemtime($fp.$fn))

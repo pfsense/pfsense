@@ -40,7 +40,7 @@
 	<!-- This use of filemtime() is intended to fool the browser into reloading the file (not using the cached version) if the file is changed -->
 
 	<script src="/vendor/jquery/jquery-3.4.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-3.4.1.min.js')?>"></script>
- 	<script src="/vendor/jquery-ui/jquery-ui.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery-ui/jquery-ui.min.js')?>"></script>
+ 	<script src="/vendor/jquery-ui/jquery-ui-1.12.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery-ui/jquery-ui-1.12.1.min.js')?>"></script>
 	<script src="/vendor/bootstrap/js/bootstrap.min.js?v=<?=filemtime('/usr/local/www/vendor/bootstrap/js/bootstrap.min.js')?>"></script>
 	<script src="/js/pfSense.js?v=<?=filemtime('/usr/local/www/js/pfSense.js')?>"></script>
 	<script src="/js/pfSenseHelpers.js?v=<?=filemtime('/usr/local/www/js/pfSenseHelpers.js')?>"></script>

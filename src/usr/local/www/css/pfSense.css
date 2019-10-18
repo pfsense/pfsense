@@ -21,7 +21,7 @@
 
 @import url("/vendor/bootstrap/css/bootstrap.min.css");
 @import url("/css/fonts/roboto.css");
-@import url("/vendor/jquery/jquery-ui/themes/smoothness/theme.css");
+@import url("/vendor/jquery-ui/jquery-ui-1.12.1.min.css");
 
 html {
     position: relative;

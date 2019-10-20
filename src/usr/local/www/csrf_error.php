@@ -107,8 +107,8 @@ $logincssfile = "#770101";
 	});
 	//]]>
 	</script>
-	<script src="/vendor/jquery/jquery-1.12.0.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-1.12.0.min.js')?>"></script>
-	<script src="/vendor/jquery/jquery-ui-1.11.4.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-ui-1.11.4.min.js')?>"></script>
+	<script src="/vendor/jquery/jquery-3.4.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-3.4.1.min.js')?>"></script>
+	<script src="/vendor/jquery-ui/jquery-ui-1.12.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery-ui/jquery-ui-1.12.1.min.js')?>"></script>
 	<script src="/vendor/bootstrap/js/bootstrap.min.js?v=<?=filemtime('/usr/local/www/vendor/bootstrap/js/bootstrap.min.js')?>"></script>
 	<script src="/js/pfSense.js?v=<?=filemtime('/usr/local/www/js/pfSense.js')?>"></script>
 	<script src="/js/pfSenseHelpers.js?v=<?=filemtime('/usr/local/www/js/pfSenseHelpers.js')?>"></script>

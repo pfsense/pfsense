@@ -1178,9 +1178,7 @@ EOD;
 				$dhcpdconf .= "}\n";
 
 				// subclass for DHCP limiting
-				// unknown if the "1:" prefix is still needed, so adding it just in case
-				$dhcpdconf .= "subclass \"s_{$dhcpif}\" 1:{$sm['mac']};\n";
-				$dhcpdconf .= "subclass \"s_{$dhcpif}\" {$sm['mac']};\n";
+				$dhcpdconf .= "subclass \"s_{$dhcpif}\" 1:{$sm['mac']};\n"; // assuming ALL addresses are ethernet hardware type ("1:" prefix)
 
 				$i++;
 			}

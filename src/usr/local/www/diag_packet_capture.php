@@ -443,10 +443,12 @@ if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 		null,
 		'fa-stop-circle'
 	))->addClass('btn-warning');
-	$section->addInput(new Form_StaticText(
-		'Last capture start',
-		date("F jS, Y g:i:s a.", filemtime($fp.$fns))
-	));
+	if (file_exists($fp.$fns)) {
+		$section->addInput(new Form_StaticText(
+			'Last capture start',
+			date("F jS, Y g:i:s a.", filemtime($fp.$fns))
+		));
+	}
 }
 
 if (file_exists($fp.$fn) and $processisrunning != true) {
@@ -464,7 +466,7 @@ if (file_exists($fp.$fn) and $processisrunning != true) {
 		'fa-download'
 	))->addClass('btn-primary');
 
-	if (file_exists($fp.$fns) {
+	if (file_exists($fp.$fns)) {
 		$section->addInput(new Form_StaticText(
 			'Last capture start',
 			date("F jS, Y g:i:s a.", filemtime($fp.$fns))

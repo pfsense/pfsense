@@ -524,7 +524,7 @@ if ($do_tcpdump) :
 		print_info_box(gettext('Packet capture is running'), 'info');
 
 		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
-		mwexec ("touch /root/packetcapture.start");
+		touch("/root/packetcapture.start");
 		// Debug
 		//echo $cmd;
 		mwexec_bg ($cmd);

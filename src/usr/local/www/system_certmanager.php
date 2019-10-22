@@ -41,7 +41,7 @@ $cert_methods = array(
 );
 
 $cert_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
-$cert_eckeys = array("brainpoolP160r1", "brainpoolP192r1");
+$cert_eckeys = array("secp112r1", "secp112r2", "secp128r1", "secp128r2", "secp160k1", "secp160r1", "secp160r2", "secp192k1", "secp224k1", "secp224r1", "secp256k1", "secp384r1", "secp521r1", "prime192v1", "prime192v2", "prime192v3", "prime239v1", "prime239v2", "prime239v3", "prime256v1", "sect113r1", "sect113r2", "sect131r1", "sect131r2", "sect163k1", "sect163r1", "sect163r2", "sect193r1", "sect193r2", "sect233k1", "sect233r1", "sect239k1", "sect283k1", "sect283r1", "sect409k1", "sect409r1", "sect571k1", "sect571r1", "c2pnb163v1", "c2pnb163v2", "c2pnb163v3", "c2pnb176v1", "c2tnb191v1", "c2tnb191v2", "c2tnb191v3", "c2pnb208w1", "c2tnb239v1", "c2tnb239v2", "c2tnb239v3", "c2pnb272w1", "c2pnb304w1", "c2tnb359v1", "c2pnb368w1", "c2tnb431r1", "wap-wsg-idm-ecid-wtls1", "wap-wsg-idm-ecid-wtls3", "wap-wsg-idm-ecid-wtls4", "wap-wsg-idm-ecid-wtls5", "wap-wsg-idm-ecid-wtls6", "wap-wsg-idm-ecid-wtls7", "wap-wsg-idm-ecid-wtls8", "wap-wsg-idm-ecid-wtls9", "wap-wsg-idm-ecid-wtls10", "wap-wsg-idm-ecid-wtls11", "wap-wsg-idm-ecid-wtls12", "brainpoolP160r1", "brainpoolP160t1", "brainpoolP192r1", "brainpoolP192t1", "brainpoolP224r1", "brainpoolP224t1", "brainpoolP256r1", "brainpoolP256t1", "brainpoolP320r1", "brainpoolP320t1", "brainpoolP384r1", "brainpoolP384t1", "brainpoolP512r1", "brainpoolP512t1");
 $cert_keytypes = array("RSA", "ECDSA");
 $cert_types = array(
 	"server" => "Server Certificate",
@@ -97,9 +97,11 @@ if ($act == "new") {
 	$pconfig['method'] = $_POST['method'];
 	$pconfig['keytype'] = "RSA";
 	$pconfig['keylen'] = "2048";
+	$pconfig['eckey'] = "brainpoolP160r1";
 	$pconfig['digest_alg'] = "sha256";
 	$pconfig['csr_keytype'] = "RSA";
 	$pconfig['csr_keylen'] = "2048";
+	$pconfig['csr_eckey'] = "brainpoolP160r1";
 	$pconfig['csr_digest_alg'] = "sha256";
 	$pconfig['csrsign_digest_alg'] = "sha256";
 	$pconfig['type'] = "user";
@@ -245,11 +247,12 @@ if ($_POST['save']) {
 
 		if ($pconfig['method'] == "internal") {
 			$reqdfields = explode(" ",
-				"descr caref keylen type keytype lifetime dn_commonname");
+				"descr caref keylen eckey type keytype lifetime dn_commonname");
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Certificate authority"),
 				gettext("Key length"),
+				gettext("EC key"),
 				gettext("Key type"),
 				gettext("Certificate Type"),
 				gettext("Lifetime"),
@@ -258,10 +261,12 @@ if ($_POST['save']) {
 
 		if ($pconfig['method'] == "external") {
 			$reqdfields = explode(" ",
-				"descr csr_keylen csr_dn_commonname");
+				"descr csr_keylen csr_eckey csr_keytype csr_dn_commonname");
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Key length"),
+				gettext("EC key"),
+				gettext("Key type"),
 				gettext("Common Name"));
 		}
 
@@ -340,16 +345,28 @@ if ($_POST['save']) {
 
 			switch ($pconfig['method']) {
 				case "internal":
+					if (isset($_POST["keytype"]) && !in_array($_POST["keytype"], $cert_keytypes)) {
+						array_push($input_errors, gettext("Please select a valid Key Type."));
+					}
 					if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
 						array_push($input_errors, gettext("Please select a valid Key Length."));
+					}
+					if (isset($_POST["eckey"]) && !in_array($_POST["eckey"], $cert_eckeys)) {
+						array_push($input_errors, gettext("Please select a valid EC Key."));
 					}
 					if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 					}
 					break;
 				case "external":
+					if (isset($_POST["csr_keytype"]) && !in_array($_POST["csr_keytype"], $cert_keytypes)) {
+						array_push($input_errors, gettext("Please select a valid Key Type."));
+					}
 					if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
 						array_push($input_errors, gettext("Please select a valid Key Length."));
+					}
+					if (isset($_POST["csr_eckey"]) && !in_array($_POST["csr_eckey"], $cert_eckeys)) {
+						array_push($input_errors, gettext("Please select a valid EC Key."));
 					}
 					if (!in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
 						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
@@ -783,12 +800,25 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		array_combine($cert_keytypes, $cert_keytypes)
 	));
 
-	$section->addInput(new Form_Select(
+	$group = new Form_Group($i == 0 ? '*Key length':'');
+        $group->addClass('rsakeys');
+	$group->add(new Form_Select(
 		'keylen',
-		'*Key length',
+		null,
 		$pconfig['keylen'],
-		($pconfig['keytype'] == 'RSA') ? array_combine($cert_keylens, $cert_keylens) : array_combine($cert_eckeys, $cert_eckeys)
+		array_combine($cert_keylens, $cert_keylens)
 	));
+	$section->add($group);
+
+	$group = new Form_Group($i == 0 ? '*EC key':'');
+        $group->addClass('eckeys');
+	$group->add(new Form_Select(
+		'eckey',
+		null,
+		$pconfig['eckey'],
+		array_combine($cert_eckeys, $cert_eckeys)
+	));
+	$section->add($group);
 
 	$section->addInput(new Form_Select(
 		'digest_alg',
@@ -868,12 +898,25 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		array_combine($cert_keytypes, $cert_keytypes)
 	));
 
-	$section->addInput(new Form_Select(
+	$group = new Form_Group($i == 0 ? '*Key length':'');
+        $group->addClass('csr_rsakeys');
+	$group->add(new Form_Select(
 		'csr_keylen',
-		'*Key length',
+		null,
 		$pconfig['csr_keylen'],
 		array_combine($cert_keylens, $cert_keylens)
 	));
+	$section->add($group);
+
+	$group = new Form_Group($i == 0 ? '*EC key':'');
+        $group->addClass('csr_eckeys');
+	$group->add(new Form_Select(
+		'csr_eckey',
+		null,
+		$pconfig['csr_eckey'],
+		array_combine($cert_eckeys, $cert_eckeys)
+	));
+	$section->add($group);
 
 	$section->addInput(new Form_Select(
 		'csr_digest_alg',
@@ -1440,13 +1483,34 @@ events.push(function() {
 		set_csr_ro();
 	});
 
+	function change_keytype() {
+       		hideClass('rsakeys', ($('#keytype').val() != 'RSA'));
+       		hideClass('eckeys', ($('#keytype').val() != 'ECDSA'));
+        }
+
+	$('#keytype').change(function () {
+                change_keytype();
+        });
+
+	function change_csrkeytype() {
+       		hideClass('csr_rsakeys', ($('#csr_keytype').val() != 'RSA'));
+       		hideClass('csr_eckeys', ($('#csr_keytype').val() != 'ECDSA'));
+        }
+
+	$('#csr_keytype').change(function () {
+                change_csrkeytype();
+        });
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	internalca_change();
 	set_csr_ro();
+	change_keytype();
+	change_csrkeytype();
 
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();
+
 
 <?php endif; ?>
 

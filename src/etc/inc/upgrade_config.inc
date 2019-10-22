@@ -4571,6 +4571,7 @@ function upgrade_144_to_145() {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
 			if (isset($ifcfg['enable'])) {
 				if ($ifcfg['ipaddrv6'] == "track6") {
+					init_config_arr(array('dhcpdv6', $ifname, 'range'));
 					$config['dhcpdv6'][$ifname]['enable'] = true;
 					$config['dhcpdv6'][$ifname]['range']['from'] = "::1000";
 					$config['dhcpdv6'][$ifname]['range']['to'] = "::2000";

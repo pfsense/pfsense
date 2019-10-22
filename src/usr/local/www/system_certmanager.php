@@ -41,6 +41,8 @@ $cert_methods = array(
 );
 
 $cert_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
+$cert_eckeys = array("brainpoolP160r1", "brainpoolP192r1");
+$cert_keytypes = array("RSA", "ECDSA");
 $cert_types = array(
 	"server" => "Server Certificate",
 	"user" => "User Certificate");
@@ -93,8 +95,10 @@ if ($_POST['act'] == "del") {
 
 if ($act == "new") {
 	$pconfig['method'] = $_POST['method'];
+	$pconfig['keytype'] = "RSA";
 	$pconfig['keylen'] = "2048";
 	$pconfig['digest_alg'] = "sha256";
+	$pconfig['csr_keytype'] = "RSA";
 	$pconfig['csr_keylen'] = "2048";
 	$pconfig['csr_digest_alg'] = "sha256";
 	$pconfig['csrsign_digest_alg'] = "sha256";
@@ -241,11 +245,12 @@ if ($_POST['save']) {
 
 		if ($pconfig['method'] == "internal") {
 			$reqdfields = explode(" ",
-				"descr caref keylen type lifetime dn_commonname");
+				"descr caref keylen type keytype lifetime dn_commonname");
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Certificate authority"),
 				gettext("Key length"),
+				gettext("Key type"),
 				gettext("Certificate Type"),
 				gettext("Lifetime"),
 				gettext("Common Name"));
@@ -772,10 +777,17 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	}
 
 	$section->addInput(new Form_Select(
+		'keytype',
+		'*Key type',
+		$pconfig['keytype'],
+		array_combine($cert_keytypes, $cert_keytypes)
+	));
+
+	$section->addInput(new Form_Select(
 		'keylen',
 		'*Key length',
 		$pconfig['keylen'],
-		array_combine($cert_keylens, $cert_keylens)
+		($pconfig['keytype'] == 'RSA') ? array_combine($cert_keylens, $cert_keylens) : array_combine($cert_eckeys, $cert_eckeys)
 	));
 
 	$section->addInput(new Form_Select(
@@ -848,6 +860,13 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$form->add($section);
 	$section = new Form_Section('External Signing Request');
 	$section->addClass('toggle-external collapse');
+
+	$section->addInput(new Form_Select(
+		'csr_keytype',
+		'*Key type',
+		$pconfig['csr_keytype'],
+		array_combine($cert_keytypes, $cert_keytypes)
+	));
 
 	$section->addInput(new Form_Select(
 		'csr_keylen',

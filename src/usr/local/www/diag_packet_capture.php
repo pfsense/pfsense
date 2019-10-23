@@ -146,6 +146,7 @@ require_once("ipsec.inc");
 
 $fp = "/root/";
 $fn = "packetcapture.cap";
+$fns = "packetcapture.start";
 $snaplen = 0;//default packet length
 $count = 100;//default number of packets to capture
 $max_display_size = 50*1024*1024; // 50MB limit on GUI capture display. See https://redmine.pfsense.org/issues/9239
@@ -474,6 +475,15 @@ if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 		null,
 		'fa-stop-circle'
 	))->addClass('btn-warning');
+	if ($action == gettext("Start")) {
+		touch("/root/packetcapture.start");
+	}
+	if (file_exists($fp.$fns)) {
+		$section->addInput(new Form_StaticText(
+			'Last capture start',
+			date("F jS, Y g:i:s a.", filemtime($fp.$fns))
+		));
+	}
 }
 
 if (file_exists($fp.$fn) and $processisrunning != true) {
@@ -491,8 +501,14 @@ if (file_exists($fp.$fn) and $processisrunning != true) {
 		'fa-download'
 	))->addClass('btn-primary');
 
+	if (file_exists($fp.$fns)) {
+		$section->addInput(new Form_StaticText(
+			'Last capture start',
+			date("F jS, Y g:i:s a.", filemtime($fp.$fns))
+		));
+	}
 	$section->addInput(new Form_StaticText(
-		'Last capture',
+		'Last capture stop',
 		date("F jS, Y g:i:s a.", filemtime($fp.$fn))
 	));
 }
@@ -529,7 +545,7 @@ if ($do_tcpdump) :
 	if ($action == gettext("Start")) {
 		$matchstr = implode($matches, " and ");
 
-		print_info_box(gettext('Packet capture is running.'), 'info');
+		print_info_box(gettext('Packet capture is running'), 'info');
 
 		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
 		mwexec_bg ($cmd);

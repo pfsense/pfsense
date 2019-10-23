@@ -48,7 +48,7 @@ $cert_types = array(
 
 global $cert_altname_types;
 global $openssl_digest_algs;
-global $openssl_eckeys;
+$openssl_ecnames = openssl_get_curve_names();
 
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$userid = $_REQUEST['userid'];
@@ -97,11 +97,11 @@ if ($act == "new") {
 	$pconfig['method'] = $_POST['method'];
 	$pconfig['keytype'] = "RSA";
 	$pconfig['keylen'] = "2048";
-	$pconfig['eckey'] = "brainpoolP160r1";
+	$pconfig['ecname'] = "brainpoolP256r1";
 	$pconfig['digest_alg'] = "sha256";
 	$pconfig['csr_keytype'] = "RSA";
 	$pconfig['csr_keylen'] = "2048";
-	$pconfig['csr_eckey'] = "brainpoolP160r1";
+	$pconfig['csr_ecname'] = "brainpoolP256r1";
 	$pconfig['csr_digest_alg'] = "sha256";
 	$pconfig['csrsign_digest_alg'] = "sha256";
 	$pconfig['type'] = "user";
@@ -247,12 +247,12 @@ if ($_POST['save']) {
 
 		if ($pconfig['method'] == "internal") {
 			$reqdfields = explode(" ",
-				"descr caref keylen eckey type keytype lifetime dn_commonname");
+				"descr caref keylen ecname type keytype lifetime dn_commonname");
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Certificate authority"),
 				gettext("Key length"),
-				gettext("EC key"),
+				gettext("Elliptic Curve Name"),
 				gettext("Key type"),
 				gettext("Certificate Type"),
 				gettext("Lifetime"),
@@ -261,11 +261,11 @@ if ($_POST['save']) {
 
 		if ($pconfig['method'] == "external") {
 			$reqdfields = explode(" ",
-				"descr csr_keylen csr_eckey csr_keytype csr_dn_commonname");
+				"descr csr_keylen csr_ecname csr_keytype csr_dn_commonname");
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Key length"),
-				gettext("EC key"),
+				gettext("Elliptic Curve Name"),
 				gettext("Key type"),
 				gettext("Common Name"));
 		}
@@ -351,8 +351,8 @@ if ($_POST['save']) {
 					if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
 						array_push($input_errors, gettext("Please select a valid Key Length."));
 					}
-					if (isset($_POST["eckey"]) && !in_array($_POST["eckey"], $openssl_eckeys)) {
-						array_push($input_errors, gettext("Please select a valid EC Key."));
+					if (isset($_POST["ecname"]) && !in_array($_POST["ecname"], $openssl_ecnames)) {
+						array_push($input_errors, gettext("Please select a valid Elliptic Curve Name."));
 					}
 					if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
@@ -365,8 +365,8 @@ if ($_POST['save']) {
 					if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
 						array_push($input_errors, gettext("Please select a valid Key Length."));
 					}
-					if (isset($_POST["csr_eckey"]) && !in_array($_POST["csr_eckey"], $openssl_eckeys)) {
-						array_push($input_errors, gettext("Please select a valid EC Key."));
+					if (isset($_POST["csr_ecname"]) && !in_array($_POST["csr_ecname"], $openssl_ecnames)) {
+						array_push($input_errors, gettext("Please select a valid Elliptic Curve Name."));
 					}
 					if (!in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
 						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
@@ -478,7 +478,7 @@ if ($_POST['save']) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 
-					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'], $pconfig['eckey'], $pconfig['keytype'])) {
+					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'], $pconfig['keytype'], $pconfig['ecname'])) {
 						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
 							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -523,7 +523,7 @@ if ($_POST['save']) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 
-					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'], $pconfig['csr_eckey'], $pconfig['csr_keytype'])) {
+					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'], $pconfig['csr_keytype'], $pconfig['csr_ecname'])) {
 						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
 							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -801,7 +801,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	));
 
 	$group = new Form_Group($i == 0 ? '*Key length':'');
-        $group->addClass('rsakeys');
+	$group->addClass('rsakeys');
 	$group->add(new Form_Select(
 		'keylen',
 		null,
@@ -810,13 +810,13 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	));
 	$section->add($group);
 
-	$group = new Form_Group($i == 0 ? '*EC key':'');
-        $group->addClass('eckeys');
+	$group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
+        $group->addClass('ecnames');
 	$group->add(new Form_Select(
-		'eckey',
+		'ecname',
 		null,
-		$pconfig['eckey'],
-		array_combine($openssl_eckeys, $openssl_eckeys)
+		$pconfig['ecname'],
+		array_combine($openssl_ecnames, $openssl_ecnames)
 	));
 	$section->add($group);
 
@@ -899,7 +899,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	));
 
 	$group = new Form_Group($i == 0 ? '*Key length':'');
-        $group->addClass('csr_rsakeys');
+	$group->addClass('csr_rsakeys');
 	$group->add(new Form_Select(
 		'csr_keylen',
 		null,
@@ -908,13 +908,13 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	));
 	$section->add($group);
 
-	$group = new Form_Group($i == 0 ? '*EC key':'');
-        $group->addClass('csr_eckeys');
+	$group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
+        $group->addClass('csr_ecnames');
 	$group->add(new Form_Select(
-		'csr_eckey',
+		'csr_ecname',
 		null,
-		$pconfig['csr_eckey'],
-		array_combine($openssl_eckeys, $openssl_eckeys)
+		$pconfig['csr_ecname'],
+		array_combine($openssl_ecnames, $openssl_ecnames)
 	));
 	$section->add($group);
 
@@ -1485,7 +1485,7 @@ events.push(function() {
 
 	function change_keytype() {
        		hideClass('rsakeys', ($('#keytype').val() != 'RSA'));
-       		hideClass('eckeys', ($('#keytype').val() != 'ECDSA'));
+       		hideClass('ecnames', ($('#keytype').val() != 'ECDSA'));
         }
 
 	$('#keytype').change(function () {
@@ -1494,7 +1494,7 @@ events.push(function() {
 
 	function change_csrkeytype() {
        		hideClass('csr_rsakeys', ($('#csr_keytype').val() != 'RSA'));
-       		hideClass('csr_eckeys', ($('#csr_keytype').val() != 'ECDSA'));
+       		hideClass('csr_ecnames', ($('#csr_keytype').val() != 'ECDSA'));
         }
 
 	$('#csr_keytype').change(function () {

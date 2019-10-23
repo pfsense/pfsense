@@ -199,14 +199,19 @@ function ca_import(& $ca, $str, $key = "", $serial = "") {
 	return true;
 }
 
-function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256") {
+function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256", $keytype = "RSA", $ecname = "brainpoolP256r1") {
 
 	$args = array(
 		"x509_extensions" => "v3_ca",
 		"digest_alg" => $digest_alg,
-		"private_key_bits" => (int)$keylen,
-		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 		"encrypt_key" => false);
+	if ($keytype == 'ECDSA') {
+		$args["curve_name"] = $ecname;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_EC;
+	} else {
+		$args["private_key_bits"] = (int)$keylen;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_RSA;
+	}
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
@@ -240,7 +245,7 @@ function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256") {
 	return true;
 }
 
-function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "sha256") {
+function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "sha256", $keytype = "RSA", $ecname = "brainpoolP256r1") {
 	// Create Intermediate Certificate Authority
 	$signing_ca =& lookup_ca($caref);
 	if (!$signing_ca) {
@@ -257,9 +262,14 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 	$args = array(
 		"x509_extensions" => "v3_ca",
 		"digest_alg" => $digest_alg,
-		"private_key_bits" => (int)$keylen,
-		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 		"encrypt_key" => false);
+	if ($keytype == 'ECDSA') {
+		$args["curve_name"] = $ecname;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_EC;
+	} else {
+		$args["private_key_bits"] = (int)$keylen;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_RSA;
+	}
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);

@@ -811,7 +811,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$section->add($group);
 
 	$group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
-        $group->addClass('ecnames');
+	$group->addClass('ecnames');
 	$group->add(new Form_Select(
 		'ecname',
 		null,
@@ -909,7 +909,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$section->add($group);
 
 	$group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
-        $group->addClass('csr_ecnames');
+	$group->addClass('csr_ecnames');
 	$group->add(new Form_Select(
 		'csr_ecname',
 		null,

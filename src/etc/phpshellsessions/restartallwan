@@ -1,0 +1,51 @@
+/*
+ * restartallwans
+ *
+ * This script looks for all WAN interfaces by checking which of them has gateways
+ * and then it simply disable / enable them
+ * useful for testing configuration
+ *
+ */
+
+global $config;
+$config = parse_config(true);
+
+$a_gateways = return_gateways_array(true, false, true, true);
+
+// find gw interfaces os names (em0, vtnet1, etc):
+$restartifs = array();
+for ($id=0; $id<count($a_gateways); $id++) {
+	array_push($restartifs,$a_gateways[$id]['interface']);
+}
+$restartifs = array_unique($restartifs);
+
+// find gw interfaces pfsense names (wan, opt1, etc):
+$names_restart = array();
+while ($int = current($config['interfaces'])) {
+	if (in_array($int['if'], $restartifs)) {
+		array_push($names_restart,key($config['interfaces']));
+	}
+	next($config['interfaces']);
+}
+
+foreach ($names_restart as $id) {
+	interface_bring_down($id, true, $config['interfaces'][$id]);
+if (isset($config['dhcpd'][$id]['enable']) || 
+	isset($config['dhcpdv6'][$id]['enable'])) {
+		services_dhcpd_configure();
+	}
+	printf("Interface %s is disabled\n", $id);
+}
+
+sleep (1);
+
+foreach ($names_restart as $id) {
+	interface_bring_down($id, false, $config['interfaces'][$id]);
+	interface_configure($id, true);
+	if ($config['interfaces'][$id]['ipaddrv6'] == 'track6') {
+		$wancfg = $config['interfaces'][$id];
+		interface_track6_configure($id, $wancfg, true);
+	}
+	printf("Interface %s is enabled\n", $id);
+}
+echo "\n";

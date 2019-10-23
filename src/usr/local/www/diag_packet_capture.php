@@ -443,6 +443,9 @@ if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 		null,
 		'fa-stop-circle'
 	))->addClass('btn-warning');
+	if ($action == gettext("Start")) {
+                touch("/root/packetcapture.start");
+        }
 	if (file_exists($fp.$fns)) {
 		$section->addInput(new Form_StaticText(
 			'Last capture start',
@@ -526,7 +529,6 @@ if ($do_tcpdump) :
 		print_info_box(gettext('Packet capture is running'), 'info');
 
 		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
-		touch("/root/packetcapture.start");
 		// Debug
 		//echo $cmd;
 		mwexec_bg ($cmd);

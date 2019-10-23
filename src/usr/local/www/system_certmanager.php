@@ -41,7 +41,6 @@ $cert_methods = array(
 );
 
 $cert_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
-$cert_eckeys = array("secp112r1", "secp112r2", "secp128r1", "secp128r2", "secp160k1", "secp160r1", "secp160r2", "secp192k1", "secp224k1", "secp224r1", "secp256k1", "secp384r1", "secp521r1", "prime192v1", "prime192v2", "prime192v3", "prime239v1", "prime239v2", "prime239v3", "prime256v1", "sect113r1", "sect113r2", "sect131r1", "sect131r2", "sect163k1", "sect163r1", "sect163r2", "sect193r1", "sect193r2", "sect233k1", "sect233r1", "sect239k1", "sect283k1", "sect283r1", "sect409k1", "sect409r1", "sect571k1", "sect571r1", "c2pnb163v1", "c2pnb163v2", "c2pnb163v3", "c2pnb176v1", "c2tnb191v1", "c2tnb191v2", "c2tnb191v3", "c2pnb208w1", "c2tnb239v1", "c2tnb239v2", "c2tnb239v3", "c2pnb272w1", "c2pnb304w1", "c2tnb359v1", "c2pnb368w1", "c2tnb431r1", "wap-wsg-idm-ecid-wtls1", "wap-wsg-idm-ecid-wtls3", "wap-wsg-idm-ecid-wtls4", "wap-wsg-idm-ecid-wtls5", "wap-wsg-idm-ecid-wtls6", "wap-wsg-idm-ecid-wtls7", "wap-wsg-idm-ecid-wtls8", "wap-wsg-idm-ecid-wtls9", "wap-wsg-idm-ecid-wtls10", "wap-wsg-idm-ecid-wtls11", "wap-wsg-idm-ecid-wtls12", "brainpoolP160r1", "brainpoolP160t1", "brainpoolP192r1", "brainpoolP192t1", "brainpoolP224r1", "brainpoolP224t1", "brainpoolP256r1", "brainpoolP256t1", "brainpoolP320r1", "brainpoolP320t1", "brainpoolP384r1", "brainpoolP384t1", "brainpoolP512r1", "brainpoolP512t1");
 $cert_keytypes = array("RSA", "ECDSA");
 $cert_types = array(
 	"server" => "Server Certificate",
@@ -49,6 +48,7 @@ $cert_types = array(
 
 global $cert_altname_types;
 global $openssl_digest_algs;
+global $openssl_eckeys;
 
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$userid = $_REQUEST['userid'];
@@ -351,7 +351,7 @@ if ($_POST['save']) {
 					if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
 						array_push($input_errors, gettext("Please select a valid Key Length."));
 					}
-					if (isset($_POST["eckey"]) && !in_array($_POST["eckey"], $cert_eckeys)) {
+					if (isset($_POST["eckey"]) && !in_array($_POST["eckey"], $openssl_eckeys)) {
 						array_push($input_errors, gettext("Please select a valid EC Key."));
 					}
 					if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
@@ -365,7 +365,7 @@ if ($_POST['save']) {
 					if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
 						array_push($input_errors, gettext("Please select a valid Key Length."));
 					}
-					if (isset($_POST["csr_eckey"]) && !in_array($_POST["csr_eckey"], $cert_eckeys)) {
+					if (isset($_POST["csr_eckey"]) && !in_array($_POST["csr_eckey"], $openssl_eckeys)) {
 						array_push($input_errors, gettext("Please select a valid EC Key."));
 					}
 					if (!in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
@@ -478,7 +478,7 @@ if ($_POST['save']) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 
-					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'])) {
+					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'], $pconfig['eckey'], $pconfig['keytype'])) {
 						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
 							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -523,7 +523,7 @@ if ($_POST['save']) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 
-					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'])) {
+					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'], $pconfig['csr_eckey'], $pconfig['csr_keytype'])) {
 						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
 							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -816,7 +816,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'eckey',
 		null,
 		$pconfig['eckey'],
-		array_combine($cert_eckeys, $cert_eckeys)
+		array_combine($openssl_eckeys, $openssl_eckeys)
 	));
 	$section->add($group);
 
@@ -914,7 +914,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'csr_eckey',
 		null,
 		$pconfig['csr_eckey'],
-		array_combine($cert_eckeys, $cert_eckeys)
+		array_combine($openssl_eckeys, $openssl_eckeys)
 	));
 	$section->add($group);
 

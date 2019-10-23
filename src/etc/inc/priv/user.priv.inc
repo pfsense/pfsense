@@ -5,6 +5,7 @@ global $priv_list;
 $priv_list['system-xmlrpc-ha-sync'] = array();
 $priv_list['system-xmlrpc-ha-sync']['name'] = gettext("System - HA node sync");
 $priv_list['system-xmlrpc-ha-sync']['descr'] = gettext("Allow access to authenticate this user for HA sync via XMLRPC");
+$priv_list['system-xmlrpc-ha-sync']['warn'] = "standard-warning-root";
 
 $priv_list['user-services-captiveportal-login'] = array();
 $priv_list['user-services-captiveportal-login']['name']  = gettext("User - Services: Captive Portal login");

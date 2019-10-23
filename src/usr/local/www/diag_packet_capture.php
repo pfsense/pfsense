@@ -445,7 +445,7 @@ if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 	))->addClass('btn-warning');
 	if ($action == gettext("Start")) {
                 touch("/root/packetcapture.start");
-        }
+	}
 	if (file_exists($fp.$fns)) {
 		$section->addInput(new Form_StaticText(
 			'Last capture start',

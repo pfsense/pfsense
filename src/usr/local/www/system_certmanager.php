@@ -1221,6 +1221,10 @@ foreach ($a_cert as $i => $cert):
 	if (!is_array($cert) || empty($cert)) {
 		continue;
 	}
+	if (!empty($cert['prv'])) {
+		$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
+		$key_details = openssl_pkey_get_details($res_key);
+	}
 	$name = htmlspecialchars($cert['descr']);
 	$sans = array();
 	if ($cert['crt']) {
@@ -1303,6 +1307,18 @@ foreach ($a_cert as $i => $cert):
 						if (cert_get_ocspstaple($cert['crt'])) {
 							$certextinfo .= '<b>' . gettext("OCSP: ") . '</b> ';
 							$certextinfo .= gettext("Must Staple");
+						}
+						if (!empty($cert['prv'])) {
+							$certextinfo .= '<b>' . gettext("Key type: ") . '</b> ';
+							if ($key_details['type'] == OPENSSL_KEYTYPE_RSA) {
+								$certextinfo .= 'RSA<br/>';
+								$certextinfo .= '<b>' . gettext("Key size: ") . '</b> ';
+								$certextinfo .= $key_details['bits'] . '<br/>';
+							} else {
+								$certextinfo .= 'ECDSA<br/>';
+								$certextinfo .= '<b>' . gettext("Elliptic curve name: ") . '</b>';
+								$certextinfo .= $key_details['ec']['curve_name'] . '<br/>';
+							}
 						}
 						?>
 						<?php if (!empty($certextinfo)): ?>

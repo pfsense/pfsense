@@ -725,7 +725,7 @@ function cert_get_serial($str_crt, $decode = true) {
 		$str_crt = base64_decode($str_crt);
 	}
 	$crt_details = openssl_x509_parse($str_crt);
-	if (isset($crt_details['serialNumber']) && !empty($crt_details['serialNumber'])) {
+	if (isset($crt_details['serialNumber'])) {
 		return $crt_details['serialNumber'];
 	} else {
 		return NULL;
@@ -1317,10 +1317,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 	}
 
 	/* Test for self-signed or signed by a CA */
-	$selfsigned = false;
-	if ($subj == $issuer) {
-		$selfsigned = true;
-	}
+	$selfsigned = ($subj == $issuer);
 
 	/* Determine the type if it is not specified directly */
 	if (array_key_exists('serial', $cert)) {
@@ -1436,7 +1433,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 		 */
 		$ca_res_crt   = null;
 		$ca_res_key   = $res_key;
-		$ca_serial    = 0; /* Increment from previous? */
+		$ca_serial    = 0; /* TODO: Check if we should increment from previous */
 	}
 
 	/* Sign the CSR */
@@ -1460,4 +1457,215 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 	return true;
 }
 
+/****f* certs/cert_get_all_services
+ * NAME
+ *   cert_get_all_services - Locate services using a given certificate
+ * INPUTS
+ *   $refid: The refid of a certificate to check
+ * RESULT
+ *   array containing the services which use this certificate, including:
+ *     webgui: Present and true if the WebGUI uses this certificate. Unset otherwise.
+ *     services: Array of service definitions using this certificate, with:
+ *       name: Name of the service
+ *       extras: Extra information needed by some services, such as OpenVPN or Captive Portal.
+ *     packages: Array containing package names using this certificate.
+ ******/
+
+function cert_get_all_services($refid) {
+	global $config;
+	$services = array();
+	$services['services'] = array();
+	$services['packages'] = array();
+
+	/* Only set if true, otherwise leave unset. */
+	if (is_webgui_cert($refid)) {
+		$services['webgui'] = true;
+	}
+
+	init_config_arr(array('openvpn', 'openvpn-server'));
+	init_config_arr(array('openvpn', 'openvpn-client'));
+	/* Find all OpenVPN clients and servers which use this certificate */
+	foreach(array('server', 'client') as $mode) {
+		foreach ($config['openvpn']["openvpn-{$mode}"] as $ovpn) {
+			if ($ovpn['certref'] == $refid) {
+				/* OpenVPN instances are restarted individually,
+				 * so we need to note the mode and ID. */
+				$services['services'][] = array(
+					'name' => 'openvpn',
+					'extras' => array(
+						'vpnmode' => $mode,
+						'id' => $ovpn['vpnid']
+					)
+				);
+			}
+		}
+	}
+
+	/* If any one IPsec tunnel uses this certificate then the whole service
+	 * needs a bump. */
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as $ipsec) {
+		if (($ipsec['authentication_method'] == 'rsasig') &&
+		    ($ipsec['certref'] == $refid)) {
+			$services['services'][] = array('name' => 'ipsec');
+			/* Stop after finding one, no need to search for more. */
+			break;
+		}
+	}
+
+	/* Check to see if any HTTPS-enabled Captive Portal zones use this
+	 * certificate. */
+	init_config_arr(array('captiveportal'));
+	foreach ($config['captiveportal'] as $zone => $portal) {
+		if (isset($portal['enable']) && isset($portal['httpslogin']) &&
+		    ($portal['certref'] == $refid)) {
+			/* Captive Portal zones are restarted individually, so
+			 * we need to note the zone name. */
+			$services['services'][] = array(
+				'name' => 'captiveportal',
+				'extras' => array(
+					'zone' => $zone,
+				)
+			);
+		}
+	}
+
+	/* Locate any packages using this certificate */
+	$pkgcerts = pkg_call_plugins('plugin_certificates', array('type' => 'certificates', 'event' => 'used_certificates'));
+	foreach ($pkgcerts as $name => $package) {
+		if (is_array($package['certificatelist'][$refid]) &&
+		    isset($package['certificatelist'][$refid]) > 0) {
+			$services['packages'][] = $name;
+		}
+	}
+
+	return $services;
+}
+
+/****f* certs/ca_get_all_services
+ * NAME
+ *   ca_get_all_services - Locate services using a given certificate authority or its decendents
+ * INPUTS
+ *   $refid: The refid of a certificate authority to check
+ * RESULT
+ *   array containing the services which use this certificate authority, including:
+ *     webgui: Present and true if the WebGUI uses this certificate. Unset otherwise.
+ *     services: Array of service definitions using this certificate, with:
+ *       name: Name of the service
+ *       extras: Extra information needed by some services, such as OpenVPN or Captive Portal.
+ *     packages: Array containing package names using this certificate.
+ * NOTES
+ *   This searches recursively to find entries using this CA as well as intermediate
+ *   CAs and certificates signed by this CA, and returns a single set of all services.
+ *   This avoids restarting affected services multiple times when there is overlapping
+ *   usage.
+ ******/
+function ca_get_all_services($refid) {
+	global $config;
+	$services = array();
+	$services['services'] = array();
+
+	init_config_arr(array('openvpn', 'openvpn-server'));
+	init_config_arr(array('openvpn', 'openvpn-client'));
+	foreach(array('server', 'client') as $mode) {
+		foreach ($config['openvpn']["openvpn-{$mode}"] as $ovpn) {
+			if ($ovpn['caref'] == $refid) {
+				$services['services'][] = array(
+					'name' => 'openvpn',
+					'extras' => array(
+						'vpnmode' => $mode,
+						'id' => $ovpn['vpnid']
+					)
+				);
+			}
+		}
+	}
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as $ipsec) {
+		if ($ipsec['certref'] == $refid) {
+			break;
+		}
+	}
+	foreach ($config['ipsec']['phase1'] as $ipsec) {
+		if (($ipsec['authentication_method'] == 'rsasig') &&
+		    ($ipsec['caref'] == $refid)) {
+			$services['services'][] = array('name' => 'ipsec');
+			break;
+		}
+	}
+
+	/* Loop through all certs and get their services as well */
+	init_config_arr(array('cert'));
+	foreach ($config['cert'] as $cert) {
+		if ($cert['caref'] == $refid) {
+			$services = array_merge_recursive_unique($services, cert_get_all_services($cert['refid']));
+		}
+	}
+
+	/* Look for intermediate certs and services */
+	init_config_arr(array('ca'));
+	foreach ($config['ca'] as $cert) {
+		if ($cert['caref'] == $refid) {
+			$services = array_merge_recursive_unique($services, ca_get_all_services($cert['refid']));
+		}
+	}
+
+	return $services;
+}
+
+/****f* certs/cert_restart_services
+ * NAME
+ *   cert_restart_services - Restarts services specific to CA/Certificate usage
+ * INPUTS
+ *   $services: An array of services returned by cert_get_all_services or ca_get_all_services
+ * RESULT
+ *   Services in the given array are restarted
+ *   returns false if the input is invalid
+ *   returns true at the end of execution
+ ******/
+
+function cert_restart_services($services) {
+	/* If the input is not an array, it is invalid. */
+	if (!is_array($services)) {
+		return false;
+	}
+
+	/* Base string to log when restarting a service */
+	$restart_string = gettext('Restarting %s %s due to certificate change');
+
+	/* Restart GUI: */
+	if ($services['webgui']) {
+		ob_flush();
+		flush();
+		log_error(sprintf($restart_string, gettext('service'), 'WebGUI'));
+		send_event("service restart webgui");
+	}
+
+	/* Restart other base services: */
+	if (is_array($services['services'])) {
+		foreach ($services['services'] as $service) {
+			switch ($service['name']) {
+				case 'openvpn':
+					$service_name = "{$service['name']} {$service['extras']['vpnmode']} {$service['extras']['id']}";
+					break;
+				case 'captiveportal':
+					$service_name = "{$service['name']} zone {$service['extras']['zone']}";
+					break;
+				default:
+					$service_name = $service['name'];
+			}
+			log_error(sprintf($restart_string, gettext('service'), $service_name));
+			service_control_restart($service['name'], $service['extras']);
+		}
+	}
+
+	/* Restart Packages: */
+	if (is_array($services['packages'])) {
+		foreach ($services['packages'] as $service) {
+			log_error(sprintf($restart_string, gettext('package'), $service));
+			restart_service($service);
+		}
+	}
+	return true;
+}
 ?>

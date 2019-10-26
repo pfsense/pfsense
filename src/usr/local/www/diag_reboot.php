@@ -43,8 +43,6 @@ $guitimeout = 90;	// Seconds to wait before reloading the page after reboot
 $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Reboot"));
-$platform = system_identify_specific_platform();
-$no_options = array('SG-1100', 'ROGUE-1', 'uFW');
 include("head.inc");
 
 if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
@@ -55,15 +53,8 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
 		print('<div><pre>');
 		switch ($_POST['rebootmode']) {
 			case 'FSCKReboot':
-<<<<<<< HEAD
-				if (!in_array($platform['name'], $no_options)) {
-					mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
-					system_reboot();
-				}
-=======
 				mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
 				system_reboot();
->>>>>>> master
 				break;
 			case 'Reroot':
 				if (!is_module_loaded("zfs.ko")) {
@@ -126,17 +117,8 @@ else:
 
 $form = new Form(false);
 
-<<<<<<< HEAD
-$help = 'Click "Normal reboot" to reboot the system immediately';
-$modeslist = ['Reboot' => 'Normal reboot'];
-if (!in_array($platform['name'], $no_options)) {
-	$help .= ', "Reboot with Filesystem Check" to reboot and run filesystem check';
-	$modeslist += ['FSCKReboot' => 'Reboot with Filesystem Check'];
-	} 
-=======
 $help = 'Click "Normal reboot" to reboot the system immediately, "Reboot with Filessystem Check" to reboot and run filesystem check';
 $modeslist = ['Reboot' => 'Normal reboot', 'FSCKReboot' => 'Reboot with Filesystem Check'];
->>>>>>> master
 if (!is_module_loaded("zfs.ko")) {
 	$help .= ' or "Reroot" to stop processes, remount disks and re-run startup sequence';
 	$modeslist += ['Reroot' => 'Reroot'];
@@ -144,7 +126,6 @@ if (!is_module_loaded("zfs.ko")) {
 $help .= '.';
 
 $section = new Form_Section('Select reboot method');
-<<<<<<< HEAD
 
 $section->addInput(new Form_Select(
         'rebootmode',
@@ -165,28 +146,6 @@ $form->addGlobal(new Form_Button(
 print $form;
 ?>
 
-=======
-
-$section->addInput(new Form_Select(
-        'rebootmode',
-        '*Reboot method',
-        $rebootmode,
-        $modeslist
-))->setHelp($help);
-
-$form->add($section);
-
-$form->addGlobal(new Form_Button(
-        'Submit',
-        'Submit',
-        null,
-        'fa-wrench'
-))->addClass('btn-primary');
-
-print $form;
-?>
-
->>>>>>> master
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {

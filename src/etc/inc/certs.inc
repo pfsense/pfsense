@@ -199,14 +199,19 @@ function ca_import(& $ca, $str, $key = "", $serial = "") {
 	return true;
 }
 
-function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256") {
+function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256", $keytype = "RSA", $ecname = "brainpoolP256r1") {
 
 	$args = array(
 		"x509_extensions" => "v3_ca",
 		"digest_alg" => $digest_alg,
-		"private_key_bits" => (int)$keylen,
-		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 		"encrypt_key" => false);
+	if ($keytype == 'ECDSA') {
+		$args["curve_name"] = $ecname;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_EC;
+	} else {
+		$args["private_key_bits"] = (int)$keylen;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_RSA;
+	}
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
@@ -240,7 +245,7 @@ function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256") {
 	return true;
 }
 
-function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "sha256") {
+function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "sha256", $keytype = "RSA", $ecname = "brainpoolP256r1") {
 	// Create Intermediate Certificate Authority
 	$signing_ca =& lookup_ca($caref);
 	if (!$signing_ca) {
@@ -257,9 +262,14 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 	$args = array(
 		"x509_extensions" => "v3_ca",
 		"digest_alg" => $digest_alg,
-		"private_key_bits" => (int)$keylen,
-		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 		"encrypt_key" => false);
+	if ($keytype == 'ECDSA') {
+		$args["curve_name"] = $ecname;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_EC;
+	} else {
+		$args["private_key_bits"] = (int)$keylen;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_RSA;
+	}
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
@@ -312,7 +322,7 @@ function cert_import(& $cert, $crt_str, $key_str) {
 	return true;
 }
 
-function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $digest_alg = "sha256") {
+function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $digest_alg = "sha256", $keytype = "RSA", $ecname = "brainpoolP256r1") {
 
 	$cert['type'] = $type;
 
@@ -349,9 +359,14 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 	$args = array(
 		"x509_extensions" => $cert_type,
 		"digest_alg" => $digest_alg,
-		"private_key_bits" => (int)$keylen,
-		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 		"encrypt_key" => false);
+	if ($keytype == 'ECDSA') {
+		$args["curve_name"] = $ecname;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_EC;
+	} else {
+		$args["private_key_bits"] = (int)$keylen;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_RSA;
+	}
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
@@ -394,7 +409,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 	return true;
 }
 
-function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha256") {
+function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha256", $keytype = "RSA", $ecname = "brainpoolP256r1") {
 
 	$cert_type = cert_type_config_section($type);
 
@@ -410,9 +425,14 @@ function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha2
 		"x509_extensions" => $cert_type,
 		"req_extensions" => "req_{$cert_type}",
 		"digest_alg" => $digest_alg,
-		"private_key_bits" => (int)$keylen,
-		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 		"encrypt_key" => false);
+	if ($keytype == 'ECDSA') {
+		$args["curve_name"] = $ecname;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_EC;
+	} else {
+		$args["private_key_bits"] = (int)$keylen;
+		$args["private_key_type"] = OPENSSL_KEYTYPE_RSA;
+	}
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
@@ -705,7 +725,7 @@ function cert_get_serial($str_crt, $decode = true) {
 		$str_crt = base64_decode($str_crt);
 	}
 	$crt_details = openssl_x509_parse($str_crt);
-	if (isset($crt_details['serialNumber']) && !empty($crt_details['serialNumber'])) {
+	if (isset($crt_details['serialNumber'])) {
 		return $crt_details['serialNumber'];
 	} else {
 		return NULL;
@@ -1188,4 +1208,464 @@ function cert_type_config_section($type) {
 	return $cert_type;
 }
 
+/****f* certs/is_cert_locally_renewable
+ * NAME
+ *   is_cert_locally_renewable - Check to see if an existing certificate can be
+ *                               renewed by a local internal CA.
+ * INPUTS
+ *   $cert : The certificate to be tested
+ * RESULT
+ *   true if the certificate can be locally renewed, false otherwise.
+ ******/
+
+function is_cert_locally_renewable($cert) {
+	/* If there is no certificate or private key string, this entry is either
+	 * invalid or cannot be renewed. */
+	if (empty($cert['crt']) || empty($cert['prv'])) {
+		return false;
+	}
+
+	/* Get subject and issuer values to test for self-signed state */
+	$subj = cert_get_subject($cert['crt']);
+	$issuer = cert_get_issuer($cert['crt']);
+
+	/* Lookup CA for this certificate */
+	$ca = array();
+	if (!empty($cert['caref'])) {
+		$ca = lookup_ca($cert['caref']);
+	}
+
+	/* If the CA exists and we have the private key, or if the cert is
+	 *  self-signed, then it can be locally renewed. */
+	return ((!empty($ca) && !empty($ca['prv'])) || ($subj == $issuer));
+}
+
+/* Strict certificate requirements based on
+ * https://redmine.pfsense.org/issues/9825
+ */
+global $cert_strict_values;
+$cert_strict_values = array(
+	'max_server_cert_lifetime' => 825,
+	'digest_blacklist' => array('md4', 'RSA-MD4',  'md5', 'RSA-MD5', 'md5-sha1',
+					'mdc2', 'RSA-MDC2', 'sha1', 'RSA-SHA1',
+					'RSA-SHA1-2', 'sha224', 'RSA-SHA224'),
+	'min_private_key_bits' => 2048,
+);
+
+/****f* certs/cert_renew
+ * NAME
+ *   cert_renew - Renew an existing internal CA or certificate
+ * INPUTS
+ *   $cert : The entry to be renewed (used as a reference so it can be altered directly)
+ *   $reusekey : Whether or not to reuse the existing key for the certificate
+ *      true: Reuse the existing key (Default)
+ *      false: Generate a new key based on current (or enforced minimum) parameters
+ *   $strictsecurity : Whether or not to enforce stricter security for specific attributes
+ *      true: Enforce maximum lifetime for server certs, minimum digest type, and
+ *            minimum private key size. See https://redmine.pfsense.org/issues/9825
+ *      false: Use existing values as-is (Default).
+ * RESULT
+ *   true if successful, false if failure.
+ * NOTES
+ *   See https://redmine.pfsense.org/issues/9842 for more information on behavior.
+ *   Does NOT run write_config(), that must be performed by the caller.
+ ******/
+
+function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
+	global $cert_strict_values;
+
+	/* If there is no certificate or private key string, this entry is either
+	 *  invalid or cannot be renewed by this function. */
+	if (empty($cert['crt']) || empty($cert['prv'])) {
+		return false;
+	}
+
+	/* Read certificate information necessary to create a new request */
+	$cert_details = openssl_x509_parse(base64_decode($cert['crt']));
+
+	/* No details, must not be valid in some way */
+	if (!array($cert_details) || empty($cert_details)) {
+		return false;
+	}
+
+	$subj = cert_get_subject($cert['crt']);
+	$issuer = cert_get_issuer($cert['crt']);
+
+	$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
+	$key_details = openssl_pkey_get_details($res_key);
+
+	/* Form a new Distinguished Name from the existing values.
+	 * Note: Deprecated/unsupported DN fields may not be carried forward, but
+	 *       may be preserved to avoid altering a subject.
+	 */
+	$subject_map = array(
+		'CN' => 'commonName',
+		'C' => 'countryName',
+		'ST' => 'stateOrProvinceName',
+		'L' => 'localityName',
+		'O' => 'organizationName',
+		'OU' => 'organizationalUnitName',
+		'emailAddress' => 'emailAddress', /* deprecated, but commonly found in older entries */
+	);
+	$dn = array();
+	/* This is necessary to ensure the order of subject components is
+	 * identical on the old and new certificate. */
+	foreach ($cert_details['subject'] as $p => $v) {
+		if (array_key_exists($p, $subject_map)) {
+			$dn[$subject_map[$p]] = $v;
+		}
+	}
+
+	/* Test for self-signed or signed by a CA */
+	$selfsigned = ($subj == $issuer);
+
+	/* Determine the type if it is not specified directly */
+	if (array_key_exists('serial', $cert)) {
+		/* If a serial value is present, this must be a CA */
+		$cert['type'] = 'ca';
+	} elseif (empty($cert['type'])) {
+		/* Assume server certificate if empty & non-CA (e.g. self-signed) */
+		$cert['type'] = 'server';
+	}
+
+	/* Convert the internal certificate type to an openssl.cnf section name */
+	$cert_type = cert_type_config_section($cert['type']);
+	if ($cert['type'] != 'ca') {
+		$cert_type .= '_san';
+	}
+
+	/* Reuse lifetime (convert seconds to days) */
+	$lifetime = (int) round(($cert_details['validTo_time_t'] - $cert_details['validFrom_time_t']) / 86400);
+
+	/* If we are enforcing strict security, then cap the lifetime for server certificates */
+	if (($cert_type == 'server_san') && $strictsecurity &&
+	    ($lifetime > $cert_strict_values['max_server_cert_lifetime'])) {
+		$lifetime = $cert_strict_values['max_server_cert_lifetime'];
+	}
+
+	/* Reuse SAN list, or, if empty, add CN as SAN. */
+	$sans = $cert_details['extensions']['subjectAltName'];
+	if (empty($sans)) {
+		$sans = cert_add_altname_type($dn['commonName']);
+	}
+
+	/* subjectAltName can be set _only_ via configuration file, so put the
+	 * value into the environment where it will be read from the configuration */
+	putenv("SAN={$sans}");
+
+	/* If we are enforcing strict security, then check the digest against a
+	 * blacklist of insecure digest methods. */
+	$digest_alg = $cert_details['signatureTypeSN'];
+	if ($strictsecurity &&
+	    (in_array($digest_alg, $cert_strict_values['digest_blacklist']))) {
+		$digest_alg = 'sha256';
+	}
+
+	/* If we are enforcing strict security, then ensure the private key size
+	 * is at least 2048 bits. */
+	$private_key_bits = $key_details['bits'];
+	if ($strictsecurity &&
+	    ($private_key_bits < $cert_strict_values['min_private_key_bits'])) {
+		$private_key_bits = $cert_strict_values['min_private_key_bits'];
+		$reusekey = false;
+	}
+
+	/* Validate key type, assume RSA if it cannot be read. */
+	if (is_array($key_details) && array_key_exists('type', $key_details)) {
+		$private_key_type = $key_details['type'];
+	} else {
+		$private_key_type = OPENSSL_KEYTYPE_RSA;
+	}
+
+	/* Setup certificate and key arguments */
+	$args = array(
+		"x509_extensions" => $cert_type,
+		"digest_alg" => $digest_alg,
+		"private_key_bits" => (int)$private_key_bits,
+		"private_key_type" => $private_key_type,
+		"encrypt_key" => false);
+
+	/* Adjust argumnents to account for ECDSA keys. */
+	if (($key_details['type'] ==  OPENSSL_KEYTYPE_EC) &&
+	    (!empty($key_details['ec']['curve_name']))) {
+		$args['curve_name'] = $key_details['ec']['curve_name'];
+	}
+
+	/* Make a new key if necessary */
+	if (!$res_key || !$reusekey) {
+		$res_key = openssl_pkey_new($args);
+		if (!$res_key) {
+			return false;
+		}
+	}
+
+	/* Create a new CSR from derived parameters and key */
+	$res_csr = openssl_csr_new($dn, $res_key, $args);
+	/* If the CSR could not be created, bail */
+	if (!$res_csr) {
+		return false;
+	}
+
+	if (!empty($cert['caref'])) {
+		/* The certificate was signed by a CA, so read the CA details. */
+		$ca = & lookup_ca($cert['caref']);
+		/* If the referenced CA cannot be found, bail. */
+		if (!$ca) {
+			return false;
+		}
+		$ca_str_crt = base64_decode($ca['crt']);
+		$ca_str_key = base64_decode($ca['prv']);
+		$ca_res_crt = openssl_x509_read($ca_str_crt);
+		$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
+		if (!$ca_res_key) {
+			/* If the CA key cannot be read, bail. */
+			return false;
+		}
+		/* If the CA does not have a serial number, assume 0. */
+		if (empty($ca['serial'])) {
+			$ca['serial'] = 0;
+		}
+		/* Increment the CA serial before use. */
+		$ca_serial = ++$ca['serial'];
+	} elseif ($selfsigned) {
+		/* For self-signed CAs & certificates, set the CA details to self and
+		 * use the key for this entry to sign itself.
+		 */
+		$ca_res_crt   = null;
+		$ca_res_key   = $res_key;
+		$ca_serial    = 0; /* TODO: Check if we should increment from previous */
+	}
+
+	/* Sign the CSR */
+	$res_crt = openssl_csr_sign($res_csr, $ca_res_crt, $ca_res_key, $lifetime,
+				 $args, $ca_serial);
+	/* If the CSR could not be signed, bail */
+	if (!$res_crt) {
+		return false;
+	}
+
+	/* Attempt to read the key and certificate and if that fails, bail */
+	if (!openssl_pkey_export($res_key, $str_key) ||
+	    !openssl_x509_export($res_crt, $str_crt)) {
+		return false;
+	}
+
+	/* Load the new certificate string and key into the configuration */
+	$cert['crt'] = base64_encode($str_crt);
+	$cert['prv'] = base64_encode($str_key);
+
+	return true;
+}
+
+/****f* certs/cert_get_all_services
+ * NAME
+ *   cert_get_all_services - Locate services using a given certificate
+ * INPUTS
+ *   $refid: The refid of a certificate to check
+ * RESULT
+ *   array containing the services which use this certificate, including:
+ *     webgui: Present and true if the WebGUI uses this certificate. Unset otherwise.
+ *     services: Array of service definitions using this certificate, with:
+ *       name: Name of the service
+ *       extras: Extra information needed by some services, such as OpenVPN or Captive Portal.
+ *     packages: Array containing package names using this certificate.
+ ******/
+
+function cert_get_all_services($refid) {
+	global $config;
+	$services = array();
+	$services['services'] = array();
+	$services['packages'] = array();
+
+	/* Only set if true, otherwise leave unset. */
+	if (is_webgui_cert($refid)) {
+		$services['webgui'] = true;
+	}
+
+	init_config_arr(array('openvpn', 'openvpn-server'));
+	init_config_arr(array('openvpn', 'openvpn-client'));
+	/* Find all OpenVPN clients and servers which use this certificate */
+	foreach(array('server', 'client') as $mode) {
+		foreach ($config['openvpn']["openvpn-{$mode}"] as $ovpn) {
+			if ($ovpn['certref'] == $refid) {
+				/* OpenVPN instances are restarted individually,
+				 * so we need to note the mode and ID. */
+				$services['services'][] = array(
+					'name' => 'openvpn',
+					'extras' => array(
+						'vpnmode' => $mode,
+						'id' => $ovpn['vpnid']
+					)
+				);
+			}
+		}
+	}
+
+	/* If any one IPsec tunnel uses this certificate then the whole service
+	 * needs a bump. */
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as $ipsec) {
+		if (($ipsec['authentication_method'] == 'rsasig') &&
+		    ($ipsec['certref'] == $refid)) {
+			$services['services'][] = array('name' => 'ipsec');
+			/* Stop after finding one, no need to search for more. */
+			break;
+		}
+	}
+
+	/* Check to see if any HTTPS-enabled Captive Portal zones use this
+	 * certificate. */
+	init_config_arr(array('captiveportal'));
+	foreach ($config['captiveportal'] as $zone => $portal) {
+		if (isset($portal['enable']) && isset($portal['httpslogin']) &&
+		    ($portal['certref'] == $refid)) {
+			/* Captive Portal zones are restarted individually, so
+			 * we need to note the zone name. */
+			$services['services'][] = array(
+				'name' => 'captiveportal',
+				'extras' => array(
+					'zone' => $zone,
+				)
+			);
+		}
+	}
+
+	/* Locate any packages using this certificate */
+	$pkgcerts = pkg_call_plugins('plugin_certificates', array('type' => 'certificates', 'event' => 'used_certificates'));
+	foreach ($pkgcerts as $name => $package) {
+		if (is_array($package['certificatelist'][$refid]) &&
+		    isset($package['certificatelist'][$refid]) > 0) {
+			$services['packages'][] = $name;
+		}
+	}
+
+	return $services;
+}
+
+/****f* certs/ca_get_all_services
+ * NAME
+ *   ca_get_all_services - Locate services using a given certificate authority or its decendents
+ * INPUTS
+ *   $refid: The refid of a certificate authority to check
+ * RESULT
+ *   array containing the services which use this certificate authority, including:
+ *     webgui: Present and true if the WebGUI uses this certificate. Unset otherwise.
+ *     services: Array of service definitions using this certificate, with:
+ *       name: Name of the service
+ *       extras: Extra information needed by some services, such as OpenVPN or Captive Portal.
+ *     packages: Array containing package names using this certificate.
+ * NOTES
+ *   This searches recursively to find entries using this CA as well as intermediate
+ *   CAs and certificates signed by this CA, and returns a single set of all services.
+ *   This avoids restarting affected services multiple times when there is overlapping
+ *   usage.
+ ******/
+function ca_get_all_services($refid) {
+	global $config;
+	$services = array();
+	$services['services'] = array();
+
+	init_config_arr(array('openvpn', 'openvpn-server'));
+	init_config_arr(array('openvpn', 'openvpn-client'));
+	foreach(array('server', 'client') as $mode) {
+		foreach ($config['openvpn']["openvpn-{$mode}"] as $ovpn) {
+			if ($ovpn['caref'] == $refid) {
+				$services['services'][] = array(
+					'name' => 'openvpn',
+					'extras' => array(
+						'vpnmode' => $mode,
+						'id' => $ovpn['vpnid']
+					)
+				);
+			}
+		}
+	}
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as $ipsec) {
+		if ($ipsec['certref'] == $refid) {
+			break;
+		}
+	}
+	foreach ($config['ipsec']['phase1'] as $ipsec) {
+		if (($ipsec['authentication_method'] == 'rsasig') &&
+		    ($ipsec['caref'] == $refid)) {
+			$services['services'][] = array('name' => 'ipsec');
+			break;
+		}
+	}
+
+	/* Loop through all certs and get their services as well */
+	init_config_arr(array('cert'));
+	foreach ($config['cert'] as $cert) {
+		if ($cert['caref'] == $refid) {
+			$services = array_merge_recursive_unique($services, cert_get_all_services($cert['refid']));
+		}
+	}
+
+	/* Look for intermediate certs and services */
+	init_config_arr(array('ca'));
+	foreach ($config['ca'] as $cert) {
+		if ($cert['caref'] == $refid) {
+			$services = array_merge_recursive_unique($services, ca_get_all_services($cert['refid']));
+		}
+	}
+
+	return $services;
+}
+
+/****f* certs/cert_restart_services
+ * NAME
+ *   cert_restart_services - Restarts services specific to CA/Certificate usage
+ * INPUTS
+ *   $services: An array of services returned by cert_get_all_services or ca_get_all_services
+ * RESULT
+ *   Services in the given array are restarted
+ *   returns false if the input is invalid
+ *   returns true at the end of execution
+ ******/
+
+function cert_restart_services($services) {
+	/* If the input is not an array, it is invalid. */
+	if (!is_array($services)) {
+		return false;
+	}
+
+	/* Base string to log when restarting a service */
+	$restart_string = gettext('Restarting %s %s due to certificate change');
+
+	/* Restart GUI: */
+	if ($services['webgui']) {
+		ob_flush();
+		flush();
+		log_error(sprintf($restart_string, gettext('service'), 'WebGUI'));
+		send_event("service restart webgui");
+	}
+
+	/* Restart other base services: */
+	if (is_array($services['services'])) {
+		foreach ($services['services'] as $service) {
+			switch ($service['name']) {
+				case 'openvpn':
+					$service_name = "{$service['name']} {$service['extras']['vpnmode']} {$service['extras']['id']}";
+					break;
+				case 'captiveportal':
+					$service_name = "{$service['name']} zone {$service['extras']['zone']}";
+					break;
+				default:
+					$service_name = $service['name'];
+			}
+			log_error(sprintf($restart_string, gettext('service'), $service_name));
+			service_control_restart($service['name'], $service['extras']);
+		}
+	}
+
+	/* Restart Packages: */
+	if (is_array($services['packages'])) {
+		foreach ($services['packages'] as $service) {
+			log_error(sprintf($restart_string, gettext('package'), $service));
+			restart_service($service);
+		}
+	}
+	return true;
+}
 ?>

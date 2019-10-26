@@ -1130,6 +1130,9 @@
 /usr/local/www/tree/tree.js
 /usr/local/www/treeview.css
 /usr/local/www/upload_progress.php
+/usr/local/vendor/jquery/jquery-1.12.0.min.js
+/usr/local/vendor/jquery/jquery-ui-1.11.4.min.js
+/usr/local/vendor/jquery/jquery-ui
 /usr/local/www/vpn_ipsec_ca.php
 /usr/local/www/vpn_ipsec_ca_edit.php
 /usr/local/www/vpn_ipsec_ca_edit_create_cert.php

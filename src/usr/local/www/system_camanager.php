@@ -39,7 +39,9 @@ $ca_methods = array(
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
 $ca_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
+$ca_keytypes = array("RSA", "ECDSA");
 global $openssl_digest_algs;
+$openssl_ecnames = openssl_get_curve_names();
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -106,7 +108,9 @@ if ($act == "edit") {
 
 if ($act == "new") {
 	$pconfig['method'] = $_POST['method'];
+	$pconfig['keytype'] = "RSA";
 	$pconfig['keylen'] = "2048";
+	$pconfig['ecname'] = "brainpoolP256r1";
 	$pconfig['digest_alg'] = "sha256";
 	$pconfig['lifetime'] = "3650";
 	$pconfig['dn_commonname'] = "internal-ca";
@@ -181,20 +185,24 @@ if ($_POST['save']) {
 	}
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",
-			"descr keylen lifetime dn_commonname");
+			"descr keylen ecname keytype lifetime dn_commonname");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Key length"),
+			gettext("Elliptic Curve Name"),
+			gettext("Key type"),
 			gettext("Lifetime"),
 			gettext("Common Name"));
 	}
 	if ($pconfig['method'] == "intermediate") {
 		$reqdfields = explode(" ",
-			"descr caref keylen lifetime dn_commonname");
+			"descr caref keylen ecname keytype lifetime dn_commonname");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Signing Certificate Authority"),
 			gettext("Key length"),
+			gettext("Elliptic Curve Name"),
+			gettext("Key type"),
 			gettext("Lifetime"),
 			gettext("Common Name"));
 	}
@@ -205,8 +213,14 @@ if ($_POST['save']) {
 		if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
 			array_push($input_errors, gettext("The field 'Descriptive Name' contains invalid characters."));
 		}
+		if (!in_array($_POST["keytype"], $ca_keytypes)) {
+			array_push($input_errors, gettext("Please select a valid Key Type."));
+		}
 		if (!in_array($_POST["keylen"], $ca_keylens)) {
 			array_push($input_errors, gettext("Please select a valid Key Length."));
+		}
+		if (!in_array($_POST["ecname"], $openssl_ecnames)) {
+			array_push($input_errors, gettext("Please select a valid Elliptic Curve Name."));
 		}
 		if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 			array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
@@ -257,7 +271,7 @@ if ($_POST['save']) {
 				if (!empty($pconfig['dn_organizationalunit'])) {
 					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 				}
-				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])) {
+				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'], $pconfig['keytype'], $pconfig['ecname'])) {
 					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
 						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -282,7 +296,7 @@ if ($_POST['save']) {
 				if (!empty($pconfig['dn_organizationalunit'])) {
 					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 				}
-				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])) {
+				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'], $pconfig['keytype'], $pconfig['ecname'])) {
 					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
 						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -454,6 +468,9 @@ foreach ($a_ca as $i => $ca):
 					<?php if ($ca['prv']): ?>
 						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
 					<?php endif?>
+					<?php if (is_cert_locally_renewable($ca)): ?>
+						<a href="system_certmanager_renew.php?type=ca&amp;refid=<?=$ca['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
+					<?php endif ?>
 					<?php if (!ca_in_use($ca['refid'])): ?>
 						<a class="fa fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>" usepost ></a>
 					<?php endif?>
@@ -621,11 +638,31 @@ $group->add(new Form_Select(
 $section->add($group);
 
 $section->addInput(new Form_Select(
+	'keytype',
+	'*Key type',
+	$pconfig['keytype'],
+	array_combine($ca_keytypes, $ca_keytypes)
+));
+
+$group = new Form_Group($i == 0 ? '*Key length':'');
+$group->addClass('rsakeys');
+$group->add(new Form_Select(
 	'keylen',
-	'*Key length (bits)',
+	null,
 	$pconfig['keylen'],
 	array_combine($ca_keylens, $ca_keylens)
 ));
+$section->add($group);
+
+$group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
+$group->addClass('ecnames');
+$group->add(new Form_Select(
+	'ecname',
+	null,
+	$pconfig['ecname'],
+	array_combine($openssl_ecnames, $openssl_ecnames)
+));
+$section->add($group);
 
 $section->addInput(new Form_Select(
 	'digest_alg',
@@ -705,5 +742,23 @@ foreach ($a_ca as $ca) {
 	}
 }
 
-include('foot.inc');
 ?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	function change_keytype() {
+	hideClass('rsakeys', ($('#keytype').val() != 'RSA'));
+		hideClass('ecnames', ($('#keytype').val() != 'ECDSA'));
+	}
+
+	$('#keytype').change(function () {
+		change_keytype();
+	});
+
+	// ---------- On initial page load ------------------------------------------------------------
+	change_keytype();
+});
+//]]>
+</script>
+<?php
+include('foot.inc');

@@ -341,7 +341,7 @@ $(function() {
 	};
 
 	(function(Plugin, $, window) {
-		$(window).load(function() {
+		$(window).on("load", function() {
 			var $controls = $('[data-toggle=disable]');
 
 			$controls.each(function() {

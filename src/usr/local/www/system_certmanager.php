@@ -41,12 +41,14 @@ $cert_methods = array(
 );
 
 $cert_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
+$cert_keytypes = array("RSA", "ECDSA");
 $cert_types = array(
 	"server" => "Server Certificate",
 	"user" => "User Certificate");
 
 global $cert_altname_types;
 global $openssl_digest_algs;
+$openssl_ecnames = openssl_get_curve_names();
 
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$userid = $_REQUEST['userid'];
@@ -93,9 +95,13 @@ if ($_POST['act'] == "del") {
 
 if ($act == "new") {
 	$pconfig['method'] = $_POST['method'];
+	$pconfig['keytype'] = "RSA";
 	$pconfig['keylen'] = "2048";
+	$pconfig['ecname'] = "brainpoolP256r1";
 	$pconfig['digest_alg'] = "sha256";
+	$pconfig['csr_keytype'] = "RSA";
 	$pconfig['csr_keylen'] = "2048";
+	$pconfig['csr_ecname'] = "brainpoolP256r1";
 	$pconfig['csr_digest_alg'] = "sha256";
 	$pconfig['csrsign_digest_alg'] = "sha256";
 	$pconfig['type'] = "user";
@@ -216,11 +222,13 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("This signing request does not appear to be valid.");
 			}
 
-			if ( (($_POST['csrtosign'] === "new") && (strlen($_POST['keypaste']) > 0)) && (!strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") || !strstr($_POST['keypaste'], "END PRIVATE KEY"))) {
+			if ( (($_POST['csrtosign'] === "new") && (strlen($_POST['keypaste']) > 0)) && 
+			    ((!strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") && !strstr($_POST['keypaste'], "BEGIN EC PRIVATE KEY")) || 
+			    (strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") && !strstr($_POST['keypaste'], "END PRIVATE KEY")) ||
+			    (strstr($_POST['keypaste'], "BEGIN EC PRIVATE KEY") && !strstr($_POST['keypaste'], "END EC PRIVATE KEY")))) {
 				$input_errors[] = gettext("This private does not appear to be valid.");
 				$input_errors[] = gettext("Key data field should be blank, or a valid x509 private key");
 			}
-
 		}
 
 		if ($pconfig['method'] == "import") {
@@ -241,11 +249,13 @@ if ($_POST['save']) {
 
 		if ($pconfig['method'] == "internal") {
 			$reqdfields = explode(" ",
-				"descr caref keylen type lifetime dn_commonname");
+				"descr caref keylen ecname keytype type lifetime dn_commonname");
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Certificate authority"),
 				gettext("Key length"),
+				gettext("Elliptic Curve Name"),
+				gettext("Key type"),
 				gettext("Certificate Type"),
 				gettext("Lifetime"),
 				gettext("Common Name"));
@@ -253,10 +263,12 @@ if ($_POST['save']) {
 
 		if ($pconfig['method'] == "external") {
 			$reqdfields = explode(" ",
-				"descr csr_keylen csr_dn_commonname");
+				"descr csr_keylen csr_ecname csr_keytype csr_dn_commonname");
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Key length"),
+				gettext("Elliptic Curve Name"),
+				gettext("Key type"),
 				gettext("Common Name"));
 		}
 
@@ -335,16 +347,28 @@ if ($_POST['save']) {
 
 			switch ($pconfig['method']) {
 				case "internal":
+					if (isset($_POST["keytype"]) && !in_array($_POST["keytype"], $cert_keytypes)) {
+						array_push($input_errors, gettext("Please select a valid Key Type."));
+					}
 					if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
 						array_push($input_errors, gettext("Please select a valid Key Length."));
+					}
+					if (isset($_POST["ecname"]) && !in_array($_POST["ecname"], $openssl_ecnames)) {
+						array_push($input_errors, gettext("Please select a valid Elliptic Curve Name."));
 					}
 					if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 					}
 					break;
 				case "external":
+					if (isset($_POST["csr_keytype"]) && !in_array($_POST["csr_keytype"], $cert_keytypes)) {
+						array_push($input_errors, gettext("Please select a valid Key Type."));
+					}
 					if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
 						array_push($input_errors, gettext("Please select a valid Key Length."));
+					}
+					if (isset($_POST["csr_ecname"]) && !in_array($_POST["csr_ecname"], $openssl_ecnames)) {
+						array_push($input_errors, gettext("Please select a valid Elliptic Curve Name."));
 					}
 					if (!in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
 						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
@@ -456,7 +480,7 @@ if ($_POST['save']) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 
-					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'])) {
+					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'], $pconfig['keytype'], $pconfig['ecname'])) {
 						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
 							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -501,7 +525,7 @@ if ($_POST['save']) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 
-					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'])) {
+					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'], $pconfig['csr_keytype'], $pconfig['csr_ecname'])) {
 						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
 							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -650,7 +674,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'*Descriptive name',
 		'text',
 		($a_user && empty($pconfig['descr'])) ? $a_user[$userid]['name'] : $pconfig['descr']
-	))->addClass('toggle-existing');
+	))->addClass('toggle-internal toggle-import toggle-external toggle-sign collapse');
 
 	$form->add($section);
 
@@ -772,11 +796,31 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	}
 
 	$section->addInput(new Form_Select(
+		'keytype',
+		'*Key type',
+		$pconfig['keytype'],
+		array_combine($cert_keytypes, $cert_keytypes)
+	));
+
+	$group = new Form_Group($i == 0 ? '*Key length':'');
+	$group->addClass('rsakeys');
+	$group->add(new Form_Select(
 		'keylen',
-		'*Key length',
+		null,
 		$pconfig['keylen'],
 		array_combine($cert_keylens, $cert_keylens)
 	));
+	$section->add($group);
+
+	$group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
+	$group->addClass('ecnames');
+	$group->add(new Form_Select(
+		'ecname',
+		null,
+		$pconfig['ecname'],
+		array_combine($openssl_ecnames, $openssl_ecnames)
+	));
+	$section->add($group);
 
 	$section->addInput(new Form_Select(
 		'digest_alg',
@@ -850,11 +894,31 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$section->addClass('toggle-external collapse');
 
 	$section->addInput(new Form_Select(
+		'csr_keytype',
+		'*Key type',
+		$pconfig['csr_keytype'],
+		array_combine($cert_keytypes, $cert_keytypes)
+	));
+
+	$group = new Form_Group($i == 0 ? '*Key length':'');
+	$group->addClass('csr_rsakeys');
+	$group->add(new Form_Select(
 		'csr_keylen',
-		'*Key length',
+		null,
 		$pconfig['csr_keylen'],
 		array_combine($cert_keylens, $cert_keylens)
 	));
+	$section->add($group);
+
+	$group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
+	$group->addClass('csr_ecnames');
+	$group->add(new Form_Select(
+		'csr_ecname',
+		null,
+		$pconfig['csr_ecname'],
+		array_combine($openssl_ecnames, $openssl_ecnames)
+	));
+	$section->add($group);
 
 	$section->addInput(new Form_Select(
 		'csr_digest_alg',
@@ -1159,6 +1223,10 @@ foreach ($a_cert as $i => $cert):
 	if (!is_array($cert) || empty($cert)) {
 		continue;
 	}
+	if (!empty($cert['prv'])) {
+		$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
+		$key_details = openssl_pkey_get_details($res_key);
+	}
 	$name = htmlspecialchars($cert['descr']);
 	$sans = array();
 	if ($cert['crt']) {
@@ -1242,6 +1310,18 @@ foreach ($a_cert as $i => $cert):
 							$certextinfo .= '<b>' . gettext("OCSP: ") . '</b> ';
 							$certextinfo .= gettext("Must Staple");
 						}
+						if (!empty($cert['prv'])) {
+							$certextinfo .= '<b>' . gettext("Key type: ") . '</b> ';
+							if ($key_details['type'] == OPENSSL_KEYTYPE_RSA) {
+								$certextinfo .= 'RSA<br/>';
+								$certextinfo .= '<b>' . gettext("Key size: ") . '</b> ';
+								$certextinfo .= $key_details['bits'] . '<br/>';
+							} else {
+								$certextinfo .= 'ECDSA<br/>';
+								$certextinfo .= '<b>' . gettext("Elliptic curve name: ") . '</b>';
+								$certextinfo .= $key_details['ec']['curve_name'] . '<br/>';
+							}
+						}
 						?>
 						<?php if (!empty($certextinfo)): ?>
 							<div class="infoblock">
@@ -1286,6 +1366,9 @@ foreach ($a_cert as $i => $cert):
 							<?php if ($cert['prv']): ?>
 								<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
 							<?php endif?>
+							<?php if (is_cert_locally_renewable($cert)): ?>
+								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
+							<?php endif ?>
 							<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="fa fa-archive" title="<?=gettext("Export P12")?>"></a>
 						<?php else: ?>
 							<a href="system_certmanager.php?act=csr&amp;id=<?=$i?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>"></a>
@@ -1421,13 +1504,34 @@ events.push(function() {
 		set_csr_ro();
 	});
 
+	function change_keytype() {
+       		hideClass('rsakeys', ($('#keytype').val() != 'RSA'));
+       		hideClass('ecnames', ($('#keytype').val() != 'ECDSA'));
+        }
+
+	$('#keytype').change(function () {
+                change_keytype();
+        });
+
+	function change_csrkeytype() {
+       		hideClass('csr_rsakeys', ($('#csr_keytype').val() != 'RSA'));
+       		hideClass('csr_ecnames', ($('#csr_keytype').val() != 'ECDSA'));
+        }
+
+	$('#csr_keytype').change(function () {
+                change_csrkeytype();
+        });
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	internalca_change();
 	set_csr_ro();
+	change_keytype();
+	change_csrkeytype();
 
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();
+
 
 <?php endif; ?>
 

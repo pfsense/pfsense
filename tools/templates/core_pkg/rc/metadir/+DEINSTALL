@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ "${2}" != "DEINSTALL" ]; then
+	exit 0
+fi
+
+if [ -f /usr/local/share/%%PRODUCT_NAME%%/fix_for_SA-19-10.ufs ]; then
+	exit 0
+fi
+
+echo "===> Flagging this system to apply fix for FreeBSD-SA-19:10.ufs"
+touch /.fix_for_SA-19-10.ufs

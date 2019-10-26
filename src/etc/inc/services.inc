@@ -248,6 +248,8 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdconf .= "\t\tRemoveRoute on;\n";
 		$radvdconf .= "\t};\n";
 
+		$usedefaultvalues = $dhcpv6ifconf['ramode'] == "managed" || $dhcpv6ifconf['ramode'] == "stateless_dhcp" ? false : true;
+
 		/* add DNS servers */
 		$dnslist = array();
 		if (isset($dhcpv6ifconf['rasamednsasdhcp6']) && is_array($dhcpv6ifconf['dnsserver']) && !empty($dhcpv6ifconf['dnsserver'])) {
@@ -262,9 +264,9 @@ function services_radvd_configure($blacklist = array()) {
 					$dnslist[] = $server;
 				}
 			}
-		} elseif (isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable'])) {
+		} elseif ($usedefaultvalues && (isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable']))) {
 			$dnslist[] = get_interface_ipv6($realif);
-		} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
+		} elseif ($usedefaultvalues && (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver']))) {
 			foreach ($config['system']['dnsserver'] as $server) {
 				if (is_ipaddrv6($server)) {
 					$dnslist[] = $server;
@@ -286,13 +288,16 @@ function services_radvd_configure($blacklist = array()) {
 				$searchlist[] = $sd;
 			}
 		}
+		$searchliststring = "";
 		if (count($searchlist) > 0) {
 			$searchliststring = trim(implode(" ", $searchlist));
 		}
-		if (!empty($dhcpv6ifconf['domain'])) {
-			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} {$searchliststring} { };\n";
-		} elseif (!empty($config['system']['domain'])) {
-			$radvdconf .= "\tDNSSL {$config['system']['domain']} {$searchliststring} { };\n";
+		if (isset($dhcpv6ifconf['rasamednsasdhcp6']) && !empty($dhcpv6ifconf['domain'])) {
+			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} { };\n";
+		} elseif (!isset($dhcpv6ifconf['rasamednsasdhcp6']) && !empty($searchliststring)) {
+			$radvdconf .= "\tDNSSL {$searchliststring} { };\n";
+		} elseif ($usedefaultvalues && !empty($config['system']['domain'])) {
+			$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
 		}
 		$radvdconf .= "};\n";
 	}
@@ -548,18 +553,26 @@ update-conflict-detection false;
 
 EOD;
 
-	if (!isset($dhcpifconf['disablepingcheck'])) {
-		$dhcpdconf .= "ping-check true;\n";
-	} else {
-		$dhcpdconf .= "ping-check false;\n";
-	}
-
 	if (!isset($dhcpifconf['disableauthoritative'])) {
 		$dhcpdconf .= "authoritative;\n";
 	}
 
 	if (isset($dhcpifconf['alwaysbroadcast'])) {
 		$dhcpdconf .= "always-broadcast on\n";
+	}
+
+	// OMAPI Settings
+	if (isset($dhcpifconf['omapi_port']) && is_numeric($dhcpifconf['omapi_port'])) {
+		$dhcpdconf .= <<<EOD
+
+key omapi_key {
+  algorithm {$dhcpifconf['omapi_key_algorithm']};
+  secret "{$dhcpifconf['omapi_key']}";
+};
+omapi-port {$dhcpifconf['omapi_port']};
+omapi-key omapi_key;
+
+EOD;
 	}
 
 	$dhcpdifs = array();
@@ -1020,6 +1033,12 @@ EOD;
 		// max-lease-time
 		if ($dhcpifconf['maxleasetime']) {
 			$dhcpdconf .= "	max-lease-time {$dhcpifconf['maxleasetime']};\n";
+		}
+
+		if (!isset($dhcpifconf['disablepingcheck'])) {
+			$dhcpdconf .= "	ping-check true;\n";
+		} else {
+			$dhcpdconf .= "	ping-check false;\n";
 		}
 
 		// netbios-name*
@@ -1960,6 +1979,7 @@ function services_dyndns_configure($int = "") {
 				$dyndns['verboselog'] = isset($dyndns['verboselog']);
 				$dyndns['curl_ipresolve_v4'] = isset($dyndns['curl_ipresolve_v4']);
 				$dyndns['curl_ssl_verifypeer'] = isset($dyndns['curl_ssl_verifypeer']);
+				$dyndns['proxied'] = isset($dyndns['proxied']);
 				services_dyndns_configure_client($dyndns);
 				sleep(1);
 			}

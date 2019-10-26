@@ -29,12 +29,18 @@
 /* THIS MUST BE ABOVE ALL OTHER CODE */
 header("X-Frame-Options: SAMEORIGIN");
 include_once('phpsessionmanager.inc');
+
+function pfSense_csrf_callback() {
+	include "csrf_error.php";
+}
+
 if (!$nocsrf) {
 	function csrf_startup() {
 		global $config;
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
 		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
 		csrf_conf('expires', $timeout_minutes * 60);
+		csrf_conf('callback', 'pfSense_csrf_callback');
 	}
 	require_once("csrf/csrf-magic.php");
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {

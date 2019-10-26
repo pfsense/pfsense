@@ -38,20 +38,9 @@ if ($_GET['getpic']=="true") {
 	}
 
 	/* Do not rely on filename to determine image type. */
-	$img_info =getimagesize($image_filename);
-	switch ($img_info[2]) {
-		case IMAGETYPE_GIF:
-			$pic_type = "gif";
-			break;
-		case IMAGETYPE_JPEG:
-			$pic_type = "jpg";
-			break;
-		case IMAGETYPE_PNG:
-			$pic_type = "png";
-			break;
-		default:
-			echo null;
-			exit;
+	$pic_type = is_supported_image($image_filename);
+	if (empty($pic_type)) {
+		exit;
 	}
 
 	if ($user_settings['widgets'][$wk]['picturewidget']) {
@@ -63,7 +52,7 @@ if ($_GET['getpic']=="true") {
 	}
 
 	header("Content-Disposition: inline; filename=\"" . basename($image_filename) . "\"");
-	header("Content-Type: image/{$pic_type}");
+	header("Content-Type: " . image_type_to_mime_type($pic_type));
 	header("Content-Length: " . strlen($data));
 	echo $data;
 	exit;
@@ -88,12 +77,8 @@ if ($_POST['widgetkey']) {
 				die("Could not read temporary file");
 			} else {
 				// Make sure they upload an image and not some other file
-				$img_info =getimagesize($_FILES['pictfile']['tmp_name']);
-				if($img_info === FALSE){
-					die("Unable to determine image type of uploaded file");
-				}
-				if(($img_info[2] !== IMAGETYPE_GIF) && ($img_info[2] !== IMAGETYPE_JPEG) && ($img_info[2] !== IMAGETYPE_PNG)){
-					die("Not a gif/jpg/png");
+				if (!is_supported_image($_FILES['pictfile']['tmp_name'])) {
+					die("Not a supported image type");
 				}
 				$picname = basename($_FILES['uploadedfile']['name']);
 				$user_settings['widgets'][$wk]['picturewidget'] = "/conf/widget_image";

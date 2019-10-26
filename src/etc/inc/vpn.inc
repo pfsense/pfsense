@@ -536,7 +536,7 @@ EOD;
 
 	if (is_array($a_client) && isset($a_client['enable'])) {
 		$strongswan .= "\t\tattr {\n";
-		
+
 		$cfgservers = array();
 		if (!empty($a_client['wins_server1'])) {
 			$cfgservers[] = $a_client['wins_server1'];
@@ -864,6 +864,12 @@ EOD;
 			$ikeid = $ph1ent['ikeid'];
 			$keyexchange = "ikev1";
 			$passive = "route";
+
+			$closeaction = "";
+			if (!empty($ph1ent['closeaction'])) {
+				$closeaction = "closeaction = {$ph1ent['closeaction']}";
+			}
+
 			if (!empty($ph1ent['iketype'])) {
 				if ($ph1ent['iketype'] == "ikev2") {
 					$keyexchange = "ikev2";
@@ -1024,7 +1030,7 @@ EOD;
 				if (!empty($a_client['dns_server4'])) {
 					$rightdnsservers[] = $a_client['dns_server4'];
 				}
-				
+
 				if (count($rightdnsservers)) {
 					$rightdnsserver = "\trightdns = " . implode(',', $rightdnsservers) . "\n";
 				}
@@ -1301,7 +1307,9 @@ EOD;
 													if (!empty($modp)) {
 														$tmpealgo .= "-{$modp}";
 													}
-													$ealgoESPsp2arr[] = $tmpealgo;
+													if (!in_array($tmpealgo, $ealgoESPsp2arr)) {
+														$ealgoESPsp2arr[] = $tmpealgo;
+													}
 												}
 											} else {
 												$tmpealgo = "{$ealg_id}{$keylen}";
@@ -1309,7 +1317,9 @@ EOD;
 												if (!empty($modp)) {
 													$tmpealgo .= "-{$modp}";
 												}
-												$ealgoESPsp2arr[] = $tmpealgo;
+												if (!in_array($tmpealgo, $ealgoESPsp2arr)) {
+													$ealgoESPsp2arr[] = $tmpealgo;
+												}
 											}
 										}
 									}
@@ -1322,7 +1332,9 @@ EOD;
 											if (!empty($modp)) {
 												$tmpealgo .= "-{$modp}";
 											}
-											$ealgoESPsp2arr[] = $tmpealgo;
+											if (!in_array($tmpealgo, $ealgoESPsp2arr)) {
+												$ealgoESPsp2arr[] = $tmpealgo;
+											}
 										}
 									} else {
 										$tmpealgo = "{$ealg_id}{$ealg_kl}";
@@ -1330,7 +1342,9 @@ EOD;
 										if (!empty($modp)) {
 											$tmpealgo .= "-{$modp}";
 										}
-										$ealgoESPsp2arr[] = $tmpealgo;
+										if (!in_array($tmpealgo, $ealgoESPsp2arr)) {
+											$ealgoESPsp2arr[] = $tmpealgo;
+										}
 									}
 								}
 							}
@@ -1343,7 +1357,9 @@ EOD;
 								if (!empty($modp)) {
 									$tmpAHalgo = "-{$modp}";
 								}
-								$ealgoAHsp2arr[] = $tmpAHalgo;
+								if (!in_array($tmpAHalgo, $ealgoAHsp2arr)) {
+									$ealgoAHsp2arr[] = $tmpAHalgo;
+								}
 							}
 						}
 					}
@@ -1373,6 +1389,7 @@ EOD;
 	{$installpolicy}
 	{$tunneltype}
 	{$dpdline}
+	{$closeaction}
 	auto = {$passive}
 	left = {$left_spec}
 	right = {$right_spec}
@@ -1525,7 +1542,7 @@ EOD;
 					// supported: ipv4, ipv6, rfc822, email, userfqdn, fqdn, dns, asn1dn, asn1gn, keyid
 					// example: $ipsecfin = "\trightid = email:your@email.address\n";
 
-					// note: comma seperated list for access restriction, regardless of firewall rules
+					// note: comma separated list for access restriction, regardless of firewall rules
 					// example: $ipsecfin = "\tleftsubnet = 1.1.1.1/32,1.1.1.2/32,2.2.2.0/24\n";
 
 					$mobilekey_counter++;

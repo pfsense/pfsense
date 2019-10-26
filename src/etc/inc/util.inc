@@ -1134,6 +1134,22 @@ function is_port($port) {
 	return false;
 }
 
+/* returns true if $port is in use */
+function is_port_in_use($port, $proto = "tcp", $ip_version = 4) {
+	$port_info = array();
+	exec("/usr/bin/netstat --libxo json -an " . escapeshellarg('-' . $ip_version) . " -p " . escapeshellarg($proto), $rawdata, $rc);
+	if ($rc == 0) {
+		$netstatarr = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
+		$netstatarr = $netstatarr['statistics']['socket'];
+
+		foreach($netstatarr as $index => $portstats){
+			array_push($port_info, $portstats['local']['port']);
+		}
+	}
+
+	return in_array($port, $port_info);
+}
+
 /* returns true if $portrange is a valid TCP/UDP portrange ("<port>:<port>") */
 function is_portrange($portrange) {
 	$ports = explode(":", $portrange);
@@ -2905,6 +2921,27 @@ function dhcpd_date_adjust_gmt($dt) {
 	 * failed, just return the input.
 	 */
 	return $dt;
+}
+
+global $supported_image_types;
+$supported_image_types = array(
+	IMAGETYPE_JPEG,
+	IMAGETYPE_PNG,
+	IMAGETYPE_GIF,
+	IMAGETYPE_WEBP
+);
+
+function is_supported_image($image_filename) {
+	global $supported_image_types;
+	$img_info = getimagesize($image_filename);
+
+	/* If it's not an image, or it isn't in the supported list, return false */
+	if (($img_info === false) ||
+	    !in_array($img_info[2], array_keys($supported_image_types))) {
+		return false;
+	} else {
+		return $img_info[2];
+	}
 }
 
 ?>

@@ -47,7 +47,7 @@ if (!array_key_exists($cpzone, $a_cp)) {
 }
 
 if (empty($cpzone)) {
-	header("Location: services_captiveportal_zones.php");
+	header("Location: status_captiveportal.php");
 	exit;
 }
 
@@ -55,9 +55,7 @@ $pgtitle = array(gettext("Status"), gettext("Captive Portal"), htmlspecialchars(
 $pglinks = array("", "status_captiveportal.php", "status_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
-if (!is_array($config['voucher'][$cpzone]['roll'])) {
-	$config['voucher'][$cpzone]['roll'] = array();
-}
+init_config_arr(array('voucher', $cpzone, 'roll'));
 
 $a_roll = $config['voucher'][$cpzone]['roll'];
 

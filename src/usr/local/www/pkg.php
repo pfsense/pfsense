@@ -222,6 +222,10 @@ if ($pkg['tabs'] != "") {
 	ksort($tab_array);
 }
 
+if (!empty($pkg['tabs'])) {
+	$shortcut_section = $pkg['shortcut_section'];
+}
+
 include("head.inc");
 if (isset($tab_array)) {
 	foreach ($tab_array as $tabid => $tab) {

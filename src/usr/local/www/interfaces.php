@@ -85,7 +85,7 @@ init_config_arr(array('gateways', 'gateway_item'));
 $a_gateways = &$config['gateways']['gateway_item'];
 
 $interfaces = get_configured_interface_with_descr();
-/* Interfaces which have addresses configired elsewhere and should not be
+/* Interfaces which have addresses configured elsewhere and should not be
  * configured here. See https://redmine.pfsense.org/issues/8687 */
 $no_address_interfaces = array("ovpn", "ipsec", "gif", "gre");
 $show_address_controls = true;

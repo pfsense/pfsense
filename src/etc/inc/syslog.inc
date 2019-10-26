@@ -60,18 +60,27 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 	return $remote_servers;
 }
 
-function system_syslogd_get_all_logfilenames() {
+function system_syslogd_get_all_logfilenames($add_extension = false) {
 	global $config, $g, $system_log_files;
+
+	if ($add_extension) {
+		$all_syslog_files = array();
+		foreach ($system_log_files as $syslogfile) {
+			$all_syslog_files[] = "{$syslogfile}.log";
+		}
+	} else {
+		$all_syslog_files = $system_log_files;
+	}
 
 	if ($config['installedpackages']['package']) {
 		foreach ($config['installedpackages']['package'] as $package) {
 			if (isset($package['logging']['logfilename'])) {
-				$system_log_files[] = $package['logging']['logfilename'];
+				$all_syslog_files[] = $package['logging']['logfilename'];
 			}
 		}
 	}
 
-	return $system_log_files;
+	return $all_syslog_files;
 }
 
 /* For a given log filename prefix, return a list with the filename and
@@ -121,15 +130,16 @@ function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = tru
 }
 
 function clear_all_log_files($restart = false) {
-	global $g, $system_log_files;
+	global $g, $system_log_files, $system_log_non_syslog_files;
 	if ($restart) {
 		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
 			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
 		}
 	}
 
-	foreach (system_syslogd_get_all_logfilenames() as $lfile) {
-		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
+	/* Combine list of syslog and non-syslog log files */
+	foreach (array_merge(system_syslogd_get_all_logfilenames(true), $system_log_non_syslog_files) as $lfile) {
+		clear_log_file("{$g['varlog_path']}/{$lfile}", false);
 	}
 
 	if ($restart) {

@@ -113,7 +113,7 @@ if (!function_exists('getBoolValueFromConfig')) {
 //save widget config settings on POST
 if ($_POST['widgetkey']) {
 	if (isset($_POST["thermal_sensors_widget_show_fahrenheit"])) {
-		// convert back to celcius
+		// convert back to celsius
 		$_POST["thermal_sensors_widget_zone_warning_threshold"] = floor(($_POST["thermal_sensors_widget_zone_warning_threshold"] - 32) / 1.8);
 		$_POST["thermal_sensors_widget_zone_critical_threshold"] = floor(($_POST["thermal_sensors_widget_zone_critical_threshold"] - 32) / 1.8);
 		$_POST["thermal_sensors_widget_core_warning_threshold"] = floor(($_POST["thermal_sensors_widget_core_warning_threshold"] - 32) / 1.8);

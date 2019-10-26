@@ -95,12 +95,12 @@ if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['l
 	return;
 }
 
-if (!empty($cpcfg['redirurl'])) {
-	$redirurl = $cpcfg['redirurl'];
-} elseif (preg_match("/redirurl=(.*)/", $orig_request, $matches)) {
+if (preg_match("/redirurl=(.*)/", $orig_request, $matches)) {
 	$redirurl = urldecode($matches[1]);
 } elseif ($_REQUEST['redirurl']) {
 	$redirurl = $_REQUEST['redirurl'];
+} elseif (!empty($cpcfg['redirurl'])) {
+	$redirurl = $cpcfg['redirurl'];
 }
 
 $macfilter = !isset($cpcfg['nomacfilter']);

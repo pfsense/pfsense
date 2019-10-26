@@ -62,17 +62,17 @@ $output_path = "/tmp/status_output/";
 $output_file = "/tmp/status_output.tgz";
 
 $filtered_tags = array(
-	'accountkey', 'authorizedkeys', 'auth_pass', 'auth_user', 'bcrypt-hash',
-	'cert_key', 'crypto_password', 'crypto_password2',
-	'dns_nsupdatensupdate_key', 'encryption_password', 'etpro_code',
-	'etprocode', 'gold_encryption_password', 'gold_password', 'influx_pass',
-	'ipsecpsk', 'ldap_bindpw', 'lighttpd_ls_password',
+	'accountkey', 'authorizedkeys', 'auth_pass', 'auth_user',
+	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'crypto_password',
+	'crypto_password2', 'dns_nsupdatensupdate_key', 'encryption_password',
+	'etpro_code', 'etprocode', 'gold_encryption_password', 'gold_password',
+	'influx_pass', 'ipsecpsk', 'ldap_bindpw', 'lighttpd_ls_password',
 	'lighttpd_ls_password', 'md5-hash', 'md5password', 'md5sigkey',
-	'md5sigpass', 'nt-hash', 'oinkcode', 'oincmastercode', 'passphrase',
-	'password', 'passwordagain', 'pre-shared-key', 'proxypass',
-	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radius_secret',
-	'redis_password', 'redis_passwordagain', 'rocommunity', 'secret',
-	'shared_key', 'tls', 'tlspskidentity', 'tlspskfile',
+	'md5sigpass', 'nt-hash', 'oinkcode', 'oinkmastercode', 'passphrase',
+	'password', 'passwordagain', 'postgresqlpasswordenc', 'pre-shared-key',
+	'proxypass', 'proxy_passwd', 'proxyuser', 'proxy_user', 'prv',
+	'radius_secret', 'redis_password', 'redis_passwordagain', 'rocommunity',
+	'secret', 'shared_key', 'tls', 'tlspskidentity', 'tlspskfile',
 	'varclientpasswordinput', 'varclientsharedsecret', 'varsyncpassword',
 	'varusersmotpinitsecret', 'varusersmotppin'
 );

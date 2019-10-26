@@ -30,7 +30,7 @@ function get_device_key() {
 		exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t ed25519 -b 4096 -N '' -f /etc/ssh//ssh_host_ed25519_key");
 	}
 
-	// The userkey (firewall identifier) is an MD5 has of the ed25519 public key
+	// The userkey (firewall identifier) is an sha256 hash of the ed25519 public key
 	return hash("sha256", file_get_contents("/etc/ssh/ssh_host_ed25519_key.pub"));
 }
 
@@ -41,12 +41,6 @@ if (isset($_REQUEST['userkey']) && !empty($_REQUEST['userkey'])) {
 } else {
 	$userkey = get_device_key();
 }
-
-// Defined username. Username must be sent lowercase. See Redmine #7127 and Netgate Redmine #163
-$username = strtolower($config['system']['acb']['gold_username']);
-
-// Defined password
-$password = $config['system']['acb']['gold_password'];
 
 $uniqueID = system_get_uniqueid();
 
@@ -140,7 +134,7 @@ function test_connection($post) {
 		return;
 	}
 
-	// Seperator used during client / server communications
+	// Separator used during client / server communications
 	$oper_sep = "\|\|";
 
 	// Encryption password
@@ -243,8 +237,8 @@ function upload_config($manual = false) {
 		if (!file_exists("/cf/conf/autoconfigback.notice")) {
 			$notice_text = "The encryption password is not set for Automatic Configuration Backup.";
 			$notice_text .= " Please correct this in Services -> AutoConfigBackup -> Settings.";
-			//log_error($notice_text);
-			//file_notice("AutoConfigBackup", $notice_text, $notice_text, "");
+			log_error($notice_text);
+			file_notice("AutoConfigBackup", $notice_text, $notice_text, "");
 			touch("/cf/conf/autoconfigback.notice");
 		}
 	} else {
@@ -281,7 +275,7 @@ function upload_config($manual = false) {
 			curl_setopt($curl_session, CURLOPT_POST, count($post_fields));
 			curl_setopt($curl_session, CURLOPT_POSTFIELDS, $post_fields);
 			curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 			curl_setopt($curl_session, CURLOPT_CONNECTTIMEOUT, 55);
 			curl_setopt($curl_session, CURLOPT_TIMEOUT, 30);
 			curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
@@ -303,9 +297,9 @@ function upload_config($manual = false) {
 			}
 
 			if (strpos($data, "500") != false) {
-				$notice_text = "An error occurred while uploading your pfSense configuration to " . $upload_url . " (" . htmlspecialchars($data) . ")";
+				$notice_text = gettext("An error occurred while uploading your pfSense configuration to ") . $upload_url . " (" . htmlspecialchars($data) . ")";
 				log_error($notice_text . " - " . $data);
-				file_notice("AutoConfigBackup", $notice_text, "Backup Failure", "/pkg_edit.php?xml=autoconfigbackup.xml&id=0");
+				file_notice("AutoConfigBackup", $notice_text);
 				update_filter_reload_status($notice_text);
 				$input_errors["acb_upload"] = $notice_text;
 			} else {

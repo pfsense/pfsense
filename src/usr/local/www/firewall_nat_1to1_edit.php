@@ -587,7 +587,7 @@ events.push(function() {
 
 	// ---------- Autocomplete --------------------------------------------------------------------
 
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "urltable"))) ?>;
 
 	$('#dst').autocomplete({
 		source: addressarray

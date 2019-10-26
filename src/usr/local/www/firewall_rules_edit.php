@@ -810,10 +810,10 @@ if ($_POST['save']) {
 	if ($_POST['statetype'] && !array_key_exists($_POST['statetype'], $statetype_values)) {
 		$input_errors[] = gettext("Invalid State Type.");
 	}
-	if ($_POST['vlanprio'] && !in_array($_POST['vlanprio'], $vlanprio)) {
+	if ($_POST['vlanprio'] && !array_key_exists($_POST['vlanprio'], $vlanprio)) {
 		$input_errors[] = gettext("Invalid VLAN Prio.");
 	}
-	if ($_POST['vlanprioset'] && !in_array($_POST['vlanprioset'], $vlanprio)) {
+	if ($_POST['vlanprioset'] && !array_key_exists($_POST['vlanprioset'], $vlanprio)) {
 		$input_errors[] = gettext("Invalid VLAN Prio Set.");
 	}
 
@@ -1773,7 +1773,7 @@ events.push(function() {
 
 	// Remove focus on page load
 	document.activeElement.blur()
-	
+
 	function show_advopts(ispageload) {
 		var text;
 		// On page load decide the initial state based on the data.
@@ -2123,7 +2123,7 @@ events.push(function() {
 		setHelpText(target, dispstr);
 	}
 
-	// When editing "associated" rules, everything except the enable, action, address family and desscription
+	// When editing "associated" rules, everything except the enable, action, address family and description
 	// fields are disabled
 	function disable_most(disable) {
 		var elementsToDisable = [
@@ -2153,7 +2153,7 @@ events.push(function() {
 
 	// ---------- Autocomplete --------------------------------------------------------------------
 
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "url", "urltable"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "url", "urltable"))) ?>;
 	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
 	$('#src, #dst').autocomplete({

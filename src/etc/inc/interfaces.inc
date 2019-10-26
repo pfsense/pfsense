@@ -2120,15 +2120,6 @@ function interface_ppps_configure($interface) {
 	}
 	$upper_type = strtoupper($ppp['type']);
 
-	/* XXX: This does not make sense and may create trouble
-	 * comment it for now to be removed later on.
-	if (platform_booting()) {
-		$descr = isset($ifcfg['descr']) ? $ifcfg['descr'] : strtoupper($interface);
-		echo "starting {$pppif} link...";
-		if (isvalidpid("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid"))
-			return 0;
-	}
-	*/
 	$confports = explode(',', $ppp['ports']);
 	if ($type == "modem") {
 		$ports = $confports;
@@ -4824,7 +4815,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	if (isset($wancfg['dhcp6withoutra'])) {
 		/*
 		 * Start dhcp6c here if we don't want to wait for ra - calls
-		 * seperate function
+		 * separate function
 		 *
 		 * In this mode dhcp6c launches rtsold via its script. RTSOLD
 		 * will then run the configure on receipt of the RA.

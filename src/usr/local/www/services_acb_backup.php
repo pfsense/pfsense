@@ -71,7 +71,7 @@ $tab_array[] = array("Restore", false, "/services_acb.php");
 $tab_array[] = array("Backup now", true, "/services_acb_backup.php");
 display_top_tabs($tab_array);
 
-$form = new Form("Backup");
+$form = new Form("Backup", $config['system']['acb']['enable'] === "yes");
 
 $section = new Form_Section('Backup Details');
 
@@ -97,6 +97,27 @@ $section2->addInput(new Form_Input(
 $form->add($section2);
 
 print($form);
-
 ?>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$(form).submit(function(e) {
+		e.preventDefault();
+		encpwd = '<?=$config['system']['acb']['encryption_password']?>';
+		if ( encpwd.length === 0) {
+			alert('<?=gettext("No encryption password has been set")?>');
+		} else if ($('#devkey').val().length === 0 ) {
+			alert('<?=gettext("No device key has been specified")?>');
+		} else if ($('#reason').val().length === 0 ) {
+			alert('<?=gettext("Please provide a reason for this backup")?>');
+		} else {
+			form.submit(); // submit bypassing the jQuery bound event
+		}
+	});
+});
+//]]>
+</script>
+
 <?php include("foot.inc"); ?>
+

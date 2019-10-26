@@ -255,6 +255,16 @@ if ($act == "edit") {
 		$pconfig['udp_fast_io'] = $a_server[$id]['udp_fast_io'];
 		$pconfig['sndrcvbuf'] = $a_server[$id]['sndrcvbuf'];
 		$pconfig['push_register_dns'] = $a_server[$id]['push_register_dns'];
+
+		$pconfig['ping_method'] = $a_server[$id]['ping_method'];
+		$pconfig['keepalive_interval'] = $a_server[$id]['keepalive_interval'];
+		$pconfig['keepalive_timeout'] = $a_server[$id]['keepalive_timeout'];
+		$pconfig['ping_seconds'] = $a_server[$id]['ping_seconds'];
+		$pconfig['ping_push'] = empty($a_server[$id]['ping_push']) ? '' : 'yes';
+		$pconfig['ping_action'] = $a_server[$id]['ping_action'];
+		$pconfig['ping_action_seconds'] = $a_server[$id]['ping_action_seconds'];
+		$pconfig['ping_action_push'] = empty($a_server[$id]['ping_action_push']) ? '' : 'yes';
+		$pconfig['inactive_seconds'] = $a_server[$id]['inactive_seconds'] ?: 0;
 	}
 }
 
@@ -631,6 +641,16 @@ if ($_POST['save']) {
 		}
 
 		$server['ncp_enable'] = $pconfig['ncp_enable'] ? "enabled":"disabled";
+
+		$server['ping_method'] = $pconfig['ping_method'];
+		$server['keepalive_interval'] = $pconfig['keepalive_interval'];
+		$server['keepalive_timeout'] = $pconfig['keepalive_timeout'];
+		$server['ping_seconds'] = $pconfig['ping_seconds'];
+		$server['ping_push'] = $pconfig['ping_push'];
+		$server['ping_action'] = $pconfig['ping_action'];
+		$server['ping_action_seconds'] = $pconfig['ping_action_seconds'];
+		$server['ping_action_push'] = $pconfig['ping_action_push'];
+		$server['inactive_seconds'] = $pconfig['inactive_seconds'];
 
 		if (isset($id) && $a_server[$id]) {
 			$a_server[$id] = $server;
@@ -1186,6 +1206,94 @@ if ($act=="new" || $act=="edit"):
 	))->setHelp('Specifies the method used to supply a virtual adapter IP address to clients when using TUN mode on IPv4.%1$s' .
 				'Some clients may require this be set to "subnet" even for IPv6, such as OpenVPN Connect (iOS/Android). ' .
 				'Older versions of OpenVPN (before 2.0.9) or clients such as Yealink phones may require "net30".', '<br />');
+
+	$form->add($section);
+
+	$section = new Form_Section("Ping settings");
+
+	$section->addInput(new Form_Input(
+		'inactive_seconds',
+		'Inactive',
+		'number',
+		$pconfig['inactive_seconds'] ?: 0,
+		['min' => '0']
+	    ))->setHelp('Causes OpenVPN to exit after n seconds of ' .
+	    'inactivity on the TUN/TAP device.%1$s' .
+	    'The time length of inactivity is measured since the last ' .
+	    'incoming or outgoing tunnel packet.%1$s' .
+	    '0 disables this feature.%1$s', '<br />');
+
+	$section->addInput(new Form_Select(
+		'ping_method',
+		'Ping method',
+		$pconfig['ping_method'],
+		$openvpn_ping_method
+	))->setHelp('keepalive helper uses interval and timeout parameters ' .
+	    'to define ping and ping-restart values as follows:%1$s' .
+	    'ping = interval%1$s' .
+	    'ping-restart = timeout*2%1$s' .
+	    'push ping = interval%1$s' .
+	    'push ping-restart = timeout%1$s',
+	    '<br />');
+
+	$section->addInput(new Form_Input(
+		'keepalive_interval',
+		'Interval',
+		'number',
+		$pconfig['keepalive_interval']
+		    ?: $openvpn_default_keepalive_interval,
+		['min' => '0']
+	));
+
+	$section->addInput(new Form_Input(
+		'keepalive_timeout',
+		'Timeout',
+		'number',
+		$pconfig['keepalive_timeout']
+		    ?: $openvpn_default_keepalive_timeout,
+		['min' => '0']
+	));
+
+	$section->addInput(new Form_Input(
+		'ping_seconds',
+		'Ping',
+		'number',
+		$pconfig['ping_seconds'] ?: $openvpn_default_keepalive_interval,
+		['min' => '0']
+	))->setHelp('Ping remote over the TCP/UDP control channel if no ' .
+	    'packets have been sent for at least n seconds.%1$s',
+	    '<br />');
+
+	$section->addInput(new Form_Checkbox(
+		'ping_push',
+		'Push ping to client',
+		'Push ping to VPN client',
+		$pconfig['ping_push']
+	));
+
+	$section->addInput(new Form_Select(
+		'ping_action',
+		'Ping restart or exit',
+		$pconfig['ping_action'],
+		$openvpn_ping_action
+	))->setHelp('Exit or restart OpenVPN after timeout from remote%1$s',
+	    '<br />');
+
+	$section->addInput(new Form_Input(
+		'ping_action_seconds',
+		'Ping restart or exit seconds',
+		'number',
+		$pconfig['ping_action_seconds']
+		    ?: $openvpn_default_keepalive_timeout,
+		['min' => '0']
+	));
+
+	$section->addInput(new Form_Checkbox(
+		'ping_action_push',
+		'Push to client',
+		'Push ping-restart/ping-exit to VPN client',
+		$pconfig['ping_action_push']
+	));
 
 	$form->add($section);
 
@@ -1802,6 +1910,20 @@ events.push(function() {
 		}
 	}
 
+	function ping_method_change() {
+		pvalue = $('#ping_method').val();
+
+		keepalive = (pvalue == 'keepalive');
+
+		hideInput('keepalive_interval', !keepalive);
+		hideInput('keepalive_timeout', !keepalive);
+		hideInput('ping_seconds', keepalive);
+		hideCheckbox('ping_push', keepalive);
+		hideInput('ping_action', keepalive);
+		hideInput('ping_action_seconds', keepalive);
+		hideCheckbox('ping_action_push', keepalive);
+	}
+
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
 
 	// NTP
@@ -1870,6 +1992,11 @@ events.push(function() {
 		tuntap_change();
 	});
 
+	// ping
+	$('#ping_method').change(function () {
+		ping_method_change();
+	});
+
 	// Certref
 	$('#certref').on('change', function() {
 		var errmsg = "";
@@ -1881,12 +2008,12 @@ events.push(function() {
 		$('#certtype').html(errmsg);
 	});
 
-	function updateCiphers(mem) {
+	function updateCipher(mem) {
 		var found = false;
 
 		// If the cipher exists, remove it
 		$('[id="ncp-ciphers[]"] option').each(function() {
-			if($(this).val() == mem) {
+			if($(this).val().toString() == mem) {
 				$(this).remove();
 				found = true;
 			}
@@ -1896,6 +2023,10 @@ events.push(function() {
 		if (!found) {
 			$('[id="ncp-ciphers[]"]').append(new Option(mem , mem));
 		}
+	}
+
+	function updateCiphers(mem) {
+		mem.toString().split(",").forEach(updateCipher);
 
 		// Unselect all options
 		$('[id="availciphers[]"] option:selected').removeAttr("selected");
@@ -1933,6 +2064,7 @@ events.push(function() {
 	ntp_server_change();
 	netbios_change();
 	tuntap_change();
+	ping_method_change();
 });
 //]]>
 </script>

@@ -406,7 +406,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 			/* If we are in firewall/routing mode (not single interface)
 			 * then ensure that we are not running DHCP on the wan which
-			 * will make a lot of ISP's unhappy.
+			 * will make a lot of ISPs unhappy.
 			 */
 			if ($config['interfaces']['lan'] && $config['dhcpd']['wan']) {
 				unset($config['dhcpd']['wan']);

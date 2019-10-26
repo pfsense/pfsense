@@ -167,7 +167,7 @@ events.push(function() {
 				}
 			}
 		}
-		// use a slowly sliding max scale value but do make sure its always large enough to accomodate the largest value..
+		// use a slowly sliding max scale value but do make sure its always large enough to accommodate the largest value..
 		if (graphstatmax < statmax) {
 			// peek value + 10% keeps a little room for it to increase
 			graphstatmax = statmax * 1.1;

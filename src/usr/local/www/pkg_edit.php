@@ -590,6 +590,9 @@ if ($pkg['tabs'] != "") {
 
 	ksort($tab_array);
 }
+if (!empty($pkg['tabs'])) {
+	$shortcut_section = $pkg['shortcut_section'];
+}
 
 include("head.inc");
 if ($pkg['custom_php_after_head_command']) {

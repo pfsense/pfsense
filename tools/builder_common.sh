@@ -863,6 +863,7 @@ create_memstick_image() {
 
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
 	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
+	echo 'boot_serial="NO"' >> ${LOADERCONF}
 	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
@@ -1824,6 +1825,7 @@ poudriere_bulk() {
 	fi
 
 	cat <<EOF >>/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
+
 PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL}
 PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE}
 PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL}

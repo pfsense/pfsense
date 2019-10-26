@@ -2070,7 +2070,7 @@ function upgrade_054_to_055() {
 	$rrdinterval = 60;
 	$valid = $rrdinterval * 2;
 
-	/* Asume GigE for now */
+	/* Assume GigE for now */
 	$downstream = 125000000;
 	$upstream = 125000000;
 
@@ -2781,7 +2781,7 @@ function upgrade_080_to_081() {
 	$rrdinterval = 60;
 	$valid = $rrdinterval * 2;
 
-	/* Asume GigE for now */
+	/* Assume GigE for now */
 	$downstream = 125000000;
 	$upstream = 125000000;
 
@@ -4571,6 +4571,7 @@ function upgrade_144_to_145() {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
 			if (isset($ifcfg['enable'])) {
 				if ($ifcfg['ipaddrv6'] == "track6") {
+					init_config_arr(array('dhcpdv6', $ifname, 'range'));
 					$config['dhcpdv6'][$ifname]['enable'] = true;
 					$config['dhcpdv6'][$ifname]['range']['from'] = "::1000";
 					$config['dhcpdv6'][$ifname]['range']['to'] = "::2000";
@@ -5783,11 +5784,11 @@ function upgrade_185_to_186() {
 function generate_usermanager_radius_config($cpzone, $counter, $protocol, $ip, $key, $port, $radiussrcip_attribute, $is_accounting=false, $accounting_port=false) {
 	global $config;
 	$pconfig = array();
-	
+
 	if (!is_array($config['system']['authserver'])) {
 		$config['system']['authserver'] = array();
 	}
-	
+
 	$pconfig['name'] = "Auto generated from Captive Portal {$cpzone}";
 	if ($counter != 1) {
 		$pconfig['name'] .= " {$counter}";
@@ -5800,14 +5801,14 @@ function generate_usermanager_radius_config($cpzone, $counter, $protocol, $ip, $
 	$pconfig['radius_timeout'] = 3;
 	$pconfig['radius_auth_port'] = $port;
 	$pconfig['radius_nasip_attribute'] = $radiussrcip_attribute;
-	
+
 	if($is_accounting) {
 		$pconfig['radius_srvcs'] = "both";
 		$pconfig['radius_acct_port'] = $accounting_port;
 	}
-	
+
 	$config['system']['authserver'][] = $pconfig;
-	
+
 	return 'radius - '.$pconfig['name'];
 }
 
@@ -5817,16 +5818,16 @@ function upgrade_186_to_187() {
 
 	if (is_array($config['captiveportal'])) {
 		foreach ($config['captiveportal'] as $cpzone => $cp) {
-			// we flush any existing sqlite3 db. 
+			// we flush any existing sqlite3 db.
 			// It will be automatically re-generated on next captiveportal_readdb()/captiveportal_writedb()
 			$db_path = "{$g['vardb_path']}/captiveportal{$cpzone}.db";
 			unlink_if_exists($db_path);
-		
-			if ($cp['auth_method'] === 'radius') { // Radius Auth	
+
+			if ($cp['auth_method'] === 'radius') { // Radius Auth
 				$auth_servers = array();
 				$auth_servers2 = array();
 				$radiuscounter = 1;
-				
+
 				if (intval($cp['radiusport']) == 0) {
 					$cp['radiusport'] = 1812;
 				}
@@ -5837,29 +5838,29 @@ function upgrade_186_to_187() {
 					$cp['radiussrcip_attribute'] = 'wan';
 				}
 				$auth_servers[] = generate_usermanager_radius_config($cpzone, $radiuscounter, $cp['radius_protocol'], $cp['radiusip'], $cp['radiuskey'], $cp['radiusport'], $cp['radiussrcip_attribute'], isset($cp['radacct_enable']), $cp['radiusacctport']);
-				  
+
 				if (!empty($cp['radiusip2'])) {
 					$radiuscounter++;
 					if (intval($cp['radiusport2']) == 0) {
 						$cp['radiusport2'] = 1812;
-					}		
-					$auth_servers[] = generate_usermanager_radius_config($cpzone, $radiuscounter, $cp['radius_protocol'], $cp['radiusip2'], $cp['radiuskey2'], $cp['radiusport2'], $cp['radiussrcip_attribute'], false, 0); 
+					}
+					$auth_servers[] = generate_usermanager_radius_config($cpzone, $radiuscounter, $cp['radius_protocol'], $cp['radiusip2'], $cp['radiuskey2'], $cp['radiusport2'], $cp['radiussrcip_attribute'], false, 0);
 				}
 				if (!empty($cp['radiusip3'])) {
 					$radiuscounter++;
 					if (intval($cp['radiusport3']) == 0) {
 						$cp['radiusport3'] = 1812;
 					}
-					$auth_servers2[] = generate_usermanager_radius_config($cpzone, $radiuscounter, $cp['radius_protocol'], $cp['radiusip3'], $cp['radiuskey3'], $cp['radiusport3'], $cp['radiussrcip_attribute'], false, 0); 
+					$auth_servers2[] = generate_usermanager_radius_config($cpzone, $radiuscounter, $cp['radius_protocol'], $cp['radiusip3'], $cp['radiuskey3'], $cp['radiusport3'], $cp['radiussrcip_attribute'], false, 0);
 				}
 				if (!empty($cp['radiusip4'])) {
 					$radiuscounter++;
 					if (intval($cp['radiusport4']) == 0) {
 						$cp['radiusport4'] = 1812;
 					}
-					$auth_servers2[] = generate_usermanager_radius_config($cpzone, $radiuscounter, $cp['radius_protocol'], $cp['radiusip4'], $cp['radiuskey4'], $cp['radiusport4'], $cp['radiussrcip_attribute'], false, 0); 
+					$auth_servers2[] = generate_usermanager_radius_config($cpzone, $radiuscounter, $cp['radius_protocol'], $cp['radiusip4'], $cp['radiuskey4'], $cp['radiusport4'], $cp['radiussrcip_attribute'], false, 0);
 				}
-				
+
 				$cp['auth_method'] = 'authserver';
 				$cp['auth_server'] = implode(",", $auth_servers);
 				$cp['auth_server2'] = implode(",", $auth_servers2);
@@ -5876,9 +5877,9 @@ function upgrade_186_to_187() {
 			} elseif ($cp['auth_method'] === 'local') { // Local Auth
 				$cp['auth_method'] = 'authserver';
 				$cp['auth_server'] = "Local Auth - Local Database";
-			} 
+			}
 			// we don't need to update anything when "none" auth method is selected
-			
+
 			$config['captiveportal'][$cpzone] = $cp;
 		}
 	}
@@ -5975,7 +5976,7 @@ function upgrade_191_to_192() {
 	    isset($config['hasync']['synchronizelb'])) {
 		unset($config['hasync']['synchronizelb']);
 	}
-	
+
 	/* If the LB widget is present, remove it*/
 	if (isset($config['widgets']) &&
 	    isset($config['widgets']['sequence']) &&

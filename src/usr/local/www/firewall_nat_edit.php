@@ -1196,7 +1196,7 @@ if (!$_POST) {
 	nordr_change();
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
-	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "urltable"))) ?>;
 	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 
 	$('#localip, #src, #dst').autocomplete({

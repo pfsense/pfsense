@@ -387,7 +387,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 	if ($firmwareupdate):
 
 		// Check to see if any new repositories have become available. This data is cached and
-		// refreshed evrey 24 hours
+		// refreshed every 24 hours
 		update_repos();
 		$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
 		$helpfilename = "{$repopath}/{$g['product_name']}-repo-custom.help";

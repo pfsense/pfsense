@@ -1409,13 +1409,19 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		}
 		$ldapauthcont = $authcfg['ldap_authcn'];
 		$ldapnameattribute = strtolower($authcfg['ldap_attr_user']);
+		$ldapgroupattribute = $authcfg['ldap_attr_member'];
 		$ldapextendedqueryenabled = $authcfg['ldap_extended_enabled'];
 		$ldapextendedquery = $authcfg['ldap_extended_query'];
 		$ldapfilter = "";
 		if (!$ldapextendedqueryenabled) {
 			$ldapfilter = "({$ldapnameattribute}={$username})";
 		} else {
-			$ldapfilter = "(&({$ldapnameattribute}={$username})({$ldapextendedquery}))";
+			if (isset($authcfg['ldap_rfc2307'])) {
+				$ldapfilter = "({$ldapnameattribute}={$username})";
+				$ldapgroupfilter = "(&({$ldapgroupattribute}={$username})({$ldapextendedquery}))";
+			} else {
+				$ldapfilter = "(&({$ldapnameattribute}={$username})({$ldapextendedquery}))";
+			}
 		}
 		$ldaptype = "";
 		$ldapver = $authcfg['ldap_protver'];
@@ -1515,12 +1521,29 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		/* Support legacy auth container specification. */
 		if (stristr($ldac_split, "DC=") || empty($ldapbasedn)) {
 			$search = @$ldapfunc($ldap, $ldac_split, $ldapfilter);
+			if (isset($ldapgroupfilter)) {
+				$groupsearch = @$ldapfunc($ldap, $ldac_split, $ldapgroupfilter);
+			}
 		} else {
 			$search = @$ldapfunc($ldap, $ldapsearchbasedn, $ldapfilter);
+			if (isset($ldapgroupfilter)) {
+				$groupsearch = @$ldapfunc($ldap, $ldapsearchbasedn, $ldapgroupfilter);
+			}
+		}
+
+		if (isset($ldapgroupfilter) && !$groupsearch) {
+			log_error(sprintf(gettext("Extended group search resulted in error: %s"), ldap_error($ldap)));
+			continue;
 		}
 		if (!$search) {
 			log_error(sprintf(gettext("Search resulted in error: %s"), ldap_error($ldap)));
 			continue;
+		}
+		if (isset($groupsearch)) {
+			$validgroup = ldap_count_entries($ldap, $groupsearch);
+			if ($debug) {
+				log_auth(sprintf(gettext("LDAP group search: %s results."), $validgroup));
+			}
 		}
 		$info = ldap_get_entries($ldap, $search);
 		$matches = $info['count'];
@@ -1561,8 +1584,16 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		log_auth(sprintf(gettext('Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
 	}
 
+	if ($debug && isset($ldapgroupfilter) && $validgroup < 1) {
+		log_auth(sprintf(gettext('Logged in successfully as %1$s but did not match any field in extended query.'), $username));
+	}
+
 	/* At this point we are bound to LDAP so the user was auth'd okay. Close connection. */
 	@ldap_unbind($ldap);
+
+	if (isset($ldapgroupfilter) && $validgroup < 1) {
+		return false;
+	}
 
 	return true;
 }
@@ -1643,7 +1674,7 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 		}
 		if (!is_ipaddr($nasip)) {
 			$nasip = get_interface_ip($nasip);
-			
+
 			if (!is_ipaddr($nasip)) {
 				$nasip = get_interface_ip();//We use wan interface IP as fallback for NAS-IP-Address
 			}
@@ -1652,7 +1683,7 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 
 		$rauth->putAttribute(RADIUS_NAS_IP_ADDRESS, $nasip, "addr");
 		$rauth->putAttribute(RADIUS_NAS_IDENTIFIER, $nasid);
-		
+
 		if(!empty($attributes['calling_station_id'])) {
 			$rauth->putAttribute(RADIUS_CALLING_STATION_ID, $attributes['calling_station_id']);
 		}
@@ -1663,7 +1694,7 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 		}
 		if(!empty($attributes['nas_port_type'])) {
 			$rauth->putAttribute(RADIUS_NAS_PORT_TYPE, $attributes['nas_port_type']);
-		}		
+		}
 		if(!empty($attributes['nas_port'])) {
 			$rauth->putAttribute(RADIUS_NAS_PORT, intval($attributes['nas_port']), 'integer');
 		}
@@ -1686,7 +1717,7 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 		$ret = false;
 	}
 
-	
+
 	// Get attributes, even if auth failed.
 	if ($rauth->getAttributes()) {
 	$attributes = array_merge($attributes,$rauth->listAttributes());
@@ -1697,7 +1728,7 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 			$stt = strtotime(preg_replace("/\+(\d+):(\d+)$/", " +\${1}\${2}", preg_replace("/(\d+)T(\d+)/", "\${1} \${2}",$stt)));
 		}
 	}
-	
+
 	// close OO RADIUS_AUTHENTICATION
 	$rauth->close();
 
@@ -1890,9 +1921,9 @@ function getUserGroups($username, $authcfg, &$attributes = array()) {
 }
 
 /*
-Possible return values : 
+Possible return values :
 true : authentication worked
-false : authentication failed (invalid login/password, not enought permission, etc...)
+false : authentication failed (invalid login/password, not enough permission, etc...)
 null : error during authentication process (unable to reach remote server, etc...)
 */
 function authenticate_user($username, $password, $authcfg = NULL, &$attributes = array()) {

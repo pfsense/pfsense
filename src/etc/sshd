@@ -172,7 +172,7 @@ if (!empty($generate_keys)) {
 	file_notice("SSH", "{$g['product_name']} has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");
 }
 
-/* kill existing sshd process, server only, not the childs */
+/* kill existing sshd process, server only, not the children */
 $sshd_pid = exec("ps ax | egrep '/usr/sbin/[s]shd' | awk '{print $1}'");
 if ($sshd_pid <> "") {
 	echo "stopping ssh process $sshd_pid \n";

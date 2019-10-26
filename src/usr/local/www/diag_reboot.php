@@ -43,6 +43,8 @@ $guitimeout = 90;	// Seconds to wait before reloading the page after reboot
 $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Reboot"));
+$platform = system_identify_specific_platform();
+$no_options = array('SG-1100', 'ROGUE-1', 'uFW');
 include("head.inc");
 
 if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
@@ -53,8 +55,10 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
 		print('<div><pre>');
 		switch ($_POST['rebootmode']) {
 			case 'FSCKReboot':
-				mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
-				system_reboot();
+				if (!in_array($platform['name'], $no_options)) {
+					mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
+					system_reboot();
+				}
 				break;
 			case 'Reroot':
 				if (!is_module_loaded("zfs.ko")) {
@@ -117,8 +121,12 @@ else:
 
 $form = new Form(false);
 
-$help = 'Click "Normal reboot" to reboot the system immediately, "Reboot with Filessystem Check" to reboot and run filesystem check';
-$modeslist = ['Reboot' => 'Normal reboot', 'FSCKReboot' => 'Reboot with Filesystem Check'];
+$help = 'Click "Normal reboot" to reboot the system immediately';
+$modeslist = ['Reboot' => 'Normal reboot'];
+if (!in_array($platform['name'], $no_options)) {
+        $help .= ', "Reboot with Filesystem Check" to reboot and run filesystem check';
+        $modeslist += ['FSCKReboot' => 'Reboot with Filesystem Check'];
+        }
 if (!is_module_loaded("zfs.ko")) {
 	$help .= ' or "Reroot" to stop processes, remount disks and re-run startup sequence';
 	$modeslist += ['Reroot' => 'Reroot'];

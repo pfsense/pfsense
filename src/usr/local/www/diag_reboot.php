@@ -121,7 +121,7 @@ else:
 
 $form = new Form(false);
 
-$help = 'Click "Normal reboot" to reboot the system immediately';
+$help = 'Select "Normal reboot" to reboot the system immediately';
 $modeslist = ['Reboot' => 'Normal reboot'];
 if (!in_array($platform['name'], $no_options)) {
         $help .= ', "Reboot with Filesystem Check" to reboot and run filesystem check';

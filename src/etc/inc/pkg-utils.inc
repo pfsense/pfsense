@@ -1492,7 +1492,21 @@ function update_repos() {
 				$osver = php_uname('r');
 				$v = strtolower(php_uname('v'));
 				$ed =  (strpos($v, 'factory') !== false) ? "Factory":"Community";
-				$version = "{\"os\":\"" . $os . "\",\"osver\":\"" . $osver . "\",\"prod\":\"pfSense\"," . "\"ver\":\"" . $info[0]['version'] . "\",\"ed\":\"" . $ed . "\"}";
+				$pkglist = get_pkg_info("all", false, true);
+				$version = "{\"os\":\"" . $os . "\",\"osver\":\"" . $osver . "\",\"prod\":\"pfSense\"," . "\"ver\":\"" . $info[0]['version'] . "\",\"ed\":\"" . $ed . "\",\"pkgs\":[";
+
+				$first = true;
+
+				foreach($pkglist as $pkg) {
+					if (!$first) {
+						$version .= ",";
+					}
+
+					$version .= "{\"name\":\"" . $pkg['shortname'] . "\",\"ver\":\"" . $pkg['version'] . "\"}";
+					$first = false;
+				}
+
+				$version .= "]}";
 
 				$arch =  php_uname('m');
 				$locale = $config['system']['language'];

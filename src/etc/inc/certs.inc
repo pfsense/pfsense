@@ -1668,4 +1668,97 @@ function cert_restart_services($services) {
 	}
 	return true;
 }
+
+function cert_get_expiration_days($cert) {
+	if (!is_array($cert) || empty($cert['crt'])) {
+		return null;
+	}
+	$cert_details = openssl_x509_parse(base64_decode($cert['crt']));
+	return (int) round(($cert_details['validTo_time_t'] - time()) / 86400);
+}
+
+function cert_print_infoblock($cert) {
+	if (!is_array($cert) || empty($cert['crt'])) {
+		return null;
+	}
+	$certextinfo = "";
+	$cert_details = openssl_x509_parse(base64_decode($cert['crt']));
+	if (isset($cert_details['serialNumber']) && (strlen($cert_details['serialNumber']) > 0)) {
+		$certextinfo .= '<b>' . gettext("Serial: ") . '</b> ';
+		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($cert_details['serialNumber'], true));
+		$certextinfo .= '<br/>';
+	}
+	$certsig = cert_get_sigtype($cert['crt']);
+	if (is_array($certsig) && !empty($certsig) && !empty($certsig['shortname'])) {
+		$certextinfo .= '<b>' . gettext("Signature Digest: ") . '</b> ';
+		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($certsig['shortname'], true));
+		$certextinfo .= '<br/>';
+	}
+	$sans = cert_get_sans($cert['crt']);
+	if (is_array($sans) && !empty($sans)) {
+		$certextinfo .= '<b>' . gettext("SAN: ") . '</b> ';
+		$certextinfo .= htmlspecialchars(implode(', ', cert_escape_x509_chars($sans, true)));
+		$certextinfo .= '<br/>';
+	}
+	$purpose = cert_get_purpose($cert['crt']);
+	if (is_array($purpose) && !empty($purpose['ku'])) {
+		$certextinfo .= '<b>' . gettext("KU: ") . '</b> ';
+		$certextinfo .= htmlspecialchars(implode(', ', $purpose['ku']));
+		$certextinfo .= '<br/>';
+	}
+	if (is_array($purpose) && !empty($purpose['eku'])) {
+		$certextinfo .= '<b>' . gettext("EKU: ") . '</b> ';
+		$certextinfo .= htmlspecialchars(implode(', ', $purpose['eku']));
+		$certextinfo .= '<br/>';
+	}
+	if (cert_get_ocspstaple($cert['crt'])) {
+		$certextinfo .= '<b>' . gettext("OCSP: ") . '</b> ';
+		$certextinfo .= gettext("Must Staple");
+	}
+	if (!empty($cert['prv'])) {
+		$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
+		$key_details = openssl_pkey_get_details($res_key);
+		$certextinfo .= '<b>' . gettext("Key Type: ") . '</b> ';
+		if ($key_details['type'] == OPENSSL_KEYTYPE_RSA) {
+			$certextinfo .= 'RSA<br/>';
+			$certextinfo .= '<b>' . gettext("Key Size: ") . '</b> ';
+			$certextinfo .= $key_details['bits'] . '<br/>';
+		} else {
+			$certextinfo .= 'ECDSA<br/>';
+			$certextinfo .= '<b>' . gettext("Elliptic curve name: ") . '</b>';
+			$certextinfo .= $key_details['ec']['curve_name'] . '<br/>';
+		}
+	}
+	if (!empty($cert_details['name'])) {
+		$certextinfo .= '<b>' . gettext("DN: ") . '</b> ';
+		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($cert_details['name'], true));
+		$certextinfo .= '<br/>';
+	}
+	if (!empty($cert_details['hash'])) {
+		$certextinfo .= '<b>' . gettext("Hash: ") . '</b> ';
+		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($cert_details['hash'], true));
+		$certextinfo .= '<br/>';
+	}
+	if (is_array($cert_details["extensions"]) && !empty($cert_details["extensions"]["subjectKeyIdentifier"])) {
+		$certextinfo .= '<b>' . gettext("Subject Key ID: ") . '</b> ';
+		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($cert_details["extensions"]["subjectKeyIdentifier"], true));
+		$certextinfo .= '<br/>';
+	}
+	if (is_array($cert_details["extensions"]) && !empty($cert_details["extensions"]["authorityKeyIdentifier"])) {
+		$certextinfo .= '<b>' . gettext("Authority Key ID: ") . '</b> ';
+		$certextinfo .= str_replace("\n", '<br/>', htmlspecialchars(cert_escape_x509_chars($cert_details["extensions"]["authorityKeyIdentifier"], true)));
+		$certextinfo .= '<br/>';
+	}
+	$expiredays = cert_get_expiration_days($cert);
+	$certextinfo .= '<b>' . gettext("Lifetime: ") . '</b> ';
+	$certextinfo .= sprintf(gettext(($expiredays > 0) ? "%d days until expiration" : "Expired %d days ago"), abs($expiredays));
+	$certextinfo .= '<br/>';
+	if (!empty($certextinfo)) { ?>
+		<div class="infoblock">
+		<? print_info_box($certextinfo, 'info', false); ?>
+		</div>
+	<?php
+	}
+}
+
 ?>

@@ -442,6 +442,7 @@ foreach ($a_ca as $i => $ca):
 					<td><?=$certcount?></td>
 					<td>
 						<?=$subj?>
+						<?php cert_print_infoblock($ca); ?>
 						<br />
 						<small>
 							<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>

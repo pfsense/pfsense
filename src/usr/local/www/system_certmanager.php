@@ -1223,17 +1223,11 @@ foreach ($a_cert as $i => $cert):
 	if (!is_array($cert) || empty($cert)) {
 		continue;
 	}
-	if (!empty($cert['prv'])) {
-		$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
-		$key_details = openssl_pkey_get_details($res_key);
-	}
 	$name = htmlspecialchars($cert['descr']);
-	$sans = array();
 	if ($cert['crt']) {
 		$subj = cert_get_subject($cert['crt']);
 		$issuer = cert_get_issuer($cert['crt']);
 		$purpose = cert_get_purpose($cert['crt']);
-		$sans = cert_get_sans($cert['crt']);
 		list($startdate, $enddate) = cert_get_dates($cert['crt']);
 
 		if ($subj == $issuer) {
@@ -1254,7 +1248,6 @@ foreach ($a_cert as $i => $cert):
 
 	if ($cert['csr']) {
 		$subj = htmlspecialchars(cert_escape_x509_chars(csr_get_subject($cert['csr']), true));
-		$sans = cert_get_sans($cert['crt']);
 		$caname = "<em>" . gettext("external - signature pending") . "</em>";
 	}
 
@@ -1277,58 +1270,7 @@ foreach ($a_cert as $i => $cert):
 					<td><?=$caname?></td>
 					<td>
 						<?=$subj?>
-						<?php
-						$certextinfo = "";
-						$certserial = cert_get_serial($cert['crt']);
-						if (!empty($certserial)) {
-							$certextinfo .= '<b>' . gettext("Serial: ") . '</b> ';
-							$certextinfo .= htmlspecialchars(cert_escape_x509_chars($certserial, true));
-							$certextinfo .= '<br/>';
-						}
-						$certsig = cert_get_sigtype($cert['crt']);
-						if (is_array($certsig) && !empty($certsig) && !empty($certsig['shortname'])) {
-							$certextinfo .= '<b>' . gettext("Signature Digest: ") . '</b> ';
-							$certextinfo .= htmlspecialchars(cert_escape_x509_chars($certsig['shortname'], true));
-							$certextinfo .= '<br/>';
-						}
-						if (is_array($sans) && !empty($sans)) {
-							$certextinfo .= '<b>' . gettext("SAN: ") . '</b> ';
-							$certextinfo .= htmlspecialchars(implode(', ', cert_escape_x509_chars($sans, true)));
-							$certextinfo .= '<br/>';
-						}
-						if (is_array($purpose) && !empty($purpose['ku'])) {
-							$certextinfo .= '<b>' . gettext("KU: ") . '</b> ';
-							$certextinfo .= htmlspecialchars(implode(', ', $purpose['ku']));
-							$certextinfo .= '<br/>';
-						}
-						if (is_array($purpose) && !empty($purpose['eku'])) {
-							$certextinfo .= '<b>' . gettext("EKU: ") . '</b> ';
-							$certextinfo .= htmlspecialchars(implode(', ', $purpose['eku']));
-							$certextinfo .= '<br/>';
-						}
-						if (cert_get_ocspstaple($cert['crt'])) {
-							$certextinfo .= '<b>' . gettext("OCSP: ") . '</b> ';
-							$certextinfo .= gettext("Must Staple");
-						}
-						if (!empty($cert['prv'])) {
-							$certextinfo .= '<b>' . gettext("Key type: ") . '</b> ';
-							if ($key_details['type'] == OPENSSL_KEYTYPE_RSA) {
-								$certextinfo .= 'RSA<br/>';
-								$certextinfo .= '<b>' . gettext("Key size: ") . '</b> ';
-								$certextinfo .= $key_details['bits'] . '<br/>';
-							} else {
-								$certextinfo .= 'ECDSA<br/>';
-								$certextinfo .= '<b>' . gettext("Elliptic curve name: ") . '</b>';
-								$certextinfo .= $key_details['ec']['curve_name'] . '<br/>';
-							}
-						}
-						?>
-						<?php if (!empty($certextinfo)): ?>
-							<div class="infoblock">
-							<? print_info_box($certextinfo, 'info', false); ?>
-							</div>
-						<?php endif?>
-
+						<?= cert_print_infoblock($cert); ?>
 						<?php if (!empty($startdate) || !empty($enddate)): ?>
 						<br />
 						<small>

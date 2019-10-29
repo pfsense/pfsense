@@ -1228,7 +1228,6 @@ foreach ($a_cert as $i => $cert):
 		$subj = cert_get_subject($cert['crt']);
 		$issuer = cert_get_issuer($cert['crt']);
 		$purpose = cert_get_purpose($cert['crt']);
-		list($startdate, $enddate) = cert_get_dates($cert['crt']);
 
 		if ($subj == $issuer) {
 			$caname = '<i>'. gettext("self-signed") .'</i>';
@@ -1271,12 +1270,7 @@ foreach ($a_cert as $i => $cert):
 					<td>
 						<?=$subj?>
 						<?= cert_print_infoblock($cert); ?>
-						<?php if (!empty($startdate) || !empty($enddate)): ?>
-						<br />
-						<small>
-							<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
-						</small>
-						<?php endif?>
+						<?php cert_print_dates($cert);?>
 					</td>
 					<td>
 						<?php if (is_cert_revoked($cert)): ?>

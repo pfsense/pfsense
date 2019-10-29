@@ -408,7 +408,6 @@ foreach ($a_ca as $i => $ca):
 	$name = htmlspecialchars($ca['descr']);
 	$subj = cert_get_subject($ca['crt']);
 	$issuer = cert_get_issuer($ca['crt']);
-	list($startdate, $enddate) = cert_get_dates($ca['crt']);
 	if ($subj == $issuer) {
 		$issuer_name = gettext("self-signed");
 	} else {
@@ -443,10 +442,7 @@ foreach ($a_ca as $i => $ca):
 					<td>
 						<?=$subj?>
 						<?php cert_print_infoblock($ca); ?>
-						<br />
-						<small>
-							<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
-						</small>
+						<?php cert_print_dates($ca);?>
 					</td>
 					<td class="text-nowrap">
 						<?php if (is_openvpn_server_ca($ca['refid'])): ?>

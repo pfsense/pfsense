@@ -1669,90 +1669,229 @@ function cert_restart_services($services) {
 	return true;
 }
 
-function cert_get_expiration_days($cert) {
+/****f* certs/cert_get_lifetime
+ * NAME
+ *   cert_get_lifetime - Returns the number of days the certificate is valid
+ * INPUTS
+ *   $untilexpire: Boolean
+ *     true: The number of days returned is from now until the certificate expiration.
+ *     false (default): The number of days returned is the total lifetime of the certificate.
+ * RESULT
+ *   Integer number of days in the certificate total or remaining lifetime
+ ******/
+
+function cert_get_lifetime($cert, $untilexpire = false) {
+	/* If the certificate is not valid, bail. */
 	if (!is_array($cert) || empty($cert['crt'])) {
 		return null;
 	}
+	/* Read certificate details */
 	$cert_details = openssl_x509_parse(base64_decode($cert['crt']));
-	return (int) round(($cert_details['validTo_time_t'] - time()) / 86400);
+	/* Determine which start time to use (now, or cert start) */
+	$fromtime = ($untilexpire) ? time() : $cert_details['validFrom_time_t'];
+	/* Calculate and return the requested duration, converting from seconds to days. */
+	return (int) round(($cert_details['validTo_time_t'] - $fromtime) / 86400);
 }
 
-function cert_print_infoblock($cert) {
+/****f* certs/cert_analyze_lifetime
+ * NAME
+ *   cert_analyze_lifetime - Analyze a certificate lifetime for expiration notices
+ * INPUTS
+ *   $expiredays: Number of days until the certificate expires (See cert_get_lifetime())
+ * RESULT
+ *   An array of two entries:
+ *   0/$lrclass: A bootstrap name for use with classes like text-<x>
+ *   1/$expstring: A text analysis describing the expiration timeframe.
+ ******/
+
+function cert_analyze_lifetime($expiredays) {
+	/* Number of days at which to warn of expiration.
+	 * Might move to to global or a user setting. */
+	$warning_days = 30;
+
+	if ($expiredays > $warning_days) {
+		/* Not expiring soon */
+		$lrclass = 'normal';
+		$expstring = gettext("%d %s until expiration");
+	} elseif ($expiredays > 0) {
+		/* Still valid but expiring soon */
+		$lrclass = 'warning';
+		$expstring = gettext("Expiring soon, in %d %s");
+	} else {
+		/* Certificate has expired */
+		$lrclass = 'danger';
+		$expstring = gettext("Expired %d %s ago");
+	}
+	$days = (abs($expiredays) == 1) ? gettext('day') : gettext('days');
+	$expstring = sprintf($expstring, abs($expiredays), $days);
+	return array($lrclass, $expstring);
+}
+
+/****f* certs/cert_print_dates
+ * NAME
+ *   cert_print_dates - Print the start and end timestamps for the given certificate
+ * INPUTS
+ *   $cert: CA or Cert entry for which the dates will be printed
+ * RESULT
+ *   Returns null if the passed entry is invalid
+ *   Otherwise, outputs the dates to the user with formatting.
+ ******/
+
+function cert_print_dates($cert) {
+	/* If the certificate is not valid, bail. */
 	if (!is_array($cert) || empty($cert['crt'])) {
 		return null;
 	}
+	/* Attempt to extract the dates from the certificate */
+	list($startdate, $enddate) = cert_get_dates($cert['crt']);
+	/* If either of the timestamps are empty, then do not print anything.
+	 * The entry may not be valid or it may just be missing date information */
+	if (empty($startdate) || empty($enddate)) {
+		return null;
+	}
+	/* Get the expiration days */
+	$expiredays = cert_get_lifetime($cert, true);
+	/* Analyze the lifetime value */
+	list($lrclass, $expstring) = cert_analyze_lifetime($expiredays);
+	/* Output the dates, with a tooltip showing days until expiration, and
+	 * a visual indication of warning/expired status. */
+	?>
+	<br />
+	<small>
+	<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br />
+	<?=gettext("Valid Until")?>:
+	<span class="text-<?=$lrclass?>" data-toggle="tooltip" data-placement="bottom" title="<?= $expstring ?>">
+	<b><?=$enddate ?></b>
+	</span>
+	</small>
+	<?php
+}
+
+/****f* certs/cert_print_infoblock
+ * NAME
+ *   cert_print_infoblock - Print an information block containing certificate details
+ * INPUTS
+ *   $cert: CA or Cert entry for which the information will be printed
+ * RESULT
+ *   Returns null if the passed entry is invalid
+ *   Otherwise, outputs information to the user with formatting.
+ ******/
+
+function cert_print_infoblock($cert) {
+	/* If the certificate is not valid, bail. */
+	if (!is_array($cert) || empty($cert['crt'])) {
+		return null;
+	}
+	/* Variable to hold the formatted information */
 	$certextinfo = "";
+
+	/* Serial number */
 	$cert_details = openssl_x509_parse(base64_decode($cert['crt']));
 	if (isset($cert_details['serialNumber']) && (strlen($cert_details['serialNumber']) > 0)) {
 		$certextinfo .= '<b>' . gettext("Serial: ") . '</b> ';
 		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($cert_details['serialNumber'], true));
 		$certextinfo .= '<br/>';
 	}
+
+	/* Digest type */
 	$certsig = cert_get_sigtype($cert['crt']);
 	if (is_array($certsig) && !empty($certsig) && !empty($certsig['shortname'])) {
 		$certextinfo .= '<b>' . gettext("Signature Digest: ") . '</b> ';
 		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($certsig['shortname'], true));
 		$certextinfo .= '<br/>';
 	}
+
+	/* Subject Alternative Name (SAN) list */
 	$sans = cert_get_sans($cert['crt']);
 	if (is_array($sans) && !empty($sans)) {
 		$certextinfo .= '<b>' . gettext("SAN: ") . '</b> ';
 		$certextinfo .= htmlspecialchars(implode(', ', cert_escape_x509_chars($sans, true)));
 		$certextinfo .= '<br/>';
 	}
+
+	/* Key usage */
 	$purpose = cert_get_purpose($cert['crt']);
 	if (is_array($purpose) && !empty($purpose['ku'])) {
 		$certextinfo .= '<b>' . gettext("KU: ") . '</b> ';
 		$certextinfo .= htmlspecialchars(implode(', ', $purpose['ku']));
 		$certextinfo .= '<br/>';
 	}
+
+	/* Extended key usage */
 	if (is_array($purpose) && !empty($purpose['eku'])) {
 		$certextinfo .= '<b>' . gettext("EKU: ") . '</b> ';
 		$certextinfo .= htmlspecialchars(implode(', ', $purpose['eku']));
 		$certextinfo .= '<br/>';
 	}
+
+	/* OCSP / Must Staple */
 	if (cert_get_ocspstaple($cert['crt'])) {
 		$certextinfo .= '<b>' . gettext("OCSP: ") . '</b> ';
 		$certextinfo .= gettext("Must Staple");
 	}
+
+	/* Private key information */
 	if (!empty($cert['prv'])) {
 		$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
 		$key_details = openssl_pkey_get_details($res_key);
+
+		/* Key type (RSA or EC) */
 		$certextinfo .= '<b>' . gettext("Key Type: ") . '</b> ';
 		if ($key_details['type'] == OPENSSL_KEYTYPE_RSA) {
+			/* RSA Key size */
 			$certextinfo .= 'RSA<br/>';
 			$certextinfo .= '<b>' . gettext("Key Size: ") . '</b> ';
 			$certextinfo .= $key_details['bits'] . '<br/>';
 		} else {
+			/* Elliptic curve (EC) key curve name */
 			$certextinfo .= 'ECDSA<br/>';
 			$certextinfo .= '<b>' . gettext("Elliptic curve name: ") . '</b>';
 			$certextinfo .= $key_details['ec']['curve_name'] . '<br/>';
 		}
 	}
+
+	/* Distinguished name (DN) */
 	if (!empty($cert_details['name'])) {
 		$certextinfo .= '<b>' . gettext("DN: ") . '</b> ';
 		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($cert_details['name'], true));
 		$certextinfo .= '<br/>';
 	}
+
+	/* Hash value */
 	if (!empty($cert_details['hash'])) {
 		$certextinfo .= '<b>' . gettext("Hash: ") . '</b> ';
 		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($cert_details['hash'], true));
 		$certextinfo .= '<br/>';
 	}
+
+	/* Subject Key Identifier (SKID) */
 	if (is_array($cert_details["extensions"]) && !empty($cert_details["extensions"]["subjectKeyIdentifier"])) {
 		$certextinfo .= '<b>' . gettext("Subject Key ID: ") . '</b> ';
 		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($cert_details["extensions"]["subjectKeyIdentifier"], true));
 		$certextinfo .= '<br/>';
 	}
+
+	/* Authority Key Identifier (AKID) */
 	if (is_array($cert_details["extensions"]) && !empty($cert_details["extensions"]["authorityKeyIdentifier"])) {
 		$certextinfo .= '<b>' . gettext("Authority Key ID: ") . '</b> ';
 		$certextinfo .= str_replace("\n", '<br/>', htmlspecialchars(cert_escape_x509_chars($cert_details["extensions"]["authorityKeyIdentifier"], true)));
 		$certextinfo .= '<br/>';
 	}
-	$expiredays = cert_get_expiration_days($cert);
-	$certextinfo .= '<b>' . gettext("Lifetime: ") . '</b> ';
-	$certextinfo .= sprintf(gettext(($expiredays > 0) ? "%d days until expiration" : "Expired %d days ago"), abs($expiredays));
+
+	/* Total Lifetime (days from cert start to end) */
+	$lifetime = cert_get_lifetime($cert);
+	$certextinfo .= '<b>' . gettext("Total Lifetime: ") . '</b> ';
+	$certextinfo .= sprintf("%d %s", $lifetime, (abs($lifetime) == 1) ? gettext('day') : gettext('days'));
 	$certextinfo .= '<br/>';
+
+	/* Lifetime before certificate expires (days from now to end) */
+	$expiredays = cert_get_lifetime($cert, true);
+	list($lrclass, $expstring) = cert_analyze_lifetime($expiredays);
+	$certextinfo .= '<b>' . gettext("Lifetime Remaining: ") . '</b> ';
+	$certextinfo .= "<span class=\"text-{$lrclass}\">{$expstring}</span>";
+	$certextinfo .= '<br/>';
+
+	/* Output the infoblock */
 	if (!empty($certextinfo)) { ?>
 		<div class="infoblock">
 		<? print_info_box($certextinfo, 'info', false); ?>

@@ -86,6 +86,7 @@ $g = array(
 	"default_timezone" => "Etc/UTC",
 	"language" => "en_US",
 	"default_config_backup_count" => 30,
+	"default_cert_expiredays" => 30,
 	"default_log_entries" => 500,
 	"default_log_size" => 512000,
 	"minimumtableentries_bogonsv6" => 400000,

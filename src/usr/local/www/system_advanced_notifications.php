@@ -33,7 +33,15 @@ require_once("notices.inc");
 require_once("pfsense-utils.inc");
 
 $pconfig = array();
+init_config_arr(array('notifications', 'certexpire'));
 init_config_arr(array('notifications', 'smtp'));
+
+// General Settings
+$pconfig['cert_enable_notify'] = ($config['notifications']['certexpire']['enable'] != "disable");
+if ($config['notifications']['certexpire']['expiredays']) {
+	$pconfig['certexpiredays'] = $config['notifications']['certexpire']['expiredays'];
+}
+
 
 // SMTP
 $pconfig['disable_smtp'] = isset($config['notifications']['smtp']['disable']);
@@ -75,6 +83,10 @@ if ($_POST) {
 
 	$testsmtp = isset($_POST['test-smtp']);
 	if (isset($_POST['save']) || $testsmtp) {
+
+		// General Settings
+		$config['notifications']['certexpire']['enable'] = ($_POST['cert_enable_notify'] == "yes") ? "enable" : "disable";
+		$config['notifications']['certexpire']['expiredays'] = $_POST['certexpiredays'];
 
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
@@ -168,6 +180,28 @@ $tab_array[] = array(gettext("Notifications"), true, "system_advanced_notificati
 display_top_tabs($tab_array);
 
 $form = new Form;
+
+$section = new Form_Section('General Settings');
+
+$section->addInput(new Form_Checkbox(
+	'cert_enable_notify',
+	'Certificate Expiration',
+	'Enable daily notifications of expired and soon-to-expire certificates',
+	$pconfig['cert_enable_notify']
+))->setHelp('When enabled, the firewall will check CA and Certificate expiration ' .
+	'times daily and file notices when expired or soon-to-expire ' .
+	'entries are detected.');
+$section->addInput(new Form_Input(
+	'certexpiredays',
+	'Certificate Expiration Threshold',
+	'number',
+	$pconfig['certexpiredays']
+))->setAttribute('placeholder', $g['default_cert_expiredays'])
+  ->setHelp('The number of days at which a certificate lifetime is considered to ' .
+	'be expiring soon and worthy of notification. Default is 30 days.');
+
+$form->add($section);
+
 
 $section = new Form_Section('E-Mail');
 

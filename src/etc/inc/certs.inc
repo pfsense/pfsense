@@ -1705,9 +1705,15 @@ function cert_get_lifetime($cert, $untilexpire = false) {
  ******/
 
 function cert_analyze_lifetime($expiredays) {
-	/* Number of days at which to warn of expiration.
-	 * Might move to to global or a user setting. */
-	$warning_days = 30;
+	global $config, $g;
+	/* Number of days at which to warn of expiration. */
+	init_config_arr(array('notifications', 'certexpire'));
+	if (!isset($config['notifications']['certexpire']['expiredays']) ||
+	    empty($config['notifications']['certexpire']['expiredays'])) {
+		$warning_days = $g['default_cert_expiredays'];
+	} else {
+		$warning_days = $config['notifications']['certexpire']['expiredays'];
+	}
 
 	if ($expiredays > $warning_days) {
 		/* Not expiring soon */

@@ -1907,4 +1907,53 @@ function cert_print_infoblock($cert) {
 	}
 }
 
+/****f* certs/cert_notify_expiring
+ * NAME
+ *   cert_notify_expiring - Notify admin about expiring certificates
+ * INPUTS
+ *   None
+ * RESULT
+ *   File a notice containing expiring certificate information, which is then
+ *   logged, displayed in the GUI, and sent via e-mail (if enabled).
+ ******/
+
+function cert_notify_expiring() {
+	global $config;
+
+	/* If certificate expiration notifications are disabled, there is nothing to do. */
+	init_config_arr(array('notifications', 'certexpire'));
+	if ($config['notifications']['certexpire']['enable'] == "disable") {
+		return;
+	}
+
+	$notifications = array();
+
+	/* Check all CA and Cert entries at once */
+	init_config_arr(array('ca'));
+	init_config_arr(array('cert'));
+	$all_certs = array_merge_recursive_unique($config['ca'], $config['cert']);
+
+	foreach ($all_certs as $cert) {
+		/* Fetch and analyze expiration */
+		$expiredays = cert_get_lifetime($cert, true);
+		/* If the result is null, then the lifetime data is missing, so skip the invalid entry. */
+		if ($expiredays == null) {
+			continue;
+		}
+		list($lrclass, $expstring) = cert_analyze_lifetime($expiredays);
+		/* Only notify if the certificate is expiring soon, or has
+		 * already expired */
+		if ($lrclass != 'normal') {
+			$notify_string = (array_key_exists('serial', $cert)) ? gettext('Certificate Authority') : gettext('Certificate');
+			$notify_string .= ": {$cert['descr']} ({$cert['refid']}): {$expstring}";
+			$notifications[] = $notify_string;
+		}
+	}
+	if (!empty($notifications)) {
+		$message = gettext("The following CA/Certificate entries are expiring:") . "\n" .
+			implode("\n", $notifications);
+		file_notice("Certificate Expiration", $message, "Certificate Manager");
+	}
+}
+
 ?>

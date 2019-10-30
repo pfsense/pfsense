@@ -27,6 +27,9 @@ require_once("notices.inc");
 /* Run daily tasks */
 function periodic_daily() {
 
+	require_once("certs.inc");
+	cert_notify_expiring();
+
 	/* Allow packages to define and execute daily tasks */
 	pkg_call_plugins('plugin_periodic', array('event' => 'daily'));
 

@@ -86,7 +86,8 @@ if ($_POST) {
 
 		// General Settings
 		$config['notifications']['certexpire']['enable'] = ($_POST['cert_enable_notify'] == "yes") ? "enable" : "disable";
-		if (is_numericint($_POST['certexpiredays']) && ($_POST['certexpiredays'] > 0)) {
+		if (empty($_POST['certexpiredays']) ||
+		    (is_numericint($_POST['certexpiredays']) && ($_POST['certexpiredays'] > 0))) {
 			$config['notifications']['certexpire']['expiredays'] = $_POST['certexpiredays'];
 		} else {
 			$input_errors[] = gettext("Certificate Expiration Threshold must be a positive integer");

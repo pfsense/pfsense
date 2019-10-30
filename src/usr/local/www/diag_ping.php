@@ -54,15 +54,12 @@ if ($_POST || $_REQUEST['host']) {
 	$reqdfields = explode(" ", "host count");
 	$reqdfieldsn = array(gettext("Host"), gettext("Count"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
-
-	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT)) {
+	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT) || (!is_numericint($_REQUEST['wait']))) {
 		$input_errors[] = sprintf(gettext("Count must be between 1 and %s"), MAX_COUNT);
-	}
-	
-	if (($_REQUEST['wait'] < 1) || ($_REQUEST['wait'] > MAX_WAIT)) {
+	}	
+	if (($_REQUEST['wait'] < 1) || ($_REQUEST['wait'] > MAX_WAIT) || (!is_numericint($_REQUEST['wait']))) {
 		$input_errors[] = sprintf(gettext("Wait must be between 1 and %s"), MAX_WAIT);
-	}
-	
+	}	
 	$host = trim($_REQUEST['host']);
 	$ipproto = $_REQUEST['ipproto'];
 	if (($ipproto == "ipv4") && is_ipaddrv6($host)) {
@@ -79,14 +76,8 @@ if ($_POST || $_REQUEST['host']) {
 		if (isset($_REQUEST['sourceip'])) {
 			$sourceip = $_REQUEST['sourceip'];
 		}
-		$count = $_REQUEST['count'];
-		if (preg_match('/[^0-9]/', $count)) {
-			$count = DEFAULT_COUNT;
-		}
-		$wait = $_REQUEST['wait'];
-		if (preg_match('/[^0-9]/', $wait)) {
-			$wait = DEFAULT_WAIT;
-		}
+		$count = (empty($_REQUEST['count'])) ? DEFAULT_WAIT : $_REQUEST['count'];
+		$wait = (empty($_REQUEST['wait'])) ? DEFAULT_WAIT : $_REQUEST['wait'];
 	}
 }
 
@@ -170,7 +161,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'wait',
-	'Number of seconds to wait between pings',
+	'Seconds between pings',
 	$wait,
 	array_combine(range(1, MAX_WAIT), range(1, MAX_WAIT))
 ))->setHelp('Number of seconds to wait between pings.');

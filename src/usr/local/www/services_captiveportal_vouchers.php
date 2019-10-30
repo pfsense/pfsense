@@ -534,7 +534,8 @@ $section->addInput(new Form_Input(
 	'vouchersyncusername',
 	'Voucher sync username',
 	'text',
-	$pconfig['vouchersyncusername']
+	$pconfig['vouchersyncusername'],
+	['autocomplete' => 'new-password']
 ))->setHelp('This is the username of the master voucher nodes webConfigurator.');
 
 $section->addPassword(new Form_Input(

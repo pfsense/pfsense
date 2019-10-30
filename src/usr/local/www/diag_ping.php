@@ -83,9 +83,9 @@ if ($_POST || $_REQUEST['host']) {
 		if (preg_match('/[^0-9]/', $count)) {
 			$count = DEFAULT_COUNT;
 		}
-		$count = $_REQUEST['wait'];
+		$wait = $_REQUEST['wait'];
 		if (preg_match('/[^0-9]/', wait)) {
-			$count = DEFAULT_WAIT;
+			$wait = DEFAULT_WAIT;
 		}
 	}
 }

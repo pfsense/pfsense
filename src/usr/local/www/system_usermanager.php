@@ -784,7 +784,8 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'usernamefld',
 		'*Username',
 		'text',
-		$pconfig['usernamefld']
+		$pconfig['usernamefld'],
+		['autocomplete' => 'new-password']
 	));
 
 	if ($ro) {
@@ -808,12 +809,16 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	$group->add(new Form_Input(
 		'passwordfld1',
 		'Password',
-		'password'
+		'password',
+		null,
+		['autocomplete' => 'new-password']
 	));
 	$group->add(new Form_Input(
 		'passwordfld2',
 		'Confirm Password',
-		'password'
+		'password',
+		null,
+		['autocomplete' => 'new-password']
 	));
 
 	$section->add($group);

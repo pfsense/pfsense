@@ -110,13 +110,17 @@ $section = new Form_Section('Update Password');
 $section->addInput(new Form_Input(
 	'passwordfld1',
 	'*Password',
-	'password'
+	'password',
+	null,
+	['autocomplete' => 'new-password']
 ));
 
 $section->addInput(new Form_Input(
 	'passwordfld2',
 	'*Confirmation',
-	'password'
+	'password',
+	null,
+	['autocomplete' => 'new-password']
 ))->setHelp('Select a new password');
 
 $form->add($section);

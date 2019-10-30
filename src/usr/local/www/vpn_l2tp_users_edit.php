@@ -151,7 +151,8 @@ $section->addInput(new Form_Input(
 	'usernamefld',
 	'*Username',
 	'text',
-	$pconfig['usernamefld']
+	$pconfig['usernamefld'],
+	['autocomplete' => 'new-password']
 ));
 
 $pwd = new Form_Input(

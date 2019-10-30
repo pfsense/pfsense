@@ -139,7 +139,8 @@ $section->addInput(new Form_Input(
 	'username',
 	'User name',
 	'text',
-	$pconfig['username']
+	$pconfig['username'],
+	['autocomplete' => 'new-password']
 ));
 
 $section->addPassword(new Form_Input(

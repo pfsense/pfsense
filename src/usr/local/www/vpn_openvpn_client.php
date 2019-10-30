@@ -626,7 +626,8 @@ if ($act=="new" || $act=="edit"):
 		'proxy_user',
 		'Username',
 		'text',
-		$pconfig['proxy_user']
+		$pconfig['proxy_user'],
+		['autocomplete' => 'new-password']
 	));
 
 	$section->addPassword(new Form_Input(
@@ -651,7 +652,8 @@ if ($act=="new" || $act=="edit"):
 		'auth_user',
 		'Username',
 		'text',
-		$pconfig['auth_user']
+		$pconfig['auth_user'],
+		['autocomplete' => 'new-password']
 	))->setHelp('Leave empty when no user name is needed');
 
 	$section->addPassword(new Form_Input(

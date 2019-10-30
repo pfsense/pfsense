@@ -279,14 +279,15 @@ $section->addInput(new Form_Input(
 	'Notification E-Mail auth username (optional)',
 	'text',
 	$pconfig['smtpusername'],
-	['autocomplete' => 'off']
+	['autocomplete' => 'new-password']
 ))->setHelp('Enter the e-mail address username for SMTP authentication.');
 
 $section->addPassword(new Form_Input(
 	'smtppassword',
 	'Notification E-Mail auth password',
 	'password',
-	$pconfig['smtppassword']
+	$pconfig['smtppassword'],
+	['autocomplete' => 'new-password']
 ))->setHelp('Enter the e-mail account password for SMTP authentication.');
 
 $section->addInput(new Form_Select(

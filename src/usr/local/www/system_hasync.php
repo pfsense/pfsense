@@ -163,7 +163,8 @@ $section->addInput(new Form_Input(
 	'username',
 	'Remote System Username',
 	'text',
-	$pconfig['username']
+	$pconfig['username'],
+	['autocomplete' => 'new-password']
 ))->setHelp('Enter the webConfigurator username of the system entered above for synchronizing the configuration.%1$s' .
 			'Do not use the Synchronize Config to IP and username option on backup cluster members!', '<br />');
 

@@ -495,14 +495,16 @@ if ($usernames != "") {
 			'username' . $counter,
 			null,
 			'text',
-			$user
+			$user,
+			['autocomplete' => 'new-password']
 		))->setHelp($numrows == $counter ? 'Username':null);
 
 		$group->add(new Form_Input(
 			'password' . $counter,
 			null,
 			'password',
-			$passwd
+			$passwd,
+			['autocomplete' => 'new-password']
 		))->setHelp($numrows == $counter ? 'Password':null);
 
 		$group->add(new Form_IpAddress(

@@ -1441,22 +1441,22 @@ events.push(function() {
 	});
 
 	function change_keytype() {
-       		hideClass('rsakeys', ($('#keytype').val() != 'RSA'));
-       		hideClass('ecnames', ($('#keytype').val() != 'ECDSA'));
-        }
+		hideClass('rsakeys', ($('#keytype').val() != 'RSA'));
+		hideClass('ecnames', ($('#keytype').val() != 'ECDSA'));
+	}
 
 	$('#keytype').change(function () {
-                change_keytype();
-        });
+		change_keytype();
+	});
 
 	function change_csrkeytype() {
-       		hideClass('csr_rsakeys', ($('#csr_keytype').val() != 'RSA'));
-       		hideClass('csr_ecnames', ($('#csr_keytype').val() != 'ECDSA'));
-        }
+		hideClass('csr_rsakeys', ($('#csr_keytype').val() != 'RSA'));
+		hideClass('csr_ecnames', ($('#csr_keytype').val() != 'ECDSA'));
+	}
 
 	$('#csr_keytype').change(function () {
-                change_csrkeytype();
-        });
+		change_csrkeytype();
+	});
 
 	// ---------- On initial page load ------------------------------------------------------------
 

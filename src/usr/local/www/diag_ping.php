@@ -40,7 +40,7 @@ require_once("guiconfig.inc");
 define('MAX_COUNT', 10);
 define('DEFAULT_COUNT', 3);
 define('MAX_WAIT', 10);
-define('DEFAULT_COUNT', 1);
+define('DEFAULT_WAIT', 1);
 $do_ping = false;
 $host = '';
 $count = DEFAULT_COUNT;

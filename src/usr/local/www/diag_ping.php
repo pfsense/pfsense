@@ -119,7 +119,7 @@ if ($do_ping) {
 		}
 	}
 
-	$cmd = "{$command} {$srcip} -c" . escapeshellarg($count) . " -i " . escapeshellarg($wait) . " " . escapeshellarg($host);
+	$cmd = "{$command} {$srcip} -c" . escapeshellarg($count) . " -i" . escapeshellarg($wait) . " " . escapeshellarg($host);
 	//echo "Ping command: {$cmd}\n";
 	$result = shell_exec($cmd);
 

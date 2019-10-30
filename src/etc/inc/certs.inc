@@ -1834,6 +1834,7 @@ function cert_print_infoblock($cert) {
 	if (cert_get_ocspstaple($cert['crt'])) {
 		$certextinfo .= '<b>' . gettext("OCSP: ") . '</b> ';
 		$certextinfo .= gettext("Must Staple");
+		$certextinfo .= '<br/>';
 	}
 
 	/* Private key information */

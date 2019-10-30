@@ -164,7 +164,7 @@ $section->addInput(new Form_Select(
 	'Seconds between pings',
 	$wait,
 	array_combine(range(1, MAX_WAIT), range(1, MAX_WAIT))
-))->setHelp('Number of seconds to wait between pings.');
+))->setHelp('Select the number of seconds to wait between pings.');
 
 $form->add($section);
 

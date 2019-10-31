@@ -523,7 +523,7 @@ if ($do_tcpdump) :
 	}
 
 	if (in_array($proto, $protos)) {
-		$matches[] = fixup_not($proto);
+		$matches[] = fixup_not(str_replace('carp', 'proto 112', $proto));
 	}
 
 	if ($port != "") {

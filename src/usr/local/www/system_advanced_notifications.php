@@ -37,7 +37,7 @@ init_config_arr(array('notifications', 'certexpire'));
 init_config_arr(array('notifications', 'smtp'));
 
 // General Settings
-$pconfig['cert_enable_notify'] = ($config['notifications']['certexpire']['enable'] != "disable");
+$pconfig['cert_enable_notify'] = ($config['notifications']['certexpire']['enable'] != "disabled");
 if ($config['notifications']['certexpire']['expiredays']) {
 	$pconfig['certexpiredays'] = $config['notifications']['certexpire']['expiredays'];
 }
@@ -85,7 +85,7 @@ if ($_POST) {
 	if (isset($_POST['save']) || $testsmtp) {
 
 		// General Settings
-		$config['notifications']['certexpire']['enable'] = ($_POST['cert_enable_notify'] == "yes") ? "enable" : "disable";
+		$config['notifications']['certexpire']['enable'] = ($_POST['cert_enable_notify'] == "yes") ? "enabled" : "disabled";
 		if (empty($_POST['certexpiredays']) ||
 		    (is_numericint($_POST['certexpiredays']) && ($_POST['certexpiredays'] > 0))) {
 			$config['notifications']['certexpire']['expiredays'] = $_POST['certexpiredays'];

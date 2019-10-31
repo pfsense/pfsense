@@ -1922,7 +1922,7 @@ function cert_notify_expiring() {
 
 	/* If certificate expiration notifications are disabled, there is nothing to do. */
 	init_config_arr(array('notifications', 'certexpire'));
-	if ($config['notifications']['certexpire']['enable'] == "disable") {
+	if ($config['notifications']['certexpire']['enable'] == "disabled") {
 		return;
 	}
 

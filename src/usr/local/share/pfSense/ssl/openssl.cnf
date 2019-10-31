@@ -195,7 +195,7 @@ keyUsage			= digitalSignature, keyEncipherment
 nsComment			= "OpenSSL Generated Server Certificate"
 subjectKeyIdentifier		= hash
 authorityKeyIdentifier		= keyid,issuer:always
-extendedKeyUsage		= serverAuth,1.3.6.1.5.5.8.2.2
+extendedKeyUsage		= serverAuth,clientAuth,1.3.6.1.5.5.8.2.2
 
 [ server_san ]
 
@@ -206,7 +206,7 @@ keyUsage			= digitalSignature, keyEncipherment
 nsComment			= "OpenSSL Generated Server Certificate"
 subjectKeyIdentifier		= hash
 authorityKeyIdentifier		= keyid,issuer:always
-extendedKeyUsage		= serverAuth,1.3.6.1.5.5.8.2.2
+extendedKeyUsage		= serverAuth,clientAuth,1.3.6.1.5.5.8.2.2
 subjectAltName			= $ENV::SAN
 
 [ req_usr_cert ]
@@ -236,7 +236,7 @@ nsCertType			= server
 keyUsage			= digitalSignature, keyEncipherment
 nsComment			= "OpenSSL Generated Server Certificate"
 subjectKeyIdentifier		= hash
-extendedKeyUsage		= serverAuth,1.3.6.1.5.5.8.2.2
+extendedKeyUsage		= serverAuth,clientAuth,1.3.6.1.5.5.8.2.2
 
 [ req_server_san ]
 
@@ -246,7 +246,7 @@ nsCertType			= server
 keyUsage			= digitalSignature, keyEncipherment
 nsComment			= "OpenSSL Generated Server Certificate"
 subjectKeyIdentifier		= hash
-extendedKeyUsage		= serverAuth,1.3.6.1.5.5.8.2.2
+extendedKeyUsage		= serverAuth,clientAuth,1.3.6.1.5.5.8.2.2
 subjectAltName			= $ENV::SAN
 
 [ v3_req ]

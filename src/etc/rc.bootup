@@ -182,6 +182,9 @@ system_hosts_generate();
 /* configure loopback interface */
 interfaces_loopback_configure();
 
+/* Setup Local CA Trust Store */
+ca_setup_trust_store();
+
 /* start syslogd */
 system_syslogd_start();
 

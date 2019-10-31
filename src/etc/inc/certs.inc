@@ -1898,6 +1898,11 @@ function cert_print_infoblock($cert) {
 	$certextinfo .= "<span class=\"text-{$lrclass}\">{$expstring}</span>";
 	$certextinfo .= '<br/>';
 
+	/* CA Trust store presence */
+	$certextinfo .= '<b>' . gettext("Trust Store: ") . '</b> ';
+	$certextinfo .= (isset($cert['trust']) && ($cert['trust'] == "enabled")) ? gettext('Included') : gettext('Excluded');
+	$certextinfo .= '<br/>';
+
 	/* Output the infoblock */
 	if (!empty($certextinfo)) { ?>
 		<div class="infoblock">
@@ -1953,6 +1958,50 @@ function cert_notify_expiring() {
 		$message = gettext("The following CA/Certificate entries are expiring:") . "\n" .
 			implode("\n", $notifications);
 		file_notice("Certificate Expiration", $message, "Certificate Manager");
+	}
+}
+
+/****f* certs/ca_setup_trust_store
+ * NAME
+ *   ca_setup_trust_store - Setup local CA trust store so that CA entries in the
+ *                          configuration may be trusted by the operating system.
+ * INPUTS
+ *   None
+ * RESULT
+ *   CAs marked as trusted in the configuration will be setup in the OS trust store.
+ ******/
+
+function ca_setup_trust_store() {
+	global $config;
+
+	/* This directory is trusted by OpenSSL on FreeBSD by default */
+	$trust_store_directory = '/etc/ssl/certs';
+
+	/* Create the directory if it does not already exist, and clean it up if it does. */
+	safe_mkdir($trust_store_directory);
+	unlink_if_exists("{$trust_store_directory}/*.0");
+
+	init_config_arr(array('ca'));
+	foreach ($config['ca'] as $ca) {
+		/* If the entry is invalid or is not trusted, skip it. */
+		if (!is_array($ca) ||
+		    empty($ca['crt']) ||
+		    !isset($ca['trust']) ||
+		    ($ca['trust'] != "enabled")) {
+			continue;
+		}
+
+		/* Decode the certificate contents */
+		$cert_contents = base64_decode($ca['crt']);
+		/* Get hash value to use for filename */
+		$cert_details = openssl_x509_parse($cert_contents);
+		$ca_filename = "{$trust_store_directory}/{$cert_details['hash']}.0";
+
+		/* Write CA to trust store and ensure it has correct permissions. */
+		file_put_contents($ca_filename, $cert_contents);
+		chmod($ca_filename, 0644);
+		chown($ca_filename, 'root');
+		chgrp($ca_filename, 'wheel');
 	}
 }
 

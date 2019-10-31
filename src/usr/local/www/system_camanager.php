@@ -87,6 +87,7 @@ if ($_POST['act'] == "del") {
 	$name = $a_ca[$id]['descr'];
 	unset($a_ca[$id]);
 	write_config();
+	ca_setup_trust_store();
 	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted."), htmlspecialchars($name));
 	pfSenseHeader("system_camanager.php");
 	exit;
@@ -102,6 +103,7 @@ if ($act == "edit") {
 	$pconfig['refid']  = $a_ca[$id]['refid'];
 	$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);
 	$pconfig['serial'] = $a_ca[$id]['serial'];
+	$pconfig['trust']  = ($a_ca[$id]['trust'] == 'enabled');
 	if (!empty($a_ca[$id]['prv'])) {
 		$pconfig['key'] = base64_decode($a_ca[$id]['prv']);
 	}
@@ -242,6 +244,7 @@ if ($_POST['save']) {
 		}
 
 		$ca['descr'] = $pconfig['descr'];
+		$ca['trust'] = ($pconfig['trust'] == 'yes') ? "enabled" : "disabled";
 
 		if ($act == "edit") {
 			$ca['descr']  = $pconfig['descr'];
@@ -317,6 +320,7 @@ if ($_POST['save']) {
 
 		if (!$input_errors) {
 			write_config();
+			ca_setup_trust_store();
 			pfSenseHeader("system_camanager.php");
 		}
 	}
@@ -574,6 +578,14 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['descr']
 ));
+
+$section->addInput(new Form_Checkbox(
+	'trust',
+	'Trust Store',
+	'Add this Certificate Authority to the Operating System Trust Store',
+	$pconfig['trust']
+))->setHelp('When enabled, the contents of the CA will be added to the trust ' .
+	'store so that they will be trusted by the operating system.');
 
 if (!isset($id) || $act == "edit") {
 	$section->addInput(new Form_Select(

@@ -48,6 +48,7 @@ $cert_types = array(
 
 global $cert_altname_types;
 global $openssl_digest_algs;
+global $cert_strict_values;
 $openssl_ecnames = openssl_get_curve_names();
 
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
@@ -740,14 +741,17 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'*Certificate Lifetime (days)',
 		'number',
 		$pconfig['csrsign_lifetime'] ? $pconfig['csrsign_lifetime']:'3650'
-	));
+	))->setHelp('The length of time the signed certificate will be valid, in days. %1$s' .
+		'Server certificates should not have a lifetime over 825 days or some platforms ' .
+		'may consider the certificate invalid.', '<br/>');
 	$section->addInput(new Form_Select(
 		'csrsign_digest_alg',
 		'*Digest Algorithm',
 		$pconfig['csrsign_digest_alg'],
 		array_combine($openssl_digest_algs, $openssl_digest_algs)
-	))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
-		'SHA1 when possible');
+	))->setHelp('The digest method used when the certificate is signed. %1$s' .
+		'The best practice is to use an algorithm stronger than SHA1. '.
+		'Some platforms may consider weaker digest algorithms invalid', '<br/>');
 
 	$form->add($section);
 
@@ -809,7 +813,9 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		null,
 		$pconfig['keylen'],
 		array_combine($cert_keylens, $cert_keylens)
-	));
+	))->setHelp('The length to use when generating a new RSA key, in bits. %1$s' .
+		'The Key Length should not be lower than 2048 or some platforms ' .
+		'may consider the certificate invalid.', '<br/>');
 	$section->add($group);
 
 	$group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
@@ -827,15 +833,18 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'*Digest Algorithm',
 		$pconfig['digest_alg'],
 		array_combine($openssl_digest_algs, $openssl_digest_algs)
-	))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
-		'SHA1 when possible.');
+	))->setHelp('The digest method used when the certificate is signed. %1$s' .
+		'The best practice is to use an algorithm stronger than SHA1. '.
+		'Some platforms may consider weaker digest algorithms invalid', '<br/>');
 
 	$section->addInput(new Form_Input(
 		'lifetime',
 		'*Lifetime (days)',
 		'number',
 		$pconfig['lifetime']
-	));
+	))->setHelp('The length of time the signed certificate will be valid, in days. %1$s' .
+		'Server certificates should not have a lifetime over 825 days or some platforms ' .
+		'may consider the certificate invalid.', '<br/>');
 
 	$section->addInput(new Form_Input(
 		'dn_commonname',
@@ -907,7 +916,9 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		null,
 		$pconfig['csr_keylen'],
 		array_combine($cert_keylens, $cert_keylens)
-	));
+	))->setHelp('The length to use when generating a new RSA key, in bits. %1$s' .
+		'The Key Length should not be lower than 2048 or some platforms ' .
+		'may consider the certificate invalid.', '<br/>');
 	$section->add($group);
 
 	$group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
@@ -925,8 +936,9 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'*Digest Algorithm',
 		$pconfig['csr_digest_alg'],
 		array_combine($openssl_digest_algs, $openssl_digest_algs)
-	))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
-		'SHA1 when possible');
+	))->setHelp('The digest method used when the certificate is signed. %1$s' .
+		'The best practice is to use an algorithm stronger than SHA1. '.
+		'Some platforms may consider weaker digest algorithms invalid', '<br/>');
 
 	$section->addInput(new Form_Input(
 		'csr_dn_commonname',
@@ -1430,7 +1442,88 @@ events.push(function() {
 		setRequired('csrpaste', newcsr);
 	}
 
+	function check_lifetime() {
+		var maxserverlife = <?= $cert_strict_values['max_server_cert_lifetime'] ?>;
+		var ltid = '#lifetime';
+		if ($('#method').val() == "sign") {
+			ltid = '#csrsign_lifetime';
+		}
+		if (($('#type').val() == "server") && (parseInt($(ltid).val()) > maxserverlife)) {
+			$(ltid).parent().parent().removeClass("text-normal").addClass("text-warning");
+			$(ltid).removeClass("text-normal").addClass("text-warning");
+		} else {
+			$(ltid).parent().parent().removeClass("text-warning").addClass("text-normal");
+			$(ltid).removeClass("text-warning").addClass("text-normal");
+		}
+	}
+	function check_keylen() {
+		var min_keylen = <?= $cert_strict_values['min_private_key_bits'] ?>;
+		var klid = '#keylen';
+		if ($('#method').val() == "external") {
+			klid = '#csr_keylen';
+		}
+		/* Color the Parent/Label */
+		if (parseInt($(klid).val()) < min_keylen) {
+			$(klid).parent().parent().removeClass("text-normal").addClass("text-warning");
+		} else {
+			$(klid).parent().parent().removeClass("text-warning").addClass("text-normal");
+		}
+		/* Color individual options */
+		$(klid + " option").filter(function() {
+			return parseInt($(this).val()) < min_keylen;
+		}).removeClass("text-normal").addClass("text-warning").siblings().removeClass("text-warning").addClass("text-normal");
+	}
+
+	function check_digest() {
+		var weak_algs = <?= json_encode($cert_strict_values['digest_blacklist']) ?>;
+		var daid = '#digest_alg';
+		if ($('#method').val() == "external") {
+			daid = '#csr_digest_alg';
+		} else if ($('#method').val() == "sign") {
+			daid = '#csrsign_digest_alg';
+		}
+		/* Color the Parent/Label */
+		if (jQuery.inArray($(daid).val(), weak_algs) > -1) {
+			$(daid).parent().parent().removeClass("text-normal").addClass("text-warning");
+		} else {
+			$(daid).parent().parent().removeClass("text-warning").addClass("text-normal");
+		}
+		/* Color individual options */
+		$(daid + " option").filter(function() {
+			return (jQuery.inArray($(this).val(), weak_algs) > -1);
+		}).removeClass("text-normal").addClass("text-warning").siblings().removeClass("text-warning").addClass("text-normal");
+	}
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
+
+	$('#type').on('change', function() {
+		check_lifetime();
+	});
+	$('#method').on('change', function() {
+		check_lifetime();
+		check_keylen();
+		check_digest();
+	});
+	$('#lifetime').on('change', function() {
+		check_lifetime();
+	});
+	$('#csrsign_lifetime').on('change', function() {
+		check_lifetime();
+	});
+
+	$('#keylen').on('change', function() {
+		check_keylen();
+	});
+	$('#csr_keylen').on('change', function() {
+		check_keylen();
+	});
+
+	$('#digest_alg').on('change', function() {
+		check_digest();
+	});
+	$('#csr_digest_alg').on('change', function() {
+		check_digest();
+	});
 
 	$('#caref').on('change', function() {
 		internalca_change();
@@ -1464,6 +1557,9 @@ events.push(function() {
 	set_csr_ro();
 	change_keytype();
 	change_csrkeytype();
+	check_lifetime();
+	check_keylen();
+	check_digest();
 
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();

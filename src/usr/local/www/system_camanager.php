@@ -41,6 +41,7 @@ $ca_methods = array(
 $ca_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
 $ca_keytypes = array("RSA", "ECDSA");
 global $openssl_digest_algs;
+global $cert_strict_values;
 $openssl_ecnames = openssl_get_curve_names();
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
@@ -648,7 +649,9 @@ $group->add(new Form_Select(
 	null,
 	$pconfig['keylen'],
 	array_combine($ca_keylens, $ca_keylens)
-));
+))->setHelp('The length to use when generating a new RSA key, in bits. %1$s' .
+	'The Key Length should not be lower than 2048 or some platforms ' .
+	'may consider the certificate invalid.', '<br/>');
 $section->add($group);
 
 $group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
@@ -666,8 +669,9 @@ $section->addInput(new Form_Select(
 	'*Digest Algorithm',
 	$pconfig['digest_alg'],
 	array_combine($openssl_digest_algs, $openssl_digest_algs)
-))->setHelp('NOTE: It is recommended to use an algorithm stronger than SHA1 '.
-	'when possible.');
+))->setHelp('The digest method used when the CA is signed. %1$s' .
+	'The best practice is to use an algorithm stronger than SHA1. '.
+	'Some platforms may consider weaker digest algorithms invalid', '<br/>');
 
 $section->addInput(new Form_Input(
 	'lifetime',
@@ -752,8 +756,55 @@ events.push(function() {
 		change_keytype();
 	});
 
+	function check_keylen() {
+		var min_keylen = <?= $cert_strict_values['min_private_key_bits'] ?>;
+		var klid = '#keylen';
+		/* Color the Parent/Label */
+		if (parseInt($(klid).val()) < min_keylen) {
+			$(klid).parent().parent().removeClass("text-normal").addClass("text-warning");
+		} else {
+			$(klid).parent().parent().removeClass("text-warning").addClass("text-normal");
+		}
+		/* Color individual options */
+		$(klid + " option").filter(function() {
+			return parseInt($(this).val()) < min_keylen;
+		}).removeClass("text-normal").addClass("text-warning").siblings().removeClass("text-warning").addClass("text-normal");
+	}
+
+	function check_digest() {
+		var weak_algs = <?= json_encode($cert_strict_values['digest_blacklist']) ?>;
+		var daid = '#digest_alg';
+		/* Color the Parent/Label */
+		if (jQuery.inArray($(daid).val(), weak_algs) > -1) {
+			$(daid).parent().parent().removeClass("text-normal").addClass("text-warning");
+		} else {
+			$(daid).parent().parent().removeClass("text-warning").addClass("text-normal");
+		}
+		/* Color individual options */
+		$(daid + " option").filter(function() {
+			return (jQuery.inArray($(this).val(), weak_algs) > -1);
+		}).removeClass("text-normal").addClass("text-warning").siblings().removeClass("text-warning").addClass("text-normal");
+	}
+
+	// ---------- Control change handlers ---------------------------------------------------------
+
+	$('#method').on('change', function() {
+		check_keylen();
+		check_digest();
+	});
+
+	$('#keylen').on('change', function() {
+		check_keylen();
+	});
+
+	$('#digest_alg').on('change', function() {
+		check_digest();
+	});
+
 	// ---------- On initial page load ------------------------------------------------------------
 	change_keytype();
+	check_keylen();
+	check_digest();
 });
 //]]>
 </script>

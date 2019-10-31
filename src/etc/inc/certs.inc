@@ -1248,7 +1248,7 @@ $cert_strict_values = array(
 	'max_server_cert_lifetime' => 825,
 	'digest_blacklist' => array('md4', 'RSA-MD4',  'md5', 'RSA-MD5', 'md5-sha1',
 					'mdc2', 'RSA-MDC2', 'sha1', 'RSA-SHA1',
-					'RSA-SHA1-2', 'sha224', 'RSA-SHA224'),
+					'RSA-SHA1-2'),
 	'min_private_key_bits' => 2048,
 );
 

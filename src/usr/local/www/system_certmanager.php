@@ -1419,7 +1419,10 @@ events.push(function() {
 					continue;
 				}
 
-				$subject = cert_get_subject_hash($ca['crt']);
+				$subject = @cert_get_subject_hash($ca['crt']);
+				if (!is_array($subject) || empty($subject)) {
+					continue;
+				}
 ?>
 				case "<?=$ca['refid'];?>":
 					$('#dn_country').val(<?=json_encode(cert_escape_x509_chars($subject['C'], true));?>);

@@ -1012,10 +1012,18 @@ function crl_update(& $crl) {
 
 	if (is_array($crl['cert']) && (count($crl['cert']) > 0)) {
 		foreach ($crl['cert'] as $cert) {
+			/* Determine the serial number to revoke */
+			if (isset($cert['serial'])) {
+				$serial = $cert['serial'];
+			} elseif (isset($cert['crt'])) {
+				$serial = cert_get_serial($cert['crt'], true);
+			} else {
+				continue;
+			}
 			$crlconf['revoked'][] = array(
-				'serial' => cert_get_serial($cert["crt"], true),
-				'rev_date' => $cert["revoke_time"],
-				'reason' => ($cert["reason"] == -1) ? null : (int) $cert["reason"],
+				'serial' => $serial,
+				'rev_date' => $cert['revoke_time'],
+				'reason' => ($cert['reason'] == -1) ? null : (int) $cert['reason'],
 			);
 		}
 	}
@@ -1035,9 +1043,21 @@ function cert_revoke($cert, & $crl, $reason = OCSP_REVOKED_STATUS_UNSPECIFIED) {
 	if (!is_crl_internal($crl)) {
 		return false;
 	}
-	$cert["reason"] = $reason;
-	$cert["revoke_time"] = time();
-	$crl["cert"][] = $cert;
+
+	if (!is_array($cert)) {
+		/* If passed a not an array but a serial string, set it up as an
+		 * array with the serial number defined */
+		$rcert = array();
+		$rcert['serial'] = $cert;
+	} else {
+		/* If passed a certificate entry, read out the serial and store
+		 * it separately. */
+		$rcert = $cert;
+		$rcert['serial'] = cert_get_serial($cert['crt']);
+	}
+	$rcert['reason'] = $reason;
+	$rcert['revoke_time'] = time();
+	$crl['cert'][] = $rcert;
 	crl_update($crl);
 	return true;
 }
@@ -1047,8 +1067,14 @@ function cert_unrevoke($cert, & $crl) {
 	if (!is_crl_internal($crl)) {
 		return false;
 	}
+
+	$serial = crl_get_entry_serial($cert);
+
 	foreach ($crl['cert'] as $id => $rcert) {
-		if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr'])) {
+		/* Check for a match by refid, name, or serial number */
+		if (($rcert['refid'] == $cert['refid']) ||
+		    ($rcert['descr'] == $cert['descr']) ||
+		    (crl_get_entry_serial($rcert) == $serial)) {
 			unset($crl['cert'][$id]);
 			if (count($crl['cert']) == 0) {
 				// Protect against accidentally switching the type to imported, for older CRLs
@@ -1082,6 +1108,131 @@ function cert_compare($cert1, $cert2) {
 	return false;
 }
 
+/****f* certs/crl_get_entry_serial
+ * NAME
+ *   crl_get_entry_serial - Take a CRL entry and determine the associated serial
+ * INPUTS
+ *   $entry: CRL certificate list entry to inspect, or serial string
+ * RESULT
+ *   The requested serial string, if present, or null if it cannot be determined.
+ ******/
+
+function crl_get_entry_serial($entry) {
+	/* Check the passed entry several ways to determine the serial */
+	if (isset($entry['serial']) && (strlen($entry['serial']) > 0)) {
+		/* Entry is an array with a viable 'serial' element */
+		return $entry['serial'];
+	} elseif (isset($entry['crt'])) {
+		/* Entry is an array with certificate text which can be used to
+		 * determine the serial */
+		return cert_get_serial($entry['crt'], true);
+	} elseif (cert_validate_serial($entry) != null) {
+		/* Entry is a valid serial string */
+		return $entry;
+	}
+	/* Unable to find or determine a serial number */
+	return null;
+}
+
+/****f* certs/cert_validate_serial
+ * NAME
+ *   cert_validate_serial - Validate a given string to test if it can be used as
+ *                          a certificate serial.
+ * INPUTS
+ *   $serial     : Serial number string to test
+ *   $returnvalue: Whether to return the parsed value or true/false
+ * RESULT
+ *   If $returnvalue is true, then the parsed ASN.1 integer value string for
+ *     $serial or null if invalid
+ *   If $returnvalue is false, then true/false based on whether or not $serial
+ *     is valid.
+ ******/
+
+function cert_validate_serial($serial, $returnvalue = false) {
+	require_once('ASN1.php');
+	require_once('ASN1_INT.php');
+	/* The ASN.1 parsing function will throw an exception if the value is
+	 * invalid, so take advantage of that to catch other error as well. */
+	try {
+		/* If the serial is not a string, then do not bother with
+		 * further tests. */
+		if (!is_string($serial)) {
+			throw new Exception('Not a string');
+		}
+		/* Process a hex string */
+		if ((substr($serial, 0, 2) == '0x')) {
+			/* If the string is hex, then it must contain only
+			 * valid hex digits */
+			if (!ctype_xdigit(substr($serial, 2))) {
+				throw new Exception('Not a valid hex string');
+			}
+			/* Convert to decimal */
+			$serial = base_convert($serial, 16, 10);
+		}
+		/* Attempt to create an ASN.1 integer, if it fails, an exception will be thrown */
+		$asn1serial = new \Ukrbublik\openssl_x509_crl\ASN1_INT( $serial );
+		return ($returnvalue) ? $asn1serial->content : true;
+	} catch (Exception $ex) {
+		/* No mattter what the error is, return null or false depending
+		 * on what was requested. */
+		return ($returnvalue) ? null : false;
+	}
+}
+
+/****f* certs/crl_contains_cert
+ * NAME
+ *   crl_contains_cert - Check if a certificate is present in a CRL
+ * INPUTS
+ *   $crl : CRL to check
+ *   $cert: Certificate to test
+ * RESULT
+ *   true if the CRL contains the certificate, false otherwise
+ ******/
+
+function crl_contains_cert($crl, $cert) {
+	global $config;
+	if (!is_array($config['crl']) ||
+	    !is_array($crl['cert'])) {
+		return false;
+	}
+
+	/* Find the issuer of this CRL */
+	$ca = lookup_ca($crl['caref']);
+	$crlissuer = is_array($cert) ? cert_get_issuer($ca['crt']) : null;
+	$serial = crl_get_entry_serial($cert);
+
+	/* Skip issuer match when sarching by serial instead of certificate */
+	$issuer = is_array($cert) ? cert_get_issuer($cert['crt']) : null;
+
+	/* If the requested certificate was not issued by the
+	 * same CA as the CRL, then do not bother checking this
+	 * CRL. */
+	if ($issuer != $crlissuer) {
+		return false;
+	}
+
+	/* Check CRL entries to see if the certificate serial is revoked */
+	foreach ($crl['cert'] as $rcert) {
+		if (crl_get_entry_serial($rcert) == $serial) {
+			return true;
+		}
+	}
+
+	/* Certificate was not found in the CRL */
+	return false;
+}
+
+/****f* certs/is_cert_revoked
+ * NAME
+ *   is_cert_revoked - Test if a given certificate or serial is revoked
+ * INPUTS
+ *   $cert  : Certificate entry or serial number to test
+ *   $crlref: CRL to check for revoked entries, or empty to check all CRLs
+ * RESULT
+ *   true if the requested entry is revoked
+ *   false if the requested entry is not revoked
+ ******/
+
 function is_cert_revoked($cert, $crlref = "") {
 	global $config;
 	if (!is_array($config['crl'])) {
@@ -1090,23 +1241,22 @@ function is_cert_revoked($cert, $crlref = "") {
 
 	if (!empty($crlref)) {
 		$crl = lookup_crl($crlref);
-		if (!is_array($crl['cert'])) {
-			return false;
-		}
-		foreach ($crl['cert'] as $rcert) {
-			if (cert_compare($rcert, $cert)) {
-				return true;
-			}
-		}
+		return crl_contains_cert($crl, $cert);
 	} else {
+		if (!is_array($cert)) {
+			/* If passed a serial, then it cannot be definitively
+			 * matched in this way since we do not know the CA
+			 * associated with the bare serial. */
+			return null;
+		}
+
+		/* Check every CRL in the configuration for a match */
 		foreach ($config['crl'] as $crl) {
 			if (!is_array($crl['cert'])) {
 				continue;
 			}
-			foreach ($crl['cert'] as $rcert) {
-				if (cert_compare($rcert, $cert)) {
-					return true;
-				}
+			if (crl_contains_cert($crl, $cert)) {
+				return true;
 			}
 		}
 	}

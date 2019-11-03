@@ -192,12 +192,9 @@ $p1_authentication_methods = array(
 	'eap-radius' => array('name' => gettext('EAP-RADIUS'), 'mobile' => true),
 	'eap-mschapv2' => array('name' => gettext('EAP-MSChapv2'), 'mobile' => true),
 	'rsasig' => array('name' => gettext('Mutual RSA'), 'mobile' => false),
+	'pkcs11' => array('name' => gettext('Mutual RSA (PKCS#11)'), 'mobile' => false),
 	'pre_shared_key' => array('name' => gettext('Mutual PSK'), 'mobile' => false)
 );
-
-if (!empty(shell_exec('/usr/local/bin/pkcs15-tool -c'))) {
-	$p1_authentication_methods['pkcs11'] = array('name' => gettext('Mutual RSA (PKCS#11)'), 'mobile' => false);
-}	
 
 global $ipsec_preshared_key_type;
 $ipsec_preshared_key_type = array(

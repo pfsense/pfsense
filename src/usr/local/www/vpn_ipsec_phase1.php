@@ -203,9 +203,10 @@ if ($_POST['save']) {
 	// Unset ca and cert if not required to avoid storing in config
 	if ($method == "pre_shared_key" || $method == "xauth_psk_server") {
 		unset($pconfig['certref']);
+		unset($pconfig['pkcs11certref']);
 	}
 
-	if ($method != "rsasig" && $method != "xauth_rsa_server" && $method != "eap-tls") {
+	if ($method != "rsasig" && $method != "xauth_rsa_server" && $method != "eap-tls" && $method != "pkcs11") {
 		unset($pconfig['caref']);
 	}
 
@@ -242,6 +243,10 @@ if ($_POST['save']) {
 		case "rsasig":
 			$reqdfields = explode(" ", "caref certref");
 			$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
+			break;
+		case "pkcs11":
+			$reqdfields = explode(" ", "caref pkcs11certref pkcs11pin");
+			$reqdfieldsn = array(gettext("Certificate Authority"), gettext("PKCS#11 Token Certificate"), gettext("PKCS#11 Token PIN"));
 			break;
 		default:
 			/* Other types do not use this validation mechanism. */
@@ -494,6 +499,8 @@ if ($_POST['save']) {
 		$ph1ent['pre-shared-key'] = $pconfig['pskey'];
 		$ph1ent['private-key'] = base64_encode($pconfig['privatekey']);
 		$ph1ent['certref'] = $pconfig['certref'];
+		$ph1ent['pkcs11certref'] = $pconfig['pkcs11certref'];
+		$ph1ent['pkcs11pin'] = $pconfig['pkcs11pin'];
 		$ph1ent['caref'] = $pconfig['caref'];
 		$ph1ent['authentication_method'] = $pconfig['authentication_method'];
 		$ph1ent['descr'] = $pconfig['descr'];
@@ -630,6 +637,56 @@ function build_peerid_list() {
 	return($list);
 }
 
+<<<<<<< HEAD
+=======
+function build_cert_list() {
+	global $config;
+
+	$list = array();
+
+	if (is_array($config['cert'])) {
+		foreach ($config['cert'] as $cert) {
+			$list[$cert['refid']] = $cert['descr'];
+		}
+	}
+
+	return($list);
+}
+
+function build_pkcs11cert_list() {
+	global $config;
+
+	$list = array();
+	$p11_cn = array();
+	$p11_id = array();
+	$output = shell_exec('pkcs15-tool -c');
+
+	preg_match_all('/X\.509\ Certificate\ \[(.*)\]/', $output, $p11_cn);
+	preg_match_all('/ID\s+: (.*)/', $output, $p11_id);
+
+	if (is_array($p11_id)) {
+		for ($i = 0; $i < count($p11_id); $i++) {
+			$list[$p11_id[1][$i]] = $p11_cn[1][$i];
+		}
+	}
+	return($list);
+}
+
+function build_ca_list() {
+	global $config;
+
+	$list = array();
+
+	if (is_array($config['ca'])) {
+		foreach ($config['ca'] as $ca) {
+			$list[$ca['refid']] = $ca['descr'];
+		}
+	}
+
+	return($list);
+}
+
+>>>>>>> first steps
 function build_eal_list() {
 	global $p1_ealgos;
 
@@ -787,6 +844,20 @@ $section->addInput(new Form_Select(
 	$pconfig['certref'],
 	cert_build_list('cert', 'IPsec')
 ))->setHelp('Select a certificate previously configured in the Certificate Manager.');
+
+$section->addInput(new Form_Select(
+	'pkcs11certref',
+	'*My PKCS#11 Certificate',
+	$pconfig['pkcs11certref'],
+	build_pkcs11cert_list()
+))->setHelp('Select a certificate previously created on PKCS#11 Token.');
+
+$section->addInput(new Form_Input(
+	'pkcs11pin',
+	'*My PKCS#11 Token PIN',
+	'text',
+	$pconfig['pkcs11pin']
+))->setHelp('Enter token PIN number');
 
 $section->addInput(new Form_Select(
 	'caref',
@@ -1050,8 +1121,12 @@ events.push(function() {
 				hideClass('peeridgroup', false);
 				hideInput('certref', false);
 				hideInput('caref', true);
+				hideInput('pkcs11certref', true);
+				hideInput('pkcs11pin', true);
 				disableInput('certref', false);
 				disableInput('caref', true);
+				disableInput('pkcs11certref', true);
+				disableInput('pkcs11pin', true);
 				break;
 			case 'eap-tls':
 			case 'xauth_rsa_server':
@@ -1060,8 +1135,24 @@ events.push(function() {
 				hideClass('peeridgroup', false);
 				hideInput('certref', false);
 				hideInput('caref', false);
+				hideInput('pkcs11certref', true);
+				hideInput('pkcs11pin', true);
 				disableInput('certref', false);
 				disableInput('caref', false);
+				disableInput('pkcs11certref', true);
+				disableInput('pkcs11pin', true);
+				break;
+			case 'pkcs11':
+				hideInput('pskey', true);
+				hideClass('peeridgroup', false);
+				hideInput('certref', true);
+				hideInput('caref', false);
+				hideInput('pkcs11certref', false);
+				hideInput('pkcs11pin', false);
+				disableInput('certref', true);
+				disableInput('caref', false);
+				disableInput('pkcs11certref', false);
+				disableInput('pkcs11pin', false);
 				break;
 
 <?php if ($pconfig['mobile']) { ?>
@@ -1070,8 +1161,12 @@ events.push(function() {
 					hideClass('peeridgroup', true);
 					hideInput('certref', true);
 					hideInput('caref', true);
+					hideInput('pkcs11certref', true);
+					hideInput('pkcs11pin', true);
 					disableInput('certref', true);
 					disableInput('caref', true);
+					disableInput('pkcs11certref', true);
+					disableInput('pkcs11pin', true);
 					break;
 <?php } ?>
 			default: /* psk modes*/
@@ -1079,8 +1174,12 @@ events.push(function() {
 				hideClass('peeridgroup', false);
 				hideInput('certref', true);
 				hideInput('caref', true);
+				hideInput('pkcs11certref', true);
+				hideInput('pkcs11pin', true);
 				disableInput('certref', true);
 				disableInput('caref', true);
+				disableInput('pkcs11certref', true);
+				disableInput('pkcs11pin', true);
 				break;
 		}
 	}

@@ -483,21 +483,21 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill 2>/dev/null");
 	}
 
+	global $reserved_table_names;
 	// get aliases names from config
 	$aliasesnames = array();
 	foreach ($config['aliases']['alias'] as $alias) {
 		array_push($aliasesnames, $alias['name']);
 	}
 	// get aliases names from pfctl -sT
-	$pftables = explode("\n",shell_exec("/sbin/pfctl -sT"));
+	exec("/sbin/pfctl -sT", $pftables);
 	// compare config and pfctl aliases
 	$diff = array_diff($pftables, $aliasesnames);
 	// don't delete special aliases
-	$diff_exceptions = array('bogons','bogonsv6','snort2c','sshguard','negate_networks','tonatsubnets','virusprot','vpn_networks');
-	$diff = array_diff($diff, $diff_exceptions);
+	$diff = array_diff($diff, $reserved_table_names);
 	// delete unused aliases
 	foreach ($diff as $alias) {
-		$_grbg = exec("/sbin/pfctl -t " . $alias . " -T kill 2>/dev/null");
+		$_grbg = exec("/sbin/pfctl -t " . escapeshellarg($alias) . " -T kill 2>/dev/null");
 	}
 
 	if (!platform_booting()) {

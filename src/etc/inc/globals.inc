@@ -232,6 +232,7 @@ $pf_reserved_keywords = array(
 	"flush", "sloppy", "tagged", "tag", "ifbound", "floating", "statepolicy", "statedefaults", "route", "settos",
 	"divertto", "divertreply", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 
+/* Reserved table names to avoid collision */
 global $reserved_table_names;
 $reserved_table_names = array(
 	"bogons",

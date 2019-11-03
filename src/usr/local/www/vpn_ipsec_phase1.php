@@ -103,6 +103,8 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	    ($pconfig['authentication_method'] == "xauth_psk_server")) {
 		$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
 	} else {
+		$pconfig['pkcs11certref'] = $a_phase1[$p1index]['pkcs11certref'];
+		$pconfig['pkcs11pin'] = $a_phase1[$p1index]['pkcs11pin'];
 		$pconfig['certref'] = $a_phase1[$p1index]['certref'];
 		$pconfig['caref'] = $a_phase1[$p1index]['caref'];
 	}

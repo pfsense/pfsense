@@ -692,9 +692,15 @@ EOD;
 				@chmod($ph1certfile, 0600);
 
 				/* XXX" Traffic selectors? */
+<<<<<<< HEAD
 				$pskconf .= " : ";
 				$pskconf .= (cert_get_pkey_curve($cert['prv']) === false) ? "RSA" : "ECDSA";
 				$pskconf .= " {$ph1keyfile}\n";
+=======
+				$pskconf .= " : RSA {$ph1keyfile}\n";
+			} else if ($ph1ent['authentication_method'] == 'pkcs11') {
+				$pskconf .= " : PIN %smartcard:{$ph1ent['pkcs11certref']} '{$ph1ent['pkcs11pin']}'\n";
+>>>>>>> more
 			} else {
 				list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
@@ -730,7 +736,7 @@ EOD;
 			 * client cert CA chain to the list of CAs to write
 			 */
 			if (in_array($ph1ent['authentication_method'],
-			array('rsasig', 'eap-tls', 'xauth_rsa_server'))) {
+			array('rsasig', 'eap-tls', 'xauth_rsa_server', 'pkcs11'))) {
 
 				if (!empty($ph1ent['caref']) && !array_key_exists($ph1ent['caref'], $vpncas)) {
 					$thisca = lookup_ca($ph1ent['caref']);
@@ -1132,6 +1138,16 @@ EOD;
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
 					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+						$authentication .= "\n\tleftsendcert=always";
+					}
+					if (isset($casub)) {
+						$authentication .= "\n\trightca=\"$casub\"";
+					}
+					break;
+				case 'pkcs11':
+					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
+					if (!empty($ph1ent['pkcs11certref'])) {
+						$authentication .= "\n\tleftcert=%smartcard:{$ph1ent['pkcs11certref']}";
 						$authentication .= "\n\tleftsendcert=always";
 					}
 					if (isset($casub)) {

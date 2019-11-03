@@ -195,6 +195,10 @@ $p1_authentication_methods = array(
 	'pre_shared_key' => array('name' => gettext('Mutual PSK'), 'mobile' => false)
 );
 
+if (!empty(shell_exec('/usr/local/bin/pkcs15-tool -c'))) {
+	$p1_authentication_methods['pkcs11'] = array('name' => gettext('Mutual RSA (PKCS#11)'), 'mobile' => false);
+}	
+
 global $ipsec_preshared_key_type;
 $ipsec_preshared_key_type = array(
 	'PSK' => 'PSK',

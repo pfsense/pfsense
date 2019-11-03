@@ -232,6 +232,18 @@ $pf_reserved_keywords = array(
 	"flush", "sloppy", "tagged", "tag", "ifbound", "floating", "statepolicy", "statedefaults", "route", "settos",
 	"divertto", "divertreply", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 
+global $reserved_table_names;
+$reserved_table_names = array(
+	"bogons",
+	"bogonsv6",
+	"negate_networks",
+	"snort2c",
+	"sshguard",
+	"tonatsubnets",
+	"virusprot",
+	"vpn_networks",
+);
+
 /* VLAN Prio values. */
 $vlanprio_values = array(
 	"bk" => 0,

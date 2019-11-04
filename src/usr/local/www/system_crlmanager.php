@@ -67,6 +67,7 @@ foreach ($a_crl as $cid => $acrl) {
 
 $act = $_REQUEST['act'];
 
+$cacert_list = array();
 
 if (!empty($id)) {
 	$thiscrl =& lookup_crl($id);
@@ -345,12 +346,15 @@ function build_ca_list() {
 }
 
 function build_cacert_list() {
-	global $ca_certs;
+	global $a_cert, $crl, $id;
 
 	$list = array();
-
-	foreach ($ca_certs as $cert) {
-		$list[$cert['refid']] = $cert['descr'];
+	foreach ($a_cert as $cert) {
+		if ((isset($cert['caref']) && !empty($cert['caref'])) &&
+		    ($cert['caref'] == $crl['caref']) &&
+		    !is_cert_revoked($cert, $id)) {
+			$list[$cert['refid']] = $cert['descr'];
+		}
 	}
 
 	return($list);
@@ -492,7 +496,7 @@ if ($act == "new" || $act == gettext("Save")) {
 ?>
 
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Currently Revoked Certificates for CRL") . ': ' . $crl['descr']?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Revoked Certificates in CRL") . ': ' . $crl['descr']?></h2></div>
 		<div class="panel-body table-responsive">
 <?php
 	if (!is_array($crl['cert']) || (count($crl['cert']) == 0)) {
@@ -540,27 +544,19 @@ if ($act == "new" || $act == gettext("Save")) {
 	</div>
 <?php
 
-	$ca_certs = array();
-	foreach ($a_cert as $cert) {
-		if ($cert['caref'] == $crl['caref'] && !is_cert_revoked($cert, $id)) {
-			$ca_certs[] = $cert;
-		}
-	}
+	$section = new Form_Section('Revoke Certificates');
 
-	if (count($ca_certs) == 0) {
+	$section->addInput(new Form_Select(
+		'crlreason',
+		'Reason',
+		-1,
+		$openssl_crl_status
+		))->setHelp('Select the reason for which the certificates are being revoked.');
+
+	$cacert_list = build_cacert_list();
+	if (count($cacert_list) == 0) {
 		print_info_box(gettext("No certificates found for this CA."), 'danger');
 	} else {
-		$section = new Form_Section('Choose a Certificate to Revoke');
-
-		$section->addInput(new Form_Select(
-			'crlreason',
-			'Reason',
-			-1,
-			$openssl_crl_status
-			))->setHelp('Select the reason for which the certificates are being revoked.');
-
-		$cacert_list = build_cacert_list();
-
 		$section->addInput(new Form_Select(
 			'certref',
 			'Revoke Certificates',
@@ -569,44 +565,44 @@ if ($act == "new" || $act == gettext("Save")) {
 			true
 			))->addClass('multiselect')
 			->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');
-
-		$section->addInput(new Form_Input(
-			'revokeserial',
-			'Revoke by Serial',
-			'text',
-			$pconfig['revokeserial']
-		))->setHelp('List of certificate serial numbers to revoke (separated by spaces)');
-
-		$form->addGlobal(new Form_Button(
-			'submit',
-			'Add',
-			null,
-			'fa-plus'
-			))->addClass('btn-success btn-sm');
-
-		$form->addGlobal(new Form_Input(
-			'id',
-			null,
-			'hidden',
-			$crl['refid']
-		));
-
-		$form->addGlobal(new Form_Input(
-			'act',
-			null,
-			'hidden',
-			'addcert'
-		));
-
-		$form->addGlobal(new Form_Input(
-			'crlref',
-			null,
-			'hidden',
-			$crl['refid']
-		));
-
-		$form->add($section);
 	}
+
+	$section->addInput(new Form_Input(
+		'revokeserial',
+		'Revoke by Serial',
+		'text',
+		$pconfig['revokeserial']
+	))->setHelp('List of certificate serial numbers to revoke (separated by spaces)');
+
+	$form->addGlobal(new Form_Button(
+		'submit',
+		'Add',
+		null,
+		'fa-plus'
+		))->addClass('btn-success btn-sm');
+
+	$form->addGlobal(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$crl['refid']
+	));
+
+	$form->addGlobal(new Form_Input(
+		'act',
+		null,
+		'hidden',
+		'addcert'
+	));
+
+	$form->addGlobal(new Form_Input(
+		'crlref',
+		null,
+		'hidden',
+		$crl['refid']
+	));
+
+	$form->add($section);
 
 	print($form);
 } else {

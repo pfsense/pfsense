@@ -42,6 +42,8 @@ $ca_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "153
 $ca_keytypes = array("RSA", "ECDSA");
 global $openssl_digest_algs;
 global $cert_strict_values;
+$max_lifetime = cert_get_max_lifetime();
+$default_lifetime = min(3650, $max_lifetime);
 $openssl_ecnames = openssl_get_curve_names();
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
@@ -116,7 +118,7 @@ if ($act == "new") {
 	$pconfig['keylen'] = "2048";
 	$pconfig['ecname'] = "brainpoolP256r1";
 	$pconfig['digest_alg'] = "sha256";
-	$pconfig['lifetime'] = "3650";
+	$pconfig['lifetime'] = $default_lifetime;
 	$pconfig['dn_commonname'] = "internal-ca";
 }
 
@@ -228,6 +230,9 @@ if ($_POST['save']) {
 		}
 		if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 			array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+		}
+		if ($_POST['lifetime'] > $max_lifetime) {
+			$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
 		}
 	}
 
@@ -700,7 +705,8 @@ $section->addInput(new Form_Input(
 	'lifetime',
 	'*Lifetime (days)',
 	'number',
-	$pconfig['lifetime']
+	$pconfig['lifetime'],
+	['max' => $max_lifetime]
 ));
 
 $section->addInput(new Form_Input(

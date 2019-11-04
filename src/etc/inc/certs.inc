@@ -51,6 +51,8 @@ $cert_altname_types = array(
 	'email' => gettext('email address'),
 );
 
+global $cert_max_lifetime;
+$cert_max_lifetime = 12000;
 
 function & lookup_ca($refid) {
 	global $config;
@@ -937,20 +939,20 @@ function cert_usedby_description($refid, $certificates_used_by_packages) {
 
 /* Detect a rollover at 2038 on some platforms (e.g. ARM)
  * See: https://redmine.pfsense.org/issues/9098 */
-function crl_get_max_lifetime($max = 9999) {
-	if ($max <= 0) {
-		return 0;
-	}
+function cert_get_max_lifetime() {
+	global $cert_max_lifetime;
+	$max = $cert_max_lifetime;
+
 	$current_time = time();
 	while ((int)($current_time + ($max * 24 * 60 * 60)) < 0) {
 		$max--;
 	}
-	return $max;
+	return min($max, $cert_max_lifetime);
 }
 
 function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 3650) {
 	global $config;
-	$max_lifetime = crl_get_max_lifetime();
+	$max_lifetime = cert_get_max_lifetime();
 	$ca =& lookup_ca($caref);
 	if (!$ca) {
 		return false;
@@ -987,7 +989,7 @@ function crl_update(& $crl) {
 	require_once('X509_CRL.php');
 
 	global $config;
-	$max_lifetime = crl_get_max_lifetime();
+	$max_lifetime = cert_get_max_lifetime();
 	$ca =& lookup_ca($crl['caref']);
 	if (!$ca) {
 		return false;

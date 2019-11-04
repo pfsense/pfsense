@@ -49,6 +49,8 @@ $cert_types = array(
 global $cert_altname_types;
 global $openssl_digest_algs;
 global $cert_strict_values;
+$max_lifetime = cert_get_max_lifetime();
+$default_lifetime = min(3650, $max_lifetime);
 $openssl_ecnames = openssl_get_curve_names();
 
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
@@ -106,7 +108,7 @@ if ($act == "new") {
 	$pconfig['csr_digest_alg'] = "sha256";
 	$pconfig['csrsign_digest_alg'] = "sha256";
 	$pconfig['type'] = "user";
-	$pconfig['lifetime'] = "3650";
+	$pconfig['lifetime'] = $default_lifetime;
 }
 
 if ($act == "exp") {
@@ -230,6 +232,9 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("This private does not appear to be valid.");
 				$input_errors[] = gettext("Key data field should be blank, or a valid x509 private key");
 			}
+			if ($_POST['lifetime'] > $max_lifetime) {
+				$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
+			}
 		}
 
 		if ($pconfig['method'] == "import") {
@@ -260,6 +265,9 @@ if ($_POST['save']) {
 				gettext("Certificate Type"),
 				gettext("Lifetime"),
 				gettext("Common Name"));
+			if ($_POST['lifetime'] > $max_lifetime) {
+				$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
+			}
 		}
 
 		if ($pconfig['method'] == "external") {
@@ -740,7 +748,8 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'csrsign_lifetime',
 		'*Certificate Lifetime (days)',
 		'number',
-		$pconfig['csrsign_lifetime'] ? $pconfig['csrsign_lifetime']:'3650'
+		$pconfig['csrsign_lifetime'] ? $pconfig['csrsign_lifetime']:$default_lifetime,
+		['max' => $max_lifetime]
 	))->setHelp('The length of time the signed certificate will be valid, in days. %1$s' .
 		'Server certificates should not have a lifetime over 825 days or some platforms ' .
 		'may consider the certificate invalid.', '<br/>');
@@ -841,7 +850,8 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'lifetime',
 		'*Lifetime (days)',
 		'number',
-		$pconfig['lifetime']
+		$pconfig['lifetime'],
+		['max' => $max_lifetime]
 	))->setHelp('The length of time the signed certificate will be valid, in days. %1$s' .
 		'Server certificates should not have a lifetime over 825 days or some platforms ' .
 		'may consider the certificate invalid.', '<br/>');

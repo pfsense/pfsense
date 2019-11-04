@@ -34,11 +34,8 @@ require_once("openvpn.inc");
 require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
-$max_lifetime = crl_get_max_lifetime();
-$default_lifetime = 3650;
-if ($max_lifetime < $default_lifetime) {
-	$default_lifetime = $max_lifetime;
-}
+$max_lifetime = cert_get_max_lifetime();
+$default_lifetime = min(9999, $max_lifetime);
 
 global $openssl_crl_status;
 
@@ -436,7 +433,7 @@ if ($act == "new" || $act == gettext("Save")) {
 		'Serial',
 		'number',
 		$pconfig['serial'],
-		['min' => '0', 'max' => '9999']
+		['min' => '0']
 	));
 
 	$form->add($section);

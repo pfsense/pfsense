@@ -340,10 +340,9 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 		if (!$ca_res_key) {
 			return false;
 		}
-		if (empty($ca['serial'])) {
-			$ca['serial'] = 0;
-		}
-		$ca_serial = ++$ca['serial'];
+
+		/* Get the next available CA serial number. */
+		$ca_serial = ca_get_next_serial($ca);
 	}
 
 	$cert_type = cert_type_config_section($type);
@@ -470,10 +469,9 @@ function csr_sign($csr, & $ca, $duration, $type = "user", $altnames, $digest_alg
 	if (!$ca_res_key) {
 		return false;
 	}
-	if (empty($ca['serial'])) {
-		$ca['serial'] = 0;
-	}
-	$ca_serial = ++$ca['serial'];
+
+	/* Get the next available CA serial number. */
+	$ca_serial = ca_get_next_serial($ca);
 
 	$cert_type = cert_type_config_section($type);
 
@@ -1179,6 +1177,111 @@ function cert_validate_serial($serial, $returnvalue = false) {
 	}
 }
 
+/****f* certs/cert_generate_serial
+ * NAME
+ *   cert_generate_serial - Generate a random positive integer usable as a
+ *                          certificate serial number
+ * INPUTS
+ *   None
+ * RESULT
+ *   Integer representing an ASN.1 compatible certificate serial number.
+ ******/
+
+function cert_generate_serial() {
+	/* Use a separate function for this to make it easier to use a better
+	 * randomization function in the future. */
+
+	/* Unfortunately, PHP openssl_csr_sign() limits serial numbers to a
+	 * PHP integer, so we cannot generate large numbers up to the maximum
+	 * allowed ASN.1 size (2^159). We are limited to PHP_INT_MAX */
+	return random_int(1, PHP_INT_MAX);
+}
+
+/****f* certs/ca_has_serial
+ * NAME
+ *   ca_has_serial - Check if a serial number is used by any certificate in a given CA
+ * INPUTS
+ *   $ca    : Certificate Authority to check
+ *   $serial: Serial number to check
+ * RESULT
+ *   true if the serial number is in use by a certificate issued by this CA,
+ *   false otherwise.
+ ******/
+
+function ca_has_serial($caref, $serial) {
+	global $config;
+
+	foreach ($config['cert'] as $cert) {
+		if (($cert['caref'] == $caref) &&
+		    (cert_get_serial($cert['crt'], true) == $serial)) {
+			/* If this certificate is issued by the CA in question
+			 * and has a matching serial number, stop processing
+			 * and return true. */
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/****f* certs/cert_get_random_serial
+ * NAME
+ *   cert_get_random_serial - Generate a random certificate serial unique in a CA
+ * INPUTS
+ *   $caref : Certificate Authority refid to test for serial uniqueness.
+ * RESULT
+ *   Random serial number which is not in use by any known certificate in a CA
+ ******/
+
+function cert_get_random_serial($caref) {
+	/* Number of attempts to generate a usable serial. Multiple attempts
+	 *  are necessary to ensure that the number is usable and unique. */
+	$attempts = 10;
+
+	/* Default value, -1 indicates an error */
+	$serial = -1;
+
+	for ($i=0; $i < $attempts; $i++) {
+		/* Generate a random serial */
+		$serial = cert_generate_serial();
+		/* Check that the serial number is usable and unique:
+		 *  * Cannot be 0
+		 *  * Must be a valid ASN.1 serial number
+		 *  * Cannot be used by any other certificate on this CA */
+		if (($serial != 0) &&
+		    cert_validate_serial($serial) &&
+		    !ca_has_serial($caref, $serial)) {
+			/* If all conditions are met, we have a good serial, so stop. */
+			break;
+		}
+	}
+	return $serial;
+}
+
+/****f* certs/ca_get_next_serial
+ * NAME
+ *   ca_get_next_serial - Get the next available serial number for a CA
+ * INPUTS
+ *   $ca: Reference to a CA entry
+ * RESULT
+ *   A randomized serial number (if enabled for a CA) or the next sequential value.
+ ******/
+
+function ca_get_next_serial(& $ca) {
+	$ca_serial = null;
+	/* Get a randomized serial if enabled */
+	if ($ca['randomserial'] == 'enabled') {
+		$ca_serial = cert_get_random_serial($ca['refid']);
+	}
+	/* Initialize the sequential serial to be safe */
+	if (empty($ca['serial'])) {
+		$ca['serial'] = 0;
+	}
+	/* If not using a randomized serial, or randomizing the serial
+	 * failed, then fall back to sequential serials. */
+	return (empty($ca_serial) || ($ca_serial == -1)) ? ++$ca['serial'] : $ca_serial;
+}
+
 /****f* certs/crl_contains_cert
  * NAME
  *   crl_contains_cert - Check if a certificate is present in a CRL
@@ -1575,8 +1678,8 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 		if (empty($ca['serial'])) {
 			$ca['serial'] = 0;
 		}
-		/* Increment the CA serial before use. */
-		$ca_serial = ++$ca['serial'];
+		/* Get the next available CA serial number. */
+		$ca_serial = ca_get_next_serial($ca);
 	} elseif ($selfsigned) {
 		/* For self-signed CAs & certificates, set the CA details to self and
 		 * use the key for this entry to sign itself.

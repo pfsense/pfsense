@@ -104,6 +104,7 @@ if ($act == "edit") {
 	$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);
 	$pconfig['serial'] = $a_ca[$id]['serial'];
 	$pconfig['trust']  = ($a_ca[$id]['trust'] == 'enabled');
+	$pconfig['randomserial']  = ($a_ca[$id]['randomserial'] == 'enabled');
 	if (!empty($a_ca[$id]['prv'])) {
 		$pconfig['key'] = base64_decode($a_ca[$id]['prv']);
 	}
@@ -245,6 +246,7 @@ if ($_POST['save']) {
 
 		$ca['descr'] = $pconfig['descr'];
 		$ca['trust'] = ($pconfig['trust'] == 'yes') ? "enabled" : "disabled";
+		$ca['randomserial'] = ($pconfig['randomserial'] == 'yes') ? "enabled" : "disabled";
 
 		if ($act == "edit") {
 			$ca['descr']  = $pconfig['descr'];
@@ -615,13 +617,22 @@ $section->addInput(new Form_Textarea(
 	'optional in most cases, but is required when generating a '.
 	'Certificate Revocation List (CRL).');
 
+$section->addInput(new Form_Checkbox(
+	'randomserial',
+	'Randomize Serial',
+	'Use random serial numbers when signing certifices',
+	$pconfig['randomserial']
+))->setHelp('When enabled, serial numbers for certificates signed by this CA ' .
+		'will be automatically randomized and checked for uniqueness ' .
+		'instead of using the sequential value from Next Certificate Serial.');
+
 $section->addInput(new Form_Input(
 	'serial',
-	'Serial for next certificate',
+	'Next Certificate Serial',
 	'number',
 	$pconfig['serial']
-))->setHelp('Enter a decimal number to be used as the serial number for the next '.
-	'certificate to be created using this CA.');
+))->setHelp('Enter a decimal number to be used as a sequential serial number for ' .
+	'the next certificate to be signed by this CA.');
 
 $form->add($section);
 

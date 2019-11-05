@@ -63,154 +63,131 @@ if ($_REQUEST['act']) {
 	$act = $_REQUEST['act'];
 }
 
-if ($_POST['act'] == "del") {
-
-	if (!isset($a_ca[$id])) {
-		pfSenseHeader("system_camanager.php");
-		exit;
-	}
-
-	/* Only remove CA reference when deleting. It can be reconnected if a new matching CA is imported */
-	$index = count($a_cert) - 1;
-	for (;$index >= 0; $index--) {
-		if ($a_cert[$index]['caref'] == $a_ca[$id]['refid']) {
-			unset($a_cert[$index]['caref']);
-		}
-	}
-
-	/* Remove any CRLs for this CA, there is no way to recover the connection once the CA has been removed. */
-	$index = count($a_crl) - 1;
-	for (;$index >= 0; $index--) {
-		if ($a_crl[$index]['caref'] == $a_ca[$id]['refid']) {
-			unset($a_crl[$index]);
-		}
-	}
-
-	$name = $a_ca[$id]['descr'];
-	unset($a_ca[$id]);
-	write_config();
-	ca_setup_trust_store();
-	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted."), htmlspecialchars($name));
+/* Actions other than 'new' require an ID.
+ * 'del' action must be submitted via POST. */
+if ((!empty($act) &&
+    ($act != 'new') &&
+    !$a_ca[$id]) ||
+    (($act == 'del') && empty($_POST))) {
 	pfSenseHeader("system_camanager.php");
 	exit;
 }
 
-if ($act == "edit") {
-	if (!$a_ca[$id]) {
+switch ($act) {
+	case 'del':
+		/* Only remove CA reference when deleting. It can be reconnected if a new matching CA is imported */
+		$index = count($a_cert) - 1;
+		for (;$index >= 0; $index--) {
+			if ($a_cert[$index]['caref'] == $a_ca[$id]['refid']) {
+				unset($a_cert[$index]['caref']);
+			}
+		}
+		/* Remove any CRLs for this CA, there is no way to recover the connection once the CA has been removed. */
+		$index = count($a_crl) - 1;
+		for (;$index >= 0; $index--) {
+			if ($a_crl[$index]['caref'] == $a_ca[$id]['refid']) {
+				unset($a_crl[$index]);
+			}
+		}
+		$name = $a_ca[$id]['descr'];
+		unset($a_ca[$id]);
+		write_config();
+		ca_setup_trust_store();
+		$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted."), htmlspecialchars($name));
 		pfSenseHeader("system_camanager.php");
 		exit;
-	}
-	$pconfig['method'] = 'existing';
-	$pconfig['descr']  = $a_ca[$id]['descr'];
-	$pconfig['refid']  = $a_ca[$id]['refid'];
-	$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);
-	$pconfig['serial'] = $a_ca[$id]['serial'];
-	$pconfig['trust']  = ($a_ca[$id]['trust'] == 'enabled');
-	$pconfig['randomserial']  = ($a_ca[$id]['randomserial'] == 'enabled');
-	if (!empty($a_ca[$id]['prv'])) {
-		$pconfig['key'] = base64_decode($a_ca[$id]['prv']);
-	}
-}
-
-if ($act == "new") {
-	$pconfig['method'] = $_POST['method'];
-	$pconfig['keytype'] = "RSA";
-	$pconfig['keylen'] = "2048";
-	$pconfig['ecname'] = "brainpoolP256r1";
-	$pconfig['digest_alg'] = "sha256";
-	$pconfig['lifetime'] = $default_lifetime;
-	$pconfig['dn_commonname'] = "internal-ca";
-}
-
-if ($act == "exp") {
-
-	if (!$a_ca[$id]) {
-		pfSenseHeader("system_camanager.php");
-		exit;
-	}
-
-	$exp_name = urlencode("{$a_ca[$id]['descr']}.crt");
-	$exp_data = base64_decode($a_ca[$id]['crt']);
-	$exp_size = strlen($exp_data);
-
-	header("Content-Type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$exp_name}");
-	header("Content-Length: $exp_size");
-	echo $exp_data;
-	exit;
-}
-
-if ($act == "expkey") {
-
-	if (!$a_ca[$id]) {
-		pfSenseHeader("system_camanager.php");
-		exit;
-	}
-
-	$exp_name = urlencode("{$a_ca[$id]['descr']}.key");
-	$exp_data = base64_decode($a_ca[$id]['prv']);
-	$exp_size = strlen($exp_data);
-
-	header("Content-Type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$exp_name}");
-	header("Content-Length: $exp_size");
-	echo $exp_data;
-	exit;
+		break;
+	case 'edit':
+		/* Editing an existing CA, so populate values. */
+		$pconfig['method'] = 'existing';
+		$pconfig['descr']  = $a_ca[$id]['descr'];
+		$pconfig['refid']  = $a_ca[$id]['refid'];
+		$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);
+		$pconfig['serial'] = $a_ca[$id]['serial'];
+		$pconfig['trust']  = ($a_ca[$id]['trust'] == 'enabled');
+		$pconfig['randomserial']  = ($a_ca[$id]['randomserial'] == 'enabled');
+		if (!empty($a_ca[$id]['prv'])) {
+			$pconfig['key'] = base64_decode($a_ca[$id]['prv']);
+		}
+		break;
+	case 'new':
+		/* New CA, so set default values */
+		$pconfig['method'] = $_POST['method'];
+		$pconfig['keytype'] = "RSA";
+		$pconfig['keylen'] = "2048";
+		$pconfig['ecname'] = "brainpoolP256r1";
+		$pconfig['digest_alg'] = "sha256";
+		$pconfig['lifetime'] = $default_lifetime;
+		$pconfig['dn_commonname'] = "internal-ca";
+		break;
+	case 'exp':
+		/* Exporting a ca */
+		send_user_download('data', base64_decode($a_ca[$id]['crt']), "{$a_ca[$id]['descr']}.crt");
+		break;
+	case 'expkey':
+		/* Exporting a private key */
+		send_user_download('data', base64_decode($a_ca[$id]['prv']), "{$a_ca[$id]['descr']}.key");
+		break;
+	default:
+		break;
 }
 
 if ($_POST['save']) {
-
 	unset($input_errors);
 	$input_errors = array();
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($pconfig['method'] == "existing") {
-		$reqdfields = explode(" ", "descr cert");
-		$reqdfieldsn = array(
-			gettext("Descriptive name"),
-			gettext("Certificate data"));
-		if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
-			$input_errors[] = gettext("This certificate does not appear to be valid.");
-		}
-		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED")) {
-			$input_errors[] = gettext("Encrypted private keys are not yet supported.");
-		}
-		if (!$input_errors && !empty($_POST['key']) && cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
-			$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
-		}
-		/* we must ensure the certificate is capable of acting as a CA
-		 * https://redmine.pfsense.org/issues/7885
-		 */
-		if (!$input_errors) {
-			$purpose = cert_get_purpose($_POST['cert'], false);
-			if ($purpose['ca'] != 'Yes') {
-				$input_errors[] = gettext("The submitted certificate does not appear to be a Certificate Authority, import it on the Certificates tab instead.");
+	switch ($pconfig['method']) {
+		case 'existing':
+			$reqdfields = explode(" ", "descr cert");
+			$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("Certificate data"));
+			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
+				$input_errors[] = gettext("This certificate does not appear to be valid.");
 			}
-		}
-	}
-	if ($pconfig['method'] == "internal") {
-		$reqdfields = explode(" ",
-			"descr keylen ecname keytype lifetime dn_commonname");
-		$reqdfieldsn = array(
-			gettext("Descriptive name"),
-			gettext("Key length"),
-			gettext("Elliptic Curve Name"),
-			gettext("Key type"),
-			gettext("Lifetime"),
-			gettext("Common Name"));
-	}
-	if ($pconfig['method'] == "intermediate") {
-		$reqdfields = explode(" ",
-			"descr caref keylen ecname keytype lifetime dn_commonname");
-		$reqdfieldsn = array(
-			gettext("Descriptive name"),
-			gettext("Signing Certificate Authority"),
-			gettext("Key length"),
-			gettext("Elliptic Curve Name"),
-			gettext("Key type"),
-			gettext("Lifetime"),
-			gettext("Common Name"));
+			if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED")) {
+				$input_errors[] = gettext("Encrypted private keys are not yet supported.");
+			}
+			if (!$input_errors && !empty($_POST['key']) && cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
+				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
+			}
+			/* we must ensure the certificate is capable of acting as a CA
+			 * https://redmine.pfsense.org/issues/7885
+			 */
+			if (!$input_errors) {
+				$purpose = cert_get_purpose($_POST['cert'], false);
+				if ($purpose['ca'] != 'Yes') {
+					$input_errors[] = gettext("The submitted certificate does not appear to be a Certificate Authority, import it on the Certificates tab instead.");
+				}
+			}
+			break;
+		case 'internal':
+			$reqdfields = explode(" ",
+				"descr keylen ecname keytype lifetime dn_commonname");
+			$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("Key length"),
+				gettext("Elliptic Curve Name"),
+				gettext("Key type"),
+				gettext("Lifetime"),
+				gettext("Common Name"));
+			break;
+		case 'intermediate':
+			$reqdfields = explode(" ",
+				"descr caref keylen ecname keytype lifetime dn_commonname");
+			$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("Signing Certificate Authority"),
+				gettext("Key length"),
+				gettext("Elliptic Curve Name"),
+				gettext("Key type"),
+				gettext("Lifetime"),
+				gettext("Common Name"));
+			break;
+		default:
+			break;
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);

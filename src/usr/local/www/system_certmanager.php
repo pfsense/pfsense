@@ -82,137 +82,81 @@ foreach ($a_ca as $ca) {
 
 $act = $_REQUEST['act'];
 
-if ($_POST['act'] == "del") {
-
-	if (!isset($a_cert[$id])) {
-		pfSenseHeader("system_certmanager.php");
-		exit;
-	}
-
-	unset($a_cert[$id]);
-	write_config();
-	$savemsg = sprintf(gettext("Certificate %s successfully deleted."), htmlspecialchars($a_cert[$id]['descr']));
+/* Actions other than 'new' require an ID.
+ * 'del' action must be submitted via POST. */
+if ((!empty($act) &&
+    ($act != 'new') &&
+    !$a_cert[$id]) ||
+    (($act == 'del') && empty($_POST))) {
 	pfSenseHeader("system_certmanager.php");
 	exit;
 }
 
-if ($act == "new") {
-	$pconfig['method'] = $_POST['method'];
-	$pconfig['keytype'] = "RSA";
-	$pconfig['keylen'] = "2048";
-	$pconfig['ecname'] = "brainpoolP256r1";
-	$pconfig['digest_alg'] = "sha256";
-	$pconfig['csr_keytype'] = "RSA";
-	$pconfig['csr_keylen'] = "2048";
-	$pconfig['csr_ecname'] = "brainpoolP256r1";
-	$pconfig['csr_digest_alg'] = "sha256";
-	$pconfig['csrsign_digest_alg'] = "sha256";
-	$pconfig['type'] = "user";
-	$pconfig['lifetime'] = $default_lifetime;
-}
-
-if ($act == "exp") {
-
-	if (!$a_cert[$id]) {
+switch ($act) {
+	case 'del':
+		unset($a_cert[$id]);
+		write_config();
+		$savemsg = sprintf(gettext("Certificate %s successfully deleted."), htmlspecialchars($a_cert[$id]['descr']));
 		pfSenseHeader("system_certmanager.php");
 		exit;
-	}
-
-	$exp_name = urlencode("{$a_cert[$id]['descr']}.crt");
-	$exp_data = base64_decode($a_cert[$id]['crt']);
-	$exp_size = strlen($exp_data);
-
-	header("Content-Type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$exp_name}");
-	header("Content-Length: $exp_size");
-	echo $exp_data;
-	exit;
+	case 'new':
+		/* New certificate, so set default values */
+		$pconfig['method'] = $_POST['method'];
+		$pconfig['keytype'] = "RSA";
+		$pconfig['keylen'] = "2048";
+		$pconfig['ecname'] = "brainpoolP256r1";
+		$pconfig['digest_alg'] = "sha256";
+		$pconfig['csr_keytype'] = "RSA";
+		$pconfig['csr_keylen'] = "2048";
+		$pconfig['csr_ecname'] = "brainpoolP256r1";
+		$pconfig['csr_digest_alg'] = "sha256";
+		$pconfig['csrsign_digest_alg'] = "sha256";
+		$pconfig['type'] = "user";
+		$pconfig['lifetime'] = $default_lifetime;
+		break;
+	case 'csr':
+		/* Editing a CSR, so populate values */
+		$pconfig['descr'] = $a_cert[$id]['descr'];
+		$pconfig['csr'] = base64_decode($a_cert[$id]['csr']);
+		break;
+	case 'exp':
+		/* Exporting a certificate */
+		send_user_download('data', base64_decode($a_cert[$id]['crt']), "{$a_cert[$id]['descr']}.crt");
+		break;
+	case 'req':
+		/* Exporting a certificate signing request */
+		send_user_download('data', base64_decode($a_cert[$id]['csr']), "{$a_cert[$id]['descr']}.req");
+		break;
+	case 'key':
+		/* Exporting a private key */
+		send_user_download('data', base64_decode($a_cert[$id]['prv']), "{$a_cert[$id]['descr']}.key");
+		break;
+	case 'p12':
+		/* Exporting a PKCS#12 file containing the certificate, key, and (if present) CA */
+		$args = array();
+		$args['friendly_name'] = $a_cert[$id]['descr'];
+		$ca = lookup_ca($a_cert[$id]['caref']);
+		if ($ca) {
+			/* If the CA can be found, then add the CA to the container */
+			$args['extracerts'] = openssl_x509_read(base64_decode($ca['crt']));
+		}
+		$res_crt = openssl_x509_read(base64_decode($a_cert[$id]['crt']));
+		$res_key = openssl_pkey_get_private(base64_decode($a_cert[$id]['prv']));
+		$exp_data = "";
+		openssl_pkcs12_export($res_crt, $exp_data, $res_key, null, $args);
+		send_user_download('data', $exp_data, "{$a_cert[$id]['descr']}.p12");
+		break;
+	default:
+		break;
 }
 
-if ($act == "req") {
+if ($_POST['save'] == gettext("Save")) {
+	/* Creating a new entry */
+	$input_errors = array();
+	$pconfig = $_POST;
 
-	if (!$a_cert[$id]) {
-		pfSenseHeader("system_certmanager.php");
-		exit;
-	}
-
-	$exp_name = urlencode("{$a_cert[$id]['descr']}.req");
-	$exp_data = base64_decode($a_cert[$id]['csr']);
-	$exp_size = strlen($exp_data);
-
-	header("Content-Type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$exp_name}");
-	header("Content-Length: $exp_size");
-	echo $exp_data;
-	exit;
-}
-
-if ($act == "key") {
-
-	if (!$a_cert[$id]) {
-		pfSenseHeader("system_certmanager.php");
-		exit;
-	}
-
-	$exp_name = urlencode("{$a_cert[$id]['descr']}.key");
-	$exp_data = base64_decode($a_cert[$id]['prv']);
-	$exp_size = strlen($exp_data);
-
-	header("Content-Type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$exp_name}");
-	header("Content-Length: $exp_size");
-	echo $exp_data;
-	exit;
-}
-
-if ($act == "p12") {
-	if (!$a_cert[$id]) {
-		pfSenseHeader("system_certmanager.php");
-		exit;
-	}
-
-	$exp_name = urlencode("{$a_cert[$id]['descr']}.p12");
-	$args = array();
-	$args['friendly_name'] = $a_cert[$id]['descr'];
-
-	$ca = lookup_ca($a_cert[$id]['caref']);
-
-	if ($ca) {
-		$args['extracerts'] = openssl_x509_read(base64_decode($ca['crt']));
-	}
-
-	$res_crt = openssl_x509_read(base64_decode($a_cert[$id]['crt']));
-	$res_key = openssl_pkey_get_private(array(0 => base64_decode($a_cert[$id]['prv']) , 1 => ""));
-
-	$exp_data = "";
-	openssl_pkcs12_export($res_crt, $exp_data, $res_key, null, $args);
-	$exp_size = strlen($exp_data);
-
-	header("Content-Type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$exp_name}");
-	header("Content-Length: $exp_size");
-	echo $exp_data;
-	exit;
-}
-
-if ($act == "csr") {
-	if (!$a_cert[$id]) {
-		pfSenseHeader("system_certmanager.php");
-		exit;
-	}
-
-	$pconfig['descr'] = $a_cert[$id]['descr'];
-	$pconfig['csr'] = base64_decode($a_cert[$id]['csr']);
-}
-
-if ($_POST['save']) {
-
-	if ($_POST['save'] == gettext("Save")) {
-		$input_errors = array();
-		$pconfig = $_POST;
-
-		/* input validation */
-		if ($pconfig['method'] == "sign") {
+	switch ($pconfig['method']) {
+		case 'sign':
 			$reqdfields = explode(" ",
 				"descr catosignwith");
 			$reqdfieldsn = array(
@@ -235,9 +179,8 @@ if ($_POST['save']) {
 			if ($_POST['lifetime'] > $max_lifetime) {
 				$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
 			}
-		}
-
-		if ($pconfig['method'] == "import") {
+			break;
+		case 'import':
 			$reqdfields = explode(" ",
 				"descr cert key");
 			$reqdfieldsn = array(
@@ -251,9 +194,8 @@ if ($_POST['save']) {
 			if (cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
 				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 			}
-		}
-
-		if ($pconfig['method'] == "internal") {
+			break;
+		case 'internal':
 			$reqdfields = explode(" ",
 				"descr caref keylen ecname keytype type lifetime dn_commonname");
 			$reqdfieldsn = array(
@@ -268,9 +210,8 @@ if ($_POST['save']) {
 			if ($_POST['lifetime'] > $max_lifetime) {
 				$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
 			}
-		}
-
-		if ($pconfig['method'] == "external") {
+			break;
+		case 'external':
 			$reqdfields = explode(" ",
 				"descr csr_keylen csr_ecname csr_keytype csr_dn_commonname");
 			$reqdfieldsn = array(
@@ -279,353 +220,336 @@ if ($_POST['save']) {
 				gettext("Elliptic Curve Name"),
 				gettext("Key type"),
 				gettext("Common Name"));
-		}
-
-		if ($pconfig['method'] == "existing") {
+			break;
+		case 'existing':
 			$reqdfields = array("certref");
 			$reqdfieldsn = array(gettext("Existing Certificate Choice"));
+			break;
+		default:
+			break;
+	}
+
+	$altnames = array();
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if ($pconfig['method'] != "import" && $pconfig['method'] != "existing") {
+		/* subjectAltNames */
+		$san_typevar = 'altname_type';
+		$san_valuevar = 'altname_value';
+		// This is just the blank alternate name that is added for display purposes. We don't want to validate/save it
+		if ($_POST["{$san_valuevar}0"] == "") {
+			unset($_POST["{$san_typevar}0"]);
+			unset($_POST["{$san_valuevar}0"]);
+		}
+		foreach ($_POST as $key => $value) {
+			$entry = '';
+			if (!substr_compare($san_typevar, $key, 0, strlen($san_typevar))) {
+				$entry = substr($key, strlen($san_typevar));
+				$field = 'type';
+			} elseif (!substr_compare($san_valuevar, $key, 0, strlen($san_valuevar))) {
+				$entry = substr($key, strlen($san_valuevar));
+				$field = 'value';
+			}
+
+			if (ctype_digit($entry)) {
+				$entry++;	// Pre-bootstrap code is one-indexed, but the bootstrap code is 0-indexed
+				$altnames[$entry][$field] = $value;
+			}
 		}
 
-		$altnames = array();
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+		$pconfig['altnames']['item'] = $altnames;
 
-		if ($pconfig['method'] != "import" && $pconfig['method'] != "existing") {
-			/* subjectAltNames */
-			$san_typevar = 'altname_type';
-			$san_valuevar = 'altname_value';
-			// This is just the blank alternate name that is added for display purposes. We don't want to validate/save it
-			if ($_POST["{$san_valuevar}0"] == "") {
-				unset($_POST["{$san_typevar}0"]);
-				unset($_POST["{$san_valuevar}0"]);
-			}
-			foreach ($_POST as $key => $value) {
-				$entry = '';
-				if (!substr_compare($san_typevar, $key, 0, strlen($san_typevar))) {
-					$entry = substr($key, strlen($san_typevar));
-					$field = 'type';
-				} elseif (!substr_compare($san_valuevar, $key, 0, strlen($san_valuevar))) {
-					$entry = substr($key, strlen($san_valuevar));
-					$field = 'value';
-				}
-
-				if (ctype_digit($entry)) {
-					$entry++;	// Pre-bootstrap code is one-indexed, but the bootstrap code is 0-indexed
-					$altnames[$entry][$field] = $value;
-				}
-			}
-
-			$pconfig['altnames']['item'] = $altnames;
-
-			/* Input validation for subjectAltNames */
-			foreach ($altnames as $idx => $altname) {
-				switch ($altname['type']) {
-					case "DNS":
-						if (!is_hostname($altname['value'], true) || is_ipaddr($altname['value'])) {
-							array_push($input_errors, "DNS subjectAltName values must be valid hostnames, FQDNs or wildcard domains.");
-						}
-						break;
-					case "IP":
-						if (!is_ipaddr($altname['value'])) {
-							array_push($input_errors, "IP subjectAltName values must be valid IP Addresses");
-						}
-						break;
-					case "email":
-						if (empty($altname['value'])) {
-							array_push($input_errors, "An e-mail address must be provided for this type of subjectAltName");
-						}
-						if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $altname['value'])) {
-							array_push($input_errors, "The e-mail provided in a subjectAltName contains invalid characters.");
-						}
-						break;
-					case "URI":
-						/* Close enough? */
-						if (!is_URL($altname['value'])) {
-							$input_errors[] = "URI subjectAltName types must be a valid URI";
-						}
-						break;
-					default:
-						$input_errors[] = "Unrecognized subjectAltName type.";
-				}
-			}
-
-			/* Make sure we do not have invalid characters in the fields for the certificate */
-
-			if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
-				array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
-			}
-
-			switch ($pconfig['method']) {
-				case "internal":
-					if (isset($_POST["keytype"]) && !in_array($_POST["keytype"], $cert_keytypes)) {
-						array_push($input_errors, gettext("Please select a valid Key Type."));
-					}
-					if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
-						array_push($input_errors, gettext("Please select a valid Key Length."));
-					}
-					if (isset($_POST["ecname"]) && !in_array($_POST["ecname"], $openssl_ecnames)) {
-						array_push($input_errors, gettext("Please select a valid Elliptic Curve Name."));
-					}
-					if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
-						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+		/* Input validation for subjectAltNames */
+		foreach ($altnames as $idx => $altname) {
+			switch ($altname['type']) {
+				case "DNS":
+					if (!is_hostname($altname['value'], true) || is_ipaddr($altname['value'])) {
+						$input_errors[] = gettext("DNS subjectAltName values must be valid hostnames, FQDNs or wildcard domains.");
 					}
 					break;
-				case "external":
-					if (isset($_POST["csr_keytype"]) && !in_array($_POST["csr_keytype"], $cert_keytypes)) {
-						array_push($input_errors, gettext("Please select a valid Key Type."));
-					}
-					if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
-						array_push($input_errors, gettext("Please select a valid Key Length."));
-					}
-					if (isset($_POST["csr_ecname"]) && !in_array($_POST["csr_ecname"], $openssl_ecnames)) {
-						array_push($input_errors, gettext("Please select a valid Elliptic Curve Name."));
-					}
-					if (!in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
-						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+				case "IP":
+					if (!is_ipaddr($altname['value'])) {
+						$input_errors[] = gettext("IP subjectAltName values must be valid IP Addresses");
 					}
 					break;
-				case "sign":
-					if (!in_array($_POST["csrsign_digest_alg"], $openssl_digest_algs)) {
-						array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+				case "email":
+					if (empty($altname['value'])) {
+						$input_errors[] = gettext("An e-mail address must be provided for this type of subjectAltName");
+					}
+					if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $altname['value'])) {
+						$input_errors[] = gettext("The e-mail provided in a subjectAltName contains invalid characters.");
+					}
+					break;
+				case "URI":
+					/* Close enough? */
+					if (!is_URL($altname['value'])) {
+						$input_errors[] = gettext("URI subjectAltName types must be a valid URI");
 					}
 					break;
 				default:
-					break;
+					$input_errors[] = gettext("Unrecognized subjectAltName type.");
 			}
 		}
 
-		/* save modifications */
-		if (!$input_errors) {
+		/* Make sure we do not have invalid characters in the fields for the certificate */
+		if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+			$input_errors[] = gettext("The field 'Descriptive Name' contains invalid characters.");
+		}
 
-			if ($pconfig['method'] == "existing") {
-				$cert = lookup_cert($pconfig['certref']);
-				if ($cert && $a_user) {
-					$a_user[$userid]['cert'][] = $cert['refid'];
+		switch ($pconfig['method']) {
+			case "internal":
+				if (isset($_POST["keytype"]) && !in_array($_POST["keytype"], $cert_keytypes)) {
+					$input_errors[] = gettext("Please select a valid Key Type.");
 				}
-			} else if ($pconfig['method'] == "sign") { // Sign a CSR
-				$csrid = lookup_cert($pconfig['csrtosign']);
-				$ca = & lookup_ca($pconfig['catosignwith']);
-
-				// Read the CSR from $config, or if a new one, from the textarea
-				if ($pconfig['csrtosign'] === "new") {
-					$csr = $pconfig['csrpaste'];
-				} else {
-					$csr = base64_decode($csrid['csr']);
+				if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
+					$input_errors[] = gettext("Please select a valid Key Length.");
 				}
-				if (count($altnames)) {
-					foreach ($altnames as $altname) {
-						$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
-					}
-					$altname_str = implode(",", $altnames_tmp);
+				if (isset($_POST["ecname"]) && !in_array($_POST["ecname"], $openssl_ecnames)) {
+					$input_errors[] = gettext("Please select a valid Elliptic Curve Name.");
 				}
-
-				$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], $pconfig['type'], $altname_str, $pconfig['csrsign_digest_alg']);
-
-				if ($n509) {
-					// Gather the details required to save the new cert
-					$newcert = array();
-					$newcert['refid'] = uniqid();
-					$newcert['caref'] = $pconfig['catosignwith'];
-					$newcert['descr'] = $pconfig['descr'];
-					$newcert['type'] = $pconfig['type'];
-					$newcert['crt'] = base64_encode($n509);
-
-					if ($pconfig['csrtosign'] === "new") {
-						$newcert['prv'] = base64_encode($pconfig['keypaste']);
-					} else {
-						$newcert['prv'] = $csrid['prv'];
-					}
-
-					// Add it to the config file
-					$config['cert'][] = $newcert;
+				if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
+					$input_errors[] = gettext("Please select a valid Digest Algorithm.");
 				}
-
-			} else {
-				$cert = array();
-				$cert['refid'] = uniqid();
-				if (isset($id) && $a_cert[$id]) {
-					$cert = $a_cert[$id];
+				break;
+			case "external":
+				if (isset($_POST["csr_keytype"]) && !in_array($_POST["csr_keytype"], $cert_keytypes)) {
+					$input_errors[] = gettext("Please select a valid Key Type.");
 				}
-
-				$cert['descr'] = $pconfig['descr'];
-
-				$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
-
-				if ($pconfig['method'] == "import") {
-					cert_import($cert, $pconfig['cert'], $pconfig['key']);
+				if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
+					$input_errors[] = gettext("Please select a valid Key Length.");
 				}
-
-				if ($pconfig['method'] == "internal") {
-					$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
-					if (!empty($pconfig['dn_country'])) {
-						$dn['countryName'] = $pconfig['dn_country'];
-					}
-					if (!empty($pconfig['dn_state'])) {
-						$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['dn_state']);
-					}
-					if (!empty($pconfig['dn_city'])) {
-						$dn['localityName'] = cert_escape_x509_chars($pconfig['dn_city']);
-					}
-					if (!empty($pconfig['dn_organization'])) {
-						$dn['organizationName'] = cert_escape_x509_chars($pconfig['dn_organization']);
-					}
-					if (!empty($pconfig['dn_organizationalunit'])) {
-						$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
-					}
-
-					$altnames_tmp = array();
-					$cn_altname = cert_add_altname_type($pconfig['dn_commonname']);
-					if (!empty($cn_altname)) {
-						$altnames_tmp[] = $cn_altname;
-					}
-					if (count($altnames)) {
-						foreach ($altnames as $altname) {
-							// The CN is added as a SAN automatically, do not add it again.
-							if ($altname['value'] != $pconfig['dn_commonname']) {
-								$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
-							}
-						}
-					}
-					if (!empty($altnames_tmp)) {
-						$dn['subjectAltName'] = implode(",", $altnames_tmp);
-					}
-
-					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'], $pconfig['keytype'], $pconfig['ecname'])) {
-						$input_errors = array();
-						while ($ssl_err = openssl_error_string()) {
-							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
-								array_push($input_errors, "openssl library returns: " . $ssl_err);
-							}
-						}
-					}
+				if (isset($_POST["csr_ecname"]) && !in_array($_POST["csr_ecname"], $openssl_ecnames)) {
+					$input_errors[] = gettext("Please select a valid Elliptic Curve Name.");
 				}
-
-				if ($pconfig['method'] == "external") {
-					$dn = array('commonName' => cert_escape_x509_chars($pconfig['csr_dn_commonname']));
-					if (!empty($pconfig['csr_dn_country'])) {
-						$dn['countryName'] = $pconfig['csr_dn_country'];
-					}
-					if (!empty($pconfig['csr_dn_state'])) {
-						$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['csr_dn_state']);
-					}
-					if (!empty($pconfig['csr_dn_city'])) {
-						$dn['localityName'] = cert_escape_x509_chars($pconfig['csr_dn_city']);
-					}
-					if (!empty($pconfig['csr_dn_organization'])) {
-						$dn['organizationName'] = cert_escape_x509_chars($pconfig['csr_dn_organization']);
-					}
-					if (!empty($pconfig['csr_dn_organizationalunit'])) {
-						$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['csr_dn_organizationalunit']);
-					}
-
-					$altnames_tmp = array();
-					$cn_altname = cert_add_altname_type($pconfig['csr_dn_commonname']);
-					if (!empty($cn_altname)) {
-						$altnames_tmp[] = $cn_altname;
-					}
-					if (count($altnames)) {
-						foreach ($altnames as $altname) {
-							// The CN is added as a SAN automatically, do not add it again.
-							if ($altname['value'] != $pconfig['csr_dn_commonname']) {
-								$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
-							}
-						}
-					}
-					if (!empty($altnames_tmp)) {
-						$dn['subjectAltName'] = implode(",", $altnames_tmp);
-					}
-
-					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'], $pconfig['csr_keytype'], $pconfig['csr_ecname'])) {
-						$input_errors = array();
-						while ($ssl_err = openssl_error_string()) {
-							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
-								array_push($input_errors, "openssl library returns: " . $ssl_err);
-							}
-						}
-					}
+				if (!in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
+					$input_errors[] = gettext("Please select a valid Digest Algorithm.");
 				}
-
-				error_reporting($old_err_level);
-
-				if (isset($id) && $a_cert[$id]) {
-					$a_cert[$id] = $cert;
-				} else {
-					$a_cert[] = $cert;
+				break;
+			case "sign":
+				if (!in_array($_POST["csrsign_digest_alg"], $openssl_digest_algs)) {
+					$input_errors[] = gettext("Please select a valid Digest Algorithm.");
 				}
-
-				if (isset($a_user) && isset($userid)) {
-					$a_user[$userid]['cert'][] = $cert['refid'];
-				}
-			}
-
-			if (!$input_errors) {
-				write_config();
-			}
-
-			if ((isset($userid) && is_numeric($userid)) && !$input_errors) {
-				post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
-				exit;
-			}
+				break;
+			default:
+				break;
 		}
 	}
 
-	if ($_POST['save'] == gettext("Update")) {
-		unset($input_errors);
-		$pconfig = $_POST;
+	/* save modifications */
+	if (!$input_errors) {
 
-		/* input validation */
-		$reqdfields = explode(" ", "descr cert");
-		$reqdfieldsn = array(
-			gettext("Descriptive name"),
-			gettext("Final Certificate data"));
+		if ($pconfig['method'] == "existing") {
+			$cert = lookup_cert($pconfig['certref']);
+			if ($cert && $a_user) {
+				$a_user[$userid]['cert'][] = $cert['refid'];
+			}
+		} elseif ($pconfig['method'] == "sign") { // Sign a CSR
+			$csrid = lookup_cert($pconfig['csrtosign']);
+			$ca = & lookup_ca($pconfig['catosignwith']);
 
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+			// Read the CSR from $config, or if a new one, from the textarea
+			if ($pconfig['csrtosign'] === "new") {
+				$csr = $pconfig['csrpaste'];
+			} else {
+				$csr = base64_decode($csrid['csr']);
+			}
+			if (count($altnames)) {
+				foreach ($altnames as $altname) {
+					$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
+				}
+				$altname_str = implode(",", $altnames_tmp);
+			}
 
-		if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
-			array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
-		}
+			$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], $pconfig['type'], $altname_str, $pconfig['csrsign_digest_alg']);
 
-//		old way
-		/* make sure this csr and certificate subjects match */
-//		$subj_csr = csr_get_subject($pconfig['csr'], false);
-//		$subj_cert = cert_get_subject($pconfig['cert'], false);
-//
-//		if (!isset($_POST['ignoresubjectmismatch']) && !($_POST['ignoresubjectmismatch'] == "yes")) {
-//			if (strcmp($subj_csr, $subj_cert)) {
-//				$input_errors[] = sprintf(gettext("The certificate subject '%s' does not match the signing request subject."), $subj_cert);
-//				$subject_mismatch = true;
-//			}
-//		}
-		$mod_csr = cert_get_publickey($pconfig['csr'], false, 'csr');
-		$mod_cert = cert_get_publickey($pconfig['cert'], false);
+			if ($n509) {
+				// Gather the details required to save the new cert
+				$newcert = array();
+				$newcert['refid'] = uniqid();
+				$newcert['caref'] = $pconfig['catosignwith'];
+				$newcert['descr'] = $pconfig['descr'];
+				$newcert['type'] = $pconfig['type'];
+				$newcert['crt'] = base64_encode($n509);
 
-		if (strcmp($mod_csr, $mod_cert)) {
-			// simply: if the moduli don't match, then the private key and public key won't match
-			$input_errors[] = sprintf(gettext("The certificate public key does not match the signing request public key."), $subj_cert);
-			$subject_mismatch = true;
-		}
+				if ($pconfig['csrtosign'] === "new") {
+					$newcert['prv'] = base64_encode($pconfig['keypaste']);
+				} else {
+					$newcert['prv'] = $csrid['prv'];
+				}
 
-		/* save modifications */
-		if (!$input_errors) {
+				// Add it to the config file
+				$config['cert'][] = $newcert;
+			}
 
-			$cert = $a_cert[$id];
+		} else {
+			$cert = array();
+			$cert['refid'] = uniqid();
+			if (isset($id) && $a_cert[$id]) {
+				$cert = $a_cert[$id];
+			}
 
 			$cert['descr'] = $pconfig['descr'];
 
-			csr_complete($cert, $pconfig['cert']);
+			$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page breaking menu tabs */
 
-			$a_cert[$id] = $cert;
+			if ($pconfig['method'] == "import") {
+				cert_import($cert, $pconfig['cert'], $pconfig['key']);
+			}
 
-			write_config();
+			if ($pconfig['method'] == "internal") {
+				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+				if (!empty($pconfig['dn_country'])) {
+					$dn['countryName'] = $pconfig['dn_country'];
+				}
+				if (!empty($pconfig['dn_state'])) {
+					$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['dn_state']);
+				}
+				if (!empty($pconfig['dn_city'])) {
+					$dn['localityName'] = cert_escape_x509_chars($pconfig['dn_city']);
+				}
+				if (!empty($pconfig['dn_organization'])) {
+					$dn['organizationName'] = cert_escape_x509_chars($pconfig['dn_organization']);
+				}
+				if (!empty($pconfig['dn_organizationalunit'])) {
+					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
+				}
 
-			pfSenseHeader("system_certmanager.php");
+				$altnames_tmp = array();
+				$cn_altname = cert_add_altname_type($pconfig['dn_commonname']);
+				if (!empty($cn_altname)) {
+					$altnames_tmp[] = $cn_altname;
+				}
+				if (count($altnames)) {
+					foreach ($altnames as $altname) {
+						// The CN is added as a SAN automatically, do not add it again.
+						if ($altname['value'] != $pconfig['dn_commonname']) {
+							$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
+						}
+					}
+				}
+				if (!empty($altnames_tmp)) {
+					$dn['subjectAltName'] = implode(",", $altnames_tmp);
+				}
+
+				if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'], $pconfig['keytype'], $pconfig['ecname'])) {
+					$input_errors = array();
+					while ($ssl_err = openssl_error_string()) {
+						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+							$input_errors[] = sprintf(gettext("OpenSSL Library Error: %s"), $ssl_err);
+						}
+					}
+				}
+			}
+
+			if ($pconfig['method'] == "external") {
+				$dn = array('commonName' => cert_escape_x509_chars($pconfig['csr_dn_commonname']));
+				if (!empty($pconfig['csr_dn_country'])) {
+					$dn['countryName'] = $pconfig['csr_dn_country'];
+				}
+				if (!empty($pconfig['csr_dn_state'])) {
+					$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['csr_dn_state']);
+				}
+				if (!empty($pconfig['csr_dn_city'])) {
+					$dn['localityName'] = cert_escape_x509_chars($pconfig['csr_dn_city']);
+				}
+				if (!empty($pconfig['csr_dn_organization'])) {
+					$dn['organizationName'] = cert_escape_x509_chars($pconfig['csr_dn_organization']);
+				}
+				if (!empty($pconfig['csr_dn_organizationalunit'])) {
+					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['csr_dn_organizationalunit']);
+				}
+
+				$altnames_tmp = array();
+				$cn_altname = cert_add_altname_type($pconfig['csr_dn_commonname']);
+				if (!empty($cn_altname)) {
+					$altnames_tmp[] = $cn_altname;
+				}
+				if (count($altnames)) {
+					foreach ($altnames as $altname) {
+						// The CN is added as a SAN automatically, do not add it again.
+						if ($altname['value'] != $pconfig['csr_dn_commonname']) {
+							$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
+						}
+					}
+				}
+				if (!empty($altnames_tmp)) {
+					$dn['subjectAltName'] = implode(",", $altnames_tmp);
+				}
+
+				if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'], $pconfig['csr_keytype'], $pconfig['csr_ecname'])) {
+					$input_errors = array();
+					while ($ssl_err = openssl_error_string()) {
+						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+							$input_errors[] = sprintf(gettext("OpenSSL Library Error: %s"), $ssl_err);
+						}
+					}
+				}
+			}
+
+			error_reporting($old_err_level);
+
+			if (isset($id) && $a_cert[$id]) {
+				$a_cert[$id] = $cert;
+			} else {
+				$a_cert[] = $cert;
+			}
+
+			if (isset($a_user) && isset($userid)) {
+				$a_user[$userid]['cert'][] = $cert['refid'];
+			}
 		}
+
+		if (!$input_errors) {
+			write_config();
+		}
+
+		if ((isset($userid) && is_numeric($userid)) && !$input_errors) {
+			post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
+			exit;
+		}
+	}
+} elseif ($_POST['save'] == gettext("Update")) {
+	/* Updating a certificate signing request */
+	unset($input_errors);
+	$pconfig = $_POST;
+
+	/* input validation */
+	$reqdfields = explode(" ", "descr cert");
+	$reqdfieldsn = array(
+		gettext("Descriptive name"),
+		gettext("Final Certificate data"));
+
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
+		$input_errors[] = gettext("The field 'Descriptive Name' contains invalid characters.");
+	}
+
+	$mod_csr = cert_get_publickey($pconfig['csr'], false, 'csr');
+	$mod_cert = cert_get_publickey($pconfig['cert'], false);
+
+	if (strcmp($mod_csr, $mod_cert)) {
+		// simply: if the moduli don't match, then the private key and public key won't match
+		$input_errors[] = gettext("The certificate public key does not match the signing request public key.");
+		$subject_mismatch = true;
+	}
+
+	/* save modifications */
+	if (!$input_errors) {
+		$cert = $a_cert[$id];
+		$cert['descr'] = $pconfig['descr'];
+		csr_complete($cert, $pconfig['cert']);
+		$a_cert[$id] = $cert;
+		write_config();
+		pfSenseHeader("system_certmanager.php");
 	}
 }
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificates"));
 $pglinks = array("", "system_camanager.php", "system_certmanager.php");
 
-if (($act == "new" || ($_POST['save'] == gettext("Save") && $input_errors)) || ($act == "csr" || ($_POST['save'] == gettext("Update") && $input_errors))) {
+if (($act == "new" || ($_POST['save'] == gettext("Save") && $input_errors)) ||
+    ($act == "csr" || ($_POST['save'] == gettext("Update") && $input_errors))) {
 	$pgtitle[] = gettext('Edit');
 	$pglinks[] = "@self";
 }
@@ -1128,7 +1052,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	print $form;
 
-} else if ($act == "csr" || (($_POST['save'] == gettext("Update")) && $input_errors)) {
+} elseif ($act == "csr" || (($_POST['save'] == gettext("Update")) && $input_errors)) {
 	$form = new Form(false);
 	$form->setAction('system_certmanager.php?act=csr');
 

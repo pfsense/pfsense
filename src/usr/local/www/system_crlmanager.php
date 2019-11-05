@@ -70,148 +70,136 @@ if (!empty($id)) {
 	$thiscrl =& lookup_crl($id);
 }
 
-// If we were given an invalid crlref in the id, no sense in continuing as it would only cause errors.
-if (!$thiscrl && (($act != "") && ($act != "new"))) {
-	pfSenseHeader("system_crlmanager.php");
+/* Actions other than 'new' require a CRL to act upon.
+ * 'del' action must be submitted via POST. */
+if ((!empty($act) &&
+    ($act != 'new') &&
+    !$thiscrl) ||
+    (($act == 'del') && empty($_POST))) {
+	pfSenseHeader("system_camanager.php");
 	$act="";
 	$savemsg = gettext("Invalid CRL reference.");
 	$class = "danger";
 }
 
-if ($_POST['act'] == "del") {
-	$name = htmlspecialchars($thiscrl['descr']);
-	if (crl_in_use($id)) {
-		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted."), $name);
-		$class = "danger";
-	} else {
-		foreach ($a_crl as $cid => $acrl) {
-			if ($acrl['refid'] == $thiscrl['refid']) {
-				unset($a_crl[$cid]);
+switch ($act) {
+	case 'del':
+		$name = htmlspecialchars($thiscrl['descr']);
+		if (crl_in_use($id)) {
+			$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted."), $name);
+			$class = "danger";
+		} else {
+			foreach ($a_crl as $cid => $acrl) {
+				if ($acrl['refid'] == $thiscrl['refid']) {
+					unset($a_crl[$cid]);
+				}
+			}
+			write_config("Deleted CRL {$name}.");
+			$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted."), $name);
+			$class = "success";
+		}
+		break;
+	case 'new':
+		$pconfig['method'] = $_REQUEST['method'];
+		$pconfig['caref'] = $_REQUEST['caref'];
+		$pconfig['lifetime'] = $default_lifetime;
+		$pconfig['serial'] = "0";
+		$crlca =& lookup_ca($pconfig['caref']);
+		if (!$crlca) {
+			$input_errors[] = gettext('Invalid CA');
+			unset($act);
+		}
+		break;
+	case 'addcert':
+		unset($input_errors);
+		$pconfig = $_REQUEST;
+		$revoke_list = array();
+		if (!$pconfig['crlref'] || (!$pconfig['certref'] && !$pconfig['revokeserial'])) {
+			pfSenseHeader("system_crlmanager.php");
+			exit;
+		}
+		$crl =& lookup_crl($pconfig['crlref']);
+		if (!is_array($pconfig['certref'])) {
+			$pconfig['certref'] = array();
+		}
+		if (empty($pconfig['certref']) && empty($pconfig['revokeserial'])) {
+			$input_errors[] = gettext("Select one or more certificates or enter a serial number to revoke.");
+		}
+		if (!is_crl_internal($crl)) {
+			$input_errors[] = gettext("Cannot revoke certificates for an imported/external CRL.");
+		}
+		foreach ($pconfig['certref'] as $rcert) {
+			$cert = lookup_cert($rcert);
+			if ($crl['caref'] == $cert['caref']) {
+				$revoke_list[] = $cert;
+			} else {
+				$input_errors[] = gettext("CA mismatch between the Certificate and CRL. Unable to Revoke.");
 			}
 		}
-		write_config("Deleted CRL {$name}.");
-		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted."), $name);
-		$class = "success";
-	}
-}
-
-if ($act == "new") {
-	$pconfig['method'] = $_REQUEST['method'];
-	$pconfig['caref'] = $_REQUEST['caref'];
-	$pconfig['lifetime'] = $default_lifetime;
-	$pconfig['serial'] = "0";
-	$crlca =& lookup_ca($pconfig['caref']);
-	if (!$crlca) {
-		$input_errors[] = gettext('Invalid CA');
-		unset($act);
-	}
-}
-
-if ($act == "exp") {
-	crl_update($thiscrl);
-	$exp_name = urlencode("{$thiscrl['descr']}.crl");
-	$exp_data = base64_decode($thiscrl['text']);
-	$exp_size = strlen($exp_data);
-
-	header("Content-Type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$exp_name}");
-	header("Content-Length: $exp_size");
-	echo $exp_data;
-	exit;
-}
-
-if ($act == "addcert") {
-	unset($input_errors);
-	$pconfig = $_REQUEST;
-	$revoke_list = array();
-
-	if (!$pconfig['crlref'] || (!$pconfig['certref'] && !$pconfig['revokeserial'])) {
-		pfSenseHeader("system_crlmanager.php");
-		exit;
-	}
-
-	// certref, crlref
-	$crl =& lookup_crl($pconfig['crlref']);
-	if (!is_array($pconfig['certref'])) {
-		$pconfig['certref'] = array();
-	}
-
-	if (empty($pconfig['certref']) && empty($pconfig['revokeserial'])) {
-		$input_errors[] = gettext("Select one or more certificates or enter a serial number to revoke.");
-	}
-	if (!is_crl_internal($crl)) {
-		$input_errors[] = gettext("Cannot revoke certificates for an imported/external CRL.");
-	}
-
-	foreach ($pconfig['certref'] as $rcert) {
-		$cert = lookup_cert($rcert);
-		if ($crl['caref'] == $cert['caref']) {
-			$revoke_list[] = $cert;
+		foreach (explode(' ', $pconfig['revokeserial']) as $serial) {
+			if (empty($serial)) {
+				continue;
+			}
+			$vserial = cert_validate_serial($serial, true, true);
+			if ($vserial != null) {
+				$revoke_list[] = $vserial;
+			} else {
+				$input_errors[] = gettext("Invalid serial in list (Must be ASN.1 integer compatible decimal or hex string).");
+			}
+		}
+		if (!$input_errors) {
+			$reason = (empty($pconfig['crlreason'])) ? 0 : $pconfig['crlreason'];
+			foreach ($revoke_list as $cert) {
+				cert_revoke($cert, $crl, $reason);
+			}
+			// refresh IPsec and OpenVPN CRLs
+			openvpn_refresh_crls();
+			vpn_ipsec_configure();
+			write_config("Revoked certificate(s) in CRL {$crl['descr']}.");
+			pfSenseHeader("system_crlmanager.php");
+			exit;
 		} else {
-			$input_errors[] = gettext("CA mismatch between the Certificate and CRL. Unable to Revoke.");
+			$act = 'edit';
 		}
-	}
-
-	foreach (explode(' ', $pconfig['revokeserial']) as $serial) {
-		if (empty($serial)) {
-			continue;
+		break;
+	case 'delcert':
+		if (!is_array($thiscrl['cert'])) {
+			pfSenseHeader("system_crlmanager.php");
+			exit;
 		}
-		$vserial = cert_validate_serial($serial, true, true);
-		if ($vserial != null) {
-			$revoke_list[] = $vserial;
+		$found = false;
+		foreach ($thiscrl['cert'] as $acert) {
+			if ($acert['refid'] == $_REQUEST['certref']) {
+				$found = true;
+				$thiscert = $acert;
+			}
+		}
+		if (!$found) {
+			pfSenseHeader("system_crlmanager.php");
+			exit;
+		}
+		$certname = htmlspecialchars($thiscert['descr']);
+		$crlname = htmlspecialchars($thiscrl['descr']);
+		if (cert_unrevoke($thiscert, $thiscrl)) {
+			$savemsg = sprintf(gettext('Deleted Certificate %1$s from CRL %2$s.'), $certname, $crlname);
+			$class = "success";
+			// refresh IPsec and OpenVPN CRLs
+			openvpn_refresh_crls();
+			vpn_ipsec_configure();
+			write_config($savemsg);
 		} else {
-			$input_errors[] = gettext("Invalid serial in list (Must be ASN.1 integer compatible decimal or hex string).");
+			$savemsg = sprintf(gettext('Failed to delete Certificate %1$s from CRL %2$s.'), $certname, $crlname);
+			$class = "danger";
 		}
-	}
-
-	if (!$input_errors) {
-		$reason = (empty($pconfig['crlreason'])) ? 0 : $pconfig['crlreason'];
-
-		foreach ($revoke_list as $cert) {
-			cert_revoke($cert, $crl, $reason);
-		}
-
-		// refresh IPsec and OpenVPN CRLs
-		openvpn_refresh_crls();
-		vpn_ipsec_configure();
-		write_config("Revoked certificate(s) in CRL {$crl['descr']}.");
-		pfSenseHeader("system_crlmanager.php");
-		exit;
-	} else {
-		$act = 'edit';
-	}
-}
-
-if ($act == "delcert") {
-	if (!is_array($thiscrl['cert'])) {
-		pfSenseHeader("system_crlmanager.php");
-		exit;
-	}
-	$found = false;
-	foreach ($thiscrl['cert'] as $acert) {
-		if ($acert['refid'] == $_REQUEST['certref']) {
-			$found = true;
-			$thiscert = $acert;
-		}
-	}
-	if (!$found) {
-		pfSenseHeader("system_crlmanager.php");
-		exit;
-	}
-	$certname = htmlspecialchars($thiscert['descr']);
-	$crlname = htmlspecialchars($thiscrl['descr']);
-	if (cert_unrevoke($thiscert, $thiscrl)) {
-		$savemsg = sprintf(gettext('Deleted Certificate %1$s from CRL %2$s.'), $certname, $crlname);
-		$class = "success";
-		// refresh IPsec and OpenVPN CRLs
-		openvpn_refresh_crls();
-		vpn_ipsec_configure();
-		write_config($savemsg);
-	} else {
-		$savemsg = sprintf(gettext('Failed to delete Certificate %1$s from CRL %2$s.'), $certname, $crlname);
-		$class = "danger";
-	}
-	$act="edit";
+		$act="edit";
+		break;
+	case 'exp':
+		/* Exporting the CRL contents*/
+		crl_update($thiscrl);
+		send_user_download('data', base64_decode($thiscrl['text']), "{$thiscrl['descr']}.crl");
+		break;
+	default:
+		break;
 }
 
 if ($_POST['save']) {

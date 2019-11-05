@@ -236,6 +236,10 @@ if ($_POST['save']) {
 		}
 	}
 
+	if (!empty($_POST['serial']) && !cert_validate_serial($_POST['serial'])) {
+		$input_errors[] = gettext("Please enter a valid integer serial number.");
+	}
+
 	/* save modifications */
 	if (!$input_errors) {
 		$ca = array();

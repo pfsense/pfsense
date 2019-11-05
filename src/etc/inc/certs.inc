@@ -1126,7 +1126,7 @@ function crl_get_entry_serial($entry) {
 		/* Entry is an array with certificate text which can be used to
 		 * determine the serial */
 		return cert_get_serial($entry['crt'], true);
-	} elseif (cert_validate_serial($entry) != null) {
+	} elseif (cert_validate_serial($entry, false, true) != null) {
 		/* Entry is a valid serial string */
 		return $entry;
 	}
@@ -1148,7 +1148,7 @@ function crl_get_entry_serial($entry) {
  *     is valid.
  ******/
 
-function cert_validate_serial($serial, $returnvalue = false) {
+function cert_validate_serial($serial, $returnvalue = false, $allowlarge = false) {
 	require_once('ASN1.php');
 	require_once('ASN1_INT.php');
 	/* The ASN.1 parsing function will throw an exception if the value is
@@ -1169,6 +1169,15 @@ function cert_validate_serial($serial, $returnvalue = false) {
 			/* Convert to decimal */
 			$serial = base_convert($serial, 16, 10);
 		}
+
+		/* Unfortunately, PHP openssl_csr_sign() limits serial numbers to a
+		 * PHP integer, so we cannot generate large numbers up to the maximum
+		 * allowed ASN.1 size (2^159). We are limited to PHP_INT_MAX --
+		 * As such, numbers larger than that limit should be rejected */
+		if ($serial > PHP_INT_MAX) {
+			throw new Exception('Serial too large for PHP OpenSSL');
+		}
+
 		/* Attempt to create an ASN.1 integer, if it fails, an exception will be thrown */
 		$asn1serial = new \Ukrbublik\openssl_x509_crl\ASN1_INT( $serial );
 		return ($returnvalue) ? $asn1serial->content : true;

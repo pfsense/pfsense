@@ -156,7 +156,7 @@ if ($act == "addcert") {
 		if (empty($serial)) {
 			continue;
 		}
-		$vserial = cert_validate_serial($serial, true);
+		$vserial = cert_validate_serial($serial, true, true);
 		if ($vserial != null) {
 			$revoke_list[] = $vserial;
 		} else {
@@ -239,6 +239,10 @@ if ($_POST['save']) {
 	}
 	if ($pconfig['lifetime'] > $max_lifetime) {
 		$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
+	}
+
+	if (!empty($pconfig['serial']) && !cert_validate_serial($pconfig['serial'])) {
+		$input_errors[] = gettext("Please enter a valid integer serial number.");
 	}
 
 	/* save modifications */

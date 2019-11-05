@@ -26,6 +26,7 @@
 ##|*IDENT=page-diagnostics-configurationhistory
 ##|*NAME=Diagnostics: Configuration History
 ##|*DESCR=Allow access to the 'Diagnostics: Configuration History' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=diag_confbak.php*
 ##|-PRIV
 

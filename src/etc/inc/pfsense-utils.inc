@@ -3465,4 +3465,65 @@ function &getarraybyref(&$array) {
 	return $item;
 }
 
+/****f* pfsense-utils/send_download_data
+ * NAME
+ *   send_download_data - Send content to a user's browser as a file to download
+ * INPUTS
+ *   $type        : The type of download, either 'data' to send the contents of
+ *                    a variable or 'file' to send the contents of a file on the
+ *                    filesystem.
+ *   $content     : For 'data' type, the content to send the user. For 'file'
+ *                    type, the full path to the file to send.
+ *   $userfilename: The filename presented to the user when downloading. For
+ *                    'file' type, this may be omitted and the basename of
+ *                    $content will be used instead.
+ *   $contenttype : MIME content type of the data. Default "application/octet-stream"
+ * RESULT
+ *   Sends the data to the browser as a file to download.
+ ******/
+
+function send_user_download($type = 'data', $content, $userfilename = "", $contenttype = "application/octet-stream") {
+	/* If the type is 'file', then use the file size, otherwise use the size of the data to send */
+	$size = ($type == 'file') ? filesize($content) : strlen($content);
+
+	/* If the filename to pass to the user is empty, assume it to be the filename being read. */
+	$name = (($type == 'file') && empty($userfilename)) ? basename($content) : $userfilename;
+
+	/* Cannot determine the filename, so bail. */
+	if (empty($name)) {
+		exit;
+	}
+
+	/* Send basic download headers */
+	header("Content-Type: {$contenttype}");
+	header("Content-Length: {$size}");
+	header("Content-Disposition: attachment; filename=" . urlencode($name));
+
+	/* Send cache headers */
+	if (isset($_SERVER['HTTPS'])) {
+		header('Pragma: ');
+		header('Cache-Control: ');
+	} else {
+		header("Pragma: private");
+		header("Cache-Control: private, must-revalidate");
+	}
+
+	/* Ensure output buffering is off so PHP does not consume
+	 * memory in readfile(). https://redmine.pfsense.org/issues/9239 */
+	while (ob_get_level()) {
+		@ob_end_clean();
+	}
+
+	/* Send the data to the user */
+	if ($type == 'file') {
+		readfile($content);
+	} else {
+		echo $content;
+	}
+
+	/* Flush any remaining output buffer */
+	@ob_end_flush();
+	exit;
+}
+
 ?>

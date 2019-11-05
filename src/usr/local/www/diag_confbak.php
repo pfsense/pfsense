@@ -66,17 +66,9 @@ if ($_POST['rmver'] != "") {
 
 if ($_REQUEST['getcfg'] != "") {
 	$_REQUEST['getcfg'] = basename($_REQUEST['getcfg']);
-	$file = $g['conf_path'] . '/backup/config-' . $_REQUEST['getcfg'] . '.xml';
-
-	$exp_name = urlencode("config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_REQUEST['getcfg']}.xml");
-	$exp_data = file_get_contents($file);
-	$exp_size = strlen($exp_data);
-
-	header("Content-Type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$exp_name}");
-	header("Content-Length: $exp_size");
-	echo $exp_data;
-	exit;
+	send_user_download('file',
+				$g['conf_path'] . '/backup/config-' . $_REQUEST['getcfg'] . '.xml',
+				"config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_REQUEST['getcfg']}.xml");
 }
 
 if (($_REQUEST['diff'] == 'Diff') && isset($_REQUEST['oldtime']) && isset($_REQUEST['newtime']) &&

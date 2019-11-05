@@ -40,21 +40,7 @@ function download_crashdata_file($name) {
 		exit;
 	}
 	session_cache_limiter('public');
-	$fd = fopen($name, "rb");
-	header("Content-Type: application/octet-stream");
-	header("Content-Length: " . filesize($name));
-	header("Content-Disposition: attachment; filename=\"" .
-		trim(htmlentities(basename($name))) . "\"");
-	if (isset($_SERVER['HTTPS'])) {
-		header('Pragma: ');
-		header('Cache-Control: ');
-	} else {
-		header("Pragma: private");
-		header("Cache-Control: private, must-revalidate");
-	}
-
-	fpassthru($fd);
-	exit;
+	send_user_download('file', $name);
 }
 
 if (!empty($_POST['Download'])) {

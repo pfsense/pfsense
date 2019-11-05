@@ -3487,7 +3487,7 @@ function send_user_download($type = 'data', $content, $userfilename = "", $conte
 	$size = ($type == 'file') ? filesize($content) : strlen($content);
 
 	/* If the filename to pass to the user is empty, assume it to be the filename being read. */
-	$name = (($type == 'file') && empty($userfilename)) ? basename($content) : $userfilename;
+	$name = basename((($type == 'file') && empty($userfilename)) ? $content : $userfilename);
 
 	/* Cannot determine the filename, so bail. */
 	if (empty($name)) {

@@ -55,6 +55,7 @@ $priv_list['page-diagnostics-command']['match'][] = "diag_command.php*";
 $priv_list['page-diagnostics-configurationhistory'] = array();
 $priv_list['page-diagnostics-configurationhistory']['name'] = gettext("WebCfg - Diagnostics: Configuration History");
 $priv_list['page-diagnostics-configurationhistory']['descr'] = gettext("Allow access to the 'Diagnostics: Configuration History' page.");
+$priv_list['page-diagnostics-configurationhistory']['warn'] = "standard-warning-root";
 $priv_list['page-diagnostics-configurationhistory']['match'] = array();
 $priv_list['page-diagnostics-configurationhistory']['match'][] = "diag_confbak.php*";
 

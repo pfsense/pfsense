@@ -110,7 +110,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir) {
 	}
 
 	/* Source Operator */
-	if (in_array(trim($rule[$index]), array("lt", "gt", "dq", "neq"))) {
+	if (in_array(trim($rule[$index]), array("lt", "gt", "eq", "neq"))) {
 		switch(trim($rule[$index])) {
 			case "lt":
 				$operator = "<";
@@ -118,7 +118,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir) {
 			case "gt":
 				$operator = ">";
 				break;
-			case "dq":
+			case "eq":
 				$operator = "=";
 				break;
 			case "neq":
@@ -177,7 +177,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir) {
 	}
 
 	/* Destination Operator */
-	if (in_array(trim($rule[$index]), array("lt", "gt", "dq", "neq"))) {
+	if (in_array(trim($rule[$index]), array("lt", "gt", "eq", "neq"))) {
 		switch(trim($rule[$index])) {
 			case "lt":
 				$operator = "<";
@@ -185,7 +185,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir) {
 			case "gt":
 				$operator = ">";
 				break;
-			case "dq":
+			case "eq":
 				$operator = "=";
 				break;
 			case "neq":

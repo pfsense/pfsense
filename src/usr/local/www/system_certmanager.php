@@ -77,7 +77,19 @@ foreach ($a_ca as $ca) {
 	}
 }
 
-$act = $_REQUEST['act'];
+if ($_REQUEST['exportp12']) {
+	$act = 'p12';
+} elseif ($_REQUEST['exportpkey']) {
+	$act = 'key';
+} else {
+	$act = $_REQUEST['act'];
+}
+
+if ($act == 'edit') {
+	$cert_methods = array(
+		'edit' => gettext("Edit an existing certificate")
+	);
+}
 
 if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -128,6 +140,12 @@ switch ($act) {
 		$pconfig['type'] = "user";
 		$pconfig['lifetime'] = $default_lifetime;
 		break;
+	case 'edit':
+		/* Editing a certificate, so populate values */
+		$pconfig['descr'] = $thiscert['descr'];
+		$pconfig['cert'] = base64_decode($thiscert['crt']);
+		$pconfig['key'] = base64_decode($thiscert['prv']);
+		break;
 	case 'csr':
 		/* Editing a CSR, so populate values */
 		$pconfig['descr'] = $thiscert['descr'];
@@ -143,10 +161,23 @@ switch ($act) {
 		break;
 	case 'key':
 		/* Exporting a private key */
-		send_user_download('data', base64_decode($thiscert['prv']), "{$thiscert['descr']}.key");
+		$keyout = base64_decode($thiscert['prv']);
+		if (isset($_POST['exportpass']) && !empty($_POST['exportpass'])) {
+			$res_key = openssl_pkey_get_private($keyout);
+			if ($res_key) {
+				openssl_pkey_export($res_key, $keyout, $_POST['exportpass']);
+			} else {
+				$savemsg = gettext("Unable to export password-protected private key.");
+				$class = 'danger';
+			}
+		}
+		if (!empty($keyout)) {
+			send_user_download('data', $keyout, "{$thiscert['descr']}.key");
+		}
 		break;
 	case 'p12':
 		/* Exporting a PKCS#12 file containing the certificate, key, and (if present) CA */
+		$password = (isset($_POST['exportpass']) && !empty($_POST['exportpass'])) ? $_POST['exportpass'] : null;
 		$args = array();
 		$args['friendly_name'] = $thiscert['descr'];
 		$ca = lookup_ca($thiscert['caref']);
@@ -157,7 +188,7 @@ switch ($act) {
 		$res_crt = openssl_x509_read(base64_decode($thiscert['crt']));
 		$res_key = openssl_pkey_get_private(base64_decode($thiscert['prv']));
 		$exp_data = "";
-		openssl_pkcs12_export($res_crt, $exp_data, $res_key, null, $args);
+		openssl_pkcs12_export($res_crt, $exp_data, $res_key, $password, $args);
 		send_user_download('data', $exp_data, "{$thiscert['descr']}.p12");
 		break;
 	default:
@@ -194,6 +225,7 @@ if ($_POST['save'] == gettext("Save")) {
 				$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
 			}
 			break;
+		case 'edit':
 		case 'import':
 			$reqdfields = explode(" ",
 				"descr cert key");
@@ -246,7 +278,7 @@ if ($_POST['save'] == gettext("Save")) {
 	$altnames = array();
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($pconfig['method'] != "import" && $pconfig['method'] != "existing") {
+	if (!in_array($pconfig['method'], array('edit', 'import', 'existing'))) {
 		/* subjectAltNames */
 		$san_typevar = 'altname_type';
 		$san_valuevar = 'altname_value';
@@ -351,69 +383,74 @@ if ($_POST['save'] == gettext("Save")) {
 
 	/* save modifications */
 	if (!$input_errors) {
+		$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page breaking menu tabs */
 
-		if ($pconfig['method'] == "existing") {
-			$cert = lookup_cert($pconfig['certref']);
-			if ($cert && $a_user) {
-				$a_user[$userid]['cert'][] = $cert['refid'];
-				$savemsg = sprintf(gettext("Added certificate %s to user %s"), $cert['descr'], $a_user[$userid]['name']);
-			}
-		} elseif ($pconfig['method'] == "sign") { // Sign a CSR
-			$csrid = lookup_cert($pconfig['csrtosign']);
-			$ca = & lookup_ca($pconfig['catosignwith']);
-
-			// Read the CSR from $config, or if a new one, from the textarea
-			if ($pconfig['csrtosign'] === "new") {
-				$csr = $pconfig['csrpaste'];
-			} else {
-				$csr = base64_decode($csrid['csr']);
-			}
-			if (count($altnames)) {
-				foreach ($altnames as $altname) {
-					$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
-				}
-				$altname_str = implode(",", $altnames_tmp);
-			}
-
-			$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], $pconfig['type'], $altname_str, $pconfig['csrsign_digest_alg']);
-
-			if ($n509) {
-				// Gather the details required to save the new cert
-				$newcert = array();
-				$newcert['refid'] = uniqid();
-				$newcert['caref'] = $pconfig['catosignwith'];
-				$newcert['descr'] = $pconfig['descr'];
-				$newcert['type'] = $pconfig['type'];
-				$newcert['crt'] = base64_encode($n509);
-
-				if ($pconfig['csrtosign'] === "new") {
-					$newcert['prv'] = base64_encode($pconfig['keypaste']);
-				} else {
-					$newcert['prv'] = $csrid['prv'];
-				}
-
-				// Add it to the config file
-				$config['cert'][] = $newcert;
-				$savemsg = sprintf(gettext("Signed certificate %s"), $newcert['descr']);
-			}
-
+		if (isset($id) && $thiscert) {
+			$cert = $thiscert;
 		} else {
 			$cert = array();
 			$cert['refid'] = uniqid();
-			if (isset($id) && $thiscert) {
-				$cert = $thiscert;
-			}
+		}
 
-			$cert['descr'] = $pconfig['descr'];
+		$cert['descr'] = $pconfig['descr'];
 
-			$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page breaking menu tabs */
-
-			if ($pconfig['method'] == "import") {
+		switch($pconfig['method']) {
+			case 'existing':
+				/* Add an existing certificate to a user */
+				$ucert = lookup_cert($pconfig['certref']);
+				if ($ucert && $a_user) {
+					$a_user[$userid]['cert'][] = $ucert['refid'];
+					$savemsg = sprintf(gettext("Added certificate %s to user %s"), $ucert['descr'], $a_user[$userid]['name']);
+				}
+				unset($cert);
+				break;
+			case 'sign':
+				/* Sign a CSR */
+				$csrid = lookup_cert($pconfig['csrtosign']);
+				$ca = & lookup_ca($pconfig['catosignwith']);
+				// Read the CSR from $config, or if a new one, from the textarea
+				if ($pconfig['csrtosign'] === "new") {
+					$csr = $pconfig['csrpaste'];
+				} else {
+					$csr = base64_decode($csrid['csr']);
+				}
+				if (count($altnames)) {
+					foreach ($altnames as $altname) {
+						$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
+					}
+					$altname_str = implode(",", $altnames_tmp);
+				}
+				$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], $pconfig['type'], $altname_str, $pconfig['csrsign_digest_alg']);
+				if ($n509) {
+					// Gather the details required to save the new cert
+					$newcert = array();
+					$newcert['refid'] = uniqid();
+					$newcert['caref'] = $pconfig['catosignwith'];
+					$newcert['descr'] = $pconfig['descr'];
+					$newcert['type'] = $pconfig['type'];
+					$newcert['crt'] = base64_encode($n509);
+					if ($pconfig['csrtosign'] === "new") {
+						$newcert['prv'] = base64_encode($pconfig['keypaste']);
+					} else {
+						$newcert['prv'] = $csrid['prv'];
+					}
+					// Add it to the config file
+					$config['cert'][] = $newcert;
+					$savemsg = sprintf(gettext("Signed certificate %s"), $newcert['descr']);
+				}
+				unset($cert);
+				break;
+			case 'edit':
+				cert_import($cert, $pconfig['cert'], $pconfig['key']);
+				$savemsg = sprintf(gettext("Edited certificate %s"), $cert['descr']);
+				break;
+			case 'import':
+				/* Import an external certificate+key */
 				cert_import($cert, $pconfig['cert'], $pconfig['key']);
 				$savemsg = sprintf(gettext("Imported certificate %s"), $cert['descr']);
-			}
-
-			if ($pconfig['method'] == "internal") {
+				break;
+			case 'internal':
+				/* Create an internal certificate */
 				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
 				if (!empty($pconfig['dn_country'])) {
 					$dn['countryName'] = $pconfig['dn_country'];
@@ -430,7 +467,6 @@ if ($_POST['save'] == gettext("Save")) {
 				if (!empty($pconfig['dn_organizationalunit'])) {
 					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 				}
-
 				$altnames_tmp = array();
 				$cn_altname = cert_add_altname_type($pconfig['dn_commonname']);
 				if (!empty($cn_altname)) {
@@ -447,7 +483,6 @@ if ($_POST['save'] == gettext("Save")) {
 				if (!empty($altnames_tmp)) {
 					$dn['subjectAltName'] = implode(",", $altnames_tmp);
 				}
-
 				if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'], $pconfig['keytype'], $pconfig['ecname'])) {
 					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
@@ -457,9 +492,9 @@ if ($_POST['save'] == gettext("Save")) {
 					}
 				}
 				$savemsg = sprintf(gettext("Created internal certificate %s"), $cert['descr']);
-			}
-
-			if ($pconfig['method'] == "external") {
+				break;
+			case 'external':
+				/* Create a certificate signing request */
 				$dn = array('commonName' => cert_escape_x509_chars($pconfig['csr_dn_commonname']));
 				if (!empty($pconfig['csr_dn_country'])) {
 					$dn['countryName'] = $pconfig['csr_dn_country'];
@@ -476,7 +511,6 @@ if ($_POST['save'] == gettext("Save")) {
 				if (!empty($pconfig['csr_dn_organizationalunit'])) {
 					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['csr_dn_organizationalunit']);
 				}
-
 				$altnames_tmp = array();
 				$cn_altname = cert_add_altname_type($pconfig['csr_dn_commonname']);
 				if (!empty($cn_altname)) {
@@ -493,7 +527,6 @@ if ($_POST['save'] == gettext("Save")) {
 				if (!empty($altnames_tmp)) {
 					$dn['subjectAltName'] = implode(",", $altnames_tmp);
 				}
-
 				if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'], $pconfig['csr_keytype'], $pconfig['csr_ecname'])) {
 					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
@@ -503,19 +536,20 @@ if ($_POST['save'] == gettext("Save")) {
 					}
 				}
 				$savemsg = sprintf(gettext("Created certificate signing request %s"), $cert['descr']);
-			}
+				break;
+			default:
+				break;
+		}
+		error_reporting($old_err_level);
 
-			error_reporting($old_err_level);
+		if (isset($id) && $thiscert) {
+			$thiscert = $cert;
+		} elseif ($cert) {
+			$a_cert[] = $cert;
+		}
 
-			if (isset($id) && $thiscert) {
-				$thiscert = $cert;
-			} else {
-				$a_cert[] = $cert;
-			}
-
-			if (isset($a_user) && isset($userid)) {
-				$a_user[$userid]['cert'][] = $cert['refid'];
-			}
+		if (isset($a_user) && isset($userid)) {
+			$a_user[$userid]['cert'][] = $cert['refid'];
 		}
 
 		if (!$input_errors) {
@@ -589,7 +623,7 @@ $tab_array[] = array(gettext("Certificates"), true, "system_certmanager.php");
 $tab_array[] = array(gettext("Certificate Revocation"), false, "system_crlmanager.php");
 display_top_tabs($tab_array);
 
-if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
+if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$form = new Form();
 	$form->setAction('system_certmanager.php');
 
@@ -611,9 +645,19 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		));
 	}
 
-	$section = new Form_Section('Add/Sign a New Certificate');
+	switch ($act) {
+		case 'edit':
+			$maintitle = gettext('Edit an Existing Certificate');
+			break;
+		case 'new':
+		default:
+			$maintitle = gettext('Add/Sign a New Certificate');
+			break;
+	}
 
-	if (!isset($id)) {
+	$section = new Form_Section($maintitle);
+
+	if (!isset($id) || ($act == 'edit')) {
 		$section->addInput(new Form_Select(
 			'method',
 			'*Method',
@@ -627,7 +671,14 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'*Descriptive name',
 		'text',
 		($a_user && empty($pconfig['descr'])) ? $a_user[$userid]['name'] : $pconfig['descr']
-	))->addClass('toggle-internal toggle-import toggle-external toggle-sign toggle-existing collapse');
+	))->addClass('toggle-internal toggle-import toggle-edit toggle-external toggle-sign toggle-existing collapse');
+
+	if (!empty($pconfig['cert'])) {
+		$section->addInput(new Form_StaticText(
+			"Subject",
+			htmlspecialchars(cert_get_subject($pconfig['cert'], false))
+		))->addClass('toggle-edit collapse');
+	}
 
 	$form->add($section);
 
@@ -708,8 +759,14 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$form->add($section);
 
-	$section = new Form_Section('Import Certificate');
-	$section->addClass('toggle-import collapse');
+	if ($act == 'edit') {
+		$editimport = gettext("Edit Certificate");
+	} else {
+		$editimport = gettext("Import Certificate");
+	}
+
+	$section = new Form_Section($editimport);
+	$section->addClass('toggle-import toggle-edit collapse');
 
 	$section->addInput(new Form_Textarea(
 		'cert',
@@ -722,6 +779,14 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'*Private key data',
 		$pconfig['key']
 	))->setHelp('Paste a private key in X.509 PEM format here.');
+
+	$section->addInput(new Form_Input(
+		'exportpass',
+		'Export Password',
+		'password',
+		null,
+		['placeholder' => gettext('Export Password'), 'autocomplete' => 'new-password']
+	))->setHelp('Enter the password to use when using the export buttons below (not stored)')->addClass('toggle-edit collapse');
 
 	$form->add($section);
 	$section = new Form_Section('Internal Certificate');
@@ -1069,6 +1134,20 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$form->add($section);
 
+	if ($act == 'edit') {
+		$form->addGlobal(new Form_Button(
+			'exportpkey',
+			'Export Private Key',
+			null,
+			'fa-key'
+		))->addClass('btn-primary');
+		$form->addGlobal(new Form_Button(
+			'exportp12',
+			'Export PKCS#12',
+			null,
+			'fa-archive'
+		))->addClass('btn-primary');
+	}
 
 	print $form;
 
@@ -1263,6 +1342,7 @@ foreach ($a_cert as $cert):
 					</td>
 					<td>
 						<?php if (!$cert['csr']): ?>
+							<a href="system_certmanager.php?act=edit&amp;id=<?=$cert['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit Certificate")?>"></a>
 							<a href="system_certmanager.php?act=exp&amp;id=<?=$cert['refid']?>" class="fa fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
 							<?php if ($cert['prv']): ?>
 								<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>

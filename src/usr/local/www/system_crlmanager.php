@@ -56,6 +56,7 @@ $a_cert = &$config['cert'];
 init_config_arr(array('crl'));
 $a_crl = &$config['crl'];
 
+/* Clean up blank entries missing a reference ID */
 foreach ($a_crl as $cid => $acrl) {
 	if (!isset($acrl['refid'])) {
 		unset ($a_crl[$cid]);

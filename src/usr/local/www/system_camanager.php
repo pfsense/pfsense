@@ -45,10 +45,7 @@ global $cert_strict_values;
 $max_lifetime = cert_get_max_lifetime();
 $default_lifetime = min(3650, $max_lifetime);
 $openssl_ecnames = openssl_get_curve_names();
-
-if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
-	$id = $_REQUEST['id'];
-}
+$class = "success";
 
 init_config_arr(array('ca'));
 $a_ca = &$config['ca'];
@@ -59,15 +56,20 @@ $a_cert = &$config['cert'];
 init_config_arr(array('crl'));
 $a_crl = &$config['crl'];
 
-if ($_REQUEST['act']) {
-	$act = $_REQUEST['act'];
+$act = $_REQUEST['act'];
+
+if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
+}
+if (!empty($id)) {
+	$thisca =& lookup_ca($id);
 }
 
 /* Actions other than 'new' require an ID.
  * 'del' action must be submitted via POST. */
 if ((!empty($act) &&
     ($act != 'new') &&
-    !$a_ca[$id]) ||
+    !$thisca) ||
     (($act == 'del') && empty($_POST))) {
 	pfSenseHeader("system_camanager.php");
 	exit;
@@ -75,39 +77,46 @@ if ((!empty($act) &&
 
 switch ($act) {
 	case 'del':
-		/* Only remove CA reference when deleting. It can be reconnected if a new matching CA is imported */
-		$index = count($a_cert) - 1;
-		for (;$index >= 0; $index--) {
-			if ($a_cert[$index]['caref'] == $a_ca[$id]['refid']) {
-				unset($a_cert[$index]['caref']);
+		$name = htmlspecialchars($thisca['descr']);
+		if (cert_in_use($id)) {
+			$savemsg = sprintf(gettext("Certificate %s is in use and cannot be deleted"), $name);
+			$class = "danger";
+		} else {
+			/* Only remove CA reference when deleting. It can be reconnected if a new matching CA is imported */
+			foreach ($a_cert as $cid => $acrt) {
+				if ($acrt['caref'] == $thisca['refid']) {
+					unset($a_cert[$cid]['caref']);
+				}
 			}
-		}
-		/* Remove any CRLs for this CA, there is no way to recover the connection once the CA has been removed. */
-		$index = count($a_crl) - 1;
-		for (;$index >= 0; $index--) {
-			if ($a_crl[$index]['caref'] == $a_ca[$id]['refid']) {
-				unset($a_crl[$index]);
+			/* Remove any CRLs for this CA, there is no way to recover the connection once the CA has been removed. */
+			foreach ($a_crl as $cid => $acrl) {
+				if ($acrl['caref'] == $thisca['refid']) {
+					unset($a_crl[$cid]);
+				}
 			}
+			/* Delete the CA */
+			foreach ($a_ca as $cid => $aca) {
+				if ($aca['refid'] == $thisca['refid']) {
+					unset($a_ca[$cid]);
+				}
+			}
+			$savemsg = sprintf(gettext("Deleted Certificate Authority %s and associated CRLs"), htmlspecialchars($name));
+			write_config($savemsg);
+			ca_setup_trust_store();
 		}
-		$name = $a_ca[$id]['descr'];
-		unset($a_ca[$id]);
-		write_config();
-		ca_setup_trust_store();
-		$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted."), htmlspecialchars($name));
-		pfSenseHeader("system_camanager.php");
-		exit;
+		unset($act);
 		break;
 	case 'edit':
 		/* Editing an existing CA, so populate values. */
 		$pconfig['method'] = 'existing';
-		$pconfig['descr']  = $a_ca[$id]['descr'];
-		$pconfig['refid']  = $a_ca[$id]['refid'];
-		$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);
-		$pconfig['serial'] = $a_ca[$id]['serial'];
-		$pconfig['trust']  = ($a_ca[$id]['trust'] == 'enabled');
-		$pconfig['randomserial']  = ($a_ca[$id]['randomserial'] == 'enabled');
-		if (!empty($a_ca[$id]['prv'])) {
-			$pconfig['key'] = base64_decode($a_ca[$id]['prv']);
+		$pconfig['descr']  = $thisca['descr'];
+		$pconfig['refid']  = $thisca['refid'];
+		$pconfig['cert']   = base64_decode($thisca['crt']);
+		$pconfig['serial'] = $thisca['serial'];
+		$pconfig['trust']  = ($thisca['trust'] == 'enabled');
+		$pconfig['randomserial']  = ($thisca['randomserial'] == 'enabled');
+		if (!empty($thisca['prv'])) {
+			$pconfig['key'] = base64_decode($thisca['prv']);
 		}
 		break;
 	case 'new':
@@ -122,11 +131,11 @@ switch ($act) {
 		break;
 	case 'exp':
 		/* Exporting a ca */
-		send_user_download('data', base64_decode($a_ca[$id]['crt']), "{$a_ca[$id]['descr']}.crt");
+		send_user_download('data', base64_decode($thisca['crt']), "{$thisca['descr']}.crt");
 		break;
 	case 'expkey':
 		/* Exporting a private key */
-		send_user_download('data', base64_decode($a_ca[$id]['prv']), "{$a_ca[$id]['descr']}.key");
+		send_user_download('data', base64_decode($thisca['prv']), "{$thisca['descr']}.key");
 		break;
 	default:
 		break;
@@ -226,8 +235,8 @@ if ($_POST['save']) {
 			$ca['refid'] = $pconfig['refid'];
 		}
 
-		if (isset($id) && $a_ca[$id]) {
-			$ca = $a_ca[$id];
+		if (isset($id) && $thisca) {
+			$ca = $thisca;
 		}
 
 		$ca['descr'] = $pconfig['descr'];
@@ -242,10 +251,12 @@ if ($_POST['save']) {
 			if (!empty($pconfig['key'])) {
 				$ca['prv']	  = base64_encode($pconfig['key']);
 			}
+			$savemsg = sprintf(gettext("Updated Certificate Authority %s"), $ca['descr']);
 		} else {
 			$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 			if ($pconfig['method'] == "existing") {
 				ca_import($ca, $pconfig['cert'], $pconfig['key'], $pconfig['serial']);
+				$savemsg = sprintf(gettext("Imported Certificate Authority %s"), $ca['descr']);
 			} else if ($pconfig['method'] == "internal") {
 				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
 				if (!empty($pconfig['dn_country'])) {
@@ -271,6 +282,7 @@ if ($_POST['save']) {
 						}
 					}
 				}
+				$savemsg = sprintf(gettext("Created internal Certificate Authority %s"), $ca['descr']);
 			} else if ($pconfig['method'] == "intermediate") {
 				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
 				if (!empty($pconfig['dn_country'])) {
@@ -296,18 +308,19 @@ if ($_POST['save']) {
 						}
 					}
 				}
+				$savemsg = sprintf(gettext("Created internal intermediate Certificate Authority %s"), $ca['descr']);
 			}
 			error_reporting($old_err_level);
 		}
 
-		if (isset($id) && $a_ca[$id]) {
-			$a_ca[$id] = $ca;
+		if (isset($id) && $thisca) {
+			$thisca = $ca;
 		} else {
 			$a_ca[] = $ca;
 		}
 
 		if (!$input_errors) {
-			write_config();
+			write_config($savemsg);
 			ca_setup_trust_store();
 			pfSenseHeader("system_camanager.php");
 		}
@@ -328,7 +341,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg, 'success');
+	print_info_box($savemsg, $class);
 }
 
 $tab_array = array();
@@ -397,7 +410,7 @@ $pluginparams['type'] = 'certificates';
 $pluginparams['event'] = 'used_ca';
 $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
 
-foreach ($a_ca as $i => $ca):
+foreach ($a_ca as $ca):
 	$name = htmlspecialchars($ca['descr']);
 	$subj = cert_get_subject($ca['crt']);
 	$issuer = cert_get_issuer($ca['crt']);
@@ -453,16 +466,16 @@ foreach ($a_ca as $i => $ca):
 						<?php echo cert_usedby_description($ca['refid'], $certificates_used_by_packages); ?>
 					</td>
 					<td class="text-nowrap">
-						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$ca['refid']?>"></a>
+						<a class="fa fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$ca['refid']?>"></a>
 					<?php if ($ca['prv']): ?>
-						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
+						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$ca['refid']?>"></a>
 					<?php endif?>
 					<?php if (is_cert_locally_renewable($ca)): ?>
 						<a href="system_certmanager_renew.php?type=ca&amp;refid=<?=$ca['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
 					<?php endif ?>
 					<?php if (!ca_in_use($ca['refid'])): ?>
-						<a class="fa fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>" usepost ></a>
+						<a class="fa fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$ca['refid']?>" usepost ></a>
 					<?php endif?>
 					</td>
 				</tr>
@@ -540,7 +553,7 @@ events.push(function() {
 
 $form = new Form;
 //$form->setAction('system_camanager.php?act=edit');
-if (isset($id) && $a_ca[$id]) {
+if (isset($id) && $thisca) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

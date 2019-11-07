@@ -696,25 +696,24 @@ function cert_get_ocspstaple($str_crt, $decode = true) {
 	return false;
 }
 
-function cert_get_dates($str_crt, $decode = true) {
+function cert_get_dates($str_crt, $decode = true, $outputstring = true) {
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
 	}
 	$crt_details = openssl_x509_parse($str_crt);
-	if ($crt_details['validFrom_time_t'] > 0) {
-		$start = date('r', $crt_details['validFrom_time_t']);
-	} else {
-		$dt = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validFrom'], 'Z'));
-		if ($dt !== false) {
-			$start = $dt->format(DateTimeInterface::RFC2822);
+	$now = new DateTime("now");
+	$start = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validFrom'], 'Z'), new DateTimeZone('Z'));
+	if ($start !== false) {
+		$start->setTimezone($now->getTimeZone());
+		if ($outputstring) {
+			$start = $start->format(DateTimeInterface::RFC2822);
 		}
 	}
-	if ($crt_details['validTo_time_t'] > 0) {
-		$end = date('r', $crt_details['validTo_time_t']);
-	} else {
-		$dt = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validTo'], 'Z'));
-		if ($dt !== false) {
-			$end = $dt->format(DateTimeInterface::RFC2822);
+	$end = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validTo'], 'Z'), new DateTimeZone('Z'));
+	if ($end !== false) {
+		$end->setTimezone($now->getTimeZone());
+		if ($outputstring) {
+			$end = $end->format(DateTimeInterface::RFC2822);
 		}
 	}
 	return array($start, $end);
@@ -1950,11 +1949,15 @@ function cert_get_lifetime($cert, $untilexpire = false) {
 		return null;
 	}
 	/* Read certificate details */
-	$cert_details = openssl_x509_parse(base64_decode($cert['crt']));
+	list($startdate, $enddate) = cert_get_dates($cert['crt'], true, false);
+
 	/* Determine which start time to use (now, or cert start) */
-	$fromtime = ($untilexpire) ? time() : $cert_details['validFrom_time_t'];
-	/* Calculate and return the requested duration, converting from seconds to days. */
-	return (int) round(($cert_details['validTo_time_t'] - $fromtime) / 86400);
+	$startdate = ($untilexpire) ? new DateTime("now") : $startdate;
+
+	/* Calculate the requested intervals */
+	$interval = $startdate->diff($enddate);
+
+	return $interval->days;
 }
 
 /****f* certs/cert_analyze_lifetime
@@ -2200,9 +2203,12 @@ function cert_notify_expiring() {
 	/* Check all CA and Cert entries at once */
 	init_config_arr(array('ca'));
 	init_config_arr(array('cert'));
-	$all_certs = array_merge_recursive_unique($config['ca'], $config['cert']);
+	$all_certs = array_merge_recursive($config['ca'], $config['cert']);
 
 	foreach ($all_certs as $cert) {
+		if (empty($cert)) {
+			continue;
+		}
 		/* Fetch and analyze expiration */
 		$expiredays = cert_get_lifetime($cert, true);
 		/* If the result is null, then the lifetime data is missing, so skip the invalid entry. */

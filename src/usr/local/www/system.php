@@ -549,7 +549,7 @@ if ($dnsserver_count == 0) {
 
 foreach ($pconfig['dnsserver'] as $dnsserver) {
 
-	$is_last_dnsserver = ($dnsserver_num == $dnsserver_count - 1);
+	$is_last_dnsserver = (($dnsserver_num == $dnsserver_count - 1) || $dnsserver_count == 0);
 	$group = new Form_Group($dnsserver_num == 0 ? 'DNS Servers':'');
 	$group->addClass('repeatable');
 

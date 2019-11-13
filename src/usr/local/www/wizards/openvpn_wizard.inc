@@ -493,6 +493,7 @@ function step12_submitphpaction() {
 			$auth['ldap_attr_groupobj'] = $pconfig['step2']['ldap_attr_groupobj'];
 			$auth['ldap_utf8'] = isset($pconfig['step2']['ldap_utf8']);
 			$auth['ldap_nostrip_at'] = isset($pconfig['step2']['ldap_nostrip_at']);
+			$auth['ldap_allow_unauthenticated'] = isset($pconfig['step2']['ldap_allow_unauthenticated']);
 
 		} else if ($auth['type'] == "radius") {
 			$auth['host'] = $pconfig['step2']['ip'];

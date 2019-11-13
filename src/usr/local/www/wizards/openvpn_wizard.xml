@@ -305,6 +305,14 @@
 			<bindstofield>ovpnserver->step2->ldap_nostrip_at</bindstofield>
 		</field>
 		<field>
+			<name>ldap_allow_unauthenticated</name>
+			<displayname>Allow unauthenticated bind</displayname>
+			<type>checkbox</type>
+			<typehint>Allow unauthenticated bind</typehint>
+			<description>Unauthenticated binds are bind with an existing login but with an empty password.</description>
+			<bindstofield>ovpnserver->step2->ldap_allow_unauthenticated</bindstofield>
+		</field>
+		<field>
 			<type>submit</type>
 			<name>Add new Server</name>
 		</field>

@@ -130,11 +130,11 @@ switch ($act) {
 		$pconfig['method'] = $_POST['method'];
 		$pconfig['keytype'] = "RSA";
 		$pconfig['keylen'] = "2048";
-		$pconfig['ecname'] = "brainpoolP256r1";
+		$pconfig['ecname'] = "prime256v1";
 		$pconfig['digest_alg'] = "sha256";
 		$pconfig['csr_keytype'] = "RSA";
 		$pconfig['csr_keylen'] = "2048";
-		$pconfig['csr_ecname'] = "brainpoolP256r1";
+		$pconfig['csr_ecname'] = "prime256v1";
 		$pconfig['csr_digest_alg'] = "sha256";
 		$pconfig['csrsign_digest_alg'] = "sha256";
 		$pconfig['type'] = "user";

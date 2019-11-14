@@ -124,7 +124,7 @@ switch ($act) {
 		$pconfig['method'] = $_POST['method'];
 		$pconfig['keytype'] = "RSA";
 		$pconfig['keylen'] = "2048";
-		$pconfig['ecname'] = "brainpoolP256r1";
+		$pconfig['ecname'] = "prime256v1";
 		$pconfig['digest_alg'] = "sha256";
 		$pconfig['lifetime'] = $default_lifetime;
 		$pconfig['dn_commonname'] = "internal-ca";

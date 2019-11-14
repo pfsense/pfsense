@@ -430,7 +430,15 @@ $section->add($group);
 
 $values = array();
 foreach ($a_cert as $cert) {
-	$values[ $cert['refid'] ] = $cert['descr'];
+	$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
+	$key_details = openssl_pkey_get_details($res_key);
+	if ($key_details['type'] ==  OPENSSL_KEYTYPE_EC) { 
+		if ($key_details['curve'] == 'prime256v1' or $key_details['curve'] == 'secp384r1') {
+			$values[ $cert['refid'] ] = $cert['descr'];
+		}
+	} else {
+		$values[ $cert['refid'] ] = $cert['descr'];
+	}
 }
 
 $section->addInput($input = new Form_Select(
@@ -438,7 +446,7 @@ $section->addInput($input = new Form_Select(
 	'SSL Certificate',
 	$pconfig['ssl-certref'],
 	$values
-));
+))->setHelp('ECDSA certificates with curves other than prime256v1 or secp384r1 are not supported and hidden.');
 
 $section->addInput(new Form_Input(
 	'webguiport',

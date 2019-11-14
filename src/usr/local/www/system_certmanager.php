@@ -51,7 +51,7 @@ global $openssl_digest_algs;
 global $cert_strict_values;
 $max_lifetime = cert_get_max_lifetime();
 $default_lifetime = min(3650, $max_lifetime);
-$openssl_ecnames = openssl_get_curve_names();
+$openssl_ecnames = cert_build_curve_list();
 $class = "success";
 
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
@@ -350,7 +350,7 @@ if ($_POST['save'] == gettext("Save")) {
 				if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens)) {
 					$input_errors[] = gettext("Please select a valid Key Length.");
 				}
-				if (isset($_POST["ecname"]) && !in_array($_POST["ecname"], $openssl_ecnames)) {
+				if (isset($_POST["ecname"]) && !in_array($_POST["ecname"], array_keys($openssl_ecnames))) {
 					$input_errors[] = gettext("Please select a valid Elliptic Curve Name.");
 				}
 				if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
@@ -364,7 +364,7 @@ if ($_POST['save'] == gettext("Save")) {
 				if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens)) {
 					$input_errors[] = gettext("Please select a valid Key Length.");
 				}
-				if (isset($_POST["csr_ecname"]) && !in_array($_POST["csr_ecname"], $openssl_ecnames)) {
+				if (isset($_POST["csr_ecname"]) && !in_array($_POST["csr_ecname"], array_keys($openssl_ecnames))) {
 					$input_errors[] = gettext("Please select a valid Elliptic Curve Name.");
 				}
 				if (!in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
@@ -842,8 +842,8 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'ecname',
 		null,
 		$pconfig['ecname'],
-		array_combine($openssl_ecnames, $openssl_ecnames)
-	));
+		$openssl_ecnames
+	))->setHelp('Curves may not be compatible with all uses. Known compatible curve uses are denoted in brackets.');
 	$section->add($group);
 
 	$section->addInput(new Form_Select(
@@ -946,7 +946,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'csr_ecname',
 		null,
 		$pconfig['csr_ecname'],
-		array_combine($openssl_ecnames, $openssl_ecnames)
+		$openssl_ecnames
 	));
 	$section->add($group);
 

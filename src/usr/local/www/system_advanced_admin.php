@@ -428,17 +428,12 @@ if (!$certs_available) {
 
 $section->add($group);
 
-$values = array();
-foreach ($a_cert as $cert) {
-	$values[ $cert['refid'] ] = $cert['descr'];
-}
-
 $section->addInput($input = new Form_Select(
 	'ssl-certref',
 	'SSL Certificate',
 	$pconfig['ssl-certref'],
-	$values
-));
+	cert_build_list('cert', 'HTTPS')
+))->setHelp('Certificates known to be incompatible with use for HTTPS are not included in this list.');
 
 $section->addInput(new Form_Input(
 	'webguiport',

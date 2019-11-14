@@ -2275,4 +2275,144 @@ function ca_setup_trust_store() {
 	}
 }
 
+/****f* certs/cert_get_pkey_curve
+ * NAME
+ *   cert_get_pkey_curve - Get the ECDSA curve of a private key
+ * INPUTS
+ *   $pkey  : The private key to check
+ *   $decode: true: base64 decode the string before use, false to use as-is.
+ * RESULT
+ *   false if the private key is not ECDSA or the private key is not present.
+ *   Otherwise, the name of the ECDSA curve used for the private key.
+ ******/
+
+function cert_get_pkey_curve($pkey, $decode = true) {
+	if ($decode) {
+		$pkey = base64_decode($pkey);
+	}
+
+	/* Attempt to read the private key, and if successful, its details. */
+	$res_key = openssl_pkey_get_private($pkey);
+	if ($res_key) {
+		$key_details = openssl_pkey_get_details($res_key);
+		/* If this is an EC key, and the curve name is not empty, return
+		 * that curve name. */
+		if (($key_details['type'] ==  OPENSSL_KEYTYPE_EC) &&
+		    (!empty($key_details['ec']['curve_name']))) {
+			return $key_details['ec']['curve_name'];
+		}
+	}
+
+	/* Either the private key could not be read, or this is not an EC certificate. */
+	return false;
+}
+
+/* Array containing ECDSA curve names allowed in certain contexts. For instance,
+ * HTTPS servers and web browsers only support specific curves in TLSv1.3. */
+global $cert_curve_compatible;
+$cert_curve_compatible = array(
+	'HTTPS' => array('prime256v1', 'secp384r1'), /* Per TLSv1.3 spec and Mozilla compatibility list */
+	'IPsec' => array('prime256v1', 'secp384r1', 'secp521r1') /* Per strongSwan docs/issues */
+);
+
+/****f* certs/cert_build_curve_list
+ * NAME
+ *   cert_build_curve_list - Build an option list of ECDSA curves with notations
+ *                           about known compatible uses.
+ * INPUTS
+ *   None
+ * RESULT
+ *   Returns an option list of OpenSSL EC names with added notes. This can be
+ *   used directly in form option selection lists.
+ ******/
+
+function cert_build_curve_list() {
+	global $cert_curve_compatible;
+	/* Get the default list of curve names */
+	$openssl_ecnames = openssl_get_curve_names();
+	/* Turn this into a hashed array where key==value */
+	$curvelist = array_combine($openssl_ecnames, $openssl_ecnames);
+	/* Check all known compatible curves and note matches */
+	foreach ($cert_curve_compatible as $consumer => $validcurves) {
+		/* $consumer will be a name like HTTPS or IPsec
+		 * $validcurves will be an array of curves compatible with the consumer */
+		foreach ($validcurves as $vc) {
+			/* If the valid curve is present in the curve list, add
+			 * a note with the consumer name to the value visible to
+			 * the user. */
+			if (array_key_exists($vc, $curvelist)) {
+				$curvelist[$vc] .= " [{$consumer}]";
+			}
+		}
+	}
+	return $curvelist;
+}
+
+/****f* certs/cert_check_pkey_compatibility
+ * NAME
+ *   cert_check_pkey_compatibility - Check a private key to see if it can be
+ *                                   used in a specific compatible context.
+ * INPUTS
+ *   $pkey    : The private key to check
+ *   $consumer: The consumer name used to validate the curve. See the contents
+ *                 of $cert_curve_compatible for details.
+ * RESULT
+ *   true if the private key may be used in requested area, or if there are no
+ *        restrictions.
+ *   false if the private key cannot be used.
+ ******/
+
+function cert_check_pkey_compatibility($pkey, $consumer) {
+	global $cert_curve_compatible;
+
+	/* Read the curve name from the key */
+	$curve = cert_get_pkey_curve($pkey);
+	/* Return true if any of the following conditions are met:
+	 *  * This is not an EC key
+	 *  * The private key cannot be read
+	 *  * There are no restrictions
+	 *  * The requested curve is compatible */
+	return (($curve === false) ||
+		!array_key_exists($consumer, $cert_curve_compatible) ||
+		in_array($curve, $cert_curve_compatible[$consumer]));
+}
+
+/****f* certs/cert_build_list
+ * NAME
+ *   cert_build_list - Build an option list of cert or CA entries, checked
+ *                     against a specific consumer name.
+ * INPUTS
+ *   $type    : 'ca' for certificate authority entries, 'cert' for certificates.
+ *   $consumer: The consumer name used to filter certificates out of the result.
+ *                 See the contents of $cert_curve_compatible for details.
+ * RESULT
+ *   Returns an option list of entries with incompatible entries removed. This
+ *   can be used directly in form option selection lists.
+ * NOTES
+ *   This can be expanded in the future to allow for other types of restrictions.
+ ******/
+
+function cert_build_list($type = 'cert', $consumer = '') {
+	global $config;
+
+	/* Ensure that $type is valid */
+	if (!in_array($type, array('ca', 'cert'))) {
+		return array();
+	}
+
+	/* Initialize arrays */
+	init_config_arr(array($type));
+	$list = array();
+
+	/* Create a hashed array with the certificate refid as the key and
+	 * descriptive name as the value. Exclude incompatible certificates. */
+	foreach ($config[$type] as $cert) {
+		if (cert_check_pkey_compatibility($cert['prv'], $consumer)) {
+			$list[$cert['refid']] = $cert['descr'];
+		}
+	}
+
+	return $list;
+}
+
 ?>

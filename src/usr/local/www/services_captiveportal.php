@@ -469,18 +469,6 @@ if ($_POST['save']) {
 	}
 }
 
-function build_cert_list() {
-	global $a_cert;
-
-	$list = array();
-
-	foreach ($a_cert as $cert) {
-		$list[$cert['refid']] = $cert['descr'];
-	}
-
-	return($list);
-}
-
 function build_authserver_list() {
 
 	$authlist = auth_get_authserver_list();
@@ -1106,8 +1094,8 @@ $section->addInput(new Form_Select(
 	'certref',
 	'*SSL Certificate',
 	$pconfig['certref'],
-	build_cert_list()
-))->setHelp('If no certificates are defined, one may be defined here: %1$sSystem &gt; Cert. Manager%2$s', '<a href="system_certmanager.php">', '</a>');
+	cert_build_list('cert', 'HTTPS')
+))->setHelp('Certificates known to be incompatible with use for HTTPS are not included in this list. If no certificates are defined, one may be defined here: %1$sSystem &gt; Cert. Manager%2$s', '<a href="system_certmanager.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'nohttpsforwards',

@@ -696,26 +696,34 @@ function cert_get_ocspstaple($str_crt, $decode = true) {
 	return false;
 }
 
+function cert_format_date($validTS, $validTS_time_t, $outputstring = true) {
+	$now = new DateTime("now");
+
+	/* Try to create a DateTime object from the full time string */
+	$date = DateTime::createFromFormat('ymdHis', rtrim($validTS, 'Z'), new DateTimeZone('Z'));
+	/* If that failed, try to create it from the UNIX timestamp */
+	if ($date === false) {
+		$date = new DateTime('@' . $validTS_time_t, new DateTimeZone('Z'));
+	}
+	/* If we have a valid DateTime object, format it in a nice way */
+	if ($date !== false) {
+		$date->setTimezone($now->getTimeZone());
+		if ($outputstring) {
+			$date = $date->format(DateTimeInterface::RFC2822);
+		}
+	}
+	return $date;
+}
+
 function cert_get_dates($str_crt, $decode = true, $outputstring = true) {
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
 	}
 	$crt_details = openssl_x509_parse($str_crt);
-	$now = new DateTime("now");
-	$start = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validFrom'], 'Z'), new DateTimeZone('Z'));
-	if ($start !== false) {
-		$start->setTimezone($now->getTimeZone());
-		if ($outputstring) {
-			$start = $start->format(DateTimeInterface::RFC2822);
-		}
-	}
-	$end = DateTime::createFromFormat('ymdHis', rtrim($crt_details['validTo'], 'Z'), new DateTimeZone('Z'));
-	if ($end !== false) {
-		$end->setTimezone($now->getTimeZone());
-		if ($outputstring) {
-			$end = $end->format(DateTimeInterface::RFC2822);
-		}
-	}
+
+	$start = cert_format_date($crt_details['validFrom'], $crt_details['validFrom_time_t'], $outputstring);
+	$end   = cert_format_date($crt_details['validTo'], $crt_details['validTo_time_t'], $outputstring);
+
 	return array($start, $end);
 }
 
@@ -1951,13 +1959,19 @@ function cert_get_lifetime($cert, $untilexpire = false) {
 	/* Read certificate details */
 	list($startdate, $enddate) = cert_get_dates($cert['crt'], true, false);
 
+	/* If either of the dates are invalid, there is nothing we can do here. */
+	if (($startdate === false) || ($enddate === false)) {
+		return false;
+	}
+
 	/* Determine which start time to use (now, or cert start) */
 	$startdate = ($untilexpire) ? new DateTime("now") : $startdate;
 
 	/* Calculate the requested intervals */
 	$interval = $startdate->diff($enddate);
 
-	return $interval->days;
+	/* DateTime diff is always positive, check if we need to negate the result. */
+	return ($startdate > $enddate) ? -1 * $interval->days : $interval->days;
 }
 
 /****f* certs/cert_analyze_lifetime

@@ -2133,8 +2133,11 @@ function cert_print_infoblock($cert) {
 		} else {
 			/* Elliptic curve (EC) key curve name */
 			$certextinfo .= 'ECDSA<br/>';
-			$certextinfo .= '<b>' . gettext("Elliptic curve name: ") . '</b>';
-			$certextinfo .= $key_details['ec']['curve_name'] . '<br/>';
+			$curve = cert_get_pkey_curve($cert['prv']);
+			if (!empty($curve)) {
+				$certextinfo .= '<b>' . gettext("Elliptic curve name:") . ' </b>';
+				$certextinfo .= $curve . '<br/>';
+			}
 		}
 	}
 
@@ -2311,9 +2314,12 @@ function cert_get_pkey_curve($pkey, $decode = true) {
 		$key_details = openssl_pkey_get_details($res_key);
 		/* If this is an EC key, and the curve name is not empty, return
 		 * that curve name. */
-		if (($key_details['type'] ==  OPENSSL_KEYTYPE_EC) &&
-		    (!empty($key_details['ec']['curve_name']))) {
-			return $key_details['ec']['curve_name'];
+		if ($key_details['type'] ==  OPENSSL_KEYTYPE_EC) {
+			if (!empty($key_details['ec']['curve_name'])) {
+				return $key_details['ec']['curve_name'];
+			} else {
+				return $key_details['ec']['curve_oid'];
+			}
 		}
 	}
 

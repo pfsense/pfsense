@@ -431,12 +431,16 @@ if ($_POST) {
 				if ($_POST[$dnsgwname]) {
 					$config['system'][$outdnsgwconfigname] = $thisdnsgwname;
 					$pconfig[$outdnsgwname] = $thisdnsgwname;
-					$config['system'][$outdnshostconfigname] = $thisdnshostname;
-					$pconfig[$outdnshostname] = $thisdnshostname;
 				} else {
 					// Note: when no DNS GW name is chosen, the entry is set to "none", so actually this case never happens.
 					unset($config['system'][$outdnsgwconfigname]);
 					$pconfig[$outdnsgwname] = "";
+				}
+				if ($_POST[$dnshostname]) {
+					$config['system'][$outdnshostconfigname] = $thisdnshostname;
+					$pconfig[$outdnshostname] = $thisdnshostname;
+				} else {
+					// Note: when no DNS hostname is chosen, unset the value.
 					unset($config['system'][$outdnshostconfigname]);
 					$pconfig[$outdnshostname] = "";
 				}

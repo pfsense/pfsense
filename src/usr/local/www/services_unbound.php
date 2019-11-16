@@ -339,11 +339,6 @@ $section->addInput(new Form_Checkbox(
 		'Activating this option disables automatic interface response routing behavior, thus it works best with specific interface bindings.' );
 
 if ($certs_available) {
-	$values = array();
-	foreach ($a_cert as $cert) {
-		$values[ $cert['refid'] ] = $cert['descr'];
-	}
-
 	$section->addInput($input = new Form_Select(
 		'sslcertref',
 		'SSL/TLS Certificate',

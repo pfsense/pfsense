@@ -152,8 +152,8 @@ $count = 100;//default number of packets to capture
 $max_display_size = 50*1024*1024; // 50MB limit on GUI capture display. See https://redmine.pfsense.org/issues/9239
 
 $fams = array('ip', 'ip6');
-$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp', 'pfsync',
-		        '!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp', '!pfsync');
+$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp', 'pfsync', 'ospf',
+		        '!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp', '!pfsync', '!ospf');
 
 $input_errors = array();
 
@@ -322,7 +322,9 @@ $protocollist = array(
 	'pfsync' => 'pfsync',
 	'!pfsync' => $excl . ' pfsync',
 	'esp' => 'ESP',
-	'!esp' => $excl . ' ESP'
+	'!esp' => $excl . ' ESP',
+	'ospf' => 'OSPF',
+	'!ospf' => $excl . ' OSPF'
 );
 
 include("head.inc");
@@ -512,7 +514,17 @@ if ($do_tcpdump) :
 	}
 
 	if (in_array($proto, $protos)) {
-		$matches[] = fixup_not(str_replace('carp', 'proto 112', $proto));
+		if ($proto == 'carp') {
+			$matches[] = fixup_not(str_replace('carp', 'proto 112', $proto));
+		} else {
+			if ($fam == 'ip') {
+				$matches[] = fixup_not(str_replace('ospf', 'ip[9] == 89', $proto));
+			} else if ($fam == 'ip6') {
+				$matches[] = fixup_not(str_replace('ospf', 'proto 0x59', $proto));
+			} else {
+				$matches[] = fixup_not(str_replace('ospf', 'proto ospf', $proto));
+			}
+		}
 	}
 
 	if ($port != "") {

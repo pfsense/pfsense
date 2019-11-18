@@ -521,12 +521,14 @@ if ($do_tcpdump) :
 		switch ($proto) {
 			case 'ospf':
 				$proto = str_replace('ospf', 'proto ospf', $proto);
+				break;
 			case 'carp':
 				$proto = str_replace('carp', 'proto 112', $proto);
+				break;
 			default:
-				$matches[] = fixup_not($proto);
 				break;
 		}
+		$matches[] = fixup_not($proto);
 	}
 
 	if ($port != "") {

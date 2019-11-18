@@ -515,13 +515,16 @@ if ($do_tcpdump) :
 
 	if (in_array($proto, $protos)) {
 		switch ($proto) {
-			case 'carp':
-				$matches[] = fixup_not(str_replace('carp', 'proto 112', $proto));
+			case '!ospf':
+				$matches[] = str_replace('!ospf', '! proto ospf', $proto);
 				break;
 			case 'ospf':
-				$matches[] = fixup_not(str_replace('ospf', 'proto ospf', $proto));
+				$matches[] = str_replace('ospf', 'proto ospf', $proto);
 				break;
+			case 'carp':
+				$proto = str_replace('carp', 'proto 112', $proto);
 			default:
+				$matches[] = fixup_not($proto);
 				break;
 		}
 	}

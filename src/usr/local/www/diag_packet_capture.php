@@ -514,16 +514,15 @@ if ($do_tcpdump) :
 	}
 
 	if (in_array($proto, $protos)) {
-		if ($proto == 'carp') {
-			$matches[] = fixup_not(str_replace('carp', 'proto 112', $proto));
-		} else {
-			if ($fam == 'ip') {
-				$matches[] = fixup_not(str_replace('ospf', 'ip[9] == 89', $proto));
-			} else if ($fam == 'ip6') {
-				$matches[] = fixup_not(str_replace('ospf', 'proto 0x59', $proto));
-			} else {
+		switch ($proto) {
+			case 'carp':
+				$matches[] = fixup_not(str_replace('carp', 'proto 112', $proto));
+				break;
+			case 'ospf':
 				$matches[] = fixup_not(str_replace('ospf', 'proto ospf', $proto));
-			}
+				break;
+			default:
+				break;
 		}
 	}
 

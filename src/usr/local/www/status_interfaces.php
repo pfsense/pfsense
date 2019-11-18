@@ -55,7 +55,7 @@ $formtemplate = '<form name="%s" action="status_interfaces.php" method="post">' 
 					'<input type="hidden" name="ifdescr" value="%s" />' .
 					'<input type="hidden" name="status" value="%s" />' .
 					'%s' .
-					'<button type="submit" name="submit" class="btn btn-warning btn-xs" value="%s">' .
+					'<button type="submit" name="submit" class="btn btn-danger btn-xs" value="%s">' .
 					'<i class="fa fa-refresh icon-embed-btn"></i>' .
 					'%s' .
 					'</button>' .
@@ -120,12 +120,12 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		<dl class="dl-horizontal">
 <?php
 		showDef(true, gettext("Status"), $ifinfo['enable'] ? $ifinfo['status'] : gettext('disabled'));
-		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, $ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew"), $ifinfo['dhcplink'] == "up" ? $chkbox_relinquish_lease_v4 : '');
-		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, $ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew"), $ifinfo['dhcp6link'] == "up" ? $chkbox_relinquish_lease_v6 : '');
-		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, $ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
-		showDefBtn($ifinfo['pptplink'], 'PPTP', $ifinfo['pptplink'], $ifdescr, $ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
-		showDefBtn($ifinfo['l2tplink'], 'L2TP', $ifinfo['l2tplink'], $ifdescr, $ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
-		showDefBtn($ifinfo['ppplink'], 'PPP', $ifinfo['ppplink'], $ifdescr, ($ifinfo['ppplink'] == "up" && !$ifinfo['nodevice']) ? gettext("Disconnect") : gettext("Connect"), '');
+		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, (($ifinfo['dhcplink'] == "up") ? gettext("Release") : gettext("Renew")) . " {$ifname}", $ifinfo['dhcplink'] == "up" ? $chkbox_relinquish_lease_v4 : '');
+		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, (($ifinfo['dhcp6link'] == "up") ? gettext("Release") : gettext("Renew")) . " {$ifname}", $ifinfo['dhcp6link'] == "up" ? $chkbox_relinquish_lease_v6 : '');
+		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, (($ifinfo['pppoelink'] == "up") ? gettext("Disconnect") : gettext("Connect")) . " {$ifname}", '');
+		showDefBtn($ifinfo['pptplink'], 'PPTP', $ifinfo['pptplink'], $ifdescr, (($ifinfo['pptplink'] == "up") ? gettext("Disconnect") : gettext("Connect")) . " {$ifname}", '');
+		showDefBtn($ifinfo['l2tplink'], 'L2TP', $ifinfo['l2tplink'], $ifdescr, (($ifinfo['l2tplink'] == "up") ? gettext("Disconnect") : gettext("Connect")) . " {$ifname}", '');
+		showDefBtn($ifinfo['ppplink'], 'PPP', $ifinfo['ppplink'], $ifdescr, (($ifinfo['ppplink'] == "up" && !$ifinfo['nodevice']) ? gettext("Disconnect") : gettext("Connect")) . " {$ifname}", '');
 		showDef($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated'], gettext("Uptime") . ' ' . ($ifinfo['ppp_uptime_accumulated'] ? gettext('(historical)'):''), $ifinfo['ppp_uptime'] . $ifinfo['ppp_uptime_accumulated']);
 		showDef($ifinfo['cell_rssi'], gettext("Cell Signal (RSSI)"), $ifinfo['cell_rssi']);
 		showDef($ifinfo['cell_mode'], gettext("Cell Mode"), $ifinfo['cell_mode']);

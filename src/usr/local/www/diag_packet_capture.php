@@ -59,7 +59,11 @@ function has_not($value) {
 }
 
 function fixup_not($value) {
-	return str_replace("!", "not ", $value);
+	if ($value == '!ospf') {
+		return "! proto ospf";
+	} else {
+		return str_replace("!", "not ", $value);
+	}
 }
 
 function strip_not($value) {
@@ -515,12 +519,8 @@ if ($do_tcpdump) :
 
 	if (in_array($proto, $protos)) {
 		switch ($proto) {
-			case '!ospf':
-				$matches[] = str_replace('!ospf', '! proto ospf', $proto);
-				break;
 			case 'ospf':
-				$matches[] = str_replace('ospf', 'proto ospf', $proto);
-				break;
+				$proto = str_replace('ospf', 'proto ospf', $proto);
 			case 'carp':
 				$proto = str_replace('carp', 'proto 112', $proto);
 			default:

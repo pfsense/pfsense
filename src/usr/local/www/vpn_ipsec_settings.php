@@ -336,7 +336,7 @@ $section->addInput(new Form_Checkbox(
 	'Strict CRL Checking',
 	'Enable strict Certificate Revocation List checking',
 	$pconfig['strictcrlpolicy']
-))->setHelp('Check this to require availability of a fresh CRL for peer authentication based on RSA signatures to succeed.');
+))->setHelp('Check this to require availability of a fresh CRL for peer authentication based on certificate signatures to succeed.');
 
 $section->addInput(new Form_Checkbox(
 	'makebeforebreak',

@@ -185,13 +185,13 @@ $p2_halgos = array(
 
 global $p1_authentication_methods;
 $p1_authentication_methods = array(
-	'hybrid_rsa_server' => array('name' => gettext('Hybrid RSA + Xauth'), 'mobile' => true),
-	'xauth_rsa_server' => array('name' => gettext('Mutual RSA + Xauth'), 'mobile' => true),
+	'hybrid_cert_server' => array('name' => gettext('Hybrid Certificate + Xauth'), 'mobile' => true),
+	'xauth_cert_server' => array('name' => gettext('Mutual Certificate + Xauth'), 'mobile' => true),
 	'xauth_psk_server' => array('name' => gettext('Mutual PSK + Xauth'), 'mobile' => true),
 	'eap-tls' => array('name' => gettext('EAP-TLS'), 'mobile' => true),
 	'eap-radius' => array('name' => gettext('EAP-RADIUS'), 'mobile' => true),
 	'eap-mschapv2' => array('name' => gettext('EAP-MSChapv2'), 'mobile' => true),
-	'rsasig' => array('name' => gettext('Mutual RSA'), 'mobile' => false),
+	'cert' => array('name' => gettext('Mutual Certificate'), 'mobile' => false),
 	'pre_shared_key' => array('name' => gettext('Mutual PSK'), 'mobile' => false)
 );
 

@@ -1776,7 +1776,7 @@ function cert_get_all_services($refid) {
 	 * needs a bump. */
 	init_config_arr(array('ipsec', 'phase1'));
 	foreach ($config['ipsec']['phase1'] as $ipsec) {
-		if (($ipsec['authentication_method'] == 'rsasig') &&
+		if (($ipsec['authentication_method'] == 'cert') &&
 		    ($ipsec['certref'] == $refid)) {
 			$services['services'][] = array('name' => 'ipsec');
 			/* Stop after finding one, no need to search for more. */
@@ -1858,7 +1858,7 @@ function ca_get_all_services($refid) {
 		}
 	}
 	foreach ($config['ipsec']['phase1'] as $ipsec) {
-		if (($ipsec['authentication_method'] == 'rsasig') &&
+		if (($ipsec['authentication_method'] == 'cert') &&
 		    ($ipsec['caref'] == $refid)) {
 			$services['services'][] = array('name' => 'ipsec');
 			break;

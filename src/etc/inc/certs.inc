@@ -2182,10 +2182,19 @@ function cert_print_infoblock($cert) {
 	$certextinfo .= "<span class=\"text-{$lrclass}\">{$expstring}</span>";
 	$certextinfo .= '<br/>';
 
-	/* CA Trust store presence */
-	$certextinfo .= '<b>' . gettext("Trust Store: ") . '</b> ';
-	$certextinfo .= (isset($cert['trust']) && ($cert['trust'] == "enabled")) ? gettext('Included') : gettext('Excluded');
-	$certextinfo .= '<br/>';
+	if ($purpose['ca'] == 'Yes') {
+		/* CA Trust store presence */
+		$certextinfo .= '<b>' . gettext("Trust Store: ") . '</b> ';
+		$certextinfo .= (isset($cert['trust']) && ($cert['trust'] == "enabled")) ? gettext('Included') : gettext('Excluded');
+		$certextinfo .= '<br/>';
+
+		if (!empty($cert['prv'])) {
+			/* CA Next/Randomize Serial */
+			$certextinfo .= '<b>' . gettext("Next Serial: ") . '</b> ';
+			$certextinfo .= (isset($cert['randomserial']) && ($cert['randomserial'] == "enabled")) ? gettext('Randomized') : $cert['serial'];
+			$certextinfo .= '<br/>';
+		}
+	}
 
 	/* Output the infoblock */
 	if (!empty($certextinfo)) { ?>

@@ -1206,11 +1206,8 @@ events.push(function() {
 	}
 
 	function protocol_change() {
-		if ($('#protocol').val().substring(0, 3).toLowerCase() == 'udp') {
-			hideCheckbox('udp_fast_io', false);
-		} else {
-			hideCheckbox('udp_fast_io', true);
-		}
+		hideInput('interface', (($('#protocol').val().toLowerCase() == 'udp') || ($('#protocol').val().toLowerCase() == 'tcp')));
+		hideCheckbox('udp_fast_io', !($('#protocol').val().substring(0, 3).toLowerCase() == 'udp'));
 	}
 
 	// Process "Automatically generate a shared key" checkbox

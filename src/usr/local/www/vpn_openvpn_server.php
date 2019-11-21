@@ -1539,7 +1539,7 @@ else:
 			<thead>
 				<tr>
 					<th><?=gettext("Interface")?></th>
-					<th><?=gettext("Protocol / Port")?></th>
+					<th data-sortable-type="alpha"><?=gettext("Protocol / Port")?></th>
 					<th><?=gettext("Tunnel Network")?></th>
 					<th><?=gettext("Crypto")?></th>
 					<th><?=gettext("Description")?></th>
@@ -1556,7 +1556,7 @@ else:
 					<td>
 						<?=convert_openvpn_interface_to_friendly_descr($server['interface'])?>
 					</td>
-					<td>
+					<td data-value="<?=htmlspecialchars($server['local_port']) . '-' . htmlspecialchars($server['protocol'])?>">
 						<?=htmlspecialchars($server['protocol'])?> / <?=htmlspecialchars($server['local_port'])?>
 					</td>
 					<td>

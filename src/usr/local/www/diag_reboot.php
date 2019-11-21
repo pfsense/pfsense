@@ -44,7 +44,6 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Reboot"));
 $platform = system_identify_specific_platform();
-$no_options = array('SG-1100', 'ROGUE-1', 'uFW');
 include("head.inc");
 
 if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
@@ -55,7 +54,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
 		print('<div><pre>');
 		switch ($_POST['rebootmode']) {
 			case 'FSCKReboot':
-				if (!in_array($platform['name'], $no_options)) {
+				if (get_single_sysctl('hw.machine') != 'arm') {
 					mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
 					system_reboot();
 				}
@@ -123,7 +122,7 @@ $form = new Form(false);
 
 $help = 'Select "Normal reboot" to reboot the system immediately';
 $modeslist = ['Reboot' => 'Normal reboot'];
-if (!in_array($platform['name'], $no_options)) {
+if (get_single_sysctl('hw.machine') != 'arm') {
         $help .= ', "Reboot with Filesystem Check" to reboot and run filesystem check';
         $modeslist += ['FSCKReboot' => 'Reboot with Filesystem Check'];
         }

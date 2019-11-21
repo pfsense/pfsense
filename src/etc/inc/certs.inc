@@ -2340,8 +2340,15 @@ function cert_get_pkey_curve($pkey, $decode = true) {
  * HTTPS servers and web browsers only support specific curves in TLSv1.3. */
 global $cert_curve_compatible;
 $cert_curve_compatible = array(
-	'HTTPS' => array('prime256v1', 'secp384r1'), /* Per TLSv1.3 spec and Mozilla compatibility list */
-	'IPsec' => array('prime256v1', 'secp384r1', 'secp521r1') /* Per strongSwan docs/issues */
+	/* HTTPS list per TLSv1.3 spec and Mozilla compatibility list */
+	'HTTPS' => array('prime256v1', 'secp384r1'),
+	/* IPsec/EAP/TLS list per strongSwan docs/issues */
+	'IPsec' => array('prime256v1', 'secp384r1', 'secp521r1'),
+	/* OpenVPN bug limits to secp* curves, see https://redmine.pfsense.org/issues/9744 */
+	'OpenVPN' => array('secp112r1', 'secp112r2', 'secp128r1', 'secp128r2',
+			'secp160k1', 'secp160r1', 'secp160r2', 'secp192k1',
+			'secp224k1', 'secp224r1', 'secp256k1', 'secp384r1',
+			'secp521r1'),
 );
 
 /****f* certs/cert_build_curve_list

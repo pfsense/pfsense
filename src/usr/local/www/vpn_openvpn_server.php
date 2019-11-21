@@ -849,17 +849,11 @@ if ($act=="new" || $act=="edit"):
 			'Both may be set to omit the direction, in which case the TLS Key will be used bidirectionally.');
 
 	if (count($a_ca)) {
-
-		$list = array();
-		foreach ($a_ca as $ca) {
-			$list[$ca['refid']] = $ca['descr'];
-		}
-
 		$section->addInput(new Form_Select(
 			'caref',
 			'*Peer Certificate Authority',
 			$pconfig['caref'],
-			$list
+			cert_build_list('ca', 'OpenVPN')
 		));
 	} else {
 		$section->addInput(new Form_StaticText(

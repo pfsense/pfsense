@@ -250,6 +250,7 @@ function openvpn_build_crl_list() {
 
 function openvpn_build_cert_list($include_none = false, $prioritize_server_certs = false) {
 	global $a_cert;
+	$openvpn_compatible_certs = cert_build_list('cert', 'OpenVPN');
 
 	if ($include_none) {
 		$list = array('' => gettext('None (Username and/or Password required)'));
@@ -265,6 +266,9 @@ function openvpn_build_cert_list($include_none = false, $prioritize_server_certs
 	}
 
 	foreach ($a_cert as $cert) {
+		if (!array_key_exists($cert['refid'], $openvpn_compatible_certs)) {
+			continue;
+		}
 		$properties = array();
 		$propstr = "";
 		$ca = lookup_ca($cert['caref']);
@@ -451,15 +455,11 @@ function openvpn_get_cipherlist() {
 }
 
 function openvpn_get_curvelist() {
-
+	global $cert_curve_compatible;
 	$curves = array();
 	$curves["none"] = gettext("Use Default");
-	$curve_out = shell_exec('/usr/local/sbin/openvpn --show-curves | /usr/bin/grep -v \'Available Elliptic curves\'');
-	$curve_lines = explode("\n", trim($curve_out));
-	sort($curve_lines);
-	foreach ($curve_lines as $line) {
-		$line = trim($line);
-		$curves[$line] = $line;
+	foreach ($cert_curve_compatible['OpenVPN'] as $curve) {
+		$curves[$curve] = $curve;
 	}
 	return $curves;
 }

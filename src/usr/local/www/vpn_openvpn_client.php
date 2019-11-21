@@ -102,7 +102,7 @@ if ($act == "new") {
 global $simplefields;
 $simplefields = array('auth_user', 'auth_pass');
 
-if ($act == "edit") {
+if (($act == "edit") || ($act == "dup")) {
 	if (isset($id) && $a_client[$id]) {
 		foreach ($simplefields as $stat) {
 			$pconfig[$stat] = $a_client[$id][$stat];
@@ -192,6 +192,12 @@ if ($act == "edit") {
 		$pconfig['ping_action_seconds'] = $a_client[$id]['ping_action_seconds'];
 		$pconfig['inactive_seconds'] = $a_client[$id]['inactive_seconds'] ?: 0;
 	}
+}
+
+if ($act == "dup") {
+	$act = "new";
+	$vpnid = 0;
+	unset($id);
 }
 
 if ($_POST['save']) {
@@ -1133,8 +1139,9 @@ else:
 						<?=htmlspecialchars($client['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete client')?>" href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit Client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-clone"	title="<?=gettext("Copy Client")?>"	href="vpn_openvpn_client.php?act=dup&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete Client')?>"	href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php

@@ -111,7 +111,7 @@ if ($act == "new") {
 	$pconfig['compression'] = "none";
 }
 
-if ($act == "edit") {
+if (($act == "edit") || ($act == "dup")) {
 
 	if (isset($id) && $a_server[$id]) {
 		$pconfig['disable'] = isset($a_server[$id]['disable']);
@@ -266,6 +266,13 @@ if ($act == "edit") {
 		$pconfig['ping_action_push'] = empty($a_server[$id]['ping_action_push']) ? '' : 'yes';
 		$pconfig['inactive_seconds'] = $a_server[$id]['inactive_seconds'] ?: 0;
 	}
+}
+
+if ($act == "dup") {
+	$act = "new";
+	$pconfig['local_port'] = openvpn_port_next('UDP');
+	$vpnid = 0;
+	unset($id);
 }
 
 if ($_POST['save']) {
@@ -1568,8 +1575,9 @@ else:
 						<?=htmlspecialchars(sprintf('%1$s (%2$s)', $server['description'], $server['dev_mode']))?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit server')?>" href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete server')?>" href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit Server')?>"	href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-clone"	title="<?=gettext("Copy Server")?>"	href="vpn_openvpn_server.php?act=dup&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete Server')?>"	href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php

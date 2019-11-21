@@ -67,7 +67,7 @@ if ($_POST['act'] == "del") {
 	}
 }
 
-if ($act == "edit") {
+if (($act == "edit") || ($act == "dup")) {
 	if (isset($id) && $a_csc[$id]) {
 		$pconfig['server_list'] = explode(",", $a_csc[$id]['server_list']);
 		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
@@ -128,6 +128,11 @@ if ($act == "edit") {
 			$pconfig['nbdd_server_enable'] = true;
 		}
 	}
+}
+
+if ($act == "dup") {
+	$act = "new";
+	unset($id);
 }
 
 if ($_POST['save']) {
@@ -701,6 +706,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 					</td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-clone"	title="<?=gettext("Copy CSC Override")?>"	href="vpn_openvpn_csc.php?act=dup&amp;id=<?=$i?>" usepost></a>
 						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>

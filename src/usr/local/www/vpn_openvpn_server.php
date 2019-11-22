@@ -534,6 +534,28 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The supplied Send/Receive Buffer size is invalid.");
 	}
 
+	if (!empty($pconfig['ping_method']) && !array_key_exists($pconfig['ping_method'], $openvpn_ping_method)) {
+		$input_errors[] = gettext("The supplied Ping Method is invalid.");
+	}
+	if (!empty($pconfig['ping_action']) && !array_key_exists($pconfig['ping_action'], $openvpn_ping_action)) {
+		$input_errors[] = gettext("The supplied Ping Action is invalid.");
+	}
+	if (!empty($pconfig['keepalive_interval']) && !is_numericint($pconfig['keepalive_interval'])) {
+		$input_errors[] = gettext("The supplied Keepalive Interval value is invalid.");
+	}
+	if (!empty($pconfig['keepalive_timeout']) && !is_numericint($pconfig['keepalive_timeout'])) {
+		$input_errors[] = gettext("The supplied Keepalive Timeout value is invalid.");
+	}
+	if (!empty($pconfig['ping_seconds']) && !is_numericint($pconfig['ping_seconds'])) {
+		$input_errors[] = gettext("The supplied Ping Seconds value is invalid.");
+	}
+	if (!empty($pconfig['ping_action_seconds']) && !is_numericint($pconfig['ping_action_seconds'])) {
+		$input_errors[] = gettext("The supplied Ping Restart or Exit Seconds value is invalid.");
+	}
+	if (!empty($pconfig['inactive_seconds']) && !is_numericint($pconfig['inactive_seconds'])) {
+		$input_errors[] = gettext("The supplied Inactive Seconds value is invalid.");
+	}
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {

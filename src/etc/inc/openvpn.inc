@@ -2159,4 +2159,35 @@ function openvpn_restart_by_vpnid($mode, $vpnid) {
 	openvpn_restart($mode, $settings);
 }
 
+/****f* certs/openvpn_is_tunnel_network_in_use
+ * NAME
+ *   openvpn_is_tunnel_network_in_use
+ *     Check if the supplied network is in use as an OpenVPN server or client
+ *     tunnel network
+ * INPUTS
+ *   $net : The IPv4 or IPv6 network to check
+ * RESULT
+ *   boolean value: true if the network is in use, false otherwise.
+ ******/
+
+function openvpn_is_tunnel_network_in_use($net) {
+	global $config;
+	init_config_arr(array('openvpn', 'openvpn-server'));
+	init_config_arr(array('openvpn', 'openvpn-client'));
+	/* Determine whether to check IPv4 or IPv6 tunnel networks */
+	$tocheck = 'tunnel_network';
+	if (is_v6($net)) {
+		$tocheck .= "v6";
+	}
+	/* Check all OpenVPN clients and servers for this tunnel network */
+	foreach(array('server', 'client') as $mode) {
+		foreach ($config['openvpn']["openvpn-{$mode}"] as $ovpn) {
+			if (!empty($ovpn[$tocheck]) &&
+			    ($ovpn[$tocheck] == $net)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
 ?>

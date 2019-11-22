@@ -300,11 +300,21 @@ if ($_POST['save']) {
 		if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4")) {
 			$input_errors[] = $result;
 		}
+		if ((!isset($a_client[$id]) ||
+		    ($a_client[$id]['tunnel_network'] != $pconfig['tunnel_network'])) &&
+		    openvpn_is_tunnel_network_in_use($pconfig['tunnel_network'])) {
+			$input_errors[] = gettext("The submitted IPv4 Tunnel Network is already in use.");
+		}
 	}
 
 	if ($pconfig['tunnel_networkv6']) {
 		if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6")) {
 			$input_errors[] = $result;
+		}
+		if ((!isset($a_client[$id]) ||
+		    ($a_client[$id]['tunnel_networkv6'] != $pconfig['tunnel_networkv6'])) &&
+		    openvpn_is_tunnel_network_in_use($pconfig['tunnel_networkv6'])) {
+			$input_errors[] = gettext("The submitted IPv6 Tunnel Network is already in use.");
 		}
 	}
 

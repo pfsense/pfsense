@@ -168,6 +168,21 @@ $openvpn_ping_action = array(
 	'ping_exit' => gettext("ping-exit -- Exit OpenVPN after timeout")
 );
 
+global $openvpn_exit_notify_server;
+$openvpn_exit_notify_server = array(
+	'none' => gettext("Disabled"),
+	'1' => gettext("Reconnect to this server / Retry once"),
+	'2' => gettext("Reconnect to next server / Retry twice"),
+);
+
+global $openvpn_exit_notify_client;
+$openvpn_exit_notify_client = array(
+	'none' => gettext("Disabled"),
+);
+for ($i=1; $i<=5; $i++) {
+	$openvpn_exit_notify_client[$i] = sprintf(gettext("Retry %dx"), $i);
+}
+
 function openvpn_build_mode_list() {
 	global $openvpn_server_modes;
 
@@ -1356,6 +1371,13 @@ function openvpn_reconfigure($mode, $settings) {
 	    && (strtolower(substr($settings['protocol'], 0, 3)) == "udp")
 	    && (empty($settings['use_shaper']))) {
 		$conf .= "fast-io\n";
+	}
+
+	/* Exit Notify. Only compatible with UDP. */
+	if (!empty($settings['exit_notify']) &&
+	    is_numericint($settings['exit_notify']) &&
+	    (strtolower(substr($settings['protocol'], 0, 3)) == "udp")) {
+		$conf .= "explicit-exit-notify {$settings['exit_notify']}\n";
 	}
 
 	/* Send and Receive Buffer Settings */

@@ -34,7 +34,7 @@ require_once("openvpn.inc");
 require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 
-global $openvpn_topologies, $openvpn_tls_modes;
+global $openvpn_topologies, $openvpn_tls_modes, $openvpn_exit_notify_server;
 
 init_config_arr(array('openvpn', 'openvpn-server'));
 $a_server = &$config['openvpn']['openvpn-server'];
@@ -253,6 +253,7 @@ if (($act == "edit") || ($act == "dup")) {
 
 		$pconfig['push_blockoutsidedns'] = $a_server[$id]['push_blockoutsidedns'];
 		$pconfig['udp_fast_io'] = $a_server[$id]['udp_fast_io'];
+		$pconfig['exit_notify'] = $a_server[$id]['exit_notify'];
 		$pconfig['sndrcvbuf'] = $a_server[$id]['sndrcvbuf'];
 		$pconfig['push_register_dns'] = $a_server[$id]['push_register_dns'];
 
@@ -511,12 +512,21 @@ if ($_POST['save']) {
 		}
 	}
 
-	/* UDP Fast I/O is not compatible with TCP, so toss the option out when
-	   submitted since it can't be set this way legitimately. This also avoids
-	   having to perform any more trickery on the stored option to not preserve
-	   the value when changing modes. */
-	if ($pconfig['udp_fast_io'] && (strtolower(substr($pconfig['protocol'], 0, 3)) != "udp")) {
-		unset($pconfig['udp_fast_io']);
+	/* UDP Fast I/O and Exit Notify are not compatible with TCP, so toss the
+	 * option out when submitted since it can't be set this way
+	 * legitimately. This also avoids having to perform any more trickery on
+	 * the stored option to not preserve the value when changing modes. */
+	if (strtolower(substr($pconfig['protocol'], 0, 3)) != "udp") {
+		if ($pconfig['udp_fast_io']) {
+			unset($pconfig['udp_fast_io']);
+		}
+		if ($pconfig['exit_notify']) {
+			unset($pconfig['exit_notify']);
+		}
+	} else {
+		if (!array_key_exists($pconfig['exit_notify'], $openvpn_exit_notify_server)) {
+			$input_errors[] = gettext("The Exit Notify value is invalid.");
+		}
 	}
 
 	if (!empty($pconfig['sndrcvbuf']) && !array_key_exists($pconfig['sndrcvbuf'], openvpn_get_buffer_values())) {
@@ -623,6 +633,9 @@ if ($_POST['save']) {
 		}
 		if ($pconfig['udp_fast_io']) {
 			$server['udp_fast_io'] = $pconfig['udp_fast_io'];
+		}
+		if ($pconfig['exit_notify']) {
+			$server['exit_notify'] = $pconfig['exit_notify'];
 		}
 		$server['sndrcvbuf'] = $pconfig['sndrcvbuf'];
 		if ($pconfig['push_register_dns']) {
@@ -1468,6 +1481,17 @@ if ($act=="new" || $act=="edit"):
 		'Not compatible with all platforms, and not compatible with OpenVPN bandwidth limiting.');
 
 	$section->addInput(new Form_Select(
+		'exit_notify',
+		'Exit Notify',
+		$pconfig['exit_notify'],
+		$openvpn_exit_notify_server
+	))->setHelp('Send an explicit exit notification to connected clients/peers when restarting ' .
+		'or shutting down, so they may immediately disconnect rather than waiting for a timeout. ' .
+		'In SSL/TLS Server modes, clients may be directed to reconnect or use the next server. ' .
+		'In Peer-to-Peer Shared Key or with a /30 Tunnel Network, this value controls how ' .
+		'many times this instance will attempt to send the exit notification.');
+
+	$section->addInput(new Form_Select(
 		'sndrcvbuf',
 		'Send/Receive Buffer',
 		$pconfig['sndrcvbuf'],
@@ -1752,7 +1776,9 @@ events.push(function() {
 
 	function protocol_change() {
 		hideInput('interface', (($('#protocol').val().toLowerCase() == 'udp') || ($('#protocol').val().toLowerCase() == 'tcp')));
-		hideCheckbox('udp_fast_io', !($('#protocol').val().substring(0, 3).toLowerCase() == 'udp'));
+		var notudp = !($('#protocol').val().substring(0, 3).toLowerCase() == 'udp');
+		hideCheckbox('udp_fast_io', notudp);
+		hideInput('exit_notify', notudp);
 	}
 
 	// Process "Enable authentication of TLS packets" checkbox

@@ -164,6 +164,7 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['auth-retry-none'] = $a_client[$id]['auth-retry-none'];
 		$pconfig['passtos'] = $a_client[$id]['passtos'];
 		$pconfig['udp_fast_io'] = $a_client[$id]['udp_fast_io'];
+		$pconfig['exit_notify'] = $a_client[$id]['exit_notify'];
 		$pconfig['sndrcvbuf'] = $a_client[$id]['sndrcvbuf'];
 		$pconfig['topology'] = $a_client[$id]['topology'];
 
@@ -384,12 +385,21 @@ if ($_POST['save']) {
 		}
 	}
 
-	/* UDP Fast I/O is not compatible with TCP, so toss the option out when
-	   submitted since it can't be set this way legitimately. This also avoids
-	   having to perform any more trickery on the stored option to not preserve
-	   the value when changing modes. */
-	if ($pconfig['udp_fast_io'] && (strtolower(substr($pconfig['protocol'], 0, 3)) != "udp")) {
-		unset($pconfig['udp_fast_io']);
+	/* UDP Fast I/O and Exit Notify are not compatible with TCP, so toss the
+	 * option out when submitted since it can't be set this way
+	 * legitimately. This also avoids having to perform any more trickery on
+	 * the stored option to not preserve the value when changing modes. */
+	if (strtolower(substr($pconfig['protocol'], 0, 3)) != "udp") {
+		if ($pconfig['udp_fast_io']) {
+			unset($pconfig['udp_fast_io']);
+		}
+		if ($pconfig['exit_notify']) {
+			unset($pconfig['exit_notify']);
+		}
+	} else {
+		if (!array_key_exists($pconfig['exit_notify'], $openvpn_exit_notify_client)) {
+			$input_errors[] = gettext("The Exit Notify value is invalid.");
+		}
 	}
 
 	if ($pconfig['udp_fast_io'] && (!empty($pconfig['use_shaper']))) {
@@ -481,6 +491,7 @@ if ($_POST['save']) {
 		$client['auth-retry-none'] = $pconfig['auth-retry-none'];
 		$client['passtos'] = $pconfig['passtos'];
 		$client['udp_fast_io'] = $pconfig['udp_fast_io'];
+		$client['exit_notify'] = $pconfig['exit_notify'];
 		$client['sndrcvbuf'] = $pconfig['sndrcvbuf'];
 
 		$client['route_no_pull'] = $pconfig['route_no_pull'];
@@ -1039,6 +1050,15 @@ if ($act=="new" || $act=="edit"):
 		'Not compatible with all platforms, and not compatible with OpenVPN bandwidth limiting.');
 
 	$section->addInput(new Form_Select(
+		'exit_notify',
+		'Exit Notify',
+		$pconfig['exit_notify'],
+		$openvpn_exit_notify_client
+	))->setHelp('Send an explicit exit notification to connected servers/peers when restarting ' .
+		'or shutting down, so they may immediately disconnect rather than waiting for a timeout. ' .
+		'This value controls how many times this instance will attempt to send the exit notification.');
+
+	$section->addInput(new Form_Select(
 		'sndrcvbuf',
 		'Send/Receive Buffer',
 		$pconfig['sndrcvbuf'],
@@ -1217,7 +1237,9 @@ events.push(function() {
 
 	function protocol_change() {
 		hideInput('interface', (($('#protocol').val().toLowerCase() == 'udp') || ($('#protocol').val().toLowerCase() == 'tcp')));
-		hideCheckbox('udp_fast_io', !($('#protocol').val().substring(0, 3).toLowerCase() == 'udp'));
+		var notudp = !($('#protocol').val().substring(0, 3).toLowerCase() == 'udp');
+		hideCheckbox('udp_fast_io', notudp);
+		hideInput('exit_notify', notudp);
 	}
 
 	// Process "Automatically generate a shared key" checkbox

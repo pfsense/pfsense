@@ -252,6 +252,7 @@ if (($act == "edit") || ($act == "dup")) {
 		}
 
 		$pconfig['push_blockoutsidedns'] = $a_server[$id]['push_blockoutsidedns'];
+		$pconfig['username_as_common_name']  = ($a_server[$id]['username_as_common_name'] != 'disabled');
 		$pconfig['udp_fast_io'] = $a_server[$id]['udp_fast_io'];
 		$pconfig['exit_notify'] = $a_server[$id]['exit_notify'];
 		$pconfig['sndrcvbuf'] = $a_server[$id]['sndrcvbuf'];
@@ -631,6 +632,9 @@ if ($_POST['save']) {
 		if ($pconfig['push_blockoutsidedns']) {
 			$server['push_blockoutsidedns'] = $pconfig['push_blockoutsidedns'];
 		}
+
+		$server['username_as_common_name'] = ($pconfig['username_as_common_name'] == 'yes') ? "enabled" : "disabled";
+
 		if ($pconfig['udp_fast_io']) {
 			$server['udp_fast_io'] = $pconfig['udp_fast_io'];
 		}
@@ -1473,6 +1477,14 @@ if ($act=="new" || $act=="edit"):
 				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"', '<br />');
 
 	$section->addInput(new Form_Checkbox(
+		'username_as_common_name',
+		'Username as Common Name',
+		'Use the authenticated client username instead of the certificate common name (CN).',
+		$pconfig['username_as_common_name']
+	))->setHelp('When a user authenticates, if this option is enabled then the username of the client will be used ' .
+			'in place of the certificate common name for purposes such as determining Client Specific Overrides.');
+
+	$section->addInput(new Form_Checkbox(
 		'udp_fast_io',
 		'UDP Fast I/O',
 		'Use fast I/O operations with UDP writes to tun/tap. Experimental.',
@@ -1726,6 +1738,7 @@ events.push(function() {
 				hideMultiClass('authmode', true);
 				hideCheckbox('client2client', true);
 				hideCheckbox('autokey_enable', false);
+				hideCheckbox('username_as_common_name', true);
 			break;
 			case "p2p_tls":
 				advanced_change(true, value);
@@ -1737,6 +1750,7 @@ events.push(function() {
 				hideInput('local_networkv6', false);
 				hideMultiClass('authmode', true);
 				hideCheckbox('client2client', false);
+				hideCheckbox('username_as_common_name', true);
 			break;
 			case "server_user":
 			case "server_tls_user":
@@ -1750,6 +1764,7 @@ events.push(function() {
 				hideMultiClass('authmode', false);
 				hideCheckbox('client2client', false);
 				hideCheckbox('autokey_enable', true);
+				hideCheckbox('username_as_common_name', false);
 			break;
 			case "server_tls":
 				hideMultiClass('authmode', true);
@@ -1765,6 +1780,7 @@ events.push(function() {
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideCheckbox('client2client', false);
+				hideCheckbox('username_as_common_name', true);
 			break;
 		}
 

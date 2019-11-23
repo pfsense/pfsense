@@ -1016,9 +1016,10 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 	$section->addClass('toggle-existing collapse');
 
 	$existCerts = array();
+	$ecdsagood = cert_build_list('cert', 'IPsec');
 
 	foreach ($config['cert'] as $cert) {
-		if (!is_array($cert) || empty($cert)) {
+		if (!is_array($cert) || empty($cert) || !in_array($cert['refid'], array_keys($ecdsagood))) {
 			continue;
 		}
 		if (is_array($config['system']['user'][$userid]['cert'])) { // Could be MIA!

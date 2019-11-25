@@ -39,9 +39,12 @@ require_once("guiconfig.inc");
 
 define('MAX_COUNT', 10);
 define('DEFAULT_COUNT', 3);
+define('MAX_WAIT', 10);
+define('DEFAULT_WAIT', 1);
 $do_ping = false;
 $host = '';
 $count = DEFAULT_COUNT;
+$wait = DEFAULT_WAIT;
 
 if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
@@ -51,11 +54,12 @@ if ($_POST || $_REQUEST['host']) {
 	$reqdfields = explode(" ", "host count");
 	$reqdfieldsn = array(gettext("Host"), gettext("Count"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
-
-	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT)) {
+	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT) || (!is_numericint($_REQUEST['wait']))) {
 		$input_errors[] = sprintf(gettext("Count must be between 1 and %s"), MAX_COUNT);
-	}
-
+	}	
+	if (($_REQUEST['wait'] < 1) || ($_REQUEST['wait'] > MAX_WAIT) || (!is_numericint($_REQUEST['wait']))) {
+		$input_errors[] = sprintf(gettext("Wait must be between 1 and %s"), MAX_WAIT);
+	}	
 	$host = trim($_REQUEST['host']);
 	$ipproto = $_REQUEST['ipproto'];
 	if (($ipproto == "ipv4") && is_ipaddrv6($host)) {
@@ -72,10 +76,8 @@ if ($_POST || $_REQUEST['host']) {
 		if (isset($_REQUEST['sourceip'])) {
 			$sourceip = $_REQUEST['sourceip'];
 		}
-		$count = $_REQUEST['count'];
-		if (preg_match('/[^0-9]/', $count)) {
-			$count = DEFAULT_COUNT;
-		}
+		$count = (empty($_REQUEST['count'])) ? DEFAULT_WAIT : $_REQUEST['count'];
+		$wait = (empty($_REQUEST['wait'])) ? DEFAULT_WAIT : $_REQUEST['wait'];
 	}
 }
 
@@ -108,7 +110,7 @@ if ($do_ping) {
 		}
 	}
 
-	$cmd = "{$command} {$srcip} -c" . escapeshellarg($count) . " " . escapeshellarg($host);
+	$cmd = "{$command} {$srcip} -c" . escapeshellarg($count) . " -i" . escapeshellarg($wait) . " " . escapeshellarg($host);
 	//echo "Ping command: {$cmd}\n";
 	$result = shell_exec($cmd);
 
@@ -156,6 +158,13 @@ $section->addInput(new Form_Select(
 	$count,
 	array_combine(range(1, MAX_COUNT), range(1, MAX_COUNT))
 ))->setHelp('Select the maximum number of pings.');
+
+$section->addInput(new Form_Select(
+	'wait',
+	'Seconds between pings',
+	$wait,
+	array_combine(range(1, MAX_WAIT), range(1, MAX_WAIT))
+))->setHelp('Select the number of seconds to wait between pings.');
 
 $form->add($section);
 

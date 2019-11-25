@@ -3843,6 +3843,10 @@ class dnpipe_class extends dummynet_class {
 		if ($data['delay'] && (!is_numeric($data['delay']))) {
 			$input_errors[] = gettext("Delay must be an integer.");
 		}
+		if ($data['delay'] && is_numeric($data['delay']) &&
+		    (($data['delay'] < 0) || ($data['delay'] > 10000))) {
+			$input_errors[] = gettext("Delay must be an integer between 0 and 10000.");
+		}
 
 		/* Limiter patch */
 		$selectedScheduler = getSchedulers()[$data['sched']];

@@ -120,6 +120,8 @@ if (file_exists("{$g['etc_path']}/default-config-flavor")) {
 	$g['default-config-flavor'] = '';
 }
 
+$g['openvpn_base'] = "{$g['varetc_path']}/openvpn";
+
 /* Default sysctls */
 $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.tcp.blackhole" => "2",

@@ -2287,18 +2287,77 @@ function ca_setup_trust_store() {
 			continue;
 		}
 
-		/* Decode the certificate contents */
-		$cert_contents = base64_decode($ca['crt']);
-		/* Get hash value to use for filename */
-		$cert_details = openssl_x509_parse($cert_contents);
-		$ca_filename = "{$trust_store_directory}/{$cert_details['hash']}.0";
-
-		/* Write CA to trust store and ensure it has correct permissions. */
-		file_put_contents($ca_filename, $cert_contents);
-		chmod($ca_filename, 0644);
-		chown($ca_filename, 'root');
-		chgrp($ca_filename, 'wheel');
+		ca_setup_capath($ca, $trust_store_directory);
 	}
+}
+
+/****f* certs/ca_setup_capath
+ * NAME
+ *   ca_setup_capath - Setup CApath structure so that CA chains and related CRLs
+ *                     may be written and validated by the -CApath option in
+ *                     OpenSSL and other compatible validators.
+ * INPUTS
+ *   $ca     : A CA (not a refid) to write
+ *   $basedir: The directory which will contain the CA structure.
+ *   $crl    : A CRL (not a refid) associated with the CA to write.
+ * RESULT
+ *   $basedir is populated with CA and CRL files in a format usable by OpenSSL
+ *   CApath. This has the filenames as the CA hash with the CA named <hash>.0
+ *   and CRLs named <hash>.r0
+ ******/
+
+function ca_setup_capath($ca, $basedir, $crl = "") {
+	global $config;
+	/* Check for an invalid CA */
+	if (!$ca || !is_array($ca)) {
+		return false;
+	}
+	/* Check for an invalid CRL, but do not consider it fatal if it's wrong */
+	if (!$crl || !is_array($crl) || ($crl['caref'] != $ca['refid'])) {
+		unset($crl);
+	}
+
+	/* Check for an empty base directory, which is invalid */
+	if (empty($basedir)) {
+		return false;
+	}
+
+	/* Ensure that $basedir exists and is a directory */
+	if (!is_dir($basedir)) {
+		/* If it's a file, remove it, otherwise the directory cannot
+		 * be created. */
+		if (file_exists($basedir)) {
+			@unlink_if_exists($basedir);
+		}
+		@safe_mkdir($basedir);
+	}
+	/* Decode the certificate contents */
+	$cert_contents = base64_decode($ca['crt']);
+	/* Get hash value to use for filename */
+	$cert_details = openssl_x509_parse($cert_contents);
+	$fprefix = "{$basedir}/{$cert_details['hash']}";
+
+	/* Cleanup old CA/CRL files for this hash */
+	@unlink_if_exists("{$fprefix}.*");
+
+	/* Write CA to base dir and ensure it has correct permissions. */
+	$ca_filename = "{$fprefix}.0";
+	file_put_contents($ca_filename, $cert_contents);
+	chmod($ca_filename, 0644);
+	chown($ca_filename, 'root');
+	chgrp($ca_filename, 'wheel');
+
+	/* If there is a CRL, process it. */
+	if ($crl) {
+		/* Write CRL to trust store and ensure it has correct permissions. */
+		$crl_filename = "{$fprefix}.r0";
+		file_put_contents($crl_filename, base64_decode($crl['text']));
+		chmod($crl_filename, 0644);
+		chown($crl_filename, 'root');
+		chgrp($crl_filename, 'wheel');
+	}
+
+	return true;
 }
 
 /****f* certs/cert_get_pkey_curve

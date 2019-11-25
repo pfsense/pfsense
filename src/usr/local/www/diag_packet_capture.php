@@ -59,7 +59,11 @@ function has_not($value) {
 }
 
 function fixup_not($value) {
-	return str_replace("!", "not ", $value);
+	if ($value == '!ospf') {
+		return "! proto ospf";
+	} else {
+		return str_replace("!", "not ", $value);
+	}
 }
 
 function strip_not($value) {
@@ -152,8 +156,8 @@ $count = 100;//default number of packets to capture
 $max_display_size = 50*1024*1024; // 50MB limit on GUI capture display. See https://redmine.pfsense.org/issues/9239
 
 $fams = array('ip', 'ip6');
-$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp', 'pfsync',
-		        '!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp', '!pfsync');
+$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp', 'pfsync', 'ospf',
+		        '!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp', '!pfsync', '!ospf');
 
 $input_errors = array();
 
@@ -322,7 +326,9 @@ $protocollist = array(
 	'pfsync' => 'pfsync',
 	'!pfsync' => $excl . ' pfsync',
 	'esp' => 'ESP',
-	'!esp' => $excl . ' ESP'
+	'!esp' => $excl . ' ESP',
+	'ospf' => 'OSPF',
+	'!ospf' => $excl . ' OSPF'
 );
 
 include("head.inc");
@@ -512,7 +518,17 @@ if ($do_tcpdump) :
 	}
 
 	if (in_array($proto, $protos)) {
-		$matches[] = fixup_not(str_replace('carp', 'proto 112', $proto));
+		switch ($proto) {
+			case 'ospf':
+				$proto = str_replace('ospf', 'proto ospf', $proto);
+				break;
+			case 'carp':
+				$proto = str_replace('carp', 'proto 112', $proto);
+				break;
+			default:
+				break;
+		}
+		$matches[] = fixup_not($proto);
 	}
 
 	if ($port != "") {

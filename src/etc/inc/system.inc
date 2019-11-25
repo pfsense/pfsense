@@ -1306,7 +1306,7 @@ EOD;
 		} else {
 			$nginx_config .= "\t\tssl_protocols   TLSv1.2 TLSv1.3;\n";
 		}
-		$nginx_config .= "\t\tssl_ciphers \"EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH\";\n";
+		$nginx_config .= "\t\tssl_ciphers \"EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305\";\n";
 		$nginx_config .= "\t\tssl_prefer_server_ciphers       on;\n";
 		if ($captive_portal === false && $hsts !== false) {
 			$nginx_config .= "\t\tadd_header Strict-Transport-Security \"max-age=31536000\";\n";

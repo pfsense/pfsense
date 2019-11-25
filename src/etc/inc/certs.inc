@@ -2418,6 +2418,8 @@ function cert_check_pkey_compatibility($pkey, $consumer) {
  *   $type    : 'ca' for certificate authority entries, 'cert' for certificates.
  *   $consumer: The consumer name used to filter certificates out of the result.
  *                 See the contents of $cert_curve_compatible for details.
+ *   $selectsource: Then true, outputs in a format usable by select_source in
+ *                  packages.
  * RESULT
  *   Returns an option list of entries with incompatible entries removed. This
  *   can be used directly in form option selection lists.
@@ -2425,7 +2427,7 @@ function cert_check_pkey_compatibility($pkey, $consumer) {
  *   This can be expanded in the future to allow for other types of restrictions.
  ******/
 
-function cert_build_list($type = 'cert', $consumer = '') {
+function cert_build_list($type = 'cert', $consumer = '', $selectsource = false) {
 	global $config;
 
 	/* Ensure that $type is valid */
@@ -2441,7 +2443,12 @@ function cert_build_list($type = 'cert', $consumer = '') {
 	 * descriptive name as the value. Exclude incompatible certificates. */
 	foreach ($config[$type] as $cert) {
 		if (cert_check_pkey_compatibility($cert['prv'], $consumer)) {
-			$list[$cert['refid']] = $cert['descr'];
+			if ($selectsource) {
+				$list[] = array('refid' => $cert['refid'],
+						'descr' => $cert['descr']);
+			} else {
+				$list[$cert['refid']] = $cert['descr'];
+			}
 		}
 	}
 

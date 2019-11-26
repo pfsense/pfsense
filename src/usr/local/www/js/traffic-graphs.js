@@ -330,7 +330,9 @@ function draw_graph(then) {
 					 * timers stacking up waiting for a
 					 * frame update.
 					 */
-					charts[key].update();
+					if (charts[key]) {
+						charts[key].update();
+					}
 				}
 				interfaceCount++;
 				interfaceCount = interfaceCount % interfaceSize;

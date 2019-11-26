@@ -2025,6 +2025,7 @@ function openvpn_refresh_crls() {
 					foreach ($cas as $ca) {
 						ca_setup_capath($ca, $capath, $crl, true);
 					}
+					unset($cas, $param, $capath, $crl);
 					break;
 			}
 		}

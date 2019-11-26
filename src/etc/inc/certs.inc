@@ -2300,13 +2300,14 @@ function ca_setup_trust_store() {
  *   $ca     : A CA (not a refid) to write
  *   $basedir: The directory which will contain the CA structure.
  *   $crl    : A CRL (not a refid) associated with the CA to write.
+ *   $refresh: Refresh CRLs -- When true, perform no cleanup and increment suffix
  * RESULT
  *   $basedir is populated with CA and CRL files in a format usable by OpenSSL
  *   CApath. This has the filenames as the CA hash with the CA named <hash>.0
  *   and CRLs named <hash>.r0
  ******/
 
-function ca_setup_capath($ca, $basedir, $crl = "") {
+function ca_setup_capath($ca, $basedir, $crl = "", $refresh = false) {
 	global $config;
 	/* Check for an invalid CA */
 	if (!$ca || !is_array($ca)) {
@@ -2337,11 +2338,11 @@ function ca_setup_capath($ca, $basedir, $crl = "") {
 	$cert_details = openssl_x509_parse($cert_contents);
 	$fprefix = "{$basedir}/{$cert_details['hash']}";
 
-	/* Cleanup old CA/CRL files for this hash */
-	@unlink_if_exists("{$fprefix}.*");
 
-	/* Write CA to base dir and ensure it has correct permissions. */
 	$ca_filename = "{$fprefix}.0";
+	/* Cleanup old CA/CRL files for this hash */
+	@unlink_if_exists($ca_filename);
+	/* Write CA to base dir and ensure it has correct permissions. */
 	file_put_contents($ca_filename, $cert_contents);
 	chmod($ca_filename, 0644);
 	chown($ca_filename, 'root');
@@ -2349,8 +2350,14 @@ function ca_setup_capath($ca, $basedir, $crl = "") {
 
 	/* If there is a CRL, process it. */
 	if ($crl) {
-		/* Write CRL to trust store and ensure it has correct permissions. */
-		$crl_filename = "{$fprefix}.r0";
+		$crl_filename = "{$fprefix}.r";
+		if (!$refresh) {
+			/* Cleanup old CA/CRL files for this hash */
+			@unlink_if_exists("{$crl_filename}*");
+		}
+		/* Find next suffix based on how many existing files there are (start=0) */
+		$crl_filename .= count(glob("{$crl_filename}*"));
+		/* Write CRL to base dir and ensure it has correct permissions. */
 		file_put_contents($crl_filename, base64_decode($crl['text']));
 		chmod($crl_filename, 0644);
 		chown($crl_filename, 'root');

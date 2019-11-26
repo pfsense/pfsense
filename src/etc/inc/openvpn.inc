@@ -2017,13 +2017,13 @@ function openvpn_refresh_crls() {
 				case 'server_user':
 					$param = array('caref' => $settings['caref']);
 					$cas = ca_chain_array($param);
-					$capath = "{$g['openvpn_base']}/{$mode_id}/ca";
+					$capath = "{$g['openvpn_base']}/server{$settings['vpnid']}/ca";
 					if (!empty($settings['crlref'])) {
 						$crl = lookup_crl($settings['crlref']);
 						crl_update($crl);
 					}
 					foreach ($cas as $ca) {
-						ca_setup_capath($ca, $capath, $crl);
+						ca_setup_capath($ca, $capath, $crl, true);
 					}
 					break;
 			}

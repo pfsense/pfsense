@@ -2479,6 +2479,7 @@ function cert_check_pkey_compatibility($pkey, $consumer) {
  *                 See the contents of $cert_curve_compatible for details.
  *   $selectsource: Then true, outputs in a format usable by select_source in
  *                  packages.
+ *   $addnone: When true, a 'none' choice is added to the list.
  * RESULT
  *   Returns an option list of entries with incompatible entries removed. This
  *   can be used directly in form option selection lists.
@@ -2486,7 +2487,7 @@ function cert_check_pkey_compatibility($pkey, $consumer) {
  *   This can be expanded in the future to allow for other types of restrictions.
  ******/
 
-function cert_build_list($type = 'cert', $consumer = '', $selectsource = false) {
+function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, $addnone = false) {
 	global $config;
 
 	/* Ensure that $type is valid */
@@ -2497,6 +2498,14 @@ function cert_build_list($type = 'cert', $consumer = '', $selectsource = false) 
 	/* Initialize arrays */
 	init_config_arr(array($type));
 	$list = array();
+
+	if ($addnone) {
+		if ($selectsource) {
+			$list[] = array('refid' => 'none', 'descr' => 'None');
+		} else {
+			$list['none'] = "None";
+		}
+	}
 
 	/* Create a hashed array with the certificate refid as the key and
 	 * descriptive name as the value. Exclude incompatible certificates. */

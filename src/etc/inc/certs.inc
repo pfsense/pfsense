@@ -1319,7 +1319,7 @@ function crl_contains_cert($crl, $cert) {
 
 	/* Find the issuer of this CRL */
 	$ca = lookup_ca($crl['caref']);
-	$crlissuer = is_array($cert) ? cert_get_issuer($ca['crt']) : null;
+	$crlissuer = is_array($cert) ? cert_get_subject($ca['crt']) : null;
 	$serial = crl_get_entry_serial($cert);
 
 	/* Skip issuer match when sarching by serial instead of certificate */

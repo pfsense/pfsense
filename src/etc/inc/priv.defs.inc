@@ -55,6 +55,7 @@ $priv_list['page-diagnostics-command']['match'][] = "diag_command.php*";
 $priv_list['page-diagnostics-configurationhistory'] = array();
 $priv_list['page-diagnostics-configurationhistory']['name'] = gettext("WebCfg - Diagnostics: Configuration History");
 $priv_list['page-diagnostics-configurationhistory']['descr'] = gettext("Allow access to the 'Diagnostics: Configuration History' page.");
+$priv_list['page-diagnostics-configurationhistory']['warn'] = "standard-warning-root";
 $priv_list['page-diagnostics-configurationhistory']['match'] = array();
 $priv_list['page-diagnostics-configurationhistory']['match'][] = "diag_confbak.php*";
 
@@ -948,6 +949,12 @@ $priv_list['page-diagnostics-logs-firewall-summary']['descr'] = gettext("Allow a
 $priv_list['page-diagnostics-logs-firewall-summary']['match'] = array();
 $priv_list['page-diagnostics-logs-firewall-summary']['match'][] = "status_logs_filter_summary.php*";
 
+$priv_list['page-status-packagelogs'] = array();
+$priv_list['page-status-packagelogs']['name'] = gettext("WebCfg - Status: Package logs");
+$priv_list['page-status-packagelogs']['descr'] = gettext("Allow access to the 'Status: Package logs' page.");
+$priv_list['page-status-packagelogs']['match'] = array();
+$priv_list['page-status-packagelogs']['match'][] = "status_logs_packages.php*";
+
 $priv_list['page-diagnostics-logs-settings'] = array();
 $priv_list['page-diagnostics-logs-settings']['name'] = gettext("WebCfg - Status: Logs: Settings");
 $priv_list['page-diagnostics-logs-settings']['descr'] = gettext("Allow access to the 'Status: Logs: Settings' page.");
@@ -971,12 +978,6 @@ $priv_list['page-status-openvpn']['name'] = gettext("WebCfg - Status: OpenVPN");
 $priv_list['page-status-openvpn']['descr'] = gettext("Allow access to the 'Status: OpenVPN' page.");
 $priv_list['page-status-openvpn']['match'] = array();
 $priv_list['page-status-openvpn']['match'][] = "status_openvpn.php*";
-
-$priv_list['page-status-packagelogs'] = array();
-$priv_list['page-status-packagelogs']['name'] = gettext("WebCfg - Status: Package logs");
-$priv_list['page-status-packagelogs']['descr'] = gettext("Allow access to the 'Status: Package logs' page.");
-$priv_list['page-status-packagelogs']['match'] = array();
-$priv_list['page-status-packagelogs']['match'][] = "status_logs_packages.php*";
 
 $priv_list['page-status-trafficshaper-queues'] = array();
 $priv_list['page-status-trafficshaper-queues']['name'] = gettext("WebCfg - Status: Traffic Shaper: Queues");
@@ -1068,6 +1069,12 @@ $priv_list['page-system-certmanager']['name'] = gettext("WebCfg - System: Certif
 $priv_list['page-system-certmanager']['descr'] = gettext("Allow access to the 'System: Certificate Manager' page.");
 $priv_list['page-system-certmanager']['match'] = array();
 $priv_list['page-system-certmanager']['match'][] = "system_certmanager.php*";
+
+$priv_list['page-system-certmanager-renew'] = array();
+$priv_list['page-system-certmanager-renew']['name'] = gettext("WebCfg - System: Certificate Manager: Renew or Reissue CA/Certificate");
+$priv_list['page-system-certmanager-renew']['descr'] = gettext("Allow access to the 'System: Certificate Manager: Renew or Reissue CA/Certificate' page.");
+$priv_list['page-system-certmanager-renew']['match'] = array();
+$priv_list['page-system-certmanager-renew']['match'][] = "system_certmanager_renew.php*";
 
 $priv_list['page-system-crlmanager'] = array();
 $priv_list['page-system-crlmanager']['name'] = gettext("WebCfg - System: CRL Manager");

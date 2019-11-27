@@ -29,6 +29,7 @@
 require_once("ipsec.inc");
 require_once("filter.inc");
 require_once("auth.inc");
+require_once("certs.inc");
 
 function vpn_update_daemon_loglevel($category, $level) {
 	global $ipsec_log_cats, $ipsec_log_sevs;
@@ -691,7 +692,9 @@ EOD;
 				@chmod($ph1certfile, 0600);
 
 				/* XXX" Traffic selectors? */
-				$pskconf .= " : RSA {$ph1keyfile}\n";
+				$pskconf .= " : ";
+				$pskconf .= (cert_get_pkey_curve($cert['prv']) === false) ? "RSA" : "ECDSA";
+				$pskconf .= " {$ph1keyfile}\n";
 			} else if ($ph1ent['authentication_method'] == 'pkcs11') {
 				$pskconf .= " : PIN %smartcard:{$ph1ent['pkcs11certref']} '{$ph1ent['pkcs11pin']}'\n";
 			} else {

@@ -376,7 +376,8 @@ $section->addInput(new Form_Input(
 	'proxyuser',
 	'Proxy Username',
 	'text',
-	$pconfig['proxyuser']
+	$pconfig['proxyuser'],
+	['autocomplete' => 'new-password']
 ))->setHelp('Username for authentication to proxy server. Optional, '.
 	'leave blank to not use authentication.');
 

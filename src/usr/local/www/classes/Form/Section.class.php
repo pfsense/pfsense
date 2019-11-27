@@ -75,6 +75,7 @@ class Form_Section extends Form_Element
 		}
 
 		$input->setType("password");
+		$input->setAttribute('autocomplete', 'new-password');
 		$group->add($input);
 		$confirm = clone $input;
 		$confirm->setName($confirm->getName() . "_confirm");

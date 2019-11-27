@@ -79,21 +79,7 @@ $filtered_tags = array(
 
 if ($_POST['submit'] == "DOWNLOAD" && file_exists($output_file)) {
 	session_cache_limiter('public');
-	$fd = fopen($output_file, "rb");
-	header("Content-Type: application/octet-stream");
-	header("Content-Length: " . filesize($output_file));
-	header("Content-Disposition: attachment; filename=\"" .
-		trim(htmlentities(basename($output_file))) . "\"");
-	if (isset($_SERVER['HTTPS'])) {
-		header('Pragma: ');
-		header('Cache-Control: ');
-	} else {
-		header("Pragma: private");
-		header("Cache-Control: private, must-revalidate");
-	}
-
-	fpassthru($fd);
-	exit;
+	send_user_download('file', $output_file);
 }
 
 if (is_dir($output_path)) {

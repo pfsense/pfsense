@@ -1232,7 +1232,7 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 			$pluginparams['name'] = $gwname;
 			if ($gwdown == true) {
 				if (!file_exists("/tmp/.down.{$gwname}")) {
-					touch("/tmp/.down.{$gwname}");
+					@touch("/tmp/.down.{$gwname}");
 					$msg .= "\n".implode("|", $status);
 					$pluginparams['event'] = 'gateway.down';
 					$statuschanged = true;

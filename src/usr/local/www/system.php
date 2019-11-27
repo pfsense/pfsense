@@ -431,12 +431,16 @@ if ($_POST) {
 				if ($_POST[$dnsgwname]) {
 					$config['system'][$outdnsgwconfigname] = $thisdnsgwname;
 					$pconfig[$outdnsgwname] = $thisdnsgwname;
-					$config['system'][$outdnshostconfigname] = $thisdnshostname;
-					$pconfig[$outdnshostname] = $thisdnshostname;
 				} else {
 					// Note: when no DNS GW name is chosen, the entry is set to "none", so actually this case never happens.
 					unset($config['system'][$outdnsgwconfigname]);
 					$pconfig[$outdnsgwname] = "";
+				}
+				if ($_POST[$dnshostname]) {
+					$config['system'][$outdnshostconfigname] = $thisdnshostname;
+					$pconfig[$outdnshostname] = $thisdnshostname;
+				} else {
+					// Note: when no DNS hostname is chosen, unset the value.
 					unset($config['system'][$outdnshostconfigname]);
 					$pconfig[$outdnshostname] = "";
 				}
@@ -549,7 +553,7 @@ if ($dnsserver_count == 0) {
 
 foreach ($pconfig['dnsserver'] as $dnsserver) {
 
-	$is_last_dnsserver = ($dnsserver_num == $dnsserver_count - 1);
+	$is_last_dnsserver = (($dnsserver_num == $dnsserver_count - 1) || $dnsserver_count == 0);
 	$group = new Form_Group($dnsserver_num == 0 ? 'DNS Servers':'');
 	$group->addClass('repeatable');
 

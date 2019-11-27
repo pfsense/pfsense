@@ -6048,6 +6048,15 @@ function upgrade_196_to_197() {
 	install_cron_job('/usr/sbin/newsyslog', true, "*/1", '*', '*', '*', '*', 'root', false);
 }
 
+/* Add periodic cron jobs */
+function upgrade_197_to_198() {
+	global $g, $config;
+
+	install_cron_job('/etc/rc.periodic daily',   true, "1",  '3', '*', '*', '*', 'root', false);
+	install_cron_job('/etc/rc.periodic weekly',  true, "15", '4', '*', '*', '6', 'root', false);
+	install_cron_job('/etc/rc.periodic monthly', true, "30", '5', '1', '*', '*', 'root', false);
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

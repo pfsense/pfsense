@@ -458,6 +458,13 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Cannot disable a Phase 1 with a child Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
 	}
 
+	if (!empty($pconfig['certref'])) {
+		$errchkcert =& lookup_cert($pconfig['certref']);
+		if (is_array($errchkcert) && !cert_check_pkey_compatibility($errchkcert['prv'], 'IPsec')) {
+			$input_errors[] = gettext("The selected ECDSA certificate does not use a curve compatible with IKEv2");
+		}
+	}
+
 	if (!$input_errors) {
 		$ph1ent['ikeid'] = $pconfig['ikeid'];
 		$ph1ent['iketype'] = $pconfig['iketype'];
@@ -632,20 +639,6 @@ function build_peerid_list() {
 	return($list);
 }
 
-function build_cert_list() {
-	global $config;
-
-	$list = array();
-
-	if (is_array($config['cert'])) {
-		foreach ($config['cert'] as $cert) {
-			$list[$cert['refid']] = $cert['descr'];
-		}
-	}
-
-	return($list);
-}
-
 function build_pkcs11cert_list() {
 	global $config;
 
@@ -662,20 +655,6 @@ function build_pkcs11cert_list() {
 			$list[$p11_id[1][$i]] = $p11_cn[1][$i];
 		}
 	}
-	return($list);
-}
-
-function build_ca_list() {
-	global $config;
-
-	$list = array();
-
-	if (is_array($config['ca'])) {
-		foreach ($config['ca'] as $ca) {
-			$list[$ca['refid']] = $ca['descr'];
-		}
-	}
-
 	return($list);
 }
 
@@ -834,7 +813,7 @@ $section->addInput(new Form_Select(
 	'certref',
 	'*My Certificate',
 	$pconfig['certref'],
-	build_cert_list()
+	cert_build_list('cert', 'IPsec')
 ))->setHelp('Select a certificate previously configured in the Certificate Manager.');
 
 $section->addInput(new Form_Select(
@@ -855,7 +834,7 @@ $section->addInput(new Form_Select(
 	'caref',
 	'*Peer Certificate Authority',
 	$pconfig['caref'],
-	build_ca_list()
+	cert_build_list('ca', 'IPsec')
 ))->setHelp('Select a certificate authority previously configured in the Certificate Manager.');
 
 $form->add($section);

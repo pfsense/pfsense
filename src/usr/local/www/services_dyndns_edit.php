@@ -366,7 +366,8 @@ $section->addInput(new Form_Input(
 	'username',
 	'Username',
 	'text',
-	$pconfig['username']
+	$pconfig['username'],
+	['autocomplete' => 'new-password']
 ))->setHelp('Username is required for all types except Namecheap, FreeDNS, FreeDNS-v6, DigitalOcean, Linode and Custom Entries.%1$s' .
 			'Azure: Enter your Azure AD application ID%1$s' .
 			'DNS Made Easy: Dynamic DNS ID%1$s' .

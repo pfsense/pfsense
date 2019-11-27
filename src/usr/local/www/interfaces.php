@@ -2715,7 +2715,8 @@ $section->addInput(new Form_Input(
 	'ppp_username',
 	'Username',
 	'text',
-	$pconfig['ppp_username']
+	$pconfig['ppp_username'],
+	['autocomplete' => 'new-password']
 ));
 
 $section->addPassword(new Form_Input(
@@ -2782,7 +2783,8 @@ $section->addInput(new Form_Input(
 	'pppoe_username',
 	'*Username',
 	'text',
-	$pconfig['pppoe_username']
+	$pconfig['pppoe_username'],
+	['autocomplete' => 'new-password']
 ));
 
 $section->addPassword(new Form_Input(
@@ -2907,7 +2909,8 @@ $section->addInput(new Form_Input(
 	'pptp_username',
 	'*Username',
 	'text',
-	$pconfig['pptp_username']
+	$pconfig['pptp_username'],
+	['autocomplete' => 'new-password']
 ));
 
 $section->addPassword(new Form_Input(

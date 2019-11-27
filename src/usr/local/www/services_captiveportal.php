@@ -69,15 +69,7 @@ if ($_REQUEST['act'] == "viewhtml") {
 	}
 	exit;
 } else if ($_REQUEST['act'] == "gethtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
-	$file_data = base64_decode($a_cp[$cpzone]['page']['htmltext']);
-	$file_size = strlen($file_data);
-
-	header("Content-Type: text/html");
-	header("Content-Disposition: attachment; filename=portal.html");
-	header("Content-Length: $file_size");
-	echo $file_data;
-
-	exit;
+	send_user_download('data', base64_decode($a_cp[$cpzone]['page']['htmltext']), "portal.html", "text/html");
 } else if ($_REQUEST['act'] == "delhtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
 	unset($a_cp[$cpzone]['page']['htmltext']);
 	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default portal page"), $cpzone));
@@ -89,15 +81,7 @@ if ($_REQUEST['act'] == "viewhtml") {
 	}
 	exit;
 } else if ($_REQUEST['act'] == "geterrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
-	$file_data = base64_decode($a_cp[$cpzone]['page']['errtext']);
-	$file_size = strlen($file_data);
-
-	header("Content-Type: text/html");
-	header("Content-Disposition: attachment; filename=err.html");
-	header("Content-Length: $file_size");
-	echo $file_data;
-
-	exit;
+	send_user_download('data', base64_decode($a_cp[$cpzone]['page']['errtext']), "err.html", "text/html");
 } else if ($_REQUEST['act'] == "delerrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
 	unset($a_cp[$cpzone]['page']['errtext']);
 	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default error page"), $cpzone));
@@ -109,15 +93,7 @@ if ($_REQUEST['act'] == "viewhtml") {
 	}
 	exit;
 } else if ($_REQUEST['act'] == "getlogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
-	$file_data = base64_decode($a_cp[$cpzone]['page']['logouttext']);
-	$file_size = strlen($file_data);
-
-	header("Content-Type: text/html");
-	header("Content-Disposition: attachment; filename=logout.html");
-	header("Content-Length: $file_size");
-	echo $file_data;
-
-	exit;
+	send_user_download('data', base64_decode($a_cp[$cpzone]['page']['logouttext']), "logout.html", "text/html");
 } else if ($_REQUEST['act'] == "dellogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
 	unset($a_cp[$cpzone]['page']['logouttext']);
 	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default logout page"), $cpzone));
@@ -491,18 +467,6 @@ if ($_POST['save']) {
 			$pconfig['cinterface'] = implode(",", $_POST['cinterface']);
 		}
 	}
-}
-
-function build_cert_list() {
-	global $a_cert;
-
-	$list = array();
-
-	foreach ($a_cert as $cert) {
-		$list[$cert['refid']] = $cert['descr'];
-	}
-
-	return($list);
 }
 
 function build_authserver_list() {
@@ -1130,8 +1094,8 @@ $section->addInput(new Form_Select(
 	'certref',
 	'*SSL Certificate',
 	$pconfig['certref'],
-	build_cert_list()
-))->setHelp('If no certificates are defined, one may be defined here: %1$sSystem &gt; Cert. Manager%2$s', '<a href="system_certmanager.php">', '</a>');
+	cert_build_list('cert', 'HTTPS')
+))->setHelp('Certificates known to be incompatible with use for HTTPS are not included in this list. If no certificates are defined, one may be defined here: %1$sSystem &gt; Cert. Manager%2$s', '<a href="system_certmanager.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'nohttpsforwards',

@@ -41,11 +41,11 @@ $ca_methods = array(
 $ca_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
 $ca_keytypes = array("RSA", "ECDSA");
 global $openssl_digest_algs;
-$openssl_ecnames = openssl_get_curve_names();
-
-if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
-	$id = $_REQUEST['id'];
-}
+global $cert_strict_values;
+$max_lifetime = cert_get_max_lifetime();
+$default_lifetime = min(3650, $max_lifetime);
+$openssl_ecnames = cert_build_curve_list();
+$class = "success";
 
 init_config_arr(array('ca'));
 $a_ca = &$config['ca'];
@@ -56,155 +56,147 @@ $a_cert = &$config['cert'];
 init_config_arr(array('crl'));
 $a_crl = &$config['crl'];
 
-if ($_REQUEST['act']) {
-	$act = $_REQUEST['act'];
+$act = $_REQUEST['act'];
+
+if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
+}
+if (!empty($id)) {
+	$thisca =& lookup_ca($id);
 }
 
-if ($_POST['act'] == "del") {
-
-	if (!isset($a_ca[$id])) {
-		pfSenseHeader("system_camanager.php");
-		exit;
-	}
-
-	/* Only remove CA reference when deleting. It can be reconnected if a new matching CA is imported */
-	$index = count($a_cert) - 1;
-	for (;$index >= 0; $index--) {
-		if ($a_cert[$index]['caref'] == $a_ca[$id]['refid']) {
-			unset($a_cert[$index]['caref']);
-		}
-	}
-
-	/* Remove any CRLs for this CA, there is no way to recover the connection once the CA has been removed. */
-	$index = count($a_crl) - 1;
-	for (;$index >= 0; $index--) {
-		if ($a_crl[$index]['caref'] == $a_ca[$id]['refid']) {
-			unset($a_crl[$index]);
-		}
-	}
-
-	$name = $a_ca[$id]['descr'];
-	unset($a_ca[$id]);
-	write_config();
-	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted."), htmlspecialchars($name));
+/* Actions other than 'new' require an ID.
+ * 'del' action must be submitted via POST. */
+if ((!empty($act) &&
+    ($act != 'new') &&
+    !$thisca) ||
+    (($act == 'del') && empty($_POST))) {
 	pfSenseHeader("system_camanager.php");
 	exit;
 }
 
-if ($act == "edit") {
-	if (!$a_ca[$id]) {
-		pfSenseHeader("system_camanager.php");
-		exit;
-	}
-	$pconfig['method'] = 'existing';
-	$pconfig['descr']  = $a_ca[$id]['descr'];
-	$pconfig['refid']  = $a_ca[$id]['refid'];
-	$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);
-	$pconfig['serial'] = $a_ca[$id]['serial'];
-	if (!empty($a_ca[$id]['prv'])) {
-		$pconfig['key'] = base64_decode($a_ca[$id]['prv']);
-	}
-}
-
-if ($act == "new") {
-	$pconfig['method'] = $_POST['method'];
-	$pconfig['keytype'] = "RSA";
-	$pconfig['keylen'] = "2048";
-	$pconfig['ecname'] = "brainpoolP256r1";
-	$pconfig['digest_alg'] = "sha256";
-	$pconfig['lifetime'] = "3650";
-	$pconfig['dn_commonname'] = "internal-ca";
-}
-
-if ($act == "exp") {
-
-	if (!$a_ca[$id]) {
-		pfSenseHeader("system_camanager.php");
-		exit;
-	}
-
-	$exp_name = urlencode("{$a_ca[$id]['descr']}.crt");
-	$exp_data = base64_decode($a_ca[$id]['crt']);
-	$exp_size = strlen($exp_data);
-
-	header("Content-Type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$exp_name}");
-	header("Content-Length: $exp_size");
-	echo $exp_data;
-	exit;
-}
-
-if ($act == "expkey") {
-
-	if (!$a_ca[$id]) {
-		pfSenseHeader("system_camanager.php");
-		exit;
-	}
-
-	$exp_name = urlencode("{$a_ca[$id]['descr']}.key");
-	$exp_data = base64_decode($a_ca[$id]['prv']);
-	$exp_size = strlen($exp_data);
-
-	header("Content-Type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$exp_name}");
-	header("Content-Length: $exp_size");
-	echo $exp_data;
-	exit;
+switch ($act) {
+	case 'del':
+		$name = htmlspecialchars($thisca['descr']);
+		if (cert_in_use($id)) {
+			$savemsg = sprintf(gettext("Certificate %s is in use and cannot be deleted"), $name);
+			$class = "danger";
+		} else {
+			/* Only remove CA reference when deleting. It can be reconnected if a new matching CA is imported */
+			foreach ($a_cert as $cid => $acrt) {
+				if ($acrt['caref'] == $thisca['refid']) {
+					unset($a_cert[$cid]['caref']);
+				}
+			}
+			/* Remove any CRLs for this CA, there is no way to recover the connection once the CA has been removed. */
+			foreach ($a_crl as $cid => $acrl) {
+				if ($acrl['caref'] == $thisca['refid']) {
+					unset($a_crl[$cid]);
+				}
+			}
+			/* Delete the CA */
+			foreach ($a_ca as $cid => $aca) {
+				if ($aca['refid'] == $thisca['refid']) {
+					unset($a_ca[$cid]);
+				}
+			}
+			$savemsg = sprintf(gettext("Deleted Certificate Authority %s and associated CRLs"), htmlspecialchars($name));
+			write_config($savemsg);
+			ca_setup_trust_store();
+		}
+		unset($act);
+		break;
+	case 'edit':
+		/* Editing an existing CA, so populate values. */
+		$pconfig['method'] = 'existing';
+		$pconfig['descr']  = $thisca['descr'];
+		$pconfig['refid']  = $thisca['refid'];
+		$pconfig['cert']   = base64_decode($thisca['crt']);
+		$pconfig['serial'] = $thisca['serial'];
+		$pconfig['trust']  = ($thisca['trust'] == 'enabled');
+		$pconfig['randomserial']  = ($thisca['randomserial'] == 'enabled');
+		if (!empty($thisca['prv'])) {
+			$pconfig['key'] = base64_decode($thisca['prv']);
+		}
+		break;
+	case 'new':
+		/* New CA, so set default values */
+		$pconfig['method'] = $_POST['method'];
+		$pconfig['keytype'] = "RSA";
+		$pconfig['keylen'] = "2048";
+		$pconfig['ecname'] = "prime256v1";
+		$pconfig['digest_alg'] = "sha256";
+		$pconfig['lifetime'] = $default_lifetime;
+		$pconfig['dn_commonname'] = "internal-ca";
+		break;
+	case 'exp':
+		/* Exporting a ca */
+		send_user_download('data', base64_decode($thisca['crt']), "{$thisca['descr']}.crt");
+		break;
+	case 'expkey':
+		/* Exporting a private key */
+		send_user_download('data', base64_decode($thisca['prv']), "{$thisca['descr']}.key");
+		break;
+	default:
+		break;
 }
 
 if ($_POST['save']) {
-
 	unset($input_errors);
 	$input_errors = array();
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($pconfig['method'] == "existing") {
-		$reqdfields = explode(" ", "descr cert");
-		$reqdfieldsn = array(
-			gettext("Descriptive name"),
-			gettext("Certificate data"));
-		if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
-			$input_errors[] = gettext("This certificate does not appear to be valid.");
-		}
-		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED")) {
-			$input_errors[] = gettext("Encrypted private keys are not yet supported.");
-		}
-		if (!$input_errors && !empty($_POST['key']) && cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
-			$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
-		}
-		/* we must ensure the certificate is capable of acting as a CA
-		 * https://redmine.pfsense.org/issues/7885
-		 */
-		if (!$input_errors) {
-			$purpose = cert_get_purpose($_POST['cert'], false);
-			if ($purpose['ca'] != 'Yes') {
-				$input_errors[] = gettext("The submitted certificate does not appear to be a Certificate Authority, import it on the Certificates tab instead.");
+	switch ($pconfig['method']) {
+		case 'existing':
+			$reqdfields = explode(" ", "descr cert");
+			$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("Certificate data"));
+			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
+				$input_errors[] = gettext("This certificate does not appear to be valid.");
 			}
-		}
-	}
-	if ($pconfig['method'] == "internal") {
-		$reqdfields = explode(" ",
-			"descr keylen ecname keytype lifetime dn_commonname");
-		$reqdfieldsn = array(
-			gettext("Descriptive name"),
-			gettext("Key length"),
-			gettext("Elliptic Curve Name"),
-			gettext("Key type"),
-			gettext("Lifetime"),
-			gettext("Common Name"));
-	}
-	if ($pconfig['method'] == "intermediate") {
-		$reqdfields = explode(" ",
-			"descr caref keylen ecname keytype lifetime dn_commonname");
-		$reqdfieldsn = array(
-			gettext("Descriptive name"),
-			gettext("Signing Certificate Authority"),
-			gettext("Key length"),
-			gettext("Elliptic Curve Name"),
-			gettext("Key type"),
-			gettext("Lifetime"),
-			gettext("Common Name"));
+			if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED")) {
+				$input_errors[] = gettext("Encrypted private keys are not yet supported.");
+			}
+			if (!$input_errors && !empty($_POST['key']) && cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
+				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
+			}
+			/* we must ensure the certificate is capable of acting as a CA
+			 * https://redmine.pfsense.org/issues/7885
+			 */
+			if (!$input_errors) {
+				$purpose = cert_get_purpose($_POST['cert'], false);
+				if ($purpose['ca'] != 'Yes') {
+					$input_errors[] = gettext("The submitted certificate does not appear to be a Certificate Authority, import it on the Certificates tab instead.");
+				}
+			}
+			break;
+		case 'internal':
+			$reqdfields = explode(" ",
+				"descr keylen ecname keytype lifetime dn_commonname");
+			$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("Key length"),
+				gettext("Elliptic Curve Name"),
+				gettext("Key type"),
+				gettext("Lifetime"),
+				gettext("Common Name"));
+			break;
+		case 'intermediate':
+			$reqdfields = explode(" ",
+				"descr caref keylen ecname keytype lifetime dn_commonname");
+			$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("Signing Certificate Authority"),
+				gettext("Key length"),
+				gettext("Elliptic Curve Name"),
+				gettext("Key type"),
+				gettext("Lifetime"),
+				gettext("Common Name"));
+			break;
+		default:
+			break;
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -219,12 +211,19 @@ if ($_POST['save']) {
 		if (!in_array($_POST["keylen"], $ca_keylens)) {
 			array_push($input_errors, gettext("Please select a valid Key Length."));
 		}
-		if (!in_array($_POST["ecname"], $openssl_ecnames)) {
+		if (!in_array($_POST["ecname"], array_keys($openssl_ecnames))) {
 			array_push($input_errors, gettext("Please select a valid Elliptic Curve Name."));
 		}
 		if (!in_array($_POST["digest_alg"], $openssl_digest_algs)) {
 			array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 		}
+		if ($_POST['lifetime'] > $max_lifetime) {
+			$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
+		}
+	}
+
+	if (!empty($_POST['serial']) && !cert_validate_serial($_POST['serial'])) {
+		$input_errors[] = gettext("Please enter a valid integer serial number.");
 	}
 
 	/* save modifications */
@@ -236,11 +235,13 @@ if ($_POST['save']) {
 			$ca['refid'] = $pconfig['refid'];
 		}
 
-		if (isset($id) && $a_ca[$id]) {
-			$ca = $a_ca[$id];
+		if (isset($id) && $thisca) {
+			$ca = $thisca;
 		}
 
 		$ca['descr'] = $pconfig['descr'];
+		$ca['trust'] = ($pconfig['trust'] == 'yes') ? "enabled" : "disabled";
+		$ca['randomserial'] = ($pconfig['randomserial'] == 'yes') ? "enabled" : "disabled";
 
 		if ($act == "edit") {
 			$ca['descr']  = $pconfig['descr'];
@@ -250,10 +251,12 @@ if ($_POST['save']) {
 			if (!empty($pconfig['key'])) {
 				$ca['prv']	  = base64_encode($pconfig['key']);
 			}
+			$savemsg = sprintf(gettext("Updated Certificate Authority %s"), $ca['descr']);
 		} else {
 			$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 			if ($pconfig['method'] == "existing") {
 				ca_import($ca, $pconfig['cert'], $pconfig['key'], $pconfig['serial']);
+				$savemsg = sprintf(gettext("Imported Certificate Authority %s"), $ca['descr']);
 			} else if ($pconfig['method'] == "internal") {
 				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
 				if (!empty($pconfig['dn_country'])) {
@@ -279,6 +282,7 @@ if ($_POST['save']) {
 						}
 					}
 				}
+				$savemsg = sprintf(gettext("Created internal Certificate Authority %s"), $ca['descr']);
 			} else if ($pconfig['method'] == "intermediate") {
 				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
 				if (!empty($pconfig['dn_country'])) {
@@ -304,18 +308,20 @@ if ($_POST['save']) {
 						}
 					}
 				}
+				$savemsg = sprintf(gettext("Created internal intermediate Certificate Authority %s"), $ca['descr']);
 			}
 			error_reporting($old_err_level);
 		}
 
-		if (isset($id) && $a_ca[$id]) {
-			$a_ca[$id] = $ca;
+		if (isset($id) && $thisca) {
+			$thisca = $ca;
 		} else {
 			$a_ca[] = $ca;
 		}
 
 		if (!$input_errors) {
-			write_config();
+			write_config($savemsg);
+			ca_setup_trust_store();
 			pfSenseHeader("system_camanager.php");
 		}
 	}
@@ -335,7 +341,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg, 'success');
+	print_info_box($savemsg, $class);
 }
 
 $tab_array = array();
@@ -404,11 +410,10 @@ $pluginparams['type'] = 'certificates';
 $pluginparams['event'] = 'used_ca';
 $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
 
-foreach ($a_ca as $i => $ca):
+foreach ($a_ca as $ca):
 	$name = htmlspecialchars($ca['descr']);
 	$subj = cert_get_subject($ca['crt']);
 	$issuer = cert_get_issuer($ca['crt']);
-	list($startdate, $enddate) = cert_get_dates($ca['crt']);
 	if ($subj == $issuer) {
 		$issuer_name = gettext("self-signed");
 	} else {
@@ -442,10 +447,8 @@ foreach ($a_ca as $i => $ca):
 					<td><?=$certcount?></td>
 					<td>
 						<?=$subj?>
-						<br />
-						<small>
-							<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
-						</small>
+						<?php cert_print_infoblock($ca); ?>
+						<?php cert_print_dates($ca);?>
 					</td>
 					<td class="text-nowrap">
 						<?php if (is_openvpn_server_ca($ca['refid'])): ?>
@@ -463,16 +466,16 @@ foreach ($a_ca as $i => $ca):
 						<?php echo cert_usedby_description($ca['refid'], $certificates_used_by_packages); ?>
 					</td>
 					<td class="text-nowrap">
-						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$ca['refid']?>"></a>
+						<a class="fa fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$ca['refid']?>"></a>
 					<?php if ($ca['prv']): ?>
-						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
+						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$ca['refid']?>"></a>
 					<?php endif?>
 					<?php if (is_cert_locally_renewable($ca)): ?>
 						<a href="system_certmanager_renew.php?type=ca&amp;refid=<?=$ca['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
 					<?php endif ?>
 					<?php if (!ca_in_use($ca['refid'])): ?>
-						<a class="fa fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>" usepost ></a>
+						<a class="fa fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$ca['refid']?>" usepost ></a>
 					<?php endif?>
 					</td>
 				</tr>
@@ -550,7 +553,7 @@ events.push(function() {
 
 $form = new Form;
 //$form->setAction('system_camanager.php?act=edit');
-if (isset($id) && $a_ca[$id]) {
+if (isset($id) && $thisca) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,
@@ -576,6 +579,14 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['descr']
 ));
+
+$section->addInput(new Form_Checkbox(
+	'trust',
+	'Trust Store',
+	'Add this Certificate Authority to the Operating System Trust Store',
+	$pconfig['trust']
+))->setHelp('When enabled, the contents of the CA will be added to the trust ' .
+	'store so that they will be trusted by the operating system.');
 
 if (!isset($id) || $act == "edit") {
 	$section->addInput(new Form_Select(
@@ -605,13 +616,22 @@ $section->addInput(new Form_Textarea(
 	'optional in most cases, but is required when generating a '.
 	'Certificate Revocation List (CRL).');
 
+$section->addInput(new Form_Checkbox(
+	'randomserial',
+	'Randomize Serial',
+	'Use random serial numbers when signing certifices',
+	$pconfig['randomserial']
+))->setHelp('When enabled, serial numbers for certificates signed by this CA ' .
+		'will be automatically randomized and checked for uniqueness ' .
+		'instead of using the sequential value from Next Certificate Serial.');
+
 $section->addInput(new Form_Input(
 	'serial',
-	'Serial for next certificate',
+	'Next Certificate Serial',
 	'number',
 	$pconfig['serial']
-))->setHelp('Enter a decimal number to be used as the serial number for the next '.
-	'certificate to be created using this CA.');
+))->setHelp('Enter a decimal number to be used as a sequential serial number for ' .
+	'the next certificate to be signed by this CA.');
 
 $form->add($section);
 
@@ -651,7 +671,9 @@ $group->add(new Form_Select(
 	null,
 	$pconfig['keylen'],
 	array_combine($ca_keylens, $ca_keylens)
-));
+))->setHelp('The length to use when generating a new RSA key, in bits. %1$s' .
+	'The Key Length should not be lower than 2048 or some platforms ' .
+	'may consider the certificate invalid.', '<br/>');
 $section->add($group);
 
 $group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
@@ -660,8 +682,8 @@ $group->add(new Form_Select(
 	'ecname',
 	null,
 	$pconfig['ecname'],
-	array_combine($openssl_ecnames, $openssl_ecnames)
-));
+	$openssl_ecnames
+))->setHelp('Curves may not be compatible with all uses. Known compatible curve uses are denoted in brackets.');
 $section->add($group);
 
 $section->addInput(new Form_Select(
@@ -669,14 +691,16 @@ $section->addInput(new Form_Select(
 	'*Digest Algorithm',
 	$pconfig['digest_alg'],
 	array_combine($openssl_digest_algs, $openssl_digest_algs)
-))->setHelp('NOTE: It is recommended to use an algorithm stronger than SHA1 '.
-	'when possible.');
+))->setHelp('The digest method used when the CA is signed. %1$s' .
+	'The best practice is to use an algorithm stronger than SHA1. '.
+	'Some platforms may consider weaker digest algorithms invalid', '<br/>');
 
 $section->addInput(new Form_Input(
 	'lifetime',
 	'*Lifetime (days)',
 	'number',
-	$pconfig['lifetime']
+	$pconfig['lifetime'],
+	['max' => $max_lifetime]
 ));
 
 $section->addInput(new Form_Input(
@@ -755,8 +779,55 @@ events.push(function() {
 		change_keytype();
 	});
 
+	function check_keylen() {
+		var min_keylen = <?= $cert_strict_values['min_private_key_bits'] ?>;
+		var klid = '#keylen';
+		/* Color the Parent/Label */
+		if (parseInt($(klid).val()) < min_keylen) {
+			$(klid).parent().parent().removeClass("text-normal").addClass("text-warning");
+		} else {
+			$(klid).parent().parent().removeClass("text-warning").addClass("text-normal");
+		}
+		/* Color individual options */
+		$(klid + " option").filter(function() {
+			return parseInt($(this).val()) < min_keylen;
+		}).removeClass("text-normal").addClass("text-warning").siblings().removeClass("text-warning").addClass("text-normal");
+	}
+
+	function check_digest() {
+		var weak_algs = <?= json_encode($cert_strict_values['digest_blacklist']) ?>;
+		var daid = '#digest_alg';
+		/* Color the Parent/Label */
+		if (jQuery.inArray($(daid).val(), weak_algs) > -1) {
+			$(daid).parent().parent().removeClass("text-normal").addClass("text-warning");
+		} else {
+			$(daid).parent().parent().removeClass("text-warning").addClass("text-normal");
+		}
+		/* Color individual options */
+		$(daid + " option").filter(function() {
+			return (jQuery.inArray($(this).val(), weak_algs) > -1);
+		}).removeClass("text-normal").addClass("text-warning").siblings().removeClass("text-warning").addClass("text-normal");
+	}
+
+	// ---------- Control change handlers ---------------------------------------------------------
+
+	$('#method').on('change', function() {
+		check_keylen();
+		check_digest();
+	});
+
+	$('#keylen').on('change', function() {
+		check_keylen();
+	});
+
+	$('#digest_alg').on('change', function() {
+		check_digest();
+	});
+
 	// ---------- On initial page load ------------------------------------------------------------
 	change_keytype();
+	check_keylen();
+	check_digest();
 });
 //]]>
 </script>

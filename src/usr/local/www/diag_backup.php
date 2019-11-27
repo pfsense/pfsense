@@ -216,24 +216,7 @@ if ($_POST) {
 					tagfile_reformat($data, $data, "config.xml");
 				}
 
-				$size = strlen($data);
-				header("Content-Type: application/octet-stream");
-				header("Content-Disposition: attachment; filename={$name}");
-				header("Content-Length: $size");
-				if (isset($_SERVER['HTTPS'])) {
-					header('Pragma: ');
-					header('Cache-Control: ');
-				} else {
-					header("Pragma: private");
-					header("Cache-Control: private, must-revalidate");
-				}
-
-				while (ob_get_level()) {
-					@ob_end_clean();
-				}
-				echo $data;
-				@ob_end_flush();
-				exit;
+				send_user_download('data', $data, $name);
 			}
 		}
 

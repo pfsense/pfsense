@@ -79,6 +79,7 @@ if ($_POST['renew']) {
 					$new_serial);
 		log_error($message);
 		write_config($message);
+		ca_setup_trust_store();
 		cert_restart_services($service_function($torenew['refid']));
 		pfSenseHeader($returnpage);
 		exit;

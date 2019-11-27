@@ -296,18 +296,7 @@ if ($_POST) {
 			}
 		} elseif ($_POST['downloadbtn'] != "") {
 			//download file
-			$fs = filesize($fp.$fn);
-			header("Content-Type: application/octet-stream");
-			header("Content-Disposition: attachment; filename={$fn}");
-			header("Content-Length: {$fs}");
-			/* Ensure output buffering is off so PHP does not consume
-			 * memory in readfile(). https://redmine.pfsense.org/issues/9239 */
-			while (ob_get_level()) {
-				@ob_end_clean();
-			}
-			readfile($fp.$fn);
-			@ob_end_flush();
-			exit;
+			send_user_download('file', $fp.$fn);
 		}
 	}
 } else {
@@ -523,7 +512,7 @@ if ($do_tcpdump) :
 	}
 
 	if (in_array($proto, $protos)) {
-		$matches[] = fixup_not($proto);
+		$matches[] = fixup_not(str_replace('carp', 'proto 112', $proto));
 	}
 
 	if ($port != "") {

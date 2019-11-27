@@ -818,14 +818,14 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'pkcs11certref',
-	'*My PKCS#11 Certificate',
+	'*PKCS#11 Certificate',
 	$pconfig['pkcs11certref'],
 	build_pkcs11cert_list()
 ))->setHelp('Select a certificate previously created on PKCS#11 Token.');
 
 $section->addInput(new Form_Input(
 	'pkcs11pin',
-	'*My PKCS#11 Token PIN',
+	'*PKCS#11 Token PIN',
 	'text',
 	$pconfig['pkcs11pin']
 ))->setHelp('Enter token PIN number');

@@ -343,7 +343,7 @@ if ($certs_available) {
 		'sslcertref',
 		'SSL/TLS Certificate',
 		$pconfig['sslcertref'],
-		cert_build_list('cert', 'HTTPS')
+		cert_build_list('cert', 'IPsec')
 	))->setHelp('The server certificate to use for SSL/TLS service. The CA chain will be determined automatically.');
 } else {
 	$section->addInput(new Form_StaticText(

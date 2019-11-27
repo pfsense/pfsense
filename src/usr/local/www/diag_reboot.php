@@ -54,7 +54,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
 		print('<div><pre>');
 		switch ($_POST['rebootmode']) {
 			case 'FSCKReboot':
-				if (get_single_sysctl('hw.machine') != 'arm') {
+				if (php_uname('m') != 'arm') {
 					mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
 					system_reboot();
 				}
@@ -122,7 +122,7 @@ $form = new Form(false);
 
 $help = 'Select "Normal reboot" to reboot the system immediately';
 $modeslist = ['Reboot' => 'Normal reboot'];
-if (get_single_sysctl('hw.machine') != 'arm') {
+if (php_uname('m') != 'arm') {
         $help .= ', "Reboot with Filesystem Check" to reboot and run filesystem check';
         $modeslist += ['FSCKReboot' => 'Reboot with Filesystem Check'];
         }

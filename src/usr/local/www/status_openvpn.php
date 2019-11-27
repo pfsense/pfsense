@@ -106,7 +106,8 @@ include("head.inc"); ?>
 						<th><?=gettext("Real Address")?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
-						<th><?=gettext("Bytes Sent/Received")?></th>
+						<th><?=gettext("Bytes Sent")?></th>
+						<th><?=gettext("Bytes Received")?></th>
 						<th><!-- Icons --></th>
 					</tr>
 				</thead>
@@ -134,7 +135,8 @@ include("head.inc"); ?>
 							<?=$conn['virtual_addr6'];?>
 						</td>
 						<td><?=$conn['connect_time'];?></td>
-						<td><?=format_bytes($conn['bytes_sent']);?> / <?=format_bytes($conn['bytes_recv']);?></td>
+						<td data-value="<?=trim($conn['bytes_sent'])?>"><?=format_bytes($conn['bytes_sent']);?></td>
+						<td data-value="<?=trim($conn['bytes_recv'])?>"><?=format_bytes($conn['bytes_recv']);?></td>
 						<td>
 							<a
 							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>');" style="cursor:pointer;"
@@ -240,7 +242,8 @@ include("head.inc"); ?>
 						<th><?=gettext("Connected Since"); ?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
-						<th><?=gettext("Bytes Sent / Received"); ?></th>
+						<th><?=gettext("Bytes Sent"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -261,7 +264,8 @@ include("head.inc"); ?>
 							<?=$sk_server['virtual_addr6'];?>
 						</td>
 						<td><?=$sk_server['remote_host'];?></td>
-						<td><?=format_bytes($sk_server['bytes_sent']);?> / <?=format_bytes($sk_server['bytes_recv']);?></td>
+						<td data-value="<?=trim($sk_server['bytes_sent'])?>"><?=format_bytes($sk_server['bytes_sent']);?></td>
+						<td data-value="<?=trim($sk_server['bytes_recv'])?>"><?=format_bytes($sk_server['bytes_recv']);?></td>
 						<td>
 							<table>
 								<tr>
@@ -301,7 +305,8 @@ include("head.inc"); ?>
 						<th><?=gettext("Local Address"); ?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
-						<th><?=gettext("Bytes Sent/Received"); ?></th>
+						<th><?=gettext("Bytes Sent"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -335,7 +340,8 @@ include("head.inc"); ?>
 							<?=$client['remote_host'];?>:<?=$client['remote_port'];?>
 					<?php endif; ?>
 						</td>
-						<td><?=format_bytes($client['bytes_sent']);?> / <?=format_bytes($client['bytes_recv']);?></td>
+						<td data-value="<?=trim($client['bytes_sent'])?>"><?=format_bytes($client['bytes_sent']);?></td>
+						<td data-value="<?=trim($client['bytes_recv'])?>"><?=format_bytes($client['bytes_recv']);?></td>
 						<td>
 							<table>
 								<tr>

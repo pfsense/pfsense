@@ -208,12 +208,12 @@ if ($_POST['save']) {
 		unset($pconfig['pkcs11certref']);
 	}
 
-	if ($method != "rsasig" && $method != "xauth_rsa_server" && $method != "eap-tls" && $method != "pkcs11") {
+	if ($method != "cert" && $method != "xauth_rsa_server" && $method != "eap-tls" && $method != "pkcs11") {
 		unset($pconfig['caref']);
 	}
 
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
-	// For RSA methods, require the CA/Cert.
+	// For certificate methods, require the CA/Cert.
 	switch ($method) {
 		case 'eap-mschapv2':
 			if ($pconfig['iketype'] != 'ikev2') {
@@ -241,8 +241,8 @@ if ($_POST['save']) {
 			$reqdfieldsn = array(gettext("Pre-Shared Key"));
 			$validate_pskey = true;
 			break;
-		case "xauth_rsa_server":
-		case "rsasig":
+		case "xauth_cert_server":
+		case "cert":
 			$reqdfields = explode(" ", "caref certref");
 			$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 			break;
@@ -639,25 +639,6 @@ function build_peerid_list() {
 	return($list);
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-function build_cert_list() {
-	global $config;
-
-	$list = array();
-
-	if (is_array($config['cert'])) {
-		foreach ($config['cert'] as $cert) {
-			$list[$cert['refid']] = $cert['descr'];
-		}
-	}
-
-	return($list);
-}
-
-=======
->>>>>>> 439969176696a3e074d70bbd68c0e97f18033e1a
 function build_pkcs11cert_list() {
 	global $config;
 
@@ -677,24 +658,6 @@ function build_pkcs11cert_list() {
 	return($list);
 }
 
-<<<<<<< HEAD
-function build_ca_list() {
-	global $config;
-
-	$list = array();
-
-	if (is_array($config['ca'])) {
-		foreach ($config['ca'] as $ca) {
-			$list[$ca['refid']] = $ca['descr'];
-		}
-	}
-
-	return($list);
-}
-
->>>>>>> first steps
-=======
->>>>>>> 439969176696a3e074d70bbd68c0e97f18033e1a
 function build_eal_list() {
 	global $p1_ealgos;
 
@@ -1124,7 +1087,7 @@ events.push(function() {
 		switch ($('#authentication_method').val()) {
 			case 'eap-mschapv2':
 			case 'eap-radius':
-			case 'hybrid_rsa_server':
+			case 'hybrid_cert_server':
 				hideInput('pskey', true);
 				hideClass('peeridgroup', false);
 				hideInput('certref', false);
@@ -1137,8 +1100,8 @@ events.push(function() {
 				disableInput('pkcs11pin', true);
 				break;
 			case 'eap-tls':
-			case 'xauth_rsa_server':
-			case 'rsasig':
+			case 'xauth_cert_server':
+			case 'cert':
 				hideInput('pskey', true);
 				hideClass('peeridgroup', false);
 				hideInput('certref', false);

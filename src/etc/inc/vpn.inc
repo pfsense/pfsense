@@ -652,7 +652,7 @@ EOD;
 				continue;
 			}
 
-			if (strstr($ph1ent['authentication_method'], 'rsa') ||
+			if (strstr($ph1ent['authentication_method'], 'cert') ||
 			    in_array($ph1ent['authentication_method'], array('eap-mschapv2', 'eap-tls', 'eap-radius'))) {
 				$certline = '';
 
@@ -692,20 +692,11 @@ EOD;
 				@chmod($ph1certfile, 0600);
 
 				/* XXX" Traffic selectors? */
-<<<<<<< HEAD
 				$pskconf .= " : ";
 				$pskconf .= (cert_get_pkey_curve($cert['prv']) === false) ? "RSA" : "ECDSA";
 				$pskconf .= " {$ph1keyfile}\n";
-<<<<<<< HEAD
-=======
-				$pskconf .= " : RSA {$ph1keyfile}\n";
 			} else if ($ph1ent['authentication_method'] == 'pkcs11') {
 				$pskconf .= " : PIN %smartcard:{$ph1ent['pkcs11certref']} '{$ph1ent['pkcs11pin']}'\n";
->>>>>>> more
-=======
-			} else if ($ph1ent['authentication_method'] == 'pkcs11') {
-				$pskconf .= " : PIN %smartcard:{$ph1ent['pkcs11certref']} '{$ph1ent['pkcs11pin']}'\n";
->>>>>>> 439969176696a3e074d70bbd68c0e97f18033e1a
 			} else {
 				list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
@@ -741,8 +732,7 @@ EOD;
 			 * client cert CA chain to the list of CAs to write
 			 */
 			if (in_array($ph1ent['authentication_method'],
-			array('rsasig', 'eap-tls', 'xauth_rsa_server', 'pkcs11'))) {
-
+			array('cert', 'eap-tls', 'xauth_rsa_server', 'pkcs11'))) {
 				if (!empty($ph1ent['caref']) && !array_key_exists($ph1ent['caref'], $vpncas)) {
 					$thisca = lookup_ca($ph1ent['caref']);
 					$vpncas[$ph1ent['caref']] = $thisca;
@@ -1121,7 +1111,7 @@ EOD;
 						}
 					}
 					break;
-				case 'xauth_rsa_server':
+				case 'xauth_cert_server':
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
 					$authentication .= "\n\trightauth2 = xauth-generic";
 					if (!empty($ph1ent['certref'])) {
@@ -1139,7 +1129,7 @@ EOD;
 				case 'pre_shared_key':
 					$authentication = "leftauth = psk\n\trightauth = psk";
 					break;
-				case 'rsasig':
+				case 'cert':
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
 					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
@@ -1159,7 +1149,7 @@ EOD;
 						$authentication .= "\n\trightca=\"$casub\"";
 					}
 					break;
-				case 'hybrid_rsa_server':
+				case 'hybrid_cert_server':
 					$authentication = "leftauth = pubkey\n\trightauth = xauth-generic";
 					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";

@@ -71,7 +71,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "19.8",
+	"latest_config" => "19.9",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -119,6 +119,8 @@ if (file_exists("{$g['etc_path']}/default-config-flavor")) {
 } else {
 	$g['default-config-flavor'] = '';
 }
+
+$g['openvpn_base'] = "{$g['varetc_path']}/openvpn";
 
 /* Default sysctls */
 $sysctls = array("net.inet.ip.portrange.first" => "1024",

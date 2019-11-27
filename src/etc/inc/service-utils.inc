@@ -639,7 +639,7 @@ function service_control_start($name, $extras) {
 			$vpnmode = isset($extras['vpnmode']) ? htmlspecialchars($extras['vpnmode']) : htmlspecialchars($extras['mode']);
 			if (($vpnmode == "server") || ($vpnmode == "client")) {
 				$id = isset($extras['vpnid']) ? htmlspecialchars($extras['vpnid']) : htmlspecialchars($extras['id']);
-				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
+				$configfile = "{$g['openvpn_base']}/{$vpnmode}{$id}/config.ovpn";
 				if (file_exists($configfile)) {
 					openvpn_restart_by_vpnid($vpnmode, $id);
 				}
@@ -787,7 +787,7 @@ function service_control_restart($name, $extras) {
 			$vpnmode = htmlspecialchars($extras['vpnmode']);
 			if ($vpnmode == "server" || $vpnmode == "client") {
 				$id = htmlspecialchars($extras['id']);
-				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
+				$configfile = "{$g['openvpn_base']}/{$vpnmode}{$id}/config.ovpn";
 				if (file_exists($configfile)) {
 					openvpn_restart_by_vpnid($vpnmode, $id);
 				}

@@ -6057,6 +6057,25 @@ function upgrade_197_to_198() {
 	install_cron_job('/etc/rc.periodic monthly', true, "30", '5', '1', '*', '*', 'root', false);
 }
 
+/* Update IPsec authentication method names
+ * https://redmine.pfsense.org/issues/9903 */
+function upgrade_198_to_199() {
+	global $config;
+	/* "RSA" methods changed to the more generic "cert" since they are not only RSA. */
+	$namechanges = array(
+		'hybrid_rsa_server' => 'hybrid_cert_server',
+		'xauth_rsa_server' => 'xauth_cert_server',
+		'rsasig' => 'cert',
+	);
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		/* If the auth method for this P1 is in the list to change, change it */
+		if (array_key_exists($ph1ent['authentication_method'], $namechanges)) {
+			$ph1ent['authentication_method'] = $namechanges[$ph1ent['authentication_method']];
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

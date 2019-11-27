@@ -68,11 +68,6 @@ if (!$username || !$password) {
 /* Replaced by a sed with proper variables used below(ldap parameters). */
 //<template>
 
-if (file_exists("{$g['varetc_path']}/openvpn/{$modeid}.ca")) {
-	putenv("LDAPTLS_CACERT={$g['varetc_path']}/openvpn/{$modeid}.ca");
-	putenv("LDAPTLS_REQCERT=never");
-}
-
 $authenticated = false;
 
 if (($strictusercn === true) && (mb_strtolower($common_name) !== mb_strtolower($username))) {

@@ -1439,15 +1439,17 @@ function interface_ipsec_vti_configure($ph1ent) {
 		/* Loop through all of the addresses for this interface and apply them as needed */
 		foreach ($addrs as $addr) {
 			// apply interface addresses
-			if (is_ipaddrv6($addr['left'])) {
+			if (is_v6($addr['left'])) {
 				$inet = "inet6";
 				$gwtype = "v6";
+				$right = '';
 			} else {
 				$inet = "inet";
 				$gwtype = "";
+				$right = escapeshellarg($addr['right']);
 			}
 
-			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} " . escapeshellarg($addr['left']) . " " . escapeshellarg($addr['right']) . $addr['alias'], false);
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} " . escapeshellarg($addr['left']) . " " . $right . $addr['alias'], false);
 			/* If alias is empty, this is the first address on the interface and should be used as the gateway. */
 			if (empty($addr['alias'])) {
 				file_put_contents("/tmp/{$ipsecif}_router{$gwtype}", $addr['right']);

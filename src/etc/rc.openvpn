@@ -44,7 +44,7 @@ function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
 	} else {
 		if (!empty($interface)) {
 			$mode_id = $mode . $ovpn_settings['vpnid'];
-			$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.interface";
+			$fpath = "{$g['openvpn_base']}/{$mode_id}/interface";
 			if (file_exists($fpath)) {
 				/* Compare the interface currently used by the VPN with the interface that should be used.
 				   If the VPN should stay on the same interface, do not resync */

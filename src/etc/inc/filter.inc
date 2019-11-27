@@ -483,6 +483,21 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill 2>/dev/null");
 	}
 
+	global $reserved_table_names;
+	// get aliases names from config
+	$aliasesnames = array();
+	foreach ($config['aliases']['alias'] as $alias) {
+		array_push($aliasesnames, $alias['name']);
+	}
+	// get aliases names from pfctl -sT
+	exec("/sbin/pfctl -sT", $pftables);
+	// compare config with pfctl aliases and reserved table names
+	$diff = array_diff($pftables, $aliasesnames, $reserved_table_names);
+	// delete unused aliases
+	foreach ($diff as $alias) {
+		$_grbg = exec("/sbin/pfctl -t " . escapeshellarg($alias) . " -T kill 2>/dev/null");
+	}
+
 	if (!platform_booting()) {
 		if (!empty($filterdns)) {
 			@file_put_contents("{$g['varetc_path']}/filterdns.conf", implode("", $filterdns));

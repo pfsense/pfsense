@@ -89,18 +89,6 @@ if (!$ignorefirmwarelock) {
 	}
 }
 
-/* Reserved table names to avoid collision */
-$reserved_table_names = array(
-	"bogons",
-	"bogonsv6",
-	"negate_networks",
-	"snort2c",
-	"sshguard",
-	"tonatsubnets",
-	"virusprot",
-	"vpn_networks",
-);
-
 $firewall_rules_dscp_types = array(
 	"af11",
 	"af12",

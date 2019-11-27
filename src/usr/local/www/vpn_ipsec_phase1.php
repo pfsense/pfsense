@@ -640,6 +640,7 @@ function build_peerid_list() {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 function build_cert_list() {
 	global $config;
@@ -655,6 +656,8 @@ function build_cert_list() {
 	return($list);
 }
 
+=======
+>>>>>>> 439969176696a3e074d70bbd68c0e97f18033e1a
 function build_pkcs11cert_list() {
 	global $config;
 
@@ -674,6 +677,7 @@ function build_pkcs11cert_list() {
 	return($list);
 }
 
+<<<<<<< HEAD
 function build_ca_list() {
 	global $config;
 
@@ -689,6 +693,8 @@ function build_ca_list() {
 }
 
 >>>>>>> first steps
+=======
+>>>>>>> 439969176696a3e074d70bbd68c0e97f18033e1a
 function build_eal_list() {
 	global $p1_ealgos;
 

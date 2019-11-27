@@ -491,7 +491,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 	// get aliases names from pfctl -sT
 	exec("/sbin/pfctl -sT", $pftables);
-	// compare config and pfctl aliases
+	// compare config with pfctl aliases and reserved table names
 	$diff = array_diff($pftables, $aliasesnames, $reserved_table_names);
 	// delete unused aliases
 	foreach ($diff as $alias) {

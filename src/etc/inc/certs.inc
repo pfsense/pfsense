@@ -1648,7 +1648,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 		"encrypt_key" => false);
 
 	/* If we are enforcing strict security, then ensure the private key size
-	 * is at least 2048 bits or NIST P-384 elliptic curve*/
+	 * is at least 2048 bits or NIST P-256 elliptic curve*/
 	$private_key_bits = $key_details['bits'];
 	if ($strictsecurity) {
 		if (($key_details['type'] == OPENSSL_KEYTYPE_RSA) &&

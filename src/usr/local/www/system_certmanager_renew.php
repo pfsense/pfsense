@@ -33,7 +33,7 @@ require_once("guiconfig.inc");
 require_once("certs.inc");
 require_once("pfsense-utils.inc");
 
-global $cert_strict_values;
+global $cert_strict_values, $cert_curve_compatible;
 
 init_config_arr(array('ca'));
 $a_ca = &$config['ca'];
@@ -248,6 +248,14 @@ print($form);
 					<td><?=htmlspecialchars($key_details['bits'])?></td>
 					<td><?=$cert_strict_values['min_private_key_bits']?></td>
 					<td><?=($key_details['bits'] < $cert_strict_values['min_private_key_bits']) ? gettext('Yes') : gettext('No') ?></td>
+				</tr>
+<?php endif; ?>
+<?php if ($key_details['type'] == OPENSSL_KEYTYPE_EC): ?>
+				<tr>
+					<td><?=gettext("Elliptic Curve Name")?></td>
+					<td><?=htmlspecialchars($key_details['ec']['curve_name'])?></td>
+					<td><?=$cert_strict_values['ec_curve']?></td>
+					<td><?=(!in_array($key_details['ec']['curve_name'], $cert_curve_compatible['IPsec'])) ? gettext('Yes') : gettext('No') ?></td>
 				</tr>
 <?php endif; ?>
 			</tbody>

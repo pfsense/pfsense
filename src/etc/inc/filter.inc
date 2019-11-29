@@ -486,6 +486,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	global $reserved_table_names;
 	// get aliases names from config
 	$aliasesnames = array();
+	init_config_arr(array('aliases', 'alias'));
 	foreach ($config['aliases']['alias'] as $alias) {
 		array_push($aliasesnames, $alias['name']);
 	}

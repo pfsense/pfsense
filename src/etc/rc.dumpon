@@ -45,6 +45,9 @@ done </etc/fstab
 if [ "${works}" != "true" ]; then
 	# fstab entries did not work, try swap labels
 	for dev in /dev/label/swap*; do
+		if [ ! -e "${dev}" ]; then
+			continue;
+		fi
 		dumpon_try "${dev}" && works=true
 	done
 	if [ "${works}" != "true" ]; then

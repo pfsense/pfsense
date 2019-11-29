@@ -1655,7 +1655,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 		    ($private_key_bits < $cert_strict_values['min_private_key_bits'])) {
 			$private_key_bits = $cert_strict_values['min_private_key_bits'];
 			$reusekey = false;
-		} else if (!in_array($key_details['ec']['curve_name'], $cert_curve_compatible['IPsec'])) {
+		} else if (!in_array($key_details['ec']['curve_name'], $curve_compatible_list)) {
 			$ec_curve = $cert_strict_values['ec_curve'];
 			$reusekey = false;
 		}
@@ -2337,11 +2337,12 @@ function cert_get_pkey_curve($pkey, $decode = true) {
 
 /* Array containing ECDSA curve names allowed in certain contexts. For instance,
  * HTTPS servers and web browsers only support specific curves in TLSv1.3. */
-global $cert_curve_compatible;
+global $cert_curve_compatible, $curve_compatible_list;
 $cert_curve_compatible = array(
 	'HTTPS' => array('prime256v1', 'secp384r1'), /* Per TLSv1.3 spec and Mozilla compatibility list */
 	'IPsec' => array('prime256v1', 'secp384r1', 'secp521r1') /* Per strongSwan docs/issues */
 );
+$curve_compatible_list = array_unique(call_user_func_array('array_merge', $cert_curve_compatible));
 
 /****f* certs/cert_build_curve_list
  * NAME

@@ -115,7 +115,7 @@ switch ($act) {
 		unset($input_errors);
 		$pconfig = $_REQUEST;
 		$revoke_list = array();
-		if (!$pconfig['crlref'] || (!$pconfig['certref'] && !$pconfig['revokeserial'])) {
+		if (!$pconfig['crlref'] || (!$pconfig['certref'] && (strlen($pconfig['revokeserial']) == 0))) {
 			pfSenseHeader("system_crlmanager.php");
 			exit;
 		}
@@ -123,7 +123,7 @@ switch ($act) {
 		if (!is_array($pconfig['certref'])) {
 			$pconfig['certref'] = array();
 		}
-		if (empty($pconfig['certref']) && empty($pconfig['revokeserial'])) {
+		if (empty($pconfig['certref']) && !cert_validate_serial($pconfig['revokeserial'])) {
 			$input_errors[] = gettext("Select one or more certificates or enter a serial number to revoke.");
 		}
 		if (!is_crl_internal($crl)) {
@@ -138,7 +138,7 @@ switch ($act) {
 			}
 		}
 		foreach (explode(' ', $pconfig['revokeserial']) as $serial) {
-			if (empty($serial)) {
+			if (!is_numeric($serial)) {
 				continue;
 			}
 			$vserial = cert_validate_serial($serial, true, true);
@@ -230,7 +230,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
 	}
 
-	if (!empty($pconfig['serial']) && !cert_validate_serial($pconfig['serial'])) {
+	if ((strlen($pconfig['serial']) > 0) && !cert_validate_serial($pconfig['serial'])) {
 		$input_errors[] = gettext("Please enter a valid integer serial number.");
 	}
 
@@ -508,7 +508,7 @@ if ($act == "new" || $act == gettext("Save")) {
 		foreach ($crl['cert'] as $i => $cert):
 			$name = empty($cert['descr']) ? gettext('Revoked by Serial') : htmlspecialchars($cert['descr']);
 			$serial = crl_get_entry_serial($cert);
-			if (empty($serial)) {
+			if (strlen($serial) == 0) {
 				$serial = gettext("Invalid");
 			} ?>
 					<tr>

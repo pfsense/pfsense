@@ -284,10 +284,26 @@ function get_queue_stats() {
 			$interfacestats[$currentqueueif][$currentqueuename] = &$newqueue;
 		} else {
 			if ($items[3] == "pkts:") {
-				$newqueue["pkts"] = trim(substr($line, 10, 10));
-				$newqueue["bytes"] = trim(substr($line, 29, 10));
-				$newqueue["droppedpkts"] = trim(substr($line, 55, 6));
-				$newqueue["droppedbytes"] = trim(substr($line, 69, 6));
+				$pktsquery = "pkts:";
+				$pktsstart = strpos($line, $pktsquery);
+				$pktsend = $pktsstart + strlen($pktsquery);
+
+				$bytesquery = "bytes:";
+				$bytesstart = strpos($line, $bytesquery);
+				$bytesend = $bytesstart + strlen($bytesquery);
+
+				$droppedpktsquery = "dropped pkts:";
+				$droppedpktsstart = strpos($line, $droppedpktsquery);
+				$droppedpktsend = $droppedpktsstart + strlen($droppedpktsquery);
+
+				$droppedbytesquery = "bytes:";
+				$droppedbytesstart = strpos($line, $droppedbytesquery, $droppedpktsend);
+				$droppedbytesend = $droppedbytesstart + strlen($droppedbytesquery);
+
+				$newqueue["pkts"] = trim(substr($line, $pktsend, $bytesstart-$pktsend));
+				$newqueue["bytes"] = trim(substr($line, $bytesend, $droppedpktsstart-$bytesend));
+				$newqueue["droppedpkts"] = trim(substr($line, $droppedpktsend, $droppedbytesstart-$droppedpktsend));
+				$newqueue["droppedbytes"] = trim(substr($line, $droppedbytesend, strlen($line)-1-$droppedbytesend));
 			}
 			if ($items[3] == "qlength:") {
 				$subitems = explode("/", substr($line, 13, 8));

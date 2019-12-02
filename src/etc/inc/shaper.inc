@@ -284,26 +284,11 @@ function get_queue_stats() {
 			$interfacestats[$currentqueueif][$currentqueuename] = &$newqueue;
 		} else {
 			if ($items[3] == "pkts:") {
-				$pktsquery = "pkts:";
-				$pktsstart = strpos($line, $pktsquery);
-				$pktsend = $pktsstart + strlen($pktsquery);
-
-				$bytesquery = "bytes:";
-				$bytesstart = strpos($line, $bytesquery);
-				$bytesend = $bytesstart + strlen($bytesquery);
-
-				$droppedpktsquery = "dropped pkts:";
-				$droppedpktsstart = strpos($line, $droppedpktsquery);
-				$droppedpktsend = $droppedpktsstart + strlen($droppedpktsquery);
-
-				$droppedbytesquery = "bytes:";
-				$droppedbytesstart = strpos($line, $droppedbytesquery, $droppedpktsend);
-				$droppedbytesend = $droppedbytesstart + strlen($droppedbytesquery);
-
-				$newqueue["pkts"] = trim(substr($line, $pktsend, $bytesstart-$pktsend));
-				$newqueue["bytes"] = trim(substr($line, $bytesend, $droppedpktsstart-$bytesend));
-				$newqueue["droppedpkts"] = trim(substr($line, $droppedpktsend, $droppedbytesstart-$droppedpktsend));
-				$newqueue["droppedbytes"] = trim(substr($line, $droppedbytesend, strlen($line)-1-$droppedbytesend));
+				preg_match('/pkts:\s+(\d+)\s+bytes:\s+(\d+)\s+dropped pkts:\s+(\d+)\s+bytes:\s+(\d+)/', $line, $matches);
+				$newqueue["pkts"] = $matches[1];
+				$newqueue["bytes"] = $matches[2];
+				$newqueue["droppedpkts"] = $matches[3];
+				$newqueue["droppedbytes"] = $matches[4];
 			}
 			if ($items[3] == "qlength:") {
 				$subitems = explode("/", substr($line, 13, 8));

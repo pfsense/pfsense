@@ -342,7 +342,11 @@ function print_ipsec_body() {
 					print("</td>\n");
 					print("<td>\n");
 
-					print(htmlspecialchars($childsa['encr-alg']) . '<br/>');
+					print(htmlspecialchars($childsa['encr-alg']));
+                                        if ($childsa['encr-alg'] != '3DES_CBC') {
+                                                print('_' . htmlspecialchars($childsa['encr-keysize']));
+                                        }
+                                        print('<br/>');
 					print(htmlspecialchars($childsa['integ-alg']) . '<br/>');
 
 					if (!empty($childsa['prf-alg'])) {

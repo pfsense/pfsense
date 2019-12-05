@@ -37,7 +37,7 @@ if (file_exists("{$g['varrun_path']}/booting")) {
 
 $ipseclck_pending = try_lock('ipsecdns_pending', 0);
 if (!$ipseclck_pending) {
-	/* if a vpn_ipsec_configure() is still pending no need to stack up another one */
+	/* if a ipsec_configure() is still pending no need to stack up another one */
 	return;
 }
 
@@ -65,7 +65,7 @@ log_error("IPSEC: One or more IPsec tunnel endpoints has changed its IP. Refresh
 /* make sure we have the latest configuration changes loaded. */
 $config = parse_config();
 
-vpn_ipsec_configure();
+ipsec_configure();
 
 unlock($ipseclck);
 

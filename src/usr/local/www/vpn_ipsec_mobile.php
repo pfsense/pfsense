@@ -48,6 +48,7 @@ $a_client = &$config['ipsec']['client'];
 if (count($a_client)) {
 
 	$pconfig['enable'] = $a_client['enable'];
+	$pconfig['radiusaccounting'] = ($a_client['radiusaccounting'] == 'enabled');
 
 	$pconfig['user_source'] = $a_client['user_source'];
 	$pconfig['group_source'] = $a_client['group_source'];
@@ -125,7 +126,7 @@ if ($_REQUEST['create']) {
 if ($_POST['apply']) {
 	$retval = 0;
 	/* NOTE: #4353 Always restart ipsec when mobile clients settings change */
-	$ipsec_dynamic_hosts = vpn_ipsec_configure(true);
+	$ipsec_dynamic_hosts = ipsec_configure(true);
 	if ($ipsec_dynamic_hosts >= 0) {
 		if (is_subsystem_dirty('ipsec')) {
 			clear_subsystem_dirty('ipsec');
@@ -236,6 +237,9 @@ if ($_POST['save']) {
 		if ($pconfig['enable']) {
 			$client['enable'] = true;
 		}
+
+		$client['radiusaccounting'] = ($pconfig['radiusaccounting'] == 'yes') ? "enabled" : "disabled";
+
 		if (!empty($pconfig['user_source'])) {
 			$client['user_source'] = implode(",", $pconfig['user_source']);
 			$client['user_source'] = htmlentities($client['user_source'],ENT_COMPAT,'UTF-8');
@@ -459,6 +463,17 @@ $section->addInput(new Form_Select(
 		'system' => gettext('system'),
 	)
 ))->setHelp('Source');
+
+$section->addInput(new Form_Checkbox(
+	'radiusaccounting',
+	'RADIUS Accounting',
+	'Enable RADIUS Accounting',
+	$pconfig['radiusaccounting']
+))->setHelp('When enabled, the IPsec daemon will attempt to send RADIUS accounting ' .
+		'data for all tunnels, not only connections associated with mobile IPsec. ' .
+		'Do not enable this option unless the selected RADIUS servers are online and ' .
+		'capable of receiving RADIUS accounting data. If RADIUS accounting data is ' .
+		'enabled and fails to send, tunnels will be disconnected.');
 
 $form->add($section);
 

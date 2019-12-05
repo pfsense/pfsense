@@ -155,7 +155,7 @@ switch ($act) {
 			}
 			// refresh IPsec and OpenVPN CRLs
 			openvpn_refresh_crls();
-			vpn_ipsec_configure();
+			ipsec_configure();
 			write_config("Revoked certificate(s) in CRL {$crl['descr']}.");
 			pfSenseHeader("system_crlmanager.php");
 			exit;
@@ -186,7 +186,7 @@ switch ($act) {
 			$class = "success";
 			// refresh IPsec and OpenVPN CRLs
 			openvpn_refresh_crls();
-			vpn_ipsec_configure();
+			ipsec_configure();
 			write_config($savemsg);
 		} else {
 			$savemsg = sprintf(gettext('Failed to delete Certificate %1$s from CRL %2$s.'), $certname, $crlname);
@@ -268,7 +268,7 @@ if ($_POST['save']) {
 		write_config("Saved CRL {$crl['descr']}");
 		// refresh IPsec and OpenVPN CRLs
 		openvpn_refresh_crls();
-		vpn_ipsec_configure();
+		ipsec_configure();
 		pfSenseHeader("system_crlmanager.php");
 	}
 }

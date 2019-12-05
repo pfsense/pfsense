@@ -46,7 +46,7 @@ $a_phase2 = &$config['ipsec']['phase2'];
 
 
 if ($_POST['apply']) {
-	$ipsec_dynamic_hosts = vpn_ipsec_configure();
+	$ipsec_dynamic_hosts = ipsec_configure();
 	/* reload the filter in the background */
 	$retval = 0;
 	$retval |= filter_configure();

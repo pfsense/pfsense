@@ -323,7 +323,7 @@ voucher_configure();
 system_do_shell_commands();
 
 /* start IPsec tunnels */
-$ipsec_dynamic_hosts = vpn_ipsec_configure();
+$ipsec_dynamic_hosts = ipsec_configure();
 
 /* start SNMP service */
 services_snmpd_configure();
@@ -395,7 +395,7 @@ unset($g['booting']);
 
 /* If there are ipsec dynamic hosts try again to reload the tunnels as rc.newipsecdns does */
 if ($ipsec_dynamic_hosts) {
-	vpn_ipsec_configure();
+	ipsec_configure();
 }
 if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 	filter_configure();

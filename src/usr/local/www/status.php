@@ -320,7 +320,12 @@ defCmdT("DHCP-IPv4 Configuration", "/bin/cat /var/dhcpd/etc/dhcpd.conf");
 defCmdT("DHCP-IPv6-Configuration", "/bin/cat /var/dhcpd/etc/dhcpdv6.conf");
 defCmdT("IPsec-strongSwan Configuration", "/bin/cat /var/etc/ipsec/strongswan.conf | /usr/bin/sed 's/[[:blank:]]secret = .*//'");
 defCmdT("IPsec-Configuration", "/bin/cat /var/etc/ipsec/ipsec.conf");
-defCmdT("IPsec-Status", "/usr/local/sbin/ipsec statusall");
+defCmdT("IPsec-Status-Statistics", "/usr/local/sbin/swanctl --stats --pretty");
+defCmdT("IPsec-Status-Connections", "/usr/local/sbin/swanctl --list-conns");
+defCmdT("IPsec-Status-Active SAs", "/usr/local/sbin/swanctl --list-sas");
+defCmdT("IPsec-Status-Policies", "/usr/local/sbin/swanctl --list-pols");
+defCmdT("IPsec-Status-Certificates", "/usr/local/sbin/swanctl --list-certs --utc");
+defCmdT("IPsec-Status-Pools", "/usr/local/sbin/swanctl --list-pools --leases");
 defCmdT("IPsec-SPD", "/sbin/setkey -DP");
 defCmdT("IPsec-SAD", "/sbin/setkey -D");
 if (file_exists("/cf/conf/upgrade_log.txt")) {

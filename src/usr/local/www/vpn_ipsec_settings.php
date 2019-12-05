@@ -80,7 +80,6 @@ if ($_POST['save']) {
 			if ($pconfig['logging'][$cat] != $config['ipsec']['logging'][$cat]) {
 				init_config_arr(array('ipsec', 'logging'));
 				$config['ipsec']['logging'][$cat] = $pconfig['logging'][$cat];
-				vpn_update_daemon_loglevel($cat, $pconfig['logging'][$cat]);
 			}
 		}
 
@@ -178,7 +177,7 @@ if ($_POST['save']) {
 		$retval = 0;
 		$retval |= filter_configure();
 
-		vpn_ipsec_configure($needsrestart);
+		ipsec_configure($needsrestart);
 	}
 
 	// The logic value sent by $_POST for autoexcludelanaddress is opposite to

@@ -1636,7 +1636,7 @@ function interfaces_configure() {
 		system_routing_configure();
 
 		/* reload IPsec tunnels */
-		vpn_ipsec_configure();
+		ipsec_configure();
 
 		/* restart dns servers (defering dhcpd reload) */
 		if (isset($config['dnsmasq']['enable'])) {

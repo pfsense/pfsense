@@ -45,34 +45,38 @@ if ($_REQUEST['ajax']) {
 	exit;
 }
 
-if ($_POST['act'] == 'connect') {
+if (($_POST['act'] == 'connect') || ($_POST['act'] == 'childconnect')) {
 	if (ctype_digit($_POST['ikeid'])) {
 		$ph1ent = ipsec_get_phase1($_POST['ikeid']);
 		if (!empty($ph1ent)) {
-			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn'])) {
+			if (empty($ph1ent['iketype']) || ($ph1ent['iketype'] == 'ikev1') || isset($ph1ent['splitconn'])) {
 				$ph2entries = ipsec_get_number_of_phase2($_POST['ikeid']);
 				for ($i = 0; $i < $ph2entries; $i++) {
 					$connid = escapeshellarg("con{$_POST['ikeid']}00{$i}");
-					mwexec_bg("/usr/local/sbin/ipsec down {$connid}");
-					mwexec_bg("/usr/local/sbin/ipsec up {$connid}");
+					if ($_POST['act'] != 'childconnect') {
+						mwexec_bg("/usr/local/sbin/swanctl --terminate --child {$connid}");
+					}
+					mwexec_bg("/usr/local/sbin/swanctl --initiate --child {$connid}");
 				}
 			} else {
-				mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_POST['ikeid'] . '000'));
-				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_POST['ikeid'] . '000'));
+				if ($_POST['act'] != 'childconnect') {
+					mwexec_bg("/usr/local/sbin/swanctl --terminate --ike con" . escapeshellarg($_POST['ikeid'] . '000'));
+				}
+				mwexec_bg("/usr/local/sbin/swanctl --initiate --child con" . escapeshellarg($_POST['ikeid'] . '000'));
 			}
 		}
 	}
 } else if ($_POST['act'] == 'ikedisconnect') {
 
 	if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
-		mwexec_bg("/usr/local/sbin/ipsec down " ."'" . escapeshellarg($_POST['ikeid']) . "[" . escapeshellarg($_POST['ikesaid']) . "]" . "'");
+		mwexec_bg("/usr/local/sbin/swanctl --terminate --ike " . escapeshellarg($_POST['ikeid']) . " --ike-id " .escapeshellarg($_POST['ikesaid']));
 	} else {
-		mwexec_bg("/usr/local/sbin/ipsec down " . escapeshellarg($_POST['ikeid']));
+		mwexec_bg("/usr/local/sbin/swanctl --terminate --ike " . escapeshellarg($_POST['ikeid']));
 	}
 } else if ($_POST['act'] == 'childdisconnect') {
 	//pull out number from id
 		if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
-			mwexec_bg("/usr/local/sbin/ipsec down " . escapeshellarg($_POST['ikeid']) . "{" . escapeshellarg($_POST['ikesaid']) . "}");
+			mwexec_bg("/usr/local/sbin/swanctl --terminate --child " . escapeshellarg($_POST['ikeid']) . " --child-id " . escapeshellarg($_POST['ikesaid']));
 		}
 }
 
@@ -253,6 +257,12 @@ function print_ipsec_body() {
 				print("</a><br />\n");
 
 			}
+			if (empty($ikesa['child-sas'])) {
+				print('<br/><a href="status_ipsec.php?act=childconnect&amp;ikeid=' . substr($con_id, 0, -3) . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect Children"). '" usepost>');
+				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
+				print(gettext("Connect Children"));
+				print("</a>\n");
+			}
 
 			print("</td>\n");
 			print("</tr>\n");
@@ -269,7 +279,7 @@ function print_ipsec_body() {
 				print('<div>');
 				print('<a type="button" id="btnchildsa-'. $child_key .  '" class="btn btn-sm btn-info">');
 				print('<i class="fa fa-plus-circle icon-embed-btn"></i>');
-				print(gettext('Show child SA entries'));
+				print(sprintf(gettext('Show child SA entries (%d)'), count($ikesa['child-sas'])));
 				print("</a>\n");
 				print("	</div>\n");
 
@@ -426,7 +436,7 @@ function print_ipsec_body() {
 			if (empty($ph1src)) {
 				print(gettext("Unknown"));
 			} else {
-				print(htmlspecialchars($ph1src));
+				print(htmlspecialchars(str_replace(',', ', ', $ph1src)));
 			}
 
 			print("</td>\n");
@@ -469,8 +479,7 @@ function print_ipsec_body() {
 
 				print("<td>\n");
 				print(gettext("Disconnected"));
-				print("</td>\n");
-				print("<td>\n");
+				print("<br/>\n");
 				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $ph1ent['ikeid'] . '" class="btn btn-xs btn-success" usepost>');
 				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
 				print(gettext("Connect VPN"));
@@ -613,7 +622,7 @@ events.push(function() {
 	function show_childsa(said) {
 		sa_open[said] = true;
 		$('#childsa-' + said).show();
-		$('#btnchildsa-con' + said).hide();
+		$('#btnchildsa-' + said).hide();
 	}
 
 	// Populate the tbody on page load

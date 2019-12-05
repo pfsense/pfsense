@@ -469,7 +469,7 @@ if ($_POST['save']) {
 		$ph1ent['disabled'] = $pconfig['disabled'] ? true : false;
 		$ph1ent['interface'] = $pconfig['interface'];
 		/* if the remote gateway changed and the interface is not WAN then remove route */
-		/* the vpn_ipsec_configure() handles adding the route */
+		/* the ipsec_configure() handles adding the route */
 		if ($pconfig['interface'] <> "wan") {
 			if ($old_ph1ent['remote-gateway'] <> $pconfig['remotegw']) {
 				mwexec("/sbin/route delete -host {$old_ph1ent['remote-gateway']}");

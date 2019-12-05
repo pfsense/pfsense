@@ -52,8 +52,9 @@ if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 			<thead>
 				<tr>
 					<th><?=gettext("Pool")?></th>
-					<th><?=gettext("Usage")?></th>
+					<th><?=gettext("Base")?></th>
 					<th><?=gettext("Online")?></th>
+					<th><?=gettext("Total Usage")?></th>
 					<th><?=gettext("ID")?></th>
 					<th><?=gettext("Host")?></th>
 					<th><?=gettext("Status")?></th>
@@ -69,20 +70,26 @@ if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 						<?=$pool['name']?>
 					</td>
 					<td>
-						<?=$pool['usage']?>
+						<?=$pool['base']?>
 					</td>
 					<td>
 						<?=$pool['online']?>
 					</td>
+					<td>
+						<?php if ($pool['size'] > 0): ?>
+						<?=$pool['online'] + $pool['offline']?> / <?=$pool['size']?>
+						<?php endif; ?>
+					</td>
 
 <?php
 				$leaserow = true;
-				if (is_array($pool['lease']) && count($pool['lease']) > 0) {
+				if (is_array($pool['lease']) && (count($pool['lease']) > 0)) {
 					foreach ($pool['lease'] as $lease) {
 						if (!$leaserow) {
 							// On subsequent rows the first three columns are blank
 ?>
 				<tr>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>

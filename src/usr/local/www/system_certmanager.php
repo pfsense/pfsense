@@ -1308,6 +1308,7 @@ foreach ($a_cert as $cert):
 						<?php if (is_array($purpose)): ?>
 							CA: <b><?=$purpose['ca']?></b><br/>
 							<?=gettext("Server")?>: <b><?=$purpose['server']?></b><br/>
+							<?php if ($purpose['server'] == 'Yes' && cert_get_lifetime($cert) > 825):  echo('*'); endif?></b><br/>
 						<?php endif?>
 					</td>
 					<td><?=$caname?></td>
@@ -1368,6 +1369,7 @@ foreach ($a_cert as $cert):
 		</div>
 	</div>
 </div>
+<span class="help-block"><?=gettext('* Server certificates with a lifetime of more than 825 days may be considered invalid on some platforms.')?>
 
 <nav class="action-buttons">
 	<a href="?act=new" class="btn btn-success btn-sm">

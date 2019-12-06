@@ -1307,8 +1307,9 @@ foreach ($a_cert as $cert):
 						<?php endif?>
 						<?php if (is_array($purpose)): ?>
 							CA: <b><?=$purpose['ca']?></b><br/>
-							<?=gettext("Server")?>: <b><?=$purpose['server']?></b><br/>
+							<?=gettext("Server")?>: <b><?=$purpose['server']?>
 							<?php if ($purpose['server'] == 'Yes' && cert_get_lifetime($cert) > 825):  echo('*'); endif?></b><br/>
+							</b><br/>
 						<?php endif?>
 					</td>
 					<td><?=$caname?></td>

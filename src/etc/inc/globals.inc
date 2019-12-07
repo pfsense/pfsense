@@ -86,7 +86,7 @@ $g = array(
 	"default_timezone" => "Etc/UTC",
 	"language" => "en_US",
 	"default_config_backup_count" => 30,
-	"default_cert_expiredays" => 28,
+	"default_cert_expiredays" => 27,
 	"default_log_entries" => 500,
 	"default_log_size" => 512000,
 	"minimumtableentries_bogonsv6" => 400000,
@@ -234,6 +234,19 @@ $pf_reserved_keywords = array(
 	"maxsrcstates", "maxsrcnodes", "sourcetrack", "global", "rule", "maxsrcconn", "maxsrcconnrate", "overload",
 	"flush", "sloppy", "tagged", "tag", "ifbound", "floating", "statepolicy", "statedefaults", "route", "settos",
 	"divertto", "divertreply", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
+
+/* Reserved table names to avoid collision */
+global $reserved_table_names;
+$reserved_table_names = array(
+	"bogons",
+	"bogonsv6",
+	"negate_networks",
+	"snort2c",
+	"sshguard",
+	"tonatsubnets",
+	"virusprot",
+	"vpn_networks",
+);
 
 /* VLAN Prio values. */
 $vlanprio_values = array(

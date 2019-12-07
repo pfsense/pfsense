@@ -87,8 +87,10 @@ if ($_POST['save'] || $_POST['force']) {
 	$reqdfieldsn = array(gettext("Service type"));
 
 	if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
-		$reqdfields[] = "host";
-		$reqdfieldsn[] = gettext("Hostname");
+		if ($pconfig['type'] != "dnsomatic") {
+			$reqdfields[] = "host";
+			$reqdfieldsn[] = gettext("Hostname");
+		}
 		$reqdfields[] = "passwordfld";
 		$reqdfieldsn[] = gettext("Password");
 		$reqdfields[] = "username";

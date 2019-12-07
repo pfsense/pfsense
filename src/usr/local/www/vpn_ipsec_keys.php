@@ -51,7 +51,7 @@ foreach ($config['system']['user'] as $id => $user) {
 }
 
 if (isset($_POST['apply'])) {
-	vpn_ipsec_configure();
+	ipsec_configure();
 	/* reload the filter in the background */
 	$retval = 0;
 	$retval |= filter_configure();

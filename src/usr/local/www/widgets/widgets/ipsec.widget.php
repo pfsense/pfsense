@@ -129,7 +129,13 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	$data->overview = "<tr>";
 	$data->overview .= "<td>" . $activecounter . "</td>";
 	$data->overview .= "<td>" . $inactivecounter . "</td>";
-	$data->overview .= "<td>" . (is_array($mobile['pool']) ? htmlspecialchars($mobile['pool'][0]['usage']) : '0') . "</td>";
+	$mobileusage = 0;
+	if (is_array($mobile['pool'])) {
+		foreach ($mobile['pool'] as $pool) {
+			$mobileusage += $pool['online'] + $pool['offline'];
+		}
+	}
+	$data->overview .= "<td>" . htmlspecialchars($mobileusage) . "</td>";
 	$data->overview .= "</tr>";
 
 	$data->tunnel = "";
@@ -150,12 +156,14 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	
 	$data->mobile = "";
 	if (is_array($mobile['pool'])) {
+		$mucount = 0;
 		foreach ($mobile['pool'] as $pool) {
 			if (!is_array($pool['lease'])) {
 				continue;
 			}
 			if(is_array($pool['lease']) && !empty($pool['lease'])){
 				foreach ($pool['lease'] as $muser) {
+					$mucount++;
 					$data->mobile .= "<tr>";
 					$data->mobile .= "<td>" . htmlspecialchars($muser['id']) . "</td>";
 					$data->mobile .= "<td>" . htmlspecialchars($muser['host']) . "</td>";
@@ -164,6 +172,11 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				}
 			}
 		}
+		if ($mucount == 0) {
+			$data->mobile .= '<tr><td colspan="3">' . gettext("No mobile leases") . '</tr>';
+		}
+	} else {
+		$data->mobile .= '<tr><td colspan="3">' . gettext("No mobile pools configured") . '</tr>';
 	}
 	
 	print(json_encode($data));

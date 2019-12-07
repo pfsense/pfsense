@@ -594,7 +594,7 @@ class pfsense_xmlrpc_server {
 		}
 
 		if ($old_ipsec_enabled !== ipsec_enabled()) {
-			vpn_ipsec_configure();
+			ipsec_configure();
 		}
 
 		unset($old_config);

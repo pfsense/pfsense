@@ -68,10 +68,12 @@ if (!$config['installedpackages'] ||
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
-						<th><?=gettext("Port")?></th>
+						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Protocol")?></th>
-						<th><?=gettext("Internal IP")?></th>
-						<th><?=gettext("Int. Port")?></th>
+						<th><?=gettext("Ext IP")?></th>
+						<th><?=gettext("Port")?></th>
+						<th><?=gettext("Int IP")?></th>
+						<th><?=gettext("Int Port")?></th>
 						<th><?=gettext("Description")?></th>
 					</tr>
 				</thead>
@@ -80,29 +82,31 @@ if (!$config['installedpackages'] ||
 $i = 0;
 
 foreach ($rdr_entries as $rdr_entry) {
-	if (preg_match("/on (.*) inet proto (.*) from any to any port = (.*) keep state label \"(.*)\" rtable [0-9] -> (.*) port (.*)/", $rdr_entry, $matches)) {
-	$rdr_proto = $matches[2];
-	$rdr_port = $matches[3];
-	$rdr_label =$matches[4];
-	$rdr_ip = $matches[5];
-	$rdr_iport = $matches[6];
-
+	/* rdr log quick on igb2 inet proto tcp from any to any port = xxxxx keep state label "xxxxx" rtable 0 -> xxx.xxx.xxx.xxx port xxxxx */
+	/* rdr log quick on igb2 inet proto udp from any to xxx.xxx.xxx.xxx port = xxxxxx keep state label "xxxxx" rtable 0 -> xxx.xxx.xxx.xxx port xxxxx */
+	if (preg_match("/on (?P<iface>.*) inet proto (?P<proto>.*) from any to (?P<extaddr>.*) port = (?P<extport>.*) keep state label \"(?P<descr>.*)\" rtable [0-9] -> (?P<intaddr>.*) port (?P<intport>.*)/", $rdr_entry, $matches)) {
 ?>
 					<tr>
 						<td>
-							<?=$rdr_port?>
+							<?= htmlspecialchars(convert_real_interface_to_friendly_descr($matches['iface'])) ?>
 						</td>
 						<td>
-							<?=$rdr_proto?>
+							<?= htmlspecialchars($matches['proto']) ?>
 						</td>
 						<td>
-							<?=$rdr_ip?>
+							<?= htmlspecialchars($matches['extaddr']) ?>
 						</td>
 						<td>
-							<?=$rdr_iport?>
+							<?= htmlspecialchars($matches['extport']) ?>
 						</td>
 						<td>
-							<?=$rdr_label?>
+							<?= htmlspecialchars($matches['intaddr']) ?>
+						</td>
+						<td>
+							<?= htmlspecialchars($matches['intport']) ?>
+						</td>
+						<td>
+							<?= htmlspecialchars($matches['descr']) ?>
 						</td>
 					</tr>
 <?php

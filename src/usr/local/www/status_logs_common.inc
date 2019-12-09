@@ -393,6 +393,7 @@ function log_filter_form_firewall_submit() {
 		$filterfieldsarray['dstport'] = getGETPOSTsettingvalue('filterlogentries_destinationport', null);
 		$filterfieldsarray['proto'] = getGETPOSTsettingvalue('filterlogentries_protocol', null);
 		$filterfieldsarray['tcpflags'] = getGETPOSTsettingvalue('filterlogentries_protocolflags', null);
+		$filterfieldsarray['tracker'] = getGETPOSTsettingvalue('filterlogentries_tracker', null);
 		$filterlogentries_qty = getGETPOSTsettingvalue('filterlogentries_qty', null);
 	}
 }
@@ -515,6 +516,17 @@ function filter_form_firewall() {
 			'text',
 			$filterfieldsarray['tcpflags']
 		))->setWidth(2)->setHelp('Protocol Flags');
+
+		$group->add(new Form_Input(
+			'filterlogentries_tracker',
+			null,
+			'text',
+			$filterfieldsarray['tracker']
+		))->setWidth(2)->setHelp('Rule Tracker ID');
+
+		$section->add($group);
+
+		$group = new Form_Group('');
 
 		$btnsubmit = new Form_Button(
 			'filterlogentries_submit',

@@ -214,7 +214,7 @@ function print_ipsec_body() {
 			print("</td>\n");
 			print("<td>\n");
 			print(htmlspecialchars($ikesa['encr-alg']));
-			if ($ikesa['encr-alg'] != '3DES_CBC') { 
+			if ($ikesa['encr-alg'] != '3DES_CBC') {
 				print('_' . htmlspecialchars($ikesa['encr-keysize']));
 			}
 			print("<br/>");

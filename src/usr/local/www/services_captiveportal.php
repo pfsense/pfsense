@@ -594,7 +594,7 @@ $section->addInput(new Form_Input(
 	'Pre-authentication redirect URL',
 	'text',
 	$pconfig['preauthurl']
-))->setHelp('Set a default redirection URL. Visitors will be redirected to this URL after authentication only if the captive portal don\'t know where to redirect them. This field will be accessible through $PORTAL_REDIRURL$ variable in captiveportal\'s HTML pages.');
+))->setHelp('Set a default redirection URL. Visitors will be redirected to this URL after authentication only if the captive portal doesn\'t know where to redirect them. This field will be accessible through $PORTAL_REDIRURL$ variable in captiveportal\'s HTML pages.');
 
 $section->addInput(new Form_Input(
 	'redirurl',

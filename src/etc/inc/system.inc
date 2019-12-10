@@ -1158,6 +1158,10 @@ function get_dns_nameservers($add_v6_brackets = false) {
 				$dns_nameservers[] = $nameserver;
 			}
 		}
+	} else {
+		/* If override is disallowed, ignore the dynamic NS entries
+		 * https://redmine.pfsense.org/issues/9963 */
+		$ns = array();
 	}
 	if (is_array($syscfg['dnsserver'])) {
 		foreach ($syscfg['dnsserver'] as $sys_dnsserver) {

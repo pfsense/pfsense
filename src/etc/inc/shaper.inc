@@ -284,10 +284,11 @@ function get_queue_stats() {
 			$interfacestats[$currentqueueif][$currentqueuename] = &$newqueue;
 		} else {
 			if ($items[3] == "pkts:") {
-				$newqueue["pkts"] = trim(substr($line, 10, 10));
-				$newqueue["bytes"] = trim(substr($line, 29, 10));
-				$newqueue["droppedpkts"] = trim(substr($line, 55, 6));
-				$newqueue["droppedbytes"] = trim(substr($line, 69, 6));
+				preg_match('/pkts:\s+(\d+)\s+bytes:\s+(\d+)\s+dropped pkts:\s+(\d+)\s+bytes:\s+(\d+)/', $line, $matches);
+				$newqueue["pkts"] = $matches[1];
+				$newqueue["bytes"] = $matches[2];
+				$newqueue["droppedpkts"] = $matches[3];
+				$newqueue["droppedbytes"] = $matches[4];
 			}
 			if ($items[3] == "qlength:") {
 				$subitems = explode("/", substr($line, 13, 8));

@@ -208,7 +208,7 @@ if ($_POST['save']) {
 		unset($pconfig['pkcs11certref']);
 	}
 
-	if ($method != "cert" && $method != "xauth_rsa_server" && $method != "eap-tls" && $method != "pkcs11") {
+	if (!in_array($method, array('cert', 'eap-tls', 'xauth_cert_server', 'pkcs11'))) {
 		unset($pconfig['caref']);
 	}
 
@@ -645,7 +645,7 @@ function build_pkcs11cert_list() {
 	$list = array();
 	$p11_cn = array();
 	$p11_id = array();
-	$output = shell_exec('pkcs15-tool -c');
+	$output = shell_exec('/usr/local/bin/pkcs15-tool -c');
 
 	preg_match_all('/X\.509\ Certificate\ \[(.*)\]/', $output, $p11_cn);
 	preg_match_all('/ID\s+: (.*)/', $output, $p11_id);

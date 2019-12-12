@@ -309,4 +309,10 @@ $system_log_compression_types = array(
 		),
 );
 
+global $syslog_formats;
+$syslog_formats = array(
+	'rfc3164' => gettext('BSD (RFC 3164, default)'),
+	'rfc5424' => gettext('syslog (RFC 5424, with RFC 3339 microsecond-precision timestamps)'),
+);
+
 ?>

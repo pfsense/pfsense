@@ -38,7 +38,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("status_logs_common.inc");
 
-global $g, $system_log_compression_types;
+global $g, $system_log_compression_types, $syslog_formats;
 
 $pconfig['reverse'] = isset($config['syslog']['reverse']);
 $pconfig['nentries'] = $config['syslog']['nentries'];
@@ -73,6 +73,7 @@ $pconfig['logfilesize'] = $config['syslog']['logfilesize'];
 $pconfig['logcompressiontype'] = $config['syslog']['logcompressiontype'];
 $pconfig['rotatecount'] = $config['syslog']['rotatecount'];
 $pconfig['igmpxverbose'] = isset($config['syslog']['igmpxverbose']);
+$pconfig['format'] = $config['syslog']['format'];
 
 if (!$pconfig['nentries']) {
 	$pconfig['nentries'] = $g['default_log_entries'];
@@ -122,6 +123,10 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		}
 	}
 
+	if (!array_key_exists($_POST['format'], $syslog_formats)) {
+		$input_errors[] = gettext("Invalid Log Message Format.");
+	}
+
 	if (!array_key_exists($_POST['logcompressiontype'], $system_log_compression_types)) {
 		$input_errors[] = gettext("Invalid log compression type.");
 	}
@@ -154,6 +159,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			$config['syslog']['logcompressiontype'] = $_POST['logcompressiontype'];
 		}
 
+		$config['syslog']['format'] = $_POST['format'];
 		$config['syslog']['rotatecount'] = $_POST['rotatecount'];
 		$config['syslog']['remoteserver'] = $_POST['remoteserver'];
 		$config['syslog']['remoteserver2'] = $_POST['remoteserver2'];
@@ -257,6 +263,15 @@ tab_array_logs_common();
 $form = new Form();
 
 $section = new Form_Section('General Logging Options');
+
+$section->addInput(new Form_Select(
+	'format',
+	'Log Message Format',
+	!isset($pconfig['format']) ? 'rfc3164' : $pconfig['format'],
+	$syslog_formats,
+))->setHelp('The format of syslog messages written to disk locally and sent to ' .
+	'remote syslog servers (if enabled).%s' .
+	'Changing this value will only affect new log messages.', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'reverse',

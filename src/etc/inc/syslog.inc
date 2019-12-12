@@ -387,6 +387,8 @@ EOD;
 		}
 	}
 
+	$syslogd_format = empty($config['syslog']['format']) ? '' : '-O ' . escapeshellarg($config['syslog']['format']);
+
 	$syslogd_sockets = "";
 	foreach ($log_sockets as $log_socket) {
 		// Ensure that the log directory exists
@@ -446,7 +448,7 @@ EOD;
 			usleep(100000);
 		}
 
-		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c {$syslogd_sockets} -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
+		$retval = mwexec_bg("/usr/sbin/syslogd {$syslogd_format} -s -c -c {$syslogd_sockets} -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
 	} else {
 		$retval = sigkillbypid("{$g['varrun_path']}/syslog.pid", "HUP");
 	}
@@ -603,18 +605,32 @@ function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert 
 	$rows = 0;
 	foreach ($logarr as $logent) {
 		$rows++;
+		$entry_date_time = "";
 
 		/* Determine log entry content */
-		$splitlogent = preg_split("/\s+/", $logent, 6);
-		$entry_date_time = "";
+		$splitlogent = preg_split("/\s+/", $logent, 10);
+		if (strpos($splitlogent[0], '>') === false) {
+			/* RFC 3164 Format */
+			$syslogformat = 'rfc3164';
+		} else {
+			/* RFC 5424 Format */
+			$syslogformat = 'rfc5424';
+		}
+
 		if ($format == 'raw') {
 			$entry_text = $logent;
 		} elseif ($withorig) {
-			$entry_date_time = htmlspecialchars(join(" ", array_slice($splitlogent, 0, 3)));
-			$entry_text = ($splitlogent[3] == $config['system']['hostname']) ? "" : $splitlogent[3] . " ";
-			$entry_text .= $splitlogent[4] . " " . $splitlogent[5];
+			if ($syslogformat == 'rfc3164') {
+				$entry_date_time = htmlspecialchars(join(" ", array_slice($splitlogent, 0, 3)));
+				$entry_text = ($splitlogent[3] == $config['system']['hostname']) ? "" : $splitlogent[3] . " ";
+				$entry_text .= implode(' ', array_slice($splitlogent, 4));
+			} else {
+				$entry_date_time = htmlspecialchars($splitlogent[1]);
+				$entry_text = ($splitlogent[2] == "{$config['system']['hostname']}.{$config['system']['domain']}" ) ? '' : $splitlogent[2] . ' ';
+				$entry_text .= implode(' ', array_slice($splitlogent, 3));
+			}
 		} else {
-			$entry_text = $splitlogent[5];
+			$entry_text = implode(' ', array_slice($splitlogent, ($syslogformat == 'rfc3164') ? 5 : 9));
 		}
 		$entry_text = htmlspecialchars($entry_text);
 
@@ -673,52 +689,94 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 	}
 
 # Common Regular Expression Patterns
-	$month_pattern = "[a-zA-Z]{3}";
-	$day_pattern = "[0-9]{1,2}";
-	$time_pattern = "[0-9]{2}:[0-9]{2}:[0-9]{2}";
+	$base_patterns = array(
+		'rfc3164' => array('start_pattern' => "^"),
+		'rfc5424' => array('start_pattern' => "^<[0-9]{1,3}>[0-9]*\ "),
+	);
 
-	$date_pattern = "\(" . $month_pattern . "\ +" . $day_pattern . "\ +" . $time_pattern . "\)";
+	/* bsd log date */
+	$base_patterns['rfc3164']['date_pattern'] = "\([a-zA-Z]{3}\ +[0-9]{1,2}\ +[0-9]{2}:[0-9]{2}:[0-9]{2}\)";
+	/* RFC3339 Extended format date */
+	$base_patterns['rfc5424']['date_pattern'] = "\((?:[0-9]+)-(?:0[1-9]|1[012])-(?:0[1-9]|[12][0-9]|3[01])[Tt](?:[01][0-9]|2[0-3]):(?:[0-5][0-9]):(?:[0-5][0-9]|60)(?:\.[0-9]+)?(?:(?:[Zz])|(?:[\+|\-](?:[01][0-9]|2[0-3]):[0-5][0-9]))\)";
 
-	$host_pattern = "\(.*?\)";
-#	$host_pattern = "\([a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]\)";
+	/* hostname only, might not be present */
+	$base_patterns['rfc3164']['host_pattern'] = "\(.*?\)";
+	/* FQDN, always present */
+	$base_patterns['rfc5424']['host_pattern'] = "\(\S+?\)";
 
-	$process_pattern = "\(.*?\)\(?::\ +\)?";
-	$pid_pattern = "\(?:\\\[\([0-9:]*\)\\\]\)?:?";
-	$process_pid_pattern = $process_pattern . $pid_pattern;
+	/* name[pid]:, pid may not be present */
+	$base_patterns['rfc3164']['process_pattern'] = "\(.*?\)\(?::\ +\)?";
+	/* name alone, nothing special */
+	$base_patterns['rfc5424']['process_pattern'] = "\(\S+?\)\ ";
 
-	$log_message_pattern = "\(.*\)";
+	/* pid in brackets, may not be present */
+	$base_patterns['rfc3164']['pid_pattern'] = "\(?:\\\[\([0-9:]*\)\\\]\)?:?";
+	/* pid (which we want) alone, always present but may be '-', message ID is next, but we ignore it */
+	$base_patterns['rfc5424']['pid_pattern'] = "\(\S+?\)\ \S+?\ \S+?";
 
+	/* match anything from here on */
+	$base_patterns['rfc3164']['log_message_pattern'] = "\(.*\)";
+	$base_patterns['rfc5424']['log_message_pattern'] = "\(.*\)";
+
+	$patterns = array(
+		'rfc3164' => $base_patterns['rfc3164']['start_pattern'],
+		'rfc5424' => $base_patterns['rfc5424']['start_pattern'],
+	);
 
 	# Construct RegEx for specific log file type.
-	if ($logfile_type == 'firewall') {
-		$pattern = "filterlog\[[0-9]+\]:";
-	}
-	else if ($logfile_type == 'system') {
-		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$";
-	}
-
-	else if ($logfile_type == 'vpn_login') {
-		$action_pattern = "\(.*?\)";
-		$type_pattern = "\(.*?\)";
-		$ip_address_pattern = "\(.*?\)";
-		$user_pattern = "\(.*?\)";
-		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pattern . "\ +" . $action_pattern . "\,\ *" . $type_pattern . "\,\ *" . $ip_address_pattern . "\,\ *" . $user_pattern . "$";
-	}
-	else if ($logfile_type == 'vpn_service') {
-		$type_pattern = "\(.*?\):";
-		$pid_pattern = "\(?:process\ +\([0-9:]*\)\)?";
-		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $type_pattern . "\ +" . $pid_pattern . "\ *" . $log_message_pattern . "$";
-	}
-	else if ($logfile_type == 'unknown') {
-		$pattern = "^" . $date_pattern . "\ +" . $log_message_pattern . "$";
-	}
-	else {
-		$pattern = "^\(.*\)$";
+	switch ($logfile_type) {
+		case 'firewall':
+			$patterns['rfc3164'] = "filterlog\[[0-9]+\]:";
+			$patterns['rfc5424'] = "filterlog";
+			break;
+		case 'system':
+		case 'vpn_service':
+			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ +" .
+						$base_patterns['rfc3164']['host_pattern'] . "\ +" .
+						$base_patterns['rfc3164']['process_pattern'] .
+						$base_patterns['rfc3164']['pid_pattern'] . "\ +" .
+						$base_patterns['rfc3164']['log_message_pattern'] . "$";
+			$patterns['rfc5424'] .= $base_patterns['rfc5424']['date_pattern'] . "\ " .
+						$base_patterns['rfc5424']['host_pattern'] . "\ " .
+						$base_patterns['rfc5424']['process_pattern'] .
+						$base_patterns['rfc5424']['pid_pattern'] . "\ " .
+						$base_patterns['rfc5424']['log_message_pattern'] . "$";
+			break;
+		case 'vpn_login':
+			$action_pattern = "\(.*?\)";
+			$type_pattern = "\(.*?\)";
+			$ip_address_pattern = "\(.*?\)";
+			$user_pattern = "\(.*?\)";
+			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ +" .
+						$base_patterns['rfc3164']['host_pattern'] . "\ +" .
+						$base_patterns['rfc3164']['process_pattern'] . "\ +" .
+						"\(.*?\)\,\ *" .
+						"\(.*?\)\,\ *" .
+						"\(.*?\)\,\ *" .
+						"\(.*?\)$";
+			$patterns['rfc5424'] .= $base_patterns['rfc5424']['date_pattern'] . "\ " .
+						$base_patterns['rfc5424']['host_pattern'] . "\ " .
+						$base_patterns['rfc5424']['process_pattern'] .
+						"\S+?\ \S+?\ \S+?\ " .
+						"\(\S*?\)\,\ *" .
+						"\(\S*?\)\,\ *" .
+						"\(\S*?\)\,\ *" .
+						"\(\S*?\)$";
+			break;
+		case 'unknown':
+			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "*\ +" .
+						$base_patterns['rfc3164']['log_message_pattern'] . "$";
+			$patterns['rfc5424'] .= $base_patterns['rfc5424']['date_pattern'] . "*\ " .
+						$base_patterns['rfc5424']['log_message_pattern'] . "$";
+			break;
+		default:
+			$patterns['rfc3164'] .= "\(.*\)$";
+			$patterns['rfc5424'] .= "\(.*\)$";
 	}
 
 	if ($logfile_type != 'utx') {
 		# Get a bunch of log entries.
-		exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . " | /usr/bin/grep -E {$pattern} | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec(system_log_get_cat() . ' ' . sort_related_log_files($logfile, true, true) . " | /usr/bin/tail -r -n {$tail}", $logarr);
 	} else {
 		$_gb = exec("/usr/bin/last --libxo=json", $rawdata, $rc);
 		if ($rc == 0) {
@@ -728,12 +786,8 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 	}
 
 	# Remove escapes and fix up the pattern for preg_match.
-	$pattern = '/' . $pattern . '/';
-	$pattern = str_replace('\(', '(', $pattern);
-	$pattern = str_replace('\)', ')', $pattern);
-	$pattern = str_replace('\[', '[', $pattern);
-	$pattern = str_replace('\]', ']', $pattern);
-
+	$patterns['rfc3164'] = '/' . str_replace(array('\(', '\)', '\[', '\]'), array('(', ')', '[', ']'), $patterns['rfc3164']) . '/';
+	$patterns['rfc5424'] = '/' . str_replace(array('\(', '\)', '\[', '\]'), array('(', ')', '[', ']'), $patterns['rfc5424']) . '/';
 
 	$filterlog = array();
 	$counter = 0;
@@ -743,7 +797,9 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 		if ($counter >= $nentries) {
 			break;
 		}
-
+		if ($logfile_type != 'utx') {
+			$pattern = (substr($logent, 0, 1) == '<') ? $patterns['rfc5424'] : $patterns['rfc3164'];
+		}
 		switch($logfile_type) {
 			case 'firewall':
 				$flent = parse_firewall_log_line($logent);
@@ -848,6 +904,7 @@ function parse_vpn_login_log_line($line) {
 		return "";
 
 	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['action'], $flent['type'], $flent['ip_address'], $flent['user']) = $log_split;
+	$flent['time'] = str_replace('T', ' ', $flent['time']);
 
 	/* If there is time, action, user, and IP address fields, then the line should be usable/good */
 	if (!( (trim($flent['time']) == "") && (trim($flent['action']) == "") && (trim($flent['user']) == "") && (trim($flent['ip_address']) == "") )) {
@@ -870,6 +927,7 @@ function parse_vpn_service_log_line($line) {
 		return "";
 
 	list($all, $flent['time'], $flent['host'], $flent['type'], $flent['pid'], $flent['message']) = $log_split;
+	$flent['time'] = str_replace('T', ' ', $flent['time']);
 
 	/* If there is time, type, and message fields, then the line should be usable/good */
 	if (!( (trim($flent['time']) == "") && (trim($flent['type']) == "") && (trim($flent['message']) == "") )) {
@@ -907,6 +965,7 @@ function parse_unknown_log_line($line) {
 	}
 
 	list($all, $flent['time'], $flent['message']) = $log_split;
+	$flent['time'] = str_replace('T', ' ', $flent['time']);
 
 	/* If there is time, and message, fields, then the line should be usable/good */
 	if (!((trim($flent['time']) == "") && (trim($flent['message']) == ""))) {
@@ -930,6 +989,7 @@ function parse_system_log_line($line) {
 	}
 
 	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['pid'], $flent['message']) = $log_split;
+	$flent['time'] = str_replace('T', ' ', $flent['time']);
 
 	/* If there is time, process, and message, fields, then the line should be usable/good */
 	if (!((trim($flent['time']) == "") && (trim($flent['process']) == "") && (trim($flent['message']) == ""))) {
@@ -948,11 +1008,20 @@ function parse_firewall_log_line($line) {
 	$flent = array();
 	$log_split = "";
 
-	if (!preg_match("/(.*)\s(.*)\sfilterlog\[[0-9]+\]:\s(.*)$/", $line, $log_split)) {
+	if (substr($line, 0, 1) == '<') {
+		/* RFC 5424 */;
+		$pattern = "/^<[0-9]{1,3}>[0-9]*\ (\S+?)\ (\S+?)\ filterlog\ \S+?\ \S+?\ \S+?\ (.*)$/U";
+	} else {
+		/* RFC 3164 */
+		$pattern = "/(.*)\s(.*)\sfilterlog\[[0-9]+\]:\s(.*)$/";
+	}
+
+	if (!preg_match($pattern, $line, $log_split)) {
 		return "";
 	}
 
 	list($all, $flent['time'], $host, $rule) = $log_split;
+	$flent['time'] = str_replace('T', ' ', $flent['time']);
 
 	$rule_data = explode(",", $rule);
 	$field = 0;

@@ -141,6 +141,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$pconfig['domainsearchlist'] = $config['dhcpdv6'][$if]['domainsearchlist'];
 	list($pconfig['wins1'], $pconfig['wins2']) = $config['dhcpdv6'][$if]['winsserver'];
 	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $config['dhcpdv6'][$if]['dnsserver'];
+	$pconfig['disable-dhcp6c-dns'] = $config['dhcpdv6'][$if]['disable-dhcp6c-dns'];
 	$pconfig['enable'] = isset($config['dhcpdv6'][$if]['enable']);
 	$pconfig['ddnsdomain'] = $config['dhcpdv6'][$if]['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $config['dhcpdv6'][$if]['ddnsdomainprimary'];
@@ -441,7 +442,7 @@ if (isset($_POST['apply'])) {
 		if ($_POST['dns4']) {
 			$config['dhcpdv6'][$if]['dnsserver'][] = $_POST['dns4'];
 		}
-
+		$config['dhcpdv6'][$if]['disable-dhcp6c-dns'] = ($_POST['disable-dhcp6c-dns']) ? true : false;
 		$config['dhcpdv6'][$if]['domain'] = $_POST['domain'];
 		$config['dhcpdv6'][$if]['domainsearchlist'] = $_POST['domainsearchlist'];
 		$config['dhcpdv6'][$if]['enable'] = ($_POST['enable']) ? true : false;
@@ -707,6 +708,13 @@ for ($i=1;$i<=4; $i++) {
 
 $group->setHelp('Leave blank to use the system default DNS servers, this interface\'s IP if DNS forwarder is enabled, or the servers configured on the "General" page.');
 $section->add($group);
+$section->addInput(new Form_Checkbox(
+	'disable-dhcp6c-dns',
+	null,
+	'Do NOT provide DNS servers to DHCPv6 clients',
+	$pconfig['disable-dhcp6c-dns']
+))->setHelp('Checking this box disables the dhcp6.name-servers option in /var/dhcpd/etc/dhcpdv6.conf. ' .
+			'Use with caution, as the resulting behavior may violate some RFCs.');
 
 $section->addInput(new Form_Input(
 	'domain',

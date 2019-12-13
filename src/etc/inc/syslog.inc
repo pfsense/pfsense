@@ -31,6 +31,12 @@ global $buffer_rules_rdr, $buffer_rules_normal;
 $buffer_rules_rdr = array();
 $buffer_rules_normal = array();
 
+global $syslog_formats;
+$syslog_formats = array(
+	'rfc3164' => gettext('BSD (RFC 3164, default)'),
+	'rfc5424' => gettext('syslog (RFC 5424, with RFC 3339 microsecond-precision timestamps)'),
+);
+
 function system_syslogd_fixup_server($server) {
 	/* If it's an IPv6 IP alone, encase it in brackets */
 	if (is_ipaddrv6($server)) {

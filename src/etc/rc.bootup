@@ -203,7 +203,7 @@ setup_microcode();
 echo "done.\n";
 
 /* pcscd daemon must be started before IPsec */
-echo "PC/SC Smart Card Services...";
+echo "Starting PC/SC Smart Card Services...";
 mwexec_bg("/usr/local/sbin/pcscd");
 echo "done.\n";
 

@@ -202,6 +202,11 @@ echo "Setting up interfaces microcode...";
 setup_microcode();
 echo "done.\n";
 
+/* pcscd daemon must be started before IPsec */
+echo "PC/SC Smart Card Services...";
+mwexec_bg("/usr/local/sbin/pcscd");
+echo "done.\n";
+
 if (isset($config['system']['mds_disable']) &&
     (strlen($config['system']['mds_disable']) > 0)) {
 	set_single_sysctl("hw.mds_disable" , (int)$config['system']['mds_disable']);

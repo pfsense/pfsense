@@ -196,7 +196,7 @@ $p1_authentication_methods = array(
 	'eap-radius' => array('name' => gettext('EAP-RADIUS'), 'mobile' => true),
 	'eap-mschapv2' => array('name' => gettext('EAP-MSChapv2'), 'mobile' => true),
 	'cert' => array('name' => gettext('Mutual Certificate'), 'mobile' => false),
-	'pkcs11' => array('name' => gettext('Mutual Certificate (PKCS#11)'), 'mobile' => false),
+	'pkcs11' => array('name' => gettext('Mutual Certificate (Token)'), 'mobile' => false),
 	'pre_shared_key' => array('name' => gettext('Mutual PSK'), 'mobile' => false)
 );
 

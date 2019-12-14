@@ -249,7 +249,7 @@ if ($_POST['save']) {
 			break;
 		case "pkcs11":
 			$reqdfields = explode(" ", "caref pkcs11certref pkcs11pin");
-			$reqdfieldsn = array(gettext("Certificate Authority"), gettext("PKCS#11 Token Certificate"), gettext("PKCS#11 Token PIN"));
+			$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Token Certificate"), gettext("Token PIN"));
 			break;
 		default:
 			/* Other types do not use this validation mechanism. */
@@ -652,8 +652,8 @@ function build_pkcs11cert_list() {
 	preg_match_all('/ID\s+: (.*)/', $output, $p11_id);
 
 	if (is_array($p11_id)) {
-		for ($i = 0; $i < count($p11_id); $i++) {
-			$list[$p11_id[1][$i]] = $p11_cn[1][$i];
+		for ($i = 0; $i < count($p11_id[1]); $i++) {
+			$list[$p11_id[1][$i]] = "{$p11_cn[1][$i]} " . "({$p11_id[1][$i]})";
 		}
 	}
 	return($list);
@@ -819,14 +819,14 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'pkcs11certref',
-	'*PKCS#11 Certificate',
+	'*Token Certificate',
 	$pconfig['pkcs11certref'],
 	build_pkcs11cert_list()
-))->setHelp('Select a certificate previously created on PKCS#11 Token.');
+))->setHelp('Select a certificate previously created on Token.');
 
 $section->addInput(new Form_Input(
 	'pkcs11pin',
-	'*PKCS#11 Token PIN',
+	'*Token PIN',
 	'text',
 	$pconfig['pkcs11pin']
 ))->setHelp('Enter token PIN number');

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * vpn_ipsec_phase1.php
  *
@@ -651,7 +652,7 @@ function build_pkcs11cert_list() {
 	preg_match_all('/ID\s+: (.*)/', $output, $p11_id);
 
 	if (is_array($p11_id)) {
-		for ($i = 0; $i < count($p11_id) - 1; $i++) {
+		for ($i = 0; $i < count($p11_id); $i++) {
 			$list[$p11_id[1][$i]] = $p11_cn[1][$i];
 		}
 	}

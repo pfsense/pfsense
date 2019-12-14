@@ -2384,13 +2384,17 @@ function ipsec_setup_secrets() {
 
 				$scconf['secrets']['private-' . $suffix++] = array('file' => $ph1keyfile);
 			} else if (strstr($ph1ent['authentication_method'], 'pkcs11')) {
-				if (!empty($ph1ent['pkcs11certref'])) {
+				$p11_id = array();
+				$output = shell_exec('/usr/local/bin/pkcs15-tool -c');
+				preg_match_all('/ID\s+: (.*)/', $output, $p11_id);
+				if (!empty($ph1ent['pkcs11certref']) && in_array($ph1ent['pkcs11certref'], $p11_id[1])) {
 					$scconf['secrets']['token-' . $suffix++] = array(
 						'handle' => $ph1ent['pkcs11certref'],
 						'pin' => $ph1ent['pkcs11pin'],
 					);
 				} else {
-					log_error(sprintf(gettext("Error: Invalid phase1 PKCS#11 certificate reference for %s"), $ph1ent['name']));
+					log_error(sprintf(gettext("Error: Invalid phase1 PKCS#11 certificate reference or PKCS#11 is not present for %s"), $ph1ent['name']));
+					continue;
 				}
 			} else {
 				/* Setup pre-shared keys */

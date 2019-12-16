@@ -819,17 +819,17 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'pkcs11certref',
-	'*Token Certificate',
+	'*PKCS#11 Certificate',
 	$pconfig['pkcs11certref'],
 	build_pkcs11cert_list()
-))->setHelp('Select a certificate previously created on Token.');
+))->setHelp('Select a Certificate from an attached PKCS#11 token device');
 
 $section->addInput(new Form_Input(
 	'pkcs11pin',
-	'*Token PIN',
+	'*PKCS#11 PIN',
 	'text',
 	$pconfig['pkcs11pin']
-))->setHelp('Enter token PIN number');
+))->setHelp('Enter PKCS#11 token PIN number');
 
 $section->addInput(new Form_Select(
 	'caref',

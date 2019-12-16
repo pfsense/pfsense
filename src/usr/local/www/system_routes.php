@@ -93,7 +93,7 @@ function delete_static_route($id) {
 	foreach ($targets as $tgt) {
 		$family = (is_subnetv6($tgt) ? "-inet6" : "-inet");
 		$gateway = $a_gateways[$a_routes[$id]['gateway']]['gateway'];
-		mwexec("/sbin/route delete {$family} " . escapeshellarg($tgt) . " " . $escapeshellarg($gateway));
+		mwexec("/sbin/route delete {$family} " . escapeshellarg($tgt) . " " . escapeshellarg($gateway));
 	}
 
 	unset($targets);

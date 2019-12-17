@@ -598,7 +598,7 @@ if ($_POST['save']) {
 				}
 				$server['tls'] = base64_encode($pconfig['tls']);
 				$server['tls_type'] = $pconfig['tls_type'];
-				$pconfig['tlsauth_keydir'] = $a_client[$id]['tlsauth_keydir'];
+				$server['tlsauth_keydir'] = $pconfig['tlsauth_keydir'];
 			}
 			$server['caref'] = $pconfig['caref'];
 			$server['crlref'] = $pconfig['crlref'];

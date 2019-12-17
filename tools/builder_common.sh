@@ -1675,6 +1675,11 @@ poudriere_init() {
 		echo ">>> ERROR: POUDRIERE_PORTS_GIT_URL is not defined"
 		print_error_pfS
 	fi
+
+	# PARALLEL_JOBS us ncpu / 4 for best performance
+	local _parallel_jobs=$(sysctl -qn hw.ncpu)
+	_parallel_jobs=$((_parallel_jobs / 4))
+
 	echo ">>> Creating poudriere.conf" | tee -a ${LOGFILE}
 	cat <<EOF >/usr/local/etc/poudriere.conf
 ZPOOL=${ZFS_TANK}
@@ -1692,7 +1697,7 @@ COMMIT_PACKAGES_ON_FAILURE=no
 KEEP_OLD_PACKAGES=yes
 KEEP_OLD_PACKAGES_COUNT=5
 ALLOW_MAKE_JOBS=yes
-PARALLEL_JOBS=8
+PARALLEL_JOBS=${_parallel_jobs}
 EOF
 
 	if pkg info -e ccache; then

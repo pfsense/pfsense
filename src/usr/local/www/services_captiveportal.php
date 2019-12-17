@@ -131,6 +131,10 @@ if ($a_cp[$cpzone]) {
 	$pconfig['reauthenticate'] = isset($a_cp[$cpzone]['reauthenticate']);
 	$pconfig['preservedb'] = isset($a_cp[$cpzone]['preservedb']);
 	$pconfig['reauthenticateacct'] = $a_cp[$cpzone]['reauthenticateacct'];
+	$pconfig['saml_idp_entity_id'] = $a_cp[$cpzone]['saml_idp_entity_id'];
+	$pconfig['saml_idp_login'] = $a_cp[$cpzone]['saml_idp_login'];	
+	$pconfig['saml_idp_logout'] = $a_cp[$cpzone]['saml_idp_logout'];
+	$pconfig['saml_idp_x509cert'] = base64_decode($a_cp[$cpzone]['saml_idp_x509cert']);
 	$pconfig['httpslogin_enable'] = isset($a_cp[$cpzone]['httpslogin']);
 	$pconfig['httpsname'] = $a_cp[$cpzone]['httpsname'];
 	$pconfig['preauthurl'] = strtolower($a_cp[$cpzone]['preauthurl']);
@@ -196,7 +200,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if ($_POST['auth_method'] && !in_array($_POST['auth_method'], array('none', 'authserver', 'radmac'))) {
+		if ($_POST['auth_method'] && !in_array($_POST['auth_method'], array('none', 'authserver', 'radmac','saml'))) {
 			$input_errors[] = gettext("Authentication method is invalid.");
 		}
 
@@ -255,7 +259,7 @@ if ($_POST['save']) {
 	}
 
 	if ($_POST['auth_method']) {
-		if ($_POST['auth_method'] !== 'none' && empty($_POST['auth_server'])) {
+		if ($_POST['auth_method'] !== 'none' && $_POST['auth_method'] !== 'saml' && empty($_POST['auth_server'])) {
 			$input_errors[] = gettext("You need to select at least one authentication server.");
 		}
 		/* If RADMAC auth method is selected : carefully check that the selected server is a RADIUS one */
@@ -344,6 +348,10 @@ if ($_POST['save']) {
 		$newcp['radmac_secret'] = $_POST['radmac_secret'] ? $_POST['radmac_secret'] : false;
 		$newcp['radmac_fallback'] = $_POST['radmac_fallback'] ? true : false;
 		$newcp['reauthenticateacct'] = $_POST['reauthenticateacct'];
+		$newcp['saml_idp_entity_id'] = $_POST['saml_idp_entity_id'];
+		$newcp['saml_idp_login'] = $_POST['saml_idp_login'];
+		$newcp['saml_idp_logout'] = $_POST['saml_idp_logout'];
+		$newcp['saml_idp_x509cert'] = base64_encode($_POST['saml_idp_x509cert']);
 		if ($_POST['httpslogin_enable']) {
 			$newcp['httpslogin'] = true;
 		} else {
@@ -859,6 +867,7 @@ $group = new Form_Group('*Authentication Method');
 $options['authserver'] = 'Use an Authentication backend';
 $options['none'] = 'None, don\'t authenticate users';
 $options['radmac'] = 'Use RADIUS MAC Authentication';
+$options['saml'] = 'Use SAML Authentication';
 
 $group->add(new Form_Select(
 	'auth_method',
@@ -973,6 +982,34 @@ $section->addInput(new Form_Select(
 			'IETF: 00-11-22-33-44-55 %1$s' .
 			'Cisco: 0011.2233.4455 %1$s' .
 			'Unformatted: 001122334455', '<br />');
+
+$section->addInput(new Form_Input(
+	'saml_idp_entity_id',
+	'IdP Entity Id',
+	'text',
+	$pconfig['saml_idp_entity_id']
+))->setHelp('Identifier of the IdP entity  (must be a URI)');
+
+$section->addInput(new Form_Input(
+	'saml_idp_login',
+	'IdP Login url',
+	'text',
+	$pconfig['saml_idp_login']
+))->setHelp('URL Target of the IdP where the SP will send the Authentication Request Message');
+
+$section->addInput(new Form_Input(
+	'saml_idp_logout',
+	'IdP Logout url',
+	'text',
+	$pconfig['saml_idp_logout']
+))->setHelp('URL Location of the IdP where the SP will send the SLO Request');
+
+$section->addInput(new Form_TextArea(
+	'saml_idp_x509cert',
+	'IdP x509 certificate',
+	$pconfig['saml_idp_x509cert']
+))->setHelp('Public x509 certificate of the IdP');
+
 
 $form->add($section);
 
@@ -1141,6 +1178,13 @@ events.push(function() {
 		hideInput('radiusnasid', hide);
 	}
 
+	function hideSaml(hide) {
+		hideInput('saml_idp_entity_id', hide);
+		hideInput('saml_idp_login', hide);
+		hideInput('saml_idp_logout', hide);
+		hideInput('saml_idp_x509cert', hide);
+	}
+
 	function hideHTTPS() {
 		hide = (!$('#httpslogin_enable').prop('checked') || !$('#enable').prop('checked'));
 
@@ -1212,7 +1256,7 @@ events.push(function() {
 			$.each(authserver_list, function(key, value) {
 				$('<option>').val(key).text(value).appendTo($('select[name="auth_server[]"]'));
 			});
-
+			hideSaml(true);
 			hideCheckbox('reauthenticate', false);
 			hideClass('auth_server', false);
 			hideInput('radmac_secret', true);
@@ -1228,14 +1272,32 @@ events.push(function() {
 					$('<option>').val(key).text(value).appendTo($('select[name="auth_server[]"]'));
 				}
 			});
+			hideSaml(true);
 			hideCheckbox('reauthenticate', false);
 			hideClass('auth_server', false);
 			hideInput('radmac_secret', false);
 			hideCheckbox('radmac_fallback', false);
 			$('.auth_server .vouchers_helptext').addClass('hidden');
+		} 
+		else if(auth_method.indexOf("saml") === 0) {
+			// if "saml" is selected :  only SAML settings should be displayed 
+			$('select[name="auth_server[]"]').find('option').remove();
+
+			$.each(authserver_list, function(key, value) {
+				if(key.indexOf("saml") === 0) {
+					$('<option>').val(key).text(value).appendTo($('select[name="auth_server[]"]'));
+				}
+			});
+			hideSaml(false);
+			hideRadius(true);
+			hideCheckbox('reauthenticate', true);
+			hideClass('auth_server', true);
+			hideInput('radmac_secret', true);
+			hideCheckbox('radmac_fallback', true);
 		} else {
 			// if "none" is selected : we hide most of authentication settings
 			hideRadius(true);
+			hideSaml(true);
 			hideCheckbox('reauthenticate', true);
 			hideClass('auth_server', true);
 			hideInput('radmac_secret', true);

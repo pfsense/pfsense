@@ -562,7 +562,7 @@ if ($do_tcpdump) :
 	<div class="panel-body">
 		<div class="form-group">
 <?php
-		if ($proto == "carp") {
+		if ($_POST['proto'] == "carp") {
 			$iscarp = "-T carp";
 		} else {
 			$iscarp = "";

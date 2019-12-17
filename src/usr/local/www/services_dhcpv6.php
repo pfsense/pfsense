@@ -141,7 +141,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$pconfig['domainsearchlist'] = $config['dhcpdv6'][$if]['domainsearchlist'];
 	list($pconfig['wins1'], $pconfig['wins2']) = $config['dhcpdv6'][$if]['winsserver'];
 	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $config['dhcpdv6'][$if]['dnsserver'];
-	$pconfig['enable-dhcp6c-dns'] = ($config['dhcpdv6'][$if]['enable-dhcp6c-dns'] != 'disabled') ? "enabled" : "disabled";
+	$pconfig['dhcp6c-dns'] = ($config['dhcpdv6'][$if]['dhcp6c-dns'] != 'disabled') ? "enabled" : "disabled";
 	$pconfig['enable'] = isset($config['dhcpdv6'][$if]['enable']);
 	$pconfig['ddnsdomain'] = $config['dhcpdv6'][$if]['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $config['dhcpdv6'][$if]['ddnsdomainprimary'];
@@ -442,7 +442,7 @@ if (isset($_POST['apply'])) {
 		if ($_POST['dns4']) {
 			$config['dhcpdv6'][$if]['dnsserver'][] = $_POST['dns4'];
 		}
-		$config['dhcpdv6'][$if]['enable-dhcp6c-dns'] = ($_POST['enable-dhcp6c-dns']) ? "enabled" : "disabled";
+		$config['dhcpdv6'][$if]['dhcp6c-dns'] = ($_POST['dhcp6c-dns']) ? "enabled" : "disabled";
 		$config['dhcpdv6'][$if]['domain'] = $_POST['domain'];
 		$config['dhcpdv6'][$if]['domainsearchlist'] = $_POST['domainsearchlist'];
 		$config['dhcpdv6'][$if]['enable'] = ($_POST['enable']) ? true : false;
@@ -710,10 +710,10 @@ $group->setHelp('Leave blank to use the system default DNS servers, this interfa
 $section->add($group);
 
 $section->addInput(new Form_Checkbox(
-	'enable-dhcp6c-dns',
+	'dhcp6c-dns',
 	null,
 	'Provide DNS servers to DHCPv6 clients',
-	($pconfig['enable-dhcp6c-dns'] == "enabled")
+	($pconfig['dhcp6c-dns'] == "enabled")
 ))->setHelp('Unchecking this box disables the dhcp6.name-servers option in /var/dhcpd/etc/dhcpdv6.conf. ' .
 			'Use with caution, as the resulting behavior may violate some RFCs.');
 

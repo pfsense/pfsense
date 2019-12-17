@@ -249,7 +249,7 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdconf .= "\t};\n";
 
 		/* add DNS servers */
-		if (($dhcpv6ifconf['enable-radvd-dns']) != 'disabled') {
+		if (($dhcpv6ifconf['radvd-dns']) != 'disabled') {
 			$dnslist = array();
 			if (isset($dhcpv6ifconf['rasamednsasdhcp6']) && is_array($dhcpv6ifconf['dnsserver']) && !empty($dhcpv6ifconf['dnsserver'])) {
 				foreach ($dhcpv6ifconf['dnsserver'] as $server) {
@@ -371,7 +371,7 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdconf .= "\t};\n";
 
 		/* add DNS servers */
-		if (($dhcpv6ifconf['enable-radvd-dns']) != 'disabled') {
+		if (($dhcpv6ifconf['radvd-dns']) != 'disabled') {
 			$dnslist = array();
 			if (isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable'])) {
 				$dnslist[] = $ifcfgipv6;
@@ -1438,7 +1438,7 @@ EOD;
 			$dnscfgv6 .= "	do-forward-updates false;\n";
 		}
 
-		if (($dhcpv6ifconf['enable-dhcp6c-dns']) != 'disabled') {
+		if (($dhcpv6ifconf['dhcp6c-dns']) != 'disabled') {
 			if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
 				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dhcpv6ifconf['dnsserver']) . ";";
 			} else if (((isset($config['dnsmasq']['enable'])) || isset($config['unbound']['enable'])) && (is_ipaddrv6($ifcfgipv6))) {

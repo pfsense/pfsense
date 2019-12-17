@@ -84,7 +84,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
 	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = $config['dhcpdv6'][$if]['radnsserver'];
-	$pconfig['enable-radvd-dns'] = ($config['dhcpdv6'][$if]['enable-radvd-dns'] != 'disabled') ? "enabled" : "disabled";
+	$pconfig['radvd-dns'] = ($config['dhcpdv6'][$if]['radvd-dns'] != 'disabled') ? "enabled" : "disabled";
 	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
 
 	$pconfig['subnets'] = $config['dhcpdv6'][$if]['subnets']['item'];
@@ -228,7 +228,7 @@ if ($_POST['save']) {
 			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns3'];
 		}
 
-		$config['dhcpdv6'][$if]['enable-radvd-dns'] = ($_POST['enable-radvd-dns']) ? "enabled" : "disabled";
+		$config['dhcpdv6'][$if]['radvd-dns'] = ($_POST['radvd-dns']) ? "enabled" : "disabled";
 		$config['dhcpdv6'][$if]['rasamednsasdhcp6'] = ($_POST['rasamednsasdhcp6']) ? true : false;
 
 		if (count($pconfig['subnets'])) {
@@ -456,10 +456,10 @@ $section->addInput(new Form_Input(
 ))->setHelp('The RA server can optionally provide a domain search list. Use the semicolon character as separator.');
 
 $section->addInput(new Form_Checkbox(
-	'enable-radvd-dns',
+	'radvd-dns',
 	null,
 	'Provide DNS configuration via radvd',
-	($pconfig['enable-radvd-dns'] == "enabled")
+	($pconfig['radvd-dns'] == "enabled")
 ))->setHelp('Unchecking this box disables the RDNSS/DNSSL options in /var/etc/radvd.conf. ' .
 			'Use with caution, as the resulting behavior may violate some RFCs.');
 

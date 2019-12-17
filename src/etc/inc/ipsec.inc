@@ -196,6 +196,7 @@ $p1_authentication_methods = array(
 	'eap-radius' => array('name' => gettext('EAP-RADIUS'), 'mobile' => true),
 	'eap-mschapv2' => array('name' => gettext('EAP-MSChapv2'), 'mobile' => true),
 	'cert' => array('name' => gettext('Mutual Certificate'), 'mobile' => false),
+	'pkcs11' => array('name' => gettext('Mutual Certificate (PKCS#11)'), 'mobile' => false),
 	'pre_shared_key' => array('name' => gettext('Mutual PSK'), 'mobile' => false)
 );
 
@@ -1387,6 +1388,13 @@ function ipsec_setup_strongswan() {
 	$ssconf['charon']['plugins']['unity'] = array('load' => $unity_enabled);
 	$ssconf['charon']['plugins']['curve25519'] = array('load' => "yes");
 
+	$ssconf['charon']['plugins']['pkcs11'] = array();
+	$ssconf['charon']['plugins']['pkcs11']['load'] = "yes";
+	$ssconf['charon']['plugins']['pkcs11']['modules'] = array();
+	$ssconf['charon']['plugins']['pkcs11']['modules']['opensc'] = array();
+	$ssconf['charon']['plugins']['pkcs11']['modules']['opensc']['load_certs'] = "yes";
+	$ssconf['charon']['plugins']['pkcs11']['modules']['opensc']['path'] = "/usr/local/lib/opensc-pkcs11.so";
+
 	/* Find RADIUS servers designated for Mobile IPsec user auth */
 	$radius_servers = array();
 	foreach (explode(',', $config['ipsec']['client']['user_source']) as $user_source) {
@@ -1798,6 +1806,7 @@ function ipsec_setup_authentication(& $ph1ent, & $conn) {
 			$remote['auth'] = "psk";
 			break;
 		case 'cert':
+		case 'pkcs11':
 			$local['auth'] = "pubkey";
 			$remote['auth'] = "pubkey";
 			break;
@@ -1808,10 +1817,14 @@ function ipsec_setup_authentication(& $ph1ent, & $conn) {
 	}
 	if (in_array($ph1ent['authentication_method'], array('eap-mschapv2', 'eap-tls', 'eap-radius', 'xauth_cert_server', 'cert', 'hybrid_cert_server')) &&
 	    !empty($ph1ent['certref'])) {
-		$local['certs'] = "{$ipsec_swanctl_dirs['certpath']}/cert-{$ph1ent['ikeid']}.crt";
+		$local['cert'] = array('file' => "{$ipsec_swanctl_dirs['certpath']}/cert-{$ph1ent['ikeid']}.crt");
 		$conn['send_cert'] = "always";
 	}
-	if (in_array($ph1ent['authentication_method'], array('eap-tls', 'xauth_cert_server', 'cert')) &&
+	if ($ph1ent['authentication_method'] == 'pkcs11') {
+		$local['cert'] = array('handle' => "{$ph1ent['pkcs11certref']}");
+		$conn['send_cert'] = "always";
+	}
+	if (in_array($ph1ent['authentication_method'], array('eap-tls', 'xauth_cert_server', 'cert', 'pkcs11')) &&
 	    isset($cafn)) {
 		$remote['cacerts'] = $cafn;
 	}
@@ -2370,6 +2383,19 @@ function ipsec_setup_secrets() {
 				@chmod($ph1certfile, 0600);
 
 				$scconf['secrets']['private-' . $suffix++] = array('file' => $ph1keyfile);
+			} else if (strstr($ph1ent['authentication_method'], 'pkcs11')) {
+				$p11_id = array();
+				$output = shell_exec('/usr/local/bin/pkcs15-tool -c');
+				preg_match_all('/ID\s+: (.*)/', $output, $p11_id);
+				if (!empty($ph1ent['pkcs11certref']) && in_array($ph1ent['pkcs11certref'], $p11_id[1])) {
+					$scconf['secrets']['token-' . $suffix++] = array(
+						'handle' => $ph1ent['pkcs11certref'],
+						'pin' => $ph1ent['pkcs11pin'],
+					);
+				} else {
+					log_error(sprintf(gettext("Error: Invalid phase1 PKCS#11 certificate reference or PKCS#11 is not present for %s"), $ph1ent['name']));
+					continue;
+				}
 			} else {
 				/* Setup pre-shared keys */
 				list($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
@@ -2414,7 +2440,7 @@ function ipsec_setup_secrets() {
 			 * client cert CA chain to the list of CAs to write
 			 */
 			if (in_array($ph1ent['authentication_method'],
-			    array('cert', 'eap-tls', 'xauth_cert_server'))) {
+			    array('cert', 'eap-tls', 'xauth_cert_server', 'pkcs11'))) {
 				if (!empty($ph1ent['caref']) && !array_key_exists($ph1ent['caref'], $vpncas)) {
 					$thisca = lookup_ca($ph1ent['caref']);
 					$vpncas[$ph1ent['caref']] = $thisca;

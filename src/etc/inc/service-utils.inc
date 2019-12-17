@@ -265,6 +265,11 @@ function get_services() {
 	}
 
 	$pconfig = array();
+	$pconfig['name'] = "pcscd";
+	$pconfig['description'] = gettext("PC/SC Smart Card Daemon");
+	$services[] = $pconfig;
+
+	$pconfig = array();
 	$pconfig['name'] = "ntpd";
 	$pconfig['description'] = gettext("NTP clock sync");
 	$services[] = $pconfig;
@@ -648,6 +653,9 @@ function service_control_start($name, $extras) {
 		case 'syslogd':
 			system_syslogd_start();
 			break;
+		case 'pcscd':
+			mwexec_bg("service pcscd onestart");
+			break;
 		default:
 			start_service($name);
 			break;
@@ -726,6 +734,9 @@ function service_control_stop($name, $extras) {
 			}
 			/* Make sure sshguard stops as well */
 			sigkillbyname("sshguard", "TERM");
+			break;
+		case 'pcscd':
+			mwexec_bg("service pcscd onestop");
 			break;
 		default:
 			stop_service($name);

@@ -792,7 +792,7 @@ $section->addInput(new Form_Select(
 	'caref',
 	'*Peer Certificate Authority',
 	$pconfig['caref'],
-	cert_build_list('ca', 'IPsec')
+	cert_build_list('ca', 'IPsec', false, false, true)
 ))->setHelp('Select a certificate authority previously configured in the Certificate Manager.');
 
 $form->add($section);

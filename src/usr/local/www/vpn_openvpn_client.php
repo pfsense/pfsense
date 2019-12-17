@@ -770,7 +770,7 @@ if ($act=="new" || $act=="edit"):
 			'caref',
 			'*Peer Certificate Authority',
 			$pconfig['caref'],
-			cert_build_list('ca', 'OpenVPN')
+			cert_build_list('ca', 'OpenVPN', false, false, true)
 		));
 	} else {
 		$section->addInput(new Form_StaticText(

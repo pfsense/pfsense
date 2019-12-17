@@ -67,7 +67,7 @@ if ($_POST['apply']) {
 }
 
 function delete_static_route($id) {
-	global $config, $a_routes, $changedesc_prefix;
+	global $config, $a_routes, $changedesc_prefix, $a_gateways;
 
 	if (!isset($a_routes[$id])) {
 		return;
@@ -92,7 +92,8 @@ function delete_static_route($id) {
 
 	foreach ($targets as $tgt) {
 		$family = (is_subnetv6($tgt) ? "-inet6" : "-inet");
-		mwexec("/sbin/route delete {$family} " . escapeshellarg($tgt));
+		$gateway = $a_gateways[$a_routes[$id]['gateway']]['gateway'];
+		mwexec("/sbin/route delete {$family} " . escapeshellarg($tgt) . " " . escapeshellarg($gateway));
 	}
 
 	unset($targets);

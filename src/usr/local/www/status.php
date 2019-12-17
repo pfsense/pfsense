@@ -322,6 +322,7 @@ defCmdT("Firewall-pftop Speed", "/usr/local/sbin/pftop -w 150 -a -b -v speed");
 defCmdT("Firewall-IPFW Rules for Captive Portal", "/sbin/ipfw show");
 defCmdT("Firewall-IPFW Limiter Info", "/sbin/ipfw pipe show");
 defCmdT("Firewall-IPFW Queue Info", "/sbin/ipfw queue show");
+defCmdT("Firewall-IPFW Tables", "/sbin/ipfw table all list");
 
 if (is_array($config['load_balancer']['lbpool']) && is_array($config['load_balancer']['virtual_server'])) {
 	defCmdT("Load Balancer-Redirects", "/usr/local/sbin/relayctl show redirects");

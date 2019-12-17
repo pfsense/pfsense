@@ -144,7 +144,7 @@ if (($act == "edit") || ($act == "dup")) {
 				$pconfig['tlsauth_enable'] = "yes";
 				$pconfig['tls'] = base64_decode($a_server[$id]['tls']);
 				$pconfig['tls_type'] = $a_server[$id]['tls_type'];
-				$pconfig['tlsauth_keydir'] = $a_client[$id]['tlsauth_keydir'];
+				$pconfig['tlsauth_keydir'] = $a_server[$id]['tlsauth_keydir'];
 			}
 
 			$pconfig['caref'] = $a_server[$id]['caref'];

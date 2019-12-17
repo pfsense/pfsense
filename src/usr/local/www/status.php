@@ -310,6 +310,7 @@ defCmdT("Firewall-pftop Speed", "/usr/local/sbin/pftop -w 150 -a -b -v speed");
 defCmdT("Firewall-IPFW Rules for Captive Portal", "/sbin/ipfw show");
 defCmdT("Firewall-IPFW Limiter Info", "/sbin/ipfw pipe show");
 defCmdT("Firewall-IPFW Queue Info", "/sbin/ipfw queue show");
+defCmdT("Firewall-IPFW Tables", "/sbin/ipfw table all list");
 
 /* Configuration Files */
 defCmdT("Disk-Contents of var run", "/bin/ls /var/run");

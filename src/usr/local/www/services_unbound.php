@@ -339,16 +339,11 @@ $section->addInput(new Form_Checkbox(
 		'Activating this option disables automatic interface response routing behavior, thus it works best with specific interface bindings.' );
 
 if ($certs_available) {
-	$values = array();
-	foreach ($a_cert as $cert) {
-		$values[ $cert['refid'] ] = $cert['descr'];
-	}
-
 	$section->addInput($input = new Form_Select(
 		'sslcertref',
 		'SSL/TLS Certificate',
 		$pconfig['sslcertref'],
-		$values
+		cert_build_list('cert', 'IPsec')
 	))->setHelp('The server certificate to use for SSL/TLS service. The CA chain will be determined automatically.');
 } else {
 	$section->addInput(new Form_StaticText(

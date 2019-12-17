@@ -24,7 +24,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-session_start();
 
 require_once("auth.inc");
 require_once("functions.inc");
@@ -245,16 +244,6 @@ EOD;
 		} else {
 			portal_reply_page($redirurl, $type, $replymsg);
 		}
-	}
-} elseif ($cpcfg['auth_method'] === 'saml') {
-	if ( isset( $_SESSION['samlNameId'] ) && $_SESSION['samlNameId']  != "" ) {
-		if (portal_allow($clientip, $clientmac, $_SESSION['samlNameId'], null, null, null, 'saml', 'saml')) {
-			captiveportal_logportalauth($_SESSION['samlNameId'], $clientmac, $clientip, "SAML authentication {$_SESSION['samlNameId']} successful");
-		} else {
-			portal_reply_page($redirurl, "error", $errormsg);
-		}
-	} else {
-		portal_reply_page($redirurl, "error", $errormsg);
 	}
 } else {
 	/* display captive portal page */

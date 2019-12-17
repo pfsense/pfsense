@@ -166,16 +166,6 @@ EOD;
 		<input type="submit" name="accept" class="login login-submit" value="Login" id="login" {$disabled}>
 	  </form>
 	  <br  />
-EOD;
-
-	if ($config['captiveportal'][$cpzone]['auth_method'] == "saml"){
-		$htmltext .= <<<EOD
-			<input type="button" class="login login-submit" onclick="window.location=''" value="Login with SSO" id="login">
-	<br/><br/>
-EOD;
-	}
-
-	$htmltext .= <<<EOD
 	  <span> <i>Made with &hearts; by</i> <strong>Netgate</strong></span>
 	</div>
 	<div id="terms">

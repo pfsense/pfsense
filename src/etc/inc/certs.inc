@@ -2494,7 +2494,7 @@ function cert_check_pkey_compatibility($pkey, $consumer) {
  *   This can be expanded in the future to allow for other types of restrictions.
  ******/
 
-function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, $addnone = false) {
+function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, $addnone = false, $noprv = false) {
 	global $config;
 
 	/* Ensure that $type is valid */
@@ -2517,7 +2517,9 @@ function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, 
 	/* Create a hashed array with the certificate refid as the key and
 	 * descriptive name as the value. Exclude incompatible certificates. */
 	foreach ($config[$type] as $cert) {
-		if (cert_check_pkey_compatibility($cert['prv'], $consumer)) {
+		if (empty($cert['prv']) && !$noprv) {
+			continue;
+		} else if (cert_check_pkey_compatibility($cert['prv'], $consumer)) {
 			if ($selectsource) {
 				$list[] = array('refid' => $cert['refid'],
 						'descr' => $cert['descr']);

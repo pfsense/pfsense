@@ -867,6 +867,7 @@ events.push(function() {
 	$('#type').on('change', function() {
 		typechange();
 	});
+
 	var text = 'Some data I want to export';
 	var data = new Blob([text], {type: 'text/plain'});
 	var url = window.URL.createObjectURL(data);

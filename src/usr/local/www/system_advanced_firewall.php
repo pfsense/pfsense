@@ -331,7 +331,7 @@ if ($_POST) {
 		}
 
 		if ($_POST['no_apipa_block'] == "yes") {
-			$config['system']['no_apipa_block'] = $_POST['no_apipa_block'];
+			$config['system']['no_apipa_block'] = "enabled";
 		} else {
 			unset($config['system']['no_apipa_block']);
 		}
@@ -578,10 +578,10 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'no_apipa_block',
-	'Disable APIPA blocking',
-	'Disable APIPA blocking rules',
+	'Allow APIPA',
+	'Allow APIPA traffic',
 	$pconfig['no_apipa_block']
-))->setHelp('Normally this traffic should be dropped, as APIPA traffic cannot be routed, but some providers may utilize APIPA space for interconnect interfaces.');
+))->setHelp('Normally this traffic is dropped by firewall (as APIPA traffic cannot be routed), but some providers may utilize APIPA space for interconnect interfaces.');
 
 $section->addInput(new Form_Input(
 	'aliasesresolveinterval',

@@ -97,7 +97,9 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['peerid_type'] = $a_phase1[$p1index]['peerid_type'];
 	$pconfig['peerid_data'] = $a_phase1[$p1index]['peerid_data'];
 	$pconfig['encryption'] = $a_phase1[$p1index]['encryption'];
-	$pconfig['lifetime'] = $a_phase1[$p1index]['lifetime'];
+	$pconfig['rekey_time'] = $a_phase1[$p1index]['rekey_time'];
+	$pconfig['reauth_time'] = $a_phase1[$p1index]['reauth_time'];
+	$pconfig['over_time'] = $a_phase1[$p1index]['over_time'];
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
 
 	if (($pconfig['authentication_method'] == "pre_shared_key") ||
@@ -114,18 +116,6 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];
 	$pconfig['mobike'] = $a_phase1[$p1index]['mobike'];
 	$pconfig['closeaction'] = $a_phase1[$p1index]['closeaction'];
-
-	if (isset($a_phase1[$p1index]['reauth_enable'])) {
-		$pconfig['reauth_enable'] = true;
-	}
-
-	if (isset($a_phase1[$p1index]['rekey_enable'])) {
-		$pconfig['rekey_enable'] = true;
-	}
-
-	if ($a_phase1[$p1index]['margintime']) {
-		$pconfig['margintime'] = $a_phase1[$p1index]['margintime'];
-	}
 
 	if (isset($a_phase1[$p1index]['responderonly'])) {
 		$pconfig['responderonly'] = true;
@@ -159,7 +149,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['myid_type'] = "myaddress";
 	$pconfig['peerid_type'] = "peeraddress";
 	$pconfig['authentication_method'] = "pre_shared_key";
-	$pconfig['lifetime'] = "28800";
+	$pconfig['reauth_time'] = "28800";
 	$pconfig['nat_traversal'] = 'on';
 	$pconfig['mobike'] = 'off';
 	$pconfig['dpd_enable'] = true;
@@ -267,20 +257,18 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Pre-Shared Key contains invalid characters.");
 	}
 
-	if (($pconfig['lifetime'] && !is_numericint($pconfig['lifetime']))) {
-		$input_errors[] = gettext("The P1 lifetime must be an integer.");
+	if (!empty($pconfig['rekey_time']) && !is_numericint($pconfig['rekey_time'])) {
+		$input_errors[] = gettext("Rekey Time must be an integer.");
+	}
+	if (!empty($pconfig['reauth_time']) && !is_numericint($pconfig['reauth_time'])) {
+		$input_errors[] = gettext("Reauth Time must be an integer.");
+	}
+	if (!empty($pconfig['over_time']) && !is_numericint($pconfig['over_time'])) {
+		$input_errors[] = gettext("Over Time must be an integer.");
 	}
 
 	if (!empty($pconfig['closeaction']) && !array_key_exists($pconfig['closeaction'], $ipsec_closeactions)) {
 		$input_errors[] = gettext("Invalid Child SA Close Action.");
-	}
-
-	if (!isset($pconfig['rekey_enable']) && $pconfig['margintime']) {
-		if(!is_numericint($pconfig['margintime'])){
-			 $input_errors[] = gettext("The margintime must be an integer.");
-		} else if(intval($pconfig['margintime']) >= intval($pconfig['lifetime'])){
-			 $input_errors[] = gettext("The margintime must be smaller than the P1 lifetime.");
-		}
 	}
 
 	if ($pconfig['remotegw']) {
@@ -498,7 +486,9 @@ if ($_POST['save']) {
 		$ph1ent['peerid_data'] = $pconfig['peerid_data'];
 
 		$ph1ent['encryption'] = $pconfig['encryption'];
-		$ph1ent['lifetime'] = $pconfig['lifetime'];
+		$ph1ent['rekey_time'] = $pconfig['rekey_time'];
+		$ph1ent['reauth_time'] = $pconfig['reauth_time'];
+		$ph1ent['over_time'] = $pconfig['over_time'];
 		$ph1ent['pre-shared-key'] = $pconfig['pskey'];
 		$ph1ent['private-key'] = base64_encode($pconfig['privatekey']);
 		$ph1ent['certref'] = $pconfig['certref'];
@@ -510,24 +500,6 @@ if ($_POST['save']) {
 		$ph1ent['nat_traversal'] = $pconfig['nat_traversal'];
 		$ph1ent['mobike'] = $pconfig['mobike'];
 		$ph1ent['closeaction'] = $pconfig['closeaction'];
-
-		if (isset($pconfig['reauth_enable'])) {
-			$ph1ent['reauth_enable'] = true;
-		} else {
-			unset($ph1ent['reauth_enable']);
-		}
-
-		if (isset($pconfig['rekey_enable'])) {
-			$ph1ent['rekey_enable'] = true;
-		} else {
-			unset($ph1ent['rekey_enable']);
-		}
-
-		if (!isset($pconfig['rekey_enable'])) {
-			$ph1ent['margintime'] = $pconfig['margintime'];
-		} else {
-			unset($ph1ent['margintime']);
-		}
 
 		if (isset($pconfig['responderonly'])) {
 			$ph1ent['responderonly'] = true;
@@ -897,38 +869,40 @@ $btnaddopt = new Form_Button(
 $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 $section->addInput($btnaddopt);
 
-$section = new Form_Section('NOTITLE');
+$form->add($section);
+
+$section = new Form_Section('Expiration and Replacement');
+
 $section->addInput(new Form_Input(
-	'lifetime',
-	'*Lifetime (Seconds)',
+	'rekey_time',
+	'Rekey Time',
 	'number',
-	$pconfig['lifetime']
-));
+	$pconfig['rekey_time']
+))->setHelp('Time, in seconds, before an IKE SA establishes new keys. This works without interruption. ' .
+		'Only supported by IKEv2, and is recommended for use with IKEv2. ' .
+		'Leave blank or enter a value of 0 to disable.');
+
+$section->addInput(new Form_Input(
+	'reauth_time',
+	'Reauth Time',
+	'number',
+	$pconfig['reauth_time']
+))->setHelp('Time, in seconds, before an IKE SA is torn down and recreated from scratch, including authentication. ' .
+		'This can be disruptive unless both sides support make-before-break and overlapping IKE SA entries. ' .
+		'Supported by IKEv1 and IKEv2. Leave blank or enter a value of 0 to disable.');
+
+$section->addInput(new Form_Input(
+	'over_time',
+	'Over Time',
+	'number',
+	$pconfig['over_time']
+))->setHelp('Hard IKE SA life time, in seconds, after which the IKE SA will be expired. ' .
+		'This time is relative to reauthentication and rekey time. ' .
+		'If left empty, defaults to 10% of whichever timer is higher (reauth or rekey)');
 
 $form->add($section);
 
 $section = new Form_Section('Advanced Options');
-
-$section->addInput(new Form_Checkbox(
-	'rekey_enable',
-	'Disable rekey',
-	'Disables renegotiation when a connection is about to expire.',
-	$pconfig['rekey_enable']
-));
-
-$section->addInput(new Form_Input(
-	'margintime',
-	'Margintime (Seconds)',
-	'number',
-	$pconfig['margintime']
-))->setHelp('How long before connection expiry or keying-channel expiry should attempt to negotiate a replacement begin.');
-
-$section->addInput(new Form_Checkbox(
-	'reauth_enable',
-	'Disable Reauth',
-	'Whether rekeying of an IKE_SA should also reauthenticate the peer. In IKEv1, reauthentication is always done.',
-	$pconfig['reauth_enable']
-));
 
 $section->addInput(new Form_Checkbox(
 	'responderonly',
@@ -1067,14 +1041,14 @@ events.push(function() {
 			hideInput('mode', true);
 			hideInput('mobike', false);
 			//hideCheckbox('tfc_enable', false);
-			hideCheckbox('reauth_enable', false);
+			hideInput('rekey_time', false);
 			hideCheckbox('splitconn', false);
 		} else {
 			hideInput('mode', false);
 			hideInput('mobike', true);
 			//hideCheckbox('tfc_enable', true);
 			//hideInput('tfc_bytes', true);
-			hideCheckbox('reauth_enable', true);
+			hideInput('rekey_time', !($('#iketype').val() == 'auto'));
 			hideCheckbox('splitconn', true);
 		}
 	}
@@ -1199,12 +1173,6 @@ events.push(function() {
 		}
 	}
 
-	function rekeychkbox_change() {
-		hide = $('#rekey_enable').prop('checked');
-
-		hideInput('margintime', hide);
-  }
-
 	function dpdchkbox_change() {
 		hide = !$('#dpd_enable').prop('checked');
 
@@ -1227,11 +1195,6 @@ events.push(function() {
 	//}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ----------
-
-	 // Enable Rekey
-	$('#rekey_enable').click(function () {
-		rekeychkbox_change();
-	});
 
 	 // Enable DPD
 	$('#dpd_enable').click(function () {

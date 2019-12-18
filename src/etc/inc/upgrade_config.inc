@@ -6076,6 +6076,42 @@ function upgrade_198_to_199() {
 	}
 }
 
+/* Update IPsec reauth and rekey variable names and values based on existing settings
+ * https://redmine.pfsense.org/issues/9983
+ */
+function upgrade_199_to_200() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		/* Convert lifetime to reauth_time since that's how previous
+		 * versions behaved. */
+		if (isset($ph1ent['reauth_enable'])) {
+			$ph1ent['reauth_time'] = "0";
+			/* If reauth is disabled, set hard P1 lifetime  limit */
+			$ph1ent['over_time'] = $ph1ent['lifetime'];
+		} else {
+			/* Reauth at 90% of requested lifetime, set hard limit at full (relative) lifetime */
+			$ph1ent['reauth_time'] = (int)($ph1ent['lifetime'] * 0.90);
+			$ph1ent['over_time'] = (int)($ph1ent['lifetime'] * 0.10);
+		}
+		/* Auto or IKEv2, rekey items */
+		if (($ph1ent['iketype'] == 'ikev2') || ($ph1ent['iketype'] == 'auto')) {
+			if (isset($ph1ent['rekey_enable'])) {
+				/* Disable rekey */
+				$ph1ent['rekey_time'] = "0";
+				$ph1ent['reauth_time'] = "0";
+				/* If rekey is disabled, set hard P1 lifetime limit */
+				$ph1ent['over_time'] = $ph1ent['lifetime'];
+			} elseif (!empty($ph1ent['margintime'])) {
+				/* If margintime is set, use that to calculate over_time and reauth_time */
+				$ph1ent['reauth_time'] = ($ph1ent['lifetime'] - $ph1ent['margintime']);
+				$ph1ent['over_time'] = $ph1ent['margintime'];
+			}
+		}
+		unset($ph1ent['lifetime'], $ph1ent['reauth_enable'], $ph1ent['rekey_enable'], $ph1ent['margintime']);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

@@ -238,12 +238,20 @@ function print_ipsec_body() {
 
 			print("</td>\n");
 			print("<td>\n");
-			if (!empty($ikesa['reauth-time'])) {
-				print("<b>" . gettext("Reauth:") . "</b> ". htmlspecialchars($ikesa['reauth-time']) . gettext("s (") . convert_seconds_to_dhms($ikesa['reauth-time']) . ")");
+			if ($ikesa['version'] == 2) {
+				print("<b>" . gettext("Rekey:") . "</b> ");
+				if (!empty($ikesa['rekey-time'])) {
+					print(htmlspecialchars($ikesa['rekey-time']) . gettext("s (") . convert_seconds_to_dhms($ikesa['rekey-time']) . ")");
+				} else {
+					print(gettext("Disabled"));
+				}
 				print("<br/>");
 			}
-			if (!empty($ikesa['rekey-time'])) {
-				print("<b>" . gettext("Rekey:") . "</b> " . htmlspecialchars($ikesa['rekey-time']) . gettext("s (") . convert_seconds_to_dhms($ikesa['rekey-time']) . ")");
+			print("<b>" . gettext("Reauth:") . "</b> ");
+			if (!empty($ikesa['reauth-time'])) {
+				print(htmlspecialchars($ikesa['reauth-time']) . gettext("s (") . convert_seconds_to_dhms($ikesa['reauth-time']) . ")");
+			} else {
+				print(gettext("Disabled"));
 			}
 			print("</td>\n");
 			print("<td>\n");

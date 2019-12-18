@@ -2048,37 +2048,17 @@ function ipsec_setup_tunnels() {
 			$child_params['dpd_action'] = "none";
 		}
 
-		/* Auto or IKEv1, setup reauthentication */
-		if (($ikeversion == 0) || ($ikeversion == 1)) {
-			/* IKEv1 uses reauth, not rekey. Reauth with IKEv2 can be problematic. */
-			if (isset($ph1ent['reauth_enable'])) {
-				$conn['reauth_time'] = "0s";
-				/* If reauth is disabled, set P1 lifetime as over_time */
-				$conn['over_time'] = "{$ph1ent['lifetime']}s";
-			} else {
-				/* Reauth at 90% of requested lifetime, set hard limit at full (relative) lifetime */
-				$conn['reauth_time'] = (int)($ph1ent['lifetime'] * 0.90) . "s";
-				$conn['over_time'] = (int)($ph1ent['lifetime'] * 0.10) . "s";
-			}
-		}
-		/* Auto or IKEv2, setup rekey */
+		/* Reauth (Any) */
+		$conn['reauth_time'] = (empty($ph1ent['reauth_time']) ? "0" : $ph1ent['reauth_time']) . "s";
+
+		/* Rekey (IKEv2 or Auto only, not supported by IKEv1) */
 		if (($ikeversion == 0) || ($ikeversion == 2)) {
-			/* IKEv2 uses rekey, reauth may cause problems */
-			if (isset($ph1ent['rekey_enable'])) {
-				$conn['rekey_time'] = "0s";
-				/* If rekey is disabled, set P1 lifetime as over_time */
-				$conn['over_time'] = "{$ph1ent['lifetime']}s";
-			} else {
-				if (!empty($ph1ent['margintime'])) {
-					/* If margintime is set, use that to calculate over_time and rekey_time */
-					$conn['rekey_time'] = ($ph1ent['lifetime'] - $ph1ent['margintime']) . "s";
-					$conn['over_time'] = "{$ph1ent['margintime']}s";
-				} else {
-					/* Rekey at 90% of requested lifetime, set hard limit at full (relative) lifetime */
-					$conn['rekey_time'] = (int)($ph1ent['lifetime'] * 0.90) . "s";
-					$conn['over_time'] = (int)($ph1ent['lifetime'] * 0.10) . "s";
-				}
-			}
+			$conn['rekey_time'] = (empty($ph1ent['rekey_time']) ? "0" : $ph1ent['rekey_time']) . "s";
+		}
+
+		/* Over Time */
+		if (!empty($ph1ent['over_time'])) {
+			$conn['over_time'] = "{$ph1ent['over_time']}s";
 		}
 
 		/* NAT Traversal */

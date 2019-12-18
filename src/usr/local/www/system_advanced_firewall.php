@@ -581,7 +581,7 @@ $section->addInput(new Form_Checkbox(
 	'Allow APIPA',
 	'Allow APIPA traffic',
 	$pconfig['no_apipa_block']
-))->setHelp('Normally this traffic is dropped by firewall (as APIPA traffic cannot be routed), but some providers may utilize APIPA space for interconnect interfaces.');
+))->setHelp('Normally this traffic is dropped by the firewall, as APIPA traffic cannot be routed, but some providers may utilize APIPA space for interconnect interfaces.');
 
 $section->addInput(new Form_Input(
 	'aliasesresolveinterval',

@@ -743,13 +743,6 @@ while ($counter < count($addresses)) {
 }
 
 $form->addGlobal(new Form_Button(
-	'download_link',
-	'Download',
-	'',
-	'fa fa-download icon-embed-btn'
-))->addClass('btn btn-primary');
-
-$form->addGlobal(new Form_Button(
 	'addrow',
 	$btn_str[$tab],
 	null,
@@ -868,57 +861,9 @@ events.push(function() {
 		typechange();
 	});
 
-	var text = 'Some data I want to export';
-	var data = new Blob([text], {type: 'text/plain'});
-	var url = window.URL.createObjectURL(data);
-	document.getElementById('download_link').href = url;
 });
-
-	function downloadCSV(csv, filename) {
-	    var csvFile;
-	    var downloadLink;
-
-	    // CSV file
-	    csvFile = new Blob([csv], {type: "text/csv"});
-
-	    // Download link
-	    downloadLink = document.createElement("a");
-
-	    // File name
-	    downloadLink.download = filename;
-
-	    // Create a link to the file
-	    downloadLink.href = window.URL.createObjectURL(csvFile);
-
-	    // Hide download link
-	    downloadLink.style.display = "none";
-
-	    // Add the link to DOM
-	    document.body.appendChild(downloadLink);
-
-	    // Click download link
-	    downloadLink.click();
-	}
-	function exportTableToCSV(filename) {
-	    var csv = [];
-	    var rows = document.querySelectorAll("table tr");
-
-	    for (var i = 0; i < rows.length; i++) {
-		var row = [], cols = rows[i].querySelectorAll("td, th");
-
-		for (var j = 0; j < cols.length; j++)
-		    row.push(cols[j].innerText);
-
-		csv.push(row.join(","));
-	    }
-
-	    // Download CSV file
-	    downloadCSV(csv.join("\n"), filename);
-	}
 //]]>
 </script>
-
-
 
 <?php
 include("foot.inc");

@@ -1015,12 +1015,6 @@ EOD;
 			$dhcpdconf .= "	max-lease-time {$dhcpifconf['maxleasetime']};\n";
 		}
 
-		if (!isset($dhcpifconf['disablepingcheck'])) {
-			$dhcpdconf .= "	ping-check true;\n";
-		} else {
-			$dhcpdconf .= "	ping-check false;\n";
-		}
-
 		// netbios-name*
 		if (is_array($dhcpifconf['winsserver']) && $dhcpifconf['winsserver'][0]) {
 			$dhcpdconf .= "	option netbios-name-servers " . join(",", $dhcpifconf['winsserver']) . ";\n";

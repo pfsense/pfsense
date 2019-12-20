@@ -127,9 +127,6 @@ switch ($act) {
 			$input_errors[] = gettext("Cannot revoke certificates for an imported/external CRL.");
 		}
 		foreach (explode(' ', $pconfig['revokeserial']) as $serial) {
-			if (!is_numeric($serial)) {
-				continue;
-			}
 			$vserial = cert_validate_serial($serial, true, true);
 			if ($vserial != null) {
 				$revoke_list[] = $vserial;

@@ -54,6 +54,7 @@ $old_maximumtableentries = $config['system']['maximumtableentries'];
 $pconfig['maximumfrags'] = $config['system']['maximumfrags'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
+$pconfig['no_apipa_block'] = isset($config['system']['no_apipa_block']);
 $pconfig['bogonsinterval'] = $config['system']['bogons']['interval'];
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 $pconfig['enablebinatreflection'] = $config['system']['enablebinatreflection'];
@@ -329,6 +330,12 @@ if ($_POST) {
 			unset($config['system']['disablenegate']);
 		}
 
+		if ($_POST['no_apipa_block'] == "yes") {
+			$config['system']['no_apipa_block'] = "enabled";
+		} else {
+			unset($config['system']['no_apipa_block']);
+		}
+
 		if ($_POST['enablenatreflectionhelper'] == "yes") {
 			$config['system']['enablenatreflectionhelper'] = "yes";
 		} else {
@@ -568,6 +575,13 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('With Multi-WAN it is generally desired to ensure traffic reaches directly '.
 	'connected networks and VPN networks when using policy routing. This can be disabled '.
 	'for special purposes but it requires manually creating rules for these networks.');
+
+$section->addInput(new Form_Checkbox(
+	'no_apipa_block',
+	'Allow APIPA',
+	'Allow APIPA traffic',
+	$pconfig['no_apipa_block']
+))->setHelp('Normally this traffic is dropped by the firewall, as APIPA traffic cannot be routed, but some providers may utilize APIPA space for interconnect interfaces.');
 
 $section->addInput(new Form_Input(
 	'aliasesresolveinterval',

@@ -780,13 +780,15 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		$pconfig['key']
 	))->setHelp('Paste a private key in X.509 PEM format here.');
 
-	$section->addInput(new Form_Input(
-		'exportpass',
-		'Export Password',
-		'password',
-		null,
-		['placeholder' => gettext('Export Password'), 'autocomplete' => 'new-password']
-	))->setHelp('Enter the password to use when using the export buttons below (not stored)')->addClass('toggle-edit collapse');
+	if ($act == 'edit') {
+		$section->addInput(new Form_Input(
+			'exportpass',
+			'Export Password',
+			'password',
+			null,
+			['placeholder' => gettext('Export Password'), 'autocomplete' => 'new-password']
+		))->setHelp('Enter the password to use when using the export buttons below (not stored)')->addClass('toggle-edit collapse');
+	}
 
 	$form->add($section);
 	$section = new Form_Section('Internal Certificate');

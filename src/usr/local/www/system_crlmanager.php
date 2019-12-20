@@ -126,12 +126,14 @@ switch ($act) {
 		if (!is_crl_internal($crl)) {
 			$input_errors[] = gettext("Cannot revoke certificates for an imported/external CRL.");
 		}
-		foreach (explode(' ', $pconfig['revokeserial']) as $serial) {
-			$vserial = cert_validate_serial($serial, true, true);
-			if ($vserial != null) {
-				$revoke_list[] = $vserial;
-			} else {
-				$input_errors[] = gettext("Invalid serial in list (Must be ASN.1 integer compatible decimal or hex string).");
+		if (!empty($pconfig['revokeserial'])) {
+			foreach (explode(' ', $pconfig['revokeserial']) as $serial) {
+				$vserial = cert_validate_serial($serial, true, true);
+				if ($vserial != null) {
+					$revoke_list[] = $vserial;
+				} else {
+					$input_errors[] = gettext("Invalid serial in list (Must be ASN.1 integer compatible decimal or hex string).");
+				}
 			}
 		}
 		if (empty($pconfig['certref']) && empty($revoke_list)) {

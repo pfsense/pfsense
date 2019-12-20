@@ -23,7 +23,7 @@ firewalls.
 pfSense started in 2004 as a fork of the m0n0wall Project which ended
 2015/02/15, though has diverged significantly since.
 
-pfSense is Copyright 2004-2018 Rubicon Communications, LLC (Netgate) and
+pfSense is Copyright 2004-2019 Rubicon Communications, LLC (Netgate) and
 published under an open source license. (https://pfsense.org/license)
 
 Read more at https://pfsense.org/ and support the team by buying bundled

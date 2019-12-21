@@ -106,12 +106,12 @@ if [ ${FSCK_ACTION_NEEDED} = 1 ]; then
 	/sbin/fsck -y -t ufs
 fi
 
-/sbin/mount -a 2>/dev/null
+/sbin/mount -a -o noatime 2>/dev/null
 mount_rc=$?
 attempts=0
 while [ ${mount_rc} -ne 0 -a ${attempts} -lt 10 ]; do
 	/sbin/fsck -y -t ufs
-	/sbin/mount -a 2>/dev/null
+	/sbin/mount -a -o noatime 2>/dev/null
 	mount_rc=$?
 	attempts=$((attempts+1))
 done

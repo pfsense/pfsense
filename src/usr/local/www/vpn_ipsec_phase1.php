@@ -468,7 +468,8 @@ if ($_POST['save']) {
 		/* the ipsec_configure() handles adding the route */
 		if ($pconfig['interface'] <> "wan") {
 			if ($old_ph1ent['remote-gateway'] <> $pconfig['remotegw']) {
-				mwexec("/sbin/route delete -host {$old_ph1ent['remote-gateway']}");
+                                $rgateway = exec("/sbin/route -n show {$old_ph1ent} | grep gateway | cut -d' ' -f6");
+				mwexec("/sbin/route delete -host {$old_ph1ent['remote-gateway']} {$rgateway}");
 			}
 		}
 

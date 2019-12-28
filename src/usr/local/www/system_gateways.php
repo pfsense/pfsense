@@ -142,8 +142,9 @@ function delete_gateway_item($id) {
 	    !isset($a_gateways[$id]['disabled']) &&
 	    isset($a_gateways[$id]['isdefaultgw'])) {
 		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? '-inet6' : '-inet');
+		$rgateway = $a_gateways[$id]['gateway'];
 		file_put_contents("/dev/console", "\n[".getmypid()."] DEL_GW, route= delete {$inet} default");
-		mwexec("/sbin/route delete {$inet} default");
+		mwexec("/sbin/route delete {$inet} default {$rgateway}");
 	}
 
 	/* NOTE: Cleanup static routes for the interface route if any */
@@ -152,8 +153,9 @@ function delete_gateway_item($id) {
 	    isset($a_gateways[$id]["nonlocalgateway"])) {
 		$realif = get_real_interface($a_gateways[$id]['interface']);
 		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? "-inet6" : "-inet");
+		$rgateway = $a_gateways[$id]['gateway'];
 		file_put_contents("/dev/console", "\n[".getmypid()."] DEL_GW, route= $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif));
-		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif);
+		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif) . " " . escapeshellarg($rgateway);
 		mwexec($cmd);
 	}
 	/* NOTE: Cleanup static routes for the monitor ip if any */
@@ -161,10 +163,11 @@ function delete_gateway_item($id) {
 	    $a_gateways[$id]['monitor'] != "dynamic" &&
 	    is_ipaddr($a_gateways[$id]['monitor']) &&
 	    $a_gateways[$id]['gateway'] != $a_gateways[$id]['monitor']) {
+		$rgateway = $a_gateways[$id]['gateway'];
 		if (is_ipaddrv4($a_gateways[$id]['monitor'])) {
-			mwexec("/sbin/route delete " . escapeshellarg($a_gateways[$id]['monitor']));
+			mwexec("/sbin/route delete " . escapeshellarg($a_gateways[$id]['monitor']) . " " . escapeshellarg($rgateway));
 		} else {
-			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateways[$id]['monitor']));
+			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateways[$id]['monitor']) . " " . escapeshellarg($rgateway)));
 		}
 	}
 

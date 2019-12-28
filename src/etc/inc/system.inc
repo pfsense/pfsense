@@ -206,7 +206,7 @@ function system_resolvconf_generate($dynupdate = false) {
 				mwexec("/sbin/route delete -host {$inet6}{$dnsserver} {$gatewayip}");
 				if (isset($config['system']['route-debug'])) {
 					$mt = microtime();
-					log_error("ROUTING debug: $mt - route delete -host {$inet6}{$dnsserver}");
+					log_error("ROUTING debug: $mt - route delete -host {$inet6}{$dnsserver} {$gatewayip}");
 				}
 			}
 		}
@@ -942,7 +942,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 				mwexec("/sbin/route delete " . escapeshellarg($ip) . " " . escapeshellarg($gatewayip), true);
 				if (isset($config['system']['route-debug'])) {
 					$mt = microtime();
-					log_error("ROUTING debug: $mt - route delete $ip ");
+					log_error("ROUTING debug: $mt - route delete $ip $gatewayip ");
 				}
 			}
 
@@ -952,7 +952,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 					mwexec("/sbin/route delete " . escapeshellarg($ip) . " " . escapeshellarg($gatewayip), true);
 					if (isset($config['system']['route-debug'])) {
 						$mt = microtime();
-						log_error("ROUTING debug: $mt - route delete $ip ");
+						log_error("ROUTING debug: $mt - route delete $ip $gatewayip ");
 					}
 				}
 				continue;

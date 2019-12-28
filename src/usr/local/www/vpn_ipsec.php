@@ -197,7 +197,8 @@ if ($_POST['apply']) {
 	} else if (isset($delbtn)) {
 		/* remove static route if interface is not WAN */
 		if ($a_phase1[$delbtn]['interface'] <> "wan") {
-			mwexec("/sbin/route delete -host {$a_phase1[$delbtn]['remote-gateway']}");
+			$rgateway = exec("/sbin/route -n show {$a_phase1[$delbtn]['remote-gateway']} | grep gateway | cut -d' ' -f6");
+			mwexec("/sbin/route delete -host {$a_phase1[$delbtn]['remote-gateway']} {$rgateway}");
 		}
 
 		/* remove all phase2 entries that match the ikeid */

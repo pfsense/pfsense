@@ -2026,17 +2026,19 @@ function save_gateway($gateway_settings, $realid = "") {
 		isset($a_gateway_item[$realid]["nonlocalgateway"])) {
 		$realif = get_real_interface($a_gateway_item[$realid]['interface']);
 		$inet = (!is_ipaddrv4($a_gateway_item[$realid]['gateway']) ? "-inet6" : "-inet");
-		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateway_item[$realid]['gateway']) . " -iface " . escapeshellarg($realif);
+		$gateway = $a_gateway_item[$realid]['gateway'];
+		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateway_item[$realid]['gateway']) . " -iface " . escapeshellarg($realif . " " . escapeshellarg($gateway));
 		mwexec($cmd);
 	}
 
 	/* NOTE: If monitor ip is changed need to cleanup the old static route */
 	if ($gateway_settings['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
 		$gateway_settings['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
+		$gateway = $a_gateway_item[$realid]['gateway'];
 		if (is_ipaddrv4($a_gateway_item[$realid]['monitor'])) {
-			mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$realid]['monitor']));
+			mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$realid]['monitor']) . " " . escapeshellarg($gateway));
 		} else {
-			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$realid]['monitor']));
+			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$realid]['monitor']) . " " . escapeshellarg($gateway));
 		}
 	}
 
@@ -2125,7 +2127,7 @@ function gateway_set_enabled($name, $enabled) {
 					$cgw = getcurrentdefaultgatewayip('inet6');
 				}
 				if ($gateway['gateway'] == $cgw) {
-					mwexec("/sbin/route delete -{$inet} default");
+					mwexec("/sbin/route delete -{$inet} default {$cgw}");
 				}
 			}
 			$gateway['disabled'] = true;

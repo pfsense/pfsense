@@ -202,7 +202,8 @@ function system_resolvconf_generate($dynupdate = false) {
 				route_add_or_change("-host {$inet6}{$dnsserver} {$gatewayip}");
 			} else {
 				/* Remove old route when disable gw */
-				mwexec("/sbin/route -q delete -host {$inet6}{$dnsserver}");
+				$gatewayip = exec("/sbin/route -n show {$dnsserver} | grep gateway | cut -d' ' -f6");
+				mwexec("/sbin/route delete -host {$inet6}{$dnsserver} {$gatewayip}");
 				if (isset($config['system']['route-debug'])) {
 					$mt = microtime();
 					log_error("ROUTING debug: $mt - route delete -host {$inet6}{$dnsserver}");
@@ -938,7 +939,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 				if (in_array($ip, $ips)) {
 					continue;
 				}
-				mwexec("/sbin/route delete " . escapeshellarg($ip), true);
+				mwexec("/sbin/route delete " . escapeshellarg($ip) . " " . escapeshellarg($gatewayip), true);
 				if (isset($config['system']['route-debug'])) {
 					$mt = microtime();
 					log_error("ROUTING debug: $mt - route delete $ip ");
@@ -948,7 +949,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 			if (isset($rtent['disabled'])) {
 				/* XXX: This can break things by deleting routes that shouldn't be deleted - OpenVPN, dynamic routing scenarios, etc. redmine #3709 */
 				foreach ($ips as $ip) {
-					mwexec("/sbin/route delete " . escapeshellarg($ip), true);
+					mwexec("/sbin/route delete " . escapeshellarg($ip) . " " . escapeshellarg($gatewayip), true);
 					if (isset($config['system']['route-debug'])) {
 						$mt = microtime();
 						log_error("ROUTING debug: $mt - route delete $ip ");

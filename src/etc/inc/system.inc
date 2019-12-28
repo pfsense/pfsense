@@ -203,7 +203,7 @@ function system_resolvconf_generate($dynupdate = false) {
 			} else {
 				/* Remove old route when disable gw */
 				$gatewayip = exec("/sbin/route -n show {$dnsserver} | grep gateway | cut -d' ' -f6");
-				mwexec("/sbin/route delete -host {$inet6}{$dnsserver} {$gatewayip}");
+				mwexec("/sbin/route -q delete -host {$inet6}{$dnsserver} {$gatewayip}");
 				if (isset($config['system']['route-debug'])) {
 					$mt = microtime();
 					log_error("ROUTING debug: $mt - route delete -host {$inet6}{$dnsserver} {$gatewayip}");

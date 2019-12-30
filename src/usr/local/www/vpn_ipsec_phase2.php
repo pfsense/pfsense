@@ -785,7 +785,9 @@ events.push(function() {
 		} else if (value == 'vti') {
 			hideClass('opt_localid', false);
 			hideClass('opt_natid', true);
-			$('#localid_type').val('network');
+			hideClass('opt_remoteid', false);
+			$('#localid_type').val('address');
+			disableInput('localid_type', true);
 			typesel_change_local(30);
 			$('#remoteid_type').val('address');
 			disableInput('remoteid_type', true);

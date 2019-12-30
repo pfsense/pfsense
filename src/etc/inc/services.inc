@@ -249,50 +249,52 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdconf .= "\t};\n";
 
 		/* add DNS servers */
-		$dnslist = array();
-		if (isset($dhcpv6ifconf['rasamednsasdhcp6']) && is_array($dhcpv6ifconf['dnsserver']) && !empty($dhcpv6ifconf['dnsserver'])) {
-			foreach ($dhcpv6ifconf['dnsserver'] as $server) {
-				if (is_ipaddrv6($server)) {
-					$dnslist[] = $server;
+		if ($dhcpv6ifconf['radvd-dns'] != 'disabled') {
+			$dnslist = array();
+			if (isset($dhcpv6ifconf['rasamednsasdhcp6']) && is_array($dhcpv6ifconf['dnsserver']) && !empty($dhcpv6ifconf['dnsserver'])) {
+				foreach ($dhcpv6ifconf['dnsserver'] as $server) {
+					if (is_ipaddrv6($server)) {
+						$dnslist[] = $server;
+					}
+				}
+			} elseif (!isset($dhcpv6ifconf['rasamednsasdhcp6']) && isset($dhcpv6ifconf['radnsserver']) && is_array($dhcpv6ifconf['radnsserver'])) {
+				foreach ($dhcpv6ifconf['radnsserver'] as $server) {
+					if (is_ipaddrv6($server)) {
+						$dnslist[] = $server;
+					}
+				}
+			} elseif (isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable'])) {
+				$dnslist[] = get_interface_ipv6($realif);
+			} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
+				foreach ($config['system']['dnsserver'] as $server) {
+					if (is_ipaddrv6($server)) {
+						$dnslist[] = $server;
+					}
 				}
 			}
-		} elseif (!isset($dhcpv6ifconf['rasamednsasdhcp6']) && isset($dhcpv6ifconf['radnsserver']) && is_array($dhcpv6ifconf['radnsserver'])) {
-			foreach ($dhcpv6ifconf['radnsserver'] as $server) {
-				if (is_ipaddrv6($server)) {
-					$dnslist[] = $server;
+			if (count($dnslist) > 0) {
+				$dnsstring = implode(" ", $dnslist);
+				if ($dnsstring <> "") {
+					$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
 				}
 			}
-		} elseif (isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable'])) {
-			$dnslist[] = get_interface_ipv6($realif);
-		} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
-			foreach ($config['system']['dnsserver'] as $server) {
-				if (is_ipaddrv6($server)) {
-					$dnslist[] = $server;
-				}
-			}
-		}
-		if (count($dnslist) > 0) {
-			$dnsstring = implode(" ", $dnslist);
-			if ($dnsstring <> "") {
-				$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
-			}
-		}
 
-		$searchlist = array();
-		$domainsearchlist = explode(';', $dhcpv6ifconf['radomainsearchlist']);
-		foreach ($domainsearchlist as $sd) {
-			$sd = trim($sd);
-			if (is_hostname($sd)) {
-				$searchlist[] = $sd;
+			$searchlist = array();
+			$domainsearchlist = explode(';', $dhcpv6ifconf['radomainsearchlist']);
+			foreach ($domainsearchlist as $sd) {
+				$sd = trim($sd);
+				if (is_hostname($sd)) {
+					$searchlist[] = $sd;
+				}
 			}
-		}
-		if (count($searchlist) > 0) {
-			$searchliststring = trim(implode(" ", $searchlist));
-		}
-		if (!empty($dhcpv6ifconf['domain'])) {
-			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} {$searchliststring} { };\n";
-		} elseif (!empty($config['system']['domain'])) {
-			$radvdconf .= "\tDNSSL {$config['system']['domain']} {$searchliststring} { };\n";
+			if (count($searchlist) > 0) {
+				$searchliststring = trim(implode(" ", $searchlist));
+			}
+			if (!empty($dhcpv6ifconf['domain'])) {
+				$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} {$searchliststring} { };\n";
+			} elseif (!empty($config['system']['domain'])) {
+				$radvdconf .= "\tDNSSL {$config['system']['domain']} {$searchliststring} { };\n";
+			}
 		}
 		$radvdconf .= "};\n";
 	}
@@ -369,24 +371,26 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdconf .= "\t};\n";
 
 		/* add DNS servers */
-		$dnslist = array();
-		if (isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable'])) {
-			$dnslist[] = $ifcfgipv6;
-		} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
-			foreach ($config['system']['dnsserver'] as $server) {
-				if (is_ipaddrv6($server)) {
-					$dnslist[] = $server;
+		if ($dhcpv6ifconf['radvd-dns'] != 'disabled') {
+			$dnslist = array();
+			if (isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable'])) {
+				$dnslist[] = $ifcfgipv6;
+			} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
+				foreach ($config['system']['dnsserver'] as $server) {
+					if (is_ipaddrv6($server)) {
+						$dnslist[] = $server;
+					}
 				}
 			}
-		}
-		if (count($dnslist) > 0) {
-			$dnsstring = implode(" ", $dnslist);
-			if (!empty($dnsstring)) {
-				$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
+			if (count($dnslist) > 0) {
+				$dnsstring = implode(" ", $dnslist);
+				if (!empty($dnsstring)) {
+					$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
+				}
 			}
-		}
-		if (!empty($config['system']['domain'])) {
-			$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
+			if (!empty($config['system']['domain'])) {
+				$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
+			}
 		}
 		$radvdconf .= "};\n";
 	}
@@ -1434,20 +1438,24 @@ EOD;
 			$dnscfgv6 .= "	do-forward-updates false;\n";
 		}
 
-		if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
-			$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dhcpv6ifconf['dnsserver']) . ";";
-		} else if (((isset($config['dnsmasq']['enable'])) || isset($config['unbound']['enable'])) && (is_ipaddrv6($ifcfgipv6))) {
-			$dnscfgv6 .= "	option dhcp6.name-servers {$ifcfgipv6};";
-		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-			$dns_arrv6 = array();
-			foreach ($syscfg['dnsserver'] as $dnsserver) {
-				if (is_ipaddrv6($dnsserver)) {
-					$dns_arrv6[] = $dnsserver;
+		if ($dhcpv6ifconf['dhcp6c-dns'] != 'disabled') {
+			if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
+				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dhcpv6ifconf['dnsserver']) . ";";
+			} else if (((isset($config['dnsmasq']['enable'])) || isset($config['unbound']['enable'])) && (is_ipaddrv6($ifcfgipv6))) {
+				$dnscfgv6 .= "	option dhcp6.name-servers {$ifcfgipv6};";
+			} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
+				$dns_arrv6 = array();
+				foreach ($syscfg['dnsserver'] as $dnsserver) {
+					if (is_ipaddrv6($dnsserver)) {
+						$dns_arrv6[] = $dnsserver;
+					}
+				}
+				if (!empty($dns_arrv6)) {
+					$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6) . ";";
 				}
 			}
-			if (!empty($dns_arrv6)) {
-				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6) . ";";
-			}
+		} else {
+			$dnscfgv6 .= "	#option dhcp6.name-servers --;";
 		}
 
 		if (!is_ipaddrv6($ifcfgipv6)) {

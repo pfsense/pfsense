@@ -50,6 +50,10 @@ function get_disks() {
 	$disks_array = array();
 	$disks_s = explode(" ", get_single_sysctl("kern.disks"));
 	foreach ($disks_s as $disk) {
+		/* Ignore the flash devices (ARM). */
+		if (strstr($disk, "flash")) {
+			continue;
+		}
 		if (trim($disk)) {
 			$disks_array[] = $disk;
 		}

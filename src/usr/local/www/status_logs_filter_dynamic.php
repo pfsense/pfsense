@@ -475,7 +475,7 @@ if ($tcpcnt > 0) {
 ?>
 <div class="infoblock">
 <?php
-	print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags">' .
+	print_info_box('<a href="https://docs.netgate.com/pfsense/en/latest/firewall/tcp-flag-definitions.html">' .
 					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR.', 'info', false);
 ?>
 </div>

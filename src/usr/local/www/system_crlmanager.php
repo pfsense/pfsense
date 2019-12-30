@@ -123,11 +123,21 @@ switch ($act) {
 		if (!is_array($pconfig['certref'])) {
 			$pconfig['certref'] = array();
 		}
-		if (empty($pconfig['certref']) && !cert_validate_serial($pconfig['revokeserial'])) {
-			$input_errors[] = gettext("Select one or more certificates or enter a serial number to revoke.");
-		}
 		if (!is_crl_internal($crl)) {
 			$input_errors[] = gettext("Cannot revoke certificates for an imported/external CRL.");
+		}
+		if (!empty($pconfig['revokeserial'])) {
+			foreach (explode(' ', $pconfig['revokeserial']) as $serial) {
+				$vserial = cert_validate_serial($serial, true, true);
+				if ($vserial != null) {
+					$revoke_list[] = $vserial;
+				} else {
+					$input_errors[] = gettext("Invalid serial in list (Must be ASN.1 integer compatible decimal or hex string).");
+				}
+			}
+		}
+		if (empty($pconfig['certref']) && empty($revoke_list)) {
+			$input_errors[] = gettext("Select one or more certificates or enter a serial number to revoke.");
 		}
 		foreach ($pconfig['certref'] as $rcert) {
 			$cert = lookup_cert($rcert);
@@ -135,17 +145,6 @@ switch ($act) {
 				$revoke_list[] = $cert;
 			} else {
 				$input_errors[] = gettext("CA mismatch between the Certificate and CRL. Unable to Revoke.");
-			}
-		}
-		foreach (explode(' ', $pconfig['revokeserial']) as $serial) {
-			if (!is_numeric($serial)) {
-				continue;
-			}
-			$vserial = cert_validate_serial($serial, true, true);
-			if ($vserial != null) {
-				$revoke_list[] = $vserial;
-			} else {
-				$input_errors[] = gettext("Invalid serial in list (Must be ASN.1 integer compatible decimal or hex string).");
 			}
 		}
 		if (!$input_errors) {

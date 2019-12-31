@@ -142,9 +142,8 @@ function delete_gateway_item($id) {
 	    !isset($a_gateways[$id]['disabled']) &&
 	    isset($a_gateways[$id]['isdefaultgw'])) {
 		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? '-inet6' : '-inet');
-		$rgateway = $a_gateways[$id]['gateway'];
 		file_put_contents("/dev/console", "\n[".getmypid()."] DEL_GW, route= delete {$inet} default");
-		mwexec("/sbin/route delete {$inet} default {$rgateway}");
+		mwexec("/sbin/route delete {$inet} default " . escapeshellarg($a_gateways[$id]['gateway']));
 	}
 
 	/* NOTE: Cleanup static routes for the interface route if any */

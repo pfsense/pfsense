@@ -202,8 +202,8 @@ function system_resolvconf_generate($dynupdate = false) {
 				route_add_or_change("-host {$inet6}{$dnsserver} {$gatewayip}");
 			} else {
 				/* Remove old route when disable gw */
-				$gatewayip = exec("/sbin/route -n show {$dnsserver} | grep gateway | cut -d' ' -f6");
-				mwexec("/sbin/route -q delete -host {$inet6}{$dnsserver} {$gatewayip}");
+				$gatewayip = exec("/sbin/route -n get {$dnsserver} | /usr/bin/awk '/gateway:/ {print $2;}'");
+				mwexec("/sbin/route -q delete -host {$inet6}{$dnsserver} " . escapeshellarg($gatewayip));
 				if (isset($config['system']['route-debug'])) {
 					$mt = microtime();
 					log_error("ROUTING debug: $mt - route delete -host {$inet6}{$dnsserver} {$gatewayip}");

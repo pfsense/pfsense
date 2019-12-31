@@ -199,8 +199,9 @@ if ($_POST['save']) {
 				foreach ($delete_targets as $dts) {
 					if (is_ipaddrv6($dts)) {
 						$family = "-inet6";
-					$rgateway = exec("/sbin/route -n show {$dts} | grep gateway | cut -d' ' -f6");
-					$toapplylist[] = "/sbin/route delete {$family} {$dts} {$rgateway}";
+					}
+					$rgateway = exec("/sbin/route -n get {$dts} | /usr/bin/awk '/gateway:/ {print $2;}'");
+					$toapplylist[] = "/sbin/route delete {$family} {$dts} " . escapeshellarg($rgateway);
 				}
 			}
 		}

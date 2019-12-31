@@ -468,8 +468,8 @@ if ($_POST['save']) {
 		/* the ipsec_configure() handles adding the route */
 		if ($pconfig['interface'] <> "wan") {
 			if ($old_ph1ent['remote-gateway'] <> $pconfig['remotegw']) {
-                                $rgateway = exec("/sbin/route -n show {$old_ph1ent} | grep gateway | cut -d' ' -f6");
-				mwexec("/sbin/route delete -host {$old_ph1ent['remote-gateway']} {$rgateway}");
+                                $rgateway = exec("/sbin/route -n get {$old_ph1ent} | /usr/bin/awk '/gateway:/ {print $2;}'");
+				mwexec("/sbin/route delete -host {$old_ph1ent['remote-gateway']} " . escapeshellarg($rgateway));
 			}
 		}
 

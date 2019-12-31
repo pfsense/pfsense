@@ -51,6 +51,7 @@ if ($_POST['apply']) {
 if (isset($config['igmpproxy']['enable'])) {
 	$pconfig['enable'] = true;
 }
+$pconfig['igmpxverbose'] = isset($config['syslog']['igmpxverbose']);
 
 if ($_POST['save']) {
 	$pconfig = $_POST;
@@ -59,6 +60,7 @@ if ($_POST['save']) {
 	} else {
 		unset($config['igmpproxy']['enable']);
 	}
+	$config['syslog']['igmpxverbose'] = $_POST['igmpxverbose'] ? true : false;
 	write_config();
 	mark_subsystem_dirty('igmpproxy');
 	header("Location: services_igmpproxy.php");
@@ -98,6 +100,12 @@ $section->addInput(new Form_Checkbox(
 	'Enable',
 	'Enable IGMP',
 	$pconfig['enable']
+));
+$section->addInput(new Form_Checkbox(
+	'igmpxverbose',
+	'Verbose Logging',
+	'Enable verbose logging (Default is terse logging)',
+	$pconfig['igmpxverbose']
 ));
 
 $form->add($section);

@@ -2127,7 +2127,7 @@ function gateway_set_enabled($name, $enabled) {
 					$cgw = getcurrentdefaultgatewayip('inet6');
 				}
 				if ($gateway['gateway'] == $cgw) {
-					mwexec("/sbin/route delete -{$inet} default " . escapeshellarg{$cgw});
+					mwexec("/sbin/route delete -{$inet} default " . escapeshellarg($cgw));
 				}
 			}
 			$gateway['disabled'] = true;

@@ -200,7 +200,8 @@ if ($_POST['save']) {
 					if (is_ipaddrv6($dts)) {
 						$family = "-inet6";
 					}
-					$toapplylist[] = "/sbin/route delete {$family} {$dts}";
+					$rgateway = exec("/sbin/route -n get {$dts} | /usr/bin/awk '/gateway:/ {print $2;}'");
+					$toapplylist[] = "/sbin/route delete {$family} {$dts} " . escapeshellarg($rgateway);
 				}
 			}
 		}

@@ -2517,7 +2517,7 @@ function cert_build_list($type = 'cert', $consumer = '', $selectsource = false, 
 	/* Create a hashed array with the certificate refid as the key and
 	 * descriptive name as the value. Exclude incompatible certificates. */
 	foreach ($config[$type] as $cert) {
-		if (empty($cert['prv']) && $type == 'cert') {
+		if (empty($cert['prv']) && ($type == 'cert')) {
 			continue;
 		} else if (cert_check_pkey_compatibility($cert['prv'], $consumer)) {
 			if ($selectsource) {

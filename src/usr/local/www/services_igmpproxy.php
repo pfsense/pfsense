@@ -104,7 +104,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['enable']
 ));
 
-$section->addINput(new Form_Checkbox(
+$section->addInput(new Form_Checkbox(
 	'igmpxverbose',
 	'Verbose Logging',
 	'Enable verbose logging (Default is terse logging)',

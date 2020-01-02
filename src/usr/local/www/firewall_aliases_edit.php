@@ -881,5 +881,4 @@ events.push(function() {
 </script>
 
 <?php
-
 include("foot.inc");

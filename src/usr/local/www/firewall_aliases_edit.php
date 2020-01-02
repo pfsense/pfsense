@@ -121,6 +121,12 @@ if ($_POST['save']) {
 	$origname = $pconfig['name'];
 }
 
+if ($_REQUEST['exportaliases']) {
+	$expdata = str_replace(' ',"\n",$a_aliases[$id]['address']);
+	$expdata .= "\n";
+	send_user_download('data', $expdata, "{$_POST['origname']}.txt");
+}
+
 $tab = $_REQUEST['tab'];
 
 if (empty($tab)) {
@@ -742,6 +748,15 @@ while ($counter < count($addresses)) {
 	$counter++;
 }
 
+if ((isset($id) && $a_aliases[$id]) && !preg_match("/url/i", $pconfig['type'])) {
+	$form->addGlobal(new Form_Button(
+		'exportaliases',
+		'Export to file',
+		null,
+		'fa-download'
+	))->addClass('btn-primary');
+}
+
 $form->addGlobal(new Form_Button(
 	'addrow',
 	$btn_str[$tab],
@@ -866,4 +881,5 @@ events.push(function() {
 </script>
 
 <?php
+
 include("foot.inc");

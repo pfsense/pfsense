@@ -166,7 +166,7 @@ function delete_gateway_item($id) {
 		if (is_ipaddrv4($a_gateways[$id]['monitor'])) {
 			mwexec("/sbin/route delete " . escapeshellarg($a_gateways[$id]['monitor']) . " " . escapeshellarg($rgateway));
 		} else {
-			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateways[$id]['monitor']) . " " . escapeshellarg($rgateway)));
+			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateways[$id]['monitor']) . " " . escapeshellarg($rgateway));
 		}
 	}
 

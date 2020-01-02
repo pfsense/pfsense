@@ -370,7 +370,7 @@ if ($act == "new" || $act == gettext("Save")) {
 
 	$section->addInput(new Form_StaticText(
 		'Certificate Authority',
-		$crlca['descr'],
+		$crlca['descr']
 	));
 
 	if (!isset($id)) {

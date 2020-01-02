@@ -331,14 +331,14 @@ $section->addInput(new Form_Select(
 	'ntpminpoll',
 	'Minimum Poll Interval',
 	$pconfig['ntpminpoll'],
-	$ntp_poll_values,
+	$ntp_poll_values
 ))->setHelp('Minimum poll interval for NTP messages. If set, must be less than or equal to Maximum Poll Interval.');
 
 $section->addInput(new Form_Select(
 	'ntpmaxpoll',
 	'Maximum Poll Interval',
 	$pconfig['ntpmaxpoll'],
-	$ntp_poll_values,
+	$ntp_poll_values
 ))->setHelp('Maximum poll interval for NTP messages. If set, must be greater than or equal to Minimum Poll Interval.');
 
 $section->addInput(new Form_Checkbox(

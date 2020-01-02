@@ -266,7 +266,7 @@ $section->addInput(new Form_Select(
 	'format',
 	'Log Message Format',
 	!isset($pconfig['format']) ? 'rfc3164' : $pconfig['format'],
-	$syslog_formats,
+	$syslog_formats
 ))->setHelp('The format of syslog messages written to disk locally and sent to ' .
 	'remote syslog servers (if enabled).%s' .
 	'Changing this value will only affect new log messages.', '<br />');
@@ -370,7 +370,7 @@ $section->addInput(new Form_Select(
 	'logcompressiontype',
 	'Log Compression',
 	!isset($pconfig['logcompressiontype']) ? 'bzip2' : $pconfig['logcompressiontype'],
-	array_combine(array_keys($system_log_compression_types), array_keys($system_log_compression_types)),
+	array_combine(array_keys($system_log_compression_types), array_keys($system_log_compression_types))
 ))->setHelp('The type of compression to use when rotating log files. ' .
 	'Compressing rotated log files saves disk space, and the compressed logs remain available for display and searching in the GUI.%s' .
 	' WARNING: Changing this value will remove previously rotated compressed log files!', '<br />');

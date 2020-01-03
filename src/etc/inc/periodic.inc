@@ -3,7 +3,7 @@
  * periodic.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2020 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

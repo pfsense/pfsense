@@ -1869,7 +1869,7 @@ function ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, $modp) {
 	}
 
 	/* Add the hash algorithm (if present) */
-	if (!empty($halgo) && !strpos($ealg_id, "gcm")) {
+	if (!empty($halgo)) {
 		/* If there is some content in the propsal already, add a
 		 * separator */
 		if (!empty($palgo)) {

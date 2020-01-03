@@ -330,7 +330,7 @@ EOD;
 local3.*							{$g['varlog_path']}/vpn.log
 local5.*							{$g['varlog_path']}/nginx.log
 *.notice;kern.debug;lpr.info;mail.crit;daemon.none;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$g['varlog_path']}/system.log
-auth.info;authpriv.info 					|exec /usr/local/sbin/sshguard
+auth.info;authpriv.info 					|exec /usr/local/sbin/sshguard -i /var/run/sshguard.pid
 *.emerg								*
 
 EOD;
@@ -418,6 +418,7 @@ EOD;
 	}
 
 	$sshguard_config = array();
+	$sshguard_config[] = 'LOGREADER="/bin/cat"' . "\n";
 	$sshguard_config[] = 'BACKEND="/usr/local/libexec/sshg-fw-pf"' . "\n";
 	if (!empty($config['system']['sshguard_threshold'])) {
 		$sshguard_config[] = 'THRESHOLD=' .

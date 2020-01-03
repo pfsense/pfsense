@@ -163,21 +163,37 @@ switch ($act) {
 		/* Exporting a private key */
 		$keyout = base64_decode($thiscert['prv']);
 		if (isset($_POST['exportpass']) && !empty($_POST['exportpass'])) {
-			$res_key = openssl_pkey_get_private($keyout);
-			if ($res_key) {
-				openssl_pkey_export($res_key, $keyout, $_POST['exportpass']);
-			} else {
-				$savemsg = gettext("Unable to export password-protected private key.");
-				$class = 'danger';
-			}
-		}
+                        if ((strlen($_POST['exportpass']) < 4) or (strlen($_POST['exportpass']) > 1023)) {
+                                        $savemsg = gettext("Export password must be in 4 to 1023 characters.");
+                                        $class = 'danger';
+                                        break;
+                        } else {
+                                $res_key = openssl_pkey_get_private($keyout);
+                                if ($res_key) {
+                                        openssl_pkey_export($res_key, $keyout, $_POST['exportpass']);
+                                } else {
+                                        $savemsg = gettext("Unable to export password-protected private key.");
+                                        $class = 'danger';
+                                }
+                        }
+                }
 		if (!empty($keyout)) {
 			send_user_download('data', $keyout, "{$thiscert['descr']}.key");
 		}
 		break;
 	case 'p12':
 		/* Exporting a PKCS#12 file containing the certificate, key, and (if present) CA */
-		$password = (isset($_POST['exportpass']) && !empty($_POST['exportpass'])) ? $_POST['exportpass'] : null;
+		if (isset($_POST['exportpass']) && !empty($_POST['exportpass'])) {
+                        if ((strlen($_POST['exportpass']) < 4) or (strlen($_POST['exportpass']) > 1023)) {
+                                $savemsg = gettext("Export password must be in 4 to 1023 characters.");
+                                $class = 'danger';
+                                break;
+                        } else {
+                                $password = $_POST['exportpass'];
+                        }
+                } else {
+                        $password = null;
+                }
 		$args = array();
 		$args['friendly_name'] = $thiscert['descr'];
 		$ca = lookup_ca($thiscert['caref']);

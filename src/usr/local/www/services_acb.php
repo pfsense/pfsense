@@ -42,15 +42,6 @@ $decrypt_password = $config['system']['acb']['encryption_password'];
 $username = strtolower($config['system']['acb']['gold_username']);
 $password = $config['system']['acb']['gold_password'];
 
-// URL to restore.php
-$get_url = "https://portal.pfsense.org/pfSconfigbackups/restore.php";
-
-// URL to stats
-$stats_url = "https://portal.pfsense.org/pfSconfigbackups/showstats.php";
-
-// URL to delete.php
-$del_url = "https://portal.pfsense.org/pfSconfigbackups/delete.php";
-
 // Set hostname
 if ($_REQUEST['hostname']) {
 	$hostname = $_REQUEST['hostname'];
@@ -82,42 +73,6 @@ $mytz = new DateTimeZone(date_default_timezone_get());
 
 include("head.inc");
 
-function get_hostnames() {
-	global $stats_url, $username, $password, $oper_sep, $config, $g, $exp_sep;
-	// Populate available backups
-	$curl_session = curl_init();
-	curl_setopt($curl_session, CURLOPT_URL, $stats_url);
-	curl_setopt($curl_session, CURLOPT_HTTPHEADER, array("Authorization: Basic " . base64_encode("{$username}:{$password}")));
-	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
-	curl_setopt($curl_session, CURLOPT_POST, 1);
-	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($curl_session, CURLOPT_POSTFIELDS, "action=showstats");
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
-	// Proxy
-	curl_setopt_array($curl_session, configure_proxy());
-
-	$data = curl_exec($curl_session);
-	if (curl_errno($curl_session)) {
-		$fd = fopen("/tmp/acb_statsdebug.txt", "w");
-		fwrite($fd, $stats_url . "" . "action=showstats" . "\n\n");
-		fwrite($fd, $data);
-		fwrite($fd, curl_error($curl_session));
-		fclose($fd);
-	} else {
-		curl_close($curl_session);
-	}
-
-	// Loop through and create new confvers
-	$data_split = explode("\n", $data);
-	$statvers = array();
-	foreach ($data_split as $ds) {
-		$ds_split = explode($exp_sep, $ds);
-		if ($ds_split[0]) {
-			$statvers[] = $ds_split[0];
-		}
-	}
-	return $statvers;
-}
 
 if ($_REQUEST['rmver'] != "") {
 	$curl_session = curl_init();
@@ -136,11 +91,11 @@ if ($_REQUEST['rmver'] != "") {
 	$data = curl_exec($curl_session);
 	if (curl_errno($curl_session)) {
 		$fd = fopen("/tmp/acb_deletedebug.txt", "w");
-		fwrite($fd, $get_url . "" . "action=delete&hostname=" . urlencode($hostname) . "&revision=" . urlencode($_REQUEST['rmver']) . "\n\n");
+		fwrite($fd, "https://acb.netgate.com/rmbkp" . "" . "action=delete&hostname=" . urlencode($hostname) . "&revision=" . urlencode($_REQUEST['rmver']) . "\n\n");
 		fwrite($fd, $data);
 		fwrite($fd, curl_error($curl_session));
 		fclose($fd);
-		$savemsg = "An error occurred while trying to remove the item from portal.pfsense.org.";
+		$savemsg = "An error occurred while trying to remove the item from acb.netgate.com.";
 	} else {
 		curl_close($curl_session);
 		$budate = new DateTime($_REQUEST['rmver'], $acbtz);
@@ -197,7 +152,7 @@ if ($_REQUEST['newver'] != "") {
 	if (curl_errno($curl_session)) {
 		/* If an error occurred, log the error in /tmp/ */
 		$fd = fopen("/tmp/acb_restoredebug.txt", "w");
-		fwrite($fd, $get_url . "" . "action=restore&hostname={$hostname}&revision=" . urlencode($_REQUEST['newver']) . "\n\n");
+		fwrite($fd, "https://acb.netgate.com/getbkp" . "" . "action=restore&hostname={$hostname}&revision=" . urlencode($_REQUEST['newver']) . "\n\n");
 		fwrite($fd, $data);
 		fwrite($fd, curl_error($curl_session));
 		fclose($fd);
@@ -284,7 +239,7 @@ if ( !($_REQUEST['download']) || $input_errors) {
 
 	if (curl_errno($curl_session)) {
 		$fd = fopen("/tmp/acb_backupdebug.txt", "w");
-		fwrite($fd, $get_url . "" . "action=showbackups" . "\n\n");
+		fwrite($fd, "https://acb.netgate.com/list" . "" . "action=showbackups" . "\n\n");
 		fwrite($fd, $data);
 		fwrite($fd, curl_error($curl_session));
 		fclose($fd);
@@ -339,8 +294,6 @@ if ($_REQUEST['download']) {
 $tab_array[] = array("Backup now", false, "/services_acb_backup.php");
 
 display_top_tabs($tab_array);
-
-$hostnames = get_hostnames();
 ?>
 
 <div id="loading">

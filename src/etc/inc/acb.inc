@@ -127,7 +127,7 @@ function configure_proxy() {
 }
 
 function test_connection($post) {
-	global $savemsg, $config, $g, $legacy;
+	global $savemsg, $config, $g;
 
 	// Do nothing when booting or when not enabled
 	if (platform_booting() || !acb_enabled()) {
@@ -150,16 +150,11 @@ function test_connection($post) {
 	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
 
 	// URL to restore.php
-	$get_url = $legacy ? "https://portal.pfsense.org/pfSconfigbackups/restore.php":"https://acb.netgate.com/getbkp";
+	$get_url = "https://acb.netgate.com/getbkp";
 
 	// Populate available backups
 	$curl_session = curl_init();
 	curl_setopt($curl_session, CURLOPT_URL, $get_url);
-
-	if ($legacy) {
-		curl_setopt($curl_session, CURLOPT_HTTPHEADER, array("Authorization: Basic " . base64_encode("{$username}:{$password}")));
-	}
-
 	curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_setopt($curl_session, CURLOPT_POST, 1);
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
@@ -198,7 +193,7 @@ function upload_config($manual = false) {
 	}
 
 	/*
-	 * pfSense upload config to pfSense.org script
+	 * pfSense upload config to acb.netgate.com script
 	 * This file plugs into config.inc (/usr/local/pkg/parse_config)
 	 * and runs every time the running firewall filter changes.
 	 *
@@ -314,7 +309,7 @@ function upload_config($manual = false) {
 
 		} else {
 			// Debugging
-			//log_error("No https://portal.pfsense.org backup required.");
+			//log_error("No https://acb.netgate.com backup required.");
 		}
 	}
 }

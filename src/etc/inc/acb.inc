@@ -245,7 +245,7 @@ function upload_config($manual = false) {
 		/* If configuration has changed, upload to pfS */
 		if ($last_backup_date <> $last_config_change) {
 
-			$notice_text = "Beginning configuration backup to ." . $upload_url;
+			$notice_text = "Beginning configuration backup to " . $upload_url;
 			log_error($notice_text);
 			update_filter_reload_status($notice_text);
 

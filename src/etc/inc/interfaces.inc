@@ -2557,7 +2557,7 @@ EOD;
 
 	/* Set temporary bogon (RFC 5737) IPv4 addresses to work round mpd5 IPv6CP issue causing */
 	/* random IPv6 interface identifier during boot. More details at */
-	/* https://forum.pfsense.org/index.php?topic=101967.msg570519#msg570519 */
+	/* https://forum.netgate.com/post/592474 */
 	if (platform_booting() && is_array($config['interfaces'])) {
 		$count = 0;
 		foreach ($config['interfaces'] as $tempifacename => $tempiface) {

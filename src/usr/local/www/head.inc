@@ -417,10 +417,6 @@ $diagnostics_menu[] = array(gettext("Packet Capture"), "/diag_packet_capture.php
 
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")), 0);
 
-$gold_menu = array();
-$gold_menu[] = array(gettext("pfSense Gold"), "https://www.pfsense.org/gold");
-$gold_menu = msort(array_merge($gold_menu, return_ext_menu("Gold")), 0);
-
 if (!$g['disablehelpmenu']) {
 	$help_menu = array();
 	$help_menu[] = array(gettext("About this Page"), $helpurl);
@@ -497,7 +493,6 @@ if (are_notices_pending()) {
 					['name' => 'VPN',		     'menu' => $vpn_menu,		  'href' => null],
 					['name' => 'Status',	     'menu' => $status_menu,	  'href' => null],
 					['name' => 'Diagnostics',    'menu' => $diagnostics_menu, 'href' => null],
-//					['name' => 'Gold',		     'menu' => $gold_menu,		  'href' => '_blank'],
                     ['name' => $help_menu_title, 'menu' => $help_menu,		  'href' => '_blank']
 				] as $item):
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {

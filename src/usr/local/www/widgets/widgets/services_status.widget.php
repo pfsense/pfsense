@@ -3,7 +3,7 @@
  * services_status.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2019 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2020 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Sam Wenham
  * All rights reserved.
  *

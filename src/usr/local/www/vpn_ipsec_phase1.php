@@ -859,7 +859,6 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 	$counter += 1;
 }
 $section->addInput(new Form_StaticText('', ''))->setHelp('Note: Blowfish, 3DES, CAST128, MD5, SHA1, and DH groups 1, 2, 22, 23, and 24 provide weak security and should be avoided.');
-$form->add($section);
 
 $btnaddopt = new Form_Button(
 	'algoaddrow',
@@ -1238,7 +1237,6 @@ events.push(function() {
 	peeridsel_change();
 	iketype_change();
 	methodsel_change();
-	rekeychkbox_change();
 	dpdchkbox_change();
 <?php
 foreach($pconfig['encryption']['item'] as $key => $p1enc) {

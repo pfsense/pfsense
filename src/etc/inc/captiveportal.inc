@@ -360,8 +360,8 @@ EOD;
 		captiveportal_write_elements();
 
 		/* kill any running CP nginx instances */
-		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal.pid");
-		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal-SSL.pid");
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal.pid", 0.1);
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal-SSL.pid", 0.1);
 
 		/* start up the webserving daemon */
 		captiveportal_init_webgui_zone($cpcfg);

@@ -83,4 +83,4 @@ failover peer "Failover-2GETHER" state {
 ## Defect reports
 https://github.com/al-right/pfSense-dhcpv6-gui-leases-patch<br/>
 https://redmine.pfsense.org/<br/>
-, but if in doubt first try https://forum.pfsense.org
+, but if in doubt first try https://forum.netgate.com/

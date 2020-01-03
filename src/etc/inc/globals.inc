@@ -67,7 +67,6 @@ $g = array(
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
-	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
 	"latest_config" => "19.1",
 	"minimum_ram_warning" => "101",

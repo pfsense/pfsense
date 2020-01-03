@@ -258,7 +258,7 @@ function upload_config($manual = false) {
 			// Mount RW (if needed)
 			conf_mount_rw();
 
-			$notice_text = "Beginning configuration backup to ." . $upload_url;
+			$notice_text = "Beginning configuration backup to " . $upload_url;
 			log_error($notice_text);
 			update_filter_reload_status($notice_text);
 

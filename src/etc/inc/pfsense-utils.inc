@@ -1867,27 +1867,33 @@ function get_uptime_sec() {
 	return $uptime;
 }
 
+function fqdn_to_ip($hostname, $ipv6 = false) {
+	$domrecords = array();
+	$domips = array();
+	$qtype = ($ipv6 ? 'AAAA' : 'A');
+	exec("/usr/bin/host -t {$qtype} " . escapeshellarg($hostname), $domrecords, $rethost);
+	if ($rethost == 0) {
+		foreach ($domrecords as $domr) {
+			$doml = explode(" ", $domr);
+			$domip = ($ipv6 ? $doml[4] : $doml[3]);
+			/* fill array with domain ip addresses */
+			if (is_ipaddr($domip)) {
+				$domips[] = $domip;
+			}
+		}
+	}
+	sort($domips);
+	return $domips;
+}
+
 function add_hostname_to_watch($hostname) {
 	if (!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");
 	}
 	$result = array();
 	if ((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
-		$domrecords = array();
-		$domips = array();
-		exec("/usr/bin/host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
-		if ($rethost == 0) {
-			foreach ($domrecords as $domr) {
-				$doml = explode(" ", $domr);
-				$domip = $doml[3];
-				/* fill array with domain ip addresses */
-				if (is_ipaddr($domip)) {
-					$domips[] = $domip;
-				}
-			}
-		}
-		sort($domips);
 		$contents = "";
+		$domips = fqdn_to_ip($hostname);
 		if (!empty($domips)) {
 			foreach ($domips as $ip) {
 				$contents .= "$ip\n";
@@ -1937,21 +1943,8 @@ function compare_hostname_to_dnscache($hostname) {
 		$oldcontents = "";
 	}
 	if ((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
-		$domrecords = array();
-		$domips = array();
-		exec("/usr/bin/host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
-		if ($rethost == 0) {
-			foreach ($domrecords as $domr) {
-				$doml = explode(" ", $domr);
-				$domip = $doml[3];
-				/* fill array with domain ip addresses */
-				if (is_ipaddr($domip)) {
-					$domips[] = $domip;
-				}
-			}
-		}
-		sort($domips);
 		$contents = "";
+		$domips = fqdn_to_ip($hostname);
 		if (!empty($domips)) {
 			foreach ($domips as $ip) {
 				$contents .= "$ip\n";
@@ -2385,13 +2378,38 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 			if (!empty($tmp_str)) {
 				$tmp = $tmp_str;
 			}
-			$valid = (($type == "url" || $type == "urltable") && (is_ipaddr($tmp) || is_subnet($tmp))) ||
-				(($type == "url_ports" || $type == "urltable_ports") && is_port_or_range($tmp));
-			if ($valid) {
-				$items[] = $tmp;
-				if (count($items) == $max_items) {
+			switch ($type) {
+				case "url":
+				case "urltable":
+					if (is_ipaddr($tmp) || is_subnet($tmp)) {
+						$items[] = $tmp;
+						break;
+					}
+					if (is_fqdn($tmp)) {
+						$domipsv4 = fqdn_to_ip($tmp);
+						$domipsv6 = fqdn_to_ip($tmp, true);
+						$results = array_merge($domipsv4, $domipsv6);
+						if (!empty($results)) {
+							foreach ($results as $ip) {
+								if (is_ipaddr($ip)) {
+									$items[] = $ip;
+								}
+							}
+						}
+					}
+					break;
+				case "url_ports":
+				case "urltable_ports":
+					if (is_port_or_range($tmp)) {
+						$items[] = $tmp;
+					}
+					break;
+				default:
+					/* unknown type */
 					break;
 				}
+			if (count($items) == $max_items) {
+				break;
 			}
 		}
 	}

@@ -38,7 +38,8 @@ require_once("guiconfig.inc");
 $allow_query = !isset($config['ntpd']['noquery']);
 if (!empty($config['ntpd']['restrictions']['row']) && is_array($config['ntpd']['restrictions']['row'])) {
 	foreach ($config['ntpd']['restrictions']['row'] as $v) {
-		if (ip_in_subnet($_SERVER['REMOTE_ADDR'], "{$v['acl_network']}/{$v['mask']}")) {
+		if (ip_in_subnet('127.0.0.1', "{$v['acl_network']}/{$v['mask']}") || 
+		    ip_in_subnet('::1', "{$v['acl_network']}/{$v['mask']}")) {
 			$allow_query = !isset($v['noquery']);
 		}
 	}

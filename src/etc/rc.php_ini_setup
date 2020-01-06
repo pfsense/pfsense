@@ -21,7 +21,7 @@
 #
 
 # Set our operating platform
-VERSION=`/bin/cat /etc/version`
+VERSION=$(/bin/cat /etc/version)
 MIN_REALMEM_FOR_OPCACHE=512
 
 if /usr/local/sbin/pkg-static info -e php73; then
@@ -32,19 +32,19 @@ fi
 
 # Grab amount of memory that is detected
 if [ -f /var/log/dmesg.boot ]; then
-	AVAILMEM=`/bin/cat /var/log/dmesg.boot |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}'`
+	AVAILMEM=$(/bin/cat /var/log/dmesg.boot |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}')
 else
-	AVAILMEM=`/sbin/dmesg -a |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}'`
+	AVAILMEM=$(/sbin/dmesg -a |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}')
 fi
 
 if [ -z "$AVAILMEM" ]; then
-	MEM=`/sbin/sysctl -q hw.physmem | cut -d':' -f2`
-	AVAILMEM=`/bin/expr $MEM / 1048576`
+	MEM=$(/sbin/sysctl -q hw.physmem | cut -d':' -f2)
+	AVAILMEM=$(/bin/expr $MEM / 1048576)
 fi
 
 
 # Get amount of ram installed on this system
-REALMEM=`/sbin/sysctl -q hw.realmem | /usr/bin/awk '{print $2/1048576}' | /usr/bin/awk -F '.' '{print $1}'`
+REALMEM=$(/sbin/sysctl -q hw.realmem | /usr/bin/awk '{print $2/1048576}' | /usr/bin/awk -F '.' '{print $1}')
 export REALMEM
 export LOWMEM
 
@@ -144,7 +144,7 @@ PHP_ZEND_MODULES=""
 if [ -f /usr/local/etc/php.ini ]; then
 	/bin/rm /usr/local/etc/php.ini
 fi
-LOADED_MODULES=`/usr/local/bin/php-cgi -m | /usr/bin/grep -v "\["`
+LOADED_MODULES=$(/usr/local/bin/php-cgi -m | /usr/bin/grep -v "\[")
 
 unset TIMEZONE
 # Fetch the timezone from /var/db/zoneinfo if present
@@ -343,11 +343,11 @@ if [ -f /var/run/php_modules_load_errors.txt ]; then
 fi
 
 for EXT in $PHPMODULES; do
-	PHPMODULESLC="$PHPMODULESLC `echo "$EXT" | /usr/bin/tr '[:upper:]' '[:lower:]'`"
+	PHPMODULESLC="$PHPMODULESLC $(echo "$EXT" | /usr/bin/tr '[:upper:]' '[:lower:]')"
 done
 
 # Check loaded modules and remove anything that did not load correctly
-LOADED_MODULES=`/usr/local/bin/php-cgi -m | /usr/bin/tr '[:upper:]' '[:lower:]' 2>/dev/null | /usr/bin/grep -v "\["`
+LOADED_MODULES=$(/usr/local/bin/php-cgi -m | /usr/bin/tr '[:upper:]' '[:lower:]' 2>/dev/null | /usr/bin/grep -v "\[")
 for EXT in $PHPMODULESLC; do
 	SHOULDREMOVE="true"
 	for LM in $LOADED_MODULES; do

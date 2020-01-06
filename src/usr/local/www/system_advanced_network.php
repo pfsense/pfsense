@@ -395,16 +395,6 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('This option resets all states when a WAN IP Address changes instead of only '.
     'states associated with the previous IP Address.');
 
-if (get_freebsd_version() == 8) {
-	$section->addInput(new Form_Checkbox(
-		'flowtable',
-		'Enable flowtable support',
-		$pconfig['flowtable']
-	))->setHelp('Enables infrastructure for caching flows as a means of accelerating '.
-		'L3 and L2 lookups as well as providing stateful load balancing when used with '.
-		'RADIX_MPATH.');
-}
-
 $form->add($section);
 print $form;
 ?>

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ "${2}" != "DEINSTALL" ]; then
+if [ "${2}" = "POST-INSTALL" ]; then
 	exit 0
 fi
 

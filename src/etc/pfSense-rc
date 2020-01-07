@@ -79,9 +79,13 @@ if [ ! -z "${fsck_forced_iterations}" ]; then
 fi
 
 # Apply fix for https://www.freebsd.org/security/advisories/FreeBSD-SA-19:10.ufs.asc
+unset fsck_fix_applied
 if [ -f /.fix_for_SA-19-10.ufs ]; then
 	echo "Applying fix for FreeBSD-SA-19:10.ufs"
-	/sbin/fsck -t ufs -f -p -T ufs:-z
+	/sbin/fsck -t ufs -f -p -T ufs:-z >/dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		fsck_fix_applied=1
+	fi
 fi
 
 FSCK_ACTION_NEEDED=0
@@ -120,10 +124,6 @@ if [ ${mount_rc} -ne 0 ]; then
 	echo "ERROR: Impossible to mount filesystem, use interactive shell to attempt to recover it"
 	/bin/sh
 	/sbin/reboot
-fi
-
-if [ -f /.fix_for_SA-19-10.ufs ]; then
-	rm -f /.fix_for_SA-19-10.ufs
 fi
 
 # Handle ZFS read-only case
@@ -450,6 +450,27 @@ fi
 
 [ -z "$skip_packages" ] \
 	&& /usr/local/sbin/${product}-upgrade -y -U -b 3
+
+if [ -f /.fix_for_SA-19-10.ufs ]; then
+	# fsck fix already applied
+	if [ -n "${fsck_fix_applied}" ]; then
+		touch /cf/conf/applied_fix_for_SA-19-10.ufs
+		rm -f /.fix_for_SA-19-10.ufs
+	else
+		# if / is UFS, reroot instead of reboot
+		root_fstype=$(mount -p / | awk '{print $3}')
+		unset reroot
+		if [ "${root_fstype}" = "ufs" ]; then
+			reroot="-r"
+		fi
+
+		# fsck binary was old and didn't have -z option, then reboot
+		# and run again
+		echo "fsck needs to run to fix SA-10-10. Rebooting..."
+		/etc/rc.reboot ${reroot}
+		exit 0
+	fi
+fi
 
 # Start packages
 [ -z "$skip_packages" ] \

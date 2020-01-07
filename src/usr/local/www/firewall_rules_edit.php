@@ -516,6 +516,11 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+	if ((isset($_POST['srcnot']) && ($_POST['srctype'] == 'any')) ||
+	    (isset($_POST['dstnot']) && ($_POST['dsttype'] == 'any'))) {
+		$input_errors[] = gettext("Invert match cannot be selected with 'any'.");
+	}
+
 	if (!$_POST['srcbeginport']) {
 		$_POST['srcbeginport'] = 0;
 		$_POST['srcendport'] = 0;
@@ -1367,7 +1372,7 @@ foreach (['src' => gettext('Source'), 'dst' => gettext('Destination')] as $type 
 	$group->add(new Form_Checkbox(
 		$type .'not',
 		$name .' not',
-		'Invert match.',
+		'Invert match',
 		$pconfig[$type.'not']
 	))->setWidth(2);
 

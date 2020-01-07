@@ -78,15 +78,28 @@ if [ ! -z "${fsck_forced_iterations}" ]; then
 	done
 fi
 
+fsck_fix_flag_file="/.fix_for_SA-19-10.ufs"
+
 # Apply fix for https://www.freebsd.org/security/advisories/FreeBSD-SA-19:10.ufs.asc
 unset fsck_fix_applied
-if [ -f /.fix_for_SA-19-10.ufs ]; then
-	echo "Applying fix for FreeBSD-SA-19:10.ufs"
-	/sbin/fsck -t ufs -f -p -T ufs:-z >/dev/null 2>&1
-	if [ $? -eq 0 ]; then
-		fsck_fix_applied=1
+unset skip_fsck_fix
+unset fsck_fix_count
+if [ -f ${fsck_fix_flag_file} ]; then
+	if ! awk '{print $3}' /etc/fstab | grep -q ufs; then
+		echo "Fix for FreeBSD-SA-19:10.ufs is not needed in this system"
+		skip_fsck_fix=1
+	else
+		fsck_fix_count=$(cat ${fsck_fix_flag_file})
+		echo "Applying fix for FreeBSD-SA-19:10.ufs"
+		/sbin/fsck -t ufs -f -p -T ufs:-z >/dev/null 2>&1
+		if [ $? -eq 0 ]; then
+			fsck_fix_applied=1
+		fi
 	fi
 fi
+
+# Set it to 0 if it's empty
+fsck_fix_count=${fsck_fix_count:-0}
 
 FSCK_ACTION_NEEDED=0
 /sbin/fsck -p
@@ -451,11 +464,17 @@ fi
 [ -z "$skip_packages" ] \
 	&& /usr/local/sbin/${product}-upgrade -y -U -b 3
 
-if [ -f /.fix_for_SA-19-10.ufs ]; then
+if [ -n "${skip_fsck_fix}" ]; then
+	rm -f ${fsck_fix_flag_file}
+elif [ -f ${fsck_fix_flag_file} ]; then
 	# fsck fix already applied
 	if [ -n "${fsck_fix_applied}" ]; then
 		touch /cf/conf/applied_fix_for_SA-19-10.ufs
-		rm -f /.fix_for_SA-19-10.ufs
+		rm -f ${fsck_fix_flag_file}
+	elif [ ${fsck_fix_count} -ge 3 ]; then
+		echo "ERROR: fsck fix for SA-19-10 failed to apply..."
+		sleep 5
+		rm -f ${fsck_fix_flag_file}
 	else
 		# if / is UFS, reroot instead of reboot
 		root_fstype=$(mount -p / | awk '{print $3}')
@@ -463,6 +482,12 @@ if [ -f /.fix_for_SA-19-10.ufs ]; then
 		if [ "${root_fstype}" = "ufs" ]; then
 			reroot="-r"
 		fi
+
+		# fsck fix failed, increment escape counter to avoid infinite
+		# loop on a system with a broken filesystem
+		fsck_fix_count=$((fsck_fix_count+1))
+
+		echo "${fsck_fix_count}" > ${fsck_fix_flag_file}
 
 		# fsck binary was old and didn't have -z option, then reboot
 		# and run again

@@ -427,6 +427,39 @@ fi
 [ -x /usr/local/etc/rc.d/microcode_update ] \
 	&& /usr/local/etc/rc.d/microcode_update onestart
 
+if [ -n "${skip_fsck_fix}" ]; then
+	rm -f ${fsck_fix_flag_file}
+elif [ -f ${fsck_fix_flag_file} ]; then
+	# fsck fix already applied
+	if [ -n "${fsck_fix_applied}" ]; then
+		touch /cf/conf/applied_fix_for_SA-19-10.ufs
+		rm -f ${fsck_fix_flag_file}
+	elif [ ${fsck_fix_count} -ge 3 ]; then
+		echo "ERROR: fsck fix for SA-19-10 failed to apply..."
+		sleep 5
+		rm -f ${fsck_fix_flag_file}
+	else
+		# if / is UFS, reroot instead of reboot
+		root_fstype=$(mount -p / | awk '{print $3}')
+		unset reroot
+		if [ "${root_fstype}" = "ufs" ]; then
+			reroot="-r"
+		fi
+
+		# fsck fix failed, increment escape counter to avoid infinite
+		# loop on a system with a broken filesystem
+		fsck_fix_count=$((fsck_fix_count+1))
+
+		echo "${fsck_fix_count}" > ${fsck_fix_flag_file}
+
+		# fsck binary was old and didn't have -z option, then reboot
+		# and run again
+		echo "fsck needs to run to fix SA-10-10. Rebooting..."
+		/etc/rc.reboot ${reroot}
+		exit 0
+	fi
+fi
+
 /etc/rc.bootup
 
 # /etc/rc.bootup unset $g['booting'], and removes file
@@ -463,39 +496,6 @@ fi
 
 [ -z "$skip_packages" ] \
 	&& /usr/local/sbin/${product}-upgrade -y -U -b 3
-
-if [ -n "${skip_fsck_fix}" ]; then
-	rm -f ${fsck_fix_flag_file}
-elif [ -f ${fsck_fix_flag_file} ]; then
-	# fsck fix already applied
-	if [ -n "${fsck_fix_applied}" ]; then
-		touch /cf/conf/applied_fix_for_SA-19-10.ufs
-		rm -f ${fsck_fix_flag_file}
-	elif [ ${fsck_fix_count} -ge 3 ]; then
-		echo "ERROR: fsck fix for SA-19-10 failed to apply..."
-		sleep 5
-		rm -f ${fsck_fix_flag_file}
-	else
-		# if / is UFS, reroot instead of reboot
-		root_fstype=$(mount -p / | awk '{print $3}')
-		unset reroot
-		if [ "${root_fstype}" = "ufs" ]; then
-			reroot="-r"
-		fi
-
-		# fsck fix failed, increment escape counter to avoid infinite
-		# loop on a system with a broken filesystem
-		fsck_fix_count=$((fsck_fix_count+1))
-
-		echo "${fsck_fix_count}" > ${fsck_fix_flag_file}
-
-		# fsck binary was old and didn't have -z option, then reboot
-		# and run again
-		echo "fsck needs to run to fix SA-10-10. Rebooting..."
-		/etc/rc.reboot ${reroot}
-		exit 0
-	fi
-fi
 
 # Start packages
 [ -z "$skip_packages" ] \

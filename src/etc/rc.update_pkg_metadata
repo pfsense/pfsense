@@ -31,6 +31,7 @@ tmp_version=$(mktemp -q /tmp/${product}_version.XXXXXXXX) \
 
 ( \
 	sleep $sleep_time \
+	&& /usr/local/bin/php -r 'require_once("pkg-utils.inc");update_repos();' \
 	&& /usr/local/sbin/${product}-upgrade -uf \
 	&& ( \
 		/usr/local/sbin/${product}-upgrade -Uc > ${tmp_version}.tmp \

@@ -149,6 +149,10 @@ if (($act == "edit") || ($act == "dup")) {
 
 			$pconfig['caref'] = $a_server[$id]['caref'];
 			$pconfig['crlref'] = $a_server[$id]['crlref'];
+			if (isset($a_server[$id]['ocspcheck'])) {
+				$pconfig['ocspcheck'] = "yes";
+			}
+			$pconfig['ocspurl'] = $a_server[$id]['ocspurl'];
 			$pconfig['certref'] = $a_server[$id]['certref'];
 			$pconfig['dh_length'] = $a_server[$id]['dh_length'];
 			$pconfig['ecdh_curve'] = $a_server[$id]['ecdh_curve'];
@@ -555,6 +559,9 @@ if ($_POST['save']) {
 	if (!empty($pconfig['inactive_seconds']) && !is_numericint($pconfig['inactive_seconds'])) {
 		$input_errors[] = gettext("The supplied Inactive Seconds value is invalid.");
 	}
+	if (!empty($pconfig['ocspurl']) && !is_URL($pconfig['ocspurl'])) {
+		$input_errors[] = gettext("OCSP URL must be a valid URL address.");
+	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -602,6 +609,10 @@ if ($_POST['save']) {
 			}
 			$server['caref'] = $pconfig['caref'];
 			$server['crlref'] = $pconfig['crlref'];
+			if ($pconfig['ocspcheck']) {
+				$server['ocspcheck'] = "yes";
+			}
+			$server['ocspurl'] = $pconfig['ocspurl'];
 			$server['certref'] = $pconfig['certref'];
 			$server['dh_length'] = $pconfig['dh_length'];
 			$server['ecdh_curve'] = $pconfig['ecdh_curve'];
@@ -928,6 +939,20 @@ if ($act=="new" || $act=="edit"):
 			sprintf('No Certificate Revocation Lists defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
 		));
 	}
+
+	$section->addInput(new Form_Checkbox(
+		'ocspcheck',
+		'OCSP Check',
+		'Check client certificates with OCSP',
+		$pconfig['ocspcheck']
+	));
+
+	$section->addInput(new Form_Input(
+		'ocspurl',
+		'OCSP URL',
+		'url',
+		$pconfig['ocspurl']
+	));
 
 	$certhelp = '<span id="certtype"></span>';
 	if (count($a_cert)) {
@@ -1694,6 +1719,7 @@ events.push(function() {
 		hideCheckbox('tlsauth_enable', false);
 		hideInput('caref', false);
 		hideInput('crlref', false);
+		hideInput('ocspcheck', false);
 		hideLabel('Peer Certificate Revocation list', false);
 
 		switch (value) {
@@ -1732,6 +1758,7 @@ events.push(function() {
 				hideInput('tls_type', true);
 				hideInput('caref', true);
 				hideInput('crlref', true);
+				hideInput('ocspcheck', true);
 				hideLabel('Peer Certificate Revocation list', true);
 				hideLabel('Peer Certificate Authority', true);
 				hideInput('certref', true);
@@ -2001,6 +2028,12 @@ events.push(function() {
 		hideCheckbox('ping_action_push', keepalive);
 	}
 
+	function ocspcheck_change() {
+		var hide  = ! $('#ocspcheck').prop('checked')
+
+		hideInput('ocspurl', hide);
+	}
+
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
 
 	// NTP
@@ -2074,6 +2107,11 @@ events.push(function() {
 		ping_method_change();
 	});
 
+	// OCSP
+	$('#ocspcheck').click(function () {
+		ocspcheck_change();
+	});
+
 	// Certref
 	$('#certref').on('change', function() {
 		var errmsg = "";
@@ -2142,6 +2180,7 @@ events.push(function() {
 	netbios_change();
 	tuntap_change();
 	ping_method_change();
+	ocspcheck_change();
 });
 //]]>
 </script>

@@ -22,7 +22,11 @@
 
 
 if [ "$1" = "tls" ]; then
-	RESULT=$(/usr/local/sbin/fcgicli -f /etc/inc/openvpn.tls-verify.php -d "servercn=$2&depth=$3&certdepth=$4&certsubject=$5")
+	for ((check_depth=$3; check_depth>=0; check_depth--));
+	do
+		eval serial="\$tls_serial_${check_depth}"
+		RESULT=$(/usr/local/sbin/fcgicli -f /etc/inc/openvpn.tls-verify.php -d "servercn=$2&depth=$3&certdepth=$4&certsubject=$5&serial=$serial&config=$config")
+	done
 else
 	# Single quoting $password breaks getting the value from the variable.
 	# Base64 and urlEncode usernames and passwords

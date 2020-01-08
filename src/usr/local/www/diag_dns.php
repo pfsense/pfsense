@@ -30,6 +30,7 @@
 
 $pgtitle = array(gettext("Diagnostics"), gettext("DNS Lookup"));
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
 
@@ -45,41 +46,6 @@ foreach ($a_aliases as $a) {
 		$id = $counter;
 	}
 	$counter++;
-}
-
-function resolve_host_addresses($host) {
-	$recordtypes = array(DNS_A, DNS_AAAA, DNS_CNAME);
-	$dnsresult = array();
-	$resolved = array();
-	$errreporting = error_reporting();
-	error_reporting($errreporting & ~E_WARNING);// dns_get_record throws a warning if nothing is resolved..
-	foreach ($recordtypes as $recordtype) {
-		$tmp = dns_get_record($host, $recordtype);
-		if (is_array($tmp)) {
-			$dnsresult = array_merge($dnsresult, $tmp);
-		}
-	}
-	error_reporting($errreporting);// restore original php warning/error settings.
-
-	foreach ($dnsresult as $item) {
-		$newitem = array();
-		$newitem['type'] = $item['type'];
-		switch ($item['type']) {
-			case 'CNAME':
-				$newitem['data'] = $item['target'];
-				$resolved[] = $newitem;
-				break;
-			case 'A':
-				$newitem['data'] = $item['ip'];
-				$resolved[] = $newitem;
-				break;
-			case 'AAAA':
-				$newitem['data'] = $item['ipv6'];
-				$resolved[] = $newitem;
-				break;
-		}
-	}
-	return $resolved;
 }
 
 if (isAllowedPage('firewall_aliases_edit.php') && isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {

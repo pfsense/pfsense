@@ -1867,23 +1867,43 @@ function get_uptime_sec() {
 	return $uptime;
 }
 
-function fqdn_to_ip($hostname, $ipv6 = false) {
-	$domrecords = array();
-	$domips = array();
-	$qtype = ($ipv6 ? 'AAAA' : 'A');
-	exec("/usr/bin/host -t {$qtype} " . escapeshellarg($hostname), $domrecords, $rethost);
-	if ($rethost == 0) {
-		foreach ($domrecords as $domr) {
-			$doml = explode(" ", $domr);
-			$domip = ($ipv6 ? $doml[4] : $doml[3]);
-			/* fill array with domain ip addresses */
-			if (is_ipaddr($domip)) {
-				$domips[] = $domip;
-			}
+function resolve_host_addresses($host, $recordtypes = array(DNS_A, DNS_AAAA, DNS_CNAME), $index = true) {
+	$dnsresult = array();
+	$resolved = array();
+	$errreporting = error_reporting();
+	error_reporting($errreporting & ~E_WARNING);// dns_get_record throws a warning if nothing is resolved..
+	foreach ($recordtypes as $recordtype) {
+		$tmp = dns_get_record($host, $recordtype);
+		if (is_array($tmp)) {
+			$dnsresult = array_merge($dnsresult, $tmp);
 		}
 	}
-	sort($domips);
-	return $domips;
+	error_reporting($errreporting);// restore original php warning/error settings.
+	foreach ($dnsresult as $item) {
+		$newitem = array();
+		$newitem['type'] = $item['type'];
+		switch ($item['type']) {
+			case 'CNAME':
+				$newitem['data'] = $item['target'];
+				$resolved[] = $newitem;
+				break;
+			case 'A':
+				$newitem['data'] = $item['ip'];
+				$resolved[] = $newitem;
+				break;
+			case 'AAAA':
+				$newitem['data'] = $item['ipv6'];
+				$resolved[] = $newitem;
+				break;
+		}
+	}
+	if ($index == false) {
+		foreach ($resolved as $res) {
+			$noind[] = $res['data'];
+		}
+		$resolved = $noind;
+	}
+	return $resolved;
 }
 
 function add_hostname_to_watch($hostname) {
@@ -1893,7 +1913,7 @@ function add_hostname_to_watch($hostname) {
 	$result = array();
 	if ((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$contents = "";
-		$domips = fqdn_to_ip($hostname);
+		$domips = resolve_host_addresses($hostname, array(DNS_A), false);
 		if (!empty($domips)) {
 			foreach ($domips as $ip) {
 				$contents .= "$ip\n";
@@ -1944,7 +1964,7 @@ function compare_hostname_to_dnscache($hostname) {
 	}
 	if ((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$contents = "";
-		$domips = fqdn_to_ip($hostname);
+		$domips = resolve_host_addresses($hostname, array(DNS_A), false);
 		if (!empty($domips)) {
 			foreach ($domips as $ip) {
 				$contents .= "$ip\n";
@@ -2386,9 +2406,7 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 						break;
 					}
 					if (is_fqdn($tmp)) {
-						$domipsv4 = fqdn_to_ip($tmp);
-						$domipsv6 = fqdn_to_ip($tmp, true);
-						$results = array_merge($domipsv4, $domipsv6);
+						$results = resolve_host_addresses($tmp, array(DNS_A, DNS_AAAA), false);
 						if (!empty($results)) {
 							foreach ($results as $ip) {
 								if (is_ipaddr($ip)) {

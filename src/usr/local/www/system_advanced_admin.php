@@ -414,13 +414,13 @@ $group->add(new Form_Checkbox(
 $group->add(new Form_Checkbox(
 	'webguiproto',
 	'Protocol',
-	'HTTPS',
+	'HTTPS (SSL/TLS)',
 	($pconfig['webguiproto'] == 'https'),
 	'https'
 ))->displayAsRadio();
 
 if (!$certs_available) {
-	$group->setHelp('No Certificates have been defined. A certificate is required before SSL can be enabled. %1$s Create or Import %2$s a Certificate.',
+	$group->setHelp('No Certificates have been defined. A certificate is required before SSL/TLS can be enabled. %1$s Create or Import %2$s a Certificate.',
 		'<a href="system_certmanager.php">', '</a>');
 }
 
@@ -433,7 +433,7 @@ foreach ($a_cert as $cert) {
 
 $section->addInput($input = new Form_Select(
 	'ssl-certref',
-	'SSL Certificate',
+	'SSL/TLS Certificate',
 	$pconfig['ssl-certref'],
 	$values
 ));

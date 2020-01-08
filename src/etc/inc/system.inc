@@ -1195,7 +1195,7 @@ function system_webgui_create_certificate() {
 	$a_ca = &$config['ca'];
 	init_config_arr(array('cert'));
 	$a_cert = &$config['cert'];
-	log_error(gettext("Creating SSL Certificate for this host"));
+	log_error(gettext("Creating SSL/TLS Certificate for this host"));
 
 	$cert = array();
 	$cert['refid'] = uniqid();
@@ -1218,7 +1218,7 @@ function system_webgui_create_certificate() {
 
 	$a_cert[] = $cert;
 	$config['system']['webgui']['ssl-certref'] = $cert['refid'];
-	write_config(sprintf(gettext("Generated new self-signed HTTPS certificate (%s)"), $cert['refid']));
+	write_config(sprintf(gettext("Generated new self-signed SSL/TLS certificate for HTTPS (%s)"), $cert['refid']));
 	return $cert;
 }
 

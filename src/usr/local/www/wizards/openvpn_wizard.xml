@@ -121,7 +121,7 @@
 			<displayname>Hostname or IP address</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->ip</bindstofield>
-			<description>Address of the LDAP server. When using SSL or STARTTLS, this hostname must match the LDAP server certificate.</description>
+			<description>Address of the LDAP server. When using SSL/TLS or STARTTLS, this hostname must match the LDAP server certificate.</description>
 		</field>
 		<field>
 			<name>port</name>
@@ -129,7 +129,7 @@
 			<type>input</type>
 			<size>8</size>
 			<bindstofield>ovpnserver->step2->port</bindstofield>
-			<description>LDAP Server port, leave blank for the default (389 for TCP or STARTTLS, 636 for SSL).</description>
+			<description>LDAP Server port, leave blank for the default (389 for TCP or STARTTLS, 636 for SSL/TLS).</description>
 		</field>
 		<field>
 			<name>transport</name>

@@ -1947,7 +1947,7 @@ function upgrade_052_to_053() {
 		/* create cert entry */
 		$cert = array();
 		$cert['refid'] = uniqid();
-		$cert['descr'] = "webConfigurator SSL Certificate";
+		$cert['descr'] = "webConfigurator SSL/TLS Certificate";
 		$cert['crt'] = $config['system']['webgui']['certificate'];
 		$cert['prv'] = $config['system']['webgui']['private-key'];
 		$config['cert'][] = $cert;

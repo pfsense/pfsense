@@ -72,6 +72,36 @@ if (isset($allowed_depth) && ($cert_depth > $allowed_depth)) {
 	}
 }
 
+preg_match('/\/var\/etc\/openvpn\/server(\d+)\/config\.ovpn/', $_GET['config'], $current_vpnid);
+foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+	if (($ovpns['vpnid'] == $current_vpnid['1']) && ($ovpns['ocspcheck'] == 'yes')) {
+		$capath = "/var/etc/openvpn/server{$ovpns['vpnid']}/ca/";
+		$ca = lookup_ca($ovpns['caref']);
+		$cert_contents = base64_decode($ca['crt']);
+        	$cert_details = openssl_x509_parse($cert_contents);
+	        $issuer = $capath . $cert_details['hash'] . ".0";
+		$serial = $_GET['serial'];
+		$status = exec("/usr/bin/openssl ocsp -issuer " . escapeshellarg($issuer) 
+			. " -no_nonce"
+			. " -CApath " . escapeshellarg($capath)
+			. " -url " . escapeshellarg($ovpns['ocspurl'])
+			. " -serial " . escapeshellarg($serial));
+		if (preg_match('/(error|fail)/', $status)) {
+			echo "FAILED";
+			closelog();
+			return;
+		} else if (preg_match('/Cert Status: good/', $status) {
+			if (preg_match('/^Response verify OK/', $status) {
+				break;
+			}
+		} else {
+			echo "FAILED";
+			closelog();
+			return;
+		}
+	}
+}
+
 // Debug
 //syslog(LOG_WARNING, "Found certificate {$argv[2]} with depth {$cert_depth}");
 

@@ -91,7 +91,7 @@ if ($input_errors) {
 						<tr>
 							<th><?=gettext("Name")?></th>
 							<th><?=gettext("URL")?></th>
-							<th><?=gettext("Verify SSL Peer")?></th>
+							<th><?=gettext("Verify SSL/TLS Peer")?></th>
 							<th><?=gettext("Description")?></th>
 							<th><?=gettext("Actions")?></th>
 						</tr>

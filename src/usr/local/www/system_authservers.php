@@ -556,8 +556,8 @@ $section->addInput(new Form_Input(
 	'*Hostname or IP address',
 	'text',
 	$pconfig['ldap_host']
-))->setHelp('NOTE: When using SSL or STARTTLS, this hostname MUST match the Common Name '.
-	'(CN) of the LDAP server\'s SSL Certificate.');
+))->setHelp('NOTE: When using SSL/TLS or STARTTLS, this hostname MUST match a Subject '.
+	'Alternative Name (SAN) or the Common Name (CN) of the LDAP server SSL/TLS Certificate.');
 
 $section->addInput(new Form_Input(
 	'ldap_port',
@@ -591,9 +591,9 @@ else
 		'Peer Certificate Authority',
 		$pconfig['ldap_caref'],
 		$ldapCaRef
-	))->setHelp('This option is used if \'SSL Encrypted\' '.
-		'or \'TCP - STARTTLS\' options are chosen. '.
-		'It must match with the CA in the AD otherwise problems will arise.');
+	))->setHelp('This CA is used to validate the LDAP server certificate when '.
+		'\'SSL/TLS Encrypted\' or \'STARTTLS Encrypted\' Transport is active. '.
+		'This CA must match the CA used by the LDAP server.');
 }
 
 $section->addInput(new Form_Select(

@@ -152,8 +152,8 @@ $section->addPassword(new Form_Input(
 
 $section->addInput(new Form_Checkbox(
 	'verifysslpeer',
-	'Verify SSL Peer',
-	'Verify SSL Peer',
+	'Verify SSL/TLS Peer',
+	'Verify SSL/TLS Peer',
 	$pconfig['verifysslpeer']
 ));
 

@@ -960,7 +960,7 @@ if ($act=="new" || $act=="edit"):
 			$thiscert = lookup_cert($pconfig['certref']);
 			$purpose = cert_get_purpose($thiscert['crt'], true);
 			if ($purpose['server'] != "Yes") {
-				$certhelp = '<span id="certtype" class="text-danger">' . gettext("Warning: The selected server certificate was not created as an SSL Server certificate and may not work as expected") . ' </span>';
+				$certhelp = '<span id="certtype" class="text-danger">' . gettext("Warning: The selected server certificate was not created as an SSL/TLS Server certificate and may not work as expected") . ' </span>';
 			}
 		}
 	} else {
@@ -2117,7 +2117,7 @@ events.push(function() {
 		var errmsg = "";
 
 		if ($(this).find(":selected").index() >= "<?=$servercerts?>") {
-			var errmsg = '<span class="text-danger">' + "<?=gettext('Warning: The selected server certificate was not created as an SSL Server certificate and may not work as expected')?>" + '</span>';
+			var errmsg = '<span class="text-danger">' + "<?=gettext('Warning: The selected server certificate was not created as an SSL/TLS Server certificate and may not work as expected')?>" + '</span>';
 		}
 
 		$('#certtype').html(errmsg);

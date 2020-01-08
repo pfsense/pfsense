@@ -304,7 +304,7 @@ if ($_POST['save']) {
 			$newcp['zoneid'] = 2;
 			foreach ($a_cp as $keycpzone => $cp) {
 				if ($cp['zoneid'] == $newcp['zoneid'] && $keycpzone != $cpzone) {
-					$newcp['zoneid'] += 2; /* Reserve space for SSL config if needed */
+					$newcp['zoneid'] += 2; /* Reserve space for SSL/TLS config if needed */
 				}
 			}
 
@@ -1092,7 +1092,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'certref',
-	'*SSL Certificate',
+	'*SSL/TLS Certificate',
 	$pconfig['certref'],
 	cert_build_list('cert', 'HTTPS')
 ))->setHelp('Certificates known to be incompatible with use for HTTPS are not included in this list. If no certificates are defined, one may be defined here: %1$sSystem &gt; Cert. Manager%2$s', '<a href="system_certmanager.php">', '</a>');
@@ -1102,7 +1102,7 @@ $section->addInput(new Form_Checkbox(
 	'HTTPS Forwards',
 	'Disable HTTPS Forwards',
 	$pconfig['nohttpsforwards']
-))->setHelp('If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites will not be forwarded to the captive portal. ' .
+))->setHelp('If this option is set, attempts to connect to HTTPS (SSL/TLS on port 443) sites will not be forwarded to the captive portal. ' .
 			'This prevents certificate errors from being presented to the user even if HTTPS logins are enabled. ' .
 			'Users must attempt a connection to an HTTP (Port 80) site to get forwarded to the captive portal. ' .
 			'If HTTPS logins are enabled, the user will be redirected to the HTTPS login page.');

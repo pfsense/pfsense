@@ -246,7 +246,7 @@ EOF;
 		$tlscert_path = "{$g['unbound_chroot_path']}/sslcert.crt";
 		$tlskey_path = "{$g['unbound_chroot_path']}/sslcert.key";
 
-		// Enable SSL on the chosen or default port
+		// Enable SSL/TLS on the chosen or default port
 		$tlsconfig .= "tls-port: {$tlsport}\n";
 
 		// Lookup CA and Server Cert

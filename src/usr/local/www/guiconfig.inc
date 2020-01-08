@@ -120,9 +120,9 @@ $auth_server_types = array(
 	'radius' => "RADIUS");
 
 $ldap_urltypes = array(
-	'TCP - Standard' => 389,
-	'TCP - STARTTLS' => 389,
-	'SSL - Encrypted' => 636);
+	'Standard TCP' => 389,
+	'STARTTLS Encrypted' => 389,
+	'SSL/TLS Encrypted' => 636);
 
 $ldap_scopes = array(
 	'one' => gettext("One Level"),

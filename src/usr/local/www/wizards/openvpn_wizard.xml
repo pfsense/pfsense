@@ -123,7 +123,7 @@
 			<displayname>Hostname or IP address</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->ip</bindstofield>
-			<description>Address of the LDAP server. When using SSL or STARTTLS, this hostname must match the LDAP server certificate.</description>
+			<description>Address of the LDAP server. When using SSL/TLS or STARTTLS, this hostname must match the LDAP server certificate.</description>
 		</field>
 		<field>
 			<name>port</name>
@@ -131,7 +131,7 @@
 			<type>input</type>
 			<size>8</size>
 			<bindstofield>ovpnserver->step2->port</bindstofield>
-			<description>LDAP Server port, leave blank for the default (389 for TCP or STARTTLS, 636 for SSL).</description>
+			<description>LDAP Server port, leave blank for the default (389 for TCP or STARTTLS, 636 for SSL/TLS).</description>
 		</field>
 		<field>
 			<name>transport</name>
@@ -140,26 +140,26 @@
 			<bindstofield>ovpnserver->step2->transport</bindstofield>
 			<options>
 				<option>
-					<name>TCP - Standard</name>
-					<value>TCP - Standard</value>
+					<name>Standard TCP</name>
+					<value>Standard TCP</value>
 				</option>
 				<option>
-					<name>TCP - STARTTLS</name>
-					<value>TCP - STARTTLS</value>
+					<name>STARTTLS Encrypted</name>
+					<value>STARTTLS Encrypted</value>
 				</option>
 				<option>
-					<name>SSL - Encrypted</name>
-					<value>SSL - Encrypted</value>
+					<name>SSL/TLS Encrypted</name>
+					<value>SSL/TLS Encrypted</value>
 				</option>
 			</options>
-			<description>&lt;br/&gt;The transport used by the LDAP server. It can either be standard TCP or SSL encrypted.</description>
+			<description>&lt;br/&gt;The transport used by the LDAP server. It can either be standard TCP, STARTTLS or SSL/TLS Encrypted.</description>
 		</field>
 		<field>
 			<type>certca_selection</type>
 			<name>ldap_caref</name>
 			<displayname>Peer Certificate Authority</displayname>
 			<bindstofield>ovpnserver->step2->ldap_caref</bindstofield>
-			<description>&lt;br/&gt;The Certificate Authority for the LDAP server certificate. Used for SSL and STARTTLS.</description>
+			<description>&lt;br/&gt;The Certificate Authority for the LDAP server certificate. Used for SSL/TLS and STARTTLS.</description>
 			<add_to_certca_selection>global</add_to_certca_selection>
 		</field>
 		<field>

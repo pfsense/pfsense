@@ -1947,7 +1947,7 @@ function upgrade_052_to_053() {
 		/* create cert entry */
 		$cert = array();
 		$cert['refid'] = uniqid();
-		$cert['descr'] = "webConfigurator SSL Certificate";
+		$cert['descr'] = "webConfigurator SSL/TLS Certificate";
 		$cert['crt'] = $config['system']['webgui']['certificate'];
 		$cert['prv'] = $config['system']['webgui']['private-key'];
 		$config['cert'][] = $cert;
@@ -6109,6 +6109,23 @@ function upgrade_199_to_200() {
 			}
 		}
 		unset($ph1ent['lifetime'], $ph1ent['reauth_enable'], $ph1ent['rekey_enable'], $ph1ent['margintime']);
+	}
+}
+
+/* Update LDAP transport values */
+function upgrade_200_to_201() {
+	global $config;
+	/* Normalize/correct names (All are TCP) */
+	$namechanges = array(
+		'TCP - Standard' => 'Standard TCP',
+		'TCP - STARTTLS' => 'STARTTLS Encrypted',
+		'SSL - Encrypted' => 'SSL/TLS Encrypted',
+	);
+	init_config_arr(array('system', 'authserver'));
+	foreach ($config['system']['authserver'] as & $authserver) {
+		if (array_key_exists($authserver['ldap_urltype'], $namechanges)) {
+			$authserver['ldap_urltype'] = $namechanges[$authserver['ldap_urltype']];
+		}
 	}
 }
 

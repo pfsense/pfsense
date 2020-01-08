@@ -21,7 +21,7 @@
 
 require_once("system.inc");
 
-echo gettext("Generating a new self-signed SSL certificate for the GUI...");
+echo gettext("Generating a new self-signed SSL/TLS certificate for the GUI...");
 $cert = system_webgui_create_certificate();
 echo gettext("Done.\n");
 echo gettext("Restarting webConfigurator...");

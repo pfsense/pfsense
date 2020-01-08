@@ -103,9 +103,9 @@ function step3_submitphpaction() {
 
 	/* Default LDAP port is 389 for TCP and 636 for SSL */
 	if (empty($_POST['port'])) {
-		if (($_POST['transport'] == "TCP - Standard") || ($_POST['transport'] == "TCP - STARTTLS"))
+		if (($_POST['transport'] == "Standard TCP") || ($_POST['transport'] == "STARTTLS Encrypted"))
 			$config['ovpnserver']['step2']['port'] = 389;
-		elseif ($_POST['transport'] == "SSL - Encrypted")
+		elseif ($_POST['transport'] == "SSL/TLS Encrypted")
 			$config['ovpnserver']['step2']['port'] = 636;
 	} elseif (!is_port($_POST['port'])) {
 		$stepid--;
@@ -472,10 +472,7 @@ function step12_submitphpaction() {
 		if ($auth['type'] == "ldap") {
 			$auth['host'] = $pconfig['step2']['ip'];
 			$auth['ldap_port'] = $pconfig['step2']['port'];
-			if ($pconfig['step1']['transport'] == "tcp")
-				$auth['ldap_urltype'] = 'TCP - Standard';
-			else
-				$auth['ldap_urltype'] = 'SSL - Encrypted';
+			$auth['ldap_urltype'] = $pconfig['step2']['transport'];
 			$auth['ldap_caref'] = $pconfig['step2']['ldap_caref'];
 			$auth['ldap_protver'] = $pconfig['step2']['ldap_protver'];
 			$auth['ldap_timeout'] = $pconfig['step2']['ldap_timeout'];

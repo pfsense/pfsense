@@ -270,7 +270,7 @@ if ($_POST) {
 				if ((!empty($this_dnsgw)) && ($this_dnsgw != 'none') && (!empty($this_dnsserver))) {
 					$gatewayip = lookup_gateway_ip_by_name($this_dnsgw);
 					$inet6 = is_ipaddrv6($gatewayip) ? '-inet6 ' : '';
-					mwexec("/sbin/route -q delete -host {$inet6}{$this_dnsserver}");
+					mwexec("/sbin/route -q delete -host {$inet6}{$this_dnsserver} " . escapeshellarg($gatewayip));
 				}
 			}
 		}

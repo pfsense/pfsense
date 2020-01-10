@@ -20,9 +20,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 if [ "$1" = "tls" ]; then
-	for ((check_depth=$3; check_depth>=0; check_depth--));
+	for check_depth in $(/usr/bin/seq ${3} -1 0)
 	do
 		eval serial="\$tls_serial_${check_depth}"
 		RESULT=$(/usr/local/sbin/fcgicli -f /etc/inc/openvpn.tls-verify.php -d "servercn=$2&depth=$3&certdepth=$4&certsubject=$5&serial=$serial&config=$config")

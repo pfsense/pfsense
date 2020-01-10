@@ -38,10 +38,11 @@
 		/* Use PBKDF2 Key Derivation (https://en.wikipedia.org/wiki/PBKDF2)
 		 *  unless we need to read old data encrypted without it. */
 		$keyder = ($legacy) ? "" : "-pbkdf2";
+		$md = ($legacy) ? "md5" : "sha256";
 
 		$output = "";
 		$exitcode = "";
-		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -pass pass:" . escapeshellarg($pass) . " -salt -md sha256 {$keyder} 2> /dev/null", $output, $exitcode);
+		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -pass pass:" . escapeshellarg($pass) . " -salt -md ${md} {$keyder} 2> /dev/null", $output, $exitcode);
 
 		if (($exitcode == 0) && file_exists("{$file}.enc") && (filesize("{$file}.enc") > 0)) {
 			$result = file_get_contents("{$file}.enc");

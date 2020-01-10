@@ -2264,6 +2264,16 @@ function services_unbound_configure($restart_dhcp = true) {
 		}
 
 		/* DNS Resolver python integration */
+		if ($python_mode) {
+			if (!is_dir("{$g['unbound_chroot_path']}/dev")) {
+				safe_mkdir("{$g['unbound_chroot_path']}/dev");
+			}
+			exec("/sbin/mount -t devfs devfs " . escapeshellarg("{$g['unbound_chroot_path']}/dev"));
+		} else {
+			if (is_dir("{$g['unbound_chroot_path']}/dev")) {
+				exec("/sbin/umount -f " . escapeshellarg("{$g['unbound_chroot_path']}/dev"));
+			}
+		}
 		$base_folder = '/usr/local';
 		foreach (array('/bin', '/lib') as $dir) {
 			$validate = exec("/sbin/mount | /usr/bin/grep " . escapeshellarg("{$g['unbound_chroot_path']}{$base_folder}{$dir} (nullfs") . " 2>&1");

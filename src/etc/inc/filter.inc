@@ -200,6 +200,7 @@ function filter_delete_states_for_down_gateways() {
 
 	$any_gateway_down = false;
 	$a_gateways = return_gateways_status();
+	$a_gateway_groups = &$config['gateways']['gateway_group'];
 	if (is_array($GatewaysList)) {
 		foreach ($GatewaysList as $gwname => $gateway) {
 			if (empty($gateway['monitor'])) {
@@ -214,14 +215,56 @@ function filter_delete_states_for_down_gateways() {
 			if (empty($a_gateways[$gateway['monitor']])) {
 				continue;
 			}
-			$gwstatus = &$a_gateways[$gateway['monitor']];
-			if (strstr($gwstatus['status'], "down")) {
-				$any_gateway_down = true;
-				break;
+			$gwstatus = &$a_gateways[$gateway['monitor']]['status'];
+			$gatename = &$a_gateways[$gateway['monitor']]['name'];
+			if (strstr($gwstatus, "down")) {
+				if (!empty($a_gateway_groups)) {
+					foreach ($a_gateway_groups as $gwgr) {
+						$gw_in_group = array();
+						foreach ($gwgr['item'] as $item) {
+							$gwparams = explode('|', $item);
+							$gwdpinger = get_dpinger_status($gwparams[0]);
+							if (!strstr($a_gateways[$gwdpinger['targetip']]['status'], "down") || 
+							    ($gatename == $gwparams[0])) {
+								$gw_in_group[$gwparams[0]] = $gwparams[1];
+							}
+						}
+						// check GW failover group membership
+						// and Tier priority
+						if ($gw_in_group[$gatename] && (count($gw_in_group) > 1)) {
+							$gwtier = $gw_in_group[$gatename];
+							$have_higher_tier = false;
+							$have_lower_tier = false;
+							foreach ($gw_in_group as $gname => $tier) {
+								if ($tier > $gwtier) {
+									$have_higher_tier = true;
+								}
+								if ($tier < $gwtier) {
+									$have_lower_tier = true;
+								}
+							}
+							// need to check it for cases when Tier 1 and 3 is active
+							// but Tier 2 is down, or all Tiers are equal (loadbalance)
+							if((!$have_lower_tier && $have_higher_tier) ||
+							   (!$have_higher_tier && !$have_lower_tier)) {
+								$any_gateway_down = true;
+							}
+						} else {
+							$any_gateway_down = true;
+						}
+					}
+				} else {
+					$any_gateway_down = true;
+				}
+				if ($any_gateway_down == true) {
+					break;
+				}
 			}
 		}
 	}
+
 	if ($any_gateway_down == true) {
+		log_error("Gateway failure - killing all states");
 		mwexec("/sbin/pfctl -Fs");
 	}
 }

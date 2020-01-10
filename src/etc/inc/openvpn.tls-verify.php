@@ -90,8 +90,8 @@ foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
 			echo "FAILED";
 			closelog();
 			return;
-		} else if (preg_match('/Cert Status: good/', $status) {
-			if (preg_match('/^Response verify OK/', $status) {
+		} else if (preg_match('/Cert Status: good/', $status)) {
+			if (preg_match('/^Response verify OK/', $status)) {
 				break;
 			}
 		} else {

@@ -78,10 +78,10 @@ foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
 		$capath = "/var/etc/openvpn/server{$ovpns['vpnid']}/ca/";
 		$ca = lookup_ca($ovpns['caref']);
 		$cert_contents = base64_decode($ca['crt']);
-        	$cert_details = openssl_x509_parse($cert_contents);
-	        $issuer = $capath . $cert_details['hash'] . ".0";
+		$cert_details = openssl_x509_parse($cert_contents);
+		$issuer = $capath . $cert_details['hash'] . ".0";
 		$serial = $_GET['serial'];
-		$status = exec("/usr/bin/openssl ocsp -issuer " . escapeshellarg($issuer) 
+		$status = exec("/usr/bin/openssl ocsp -issuer " . escapeshellarg($issuer)
 			. " -no_nonce"
 			. " -CApath " . escapeshellarg($capath)
 			. " -url " . escapeshellarg($ovpns['ocspurl'])

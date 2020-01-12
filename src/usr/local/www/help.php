@@ -27,7 +27,7 @@ require_once("guiconfig.inc");
 $helppages = array(
 	'index.php' => 'https://docs.netgate.com/pfsense/en/latest/config/dashboard.html',
 
-	'crash_reporter.php' => 'https://docs.netgate.com/pfsense/en/latest/hardware/unexpected-reboot-troubleshooting.html',
+	'crash_reporter.php' => 'https://docs.netgate.com/pfsense/en/latest/development/obtaining-panic-information-for-developers.html#viewing-and-submitting-a-crash-dump',
 	'diag_arp.php' => 'https://docs.netgate.com/pfsense/en/latest/monitoring/arp-table.html',
 	'diag_authentication.php' => 'https://docs.netgate.com/pfsense/en/latest/usermanager/user-authentication-servers.html',
 	'diag_backup.php' => 'https://docs.netgate.com/pfsense/en/latest/backup/configuration-backup-and-restore.html',

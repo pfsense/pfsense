@@ -201,8 +201,8 @@ if ($_POST) {
 		if ($fam == "ip6" && $proto == "icmp") {
 			$input_errors[] = gettext("IPv6 with ICMP is not valid.");
 		}
-		if ($fam == "ip6" && $proto =="arp") {
-			$input_errors[] = gettext("IPv6 with ARP is not valid.");
+		if ($proto =="arp") {
+			$input_errors[] = gettext("Selecting an Address Family for ARP is not valid.");
 		}
 	}
 
@@ -548,10 +548,13 @@ if ($do_tcpdump) :
 
 	if ($action == gettext("Start")) {
 		$matchstr = implode($matches, " and ");
-
-		print_info_box(gettext('Packet capture is running'), 'info');
-
 		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
+		print_info_box(gettext('Packet capture is running'), 'info');
+		?>
+		<div class="infoblock">
+		<? print_info_box(gettext('Command line') . ': ' . htmlspecialchars($cmd), 'info', false); ?>
+		</div>
+		<?php
 		mwexec_bg ($cmd);
 	} else {
 ?>
@@ -584,11 +587,13 @@ if ($do_tcpdump) :
 		}
 
 		print('<textarea class="form-control" rows="20" style="font-size: 13px; font-family: consolas,monaco,roboto mono,liberation mono,courier;">');
-		if (filesize($fp.$fn) > $max_display_size)
+		if (file_exists($fp.$fn) && (filesize($fp.$fn) > $max_display_size)) {
 			print(gettext("Packet capture file is too large to display in the GUI.") .
 			    "\n" .
 			    gettext("Download the file, or view it in the console or ssh shell."));
-		elseif ($detail == 'none') {
+		} elseif (!file_exists($fp.$fn)) {
+			print(gettext("No capture file to display."));
+		} elseif ($detail == 'none') {
 			print(gettext("Select a detail level to view the contents of the packet capture."));
 		} else {
 			system("/usr/sbin/tcpdump {$disabledns} {$detail_args} {$iscarp} -r {$fp}{$fn}");

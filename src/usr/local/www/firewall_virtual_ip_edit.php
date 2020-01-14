@@ -449,8 +449,8 @@ print($form);
 ?>
 
 <div class="infoblock">
-	<?php print_info_box(gettext("Proxy ARP and Other type Virtual IPs cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type address for these types.") . '<br />' .
-			   sprintf(gettext("For more information on CARP and the above values, visit the OpenBSD %s"), '<a href="http://www.openbsd.org/faq/pf/carp.html">CARP FAQ</a>.'), 'info', false); ?>
+	<?php print_info_box(gettext("Proxy ARP and Other type Virtual IP addresses cannot be used for binding by services on the firewall (IPsec, OpenVPN, etc.). Use an IP Alias or CARP type VIP for these roles.") . '<br />' .
+			   sprintf(gettext("For more information, visit the pfSense book section on %s"), '<a href="https://docs.netgate.com/pfsense/en/latest/book/firewall/virtual-ip-addresses.html">Virtual IP Addresses</a>.'), 'info', false); ?>
 </div>
 
 <script type="text/javascript">

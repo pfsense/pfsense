@@ -206,6 +206,7 @@ class pfsense_xmlrpc_server {
 			'crl',
 			'dhcpd',
 			'dhcpv6',
+			'dnshaper',
 			'dnsmasq',
 			'filter',
 			'ipsec',
@@ -213,6 +214,7 @@ class pfsense_xmlrpc_server {
 			'nat',
 			'openvpn',
 			'schedules',
+			'shaper',
 			'unbound',
 			'wol',
 		);

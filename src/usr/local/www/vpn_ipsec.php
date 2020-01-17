@@ -178,7 +178,7 @@ if ($_POST['apply']) {
 		if (isset($a_phase1[$togglebtn]['disabled'])) {
 			unset($a_phase1[$togglebtn]['disabled']);
 		} else {
-			if (ipsec_vti($a_phase1[$togglebtn])) {
+			if (ipsec_vti($a_phase1[$togglebtn], false, false)) {
 				$input_errors[] = gettext("Cannot disable a Phase 1 with a child Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
 			} else {
 				$a_phase1[$togglebtn]['disabled'] = true;

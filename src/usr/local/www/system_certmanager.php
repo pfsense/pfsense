@@ -170,7 +170,8 @@ switch ($act) {
 			} else {
 				$res_key = openssl_pkey_get_private($keyout);
 				if ($res_key) {
-					openssl_pkey_export($res_key, $keyout, $_POST['exportpass']);
+					$args = array('encrypt_key_cipher' => OPENSSL_CIPHER_AES_256_CBC);
+					openssl_pkey_export($res_key, $keyout, $_POST['exportpass'], $args);
 				} else {
 					$savemsg = gettext("Unable to export password-protected private key.");
 					$class = 'danger';
@@ -196,6 +197,7 @@ switch ($act) {
 		}
 		$args = array();
 		$args['friendly_name'] = $thiscert['descr'];
+		$args['encrypt_key_cipher'] = OPENSSL_CIPHER_AES_256_CBC;
 		$ca = lookup_ca($thiscert['caref']);
 		if ($ca) {
 			/* If the CA can be found, then add the CA to the container */

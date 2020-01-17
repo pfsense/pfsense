@@ -266,10 +266,12 @@ if (is_array($config['hasync'])) {
 		}
 		$sections[] = 'wol';
 	}
-	if ($hasync['synchronizetrafficshaper'] != "" and is_array($config['shaper'])) {
+	if ($hasync['synchronizetrafficshaper'] != "") {
+		init_config_arr(array('shaper'));
 		$sections[] = 'shaper';
 	}
-	if ($hasync['synchronizetrafficshaperlimiter'] != "" and is_array($config['dnshaper'])) {
+	if ($hasync['synchronizetrafficshaperlimiter'] != "") {
+		init_config_arr(array('dnshaper'));
 		$sections[] = 'dnshaper';
 	}
 	if ($hasync['synchronizestaticroutes'] != "") {

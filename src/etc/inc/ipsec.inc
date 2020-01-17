@@ -920,7 +920,7 @@ function ipsec_get_loglevels() {
 	return $levels;
 }
 
-function ipsec_vti($ph1ent, $returnaddresses = false) {
+function ipsec_vti($ph1ent, $returnaddresses = false, $skipdisabled = true) {
 	global $config;
 	if (empty($ph1ent) || !is_array($ph1ent) || !is_array($config['ipsec']['phase2'])) {
 		return false;
@@ -941,7 +941,11 @@ function ipsec_vti($ph1ent, $returnaddresses = false) {
 					'descr' => $ph2ent['descr'],
 				);
 			}
-			$is_vti = true;
+			if (!$skipdisabled && isset($ph2ent['disabled'])) {
+				continue;
+			} else {
+				$is_vti = true;
+			}
 		}
 	}
 	return ($returnaddresses) ? $vtisubnet_spec : $is_vti;

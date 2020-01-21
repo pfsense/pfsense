@@ -820,7 +820,7 @@
 								"type" => "{$recordType}",
 								"proxied" => $this->_dnsProxied,
 								"name" => "{$this->_dnsHost}",
-								"ttl" => empty($this->_dnsTTL) ? "1" : $this->_dnsTTL
+								"ttl" => empty($this->_dnsTTL) ? 1 : (int) $this->_dnsTTL
 							);
 							$data_json = json_encode($hostData);
 							$updateHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records/{$host}";

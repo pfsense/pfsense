@@ -571,7 +571,7 @@ events.push(function() {
 				hideCheckbox('wildcard', true);
 				hideCheckbox('proxied', false);
 				hideInput('zoneid', true);
-				hideInput('ttl', true);
+				hideInput('ttl', false);
 				break;
 			case "digitalocean":
 		        case "digitalocean-v6":

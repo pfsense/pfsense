@@ -1412,7 +1412,7 @@ EOD;
 		}
 
 		if ($dhcpv6ifconf['domainsearchlist'] <> "") {
-			$dnscfgv6 .= "	option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $dhcpv6ifconf['domainsearchlist'])) . "\";\n";
+			$dnscfgv6 .= "	option dhcp6.domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $dhcpv6ifconf['domainsearchlist'])) . "\";\n";
 		}
 
 		if (isset($dhcpv6ifconf['ddnsupdate'])) {

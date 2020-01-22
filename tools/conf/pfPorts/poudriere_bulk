@@ -52,6 +52,7 @@ net/%%PRODUCT_NAME%%-pkg-mtr-nox11
 net/%%PRODUCT_NAME%%-pkg-ntopng
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG-devel
+net/%%PRODUCT_NAME%%-pkg-pimd
 net/%%PRODUCT_NAME%%-pkg-routed
 net/%%PRODUCT_NAME%%-pkg-siproxd
 net/bird

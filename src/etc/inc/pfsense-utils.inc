@@ -3562,4 +3562,13 @@ function send_user_download($type = 'data', $content, $userfilename = "", $conte
 	exit;
 }
 
+// Test whether the hostname in a URL can be resolved with a very short timeout
+function is_url_hostname_resolvable($url) {
+	$urlhostname = explode("/", $url)[2];
+	putenv("RES_OPTIONS=timeout:3 attempts:1");
+	$resolvable = $urlhostname !== gethostbyname($urlhostname);
+	putenv("RES_OPTIONS");
+	return $resolvable;
+}
+
 ?>

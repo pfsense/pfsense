@@ -70,8 +70,9 @@ function updatecopyright() {
 	}
 }
 
-// Retrieve the copyright data from Netgate.com if the support data file does not exist,
-// or if it is more than a day old
-if (!file_exists($copyrightfile) || ( time()-filemtime($copyrightfile) > $refreshinterval)) {
+// Retrieve the copyright data from Netgate.com if
+// the support data file does not exist, or
+// if it is more than a day old and the URL seems resolvable
+if ( !file_exists($copyrightfile) || ( time()-filemtime($copyrightfile) > $refreshinterval && is_url_hostname_resolvable($FQDN) ) ) {
 	updateCopyright();
 }

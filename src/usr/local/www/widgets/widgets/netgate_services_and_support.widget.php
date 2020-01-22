@@ -40,9 +40,10 @@ $refreshinterval = (24 * 3600);	// 24 hours
 
 if ($_REQUEST['ajax']) {
 
-	// Retrieve the support data from Netgate.com if the support data file does not exist,
-	// or if it is more than a day old
-	if (!file_exists($supportfile) || ( time()-filemtime($supportfile) > $refreshinterval)) {
+	// Retrieve the support data from Netgate.com if
+	// the support data file does not exist, or
+	// if it is more than a day old and the URL seems resolvable
+	if ( !file_exists($supportfile) || ( time()-filemtime($supportfile) > $refreshinterval && is_url_hostname_resolvable($FQDN) ) ) {
 		if (file_exists($supportfile)) {
 			unlink($supportfile);
 		}

@@ -58,6 +58,7 @@ net/bird
 net/hping
 net/mosh
 net/nss_ldap
+net/pimd
 net/py-speedtest-cli
 net/trafshow
 net/trafshow3

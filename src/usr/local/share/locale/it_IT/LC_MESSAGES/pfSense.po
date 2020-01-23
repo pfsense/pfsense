@@ -1,4 +1,4 @@
-# Administrator <sbeaver@netgate.com>, 2019. #zanata
+# kiokoman <registrazioni@kiokoman.eu.org>, 2019. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -7,37 +7,39 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2019-05-10 12:00+0000\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
-"Language-Team: Tagalog\n"
-"Language: fil\n"
+"PO-Revision-Date: 2019-08-14 06:58+0000\n"
+"Last-Translator: kiokoman <registrazioni@kiokoman.eu.org>\n"
+"Language-Team: Italian (Italy)\n"
+"Language: it_IT\n"
 "X-Generator: Zanata 4.6.2\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: src/usr/local/captiveportal/index.php:43
 msgid "Internal error"
-msgstr ""
+msgstr "Errore Interno"
 
 #: src/usr/local/captiveportal/index.php:58
 msgid "An error occurred.  Please check the system logs for more information."
 msgstr ""
+"Si è verificato un errore. Per ulteriori informazioni, consultare i registri "
+"di sistema"
 
 #: src/usr/local/captiveportal/index.php:85
 msgid "You are connected."
-msgstr ""
+msgstr "Tu sei connesso."
 
 #: src/usr/local/captiveportal/index.php:150
 msgid "This MAC address has been blocked"
-msgstr ""
+msgstr "Questo indirizzo MAC è stato bloccato"
 
 #: src/usr/local/captiveportal/index.php:162
 #: src/usr/local/captiveportal/index.php:236
 msgid "Invalid credentials specified."
-msgstr ""
+msgstr "Credenziali specificate non valide"
 
 #: src/usr/local/captiveportal/index.php:206
 msgid "System reached maximum login capacity"
-msgstr ""
+msgstr "Il Sistema ha raggiunto la massima capacità di login"
 
 #: src/usr/local/bin/dhcpd_gather_stats.php:54
 #: src/usr/local/www/status_dhcpv6_leases.php:131
@@ -55,42 +57,42 @@ msgstr ""
 #: src/usr/local/sbin/gmirror_status_check.php:46
 #, php-format
 msgid "List of mirrors changed. Old: (%s) New: (%s)"
-msgstr "Listahan ng mga salamin na napalitan. Luma(%s) Bago: (%s)"
+msgstr "La lista dei mirrors è cambiata. Vecchio: (%s) Nuovo: (%s)"
 
 #: src/usr/local/sbin/gmirror_status_check.php:54
 #, php-format
 msgid "Mirror %s status changed from %s to %s."
-msgstr "Salamin %s napalitang estado mula %s sa %s"
+msgstr "Mirror %s stato cambiato da %s in %s"
 
 #: src/usr/local/sbin/gmirror_status_check.php:59
 #, php-format
 msgid "Mirror %s consumer count changed from %d to %d."
-msgstr "salamin %s bilang ng gumagamit ay napalitan mula %d hanggang %d"
+msgstr "Mirror %s conteggio cambiato da %d a %d."
 
 #: src/usr/local/sbin/gmirror_status_check.php:72
 #, php-format
 msgid "Mirror %s drive status changed. Old: (%s) New: (%s)"
-msgstr ""
+msgstr "Mirror %s stato drive cambiato. Vecchio: (%s) Nuovo: (%s)"
 
 #: src/usr/local/www/firewall_nat_1to1.php:55
 msgid "Firewall: NAT: 1:1 - reordered NAT 1:1 mappings."
-msgstr "Firewall: NAT: 1:1 - naisaayos NAT 1:1 na mapa"
+msgstr "Firewall: NAT: 1:1 - mappatura NAT 1:1 riordinata."
 
 #: src/usr/local/www/firewall_nat_1to1.php:78
 msgid "Firewall: NAT: 1:1 - deleted NAT 1:1 mapping."
-msgstr "Firewall: NAT: 1:1 - nabura NAT 1:1 na mapa"
+msgstr "Firewall: NAT: 1:1 - mappatura NAT 1:1 cancellata."
 
 #: src/usr/local/www/firewall_nat_1to1.php:94
 msgid "Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings."
-msgstr "Firewall NAT: 1:1 - naburang pili NAT 1:1 na mapa"
+msgstr "Firewall: NAT: 1:1 - mappatura NAT 1:1 selezionata cancellata."
 
 #: src/usr/local/www/firewall_nat_1to1.php:106
 msgid "Firewall: NAT: 1:1 - enabled a NAT 1:1 rule."
-msgstr "Firewall: NAT:1:1 gumaganang NAT 1:1 na panuntunan"
+msgstr "Firewall: NAT: 1:1 - abilita una regola NAT 1:1."
 
 #: src/usr/local/www/firewall_nat_1to1.php:109
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - disabilita una regola NAT 1:1."
 
 #: src/usr/local/www/firewall_nat_1to1.php:119
 #: src/usr/local/www/firewall_nat_1to1_edit.php:289
@@ -143,7 +145,7 @@ msgstr "1:1"
 #: src/usr/local/www/firewall_nat.php:197
 #: src/usr/local/www/firewall_nat_npt.php:127
 msgid "The NAT configuration has been changed."
-msgstr "ang pagsasaayos ng NAT ay napalitan"
+msgstr "La configurazione NAT è stata cambiata."
 
 #: src/usr/local/www/firewall_nat_1to1.php:129
 #: src/usr/local/www/interfaces_assign.php:452
@@ -175,7 +177,7 @@ msgstr "ang pagsasaayos ng NAT ay napalitan"
 #: src/usr/local/www/firewall_rules.php:305
 #: src/usr/local/www/system_gateway_groups.php:113
 msgid "The changes must be applied for them to take effect."
-msgstr "ang mga napalitan ay kailangang i-apply para umepekto"
+msgstr "Le modifiche devono essere applicate affinchè abbiano effetto."
 
 #: src/usr/local/www/firewall_nat_1to1.php:133
 #: src/usr/local/www/firewall_nat_out.php:215
@@ -184,7 +186,7 @@ msgstr "ang mga napalitan ay kailangang i-apply para umepekto"
 #: src/usr/local/www/firewall_nat_edit.php:648
 #: src/usr/local/www/firewall_nat_npt.php:132
 msgid "Port Forward"
-msgstr "Port forwar"
+msgstr "Port Forward"
 
 #: src/usr/local/www/firewall_nat_1to1.php:135
 #: src/usr/local/www/firewall_nat_out.php:197
@@ -193,7 +195,7 @@ msgstr "Port forwar"
 #: src/usr/local/www/firewall_nat_npt.php:134
 #: src/usr/local/www/firewall_nat_out_edit.php:392
 msgid "Outbound"
-msgstr "papalabas"
+msgstr "Outbound"
 
 #: src/usr/local/www/firewall_nat_1to1.php:136
 #: src/usr/local/www/firewall_nat_out.php:218
@@ -206,7 +208,7 @@ msgstr "NPt"
 
 #: src/usr/local/www/firewall_nat_1to1.php:142
 msgid "NAT 1:1 Mappings"
-msgstr "mapa ng NAT 1:1"
+msgstr "Mappatura NAT 1:1"
 
 #: src/usr/local/www/firewall_nat_1to1.php:149
 #: src/usr/local/www/interfaces_assign.php:497
@@ -261,19 +263,19 @@ msgstr "mapa ng NAT 1:1"
 #: src/usr/local/www/status_graph.php:153
 #: src/usr/local/www/firewall_nat_npt_edit.php:94 src/etc/inc/gwlb.inc:1661
 msgid "Interface"
-msgstr "interface"
+msgstr "Interfaccia"
 
 #: src/usr/local/www/firewall_nat_1to1.php:150
 msgid "External IP"
-msgstr "panlabas na IP"
+msgstr "IP Esterno"
 
 #: src/usr/local/www/firewall_nat_1to1.php:151
 msgid "Internal IP"
-msgstr "panloob na IP"
+msgstr "IP Interno"
 
 #: src/usr/local/www/firewall_nat_1to1.php:152
 msgid "Destination IP"
-msgstr "Pupuntahang IP"
+msgstr "IP di destinazione"
 
 #: src/usr/local/www/firewall_nat_1to1.php:153
 #: src/usr/local/www/status_ipsec.php:570
@@ -388,7 +390,7 @@ msgstr "Pupuntahang IP"
 #: src/usr/local/www/firewall_nat_npt_edit.php:204 src/etc/inc/shaper.inc:1793
 #: src/etc/inc/shaper.inc:4344 src/etc/inc/shaper.inc:4789
 msgid "Description"
-msgstr "paglalarawan"
+msgstr "Descrizione"
 
 #: src/usr/local/www/firewall_nat_1to1.php:154
 #: src/usr/local/www/vpn_l2tp_users.php:96
@@ -452,7 +454,7 @@ msgstr "paglalarawan"
 #: src/usr/local/www/system_gateway_groups.php:133
 #: src/usr/local/www/services_captiveportal_filemanager.php:197
 msgid "Actions"
-msgstr "aksyon"
+msgstr "Azioni"
 
 #: src/usr/local/www/firewall_nat_1to1.php:181
 #: src/usr/local/www/vpn_ipsec.php:326 src/usr/local/www/vpn_ipsec.php:489
@@ -460,14 +462,12 @@ msgstr "aksyon"
 #: src/usr/local/www/firewall_nat_npt.php:176
 #: src/usr/local/www/firewall_rules.php:480
 msgid "click to toggle enabled/disabled status"
-msgstr "pindutin para paganahin/di paganahin ang kalagayan"
+msgstr "Clicca per abilitare/disabilitare lo stato"
 
 #: src/usr/local/www/firewall_nat_1to1.php:183
 #: src/usr/local/www/firewall_nat.php:298
 msgid "Negated: This rule excludes NAT from a later rule"
-msgstr ""
-"Kabaligtaran: ang panuntunang ito ay hindi kasama sa NAT mula sa naunang "
-"panuntunan"
+msgstr "Negated: This rule excludes NAT from a later rule"
 
 #: src/usr/local/www/firewall_nat_1to1.php:210
 #: src/usr/local/www/firewall_nat_out.php:346
@@ -485,30 +485,30 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:707
 #: src/usr/local/www/firewall_rules.php:716
 msgid "Alias details"
-msgstr "detalye ng alyas"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:224
 #: src/usr/local/www/firewall_nat_out.php:474
 #: src/usr/local/www/firewall_nat_npt.php:206
 msgid "Edit mapping"
-msgstr "iedit ang mga mapa"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:225
 #: src/usr/local/www/firewall_nat_out.php:475
 #: src/usr/local/www/firewall_nat_npt.php:207
 msgid "Add a new mapping based on this one"
-msgstr "magdagdag ng bagong mapa ayun dito"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:226
 #: src/usr/local/www/firewall_nat_out.php:476
 #: src/usr/local/www/firewall_nat_npt.php:208
 msgid "Delete mapping"
-msgstr "burahin ang mapa"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:240
 #: src/usr/local/www/firewall_nat_npt.php:221
 msgid "Add mapping to the top of the list"
-msgstr "magdagdag ng mapa sa itaas ng listahan"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:242
 #: src/usr/local/www/firewall_nat_1to1.php:246
@@ -579,17 +579,17 @@ msgstr "magdagdag ng mapa sa itaas ng listahan"
 #: src/usr/local/www/system_gateway_groups.php:187
 #: src/usr/local/www/services_captiveportal_filemanager.php:241
 msgid "Add"
-msgstr "magdagdag"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:244
 #: src/usr/local/www/firewall_nat_npt.php:225
 msgid "Add mapping to the end of the list"
-msgstr "magdagdag ng mapa sa hulihang bahagi ng listahan"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:248
 #: src/usr/local/www/firewall_nat_npt.php:229
 msgid "Delete selected mappings"
-msgstr "burahin ang mga piling mapa"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:250
 #: src/usr/local/www/interfaces_assign.php:54
@@ -618,13 +618,13 @@ msgstr "burahin ang mga piling mapa"
 #: src/usr/local/www/firewall_rules.php:810 src/usr/local/www/pkg_edit.php:1469
 #: src/etc/inc/shaper.inc:4240
 msgid "Delete"
-msgstr "burahin"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:252
 #: src/usr/local/www/firewall_nat_out.php:501
 #: src/usr/local/www/firewall_nat_npt.php:233
 msgid "Save mapping order"
-msgstr "i-adya ang ayos ng mapa"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:254
 #: src/usr/local/www/interfaces_assign.php:561
@@ -664,7 +664,7 @@ msgstr "i-adya ang ayos ng mapa"
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:299
 #: src/usr/local/www/pkg_edit.php:617
 msgid "Save"
-msgstr "i-adya"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:260
 #, php-format
@@ -672,8 +672,6 @@ msgid ""
 "Depending on the way the WAN connection is setup, this may also need a "
 "%1$sVirtual IP%2$s."
 msgstr ""
-"depende sa kung anong paraan ang koneksyon ng WAN ay naisa-ayos, maaring ito "
-"ay nangangailangan ng %1$s Virtual IP%2$s"
 
 #: src/usr/local/www/firewall_nat_1to1.php:262
 msgid ""
@@ -686,7 +684,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1.php:299
 msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
-msgstr "isa o higit pang NAT 1:1 na mapa ay nailipat ngunit hindi na-iadya"
+msgstr ""
 
 #: src/usr/local/www/status_unbound.php:33
 #: src/usr/local/www/status_ipsec.php:549
@@ -740,7 +738,7 @@ msgstr "isa o higit pang NAT 1:1 na mapa ay nailipat ngunit hindi na-iadya"
 #: src/usr/local/www/status_gateway_groups.php:46
 #: src/usr/local/www/status_graph.php:137 src/etc/inc/gmirror.inc:76
 msgid "Status"
-msgstr "katayuan"
+msgstr ""
 
 #: src/usr/local/www/status_unbound.php:33
 #: src/usr/local/www/status_logs_common.inc:114
@@ -860,7 +858,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec.php:134
 #: src/usr/local/www/status_ipsec.php:180
 msgid "Any identifier"
-msgstr "anumang pagkakakilanlan"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:139
 #: src/usr/local/www/status_ipsec.php:156
@@ -878,7 +876,7 @@ msgstr "anumang pagkakakilanlan"
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:94
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:139
 msgid "Unknown"
-msgstr "Di alam"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:242
 msgid "Rekey:"
@@ -922,17 +920,17 @@ msgstr ""
 #: src/usr/local/www/status_ipsec.php:281
 #, php-format
 msgid "%1$s seconds (%2$s) ago"
-msgstr "%1$s segundo (%2$s) nakalipas"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:288
 #: src/usr/local/www/status_ipsec.php:290
 #: src/usr/local/www/status_ipsec.php:537
 msgid "Connect VPN"
-msgstr "kumunekta VPN"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:295
 msgid "Disconnect VPN"
-msgstr "tanggalin angVPN"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:297
 #: src/usr/local/www/status_ipsec.php:433
@@ -941,7 +939,7 @@ msgstr "tanggalin angVPN"
 #: src/usr/local/www/status_interfaces.php:127
 #: src/usr/local/www/status_interfaces.php:128
 msgid "Disconnect"
-msgstr "tanggalin"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:302
 #: src/usr/local/www/status_ipsec.php:304
@@ -1008,7 +1006,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:414
 msgid "IPComp: "
-msgstr "IPComp:"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:418
 #: src/usr/local/www/vpn_openvpn_client.php:671
@@ -1018,7 +1016,7 @@ msgstr "IPComp:"
 #: src/usr/local/www/firewall_rules_edit.php:1755
 #: src/usr/local/www/firewall_rules.php:741 src/etc/inc/openvpn.inc:55
 msgid "none"
-msgstr "wala"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:424
 msgid "Bytes-In:"
@@ -1038,15 +1036,15 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:431
 msgid "Disconnect Child SA"
-msgstr "disconnect anak SA"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:525
 msgid "Awaiting connections"
-msgstr "naghihintay sa mga koneksyon"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:533
 msgid "Disconnected"
-msgstr "nakatanggal"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:549
 #: src/usr/local/www/status_ipsec_leases.php:34
@@ -1191,7 +1189,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:54
 msgid "Delete interface"
-msgstr "Burahin ang interface"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:54
 #: src/usr/local/www/firewall_nat_1to1_edit.php:289
@@ -1358,7 +1356,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:74
 #: src/usr/local/www/interfaces_lagg.php:86
 msgid "Wireless"
-msgstr "wireless"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:472
 #: src/usr/local/www/interfaces_wireless.php:79
@@ -1373,7 +1371,7 @@ msgstr "wireless"
 #: src/usr/local/www/interfaces_vlan.php:75
 #: src/usr/local/www/interfaces_lagg.php:87
 msgid "VLANs"
-msgstr "VLANs"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:473
 #: src/usr/local/www/interfaces_wireless.php:80
@@ -1388,7 +1386,7 @@ msgstr "VLANs"
 #: src/usr/local/www/interfaces_vlan.php:76
 #: src/usr/local/www/interfaces_lagg.php:88
 msgid "QinQs"
-msgstr "QinQs"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:474
 #: src/usr/local/www/interfaces_wireless.php:81
@@ -1403,7 +1401,7 @@ msgstr "QinQs"
 #: src/usr/local/www/interfaces_vlan.php:77
 #: src/usr/local/www/interfaces_lagg.php:89
 msgid "PPPs"
-msgstr "PPPs"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:475
 #: src/usr/local/www/interfaces_wireless.php:82
@@ -1418,7 +1416,7 @@ msgstr "PPPs"
 #: src/usr/local/www/interfaces_vlan.php:78
 #: src/usr/local/www/interfaces_lagg.php:90
 msgid "GREs"
-msgstr "GREs"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:476
 #: src/usr/local/www/interfaces_wireless.php:83
@@ -1433,7 +1431,7 @@ msgstr "GREs"
 #: src/usr/local/www/interfaces_vlan.php:79
 #: src/usr/local/www/interfaces_lagg.php:91
 msgid "GIFs"
-msgstr "GIFs"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:477
 #: src/usr/local/www/interfaces_wireless.php:84
@@ -1448,7 +1446,7 @@ msgstr "GIFs"
 #: src/usr/local/www/interfaces_vlan.php:80
 #: src/usr/local/www/interfaces_lagg.php:92
 msgid "Bridges"
-msgstr "Tulay"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:478
 #: src/usr/local/www/interfaces_lagg_edit.php:213
@@ -1463,35 +1461,31 @@ msgstr "Tulay"
 #: src/usr/local/www/interfaces_lagg.php:75
 #: src/usr/local/www/interfaces_lagg.php:93
 msgid "LAGGs"
-msgstr "LAGGs"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:498
 msgid "Network port"
-msgstr "Network port"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:537
 msgid "Available network ports:"
-msgstr "mga bakanteng network port"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:550
 msgid "Add selected interface"
-msgstr "idagdag ang napiling interface"
+msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:566
 msgid ""
 "Interfaces that are configured as members of a lagg(4) interface will not be "
 "shown."
 msgstr ""
-"ang mga interface na naisaayos bilang miyembro ng lagg(4) interface ay di "
-"ipapakita."
 
 #: src/usr/local/www/interfaces_assign.php:568
 msgid ""
 "Wireless interfaces must be created on the Wireless tab before they can be "
 "assigned."
 msgstr ""
-"dapat gawin ang wireless interface sa wireless interface tab bago sila "
-"maitalaga."
 
 #: src/usr/local/www/diag_limiter_info.php:33
 #: src/usr/local/www/diag_dump_states.php:77
@@ -1514,19 +1508,19 @@ msgstr ""
 #: src/usr/local/www/diag_traceroute.php:39 src/usr/local/www/diag_halt.php:47
 #: src/usr/local/www/diag_ping.php:37
 msgid "Diagnostics"
-msgstr "diagnostics"
+msgstr ""
 
 #: src/usr/local/www/diag_limiter_info.php:33 src/usr/local/www/head.inc:401
 msgid "Limiter Info"
-msgstr "impormasyon ng limitasyon"
+msgstr ""
 
 #: src/usr/local/www/diag_limiter_info.php:39
 msgid "No limiters were found on this system."
-msgstr "walang mahanap na limistasyon sa sistemang ito"
+msgstr ""
 
 #: src/usr/local/www/diag_limiter_info.php:41
 msgid "Limiters:"
-msgstr "limitasyon:"
+msgstr ""
 
 #: src/usr/local/www/diag_limiter_info.php:45
 msgid "Schedulers"
@@ -1535,20 +1529,19 @@ msgstr ""
 #: src/usr/local/www/diag_limiter_info.php:50
 #: src/usr/local/www/status_queues.php:52 src/usr/local/www/head.inc:362
 msgid "Queues"
-msgstr "mga pila"
+msgstr ""
 
 #: src/usr/local/www/diag_limiter_info.php:87
 msgid "Limiter Information"
-msgstr "impormasyon ng limitasyon"
+msgstr ""
 
 #: src/usr/local/www/diag_limiter_info.php:89
 msgid "Gathering Limiter information, please wait..."
 msgstr ""
-"nangangalap ng impormasyon patungkol sa limitasyon mangyaring maghintay."
 
 #: src/usr/local/www/status_ipsec_leases.php:54
 msgid "Pool"
-msgstr "pool"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec_leases.php:55
 #: src/usr/local/www/firewall_virtual_ip_edit.php:407
@@ -1566,7 +1559,7 @@ msgstr ""
 #: src/usr/local/www/status_dhcp_leases.php:201
 #: src/usr/local/www/status_gateway_groups.php:128
 msgid "Online"
-msgstr "online"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec_leases.php:57
 msgid "Total Usage"
@@ -1575,7 +1568,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_leases.php:58
 #: src/usr/local/www/firewall_rules_edit.php:1187
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec_leases.php:59
 #: src/usr/local/www/services_unbound.php:579
@@ -1586,15 +1579,15 @@ msgstr "ID"
 #: src/usr/local/www/diag_ping.php:55
 #: src/usr/local/www/services_dnsmasq_edit.php:201
 msgid "Host"
-msgstr "host"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec_leases.php:115
 msgid "No leases from this pool yet."
-msgstr "walang upa mula sa pool na ito"
+msgstr ""
 
 #: src/usr/local/www/status_ipsec_leases.php:126
 msgid "No IPsec pools."
-msgstr "walang IPsec pools"
+msgstr ""
 
 #: src/usr/local/www/status_captiveportal_expire.php:58
 #: src/usr/local/www/services_captiveportal_zones_edit.php:37
@@ -1618,7 +1611,7 @@ msgstr "walang IPsec pools"
 #: src/usr/local/www/services_captiveportal_filemanager.php:66
 #: src/etc/inc/service-utils.inc:288
 msgid "Captive Portal"
-msgstr "captive portal"
+msgstr ""
 
 #: src/usr/local/www/status_captiveportal_expire.php:58
 #: src/usr/local/www/status_captiveportal_expire.php:76
@@ -1628,15 +1621,15 @@ msgstr "captive portal"
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:72
 #: src/usr/local/www/status_captiveportal_vouchers.php:95
 msgid "Expire Vouchers"
-msgstr "lampas na butser"
+msgstr ""
 
 #: src/usr/local/www/status_captiveportal_expire.php:65
 msgid "Voucher(s) successfully marked."
-msgstr "butser matagumpay na namarkahan"
+msgstr ""
 
 #: src/usr/local/www/status_captiveportal_expire.php:67
 msgid "Voucher(s) could not be processed."
-msgstr "butser hindi maiproseso"
+msgstr ""
 
 #: src/usr/local/www/status_captiveportal_expire.php:72
 #: src/usr/local/www/status_captiveportal_test.php:76
@@ -1645,7 +1638,7 @@ msgstr "butser hindi maiproseso"
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:68
 #: src/usr/local/www/status_captiveportal_vouchers.php:91
 msgid "Active Users"
-msgstr "actibong gumagamit"
+msgstr ""
 
 #: src/usr/local/www/status_captiveportal_expire.php:73
 #: src/usr/local/www/status_captiveportal_test.php:77
@@ -1654,7 +1647,7 @@ msgstr "actibong gumagamit"
 #: src/usr/local/www/status_captiveportal_vouchers.php:54
 #: src/usr/local/www/status_captiveportal_vouchers.php:92
 msgid "Active Vouchers"
-msgstr "actibong butser"
+msgstr ""
 
 #: src/usr/local/www/status_captiveportal_expire.php:74
 #: src/usr/local/www/status_captiveportal_test.php:78
@@ -1665,7 +1658,7 @@ msgstr "actibong butser"
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:70
 #: src/usr/local/www/status_captiveportal_vouchers.php:93
 msgid "Voucher Rolls"
-msgstr "pinaikot na butser"
+msgstr ""
 
 #: src/usr/local/www/status_captiveportal_expire.php:75
 #: src/usr/local/www/status_captiveportal_test.php:54
@@ -1675,28 +1668,26 @@ msgstr "pinaikot na butser"
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:71
 #: src/usr/local/www/status_captiveportal_vouchers.php:94
 msgid "Test Vouchers"
-msgstr "subukan ang butser"
+msgstr ""
 
 #: src/usr/local/www/status_captiveportal_expire.php:85
 #: src/usr/local/www/status_captiveportal_test.php:89
 msgid "*Vouchers"
-msgstr "*butser"
+msgstr ""
 
 #: src/usr/local/www/status_captiveportal_expire.php:87
 msgid ""
 "Enter multiple vouchers separated by space or newline. All valid vouchers "
 "will be marked as expired."
 msgstr ""
-"maglagay ng maraming butser paghiwalayin gamit ang espasyo o bagong linya. "
-"lahat ng gumaganang butser ay mamarkahan ng tapos na."
 
 #: src/usr/local/www/status_captiveportal_expire.php:100
 msgid "Expire"
-msgstr "lampas"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:44
 msgid "They must be either both IPv4 or both IPv6 addresses."
-msgstr "sila ay dapat parehong IPv4 o parehong IPv6 address."
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:114
 #: src/usr/local/www/firewall_nat_out_edit.php:149
@@ -1708,7 +1699,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:124
 msgid "External subnet"
-msgstr "panlabas na subnet"
+msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:129
 #: src/usr/local/www/firewall_nat_edit.php:220
@@ -14742,6 +14733,7 @@ msgstr ""
 msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
 msgstr[0] ""
+msgstr[1] ""
 
 #: src/usr/local/www/system.php:178
 #: src/usr/local/www/services_dnsmasq_edit.php:66
@@ -29657,7 +29649,7 @@ msgstr ""
 
 #: src/etc/inc/system.inc:730
 msgid "Never"
-msgstr "Hindi"
+msgstr "Mai"
 
 #: src/etc/inc/system.inc:898
 #, php-format

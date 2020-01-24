@@ -127,6 +127,10 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['dpd_maxfail'] = $a_phase1[$p1index]['dpd_maxfail'];
 	}
 
+	if (isset($a_phase1[$p1index]['prfselect_enable'])) {
+		$pconfig['prfselect_enable'] = 'yes';
+	}
+
 	if (isset($a_phase1[$p1index]['splitconn'])) {
 		$pconfig['splitconn'] = true;
 	}
@@ -152,6 +156,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['reauth_time'] = "28800";
 	$pconfig['nat_traversal'] = 'on';
 	$pconfig['mobike'] = 'off';
+	$pconfig['prfselect_enable'] = false;
 	$pconfig['dpd_enable'] = true;
 	$pconfig['iketype'] = "ikev1";
 
@@ -166,6 +171,7 @@ if (!is_array($pconfig['encryption']['item']) || count($pconfig['encryption']['i
 	$item = array();
 	$item['encryption-algorithm'] = array('name' => "aes", 'keylen' => 128);
 	$item['hash-algorithm'] = "sha256";
+	$item['prf-algorithm'] = "sha256";
 	$item['dhgroup'] = "14";
 	$pconfig['encryption']['item'][] = $item;
 }
@@ -184,6 +190,7 @@ if ($_POST['save']) {
 			$item['encryption-algorithm']['name'] = $_POST['ealgo_algo'.$i];
 			$item['encryption-algorithm']['keylen'] = $_POST['ealgo_keylen'.$i];
 			$item['hash-algorithm'] = $_POST['halgo'.$i];
+			$item['prf-algorithm'] = $_POST['prfalgo'.$i];
 			$item['dhgroup'] = $_POST['dhgroup'.$i];
 			$pconfig['encryption']['item'][] = $item;
 		}
@@ -501,6 +508,12 @@ if ($_POST['save']) {
 		$ph1ent['nat_traversal'] = $pconfig['nat_traversal'];
 		$ph1ent['mobike'] = $pconfig['mobike'];
 		$ph1ent['closeaction'] = $pconfig['closeaction'];
+
+		if (isset($pconfig['prfselect_enable'])) {
+			$ph1ent['prfselect_enable'] = 'yes';
+		} else {
+			unset($ph1ent['prfselect_enable']);
+		}
 
 		if (isset($pconfig['responderonly'])) {
 			$ph1ent['responderonly'] = true;
@@ -825,35 +838,47 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 		null,
 		$p1enc['encryption-algorithm']['name'],
 		build_eal_list()
-	))->setHelp($lastrow ? 'Algorithm' : '');
+	))->setHelp($lastrow ? 'Algorithm' : '')->setWidth(2);
 
 	$group->add(new Form_Select(
 		'ealgo_keylen'.$key,
 		null,
 		$p1enc['encryption-algorithm']['keylen'],
 		array()
-	))->setHelp($lastrow ? 'Key length' : '');
+	))->setHelp($lastrow ? 'Key length' : '')->setWidth(2);
 
 	$group->add(new Form_Select(
 		'halgo'.$key,
 		'*Hash Algorithm',
 		$p1enc['hash-algorithm'],
 		$p1_halgos
-	))->setHelp($lastrow ? 'Hash' : '');
+	))->setHelp($lastrow ? 'Hash' : '')->setWidth(2);
 
 	$group->add(new Form_Select(
 		'dhgroup'.$key,
 		'*DH Group',
 		$p1enc['dhgroup'],
 		$p1_dhgroups
-	))->setHelp($lastrow ? 'DH Group' : '');
+	))->setHelp($lastrow ? 'DH Group' : '')->setWidth(2);
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
 		'Delete',
 		null,
 		'fa-trash'
-	))->addClass('btn-warning');
+	))->addClass('btn-warning')->setWidth(2);
+
+	$group->add(new Form_StaticText(
+		null,
+		null,
+	))->setWidth(6);
+
+	$group->add(new Form_Select(
+		'prfalgo'.$key,
+		'*PRF Algorithm',
+		$p1enc['prf-algorithm'],
+		$p1_halgos
+	))->setHelp($lastrow ? 'PRF' : '')->setWidth(2);
 
 	$section->add($group);
 	$counter += 1;
@@ -939,6 +964,13 @@ $section->addInput(new Form_Checkbox(
 	'Enable this to split connection entries with multiple phase 2 configurations. Required for remote endpoints that support only a single traffic selector per child SA.',
 	$pconfig['splitconn']
 ));
+
+$section->addInput(new Form_Checkbox(
+	'prfselect_enable',
+	'PRF Selection',
+	'Enable manual Pseudo-Random Function (PRF) selection',
+	$pconfig['prfselect_enable'],
+))->setHelp('Manual PRF selection is typically not required, but can be useful in combination with AEAD Encryption Algorithms such as AES-GCM');
 
 /* FreeBSD doesn't yet have TFC support. this is ready to go once it does
 https://redmine.pfsense.org/issues/4688
@@ -1043,6 +1075,7 @@ events.push(function() {
 			//hideCheckbox('tfc_enable', false);
 			hideInput('rekey_time', false);
 			hideCheckbox('splitconn', false);
+			hideCheckbox('prfselect_enable', false);
 		} else {
 			hideInput('mode', false);
 			hideInput('mobike', true);
@@ -1050,6 +1083,7 @@ events.push(function() {
 			//hideInput('tfc_bytes', true);
 			hideInput('rekey_time', !($('#iketype').val() == 'auto'));
 			hideCheckbox('splitconn', true);
+			hideCheckbox('prfselect_enable', true);
 		}
 	}
 
@@ -1173,6 +1207,14 @@ events.push(function() {
 		}
 	}
 
+	function prfselectchkbox_change() {
+		hide = !$('#prfselect_enable').prop('checked');
+		var i;
+		for (i = 0; i < 50; i++) {
+			hideGroupInput('prfalgo' + i , hide);
+		}
+	}
+
 	function dpdchkbox_change() {
 		hide = !$('#dpd_enable').prop('checked');
 
@@ -1195,6 +1237,11 @@ events.push(function() {
 	//}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ----------
+
+	 // Enable PRF
+	$('#prfselect_enable').click(function () {
+		prfselectchkbox_change();
+	});
 
 	 // Enable DPD
 	$('#dpd_enable').click(function () {
@@ -1238,6 +1285,7 @@ events.push(function() {
 	iketype_change();
 	methodsel_change();
 	dpdchkbox_change();
+	prfselectchkbox_change();
 <?php
 foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 	$keylen = $p1enc['encryption-algorithm']['keylen'];

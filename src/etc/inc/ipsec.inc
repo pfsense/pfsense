@@ -1859,7 +1859,7 @@ function ipsec_setup_authentication(& $ph1ent, & $conn) {
  *   Values left empty will not be added to the string. Some combinations may
  *   require one or more parts to be omitted.
  ******/
-function ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, $modp) {
+function ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, $prfalgo, $modp) {
 	$palgo = "";
 
 	/* Add the encryption algorithm (if present) */
@@ -1881,6 +1881,10 @@ function ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, $modp) {
 		}
 		$halgo = str_replace('hmac_', '', $halgo);
 		$palgo .= "{$halgo}";
+	}
+
+	if (!empty($prfalgo)) {
+		$palgo .= "-prf{$prfalgo}";
 	}
 
 	/* Convert the DH group to its keyword and add (if present) */
@@ -1912,7 +1916,7 @@ function ipsec_setup_proposal_entry(& $ph2ent, & $algo_arr, $ealg_id, $keylen) {
 	/* If multiple hash algorithms are present, loop through and add them all. */
 	if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
 		foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
-			$proposal[] = ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, $ph2ent['pfsgroup']);
+			$proposal[] = ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, false, $ph2ent['pfsgroup']);
 		}
 	} else {
 		$proposal[] = ipsec_setup_proposal_algo($ealg_id, $keylen, '', $ph2ent['pfsgroup']);
@@ -2030,9 +2034,13 @@ function ipsec_setup_tunnels() {
 						empty($p1enc['hash-algorithm'])) {
 					continue;
 				}
+				if ($ph1ent['prfselect_enable'] != 'yes') {
+					$p1enc['prf-algorithm'] = false;
+				}
 				$ciphers[] = ipsec_setup_proposal_algo($p1enc['encryption-algorithm']['name'],
 									$p1enc['encryption-algorithm']['keylen'],
 									$p1enc['hash-algorithm'],
+									$p1enc['prf-algorithm'],
 									$p1enc['dhgroup']);
 			}
 			$conn['proposals'] = implode(",", $ciphers);

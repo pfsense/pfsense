@@ -389,6 +389,9 @@ $i = 0; foreach ($a_phase1 as $ph1ent):
 							echo "<br/>";
 						}
 						echo $p1_halgos[$p1algo['hash-algorithm']];
+						if (isset($ph1ent['prfselect_enable'])) {
+							echo " / PRF" . $p1_halgos[$p1algo['prf-algorithm']];
+						}
 						$first = false;
 					}
 				}

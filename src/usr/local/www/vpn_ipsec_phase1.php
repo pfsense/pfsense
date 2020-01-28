@@ -115,6 +115,12 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
 	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];
 	$pconfig['mobike'] = $a_phase1[$p1index]['mobike'];
+	$pconfig['gw_duplicates'] = $a_phase1[$p1index]['gw_duplicates'];
+
+	if (isset($a_phase1[$p1index]['gw_duplicates'])) {
+		$pconfig['gw_duplicates'] = true;
+	}
+
 	$pconfig['closeaction'] = $a_phase1[$p1index]['closeaction'];
 
 	if (isset($a_phase1[$p1index]['responderonly'])) {
@@ -286,7 +292,7 @@ if ($_POST['save']) {
 		foreach ($a_phase1 as $ph1tmp) {
 			if ($p1index != $t) {
 				$tremotegw = $pconfig['remotegw'];
-				if (($ph1tmp['remote-gateway'] == $tremotegw) && !isset($ph1tmp['disabled'])) {
+				if (($ph1tmp['remote-gateway'] == $tremotegw) && !isset($ph1tmp['disabled']) && (!isset($pconfig['gw_duplicates']) || !isset($ph1tmp['gw_duplicates']))) {
 					$input_errors[] = sprintf(gettext('The remote gateway "%1$s" is already used by phase1 "%2$s".'), $tremotegw, $ph1tmp['descr']);
 				}
 			}
@@ -500,6 +506,14 @@ if ($_POST['save']) {
 		$ph1ent['descr'] = $pconfig['descr'];
 		$ph1ent['nat_traversal'] = $pconfig['nat_traversal'];
 		$ph1ent['mobike'] = $pconfig['mobike'];
+
+		if ( isset($pconfig['gw_duplicates'])) {
+			$ph1ent['gw_duplicates'] = true;
+		}
+		else {
+			unset($ph1ent['gw_duplicates']);
+		}
+
 		$ph1ent['closeaction'] = $pconfig['closeaction'];
 
 		if (isset($pconfig['responderonly'])) {
@@ -932,6 +946,13 @@ $section->addInput(new Form_Select(
 	$pconfig['mobike'],
 	array('on' => gettext('Enable'), 'off' => gettext('Disable'))
 ))->setHelp('Set this option to control the use of MOBIKE');
+
+$section->addInput(new Form_Checkbox(
+	'gw_duplicates',
+	'Gateway duplicates',
+	'Enable this to allow multiple phase 1 configurations with the same endpoint. When enabled, you are responsible for doing proper source routing configuration to the endpoints. When disabled, pfSense will create a static route and routing rules to the remote gateway.',
+	$pconfig['gw_duplicates']
+));
 
 $section->addInput(new Form_Checkbox(
 	'splitconn',

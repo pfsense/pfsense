@@ -949,6 +949,8 @@ function ipsec_vti($ph1ent, $returnaddresses = false) {
  */
 function ipsec_reload_package_hook() {
 	global $g, $config;
+
+	init_config_arr(array('installedpackages', 'package'));
 	foreach ($config['installedpackages']['package'] as $package) {
 		if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 			continue;

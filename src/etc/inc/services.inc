@@ -1106,7 +1106,9 @@ EOD;
 		if (is_array($dhcpifconf['staticmap'])) {
 
 			$i = 0;
+			$sm_newzone[] = array();
 			foreach ($dhcpifconf['staticmap'] as $sm) {
+				$need_sm_ddns_updates = false;
 				$dhcpdconf .= "host s_{$dhcpif}_{$i} {\n";
 
 				if ($sm['mac']) {
@@ -1154,6 +1156,7 @@ EOD;
 				if (isset($sm['ddnsupdate'])) {
 					if (($sm['ddnsdomain'] <> "") && ($sm['ddnsdomain'] != $dhcpifconf['ddnsdomain'])) {
 						$smdnscfg .= "		ddns-domainname \"{$sm['ddnsdomain']}\";\n";
+				 		$need_sm_ddns_updates = true;	
 					}
 					$smdnscfg .= "		ddns-update-style interim;\n";
 				}
@@ -1190,6 +1193,18 @@ EOD;
 				}
 
 				$dhcpdconf .= "}\n";
+				// add zone DDNS key/server to $ddns_zone[] if required
+				if ($need_sm_ddns_updates) {
+					$sm_newzone['dns-servers'] = array($sm['ddnsdomainprimary']);
+					$sm_newzone['domain-name'] = $sm['domain'];
+					$sm_newzone['ddnsdomainkeyname'] = $sm['ddnsdomainkeyname'];
+					// fetch alogrithm from interface - can this be set per client?
+					$sm_newzone['ddnsdomainkeyalgorithm'] = $dhcpifconf['ddnsdomainkeyalgorithm'];
+					$sm_newzone['ddnsdomainkey'] = $sm['ddnsdomainkey'];
+					$dhcpdconf .= dhcpdkey($sm_newzone);
+					$ddns_zones[] = $sm_newzone;
+					$need_ddns_updates = true;
+				}
 				$i++;
 			}
 		}

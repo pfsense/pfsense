@@ -284,12 +284,12 @@ caption {
 
 .table-striped>tbody>tr.disabled:nth-of-type(odd) {
     background-color: rgba(48, 48, 48, .5);
-    color: rgba(255,255,255,.5);
+    color: rgba(255,55,55,1);
 }
 
 .table-striped>tbody>tr.disabled:nth-of-type(even) {
     background-color: rgba(66, 66, 66, .5);
-    color: rgba(255,255,255,.5);
+    color: rgba(255,55,55,1);
 }
 
 .table-hover>tbody>tr.disabled:hover, .table-striped>tbody>tr.disabled:nth-of-type(odd):hover, .table-striped>tbody>tr.disabled:nth-of-type(even):hover {

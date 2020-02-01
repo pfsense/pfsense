@@ -428,7 +428,7 @@ if (!$dfltmsg && $sform)  {
 			$queue ? 'Delete this queue':'Disable shaper on interface',
 			$url,
 			'fa-trash'
-		))->addClass('btn-danger');
+		))->addClass('btn-danger nowarn');
 
 	}
 

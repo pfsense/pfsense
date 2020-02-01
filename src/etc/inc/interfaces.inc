@@ -6978,6 +6978,16 @@ function get_interface_ports() {
 		}
 	}
 
+	if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
+		foreach ($config['qinqs']['qinqentry'] as $qinq) {
+			$members = explode(" ", $qinq['members']);
+			foreach ($members as $mem) {
+				$qentry = $qinq['vlanif'] . "." . $mem;
+				$portlist[$qentry] = $qentry;
+			}
+		}
+	}
+
 	foreach ($portlist as $ifn => $ifinfo) {
 		$string = "";
 		if (is_array($ifinfo)) {
@@ -7009,7 +7019,12 @@ function build_ppps_link_list() {
 	} else {
 		$iflist = get_interface_ports();
 
-		$viplist = get_configured_vip_list_with_descr('all', VIP_CARP);
+		$viplist = array();
+		$carplist = get_configured_vip_list_with_descr('all', VIP_CARP);
+		foreach ($carplist as $vid => $vaddr) {
+			$vip = get_configured_vip($vid);
+			$viplist[$vid] = "{$vaddr} (vhid: {$vip['vhid']})";
+		}
 
 		$linklist['list'] = array_merge($iflist, $viplist);
 

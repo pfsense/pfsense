@@ -170,45 +170,37 @@ if [ -d "/conf" ]; then
 	fi
 fi
 
-USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+. /etc/rc.ramdisk_functions.sh
 
-unset MOVE_PKG_DATA
-# If use MFS var is disabled, move files back to place
-if [ "${USE_MFS_TMPVAR}" != "true" -a -f /root/var/db/pkg/local.sqlite ]; then
-	MOVE_PKG_DATA=1
-	rm -rf /var/db/pkg 2>/dev/null
-	rm -rf /var/cache/pkg 2>/dev/null
-	mv -f /root/var/db/pkg /var/db
-	mv -f /root/var/cache/pkg /var/cache
-# If use MFS var is enabled, move files to a safe place
-elif [ "${USE_MFS_TMPVAR}" = "true" -a -f /var/db/pkg/local.sqlite ]; then
-	MOVE_PKG_DATA=1
-	rm -rf /root/var/db/pkg 2>/dev/null
-	rm -rf /root/var/cache/pkg 2>/dev/null
-	/bin/mkdir -p /root/var/db /root/var/cache
-	mv -f /var/db/pkg /root/var/db
-	mv -f /var/cache/pkg /root/var/cache
+# Check if RAM disks are enabled, store for repeated use
+if ramdisk_check_enabled; then
+	USE_RAMDISK=true
 fi
 
-# Mount /var and /tmp on ZFS filesystems when it's necessary
-if [ -n "${USE_ZFS}" -a "${USE_MFS_TMPVAR}" = "true" ]; then
-	zfs list -H -o name,mountpoint |
-	    while read volume mountpoint; do
-		[ "${mountpoint}" != "/var" -a "${mountpoint}" != "/tmp" ] \
-			&& continue
+# Relocate pkgdb based on desired RAM disk settings
+ramdisk_relocate_pkgdb_all
 
-		/sbin/zfs umount ${volume}
-	done
+# Dismount /tmp and /var on ZFS if using RAM disks and they are separate volumes
+if [ -n "${USE_ZFS}" -a -n "${USE_RAMDISK}" ]; then
+	ramdisk_fixup_zfs
 fi
 
-if [ "${USE_MFS_TMPVAR}" = "true" ]; then
+# Attempt to create and mount RAM disks
+if [ -n "${USE_RAMDISK}" ]; then
 	/etc/rc.embedded
 fi
 
-if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
-	/bin/mkdir -p /var/db /var/cache
-	ln -sf ../../root/var/db/pkg /var/db/pkg
-	ln -sf ../../root/var/cache/pkg /var/cache/pkg
+# If RAM disks are active, make symlinks for pkg database
+if [ -n "${USE_RAMDISK}" -o -n "${MOVE_PKG_DATA}" ]; then
+	ramdisk_link_pkgdb
+fi
+
+# If activating RAM disks failed, then undo some of the above actions
+if [ -n "${USE_RAMDISK}" ] && ramdisk_failed; then
+	ramdisk_fixup_zfs mount
+	ramdisk_relocate_pkgdb disk
+else
+	ramdisk_reset_status
 fi
 
 # Read product_name from $g, defaults to pfSense
@@ -247,7 +239,7 @@ fi
 # Use php -n here because we are not ready to load extensions yet
 varrunpath=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var varrun_path "/var/run")
 
-if [ "${USE_MFS_TMPVAR}" != "true" ]; then
+if ! ramdisk_is_active; then
 	/sbin/mdmfs -S -M -s 4m md $varrunpath
 fi
 

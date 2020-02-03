@@ -360,6 +360,11 @@ if ($physmem < $g['minimum_ram_warning']) {
 	));
 }
 
+if (file_exists("/conf/ram_disks_failed")) {
+	require_once("/etc/inc/notices.inc");
+	file_notice("RAM Disks", "RAM disk creation failed. Reverted to traditional storage. Check RAM disk sizes.", "RAM Disks");
+}
+
 /* if we are operating at 1000 then increase timeouts.
    this was never accounted for after moving to 1000 hz */
 $kern_hz = get_single_sysctl('kern.clockrate');

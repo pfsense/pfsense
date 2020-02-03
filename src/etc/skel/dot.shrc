@@ -35,7 +35,7 @@ if [ "${HTTP_PROXY_AUTH_USER}" != "" ] && [ "${HTTP_PROXY_AUTH_PASS}" != "" ]; t
 fi
 
 USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
-if [ "${USE_MFS_TMPVAR}" = "true" ]; then
+if [ "${USE_MFS_TMPVAR}" = "true" ] && [ ! -f /conf/ram_disks_failed ]; then
 	export PKG_DBDIR='/root/var/db/pkg'
 	export PKG_CACHEDIR='/root/var/cache/pkg'
 fi

@@ -20,31 +20,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Size of /tmp
-USE_MFS_TMP_SIZE=$(/usr/local/sbin/read_xml_tag.sh string system/use_mfs_tmp_size)
-if [ -n "${USE_MFS_TMP_SIZE}" ] && [ ${USE_MFS_TMP_SIZE} -gt 0 ]; then
-	tmpsize="${USE_MFS_TMP_SIZE}m"
-else
-	tmpsize="40m"
-fi
-
-# Size of /var
-USE_MFS_VAR_SIZE=$(/usr/local/sbin/read_xml_tag.sh string system/use_mfs_var_size)
-if [ -n "${USE_MFS_VAR_SIZE}" ] && [ ${USE_MFS_VAR_SIZE} -gt 0 ]; then
-	varsize="${USE_MFS_VAR_SIZE}m"
-else
-	varsize="60m"
-fi
+. /etc/rc.ramdisk_functions.sh
 
 echo -n "Setting up memory disks..."
-mdmfs -S -M -s ${tmpsize} md /tmp
-mdmfs -S -M -s ${varsize} md /var
 
-# Create some needed directories
-/bin/mkdir -p /var/db /var/spool/lock
-/usr/sbin/chown uucp:dialer /var/spool/lock
-
-# Ensure vi's recover directory is present
-/bin/mkdir -p /var/tmp/vi.recover/
-/bin/mkdir -p /var/crash/
-echo " done."
+if ramdisk_check_size && ramdisk_try_mount tmp && ramdisk_try_mount var; then
+	/bin/rm -f ${RAMDISK_FLAG_FILE}
+	# Create some needed directories
+	/bin/mkdir -p /var/db /var/spool/lock
+	/usr/sbin/chown uucp:dialer /var/spool/lock
+	# Ensure vi's recover directory is present
+	/bin/mkdir -p /var/tmp/vi.recover/
+	/bin/mkdir -p /var/crash/
+	echo " done."
+else
+	/usr/bin/touch ${RAMDISK_FLAG_FILE}
+	/sbin/umount -f /tmp /var 2>/dev/null
+	echo " failed."
+fi

@@ -38,16 +38,8 @@ product=$(/usr/local/sbin/read_global_var product_name pfSense)
 # Remove temporary files on shutdown from /tmp/
 rm -rf /tmp/*
 
-USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
-DISK_NAME=`/bin/df /var/db/rrd | /usr/bin/tail -1 | /usr/bin/awk '{print $1;}'`
-DISK_TYPE=`/usr/bin/basename ${DISK_NAME} | /usr/bin/cut -c1-2`
-# If we are not on a full install, or if the full install wants RAM disks, or if the full install _was_ using RAM disks, but isn't for the next boot...
-if [ "${USE_MFS_TMPVAR}" = "true" ] || [ "${DISK_TYPE}" = "md" ]; then
-	/etc/rc.backup_aliastables.sh
-	/etc/rc.backup_rrd.sh
-	/etc/rc.backup_dhcpleases.sh
-	/etc/rc.backup_logs.sh
-fi
+. /etc/rc.ramdisk_functions.sh
+ramdisk_make_backup
 
 sleep 1
 

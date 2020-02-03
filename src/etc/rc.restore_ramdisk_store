@@ -22,6 +22,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+. /etc/rc.ramdisk_functions.sh
+
 # Wildcard file existence check function
 wildcard_file_exists() {
 	for file in "$1"; do
@@ -43,8 +45,6 @@ if wildcard_file_exists "${RAM_Disk_Store}/"*".tgz"; then
 	mesg="Restoring contents of RAM disk store..."
 	echo -n "$mesg"
 
-	USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
-
 	# Restore the ram disk
 	for backup_file in "${RAM_Disk_Store}/"*".tgz"; do
 		if [ -f "$backup_file" ]; then
@@ -59,7 +59,7 @@ if wildcard_file_exists "${RAM_Disk_Store}/"*".tgz"; then
 			mesg="$mesg\nRAM disk restore succeeded: $backup_file"
 
 			#If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition.
-			if [ "${USE_MFS_TMPVAR}" != "true" ]; then
+			if ! ramdisk_is_active; then
 				/bin/rm -f "${backup_file}"
 			fi
 		fi

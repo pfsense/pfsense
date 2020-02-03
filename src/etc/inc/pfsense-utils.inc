@@ -2655,7 +2655,7 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 
 			/* Remove existing archive and create an up to date archive if RAM disk is enabled. */
 			unlink_if_exists("{$g['cf_conf_path']}/RAM_Disk_Store/{$name}.txt.tgz");
-			if (isset($config['system']['use_mfs_tmpvar'])) {
+			if (isset($config['system']['use_mfs_tmpvar']) && !file_exists("/conf/ram_disks_failed")) {
 				mwexec("/usr/bin/tar -czf " . escapeshellarg("{$g['cf_conf_path']}/RAM_Disk_Store/{$name}.txt.tgz") . " -C / " . escapeshellarg($urltable_filename));
 			}
 

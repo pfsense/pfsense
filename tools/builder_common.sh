@@ -1811,6 +1811,11 @@ poudriere_bulk() {
 	local _archs=$(poudriere_possible_archs)
 	local _makeconf
 
+	# Create DISTFILES_CACHE if it doesn't exist
+	if [ ! -d /usr/ports/distfiles ]; then
+		mkdir -p /usr/ports/distfiles
+	fi
+
 	LOGFILE=${BUILDER_LOGS}/poudriere.log
 
 	if [ -n "${UPLOAD}" -a -z "${PKG_RSYNC_HOSTNAME}" ]; then

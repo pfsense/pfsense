@@ -20,7 +20,7 @@
  */
 
 @import url("/css/pfSense.css");
-@import url("/vendor/jquery/jquery-ui/themes/dark-hive/theme.css");
+@import url("/vendor/jquery-ui/themes/dark-hive/theme.css");
 
 body {
     background-color: #212121;

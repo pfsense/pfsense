@@ -60,7 +60,7 @@ function updatecopyright() {
 				// Save to a temporary file
 				file_put_contents($tmpfile, $response);
 				// If the file contents are not the same as the existing file, create the trigger to display the new copyright
-				if (!file_exists($copyrightfile) || (md5_file($copyrightfile) != md5_file($tmpfile))) {
+				if (!file_exists($copyrightfile) || !compare_copytext(file_get_contents($copyrightfile), $response)) {
 					touch("{$g['cf_conf_path']}/copynotice_display");
 				}
 
@@ -74,4 +74,18 @@ function updatecopyright() {
 // or if it is more than a day old
 if (!file_exists($copyrightfile) || ( time()-filemtime($copyrightfile) > $refreshinterval)) {
 	updateCopyright();
+}
+
+// Compare the copyright text contained in the first HTML <DIV>
+function compare_copytext ($new, $old) {
+	if ((strlen($new) > 0) && (strlen($old) > 0)) {
+		$new_divend = strpos($new, "</div>");
+		$old_divend = strpos($old, "</div>");
+
+		if ($new_divend && $old_divend) {
+			return(md5(substr($new, 0, $new_divend)) === md5(substr($old, 0, $old_divend)));
+		}
+	}
+
+	return false;
 }

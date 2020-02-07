@@ -351,7 +351,7 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {
 		if (!platform_booting()) {
-			return resolve_retry($rg);
+			return resolve_retry($rg, $ph1ent['protocol']);
 		}
 	}
 	if (!is_ipaddr($rg)) {
@@ -1213,7 +1213,7 @@ function ipsec_setup_gwifs() {
 				$filterdns_list[] = "{$rg}";
 				add_hostname_to_watch($rg);
 				if (!platform_booting()) {
-					$rg = resolve_retry($rg);
+					$rg = resolve_retry($rg, $ph1ent['protocol']);
 				}
 				if (!is_ipaddr($rg)) {
 					continue;

@@ -283,6 +283,7 @@ switch ($wancfg['ipaddr']) {
 switch ($wancfg['ipaddrv6']) {
 	case "slaac":
 		$pconfig['type6'] = "slaac";
+		$pconfig['ipv6usev4iface'] = isset($wancfg['ipv6usev4iface']);
 		break;
 	case "dhcp6":
 		$pconfig['dhcp6-duid'] = $wancfg['dhcp6-duid'];
@@ -1338,6 +1339,9 @@ if ($_POST['apply']) {
 				break;
 			case "slaac":
 				$wancfg['ipaddrv6'] = "slaac";
+				if ($_POST['ipv6usev4iface'] == "yes") {
+					$wancfg['ipv6usev4iface'] = true;
+				}
 				break;
 			case "dhcp6":
 				$wancfg['ipaddrv6'] = "dhcp6";
@@ -1961,6 +1965,18 @@ $group->setHelp('If this interface is an Internet connection, select an existing
 				'Gateways can be managed by %2$sclicking here%3$s.', '<br />', '<a target="_blank" href="system_gateways.php">', '</a>');
 
 $section->add($group);
+
+$form->add($section);
+
+$section = new Form_Section('SLAAC IPv6 Configuration');
+$section->addClass('slaac');
+
+$section->addInput(new Form_Checkbox(
+	'ipv6usev4iface',
+	'Use IPv4 connectivity as parent interface',
+	'IPv6 will use the IPv4 connectivity link (PPPoE)',
+	$pconfig['ipv6usev4iface']
+));
 
 $form->add($section);
 

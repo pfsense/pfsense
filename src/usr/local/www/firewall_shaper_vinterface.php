@@ -420,7 +420,7 @@ if (!$dfltmsg) {
 					($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
 					$url,
 					'fa-trash'
-				))->addClass('btn-danger');
+				))->addClass('btn-danger nowarn');
 			}
 		}
 	}

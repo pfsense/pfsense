@@ -1980,6 +1980,23 @@ function format_number($num, $precision = 3) {
 	return ("$num {$units[$i]}");
 }
 
+
+function unformat_number($formated_num) {
+	$num = strtoupper($formated_num);
+    
+	if ( strpos($num,"T") !== false ) {
+		$num = str_replace("T","",$num) * 1000 * 1000 * 1000 * 1000;
+	} else if ( strpos($num,"G") !== false ) {
+		$num = str_replace("G","",$num) * 1000 * 1000 * 1000;
+	} else if ( strpos($num,"M") !== false ) {
+		$num = str_replace("M","",$num) * 1000 * 1000;
+	} else if ( strpos($num,"K") !== false ) {
+		$num = str_replace("K","",$num) * 1000;
+	}
+    
+	return $num;
+}
+
 function update_filter_reload_status($text, $new=false) {
 	global $g;
 

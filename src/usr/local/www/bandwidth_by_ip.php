@@ -38,9 +38,12 @@ if (!does_interface_exist($real_interface)) {
 }
 
 $intip = find_interface_ip($real_interface);
+$intip6 = find_interface_ipv6($real_interface);
 //get interface subnet
 $netmask = find_interface_subnet($real_interface);
+$netmask6 = find_interface_subnetv6($real_interface);
 $intsubnet = gen_subnet($intip, $netmask) . "/$netmask";
+$intsubnet6 = gen_subnet($intip6, $netmask6) . "/$netmask";
 
 // see if they want local, remote or all IPs returned
 $filter = $_REQUEST['filter'];
@@ -111,7 +114,66 @@ if ($hostipformat != "") {
 	}
 }
 
-$_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} {$ratesubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
+
+//get the mode
+$mode = !empty($_REQUEST['mode']) ? $_REQUEST['mode'] : '';
+if ($mode == "iftop") {
+	$current_ts = time();
+	if ( file_exists("/var/run/iftop_{$real_interface}.pid") ) {
+		$statPID = stat("/var/run/iftop_{$real_interface}.pid");
+		$since = $current_ts - $statPID['mtime'];
+		if ( $since < 5 && file_exists("/var/db/iftop_{$real_interface}.log") ) {
+			$listedIPs=file("/var/db/iftop_{$real_interface}.log");
+		} else {
+			if ( isvalidpid("/var/run/iftop_{$real_interface}.pid") ) {
+				killbypid("/var/run/iftop_{$real_interface}.pid");
+			}
+			unlink ( "/var/run/iftop_{$real_interface}.pid" );
+			$_grb = exec ( "/usr/local/bin/iftop_parser.sh {$real_interface} $current_ts", $listedIPs );
+		}
+	} else {
+		// refresh iftop infos
+		$_grb = exec ( "/usr/local/bin/iftop_parser.sh {$real_interface} $current_ts", $listedIPs );
+	}
+
+	// order and group by
+	$arr_in = array();
+	$arr_out = array();
+	foreach ($listedIPs as $k => $line) {
+		if ($line != "") {
+			$arrLine = explode (";", $line);
+			$ip  = $arrLine[0];
+			$in  = unformat_number($arrLine[1]);
+			$out = unformat_number($arrLine[2]);
+			if (isset($arr_in[$ip])) {
+				$arr_in[$ip]  += $in;
+				$arr_out[$ip] += $out;
+			} else {
+				$arr_in[$ip]  = $in;
+				$arr_out[$ip] = $out;
+			}
+		}
+	}
+
+	if ($sort == "out") {
+		arsort($arr_out,SORT_NUMERIC);
+		$arrIP = array_keys($arr_out);
+	} else {
+		arsort($arr_in,SORT_NUMERIC);
+		$arrIP = array_keys($arr_in);
+	}
+
+	unset($listedIPs);
+	$listedIPs[] = "";
+	$listedIPs[] = "";
+	foreach ($arrIP as $k => $ip) {
+		$listedIPs[] = $ip.";".format_number($arr_in[$ip],2).";".format_number($arr_out[$ip],2);
+	}
+
+} else {
+	$_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} {$ratesubnet} | tr \"|\" \" \" | awk '{ printf \"%s;%s;%s;%s;%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
+}
+
 
 $someinfo = false;
 for ($x=2; $x<12; $x++) {
@@ -121,10 +183,10 @@ for ($x=2; $x<12; $x++) {
 	// echo $bandwidthinfo;
 	$emptyinfocounter = 1;
 	if ($bandwidthinfo != "") {
-		$infoarray = explode (":", $bandwidthinfo);
+		$infoarray = explode (";", $bandwidthinfo);
 		if (($filter == "all") ||
-		    (($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
-		    (($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {
+		    (($filter == "local") && ((ip_in_subnet($infoarray[0], $intsubnet)) || (ip_in_subnet($infoarray[0], $intsubnet6)))) ||
+		    (($filter == "remote") && ((!ip_in_subnet($infoarray[0], $intsubnet)) || (!ip_in_subnet($infoarray[0], $intsubnet6))))) {
 			if ($hostipformat == "") {
 				// pass back just the raw IP address
 				$addrdata = $infoarray[0];

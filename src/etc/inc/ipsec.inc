@@ -1675,7 +1675,7 @@ function ipsec_setup_bypasslan() {
  * RESULT
  *   Static routes in the OS routing table for IPsec peers
  ******/
-function ipsec_setup_routes($interface, $family, $sourcehost) {
+function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
 	if (substr($interface, 0, 4) == "_vip") {
 		$vpninterface = get_configured_vip_interface($interface);
 		if (substr($vpninterface, 0, 4) == "_vip") {

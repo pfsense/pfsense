@@ -115,7 +115,6 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
 	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];
 	$pconfig['mobike'] = $a_phase1[$p1index]['mobike'];
-	$pconfig['gw_duplicates'] = $a_phase1[$p1index]['gw_duplicates'];
 
 	if (isset($a_phase1[$p1index]['gw_duplicates'])) {
 		$pconfig['gw_duplicates'] = true;
@@ -509,8 +508,7 @@ if ($_POST['save']) {
 
 		if ( isset($pconfig['gw_duplicates'])) {
 			$ph1ent['gw_duplicates'] = true;
-		}
-		else {
+		} else {
 			unset($ph1ent['gw_duplicates']);
 		}
 
@@ -950,7 +948,9 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Checkbox(
 	'gw_duplicates',
 	'Gateway duplicates',
-	'Enable this to allow multiple phase 1 configurations with the same endpoint. When enabled, you are responsible for doing proper source routing configuration to the endpoints. When disabled, pfSense will create a static route and routing rules to the remote gateway.',
+	'Enable this to allow multiple phase 1 configurations with the same endpoint. ' .
+		'When enabled, you are responsible for doing proper source routing configuration to the endpoints. '.
+		'When disabled, pfSense will create a static route and routing rules to the remote gateway.',
 	$pconfig['gw_duplicates']
 ));
 

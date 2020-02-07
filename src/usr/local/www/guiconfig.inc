@@ -138,19 +138,22 @@ $ldap_templates = array(
 		'desc' => "OpenLDAP",
 		'attr_user' => "cn",
 		'attr_group' => "cn",
-		'attr_member' => "member"),
+		'attr_member' => "member",
+		'allow_unauthenticated' => "true"),
 
 	'msad' => array(
 		'desc' => "Microsoft AD",
 		'attr_user' => "samAccountName",
 		'attr_group' => "cn",
-		'attr_member' => "memberOf"),
+		'attr_member' => "memberOf",
+		'allow_unauthenticated' => "false"),
 
 	'edir' => array(
 		'desc' => "Novell eDirectory",
 		'attr_user' => "cn",
 		'attr_group' => "cn",
-		'attr_member' => "uniqueMember"));
+		'attr_member' => "uniqueMember",
+		'allow_unauthenticated' => "false"));
 
 $radius_srvcs = array(
 	'both' => gettext("Authentication and Accounting"),

@@ -161,6 +161,7 @@ if ($act == "edit") {
 			$pconfig['ldap_attr_groupobj'] = $a_server[$id]['ldap_attr_groupobj'];
 			$pconfig['ldap_utf8'] = isset($a_server[$id]['ldap_utf8']);
 			$pconfig['ldap_nostrip_at'] = isset($a_server[$id]['ldap_nostrip_at']);
+			$pconfig['ldap_allow_unauthenticated'] = isset($a_server[$id]['ldap_allow_unauthenticated']);
 			$pconfig['ldap_rfc2307'] = isset($a_server[$id]['ldap_rfc2307']);
 
 			if (!$pconfig['ldap_binddn'] || !$pconfig['ldap_bindpw']) {
@@ -335,6 +336,11 @@ if ($_POST['save']) {
 				$server['ldap_nostrip_at'] = true;
 			} else {
 				unset($server['ldap_nostrip_at']);
+			}
+			if ($pconfig['ldap_allow_unauthenticated'] == "yes") {
+				$server['ldap_allow_unauthenticated'] = true;
+			} else {
+				unset($server['ldap_allow_unauthenticated']);
 			}
 			if ($pconfig['ldap_rfc2307'] == "yes") {
 				$server['ldap_rfc2307'] = true;
@@ -765,6 +771,14 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['ldap_nostrip_at']
 ))->setHelp('e.g. user@host becomes user when unchecked.');
 
+$section->addInput(new Form_Checkbox(
+	'ldap_allow_unauthenticated',
+	'Allow unauthenticated bind',
+	'Allow unauthenticated bind',
+	$pconfig['ldap_allow_unauthenticated'],
+))->setHelp('Unauthenticated binds are bind with an existing login but with an empty password. '.
+         'Some LDAP servers (Microsoft AD) allow this type of bind without any possiblity to disable it.');
+
 $form->add($section);
 
 // ==== RADIUS section ========================================================
@@ -980,6 +994,7 @@ events.push(function() {
 				$('#ldap_attr_user').val("<?=$tmpldata['attr_user'];?>");
 				$('#ldap_attr_group').val("<?=$tmpldata['attr_group'];?>");
 				$('#ldap_attr_member').val("<?=$tmpldata['attr_member'];?>");
+				$("#ldap_allow_unauthenticated").attr("checked", <?=$tmpldata['allow_unauthenticated'];?>);
 				break;
 <?php
 			$index++;

@@ -1371,6 +1371,11 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		return false;
 	}
 
+	if (!isset($authcfg['ldap_allow_unauthenticated']) && $passwd == '') {
+		$attributes['error_message'] = gettext("Invalid credentials.");
+		return false;
+	}
+
 	if (!function_exists("ldap_connect")) {
 		log_error(gettext("ERROR! unable to find ldap_connect() function."));
 		$attributes['error_message'] = gettext("Internal error during authentication.");
@@ -1990,7 +1995,7 @@ function session_auth() {
 
 	/* Validate incoming login request */
 	$attributes = array('nas_identifier' => 'webConfigurator-' . gethostname());
-	if (isset($_POST['login']) && !empty($_POST['usernamefld']) && !empty($_POST['passwordfld'])) {
+	if (isset($_POST['login']) && !empty($_POST['usernamefld'])) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 		$remoteauth = authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg, $attributes);
 		if ($remoteauth || authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {

@@ -53,7 +53,7 @@ if (isset($_GET['username'])) {
 	$common_name = getenv("common_name");
 }
 
-if (!$username || !$password) {
+if (!$username) {
 	syslog(LOG_ERR, "invalid user authentication environment");
 	if (isset($_GET['username'])) {
 		echo "FAILED";

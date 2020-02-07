@@ -40,7 +40,7 @@ if ($_POST) {
 		$input_errors[] =  sprintf(gettext('%s is not a valid authentication server'), $_POST['authmode']);
 	}
 
-	if (empty($_POST['username']) || empty($_POST['password'])) {
+	if (empty($_POST['username'])) {
 		$input_errors[] = gettext("A username and password must be specified.");
 	}
 

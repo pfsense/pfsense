@@ -51,7 +51,7 @@ if (isset($_GET['username'])) {
 	$authmodes = explode(",", getenv("authcfg"));
 }
 
-if (!$username || !$password) {
+if (!$username) {
 	syslog(LOG_ERR, "invalid user authentication environment");
 	if (isset($_GET['username'])) {
 		echo "FAILED";

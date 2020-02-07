@@ -1697,6 +1697,19 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		$tonathosts[] = "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']}";
 		$descriptions[] = gettext("IPsec client");
 	}
+	if (isset($config['ipsec']['client']['enable']) &&
+	    isset($config['ipsec']['mobilekey'])) {
+		foreach ($config['ipsec']['mobilekey'] as $key) {
+			if (in_array("{$key['pool_address']}/{$key['pool_netbits']}", $tonathosts)) {
+				continue;
+			}
+			if (!empty($key['pool_address']) &&
+			    !empty($key['pool_netbits'])) {
+				$tonathosts[] = "{$key['pool_address']}/{$key['pool_netbits']}";
+				$descriptions[] = gettext("IPsec client");
+			}
+		}
+	}
 	if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
 		foreach ($config['ipsec']['phase1'] as $ph1ent) {
 			$vti_addrs = ipsec_vti($ph1ent, true);

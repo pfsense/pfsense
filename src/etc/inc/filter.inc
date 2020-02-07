@@ -1786,7 +1786,7 @@ function filter_nat_rules_generate_if ($if, $descr = "", $ipprotocol = "", $src 
 	global $config, $FilterIflist;
 
 	/* XXX: billm - any idea if this code is needed? */
-	if ($src == "/32" || $src == "/128" || $src{0} == "/") {
+	if ($src == "/32" || $src == "/128" || $src[0] == "/") {
 		return "# src incorrectly specified\n";
 	}
 	$if_friendly = $FilterIflist[$if]['descr'];

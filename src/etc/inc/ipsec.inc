@@ -1915,7 +1915,7 @@ function ipsec_setup_proposal_entry(& $ph2ent, & $algo_arr, $ealg_id, $keylen) {
 			$proposal[] = ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, $ph2ent['pfsgroup']);
 		}
 	} else {
-		$proposal[] = ipsec_setup_proposal_algo($ealg_id, $keylen, '', $ph2ent['pfsgroup']);
+		$proposal[] = ipsec_setup_proposal_algo($ealg_id, $keylen, false, false, $ph2ent['pfsgroup']);
 	}
 
 	/* Add to master list */

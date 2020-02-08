@@ -25,6 +25,7 @@
 require_once("filter.inc");
 require_once("auth.inc");
 require_once("certs.inc");
+require_once("interfaces.inc");
 
 /* IPsec defines */
 global $ipsec_loglevels;
@@ -2518,6 +2519,7 @@ function ipsec_configure($restart = false) {
 		sleep(2);
 		/* Shutdown enc0 interface*/
 		mwexec("/sbin/ifconfig enc0 down");
+		ipsec_gre_default_mtu(); 
 		return 0;
 	} else {
 		/* Startup enc0 interface */
@@ -2639,6 +2641,9 @@ function ipsec_configure($restart = false) {
 		}
 	}
 
+	/* set default MTU to 1400 for GRE over IPsec, othewise to 1476 */
+	ipsec_gre_default_mtu(); 
+
 	/* Manage process */
 	if ($restart === true) {
 		mwexec_bg("/usr/local/sbin/strongswanrc restart", false);
@@ -2689,5 +2694,19 @@ function ipsec_configure($restart = false) {
 
 	unlock($ipsecstartlock);
 	return count($filterdns_list);
+}
+
+function ipsec_gre_default_mtu() {
+	global $config;
+
+	foreach ($config['interfaces'] as $if => $ifdetail) { 
+		if (interface_is_type($ifdetail['if'], 'gre') && !isset($ifdetail['mtu'])) {
+			if (is_greipsec($ifdetail['if'])) {
+				set_interface_mtu($ifdetail['if'], 1400);
+			} else {
+				set_interface_mtu($ifdetail['if'], 1476);
+			}
+		}
+	}
 }
 ?>

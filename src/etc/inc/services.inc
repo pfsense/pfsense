@@ -789,6 +789,9 @@ EOPP;
 			}
 		}
 
+		// instantiate class before pool definition
+		$dhcpdconf .= "class \"s_{$dhcpif}\" {\n	match pick-first-value (option dhcp-client-identifier, hardware);\n}\n";
+
 		$dhcpdconf .= "subnet {$subnet} netmask {$subnetmask} {\n";
 
 		// Setup pool options
@@ -860,8 +863,16 @@ EOPP;
 				$dhcpdconf .= "		$deny_action dynamic bootp clients;\n";
 			}
 
+			// set pool MAC limitations
 			if (isset($poolconf['denyunknown'])) {
-				$dhcpdconf .= "		$deny_action unknown-clients;\n";
+				if ($poolconf['denyunknown'] == "class") {
+					$dhcpdconf .= "		allow members of \"s_{$dhcpif}\";\n";
+					$dhcpdconf .= "		$deny_action unknown-clients;\n";
+				} else if ($poolconf['denyunknown'] == "disabled") {
+					// add nothing to $dhcpdconf; condition added to prevent next condition applying if ever engine changes such that: isset("disabled") == true
+				} else {	// "catch-all" covering "enabled" value post-PR#4066, and covering non-upgraded boolean option (i.e. literal value "enabled")
+					$dhcpdconf .= "		$deny_action unknown-clients;\n";
+				}
 			}
 
 			if ($poolconf['gateway'] && $poolconf['gateway'] != "none" && ($poolconf['gateway'] != $dhcpifconf['gateway'])) {
@@ -1110,11 +1121,11 @@ EOD;
 				$dhcpdconf .= "host s_{$dhcpif}_{$i} {\n";
 
 				if ($sm['mac']) {
-					$dhcpdconf .= "        hardware ethernet {$sm['mac']};\n";
+					$dhcpdconf .= "	hardware ethernet {$sm['mac']};\n";
 				}
 
 				if ($sm['cid']) {
-					$dhcpdconf .= "        option dhcp-client-identifier \"{$sm['cid']}\";\n";
+					$dhcpdconf .= " option dhcp-client-identifier \"{$sm['cid']}\";\n";
 				}
 
 				if ($sm['ipaddr']) {
@@ -1190,6 +1201,17 @@ EOD;
 				}
 
 				$dhcpdconf .= "}\n";
+
+				// subclass for DHCP limiting
+				if (!empty($sm['mac'])) {
+					// assuming ALL addresses are ethernet hardware type ("1:" prefix)
+					$dhcpdconf .= "subclass \"s_{$dhcpif}\" 1:{$sm['mac']};\n";
+				}
+				if (!empty($sm['cid'])) {
+					$dhcpdconf .= "subclass \"s_{$dhcpif}\" \"{$sm['cid']}\";\n";
+				}
+
+
 				$i++;
 			}
 		}

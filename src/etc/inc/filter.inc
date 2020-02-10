@@ -2392,8 +2392,8 @@ function filter_nat_rules_generate() {
 					$dstaddr_reflect = gen_subnet($dstaddr_reflect, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
 				}
 
-				if ($dstaddr_port[2]) {
-					$dstaddr_reflect .= " port " . $dstaddr_port[2];
+				if ($dstaddr_port[count($dstaddr_port)-1]]) {
+					$dstaddr_reflect .= " port " . $dstaddr_port[count($dstaddr_port)-1]];
 				}
 			}
 
@@ -2425,8 +2425,8 @@ function filter_nat_rules_generate() {
 			}
 
 			$localport_nat = $localport;
-			if (empty($localport_nat) && $dstaddr_port[2]) {
-				$localport_nat = " port " . $dstaddr_port[2];
+			if (empty($localport_nat) && is_port($dstaddr_port[count($dstaddr_port)-1])) {
+				$localport_nat = " port " . $dstaddr_port[count($dstaddr_port)-1];
 			}
 
 			if ($srcaddr <> "" && $dstaddr <> "" && $natif) {

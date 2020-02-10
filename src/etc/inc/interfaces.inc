@@ -29,6 +29,7 @@
 require_once("globals.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
+require_once("ipsec.inc");
 
 function interfaces_bring_up($interface) {
 	if (!$interface) {
@@ -274,21 +275,6 @@ function interface_is_qinq($if = NULL) {
 		}
 	}
 
-	return (NULL);
-}
-
-function interface_is_lagg($if = NULL) {
-	global $config;
-
-	if (!isset($config['laggs']['lagg']) || !is_array($config['laggs']['lagg'])) {
-		return (NULL);
-	}
-
-	foreach ($config['laggs']['lagg'] as $lagg) {
-		if ($lagg['laggif'] == $if) {
-			return ($lagg);
-		}
-	}
 	return (NULL);
 }
 
@@ -1161,6 +1147,62 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	interfaces_bring_up($greif);
 
 	return $greif;
+}
+
+function interface_is_type($if = NULL, $type) {
+	global $config;
+	switch ($type) {
+		case "gre":
+			$list = 'gres';
+			$entry = 'gre';
+			$entif = 'greif';
+			break;
+		case "gif":
+			$list = 'gifs';
+			$entry = 'gif';
+			$entif = 'gifif';
+			break;
+		case "lagg":
+			$list = 'laggs';
+			$entry = 'lagg';
+			$entif = 'laggif';
+			break;
+		default:
+			break;
+	}
+
+	if (!isset($config[$list][$entry]) || !is_array($config[$list][$entry])) {
+		return (NULL);
+	}
+
+	foreach ($config[$list][$entry] as $ent) {
+		if ($ent[$entif] == $if) {
+			return ($ent);
+		}
+	}
+	return (NULL);
+}
+
+function is_greipsec($if) {
+	global $config;
+
+	if (ipsec_enabled() && is_array($config['gres']) && 
+	    is_array($config['gres']['gre']) &&
+	    is_array($config['ipsec']['phase2'])) {
+		foreach ($config['gres']['gre'] as $gre) {
+			foreach ($config['ipsec']['phase1'] as $ph1ent) {
+				foreach ($config['ipsec']['phase2'] as $ph2ent) {
+					if (($ph1ent['ikeid'] == $ph2ent['ikeid']) && ($ph2ent['mode'] == 'transport') && 
+					    !isset($ph1ent['disabled']) && !isset($ph2ent['disabled']) && 
+					    ($ph1ent['interface'] == $gre['if']) && ($gre['greif'] == $if) &&
+					    ($ph1ent['remote-gateway'] == $gre['remote-addr'])) {
+						    return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 function interfaces_gif_configure($checkparent = 0, $realif = "") {
@@ -3954,8 +3996,19 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if ($wantedmtu == 0) {
 		$wantedmtu = interface_mtu_wanted_for_pppoe($mtuif);
 	}
-	if ($wantedmtu == 0 && interface_is_vlan($mtuif) != NULL && interface_isppp_type($interface)) {
+	if (($wantedmtu == 0) && interface_is_vlan($mtuif) != NULL && interface_isppp_type($interface)) {
 		$wantedmtu = interface_mtu_wanted_for_pppoe($mtuhwif);
+	}
+	if (($wantedmtu == 0) && interface_is_type($mtuif, 'gre')) {
+		/* set MTU to 1400 for GRE over IPsec */
+		if (is_greipsec($mtuif)) {
+			$wantedmtu = 1400;
+		} else {
+			$wantedmtu = 1476;
+		}
+	}
+	if (($wantedmtu == 0) && interface_is_type($mtuif, 'gif')) {
+		$wantedmtu = 1280;
 	}
 
 	/* Set the MTU to 1500 if no explicit MTU configured. */
@@ -5533,7 +5586,7 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 
 	if (empty($parents)) {
 		/* Handle LAGGs. */
-		$lagg = interface_is_lagg($realif);
+		$lagg = interface_is_type($realif, 'lagg');
 		if ($lagg != NULL && isset($lagg['members'])) {
 			$parents = explode(",", $lagg['members']);
 		}

@@ -2392,8 +2392,8 @@ function filter_nat_rules_generate() {
 					$dstaddr_reflect = gen_subnet($dstaddr_reflect, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
 				}
 
-				if ($dstaddr_port[count($dstaddr_port)-1]]) {
-					$dstaddr_reflect .= " port " . $dstaddr_port[count($dstaddr_port)-1]];
+				if ($dstaddr_port[count($dstaddr_port)-1]) {
+					$dstaddr_reflect .= " port " . $dstaddr_port[count($dstaddr_port)-1];
 				}
 			}
 

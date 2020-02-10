@@ -163,7 +163,13 @@ if (is_array($dhcpdconf)) {
 	list($pconfig['wins1'], $pconfig['wins2']) = $dhcpdconf['winsserver'];
 	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $dhcpdconf['dnsserver'];
 	$pconfig['ignorebootp'] = isset($dhcpdconf['ignorebootp']);
-	$pconfig['denyunknown'] = isset($dhcpdconf['denyunknown']);
+
+	if (isset($dhcpdconf['denyunknown'])) {
+		$pconfig['denyunknown'] = empty($dhcpdconf['denyunknown']) ? "enabled" : $dhcpdconf['denyunknown'];
+	} else {
+		$pconfig['denyunknown'] = "disabled";
+	}
+
 	$pconfig['ignoreclientuids'] = isset($dhcpdconf['ignoreclientuids']);
 	$pconfig['nonak'] = isset($dhcpdconf['nonak']);
 	$pconfig['ddnsdomain'] = $dhcpdconf['ddnsdomain'];
@@ -659,7 +665,13 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['domain'] = $_POST['domain'];
 		$dhcpdconf['domainsearchlist'] = $_POST['domainsearchlist'];
 		$dhcpdconf['ignorebootp'] = ($_POST['ignorebootp']) ? true : false;
-		$dhcpdconf['denyunknown'] = ($_POST['denyunknown']) ? true : false;
+
+		if (in_array($_POST['denyunknown'], array("enabled", "class"))) {
+			$dhcpdconf['denyunknown'] = $_POST['denyunknown'];
+		} else {
+			unset($dhcpdconf['denyunknown']);
+		}
+
 		$dhcpdconf['ignoreclientuids'] = ($_POST['ignoreclientuids']) ? true : false;
 		$dhcpdconf['nonak'] = ($_POST['nonak']) ? true : false;
 		$dhcpdconf['ddnsdomain'] = $_POST['ddnsdomain'];
@@ -965,12 +977,19 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['ignorebootp']
 ));
 
-$section->addInput(new Form_Checkbox(
+$section->addInput(new Form_Select(
 	'denyunknown',
 	'Deny unknown clients',
-	'Only the clients defined below will get DHCP leases from this server.',
-	$pconfig['denyunknown']
-));
+	$pconfig['denyunknown'],
+	array(
+		"disabled" => "Allow all clients",
+		"enabled" => "Allow known clients from any interface",
+		"class" => "Allow known clients from only this interface",
+	)
+))->setHelp('When set to %3$sAllow all clients%4$s, any DHCP client will get an IP address within this scope/range on this interface. '.
+	'If set to %3$sAllow known clients from any interface%4$s, any DHCP client with a MAC address listed on %1$s%3$sany%4$s%2$s scope(s)/interface(s) will get an IP address. ' .
+	'If set to %3$sAllow known clients from only this interface%4$s, only MAC addresses listed below (i.e. for this interface) will get an IP address within this scope/range.',
+	'<i>', '</i>', '<b>', '</b>');
 
 $section->addInput(new Form_Checkbox(
 	'nonak',

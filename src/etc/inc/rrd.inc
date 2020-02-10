@@ -417,7 +417,7 @@ function enable_rrd_graphing() {
 						$factor = 1;
 						break;
 				}
-				$qbandwidth = $altq->GetBandwidth() * $factor;
+				$qbandwidth = (int) $altq->GetBandwidth() * $factor;
 				if ($qbandwidth <= 0) {
 					$qbandwidth = 100 * 1000 * 1000; /* 100Mbit */
 				}

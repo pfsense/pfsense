@@ -1304,7 +1304,6 @@ function openvpn_reconfigure($mode, $settings) {
 	switch ($settings['compression']) {
 		case 'none':
 			$settings['compression'] = '';
-			break;
 		case 'lz4':
 		case 'lz4-v2':
 		case 'lzo':

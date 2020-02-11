@@ -870,7 +870,7 @@ foreach($pconfig['encryption']['item'] as $key => $p1enc) {
 
 	$group->add(new Form_StaticText(
 		null,
-		null,
+		null
 	))->setWidth(6);
 
 	$group->add(new Form_Select(
@@ -969,7 +969,7 @@ $section->addInput(new Form_Checkbox(
 	'prfselect_enable',
 	'PRF Selection',
 	'Enable manual Pseudo-Random Function (PRF) selection',
-	$pconfig['prfselect_enable'],
+	$pconfig['prfselect_enable']
 ))->setHelp('Manual PRF selection is typically not required, but can be useful in combination with AEAD Encryption Algorithms such as AES-GCM');
 
 /* FreeBSD doesn't yet have TFC support. this is ready to go once it does

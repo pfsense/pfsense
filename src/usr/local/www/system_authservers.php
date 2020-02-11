@@ -775,7 +775,7 @@ $section->addInput(new Form_Checkbox(
 	'ldap_allow_unauthenticated',
 	'Allow unauthenticated bind',
 	'Allow unauthenticated bind',
-	$pconfig['ldap_allow_unauthenticated'],
+	$pconfig['ldap_allow_unauthenticated']
 ))->setHelp('Unauthenticated binds are bind with an existing login but with an empty password. '.
          'Some LDAP servers (Microsoft AD) allow this type of bind without any possiblity to disable it.');
 

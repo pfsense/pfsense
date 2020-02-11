@@ -949,8 +949,8 @@ $section->addInput(new Form_Checkbox(
 	'gw_duplicates',
 	'Gateway duplicates',
 	'Enable this to allow multiple phase 1 configurations with the same endpoint. ' .
-		'When enabled, pfSense does not manage routing to the remote gateway and traffic will follow the default route '.
-		'without regard for the chosen interface. Static routes can override this behavior.'.
+		'When enabled, pfSense does not manage routing to the remote gateway and traffic will follow the default route ' .
+		'without regard for the chosen interface. Static routes can override this behavior.',
 	$pconfig['gw_duplicates']
 ));
 

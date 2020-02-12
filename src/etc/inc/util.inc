@@ -1958,16 +1958,18 @@ function resolve_retry($hostname, $protocol = 'inet', $retries = 5, $numrecords 
 		if ($checkproto($hostname)) {
 			return $hostname;
 		}
-		$dnsresult = dns_get_record($hostname, $dnsproto);
-		foreach ($dnsresult as $dnsrec => $ip) {
-			if (is_array($ip)) {
-				if (in_array($ip['type'], $dnstype)) {
-				    if ($checkproto($ip['ip'])) { 
-					    $recresult[] = $ip['ip'];
-				    }
-				    if ($checkproto($ip['ipv6'])) { 
-					    $recresult[] = $ip['ipv6'];
-				    }
+		$dnsresult = @dns_get_record($hostname, $dnsproto);
+		if (!empty($dnsresult)) {
+			foreach ($dnsresult as $dnsrec => $ip) {
+				if (is_array($ip)) {
+					if (in_array($ip['type'], $dnstype)) {
+					    if ($checkproto($ip['ip'])) { 
+						    $recresult[] = $ip['ip'];
+					    }
+					    if ($checkproto($ip['ipv6'])) { 
+						    $recresult[] = $ip['ipv6'];
+					    }
+					}
 				}
 			}
 		}

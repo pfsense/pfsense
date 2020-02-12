@@ -5741,7 +5741,8 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 							case 'l2tp':
 							case 'pptp':
 								// Added catch for static v6 but using v4 link. Sets things to use pppoe link
-								if ((isset($cfg['dhcp6usev4iface']) && $realv6iface === false) || isset($cfg['ipv6usev4iface'])) {
+								if ((isset($cfg['dhcp6usev4iface']) && $realv6iface === false) || 
+								    isset($cfg['ipv6usev4iface']) || isset($cfg['slaacusev4iface'])) {
 									$wanif = $cfg['if'];
 								} else {
 									$parents = get_parent_interface($interface);
@@ -6402,7 +6403,8 @@ function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallb
 			case 'l2tp':
 			case 'pptp':
 			case 'ppp':
-				if ($config['interfaces'][$interface]['ipaddrv6'] == 'dhcp6') {
+				if (($config['interfaces'][$interface]['ipaddrv6'] == 'dhcp6') ||
+				    ($config['interfaces'][$interface]['ipaddrv6'] == 'slaac')) {
 					$realif = get_real_interface($interface, 'inet6', false);
 				}
 				break;

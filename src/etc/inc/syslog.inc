@@ -1162,7 +1162,7 @@ function parse_firewall_log_line($line) {
 }
 
 function get_port_with_service($port, $proto) {
-	if (!$port) {
+	if (!$port || !is_port($port)) {
 		return '';
 	}
 

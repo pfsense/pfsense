@@ -21,17 +21,17 @@
  * limitations under the License.
  */
 
-global $username;
+global $username, $dev, $untrusted_port;
 
-$devname = getenv("dev");
-if (empty($devname)) {
-	$devname = "openvpn";
+if (empty($dev)) {
+	$dev = "openvpn";
 }
 
 function cisco_to_cidr($addr) {
 	if (!is_ipaddr($addr)) {
-		return 0;
+		throw new Exception('Invalid IP Addr');
 	}
+
 	$mask = decbin(~ip2long($addr));
 	$mask = substr($mask, -32);
 	$k = 0;
@@ -42,7 +42,6 @@ function cisco_to_cidr($addr) {
 }
 
 function cisco_extract_index($prule) {
-
 	$index = explode("#", $prule);
 	if (is_numeric($index[1])) {
 		return intval($index[1]);
@@ -52,8 +51,176 @@ function cisco_extract_index($prule) {
 	return -1;;
 }
 
+function parse_cisco_acl_rule($rule, $devname, $dir) {
+	$rule_orig = $rule;
+	$rule = explode(" ", $rule);
+	$tmprule = "";
+	$index = 0;
+
+	if ($rule[$index] == "permit") {
+		$tmprule = "pass {$dir} quick on {$devname} ";
+	} else if ($rule[$index] == "deny") {
+		$tmprule = "block {$dir} quick on {$devname} ";
+	} else {
+		return;
+	}
+
+	$index++;
+
+	switch ($rule[$index]) {
+		case "ip":
+			$tmprule .= "inet ";
+			break;
+		case "icmp":
+		case "tcp":
+		case "udp":
+			$tmprule .= "proto {$rule[$index]} ";
+			break;
+		default:
+			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid protocol.");
+			return;
+	}
+	$index++;
+
+	/* Source */
+	if (trim($rule[$index]) == "host") {
+		$index++;
+		$tmprule .= "from {$rule[$index]} ";
+		$index++;
+	} else if (trim($rule[$index]) == "any") {
+		$tmprule .= "from any ";
+		$index++;
+	} else {
+		$network = $rule[$index];
+		$netmask = $rule[++$index];
+
+
+		if(!is_ipaddr($network)) {
+			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source network '$network'.");
+			return;
+		}
+
+		try {
+			$netmask = cisco_to_cidr($netmask);
+		} catch(Exception $e) {
+			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source netmask '$netmask'.");
+			return;
+		}
+		$tmprule .= "from {network}/{$netmask}";
+
+		$index++;
+	}
+
+	/* Source Operator */
+	if (in_array(trim($rule[$index]), array("lt", "gt", "eq", "neq"))) {
+		switch(trim($rule[$index])) {
+			case "lt":
+				$operator = "<";
+				break;
+			case "gt":
+				$operator = ">";
+				break;
+			case "eq":
+				$operator = "=";
+				break;
+			case "neq":
+				$operator = "!=";
+				break;
+		}
+
+		$port = $rule[++$index];
+		if (is_port($port)) {
+			$tmprule .= "port {$operator} {$port} ";
+		} else {
+			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source port: '$port' not a numeric value between 0 and 65535.");
+			return;
+		}
+		$index++;
+	} else if (trim($rule[$index]) == "range") {
+		$port = array($rule[++$index], $rule[++$index]);
+		if (is_port($port[0]) && is_port($port[1])) {
+			$port[0]--;
+			$port[1]++;
+			$tmprule .= "port {$port[0]} >< {$port[1]} ";
+		} else {
+			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source ports: '$port[0]' & '$port[1]' one or both are not a numeric value between 0 and 65535.");
+			return;
+		}
+		$index++;
+	}
+
+	/* Destination */
+	if (trim($rule[$index]) == "host") {
+		$index++;
+		$tmprule .= "to {$rule[$index]} ";
+		$index++;
+	} else if (trim($rule[$index]) == "any") {
+		$tmprule .= "to any ";
+		$index++;
+	} else {
+		$network = $rule[$index];
+		$netmask = $rule[++$index];
+
+
+		if(!is_ipaddr($network)) {
+			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination network '$network'.");
+			return;
+		}
+
+		try {
+			$netmask = cisco_to_cidr($netmask);
+		} catch(Exception $e) {
+			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination netmask '$netmask'.");
+			return;
+		}
+		$tmprule .= "to {network}/{$netmask}";
+
+		$index++;
+	}
+
+	/* Destination Operator */
+	if (in_array(trim($rule[$index]), array("lt", "gt", "eq", "neq"))) {
+		switch(trim($rule[$index])) {
+			case "lt":
+				$operator = "<";
+				break;
+			case "gt":
+				$operator = ">";
+				break;
+			case "eq":
+				$operator = "=";
+				break;
+			case "neq":
+				$operator = "!=";
+				break;
+		}
+
+		$port = $rule[++$index];
+		if (is_port($port)) {
+			$tmprule .= "port {$operator} {$port} ";
+		} else {
+			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination port: '$port' not a numeric value between 0 and 65535.");
+			return;
+		}
+		$index++;
+	} else if (trim($rule[$index]) == "range") {
+		$port = array($rule[++$index], $rule[++$index]);
+		if (is_port($port[0]) && is_port($port[1])) {
+			$port[0]--;
+			$port[1]++;
+			$tmprule .= "port {$port[0]} >< {$port[1]} ";
+		} else {
+			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination ports: '$port[0]' '$port[1]' one or both are not a numeric value between 0 and 65535.");
+			return;
+		}
+		$index++;
+	}
+
+	return $tmprule;
+}
+
 function parse_cisco_acl($attribs) {
-	global $devname, $attributes;
+	global $dev, $attributes;
 	if (!is_array($attribs)) {
 		return "";
 	}
@@ -83,77 +250,7 @@ function parse_cisco_acl($attribs) {
 				continue;
 			}
 
-			$rule = $rule[1];
-			$rule = explode(" ", $rule);
-			$tmprule = "";
-			$index = 0;
-			$isblock = false;
-			if ($rule[$index] == "permit") {
-				$tmprule = "pass {$dir} quick on {$devname} ";
-			} else if ($rule[$index] == "deny") {
-				//continue;
-				$isblock = true;
-				$tmprule = "block {$dir} quick on {$devname} ";
-			} else {
-				continue;
-			}
-
-			$index++;
-
-			switch ($rule[$index]) {
-				case "tcp":
-				case "udp":
-					$tmprule .= "proto {$rule[$index]} ";
-					break;
-			}
-
-			$index++;
-			/* Source */
-			if (trim($rule[$index]) == "host") {
-				$index++;
-				$tmprule .= "from {$rule[$index]} ";
-				$index++;
-				if ($isblock == true) {
-					$isblock = false;
-				}
-			} else if (trim($rule[$index]) == "any") {
-				$tmprule .= "from any ";
-				$index++;
-			} else {
-				$tmprule .= "from {$rule[$index]}";
-				$index++;
-				$netmask = cisco_to_cidr($rule[$index]);
-				$tmprule .= "/{$netmask} ";
-				$index++;
-				if ($isblock == true) {
-					$isblock = false;
-				}
-			}
-			/* Destination */
-			if (trim($rule[$index]) == "host") {
-				$index++;
-				$tmprule .= "to {$rule[$index]} ";
-				$index++;
-				if ($isblock == true) {
-					$isblock = false;
-				}
-			} else if (trim($rule[$index]) == "any") {
-				$index++;
-				$tmprule .= "to any";
-			} else {
-				$tmprule .= "to {$rule[$index]}";
-				$index++;
-				$netmask = cisco_to_cidr($rule[$index]);
-				$tmprule .= "/{$netmask} ";
-				$index++;
-				if ($isblock == true) {
-					$isblock = false;
-				}
-			}
-
-			if ($isblock == true) {
-				continue;
-			}
+			$tmprule = parse_cisco_acl_rule($rule[1], $dev, $dir);
 
 			if ($dir == "in") {
 				$inrules[$rindex] = $tmprule;
@@ -183,11 +280,8 @@ function parse_cisco_acl($attribs) {
 
 $rules = parse_cisco_acl($attributes);
 if (!empty($rules)) {
-	$pid = posix_getpid();
-	$filename = "{$g['tmp_path']}/ovpn_{$pid}{$username}.rules";
+	$filename = "{$g['tmp_path']}/ovpn_{$dev}_{$username}_{$untrusted_port}.rules";
 	@file_put_contents($filename, $rules);
-	mwexec("/sbin/pfctl -a " . escapeshellarg("openvpn/{$username}") . " -f " . escapeshellarg($filename));
-	@unlink($filename);
 }
 
 ?>

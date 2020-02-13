@@ -36,7 +36,7 @@ require_once("interfaces.inc");
 /* setup syslog logging */
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 
-global $common_name, $username;
+global $common_name, $username, $dev, $untrusted_port;
 
 if (isset($_GET['username'])) {
 	$authmodes = explode(",", base64_decode($_GET['authcfg']));
@@ -46,11 +46,15 @@ if (isset($_GET['username'])) {
 	$common_name = $_GET['cn'];
 	$modeid = $_GET['modeid'];
 	$strictusercn = $_GET['strictcn'] == "false" ? false : true;
+	$dev = $_GET['dev'];
+	$untrusted_port = $_GET['untrusted_port'];
 } else {
 	/* read data from environment */
 	$username = getenv("username");
 	$password = getenv("password");
 	$common_name = getenv("common_name");
+	$dev = getenv("dev");
+	$untrusted_port = getenv("untrusted_port");
 }
 
 if (!$username) {

@@ -62,7 +62,7 @@ username=$(printf "%s" "${username}" | "${openssl}" enc -base64 | \
 # ---------- Perform Check
 auth_credentials="username=${username}&password=${password}"
 # Note that common_name is also assumed to be set by the environment
-auth_server_1="cn=${common_name}&strictcn=${strictcn}&authcfg=${authcfg}"
+auth_server_1="cn=${common_name}&strictcn=${strictcn}&authcfg=${authcfg}&dev=${dev}&untrusted_port=${untrusted_port}"
 auth_server_2="modeid=${modeid}&nas_port=${nas_port}"
 auth_args="${auth_credentials}&${auth_server_1}&${auth_server_2}"
 
@@ -72,7 +72,7 @@ result=$("${fcgicli}" -f "${auth_user_php}" -d "${auth_args}")
 
 auth_result="${auth_failure}"
 if [ "${result}" = "OK" ]; then
-    auth_result="${auth_success}"
+	auth_result="${auth_success}"
 fi
 
 # The output file path should be set in the environment

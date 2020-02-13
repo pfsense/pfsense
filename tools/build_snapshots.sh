@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -T
 #
 # build_snapshots.sh
 #

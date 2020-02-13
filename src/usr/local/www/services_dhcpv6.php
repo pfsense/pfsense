@@ -152,7 +152,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$pconfig['ddnsforcehostname'] = isset($config['dhcpdv6'][$if]['ddnsforcehostname']);
 	$pconfig['ddnsreverse'] = isset($config['dhcpdv6'][$if]['ddnsreverse']);
 	$pconfig['ddnsclientupdates'] = $config['dhcpdv6'][$if]['ddnsclientupdates'];
-	list($pconfig['ntp1'], $pconfig['ntp2']) = $config['dhcpdv6'][$if]['ntpserver'];
+	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3'] ) = $config['dhcpdv6'][$if]['ntpserver'];
 	$pconfig['tftp'] = $config['dhcpdv6'][$if]['tftp'];
 	$pconfig['ldap'] = $config['dhcpdv6'][$if]['ldap'];
 	$pconfig['netboot'] = isset($config['dhcpdv6'][$if]['netboot']);
@@ -329,7 +329,9 @@ if (isset($_POST['apply'])) {
 		}
 	}
 
-	if (($_POST['ntp1'] && !is_ipaddrv6($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv6($_POST['ntp2']))) {
+	if (($_POST['ntp1'] && !is_ipaddrv6($_POST['ntp1'])) ||
+	    ($_POST['ntp2'] && !is_ipaddrv6($_POST['ntp2'])) ||
+	    ($_POST['ntp3'] && !is_ipaddrv6($_POST['ntp3']))) {
 		$input_errors[] = gettext("A valid IPv6 address must be specified for the primary/secondary NTP servers.");
 	}
 	if (($_POST['domain'] && !is_domain($_POST['domain']))) {
@@ -462,6 +464,9 @@ if (isset($_POST['apply'])) {
 		}
 		if ($_POST['ntp2']) {
 			$config['dhcpdv6'][$if]['ntpserver'][] = $_POST['ntp2'];
+		}
+		if ($_POST['ntp3']) {
+			$config['dhcpdv6'][$if]['ntpserver'][] = $_POST['ntp3'];
 		}
 
 		$config['dhcpdv6'][$if]['tftp'] = $_POST['tftp'];
@@ -878,6 +883,14 @@ $group->add(new Form_Input(
 	['placeholder' => 'NTP 2']
 ));
 
+$group->add(new Form_Input(
+	'ntp3',
+	'NTP Server 3',
+	'text',
+	$pconfig['ntp3'],
+	['placeholder' => 'NTP 3']
+));
+
 $group->addClass('ntpclass');
 
 $section->add($group);
@@ -1155,7 +1168,7 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2'])) {
+			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2']) && empty($pconfig['ntp3'])) {
 				$showadv = false;
 			} else {
 				$showadv = true;
@@ -1169,6 +1182,7 @@ events.push(function() {
 
 		hideInput('ntp1', !showadvntp);
 		hideInput('ntp2', !showadvntp);
+		hideInput('ntp3', !showadvntp);
 
 		if (showadvntp) {
 			text = "<?=gettext('Hide Advanced');?>";

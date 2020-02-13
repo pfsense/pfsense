@@ -181,7 +181,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['ddnsforcehostname'] = isset($dhcpdconf['ddnsforcehostname']);
 	$pconfig['mac_allow'] = $dhcpdconf['mac_allow'];
 	$pconfig['mac_deny'] = $dhcpdconf['mac_deny'];
-	list($pconfig['ntp1'], $pconfig['ntp2']) = $dhcpdconf['ntpserver'];
+	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3'] ) = $dhcpdconf['ntpserver'];
 	$pconfig['tftp'] = $dhcpdconf['tftp'];
 	$pconfig['ldap'] = $dhcpdconf['ldap'];
 	$pconfig['netboot'] = isset($dhcpdconf['netboot']);
@@ -413,7 +413,9 @@ if (isset($_POST['save'])) {
 		$input_errors[] = gettext("If a mac deny list is specified, it must contain only valid partial MAC addresses.");
 	}
 
-	if (($_POST['ntp1'] && (!is_ipaddrv4($_POST['ntp1']) && !is_hostname($_POST['ntp1']))) || ($_POST['ntp2'] && (!is_ipaddrv4($_POST['ntp2']) && !is_hostname($_POST['ntp2'])))) {
+	if (($_POST['ntp1'] && (!is_ipaddrv4($_POST['ntp1']) && !is_hostname($_POST['ntp1']))) ||
+	    ($_POST['ntp2'] && (!is_ipaddrv4($_POST['ntp2']) && !is_hostname($_POST['ntp2']))) ||
+	    ($_POST['ntp3'] && (!is_ipaddrv4($_POST['ntp3']) && !is_hostname($_POST['ntp3'])))) {
 		$input_errors[] = gettext("A valid IP address or hostname must be specified for the primary/secondary NTP servers.");
 	}
 	if (($_POST['domain'] && !is_domain($_POST['domain']))) {
@@ -691,6 +693,9 @@ if (isset($_POST['save'])) {
 		}
 		if ($_POST['ntp2']) {
 			$dhcpdconf['ntpserver'][] = $_POST['ntp2'];
+		}
+		if ($_POST['ntp3']) {
+			$dhcpdconf['ntpserver'][] = $_POST['ntp3'];
 		}
 
 		$dhcpdconf['tftp'] = $_POST['tftp'];
@@ -1384,6 +1389,13 @@ $section->addInput(new Form_IpAddress(
 	'HOSTV4'
 ));
 
+$section->addInput(new Form_IpAddress(
+	'ntp3',
+	'NTP Server 3',
+	$pconfig['ntp3'],
+	'HOSTV4'
+));
+
 // Advanced TFTP
 $btnadv = new Form_Button(
 	'btnadvtftp',
@@ -1801,7 +1813,7 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2'])) {
+			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2']) && empty($pconfig['ntp3']) ) {
 				$showadv = false;
 			} else {
 				$showadv = true;
@@ -1815,6 +1827,7 @@ events.push(function() {
 
 		hideInput('ntp1', !showadvntp);
 		hideInput('ntp2', !showadvntp);
+		hideInput('ntp3', !showadvntp);
 
 		if (showadvntp) {
 			text = "<?=gettext('Hide Advanced');?>";

@@ -21,8 +21,7 @@
 # limitations under the License.
 
 usage() {
-	echo "Usage: $(basename $0) [-a ARCH] [-l] [-n] [-r] [-U] [-p] [-i]"
-	echo "	-a: Only build ARCH"
+	echo "Usage: $(basename $0) [-l] [-n] [-r] [-U] [-p] [-i]"
 	echo "	-l: Build looped operations"
 	echo "	-n: Do not build images, only core pkg repo"
 	echo "	-p: Update poudriere repo"
@@ -42,11 +41,8 @@ LOOPED_SNAPSHOTS=""
 POUDRIERE_SNAPSHOTS=""
 
 # Handle command line arguments
-while getopts a:lnprUi opt; do
+while getopts lnprUi opt; do
 	case ${opt} in
-		a)
-			ARCH=$OPTARG
-			;;
 		n)
 			IMAGES="none"
 			;;
@@ -71,11 +67,6 @@ while getopts a:lnprUi opt; do
 			;;
 	esac
 done
-
-unset ARCH_PARAM
-if [ -n "${ARCH}" ]; then
-	ARCH_PARAM="-a ${ARCH}"
-fi
 
 if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
 	export minsleepvalue=${minsleepvalue:-"360"}
@@ -200,14 +191,13 @@ while [ /bin/true ]; do
 "
 	if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
 		exec_and_update_status \
-		    ${BUILDER_ROOT}/build.sh --update-poudriere-ports \
-		    ${ARCH_PARAM}
+		    ${BUILDER_ROOT}/build.sh --update-poudriere-ports
 		rc=$?
 
 		if [ $rc -eq 0 ]; then
 			exec_and_update_status \
 			    ${BUILDER_ROOT}/build.sh ${_SKIP_FINAL_RSYNC} \
-			    ${UPLOAD} --update-pkg-repo ${ARCH_PARAM}
+			    ${UPLOAD} --update-pkg-repo
 			rc=$?
 		fi
 	else
@@ -218,7 +208,7 @@ while [ /bin/true ]; do
 		if [ $rc -eq 0 ]; then
 			exec_and_update_status \
 			    ${BUILDER_ROOT}/build.sh ${_SKIP_FINAL_RSYNC} \
-			    ${UPLOAD} --snapshots ${IMAGES} ${ARCH_PARAM}
+			    ${UPLOAD} --snapshots ${IMAGES}
 			rc=$?
 		fi
 	fi

@@ -20,7 +20,6 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 net-mgmt/%%PRODUCT_NAME%%-pkg-arpwatch
 net-mgmt/%%PRODUCT_NAME%%-pkg-bandwidthd
 net-mgmt/%%PRODUCT_NAME%%-pkg-darkstat
-net-mgmt/%%PRODUCT_NAME%%-pkg-iftop
 net-mgmt/%%PRODUCT_NAME%%-pkg-lldpd
 net-mgmt/%%PRODUCT_NAME%%-pkg-net-snmp
 net-mgmt/%%PRODUCT_NAME%%-pkg-nrpe

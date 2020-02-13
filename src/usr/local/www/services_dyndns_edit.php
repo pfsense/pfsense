@@ -128,6 +128,13 @@ if ($_POST['save'] || $_POST['force']) {
 		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
 			$host_to_check = $_POST['host'];
 			$allow_wildcard = true;
+		} elseif ($pconfig['type'] == "hover") {
+			/* hover allows hostnames '@' and '*' also */
+			if ((strcmp("@", $_POST['host']) == 0) || (strcmp("*", $_POST['host']) == 0)) {
+				$host_to_check = $_POST['domainname'];
+			} else {
+				$host_to_check = $_POST['host'] . '.' . $_POST['domainname'];
+			}
 		} else {
 			$host_to_check = $_POST['host'];
 

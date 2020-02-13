@@ -971,10 +971,14 @@
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
 
 					$output = curl_exec($ch);
-					preg_match("/^{\"succeeded\":true.*?domain_name\":\"{$this->_dnsDomain}.*?entries.*?{\"id\":\"([^\"]*?)\",\"name\":\"{$this->_dnsHost}\".*?\$/", $output, $hostID);
+					$pregHost = preg_quote($this->_dnsHost);
+					$pregDomain = preg_quote($this->_dnsDomain);
+					preg_match("/^{\"succeeded\":true.*?domain_name\":\"{$pregDomain}.*?entries.*?{\"id\":\"([^\"]*?)\",\"name\":\"{$pregHost}\",\"type\":\"A\".*?\$/", $output, $hostID);
 					$hostID = $hostID[1];
-					preg_match("/^{\"succeeded\":true.*?domain_name\":\"{$this->_dnsDomain}.*?entries.*?{[^\}]*?\"name\":\"{$this->_dnsHost}\".*?content\":\"([^\"]*?)\".*?\$/", $output, $hostIP);
+					preg_match("/^{\"succeeded\":true.*?domain_name\":\"{$pregDomain}.*?entries.*?{[^\}]*?\"name\":\"{$pregHost}\",\"type\":\"A\".*?content\":\"([^\"]*?)\".*?\$/", $output, $hostIP);
 					$hostIP = $hostIP[1];
+					unset($pregHost);
+					unset($pregDomain);
 
 					//step 3: update the IP
 					if ($hostID) {

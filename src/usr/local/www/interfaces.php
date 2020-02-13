@@ -283,7 +283,7 @@ switch ($wancfg['ipaddr']) {
 switch ($wancfg['ipaddrv6']) {
 	case "slaac":
 		$pconfig['type6'] = "slaac";
-		$pconfig['ipv6usev4iface'] = isset($wancfg['ipv6usev4iface']);
+		$pconfig['slaacusev4iface'] = isset($wancfg['slaacusev4iface']);
 		break;
 	case "dhcp6":
 		$pconfig['dhcp6-duid'] = $wancfg['dhcp6-duid'];
@@ -1087,6 +1087,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6-ia-pd-send-hint']);
 		unset($wancfg['dhcp6prefixonly']);
 		unset($wancfg['dhcp6usev4iface']);
+		unset($wancfg['slaacusev4iface']);
 		unset($wancfg['ipv6usev4iface']);
 		unset($wancfg['dhcp6debug']);
 		unset($wancfg['track6-interface']);
@@ -1339,8 +1340,8 @@ if ($_POST['apply']) {
 				break;
 			case "slaac":
 				$wancfg['ipaddrv6'] = "slaac";
-				if ($_POST['ipv6usev4iface'] == "yes") {
-					$wancfg['ipv6usev4iface'] = true;
+				if ($_POST['slaacusev4iface'] == "yes") {
+					$wancfg['slaacusev4iface'] = true;
 				}
 				break;
 			case "dhcp6":
@@ -1972,10 +1973,10 @@ $section = new Form_Section('SLAAC IPv6 Configuration');
 $section->addClass('slaac');
 
 $section->addInput(new Form_Checkbox(
-	'ipv6usev4iface',
+	'slaacusev4iface',
 	'Use IPv4 connectivity as parent interface',
 	'IPv6 will use the IPv4 connectivity link (PPPoE)',
-	$pconfig['ipv6usev4iface']
+	$pconfig['slaacusev4iface']
 ));
 
 $form->add($section);

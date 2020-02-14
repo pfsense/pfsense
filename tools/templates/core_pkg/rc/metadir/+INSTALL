@@ -5,7 +5,7 @@ if [ "${2}" = "POST-INSTALL" ]; then
 fi
 
 if ! /usr/bin/grep -q "net.pf.request_maxcount" /boot/loader.conf \
-    /boot/loader.conf.local; then
+    /boot/loader.conf.local 2>/dev/null; then
 	_value=$(/usr/local/sbin/read_xml_tag.sh string \
 	    system/maximumtableentries)
 	if [ -z "${_value}" ]; then

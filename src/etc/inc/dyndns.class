@@ -798,17 +798,28 @@
 					$dnsHost = str_replace(' ', '', $this->_dnsHost);
 
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-						'X-Auth-Email: '.$this->_dnsUser.'',
-						'X-Auth-Key: '.$this->_dnsPass.'',
-						'Content-Type: application/json'
-					));
 
-					// Get zone ID
-					$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$this->_dnsDomain}";
-					curl_setopt($ch, CURLOPT_URL, $getZoneId);
-					$output = json_decode(curl_exec($ch));
-					$zone = $output->result[0]->id;
+					if(strpos($this->_dnsUser, '@') !== false){
+						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+							'X-Auth-Email: '.$this->_dnsUser.'',
+							'X-Auth-Key: '.$this->_dnsPass.'',
+							'Content-Type: application/json'
+						));
+
+						// Get zone ID
+						$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$this->_dnsDomain}";
+						curl_setopt($ch, CURLOPT_URL, $getZoneId);
+						$output = json_decode(curl_exec($ch));
+						$zone = $output->result[0]->id;
+					} else {
+						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+							'Authorization: Bearer '.$this->_dnsPass.'',
+							'Content-Type: application/json'
+						));
+
+						$zone = $this->_dnsUser;
+					}
+
 					if ($zone) { // If zone ID was found get host ID
 						$getHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records?name={$this->_FQDN}&type={$recordType}";
 						curl_setopt($ch, CURLOPT_URL, $getHostId);

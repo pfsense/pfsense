@@ -385,7 +385,8 @@ $section->addInput(new Form_Input(
 			'Route 53: Enter the Access Key ID.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
 			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
-			'Godaddy:: Enter the API key.%1$s' .
+			'Godaddy: Enter the API key.%1$s' .
+			'Cloudflare: Enter email for Global API Key or Zone ID for API token.%1$s' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
 
 $section->addPassword(new Form_Input(
@@ -404,7 +405,7 @@ $section->addPassword(new Form_Input(
 			'GoDaddy: Enter the API secret.%1$s' .
 			'DNSimple: Enter the API token.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
-			'Cloudflare: Enter the Global API Key.', '<br />');
+			'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone.', '<br />');
 
 $section->addInput(new Form_Input(
 	'zoneid',

@@ -528,11 +528,19 @@
 						// Update the IP to a dummy value to force No-IP free accounts to see a change.
 						$iptoset = "fd00:d::1";
 						$this->_dnsDummyUpdateDone = true;
-						log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP temporarily set to %3$s'), $this->_dnsService, $this->_dnsHost, $iptoset));
+						$log_message = 'Dynamic DNS %1$s (%2$s): ';
+						$log_message .= 'Processing dummy update on No-IP free account. ';
+						$log_message .= 'IP temporarily set to %3$s';
+						log_error(sprintf(gettext($log_message), $this->_dnsService, $this->_dnsHost, $iptoset));
 					} else {
 						$iptoset = $this->_dnsIP;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . urlencode($this->_dnsUser) . '&pass=' . urlencode($this->_dnsPass) . '&h[]=' . $this->_dnsHost.'&ipv6=' . $iptoset);
+					$url_data = $server . $port;
+					$url_data .= '?username=' . urlencode($this->_dnsUser);
+					$url_data .= '&pass=' . urlencode($this->_dnsPass);
+					$url_data .= '&h[]=' . $this->_dnsHost;
+					$url_data .= '&ipv6=' . $iptoset;
+					curl_setopt($ch, CURLOPT_URL, $url_data);
 					break;
 				case 'noip':
 				case 'noip-free':

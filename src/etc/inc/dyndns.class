@@ -799,10 +799,10 @@
 
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-					if(strpos($this->_dnsUser, '@') !== false){
+					if (strpos($this->_dnsUser, '@') !== false) {
 						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-							'X-Auth-Email: '.$this->_dnsUser.'',
-							'X-Auth-Key: '.$this->_dnsPass.'',
+							'X-Auth-Email: '.$this->_dnsUser,
+							'X-Auth-Key: '.$this->_dnsPass,
 							'Content-Type: application/json'
 						));
 
@@ -813,7 +813,7 @@
 						$zone = $output->result[0]->id;
 					} else {
 						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-							'Authorization: Bearer '.$this->_dnsPass.'',
+							'Authorization: Bearer '.$this->_dnsPass,
 							'Content-Type: application/json'
 						));
 

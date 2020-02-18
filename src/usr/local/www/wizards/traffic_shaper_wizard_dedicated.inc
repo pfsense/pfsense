@@ -1110,7 +1110,7 @@ function apply_all_chosen_items() {
 				if ($sched != "PRIQ") {
 					$voipbw = $config['ezshaper']['step3']["local{$i}download"];
 					$voipbwunit = $config['ezshaper']['step3']["local{$i}downloadspeed"];
-					if ($sched != HFSC) {
+					if ($sched != 'HFSC') {
 						if ($voipbwunit == "%")
 							$factor = $downbw/100;
 						else
@@ -1550,8 +1550,7 @@ function apply_all_chosen_items() {
 			$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
 			$rule['tracker'] = $tracker++;
 			$config['filter']['rule'][] = $rule;
-
-		} else {
+		} elseif (array_key_exists($config['ezshaper']['step3']['provider'], $voiplist)) {
 			/* loop through voiplist[] */
 			foreach ($voiplist[$config['ezshaper']['step3']['provider']] as $voip) {
 				$rule = array();

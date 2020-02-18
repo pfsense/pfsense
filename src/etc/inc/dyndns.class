@@ -212,7 +212,7 @@
 				log_error(gettext("Dynamic DNS: updatedns() starting"));
 			}
 
-			$dyndnslck = lock("DDNS".$dnsID, LOCK_EX);
+			$dyndnslck = lock("DDNS" . $dnsID, LOCK_EX);
 
 			if (!$dnsService) $this->_error(2);
 			switch ($dnsService) {
@@ -454,7 +454,7 @@
 				case 'glesys':
 					$needsIP = TRUE;
 					$server = 'https://api.glesys.com/domain/updaterecord/format/json';
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$post_data['recordid'] = $this->_FQDN;
 					$post_data['data'] = $this->_dnsIP;
 					curl_setopt($ch, CURLOPT_URL, $server);
@@ -467,7 +467,7 @@
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") {
 						$this->_dnsWildcard = "ON";
 					}
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$server = "https://members.dyndns.org/nic/update";
 					$port = "";
 					if ($this->_dnsServer) {
@@ -476,7 +476,7 @@
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard=' . $this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
 				case 'dhs':
 					// DHS is disabled in the GUI because the following doesn't work.
@@ -504,7 +504,7 @@
 						$port = ":" . $this->_dnsPort;
 					}
 					curl_setopt($ch, CURLOPT_URL, $server . $port);
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
 				case 'noip':
@@ -528,11 +528,11 @@
 					} else {
 						$iptoset = $this->_dnsIP;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . urlencode($this->_dnsUser) . '&pass=' . urlencode($this->_dnsPass) . '&h[]=' . $this->_dnsHost.'&ip=' . $iptoset);
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . urlencode($this->_dnsUser) . '&pass=' . urlencode($this->_dnsPass) . '&h[]=' . $this->_dnsHost . '&ip=' . $iptoset);
 					break;
 				case 'easydns':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$server = "https://members.easydns.com/dyn/dyndns.php";
 					$port = "";
 					if ($this->_dnsServer) {
@@ -545,7 +545,7 @@
 					break;
 				case 'hn':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$server = "http://dup.hn.org/vanity/update";
 					$port = "";
 					if ($this->_dnsServer) {
@@ -558,7 +558,7 @@
 					break;
 				case 'zoneedit':
 					$needsIP = FALSE;
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 
 					$server = "https://dynamic.zoneedit.com/auth/dynamic.html";
 					$port = "";
@@ -607,13 +607,13 @@
 						sleep(1);
 						switch ($code) {
 							case 100:
-								fputs($this->con['socket'], "LOGIN ".$this->_dnsUser." ".$this->_dnsPass."\n");
+								fputs($this->con['socket'], "LOGIN " . $this->_dnsUser . " " . $this->_dnsPass . "\n");
 								break;
 							case 225:
-								fputs($this->con['socket'], "DELRR ".$this->_dnsHost." A\n");
+								fputs($this->con['socket'], "DELRR " . $this->_dnsHost . " A\n");
 								break;
 							case 901:
-								fputs($this->con['socket'], "ADDRR ".$this->_dnsHost." A ".$this->_dnsIP."\n");
+								fputs($this->con['socket'], "ADDRR " . $this->_dnsHost . " A " . $this->_dnsIP . "\n");
 								break;
 							case 795:
 								fputs($this->con['socket'], "QUIT\n");
@@ -629,7 +629,7 @@
 					break;
 				case 'dnsexit':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_URL, 'https://www.dnsexit.com/RemoteUpdate.sv?login='.$this->_dnsUser. '&password='.$this->_dnsPass.'&host='.$this->_dnsHost.'&myip='.$this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, 'https://www.dnsexit.com/RemoteUpdate.sv?login=' . $this->_dnsUser . '&password=' . $this->_dnsPass . '&host=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				case 'loopia':
 					$needsIP = TRUE;
@@ -644,8 +644,8 @@
 				case 'opendns':
 					$needsIP = FALSE;
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "https://updates.opendns.com/nic/update?hostname=". $this->_dnsHost;
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					$server = "https://updates.opendns.com/nic/update?hostname=" . $this->_dnsHost;
 					$port = "";
 					if ($this->_dnsServer) {
 						$server = $this->_dnsServer;
@@ -653,12 +653,12 @@
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server .$port);
+					curl_setopt($ch, CURLOPT_URL, $server . $port);
 					break;
 
 				case 'staticcling':
 					$needsIP = FALSE;
-					curl_setopt($ch, CURLOPT_URL, 'https://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, 'https://www.staticcling.org/update.html?login=' . $this->_dnsUser . '&pass=' . $this->_dnsPass);
 					break;
 				case 'dnsomatic':
 					/* Example syntax
@@ -684,7 +684,7 @@
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NOCHG');
+					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard=' . $this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NOCHG');
 					break;
 				case 'namecheap':
 					/* Example:
@@ -723,7 +723,7 @@
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") {
 						$this->_dnsWildcard = "ON";
 					}
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$server = "https://carol.selfhost.de/nic/update";
 					$port = "";
 					if ($this->_dnsServer) {
@@ -732,7 +732,7 @@
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard=' . $this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
 				case 'route53':
 					require_once("r53.class");
@@ -801,8 +801,8 @@
 
 					if (strpos($this->_dnsUser, '@') !== false) {
 						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-							'X-Auth-Email: '.$this->_dnsUser,
-							'X-Auth-Key: '.$this->_dnsPass,
+							'X-Auth-Email: ' . $this->_dnsUser,
+							'X-Auth-Key: ' . $this->_dnsPass,
 							'Content-Type: application/json'
 						));
 
@@ -813,7 +813,7 @@
 						$zone = $output->result[0]->id;
 					} else {
 						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-							'Authorization: Bearer '.$this->_dnsPass,
+							'Authorization: Bearer ' . $this->_dnsPass,
 							'Content-Type: application/json'
 						));
 
@@ -843,13 +843,13 @@
 					break;
 				case 'eurodns':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$server = "https://update.eurodyndns.org/update/";
 					$port = "";
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server .$port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				case 'gratisdns':
 					$needsIP = TRUE;
@@ -859,7 +859,7 @@
 				case 'ovh-dynhost':
 					$needsIP = FALSE;
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$server = "https://www.ovh.com/nic/update";
 					$port = "";
 					if ($this->_dnsServer) {
@@ -868,11 +868,11 @@
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard=' . $this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
 				case 'citynetwork':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$server = 'https://dyndns.citynetwork.se/nic/update';
 					$port = "";
 					if ($this->_dnsServer) {
@@ -881,7 +881,7 @@
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server .$port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				case 'dnsimple':
 					/* Uses DNSimple's v2 REST API
@@ -905,7 +905,7 @@
 					$needsIP = TRUE;
 					$server = 'https://api.godaddy.com/v1/domains/';
 					$recordType = $this->_useIPv6 ? "AAAA" : "A";
-					$url = $server  . $this->_dnsDomain . '/records/' . $recordType . '/' . $this->_dnsHost;
+					$url = $server . $this->_dnsDomain . '/records/' . $recordType . '/' . $this->_dnsHost;
 					$jsondata = '[{"data":"' . $this->_dnsIP . '","ttl":' . $this->_dnsTTL . '}]';
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -925,7 +925,7 @@
 					$server = "https://domains.google.com/nic/update";
 					$port = "";
 					curl_setopt($ch, CURLOPT_URL, 'https://domains.google.com/nic/update');
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
 				case 'dnsmadeeasy':
@@ -936,7 +936,7 @@
 				case 'spdyn':
 				case 'spdyn-v6':
 					$needsIP = FALSE;
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$server = "https://update.spdyn.de/nic/update";
 					$port = "";
 					if ($this->_dnsServer) {
@@ -945,12 +945,12 @@
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server .$port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				case 'all-inkl':
 					$needsIP = FALSE;
 					$server = 'https://dyndns.kasserver.com/';
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, $server . 'myip=' . $this->_dnsIP);
 					break;
 				case 'hover':
@@ -1015,7 +1015,7 @@
 					$post_data['value'] = $this->_dnsIP;
 					$post_data['record'] = $this->_dnsHost;
 					$post_data['type'] = $isv6 ? 'AAAA' : 'A';
-					$post_data['comment'] = "Updated by pfSense:$this->_dnsUser on ".date('c');
+					$post_data['comment'] = "Updated by pfSense:$this->_dnsUser on " . date('c');
 					$port = "";
 					if ($this->_dnsServer) {
 						$server = $this->_dnsServer;
@@ -1264,7 +1264,7 @@
 				}
 				$request_headers = array();
 				//$request_headers[] = 'Accept: application/json';
-				$request_headers[] = 'X-Api-Key: ' .$this->_dnsPass;
+				$request_headers[] = 'X-Api-Key: ' . $this->_dnsPass;
 				$request_headers[] = 'Content-Type: application/json';
 				//create or update record
 				if ($recordHref == null) {
@@ -2042,7 +2042,7 @@
 						}
 						$status = $status_intro . $error_str . $message;
 					} else {
-						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $code .")";
+						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $code . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 						$this->_debug($data);
 					}
@@ -2155,7 +2155,7 @@
 					}
 					break;
 				case 'all-inkl':
- 					if (preg_match('/good\s'.$this->_dnsIP.'/i', $data)) {
+ 					if (preg_match('/good\s' . $this->_dnsIP . '/i', $data)) {
 							$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
  							$successful_update = true;
  					} else if (preg_match('/good/i', $data)) {
@@ -2165,7 +2165,7 @@
 					}
 					else {
 							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-							log_error($status_intro . gettext("PAYLOAD:") . " " . $header.$data);
+							log_error($status_intro . gettext("PAYLOAD:") . " " . $header . $data);
  							$this->_debug($data);
  							$this->_debug($header);
  					}
@@ -2406,7 +2406,7 @@
 				if (file_exists($this->_cacheFile_v6)) {
 					$contents = file_get_contents($this->_cacheFile_v6);
 					list($cacheIP, $cacheTime) = explode('|', $contents);
-					$this->_debug($cacheIP.'/'.$cacheTime);
+					$this->_debug($cacheIP . '/' . $cacheTime);
 					$initial = false;
 					$log_error .= sprintf(gettext("Cached IPv6: %s"), $cacheIP);
 				} else {
@@ -2420,7 +2420,7 @@
 				if (file_exists($this->_cacheFile)) {
 					$contents = file_get_contents($this->_cacheFile);
 					list($cacheIP, $cacheTime) = explode('|', $contents);
-					$this->_debug($cacheIP.'/'.$cacheTime);
+					$this->_debug($cacheIP . '/' . $cacheTime);
 					$initial = false;
 					$log_error .= sprintf(gettext("Cached IP: %s"), $cacheIP);
 				} else {
@@ -2481,7 +2481,7 @@
 			if (!$g['debug']) {
 				return;
 			}
-			$string = date('m-d-y h:i:s').' - ('.$this->_debugID.') - ['.$this->_dnsService.'] - '.$data."\n";
+			$string = date('m-d-y h:i:s') . ' - (' . $this->_debugID . ') - [' . $this->_dnsService . '] - ' . $data . "\n";
 			$file = fopen($this->_debugFile, 'a');
 			fwrite($file, $string);
 			fclose($file);

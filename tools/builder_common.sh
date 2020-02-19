@@ -1390,12 +1390,12 @@ pkg_repo_rsync() {
 
 	for _pkg_rsync_hostname in ${PKG_RSYNC_HOSTNAME}; do
 		# Make sure destination directory exist
-		ssh -p ${PKG_RSYNC_SSH_PORT} \
+		ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
 			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} \
 			"mkdir -p ${PKG_RSYNC_DESTDIR}"
 
 		echo -n ">>> Sending updated repository to ${_pkg_rsync_hostname}... " | tee -a ${_logfile}
-		if script -aq ${_logfile} rsync -Have "ssh -p ${PKG_RSYNC_SSH_PORT}" \
+		if script -aq ${_logfile} rsync -Have "ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT}" \
 			--timeout=60 --delete-delay ${_repo_path} \
 			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
 		then
@@ -1413,14 +1413,14 @@ pkg_repo_rsync() {
 		if [ -n "${_IS_RELEASE}" -o "${_repo_path_param}" = "${CORE_PKG_PATH}" ]; then
 			for _pkg_final_rsync_hostname in ${PKG_FINAL_RSYNC_HOSTNAME}; do
 				# Send .real* directories first to prevent having a broken repo while transfer happens
-				local _cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
+				local _cmd="rsync -Have \"ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
 					--timeout=60 ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
 					--include=\"/*\" --include=\"*/.real*\" --include=\"*/.real*/***\" \
 					--exclude=\"*\" \
 					${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname}:${PKG_FINAL_RSYNC_DESTDIR}"
 
 				echo -n ">>> Sending updated packages to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
-				if script -aq ${_logfile} ssh -p ${PKG_RSYNC_SSH_PORT} \
+				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
 					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
 					echo "Done!" | tee -a ${_logfile}
 				else
@@ -1429,12 +1429,12 @@ pkg_repo_rsync() {
 					print_error_pfS
 				fi
 
-				_cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
+				_cmd="rsync -Have \"ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
 					--timeout=60 --delete-delay ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
 					${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname}:${PKG_FINAL_RSYNC_DESTDIR}"
 
 				echo -n ">>> Sending updated repositories metadata to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
-				if script -aq ${_logfile} ssh -p ${PKG_RSYNC_SSH_PORT} \
+				if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_RSYNC_SSH_PORT} \
 					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
 					echo "Done!" | tee -a ${_logfile}
 				else
@@ -1447,12 +1447,12 @@ pkg_repo_rsync() {
 					continue
 				fi
 
-				local _repos=$(ssh -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+				local _repos=$(ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
 				    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
 				    "ls -1d ${PKG_FINAL_RSYNC_DESTDIR}/${_repo_base%%-core}*")
 				for _repo in ${_repos}; do
 					echo -n ">>> Sending updated packages to AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
-					if script -aq ${_logfile} ssh -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+					if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
 					    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
 					    "${_aws_sync_cmd} ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
 						echo "Done!" | tee -a ${_logfile}
@@ -1462,7 +1462,7 @@ pkg_repo_rsync() {
 						print_error_pfS
 					fi
 					echo -n ">>> Cleaning up packages at AWS ${PKG_FINAL_S3_PATH}... " | tee -a ${_logfile}
-					if script -aq ${_logfile} ssh -p ${PKG_FINAL_RSYNC_SSH_PORT} \
+					if script -aq ${_logfile} ssh -o StrictHostKeyChecking=no -p ${PKG_FINAL_RSYNC_SSH_PORT} \
 					    ${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname} \
 					    "${_aws_sync_cmd} --delete ${_repo} ${PKG_FINAL_S3_PATH}/$(basename ${_repo})"; then
 						echo "Done!" | tee -a ${_logfile}
@@ -1994,7 +1994,7 @@ snapshots_create_sha256() {
 
 snapshots_scp_files() {
 	if [ -z "${RSYNC_COPY_ARGUMENTS}" ]; then
-		RSYNC_COPY_ARGUMENTS="-ave ssh --timeout=60"
+		RSYNC_COPY_ARGUMENTS="-Have \"ssh -o StrictHostKeyChecking=no\" --timeout=60"
 	fi
 
 	snapshots_update_status ">>> Copying core pkg repo to ${PKG_RSYNC_HOSTNAME}"
@@ -2005,12 +2005,12 @@ snapshots_scp_files() {
 		snapshots_update_status ">>> Copying files to ${_rsyncip}"
 
 		# Ensure directory(s) are available
-		ssh ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/installer"
+		ssh -o StrictHostKeyChecking=no ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/installer"
 		if [ -d $IMAGES_FINAL_DIR/virtualization ]; then
-			ssh ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/virtualization"
+			ssh -o StrictHostKeyChecking=no ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/virtualization"
 		fi
 		# ensure permissions are correct for r+w
-		ssh ${RSYNCUSER}@${_rsyncip} "chmod -R ug+rw ${RSYNCPATH}/."
+		ssh -o StrictHostKeyChecking=no ${RSYNCUSER}@${_rsyncip} "chmod -R ug+rw ${RSYNCPATH}/."
 		rsync $RSYNC_COPY_ARGUMENTS $IMAGES_FINAL_DIR/installer/* \
 			${RSYNCUSER}@${_rsyncip}:${RSYNCPATH}/installer/
 		if [ -d $IMAGES_FINAL_DIR/virtualization ]; then

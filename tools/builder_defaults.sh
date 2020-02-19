@@ -301,7 +301,7 @@ else
 	export PKG_REPO_SIGN_KEY=${PKG_REPO_SIGN_KEY:-"beta${PRODUCT_NAME_SUFFIX}"}
 fi
 # Command used to sign pkg repo
-: ${PKG_REPO_SIGNING_COMMAND="ssh sign@codesigner.netgate.com sudo ./sign.sh ${PKG_REPO_SIGN_KEY}"}
+: ${PKG_REPO_SIGNING_COMMAND="ssh -o StrictHostKeyChecking=no sign@codesigner.netgate.com sudo ./sign.sh ${PKG_REPO_SIGN_KEY}"}
 export PKG_REPO_SIGNING_COMMAND
 export DO_NOT_SIGN_PKG_REPO=${DO_NOT_SIGN_PKG_REPO:-}
 

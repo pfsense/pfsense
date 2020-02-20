@@ -70,6 +70,11 @@ if ($_POST['save']) {
 		}
 	}
 
+	if (!empty($_POST['threshold']) && (!is_numeric($_POST['threshold']) ||
+	    ($_POST['threshold'] < -1) || ($_POST['threshold'] > 256))) {
+		$input_errors[] = gettext("Threshold value should be between -1 and 256.");
+	} 
+
 	$igmpentry = array();
 	$igmpentry['ifname'] = $_POST['ifname'];
 	$igmpentry['threshold'] = $_POST['threshold'];
@@ -86,7 +91,7 @@ if ($_POST['save']) {
 		}
 
 		$this_addr =  $_POST["address{$x}"] . "/" . $_POST["address_subnet{$x}"];
-		if (is_subnet($this_addr)) {
+		if (is_subnetv4($this_addr)) {
 			$address .= $this_addr;
 			$isfirst++;
 		} else {
@@ -227,7 +232,7 @@ foreach ($item as $ww) {
 		null,
 		$address,
 		['placeholder' => 'Address']
-	))->sethelp($tracker == $rows ? 'Network/CIDR':null)->addMask('address_subnet' . $tracker, $address_subnet)->setWidth(4)->setPattern('[a-zA-Z0-9_.:]+');
+	))->sethelp($tracker == $rows ? 'Network/CIDR':null)->addMask('address_subnet' . $tracker, $address_subnet, 32)->setWidth(4);
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,

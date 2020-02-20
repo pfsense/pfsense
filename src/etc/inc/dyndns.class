@@ -294,6 +294,8 @@
 				case 'godaddy-v6':
 				case 'azurev6':
 				case 'linode-v6':
+				case 'noip-v6':
+				case 'noip-free-v6':
 					$this->_useIPv6 = true;
 					break;
 				default:
@@ -344,7 +346,9 @@
 					case 'dyndns-custom':
 					case 'dhs':
 					case 'noip':
+					case 'noip-v6':
 					case 'noip-free':
+					case 'noip-free-v6':
 					case 'easydns':
 					case 'hn':
 					case 'zoneedit':
@@ -506,6 +510,37 @@
 					curl_setopt($ch, CURLOPT_URL, $server . $port);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					break;
+				case 'noip-v6':
+				case 'noip-free-v6':
+					$needsIP = TRUE;
+					$server = "https://dynupdate.no-ip.com/ducupdate.php";
+					$port = "";
+					if ($this->_dnsServer) {
+						$server = $this->_dnsServer;
+					}
+					if ($this->_dnsPort) {
+						$port = ":" . $this->_dnsPort;
+					}
+					if (($this->_dnsService == "noip-free-v6") &&
+					    ($this->_forceUpdateNeeded == true) &&
+					    ($this->_dnsDummyUpdateDone == false)) {
+						// Update the IP to a dummy value to force No-IP free accounts to see a change.
+						$iptoset = "fd00:d::1";
+						$this->_dnsDummyUpdateDone = true;
+						$log_message = 'Dynamic DNS %1$s (%2$s): ';
+						$log_message .= 'Processing dummy update on No-IP free account. ';
+						$log_message .= 'IP temporarily set to %3$s';
+						log_error(sprintf(gettext($log_message), $this->_dnsService, $this->_dnsHost, $iptoset));
+					} else {
+						$iptoset = $this->_dnsIP;
+					}
+					$url_data = $server . $port;
+					$url_data .= '?username=' . urlencode($this->_dnsUser);
+					$url_data .= '&pass=' . urlencode($this->_dnsPass);
+					$url_data .= '&h[]=' . $this->_dnsHost;
+					$url_data .= '&ipv6=' . $iptoset;
+					curl_setopt($ch, CURLOPT_URL, $url_data);
 					break;
 				case 'noip':
 				case 'noip-free':
@@ -1597,7 +1632,9 @@
 				case 'dhs':
 					break;
 				case 'noip':
+				case 'noip-v6':
 				case 'noip-free':
+				case 'noip-free-v6':
 					list($ip, $code) = explode(":", $data);
 					switch ($code) {
 						case 0:

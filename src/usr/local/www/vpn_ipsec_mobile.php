@@ -69,18 +69,23 @@ if (count($a_client)) {
 	$pconfig['wins_server2'] = $a_client['wins_server2'];
 	$pconfig['pfs_group'] = $a_client['pfs_group'];
 	$pconfig['login_banner'] = $a_client['login_banner'];
-
+	$pconfig['radius_ip_priority_enable'] = $a_client['radius_ip_priority_enable'];
+	
 	if (isset($pconfig['enable'])) {
 		$pconfig['enable'] = true;
 	}
 
-	if ($pconfig['pool_address']&&$pconfig['pool_netbits']) {
+	if ($pconfig['pool_address'] && $pconfig['pool_netbits']) {
 		$pconfig['pool_enable'] = true;
 	} else {
 		$pconfig['pool_netbits'] = 24;
 	}
 
-	if ($pconfig['pool_address_v6']&&$pconfig['pool_netbits_v6']) {
+	if (isset($pconfig['radius_ip_priority_enable'])) {
+		$pconfig['radius_ip_priority_enable'] = true;
+	}
+
+	if ($pconfig['pool_address_v6'] && $pconfig['pool_netbits_v6']) {
 		$pconfig['pool_enable_v6'] = true;
 	} else {
 		$pconfig['pool_netbits_v6'] = 120;
@@ -102,11 +107,11 @@ if (count($a_client)) {
 		$pconfig['dns_split_enable'] = true;
 	}
 
-	if ($pconfig['dns_server1']||$pconfig['dns_server2']||$pconfig['dns_server3']||$pconfig['dns_server4']) {
+	if ($pconfig['dns_server1'] || $pconfig['dns_server2'] || $pconfig['dns_server3'] || $pconfig['dns_server4']) {
 		$pconfig['dns_server_enable'] = true;
 	}
 
-	if ($pconfig['wins_server1']||$pconfig['wins_server2']) {
+	if ($pconfig['wins_server1'] || $pconfig['wins_server2']) {
 		$pconfig['wins_server_enable'] = true;
 	}
 
@@ -231,6 +236,12 @@ if ($_POST['save']) {
 		}
 	}
 
+	if ($pconfig['radius_ip_priority_enable']) {
+		if (!(isset($mobileph1) && ($mobileph1['authentication_method'] == 'eap-radius'))) {
+			$input_errors[] = gettext("RADIUS IP may only take prioriy when using EAP-RADIUS for authentication on the Mobile IPsec VPN.");
+		}
+	}
+
 	if (!$input_errors) {
 		$client = array();
 
@@ -250,6 +261,10 @@ if ($_POST['save']) {
 		if ($pconfig['pool_enable']) {
 			$client['pool_address'] = $pconfig['pool_address'];
 			$client['pool_netbits'] = $pconfig['pool_netbits'];
+		}
+
+		if ($pconfig['radius_ip_priority_enable']) {
+			$client['radius_ip_priority_enable'] = true;
 		}
 
 		if ($pconfig['pool_enable_v6']) {
@@ -515,6 +530,13 @@ $group->add(new Form_Select(
 ))->setWidth(2);
 
 $section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'radius_ip_priority_enable',
+	'RADIUS IP address priority',
+	'IPv4 address pool is used if IP is not supplied by RADIUS server',
+	$pconfig['radius_ip_priority_enable']
+));
 
 $section->addInput(new Form_Checkbox(
 	'pool_enable_v6',

@@ -1341,7 +1341,6 @@ function ipsec_setup_strongswan() {
 	$ssconf[] = "# Automatically generated config file - DO NOT MODIFY. Changes will be overwritten.";
 	$ssconf['starter'] = array();
 	$ssconf['starter']['load_warning'] = "no";
-	$ssconf['starter']['config_file'] = "{$g['varetc_path']}/ipsec/ipsec.conf";
 
 	$ssconf['charon'] = array();
 	$ssconf['charon'][] = '# number of worker threads in charon';
@@ -1419,6 +1418,7 @@ function ipsec_setup_strongswan() {
 	/* Generate an eap-radius config section if appropriate */
 	if (count($radius_servers) && ($mobile_ipsec_auth === "eap-radius")) {
 		$ssconf['charon']['plugins']['eap-radius'] = array();
+		$ssconf['charon']['plugins']['eap-radius']['load'] = "2";
 		$ssconf['charon']['plugins']['eap-radius']['class_group'] = "yes";
 		$ssconf['charon']['plugins']['eap-radius']['eap_start'] = "no";
 		/* Activate RADIUS accounting only if it was selected on the IPsec Mobile Clients tab */
@@ -1461,6 +1461,10 @@ function ipsec_setup_pools() {
 	if (!is_array($a_client) || !isset($a_client['enable'])) {
 		return;
 	}
+	if (($mobile_ipsec_auth == "eap-radius") && empty($a_client['pool_address']) &&
+	    empty($a_client['pool_address_v6'])) {
+		return;
+	}
 	$scconf['pools']['mobile-pool'] = array();
 
 	$pool_addrs = array();
@@ -1469,9 +1473,6 @@ function ipsec_setup_pools() {
 	}
 	if (!empty($a_client['pool_address_v6'])) {
 		$pool_addrs[] = "{$a_client['pool_address_v6']}/{$a_client['pool_netbits_v6']}";
-	}
-	if ($mobile_ipsec_auth == "eap-radius" && !count($pool_addrs)) {
-		$pool_addrs[] = "%radius";
 	}
 	if (count($pool_addrs)) {
 		$scconf['pools']['mobile-pool']['addrs'] = implode(',', $pool_addrs);
@@ -2263,7 +2264,15 @@ function ipsec_setup_tunnels() {
 		$conn['remote_addrs'] = $remote_spec;
 
 		if (isset($ph1ent['mobile'])) {
-			$conn['pools'] = "mobile-pool";
+			if (($ph1ent['authentication_method'] == 'eap-radius') && 
+			    empty($a_client['pool_address']) && empty($a_client['pool_address_v6'])) {
+				$conn['pools'] = "radius";
+			} else {
+				$conn['pools'] = "mobile-pool";
+				if (isset($a_client['radius_ip_priority_enable'])) {
+					$conn['pools'] .= ", radius";
+				}
+			}
 		}
 
 		/* For IKEv2 without Split Connections, setup combined sets of

@@ -1918,7 +1918,8 @@ function ipsec_setup_proposal_entry(& $ph2ent, & $algo_arr, $ealg_id, $keylen) {
 	$proposal = array();
 
 	/* If multiple hash algorithms are present, loop through and add them all. */
-	if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
+	if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option']) 
+	    && !strpos($ealg_id, "gcm")) {
 		foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
 			$proposal[] = ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, false, $ph2ent['pfsgroup']);
 		}

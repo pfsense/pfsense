@@ -80,6 +80,8 @@ $pconfig['infra_host_ttl'] = isset($config['unbound']['infra_host_ttl']) ? $conf
 $pconfig['infra_cache_numhosts'] = isset($config['unbound']['infra_cache_numhosts']) ? $config['unbound']['infra_cache_numhosts'] : '10000';
 $pconfig['unwanted_reply_threshold'] = isset($config['unbound']['unwanted_reply_threshold']) ? $config['unbound']['unwanted_reply_threshold'] : 'disabled';
 $pconfig['log_verbosity'] = isset($config['unbound']['log_verbosity']) ? $config['unbound']['log_verbosity'] : "1";
+$pconfig['dns64prefix'] = isset($config['unbound']['dns64prefix']) ? $config['unbound']['dns64prefix'] : '';
+$pconfig['dns64netbits'] = isset($config['unbound']['dns64netbits']) ? $config['unbound']['dns64netbits'] : '96';
 
 if (isset($config['unbound']['disable_auto_added_access_control'])) {
 	$pconfig['disable_auto_added_access_control'] = true;
@@ -91,6 +93,10 @@ if (isset($config['unbound']['disable_auto_added_host_entries'])) {
 
 if (isset($config['unbound']['use_caps'])) {
 	$pconfig['use_caps'] = true;
+}
+
+if (isset($config['unbound']['dns64'])) {
+	$pconfig['dns64'] = true;
 }
 
 if ($_POST) {
@@ -142,6 +148,13 @@ if ($_POST) {
 		}
 		if (isset($_POST['dnssecstripped']) && !isset($config['unbound']['dnssec'])) {
 			$input_errors[] = gettext("Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.");
+		}
+		if (isset($_POST['dns64']) && !empty($_POST['dns64prefix']) && !is_ipaddrv6($_POST['dns64prefix'])) {
+			$input_errors[] = gettext("DNS64 Prefix must be valid IPv6 prefix.");
+		}
+		if (isset($_POST['dns64']) && isset($_POST['dns64netbits']) && 
+		    (($_POST['dns64netbits'] > 96) || ($_POST['dns64netbits'] < 1))) {
+			$input_errors[] = gettext("DNS64 subnet must be not more than 96 and not less that 1.");
 		}
 
 		if (!$input_errors) {
@@ -214,6 +227,14 @@ if ($_POST) {
 				$config['unbound']['use_caps'] = true;
 			} else {
 				unset($config['unbound']['use_caps']);
+			}
+
+			if (isset($_POST['dns64'])) {
+				$config['unbound']['dns64'] = true;
+				$config['unbound']['dns64prefix'] = $_POST['dns64prefix'];
+				$config['unbound']['dns64netbits'] = $_POST['dns64netbits'];
+			} else {
+				unset($config['unbound']['dns64']);
 			}
 
 			write_config(gettext("DNS Resolver configured."));
@@ -438,7 +459,47 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['use_caps']
 ))->setHelp('See the implementation %1$sdraft dns-0x20%2$s for more information.', '<a href="https://tools.ietf.org/html/draft-vixie-dnsext-dns0x20-00">', '</a>');
 
+$section->addInput(new Form_Checkbox(
+	'dns64',
+	'DNS64 Support',
+	'Enable DNS64 (RFC 6147)',
+	$pconfig['dns64']
+))->setHelp('DNS64 is used with an IPv6/IPv4 translator to enable client-server communication between an IPv6-only client and an IPv4-only servers.');
+
+$group = new Form_Group('DNS64 Prefix');
+$group->addClass('dns64pr');
+
+$group->add(new Form_IpAddress(
+	'dns64prefix',
+	'DNS64 Prefix',
+	$pconfig['dns64prefix']
+))->addMask('dns64netbits', $pconfig['dns64netbits'], 96, 1, false)->setWidth(4);
+$group->setHelp('IPv6 prefix used by IPv6 representations of IPv4 addresses. If this field is empty, default 64:ff9b::/96 prefix is used.');
+
+$section->add($group);
+
 $form->add($section);
 print($form);
 
+?>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	function change_dns64() {
+		hideClass('dns64pr', !($('#dns64').prop('checked')));
+	}
+
+	 // DNS64
+	$('#dns64').change(function () {
+		change_dns64();
+	});
+
+	// ---------- On initial page load ------------------------------------------------------------
+
+	change_dns64();
+});
+//]]>
+</script>
+<?php
 include("foot.inc");

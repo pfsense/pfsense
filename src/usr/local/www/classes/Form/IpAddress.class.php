@@ -70,7 +70,7 @@ class Form_IpAddress extends Form_Input
 	}
 
 	// $min is provided to allow for VPN masks in which '0' is valid
-	public function addMask($name, $value, $max = 128, $min = 1)
+	public function addMask($name, $value, $max = 128, $min = 1, $auto = true)
 	{
 		$this->_mask = new Form_Select(
 			$name,
@@ -80,6 +80,9 @@ class Form_IpAddress extends Form_Input
 		);
 
 		$this->_mask->addClass("pfIpMask");
+
+		if ($auto)
+			$this->_auto = true;
 
 		return $this;
 	}
@@ -99,10 +102,13 @@ class Form_IpAddress extends Form_Input
 		if (!isset($this->_mask))
 			return $input;
 
+		if (isset($this->_auto))
+			$pfipmask = " pfIpMask";
+
 		return <<<EOT
 		<div class="input-group">
 			$input
-			<span class="input-group-addon input-group-inbetween pfIpMask">/</span>
+			<span class="input-group-addon input-group-inbetween$pfipmask">/</span>
 			{$this->_mask}
 		</div>
 EOT;

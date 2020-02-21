@@ -645,10 +645,10 @@
 		<field>
 			<name>lifetime</name>
 			<displayname>Lifetime</displayname>
-			<description>Lifetime in days. Server certificates should not have a lifetime over 825 days or some platforms may consider the certificate invalid.</description>
+			<description>Lifetime in days. Server certificates should not have a lifetime over 398 days or some platforms may consider the certificate invalid.</description>
 			<type>input</type>
 			<size>10</size>
-			<value>825</value>
+			<value>398</value>
 			<bindstofield>ovpnserver->step9->lifetime</bindstofield>
 		</field>
 		<field>

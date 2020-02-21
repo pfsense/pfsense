@@ -1027,7 +1027,7 @@ function system_routing_enable() {
 }
 
 function system_webgui_create_certificate() {
-	global $config, $g;
+	global $config, $g, $cert_strict_values;
 
 	init_config_arr(array('ca'));
 	$a_ca = &$config['ca'];
@@ -1045,7 +1045,7 @@ function system_webgui_create_certificate() {
 		'commonName' => $cert_hostname,
 		'subjectAltName' => "DNS:{$cert_hostname}");
 	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
-	if (!cert_create($cert, null, 2048, 825, $dn, "self-signed", "sha256")) {
+	if (!cert_create($cert, null, 2048, $cert_strict_values['max_server_cert_lifetime'], $dn, "self-signed", "sha256")) {
 		while ($ssl_err = openssl_error_string()) {
 			log_error(sprintf(gettext("Error creating WebGUI Certificate: openssl library returns: %s"), $ssl_err));
 		}

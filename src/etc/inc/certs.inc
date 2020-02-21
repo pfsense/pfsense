@@ -1516,7 +1516,7 @@ function is_cert_locally_renewable($cert) {
  */
 global $cert_strict_values;
 $cert_strict_values = array(
-	'max_server_cert_lifetime' => 825,
+	'max_server_cert_lifetime' => 398,
 	'digest_blacklist' => array('md4', 'RSA-MD4',  'md5', 'RSA-MD5', 'md5-sha1',
 					'mdc2', 'RSA-MDC2', 'sha1', 'RSA-SHA1',
 					'RSA-SHA1-2'),

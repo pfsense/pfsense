@@ -764,8 +764,8 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		$pconfig['csrsign_lifetime'] ? $pconfig['csrsign_lifetime']:$default_lifetime,
 		['max' => $max_lifetime]
 	))->setHelp('The length of time the signed certificate will be valid, in days. %1$s' .
-		'Server certificates should not have a lifetime over 825 days or some platforms ' .
-		'may consider the certificate invalid.', '<br/>');
+		'Server certificates should not have a lifetime over %2$s days or some platforms ' .
+		'may consider the certificate invalid.', '<br/>', $cert_strict_values['max_server_cert_lifetime']);
 	$section->addInput(new Form_Select(
 		'csrsign_digest_alg',
 		'*Digest Algorithm',
@@ -882,8 +882,8 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		$pconfig['lifetime'],
 		['max' => $max_lifetime]
 	))->setHelp('The length of time the signed certificate will be valid, in days. %1$s' .
-		'Server certificates should not have a lifetime over 825 days or some platforms ' .
-		'may consider the certificate invalid.', '<br/>');
+		'Server certificates should not have a lifetime over %2$s days or some platforms ' .
+		'may consider the certificate invalid.', '<br/>', $cert_strict_values['max_server_cert_lifetime']);
 
 	$section->addInput(new Form_Input(
 		'dn_commonname',

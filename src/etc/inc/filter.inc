@@ -2425,8 +2425,11 @@ function filter_nat_rules_generate() {
 			}
 
 			$localport_nat = $localport;
-			if (empty($localport_nat) && is_port($dstaddr_port[count($dstaddr_port)-1])) {
-				$localport_nat = " port " . $dstaddr_port[count($dstaddr_port)-1];
+
+			if (empty($localport_nat)) {
+				$natreftarget = $dstaddr_reflect;
+			} else {
+				$natreftarget = "{$target}{$localport_nat}";
 			}
 
 			if ($srcaddr <> "" && $dstaddr <> "" && $natif) {
@@ -2472,7 +2475,7 @@ function filter_nat_rules_generate() {
 
 				$natrules .= "\n";
 				if (!isset($rule['nordr'])) {
-					$natrules .= filter_generate_reflection_nat($rule, $route_table, $nat_if_list, $protocol, "{$target}{$localport_nat}", $target_ip);
+					$natrules .= filter_generate_reflection_nat($rule, $route_table, $nat_if_list, $protocol, $natreftarget, $target_ip);
 				}
 			}
 		}

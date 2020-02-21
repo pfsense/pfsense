@@ -142,6 +142,8 @@ if ($_POST['save']) {
 			if ($_POST["username{$x}"]) {
 				if (empty($_POST["password{$x}"])) {
 					$input_errors[] = sprintf(gettext("No password specified for username %s"), $_POST["username{$x}"]);
+				} elseif (preg_match("/^!/", trim($_POST["password{$x}"]))) {
+					$input_errors[] = gettext("User passwords cannot start with '!'.");
 				}
 				if ($_POST["ip{$x}"] != "" && !is_ipaddr($_POST["ip{$x}"])) {
 					$input_errors[] = sprintf(gettext("Incorrect ip address specified for username %s"), $_POST["username{$x}"]);

@@ -229,7 +229,10 @@ EOD;
 					$item = explode(" ", $pppoecfg['username']);
 					foreach ($item as $userdata) {
 						$data = explode(":", $userdata);
-						$mpdsecret .= "{$data[0]} \"" . base64_decode($data[1]) . "\" {$data[2]}\n";
+						/* Escape double quotes, do not allow password to start with '!'
+						 * https://redmine.pfsense.org/issues/10275 */
+						$pass = str_replace('"', '\"', ltrim(base64_decode($data[1]), '!'));
+						$mpdsecret .= "{$data[0]} \"{$pass}\" {$data[2]}\n";
 					}
 				}
 
@@ -415,7 +418,10 @@ EOD;
 
 			if (is_array($l2tpcfg['user'])) {
 				foreach ($l2tpcfg['user'] as $user) {
-					$mpdsecret .= "{$user['name']} \"{$user['password']}\" {$user['ip']}\n";
+					/* Escape double quotes, do not allow password to start with '!'
+					 * https://redmine.pfsense.org/issues/10275 */
+					$pass = str_replace('"', '\"', ltrim($user['password'], '!'));
+					$mpdsecret .= "{$user['name']} \"{$pass}\" {$user['ip']}\n";
 				}
 			}
 

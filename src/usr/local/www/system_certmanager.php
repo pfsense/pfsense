@@ -246,16 +246,15 @@ if ($_POST['save'] == gettext("Save")) {
 		case 'edit':
 		case 'import':
 			$reqdfields = explode(" ",
-				"descr cert key");
+				"descr cert");
 			$reqdfieldsn = array(
 				gettext("Descriptive name"),
-				gettext("Certificate data"),
-				gettext("Key data"));
+				gettext("Certificate data"));
 			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
 				$input_errors[] = gettext("This certificate does not appear to be valid.");
 			}
 
-			if (cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
+			if ($_POST['key'] && (cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv'))) {
 				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 			}
 			break;
@@ -794,9 +793,9 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	$section->addInput(new Form_Textarea(
 		'key',
-		'*Private key data',
+		'Private key data',
 		$pconfig['key']
-	))->setHelp('Paste a private key in X.509 PEM format here.');
+	))->setHelp('Paste a private key in X.509 PEM format here. This field may remain empty in certain cases, such as when the private key is stored on a PKCS#11 token.');
 
 	if ($act == 'edit') {
 		$section->addInput(new Form_Input(

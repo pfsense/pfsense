@@ -1154,7 +1154,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	$form->add($section);
 
-	if ($act == 'edit') {
+	if (($act == 'edit') && !empty($pconfig['key'])) {
 		$form->addGlobal(new Form_Button(
 			'exportpkey',
 			'Export Private Key',
@@ -1369,8 +1369,8 @@ foreach ($a_cert as $cert):
 							<?php endif?>
 							<?php if (is_cert_locally_renewable($cert)): ?>
 								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
-							<?php endif ?>
 							<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa fa-archive" title="<?=gettext("Export P12")?>"></a>
+							<?php endif ?>
 						<?php else: ?>
 							<a href="system_certmanager.php?act=csr&amp;id=<?=$cert['refid']?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>"></a>
 							<a href="system_certmanager.php?act=req&amp;id=<?=$cert['refid']?>" class="fa fa-sign-in" title="<?=gettext("Export Request")?>"></a>

@@ -1466,17 +1466,7 @@ function ipsec_setup_pools() {
 		return;
 	}
 	$scconf['pools']['mobile-pool'] = array();
-
-	$pool_addrs = array();
-	if (!empty($a_client['pool_address'])) {
-		$pool_addrs[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
-	}
-	if (!empty($a_client['pool_address_v6'])) {
-		$pool_addrs[] = "{$a_client['pool_address_v6']}/{$a_client['pool_netbits_v6']}";
-	}
-	if (count($pool_addrs)) {
-		$scconf['pools']['mobile-pool']['addrs'] = implode(',', $pool_addrs);
-	}
+	$pool_common =& $scconf['pools']['mobile-pool'];
 
 	$rightdnsservers = array();
 	if (!empty($a_client['dns_server1'])) {
@@ -1492,7 +1482,7 @@ function ipsec_setup_pools() {
 		$rightdnsservers[] = $a_client['dns_server4'];
 	}
 	if (count($rightdnsservers)) {
-		$scconf['pools']['mobile-pool']['dns'] = implode(',', $rightdnsservers);
+		$pool_common['dns'] = implode(',', $rightdnsservers);
 	}
 
 	$cfgservers = array();
@@ -1503,47 +1493,70 @@ function ipsec_setup_pools() {
 		$cfgservers[] = $a_client['wins_server2'];
 	}
 	if (!empty($cfgservers)) {
-		$scconf['pools']['mobile-pool']['nbns'] = implode(",", $cfgservers);
+		$pool_common['nbns'] = implode(",", $cfgservers);
 	}
 	unset($cfgservers);
 
+	$net_list4 = array();
+	$net_list6 = array();
 	if (isset($a_client['net_list']) && is_array($a_phase2)) {
-		$net_list = array();
 		foreach ($a_phase2 as $ph2ent) {
 			if (isset($ph2ent['disabled']) ||
 			    !isset($ph2ent['mobile'])) {
 				continue;
 			}
-			$net_list[] = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
-		}
-		if (!empty($net_list)) {
-			$scconf['pools']['mobile-pool']['subnet'] = implode(",", $net_list);
-			$scconf['pools']['mobile-pool']['split_include'] = implode(",", $net_list);
-			unset($net_list);
+			$nlent = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
+			if (is_subnetv4($nlent)) {
+				$net_list4[] = $nlent;
+			} elseif (is_subnetv6($nlent)) {
+				$net_list6[] = $nlent;
+			}
+			unset($nlent);
 		}
 	}
 	if (!empty($a_client['dns_domain'])) {
-		$scconf['pools']['mobile-pool'][] = "# Search domain and default domain";
-		$scconf['pools']['mobile-pool']['28674'] = "\"{$a_client['dns_domain']}\"";
+		$pool_common[] = "# Search domain and default domain";
+		$pool_common['28674'] = "\"{$a_client['dns_domain']}\"";
 		if (empty($a_client['dns_split'])) {
-			$scconf['pools']['mobile-pool']['28675'] = "\"{$a_client['dns_domain']}\"";
+			$pool_common['28675'] = "\"{$a_client['dns_domain']}\"";
 		}
 	}
 
 	if (!empty($a_client['dns_split'])) {
-		$scconf['pools']['mobile-pool']['28675'] = "\"{$a_client['dns_split']}\"";
+		$pool_common['28675'] = "\"{$a_client['dns_split']}\"";
 	}
 
 	if (!empty($a_client['login_banner'])) {
-		$scconf['pools']['mobile-pool']['28672'] = "\"{$a_client['login_banner']}\"";
+		$pool_common['28672'] = "\"{$a_client['login_banner']}\"";
 	}
 
 	if (isset($a_client['save_passwd'])) {
-		$scconf['pools']['mobile-pool']['28673'] = "1";
+		$pool_common['28673'] = "1";
 	}
 
 	if ($a_client['pfs_group']) {
-		$scconf['pools']['mobile-pool']['28679'] = "\"{$a_client['pfs_group']}\"";
+		$pool_common['28679'] = "\"{$a_client['pfs_group']}\"";
+	}
+
+	if (!empty($a_client['pool_address'])) {
+		$scconf['pools']['mobile-pool-v4 : mobile-pool'] = array();
+		$v4pool =& $scconf['pools']['mobile-pool-v4 : mobile-pool'];
+		$v4pool['addrs'] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
+		if (!empty($net_list4)) {
+			$v4pool['subnet'] = implode(",", $net_list4);
+			$v4pool['split_include'] = implode(",", $net_list4);
+			unset($net_list4);
+		}
+	}
+	if (!empty($a_client['pool_address_v6'])) {
+		$scconf['pools']['mobile-pool-v6 : mobile-pool'] = array();
+		$v6pool =& $scconf['pools']['mobile-pool-v6 : mobile-pool'];
+		$v6pool['addrs'] = "{$a_client['pool_address_v6']}/{$a_client['pool_netbits_v6']}";
+		if (!empty($net_list6)) {
+			$v6pool['subnet'] = implode(",", $net_list6);
+			$v6pool['split_include'] = implode(",", $net_list6);
+			unset($net_list6);
+		}
 	}
 
 	return;
@@ -2264,17 +2277,24 @@ function ipsec_setup_tunnels() {
 		$conn['local_addrs'] = $local_spec;
 		$conn['remote_addrs'] = $remote_spec;
 
+		$pools = array();
 		if (isset($ph1ent['mobile'])) {
 			if (($ph1ent['authentication_method'] == 'eap-radius') && 
 			    empty($a_client['pool_address']) && empty($a_client['pool_address_v6'])) {
-				$conn['pools'] = "radius";
+				$pools[] = "radius";
 			} else {
-				$conn['pools'] = "mobile-pool";
+				if (!empty($a_client['pool_address'])) {
+					$pools[] = "mobile-pool-v4";
+				}
+				if (!empty($a_client['pool_address_v6'])) {
+					$pools[] = "mobile-pool-v6";
+				}
 				if (isset($a_client['radius_ip_priority_enable'])) {
-					$conn['pools'] .= ", radius";
+					$pools[] .= "radius";
 				}
 			}
 		}
+		$conn['pools'] = implode(', ', $pools);
 
 		/* For IKEv2 without Split Connections, setup combined sets of
 		 * local/remote traffic selectors and propsals */

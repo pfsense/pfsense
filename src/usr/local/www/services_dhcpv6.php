@@ -227,10 +227,10 @@ if (isset($_POST['apply'])) {
 
 	// Note: if DHCPv6 Server is not enabled, then it is OK to adjust other parameters without specifying range from-to.
 	if ($_POST['enable']) {
-		$reqdfields = explode(" ", "range_from range_to");
-		$reqdfieldsn = array(gettext("Range begin"), gettext("Range end"));
-
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+		if ((empty($_POST['range_from']) || empty($_POST['range_to'])) &&
+		    ($config['dhcpdv6'][$if]['ramode'] != 'stateless_dhcp')) {
+			$input_errors[] = gettext("A valid range must be specified for any mode except Stateless DHCP.");
+		}
 	}
 
 	if (($_POST['prefixrange_from'] && !is_ipaddrv6($_POST['prefixrange_from']))) {

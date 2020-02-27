@@ -1517,11 +1517,11 @@ EOD;
 			$range_to = merge_ipv6_delegated_prefix($ifcfgipv6, $range_to, $pdlen);
 		}
 
-		$dhcpdv6conf .= <<<EOD
-	range6 {$range_from} {$range_to};
-$dnscfgv6
+		if (!empty($dhcpv6ifconf['range']['from']) && !empty($dhcpv6ifconf['range']['to'])) {
+			$dhcpdv6conf .= "	range6 {$range_from} {$range_to};\n";
+		}
 
-EOD;
+		$dhcpdv6conf .= $dnscfgv6;
 
 		if (is_ipaddrv6($dhcpv6ifconf['prefixrange']['from']) && is_ipaddrv6($dhcpv6ifconf['prefixrange']['to'])) {
 			$dhcpdv6conf .= "	prefix6 {$dhcpv6ifconf['prefixrange']['from']} {$dhcpv6ifconf['prefixrange']['to']} /{$dhcpv6ifconf['prefixrange']['prefixlength']};\n";

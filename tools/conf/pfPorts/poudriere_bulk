@@ -95,6 +95,7 @@ sysutils/flashrom
 sysutils/htop
 sysutils/lsof
 sysutils/pstree
+sysutils/screen
 sysutils/stress
 sysutils/tmux
 sysutils/usb_modeswitch

@@ -1867,7 +1867,7 @@ function system_ntp_configure() {
 		$ntpcfg .= ' notrap';
 	}
 
-	/* Pools require "restrict source" and cannot contain "nopeer". */
+	/* Pools require "restrict source" and cannot contain "nopeer" and "noserve". */
 	if ($have_pools) {
 		$ntpcfg .= "\nrestrict source";
 		if (empty($config['ntpd']['kod'])) { /*note: this one works backwards */
@@ -1878,9 +1878,6 @@ function system_ntp_configure() {
 		}
 		if (!empty($config['ntpd']['noquery'])) {
 			$ntpcfg .= ' noquery';
-		}
-		if (!empty($config['ntpd']['noserve'])) {
-			$ntpcfg .= ' noserve';
 		}
 		if (empty($config['ntpd']['notrap'])) { /*note: this one works backwards */
 			$ntpcfg .= ' notrap';

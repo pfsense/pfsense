@@ -172,6 +172,10 @@ delete_old_routes() {
 	# Only allow the default route to be overridden if it's on our own interface
 	if [ -f "/tmp/${interface}_defaultgw" ]; then
 		for router in $old_routers; do
+			#  delete local route to the router ip address.
+			#  cleans up our route to a gateway possibly outside of the assigned subnet
+			$ROUTE delete -host $router -iface $interface
+
 			$ROUTE delete default $router >/dev/null 2>&1
 			/bin/rm -f /tmp/${interface}_router
 		done
@@ -228,6 +232,13 @@ add_new_routes() {
 					echo $router > /tmp/${interface}_router
 				fi
 			else
+				#  add local route to the router ip address.
+				#  this will not cause any harm if the router is within the subnet
+				#  but it will prevent route troubles if the router is outside of the subnet
+				#  this is useful for captive subnets or similar gateway out-of-subnet situations
+				$ROUTE add -host $router -iface $interface
+				echo $ROUTE add -host $router -iface $interface | $LOGGER
+
 				$ROUTE add default $router
 				echo $ROUTE add default $router | $LOGGER
 				echo $router > /tmp/${interface}_router

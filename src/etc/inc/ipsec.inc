@@ -1466,7 +1466,17 @@ function ipsec_setup_pools() {
 		return;
 	}
 	$scconf['pools']['mobile-pool'] = array();
+	$pool_addrs = array();
 	$pool_common =& $scconf['pools']['mobile-pool'];
+	if (!empty($a_client['pool_address'])) {
+		$pool_addrs[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
+	}
+	if (!empty($a_client['pool_address_v6'])) {
+		$pool_addrs[] = "{$a_client['pool_address_v6']}/{$a_client['pool_netbits_v6']}";
+	}
+	if (!empty($pool_addrs)) {
+		$pool_common['addrs'] = implode(',', $pool_addrs);
+	}
 
 	$rightdnsservers = array();
 	if (!empty($a_client['dns_server1'])) {

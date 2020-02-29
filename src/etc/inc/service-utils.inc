@@ -481,7 +481,7 @@ function get_service_status($service) {
 			$running = is_pid_running("{$g['varrun_path']}/dhcrelay6.pid");
 			break;
 		case 'ipsec':
-			$running = is_pid_running("{$g['varrun_path']}/charon.pid");
+			$running = (is_pid_running("{$g['varrun_path']}/charon.pid") || is_process_running('charon'));
 			break;
 		default:
 			$running = is_service_running($service['name']);

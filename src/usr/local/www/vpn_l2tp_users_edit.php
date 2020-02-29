@@ -81,7 +81,7 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld'])) {
+	if (preg_match("/[^a-zA-Z0-9\.\@\-_]/", $_POST['usernamefld'])) {
 		$input_errors[] = gettext("The username contains invalid characters.");
 	}
 	if (preg_match("/^!/", trim($_POST['passwordfld']))) {

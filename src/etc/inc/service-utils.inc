@@ -374,11 +374,11 @@ function get_services() {
 		}
 	}
 
-	if (!is_array($config['load_balancer']['lbpool'])) {
-		$config['load_balancer']['lbpool'] = array();
-	}
+	init_config_arr(array('load_balancer', 'lbpool'));
+	init_config_arr(array('load_balancer', 'virtual_server'));
 
-	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server']) && count($config['load_balancer']['lbpool'])) {
+	if (count($config['load_balancer']['virtual_server']) &&
+	    count($config['load_balancer']['lbpool'])) {
 		$pconfig = array();
 		$pconfig['name'] = "relayd";
 		$pconfig['description'] = gettext("Server load balancing daemon");

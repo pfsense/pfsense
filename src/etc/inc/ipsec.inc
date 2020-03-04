@@ -1465,8 +1465,9 @@ function ipsec_setup_pools() {
 	    empty($a_client['pool_address_v6'])) {
 		return;
 	}
-	$scconf['pools']['mobile-pool'] = array();
-	$pool_common =& $scconf['pools']['mobile-pool'];
+	$scconf['mobile-pool'] = array();
+	$scconf['pools'] = array();
+	$pool_common =& $scconf['mobile-pool'];
 
 	$rightdnsservers = array();
 	if (!empty($a_client['dns_server1'])) {
@@ -1582,9 +1583,9 @@ function ipsec_setup_userpools() {
 	if (!is_array($a_mobilekey) ||
 	    empty($a_mobilekey) ||
 	    !is_array($scconf['connections']) ||
-	    !is_array($scconf['connections']['con-mobile']) ||
+	    !is_array($scconf['con-mobile-defaults']) ||
 	    !is_array($scconf['pools']) ||
-	    !is_array($scconf['pools']['mobile-pool'])) {
+	    !is_array($scconf['mobile-pool'])) {
 		return;
 	}
 
@@ -1602,7 +1603,7 @@ function ipsec_setup_userpools() {
 		$upbase = "mobile-userpool-{$suffix}";
 		/* The full connection name including a reference to the primary
 		 * mobile connection */
-		$upconn = "con-{$upbase} : con-mobile";
+		$upconn = "con-{$upbase} : con-mobile-defaults";
 		/* The full pool name including a reference to the primary
 		 * mobile pool */
 		$upname = "{$upbase} : mobile-pool";
@@ -1994,11 +1995,20 @@ function ipsec_setup_tunnels() {
 
 		/* Determine the name of this connection, either con-mobile for
 		 * mobile clients, or a name based on the IKE ID otherwise. */
-		$cname = isset($ph1ent['mobile']) ? "con-mobile" : "con{$ph1ent['ikeid']}000";
-		/* Start with common default values */
-		$scconf['connections'][$cname] = $conn_defaults;
-		/* Array reference to make things easier */
-		$conn =& $scconf['connections'][$cname];
+		if (isset($ph1ent['mobile'])) {
+			$cname = "con-mobile";
+			/* Start with common default values */
+			$scconf["{$cname}-defaults"] = $conn_defaults;
+			/* Array reference to make things easier */
+			$conn =& $scconf["{$cname}-defaults"];
+			$scconf['connections']["{$cname} : {$cname}-defaults"] = array("# Stub to load con-mobile-defaults");
+		} else {
+			$cname = "con{$ph1ent['ikeid']}000";
+			/* Start with common default values */
+			$scconf['connections'][$cname] = $conn_defaults;
+			/* Array reference to make things easier */
+			$conn =& $scconf['connections'][$cname];
+		}
 
 		/* Common parameters for all children */
 		$child_params = array();

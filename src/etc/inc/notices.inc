@@ -375,7 +375,11 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	);
 
 	if ($config['notifications']['smtp']['sslvalidate'] == "disabled") {
-		$params['socket_options'] = array('ssl' => array('verify_peer_name' => false));
+		$params['socket_options'] = array(
+			'ssl' => array(
+				'verify_peer_name' => false,
+				'verify_peer' => false
+		));
 	}
 
 	if ($config['notifications']['smtp']['fromaddress']) {

@@ -239,6 +239,7 @@ if ($_POST['save']) {
 	if ($pconfig['radius_ip_priority_enable']) {
 		if (!(isset($mobileph1) && ($mobileph1['authentication_method'] == 'eap-radius'))) {
 			$input_errors[] = gettext("RADIUS IP may only take prioriy when using EAP-RADIUS for authentication on the Mobile IPsec VPN.");
+			$pconfig['user_source'] = implode(',', $pconfig['user_source']);
 		}
 	}
 
@@ -532,13 +533,6 @@ $group->add(new Form_Select(
 $section->add($group);
 
 $section->addInput(new Form_Checkbox(
-	'radius_ip_priority_enable',
-	'RADIUS IP address priority',
-	'IPv4 address pool is used if IP is not supplied by RADIUS server',
-	$pconfig['radius_ip_priority_enable']
-));
-
-$section->addInput(new Form_Checkbox(
 	'pool_enable_v6',
 	'Virtual IPv6 Address Pool',
 	'Provide a virtual IPv6 address to clients',
@@ -571,9 +565,16 @@ $group->add(new Form_Select(
 	'',
 	$pconfig['pool_netbits_v6'],
 	$netBitsv6
-))->setWidth(3);
+))->setWidth(2);
 
 $section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'radius_ip_priority_enable',
+	'RADIUS IP address priority',
+	'IPv4/IPv6 address pool is used if address is not supplied by RADIUS server',
+	$pconfig['radius_ip_priority_enable']
+));
 
 $section->addInput(new Form_Checkbox(
 	'net_list_enable',

@@ -32,6 +32,7 @@ require_once("guiconfig.inc");
 require_once("notices.inc");
 require_once("pfsense-utils.inc");
 
+global $smtp_authentication_mechanisms;
 $pconfig = array();
 init_config_arr(array('notifications', 'certexpire'));
 init_config_arr(array('notifications', 'smtp'));
@@ -94,8 +95,18 @@ if ($_POST) {
 		}
 
 		// SMTP
-		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
-		$config['notifications']['smtp']['port'] = $_POST['smtpport'];
+		if (empty($_POST['smtpipaddress']) && (($_POST['disable_smtp'] != "yes") || $testsmtp)) {
+			$input_errors[] = gettext("Please enter valid E-Mail server address.");
+		} else {
+			$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
+		}
+
+		if (!is_port($_POST['smtpport'])) {
+			$input_errors[] = gettext("Please enter valid SMTP port of E-Mail server address.");
+		} else {
+			$config['notifications']['smtp']['port'] = $_POST['smtpport'];
+		}
+
 		if (isset($_POST['smtpssl'])) {
 			$config['notifications']['smtp']['ssl'] = true;
 		} else {
@@ -108,8 +119,18 @@ if ($_POST) {
 			$config['notifications']['smtp']['sslvalidate'] = "disabled";
 		}
 
-		$config['notifications']['smtp']['timeout'] = $_POST['smtptimeout'];
-		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
+		if (!empty($_POST['smtptimeout']) && !is_numeric($_POST['smtptimeout'])) {
+			$input_errors[] = gettext("Please enter valid connection timeout.");
+		} else {
+			$config['notifications']['smtp']['timeout'] = $_POST['smtptimeout'];
+		}
+
+		if (empty($_POST['smtpnotifyemailaddress']) && (($_POST['disable_smtp'] != "yes") || $testsmtp)) {
+			$input_errors[] = gettext("Please enter valid notification E-Mail address.");
+		} else {
+			$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
+		}
+
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 
 		if (strcmp($_POST['smtppassword'], DMYPWD)!= 0) {
@@ -123,7 +144,12 @@ if ($_POST) {
 			}
 		}
 
-		$config['notifications']['smtp']['authentication_mechanism'] = $_POST['smtpauthmech'];
+		if (!array_key_exists($_POST['smtpauthmech'], $smtp_authentication_mechanisms)) {
+			$input_errors[] = gettext("Please select valid authentication mechanism.");
+		} else {
+			$config['notifications']['smtp']['authentication_mechanism'] = $_POST['smtpauthmech'];
+		}
+
 		$config['notifications']['smtp']['fromaddress'] = $_POST['smtpfromaddress'];
 
 		if ($_POST['disable_smtp'] == "yes") {

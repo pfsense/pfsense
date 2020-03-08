@@ -2383,7 +2383,7 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 	$comments = array();
 	/* NOTE: fgetss() is not a typo RTFM before being smart */
 	while (($fc = fgetss($fd)) !== FALSE) {
-		$tmp = trim($fc, " \t\n\r");
+		$tmp = idn_to_ascii(trim($fc, " \t\n\r"));
 		if (empty($tmp)) {
 			continue;
 		}

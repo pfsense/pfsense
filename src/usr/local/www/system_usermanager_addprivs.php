@@ -157,7 +157,7 @@ $section = new Form_Section('User Privileges');
 
 $name_string = $a_user['name'];
 if (!empty($a_user['descr'])) {
-	$name_string .= " ({$a_user['descr']})";
+	$name_string .= " (" . htmlspecialchars($a_user['descr']) . ")";
 }
 
 $section->addInput(new Form_StaticText(

@@ -36,6 +36,7 @@ require_once("shaper.inc");
 
 global $ntp_poll_min_default, $ntp_poll_max_default;
 $ntp_poll_values = system_ntp_poll_values();
+$auto_pool_suffix = "pool.ntp.org";
 
 if (!is_array($config['ntpd'])) {
 	$config['ntpd'] = array();
@@ -70,6 +71,13 @@ if ($_POST) {
 		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
 	}
 
+	for ($i = 0; $i < NUMTIMESERVERS; $i++) {
+		if (isset($pconfig["servselect{$i}"]) && (isset($pconfig["servispool{$i}"]) || 
+		    (substr_compare($pconfig["server{$i}"], $auto_pool_suffix, strlen($pconfig["server{$i}"]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0))) {
+			$input_errors[] = gettext("It is not possible to use 'No Select' for pools.");
+		}
+	}
+
 	if (is_numericint($pconfig['ntpminpoll']) &&
 	    is_numericint($pconfig['ntpmaxpoll']) &&
 	    ($pconfig['ntpmaxpoll'] < $pconfig['ntpminpoll'])) {
@@ -98,13 +106,13 @@ if ($_POST) {
 			$tserver = trim($_POST["server{$i}"]);
 			if (!empty($tserver)) {
 				$timeservers .= "{$tserver} ";
-				if (!empty($_POST["servprefer{$i}"])) {
+				if (isset($_POST["servprefer{$i}"])) {
 					$config['ntpd']['prefer'] .= "{$tserver} ";
 				}
-				if (!empty($_POST["servselect{$i}"])) {
+				if (isset($_POST["servselect{$i}"])) {
 					$config['ntpd']['noselect'] .= "{$tserver} ";
 				}
-				if (!empty($_POST["servispool{$i}"])) {
+				if (isset($_POST["servispool{$i}"])) {
 					$config['ntpd']['ispool'] .= "{$tserver} ";
 				}
 			}
@@ -246,7 +254,6 @@ $section->addInput(new Form_Select(
 
 $timeservers = explode(' ', $config['system']['timeservers']);
 $maxrows = max(count($timeservers), 1);
-$auto_pool_suffix = "pool.ntp.org";
 for ($counter=0; $counter < $maxrows; $counter++) {
 	$group = new Form_Group($counter == 0 ? 'Time Servers':'');
 	$group->addClass('repeatable');

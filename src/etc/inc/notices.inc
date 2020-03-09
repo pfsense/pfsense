@@ -27,6 +27,7 @@ require_once("functions.inc");
 require_once("led.inc");
 
 $notice_path = $g['tmp_path'] . '/notices';
+global $smtp_authentication_mechanisms;
 $smtp_authentication_mechanisms = array(
 	'PLAIN' => 'PLAIN',
 	'LOGIN' => 'LOGIN');

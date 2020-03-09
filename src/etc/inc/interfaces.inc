@@ -4183,6 +4183,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 	}
 
+	if (!empty($wancfg['descr'])) {
+		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " description " . escapeshellarg($wancfg['descr']));
+	};
+
 	interfaces_staticarp_configure($interface);
 	return 0;
 }

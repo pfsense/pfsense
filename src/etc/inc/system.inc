@@ -1654,15 +1654,15 @@ function system_ntp_configure() {
 	$ntpcfg .= "\n";
 
 	/* Add min-max ntp peers */
-        $ntpcfg .= "# Min-Max peers\n";
-        $ntpcfg .= 'tos minclock 3 maxclock ';
-        if (!empty($config['ntpd']['ntpmaxpeers'])) {
-                $ntpcfg .= $config['ntpd']['ntpmaxpeers'];
-        } else {
-                $ntpcfg .= '4';
-        }
-        $ntpcfg .= "\n";
-	
+	$ntpcfg .= "# Min-Max peers\n";
+	$ntpcfg .= 'tos minclock 3 maxclock ';
+	if (!empty($config['ntpd']['ntpmaxpeers'])) {
+		$ntpcfg .= $config['ntpd']['ntpmaxpeers'];
+	} else {
+		$ntpcfg .= '4';
+	}
+	$ntpcfg .= "\n";
+
 	/* Add PPS configuration */
 	if (is_array($config['ntpd']['pps']) && !empty($config['ntpd']['pps']['port']) &&
 	    file_exists('/dev/'.$config['ntpd']['pps']['port']) &&

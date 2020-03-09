@@ -126,7 +126,7 @@ if ($_POST['save']) {
 
 		write_config(gettext("Configured a L2TP VPN user."));
 
-		$retval = vpn_l2tp_configure();
+		$retval = vpn_l2tp_updatesecret();
 
 		pfSenseHeader("vpn_l2tp_users.php");
 

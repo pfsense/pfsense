@@ -125,7 +125,7 @@ if ($_POST) {
 			$timeservers = "pool.ntp.org";
 		}
 		$config['system']['timeservers'] = trim($timeservers);
-		
+
 		$config['ntpd']['ntpmaxpeers'] = $pconfig['ntpmaxpeers'];
 		$config['ntpd']['orphan'] = trim($pconfig['ntporphan']);
 		$config['ntpd']['ntpminpoll'] = $pconfig['ntpminpoll'];

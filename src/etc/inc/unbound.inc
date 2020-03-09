@@ -175,6 +175,17 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 		$module_config .= 'python ';
 	}
 
+	// Setup DNS64 support
+	if (isset($unboundcfg['dns64'])) {
+		$module_config .= 'dns64 ';
+		$dns64_conf = 'dns64-prefix: ';
+		if (is_subnetv6($unboundcfg['dns64prefix'] . '/' . $unboundcfg['dns64netbits'])) {
+			$dns64_conf .= $unboundcfg['dns64prefix'] . '/' . $unboundcfg['dns64netbits'];
+		} else {
+			$dns64_conf .= '64:ff9b::/96';
+		}
+	}
+
 	// Setup DNSSEC support
 	if (isset($unboundcfg['dnssec'])) {
 		$module_config .= 'validator ';
@@ -487,6 +498,7 @@ serve-expired: {$dns_record_cache}
 # DNS Rebinding
 {$private_addr}
 {$private_domains}
+{$dns64_conf}
 
 # Access lists
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/access_lists.conf

@@ -1118,6 +1118,7 @@ EOD;
 
 			$i = 0;
 			foreach ($dhcpifconf['staticmap'] as $sm) {
+				$cid = '';
 				$dhcpdconf .= "host s_{$dhcpif}_{$i} {\n";
 
 				if ($sm['mac']) {
@@ -1125,7 +1126,8 @@ EOD;
 				}
 
 				if ($sm['cid']) {
-					$dhcpdconf .= " option dhcp-client-identifier \"{$sm['cid']}\";\n";
+					$cid = str_replace('"', '\"', $sm['cid']);
+					$dhcpdconf .= "	option dhcp-client-identifier \"{$cid}\";\n";
 				}
 
 				if ($sm['ipaddr']) {
@@ -1207,8 +1209,8 @@ EOD;
 					// assuming ALL addresses are ethernet hardware type ("1:" prefix)
 					$dhcpdconf .= "subclass \"s_{$dhcpif}\" 1:{$sm['mac']};\n";
 				}
-				if (!empty($sm['cid'])) {
-					$dhcpdconf .= "subclass \"s_{$dhcpif}\" \"{$sm['cid']}\";\n";
+				if (!empty($cid)) {
+					$dhcpdconf .= "subclass \"s_{$dhcpif}\" \"{$cid}\";\n";
 				}
 
 

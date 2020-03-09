@@ -59,6 +59,10 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	if (!is_numericint($_POST['ntpmaxpeers']) || ($_POST['ntpmaxpeers'] < 4) || ($_POST['ntpmaxpeers'] > 10)) {
+		$input_errors[] = gettext("Max NTP peers must be a number between 4 and 10");
+	}
+	
 	if ((strlen($pconfig['ntporphan']) > 0) && (!is_numericint($pconfig['ntporphan']) || ($pconfig['ntporphan'] < 1) || ($pconfig['ntporphan'] > 15))) {
 		$input_errors[] = gettext("The supplied value for NTP Orphan Mode is invalid.");
 	}
@@ -121,7 +125,8 @@ if ($_POST) {
 			$timeservers = "pool.ntp.org";
 		}
 		$config['system']['timeservers'] = trim($timeservers);
-
+		
+		$config['ntpd']['ntpmaxpeers'] = $pconfig['ntpmaxpeers'];
 		$config['ntpd']['orphan'] = trim($pconfig['ntporphan']);
 		$config['ntpd']['ntpminpoll'] = $pconfig['ntpminpoll'];
 		$config['ntpd']['ntpmaxpoll'] = $pconfig['ntpmaxpoll'];
@@ -323,6 +328,15 @@ $section->addInput(new Form_StaticText(
 	'<a target="_blank" href="https://support.ntp.org/bin/view/Support/ConfiguringNTP">',
 	'</a>'
 	);
+
+$section->addInput(new Form_Input(
+	'ntpmaxpeers',
+	'Max Pool Peers',
+	'number',
+	$pconfig['ntpmaxpeers'],
+	['min' => 4, 'max' => 10]
+))->setHelp('Maximun NTP peers to check. Remember that many servers inside pools are provided by volunteers, ' .
+	'all you will gain from a higher number is extra load on the volunteer time servers. (Default: 4).');
 
 $section->addInput(new Form_Input(
 	'ntporphan',

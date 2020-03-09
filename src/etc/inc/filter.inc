@@ -4239,7 +4239,7 @@ function filter_generate_ipsec_rules($log = array()) {
 		foreach ($config['ipsec']['phase1'] as $ph1ent) {
 			$tracker += 10;
 
-			if (isset ($ph1ent['disabled'])) {
+			if (isset ($ph1ent['disabled']) || isset ($ph1ent['gw_duplicates'])) {
 				continue;
 			}
 			/* determine local and remote peer addresses */

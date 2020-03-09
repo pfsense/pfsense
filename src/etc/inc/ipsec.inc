@@ -1222,7 +1222,7 @@ function ipsec_setup_gwifs() {
 					continue;
 				}
 			}
-			if (array_search($rg, $rgmap)) {
+			if (!isset($ph1ent['gw_duplicates']) && array_search($rg, $rgmap)) {
 				log_error(sprintf(gettext("The remote gateway %s already exists on another phase 1 entry"), $rg));
 				continue;
 			}
@@ -1689,10 +1689,11 @@ function ipsec_setup_bypasslan() {
  *   $interface : The interface upon which routes will be configured.
  *   $family    : The address family ('inet' or 'inet6')
  *   $sourcehost: The local source address used for initiating connections.
+ *   $duplicates: If the ipsec tunnel allows duplicates remote peers
  * RESULT
  *   Static routes in the OS routing table for IPsec peers
  ******/
-function ipsec_setup_routes($interface, $family, $sourcehost) {
+function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
 	if (substr($interface, 0, 4) == "_vip") {
 		$vpninterface = get_configured_vip_interface($interface);
 		if (substr($vpninterface, 0, 4) == "_vip") {
@@ -1718,7 +1719,7 @@ function ipsec_setup_routes($interface, $family, $sourcehost) {
 			/* if the remote gateway is in the local subnet, then don't add a route */
 			if (is_ipaddrv4($sourcehost) &&
 			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
-				if (is_ipaddrv4($gatewayip)) {
+				if (is_ipaddrv4($gatewayip) && !$duplicates) {
 					// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
 					route_add_or_change("-host {$sourcehost} {$gatewayip}");
 				}
@@ -1733,7 +1734,7 @@ function ipsec_setup_routes($interface, $family, $sourcehost) {
 			/* if the remote gateway is in the local subnet, then don't add a route */
 			if (is_ipaddrv6($sourcehost) &&
 			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
-				if (is_ipaddrv6($gatewayip)) {
+				if (is_ipaddrv6($gatewayip) && !$duplicates) {
 					// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
 					route_add_or_change("-inet6 -host {$sourcehost} {$gatewayip}");
 				}
@@ -2050,7 +2051,7 @@ function ipsec_setup_tunnels() {
 		} else {
 			$remote_spec = $ph1ent['remote-gateway'];
 			$sourcehost = (is_ipaddr($remote_spec)) ? $remote_spec : $rgmap[$remote_spec];
-			$ifacesuse = ipsec_setup_routes($ph1ent['interface'], $ph1ent['protocol'], $sourcehost);
+			$ifacesuse = ipsec_setup_routes($ph1ent['interface'], $ph1ent['protocol'], $sourcehost, isset($ph1ent['gw_duplicates']));
 		}
 
 		/* Setup IKE proposals */

@@ -335,7 +335,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['ntpmaxpeers'],
 	['min' => 4, 'max' => 10]
-))->setHelp('Maximun NTP peers to check. Remember that many servers inside pools are provided by volunteers, ' .
+))->setHelp('Maximum NTP peers to check. Remember that many servers inside pools are provided by volunteers, ' .
 	'all you will gain from a higher number is extra load on the volunteer time servers. (Default: 4).');
 
 $section->addInput(new Form_Input(

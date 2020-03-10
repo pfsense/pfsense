@@ -18444,7 +18444,7 @@ msgstr ""
 "l'accès au webConfigurator soit contrôlé par les règles définies dans le "
 "pare-feu (assurez-vous qu'une règle autorisant cet accès soit créée, afin "
 "d'éviter un blocage définitif!). %2$sAstuce: L'option définir une adresse IP "
-"pour l'interface dans la console permet de réarmer ce paramètre%$3$s"
+"pour l'interface dans la console permet de réarmer ce paramètre%3$s"
 
 #: src/usr/local/www/system_advanced_admin.php:526
 msgid "DNS Rebind Check"

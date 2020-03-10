@@ -92,7 +92,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($a_maps[$id]['ddnsforcehostname']);
-	list($pconfig['ntp1'], $pconfig['ntp2']) = $a_maps[$id]['ntpserver'];
+	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3']) = $a_maps[$id]['ntpserver'];
 	$pconfig['tftp'] = $a_maps[$id]['tftp'];
 } else {
 	$pconfig['mac'] = $_REQUEST['mac'];
@@ -121,6 +121,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ddnsforcehostname'] = isset($_REQUEST['ddnsforcehostname']);
 	$pconfig['ntp1'] = $_REQUEST['ntp1'];
 	$pconfig['ntp2'] = $_REQUEST['ntp2'];
+	$pconfig['ntp3'] = $_REQUEST['ntp3'];
 	$pconfig['tftp'] = $_REQUEST['tftp'];
 }
 
@@ -254,9 +255,12 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2']))) {
-		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary NTP servers.");
+	if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) ||
+	    ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2'])) ||
+	    ($_POST['ntp3'] && !is_ipaddrv4($_POST['ntp3']))) {
+		$input_errors[] = gettext("A valid IPv4 address must be specified for NTP servers.");
 	}
+
 	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
 		$input_errors[] = gettext("A valid IPv4 address, hostname or URL must be specified for the TFTP server.");
 	}
@@ -321,6 +325,9 @@ if ($_POST['save']) {
 		}
 		if ($_POST['ntp2']) {
 			$mapent['ntpserver'][] = $_POST['ntp2'];
+		}
+		if ($_POST['ntp3']) {
+			$mapent['ntpserver'][] = $_POST['ntp3'];
 		}
 
 		$mapent['tftp'] = $_POST['tftp'];
@@ -639,6 +646,14 @@ $group->add(new Form_Input(
 	['placeholder' => 'NTP 2']
 ));
 
+$group->add(new Form_Input(
+	'ntp3',
+	'NTP Server 3',
+	'text',
+	$pconfig['ntp3'],
+	['placeholder' => 'NTP 3']
+));
+
 $group->addClass('ntpclass');
 
 $section->add($group);
@@ -720,7 +735,7 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2'])) {
+			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2']) && empty($pconfig['ntp3'])) {
 				$showadv = false;
 			} else {
 				$showadv = true;
@@ -734,6 +749,7 @@ events.push(function() {
 
 		hideInput('ntp1', !showadvntp);
 		hideInput('ntp2', !showadvntp);
+		hideInput('ntp3', !showadvntp);
 
 		if (showadvntp) {
 			text = "<?=gettext('Hide Advanced');?>";

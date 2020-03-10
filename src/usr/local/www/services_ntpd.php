@@ -60,7 +60,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if (!is_numericint($_POST['ntpmaxpeers']) || ($_POST['ntpmaxpeers'] < 4) || ($_POST['ntpmaxpeers'] > 10)) {
-		$input_errors[] = gettext("Max NTP peers must be a number between 4 and 10");
+		$input_errors[] = gettext("Max candidate NTP peers must be a number between 4 and 10");
 	}
 	
 	if ((strlen($pconfig['ntporphan']) > 0) && (!is_numericint($pconfig['ntporphan']) || ($pconfig['ntporphan'] < 1) || ($pconfig['ntporphan'] > 15))) {
@@ -72,7 +72,7 @@ if ($_POST) {
 	}
 
 	if (!array_key_exists($pconfig['ntpmaxpoll'], $ntp_poll_values)) {
-		$input_errors[] = gettext("The supplied value for Poll Interval is invalid.");
+		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
 	}
 
 	for ($i = 0; $i < NUMTIMESERVERS; $i++) {

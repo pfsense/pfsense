@@ -72,7 +72,7 @@ if ($_POST) {
 	}
 
 	if (!array_key_exists($pconfig['ntpmaxpoll'], $ntp_poll_values)) {
-		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
+		$input_errors[] = gettext("The supplied value for Poll Interval is invalid.");
 	}
 
 	for ($i = 0; $i < NUMTIMESERVERS; $i++) {
@@ -331,11 +331,11 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_Input(
 	'ntpmaxpeers',
-	'Max Pool Peers',
+	'Max candidate NTP peers',
 	'number',
 	$pconfig['ntpmaxpeers'],
 	['min' => 4, 'max' => 10]
-))->setHelp('Maximum NTP peers to check. Remember that many servers inside pools are provided by volunteers, ' .
+))->setHelp('Maximum candidate NTP peers. Remember that many servers inside pools are provided by volunteers, ' .
 	'all you will gain from a higher number is extra load on the volunteer time servers. (Default: 4).');
 
 $section->addInput(new Form_Input(

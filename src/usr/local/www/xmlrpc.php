@@ -304,7 +304,7 @@ class pfsense_xmlrpc_server {
 
 					if ($idx === false) {
 						$u2add[] = $user;
-					} else if ($user['uid'] < 2000) {
+					} else if (($user['uid'] < 2000) && ($sections['hasync']['adminsync'] != 'on')) {
 						$u2keep[] = $idx;
 					} else if ($user != $local_users[$idx]) {
 						$u2add[] = $user;
@@ -666,9 +666,7 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return bool
 	 */
-	public function filter_configure($reset_accounts = true) {
-		$this->auth();
-
+	private function filter_configure($reset_accounts = true) {
 		global $g, $config;
 
 		filter_configure();

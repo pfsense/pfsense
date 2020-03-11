@@ -449,7 +449,9 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 	}
 
 	foreach($u2del as $user) {
-		if ($user['uid'] < 2000 || $user['uid'] > 65000) {
+		if ($user['uid'] > 65000) {
+			continue;
+		} else if ($user['uid'] < 2000 && !in_array($user, $u2add)) {
 			continue;
 		}
 
@@ -776,9 +778,15 @@ function local_user_del($user) {
 }
 
 function local_user_set_password(&$user, $password) {
+	global $config;
+
 	unset($user['password']);
 	unset($user['md5-hash']);
 	$user['bcrypt-hash'] = password_hash($password, PASSWORD_BCRYPT);
+	if (($user['name'] == $config['hasync']['username']) &&
+	    ($config['hasync']['adminsync'] == 'on')) {
+		$config['hasync']['new_password'] = $password;
+	}
 }
 
 function local_user_get_groups($user, $all = false) {

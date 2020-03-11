@@ -35,6 +35,7 @@ $a_hasync = &$config['hasync'];
 
 $checkbox_names = array(
 	'pfsyncenabled',
+	'adminsync',
 	'synchronizeusers',
 	'synchronizeauthservers',
 	'synchronizecerts',
@@ -175,6 +176,16 @@ $section->addPassword(new Form_Input(
 	$pconfig['passwordfld']
 ))->setHelp('Enter the webConfigurator password of the system entered above for synchronizing the configuration.%1$s' .
 			'Do not use the Synchronize Config to IP and password option on backup cluster members!', '<br />');
+
+$section->addInput(new Form_Checkbox(
+	'adminsync',
+	'Synchronize admin',
+	'synchronize admin accounts and autoupdate sync password.',
+	($pconfig['adminsync'] === 'on'),
+	'on'
+))->setHelp('By default, the admin account does not synchronize, and each node may have a different admin password.%1$s' .
+			'This option automatically updates XMLRPC Remote System Password when the password is changed on 
+			the Remote System Username account.', '<br />');
 
 $group = new Form_MultiCheckboxGroup('Select options to sync');
 

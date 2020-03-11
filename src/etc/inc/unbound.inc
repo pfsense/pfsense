@@ -30,6 +30,8 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("interfaces.inc");
+require_once("util.inc");
 
 function create_unbound_chroot_path($cfgsubdir = "") {
 	global $config, $g;
@@ -328,7 +330,11 @@ EOF;
 	$dns_record_cache = isset($unboundcfg['dnsrecordcache']) ? "yes" : "no";
 	$outgoing_num_tcp = isset($unboundcfg['outgoing_num_tcp']) ? $unboundcfg['outgoing_num_tcp'] : "10";
 	$incoming_num_tcp = isset($unboundcfg['incoming_num_tcp']) ? $unboundcfg['incoming_num_tcp'] : "10";
-	$edns_buffer_size = (!empty($unboundcfg['edns_buffer_size'])) ? $unboundcfg['edns_buffer_size'] : "4096";
+	if (empty($unboundcfg['edns_buffer_size']) || ($unboundcfg['edns_buffer_size'] == 'auto')) {
+		$edns_buffer_size = unbound_auto_ednsbufsize();
+	} else {
+		$edns_buffer_size = $unboundcfg['edns_buffer_size'];
+	}
 	$num_queries_per_thread = (!empty($unboundcfg['num_queries_per_thread'])) ? $unboundcfg['num_queries_per_thread'] : "4096";
 	$jostle_timeout = (!empty($unboundcfg['jostle_timeout'])) ? $unboundcfg['jostle_timeout'] : "200";
 	$cache_max_ttl = (!empty($unboundcfg['cache_max_ttl'])) ? $unboundcfg['cache_max_ttl'] : "86400";
@@ -957,6 +963,40 @@ function unbound_local_zone_types() {
 		"inform_deny" => gettext("Inform Deny"),
 		"nodefault" => gettext("No Default")
 	);
+}
+
+// Autoconfig EDNS buffer size
+function unbound_auto_ednsbufsize() {
+	global $config;
+
+	$active_ipv6_inf = false;
+	if ($config['unbound']['active_interface'] != 'all') {
+		$active_interfaces = explode(",", $config['unbound']['active_interface']);
+	} else {
+		$active_interfaces = get_configured_interface_list();
+	}
+
+	$min_mtu = get_interface_mtu(get_real_interface($active_interfaces[0]));
+	foreach ($active_interfaces as $ubif) {
+		$ubif_mtu = get_interface_mtu(get_real_interface($ubif));
+		if (get_interface_ipv6($ubif)) {
+			$active_ipv6_inf = true;
+		}
+		if ($ubif_mtu < $min_mtu) {
+			$min_mtu = $ubif_mtu;
+		}
+	}
+
+	// maximum IPv4 + UDP header = 68 bytes
+	$min_mtu = $min_mtu - 68;
+
+	if (($min_mtu < 1232) && $active_ipv6_inf) {
+		$min_mtu = 1232;
+	} elseif ($min_mtu < 512) {
+		$min_mtu = 512;
+	}	
+
+	return $min_mtu;
 }
 
 ?>

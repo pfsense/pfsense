@@ -32,6 +32,16 @@
 require_once("guiconfig.inc");
 require_once("unbound.inc");
 
+$unbound_edns_sizes = array(
+	"auto" => "Automatic value based on active interface MTUs",
+	"512"  => "512: IPv4 Minimum",
+	"1220" => "1220: NSD IPv6 EDNS Minimum",
+	"1232" => "1232: IPv6 Minimum",
+	"1432" => "1432: 1500 Byte MTU",
+	"1480" => "1480: NSD IPv4 EDNS Minimum",
+	"4096" => "4096: Unbound Default"
+);
+
 if (!is_array($config['unbound'])) {
 	$config['unbound'] = array();
 }
@@ -71,7 +81,7 @@ if (isset($config['unbound']['dnsrecordcache'])) {
 $pconfig['msgcachesize'] = $config['unbound']['msgcachesize'];
 $pconfig['outgoing_num_tcp'] = isset($config['unbound']['outgoing_num_tcp']) ? $config['unbound']['outgoing_num_tcp'] : '10';
 $pconfig['incoming_num_tcp'] = isset($config['unbound']['incoming_num_tcp']) ? $config['unbound']['incoming_num_tcp'] : '10';
-$pconfig['edns_buffer_size'] = isset($config['unbound']['edns_buffer_size']) ? $config['unbound']['edns_buffer_size'] : '4096';
+$pconfig['edns_buffer_size'] = isset($config['unbound']['edns_buffer_size']) ? $config['unbound']['edns_buffer_size'] : 'auto';
 $pconfig['num_queries_per_thread'] = $config['unbound']['num_queries_per_thread'];
 $pconfig['jostle_timeout'] = isset($config['unbound']['jostle_timeout']) ? $config['unbound']['jostle_timeout'] : '200';
 $pconfig['cache_max_ttl'] = isset($config['unbound']['cache_max_ttl']) ? $config['unbound']['cache_max_ttl'] : '86400';
@@ -113,7 +123,7 @@ if ($_POST) {
 		if (isset($_POST['incoming_num_tcp']) && !in_array($_POST['incoming_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
 			$input_errors[] = gettext("A valid value must be specified for Incoming TCP Buffers.");
 		}
-		if (isset($_POST['edns_buffer_size']) && !in_array($_POST['edns_buffer_size'], array('512', '1480', '4096'), true)) {
+		if (isset($_POST['edns_buffer_size']) && !array_key_exists($_POST['edns_buffer_size'], $unbound_edns_sizes)) {
 			$input_errors[] = gettext("A valid value must be specified for EDNS Buffer Size.");
 		}
 		if (isset($_POST['num_queries_per_thread']) && !in_array($_POST['num_queries_per_thread'], array('512', '1024', '2048'), true)) {
@@ -335,10 +345,12 @@ $section->addInput(new Form_Select(
 	'edns_buffer_size',
 	'EDNS Buffer Size',
 	$pconfig['edns_buffer_size'],
-	array_combine(array("512", "1480", "4096"), array("512", "1480", "4096"))
-))->setHelp('Number of bytes size to advertise as the EDNS reassembly buffer size. This is the value that is used in UDP datagrams sent to peers. ' .
-			'RFC recommendation is 4096 (which is the default). If fragmentation reassemble problems occur, usually seen as timeouts, then a value of 1480 should help. ' .
-			'The 512 value bypasses most MTU path problems, but it can generate an excessive amount of TCP fallback.');
+	$unbound_edns_sizes
+))->setHelp(
+	'Number of bytes size to advertise as the EDNS reassembly buffer size. This is the value that is used in UDP datagrams sent to peers.%1$s' .
+	'Auto mode sets optimal buffer size by using the smallest MTU of active interfaces and subtracting the IPv4/IPv6 header size.%1$s' .
+	'If fragmentation reassemble problems occur, usually seen as timeouts, then a value of 1432 should help.%1$s' .
+	'The 512/1232 values bypasses most IPv4/IPv6 MTU path problems, but it can generate an excessive amount of TCP fallback.', '<br />');
 
 $section->addInput(new Form_Select(
 	'num_queries_per_thread',

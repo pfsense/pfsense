@@ -1652,11 +1652,11 @@ function system_ntp_configure() {
 		$ntpcfg .= '12';
 	}
 	/* Add Maximum candidate NTP peers */
+	$ntpcfg .= ' maxclock ';
 	if (!empty($config['ntpd']['ntpmaxpeers'])) {
-		$ntpcfg .= ' maxclock ';
 		$ntpcfg .= $config['ntpd']['ntpmaxpeers'];
 	} else {
-		$ntpcfg .= ' maxclock 5';
+		$ntpcfg .= '5';
 	}
 	$ntpcfg .= "\n";
 

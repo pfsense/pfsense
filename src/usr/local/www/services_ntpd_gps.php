@@ -198,8 +198,17 @@ if ($_POST && empty($input_errors)) {
 
 	if (!empty($_POST['gpsspeed'])) {
 		$config['ntpd']['gps']['speed'] = $_POST['gpsspeed'];
+		if ($_POST['gpsspeed'] == 'autoalways') {
+			$fixghost = true;
+		}
 	} elseif (isset($config['ntpd']['gps']['speed'])) {
 		unset($config['ntpd']['gps']['speed']);
+	}
+	
+	if (!empty($_POST['autobaudinit'])) {
+		$config['ntpd']['gps']['autobaudinit'] = $_POST['autobaudinit'];
+	} elseif (isset($config['ntpd']['gps']['autobaudinit'])) {
+		unset($config['ntpd']['gps']['autobaudinit']);
 	}
 
 	if (!empty($_POST['gpsnmea']) && ($_POST['gpsnmea'][0] === "0")) {
@@ -312,6 +321,14 @@ if ($_POST && empty($input_errors)) {
 	$changes_applied = true;
 	$retval = 0;
 	$retval |= system_ntp_configure();
+	if ($fixghost) {
+		$config['ntpd']['gps']['speed'] = 'autoalways';
+	}
+} else {
+	/* set defaults if they do not already exist */
+	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
+		set_default_gps();
+	}
 }
 
 function build_nmea_list() {
@@ -403,10 +420,25 @@ if (!empty($serialports)) {
 		'gpsspeed',
 		null,
 		$pconfig['speed'],
-		[0 => '4800', 16 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200']
+		[0 => '4800', 16 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200', 'autoset' => 'Autoset', 'autoalways' => 'Always Auto']
 
 	))->setHelp('A higher baud rate is generally only helpful if the GPS is sending too many sentences. ' .
-				'It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600.');
+				'It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600.%1$s' .
+				'Autoset tries to find the correct baud rate of the GPS device and then saves the configuration.%1$s' .
+				'Always Auto tries to find the correct baud rate of the GPS device every time NTPd is started.', '<br /><br />');
+	
+	$section->addInput(new Form_Checkbox(
+		'autobaudinit',
+		null,
+		'Check baud rate before sending init commands (default: unchecked).',
+		$pconfig['autobaudinit']
+	))->setHelp(
+		'Before sending the initialization commands, check the GPS baud rate. ' . 
+		'If it is not correct try to find the correct baud rate automatically, ' .
+		'send the initialization commands if the correct rate is found, ' .
+		'and then set the baud rate to the configured speed.%1$s' . 
+		'This is useful if the GPS device resets back to a default rate on power loss ' .
+		'or when changing the baud rate.', '<br /><br />');
 }
 
 $nmealist = build_nmea_list();
@@ -652,6 +684,7 @@ events.push(function() {
 		$('#gpsnmea').val(0);
 		$('#processpgrmf').prop('checked', false);
 		$('#gpsspeed').val(0);
+		$('#autobaudinit').prop('checked', false);
 		$('#gpsfudge1').val(0);
 		$('#gpsinitcmd').val(get_gps_string(type));
 

@@ -1503,6 +1503,49 @@ function system_timezone_configure() {
 	}
 }
 
+function check_gps_speed($device) {
+	usleep(1000);
+	// Set timeout to 5s
+	$timeout=microtime(true)+5;
+	if ($fp = fopen($device, 'r')) {
+		stream_set_blocking($fp, 0);
+		stream_set_timeout($fp, 5);
+		$contents = "";
+		$cnt = 0;
+		$buffersize = 256;
+		do {
+			$c = fread($fp, $buffersize - $cnt);
+
+			// Wait for data to arive
+			if (($c === false) || (strlen($c) == 0)) {
+				usleep(500);
+				continue;
+			}
+
+			$contents.=$c;
+			$cnt = $cnt + strlen($c);
+		} while (($cnt < $buffersize) && (microtime(true) < $timeout));
+		fclose($fp);
+
+		$nmeasentences = ['RMC', 'GGA', 'GLL', 'ZDA', 'ZDG', 'PGRMF'];
+		foreach ($nmeasentences as $sentence) {
+			if (strpos($contents, $sentence) > 0) {
+				return true;
+			}
+		}
+		if (strpos($contents, '0') > 0) {
+			$filters = ['`', '?', '/', '~'];
+			foreach ($filters as $filter) {
+				if (strpos($contents, $filter) !== false) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
 /* Generate list of possible NTP poll values
  * https://redmine.pfsense.org/issues/9439 */
 global $ntp_poll_min_value, $ntp_poll_max_value;
@@ -1548,6 +1591,8 @@ function system_ntp_fixup_poll_value($type, $configvalue, $default) {
 
 function system_ntp_setup_gps($serialport) {
 	global $config, $g;
+
+	init_config_arr(array('ntpd', 'gps', 'speed'));
 	$gps_device = '/dev/gps0';
 	$serialport = '/dev/'.$serialport;
 
@@ -1560,28 +1605,42 @@ function system_ntp_setup_gps($serialport) {
 	@symlink($serialport, $gps_device);
 
 	$gpsbaud = '4800';
-	if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['speed'])) {
-		switch ($config['ntpd']['gps']['speed']) {
-			case '16':
-				$gpsbaud = '9600';
-				break;
-			case '32':
-				$gpsbaud = '19200';
-				break;
-			case '48':
-				$gpsbaud = '38400';
-				break;
-			case '64':
-				$gpsbaud = '57600';
-				break;
-			case '80':
-				$gpsbaud = '115200';
-				break;
-		}
+	$speeds = array(
+		0 => '4800', 
+		16 => '9600', 
+		32 => '19200', 
+		48 => '38400', 
+		64 => '57600', 
+		80 => '115200'
+	);
+	if (!empty($config['ntpd']['gps']['speed']) && array_key_exists($config['ntpd']['gps']['speed'], $speeds)) {
+		$gpsbaud = $speeds[$config['ntpd']['gps']['speed']];
 	}
 
-	/* Configure the serial port for raw IO and set the speed */
-	mwexec("stty -f {$serialport}.init raw speed {$gpsbaud}");
+	system_ntp_setup_rawspeed($serialport, $gpsbaud);
+
+	$autospeed = ($config['ntpd']['gps']['speed'] == 'autoalways' || $config['ntpd']['gps']['speed'] == 'autoset');
+	if ($autospeed || ($config['ntpd']['gps']['autobaudinit'] && !check_gps_speed($gps_device))) {
+		$found = false;
+		foreach ($speeds as $baud) {
+			system_ntp_setup_rawspeed($serialport, $baud);
+			if ($found = check_gps_speed($gps_device)) {
+				if ($autospeed) {
+					$saveconfig = ($config['ntpd']['gps']['speed'] == 'autoset');
+					$config['ntpd']['gps']['speed'] = array_search($baud, $speeds);
+					$gpsbaud = $baud;
+					if ($saveconfig) {
+						write_config(sprintf(gettext('Autoset GPS baud rate to %s'), $baud));
+					}
+				}
+				break;
+			}
+		}
+		if ($found === false) {
+			log_error(gettext("Could not find correct GPS baud rate."));
+			return false;
+		}
+	}
 
 	/* Send the following to the GPS port to initialize the GPS */
 	if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['type'])) {
@@ -1594,13 +1653,27 @@ function system_ntp_setup_gps($serialport) {
 	@file_put_contents('/tmp/gps.init', $gps_init);
 	mwexec("cat /tmp/gps.init > {$serialport}");
 
+	if ($found && $config['ntpd']['gps']['autobaudinit']) {
+		system_ntp_setup_rawspeed($serialport, $gpsbaud);
+	}
+
+	/* Remove old /etc/remote entry if it exists */
+	if (mwexec("/usr/bin/grep -c '^gps0' /etc/remote")) {
+		mwexec("/usr/bin/sed -i '' -n '/gps0/!p' /etc/remote");
+	}
+
 	/* Add /etc/remote entry in case we need to read from the GPS with tip */
-	if (intval(`grep -c '^gps0' /etc/remote`) == 0) {
+	if (intval(`/usr/bin/grep -c '^gps0' /etc/remote`) == 0) {
 		@file_put_contents("/etc/remote", "gps0:dv={$serialport}:br#{$gpsbaud}:pa=none:\n", FILE_APPEND);
 	}
 
-
 	return true;
+}
+
+// Configure the serial port for raw IO and set the speed
+function system_ntp_setup_rawspeed($serialport, $baud) {
+	mwexec("/bin/stty -f " .  escapeshellarg($serialport) . " raw speed " . escapeshellarg($baud));
+	mwexec("/bin/stty -f " .  escapeshellarg($serialport) . ".init raw speed " . escapeshellarg($baud));
 }
 
 function system_ntp_setup_pps($serialport) {
@@ -1637,6 +1710,12 @@ function system_ntp_configure() {
 	if (!is_array($config['ntpd'])) {
 		$config['ntpd'] = array();
 	}
+
+	/* if ntpd is running, kill it */
+	while (isvalidpid("{$g['varrun_path']}/ntpd.pid")) {
+		killbypid("{$g['varrun_path']}/ntpd.pid");
+	}
+	@unlink("{$g['varrun_path']}/ntpd.pid");
 
 	$ntpcfg = "# \n";
 	$ntpcfg .= "# pfSense ntp configuration file \n";
@@ -1695,7 +1774,6 @@ function system_ntp_configure() {
 
 	/* Add GPS configuration */
 	if (is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['port']) &&
-	    file_exists('/dev/'.$config['ntpd']['gps']['port']) &&
 	    system_ntp_setup_gps($config['ntpd']['gps']['port'])) {
 		$ntpcfg .= "\n";
 		$ntpcfg .= "# GPS Setup\n";
@@ -1762,7 +1840,6 @@ function system_ntp_configure() {
 		}
 		$ntpcfg .= "\n";
 	} elseif (is_array($config['ntpd']) && !empty($config['ntpd']['gpsport']) &&
-	    file_exists('/dev/'.$config['ntpd']['gpsport']) &&
 	    system_ntp_setup_gps($config['ntpd']['gpsport'])) {
 		/* This handles a 2.1 and earlier config */
 		$ntpcfg .= "# GPS Setup\n";
@@ -1960,12 +2037,6 @@ function system_ntp_configure() {
 		log_error(sprintf(gettext("Could not open %s/ntpd.conf for writing"), $g['varetc_path']));
 		return;
 	}
-
-	/* if ntpd is running, kill it */
-	while (isvalidpid("{$g['varrun_path']}/ntpd.pid")) {
-		killbypid("{$g['varrun_path']}/ntpd.pid");
-	}
-	@unlink("{$g['varrun_path']}/ntpd.pid");
 
 	/* if /var/empty does not exist, create it */
 	if (!is_dir("/var/empty")) {

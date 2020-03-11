@@ -979,7 +979,8 @@ function filter_get_vpns_list() {
 		}
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
-				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
+				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport') &&
+				    !isset($ph2ent['disabled'])) {
 					if (!is_array($ph2ent['remoteid'])) {
 						continue;
 					}

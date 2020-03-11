@@ -38,6 +38,7 @@ global $ntp_poll_min_default, $ntp_poll_max_default;
 $ntp_poll_values = system_ntp_poll_values();
 $auto_pool_suffix = "pool.ntp.org";
 $max_candidate_peers = 25;
+$min_candidate_peers = 4;
 
 if (!is_array($config['ntpd'])) {
 	$config['ntpd'] = array();
@@ -60,8 +61,10 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (!is_numericint($_POST['ntpmaxpeers']) || ($_POST['ntpmaxpeers'] < 4) || ($_POST['ntpmaxpeers'] > $max_candidate_peers)) {
-		$input_errors[] = gettext("Max candidate pool peers must be a number between 4 and $max_candidate_peers");
+	if (!is_numericint($_POST['ntpmaxpeers']) ||
+	    ($_POST['ntpmaxpeers'] < $min_candidate_peers) ||
+	    ($_POST['ntpmaxpeers'] > $max_candidate_peers)) {
+		$input_errors[] = gettext("Max candidate pool peers must be a number between $min_candidate_peers and $max_candidate_peers");
 	}
 	
 	if ((strlen($pconfig['ntporphan']) > 0) && (!is_numericint($pconfig['ntporphan']) || ($pconfig['ntporphan'] < 1) || ($pconfig['ntporphan'] > 15))) {
@@ -335,7 +338,7 @@ $section->addInput(new Form_Input(
 	'Max candidate pool peers',
 	'number',
 	$pconfig['ntpmaxpeers'],
-	['min' => 4, 'max' => $max_candidate_peers]
+	['min' => $min_candidate_peers, 'max' => $max_candidate_peers]
 ))->setHelp('Maximum candidate NTP pool peers. Remember that many servers inside pools are provided by volunteers, ' .
 	'all you will gain from a higher number is extra load on the volunteer time servers. (Default: 5).');
 

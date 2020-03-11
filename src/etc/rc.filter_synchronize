@@ -214,11 +214,21 @@ function carp_sync_xml($sections) {
 		}
 	}
 
+	if (isset($config_copy['hasync']['adminsync'])) {
+		$xml['hasync']['adminsync'] = $config_copy['hasync']['adminsync'];
+	}
+
 	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('restore_config_section', $xml, 900);
 	if ($resp != null) {
 		$url = $rpc_client->getUrl();
 		update_filter_reload_status("XMLRPC sync successfully completed with {$url}.");
+		if (isset($config['hasync']['new_password'])) {
+			update_filter_reload_status("Updating XMLRPC sync password.");
+			$config['hasync']['password'] = $config['hasync']['new_password'];
+			unset($config['hasync']['new_password']);
+			write_config("Update XMLRPC sync password.");
+		}
 		return true;
 	}
 	return false;

@@ -8854,7 +8854,7 @@ msgstr "Host Überschreibung löschen"
 #: src/usr/local/www/services_unbound.php:622
 #: src/usr/local/www/services_dnsmasq.php:408
 msgid "Alias for "
-msgstr "Aliase für"
+msgstr "Aliase für "
 
 #: src/usr/local/www/services_unbound.php:659
 #: src/usr/local/www/services_dnsmasq.php:436

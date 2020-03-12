@@ -64,7 +64,7 @@ if ($_POST) {
 	if (!is_numericint($_POST['ntpmaxpeers']) ||
 	    ($_POST['ntpmaxpeers'] < $min_candidate_peers) ||
 	    ($_POST['ntpmaxpeers'] > $max_candidate_peers)) {
-		$input_errors[] = gettext("Max candidate pool peers must be a number between $min_candidate_peers and $max_candidate_peers");
+		$input_errors[] = sprintf(gettext("Max candidate pool peers must be a number between %d and %d"), $min_candidate_peers, $max_candidate_peers);
 	}
 	
 	if ((strlen($pconfig['ntporphan']) > 0) && (!is_numericint($pconfig['ntporphan']) || ($pconfig['ntporphan'] < 1) || ($pconfig['ntporphan'] > 15))) {
@@ -339,8 +339,11 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['ntpmaxpeers'],
 	['min' => $min_candidate_peers, 'max' => $max_candidate_peers]
-))->setHelp('Maximum candidate NTP pool peers. Remember that many servers inside pools are provided by volunteers, ' .
-	'all you will gain from a higher number is extra load on the volunteer time servers. (Default: 5).');
+))->setHelp('Maximum number of candidate peers in the NTP pool. This value should be set low enough to provide sufficient alternate sources ' .
+	    'while not contacting an excessively large number of peers. ' .
+	    'Many servers inside public pools are provided by volunteers, ' .
+	    'and a large candidate pool places unnecessary extra load ' .
+	    'on the volunteer time servers for little to no added benefit. (Default: 5).');
 
 $section->addInput(new Form_Input(
 	'ntporphan',

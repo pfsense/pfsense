@@ -146,7 +146,7 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 		$mapent = array();
-		$mapent['duid'] = $_POST['duid'];
+		$mapent['duid'] = str_replace("-", ":", $_POST['duid']);
 		$mapent['ipaddrv6'] = $_POST['ipaddrv6'];
 		$mapent['hostname'] = $_POST['hostname'];
 		$mapent['descr'] = $_POST['descr'];
@@ -206,7 +206,8 @@ $section->addInput(new Form_Input(
 	['placeholder' => 'DUID-LLT - ETH -- TIME --- ---- address ---- xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx']
 ))->setHelp('Enter a DUID in the following format: %1$s %2$s', '<br />',
 			'DUID-LLT - ETH -- TIME --- ---- address ---- ' .
-			'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx');
+			'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx ---- ' .
+			'xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx');
 
 $section->addInput(new Form_Input(
 	'ipaddrv6',

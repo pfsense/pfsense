@@ -1798,12 +1798,11 @@ function services_dhcrelay_configure() {
 	$dhcrelayifs = array();
 	$dhcifaces = explode(",", $dhcrelaycfg['interface']);
 	foreach ($dhcifaces as $dhcrelayif) {
-		if (!isset($iflist[$dhcrelayif]) ||
-		    link_interface_to_bridge($dhcrelayif)) {
+		if (!isset($iflist[$dhcrelayif])) {
 			continue;
 		}
 
-		if (is_ipaddr(get_interface_ip($dhcrelayif))) {
+		if (get_interface_ip($dhcrelayif)) {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 		}
 	}
@@ -1821,7 +1820,7 @@ function services_dhcrelay_configure() {
 	$srvifaces = array();
 	foreach ($srvips as $srcidx => $srvip) {
 		$destif = guess_interface_from_ip($srvip);
-		if (!empty($destif)) {
+		if (!empty($destif) && !is_pseudo_interface($destif)) {
 			$srvifaces[] = $destif;
 		}
 	}
@@ -1884,12 +1883,11 @@ function services_dhcrelay6_configure() {
 
 	$dhcifaces = explode(",", $dhcrelaycfg['interface']);
 	foreach ($dhcifaces as $dhcrelayif) {
-		if (!isset($iflist[$dhcrelayif]) ||
-		    link_interface_to_bridge($dhcrelayif)) {
+		if (!isset($iflist[$dhcrelayif])) {
 			continue;
 		}
 
-		if (is_ipaddrv6(get_interface_ipv6($dhcrelayif))) {
+		if (get_interface_ipv6($dhcrelayif)) {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 		}
 	}
@@ -1903,7 +1901,7 @@ function services_dhcrelay6_configure() {
 	$srvifaces = array();
 	foreach ($srvips as $srcidx => $srvip) {
 		$destif = guess_interface_from_ip($srvip);
-		if (!empty($destif)) {
+		if (!empty($destif) && !is_pseudo_interface($destif)) {
 			$srvifaces[] = "{$srvip}%{$destif}";
 		}
 	}

@@ -49,7 +49,8 @@ $iflist = array_intersect_key(
 		array_filter(
 			array_keys(get_configured_interface_with_descr()),
 			function($if) {
-				return is_ipaddrv6(get_interface_ipv6($if));
+				return (get_interface_ipv6($if) &&
+				    !is_pseudo_interface(convert_friendly_interface_to_real_interface_name($if)));
 			}
 		)
 	)

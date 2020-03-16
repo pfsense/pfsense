@@ -617,7 +617,7 @@ events.push(function() {
 				break;
 
 			case "Garmin":
-				return "JFBHUk1DLCwsLCwsLCwsLDMsLDIsOCo1RQokUEdSTUMxLCwxLCwsLCwsVywsLCwsLCwqMzAKJFBHUk1PLCwyKjc1CiRQR1JNTyxHUFJNQywxKjNECiRQR1JNTyxHUEdHQSwxKjIwCiRQR1JNTyxHUEdMTCwxKjI2Cg==";
+				return "JFBHUk1DLCwsLCwsLCwsLDMsLDIsOCo1RQ0KJFBHUk1DMSwsMSwsLCwsLFcsLCwsLCwsKjMwDQokUEdSTU8sLDIqNzUNCiRQR1JNTyxHUFJNQywxKjNEDQokUEdSTU8sR1BHR0EsMSoyMA0KJFBHUk1PLEdQR0xMLDEqMjYNCg==";
 				break;
 
 			case "Generic":

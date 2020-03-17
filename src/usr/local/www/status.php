@@ -342,6 +342,16 @@ if (file_exists("/var/etc/filterdns.conf")) {
 	defCmdT("DNS-filterdns Daemon Configuration", "/bin/cat /var/etc/filterdns.conf");
 }
 
+if (is_dir("/var/etc/openvpn")) {
+	foreach(glob('/var/etc/openvpn/*/config.ovpn') as $file) {
+		$ovpnfile = explode('/', $file);
+		if (!count($ovpnfile) || (count($ovpnfile) < 6)) {
+			continue;
+		}
+		defCmdT("OpenVPN-Configuration {$ovpnfile[4]}", "/bin/cat " . escapeshellarg($file));
+	}
+}
+
 /* Logs */
 function status_add_log($name, $logfile, $number = 1000) {
 	if (!file_exists($logfile)) {

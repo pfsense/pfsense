@@ -310,11 +310,11 @@ include("head.inc");
 					<th><?=gettext("Stratum")?></th>
 					<th><?=gettext("Type")?></th>
 					<th><?=gettext("When")?></th>
-					<th><?=gettext("Poll")?></th>
+					<th><?=gettext("Poll (s)")?></th>
 					<th><?=gettext("Reach")?></th>
-					<th><?=gettext("Delay")?></th>
-					<th><?=gettext("Offset")?></th>
-					<th><?=gettext("Jitter")?></th>
+					<th><?=gettext("Delay (ms)")?></th>
+					<th><?=gettext("Offset (ms)")?></th>
+					<th><?=gettext("Jitter (ms)")?></th>
 				</tr>
 			</thead>
 			<tbody id="ntpbody">

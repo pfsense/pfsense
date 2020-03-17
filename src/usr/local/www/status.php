@@ -345,6 +345,16 @@ if (file_exists("/var/etc/filterdns.conf")) {
 	defCmdT("DNS-filterdns Daemon Configuration", "/bin/cat /var/etc/filterdns.conf");
 }
 
+if (is_dir("/var/etc/openvpn")) {
+	foreach(glob('/var/etc/openvpn/*/config.ovpn') as $file) {
+		$ovpnfile = explode('/', $file);
+		if (!count($ovpnfile) || (count($ovpnfile) < 6)) {
+			continue;
+		}
+		defCmdT("OpenVPN-Configuration {$ovpnfile[4]}", "/bin/cat " . escapeshellarg($file));
+	}
+}
+
 /* Logs */
 defCmdT("Log-System-Last 1000 entries", "/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 1000");
 defCmdT("Log-DHCP-Last 1000 entries", "/usr/local/sbin/clog /var/log/dhcpd.log 2>&1 | tail -n 1000");

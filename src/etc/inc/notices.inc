@@ -410,10 +410,65 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	log_error(sprintf(gettext("Message sent to %s OK"), $to));
 	return;
 }
+/****f* notices/notify_via_telegram
+ * NAME
+ *   notify_via_telegram
+ * INPUTS
+ *	 notification string to send to Telegram via API
+ * RESULT
+ *   returns NULL if message was sent
+ ******/
+
+function notify_via_telegram($message, $force = false){
+		global $config;
+		if (isset($config['notifications']['telegram']['disable']) && !$force) {
+			return;
+		}
+		if (!$config['notifications']['telegram']['api']) {
+			return;
+		}
+		if (!$config['notifications']['telegram']['chatid']) {
+			return;
+		}
+
+		$url = "https://api.telegram.org/bot".$config['notifications']['telegram']['api']."/sendMessage?";
+		$data = array(
+			"chat_id" => $config['notifications']['telegram']['chatid'],
+			"text" => $config['system']['hostname'].".".$config['system']['domain']."\n".$message
+		);
+		$result = json_decode(curl_post_telegram($url . http_build_query($data)), true);
+		if ($result['ok']) {
+			$err_msg=NULL;
+		}else{
+			$err_msg=(sprintf(gettext("Failed to send Telegram notification. Error received was :".$result['error_code'].": ".$result['description'])));
+			log_error($err_msg);
+		}
+		return $err_msg;
+}
+
+function curl_post_telegram($url) {
+	if (function_exists('curl_exec')){
+		$conn = curl_init($url);
+		curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, true);
+		curl_setopt($conn, CURLOPT_FRESH_CONNECT,  true);
+		curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
+		$curl_post_telegram_data = (curl_exec($conn));
+		curl_close($conn);
+	}else{
+		$err_array = array(
+			'ok' => false,
+			'error_code' => "Curl Init",
+			'description' => "The function curl_exec is missing, cannot proceed"
+		);
+		$curl_post_telegram_data = json_encode($err_array);
+	}
+return $curl_post_telegram_data;	//json encoded either way
+}
 
 /* Notify via remote methods only - not via GUI. */
 function notify_all_remote($msg) {
 	notify_via_smtp($msg);
+	notify_via_telegram($msg);
 }
 
 ?>

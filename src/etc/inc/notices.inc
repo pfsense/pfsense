@@ -420,30 +420,29 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
  ******/
 
 function notify_via_telegram($message, $force = false){
-		global $config;
-		if (isset($config['notifications']['telegram']['disable']) && !$force) {
-			return;
-		}
-		if (!$config['notifications']['telegram']['api']) {
-			return;
-		}
-		if (!$config['notifications']['telegram']['chatid']) {
-			return;
-		}
-
-		$url = "https://api.telegram.org/bot{$config['notifications']['telegram']['api']}/sendMessage?";
-		$data = array(
-			"chat_id" => $config['notifications']['telegram']['chatid'],
-			"text" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
-		);
-		$result = json_decode(curl_post_telegram($url . http_build_query($data)), true);
-		if ($result['ok']) {
-			unset($err_msg);
-		}else{
-			$err_msg=(sprintf(gettext("Failed to send Telegram notification. Error received was :{$result['error_code']}: {$result['description']}")));
-			log_error($err_msg);
-		}
-		return $err_msg;
+	global $config;
+	if (isset($config['notifications']['telegram']['disable']) && !$force) {
+		return;
+	}
+	if (!$config['notifications']['telegram']['api']) {
+		return;
+	}
+	if (!$config['notifications']['telegram']['chatid']) {
+		return;
+	}
+	$url = "https://api.telegram.org/bot{$config['notifications']['telegram']['api']}/sendMessage?";
+	$data = array(
+		"chat_id" => $config['notifications']['telegram']['chatid'],
+		"text" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
+	);
+	$result = json_decode(curl_post_telegram($url . http_build_query($data)), true);
+	if ($result['ok']) {
+		unset($err_msg);
+	}else{
+		$err_msg=(sprintf(gettext("Failed to send Telegram notification. Error received was :{$result['error_code']}: {$result['description']}")));
+		log_error($err_msg);
+	}
+	return $err_msg;
 }
 
 function curl_post_telegram($url) {

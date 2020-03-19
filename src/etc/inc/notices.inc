@@ -431,16 +431,16 @@ function notify_via_telegram($message, $force = false){
 			return;
 		}
 
-		$url = "https://api.telegram.org/bot".$config['notifications']['telegram']['api']."/sendMessage?";
+		$url = "https://api.telegram.org/bot{$config['notifications']['telegram']['api']}/sendMessage?";
 		$data = array(
 			"chat_id" => $config['notifications']['telegram']['chatid'],
-			"text" => $config['system']['hostname'].".".$config['system']['domain']."\n".$message
+			"text" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
 		);
 		$result = json_decode(curl_post_telegram($url . http_build_query($data)), true);
 		if ($result['ok']) {
-			$err_msg=NULL;
+			unset($err_msg);
 		}else{
-			$err_msg=(sprintf(gettext("Failed to send Telegram notification. Error received was :".$result['error_code'].": ".$result['description'])));
+			$err_msg=(sprintf(gettext("Failed to send Telegram notification. Error received was :{$result['error_code']}: {$result['description']}")));
 			log_error($err_msg);
 		}
 		return $err_msg;

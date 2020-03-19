@@ -1904,6 +1904,7 @@ function ca_get_all_services($refid) {
  ******/
 
 function cert_restart_services($services) {
+	require_once("service-utils.inc");
 	/* If the input is not an array, it is invalid. */
 	if (!is_array($services)) {
 		return false;

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-11 10:10-0300\n"
+"POT-Creation-Date: 2020-03-18 21:49-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -789,8 +789,8 @@ msgstr ""
 #: src/usr/local/www/status_unbound.php:61
 #: src/usr/local/www/vpn_openvpn_client.php:1029
 #: src/usr/local/www/diag_dns.php:288 src/usr/local/www/head.inc:404
-#: src/usr/local/www/diag_ping.php:37 src/usr/local/www/diag_ping.php:131
-#: src/usr/local/www/diag_ping.php:173
+#: src/usr/local/www/diag_ping.php:37 src/usr/local/www/diag_ping.php:134
+#: src/usr/local/www/diag_ping.php:176
 #: src/usr/local/www/vpn_openvpn_server.php:1341
 msgid "Ping"
 msgstr ""
@@ -1771,7 +1771,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:507
 #: src/usr/local/www/firewall_nat_out_edit.php:532
 #: src/usr/local/www/interfaces.php:3190
-#: src/usr/local/www/diag_traceroute.php:144 src/etc/inc/ipsec.inc:109
+#: src/usr/local/www/diag_traceroute.php:147 src/etc/inc/ipsec.inc:109
 msgid "Any"
 msgstr ""
 
@@ -11850,8 +11850,8 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:174
 #: src/usr/local/www/system.php:514 src/usr/local/www/diag_testport.php:223
 #: src/usr/local/www/services_rfc2136_edit.php:194
-#: src/usr/local/www/diag_traceroute.php:127
-#: src/usr/local/www/diag_ping.php:135
+#: src/usr/local/www/diag_traceroute.php:130
+#: src/usr/local/www/diag_ping.php:138
 msgid "*Hostname"
 msgstr ""
 
@@ -11868,8 +11868,8 @@ msgstr ""
 msgid "Add alias"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:238 src/usr/local/www/diag_traceroute.php:183
-#: src/usr/local/www/diag_ping.php:184
+#: src/usr/local/www/diag_dns.php:238 src/usr/local/www/diag_traceroute.php:186
+#: src/usr/local/www/diag_ping.php:187
 msgid "Results"
 msgstr ""
 
@@ -11899,8 +11899,8 @@ msgstr ""
 
 #: src/usr/local/www/diag_dns.php:289 src/usr/local/www/head.inc:415
 #: src/usr/local/www/diag_traceroute.php:39
-#: src/usr/local/www/diag_traceroute.php:123
-#: src/usr/local/www/diag_traceroute.php:172 src/etc/inc/filter.inc:89
+#: src/usr/local/www/diag_traceroute.php:126
+#: src/usr/local/www/diag_traceroute.php:175 src/etc/inc/filter.inc:89
 msgid "Traceroute"
 msgstr ""
 
@@ -17476,27 +17476,27 @@ msgstr ""
 msgid "This status page includes the following information"
 msgstr ""
 
-#: src/usr/local/www/status.php:406
+#: src/usr/local/www/status.php:416
 msgid ""
 "Make sure all sensitive information is removed! (Passwords, etc.) before "
 "posting information from this page in public places such as forum or social "
 "media sites."
 msgstr ""
 
-#: src/usr/local/www/status.php:408
+#: src/usr/local/www/status.php:418
 msgid ""
 "Common password and other private fields in config.xml have been "
 "automatically redacted."
 msgstr ""
 
-#: src/usr/local/www/status.php:410
+#: src/usr/local/www/status.php:420
 #, php-format
 msgid ""
 "When the page has finished loading, the output is stored in %1$s. It may be "
 "downloaded via scp or using this button: "
 msgstr ""
 
-#: src/usr/local/www/status.php:413 src/usr/local/www/diag_command.php:221
+#: src/usr/local/www/status.php:423 src/usr/local/www/diag_command.php:221
 #: src/usr/local/www/crash_reporter.php:129
 #: src/usr/local/www/services_captiveportal.php:727
 #: src/usr/local/www/services_captiveportal.php:761
@@ -17504,19 +17504,19 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: src/usr/local/www/status.php:423
+#: src/usr/local/www/status.php:433
 msgid "Status output suppressed. Download archive to view."
 msgstr ""
 
-#: src/usr/local/www/status.php:429
+#: src/usr/local/www/status.php:439
 msgid "Gathering status data..."
 msgstr ""
 
-#: src/usr/local/www/status.php:434
+#: src/usr/local/www/status.php:444
 msgid "Saving output to archive..."
 msgstr ""
 
-#: src/usr/local/www/status.php:445
+#: src/usr/local/www/status.php:455
 msgid "Done."
 msgstr ""
 
@@ -18831,18 +18831,18 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/diag_testport.php:254
-#: src/usr/local/www/diag_traceroute.php:142
+#: src/usr/local/www/diag_traceroute.php:145
 msgid "*Source Address"
 msgstr ""
 
 #: src/usr/local/www/diag_testport.php:257
-#: src/usr/local/www/diag_traceroute.php:145
+#: src/usr/local/www/diag_traceroute.php:148
 msgid "Select source address for the trace."
 msgstr ""
 
 #: src/usr/local/www/diag_testport.php:261
-#: src/usr/local/www/diag_traceroute.php:135
-#: src/usr/local/www/diag_ping.php:143
+#: src/usr/local/www/diag_traceroute.php:138
+#: src/usr/local/www/diag_ping.php:146
 msgid "*IP Protocol"
 msgstr ""
 
@@ -26233,39 +26233,43 @@ msgstr ""
 msgid "When using IPv6, the target host must be an IPv6 address or hostname."
 msgstr ""
 
-#: src/usr/local/www/diag_traceroute.php:117
+#: src/usr/local/www/diag_traceroute.php:75 src/usr/local/www/diag_ping.php:72
+msgid "Hostname must be a valid hostname or IP address."
+msgstr ""
+
+#: src/usr/local/www/diag_traceroute.php:120
 #, php-format
 msgid "Error: %s could not be traced/resolved"
 msgstr ""
 
-#: src/usr/local/www/diag_traceroute.php:138
+#: src/usr/local/www/diag_traceroute.php:141
 msgid "Select the protocol to use."
 msgstr ""
 
-#: src/usr/local/www/diag_traceroute.php:149
+#: src/usr/local/www/diag_traceroute.php:152
 msgid "Maximum number of hops"
 msgstr ""
 
-#: src/usr/local/www/diag_traceroute.php:152
+#: src/usr/local/www/diag_traceroute.php:155
 msgid "Select the maximum number of network hops to trace."
 msgstr ""
 
-#: src/usr/local/www/diag_traceroute.php:156
+#: src/usr/local/www/diag_traceroute.php:159
 msgid "Reverse Address Lookup"
 msgstr ""
 
-#: src/usr/local/www/diag_traceroute.php:159
+#: src/usr/local/www/diag_traceroute.php:162
 msgid ""
 "When checked, traceroute will attempt to perform a PTR lookup to locate "
 "hostnames for hops along the path. This will slow down the process as it has "
 "to wait for DNS replies."
 msgstr ""
 
-#: src/usr/local/www/diag_traceroute.php:163
+#: src/usr/local/www/diag_traceroute.php:166
 msgid "Use ICMP"
 msgstr ""
 
-#: src/usr/local/www/diag_traceroute.php:166
+#: src/usr/local/www/diag_traceroute.php:169
 msgid ""
 "By default, traceroute uses UDP but that may be blocked by some routers. "
 "Check this box to use ICMP instead, which may succeed. "
@@ -26469,36 +26473,36 @@ msgstr ""
 msgid "Wait must be between 1 and %s"
 msgstr ""
 
-#: src/usr/local/www/diag_ping.php:118
+#: src/usr/local/www/diag_ping.php:121
 #, php-format
 msgid "Host \"%s\" did not respond or could not be resolved."
 msgstr ""
 
-#: src/usr/local/www/diag_ping.php:152
+#: src/usr/local/www/diag_ping.php:155
 msgid "Automatically selected (default)"
 msgstr ""
 
-#: src/usr/local/www/diag_ping.php:150
+#: src/usr/local/www/diag_ping.php:153
 msgid "*Source address"
 msgstr ""
 
-#: src/usr/local/www/diag_ping.php:153
+#: src/usr/local/www/diag_ping.php:156
 msgid "Select source address for the ping."
 msgstr ""
 
-#: src/usr/local/www/diag_ping.php:157
+#: src/usr/local/www/diag_ping.php:160
 msgid "Maximum number of pings"
 msgstr ""
 
-#: src/usr/local/www/diag_ping.php:160
+#: src/usr/local/www/diag_ping.php:163
 msgid "Select the maximum number of pings."
 msgstr ""
 
-#: src/usr/local/www/diag_ping.php:164
+#: src/usr/local/www/diag_ping.php:167
 msgid "Seconds between pings"
 msgstr ""
 
-#: src/usr/local/www/diag_ping.php:167
+#: src/usr/local/www/diag_ping.php:170
 msgid "Select the number of seconds to wait between pings."
 msgstr ""
 

@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-11 10:10-0300\n"
+"POT-Creation-Date: 2020-03-18 21:49-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2020-01-23 12:10+0000\n"
+"PO-Revision-Date: 2020-03-14 02:07+0000\n"
 "Last-Translator: kiokoman <registrazioni@kiokoman.eu.org>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -797,8 +797,8 @@ msgstr "TTL"
 #: src/usr/local/www/status_unbound.php:61
 #: src/usr/local/www/vpn_openvpn_client.php:1029
 #: src/usr/local/www/diag_dns.php:288 src/usr/local/www/head.inc:404
-#: src/usr/local/www/diag_ping.php:37 src/usr/local/www/diag_ping.php:131
-#: src/usr/local/www/diag_ping.php:173
+#: src/usr/local/www/diag_ping.php:37 src/usr/local/www/diag_ping.php:134
+#: src/usr/local/www/diag_ping.php:176
 #: src/usr/local/www/vpn_openvpn_server.php:1341
 msgid "Ping"
 msgstr "Ping"
@@ -890,12 +890,12 @@ msgstr "Sconosciuto"
 
 #: src/usr/local/www/status_ipsec.php:242
 msgid "Rekey:"
-msgstr ""
+msgstr "Rekey:"
 
 #: src/usr/local/www/status_ipsec.php:244
 #: src/usr/local/www/status_ipsec.php:252
 msgid "s ("
-msgstr ""
+msgstr "s ("
 
 #: src/usr/local/www/status_ipsec.php:246
 #: src/usr/local/www/status_ipsec.php:254
@@ -925,7 +925,7 @@ msgstr "Disabilitato"
 
 #: src/usr/local/www/status_ipsec.php:250
 msgid "Reauth:"
-msgstr ""
+msgstr "Reauth:"
 
 #: src/usr/local/www/status_ipsec.php:281
 #, php-format
@@ -954,12 +954,12 @@ msgstr "Disconnetti"
 #: src/usr/local/www/status_ipsec.php:302
 #: src/usr/local/www/status_ipsec.php:304
 msgid "Connect Children"
-msgstr ""
+msgstr "Connect Children"
 
 #: src/usr/local/www/status_ipsec.php:323
 #, php-format
 msgid "Show child SA entries (%d)"
-msgstr ""
+msgstr "Visualizza inserimenti child SA (%d)"
 
 #: src/usr/local/www/status_ipsec.php:330
 #: src/usr/local/www/status_ipsec.php:569
@@ -993,26 +993,26 @@ msgstr "Statistiche"
 
 #: src/usr/local/www/status_ipsec.php:362
 msgid "Local:"
-msgstr ""
+msgstr "Locale:"
 
 #: src/usr/local/www/status_ipsec.php:367
 msgid "Remote:"
-msgstr ""
+msgstr "Remoto:"
 
 #: src/usr/local/www/status_ipsec.php:384
 #, php-format
 msgid "%3$sRekey: %4$s%1$s seconds (%2$s)"
-msgstr ""
+msgstr "%3$sRekey: %4$s%1$s seconds (%2$s)"
 
 #: src/usr/local/www/status_ipsec.php:386
 #, php-format
 msgid "%3$sLife: %4$s%1$s seconds (%2$s)"
-msgstr ""
+msgstr "%3$sDurata: %4$s%1$s secondi (%2$s)"
 
 #: src/usr/local/www/status_ipsec.php:388
 #, php-format
 msgid "%3$sInstall: %4$s%1$s seconds (%2$s)"
-msgstr ""
+msgstr "%3$sInstall: %4$s%1$s secondi (%2$s)"
 
 #: src/usr/local/www/status_ipsec.php:414
 msgid "IPComp: "
@@ -1030,19 +1030,19 @@ msgstr "nessuno"
 
 #: src/usr/local/www/status_ipsec.php:424
 msgid "Bytes-In:"
-msgstr ""
+msgstr "Bytes-In:"
 
 #: src/usr/local/www/status_ipsec.php:425
 msgid "Packets-In:"
-msgstr ""
+msgstr "Packets-In:"
 
 #: src/usr/local/www/status_ipsec.php:426
 msgid "Bytes-Out:"
-msgstr ""
+msgstr "Bytes-Out:"
 
 #: src/usr/local/www/status_ipsec.php:427
 msgid "Packets-Out:"
-msgstr ""
+msgstr "Packets-Out:"
 
 #: src/usr/local/www/status_ipsec.php:431
 msgid "Disconnect Child SA"
@@ -1133,7 +1133,7 @@ msgstr "Ruolo"
 
 #: src/usr/local/www/status_ipsec.php:574
 msgid "Timers"
-msgstr ""
+msgstr "Timers"
 
 #: src/usr/local/www/status_ipsec.php:583
 msgid "Collecting IPsec status information."
@@ -1595,7 +1595,7 @@ msgstr "Connesso"
 
 #: src/usr/local/www/status_ipsec_leases.php:57
 msgid "Total Usage"
-msgstr ""
+msgstr "Utilizzo Totale"
 
 #: src/usr/local/www/status_ipsec_leases.php:58
 #: src/usr/local/www/firewall_rules_edit.php:1187
@@ -1804,7 +1804,7 @@ msgstr "Firewall: NAT: 1: 1: mappatura NAT 1: 1 salvata/modificata."
 #: src/usr/local/www/firewall_nat_out_edit.php:507
 #: src/usr/local/www/firewall_nat_out_edit.php:532
 #: src/usr/local/www/interfaces.php:3190
-#: src/usr/local/www/diag_traceroute.php:144 src/etc/inc/ipsec.inc:109
+#: src/usr/local/www/diag_traceroute.php:147 src/etc/inc/ipsec.inc:109
 msgid "Any"
 msgstr "Qualsiasi"
 
@@ -2201,6 +2201,8 @@ msgstr "Valore"
 #: src/usr/local/www/services_dhcpv6.php:232
 msgid "A valid range must be specified for any mode except Stateless DHCP."
 msgstr ""
+"È necessario specificare un intervallo valido per qualsiasi modalità ad "
+"eccezione del DHCP stateless."
 
 #: src/usr/local/www/services_dhcpv6.php:237
 #: src/usr/local/www/services_dhcpv6.php:240
@@ -2543,6 +2545,9 @@ msgid ""
 "caution, as the resulting behavior may violate RFCs and lead to unintended "
 "client behavior."
 msgstr ""
+"Deselezionando questa casella si disabilita l'opzione dhcp6.name-server. "
+"Usare con cautela, in quanto il comportamento risultante può violare le RFC "
+"e portare a comportamenti non intenzionali del cliente."
 
 #: src/usr/local/www/services_dhcpv6.php:727
 #: src/usr/local/www/services_dhcp.php:1185
@@ -2833,7 +2838,7 @@ msgstr "Server NTP 2"
 #: src/usr/local/www/services_dhcpv6.php:888
 #: src/usr/local/www/services_dhcp.php:1394
 msgid "NTP Server 3"
-msgstr ""
+msgstr "NTP Server 3"
 
 #: src/usr/local/www/services_dhcpv6.php:908
 #: src/usr/local/www/services_dhcp.php:1432
@@ -3483,7 +3488,7 @@ msgstr "URL"
 #: src/usr/local/www/services_checkip_edit.php:155
 #: src/usr/local/www/services_checkip_edit.php:156
 msgid "Verify SSL/TLS Peer"
-msgstr ""
+msgstr "Verifica SSL/TLS Peer"
 
 #: src/usr/local/www/services_checkip.php:134
 #: src/usr/local/www/services_dyndns.php:190
@@ -4461,6 +4466,9 @@ msgid ""
 "Unchecking this box disables the RDNSS/DNSSL options in /var/etc/radvd.conf. "
 "Use with caution, as the resulting behavior may violate some RFCs."
 msgstr ""
+"Deselezionando questa casella si disabilitano le opzioni RDNSS / DNSSL in /"
+"var/etc/radvd.conf. Usare con cautela, poiché il comportamento risultante "
+"potrebbe violare alcuni RFC."
 
 #: src/usr/local/www/services_router_advertisements.php:468
 #: src/usr/local/www/status_logs_common.inc:106
@@ -4772,7 +4780,7 @@ msgstr "Può essere configurata solo un'interfaccia 'upstream'."
 
 #: src/usr/local/www/services_igmpproxy_edit.php:75
 msgid "Threshold value should be between -1 and 256."
-msgstr ""
+msgstr "Il valore di soglia deve essere compreso tra -1 e 256."
 
 #: src/usr/local/www/services_igmpproxy_edit.php:98
 #, php-format
@@ -5280,7 +5288,7 @@ msgstr "Flag di protocollo"
 
 #: src/usr/local/www/status_logs_common.inc:525
 msgid "Rule Tracker ID"
-msgstr ""
+msgstr "Rule Tracker ID"
 
 #: src/usr/local/www/status_logs_common.inc:693
 msgid "Number of log entries to show must be between 5 and 2000."
@@ -6848,12 +6856,12 @@ msgstr "La password e le conferma della password devono coincidere."
 #: src/usr/local/www/vpn_openvpn_client.php:307
 #: src/usr/local/www/vpn_openvpn_server.php:350
 msgid "The submitted IPv4 Tunnel Network is already in use."
-msgstr ""
+msgstr "La rete del Tunnel IPv4 specificata è già in uso"
 
 #: src/usr/local/www/vpn_openvpn_client.php:318
 #: src/usr/local/www/vpn_openvpn_server.php:361
 msgid "The submitted IPv6 Tunnel Network is already in use."
-msgstr ""
+msgstr "La rete del Tunnel IPv6 specificata è già in uso"
 
 #: src/usr/local/www/vpn_openvpn_client.php:331
 msgid "The bandwidth limit must be a positive numeric value."
@@ -6919,7 +6927,7 @@ msgstr "La password e la conferma devono coincidere."
 #: src/usr/local/www/vpn_openvpn_client.php:401
 #: src/usr/local/www/vpn_openvpn_server.php:533
 msgid "The Exit Notify value is invalid."
-msgstr ""
+msgstr "Il valore di notifica di uscita non è valido."
 
 #: src/usr/local/www/vpn_openvpn_client.php:408
 msgid "Limit Outgoing Bandwidth is not compatible with UDP Fast I/O."
@@ -6934,37 +6942,37 @@ msgstr "La dimensione del buffer Inviato/Ricevuto non è valida."
 #: src/usr/local/www/vpn_openvpn_client.php:419
 #: src/usr/local/www/vpn_openvpn_server.php:542
 msgid "The supplied Ping Method is invalid."
-msgstr ""
+msgstr "Il metodo Ping fornito non è valido."
 
 #: src/usr/local/www/vpn_openvpn_client.php:422
 #: src/usr/local/www/vpn_openvpn_server.php:545
 msgid "The supplied Ping Action is invalid."
-msgstr ""
+msgstr "L'azione ping fornita non è valida."
 
 #: src/usr/local/www/vpn_openvpn_client.php:425
 #: src/usr/local/www/vpn_openvpn_server.php:548
 msgid "The supplied Keepalive Interval value is invalid."
-msgstr ""
+msgstr "Il valore dell'intervallo keepalive fornito non è valido."
 
 #: src/usr/local/www/vpn_openvpn_client.php:428
 #: src/usr/local/www/vpn_openvpn_server.php:551
 msgid "The supplied Keepalive Timeout value is invalid."
-msgstr ""
+msgstr "Il valore di timeout Keepalive fornito non è valido."
 
 #: src/usr/local/www/vpn_openvpn_client.php:431
 #: src/usr/local/www/vpn_openvpn_server.php:554
 msgid "The supplied Ping Seconds value is invalid."
-msgstr ""
+msgstr "Il valore di Ping Seconds fornito non è valido."
 
 #: src/usr/local/www/vpn_openvpn_client.php:434
 #: src/usr/local/www/vpn_openvpn_server.php:557
 msgid "The supplied Ping Restart or Exit Seconds value is invalid."
-msgstr ""
+msgstr "Il valore in secondi di Riavvio o Uscita ping fornito non è valido."
 
 #: src/usr/local/www/vpn_openvpn_client.php:437
 #: src/usr/local/www/vpn_openvpn_server.php:560
 msgid "The supplied Inactive Seconds value is invalid."
-msgstr ""
+msgstr "Il valore di inattività in secondi fornito non è valido."
 
 #: src/usr/local/www/vpn_openvpn_client.php:540
 #, php-format
@@ -7703,7 +7711,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:1079
 #: src/usr/local/www/vpn_openvpn_server.php:1547
 msgid "Exit Notify"
-msgstr ""
+msgstr "Notifica di Uscita"
 
 #: src/usr/local/www/vpn_openvpn_client.php:1082
 msgid ""
@@ -7712,6 +7720,10 @@ msgid ""
 "waiting for a timeout. This value controls how many times this instance will "
 "attempt to send the exit notification."
 msgstr ""
+"Invia una notifica di uscita esplicita ai server / peer connessi al riavvio "
+"o allo spegnimento, in modo che possano disconnettersi immediatamente "
+"anziché attendere un timeout. Questo valore controlla quante volte questa "
+"istanza tenterà di inviare la notifica di uscita."
 
 #: src/usr/local/www/vpn_openvpn_client.php:1088
 #: src/usr/local/www/vpn_openvpn_server.php:1558
@@ -7780,15 +7792,15 @@ msgstr "Clients OpenVPN"
 
 #: src/usr/local/www/vpn_openvpn_client.php:1192
 msgid "Edit Client"
-msgstr ""
+msgstr "Modifica Client"
 
 #: src/usr/local/www/vpn_openvpn_client.php:1193
 msgid "Copy Client"
-msgstr ""
+msgstr "Copia Client"
 
 #: src/usr/local/www/vpn_openvpn_client.php:1194
 msgid "Delete Client"
-msgstr ""
+msgstr "Cancella Client"
 
 #: src/usr/local/www/interfaces_wireless.php:54
 msgid ""
@@ -7819,16 +7831,20 @@ msgid ""
 "The specified OMAPI port number is invalid. Port number must be between 1024 "
 "and 65635."
 msgstr ""
+"Il numero di porta OMAPI specificato non è valido. Il numero di porta deve "
+"essere compreso tra 1024 e 65635."
 
 #: src/usr/local/www/services_dhcp.php:265
 msgid ""
 "Specified port number for OMAPI is in use. Please choose another port or "
 "consider using the default."
 msgstr ""
+"Il numero di porta specificato per OMAPI è in uso. Scegli un'altra porta o "
+"considera l'utilizzo del valore predefinito."
 
 #: src/usr/local/www/services_dhcp.php:315
 msgid "A key is required when OMAPI is enabled (port specified)."
-msgstr ""
+msgstr "È richiesta una chiave quando OMAPI è abilitato (porta specificata)."
 
 #: src/usr/local/www/services_dhcp.php:322
 msgid "Range begin"
@@ -8056,7 +8072,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:749
 msgid "DHCP Server - Settings changed for interface "
-msgstr ""
+msgstr "Server DHCP: impostazioni modificate per l'interfaccia "
 
 #: src/usr/local/www/services_dhcp.php:850
 #: src/usr/local/www/status_dhcp_leases.php:324
@@ -8146,6 +8162,14 @@ msgid ""
 "listed below (i.e. for this interface) will get an IP address within this "
 "scope/range."
 msgstr ""
+"Se impostato su %3$sConsenti a tutti i client%4$s, qualsiasi client DHCP "
+"otterrà un indirizzo IP all'interno di questo ambito/intervallo su questa "
+"interfaccia. Se impostato su %3$sConsenti client noti da qualsiasi "
+"interfaccia%4$s, qualsiasi client DHCP con un indirizzo MAC elencato su "
+"%1$s%3$squalsiasi%4$s%2$s ambito/interfaccia / e ) riceverà un indirizzo IP. "
+"Se impostato su %3$sConsenti ai client noti solo di questa interfaccia%4$s, "
+"solo gli indirizzi MAC elencati di seguito (ovvero per questa interfaccia) "
+"otterranno un indirizzo IP all'interno di questo ambito/intervallo."
 
 #: src/usr/local/www/services_dhcp.php:1001
 msgid "Ignore denied clients"
@@ -8226,40 +8250,44 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1128
 msgid "OMAPI"
-msgstr ""
+msgstr "OMAPI"
 
 #: src/usr/local/www/services_dhcp.php:1132
 msgid "OMAPI Port"
-msgstr ""
+msgstr "Porta OMAPI"
 
 #: src/usr/local/www/services_dhcp.php:1136
 msgid ""
 "Set the port that OMAPI will listen on. The default port is 7911, leave "
 "blank to disable."
 msgstr ""
+"Imposta la porta su cui OMAPI ascolterà. La porta predefinita è 7911, "
+"lasciare vuota per disabilitare."
 
 #: src/usr/local/www/services_dhcp.php:1138
 #: src/usr/local/www/services_dhcp.php:1142
 msgid "OMAPI Key"
-msgstr ""
+msgstr "Chiave OMAPI"
 
 #: src/usr/local/www/services_dhcp.php:1146
 msgid ""
 "Enter a key matching the selected algorithm<br />to secure connections to "
 "the OMAPI endpoint."
 msgstr ""
+"Immettere una chiave corrispondente all'algoritmo selezionato<br />per "
+"proteggere le connessioni all'endpoint OMAPI."
 
 #: src/usr/local/www/services_dhcp.php:1153
 msgid "Generate a new key based<br />on the selected algorithm."
-msgstr ""
+msgstr "Genera una nuova chiave in base<br />all'algoritmo selezionato."
 
 #: src/usr/local/www/services_dhcp.php:1159
 msgid "Key Algorithm"
-msgstr ""
+msgstr "Chiave Algoritmo"
 
 #: src/usr/local/www/services_dhcp.php:1169
 msgid "Set the algorithm that OMAPI key will use."
-msgstr ""
+msgstr "Imposta l'algoritmo da utilizzare per la chiave OMAPI"
 
 #: src/usr/local/www/services_dhcp.php:1173
 msgid "Other Options"
@@ -8589,7 +8617,7 @@ msgstr "Opzione"
 #: src/usr/local/www/services_dhcp.php:1641
 #, php-format
 msgid "DHCP Static Mappings for this Interface (total: %d)"
-msgstr ""
+msgstr "Mapping statici DHCP per questa interfaccia (totale: %d)"
 
 #: src/usr/local/www/services_dhcp.php:1643
 msgid "DHCP Static Mappings for this Interface"
@@ -9092,11 +9120,11 @@ msgstr "Attualmente non in fase di riavvio (DEBUG è impostato su true)."
 
 #: src/usr/local/www/diag_reboot.php:135
 msgid "Select reboot method"
-msgstr ""
+msgstr "Seleziona metodo di riavvio"
 
 #: src/usr/local/www/diag_reboot.php:139
 msgid "*Reboot method"
-msgstr ""
+msgstr "*Metodo di riavvio"
 
 #: src/usr/local/www/services_acb_backup.php:83
 msgid "Enter the reason for the backup"
@@ -9115,15 +9143,15 @@ msgstr ""
 
 #: src/usr/local/www/services_acb_backup.php:109
 msgid "No encryption password has been set"
-msgstr ""
+msgstr "Non è stata impostata alcuna password di crittografia"
 
 #: src/usr/local/www/services_acb_backup.php:111
 msgid "No device key has been specified"
-msgstr ""
+msgstr "Nessuna chiave di dispositivo è stata specificata"
 
 #: src/usr/local/www/services_acb_backup.php:113
 msgid "Please provide a reason for this backup"
-msgstr ""
+msgstr "Fornisci un motivo per questo backup"
 
 #: src/usr/local/www/services_dnsmasq.php:143
 msgid ""
@@ -9343,27 +9371,27 @@ msgstr "Scegli un certificato esistente"
 
 #: src/usr/local/www/system_certmanager.php:90
 msgid "Edit an existing certificate"
-msgstr ""
+msgstr "Modifica un certificato esistente"
 
 #: src/usr/local/www/system_certmanager.php:115
 #: src/usr/local/www/system_camanager.php:82
 #, php-format
 msgid "Certificate %s is in use and cannot be deleted"
-msgstr ""
+msgstr "Il certificato %s è in uso e non può essere eliminato"
 
 #: src/usr/local/www/system_certmanager.php:123
 #, php-format
 msgid "Deleted certificate %s"
-msgstr ""
+msgstr "Certificato eliminato %s"
 
 #: src/usr/local/www/system_certmanager.php:167
 #: src/usr/local/www/system_certmanager.php:189
 msgid "Export password must be in 4 to 1023 characters."
-msgstr ""
+msgstr "La password di esportazione deve contenere da 4 a 1023 caratteri."
 
 #: src/usr/local/www/system_certmanager.php:176
 msgid "Unable to export password-protected private key."
-msgstr ""
+msgstr "Impossibile esportare la chiave privata protetta da password."
 
 #: src/usr/local/www/system_certmanager.php:226
 #: src/usr/local/www/system_certmanager.php:251
@@ -9448,14 +9476,14 @@ msgstr "Lunghezza della chiave"
 #: src/usr/local/www/system_camanager.php:193
 #: src/usr/local/www/system_certmanager_renew.php:255
 msgid "Elliptic Curve Name"
-msgstr ""
+msgstr "Nome della curva ellittica"
 
 #: src/usr/local/www/system_certmanager.php:269
 #: src/usr/local/www/system_certmanager.php:284
 #: src/usr/local/www/system_camanager.php:182
 #: src/usr/local/www/system_camanager.php:194
 msgid "Key type"
-msgstr ""
+msgstr "Tipo di chiave"
 
 #: src/usr/local/www/system_certmanager.php:270
 #: src/usr/local/www/system_certmanager_renew.php:152
@@ -9491,26 +9519,29 @@ msgid ""
 "DNS subjectAltName values must be valid hostnames, FQDNs or wildcard domains."
 ""
 msgstr ""
+"I valori DNS subjectAltName devono essere nomi host, FQDN o domini jolly "
+"validi."
 
 #: src/usr/local/www/system_certmanager.php:335
 msgid "IP subjectAltName values must be valid IP Addresses"
-msgstr ""
+msgstr "I valori IP subjectAltName devono essere indirizzi IP validi"
 
 #: src/usr/local/www/system_certmanager.php:340
 msgid "An e-mail address must be provided for this type of subjectAltName"
 msgstr ""
+"È necessario fornire un indirizzo e-mail per questo tipo di subjectAltName"
 
 #: src/usr/local/www/system_certmanager.php:343
 msgid "The e-mail provided in a subjectAltName contains invalid characters."
-msgstr ""
+msgstr "L'e-mail fornita in un subjectAltName contiene caratteri non validi."
 
 #: src/usr/local/www/system_certmanager.php:349
 msgid "URI subjectAltName types must be a valid URI"
-msgstr ""
+msgstr "I tipi subjectAltName dell'URI devono essere un URI valido"
 
 #: src/usr/local/www/system_certmanager.php:353
 msgid "Unrecognized subjectAltName type."
-msgstr ""
+msgstr "Tipo subjectAltName non riconosciuto."
 
 #: src/usr/local/www/system_certmanager.php:359
 #: src/usr/local/www/system_certmanager.php:595
@@ -9522,7 +9553,7 @@ msgstr "Il campo 'Nome descrittivo' contiene caratteri non validi."
 #: src/usr/local/www/system_certmanager.php:379
 #: src/usr/local/www/system_camanager.php:209
 msgid "Please select a valid Key Type."
-msgstr ""
+msgstr "Seleziona un tipo di chiave valido."
 
 #: src/usr/local/www/system_certmanager.php:368
 #: src/usr/local/www/system_certmanager.php:382
@@ -9534,7 +9565,7 @@ msgstr "Selezionare una lunghezza di chiave valida."
 #: src/usr/local/www/system_certmanager.php:385
 #: src/usr/local/www/system_camanager.php:215
 msgid "Please select a valid Elliptic Curve Name."
-msgstr ""
+msgstr "Seleziona un nome di curva ellittica valido."
 
 #: src/usr/local/www/system_certmanager.php:374
 #: src/usr/local/www/system_certmanager.php:388
@@ -9546,38 +9577,38 @@ msgstr "Seleziona un algoritmo Digest valido."
 #: src/usr/local/www/system_certmanager.php:420
 #, php-format
 msgid "Added certificate %s to user %s"
-msgstr ""
+msgstr "Certificato %s aggiunto all'utente %s"
 
 #: src/usr/local/www/system_certmanager.php:456
 #, php-format
 msgid "Signed certificate %s"
-msgstr ""
+msgstr "Certificato %s firmato"
 
 #: src/usr/local/www/system_certmanager.php:462
 #, php-format
 msgid "Edited certificate %s"
-msgstr ""
+msgstr "Certificato %s modificato"
 
 #: src/usr/local/www/system_certmanager.php:467
 #, php-format
 msgid "Imported certificate %s"
-msgstr ""
+msgstr "Certificato %s importato"
 
 #: src/usr/local/www/system_certmanager.php:507
 #: src/usr/local/www/system_certmanager.php:551
 #, php-format
 msgid "OpenSSL Library Error: %s"
-msgstr ""
+msgstr "Errore OpenSSL Library: %s"
 
 #: src/usr/local/www/system_certmanager.php:511
 #, php-format
 msgid "Created internal certificate %s"
-msgstr ""
+msgstr "Certificato Interno %s Creato"
 
 #: src/usr/local/www/system_certmanager.php:555
 #, php-format
 msgid "Created certificate signing request %s"
-msgstr ""
+msgstr "Richiesta firma certificato %s creato"
 
 #: src/usr/local/www/system_certmanager.php:590
 msgid "Final Certificate data"
@@ -9593,7 +9624,7 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:613
 #, php-format
 msgid "Updated certificate signing request %s"
-msgstr ""
+msgstr "Richiesta firma certificato %s Aggiornato"
 
 #: src/usr/local/www/system_certmanager.php:619
 #: src/usr/local/www/system_camanager.php:330
@@ -9631,7 +9662,7 @@ msgstr "Revoca del certificato"
 
 #: src/usr/local/www/system_certmanager.php:667
 msgid "Edit an Existing Certificate"
-msgstr ""
+msgstr "Modifica un certficato esistente"
 
 #: src/usr/local/www/system_certmanager.php:671
 msgid "Add/Sign a New Certificate"
@@ -9655,7 +9686,7 @@ msgstr "*Nome descrittivo"
 #: src/usr/local/www/system_certmanager.php:695
 #: src/usr/local/www/system_certmanager_renew.php:134
 msgid "Subject"
-msgstr ""
+msgstr "Subject"
 
 #: src/usr/local/www/system_certmanager.php:727
 msgid "New CSR (Paste below)"
@@ -9706,6 +9737,9 @@ msgid ""
 "certificates should not have a lifetime over %2$s days or some platforms may "
 "consider the certificate invalid."
 msgstr ""
+"Il periodo di validità del certificato firmato, in giorni. %1$s I "
+"certificati server non devono avere una durata superiore a %2$s giorni o "
+"alcune piattaforme potrebbero considerare il certificato non valido."
 
 #: src/usr/local/www/system_certmanager.php:770
 #: src/usr/local/www/system_certmanager.php:870
@@ -9723,11 +9757,14 @@ msgid ""
 "is to use an algorithm stronger than SHA1. Some platforms may consider "
 "weaker digest algorithms invalid"
 msgstr ""
+"Il metodo digest utilizzato quando il certificato è firmato. %1$sLa migliore "
+"pratica è usare un algoritmo più forte di SHA1. Alcune piattaforme "
+"potrebbero considerare non validi algoritmi digest più deboli"
 
 #: src/usr/local/www/system_certmanager.php:780
 #: src/usr/local/www/system_certmanager.php:1364
 msgid "Edit Certificate"
-msgstr ""
+msgstr "Modifica Certificato"
 
 #: src/usr/local/www/system_certmanager.php:782
 msgid "Import Certificate"
@@ -9745,23 +9782,28 @@ msgstr "Incolla qui un certificato nel formato X.509 PEM."
 
 #: src/usr/local/www/system_certmanager.php:796
 msgid "Private key data"
-msgstr ""
+msgstr "Private key data"
 
 #: src/usr/local/www/system_certmanager.php:798
 msgid ""
 "Paste a private key in X.509 PEM format here. This field may remain empty in "
 "certain cases, such as when the private key is stored on a PKCS#11 token."
 msgstr ""
+"Incolla qui una chiave privata in formato PEM X.509. Questo campo può "
+"rimanere vuoto in alcuni casi, ad esempio quando la chiave privata è "
+"memorizzata su un token PKCS # 11."
 
 #: src/usr/local/www/system_certmanager.php:806
 #: src/usr/local/www/system_certmanager.php:803
 msgid "Export Password"
-msgstr ""
+msgstr "Esporta Password"
 
 #: src/usr/local/www/system_certmanager.php:807
 msgid ""
 "Enter the password to use when using the export buttons below (not stored)"
 msgstr ""
+"Immettere la password da utilizzare quando si utilizzano i pulsanti di "
+"esportazione di seguito (non memorizzati)"
 
 #: src/usr/local/www/system_certmanager.php:811
 msgid "Internal Certificate"
@@ -9791,7 +9833,7 @@ msgstr "*Autorità di certificazione"
 #: src/usr/local/www/system_certmanager.php:945
 #: src/usr/local/www/system_camanager.php:663
 msgid "*Key type"
-msgstr ""
+msgstr "*Key type"
 
 #: src/usr/local/www/system_certmanager.php:846
 #: src/usr/local/www/system_certmanager.php:950
@@ -9808,12 +9850,15 @@ msgid ""
 "should not be lower than 2048 or some platforms may consider the certificate "
 "invalid."
 msgstr ""
+"La lunghezza da utilizzare quando si genera una nuova chiave RSA, in bit. "
+"%1$sLa lunghezza della chiave non deve essere inferiore a 2048 o alcune "
+"piattaforme potrebbero considerare il certificato non valido."
 
 #: src/usr/local/www/system_certmanager.php:858
 #: src/usr/local/www/system_certmanager.php:962
 #: src/usr/local/www/system_camanager.php:680
 msgid "*Elliptic Curve Name"
-msgstr ""
+msgstr "*Nome curva Ellittica"
 
 #: src/usr/local/www/system_certmanager.php:865
 #: src/usr/local/www/system_camanager.php:687
@@ -9821,6 +9866,8 @@ msgid ""
 "Curves may not be compatible with all uses. Known compatible curve uses are "
 "denoted in brackets."
 msgstr ""
+"Le curve potrebbero non essere compatibili con tutti gli usi. Gli usi di "
+"curva compatibili noti sono indicati tra parentesi."
 
 #: src/usr/local/www/system_certmanager.php:879
 #: src/usr/local/www/system_camanager.php:701
@@ -9969,11 +10016,11 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:1159
 msgid "Export Private Key"
-msgstr ""
+msgstr "Esporta chiave privata"
 
 #: src/usr/local/www/system_certmanager.php:1165
 msgid "Export PKCS#12"
-msgstr ""
+msgstr "Esporta PKCS#12"
 
 #: src/usr/local/www/system_certmanager.php:1177
 msgid "Complete Signing Request for "
@@ -10123,7 +10170,7 @@ msgstr "Esporta chiave"
 #: src/usr/local/www/system_certmanager.php:1370
 #: src/usr/local/www/system_camanager.php:475
 msgid "Reissue/Renew"
-msgstr ""
+msgstr "Riemettere/Rinnova"
 
 #: src/usr/local/www/system_certmanager.php:1371
 msgid "Export P12"
@@ -10594,7 +10641,7 @@ msgstr "Lo username contiene caratteri non validi."
 
 #: src/usr/local/www/vpn_l2tp_users_edit.php:88
 msgid "The password cannot start with '!'."
-msgstr ""
+msgstr "La password non può iniziare con '!'"
 
 #: src/usr/local/www/vpn_l2tp_users_edit.php:91
 #: src/usr/local/www/system_usermanager_passwordmg.php:49
@@ -10653,13 +10700,13 @@ msgstr "Connesso da"
 #: src/usr/local/www/status_openvpn.php:245
 #: src/usr/local/www/status_openvpn.php:308
 msgid "Bytes Sent"
-msgstr ""
+msgstr "Bytes inviati"
 
 #: src/usr/local/www/status_openvpn.php:110
 #: src/usr/local/www/status_openvpn.php:246
 #: src/usr/local/www/status_openvpn.php:309
 msgid "Bytes Received"
-msgstr ""
+msgstr "Bytes ricevuti"
 
 #: src/usr/local/www/status_openvpn.php:144
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:83
@@ -11337,15 +11384,15 @@ msgstr "Nessuna informazione"
 
 #: src/usr/local/www/csrf_error.php:25 src/usr/local/www/csrf_error.php:43
 msgid "CSRF Error"
-msgstr ""
+msgstr "Errore CSRF"
 
 #: src/usr/local/www/csrf_error.php:79
 msgid "Try again"
-msgstr ""
+msgstr "Prova ancora"
 
 #: src/usr/local/www/csrf_error.php:81
 msgid "Resubmit Request with New Token"
-msgstr ""
+msgstr "Reinvia richiesta con nuovo token"
 
 #: src/usr/local/www/system_advanced_misc.php:43
 msgid "Hiadaptive"
@@ -11432,6 +11479,8 @@ msgstr ""
 msgid ""
 "Combined size of /tmp and /var RAM disks would exceed free kernel memory."
 msgstr ""
+"Le dimensioni combinate dei dischi RAM /tmp e /var supererebbero la memoria "
+"del kernel libera."
 
 #: src/usr/local/www/system_advanced_misc.php:135
 msgid "Proxy port must be a valid port number, 1-65535."
@@ -11524,6 +11573,12 @@ msgid ""
 "connection. Further connections from that host will be redirected via the "
 "next gateway in the round robin."
 msgstr ""
+"Le connessioni successive verranno reindirizzate tramite gateway in modo "
+"round robin con connessioni dalla stessa sorgente inviate tramite lo stesso "
+"gateway. Questa \"connessione adesiva\" esisterà fintanto che ci sono stati "
+"che si riferiscono a questa connessione. Una volta scaduti gli stati, lo "
+"sarà anche la connessione adesiva. Ulteriori connessioni da quell'host "
+"verranno reindirizzate tramite il gateway successivo nel round robin."
 
 #: src/usr/local/www/system_advanced_misc.php:417
 msgid "Source tracking timeout"
@@ -11793,6 +11848,10 @@ msgid ""
 "enough to contain the current contents of the directories in question. "
 "%sMaximum total size of all RAM disks cannot exceed free kernel memory: %s"
 msgstr ""
+"Imposta la dimensione, in MiB, per i dischi RAM. Assicurarsi che ciascun "
+"disco RAM sia sufficientemente grande da contenere il contenuto corrente "
+"delle directory in questione. %sLa dimensione totale massima di tutti i "
+"dischi RAM non può superare la memoria del kernel libera:%s"
 
 #: src/usr/local/www/system_advanced_misc.php:599
 msgid "Periodic RAM Disk Data Backups"
@@ -12010,7 +12069,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:182
 msgid "Synchronize admin"
-msgstr ""
+msgstr "Sincronizza admin"
 
 #: src/usr/local/www/system_hasync.php:186
 #, php-format
@@ -12020,6 +12079,10 @@ msgid ""
 "System Password when the password is changed on \n"
 "\t\t\tthe Remote System Username account."
 msgstr ""
+"Per impostazione predefinita, l'account admin non si sincronizza e ogni nodo "
+"potrebbe avere una password admin diversa.%1$sQuesta opzione aggiorna "
+"automaticamente la password del sistema remoto XMLRPC quando la password "
+"viene modificata \t\t\tl'account del nome utente del sistema remoto."
 
 #: src/usr/local/www/system_hasync.php:190
 msgid "Select options to sync"
@@ -12313,7 +12376,7 @@ msgstr "IPv6 con ICMP non è valido."
 
 #: src/usr/local/www/diag_packet_capture.php:205
 msgid "Selecting an Address Family for ARP is not valid."
-msgstr ""
+msgstr "La selezione di una famiglia di indirizzi per ARP non è valida."
 
 #: src/usr/local/www/diag_packet_capture.php:210
 msgid "Invalid protocol."
@@ -12482,6 +12545,12 @@ msgid ""
 "(\",\") separated values perform a boolean \"AND\". Separating with a pipe "
 "(\"|\") performs a boolean \"OR\".Leave blank if not filtering by port."
 msgstr ""
+"La porta può essere la porta di origine o di destinazione. packet capture "
+"cercherà questa porta in entrambi i campi. La corrispondenza può essere "
+"annullata precedendo il valore con \"!\". È possibile specificare più porte. "
+"I valori separati da virgola (\",\") eseguono un \"AND\" booleano. La "
+"separazione con una pipe (\"|\") esegue un \"OR\" booleano. Lasciare vuoto "
+"per non filtrare la porta."
 
 #: src/usr/local/www/diag_packet_capture.php:410
 msgid "Packet Length"
@@ -12553,7 +12622,7 @@ msgstr ""
 #: src/usr/local/www/diag_packet_capture.php:474
 #: src/usr/local/www/diag_packet_capture.php:497
 msgid "Last capture start"
-msgstr ""
+msgstr "Inizio dell'ultima acquisizione"
 
 #: src/usr/local/www/diag_packet_capture.php:483
 msgid "View Capture"
@@ -12561,15 +12630,15 @@ msgstr "Visualizza catture"
 
 #: src/usr/local/www/diag_packet_capture.php:502
 msgid "Last capture stop"
-msgstr ""
+msgstr "Fine dell' ultima acquisizione"
 
 #: src/usr/local/www/diag_packet_capture.php:552
 msgid "Packet capture is running"
-msgstr ""
+msgstr "Packet capture è in esecuzione"
 
 #: src/usr/local/www/diag_packet_capture.php:555
 msgid "Command line"
-msgstr ""
+msgstr "Linea di comando"
 
 #: src/usr/local/www/diag_packet_capture.php:563
 msgid "Packets Captured"
@@ -12587,7 +12656,7 @@ msgstr "Scarica il file o visualizzalo nella console o nella shell ssh."
 
 #: src/usr/local/www/diag_packet_capture.php:595
 msgid "No capture file to display."
-msgstr ""
+msgstr "Nessun file di cattura da visualizzare"
 
 #: src/usr/local/www/diag_packet_capture.php:597
 msgid "Select a detail level to view the contents of the packet capture."
@@ -12948,8 +13017,8 @@ msgstr "Impossibile creare alias per %s"
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:174
 #: src/usr/local/www/system.php:514 src/usr/local/www/diag_testport.php:223
 #: src/usr/local/www/services_rfc2136_edit.php:194
-#: src/usr/local/www/diag_traceroute.php:127
-#: src/usr/local/www/diag_ping.php:135
+#: src/usr/local/www/diag_traceroute.php:130
+#: src/usr/local/www/diag_ping.php:138
 msgid "*Hostname"
 msgstr "*Hostname"
 
@@ -12966,8 +13035,8 @@ msgstr "Aggiorna alias"
 msgid "Add alias"
 msgstr "Aggiungi alias"
 
-#: src/usr/local/www/diag_dns.php:238 src/usr/local/www/diag_traceroute.php:183
-#: src/usr/local/www/diag_ping.php:184
+#: src/usr/local/www/diag_dns.php:238 src/usr/local/www/diag_traceroute.php:186
+#: src/usr/local/www/diag_ping.php:187
 msgid "Results"
 msgstr "Risultati"
 
@@ -12997,8 +13066,8 @@ msgstr "Maggiori informazioni"
 
 #: src/usr/local/www/diag_dns.php:289 src/usr/local/www/head.inc:415
 #: src/usr/local/www/diag_traceroute.php:39
-#: src/usr/local/www/diag_traceroute.php:123
-#: src/usr/local/www/diag_traceroute.php:172 src/etc/inc/filter.inc:89
+#: src/usr/local/www/diag_traceroute.php:126
+#: src/usr/local/www/diag_traceroute.php:175 src/etc/inc/filter.inc:89
 msgid "Traceroute"
 msgstr "Traceroute"
 
@@ -13012,7 +13081,7 @@ msgstr "Il valore fornito per la modalità orfana NTP non è valido."
 
 #: src/usr/local/www/services_ntpd.php:77
 msgid "It is not possible to use 'No Select' for pools."
-msgstr ""
+msgstr "Non è possibile utilizzare 'No Select' per i pools"
 
 #: src/usr/local/www/services_ntpd.php:84
 msgid ""
@@ -14184,7 +14253,7 @@ msgstr "Creare un'autorità di certificazione intermedia"
 #: src/usr/local/www/system_camanager.php:103
 #, php-format
 msgid "Deleted Certificate Authority %s and associated CRLs"
-msgstr ""
+msgstr "Autorità di certificazione %s e CRL associati eliminata "
 
 #: src/usr/local/www/system_camanager.php:160
 msgid "Encrypted private keys are not yet supported."
@@ -14205,27 +14274,27 @@ msgstr "Autorità di certificazione di firma"
 #: src/usr/local/www/system_camanager.php:226
 #: src/usr/local/www/system_crlmanager.php:233
 msgid "Please enter a valid integer serial number."
-msgstr ""
+msgstr "Inserisci un numero di serie intero valido."
 
 #: src/usr/local/www/system_camanager.php:254
 #, php-format
 msgid "Updated Certificate Authority %s"
-msgstr ""
+msgstr "Autorità di certificazione %s aggiornata"
 
 #: src/usr/local/www/system_camanager.php:259
 #, php-format
 msgid "Imported Certificate Authority %s"
-msgstr ""
+msgstr "Autorità di certificazione %s importata"
 
 #: src/usr/local/www/system_camanager.php:285
 #, php-format
 msgid "Created internal Certificate Authority %s"
-msgstr ""
+msgstr "Autorità di certificazione interna %s creata"
 
 #: src/usr/local/www/system_camanager.php:311
 #, php-format
 msgid "Created internal intermediate Certificate Authority %s"
-msgstr ""
+msgstr "Autorità di certificazione interna intermedia %s creata"
 
 #: src/usr/local/www/system_camanager.php:391
 msgid "Certificate Authorities"
@@ -14262,17 +14331,19 @@ msgstr "Crea / Modifica CA"
 
 #: src/usr/local/www/system_camanager.php:594
 msgid "Trust Store"
-msgstr ""
+msgstr "Trust Store"
 
 #: src/usr/local/www/system_camanager.php:597
 msgid ""
 "When enabled, the contents of the CA will be added to the trust store so "
 "that they will be trusted by the operating system."
 msgstr ""
+"Se abilitato, i contenuti della CA verranno aggiunti al truststore in modo "
+"che siano considerati affidabili dal sistema operativo."
 
 #: src/usr/local/www/system_camanager.php:602
 msgid "Randomize Serial"
-msgstr ""
+msgstr "Randomizza seriale"
 
 #: src/usr/local/www/system_camanager.php:605
 msgid ""
@@ -14281,6 +14352,10 @@ msgid ""
 "and checked for uniqueness instead of using the sequential value from Next "
 "Certificate Serial."
 msgstr ""
+"Se abilitato, se questa CA è in grado di firmare i certificati, i numeri di "
+"serie per i certificati firmati da questa CA saranno automaticamente casuali "
+"e controllati per l'univocità invece di utilizzare il valore sequenziale dal "
+"prossimo certificato seriale."
 
 #: src/usr/local/www/system_camanager.php:612
 msgid "Existing Certificate Authority"
@@ -14302,13 +14377,15 @@ msgstr ""
 
 #: src/usr/local/www/system_camanager.php:631
 msgid "Next Certificate Serial"
-msgstr ""
+msgstr "Prossimo certificato seriale"
 
 #: src/usr/local/www/system_camanager.php:634
 msgid ""
 "Enter a decimal number to be used as a sequential serial number for the next "
 "certificate to be signed by this CA."
 msgstr ""
+"Immettere un numero decimale da utilizzare come numero seriale sequenziale "
+"per il prossimo certificato che deve essere firmato da questa CA."
 
 #: src/usr/local/www/system_camanager.php:639
 msgid "Internal Certificate Authority"
@@ -14325,6 +14402,9 @@ msgid ""
 "use an algorithm stronger than SHA1. Some platforms may consider weaker "
 "digest algorithms invalid"
 msgstr ""
+"Il metodo digest utilizzato quando la CA è firmata. %1$sLa migliore pratica "
+"è usare un algoritmo più forte di SHA1. Alcune piattaforme potrebbero "
+"considerare non validi algoritmi digest più deboli"
 
 #: src/usr/local/www/system_camanager.php:717
 msgid ""
@@ -14563,15 +14643,15 @@ msgstr "Regole UPnP &amp; NAT-PMP"
 
 #: src/usr/local/www/status_upnp.php:73
 msgid "Ext IP"
-msgstr ""
+msgstr "Est IP"
 
 #: src/usr/local/www/status_upnp.php:75
 msgid "Int IP"
-msgstr ""
+msgstr "Int IP"
 
 #: src/usr/local/www/status_upnp.php:76
 msgid "Int Port"
-msgstr ""
+msgstr "Int Port"
 
 #: src/usr/local/www/status_upnp.php:126 src/usr/local/www/status_upnp.php:128
 msgid "Clear all sessions"
@@ -14860,6 +14940,14 @@ msgid ""
 "separately.%1$sCloudflare, Linode: Enter @ as the hostname to indicate an "
 "empty field."
 msgstr ""
+"Immettere l'FQDN completo. Esempio: myhost.dyndns.org%1$sDNS made easy: ID "
+"DNS dinamico (NON nome host)%1$she.net tunnelbroker: inserisci l'ID tunnel."
+"%1$sGleSYS: inserisci l'ID record.%1$sDNSimple: inserisci solo il nome di "
+"dominio.%1$sNamecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy, "
+"Linode: inserisci il nome host e il dominio separatamente, dove il dominio è "
+"il dominio o la zona del sottodominio gestito dal provider.%1$sDigitalOcean: "
+"Immettere l'ID record come nome host e dominio separatamente.%1$sCloudflare, "
+"Linode: immettere @ come nome host per indicare un campo vuoto."
 
 #: src/usr/local/www/services_dyndns_edit.php:332
 msgid "MX"
@@ -14904,13 +14992,15 @@ msgstr "Opzioni HTTP API DNS"
 
 #: src/usr/local/www/services_dyndns_edit.php:370
 msgid "HTTP API SSL/TLS Options"
-msgstr ""
+msgstr "HTTP API SSL/TLS Opzioni"
 
 #: src/usr/local/www/services_dyndns_edit.php:373
 msgid ""
 "When set, the server must provide a valid SSL/TLS certificate trust chain "
 "which can be verified by this firewall."
 msgstr ""
+"Se impostato, il server deve fornire una catena di attendibilità del "
+"certificato SSL / TLS valida che può essere verificata da questo firewall."
 
 #: src/usr/local/www/services_dyndns_edit.php:381
 #, php-format
@@ -14924,6 +15014,15 @@ msgid ""
 "Global API Key or Zone ID for API token.%1$sFor Custom Entries, Username and "
 "Password represent HTTP Authentication username and passwords."
 msgstr ""
+"Il nome utente è richiesto per tutti i tipi tranne Namecheap, FreeDNS, "
+"FreeDNS-v6, DigitalOcean, Linode e voci personalizzate.%1$sAzure: inserisci "
+"l'ID applicazione Azure AD%1$sDNS Made Easy: ID DNS dinamico%1$sDNSimple: "
+"Account utente ID (nell'URL dopo '/ a /')%1$sRoute 53: immettere l'ID chiave "
+"di accesso.%1$sGleSYS: immettere l'utente API.%1$sDreamhost: immettere un "
+"valore da visualizzare nel commento del record DNS .%1$sGodaddy: inserisci "
+"la chiave API.%1$sCloudflare: inserisci l'email per la chiave API globale o "
+"l'ID zona per il token API.%1$sPer voci personalizzate, nome utente e "
+"password rappresentano nome utente e password di autenticazione HTTP."
 
 #: src/usr/local/www/services_dyndns_edit.php:397
 #, php-format
@@ -14937,6 +15036,14 @@ msgid ""
 "Token.%1$sCloudflare: Enter the Global API Key or API token with DNS edit "
 "permisson on the provided zone."
 msgstr ""
+"FreeDNS (freedns.afraid.org): Inserisci \"Authentication Token\" fornito da "
+"FreeDNS.%1$sAzure: client secret of the AD application%1$sDNS Made Easy: "
+"Dynamic DNS Password%1$sDigitalOcean: Inserisci API token%1$sRoute 53: "
+"Inserisci Secret Access Key.%1$sGleSYS: Inserisci API key.%1$sDreamhost: "
+"Inserisci API Key.%1$sGandi LiveDNS: Inserisci API token%1$sGoDaddy: "
+"Inserisci API secret.%1$sDNSimple: Inserisci API token.%1$sLinode: Inserisci "
+"Personal Access Token.%1$sCloudflare: Inserisci Global API Key o API token "
+"impostando i permessi nella zona DNS fornita."
 
 #: src/usr/local/www/services_dyndns_edit.php:412
 msgid "Zone ID"
@@ -15404,7 +15511,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:581
 msgid "Allow APIPA"
-msgstr ""
+msgstr "Permetti APIPA"
 
 #: src/usr/local/www/system_advanced_firewall.php:584
 msgid ""
@@ -15412,6 +15519,9 @@ msgid ""
 "routed, but some providers may utilize APIPA space for interconnect "
 "interfaces."
 msgstr ""
+"Normalmente questo traffico viene eliminato dal firewall, poiché il traffico "
+"APIPA non può essere instradato, ma alcuni provider potrebbero utilizzare lo "
+"spazio APIPA per le interfacce di interconnessione."
 
 #: src/usr/local/www/system_advanced_firewall.php:588
 msgid "Aliases Hostnames Resolve Interval"
@@ -15763,7 +15873,7 @@ msgstr "Opzioni IGMP generali"
 
 #: src/usr/local/www/services_igmpproxy.php:109
 msgid "Verbose Logging"
-msgstr ""
+msgstr "Verbose Logging"
 
 #: src/usr/local/www/services_igmpproxy.php:162
 msgid "Edit IGMP entry"
@@ -16099,7 +16209,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:243
 msgid "File decryption failed. Incorrect password or file is invalid."
-msgstr ""
+msgstr "Decriptazione del file fallita. Password errara o file non valido"
 
 #: src/usr/local/www/diag_backup.php:248
 msgid "Upgrading m0n0wall configuration to pfsense."
@@ -17110,6 +17220,8 @@ msgid ""
 "RADIUS IP may only take prioriy when using EAP-RADIUS for authentication on "
 "the Mobile IPsec VPN."
 msgstr ""
+"RADIUS IP può avere la priorità solo quando si utilizza EAP-RADIUS per "
+"l'autenticazione sulla VPN IPsec mobile."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:313
 msgid "Saved IPsec Mobile Clients configuration."
@@ -17158,7 +17270,7 @@ msgstr "*Autenticazione gruppo"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:485
 msgid "RADIUS Accounting"
-msgstr ""
+msgstr "RADIUS Accounting"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:488
 msgid ""
@@ -17168,6 +17280,12 @@ msgid ""
 "of receiving RADIUS accounting data. If RADIUS accounting data is enabled "
 "and fails to send, tunnels will be disconnected."
 msgstr ""
+"Se abilitato, il demone IPsec tenterà di inviare i dati di contabilità "
+"RADIUS per tutti i tunnel, non solo le connessioni associate a IPsec mobile. "
+"Non abilitare questa opzione a meno che i server RADIUS selezionati siano "
+"online e in grado di ricevere i dati di contabilità RADIUS. Se i dati di "
+"contabilità RADIUS sono abilitati e non è possibile inviare, i tunnel "
+"verranno disconnessi."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:496
 msgid "Client Configuration (mode-cfg)"
@@ -17191,7 +17309,7 @@ msgstr "Configurazione di rete per il pool di indirizzi IPv6 virtuale"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:574
 msgid "RADIUS IP address priority"
-msgstr ""
+msgstr "RADIUS IP address priorietà"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:581
 msgid "Network List"
@@ -17255,6 +17373,8 @@ msgid ""
 "Note: Groups 1, 2, 5, 22, 23, and 24 provide weak security and should be "
 "avoided."
 msgstr ""
+"Nota: Grouppi 1, 2, 5, 22, 23, e 24 forniscono una sicurezza debole e "
+"andrebbero evitati."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:715
 msgid "Login Banner"
@@ -18375,11 +18495,14 @@ msgid ""
 "services on the firewall (IPsec, OpenVPN, etc.). Use an IP Alias or CARP "
 "type VIP for these roles."
 msgstr ""
+"Proxy ARP e altri tipi di indirizzi IP virtuali non possono essere "
+"utilizzati per l'associazione dei servizi sul firewall (IPsec, OpenVPN, ecc."
+"). Utilizzare un IP Alias o CARP di tipo VIP per questi ruoli."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:453
 #, php-format
 msgid "For more information, visit the pfSense book section on %s"
-msgstr ""
+msgstr "Per maggiori informazioni, visita la documentazione pfSense su %s"
 
 #: src/usr/local/www/status_logs_filter_dynamic.php:383
 msgid "Pause"
@@ -18461,12 +18584,16 @@ msgid ""
 "No Certificates have been defined. A certificate is required before SSL/TLS "
 "can be enabled. %1$s Create or Import %2$s a Certificate."
 msgstr ""
+"Non sono stati definiti certificati. È necessario un certificato prima di "
+"abilitare SSL/TLS. %1$sCrea o importa%2$s un certificato."
 
 #: src/usr/local/www/system_advanced_admin.php:436
 msgid ""
 "Certificates known to be incompatible with use for HTTPS are not included in "
 "this list."
 msgstr ""
+"I certificati noti per essere incompatibili con l'uso per HTTPS non sono "
+"inclusi in questo elenco."
 
 #: src/usr/local/www/system_advanced_admin.php:440
 msgid "TCP port"
@@ -18939,6 +19066,8 @@ msgstr "Tipo di collegamento"
 #: src/usr/local/www/status_dhcp_leases.php:181
 msgid "Enter a search string or *nix regular expression to filter entries."
 msgstr ""
+"Immettere una stringa di ricerca o o espressione regolare *nix per filtrare "
+"le voci."
 
 #: src/usr/local/www/diag_arp.php:221
 msgid "Incomplete"
@@ -19320,7 +19449,7 @@ msgstr "Modifica sostituzione CSC"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:709
 msgid "Copy CSC Override"
-msgstr ""
+msgstr "Copia CSC Override"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:710
 msgid "Delete CSC Override"
@@ -19361,7 +19490,7 @@ msgstr "Stato firewall su %s"
 msgid "This status page includes the following information"
 msgstr "Questa pagina di stato include le seguenti informazioni"
 
-#: src/usr/local/www/status.php:406
+#: src/usr/local/www/status.php:416
 msgid ""
 "Make sure all sensitive information is removed! (Passwords, etc.) before "
 "posting information from this page in public places such as forum or social "
@@ -19371,7 +19500,7 @@ msgstr ""
 "(Password, ecc.) Prima di pubblicare informazioni da questa pagina in luoghi "
 "pubblici come forum o siti di social media."
 
-#: src/usr/local/www/status.php:408
+#: src/usr/local/www/status.php:418
 msgid ""
 "Common password and other private fields in config.xml have been "
 "automatically redacted."
@@ -19379,7 +19508,7 @@ msgstr ""
 "La password comune e altri campi privati in config.xml sono stati "
 "automaticamente cancellati."
 
-#: src/usr/local/www/status.php:410
+#: src/usr/local/www/status.php:420
 #, php-format
 msgid ""
 "When the page has finished loading, the output is stored in %1$s. It may be "
@@ -19388,7 +19517,7 @@ msgstr ""
 "Al termine del caricamento della pagina, l'output viene archiviato in %1$s. "
 "Può essere scaricato tramite SCP o usando questo pulsante:"
 
-#: src/usr/local/www/status.php:413 src/usr/local/www/diag_command.php:221
+#: src/usr/local/www/status.php:423 src/usr/local/www/diag_command.php:221
 #: src/usr/local/www/crash_reporter.php:129
 #: src/usr/local/www/services_captiveportal.php:727
 #: src/usr/local/www/services_captiveportal.php:761
@@ -19396,19 +19525,19 @@ msgstr ""
 msgid "Download"
 msgstr "Scarica"
 
-#: src/usr/local/www/status.php:423
+#: src/usr/local/www/status.php:433
 msgid "Status output suppressed. Download archive to view."
 msgstr "Uscita di stato soppressa. Scarica l'archivio per visualizzare."
 
-#: src/usr/local/www/status.php:429
+#: src/usr/local/www/status.php:439
 msgid "Gathering status data..."
 msgstr "Raccolta dei dati di stato ..."
 
-#: src/usr/local/www/status.php:434
+#: src/usr/local/www/status.php:444
 msgid "Saving output to archive..."
 msgstr "Salvataggio dell'output nell'archivio ..."
 
-#: src/usr/local/www/status.php:445
+#: src/usr/local/www/status.php:455
 msgid "Done."
 msgstr "Fatto."
 
@@ -19544,6 +19673,9 @@ msgid ""
 "Alternative Name (SAN) or the Common Name (CN) of the LDAP server SSL/TLS "
 "Certificate."
 msgstr ""
+"NOTA: quando si utilizza SSL/TLS o STARTTLS, questo nome host DEVE "
+"corrispondere a un nome alternativo soggetto (SAN) o al nome comune (CN) del "
+"certificato SSL/TLS del server LDAP."
 
 #: src/usr/local/www/system_authservers.php:570
 msgid "*Port value"
@@ -19564,6 +19696,10 @@ msgid ""
 "Encrypted' or 'STARTTLS Encrypted' Transport is active. This CA must match "
 "the CA used by the LDAP server."
 msgstr ""
+"Questa CA viene utilizzata per convalidare il certificato del server LDAP "
+"quando è attivo il trasporto \"SSL/TLS crittografato\" o \"STARTTLS "
+"crittografato\". Questa CA deve corrispondere alla CA utilizzata dal server "
+"LDAP."
 
 #: src/usr/local/www/system_authservers.php:607
 msgid "*Protocol version"
@@ -19620,11 +19756,15 @@ msgid "Query"
 msgstr "Query"
 
 #: src/usr/local/www/system_authservers.php:676
+#, fuzzy
 msgid ""
 "Example (MSAD): memberOf=CN=Groupname,OU=MyGroups,DC=example,DC="
 "com<br>Example (2307): |(&(objectClass=posixGroup)(cn=Groupname)(memberUid="
 "*))(&(objectClass=posixGroup)(cn=anotherGroup)(memberUid=*))"
 msgstr ""
+"Esempio (MSAD): memberOf=CN=Groupname,OU=MyGroups,DC=example,DC="
+"com<br>Esempio (2307): |(&(objectClass=posixGroup)(cn=Groupname)(memberUid="
+"*))(&(objectClass=posixGroup)(cn=anotherGroup)(memberUid=*))"
 
 #: src/usr/local/www/system_authservers.php:682
 msgid "Bind anonymous"
@@ -19704,7 +19844,7 @@ msgstr "per esempio. utente@host diventa utente quando deselezionato."
 #: src/usr/local/www/system_authservers.php:776
 #: src/usr/local/www/system_authservers.php:777
 msgid "Allow unauthenticated bind"
-msgstr ""
+msgstr "Consenti bind non autenticata"
 
 #: src/usr/local/www/system_authservers.php:779
 msgid ""
@@ -19712,6 +19852,9 @@ msgid ""
 "password. Some LDAP servers (Microsoft AD) allow this type of bind without "
 "any possiblity to disable it."
 msgstr ""
+"I bind non autenticati sono associati a un login esistente ma con una "
+"password vuota. Alcuni server LDAP (Microsoft AD) consentono questo tipo di "
+"bind senza alcuna possibilità di disabilitarlo."
 
 #: src/usr/local/www/system_authservers.php:785
 msgid "RADIUS Server Settings"
@@ -20579,7 +20722,7 @@ msgstr "Elenco di revoche di certificati %s cancellato con successo."
 
 #: src/usr/local/www/system_crlmanager.php:110
 msgid "Invalid CA"
-msgstr ""
+msgstr "CA Invalido"
 
 #: src/usr/local/www/system_crlmanager.php:127
 msgid "Cannot revoke certificates for an imported/external CRL."
@@ -20590,10 +20733,13 @@ msgid ""
 "Invalid serial in list (Must be ASN.1 integer compatible decimal or hex "
 "string)."
 msgstr ""
+"Elenco seriale non valido (deve essere un numero decimale o stringa "
+"esadecimale compatibile ASN.1)."
 
 #: src/usr/local/www/system_crlmanager.php:140
 msgid "Select one or more certificates or enter a serial number to revoke."
 msgstr ""
+"Seleziona uno o più certificati o inserisci un numero seriale per revocare."
 
 #: src/usr/local/www/system_crlmanager.php:147
 msgid "CA mismatch between the Certificate and CRL. Unable to Revoke."
@@ -20653,7 +20799,7 @@ msgstr "Modifica elenco di revoche di certificati importati"
 
 #: src/usr/local/www/system_crlmanager.php:488
 msgid "Revoked Certificates in CRL"
-msgstr ""
+msgstr "Certificati revocati in CRL"
 
 #: src/usr/local/www/system_crlmanager.php:492
 msgid "No certificates found for this CRL."
@@ -20673,11 +20819,11 @@ msgstr "Revocato a"
 
 #: src/usr/local/www/system_crlmanager.php:508
 msgid "Revoked by Serial"
-msgstr ""
+msgstr "Revocato da seriale"
 
 #: src/usr/local/www/system_crlmanager.php:511
 msgid "Invalid"
-msgstr ""
+msgstr "Invalido"
 
 #: src/usr/local/www/system_crlmanager.php:520
 msgid "Delete this certificate from the CRL"
@@ -20686,7 +20832,7 @@ msgstr "Elimina questo certificato dal CRL"
 #: src/usr/local/www/system_crlmanager.php:536
 #: src/usr/local/www/system_crlmanager.php:551
 msgid "Revoke Certificates"
-msgstr ""
+msgstr "Certificati Revocati"
 
 #: src/usr/local/www/system_crlmanager.php:540
 msgid "Reason"
@@ -20694,7 +20840,7 @@ msgstr "Motivo"
 
 #: src/usr/local/www/system_crlmanager.php:543
 msgid "Select the reason for which the certificates are being revoked."
-msgstr ""
+msgstr "Seleziona il motivo per cui i certificati vengono revocati."
 
 #: src/usr/local/www/system_crlmanager.php:547
 msgid "No certificates found for this CA."
@@ -20702,15 +20848,16 @@ msgstr "Nessun certificato trovato per questa CA."
 
 #: src/usr/local/www/system_crlmanager.php:561
 msgid "Revoke by Serial"
-msgstr ""
+msgstr "Revoca da seriale"
 
 #: src/usr/local/www/system_crlmanager.php:564
 msgid "List of certificate serial numbers to revoke (separated by spaces)"
 msgstr ""
+"Elenco dei numeri di serie del certificato da revocare (separati da spazi)"
 
 #: src/usr/local/www/system_crlmanager.php:601
 msgid "Certificate Revocation Lists"
-msgstr ""
+msgstr "Elenchi di revoca dei certificati"
 
 #: src/usr/local/www/system_crlmanager.php:606
 #: src/usr/local/www/system_usermanager.php:569
@@ -20732,11 +20879,11 @@ msgstr "Cancella CRL"
 
 #: src/usr/local/www/system_crlmanager.php:678
 msgid "Create or Import a New Certificate Revocation List"
-msgstr ""
+msgstr "Crea o importa un nuovo elenco di revoche di certificati"
 
 #: src/usr/local/www/system_crlmanager.php:685
 msgid "Select a Certificate Authority for the new CRL"
-msgstr ""
+msgstr "Selezionare un'autorità di certificazione per il nuovo CRL"
 
 #: src/usr/local/www/diag_testport.php:40
 #: src/usr/local/www/diag_testport.php:219 src/usr/local/www/head.inc:405
@@ -20820,18 +20967,18 @@ msgstr ""
 "sotto questo modulo."
 
 #: src/usr/local/www/diag_testport.php:254
-#: src/usr/local/www/diag_traceroute.php:142
+#: src/usr/local/www/diag_traceroute.php:145
 msgid "*Source Address"
 msgstr "*Indirizzo di origine"
 
 #: src/usr/local/www/diag_testport.php:257
-#: src/usr/local/www/diag_traceroute.php:145
+#: src/usr/local/www/diag_traceroute.php:148
 msgid "Select source address for the trace."
 msgstr "Seleziona l'indirizzo di origine per la traccia."
 
 #: src/usr/local/www/diag_testport.php:261
-#: src/usr/local/www/diag_traceroute.php:135
-#: src/usr/local/www/diag_ping.php:143
+#: src/usr/local/www/diag_traceroute.php:138
+#: src/usr/local/www/diag_ping.php:146
 msgid "*IP Protocol"
 msgstr "*Protocollo IP"
 
@@ -21879,11 +22026,12 @@ msgstr "Conteggio dei bit di destinazione"
 
 #: src/usr/local/www/firewall_rules_edit.php:525
 msgid "Invert match cannot be selected with 'any'."
-msgstr ""
+msgstr "La corrispondenza inversa non può essere selezionata con 'qualsiasi'."
 
 #: src/usr/local/www/firewall_rules_edit.php:529
 msgid "Invert tagged match cannot be selected without any tags."
 msgstr ""
+"Inverti corrispondenza taggata - non può essere selezionata senza tag."
 
 #: src/usr/local/www/firewall_rules_edit.php:592
 #: src/usr/local/www/firewall_rules_edit.php:597
@@ -22478,13 +22626,16 @@ msgstr "Tagged"
 
 #: src/usr/local/www/firewall_rules_edit.php:1590
 msgid "nottagged"
-msgstr ""
+msgstr "nontaggato"
 
 #: src/usr/local/www/firewall_rules_edit.php:1602
 msgid ""
 "Match a mark placed on a packet by a different rule with the Tag option. "
 "Check Invert to match packets which do not contain this tag."
 msgstr ""
+"Abbina un segno posizionato su un pacchetto da una regola diversa con "
+"l'opzione Tag. Seleziona Inverti per abbinare i pacchetti che non contengono "
+"questo tag."
 
 #: src/usr/local/www/firewall_rules_edit.php:1608
 msgid "Max. states"
@@ -23295,7 +23446,7 @@ msgstr "Nessuna password spceificata per l'utente %s"
 
 #: src/usr/local/www/services_pppoe_edit.php:146
 msgid "User passwords cannot start with '!'."
-msgstr ""
+msgstr "La password Utente non può iniziare con '!'."
 
 #: src/usr/local/www/services_pppoe_edit.php:149
 #, php-format
@@ -23518,6 +23669,13 @@ msgid ""
 "tries to find the correct baud rate of the GPS device every time NTPd is "
 "started."
 msgstr ""
+"Una velocità di trasmissione superiore è generalmente utile solo se il GPS "
+"sta inviando troppe frasi. Si consiglia di configurare il GPS per inviare "
+"solo una frase a una velocità di trasmissione di 4800 o 9600.%1$sAutoset "
+"tenta di trovare la velocità di trasmissione corretta del dispositivo GPS e "
+"quindi salva la configurazione.%1$sSempre Auto cerca di trovare la velocità "
+"di trasmissione corretta del dispositivo GPS ogni volta che viene avviato "
+"NTPd."
 
 #: src/usr/local/www/services_ntpd_gps.php:436
 #, php-format
@@ -23528,6 +23686,13 @@ msgid ""
 "rate to the configured speed.%1$sThis is useful if the GPS device resets "
 "back to a default rate on power loss or when changing the baud rate."
 msgstr ""
+"Prima di inviare i comandi di inizializzazione, controllare la velocità di "
+"trasmissione GPS. Se non è corretto prova a trovare automaticamente la "
+"velocità di trasmissione corretta, se viene rilevata la velocità corretta "
+"invia i comandi di inizializzazione, quindi imposta la velocità di "
+"trasmissione alla velocità configurata.%1$sQuesto è utile se il dispositivo "
+"GPS si resetta e ripristina un valore predefinita in caso di perdita di "
+"potenza o quando si modifica la velocità di trasmissione."
 
 #: src/usr/local/www/services_ntpd_gps.php:447
 msgid "NMEA Sentences"
@@ -24198,16 +24363,16 @@ msgstr ""
 #: src/usr/local/www/system_certmanager_renew.php:74
 #, php-format
 msgid "Renewed %s %s (%s) - Serial %s -> %s"
-msgstr ""
+msgstr "Rinnovato %s %s (%s) - Seriale %s -> %s"
 
 #: src/usr/local/www/system_certmanager_renew.php:87
 msgid "Error renewing"
-msgstr ""
+msgstr "Errore rinnovo"
 
 #: src/usr/local/www/system_certmanager_renew.php:91
 #: src/usr/local/www/system_certmanager_renew.php:104
 msgid "Renew or Reissue"
-msgstr ""
+msgstr "Rinnova o Riemetti"
 
 #: src/usr/local/www/system_certmanager_renew.php:123
 msgid ""
@@ -24216,32 +24381,38 @@ msgid ""
 "Daemons known to be using this entry or one of its descendents will be "
 "restarted after the entry is replaced."
 msgstr ""
+"Rinnovare o Riemettere un CA o un certificato rimpiazzerà quello vecchio. Il "
+"vechio CA verrà perso an non potrà essere revocato dopo il suo rimpiazzo. I "
+"demoni noti per utilizzare questa voce o uno dei suoi discendenti verranno "
+"riavviati dopo la sostituzione della voce."
 
 #: src/usr/local/www/system_certmanager_renew.php:131
 msgid "Renew or Reissue: "
-msgstr ""
+msgstr "Rinnova o Riemetti:"
 
 #: src/usr/local/www/system_certmanager_renew.php:145
 msgid "Subject Key ID"
-msgstr ""
+msgstr "Subject Key ID"
 
 #: src/usr/local/www/system_certmanager_renew.php:159
 msgid "Issued By"
-msgstr ""
+msgstr "Emesso Da"
 
 #: src/usr/local/www/system_certmanager_renew.php:166
 msgid "Reuse Key"
-msgstr ""
+msgstr "Riutilizza chiave"
 
 #: src/usr/local/www/system_certmanager_renew.php:169
 msgid ""
 "Set this option to retain the existing keys when reissuing. Uncheck to "
 "generate a new key."
 msgstr ""
+"Impostare questa opzione per conservare le chiavi esistenti durante la "
+"riemissione. Deseleziona per generare una nuova chiave."
 
 #: src/usr/local/www/system_certmanager_renew.php:173
 msgid "Strict Security"
-msgstr ""
+msgstr "Strict Security"
 
 #: src/usr/local/www/system_certmanager_renew.php:176
 msgid ""
@@ -24250,59 +24421,67 @@ msgid ""
 "Note that this will override the value of Reuse Key if the old key does not "
 "meet the stricter requirements."
 msgstr ""
+"Impostare questa opzione per applicare requisiti di sicurezza più severe, "
+"che possono alterare alcune proprietà del certificato come digest, lunghezza "
+"della chiave e durata. Si noti che questo sostituirà il valore di Reuse Key "
+"se la vecchia chiave non soddisfa i requisiti più rigorosi."
 
 #: src/usr/local/www/system_certmanager_renew.php:197
 msgid "Renew/Reissue"
-msgstr ""
+msgstr "Rinnova/Riemetti"
 
 #: src/usr/local/www/system_certmanager_renew.php:205
 msgid "Certificate Properties vs Strict Security"
-msgstr ""
+msgstr "Certificate Properties vs Strict Security"
 
 #: src/usr/local/www/system_certmanager_renew.php:209
 msgid ""
 "If Strict Security is checked, weak certificate properties will be replaced "
 "as necessary."
 msgstr ""
+"Se si seleziona Strict Security, le proprietà del certificato debole "
+"verranno sostituite se necessario."
 
 #: src/usr/local/www/system_certmanager_renew.php:210
 msgid ""
 "This table lists the specific changes necessary to meet strict security "
 "requirements."
 msgstr ""
+"Questa tabella elenca le modifiche specifiche necessarie per soddisfare "
+"severi requisiti di sicurezza."
 
 #: src/usr/local/www/system_certmanager_renew.php:218
 msgid "Property"
-msgstr ""
+msgstr "Proprietà"
 
 #: src/usr/local/www/system_certmanager_renew.php:219
 msgid "Current Value"
-msgstr ""
+msgstr "Valore Corrente"
 
 #: src/usr/local/www/system_certmanager_renew.php:220
 msgid "Secure Value"
-msgstr ""
+msgstr "Secure Value"
 
 #: src/usr/local/www/system_certmanager_renew.php:221
 msgid "Would Change"
-msgstr ""
+msgstr "Cambierebbe"
 
 #: src/usr/local/www/system_certmanager_renew.php:228
 #: src/usr/local/www/system_certmanager_renew.php:231
 msgid "Days"
-msgstr ""
+msgstr "Giorni"
 
 #: src/usr/local/www/system_certmanager_renew.php:240
 msgid "Digest"
-msgstr ""
+msgstr "Digest"
 
 #: src/usr/local/www/system_certmanager_renew.php:242
 msgid "SHA-256 or stronger"
-msgstr ""
+msgstr "SHA-256 o migliore"
 
 #: src/usr/local/www/system_certmanager_renew.php:247
 msgid "RSA Key Bits"
-msgstr ""
+msgstr "RSA Key Bits"
 
 #: src/usr/local/www/firewall_aliases_import.php:50
 msgid "Bulk import"
@@ -24547,11 +24726,11 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:292
 msgid "Unsupported logo image type."
-msgstr ""
+msgstr "Tipo di immagine per il logo non supportato"
 
 #: src/usr/local/www/services_captiveportal.php:296
 msgid "Unsupported background image type."
-msgstr ""
+msgstr "Tipo di immagine per lo sfondo non supportato"
 
 #: src/usr/local/www/services_captiveportal.php:504
 msgid "Captive Portal Configuration"
@@ -24692,6 +24871,10 @@ msgid ""
 "them. This field will be accessible through $PORTAL_REDIRURL$ variable in "
 "captiveportal's HTML pages."
 msgstr ""
+"Imposta un URL di reindirizzamento predefinito. I visitatori verranno "
+"reindirizzati a questo URL dopo l'autenticazione solo se captive portal non "
+"sa dove reindirizzarli. Questo campo sarà accessibile attraverso la "
+"variabile $PORTAL_REDIRURL$ nelle pagine HTML di captive portal."
 
 #: src/usr/local/www/services_captiveportal.php:601
 msgid "After authentication Redirection URL"
@@ -25287,7 +25470,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:1095
 msgid "*SSL/TLS Certificate"
-msgstr ""
+msgstr "*SSL/TLS Certificato"
 
 #: src/usr/local/www/services_captiveportal.php:1098
 #, php-format
@@ -25296,6 +25479,9 @@ msgid ""
 "this list. If no certificates are defined, one may be defined here: "
 "%1$sSystem &gt; Cert. Manager%2$s"
 msgstr ""
+"I certificati noti per essere incompatibili con l'uso per HTTPS non sono "
+"inclusi in questo elenco. Se non vengono definiti certificati, è possibile "
+"definirne uno qui:%1$sSistema &gt; Cert. Manager%2$s"
 
 #: src/usr/local/www/services_captiveportal.php:1102
 msgid "HTTPS Forwards"
@@ -25310,6 +25496,13 @@ msgid ""
 "to the captive portal. If HTTPS logins are enabled, the user will be "
 "redirected to the HTTPS login page."
 msgstr ""
+"Se questa opzione è impostata, i tentativi di connessione ai siti HTTPS (SSL/"
+"TLS sulla porta 443) non verranno inoltrati al captive portal. Ciò impedisce "
+"che gli errori del certificato vengano presentati all'utente anche se gli "
+"accessi HTTPS sono abilitati. Gli utenti devono tentare una connessione a un "
+"sito HTTP (Porta 80) per essere inoltrati al captive portal. Se gli accessi "
+"HTTPS sono abilitati, l'utente verrà reindirizzato alla pagina di accesso "
+"HTTPS."
 
 #: src/usr/local/www/services_captiveportal.php:1114
 msgid ""
@@ -25412,7 +25605,7 @@ msgstr "Manuale FreeBSD"
 
 #: src/usr/local/www/head.inc:432
 msgid "User survey"
-msgstr ""
+msgstr "Sondaggio utente"
 
 #: src/usr/local/www/head.inc:524 src/usr/local/www/head.inc:730
 msgid "Notices"
@@ -25572,11 +25765,11 @@ msgstr "EAP-RADIUS può essere utilizzato solo con VPN di tipo IKEv2."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:254
 msgid "Token Certificate"
-msgstr ""
+msgstr "Token Certificate"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:254
 msgid "Token PIN"
-msgstr ""
+msgstr "Token PIN"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:262
 msgid "Remote gateway"
@@ -25584,15 +25777,15 @@ msgstr "Gateway remoto"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:273
 msgid "Rekey Time must be an integer."
-msgstr ""
+msgstr "Rekey Time deve essere numerico"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:276
 msgid "Reauth Time must be an integer."
-msgstr ""
+msgstr "Reauth Time deve essere numerico"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:279
 msgid "Over Time must be an integer."
-msgstr ""
+msgstr "Over Time deve essere numerico"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:283
 msgid "Invalid Child SA Close Action."
@@ -25759,6 +25952,8 @@ msgstr ""
 msgid ""
 "The selected ECDSA certificate does not use a curve compatible with IKEv2"
 msgstr ""
+"Il certificato ECDSA selezionato non utilizza una curva compatibile con "
+"IKEv2"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:566
 msgid "Saved IPsec tunnel Phase 1 configuration."
@@ -25875,19 +26070,19 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:820
 msgid "*PKCS#11 Certificate"
-msgstr ""
+msgstr "*PKCS#11 Certificato"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:823
 msgid "Select a Certificate from an attached PKCS#11 token device"
-msgstr ""
+msgstr "Seleziona un certificato da PKCS#11 token device"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:827
 msgid "*PKCS#11 PIN"
-msgstr ""
+msgstr "*PKCS#11 PIN"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:830
 msgid "Enter PKCS#11 token PIN number"
-msgstr ""
+msgstr "Inserisci in numero token PIN PKCS#11"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:837
 msgid ""
@@ -25923,17 +26118,19 @@ msgstr "DH Group"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:890
 msgid "*PRF Algorithm"
-msgstr ""
+msgstr "*PRF Algoritmo"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:893
 msgid "PRF"
-msgstr ""
+msgstr "PRF"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:898
 msgid ""
 "Note: Blowfish, 3DES, CAST128, MD5, SHA1, and DH groups 1, 2, 5, 22, 23, and "
 "24 provide weak security and should be avoided."
 msgstr ""
+"Nota: Blowfish, 3DES, CAST128, MD5, SHA1, e DH gruppi 1, 2, 5, 22, 23, e 24 "
+"forniscono una bassa sicurezza e andrebbero evitati."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:902
 msgid "Add Algorithm"
@@ -25941,11 +26138,11 @@ msgstr "Aggiungi Algoritmo"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:911
 msgid "Expiration and Replacement"
-msgstr ""
+msgstr "Scadenza e Sostituione"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:915
 msgid "Rekey Time"
-msgstr ""
+msgstr "Rekey Time"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:918
 msgid ""
@@ -25953,10 +26150,13 @@ msgid ""
 "interruption. Only supported by IKEv2, and is recommended for use with IKEv2."
 " Leave blank or enter a value of 0 to disable."
 msgstr ""
+"Tempo in secondi prima che IKE SA stabilisca nuove chiavi. Ciò avviene senza "
+"interruzioni. Supportato solo da IKEv2 ed è raccomandato per l'uso con IKEv2."
+" Lasciare vuoto o inserire il valore 0 per disabilitare."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:924
 msgid "Reauth Time"
-msgstr ""
+msgstr "Reauth Time"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:927
 msgid ""
@@ -25965,10 +26165,15 @@ msgid ""
 "make-before-break and overlapping IKE SA entries. Supported by IKEv1 and "
 "IKEv2. Leave blank or enter a value of 0 to disable."
 msgstr ""
+"Tempo in secondi prima che IKE SA venga abbattuto e ricreato da capo, "
+"incluso l'autenticazione. Questo può essere distruttivo a meno che entrambe "
+"le parti supportino make-before-break e siano in grado di sovrascrivere gli "
+"inserimenti di IKE SA. Supportato da IKEv1 e IKEv2. Lasciare vuoto o "
+"inserire il valore 0 per disabilitare."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:933
 msgid "Over Time"
-msgstr ""
+msgstr "Over Time"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:936
 #, php-format
@@ -25977,6 +26182,9 @@ msgid ""
 "This time is relative to reauthentication and rekey time. If left empty, "
 "defaults to 10% of whichever timer is higher (reauth or rekey)"
 msgstr ""
+"Tempo di vita IKE SA in secondi, dopo il quale IKE SA scadrà. Questo "
+"parametro è in relazione a riautenticazione e rekey time. Se lasciato vuoto, "
+"di default è 10% del valore di timer più altro tra reauth e rekey"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:946
 msgid "Responder Only"
@@ -26022,7 +26230,7 @@ msgstr "Imposta questa opzione per controllare l'utilizzo di MOBIKE"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:975
 msgid "Gateway duplicates"
-msgstr ""
+msgstr "Duplicati del gateway"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:984
 msgid "Split connections"
@@ -26030,13 +26238,15 @@ msgstr "Dividi connessioni"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:991
 msgid "PRF Selection"
-msgstr ""
+msgstr "Selezione PRF"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:994
 msgid ""
 "Manual PRF selection is typically not required, but can be useful in "
 "combination with AEAD Encryption Algorithms such as AES-GCM"
 msgstr ""
+"Tipicamente non è richiesta una selezione manuale di PRF ma può risultare "
+"utile in combinazione con l'algoritmo di criptazione AEAD come AES-GCM"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:1017
 msgid "Dead Peer Detection"
@@ -26414,7 +26624,7 @@ msgstr "Suggerimento"
 
 #: src/usr/local/www/firewall_aliases_edit.php:754
 msgid "Export to file"
-msgstr ""
+msgstr "Esporta in un file"
 
 #: src/usr/local/www/interfaces_bridge.php:57
 msgid "This bridge cannot be deleted because it is assigned as an interface."
@@ -26643,11 +26853,11 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:163
 msgid "DNS64 Prefix must be valid IPv6 prefix."
-msgstr ""
+msgstr "Prefisso DNS64 deve essere un in prefisso IPv6 valido."
 
 #: src/usr/local/www/services_unbound_advanced.php:167
 msgid "DNS64 subnet must be not more than 96 and not less that 1."
-msgstr ""
+msgstr "La subnet DNS64 non deve essere superiore a 96 e non meno di 1."
 
 #: src/usr/local/www/services_unbound_advanced.php:282
 msgid "Advanced Privacy Options"
@@ -26816,6 +27026,15 @@ msgid ""
 "%1$sThe 512/1232 values bypasses most IPv4/IPv6 MTU path problems, but it "
 "can generate an excessive amount of TCP fallback."
 msgstr ""
+"Numero di byte per la pubblicazione come dimensione del buffer di "
+"riassemblaggio di EDNS. Questo è il valore utilizzato nei datagrammi UDP "
+"inviati ai peer.%1$sLa modalità automatica imposta la dimensione ottimale "
+"del buffer usando il valore più piccolo di MTU delle interfacce attive e "
+"sottraendo la dimensione dell'intestazione IPv4/IPv6.%1$sSe si verificano "
+"problemi di riassemblaggio della frammentazione, di solito visti come "
+"timeout, un valore di 1432 dovrebbe aiutare.%1$s I valori 512/1232 aggirano "
+"la maggior parte dei problemi del percorso MTU IPv4/IPv6, ma possono "
+"generare una quantità eccessiva di fallback TCP."
 
 #: src/usr/local/www/services_unbound_advanced.php:378
 msgid "Number of Queries per Thread"
@@ -27000,24 +27219,29 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:476
 msgid "DNS64 Support"
-msgstr ""
+msgstr "Supporto DNS64"
 
 #: src/usr/local/www/services_unbound_advanced.php:479
 msgid ""
 "DNS64 is used with an IPv6/IPv4 translator to enable client-server "
 "communication between an IPv6-only client and an IPv4-only servers."
 msgstr ""
+"DNS64 è utilizzato con un traduttore IPv6/IPv4 per abilitare comunicazione "
+"client-server tra un client solo IPv6 e un server solo IPv4"
 
 #: src/usr/local/www/services_unbound_advanced.php:481
 #: src/usr/local/www/services_unbound_advanced.php:486
 msgid "DNS64 Prefix"
-msgstr ""
+msgstr "Prefisso DNS64"
 
 #: src/usr/local/www/services_unbound_advanced.php:489
 msgid ""
 "IPv6 prefix used by IPv6 representations of IPv4 addresses. If this field is "
 "empty, default 64:ff9b::/96 prefix is used."
 msgstr ""
+"Il Prefisso IPv6 utilizzato da IPv6 per rappresentare l'indirizzo IPv4. Se "
+"questo campo è lasciato vuoto di default verrà utilizzato il prefisso 64:"
+"ff9b::/96."
 
 #: src/usr/local/www/interfaces_gif_edit.php:59
 msgid "gif remote address"
@@ -27682,6 +27906,8 @@ msgid ""
 "Note: Hash is ignored with GCM algorithms. MD5 and SHA1 provide weak "
 "security and should be avoided."
 msgstr ""
+"Nota Hash è ignorato con l'algoritmo GCM. MD5 e SHA1 forniscono una bassa "
+"sicurezza e andrebbero evitati."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:698
 msgid "PFS key group"
@@ -27904,11 +28130,15 @@ msgid ""
 "The OpenVPN and VTI interface description must be less than 26 characters "
 "long."
 msgstr ""
+"La descrizione per l'interfaccia OpenVPN e VTI deve contenere meno di 26 "
+"caratteri"
 
 #: src/usr/local/www/interfaces.php:563
 msgid ""
 "The GIF and GRE interface description must be less than 23 characters long."
 msgstr ""
+"La descrizione per l'interfaccia GIF e GRE deve contenere meno di 23 "
+"caratteri"
 
 #: src/usr/local/www/interfaces.php:572
 msgid "The interface description cannot start with pkg_"
@@ -28437,7 +28667,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1982
 msgid "SLAAC IPv6 Configuration"
-msgstr ""
+msgstr "Configurazione SLAAC IPv6"
 
 #: src/usr/local/www/interfaces.php:1987 src/usr/local/www/interfaces.php:2006
 #: src/usr/local/www/interfaces.php:2319
@@ -29294,28 +29524,32 @@ msgstr ""
 "Quando si utilizza IPv6, l'host di destinazione deve essere un indirizzo "
 "IPv6 o un nome host."
 
-#: src/usr/local/www/diag_traceroute.php:117
+#: src/usr/local/www/diag_traceroute.php:75 src/usr/local/www/diag_ping.php:72
+msgid "Hostname must be a valid hostname or IP address."
+msgstr ""
+
+#: src/usr/local/www/diag_traceroute.php:120
 #, php-format
 msgid "Error: %s could not be traced/resolved"
 msgstr "Errore: %s non può essere tracciato/risolto"
 
-#: src/usr/local/www/diag_traceroute.php:138
+#: src/usr/local/www/diag_traceroute.php:141
 msgid "Select the protocol to use."
 msgstr "Selezionare il protocollo da utilizzare."
 
-#: src/usr/local/www/diag_traceroute.php:149
+#: src/usr/local/www/diag_traceroute.php:152
 msgid "Maximum number of hops"
 msgstr "Massimo numero di hops"
 
-#: src/usr/local/www/diag_traceroute.php:152
+#: src/usr/local/www/diag_traceroute.php:155
 msgid "Select the maximum number of network hops to trace."
 msgstr "Seleziona il numero massimo di hop di rete da tracciare."
 
-#: src/usr/local/www/diag_traceroute.php:156
+#: src/usr/local/www/diag_traceroute.php:159
 msgid "Reverse Address Lookup"
 msgstr "Risoluzione inversa del record DNS"
 
-#: src/usr/local/www/diag_traceroute.php:159
+#: src/usr/local/www/diag_traceroute.php:162
 msgid ""
 "When checked, traceroute will attempt to perform a PTR lookup to locate "
 "hostnames for hops along the path. This will slow down the process as it has "
@@ -29325,11 +29559,11 @@ msgstr ""
 "individuare i nomi host nei salti lungo il percorso. Ciò rallenterà il "
 "processo in quanto deve attendere le risposte DNS."
 
-#: src/usr/local/www/diag_traceroute.php:163
+#: src/usr/local/www/diag_traceroute.php:166
 msgid "Use ICMP"
 msgstr "Utilizza ICMP"
 
-#: src/usr/local/www/diag_traceroute.php:166
+#: src/usr/local/www/diag_traceroute.php:169
 msgid ""
 "By default, traceroute uses UDP but that may be blocked by some routers. "
 "Check this box to use ICMP instead, which may succeed. "
@@ -29572,60 +29806,61 @@ msgstr "Il conteggio deve essere compreso tra 1 e %s"
 #: src/usr/local/www/diag_ping.php:61
 #, php-format
 msgid "Wait must be between 1 and %s"
-msgstr ""
+msgstr "Attesa deve essere un valore tra 1 e %s"
 
-#: src/usr/local/www/diag_ping.php:118
+#: src/usr/local/www/diag_ping.php:121
 #, php-format
 msgid "Host \"%s\" did not respond or could not be resolved."
 msgstr "L'host \"%s\" non ha risposto o è stato impossibile risolverlo."
 
-#: src/usr/local/www/diag_ping.php:152
+#: src/usr/local/www/diag_ping.php:155
 msgid "Automatically selected (default)"
 msgstr "Selezionato automaticamente (default)"
 
-#: src/usr/local/www/diag_ping.php:150
+#: src/usr/local/www/diag_ping.php:153
 msgid "*Source address"
 msgstr "*Indirizzo di origine"
 
-#: src/usr/local/www/diag_ping.php:153
+#: src/usr/local/www/diag_ping.php:156
 msgid "Select source address for the ping."
 msgstr "Selezionare l'indirizzo di origine per il ping"
 
-#: src/usr/local/www/diag_ping.php:157
+#: src/usr/local/www/diag_ping.php:160
 msgid "Maximum number of pings"
 msgstr "Numero massimo di ping"
 
-#: src/usr/local/www/diag_ping.php:160
+#: src/usr/local/www/diag_ping.php:163
 msgid "Select the maximum number of pings."
 msgstr "Seleziona il numero massimo di ping."
 
-#: src/usr/local/www/diag_ping.php:164
-msgid "Seconds between pings"
-msgstr ""
-
 #: src/usr/local/www/diag_ping.php:167
+msgid "Seconds between pings"
+msgstr "Secondi tra un ping e l'altro"
+
+#: src/usr/local/www/diag_ping.php:170
 msgid "Select the number of seconds to wait between pings."
-msgstr ""
+msgstr "Seleziona il numero di secondi da attendere tra un ping e l'altro"
 
 #: src/usr/local/www/system_advanced_notifications.php:94
 msgid "Certificate Expiration Threshold must be a positive integer"
-msgstr ""
+msgstr "Certificate Expiration Threshold deve essere un numero positivo"
 
 #: src/usr/local/www/system_advanced_notifications.php:99
 msgid "Please enter valid E-Mail server address."
-msgstr ""
+msgstr "Si prega di Inserire un indirizzo valido per il server E-mail"
 
 #: src/usr/local/www/system_advanced_notifications.php:105
 msgid "Please enter valid SMTP port of E-Mail server address."
 msgstr ""
+"Si prega di Inserire una porta SMTP valida per l'indirizzo del server E-mail"
 
 #: src/usr/local/www/system_advanced_notifications.php:123
 msgid "Please enter valid connection timeout."
-msgstr ""
+msgstr "Si prega di Inserire un timeout valido per la connessione"
 
 #: src/usr/local/www/system_advanced_notifications.php:129
 msgid "Please enter valid notification E-Mail address."
-msgstr ""
+msgstr "Si prega di Inserire un indirizzo E-mail valido per le notifiche"
 
 #: src/usr/local/www/system_advanced_notifications.php:142
 msgid "SMTP passwords must match"
@@ -29633,7 +29868,7 @@ msgstr "Le password SMTP devono corrispondere"
 
 #: src/usr/local/www/system_advanced_notifications.php:148
 msgid "Please select valid authentication mechanism."
-msgstr ""
+msgstr "Si prega di Selezionare una meccanismo valido per l'autenticazione"
 
 #: src/usr/local/www/system_advanced_notifications.php:182
 #, php-format
@@ -29648,23 +29883,28 @@ msgstr "E-mail di test SMTP inviata con successo"
 
 #: src/usr/local/www/system_advanced_notifications.php:219
 msgid "Certificate Expiration"
-msgstr ""
+msgstr "Scadenza Certificato"
 
 #: src/usr/local/www/system_advanced_notifications.php:222
 msgid ""
 "When enabled, the firewall will check CA and Certificate expiration times "
 "daily and file notices when expired or soon-to-expire entries are detected."
 msgstr ""
+"Se abilitato, il firewall controlla quotidianamente i tempi di scadenza "
+"della CA e del certificato e rileva i file quando vengono rilevate voci "
+"scadute o in scadenza."
 
 #: src/usr/local/www/system_advanced_notifications.php:227
 msgid "Certificate Expiration Threshold"
-msgstr ""
+msgstr "Soglia di scadenza del certificato"
 
 #: src/usr/local/www/system_advanced_notifications.php:231
 msgid ""
 "The number of days at which a certificate lifetime is considered to be "
 "expiring soon and worthy of notification. Default is 30 days."
 msgstr ""
+"Il numero di giorni in cui si ritiene che una durata del certificato scada "
+"presto e che meriti una notifica. L'impostazione predefinita è 30 giorni."
 
 #: src/usr/local/www/system_advanced_notifications.php:237
 msgid "E-Mail"
@@ -30152,7 +30392,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:563
 msgid "OCSP URL must be a valid URL address."
-msgstr ""
+msgstr "OCSP URL deve essere un indirizzo URL valido."
 
 #: src/usr/local/www/vpn_openvpn_server.php:728
 #, php-format
@@ -30193,11 +30433,11 @@ msgstr "La porta usata da OpenVPN per ricevere le connessioni dei client."
 
 #: src/usr/local/www/vpn_openvpn_server.php:948
 msgid "OCSP Check"
-msgstr ""
+msgstr "OCSP Check"
 
 #: src/usr/local/www/vpn_openvpn_server.php:955
 msgid "OCSP URL"
-msgstr ""
+msgstr "OCSP URL"
 
 #: src/usr/local/www/vpn_openvpn_server.php:966
 #: src/usr/local/www/vpn_openvpn_server.php:2123
@@ -30205,6 +30445,8 @@ msgid ""
 "Warning: The selected server certificate was not created as an SSL/TLS "
 "Server certificate and may not work as expected"
 msgstr ""
+"Attenzione: Il certificato del server selezionato non è stato creato come "
+"certificato del server SSL/TLS e potrebbe non funzionare come previsto"
 
 #: src/usr/local/www/vpn_openvpn_server.php:970
 #, php-format
@@ -30629,7 +30871,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1531
 msgid "Username as Common Name"
-msgstr ""
+msgstr "Username come Common Name"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1534
 msgid ""
@@ -30637,6 +30879,10 @@ msgid ""
 "the client will be used in place of the certificate common name for purposes "
 "such as determining Client Specific Overrides."
 msgstr ""
+"Quando un utente esegue l'autenticazione, se questa opzione è abilitata, il "
+"nome utente del client verrà utilizzato al posto del nome comune del "
+"certificato per scopi quali la determinazione di sostituzioni specifiche del "
+"client."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1550
 msgid ""
@@ -30647,6 +30893,13 @@ msgid ""
 "Tunnel Network, this value controls how many times this instance will "
 "attempt to send the exit notification."
 msgstr ""
+"Invia una notifica di uscita esplicita ai client / peer connessi al riavvio "
+"o allo spegnimento, in modo che possano disconnettersi immediatamente "
+"anziché attendere un timeout. Nelle modalità Server SSL/TLS, i client "
+"possono essere indirizzati a riconnettersi o utilizzare il server successivo."
+" Nella chiave condivisa peer-to-peer o con una rete tunnel / 30, questo "
+"valore controlla quante volte questa istanza tenterà di inviare la notifica "
+"di uscita."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1591
 msgid ""
@@ -30675,15 +30928,15 @@ msgstr "Crypto"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1672
 msgid "Edit Server"
-msgstr ""
+msgstr "Modifica Server"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1673
 msgid "Copy Server"
-msgstr ""
+msgstr "Copia Server"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1674
 msgid "Delete Server"
-msgstr ""
+msgstr "Elimina Server"
 
 #: src/usr/local/www/services_dyndns.php:47
 msgid "Dynamic DNS client deleted."
@@ -31054,6 +31307,9 @@ msgid ""
 "Check this to require availability of a fresh CRL for peer authentication "
 "based on certificate signatures to succeed."
 msgstr ""
+"Abilita questo per richiedere la disponibilità di un nuovo CRL per "
+"l'autenticazione peer basata sulle firme dei certificati per ottenere esito "
+"positivo."
 
 #: src/usr/local/www/vpn_ipsec_settings.php:342
 msgid "Make before Break"
@@ -31141,7 +31397,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:126
 msgid "Invalid Log Message Format."
-msgstr ""
+msgstr "Formato del messaggio di Log non valido"
 
 #: src/usr/local/www/status_logs_settings.php:130
 msgid "Invalid log compression type."
@@ -31218,7 +31474,7 @@ msgstr "Opzioni di registrazione generali"
 
 #: src/usr/local/www/status_logs_settings.php:267
 msgid "Log Message Format"
-msgstr ""
+msgstr "Formato Messaggio di Log"
 
 #: src/usr/local/www/status_logs_settings.php:270
 #, php-format
@@ -31227,6 +31483,9 @@ msgid ""
 "syslog servers (if enabled).%sChanging this value will only affect new log "
 "messages."
 msgstr ""
+"Il formato dei messaggi syslog scritti sul disco localmente e inviati ai "
+"server syslog remoti (se abilitati).%s La modifica di questo valore influirà "
+"solo sui nuovi messaggi di registro."
 
 #: src/usr/local/www/status_logs_settings.php:287
 msgid ""
@@ -31604,11 +31863,11 @@ msgstr "Tutte le voci di Dyn DNS sono nascoste."
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:176
 msgid "No mobile leases"
-msgstr ""
+msgstr "Nessun lease mobile"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:179
 msgid "No mobile pools configured"
-msgstr ""
+msgstr "Nessun pools mobile configurato"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:192
 msgid "Mobile"
@@ -32242,7 +32501,7 @@ msgstr "Elimina interfaccia LAGG"
 
 #: src/usr/local/www/status_dhcp_leases.php:166
 msgid "Client ID"
-msgstr ""
+msgstr "Client ID"
 
 #: src/usr/local/www/status_dhcp_leases.php:284
 #: src/usr/local/www/status_dhcp_leases.php:285
@@ -32445,11 +32704,11 @@ msgstr "FQDN"
 
 #: src/usr/local/www/status_graph.php:197
 msgid "rate (standard)"
-msgstr ""
+msgstr "rate (standard)"
 
 #: src/usr/local/www/status_graph.php:198
 msgid "iftop (experimental)"
-msgstr ""
+msgstr "iftop (sperimentale)"
 
 #: src/usr/local/www/status_graph.php:204
 msgid "Controls"
@@ -33048,11 +33307,11 @@ msgstr "Indirizzo IP peer"
 
 #: src/etc/inc/ipsec.inc:193
 msgid "Hybrid Certificate + Xauth"
-msgstr ""
+msgstr "Hybrid Certificate + Xauth"
 
 #: src/etc/inc/ipsec.inc:194
 msgid "Mutual Certificate + Xauth"
-msgstr ""
+msgstr "Mutual Certificate + Xauth"
 
 #: src/etc/inc/ipsec.inc:195
 msgid "Mutual PSK + Xauth"
@@ -33072,11 +33331,11 @@ msgstr "EAP-MSChapv2"
 
 #: src/etc/inc/ipsec.inc:199
 msgid "Mutual Certificate"
-msgstr ""
+msgstr "Mutual Certificate"
 
 #: src/etc/inc/ipsec.inc:200
 msgid "Mutual Certificate (PKCS#11)"
-msgstr ""
+msgstr "Mutual Certificate (PKCS#11)"
 
 #: src/etc/inc/ipsec.inc:201
 msgid "Mutual PSK"
@@ -33269,6 +33528,8 @@ msgid ""
 "Error: Invalid phase1 PKCS#11 certificate reference or PKCS#11 is not "
 "present for %s"
 msgstr ""
+"Errore: Phase1 PKCS#11 certificato di referenza non valido o PKCS#11 non "
+"presente per %s"
 
 #: src/etc/inc/ipsec.inc:2500
 #, php-format
@@ -33318,7 +33579,7 @@ msgstr "Route statiche: next-hop non trovato a %s"
 
 #: src/etc/inc/system.inc:1036
 msgid "Creating SSL/TLS Certificate for this host"
-msgstr ""
+msgstr "Creazione certificato SSL/TLS per questo host"
 
 #: src/etc/inc/system.inc:1040
 #, php-format
@@ -33335,7 +33596,7 @@ msgstr ""
 #: src/etc/inc/system.inc:1059
 #, php-format
 msgid "Generated new self-signed SSL/TLS certificate for HTTPS (%s)"
-msgstr ""
+msgstr "Genera nuovo certificato SSL/TLS autofirmato per HTTPS (%s)"
 
 #: src/etc/inc/system.inc:1067
 msgid "Starting webConfigurator..."
@@ -33377,11 +33638,11 @@ msgstr "Ometti (Non settare)"
 #: src/etc/inc/system.inc:1633
 #, php-format
 msgid "Autoset GPS baud rate to %s"
-msgstr ""
+msgstr "AutoImposta GPS baund rate a %s"
 
 #: src/etc/inc/system.inc:1640
 msgid "Could not find correct GPS baud rate."
-msgstr ""
+msgstr "Impossibile trovare un valore corretto per GPS baund rate"
 
 #: src/etc/inc/system.inc:2037
 #, php-format
@@ -33501,38 +33762,38 @@ msgstr "indirizzo email"
 #: src/etc/inc/certs.inc:1913
 #, php-format
 msgid "Restarting %s %s due to certificate change"
-msgstr ""
+msgstr "Riavvio %s %s a causa di un cambio certificato "
 
 #: src/etc/inc/certs.inc:1919 src/etc/inc/certs.inc:1936
 msgid "service"
-msgstr ""
+msgstr "Servizio"
 
 #: src/etc/inc/certs.inc:1944
 msgid "package"
-msgstr ""
+msgstr "Pacchetto"
 
 #: src/etc/inc/certs.inc:2010
 #, php-format
 msgid "%d %s until expiration"
-msgstr ""
+msgstr "%d %s alla scadenza"
 
 #: src/etc/inc/certs.inc:2014
 #, php-format
 msgid "Expiring soon, in %d %s"
-msgstr ""
+msgstr "Scadenza imminente in %d %s"
 
 #: src/etc/inc/certs.inc:2018
 #, php-format
 msgid "Expired %d %s ago"
-msgstr ""
+msgstr "Scaduto %d %s fa"
 
 #: src/etc/inc/certs.inc:2020 src/etc/inc/certs.inc:2183
 msgid "day"
-msgstr ""
+msgstr "giorno"
 
 #: src/etc/inc/certs.inc:2020 src/etc/inc/certs.inc:2183
 msgid "days"
-msgstr ""
+msgstr "giorni"
 
 #: src/etc/inc/certs.inc:2056
 msgid "Valid From"
@@ -33572,63 +33833,63 @@ msgstr "Must Staple"
 
 #: src/etc/inc/certs.inc:2135
 msgid "Key Type: "
-msgstr ""
+msgstr "Key Type: "
 
 #: src/etc/inc/certs.inc:2139
 msgid "Key Size: "
-msgstr ""
+msgstr "Key Size: "
 
 #: src/etc/inc/certs.inc:2146
 msgid "Elliptic curve name:"
-msgstr ""
+msgstr "Nome curva Ellittica"
 
 #: src/etc/inc/certs.inc:2154
 msgid "DN: "
-msgstr ""
+msgstr "DN: "
 
 #: src/etc/inc/certs.inc:2161
 msgid "Hash: "
-msgstr ""
+msgstr "Hash: "
 
 #: src/etc/inc/certs.inc:2168
 msgid "Subject Key ID: "
-msgstr ""
+msgstr "Subject Key ID: "
 
 #: src/etc/inc/certs.inc:2175
 msgid "Authority Key ID: "
-msgstr ""
+msgstr "Authority Key ID: "
 
 #: src/etc/inc/certs.inc:2182
 msgid "Total Lifetime: "
-msgstr ""
+msgstr "Total Lifetime: "
 
 #: src/etc/inc/certs.inc:2189
 msgid "Lifetime Remaining: "
-msgstr ""
+msgstr "Lifetime Rimanente:"
 
 #: src/etc/inc/certs.inc:2195
 msgid "Trust Store: "
-msgstr ""
+msgstr "Trust Store: "
 
 #: src/etc/inc/certs.inc:2196
 msgid "Included"
-msgstr ""
+msgstr "Incluso"
 
 #: src/etc/inc/certs.inc:2196
 msgid "Excluded"
-msgstr ""
+msgstr "Escluso"
 
 #: src/etc/inc/certs.inc:2201
 msgid "Next Serial: "
-msgstr ""
+msgstr "Prossimo Seriale:"
 
 #: src/etc/inc/certs.inc:2202
 msgid "Randomized"
-msgstr ""
+msgstr "Randomizzato"
 
 #: src/etc/inc/certs.inc:2262
 msgid "The following CA/Certificate entries are expiring:"
-msgstr ""
+msgstr "I seguenti CA/certificati sono scaduti:"
 
 #: src/etc/inc/xmlreader.inc:163
 #, php-format
@@ -33801,6 +34062,7 @@ msgstr "Avvio il servizio UPnP..."
 #: src/etc/inc/acb.inc:295
 msgid "An error occurred while uploading your pfSense configuration to "
 msgstr ""
+"Si è presentato un errore nel caricare la configurazione di pfSense in"
 
 #: src/etc/inc/service-utils.inc:249
 msgid "Router Advertisement Daemon"
@@ -33808,7 +34070,7 @@ msgstr "Demone Router Advertisement"
 
 #: src/etc/inc/service-utils.inc:269
 msgid "PC/SC Smart Card Daemon"
-msgstr ""
+msgstr "PC/SC Smart Card Daemon"
 
 #: src/etc/inc/service-utils.inc:274
 msgid "NTP clock sync"
@@ -34004,7 +34266,7 @@ msgstr "Login non valido"
 
 #: src/etc/inc/auth.inc:1383
 msgid "Invalid credentials."
-msgstr ""
+msgstr "Credenziali Invalide"
 
 #: src/etc/inc/auth.inc:1388
 msgid "ERROR! unable to find ldap_connect() function."
@@ -34061,7 +34323,7 @@ msgstr ""
 #: src/etc/inc/auth.inc:1548
 #, php-format
 msgid "Extended group search resulted in error: %s"
-msgstr ""
+msgstr "Ricerca gruppi estesa ha causato un errore: %s"
 
 #: src/etc/inc/auth.inc:1552
 #, php-format
@@ -34071,7 +34333,7 @@ msgstr "La ricerca ha generato un errore: %s"
 #: src/etc/inc/auth.inc:1558
 #, php-format
 msgid "LDAP group search: %s results."
-msgstr ""
+msgstr "Ricerca gruppi LDAP: %s risultati."
 
 #: src/etc/inc/auth.inc:1576
 #, php-format
@@ -34108,6 +34370,8 @@ msgid ""
 "Logged in successfully as %1$s but did not match any field in extended query."
 ""
 msgstr ""
+"Loggato con successo come %1$s ma non corrisponde ad alcun campo nella query "
+"estesa."
 
 #: src/etc/inc/auth.inc:1633
 msgid ""
@@ -34335,16 +34599,16 @@ msgstr "ping-exit -- Chiudi OpenVPN dopo il timeout"
 
 #: src/etc/inc/openvpn.inc:174
 msgid "Reconnect to this server / Retry once"
-msgstr ""
+msgstr "Riconnetti a questo server / Riprova una volta"
 
 #: src/etc/inc/openvpn.inc:175
 msgid "Reconnect to next server / Retry twice"
-msgstr ""
+msgstr "Riconnetti al prossimo server / Riprova due volte"
 
 #: src/etc/inc/openvpn.inc:183
 #, php-format
 msgid "Retry %dx"
-msgstr ""
+msgstr "Tentativi: %dx"
 
 #: src/etc/inc/openvpn.inc:271
 msgid "None (Username and/or Password required)"
@@ -34833,7 +35097,7 @@ msgstr "Ritardo deve essere un intero."
 
 #: src/etc/inc/shaper.inc:3849
 msgid "Delay must be an integer between 0 and 10000."
-msgstr ""
+msgstr "Il ritardo deve essere un numero intero compreso tra 0 e 10000."
 
 #: src/etc/inc/shaper.inc:3855
 msgid "Selected scheduler not recognized."
@@ -35386,11 +35650,11 @@ msgstr "Cinese (semplificato)"
 
 #: src/etc/inc/pfsense-utils.inc:3110
 msgid "Chinese (Simplified, Hong Kong SAR China)"
-msgstr ""
+msgstr "Chinese (Simplified, Hong Kong SAR China)"
 
 #: src/etc/inc/pfsense-utils.inc:3111
 msgid "Chinese (Traditional, Taiwan)"
-msgstr ""
+msgstr "Chinese (Traditional, Taiwan)"
 
 #: src/etc/inc/pfsense-utils.inc:3112
 msgid "Dutch"
@@ -35410,7 +35674,7 @@ msgstr "Tedesco (Germania)"
 
 #: src/etc/inc/pfsense-utils.inc:3116
 msgid "Italian"
-msgstr ""
+msgstr "Italiano"
 
 #: src/etc/inc/pfsense-utils.inc:3117
 msgid "Korean"
@@ -35559,7 +35823,7 @@ msgstr "Errore: impossibile aprire mpd.conf in vpn_l2tp_configure()."
 #: src/etc/inc/vpn.inc:435
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_l2tp_updatesecret()."
-msgstr ""
+msgstr "Errore: impossibile aprire mpd.secret in vpn_l2tp_updatesecret()."
 
 #: src/etc/inc/xmlparse_attr.inc:74 src/etc/inc/xmlparse.inc:90
 #, php-format
@@ -36895,11 +37159,11 @@ msgstr "Errore XML: %1$s nella riga %2$d in %3$s"
 
 #: src/etc/inc/syslog.inc:36
 msgid "BSD (RFC 3164, default)"
-msgstr ""
+msgstr "BSD (RFC 3164, default)"
 
 #: src/etc/inc/syslog.inc:37
 msgid "syslog (RFC 5424, with RFC 3339 microsecond-precision timestamps)"
-msgstr ""
+msgstr "syslog (RFC 5424, with RFC 3339 microsecond-precision timestamps)"
 
 #: src/etc/inc/syslog.inc:176
 msgid "Starting syslog..."
@@ -38407,12 +38671,15 @@ msgstr "Permetti l'accesso alla pagina 'Sistema: Gestore Certificati'."
 #: src/etc/inc/priv.defs.inc:1074
 msgid "WebCfg - System: Certificate Manager: Renew or Reissue CA/Certificate"
 msgstr ""
+"WebCfg - Sistema: Certificate Manager: Rinnova or Riemetti CA/Certificate"
 
 #: src/etc/inc/priv.defs.inc:1075
 msgid ""
 "Allow access to the 'System: Certificate Manager: Renew or Reissue CA/"
 "Certificate' page."
 msgstr ""
+"Permetti l'accesso alla pagina 'Sistema: Certificate Manager: Rinnova o "
+"Riemetti CA/certificate'."
 
 #: src/etc/inc/priv.defs.inc:1080
 msgid "WebCfg - System: CRL Manager"
@@ -40602,7 +40869,7 @@ msgstr "a"
 
 #: src/usr/local/www/services_dhcpv6.php:720
 msgid "Provide DNS servers to DHCPv6 clients"
-msgstr ""
+msgstr "Fornisce server DNS ai client DHCPv6"
 
 #: src/usr/local/www/services_dhcpv6.php:758
 msgid "Change DHCPv6 display lease time from UTC to local time"
@@ -40632,7 +40899,7 @@ msgstr "Abilita avvio da rete"
 
 #: src/usr/local/www/services_router_advertisements.php:461
 msgid "Provide DNS configuration via radvd"
-msgstr ""
+msgstr "Fornisce configurazione DNS via radvd"
 
 #: src/usr/local/www/services_router_advertisements.php:469
 msgid "Use same settings as DHCPv6 server"
@@ -40793,7 +41060,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1151
 msgid "Generate New Key"
-msgstr ""
+msgstr "Genera Nuova Chiave"
 
 #: src/usr/local/www/services_dhcp.php:1223
 msgid "Enable Static ARP entries"
@@ -40980,7 +41247,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:183
 msgid "synchronize admin accounts and autoupdate sync password."
-msgstr ""
+msgstr "sincronizza account admin e autoaggiorna password sincronizzate"
 
 #: src/usr/local/www/system_hasync.php:195
 msgid "User manager users and groups"
@@ -41129,10 +41396,12 @@ msgstr ""
 #: src/usr/local/www/system_camanager.php:595
 msgid "Add this Certificate Authority to the Operating System Trust Store"
 msgstr ""
+"Aggiungi questo Certificato di Autorità al Trust Store del sistema operativo "
+""
 
 #: src/usr/local/www/system_camanager.php:603
 msgid "Use random serial numbers when signing certifices"
-msgstr ""
+msgstr "Utilizza numeri seriali random per firmare i certificati"
 
 #: src/usr/local/www/services_snmp.php:216
 msgid "Enable the SNMP Daemon and its controls"
@@ -41184,7 +41453,7 @@ msgstr "Forza la risoluzione DNS IPv4"
 
 #: src/usr/local/www/services_dyndns_edit.php:371
 msgid "Verify SSL/TLS Certificate Trust"
-msgstr ""
+msgstr "Verifica SSL/TLS Certificate Trust"
 
 #: src/usr/local/www/system_advanced_firewall.php:438
 msgid "Clear invalid DF bits instead of dropping the packets"
@@ -41228,7 +41497,7 @@ msgstr "Disattiva la regola di negazione sulla politica regole di routing"
 
 #: src/usr/local/www/system_advanced_firewall.php:582
 msgid "Allow APIPA traffic"
-msgstr ""
+msgstr "Permetti traffico APIPA"
 
 #: src/usr/local/www/system_advanced_firewall.php:599
 msgid "Verify HTTPS certificates when downloading alias URLs"
@@ -41358,7 +41627,7 @@ msgstr "Emetti indirizzi IP attraverso server RADIUS."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:486
 msgid "Enable RADIUS Accounting"
-msgstr ""
+msgstr "Abilita Accounting RADIUS"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:501
 msgid "Provide a virtual IP address to clients"
@@ -41372,6 +41641,8 @@ msgstr "Fornisci un indirizzo IPv6 virtuale ai clients"
 msgid ""
 "IPv4/IPv6 address pool is used if address is not supplied by RADIUS server"
 msgstr ""
+"IPv4/IPv6 address pool è utilizzato se l'indirizzo non è fornito dal server "
+"RADIUS"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:582
 msgid "Provide a list of accessible networks to clients"
@@ -41433,7 +41704,7 @@ msgstr "HTTP"
 
 #: src/usr/local/www/system_advanced_admin.php:419
 msgid "HTTPS (SSL/TLS)"
-msgstr ""
+msgstr "HTTPS (SSL/TLS)"
 
 #: src/usr/local/www/system_advanced_admin.php:460
 msgid "Disable webConfigurator redirect rule"
@@ -41671,7 +41942,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1388
 msgid "Invert match"
-msgstr ""
+msgstr "Inverti abbinamento"
 
 #: src/usr/local/www/firewall_rules_edit.php:1515
 msgid "Log packets that are handled by this rule"
@@ -41691,7 +41962,7 @@ msgstr "Disabilita risposta automatica generata per questa regola."
 
 #: src/usr/local/www/firewall_rules_edit.php:1591
 msgid "Invert"
-msgstr ""
+msgstr "Inverti"
 
 #: src/usr/local/www/firewall_rules_edit.php:1665
 msgid "Prevent states created by this rule to be sync'ed over pfsync."
@@ -41802,6 +42073,8 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:433
 msgid "Check baud rate before sending init commands (default: unchecked)."
 msgstr ""
+"Controlla baud rate prima di inviare i comandi di inizializzazione (default: "
+"non abilitato)"
 
 #: src/usr/local/www/services_ntpd_gps.php:456
 msgid "Process PGRMF. Ignores ALL other NMEA sentences. (default: unchecked)."
@@ -41885,11 +42158,11 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager_renew.php:167
 msgid "Use the existing key"
-msgstr ""
+msgstr "Usa la chiave esistente"
 
 #: src/usr/local/www/system_certmanager_renew.php:174
 msgid "Enforce strict security parameters"
-msgstr ""
+msgstr "Rafforza i parametri di sicurezza "
 
 #: src/usr/local/www/services_captiveportal.php:509
 msgid "Enable Captive Portal"
@@ -42029,6 +42302,10 @@ msgid ""
 "traffic will follow the default route without regard for the chosen "
 "interface. Static routes can override this behavior."
 msgstr ""
+"Abilitare per consentire più configurazioni di fase 1 con lo stesso endpoint."
+" Se abilitato, pfSense non gestisce il routing al gateway remoto e il "
+"traffico seguirà il percorso predefinito indipendentemente dall'interfaccia "
+"scelta. Le route statiche possono ignorare questo comportamento."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:985
 msgid ""
@@ -42042,7 +42319,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:992
 msgid "Enable manual Pseudo-Random Function (PRF) selection"
-msgstr ""
+msgstr "Abilita selezione manuale Pseudo-Random Function (PRF)"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:1018
 msgid "Enable DPD"
@@ -42116,7 +42393,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:477
 msgid "Enable DNS64 (RFC 6147)"
-msgstr ""
+msgstr "Abilita DNS64 (RFC 6147)"
 
 #: src/usr/local/www/interfaces_gif_edit.php:207
 msgid ""
@@ -42323,7 +42600,7 @@ msgstr "Abilita autenticazione 802.1X"
 
 #: src/usr/local/www/system_advanced_notifications.php:220
 msgid "Enable daily notifications of expired and soon-to-expire certificates"
-msgstr ""
+msgstr "Abilita notifiche giornaliere per i certificati scaduti o in scadenza"
 
 #: src/usr/local/www/system_advanced_notifications.php:242
 msgid "Disable SMTP Notifications"
@@ -42361,7 +42638,7 @@ msgstr "Disabilita questo server"
 
 #: src/usr/local/www/vpn_openvpn_server.php:949
 msgid "Check client certificates with OCSP"
-msgstr ""
+msgstr "Controlla i certificati client con OCSP"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1103
 msgid "Enforce match"
@@ -42449,6 +42726,8 @@ msgid ""
 "Use the authenticated client username instead of the certificate common name "
 "(CN)."
 msgstr ""
+"Utilizza il nome utente del client autenticato invece che il certificato "
+"common name (CN)"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:277
 msgid "Enable IPCompression"

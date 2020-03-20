@@ -2302,6 +2302,9 @@ function interface_ppps_configure($interface) {
 	if (isset($ppp['mrru'])) {
 		$mrrus = explode(',', $ppp['mrru']);
 	}
+	if (!empty($ifcfg['ipaddrv6'])) {
+		$ipv6cp = "set bundle enable ipv6cp";
+	}
 
 	// Construct the mpd.conf file
 	$mpdconf = <<<EOD
@@ -2314,7 +2317,7 @@ startup:
 default:
 {$ppp['type']}client:
 	create bundle static {$interface}
-	set bundle enable ipv6cp
+	{$ipv6cp}
 	set iface name {$pppif}
 
 EOD;

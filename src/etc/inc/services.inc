@@ -534,6 +534,22 @@ function services_dhcpdv4_configure() {
 				}
 			}
 		}
+		if (is_array($dhcpifconf['staticmap'])) {
+			$i = 0;
+			foreach ($dhcpifconf['staticmap'] as $sm) {
+				if (is_array($sm['numberoptions']) && is_array($sm['numberoptions']['item'])) {
+					foreach ($sm['numberoptions']['item'] as $itemidx => $item) {
+						if (!empty($item['type'])) {
+							$itemtype = $item['type'];
+						} else {
+							$itemtype = "text";
+						}
+						$custoptions .= "option custom-s_{$dhcpif}_{$i}-{$itemidx} code {$item['number']} = {$itemtype};\n";
+					}
+				}
+				$i++;
+			}
+		}
 	}
 
 	$dhcpdconf = <<<EOD
@@ -1200,6 +1216,47 @@ EOD;
 				// tftp-server-name
 				if (!empty($sm['tftp']) && ($sm['tftp'] != $dhcpifconf['tftp'])) {
 					$dhcpdconf .= "	option tftp-server-name \"{$sm['tftp']}\";\n";
+				}
+
+				// Handle option, number rowhelper values
+				$dhcpdconf .= "\n";
+				if (isset($sm['numberoptions']['item']) && is_array($sm['numberoptions']['item'])) {
+					foreach ($sm['numberoptions']['item'] as $itemidx => $item) {
+						$item_value = base64_decode($item['value']);
+						if (empty($item['type']) || $item['type'] == "text") {
+							$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$itemidx} \"{$item_value}\";\n";
+						} else {
+							$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$itemidx} {$item_value};\n";
+						}
+					}
+				}
+
+				// ldap-server
+				if (!empty($sm['ldap']) && ($sm['ldap'] != $dhcpifconf['ldap'])) {
+					$dhcpdconf .= "	option ldap-server \"{$sm['ldap']}\";\n";
+				}
+
+				// net boot information
+				if (isset($sm['netboot'])) {
+					if ($sm['nextserver'] <> "") {
+						$dhcpdconf .= "	next-server {$sm['nextserver']};\n";
+					}
+					if (!empty($sm['filename']) && !empty($sm['filename32']) && !empty($sm['filename64'])) {
+						$dhcpdconf .= "	if option arch = 00:06 {\n";
+						$dhcpdconf .= "		filename \"{$sm['filename32']}\";\n";
+						$dhcpdconf .= "	} else if option arch = 00:07 {\n";
+						$dhcpdconf .= "		filename \"{$sm['filename64']}\";\n";
+						$dhcpdconf .= "	} else if option arch = 00:09 {\n";
+						$dhcpdconf .= "		filename \"{$sm['filename64']}\";\n";
+						$dhcpdconf .= "	} else {\n";
+						$dhcpdconf .= "		filename \"{$sm['filename']}\";\n";
+						$dhcpdconf .= "	}\n\n";
+					} elseif (!empty($sm['filename'])) {
+						$dhcpdconf .= "	filename \"{$sm['filename']}\";\n";
+					}
+					if (!empty($dhcpifconf['rootpath'])) {
+						$dhcpdconf .= "	option root-path \"{$sm['rootpath']}\";\n";
+					}
 				}
 
 				$dhcpdconf .= "}\n";

@@ -47,6 +47,7 @@ $a_phase2 = &$config['ipsec']['phase2'];
 
 if ($_POST['apply']) {
 	$ipsec_dynamic_hosts = ipsec_configure();
+	ipsec_reload_package_hook();
 	/* reload the filter in the background */
 	$retval = 0;
 	$retval |= filter_configure();

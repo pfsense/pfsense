@@ -7162,4 +7162,14 @@ function create_interface_list() {
 	return($iflist);
 }
 
+function is_pseudo_interface($inf) {
+	$psifs = array('ovpn', 'ipsec', 'l2tp', 'pptp', 'gif', 'gre', 'ppp', 'pppoe');
+	foreach ($psifs as $pif) {
+		if (substr($inf, 0, strlen($pif)) == $pif) {
+			return true;
+		}
+	}
+	return false;
+}
+
 ?>

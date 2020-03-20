@@ -213,7 +213,8 @@ print $form;
 		$arr[] = array("filter" => $_POST['filter']);
 	}
 
-	if (isset($_POST['filter']) || !isset($config['system']['webgui']['requirestatefilter'])) {
+	if (isset($_POST['filter']) || isset($_REQUEST['ruleid']) ||
+	    !isset($config['system']['webgui']['requirestatefilter'])) {
 		if (count($arr) > 0) {
 			$res = pfSense_get_pf_states($arr);
 		} else {
@@ -273,7 +274,8 @@ print $form;
 if ($states == 0) {
 	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
 		$errmsg = gettext('No states were found that match the current filter.');
-	} else if (!isset($_POST['filter']) && isset($config['system']['webgui']['requirestatefilter'])) {
+	} else if (!isset($_POST['filter']) && !isset($_REQUEST['ruleid']) &&
+	    isset($config['system']['webgui']['requirestatefilter'])) {
 		$errmsg = gettext('State display suppressed without filter submission. '.
 		'See System > General Setup, Require State Filter.');
 	} else {

@@ -1723,12 +1723,19 @@ function system_ntp_configure() {
 	$ntpcfg .= "tinker panic 0 \n";
 
 	/* Add Orphan mode */
-	$ntpcfg .= "# Orphan mode stratum\n";
+	$ntpcfg .= "# Orphan mode stratum and Maximum candidate NTP peers\n";
 	$ntpcfg .= 'tos orphan ';
 	if (!empty($config['ntpd']['orphan'])) {
 		$ntpcfg .= $config['ntpd']['orphan'];
 	} else {
 		$ntpcfg .= '12';
+	}
+	/* Add Maximum candidate NTP peers */
+	$ntpcfg .= ' maxclock ';
+	if (!empty($config['ntpd']['ntpmaxpeers'])) {
+		$ntpcfg .= $config['ntpd']['ntpmaxpeers'];
+	} else {
+		$ntpcfg .= '5';
 	}
 	$ntpcfg .= "\n";
 

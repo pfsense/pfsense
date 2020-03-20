@@ -1616,7 +1616,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 	}
 
 	/* Reuse SAN list, or, if empty, add CN as SAN. */
-	$sans = $cert_details['extensions']['subjectAltName'];
+	$sans = str_replace("IP Address", "IP", $cert_details['extensions']['subjectAltName']);
 	if (empty($sans)) {
 		$sans = cert_add_altname_type($dn['commonName']);
 	}

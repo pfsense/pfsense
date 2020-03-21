@@ -3999,7 +3999,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if ($wantedmtu == 0) {
 		$wantedmtu = interface_mtu_wanted_for_pppoe($mtuif);
 	}
-	if (($wantedmtu == 0) && interface_is_vlan($mtuif) != NULL && interface_isppp_type($interface)) {
+	if (($wantedmtu == 0) && (interface_is_vlan($mtuif) != NULL) && interface_isppp_type($interface)) {
 		$wantedmtu = interface_mtu_wanted_for_pppoe($mtuhwif);
 	}
 	if (($wantedmtu == 0) && interface_is_type($mtuif, 'gre')) {
@@ -6754,7 +6754,8 @@ function get_wireless_channel_info($interface) {
 function set_interface_mtu($interface, $mtu) {
 
 	/* LAGG interface must be destroyed and re-created to change MTU */
-	if (substr($interface, 0, 4) == 'lagg') {
+	if ((substr($interface, 0, 4) == 'lagg') &&
+	    (!strstr($interface, "."))) {
 		if (isset($config['laggs']['lagg']) &&
 		    is_array($config['laggs']['lagg'])) {
 			foreach ($config['laggs']['lagg'] as $lagg) {

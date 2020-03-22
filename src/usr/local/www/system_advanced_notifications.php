@@ -80,7 +80,7 @@ if ($config['notifications']['smtp']['fromaddress']) {
 $pconfig['disablebeep'] = isset($config['system']['disablebeep']);
 
 // Telegram
-$pconfig['disable_telegram'] = isset($config['notifications']['telegram']['disable']);
+$pconfig['enable_telegram'] = isset($config['notifications']['telegram']['enabled']);
 if ($config['notifications']['telegram']['api']) {
 	$pconfig['api'] = $config['notifications']['telegram']['api'];
 }
@@ -175,14 +175,9 @@ if ($_POST) {
 			unset($config['system']['disablebeep']);
 		}
 		// Telegram
+		$config['notifications']['telegram']['enabled'] = ($_POST['enable_telegram'] == "yes") ? true : false;
 		$config['notifications']['telegram']['api'] = $_POST['api'];
 		$config['notifications']['telegram']['chatid'] = $_POST['chatid'];
-
-		if ($_POST['disable_telegram'] == "yes") {
-			$config['notifications']['telegram']['disable'] = true;
-		} else {
-			unset($config['notifications']['telegram']['disable']);
-		}
 
 		if (preg_replace("/[^a-zA-Z0-9_:\-]/", "", $config['notifications']['telegram']['api']) !== $config['notifications']['telegram']['api']) {
 			$input_errors[] = gettext("The only special characters permitted in the Telegram API string are _, - and :");
@@ -385,12 +380,11 @@ $form->add($section);
 $section = new Form_Section('Telegram');
 
 $section->addInput(new Form_Checkbox(
-	'disable_telegram',
-	'Disable Telegram',
-	'Disable Telegram Notifications',
-	$pconfig['disable_telegram']
-))->setHelp('Check this option to disable Telegram notifications but preserve the '.
-	'settings below.');
+	'enable_telegram',
+	'Enable Telegram',
+	'Enable Telegram Notifications',
+	$pconfig['enable_telegram']
+))->setHelp('Check this option to enable Telegram notifications.');
 
 $section->addInput(new Form_Input(
 	'api',
@@ -415,7 +409,7 @@ $section->addInput(new Form_Button(
 	null,
 	'fa-send'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
-	'marked as disabled.  The last SAVED values will be used, not necessarily the values entered here.');
+	'not enabled.  The last SAVED values will be used, not necessarily the values displayed here.');
 
 
 $form->add($section);

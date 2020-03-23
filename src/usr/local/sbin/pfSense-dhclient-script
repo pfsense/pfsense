@@ -297,11 +297,11 @@ notify_rc_newwanip() {
 #
 # Start of active code.
 #
+exit_status=0
 
 # Invoke the local dhcp client enter hooks, if they exist.
 if [ -f /etc/dhclient-enter-hooks ]; then
 	$LOGGER "dhclient-enter-hooks"
-	exit_status=0
 	. /etc/dhclient-enter-hooks
 	# allow the local script to abort processing of this state
 	# local script must set exit_status variable to nonzero.
@@ -370,6 +370,9 @@ EXPIRE|FAIL|RELEASE)
 	;;
 
 TIMEOUT)
+	# This case must exit zero only if the cached address
+	# is considered valid. See dhclient-script(8).
+	exit_status=1
 	delete_old_alias
 	add_new_address
 	/bin/sleep 1
@@ -384,19 +387,21 @@ TIMEOUT)
 			if add_new_resolv_conf; then
 				notify_rc_newwanip
 			fi
+			exit_status=0
 		fi
 	fi
-	$IFCONFIG $interface inet -alias $new_ip_address $medium
-	delete_old_routes
+	if [ $exit_status -ne 0 ]; then
+		$IFCONFIG $interface inet -alias $new_ip_address $medium
+		delete_old_routes
+	fi
 	;;
 esac
 
 # Invoke the local dhcp client exit hooks, if they exist.
 if [ -f /etc/dhclient-exit-hooks ]; then
 	$LOGGER "dhclient-exit-hooks"
-	exit_status=0
 	. /etc/dhclient-exit-hooks
 	# allow the local script to abort processing of this state
 	# local script must set exit_status variable to nonzero.
-	exit $exit_status
 fi
+exit $exit_status

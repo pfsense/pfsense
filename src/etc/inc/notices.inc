@@ -419,11 +419,11 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
  *   returns NULL if message was sent
  ******/
 
-function notify_via_telegram($message, $force = false){
+function notify_via_telegram($message, $force = false) {
 	global $config;
 	if ((!isset($config['notifications']['telegram']['enabled']) || (!$force))
-	|| (!$config['notifications']['telegram']['api'] || !$config['notifications']['telegram']['chatid'])){
-		if($force){
+	|| (!$config['notifications']['telegram']['api'] || !$config['notifications']['telegram']['chatid'])) {
+		if($force) {
 			$err_msg="Unable to test Telegram notification without both API Key & Chat ID set";
 			return $err_msg;
 		}
@@ -436,7 +436,7 @@ function notify_via_telegram($message, $force = false){
 		"text" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
 	);
 	$result = json_decode(curl_post_telegram($url . http_build_query($data)), true);
-	if(is_array($result)){
+	if(is_array($result)) {
 		if ($result['ok']) {
 			unset($err_msg);
 		} else {

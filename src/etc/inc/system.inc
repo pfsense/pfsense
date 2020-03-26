@@ -622,9 +622,16 @@ function system_dhcpleases_configure() {
 		}
 		@unlink($pidfile);
 		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['etc_path']}/hosts");
-	} elseif (isvalidpid($pidfile)) {
-		sigkillbypid($pidfile, "TERM");
-		@unlink($pidfile);
+	} else {
+		if (isvalidpid($pidfile)) {
+			sigkillbypid($pidfile, "TERM");
+			@unlink($pidfile);
+		}
+		if (file_exists("{$g['unbound_chroot_path']}/dhcpleases_entries.conf")) {
+			$dhcpleases = fopen("{$g['unbound_chroot_path']}/dhcpleases_entries.conf", "w");
+			ftruncate($dhcpleases, 0);
+			fclose($dhcpleases);
+		}
 	}
 }
 

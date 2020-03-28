@@ -1883,8 +1883,11 @@ function services_dhcrelay_configure() {
 	}
 	$srvifaces = array_unique($srvifaces);
 
-	/* The server interface(s) should not be in this list */
-	$dhcrelayifs = array_diff($dhcrelayifs, $srvifaces);
+	/* see https://redmine.pfsense.org/issues/10381 */
+	if ((count($dhcrelayifs) > 1) || (count($srvifaces) > 1)) {
+		/* The server interface(s) should not be in this list */
+		$dhcrelayifs = array_diff($dhcrelayifs, $srvifaces);
+	}
 
 	/* fire up dhcrelay */
 	if (empty($dhcrelayifs)) {

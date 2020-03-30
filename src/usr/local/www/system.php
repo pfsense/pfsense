@@ -250,8 +250,8 @@ if ($_POST) {
 	$_POST['timeservers'] = preg_replace('/[[:blank:]]+/', ' ', $_POST['timeservers']);
 	$_POST['timeservers'] = trim($_POST['timeservers']);
 	foreach (explode(' ', $_POST['timeservers']) as $ts) {
-		if (!is_domain($ts) && (!is_ipaddrv6($ts))) {
-			$input_errors[] = gettext("A NTP Time Server name may only contain the characters a-z, 0-9, '-', '.' and ':'.");
+		if (!is_domain($ts) && (!is_ipaddr($ts))) {
+			$input_errors[] = gettext("NTP Time Server names must be valid domain names, IPv4 addresses, or IPv6 addresses");
 		}
 	}
 

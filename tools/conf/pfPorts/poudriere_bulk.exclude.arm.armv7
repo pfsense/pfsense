@@ -1,7 +1,6 @@
 devel/aws-sdk-php
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
 graphics/drm-kmod
-net-mgmt/pfSense-pkg-Telegraf
 sysutils/%%PRODUCT_NAME%%-azure
 sysutils/%%PRODUCT_NAME%%-builder
 sysutils/%%PRODUCT_NAME%%-pkg-LCDproc

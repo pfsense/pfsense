@@ -43,7 +43,12 @@ require_once("filter.inc");
 if ($_REQUEST['generatekey']) {
 	$keyoutput = "";
 	$keystatus = "";
+	$more_char = "!?()[]{}#+-";
 	exec("/bin/dd status=none if=/dev/random bs=4096 count=1 | /usr/bin/openssl sha224 | /usr/bin/cut -f2 -d' '", $keyoutput, $keystatus);
+	while (strlen($keyoutput[0]) < 64) {
+		$keyoutput[0] .= substr($more_char, rand(0, strlen($more_char) - 1), 1);
+		$keyoutput[0] = str_shuffle($keyoutput[0]);
+	}
 	print json_encode(['pskey' => $keyoutput[0]]);
 	exit;
 }

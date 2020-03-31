@@ -422,8 +422,8 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 function notify_via_telegram($message, $force = false) {
 	global $config;
 	if ((!isset($config['notifications']['telegram']['enabled']) && (!$force))
-			|| !$config['notifications']['telegram']['api']
-			|| !$config['notifications']['telegram']['chatid']) {
+	    || !$config['notifications']['telegram']['api']
+	    || !$config['notifications']['telegram']['chatid']) {
 		if ($force) {
 			return gettext("Unable to test Telegram notification without both API Key & Chat ID set");
 		}

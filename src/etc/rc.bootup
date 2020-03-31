@@ -290,9 +290,7 @@ echo "done.\n";
 system_routing_enable();
 
 /* Enable ntpd */
-echo "Starting NTP time client...";
 system_ntp_configure();
-echo "done.\n";
 
 /* Configure console (and serial port - if necessary). */
 console_configure();

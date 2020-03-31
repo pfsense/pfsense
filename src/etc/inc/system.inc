@@ -1592,6 +1592,10 @@ function system_ntp_fixup_poll_value($type, $configvalue, $default) {
 function system_ntp_setup_gps($serialport) {
 	global $config, $g;
 
+	if (is_array($config['ntpd']) && ($config['ntpd']['enable'] == 'disabled')) {
+		return false;
+	}
+
 	init_config_arr(array('ntpd', 'gps', 'speed'));
 	$gps_device = '/dev/gps0';
 	$serialport = '/dev/'.$serialport;
@@ -1685,6 +1689,10 @@ function system_ntp_setup_pps($serialport) {
 	if (!file_exists($serialport)) {
 		return false;
 	}
+	// If ntpd is disabled, just return
+	if (is_array($config['ntpd']) && ($config['ntpd']['enable'] == 'disabled')) {
+		return false;
+	}
 
 	// Create symlink that ntpd requires
 	unlink_if_exists($pps_device);
@@ -1693,7 +1701,6 @@ function system_ntp_setup_pps($serialport) {
 
 	return true;
 }
-
 
 function system_ntp_configure() {
 	global $config, $g;
@@ -1709,6 +1716,20 @@ function system_ntp_configure() {
 
 	if (!is_array($config['ntpd'])) {
 		$config['ntpd'] = array();
+	}
+	// ntpd is disabled, just stop it and return
+	if ($config['ntpd']['enable'] == 'disabled') {
+		while (isvalidpid("{$g['varrun_path']}/ntpd.pid")) {
+			killbypid("{$g['varrun_path']}/ntpd.pid");
+		}
+		@unlink("{$g['varrun_path']}/ntpd.pid");
+		@unlink("{$g['varetc_path']}/ntpd.conf");
+		log_error("NTPD is disabled.");
+		return;
+	}
+
+	if (platform_booting()) {
+		echo gettext("Starting NTP Server...");
 	}
 
 	/* if ntpd is running, kill it */
@@ -2050,11 +2071,16 @@ function system_ntp_configure() {
 		mkdir("/var/empty", 0555, true);
 	}
 
-	/* start opentpd, set time now and use /var/etc/ntpd.conf */
+	/* start ntpd, set time now and use /var/etc/ntpd.conf */
 	mwexec("/usr/local/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf -p {$g['varrun_path']}/ntpd.pid", false, true);
 
 	// Note that we are starting up
 	log_error("NTPD is starting up.");
+
+	if (platform_booting()) {
+		echo gettext("done.") . "\n";
+	}
+
 	return;
 }
 

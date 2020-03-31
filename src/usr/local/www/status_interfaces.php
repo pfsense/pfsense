@@ -162,6 +162,14 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				}
 			}
 
+			if ($ifinfo['laggport']) {
+				$laggp = array();
+				foreach ($ifinfo['laggport'] as $lgp) {
+					list($laggp[]) = explode(" ", $lgp);
+				}
+				$laggport = implode(", ", $laggp);
+			}
+
 			showDef($ifinfo['mtu'], gettext("MTU"), $ifinfo['mtu']);
 			showDef($ifinfo['media'], gettext("Media"), $ifinfo['media']);
 			showDef($ifinfo['laggproto'], gettext("LAGG Protocol"), $ifinfo['laggproto']);

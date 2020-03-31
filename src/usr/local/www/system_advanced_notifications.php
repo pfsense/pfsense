@@ -392,7 +392,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['api'],
 	['placeholder' => '123456789:ABCDEabcde_FGHIJfghijKLMNOklmnoPQRST']
-))->setHelp('Enter the API key required to authenticate the the Telegram API server.');
+))->setHelp('Enter the API key required to authenticate with the Telegram API server.');
 
 $section->addInput(new Form_Input(
 	'chatid',
@@ -401,7 +401,7 @@ $section->addInput(new Form_Input(
 	$pconfig['chatid'],
 	['placeholder' => '123456789']
 
-))->setHelp('Enter the chat ID number(private) or channel @username(public) that will be used to send the notifications to.');
+))->setHelp('Enter the chat ID number (private) or channel @username (public) that will be used to send the notifications to.');
 
 $section->addInput(new Form_Button(
 	'test-telegram',

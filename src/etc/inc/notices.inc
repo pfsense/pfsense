@@ -421,11 +421,11 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 
 function notify_via_telegram($message, $force = false) {
 	global $config;
-	if ((!isset($config['notifications']['telegram']['enabled']) || (!$force))
-	|| (!$config['notifications']['telegram']['api'] || !$config['notifications']['telegram']['chatid'])) {
-		if($force) {
-			$err_msg="Unable to test Telegram notification without both API Key & Chat ID set";
-			return $err_msg;
+	if ((!isset($config['notifications']['telegram']['enabled']) && (!$force))
+			|| !$config['notifications']['telegram']['api']
+			|| !$config['notifications']['telegram']['chatid']) {
+		if ($force) {
+			return gettext("Unable to test Telegram notification without both API Key & Chat ID set");
 		}
 		return;
 	}
@@ -436,15 +436,15 @@ function notify_via_telegram($message, $force = false) {
 		"text" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
 	);
 	$result = json_decode(curl_post_telegram($url . http_build_query($data)), true);
-	if(is_array($result)) {
+	if (is_array($result)) {
 		if ($result['ok']) {
 			unset($err_msg);
 		} else {
-			$err_msg=sprintf(gettext("Failed to send Telegram notification. Error received was :{$result['error_code']}: {$result['description']}"));
+			$err_msg = sprintf(gettext("Failed to send Telegram notification. Error received was :{$result['error_code']}: {$result['description']}"));
 			log_error($err_msg);
 		}
 	} else {
-		$err_msg="API to Telegram did not return data in expected format!";
+		$err_msg = gettext("API to Telegram did not return data in expected format!");
 		log_error($err_msg);
 	}
 	return $err_msg;

@@ -80,10 +80,10 @@ $ipsec_log_cats = array(
 
 global $ipsec_identifier_list;
 $ipsec_identifier_list = array(
+	'none' => array('desc' => '', 'mobile' => true),
 	// 'ipv4' => array('desc' => gettext('IPv4 address'), 'mobile' => true),
 	// 'ipv6' => array('desc' => gettext('IPv6 address'), 'mobile' => true),
-	// 'rfc822' => array('desc' => gettext('RFC822'), 'mobile' => true),
-	'none' => array('desc' => '', 'mobile' => true),
+	'rfc822' => array('desc' => gettext('RFC822'), 'mobile' => true),
 	'email' => array('desc' => gettext('E-mail address'), 'mobile' => true),
 	'userfqdn' => array('desc' => gettext('User Fully Qualified Domain Name'), 'mobile' => true)
 	// 'fqdn' => array('desc' => gettext('Fully Qualified Domain Name'), 'mobile' => true),
@@ -204,7 +204,8 @@ $p1_authentication_methods = array(
 global $ipsec_preshared_key_type;
 $ipsec_preshared_key_type = array(
 	'PSK' => 'PSK',
-	'EAP' => 'EAP'
+	'EAP' => 'EAP',
+	'RSA' => 'RSA'
 );
 
 global $ipsec_closeactions;
@@ -1603,7 +1604,7 @@ function ipsec_setup_userpools() {
 		$upbase = "mobile-userpool-{$suffix}";
 		/* The full connection name including a reference to the primary
 		 * mobile connection */
-		$upconn = "con-{$upbase} : con-mobile-defaults";
+		$upconn = "con{$mkent['ikeid']}000-{$upbase} : con-mobile-defaults";
 		/* The full pool name including a reference to the primary
 		 * mobile pool */
 		$upname = "{$upbase} : mobile-pool";
@@ -1611,13 +1612,34 @@ function ipsec_setup_userpools() {
 		$scconf['connections'][$upconn] = array();
 		$scconf['pools'][$upname] = array();
 
-		$clientid = ($mkent['ident_type'] == "none") ? "\"{$mkent['ident']}\"" : "{$mkent['ident_type']}:{$mkent['ident']}";
+		switch ($mkent['ident_type']) {
+			case 'email':
+			case 'rfc822':
+			case 'userfqdn':
+				$clientid = "{$mkent['ident_type']}:{$mkent['ident']}";
+				break;
+			default:
+				$clientid = "\"{$mkent['ident']}\"";
+				break;
+		}
+
 		$clienteapid = ($ph1ent['authentication_method'] == "eap-mschapv2") ? $clientid : '%any';
 
 		/* Craft a cloned connection with the ID information to match */
 		$scconf['connections'][$upconn]['remote'] = array();
-		$scconf['connections'][$upconn]['remote']['id'] = $clientid;
-		$scconf['connections'][$upconn]['remote']['eap_id'] = $clienteapid;
+
+		switch ($mkent['type']) {
+			case 'EAP':
+				$scconf['connections'][$upconn]['remote']['id'] = $clientid;
+				$scconf['connections'][$upconn]['remote']['eap_id'] = $clienteapid;
+				break;
+			case 'RSA':
+				$scconf['connections'][$upconn]['remote']['id'] = '"/CN=' . $mkent['ident'] . '/"';
+				break;
+			default:
+				break;
+		}
+
 		$scconf['connections'][$upconn]['pools'] = $upbase;
 
 		/* Craft a cloned pool with pool settings to override for this user */
@@ -1997,12 +2019,13 @@ function ipsec_setup_tunnels() {
 		/* Determine the name of this connection, either con-mobile for
 		 * mobile clients, or a name based on the IKE ID otherwise. */
 		if (isset($ph1ent['mobile'])) {
-			$cname = "con-mobile";
+			$cdefaults = "con-mobile";
+			$cname = "con{$ph1ent['ikeid']}000-mobile";
 			/* Start with common default values */
-			$scconf["{$cname}-defaults"] = $conn_defaults;
+			$scconf["{$cdefaults}-defaults"] = $conn_defaults;
 			/* Array reference to make things easier */
-			$conn =& $scconf["{$cname}-defaults"];
-			$scconf['connections']["{$cname} : {$cname}-defaults"] = array("# Stub to load con-mobile-defaults");
+			$conn =& $scconf["{$cdefaults}-defaults"];
+			$scconf['connections']["{$cname} : {$cdefaults}-defaults"] = array("# Stub to load con-mobile-defaults");
 		} else {
 			$cname = "con{$ph1ent['ikeid']}000";
 			/* Start with common default values */

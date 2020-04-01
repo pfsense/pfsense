@@ -255,9 +255,9 @@ if ($_POST['save']) {
 				}
 
 				$entered_localid_data = ipsec_idinfo_to_cidr($entered, false, $pconfig['mode']);
-				if ($localid_data == $entered_localid_data) {
+				if ($localid_data == $entered_localid_data && $pconfig['ikeid'] == $name['ikeid']) {
 					/* adding new p2 entry */
-					$input_errors[] = gettext("Phase2 with this Local Network is already defined for mobile clients.");
+					$input_errors[] = gettext("Phase2 with this Local Network is already defined for these mobile clients.");
 					break;
 				}
 			}

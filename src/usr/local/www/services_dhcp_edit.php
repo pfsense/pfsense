@@ -296,6 +296,9 @@ if ($_POST['save']) {
 	    ($_POST['ntp3'] && (!is_ipaddrv4($_POST['ntp3']) && !is_hostname($_POST['ntp3'])))) {
 		$input_errors[] = gettext("A valid IP address or hostname must be specified for the primary/secondary NTP servers.");
 	}
+	if ($_POST['domain'] && (!is_domain($_POST['domain'], false, false))) {
+		$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
+	}
 	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
 		$input_errors[] = gettext("A valid IPv4 address, hostname or URL must be specified for the TFTP server.");
 	}

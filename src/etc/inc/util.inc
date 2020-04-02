@@ -998,8 +998,11 @@ function is_hostname($hostname, $allow_wildcard=false) {
 }
 
 /* returns true if $domain is a valid domain name */
-function is_domain($domain, $allow_wildcard=false) {
+function is_domain($domain, $allow_wildcard=false, $trailing_dot=true) {
 	if (!is_string($domain)) {
+		return false;
+	}
+	if (!$trailing_dot && ($domain[strlen($domain)-1] == ".")) {
 		return false;
 	}
 	if ($allow_wildcard) {

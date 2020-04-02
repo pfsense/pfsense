@@ -12,9 +12,17 @@ CN=${CN%%.${DOMAIN}}
 
 DIR="/var/unbound"
 PIDFILE="/var/run/unbound.pid"
+IPV4REGEX='^[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}$'
 
 if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
-	CONF="${DIR}/openvpn.client.${IP}.conf"
+	if [ $(expr "${IP}" : ${IPV4REGEX}) -ne 0 ]; then
+		SUFFIX='ipv4' 
+		ARECORD='A' 
+	else
+		SUFFIX='ipv6' 
+		ARECORD='AAAA' 
+	fi
+	CONF="${DIR}/openvpn.client.${CN}.${SUFFIX}.conf"
 
 	case "${OP}" in
 
@@ -24,14 +32,14 @@ if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 
 			if [ -f "${TMPCONF}" -a -f "${TMPSRV}" ]; then
 				# Remove all configs which mention the FQDN
-				/usr/bin/grep -l -null "^local-data: \"${CN}.${DOMAIN} A " ${DIR}/openvpn.client.*.conf | /usr/bin/xargs -0 /bin/rm
+				/usr/bin/grep -l -null "^local-data: \"${CN}.${DOMAIN} ${ARECORD} " ${DIR}/openvpn.client.*.conf | /usr/bin/xargs -0 /bin/rm
 				/bin/test -f "${CONF}" && /bin/rm "${CONF}"
 
 				# Add new local-data entry.
 				(
 					echo "local-data-ptr: \"${IP} ${CN}.${DOMAIN}\"" &&
-					echo "local-data: \"${CN}.${DOMAIN} A ${IP}\"" &&
-					echo "local-data: \"${CN} A ${IP}\""
+					echo "local-data: \"${CN}.${DOMAIN} ${ARECORD} ${IP}\"" &&
+					echo "local-data: \"${CN} ${ARECORD} ${IP}\""
 				) > "${TMPCONF}"
 
 				# Check syntax, install configuration and restart unbound.

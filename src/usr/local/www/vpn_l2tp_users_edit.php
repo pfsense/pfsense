@@ -81,15 +81,12 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld'])) {
+	if (preg_match("/[^a-zA-Z0-9\.\@\-_]/", $_POST['usernamefld'])) {
 		$input_errors[] = gettext("The username contains invalid characters.");
 	}
-
-/*	Per Redmine #7623 - Allow any characters in password
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['passwordfld'])) {
-		$input_errors[] = gettext("The password contains invalid characters.");
+	if (preg_match("/^!/", trim($_POST['passwordfld']))) {
+		$input_errors[] = gettext("The password cannot start with '!'.");
 	}
-*/
 	if (($_POST['passwordfld']) && ($_POST['passwordfld'] != $_POST['passwordfld_confirm'])) {
 		$input_errors[] = gettext("The passwords do not match.");
 	}
@@ -129,7 +126,7 @@ if ($_POST['save']) {
 
 		write_config(gettext("Configured a L2TP VPN user."));
 
-		$retval = vpn_l2tp_configure();
+		$retval = vpn_l2tp_updatesecret();
 
 		pfSenseHeader("vpn_l2tp_users.php");
 

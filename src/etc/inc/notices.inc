@@ -27,6 +27,7 @@ require_once("functions.inc");
 require_once("led.inc");
 
 $notice_path = $g['tmp_path'] . '/notices';
+global $smtp_authentication_mechanisms;
 $smtp_authentication_mechanisms = array(
 	'PLAIN' => 'PLAIN',
 	'LOGIN' => 'LOGIN');
@@ -375,7 +376,11 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	);
 
 	if ($config['notifications']['smtp']['sslvalidate'] == "disabled") {
-		$params['socket_options'] = array('ssl' => array('verify_peer_name' => false));
+		$params['socket_options'] = array(
+			'ssl' => array(
+				'verify_peer_name' => false,
+				'verify_peer' => false
+		));
 	}
 
 	if ($config['notifications']['smtp']['fromaddress']) {

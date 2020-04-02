@@ -107,7 +107,7 @@ if ($_POST['save']) {
 	$schedule = array();
 
 	$schedule['name'] = $_POST['name'];
-	$schedule['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');
+	$schedule['descr'] = $_POST['descr'];
 
 	$timerangeFound = false;
 
@@ -130,7 +130,7 @@ if ($_POST['save']) {
 			$timehourstr = $_POST['starttime' . $x];
 			$timehourstr .= "-";
 			$timehourstr .= $_POST['stoptime' . $x];
-			$timedescrstr = htmlentities($_POST['timedescr' . $x], ENT_QUOTES, 'UTF-8');
+			$timedescrstr = $_POST['timedescr' . $x];
 			$dashpos = strpos($timestr, '-');
 
 			if ($dashpos === false) {

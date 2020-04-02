@@ -2383,7 +2383,7 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 	$comments = array();
 	/* NOTE: fgetss() is not a typo RTFM before being smart */
 	while (($fc = fgetss($fd)) !== FALSE) {
-		$tmp = trim($fc, " \t\n\r");
+		$tmp = idn_to_ascii(trim($fc, " \t\n\r"));
 		if (empty($tmp)) {
 			continue;
 		}
@@ -3560,6 +3560,18 @@ function send_user_download($type = 'data', $content, $userfilename = "", $conte
 	/* Flush any remaining output buffer */
 	@ob_end_flush();
 	exit;
+}
+
+// Test whether the hostname in a URL can be resolved with a very short timeout
+function is_url_hostname_resolvable($url) {
+	$urlhostname = parse_url($url, PHP_URL_HOST);
+	if (empty($urlhostname)) {
+		return false;
+	}
+	putenv("RES_OPTIONS=timeout:3 attempts:1");
+	$resolvable = ($urlhostname !== gethostbyname($urlhostname));
+	putenv("RES_OPTIONS");
+	return $resolvable;
 }
 
 ?>

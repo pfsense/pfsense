@@ -534,6 +534,22 @@ function services_dhcpdv4_configure() {
 				}
 			}
 		}
+		if (is_array($dhcpifconf['staticmap'])) {
+			$i = 0;
+			foreach ($dhcpifconf['staticmap'] as $sm) {
+				if (is_array($sm['numberoptions']) && is_array($sm['numberoptions']['item'])) {
+					foreach ($sm['numberoptions']['item'] as $itemidx => $item) {
+						if (!empty($item['type'])) {
+							$itemtype = $item['type'];
+						} else {
+							$itemtype = "text";
+						}
+						$custoptions .= "option custom-s_{$dhcpif}_{$i}-{$itemidx} code {$item['number']} = {$itemtype};\n";
+					}
+				}
+				$i++;
+			}
+		}
 	}
 
 	$dhcpdconf = <<<EOD
@@ -1118,6 +1134,7 @@ EOD;
 
 			$i = 0;
 			foreach ($dhcpifconf['staticmap'] as $sm) {
+				$cid = '';
 				$dhcpdconf .= "host s_{$dhcpif}_{$i} {\n";
 
 				if ($sm['mac']) {
@@ -1125,7 +1142,8 @@ EOD;
 				}
 
 				if ($sm['cid']) {
-					$dhcpdconf .= " option dhcp-client-identifier \"{$sm['cid']}\";\n";
+					$cid = str_replace('"', '\"', $sm['cid']);
+					$dhcpdconf .= "	option dhcp-client-identifier \"{$cid}\";\n";
 				}
 
 				if ($sm['ipaddr']) {
@@ -1200,6 +1218,47 @@ EOD;
 					$dhcpdconf .= "	option tftp-server-name \"{$sm['tftp']}\";\n";
 				}
 
+				// Handle option, number rowhelper values
+				$dhcpdconf .= "\n";
+				if (isset($sm['numberoptions']['item']) && is_array($sm['numberoptions']['item'])) {
+					foreach ($sm['numberoptions']['item'] as $itemidx => $item) {
+						$item_value = base64_decode($item['value']);
+						if (empty($item['type']) || $item['type'] == "text") {
+							$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$itemidx} \"{$item_value}\";\n";
+						} else {
+							$dhcpdconf .= "	option custom-s_{$dhcpif}_{$i}-{$itemidx} {$item_value};\n";
+						}
+					}
+				}
+
+				// ldap-server
+				if (!empty($sm['ldap']) && ($sm['ldap'] != $dhcpifconf['ldap'])) {
+					$dhcpdconf .= "	option ldap-server \"{$sm['ldap']}\";\n";
+				}
+
+				// net boot information
+				if (isset($sm['netboot'])) {
+					if ($sm['nextserver'] <> "") {
+						$dhcpdconf .= "	next-server {$sm['nextserver']};\n";
+					}
+					if (!empty($sm['filename']) && !empty($sm['filename32']) && !empty($sm['filename64'])) {
+						$dhcpdconf .= "	if option arch = 00:06 {\n";
+						$dhcpdconf .= "		filename \"{$sm['filename32']}\";\n";
+						$dhcpdconf .= "	} else if option arch = 00:07 {\n";
+						$dhcpdconf .= "		filename \"{$sm['filename64']}\";\n";
+						$dhcpdconf .= "	} else if option arch = 00:09 {\n";
+						$dhcpdconf .= "		filename \"{$sm['filename64']}\";\n";
+						$dhcpdconf .= "	} else {\n";
+						$dhcpdconf .= "		filename \"{$sm['filename']}\";\n";
+						$dhcpdconf .= "	}\n\n";
+					} elseif (!empty($sm['filename'])) {
+						$dhcpdconf .= "	filename \"{$sm['filename']}\";\n";
+					}
+					if (!empty($dhcpifconf['rootpath'])) {
+						$dhcpdconf .= "	option root-path \"{$sm['rootpath']}\";\n";
+					}
+				}
+
 				$dhcpdconf .= "}\n";
 
 				// subclass for DHCP limiting
@@ -1207,8 +1266,8 @@ EOD;
 					// assuming ALL addresses are ethernet hardware type ("1:" prefix)
 					$dhcpdconf .= "subclass \"s_{$dhcpif}\" 1:{$sm['mac']};\n";
 				}
-				if (!empty($sm['cid'])) {
-					$dhcpdconf .= "subclass \"s_{$dhcpif}\" \"{$sm['cid']}\";\n";
+				if (!empty($cid)) {
+					$dhcpdconf .= "subclass \"s_{$dhcpif}\" \"{$cid}\";\n";
 				}
 
 
@@ -1517,11 +1576,11 @@ EOD;
 			$range_to = merge_ipv6_delegated_prefix($ifcfgipv6, $range_to, $pdlen);
 		}
 
-		$dhcpdv6conf .= <<<EOD
-	range6 {$range_from} {$range_to};
-$dnscfgv6
+		if (!empty($dhcpv6ifconf['range']['from']) && !empty($dhcpv6ifconf['range']['to'])) {
+			$dhcpdv6conf .= "	range6 {$range_from} {$range_to};\n";
+		}
 
-EOD;
+		$dhcpdv6conf .= $dnscfgv6;
 
 		if (is_ipaddrv6($dhcpv6ifconf['prefixrange']['from']) && is_ipaddrv6($dhcpv6ifconf['prefixrange']['to'])) {
 			$dhcpdv6conf .= "	prefix6 {$dhcpv6ifconf['prefixrange']['from']} {$dhcpv6ifconf['prefixrange']['to']} /{$dhcpv6ifconf['prefixrange']['prefixlength']};\n";
@@ -1796,12 +1855,11 @@ function services_dhcrelay_configure() {
 	$dhcrelayifs = array();
 	$dhcifaces = explode(",", $dhcrelaycfg['interface']);
 	foreach ($dhcifaces as $dhcrelayif) {
-		if (!isset($iflist[$dhcrelayif]) ||
-		    link_interface_to_bridge($dhcrelayif)) {
+		if (!isset($iflist[$dhcrelayif])) {
 			continue;
 		}
 
-		if (is_ipaddr(get_interface_ip($dhcrelayif))) {
+		if (get_interface_ip($dhcrelayif)) {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 		}
 	}
@@ -1819,7 +1877,7 @@ function services_dhcrelay_configure() {
 	$srvifaces = array();
 	foreach ($srvips as $srcidx => $srvip) {
 		$destif = guess_interface_from_ip($srvip);
-		if (!empty($destif)) {
+		if (!empty($destif) && !is_pseudo_interface($destif)) {
 			$srvifaces[] = $destif;
 		}
 	}
@@ -1882,12 +1940,11 @@ function services_dhcrelay6_configure() {
 
 	$dhcifaces = explode(",", $dhcrelaycfg['interface']);
 	foreach ($dhcifaces as $dhcrelayif) {
-		if (!isset($iflist[$dhcrelayif]) ||
-		    link_interface_to_bridge($dhcrelayif)) {
+		if (!isset($iflist[$dhcrelayif])) {
 			continue;
 		}
 
-		if (is_ipaddrv6(get_interface_ipv6($dhcrelayif))) {
+		if (get_interface_ipv6($dhcrelayif)) {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 		}
 	}
@@ -1901,7 +1958,7 @@ function services_dhcrelay6_configure() {
 	$srvifaces = array();
 	foreach ($srvips as $srcidx => $srvip) {
 		$destif = guess_interface_from_ip($srvip);
-		if (!empty($destif)) {
+		if (!empty($destif) && !is_pseudo_interface($destif)) {
 			$srvifaces[] = "{$srvip}%{$destif}";
 		}
 	}

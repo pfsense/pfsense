@@ -979,7 +979,8 @@ function filter_get_vpns_list() {
 		}
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
-				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
+				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport') &&
+				    !isset($ph2ent['disabled'])) {
 					if (!is_array($ph2ent['remoteid'])) {
 						continue;
 					}
@@ -2559,16 +2560,27 @@ function filter_address_add_vips_subnets(&$subnets, $if, $not) {
 	global $FilterIflist;
 
 	$if_subnets = array($subnets);
+	$vips = array();
+	$vips6 = array();
 
 	if ($not == true) {
 		$subnets = "!{$subnets}";
 	}
 
-	if (!isset($FilterIflist[$if]['vips']) || !is_array($FilterIflist[$if]['vips'])) {
+	if ((!isset($FilterIflist[$if]['vips']) || !is_array($FilterIflist[$if]['vips'])) &&
+	    (!isset($FilterIflist[$if]['vips6']) || !is_array($FilterIflist[$if]['vips6']))) {
 		return;
 	}
 
-	foreach ($FilterIflist[$if]['vips'] as $vip) {
+	if (isset($FilterIflist[$if]['vips']) && is_array($FilterIflist[$if]['vips'])) {
+		$vips = $FilterIflist[$if]['vips'];
+	}
+
+	if (isset($FilterIflist[$if]['vips6']) && is_array($FilterIflist[$if]['vips6'])) {
+		$vips6 = $FilterIflist[$if]['vips6'];
+	}
+
+	foreach (array_merge($vips, $vips6) as $vip) {
 		foreach ($if_subnets as $subnet) {
 			if (ip_in_subnet($vip['ip'], $subnet)) {
 				continue 2;
@@ -4239,7 +4251,7 @@ function filter_generate_ipsec_rules($log = array()) {
 		foreach ($config['ipsec']['phase1'] as $ph1ent) {
 			$tracker += 10;
 
-			if (isset ($ph1ent['disabled'])) {
+			if (isset ($ph1ent['disabled']) || isset ($ph1ent['gw_duplicates'])) {
 				continue;
 			}
 			/* determine local and remote peer addresses */

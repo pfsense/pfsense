@@ -553,6 +553,16 @@ if ($_POST['apply']) {
 			$input_errors[] = gettext("The interface description cannot contain only numbers.");
 		}
 
+		if ((strlen(trim($_POST['descr'])) > 25) && ((substr($realifname, 0, 4) == 'ovpn') ||
+		    (substr($realifname, 0, 5) == 'ipsec'))) {
+			$input_errors[] = gettext("The OpenVPN and VTI interface description must be less than 26 characters long.");
+		}
+
+		if ((strlen(trim($_POST['descr'])) > 22) && ((substr($realifname, 0, 3) == 'gif') ||
+		    (substr($realifname, 0, 3) == 'gre'))) {
+			$input_errors[] = gettext("The GIF and GRE interface description must be less than 23 characters long.");
+		}
+
 		/*
 		 * Packages (e.g. tinc) create interface groups, reserve this
 		 * namespace pkg_ for them.

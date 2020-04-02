@@ -1516,7 +1516,7 @@ function is_cert_locally_renewable($cert) {
  */
 global $cert_strict_values;
 $cert_strict_values = array(
-	'max_server_cert_lifetime' => 825,
+	'max_server_cert_lifetime' => 398,
 	'digest_blacklist' => array('md4', 'RSA-MD4',  'md5', 'RSA-MD5', 'md5-sha1',
 					'mdc2', 'RSA-MDC2', 'sha1', 'RSA-SHA1',
 					'RSA-SHA1-2'),
@@ -1616,7 +1616,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 	}
 
 	/* Reuse SAN list, or, if empty, add CN as SAN. */
-	$sans = $cert_details['extensions']['subjectAltName'];
+	$sans = str_replace("IP Address", "IP", $cert_details['extensions']['subjectAltName']);
 	if (empty($sans)) {
 		$sans = cert_add_altname_type($dn['commonName']);
 	}
@@ -1904,6 +1904,7 @@ function ca_get_all_services($refid) {
  ******/
 
 function cert_restart_services($services) {
+	require_once("service-utils.inc");
 	/* If the input is not an array, it is invalid. */
 	if (!is_array($services)) {
 		return false;

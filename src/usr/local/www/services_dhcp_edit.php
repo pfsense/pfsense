@@ -92,8 +92,17 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($a_maps[$id]['ddnsforcehostname']);
-	list($pconfig['ntp1'], $pconfig['ntp2']) = $a_maps[$id]['ntpserver'];
+	list($pconfig['ntp1'], $pconfig['ntp2'], $pconfig['ntp3']) = $a_maps[$id]['ntpserver'];
 	$pconfig['tftp'] = $a_maps[$id]['tftp'];
+	$pconfig['ldap'] = $a_maps[$id]['ldap'];
+	$pconfig['netboot'] = isset($a_maps[$id]['netboot']);
+	$pconfig['nextserver'] = $a_maps[$id]['nextserver'];
+	$pconfig['filename'] = $a_maps[$id]['filename'];
+	$pconfig['filename32'] = $a_maps[$id]['filename32'];
+	$pconfig['filename64'] = $a_maps[$id]['filename64'];
+	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
+	$pconfig['netmask'] = $a_maps[$id]['netmask'];
+	$pconfig['numberoptions'] = $a_maps[$id]['numberoptions'];
 } else {
 	$pconfig['mac'] = $_REQUEST['mac'];
 	$pconfig['cid'] = $_REQUEST['cid'];
@@ -121,12 +130,40 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ddnsforcehostname'] = isset($_REQUEST['ddnsforcehostname']);
 	$pconfig['ntp1'] = $_REQUEST['ntp1'];
 	$pconfig['ntp2'] = $_REQUEST['ntp2'];
+	$pconfig['ntp3'] = $_REQUEST['ntp3'];
 	$pconfig['tftp'] = $_REQUEST['tftp'];
+	$pconfig['ldap'] = $_REQUEST['ldap'];
+	$pconfig['netboot'] = isset($_REQUEST['netboot']);
+	$pconfig['nextserver'] = $_REQUEST['nextserver'];
+	$pconfig['filename'] = $_REQUEST['filename'];
+	$pconfig['filename32'] = $_REQUEST['filename32'];
+	$pconfig['filename64'] = $_REQUEST['filename64'];
+	$pconfig['rootpath'] = $_REQUEST['rootpath'];
+	$pconfig['netmask'] = $_REQUEST['netmask'];
+	$pconfig['numberoptions'] = $_REQUEST['numberoptions'];
 }
 
 if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	$numberoptions = array();
+	for ($x = 0; $x < 99; $x++) {
+		if (isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
+			if ($_POST["number{$x}"] < 1 || $_POST["number{$x}"] > 254) {
+				$input_errors[] = gettext("The DHCP option must be a number between 1 and 254.");
+				continue;
+			}
+			$numbervalue = array();
+			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
+			$numbervalue['type'] = htmlspecialchars($_POST["itemtype{$x}"]);
+			$numbervalue['value'] = base64_encode($_POST["value{$x}"]);
+			$numberoptions['item'][] = $numbervalue;
+		}
+	}
+
+	// Reload the new pconfig variable that the form uses.
+	$pconfig['numberoptions'] = $numberoptions;
 
 	/* input validation */
 	$reqdfields = array();
@@ -254,8 +291,10 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2']))) {
-		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary NTP servers.");
+	if (($_POST['ntp1'] && (!is_ipaddrv4($_POST['ntp1']) && !is_hostname($_POST['ntp1']))) ||
+	    ($_POST['ntp2'] && (!is_ipaddrv4($_POST['ntp2']) && !is_hostname($_POST['ntp2']))) ||
+	    ($_POST['ntp3'] && (!is_ipaddrv4($_POST['ntp3']) && !is_hostname($_POST['ntp3'])))) {
+		$input_errors[] = gettext("A valid IP address or hostname must be specified for the primary/secondary NTP servers.");
 	}
 	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
 		$input_errors[] = gettext("A valid IPv4 address, hostname or URL must be specified for the TFTP server.");
@@ -322,9 +361,18 @@ if ($_POST['save']) {
 		if ($_POST['ntp2']) {
 			$mapent['ntpserver'][] = $_POST['ntp2'];
 		}
+		if ($_POST['ntp3']) {
+			$mapent['ntpserver'][] = $_POST['ntp3'];
+		}
 
 		$mapent['tftp'] = $_POST['tftp'];
 		$mapent['ldap'] = $_POST['ldap'];
+		$mapent['netboot'] = ($_POST['netboot']) ? true : false;
+		$mapent['nextserver'] = $_POST['nextserver'];
+		$mapent['filename'] = $_POST['filename'];
+		$mapent['filename32'] = $_POST['filename32'];
+		$mapent['filename64'] = $_POST['filename64'];
+		$mapent['numberoptions'] = $pconfig['numberoptions'];
 
 		if (isset($id) && $a_maps[$id]) {
 			$a_maps[$id] = $mapent;
@@ -639,6 +687,14 @@ $group->add(new Form_Input(
 	['placeholder' => 'NTP 2']
 ));
 
+$group->add(new Form_Input(
+	'ntp3',
+	'NTP Server 3',
+	'text',
+	$pconfig['ntp3'],
+	['placeholder' => 'NTP 3']
+));
+
 $group->addClass('ntpclass');
 
 $section->add($group);
@@ -663,6 +719,178 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['tftp']
 ))->setHelp('Leave blank to disable. Enter a full hostname or IP for the TFTP server.');
+
+// Advanced LDAP
+$btnadv = new Form_Button(
+	'btnadvldap',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
+
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'LDAP',
+	$btnadv
+));
+
+$section->addInput(new Form_Input(
+	'ldap',
+	'LDAP Server URI',
+	'text',
+	$pconfig['ldap']
+))->setHelp('Leave blank to disable. Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com ');
+
+// Advanced Network Booting options
+$btnadv = new Form_Button(
+	'btnadvnwkboot',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
+
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'Network Booting',
+	$btnadv
+));
+
+$section->addInput(new Form_Checkbox(
+	'netboot',
+	'Enable',
+	'Enables network booting',
+	$pconfig['netboot']
+));
+
+$section->addInput(new Form_IpAddress(
+	'nextserver',
+	'Next Server',
+	$pconfig['nextserver'],
+	'V4'
+))->setHelp('Enter the IP address of the next server');
+
+$section->addInput(new Form_Input(
+	'filename',
+	'Default BIOS file name',
+	'text',
+	$pconfig['filename']
+));
+
+$section->addInput(new Form_Input(
+	'filename32',
+	'UEFI 32 bit file name',
+	'text',
+	$pconfig['filename32']
+));
+
+$section->addInput(new Form_Input(
+	'filename64',
+	'UEFI 64 bit file name',
+	'text',
+	$pconfig['filename64']
+))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
+			'All three filenames and a configured boot server are necessary for UEFI to work! ');
+
+$section->addInput(new Form_Input(
+	'rootpath',
+	'Root path',
+	'text',
+	$pconfig['rootpath']
+))->setHelp('string-format: iscsi:(servername):(protocol):(port):(LUN):targetname ');
+
+// Advanced Additional options
+$btnadv = new Form_Button(
+	'btnadvopts',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
+
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'Additional BOOTP/DHCP Options',
+	$btnadv
+));
+
+$form->add($section);
+
+$section = new Form_Section('Additional BOOTP/DHCP Options');
+$section->addClass('adnlopts');
+
+$section->addInput(new Form_StaticText(
+	null,
+	'<div class="alert alert-info"> ' . gettext('Enter the DHCP option number and the value for each item to include in the DHCP lease information.') . ' ' .
+	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s.%3$s'), '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a>', '</div>')
+));
+
+if (!$pconfig['numberoptions']) {
+	$pconfig['numberoptions'] = array();
+	$pconfig['numberoptions']['item']  = array(array('number' => '', 'type' => 'text', 'value' => ''));
+}
+
+$customitemtypes = array(
+	'text' => gettext('Text'), 'string' => gettext('String'), 'boolean' => gettext('Boolean'),
+	'unsigned integer 8' => gettext('Unsigned 8-bit integer'), 'unsigned integer 16' => gettext('Unsigned 16-bit integer'), 'unsigned integer 32' => gettext('Unsigned 32-bit integer'),
+	'signed integer 8' => gettext('Signed 8-bit integer'), 'signed integer 16' => gettext('Signed 16-bit integer'), 'signed integer 32' => gettext('Signed 32-bit integer'), 'ip-address' => gettext('IP address or host')
+);
+
+$numrows = count($item) -1;
+$counter = 0;
+
+$numrows = count($pconfig['numberoptions']['item']) -1;
+
+foreach ($pconfig['numberoptions']['item'] as $item) {
+	$number = $item['number'];
+	$itemtype = $item['type'];
+	$value = base64_decode($item['value']);
+
+	$group = new Form_Group(($counter == 0) ? 'Option':null);
+	$group->addClass('repeatable');
+
+	$group->add(new Form_Input(
+		'number' . $counter,
+		null,
+		'number',
+		$number,
+		['min'=>'1', 'max'=>'254']
+	))->setHelp($numrows == $counter ? 'Number':null);
+
+
+	$group->add(new Form_Select(
+		'itemtype' . $counter,
+		null,
+		$itemtype,
+		$customitemtypes
+	))->setWidth(3)->setHelp($numrows == $counter ? 'Type':null);
+
+	$group->add(new Form_Input(
+		'value' . $counter,
+		null,
+		'text',
+		$value
+	))->setHelp($numrows == $counter ? 'Value':null);
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
+
+	$section->add($group);
+
+	$counter++;
+}
+
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add',
+	null,
+	'fa-plus'
+))->addClass('btn-success');
 
 $form->add($section);
 print($form);
@@ -720,7 +948,7 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2'])) {
+			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2']) && empty($pconfig['ntp3'])) {
 				$showadv = false;
 			} else {
 				$showadv = true;
@@ -734,6 +962,7 @@ events.push(function() {
 
 		hideInput('ntp1', !showadvntp);
 		hideInput('ntp2', !showadvntp);
+		hideInput('ntp3', !showadvntp);
 
 		if (showadvntp) {
 			text = "<?=gettext('Hide Advanced');?>";
@@ -781,6 +1010,114 @@ events.push(function() {
 		show_advtftp();
 	});
 
+	// Show advanced LDAP options ======================================================================================
+	var showadvldap = false;
+
+	function show_advldap(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['ldap'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvldap = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvldap = !showadvldap;
+		}
+
+		hideInput('ldap', !showadvldap);
+
+		if (showadvldap) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvldap').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvldap').click(function(event) {
+		show_advldap();
+	});
+
+	// Show advanced additional opts options ===========================================================================
+	var showadvopts = false;
+
+	function show_advopts(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['numberoptions']) ||
+			    (empty($pconfig['numberoptions']['item'][0]['number']) && (empty($pconfig['numberoptions']['item'][0]['value'])))) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvopts = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvopts = !showadvopts;
+		}
+
+		hideClass('adnlopts', !showadvopts);
+
+		if (showadvopts) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvopts').click(function(event) {
+		show_advopts();
+	});
+
+	// Show advanced Network Booting options ===========================================================================
+	var showadvnwkboot = false;
+
+	function show_advnwkboot(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['netboot'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvnwkboot = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvnwkboot = !showadvnwkboot;
+		}
+
+		hideCheckbox('netboot', !showadvnwkboot);
+		hideInput('nextserver', !showadvnwkboot);
+		hideInput('filename', !showadvnwkboot);
+		hideInput('filename32', !showadvnwkboot);
+		hideInput('filename64', !showadvnwkboot);
+		hideInput('rootpath', !showadvnwkboot);
+
+		if (showadvnwkboot) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvnwkboot').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvnwkboot').click(function(event) {
+		show_advnwkboot();
+	});
+
 	// On click, copy the hidden 'mymac' text to the 'mac' input
 	$("#btnmymac").click(function() {
 		$('#mac').val('<?=$mymac?>');
@@ -790,6 +1127,13 @@ events.push(function() {
 	show_advdns(true);
 	show_advntp(true);
 	show_advtftp(true);
+	show_advldap(true);
+	show_advopts(true);
+	show_advnwkboot(true);
+
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
+
 });
 //]]>
 </script>

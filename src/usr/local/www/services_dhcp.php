@@ -1636,7 +1636,14 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("DHCP Static Mappings for this Interface")?></h2></div>
+<?php
+	if (is_array($a_maps) && (count($a_maps) > 0)) {
+		$title = sprintf(gettext('DHCP Static Mappings for this Interface (total: %d)'), count($a_maps));
+	} else {
+		$title = gettext("DHCP Static Mappings for this Interface");
+	}
+?>
+	<div class="panel-heading"><h2 class="panel-title"><?=$title?></h2></div>
 	<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>

@@ -327,7 +327,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 				null,
 				'password',
 				$value
-			))->setHelp($description);
+			))->setHelp($description)->setAttribute('autocomplete', 'new-password');
 			break;
 		case "textarea":
 			$group->add(new Form_Textarea(
@@ -800,7 +800,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 					$pkga['fielddescr'],
 					'password',
 					$value
-				))->setHelp($pkga['description']);
+				))->setHelp($pkga['description'])->setAttribute('autocomplete', 'new-password');
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Input(
@@ -808,14 +808,14 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						$pkga['fielddescr'],
 						'password',
 						$value
-					))->setHelp($pkga['description']);
+					))->setHelp($pkga['description'])->setAttribute('autocomplete', 'new-password');
 				} else {
 					$section->addInput(new Form_Input(
 						$pkga['fieldname'],
 						$pkga['fielddescr'],
 						'password',
 						$value
-					))->setHelp($pkga['description']);
+					))->setHelp($pkga['description'])->setAttribute('autocomplete', 'new-password');
 				}
 			}
 

@@ -32,6 +32,16 @@
 require_once("guiconfig.inc");
 require_once("unbound.inc");
 
+$unbound_edns_sizes = array(
+	"auto" => "Automatic value based on active interface MTUs",
+	"512"  => "512: IPv4 Minimum",
+	"1220" => "1220: NSD IPv6 EDNS Minimum",
+	"1232" => "1232: IPv6 Minimum",
+	"1432" => "1432: 1500 Byte MTU",
+	"1480" => "1480: NSD IPv4 EDNS Minimum",
+	"4096" => "4096: Unbound Default"
+);
+
 if (!is_array($config['unbound'])) {
 	$config['unbound'] = array();
 }
@@ -71,7 +81,7 @@ if (isset($config['unbound']['dnsrecordcache'])) {
 $pconfig['msgcachesize'] = $config['unbound']['msgcachesize'];
 $pconfig['outgoing_num_tcp'] = isset($config['unbound']['outgoing_num_tcp']) ? $config['unbound']['outgoing_num_tcp'] : '10';
 $pconfig['incoming_num_tcp'] = isset($config['unbound']['incoming_num_tcp']) ? $config['unbound']['incoming_num_tcp'] : '10';
-$pconfig['edns_buffer_size'] = isset($config['unbound']['edns_buffer_size']) ? $config['unbound']['edns_buffer_size'] : '4096';
+$pconfig['edns_buffer_size'] = isset($config['unbound']['edns_buffer_size']) ? $config['unbound']['edns_buffer_size'] : 'auto';
 $pconfig['num_queries_per_thread'] = $config['unbound']['num_queries_per_thread'];
 $pconfig['jostle_timeout'] = isset($config['unbound']['jostle_timeout']) ? $config['unbound']['jostle_timeout'] : '200';
 $pconfig['cache_max_ttl'] = isset($config['unbound']['cache_max_ttl']) ? $config['unbound']['cache_max_ttl'] : '86400';
@@ -80,6 +90,8 @@ $pconfig['infra_host_ttl'] = isset($config['unbound']['infra_host_ttl']) ? $conf
 $pconfig['infra_cache_numhosts'] = isset($config['unbound']['infra_cache_numhosts']) ? $config['unbound']['infra_cache_numhosts'] : '10000';
 $pconfig['unwanted_reply_threshold'] = isset($config['unbound']['unwanted_reply_threshold']) ? $config['unbound']['unwanted_reply_threshold'] : 'disabled';
 $pconfig['log_verbosity'] = isset($config['unbound']['log_verbosity']) ? $config['unbound']['log_verbosity'] : "1";
+$pconfig['dns64prefix'] = isset($config['unbound']['dns64prefix']) ? $config['unbound']['dns64prefix'] : '';
+$pconfig['dns64netbits'] = isset($config['unbound']['dns64netbits']) ? $config['unbound']['dns64netbits'] : '96';
 
 if (isset($config['unbound']['disable_auto_added_access_control'])) {
 	$pconfig['disable_auto_added_access_control'] = true;
@@ -91,6 +103,10 @@ if (isset($config['unbound']['disable_auto_added_host_entries'])) {
 
 if (isset($config['unbound']['use_caps'])) {
 	$pconfig['use_caps'] = true;
+}
+
+if (isset($config['unbound']['dns64'])) {
+	$pconfig['dns64'] = true;
 }
 
 if ($_POST) {
@@ -113,7 +129,7 @@ if ($_POST) {
 		if (isset($_POST['incoming_num_tcp']) && !in_array($_POST['incoming_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
 			$input_errors[] = gettext("A valid value must be specified for Incoming TCP Buffers.");
 		}
-		if (isset($_POST['edns_buffer_size']) && !in_array($_POST['edns_buffer_size'], array('512', '1480', '4096'), true)) {
+		if (isset($_POST['edns_buffer_size']) && !array_key_exists($_POST['edns_buffer_size'], $unbound_edns_sizes)) {
 			$input_errors[] = gettext("A valid value must be specified for EDNS Buffer Size.");
 		}
 		if (isset($_POST['num_queries_per_thread']) && !in_array($_POST['num_queries_per_thread'], array('512', '1024', '2048'), true)) {
@@ -142,6 +158,13 @@ if ($_POST) {
 		}
 		if (isset($_POST['dnssecstripped']) && !isset($config['unbound']['dnssec'])) {
 			$input_errors[] = gettext("Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.");
+		}
+		if (isset($_POST['dns64']) && !empty($_POST['dns64prefix']) && !is_ipaddrv6($_POST['dns64prefix'])) {
+			$input_errors[] = gettext("DNS64 Prefix must be valid IPv6 prefix.");
+		}
+		if (isset($_POST['dns64']) && isset($_POST['dns64netbits']) && 
+		    (($_POST['dns64netbits'] > 96) || ($_POST['dns64netbits'] < 1))) {
+			$input_errors[] = gettext("DNS64 subnet must be not more than 96 and not less that 1.");
 		}
 
 		if (!$input_errors) {
@@ -214,6 +237,14 @@ if ($_POST) {
 				$config['unbound']['use_caps'] = true;
 			} else {
 				unset($config['unbound']['use_caps']);
+			}
+
+			if (isset($_POST['dns64'])) {
+				$config['unbound']['dns64'] = true;
+				$config['unbound']['dns64prefix'] = $_POST['dns64prefix'];
+				$config['unbound']['dns64netbits'] = $_POST['dns64netbits'];
+			} else {
+				unset($config['unbound']['dns64']);
 			}
 
 			write_config(gettext("DNS Resolver configured."));
@@ -335,10 +366,12 @@ $section->addInput(new Form_Select(
 	'edns_buffer_size',
 	'EDNS Buffer Size',
 	$pconfig['edns_buffer_size'],
-	array_combine(array("512", "1480", "4096"), array("512", "1480", "4096"))
-))->setHelp('Number of bytes size to advertise as the EDNS reassembly buffer size. This is the value that is used in UDP datagrams sent to peers. ' .
-			'RFC recommendation is 4096 (which is the default). If fragmentation reassemble problems occur, usually seen as timeouts, then a value of 1480 should help. ' .
-			'The 512 value bypasses most MTU path problems, but it can generate an excessive amount of TCP fallback.');
+	$unbound_edns_sizes
+))->setHelp(
+	'Number of bytes size to advertise as the EDNS reassembly buffer size. This is the value that is used in UDP datagrams sent to peers.%1$s' .
+	'Auto mode sets optimal buffer size by using the smallest MTU of active interfaces and subtracting the IPv4/IPv6 header size.%1$s' .
+	'If fragmentation reassemble problems occur, usually seen as timeouts, then a value of 1432 should help.%1$s' .
+	'The 512/1232 values bypasses most IPv4/IPv6 MTU path problems, but it can generate an excessive amount of TCP fallback.', '<br />');
 
 $section->addInput(new Form_Select(
 	'num_queries_per_thread',
@@ -438,7 +471,47 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['use_caps']
 ))->setHelp('See the implementation %1$sdraft dns-0x20%2$s for more information.', '<a href="https://tools.ietf.org/html/draft-vixie-dnsext-dns0x20-00">', '</a>');
 
+$section->addInput(new Form_Checkbox(
+	'dns64',
+	'DNS64 Support',
+	'Enable DNS64 (RFC 6147)',
+	$pconfig['dns64']
+))->setHelp('DNS64 is used with an IPv6/IPv4 translator to enable client-server communication between an IPv6-only client and an IPv4-only servers.');
+
+$group = new Form_Group('DNS64 Prefix');
+$group->addClass('dns64pr');
+
+$group->add(new Form_IpAddress(
+	'dns64prefix',
+	'DNS64 Prefix',
+	$pconfig['dns64prefix']
+))->addMask('dns64netbits', $pconfig['dns64netbits'], 96, 1, false)->setWidth(4);
+$group->setHelp('IPv6 prefix used by IPv6 representations of IPv4 addresses. If this field is empty, default 64:ff9b::/96 prefix is used.');
+
+$section->add($group);
+
 $form->add($section);
 print($form);
 
+?>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	function change_dns64() {
+		hideClass('dns64pr', !($('#dns64').prop('checked')));
+	}
+
+	 // DNS64
+	$('#dns64').change(function () {
+		change_dns64();
+	});
+
+	// ---------- On initial page load ------------------------------------------------------------
+
+	change_dns64();
+});
+//]]>
+</script>
+<?php
 include("foot.inc");

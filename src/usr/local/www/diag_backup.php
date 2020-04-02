@@ -157,8 +157,8 @@ if ($_POST) {
 	if ($mode) {
 		if ($mode == "download") {
 			if ($_POST['encrypt']) {
-				if (!$_POST['encrypt_password']) {
-					$input_errors[] = gettext("A password for encryption must be supplied and confirmed.");
+				if (!$_POST['encrypt_password'] || ($_POST['encrypt_password'] != $_POST['encrypt_password_confirm'])) {
+					$input_errors[] = gettext("Supplied password and confirmation do not match.");
 				}
 			}
 
@@ -548,7 +548,7 @@ $section->addInput(new Form_Checkbox(
 	false
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'encrypt_password',
 	'Password',
 	'password',
@@ -666,9 +666,7 @@ events.push(function() {
 		decryptHide = !($('input[name="decrypt"]').is(':checked'));
 
 		hideInput('encrypt_password', encryptHide);
-		hideInput('encrypt_password_confirm', encryptHide);
 		hideInput('decrypt_password', decryptHide);
-		hideInput('decrypt_password_confirm', decryptHide);
 	}
 
 	// ---------- Click handlers ------------------------------------------------------------------

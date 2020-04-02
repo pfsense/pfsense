@@ -98,7 +98,7 @@ if ($act == "new") {
 	$pconfig['ncp-ciphers'] = "AES-128-GCM";
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
-	$pconfig['tlsauth_keydir'] = "";
+	$pconfig['tlsauth_keydir'] = "default";
 	$pconfig['autotls_enable'] = "yes";
 	$pconfig['dh_length'] = 2048;
 	$pconfig['dev_mode'] = "tun";
@@ -903,12 +903,15 @@ if ($act=="new" || $act=="edit"):
 		    'Encryption and Authentication mode also encrypts control channel communication, providing more privacy and traffic control channel obfuscation.',
 			'<br/>');
 
+	if (strlen($pconfig['tlsauth_keydir']) == 0) {
+		$pconfig['tlsauth_keydir'] = "default";
+	}
 	$section->addInput(new Form_Select(
 		'tlsauth_keydir',
 		'*TLS keydir direction',
 		$pconfig['tlsauth_keydir'],
 		openvpn_get_keydirlist()
-        ))->setHelp('The TLS Key Direction must be set to complementary values on the client and server. ' .
+	))->setHelp('The TLS Key Direction must be set to complementary values on the client and server. ' .
 			'For example, if the server is set to 0, the client must be set to 1. ' .
 			'Both may be set to omit the direction, in which case the TLS Key will be used bidirectionally.');
 

@@ -177,9 +177,16 @@ if (!$interface) {
 
 $ifaceassigned = "";
 
-function next_unused_gateway_name($interface) {
+function next_unused_gateway_name($interface, $inet_type = 'inet') {
 	global $g, $config;
-	$new_name = "GW_" . strtoupper($interface);
+
+	if ($inet_type == 'inet') {
+		$name_suffix = "GW";
+	} else {
+		$name_suffix = "GWv6";
+	}
+
+	$new_name = strtoupper($interface) . $name_suffix;
 
 	if (!is_array($config['gateways']['gateway_item'])) {
 		return $new_name;
@@ -195,7 +202,7 @@ function next_unused_gateway_name($interface) {
 		}
 		if ($existing) {
 			$count += 1;
-			$new_name = "GW_" . strtoupper($interface) . "_" . $count;
+			$new_name = strtoupper($interface) . $name_suffix . "_" . $count;
 		}
 	} while ($existing);
 	return $new_name;
@@ -217,7 +224,7 @@ function add_gateway_to_config($interface, $gatewayip, $inet_type) {
 		}
 	}
 	if ($new_name == '') {
-		$new_name = next_unused_gateway_name($interface);
+		$new_name = next_unused_gateway_name($interface, $inet_type);
 		$item = array(
 			"interface" => $interface,
 			"gateway" => $gatewayip,

@@ -1222,7 +1222,7 @@ function ipsec_setup_gwifs() {
 					continue;
 				}
 			}
-			if (array_search($rg, $rgmap)) {
+			if (!isset($ph1ent['gw_duplicates']) && array_search($rg, $rgmap)) {
 				log_error(sprintf(gettext("The remote gateway %s already exists on another phase 1 entry"), $rg));
 				continue;
 			}
@@ -1341,7 +1341,6 @@ function ipsec_setup_strongswan() {
 	$ssconf[] = "# Automatically generated config file - DO NOT MODIFY. Changes will be overwritten.";
 	$ssconf['starter'] = array();
 	$ssconf['starter']['load_warning'] = "no";
-	$ssconf['starter']['config_file'] = "{$g['varetc_path']}/ipsec/ipsec.conf";
 
 	$ssconf['charon'] = array();
 	$ssconf['charon'][] = '# number of worker threads in charon';
@@ -1419,6 +1418,7 @@ function ipsec_setup_strongswan() {
 	/* Generate an eap-radius config section if appropriate */
 	if (count($radius_servers) && ($mobile_ipsec_auth === "eap-radius")) {
 		$ssconf['charon']['plugins']['eap-radius'] = array();
+		$ssconf['charon']['plugins']['eap-radius']['load'] = "2";
 		$ssconf['charon']['plugins']['eap-radius']['class_group'] = "yes";
 		$ssconf['charon']['plugins']['eap-radius']['eap_start'] = "no";
 		/* Activate RADIUS accounting only if it was selected on the IPsec Mobile Clients tab */
@@ -1461,21 +1461,13 @@ function ipsec_setup_pools() {
 	if (!is_array($a_client) || !isset($a_client['enable'])) {
 		return;
 	}
-	$scconf['pools']['mobile-pool'] = array();
-
-	$pool_addrs = array();
-	if (!empty($a_client['pool_address'])) {
-		$pool_addrs[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
+	if (($mobile_ipsec_auth == "eap-radius") && empty($a_client['pool_address']) &&
+	    empty($a_client['pool_address_v6'])) {
+		return;
 	}
-	if (!empty($a_client['pool_address_v6'])) {
-		$pool_addrs[] = "{$a_client['pool_address_v6']}/{$a_client['pool_netbits_v6']}";
-	}
-	if ($mobile_ipsec_auth == "eap-radius" && !count($pool_addrs)) {
-		$pool_addrs[] = "%radius";
-	}
-	if (count($pool_addrs)) {
-		$scconf['pools']['mobile-pool']['addrs'] = implode(',', $pool_addrs);
-	}
+	$scconf['mobile-pool'] = array();
+	$scconf['pools'] = array();
+	$pool_common =& $scconf['mobile-pool'];
 
 	$rightdnsservers = array();
 	if (!empty($a_client['dns_server1'])) {
@@ -1491,7 +1483,7 @@ function ipsec_setup_pools() {
 		$rightdnsservers[] = $a_client['dns_server4'];
 	}
 	if (count($rightdnsservers)) {
-		$scconf['pools']['mobile-pool']['dns'] = implode(',', $rightdnsservers);
+		$pool_common['dns'] = implode(',', $rightdnsservers);
 	}
 
 	$cfgservers = array();
@@ -1502,47 +1494,70 @@ function ipsec_setup_pools() {
 		$cfgservers[] = $a_client['wins_server2'];
 	}
 	if (!empty($cfgservers)) {
-		$scconf['pools']['mobile-pool']['nbns'] = implode(",", $cfgservers);
+		$pool_common['nbns'] = implode(",", $cfgservers);
 	}
 	unset($cfgservers);
 
+	$net_list4 = array();
+	$net_list6 = array();
 	if (isset($a_client['net_list']) && is_array($a_phase2)) {
-		$net_list = array();
 		foreach ($a_phase2 as $ph2ent) {
 			if (isset($ph2ent['disabled']) ||
 			    !isset($ph2ent['mobile'])) {
 				continue;
 			}
-			$net_list[] = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
-		}
-		if (!empty($net_list)) {
-			$scconf['pools']['mobile-pool']['subnet'] = implode(",", $net_list);
-			$scconf['pools']['mobile-pool']['split_include'] = implode(",", $net_list);
-			unset($net_list);
+			$nlent = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
+			if (is_subnetv4($nlent)) {
+				$net_list4[] = $nlent;
+			} elseif (is_subnetv6($nlent)) {
+				$net_list6[] = $nlent;
+			}
+			unset($nlent);
 		}
 	}
 	if (!empty($a_client['dns_domain'])) {
-		$scconf['pools']['mobile-pool'][] = "# Search domain and default domain";
-		$scconf['pools']['mobile-pool']['28674'] = "\"{$a_client['dns_domain']}\"";
+		$pool_common[] = "# Search domain and default domain";
+		$pool_common['28674'] = "\"{$a_client['dns_domain']}\"";
 		if (empty($a_client['dns_split'])) {
-			$scconf['pools']['mobile-pool']['28675'] = "\"{$a_client['dns_domain']}\"";
+			$pool_common['28675'] = "\"{$a_client['dns_domain']}\"";
 		}
 	}
 
 	if (!empty($a_client['dns_split'])) {
-		$scconf['pools']['mobile-pool']['28675'] = "\"{$a_client['dns_split']}\"";
+		$pool_common['28675'] = "\"{$a_client['dns_split']}\"";
 	}
 
 	if (!empty($a_client['login_banner'])) {
-		$scconf['pools']['mobile-pool']['28672'] = "\"{$a_client['login_banner']}\"";
+		$pool_common['28672'] = "\"{$a_client['login_banner']}\"";
 	}
 
 	if (isset($a_client['save_passwd'])) {
-		$scconf['pools']['mobile-pool']['28673'] = "1";
+		$pool_common['28673'] = "1";
 	}
 
 	if ($a_client['pfs_group']) {
-		$scconf['pools']['mobile-pool']['28679'] = "\"{$a_client['pfs_group']}\"";
+		$pool_common['28679'] = "\"{$a_client['pfs_group']}\"";
+	}
+
+	if (!empty($a_client['pool_address'])) {
+		$scconf['pools']['mobile-pool-v4 : mobile-pool'] = array();
+		$v4pool =& $scconf['pools']['mobile-pool-v4 : mobile-pool'];
+		$v4pool['addrs'] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
+		if (!empty($net_list4)) {
+			$v4pool['subnet'] = implode(",", $net_list4);
+			$v4pool['split_include'] = implode(",", $net_list4);
+			unset($net_list4);
+		}
+	}
+	if (!empty($a_client['pool_address_v6'])) {
+		$scconf['pools']['mobile-pool-v6 : mobile-pool'] = array();
+		$v6pool =& $scconf['pools']['mobile-pool-v6 : mobile-pool'];
+		$v6pool['addrs'] = "{$a_client['pool_address_v6']}/{$a_client['pool_netbits_v6']}";
+		if (!empty($net_list6)) {
+			$v6pool['subnet'] = implode(",", $net_list6);
+			$v6pool['split_include'] = implode(",", $net_list6);
+			unset($net_list6);
+		}
 	}
 
 	return;
@@ -1568,9 +1583,9 @@ function ipsec_setup_userpools() {
 	if (!is_array($a_mobilekey) ||
 	    empty($a_mobilekey) ||
 	    !is_array($scconf['connections']) ||
-	    !is_array($scconf['connections']['con-mobile']) ||
+	    !is_array($scconf['con-mobile-defaults']) ||
 	    !is_array($scconf['pools']) ||
-	    !is_array($scconf['pools']['mobile-pool'])) {
+	    !is_array($scconf['mobile-pool'])) {
 		return;
 	}
 
@@ -1588,7 +1603,7 @@ function ipsec_setup_userpools() {
 		$upbase = "mobile-userpool-{$suffix}";
 		/* The full connection name including a reference to the primary
 		 * mobile connection */
-		$upconn = "con-{$upbase} : con-mobile";
+		$upconn = "con-{$upbase} : con-mobile-defaults";
 		/* The full pool name including a reference to the primary
 		 * mobile pool */
 		$upname = "{$upbase} : mobile-pool";
@@ -1674,10 +1689,11 @@ function ipsec_setup_bypasslan() {
  *   $interface : The interface upon which routes will be configured.
  *   $family    : The address family ('inet' or 'inet6')
  *   $sourcehost: The local source address used for initiating connections.
+ *   $duplicates: If the ipsec tunnel allows duplicates remote peers
  * RESULT
  *   Static routes in the OS routing table for IPsec peers
  ******/
-function ipsec_setup_routes($interface, $family, $sourcehost) {
+function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
 	if (substr($interface, 0, 4) == "_vip") {
 		$vpninterface = get_configured_vip_interface($interface);
 		if (substr($vpninterface, 0, 4) == "_vip") {
@@ -1703,7 +1719,7 @@ function ipsec_setup_routes($interface, $family, $sourcehost) {
 			/* if the remote gateway is in the local subnet, then don't add a route */
 			if (is_ipaddrv4($sourcehost) &&
 			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
-				if (is_ipaddrv4($gatewayip)) {
+				if (is_ipaddrv4($gatewayip) && !$duplicates) {
 					// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
 					route_add_or_change("-host {$sourcehost} {$gatewayip}");
 				}
@@ -1718,7 +1734,7 @@ function ipsec_setup_routes($interface, $family, $sourcehost) {
 			/* if the remote gateway is in the local subnet, then don't add a route */
 			if (is_ipaddrv6($sourcehost) &&
 			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
-				if (is_ipaddrv6($gatewayip)) {
+				if (is_ipaddrv6($gatewayip) && !$duplicates) {
 					// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
 					route_add_or_change("-inet6 -host {$sourcehost} {$gatewayip}");
 				}
@@ -1917,7 +1933,8 @@ function ipsec_setup_proposal_entry(& $ph2ent, & $algo_arr, $ealg_id, $keylen) {
 	$proposal = array();
 
 	/* If multiple hash algorithms are present, loop through and add them all. */
-	if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
+	if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option']) 
+	    && !strpos($ealg_id, "gcm")) {
 		foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
 			$proposal[] = ipsec_setup_proposal_algo($ealg_id, $keylen, $halgo, false, $ph2ent['pfsgroup']);
 		}
@@ -1979,11 +1996,20 @@ function ipsec_setup_tunnels() {
 
 		/* Determine the name of this connection, either con-mobile for
 		 * mobile clients, or a name based on the IKE ID otherwise. */
-		$cname = isset($ph1ent['mobile']) ? "con-mobile" : "con{$ph1ent['ikeid']}000";
-		/* Start with common default values */
-		$scconf['connections'][$cname] = $conn_defaults;
-		/* Array reference to make things easier */
-		$conn =& $scconf['connections'][$cname];
+		if (isset($ph1ent['mobile'])) {
+			$cname = "con-mobile";
+			/* Start with common default values */
+			$scconf["{$cname}-defaults"] = $conn_defaults;
+			/* Array reference to make things easier */
+			$conn =& $scconf["{$cname}-defaults"];
+			$scconf['connections']["{$cname} : {$cname}-defaults"] = array("# Stub to load con-mobile-defaults");
+		} else {
+			$cname = "con{$ph1ent['ikeid']}000";
+			/* Start with common default values */
+			$scconf['connections'][$cname] = $conn_defaults;
+			/* Array reference to make things easier */
+			$conn =& $scconf['connections'][$cname];
+		}
 
 		/* Common parameters for all children */
 		$child_params = array();
@@ -2025,7 +2051,7 @@ function ipsec_setup_tunnels() {
 		} else {
 			$remote_spec = $ph1ent['remote-gateway'];
 			$sourcehost = (is_ipaddr($remote_spec)) ? $remote_spec : $rgmap[$remote_spec];
-			$ifacesuse = ipsec_setup_routes($ph1ent['interface'], $ph1ent['protocol'], $sourcehost);
+			$ifacesuse = ipsec_setup_routes($ph1ent['interface'], $ph1ent['protocol'], $sourcehost, isset($ph1ent['gw_duplicates']));
 		}
 
 		/* Setup IKE proposals */
@@ -2262,9 +2288,24 @@ function ipsec_setup_tunnels() {
 		$conn['local_addrs'] = $local_spec;
 		$conn['remote_addrs'] = $remote_spec;
 
+		$pools = array();
 		if (isset($ph1ent['mobile'])) {
-			$conn['pools'] = "mobile-pool";
+			if (($ph1ent['authentication_method'] == 'eap-radius') && 
+			    empty($a_client['pool_address']) && empty($a_client['pool_address_v6'])) {
+				$pools[] = "radius";
+			} else {
+				if (!empty($a_client['pool_address'])) {
+					$pools[] = "mobile-pool-v4";
+				}
+				if (!empty($a_client['pool_address_v6'])) {
+					$pools[] = "mobile-pool-v6";
+				}
+				if (isset($a_client['radius_ip_priority_enable'])) {
+					$pools[] .= "radius";
+				}
+			}
 		}
+		$conn['pools'] = implode(', ', $pools);
 
 		/* For IKEv2 without Split Connections, setup combined sets of
 		 * local/remote traffic selectors and propsals */

@@ -2302,6 +2302,9 @@ function interface_ppps_configure($interface) {
 	if (isset($ppp['mrru'])) {
 		$mrrus = explode(',', $ppp['mrru']);
 	}
+	if (!empty($ifcfg['ipaddrv6'])) {
+		$ipv6cp = "set bundle enable ipv6cp";
+	}
 
 	// Construct the mpd.conf file
 	$mpdconf = <<<EOD
@@ -2314,7 +2317,7 @@ startup:
 default:
 {$ppp['type']}client:
 	create bundle static {$interface}
-	set bundle enable ipv6cp
+	{$ipv6cp}
 	set iface name {$pppif}
 
 EOD;
@@ -4182,6 +4185,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			captiveportal_init_rules_byinterface($interface);
 		}
 	}
+
+	if (!empty($wancfg['descr'])) {
+		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " description " . escapeshellarg($wancfg['descr']));
+	};
 
 	interfaces_staticarp_configure($interface);
 	return 0;
@@ -7156,6 +7163,16 @@ function create_interface_list() {
 	}
 
 	return($iflist);
+}
+
+function is_pseudo_interface($inf) {
+	$psifs = array('ovpn', 'ipsec', 'l2tp', 'pptp', 'gif', 'gre', 'ppp', 'pppoe');
+	foreach ($psifs as $pif) {
+		if (substr($inf, 0, strlen($pif)) == $pif) {
+			return true;
+		}
+	}
+	return false;
 }
 
 ?>

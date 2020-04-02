@@ -535,7 +535,7 @@ function openvpn_remap_digest($digest) {
 
 function openvpn_get_keydirlist() {
 	$keydirs = array(
-		''  => gettext('Use default direction'),
+		'default'  => gettext('Use default direction'),
 		'0' => gettext('Direction 0'),
 		'1' => gettext('Direction 1'),
 		'2' => gettext('Both directions'),

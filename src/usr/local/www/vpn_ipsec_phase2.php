@@ -644,7 +644,7 @@ foreach ($p2_ealgos as $algo => $algodata) {
 		$algodata['name'],
 		(is_array($pconfig['ealgos']) && in_array($algo, $pconfig['ealgos'])),
 		$algo
-	))->addClass('multi')->setAttribute('id');
+	))->addClass('multi ealgoschk')->setAttribute('id', $algodata['name']);
 
 	if (is_array($algodata['keysel'])) {
 		$list = array();
@@ -684,7 +684,7 @@ foreach ($p2_halgos as $algo => $algoname) {
 		$algo
 	))->addClass('multi')->setAttribute('id');
 
-	$group->setHelp('Note: MD5 and SHA1 provide weak security and should be avoided.');
+	$group->setHelp('Note: Hash is ignored with GCM algorithms. MD5 and SHA1 provide weak security and should be avoided.');
 }
 
 $section->add($group);
@@ -961,7 +961,19 @@ events.push(function() {
 	<?php endif; ?>
 
 	function change_protocol() {
-			hideClass('encalg', ($('#proto').val() != 'esp'));
+		hideClass('encalg', ($('#proto').val() != 'esp'));
+	}
+
+	function change_aead() {
+		var notaead = ['AES', 'Blowfish', '3DES', 'CAST128'];
+		var arrayLength = notaead.length;
+		for (var i = 0; i < arrayLength; i++) {
+			if ($('#' + notaead[i]).prop('checked')) {
+				$("input[name='halgos[]']").prop("disabled", false);
+				return;
+			} 
+		}
+		$("input[name='halgos[]']").prop("disabled", true);
 	}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ----------
@@ -969,6 +981,11 @@ events.push(function() {
 	 // Protocol
 	$('#proto').change(function () {
 		change_protocol();
+	});
+
+	// AEAD
+	$(".ealgoschk").click(function () {
+		change_aead();
 	});
 
 	 // Localid
@@ -995,6 +1012,7 @@ events.push(function() {
 
 	change_mode();
 	change_protocol();
+	change_aead();
 	typesel_change_local(<?=htmlspecialchars($pconfig['localid_netbits'])?>);
 	typesel_change_natlocal(<?=htmlspecialchars($pconfig['natlocalid_netbits'])?>);
 <?php

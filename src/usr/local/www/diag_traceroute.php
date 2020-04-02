@@ -71,6 +71,9 @@ if ($_POST || $_REQUEST['host']) {
 	if (($ipproto == "ipv6") && is_ipaddrv4($host)) {
 		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
 	}
+	if (!is_ipaddr($host) && !is_hostname($host)) {
+		$input_errors[] = gettext("Hostname must be a valid hostname or IP address.");
+	}
 
 	$sourceip = $_REQUEST['sourceip'];
 	$ttl = $_REQUEST['ttl'];
@@ -183,7 +186,7 @@ if ($do_traceroute && $result) {
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Results')?></h2></div>
 		<div class="panel-body">
 <?php
-	print('<pre>' . $result . '</pre>');
+	print('<pre>' . htmlspecialchars($result) . '</pre>');
 ?>
 		</div>
 	</div>

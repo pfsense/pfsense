@@ -1720,7 +1720,6 @@ EOD;
 
 	if ($nsupdate) {
 		$dhcpdv6conf .= "ddns-update-style interim;\n";
-    $dhcpdv6conf .= "update-static-leases on;\n";
 	} else {
 		$dhcpdv6conf .= "ddns-update-style none;\n";
 	}

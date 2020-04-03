@@ -1139,7 +1139,8 @@ function openvpn_reconfigure($mode, $settings) {
 		$conf .= "management {$g['openvpn_base']}/{$mode_id}/sock unix\n";
 
 		// The remote server
-		$conf .= "remote {$settings['server_addr']} {$settings['server_port']}\n";
+		$remoteproto = strtolower($settings['protocol']);
+		$conf .= "remote {$settings['server_addr']} {$settings['server_port']} {$remoteproto}\n";
 
 		if (!empty($settings['use_shaper'])) {
 			$conf .= "shaper {$settings['use_shaper']}\n";

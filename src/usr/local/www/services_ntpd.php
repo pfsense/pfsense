@@ -61,9 +61,8 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (!is_numericint($_POST['ntpmaxpeers']) ||
-	    ($_POST['ntpmaxpeers'] < $min_candidate_peers) ||
-	    ($_POST['ntpmaxpeers'] > $max_candidate_peers)) {
+	if (!empty($_POST['ntpmaxpeers']) && (!is_numericint($_POST['ntpmaxpeers']) ||
+	    ($_POST['ntpmaxpeers'] < $min_candidate_peers) || ($_POST['ntpmaxpeers'] > $max_candidate_peers))) {
 		$input_errors[] = sprintf(gettext("Max candidate pool peers must be a number between %d and %d"), $min_candidate_peers, $max_candidate_peers);
 	}
 	
@@ -131,7 +130,11 @@ if ($_POST) {
 		}
 		$config['system']['timeservers'] = trim($timeservers);
 
-		$config['ntpd']['ntpmaxpeers'] = $pconfig['ntpmaxpeers'];
+		if (!empty($pconfig['ntpmaxpeers'])) {
+			$config['ntpd']['ntpmaxpeers'] = $pconfig['ntpmaxpeers'];
+		} else {
+			unset($config['ntpd']['ntpmaxpeers']);
+		}
 		$config['ntpd']['orphan'] = trim($pconfig['ntporphan']);
 		$config['ntpd']['ntpminpoll'] = $pconfig['ntpminpoll'];
 		$config['ntpd']['ntpmaxpoll'] = $pconfig['ntpmaxpoll'];

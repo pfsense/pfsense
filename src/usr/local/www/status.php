@@ -282,6 +282,7 @@ defCmdT("Network-Listen Queues", "/usr/bin/netstat -LaAn");
 defCmdT("Network-Sockets", "/usr/bin/sockstat");
 defCmdT("Network-ARP Table", "/usr/sbin/arp -an");
 defCmdT("Network-NDP Table", "/usr/sbin/ndp -na");
+defCmdT("OS-Kernel Modules", "/sbin/kldstat -v");
 defCmdT("OS-Kernel VMStat", "/usr/bin/vmstat -afimsz");
 
 /* If a device has a switch, put the switch configuration in the status output */
@@ -389,8 +390,8 @@ defCmdT("OS-Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
 defCmdT("OS-sysctl values", "/sbin/sysctl -aq");
 defCmdT("OS-Kernel Environment", "/bin/kenv");
 defCmdT("OS-Kernel Memory Usage", "/usr/local/sbin/kmemusage.sh");
-defCmdT("OS-Installed Packages", "/usr/sbin/pkg info");
-defCmdT("OS-Package Manager Configuration", "/usr/sbin/pkg -vv");
+defCmdT("OS-Installed Packages", "/usr/local/sbin/pkg-static info");
+defCmdT("OS-Package Manager Configuration", "/usr/local/sbin/pkg-static -vv");
 defCmdT("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");
 defCmdT("Hardware-USB Devices", "/usr/sbin/usbconfig dump_device_desc");
 

@@ -1034,6 +1034,12 @@ function interface_lagg_configure($lagg) {
 		$lagg_mtu = 1500;
 	}
 
+	// put failover master interface on top of list
+	if (isset($lagg['failovermaster']) && ($lagg['failovermaster'] != 'auto')) {
+		unset($members[array_search($lagg['failovermaster'], $members)]);
+		$members = array_merge(array($lagg['failovermaster']), $members);
+	}
+
 	foreach ($members as $member) {
 		if (!does_interface_exist($member)) {
 			continue;

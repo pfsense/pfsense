@@ -269,10 +269,12 @@ function get_services() {
 	$pconfig['description'] = gettext("PC/SC Smart Card Daemon");
 	$services[] = $pconfig;
 
-	$pconfig = array();
-	$pconfig['name'] = "ntpd";
-	$pconfig['description'] = gettext("NTP clock sync");
-	$services[] = $pconfig;
+	if (is_array($config['ntpd']) && ($config['ntpd']['enable'] != 'disabled')) {
+		$pconfig = array();
+		$pconfig['name'] = "ntpd";
+		$pconfig['description'] = gettext("NTP clock sync");
+		$services[] = $pconfig;
+	}
 
 	$pconfig = array();
 	$pconfig['name'] = "syslogd";

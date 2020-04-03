@@ -93,6 +93,7 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+		$config['ntpd']['enable'] = isset($pconfig['enable']) ? 'enabled' : 'disabled';
 		if (is_array($_POST['interface'])) {
 			$config['ntpd']['interface'] = implode(",", $_POST['interface']);
 		} elseif (isset($config['ntpd']['interface'])) {
@@ -221,6 +222,7 @@ function build_interface_list() {
 
 init_config_arr(array('ntpd'));
 $pconfig = &$config['ntpd'];
+$config['ntpd']['enable'] = isset($pconfig['enable']) ? 'enabled' : 'disabled';
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();
 } else {
@@ -250,6 +252,13 @@ $form = new Form;
 $form->setMultipartEncoding();	// Allow file uploads
 
 $section = new Form_Section('NTP Server Configuration');
+
+$section->addInput(new Form_Checkbox(
+	'enable',
+	'Enable',
+	'Enable NTP Server',
+	$pconfig['enable']
+))->setHelp('You may need to disable NTP if pfSense is running in a virtual machine and the host is responsible for the clock.');
 
 $iflist = build_interface_list();
 

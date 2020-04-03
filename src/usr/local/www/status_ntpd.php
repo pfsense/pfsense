@@ -45,7 +45,7 @@ if (!empty($config['ntpd']['restrictions']['row']) && is_array($config['ntpd']['
 	}
 }
 
-if ($allow_query) {
+if ($allow_query && ($config['ntpd']['enable'] != 'disabled')) {
 	if (isset($config['system']['ipv6allow'])) {
 		$inet_version = "";
 	} else {
@@ -206,8 +206,13 @@ if ($_REQUEST['ajax']) {
 function print_status() {
 	global $config, $ntpq_servers, $allow_query;
 
-	if (!$allow_query):
-
+	if ($config['ntpd']['enable'] == 'disabled'):
+		print("<tr>\n");
+		print('<td class="warning" colspan="11">');
+		printf(gettext('NTP Server is disabled'));
+		print("</td>\n");
+		print("</tr>\n");
+	elseif (!$allow_query):
 		print("<tr>\n");
 		print('<td class="warning" colspan="11">');
 		printf(gettext('Statistics unavailable because ntpq and ntpdc queries are disabled in the %1$sNTP service settings%2$s'), '<a href="services_ntpd.php">', '</a>');

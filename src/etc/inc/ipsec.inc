@@ -373,6 +373,8 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 			if ($addrbits) {
 				if ($mode == "tunnel6") {
 					return $idinfo['address']."/128";
+				} elseif (($mode == "vti") && is_ipaddrv4($idinfo['address'])) {
+					return $idinfo['address']."/30";
 				} elseif (($mode == "vti") && is_ipaddrv6($idinfo['address'])) {
 					return $idinfo['address']."/64";
 				} else {

@@ -6094,6 +6094,18 @@ function link_interface_to_bridge($int) {
 	}
 }
 
+function link_interface_to_lagg($int) {
+	global $config;
+
+	if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
+		foreach ($config['laggs']['lagg'] as $lagg) {
+			if (in_array($int, explode(',', $lagg['members']))) {
+				return "{$lagg['laggif']}";
+			}
+		}
+	}
+}
+
 function link_interface_to_group($int) {
 	global $config;
 

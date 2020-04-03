@@ -182,7 +182,7 @@ if ($_POST) {
 			}
 		}
 	}
-	if ($_POST['domain'] && !is_domain($_POST['domain'])) {
+	if ($_POST['domain'] && (!is_domain($_POST['domain'], false, false))) {
 		$input_errors[] = gettext("The domain may only contain the characters a-z, 0-9, '-' and '.'.");
 	}
 	validate_webguicss_field($input_errors, $_POST['webguicss']);

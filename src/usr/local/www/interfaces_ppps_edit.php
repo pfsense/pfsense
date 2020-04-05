@@ -586,7 +586,7 @@ if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 			'localip[' . $ifnm . ']',
 			null,
 			$pconfig['localip'][$ifnm]
-		))->addMask('subnet[' . $ifnm . ']', $pconfig['subnet'][$ifnm], 31)->setHelp('Local IP Address');
+		))->addMask('subnet[' . $ifnm . ']', $pconfig['subnet'][$ifnm], 31, 1, false)->setHelp('Local IP Address');
 
 		$group->add(new Form_Input(
 			'gateway[' . $ifnm . ']',

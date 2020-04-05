@@ -730,23 +730,13 @@ EOPP;
 
 			$revsubnet = array_reverse(explode('.',$subnet));
 
-			/* Take care of full classes first */
-			switch ($ifcfgsn) {
-				case 8:
-					$start_octet = 3;
-					break;
-				case 16:
-					$start_octet = 2;
-					break;
-				case 24:
-					$start_octet = 1;
-					break;
-				default:
-					$start_octet = 0;
-					/* Add subnet bitmask to first octet */
-					$revsubnet[0] .= '-' . $ifcfgsn;
-					break;
-
+			$subnet_mask_bits = 32 - $ifcfgsn;
+			$start_octet = $subnet_mask_bits >> 3;
+			$octet_mask_bits = $subnet_mask_bits & ($subnet_mask_bits % 8);
+			if ($octet_mask_bits) {
+			    $octet_mask = (1 << $octet_mask_bits) - 1;
+			    $octet_start = $revsubnet[$start_octet] & ~$octet_mask;
+			    $revsubnet[$start_octet] = $octet_start . "-" . ($octet_start + $octet_mask);
 			}
 
 			$ptr_domain = '';

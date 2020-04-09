@@ -2570,33 +2570,36 @@ function route_add_or_change($args) {
 }
 
 function set_ipv6routes_mtu($interface, $mtu) {
-        global $config, $g;
+	global $config, $g;
 
-        $ipv6mturoutes = array();
-        $if = convert_real_interface_to_friendly_interface_name($interface);
-        if ($config['interfaces'][$if]['ipaddrv6']) {
-                $a_gateways = return_gateways_array();
-                $a_staticroutes = get_staticroutes(false, false, true);
-                foreach ($a_gateways as $gate) {
-                        foreach ($a_staticroutes as $sroute) {
-                                if (($gate['interface'] == $interface) && ($sroute['gateway'] == $gate['name'])) {
-                                        $tgt = $sroute['network'];
-                                        $gateway = $gate['gateway'];
-                                        $ipv6mturoutes[$tgt] = $gateway;
-                                }
-                        }
-                        if (($gate['interface'] == $interface) && $gate['isdefaultgw']) {
-                                $tgt = "default";
-                                $gateway = $gate['gateway'];
-                                $ipv6mturoutes[$tgt] = $gateway;
-                        }
-                }
-                if (!empty($ipv6mturoutes)) {
-                        foreach ($ipv6mturoutes as $tgt => $gateway) {
-                                mwexec("/sbin/route change -6 -mtu " . escapeshellarg($mtu) . " " . escapeshellarg($tgt) . " " . escapeshellarg($gateway));
-                        }
-                }
-        }
+	$ipv6mturoutes = array();
+	$if = convert_real_interface_to_friendly_interface_name($interface);
+	if (!$config['interfaces'][$if]['ipaddrv6']) {
+		return;
+	}
+	$a_gateways = return_gateways_array();
+	$a_staticroutes = get_staticroutes(false, false, true);
+	foreach ($a_gateways as $gate) {
+		foreach ($a_staticroutes as $sroute) {
+			if ($gate['interface'] == $interface &&
+			    $sroute['gateway'] == $gate['name']) {
+				$tgt = $sroute['network'];
+				$gateway = $gate['gateway'];
+				$ipv6mturoutes[$tgt] = $gateway;
+			}
+		}
+		if ($gate['interface'] == $interface &&
+		    $gate['isdefaultgw']) {
+			$tgt = "default";
+			$gateway = $gate['gateway'];
+			$ipv6mturoutes[$tgt] = $gateway;
+		}
+	}
+	foreach ($ipv6mturoutes as $tgt => $gateway) {
+		mwexec("/sbin/route change -6 -mtu " . escapeshellarg($mtu) .
+		    " " . escapeshellarg($tgt) . " " .
+		    escapeshellarg($gateway));
+	}
 }
 
 function alias_to_subnets_recursive($name, $returnhostnames = false) {

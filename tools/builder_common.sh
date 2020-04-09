@@ -1702,7 +1702,6 @@ EOF
 	if pkg info -e ccache; then
 	cat <<EOF >>/usr/local/etc/poudriere.conf
 CCACHE_DIR=/var/cache/ccache
-ALLOW_UNSUPPORTED_SYSTEM=yes
 EOF
 	fi
 

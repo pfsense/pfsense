@@ -4064,6 +4064,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	} else {
 		if ($wantedmtu != get_interface_mtu($mtuif)) {
 			pfSense_interface_mtu($mtuif, $wantedmtu);
+			set_ipv6routes_mtu($mtuif, $wantedmtu);
 		}
 	}
 	/* XXX: What about gre/gif/.. ? */
@@ -6785,6 +6786,7 @@ function set_interface_mtu($interface, $mtu) {
 		}
 	} else {
 		pfSense_interface_mtu($interface, $mtu);
+		set_ipv6routes_mtu($interface, $mtu);
 	}
 }
 

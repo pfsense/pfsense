@@ -163,11 +163,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			}
 
 			if ($ifinfo['laggport']) {
-				$laggp = array();
-				foreach ($ifinfo['laggport'] as $lgp) {
-					list($laggp[]) = explode(" ", $lgp);
-				}
-				$laggport = implode(", ", $laggp);
+				$laggport = get_lagg_ports($ifinfo['laggport']);
 			}
 
 			showDef($ifinfo['mtu'], gettext("MTU"), $ifinfo['mtu']);

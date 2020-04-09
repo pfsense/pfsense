@@ -3032,4 +3032,22 @@ function is_supported_image($image_filename) {
 	}
 }
 
+function get_lagg_ports ($laggport) {
+	$laggp = array();
+	foreach ($laggport as $lgp) {
+		list($lpname, $lpinfo) = explode(" ", $lgp);
+		preg_match('~<(.+)>~', $lpinfo, $lgportmode);
+		if ($lgportmode[1]) {
+			$laggp[] = $lpname . " (" . $lgportmode[1] . ")";
+		} else {
+			$laggp[] = $lpname;
+		}
+	}
+	if ($laggp) {
+		return implode(", ", $laggp);
+	} else {
+		return false;
+	}
+}
+
 ?>

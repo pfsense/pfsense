@@ -33,7 +33,7 @@ require_once("guiconfig.inc");
 
 $gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
 
-global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
+global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps, $ntp_stratum_values;
 $ntp_poll_values = system_ntp_poll_values();
 
 function set_default_gps() {
@@ -159,18 +159,38 @@ if ($_POST) {
 		$input_errors[] = gettext("The submitted GPS type is invalid.");
 	}
 
-	if (!array_key_exists($pconfig['gpsminpoll'], $ntp_poll_values)) {
+	if (!array_key_exists($_POST['gpsminpoll'], $ntp_poll_values)) {
 		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is invalid.");
 	}
 
-	if (!array_key_exists($pconfig['gpsmaxpoll'], $ntp_poll_values)) {
+	if (!array_key_exists($_POST['gpsmaxpoll'], $ntp_poll_values)) {
 		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
 	}
 
-	if (is_numericint($pconfig['gpsminpoll']) &&
-	    is_numericint($pconfig['gpsmaxpoll']) ||
-	    ($pconfig['gpsmaxpoll'] < $pconfig['gpsminpoll'])) {
+	if (is_numericint($_POST['gpsminpoll']) && is_numericint($_POST['gpsmaxpoll']) &&
+	    ($_POST['gpsmaxpoll'] < $_POST['gpsminpoll'])) {
 		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is higher than Maximum Poll Interval.");
+	}
+
+	if (!empty($_POST['gpsfudge1']) && !is_numeric($_POST['gpsfudge1'])) {
+		$input_errors[] = gettext("The supplied value for Fudge Time 1 is invalid.");
+	}
+
+	if (!empty($_POST['gpsfudge2']) && !is_numeric($_POST['gpsfudge2'])) {
+		$input_errors[] = gettext("The supplied value for Fudge Time 2 is invalid.");
+	}
+
+	if (!empty($_POST['gpsstratum']) && (!is_numeric($_POST['gpsstratum']) || ($_POST['gpsstratum'] < 0) ||
+	    ($_POST['gpsstratum'] > 16))) {
+		$input_errors[] = gettext("The supplied value for Stratum must be from 0 to 16.");
+	}
+
+	if (!empty($_POST['gpsrefid']) && (strlen($_POST['gpsrefid']) > 4)) {
+		$input_errors[] = gettext("Clock ID must be not more that four characters.");
+	}
+
+	if (!empty($_POST['gpsrefid']) && !preg_match('/^[a-zA-Z0-9\-_]+$/', $_POST['gpsrefid'])) {
+		$input_errors[] = gettext("Clock ID may only contain the characters a-z, A-Z, 0-9, '-' and '_'.");
 	}
 
 } else {
@@ -375,6 +395,7 @@ $tab_array[] = array(gettext("Settings"), false, "services_ntpd.php");
 $tab_array[] = array(gettext("ACLs"), false, "services_ntpd_acls.php");
 $tab_array[] = array(gettext("Serial GPS"), true, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
+$tab_array[] = array(gettext("ACTS"), false, "services_ntpd_acts.php");
 display_top_tabs($tab_array);
 
 $form = new Form;
@@ -471,11 +492,11 @@ $section->addInput(new Form_Input(
 	$pconfig['fudge2']
 ))->setHelp('Fudge time 2 is used to specify the GPS time offset (default: 0.0).');
 
-$section->addInput(new Form_Input(
+$section->addInput(new Form_Select(
 	'gpsstratum',
-	'Stratum (0-16)',
-	'text',
-	$pconfig['stratum']
+	'Stratum',
+	$pconfig['stratum'],
+	$ntp_stratum_values
 ))->setHelp('This may be used to change the GPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock.');
 
 $section->addInput(new Form_Select(
@@ -724,7 +745,6 @@ events.push(function() {
 				return;
 		}
 
-		$('#gpsstratum').val("");
 		$('#gpsrefid').val("");
 		$('#gpsflag1').prop('checked', true);
 		$('#gpsflag2').prop('checked', false);

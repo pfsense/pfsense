@@ -31,7 +31,7 @@
 
 require_once("guiconfig.inc");
 
-global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
+global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps, $ntp_stratum_values;
 $ntp_poll_values = system_ntp_poll_values();
 
 if (!is_array($config['ntpd'])) {
@@ -44,18 +44,34 @@ if (!is_array($config['ntpd']['pps'])) {
 if ($_POST) {
 	unset($input_errors);
 
-	if (!array_key_exists($pconfig['ppsminpoll'], $ntp_poll_values)) {
+	if (!array_key_exists($_POST['ppsminpoll'], $ntp_poll_values)) {
 		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is invalid.");
 	}
 
-	if (!array_key_exists($pconfig['ppsmaxpoll'], $ntp_poll_values)) {
+	if (!array_key_exists($_POST['ppsmaxpoll'], $ntp_poll_values)) {
 		$input_errors[] = gettext("The supplied value for Maximum Poll Interval is invalid.");
 	}
 
-	if (is_numericint($pconfig['ppsminpoll']) &&
-	    is_numericint($pconfig['ppsmaxpoll']) ||
-	    ($pconfig['ppsmaxpoll'] < $pconfig['ppsminpoll'])) {
+	if (is_numericint($_POST['ppsminpoll']) && is_numericint($_POST['ppsmaxpoll']) &&
+	    ($_POST['ppsmaxpoll'] < $_POST['ppsminpoll'])) {
 		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is higher than Maximum Poll Interval.");
+	}
+
+	if (!empty($_POST['ppsfudge1']) && !is_numeric($_POST['ppsfudge1'])) {
+		$input_errors[] = gettext("The supplied value for Fudge Time is invalid.");
+	}
+
+	if (!empty($_POST['ppsstratum']) && (!is_numeric($_POST['ppsstratum']) || ($_POST['ppsstratum'] < 0) ||
+	    ($_POST['ppsstratum'] > 16))) {
+		$input_errors[] = gettext("The supplied value for Stratum must be from 0 to 16.");
+	}
+
+	if (!empty($_POST['ppsrefid']) && (strlen($_POST['ppsrefid']) > 4)) {
+		$input_errors[] = gettext("Clock ID must be not more that four characters.");
+	}
+
+	if (!empty($_POST['ppsrefid']) && !preg_match('/^[a-zA-Z0-9\-_]+$/', $_POST['ppsrefid'])) {
+		$input_errors[] = gettext("Clock ID may only contain the characters a-z, A-Z, 0-9, '-' and '_'.");
 	}
 
 	if (!$input_errors) {
@@ -126,7 +142,7 @@ $shortcut_section = "ntp";
 include("head.inc");
 
 if ($input_errors) {
-    print_input_errors($input_errors);
+	print_input_errors($input_errors);
 }
 
 if ($changes_applied) {
@@ -138,6 +154,7 @@ $tab_array[] = array(gettext("Settings"), false, "services_ntpd.php");
 $tab_array[] = array(gettext("ACLs"), false, "services_ntpd_acls.php");
 $tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), true, "services_ntpd_pps.php");
+$tab_array[] = array(gettext("ACTS"), false, "services_ntpd_acts.php");
 display_top_tabs($tab_array);
 
 $form = new Form;
@@ -178,11 +195,11 @@ $section->addInput(new Form_Input(
 	$pconfig['fudge1']
 ))->setHelp('Fudge time is used to specify the PPS signal offset from the actual second such as the transmission delay between the transmitter and the receiver (default: 0.0).');
 
-$section->addInput(new Form_Input(
+$section->addInput(new Form_Select(
 	'ppsstratum',
 	'Stratum',
-	'text',
-	$pconfig['stratum']
+	$pconfig['stratum'],
+	$ntp_stratum_values
 ))->setHelp('This may be used to change the PPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock and just monitor this source.');
 
 $section->addInput(new Form_Select(

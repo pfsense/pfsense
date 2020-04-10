@@ -1558,6 +1558,7 @@ function check_gps_speed($device) {
 global $ntp_poll_min_value, $ntp_poll_max_value;
 global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
 global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
+global $ntp_poll_min_default_acts, $ntp_poll_max_default_acts;
 global $ntp_poll_min_default, $ntp_poll_max_default;
 $ntp_poll_min_value = 4;
 $ntp_poll_max_value = 17;
@@ -1565,8 +1566,31 @@ $ntp_poll_min_default_gps = 4;
 $ntp_poll_max_default_gps = 4;
 $ntp_poll_min_default_pps = 4;
 $ntp_poll_max_default_pps = 4;
+$ntp_poll_min_default_acts = 12;
+$ntp_poll_max_default_acts = 17;
 $ntp_poll_min_default = 'omit';
 $ntp_poll_max_default = 9;
+
+global $ntp_stratum_values;
+$ntp_stratum_values = array(
+	'0' => gettext('0 (default)'),
+	'1' => '1',
+	'2' => '2',
+	'3' => '3',
+	'4' => '4',
+	'5' => '5',
+	'6' => '6',
+	'7' => '7',
+	'8' => '8',
+	'9' => '9',
+	'10' => '10',
+	'11' => '11',
+	'12' => '12',
+	'13' => '13',
+	'14' => '14',
+	'15' => '15',
+	'16' => gettext('16 (undefined)')
+);
 
 function system_ntp_poll_values() {
 	global $ntp_poll_min_value, $ntp_poll_max_value;
@@ -1709,10 +1733,41 @@ function system_ntp_setup_pps($serialport) {
 	return true;
 }
 
+function system_ntp_setup_acts($serialport) {
+	global $config;
+	$acts_device = '/dev/acts0';
+	$serialport = '/dev/'.$serialport;
+
+	if (!file_exists($serialport)) {
+		return false;
+	}
+
+	// Create symlink that ntpd requires
+	unlink_if_exists($acts_device);
+	@symlink($serialport, $acts_device);
+
+	$actsbaud = $config['ntpd']['acts']['speed'];
+	/* Configure the serial port for raw IO and set the speed */
+	mwexec("stty -f {$serialport} raw speed {$actsbaud}");
+	mwexec("stty -f {$serialport}.init raw speed {$actsbaud}");
+
+	/* Remove old /etc/remote entry if it exists */
+	$acts_shortname = "acts0";
+	if (intval(`/usr/bin/grep -c "^{$acts_shortname}" /etc/remote`) != 0) {
+		mwexec("/usr/bin/sed -i '' -n '/{$acts_shortname}/!p' /etc/remote");
+	} else {
+	/* Add /etc/remote entry in case we need to read from the ACTS with tip */
+		@file_put_contents("/etc/remote", "{$acts_shortname}:dv={$serialport}:br#{$actsbaud}:pa=none:\n", FILE_APPEND);
+	}
+
+	return true;
+}
+
 function system_ntp_configure() {
 	global $config, $g;
 	global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
 	global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
+	global $ntp_poll_min_default_acts, $ntp_poll_max_default_acts;
 	global $ntp_poll_min_default, $ntp_poll_max_default;
 
 	$driftfile = "/var/db/ntpd.drift";
@@ -1885,6 +1940,35 @@ function system_ntp_configure() {
 		$ntpcfg .= "fudge 127.127.1.0 stratum 12\n";
 	}
 	/* End GPS configuration */
+
+	/* Add ACTS configuration */
+	if (is_array($config['ntpd']['acts']) && !empty($config['ntpd']['acts']['port']) && system_ntp_setup_acts($config['ntpd']['acts']['port'])) {
+		$ntpcfg .= "\n# ACTS Setup\n";
+		$ntpcfg .= 'server 127.127.18.0 mode ' . $config['ntpd']['acts']['mode'] .' iburst';
+		$ntpcfg .= system_ntp_fixup_poll_value('minpoll', $config['ntpd']['acts']['actsminpoll'], $ntp_poll_min_default_acts);
+		$ntpcfg .= system_ntp_fixup_poll_value('maxpoll', $config['ntpd']['acts']['actsmaxpoll'], $ntp_poll_max_default_acts);
+		if (!empty($config['ntpd']['acts']['prefer'])) {
+			$ntpcfg .= ' prefer';
+		}
+		if (!empty($config['ntpd']['acts']['noselect'])) {
+			$ntpcfg .= ' noselect ';
+		}
+		$ntpcfg .= "\nfudge 127.127.18.0";
+		if (!empty($config['ntpd']['acts']['fudge1'])) {
+			$ntpcfg .= ' time1 '. $config['ntpd']['acts']['fudge1'];
+		}
+		$ntpcfg .= ' flag1 ' . (int)!empty($config['ntpd']['acts']['flag1']);
+		$ntpcfg .= ' flag2 ' . (int)!empty($config['ntpd']['acts']['flag2']);
+		if (!empty($config['ntpd']['acts']['refid'])) {
+			$ntpcfg .= ' refid ' . $config['ntpd']['acts']['refid'];
+		}
+		if (!empty($config['ntpd']['acts']['stratum'])) {
+			$ntpcfg .= ' stratum ' . $config['ntpd']['acts']['stratum'];
+		}
+		$ntpcfg .= "\nphone " . $config['ntpd']['acts']['phonecmd'] . "\n";
+	}
+	/* End ACTS configuration */
+
 	$auto_pool_suffix = "pool.ntp.org";
 	$have_pools = false;
 	$ntpcfg .= "\n\n# Upstream Servers\n";

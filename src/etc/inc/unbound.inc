@@ -328,6 +328,7 @@ EOF;
 	$prefetch = isset($unboundcfg['prefetch']) ? "yes" : "no";
 	$prefetch_key = isset($unboundcfg['prefetchkey']) ? "yes" : "no";
 	$dns_record_cache = isset($unboundcfg['dnsrecordcache']) ? "yes" : "no";
+	$aggressivensec = isset($unboundcfg['aggressivensec']) ? "yes" : "no";
 	$outgoing_num_tcp = isset($unboundcfg['outgoing_num_tcp']) ? $unboundcfg['outgoing_num_tcp'] : "10";
 	$incoming_num_tcp = isset($unboundcfg['incoming_num_tcp']) ? $unboundcfg['incoming_num_tcp'] : "10";
 	if (empty($unboundcfg['edns_buffer_size']) || ($unboundcfg['edns_buffer_size'] == 'auto')) {
@@ -494,6 +495,7 @@ prefetch: {$prefetch}
 prefetch-key: {$prefetch_key}
 use-caps-for-id: {$use_caps}
 serve-expired: {$dns_record_cache}
+aggressive-nsec: {$aggressivensec}
 # Statistics
 {$statistics}
 # TLS Configuration

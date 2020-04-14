@@ -78,6 +78,10 @@ if (isset($config['unbound']['dnsrecordcache'])) {
 	$pconfig['dnsrecordcache'] = true;
 }
 
+if (isset($config['unbound']['aggressivensec'])) {
+	$pconfig['aggressivensec'] = true;
+}
+
 $pconfig['msgcachesize'] = $config['unbound']['msgcachesize'];
 $pconfig['outgoing_num_tcp'] = isset($config['unbound']['outgoing_num_tcp']) ? $config['unbound']['outgoing_num_tcp'] : '10';
 $pconfig['incoming_num_tcp'] = isset($config['unbound']['incoming_num_tcp']) ? $config['unbound']['incoming_num_tcp'] : '10';
@@ -207,6 +211,11 @@ if ($_POST) {
 				$config['unbound']['dnsrecordcache'] = true;
 			} else {
 				unset($config['unbound']['dnsrecordcache']);
+			}
+			if (isset($_POST['aggressivensec'])) {
+				$config['unbound']['aggressivensec'] = true;
+			} else {
+				unset($config['unbound']['aggressivensec']);
 			}
 			$config['unbound']['msgcachesize'] = $_POST['msgcachesize'];
 			$config['unbound']['outgoing_num_tcp'] = $_POST['outgoing_num_tcp'];
@@ -340,6 +349,15 @@ $section->addInput(new Form_Checkbox(
 	'Serve cache records even with TTL of 0',
 	$pconfig['dnsrecordcache']
 ))->setHelp('When enabled, allows unbound to serve one query even with a TTL of 0, if TTL is 0 then new record will be requested in the background when the cache is served to ensure cache is updated without latency on service of the DNS request.');
+
+$section->addInput(new Form_Checkbox(
+	'aggressivensec',
+	'Aggressive NSEC',
+	'Aggressive Use of DNSSEC-Validated Cache',
+	$pconfig['aggressivensec']
+))->setHelp('When enabled, unbound uses the DNSSEC NSEC chain to synthesize NXDOMAIN and other denials, ' .
+	    'using information from previous NXDOMAINs answers. It helps to reduce the query rate towards ' .
+	    'targets that get a very high nonexistent name lookup rate.');
 
 $section->addInput(new Form_Select(
 	'msgcachesize',

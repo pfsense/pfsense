@@ -1329,7 +1329,7 @@
 					foreach(explode(PHP_EOL,$header) as $hv) {
 						log_error(sprintf("Response Header: %s", rtrim($hv)));
 				  	}
-				  log_error(sprintf("Response Data: %s", $data));
+					log_error(sprintf("Response Data: %s", $data));
 				}
 				$this->_checkStatus($ch, $data, $header);
 				@curl_close($ch);

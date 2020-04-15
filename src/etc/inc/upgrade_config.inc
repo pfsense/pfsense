@@ -5479,17 +5479,31 @@ function upgrade_174_to_175() {
 	if (count($config['ipsec']['phase1'])) {
 		$a_phase1 = &$config['ipsec']['phase1'];
 		foreach($a_phase1 as &$phase1) {
-			if (empty($phase1)) {
+			if (empty($phase1) || !is_array($phase1)) {
 				continue;
 			}
 			$item = array();
-			$item['encryption-algorithm'] = $phase1['encryption-algorithm'];
-			$item['hash-algorithm'] = $phase1['hash-algorithm'];
-			$item['dhgroup'] = $phase1['dhgroup'];
-			$phase1['encryption']['item'][] = $item;
-			unset($phase1['encryption-algorithm']);
-			unset($phase1['hash-algorithm']);
-			unset($phase1['dhgroup']);
+			if (isset($phase1['encryption-algorithm']) && !empty($phase1['encryption-algorithm'])) {
+				$item['encryption-algorithm'] = $phase1['encryption-algorithm'];
+				unset($phase1['encryption-algorithm']);
+			}
+			if (isset($phase1['hash-algorithm']) && !empty($phase1['hash-algorithm'])) {
+				$item['hash-algorithm'] = $phase1['hash-algorithm'];
+				unset($phase1['hash-algorithm']);
+			}
+			if (isset($phase1['dhgroup']) && !empty($phase1['dhgroup'])) {
+				$item['dhgroup'] = $phase1['dhgroup'];
+				unset($phase1['dhgroup']);
+			}
+			if (!empty($item)) {
+				if (!is_array($phase1['encryption'])) {
+					$phase1['encryption'] = array();
+				}
+				if (!is_array($phase1['encryption']['item'])) {
+					$phase1['encryption']['item'] = array();
+				}
+				$phase1['encryption']['item'][] = $item;
+			}
 		}
 	}
 }

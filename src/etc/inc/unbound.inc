@@ -910,6 +910,23 @@ function unbound_acls_config($cfgsubdir = "") {
 			}
 		}
 
+		// OpenVPN IPv6 Tunnel Networks
+		foreach (array('openvpn-client', 'openvpn-server') as $ovpnentry) {
+			if (is_array($config['openvpn'][$ovpnentry])) {
+				foreach ($config['openvpn'][$ovpnentry] as $ovpnent) {
+					if (!isset($ovpnent['disable']) && !empty($ovpnent['tunnel_networkv6'])) {
+						$aclcfg .= "access-control: {$ovpnent['tunnel_networkv6']} allow\n";
+					}
+				}
+			}
+		}
+		// IPsec Mobile Virtual IPv6 Address Pool
+		if ((isset($config['ipsec']['client']['enable'])) &&
+		    (!empty($config['ipsec']['client']['pool_address_v6'])) &&
+		    (!empty($config['ipsec']['client']['pool_netbits_v6']))) {
+			$aclcfg .= "access-control: {$config['ipsec']['client']['pool_address_v6']}/{$config['ipsec']['client']['pool_netbits_v6']} allow\n";
+		}
+
 		// Generate IPv4 access-control entries using the same logic as automatic outbound NAT
 		if (empty($FilterIflist)) {
 			filter_generate_optcfg_array();

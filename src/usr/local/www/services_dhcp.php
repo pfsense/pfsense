@@ -190,6 +190,8 @@ if (is_array($dhcpdconf)) {
 	$pconfig['filename'] = $dhcpdconf['filename'];
 	$pconfig['filename32'] = $dhcpdconf['filename32'];
 	$pconfig['filename64'] = $dhcpdconf['filename64'];
+	$pconfig['filename32arm'] = $dhcpdconf['filename32arm'];
+	$pconfig['filename64arm'] = $dhcpdconf['filename64arm'];
 	$pconfig['rootpath'] = $dhcpdconf['rootpath'];
 	$pconfig['netmask'] = $dhcpdconf['netmask'];
 	$pconfig['numberoptions'] = $dhcpdconf['numberoptions'];
@@ -718,6 +720,8 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['filename'] = $_POST['filename'];
 		$dhcpdconf['filename32'] = $_POST['filename32'];
 		$dhcpdconf['filename64'] = $_POST['filename64'];
+		$dhcpdconf['filename32arm'] = $_POST['filename32arm'];
+		$dhcpdconf['filename64arm'] = $_POST['filename64arm'];
 		$dhcpdconf['rootpath'] = $_POST['rootpath'];
 		unset($dhcpdconf['statsgraph']);
 		if ($_POST['statsgraph']) {
@@ -1509,8 +1513,22 @@ $section->addInput(new Form_Input(
 	'UEFI 64 bit file name',
 	'text',
 	$pconfig['filename64']
+));
+
+$section->addInput(new Form_Input(
+	'filename32arm',
+	'ARM 32 bit file name',
+	'text',
+	$pconfig['filename32arm']
+));
+
+$section->addInput(new Form_Input(
+	'filename64arm',
+	'ARM 64 bit file name',
+	'text',
+	$pconfig['filename64arm']
 ))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
-			'All three filenames and a configured boot server are necessary for UEFI to work! ');
+			'All five filenames and a configured boot server are necessary for UEFI & ARM to work! ');
 
 $section->addInput(new Form_Input(
 	'rootpath',

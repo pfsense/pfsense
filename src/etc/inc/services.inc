@@ -987,8 +987,18 @@ EOPP;
 				    ($poolconf['filename64'] != $dhcpifconf['filename64']))) {
 					$filename64 = $poolconf['filename64'];
 				}
+				if (!empty($poolconf['filename32arm']) &&
+				    (!isset($dhcpifconf['filename32arm']) ||
+				    ($poolconf['filename32arm'] != $dhcpifconf['filename32arm']))) {
+					$filename32arm = $poolconf['filename32arm'];
+				}
+				if (!empty($poolconf['filename64arm']) &&
+				    (!isset($dhcpifconf['filename64arm']) ||
+				    ($poolconf['filename64arm'] != $dhcpifconf['filename64arm']))) {
+					$filename64arm = $poolconf['filename64arm'];
+				}
 
-				if (!empty($filename32) || !empty($filename64)) {
+				if (!empty($filename32) || !empty($filename64) || !empty($filename32arm) || !empty($filename64arm)) {
 					if (empty($filename) && !empty($dhcpifconf['filename'])) {
 						$filename = $dhcpifconf['filename'];
 					}
@@ -998,22 +1008,32 @@ EOPP;
 					if (empty($filename64) && !empty($dhcpifconf['filename64'])) {
 						$filename64 = $dhcpifconf['filename64'];
 					}
+					if (empty($filename32arm) && !empty($dhcpifconf['filename32arm'])) {
+						$filename32arm = $dhcpifconf['filename32arm'];
+					}
+					if (empty($filename64arm) && !empty($dhcpifconf['filename64arm'])) {
+						$filename64arm = $dhcpifconf['filename64arm'];
+					}
 				}
 
-				if (!empty($filename) && !empty($filename32) && !empty($filename64)) {
+				if (!empty($filename) && !empty($filename32) && !empty($filename64) && !empty($filename32arm) && !empty($filename64arm)) {
 					$dhcpdconf .= "		if option arch = 00:06 {\n";
 					$dhcpdconf .= "			filename \"{$filename32}\";\n";
 					$dhcpdconf .= "		} else if option arch = 00:07 {\n";
 					$dhcpdconf .= "			filename \"{$filename64}\";\n";
 					$dhcpdconf .= "		} else if option arch = 00:09 {\n";
 					$dhcpdconf .= "			filename \"{$filename64}\";\n";
+					$dhcpdconf .= "		} else if option arch = 00:0a {\n";
+					$dhcpdconf .= "			filename \"{$filename32arm}\";\n";
+					$dhcpdconf .= "		} else if option arch = 00:0b {\n";
+					$dhcpdconf .= "			filename \"{$filename64arm}\";\n";
 					$dhcpdconf .= "		} else {\n";
 					$dhcpdconf .= "			filename \"{$filename}\";\n";
 					$dhcpdconf .= "		}\n\n";
 				} elseif (!empty($filename)) {
 					$dhcpdconf .= "		filename \"{$filename}\";\n";
 				}
-				unset($filename, $filename32, $filename64);
+				unset($filename, $filename32, $filename64, $filename32arm, $filename64arm);
 
 				if (!empty($poolconf['rootpath']) && ($poolconf['rootpath'] != $dhcpifconf['rootpath'])) {
 					$dhcpdconf .= "		option root-path \"{$poolconf['rootpath']}\";\n";

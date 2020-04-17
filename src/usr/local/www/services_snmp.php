@@ -366,6 +366,7 @@ print($form);
 events.push(function() {
 
 	noMibii = false;
+	noHostres = false;
 
 	$('#junk').hide();
 	enableChange();
@@ -392,6 +393,17 @@ events.push(function() {
 		}
 	}
 
+	function pfChange() {
+		if ($('#pf').prop('checked')) {
+			$('#hostres').prop('checked', true);
+			$('#mibii').prop('checked', true);
+			noHostres = true;
+			noMibii = true;
+		} else {
+			noHostres = false;
+		}
+	}
+
 	$('#enable').change(function() {
 		enableChange();
 	});
@@ -402,12 +414,19 @@ events.push(function() {
 
 	$('#hostres').change(function() {
 		hostresChange();
+		if (noHostres) {
+			$('#hostres').prop('checked', 'true');
+		}
 	});
 
 	$('#mibii').change(function() {
 		if (noMibii) {
 			$('#mibii').prop('checked', 'true');
 		}
+	});
+
+	$('#pf').change(function() {
+		pfChange();
 	});
 
 	$('[name=btntoggleall]').hide();

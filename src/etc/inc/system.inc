@@ -1603,7 +1603,8 @@ function system_ntp_setup_gps($serialport) {
 		return false;
 	}
 
-	init_config_arr(array('ntpd', 'gps', 'speed'));
+	init_config_arr(array('ntpd', 'gps'));
+
 	$gps_device = '/dev/gps0';
 	$serialport = '/dev/'.$serialport;
 
@@ -1669,12 +1670,12 @@ function system_ntp_setup_gps($serialport) {
 	}
 
 	/* Remove old /etc/remote entry if it exists */
-	if (mwexec("/usr/bin/grep -c '^gps0' /etc/remote")) {
+	if (mwexec("/usr/bin/grep -c '^gps0' /etc/remote") == 0) {
 		mwexec("/usr/bin/sed -i '' -n '/gps0/!p' /etc/remote");
 	}
 
 	/* Add /etc/remote entry in case we need to read from the GPS with tip */
-	if (intval(`/usr/bin/grep -c '^gps0' /etc/remote`) == 0) {
+	if (mwexec("/usr/bin/grep -c '^gps0' /etc/remote") != 0) {
 		@file_put_contents("/etc/remote", "gps0:dv={$serialport}:br#{$gpsbaud}:pa=none:\n", FILE_APPEND);
 	}
 

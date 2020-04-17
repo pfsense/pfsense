@@ -55,6 +55,8 @@ function status_logs_common_code() {
 
 	if ($_POST['clear']) {
 		clear_log_file($logfile_path);
+	} elseif ($_POST['download'] && file_exists($logfile_path)) {
+		send_user_download('file', $logfile_path, "{$logfile}_log.txt");
 	}
 
 	/* Setup shortcuts if they exist */
@@ -1024,6 +1026,19 @@ function manage_log_section() {
 		$btnsavesettings
 	))->setHelp('Saves changed settings.');
 
+	$btndownload = new Form_Button(
+		'download',
+		gettext('Download log'),
+		null,
+		'fa-download'
+	);
+
+	$group->add(new Form_StaticText(
+		'',
+		$btndownload
+	))->setHelp('Download local log file.');
+
+	$btndownload->addClass('btn-primary');
 
 	$btnclear = new Form_Button(
 		'clear',

@@ -3574,4 +3574,31 @@ function is_url_hostname_resolvable($url) {
 	return $resolvable;
 }
 
+function get_pf_timeouts () {
+	$pftimeout = array();
+	exec("/sbin/pfctl -st", $pfctlst, $retval);
+	if ($retval == 0) {
+		foreach ($pfctlst as $i => $pfst) {
+			preg_match('/([a-z]+)\.([a-z]+)\s+([0-9]+)/', $pfst, $timeout);
+			if ($timeout[1] == "other") {
+				$proto = "Other";
+			} else {
+				$proto = strtoupper($timeout[1]);
+			}
+			if ($timeout[2] == "finwait") {
+				$type = "FIN Wait";
+			} else {
+				$type = ucfirst($timeout[2]);
+			}
+			$pftimeout[$proto][$type]['name'] = $proto . " " . $type;
+			$pftimeout[$proto][$type]['keyname'] = $timeout[1] . $timeout[2] . "timeout";
+			$pftimeout[$proto][$type]['value'] = $timeout[3];
+			if ($i == 14) {
+				break;
+			}
+		}
+	}
+	return $pftimeout;
+}
+
 ?>

@@ -69,6 +69,7 @@ $pconfig['tcpestablishedtimeout'] = $config['system']['tcpestablishedtimeout'];
 $pconfig['tcpclosingtimeout'] = $config['system']['tcpclosingtimeout'];
 $pconfig['tcpfinwaittimeout'] = $config['system']['tcpfinwaittimeout'];
 $pconfig['tcpclosedtimeout'] = $config['system']['tcpclosedtimeout'];
+$pconfig['tcptsdifftimeout'] = $config['system']['tcptsdifftimeout'];
 $pconfig['udpfirsttimeout'] = $config['system']['udpfirsttimeout'];
 $pconfig['udpsingletimeout'] = $config['system']['udpsingletimeout'];
 $pconfig['udpmultipletimeout'] = $config['system']['udpmultipletimeout'];
@@ -133,6 +134,9 @@ if ($_POST) {
 	}
 	if ($_POST['tcpclosedtimeout'] && !is_numericint($_POST['tcpclosedtimeout'])) {
 		$input_errors[] = gettext("The TCP closed timeout value must be an integer.");
+	}
+	if ($_POST['tcptsdifftimeout'] && !is_numericint($_POST['tcptsdifftimeout'])) {
+		$input_errors[] = gettext("The TCP tsdiff timeout value must be an integer.");
 	}
 	if ($_POST['udpfirsttimeout'] && !is_numericint($_POST['udpfirsttimeout'])) {
 		$input_errors[] = gettext("The UDP first timeout value must be an integer.");
@@ -259,6 +263,11 @@ if ($_POST) {
 			$config['system']['tcpclosedtimeout'] = $_POST['tcpclosedtimeout'];
 		} else {
 			unset($config['system']['tcpclosedtimeout']);
+		}
+		if (!empty($_POST['tcptsdifftimeout'])) {
+			$config['system']['tcptsdifftimeout'] = $_POST['tcptsdifftimeout'];
+		} else {
+			unset($config['system']['tcptsdifftimeout']);
 		}
 		if (!empty($_POST['udpfirsttimeout'])) {
 			$config['system']['udpfirsttimeout'] = $_POST['udpfirsttimeout'];
@@ -537,7 +546,8 @@ $section->addInput(new Form_Input(
 	'maximumfrags',
 	'Firewall Maximum Fragment Entries',
 	'text',
-	$pconfig['maximumfrags']
+	$pconfig['maximumfrags'],
+	['placeholder' => 5000]
 ))->setHelp('Maximum number of packet fragments to hold for reassembly by scrub rules. Leave this blank for the default (5000)');
 
 $section->addInput(new Form_Checkbox(
@@ -698,48 +708,17 @@ if (count($config['interfaces']) > 1) {
 
 $section = new Form_Section('State Timeouts (seconds - blank for default)');
 
-$tcpTimeouts = array('First', 'Opening', 'Established', 'Closing', 'FIN Wait', 'Closed');
-foreach ($tcpTimeouts as $name) {
-	$keyname = 'tcp'. strtolower(str_replace(" ", "", $name)) .'timeout';
-	$section->addInput(new Form_Input(
-		$keyname,
-		'TCP '. $name,
-		'number',
-		$config['system'][$keyname]
-	));
-}
-
-$udpTimeouts = array('First', 'Single', 'Multiple');
-foreach ($udpTimeouts as $name) {
-	$keyname = 'udp'. strtolower(str_replace(" ", "", $name)) .'timeout';
-	$section->addInput(new Form_Input(
-		$keyname,
-		'UDP '. $name,
-		'number',
-		$config['system'][$keyname]
-	));
-}
-
-$icmpTimeouts = array('First', 'Error');
-foreach ($icmpTimeouts as $name) {
-	$keyname = 'icmp'. strtolower(str_replace(" ", "", $name)) .'timeout';
-	$section->addInput(new Form_Input(
-		$keyname,
-		'ICMP '. $name,
-		'number',
-		$config['system'][$keyname]
-	));
-}
-
-$otherTimeouts = array('First', 'Single', 'Multiple');
-foreach ($otherTimeouts as $name) {
-	$keyname = 'other'. strtolower(str_replace(" ", "", $name)) .'timeout';
-	$section->addInput(new Form_Input(
-		$keyname,
-		'Other '. $name,
-		'number',
-		$config['system'][$keyname]
-	));
+$pftimeouts = get_pf_timeouts();
+foreach ($pftimeouts as $proto => $tm) {
+	foreach ($tm as $type => $item) {
+		$section->addInput(new Form_Input(
+			$item['keyname'],
+			$item['name'],
+			'number',
+			$config['system'][$keyname],
+			['placeholder' => $item['value']]
+		));
+	}
 }
 
 $form->add($section);
@@ -747,6 +726,11 @@ $form->add($section);
 print $form;
 
 ?></div>
+
+<div class="infoblock">
+	<?php print_info_box(gettext('You need to reload this page after changing the Firewall Optimization Options to see the actual timeout values.'), 'info', false); ?>
+</div>
+
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {

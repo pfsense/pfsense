@@ -330,6 +330,9 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	if (isset($config['system']['tcpclosedtimeout']) && is_numericint($config['system']['tcpclosedtimeout'])) {
 		$timeoutlist .= " tcp.closed {$config['system']['tcpclosedtimeout']} ";
 	}
+	if (isset($config['system']['tcptsdifftimeout']) && is_numericint($config['system']['tcptsdifftimeout'])) {
+		$timeoutlist .= " tcp.tsdiff {$config['system']['tcptsdifftimeout']} ";
+	}
 	if (isset($config['system']['udpfirsttimeout']) && is_numericint($config['system']['udpfirsttimeout'])) {
 		$timeoutlist .= " udp.first {$config['system']['udpfirsttimeout']} ";
 	}

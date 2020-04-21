@@ -4071,7 +4071,7 @@ class dnpipe_class extends dummynet_class {
 			if ($selectedAQM["ecn"]) {
 				if ($this->getECN() == 'on') {
 					$pfq_rule .= ' ecn';
-				} else {
+				} elseif (($this->getAQM() != 'red') && ($this->getAQM() != 'gred')) {
 					$pfq_rule .= ' noecn';
 				}
 			}
@@ -4689,7 +4689,7 @@ class dnqueue_class extends dummynet_class {
 			if ($selectedAQM["ecn"]) {
 				if ($this->getECN() == 'on') {
 					$pfq_rule .= ' ecn';
-				} else {
+				} elseif (($this->getAQM() != 'red') && ($this->getAQM() != 'gred')) {
 					$pfq_rule .= ' noecn';
 				}
 			}

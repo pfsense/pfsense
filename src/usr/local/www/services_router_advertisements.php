@@ -178,7 +178,7 @@ if ($_POST['save']) {
 		if (!is_numericint($_POST['raminrtradvinterval'])) {
 			$input_errors[] = gettext("Minimum advertisement interval must be an integer.");
 		}
-		if ($_POST['raminrtradvinterval'] < "3") {
+		if ($_POST['raminrtradvinterval'] < 3) {
 			$input_errors[] = gettext("Minimum advertisement interval must be no less than 3.");
 		}
 		if ($_POST['ramaxrtradvinterval'] && $_POST['raminrtradvinterval'] > (0.75 * $_POST['ramaxrtradvinterval'])) {
@@ -189,12 +189,12 @@ if ($_POST['save']) {
 		if (!is_numericint($_POST['ramaxrtradvinterval'])) {
 			$input_errors[] = gettext("Maximum advertisement interval must be an integer.");
 		}
-		if ($_POST['ramaxrtradvinterval'] < "4" || $_POST['ramaxrtradvinterval'] > "1800") {
+		if ($_POST['ramaxrtradvinterval'] < 4 || $_POST['ramaxrtradvinterval'] > 1800) {
 			$input_errors[] = gettext("Maximum advertisement interval must be no less than 4 and no greater than 1800.");
 		}
 	}
-	if ($_POST['raadvdefaultlifetime'] && !is_numericint($_POST['raadvdefaultlifetime'])) {
-		$input_errors[] = gettext("Router lifetime must be an integer between 0 and 9000.");
+	if ($_POST['raadvdefaultlifetime'] && (($_POST['raadvdefaultlifetime'] < 1) || ($_POST['raadvdefaultlifetime'] > 9000))) {
+		$input_errors[] = gettext("Router lifetime must be an integer between 1 and 9000.");
 	}
 
 	if (!$input_errors) {
@@ -352,7 +352,7 @@ $section->addInput(new Form_Input(
 	'Default valid lifetime',
 	'number',
 	$pconfig['ravalidlifetime'],
-	['min' => 1, 'max' => 655350]
+	['min' => 1, 'max' => 655350, 'placeholder' => 86400]
 ))->setHelp('The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.%1$s' .
 'The default is 86400 seconds.', '<br />');
 
@@ -360,7 +360,8 @@ $section->addInput(new Form_Input(
 	'rapreferredlifetime',
 	'Default preferred lifetime',
 	'text',
-	$pconfig['rapreferredlifetime']
+	$pconfig['rapreferredlifetime'],
+	['placeholder' => 14400]
 ))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.%1$s' .
 			'The default is 14400 seconds.', '<br />');
 
@@ -369,24 +370,27 @@ $section->addInput(new Form_Input(
 	'Minimum RA interval',
 	'number',
 	$pconfig['raminrtradvinterval'],
-	['min' => 3, 'max' => 1350]
-))->setHelp('The minimum time allowed between sending unsolicited multicast router advertisements in seconds.');
+	['min' => 3, 'max' => 1350, 'placeholder' => 5]
+))->setHelp('The minimum time allowed between sending unsolicited multicast router advertisements in seconds.%1$s' .
+'The default is 5 seconds.', '<br />');
 
 $section->addInput(new Form_Input(
 	'ramaxrtradvinterval',
 	'Maximum RA interval',
 	'number',
 	$pconfig['ramaxrtradvinterval'],
-	['min' => 4, 'max' => 1800]
-))->setHelp('The maximum time allowed between sending unsolicited multicast router advertisements in seconds.');
+	['min' => 4, 'max' => 1800, 'placeholder' => 20]
+))->setHelp('The maximum time allowed between sending unsolicited multicast router advertisements in seconds.%1$s' .
+'The default is 20 seconds.', '<br />');
 
 $section->addInput(new Form_Input(
 	'raadvdefaultlifetime',
 	'Router lifetime',
 	'number',
 	$pconfig['raadvdefaultlifetime'],
-	['min' => 0, 'max' => 9000]
-))->setHelp('The lifetime associated with the default router in seconds.');
+	['min' => 1, 'max' => 9000]
+))->setHelp('The lifetime associated with the default router in seconds.%1$s' .
+'The default is 3 * Maximim RA interval seconds.', '<br />');
 
 $section->addInput(new Form_StaticText(
 	'RA Subnets',

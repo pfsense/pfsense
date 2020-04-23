@@ -1325,6 +1325,12 @@
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
 				$data = substr($response, $header_size);
+				if ($this->_dnsVerboseLog) {
+					foreach (explode(PHP_EOL, $header) as $hv) {
+						log_error(sprintf("Response Header: %s", rtrim($hv)));
+				  	}
+					log_error(sprintf("Response Data: %s", $data));
+				}
 				$this->_checkStatus($ch, $data, $header);
 				@curl_close($ch);
 			}

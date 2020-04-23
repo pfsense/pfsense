@@ -333,6 +333,9 @@ defCmdT("IPsec-SAD", "/sbin/setkey -D");
 if (file_exists("/cf/conf/upgrade_log.txt")) {
 	defCmdT("OS-Upgrade Log", "/bin/cat /cf/conf/upgrade_log.txt");
 }
+if (file_exists("/cf/conf/upgrade_log.latest.txt")) {
+	defCmdT("OS-Upgrade Log Latest", "/bin/cat /cf/conf/upgrade_log.latest.txt");
+}
 if (file_exists("/boot/loader.conf")) {
 	defCmdT("OS-Boot Loader Configuration", "/bin/cat /boot/loader.conf");
 }

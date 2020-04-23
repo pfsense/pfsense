@@ -100,6 +100,8 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['filename'] = $a_maps[$id]['filename'];
 	$pconfig['filename32'] = $a_maps[$id]['filename32'];
 	$pconfig['filename64'] = $a_maps[$id]['filename64'];
+	$pconfig['filename32arm'] = $dhcpdconf['filename32arm'];
+	$pconfig['filename64arm'] = $dhcpdconf['filename64arm'];
 	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
 	$pconfig['netmask'] = $a_maps[$id]['netmask'];
 	$pconfig['numberoptions'] = $a_maps[$id]['numberoptions'];
@@ -138,6 +140,8 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['filename'] = $_REQUEST['filename'];
 	$pconfig['filename32'] = $_REQUEST['filename32'];
 	$pconfig['filename64'] = $_REQUEST['filename64'];
+	$pconfig['filename32arm'] = $dhcpdconf['filename32arm'];
+	$pconfig['filename64arm'] = $dhcpdconf['filename64arm'];
 	$pconfig['rootpath'] = $_REQUEST['rootpath'];
 	$pconfig['netmask'] = $_REQUEST['netmask'];
 	$pconfig['numberoptions'] = $_REQUEST['numberoptions'];
@@ -385,6 +389,8 @@ if ($_POST['save']) {
 		$mapent['filename'] = $_POST['filename'];
 		$mapent['filename32'] = $_POST['filename32'];
 		$mapent['filename64'] = $_POST['filename64'];
+		$mapent['filename32arm'] = $_POST['filename32arm'];
+		$mapent['filename64arm'] = $_POST['filename64arm'];
 		$mapent['numberoptions'] = $pconfig['numberoptions'];
 
 		if (isset($id) && $a_maps[$id]) {
@@ -803,8 +809,22 @@ $section->addInput(new Form_Input(
 	'UEFI 64 bit file name',
 	'text',
 	$pconfig['filename64']
+));
+
+$section->addInput(new Form_Input(
+	'filename32arm',
+	'ARM 32 bit file name',
+	'text',
+	$pconfig['filename32arm']
+));
+
+$section->addInput(new Form_Input(
+	'filename64arm',
+	'ARM 64 bit file name',
+	'text',
+	$pconfig['filename64arm']
 ))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
-			'All three filenames and a configured boot server are necessary for UEFI to work! ');
+			'All five filenames and a configured boot server are necessary for UEFI & ARM to work! ');
 
 $section->addInput(new Form_Input(
 	'rootpath',
@@ -1117,6 +1137,8 @@ events.push(function() {
 		hideInput('filename', !showadvnwkboot);
 		hideInput('filename32', !showadvnwkboot);
 		hideInput('filename64', !showadvnwkboot);
+		hideInput('filename32arm', !showadvnwkboot);
+		hideInput('filename64arm', !showadvnwkboot);
 		hideInput('rootpath', !showadvnwkboot);
 
 		if (showadvnwkboot) {

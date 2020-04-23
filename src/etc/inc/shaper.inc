@@ -4319,7 +4319,7 @@ EOD;
 			array('none' => gettext('None'), 'srcaddress' => gettext('Source addresses'), 'dstaddress' => gettext('Destination addresses'))
 		))->setHelp('If "source" or "destination" slots is chosen a dynamic pipe with the bandwidth, delay, packet loss ' .
 					'and queue size given above will be created for each source/destination IP address encountered, respectively. ' .
-					'This makes it possible to easily specify bandwidth limits per host.');
+					'This makes it possible to easily specify bandwidth limits per host or subnet.');
 
 		$group = new Form_Group(null);
 
@@ -4762,9 +4762,11 @@ class dnqueue_class extends dummynet_class {
 			'Mask',
 			$mask['type'],
 			array('none' => gettext('None'), 'srcaddress' => gettext('Source addresses'), 'dstaddress' => gettext('Destination addresses'))
-		))->setHelp('If "source" or "destination" slots is chosen a dynamic pipe with the bandwidth, delay, packet loss ' .
+		))->setHelp('If "source" or "destination" slots is chosen a dynamic queue with the bandwidth, delay, packet loss ' .
 					'and queue size given above will be created for each source/destination IP address encountered, respectively. ' .
-					'This makes it possible to easily specify bandwidth limits per host.');
+ 					'This makes it possible to easily specify bandwidth limits per ' .
+ 					'host or subnet, usually capped by the bandwidth of the parent ' .
+ 					'limiter.');
 
 		$group = new Form_Group(null);
 

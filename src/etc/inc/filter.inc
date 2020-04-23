@@ -1662,16 +1662,6 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		}
 	}
 
-	/* L2TP subnet */
-	if (isset($FilterIflist['l2tp']) && $FilterIflist['l2tp']['mode'] == "server") {
-		$l2tp_sa = $FilterIflist['l2tp']['sa'];
-		$l2tp_sn = $FilterIflist['l2tp']['sn'];
-		if (is_private_ip($l2tp_sa) && !empty($l2tp_sn)) {
-			$tonathosts[] = "{$l2tp_sa}/{$l2tp_sn}";
-			$descriptions[] = gettext("L2TP server");
-		}
-	}
-
 	/* add openvpn interfaces */
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv) {

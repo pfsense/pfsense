@@ -669,16 +669,12 @@ foreach ($a_filter as $filteri => $filterent):
 							if ($config['l2tp']['mode'] == 'server')
 								$selected_descs[] = 'L2TP VPN';
 							break;
-						case 'pptp':
-							if ($config['pptpd']['mode'] == 'server')
-								$selected_descs[] = 'PPTP VPN';
-							break;
 						case 'pppoe':
 							if (is_pppoe_server_enabled())
 								$selected_descs[] = 'PPPoE Server';
 							break;
 						case 'enc0':
-							if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
+							if (ipsec_enabled())
 								$selected_descs[] = 'IPsec';
 							break;
 						case 'openvpn':
@@ -691,7 +687,9 @@ foreach ($a_filter as $filteri => $filterent):
 						}
 					}
 				}
-				echo implode('<br/>', $selected_descs);
+				if (!empty($selected_descs)) {
+					echo implode('<br/>', $selected_descs);
+				}
 			}
 	?>
 			</td>

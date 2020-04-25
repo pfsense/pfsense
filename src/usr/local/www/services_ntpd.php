@@ -229,6 +229,7 @@ function build_interface_list() {
 
 init_config_arr(array('ntpd'));
 $pconfig = &$config['ntpd'];
+$pconfig['enable'] = ($config['ntpd']['enable'] != 'disabled') ? 'enabled' : 'disabled';
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();
 } else {

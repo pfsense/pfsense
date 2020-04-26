@@ -805,7 +805,7 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "DS:sjit:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "DS:cjit:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "DS:wander:GAUGE:$ntpdvalid:0:1000 ";
-				$rrdcreate .= "DS:freq:GAUGE:$ntpdvalid:0:1000 ";
+				$rrdcreate .= "DS:freq:GAUGE:$ntpdvalid:-1000:1000 ";
 				$rrdcreate .= "DS:disp:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
 				$rrdcreate .= "RRA:MIN:0.5:5:720 ";

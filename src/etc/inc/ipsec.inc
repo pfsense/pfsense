@@ -2530,7 +2530,8 @@ function ipsec_setup_secrets() {
 			    ($key['ident'] == 'any')) {
 				$key['ident'] = '%any';
 			}
-			$scconf['secrets']['eap-' . $suffix++] = array(
+			$userkeyprefix = (strtolower($key['type']) == 'eap') ? 'eap' : 'ike';
+			$scconf['secrets'][$userkeyprefix . '-' . $suffix++] = array(
 				'secret' => '0s' . base64_encode(trim($key['pre-shared-key'])),
 				'id-0' => $key['ident'],
 			);

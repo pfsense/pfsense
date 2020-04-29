@@ -1040,6 +1040,12 @@ function interface_lagg_configure($lagg) {
 		$members = array_merge(array($lagg['failovermaster']), $members);
 	}
 
+	if (isset($lagg['lacptimeout']) && ($lagg['lacptimeout'] != 'slow')) {
+		$lacptimeout = 'lacp_fast_timeout';
+	} else {
+		$lacptimeout = '';
+	}
+
 	foreach ($members as $member) {
 		if (!does_interface_exist($member)) {
 			continue;
@@ -1056,7 +1062,7 @@ function interface_lagg_configure($lagg) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($laggif) . " laggport " . escapeshellarg($member));
 	}
 
-	mwexec("/sbin/ifconfig {$laggif} laggproto " . escapeshellarg($lagg['proto']));
+	mwexec("/sbin/ifconfig {$laggif} laggproto " . escapeshellarg($lagg['proto']) . " {$lacptimeout}");
 
 	interfaces_bring_up($laggif);
 

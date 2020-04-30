@@ -112,6 +112,9 @@ if (isset($id) && $a_laggs[$id]) {
 	if (isset($a_laggs[$id]['failovermaster'])) {
 		$pconfig['failovermaster'] = $a_laggs[$id]['failovermaster'];
 	}
+	if (isset($a_laggs[$id]['lacptimeout'])) {
+		$pconfig['lacptimeout'] = $a_laggs[$id]['lacptimeout'];
+	}
 	$pconfig['descr'] = $a_laggs[$id]['descr'];
 }
 
@@ -158,6 +161,11 @@ if ($_POST['save']) {
 			$lagg['failovermaster'] = $_POST['failovermaster'];
 		} else {
 			unset($lagg['failovermaster']);
+		}
+		if (($_POST['proto'] == 'lacp') && isset($_POST['lacptimeout'])) {
+			$lagg['lacptimeout'] = $_POST['lacptimeout'];
+		} else {
+			unset($lagg['lacptimeout']);
 		}
 		if (isset($id) && $a_laggs[$id]) {
 			$lagg['laggif'] = $a_laggs[$id]['laggif'];
@@ -263,6 +271,20 @@ $group->add(new Form_Select(
 ))->setHelp('Master interface for the <b>FAILOVER</b> mode. If auto is selected, then the first interface added is the master port; any interfaces added after that are used as failover devices.');
 $section->add($group);
 
+$group = new Form_Group('LACP Timeout Mode');
+$group->addClass('lacptimeout');
+$group->add(new Form_Select(
+	'lacptimeout',
+	'LACP Timeout',
+	$pconfig['lacptimeout'],
+	array('slow' => 'Slow (default)', 'fast' => 'Fast')
+))->setHelp('In a <b>Slow</b> timeout, PDUs are sent every 30 seconds and in a <b>Fast</b> timeout, ' .
+	    'PDUs are sent every second. LACP timeout occurs when 3 consecutive PDUs are missed. ' .
+	    'If LACP timeout is a slow timeout, the time taken when 3 consecutive PDUs are missed ' .
+	    'is 90 seconds (3x30 seconds). If LACP timeout is a fast timeout, the time taken is 3 ' .
+	    'seconds (3x1 second).');
+$section->add($group);
+
 $section->addInput(new Form_Input(
 	'descr',
 	'Description',
@@ -295,6 +317,7 @@ print($form);
 events.push(function() {
 	function change_proto() {
 		hideClass('fomaster', ($('#proto').val() != 'failover'));
+		hideClass('lacptimeout', ($('#proto').val() != 'lacp'));
 	}
 
 	$('#proto').change(function () {

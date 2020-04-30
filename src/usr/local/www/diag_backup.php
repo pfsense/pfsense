@@ -199,15 +199,15 @@ if ($_POST) {
 				/*
 				 *	Backup RRD Data
 				 */
+
+				/* If the config on disk had rrddata tags already, remove that section first.
+				 * See https://redmine.pfsense.org/issues/8994 */
+				$data = preg_replace("/<rrddata>.*<\\/rrddata>/", "", $data);
+				$data = preg_replace("/<rrddata\\/>/", "", $data);
+
 				if ($_POST['backuparea'] !== "rrddata" && !$_POST['donotbackuprrd']) {
 					$rrd_data_xml = rrd_data_xml();
 					$closing_tag = "</" . $g['xml_rootobj'] . ">";
-
-					/* If the config on disk had rrddata tags already, remove that section first.
-					 * See https://redmine.pfsense.org/issues/8994 */
-					$data = preg_replace("/<rrddata>.*<\\/rrddata>/", "", $data);
-					$data = preg_replace("/<rrddata\\/>/", "", $data);
-
 					$data = str_replace($closing_tag, $rrd_data_xml . $closing_tag, $data);
 				}
 

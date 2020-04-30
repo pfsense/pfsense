@@ -797,7 +797,7 @@ $group->add(new Form_IpAddress(
 	null,
 	is_specialnet($pconfig['dst']) ? '': $pconfig['dst'],
 	'ALIASV4V6'
-))->addMask('dstmask', $pconfig['dstmask'], 31, 1, false)->setHelp('Address/mask');
+))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
 
 $section->add($group);
 

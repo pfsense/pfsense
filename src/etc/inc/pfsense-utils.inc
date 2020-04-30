@@ -3578,7 +3578,7 @@ function get_pf_timeouts () {
 	$pftimeout = array();
 	exec("/sbin/pfctl -st", $pfctlst, $retval);
 	if ($retval == 0) {
-		foreach ($pfctlst as $i => $pfst) {
+		foreach ($pfctlst as $pfst) {
 			preg_match('/([a-z]+)\.([a-z]+)\s+([0-9]+)/', $pfst, $timeout);
 			if ($timeout[1] == "other") {
 				$proto = "Other";
@@ -3593,9 +3593,6 @@ function get_pf_timeouts () {
 			$pftimeout[$proto][$type]['name'] = $proto . " " . $type;
 			$pftimeout[$proto][$type]['keyname'] = $timeout[1] . $timeout[2] . "timeout";
 			$pftimeout[$proto][$type]['value'] = $timeout[3];
-			if ($i == 14) {
-				break;
-			}
 		}
 	}
 	return $pftimeout;

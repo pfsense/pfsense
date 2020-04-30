@@ -83,6 +83,7 @@ $show_reboot_msg = false;
 $reboot_msg = gettext('The \"Firewall Maximum Table Entries\" setting has ' .
     'been changed to a value bigger than system can support without a ' .
     'reboot.\n\nReboot now ?');
+$pftimeouts = get_pf_timeouts();
 
 if ($_POST) {
 
@@ -496,7 +497,7 @@ $group->add(new Form_Input(
 	'Adaptive start',
 	'number',
 	$pconfig['adaptivestart'],
-	['min' => 0]
+	['min' => 0, 'placeholder' => $pftimeouts['ADAPTIVE']['Start']['value']]
 ))->setHelp('When the number of state entries exceeds this value, adaptive '.
 	'scaling begins.  All timeout values are scaled linearly with factor '.
 	'(adaptive.end - number of states) / (adaptive.end - adaptive.start). '.
@@ -507,7 +508,7 @@ $group->add(new Form_Input(
 	'Adaptive end',
 	'number',
 	$pconfig['adaptiveend'],
-	['min' => 0]
+	['min' => 0, 'placeholder' => $pftimeouts['ADAPTIVE']['End']['value']]
 ))->setHelp('When reaching this number of state entries, all timeout values '.
 	'become zero, effectively purging all state entries immediately.  This '.
 	'value is used to define the scale factor, it should not actually be '.
@@ -708,7 +709,6 @@ if (count($config['interfaces']) > 1) {
 
 $section = new Form_Section('State Timeouts (seconds - blank for default)');
 
-$pftimeouts = get_pf_timeouts();
 foreach ($pftimeouts as $proto => $tm) {
 	foreach ($tm as $type => $item) {
 		$section->addInput(new Form_Input(
@@ -718,6 +718,9 @@ foreach ($pftimeouts as $proto => $tm) {
 			$config['system'][$keyname],
 			['placeholder' => $item['value']]
 		));
+	}
+	if ($item['keyname'] == 'othermultipletimeout') {
+		break;
 	}
 }
 

@@ -441,6 +441,7 @@ textarea {
 .ui-autocomplete {
     color: #212121;
     background-color: #e0e0e0;
+    background-image: none;
 }
 
 .ui-widget {

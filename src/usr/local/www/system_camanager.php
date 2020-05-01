@@ -247,10 +247,8 @@ if ($_POST['save']) {
 			$ca['descr']  = $pconfig['descr'];
 			$ca['refid']  = $pconfig['refid'];
 			$ca['serial'] = $pconfig['serial'];
-			$ca['crt']	  = base64_encode($pconfig['cert']);
-			if (!empty($pconfig['key'])) {
-				$ca['prv']	  = base64_encode($pconfig['key']);
-			}
+			$ca['crt'] = base64_encode($pconfig['cert']);
+			$ca['prv'] = base64_encode($pconfig['key']);
 			$savemsg = sprintf(gettext("Updated Certificate Authority %s"), $ca['descr']);
 		} else {
 			$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */

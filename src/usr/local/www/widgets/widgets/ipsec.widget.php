@@ -164,10 +164,20 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 			if(is_array($pool['lease']) && !empty($pool['lease'])){
 				foreach ($pool['lease'] as $muser) {
 					$mucount++;
-					$data->mobile .= "<tr>";
+					if ($muser['status'] == 'online') {
+						$data->mobile .= "<tr style='background-color: #c5e5bb'>";
+					} else {
+						$data->mobile .= "<tr>";
+					}
 					$data->mobile .= "<td>" . htmlspecialchars($muser['id']) . "</td>";
 					$data->mobile .= "<td>" . htmlspecialchars($muser['host']) . "</td>";
-					$data->mobile .= "<td>" . htmlspecialchars($muser['status']) . "</td>";
+					$data->mobile .= "<td>";
+					if ($muser['status'] == 'online') {
+						$data->mobile .= "<span class='fa fa-check'></span><span style='font-weight: bold'> ";
+					} else {
+						$data->mobile .= "<span>  ";
+					}
+					$data->mobile .= htmlspecialchars($muser['status']) . "</span></td>";
 					$data->mobile .= "</tr>";
 				}
 			}

@@ -346,9 +346,9 @@ if (file_exists("/var/etc/filterdns.conf")) {
 }
 
 if (is_dir("/var/etc/openvpn")) {
-	foreach(glob('/var/etc/openvpn/*/config.ovpn') as $file) {
+	foreach(glob('/var/etc/openvpn/*.conf') as $file) {
 		$ovpnfile = explode('/', $file);
-		if (!count($ovpnfile) || (count($ovpnfile) < 6)) {
+		if (!count($ovpnfile) || (count($ovpnfile) < 5)) {
 			continue;
 		}
 		defCmdT("OpenVPN-Configuration {$ovpnfile[4]}", "/bin/cat " . escapeshellarg($file));

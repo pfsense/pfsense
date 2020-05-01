@@ -78,6 +78,14 @@ $pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid
 $use_mfs_tmpvar_before = isset($config['system']['use_mfs_tmpvar']) ? true : false;
 $use_mfs_tmpvar_after = $use_mfs_tmpvar_before;
 
+/* Adjust available kernel memory to account for existing RAM disks
+ * https://redmine.pfsense.org/issues/10420 */
+if ($use_mfs_tmpvar_before) {
+	/* Get current RAM disk sizes */
+	$current_ram_disk_size = (int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'"));
+	$available_kernel_memory += $current_ram_disk_size;
+}
+
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode'])) {
 	$pconfig['powerd_ac_mode'] = $config['system']['powerd_ac_mode'];
@@ -128,7 +136,7 @@ if ($_POST) {
 
 	if (is_numericint($_POST['use_mfs_tmp_size']) && is_numericint($_POST['use_mfs_var_size']) &&
 	    ((($_POST['use_mfs_tmp_size'] + $_POST['use_mfs_var_size']) * 1024 * 1024) > $available_kernel_memory)) {
-		$input_errors[] = gettext("Combined size of /tmp and /var RAM disks would exceed free kernel memory.");
+		$input_errors[] = gettext("Combined size of /tmp and /var RAM disks would exceed available kernel memory.");
 	}
 
 	if (!empty($_POST['proxyport']) && !is_port($_POST['proxyport'])) {
@@ -591,7 +599,7 @@ $group->add(new Form_Input(
 
 $group->setHelp('Sets the size, in MiB, for the RAM disks. ' .
 	'Ensure each RAM disk is large enough to contain the current contents of the directories in question. %s' .
-	'Maximum total size of all RAM disks cannot exceed free kernel memory: %s',
+	'Maximum total size of all RAM disks cannot exceed available kernel memory: %s',
 	'<br/>', format_bytes( $available_kernel_memory ));
 
 $section->add($group);

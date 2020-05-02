@@ -92,6 +92,20 @@ $icmptypes = array(
  	'wrureq'	=> array('descrip' => gettext('Who are you request'), 'valid4' => false, 'valid6' => true)
 );
 
+$ipv4mss = array(
+	'ipsec' => gettext('IPsec'),
+	'ipsec_mobile' => gettext('IPsec Mobile'),
+	'openvpn' => gettext('OpenVPN'),
+	'pppoe' => gettext('PPPoE Server'),
+	'l2tp' => gettext('L2TP Server')
+);
+
+$ipv6mss = array(
+	'ipsec' => gettext('IPsec'),
+	'ipsec_mobile' => gettext('IPsec Mobile'),
+	'openvpn' => gettext('OpenVPN')
+);
+
 /*
  * Interfaces that can be assigned but do not directly support filtering in pf.
  * Specify the driver prefix to match (from the left)
@@ -591,6 +605,7 @@ function filter_generate_scrubing() {
 	global $config, $FilterIflist;
 	$scrubrules = "";
 
+	// IPv4 VPN MSS
 	if (isset($config['system']['maxmss_enable'])) {
 		$maxmss = 1400;
 		if (!empty($config['system']['maxmss'])) {
@@ -599,6 +614,16 @@ function filter_generate_scrubing() {
 
 		$scrubrules .= "scrub from any to <vpn_networks> max-mss {$maxmss}\n";
 		$scrubrules .= "scrub from <vpn_networks> to any max-mss {$maxmss}\n";
+	}
+	// IPv6 VPN MSS
+	if (isset($config['system']['maxmss_enable_v6'])) {
+		$maxmss = 1400;
+		if (!empty($config['system']['maxmss_v6'])) {
+			$maxmss = $config['system']['maxmss_v6'];
+		}
+
+		$scrubrules .= "scrub from any to <vpn_networks_v6> max-mss {$maxmss}\n";
+		$scrubrules .= "scrub from <vpn_networks_v6> to any max-mss {$maxmss}\n";
 	}
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {
@@ -736,6 +761,10 @@ function filter_expand_alias_array($alias_name) {
 function filter_generate_aliases() {
 	global $g, $config, $FilterIflist, $after_filter_configure_run;
 
+	$all_vpns = array('ipsec', 'ipsec_mobile', 'openvpn', 'pppoe', 'l2tp');
+	$maxmssvpn = explode(' ', $config['system']['maxmssvpn']);
+	$maxmssvpn_v6 = explode(' ', $config['system']['maxmssvpn_v6']);
+
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_generate_aliases() being called $mt\n";
@@ -797,15 +826,21 @@ function filter_generate_aliases() {
 		}
 	}
 
-	$vpns_list = filter_get_vpns_list();
+	$vpns_list = filter_get_vpns_list($maxmssvpn, array('inet'));
 	if ($vpns_list) {
 		$aliases .= "table <vpn_networks> { $vpns_list }\n";
 	}
 
+	$vpns_list_v6 = filter_get_vpns_list($maxmssvpn_v6, array('inet6'));
+	if ($vpns_list_v6) {
+		$aliases .= "table <vpn_networks_v6> { $vpns_list_v6 }\n";
+	}
+
 	/* add a Negate_networks table */
-	$aliases .= "table <negate_networks> ";
-	if ($vpns_list) {
-		$aliases .= "{ $vpns_list }";
+	$aliases .= "table <negate_networks>";
+	$vpns_list_all = filter_get_vpns_list($all_vpns, array('inet', 'inet6'));
+	if ($vpns_list_all) {
+		$aliases .= " { $vpns_list_all } ";
 	}
 	$aliases .= "\n";
 
@@ -958,7 +993,7 @@ function filter_generate_gateways() {
 }
 
 /* returns space separated list of vpn subnets */
-function filter_get_vpns_list() {
+function filter_get_vpns_list($vpntype=array('ipsec', 'ipsec_mobile', 'openvpn', 'pppoe'), $proto=array('inet')) {
 	global $config;
 
 	$vpns = "";
@@ -968,16 +1003,28 @@ function filter_get_vpns_list() {
 	if (!function_exists('ipsec_enabled')) {
 		require_once("ipsec.inc");
 	}
-	if (ipsec_enabled()) {
+	if (ipsec_enabled() && in_array('ipsec', $vpntype)) {
 		/* Include mobile IPsec client subnet in the VPN network list.
 		   See https://redmine.pfsense.org/issues/7005 */
-		if (is_array($config['ipsec']['client'])
-		    && isset($config['ipsec']['client']['enable'])
-		    && isset($config['ipsec']['client']['pool_address'])
-		    && isset($config['ipsec']['client']['pool_netbits'])) {
-			$client_subnet = "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']}";
-			if (is_subnet($client_subnet)) {
-				 $vpns_arr[] = $client_subnet;
+		if (is_array($config['ipsec']['client']) &&
+		    isset($config['ipsec']['client']['enable'])) {
+			/* Virtual Address Pool */
+			if (isset($config['ipsec']['client']['pool_address']) &&
+			    isset($config['ipsec']['client']['pool_netbits']) && 
+			    in_array('inet', $proto)) {
+				$client_subnet = "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']}";
+				if (is_subnetv4($client_subnet)) {
+					 $vpns_arr[] = $client_subnet;
+				}
+			}
+			/* Virtual IPv6 Address Pool */
+			if (isset($config['ipsec']['client']['pool_address_v6']) &&
+			    isset($config['ipsec']['client']['pool_netbits_v6']) &&
+			    in_array('inet6', $proto)) {
+				$client_subnet = "{$config['ipsec']['client']['pool_address_v6']}/{$config['ipsec']['client']['pool_netbits_v6']}";
+				if (is_subnetv6($client_subnet)) {
+					 $vpns_arr[] = $client_subnet;
+				}
 			}
 		}
 		if (is_array($config['ipsec']['phase2'])) {
@@ -989,29 +1036,54 @@ function filter_get_vpns_list() {
 					}
 					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
 					$vpns_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
-					if (!is_subnet($vpns_subnet) || $vpns_subnet == "0.0.0.0/0") {
-						continue;
+					if (is_subnetv4($vpns_subnet) && ($vpns_subnet != "0.0.0.0/0") &&
+					    in_array('inet', $proto)) {
+						$vpns_arr[] = $vpns_subnet;
 					}
-					$vpns_arr[] = $vpns_subnet;
+					if (is_subnetv6($vpns_subnet) && ($vpns_subnet != "::/0") &&
+					    in_array('inet6', $proto)) {
+						$vpns_arr[] = $vpns_subnet;
+					}
 				}
 			}
 		}
 	}
 
 	/* openvpn */
-	foreach (array('client', 'server') as $type) {
-		if (is_array($config['openvpn']["openvpn-$type"])) {
-			foreach ($config['openvpn']["openvpn-$type"] as $settings) {
-				if (is_array($settings)) {
-					if (!isset($settings['disable'])) {
-						$remote_networks = explode(',', $settings['remote_network']);
-						foreach ($remote_networks as $remote_network) {
-							if (is_subnet($remote_network) && ($remote_network <> "0.0.0.0/0")) {
-								$vpns_arr[] = $remote_network;
+	if (in_array('openvpn', $vpntype)) {
+		foreach (array('client', 'server') as $type) {
+			if (is_array($config['openvpn']["openvpn-$type"])) {
+				foreach ($config['openvpn']["openvpn-$type"] as $settings) {
+					if (is_array($settings)) {
+						if (!isset($settings['disable'])) {
+							if (in_array('inet', $proto)) {
+								$remote_networks = explode(',', $settings['remote_network']);
+								foreach ($remote_networks as $remote_network) {
+									if (is_subnetv4($remote_network) &&
+									    ($remote_network != "0.0.0.0/0")) {
+										$vpns_arr[] = $remote_network;
+									}
+								}
+								if (is_subnet($settings['tunnel_network']) &&
+								    $settings['tunnel_network'] != "0.0.0.0/0") {
+									$vpns_arr[] = $settings['tunnel_network'];
+								}
 							}
-						}
-						if (is_subnet($settings['tunnel_network']) && $settings['tunnel_network'] <> "0.0.0.0/0") {
-							$vpns_arr[] = $settings['tunnel_network'];
+							if (in_array('inet6', $proto)) {
+								if (isset($settings['remote_networkv6'])) {
+									$remote_networks = explode(',', $settings['remote_networkv6']);
+									foreach ($remote_networks as $remote_network) {
+										if (is_subnetv6($remote_network) &&
+										    (text_to_compressed_ip6($remote_network) != "::/0")) {
+											$vpns_arr[] = $remote_network;
+										}
+									}
+									if (is_subnet($settings['tunnel_networkv6']) &&
+									    (text_to_compressed_ip6($settings['tunnel_networkv6']) != "::/0")) {
+										$vpns_arr[] = $settings['tunnel_networkv6'];
+									}
+								}
+							}
 						}
 					}
 				}
@@ -1019,16 +1091,25 @@ function filter_get_vpns_list() {
 		}
 	}
 	/* pppoe */
-	if (is_array($config['pppoes']['pppoe'])) {
+ 	if (in_array('openvpn', $vpntype) && in_array('inet', $proto) &&
+	    is_array($config['pppoes']['pppoe'])) {
 		foreach ($config['pppoes']['pppoe'] as $pppoe) {
 			if ($pppoe['mode'] == "server") {
-				if (is_ipaddr($pppoe['remoteip'])) {
-					$pppoesub = gen_subnet($pppoe['remoteip'], $pppoe['pppoe_subnet']);
-					if (is_subnet($pppoesub)) {
+				if (is_ipaddrv4($pppoe['remoteip'])) {
+					$pppoesub = gen_subnetv4($pppoe['remoteip'], $pppoe['pppoe_subnet']);
+					if (is_subnetv4($pppoesub)) {
 						$vpns_arr[] = $pppoesub;
 					}
 				}
 			}
+		}
+	}
+	/* L2TP */
+	if (in_array('l2tp', $vpntype) && in_array('inet', $proto) &&
+	    ($config['l2tp']['mode'] == "server")) {
+		$l2tp_net = "{$config['l2tp']['remoteip']}/{$config['l2tp']['l2tp_subnet']}";
+		if (is_subnetv4($l2tp_net)) {
+			$vpns_arr[] = $l2tp_net;
 		}
 	}
 

@@ -43,8 +43,6 @@ $pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces'
 $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
-$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
-$pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 
 if ($_POST['save']) {
@@ -56,15 +54,6 @@ if ($_POST['save']) {
 			$input_errors[] = sprintf(gettext("A valid value must be specified for %s debug."), $desc);
 		} else {
 			$pconfig['logging'][$cat] = $pconfig['logging_' . $cat];
-		}
-	}
-
-	if (isset($pconfig['maxmss'])) {
-		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] != '') {
-			$input_errors[] = gettext("An integer must be specified for Maximum MSS.");
-		}
-		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535) {
-			$input_errors[] = gettext("An integer between 576 and 65535 must be specified for Maximum MSS");
 		}
 	}
 
@@ -159,18 +148,6 @@ if ($_POST['save']) {
 			unset($config['ipsec']['uniqueids']);
 		}
 
-		if ($_POST['maxmss_enable'] == "yes") {
-			$config['system']['maxmss_enable'] = true;
-			$config['system']['maxmss'] = $_POST['maxmss'];
-		} else {
-			if (isset($config['system']['maxmss_enable'])) {
-				unset($config['system']['maxmss_enable']);
-			}
-			if (isset($config['system']['maxmss'])) {
-				unset($config['system']['maxmss']);
-			}
-		}
-
 		write_config(gettext("Saved IPsec advanced settings."));
 
 		$changes_applied = true;
@@ -202,23 +179,7 @@ $pglinks = array("", "vpn_ipsec.php", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
-?>
 
-<script type="text/javascript">
-//<![CDATA[
-
-function maxmss_checked(obj) {
-	if (obj.checked) {
-		$('#maxmss').attr('disabled', false);
-	} else {
-		$('#maxmss').attr('disabled', 'true');
-	}
-}
-
-//]]>
-</script>
-
-<?php
 if ($changes_applied) {
 	print_apply_result_box($retval);
 }
@@ -296,32 +257,6 @@ $section->addInput(new Form_Checkbox(
 	'A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload. ' .
 	'It is recommended to keep this option to no, unless the exact implications are known and compatibility is required for such devices (for example, some SonicWall boxes).'
 );
-
-$section->addInput(new Form_Checkbox(
-	'maxmss_enable',
-	'Enable Maximum MSS',
-	'Enable MSS clamping on VPN traffic',
-	$pconfig['maxmss_enable']
-))->toggles('.toggle-maxmss', 'collapse');
-
-$group = new Form_Group('Maximum MSS');
-$group->addClass('toggle-maxmss collapse');
-
-if (!empty($pconfig['maxmss_enable'])) {
-	$group->addClass('in');
-}
-
-$group->add(new Form_Input(
-	'maxmss',
-	'Maximum MSS',
-	'text',
-	($pconfig['maxmss'] ? $pconfig['maxmss'] : '1400')
-))->setHelp(
-	'Enable MSS clamping on TCP flows over VPN. ' .
-	'This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. '
-);
-
-$section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'unityplugin',

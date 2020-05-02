@@ -78,6 +78,12 @@ $pconfig['icmperrortimeout'] = $config['system']['icmperrortimeout'];
 $pconfig['otherfirsttimeout'] = $config['system']['otherfirsttimeout'];
 $pconfig['othersingletimeout'] = $config['system']['othersingletimeout'];
 $pconfig['othermultipletimeout'] = $config['system']['othermultipletimeout'];
+$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
+$pconfig['maxmss'] = $config['system']['maxmss'];
+$pconfig['maxmssvpn'] = explode(' ', $config['system']['maxmssvpn']);
+$pconfig['maxmss_enable_v6'] = isset($config['system']['maxmss_enable']);
+$pconfig['maxmss_v6'] = $config['system']['maxmss_v6'];
+$pconfig['maxmssvpn_v6'] = explode(' ', $config['system']['maxmssvpn_v6']);
 
 $show_reboot_msg = false;
 $reboot_msg = gettext('The \"Firewall Maximum Table Entries\" setting has ' .
@@ -178,6 +184,30 @@ if ($_POST) {
 		    $g['minimumtableentries_bogonsv6']);
 	}
 
+	if (isset($_POST['maxmss'])) {
+		if (!is_numericint($_POST['maxmss']) && !empty($_POST['maxmss'])) {
+			$input_errors[] = gettext("An integer must be specified for Maximum IPv4 VPN MSS.");
+		}
+		if (($_POST['maxmss'] < 576) || ($_POST['maxmss'] > 65535)) {
+			$input_errors[] = gettext("An integer between 576 and 65535 must be specified for Maximum IPv4 VPN MSS");
+		}
+		if (empty($_POST['maxmssvpn'])) {
+			$input_errors[] = gettext("At least one VPN type must be selected for Maximum IPv4 VPN MSS");
+		}
+	}
+
+	if (isset($_POST['maxmss_v6'])) {
+		if (!is_numericint($_POST['maxmss_v6']) && !empty($_POST['maxmss_v6'])) {
+			$input_errors[] = gettext("An integer must be specified for Maximum IPv6 VPN MSS.");
+		}
+		if (($_POST['maxmss_v6'] < 1280) || ($_POST['maxmss_v6'] > 65535)) {
+			$input_errors[] = gettext("An integer between 1280 and 65535 must be specified for Maximum IPv6 VPN MSS");
+		}
+		if (empty($_POST['maxmssvpn_v6'])) {
+			$input_errors[] = gettext("At least one VPN type must be selected for Maximum IPv6 VPN MSS");
+		}
+	}
+
 	ob_flush();
 	flush();
 
@@ -221,6 +251,38 @@ if ($_POST) {
 			$config['system']['adaptivestart'] = $_POST['adaptivestart'];
 		} else {
 			unset($config['system']['adaptivestart']);
+		}
+
+		if ($_POST['maxmss_enable'] == "yes") {
+			$config['system']['maxmss_enable'] = true;
+			$config['system']['maxmss'] = $_POST['maxmss'];
+			$config['system']['maxmssvpn'] = implode(' ', $_POST['maxmssvpn']);
+		} else {
+			if (isset($config['system']['maxmss_enable'])) {
+				unset($config['system']['maxmss_enable']);
+			}
+			if (isset($config['system']['maxmss'])) {
+				unset($config['system']['maxmss']);
+			}
+			if (isset($config['system']['maxmssvpn'])) {
+				unset($config['system']['maxmssvpn']);
+			}
+		}
+
+		if ($_POST['maxmss_enable_v6'] == "yes") {
+			$config['system']['maxmss_enable_v6'] = true;
+			$config['system']['maxmss_v6'] = $_POST['maxmss_v6'];
+			$config['system']['maxmssvpn_v6'] = implode(' ', $_POST['maxmssvpn_v6']);
+		} else {
+			if (isset($config['system']['maxmss_enable_v6'])) {
+				unset($config['system']['maxmss_enable_v6']);
+			}
+			if (isset($config['system']['maxmss_v6'])) {
+				unset($config['system']['maxmss_v6']);
+			}
+			if (isset($config['system']['maxmssvpn_v6'])) {
+				unset($config['system']['maxmssvpn_v6']);
+			}
 		}
 
 		if ($_POST['checkaliasesurlcert'] == "yes") {
@@ -473,6 +535,76 @@ $section->addInput($input = new Form_Select(
 		'conservative' => gettext('Conservative'),
 	)
 ))->setHelp('Select the type of state table optimization to use');
+
+$section->addInput(new Form_Checkbox(
+	'maxmss_enable',
+	'Enable Maximum IPv4 VPN MSS',
+	'Enable MSS clamping on IPv4 VPN traffic',
+	$pconfig['maxmss_enable']
+))->toggles('.toggle-maxmss', 'collapse');
+
+$group = new Form_Group('Maximum IPv4 MSS');
+$group->addClass('toggle-maxmss collapse');
+
+if (!empty($pconfig['maxmss_enable'])) {
+	$group->addClass('in');
+}
+
+$group->add(new Form_Input(
+	'maxmss',
+	'Maximum IPv4 MSS',
+	'text',
+	($pconfig['maxmss'] ? $pconfig['maxmss'] : '1400'),
+	['placeholder' => '1400']
+))->setHelp(
+	'Enable MSS clamping on IPv4 TCP flows over VPN. ' .
+	'This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. '
+);
+
+$group->add(new Form_Select(
+	'maxmssvpn',
+	'IPv4 VPN MSS',
+	$pconfig['maxmssvpn'],
+	$ipv4mss,
+	true
+))->setHelp('Choose the VPN types on which to enable IPv4 MSS clamping.');
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'maxmss_enable_v6',
+	'Enable Maximum IPv6 VPN MSS',
+	'Enable MSS clamping on IPv6 VPN traffic',
+	$pconfig['maxmss_enable_v6']
+))->toggles('.toggle-maxmss_v6', 'collapse');
+
+$group = new Form_Group('Maximum IPv6 MSS');
+$group->addClass('toggle-maxmss_v6 collapse');
+
+if (!empty($pconfig['maxmss_enable_v6'])) {
+	$group->addClass('in');
+}
+
+$group->add(new Form_Input(
+	'maxmss_v6',
+	'Maximum IPv6 MSS',
+	'text',
+	($pconfig['maxmss_v6'] ? $pconfig['maxmss_v6'] : '1400'),
+	['placeholder' => '1400']
+))->setHelp(
+	'Enable MSS clamping on IPv6 TCP flows over VPN. ' .
+	'This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. '
+);
+
+$group->add(new Form_Select(
+	'maxmssvpn_v6',
+	'IPv6 VPN MSS',
+	$pconfig['maxmssvpn_v6'],
+	$ipv6mss,
+	true
+))->setHelp('Choose the VPN types on which to enable IPv6 MSS clamping.');
+
+$section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'disablefilter',

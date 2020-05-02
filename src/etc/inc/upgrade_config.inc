@@ -6143,6 +6143,20 @@ function upgrade_200_to_201() {
 	}
 }
 
+/* Update VPN MSS clamping for backward compatibility */
+function upgrade_201_to_202() {
+	global $config;
+
+	if (isset($config['system']['maxmss_enable'])) {
+		if (!empty($config['system']['maxmss'])) {
+			$config['system']['maxmss_v6'] = $config['system']['maxmss'];
+		}
+		$config['system']['maxmssvpn'] = "ipsec ipsec_mobile openvpn pppoe";
+		$config['system']['maxmss_enable_v6'] = true;
+		$config['system']['maxmssvpn_v6'] = "ipsec";
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

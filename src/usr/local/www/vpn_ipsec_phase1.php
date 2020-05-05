@@ -914,7 +914,8 @@ $section->addInput(new Form_Input(
 	'rekey_time',
 	'Rekey Time',
 	'number',
-	$pconfig['rekey_time']
+	$pconfig['rekey_time'],
+	['min' => 0]
 ))->setHelp('Time, in seconds, before an IKE SA establishes new keys. This works without interruption. ' .
 		'Only supported by IKEv2, and is recommended for use with IKEv2. ' .
 		'Leave blank or enter a value of 0 to disable.');
@@ -923,7 +924,8 @@ $section->addInput(new Form_Input(
 	'reauth_time',
 	'Reauth Time',
 	'number',
-	$pconfig['reauth_time']
+	$pconfig['reauth_time'],
+	['min' => 0]
 ))->setHelp('Time, in seconds, before an IKE SA is torn down and recreated from scratch, including authentication. ' .
 		'This can be disruptive unless both sides support make-before-break and overlapping IKE SA entries. ' .
 		'Supported by IKEv1 and IKEv2. Leave blank or enter a value of 0 to disable.');
@@ -932,7 +934,8 @@ $section->addInput(new Form_Input(
 	'over_time',
 	'Over Time',
 	'number',
-	$pconfig['over_time']
+	$pconfig['over_time'],
+	['min' => 0]
 ))->setHelp('Hard IKE SA life time, in seconds, after which the IKE SA will be expired. ' .
 		'This time is relative to reauthentication and rekey time. ' .
 		'If left empty, defaults to 10% of whichever timer is higher (reauth or rekey)');

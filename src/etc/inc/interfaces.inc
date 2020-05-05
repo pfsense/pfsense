@@ -1035,12 +1035,14 @@ function interface_lagg_configure($lagg) {
 	}
 
 	// put failover master interface on top of list
-	if (isset($lagg['failovermaster']) && ($lagg['failovermaster'] != 'auto')) {
+	if (($lagg['proto'] == 'failover') && isset($lagg['failovermaster']) &&
+	    ($lagg['failovermaster'] != 'auto')) {
 		unset($members[array_search($lagg['failovermaster'], $members)]);
 		$members = array_merge(array($lagg['failovermaster']), $members);
 	}
 
-	if (isset($lagg['lacptimeout']) && ($lagg['lacptimeout'] != 'slow')) {
+	if (($lagg['proto'] == 'lacp') && isset($lagg['lacptimeout']) &&
+	    ($lagg['lacptimeout'] != 'slow')) {
 		$lacptimeout = 'lacp_fast_timeout';
 	} else {
 		$lacptimeout = '';

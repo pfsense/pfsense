@@ -146,8 +146,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Protocol supplied is invalid");
 	}
 
-	if (is_array($_POST['members']) && isset($_POST['failovermaster']) && ($_POST['failovermaster'] != 'auto') &&
-	    (array_search($_POST['failovermaster'], $_POST['members']) === false)) {
+	if (is_array($_POST['members']) && ($_POST['proto'] == 'failover') && isset($_POST['failovermaster']) &&
+	    ($_POST['failovermaster'] != 'auto') && (array_search($_POST['failovermaster'], $_POST['members']) === false)) {
 			$input_errors[] = sprintf(gettext("Failover Master Interface must be selected as member."));
 	}
 

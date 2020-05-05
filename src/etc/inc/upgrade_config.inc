@@ -5967,6 +5967,14 @@ function upgrade_190_to_191() {
  */
 function additional_config_upgrade() {
 	global $config;
+
+	if (!empty($config['system']['language'])) {
+		if ($config['system']['language'] == 'zh_HK') {
+			$config['system']['language'] = 'zh_Hans_HK';
+		} elseif ($config['system']['language'] == 'zh_TW') {
+			$config['system']['language'] = 'zh_Hant_TW';
+		}
+	}
 }
 
 ?>

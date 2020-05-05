@@ -6143,6 +6143,19 @@ function upgrade_200_to_201() {
 	}
 }
 
+/* #10525: Handle Chinese (HongKong / Taiwan) locale rename */
+function upgrade_201_to_202() {
+	global $config;
+
+	if (!empty($config['system']['language'])) {
+		if ($config['system']['language'] == 'zh_HK') {
+			$config['system']['language'] = 'zh_Hans_HK';
+		} elseif ($config['system']['language'] == 'zh_TW') {
+			$config['system']['language'] = 'zh_Hant_TW';
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

@@ -1906,22 +1906,38 @@ function services_dhcrelay_configure() {
 	}
 	$srvifaces = array_unique($srvifaces);
 
+	/* Check for relays in the same subnet as clients so they can bind for
+	 * either direction (up or down) */
+	$srvrelayifs = array_intersect($dhcrelayifs, $srvifaces);
+
 	/* The server interface(s) should not be in this list */
 	$dhcrelayifs = array_diff($dhcrelayifs, $srvifaces);
 
+	/* Remove the dual-role interfaces from up and down lists */
+	$srvifaces = array_diff($srvifaces, $srvrelayifs);
+	$dhcrelayifs = array_diff($dhcrelayifs, $srvrelayifs);
+
 	/* fire up dhcrelay */
-	if (empty($dhcrelayifs)) {
+	if (empty($dhcrelayifs) && empty($srvrelayifs)) {
 		log_error(gettext("No suitable downstream interfaces found for running dhcrelay!"));
 		return; /* XXX */
 	}
-	if (empty($srvifaces)) {
+	if (empty($srvifaces) && empty($srvrelayifs)) {
 		log_error(gettext("No suitable upstream interfaces found for running dhcrelay!"));
 		return; /* XXX */
 	}
 
 	$cmd = "/usr/local/sbin/dhcrelay";
-	$cmd .= " -id " . implode(" -id ", $dhcrelayifs);
-	$cmd .= " -iu " . implode(" -iu ", $srvifaces);
+
+	if (!empty($dhcrelayifs)) {
+		$cmd .= " -id " . implode(" -id ", $dhcrelayifs);
+	}
+	if (!empty($srvifaces)) {
+		$cmd .= " -iu " . implode(" -iu ", $srvifaces);
+	}
+	if (!empty($srvrelayifs)) {
+		$cmd .= " -i " . implode(" -i ", $srvrelayifs);
+	}
 
 	if (isset($dhcrelaycfg['agentoption'])) {
 		$cmd .= " -a -m replace";

@@ -182,6 +182,9 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	} else if ($a_ppps[$pppid]['type'] == "pptp" || $a_ppps[$pppid]['type'] == "l2tp") {
 		$pconfig['pptp_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pptp_password'] = base64_decode($a_ppps[$pppid]['password']);
+		if (($a_ppps[$pppid]['type'] == 'l2tp') && isset($a_ppps[$pppid]['secret'])) {
+			$pconfig['l2tp_secret'] = base64_decode($a_ppps[$pppid]['secret']);
+		}
 		$pconfig['pptp_localip'] = explode(",", $a_ppps[$pppid]['localip']);
 		$pconfig['pptp_subnet'] = explode(",", $a_ppps[$pppid]['subnet']);
 		$pconfig['pptp_remote'] = explode(",", $a_ppps[$pppid]['gateway']);
@@ -1170,6 +1173,7 @@ if ($_POST['apply']) {
 		unset($wancfg['pppoe_password']);
 		unset($wancfg['pptp_username']);
 		unset($wancfg['pptp_password']);
+		unset($wancfg['l2tp_secret']);
 		unset($wancfg['provider']);
 		unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
@@ -1314,6 +1318,11 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['username'] = $_POST['pptp_username'];
 				if ($_POST['pptp_password'] != DMYPWD) {
 					$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
+				}
+				if (($_POST['type'] == 'l2tp') && (!empty($_POST['l2tp_secret']))) {
+					$a_ppps[$pppid]['secret'] = base64_encode($_POST['l2tp_secret']);
+				} else {
+					unset($a_ppps[$pppid]['secret']);
 				}
 				// Replace the first (0) entry with the posted data. Preserve any other entries that might be there.
 				$poriginal['pptp_localip'][0] = $_POST['pptp_local0'];
@@ -2947,6 +2956,19 @@ $section->addPassword(new Form_Input(
 	$pconfig['pptp_password']
 ));
 
+$group = new Form_Group('Shared Secret');
+
+$group->add(new Form_Input(
+	'l2tp_secret',
+	'*Secret',
+	'password',
+	$pconfig['l2tp_secret']
+))->setHelp('L2TP tunnel Shared Secret. Used to authenticate tunnel connection and encrypt ' .
+	    'important control packets avpairs. (Optional)');
+
+$group->addClass('l2tp_secret');
+$section->add($group);
+
 $section->addInput(new Form_IpAddress(
 	'pptp_local0',
 	'*Local IP address',
@@ -3497,9 +3519,13 @@ events.push(function() {
 				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pptp, .ppp').hide();
 				break;
 			}
-			case "l2tp":
-			case "pptp": {
+			case "l2tp": {
 				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pppoe, .ppp').hide();
+				$('.pptp, .l2tp_secret').show();
+				break;
+			}
+			case "pptp": {
+				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pppoe, .ppp, .l2tp_secret').hide();
 				$('.pptp').show();
 				break;
 			}

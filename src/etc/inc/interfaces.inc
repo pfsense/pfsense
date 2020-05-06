@@ -2576,6 +2576,14 @@ EOD;
 EOD;
 		}
 
+		if (($type == "l2tp") && !empty($ppp['secret'])) {
+			$secret = str_replace('"', '\"', base64_decode($ppp['secret']));
+			$mpdconf .= <<<EOD
+	set l2tp secret "{$secret}"
+
+EOD;
+		}
+
 		if ($type == "pptp" || $type == "l2tp") {
 			$mpdconf .= <<<EOD
 	set {$type} self {$localips[$pid]}

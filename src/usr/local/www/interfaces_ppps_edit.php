@@ -596,7 +596,7 @@ if ($pconfig['type'] == 'l2tp') {
 		'password',
 		$pconfig['secret']
 	))->setHelp('L2TP tunnel Shared Secret. Used to authenticate tunnel connection and encrypt ' .
-       		    'important control packets avpairs. (Optional)');
+       		    'important control packet contents. (Optional)');
 
 	$group->addClass('secret');
 	$section->add($group);

@@ -2017,6 +2017,8 @@ events.push(function() {
 		hideInput('filename', !showadvnwkboot);
 		hideInput('filename32', !showadvnwkboot);
 		hideInput('filename64', !showadvnwkboot);
+		hideInput('filename32arm', !showadvnwkboot);
+		hideInput('filename64arm', !showadvnwkboot);
 		hideInput('rootpath', !showadvnwkboot);
 
 		if (showadvnwkboot) {

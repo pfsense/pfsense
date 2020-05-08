@@ -1128,21 +1128,12 @@ function interface_gre_configure(&$gre, $grekey = "") {
 		$greif = pfSense_interface_create("gre");
 	}
 
-	if (!isset($gre['tunnel-type']))
-	{
-		// Fallback mode for older configurations
-		if (!is_ipaddrv6($gre['tunnel-local-addr'])) {
-			$gre['tunnel-type'] = 'v4';
-			$gre['tunnel-local-net4'] = $gre['tunnel-local-net'];
-			$gre['tunnel-local-addr4'] = $gre['tunnel-local-addr'];
-			$gre['tunnel-remote-addr4'] = $gre['tunnel-remote-addr'];
-		}
-		else {
-			$gre['tunnel-type'] = 'v6';
-			$gre['tunnel-local-net6'] = $gre['tunnel-local-net'];
-			$gre['tunnel-local-addr6'] = $gre['tunnel-local-addr'];
-			$gre['tunnel-remote-addr6'] = $gre['tunnel-remote-addr'];
-		}
+	$tunnel_type = '';
+	if (($gre['tunnel-local-addr'] !== '') || ($gre['tunnel-remote-addr'] !== '')) {
+		$tunnel_type = 'v4';
+	}
+	if (($gre['tunnel-local-addr6'] !== '') || ($gre['tunnel-remote-addr6'] !== '')) {
+		$tunnel_type .= 'v6';
 	}
 
 	/* Do not change the order here for more see gre(4) NOTES section. */
@@ -1151,10 +1142,10 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	} else {
 		mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} " . escapeshellarg($gre['remote-addr']));
 	}
-	if (in_array($gre['tunnel-type'], array('v4', 'v4v6'))) {
-		mwexec("/sbin/ifconfig {$greif} " . escapeshellarg($gre['tunnel-local-addr4']) . " " . escapeshellarg($gre['tunnel-remote-addr4']) . " netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
+	if (in_array($tunnel_type, array('v4', 'v4v6'))) {
+		mwexec("/sbin/ifconfig {$greif} " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
 	}
-	if (in_array($gre['tunnel-type'], array('v6', 'v4v6'))) {
+	if (in_array($tunnel_type, array('v6', 'v4v6'))) {
 		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
 		mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr6']) . " " . escapeshellarg($gre['tunnel-remote-addr6']) . " prefixlen 128");
 	}
@@ -1166,19 +1157,19 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	}
 
 	if (isset($gre['link1'])) {
-		if (in_array($gre['tunnel-type'], array('v4', 'v4v6'))) {
-			mwexec("/sbin/route add " . escapeshellarg($gre['tunnel-remote-addr4']) . "/" . escapeshellarg($gre['tunnel-remote-net4']) . " " . escapeshellarg($gre['tunnel-local-addr4']));
+		if (in_array($tunnel_type, array('v4', 'v4v6'))) {
+			mwexec("/sbin/route add " . escapeshellarg($gre['tunnel-remote-addr']) . "/" . escapeshellarg($gre['tunnel-remote-net']) . " " . escapeshellarg($gre['tunnel-local-addr']));
 		}
 	}
 	if (isset($gre['link3'])) {
-		if (in_array($gre['tunnel-type'], array('v6', 'v4v6'))) {
+		if (in_array($tunnel_type, array('v6', 'v4v6'))) {
 			mwexec("/sbin/route -6 add " . escapeshellarg($gre['tunnel-remote-addr6']) . "/" . escapeshellarg($gre['tunnel-remote-net6']) . " " . escapeshellarg($gre['tunnel-local-addr6']));
 		}
 	}
-	if (in_array($gre['tunnel-type'], array('v4', 'v4v6'))) {
-		file_put_contents("{$g['tmp_path']}/{$greif}_router", $gre['tunnel-remote-addr4']);
+	if (in_array($tunnel_type, array('v4', 'v4v6'))) {
+		file_put_contents("{$g['tmp_path']}/{$greif}_router", $gre['tunnel-remote-addr']);
 	}
-	if (in_array($gre['tunnel-type'], array('v6', 'v4v6'))) {
+	if (in_array($tunnel_type, array('v6', 'v4v6'))) {
 		file_put_contents("{$g['tmp_path']}/{$greif}_routerv6", $gre['tunnel-remote-addr6']);
 	}
 

@@ -6156,6 +6156,31 @@ function upgrade_201_to_202() {
 	}
 }
 
+function upgrade_245_to_246() {
+	global $config;
+	// upgrade GREs with IPv6 tunnel networt to new dual stack format
+	if (is_array($config['gres']['gre'])) {
+		foreach ($config['gres']['gre'] as $idx => $gre) {
+			if (!is_ipaddrv6($gre['tunnel-local-addr'])) {
+				$gre['tunnel-local-net6'] = $gre['tunnel-local-net'];
+				$gre['tunnel-local-addr6'] = $gre['tunnel-local-addr'];
+				$gre['tunnel-remote-addr6'] = $gre['tunnel-remote-addr'];
+				$gre['tunnel-local-net'] = '';
+				$gre['tunnel-local-addr'] = '';
+				$gre['tunnel-remote-addr'] = '';
+				if (isset($gre['link1'])) {
+					$gre['link3'] = '';
+					unset($gre['link1']);
+				}
+			} else {
+				$gre['tunnel-local-net6'] = '';
+				$gre['tunnel-local-addr6'] = '';
+				$gre['tunnel-remote-addr6'] = '';
+			}
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

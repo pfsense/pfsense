@@ -54,10 +54,11 @@ if ($_POST || $_REQUEST['host']) {
 	$reqdfields = explode(" ", "host count");
 	$reqdfieldsn = array(gettext("Host"), gettext("Count"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
-	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT) || (!is_numericint($_REQUEST['wait']))) {
+	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT) || (!is_numericint($_REQUEST['count']))) {
 		$input_errors[] = sprintf(gettext("Count must be between 1 and %s"), MAX_COUNT);
 	}	
-	if (($_REQUEST['wait'] < 1) || ($_REQUEST['wait'] > MAX_WAIT) || (!is_numericint($_REQUEST['wait']))) {
+	if (isset($_REQUEST['wait']) && (($_REQUEST['wait'] < 1) ||
+	    ($_REQUEST['wait'] > MAX_WAIT) || (!is_numericint($_REQUEST['wait'])))) {
 		$input_errors[] = sprintf(gettext("Wait must be between 1 and %s"), MAX_WAIT);
 	}	
 	$host = trim($_REQUEST['host']);

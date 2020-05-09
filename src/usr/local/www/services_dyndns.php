@@ -196,6 +196,7 @@ foreach ($a_dyndns as $dyndns):
 								<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 <?php }
 ?>
+								<a class="fa fa-clone" title="<?=gettext('Copy service')?>"	href="services_dyndns_edit.php?dup=<?=$i?>"></a>
 								<a class="fa fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>" usepost></a>
 							</td>
 						</tr>

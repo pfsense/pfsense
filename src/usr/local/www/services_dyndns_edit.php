@@ -48,10 +48,18 @@ $a_dyndns = &$config['dyndnses']['dyndns'];
 
 $id = $_REQUEST['id'];
 
+$dup = false;
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$dup = true;
+}
+
 if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['username'] = $a_dyndns[$id]['username'];
 	$pconfig['password'] = $a_dyndns[$id]['password'];
-	$pconfig['host'] = $a_dyndns[$id]['host'];
+	if (!$dup) {
+		$pconfig['host'] = $a_dyndns[$id]['host'];
+	}
 	$pconfig['domainname'] = $a_dyndns[$id]['domainname'];
 	$pconfig['mx'] = $a_dyndns[$id]['mx'];
 	$pconfig['type'] = $a_dyndns[$id]['type'];
@@ -201,7 +209,7 @@ if ($_POST['save'] || $_POST['force']) {
 			$dyndns['username'] = "";
 		}
 
-		if (isset($id) && $a_dyndns[$id]) {
+		if (isset($id) && $a_dyndns[$id] && !$dup) {
 			$a_dyndns[$id] = $dyndns;
 		} else {
 			$a_dyndns[] = $dyndns;

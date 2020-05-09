@@ -402,6 +402,10 @@ if ($_POST['save']) {
 		}
 	}
 
+	if (strpos($_POST['descr'], "\\") !== false) {
+		$input_errors[] = gettext("The '\' character is not allowed in the Description field.");
+	}
+
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
 		$_POST['srcbeginport'] = 0;
 		$_POST['srcendport'] = 0;

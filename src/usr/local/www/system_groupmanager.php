@@ -238,7 +238,14 @@ if (isset($_POST['save']) && !$read_only) {
 		if (isset($id) && $a_group[$id]) {
 			$a_group[$id] = $group;
 		} else {
-			$group['gid'] = $config['system']['nextgid']++;
+			/* Use gid from /etc/group if it exists */
+			$groups = posix_getgrnam($group['name']);
+			if ($groups) {
+				$group['gid'] = $groups["gid"];
+				$group['scope'] = "system";
+			} else {
+				$group['gid'] = $config['system']['nextgid']++;
+			}
 			$a_group[] = $group;
 		}
 

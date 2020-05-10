@@ -47,7 +47,6 @@ if (isset($id) && $a_gres[$id]) {
 	$pconfig['tunnel-remote-addr6'] = $a_gres[$id]['tunnel-remote-addr6'];
 	$pconfig['link1'] = isset($a_gres[$id]['link1']);
 	$pconfig['link2'] = isset($a_gres[$id]['link2']);
-	$pconfig['link3'] = isset($a_gres[$id]['link3']);
 	$pconfig['link0'] = isset($a_gres[$id]['link0']);
 	$pconfig['descr'] = $a_gres[$id]['descr'];
 }
@@ -64,23 +63,41 @@ if ($_POST['save']) {
 	$pconfig['remote-addr'] = addrtolower($_POST['remote-addr']);
 
 	$tunnel_type = '';
-	if (($pconfig['tunnel-local-addr'] !== '') || ($pconfig['tunnel-remote-addr'] !== '')) {
+	if ((!empty($pconfig['tunnel-local-addr'])) || (!empty($pconfig['tunnel-remote-addr']))) {
 		$tunnel_type = 'v4';
 	}
-	if (($pconfig['tunnel-local-addr6'] !== '') || ($pconfig['tunnel-remote-addr6'] !== '')) {
+	if ((!empty($pconfig['tunnel-local-addr6'])) || (!empty($pconfig['tunnel-remote-addr6']))) {
 		$tunnel_type .= 'v6';
 	}
 
 	/* input validation */
 	if ($tunnel_type === 'v4v6') {
 		$reqdfields = explode(" ", "if remote-addr tunnel-local-addr tunnel-remote-addr tunnel-remote-net tunnel-local-addr6 tunnel-remote-addr6 tunnel-remote-net6");
-		$reqdfieldsn = array(gettext("Parent interface"), gettext("Remote tunnel endpoint IPv4 address"), gettext("Local tunnel IPv4 address"), gettext("Remote tunnel IPv4 address"), gettext("Remote IPv4 tunnel network"), gettext("Remote tunnel endpoint IPv6 address"), gettext("Local tunnel IPv6 address"), gettext("Remote tunnel IPv6 address"), gettext("Remote IPv6 tunnel network"));
+		$reqdfieldsn = array(
+			gettext("Parent interface"),
+			gettext("Remote Address"),
+			gettext("Local IPv4 tunnel address"),
+			gettext("Remote IPv4 tunnel address"),
+			gettext("IPv4 tunnel subnet"),
+			gettext("Local IPv6 tunnel address"),
+			gettext("Remote IPv6 tunnel address"),
+			gettext("IPv6 tunnel subnet"));
 	} else if ($tunnel_type === 'v6') {
 		$reqdfields = explode(" ", "if remote-addr tunnel-local-addr6 tunnel-remote-addr6 tunnel-remote-net6");
-		$reqdfieldsn = array(gettext("Parent interface"), gettext("Remote tunnel endpoint IPv6 address"), gettext("Local tunnel IPv6 address"), gettext("Remote tunnel IPv6 address"), gettext("Remote IPv6 tunnel network"));
+		$reqdfieldsn = array(
+			gettext("Parent interface"),
+			gettext("Remote Address"),
+			gettext("Local IPv6 tunnel address"),
+			gettext("Remote IPv6 tunnel address"),
+			gettext("IPv6 tunnel subnet"));
 	} else {
 		$reqdfields = explode(" ", "if remote-addr tunnel-local-addr tunnel-remote-addr tunnel-remote-net");
-		$reqdfieldsn = array(gettext("Parent interface"), gettext("Remote tunnel endpoint IPv4 address"), gettext("Local tunnel IPv4 address"), gettext("Remote tunnel IPv4 address"), gettext("Remote IPv4 tunnel network"));
+		$reqdfieldsn = array(
+			gettext("Parent interface"),
+			gettext("Remote Address"),
+			gettext("Local IPv4 tunnel address"),
+			gettext("Remote IPv4 tunnel address"),
+			gettext("IPv4 tunnel subnet"));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -89,52 +106,36 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The tunnel needs either a valid IPv4 or IPv6 tunnel configuration.");
 	}
 
-	if (((!is_ipaddr($_POST['tunnel-local-addr'])) ||
-	     (!is_ipaddr($_POST['tunnel-remote-addr']))) &&
-	    in_array($tunnel_type, array('v4', 'v4v6'))) {
-		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IPv4 addresses.");
-	}
-
-	if (((!is_ipaddrv6($_POST['tunnel-local-addr6'])) ||
-	     (!is_ipaddrv6($_POST['tunnel-remote-addr6']))) &&
-	     in_array($tunnel_type, array('v6', 'v4v6'))) {
-		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IPv6 addresses.");
-	}
-
 	if (!is_ipaddr($_POST['remote-addr'])) {
 		$input_errors[] = gettext("The remote address must be a valid IP address.");
 	}
 
-	if (!is_numericint($_POST['tunnel-remote-net'])) {
-		$input_errors[] = gettext("The GRE tunnel subnet must be an integer.");
+	if ((!is_ipaddrv4($_POST['tunnel-local-addr'])) &&
+	    in_array($tunnel_type, array('v4', 'v4v6'))) {
+		$input_errors[] = gettext("The IPv4 local tunnel address must be a valid IPv4 address.");
 	}
 
-	if (!is_numericint($_POST['tunnel-remote-net6'])) {
-		$input_errors[] = gettext("The v6 GRE tunnel subnet must be an integer.");
+	if ((!is_ipaddrv4($_POST['tunnel-remote-addr'])) &&
+	    in_array($tunnel_type, array('v4', 'v4v6'))) {
+		$input_errors[] = gettext("The IPv4 remote tunnel address must be a valid IPv4 address.");
 	}
 
-	if (in_array($tunnel_type, array('v4', 'v4v6'))) {
-		if (!is_ipaddrv4($_POST['tunnel-local-addr'])) {
-			$input_errors[] = gettext("The GRE Tunnel local address must be IPv4 if the tunnel type is IPv4.");
-		}
-		if (!is_ipaddrv4($_POST['tunnel-remote-addr'])) {
-			$input_errors[] = gettext("The GRE Tunnel remote address must be IPv4 if the tunnel type is IPv4.");
-		}
-		if ($_POST['tunnel-remote-net'] > 32 || $_POST['tunnel-remote-net'] < 1) {
-			$input_errors[] = gettext("The GRE tunnel subnet for IPv4 must be an integer between 1 and 32.");
-		}
+	if ((!is_ipaddrv6($_POST['tunnel-local-addr6'])) &&
+	     in_array($tunnel_type, array('v6', 'v4v6'))) {
+		$input_errors[] = gettext("The IPv6 local tunnel address must be a valid IPv6 address.");
 	}
 
-	if (in_array($tunnel_type, array('v6', 'v4v6'))) {
-		if (!is_ipaddrv6($_POST['tunnel-local-addr6'])) {
-			$input_errors[] = gettext("The GRE Tunnel local address must be IPv6 if the tunnel type is IPv6.");
-		}
-		if (!is_ipaddrv6($_POST['tunnel-remote-addr6'])) {
-			$input_errors[] = gettext("The GRE Tunnel remote address must be IPv6 if the tunnel type is IPv6.");
-		}
-		if ($_POST['tunnel-remote-net6'] > 128 || $_POST['tunnel-remote-net6'] < 1) {
-			$input_errors[] = gettext("The GRE tunnel subnet must be an integer between 1 and 128.");
-		}
+	if ((!is_ipaddrv6($_POST['tunnel-remote-addr6'])) &&
+	     in_array($tunnel_type, array('v6', 'v4v6'))) {
+		$input_errors[] = gettext("The IPv6 remote tunnel address must be a valid IPv6 address.");
+	}
+
+	if ((!is_numericint($_POST['tunnel-remote-net'])) || ($_POST['tunnel-remote-net'] > 32) || ($_POST['tunnel-remote-net'] < 1)) {
+		$input_errors[] = gettext("The IPv4 tunnel subnet must be an integer between 1 and 32.");
+	}
+
+	if ((!is_numericint($_POST['tunnel-remote-net6'])) || ($_POST['tunnel-remote-net6'] > 128) || ($_POST['tunnel-remote-net6'] < 1)) {
+		$input_errors[] = gettext("The IPv6 tunnel subnet must be an integer between 1 and 128.");
 	}
 
 	foreach ($a_gres as $gre) {
@@ -142,8 +143,12 @@ if ($_POST['save']) {
 			continue;
 		}
 
-		if (($gre['if'] == $_POST['if']) && (($gre['tunnel-remote-addr'] == $_POST['tunnel-remote-addr']) || ($gre['tunnel-remote-addr6'] == $_POST['tunnel-remote-addr6']))) {
-			$input_errors[] = sprintf(gettext("A GRE tunnel with the network %s is already defined."), $gre['remote-network']);
+		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
+			$input_errors[] = sprintf(gettext("A GRE tunnel with the same IPv4 tunnel network is already defined."));
+			break;
+		}
+		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-addr6'] == $_POST['tunnel-remote-addr6'])) {
+			$input_errors[] = sprintf(gettext("A GRE tunnel with the same IPv6 tunnel network is already defined."));
 			break;
 		}
 	}
@@ -161,9 +166,6 @@ if ($_POST['save']) {
 		$gre['descr'] = $_POST['descr'];
 		if (isset($_POST['link1']) && $_POST['link1']) {
 			$gre['link1'] = '';
-		}
-		if (isset($_POST['link3']) && $_POST['link3']) {
-			$gre['link3'] = '';
 		}
 		$gre['greif'] = $_POST['greif'];
 
@@ -223,7 +225,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_IpAddress(
 	'remote-addr',
-	'*GRE Remote Address',
+	'*Remote Address',
 	$pconfig['remote-addr']
 ))->setHelp('Peer address where encapsulated GRE packets will be sent.');
 
@@ -231,29 +233,24 @@ $group = new Form_Group(gettext('IPv4'));
 
 $group->add(new Form_IpAddress(
 	'tunnel-local-addr',
-	'*GRE tunnel local address',
-	$pconfig['tunnel-local-addr']
-))->setHelp('Local GRE tunnel endpoint.');
+	'*Local Tunnel Address',
+	$pconfig['tunnel-local-addr'],
+	'V4'
+))->setHelp('Local IPv4 tunnel address.');
 
 $group->add(new Form_IpAddress(
 	'tunnel-remote-addr',
-	'*GRE tunnel remote address',
-	$pconfig['tunnel-remote-addr']
-))->setHelp('Remote GRE address endpoint.');
+	'*Remote Tunnel Address',
+	$pconfig['tunnel-remote-addr'],
+	'V4'
+))->setHelp('Remote IPv4 address address.');
 
 $group->add(new Form_Select(
 	'tunnel-remote-net',
-	'*GRE tunnel subnet',
+	'*Tunnel subnet',
 	$pconfig['tunnel-remote-net'],
 	array_combine(range(32, 1, -1), range(32, 1, -1))
-))->setHelp('The subnet is used for determining the network that is tunnelled.');
-
-$group->add(new Form_Checkbox(
-	'link1',
-	'Add Static Route',
-	'Add an explicit static route for the remote inner tunnel address/subnet via the local tunnel address',
-	$pconfig['link1']
-));
+))->setHelp('The subnet is used for determining the IPv4 network that is tunnelled.');
 
 $section->add($group);
 
@@ -261,31 +258,33 @@ $group = new Form_Group(gettext('IPv6'));
 
 $group->add(new Form_IpAddress(
 	'tunnel-local-addr6',
-	'*GRE tunnel local v6 address',
-	$pconfig['tunnel-local-addr6']
-))->setHelp('Local v6 GRE tunnel endpoint.');
+	'*Local Tunnel Address',
+	$pconfig['tunnel-local-addr6'],
+	'V6'
+))->setHelp('Local IPv6 tunnel address.');
 
 $group->add(new Form_IpAddress(
 	'tunnel-remote-addr6',
-	'*GRE tunnel remote v6 address',
-	$pconfig['tunnel-remote-addr6']
-))->setHelp('Remote v6 GRE address endpoint.');
+	'*Remote Tunnel address',
+	$pconfig['tunnel-remote-addr6'],
+	'V6'
+))->setHelp('Remote IPv6 address address.');
 
 $group->add(new Form_Select(
 	'tunnel-remote-net6',
-	'*GRE tunnel v6 subnet',
+	'*Tunnel subnet',
 	$pconfig['tunnel-remote-net6'],
 	array_combine(range(128, 1, -1), range(128, 1, -1))
-))->setHelp('The subnet is used for determining the v6 network that is tunnelled.');
-
-$group->add(new Form_Checkbox(
-	'link3',
-	'Add Static Route',
-	'Add an explicit static route for the remote inner tunnel address/subnet via the local tunnel address',
-	$pconfig['link3']
-));
+))->setHelp('The subnet is used for determining the IPv6 network that is tunnelled.');
 
 $section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'link1',
+	'Add Static Route',
+	'Add an explicit static route for the remote inner tunnel address/subnet via the local tunnel address',
+	$pconfig['link1']
+));
 
 $section->addInput(new Form_Input(
 	'descr',

@@ -1129,10 +1129,10 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	}
 
 	$tunnel_type = '';
-	if (($gre['tunnel-local-addr'] !== '') || ($gre['tunnel-remote-addr'] !== '')) {
+	if ((!empty($gre['tunnel-local-addr'])) || (!empty($gre['tunnel-remote-addr']))) {
 		$tunnel_type = 'v4';
 	}
-	if (($gre['tunnel-local-addr6'] !== '') || ($gre['tunnel-remote-addr6'] !== '')) {
+	if ((!empty($gre['tunnel-local-addr6'])) || (!empty($gre['tunnel-remote-addr6']))) {
 		$tunnel_type .= 'v6';
 	}
 
@@ -1160,8 +1160,6 @@ function interface_gre_configure(&$gre, $grekey = "") {
 		if (in_array($tunnel_type, array('v4', 'v4v6'))) {
 			mwexec("/sbin/route add " . escapeshellarg($gre['tunnel-remote-addr']) . "/" . escapeshellarg($gre['tunnel-remote-net']) . " " . escapeshellarg($gre['tunnel-local-addr']));
 		}
-	}
-	if (isset($gre['link3'])) {
 		if (in_array($tunnel_type, array('v6', 'v4v6'))) {
 			mwexec("/sbin/route -6 add " . escapeshellarg($gre['tunnel-remote-addr6']) . "/" . escapeshellarg($gre['tunnel-remote-net6']) . " " . escapeshellarg($gre['tunnel-local-addr6']));
 		}

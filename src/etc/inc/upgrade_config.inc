@@ -6156,26 +6156,22 @@ function upgrade_201_to_202() {
 	}
 }
 
-function upgrade_245_to_246() {
+function upgrade_202_to_203() {
 	global $config;
-	// upgrade GREs with IPv6 tunnel networt to new dual stack format
+	// Upgrade GREs with IPv6 tunnel networks to new dual stack format
 	if (is_array($config['gres']['gre'])) {
-		foreach ($config['gres']['gre'] as $idx => $gre) {
-			if (!is_ipaddrv6($gre['tunnel-local-addr'])) {
-				$gre['tunnel-local-net6'] = $gre['tunnel-local-net'];
+		foreach ($config['gres']['gre'] as $idx => &$gre) {
+			if (is_ipaddrv6($gre['tunnel-local-addr'])) {
 				$gre['tunnel-local-addr6'] = $gre['tunnel-local-addr'];
 				$gre['tunnel-remote-addr6'] = $gre['tunnel-remote-addr'];
-				$gre['tunnel-local-net'] = '';
+				$gre['tunnel-remote-net6'] = $gre['tunnel-remote-net'];
 				$gre['tunnel-local-addr'] = '';
 				$gre['tunnel-remote-addr'] = '';
-				if (isset($gre['link1'])) {
-					$gre['link3'] = '';
-					unset($gre['link1']);
-				}
+				$gre['tunnel-remote-net'] = '';
 			} else {
-				$gre['tunnel-local-net6'] = '';
 				$gre['tunnel-local-addr6'] = '';
 				$gre['tunnel-remote-addr6'] = '';
+				$gre['tunnel-remote-net6'] = '';
 			}
 		}
 	}

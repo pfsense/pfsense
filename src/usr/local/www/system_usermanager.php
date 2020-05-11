@@ -477,6 +477,11 @@ if ($_POST['save'] && !$read_only) {
 
 		local_user_set_groups($userent, $_POST['groups']);
 		local_user_set($userent);
+
+		/* Update user index to account for new changes */
+		global $userindex;
+		$userindex = index_users();
+
 		$savemsg = sprintf(gettext("Successfully %s user %s"), (isset($id)) ? gettext("edited") : gettext("created"), $userent['name']);
 		write_config($savemsg);
 		syslog($logging_level, "{$logging_prefix}: {$savemsg}");

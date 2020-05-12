@@ -1271,7 +1271,7 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 				}
 				$tiers[$tier][] = $gwname;
 				if (unlink_if_exists("/tmp/.down.{$gwname}")) {
-					$msg = sprintf(getmypid () . gettext('MONITOR: %1$s is available now, adding to routing group %2$s'), $gwname, $group['name']);
+					$msg = sprintf(gettext('MONITOR: %1$s is available now, adding to routing group %2$s'), $gwname, $group['name']);
 					$msg .= "\n".implode("|", $status);
 					$pluginparams['event'] = 'gateway.up';
 					$statuschanged = true;

@@ -122,7 +122,8 @@ if ($_POST['save']) {
 }
 
 if ($_REQUEST['exportaliases']) {
-	$expdata = str_replace(' ',"\n",$a_aliases[$id]['address']);
+	$expdata = array_map('idn_to_utf8', explode(" ", $a_aliases[$id]['address']));
+	$expdata = implode("\n", $expdata);
 	$expdata .= "\n";
 	send_user_download('data', $expdata, "{$_POST['origname']}.txt");
 }
@@ -218,7 +219,7 @@ if ($_POST['save']) {
 		/* item is a url table type */
 		if ($_POST['address0']) {
 			/* fetch down and add in */
-			$_POST['address0'] = trim($_POST['address0']);
+			$_POST['address0'] = trim(idn_to_ascii($_POST['address0']));
 			$address[] = $_POST['address0'];
 			$alias['url'] = $_POST['address0'];
 			$alias['updatefreq'] = $_POST['address_subnet0'] ? $_POST['address_subnet0'] : 7;
@@ -240,12 +241,12 @@ if ($_POST['save']) {
 				$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
 			}
 		}
-	} else if ($_POST['type'] == "url" || $_POST['type'] == "url_ports") {
+	} elseif (($_POST['type'] == "url") || ($_POST['type'] == "url_ports")) {
 		$desc_fmt_err_found = false;
 
 		/* item is a url type */
 		for ($x = 0; $x < $max_alias_addresses - 1; $x++) {
-			$_POST['address' . $x] = trim($_POST['address' . $x]);
+			$_POST['address' . $x] = trim(idn_to_ascii($_POST['address' . $x]));
 			if ($_POST['address' . $x]) {
 				/* fetch down and add in */
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
@@ -330,7 +331,7 @@ if ($_POST['save']) {
 				} else {
 					$detail_text = sprintf(gettext("Entry added %s"), date('r'));
 				}
-				$address_items = explode(" ", trim($_POST["address{$x}"]));
+				$address_items = explode(" ", trim(idn_to_ascii($_POST["address{$x}"])));
 				foreach ($address_items as $address_item) {
 					$iprange_type = is_iprange($address_item);
 					if ($iprange_type == 4) {
@@ -445,14 +446,14 @@ if ($_POST['save']) {
 				if (!is_port_or_range($input_address)) {
 					$input_errors[] = sprintf(gettext("%s is not a valid port or alias."), $input_address);
 				}
-			} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
+			} else if (($_POST['type'] == "host") || ($_POST['type'] == "network")) {
 				if (is_subnet($input_address) ||
 				    (!is_ipaddr($input_address) && !is_hostname($input_address))) {
 					$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s address, FQDN or alias.'), $input_address, $singular_types[$_POST['type']]);
 				}
 			}
 			$tmpaddress = $input_address;
-			if ($_POST['type'] != "host" && is_ipaddr($input_address) && $input_address_subnet[$idx] <> "") {
+			if (($_POST['type'] != "host") && is_ipaddr($input_address) && ($input_address_subnet[$idx] <> "")) {
 				if (!is_subnet($input_address . "/" . $input_address_subnet[$idx])) {
 					$input_errors[] = sprintf(gettext('%1$s/%2$s is not a valid subnet.'), $input_address, $input_address_subnet[$idx]);
 				} else {
@@ -593,7 +594,7 @@ $help = array(
 // On submit, strings like that are parsed and expanded into the appropriate individual entries and then validated.
 $pattern_str = array(
 	'network'			=> '[a-zA-Z0-9_:.-]+(/[0-9]+)?( [a-zA-Z0-9_:.-]+(/[0-9]+)?)*',	// Alias Name, Host Name, IP Address, FQDN, Network or IP Address Range
-	'host'				=> '[a-zA-Z0-9_:.-]+(/[0-9]+)?( [a-zA-Z0-9_:.-]+(/[0-9]+)?)*',	// Alias Name, Host Name, IP Address, FQDN
+	'host'				=> '[\pL0-9_:.-]+(/[0-9]+)?( [a-zA-Z0-9_:.-]+(/[0-9]+)?)*',	// Alias Name, Host Name, IP Address, FQDN
 	'port'				=> '[a-zA-Z0-9_:]+',	// Alias Name, Port Number, or Port Number Range
 	'url'				=> '.*',				// Alias Name or URL
 	'url_ports'			=> '.*',				// Alias Name or URL
@@ -726,7 +727,7 @@ while ($counter < count($addresses)) {
 	$group->add(new Form_IpAddress(
 		'address' . $counter,
 		'Address',
-		$address,
+		idn_to_utf8($address),
 		'ALIASV4V6'
 	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern($pattern_str[$tab]);
 

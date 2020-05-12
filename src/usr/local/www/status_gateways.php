@@ -124,38 +124,50 @@ display_top_tabs($tab_array);
 				</td>
 <?php
 					$status = $gateways_status[$i];
-					switch ($status['status']) {
-						case "force_down":
-							$online = gettext("Offline (forced)");
-							$bgcolor = "bg-danger";
-							break;
-						case "down":
-							$online = gettext("Offline");
-							$bgcolor = "bg-danger";
-							break;
-						case "highloss":
-							$online = gettext("Danger, Packetloss") . ': ' . $status['loss'];
-							$bgcolor = "bg-danger";
-							break;
-						case "loss":
-							$online = gettext("Warning, Packetloss") . ': ' . $status['loss'];
-							$bgcolor = "bg-warning";
-							break;
-						case "highdelay":
-							$online = gettext("Danger, Latency") . ': ' . $status['delay'];
-							$bgcolor = "bg-danger";
-							break;
-						case "delay":
-							$online = gettext("Warning, Latency") . ': ' . $status['delay'];
-							$bgcolor = "bg-warning";
-							break;
-						case "none":
-							$online = gettext("Online");
-							$bgcolor = "bg-success";
-							break;
-						default:
-							$online = gettext("Pending");
-							$bgcolor = "bg-info";
+					if (stristr($status['status'], "online")) {
+						switch ($status['substatus']) {
+							case "highloss":
+								$online = gettext("Danger, Packetloss") . ': ' . $status['loss'];
+								$bgcolor = "bg-danger";
+								break;
+							case "highdelay":
+								$online = gettext("Danger, Latency") . ': ' . $status['delay'];
+								$bgcolor = "bg-danger";
+								break;
+							case "loss":
+								$online = gettext("Warning, Packetloss") . ': ' . $status['loss'];
+								$bgcolor = "bg-warning";
+								break;
+							case "delay":
+								$online = gettext("Warning, Latency") . ': ' . $status['delay'];
+								$bgcolor = "bg-warning";
+								break;
+							default:
+								if ($status['monitor_disable'] || ($status['monitorip'] == "none")) {
+									$online = gettext("Online <br/>(unmonitored)");
+								} else {
+									$online = gettext("Online");
+								}
+								$bgcolor = "bg-success";
+						}
+					} elseif (stristr($status['status'], "down")) {
+						$bgcolor = "bg-danger";
+						switch ($status['substatus']) {
+							case "force_down":
+								$online = gettext("Offline (forced)");
+								break;
+							case "highloss":
+								$online = gettext("Offline, Packetloss") . ': ' . $status['loss'];
+								break;
+							case "highdelay":
+								$online = gettext("Offline, Latency") . ': ' . $status['delay'];
+								break;
+							default:
+								$online = gettext("Offline");
+						}
+					} else {
+						$online = gettext("Pending");
+						$bgcolor = "bg-info";
 					}
 ?>
 				<td class="<?=$bgcolor?>">

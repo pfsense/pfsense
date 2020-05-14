@@ -45,9 +45,11 @@ function isvalidpid($pidfile) {
 
 function is_process_running($process) {
 	$output = "";
-	exec("/bin/pgrep -anx " . escapeshellarg($process), $output, $retval);
-
-	return (intval($retval) == 0);
+	if (!empty($process)) {
+		exec("/bin/pgrep -anx " . escapeshellarg($process), $output, $retval);
+		return (intval($retval) == 0);
+	}
+	return false;
 }
 
 function isvalidproc($proc) {

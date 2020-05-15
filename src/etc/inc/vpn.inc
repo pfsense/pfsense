@@ -390,7 +390,7 @@ l2tps:
 
 EOD;
 			if (isset($l2tpcfg['secret'])) {
-				$secret = str_replace('"', '\"', base64_decode($l2tpcfg['secret']));
+				$secret = str_replace('"', '\"', $l2tpcfg['secret']);
 				$mpdconf .=<<<EOD
 	set l2tp secret "{$secret}"
 

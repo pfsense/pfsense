@@ -92,9 +92,17 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
+$dup = false;
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$dup = true;
+}
+
 if (isset($id) && $a_aliases[$id]) {
 	$original_alias_name = $a_aliases[$id]['name'];
-	$pconfig['name'] = $a_aliases[$id]['name'];
+	if (!$dup) {
+		$pconfig['name'] = $a_aliases[$id]['name'];
+	}
 	$pconfig['detail'] = $a_aliases[$id]['detail'];
 	$pconfig['address'] = $a_aliases[$id]['address'];
 	$pconfig['type'] = $a_aliases[$id]['type'];
@@ -111,6 +119,10 @@ if (isset($id) && $a_aliases[$id]) {
 			$pconfig['address'] = $a_aliases[$id]['aliasurl'];
 		}
 	}
+}
+
+if ($dup) {
+	unset($id);
 }
 
 if ($_POST['save']) {

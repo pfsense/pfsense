@@ -68,6 +68,7 @@
 	 *    - ClouDNS (www.cloudns.net)
 	 *    - GoDaddy (www.godaddy.com)
 	 *    - Azure DNS (azure.microsoft.com)
+	 *    - Dynv6 (www.dynv6.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -296,6 +297,7 @@
 				case 'linode-v6':
 				case 'noip-v6':
 				case 'noip-free-v6':
+				case 'dynv6-v6':
 					$this->_useIPv6 = true;
 					break;
 				default:
@@ -394,6 +396,8 @@
 					case 'linode':
 					case 'linode-v6':
 					case 'gandi-livedns':
+					case 'dynv6':
+					case 'dynv6-v6':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -1277,8 +1281,15 @@
 						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 						curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records");
 					}
-
-				break;
+					break;
+				case 'dynv6':
+					$needIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://dynv6.com/api/update?ipv4=' . $this->_dnsIP . '&hostname=' . $this->_dnsHost . '&token=' . $this->_dnsPass);
+					break;
+				case 'dynv6-v6':
+					$needIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://dynv6.com/api/update?ipv6=' . $this->_dnsIP . '&hostname=' . $this->_dnsHost . '&token=' . $this->_dnsPass);
+					break;
 			case 'gandi-livedns':
 				// NOTE: quite similar to digitalocean case but with json content like azure case
 				// Get record href

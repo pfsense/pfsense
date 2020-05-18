@@ -46,9 +46,17 @@ if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
+$dup = false;
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$dup = true;
+}
+
 if (isset($id) && isset($a_rfc2136[$id])) {
 	$pconfig['enable'] = isset($a_rfc2136[$id]['enable']);
-	$pconfig['host'] = $a_rfc2136[$id]['host'];
+	if (!$dup) {
+		$pconfig['host'] = $a_rfc2136[$id]['host'];
+	}
 	$pconfig['ttl'] = $a_rfc2136[$id]['ttl'];
 	if (!$pconfig['ttl']) {
 		$pconfig['ttl'] = 60;
@@ -111,7 +119,7 @@ if ($_POST['save'] || $_POST['force']) {
 		$rfc2136['updatesourcefamily'] = $_POST['updatesourcefamily'];
 		$rfc2136['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_rfc2136[$id]) {
+		if (isset($id) && $a_rfc2136[$id] && !$dup) {
 			$a_rfc2136[$id] = $rfc2136;
 		} else {
 			$a_rfc2136[] = $rfc2136;

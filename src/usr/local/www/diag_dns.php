@@ -32,7 +32,7 @@ $pgtitle = array(gettext("Diagnostics"), gettext("DNS Lookup"));
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
-$host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
+$host = idn_to_ascii(trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'"));
 
 init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
@@ -174,7 +174,7 @@ include("head.inc");
 if ($input_errors) {
 	print_input_errors($input_errors);
 } else if (!$resolved && $type) {
-	print_info_box(sprintf(gettext('Host "%s" could not be resolved.'), $host), 'warning', false);
+	print_info_box(sprintf(gettext('Host "%s" could not be resolved.'), idn_to_utf8($host)), 'warning', false);
 }
 
 if ($createdalias) {
@@ -202,7 +202,7 @@ $section->addInput(new Form_Input(
 	'host',
 	'*Hostname',
 	'text',
-	$host,
+	idn_to_utf8($host),
 	['placeholder' => 'Hostname to look up.']
 ));
 

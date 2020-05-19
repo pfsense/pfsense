@@ -73,8 +73,10 @@ $filtered_tags = array(
 	'proxypass', 'proxy_passwd', 'proxyuser', 'proxy_user', 'prv',
 	'radius_secret', 'redis_password', 'redis_passwordagain', 'rocommunity',
 	'secret', 'shared_key', 'tls', 'tlspskidentity', 'tlspskfile',
-	'varclientpasswordinput', 'varclientsharedsecret', 'varsyncpassword',
-	'varusersmotpinitsecret', 'varusersmotppin'
+	'varclientpasswordinput', 'varclientsharedsecret', 'varsqlconfpassword',
+	'varsqlconf2password', 'varsyncpassword', 'varmodulesldappassword', 
+	'varmodulesldap2password', 'varusersmotpinitsecret', 'varusersmotppin', 
+	'varuserspassword'
 );
 
 if ($_POST['submit'] == "DOWNLOAD" && file_exists($output_file)) {

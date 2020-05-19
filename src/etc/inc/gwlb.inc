@@ -37,7 +37,7 @@ function return_dpinger_defaults() {
 		"loss_interval" => "2000",
 		"time_period" => "60000",
 		"alert_interval" => "1000",
-		"data_payload" => "0");
+		"data_payload" => "1");
 }
 
 function running_dpinger_processes() {
@@ -2016,7 +2016,7 @@ function save_gateway($gateway_settings, $realid = "") {
 	if (is_ipaddr($gateway_settings['monitor'])) {
 		$gateway['monitor'] = $gateway_settings['monitor'];
 	}
-	if (isset($gateway_settings['data_payload']) && $gateway_settings['data_payload'] > 0) {
+	if (isset($gateway_settings['data_payload']) && is_numeric($gateway_settings['data_payload']) && $gateway_settings['data_payload'] >= 0) {
 		$gateway['data_payload'] = $gateway_settings['data_payload'];
 	}
 

@@ -269,7 +269,7 @@ $section->addInput(new Form_Input(
 	'Data Payload',
 	'number',
 	$pconfig['data_payload'],
-	['placeholder' => $dpinger_default['data_payload']]
+	['placeholder' => $dpinger_default['data_payload'], 'min' => 0]
 ))->setHelp('Define data payload to send on ICMP packets to gateway monitor IP.');
 
 $group = new Form_Group('Latency thresholds');
@@ -420,7 +420,8 @@ events.push(function() {
 		if (ispageload) {
 <?php
 			if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
-			    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || !empty($pconfig['data_payload']) ||
+			    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) ||
+			    (isset($pconfig['data_payload']) && is_numeric($pconfig['data_payload']) &&  intval($pconfig['data_payload']) >= 0) ||
 			    (!empty($pconfig['weight']) && $pconfig['weight'] > 1) ||
 			    (!empty($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
 			    (!empty($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||

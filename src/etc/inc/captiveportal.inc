@@ -1299,13 +1299,15 @@ function captiveportal_passthrumac_configure_entry($macent, $pipeinrule = false)
 	$bwUp = 0;
 	if (!empty($macent['bw_up'])) {
 		$bwUp = $macent['bw_up'];
-	} else if (!empty($config['captiveportal'][$cpzone]['bwdefaultup'])) {
+	} elseif (isset($config['captiveportal'][$cpzone]['peruserbw']) &&
+	    !empty($config['captiveportal'][$cpzone]['bwdefaultup'])) {
 		$bwUp = $config['captiveportal'][$cpzone]['bwdefaultup'];
 	}
 	$bwDown = 0;
 	if (!empty($macent['bw_down'])) {
 		$bwDown = $macent['bw_down'];
-	} else if (!empty($config['captiveportal'][$cpzone]['bwdefaultdn'])) {
+	} elseif (isset($config['captiveportal'][$cpzone]['peruserbw']) &&
+	    !empty($config['captiveportal'][$cpzone]['bwdefaultdn'])) {
 		$bwDown = $config['captiveportal'][$cpzone]['bwdefaultdn'];
 	}
 
@@ -1433,13 +1435,15 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	$enBwup = 0;
 	if (!empty($ipent['bw_up'])) {
 		$enBwup = intval($ipent['bw_up']);
-	} else if (!empty($config['captiveportal'][$cpzone]['bwdefaultup'])) {
+	} elseif (isset($config['captiveportal'][$cpzone]['peruserbw']) &&
+	    !empty($config['captiveportal'][$cpzone]['bwdefaultup'])) {
 		$enBwup = $config['captiveportal'][$cpzone]['bwdefaultup'];
 	}
 	$enBwdown = 0;
 	if (!empty($ipent['bw_down'])) {
 		$enBwdown = intval($ipent['bw_down']);
-	} else if (!empty($config['captiveportal'][$cpzone]['bwdefaultdn'])) {
+	} elseif (isset($config['captiveportal'][$cpzone]['peruserbw']) &&
+	    !empty($config['captiveportal'][$cpzone]['bwdefaultdn'])) {
 		$enBwdown = $config['captiveportal'][$cpzone]['bwdefaultdn'];
 	}
 

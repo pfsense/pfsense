@@ -2607,6 +2607,9 @@ function ipsec_configure($restart = false) {
 	 * looping through the arrays to locate entries later. */
 	$tunnels = array();
 	foreach ($a_phase1 as $p1) {
+		if (empty($p1)) {
+			continue;
+		}
 		if (isset($p1['mobile']) && !isset($p1['disabled'])) {
 			$mobile_configured = true;
 		}

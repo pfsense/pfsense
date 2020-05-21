@@ -5943,7 +5943,10 @@ function upgrade_189_to_190() {
 	global $config;
 	init_config_arr(array('ipsec', 'phase1'));
 	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
-		if (empty($ph1ent['protocol'])) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+		if (!isset($ph1ent['protocol']) || empty($ph1ent['protocol'])) {
 			$ph1ent['protocol'] = 'inet';
 		}
 	}
@@ -6097,6 +6100,9 @@ function upgrade_199_to_200() {
 	global $config;
 	init_config_arr(array('ipsec', 'phase1'));
 	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
 		/* Convert lifetime to reauth_time since that's how previous
 		 * versions behaved. */
 		if (isset($ph1ent['reauth_enable'])) {

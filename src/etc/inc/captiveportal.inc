@@ -2362,9 +2362,11 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 				$remaining_time = 0;
 			}
 
-			/* This user was already logged in so we disconnect the old one */
-			captiveportal_disconnect($cpentry, 13);
-			captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "CONCURRENT LOGIN - TERMINATING OLD SESSION");
+			if (isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) {
+				/* This user was already logged in so we disconnect the old one */
+				captiveportal_disconnect($cpentry, 13);
+				captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "CONCURRENT LOGIN - TERMINATING OLD SESSION");
+			}
 			$unsetindexes[] = $cpentry[5];
 			break;
 		} elseif ((isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) && ($username != 'unauthenticated')) {

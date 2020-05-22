@@ -358,6 +358,10 @@ if (is_dir("/var/etc/openvpn")) {
 	}
 }
 
+if (file_exists("/var/etc/l2tp-vpn/mpd.conf")) {
+	defCmdT("L2TP-Configuration", '/usr/bin/sed -E "s/([[:blank:]](secret|radius server .*) ).*/\1<redacted>/" /var/etc/l2tp-vpn/mpd.conf');
+}
+
 /* Logs */
 function status_add_log($name, $logfile, $number = 1000) {
 	if (!file_exists($logfile)) {

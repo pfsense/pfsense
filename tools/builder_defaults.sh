@@ -88,7 +88,7 @@ if [ -z "${PRODUCT_VERSION}" ]; then
 
 	export PRODUCT_VERSION=$(head -n 1 ${PRODUCT_SRC}/etc/version)
 fi
-export PRODUCT_REVISION=${PRODUCT_REVISION:-""}
+export PRODUCT_REVISION=${PRODUCT_REVISION:-"1"}
 
 # Product repository tag to build
 _cur_git_repo_branch_or_tag=$(git -C ${BUILDER_ROOT} rev-parse --abbrev-ref HEAD)

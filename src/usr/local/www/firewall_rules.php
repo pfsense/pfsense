@@ -775,7 +775,9 @@ foreach ($a_filter as $filteri => $filterent):
 							<?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])):?>
 								<?=str_replace('_', '_<wbr>', htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']))?>
 							<?php else: ?>
+							<span data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Gateways details')?>" data-content="<?=gateway_info_popup($filterent['gateway'])?>" data-html="true">
 								<?=htmlspecialchars(pprint_port($filterent['gateway']))?>
+							</span>
 							<?php endif; ?>
 						</td>
 						<td>

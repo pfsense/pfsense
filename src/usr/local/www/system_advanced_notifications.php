@@ -384,7 +384,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable Telegram',
 	'Enable Telegram Notifications',
 	$pconfig['enable_telegram']
-))->setHelp('Check this option to enable Telegram notifications.');
+	))->setHelp('Check this option to enable Telegram notifications. <br>You will need a Telegram Bot and its associated API key. <a href="https://core.telegram.org/bots#creating-a-new-bot" target="_blank">Instructions here.</a>');
 
 $section->addInput(new Form_Input(
 	'api',
@@ -392,7 +392,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['api'],
 	['placeholder' => '123456789:ABCDEabcde_FGHIJfghijKLMNOklmnoPQRST']
-))->setHelp('Enter the API key required to authenticate with the Telegram API server.');
+))->setHelp('Enter the Bot API key required to authenticate with the Telegram API server.');
 
 $section->addInput(new Form_Input(
 	'chatid',

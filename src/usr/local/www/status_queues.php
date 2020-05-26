@@ -139,8 +139,10 @@ events.push(function() {
 						// add diff values also to parent queues
 						parentname = queueparents[find];
 						parentqueuename = parentname+interfacename;
-						interfacename_stats[interfacename][parentqueuename]['pkts_ps'] += pkts_ps;
-						interfacename_stats[interfacename][parentqueuename]['bytes_ps'] += bytes_ps;
+						if (parentname.indexOf('root_') !== 0) {
+							interfacename_stats[interfacename][parentqueuename]['pkts_ps'] += pkts_ps;
+							interfacename_stats[interfacename][parentqueuename]['bytes_ps'] += bytes_ps;
+						}
 						interfacename_stats[interfacename][parentqueuename]['borrows'] += borrows;
 						interfacename_stats[interfacename][parentqueuename]['suspends'] += suspends;
 						interfacename_stats[interfacename][parentqueuename]['droppedpkts'] += droppedpkts;

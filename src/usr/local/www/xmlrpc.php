@@ -45,7 +45,9 @@ class pfsense_xmlrpc_server {
 	private $remote_addr;
 
 	private function auth() {
-		global $config;
+		global $config, $userindex;
+		$userindex = index_users();
+
 		$username = $_SERVER['PHP_AUTH_USER'];
 		$password = $_SERVER['PHP_AUTH_PW'];
 

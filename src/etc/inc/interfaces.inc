@@ -2569,14 +2569,22 @@ EOD;
 EOD;
 		}
 		if ($type == "pppoe") {
+			$hostuniq = '';
+			if (!empty($ppp['hostuniq'])) {
+				if (preg_match('/^0x[a-fA-F0-9]+$/', $ppp['hostuniq'])) {
+					$hostuniq = strtolower($ppp['hostuniq']) .'|';
+				} elseif (preg_match('/^[a-zA-Z0-9]+$/i', $ppp['hostuniq'])) {
+					$hostuniq = '0x' . bin2hex($ppp['hostuniq']) . '|';
+				}
+			}
 			// Send a null service name if none is set.
 			$provider = isset($ppp['provider']) ? $ppp['provider'] : "";
 			$mpdconf .= <<<EOD
-	set pppoe service "{$provider}"
+	set pppoe service "{$hostuniq}{$provider}"
 
 EOD;
 		}
-		if ($type == "pppoe" && $mtus[$pid] > 1492) {
+		if (($type == "pppoe") && ($mtus[$pid] > 1492)) {
 			$mpdconf .= <<<EOD
 	set pppoe max-payload {$mtus[$pid]}
 
@@ -2597,7 +2605,7 @@ EOD;
 EOD;
 		}
 
-		if ($type == "pptp" || $type == "l2tp") {
+		if (($type == "pptp") || ($type == "l2tp")) {
 			$mpdconf .= <<<EOD
 	set {$type} self {$localips[$pid]}
 	set {$type} peer {$gateways[$pid]}

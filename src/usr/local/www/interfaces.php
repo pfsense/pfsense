@@ -882,6 +882,9 @@ if ($_POST['apply']) {
 		if (substr($wancfg['if'], 0, 3) == 'gif') {
 			$min_mtu = 1280;
 			$max_mtu = 8192;
+		} elseif (($_POST['ipaddrv6'] == '6rd') || ($_POST['ipaddrv6'] == '6to4')) {
+			$min_mtu = 1300;
+			$max_mtu = 9000;
 		} else {
 			$min_mtu = 576;
 			$max_mtu = 9000;

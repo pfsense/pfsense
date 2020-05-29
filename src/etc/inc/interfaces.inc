@@ -4499,6 +4499,12 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	if ($wancfg['prefix-6rd-v4plen'] >= 0 && $wancfg['prefix-6rd-v4plen'] <= 32) {
 		mwexec("/sbin/ifconfig {$stfiface} stfv4net {$ip4address}/" . escapeshellarg($wancfg['prefix-6rd-v4plen']));
 	}
+	$parentmtu = get_interface_mtu(get_real_interface($interface));
+	if (isset($wancfg['mtu']) && ($wancfg['mtu'] >= 1300)) {
+		set_interface_mtu($stfiface, $wancfg['mtu'] - 20);
+	} elseif ($parentmtu > 1300) {
+		set_interface_mtu($stfiface, $parentmtu - 20);
+	}
 	if ($g['debug']) {
 		log_error("Created 6rd interface {$stfiface} {$rd6prefix}/{$rd6prefixlen}");
 	}
@@ -4606,6 +4612,12 @@ function interface_6to4_configure($interface = "wan", $wancfg) {
 	pfSense_interface_flags($stfiface, IFF_LINK2);
 	mwexec("/sbin/ifconfig {$stfiface} inet6 {$stflanpr} prefixlen 16");
 
+	$parentmtu = get_interface_mtu(get_real_interface($interface));
+	if (isset($wancfg['mtu']) && ($wancfg['mtu'] >= 1300)) {
+		set_interface_mtu($stfiface, $wancfg['mtu'] - 20);
+	} elseif ($parentmtu > 1300) {
+		set_interface_mtu($stfiface, $parentmtu - 20);
+	}
 	if ($g['debug']) {
 		log_error("Set IPv6 address inet6 {$stflanpr} prefixlen 16 for {$stfiface}, route {$stfbrgw}");
 	}

@@ -2786,12 +2786,16 @@ function filter_generate_user_rule($rule) {
 				if (array_key_exists($iface, $FilterIflist)) {
 					if (isset($FilterIflist[$iface]['if'])) {
 						$ifliste .= " " . $FilterIflist[$iface]['if'] . " ";
-					} else if (isset($FilterIflist[$iface][0]['if'])) {
+						if (($FilterIflist[$iface]['type6'] == '6rd') ||
+						    ($FilterIflist[$iface]['type6'] == '6to4')) {
+							$ifliste .= " " . $FilterIflist[$iface]['ifv6'] . " ";
+						}
+					} elseif (isset($FilterIflist[$iface][0]['if'])) {
 						$ifliste .= " " . $FilterIflist[$iface][0]['if'] . " ";
 					}
 				}
 			}
-			if ($ifliste <> "") {
+			if (!empty($ifliste)) {
 				$aline['interface'] = " on { {$ifliste} } ";
 			} else {
 				$aline['interface'] = "";

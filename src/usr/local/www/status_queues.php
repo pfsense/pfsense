@@ -35,16 +35,6 @@ header("Pragma: no-cache"); // HTTP/1.0
 */
 
 require_once("guiconfig.inc");
-class QueueStats {
-	public $queuename;
-	public $queuelength;
-	public $pps;
-	public $bandwidth;
-	public $borrows;
-	public $suspends;
-	public $drops;
-}
-
 include_once("shaper.inc");
 
 $stats = get_queue_stats();
@@ -367,46 +357,5 @@ function processInterfaceQueues($altqstats, $parent_name) {
 			}
 		}
 	};
-}
-
-function statsQueues($xml) {
-	global $statistics;
-
-	$fname = convert_real_interface_to_friendly_interface_name($xml['interface']);
-	$qname = str_replace($xml['interface'], $fname, $xml['name']);
-
-	$current = new QueueStats();
-	$child = new QueueStats();
-	$current->queuename = $qname . $fname;
-	$current->queuelength = $xml['qlength'];
-	$current->pps = $xml['measured'];
-	$current->bandwidth = $xml['measuredspeedint'];
-	$current->borrows = intval($xml['borrows']);
-	$current->suspends = intval($xml['suspends']);
-	$current->drops = intval($xml['droppedpkts']);
-	if (is_array($xml['queue'])) {
-		foreach ($xml['queue'] as $q) {
-			$child = statsQueues($q);
-			$current->pps += $child->pps;
-			$current->bandwidth += $child->bandwidth;
-			$current->borrows += $child->borrows;
-			$current->suspends += $child->suspends;
-			$current->drops += $child->drops;
-		}
-	}
-	unset($child);
-	$statistics[] = $current;
-	return $current;
-}
-function format_bits($bits) {
-	if ($bits >= 1000000000) {
-		return sprintf("%.2f Gbps", $bits/1000000000);
-	} else if ($bits >= 1000000) {
-		return sprintf("%.2f Mbps", $bits/1000000);
-	} else if ($bits >= 1000) {
-		return sprintf("%.2f Kbps", $bits/1000);
-	} else {
-		return sprintf("%d bps", $bits);
-	}
 }
 ?>

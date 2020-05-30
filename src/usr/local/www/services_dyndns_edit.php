@@ -64,7 +64,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['mx'] = $a_dyndns[$id]['mx'];
 	$pconfig['type'] = $a_dyndns[$id]['type'];
 	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
-	$pconfig['interface'] = $a_dyndns[$id]['interface'];
+	$pconfig['interface'] = str_replace('_stf', '', $a_dyndns[$id]['interface']);
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
 	$pconfig['proxied'] = isset($a_dyndns[$id]['proxied']);
 	$pconfig['verboselog'] = isset($a_dyndns[$id]['verboselog']);
@@ -74,7 +74,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['ttl'] = $a_dyndns[$id]['ttl'];
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
 	$pconfig['resultmatch'] = $a_dyndns[$id]['resultmatch'];
-	$pconfig['requestif'] = $a_dyndns[$id]['requestif'];
+	$pconfig['requestif'] = str_replace('_stf', '', $a_dyndns[$id]['requestif']);
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
@@ -195,13 +195,22 @@ if ($_POST['save'] || $_POST['force']) {
 		} else {
 			$dyndns['enable'] = true;
 		}
-		$dyndns['interface'] = $_POST['interface'];
+		if (preg_match('/.+-v6/', $_POST['type']) && is_stf_interface($_POST['interface'])) { 
+			$dyndns['interface'] = $_POST['interface'] . '_stf';
+		} else {
+			$dyndns['interface'] = $_POST['interface'];
+		}
 		$dyndns['zoneid'] = $_POST['zoneid'];
 		$dyndns['ttl'] = $_POST['ttl'];
 		$dyndns['updateurl'] = $_POST['updateurl'];
 		// Trim hard-to-type but sometimes returned characters
 		$dyndns['resultmatch'] = trim($_POST['resultmatch'], "\t\n\r");
-		($dyndns['type'] == "custom" || $dyndns['type'] == "custom-v6") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
+		($dyndns['type'] == "custom") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
+		if (($dyndns['type'] == "custom-v6") && is_stf_interface($_POST['requestif'])) { 
+			$dyndns['requestif'] = $_POST['requestif'] . '_stf';
+		} else {
+			$dyndns['requestif'] = $_POST['requestif'];
+		}
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
 

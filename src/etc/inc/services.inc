@@ -2759,7 +2759,11 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 			$wanip = get_interface_ip($if);
 			$bindipv4 = $wanip;
 		}
-		$wanipv6 = get_interface_ipv6($if);
+		if (is_stf_interface($dnsupdate['interface'])) { 
+			$wanipv6 = get_interface_ipv6($dnsupdate['interface'] . '_stf');
+		} else {
+			$wanipv6 = get_interface_ipv6($if);
+		}
 		$bindipv6 = $wanipv6;
 
 		/* Handle non-default interface bindings */
@@ -2770,7 +2774,11 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		} elseif (!empty($dnsupdate['updatesource'])) {
 			/* Find the alternate binding address */
 			$bindipv4 = get_interface_ip($dnsupdate['updatesource']);
-			$bindipv6 = get_interface_ipv6($dnsupdate['updatesource']);
+			if (is_stf_interface($dnsupdate['interface'])) { 
+				$bindipv6 = get_interface_ipv6($dnsupdate['updatesource'] . '_stf');
+			} else {
+				$bindipv6 = get_interface_ipv6($dnsupdate['updatesource']);
+			}
 		}
 
 		/* Handle IPv4/IPv6 selection for the update source interface/VIP */

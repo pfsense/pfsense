@@ -1493,7 +1493,13 @@ function update_repos() {
 				$v = strtolower(php_uname('v'));
 				$ed =  (strpos($v, 'factory') !== false) ? "Factory":"Community";
 				$pkglist = get_pkg_info("all", false, true);
-				$version = "{\"os\":\"" . $os . "\",\"osver\":\"" . $osver . "\",\"prod\":\"pfSense\"," . "\"ver\":\"" . $info[0]['version'] . "\",\"ed\":\"" . $ed . "\",\"pkgs\":[";
+				$platform = system_identify_specific_platform();
+				$platformname = gettext('Unknown system');
+				if (isset($platform['descr'])) {
+					$platformname = $platform['descr'];
+				}
+
+				$version = "{\"platform\":\"" . $platformname . "\"," . "\"os\":\"" . $os . "\",\"osver\":\"" . $osver . "\",\"prod\":\"pfSense\"," . "\"ver\":\"" . $info[0]['version'] . "\",\"ed\":\"" . $ed . "\",\"pkgs\":[";
 
 				$first = true;
 

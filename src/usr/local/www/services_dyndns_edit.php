@@ -83,11 +83,10 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns")
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "freedns-v2" || $pconfig['type'] == "freedns-v6-v2" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns")
 	    && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
-
 	/* input validation */
 	$reqdfields = array();
 	$reqdfieldsn = array();
@@ -386,7 +385,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['username'],
 	['autocomplete' => 'new-password']
-))->setHelp('Username is required for all types except Namecheap, FreeDNS, FreeDNS-v6, DigitalOcean, Linode and Custom Entries.%1$s' .
+))->setHelp('Username is required for all types except Namecheap, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), DigitalOcean, Linode and Custom Entries.%1$s' .
 			'Azure: Enter your Azure AD application ID%1$s' .
 			'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
@@ -402,7 +401,7 @@ $section->addPassword(new Form_Input(
 	'Password',
 	'password',
 	$pconfig['password']
-))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
+))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
 			'Azure: client secret of the AD application%1$s' .
 			'DNS Made Easy: Dynamic DNS Password%1$s' .
 			'DigitalOcean: Enter API token%1$s' .

@@ -33,8 +33,10 @@
 	 *    - HN (hn.org) -- incomplete checking!
 	 *    - DynS (dyns.org)
 	 *    - ZoneEdit (zoneedit.com)
-	 *    - FreeDNS (freedns.afraid.org)
-	 *    - FreeDNS IPv6 (freedns.afraid.org)
+	 *    - FreeDNS API v1 (freedns.afraid.org)
+	 *    - FreeDNS IPv6 API v1 (freedns.afraid.org)
+	 *    - FreeDNS API v2 (freedns.afraid.org)
+	 *    - FreeDNS IPv6 API v2 (freedns.afraid.org)
 	 *    - Loopia (loopia.se)
 	 *    - StaticCling (staticcling.org)
 	 *    - DNSexit (dnsexit.com)
@@ -96,6 +98,8 @@
 	 *  ODS             - Last Tested: 02 August 2005
 	 *  FreeDNS         - Last Tested: 01 May 2016
 	 *  FreeDNS IPv6    - Last Tested: 01 May 2016
+	 *  FreeDNS v2      - Last Tested: 01 June 2020
+	 *  FreeDNS IPv6 v2 - Last Tested: 01 June 2020
 	 *  Loopia          - Last Tested: 21 August 2019
 	 *  StaticCling     - Last Tested: 27 April 2006
 	 *  DNSexit         - Last Tested: 20 July 2008
@@ -219,6 +223,8 @@
 			switch ($dnsService) {
 			case 'freedns':
 			case 'freedns-v6':
+			case 'freedns-v2':
+			case 'freedns-v6-v2':
 				if (!$dnsHost) $this->_error(5);
 				break;
 			case "namecheap":
@@ -290,6 +296,7 @@
 				case 'route53-v6':
 				case 'duiadns-v6':
 				case 'freedns-v6':
+				case 'freedns-v6-v2':
 				case 'cloudflare-v6':
 				case 'dreamhost-v6':
 				case 'godaddy-v6':
@@ -358,6 +365,8 @@
 					case 'ods':
 					case 'freedns':
 					case 'freedns-v6':
+					case 'freedns-v2':
+					case 'freedns-v6-v2':
 					case 'loopia':
 					case 'staticcling':
 					case 'dnsexit':
@@ -665,6 +674,14 @@
 				case 'freedns-v6':
 					$needIP = TRUE;
 					curl_setopt($ch, CURLOPT_URL, 'https://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass . '&address=' . $this->_dnsIP);
+					break;
+				case 'freedns-v2':
+					$needIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://sync.afraid.org/u/' . $this->_dnsPass . '/?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					break;
+				case 'freedns-v6-v2':
+					$needIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://v6.sync.afraid.org/u/' . $this->_dnsPass . '/?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				case 'dnsexit':
 					$needsIP = TRUE;
@@ -1795,6 +1812,20 @@
 				case 'freedns':
 				case 'freedns-v6':
 					if (preg_match("/has not changed./i", $data)) {
+						$status = $status_intro . $success_str . gettext("No Change In IP Address");
+						$successful_update = true;
+					} else if (preg_match("/Updated/i", $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
+					}
+					break;
+				case 'freedns-v2':
+				case 'freedns-v6-v2':
+					if (preg_match("/No IP change detected/i", $data)) {
 						$status = $status_intro . $success_str . gettext("No Change In IP Address");
 						$successful_update = true;
 					} else if (preg_match("/Updated/i", $data)) {

@@ -352,7 +352,7 @@ if ($_POST) {
 			unset($config['system']['enablenatreflectionhelper']);
 		}
 
-		$config['system']['reflectiontimeout'] = $_POST['reflection-timeout'];
+		$config['system']['reflectiontimeout'] = $_POST['reflectiontimeout'];
 
 		if ($_POST['bypassstaticroutes'] == "yes") {
 			$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'];

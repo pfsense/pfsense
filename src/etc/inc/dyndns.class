@@ -223,8 +223,8 @@
 			switch ($dnsService) {
 			case 'freedns':
 			case 'freedns-v6':
-			case 'freedns-v2':
-			case 'freedns-v6-v2':
+			case 'freedns2':
+			case 'freedns2-v6':
 				if (!$dnsHost) $this->_error(5);
 				break;
 			case "namecheap":
@@ -296,7 +296,7 @@
 				case 'route53-v6':
 				case 'duiadns-v6':
 				case 'freedns-v6':
-				case 'freedns-v6-v2':
+				case 'freedns2-v6':
 				case 'cloudflare-v6':
 				case 'dreamhost-v6':
 				case 'godaddy-v6':
@@ -365,8 +365,8 @@
 					case 'ods':
 					case 'freedns':
 					case 'freedns-v6':
-					case 'freedns-v2':
-					case 'freedns-v6-v2':
+					case 'freedns2':
+					case 'freedns2-v6':
 					case 'loopia':
 					case 'staticcling':
 					case 'dnsexit':
@@ -675,11 +675,11 @@
 					$needIP = TRUE;
 					curl_setopt($ch, CURLOPT_URL, 'https://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass . '&address=' . $this->_dnsIP);
 					break;
-				case 'freedns-v2':
+				case 'freedns2':
 					$needIP = TRUE;
 					curl_setopt($ch, CURLOPT_URL, 'https://sync.afraid.org/u/' . $this->_dnsPass . '/?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
-				case 'freedns-v6-v2':
+				case 'freedns2-v6':
 					$needIP = TRUE;
 					curl_setopt($ch, CURLOPT_URL, 'https://v6.sync.afraid.org/u/' . $this->_dnsPass . '/?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
@@ -1823,8 +1823,8 @@
 						$this->_debug($data);
 					}
 					break;
-				case 'freedns-v2':
-				case 'freedns-v6-v2':
+				case 'freedns2':
+				case 'freedns2-v6':
 					if (preg_match("/No IP change detected/i", $data)) {
 						$status = $status_intro . $success_str . gettext("No Change In IP Address");
 						$successful_update = true;

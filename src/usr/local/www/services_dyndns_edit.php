@@ -83,7 +83,7 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "freedns-v2" || $pconfig['type'] == "freedns-v6-v2" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns")
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "freedns2" || $pconfig['type'] == "freedns2-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns")
 	    && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}

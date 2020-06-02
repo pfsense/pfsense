@@ -2511,7 +2511,11 @@ function system_identify_specific_platform() {
 			break;
 		case 'Virtual Machine':
 			if ($maker[0] == "Microsoft Corporation") {
-				return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
+				if (stripos($bios[0], "Hyper") !== false) {
+					return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
+				} else {
+					return (array('name' => 'Azure', 'descr' => 'Microsoft Azure'));
+				}
 			}
 			break;
 		case 'VMware Virtual Platform':

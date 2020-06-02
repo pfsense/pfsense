@@ -2511,7 +2511,7 @@ function system_identify_specific_platform() {
 			break;
 		case 'Virtual Machine':
 			if ($maker[0] == "Microsoft Corporation") {
-				return (array('name' => 'Microsfot', 'descr' => 'Microsoft Azure'));
+				return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
 			}
 			break;
 		case 'VMware Virtual Platform':

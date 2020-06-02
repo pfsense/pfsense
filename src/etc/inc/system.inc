@@ -2426,7 +2426,7 @@ function system_identify_specific_platform() {
 	if (stripos($bios[0], "amazon") !== false) {
 		return (array('name' => 'AWS', 'descr' => 'Amazon Web Services'));
 	} else  if (stripos($bios[0], "Google") !== false) {
-		return (array('name' => 'Google', 'descr' => 'Google Cloud Compute'));
+		return (array('name' => 'Google', 'descr' => 'Google Cloud Platform'));
 	}
 
 	switch ($product[0]) {

@@ -1245,7 +1245,7 @@ EOD;
 					} elseif ($ph2ent['mode'] == 'vti') {
 						$tunneltype = "";
 						$installpolicy = "installpolicy = no";
-						$passive = 'start';
+						$passive = isset($ph1ent['responderonly']) ? 'add' : 'start';
 
 						$localid_type = $ph2ent['localid']['type'];
 						$leftsubnet_data = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);

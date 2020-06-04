@@ -213,7 +213,7 @@ $ipsec_closeactions = array(
 	'none' => gettext('No action'),
 	'restart' => gettext('Restart/Reconnect'),
 	'clear' => gettext('Close connection and clear SA'),
-	'hold' => gettext('Close connection and reconnect on demand'),
+	'trap' => gettext('Close connection and reconnect on demand'),
 );
 
 global $p2_modes;

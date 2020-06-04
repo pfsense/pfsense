@@ -6184,6 +6184,27 @@ function upgrade_202_to_203() {
 }
 
 /*
+ * Change IPsec close_action "hold" values to "trap".
+ * See https://redmine.pfsense.org/issues/10632
+ */
+
+function upgrade_203_to_204() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+		/* swanctl.conf uses "trap" not "hold" which was the
+		 * old ipsec.conf value */
+		if (isset($ph1ent['closeaction']) &&
+		    ($ph1ent['closeaction'] == "hold")) {
+			$ph1ent['closeaction'] = "trap";
+		}
+	}
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

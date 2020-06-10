@@ -111,7 +111,7 @@ foreach ($a_dyndns as $dyndns):
 <?php
 	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdesc) {
-		if ($dyndns['interface'] == $if) {
+		if (str_replace('_stf', '', $dyndns['interface']) == $if) {
 			print($ifdesc);
 
 			break;

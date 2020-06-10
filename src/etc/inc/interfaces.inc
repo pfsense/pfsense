@@ -7227,4 +7227,16 @@ function is_pseudo_interface($inf) {
 	return false;
 }
 
+function is_stf_interface($inf) {
+	global $config;
+
+	if (is_array($config['interfaces'][$inf]) &&
+	    (($config['interfaces'][$inf]['ipaddrv6'] == '6rd') ||
+	    ($config['interfaces'][$inf]['ipaddrv6'] == '6to4'))) {
+	    return true;
+	}
+
+	return false;
+}
+
 ?>

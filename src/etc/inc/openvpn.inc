@@ -1140,6 +1140,9 @@ function openvpn_reconfigure($mode, $settings) {
 
 		// The remote server
 		$remoteproto = strtolower($settings['protocol']);
+		if (substr($remoteproto, 0, 3) == "tcp") {
+			$remoteproto .= "-{$mode}";
+		}
 		$conf .= "remote {$settings['server_addr']} {$settings['server_port']} {$remoteproto}\n";
 
 		if (!empty($settings['use_shaper'])) {

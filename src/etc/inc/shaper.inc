@@ -567,7 +567,7 @@ function cleanup_queue_from_rules($queue) {
 	foreach ($config['filter']['rule'] as & $rule) {
 		if ($rule['defaultqueue'] == $queue) {
 			unset($rule['defaultqueue']);
-			if (isset($rule['ackqueue']) {
+			if (isset($rule['ackqueue'])) {
 				unset($rule['ackqueue']);
 			}
 		}

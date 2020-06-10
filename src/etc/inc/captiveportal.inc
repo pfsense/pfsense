@@ -1103,21 +1103,6 @@ function captiveportal_prune_old_automac() {
 				}
 				$tmpvoucherdb[$emac['username']] = $eid;
 			}
-			if (voucher_auth($emac['username']) <= 0) {
-				$pipeno = captiveportal_get_dn_passthru_ruleno($emac['mac']);
-				if ($pipeno) {
-					captiveportal_free_dn_ruleno($pipeno);
-					$macrules .= "table {$cpzone}_pipe_mac delete any,{$emac['mac']}\n";
-					$macrules .= "table {$cpzone}_pipe_mac delete {$emac['mac']},any\n";
-					$macrules .= "pipe delete {$pipeno}\n";
-					++$pipeno;
-					$macrules .= "pipe delete {$pipeno}\n";
-				}
-				$writecfg = true;
-				captiveportal_logportalauth($emac['username'], $emac['mac'],
-				    $emac['ip'], "EXPIRED {$emac['username']} LOGIN - TERMINATING SESSION");
-				unset($config['captiveportal'][$cpzone]['passthrumac'][$eid]);
-			}
 		}
 		unset($tmpvoucherdb);
 		if (!empty($macrules)) {

@@ -128,10 +128,11 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 
 		$pconfig['phone'] = $a_ppps[$pppid]['phone'];
 		$pconfig['apn'] = $a_ppps[$pppid]['apn'];
-	} else if ($a_ppps[$pppid]['type'] == "pppoe") {
+	} elseif ($a_ppps[$pppid]['type'] == "pppoe") {
 		$pconfig['pppoe_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pppoe_password'] = base64_decode($a_ppps[$pppid]['password']);
 		$pconfig['provider'] = $a_ppps[$pppid]['provider'];
+		$pconfig['hostuniq'] = $a_ppps[$pppid]['hostuniq'];
 		$pconfig['pppoe_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
 		$pconfig['pppoe_idletimeout'] = $a_ppps[$pppid]['idletimeout'];
 
@@ -843,8 +844,11 @@ if ($_POST['apply']) {
 		}
 	}
 
-	if (($_POST['provider'] && (strpos($_POST['provider'], "\"")))) {
+	if ($_POST['provider'] && strpos($_POST['provider'], "\"")) {
 		$input_errors[] = gettext("The service name may not contain quote characters.");
+	}
+	if ($_POST['hostuniq'] && !preg_match('/^[a-zA-Z0-9]+$/i', $_POST['hostuniq'])) {
+		$input_errors[] = gettext("The Host-Uniq value can only be hexadecimal or letters and numbers.");
 	}
 	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) {
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
@@ -1178,6 +1182,7 @@ if ($_POST['apply']) {
 		unset($wancfg['pptp_password']);
 		unset($wancfg['l2tp_secret']);
 		unset($wancfg['provider']);
+		unset($wancfg['hostuniq']);
 		unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
 		if (empty($wancfg['pppoe']['pppoe-reset-type'])) {
@@ -1200,6 +1205,7 @@ if ($_POST['apply']) {
 			}
 			if ($wancfg['ipaddr'] != 'pppoe') {
 				unset($a_ppps[$pppid]['pppoe-reset-type']);
+				unset($a_ppps[$pppid]['hostuniq']);
 			}
 			if ($wancfg['type'] != $_POST['type']) {
 				unset($a_ppps[$pppid]['idletimeout']);
@@ -1288,6 +1294,11 @@ if ($_POST['apply']) {
 					$a_ppps[$pppid]['provider'] = $_POST['provider'];
 				} else {
 					$a_ppps[$pppid]['provider'] = true;
+				}
+				if (!empty($_POST['hostuniq'])) {
+					$a_ppps[$pppid]['hostuniq'] = strtolower($_POST['hostuniq']);
+				} else {
+					$a_ppps[$pppid]['hostuniq'] = true;
 				}
 				$a_ppps[$pppid]['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 				if (!empty($_POST['pppoe_idletimeout'])) {
@@ -2839,6 +2850,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['provider']
 ))->setHelp('This field can usually be left empty.');
+
+$section->addInput(new Form_Input(
+	'hostuniq',
+	'Host-Uniq',
+	'text',
+	$pconfig['hostuniq']
+))->setHelp('A unique host tag value for this PPPoE client. Leave blank unless a value is required by the service provider.');
 
 $section->addInput(new Form_Checkbox(
 	'pppoe_dialondemand',

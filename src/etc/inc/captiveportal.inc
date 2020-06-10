@@ -33,6 +33,7 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("voucher.inc");
+require_once("xmlrpc_client.inc");
 
 /* Captiveportal Radius Accounting */
 PEAR::loadExtension('bcmath');
@@ -383,7 +384,9 @@ EOD;
 			captiveportal_send_server_accounting('on');
 			echo "done\n";
 
-			if (isset($cpcfg['preservedb'])) {
+			if (isset($cpcfg['preservedb']) ||
+			    captiveportal_xmlrpc_sync_get_details($syncip, $syncport, $syncuser, $syncpass)) {
+
 				$connected_users = captiveportal_read_db();
 				if (!empty($connected_users)) {
 					echo "Reconnecting users to captive portal {$cpcfg['zone']}... ";
@@ -592,7 +595,7 @@ function captiveportal_ipfw_ruleno($id) {
 
 /* reinit will disconnect all users, be careful! */
 function captiveportal_init_rules($reinit = false) {
-	global $config, $g, $cpzone, $cpzoneid;
+	global $config, $g, $cpzone;
 
 	if (!isset($config['captiveportal'][$cpzone]['enable'])) {
 		return;
@@ -605,6 +608,7 @@ function captiveportal_init_rules($reinit = false) {
 	captiveportal_free_dnrules(2000, 64500, false, $reinit);
 	unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
 
+	$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 	$skipto = captiveportal_ipfw_ruleno($cpzoneid);
 
 	$cprules = '';
@@ -764,7 +768,9 @@ function captiveportal_init_rules($reinit = false) {
 
 /* Delete all rules related to specific cpzone */
 function captiveportal_delete_rules($pipes_to_remove = array(), $clear_auth_rules = true) {
-	global $g, $cpzoneid, $cpzone;
+	global $g, $config, $cpzone;
+
+	$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 
 	$skipto1 = captiveportal_ipfw_ruleno($cpzoneid);
 	$skipto2 = $skipto1 + $g['captiveportal_rules_interval'];
@@ -841,10 +847,11 @@ function captiveportal_prune_old() {
 		$trafficquota = $cpcfg['trafficquota'] * 1048576;
 	}
 
-	/* Is there any job to do? */
-	if (!$timeout && !$idletimeout && !$trafficquota && !isset($cpcfg['reauthenticate']) &&
+	/* Is there any job to do? If we are in High Availability sync, are we in backup mode ? */
+	if ((!$timeout && !$idletimeout && !$trafficquota && !isset($cpcfg['reauthenticate']) &&
 	    !isset($cpcfg['radiussession_timeout']) && !isset($cpcfg['radiustraffic_quota']) &&
-	    !isset($vcpcfg['enable']) && !isset($cpcfg['radacct_enable'])) {
+	    !isset($vcpcfg['enable']) && !isset($cpcfg['radacct_enable'])) ||
+	    captiveportal_ha_is_node_in_backup_mode($cpzone)) {
 		return;
 	}
 
@@ -1055,7 +1062,7 @@ function captiveportal_prune_old() {
 	captiveportal_prune_old_automac();
 
 	if ($voucher_needs_sync == true) {
-		/* Trigger a sync of the vouchers on config */
+		/* perform in-use vouchers expiration using check_reload_status */
 		send_event("service sync vouchers");
 	}
 
@@ -1125,7 +1132,7 @@ function captiveportal_prune_old_automac() {
 }
 
 /* remove a single client according to the DB entry */
-function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null) {
+function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null, $carp_loop = false) {
 	global $g, $config, $cpzone, $cpzoneid;
 
 	$stop_time = (empty($stop_time)) ? time() : $stop_time;
@@ -1200,14 +1207,27 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null) {
 		}
 	}
 
-	// XMLRPC Call over to the master Voucher node
-	if (xmlrpc_sync_voucher_details($syncip, $syncport,
-	    $vouchersyncusername, $syncpass)) {
-		$remote_status = xmlrpc_sync_voucher_disconnect($dbent, $syncip,
-		    $syncport, $syncpass, $vouchersyncusername, $term_cause,
-		    $stop_time);
-	}
+	// XMLRPC Call over to the backup node if necessary
+	if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport,
+	    $syncuser, $syncpass, $carp_loop)) {
+		$rpc_client = new pfsense_xmlrpc_client();
+		$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+		$rpc_client->set_noticefile("CaptivePortalUserSync");
+		$arguments = array(
+			'sessionid' => $dbent[5],
+			'term_cause' => $term_cause,
+			'stop_time' => $stop_time
+		);
 
+		$rpc_client->xmlrpc_method('captive_portal_sync',
+			array(
+				'op' => 'disconnect_user',
+				'zone' => $cpzone,
+				'session' => base64_encode(serialize($arguments))
+			)
+		);
+	}
+	return true;
 }
 
 /* remove a single client by sessionid */
@@ -1231,9 +1251,26 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 }
 
 /* remove all clients */
-function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNECT") {
+function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNECT", $carp_loop = false) {
 	global $g, $config, $cpzone, $cpzoneid;
 
+	if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport, $syncuser, $syncpass, $carp_loop)) {
+		$rpc_client = new pfsense_xmlrpc_client();
+		$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+		$rpc_client->set_noticefile("CaptivePortalUserSync");
+		$arguments = array(
+			'term_cause' => $term_cause,
+			'logout_reason' => $logoutReason
+		);
+
+		$rpc_client->xmlrpc_method('captive_portal_sync',
+			array(
+				'op' => 'disconnect_all',
+				'zone' => $cpzone,
+				'arguments' => base64_encode(serialize($arguments))
+			)
+		);
+	}
 	/* check if we're pruning old entries and eventually wait */
 	$rcprunelock = try_lock("rcprunecaptiveportal{$cpzone}", 15);
 
@@ -1253,7 +1290,8 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 	$cpdb = captiveportal_read_db();
 	$unsetindexes = array_column($cpdb,5);
 	if (!empty($unsetindexes)) {
-		captiveportal_remove_entries($unsetindexes);
+		// High Availability : do not sync removed entries
+		captiveportal_remove_entries($unsetindexes, true);
 	}
 
 	/* reinit ipfw rules */
@@ -1261,6 +1299,7 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 
 	unlock($cpdblck);
 	unlock($rcprunelock);
+	return true;
 }
 
 /* send RADIUS acct stop for all current clients connected with RADIUS servers */
@@ -1851,7 +1890,8 @@ function captiveportal_read_db($query = "") {
 	return $cpdb;
 }
 
-function captiveportal_remove_entries($remove) {
+function captiveportal_remove_entries($remove, $carp_loop = false) {
+	global $cpzone;
 
 	if (!is_array($remove) || empty($remove)) {
 		return;
@@ -1866,6 +1906,20 @@ function captiveportal_remove_entries($remove) {
 	}
 	$query .= ")";
 	captiveportal_write_db($query);
+
+	if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport, $syncuser, $syncpass, $carp_loop)) {
+		$rpc_client = new pfsense_xmlrpc_client();
+		$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+		$rpc_client->set_noticefile("CaptivePortalUserSync");
+		$rpc_client->xmlrpc_method('captive_portal_sync',
+			array(
+				'op' => 'remove_entries',
+				'zone' => $cpzone,
+				'entries' => base64_encode(serialize($remove))
+			)
+		);
+	}
+	return true;
 }
 
 /* write captive portal DB */
@@ -2289,8 +2343,9 @@ function captiveportal_update_entry($sessionid, $new_value, $field_to_update) {
 	captiveportal_write_db("UPDATE captiveportal SET {$field_to_update} = {$new_value} WHERE sessionid = '{$sessionid}'");
 }
 
-function portal_allow($clientip, $clientmac, $username, $password = null, $attributes = null, $pipeno = null, $authmethod = null, $context = 'first') {
-	global $redirurl, $g, $config, $type, $_POST, $cpzone, $cpzoneid;
+function portal_allow($clientip, $clientmac, $username, $password = null, $redirurl = null,
+    $attributes = null, $pipeno = null, $authmethod = null, $context = 'first', $existing_sessionid = null) {
+	global $g, $config, $cpzone;
 
 	// Ensure we create an array if we are missing attributes
 	if (!is_array($attributes)) {
@@ -2342,6 +2397,12 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 
 	/* Snapshot the timestamp */
 	$allow_time = time();
+
+	if ($existing_sessionid !== null) {
+		// If we recieved this connection through XMLRPC sync :
+		// we fetch allow_time from the info given by the other node
+		$allow_time = $attributes['allow_time'];
+	}
 	$unsetindexes = array();
 
 	foreach ($cpdb as $cpentry) {
@@ -2389,9 +2450,13 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 	}
 
 	if (!isset($sessionid)) {
-		/* generate unique session ID */
-		$tod = gettimeofday();
-		$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
+		if ($existing_sessionid != null) { // existing_sessionid should only be set during XMLRPC sync
+			$sessionid = $existing_sessionid;
+		} else {
+			/* generate unique session ID */
+			$tod = gettimeofday();
+			$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
+		}
 
 		if (isset($config['captiveportal'][$cpzone]['peruserbw'])) {
 			$dwfaultbw_up = !empty($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
@@ -2457,10 +2522,9 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 
 			/* if the pool is empty, return appropriate message and exit */
 			if (is_null($pipeno)) {
-				portal_reply_page($redirurl, "error", "System reached maximum login capacity");
-				log_error("Zone: {$cpzone} - WARNING!  Captive portal has reached maximum login capacity");
+				captiveportal_syslog("Zone: {$cpzone} - WARNING!  Captive portal has reached maximum login capacity");
 				unlock($cpdblck);
-				return;
+				return false;
 			}
 
 			$bw_up_pipeno = $pipeno;
@@ -2511,6 +2575,32 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 					$sessionid, // sessionid
 					time());  // start time
 			}
+			if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport, $syncuser, $syncpass, isset($existing_sessionid))) {
+				// $existing_sessionid prevent carp loop : only forward
+				// the connection to the other node if we generated the sessionid by ourselves
+				$rpc_client = new pfsense_xmlrpc_client();
+				$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+				$rpc_client->set_noticefile("CaptivePortalUserSync");
+				$arguments = array(
+					'clientip' => $clientip,
+					'clientmac' => $clientmac,
+					'username' => $username,
+					'password' => $password,
+					'attributes' => $attributes,
+					'allow_time' => $allow_time,
+					'authmethod' => $authmethod,
+					'context' => $context,
+					'sessionid' => $sessionid
+				);
+
+				$rpc_client->xmlrpc_method('captive_portal_sync',
+					array(
+						'op' => 'connect_user',
+						'zone' => $cpzone,
+						'user' => base64_encode(serialize($arguments))
+					)
+				);
+			}
 		}
 	} else {
 		/* NOTE: #3062-11 If the pipeno has been allocated free it to not DoS the CP */
@@ -2525,6 +2615,13 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 		write_config(gettext("Captive Portal allowed users configuration changed"));
 	}
 
+	if ($existing_sessionid !== null) {
+		if (!empty($sessionid)) {
+			return $sessionid;
+		} else {
+			return false;
+		}
+	}
 	/* redirect user to desired destination */
 	if (!empty($attributes['url_redirection'])) {
 		$my_redirurl = $attributes['url_redirection'];
@@ -2713,7 +2810,8 @@ function captiveportal_send_server_accounting($type = 'on', $ruleno = null, $use
 	$cpcfg = $config['captiveportal'][$cpzone];
 	$acctcfg = auth_get_authserver($cpcfg['radacct_server']);
 
-	if (!isset($cpcfg['radacct_enable']) || empty($acctcfg)) {
+	if (!isset($cpcfg['radacct_enable']) || empty($acctcfg) ||
+	    captiveportal_ha_is_node_in_backup_mode($cpzone)) {
 		return null;
 	}
 
@@ -2841,4 +2939,5 @@ function captiveportal_isip_logged($clientip) {
 		return $cpentry;
 	}
 }
+
 ?>

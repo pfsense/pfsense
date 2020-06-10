@@ -773,6 +773,29 @@ function get_carp_interface_status($carpid) {
 }
 
 /*
+ * Return true if the CARP status of at least one interface of a captive portal zone is in backup mode
+ * This function return false if CARP is not enabled on any interface of the captive portal zone
+ */
+function captiveportal_ha_is_node_in_backup_mode($cpzone) {
+	global $config;
+
+	$cpinterfaces = explode(",", $config['captiveportal'][$cpzone]['interface']);
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($cpinterfaces as $interface) {
+			foreach ($config['virtualip']['vip'] as $vip) {
+				if (($vip['interface'] == $interface) && ($vip['mode'] == "carp")) {
+					if (get_carp_interface_status("_vip{$vip['uniqid']}") != "MASTER") {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
+/*
  * get_pfsync_interface_status($pfsyncinterface): returns the status of a pfsync
  */
 function get_pfsync_interface_status($pfsyncinterface) {

@@ -728,11 +728,13 @@ class altq_root_queue {
 
 	function CheckBandwidth($bw, $bwtype) {
 		$sum = $this->GetTotalBw();
-		if ($sum > $bw * get_bandwidthtype_scale($bwtype))
+		if ($sum > ($bw * get_bandwidthtype_scale($bwtype))) {
 			return 1;
+		}
 		foreach ($this->queues as $q) {
-			if ($q->CheckBandwidth(0, ''))
+			if ($q->CheckBandwidth(0, '')) {
 				return 1;
+			}
 		}
 
 		return 0;
@@ -741,8 +743,9 @@ class altq_root_queue {
 	function GetTotalBw($qignore = NULL) {
 		$sum = 0;
 		foreach ($this->queues as $q) {
-			if ($qignore != NULL && $qignore == $q)
+			if (($qignore != NULL) && ($qignore == $q)) {
 				continue;
+			}
 			$sum += get_bandwidth($q->GetBandwidth(), $q->GetBwscale(), $this);
 		}
 
@@ -1534,14 +1537,14 @@ class priq_queue {
 		$reqdfieldsn[] = gettext("Name");
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
-		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) {
+		if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
 			$input_errors[] = gettext("Bandwidth must be an integer.");
 		}
 		if ($data['bandwidth'] < 0) {
 			$input_errors[] = gettext("Bandwidth cannot be negative.");
 		}
 		if ($data['bandwidthtype'] == "%") {
-			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
+			if (($data['bandwidth'] > 100) || ($data['bandwidth'] < 0)) {
 				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
 			}
 		}
@@ -1568,22 +1571,33 @@ class priq_queue {
 		if (!empty($data['default']) && altq_get_default_queue($data['interface']) && empty($default)) {
 			$input_errors[] = gettext("Only one default queue per interface is allowed.");
 		}
+
+		$parent = $this->GetParent();
+		foreach ($parent->queues as $q) {
+			if (($data['newname'] == $q->GetQname()) && ($data['name'] != $data['newname'])) { 
+				$input_errors[] = gettext("A queue with the same name already exists.");
+			}
+			if (($data['priority'] == $q->GetQpriority()) && ($data['name'] != $q->GetQname())) { 
+				$input_errors[] = sprintf(gettext("The priority %d is already used by queue %s."),
+						$data['priority'], $q->GetQname());
+			}
+		}
 	}
 
 	function ReadConfig(&$q) {
-		if (!empty($q['name']) && !empty($q['newname']) && $q['name'] != $q['newname']) {
+		if (!empty($q['name']) && !empty($q['newname']) && ($q['name'] != $q['newname'])) {
 			$this->SetQname($q['newname']);
 			rename_queue_in_rules($q['name'], $q['newname']);
 		} else if (!empty($q['newname'])) {
 			$this->SetQname($q['newname']);
-		} else if (isset($q['name'])) {
+		} elseif (isset($q['name'])) {
 			$this->SetQname($q['name']);
 		}
 		if (isset($q['interface'])) {
 			$this->SetInterface($q['interface']);
 		}
 		$this->SetBandwidth($q['bandwidth']);
-		if ($q['bandwidthtype'] <> "") {
+		if (!empty($q['bandwidthtype'])) {
 			$this->SetBwscale($q['bandwidthtype']);
 		}
 		if (!empty($q['qlimit'])) {
@@ -2242,8 +2256,8 @@ class hfsc_queue extends priq_queue {
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
-		if (isset($data['linkshare3']) && $data['linkshare3'] <> "") {
-			if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) {
+		if (isset($data['linkshare3']) && !empty($data['linkshare3'])) {
+			if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
 				$input_errors[] = gettext("Bandwidth must be an integer.");
 			}
 
@@ -2252,25 +2266,25 @@ class hfsc_queue extends priq_queue {
 			}
 
 			if ($data['bandwidthtype'] == "%") {
-				if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
+				if (($data['bandwidth'] > 100) || ($data['bandwidth'] < 0)) {
 					$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
 				}
 			}
 		}
 
-		if ($data['upperlimit1'] <> "" && $data['upperlimit2'] == "") {
+		if (!empty($data['upperlimit1']) && empty($data['upperlimit2'])) {
 			$input_errors[] = gettext("upperlimit service curve defined but missing (d) value");
 		}
-		if ($data['upperlimit2'] <> "" && $data['upperlimit1'] == "") {
+		if (!empty($data['upperlimit2']) && empty($data['upperlimit1'])) {
 			$input_errors[] = gettext("upperlimit service curve defined but missing initial bandwidth (m1) value");
 		}
-		if ($data['upperlimit1'] <> "" && !is_valid_shaperbw($data['upperlimit1'])) {
+		if (!empty($data['upperlimit1']) && !is_valid_shaperbw($data['upperlimit1'])) {
 			$input_errors[] = gettext("upperlimit m1 value needs to be Kb, Mb, Gb, or %");
 		}
-		if ($data['upperlimit2'] <> "" && !is_numeric($data['upperlimit2'])) {
+		if (!empty($data['upperlimit2']) && !is_numeric($data['upperlimit2'])) {
 			$input_errors[] = gettext("upperlimit d value needs to be numeric");
 		}
-		if ($data['upperlimit3'] <> "" && !is_valid_shaperbw($data['upperlimit3'])) {
+		if (!empty($data['upperlimit3']) && !is_valid_shaperbw($data['upperlimit3'])) {
 			$input_errors[] = gettext("upperlimit m2 value needs to be Kb, Mb, Gb, or %");
 		}
 

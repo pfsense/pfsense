@@ -1094,7 +1094,47 @@
 					if (!is_array($output->domain_records)) {
 						$output->domain_records = array();
 					}
-					foreach($output->domain_records as $dnsRecord) {
+
+					// DO's API lists 20 NS records per page, so additional pages needs to be downloaded
+					// https://redmine.pfsense.org/issues/10952
+					$_domain_records = $output->domain_records;
+					$_count = count($_domain_records);
+					$_total = 0;
+					if (property_exists($output, 'meta')) {
+						$meta = $output->meta;
+						if (property_exists($meta, 'total')) {
+							$_total = $meta->total;
+						}
+					}
+					$_next = '...';
+					$_last = '';
+					while ($_next != $_last) {
+						$_next = '';
+						if (property_exists($output, 'links')) {
+							$_links = $output->links;
+							if (property_exists($_links, 'pages')) {
+								$_pages = $_links->pages;
+								if (property_exists($_pages, 'next')) {
+									$_next = $_pages->next;
+								}
+								if (property_exists($_pages, 'last')) {
+									$_last = $_pages->last;
+								}
+								if ($_next != '') {
+									echo "getting $_next\n";
+									curl_setopt($ch, CURLOPT_URL, $_next);
+									$output = json_decode(curl_exec($ch));
+									if (!is_array($output->domain_records)) {
+										$output->domain_records = array();
+									}
+									$_domain_records = array_merge($_domain_records,$output->domain_records);
+								}
+							}
+						}
+					}
+					$_count = count($_domain_records);
+
+					foreach($_domain_records as $dnsRecord) {
 						// NS records are named @ in DO's API, so check type as well 
 						// https://redmine.pfsense.org/issues/9171
 						if ($this->_dnsHost == $dnsRecord->name && $dnsRecord->type == ($isv6 ? 'AAAA' : 'A')) {

@@ -1549,6 +1549,10 @@ function openvpn_resync_csc(& $settings) {
 		$conf .= "push-reset\n";
 	}
 
+	if ($settings['remove_route']) {
+		$conf .= "push-remove route\n";
+	}
+
 	if ($settings['local_network']) {
 		$conf .= openvpn_gen_routes($settings['local_network'], "ipv4", true);
 	}

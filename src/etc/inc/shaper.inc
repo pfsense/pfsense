@@ -564,9 +564,12 @@ function shaper_do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input
 function cleanup_queue_from_rules($queue) {
 	global $config;
 
-	foreach ($config['filter']['rule'] as $rule) {
+	foreach ($config['filter']['rule'] as & $rule) {
 		if ($rule['defaultqueue'] == $queue) {
 			unset($rule['defaultqueue']);
+			if (isset($rule['ackqueue']) {
+				unset($rule['ackqueue']);
+			}
 		}
 		if ($rule['ackqueue'] == $queue) {
 			unset($rule['ackqueue']);
@@ -577,12 +580,38 @@ function cleanup_queue_from_rules($queue) {
 function cleanup_dnqueue_from_rules($queue) {
 	global $config;
 
-	foreach ($config['filter']['rule'] as $rule) {
+	foreach ($config['filter']['rule'] as & $rule) {
 		if ($rule['dnpipe'] == $queue) {
 			unset($rule['dnpipe']);
 		}
 		if ($rule['pdnpipe'] == $queue) {
 			unset($rule['pdnpipe']);
+		}
+	}
+}
+
+function rename_queue_in_rules($name, $newname) {
+	global $config;
+
+	foreach ($config['filter']['rule'] as & $rule) {
+		if ($rule['defaultqueue'] == $name) {
+			$rule['defaultqueue'] = $newname;
+		}
+		if ($rule['ackqueue'] == $name) {
+			$rule['ackqueue'] = $newname;
+		}
+	}
+}
+
+function rename_dnqueue_in_rules($name, $newname) {
+	global $config;
+
+	foreach ($config['filter']['rule'] as & $rule) {
+		if ($rule['dnpipe'] == $name) {
+			$rule['dnpipe'] = $newname;
+		}
+		if ($rule['pdnpipe'] == $name) {
+			$rule['pdnpipe'] = $newname;
 		}
 	}
 }
@@ -914,8 +943,9 @@ class altq_root_queue {
 	}
 
 	function delete_queue() {
-		foreach ($this->queues as $q)
+		foreach ($this->queues as $q) {
 			$q->delete_queue();
+		}
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -1543,6 +1573,7 @@ class priq_queue {
 	function ReadConfig(&$q) {
 		if (!empty($q['name']) && !empty($q['newname']) && $q['name'] != $q['newname']) {
 			$this->SetQname($q['newname']);
+			rename_queue_in_rules($q['name'], $q['newname']);
 		} else if (!empty($q['newname'])) {
 			$this->SetQname($q['newname']);
 		} else if (isset($q['name'])) {
@@ -2167,8 +2198,9 @@ class hfsc_queue extends priq_queue {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
 		$parent =& $this->GetParent();
-		foreach ($this->subqueues as $q)
+		foreach ($this->subqueues as $q) {
 			$q->delete_queue();
+		}
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -2941,8 +2973,9 @@ class cbq_queue extends priq_queue {
 	function delete_queue() {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
-		foreach ($this->subqueues as $q)
+		foreach ($this->subqueues as $q) {
 			$q->delete_queue();
+		}
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -3664,11 +3697,11 @@ class dnpipe_class extends dummynet_class {
 	var $qbandwidthtype;
 
 	/* Limiter queue patch */
-    var $ecn; // ecn 'on' or 'off'
-    var $aqm; // key to aqm_map
-    var $aqm_params = array(); // AQM params
-    var $scheduler;	// key to scheduler_map
-    var $scheduler_params = array(); // AQM params
+	var $ecn; // ecn 'on' or 'off'
+	var $aqm; // key to aqm_map
+	var $aqm_params = array(); // AQM params
+	var $scheduler;	// key to scheduler_map
+	var $scheduler_params = array(); // AQM params
 	function GetAQM() {
 			return $this->aqm;
 	}
@@ -3867,6 +3900,7 @@ class dnpipe_class extends dummynet_class {
 	function ReadConfig(&$q) {
 		if (!empty($q['name']) && !empty($q['newname']) && $q['name'] != $q['newname']) {
 			$this->SetQname($q['newname']);
+			rename_dnqueue_in_rules($q['name'], $q['newname']);
 		} else if (!empty($q['newname'])) {
 			$this->SetQname($q['newname']);
 		} else {

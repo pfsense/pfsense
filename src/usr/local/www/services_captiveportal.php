@@ -352,15 +352,21 @@ if ($_POST['save']) {
 		$newcp['httpsname'] = $_POST['httpsname'];
 		$newcp['preauthurl'] = $_POST['preauthurl'];
 		$newcp['blockedmacsurl'] = $_POST['blockedmacsurl'];
-		$newcp['peruserbw'] = $_POST['peruserbw'] ? true : false;
-		if (isset($_POST['bwdefaultdn'])) {
-			$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
+		if ($_POST['peruserbw']) {
+			$newcp['peruserbw'] = true;
+			if (isset($_POST['bwdefaultdn'])) {
+				$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
+			} else {
+				unset($newcp['bwdefaultdn']);
+			}
+			if (isset($_POST['bwdefaultup'])) {
+				$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
+			} else {
+				unset($newcp['bwdefaultup']);
+			}
 		} else {
+			unset($newcp['peruserbw']);
 			unset($newcp['bwdefaultdn']);
-		}
-		if (isset($_POST['bwdefaultup'])) {
-			$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
-		} else {
 			unset($newcp['bwdefaultup']);
 		}
 		$newcp['certref'] = $_POST['certref'];

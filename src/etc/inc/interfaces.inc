@@ -1113,7 +1113,10 @@ function interface_gre_configure(&$gre, $grekey = "") {
 		return -1;
 	}
 
-	$realif = get_real_interface($gre['if']);
+	$realif = convert_friendly_interface_to_real_interface_name($gre['if']);
+	if (!interface_is_vlan($realif)) {
+		$realif = get_real_interface($gre['if']);
+	}
 	$realifip = get_interface_ip($gre['if']);
 	$realifip6 = get_interface_ipv6($gre['if']);
 
@@ -1150,10 +1153,11 @@ function interface_gre_configure(&$gre, $grekey = "") {
 		mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr6']) . " " . escapeshellarg($gre['tunnel-remote-addr6']) . " prefixlen 128");
 	}
 
-	if ($greif) {
-		interfaces_bring_up($greif);
+	$parentif = get_real_interface($gre['if']);
+	if ($parentif) {
+		interfaces_bring_up($parentif);
 	} else {
-		log_error(gettext("Could not bring greif up -- variable not defined."));
+		log_error(gettext("could not bring parentif up -- variable not defined -- interface_gre_configure()"));
 	}
 
 	if (isset($gre['link1'])) {
@@ -1275,7 +1279,10 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		return -1;
 	}
 
-	$realif = get_real_interface($gif['if']);
+	$realif = convert_friendly_interface_to_real_interface_name($gif['if']);
+	if (!interface_is_vlan($realif)) {
+		$realif = get_real_interface($gif['if']);
+	}
 	$ipaddr = get_interface_ip($gif['if']);
 
 	if (is_ipaddrv4($gif['remote-addr'])) {
@@ -1294,10 +1301,11 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		$realifgw = get_interface_gateway_v6($gif['if']);
 	}
 	/* make sure the parent interface is up */
-	if ($realif) {
-		interfaces_bring_up($realif);
+	$parentif = get_real_interface($gif['if']);
+	if ($parentif) {
+		interfaces_bring_up($parentif);
 	} else {
-		log_error(gettext("could not bring realif up -- variable not defined -- interface_gif_configure()"));
+		log_error(gettext("could not bring parentif up -- variable not defined -- interface_gif_configure()"));
 	}
 
 	if (platform_booting() || !(empty($gif['gifif']))) {

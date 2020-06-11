@@ -1573,13 +1573,15 @@ class priq_queue {
 		}
 
 		$parent = $this->GetParent();
-		foreach ($parent->queues as $q) {
-			if (($data['newname'] == $q->GetQname()) && ($data['name'] != $data['newname'])) { 
-				$input_errors[] = gettext("A queue with the same name already exists.");
-			}
-			if (($data['priority'] == $q->GetQpriority()) && ($data['name'] != $q->GetQname())) { 
-				$input_errors[] = sprintf(gettext("The priority %d is already used by queue %s."),
-						$data['priority'], $q->GetQname());
+		if (is_array($parent->queues)) {
+			foreach ($parent->queues as $q) {
+				if (($data['newname'] == $q->GetQname()) && ($data['name'] != $data['newname'])) { 
+					$input_errors[] = gettext("A queue with the same name already exists.");
+				}
+				if (($data['priority'] == $q->GetQpriority()) && ($data['name'] != $q->GetQname())) { 
+					$input_errors[] = sprintf(gettext("The priority %d is already used by queue %s."),
+							$data['priority'], $q->GetQname());
+				}
 			}
 		}
 	}

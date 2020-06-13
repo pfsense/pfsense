@@ -1147,7 +1147,7 @@ class altq_root_queue {
 			null,
 			'number',
 			$this->GetBandwidth()
-		));
+		))->setHelp('The PRIQ scheduler does not support bandwidth specification.');
 
 		$group->add(new Form_Select(
 			'bandwidthtype',
@@ -1237,8 +1237,6 @@ class priq_queue {
 	var $qpriority;
 	var $description;
 	var $isparent;
-	var $qbandwidth;
-	var $qbandwidthtype;
 	var $qdefault = "";
 	var $qrio = "";
 	var $qred = "";
@@ -1283,12 +1281,6 @@ class priq_queue {
 	function SetQname($name) {
 		$this->qname = trim($name);
 	}
-	function GetBandwidth() {
-		return $this->qbandwidth;
-	}
-	function SetBandwidth($bandwidth) {
-		$this->qbandwidth = $bandwidth;
-	}
 	function GetInterface() {
 		return $this->qinterface;
 	}
@@ -1318,50 +1310,6 @@ class priq_queue {
 	}
 	function SetFirsttime($number) {
 		$this->firsttime = $number;
-	}
-	function CheckBandwidth($bw, $bwtype) {
-		$parent = $this->GetParent();
-
-		// If the child queues have bandwidth specified in %, there is no point trying
-		// to compare the total to the parent's bandwidth, which is defined in Kb/S or Mb/S etc.
-		// ToDo: Add check for total % > 100
-		//		 If one child is in %, they must all be
-
-		if ($bwtype != "%") {
-			$sum = $parent->GetTotalBw(($bw > 0) ? $this : NULL);
-
-			if ($bw > 0) {
-				$sum += get_bandwidth($bw, $bwtype, $parent);
-			}
-
-			if ($sum > get_queue_bandwidth($parent)) {
-				return 1;
-			}
-		}
-
-		foreach ($this->subqueues as $q) {
-			if ($q->CheckBandwidth(0, '')) {
-				return 1;
-			}
-		}
-
-		return 0;
-	}
-	function GetTotalBw($qignore = NULL) {
-		$sum = 0;
-		foreach ($this->subqueues as $q) {
-			if ($qignore != NULL && $qignore == $q)
-				continue;
-			$sum += get_bandwidth($q->GetBandwidth(), $q->GetBwscale(), $q->GetParent());
-		}
-
-		return $sum;
-	}
-	function GetBwscale() {
-		return $this->qbandwidthtype;
-	}
-	function SetBwscale($scale) {
-		$this->qbandwidthtype = $scale;
 	}
 	function GetDefaultQueuePresent() {
 		if ($this->GetDefault()) {
@@ -1412,28 +1360,6 @@ class priq_queue {
 	}
 	function SetAck($ack = false) {
 		$this->qack = $ack;
-	}
-
-	function GetBwscaleText() {
-		switch ($this->qbandwidthtype) {
-			case "b":
-				$bwscaletext = "Bit/s";
-				break;
-			case "Kb":
-				$bwscaletext = "Kbit/s";
-				break;
-			case "Mb":
-				$bwscaletext = "Mbit/s";
-				break;
-			case "Gb":
-				$bwscaletext = "Gbit/s";
-				break;
-			default:
-				/* For others that do not need translating like % */
-				$bwscaletext = $this->qbandwidthtype;
-				break;
-		}
-		return $bwscaletext;
 	}
 
 	function build_javascript() {
@@ -1537,20 +1463,6 @@ class priq_queue {
 		$reqdfieldsn[] = gettext("Name");
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
-		if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
-			$input_errors[] = gettext("Bandwidth must be an integer.");
-		}
-		if ($data['bandwidth'] < 0) {
-			$input_errors[] = gettext("Bandwidth cannot be negative.");
-		}
-		if ($data['bandwidthtype'] == "%") {
-			if (($data['bandwidth'] > 100) || ($data['bandwidth'] < 0)) {
-				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
-			}
-		}
-		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype']))
-			$input_errors[] = "The sum of child bandwidth is higher than parent.";
-
 		if (isset($data['priority']) && (!is_numeric($data['priority']) ||
 		    ($data['priority'] < 0) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 0 and 15.");
@@ -1595,10 +1507,6 @@ class priq_queue {
 		}
 		if (isset($q['interface'])) {
 			$this->SetInterface($q['interface']);
-		}
-		$this->SetBandwidth($q['bandwidth']);
-		if (!empty($q['bandwidthtype'])) {
-			$this->SetBwscale($q['bandwidthtype']);
 		}
 		if (!empty($q['qlimit'])) {
 			$this->SetQlimit($q['qlimit']);
@@ -1876,13 +1784,6 @@ class priq_queue {
 		$form .= '	</dt>';
 		$form .= '	<dd>';
 		$form .=		$scheduler;
-		$form .= '	</dd>';
-
-		$form .= '	<dt>';
-		$form .=		'Bandwidth';
-		$form .= '	</dt>';
-		$form .= '	<dd>';
-		$form .=		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscaleText();
 		$form .= '	</dd>';
 
 		$tmpvalue = $this->GetQpriority();

@@ -3936,6 +3936,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 					if (!is_linklocal($tmpiface)) {
 						mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$tmpiface} delete");
 					}
+				} elseif (strstr($tmpiface, "fe80::1:1")) {
+					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 fe80::1:1 -alias");
 				} else {
 					if (is_subnetv4($tmpiface)) {
 						$tmpip = explode('/', $tmpiface);

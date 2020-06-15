@@ -69,6 +69,7 @@ core_pkg_create_repo() {
 	ln -sf $(basename ${CORE_PKG_REAL_PATH}) ${CORE_PKG_PATH}/.latest
 	ln -sf .latest/All ${CORE_PKG_ALL_PATH}
 	ln -sf .latest/digests.txz ${CORE_PKG_PATH}/digests.txz
+	ln -sf .latest/meta.conf ${CORE_PKG_PATH}/meta.conf
 	ln -sf .latest/meta.txz ${CORE_PKG_PATH}/meta.txz
 	ln -sf .latest/packagesite.txz ${CORE_PKG_PATH}/packagesite.txz
 }

@@ -127,7 +127,7 @@ function build_port_info($portarr, $proto) {
 		}
 		$ports[] = "{$port}: {$count}";
 	}
-	return implode($ports, ', ');
+	return implode(', ', $ports);
 }
 
 function print_summary_table($label, $iparr, $sort = TRUE) {

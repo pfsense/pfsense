@@ -337,6 +337,12 @@ $rulescnt = pfSense_get_pf_rules();
 // Update this if you add or remove columns!
 $columns_in_table = 13;
 
+/* Floating rules tab has one extra column
+ * https://redmine.pfsense.org/issues/10667 */
+if ($if == "FloatingRules") {
+	$columns_in_table++;
+}
+
 ?>
 <!-- Allow table to scroll when dragging outside of the display window -->
 <style>

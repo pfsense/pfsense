@@ -1567,21 +1567,26 @@ function update_repos() {
 // Parse the received JSON data and save the custom repository information
 function save_repo($json) {
 	global $repopath, $g;
+
 	$repo = json_decode($json, true);
 
-	if (($repo != NULL) && isset($repo['abi']) && isset($repo['altabi']) && isset($repo['conf']) &&
-	    isset($repo['descr']) && isset($repo['name']) && (strlen($repo['conf']) > 10)) {
+	if (($repo != NULL) && isset($repo['abi']) && isset($repo['altabi']) &&
+	    isset($repo['conf']) && isset($repo['descr']) &&
+	    isset($repo['name']) && (strlen($repo['conf']) > 10)) {
 		$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
 
-		file_put_contents($basename . "conf", base64_decode($repo['conf']));
+		file_put_contents($basename . "conf", base64_decode(
+		    $repo['conf']));
 		file_put_contents($basename . "descr", $repo['descr']);
 		file_put_contents($basename . "abi", $repo['abi']);
 		file_put_contents($basename . "altabi", $repo['altabi']);
 		file_put_contents($basename . "name", $repo['name']);
 		file_put_contents($basename . "help", $repo['help']);
 	} else {
-		// If there was anything wrong with the custom repository definition, remove the help text
-		// to avoid possible confusion
+		/*
+		 * If there was anything wrong with the custom repository
+		 * definition, remove the help text to avoid possible confusion
+		 */
 		if (file_exists($basename . "help")) {
 			unlink($basename . "help");
 		}

@@ -1512,8 +1512,8 @@ function update_repos() {
 		    "{\"platform\":\"" . $platformname .
 		    "\",\"os\":\"" . $os .
 		    "\",\"osver\":\"" . $osver .
-		    "\",\"prod\":\"pfSense\"," .
-		    "\"ver\":\"" . $info[0]['version'] .
+		    "\",\"prod\":\"" . $g['product_name'] .
+		    "\",\"ver\":\"" . $info[0]['version'] .
 		    "\",\"ed\":\"" . $ed .
 		    "\",\"pkgs\":[";
 

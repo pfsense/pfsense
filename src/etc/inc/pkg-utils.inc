@@ -1509,6 +1509,7 @@ function update_repos() {
 			$platformname = $platform['descr'];
 		}
 
+		/* XXX: Use json_encode instead of hardcode it */
 		$version =
 		    "{\"platform\":\"" . $platformname .
 		    "\",\"os\":\"" . $os .

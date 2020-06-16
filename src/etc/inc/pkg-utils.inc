@@ -1461,86 +1461,104 @@ $idfile = "/var/db/uniqueid";
 $repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
 $configflename = "{$repopath}/{$g['product_name']}-repo-custom.conf";
 
-// Update the list of available repositories from the server. This will allow migration to another
-// update repository should the existing one becomes unavailable
+/*
+ * Update the list of available repositories from the server. This will allow
+ * migration to another update repository should the existing one becomes
+ * unavailable
+ */
 function update_repos() {
 	global $g, $config, $idfile, $FQDN, $repopath;
 
-	if (file_exists($idfile)) {
-		// If the custom repository definition does not exist, or is more than 24 hours old
-		// Fetch a copy from the server
-		if ( (! file_exists($configflename)) || ( time()-filemtime($configflename) > $refreshinterval)) {
-			if (function_exists('curl_version')) {
-				// Gather some information about the system so the proper repo can be returned
-				$nid = file_get_contents($idfile);
-				$serial = system_get_serial();
+	if (!file_exists($idfile) || !function_exists('curl_version')) {
+		return;
+	}
+	/*
+	 * If the custom repository definition does not exist, or is more
+	 * than 24 hours old fetch a copy from the server
+	 */
+	if (!file_exists($configflename) ||
+	    (time()-filemtime($configflename) > $refreshinterval)) {
+		/*
+		 * Gather some information about the system so the proper
+		 * repo can be returned
+		 */
+		$nid = file_get_contents($idfile);
+		$serial = system_get_serial();
+		$base_pkg = get_base_pkg_name();
+		$info = get_pkg_info($base_pkg, true, true);
+		$pkg_info = array();
 
-				$base_pkg = get_base_pkg_name();
-
-				$info = get_pkg_info($base_pkg, true, true);
-
-				$pkg_info = array();
-					foreach ($info as $item) {
-						if ($item['name'] == $base_pkg) {
-							$pkg_info = $item;
-							break;
-						}
-					}
-
-				// Compose a version string in JSON format
-				$os = php_uname('s');
-				$osver = php_uname('r');
-				$v = strtolower(php_uname('v'));
-				$ed =  (strpos($v, 'factory') !== false) ? "Factory":"Community";
-				$pkglist = get_pkg_info("all", false, true);
-				$platform = system_identify_specific_platform();
-				$platformname = gettext('Unknown system');
-				if (isset($platform['descr'])) {
-					$platformname = $platform['descr'];
-				}
-
-				$version = "{\"platform\":\"" . $platformname . "\"," . "\"os\":\"" . $os . "\",\"osver\":\"" . $osver . "\",\"prod\":\"pfSense\"," . "\"ver\":\"" . $info[0]['version'] . "\",\"ed\":\"" . $ed . "\",\"pkgs\":[";
-
-				$first = true;
-
-				foreach($pkglist as $pkg) {
-					if (!$first) {
-						$version .= ",";
-					}
-
-					$version .= "{\"name\":\"" . $pkg['shortname'] . "\",\"ver\":\"" . $pkg['version'] . "\"}";
-					$first = false;
-				}
-
-				$version .= "]}";
-
-				$arch =  php_uname('m');
-				$locale = $config['system']['language'];
-
-				$post = ['uid' => $nid,
-						 'language' => $locale,
-						 'serial' => $serial,
-						 'version' => $version,
-						 'arch' => $arch
-						];
-
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_HEADER, 0);
-				curl_setopt($ch, CURLOPT_VERBOSE, 0);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
-				curl_setopt($ch, CURLOPT_URL, $FQDN);
-				curl_setopt($ch, CURLOPT_POST, true);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
-				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,4);
-				$response = curl_exec($ch);
-				$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				curl_close($ch);
-
-				if ($status == 200) {
-					save_repo($response);
-				}
+		foreach ($info as $item) {
+			if ($item['name'] == $base_pkg) {
+				$pkg_info = $item;
+				break;
 			}
+		}
+
+		// Compose a version string in JSON format
+		$os = php_uname('s');
+		$osver = php_uname('r');
+		$v = strtolower(php_uname('v'));
+		$ed =  (strpos($v, 'factory') !== false)
+		    ? "Factory" : "Community";
+		$pkglist = get_pkg_info("all", false, true);
+		$platform = system_identify_specific_platform();
+		$platformname = gettext('Unknown system');
+
+		if (isset($platform['descr'])) {
+			$platformname = $platform['descr'];
+		}
+
+		$version =
+		    "{\"platform\":\"" . $platformname .
+		    "\",\"os\":\"" . $os .
+		    "\",\"osver\":\"" . $osver .
+		    "\",\"prod\":\"pfSense\"," .
+		    "\"ver\":\"" . $info[0]['version'] .
+		    "\",\"ed\":\"" . $ed .
+		    "\",\"pkgs\":[";
+
+		$first = true;
+
+		foreach($pkglist as $pkg) {
+			if (!$first) {
+				$version .= ",";
+			}
+
+			$version .= "{\"name\":\"" . $pkg['shortname'] .
+			    "\",\"ver\":\"" . $pkg['version'] . "\"}";
+			$first = false;
+		}
+
+		$version .= "]}";
+
+		$arch =  php_uname('m');
+		$locale = $config['system']['language'];
+
+		$post = [
+		    'uid' => $nid,
+		    'language' => $locale,
+		    'serial' => $serial,
+		    'version' => $version,
+		    'arch' => $arch
+		];
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_VERBOSE, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' .
+		    $g['product_version']);
+		curl_setopt($ch, CURLOPT_URL, $FQDN);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,4);
+		$response = curl_exec($ch);
+		$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+
+		if ($status == 200) {
+			save_repo($response);
 		}
 	}
 }

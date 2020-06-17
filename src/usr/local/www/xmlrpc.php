@@ -518,7 +518,7 @@ class pfsense_xmlrpc_server {
 
 		/*
 		 * The real work on handling the vips specially
-		 * This is a copy of intefaces_vips_configure with addition of
+		 * This is a copy of interfaces_vips_configure with addition of
 		 * not reloading existing/not changed carps
 		 */
 		if (isset($sections['virtualip']) &&

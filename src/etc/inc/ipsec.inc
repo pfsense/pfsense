@@ -210,9 +210,8 @@ $ipsec_preshared_key_type = array(
 global $ipsec_closeactions;
 $ipsec_closeactions = array(
 	'' => gettext('Default'),
-	'none' => gettext('No action'),
-	'restart' => gettext('Restart/Reconnect'),
-	'clear' => gettext('Close connection and clear SA'),
+	'none' => gettext('Close connection and clear SA'),
+	'start' => gettext('Restart/Reconnect'),
 	'trap' => gettext('Close connection and reconnect on demand'),
 );
 

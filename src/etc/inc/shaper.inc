@@ -517,7 +517,12 @@ function get_queue_bandwidth($obj) {
 
 	switch ($match[1]) {
 		case '%':
-			$objbw = ($bw / 100) * get_queue_bandwidth($obj->GetParent());
+			if (method_exists($obj, 'GetParent')) {
+				$getobjbw = get_queue_bandwidth($obj->GetParent());
+			} else {
+				$getobjbw = $obj->bandwidth;
+			}
+			$objbw = ($bw / 100) * $getobjbw;
 			break;
 		default:
 			$objbw = $bw * get_bandwidthtype_scale($scale);

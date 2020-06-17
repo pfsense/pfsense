@@ -1482,16 +1482,6 @@ function update_repos() {
 		 */
 		$nid = file_get_contents($idfile);
 		$serial = system_get_serial();
-		$base_pkg = get_base_pkg_name();
-		$info = get_pkg_info($base_pkg, true, true);
-		$pkg_info = array();
-
-		foreach ($info as $item) {
-			if ($item['name'] == $base_pkg) {
-				$pkg_info = $item;
-				break;
-			}
-		}
 
 		// Compose a version string in JSON format
 		$os = php_uname('s');
@@ -1513,7 +1503,7 @@ function update_repos() {
 		    "\",\"os\":\"" . $os .
 		    "\",\"osver\":\"" . $osver .
 		    "\",\"prod\":\"" . $g['product_name'] .
-		    "\",\"ver\":\"" . $info[0]['version'] .
+		    "\",\"ver\":\"" . $g['product_version'] .
 		    "\",\"ed\":\"" . $ed .
 		    "\",\"pkgs\":[";
 

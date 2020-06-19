@@ -27,6 +27,9 @@ if (!function_exists("dump_rrd_to_xml")) {
 if (!function_exists("read_altq_config")) {
 	require_once("shaper.inc");
 }
+if (!function_exists("console_configure")) {
+	require_once("/etc/inc/pfsense-utils.inc");
+}
 
 /* Upgrade functions must be named:
 *    upgrade_XXX_to_YYY
@@ -6233,6 +6236,14 @@ function upgrade_204_to_205() {
 			}
 		}
 	}
+}
+
+function upgrade_205_to_206() {
+	/*
+	 * Trigger a boot loader settings update to make sure the contents will
+	 * be updated before the reboot.
+	 */
+	console_configure();
 }
 
 /*

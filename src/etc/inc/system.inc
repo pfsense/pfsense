@@ -2417,8 +2417,18 @@ function system_identify_specific_platform() {
 	/* Try to guess from smbios strings */
 	unset($product);
 	unset($maker);
+	unset($bios);
 	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $product);
 	$_gb = exec('/bin/kenv -q smbios.system.maker 2>/dev/null', $maker);
+	$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $bios);
+
+	// AWS can only be identified via the bios version
+	if (stripos($bios[0], "amazon") !== false) {
+		return (array('name' => 'AWS', 'descr' => 'Amazon Web Services'));
+	} else  if (stripos($bios[0], "Google") !== false) {
+		return (array('name' => 'Google', 'descr' => 'Google Cloud Platform'));
+	}
+
 	switch ($product[0]) {
 		case 'FW7541':
 			return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));
@@ -2501,7 +2511,11 @@ function system_identify_specific_platform() {
 			break;
 		case 'Virtual Machine':
 			if ($maker[0] == "Microsoft Corporation") {
-				return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
+				if (stripos($bios[0], "Hyper") !== false) {
+					return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
+				} else {
+					return (array('name' => 'Azure', 'descr' => 'Microsoft Azure'));
+				}
 			}
 			break;
 		case 'VMware Virtual Platform':

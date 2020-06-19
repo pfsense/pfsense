@@ -1087,6 +1087,79 @@ function alias_info_popup($alias_id) {
 	return $content;
 }
 
+function gateway_info_popup($gateway) {
+	global $config;
+	init_config_arr(array('gateways', 'gateway_item'));
+	init_config_arr(array('gateways', 'gateway_group'));
+
+	$content = "";
+	$gateways = array();
+	$bgdanger = array('force_down', 'down', 'highloss', 'highdelay');
+	$bgwarning = array('loss', 'delay');
+	$bgsuccess = array('none');
+	$bgcolor = "bg-info";
+
+	if (is_array($config['gateways']['gateway_item'])) {
+		foreach($config['gateways']['gateway_item'] as $i => $item) {
+			if ($item['name'] == $gateway) {
+				$gateways[] = $item['name'];
+			}
+		}
+	}
+	if (is_array($config['gateways']['gateway_group'])) {
+		foreach($config['gateways']['gateway_group'] as $gwgroup) {
+			if ($gwgroup['name'] == $gateway) {
+				foreach ($gwgroup['item'] as $member) {
+					$membersplit = explode("|", $member);
+					$gateways[] = $membersplit[0];
+				}
+			}
+		}
+	}
+
+	if (!empty($gateways)) {
+		$gateways_status = return_gateways_status(true);
+		$content .= "<table>\n";
+		$content .= "<thead>\n";
+		$content .= "<tr>\n";
+		$content .= "<th>" . gettext("Name") . "</th><th style='padding-left: 10px;'>" . gettext("Interface") . "</th>";
+		$content .= "<th style='padding-left: 10px;'>" . gettext("Gateway") . "</th></tr>\n";
+		$content .= "</thead>\n";
+		$content .= "<tbody>\n";
+		foreach ($gateways as $gw) {
+			foreach ($gateways_status as $gwstatus) {
+				if ($gwstatus['name'] == $gw) {
+					if (in_array($gwstatus['status'], $bgdanger)) {
+						$bgcolor = "bg-danger";
+					} elseif (in_array($gwstatus['status'], $bgwarning)) {
+						$bgcolor = "bg-warning";
+					} elseif (in_array($gwstatus['status'], $bgsuccess)) {
+						$bgcolor = "bg-success";
+					} else {
+						$bgcolor = "bg-info";
+					}
+				}
+			}
+			$content .= "	<tr class='{$bgcolor}'>\n";
+			$content .= "		<td>\n";
+			$content .= 			$gw;
+			$content .=	"		</td>\n";
+			$content .= "		<td style='padding-left: 10px;'>\n";
+			$content .= 			$config['interfaces'][lookup_gateway_interface_by_name($gw)]['descr'];
+			$content .=	"		</td>\n";
+			$content .= "		<td style='padding-left: 10px;'>\n";
+			$content .= 			lookup_gateway_ip_by_name($gw);
+			$content .=	"		</td>\n";
+			$content .= "	</tr>\n";
+			$idx++;
+		}
+		$content .= "</tbody>\n";
+		$content .= "<table>\n";
+	}
+
+	return $content;
+}
+
 function rule_columns_with_alias($src, $srcport, $dst, $dstport, $target="", $targetport="") {
 	global $config;
 

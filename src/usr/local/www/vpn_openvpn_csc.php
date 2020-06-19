@@ -85,6 +85,7 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['gwredir'] = $a_csc[$id]['gwredir'];
 
 		$pconfig['push_reset'] = $a_csc[$id]['push_reset'];
+		$pconfig['remove_route'] = $a_csc[$id]['remove_route'];
 
 		$pconfig['dns_domain'] = $a_csc[$id]['dns_domain'];
 		if ($pconfig['dns_domain']) {
@@ -247,6 +248,7 @@ if ($_POST['save']) {
 		$csc['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$csc['gwredir'] = $pconfig['gwredir'];
 		$csc['push_reset'] = $pconfig['push_reset'];
+		$csc['remove_route'] = $pconfig['remove_route'];
 
 		if ($pconfig['dns_domain_enable']) {
 			$csc['dns_domain'] = $pconfig['dns_domain'];
@@ -449,12 +451,20 @@ if ($act == "new" || $act == "edit"):
 
 	$section = new Form_Section('Client Settings');
 
-	// Default domain name
 	$section->addInput(new Form_Checkbox(
 		'push_reset',
 		'Server Definitions',
 		'Prevent this client from receiving any server-defined client settings. ',
 		$pconfig['push_reset']
+	));
+
+	/* as "push-reset" can break subnet topology, 
+	 * "push-remove route" removes only IPv4/IPv6 routes, see #9702 */
+	$section->addInput(new Form_Checkbox(
+		'remove_route',
+		'Remove Server Routes',
+		'Prevent this client from receiving any server-defined routes without removing any other options. ',
+		$pconfig['remove_route']
 	));
 
 	$section->addInput(new Form_Checkbox(

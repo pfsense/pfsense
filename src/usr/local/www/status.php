@@ -76,8 +76,10 @@ $filtered_tags = array(
 	'varclientpasswordinput', 'varclientsharedsecret', 'varsqlconfpassword',
 	'varsqlconf2password', 'varsyncpassword', 'varmodulesldappassword', 
 	'varmodulesldap2password', 'varusersmotpinitsecret', 'varusersmotppin', 
-	'varuserspassword'
+	'varuserspassword', 'webrootftppassword'
 );
+
+$acme_filtered_tags = array('key', 'password', 'secret', 'token', 'pwd', 'pw');
 
 if ($_POST['submit'] == "DOWNLOAD" && file_exists($output_file)) {
 	session_cache_limiter('public');
@@ -92,7 +94,7 @@ unlink_if_exists($output_file);
 mkdir($output_path);
 
 function doCmdT($title, $command, $method) {
-	global $output_path, $output_file, $filtered_tags, $show_output;
+	global $output_path, $output_file, $filtered_tags, $acme_filtered_tags, $show_output;
 	/* Fixup output directory */
 
 	if ($show_output) {
@@ -113,6 +115,10 @@ function doCmdT($title, $command, $method) {
 				/* remove sensitive contents */
 				foreach ($filtered_tags as $tag) {
 					$line = preg_replace("/<{$tag}>.*?<\\/{$tag}>/", "<{$tag}>xxxxx</{$tag}>", $line);
+				}
+				/* remove ACME pkg sensitive contents */
+				foreach ($acme_filtered_tags as $tag) {
+					$line = preg_replace("/<dns_(.+){$tag}>.*?<\\/dns_(.+){$tag}>/", "<dns_$1{$tag}>xxxxx</dns_$1{$tag}>", $line);
 				}
 				if ($show_output) {
 					echo htmlspecialchars(str_replace("\t", "    ", $line), ENT_NOQUOTES);
@@ -356,6 +362,10 @@ if (is_dir("/var/etc/openvpn")) {
 		}
 		defCmdT("OpenVPN-Configuration {$ovpnfile[4]}", "/bin/cat " . escapeshellarg($file));
 	}
+}
+
+if (file_exists("/var/etc/l2tp-vpn/mpd.conf")) {
+	defCmdT("L2TP-Configuration", '/usr/bin/sed -E "s/([[:blank:]](secret|radius server .*) ).*/\1<redacted>/" /var/etc/l2tp-vpn/mpd.conf');
 }
 
 /* Logs */

@@ -64,7 +64,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['mx'] = $a_dyndns[$id]['mx'];
 	$pconfig['type'] = $a_dyndns[$id]['type'];
 	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
-	$pconfig['interface'] = $a_dyndns[$id]['interface'];
+	$pconfig['interface'] = str_replace('_stf', '', $a_dyndns[$id]['interface']);
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
 	$pconfig['proxied'] = isset($a_dyndns[$id]['proxied']);
 	$pconfig['verboselog'] = isset($a_dyndns[$id]['verboselog']);
@@ -74,7 +74,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['ttl'] = $a_dyndns[$id]['ttl'];
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
 	$pconfig['resultmatch'] = $a_dyndns[$id]['resultmatch'];
-	$pconfig['requestif'] = $a_dyndns[$id]['requestif'];
+	$pconfig['requestif'] = str_replace('_stf', '', $a_dyndns[$id]['requestif']);
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
@@ -83,11 +83,10 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns")
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "freedns2" || $pconfig['type'] == "freedns2-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns")
 	    && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
-
 	/* input validation */
 	$reqdfields = array();
 	$reqdfieldsn = array();
@@ -195,13 +194,22 @@ if ($_POST['save'] || $_POST['force']) {
 		} else {
 			$dyndns['enable'] = true;
 		}
-		$dyndns['interface'] = $_POST['interface'];
+		if (preg_match('/.+-v6/', $_POST['type']) && is_stf_interface($_POST['interface'])) { 
+			$dyndns['interface'] = $_POST['interface'] . '_stf';
+		} else {
+			$dyndns['interface'] = $_POST['interface'];
+		}
 		$dyndns['zoneid'] = $_POST['zoneid'];
 		$dyndns['ttl'] = $_POST['ttl'];
 		$dyndns['updateurl'] = $_POST['updateurl'];
 		// Trim hard-to-type but sometimes returned characters
 		$dyndns['resultmatch'] = trim($_POST['resultmatch'], "\t\n\r");
-		($dyndns['type'] == "custom" || $dyndns['type'] == "custom-v6") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
+		($dyndns['type'] == "custom") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
+		if (($dyndns['type'] == "custom-v6") && is_stf_interface($_POST['requestif'])) { 
+			$dyndns['requestif'] = $_POST['requestif'] . '_stf';
+		} else {
+			$dyndns['requestif'] = $_POST['requestif'];
+		}
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
 
@@ -386,7 +394,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['username'],
 	['autocomplete' => 'new-password']
-))->setHelp('Username is required for all types except Namecheap, FreeDNS, FreeDNS-v6, DigitalOcean, Linode and Custom Entries.%1$s' .
+))->setHelp('Username is required for all types except Namecheap, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), DigitalOcean, Linode and Custom Entries.%1$s' .
 			'Azure: Enter your Azure AD application ID%1$s' .
 			'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
@@ -402,7 +410,7 @@ $section->addPassword(new Form_Input(
 	'Password',
 	'password',
 	$pconfig['password']
-))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
+))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
 			'Azure: client secret of the AD application%1$s' .
 			'DNS Made Easy: Dynamic DNS Password%1$s' .
 			'DigitalOcean: Enter API token%1$s' .

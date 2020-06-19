@@ -1113,7 +1113,10 @@ function interface_gre_configure(&$gre, $grekey = "") {
 		return -1;
 	}
 
-	$realif = get_real_interface($gre['if']);
+	$realif = convert_friendly_interface_to_real_interface_name($gre['if']);
+	if (!interface_is_vlan($realif)) {
+		$realif = get_real_interface($gre['if']);
+	}
 	$realifip = get_interface_ip($gre['if']);
 	$realifip6 = get_interface_ipv6($gre['if']);
 
@@ -1150,10 +1153,11 @@ function interface_gre_configure(&$gre, $grekey = "") {
 		mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr6']) . " " . escapeshellarg($gre['tunnel-remote-addr6']) . " prefixlen 128");
 	}
 
-	if ($greif) {
-		interfaces_bring_up($greif);
+	$parentif = get_real_interface($gre['if']);
+	if ($parentif) {
+		interfaces_bring_up($parentif);
 	} else {
-		log_error(gettext("Could not bring greif up -- variable not defined."));
+		log_error(gettext("could not bring parentif up -- variable not defined -- interface_gre_configure()"));
 	}
 
 	if (isset($gre['link1'])) {
@@ -1275,7 +1279,10 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		return -1;
 	}
 
-	$realif = get_real_interface($gif['if']);
+	$realif = convert_friendly_interface_to_real_interface_name($gif['if']);
+	if (!interface_is_vlan($realif)) {
+		$realif = get_real_interface($gif['if']);
+	}
 	$ipaddr = get_interface_ip($gif['if']);
 
 	if (is_ipaddrv4($gif['remote-addr'])) {
@@ -1294,10 +1301,11 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		$realifgw = get_interface_gateway_v6($gif['if']);
 	}
 	/* make sure the parent interface is up */
-	if ($realif) {
-		interfaces_bring_up($realif);
+	$parentif = get_real_interface($gif['if']);
+	if ($parentif) {
+		interfaces_bring_up($parentif);
 	} else {
-		log_error(gettext("could not bring realif up -- variable not defined -- interface_gif_configure()"));
+		log_error(gettext("could not bring parentif up -- variable not defined -- interface_gif_configure()"));
 	}
 
 	if (platform_booting() || !(empty($gif['gifif']))) {
@@ -2569,14 +2577,22 @@ EOD;
 EOD;
 		}
 		if ($type == "pppoe") {
+			$hostuniq = '';
+			if (!empty($ppp['hostuniq'])) {
+				if (preg_match('/^0x[a-fA-F0-9]+$/', $ppp['hostuniq'])) {
+					$hostuniq = strtolower($ppp['hostuniq']) .'|';
+				} elseif (preg_match('/^[a-zA-Z0-9]+$/i', $ppp['hostuniq'])) {
+					$hostuniq = '0x' . bin2hex($ppp['hostuniq']) . '|';
+				}
+			}
 			// Send a null service name if none is set.
 			$provider = isset($ppp['provider']) ? $ppp['provider'] : "";
 			$mpdconf .= <<<EOD
-	set pppoe service "{$provider}"
+	set pppoe service "{$hostuniq}{$provider}"
 
 EOD;
 		}
-		if ($type == "pppoe" && $mtus[$pid] > 1492) {
+		if (($type == "pppoe") && ($mtus[$pid] > 1492)) {
 			$mpdconf .= <<<EOD
 	set pppoe max-payload {$mtus[$pid]}
 
@@ -2597,7 +2613,7 @@ EOD;
 EOD;
 		}
 
-		if ($type == "pptp" || $type == "l2tp") {
+		if (($type == "pptp") || ($type == "l2tp")) {
 			$mpdconf .= <<<EOD
 	set {$type} self {$localips[$pid]}
 	set {$type} peer {$gateways[$pid]}
@@ -3920,6 +3936,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 					if (!is_linklocal($tmpiface)) {
 						mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$tmpiface} delete");
 					}
+				} elseif (strstr($tmpiface, "fe80::1:1")) {
+					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 fe80::1:1 -alias");
 				} else {
 					if (is_subnetv4($tmpiface)) {
 						$tmpip = explode('/', $tmpiface);
@@ -4499,6 +4517,12 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	if ($wancfg['prefix-6rd-v4plen'] >= 0 && $wancfg['prefix-6rd-v4plen'] <= 32) {
 		mwexec("/sbin/ifconfig {$stfiface} stfv4net {$ip4address}/" . escapeshellarg($wancfg['prefix-6rd-v4plen']));
 	}
+	$parentmtu = get_interface_mtu(get_real_interface($interface));
+	if (isset($wancfg['mtu']) && ($wancfg['mtu'] >= 1300)) {
+		set_interface_mtu($stfiface, $wancfg['mtu'] - 20);
+	} elseif ($parentmtu > 1300) {
+		set_interface_mtu($stfiface, $parentmtu - 20);
+	}
 	if ($g['debug']) {
 		log_error("Created 6rd interface {$stfiface} {$rd6prefix}/{$rd6prefixlen}");
 	}
@@ -4606,6 +4630,12 @@ function interface_6to4_configure($interface = "wan", $wancfg) {
 	pfSense_interface_flags($stfiface, IFF_LINK2);
 	mwexec("/sbin/ifconfig {$stfiface} inet6 {$stflanpr} prefixlen 16");
 
+	$parentmtu = get_interface_mtu(get_real_interface($interface));
+	if (isset($wancfg['mtu']) && ($wancfg['mtu'] >= 1300)) {
+		set_interface_mtu($stfiface, $wancfg['mtu'] - 20);
+	} elseif ($parentmtu > 1300) {
+		set_interface_mtu($stfiface, $parentmtu - 20);
+	}
 	if ($g['debug']) {
 		log_error("Set IPv6 address inet6 {$stflanpr} prefixlen 16 for {$stfiface}, route {$stfbrgw}");
 	}
@@ -4759,6 +4789,13 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	$dhcp6cscriptwithoutra .= "echo \$dmnames > /tmp/{$wanif}_new_domain_name\n";
 	$dhcp6cscriptwithoutra .= "echo \$dreason > /tmp/{$wanif}_reason\n";
 	$dhcp6cscriptwithoutra .= "case \$REASON in\n";
+	$dhcp6cscriptwithoutra .= "REQUEST)\n";
+	$dhcp6cscriptwithoutra .= "/bin/sleep 2\n";
+	$dhcp6cscriptwithoutra .= "/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}\n";
+	if ($debugOption == '-D') {
+		$dhcp6cscriptwithoutra .= "/usr/bin/logger -t dhcp6c \"dhcp6c REQUEST on {$wanif} - running rtsold\"\n";
+	}
+	$dhcp6cscriptwithoutra .= ";;\n";
 	$dhcp6cscriptwithoutra .= "REBIND)\n";
 	if ($debugOption == '-D') {
 		$dhcp6cscriptwithoutra .= "/usr/bin/logger -t dhcp6c \"dhcp6c rebind on {$wanif}\"\n";
@@ -4774,7 +4811,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	}
 	$dhcp6cscriptwithoutra .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}\"\n";
 	$dhcp6cscriptwithoutra .= ";;\n";
-	$dhcp6cscriptwithoutra .= "RENEW|REQUEST|INFO)\n";
+	$dhcp6cscriptwithoutra .= "RENEW|INFO)\n";
 	if ($debugOption == '-D') {
 		$dhcp6cscriptwithoutra .= "/usr/bin/logger -t dhcp6c \"dhcp6c renew, no change - bypassing update on {$wanif}\"\n";
 	}
@@ -6671,10 +6708,10 @@ function is_altq_capable($int) {
 			"bfe", "bge", "bridge", "cas", "cpsw", "cxl", "dc", "de",
 			"ed", "em", "ep", "epair", "et", "fxp", "gem", "hme", "hn",
 			"igb", "jme", "l2tp", "le", "lem", "msk", "mxge", "my",
-			"ndis", "nfe", "ng", "nge", "npe", "nve", "ovpnc", "ovpns",
-			"ppp", "pppoe", "pptp", "re", "rl", "sf", "sge", "sis", "sk",
-			"ste", "stge", "ti", "tun", "txp", "udav", "ural", "vge",
-			"vlan", "vmx", "vr", "vte", "vtnet", "xl");
+			"ndis", "nfe", "ng", "nge", "npe", "nve", "qlxgb", "ovpnc", 
+			"ovpns", "ppp", "pppoe", "pptp", "re", "rl", "sf", "sge",
+			"sis", "sk", "ste", "stge", "ti", "tun", "txp", "udav",
+			"ural", "vge", "vlan", "vmx", "vr", "vte", "vtnet", "xl");
 
 	$int_family = remove_ifindex($int);
 
@@ -7209,6 +7246,18 @@ function is_pseudo_interface($inf) {
 			return true;
 		}
 	}
+	return false;
+}
+
+function is_stf_interface($inf) {
+	global $config;
+
+	if (is_array($config['interfaces'][$inf]) &&
+	    (($config['interfaces'][$inf]['ipaddrv6'] == '6rd') ||
+	    ($config['interfaces'][$inf]['ipaddrv6'] == '6to4'))) {
+	    return true;
+	}
+
 	return false;
 }
 

@@ -6184,6 +6184,58 @@ function upgrade_202_to_203() {
 }
 
 /*
+ * Change IPsec close_action values
+ * See https://redmine.pfsense.org/issues/10632
+ */
+
+function upgrade_203_to_204() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+		if (isset($ph1ent['closeaction'])) {
+			switch ($ph1ent['closeaction']) {
+				case 'clear':
+					/* swanctl.conf combined "clear" and "none" */
+					$ph1ent['closeaction'] = "none";
+					break;
+				case 'restart':
+					/* swanctl.conf uses "start" not "restart" */
+					$ph1ent['closeaction'] = "start";
+					break;
+				case 'hold':
+					/* swanctl.conf uses "trap" not "hold" */
+					$ph1ent['closeaction'] = "trap";
+					break;
+				default:
+					/* "none" does not need changed. */
+			}
+		}
+	}
+}
+
+function upgrade_204_to_205() {
+	global $config, $g;
+
+	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone => $cp) {
+			unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
+
+			if (is_array($config['voucher'][$cpzone])) {
+				if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
+					$config['captiveportal'][$cpzone]['enablebackwardsync'] = '';
+					$config['captiveportal'][$cpzone]['backwardsyncip'] = $config['voucher'][$cpzone]['vouchersyncdbip'];
+					$config['captiveportal'][$cpzone]['backwardsyncuser'] = $config['voucher'][$cpzone]['vouchersyncusername'];
+					$config['captiveportal'][$cpzone]['backwardsyncpassword'] = $config['voucher'][$cpzone]['vouchersyncpass'];
+				}
+			}
+		}
+	}
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

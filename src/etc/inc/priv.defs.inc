@@ -556,6 +556,12 @@ $priv_list['page-services-captiveportal-filemanager']['descr'] = gettext("Allow 
 $priv_list['page-services-captiveportal-filemanager']['match'] = array();
 $priv_list['page-services-captiveportal-filemanager']['match'][] = "services_captiveportal_filemanager.php*";
 
+$priv_list['page-services-captiveportal-hasync'] = array();
+$priv_list['page-services-captiveportal-hasync']['name'] = gettext("WebCfg - Services: Captive Portal HA");
+$priv_list['page-services-captiveportal-hasync']['descr'] = gettext("Allow access to the 'Services: Captive Portal High Availability' page.");
+$priv_list['page-services-captiveportal-hasync']['match'] = array();
+$priv_list['page-services-captiveportal-hasync']['match'][] = "services_captiveportal_hasync.php*";
+
 $priv_list['page-services-captiveportal-allowedhostnames'] = array();
 $priv_list['page-services-captiveportal-allowedhostnames']['name'] = gettext("WebCfg - Services: Captive Portal: Allowed Hostnames");
 $priv_list['page-services-captiveportal-allowedhostnames']['descr'] = gettext("Allow access to the 'Services: Captive Portal: Allowed Hostnames' page.");

@@ -217,7 +217,7 @@ EOD;
 			$syslogconf .= "auth.*;authpriv.* 						{$g['varlog_path']}/auth.log\n";
 		}
 		if (isset($syslogcfg['auth'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "auth.*;authpriv.*");
 		}
 
 		$syslogconf .= "!radvd,routed,zebra,ospfd,ospf6d,bgpd,miniupnpd,igmpproxy\n";

@@ -352,15 +352,21 @@ if ($_POST['save']) {
 		$newcp['httpsname'] = $_POST['httpsname'];
 		$newcp['preauthurl'] = $_POST['preauthurl'];
 		$newcp['blockedmacsurl'] = $_POST['blockedmacsurl'];
-		$newcp['peruserbw'] = $_POST['peruserbw'] ? true : false;
-		if (isset($_POST['bwdefaultdn'])) {
-			$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
+		if ($_POST['peruserbw']) {
+			$newcp['peruserbw'] = true;
+			if (isset($_POST['bwdefaultdn'])) {
+				$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
+			} else {
+				unset($newcp['bwdefaultdn']);
+			}
+			if (isset($_POST['bwdefaultup'])) {
+				$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
+			} else {
+				unset($newcp['bwdefaultup']);
+			}
 		} else {
+			unset($newcp['peruserbw']);
 			unset($newcp['bwdefaultdn']);
-		}
-		if (isset($_POST['bwdefaultup'])) {
-			$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
-		} else {
 			unset($newcp['bwdefaultup']);
 		}
 		$newcp['certref'] = $_POST['certref'];
@@ -495,6 +501,7 @@ $tab_array[] = array(gettext("MACs"), false, "services_captiveportal_mac.php?zon
 $tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
+$tab_array[] = array(gettext("High Availability"), false, "services_captiveportal_hasync.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 
@@ -610,12 +617,21 @@ $section->addInput(new Form_Input(
 	$pconfig['blockedmacsurl']
 ))->setHelp('Blocked MAC addresses will be redirected to this URL when attempting access.');
 
-$section->addInput(new Form_Checkbox(
+if (captiveportal_xmlrpc_sync_get_details($tmpsyncip, $tmpport, $tmpusername, $tmppassword)) {
+	$section->addInput(new Form_Checkbox(
+	'preservedb_disabled',
+	'Preserve users database',
+	'Preserve connected users across reboot',
+	'yes'
+	))->setDisabled()->setHelp("If enabled, connected users won't be disconnected during a pfSense reboot. This setting is not editable because High Availability is enabled.");
+} else {
+	$section->addInput(new Form_Checkbox(
 	'preservedb',
 	'Preserve users database',
 	'Preserve connected users across reboot',
 	$pconfig['preservedb']
-))->setHelp("If enabled, connected users won't be disconnected during a pfSense reboot.");
+	))->setHelp("If enabled, connected users won't be disconnected during a pfSense reboot.");
+}
 
 $section->addInput(new Form_Checkbox(
 	'noconcurrentlogins',
@@ -1163,6 +1179,7 @@ events.push(function() {
 		hideInput('redirurl', hide);
 		hideInput('blockedmacsurl', hide);
 		hideCheckbox('preservedb', hide);
+		hideCheckbox('preservedb_disabled', hide);
 		hideCheckbox('noconcurrentlogins', hide);
 		hideCheckbox('nomacfilter', hide);
 		hideCheckbox('passthrumacadd', hide);

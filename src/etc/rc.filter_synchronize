@@ -99,7 +99,6 @@ function carp_check_version() {
 	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('host_firmware_version');
 
-	log_error(sprintf(gettext("XMLRPC versioncheck: ").$resp['config_version'] ." -- ". $config['version']));
 	if (!isset($resp['config_version'])) {
 		update_filter_reload_status("The {$g['product_name']} software configuration version of the other member could not be determined. Skipping synchronization to avoid causing a problem!");
 		log_error("The {$g['product_name']} software configuration version of the other member could not be determined. Skipping synchronization to avoid causing a problem!");
@@ -355,7 +354,10 @@ if (is_array($config['hasync'])) {
 		}
 		$sections[] = 'schedules';
 	}
-	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['captiveportal'])) {
+	if ($hasync['synchronizecaptiveportal'] != "") {
+		if (!is_array($config['captiveportal'])) {
+			$config['captiveportal'] = array();
+		}
 		$sections[] = 'captiveportal';
 	}
 	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['voucher'])) {

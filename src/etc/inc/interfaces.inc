@@ -79,7 +79,7 @@ function get_interface_arr($flush = false) {
  * does_interface_exist($interface): return true or false if a interface is
  * detected.
  */
-function does_interface_exist($interface, $flush = true) {
+function does_interface_exist($interface, $flush = false) {
 	global $config;
 
 	if (!$interface) {
@@ -431,15 +431,19 @@ function interfaces_vlan_configure($realif = "") {
 			}
 
 			/* XXX: Maybe we should report any errors?! */
-			interface_vlan_configure($vlan);
+			interface_vlan_configure($vlan, false);
 		}
 	}
+	
+	/* Invalidate cache */
+	get_interface_arr(true);
+	
 	if (platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 }
 
-function interface_vlan_configure(&$vlan) {
+function interface_vlan_configure(&$vlan, $flush = true) {
 	global $config, $g;
 
 	if (!is_array($vlan)) {
@@ -478,7 +482,9 @@ function interface_vlan_configure(&$vlan) {
 	interfaces_bring_up($vlanif);
 
 	/* invalidate interface cache */
-	get_interface_arr(true);
+	if ($flush) {
+		get_interface_arr(true);
+	}
 
 	/* configure interface if assigned */
 	$assignedif = convert_real_interface_to_friendly_interface_name($vlanif);
@@ -494,7 +500,7 @@ function interface_vlan_configure(&$vlan) {
 	return $vlanif;
 }
 
-function interface_qinq_configure(&$qinq, $fd = NULL) {
+function interface_qinq_configure(&$qinq, $fd = NULL, $flush = true) {
 	global $config, $g;
 
 	if (!is_array($qinq)) {
@@ -546,7 +552,9 @@ function interface_qinq_configure(&$qinq, $fd = NULL) {
 	}
 
 	/* invalidate interface cache */
-	get_interface_arr(true);
+	if ($flush) {
+		get_interface_arr(true);
+	}
 
 	if (interface_is_vlan($qinqif) == NULL) {
 		mwexec("/sbin/ifconfig {$qinqif} promisc\n");
@@ -560,7 +568,7 @@ function interface_qinq_configure(&$qinq, $fd = NULL) {
 			$qinq2 = array();
 			$qinq2['tag'] = $qtag;
 			$qinq2['if'] = $vlanif;
-			interface_qinq2_configure($qinq2, $qinqcmdbuf, $macaddr);
+			interface_qinq2_configure($qinq2, $qinqcmdbuf, $macaddr, false);
 			unset($qinq2);
 		}
 		if (strlen($qinqcmdbuf) > 0) {
@@ -591,15 +599,19 @@ function interfaces_qinq_configure() {
 	if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
 		foreach ($config['qinqs']['qinqentry'] as $qinq) {
 			/* XXX: Maybe we should report any errors?! */
-			interface_qinq_configure($qinq);
+			interface_qinq_configure($qinq, NULL, false);
 		}
 	}
+	
+	/* Invalidate cache */
+	get_interface_arr(true);
+	
 	if (platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 }
 
-function interface_qinq2_configure(&$qinq, &$cmdbuf, $macaddr) {
+function interface_qinq2_configure(&$qinq, &$cmdbuf, $macaddr, $flush = true) {
 	global $config, $g;
 
 	if (!is_array($qinq)) {
@@ -629,7 +641,9 @@ function interface_qinq2_configure(&$qinq, &$cmdbuf, $macaddr) {
 	$cmdbuf .= "msg {$ngif}h{$tag}: set {$macaddr}\n";
 
 	/* invalidate interface cache */
-	get_interface_arr(true);
+	if ($flush) {
+		get_interface_arr(true);
+	}
 
 	return $vlanif;
 }
@@ -702,13 +716,16 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 				}
 			}
 			/* XXX: Maybe we should report any errors?! */
-			interface_bridge_configure($bridge, $checkmember);
+			interface_bridge_configure($bridge, $checkmember, false);
 			$i++;
 		}
+		
+		/* Invalidate cache */
+		get_interface_arr(true);
 	}
 }
 
-function interface_bridge_configure(&$bridge, $checkmember = 0) {
+function interface_bridge_configure(&$bridge, $checkmember = 0, $flush = true) {
 	global $config, $g;
 
 	if (!is_array($bridge)) {
@@ -797,6 +814,10 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 	interface_bridge_configure_advanced($bridge);
 
 	interface_bridge_configure_ip6linklocal($bridge);
+	
+	if ($flush) {
+		get_interface_arr(true);
+	}
 
 	if ($bridge['bridgeif']) {
 		interfaces_bring_up($bridge['bridgeif']);
@@ -987,16 +1008,19 @@ function interfaces_lagg_configure($realif = "") {
 				continue;
 			}
 			/* XXX: Maybe we should report any errors?! */
-			interface_lagg_configure($lagg);
+			interface_lagg_configure($lagg, true);
 			$i++;
 		}
+		
+		/* Invalidate cache */
+		get_interface_arr(true);
 	}
 	if (platform_booting()) {
 		echo gettext("done.") . "\n";
 	}
 }
 
-function interface_lagg_configure($lagg) {
+function interface_lagg_configure($lagg, $flush = true) {
 	global $config, $g;
 
 	if (!is_array($lagg)) {
@@ -1066,6 +1090,10 @@ function interface_lagg_configure($lagg) {
 
 	mwexec("/sbin/ifconfig {$laggif} laggproto " . escapeshellarg($lagg['proto']) . " {$lacptimeout}");
 
+	if ($flush) {
+		get_interface_arr(true);
+	}
+	
 	interfaces_bring_up($laggif);
 
 	return $laggif;
@@ -1100,13 +1128,15 @@ function interfaces_gre_configure($checkparent = 0, $realif = "") {
 				}
 			}
 			/* XXX: Maybe we should report any errors?! */
-			interface_gre_configure($gre);
+			interface_gre_configure($gre, "", false);
 		}
+		/* Invalidate cache */
+		get_interface_arr(true);
 	}
 }
 
 /* NOTE: $grekey is not used but useful for passing this function to array_walk. */
-function interface_gre_configure(&$gre, $grekey = "") {
+function interface_gre_configure(&$gre, $grekey = "", $flush = true) {
 	global $config, $g;
 
 	if (!is_array($gre)) {
@@ -1175,6 +1205,10 @@ function interface_gre_configure(&$gre, $grekey = "") {
 		file_put_contents("{$g['tmp_path']}/{$greif}_routerv6", $gre['tunnel-remote-addr6']);
 	}
 
+	if ($flush) {
+		get_interface_arr(true);
+	}
+	
 	interfaces_bring_up($greif);
 
 	return $greif;
@@ -1266,13 +1300,16 @@ function interfaces_gif_configure($checkparent = 0, $realif = "") {
 				}
 			}
 			/* XXX: Maybe we should report any errors?! */
-			interface_gif_configure($gif);
+			interface_gif_configure($gif, "", false);
 		}
+		
+		/* Invalidate cache */
+		get_interface_arr(true);
 	}
 }
 
 /* NOTE: $gifkey is not used but useful for passing this function to array_walk. */
-function interface_gif_configure(&$gif, $gifkey = "") {
+function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
 	global $config, $g;
 
 	if (!is_array($gif)) {
@@ -1384,6 +1421,10 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	}
 	if (is_ipaddrv6($realifgw)) {
 		route_add_or_change("-host -inet6 {$gif['remote-addr']} {$realifgw}");
+	}
+	
+	if ($flush) {
+		get_interface_arr(true);
 	}
 
 	interfaces_bring_up($gifif);
@@ -1954,6 +1995,9 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	if ($destroy == true) {
 		if (preg_match("/^[a-z0-9]+^tun|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_stf$/i", $realif)) {
 			pfSense_interface_destroy($realif);
+			
+			/* Invalidate cache */
+			get_interface_arr(true);
 		}
 	}
 
@@ -3103,6 +3147,9 @@ function interface_wireless_clone($realif, $wlcfg) {
 		/* remove previous instance if it exists */
 		if (does_interface_exist($realif)) {
 			pfSense_interface_destroy($realif);
+			
+			/* Invalidate cache */
+			get_interface_arr(true);
 		}
 
 		log_error(sprintf(gettext("Cloning new wireless interface %s"), $realif));
@@ -5732,7 +5779,7 @@ function interface_list_wireless() {
 	return $result;
 }
 
-function get_real_interface($interface = "wan", $family = "all", $realv6iface = false, $flush = true) {
+function get_real_interface($interface = "wan", $family = "all", $realv6iface = false, $flush = false) {
 	global $config, $g;
 
 	$wanif = NULL;
@@ -6968,21 +7015,23 @@ function interfaces_staticarp_configure($if) {
 	if (isset($config['dhcpd'][$if]['staticarp'])) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " staticarp ");
 		mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
-		if (is_array($config['dhcpd'][$if]['staticmap'])) {
-			foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {
-				if (!empty($arpent['ipaddr']) && !empty($arpent['mac'])) {
-					mwexec("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
-				}
-			}
-		}
 	} else {
-		mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " -staticarp ");
-		mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
-		if (is_array($config['dhcpd'][$if]) && is_array($config['dhcpd'][$if]['staticmap'])) {
-			foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {
-				if (isset($arpent['arp_table_static_entry']) && !empty($arpent['ipaddr']) && !empty($arpent['mac'])) {
-					mwexec("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
-				}
+		//Interfaces do not have staticarp enabled by default
+		//Let's not disable staticarp on freshly created interfaces
+		if (!platform_booting()) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " -staticarp ");
+			mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
+		}
+	}
+	
+	/* Enable static arp entries */
+	if (is_array($config['dhcpd'][$if]) && is_array($config['dhcpd'][$if]['staticmap'])) {
+		foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {
+			if (empty($arpent['ipaddr']) || empty($arpent['mac'])) {
+				continue;
+			}
+			if (isset($config['dhcpd'][$if]['staticarp']) || isset($arpent['arp_table_static_entry'])) {
+				mwexec("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
 			}
 		}
 	}

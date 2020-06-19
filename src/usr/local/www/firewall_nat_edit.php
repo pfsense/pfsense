@@ -1182,11 +1182,11 @@ events.push(function() {
 		typesel_change();
 	});
 
-	$('#srctype').click(function () {
+	$('#srctype').change(function () {
 		typesel_change();
 	});
 
-	$('#dsttype').click(function () {
+	$('#dsttype').change(function () {
 		typesel_change();
 	});
 

@@ -1523,6 +1523,9 @@ function openvpn_delete($mode, $settings) {
 
 	/* destroy the device */
 	pfSense_interface_destroy($devname);
+	
+	/* Invalidate interface cache */
+	get_interface_arr(true);
 
 	/* remove the configuration files */
 	@array_map('unlink', glob("{$g['openvpn_base']}/{$mode_id}/csc/*"));

@@ -1087,28 +1087,30 @@ function alias_info_popup($alias_id) {
 	return $content;
 }
 
-function gateway_info_popup($gateway) {
-	global $config;
-	init_config_arr(array('gateways', 'gateway_item'));
+function gateway_info_popup($showgw) {
+	global $config, $user_settings;
+
 	init_config_arr(array('gateways', 'gateway_group'));
+	$a_gateways = return_gateways_array();
+	$gateways_status = return_gateways_status(true);
 
 	$content = "";
-	$gateways = array();
+	$gws = array();
 	$bgdanger = array('force_down', 'down', 'highloss', 'highdelay');
 	$bgwarning = array('loss', 'delay');
 	$bgsuccess = array('none');
 	$bgcolor = "bg-info";
 
-	if (is_array($config['gateways']['gateway_item'])) {
-		foreach($config['gateways']['gateway_item'] as $i => $item) {
-			if ($item['name'] == $gateway) {
-				$gateways[] = $item['name'];
+	if (is_array($a_gateways)) {
+		foreach ($a_gateways as $i => $gateway) {
+			if ($gateway['name'] == $showgw) {
+				$gws[] = $gateway['name'];
 			}
 		}
 	}
 	if (is_array($config['gateways']['gateway_group'])) {
 		foreach($config['gateways']['gateway_group'] as $gwgroup) {
-			if ($gwgroup['name'] == $gateway) {
+			if ($gwgroup['name'] == $showgw) {
 				foreach ($gwgroup['item'] as $member) {
 					$membersplit = explode("|", $member);
 					$gateways[] = $membersplit[0];
@@ -1117,8 +1119,7 @@ function gateway_info_popup($gateway) {
 		}
 	}
 
-	if (!empty($gateways)) {
-		$gateways_status = return_gateways_status(true);
+	if (!empty($gws)) {
 		$content .= "<table>\n";
 		$content .= "<thead>\n";
 		$content .= "<tr>\n";
@@ -1126,7 +1127,7 @@ function gateway_info_popup($gateway) {
 		$content .= "<th style='padding-left: 10px;'>" . gettext("Gateway") . "</th></tr>\n";
 		$content .= "</thead>\n";
 		$content .= "<tbody>\n";
-		foreach ($gateways as $gw) {
+		foreach ($gws as $gw) {
 			foreach ($gateways_status as $gwstatus) {
 				if ($gwstatus['name'] == $gw) {
 					if (in_array($gwstatus['status'], $bgdanger)) {
@@ -1155,6 +1156,8 @@ function gateway_info_popup($gateway) {
 		}
 		$content .= "</tbody>\n";
 		$content .= "<table>\n";
+	} else {
+		return;
 	}
 
 	return $content;

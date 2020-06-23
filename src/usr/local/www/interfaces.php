@@ -358,6 +358,8 @@ if (isset($wancfg['wireless'])) {
 	$wlanbaseif = interface_get_wireless_base($wancfg['if']);
 	preg_match("/^(.*?)([0-9]*)$/", $wlanbaseif, $wlanbaseif_split);
 	$wl_modes = get_wireless_modes($if);
+	$wl_ht_modes = get_wireless_ht_modes($if);
+	$wl_ht_list = get_wireless_ht_list($if);
 	$wl_chaninfo = get_wireless_channel_info($if);
 	$wl_sysctl_prefix = 'dev.' . $wlanbaseif_split[1] . '.' . $wlanbaseif_split[2];
 	$wl_sysctl = get_sysctl(
@@ -380,6 +382,7 @@ if (isset($wancfg['wireless'])) {
 	$pconfig['protmode'] = $wancfg['wireless']['protmode'];
 	$pconfig['ssid'] = $wancfg['wireless']['ssid'];
 	$pconfig['channel'] = $wancfg['wireless']['channel'];
+	$pconfig['channel_width'] = $wancfg['wireless']['channel_width'];
 	$pconfig['txpower'] = $wancfg['wireless']['txpower'];
 	$pconfig['diversity'] = $wancfg['wireless']['diversity'];
 	$pconfig['txantenna'] = $wancfg['wireless']['txantenna'];
@@ -949,9 +952,18 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("A specific channel, not auto, must be selected for Access Point mode.");
 			}
 		}
+		if (!stristr($_POST['standard'], '11n') && ($_POST['channel_width'] != "0")) {
+			$input_errors[] = gettext("Channel width selection is only supported by 802.11n standards.");
+		}
 		if (stristr($_POST['standard'], '11n')) {
 			if (!($_POST['wme_enable'])) {
 				$input_errors[] = gettext("802.11n standards require enabling WME.");
+			}
+			if (($_POST['channel_width'] != "0") && ($_POST['channel'] != "0") &&
+			    is_array($wl_ht_list[$_POST['standard']][$_POST['channel']]) &&
+			    !empty($wl_ht_list[$_POST['standard']][$_POST['channel']]) &&
+			    !in_array($_POST['channel_width'], $wl_ht_list[$_POST['standard']][$_POST['channel']])) {
+				$input_errors[] = sprintf(gettext("Unable to use %s channel width with channel %s."), strtoupper($_POST['channel_width']), $_POST['channel']);
 			}
 		}
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -1613,6 +1625,7 @@ function handle_wireless_post() {
 	$wancfg['wireless']['protmode'] = $_POST['protmode'];
 	$wancfg['wireless']['ssid'] = $_POST['ssid'];
 	$wancfg['wireless']['channel'] = $_POST['channel'];
+	$wancfg['wireless']['channel_width'] = $_POST['channel_width'];
 	$wancfg['wireless']['authmode'] = $_POST['authmode'];
 	$wancfg['wireless']['txpower'] = $_POST['txpower'];
 	$wancfg['wireless']['distance'] = $_POST['distance'];
@@ -3099,9 +3112,9 @@ if (isset($wancfg['wireless'])) {
 
 			foreach ($wl_channels as $wl_channel) {
 				if (isset($wl_chaninfo[$wl_channel])) {
-					$mode_list[ $wl_channel] = $wl_standard . ' - ' . $wl_channel;
+					$mode_list[$wl_channel] = $wl_standard . ' - ' . $wl_channel;
 				} else {
-					$mode_list[ $wl_channel] = $wl_standard . ' - ' . $wl_channel . ' (' . $wl_chaninfo[$wl_channel][1] . ' @ ' . $wl_chaninfo[$wl_channel][2] . ' / ' . $wl_chaninfo[$wl_channel][3] . ')';
+					$mode_list[$wl_channel] = $wl_standard . ' - ' . $wl_channel . ' (' . $wl_chaninfo[$wl_channel][1] . ' @ ' . $wl_chaninfo[$wl_channel][2] . ' / ' . $wl_chaninfo[$wl_channel][3] . ')';
 				}
 			}
 		}
@@ -3114,6 +3127,13 @@ if (isset($wancfg['wireless'])) {
 		$mode_list
 	))->setHelp('Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain) %1$s' .
 				'Not all channels may be supported by some cards.  Auto may override the wireless standard selected above.', '<br />');
+
+	$section->addInput(new Form_Select(
+		'channel_width',
+		'Channel width',
+		$pconfig['channel_width'],
+		$wl_ht_modes
+	))->setHelp('Channel width for 802.11n mode. Not all cards may support channel width changing.');
 
 	if (ANTENNAS) {
 		if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {

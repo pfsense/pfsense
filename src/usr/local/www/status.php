@@ -368,6 +368,17 @@ if (file_exists("/var/etc/l2tp-vpn/mpd.conf")) {
 	defCmdT("L2TP-Configuration", '/usr/bin/sed -E "s/([[:blank:]](secret|radius server .*) ).*/\1<redacted>/" /var/etc/l2tp-vpn/mpd.conf');
 }
 
+/* Config History */
+$confvers = get_backups();
+unset($confvers['versions']);
+if (count($confvers) != 0) {
+	for ($c = count($confvers)-1; $c >= 0; $c--) {
+		$conf_history .= backup_info($confvers[$c], $c+1);
+		$conf_history .= "\n";
+	}
+	defCmdT("Config History", "echo " . escapeshellarg($conf_history));
+}
+
 /* Logs */
 function status_add_log($name, $logfile, $number = 1000) {
 	if (!file_exists($logfile)) {

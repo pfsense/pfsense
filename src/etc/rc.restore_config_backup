@@ -30,25 +30,6 @@ unset($confvers['versions']);
 
 $fp = fopen('php://stdin', 'r');
 
-function print_backup_info($backup_info, $number) {
-	if ($backup_info['time'] != 0) {
-		$date = date(gettext("n/j/y H:i:s"), $backup_info['time']);
-	} else {
-		$date = gettext("Unknown");
-	}
-
-	list($page, $reason) = explode(": ", $backup_info['description'], 2);
-	if (empty($reason)) {
-		$reason = $page;
-		$page = gettext("Unknown Page");
-	}
-
-	echo sprintf("%02d", $number) . ". {$date}\tv{$backup_info['version']}\t{$page}\n";
-	if ($reason) {
-		echo "    {$reason}\n";
-	}
-}
-
 function list_backups($which="all", $return=false) {
 	global $confvers;
 
@@ -61,7 +42,7 @@ function list_backups($which="all", $return=false) {
 		if (is_numeric($which) && ($c != $which)) {
 			continue;
 		}
-		print_backup_info($confvers[$c], $c+1);
+		echo backup_info($confvers[$c], $c+1);
 		echo "\n";
 	}
 }

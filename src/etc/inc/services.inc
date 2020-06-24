@@ -1540,9 +1540,9 @@ EOD;
 
 		if ($dhcpv6ifconf['dhcp6c-dns'] != 'disabled') {
 			if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
-				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dhcpv6ifconf['dnsserver']) . ";";
+				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dhcpv6ifconf['dnsserver']) . ";\n";
 			} else if (((isset($config['dnsmasq']['enable'])) || isset($config['unbound']['enable'])) && (is_ipaddrv6($ifcfgipv6))) {
-				$dnscfgv6 .= "	option dhcp6.name-servers {$ifcfgipv6};";
+				$dnscfgv6 .= "	option dhcp6.name-servers {$ifcfgipv6};\n";
 			} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 				$dns_arrv6 = array();
 				foreach ($syscfg['dnsserver'] as $dnsserver) {
@@ -1551,11 +1551,11 @@ EOD;
 					}
 				}
 				if (!empty($dns_arrv6)) {
-					$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6) . ";";
+					$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6) . ";\n";
 				}
 			}
 		} else {
-			$dnscfgv6 .= "	#option dhcp6.name-servers --;";
+			$dnscfgv6 .= "	#option dhcp6.name-servers --;\n";
 		}
 
 		if (!is_ipaddrv6($ifcfgipv6)) {

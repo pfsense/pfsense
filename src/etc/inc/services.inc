@@ -158,7 +158,12 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
 				break;
 		}
-		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
+		if ($dhcpv6ifconf['ramode'] == "unmanaged") {
+			$prefixnet = $ifcfgipv6;
+		} else {
+			$prefixnet = $subnetv6;
+		}
+		$radvdconf .= "\tprefix {$prefixnet}/{$ifcfgsnv6} {\n";
 		if ($racarpif == true) {
 			$radvdconf .= "\t\tDeprecatePrefix off;\n";
 		} else {
@@ -168,18 +173,15 @@ function services_radvd_configure($blacklist = array()) {
 			case "managed":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
 				$radvdconf .= "\t\tAdvAutonomous off;\n";
-				$radvdconf .= "\t\tAdvRouterAddr on;\n";
 				break;
 			case "router":
 				$radvdconf .= "\t\tAdvOnLink off;\n";
 				$radvdconf .= "\t\tAdvAutonomous off;\n";
-				$radvdconf .= "\t\tAdvRouterAddr on;\n";
 				break;
 			case "stateless_dhcp":
 			case "assist":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
 				$radvdconf .= "\t\tAdvAutonomous on;\n";
-				$radvdconf .= "\t\tAdvRouterAddr on;\n";
 				break;
 			case "unmanaged":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
@@ -211,22 +213,18 @@ function services_radvd_configure($blacklist = array()) {
 						case "managed":
 							$radvdconf .= "\t\tAdvOnLink on;\n";
 							$radvdconf .= "\t\tAdvAutonomous off;\n";
-							$radvdconf .= "\t\tAdvRouterAddr on;\n";
 							break;
 						case "router":
 							$radvdconf .= "\t\tAdvOnLink off;\n";
 							$radvdconf .= "\t\tAdvAutonomous off;\n";
-							$radvdconf .= "\t\tAdvRouterAddr on;\n";
 							break;
 						case "assist":
 							$radvdconf .= "\t\tAdvOnLink on;\n";
 							$radvdconf .= "\t\tAdvAutonomous on;\n";
-							$radvdconf .= "\t\tAdvRouterAddr on;\n";
 							break;
 						case "unmanaged":
 							$radvdconf .= "\t\tAdvOnLink on;\n";
 							$radvdconf .= "\t\tAdvAutonomous on;\n";
-							$radvdconf .= "\t\tAdvRouterAddr on;\n";
 							break;
 					}
 					$radvdconf .= "\t};\n";
@@ -367,7 +365,6 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 		$radvdconf .= "\t\tAdvOnLink on;\n";
 		$radvdconf .= "\t\tAdvAutonomous on;\n";
-		$radvdconf .= "\t\tAdvRouterAddr on;\n";
 		$radvdconf .= "\t};\n";
 
 		/* add DNS servers */

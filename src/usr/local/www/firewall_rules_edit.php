@@ -1356,6 +1356,7 @@ $section->addInput(new Form_Select(
 		'esp' => 'ESP',
 		'ah' => 'AH',
 		'gre' => 'GRE',
+		'etherip' => 'EoIP',
 		'ipv6' => 'IPV6',
 		'igmp' => 'IGMP',
 		'pim' => 'PIM',

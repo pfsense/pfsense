@@ -912,6 +912,26 @@ function backup_config() {
 	return true;
 }
 
+function backup_info($backup_info, $number) {
+	if ($backup_info['time'] != 0) {
+		$date = date(gettext("n/j/y H:i:s"), $backup_info['time']);
+	} else {
+		$date = gettext("Unknown");
+	}
+
+	list($page, $reason) = explode(": ", $backup_info['description'], 2);
+	if (empty($reason)) {
+		$reason = $page;
+		$page = gettext("Unknown Page");
+	}
+
+	$backup_info = sprintf("%02d", $number) . ". {$date}\tv{$backup_info['version']}\t{$page}\n";
+	if ($reason) {
+		$backup_info .= "    {$reason}\n";
+	}
+	return $backup_info;
+}
+
 function set_device_perms() {
 	$devices = array(
 		'pf' => array(

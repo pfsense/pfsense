@@ -239,23 +239,38 @@ if ($_POST['save'] == gettext("Save")) {
 				$input_errors[] = gettext("This private does not appear to be valid.");
 				$input_errors[] = gettext("Key data field should be blank, or a valid x509 private key");
 			}
+
 			if ($_POST['lifetime'] > $max_lifetime) {
 				$input_errors[] = gettext("Lifetime is longer than the maximum allowed value. Use a shorter lifetime.");
 			}
 			break;
 		case 'edit':
 		case 'import':
-			$reqdfields = explode(" ",
-				"descr cert");
-			$reqdfieldsn = array(
-				gettext("Descriptive name"),
-				gettext("Certificate data"));
-			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
-				$input_errors[] = gettext("This certificate does not appear to be valid.");
-			}
+			$pkcs12_data = '';
+			if ($_POST['import_type'] == 'x509') {
+				$reqdfields = explode(" ",
+					"descr cert");
+				$reqdfieldsn = array(
+					gettext("Descriptive name"),
+					gettext("Certificate data"));
+				if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
+					$input_errors[] = gettext("This certificate does not appear to be valid.");
+				}
 
-			if ($_POST['key'] && (cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv'))) {
-				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
+				if ($_POST['key'] && (cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv'))) {
+					$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
+				}
+			} else {
+				$reqdfields = array('descr');
+				$reqdfieldsn = array(gettext("Descriptive name"));
+				if (!empty($_FILES['pkcs12_cert']) && is_uploaded_file($_FILES['pkcs12_cert']['tmp_name'])) {
+					$pkcs12_file = file_get_contents($_FILES['pkcs12_cert']['tmp_name']);
+					if (!openssl_pkcs12_read($pkcs12_file, $pkcs12_data, $_POST['pkcs12_pass'])) {
+						$input_errors[] = gettext("The submitted password does not unlock the submitted PKCS #12 certificate.");
+					}
+				} else {
+					$input_errors[] = gettext("A PKCS #12 certificate store was not uploaded.");
+				}
 			}
 			break;
 		case 'internal':
@@ -463,6 +478,21 @@ if ($_POST['save'] == gettext("Save")) {
 				break;
 			case 'import':
 				/* Import an external certificate+key */
+				if ($pkcs12_data) {
+					$pconfig['cert'] = $pkcs12_data['cert'];
+					$pconfig['key'] = $pkcs12_data['pkey'];
+					if ($_POST['pkcs12_intermediate'] && is_array($pkcs12_data['extracerts'])) {
+						foreach ($pkcs12_data['extracerts'] as $intermediate) {
+							$int_data = openssl_x509_parse($intermediate);
+							if (!$int_data) continue;
+							$cn = $int_data['subject']['CN'];
+							$int_ca = array('descr' => $cn, 'refid' => uniqid());
+							if (ca_import($int_ca, $intermediate)) {
+								$a_ca[] = $int_ca;
+							}
+						}
+					}
+				}
 				cert_import($cert, $pconfig['cert'], $pconfig['key']);
 				$savemsg = sprintf(gettext("Imported certificate %s"), $cert['descr']);
 				break;
@@ -642,7 +672,7 @@ display_top_tabs($tab_array);
 
 if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	$form = new Form();
-	$form->setAction('system_certmanager.php');
+	$form->setAction('system_certmanager.php')->setMultipartEncoding();
 
 	if (isset($userid) && $a_user) {
 		$form->addGlobal(new Form_Input(
@@ -785,6 +815,26 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 	$section = new Form_Section($editimport);
 	$section->addClass('toggle-import toggle-edit collapse');
 
+	$group = new Form_Group('Certificate Type');
+
+	$group->add(new Form_Checkbox(
+		'import_type',
+		'Certificate Type',
+		'X.509 (PEM)',
+		(!isset($pconfig['import_type']) || $pconfig['import_type'] == 'x509'),
+		'x509'
+	))->displayAsRadio()->addClass('import_type_toggle');
+
+	$group->add(new Form_Checkbox(
+		'import_type',
+		'Certificate Type',
+		'PKCS #12 (PFX)',
+		(isset($pconfig['import_type']) && $pconfig['import_type'] == 'pkcs12'),
+		'pkcs12'
+	))->displayAsRadio()->addClass('import_type_toggle');
+
+	$section->add($group);
+
 	$section->addInput(new Form_Textarea(
 		'cert',
 		'*Certificate data',
@@ -796,6 +846,27 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 		'Private key data',
 		$pconfig['key']
 	))->setHelp('Paste a private key in X.509 PEM format here. This field may remain empty in certain cases, such as when the private key is stored on a PKCS#11 token.');
+
+	$section->addInput(new Form_Input(
+		'pkcs12_cert',
+		'PKCS #12 certificate',
+		'file',
+		$pconfig['pkcs12_cert']
+	))->setHelp('Select a PKCS #12 certificate store.');
+
+	$section->addInput(new Form_Input(
+		'pkcs12_pass',
+		'PKCS #12 certificate password',
+		'password',
+		$pconfig['pkcs12_pass']
+	))->setHelp('Enter the password to unlock the PKCS #12 certificate store.');
+
+	$section->addInput(new Form_Checkbox(
+		'pkcs12_intermediate',
+		'Intermediates',
+		'Import intermediate CAs',
+		isset($pconfig['pkcs12_intermediate'])
+	))->setHelp('Import any intermediate certificate authorities found in the PKCS #12 certificate store.');
 
 	if ($act == 'edit') {
 		$section->addInput(new Form_Input(
@@ -1457,6 +1528,34 @@ events.push(function() {
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
+	$('.import_type_toggle').click(function() {
+		var x509 = (this.value === 'x509');
+		hideInput('cert', !x509);
+		setRequired('cert', x509);
+		hideInput('key', !x509);
+		setRequired('key', x509);
+		hideInput('pkcs12_cert', x509);
+		setRequired('pkcs12_cert', !x509);
+		hideInput('pkcs12_pass', x509);
+		hideCheckbox('pkcs12_intermediate', x509);
+	});
+	if ($('input[name=import_type]:checked').val() == 'x509') {
+		hideInput('pkcs12_cert', true);
+		setRequired('pkcs12_cert', false);
+		hideInput('pkcs12_pass', true);
+		hideCheckbox('pkcs12_intermediate', true);
+		hideInput('cert', false);
+		setRequired('cert', true);
+		hideInput('key', false);
+		setRequired('key', true);
+	} else {
+		hideInput('cert', true);
+		setRequired('cert', false);
+		hideInput('key', true);
+		setRequired('key', false);
+		setRequired('pkcs12_cert', false);
+	}
 
 <?php if ($internal_ca_count): ?>
 	function internalca_change() {

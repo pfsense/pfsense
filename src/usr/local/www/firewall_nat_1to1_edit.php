@@ -150,14 +150,14 @@ if ($_POST['save']) {
 		$_POST['src'] = $_POST['srctype'];
 		$_POST['srcmask'] = 0;
 	} else if ($_POST['srctype'] == "single") {
-		$_POST['srcmask'] = 32;
+		$_POST['srcmask'] = (is_ipaddrv4($_POST['src'])) ? 32 : 128; 
 	}
 
 	if (is_specialnet($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 0;
 	} else if ($_POST['dsttype'] == "single") {
-		$_POST['dstmask'] = 32;
+		$_POST['dstmask'] = (is_ipaddrv4($_POST['dst'])) ? 32 : 128; 
 	} else if (is_ipaddr($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 32;
@@ -326,7 +326,9 @@ function srctype_selected() {
 	$sel = is_specialnet($pconfig['src']);
 
 	if (!$sel) {
-		if (($pconfig['srcmask'] == 32) || (!isset($pconfig['srcmask']))) {
+		if ((($pconfig['srcmask'] == 32) && (is_ipaddrv4($pconfig['src']))) ||
+		    (($pconfig['srcmask'] == 128) && (is_ipaddrv6($pconfig['src']))) ||
+		    (!isset($pconfig['srcmask']))) {
 			return('single');
 		}
 
@@ -391,12 +393,14 @@ function dsttype_selected() {
 
 	$sel = is_specialnet($pconfig['dst']);
 
-	if (empty($pconfig['dst']) || $pconfig['dst'] == "any") {
+	if (empty($pconfig['dst']) || ($pconfig['dst'] == "any")) {
 		return('any');
 	}
 
 	if (!$sel) {
-		if ($pconfig['dstmask'] == 32) {
+		if ((($pconfig['dstmask'] == 32) && (is_ipaddrv4($pconfig['dst']))) ||
+		    (($pconfig['dstmask'] == 128) && (is_ipaddrv6($pconfig['dst']))) ||
+		    (!isset($pconfig['dstmask']))) {
 			return('single');
 		}
 

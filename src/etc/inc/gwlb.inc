@@ -600,7 +600,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			if (!is_array($gateway) || empty($gateway)) {
 				continue;
 			}
-			
+
 			/* Increment it here to do not skip items */
 			$i++;
 			if (isset($gateway['defaultgw'])) {
@@ -1080,7 +1080,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			if ($gwsttng['ipprotocol'] != $ipprotocol) {
 				continue;
 			}
-			
+
 			if ((isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) || $gateways_status[$gwname]['status'] == "none")) {
 				$set_dfltgwname = $gwname;
 				break;
@@ -1253,7 +1253,7 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 			}
 			if ($statuschanged) {
 				log_error($msg);
-				notify_via_smtp($msg);
+				notify_all_remote($msg);
 				if (isset($gateways_arr[$gwname]['interface'])) {
 					$pluginparams['interface'] = $gateways_arr[$gwname]['interface'];
 				}
@@ -1460,7 +1460,7 @@ function get_root_interface($interface) {
 
 function get_interface_gateway($interface, &$dynamic = false) {
 	global $config, $g;
-	
+
 	$interface = get_root_interface($interface);
 
 	$gw = NULL;

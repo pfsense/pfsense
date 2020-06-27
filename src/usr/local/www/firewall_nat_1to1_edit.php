@@ -116,7 +116,7 @@ if ($_POST['save']) {
 	}
 
 	/* input validation */
-	if (isset($_POST['nobinat'])) {
+	if (isset($_POST['nobinat']) || ($_POST['exttype'] != "single")) {
 		$reqdfields = explode(" ", "interface");
 		$reqdfieldsn = array(gettext("Interface"));
 	} else {
@@ -164,6 +164,10 @@ if ($_POST['save']) {
 		$_POST['dsttype'] = "single";
 	}
 
+	if (is_specialnet($_POST['exttype'])) {
+		$_POST['external'] = $_POST['exttype'];
+	}
+
 	$pconfig = $_POST;
 
 	$extipaddrtype = false;
@@ -171,7 +175,7 @@ if ($_POST['save']) {
 	$dstipaddrtype = false;
 
 	/* For external, user can enter only ip's */
-	if ($_POST['external']) {
+	if ($_POST['external'] && !is_specialnet($_POST['exttype'])) {
 		$extipaddrtype = validateipaddr($_POST['external'], IPV4V6, "External subnet IP", $input_errors, false);
 	}
 
@@ -181,7 +185,7 @@ if ($_POST['save']) {
 	}
 
 	/* For src, user can enter only ips or networks */
-	if (!is_specialnet($_POST['srctype'])) {
+	if (!is_specialnet($_POST['srctype']) && !is_specialnet($_POST['exttype'])) {
 		if ($_POST['src']) {
 			$srcipaddrtype = validateipaddr($_POST['src'], IPV4V6, "Internal address", $input_errors, false);
 			if ($srcipaddrtype) {
@@ -203,7 +207,7 @@ if ($_POST['save']) {
 	}
 
 	/* For dst, user can enter ips, networks or aliases */
-	if (!is_specialnet($_POST['dsttype'])) {
+	if (!is_specialnet($_POST['dsttype']) && !is_specialnet($_POST['exttype'])) {
 		if ($_POST['dst']) {
 			$dstipaddrtype = validateipaddr($_POST['dst'], IPV4V6, "Destination address", $input_errors, true);
 			if ($dstipaddrtype == ALIAS) {
@@ -406,6 +410,37 @@ function dsttype_selected() {
 	return($pconfig['dst']);
 }
 
+function build_exttype_list() {
+	global $pconfig, $ifdisp;
+
+	$list = array('single' => gettext('Single host'));
+
+	foreach ($ifdisp as $ifent => $ifdesc) {
+		if (have_ruleint_access($ifent)) {
+			$list[$ifent . 'ip'] = $ifdesc . ' address';
+		}
+	}
+
+	return($list);
+}
+
+function exttype_selected() {
+	global $pconfig;
+
+	if ($pconfig['exttype']) {
+		// The rule type came from the $_POST array, after input errors, so keep it.
+		return $pconfig['exttype'];
+	}
+
+	$sel = is_specialnet($pconfig['external']);
+
+	if (!$sel) {
+		return('single');
+	}
+
+	return($pconfig['external']);
+}
+
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
@@ -440,12 +475,29 @@ $section->addInput(new Form_Select(
 	filter_get_interface_list()
 ))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
 
-$section->addInput(new Form_IpAddress(
+$group = new Form_Group('*External subnet IP');
+
+$group->add(new Form_StaticText(
+	null,
+	null
+))->setWidth(3);
+
+$group->add(new Form_Select(
+	'exttype',
+	null,
+	exttype_selected(),
+	build_exttype_list()
+))->setHelp('Type')->setWidth(3);
+
+$group->add(new Form_IpAddress(
 	'external',
-	'*External subnet IP',
-	$pconfig['external']
-))->setHelp('Enter the external (usually on a WAN) subnet\'s starting address for the 1:1 mapping. ' .
-			'The subnet mask from the internal address below will be applied to this IP address.');
+	null,
+	is_specialnet($pconfig['external']) ? '': $pconfig['external']
+))->setHelp('Address')->setWidth(3);
+
+$group->setHelp('Enter the external (usually on a WAN) subnet\'s starting address or interface for the 1:1 mapping.');
+
+$section->add($group);
 
 $group = new Form_Group('*Internal IP');
 
@@ -569,6 +621,16 @@ events.push(function() {
 				disableInput('dstmask', true);
 				break;
 		}
+
+		switch ($('#exttype').find(":selected").index()) {
+			case 0: // single
+				disableInput('external', false);
+				break;
+			default:
+				$('#external').val('');
+				disableInput('external', true);
+				break;
+		}
 	}
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
@@ -578,6 +640,10 @@ events.push(function() {
 	});
 
 	$('#dsttype').change(function () {
+		typesel_change();
+	});
+
+	$('#exttype').change(function () {
 		typesel_change();
 	});
 

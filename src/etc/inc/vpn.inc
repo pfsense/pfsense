@@ -389,7 +389,7 @@ l2tps:
 	set link enable incoming
 
 EOD;
-			if (isset($l2tpcfg['secret'])) {
+			if (!empty($l2tpcfg['secret'])) {
 				$secret = str_replace('"', '\"', $l2tpcfg['secret']);
 				$mpdconf .=<<<EOD
 	set l2tp secret "{$secret}"

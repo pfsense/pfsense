@@ -7310,11 +7310,24 @@ function create_interface_list() {
 	return($iflist);
 }
 
-function is_pseudo_interface($inf) {
+function is_pseudo_interface($inf, $tap=true) {
+	global $config;
 	$psifs = array('ovpn', 'ipsec', 'l2tp', 'pptp', 'gif', 'gre', 'ppp', 'pppoe');
 	foreach ($psifs as $pif) {
 		if (substr($inf, 0, strlen($pif)) == $pif) {
-			return true;
+			if (($pif == 'ovpn') && $tap) {
+				preg_match('/ovpn([cs])([1-9]+)/', $inf, $m);
+				$type = ($m[1] == 'c') ? 'client' : 'server';
+				foreach ($config['openvpn']['openvpn-'.$type] as $ovpn) {
+					if (($ovpn['vpnid'] == $m[2]) && ($ovpn['dev_mode'] == 'tap')) {
+						return false; 	
+					} elseif ($ovpn['vpnid'] == $m[2]) {
+						return true;
+					}
+				}
+			} else {
+				return true;
+			}
 		}
 	}
 	return false;

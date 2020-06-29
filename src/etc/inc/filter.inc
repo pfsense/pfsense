@@ -1965,7 +1965,13 @@ function filter_nat_rules_generate() {
 
 			$sn = "";
 			$sn1 = "";
-			$target = alias_expand($rule['external']);
+			if (is_ipaddr($rule['external'])) {
+				$target = $rule['external'];
+			} else {
+				$tmprule = array();
+				$tmprule['external']['network'] = $rule['external'];
+				$target = filter_generate_address($tmprule, 'external');
+			}
 			if (!$target) {
 				$natrules .= "# Unresolvable alias {$rule['target']}\n";
 				continue;               /* unresolvable alias */

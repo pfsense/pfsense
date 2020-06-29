@@ -298,12 +298,24 @@ if ($_POST['save']) {
 		foreach ($a_phase1 as $ph1tmp) {
 			if ($p1index != $t) {
 				$tremotegw = $pconfig['remotegw'];
-				if (($ph1tmp['remote-gateway'] == $tremotegw) && !isset($ph1tmp['disabled']) && (!isset($pconfig['gw_duplicates']) || !isset($ph1tmp['gw_duplicates']))) {
+				if (($ph1tmp['remote-gateway'] == $tremotegw) && ($ph1tmp['remote-gateway'] != '0.0.0.0') &&
+				    ($ph1tmp['remote-gateway'] != '::') && !isset($ph1tmp['disabled']) &&
+				    (!isset($pconfig['gw_duplicates']) || !isset($ph1tmp['gw_duplicates']))) {
 					$input_errors[] = sprintf(gettext('The remote gateway "%1$s" is already used by phase1 "%2$s".'), $tremotegw, $ph1tmp['descr']);
 				}
 			}
 			$t++;
 		}
+	}
+
+	if (($pconfig['remotegw'] == '0.0.0.0') || ($pconfig['remotegw'] == '::')) {
+		if (!isset($pconfig['responderonly'])) {
+			$input_errors[] = gettext('The remote gateway "0.0.0.0" or "::" address can only be used with "Responder Only".');
+		}
+		if ($pconfig['peerid_type'] == "peeraddress") {
+			$input_errors[] = gettext('The remote gateway "0.0.0.0" or "::" address can not be used with IP address peer identifier.');
+		}
+
 	}
 
 	if (($pconfig['iketype'] == "ikev1") && is_array($a_phase2) && (count($a_phase2))) {
@@ -732,7 +744,12 @@ if (!$pconfig['mobile']) {
 		'*Remote Gateway',
 		'text',
 		$pconfig['remotegw']
-	))->setHelp('Enter the public IP address or host name of the remote gateway.');
+	))->setHelp('Enter the public IP address or host name of the remote gateway.%1$s%2$s%3$s',
+	    '<div class="infoblock">',
+	    sprint_info_box(gettext('Use \'0.0.0.0\' to allow connections from any IPv4 address or \'::\' ' . 
+	    'to allow connections from any IPv6 address.' . '<br/>' . 'Responder Only must be set and ' . 
+	    'Peer IP Address cannot be used for Remote Identifier.'), 'info', false),
+	    '</div>');
 }
 
 $section->addInput(new Form_Input(

@@ -1052,7 +1052,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 
 	$gways = order_gateways_as_configured($gateways_arr);
 
-	// Add the tier names here so that ststem_gateways.php doesn't need to
+	// Add the tier names here so that system_gateways.php doesn't need to
 	foreach ($gways as $idx => $gway) {
 		$gways[$idx]['tiername'] = gateway_getgwtiername($gways, $idx);
 	}

@@ -238,39 +238,6 @@ foreach($simplefields as $field) {
 	$pconfig[$field] = $config['gateways'][$field];
 }
 
-function gateway_displaygwtiername($gwname) {
-	global $config;
-	$gw = lookup_gateway_or_group_by_name($gwname);
-	if ($config['gateways']['defaultgw4'] == $gwname || $config['gateways']['defaultgw6'] == $gwname) {
-		$result = "Default";
-	} else {
-		if ($gw['ipprotocol'] == 'inet') {
-			$defgw = lookup_gateway_or_group_by_name($config['gateways']['defaultgw4']);
-		} else {
-			$defgw = lookup_gateway_or_group_by_name($config['gateways']['defaultgw6']);
-		}
-		if ($defgw['type'] == "gatewaygroup") {
-			$detail = gateway_is_gwgroup_member($gwname, true);
-			foreach($detail as $gwitem) {
-				if ($gwitem['name'] == $defgw['name']) {
-					if (isset($gwitem['tier'])) {
-						$result = "Tier " . $gwitem['tier'];
-						break;
-					}
-				}
-			}
-		}
-	}
-	if (!empty($result)) {
-		if ($gw['ipprotocol'] == "inet") {
-			$result .= " (IPv4)";
-		} elseif ($gw['ipprotocol'] == "inet6") {
-			$result .= " (IPv6)";
-		}
-	}
-	return $result;
-}
-
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"));
 $pglinks = array("", "@self", "@self");
 $shortcut_section = "gateways";
@@ -354,7 +321,7 @@ foreach ($a_gateways as $i => $gateway):
 ?>
 						</td>
 						<td>
-							<?=gateway_displaygwtiername($gateway['name'])?>
+							<?=htmlspecialchars($gateway['tiername'])?>
 						</td>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>

@@ -319,18 +319,21 @@ display_top_tabs($tab_array);
 <?php
 foreach ($a_gateways as $i => $gateway):
 	if (isset($gateway['inactive'])) {
+		$title = gettext("Gateway inactive, interface is missing");
 		$icon = 'fa-times-circle-o';
 	} elseif (isset($gateway['disabled'])) {
 		$icon = 'fa-ban';
+		$title = gettext("Gateway disabled");
 	} else {
 		$icon = 'fa-check-circle-o';
+		$title = gettext("Gateway enabled");
 	}
 
-	if (isset($gateway['inactive'])) {
-		$title = gettext("This gateway is inactive because interface is missing");
-	} else {
-		$title = '';
+	$gtitle = "";
+	if (isset($gateway['isdefaultgw'])) {
+		$gtitle = gettext("Default gateway");
 	}
+
 	$id = $gateway['attribute'];
 ?>
 				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?> onClick="fr_toggle(<?=$id;?>)" id="fr<?=$id;?>">
@@ -342,7 +345,7 @@ foreach ($a_gateways as $i => $gateway):
 						<?php endif; ?>
 					</td>
 					<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
-					<td>
+					<td title="<?=$gtitle?>">
 						<?=htmlspecialchars($gateway['name'])?>
 <?php
 						if (isset($gateway['isdefaultgw'])) {
@@ -451,7 +454,10 @@ print $form;
 <div class="infoblock">
 <?php
 print_info_box(
-	sprintf(gettext('%1$s%2$s%3$s is the current default route as present in the current routing table of the operating system'), '<strong>', '<i class="fa fa-globe"></i>', '</strong>')
+	sprintf(gettext('%1$s The current default route as present in the current routing table of the operating system'), '<strong><i class="fa fa-globe"></i></strong>') .
+	sprintf(gettext('%1$s Gateway is inactive, interface is missing'), '<br /><strong><i class="fa fa-times-circle-o"></i></strong>') .
+	sprintf(gettext('%1$s Gateway disabled'), '<br /><strong><i class="fa fa-ban"></i></strong>') .
+	sprintf(gettext('%1$s Gateway enabled'), '<br /><strong><i class="fa fa-check-circle-o"></i></strong>')
 	);
 ?>
 </div>

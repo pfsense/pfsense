@@ -336,21 +336,21 @@ foreach ($a_gateways as $i => $gateway):
 
 	$id = $gateway['attribute'];
 ?>
-				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?> onClick="fr_toggle(<?=$id;?>)" id="fr<?=$id;?>">
-					<td style="white-space: nowrap;">
-						<?php 
-						if (is_numeric($id)) :?>
-							<input type='checkbox' id='frc<?=$id?>' onClick='fr_toggle(<?=$id?>)' name='row[]' value='<?=$id?>'/>
-							<a class='fa fa-anchor' id='Xmove_<?=$id?>' title='"<?=gettext("Move checked entries to here")?>"'></a>
-						<?php endif; ?>
-					</td>
-					<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
-					<td title="<?=$gtitle?>">
+					<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?> onClick="fr_toggle(<?=$id;?>)" id="fr<?=$id;?>">
+						<td style="white-space: nowrap;">
+							<?php 
+							if (is_numeric($id)) :?>
+								<input type='checkbox' id='frc<?=$id?>' onClick='fr_toggle(<?=$id?>)' name='row[]' value='<?=$id?>'/>
+								<a class='fa fa-anchor' id='Xmove_<?=$id?>' title='"<?=gettext("Move checked entries to here")?>"'></a>
+							<?php endif; ?>
+						</td>
+						<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
+						<td title="<?=$gtitle?>">
 						<?=htmlspecialchars($gateway['name'])?>
 <?php
-						if (isset($gateway['isdefaultgw'])) {
-							echo ' <i class="fa fa-globe"></i>';
-						}
+							if (isset($gateway['isdefaultgw'])) {
+								echo ' <i class="fa fa-globe"></i>';
+							}
 ?>
 						</td>
 						<td>

@@ -2166,60 +2166,65 @@ function gateway_or_gwgroup_exists($name) {
 // These two replacement functions avoid the need to call return_gateways_array() multiple times and
 // allow system_gateways.php to get everything it needs in a single function call
 function gateway_getgwtiername($gways, $idx) {
-        global $config;
+	global $config;
 
-        $gwname = $gways[$idx]['name'];
-        $gw = get_gateway_or_group_by_name($gwname, $gways);
-        if ($config['gateways']['defaultgw4'] == $gwname || $config['gateways']['defaultgw6'] == $gwname) {
-                $result = "Default";
-        } else {
-                if ($gw['ipprotocol'] == 'inet') {
-                        $defgw = get_gateway_or_group_by_name($config['gateways']['defaultgw4'], $gways);
-                } else {
-                        $defgw = get_gateway_or_group_by_name($config['gateways']['defaultgw6'], $gways);
-                }
-                if ($defgw['type'] == "gatewaygroup") {
-                        $detail = gateway_is_gwgroup_member($gwname, true);
-                        foreach($detail as $gwitem) {
-                                if ($gwitem['name'] == $defgw['name']) {
-                                        if (isset($gwitem['tier'])) {
-                                                $result = "Tier " . $gwitem['tier'];
-                                                break;
-                                        }
-                                }
-                        }
-                }
-        }
-        if (!empty($result)) {
-                if ($gw['ipprotocol'] == "inet") {
-                        $result .= " (IPv4)";
-                } elseif ($gw['ipprotocol'] == "inet6") {
-                        $result .= " (IPv6)";
-                }
-        }
-        return $result;
+	$result = "";
+	$gwname = $gways[$idx]['name'];
+
+	$gw = get_gateway_or_group_by_name($gwname, $gways);
+	if ($config['gateways']['defaultgw4'] == $gwname || $config['gateways']['defaultgw6'] == $gwname) {
+		$result = "Default";
+	} else {
+		if ($gw['ipprotocol'] == 'inet') {
+			$defgw = get_gateway_or_group_by_name($config['gateways']['defaultgw4'], $gways);
+		} else {
+			$defgw = get_gateway_or_group_by_name($config['gateways']['defaultgw6'], $gways);
+		}
+
+		if ($defgw['type'] == "gatewaygroup") {
+			$detail = gateway_is_gwgroup_member($gwname, true);
+			foreach($detail as $gwitem) {
+				if ($gwitem['name'] == $defgw['name']) {
+					if (isset($gwitem['tier'])) {
+						$result = "Tier " . $gwitem['tier'];
+					break;
+					 }
+				}
+			}
+		}
+    }
+
+	if (!empty($result)) {
+		if ($gw['ipprotocol'] == "inet") {
+			$result .= " (IPv4)";
+		} elseif ($gw['ipprotocol'] == "inet6") {
+			$result .= " (IPv6)";
+		}
+	}
+
+	return $result;
 }
 
 function get_gateway_or_group_by_name($gwname, $gateways_arr) {
-        global $config;
+	global $config;
 
-        foreach ($gateways_arr as $gw) {
-                if ($gw['name'] == $gwname) {
-                        $gw['type'] = 'gateway';
-                        return $gw;
-                }
-        }
+	foreach ($gateways_arr as $gw) {
+		if ($gw['name'] == $gwname) {
+			$gw['type'] = 'gateway';
+			return $gw;
+		}
+	}
 
-        if (is_array($config['gateways']['gateway_group'])) {
-                foreach ($config['gateways']['gateway_group'] as $gwg) {
-                        if ($gwg['name'] == $gwname) {
-                                $gwg['type'] = 'gatewaygroup';
-                                return $gwg;
-                        }
-                }
-        }
+	if (is_array($config['gateways']['gateway_group'])) {
+		foreach ($config['gateways']['gateway_group'] as $gwg) {
+			if ($gwg['name'] == $gwname) {
+				$gwg['type'] = 'gatewaygroup';
+				return $gwg;
+			}
+		}
+	}
 
-        return false;
+	return false;
 }
 
 ?>

@@ -46,6 +46,7 @@ require_once("guiconfig.inc");
 global $cpzone;
 global $cpzoneid;
 
+$concurrentlogins_list = array("disabled" => "Disabled", "multiple" => "Multiple", "last" => "Last login", "first" => "First login");
 $cpzoneid = 1; /* Just a default */
 $cpzone = $_REQUEST['zone'];
 
@@ -142,7 +143,15 @@ if ($a_cp[$cpzone]) {
 	$pconfig['bwdefaultdn'] = $a_cp[$cpzone]['bwdefaultdn'];
 	$pconfig['bwdefaultup'] = $a_cp[$cpzone]['bwdefaultup'];
 	$pconfig['nomacfilter'] = isset($a_cp[$cpzone]['nomacfilter']);
-	$pconfig['noconcurrentlogins'] = isset($a_cp[$cpzone]['noconcurrentlogins']);
+	if (isset($a_cp[$cpzone]['noconcurrentlogins'])) {
+		if (!empty($a_cp[$cpzone]['noconcurrentlogins'])) {
+			$pconfig['noconcurrentlogins'] = $a_cp[$cpzone]['noconcurrentlogins'];
+		} else {
+			$pconfig['noconcurrentlogins'] = 'disabled';
+		}
+	} else {
+		$pconfig['noconcurrentlogins'] = 'multiple';
+	}
 	$pconfig['redirurl'] = $a_cp[$cpzone]['redirurl'];
 	$pconfig['radiussession_timeout'] = isset($a_cp[$cpzone]['radiussession_timeout']);
 	$pconfig['radiustraffic_quota'] = isset($a_cp[$cpzone]['radiustraffic_quota']);
@@ -278,6 +287,10 @@ if ($_POST['save']) {
 		}
 	}
 
+	if (isset($_POST['noconcurrentlogins']) && !in_array($_POST['noconcurrentlogins'], array_keys($concurrentlogins_list))) {
+		$input_errors[] = gettext("You need to select an option for Concurrent user logins.");
+	}
+
 	if (isset($_POST['radacct_enable']) && empty(auth_get_authserver($_POST['radacct_server']))) {
 		$input_errors[] = gettext("You need to select at least one accounting server.");
 	}
@@ -373,7 +386,13 @@ if ($_POST['save']) {
 		$newcp['nohttpsforwards'] = $_POST['nohttpsforwards'] ? true : false;
 		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
 		$newcp['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
-		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
+		if ($_POST['noconcurrentlogins'] == 'multiple') {
+			unset($newcp['noconcurrentlogins']);
+		} elseif ($_POST['noconcurrentlogins'] == 'disabled') {
+			$newcp['noconcurrentlogins'] = true;
+		} else {
+			$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'];
+		}
 		$newcp['redirurl'] = $_POST['redirurl'];
 		$newcp['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
 		$newcp['radiustraffic_quota'] = $_POST['radiustraffic_quota'] ? true : false;
@@ -633,13 +652,17 @@ if (captiveportal_xmlrpc_sync_get_details($tmpsyncip, $tmpport, $tmpusername, $t
 	))->setHelp("If enabled, connected users won't be disconnected during a pfSense reboot.");
 }
 
-$section->addInput(new Form_Checkbox(
+$section->addInput(new Form_Select(
 	'noconcurrentlogins',
 	'Concurrent user logins',
-	'Disable Concurrent user logins',
-	$pconfig['noconcurrentlogins']
-))->setHelp('If enabled only the most recent login per username will be active. Subsequent logins will cause machines previously logged in with the ' .
-			'same username to be disconnected.');
+	$pconfig['noconcurrentlogins'],
+	$concurrentlogins_list
+))->setHelp('Disabled: Do not allow concurrent logins per username or voucher.%1$s' .
+			'Multiple: No restrictions to the number of logins per username or voucher will be applied.%1$s' .
+			'Last login: Only the most recent login per username or voucher will be granted. ' .
+			'Previous logins will be disconnected.%1$s' .
+			'First login: Only the first login per username or voucher will be granted. ' .
+			'Further login attempts using the username or voucher will not be possible while an initial user is already active.', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'nomacfilter',
@@ -1178,9 +1201,9 @@ events.push(function() {
 		hideInput('preauthurl', hide);
 		hideInput('redirurl', hide);
 		hideInput('blockedmacsurl', hide);
+		hideInput('noconcurrentlogins', hide);
 		hideCheckbox('preservedb', hide);
 		hideCheckbox('preservedb_disabled', hide);
-		hideCheckbox('noconcurrentlogins', hide);
 		hideCheckbox('nomacfilter', hide);
 		hideCheckbox('passthrumacadd', hide);
 		hideCheckbox('peruserbw', hide);

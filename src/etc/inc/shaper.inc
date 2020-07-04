@@ -4251,7 +4251,7 @@ EOD;
 
 		// If there are no bandwidths defined, make a blank one for convenience
 		if (empty($bandwidth)) {
-			$bandwidth = array(0 => array('bw' => '', 'bwscale' => 'Kb', 'bwsched' => 'none'));
+			$bandwidth = array(0 => array('bw' => '', 'bwscale' => 'Mb', 'bwsched' => 'none'));
 		}
 
 		if (is_array($bandwidth)) {

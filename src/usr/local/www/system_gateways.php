@@ -376,42 +376,20 @@ foreach ($a_gateways as $i => $gateway):
 $form = new Form;
 $section = new Form_Section('Default gateway');
 
-$items4 = array();
-$items6 = array();
-$items4[''] = "Automatic";
-$items6[''] = "Automatic";
-foreach($a_gateways as $gw) {
-	$gwn = $gw['name'];
-	if ($gw['ipprotocol'] == "inet6") {
-		$items6[$gwn] = $gwn;
-	} else {
-		$items4[$gwn] = $gwn;
-	}
-}
-$groups = return_gateway_groups_array();
-foreach ($groups as $key => $group) {
-	$gwn = $group['descr'];
-	if ($group['ipprotocol'] == "inet6") {
-		$items6[$key] = "$key ($gwn)";
-	} else {
-		$items4[$key] = "$key ($gwn)";
-	}
-}
-$items4['-'] = "None";
-$items6['-'] = "None";
+$dflts = available_default_gateways();
 
 $section->addInput(new Form_Select(
 	'defaultgw4',
 	'Default gateway IPv4',
 	$pconfig['defaultgw4'],
-	$items4
+	$dflts['v4']
 ))->setHelp('Select the gateway or gatewaygroup to use as the default gateway.');
 
 $section->addInput(new Form_Select(
 	'defaultgw6',
 	'Default gateway IPv6',
 	$pconfig['defaultgw6'],
-	$items6
+	$dflts['v6']
 ))->setHelp('Select the gateway or gatewaygroup to use as the default gateway.');
 
 $form->add($section);

@@ -324,7 +324,7 @@ foreach ($a_gateways as $i => $gateway):
 							<?=htmlspecialchars($gateway['tiername'])?>
 						</td>
 						<td>
-							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>
+							<?=htmlspecialchars($gateway['friendlyifdescr'])?>
 						</td>
 						<td>
 							<?=htmlspecialchars($gateway['gateway'])?>

@@ -664,6 +664,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			}
 
 			$gateway['friendlyiface'] = $gateway['interface'];
+			$gateway['friendlyifdescr'] = convert_friendly_interface_to_friendly_descr($gateway['interface']);
 
 			/* special treatment for tunnel interfaces */
 			if ($gateway['ipprotocol'] == "inet6") {
@@ -813,6 +814,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
 		$gateway['interface'] = get_real_interface($ifname);
 		$gateway['friendlyiface'] = $ifname;
+		$gateway['friendlyifdescr'] = convert_friendly_interface_to_friendly_descr($ifname);
 		$gateway['name'] = "{$friendly}{$ctype}";
 		$gateway['attribute'] = "system";
 
@@ -961,6 +963,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				break;
 		}
 		$gateway['friendlyiface'] = $ifname;
+		$gateway['friendlyifdescr'] = convert_friendly_interface_to_friendly_descr($ifname);
 		$gateway['name'] = "{$friendly}{$ctype}";
 		$gateway['attribute'] = "system";
 
@@ -2187,8 +2190,8 @@ function gateway_getgwtiername($gways, $idx) {
 				if ($gwitem['name'] == $defgw['name']) {
 					if (isset($gwitem['tier'])) {
 						$result = "Tier " . $gwitem['tier'];
-					break;
-					 }
+						break;
+					}
 				}
 			}
 		}

@@ -94,6 +94,11 @@ $gamesplist['gamesforwindowslive'] = array();
 	$gamesplist['gamesforwindowslive'][] = array('Games4WinLive-2', 'udp', '3074', '3074', 'both');
 	$gamesplist['gamesforwindowslive'][] = array('Games4WinLive-3', 'tcp', '3074', '3074', 'both');
 
+$gamesplist['googlestadia'] = array();
+	/* Google Stadia */
+	$gamesplist['googlestadia'][] = array('google-stadia-UDP-1', 'udp', '44700', '44899', 'both');
+	$gamesplist['googlestadia'][] = array('google-stadia-TCP-1', 'tcp', '44700', '44899', 'both');
+
 /* Games */
 
 $gamesplist['arma2'] = array();

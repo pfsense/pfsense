@@ -480,6 +480,12 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;xboxconsoles</bindstofield>
 			</field>
 			<field>
+				<name>GoogleStadia</name>
+				<type>checkbox</type>
+				<typehint>Google Stadia</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;googlestadia</bindstofield>
+			</field>
+			<field>
 				<name>Enable/Disable specific games</name>
 				<type>listtopic</type>
 			</field>

@@ -122,7 +122,7 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		if (strtolower($pconfig['save']) == strtolower(gettext("save"))) {
+		if (strtolower($pconfig['save']) == strtolower(gettext("Save"))) {
 			$acl_entry = array();
 			$acl_entry['aclid'] = $pconfig['aclid'];
 			$acl_entry['aclname'] = $pconfig['aclname'];

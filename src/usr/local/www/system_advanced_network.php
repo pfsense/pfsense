@@ -38,6 +38,8 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+$show_reboot_msg = false;
+$reboot_msg = gettext('Changing the Hardware Checksum setting requires a system reboot.') . '\n\n' . gettext('Reboot now?');
 
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = isset($config['diag']['ipv6nat']['ipaddr']) ? $config['diag']['ipv6nat']['ipaddr'] : null;
@@ -147,6 +149,12 @@ if ($_POST) {
 		} else {
 			unset($config['system']['sharednet']);
 			system_enable_arp_wrong_if();
+		}
+
+		if ((isset($_POST['disablechecksumoffloading']) xor isset($config['system']['disablechecksumoffloading'])) ||
+		    (isset($_POST['disablesegmentationoffloading']) xor isset($config['system']['disablesegmentationoffloading'])) ||
+		    (isset($_POST['disablelargereceiveoffloading']) xor isset($config['system']['disablelargereceiveoffloading']))) {
+			$show_reboot_msg = true;
 		}
 
 		if ($_POST['disablechecksumoffloading'] == "yes") {
@@ -470,6 +478,9 @@ events.push(function() {
 	setIpv6duid();
 	showHideIpv6duid();
 
+	if (<?=(int)$show_reboot_msg?> && confirm("<?=$reboot_msg?>")) {
+		postSubmit({override : 'yes'}, 'diag_reboot.php')
+	}
 
 });
 //]]>

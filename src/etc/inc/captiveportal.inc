@@ -1443,15 +1443,15 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	 */
 	if ($ishostname === true) {
 		if (!platform_booting()) {
-			$ipaddress = gethostbyname($ipent['hostname']);
-			if (!is_ipaddr($ipaddress)) {
+			$ipaddress = resolve_host_addresses($ipent['hostname'], array(DNS_A), false);
+			if (empty($ipaddress)) {
 				return;
 			}
 		} else {
-			$ipaddress = "";
+			$ipaddress = array();
 		}
 	} else {
-		$ipaddress = $ipent['ip'];
+		$ipaddress = array($ipent['ip']);
 	}
 
 	$rules = "";
@@ -1479,7 +1479,7 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	if ($ishostname === true) {
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} {$cpzone}_allowed_up pipe {$pipeup}\n";
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} {$cpzone}_allowed_down pipe {$pipedown}\n";
-		if (!is_ipaddr($ipaddress)) {
+		if (!is_ipaddr($ipaddress[0])) {
 			return array("", $cp_filterdns_conf);
 		}
 	}
@@ -1488,8 +1488,10 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	if (!empty($ipent['sn'])) {
 		$subnet = "/{$ipent['sn']}";
 	}
-	$rules .= "table {$cpzone}_allowed_up add {$ipaddress}{$subnet} {$pipeup}\n";
-	$rules .= "table {$cpzone}_allowed_down add {$ipaddress}{$subnet} {$pipedown}\n";
+	foreach ($ipaddress as $ip) {
+		$rules .= "table {$cpzone}_allowed_up add {$ip}{$subnet} {$pipeup}\n";
+		$rules .= "table {$cpzone}_allowed_down add {$ip}{$subnet} {$pipedown}\n";
+	}
 
 	if ($ishostname === true) {
 		return array($rules, $cp_filterdns_conf);

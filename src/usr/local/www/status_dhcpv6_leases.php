@@ -161,7 +161,7 @@ foreach ($config['interfaces'] as $ifname => $ifarr) {
 	    is_array($config['dhcpdv6'][$ifname]['staticmap'])) {
 		foreach ($config['dhcpdv6'][$ifname]['staticmap'] as $static) {
 			$slease = array();
-			$slease['ip'] = $static['ipaddrv6'];
+			$slease['ip'] = merge_ipv6_delegated_prefix(get_interface_ipv6($ifname), $static['ipaddrv6'], get_interface_subnetv6($ifname));
 			$slease['type'] = "static";
 			$slease['duid'] = $static['duid'];
 			$slease['start'] = "";
@@ -305,7 +305,7 @@ foreach ($leases as $data):
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
 			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
-					if ($data['ip'] == $staticent['ipaddr']) {
+					if ($data['ip'] == $staticent['ipaddrv6']) {
 						$data['if'] = $dhcpif;
 						break;
 					}
@@ -390,7 +390,7 @@ foreach ($prefixes as $data):
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
 			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
-					if ($data['ip'] == $staticent['ipaddr']) {
+					if ($data['ip'] == $staticent['ipaddrv6']) {
 						$data['if'] = $dhcpif;
 						break;
 					}

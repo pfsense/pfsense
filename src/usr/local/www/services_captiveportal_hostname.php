@@ -126,7 +126,7 @@ $i = 0;
 foreach ($a_cp[$cpzone]['allowedhostname'] as $ip): ?>
 			<tr>
 				<td>
-					<?=$directionicons[$ip['dir']]?>&nbsp;<?=strtolower($ip['hostname'])?>
+					<?=$directionicons[$ip['dir']]?>&nbsp;<?=strtolower(idn_to_utf8($ip['hostname']))?>
 				</td>
 				<td >
 					<?=htmlspecialchars($ip['descr'])?>

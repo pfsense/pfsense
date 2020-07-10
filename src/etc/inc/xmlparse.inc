@@ -218,7 +218,7 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 /* Return true if a field should be cdata encoded */
 function is_cdata_entity($ent) {
 	$cdata_fields = array(
-		'auth_pass', 'auth_prompt', 'auth_user', 'certca', 'certname', 'city', 'common_name',
+		'aclname', 'auth_pass', 'auth_prompt', 'auth_user', 'certca', 'certname', 'city', 'common_name',
 		'descr', 'detail', 'email', 'encryption_password', 'ldap_attr',
 		'ldap_authcn', 'ldap_basedn', 'ldap_basedomain', 'ldap_bind', 'ldapbinddn',
 		'ldapbindpass', 'ldap_extended_query', 'ldap_filter', 'ldap_pass', 'ldap_user',

@@ -6550,7 +6550,8 @@ function get_interface_subnet($interface = "wan") {
 	}
 
 	if (is_array($config['interfaces'][$interface]) &&
-		!empty($config['interfaces'][$interface]['subnet'])) {
+	    !empty($config['interfaces'][$interface]['subnet']) &&
+	    is_ipaddrv4($config['interfaces'][$interface]['ipaddr'])) {
 		return ($config['interfaces'][$interface]['subnet']);
 	}
 
@@ -6577,7 +6578,8 @@ function get_interface_subnetv6($interface = "wan") {
 	}
 
 	if (is_array($config['interfaces'][$interface]) &&
-		!empty($config['interfaces'][$interface]['subnetv6'])) {
+	    !empty($config['interfaces'][$interface]['subnetv6']) &&
+	    is_ipaddrv6($config['interfaces'][$interface]['ipaddrv6'])) {
 		return ($config['interfaces'][$interface]['subnetv6']);
 	}
 

@@ -876,6 +876,7 @@ function filter_generate_gateways() {
 	/* Lookup Gateways to be used in filter rules once */
 	$GatewaysList = return_gateways_array();
 	$GatewayGroupsList = return_gateway_groups_array(true);
+	$GatewaysStatus = return_gateways_status(true);
 
 	if (is_array($GatewaysList)) {
 		foreach ($GatewaysList as $gwname => $gateway) {
@@ -885,7 +886,8 @@ function filter_generate_gateways() {
 			if (!is_ipaddr($gwip)) {
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
 			}
-			if (is_ipaddr($gwip) && !empty($int) && !isset($gateway['force_down'])) {
+			if (is_ipaddr($gwip) && !empty($int) && !isset($gateway['force_down']) &&
+			    (($GatewaysStatus[$gwname]['status'] != 'down') || isset($gateway['action_disable']))) {
 				$route = "route-to ( {$int} {$gwip} )";
 			}
 			if (($route === "") && isset($config['system']['skip_rules_gw_down'])) {
@@ -906,10 +908,25 @@ function filter_generate_gateways() {
 				$foundlb = 0;
 				$routeto = "";
 				$routetomembers = 0;
+				$trigger = "";
+				foreach ($config['gateways']['gateway_group'] as $group) {
+					if ($group['name'] == $gateway) {
+						$trigger = $group['trigger'];
+						break;
+					}
+				}
 				foreach ($members as $idx => $member) {
 					$int = $member['int'];
 					$gatewayip = $member['gwip'];
-					if (($int <> "") && is_ipaddr($gatewayip)) {
+					if (!empty($int) && is_ipaddr($gatewayip) &&
+					    isset($GatewaysList[$member['gw']]) &&
+					    (isset($GatewaysList[$member['gw']]['action_disable']) ||
+					    (!isset($GatewaysList[$member['gw']]['force_down']) &&
+					    !stristr($GatewaysStatus[$member['gw']]['status'], 'down') && 
+					    ((!stristr($GatewaysStatus[$member['gw']]['status'], 'loss') &&
+					    !stristr($trigger, 'loss')) ||
+					    (!stristr($GatewaysStatus[$member['gw']]['status'], 'delay') &&
+					    !stristr($trigger, 'latency')))))) {
 						if ($g['debug']) {
 							log_error(sprintf(gettext('Setting up route with %1$s on %2$s'), $gatewayip, $int));
 						}

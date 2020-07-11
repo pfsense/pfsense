@@ -455,6 +455,7 @@ function build_area_list($showall) {
 		"unbound" => gettext("DNS Resolver"),
 		"dhcpd" => gettext("DHCP Server"),
 		"dhcpdv6" => gettext("DHCPv6 Server"),
+		"dyndnses" => gettext("Dynamic DNS"),
 		"filter" => gettext("Firewall Rules"),
 		"interfaces" => gettext("Interfaces"),
 		"ipsec" => gettext("IPSEC"),

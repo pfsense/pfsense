@@ -2012,6 +2012,9 @@ function filter_nat_rules_generate() {
 				continue;
 			}
 
+			if (!is_ipaddr($srcaddr) && !is_subnet($srcaddr)) {
+				$srcaddr = explode(' ', $srcaddr)[1];
+			}
 			$tmp = explode('/', $srcaddr);
 			$srcip = $tmp[0];
 			if (!empty($tmp[1]) && is_numeric($tmp[1])) {

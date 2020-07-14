@@ -121,6 +121,41 @@ function restore_rrddata() {
 	}
 }
 
+function voucher_data_xml($tab=false) {
+	global $g;
+
+	$voucher_files = glob("{$g['vardb_path']}/voucher_*.db");
+	if (empty($voucher_files)) {
+		return;
+	}
+	$t = ($tab) ? "\t" : "";
+	$result = "\t<voucherdata>\n";
+	foreach ($voucher_files as $voucher_file) {
+		$basename = basename($voucher_file);
+		$db_data = file_get_contents($voucher_file);
+		if ($db_data !== false) {
+			$result .= "{$t}\t\t<voucherdbfile>\n";
+			$result .= "{$t}\t\t\t<filename>{$basename}</filename>\n";
+			$result .= "{$t}\t\t\t<dbdata>" . base64_encode(gzdeflate($db_data)) . "</dbdata>\n";
+			$result .= "{$t}\t\t</voucherdbfile>\n";
+		}
+	}
+	$result .= "{$t}\t</voucherdata>\n";
+
+	return $result;
+}
+
+function restore_voucher_data() {
+	global $config, $g;
+	foreach ($config['voucher']['voucherdata']['voucherdbfile'] as $db) {
+		$voucherdb_file = "{$g['vardb_path']}/{$db['filename']}";
+		if (file_put_contents($voucherdb_file, gzinflate(base64_decode($db['dbdata']))) === false) {
+			log_error(sprintf(gettext("Cannot write %s"), $voucherdb_file));
+			continue;
+		}
+	}
+}
+
 function remove_bad_chars($string) {
 	return preg_replace('/[^a-z_0-9]/i', '', $string);
 }
@@ -187,6 +222,12 @@ if ($_POST) {
 					} else if ($_POST['backuparea'] === "rrddata") {
 						$data = rrd_data_xml();
 						$name = "{$_POST['backuparea']}-{$name}";
+					} else if ($_POST['backuparea'] === "voucher") {
+						$data = backup_config_section($_POST['backuparea']);
+						$voucher_data_xml = voucher_data_xml();
+						$closing_tag = "</voucher>";
+						$data = str_replace($closing_tag, $voucher_data_xml . $closing_tag, $data);
+						$name = "{$_POST['backuparea']}-{$name}";
 					} else {
 						/* backup specific area of configuration */
 						$data = backup_config_section($_POST['backuparea']);
@@ -205,6 +246,12 @@ if ($_POST) {
 				 *     https://redmine.pfsense.org/issues/10508 */
 				$data = preg_replace("/[[:blank:]]*<rrddata>.*<\\/rrddata>[[:blank:]]*\n*/s", "", $data);
 				$data = preg_replace("/[[:blank:]]*<rrddata\\/>[[:blank:]]*\n*/", "", $data);
+
+				if (!$_POST['backuparea'] && !empty($config['voucher'])) {
+					$voucher_data_xml = voucher_data_xml(true);
+					$closing_tag = "</voucher>";
+					$data = str_replace($closing_tag, $voucher_data_xml . $closing_tag, $data);
+				}
 
 				if ($_POST['backuparea'] !== "rrddata" && !$_POST['donotbackuprrd']) {
 					$rrd_data_xml = rrd_data_xml();
@@ -266,11 +313,18 @@ if ($_POST) {
 							if (!restore_config_section($_POST['restorearea'], $data)) {
 								$input_errors[] = gettext("An area to restore was selected but the correct xml tag could not be located.");
 							} else {
-								if ($config['rrddata']) {
-									restore_rrddata();
-									unset($config['rrddata']);
+								if ($config['rrddata'] || $config['voucher']['voucherdata']) {
+									if ($config['rrddata']) {
+										restore_rrddata();
+										unset($config['rrddata']);
+										write_config(sprintf(gettext("Unset RRD data from configuration after restoring %s configuration area"), $_POST['restorearea']));
+									}
+									if (($_POST['restorearea'] == 'voucher') && $config['voucher']['voucherdata']) {
+										restore_voucher_data();
+										unset($config['voucher']['voucherdata']);
+										write_config(sprintf(gettext("Unset Voucher data from configuration after restoring %s configuration area"), $_POST['restorearea']));
+									}
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
-									write_config(sprintf(gettext("Unset RRD data from configuration after restoring %s configuration area"), $_POST['restorearea']));
 									convert_config();
 								}
 								filter_configure();
@@ -334,11 +388,17 @@ if ($_POST) {
 									unset($loaderconf);
 								}
 								/* extract out rrd items, unset from $config when done */
-								if ($config['rrddata']) {
-									restore_rrddata();
-									unset($config['rrddata']);
+								if ($config['rrddata'] || $config['voucher']['voucherdata']) {
+									if ($config['rrddata']) {
+										restore_rrddata();
+										unset($config['rrddata']);
+									}
+									if ($config['voucher']['voucherdata']) {
+										restore_voucher_data();
+										unset($config['voucher']['voucherdata']);
+									}
+									write_config(gettext("Unset RRD and Voucher data from configuration after full restore."));
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
-									write_config(gettext("Unset RRD data from configuration after restoring full configuration"));
 									convert_config();
 								}
 								if ($m0n0wall_upgrade == true) {

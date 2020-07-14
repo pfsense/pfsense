@@ -50,7 +50,7 @@ function listtags() {
 		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
 		'schedule', 'service', 'servernat', 'servers',
 		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue', 'switch', 'swport',
-		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'vlangroup',
+		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'vlangroup', 'voucherdbfile',
 		'winsserver', 'wolentry', 'widget'
 	);
 	return array_flip($ret);

@@ -518,6 +518,7 @@ function build_area_list($showall) {
 		"filter" => gettext("Firewall Rules"),
 		"interfaces" => gettext("Interfaces"),
 		"ipsec" => gettext("IPSEC"),
+		"dnshaper" => gettext("Limiters"),
 		"nat" => gettext("NAT"),
 		"openvpn" => gettext("OpenVPN"),
 		"installedpackages" => gettext("Package Manager"),

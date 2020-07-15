@@ -6246,7 +6246,7 @@ function upgrade_205_to_206() {
 	console_configure();
 }
 
-function upgrade_206_to_207()
+function upgrade_206_to_207() {
 	/*
 	 * Trigger a boot loader settings update to make sure the contents will
 	 * be updated before the reboot.

@@ -1336,6 +1336,10 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	}
 	$data[] = 'net.pf.request_maxcount="' .  $maximumtableentries . '"';
 
+	/* Enable ALTQ support for hnX NICs. */
+	$data[] = 'hw.hn.vf_transparent=0';
+	$data[] = 'hw.hn.use_if_start=1';
+
 	safe_write_file($loader_conf_file, $data);
 
 	/* Filter loader.conf.local to avoid duplicate settings. */

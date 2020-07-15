@@ -6246,6 +6246,14 @@ function upgrade_205_to_206() {
 	console_configure();
 }
 
+function upgrade_206_to_207()
+	/*
+	 * Trigger a boot loader settings update to make sure the contents will
+	 * be updated before the reboot.
+	 */
+	console_configure();
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

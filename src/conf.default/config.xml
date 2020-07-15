@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <pfsense>
-	<version>20.6</version>
+	<version>20.7</version>
 	<lastchange/>
 	<system>
 		<optimization>normal</optimization>

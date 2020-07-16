@@ -751,10 +751,9 @@ function filter_generate_aliases() {
 				$aliases .= " }\"\n";
 			}
 		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
-			if ($ifcfg['type6'] == '6rd') {
-				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf";
-			} else if ($ifcfg['type6'] == '6to4') {
-				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf";
+			if (($ifcfg['type6'] == '6rd') || ($ifcfg['type6'] == '6to4')) {
+				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf }\"\n";
+				$aliases .= "{$ifcfg['descr']}_STF = \"{ {$if}_stf";
 			} else {
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
 
@@ -2022,9 +2021,15 @@ function filter_nat_rules_generate() {
 				$sn1 = "/{$sn}";
 			}
 
-			$natif = $FilterIflist[$natif]['if'];
-			$nat_if_list = array();
+			$natifname = $FilterIflist[$natif]['if'];
+			if (is_ipaddrv6($tmp[0]) && (($FilterIflist[$natif]['type6'] == '6rd') ||
+			    ($FilterIflist[$natif]['type6'] == '6to4'))) {
+				$natif = strtolower($FilterIflist[$natif]['descr']) . "_stf";
+			} else {
+				$natif = $natifname;
+			}
 
+			$nat_if_list = array();
 			if (isset($rule['nobinat'])) {
 				$natrules .= "no binat on {$natif} from {$srcaddr} to {$dstaddr}\n";
 			} else {
@@ -2034,7 +2039,7 @@ function filter_nat_rules_generate() {
 				 */
 				if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable") &&
 				    ($rule['natreflection'] != "disable")) {
-					$nat_if_list = filter_get_reflection_interfaces($natif);
+					$nat_if_list = filter_get_reflection_interfaces($natifname);
 				}
 
 				$natrules .= "binat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
@@ -2073,7 +2078,11 @@ function filter_nat_rules_generate() {
 			$srcaddr = trim($srcaddr);
 			$dstaddr = trim($dstaddr);
 
-			$natif = $FilterIflist[$natif]['descr'];
+			if (($FilterIflist[$natif]['type6'] == '6rd') || ($FilterIflist[$natif]['type6'] == '6to4')) {
+				$natif = $FilterIflist[$natif]['descr'] . "_STF";
+			} else {
+				$natif = $FilterIflist[$natif]['descr'];
+			}
 
 			/* Do not form an invalid NPt rule.
 			 * See https://redmine.pfsense.org/issues/8575 */

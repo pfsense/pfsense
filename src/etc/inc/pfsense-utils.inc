@@ -1208,7 +1208,8 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	 * As they will be replaced when necessary. */
 	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
 	    "hw.e6000sw.default_disabled", "vm.pmap.pti",
-	    "net.pf.request_maxcount");
+	    "net.pf.request_maxcount", "hw.hn.vf_transparent",
+	    "hw.hn.use_if_start");
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
 		$remove = array_merge($remove,
@@ -1337,8 +1338,8 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$data[] = 'net.pf.request_maxcount="' .  $maximumtableentries . '"';
 
 	/* Enable ALTQ support for hnX NICs. */
-	$data[] = 'hw.hn.vf_transparent=0';
-	$data[] = 'hw.hn.use_if_start=1';
+	$data[] = 'hw.hn.vf_transparent="0"';
+	$data[] = 'hw.hn.use_if_start="1"';
 
 	safe_write_file($loader_conf_file, $data);
 

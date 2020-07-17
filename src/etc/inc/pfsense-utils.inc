@@ -1325,7 +1325,6 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'hint.uart.1.flags="0x10"';
 	}
 	$data[] = 'autoboot_delay="3"';
-	$data[] = 'hw.usb.no_pf="1"';
 	if (isset($config['system']['pti_disabled'])) {
 		$data[] = 'vm.pmap.pti="0"';
 	}
@@ -1338,8 +1337,10 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$data[] = 'net.pf.request_maxcount="' .  $maximumtableentries . '"';
 
 	/* Enable ALTQ support for hnX NICs. */
-	$data[] = 'hw.hn.vf_transparent="0"';
-	$data[] = 'hw.hn.use_if_start="1"';
+	if (isset($config['system']['hn_altq_enable'])) {
+		$data[] = 'hw.hn.vf_transparent="0"';
+		$data[] = 'hw.hn.use_if_start="1"';
+	}
 
 	safe_write_file($loader_conf_file, $data);
 

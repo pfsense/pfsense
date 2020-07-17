@@ -6254,6 +6254,12 @@ function upgrade_206_to_207() {
 	console_configure();
 }
 
+function upgrade_207_to_208() {
+	global $config;
+
+	$config['system']['hn_altq_enable'] = true;
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

@@ -52,6 +52,7 @@ $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksum
 $pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 $pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
 $pconfig['ip_change_kill_states'] = isset($config['system']['ip_change_kill_states']) ? $config['system']['ip_change_kill_states'] : null;
+$pconfig['hnaltqenable'] = isset($config['system']['hn_altq_enable']);
 
 if ($_POST) {
 
@@ -173,6 +174,12 @@ if ($_POST) {
 			$config['system']['disablelargereceiveoffloading'] = true;
 		} else {
 			unset($config['system']['disablelargereceiveoffloading']);
+		}
+
+		if ($_POST['hnaltqenable'] == "yes") {
+			$config['system']['hn_altq_enable'] = true;
+		} else {
+			unset($config['system']['hn_altq_enable']);
 		}
 
 		if ($_POST['ip_change_kill_states'] == "yes") {
@@ -386,6 +393,15 @@ $section->addInput(new Form_Checkbox(
 	'(LRO). This offloading is broken in some hardware drivers, and may impact '.
 	'performance with some specific NICs. This will take effect after a machine reboot '.
 	'or re-configure of each interface.');
+
+$section->addInput(new Form_Checkbox(
+	'hnaltqenable',
+	'hn ALTQ support',
+	'Enable the ALTQ support for hn NICs.',
+	isset($config['system']['hn_altq_enable'])
+))->setHelp('Checking this option will enable the ALTQ support for hn NICs. '.
+	'The ALTQ support disables the multiqueue API and may reduce the system '.
+	'capability to handle traffic. This will take effect after a machine reboot.');
 
 $section->addInput(new Form_Checkbox(
 	'sharednet',

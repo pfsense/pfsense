@@ -295,6 +295,11 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		unlock($filterlck);
 		return;
 	}
+	update_filter_reload_status(gettext("Generating NAT64 rules"));
+	$nat64_rules = filter_generate_nat64_rules();
+	if (platform_booting() == true) {
+		echo ".";
+	}
 
 	$limitrules = "";
 	/* User defined maximum table entries in Advanced menu. */

@@ -57,6 +57,7 @@ if (isset($_REQUEST['dup'])) {
 
 if (isset($id) && $a_nat64[$id]) {
 	$pconfig['disabled'] = isset($a_nat64[$id]['disabled']);
+	$pconfig['allowrfc1918'] = isset($a_nat64[$id]['allowrfc1918']);
 
 	$dummyvar = 0;
 	address_to_pconfig($a_nat64[$id]['prefix4'], $pconfig['prefix4'], $pconfig['prefix4mask'],
@@ -95,6 +96,7 @@ if ($_POST['save']) {
 		$natent = array();
 
 		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
+		$natent['allowrfc1918'] = isset($_POST['allowrfc1918']) ? true:false;
 		$natent['descr'] = $_POST['descr'];
 
 		if ($_POST['prefix4']) {
@@ -160,6 +162,14 @@ $section->addInput(new Form_IpAddress(
 	'V6'
 ))->addMask('prefix6mask', 96)->setHelp('A 96-bit masked IPv6 prefix to use to prepend to/from a IPv4 address. ' .
 	'Often is the well-known prefix 64:ff9b::/96');
+	
+$section->addInput(new Form_Checkbox(
+	'allowrfc1918',
+	'Allow RFC1918',
+	'Allow private RFC1918 addresses',
+	$pconfig['allowrfc1918']
+))->setHelp('Turn on processing private IPv4 addresses. '.
+'By default IPv6 packets with destinations mapped to private address ranges defined by RFC1918 are not processed. ');
 
 $section->addInput(new Form_Input(
 	'descr',

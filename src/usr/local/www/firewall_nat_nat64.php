@@ -146,6 +146,7 @@ display_top_tabs($tab_array);
 						<th><!-- icon --></th>
 						<th><?=gettext("IPv4 Prefix")?></th>
 						<th><?=gettext("IPv6 Prefix")?></th>
+						<th><?=gettext("Allow RFC1918")?></th>
 						<th><?=gettext("Description")?></th>
 						<th><?=gettext("Actions")?></th>
 					</tr>
@@ -183,6 +184,19 @@ display_top_tabs($tab_array);
 						<td>
 <?php
 	echo $textss . pprint_address($natent['prefix6']) . $textse;
+?>
+						</td>
+						<td>
+<?php
+	if (isset($natent['allowrfc1918'])) {
+?>
+							<i class="fa fa-check text-success" title="<?=gettext("Allow private RFC1918 addresses")?>"></i>
+<?php
+	} else {
+?>
+							<i class="fa fa-times text-danger" title="<?=gettext("Disallow private RFC1918 addresses")?>"></i>
+<?php
+	}
 ?>
 						</td>
 						<td>

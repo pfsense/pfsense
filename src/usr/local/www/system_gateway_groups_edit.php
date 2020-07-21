@@ -153,24 +153,6 @@ function build_gateway_protocol_map (&$a_gateways) {
 	return $result;
 }
 
-function build_vip_list($family = 'all') {
-	global $gateway;
-
-	$list = array('address' => gettext('Interface Address'));
-
-	$viplist = get_configured_vip_list($family);
-	foreach ($viplist as $vip => $address) {
-		if ($gateway['friendlyiface'] == get_configured_vip_interface($vip)) {
-			$list[$vip] = "$address";
-			if (get_vip_descr($address)) {
-				$list[$vip] .= " (". get_vip_descr($address) .")";
-			}
-		}
-	}
-
-	return($list);
-}
-
 include("head.inc");
 
 $gateway_protocol = build_gateway_protocol_map($a_gateways);
@@ -283,7 +265,7 @@ foreach ($a_gateways as $gwname => $gateway) {
 		$gwname . '_vip',
 		'Virtual IP',
 		$vaddress,
-		build_vip_list($gateway['ipprotocol'])
+		build_vip_list($gateway['friendlyiface'], $gateway['ipprotocol'])
 	));
 
 	$group->add(new Form_Input(

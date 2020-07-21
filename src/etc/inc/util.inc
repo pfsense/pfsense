@@ -1287,6 +1287,22 @@ function is_inrange($test, $start, $end) {
 	return is_ipaddrv6($test) ? is_inrange_v6($test, $start, $end) : is_inrange_v4($test, $start, $end);
 }
 
+function build_vip_list($fif, $family = "all") {
+	$list = array('address' => gettext('Interface Address'));
+
+	$viplist = get_configured_vip_list($family);
+	foreach ($viplist as $vip => $address) {
+		if ($fif == get_configured_vip_interface($vip)) {
+			$list[$vip] = "$address";
+			if (get_vip_descr($address)) {
+				$list[$vip] .= " (". get_vip_descr($address) .")";
+			}
+		}
+	}
+
+	return($list);
+}
+
 function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
 	global $config;
 

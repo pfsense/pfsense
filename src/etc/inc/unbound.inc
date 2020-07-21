@@ -611,10 +611,10 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			mwexec("/usr/local/sbin/unbound -c {$g['unbound_chroot_path']}/unbound.conf");
 			break;
 		case "stop":
-			mwexec("echo '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf stop' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf stop'", true);
 			break;
 		case "reload":
-			mwexec("echo '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf reload' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf reload'", true);
 			break;
 		case "unbound-anchor":
 			$root_key_file = "{$g['unbound_chroot_path']}{$param1}/root.key";
@@ -626,14 +626,14 @@ function do_as_unbound_user($cmd, $param1 = "") {
 					unlink_if_exists($root_key_file);
 				}
 			}
-			mwexec("echo '/usr/local/sbin/unbound-anchor -a {$root_key_file}' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-anchor -a {$root_key_file}'", true);
 			// Only sync the file if this is the real (default) one, not a test one.
 			if ($param1 == "") {
 				//pfSense_fsync($root_key_file);
 			}
 			break;
 		case "unbound-control-setup":
-			mwexec("echo '/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}{$param1}' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}{$param1}'", true);
 			break;
 		default:
 			break;

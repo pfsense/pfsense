@@ -56,8 +56,6 @@ require_once("/etc/inc/filter.inc");
 echo ".";
 require_once("/etc/inc/shaper.inc");
 echo ".";
-require_once("/etc/inc/nat64.inc");
-echo ".";
 require_once("/etc/inc/ipsec.inc");
 echo ".";
 require_once("/etc/inc/vpn.inc");

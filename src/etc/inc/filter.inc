@@ -296,6 +296,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		return;
 	}
 	update_filter_reload_status(gettext("Generating NAT64 rules"));
+	require_once("nat64.inc");
 	$nat64_rules = filter_generate_nat64_rules();
 	if (platform_booting() == true) {
 		echo ".";

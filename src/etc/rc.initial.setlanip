@@ -45,7 +45,6 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
-require_once("nat64.inc");
 require_once("rrd.inc");
 
 function console_prompt_for_yn ($prompt_text) {

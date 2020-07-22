@@ -68,14 +68,29 @@ function filter_generate_nat64_rules() {
 		$existingRule = array();
 		exec($log[] = '/sbin/ipfw nat64lsn NAT64_'.$i.' show', $existingRule);
 		$existingRule = $existingRule[0];
+		//normalizes whitespace
+		$existingRule = implode(' ', array_filter(explode(' ', $existingRule)));
 		$log[] = 'existingRule = '.$existingRule;
 		
-		$newRule = ''; $ip4 = ''; $ip6 = ''; $allowrfc = '';
+		$newRule = ''; $newRuleOptions = ''; $ip4 = ''; $ip6 = '';
 		if ($i < count($a_nat64) && !isset($a_nat64[$i]['disabled'])) {
 			$ip4 = $a_nat64[$i]['prefix4']['address'];
 			$ip6 = $a_nat64[$i]['prefix6']['address'];
 			$allowrfc = isset($a_nat64[$i]['allowrfc1918']) ? ' allow_private' : '';
-			$newRule = 'nat64lsn NAT64_'.$i.' prefix4 '.$ip4.' prefix6 '.$ip6.$allowrfc;
+			$max_ports = isset($a_nat64[$i]['max_ports']) ? ' max_ports '.$a_nat64[$i]['max_ports'] : '';
+			$host_del_age = isset($a_nat64[$i]['host_del_age']) ? ' host_del_age '.$a_nat64[$i]['host_del_age'] : '';
+			$pg_del_age = isset($a_nat64[$i]['pg_del_age']) ? ' pg_del_age '.$a_nat64[$i]['pg_del_age'] : '';
+			$tcp_syn_age = isset($a_nat64[$i]['tcp_syn_age']) ? ' tcp_syn_age '.$a_nat64[$i]['tcp_syn_age'] : '';
+			$tcp_close_age = isset($a_nat64[$i]['tcp_close_age']) ? ' tcp_close_age '.$a_nat64[$i]['tcp_close_age'] : '';
+			$tcp_est_age = isset($a_nat64[$i]['tcp_est_age']) ? ' tcp_est_age '.$a_nat64[$i]['tcp_est_age'] : '';
+			$udp_age = isset($a_nat64[$i]['udp_age']) ? ' udp_age '.$a_nat64[$i]['udp_age'] : '';
+			$icmp_age = isset($a_nat64[$i]['icmp_age']) ? ' icmp_age '.$a_nat64[$i]['icmp_age'] : '';
+			
+			$newRuleOptions = 
+				' prefix4 '.$ip4.' prefix6 '.$ip6.
+				$max_ports.$host_del_age.$pg_del_age.$tcp_syn_age.$tcp_close_age.$tcp_est_age.$udp_age.$icmp_age.
+				$allowrfc;
+			$newRule = 'nat64lsn NAT64_'.$i.$newRuleOptions;
 		}
 		$log[] = 'newRule = '.$newRule;
 		
@@ -91,7 +106,7 @@ function filter_generate_nat64_rules() {
 					nat64_load_modules();
 				$modulesLoaded = TRUE;
 
-				mwexec($log[] = '/sbin/ipfw -q nat64lsn NAT64_'.$i.' create prefix4 '.$ip4.' prefix6 '.$ip6.$allowrfc);
+				mwexec($log[] = '/sbin/ipfw -q nat64lsn NAT64_'.$i.' create'.$newRuleOptions);
 				mwexec($log[] = '/sbin/ipfw -q '.($g['nat64_rules_start'] + $i).' add nat64lsn NAT64_'.$i.' ip from any to '.$ip4);
 				mwexec($log[] = '/sbin/ipfw -q '.($g['nat64_rules_start'] + $i).' add nat64lsn NAT64_'.$i.' ip6 from any to '.$ip6);
 				$log[] = 'added new NAT64_'.$i;

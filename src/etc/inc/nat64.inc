@@ -77,14 +77,14 @@ function filter_generate_nat64_rules() {
 			$ip4 = $a_nat64[$i]['prefix4']['address'];
 			$ip6 = $a_nat64[$i]['prefix6']['address'];
 			$allowrfc = isset($a_nat64[$i]['allowrfc1918']) ? ' allow_private' : '';
-			$max_ports = isset($a_nat64[$i]['max_ports']) ? ' max_ports '.$a_nat64[$i]['max_ports'] : '';
-			$host_del_age = isset($a_nat64[$i]['host_del_age']) ? ' host_del_age '.$a_nat64[$i]['host_del_age'] : '';
-			$pg_del_age = isset($a_nat64[$i]['pg_del_age']) ? ' pg_del_age '.$a_nat64[$i]['pg_del_age'] : '';
-			$tcp_syn_age = isset($a_nat64[$i]['tcp_syn_age']) ? ' tcp_syn_age '.$a_nat64[$i]['tcp_syn_age'] : '';
-			$tcp_close_age = isset($a_nat64[$i]['tcp_close_age']) ? ' tcp_close_age '.$a_nat64[$i]['tcp_close_age'] : '';
-			$tcp_est_age = isset($a_nat64[$i]['tcp_est_age']) ? ' tcp_est_age '.$a_nat64[$i]['tcp_est_age'] : '';
-			$udp_age = isset($a_nat64[$i]['udp_age']) ? ' udp_age '.$a_nat64[$i]['udp_age'] : '';
-			$icmp_age = isset($a_nat64[$i]['icmp_age']) ? ' icmp_age '.$a_nat64[$i]['icmp_age'] : '';
+			$max_ports = isset($a_nat64[$i]['max_ports']) && $a_nat64[$i]['max_ports'] != 2048 ? ' max_ports '.$a_nat64[$i]['max_ports'] : '';
+			$host_del_age = isset($a_nat64[$i]['host_del_age']) && $a_nat64[$i]['max_ports'] != 3600 ? ' host_del_age '.$a_nat64[$i]['host_del_age'] : '';
+			$pg_del_age = isset($a_nat64[$i]['pg_del_age']) && $a_nat64[$i]['max_ports'] != 900 ? ' pg_del_age '.$a_nat64[$i]['pg_del_age'] : '';
+			$tcp_syn_age = isset($a_nat64[$i]['tcp_syn_age']) && $a_nat64[$i]['max_ports'] != 10 ? ' tcp_syn_age '.$a_nat64[$i]['tcp_syn_age'] : '';
+			$tcp_close_age = isset($a_nat64[$i]['tcp_close_age']) && $a_nat64[$i]['max_ports'] != 180 ? ' tcp_close_age '.$a_nat64[$i]['tcp_close_age'] : '';
+			$tcp_est_age = isset($a_nat64[$i]['tcp_est_age']) && $a_nat64[$i]['max_ports'] != 7200 ? ' tcp_est_age '.$a_nat64[$i]['tcp_est_age'] : '';
+			$udp_age = isset($a_nat64[$i]['udp_age']) && $a_nat64[$i]['max_ports'] != 120 ? ' udp_age '.$a_nat64[$i]['udp_age'] : '';
+			$icmp_age = isset($a_nat64[$i]['icmp_age']) && $a_nat64[$i]['max_ports'] != 60 ? ' icmp_age '.$a_nat64[$i]['icmp_age'] : '';
 			
 			$newRuleOptions = 
 				' prefix4 '.$ip4.' prefix6 '.$ip6.

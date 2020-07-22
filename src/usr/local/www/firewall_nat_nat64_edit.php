@@ -119,14 +119,14 @@ if ($_POST['save']) {
 
 		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
 		$natent['allowrfc1918'] = isset($_POST['allowrfc1918']) ? true:false;
-		$natent['max_ports'] = !empty($_POST['max_ports']) && $_POST['max_ports'] != 2048 ? trim($_POST['max_ports']):false;
-		$natent['host_del_age'] = !empty($_POST['host_del_age']) && $_POST['host_del_age'] != 3600 ? trim($_POST['host_del_age']):false;
-		$natent['pg_del_age'] = !empty($_POST['pg_del_age']) && $_POST['pg_del_age'] != 900 ? trim($_POST['pg_del_age']):false;
-		$natent['tcp_syn_age'] = !empty($_POST['tcp_syn_age']) && $_POST['tcp_syn_age'] != 10 ? trim($_POST['tcp_syn_age']):false;
-		$natent['tcp_close_age'] = !empty($_POST['tcp_close_age']) && $_POST['tcp_close_age'] != 180 ? trim($_POST['tcp_close_age']):false;
-		$natent['tcp_est_age'] = !empty($_POST['tcp_est_age']) && $_POST['tcp_est_age'] != 7200 ? trim($_POST['tcp_est_age']):false;
-		$natent['udp_age'] = !empty($_POST['udp_age']) && $_POST['udp_age'] != 120 ? trim($_POST['udp_age']):false;
-		$natent['icmp_age'] = !empty($_POST['icmp_age']) && $_POST['icmp_age'] != 60 ? trim($_POST['icmp_age']):false;
+		$natent['max_ports'] = !empty($_POST['max_ports']) ? trim($_POST['max_ports']):false;
+		$natent['host_del_age'] = !empty($_POST['host_del_age']) ? trim($_POST['host_del_age']):false;
+		$natent['pg_del_age'] = !empty($_POST['pg_del_age']) ? trim($_POST['pg_del_age']):false;
+		$natent['tcp_syn_age'] = !empty($_POST['tcp_syn_age']) ? trim($_POST['tcp_syn_age']):false;
+		$natent['tcp_close_age'] = !empty($_POST['tcp_close_age']) ? trim($_POST['tcp_close_age']):false;
+		$natent['tcp_est_age'] = !empty($_POST['tcp_est_age']) ? trim($_POST['tcp_est_age']):false;
+		$natent['udp_age'] = !empty($_POST['udp_age']) ? trim($_POST['udp_age']):false;
+		$natent['icmp_age'] = !empty($_POST['icmp_age']) ? trim($_POST['icmp_age']):false;
 		$natent['descr'] = $_POST['descr'];
 
 		if ($_POST['prefix4'])

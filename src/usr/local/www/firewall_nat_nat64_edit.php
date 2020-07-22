@@ -42,7 +42,7 @@ $a_nat64 = &$config['nat']['nat64']['rule'];
 $pconfig['prefix4'] = '';
 $pconfig['prefix4mask'] = 24;
 $pconfig['prefix6'] = '64:ff9b::';
-$pconfig['prefix4mask'] = 96;
+$pconfig['prefix6mask'] = 96;
 //$pconfig['allowrfc1918'];
 //$pconfig['max_ports'] = 2048;
 //$pconfig['host_del_age'] = 3600;
@@ -117,6 +117,7 @@ if ($_POST['save']) {
 	if (!$input_errors) {
 		$natent = array();
 
+		$natent['type'] = 'stateful';
 		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
 		$natent['allowrfc1918'] = isset($_POST['allowrfc1918']) ? true:false;
 		$natent['max_ports'] = !empty($_POST['max_ports']) ? trim($_POST['max_ports']):false;
@@ -181,7 +182,7 @@ $section->addInput(new Form_IpAddress(
 	'*IPv4 Addresses',
 	$pconfig['prefix4'],
 	'V4'
-))->addMask('prefix4mask', $pconfig['prefix4mask'])->setHelp('The IPv4 prefix with mask defines the pool of IPv4 '
+))->addMask('prefix4mask', $pconfig['prefix4mask'], 32, 1)->setHelp('The IPv4 prefix with mask defines the pool of IPv4 '
 .'addresses used as source address after translation. Stateful NAT64 module translates IPv6 source address of client to '
 .'one IPv4 address from this pool. Note that incoming IPv4 packets that don\'t have corresponding state entry in the states '
 .'table will be dropped by translator. Make sure that translation rules handle packets, destined to configured prefix. ');

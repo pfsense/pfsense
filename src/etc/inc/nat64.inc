@@ -39,10 +39,11 @@ function nat64_load_modules() {
 	if (!is_module_loaded("ipfw_nat64.ko"))
 		mwexec("/sbin/kldload ipfw_nat64");
 	set_sysctl(array(
-		"net.inet.ip.pfil.inbound" => "pf,ipfw",
-		"net.inet6.ip6.pfil.inbound" => "pf,ipfw",
-		"net.inet.ip.pfil.outbound" => "pf,ipfw",
-		"net.inet6.ip6.pfil.outbound" => "pf,ipfw",
+		//having ipfw enabled in pfil conflicts with capture portal.
+		"net.inet.ip.pfil.inbound" => "pf",
+		"net.inet6.ip6.pfil.inbound" => "pf",
+		"net.inet.ip.pfil.outbound" => "pf",
+		"net.inet6.ip6.pfil.outbound" => "pf",
 	    "net.link.ether.ipfw" => "1",
 	    "net.inet.ip.fw.one_pass" => "1",
 	    "net.inet.ip.fw.tables_max" => "65534"
@@ -60,17 +61,18 @@ function filter_generate_nat64_rules() {
 	if (count($a_nat64) > $g['nat64_rules_interval'])
 		nat64_syslog("Out of space for nat64 rules. Some may be ignored.");
 
-	$modulesLoaded = FALSE;
-	$log = array();
+	$modulesLoaded = false;
+	$anyRule = false;
 	for($i = 0; $i < $g['nat64_rules_interval']; $i++) {
-		$log[] = 'ID = '.$i;
+		nat64_syslog('ID = '.$i);
 		
 		$existingRule = array();
-		exec($log[] = '/sbin/ipfw nat64lsn NAT64_'.$i.' show', $existingRule);
+		exec('/sbin/ipfw nat64lsn NAT64_'.$i.' show', $existingRule);
+		nat64_syslog('command: /sbin/ipfw nat64lsn NAT64_'.$i.' show', $existingRule);
 		$existingRule = $existingRule[0];
 		//normalizes whitespace
 		$existingRule = implode(' ', array_filter(explode(' ', $existingRule)));
-		$log[] = 'existingRule = '.$existingRule;
+		nat64_syslog('existingRule = '.$existingRule);
 		
 		$newRule = ''; $newRuleOptions = ''; $ip4 = ''; $ip6 = '';
 		if ($i < count($a_nat64) && !isset($a_nat64[$i]['disabled'])) {
@@ -92,33 +94,55 @@ function filter_generate_nat64_rules() {
 				$allowrfc;
 			$newRule = 'nat64lsn NAT64_'.$i.$newRuleOptions;
 		}
-		$log[] = 'newRule = '.$newRule;
+		nat64_syslog('newRule = '.$newRule);
 		
 		if ($existingRule != $newRule) {
 			if (!empty($existingRule)) {
-				mwexec($log[] = '/sbin/ipfw -q delete '.($g['nat64_rules_start'] + $i));
-				mwexec($log[] = '/sbin/ipfw -q nat64lsn NAT64_'.$i.' destroy');
-				$log[] = 'removed old NAT64_'.$i;
+				mwexec('/sbin/ipfw -q delete '.($g['nat64_rules_start'] + $i));
+				nat64_syslog('command: /sbin/ipfw -q delete '.($g['nat64_rules_start'] + $i));
+				mwexec('/sbin/ipfw -q nat64lsn NAT64_'.$i.' destroy');
+				nat64_syslog('command: /sbin/ipfw -q nat64lsn NAT64_'.$i.' destroy');
+				nat64_syslog('removed old NAT64_'.$i);
 			}
 		
 			if (!empty($newRule)) {
 				if (!$modulesLoaded)
 					nat64_load_modules();
-				$modulesLoaded = TRUE;
+				$modulesLoaded = true;
 
-				mwexec($log[] = '/sbin/ipfw -q nat64lsn NAT64_'.$i.' create'.$newRuleOptions);
-				mwexec($log[] = '/sbin/ipfw -q '.($g['nat64_rules_start'] + $i).' add nat64lsn NAT64_'.$i.' ip from any to '.$ip4);
-				mwexec($log[] = '/sbin/ipfw -q '.($g['nat64_rules_start'] + $i).' add nat64lsn NAT64_'.$i.' ip6 from any to '.$ip6);
-				$log[] = 'added new NAT64_'.$i;
+				mwexec('/sbin/ipfw -q nat64lsn NAT64_'.$i.' create'.$newRuleOptions);
+				nat64_syslog('command: /sbin/ipfw -q nat64lsn NAT64_'.$i.' create'.$newRuleOptions);
+				mwexec('/sbin/ipfw -q '.($g['nat64_rules_start'] + $i).' add nat64lsn NAT64_'.$i.' ip from any to '.$ip4);
+				nat64_syslog('command: /sbin/ipfw -q '.($g['nat64_rules_start'] + $i).' add nat64lsn NAT64_'.$i.' ip from any to '.$ip4);
+				mwexec('/sbin/ipfw -q '.($g['nat64_rules_start'] + $i).' add nat64lsn NAT64_'.$i.' ip6 from any to '.$ip6);
+				nat64_syslog('command: /sbin/ipfw -q '.($g['nat64_rules_start'] + $i).' add nat64lsn NAT64_'.$i.' ip6 from any to '.$ip6);
+				nat64_syslog('added new NAT64_'.$i);
 			}
 		}
-		
+				
+		if (!empty($newRule)) $anyRule = true;
 		if (empty($existingRule) && $i >= count($a_nat64)) break;
 	}
-	file_put_contents("{$g['tmp_path']}/rules.nat64", implode("\n", $log)."\n");
-}
-function filter_remove_nat64_rules() {
-	mwexec('/sbin/ipfw -q delete '.$g['nat64_rules_start'].'-'.($g['nat64_rules_start'] + $g['nat64_rules_interval']), true);
+	
+	if (!$anyRule) {
+		//MUST check if captive port still using ipfw
+		if (empty($config['captiveportal'])) {
+			set_single_sysctl("net.link.ether.ipfw", "0");
+		} else {
+			$cpactive = false;
+			if (is_array($config['captiveportal'])) {
+				foreach ($config['captiveportal'] as $cpkey => $cp) {
+					if (isset($cp['enable'])) {
+						$cpactive = true;
+						break;
+					}
+				}
+			}
+			if ($cpactive === false) {
+				set_single_sysctl("net.link.ether.ipfw", "0");
+			}
+		}
+	}
 }
 
 /* log simple messages to syslog */

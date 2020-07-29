@@ -72,7 +72,7 @@ $filtered_tags = array(
 	'passwordagain', 'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',
 	'proxypass', 'proxy_passwd', 'proxyuser', 'proxy_user', 'prv',
 	'radius_secret', 'redis_password', 'redis_passwordagain', 'rocommunity',
-	'secret', 'shared_key', 'tls', 'tlspskidentity', 'tlspskfile',
+	'secret', 'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',
 	'varclientpasswordinput', 'varclientsharedsecret', 'varsqlconfpassword',
 	'varsqlconf2password', 'varsyncpassword', 'varmodulesldappassword', 
 	'varmodulesldap2password', 'varusersmotpinitsecret', 'varusersmotppin', 

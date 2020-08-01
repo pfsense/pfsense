@@ -1,22 +1,22 @@
 ## Contributing to pfSense
 
-The pfSense project welcomes contributions, big or small. Members of the pfSense community frequently contribute bug fixes, enhancements, and documentation changes to improve the functionality and usability of the software.
+The pfSense project welcomes contributions, big or small. Members of the pfSense community frequently contribute bugfixes, enhancements, and documentation changes to improve the functionality and usability of the software.
 
-All of the pfSense project source code is on Github. We recommend potential contributors familiarize themselves with [the pfSense project git repositories](https://github.com/pfsense) and [Github in general](https://help.github.com).
+All of the pfSense project source code is on GitHub. We recommend potential contributors familiarize themselves with [the pfSense project Git repositories](https://github.com/pfsense) and [GitHub in general](https://help.github.com).
 
-If you want to contribute but do not have a specific topic in mind, review the [list of open bug reports and other issues that are in need of attention](https://redmine.pfsense.org/projects/pfsense/issues).
+If you want to contribute, but do not have a specific topic in mind, review the [list of open bug reports and other issues in need of attention](https://redmine.pfsense.org/projects/pfsense/issues).
 
 Contact [coreteam@pfsense.org](mailto:coreteam@pfsense.org "Mail to coreteam@pfsense.org") with any additional questions or concerns.
 
-Before submitting changes, please take a few moments to review our submission guidelines below.
+Before submitting changes, please take a few moments to review the submission guidelines below.
 
 ### **Security Submissions**
 
-We prefer [responsible disclosure](https://en.wikipedia.org/wiki/Responsible_disclosure) for security concerns.
+[Responsible disclosure](https://en.wikipedia.org/wiki/Responsible_disclosure) is preferred for security concerns.
 
-If you have discovered a security issue, **do not** create a pull request or open a public bug report. Instead, disclose the details of the potential problem to us privately.
+If you have discovered a security issue, **do not** create a pull request or open a public bug report. Instead, disclose the details of the potential problem privately.
 
-See https://www.pfsense.org/security/ for information on how to submit security issues, including information on our PGP key for encrypting messages.
+See https://www.pfsense.org/security/ for info on how to submit security issues, including the project PGP key for encrypting messages.
 
 ### **Bug Reports and Feature Requests**
 
@@ -28,9 +28,9 @@ If you are submitting a pull request, locate or create a corresponding Redmine e
 
 ### **Submitting Changes**
 
-The easiest and best way to contribute code changes to the project is through pull requests on Github.
+The easiest and best way to contribute code changes to the project is through pull requests on GitHub.
 
-For an outline of the process and guidelines to follow, see [Submitting a Pull Request via Github](https://doc.pfsense.org/index.php/Submitting_a_Pull_Request_via_Github)
+For an outline of the process and guidelines to follow, see [Submitting a Pull Request via GitHub](https://doc.pfsense.org/index.php/Submitting_a_Pull_Request_via_Github)
 
-Contributed code must conform to the [pfSense project Developer Style Guide](https://doc.pfsense.org/index.php/Developer_Style_Guide).
+Contributed code must conform to the [pfSense project developer style guide](https://doc.pfsense.org/index.php/Developer_Style_Guide).
 

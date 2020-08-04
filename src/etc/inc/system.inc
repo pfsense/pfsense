@@ -464,10 +464,11 @@ function system_hosts_dhcpd_entries() {
 				 * We are always in an "end-user" subnet
 				 * here, which all are /64 for IPv6.
 				 */
-				$ipaddrv6 = merge_ipv6_delegated_prefix(
-				    get_interface_ipv6($dhcpif),
-				    $ipaddrv6, 64);
+				$prefix6 = 64;
+			} else {
+				$prefix6 = get_interface_subnetv6($dhcpif);
 			}
+			$ipaddrv6 = merge_ipv6_delegated_prefix(get_interface_ipv6($dhcpif), $ipaddrv6, $prefix6);
 
 			$fqdn = $host['hostname'] . ".";
 			$domain = "";

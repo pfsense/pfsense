@@ -64,6 +64,16 @@ if ($_POST['apply']) {
 					default:
 						break;
 				}
+				/* restart choparp on VIP change, see #7379 */
+				if ($a_vip[$vid]['mode'] != 'proxyarp') {
+					foreach ($a_vip as $avip) { 
+						if (($avip['interface'] == $a_vip[$vid]['interface']) &&
+						    ($avip['mode'] == 'proxyarp')) {
+							interface_proxyarp_configure($a_vip[$vid]['interface']);
+							break;
+						}
+					}
+				}
 			}
 		}
 		@unlink("{$g['tmp_path']}/.firewall_virtual_ip.apply");

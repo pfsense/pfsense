@@ -96,6 +96,14 @@ if ($_POST['save']) {
 		$_POST['subnet'] = trim($_POST['subnet']);
 	}
 
+	if (is_pseudo_interface(convert_friendly_interface_to_real_interface_name($_POST['interface']))) {
+		if ($_POST['mode'] == 'ipalias') {
+			$input_errors[] = gettext("The interface chosen for the VIP does not support IP Alias mode.");
+		} elseif ($_POST['mode'] == 'proxyarp') {
+			$input_errors[] = gettext("The interface chosen for the VIP does not support Proxy ARP mode.");
+		}
+	}
+
 	if ($_POST['subnet']) {
 		if (!is_ipaddr($_POST['subnet'])) {
 			$input_errors[] = gettext("A valid IP address must be specified.");

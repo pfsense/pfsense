@@ -67,7 +67,7 @@ class Form_Section extends Form_Element
 	// Shortcut, adds a group with a password and a confirm password field.
 	// The confirm password element is created by appending "_confirm" to the name supplied
 	// The value is overwritten with a default pattern (So the user cannot see it)
-	public function addPassword(Form_Input $input)
+	public function addPassword(Form_Input $input, $confirmfield=true)
 	{
 		$group = new Form_Group($input->getTitle());
 		if ($input->getValue() != "") {
@@ -77,10 +77,12 @@ class Form_Section extends Form_Element
 		$input->setType("password");
 		$input->setAttribute('autocomplete', 'new-password');
 		$group->add($input);
-		$confirm = clone $input;
-		$confirm->setName($confirm->getName() . "_confirm");
-		$confirm->setHelp("Confirm");
-		$group->add($confirm);
+		if ($confirmfield) {
+			$confirm = clone $input;
+			$confirm->setName($confirm->getName() . "_confirm");
+			$confirm->setHelp("Confirm");
+			$group->add($confirm);
+		}
 		$this->add($group);
 
 		return $input;

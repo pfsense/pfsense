@@ -37,32 +37,38 @@ require_once("functions.inc");
 require_once("pfsense-utils.inc");
 require_once("services.inc");
 
-function index_of_command() {
-	global $croncmd, $a_cron;
+function sertup_ACB_cron($hour, $day, $month, $dow) {
+	init_config_arr(array('cron', 'item'));
+	$a_cron = &$config['cron']['item'];
+	$croncmd = "/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/execacb.php";
 
 	$i = 0;
 	$rv = -1;
 
+	// Remove the existing cron job
 	if (count($a_cron) > 0) {
 		foreach ($a_cron as $ent) {
 			if ($ent['command'] === $croncmd) {
-				return $i;
+				unset($a_cron[$i]);
 			}
 
 		$i++;
 		}
 	}
 
-	return $rv;
+	$crondef = array();
+	$crondef['minute'] = '0';
+	$crondef['hour'] = $hour;
+	$crondef['mday'] = $day;
+	$crondef['month'] = $month;
+	$crondef['wday'] = $dow;
+	$crondef['who'] = 'root';
+	$crondef['command'] = $croncmd;
 
+	$a_cron[] = $crondef;
 }
 
-$croncmd = "/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/execacb.php";
-
-init_config_arr(array('cron', 'item'));
-$a_cron = &$config['cron']['item'];
 $pconfig = $config['system']['acb'];
-
 
 if (isset($_POST['save'])) {
 	unset($input_errors);
@@ -114,24 +120,8 @@ if (isset($_POST['save'])) {
 		$config['system']['acb']['numman'] = $pconfig['numman'];
 
 		// Remove any existing cron jobs
-		$cronid = index_of_command();
-
-		if ($cronid >= 0) {
-			unset($a_cron[$cronid]);
-		}
-
 		if ($pconfig['frequency'] === "cron") {
-			$ent = array();
-			$ent['minute'] = '0';
-			$ent['hour'] = $pconfig['hours'];
-			$ent['mday'] = $pconfig['day'];
-			$ent['month'] = $pconfig['month'];
-			$ent['wday'] = $pconfig['dow'];
-			$ent['who'] = 'root';
-			$ent['command'] = $croncmd;
-
-			$a_cron[] = $ent;
-
+			sertup_ACB_cron($pconfig['hours'], $pconfig['day'], $pconfig['month'], $pconfig['dow'];)
 		}
 
 		write_config("AutoConfigBackup settings updated");

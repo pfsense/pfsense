@@ -400,6 +400,7 @@ $section->addInput(new Form_Input(
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
 			'Route 53: Enter the Access Key ID.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
+			'Domeneshop: Enter the API token.%1$s' .
 			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
 			'Godaddy: Enter the API key.%1$s' .
 			'Cloudflare: Enter email for Global API Key or Zone ID for API token.%1$s' .
@@ -416,6 +417,7 @@ $section->addPassword(new Form_Input(
 			'DigitalOcean: Enter API token%1$s' .
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
+			'Domeneshop: Enter the API secret.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
 			'Gandi LiveDNS: Enter API token%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
@@ -596,6 +598,22 @@ events.push(function() {
 				hideCheckbox('proxied', false);
 				hideInput('zoneid', true);
 				hideInput('ttl', false);
+				break;
+			case "domeneshop":
+		        case "domeneshop-v6":
+				hideGroupInput('domainname', true);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('username', false);
+				hideInput('host', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideCheckbox('proxied', true);
+				hideInput('zoneid', true);
+				hideInput('ttl', true);
 				break;
 			case "digitalocean":
 		        case "digitalocean-v6":

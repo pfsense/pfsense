@@ -3627,42 +3627,4 @@ function get_pf_timeouts () {
 	return $pftimeout;
 }
 
-// Create a crontab entry for scheduled backups
-// if $new is true, a new crontab entry is created, otherwise any existing
-// ACB entry is removed
-function setup_ACB_cron($new, $hour, $day, $month, $dow) {
-	global $config;
-
-	init_config_arr(array('cron'));
-	$a_cron = &$config['cron']['item'];
-	$croncmd = "/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/execacb.php";
-
-	$i = 0;
-	$rv = -1;
-
-	// Remove the existing cron job
-	if (count($a_cron) > 0) {
-		foreach ($a_cron as $ent) {
-			if ($ent['command'] === $croncmd) {
-				unset($a_cron[$i]);
-				break;
-			}
-
-		$i++;
-		}
-	}
-
-	if ($new) {
-		$crondef = array();
-		$crondef['minute'] = '0';
-		$crondef['hour'] = $hour;
-		$crondef['mday'] = $day;
-		$crondef['month'] = $month;
-		$crondef['wday'] = $dow;
-		$crondef['who'] = 'root';
-		$crondef['command'] = $croncmd;
-
-		$a_cron[$i] = $crondef;
-	}
-}
 ?>

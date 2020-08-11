@@ -80,20 +80,16 @@ if (isset($_POST['save'])) {
 			$config['system']['acb']['encryption_password'] = $pconfig['encryption_password'];
 		}
 
-		$config['system']['acb']['enable'] = $pconfig['enable'];
-		$config['system']['acb']['hint'] = $pconfig['hint'];
-		$config['system']['acb']['frequency'] = $pconfig['frequency'];
-		$config['system']['acb']['hours'] = $pconfig['hours'];
-		$config['system']['acb']['month'] = $pconfig['month'];
-		$config['system']['acb']['day'] = $pconfig['day'];
-		$config['system']['acb']['dow'] = $pconfig['dow'];
-		$config['system']['acb']['numman'] = $pconfig['numman'];
-
-		// Remove any existing cron jobs
-		setup_ACB_cron($pconfig['frequency'] === "cron", $pconfig['hours'], $pconfig['day'], $pconfig['month'], $pconfig['dow']);
-
-		write_config("AutoConfigBackup settings updated");
-		configure_cron();
+		setup_ACB(
+			$pconfig['enable'],
+			$pconfig['hint'],
+			$pconfig['frequency'],
+			$pconfig['hours'],
+			$pconfig['month'],
+			$pconfig['day'],
+			$pconfig['dow'],
+			$pconfig['numman']
+		);
 	}
 }
 

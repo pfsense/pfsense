@@ -75,9 +75,11 @@ if (isset($_POST['save'])) {
 		$input_errors[] = gettext("You may not retain more than 50 manual backups.");
 	}
 
+	$pwd = "";
+
 	if (!$input_errors) {
 		if($update_ep) {
-			$config['system']['acb']['encryption_password'] = $pconfig['encryption_password'];
+			$pwd = $pconfig['encryption_password'];
 		}
 
 		setup_ACB(
@@ -88,7 +90,8 @@ if (isset($_POST['save'])) {
 			$pconfig['month'],
 			$pconfig['day'],
 			$pconfig['dow'],
-			$pconfig['numman']
+			$pconfig['numman'],
+			$pwd
 		);
 	}
 }

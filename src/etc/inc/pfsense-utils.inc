@@ -571,8 +571,10 @@ function hardware_offloading_applyflags($iface) {
 
 	if (isset($config['system']['disablesegmentationoffloading'])) {
 		$flags_off |= IFCAP_TSO;
+		$flags_off |= IFCAP_VLAN_HWTSO;
 	} else if (isset($options['caps']['tso']) || isset($options['caps']['tso4']) || isset($options['caps']['tso6'])) {
 		$flags_on |= IFCAP_TSO;
+		$flags_on |= IFCAP_VLAN_HWTSO;
 	}
 
 	if (isset($config['system']['disablelargereceiveoffloading'])) {

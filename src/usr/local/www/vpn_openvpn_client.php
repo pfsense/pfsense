@@ -100,7 +100,7 @@ if ($act == "new") {
 }
 
 global $simplefields;
-$simplefields = array('auth_user', 'auth_pass');
+$simplefields = array('auth_user', 'auth_pass', 'proxy_user', 'proxy_passwd');
 
 if (($act == "edit") || ($act == "dup")) {
 	if (isset($id) && $a_client[$id]) {
@@ -120,8 +120,6 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['server_port'] = $a_client[$id]['server_port'];
 		$pconfig['proxy_addr'] = $a_client[$id]['proxy_addr'];
 		$pconfig['proxy_port'] = $a_client[$id]['proxy_port'];
-		$pconfig['proxy_user'] = $a_client[$id]['proxy_user'];
-		$pconfig['proxy_passwd'] = $a_client[$id]['proxy_passwd'];
 		$pconfig['proxy_authtype'] = $a_client[$id]['proxy_authtype'];
 		$pconfig['description'] = $a_client[$id]['description'];
 		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
@@ -198,6 +196,7 @@ if (($act == "edit") || ($act == "dup")) {
 if ($act == "dup") {
 	$act = "new";
 	$vpnid = 0;
+	$parentid = $id;
 	unset($id);
 }
 
@@ -290,10 +289,6 @@ if ($_POST['save']) {
 			if (empty($pconfig['proxy_user']) || empty($pconfig['proxy_passwd'])) {
 				$input_errors[] = gettext("User name and password are required for proxy with authentication.");
 			}
-
-			if ($pconfig['proxy_passwd'] != $pconfig['proxy_passwd_confirm']) {
-				$input_errors[] = gettext("Proxy password and confirmation must match.");
-			}
 		}
 	}
 
@@ -379,10 +374,6 @@ if ($_POST['save']) {
 		if (empty($pconfig['certref']) && empty($pconfig['auth_user']) && empty($pconfig['auth_pass'])) {
 			$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
 		}
-
-		if ($pconfig['auth_pass'] != $pconfig['auth_pass_confirm']) {
-			$input_errors[] = gettext("Password and confirmation must match.");
-		}
 	}
 
 	/* UDP Fast I/O and Exit Notify are not compatible with TCP, so toss the
@@ -451,8 +442,13 @@ if ($_POST['save']) {
 		}
 
 		foreach ($simplefields as $stat) {
-			if (($stat == 'auth_pass') && ($_POST[$stat] == DMYPWD)) {
-				$client[$stat] = $a_client[$id]['auth_pass'];
+			if ($_POST[$stat] == DMYPWD) {
+				if (is_numeric($_POST['parentid'])) {
+					$orig_id = $_POST['parentid'];
+				} else {
+					$orig_id = $id;
+				}
+				$client[$stat] = $a_client[$orig_id][$stat];
 			} else {
 				update_if_changed($stat, $client[$stat], $_POST[$stat]);
 			}
@@ -476,10 +472,6 @@ if ($_POST['save']) {
 		$client['proxy_addr'] = $pconfig['proxy_addr'];
 		$client['proxy_port'] = $pconfig['proxy_port'];
 		$client['proxy_authtype'] = $pconfig['proxy_authtype'];
-		$client['proxy_user'] = $pconfig['proxy_user'];
-		if ($pconfig['proxy_passwd'] != DMYPWD) {
-			$client['proxy_passwd'] = $pconfig['proxy_passwd'];
-		}
 		$client['description'] = $pconfig['description'];
 		$client['mode'] = $pconfig['mode'];
 		$client['topology'] = $pconfig['topology'];
@@ -683,8 +675,8 @@ if ($act=="new" || $act=="edit"):
 		'proxy_passwd',
 		'Password',
 		'password',
-		$pconfig['proxy_passwd']
-	));
+		$pconfig['proxy_passwd'],
+	), false);
 
 	$section->addInput(new Form_Input(
 		'description',
@@ -710,7 +702,7 @@ if ($act=="new" || $act=="edit"):
 		'Password',
 		'password',
 		$pconfig['auth_pass']
-	))->setHelp('Leave empty when no password is needed');
+	), false)->setHelp('Leave empty when no password is needed');
 
 	$section->addInput(new Form_Checkbox(
 		'auth-retry-none',
@@ -1148,6 +1140,15 @@ if ($act=="new" || $act=="edit"):
 			null,
 			'hidden',
 			$id
+		));
+	}
+
+	if (isset($parentid)) {
+		$form->addGlobal(new Form_Input(
+			'parentid',
+			null,
+			'hidden',
+			$parentid
 		));
 	}
 

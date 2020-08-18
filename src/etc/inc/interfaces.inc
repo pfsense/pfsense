@@ -677,30 +677,24 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 			if (empty($bridge['bridgeif'])) {
 				$bridge['bridgeif'] = "bridge{$i}";
 			}
-			if (!empty($realif) && $realif != $bridge['bridgeif']) {
+			if (!empty($realif) && ($realif != $bridge['bridgeif'])) {
+				continue;
+			}
+			$ifname = false;
+			foreach ($config['interfaces'] as $intname => $intpar) {
+				if ($intpar['if'] == $bridge['bridgeif']) {
+					$ifname = $intname;
+					break;
+				}
+			}
+
+			if (($checkmember == 1) && $ifname &&
+			    ($config['interfaces'][$ifname]['ipaddrv6'] == "track6")) {
+				continue;
+			} elseif (($checkmember == 2) && !$ifname) {
 				continue;
 			}
 
-			if ($checkmember == 1) {
-				/* XXX: It should not be possible no? */
-				if (strstr($bridge['if'], '_vip')) {
-					continue;
-				}
-				$members = explode(',', $bridge['members']);
-				foreach ($members as $member) {
-					if (!empty($config['interfaces'][$bridge['if']]) && $config['interfaces'][$bridge['if']]['ipaddrv6'] == "track6") {
-						continue 2;
-					}
-				}
-			}
-			else if ($checkmember == 2) {
-				$members = explode(',', $bridge['members']);
-				foreach ($members as $member) {
-					if (empty($config['interfaces'][$bridge['if']]) || $config['interfaces'][$bridge['if']]['ipaddrv6'] != "track6") {
-						continue 2;
-					}
-				}
-			}
 			/* XXX: Maybe we should report any errors?! */
 			interface_bridge_configure($bridge, $checkmember);
 			$i++;

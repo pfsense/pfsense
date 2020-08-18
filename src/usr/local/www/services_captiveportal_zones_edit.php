@@ -33,6 +33,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
+require_once("xmlparse.inc");
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Add Zone"));
 $pglinks = array("", "services_captiveportal_zones.php", "@self");
@@ -53,6 +54,10 @@ if ($_POST['Submit']) {
 
 	if (preg_match('/[^A-Za-z0-9_]/', $_POST['zone'])) {
 		$input_errors[] = gettext("The zone name can only contain letters, digits, and underscores ( _ ).");
+	}
+
+	if (in_array(strtolower($_POST['zone']), array_keys(array_merge(listtags(), listtags_pkg()), true))) {
+		$input_errors[] = sprintf(gettext("The zone name [%s] is reserved."), $_POST['zone']);
 	}
 
 	foreach ($a_cp as $cpkey => $cpent) {

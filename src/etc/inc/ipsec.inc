@@ -1758,7 +1758,7 @@ function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
  *   details.
  ******/
 function ipsec_setup_authentication(& $ph1ent, & $conn) {
-	global $rgmap, $ipsec_swanctl_dirs;
+	global $rgmap, $ipsec_swanctl_dirs, $config;
 	$local = array();
 	$remote = array();
 	$remote2 = array();
@@ -1812,6 +1812,10 @@ function ipsec_setup_authentication(& $ph1ent, & $conn) {
 				$remote['eap_id'] = "%any";
 			} else {
 				$local['auth'] = "eap-radius";
+			}
+			if (($config['ipsec']['client']['group_source'] == 'enabled') &&
+			    !empty($config['ipsec']['client']['auth_groups'])) {
+				$remote['groups'] = $config['ipsec']['client']['auth_groups'];
 			}
 			$remote['auth'] = "eap-radius";
 			break;

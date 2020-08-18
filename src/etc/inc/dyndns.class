@@ -291,6 +291,7 @@
 			switch ($dnsService) {
 				case 'he-net-v6':
 				case 'digitalocean-v6':
+				case 'domeneshop-v6':
 				case 'custom-v6':
 				case 'spdyn-v6':
 				case 'route53-v6':
@@ -350,6 +351,8 @@
 				switch ($this->_dnsService) {
 					case 'glesys':
 					case 'dnsomatic':
+					case 'domeneshop':
+					case 'domeneshop-v6':
 					case 'dyndns':
 					case 'dyndns-static':
 					case 'dyndns-custom':
@@ -741,6 +744,15 @@
 						$port = ":" . $this->_dnsPort;
 					}
 					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard=' . $this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NOCHG');
+					break;
+				case 'domeneshop':
+				case 'domeneshop-v6':
+					/* Example:
+						https://{token}:{secret}@api.domeneshop.no/v0/dyndns/update?hostname=example.com&myip=127.0.0.1
+					*/
+					$needsIP = FALSE;
+					$server = "https://{$this->_dnsUser}:{$this->_dnsPass}@api.domeneshop.no/v0/dyndns/update?hostname={$this->_dnsHost}&myip={$this->_dnsIP}";
+					curl_setopt($ch, CURLOPT_URL, $server);
 					break;
 				case 'namecheap':
 					/* Example:

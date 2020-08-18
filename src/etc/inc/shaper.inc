@@ -5252,7 +5252,7 @@ function dnpipe_find_nextnumber() {
 }
 
 function filter_generate_dummynet_rules() {
-	global $g, $dummynet_pipe_list;
+	global $config, $g, $dummynet_pipe_list;
 
 	read_dummynet_config();
 
@@ -5272,11 +5272,20 @@ function filter_generate_dummynet_rules() {
 		if (!is_module_loaded("dummynet.ko")) {
 			mwexec("/sbin/kldload dummynet");
 		}
-		set_sysctl(array(
+		$sysctls = (array(
 				"net.inet.ip.dummynet.io_fast" => "1",
 				"net.inet.ip.dummynet.hash_size" => "256",
 				"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
 		));
+		init_config_arr(array('sysctl', 'item'));
+		if (!empty($config['sysctl']['item'])) {
+			foreach ($config['sysctl']['item'] as $item) {
+				if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
+					$sysctls[$item['tunable']] = $item['value'];
+				}
+			}
+		}
+		set_sysctl($sysctls);
 		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
 		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");
 	}

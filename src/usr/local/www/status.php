@@ -63,7 +63,7 @@ $output_file = "/tmp/status_output.tgz";
 
 $filtered_tags = array(
 	'accountkey', 'authorizedkeys', 'auth_pass', 'auth_user',
-	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'crypto_password',
+	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'community', 'crypto_password',
 	'crypto_password2', 'dns_nsupdatensupdate_key', 'encryption_password',
 	'etpro_code', 'etprocode', 'gold_encryption_password', 'gold_password',
 	'influx_pass', 'ipsecpsk', 'ldap_bindpw', 'ldapbindpass', 'ldap_pass',

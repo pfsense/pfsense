@@ -61,6 +61,7 @@ if (isset($id) && isset($a_rfc2136[$id])) {
 	if (!$pconfig['ttl']) {
 		$pconfig['ttl'] = 60;
 	}
+	$pconfig['zone'] = $a_rfc2136[$id]['zone'];
 	$pconfig['keyname'] = $a_rfc2136[$id]['keyname'];
 	$pconfig['keyalgorithm'] = $a_rfc2136[$id]['keyalgorithm'];
 	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
@@ -92,6 +93,9 @@ if ($_POST['save'] || $_POST['force']) {
 	if ($_POST['host'] && !is_domain($_POST['host'])) {
 		$input_errors[] = gettext("The DNS update host name contains invalid characters.");
 	}
+	if ($_POST['zone'] && !is_domain($_POST['zone'])) {
+		$input_errors[] = gettext("The DNS zone name contains invalid characters.");
+	}
 	if ($_POST['ttl'] && !is_numericint($_POST['ttl'])) {
 		$input_errors[] = gettext("The DNS update TTL must be an integer.");
 	}
@@ -106,6 +110,7 @@ if ($_POST['save'] || $_POST['force']) {
 		$rfc2136 = array();
 		$rfc2136['enable'] = $_POST['enable'] ? true : false;
 		$rfc2136['host'] = $_POST['host'];
+		$rfc2136['zone'] = $_POST['zone'];
 		$rfc2136['ttl'] = $_POST['ttl'];
 		$rfc2136['keyname'] = $_POST['keyname'];
 		$rfc2136['keyalgorithm'] = $_POST['keyalgorithm'];
@@ -203,6 +208,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['host']
 ))->setHelp('Fully qualified hostname of the host to be updated.');
+
+$section->addInput(new Form_Input(
+	'zone',
+	'Zone',
+	'text',
+	$pconfig['zone']
+))->setHelp('Hostname zone (optional).');
 
 $section->addInput(new Form_Input(
 	'ttl',

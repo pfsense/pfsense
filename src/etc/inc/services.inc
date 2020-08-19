@@ -2841,6 +2841,10 @@ EOD;
 			$upinst .= "server {$dnsupdate['server']}\n";
 		}
 
+		if (!empty($dnsupdate['zone'])) {
+			$upinst .= "zone {$dnsupdate['zone']}\n";
+		}
+
 		$cachedipv4 = '';
 		$cacheTimev4 = 0;
 		if (file_exists($cacheFile)) {

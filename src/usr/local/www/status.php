@@ -67,16 +67,16 @@ $filtered_tags = array(
 	'crypto_password2', 'dns_nsupdatensupdate_key', 'encryption_password',
 	'etpro_code', 'etprocode', 'gold_encryption_password', 'gold_password',
 	'influx_pass', 'ipsecpsk', 'ldap_bindpw', 'ldapbindpass', 'ldap_pass',
-	'lighttpd_ls_password',	'md5-hash', 'md5password', 'md5sigkey',	'md5sigpass', 
-	'nt-hash', 'oinkcode', 'oinkmastercode', 'passphrase', 'password', 
-	'passwordagain', 'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',
-	'proxypass', 'proxy_passwd', 'proxyuser', 'proxy_user', 'prv',
-	'radius_secret', 'redis_password', 'redis_passwordagain', 'rocommunity',
-	'secret', 'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',
+	'lighttpd_ls_password', 'maxmind_geoipdb_key', 'maxmind_key', 'md5-hash',
+	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'oinkcode', 
+	'oinkmastercode', 'passphrase', 'password', 'passwordagain', 
+	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',	'proxypass', 
+	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radius_secret',
+	'redis_password', 'redis_passwordagain', 'rocommunity',	'secret',
+	'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',
 	'varclientpasswordinput', 'varclientsharedsecret', 'varsqlconfpassword',
-	'varsqlconf2password', 'varsyncpassword', 'varmodulesldappassword', 
-	'varmodulesldap2password', 'varusersmotpinitsecret', 'varusersmotppin', 
-	'varuserspassword', 'webrootftppassword'
+	'varsqlconf2password', 	'varsyncpassword', 'varmodulesldappassword', 'varmodulesldap2password',
+	'varusersmotpinitsecret', 'varusersmotppin', 'varuserspassword', 'webrootftppassword'
 );
 
 $acme_filtered_tags = array('key', 'password', 'secret', 'token', 'pwd', 'pw');

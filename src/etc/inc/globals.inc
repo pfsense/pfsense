@@ -89,7 +89,7 @@ $g = array(
 	"default_log_entries" => 500,
 	"default_log_size" => 512000,
 	"minimumtableentries_bogonsv6" => 400000,
-	"alternativemetaports" => array("vmware", "php72", "php73")
+	"alternativemetaports" => array("vmware", "php72", "php73", "php74")
 );
 
 /* IP TOS flags */

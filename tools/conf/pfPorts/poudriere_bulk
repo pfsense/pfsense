@@ -2,9 +2,9 @@
 benchmarks/%%PRODUCT_NAME%%-pkg-iperf
 benchmarks/iperf
 benchmarks/iperf3
-databases/php73-mysqli
-databases/php73-pdo_mysql
-databases/php73-pgsql
+databases/php74-mysqli
+databases/php74-pdo_mysql
+databases/php74-pgsql
 devel/aws-sdk-php
 devel/gdb
 dns/%%PRODUCT_NAME%%-pkg-bind

@@ -603,6 +603,7 @@
 /usr/libexec/lint2
 /usr/libexec/make_index
 /usr/libexec/ntalkd
+/usr/libexec/telnetd
 /usr/local/bin/3gstat
 /usr/local/bin/atareinit
 /usr/local/bin/athstats

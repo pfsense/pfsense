@@ -35,6 +35,7 @@
 ./sys
 ./tmp
 ./usr/lib/debug
+./usr/libexec/telnetd
 ./usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf
 ./usr/local/share/locale/*/LC_MESSAGES/%%PRODUCT_NAME%%.po
 ./usr/local/share/%%PRODUCT_NAME%%/base.mtree

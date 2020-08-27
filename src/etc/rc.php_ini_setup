@@ -90,7 +90,6 @@ PHPMODULES="$PHPMODULES curl date"
 PHPMODULES="$PHPMODULES gettext"
 # User manager
 PHPMODULES="$PHPMODULES ldap openssl pcntl"
-PHPMODULES="$PHPMODULES hash"
 PHPMODULES="$PHPMODULES mcrypt"
 # Regexs, PERL style!
 PHPMODULES="$PHPMODULES pcre"

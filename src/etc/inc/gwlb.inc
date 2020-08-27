@@ -1377,7 +1377,8 @@ function return_gateway_groups_array($fixup = false, $gways = false) {
 			fixup_default_gateway("inet6", $gateways_status, $gateways_arr);
 		}
 	}
-	if (is_array($config['gateways']['gateway_group'])) {
+	init_config_arr(array('gateways', 'gateway_group'));
+	if (!empty($config['gateways']['gateway_group'])) {
 		$viplist = get_configured_vip_list();
 		foreach ($config['gateways']['gateway_group'] as $group) {
 			$gateway_groups_array[$group['name']] = get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $viplist);
@@ -1428,12 +1429,11 @@ function lookup_gateway_or_group_by_name($gwname, $gways = false) {
 		}
 	}
 
-	if (is_array($config['gateways']['gateway_group'])) {
-		foreach ($config['gateways']['gateway_group'] as $gwg) {
-			if ($gwg['name'] == $gwname) {
-				$gwg['type'] = 'gatewaygroup';
-				return $gwg;
-			}
+	init_config_arr(array('gateways', 'gateway_group'));
+	foreach ($config['gateways']['gateway_group'] as $gwg) {
+		if ($gwg['name'] == $gwname) {
+			$gwg['type'] = 'gatewaygroup';
+			return $gwg;
 		}
 	}
 
@@ -2194,6 +2194,7 @@ function gateway_getgwtiername($gways, $idx) {
 	$gwname = $gways[$idx]['name'];
 
 	$gw = get_gateway_or_group_by_name($gwname, $gways);
+	init_config_arr(array('gateways'));
 	if ($config['gateways']['defaultgw4'] == $gwname || $config['gateways']['defaultgw6'] == $gwname) {
 		$result = "Default";
 	} else {
@@ -2237,12 +2238,11 @@ function get_gateway_or_group_by_name($gwname, $gateways_arr) {
 		}
 	}
 
-	if (is_array($config['gateways']['gateway_group'])) {
-		foreach ($config['gateways']['gateway_group'] as $gwg) {
-			if ($gwg['name'] == $gwname) {
-				$gwg['type'] = 'gatewaygroup';
-				return $gwg;
-			}
+	init_config_arr(array('gateways', 'gateway_group'));
+	foreach ($config['gateways']['gateway_group'] as $gwg) {
+		if ($gwg['name'] == $gwname) {
+			$gwg['type'] = 'gatewaygroup';
+			return $gwg;
 		}
 	}
 

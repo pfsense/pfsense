@@ -163,23 +163,22 @@ function interface_netgraph_needed($interface = "wan") {
 
 	if ($found == false) {
 		$realif = get_real_interface($interface);
-		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-				$ports = explode(',', $ppp['ports']);
-				foreach ($ports as $pid => $port) {
-					$port = get_real_interface($port);
-					if ($realif == $port) {
-						$found = true;
-						break;
-					}
-					/* Find the parent interfaces of the vlans in the MLPPP configs
-					* there should be only one element in the array here
-					* -- this could be better . . . */
-					$parent_if = get_parent_interface($port);
-					if ($realif == $parent_if[0]) {
-						$found = true;
-						break;
-					}
+		init_config_arr(array('ppps', 'ppp'));
+		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+			$ports = explode(',', $ppp['ports']);
+			foreach ($ports as $pid => $port) {
+				$port = get_real_interface($port);
+				if ($realif == $port) {
+					$found = true;
+					break;
+				}
+				/* Find the parent interfaces of the vlans in the MLPPP configs
+				* there should be only one element in the array here
+				* -- this could be better . . . */
+				$parent_if = get_parent_interface($port);
+				if ($realif == $parent_if[0]) {
+					$found = true;
+					break;
 				}
 			}
 		}

@@ -397,6 +397,7 @@ function get_services() {
 	}
 
 	foreach (array('server', 'client') as $mode) {
+		init_config_arr(array('openvpn'));
 		if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 			foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
 				if (!isset($setting['disable'])) {

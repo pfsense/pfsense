@@ -152,7 +152,7 @@ function parse_config($parse = false) {
 	$config_parsed = true;
 	unlock($lockkey);
 
-	alias_make_table($config);
+	alias_make_table();
 
 	return $config;
 }
@@ -281,7 +281,7 @@ EOD;
 		}
 
 	/* make alias table (for faster lookups) */
-	alias_make_table($config);
+	alias_make_table();
 }
 
 /****f* config/conf_mount_rw

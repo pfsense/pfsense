@@ -429,7 +429,7 @@
 				<type>checkbox</type>
 				<typehint>Prioritize network gaming traffic</typehint>
 				<description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-				<enablefields>BattleNET,EAOrigin,GameForWindowsLive,PlayStationConsoles,Steam,WiiConsoles,XboxConsoles,ARMA2,ARMA3,Battlefield2,Battlefield3,BattlefieldBC2,Borderlands,CallOfDuty,Counterstrike,Crysis2,Crysis3,DeltaForce,DeadSpace2,DeadSpace3,Dirt3,DOOM3,DragonAge2,EmpireEarth,EveOnline,Everquest,Everquest2,FarCry,FarCry2,FarCry3,GunZOnline,HalfLife,LeagueofLegends,Lineage2,MassEffect3,MechwarriorOnline,Minecraft,OperationFlashpointDR,PlanetSide,PlanetSide2,QuakeIII,QuakeIV,StarWarsTOR,TigerWoods2004PS2,TribesAscend,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft</enablefields>
+				<enablefields>BattleNET,EAOrigin,PlayStationConsoles,Steam,WiiConsoles,XboxLive,ARMA2,ARMA3,Battlefield2,Battlefield3,BattlefieldBC2,Borderlands,CallOfDuty,Counterstrike,Crysis2,Crysis3,DeltaForce,DeadSpace2,DeadSpace3,Dirt3,DOOM3,DragonAge2,EmpireEarth,EveOnline,Everquest,Everquest2,FarCry,FarCry2,FarCry3,GunZOnline,HalfLife,LeagueofLegends,Lineage2,MassEffect3,MechwarriorOnline,Minecraft,OperationFlashpointDR,PlanetSide,PlanetSide2,QuakeIII,QuakeIV,StarWarsTOR,TigerWoods2004PS2,TribesAscend,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft</enablefields>
 				<donotdisable>true</donotdisable>
 				<bindstofield>ezshaper-&gt;step6-&gt;enable</bindstofield>
 			</field>
@@ -448,12 +448,6 @@
 				<type>checkbox</type>
 				<typehint>EA Origin Client - Some PC games by EA use this.</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;eaorigin</bindstofield>
-			</field>
-				<field>
-				<name>GameForWindowsLive</name>
-				<type>checkbox</type>
-				<typehint>Games for Windows Live</typehint>
-				<bindstofield>ezshaper-&gt;step6-&gt;gamesforwindowslive</bindstofield>
 			</field>
 			<field>
 				<name>PlayStationConsoles</name>
@@ -474,10 +468,10 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;wiiconsoles</bindstofield>
 			</field>
 			<field>
-				<name>XboxConsoles</name>
+				<name>XboxLive</name>
 				<type>checkbox</type>
-				<typehint>Xbox Consoles - Xbox 360 and Xbox One</typehint>
-				<bindstofield>ezshaper-&gt;step6-&gt;xboxconsoles</bindstofield>
+				<typehint>Xbox Live Services - Xbox 360, Xbox One, Windows 10 Store Games</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;xboxlive</bindstofield>
 			</field>
 			<field>
 				<name>GoogleStadia</name>

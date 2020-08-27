@@ -658,7 +658,8 @@ footer a {
     padding-bottom: 17px;
     margin-top: -0.125em;
     width: 14px;
-    height: 14px
+    height: 14px;
+    pointer-events: none;
 }
 
 /* Used when you need an icon to act as a submit button **/

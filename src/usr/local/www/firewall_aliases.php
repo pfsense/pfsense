@@ -36,6 +36,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("alias.inc");
 
 init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
@@ -55,90 +56,11 @@ if ($_POST['apply']) {
 
 
 if ($_POST['act'] == "del") {
-	if ($a_aliases[$_POST['id']]) {
-		/* make sure rule is not being referenced by any nat or filter rules */
-		$is_alias_referenced = false;
-		$referenced_by = false;
-		$alias_name = $a_aliases[$_POST['id']]['name'];
-		// Firewall rules
-		find_alias_reference(array('filter', 'rule'), array('source', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('filter', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('filter', 'rule'), array('source', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('filter', 'rule'), array('destination', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
-		// NAT Rules
-		find_alias_reference(array('nat', 'rule'), array('source', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'rule'), array('source', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'rule'), array('destination', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'rule'), array('target'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'rule'), array('local-port'), $alias_name, $is_alias_referenced, $referenced_by);
-		// NAT 1:1 Rules
-		//find_alias_reference(array('nat', 'onetoone'), array('external'), $alias_name, $is_alias_referenced, $referenced_by);
-		//find_alias_reference(array('nat', 'onetoone'), array('source', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'onetoone'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-		// NAT Outbound Rules
-		find_alias_reference(array('nat', 'outbound', 'rule'), array('source', 'network'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'outbound', 'rule'), array('sourceport'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'outbound', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'outbound', 'rule'), array('dstport'), $alias_name, $is_alias_referenced, $referenced_by);
-		find_alias_reference(array('nat', 'outbound', 'rule'), array('target'), $alias_name, $is_alias_referenced, $referenced_by);
-		// Alias in an alias
-		find_alias_reference(array('aliases', 'alias'), array('address'), $alias_name, $is_alias_referenced, $referenced_by);
-		// Static routes
-		find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
-		if ($is_alias_referenced == true) {
-			$delete_error = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars($referenced_by));
-		} else {
-			if (preg_match("/urltable/i", $a_aliases[$_POST['id']]['type'])) {
-				// this is a URL table type alias, delete its file as well
-				unlink_if_exists("/var/db/aliastables/" . $a_aliases[$_POST['id']]['name'] . ".txt");
-			}
-			unset($a_aliases[$_POST['id']]);
-			if (write_config(gettext("Deleted a firewall alias."))) {
-				filter_configure();
-				mark_subsystem_dirty('aliases');
-			}
-			header("Location: firewall_aliases.php?tab=" . $tab);
-			exit;
-		}
-	}
-}
+	$delete_error = deleteAlias($_POST['id']);
 
-function find_alias_reference($section, $field, $origname, &$is_alias_referenced, &$referenced_by) {
-	global $config;
-	if (!$origname || $is_alias_referenced) {
-		return;
-	}
-
-	$sectionref = &$config;
-	foreach ($section as $sectionname) {
-		if (is_array($sectionref) && isset($sectionref[$sectionname])) {
-			$sectionref = &$sectionref[$sectionname];
-		} else {
-			return;
-		}
-	}
-
-	if (is_array($sectionref)) {
-		foreach ($sectionref as $itemkey => $item) {
-			$fieldfound = true;
-			$fieldref = &$sectionref[$itemkey];
-			foreach ($field as $fieldname) {
-				if (is_array($fieldref) && isset($fieldref[$fieldname])) {
-					$fieldref = &$fieldref[$fieldname];
-				} else {
-					$fieldfound = false;
-					break;
-				}
-			}
-			if ($fieldfound && $fieldref == $origname) {
-				$is_alias_referenced = true;
-				if (is_array($item)) {
-					$referenced_by = $item['descr'];
-				}
-				break;
-			}
-		}
+	if (strlen($delete_error) == 0) {
+		header("Location: firewall_aliases.php?tab=" . $tab);
+		exit;
 	}
 }
 

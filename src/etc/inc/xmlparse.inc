@@ -128,10 +128,10 @@ function cData($parser, $data) {
 		}
 
 		if (is_string($ptr)) {
-			$ptr .= html_entity_decode($data);
+			$ptr .= htmlspecialchars_decode($data);
 		} else {
 			if (trim($data, " ") != "") {
-				$ptr = html_entity_decode($data);
+				$ptr = htmlspecialchars_decode($data);
 				$havedata++;
 			}
 		}
@@ -215,21 +215,6 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	}
 }
 
-/* Return true if a field should be cdata encoded */
-function is_cdata_entity($ent) {
-	$cdata_fields = array(
-		'aclname', 'auth_pass', 'auth_prompt', 'auth_user', 'certca', 'certname', 'city', 'common_name',
-		'descr', 'detail', 'email', 'encryption_password', 'ldap_attr',
-		'ldap_authcn', 'ldap_basedn', 'ldap_basedomain', 'ldap_bind', 'ldapbinddn',
-		'ldapbindpass', 'ldap_extended_query', 'ldap_filter', 'ldap_pass', 'ldap_user',
-		'login_banner', 'organization', 'password', 'rangedescr', 'state', 'text',
-		'username', 'varusersusername', 'varuserspassword'
-	);
-
-	/* Check if the entity name starts with any of the strings above */
-	return preg_match('/(^' . implode('|^', $cdata_fields) . ')/', $ent) === 1;
-}
-
 function dump_xml_config_sub($arr, $indent) {
 
 	global $listtags;
@@ -263,10 +248,8 @@ function dump_xml_config_sub($arr, $indent) {
 						$xmlconfig .= str_repeat("\t", $indent);
 						if ((is_bool($cval) && $cval == true) || ($cval === "")) {
 							$xmlconfig .= "<$ent></$ent>\n";
-						} else if (is_cdata_entity($ent)) {
-							$xmlconfig .= "<$ent><![CDATA[" . htmlentities($cval) . "]]></$ent>\n";
 						} else {
-							$xmlconfig .= "<$ent>" . htmlentities($cval) . "</$ent>\n";
+							$xmlconfig .= "<$ent>" . htmlspecialchars($cval) . "</$ent>\n";
 						}
 					}
 				}
@@ -287,11 +270,7 @@ function dump_xml_config_sub($arr, $indent) {
 				$xmlconfig .= "<$ent></$ent>\n";
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				if (is_cdata_entity($ent)) {
-					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
-				} else {
-					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";
-				}
+				$xmlconfig .= "<$ent>" . htmlspecialchars($val) . "</$ent>\n";
 			}
 		}
 	}

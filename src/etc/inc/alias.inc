@@ -529,8 +529,7 @@ function saveAlias($post, $id) {
 		// Sort list
 		$a_aliases = msort($a_aliases, "name");
 
-		write_config(gettext("Edited a firewall alias.")) {
-		}
+		write_config(gettext("Edited a firewall alias."));
 	} else {
 		//we received input errors, copy data to prevent retype
 		$pconfig['name'] = $post['name'];

@@ -36,7 +36,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
-require_once("alias.inc");
+require_once("alias-utils.inc");
 
 init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];

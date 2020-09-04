@@ -756,6 +756,7 @@ class pfsense_xmlrpc_server {
 		if ($arguments['op'] === 'get_databases') {
 			$active_vouchers = array();
 			$expired_vouchers = array();
+			$usedmacs = '';
 
 			if (is_array($config['voucher'][$cpzone]['roll'])) {
 				foreach($config['voucher'][$cpzone]['roll'] as $id => $roll) {
@@ -763,11 +764,16 @@ class pfsense_xmlrpc_server {
 					$active_vouchers[$roll['number']] = voucher_read_active_db($roll['number']);
 				}
 			}
+			if (!empty($config['captiveportal'][$cpzone]['freelogins_count']) &&
+			    !empty($config['captiveportal'][$cpzone]['freelogins_resettimeout'])) {
+				$usedmacs = captiveportal_read_usedmacs_db();
+			}
 			// base64 is here for safety reasons, as we don't fully control
 			// the content of these arrays.
 			$returndata = array('connected_users' => base64_encode(serialize(captiveportal_read_db())),
 			'active_vouchers' => base64_encode(serialize($active_vouchers)),
-			'expired_vouchers' => base64_encode(serialize($expired_vouchers)));
+			'expired_vouchers' => base64_encode(serialize($expired_vouchers)),
+			'usedmacs' => base64_encode(serialize($usedmacs)));
 
 			return $returndata;
 		} elseif ($arguments['op'] === 'connect_user') {
@@ -814,6 +820,11 @@ class pfsense_xmlrpc_server {
 			foreach ($arguments['active_vouchers'] as $roll => $active_vouchers) {
 				voucher_write_active_db($roll, $active_vouchers);
 			}
+			return true;
+		} elseif ($arguments['op'] === 'write_usedmacs') {
+			$arguments = unserialize(base64_decode($arguments['arguments']));
+
+			captiveportal_write_usedmacs_db($arguments['usedmacs']); 
 			return true;
 		}
 	}

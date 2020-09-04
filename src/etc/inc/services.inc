@@ -1336,7 +1336,7 @@ function dhcpdkey($dhcpifconf) {
 	$dhcpdconf = "";
 	if (!empty($dhcpifconf['ddnsdomainkeyname']) && !empty($dhcpifconf['ddnsdomainkey'])) {
 		$algorithm = empty($dhcpifconf['ddnsdomainkeyalgorithm']) ? 'hmac-md5' : $dhcpifconf['ddnsdomainkeyalgorithm'];
-		$dhcpdconf .= "key {$dhcpifconf['ddnsdomainkeyname']} {\n";
+		$dhcpdconf .= "key \"{$dhcpifconf['ddnsdomainkeyname']}\" {\n";
 		$dhcpdconf .= "	algorithm {$algorithm};\n";
 		$dhcpdconf .= "	secret {$dhcpifconf['ddnsdomainkey']};\n";
 		$dhcpdconf .= "}\n";
@@ -1381,7 +1381,7 @@ function dhcpdzones($ddns_zones) {
 					$dhcpdconf .= "	secondary6 {$secondary};\n";
 				}
 				if ($zone['ddnsdomainkeyname'] <> "" && $zone['ddnsdomainkey'] <> "") {
-					$dhcpdconf .= "	key {$zone['ddnsdomainkeyname']};\n";
+					$dhcpdconf .= "	key \"{$zone['ddnsdomainkeyname']}\";\n";
 				}
 				$dhcpdconf .= "}\n";
 				$added_zones[] = $zone['domain-name'];
@@ -1399,7 +1399,7 @@ function dhcpdzones($ddns_zones) {
 					$dhcpdconf .= "	secondary6 {$secondary};\n";
 				}
 				if ($zone['ddnsdomainkeyname'] <> "" && $zone['ddnsdomainkey'] <> "") {
-					$dhcpdconf .= "	key {$zone['ddnsdomainkeyname']};\n";
+					$dhcpdconf .= "	key \"{$zone['ddnsdomainkeyname']}\";\n";
 				}
 				$dhcpdconf .= "}\n";
 				$added_zones[] = $zone['ptr-domain'];

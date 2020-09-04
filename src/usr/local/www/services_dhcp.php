@@ -402,8 +402,8 @@ if (isset($_POST['save'])) {
 		if (!$_POST['ddnsdomainkeyname'] || !$_POST['ddnsdomainkeyalgorithm'] || !$_POST['ddnsdomainkey']) {
 			$input_errors[] = gettext("A valid domain key name, algorithm and secret must be specified.");
 		}
-		if (preg_match('/[^A-Za-z0-9\-_]/', $_POST['ddnsdomainkeyname'])) {
-			$input_errors[] = gettext("The domain key name may only contain the characters a-z, A-Z, 0-9, '-' and '_'");
+		if (preg_match('/[^A-Za-z0-9\.\-\_]/', $_POST['ddnsdomainkeyname'])) {
+			$input_errors[] = gettext("The domain key name may only contain the characters a-z, A-Z, 0-9, '-', '_' and '.'");
 		}
 		if ($_POST['ddnsdomainkey'] && !base64_decode($_POST['ddnsdomainkey'], true)) {
 			$input_errors[] = gettext("The domain key secret must be a Base64 encoded value.");

@@ -121,6 +121,46 @@ function restore_rrddata() {
 	}
 }
 
+function restore_captiveportal_data($type='voucher') {
+	global $config, $g;
+	if ($type == 'captiveportal_usedmacs') {
+		$conf = 'captiveportal';
+	} else {
+		$conf = $type;
+	}
+	foreach ($config[$conf]["{$type}data"]["{$type}dbfile"] as $db) {
+		$cpdata_file = "{$g['vardb_path']}/{$db['filename']}";
+		if (file_put_contents($cpdata_file, gzinflate(base64_decode($db['dbdata']))) === false) {
+			log_error(sprintf(gettext("Cannot write %s"), $cpdata_file));
+			continue;
+		}
+	}
+}
+
+function captiveportal_data_xml($tab=false, $type='voucher') {
+	global $g;
+
+	$cpdata_files = glob("{$g['vardb_path']}/{$type}_*.db");
+	if (empty($cpdata_files)) {
+		return;
+	}
+	$t = ($tab) ? "\t" : "";
+	$result = "\t<{$type}data>\n";
+	foreach ($cpdata_files as $cpdata_file) {
+		$basename = basename($cpdata_file);
+		$db_data = file_get_contents($cpdata_file);
+		if ($db_data !== false) {
+			$result .= "{$t}\t\t<{$type}dbfile>\n";
+			$result .= "{$t}\t\t\t<filename>{$basename}</filename>\n";
+			$result .= "{$t}\t\t\t<dbdata>" . base64_encode(gzdeflate($db_data)) . "</dbdata>\n";
+			$result .= "{$t}\t\t</{$type}dbfile>\n";
+		}
+	}
+	$result .= "{$t}\t</{$type}data>\n";
+
+	return $result;
+}
+
 function remove_bad_chars($string) {
 	return preg_replace('/[^a-z_0-9]/i', '', $string);
 }
@@ -187,6 +227,18 @@ if ($_POST) {
 					} else if ($_POST['backuparea'] === "rrddata") {
 						$data = rrd_data_xml();
 						$name = "{$_POST['backuparea']}-{$name}";
+					} else if ($_POST['backuparea'] === "captiveportal") {
+						$data = backup_config_section($_POST['backuparea']);
+						$cpusedmacs_data_xml = captiveportal_data_xml(false, 'captiveportal_usedmacs');
+						$closing_tag = "</captiveportal>";
+						$data = str_replace($closing_tag, $cpusedmacs_data_xml . $closing_tag, $data);
+						$name = "{$_POST['backuparea']}-{$name}";
+					} else if ($_POST['backuparea'] === "voucher") {
+						$data = backup_config_section($_POST['backuparea']);
+						$voucher_data_xml = captiveportal_data_xml(false, 'voucher');
+						$closing_tag = "</voucher>";
+						$data = str_replace($closing_tag, $voucher_data_xml . $closing_tag, $data);
+						$name = "{$_POST['backuparea']}-{$name}";
 					} else {
 						/* backup specific area of configuration */
 						$data = backup_config_section($_POST['backuparea']);
@@ -199,15 +251,28 @@ if ($_POST) {
 				/*
 				 *	Backup RRD Data
 				 */
+
+				/* If the config on disk had rrddata tags already, remove that section first.
+				 * See https://redmine.pfsense.org/issues/8994 and
+				 *     https://redmine.pfsense.org/issues/10508 */
+				$data = preg_replace("/[[:blank:]]*<rrddata>.*<\\/rrddata>[[:blank:]]*\n*/s", "", $data);
+				$data = preg_replace("/[[:blank:]]*<rrddata\\/>[[:blank:]]*\n*/", "", $data);
+
+				if (!$_POST['backuparea'] && !empty($config['captiveportal'])) {
+					$cpusedmacs_data_xml = captiveportal_data_xml(true, 'captiveportal_usedmacs');
+					$closing_tag = "</captiveportal>";
+					$data = str_replace($closing_tag, $cpusedmacs_data_xml . $closing_tag, $data);
+				}
+
+				if (!$_POST['backuparea'] && !empty($config['voucher'])) {
+					$voucher_data_xml = captiveportal_data_xml(true, 'voucher');
+					$closing_tag = "</voucher>";
+					$data = str_replace($closing_tag, $voucher_data_xml . $closing_tag, $data);
+				}
+
 				if ($_POST['backuparea'] !== "rrddata" && !$_POST['donotbackuprrd']) {
 					$rrd_data_xml = rrd_data_xml();
 					$closing_tag = "</" . $g['xml_rootobj'] . ">";
-
-					/* If the config on disk had rrddata tags already, remove that section first.
-					 * See https://redmine.pfsense.org/issues/8994 */
-					$data = preg_replace("/<rrddata>.*<\\/rrddata>/", "", $data);
-					$data = preg_replace("/<rrddata\\/>/", "", $data);
-
 					$data = str_replace($closing_tag, $rrd_data_xml . $closing_tag, $data);
 				}
 
@@ -265,11 +330,25 @@ if ($_POST) {
 							if (!restore_config_section($_POST['restorearea'], $data)) {
 								$input_errors[] = gettext("An area to restore was selected but the correct xml tag could not be located.");
 							} else {
-								if ($config['rrddata']) {
-									restore_rrddata();
-									unset($config['rrddata']);
+								if ($config['rrddata'] || $config['voucher']['voucherdata'] ||
+								    $config['captiveportal']['captiveportal_usedmacsdata']) {
+									if ($config['rrddata']) {
+										restore_rrddata();
+										unset($config['rrddata']);
+										write_config(sprintf(gettext("Unset RRD data from configuration after restoring %s configuration area"), $_POST['restorearea']));
+									}
+									if (($_POST['restorearea'] == 'voucher') && $config['voucher']['voucherdata']) {
+										restore_captiveportal_data('voucher');
+										unset($config['voucher']['voucherdata']);
+										write_config(sprintf(gettext("Unset Voucher data from configuration after restoring %s configuration area"), $_POST['restorearea']));
+									}
+									if (($_POST['restorearea'] == 'captiveportal') &&
+									    $config['captiveportal']['captiveportal_usedmacsdata']) {
+										restore_captiveportal_data('captiveportal_usedmacs');
+										unset($config['captiveportal']['captiveportal_usedmacsdata']);
+										write_config(sprintf(gettext("Unset Used MACs data from configuration after restoring %s configuration area"), $_POST['restorearea']));
+									}
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
-									write_config(sprintf(gettext("Unset RRD data from configuration after restoring %s configuration area"), $_POST['restorearea']));
 									convert_config();
 								}
 								filter_configure();
@@ -333,11 +412,22 @@ if ($_POST) {
 									unset($loaderconf);
 								}
 								/* extract out rrd items, unset from $config when done */
-								if ($config['rrddata']) {
-									restore_rrddata();
-									unset($config['rrddata']);
+								if ($config['rrddata'] || $config['voucher']['voucherdata'] ||
+							            $config['captiveportal']['captiveportal_usedmacs'])	{
+									if ($config['rrddata']) {
+										restore_rrddata();
+										unset($config['rrddata']);
+									}
+									if ($config['voucher']['voucherdata']) {
+										restore_captiveportal_data('voucher');
+										unset($config['voucher']['voucherdata']);
+									}
+									if ($config['captiveportal']['captiveportal_usedmacs']) {
+										restore_captiveportal_data('captiveportal_usedmacs');
+										unset($config['captiveportal']['captiveportal_usedmacs']);
+									}
+									write_config(gettext("Unset RRD, Voucher and Used MACs data from configuration after full restore."));
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
-									write_config(gettext("Unset RRD data from configuration after restoring full configuration"));
 									convert_config();
 								}
 								if ($m0n0wall_upgrade == true) {
@@ -454,9 +544,11 @@ function build_area_list($showall) {
 		"unbound" => gettext("DNS Resolver"),
 		"dhcpd" => gettext("DHCP Server"),
 		"dhcpdv6" => gettext("DHCPv6 Server"),
+		"dyndnses" => gettext("Dynamic DNS"),
 		"filter" => gettext("Firewall Rules"),
 		"interfaces" => gettext("Interfaces"),
 		"ipsec" => gettext("IPSEC"),
+		"dnshaper" => gettext("Limiters"),
 		"nat" => gettext("NAT"),
 		"openvpn" => gettext("OpenVPN"),
 		"installedpackages" => gettext("Package Manager"),

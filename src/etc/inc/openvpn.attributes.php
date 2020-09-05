@@ -106,7 +106,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir) {
 			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source netmask '$netmask'.");
 			return;
 		}
-		$tmprule .= "from {network}/{$netmask}";
+		$tmprule .= "from {$network}/{$netmask} ";
 
 		$index++;
 	}
@@ -173,7 +173,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir) {
 			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination netmask '$netmask'.");
 			return;
 		}
-		$tmprule .= "to {network}/{$netmask}";
+		$tmprule .= "to {$network}/{$netmask} ";
 
 		$index++;
 	}

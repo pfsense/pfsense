@@ -49,7 +49,7 @@ $copyrightfile = "{$g['cf_conf_path']}/copyright";
 				require_once($copyrightfile);
 			} else {
 				print("<div class=\"modal-body\" style=\"background-color:#1e3f75; color:white;\">");
-				print(gettext("<p align=\"center\"><font size=\"3\">Copyright &copy; 2004-2019. Electric Sheep Fencing LLC (\"ESF\"). All Rights Reserved.</p>
+				print(gettext("<p align=\"center\"><font size=\"3\">Copyright &copy; 2004-2020. Electric Sheep Fencing LLC (\"ESF\"). All Rights Reserved.</p>
 					<p align=\"center\"><strong>NO COMMERCIAL DISTRIBUTION OF THE PFSENSE&reg; CE SOFTWARE IS ALLOWED.</strong>
 					</p>
 					<p>pfSense&reg; is a federally and internationally registered trademark and service mark of ESF, and is exclusively licensed to Rubicon Communications, LLC (d/b/a Netgate) (\"Netgate\").</p>

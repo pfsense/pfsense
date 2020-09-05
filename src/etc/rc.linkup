@@ -79,6 +79,14 @@ function handle_argument_group($iface, $argument2) {
 		return;
 	}
 
+	/* Ignore events on LAGG members without IP address configuration */
+	$lagg_if = link_interface_to_lagg($iface);
+	if (!empty($lagg_if) && empty($ipaddr) && empty($ip6addr)) {
+		log_error("Ignoring link event for LAGG member without IP address configuration");
+
+		return;
+	}
+
 	if ($staticv4 === true && $staticv6 === true) {
 		$friendly = convert_friendly_interface_to_friendly_descr($iface);
 		log_error("Hotplug event detected for {$friendly}({$iface}) static IP ({$ipaddr} {$ip6addr})");

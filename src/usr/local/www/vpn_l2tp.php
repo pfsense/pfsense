@@ -57,10 +57,12 @@ if ($_POST['save']) {
 
 	/* input validation */
 	if ($_POST['mode'] == "server") {
-		$reqdfields = explode(" ", "localip remoteip");
-		$reqdfieldsn = array(gettext("Server address"), gettext("Remote start address"));
-
-		if ($_POST['radiusenable']) {
+		$reqdfields = explode(" ", "localip");
+		$reqdfieldsn = array(gettext("Server address"));
+		if (!$_POST['radiusenable'] || !$_POST['radiusissueips']) {
+			$reqdfields = array_merge($reqdfields, explode(" ", "remoteip"));
+			$reqdfieldsn = array_merge($reqdfieldsn, array(gettext("Remote start address")));
+		} elseif ($_POST['radiusenable']) {
 			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
 			$reqdfieldsn = array_merge($reqdfieldsn,
 				array(gettext("RADIUS server address"), gettext("RADIUS shared secret")));
@@ -68,16 +70,17 @@ if ($_POST['save']) {
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-		if (($_POST['localip'] && !is_ipaddr($_POST['localip']))) {
+		if (($_POST['localip'] && !is_ipaddrv4($_POST['localip']))) {
 			$input_errors[] = gettext("A valid server address must be specified.");
 		}
 		if (is_ipaddr_configured($_POST['localip'])) {
 			$input_errors[] = gettext("'Server address' parameter should NOT be set to any IP address currently in use on this firewall.");
 		}
-		if (($_POST['l2tp_subnet'] && !is_ipaddr($_POST['remoteip']))) {
+		if ($_POST['l2tp_subnet'] && !is_ipaddrv4($_POST['remoteip']) &&
+		    (!$_POST['radiusenable'] || !$_POST['radiusissueips'])) {
 			$input_errors[] = gettext("A valid remote start address must be specified.");
 		}
-		if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver']))) {
+		if (($_POST['radiusserver'] && !is_ipaddrv4($_POST['radiusserver']))) {
 			$input_errors[] = gettext("A valid RADIUS server address must be specified.");
 		}
 
@@ -237,7 +240,7 @@ $section->addInput(new Form_IpAddress(
         'remoteip',
         '*Remote address range',
         $pconfig['remoteip']
-))->addMask('l2tp_subnet', $pconfig['l2tp_subnet'])
+))->addMask('l2tp_subnet', $pconfig['l2tp_subnet'], 32)->setWidth(5)
   ->setHelp('Specify the starting address for the client IP address subnet.');
 
 $section->addInput(new Form_Select(

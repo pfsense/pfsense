@@ -63,19 +63,23 @@ $output_file = "/tmp/status_output.tgz";
 
 $filtered_tags = array(
 	'accountkey', 'authorizedkeys', 'auth_pass', 'auth_user',
-	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'crypto_password',
+	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'community', 'crypto_password',
 	'crypto_password2', 'dns_nsupdatensupdate_key', 'encryption_password',
 	'etpro_code', 'etprocode', 'gold_encryption_password', 'gold_password',
 	'influx_pass', 'ipsecpsk', 'ldap_bindpw', 'ldapbindpass', 'ldap_pass',
-	'lighttpd_ls_password',	'md5-hash', 'md5password', 'md5sigkey',	'md5sigpass', 
-	'nt-hash', 'oinkcode', 'oinkmastercode', 'passphrase', 'password', 
-	'passwordagain', 'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',
-	'proxypass', 'proxy_passwd', 'proxyuser', 'proxy_user', 'prv',
-	'radius_secret', 'redis_password', 'redis_passwordagain', 'rocommunity',
-	'secret', 'shared_key', 'tls', 'tlspskidentity', 'tlspskfile',
-	'varclientpasswordinput', 'varclientsharedsecret', 'varsyncpassword',
-	'varusersmotpinitsecret', 'varusersmotppin'
+	'lighttpd_ls_password', 'maxmind_geoipdb_key', 'maxmind_key', 'md5-hash',
+	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'oinkcode', 
+	'oinkmastercode', 'passphrase', 'password', 'passwordagain', 
+	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',	'proxypass', 
+	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radius_secret',
+	'redis_password', 'redis_passwordagain', 'rocommunity',	'secret',
+	'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',
+	'varclientpasswordinput', 'varclientsharedsecret', 'varsqlconfpassword',
+	'varsqlconf2password', 	'varsyncpassword', 'varmodulesldappassword', 'varmodulesldap2password',
+	'varusersmotpinitsecret', 'varusersmotppin', 'varuserspassword', 'webrootftppassword'
 );
+
+$acme_filtered_tags = array('key', 'password', 'secret', 'token', 'pwd', 'pw');
 
 if ($_POST['submit'] == "DOWNLOAD" && file_exists($output_file)) {
 	session_cache_limiter('public');
@@ -90,7 +94,7 @@ unlink_if_exists($output_file);
 mkdir($output_path);
 
 function doCmdT($title, $command, $method) {
-	global $output_path, $output_file, $filtered_tags, $show_output;
+	global $output_path, $output_file, $filtered_tags, $acme_filtered_tags, $show_output;
 	/* Fixup output directory */
 
 	if ($show_output) {
@@ -111,6 +115,10 @@ function doCmdT($title, $command, $method) {
 				/* remove sensitive contents */
 				foreach ($filtered_tags as $tag) {
 					$line = preg_replace("/<{$tag}>.*?<\\/{$tag}>/", "<{$tag}>xxxxx</{$tag}>", $line);
+				}
+				/* remove ACME pkg sensitive contents */
+				foreach ($acme_filtered_tags as $tag) {
+					$line = preg_replace("/<dns_(.+){$tag}>.*?<\\/dns_(.+){$tag}>/", "<dns_$1{$tag}>xxxxx</dns_$1{$tag}>", $line);
 				}
 				if ($show_output) {
 					echo htmlspecialchars(str_replace("\t", "    ", $line), ENT_NOQUOTES);
@@ -282,6 +290,7 @@ defCmdT("Network-Listen Queues", "/usr/bin/netstat -LaAn");
 defCmdT("Network-Sockets", "/usr/bin/sockstat");
 defCmdT("Network-ARP Table", "/usr/sbin/arp -an");
 defCmdT("Network-NDP Table", "/usr/sbin/ndp -na");
+defCmdT("OS-Kernel Modules", "/sbin/kldstat -v");
 defCmdT("OS-Kernel VMStat", "/usr/bin/vmstat -afimsz");
 
 /* If a device has a switch, put the switch configuration in the status output */
@@ -317,6 +326,10 @@ defCmdT("Disk-Contents of var run", "/bin/ls /var/run");
 defCmdT("Disk-Contents of conf", "/bin/ls /conf");
 defCmdT("config.xml", "dumpconfigxml");
 defCmdT("DNS-Resolution Configuration", "/bin/cat /etc/resolv.conf");
+defCmdT("DNS-Resolver Access Lists", "/bin/cat /var/unbound/access_lists.conf");
+defCmdT("DNS-Resolver Configuration", "/bin/cat /var/unbound/unbound.conf");
+defCmdT("DNS-Resolver Domain Overrides", "/bin/cat /var/unbound/domainoverrides.conf");
+defCmdT("DNS-Resolver Host Overrides", "/bin/cat /var/unbound/host_entries.conf");
 defCmdT("DHCP-IPv4 Configuration", "/bin/cat /var/dhcpd/etc/dhcpd.conf");
 defCmdT("DHCP-IPv6-Configuration", "/bin/cat /var/dhcpd/etc/dhcpdv6.conf");
 defCmdT("IPsec-strongSwan Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/strongswan.conf');
@@ -331,6 +344,9 @@ defCmdT("IPsec-SPD", "/sbin/setkey -DP");
 defCmdT("IPsec-SAD", "/sbin/setkey -D");
 if (file_exists("/cf/conf/upgrade_log.txt")) {
 	defCmdT("OS-Upgrade Log", "/bin/cat /cf/conf/upgrade_log.txt");
+}
+if (file_exists("/cf/conf/upgrade_log.latest.txt")) {
+	defCmdT("OS-Upgrade Log Latest", "/bin/cat /cf/conf/upgrade_log.latest.txt");
 }
 if (file_exists("/boot/loader.conf")) {
 	defCmdT("OS-Boot Loader Configuration", "/bin/cat /boot/loader.conf");
@@ -350,6 +366,21 @@ if (is_dir("/var/etc/openvpn")) {
 		}
 		defCmdT("OpenVPN-Configuration {$ovpnfile[4]}", "/bin/cat " . escapeshellarg($file));
 	}
+}
+
+if (file_exists("/var/etc/l2tp-vpn/mpd.conf")) {
+	defCmdT("L2TP-Configuration", '/usr/bin/sed -E "s/([[:blank:]](secret|radius server .*) ).*/\1<redacted>/" /var/etc/l2tp-vpn/mpd.conf');
+}
+
+/* Config History */
+$confvers = get_backups();
+unset($confvers['versions']);
+if (count($confvers) != 0) {
+	for ($c = count($confvers)-1; $c >= 0; $c--) {
+		$conf_history .= backup_info($confvers[$c], $c+1);
+		$conf_history .= "\n";
+	}
+	defCmdT("Config History", "echo " . escapeshellarg($conf_history));
 }
 
 /* Logs */
@@ -389,8 +420,8 @@ defCmdT("OS-Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
 defCmdT("OS-sysctl values", "/sbin/sysctl -aq");
 defCmdT("OS-Kernel Environment", "/bin/kenv");
 defCmdT("OS-Kernel Memory Usage", "/usr/local/sbin/kmemusage.sh");
-defCmdT("OS-Installed Packages", "/usr/sbin/pkg info");
-defCmdT("OS-Package Manager Configuration", "/usr/sbin/pkg -vv");
+defCmdT("OS-Installed Packages", "/usr/local/sbin/pkg-static info");
+defCmdT("OS-Package Manager Configuration", "/usr/local/sbin/pkg-static -vv");
 defCmdT("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");
 defCmdT("Hardware-USB Devices", "/usr/sbin/usbconfig dump_device_desc");
 

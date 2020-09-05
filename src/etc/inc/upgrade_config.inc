@@ -27,6 +27,9 @@ if (!function_exists("dump_rrd_to_xml")) {
 if (!function_exists("read_altq_config")) {
 	require_once("shaper.inc");
 }
+if (!function_exists("console_configure")) {
+	require_once("/etc/inc/pfsense-utils.inc");
+}
 
 /* Upgrade functions must be named:
 *    upgrade_XXX_to_YYY
@@ -5479,17 +5482,31 @@ function upgrade_174_to_175() {
 	if (count($config['ipsec']['phase1'])) {
 		$a_phase1 = &$config['ipsec']['phase1'];
 		foreach($a_phase1 as &$phase1) {
-			if (empty($phase1)) {
+			if (empty($phase1) || !is_array($phase1)) {
 				continue;
 			}
 			$item = array();
-			$item['encryption-algorithm'] = $phase1['encryption-algorithm'];
-			$item['hash-algorithm'] = $phase1['hash-algorithm'];
-			$item['dhgroup'] = $phase1['dhgroup'];
-			$phase1['encryption']['item'][] = $item;
-			unset($phase1['encryption-algorithm']);
-			unset($phase1['hash-algorithm']);
-			unset($phase1['dhgroup']);
+			if (isset($phase1['encryption-algorithm']) && !empty($phase1['encryption-algorithm'])) {
+				$item['encryption-algorithm'] = $phase1['encryption-algorithm'];
+				unset($phase1['encryption-algorithm']);
+			}
+			if (isset($phase1['hash-algorithm']) && !empty($phase1['hash-algorithm'])) {
+				$item['hash-algorithm'] = $phase1['hash-algorithm'];
+				unset($phase1['hash-algorithm']);
+			}
+			if (isset($phase1['dhgroup']) && !empty($phase1['dhgroup'])) {
+				$item['dhgroup'] = $phase1['dhgroup'];
+				unset($phase1['dhgroup']);
+			}
+			if (!empty($item)) {
+				if (!is_array($phase1['encryption'])) {
+					$phase1['encryption'] = array();
+				}
+				if (!is_array($phase1['encryption']['item'])) {
+					$phase1['encryption']['item'] = array();
+				}
+				$phase1['encryption']['item'][] = $item;
+			}
 		}
 	}
 }
@@ -5929,7 +5946,10 @@ function upgrade_189_to_190() {
 	global $config;
 	init_config_arr(array('ipsec', 'phase1'));
 	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
-		if (empty($ph1ent['protocol'])) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+		if (!isset($ph1ent['protocol']) || empty($ph1ent['protocol'])) {
 			$ph1ent['protocol'] = 'inet';
 		}
 	}
@@ -6083,6 +6103,9 @@ function upgrade_199_to_200() {
 	global $config;
 	init_config_arr(array('ipsec', 'phase1'));
 	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
 		/* Convert lifetime to reauth_time since that's how previous
 		 * versions behaved. */
 		if (isset($ph1ent['reauth_enable'])) {
@@ -6127,6 +6150,114 @@ function upgrade_200_to_201() {
 			$authserver['ldap_urltype'] = $namechanges[$authserver['ldap_urltype']];
 		}
 	}
+}
+
+/* #10525: Handle Chinese (HongKong / Taiwan) locale rename */
+function upgrade_201_to_202() {
+	global $config;
+
+	if (!empty($config['system']['language'])) {
+		if ($config['system']['language'] == 'zh_HK') {
+			$config['system']['language'] = 'zh_Hans_HK';
+		} elseif ($config['system']['language'] == 'zh_TW') {
+			$config['system']['language'] = 'zh_Hant_TW';
+		}
+	}
+}
+
+function upgrade_202_to_203() {
+	global $config;
+	// Upgrade GREs with IPv6 tunnel networks to new dual stack format
+	if (is_array($config['gres']['gre'])) {
+		foreach ($config['gres']['gre'] as $idx => &$gre) {
+			if (is_ipaddrv6($gre['tunnel-local-addr'])) {
+				$gre['tunnel-local-addr6'] = $gre['tunnel-local-addr'];
+				$gre['tunnel-remote-addr6'] = $gre['tunnel-remote-addr'];
+				$gre['tunnel-remote-net6'] = $gre['tunnel-remote-net'];
+				$gre['tunnel-local-addr'] = '';
+				$gre['tunnel-remote-addr'] = '';
+				$gre['tunnel-remote-net'] = '';
+			} else {
+				$gre['tunnel-local-addr6'] = '';
+				$gre['tunnel-remote-addr6'] = '';
+				$gre['tunnel-remote-net6'] = '';
+			}
+		}
+	}
+}
+
+/*
+ * Change IPsec close_action values
+ * See https://redmine.pfsense.org/issues/10632
+ */
+
+function upgrade_203_to_204() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+		if (isset($ph1ent['closeaction'])) {
+			switch ($ph1ent['closeaction']) {
+				case 'clear':
+					/* swanctl.conf combined "clear" and "none" */
+					$ph1ent['closeaction'] = "none";
+					break;
+				case 'restart':
+					/* swanctl.conf uses "start" not "restart" */
+					$ph1ent['closeaction'] = "start";
+					break;
+				case 'hold':
+					/* swanctl.conf uses "trap" not "hold" */
+					$ph1ent['closeaction'] = "trap";
+					break;
+				default:
+					/* "none" does not need changed. */
+			}
+		}
+	}
+}
+
+function upgrade_204_to_205() {
+	global $config, $g;
+
+	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone => $cp) {
+			unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
+
+			if (is_array($config['voucher'][$cpzone])) {
+				if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
+					$config['captiveportal'][$cpzone]['enablebackwardsync'] = '';
+					$config['captiveportal'][$cpzone]['backwardsyncip'] = $config['voucher'][$cpzone]['vouchersyncdbip'];
+					$config['captiveportal'][$cpzone]['backwardsyncuser'] = $config['voucher'][$cpzone]['vouchersyncusername'];
+					$config['captiveportal'][$cpzone]['backwardsyncpassword'] = $config['voucher'][$cpzone]['vouchersyncpass'];
+				}
+			}
+		}
+	}
+}
+
+function upgrade_205_to_206() {
+	/*
+	 * Trigger a boot loader settings update to make sure the contents will
+	 * be updated before the reboot.
+	 */
+	console_configure();
+}
+
+function upgrade_206_to_207() {
+	/*
+	 * Trigger a boot loader settings update to make sure the contents will
+	 * be updated before the reboot.
+	 */
+	console_configure();
+}
+
+function upgrade_207_to_208() {
+	global $config;
+
+	$config['system']['hn_altq_enable'] = true;
 }
 
 /*

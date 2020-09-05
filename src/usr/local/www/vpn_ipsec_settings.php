@@ -46,6 +46,8 @@ $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencrypte
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
+$pconfig['ipsecbypass'] = isset($config['ipsec']['ipsecbypass']);
+$pconfig['bypassrules'] = $config['ipsec']['bypassrules'];
 
 if ($_POST['save']) {
 	unset($input_errors);
@@ -67,6 +69,31 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("An integer between 576 and 65535 must be specified for Maximum MSS");
 		}
 	}
+
+	$bypassrules = array();
+	for ($x = 0; $x < 99; $x++) {
+		if (isset($_POST["source{$x}"]) && isset($_POST["destination{$x}"]) &&
+		    isset($_POST["srcmask{$x}"]) && isset($_POST["dstmask{$x}"])) {
+			$source = $_POST["source{$x}"] . '/' . $_POST["srcmask{$x}"];
+			$destination = $_POST["destination{$x}"] . '/' . $_POST["dstmask{$x}"];
+			if (!is_subnetv4($source) && !is_subnetv6($source)) {
+				$input_errors[] = sprintf(gettext('%s is not valid source IP address for IPsec bypass rule'),
+				htmlspecialchars($source));
+			}
+			if (!is_subnetv4($destination) && !is_subnetv6($destination)) {
+				$input_errors[] = sprintf(gettext('%s is not valid destination IP address for IPsec bypass rule'),
+				htmlspecialchars($destination));
+			}
+			if ((is_subnetv4($source) && is_subnetv6($destination)) ||
+			    (is_subnetv6($source) && is_subnetv4($destination))) {
+				$input_errors[] = gettext('IPsec bypass source and destination addresses must belong to the same IP family.');
+			}
+			$bypassrules['rule'][] = array('source' => $_POST["source{$x}"], 'srcmask' => $_POST["srcmask{$x}"],
+						'destination' => $_POST["destination{$x}"], 'dstmask' => $_POST["dstmask{$x}"]);
+		}
+	}
+
+	$pconfig['bypassrules'] = $bypassrules;
 
 	if (!$input_errors) {
 
@@ -137,6 +164,12 @@ if ($_POST['save']) {
 			$config['ipsec']['noshuntlaninterfaces'] = true;
 		}
 
+		if ($_POST['ipsecbypass'] == "yes") {
+			$config['ipsec']['ipsecbypass'] = true;
+		} else {
+			unset($config['ipsec']['ipsecbypass']);
+		}
+
 		if ($_POST['async_crypto'] == "yes") {
 			$config['ipsec']['async_crypto'] = "enabled";
 		} else {
@@ -170,6 +203,12 @@ if ($_POST['save']) {
 				unset($config['system']['maxmss']);
 			}
 		}
+
+		if (isset($config['ipsec']['bypassrules']['rule'])) {
+			unset($config['ipsec']['bypassrules']['rule']);
+		}
+
+		$config['ipsec']['bypassrules'] = $bypassrules;
 
 		write_config(gettext("Saved IPsec advanced settings."));
 
@@ -347,13 +386,6 @@ $section->addInput(new Form_Checkbox(
 			'during reauthentication, but requires support for overlapping SAs by the peer.');
 
 $section->addInput(new Form_Checkbox(
-	'autoexcludelanaddress',
-	'Auto-exclude LAN address',
-	'Enable bypass for LAN interface IP',
-	!$pconfig['noshuntlaninterfaces']
-))->setHelp('Exclude traffic from LAN subnet to LAN IP address from IPsec.');
-
-$section->addInput(new Form_Checkbox(
 	'async_crypto',
 	'Asynchronous Cryptography',
 	'Use asynchronous mode to parallelize multiple cryptography jobs',
@@ -361,10 +393,95 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Allow crypto(9) jobs to be dispatched multi-threaded to increase performance. ' .
 		'Jobs are handled in the order they are received so that packets will be reinjected in the correct order.');
 
+$section->addInput(new Form_Checkbox(
+	'autoexcludelanaddress',
+	'Auto-exclude LAN address',
+	'Enable bypass for LAN interface IP',
+	!$pconfig['noshuntlaninterfaces']
+))->setHelp('Exclude traffic from LAN subnet to LAN IP address from IPsec.');
+
+$section->addInput(new Form_Checkbox(
+	'ipsecbypass',
+	'Additional IPsec bypass',
+	'Enable extra IPsec bypass rules',
+	$pconfig['ipsecbypass']
+))->setHelp('Create extra rules to exclude specific traffic from IPsec.');
+
+$form->add($section);
+
+$section = new Form_Section('IPsec bypass rules');
+$section->addClass('ipsecbypass');
+
+if (!$pconfig['bypassrules']) {
+	$pconfig['bypassrules'] = array();
+	$pconfig['bypassrules']['rule']  = array(array('source' => '', 'srcmask' => '32',
+	       					'destination' => '', 'dstmask' => '32'));
+}
+
+$numrows = count($item) -1;
+$counter = 0;
+
+$numrows = count($pconfig['bypassrules']['rule']) -1;
+
+foreach ($pconfig['bypassrules']['rule'] as $rule) {
+	$group = new Form_Group(($counter == 0) ? 'Rule':null);
+	$group->addClass('repeatable');
+
+	$group->add(new Form_IpAddress(
+		'source' . $counter,
+		null,
+		$rule['source']
+	))->setWidth(4)->setHelp('Source address')->addMask('srcmask' . $counter, $rule['srcmask'], 128, 0);
+
+	$group->add(new Form_IpAddress(
+		'destination' . $counter,
+		null,
+		$rule['destination']
+	))->setWidth(4)->setHelp('Destination address')->addMask('dstmask' . $counter, $rule['dstmask'], 128, 0);
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
+
+	$section->add($group);
+
+	$counter++;
+}
+
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add',
+	null,
+	'fa-plus'
+))->addClass('btn-success');
+
 $form->add($section);
 
 print $form;
 
 ?>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	var ipsecbypass = false;
+
+	function show_ipsecbypass() {
+		hide = !$('#ipsecbypass').prop('checked');
+		hideClass('ipsecbypass', hide);
+	}
+
+	$('#ipsecbypass').click(function () {
+		show_ipsecbypass();
+	});
+
+	show_ipsecbypass();
+	checkLastRow();
+});
+//]]>
+</script>
 
 <?php include("foot.inc"); ?>

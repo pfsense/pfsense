@@ -61,8 +61,7 @@ $protohelp =
 		'<strong>' . $laggprotosuc[2] . '</strong><br />' .
 		gettext('Sends and receives traffic only through the master port.  If ' .
 				'the master port becomes unavailable, the next active port is ' .
-				'used.	The first interface added is the master port; any ' .
-				'interfaces added after that are used as failover devices.') .
+				'used.') .
 	'</li>' .
 	'<li>' .
 		'<strong>' . $laggprotosuc[3] . '</strong><br />' .
@@ -110,6 +109,12 @@ if (isset($id) && $a_laggs[$id]) {
 		unset($realifchecklist[get_real_interface($tmpif)]);
 	}
 	$pconfig['proto'] = $a_laggs[$id]['proto'];
+	if (isset($a_laggs[$id]['failovermaster'])) {
+		$pconfig['failovermaster'] = $a_laggs[$id]['failovermaster'];
+	}
+	if (isset($a_laggs[$id]['lacptimeout'])) {
+		$pconfig['lacptimeout'] = $a_laggs[$id]['lacptimeout'];
+	}
 	$pconfig['descr'] = $a_laggs[$id]['descr'];
 }
 
@@ -141,12 +146,27 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Protocol supplied is invalid");
 	}
 
+	if (is_array($_POST['members']) && ($_POST['proto'] == 'failover') && isset($_POST['failovermaster']) &&
+	    ($_POST['failovermaster'] != 'auto') && (array_search($_POST['failovermaster'], $_POST['members']) === false)) {
+			$input_errors[] = sprintf(gettext("Failover Master Interface must be selected as member."));
+	}
+
 	if (!$input_errors) {
 		$lagg = array();
 		$lagg['members'] = implode(',', $_POST['members']);
 		$lagg['descr'] = $_POST['descr'];
 		$lagg['laggif'] = $_POST['laggif'];
 		$lagg['proto'] = $_POST['proto'];
+		if (($_POST['proto'] == 'failover') && isset($_POST['failovermaster'])) {
+			$lagg['failovermaster'] = $_POST['failovermaster'];
+		} else {
+			unset($lagg['failovermaster']);
+		}
+		if (($_POST['proto'] == 'lacp') && isset($_POST['lacptimeout'])) {
+			$lagg['lacptimeout'] = $_POST['lacptimeout'];
+		} else {
+			unset($lagg['lacptimeout']);
+		}
 		if (isset($id) && $a_laggs[$id]) {
 			$lagg['laggif'] = $a_laggs[$id]['laggif'];
 		}
@@ -224,6 +244,7 @@ $form = new Form();
 $section = new Form_Section('LAGG Configuration');
 
 $memberslist = build_member_list();
+$failoverlist = array_merge(array('auto' => 'auto'), $memberslist['list']);
 
 $section->addInput(new Form_Select(
 	'members',
@@ -239,6 +260,30 @@ $section->addInput(new Form_Select(
 	$pconfig['proto'],
 	array_combine($laggprotos, $laggprotosuc)
 ))->setHelp($protohelp);
+
+$group = new Form_Group('Failover Master Interface');
+$group->addClass('fomaster');
+$group->add(new Form_Select(
+	'failovermaster',
+	'Failover Master Interface',
+	$pconfig['failovermaster'],
+	$failoverlist
+))->setHelp('Master interface for the <b>FAILOVER</b> mode. If auto is selected, then the first interface added is the master port; any interfaces added after that are used as failover devices.');
+$section->add($group);
+
+$group = new Form_Group('LACP Timeout Mode');
+$group->addClass('lacptimeout');
+$group->add(new Form_Select(
+	'lacptimeout',
+	'LACP Timeout',
+	$pconfig['lacptimeout'],
+	array('slow' => 'Slow (default)', 'fast' => 'Fast')
+))->setHelp('In a <b>Slow</b> timeout, PDUs are sent every 30 seconds and in a <b>Fast</b> timeout, ' .
+	    'PDUs are sent every second. LACP timeout occurs when 3 consecutive PDUs are missed. ' .
+	    'If LACP timeout is a slow timeout, the time taken when 3 consecutive PDUs are missed ' .
+	    'is 90 seconds (3x30 seconds). If LACP timeout is a fast timeout, the time taken is 3 ' .
+	    'seconds (3x1 second).');
+$section->add($group);
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -265,5 +310,26 @@ if (isset($id) && $a_laggs[$id]) {
 
 $form->add($section);
 print($form);
+?>
 
-include("foot.inc");
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	function change_proto() {
+		hideClass('fomaster', ($('#proto').val() != 'failover'));
+		hideClass('lacptimeout', ($('#proto').val() != 'lacp'));
+	}
+
+	$('#proto').change(function () {
+		change_proto();
+	});
+
+	// ---------- On initial page load ------------------------------------------------------------
+
+	change_proto();
+
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

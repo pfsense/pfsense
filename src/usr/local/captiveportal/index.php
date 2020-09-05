@@ -155,7 +155,7 @@ EOD;
 } elseif (portal_consume_passthrough_credit($clientmac)) {
 	/* allow the client through if it had a pass-through credit for its MAC */
 	captiveportal_logportalauth("unauthenticated", $clientmac, $clientip, "ACCEPT");
-	portal_allow($clientip, $clientmac, "unauthenticated");
+	portal_allow($clientip, $clientmac, "unauthenticated", null, $redirurl);
 
 } elseif (isset($config['voucher'][$cpzone]['enable']) && $_POST['accept'] && $_POST['auth_voucher']) {
 	$voucher = trim($_POST['auth_voucher']);
@@ -170,7 +170,9 @@ EOD;
 			'voucher' => 1,
 			'session_timeout' => $timecredit*60,
 			'session_terminate_time' => 0);
-		if (portal_allow($clientip, $clientmac, $voucher, null, $attr, null, 'voucher', 'voucher')) {
+		if (portal_allow($clientip, $clientmac, $voucher, null, $redirurl, $attr, null, 'voucher', 'voucher') === 2) {
+			portal_reply_page($redirurl, "error", "Reuse of identification not allowed.");
+		} elseif (portal_allow($clientip, $clientmac, $voucher, null, $redirurl, $attr, null, 'voucher', 'voucher')) {
 			// YES: user is good for $timecredit minutes.
 			captiveportal_logportalauth($voucher, $clientmac, $clientip, "Voucher login good for $timecredit min.");
 		} else {
@@ -219,7 +221,7 @@ EOD;
 	
 	if ($auth_result['result']) {
 		captiveportal_logportalauth($user, $clientmac, $clientip, $auth_result['login_status']);
-		portal_allow($clientip, $clientmac, $user, $passwd, $auth_result['attributes'], $pipeno, $auth_result['auth_method'], $context);
+		portal_allow($clientip, $clientmac, $user, $passwd, $redirurl, $auth_result['attributes'], $pipeno, $auth_result['auth_method'], $context);
 
 	} else {
 		captiveportal_free_dn_ruleno($pipeno);

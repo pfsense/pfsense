@@ -34,6 +34,7 @@ require_once("config.inc");
 require_once("auth.inc");
 require_once("interfaces.inc");
 
+global $config;
 
 /* setup syslog logging */
 openlog("charon", LOG_ODELAY, LOG_AUTH);
@@ -78,6 +79,12 @@ if (($strictusercn === true) && ($common_name != $username)) {
 }
 
 $attributes = array("nas_identifier" => "xauthIPsec");
+if (($config['ipsec']['client']['group_source'] == 'enabled') &&
+    !empty($config['ipsec']['client']['auth_groups'])) {
+	$ipsec_groups = explode(",", ($config['ipsec']['client']['auth_groups']));
+} else { 
+	$ipsec_groups = '';
+}
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
 	if (!$authcfg && $authmode != "Local Database") {
@@ -86,9 +93,11 @@ foreach ($authmodes as $authmode) {
 
 	$authenticated = authenticate_user($username, $password, $authcfg, $attributes);
 	if ($authenticated == true) {
+		$userGroups = getUserGroups($username, $authcfg, $attributes = array());
 		if ($authmode == "Local Database") {
 			$user = getUserEntry($username);
-			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin")) {
+			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin") ||
+			    (!empty($ipsec_groups) && (count(array_intersect($userGroups, $ipsec_groups)) == 0))) {
 				$authenticated = false;
 				syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPsec since the required privileges are missing.");
 				continue;

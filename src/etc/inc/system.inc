@@ -464,10 +464,11 @@ function system_hosts_dhcpd_entries() {
 				 * We are always in an "end-user" subnet
 				 * here, which all are /64 for IPv6.
 				 */
-				$ipaddrv6 = merge_ipv6_delegated_prefix(
-				    get_interface_ipv6($dhcpif),
-				    $ipaddrv6, 64);
+				$prefix6 = 64;
+			} else {
+				$prefix6 = get_interface_subnetv6($dhcpif);
 			}
+			$ipaddrv6 = merge_ipv6_delegated_prefix(get_interface_ipv6($dhcpif), $ipaddrv6, $prefix6);
 
 			$fqdn = $host['hostname'] . ".";
 			$domain = "";
@@ -547,14 +548,6 @@ function system_hosts_generate() {
 	}
 	unset($hosts_array);
 
-	$fd = fopen("{$g['etc_path']}/hosts", "w");
-	if (!$fd) {
-		log_error(gettext(
-		    "Error: cannot open hosts file in system_hosts_generate()."
-		    ));
-		return 1;
-	}
-
 	/*
 	 * Do not remove this because dhcpleases monitors with kqueue it needs
 	 * to be killed before writing to hosts files.
@@ -562,6 +555,14 @@ function system_hosts_generate() {
 	if (file_exists("{$g['varrun_path']}/dhcpleases.pid")) {
 		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
 		@unlink("{$g['varrun_path']}/dhcpleases.pid");
+	}
+
+	$fd = fopen("{$g['etc_path']}/hosts", "w");
+	if (!$fd) {
+		log_error(gettext(
+		    "Error: cannot open hosts file in system_hosts_generate()."
+		    ));
+		return 1;
 	}
 
 	fwrite($fd, $hosts);
@@ -622,9 +623,16 @@ function system_dhcpleases_configure() {
 		}
 		@unlink($pidfile);
 		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['etc_path']}/hosts");
-	} elseif (isvalidpid($pidfile)) {
-		sigkillbypid($pidfile, "TERM");
-		@unlink($pidfile);
+	} else {
+		if (isvalidpid($pidfile)) {
+			sigkillbypid($pidfile, "TERM");
+			@unlink($pidfile);
+		}
+		if (file_exists("{$g['unbound_chroot_path']}/dhcpleases_entries.conf")) {
+			$dhcpleases = fopen("{$g['unbound_chroot_path']}/dhcpleases_entries.conf", "w");
+			ftruncate($dhcpleases, 0);
+			fclose($dhcpleases);
+		}
 	}
 }
 
@@ -1592,7 +1600,12 @@ function system_ntp_fixup_poll_value($type, $configvalue, $default) {
 function system_ntp_setup_gps($serialport) {
 	global $config, $g;
 
-	init_config_arr(array('ntpd', 'gps', 'speed'));
+	if (is_array($config['ntpd']) && ($config['ntpd']['enable'] == 'disabled')) {
+		return false;
+	}
+
+	init_config_arr(array('ntpd', 'gps'));
+
 	$gps_device = '/dev/gps0';
 	$serialport = '/dev/'.$serialport;
 
@@ -1658,12 +1671,12 @@ function system_ntp_setup_gps($serialport) {
 	}
 
 	/* Remove old /etc/remote entry if it exists */
-	if (mwexec("/usr/bin/grep -c '^gps0' /etc/remote")) {
+	if (mwexec("/usr/bin/grep -c '^gps0' /etc/remote") == 0) {
 		mwexec("/usr/bin/sed -i '' -n '/gps0/!p' /etc/remote");
 	}
 
 	/* Add /etc/remote entry in case we need to read from the GPS with tip */
-	if (intval(`/usr/bin/grep -c '^gps0' /etc/remote`) == 0) {
+	if (mwexec("/usr/bin/grep -c '^gps0' /etc/remote") != 0) {
 		@file_put_contents("/etc/remote", "gps0:dv={$serialport}:br#{$gpsbaud}:pa=none:\n", FILE_APPEND);
 	}
 
@@ -1685,6 +1698,10 @@ function system_ntp_setup_pps($serialport) {
 	if (!file_exists($serialport)) {
 		return false;
 	}
+	// If ntpd is disabled, just return
+	if (is_array($config['ntpd']) && ($config['ntpd']['enable'] == 'disabled')) {
+		return false;
+	}
 
 	// Create symlink that ntpd requires
 	unlink_if_exists($pps_device);
@@ -1693,7 +1710,6 @@ function system_ntp_setup_pps($serialport) {
 
 	return true;
 }
-
 
 function system_ntp_configure() {
 	global $config, $g;
@@ -1709,6 +1725,20 @@ function system_ntp_configure() {
 
 	if (!is_array($config['ntpd'])) {
 		$config['ntpd'] = array();
+	}
+	// ntpd is disabled, just stop it and return
+	if ($config['ntpd']['enable'] == 'disabled') {
+		while (isvalidpid("{$g['varrun_path']}/ntpd.pid")) {
+			killbypid("{$g['varrun_path']}/ntpd.pid");
+		}
+		@unlink("{$g['varrun_path']}/ntpd.pid");
+		@unlink("{$g['varetc_path']}/ntpd.conf");
+		log_error("NTPD is disabled.");
+		return;
+	}
+
+	if (platform_booting()) {
+		echo gettext("Starting NTP Server...");
 	}
 
 	/* if ntpd is running, kill it */
@@ -2050,11 +2080,16 @@ function system_ntp_configure() {
 		mkdir("/var/empty", 0555, true);
 	}
 
-	/* start opentpd, set time now and use /var/etc/ntpd.conf */
+	/* start ntpd, set time now and use /var/etc/ntpd.conf */
 	mwexec("/usr/local/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf -p {$g['varrun_path']}/ntpd.pid", false, true);
 
 	// Note that we are starting up
 	log_error("NTPD is starting up.");
+
+	if (platform_booting()) {
+		echo gettext("done.") . "\n";
+	}
+
 	return;
 }
 
@@ -2383,8 +2418,18 @@ function system_identify_specific_platform() {
 	/* Try to guess from smbios strings */
 	unset($product);
 	unset($maker);
+	unset($bios);
 	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $product);
 	$_gb = exec('/bin/kenv -q smbios.system.maker 2>/dev/null', $maker);
+	$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $bios);
+
+	// AWS can only be identified via the bios version
+	if (stripos($bios[0], "amazon") !== false) {
+		return (array('name' => 'AWS', 'descr' => 'Amazon Web Services'));
+	} else  if (stripos($bios[0], "Google") !== false) {
+		return (array('name' => 'Google', 'descr' => 'Google Cloud Platform'));
+	}
+
 	switch ($product[0]) {
 		case 'FW7541':
 			return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));
@@ -2467,7 +2512,11 @@ function system_identify_specific_platform() {
 			break;
 		case 'Virtual Machine':
 			if ($maker[0] == "Microsoft Corporation") {
-				return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
+				if (stripos($bios[0], "Hyper") !== false) {
+					return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
+				} else {
+					return (array('name' => 'Azure', 'descr' => 'Microsoft Azure'));
+				}
 			}
 			break;
 		case 'VMware Virtual Platform':

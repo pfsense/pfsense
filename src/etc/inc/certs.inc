@@ -172,6 +172,7 @@ function ca_import(& $ca, $str, $key = "", $serial = "") {
 	}
 	$subject = cert_get_subject($str, false);
 	$issuer = cert_get_issuer($str, false);
+	$serialNumber = cert_get_serial($str, false);
 
 	// Find my issuer unless self-signed
 	if ($issuer <> $subject) {
@@ -184,8 +185,13 @@ function ca_import(& $ca, $str, $key = "", $serial = "") {
 	/* Correct if child certificate was loaded first */
 	if (is_array($config['ca'])) {
 		foreach ($config['ca'] as & $oca) {
+			// check by serial number if CA already exists
+			$osn = cert_get_serial($oca['crt']);
+			if (($ca['refid'] <> $oca['refid']) && ($serialNumber == $osn)) {
+				return false;
+			}
 			$issuer = cert_get_issuer($oca['crt']);
-			if ($ca['refid'] <> $oca['refid'] && $issuer == $subject) {
+			if (($ca['refid'] <> $oca['refid']) && ($issuer == $subject)) {
 				$oca['caref'] = $ca['refid'];
 			}
 		}

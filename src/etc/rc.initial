@@ -49,7 +49,7 @@ fi
 while [ $# -gt 0 ]; do
 	case $1 in
 		-c )	shift
-			/bin/sh -c $1
+			/bin/sh -c "$@"
 			exit
 			;;
 		* )

@@ -40,22 +40,21 @@ $gamesplist['playstationconsoles'] = array();
 	$gamesplist['playstationconsoles'][] = array('PS-RemotePlay', 'tcp', '9293', '9293', 'both');
 
 $gamesplist['wiiconsoles'] = array();
-	/* XBox Consoles */
+	/* Wii Consoles */
 	$gamesplist['wiiconsoles'][] = array('Wii-Consoles-TCP-1', 'tcp', '6667', '6667', 'both');
 	$gamesplist['wiiconsoles'][] = array('Wii-Consoles-TCP-2', 'tcp', '12400', '12400', 'both');
 	$gamesplist['wiiconsoles'][] = array('Wii-Consoles-TCP-3', 'tcp', '28910', '28910', 'both');
 	$gamesplist['wiiconsoles'][] = array('Wii-Consoles-TCP-4', 'tcp', '29900', '29901', 'both');
 	$gamesplist['wiiconsoles'][] = array('Wii-Consoles-TCP-5', 'tcp', '29920', '29920', 'both');
 
-$gamesplist['xboxconsoles'] = array();
-	/* XBox Consoles */
-	$gamesplist['xboxconsoles'][] = array('xbox-Consoles-UDP-1', 'udp', '88', '88', 'both');
-	$gamesplist['xboxconsoles'][] = array('xbox-Consoles-UDP-2', 'udp', '3074', '3074', 'both');
-	$gamesplist['xboxconsoles'][] = array('xbox-Consoles-TCP-1', 'tcp', '3074', '3074', 'both');
-	$gamesplist['xboxconsoles'][] = array('xbox-Consoles-TCP-2', 'tcp', '3659', '3659', 'both');
-	$gamesplist['xboxconsoles'][] = array('xbox-Consoles-TCP-3', 'tcp', '500', '500', 'both');
-	$gamesplist['xboxconsoles'][] = array('xbox-Consoles-TCP-4', 'tcp', '3544', '3544', 'both');
-	$gamesplist['xboxconsoles'][] = array('xbox-Consoles-TCP-5', 'tcp', '4500', '4500', 'both');
+$gamesplist['xboxlive'] = array();
+	/* XBOX Live */
+	$gamesplist['xboxlive'][] = array('XBOX-Live-UDP-1', 'udp', '88', '88', 'both');
+	$gamesplist['xboxlive'][] = array('XBOX-Live-UDP-2', 'udp', '3074', '3074', 'both');
+	$gamesplist['xboxlive'][] = array('XBOX-Live-TCP-2', 'tcp', '3074', '3074', 'both');
+	$gamesplist['xboxlive'][] = array('XBOX-Live-UDP-3', 'udp', '500', '500', 'both');
+	$gamesplist['xboxlive'][] = array('XBOX-Live-UDP-4', 'udp', '3544', '3544', 'both');
+	$gamesplist['xboxlive'][] = array('XBOX-Live-UDP-5', 'udp', '4500', '4500', 'both');
 
 $gamesplist['battlenet'] = array();
 	/* Blizzard Publishing games */
@@ -88,11 +87,10 @@ $gamesplist['steam'] = array();
 	$gamesplist['steam'][] = array('Steam-2', 'udp', '1200', '1200', 'both');
 	$gamesplist['steam'][] = array('Steam-voice', 'udp', '3478', '3480', 'both');
 
-$gamesplist['gamesforwindowslive'] = array();
-	/* Games for Windows Live */
-	$gamesplist['gamesforwindowslive'][] = array('Games4WinLive-1', 'udp', '88', '88', 'both');
-	$gamesplist['gamesforwindowslive'][] = array('Games4WinLive-2', 'udp', '3074', '3074', 'both');
-	$gamesplist['gamesforwindowslive'][] = array('Games4WinLive-3', 'tcp', '3074', '3074', 'both');
+$gamesplist['googlestadia'] = array();
+	/* Google Stadia */
+	$gamesplist['googlestadia'][] = array('google-stadia-UDP-1', 'udp', '44700', '44899', 'both');
+	$gamesplist['googlestadia'][] = array('google-stadia-TCP-1', 'tcp', '44700', '44899', 'both');
 
 /* Games */
 

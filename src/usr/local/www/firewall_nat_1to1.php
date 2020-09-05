@@ -40,6 +40,14 @@ require_once("shaper.inc");
 init_config_arr(array('nat', 'onetoone'));
 $a_1to1 = &$config['nat']['onetoone'];
 
+$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
+$ifdisp = get_configured_interface_with_descr();
+
+foreach ($ifdisp as $kif => $kdescr) {
+	$specialsrcdst[] = "{$kif}";
+	$specialsrcdst[] = "{$kif}ip";
+}
+
 /* update rule order, POST[rule] is an array of ordered IDs */
 if (array_key_exists('order-store', $_POST)) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
@@ -196,8 +204,11 @@ display_top_tabs($tab_array);
 						<td>
 <?php
 					$source_net = pprint_address($natent['source']);
-					$source_cidr = strstr($source_net, '/');
-					echo $natent['external'] . $source_cidr;
+					if (is_specialnet($natent['external'])) {
+						echo $specialnets[$natent['external']];
+					} else {
+						echo $natent['external'] . strstr($source_net, '/');
+					}
 ?>
 						</td>
 						<td>

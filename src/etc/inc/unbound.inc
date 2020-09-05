@@ -328,6 +328,7 @@ EOF;
 	$prefetch = isset($unboundcfg['prefetch']) ? "yes" : "no";
 	$prefetch_key = isset($unboundcfg['prefetchkey']) ? "yes" : "no";
 	$dns_record_cache = isset($unboundcfg['dnsrecordcache']) ? "yes" : "no";
+	$aggressivensec = isset($unboundcfg['aggressivensec']) ? "yes" : "no";
 	$outgoing_num_tcp = isset($unboundcfg['outgoing_num_tcp']) ? $unboundcfg['outgoing_num_tcp'] : "10";
 	$incoming_num_tcp = isset($unboundcfg['incoming_num_tcp']) ? $unboundcfg['incoming_num_tcp'] : "10";
 	if (empty($unboundcfg['edns_buffer_size']) || ($unboundcfg['edns_buffer_size'] == 'auto')) {
@@ -494,6 +495,7 @@ prefetch: {$prefetch}
 prefetch-key: {$prefetch_key}
 use-caps-for-id: {$use_caps}
 serve-expired: {$dns_record_cache}
+aggressive-nsec: {$aggressivensec}
 # Statistics
 {$statistics}
 # TLS Configuration
@@ -609,10 +611,10 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			mwexec("/usr/local/sbin/unbound -c {$g['unbound_chroot_path']}/unbound.conf");
 			break;
 		case "stop":
-			mwexec("echo '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf stop' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf stop'", true);
 			break;
 		case "reload":
-			mwexec("echo '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf reload' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf reload'", true);
 			break;
 		case "unbound-anchor":
 			$root_key_file = "{$g['unbound_chroot_path']}{$param1}/root.key";
@@ -624,14 +626,14 @@ function do_as_unbound_user($cmd, $param1 = "") {
 					unlink_if_exists($root_key_file);
 				}
 			}
-			mwexec("echo '/usr/local/sbin/unbound-anchor -a {$root_key_file}' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-anchor -a {$root_key_file}'", true);
 			// Only sync the file if this is the real (default) one, not a test one.
 			if ($param1 == "") {
 				//pfSense_fsync($root_key_file);
 			}
 			break;
 		case "unbound-control-setup":
-			mwexec("echo '/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}{$param1}' | /usr/bin/su -m unbound", true);
+			mwexec("/usr/bin/su -m unbound -c '/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}{$param1}'", true);
 			break;
 		default:
 			break;
@@ -906,6 +908,23 @@ function unbound_acls_config($cfgsubdir = "") {
 					}
 				}
 			}
+		}
+
+		// OpenVPN IPv6 Tunnel Networks
+		foreach (array('openvpn-client', 'openvpn-server') as $ovpnentry) {
+			if (is_array($config['openvpn'][$ovpnentry])) {
+				foreach ($config['openvpn'][$ovpnentry] as $ovpnent) {
+					if (!isset($ovpnent['disable']) && !empty($ovpnent['tunnel_networkv6'])) {
+						$aclcfg .= "access-control: {$ovpnent['tunnel_networkv6']} allow\n";
+					}
+				}
+			}
+		}
+		// IPsec Mobile Virtual IPv6 Address Pool
+		if ((isset($config['ipsec']['client']['enable'])) &&
+		    (!empty($config['ipsec']['client']['pool_address_v6'])) &&
+		    (!empty($config['ipsec']['client']['pool_netbits_v6']))) {
+			$aclcfg .= "access-control: {$config['ipsec']['client']['pool_address_v6']}/{$config['ipsec']['client']['pool_netbits_v6']} allow\n";
 		}
 
 		// Generate IPv4 access-control entries using the same logic as automatic outbound NAT

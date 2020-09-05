@@ -68,8 +68,8 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (strlen($_POST['ifname']) > 16) {
-			$input_errors[] = gettext("Group name cannot have more than 16 characters.");
+		if (strlen($_POST['ifname']) > 15) {
+			$input_errors[] = gettext("Group name cannot have more than 15 characters.");
 		}
 
 		if (preg_match("/([^a-zA-Z0-9_])+/", $_POST['ifname'])) {
@@ -207,7 +207,7 @@ $section->addInput(new Form_Input(
 	'*Group Name',
 	'text',
 	$pconfig['ifname'],
-	['placeholder' => 'Group Name', 'maxlength' => "16"]
+	['placeholder' => 'Group Name', 'maxlength' => "15"]
 ))->setWidth(6)->setHelp($ifname_allowed_chars_text . " " . $ifname_no_digit_text);
 
 $section->addInput(new Form_Input(

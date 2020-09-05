@@ -797,7 +797,7 @@ function enable_rrd_graphing() {
 		/* End Captive Portal statistics */
 
 		/* NTP, set up the ntpd rrd file */
-		if (isset($config['ntpd']['statsgraph'])) {
+		if (isset($config['ntpd']['statsgraph']) && ($config['ntpd']['enable'] != 'disabled')) {
 			/* set up the ntpd rrd file */
 			if (!file_exists("$rrddbpath$ntpd")) {
 				$rrdcreate = "$rrdtool create $rrddbpath$ntpd --step $rrdntpdinterval ";
@@ -805,7 +805,7 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "DS:sjit:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "DS:cjit:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "DS:wander:GAUGE:$ntpdvalid:0:1000 ";
-				$rrdcreate .= "DS:freq:GAUGE:$ntpdvalid:0:1000 ";
+				$rrdcreate .= "DS:freq:GAUGE:$ntpdvalid:-1000:1000 ";
 				$rrdcreate .= "DS:disp:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
 				$rrdcreate .= "RRA:MIN:0.5:5:720 ";

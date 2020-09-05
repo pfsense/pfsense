@@ -121,6 +121,17 @@ if ($_POST['save']) {
 			voucher_write_used_db($rollent['number'], $rollent['used']);
 			voucher_write_active_db($rollent['number'], array());	// create empty DB
 			voucher_log(LOG_INFO, sprintf(gettext('All %1$s vouchers from Roll %2$s marked unused'), $rollent['count'], $rollent['number']));
+
+			if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport,
+				$syncuser, $syncpass, $carp_loop)) {
+				$rpc_client = new pfsense_xmlrpc_client();
+				$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+				$rpc_client->set_noticefile("CaptivePortalVouchersSync");
+				$arguments = array('active_and_used_vouchers_bitmasks' => array($rollent['number'] => base64_decode($rollent['used'])),
+				'active_vouchers' => array($rollent['number'] => array()));
+
+				$rpc_client->xmlrpc_method('captive_portal_sync', array('op' => 'write_vouchers', 'zone' => $cpzone, 'arguments' => base64_encode(serialize($arguments))));
+			}
 		} else {
 			// existing roll has been modified but without changing the count
 			// read active and used DB from ramdisk and store it in XML config

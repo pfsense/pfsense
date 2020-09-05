@@ -33,8 +33,10 @@
 	 *    - HN (hn.org) -- incomplete checking!
 	 *    - DynS (dyns.org)
 	 *    - ZoneEdit (zoneedit.com)
-	 *    - FreeDNS (freedns.afraid.org)
-	 *    - FreeDNS IPv6 (freedns.afraid.org)
+	 *    - FreeDNS API v1 (freedns.afraid.org)
+	 *    - FreeDNS IPv6 API v1 (freedns.afraid.org)
+	 *    - FreeDNS API v2 (freedns.afraid.org)
+	 *    - FreeDNS IPv6 API v2 (freedns.afraid.org)
 	 *    - Loopia (loopia.se)
 	 *    - StaticCling (staticcling.org)
 	 *    - DNSexit (dnsexit.com)
@@ -68,6 +70,7 @@
 	 *    - ClouDNS (www.cloudns.net)
 	 *    - GoDaddy (www.godaddy.com)
 	 *    - Azure DNS (azure.microsoft.com)
+	 *    - Dynv6 (www.dynv6.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -95,6 +98,8 @@
 	 *  ODS             - Last Tested: 02 August 2005
 	 *  FreeDNS         - Last Tested: 01 May 2016
 	 *  FreeDNS IPv6    - Last Tested: 01 May 2016
+	 *  FreeDNS v2      - Last Tested: 01 June 2020
+	 *  FreeDNS IPv6 v2 - Last Tested: 01 June 2020
 	 *  Loopia          - Last Tested: 21 August 2019
 	 *  StaticCling     - Last Tested: 27 April 2006
 	 *  DNSexit         - Last Tested: 20 July 2008
@@ -218,6 +223,8 @@
 			switch ($dnsService) {
 			case 'freedns':
 			case 'freedns-v6':
+			case 'freedns2':
+			case 'freedns2-v6':
 				if (!$dnsHost) $this->_error(5);
 				break;
 			case "namecheap":
@@ -284,11 +291,13 @@
 			switch ($dnsService) {
 				case 'he-net-v6':
 				case 'digitalocean-v6':
+				case 'domeneshop-v6':
 				case 'custom-v6':
 				case 'spdyn-v6':
 				case 'route53-v6':
 				case 'duiadns-v6':
 				case 'freedns-v6':
+				case 'freedns2-v6':
 				case 'cloudflare-v6':
 				case 'dreamhost-v6':
 				case 'godaddy-v6':
@@ -296,6 +305,7 @@
 				case 'linode-v6':
 				case 'noip-v6':
 				case 'noip-free-v6':
+				case 'dynv6-v6':
 					$this->_useIPv6 = true;
 					break;
 				default:
@@ -341,6 +351,8 @@
 				switch ($this->_dnsService) {
 					case 'glesys':
 					case 'dnsomatic':
+					case 'domeneshop':
+					case 'domeneshop-v6':
 					case 'dyndns':
 					case 'dyndns-static':
 					case 'dyndns-custom':
@@ -356,6 +368,8 @@
 					case 'ods':
 					case 'freedns':
 					case 'freedns-v6':
+					case 'freedns2':
+					case 'freedns2-v6':
 					case 'loopia':
 					case 'staticcling':
 					case 'dnsexit':
@@ -394,6 +408,8 @@
 					case 'linode':
 					case 'linode-v6':
 					case 'gandi-livedns':
+					case 'dynv6':
+					case 'dynv6-v6':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -662,9 +678,17 @@
 					$needIP = TRUE;
 					curl_setopt($ch, CURLOPT_URL, 'https://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass . '&address=' . $this->_dnsIP);
 					break;
+				case 'freedns2':
+					$needIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://sync.afraid.org/u/' . $this->_dnsPass . '/?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					break;
+				case 'freedns2-v6':
+					$needIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://v6.sync.afraid.org/u/' . $this->_dnsPass . '/?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					break;
 				case 'dnsexit':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_URL, 'https://www.dnsexit.com/RemoteUpdate.sv?login=' . $this->_dnsUser . '&password=' . $this->_dnsPass . '&host=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, 'https://update.dnsexit.com/RemoteUpdate.sv?login=' . $this->_dnsUser . '&password=' . $this->_dnsPass . '&host=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				case 'loopia':
 					$needsIP = TRUE;
@@ -720,6 +744,15 @@
 						$port = ":" . $this->_dnsPort;
 					}
 					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard=' . $this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NOCHG');
+					break;
+				case 'domeneshop':
+				case 'domeneshop-v6':
+					/* Example:
+						https://{token}:{secret}@api.domeneshop.no/v0/dyndns/update?hostname=example.com&myip=127.0.0.1
+					*/
+					$needsIP = FALSE;
+					$server = "https://{$this->_dnsUser}:{$this->_dnsPass}@api.domeneshop.no/v0/dyndns/update?hostname={$this->_dnsHost}&myip={$this->_dnsIP}";
+					curl_setopt($ch, CURLOPT_URL, $server);
 					break;
 				case 'namecheap':
 					/* Example:
@@ -1073,10 +1106,50 @@
 					if (!is_array($output->domain_records)) {
 						$output->domain_records = array();
 					}
-					foreach($output->domain_records as $dnsRecord) {
+
+					// DO's API lists 20 NS records per page, so additional pages needs to be downloaded
+					// https://redmine.pfsense.org/issues/10952
+					$_domain_records = $output->domain_records;
+					$_count = count($_domain_records);
+					$_total = 0;
+					if (property_exists($output, 'meta')) {
+						$meta = $output->meta;
+						if (property_exists($meta, 'total')) {
+							$_total = $meta->total;
+						}
+					}
+					$_next = '...';
+					$_last = '';
+					while ($_next != $_last) {
+						$_next = '';
+						if (property_exists($output, 'links')) {
+							$_links = $output->links;
+							if (property_exists($_links, 'pages')) {
+								$_pages = $_links->pages;
+								if (property_exists($_pages, 'next')) {
+									$_next = $_pages->next;
+								}
+								if (property_exists($_pages, 'last')) {
+									$_last = $_pages->last;
+								}
+								if ($_next != '') {
+									echo "getting $_next\n";
+									curl_setopt($ch, CURLOPT_URL, $_next);
+									$output = json_decode(curl_exec($ch));
+									if (!is_array($output->domain_records)) {
+										$output->domain_records = array();
+									}
+									$_domain_records = array_merge($_domain_records,$output->domain_records);
+								}
+							}
+						}
+					}
+					$_count = count($_domain_records);
+
+					foreach($_domain_records as $dnsRecord) {
 						// NS records are named @ in DO's API, so check type as well 
 						// https://redmine.pfsense.org/issues/9171
-						if ($this->_dnsHost == $dnsRecord->name && $dnsRecord->type == 'A') {
+						if ($this->_dnsHost == $dnsRecord->name && $dnsRecord->type == ($isv6 ? 'AAAA' : 'A')) {
 							$recordID = $dnsRecord->id;
 							break;
 						}
@@ -1277,8 +1350,15 @@
 						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 						curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records");
 					}
-
-				break;
+					break;
+				case 'dynv6':
+					$needIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://dynv6.com/api/update?ipv4=' . $this->_dnsIP . '&hostname=' . $this->_dnsHost . '&token=' . $this->_dnsPass);
+					break;
+				case 'dynv6-v6':
+					$needIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://dynv6.com/api/update?ipv6=' . $this->_dnsIP . '&hostname=' . $this->_dnsHost . '&token=' . $this->_dnsPass);
+					break;
 			case 'gandi-livedns':
 				// NOTE: quite similar to digitalocean case but with json content like azure case
 				// Get record href
@@ -1325,6 +1405,12 @@
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
 				$data = substr($response, $header_size);
+				if ($this->_dnsVerboseLog) {
+					foreach (explode(PHP_EOL, $header) as $hv) {
+						log_error(sprintf("Response Header: %s", rtrim($hv)));
+				  	}
+					log_error(sprintf("Response Data: %s", $data));
+				}
 				$this->_checkStatus($ch, $data, $header);
 				@curl_close($ch);
 			}
@@ -1778,6 +1864,20 @@
 				case 'freedns':
 				case 'freedns-v6':
 					if (preg_match("/has not changed./i", $data)) {
+						$status = $status_intro . $success_str . gettext("No Change In IP Address");
+						$successful_update = true;
+					} else if (preg_match("/Updated/i", $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
+					}
+					break;
+				case 'freedns2':
+				case 'freedns2-v6':
+					if (preg_match("/No IP change detected/i", $data)) {
 						$status = $status_intro . $success_str . gettext("No Change In IP Address");
 						$successful_update = true;
 					} else if (preg_match("/Updated/i", $data)) {

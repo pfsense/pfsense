@@ -70,7 +70,7 @@ $g = array(
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
 	"debug" => false,
-	"latest_config" => "20.1",
+	"latest_config" => "20.8",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -79,7 +79,7 @@ $g = array(
 	"captiveportal_element_sizelimit" => 1048576,
 	"captiveportal_rules_interval" => 50,
 	"services_dhcp_server_enable" => true,
-	"wireless_regex" => "/^(ath|athp|bwi|bwn|ipw|iwi|iwm|iwn|malo|mwl|ral|rsu|rum|run|uath|upgt|ural|urtw|urtwn|wi|wpi|wtap|zyd)[0-9]+/",
+	"wireless_regex" => "/^(ath|athp|bwi|bwn|ipw|iwi|iwm|iwn|malo|mwl|ral|rsu|rtwn|rum|run|uath|upgt|ural|urtw|urtwn|wi|wpi|wtap|zyd)[0-9]+/",
 	"help_base_url" => "/help.php",
 	"pkg_prefix" => "pfSense-pkg-",
 	"default_timezone" => "Etc/UTC",
@@ -89,7 +89,7 @@ $g = array(
 	"default_log_entries" => 500,
 	"default_log_size" => 512000,
 	"minimumtableentries_bogonsv6" => 400000,
-	"alternativemetaports" => array("vmware", "php72", "php73")
+	"alternativemetaports" => array("vmware", "php72", "php73", "php74")
 );
 
 /* IP TOS flags */

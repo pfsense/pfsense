@@ -66,6 +66,9 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['interfaces'] = explode(",", $a_ppps[$id]['ports']);
 	$pconfig['username'] = $a_ppps[$id]['username'];
 	$pconfig['password'] = base64_decode($a_ppps[$id]['password']);
+	if (isset($a_ppps[$id]['secret'])) {
+		$pconfig['secret'] = base64_decode($a_ppps[$id]['secret']);
+	}
 	if (isset($a_ppps[$id]['ondemand'])) {
 		$pconfig['ondemand'] = true;
 	}
@@ -139,7 +142,7 @@ if (isset($id) && $a_ppps[$id]) {
 				$pconfig['gateway'][$pconfig['interfaces'][$i]] = $gateway[$i];
 		case "pppoe":
 			$pconfig['provider'] = $a_ppps[$id]['provider'];
-			if (isset($a_ppps[$id]['provider']) and empty($a_ppps[$id]['provider'])) {
+			if (isset($a_ppps[$id]['provider']) && empty($a_ppps[$id]['provider'])) {
 				$pconfig['null_service'] = true;
 			}
 			/* ================================================ */
@@ -251,7 +254,10 @@ if ($_POST['save']) {
 	} else {
 		$input_errors[] = gettext("Password and confirmed password must match.");
 	}
-	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1) {
+	if (($_POST['type'] == 'l2tp') && (isset($_POST['secret']))) {
+		$pconfig['secret'] = $_POST['secret'];
+	}
+	if (($_POST['type'] == "ppp") && (count($_POST['interfaces']) > 1)) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
 	}
 	if ($_POST['provider'] && $_POST['null_service']) {
@@ -336,6 +342,11 @@ if ($_POST['save']) {
 			$ppp['password'] = base64_encode($_POST['passwordfld']);
 		} else {
 			$ppp['password'] = $a_ppps[$id]['password'];
+		}
+		if (($_POST['type'] == 'l2tp') && (!empty($_POST['secret']))) {
+			$ppp['secret'] = base64_encode($_POST['secret']);
+		} else {
+			unset($ppp['secret']);
 		}
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
 		if (!empty($_POST['idletimeout'])) {
@@ -575,6 +586,21 @@ $section->addPassword(new Form_Input(
 	'password',
 	$pconfig['password']
 ));
+
+if ($pconfig['type'] == 'l2tp') {
+	$group = new Form_Group('Shared Secret');
+
+	$group->add(new Form_Input(
+		'secret',
+		'*Secret',
+		'password',
+		$pconfig['secret']
+	))->setHelp('L2TP tunnel Shared Secret. Used to authenticate tunnel connection and encrypt ' .
+       		    'important control packet contents. (Optional)');
+
+	$group->addClass('secret');
+	$section->add($group);
+}
 
 // These elements are hidden by default, and un-hidden in Javascript
 if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {

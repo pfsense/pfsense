@@ -210,10 +210,9 @@ $ipsec_preshared_key_type = array(
 global $ipsec_closeactions;
 $ipsec_closeactions = array(
 	'' => gettext('Default'),
-	'none' => gettext('No action'),
-	'restart' => gettext('Restart/Reconnect'),
-	'clear' => gettext('Close connection and clear SA'),
-	'hold' => gettext('Close connection and reconnect on demand'),
+	'none' => gettext('Close connection and clear SA'),
+	'start' => gettext('Restart/Reconnect'),
+	'trap' => gettext('Close connection and reconnect on demand'),
 );
 
 global $p2_modes;
@@ -373,6 +372,8 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 			if ($addrbits) {
 				if ($mode == "tunnel6") {
 					return $idinfo['address']."/128";
+				} elseif (($mode == "vti") && is_ipaddrv4($idinfo['address'])) {
+					return $idinfo['address']."/30";
 				} elseif (($mode == "vti") && is_ipaddrv6($idinfo['address'])) {
 					return $idinfo['address']."/64";
 				} else {
@@ -1630,22 +1631,25 @@ function ipsec_setup_userpools() {
 	return;
 }
 
-/****f* ipsec/ipsec_setup_bypasslan
+/****f* ipsec/ipsec_setup_bypass
  * NAME
- *   ipsec_setup_bypasslan - Generate a bypass connection for LAN-LAN traffic
+ *   ipsec_setup_bypass - Generate a bypass connection for LAN-LAN and custom rules traffic
  * INPUTS
  *   None
  * RESULT
  *   Sets up a bypass connection to prevent local traffic from being caught by
  *   IPsec policies.
  ******/
-function ipsec_setup_bypasslan() {
+function ipsec_setup_bypass() {
 	global $config, $scconf;
-	if (isset($config['ipsec']['noshuntlaninterfaces'])) {
-		return array();
-	}
-	$bypassnets = array();
+
+	$scconf['connections']['bypass'] = array();
+	/* Prevents the connection from being considered for remote peers */
+	$scconf['connections']['bypass']['remote_addrs'] = "127.0.0.1";
+	$scconf['connections']['bypass']['children'] = array();
+
 	/* Locate the LAN IPv4 and IPv6 subnets */
+	$bypassnets = array();
 	if ($config['interfaces']['lan']) {
 		$lanip = get_interface_ip("lan");
 		if (!empty($lanip) && is_ipaddrv4($lanip)) {
@@ -1664,19 +1668,30 @@ function ipsec_setup_bypasslan() {
 			}
 		}
 	}
-	/* If we have viable targets, setup a bypass connection */
-	if (!empty($bypassnets)) {
+	/* If we have viable targets, setup a bypass LAN connection */
+	if (!empty($bypassnets) && !isset($config['ipsec']['noshuntlaninterfaces'])) {
 		$bypass = implode(',', $bypassnets);
-		$scconf['connections']['bypass'] = array();
-		/* Prevents the connection from being considered for remote peers */
-		$scconf['connections']['bypass']['remote_addrs'] = "127.0.0.1";
-		$scconf['connections']['bypass']['children'] = array();
-		$scconf['connections']['bypass']['children']['bypass'] = array();
-		$scconf['connections']['bypass']['children']['bypass']['local_ts'] = $bypass;
-		$scconf['connections']['bypass']['children']['bypass']['remote_ts'] = $bypass;
-		$scconf['connections']['bypass']['children']['bypass']['mode'] = "pass";
-		$scconf['connections']['bypass']['children']['bypass']['start_action'] = "trap";
+		$scconf['connections']['bypass']['children']['bypasslan'] = array();
+		$scconf['connections']['bypass']['children']['bypasslan']['local_ts'] = $bypass;
+		$scconf['connections']['bypass']['children']['bypasslan']['remote_ts'] = $bypass;
+		$scconf['connections']['bypass']['children']['bypasslan']['mode'] = "pass";
+		$scconf['connections']['bypass']['children']['bypasslan']['start_action'] = "trap";
 	}
+
+	/* Setup custom bypass rules */
+	if ((isset($config['ipsec']['ipsecbypass']) && $config['ipsec']['bypassrules']) &&
+	    is_array($config['ipsec']['bypassrules'])) {
+		foreach ($config['ipsec']['bypassrules']['rule'] as $id => $rule) {
+			$scconf['connections']['bypass']['children']["rule{$id}"] = array();
+			$scconf['connections']['bypass']['children']["rule{$id}"]["local_ts"] = $rule['source'] .
+			       	"/" . $rule['srcmask'];
+			$scconf['connections']['bypass']['children']["rule{$id}"]["remote_ts"] = $rule['destination'] .
+			       	"/" . $rule['dstmask'];
+			$scconf['connections']['bypass']['children']["rule{$id}"]["mode"] = "pass";
+			$scconf['connections']['bypass']['children']["rule{$id}"]["start_action"] = "trap";
+		}
+	}
+
 	return;
 }
 
@@ -1757,7 +1772,7 @@ function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
  *   details.
  ******/
 function ipsec_setup_authentication(& $ph1ent, & $conn) {
-	global $rgmap, $ipsec_swanctl_dirs;
+	global $rgmap, $ipsec_swanctl_dirs, $config;
 	$local = array();
 	$remote = array();
 	$remote2 = array();
@@ -1811,6 +1826,10 @@ function ipsec_setup_authentication(& $ph1ent, & $conn) {
 				$remote['eap_id'] = "%any";
 			} else {
 				$local['auth'] = "eap-radius";
+			}
+			if (($config['ipsec']['client']['group_source'] == 'enabled') &&
+			    !empty($config['ipsec']['client']['auth_groups'])) {
+				$remote['groups'] = $config['ipsec']['client']['auth_groups'];
 			}
 			$remote['auth'] = "eap-radius";
 			break;
@@ -2528,7 +2547,8 @@ function ipsec_setup_secrets() {
 			    ($key['ident'] == 'any')) {
 				$key['ident'] = '%any';
 			}
-			$scconf['secrets']['eap-' . $suffix++] = array(
+			$userkeyprefix = (strtolower($key['type']) == 'eap') ? 'eap' : 'ike';
+			$scconf['secrets'][$userkeyprefix . '-' . $suffix++] = array(
 				'secret' => '0s' . base64_encode(trim($key['pre-shared-key'])),
 				'id-0' => $key['ident'],
 			);
@@ -2604,6 +2624,9 @@ function ipsec_configure($restart = false) {
 	 * looping through the arrays to locate entries later. */
 	$tunnels = array();
 	foreach ($a_phase1 as $p1) {
+		if (empty($p1)) {
+			continue;
+		}
 		if (isset($p1['mobile']) && !isset($p1['disabled'])) {
 			$mobile_configured = true;
 		}
@@ -2668,8 +2691,8 @@ function ipsec_configure($restart = false) {
 	$scconf = array();
 	$scconf[] = "# This file is automatically generated. Do not edit";
 	$scconf['connections'] = array();
-	/* Setup LAN bypass */
-	ipsec_setup_bypasslan();
+	/* Setup IPsec bypass */
+	ipsec_setup_bypass();
 	/* Setup connections */
 	ipsec_setup_tunnels();
 	$scconf['pools'] = array();

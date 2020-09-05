@@ -41,6 +41,11 @@ require_once("pfsense-utils.inc");
 
 $logging_level = LOG_WARNING;
 $logging_prefix = gettext("Local User Database");
+$cert_keylens = array("1024", "2048", "3072", "4096", "6144", "7680", "8192", "15360", "16384");
+$cert_keytypes = array("RSA", "ECDSA");
+$openssl_ecnames = cert_build_curve_list();
+
+global $openssl_digest_algs;
 
 // start admin user code
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
@@ -447,7 +452,9 @@ if ($_POST['save'] && !$read_only) {
 				}
 
 				cert_create($cert, $_POST['caref'], $_POST['keylen'],
-					(int)$_POST['lifetime'], $dn);
+					(int)$_POST['lifetime'], $dn, $_POST['type'],
+					$_POST['digest_alg'], $_POST['keytype'],
+				       	$_POST['ecname']);
 
 				if (!is_array($config['cert'])) {
 					$config['cert'] = array();
@@ -477,6 +484,11 @@ if ($_POST['save'] && !$read_only) {
 
 		local_user_set_groups($userent, $_POST['groups']);
 		local_user_set($userent);
+
+		/* Update user index to account for new changes */
+		global $userindex;
+		$userindex = index_users();
+
 		$savemsg = sprintf(gettext("Successfully %s user %s"), (isset($id)) ? gettext("edited") : gettext("created"), $userent['name']);
 		write_config($savemsg);
 		syslog($logging_level, "{$logging_prefix}: {$savemsg}");
@@ -974,24 +986,42 @@ if ($act == "new" || $act == "edit" || $input_errors):
 			));
 
 			$section->addInput(new Form_Select(
+				'keytype',
+				'*Key type',
+				$pconfig['keytype'],
+				array_combine($cert_keytypes, $cert_keytypes)
+			));
+
+			$group = new Form_Group($i == 0 ? '*Key length':'');
+			$group->addClass('rsakeys');
+			$group->add(new Form_Select(
 				'keylen',
-				'Key length',
-				2048,
-				array(
-					512 => '512 bits',
-					1024 => '1024 bits',
-					2048 => '2048 bits',
-					3072 => '3072 bits',
-					4096 => '4096 bits',
-					7680 => '7680 bits',
-					8192 => '8192 bits',
-					15360 => '15360 bits',
-					16384 => '16384 bits'
-				)
-			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, ' .
-				'and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). ' .
-				'As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. ' .
-				'For more information see %1$s.', '<a href="https://keylength.com">keylength.com</a>');
+				null,
+				$pconfig['keylen'],
+				array_combine($cert_keylens, $cert_keylens)
+			))->setHelp('The length to use when generating a new RSA key, in bits. %1$s' .
+				'The Key Length should not be lower than 2048 or some platforms ' .
+				'may consider the certificate invalid.', '<br/>');
+			$section->add($group);
+
+			$group = new Form_Group($i == 0 ? '*Elliptic Curve Name':'');
+			$group->addClass('ecnames');
+			$group->add(new Form_Select(
+				'ecname',
+				null,
+				$pconfig['ecname'],
+				$openssl_ecnames
+			))->setHelp('Curves may not be compatible with all uses. Known compatible curve uses are denoted in brackets.');
+			$section->add($group);
+
+			$section->addInput(new Form_Select(
+				'csrsign_digest_alg',
+				'*Digest Algorithm',
+				$pconfig['csrsign_digest_alg'],
+				array_combine($openssl_digest_algs, $openssl_digest_algs)
+			))->setHelp('The digest method used when the certificate is signed. %1$s' .
+				'The best practice is to use an algorithm stronger than SHA1. '.
+				'Some platforms may consider weaker digest algorithms invalid', '<br/>');
 
 			$section->addInput(new Form_Input(
 				'lifetime',
@@ -1064,6 +1094,11 @@ events.push(function() {
 		}
 	}
 
+	function change_keytype() {
+		hideClass('rsakeys', ($('#keytype').val() != 'RSA'));
+		hideClass('ecnames', ($('#keytype').val() != 'ECDSA'));
+	}
+
 	$('#webguicss').change(function() {
 		setThemeWarning();
 	});
@@ -1112,12 +1147,17 @@ events.push(function() {
 
 	$('#expires').datepicker();
 
+	$('#keytype').change(function () {
+		change_keytype();
+	});
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideClass('cert-options', true);
 	//hideInput('authorizedkeys', true);
 	hideCheckbox('showkey', true);
 	setcustomoptions();
+	change_keytype();
 
 	// On submit mark all the user's groups as "selected"
 	$('form').submit(function() {

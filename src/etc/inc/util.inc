@@ -45,9 +45,11 @@ function isvalidpid($pidfile) {
 
 function is_process_running($process) {
 	$output = "";
-	exec("/bin/pgrep -anx " . escapeshellarg($process), $output, $retval);
-
-	return (intval($retval) == 0);
+	if (!empty($process)) {
+		exec("/bin/pgrep -anx " . escapeshellarg($process), $output, $retval);
+		return (intval($retval) == 0);
+	}
+	return false;
 }
 
 function isvalidproc($proc) {
@@ -680,6 +682,31 @@ function is_ipaddrv4($ipaddr) {
 	return true;
 }
 
+function is_mcast($ipaddr) {
+	if (is_mcastv4($ipaddr)) {
+		return 4;
+	}
+	if (is_mcastv6($ipaddr)) {
+		return 6;
+	}
+	return false;
+}
+
+function is_mcastv4($ipaddr) {
+	if (!is_ipaddrv4($ipaddr) ||
+	    !preg_match('/^2(?:2[4-9]|3\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d?|0)){3}$/', $ipaddr)) {
+		return false;
+	}
+	return true;
+}
+
+function is_mcastv6($ipaddr) {
+	if (!is_ipaddrv6($ipaddr) || !preg_match('/^ff.+$/', $ipaddr)) {
+		return false;
+	}
+	return true;
+}
+
 /* returns 4 or 6 respectively (== TRUE) if $ipaddr is a valid IPv4 or IPv6 linklocal address
    returns '' if not a valid linklocal address */
 function is_linklocal($ipaddr) {
@@ -769,7 +796,7 @@ function is_ipaddroralias($ipaddr) {
 	false - if not a valid subnet
 	true (numeric 4 or 6) - if valid, gives type of subnet */
 function is_subnet($subnet) {
-	if (is_string($subnet) && preg_match('/^(?:([0-9.]{7,15})|([0-9a-f:]{2,39}))\/(\d{1,3})$/i', $subnet, $parts)) {
+	if (is_string($subnet) && preg_match('/^(?:([0-9.]{7,15})|([0-9a-f:]{2,39}|[0-9a-f:]{2,30}[0-9.]{7,15}))\/(\d{1,3})$/i', $subnet, $parts)) {
 		if (is_ipaddrv4($parts[1]) && $parts[3] <= 32) {
 			return 4;
 		}
@@ -998,8 +1025,11 @@ function is_hostname($hostname, $allow_wildcard=false) {
 }
 
 /* returns true if $domain is a valid domain name */
-function is_domain($domain, $allow_wildcard=false) {
+function is_domain($domain, $allow_wildcard=false, $trailing_dot=true) {
 	if (!is_string($domain)) {
+		return false;
+	}
+	if (!$trailing_dot && ($domain[strlen($domain)-1] == ".")) {
 		return false;
 	}
 	if ($allow_wildcard) {
@@ -1280,6 +1310,22 @@ function is_inrange_v6($test, $start, $end) {
 /* returns true if $test is in the range between $start and $end */
 function is_inrange($test, $start, $end) {
 	return is_ipaddrv6($test) ? is_inrange_v6($test, $start, $end) : is_inrange_v4($test, $start, $end);
+}
+
+function build_vip_list($fif, $family = "all") {
+	$list = array('address' => gettext('Interface Address'));
+
+	$viplist = get_configured_vip_list($family);
+	foreach ($viplist as $vip => $address) {
+		if ($fif == get_configured_vip_interface($vip)) {
+			$list[$vip] = "$address";
+			if (get_vip_descr($address)) {
+				$list[$vip] .= " (". get_vip_descr($address) .")";
+			}
+		}
+	}
+
+	return($list);
 }
 
 function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
@@ -1608,7 +1654,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces) &&
 		    interface_is_vlan($ifname) == NULL &&
 		    interface_is_qinq($ifname) == NULL &&
-		    !stristr($ifname, "_wlan")) {
+		    !stristr($ifname, "_wlan") &&
+		    !stristr($ifname, "_stf")) {
 			$toput = array(
 					"mac" => trim($alink[1]),
 					"up" => in_array($ifname, $upints)
@@ -1783,16 +1830,15 @@ function unlink_if_exists($fn) {
 	return $result;
 }
 /* make a global alias table (for faster lookups) */
-function alias_make_table($config) {
-	global $aliastable;
+function alias_make_table() {
+	global $aliastable, $config;
 
 	$aliastable = array();
 
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if ($alias['name']) {
-				$aliastable[$alias['name']] = $alias['address'];
-			}
+	init_config_arr(array('aliases', 'alias'));
+	foreach ($config['aliases']['alias'] as $alias) {
+		if ($alias['name']) {
+			$aliastable[$alias['name']] = $alias['address'];
 		}
 	}
 }
@@ -2566,6 +2612,39 @@ function route_add_or_change($args) {
 	return ($rc == 0);
 }
 
+function set_ipv6routes_mtu($interface, $mtu) {
+	global $config, $g;
+
+	$ipv6mturoutes = array();
+	$if = convert_real_interface_to_friendly_interface_name($interface);
+	if (!$config['interfaces'][$if]['ipaddrv6']) {
+		return;
+	}
+	$a_gateways = return_gateways_array();
+	$a_staticroutes = get_staticroutes(false, false, true);
+	foreach ($a_gateways as $gate) {
+		foreach ($a_staticroutes as $sroute) {
+			if ($gate['interface'] == $interface &&
+			    $sroute['gateway'] == $gate['name']) {
+				$tgt = $sroute['network'];
+				$gateway = $gate['gateway'];
+				$ipv6mturoutes[$tgt] = $gateway;
+			}
+		}
+		if ($gate['interface'] == $interface &&
+		    $gate['isdefaultgw']) {
+			$tgt = "default";
+			$gateway = $gate['gateway'];
+			$ipv6mturoutes[$tgt] = $gateway;
+		}
+	}
+	foreach ($ipv6mturoutes as $tgt => $gateway) {
+		mwexec("/sbin/route change -6 -mtu " . escapeshellarg($mtu) .
+		    " " . escapeshellarg($tgt) . " " .
+		    escapeshellarg($gateway));
+	}
+}
+
 function alias_to_subnets_recursive($name, $returnhostnames = false) {
 	global $aliastable;
 	$result = array();
@@ -2596,7 +2675,8 @@ function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, 
 	global $config, $aliastable;
 
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
-	if (!is_array($config['staticroutes']['route'])) {
+	init_config_arr(array('staticroutes', 'route'));
+	if (empty($config['staticroutes']['route'])) {
 		return array();
 	}
 
@@ -2993,6 +3073,24 @@ function is_supported_image($image_filename) {
 		return false;
 	} else {
 		return $img_info[2];
+	}
+}
+
+function get_lagg_ports ($laggport) {
+	$laggp = array();
+	foreach ($laggport as $lgp) {
+		list($lpname, $lpinfo) = explode(" ", $lgp);
+		preg_match('~<(.+)>~', $lpinfo, $lgportmode);
+		if ($lgportmode[1]) {
+			$laggp[] = $lpname . " (" . $lgportmode[1] . ")";
+		} else {
+			$laggp[] = $lpname;
+		}
+	}
+	if ($laggp) {
+		return implode(", ", $laggp);
+	} else {
+		return false;
 	}
 }
 

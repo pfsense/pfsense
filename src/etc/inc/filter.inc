@@ -330,6 +330,9 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	if (isset($config['system']['tcpclosedtimeout']) && is_numericint($config['system']['tcpclosedtimeout'])) {
 		$timeoutlist .= " tcp.closed {$config['system']['tcpclosedtimeout']} ";
 	}
+	if (isset($config['system']['tcptsdifftimeout']) && is_numericint($config['system']['tcptsdifftimeout'])) {
+		$timeoutlist .= " tcp.tsdiff {$config['system']['tcptsdifftimeout']} ";
+	}
 	if (isset($config['system']['udpfirsttimeout']) && is_numericint($config['system']['udpfirsttimeout'])) {
 		$timeoutlist .= " udp.first {$config['system']['udpfirsttimeout']} ";
 	}
@@ -748,10 +751,9 @@ function filter_generate_aliases() {
 				$aliases .= " }\"\n";
 			}
 		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
-			if ($ifcfg['type6'] == '6rd') {
-				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf";
-			} else if ($ifcfg['type6'] == '6to4') {
-				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf";
+			if (($ifcfg['type6'] == '6rd') || ($ifcfg['type6'] == '6to4')) {
+				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf }\"\n";
+				$aliases .= "{$ifcfg['descr']}_STF = \"{ {$if}_stf";
 			} else {
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
 
@@ -873,6 +875,7 @@ function filter_generate_gateways() {
 	/* Lookup Gateways to be used in filter rules once */
 	$GatewaysList = return_gateways_array();
 	$GatewayGroupsList = return_gateway_groups_array(true);
+	$GatewaysStatus = return_gateways_status(true);
 
 	if (is_array($GatewaysList)) {
 		foreach ($GatewaysList as $gwname => $gateway) {
@@ -882,7 +885,8 @@ function filter_generate_gateways() {
 			if (!is_ipaddr($gwip)) {
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
 			}
-			if (is_ipaddr($gwip) && !empty($int) && !isset($gateway['force_down'])) {
+			if (is_ipaddr($gwip) && !empty($int) && !isset($gateway['force_down']) &&
+			    (($GatewaysStatus[$gwname]['status'] != 'down') || isset($gateway['action_disable']))) {
 				$route = "route-to ( {$int} {$gwip} )";
 			}
 			if (($route === "") && isset($config['system']['skip_rules_gw_down'])) {
@@ -903,10 +907,25 @@ function filter_generate_gateways() {
 				$foundlb = 0;
 				$routeto = "";
 				$routetomembers = 0;
+				$trigger = "";
+				foreach ($config['gateways']['gateway_group'] as $group) {
+					if ($group['name'] == $gateway) {
+						$trigger = $group['trigger'];
+						break;
+					}
+				}
 				foreach ($members as $idx => $member) {
 					$int = $member['int'];
 					$gatewayip = $member['gwip'];
-					if (($int <> "") && is_ipaddr($gatewayip)) {
+					if (!empty($int) && is_ipaddr($gatewayip) &&
+					    isset($GatewaysList[$member['gw']]) &&
+					    (isset($GatewaysList[$member['gw']]['action_disable']) ||
+					    (!isset($GatewaysList[$member['gw']]['force_down']) &&
+					    !stristr($GatewaysStatus[$member['gw']]['status'], 'down') && 
+					    ((!stristr($GatewaysStatus[$member['gw']]['status'], 'loss') &&
+					    !stristr($trigger, 'loss')) ||
+					    (!stristr($GatewaysStatus[$member['gw']]['status'], 'delay') &&
+					    !stristr($trigger, 'latency')))))) {
 						if ($g['debug']) {
 							log_error(sprintf(gettext('Setting up route with %1$s on %2$s'), $gatewayip, $int));
 						}
@@ -1662,16 +1681,6 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		}
 	}
 
-	/* L2TP subnet */
-	if (isset($FilterIflist['l2tp']) && $FilterIflist['l2tp']['mode'] == "server") {
-		$l2tp_sa = $FilterIflist['l2tp']['sa'];
-		$l2tp_sn = $FilterIflist['l2tp']['sn'];
-		if (is_private_ip($l2tp_sa) && !empty($l2tp_sn)) {
-			$tonathosts[] = "{$l2tp_sa}/{$l2tp_sn}";
-			$descriptions[] = gettext("L2TP server");
-		}
-	}
-
 	/* add openvpn interfaces */
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv) {
@@ -1972,7 +1981,13 @@ function filter_nat_rules_generate() {
 
 			$sn = "";
 			$sn1 = "";
-			$target = alias_expand($rule['external']);
+			if (is_ipaddr($rule['external'])) {
+				$target = $rule['external'];
+			} else {
+				$tmprule = array();
+				$tmprule['external']['network'] = $rule['external'];
+				$target = filter_generate_address($tmprule, 'external');
+			}
 			if (!$target) {
 				$natrules .= "# Unresolvable alias {$rule['target']}\n";
 				continue;               /* unresolvable alias */
@@ -1996,6 +2011,9 @@ function filter_nat_rules_generate() {
 				continue;
 			}
 
+			if (!is_ipaddr($srcaddr) && !is_subnet($srcaddr)) {
+				$srcaddr = explode(' ', $srcaddr)[1];
+			}
 			$tmp = explode('/', $srcaddr);
 			$srcip = $tmp[0];
 			if (!empty($tmp[1]) && is_numeric($tmp[1])) {
@@ -2003,9 +2021,15 @@ function filter_nat_rules_generate() {
 				$sn1 = "/{$sn}";
 			}
 
-			$natif = $FilterIflist[$natif]['if'];
-			$nat_if_list = array();
+			$natifname = $FilterIflist[$natif]['if'];
+			if (is_ipaddrv6($tmp[0]) && (($FilterIflist[$natif]['type6'] == '6rd') ||
+			    ($FilterIflist[$natif]['type6'] == '6to4'))) {
+				$natif = strtolower($FilterIflist[$natif]['descr']) . "_stf";
+			} else {
+				$natif = $natifname;
+			}
 
+			$nat_if_list = array();
 			if (isset($rule['nobinat'])) {
 				$natrules .= "no binat on {$natif} from {$srcaddr} to {$dstaddr}\n";
 			} else {
@@ -2015,7 +2039,7 @@ function filter_nat_rules_generate() {
 				 */
 				if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable") &&
 				    ($rule['natreflection'] != "disable")) {
-					$nat_if_list = filter_get_reflection_interfaces($natif);
+					$nat_if_list = filter_get_reflection_interfaces($natifname);
 				}
 
 				$natrules .= "binat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
@@ -2054,7 +2078,11 @@ function filter_nat_rules_generate() {
 			$srcaddr = trim($srcaddr);
 			$dstaddr = trim($dstaddr);
 
-			$natif = $FilterIflist[$natif]['descr'];
+			if (($FilterIflist[$natif]['type6'] == '6rd') || ($FilterIflist[$natif]['type6'] == '6to4')) {
+				$natif = $FilterIflist[$natif]['descr'] . "_STF";
+			} else {
+				$natif = $FilterIflist[$natif]['descr'];
+			}
 
 			/* Do not form an invalid NPt rule.
 			 * See https://redmine.pfsense.org/issues/8575 */
@@ -2793,12 +2821,16 @@ function filter_generate_user_rule($rule) {
 				if (array_key_exists($iface, $FilterIflist)) {
 					if (isset($FilterIflist[$iface]['if'])) {
 						$ifliste .= " " . $FilterIflist[$iface]['if'] . " ";
-					} else if (isset($FilterIflist[$iface][0]['if'])) {
+						if (($FilterIflist[$iface]['type6'] == '6rd') ||
+						    ($FilterIflist[$iface]['type6'] == '6to4')) {
+							$ifliste .= " " . $FilterIflist[$iface]['ifv6'] . " ";
+						}
+					} elseif (isset($FilterIflist[$iface][0]['if'])) {
 						$ifliste .= " " . $FilterIflist[$iface][0]['if'] . " ";
 					}
 				}
 			}
-			if ($ifliste <> "") {
+			if (!empty($ifliste)) {
 				$aline['interface'] = " on { {$ifliste} } ";
 			} else {
 				$aline['interface'] = "";

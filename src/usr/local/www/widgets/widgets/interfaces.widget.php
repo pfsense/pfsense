@@ -119,6 +119,8 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		<td>
 			<?php if ($ifinfo['pppoelink'] == "up" || $ifinfo['pptplink'] == "up" || $ifinfo['l2tplink'] == "up" || $ifinfo['ppplink'] == "up"):?>
 				<?=sprintf(gettext("Uptime: %s"), htmlspecialchars($ifinfo['ppp_uptime']));?>
+			<?php elseif (isset($ifinfo['laggproto'])):?>
+				<?=sprintf(gettext("LAGG Ports: %s"), htmlspecialchars(get_lagg_ports($ifinfo['laggport'])));?>
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['media']);?>
 			<?php endif; ?>

@@ -80,7 +80,9 @@ function vpn_pppoe_configure(&$pppoecfg) {
 		echo gettext("Configuring PPPoE Server service... ");
 	} else {
 		/* kill mpd */
-		killbypid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid");
+		if (isvalidpid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid")) {
+			killbypid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid");
+		}
 
 		/* wait for process to die */
 		sleep(2);
@@ -281,7 +283,9 @@ function vpn_l2tp_configure() {
 		echo gettext("Configuring l2tp VPN service... ");
 	} else {
 		/* kill mpd */
-		killbypid("{$g['varrun_path']}/l2tp-vpn.pid");
+		if (isvalidpid("{$g['varrun_path']}/l2tp-vpn.pid")) {
+			killbypid("{$g['varrun_path']}/l2tp-vpn.pid");
+		}
 
 		/* wait for process to die */
 		sleep(8);
@@ -324,10 +328,12 @@ function vpn_l2tp_configure() {
 			$ippool_p0 = ip_after($l2tpcfg['remoteip'], $l2tpcfg['n_l2tp_units'] - 1);
 
 			$issue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 ";
-			if (isset($l2tpcfg['radius']['radiusissueips']) && isset($l2tpcfg['radius']['server']['enable'])) {
+			if (isset($l2tpcfg['radius']['radiusissueips']) && isset($l2tpcfg['radius']['enable'])) {
 				$issue_ip_type .= "0.0.0.0/0";
+				$ippool = "";
 			} else {
 				$issue_ip_type .= "ippool p0";
+				$ippool = "set ippool add p0 {$l2tpcfg['remoteip']} {$ippool_p0}";
 			}
 
 			$ipcp_dns = '';
@@ -352,7 +358,7 @@ function vpn_l2tp_configure() {
 startup:
 
 l2tps:
-	set ippool add p0 {$l2tpcfg['remoteip']} {$ippool_p0}
+	{$ippool}
 
 	create bundle template l2tp_b
 	set bundle enable compression
@@ -383,6 +389,13 @@ l2tps:
 	set link enable incoming
 
 EOD;
+			if (!empty($l2tpcfg['secret'])) {
+				$secret = str_replace('"', '\"', $l2tpcfg['secret']);
+				$mpdconf .=<<<EOD
+	set l2tp secret "{$secret}"
+
+EOD;
+			}
 
 
 			if (isset ($l2tpcfg['radius']['enable'])) {

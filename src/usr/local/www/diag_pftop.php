@@ -205,9 +205,9 @@ print $form;
 events.push(function() {
 	$('#viewtype').on('change', function() {
 		if (['queue', 'label', 'rules'].indexOf($(this).val()) > -1) {
-			$("#sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').hide();
+			$("#filter, #sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').hide();
 		} else {
-			$("#sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').show();
+			$("#filter, #sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').show();
 		}
 	});
 	$('#filter').on('keypress keyup', function(event) {

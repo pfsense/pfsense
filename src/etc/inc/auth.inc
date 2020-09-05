@@ -389,6 +389,7 @@ function get_user_privileges(& $user) {
 }
 
 function userHasPrivilege($userent, $privid = false) {
+	global $config;
 
 	if (!$privid || !is_array($userent)) {
 		return false;
@@ -401,6 +402,18 @@ function userHasPrivilege($userent, $privid = false) {
 	}
 
 	if (!in_array($privid, $privs)) {
+		return false;
+	}
+
+	/* If someone is in admins group or is admin, do not honor the
+	 * user-config-readonly privilege to prevent foot-shooting due to a
+	 * bad privilege config.
+	 * https://redmine.pfsense.org/issues/10492 */
+	$userGroups = getUserGroups($userent['name'],
+			auth_get_authserver($config['system']['webgui']['authmode']),
+			$_SESSION['user_radius_attributes']);
+	if (($privid == 'user-config-readonly') &&
+	    (($userent['uid'] === "0") || (in_array('admins', $userGroups)))) {
 		return false;
 	}
 
@@ -1258,11 +1271,6 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapauthcont = $authcfg['ldap_authcn'];
 		$ldapnameattribute = strtolower($authcfg['ldap_attr_user']);
 		$ldapgroupattribute = strtolower($authcfg['ldap_attr_member']);
-		if (isset($authcfg['ldap_rfc2307'])) {
-			$ldapfilter         = "(&(objectClass={$authcfg['ldap_attr_groupobj']})({$ldapgroupattribute}={$username}))";
-		} else {
-			$ldapfilter         = "({$ldapnameattribute}={$username})";
-		}
 		$ldaptype = "";
 		$ldapver = $authcfg['ldap_protver'];
 		if (empty($ldapbindun) || empty($ldapbindpw)) {
@@ -1341,7 +1349,29 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapfunc = "ldap_search";
 	}
 
-	$search = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
+	if (isset($authcfg['ldap_rfc2307'])) {
+		if (isset($authcfg['ldap_rfc2307_userdn'])) {
+			$ldac_splits = explode(";", $ldapauthcont);
+			foreach ($ldac_splits as $i => $ldac_split) {
+				$ldac_split = isset($authcfg['ldap_utf8']) ? utf8_encode($ldac_split) : $ldac_split;
+				$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? utf8_encode("{$ldac_split},{$ldapbasedn}") : "{$ldac_split},{$ldapbasedn}";
+				$ldapfilter = "({$ldapnameattribute}={$username})";
+				if (stristr($ldac_split, "DC=") || empty($ldapbasedn)) {
+					$ldapdn = $ldac_split;
+				} else {
+					$ldapdn = $ldapsearchbasedn;
+				}
+				$usersearch = @$ldapfunc($ldap, $ldapdn, $ldapfilter);
+				$userinfo = @ldap_get_entries($ldap, $usersearch);
+			}
+			$username = $userinfo[0]['dn'];
+		}
+		$ldapgroupfilter         = "(&(objectClass={$authcfg['ldap_attr_groupobj']})({$ldapgroupattribute}={$username}))";
+	} else {
+		$ldapgroupfilter         = "({$ldapnameattribute}={$username})";
+	}
+
+	$search = @$ldapfunc($ldap, $ldapdn, $ldapgroupfilter, array($ldapgroupattribute));
 	$info = @ldap_get_entries($ldap, $search);
 
 	$gresults = isset($authcfg['ldap_rfc2307']) ? $info : $info[0][$ldapgroupattribute];
@@ -1533,15 +1563,21 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		}
 		/* Support legacy auth container specification. */
 		if (stristr($ldac_split, "DC=") || empty($ldapbasedn)) {
-			$search = @$ldapfunc($ldap, $ldac_split, $ldapfilter);
-			if (isset($ldapgroupfilter)) {
-				$groupsearch = @$ldapfunc($ldap, $ldac_split, $ldapgroupfilter);
-			}
+			$ldapdn = $ldac_split;
 		} else {
-			$search = @$ldapfunc($ldap, $ldapsearchbasedn, $ldapfilter);
-			if (isset($ldapgroupfilter)) {
-				$groupsearch = @$ldapfunc($ldap, $ldapsearchbasedn, $ldapgroupfilter);
+			$ldapdn = $ldapsearchbasedn;
+		}
+		$search = @$ldapfunc($ldap, $ldapdn, $ldapfilter);
+		$info = ldap_get_entries($ldap, $search);
+		if (isset($authcfg['ldap_rfc2307'])) {
+			if (isset($authcfg['ldap_rfc2307_userdn'])) {
+				$username = $info[0]['dn'];
 			}
+			$ldapgroupfilter = "(&({$ldapgroupattribute}={$username})({$ldapextendedquery}))";
+		}
+
+		if (isset($ldapgroupfilter)) {
+			$groupsearch = @$ldapfunc($ldap, $ldapdn, $ldapgroupfilter);
 		}
 
 		if (isset($ldapgroupfilter) && !$groupsearch) {
@@ -1558,7 +1594,6 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 				log_auth(sprintf(gettext("LDAP group search: %s results."), $validgroup));
 			}
 		}
-		$info = ldap_get_entries($ldap, $search);
 		$matches = $info['count'];
 		if ($matches == 1) {
 			$userdn = $_SESSION['ldapdn'] = $info[0]['dn'];

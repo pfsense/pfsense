@@ -27,6 +27,7 @@ require_once("config.inc");
 require_once("notices.inc");
 require_once("openvpn.inc");
 require_once("interfaces.inc");
+require_once("captiveportal.inc");
 
 if (isset($_GET['interface'])) {
 	$argument = $_GET['interface'];
@@ -119,6 +120,71 @@ if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
 	}
 }
 
+/* Reconfigure captive portal when necessary :
+   If we are the primary node, and we are switching back from backup to master : Get user list from the backup node */
+if (!empty($config['captiveportal']) && is_array($config['hasync']) && !empty($config['hasync']['synchronizetoip']) &&
+    $config['hasync']['synchronizecaptiveportal'] != "") {
+	if (empty($config['hasync']['username'])) {
+		$xmlrpc_username = "admin";
+	} else {
+		$xmlrpc_username = $config['hasync']['username'];
+	}
+	$xmlrpc_port = $config['system']['webgui']['port'];
+	if (empty($port)) {
+		if ($config['system']['webgui']['protocol'] == "http") {
+			$xmlrpc_port = "80";
+		} else {
+			$xmlrpc_port = "443";
+		}
+	}
+
+	foreach ($config['captiveportal'] as $cpzone=>$cp) {
+		$rpc_client = new pfsense_xmlrpc_client();
+		$rpc_client->setConnectionData($config['hasync']['synchronizetoip'], $xmlrpc_port, $xmlrpc_username, $config['hasync']['password']);
+		$resp = $rpc_client->xmlrpc_method('captive_portal_sync', array('op' => 'get_databases', 'zone' => $cpzone));
+
+		if (is_array($resp)) { // $resp will be an array only if the communication was successful
+			// Contains array of connected users (will be stored in SQLite DB)
+			$connected_users = unserialize(base64_decode($resp['connected_users']));
+			// Contains array of active vouchers (will be stored in active vouchers db)
+			$active_vouchers = unserialize(base64_decode($resp['active_vouchers']));
+			// Contain bitmask of both in use and expired vouchers (will be stored in "used vouchers" db)
+			$expired_vouchers = unserialize(base64_decode($resp['expired_vouchers']));
+			// Contains array of usedmacs (will be stored in usedmacs db)
+			$usedmacs = unserialize(base64_decode($resp['usedmacs']));
+
+			$cpdb = captiveportal_read_db();
+			$unsetindexes = array_column($cpdb, 5);
+			if (!empty($unsetindexes)) {
+				captiveportal_remove_entries($unsetindexes, true); // true: prevent carp loop
+			}
+			captiveportal_free_dnrules();
+
+			foreach ($connected_users as $id => $user) {
+				$pipeno = captiveportal_get_next_dn_ruleno('auth');
+				$attributes = array();
+				$attributes['allow_time'] = $user['allow_time'];
+				$attributes['session_timeout'] = $user['session_timeout'];
+				$attributes['idle_timeout'] = $user['idle_timeout'];
+				$attributes['session_terminate_time'] = $user['session_terminate_time'];
+				$attributes['interim_interval'] = $user['interim_interval'];
+				$attributes['maxbytes'] = $user['traffic_quota'];
+
+				portal_allow($user['ip'], $user['mac'], $user['username'], base64_decode($user['bpassword']), null,
+				    $attributes, $pipeno, $user['authmethod'], $user['context'], $user['sessionid'], true);
+			}
+			foreach ($expired_vouchers as $roll => $vdb) {
+				voucher_write_used_db($roll, $vdb);
+			}
+			foreach ($active_vouchers as $roll => $vouchers) {
+				voucher_write_active_db($roll, $vouchers);
+			}
+			captiveportal_write_usedmacs_db($usedmacs); 
+		}
+		captiveportal_syslog(sprintf(gettext('Connected users, used vouchers and used MACs have been synchronized from %1$s'), $config['hasync']['synchronizetoip']));
+	}
+}
+openlog("", LOG_PID, LOG_LOCAL0);
 $pluginparams = array();
 $pluginparams['type'] = 'carp';
 $pluginparams['event'] = 'rc.carpmaster';

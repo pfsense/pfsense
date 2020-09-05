@@ -1071,7 +1071,7 @@ function alias_info_popup($alias_id) {
 		foreach ($alias_addresses as $ap) {
 			$content .= "	<tr>\n";
 			$content .= "		<td>\n";
-			$content .= 			$ap;
+			$content .= 			idn_to_utf8($ap);
 			$content .=	"		</td>\n";
 			$content .= "		<td style='padding-left: 10px;'>\n";
 			$content .= 			htmlspecialchars($alias_details[$idx]);
@@ -1082,6 +1082,82 @@ function alias_info_popup($alias_id) {
 
 		$content .= "</tbody>\n";
 		$content .= "<table>\n";
+	}
+
+	return $content;
+}
+
+function gateway_info_popup($showgw) {
+	global $config, $user_settings;
+
+	init_config_arr(array('gateways', 'gateway_group'));
+	$a_gateways = return_gateways_array();
+	$gateways_status = return_gateways_status(true);
+
+	$content = "";
+	$gws = array();
+	$bgdanger = array('force_down', 'down', 'highloss', 'highdelay');
+	$bgwarning = array('loss', 'delay');
+	$bgsuccess = array('none');
+	$bgcolor = "bg-info";
+
+	if (is_array($a_gateways)) {
+		foreach ($a_gateways as $i => $gateway) {
+			if ($gateway['name'] == $showgw) {
+				$gws[] = $gateway['name'];
+			}
+		}
+	}
+	if (is_array($config['gateways']['gateway_group'])) {
+		foreach($config['gateways']['gateway_group'] as $gwgroup) {
+			if ($gwgroup['name'] == $showgw) {
+				foreach ($gwgroup['item'] as $member) {
+					$membersplit = explode("|", $member);
+					$gateways[] = $membersplit[0];
+				}
+			}
+		}
+	}
+
+	if (!empty($gws)) {
+		$content .= "<table>\n";
+		$content .= "<thead>\n";
+		$content .= "<tr>\n";
+		$content .= "<th>" . gettext("Name") . "</th><th style='padding-left: 10px;'>" . gettext("Interface") . "</th>";
+		$content .= "<th style='padding-left: 10px;'>" . gettext("Gateway") . "</th></tr>\n";
+		$content .= "</thead>\n";
+		$content .= "<tbody>\n";
+		foreach ($gws as $gw) {
+			foreach ($gateways_status as $gwstatus) {
+				if ($gwstatus['name'] == $gw) {
+					if (in_array($gwstatus['status'], $bgdanger)) {
+						$bgcolor = "bg-danger";
+					} elseif (in_array($gwstatus['status'], $bgwarning)) {
+						$bgcolor = "bg-warning";
+					} elseif (in_array($gwstatus['status'], $bgsuccess)) {
+						$bgcolor = "bg-success";
+					} else {
+						$bgcolor = "bg-info";
+					}
+				}
+			}
+			$content .= "	<tr class='{$bgcolor}'>\n";
+			$content .= "		<td>\n";
+			$content .= 			$gw;
+			$content .=	"		</td>\n";
+			$content .= "		<td style='padding-left: 10px;'>\n";
+			$content .= 			$config['interfaces'][lookup_gateway_interface_by_name($gw)]['descr'];
+			$content .=	"		</td>\n";
+			$content .= "		<td style='padding-left: 10px;'>\n";
+			$content .= 			lookup_gateway_ip_by_name($gw);
+			$content .=	"		</td>\n";
+			$content .= "	</tr>\n";
+			$idx++;
+		}
+		$content .= "</tbody>\n";
+		$content .= "<table>\n";
+	} else {
+		return;
 	}
 
 	return $content;

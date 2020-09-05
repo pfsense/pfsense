@@ -29,7 +29,7 @@
 ##|-PRIV
 
 function allowedhostnamescmp($a, $b) {
-	return strcmp($a['hostname'], $b['hostname']);
+	return strcmp(idn_to_utf8($a['hostname']), idn_to_utf8($b['hostname']));
 }
 
 function allowedhostnames_sort() {
@@ -68,7 +68,7 @@ $id = $_REQUEST['id'];
 
 if (isset($id) && $a_allowedhostnames[$id]) {
 	$pconfig['zone'] = $a_allowedhostnames[$id]['zone'];
-	$pconfig['hostname'] = $a_allowedhostnames[$id]['hostname'];
+	$pconfig['hostname'] = idn_to_utf8($a_allowedhostnames[$id]['hostname']);
 	$pconfig['sn'] = $a_allowedhostnames[$id]['sn'];
 	$pconfig['dir'] = $a_allowedhostnames[$id]['dir'];
 	$pconfig['bw_up'] = $a_allowedhostnames[$id]['bw_up'];
@@ -79,6 +79,7 @@ if (isset($id) && $a_allowedhostnames[$id]) {
 if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
+	$_POST['hostname'] = idn_to_ascii($_POST['hostname']);
 
 	/* input validation */
 	$reqdfields = explode(" ", "hostname");
@@ -87,7 +88,7 @@ if ($_POST['save']) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_POST['hostname'] && !is_hostname($_POST['hostname']))) {
-		$input_errors[] = sprintf(gettext("A valid Hostname must be specified. [%s]"), $_POST['hostname']);
+		$input_errors[] = sprintf(gettext("A valid Hostname must be specified. [%s]"), idn_to_utf8($_POST['hostname']));
 	}
 
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up'])) {
@@ -103,7 +104,7 @@ if ($_POST['save']) {
 		}
 
 		if ($ipent['hostname'] == $_POST['hostname']) {
-			$input_errors[] = sprintf(gettext("Hostname [%s] already allowed."), $_POST['hostname']) ;
+			$input_errors[] = sprintf(gettext("Hostname [%s] already allowed."), idn_to_utf8($_POST['hostname'])) ;
 			break ;
 		}
 	}

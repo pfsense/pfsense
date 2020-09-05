@@ -36,6 +36,7 @@ global $smtp_authentication_mechanisms;
 $pconfig = array();
 init_config_arr(array('notifications', 'certexpire'));
 init_config_arr(array('notifications', 'smtp'));
+init_config_arr(array('notifications', 'telegram'));
 
 // General Settings
 $pconfig['cert_enable_notify'] = ($config['notifications']['certexpire']['enable'] != "disabled");
@@ -78,12 +79,21 @@ if ($config['notifications']['smtp']['fromaddress']) {
 // System Sounds
 $pconfig['disablebeep'] = isset($config['system']['disablebeep']);
 
+// Telegram
+$pconfig['enable_telegram'] = isset($config['notifications']['telegram']['enabled']);
+if ($config['notifications']['telegram']['api']) {
+	$pconfig['api'] = $config['notifications']['telegram']['api'];
+}
+if ($config['notifications']['telegram']['chatid']) {
+	$pconfig['chatid'] = $config['notifications']['telegram']['chatid'];
+}
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	$testsmtp = isset($_POST['test-smtp']);
-	if (isset($_POST['save']) || $testsmtp) {
+	$testtelegram = isset($_POST['test-telegram']);
+	if (isset($_POST['save']) || $testsmtp || $testtelegram) {
 
 		// General Settings
 		$config['notifications']['certexpire']['enable'] = ($_POST['cert_enable_notify'] == "yes") ? "enabled" : "disabled";
@@ -164,8 +174,19 @@ if ($_POST) {
 		} else {
 			unset($config['system']['disablebeep']);
 		}
+		// Telegram
+		$config['notifications']['telegram']['enabled'] = ($_POST['enable_telegram'] == "yes") ? true : false;
+		$config['notifications']['telegram']['api'] = $_POST['api'];
+		$config['notifications']['telegram']['chatid'] = $_POST['chatid'];
 
-		if (!$input_errors && !$testsmtp) {
+		if (preg_replace("/[^a-zA-Z0-9_:\-]/", "", $config['notifications']['telegram']['api']) !== $config['notifications']['telegram']['api']) {
+			$input_errors[] = gettext("The only special characters permitted in the Telegram API string are _, - and :");
+		}
+		if (preg_replace("/[^a-zA-Z0-9@_\-]/", "", $config['notifications']['telegram']['chatid']) !== $config['notifications']['telegram']['chatid']) {
+			$input_errors[] = gettext("The Chat ID can only contain @, _ or - as special characters");
+		}
+
+		if (!$input_errors && !$testsmtp && !$testtelegram) {
 			write_config();
 
 			pfSenseHeader("system_advanced_notifications.php");
@@ -182,6 +203,16 @@ if ($_POST) {
 		$test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_name']), true);
 		if (empty($test_result)) {
 			$test_result = gettext("SMTP testing e-mail successfully sent");
+			$test_class = 'success';
+		} else {
+			$test_class = 'danger';
+		}
+	}
+	if ($testtelegram) {
+		// Send test message via telegram
+		$test_result = notify_via_telegram(sprintf(gettext("This is a Telegram test message from %s. It is safe to ignore this message."), $g['product_name']), true);
+		if (empty($test_result)) {
+			$test_result = gettext("Telegram testing message successfully sent");
 			$test_class = 'success';
 		} else {
 			$test_class = 'danger';
@@ -328,7 +359,7 @@ $section->addInput(new Form_Button(
 	'test-smtp',
 	'Test SMTP Settings',
 	null,
-	'fa-send'
+	'fa-envelope'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
 	'marked as disabled.  The last SAVED values will be used, not necessarily the values entered here.');
 
@@ -346,6 +377,42 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 
+$section = new Form_Section('Telegram');
+
+$section->addInput(new Form_Checkbox(
+	'enable_telegram',
+	'Enable Telegram',
+	'Enable Telegram Notifications',
+	$pconfig['enable_telegram']
+	))->setHelp('Check this option to enable Telegram notifications. <br>You will need a Telegram Bot and its associated API key. <a href="https://core.telegram.org/bots#creating-a-new-bot" target="_blank">Instructions here.</a>');
+
+$section->addInput(new Form_Input(
+	'api',
+	'API Key',
+	'text',
+	$pconfig['api'],
+	['placeholder' => '123456789:ABCDEabcde_FGHIJfghijKLMNOklmnoPQRST']
+))->setHelp('Enter the Bot API key required to authenticate with the Telegram API server.');
+
+$section->addInput(new Form_Input(
+	'chatid',
+	'Chat ID',
+	'text',
+	$pconfig['chatid'],
+	['placeholder' => '123456789']
+
+))->setHelp('Enter the chat ID number (private) or channel @username (public) that will be used to send the notifications to.');
+
+$section->addInput(new Form_Button(
+	'test-telegram',
+	'Test Telegram Settings',
+	null,
+	'fa-send'
+))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
+	'not enabled.  The last SAVED values will be used, not necessarily the values displayed here.');
+
+
+$form->add($section);
 print($form);
 
 include("foot.inc");

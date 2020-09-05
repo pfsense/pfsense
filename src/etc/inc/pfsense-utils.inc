@@ -571,8 +571,10 @@ function hardware_offloading_applyflags($iface) {
 
 	if (isset($config['system']['disablesegmentationoffloading'])) {
 		$flags_off |= IFCAP_TSO;
+		$flags_off |= IFCAP_VLAN_HWTSO;
 	} else if (isset($options['caps']['tso']) || isset($options['caps']['tso4']) || isset($options['caps']['tso6'])) {
 		$flags_on |= IFCAP_TSO;
+		$flags_on |= IFCAP_VLAN_HWTSO;
 	}
 
 	if (isset($config['system']['disablelargereceiveoffloading'])) {
@@ -770,6 +772,29 @@ function get_carp_interface_status($carpid) {
 	}
 
 	return "";
+}
+
+/*
+ * Return true if the CARP status of at least one interface of a captive portal zone is in backup mode
+ * This function return false if CARP is not enabled on any interface of the captive portal zone
+ */
+function captiveportal_ha_is_node_in_backup_mode($cpzone) {
+	global $config;
+
+	$cpinterfaces = explode(",", $config['captiveportal'][$cpzone]['interface']);
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($cpinterfaces as $interface) {
+			foreach ($config['virtualip']['vip'] as $vip) {
+				if (($vip['interface'] == $interface) && ($vip['mode'] == "carp")) {
+					if (get_carp_interface_status("_vip{$vip['uniqid']}") != "MASTER") {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 /*
@@ -1185,7 +1210,8 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	 * As they will be replaced when necessary. */
 	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
 	    "hw.e6000sw.default_disabled", "vm.pmap.pti",
-	    "net.pf.request_maxcount");
+	    "net.pf.request_maxcount", "hw.hn.vf_transparent",
+	    "hw.hn.use_if_start");
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
 		$remove = array_merge($remove,
@@ -1301,7 +1327,6 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'hint.uart.1.flags="0x10"';
 	}
 	$data[] = 'autoboot_delay="3"';
-	$data[] = 'hw.usb.no_pf="1"';
 	if (isset($config['system']['pti_disabled'])) {
 		$data[] = 'vm.pmap.pti="0"';
 	}
@@ -1312,6 +1337,12 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$maximumtableentries = pfsense_default_table_entries_size();
 	}
 	$data[] = 'net.pf.request_maxcount="' .  $maximumtableentries . '"';
+
+	/* Enable ALTQ support for hnX NICs. */
+	if (isset($config['system']['hn_altq_enable'])) {
+		$data[] = 'hw.hn.vf_transparent="0"';
+		$data[] = 'hw.hn.use_if_start="1"';
+	}
 
 	safe_write_file($loader_conf_file, $data);
 
@@ -3572,6 +3603,30 @@ function is_url_hostname_resolvable($url) {
 	$resolvable = ($urlhostname !== gethostbyname($urlhostname));
 	putenv("RES_OPTIONS");
 	return $resolvable;
+}
+
+function get_pf_timeouts () {
+	$pftimeout = array();
+	exec("/sbin/pfctl -st", $pfctlst, $retval);
+	if ($retval == 0) {
+		foreach ($pfctlst as $pfst) {
+			preg_match('/([a-z]+)\.([a-z]+)\s+([0-9]+)/', $pfst, $timeout);
+			if ($timeout[1] == "other") {
+				$proto = "Other";
+			} else {
+				$proto = strtoupper($timeout[1]);
+			}
+			if ($timeout[2] == "finwait") {
+				$type = "FIN Wait";
+			} else {
+				$type = ucfirst($timeout[2]);
+			}
+			$pftimeout[$proto][$type]['name'] = $proto . " " . $type;
+			$pftimeout[$proto][$type]['keyname'] = $timeout[1] . $timeout[2] . "timeout";
+			$pftimeout[$proto][$type]['value'] = $timeout[3];
+		}
+	}
+	return $pftimeout;
 }
 
 ?>

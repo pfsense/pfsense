@@ -24,7 +24,9 @@
 VERSION=$(/bin/cat /etc/version)
 MIN_REALMEM_FOR_OPCACHE=512
 
-if /usr/local/sbin/pkg-static info -e php73; then
+if /usr/local/sbin/pkg-static info -e php74; then
+	EXTENSIONSDIR="/usr/local/lib/php/20190902/"
+elif /usr/local/sbin/pkg-static info -e php73; then
 	EXTENSIONSDIR="/usr/local/lib/php/20180731/"
 elif /usr/local/sbin/pkg-static info -e php72; then
 	EXTENSIONSDIR="/usr/local/lib/php/20170718/"
@@ -88,7 +90,6 @@ PHPMODULES="$PHPMODULES curl date"
 PHPMODULES="$PHPMODULES gettext"
 # User manager
 PHPMODULES="$PHPMODULES ldap openssl pcntl"
-PHPMODULES="$PHPMODULES hash"
 PHPMODULES="$PHPMODULES mcrypt"
 # Regexs, PERL style!
 PHPMODULES="$PHPMODULES pcre"

@@ -128,10 +128,11 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 
 		$pconfig['phone'] = $a_ppps[$pppid]['phone'];
 		$pconfig['apn'] = $a_ppps[$pppid]['apn'];
-	} else if ($a_ppps[$pppid]['type'] == "pppoe") {
+	} elseif ($a_ppps[$pppid]['type'] == "pppoe") {
 		$pconfig['pppoe_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pppoe_password'] = base64_decode($a_ppps[$pppid]['password']);
 		$pconfig['provider'] = $a_ppps[$pppid]['provider'];
+		$pconfig['hostuniq'] = $a_ppps[$pppid]['hostuniq'];
 		$pconfig['pppoe_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
 		$pconfig['pppoe_idletimeout'] = $a_ppps[$pppid]['idletimeout'];
 
@@ -182,6 +183,9 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	} else if ($a_ppps[$pppid]['type'] == "pptp" || $a_ppps[$pppid]['type'] == "l2tp") {
 		$pconfig['pptp_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pptp_password'] = base64_decode($a_ppps[$pppid]['password']);
+		if (($a_ppps[$pppid]['type'] == 'l2tp') && isset($a_ppps[$pppid]['secret'])) {
+			$pconfig['l2tp_secret'] = base64_decode($a_ppps[$pppid]['secret']);
+		}
 		$pconfig['pptp_localip'] = explode(",", $a_ppps[$pppid]['localip']);
 		$pconfig['pptp_subnet'] = explode(",", $a_ppps[$pppid]['subnet']);
 		$pconfig['pptp_remote'] = explode(",", $a_ppps[$pppid]['gateway']);
@@ -354,6 +358,8 @@ if (isset($wancfg['wireless'])) {
 	$wlanbaseif = interface_get_wireless_base($wancfg['if']);
 	preg_match("/^(.*?)([0-9]*)$/", $wlanbaseif, $wlanbaseif_split);
 	$wl_modes = get_wireless_modes($if);
+	$wl_ht_modes = get_wireless_ht_modes($if);
+	$wl_ht_list = get_wireless_ht_list($if);
 	$wl_chaninfo = get_wireless_channel_info($if);
 	$wl_sysctl_prefix = 'dev.' . $wlanbaseif_split[1] . '.' . $wlanbaseif_split[2];
 	$wl_sysctl = get_sysctl(
@@ -376,6 +382,7 @@ if (isset($wancfg['wireless'])) {
 	$pconfig['protmode'] = $wancfg['wireless']['protmode'];
 	$pconfig['ssid'] = $wancfg['wireless']['ssid'];
 	$pconfig['channel'] = $wancfg['wireless']['channel'];
+	$pconfig['channel_width'] = $wancfg['wireless']['channel_width'];
 	$pconfig['txpower'] = $wancfg['wireless']['txpower'];
 	$pconfig['diversity'] = $wancfg['wireless']['diversity'];
 	$pconfig['txantenna'] = $wancfg['wireless']['txantenna'];
@@ -840,8 +847,11 @@ if ($_POST['apply']) {
 		}
 	}
 
-	if (($_POST['provider'] && (strpos($_POST['provider'], "\"")))) {
+	if ($_POST['provider'] && strpos($_POST['provider'], "\"")) {
 		$input_errors[] = gettext("The service name may not contain quote characters.");
+	}
+	if ($_POST['hostuniq'] && !preg_match('/^[a-zA-Z0-9]+$/i', $_POST['hostuniq'])) {
+		$input_errors[] = gettext("The Host-Uniq value can only be hexadecimal or letters and numbers.");
 	}
 	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) {
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
@@ -879,6 +889,9 @@ if ($_POST['apply']) {
 		if (substr($wancfg['if'], 0, 3) == 'gif') {
 			$min_mtu = 1280;
 			$max_mtu = 8192;
+		} elseif (($_POST['ipaddrv6'] == '6rd') || ($_POST['ipaddrv6'] == '6to4')) {
+			$min_mtu = 1300;
+			$max_mtu = 9000;
 		} else {
 			$min_mtu = 576;
 			$max_mtu = 9000;
@@ -939,9 +952,18 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("A specific channel, not auto, must be selected for Access Point mode.");
 			}
 		}
+		if (!stristr($_POST['standard'], '11n') && ($_POST['channel_width'] != "0")) {
+			$input_errors[] = gettext("Channel width selection is only supported by 802.11n standards.");
+		}
 		if (stristr($_POST['standard'], '11n')) {
 			if (!($_POST['wme_enable'])) {
 				$input_errors[] = gettext("802.11n standards require enabling WME.");
+			}
+			if (($_POST['channel_width'] != "0") && ($_POST['channel'] != "0") &&
+			    is_array($wl_ht_list[$_POST['standard']][$_POST['channel']]) &&
+			    !empty($wl_ht_list[$_POST['standard']][$_POST['channel']]) &&
+			    !in_array($_POST['channel_width'], $wl_ht_list[$_POST['standard']][$_POST['channel']])) {
+				$input_errors[] = sprintf(gettext("Unable to use %s channel width with channel %s."), strtoupper($_POST['channel_width']), $_POST['channel']);
 			}
 		}
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -1170,7 +1192,9 @@ if ($_POST['apply']) {
 		unset($wancfg['pppoe_password']);
 		unset($wancfg['pptp_username']);
 		unset($wancfg['pptp_password']);
+		unset($wancfg['l2tp_secret']);
 		unset($wancfg['provider']);
+		unset($wancfg['hostuniq']);
 		unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
 		if (empty($wancfg['pppoe']['pppoe-reset-type'])) {
@@ -1193,6 +1217,7 @@ if ($_POST['apply']) {
 			}
 			if ($wancfg['ipaddr'] != 'pppoe') {
 				unset($a_ppps[$pppid]['pppoe-reset-type']);
+				unset($a_ppps[$pppid]['hostuniq']);
 			}
 			if ($wancfg['type'] != $_POST['type']) {
 				unset($a_ppps[$pppid]['idletimeout']);
@@ -1282,6 +1307,11 @@ if ($_POST['apply']) {
 				} else {
 					$a_ppps[$pppid]['provider'] = true;
 				}
+				if (!empty($_POST['hostuniq'])) {
+					$a_ppps[$pppid]['hostuniq'] = strtolower($_POST['hostuniq']);
+				} else {
+					$a_ppps[$pppid]['hostuniq'] = true;
+				}
 				$a_ppps[$pppid]['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 				if (!empty($_POST['pppoe_idletimeout'])) {
 					$a_ppps[$pppid]['idletimeout'] = $_POST['pppoe_idletimeout'];
@@ -1314,6 +1344,11 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['username'] = $_POST['pptp_username'];
 				if ($_POST['pptp_password'] != DMYPWD) {
 					$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
+				}
+				if (($_POST['type'] == 'l2tp') && (!empty($_POST['l2tp_secret']))) {
+					$a_ppps[$pppid]['secret'] = base64_encode($_POST['l2tp_secret']);
+				} else {
+					unset($a_ppps[$pppid]['secret']);
 				}
 				// Replace the first (0) entry with the posted data. Preserve any other entries that might be there.
 				$poriginal['pptp_localip'][0] = $_POST['pptp_local0'];
@@ -1590,6 +1625,7 @@ function handle_wireless_post() {
 	$wancfg['wireless']['protmode'] = $_POST['protmode'];
 	$wancfg['wireless']['ssid'] = $_POST['ssid'];
 	$wancfg['wireless']['channel'] = $_POST['channel'];
+	$wancfg['wireless']['channel_width'] = $_POST['channel_width'];
 	$wancfg['wireless']['authmode'] = $_POST['authmode'];
 	$wancfg['wireless']['txpower'] = $_POST['txpower'];
 	$wancfg['wireless']['distance'] = $_POST['distance'];
@@ -2828,6 +2864,13 @@ $section->addInput(new Form_Input(
 	$pconfig['provider']
 ))->setHelp('This field can usually be left empty.');
 
+$section->addInput(new Form_Input(
+	'hostuniq',
+	'Host-Uniq',
+	'text',
+	$pconfig['hostuniq']
+))->setHelp('A unique host tag value for this PPPoE client. Leave blank unless a value is required by the service provider.');
+
 $section->addInput(new Form_Checkbox(
 	'pppoe_dialondemand',
 	'Dial on demand',
@@ -2947,6 +2990,19 @@ $section->addPassword(new Form_Input(
 	$pconfig['pptp_password']
 ));
 
+$group = new Form_Group('Shared Secret');
+
+$group->add(new Form_Input(
+	'l2tp_secret',
+	'*Secret',
+	'password',
+	$pconfig['l2tp_secret']
+))->setHelp('L2TP tunnel Shared Secret. Used to authenticate tunnel connection and encrypt ' .
+	    'important control packet contents. (Optional)');
+
+$group->addClass('l2tp_secret');
+$section->add($group);
+
 $section->addInput(new Form_IpAddress(
 	'pptp_local0',
 	'*Local IP address',
@@ -3056,9 +3112,9 @@ if (isset($wancfg['wireless'])) {
 
 			foreach ($wl_channels as $wl_channel) {
 				if (isset($wl_chaninfo[$wl_channel])) {
-					$mode_list[ $wl_channel] = $wl_standard . ' - ' . $wl_channel;
+					$mode_list[$wl_channel] = $wl_standard . ' - ' . $wl_channel;
 				} else {
-					$mode_list[ $wl_channel] = $wl_standard . ' - ' . $wl_channel . ' (' . $wl_chaninfo[$wl_channel][1] . ' @ ' . $wl_chaninfo[$wl_channel][2] . ' / ' . $wl_chaninfo[$wl_channel][3] . ')';
+					$mode_list[$wl_channel] = $wl_standard . ' - ' . $wl_channel . ' (' . $wl_chaninfo[$wl_channel][1] . ' @ ' . $wl_chaninfo[$wl_channel][2] . ' / ' . $wl_chaninfo[$wl_channel][3] . ')';
 				}
 			}
 		}
@@ -3071,6 +3127,13 @@ if (isset($wancfg['wireless'])) {
 		$mode_list
 	))->setHelp('Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain) %1$s' .
 				'Not all channels may be supported by some cards.  Auto may override the wireless standard selected above.', '<br />');
+
+	$section->addInput(new Form_Select(
+		'channel_width',
+		'Channel width',
+		$pconfig['channel_width'],
+		$wl_ht_modes
+	))->setHelp('Channel width for 802.11n mode. Not all cards may support channel width changing.');
 
 	if (ANTENNAS) {
 		if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
@@ -3497,9 +3560,13 @@ events.push(function() {
 				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pptp, .ppp').hide();
 				break;
 			}
-			case "l2tp":
-			case "pptp": {
+			case "l2tp": {
 				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pppoe, .ppp').hide();
+				$('.pptp, .l2tp_secret').show();
+				break;
+			}
+			case "pptp": {
+				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pppoe, .ppp, .l2tp_secret').hide();
 				$('.pptp').show();
 				break;
 			}

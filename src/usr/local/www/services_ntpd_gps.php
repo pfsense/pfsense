@@ -683,7 +683,6 @@ events.push(function() {
 	function set_gps_default(type) {
 		$('#gpsnmea').val(0);
 		$('#processpgrmf').prop('checked', false);
-		$('#gpsspeed').val(0);
 		$('#autobaudinit').prop('checked', false);
 		$('#gpsfudge1').val(0);
 		$('#gpsinitcmd').val(get_gps_string(type));

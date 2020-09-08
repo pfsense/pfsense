@@ -147,7 +147,7 @@ function alias_same_type($name, $type) {
 }
 
 function saveAlias($post, $id) {
-	global $config, $pf_reserved_keywords, $reserved_table_names;
+	global $config, $pf_reserved_keywords, $reserved_table_names. $pconfig;
 
 	$reserved_ifs = get_configured_interface_list(true);
 	$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);
@@ -528,7 +528,7 @@ function saveAlias($post, $id) {
 		$a_aliases = msort($a_aliases, "name");
 
 		write_config(gettext("Edited a firewall alias."));
-	} else {
+	} else if (isset($pconfig)) {
 		//we received input errors, copy data to prevent retype
 		$pconfig['name'] = $post['name'];
 		$pconfig['descr'] = $post['descr'];

@@ -208,6 +208,9 @@ EOD;
 
 EOD;
 				}
+				if (!empty($pppoecfg['radius']['acct_update'])) {
+					$mpdconf .= "\tset auth acct-update {$pppoecfg['radius']['acct_update']}\n";
+				}
 				if (!empty($pppoecfg['radius']['nasip'])) {
 					$mpdconf .= "\tset radius me {$pppoecfg['radius']['nasip']}\n";
 				}

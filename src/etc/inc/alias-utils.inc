@@ -147,7 +147,7 @@ function alias_same_type($name, $type) {
 }
 
 function saveAlias($post, $id) {
-	global $config, $pf_reserved_keywords, $reserved_table_names. $pconfig;
+	global $config, $pf_reserved_keywords, $reserved_table_names, $pconfig;
 
 	$reserved_ifs = get_configured_interface_list(true);
 	$pf_reserved_keywords = array_merge($pf_reserved_keywords, $reserved_ifs, $reserved_table_names);

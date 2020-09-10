@@ -1725,31 +1725,29 @@ function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
 			$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
 		}
 	}
-	if ($family == 'inet') {
-		if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
-			$gatewayip = get_interface_gateway($vpninterface);
-			$interfaceip = get_interface_ip($vpninterface);
-			$subnet_bits = get_interface_subnet($vpninterface);
-			$subnet_ip = gen_subnetv4($interfaceip, $subnet_bits);
-			/* if the remote gateway is in the local subnet, then don't add a route */
-			if (is_ipaddrv4($sourcehost) &&
-			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}") &&
-			    is_ipaddrv4($gatewayip) && !$duplicates) {
-				route_add_or_change("-host {$sourcehost} {$gatewayip}");
-			}
+	if ($family == 'inet' && !empty($ifacesuse) &&
+	    interface_has_gateway($vpninterface)) {
+		$gatewayip = get_interface_gateway($vpninterface);
+		$interfaceip = get_interface_ip($vpninterface);
+		$subnet_bits = get_interface_subnet($vpninterface);
+		$subnet_ip = gen_subnetv4($interfaceip, $subnet_bits);
+		/* if the remote gateway is in the local subnet, then don't add a route */
+		if (is_ipaddrv4($sourcehost) &&
+		    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}") &&
+		    is_ipaddrv4($gatewayip) && !$duplicates) {
+			route_add_or_change("-host {$sourcehost} {$gatewayip}");
 		}
-	} else if ($family == 'inet6') {
-		if (!empty($ifacesuse) && interface_has_gatewayv6($vpninterface)) {
-			$gatewayip = get_interface_gateway_v6($vpninterface);
-			$interfaceip = get_interface_ipv6($vpninterface);
-			$subnet_bits = get_interface_subnetv6($vpninterface);
-			$subnet_ip = gen_subnetv6($interfaceip, $subnet_bits);
-			/* if the remote gateway is in the local subnet, then don't add a route */
-			if (is_ipaddrv6($sourcehost) &&
-			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}") &&
-			    is_ipaddrv6($gatewayip) && !$duplicates) {
-				route_add_or_change("-inet6 -host {$sourcehost} {$gatewayip}");
-			}
+	} else if ($family == 'inet6' && !empty($ifacesuse) &&
+	    interface_has_gatewayv6($vpninterface)) {
+		$gatewayip = get_interface_gateway_v6($vpninterface);
+		$interfaceip = get_interface_ipv6($vpninterface);
+		$subnet_bits = get_interface_subnetv6($vpninterface);
+		$subnet_ip = gen_subnetv6($interfaceip, $subnet_bits);
+		/* if the remote gateway is in the local subnet, then don't add a route */
+		if (is_ipaddrv6($sourcehost) &&
+		    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}") &&
+		    is_ipaddrv6($gatewayip) && !$duplicates) {
+			route_add_or_change("-inet6 -host {$sourcehost} {$gatewayip}");
 		}
 	}
 	return $ifacesuse;

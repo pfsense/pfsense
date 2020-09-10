@@ -1733,11 +1733,10 @@ function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
 			$subnet_ip = gen_subnetv4($interfaceip, $subnet_bits);
 			/* if the remote gateway is in the local subnet, then don't add a route */
 			if (is_ipaddrv4($sourcehost) &&
-			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
-				if (is_ipaddrv4($gatewayip) && !$duplicates) {
-					// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
-					route_add_or_change("-host {$sourcehost} {$gatewayip}");
-				}
+			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}") &&
+			    is_ipaddrv4($gatewayip) && !$duplicates) {
+				// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
+				route_add_or_change("-host {$sourcehost} {$gatewayip}");
 			}
 		}
 	} else if ($family == 'inet6') {
@@ -1748,11 +1747,10 @@ function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
 			$subnet_ip = gen_subnetv6($interfaceip, $subnet_bits);
 			/* if the remote gateway is in the local subnet, then don't add a route */
 			if (is_ipaddrv6($sourcehost) &&
-			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
-				if (is_ipaddrv6($gatewayip) && !$duplicates) {
-					// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
-					route_add_or_change("-inet6 -host {$sourcehost} {$gatewayip}");
-				}
+			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}") &&
+			    is_ipaddrv6($gatewayip) && !$duplicates) {
+				// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
+				route_add_or_change("-inet6 -host {$sourcehost} {$gatewayip}");
 			}
 		}
 	}

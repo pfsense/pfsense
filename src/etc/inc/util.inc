@@ -2606,7 +2606,8 @@ function route_add_or_change($args) {
 		}
 	}
 	if (isset($config['system']['route-debug'])) {
-		file_put_contents("/dev/console", "\n[".getmypid()."] ROUTE: {$add_change} {$args} result: {$rc}");
+		file_put_contents("/dev/console", "\n[" . getmypid() .
+		    "] ROUTE: {$add_change} {$args} result: {$rc}");
 	}
 
 	return ($rc == 0);

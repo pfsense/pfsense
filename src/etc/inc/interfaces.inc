@@ -1302,9 +1302,11 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 
 
 	if (is_ipaddrv4($gif['tunnel-remote-addr'])) {
-		file_put_contents("{$g['tmp_path']}/{$gifif}_router", $gif['tunnel-remote-addr']);
+		file_put_contents("{$g['tmp_path']}/{$gifif}_router",
+		    $gif['tunnel-remote-addr']);
 	} else if (is_ipaddrv6($gif['tunnel-remote-addr'])) {
-		file_put_contents("{$g['tmp_path']}/{$gifif}_routerv6", $gif['tunnel-remote-addr']);
+		file_put_contents("{$g['tmp_path']}/{$gifif}_routerv6",
+		    $gif['tunnel-remote-addr']);
 	}
 
 	if (is_ipaddrv4($realifgw)) {

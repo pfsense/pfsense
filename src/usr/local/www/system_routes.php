@@ -249,14 +249,19 @@ display_top_tabs($tab_array);
 				<tbody>
 <?php
 foreach ($a_routes as $i => $route):
-	if (isset($route['disabled'])) {
+	if (isset($a_gateways[$route['gateway']]['inactive'])) {
+		$icon = 'fa-times-circle-o';
+		$title = gettext("Route inactive, gateway interface is missing");
+	} elseif (isset($route['disabled'])) {
 		$icon = 'fa-ban';
+		$title = gettext("Route disabled");
 	} else {
 		$icon = 'fa-check-circle-o';
+		$title = gettext("Route enabled");
 	}
 ?>
 				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
-					<td><i class="fa <?=$icon?>"></i></td>
+					<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
 					<td>
 						<?=strtolower($route['network'])?>
 					</td>
@@ -298,6 +303,15 @@ foreach ($a_routes as $i => $route):
 		<?=gettext("Add")?>
 	</a>
 </nav>
+<div class="infoblock">
+<?php
+print_info_box(
+	sprintf(gettext('%1$s Route is inactive, gateway interface is missing'), '<br /><strong><i class="fa fa-times-circle-o"></i></strong>') .
+	sprintf(gettext('%1$s Route disabled'), '<br /><strong><i class="fa fa-ban"></i></strong>') .
+	sprintf(gettext('%1$s Route enabled'), '<br /><strong><i class="fa fa-check-circle-o"></i></strong>')
+	);
+?>
+</div>
 <?php
 
 include("foot.inc");

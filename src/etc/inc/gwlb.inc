@@ -25,6 +25,7 @@
 require_once("config.inc");
 require_once("rrd.inc");
 require_once("ipsec.inc");
+require_once("interfaces.inc");
 
 /* Returns an array of default values used for dpinger */
 function return_dpinger_defaults() {
@@ -788,7 +789,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							}
 							if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
 								foreach ($vtisubnet_spec as $idx => $vtisub) {
-									if ($ifcfg['if'] == "ipsec{$ph1ent['ikeid']}00{$idx}") {
+									if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], $idx))) {
 										// If this specific VTI remote is v4, then we can make a v4 gw
 										if (is_ipaddrv4($vtisub['right'])) {
 											$ctype = "VTIv4";
@@ -796,7 +797,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 									}
 								}
 							} else {
-								if ($ifcfg['if'] == "ipsec{$ph1ent['ikeid']}000") {
+								if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], 0))) {
 									// If any of the VTI remotes are v4, then we can make a v4 gw
 									foreach ($vtisubnet_spec as $vtisub) {
 										if (is_ipaddrv4($vtisub['right'])) {
@@ -931,7 +932,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							}
 							if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
 								foreach ($vtisubnet_spec as $idx => $vtisub) {
-									if ($ifcfg['if'] == "ipsec{$ph1ent['ikeid']}00{$idx}") {
+									if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], $idx))) {
 										// If this specific VTI remote is v6, then we can make a v6 gw
 										if (is_ipaddrv6($vtisub['right'])) {
 											$ctype = "VTIv6";
@@ -939,7 +940,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 									}
 								}
 							} else {
-								if ($ifcfg['if'] == "ipsec{$ph1ent['ikeid']}000") {
+								if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], 0))) {
 									// If any of the VTI remotes are v6, then we can make a v6 gw
 									foreach ($vtisubnet_spec as $vtisub) {
 										if (is_ipaddrv6($vtisub['right'])) {

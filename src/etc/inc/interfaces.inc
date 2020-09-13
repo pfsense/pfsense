@@ -1427,19 +1427,21 @@ function interface_vxlan_configure(&$vxlan, $vxlankey = "") {
 		log_error(gettext("could not bring parentif up -- variable not defined -- interface_vxlan_configure()"));
 	}
 
-	if (!platform_booting() && !(empty($vxlan['vxlanif']))) {
-		pfSense_interface_destroy($vxlan['vxlanif']);
-		pfSense_interface_create($vxlan['vxlanif']);
+	if (!(empty($vxlan['vxlanif']))) {				//Interface is defined.
+		if (!platform_booting()) {
+			pfSense_interface_destroy($vxlan['vxlanif']);	//Calling this after boot implies we are editing an existing interface so destroy it first.
+		}
+		pfSense_interface_create($vxlan['vxlanif']);		//Create the interfaces at boot.
 		$vxlanif = $vxlan['vxlanif'];
 	} else {
-		$vxlanif = pfSense_interface_create("vxlan");
+		$vxlanif = pfSense_interface_create("vxlan");		//The interface is undefined, we are creating a new one. Next interface name is returned.
 	}
 
 	$ifconfigcmd = "/sbin/ifconfig " . escapeshellarg($vxlanif) . " vxlanid " .
-	    escapeshellarg($vxlan['vxlanid']) . " vxlandev " . escapeshellarg($realif);
+	    escapeshellarg($vxlan['vxlanid']);
 
 	if (is_mcast($vxlan['remote-addr'])) {
-		$ifconfigcmd .= " vxlangroup " . escapeshellarg($vxlan['remote-addr']);
+		$ifconfigcmd .= " vxlangroup " . escapeshellarg($vxlan['remote-addr']) . " vxlandev " . escapeshellarg($realif);
 	} else {
 		$ifconfigcmd .= " vxlanremote " . escapeshellarg($vxlan['remote-addr']);
 	}

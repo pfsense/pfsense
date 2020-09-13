@@ -1342,7 +1342,7 @@ function interface_vxlan_configure(&$vxlan, $vxlankey = "") {
 		log_error(gettext("could not bring parentif up -- variable not defined -- interface_vxlan_configure()"));
 	}
 
-	if (!platform_booting() && !(empty($vxlan['vxlanif']))) {
+	if (platform_booting() || !(empty($vxlan['vxlanif']))) {
 		pfSense_interface_destroy($vxlan['vxlanif']);
 		pfSense_interface_create($vxlan['vxlanif']);
 		$vxlanif = $vxlan['vxlanif'];

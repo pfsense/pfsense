@@ -1351,10 +1351,10 @@ function interface_vxlan_configure(&$vxlan, $vxlankey = "") {
 	}
 
 	$ifconfigcmd = "/sbin/ifconfig " . escapeshellarg($vxlanif) . " vxlanid " .
-	    escapeshellarg($vxlan['vxlanid']) . " vxlandev " . escapeshellarg($realif);
+	    escapeshellarg($vxlan['vxlanid']);
 
 	if (is_mcast($vxlan['remote-addr'])) {
-		$ifconfigcmd .= " vxlangroup " . escapeshellarg($vxlan['remote-addr']);
+		$ifconfigcmd .= " vxlangroup " . escapeshellarg($vxlan['remote-addr']) . " vxlandev " . escapeshellarg($realif);
 	} else {
 		$ifconfigcmd .= " vxlanremote " . escapeshellarg($vxlan['remote-addr']);
 	}

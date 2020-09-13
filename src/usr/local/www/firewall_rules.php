@@ -694,7 +694,20 @@ foreach ($a_filter as $filteri => $filterent):
 					}
 				}
 				if (!empty($selected_descs)) {
-					echo implode('<br/>', $selected_descs);
+					$desclist = '';
+					$desclength = 0;
+					foreach ($selected_descs as $descid => $desc) {
+						$desclength += strlen($desc);
+						if ($desclength > 18) {
+							$desclist .= ',<br/>';
+							$desclength = 0;
+						} elseif ($desclist) {
+							$desclist .= ', ';
+							$desclength += 2;
+						}
+						$desclist .= $desc;
+					}
+					echo $desclist;
 				}
 			}
 	?>

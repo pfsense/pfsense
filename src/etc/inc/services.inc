@@ -158,12 +158,7 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
 				break;
 		}
-		if ($dhcpv6ifconf['ramode'] == "unmanaged") {
-			$prefixnet = $ifcfgipv6;
-		} else {
-			$prefixnet = $subnetv6;
-		}
-		$radvdconf .= "\tprefix {$prefixnet}/{$ifcfgsnv6} {\n";
+		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 		if ($racarpif == true) {
 			$radvdconf .= "\t\tDeprecatePrefix off;\n";
 		} else {
@@ -186,7 +181,6 @@ function services_radvd_configure($blacklist = array()) {
 			case "unmanaged":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
 				$radvdconf .= "\t\tAdvAutonomous on;\n";
-				$radvdconf .= "\t\tAdvRouterAddr on;\n";
 				break;
 		}
 

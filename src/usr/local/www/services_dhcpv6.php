@@ -37,6 +37,8 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 
 function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
+	global $config, $g;
+
 	$retval = 0;
 	$retvaldhcp = 0;
 	$retvaldns = 0;

@@ -38,6 +38,31 @@ $smtp_authentication_mechanisms = array(
  *	'MD5' => 'MD5'
  *	'CRAM-MD5' => 'CRAM-MD5'
 */
+global $pushover_sounds;
+$pushover_sounds = array(
+	'pushover' => 'Pushover (default)',
+	'bike' => 'Bike',
+	'bugle' => 'Bugle',
+	'cashregister' => 'Cash Register',
+	'classical' => 'Classical',
+	'cosmic' => 'Cosmic',
+	'falling' => 'Falling',
+	'gamelan' => 'Gamelan',
+	'incoming' => 'Incomming',
+	'intermission' => 'Intermission',
+	'magic' => 'Magic',
+	'mechanical' => 'Mechanical',
+	'pianobar' => 'Piano Bar',
+	'siren' => 'Siren',
+	'spacealarm' => 'Space Alarm',
+	'tugboat' => 'Tug Boat',
+	'alien' => 'Alien (long)',
+	'climb' => 'Climb (long)',
+	'persistent' => 'Persistent (long)',
+	'echo' => 'Echo (long)',
+	'updown' => 'Up Down (long)',
+	'vibrate' => 'Vibrate only',
+	'none' => 'None (Silent)');
 
 /****f* notices/file_notice
  * NAME
@@ -45,8 +70,8 @@ $smtp_authentication_mechanisms = array(
  * INPUTS
  *	 $id, $notice, $category, $url, $priority, $local_only
  * RESULT
- *   Files a notice and kicks off the various alerts, smtp, system log, LED's, etc.
- *   If $local_only is true then the notice is not sent to external places (smtp)
+ *   Files a notice and kicks off the various alerts, smtp, telegram, pushover, system log, LED's, etc.
+ *   If $local_only is true then the notice is not sent to external places (smtp, telegram, pushover)
  ******/
 function file_notice($id, $notice, $category = "General", $url = "", $priority = 1, $local_only = false) {
 	/*
@@ -461,10 +486,67 @@ function curl_post_telegram($url) {
 	return $curl_post_telegram_data;	//json encoded
 }
 
+/****f* notices/notify_via_pushover
+ * NAME
+ *   notify_via_pushover
+ * INPUTS
+ *	 notification string to send to Pushover via API
+ * RESULT
+ *   returns NULL if message was sent
+ ******/
+
+function notify_via_pushover($message, $force = false) {
+	global $config;
+	if ((!isset($config['notifications']['pushover']['enabled']) && (!$force))
+	    || !$config['notifications']['pushover']['apikey']
+	    || !$config['notifications']['pushover']['userkey']) {
+		if ($force) {
+			return gettext("Unable to test Pushover notification without both API Key & User Key set");
+		}
+		return;
+	}
+
+	$url = "https://api.pushover.net/1/messages.json";
+	$data = array(
+		"token" => $config['notifications']['pushover']['apikey'],
+		"user" => $config['notifications']['pushover']['userkey'],
+		"sound" => $config['notifications']['pushover']['sound'],
+		"priority" => $config['notifications']['pushover']['priority'],
+		"retry" => $config['notifications']['pushover']['retry'],
+		"expire" => $config['notifications']['pushover']['expire'],
+		"message" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
+	);
+	$result = json_decode(curl_post_pushover($url, $data), true);
+	if (is_array($result)) {
+		if ($result['status']) {
+			unset($err_msg);
+		} else {
+			$err_msg = sprintf(gettext("Failed to send Pushover notification. Error received was: {$result['errors']['0']}"));
+			log_error($err_msg);
+		}
+	} else {
+		$err_msg = gettext("API to Pushover did not return data in expected format!");
+		log_error($err_msg);
+	}
+	return $err_msg;
+}
+
+function curl_post_pushover($url, $data) {
+	$conn = curl_init($url);
+	curl_setopt($conn, CURLOPT_POSTFIELDS, $data);
+	curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($conn, CURLOPT_FRESH_CONNECT,  true);
+	curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
+	$curl_post_pushover_data = curl_exec($conn);
+	curl_close($conn);
+	return $curl_post_pushover_data;	//json encoded
+}
+
 /* Notify via remote methods only - not via GUI. */
 function notify_all_remote($msg) {
 	notify_via_smtp($msg);
 	notify_via_telegram($msg);
+	notify_via_pushover($msg);
 }
 
 ?>

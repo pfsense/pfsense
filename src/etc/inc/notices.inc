@@ -62,7 +62,7 @@ $pushover_sounds = array(
 	'echo' => 'Echo (long)',
 	'updown' => 'Up Down (long)',
 	'vibrate' => 'Vibrate only',
-	'none' => 'None (Silent)');
+	'none' => 'None (silent)');
 
 /****f* notices/file_notice
  * NAME
@@ -525,7 +525,7 @@ function notify_via_pushover($message, $force = false) {
 			log_error($err_msg);
 		}
 	} else {
-		$err_msg = gettext("API to Pushover did not return data in expected format!");
+		$err_msg = gettext("Pushover API server did not return data in expected format!");
 		log_error($err_msg);
 	}
 	return $err_msg;

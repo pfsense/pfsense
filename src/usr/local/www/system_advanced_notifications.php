@@ -211,32 +211,32 @@ if ($_POST) {
 		$config['notifications']['pushover']['userkey'] = $_POST['pushoveruserkey'];
 
 		if (preg_replace("/[^A-Za-z0-9]/", "", $config['notifications']['pushover']['apikey']) !== $config['notifications']['pushover']['apikey']) {
-			$input_errors[] = gettext("API keys are case-sensitive, 30 characters long, and will contain the character set A-Z,a-z,0-9");
+			$input_errors[] = gettext("API keys are case-sensitive, 30 characters long, and can only use the character set A-Z,a-z,0-9");
 		}
 		if (preg_replace("/[^A-Za-z0-9]/", "", $config['notifications']['pushover']['userkey']) !== $config['notifications']['pushover']['userkey']) {
-			$input_errors[] = gettext("User keys are case-sensitive, 30 characters long, and will contain the character set A-Z,a-z,0-9");
+			$input_errors[] = gettext("User keys are case-sensitive, 30 characters long, and can only use the character set A-Z,a-z,0-9");
 		}
 		if (!array_key_exists($_POST['pushoversound'], $pushover_sounds)) {
-			$input_errors[] = gettext("Please select a valid Pushover sound.");
+			$input_errors[] = gettext("Please select a valid Pushover notification sound.");
 		} else {
 			$config['notifications']['pushover']['sound'] = $_POST['pushoversound'];
 		}
 		if (!array_key_exists($_POST['pushoverpriority'], array_fill_keys(range(-2,2),''))) {
-			$input_errors[] = gettext("Please select a valid Pushover priority.");
+			$input_errors[] = gettext("Please select a valid Pushover message priority.");
 		} else {
 			$config['notifications']['pushover']['priority'] = $_POST['pushoverpriority'];
 		}
 		if (!empty($_POST['pushoverretry']) && !is_numeric($_POST['pushoverretry'])) {
-			$input_errors[] = gettext("Please enter valid retry interval in seconds.");
+			$input_errors[] = gettext("Please enter valid notification retry interval in seconds.");
 		} elseif (!empty($_POST['pushoverretry']) && ($_POST['pushoverretry'] < 30)) {
-			$input_errors[] = gettext("Please enter valid retry interval with a minimum value of 30.");
+			$input_errors[] = gettext("Please enter valid notification retry interval with a minimum value of 30.");
 		} else {
 			$config['notifications']['pushover']['retry'] = $_POST['pushoverretry'];
 		}
 		if (!empty($_POST['pushoverexpire']) && !is_numeric($_POST['pushoverexpire'])) {
-			$input_errors[] = gettext("Please enter valid expiration time in seconds.");
+			$input_errors[] = gettext("Please enter valid notification expiration time in seconds.");
 		} elseif (!empty($_POST['pushoverexpire']) && ($_POST['pushoverretry'] > 10800)) {
-			$input_errors[] = gettext("Please enter valid expiration time with maximum value of 10800 (3 hours).");
+			$input_errors[] = gettext("Please enter valid notification expiration time with maximum value of 10800 (3 hours).");
 		} else {
 			$config['notifications']['pushover']['expire'] = $_POST['pushoverexpire'];
 		}
@@ -485,7 +485,7 @@ $section->addInput(new Form_Button(
 		'Enable Pushover',
 		'Enable Pushover Notifications',
 		$pconfig['enable_pushover']
-		))->setHelp('Check this option to enable Pushover notifications. <br>You will need to create an API key and provide your user key. <a href="https://pushover.net/api#registration" target="_blank">API documentation.</a>');
+		))->setHelp('Check this option to enable Pushover notifications. <br>An API key will need to be created and entered along with the Pushover account user key. <a href="https://pushover.net/api#registration" target="_blank">API documentation.</a>');
 
 	$section->addInput(new Form_Input(
 		'pushoverapikey',
@@ -493,7 +493,7 @@ $section->addInput(new Form_Button(
 		'text',
 		$pconfig['pushoverapikey'],
 		['placeholder' => 'azGDORePK8gMaC0QOYAMyEEuzJnyUi']
-	))->setHelp('Enter your API key required to authenticate with the Pushover API server. <a href="https://pushover.net/apps/build" target="_blank">Create API key here.</a>');
+	))->setHelp('Enter the API key required to authenticate with the Pushover API server. <a href="https://pushover.net/apps/build" target="_blank">Create API key here.</a>');
 
 	$section->addInput(new Form_Input(
 		'pushoveruserkey',
@@ -502,7 +502,7 @@ $section->addInput(new Form_Button(
 		$pconfig['pushoveruserkey'],
 		['placeholder' => 'uQiRzpo4DXghDmr9QzzfQu27cmVRsG']
 
-	))->setHelp('Enter your user key from your Pushover account');
+	))->setHelp('Enter user key of the Pushover account');
 
 	$section->addInput(new Form_Select(
 		'pushoversound',
@@ -519,7 +519,7 @@ $section->addInput(new Form_Button(
 			"0" => "Normal Priority",
 			"-2" => "Lowest Priority - No sound or notification",
 			"-1" => "Low Priority - No sound or vibration",
-			"1" => "High Priority - Always play a sound and vibrate",
+			"1" => "High Priority - Always play sound and vibrate",
 			"2" => "Emergency Priority - Repeats notification until acknowledged",
 		)
 	))->setHelp('Select message priority. <a href="https://pushover.net/api#priority" target="_blank">Message Priority documentation.</a>');
@@ -536,7 +536,7 @@ $section->addInput(new Form_Button(
 		'Emergency Priority Notification Expiration',
 		'number',
 		$pconfig['pushoverexpire']
-	))->setHelp('This specifies how many seconds your notifications will continue to be retried (every retry seconds) for Emergency Priority notifications until the notification is acknowledged. <br>This parameter must have a maximum value of at most 10800 seconds (3 hours). Default is 5 minutes.');
+	))->setHelp('This specifies how many seconds the notifications will continue to be retried (every retry seconds) for Emergency Priority notifications until the notification is acknowledged. <br>This parameter must have a maximum value of at most 10800 seconds (3 hours). Default is 5 minutes.');
 
 	$section->addInput(new Form_Button(
 		'test-pushover',

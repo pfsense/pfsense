@@ -521,7 +521,7 @@ function notify_via_pushover($message, $force = false) {
 		if ($result['status']) {
 			unset($err_msg);
 		} else {
-			$err_msg = sprintf(gettext("Failed to send Pushover notification. Error received was: {$result['errors']['0']}"));
+			$err_msg = sprintf(gettext("Failed to send Pushover notification. Error received was: %s"), $result['errors']['0']);
 			log_error($err_msg);
 		}
 	} else {

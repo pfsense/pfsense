@@ -1738,7 +1738,7 @@ function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
 		if (is_ipaddrv4($sourcehost) &&
 		    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}") &&
 		    is_ipaddrv4($gatewayip) && !$duplicates) {
-			route_add_or_change("-host {$sourcehost} {$gatewayip}");
+			route_add_or_change($sourcehost, $gatewayip);
 		}
 	} else if ($family == 'inet6' && !empty($ifacesuse) &&
 	    interface_has_gatewayv6($vpninterface)) {
@@ -1753,7 +1753,7 @@ function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
 		if (is_ipaddrv6($sourcehost) &&
 		    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}") &&
 		    is_ipaddrv6($gatewayip) && !$duplicates) {
-			route_add_or_change("-inet6 -host {$sourcehost} {$gatewayip}");
+			route_add_or_change($sourcehost, $gatewayip);
 		}
 	}
 	return $ifacesuse;

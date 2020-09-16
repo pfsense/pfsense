@@ -238,11 +238,12 @@ function setup_gateways_monitor() {
 			 */
 			if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
 				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-				$route_to = "-host {$gateway['monitor']}";
 				if (interface_isppp_type($gateway['friendlyiface'])) {
-					route_add_or_change("{$route_to} -iface {$gateway['interface']}");
+					route_add_or_change($gateway['monitor'],
+					    '', $gateway['interface']);
 				} else {
-					route_add_or_change("{$route_to} {$gateway['gateway']}");
+					route_add_or_change($gateway['monitor'],
+					    $gateway['gateway']);
 				}
 
 				pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
@@ -279,11 +280,12 @@ function setup_gateways_monitor() {
 			 */
 			if ($gateway['gateway'] != $gateway['monitor']) {
 				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-				$route_to = "-host -inet6 {$gateway['monitor']}";
 				if (interface_isppp_type($gateway['friendlyiface'])) {
-					route_add_or_change("{$route_to} -iface {$gateway['interface']}");
+					route_add_or_change($gateway['monitor'],
+					    '', $gateway['interface']);
 				} else {
-					route_add_or_change("{$route_to} {$gateway['gateway']}");
+					route_add_or_change($gateway['monitor'],
+					    $gateway['gateway']);
 				}
 
 				pfSense_kill_states("::0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmpv6");
@@ -594,8 +596,8 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 
 	$gateways_arr = array();
 	$gateways_arr_temp = array();
-	$cgw4 = getcurrentdefaultgatewayip('inet');
-	$cgw6 = getcurrentdefaultgatewayip('inet6');
+	$cgw4 = route_get_default('inet');
+	$cgw6 = route_get_default('inet6');
 	$found_defaultv4 = 0;
 	$found_defaultv6 = 0;
 
@@ -1129,7 +1131,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 		}
 
 		if (count($gwg_members) > 0) {
-			$currentdefaultgwip = getcurrentdefaultgatewayip($ipprotocol);
+			$currentdefaultgwip = route_get_default($ipprotocol);
 			$found_current = false;
 			foreach($gwg_members as $gwgroupitem) {
 				if (!empty($currentdefaultgwip) && ($gwgroupitem['gwip'] == $currentdefaultgwip)) {
@@ -1152,10 +1154,6 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	if (!empty($set_dfltgwname) && isset($gateways_arr[$set_dfltgwname])) {
 		setdefaultgateway($gateways_arr[$set_dfltgwname]);
 	}
-}
-
-function getcurrentdefaultgatewayip($ipprotocol) {
-	return trim(exec("/sbin/route -n get -{$ipprotocol} default 2>/dev/null | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
 }
 
 function setdefaultgateway($gw) {
@@ -1182,7 +1180,7 @@ function setdefaultgateway($gw) {
 			$gw['gateway'] .= "%" . $gw['interface'];
 		}
 	}
-	$currentdefaultgwip = getcurrentdefaultgatewayip($ipprotocol);
+	$currentdefaultgwip = route_get_default($ipprotocol);
 	if ($currentdefaultgwip != $gw['gateway']) {
 		log_error("Default gateway setting {$gw['descr']} as default.");
 
@@ -1198,13 +1196,15 @@ function setdefaultgateway($gw) {
 
 		if (isset($gw["nonlocalgateway"])) {
 			if (is_ipaddr($gw['gateway']) && !empty($gw['interface'])) {
-				route_add_or_change("-{$ipprotocol} {$gw['gateway']} -iface {$gw['interface']}");
+				route_add_or_change($gw['gateway'], '',
+				    $gw['interface']);
 			}
 		}
 		if (isset($config['system']['route-debug'])) {
 			file_put_contents("/dev/console", "\n[".getmypid()."] SET DEF GW: {$gw['name']} ({$gw['gateway']})");
 		}
-		route_add_or_change("-{$ipprotocol} default {$gw['gateway']}");
+		route_add_or_change("default", $gw['gateway'], '', '',
+		    $ipprotocol);
 		return true;
 	}
 }
@@ -2052,25 +2052,21 @@ function save_gateway($gateway_settings, $realid = "") {
 	}
 
 	/* NOTE: If gateway ip is changed need to cleanup the old static interface route */
-	if ($gateway_settings['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['gateway']) &&
-		$gateway['gateway'] != $a_gateway_item[$realid]['gateway'] &&
-		isset($a_gateway_item[$realid]["nonlocalgateway"])) {
-		$realif = get_real_interface($a_gateway_item[$realid]['interface']);
-		$inet = (!is_ipaddrv4($a_gateway_item[$realid]['gateway']) ? "-inet6" : "-inet");
-		$rgateway = $a_gateway_item[$realid]['gateway'];
-		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateway_item[$realid]['gateway']) . " -iface " . escapeshellarg($realif) . " " . escapeshellarg($rgateway);
-		mwexec($cmd);
+	if ($gateway_settings['monitor'] != "dynamic" &&
+	    !empty($a_gateway_item[$realid]) &&
+	    is_ipaddr($a_gateway_item[$realid]['gateway']) &&
+	    $gateway['gateway'] != $a_gateway_item[$realid]['gateway'] &&
+	    isset($a_gateway_item[$realid]["nonlocalgateway"])) {
+		route_del($a_gateway_item[$realid]['gateway']);
 	}
 
 	/* NOTE: If monitor ip is changed need to cleanup the old static route */
-	if ($gateway_settings['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
-		$gateway_settings['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
-		$rgateway = $a_gateway_item[$realid]['gateway'];
-		if (is_ipaddrv4($a_gateway_item[$realid]['monitor'])) {
-			mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$realid]['monitor']) . " " . escapeshellarg($rgateway));
-		} else {
-			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$realid]['monitor']) . " " . escapeshellarg($rgateway));
-		}
+	if ($gateway_settings['monitor'] != "dynamic" &&
+	    !empty($a_gateway_item[$realid]) &&
+	    is_ipaddr($a_gateway_item[$realid]['monitor']) &&
+	    $gateway_settings['monitor'] != $a_gateway_item[$realid]['monitor'] &&
+	    $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
+		route_del($a_gateway_item[$realid]['monitor']);
 	}
 
 	if ($gateway_settings['defaultgw'] == "yes" || $gateway_settings['defaultgw'] == "on") {
@@ -2153,12 +2149,12 @@ function gateway_set_enabled($name, $enabled) {
 			if (is_ipaddr($gateway['gateway'])) {
 				$inet = (!is_ipaddrv4($gateway['gateway']) ? 'inet6' : 'inet');
 				if ($inet == 'inet') {
-					$cgw = getcurrentdefaultgatewayip('inet');
+					$cgw = route_get_default('inet');
 				} else {
-					$cgw = getcurrentdefaultgatewayip('inet6');
+					$cgw = route_get_default('inet6');
 				}
 				if ($gateway['gateway'] == $cgw) {
-					mwexec("/sbin/route delete -{$inet} default " . escapeshellarg($cgw));
+					route_del("default", $inet);
 				}
 			}
 			$gateway['disabled'] = true;

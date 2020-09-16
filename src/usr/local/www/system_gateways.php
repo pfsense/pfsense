@@ -141,33 +141,23 @@ function delete_gateway_item($id) {
 	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) &&
 	    !isset($a_gateways[$id]['disabled']) &&
 	    isset($a_gateways[$id]['isdefaultgw'])) {
-		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? '-inet6' : '-inet');
-		file_put_contents("/dev/console", "\n[".getmypid()."] DEL_GW, route= delete {$inet} default");
-		mwexec("/sbin/route delete {$inet} default " . escapeshellarg($a_gateways[$id]['gateway']));
+		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway'])
+		    ? 'inet6' : 'inet');
+		route_del('default', $inet);
 	}
 
 	/* NOTE: Cleanup static routes for the interface route if any */
 	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) &&
 	    $gateway['gateway'] != $a_gateways[$id]['gateway'] &&
 	    isset($a_gateways[$id]["nonlocalgateway"])) {
-		$realif = get_real_interface($a_gateways[$id]['interface']);
-		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? "-inet6" : "-inet");
-		$rgateway = $a_gateways[$id]['gateway'];
-		file_put_contents("/dev/console", "\n[".getmypid()."] DEL_GW, route= $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif));
-		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif) . " " . escapeshellarg($rgateway);
-		mwexec($cmd);
+		route_del($a_gateways[$id]['gateway']);
 	}
 	/* NOTE: Cleanup static routes for the monitor ip if any */
 	if (!empty($a_gateways[$id]['monitor']) &&
 	    $a_gateways[$id]['monitor'] != "dynamic" &&
 	    is_ipaddr($a_gateways[$id]['monitor']) &&
 	    $a_gateways[$id]['gateway'] != $a_gateways[$id]['monitor']) {
-		$rgateway = $a_gateways[$id]['gateway'];
-		if (is_ipaddrv4($a_gateways[$id]['monitor'])) {
-			mwexec("/sbin/route delete " . escapeshellarg($a_gateways[$id]['monitor']) . " " . escapeshellarg($rgateway));
-		} else {
-			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateways[$id]['monitor']) . " " . escapeshellarg($rgateway));
-		}
+		route_del($a_gateways[$id]['monitor']);
 	}
 
 	if ($config['interfaces'][$a_gateways[$id]['friendlyiface']]['gateway'] == $a_gateways[$id]['name']) {

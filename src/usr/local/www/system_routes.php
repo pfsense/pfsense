@@ -75,7 +75,8 @@ function delete_static_route($id) {
 
 	$targets = array();
 	if (is_alias($a_routes[$id]['network'])) {
-		foreach (filter_expand_alias_array($a_routes[$id]['network']) as $tgt) {
+		foreach (filter_expand_alias_array($a_routes[$id]['network']) as
+		    $tgt) {
 			if (is_ipaddrv4($tgt)) {
 				$tgt .= "/32";
 			} else if (is_ipaddrv6($tgt)) {
@@ -91,9 +92,7 @@ function delete_static_route($id) {
 	}
 
 	foreach ($targets as $tgt) {
-		$family = (is_subnetv6($tgt) ? "-inet6" : "-inet");
-		$gateway = $a_gateways[$a_routes[$id]['gateway']]['gateway'];
-		mwexec("/sbin/route delete {$family} " . escapeshellarg($tgt) . " " . escapeshellarg($gateway));
+		route_del($tgt);
 	}
 
 	unset($targets);

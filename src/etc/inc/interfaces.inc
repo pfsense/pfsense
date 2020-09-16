@@ -1309,12 +1309,7 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		    $gif['tunnel-remote-addr']);
 	}
 
-	if (is_ipaddrv4($realifgw)) {
-		route_add_or_change("-host {$gif['remote-addr']} {$realifgw}");
-	} else if (is_ipaddrv6($realifgw)) {
-		route_add_or_change("-host -inet6 {$gif['remote-addr']} {$realifgw}");
-	}
-
+	route_add_or_change($gif['remote-addr'], $realifgw);
 	interfaces_bring_up($gifif);
 
 	return $gifif;
@@ -4603,7 +4598,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 
 	$ip4gateway = get_interface_gateway($interface);
 	if (is_ipaddrv4($ip4gateway)) {
-		route_add_or_change("-host {$wancfg['gateway-6rd']} {$ip4gateway}");
+		route_add_or_change($wancfg['gateway-6rd'], $ip4gateway);
 	}
 
 	/* configure dependent interfaces */
@@ -4716,7 +4711,7 @@ function interface_6to4_configure($interface = "wan", $wancfg) {
 
 	$ip4gateway = get_interface_gateway($interface);
 	if (is_ipaddrv4($ip4gateway)) {
-		route_add_or_change("-host 192.88.99.1 {$ip4gateway}");
+		route_add_or_change("192.88.99.1", $ip4gateway);
 	}
 
 	if (!platform_booting()) {
@@ -5919,24 +5914,17 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 /* Guess the physical interface by providing a IP address */
 function guess_interface_from_ip($ipaddress) {
 
-	$family = '';
-	if (is_ipaddrv4($ipaddress)) {
-		$family = 'inet';
-	}
-	if (empty($family) && is_ipaddrv6($ipaddress)) {
-		$family = 'inet6';
-	}
-
-	if (empty($family)) {
+	if (!is_ipaddr($ipaddress)) {
 		return false;
 	}
 
-	/* create a route table we can search */
-	$output = '';
-	$_gb = exec("/sbin/route -n get -{$family} " . escapeshellarg($ipaddress) . " | /usr/bin/awk '/interface/ { print \$2; };'", $output);
-	$output[0] = trim($output[0], " \n");
-	if (!empty($output[0])) {
-		return $output[0];
+	$route = route_get($ipaddress);
+	if (empty($route)) {
+		return false;
+	}
+
+	if (!empty($route[0]['interface-name'])) {
+		return $route[0]['interface-name'];
 	}
 
 	return false;

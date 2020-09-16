@@ -2577,37 +2577,204 @@ function replace_element_in_list($text, $delimiter, $element, $replacement) {
 	return implode(',', $textArray);
 }
 
-/* Try to change a static route, if it doesn't exist, add it */
-function route_add_or_change($args) {
+/* Return system's route table */
+function route_table() {
+	$_gb = exec("/usr/bin/netstat --libxo json -nWr", $rawdata, $rc);
+
+	if ($rc != 0) {
+		return array();
+	}
+
+	$netstatarr = json_decode(implode(" ", $rawdata), JSON_OBJECT_AS_ARRAY);
+	$netstatarr = $netstatarr['statistics']['route-information']
+	    ['route-table']['rt-family'];
+
+	$result = array();
+	$result['inet'] = array();
+	$result['inet6'] = array();
+	foreach ($netstatarr as $item) {
+		if ($item['address-family'] == 'Internet') {
+			$result['inet'] = $item['rt-entry'];
+		} else if ($item['address-family'] == 'Internet6') {
+			$result['inet6'] = $item['rt-entry'];
+		}
+	}
+	unset($netstatarr);
+
+	return $result;
+}
+
+/* Get static route for specific destination */
+function route_get($target, $ipprotocol = '') {
+	if (!empty($ipprotocol)) {
+		$family = $ipprotocol;
+	} else if (is_v4($target)) {
+		$family = 'inet';
+	} else if (is_v6($target)) {
+		$family = 'inet6';
+	}
+
+	if (empty($family)) {
+		return array();
+	}
+
+	$rtable = route_table();
+
+	$result = array();
+	foreach ($rtable[$family] as $item) {
+		if ($item['destination'] == $target) {
+			$result[] = $item;
+		}
+	}
+
+	return $result;
+}
+
+/* Get default route */
+function route_get_default($ipprotocol) {
+	if (empty($ipprotocol) || ($ipprotocol != 'inet' &&
+	    $ipprotocol != 'inet6')) {
+		return '';
+	}
+
+	$route = route_get('default', $ipprotocol);
+
+	if (empty($route)) {
+		return '';
+	}
+
+	if (!isset($route[0]['gateway'])) {
+		return '';
+	}
+
+	return $route[0]['gateway'];
+}
+
+/* Delete a static route */
+function route_del($target, $ipprotocol = '') {
 	global $config;
 
-	if (empty($args)) {
+	if (empty($target)) {
+		return;
+	}
+
+	if (!empty($ipprotocol) && $ipprotocol != 'inet' &&
+	    $ipprotocol != 'inet6') {
 		return false;
 	}
 
-	/* First, try to add it */
-	$_gb = exec(escapeshellcmd("/sbin/route add " . $args), $output, $rc);
-		
-	if (isset($config['system']['route-debug'])) {
-		$add_change = 'add';
-		$mt = microtime();
-		log_error("ROUTING debug: $mt - ADD RC={$rc} - $args");
+	$route = route_get($target, $ipprotocol);
+
+	if (empty($route)) {
+		return;
 	}
 
-	if ($rc != 0) {
-		/* If it fails, try to change it */
-		$_gb = exec(escapeshellcmd("/sbin/route change " . $args),
-		    $output, $rc);
+	$target_prefix = '';
+	if (is_subnet($target)) {
+		$target_prefix = '-net';
+	} else if (is_ipaddr($target)) {
+		$target_prefix = '-host';
+	}
+
+	if (!empty($ipprotocol)) {
+		$target_prefix .= " -{$ipprotocol}";
+	} else if (is_v6($target)) {
+		$target_prefix .= ' -inet6';
+	} else if (is_v4($target)) {
+		$target_prefix .= ' -inet';
+	}
+
+	foreach ($route as $item) {
+		if (substr($item['gateway'], 0, 5) == 'link#') {
+			continue;
+		}
+
+		if (is_macaddr($item['gateway'])) {
+			$gw = '-iface ' . $item['interface-name'];
+		} else {
+			$gw = $item['gateway'];
+		}
+
+		$_gb = exec(escapeshellcmd("/sbin/route del {$target_prefix} " .
+		    "{$target} {$gw}"), $output, $rc);
 
 		if (isset($config['system']['route-debug'])) {
-			$add_change = 'change';
-			$mt = microtime();
-			log_error("ROUTING debug: $mt - CHG RC={$rc} - $args");
+			log_error("ROUTING debug: " . microtime() .
+			    " - DEL RC={$rc} - {$target} - gw: " . $gw);
+			file_put_contents("/dev/console", "\n[" . getmypid() .
+			    "] ROUTE DEL: {$target_prefix} {$target} {$gw} " .
+			    "result: {$rc}");
 		}
 	}
+}
+
+/*
+ * Add static route.  If it already exists, remove it and re-add
+ *
+ * $target - IP, subnet or 'default'
+ * $gw     - gateway address
+ * $iface  - Network interface
+ * $args   - Extra arguments for /sbin/route
+ * $ipprotocol - 'inet' or 'inet6'.  Mandatory when $target == 'default'
+ *
+ */
+function route_add_or_change($target, $gw, $iface = '', $args = '',
+    $ipprotocol = '') {
+	global $config;
+
+	if (empty($target) || (empty($gw) && empty($iface))) {
+		return false;
+	}
+
+	if ($target == 'default' && empty($ipprotocol)) {
+		return false;
+	}
+
+	if (!empty($ipprotocol) && $ipprotocol != 'inet' &&
+	    $ipprotocol != 'inet6') {
+		return false;
+	}
+
+	if (is_subnet($target)) {
+		$target_prefix = '-net';
+	} else if (is_ipaddr($target)) {
+		$target_prefix = '-host';
+	}
+
+	if (!empty($ipprotocol)) {
+		$target_prefix .= " -{$ipprotocol}";
+	} else if (is_v6($target)) {
+		$target_prefix .= ' -inet6';
+	} else if (is_v4($target)) {
+		$target_prefix .= ' -inet';
+	}
+
+	/* If there is another route to the same target, remove it */
+	route_del($target, $ipprotocol);
+
+	$params = '';
+	if (!empty($iface) && does_interface_exist($iface)) {
+		$params .= " -iface {$gw}";
+	}
+	if (is_ipaddr($gw)) {
+		$params .= " " . $gw;
+	}
+
+	if (empty($params)) {
+		log_error("route_add_or_change: Invalid gateway {$gw} and/or " .
+		    "network interface {$iface}");
+		return false;
+	}
+
+	$_gb = exec(escapeshellcmd("/sbin/route add {$target_prefix} " .
+	    "{$target} {$args} {$params}"), $output, $rc);
+
 	if (isset($config['system']['route-debug'])) {
+		log_error("ROUTING debug: " . microtime() .
+		    " - ADD RC={$rc} - {$target} {$args}");
 		file_put_contents("/dev/console", "\n[" . getmypid() .
-		    "] ROUTE: {$add_change} {$args} result: {$rc}");
+		    "] ROUTE ADD: {$target_prefix} {$target} {$args} " .
+		    "{$params} result: {$rc}");
 	}
 
 	return ($rc == 0);

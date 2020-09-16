@@ -2191,11 +2191,15 @@ function portal_ip_from_client_ip($cliip) {
 		}
 	}
 
-	$inet = ($isipv6) ? '-inet6' : '-inet';
-	$iface = exec_command("/sbin/route -n get {$inet} {$cliip} | /usr/bin/awk '/interface/ { print \$2; };'");
-	$iface = trim($iface, "\n");
+	$route = route_get($cliip);
+	if (empty($route)) {
+		return false;
+	}
+
+	$iface = $route[0]['interface-name'];
 	if (!empty($iface)) {
-		$ip = ($isipv6) ? find_interface_ipv6($iface) : find_interface_ip($iface);
+		$ip = ($isipv6) ? find_interface_ipv6($iface)
+		    : find_interface_ip($iface);
 		if (is_ipaddr($ip)) {
 			return $ip;
 		}

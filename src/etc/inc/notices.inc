@@ -40,7 +40,8 @@ $smtp_authentication_mechanisms = array(
 */
 global $pushover_sounds;
 $pushover_sounds = array(
-	'pushover' => 'Pushover (default)',
+	'devicedefault' => 'Device Default',
+	'pushover' => 'Pushover',
 	'bike' => 'Bike',
 	'bugle' => 'Bugle',
 	'cashregister' => 'Cash Register',
@@ -504,6 +505,9 @@ function notify_via_pushover($message, $force = false) {
 			return gettext("Unable to test Pushover notification without both API Key & User Key set");
 		}
 		return;
+	}
+	if (strcasecmp($config['notifications']['pushover']['sound'], 'devicedefault') == 0) {
+		unset($config['notifications']['pushover']['sound']);
 	}
 
 	$url = "https://api.pushover.net/1/messages.json";

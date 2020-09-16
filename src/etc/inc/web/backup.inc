@@ -169,7 +169,7 @@ function check_and_returnif_section_exists($section) {
 	return false;
 }
 
-function execPost($post, $postfiles) {
+function execPost($post, $postfiles, $json = true) {
 	global $config;
 
 	unset($input_errors);
@@ -267,7 +267,11 @@ function execPost($post, $postfiles) {
 					tagfile_reformat($data, $data, "config.xml");
 				}
 
-				send_user_download('data', $data, $name);
+				if ($json) {
+					send_user_download('data', $data, $name);
+				} else {
+					return json_encode(array("contents" => base64_encode($data), "name" => $name));
+				}
 			}
 		}
 

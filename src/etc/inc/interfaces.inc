@@ -1322,12 +1322,11 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 function get_ipsecifnum($ikeid, $idx) {
 	global $config;
 
-	$a_vtimaps = &$config['ipsec']['vtimaps']['item'];
-	if (is_array($a_vtimaps)) {
-		foreach ($a_vtimaps as $vtimap) {
-			if (($vtimap['reqid'] == $ikeid) && ($vtimap['index'] == $idx)) {
-				return $vtimap['ifnum'];
-			}
+	init_config_arr(array('ipsec', 'vtimaps', 'item'));
+	foreach ($config['ipsec']['vtimaps']['item'] as $vtimap) {
+		if (($vtimap['reqid'] == $ikeid) &&
+		    ($vtimap['index'] == $idx)) {
+			return $vtimap['ifnum'];
 		}
 	}
 

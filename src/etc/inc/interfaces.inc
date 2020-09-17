@@ -3013,6 +3013,7 @@ function interfaces_vips_configure($interface = "") {
 function interface_ipalias_configure(&$vip) {
 	global $config;
 
+	$gateway = '';
 	if ($vip['mode'] != 'ipalias') {
 		return;
 	}
@@ -3023,6 +3024,13 @@ function interface_ipalias_configure(&$vip) {
 		if (!isset($config['interfaces'][$if]) ||
 		    !isset($config['interfaces'][$if]['enable'])) {
 			return;
+		}
+		if (is_pseudo_interface($realif)) {
+			if (is_ipaddrv4($vip['subnet'])) {
+				$gateway = get_interface_gateway($if);
+			} else {
+				$gateway = get_interface_gateway_v6($if);
+			}
 		}
 	}
 
@@ -3037,8 +3045,8 @@ function interface_ipalias_configure(&$vip) {
 		$iface = $carpvip['interface'];
 		$vhid = "vhid {$carpvip['vhid']}";
 	}
-	mwexec("/sbin/ifconfig " . escapeshellarg($realif) ." {$af} ". escapeshellarg($vip['subnet']) ."/" . escapeshellarg($vip['subnet_bits']) . " alias {$vhid}");
-	unset($iface, $af, $realif, $carpvip, $vhid);
+	mwexec("/sbin/ifconfig " . escapeshellarg($realif) ." {$af} ". escapeshellarg($vip['subnet']) ."/" . escapeshellarg($vip['subnet_bits']) . " alias {$gateway} {$vhid}");
+	unset($iface, $af, $realif, $carpvip, $vhid, $gateway);
 }
 
 function interface_carp_configure(&$vip, $maintenancemode_only = false) {

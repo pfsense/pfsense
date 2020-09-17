@@ -97,8 +97,8 @@ if ($_POST['save']) {
 	}
 
 	if (is_pseudo_interface(convert_friendly_interface_to_real_interface_name($_POST['interface']))) {
-		if ($_POST['mode'] == 'ipalias') {
-			$input_errors[] = gettext("The interface chosen for the VIP does not support IP Alias mode.");
+		if ($_POST['mode'] == 'carp') {
+			$input_errors[] = gettext("The interface chosen for the VIP does not support CARP mode.");
 		} elseif ($_POST['mode'] == 'proxyarp') {
 			$input_errors[] = gettext("The interface chosen for the VIP does not support Proxy ARP mode.");
 		}

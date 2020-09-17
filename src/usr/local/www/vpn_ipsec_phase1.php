@@ -499,12 +499,15 @@ if ($_POST['save']) {
 					unset($a_vtimaps[$id]);
 				}
 			}
-			if (($pconfig['iketype'] == 'ikev1') || isset($pconfig['splitconn'])) {
+			if (($pconfig['iketype'] == 'ikev1') ||
+			    isset($pconfig['splitconn'])) {
 				foreach ($vtisubnet_spec as $idx => $vtisub) {
-					$a_vtimaps[] = ipsec_create_vtimap($ph1ent['ikeid'], $idx);
+					$a_vtimaps[] = ipsec_create_vtimap(
+					    $ph1ent['ikeid'], $idx);
 				}
 			} else {
-				$a_vtimaps[] = ipsec_create_vtimap($ph1ent['ikeid'], 0);
+				$a_vtimaps[] = ipsec_create_vtimap(
+				    $ph1ent['ikeid'], 0);
 			}
 		}
 

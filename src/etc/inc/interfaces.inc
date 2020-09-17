@@ -1316,8 +1316,8 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 }
 
 /*
- * $ipsecifnum = get_ipsecifnum($ikeid, $idx, $create=true);
- * locates or creates and returns an ipsecifnum in the config.
+ * $ipsecifnum = get_ipsecifnum($ikeid, $idx);
+ * locates and returns an ipsecifnum in the config.
  */
 function get_ipsecifnum($ikeid, $idx) {
 	global $config;

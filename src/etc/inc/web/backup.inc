@@ -170,7 +170,7 @@ function check_and_returnif_section_exists($section) {
 }
 
 function execPost($post, $postfiles, $json = true) {
-	global $config;
+	global $config, $g;
 
 	unset($input_errors);
 

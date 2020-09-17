@@ -1387,23 +1387,22 @@ function ipsec_del_vtimap($phase2) {
 
 	$a_vtimaps = &$config['ipsec']['vtimaps']['item'];
 	$phase1 = ipsec_get_phase1($phase2['ikeid']);
-	$vtisubnet_spec = ipsec_vti($phase1, true);
 	$last = '';
 	foreach ($a_vtimaps as $id => $vtimap) {
 		if ($vtimap['reqid'] == $phase1['ikeid']) {
 			$last = $id;
 		}
 	}
-	if (is_numeric($last)) {
-		if (($phase1['iketype'] == 'ikev1') || isset($phase1['splitconn'])) {
-			unset($a_vtimaps[$last]);
-			return true;
-		} elseif (count($vtisubnet_spec) == 1) {
-			unset($a_vtimaps[$last]);
-			return true;
-		}
+	if (!is_numeric($last)) {
+		return false;
 	}
-	return false;
+
+	$vtisubnet_spec = ipsec_vti($phase1, true);
+	if (($phase1['iketype'] == 'ikev1') || isset($phase1['splitconn']) ||
+	    (count($vtisubnet_spec) == 1)) {
+		unset($a_vtimaps[$last]);
+		return true;
+	}
 }
 
 /* NOTE: $vxlankey is not used but useful for passing this function to array_walk. */

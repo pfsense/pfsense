@@ -402,25 +402,34 @@ if ($_POST['save']) {
 		$ph1ent = ipsec_get_phase1($ph2ent['ikeid']);
 		$vtisubnet_spec = ipsec_vti($ph1ent, true);
 		foreach ($a_phase2 as $ph2) {
-			if (($ph2['uniqid'] == $ph2ent['uniqid']) && ($ph2['mode'] == 'vti')) {
+			if (($ph2['uniqid'] == $ph2ent['uniqid']) &&
+			    ($ph2['mode'] == 'vti')) {
 				// config P2 mode is VTI and not changed
 				$need_vtimap = false;
 			}
 		}
 		if (($ph2ent['mode'] == "vti") && $need_vtimap) {
 			// add new vtimap if needed
-			if (($ph1ent['iketype'] == 'ikev1') || isset($ph1ent['splitconn'])) {
-				if ($vtisubnet_spec || is_array($vtisubnet_spec)) {
-					$a_vtimaps[] = ipsec_create_vtimap($ph1ent['ikeid'], count($vtisubnet_spec));
+			if (($ph1ent['iketype'] == 'ikev1') ||
+			    isset($ph1ent['splitconn'])) {
+				if ($vtisubnet_spec ||
+				    is_array($vtisubnet_spec)) {
+					$a_vtimaps[] = ipsec_create_vtimap(
+					    $ph1ent['ikeid'],
+					    count($vtisubnet_spec));
 				} else {
-					$a_vtimaps[] = ipsec_create_vtimap($ph1ent['ikeid'], 0);
+					$a_vtimaps[] = ipsec_create_vtimap(
+					    $ph1ent['ikeid'], 0);
 				}
 			} else {
-				if (!$vtisubnet_spec && !is_array($vtisubnet_spec)) {
-					$a_vtimaps[] = ipsec_create_vtimap($ph1ent['ikeid'], 0);
+				if (!$vtisubnet_spec &&
+				    !is_array($vtisubnet_spec)) {
+					$a_vtimaps[] = ipsec_create_vtimap(
+					    $ph1ent['ikeid'], 0);
 				}
 			}
-		} elseif (($ph2ent['mode'] != "vti") && !$need_vtimap && (count($vtisubnet_spec) > 0)) {
+		} else if (($ph2ent['mode'] != "vti") && !$need_vtimap &&
+		    (count($vtisubnet_spec) > 0)) {
 			// del vtimap on P2 mode change
 			ipsec_del_vtimap($ph2ent);
 		}

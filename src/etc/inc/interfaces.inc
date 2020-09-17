@@ -1394,7 +1394,6 @@ function ipsec_del_vtimap($phase2) {
 			$last = $id;
 		}
 	}
-	$aaa = count($vtisubnet_spec);
 	if (is_numeric($last)) {
 		if (($phase1['iketype'] == 'ikev1') || isset($phase1['splitconn'])) {
 			unset($a_vtimaps[$last]);

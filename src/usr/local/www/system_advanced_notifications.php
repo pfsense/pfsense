@@ -130,7 +130,7 @@ if ($_POST) {
 			$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
 		}
 
-		if (!is_port($_POST['smtpport'])) {
+		if (!is_port($_POST['smtpport']) && ($_POST['disable_smtp'] != "yes")) {
 			$input_errors[] = gettext("Please enter valid SMTP port of E-Mail server address.");
 		} else {
 			$config['notifications']['smtp']['port'] = $_POST['smtpport'];

@@ -73,6 +73,7 @@ if ($_POST['apply']) {
 			if (is_interface_ipsec_vti_assigned($a_phase2[$p2entrydel]) && ($a_phase2[$p2entrydel]['mode'] == 'vti')) {
 				$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
 			} else {
+				ipsec_del_vtimap($a_phase2[$p2entrydel]);
 				unset($a_phase2[$p2entrydel]);
 			}
 		}
@@ -219,6 +220,7 @@ if ($_POST['apply']) {
 			$input_errors[] = gettext("Cannot delete a Phase 1 which contains an active VTI Phase 2 with an interface assigned. Remove the interface assignment before deleting this P1.");
 		} else {
 			foreach ($delp2ids as $dp2idx) {
+				ipsec_del_vtimap($a_phase2[$dp2idx]);
 				unset($a_phase2[$dp2idx]);
 			}
 			unset($a_phase1[$delbtn]);
@@ -228,6 +230,7 @@ if ($_POST['apply']) {
 		if (is_interface_ipsec_vti_assigned($a_phase2[$delbtnp2]) && ($a_phase2[$delbtnp2]['mode'] == 'vti')) {
 			$input_errors[] = gettext("Cannot delete a VTI Phase 2 while the interface is assigned. Remove the interface assignment before deleting this P2.");
 		} else {
+			ipsec_del_vtimap($a_phase2[$delbtnp2]);
 			unset($a_phase2[$delbtnp2]);
 		}
 	} else {

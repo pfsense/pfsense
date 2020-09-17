@@ -1978,7 +1978,7 @@ function ipsec_setup_proposal_entry(& $ph2ent, & $algo_arr, $ealg_id, $keylen) {
  *   Sets up VTI-specific values for a request.
  ******/
 function ipsec_setup_vtireq(& $child, & $ipsec_vti_cleanup_ifs, $ikeid, $idx = 0) {
-	$child['reqid'] = "{$ikeid}00{$idx}";
+	$child['reqid'] = get_ipsecifnum($ikeid, $idx);
 	/* This interface will be a valid IPsec interface, so remove it from the cleanup list. */
 	$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array("ipsec{$child['reqid']}"));
 	$child['local_ts'] .= ",0.0.0.0/0";
@@ -2023,7 +2023,7 @@ function ipsec_setup_tunnels() {
 			$conn =& $scconf["{$cname}-defaults"];
 			$scconf['connections']["{$cname} : {$cname}-defaults"] = array("# Stub to load con-mobile-defaults");
 		} else {
-			$cname = "con{$ph1ent['ikeid']}000";
+			$cname = "con" . get_ipsecifnum($ph1ent['ikeid'], 0);
 			/* Start with common default values */
 			$scconf['connections'][$cname] = $conn_defaults;
 			/* Array reference to make things easier */
@@ -2281,7 +2281,7 @@ function ipsec_setup_tunnels() {
 			if (!isset($ph1ent['mobile']) && (($ikeversion == 1) || isset($ph1ent['splitconn']))) {
 				if (!empty($remote_ts)) {
 					/* Setup child sub-connections using unique names with a suffix */
-					$subconname = "con{$ph1ent['ikeid']}00{$suffix}";
+					$subconname = "con" . get_ipsecifnum($ph1ent['ikeid'], $idx) . $suffix;
 					$children[$subconname] = $child;
 					$children[$subconname]['local_ts'] = $local_ts;
 					$children[$subconname]['remote_ts'] = $remote_ts;

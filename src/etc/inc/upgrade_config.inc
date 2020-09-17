@@ -6260,6 +6260,38 @@ function upgrade_207_to_208() {
 	$config['system']['hn_altq_enable'] = true;
 }
 
+/* Update IPsec VTI to new VTIMAP format 
+ * https://redmine.pfsense.org/issues/9592
+ */
+function upgrade_208_to_209() {
+	require_once("interfaces.inc");
+	global $config;
+
+	init_config_arr(array('ipsec', 'vtimaps', 'item'));
+	if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1']) && is_array($config['ipsec']['phase2'])) {
+		foreach ($config['ipsec']['phase1'] as $ph1ent) {
+			if (!isset($ph1ent['mobile']) && ($ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn']))) {
+				$vtisubnet_spec = ipsec_vti($ph1ent, true, false);
+				if (!empty($vtisubnet_spec)) {
+					foreach ($vtisubnet_spec as $idx => $vtisub) {
+						$config['ipsec']['vtimaps']['item'][] = array(
+							"reqid" => $ph1ent['ikeid'],
+							"index" => $idx,
+							"ifnum" => "{$ph1ent['ikeid']}00{$idx}"
+						);
+					}
+				}
+			} else {
+				$config['ipsec']['vtimaps']['item'][] = array(
+					"reqid" => $ph1ent['ikeid'],
+					"index" => "0",
+					"ifnum" => "{$ph1ent['ikeid']}000"
+				);
+			}
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

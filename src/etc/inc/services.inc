@@ -1541,6 +1541,10 @@ EOD;
 				$dns_arrv6 = array();
 				foreach ($syscfg['dnsserver'] as $dnsserver) {
 					if (is_ipaddrv6($dnsserver)) {
+						if ($ifcfgv6['ipaddrv6'] == 'track6' &&
+						    Net_IPv6::isInNetmask($dnsserver, '::', $pdlen)) {
+							$dnsserver = merge_ipv6_delegated_prefix($ifcfgipv6, $dnsserver, $pdlen);
+						}
 						$dns_arrv6[] = $dnsserver;
 					}
 				}

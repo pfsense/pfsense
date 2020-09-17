@@ -709,7 +709,11 @@ if ($act=="new" || $act=="edit"):
 		'Authentication Retry',
 		'Do not retry connection when authentication fails',
 		$pconfig['auth-retry-none']
-	))->setHelp('When enabled, the OpenVPN process will exit if it receives an authentication failure message. The default behavior is to retry.');
+	))->setHelp('When enabled, the OpenVPN process will exit if it receives an authentication failure message. ' .
+		    'The default behavior is to retry.%1$s%2$s%3$s', '<div class="infoblock">',
+		    sprint_info_box(gettext('WARNING: If the remote server requires both a username and a password, ' .
+		    'but only one is filled in, the system will hang on reboot prompting for OpenVPN Client credentials unless ' .
+		    'Authentication Retry is checked.'), 'info', false), '</div>');
 
 	$form->add($section);
 

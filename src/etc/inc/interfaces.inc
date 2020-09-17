@@ -1336,7 +1336,6 @@ function get_ipsecifnum($ikeid, $idx) {
 function ipsec_create_vtimap($ikeid, $idx) {
 	global $config;
 
-	$a_ipsec = &$config['ipsec'];
 	if ((($ikeid < 33) && ($idx < 10)) || (($ikeid < 10) && ($idx < 100))) {
 		$oldformat = "{$ikeid}00{$idx}";
 		return array(
@@ -1345,8 +1344,9 @@ function ipsec_create_vtimap($ikeid, $idx) {
 			"ifnum" => $oldformat
 		);
 	}
-	
-	$assigned = array_column($a_ipsec['vtimaps']['item'], 'ifnum'); 
+
+	init_config_arr(array('ipsec', 'vtimaps', 'item'));
+	$assigned = array_column($config['ipsec']['vtimaps']['item'], 'ifnum');
 	asort($assigned, SORT_NUMERIC);
 	$new = 1;
 	foreach($assigned as $ipsecifnum) {

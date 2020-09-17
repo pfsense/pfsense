@@ -1360,7 +1360,8 @@ function ipsec_create_vtimap($ikeid, $idx) {
 		if ($new <= 32767) {
 			$new++;
 		} else {
-			log_error(gettext("All 32767 ipsec interface numbers have been assigned!"));
+			log_error(gettext("All 32767 ipsec interface numbers " .
+			    "have been assigned!"));
 			return(NULL);
 		}
 	}

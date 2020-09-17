@@ -132,6 +132,11 @@ if ($_POST) {
 		}
 	}
 
+	if ((auth_get_authserver($_POST['authmode'])['type'] == 'radius') &&
+		!isset(auth_get_authserver($_POST['authmode'])['radius_auth_port'])) {
+		$input_errors[] = gettext("RADIUS Authentication Server must provide Authentication service.");
+	}
+
 	if (($_POST['authmode'] == "Local Database") && $_POST['savetest']) {
 		$savemsg = gettext("Settings have been saved, but the test was not performed because it is not supported for local databases.");
 	}
@@ -167,7 +172,7 @@ if ($_POST) {
 		}
 
 		write_config();
-
+		set_pam_auth();
 	}
 }
 
@@ -221,7 +226,7 @@ $section->addInput(new Form_Select(
 	'*Authentication Server',
 	$pconfig['authmode'],
 	$auth_servers
-));
+))->setHelp('To allow SSH and console logins with RADIUS credentials, equivalent local users with the expected privileges must be created first.'); 
 
 $section->addInput(new Form_Input(
 	'auth_refresh_time',

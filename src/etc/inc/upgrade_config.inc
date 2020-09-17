@@ -32,9 +32,10 @@ if (!function_exists("console_configure")) {
 }
 
 /* Upgrade functions must be named:
-*    upgrade_XXX_to_YYY
-	* where XXX == previous version, zero padded, and YYY == next version, zero padded
-	*/
+ *    upgrade_XXX_to_YYY
+ * where XXX == previous version, zero padded, and YYY == next version, zero
+ * padded
+ */
 function upgrade_010_to_011() {
 	global $config;
 	$opti = 1;

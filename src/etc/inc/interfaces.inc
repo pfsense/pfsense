@@ -1379,9 +1379,12 @@ function ipsec_create_vtimap($ikeid, $idx) {
 function ipsec_del_vtimap($phase2) {
 	global $config;
 
-	if (!is_array($config['ipsec']['vtimaps']['item'])) {
+	init_config_arr(array('ipsec', 'vtimaps', 'item'));
+
+	if (count($config['ipsec']['vtimaps']['item']) == 0) {
 		return;
 	}
+
 	$a_vtimaps = &$config['ipsec']['vtimaps']['item'];
 	$phase1 = ipsec_get_phase1($phase2['ikeid']);
 	$vtisubnet_spec = ipsec_vti($phase1, true);

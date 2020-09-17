@@ -1,6 +1,6 @@
 <?php
 /*
- * diag_backup.php
+ * backup.inc
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
@@ -24,14 +24,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-##|+PRIV
-##|*IDENT=page-diagnostics-backup-restore
-##|*NAME=Diagnostics: Backup & Restore
-##|*DESCR=Allow access to the 'Diagnostics: Backup & Restore' page.
-##|*WARN=standard-warning-root
-##|*MATCH=diag_backup.php*
-##|-PRIV
 
 /* Allow additional execution time 0 = no limit. */
 ini_set('max_execution_time', '0');
@@ -283,10 +275,10 @@ function execPost($post, $postfiles, $json = true) {
 			}
 
 			if (!$input_errors) {
-				if (is_uploaded_file($postfiles['conffile']['tmp_name'])) {
+				if (!$json || is_uploaded_file($postfiles['conffile']['tmp_name'])) {
 
 					/* read the file contents */
-					$data = file_get_contents($postfiles['conffile']['tmp_name']);
+					$data = $json ? file_get_contents($postfiles['conffile']['tmp_name']) : $postfiles['conffile']['tmp_name'];
 					if (!$data) {
 						$input_errors[] = gettext("Warning, could not read file {$postfiles['conffile']['tmp_name']}");
 					} elseif ($post['decrypt']) {

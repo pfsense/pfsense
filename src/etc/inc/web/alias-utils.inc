@@ -1,6 +1,6 @@
 <?php
 /*
- * alias.inc
+ * alias-utils.inc
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter

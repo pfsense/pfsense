@@ -1346,6 +1346,15 @@ function ipsec_create_vtimap($ikeid, $idx) {
 	}
 
 	init_config_arr(array('ipsec', 'vtimaps', 'item'));
+
+	if (count($config['ipsec']['vtimaps']['item']) == 0) {
+		return array(
+			"reqid" => $ikeid,
+			"index" => $idx,
+			"ifnum" => 1
+		);
+	}
+
 	$assigned = array_column($config['ipsec']['vtimaps']['item'], 'ifnum');
 	asort($assigned, SORT_NUMERIC);
 	$new = 1;

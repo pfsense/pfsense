@@ -494,11 +494,9 @@ if ($_POST['save']) {
 		if ((($pconfig['iketype'] != $a_phase1[$p1index]['iketype']) ||
 		    (isset($pconfig['splitconn']) != isset($a_phase1[$p1index]['splitconn']))) &&
 		    ($vtisubnet_spec || is_array($vtisubnet_spec))) {
-			if (is_array($a_vtimaps)) {
-				foreach ($a_vtimaps as $id => $vtimap) {
-					if ($vtimap['reqid'] == $ph1ent['ikeid']) {
-						unset($a_vtimaps[$id]);
-					}
+			foreach ($a_vtimaps as $id => $vtimap) {
+				if ($vtimap['reqid'] == $ph1ent['ikeid']) {
+					unset($a_vtimaps[$id]);
 				}
 			}
 			if (($pconfig['iketype'] == 'ikev1') || isset($pconfig['splitconn'])) {

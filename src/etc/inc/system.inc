@@ -352,12 +352,14 @@ function system_hosts_override_entries($dnscfg) {
 		}
 		$fqdn .= $host['domain'];
 
-		$hosts[] = array(
-		    'ipaddr' => $host['ip'],
-		    'fqdn' => $fqdn,
-		    'name' => $host['host'],
-		    'domain' => $host['domain']
-		);
+		foreach (explode(',', $host['ip']) as $ip) {
+			$hosts[] = array(
+			    'ipaddr' => $ip,
+			    'fqdn' => $fqdn,
+			    'name' => $host['host'],
+			    'domain' => $host['domain']
+			);
+		}
 
 		if (!is_array($host['aliases']) ||
 		    !is_array($host['aliases']['item'])) {
@@ -371,12 +373,14 @@ function system_hosts_override_entries($dnscfg) {
 			}
 			$fqdn .= $alias['domain'];
 
-			$hosts[] = array(
-			    'ipaddr' => $host['ip'],
-			    'fqdn' => $fqdn,
-			    'name' => $alias['host'],
-			    'domain' => $alias['domain']
-			);
+			foreach (explode(',', $host['ip']) as $ip) {
+				$hosts[] = array(
+				    'ipaddr' => $ip,
+				    'fqdn' => $fqdn,
+				    'name' => $alias['host'],
+				    'domain' => $alias['domain']
+				);
+			}
 		}
 	}
 

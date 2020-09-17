@@ -86,8 +86,13 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("A valid domain must be specified.");
 	}
 
-	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
-		$input_errors[] = gettext("A valid IP address must be specified.");
+	if ($_POST['ip']) {
+		foreach (explode(',', $_POST['ip']) as $ip) {
+			if (!is_ipaddr($ip)) {
+				$input_errors[] = gettext("A valid IP addresses must be specified.");
+				break;
+			}
+		}
 	}
 
 	/* collect aliases */
@@ -210,8 +215,9 @@ $section->addInput(new Form_IpAddress(
 	'ip',
 	'*IP Address',
 	$pconfig['ip']
-))->setHelp('IPv4 or IPv6 address to be returned for the host%1$s' .
-			'e.g.: 192.168.100.100 or fd00:abcd::1', '<br />');
+))->setHelp('IPv4 or IPv6 comma-separated addresses to be returned for the host%1$s' .
+			'e.g.: 192.168.100.100 or fd00:abcd::%1$s' .
+			'or list 192.168.1.3,192.168.4.5,fc00:123::3' , '<br />');
 
 $section->addInput(new Form_Input(
 	'descr',

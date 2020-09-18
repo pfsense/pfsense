@@ -504,4 +504,18 @@ function execPost($post, $postfiles, $ui = true) {
 	return $input_errors;
 }
 
+// Compose a list of recent backups formatted as a JSON array
+function listBackupsJSON() {
+	global $g;
+
+	$raw = unserialize(file_get_contents($g["cf_conf_path"] . "/backup/backup.cache"));
+
+	$backups = array();
+	foreach($raw as $key => $value) {
+	    $backups[] = array("time" => $key, "desc" => $value['description'], "size" => $value['filesize'], "vers" => $value['version']);
+	}
+
+	return json_encode($backups);
+}
+
 ?>

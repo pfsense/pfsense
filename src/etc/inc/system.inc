@@ -116,6 +116,22 @@ function activate_sysctls() {
 		}
 	}
 
+	/* Set net.pf.request_maxcount via sysctl since it is no longer a loader
+	 *   tunable. See https://redmine.pfsense.org/issues/10861
+	 *   Set the value dynamically since its default is not static, yet this
+	 *   still could be overridden by a user tunable. */
+	if (isset($config['system']['maximumtableentries'])) {
+		$maximumtableentries = $config['system']['maximumtableentries'];
+	} else {
+		$maximumtableentries = pfsense_default_table_entries_size();
+	}
+	/* Set the default when there is no tunable or when the tunable is set
+	 * too low. */
+	if (empty($sysctls['net.pf.request_maxcount']) ||
+	    ($sysctls['net.pf.request_maxcount'] < $maximumtableentries)) {
+		$sysctls['net.pf.request_maxcount'] = $maximumtableentries;
+	}
+
 	set_sysctl($sysctls);
 }
 

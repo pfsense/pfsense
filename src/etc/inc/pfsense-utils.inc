@@ -1331,13 +1331,6 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'vm.pmap.pti="0"';
 	}
 
-	if (isset($config['system']['maximumtableentries'])) {
-		$maximumtableentries = $config['system']['maximumtableentries'];
-	} else {
-		$maximumtableentries = pfsense_default_table_entries_size();
-	}
-	$data[] = 'net.pf.request_maxcount="' .  $maximumtableentries . '"';
-
 	/* Enable ALTQ support for hnX NICs. */
 	if (isset($config['system']['hn_altq_enable'])) {
 		$data[] = 'hw.hn.vf_transparent="0"';

@@ -161,7 +161,7 @@ function check_and_returnif_section_exists($section) {
 	return false;
 }
 
-function execPost($post, $postfiles, $json = true) {
+function execPost($post, $postfiles, $ui = true) {
 	global $config, $g;
 
 	unset($input_errors);
@@ -259,10 +259,10 @@ function execPost($post, $postfiles, $json = true) {
 					tagfile_reformat($data, $data, "config.xml");
 				}
 
-				if ($json) {
+				if ($ui) {
 					send_user_download('data', $data, $name);
 				} else {
-					return json_encode(array("contents" => base64_encode($data), "name" => $name));
+					return ui_encode(array("contents" => base64_encode($data), "name" => $name));
 				}
 			}
 		}
@@ -275,10 +275,10 @@ function execPost($post, $postfiles, $json = true) {
 			}
 
 			if (!$input_errors) {
-				if (!$json || is_uploaded_file($postfiles['conffile']['tmp_name'])) {
+				if (!$ui || is_uploaded_file($postfiles['conffile']['tmp_name'])) {
 
 					/* read the file contents */
-					$data = $json ? file_get_contents($postfiles['conffile']['tmp_name']) : $postfiles['conffile']['tmp_name'];
+					$data = $ui ? file_get_contents($postfiles['conffile']['tmp_name']) : $postfiles['conffile']['tmp_name'];
 					if (!$data) {
 						$input_errors[] = gettext("Warning, could not read file {$postfiles['conffile']['tmp_name']}");
 					} elseif ($post['decrypt']) {
@@ -479,14 +479,18 @@ function execPost($post, $postfiles, $json = true) {
 									touch("/var/run/interface_mismatch_reboot_needed");
 									clear_subsystem_dirty("restore");
 									convert_config();
-									header("Location: interfaces_assign.php");
+									if ($ui) {
+										header("Location: interfaces_assign.php");
+									}
 									exit;
 								}
 								if (is_interface_vlan_mismatch() == true) {
 									touch("/var/run/interface_mismatch_reboot_needed");
 									clear_subsystem_dirty("restore");
 									convert_config();
-									header("Location: interfaces_assign.php");
+									if ($ui) {
+										header("Location: interfaces_assign.php");
+									}
 									exit;
 								}
 							} else {

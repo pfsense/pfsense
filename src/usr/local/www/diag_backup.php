@@ -171,6 +171,17 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $section->addInput(new Form_Checkbox(
+	'backupdata',
+	'Include extra data',
+	'Backup extra data.',
+	true
+))->setHelp('Backup extra data files for some services.%1$s' .
+	    '%2$s%3$sCaptive Portal - Captive Portal DB and UsedMACs%4$s' .
+	    '%3$sCaptive Portal Vouchers - Used Vouchers DB%4$s%5$s', 
+	    '<div class="infoblock">', '<ul>', '<li>', '</li>', '</ul></div>'
+);
+
+$section->addInput(new Form_Checkbox(
 	'encrypt',
 	'Encryption',
 	'Encrypt this configuration file.',
@@ -314,7 +325,24 @@ events.push(function() {
 		} else {
 			$('.restore').prop('disabled', true);
 		}
-    });
+	});
+
+	$('#backuparea').change(function () {
+		if (document.getElementById("backuparea").value == 0) {
+			disableInput('donotbackuprrd', false);
+			disableInput('nopackages', false);
+			disableInput('backupdata', false);
+		} else {
+			disableInput('donotbackuprrd', true);
+			disableInput('nopackages', true);
+			disableInput('backupdata', true);
+			if ((document.getElementById("backuparea").value == 'captiveportal') ||
+			    (document.getElementById("backuparea").value == 'voucher')) {
+				disableInput('backupdata', false);
+			}
+		}
+	});
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideSections();

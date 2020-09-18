@@ -4134,7 +4134,6 @@ class dnpipe_class extends dummynet_class {
 		}
 		$selectedScheduler = getSchedulers()[$this->getScheduler()];
 		if ($selectedScheduler) {
-			//$pfq_rule .= "\nsched ". $this->GetNumber() . " config pipe " . $this->GetNumber() . " " . FormatParameters($selectedScheduler["parameter_format"], $this->GetSchedulerParameters());			
 			$pfq_rule .= "\nsched ". $this->GetNumber() . " config ";
 			$pfq_rule .= "pipe ". $this->GetNumber();
 			$this->build_mask_rules($pfq_rule);

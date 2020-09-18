@@ -133,7 +133,7 @@ function backup_xmldatafile($tab=false, $type='voucher') {
 		return;
 	}
 	$t = ($tab) ? "\t" : "";
-	$result = "\t<{$type}data>\n";
+	$result = "{$t}\t<{$type}data>\n";
 	foreach ($xmldata_files as $xmldata_file) {
 		$basename = basename($xmldata_file);
 		$data = file_get_contents($xmldata_file);
@@ -201,13 +201,13 @@ function execPost($post, $postfiles, $ui = true) {
 					} else if ($post['backuparea'] === "rrddata") {
 						$data = rrd_data_xml();
 						$name = "{$post['backuparea']}-{$name}";
-					} else if ($post['backuparea'] === "captiveportal") {
+					} else if (($post['backuparea'] === "captiveportal") && $post['backupdata']) {
 						$data = backup_config_section($post['backuparea']);
 						$captiveportal_data_xml = backup_xmldatafile(false, 'captiveportal');
 						$closing_tag = "</captiveportal>";
 						$data = str_replace($closing_tag, $captiveportal_data_xml . $closing_tag, $data);
 						$name = "{$post['backuparea']}-{$name}";
-					} else if ($post['backuparea'] === "voucher") {
+					} else if (($post['backuparea'] === "voucher") && $post['backupdata']) {
 						$data = backup_config_section($post['backuparea']);
 						$voucher_data_xml = backup_xmldatafile(false, 'voucher');
 						$closing_tag = "</voucher>";
@@ -232,15 +232,17 @@ function execPost($post, $postfiles, $ui = true) {
 				$data = preg_replace("/[[:blank:]]*<rrddata>.*<\\/rrddata>[[:blank:]]*\n*/s", "", $data);
 				$data = preg_replace("/[[:blank:]]*<rrddata\\/>[[:blank:]]*\n*/", "", $data);
 
-				if (!$post['backuparea'] && !empty($config['captiveportal'])) {
+				if (!$post['backuparea'] && !empty($config['captiveportal']) &&
+				    $post['backupdata']) {
 					$captiveportal_data_xml = backup_xmldatafile(true, 'captiveportal');
-					$closing_tag = "</captiveportal>";
+					$closing_tag = "\t</captiveportal>";
 					$data = str_replace($closing_tag, $captiveportal_data_xml . $closing_tag, $data);
 				}
 
-				if (!$post['backuparea'] && !empty($config['voucher'])) {
+				if (!$post['backuparea'] && !empty($config['voucher']) &&
+				    $post['backupdata']) {
 					$voucher_data_xml = backup_xmldatafile(true, 'voucher');
-					$closing_tag = "</voucher>";
+					$closing_tag = "\t</voucher>";
 					$data = str_replace($closing_tag, $voucher_data_xml . $closing_tag, $data);
 				}
 

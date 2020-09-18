@@ -1008,11 +1008,12 @@ function ldap_setup_caenv($ldap, $authcfg) {
 		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 		return;
 	} elseif ($authcfg['ldap_caref'] == "global") {
+		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, "/etc/ssl/");
+		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, "/etc/ssl/cert.pem");
 		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_CACERTDIR, "/etc/ssl/");
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_CACERTFILE, "/etc/ssl/cert.pem");
 	} else {
 		$caref = lookup_ca($authcfg['ldap_caref']);
+		$cert_details = openssl_x509_parse(base64_decode($caref['crt']));
 		$param = array('caref' => $authcfg['ldap_caref']);
 		$cachain = ca_chain($param);
 		if (!$caref) {
@@ -1023,15 +1024,15 @@ function ldap_setup_caenv($ldap, $authcfg) {
 		}
 
 		$cert_path = "{$g['varrun_path']}/certs";
+		$cert_filename = "{$cert_path}/{$cert_details['hash']}.0";
 		safe_mkdir($cert_path);
-		unlink_if_exists("{$cert_path}/{$caref['refid']}.ca");
-		file_put_contents("{$cert_path}/{$caref['refid']}.ca", $cachain);
-		@chmod("{$cert_path}/{$caref['refid']}.ca", 0600);
+		unlink_if_exists($cert_filename);
+		file_put_contents($cert_filename, $cachain);
+		@chmod($cert_filename, 0600);
 
 		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
-		/* XXX: Probably even the hashed link should be created for this? */
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_CACERTDIR, $cert_path);
-		ldap_set_option($ldap, LDAP_OPT_X_TLS_CACERTFILE, "{$cert_path}/{$caref['refid']}.ca");
+		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, $cert_path);
+		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, $cert_filename);
 	}
 }
 

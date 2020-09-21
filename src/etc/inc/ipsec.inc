@@ -1368,6 +1368,10 @@ function ipsec_setup_strongswan() {
 		$ssconf['charon']['accept_unencrypted_mainmode_messages'] = "yes";
 	}
 
+	if (isset($config['ipsec']['maxexchange'])) {
+		$ssconf['charon']['max_ikev1_exchanges'] = $config['ipsec']['maxexchange'];
+	}
+
 	$unity_enabled = isset($config['ipsec']['unityplugin']) ? 'yes' : 'no';
 	$ssconf['charon']['cisco_unity'] = $unity_enabled;
 

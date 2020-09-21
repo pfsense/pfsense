@@ -260,7 +260,7 @@ function execPost($post, $postfiles, $ui = true) {
 				if ($ui) {
 					send_user_download('data', $data, $name);
 				} else {
-					return ui_encode(array("contents" => base64_encode($data), "name" => $name));
+					return json_encode(array("contents" => base64_encode($data), "name" => $name));
 				}
 			}
 		}

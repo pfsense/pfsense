@@ -85,6 +85,8 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['mobile'] = 'true';
 	} else {
 		$pconfig['remotegw'] = $a_phase1[$p1index]['remote-gateway'];
+		$pconfig['ikeport'] = $a_phase1[$p1index]['ikeport'];
+		$pconfig['nattport'] = $a_phase1[$p1index]['nattport'];
 	}
 
 	if (empty($a_phase1[$p1index]['iketype'])) {
@@ -293,6 +295,26 @@ if ($_POST['save']) {
 		} elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] == "inet")) {
 			$input_errors[] = gettext("A valid remote gateway IPv6 address must be specified or protocol needs to be changed to IPv4");
 		}
+	}
+
+	if ($_POST['ikeport']) {
+		if (!is_port($pconfig['ikeport'])) {
+			$input_errors[] = gettext("The IKE port number is invalid.");
+		}
+	} else {
+		unset($pconfig['ikeport']);
+	}
+
+	if ($_POST['nattport']) {
+		if (!is_port($pconfig['nattport'])) {
+			$input_errors[] = gettext("The NAT-T port number is invalid.");
+		}
+	} else {
+		unset($pconfig['nattport']);
+	}
+
+	if (isset($pconfig['ikeport']) && isset($pconfig['nattport']) && $pconfig['ikeport'] == $pconfig['nattport']) {
+		$input_errors[] = gettext("IKE and NAT-T port numbers must be different.");
 	}
 
 	if ($pconfig['remotegw'] && is_ipaddr($pconfig['remotegw']) && !isset($pconfig['disabled'])) {
@@ -525,6 +547,16 @@ if ($_POST['save']) {
 			$ph1ent['mobile'] = true;
 		} else {
 			$ph1ent['remote-gateway'] = $pconfig['remotegw'];
+			if ( !empty($pconfig['ikeport']) ) {
+				$ph1ent['ikeport'] = $pconfig['ikeport'];
+			} else {
+				unset($ph1ent['ikeport']);
+			}
+			if ( !empty($pconfig['nattport']) ) {
+				$ph1ent['nattport'] = $pconfig['nattport'];
+			} else {
+				unset($ph1ent['nattport']);
+			}
 		}
 
 		$ph1ent['protocol'] = $pconfig['protocol'];
@@ -763,9 +795,11 @@ $section->addInput(new Form_Select(
 ))->setHelp('Select the interface for the local endpoint of this phase1 entry.');
 
 if (!$pconfig['mobile']) {
-	$section->addInput(new Form_Input(
+	$group = new Form_Group('*Remote Gateway');
+
+	$group->add(new Form_Input(
 		'remotegw',
-		'*Remote Gateway',
+		'Remote Gateway',
 		'text',
 		$pconfig['remotegw']
 	))->setHelp('Enter the public IP address or host name of the remote gateway.%1$s%2$s%3$s',
@@ -774,6 +808,25 @@ if (!$pconfig['mobile']) {
 	    'to allow connections from any IPv6 address.' . '<br/>' . 'Responder Only must be set and ' . 
 	    'Peer IP Address cannot be used for Remote Identifier.'), 'info', false),
 	    '</div>');
+	$group->add(new Form_Input(
+	    'ikeport',
+	    'Remote IKE Port',
+	    'number',
+	    $pconfig['ikeport'],
+	    ['min' => 1, 'max' => 65535]
+	))->setHelp('UDP port for IKE on the remote gateway. Leave empty for default automatic behavior (500/4500).');
+	$group->add(new Form_Input(
+	    'nattport',
+	    'Remote NAT-T Port',
+	    'number',
+	    $pconfig['nattport'],
+	    ['min' => 1, 'max' => 65535]
+	))->setHelp('UDP port for NAT-T on the remote gateway.%1$s%2$s%3$s',
+	    '<div class="infoblock">',
+	    sprint_info_box(gettext('If the IKE port is empty and NAT-T contains a value, the tunnel will use only NAT-T.'),
+	    'info', false),
+	    '</div>');
+	$section->add($group);
 }
 
 $section->addInput(new Form_Input(

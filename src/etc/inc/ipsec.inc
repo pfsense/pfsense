@@ -1379,6 +1379,14 @@ function ipsec_setup_strongswan() {
 		$ssconf['charon']['make_before_break'] = "yes";
 	}
 
+	if (isset($config['ipsec']['port'])) {
+		$ssconf['charon']['port'] = $config['ipsec']['port'];
+	}
+
+	if (isset($config['ipsec']['port_nat_t'])) {
+		$ssconf['charon']['port_nat_t'] = $config['ipsec']['port_nat_t'];
+	}
+
 	$ssconf['charon']['syslog'] = array();
 	$ssconf['charon']['syslog']['identifier'] = 'charon';
 	$ssconf['charon']['syslog'][] = "# log everything under daemon since it ends up in the same place regardless with our syslog.conf";
@@ -2130,6 +2138,17 @@ function ipsec_setup_tunnels() {
 		/* TFC Padding */
 		if (isset($ph1ent['tfc_enable'])) {
 			$conn['tfc_padding'] = (isset($ph1ent['tfc_bytes']) && is_numericint($ph1ent['tfc_bytes'])) ? $ph1ent['tfc_bytes'] : "mtu";
+		}
+
+		/* Custom Ports */
+		if (isset($ph1ent['ikeport'])) {
+			/* For a connection without encapsulation, do not set local_port */
+			$conn['remote_port'] = $ph1ent['ikeport'];
+		} elseif (isset($ph1ent['nattport'])) {
+			/* For an encapsulated connection,
+			 * set local_port to the server NAT-T port value or default (4500) */
+			$conn['local_port'] = isset($config['ipsec']['port_nat_t']) ? $config['ipsec']['port_nat_t'] : 4500;
+			$conn['remote_port'] = $ph1ent['nattport'];
 		}
 
 		/* Arrays for P2s/children */

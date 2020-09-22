@@ -32,6 +32,7 @@ ini_set('max_input_time', '0');
 /* omit no-cache headers because it confuses IE with file downloads */
 $omit_nocacheheaders = true;
 require_once("config.gui.inc");
+require_once("config.lib.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
@@ -509,6 +510,8 @@ function execPost($post, $postfiles, $ui = true) {
 // Compose a list of recent backups formatted as a JSON array
 function listBackupsJSON() {
 	global $g;
+
+	cleanup_backupcache(false);
 
 	$raw = unserialize(file_get_contents($g["cf_conf_path"] . "/backup/backup.cache"));
 

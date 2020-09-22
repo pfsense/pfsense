@@ -57,6 +57,7 @@ if (is_numericint($_REQUEST['id'])) {
 
 if (isset($id) && $a_pppoes[$id]) {
 	$pppoecfg =& $a_pppoes[$id];
+	$pppoecfg_old = $a_pppoes[$id];
 
 	$pconfig['remoteip'] = $pppoecfg['remoteip'];
 	$pconfig['localip'] = $pppoecfg['localip'];
@@ -242,6 +243,22 @@ if ($_POST['save']) {
 			$pppoecfg['username'] = implode(" ", $users);
 		}
 
+		if (isset($id) && 
+		    (($pppoecfg_old['remoteip'] != $pppoecfg['remoteip']) ||
+		    ($pppoecfg_old['localip'] != $pppoecfg['localip']) ||
+		    ($pppoecfg_old['mode'] != $pppoecfg['mode']) ||
+		    ($pppoecfg_old['interface'] != $pppoecfg['interface']) ||
+		    ($pppoecfg_old['n_pppoe_units'] != $pppoecfg['n_pppoe_units']) ||
+		    ($pppoecfg_old['n_pppoe_maxlogin'] != $pppoecfg['n_pppoe_maxlogin']) ||
+		    ($pppoecfg_old['pppoe_subnet'] != $pppoecfg['pppoe_subnet']) ||
+		    ($pppoecfg_old['dns1'] != $pppoecfg['dns1']) ||
+		    ($pppoecfg_old['dns2'] != $pppoecfg['dns2']) ||
+		    ($pppoecfg_old['radius'] != $pppoecfg['radius']))) {
+		    	$reload = true;
+		} else {
+			$reload = false;
+		}
+
 		if (!isset($id)) {
 			$id = count($a_pppoes);
 		}
@@ -252,12 +269,17 @@ if ($_POST['save']) {
 			$toapplylist = array();
 		}
 
-		$toapplylist[] = $pppoecfg['pppoeid'];
-		$a_pppoes[$id] = $pppoecfg;
-
 		write_config();
-		mark_subsystem_dirty('vpnpppoe');
-		file_put_contents("{$g['tmp_path']}/.vpn_pppoe.apply", serialize($toapplylist));
+
+		if ($reload) {
+			$toapplylist[] = $pppoecfg['pppoeid'];
+			mark_subsystem_dirty('vpnpppoe');
+			file_put_contents("{$g['tmp_path']}/.vpn_pppoe.apply", serialize($toapplylist));
+		}
+
+		$a_pppoes[$id] = $pppoecfg;
+		vpn_pppoe_updatesecret($pppoecfg);
+
 		header("Location: services_pppoe.php");
 		exit;
 	}

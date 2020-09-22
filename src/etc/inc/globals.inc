@@ -89,7 +89,13 @@ $g = array(
 	"default_log_entries" => 500,
 	"default_log_size" => 512000,
 	"minimumtableentries_bogonsv6" => 400000,
-	"alternativemetaports" => array("vmware", "php72", "php73", "php74")
+	"alternativemetaports" => array("vmware", "php72", "php73", "php74"),
+	"backuppath" => array(
+		'captiveportal' => "/var/db/captiveportal*.db",
+		'dhcpd' => "/var/dhcpd/var/db/dhcpd.leases",
+		'dhcpdv6' => "/var/dhcpd/var/db/dhcpd6.leases",
+		'voucher' => "/var/db/voucher_*.db"
+	)
 );
 
 /* IP TOS flags */

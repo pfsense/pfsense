@@ -2620,6 +2620,10 @@ function route_get($target, $ipprotocol = '') {
 
 	$rtable = route_table();
 
+	if (empty($rtable)) {
+		return array();
+	}
+
 	$result = array();
 	foreach ($rtable[$family] as $item) {
 		if ($item['destination'] == $target) {

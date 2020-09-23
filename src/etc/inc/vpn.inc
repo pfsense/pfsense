@@ -220,32 +220,7 @@ EOD;
 			fclose($fd);
 			unset($mpdconf);
 
-			if ($pppoecfg['username']) {
-				/* write mpd.secret */
-				$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", "w");
-				if (!$fd) {
-					printf(gettext("Error: cannot open mpd.secret in vpn_pppoe_configure().") . "\n");
-					return 1;
-				}
-
-				$mpdsecret = "\n\n";
-
-				if (!empty($pppoecfg['username'])) {
-					$item = explode(" ", $pppoecfg['username']);
-					foreach ($item as $userdata) {
-						$data = explode(":", $userdata);
-						/* Escape double quotes, do not allow password to start with '!'
-						 * https://redmine.pfsense.org/issues/10275 */
-						$pass = str_replace('"', '\"', ltrim(base64_decode($data[1]), '!'));
-						$mpdsecret .= "{$data[0]} \"{$pass}\" {$data[2]}\n";
-					}
-				}
-
-				fwrite($fd, $mpdsecret);
-				fclose($fd);
-				unset($mpdsecret);
-				chmod("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", 0600);
-			}
+			vpn_pppoe_updatesecret($pppoecfg);
 
 			/* Check if previous instance is still up */
 			while (file_exists("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid") && isvalidpid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid")) {
@@ -265,6 +240,38 @@ EOD;
 	}
 
 	return 0;
+}
+
+function vpn_pppoe_updatesecret(&$pppoecfg) {
+	global $config, $g;
+
+	if ($pppoecfg['username']) {
+		/* write mpd.secret */
+		$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", "w");
+		if (!$fd) {
+			printf(gettext("Error: cannot open mpd.secret in vpn_pppoe_configure().") . "\n");
+			return 1;
+		}
+
+		$mpdsecret = "\n\n";
+
+		if (!empty($pppoecfg['username'])) {
+			$item = explode(" ", $pppoecfg['username']);
+			foreach ($item as $userdata) {
+				$data = explode(":", $userdata);
+				/* Escape double quotes, do not allow password to start with '!'
+				 * https://redmine.pfsense.org/issues/10275 */
+				$pass = str_replace('"', '\"', ltrim(base64_decode($data[1]), '!'));
+				$mpdsecret .= "{$data[0]} \"{$pass}\" {$data[2]}\n";
+			}
+		}
+
+		fwrite($fd, $mpdsecret);
+		fclose($fd);
+		unset($mpdsecret);
+		chmod("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", 0600);
+		return 0;
+	}
 }
 
 function vpn_l2tp_configure() {

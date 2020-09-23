@@ -105,6 +105,10 @@ if ($_POST['save']) {
 	if (!is_ipaddrv6(trim($_POST['dst']))) {
 		$input_errors[] = gettext("The specified destination address is not a valid IPv6 prefix");
 	}
+	if (check_subnetsv6_overlap(get_interface_ipv6($_POST['interface']), 128, trim($_POST['dst']), $_POST['dstmask']) &&
+	    !$_POST['dstnot']) {
+		$input_errors[] = gettext("The specified destination address and interface IPv6 address cannot overlap");
+	}
 
 	if (!$input_errors) {
 		$natent = array();

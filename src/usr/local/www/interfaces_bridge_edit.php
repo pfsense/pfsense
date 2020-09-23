@@ -184,6 +184,18 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("At least one member interface must be selected for a bridge.");
 	}
 
+	if (is_array($_POST['members']) && is_array($config['captiveportal'])) {
+		foreach ($_POST['members'] as $member) {
+			foreach ($config['captiveportal'] as $cp) {
+				if (in_array($member, explode(',', $cp['interface']))) {
+					$input_errors[] = sprintf(gettext('The interface (%s) is part of ' .
+						'the Captive Portal and cannot be part of the bridge. ' .
+						'Remove the interface to continue.'), $ifacelist[$cpint]);
+				}
+			}
+		}
+	}
+
 	if (is_array($_POST['static'])) {
 		foreach ($_POST['static'] as $ifstatic) {
 			if (is_array($_POST['members']) && !in_array($ifstatic, $_POST['members'])) {

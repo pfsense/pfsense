@@ -458,7 +458,7 @@ print($form);
 
 <div class="infoblock">
 	<?php print_info_box(gettext("Proxy ARP and Other type Virtual IP addresses cannot be used for binding by services on the firewall (IPsec, OpenVPN, etc.). Use an IP Alias or CARP type VIP for these roles.") . '<br />' .
-			   sprintf(gettext("For more information, visit the pfSense book section on %s"), '<a href="https://docs.netgate.com/pfsense/en/latest/book/firewall/virtual-ip-addresses.html">Virtual IP Addresses</a>.'), 'info', false); ?>
+			   sprintf(gettext("For more information, visit the pfSense book section on %s"), '<a href="https://docs.netgate.com/pfsense/en/latest/firewall/virtual-ip-addresses.html">Virtual IP Addresses</a>.'), 'info', false); ?>
 </div>
 
 <script type="text/javascript">

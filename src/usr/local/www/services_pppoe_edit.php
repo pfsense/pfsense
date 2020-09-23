@@ -296,7 +296,9 @@ function build_interface_list() {
 	$interfaces = get_configured_interface_with_descr();
 
 	foreach ($interfaces as $iface => $ifacename) {
-		$list[$iface] = $ifacename;
+		if (!is_pseudo_interface(convert_friendly_interface_to_real_interface_name($iface))) {
+			$list[$iface] = $ifacename;
+		}
 	}
 
 	return($list);

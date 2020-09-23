@@ -60,7 +60,9 @@ if ($_POST) {
 		clear_subsystem_dirty('packagelock');
 		$savemsg = "Package lock cleared.";
 	} else {
-		$input_errors = execPost($_POST, $_FILES);
+		$execpost_return = execPost($_POST, $_FILES);
+		$input_errors = $execpost_return['input_errors'];
+		$savemsg = $execpost_return['savemsg'];
 	}
 
 }
@@ -176,8 +178,10 @@ $section->addInput(new Form_Checkbox(
 	'Backup extra data.',
 	true
 ))->setHelp('Backup extra data files for some services.%1$s' .
-	    '%2$s%3$sCaptive Portal - Captive Portal DB and UsedMACs%4$s' .
-	    '%3$sCaptive Portal Vouchers - Used Vouchers DB%4$s%5$s', 
+	    '%2$s%3$sCaptive Portal - Captive Portal DB and UsedMACs DB%4$s' .
+	    '%3$sCaptive Portal Vouchers - Used Vouchers DB%4$s' .
+	    '%3$sDHCP Server - DHCP leases DB%4$s' .
+	    '%3$sDHCPv6 Server - DHCPv6 leases DB%4$s%5$s',
 	    '<div class="infoblock">', '<ul>', '<li>', '</li>', '</ul></div>'
 );
 
@@ -336,8 +340,7 @@ events.push(function() {
 			disableInput('donotbackuprrd', true);
 			disableInput('nopackages', true);
 			disableInput('backupdata', true);
-			if ((document.getElementById("backuparea").value == 'captiveportal') ||
-			    (document.getElementById("backuparea").value == 'voucher')) {
+			if (['captiveportal', 'dhcpd', 'dhcpdv6', 'voucher'].includes(document.getElementById("backuparea").value)) {
 				disableInput('backupdata', false);
 			}
 		}

@@ -116,9 +116,11 @@ function restore_rrddata() {
 
 function restore_xmldatafile($type='voucher') {
 	global $config, $g;
+
 	foreach ($config[$type]["{$type}data"]["xmldatafile"] as $file) {
 		$basename = basename($file['filename']);
-		$xmldata_file = "{$g['vardb_path']}/{$basename}";
+		$dirname = dirname($g['backuppath'][$type]);
+		$xmldata_file = "{$dirname}/{$basename}";
 		if (file_put_contents($xmldata_file, gzinflate(base64_decode($file['data']))) === false) {
 			log_error(sprintf(gettext("Cannot write %s"), $xmldata_file));
 			continue;
@@ -129,7 +131,7 @@ function restore_xmldatafile($type='voucher') {
 function backup_xmldatafile($tab=false, $type='voucher') {
 	global $g;
 
-	$xmldata_files = glob("{$g['vardb_path']}/{$type}*.db");
+	$xmldata_files = glob("{$g['backuppath'][$type]}");
 	if (empty($xmldata_files)) {
 		return;
 	}
@@ -202,17 +204,11 @@ function execPost($post, $postfiles, $ui = true) {
 					} else if ($post['backuparea'] === "rrddata") {
 						$data = rrd_data_xml();
 						$name = "{$post['backuparea']}-{$name}";
-					} else if (($post['backuparea'] === "captiveportal") && $post['backupdata']) {
+					} else if (array_key_exists($post['backuparea'], $g['backuppath']) && $post['backupdata']) {
 						$data = backup_config_section($post['backuparea']);
-						$captiveportal_data_xml = backup_xmldatafile(false, 'captiveportal');
-						$closing_tag = "</captiveportal>";
-						$data = str_replace($closing_tag, $captiveportal_data_xml . $closing_tag, $data);
-						$name = "{$post['backuparea']}-{$name}";
-					} else if (($post['backuparea'] === "voucher") && $post['backupdata']) {
-						$data = backup_config_section($post['backuparea']);
-						$voucher_data_xml = backup_xmldatafile(false, 'voucher');
-						$closing_tag = "</voucher>";
-						$data = str_replace($closing_tag, $voucher_data_xml . $closing_tag, $data);
+						$dataxml = backup_xmldatafile(false, $post['backuparea']);
+						$closing_tag = "</{$post['backuparea']}>";
+						$data = str_replace($closing_tag, $dataxml . $closing_tag, $data);
 						$name = "{$post['backuparea']}-{$name}";
 					} else {
 						/* backup specific area of configuration */
@@ -233,18 +229,14 @@ function execPost($post, $postfiles, $ui = true) {
 				$data = preg_replace("/[[:blank:]]*<rrddata>.*<\\/rrddata>[[:blank:]]*\n*/s", "", $data);
 				$data = preg_replace("/[[:blank:]]*<rrddata\\/>[[:blank:]]*\n*/", "", $data);
 
-				if (!$post['backuparea'] && !empty($config['captiveportal']) &&
-				    $post['backupdata']) {
-					$captiveportal_data_xml = backup_xmldatafile(true, 'captiveportal');
-					$closing_tag = "\t</captiveportal>";
-					$data = str_replace($closing_tag, $captiveportal_data_xml . $closing_tag, $data);
-				}
-
-				if (!$post['backuparea'] && !empty($config['voucher']) &&
-				    $post['backupdata']) {
-					$voucher_data_xml = backup_xmldatafile(true, 'voucher');
-					$closing_tag = "\t</voucher>";
-					$data = str_replace($closing_tag, $voucher_data_xml . $closing_tag, $data);
+				if (!$post['backuparea'] && $post['backupdata']) {
+					foreach ($g['backuppath'] as $bk => $path) {
+						if (!empty($config[$bk])) {
+							$dataxml = backup_xmldatafile(true, $bk);
+							$closing_tag = "\t</{$bk}>";
+							$data = str_replace($closing_tag, $dataxml . $closing_tag, $data);
+						}
+					}
 				}
 
 				if ($post['backuparea'] !== "rrddata" && !$post['donotbackuprrd']) {
@@ -311,24 +303,19 @@ function execPost($post, $postfiles, $ui = true) {
 							if (!restore_config_section($post['restorearea'], $data)) {
 								$input_errors[] = gettext("An area to restore was selected but the correct xml tag could not be located.");
 							} else {
-								if ($config['rrddata'] || $config['voucher']['voucherdata'] ||
-								    $config['captiveportal']['captiveportaldata']) {
-									if ($config['rrddata']) {
-										restore_rrddata();
-										unset($config['rrddata']);
-										write_config(sprintf(gettext("Unset RRD data from configuration after restoring %s configuration area"), $post['restorearea']));
-									}
-									if (($post['restorearea'] == 'voucher') && $config['voucher']['voucherdata']) {
-										restore_xmldatafile('voucher');
-										unset($config['voucher']['voucherdata']);
-										write_config(sprintf(gettext("Unset Voucher data from configuration after restoring %s configuration area"), $post['restorearea']));
-									}
-									if (($post['restorearea'] == 'captiveportal') &&
-									    $config['captiveportal']['captiveportaldata']) {
-										restore_xmldatafile('captiveportal');
-										unset($config['captiveportal']['captiveportaldata']);
-										write_config(sprintf(gettext("Unset Captive Portal DB and Used MACs data from configuration after restoring %s configuration area"), $post['restorearea']));
-									}
+								$conf_change = false;
+								if ($config['rrddata']) {
+									restore_rrddata();
+									unset($config['rrddata']);
+									$conf_change = true;
+								}
+								if (!empty($config[$post['restorearea']][$post['restorearea'].'data'])) {
+									restore_xmldatafile($post['restorearea']);
+									unset($config[$post['restorearea']][$post['restorearea'].'data']);
+									$conf_change = true;
+								}
+								if ($conf_change) {
+									write_config(sprintf(gettext("Unset RRD and extra data from configuration after restoring %s configuration area"), $post['restorearea']));
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									convert_config();
 								}
@@ -393,21 +380,21 @@ function execPost($post, $postfiles, $ui = true) {
 									unset($loaderconf);
 								}
 								/* extract out rrd items, unset from $config when done */
-								if ($config['rrddata'] || $config['voucher']['voucherdata'] ||
-							            $config['captiveportal']['captiveportaldata']) {
-									if ($config['rrddata']) {
-										restore_rrddata();
-										unset($config['rrddata']);
+								$conf_change = false;
+								if ($config['rrddata']) {
+									restore_rrddata();
+									unset($config['rrddata']);
+									$conf_change = true;
+								}
+								foreach ($g['backuppath'] as $bk => $path) {
+									if (!empty($config[$bk][$bk.'data'])) {
+										restore_xmldatafile($bk);
+										unset($config[$bk][$bk.'data']);
+										$conf_change = true;
 									}
-									if ($config['voucher']['voucherdata']) {
-										restore_xmldatafile('voucher');
-										unset($config['voucher']['voucherdata']);
-									}
-									if ($config['captiveportal']['captiveportaldata']) {
-										restore_xmldatafile('captiveportal');
-										unset($config['captiveportal']['captiveportaldata']);
-									}
-									write_config(gettext("Unset RRD, Voucher, Captive Portal DB and Used MACs data from configuration after full restore."));
+								}
+								if ($conf_change) {
+									write_config(gettext("Unset RRD and extra data from configuration after full restore."));
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									convert_config();
 								}
@@ -504,7 +491,7 @@ function execPost($post, $postfiles, $ui = true) {
 		}
 	}
 
-	return $input_errors;
+	return array("input_errors" => $input_errors, "savemsg" => $savemsg);
 }
 
 // Compose a list of recent backups formatted as a JSON array

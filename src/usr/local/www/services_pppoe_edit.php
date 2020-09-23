@@ -109,6 +109,11 @@ if ($_POST['save']) {
 			$reqdfieldsn = array_merge($reqdfieldsn,
 				array(gettext("RADIUS server address"), gettext("RADIUS shared secret")));
 		}
+		if ($_POST['radiussecenable']) {
+			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver2 radiussecret2"));
+			$reqdfieldsn = array_merge($reqdfieldsn,
+				array(gettext("Secondary RADIUS server address"), gettext("Secondary RADIUS server shared secret")));
+		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -492,10 +497,11 @@ $section->addPassword(new Form_Input(
 $counter = 0;
 $numrows = count($item) -1;
 
-$usernames = $pconfig['username'];
-
-//DEBUG
-//$usernames = 'sbeaver:TXlQYXNzd2Q=:192.168.1.1 smith:TXlQYXNzd2Q=:192.168.2.1 sjones:TXlQYXNzd2Q=:192.168.3.1 salpha:TXlQYXNzd2Q=:192.168.4.1';
+if (!empty($pconfig['username'])) {
+	$usernames = $pconfig['username'];
+} else {
+	$usernames = $pppoecfg['username'];
+}
 
 if ($usernames == "") {
 	$usernames = '::';

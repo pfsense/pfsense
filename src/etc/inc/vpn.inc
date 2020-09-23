@@ -194,8 +194,20 @@ EOD;
 				if (isset($pppoecfg['radius']['server']['acctport'])) {
 					$radiusacctport = $pppoecfg['radius']['server']['acctport'];
 				}
+				$mpdconf .= "\tset radius server {$pppoecfg['radius']['server']['ip']} \"{$pppoecfg['radius']['server']['secret']}\" {$radiusport} {$radiusacctport}\n";
+				if (isset($pppoecfg['radius']['server2']['enable'])) {
+					$radiusport = "";
+					$radiusacctport = "";
+					if (isset($pppoecfg['radius']['server2']['port'])) {
+						$radiusport = $pppoecfg['radius']['server2']['port'];
+					}
+					if (isset($pppoecfg['radius']['server2']['acctport'])) {
+						$radiusacctport = $pppoecfg['radius']['server2']['acctport'];
+					}
+					$mpdconf .= "\tset radius server {$pppoecfg['radius']['server2']['ip']} \"{$pppoecfg['radius']['server2']['secret2']}\" {$radiusport} {$radiusacctport}\n";
+				}
+
 				$mpdconf .=<<<EOD
-	set radius server {$pppoecfg['radius']['server']['ip']} "{$pppoecfg['radius']['server']['secret']}" {$radiusport} {$radiusacctport}
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth

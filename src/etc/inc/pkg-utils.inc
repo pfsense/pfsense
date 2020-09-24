@@ -864,6 +864,8 @@ function install_package_xml($package_name) {
 		return false;
 	}
 
+	$pkg_data = &$config['installedpackages']['package'][$pkgid];
+
 	update_status(gettext("Loading package configuration... "));
 	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
 	    $pkg_info['configurationfile'], "packagegui");
@@ -871,7 +873,7 @@ function install_package_xml($package_name) {
 	update_status(gettext("Configuring package components...") .
 	    "\n");
 	if (!empty($pkg_config['filter_rules_needed'])) {
-		$config['installedpackages']['package'][$pkgid]['filter_rule_function'] =
+		$pkg_data['filter_rule_function'] =
 		    $pkg_config['filter_rules_needed'];
 	}
 	/* modify system files */
@@ -954,14 +956,14 @@ function install_package_xml($package_name) {
 		update_status(gettext("done.") . "\n");
 	}
 	if (is_array($pkg_config['tabs'])) {
-		$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];
+		$pkg_data['tabs'] = $pkg_config['tabs'];
 	}
 	/* plugins */
 	if (isset($pkg_config['include_file'])) {
-		$config['installedpackages']['package'][$pkgid]['include_file'] = $pkg_config['include_file'];
+		$pkg_data['include_file'] = $pkg_config['include_file'];
 	}
 	if (is_array($pkg_config['plugins']['item'])) {
-		$config['installedpackages']['package'][$pkgid]['plugins']['item'] = $pkg_config['plugins']['item'];
+		$pkg_data['plugins']['item'] = $pkg_config['plugins']['item'];
 	}
 
 	update_status(gettext("Writing configuration... "));
@@ -1062,12 +1064,15 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		 */
 		$missing_include = false;
 		if ($pkg_config['include_file'] <> "") {
-			update_status(gettext("Loading package instructions...") . "\n");
+			update_status(gettext("Loading package instructions...")
+			    . "\n");
 			if (file_exists($pkg_config['include_file'])) {
-				pkg_debug("require_once(\"{$pkg_config['include_file']}\")\n");
+				pkg_debug("require_once(\"" .
+				    "{$pkg_config['include_file']}\")\n");
 				require_once($pkg_config['include_file']);
 			} else {
-				pkg_debug("Missing include {$pkg_config['include_file']}\n");
+				pkg_debug("Missing include " .
+				    $pkg_config['include_file'] . "\n");
 				$missing_include = true;
 				update_status(sprintf(gettext("Include file " .
 				    "%s could not be found for inclusion."),
@@ -1093,7 +1098,8 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 			}
 		}
 		/* deinstall commands */
-		if ($when == "deinstall" && $pkg_config['custom_php_deinstall_command'] <> "") {
+		if ($when == "deinstall" &&
+		    $pkg_config['custom_php_deinstall_command'] <> "") {
 			update_status(gettext("Deinstall commands... "));
 			if ($missing_include == false) {
 				eval_once($pkg_config['custom_php_deinstall_command']);

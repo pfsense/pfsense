@@ -1007,15 +1007,14 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
 		    $pkg_info['configurationfile'], "packagegui");
 		/* remove menu items */
-		if (is_array($pkg_config['menu'])) {
+		if (is_array($pkg_config['menu']) && is_array($menus)) {
 			update_status(gettext("Menu items... "));
-			if (is_array($pkg_config['menu']) && is_array($menus)) {
-				foreach ($pkg_config['menu'] as $menu) {
-					foreach ($menus as $key => $instmenu) {
-						if ($instmenu['name'] == $menu['name']) {
-							unset($menus[$key]);
-							break;
-						}
+			foreach ($pkg_config['menu'] as $menu) {
+				foreach ($menus as $key => $instmenu) {
+					if ($instmenu['name'] ==
+					    $menu['name']) {
+						unset($menus[$key]);
+						break;
 					}
 				}
 			}

@@ -50,6 +50,7 @@ if (!function_exists("pkg_debug")) {
 		if (!$fd_log) {
 			update_status(gettext("Warning, could not open log " .
 			    "for writing.") . "\n");
+			return;
 		}
 		@fwrite($fd_log, $msg);
 	}

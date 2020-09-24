@@ -998,15 +998,14 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	    $package_name) . "\n");
 	/* parse package configuration */
 	init_config_arr(array('installedpackages', 'package', $pkgid));
-	$packages = &$config['installedpackages']['package'];
-	$pkg_info = &$packages[$pkgid];
+	$pkg_info = $config['installedpackages']['package'][$pkgid];
 	init_config_arr(array('installedpackages', 'menu'));
 	$menus = &$config['installedpackages']['menu'];
 	init_config_arr(array('installedpackages', 'service'));
 	$services = &$config['installedpackages']['service'];
 	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
-		    $packages[$pkgid]['configurationfile'], "packagegui");
+		    $pkg_info['configurationfile'], "packagegui");
 		/* remove menu items */
 		if (is_array($pkg_config['menu'])) {
 			update_status(gettext("Menu items... "));

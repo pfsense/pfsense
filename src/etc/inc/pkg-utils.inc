@@ -885,20 +885,26 @@ function install_package_xml($package_name) {
 	 */
 	$missing_include = false;
 	if ($pkg_config['include_file'] <> "") {
-		update_status(gettext("Loading package instructions...") . "\n");
+		update_status(gettext("Loading package instructions...") .
+		    "\n");
 		if (file_exists($pkg_config['include_file'])) {
-			pkg_debug("require_once('{$pkg_config['include_file']}')\n");
+			pkg_debug("require_once('" .
+			    $pkg_config['include_file'] . "')\n");
 			require_once($pkg_config['include_file']);
 		} else {
-			pkg_debug("Missing include {$pkg_config['include_file']}\n");
+			pkg_debug("Missing include " .
+			    "{$pkg_config['include_file']}\n");
 			$missing_include = true;
 			update_status(sprintf(gettext("Include %s is missing!"),
 			    basename($pkg_config['include_file'])) . "\n");
 
 			uninstall_package($package_name);
 			write_config($changedesc);
-			log_error(sprintf(gettext("Failed to install package: %s."), $pkg_info['name']));
-			update_status(gettext("Failed to install package.") . "\n");
+			log_error(sprintf(gettext(
+			    "Failed to install package: %s."),
+			    $pkg_info['name']));
+			update_status(gettext("Failed to install package.") .
+			    "\n");
 			return false;
 		}
 	}
@@ -907,18 +913,22 @@ function install_package_xml($package_name) {
 	update_status(gettext("Custom commands...") . "\n");
 	if ($missing_include == false) {
 		if ($pkg_config['custom_php_global_functions'] <> "") {
-			update_status(gettext("Executing custom_php_global_functions()..."));
+			update_status(gettext(
+			    "Executing custom_php_global_functions()..."));
 			eval_once($pkg_config['custom_php_global_functions']);
 			update_status(gettext("done.") . "\n");
 		}
 		if ($pkg_config['custom_php_install_command']) {
-			update_status(gettext("Executing custom_php_install_command()..."));
+			update_status(gettext(
+			    "Executing custom_php_install_command()..."));
 			eval_once($pkg_config['custom_php_install_command']);
 			update_status(gettext("done.") . "\n");
 		}
 		if ($pkg_config['custom_php_resync_config_command'] <> "") {
-			update_status(gettext("Executing custom_php_resync_config_command()..."));
-			eval_once($pkg_config['custom_php_resync_config_command']);
+			update_status(gettext(
+			    "Executing custom_php_resync_config_command()..."));
+			eval_once(
+			    $pkg_config['custom_php_resync_config_command']);
 			update_status(gettext("done.") . "\n");
 		}
 	}

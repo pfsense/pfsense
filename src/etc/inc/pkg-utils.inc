@@ -849,111 +849,12 @@ function install_package_xml($package_name) {
 		return false;
 	}
 
-	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
-		update_status(gettext("Loading package configuration... "));
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
-		    $pkg_info['configurationfile'], "packagegui");
-		update_status(gettext("done.") . "\n");
-		update_status(gettext("Configuring package components...") .
-		    "\n");
-		if (!empty($pkg_config['filter_rules_needed'])) {
-			$config['installedpackages']['package'][$pkgid]['filter_rule_function'] =
-			    $pkg_config['filter_rules_needed'];
-		}
-		/* modify system files */
-
-		/* if a require exists, include it.  this will
-		 * show us where an error exists in a package
-		 * instead of making us blindly guess
-		 */
-		$missing_include = false;
-		if ($pkg_config['include_file'] <> "") {
-			update_status(gettext("Loading package instructions...") . "\n");
-			if (file_exists($pkg_config['include_file'])) {
-				pkg_debug("require_once('{$pkg_config['include_file']}')\n");
-				require_once($pkg_config['include_file']);
-			} else {
-				pkg_debug("Missing include {$pkg_config['include_file']}\n");
-				$missing_include = true;
-				update_status(sprintf(gettext("Include %s is missing!"),
-				    basename($pkg_config['include_file'])) . "\n");
-
-				uninstall_package($package_name);
-				write_config($changedesc);
-				log_error(sprintf(gettext("Failed to install package: %s."), $pkg_info['name']));
-				update_status(gettext("Failed to install package.") . "\n");
-				return false;
-			}
-		}
-
-		/* custom commands */
-		update_status(gettext("Custom commands...") . "\n");
-		if ($missing_include == false) {
-			if ($pkg_config['custom_php_global_functions'] <> "") {
-				update_status(gettext("Executing custom_php_global_functions()..."));
-				eval_once($pkg_config['custom_php_global_functions']);
-				update_status(gettext("done.") . "\n");
-			}
-			if ($pkg_config['custom_php_install_command']) {
-				update_status(gettext("Executing custom_php_install_command()..."));
-				eval_once($pkg_config['custom_php_install_command']);
-				update_status(gettext("done.") . "\n");
-			}
-			if ($pkg_config['custom_php_resync_config_command'] <> "") {
-				update_status(gettext("Executing custom_php_resync_config_command()..."));
-				eval_once($pkg_config['custom_php_resync_config_command']);
-				update_status(gettext("done.") . "\n");
-			}
-		}
-		/* sidebar items */
-		if (is_array($pkg_config['menu'])) {
-			update_status(gettext("Menu items... "));
-			foreach ($pkg_config['menu'] as $menu) {
-				if (is_array($config['installedpackages']['menu'])) {
-					foreach ($config['installedpackages']['menu'] as $amenu) {
-						if ($amenu['name'] == $menu['name']) {
-							continue 2;
-						}
-					}
-				} else {
-					$config['installedpackages']['menu'] = array();
-				}
-				$config['installedpackages']['menu'][] = $menu;
-			}
-			update_status(gettext("done.") . "\n");
-		}
-		/* services */
-		if (is_array($pkg_config['service'])) {
-			update_status(gettext("Services... "));
-			foreach ($pkg_config['service'] as $service) {
-				if (is_array($config['installedpackages']['service'])) {
-					foreach ($config['installedpackages']['service'] as $aservice) {
-						if ($aservice['name'] == $service['name']) {
-							continue 2;
-						}
-					}
-				} else {
-					$config['installedpackages']['service'] = array();
-				}
-				$config['installedpackages']['service'][] = $service;
-			}
-			update_status(gettext("done.") . "\n");
-		}
- 		if (is_array($pkg_config['tabs'])) {
- 			$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];
- 		}
-		/* plugins */
-		if (isset($pkg_config['include_file'])) {
-			$config['installedpackages']['package'][$pkgid]['include_file'] = $pkg_config['include_file'];
-		}
-		if (is_array($pkg_config['plugins']['item'])) {
-			$config['installedpackages']['package'][$pkgid]['plugins']['item'] = $pkg_config['plugins']['item'];
-		}
-	} else {
+	if (!file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		pkg_debug("Unable to find config file\n");
-		update_status(gettext("Loading package configuration... failed!") .
-		    "\n\n" . gettext("Installation aborted."));
-		pkg_debug(gettext("Unable to load package configuration. Installation aborted.") ."\n");
+		update_status(gettext("Loading package configuration... " .
+		    "failed!") .  "\n\n" . gettext("Installation aborted."));
+		pkg_debug(gettext("Unable to load package configuration. " .
+		    "Installation aborted.") ."\n");
 
 		uninstall_package($package_name);
 		write_config($changedesc);
@@ -961,6 +862,106 @@ function install_package_xml($package_name) {
 		    $pkg_info['name']));
 		update_status(gettext("Failed to install package.") . "\n");
 		return false;
+	}
+
+	update_status(gettext("Loading package configuration... "));
+	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
+	    $pkg_info['configurationfile'], "packagegui");
+	update_status(gettext("done.") . "\n");
+	update_status(gettext("Configuring package components...") .
+	    "\n");
+	if (!empty($pkg_config['filter_rules_needed'])) {
+		$config['installedpackages']['package'][$pkgid]['filter_rule_function'] =
+		    $pkg_config['filter_rules_needed'];
+	}
+	/* modify system files */
+
+	/* if a require exists, include it.  this will
+	 * show us where an error exists in a package
+	 * instead of making us blindly guess
+	 */
+	$missing_include = false;
+	if ($pkg_config['include_file'] <> "") {
+		update_status(gettext("Loading package instructions...") . "\n");
+		if (file_exists($pkg_config['include_file'])) {
+			pkg_debug("require_once('{$pkg_config['include_file']}')\n");
+			require_once($pkg_config['include_file']);
+		} else {
+			pkg_debug("Missing include {$pkg_config['include_file']}\n");
+			$missing_include = true;
+			update_status(sprintf(gettext("Include %s is missing!"),
+			    basename($pkg_config['include_file'])) . "\n");
+
+			uninstall_package($package_name);
+			write_config($changedesc);
+			log_error(sprintf(gettext("Failed to install package: %s."), $pkg_info['name']));
+			update_status(gettext("Failed to install package.") . "\n");
+			return false;
+		}
+	}
+
+	/* custom commands */
+	update_status(gettext("Custom commands...") . "\n");
+	if ($missing_include == false) {
+		if ($pkg_config['custom_php_global_functions'] <> "") {
+			update_status(gettext("Executing custom_php_global_functions()..."));
+			eval_once($pkg_config['custom_php_global_functions']);
+			update_status(gettext("done.") . "\n");
+		}
+		if ($pkg_config['custom_php_install_command']) {
+			update_status(gettext("Executing custom_php_install_command()..."));
+			eval_once($pkg_config['custom_php_install_command']);
+			update_status(gettext("done.") . "\n");
+		}
+		if ($pkg_config['custom_php_resync_config_command'] <> "") {
+			update_status(gettext("Executing custom_php_resync_config_command()..."));
+			eval_once($pkg_config['custom_php_resync_config_command']);
+			update_status(gettext("done.") . "\n");
+		}
+	}
+	/* sidebar items */
+	if (is_array($pkg_config['menu'])) {
+		update_status(gettext("Menu items... "));
+		foreach ($pkg_config['menu'] as $menu) {
+			if (is_array($config['installedpackages']['menu'])) {
+				foreach ($config['installedpackages']['menu'] as $amenu) {
+					if ($amenu['name'] == $menu['name']) {
+						continue 2;
+					}
+				}
+			} else {
+				$config['installedpackages']['menu'] = array();
+			}
+			$config['installedpackages']['menu'][] = $menu;
+		}
+		update_status(gettext("done.") . "\n");
+	}
+	/* services */
+	if (is_array($pkg_config['service'])) {
+		update_status(gettext("Services... "));
+		foreach ($pkg_config['service'] as $service) {
+			if (is_array($config['installedpackages']['service'])) {
+				foreach ($config['installedpackages']['service'] as $aservice) {
+					if ($aservice['name'] == $service['name']) {
+						continue 2;
+					}
+				}
+			} else {
+				$config['installedpackages']['service'] = array();
+			}
+			$config['installedpackages']['service'][] = $service;
+		}
+		update_status(gettext("done.") . "\n");
+	}
+	if (is_array($pkg_config['tabs'])) {
+		$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];
+	}
+	/* plugins */
+	if (isset($pkg_config['include_file'])) {
+		$config['installedpackages']['package'][$pkgid]['include_file'] = $pkg_config['include_file'];
+	}
+	if (is_array($pkg_config['plugins']['item'])) {
+		$config['installedpackages']['package'][$pkgid]['plugins']['item'] = $pkg_config['plugins']['item'];
 	}
 
 	update_status(gettext("Writing configuration... "));

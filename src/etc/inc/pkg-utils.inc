@@ -1021,27 +1021,28 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 			update_status(gettext("done.") . "\n");
 		}
 		/* remove services */
-		if (is_array($pkg_config['service'])) {
+		if (is_array($pkg_config['service']) && is_array($services)) {
 			update_status(gettext("Services... "));
-			if (is_array($pkg_config['service']) && is_array($services)) {
-				foreach ($pkg_config['service'] as $service) {
-					foreach ($services as $key => $instservice) {
-						if ($instservice['name'] == $service['name']) {
-							if (platform_booting() != true) {
-								stop_service($service['name']);
-							}
-							if ($service['rcfile']) {
-								$prefix = RCFILEPREFIX;
-								if (!empty($service['prefix'])) {
-									$prefix = $service['prefix'];
-								}
-								if (file_exists("{$prefix}{$service['rcfile']}")) {
-									@unlink("{$prefix}{$service['rcfile']}");
-								}
-							}
-							unset($services[$key]);
-						}
+			foreach ($pkg_config['service'] as $service) {
+				foreach ($services as $key => $instservice) {
+					if ($instservice['name'] !=
+					    $service['name']) {
+						continue;
 					}
+					if (platform_booting() != true) {
+						stop_service($service['name']);
+					}
+					if ($service['rcfile']) {
+						if (empty($service['prefix'])) {
+							$prefix = RCFILEPREFIX;
+						} else {
+							$prefix =
+							    $service['prefix'];
+						}
+						unlink_if_exists($prefix .
+						    $service['rcfile']);
+					}
+					unset($services[$key]);
 				}
 			}
 			update_status(gettext("done.") . "\n");

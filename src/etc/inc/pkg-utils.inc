@@ -761,21 +761,22 @@ function read_package_configurationfile($package_name) {
 	$pkg_config = array();
 	$id = get_package_id($package_name);
 
-	if ($id < 0 ||
-	    !isset($config['installedpackages']['package'][$id]['configurationfile'])) {
+	if ($id < 0 || !isset($config['installedpackages']['package'][$id])) {
 		return $pkg_config;
 	}
 
-	$pkg_configurationfile =
-	    $config['installedpackages']['package'][$id]['configurationfile'];
+	$pkg_data = $config['installedpackages']['package'][$id];
 
-	if (empty($pkg_configurationfile) ||
-	    !file_exists('/usr/local/pkg/' . $pkg_configurationfile)) {
+	if (empty($pkg_data['configurationfile'])) {
+		return $pkg_config;
+	}
+
+	if (!file_exists('/usr/local/pkg/' . $pkg_data['configurationfile'])) {
 		return $pkg_config;
 	}
 
 	$pkg_config = parse_xml_config_pkg('/usr/local/pkg/' .
-	    $pkg_configurationfile, "packagegui");
+	    $pkg_data['configurationfile'], "packagegui");
 
 	return $pkg_config;
 }

@@ -933,34 +933,30 @@ function install_package_xml($package_name) {
 		}
 	}
 	/* sidebar items */
+	init_config_arr(array('installedpackages', 'menu'));
 	if (is_array($pkg_config['menu'])) {
 		update_status(gettext("Menu items... "));
 		foreach ($pkg_config['menu'] as $menu) {
-			if (is_array($config['installedpackages']['menu'])) {
-				foreach ($config['installedpackages']['menu'] as $amenu) {
-					if ($amenu['name'] == $menu['name']) {
-						continue 2;
-					}
+			foreach ($config['installedpackages']['menu'] as
+			    $amenu) {
+				if ($amenu['name'] == $menu['name']) {
+					continue 2;
 				}
-			} else {
-				$config['installedpackages']['menu'] = array();
 			}
 			$config['installedpackages']['menu'][] = $menu;
 		}
 		update_status(gettext("done.") . "\n");
 	}
 	/* services */
+	init_config_arr(array('installedpackages', 'service'));
 	if (is_array($pkg_config['service'])) {
 		update_status(gettext("Services... "));
 		foreach ($pkg_config['service'] as $service) {
-			if (is_array($config['installedpackages']['service'])) {
-				foreach ($config['installedpackages']['service'] as $aservice) {
-					if ($aservice['name'] == $service['name']) {
-						continue 2;
-					}
+			foreach ($config['installedpackages']['service'] as
+			    $aservice) {
+				if ($aservice['name'] == $service['name']) {
+					continue 2;
 				}
-			} else {
-				$config['installedpackages']['service'] = array();
 			}
 			$config['installedpackages']['service'][] = $service;
 		}

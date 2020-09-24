@@ -43,9 +43,13 @@ if (!function_exists("pkg_debug")) {
 		}
 
 		if (!$fd_log) {
-			if (!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_debug.log", "w")) {
-				update_status(gettext("Warning, could not open log for writing.") . "\n");
-			}
+			$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_debug.log",
+			    "w");
+		}
+
+		if (!$fd_log) {
+			update_status(gettext("Warning, could not open log " .
+			    "for writing.") . "\n");
 		}
 		@fwrite($fd_log, $msg);
 	}
@@ -63,7 +67,8 @@ function pkg_valid_name($pkgname) {
 function pkg_remove_prefix(&$pkg_name) {
 	global $g;
 
-	if (substr($pkg_name, 0, strlen($g['pkg_prefix'])) == $g['pkg_prefix']) {
+	if (substr($pkg_name, 0, strlen($g['pkg_prefix'])) ==
+	    $g['pkg_prefix']) {
 		$pkg_name = substr($pkg_name, strlen($g['pkg_prefix']));
 	}
 }
@@ -99,12 +104,16 @@ function pkg_env($extra_env = array()) {
 		}
 		$pkg_env_vars['HTTP_PROXY'] = $http_proxy;
 
-		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
-			$pkg_env_vars['HTTP_PROXY_AUTH'] = "basic:*:{$config['system']['proxyuser']}:{$config['system']['proxypass']}";
+		if (!empty($config['system']['proxyuser']) &&
+		    !empty($config['system']['proxypass'])) {
+			$pkg_env_vars['HTTP_PROXY_AUTH'] = "basic:*:" .
+			    $config['system']['proxyuser'] . ":" .
+			    $config['system']['proxypass'];
 		}
 	}
 
-	if (isset($config['system']['use_mfs_tmpvar']) && !file_exists("/conf/ram_disks_failed")) {
+	if (isset($config['system']['use_mfs_tmpvar']) &&
+	    !file_exists("/conf/ram_disks_failed")) {
 		$pkg_env_vars['PKG_DBDIR'] = '/root/var/db/pkg';
 		$pkg_env_vars['PKG_CACHEDIR'] = '/root/var/cache/pkg';
 	}
@@ -184,9 +193,9 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 
 	pkg_debug("pkg_call(): error_log\n{$error_log}\n");
 	if (!$mute) {
-		update_status("\n\n" .  sprintf(gettext(
-		    "ERROR!!! An error occurred on pkg execution (rc = %d) with parameters '%s':"),
-		    $rc, $params) . "\n" . $error_log . "\n");
+		update_status("\n\n" . sprintf(gettext("ERROR!!! An error " .
+		    "occurred on pkg execution (rc = %d) with parameters " .
+		    "'%s':"), $rc, $params) . "\n" . $error_log . "\n");
 	}
 
 	return false;
@@ -325,7 +334,8 @@ function get_package_id($package_name) {
 
 /* Return internal_name when it's defined, otherwise, returns name */
 function get_package_internal_name($package_data) {
-	if (isset($package_data['internal_name']) && ($package_data['internal_name'] != "")) {
+	if (isset($package_data['internal_name']) &&
+	    ($package_data['internal_name'] != "")) {
 		/* e.g. name is Ipguard-dev, internal name is ipguard */
 		return $package_data['internal_name'];
 	} else {
@@ -578,8 +588,9 @@ function register_all_installed_packages() {
 }
 
 /*
- * resync_all_package_configs() Force packages to setup their configuration and rc.d files.
- * This function may also print output to the terminal indicating progress.
+ * resync_all_package_configs() Force packages to setup their configuration
+ * and rc.d files.  This function may also print output to the terminal
+ * indicating progress.
  */
 function resync_all_package_configs($show_message = false) {
 	global $config, $pkg_interface, $g;
@@ -621,7 +632,8 @@ function uninstall_package($package_name) {
 	$internal_name = $package_name;
 	$id = get_package_id($package_name);
 	if ($id >= 0) {
-		$internal_name = get_package_internal_name($config['installedpackages']['package'][$id]);
+		$internal_name = get_package_internal_name(
+		    $config['installedpackages']['package'][$id]);
 		stop_service($internal_name);
 	}
 	$pkg_name = $g['pkg_prefix'] . $internal_name;
@@ -642,7 +654,8 @@ function reinstall_package($package_name) {
 	$internal_name = $package_name;
 	$id = get_package_id($package_name);
 	if ($id >= 0) {
-		$internal_name = get_package_internal_name($config['installedpackages']['package'][$id]);
+		$internal_name = get_package_internal_name(
+		    $config['installedpackages']['package'][$id]);
 	}
 	$pkg_name = $g['pkg_prefix'] . $internal_name;
 	pkg_install($pkg_name);
@@ -663,21 +676,26 @@ function sync_package($package_name) {
 	}
 
 	if (($pkg_id = get_package_id($package_name)) == -1) {
-		return; // This package doesn't really exist - exit the function.
+		// This package doesn't really exist - exit the function.
+		return;
 	}
 
 	if (!is_array($config['installedpackages']['package'][$pkg_id])) {
-		return;	 // No package belongs to the pkg_id passed to this function.
+		// No package belongs to the pkg_id passed to this function.
+		return;
 	}
 
 	$package = &$config['installedpackages']['package'][$pkg_id];
 	if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-		log_error(sprintf(gettext("The %s package is missing its configuration file and must be reinstalled."), $package['name']));
+		log_error(sprintf(gettext("The %s package is missing its " .
+		    "configuration file and must be reinstalled."),
+		    $package['name']));
 		delete_package_xml($package['name']);
 		return;
 	}
 
-	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
+	    $package['configurationfile'], "packagegui");
 	if (isset($pkg_config['nosync'])) {
 		return;
 	}
@@ -688,10 +706,14 @@ function sync_package($package_name) {
 		if (file_exists($include_file)) {
 			require_once($include_file);
 		} else {
-			log_error(sprintf(gettext('Reinstalling package %1$s because its include file(%2$s) is missing!'), $package['name'], $include_file));
+			log_error(sprintf(gettext('Reinstalling package %1$s " .
+			    "because its include file(%2$s) is missing!'),
+			    $package['name'], $include_file));
 			uninstall_package($package['name']);
 			if (reinstall_package($package['name']) != 0) {
-				log_error(sprintf(gettext("Reinstalling package %s failed. Take appropriate measures!!!"), $package['name']));
+				log_error(sprintf(gettext("Reinstalling " .
+				    "package %s failed. Take appropriate " .
+				    "measures!!!"), $package['name']));
 				return;
 			}
 			if (file_exists($include_file)) {
@@ -714,7 +736,8 @@ function sync_package($package_name) {
 function read_package_config($package_name) {
 	global $g;
 
-	$pkg_info_xml = '/usr/local/share/' . $g['pkg_prefix'] . $package_name . '/info.xml';
+	$pkg_info_xml = '/usr/local/share/' . $g['pkg_prefix'] . $package_name .
+	    '/info.xml';
 
 	if (!file_exists($pkg_info_xml)) {
 		return false;
@@ -737,17 +760,21 @@ function read_package_configurationfile($package_name) {
 	$pkg_config = array();
 	$id = get_package_id($package_name);
 
-	if ($id < 0 || !isset($config['installedpackages']['package'][$id]['configurationfile'])) {
+	if ($id < 0 ||
+	    !isset($config['installedpackages']['package'][$id]['configurationfile'])) {
 		return $pkg_config;
 	}
 
-	$pkg_configurationfile = $config['installedpackages']['package'][$id]['configurationfile'];
+	$pkg_configurationfile =
+	    $config['installedpackages']['package'][$id]['configurationfile'];
 
-	if (empty($pkg_configurationfile) || !file_exists('/usr/local/pkg/' . $pkg_configurationfile)) {
+	if (empty($pkg_configurationfile) ||
+	    !file_exists('/usr/local/pkg/' . $pkg_configurationfile)) {
 		return $pkg_config;
 	}
 
-	$pkg_config = parse_xml_config_pkg('/usr/local/pkg/' . $pkg_configurationfile, "packagegui");
+	$pkg_config = parse_xml_config_pkg('/usr/local/pkg/' .
+	    $pkg_configurationfile, "packagegui");
 
 	return $pkg_config;
 }
@@ -785,7 +812,8 @@ function install_package_xml($package_name) {
 	/* safe side. Write config below will send to ro again. */
 
 	pkg_debug(gettext("Beginning package installation.") . "\n");
-	log_error(sprintf(gettext('Beginning package installation for %s .'), $pkg_info['name']));
+	log_error(sprintf(gettext('Beginning package installation for %s .'),
+	    $pkg_info['name']));
 
 	/* add package information to config.xml */
 	$pkgid = get_package_id($pkg_info['name']);
@@ -793,34 +821,43 @@ function install_package_xml($package_name) {
 	if ($pkgid == -1) {
 		init_config_arr(array('installedpackages', 'package'));
 		$config['installedpackages']['package'][] = $pkg_info;
-		$changedesc = sprintf(gettext("Installed %s package."), $pkg_info['name']);
+		$changedesc = sprintf(gettext("Installed %s package."),
+		    $pkg_info['name']);
 		$to_output = gettext("done.") . "\n";
 	} else {
 		init_config_arr(array('installedpackages', 'package', $pkgid));
 		$config['installedpackages']['package'][$pkgid] = $pkg_info;
-		$changedesc = sprintf(gettext("Overwrote previous installation of %s."), $pkg_info['name']);
+		$changedesc = sprintf(gettext("Overwrote previous " .
+		    "installation of %s."), $pkg_info['name']);
 		$to_output = gettext("overwrite!") . "\n";
 	}
-	write_config(sprintf(gettext("Intermediate config write during package install for %s."), $pkg_info['name']));
+	write_config(sprintf(gettext("Intermediate config write during " .
+	    "package install for %s."), $pkg_info['name']));
 	update_status($to_output);
 
 	if (($pkgid = get_package_id($package_name)) == -1) {
-		update_status(sprintf(gettext('The %1$s package is not installed.%2$sInstallation aborted.'), $package_name, "\n\n"));
+		update_status(sprintf(gettext('The %1$s package is not " .
+		    "installed.%2$sInstallation aborted.'), $package_name,
+		    "\n\n"));
 
 		uninstall_package($package_name);
 		write_config($changedesc);
-		log_error(sprintf(gettext("Failed to install package: %s."), $pkg_info['name']));
+		log_error(sprintf(gettext("Failed to install package: %s."),
+		    $pkg_info['name']));
 		update_status(gettext("Failed to install package.") . "\n");
 		return false;
 	}
 
 	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
 		update_status(gettext("Loading package configuration... "));
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $pkg_info['configurationfile'], "packagegui");
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
+		    $pkg_info['configurationfile'], "packagegui");
 		update_status(gettext("done.") . "\n");
-		update_status(gettext("Configuring package components...") . "\n");
+		update_status(gettext("Configuring package components...") .
+		    "\n");
 		if (!empty($pkg_config['filter_rules_needed'])) {
-			$config['installedpackages']['package'][$pkgid]['filter_rule_function'] = $pkg_config['filter_rules_needed'];
+			$config['installedpackages']['package'][$pkgid]['filter_rule_function'] =
+			    $pkg_config['filter_rules_needed'];
 		}
 		/* modify system files */
 
@@ -837,7 +874,8 @@ function install_package_xml($package_name) {
 			} else {
 				pkg_debug("Missing include {$pkg_config['include_file']}\n");
 				$missing_include = true;
-				update_status(sprintf(gettext("Include %s is missing!"), basename($pkg_config['include_file'])) . "\n");
+				update_status(sprintf(gettext("Include %s is missing!"),
+				    basename($pkg_config['include_file'])) . "\n");
 
 				uninstall_package($package_name);
 				write_config($changedesc);
@@ -912,19 +950,22 @@ function install_package_xml($package_name) {
 		}
 	} else {
 		pkg_debug("Unable to find config file\n");
-		update_status(gettext("Loading package configuration... failed!") . "\n\n" . gettext("Installation aborted."));
+		update_status(gettext("Loading package configuration... failed!") .
+		    "\n\n" . gettext("Installation aborted."));
 		pkg_debug(gettext("Unable to load package configuration. Installation aborted.") ."\n");
 
 		uninstall_package($package_name);
 		write_config($changedesc);
-		log_error(sprintf(gettext("Failed to install package: %s."), $pkg_info['name']));
+		log_error(sprintf(gettext("Failed to install package: %s."),
+		    $pkg_info['name']));
 		update_status(gettext("Failed to install package.") . "\n");
 		return false;
 	}
 
 	update_status(gettext("Writing configuration... "));
 	write_config($changedesc);
-	log_error(sprintf(gettext("Successfully installed package: %s."), $pkg_info['name']));
+	log_error(sprintf(gettext("Successfully installed package: %s."),
+	    $pkg_info['name']));
 	update_status(gettext("done.") . "\n");
 	if ($pkg_info['after_install_info']) {
 		update_status($pkg_info['after_install_info']);
@@ -944,13 +985,15 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 
 	$pkgid = get_package_id($package_name);
 	if ($pkgid == -1) {
-		update_status(sprintf(gettext('The %1$s package is not installed.%2$sDeletion aborted.'), $package_name, "\n\n"));
+		update_status(sprintf(gettext('The %1$s package is not " .
+		    "installed.%2$sDeletion aborted.'), $package_name, "\n\n"));
 		ob_flush();
 		sleep(1);
 		return;
 	}
 	pkg_debug(sprintf(gettext("Removing %s package... "), $package_name));
-	update_status(sprintf(gettext("Removing %s components..."), $package_name) . "\n");
+	update_status(sprintf(gettext("Removing %s components..."),
+	    $package_name) . "\n");
 	/* parse package configuration */
 	init_config_arr(array('installedpackages', 'package', $pkgid));
 	$packages = &$config['installedpackages']['package'];
@@ -960,7 +1003,8 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	init_config_arr(array('installedpackages', 'service'));
 	$services = &$config['installedpackages']['service'];
 	if (file_exists("/usr/local/pkg/" . $pkg_info['configurationfile'])) {
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
+		    $packages[$pkgid]['configurationfile'], "packagegui");
 		/* remove menu items */
 		if (is_array($pkg_config['menu'])) {
 			update_status(gettext("Menu items... "));
@@ -1003,13 +1047,15 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 			update_status(gettext("done.") . "\n");
 		}
 		/*
-		 * XXX: Otherwise inclusion of config.inc again invalidates actions taken.
+		 * XXX: Otherwise inclusion of config.inc again invalidates
+		 *      actions taken.
 		 *	Same is done during installation.
 		 */
-		write_config(sprintf(gettext("Intermediate config write during package removal for %s."), $package_name));
+		write_config(sprintf(gettext("Intermediate config write " .
+		    "during package removal for %s."), $package_name));
 
 		/*
-		 * If a require exists, include it.	 this will
+		 * If a require exists, include it. this will
 		 * show us where an error exists in a package
 		 * instead of making us blindly guess
 		 */
@@ -1022,15 +1068,22 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 			} else {
 				pkg_debug("Missing include {$pkg_config['include_file']}\n");
 				$missing_include = true;
-				update_status(sprintf(gettext("Include file %s could not be found for inclusion."), basename($pkg_config['include_file'])) . "\n");
+				update_status(sprintf(gettext("Include file " .
+				    "%s could not be found for inclusion."),
+				    basename($pkg_config['include_file'])) .
+				    "\n");
 			}
 		}
-		/* ermal
+		/*
 		 * NOTE: It is not possible to handle parse errors on eval.
-		 * So we prevent it from being run at all to not interrupt all the other code.
+		 * So we prevent it from being run at all to not interrupt all
+		 * the other code.
 		 */
 		if ($when == "deinstall" && $missing_include == false) {
-			/* evaluate this package's global functions and pre deinstall commands */
+			/*
+			 * evaluate this package's global functions and pre
+			 * deinstall commands
+			 */
 			if ($pkg_config['custom_php_global_functions'] <> "") {
 				eval_once($pkg_config['custom_php_global_functions']);
 			}
@@ -1045,15 +1098,19 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 				eval_once($pkg_config['custom_php_deinstall_command']);
 				update_status(gettext("done.") . "\n");
 			} else {
-				update_status("\n". gettext("Not executing custom deinstall hook because an include is missing.") . "\n");
+				update_status("\n". gettext("Not executing " .
+				    "custom deinstall hook because an " .
+				    "include is missing.") . "\n");
 			}
 		}
 	}
 	/* syslog */
 	$need_syslog_restart = false;
-	if (is_array($pkg_info['logging']) && $pkg_info['logging']['logfilename'] <> "") {
+	if (is_array($pkg_info['logging']) &&
+	    $pkg_info['logging']['logfilename'] <> "") {
 		update_status(gettext("Syslog entries... "));
-		@unlink_if_exists("{$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
+		@unlink_if_exists($g['varlog_path'] . "/" .
+		    $pkg_info['logging']['logfilename']);
 		update_status("done.\n");
 		$need_syslog_restart = true;
 	}
@@ -1063,9 +1120,12 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		update_status(gettext("Configuration... "));
 		unset($config['installedpackages']['package'][$pkgid]);
 		update_status(gettext("done.") . "\n");
-		write_config(sprintf(gettext("Removed %s package."), $package_name));
-		/* remove package entry from /etc/syslog.conf if needed */
-		/* this must be done after removing the entries from config.xml */
+		write_config(sprintf(gettext("Removed %s package."),
+		    $package_name));
+		/*
+		 * remove package entry from /etc/syslog.conf if needed
+		 * this must be done after removing the entries from config.xml
+		 */
 		if ($need_syslog_restart) {
 			system_syslogd_start(true);
 		}
@@ -1196,7 +1256,8 @@ function stop_packages() {
 			echo " Stopping package {$package['name']}...";
 			$internal_name = get_package_internal_name($package);
 			stop_service($internal_name);
-			unset($rcfiles[RCFILEPREFIX . strtolower($internal_name) . ".sh"]);
+			unset($rcfiles[RCFILEPREFIX .
+			    strtolower($internal_name) . ".sh"]);
 			echo "done.\n";
 		}
 	}
@@ -1205,7 +1266,8 @@ function stop_packages() {
 		$shell = @popen("/bin/sh", "w");
 		if ($shell) {
 			echo " Stopping {$rcfile}...";
-			if (!@fwrite($shell, "{$rcfile} stop >>/tmp/bootup_messages 2>&1")) {
+			if (!@fwrite($shell,
+			    "{$rcfile} stop >>/tmp/bootup_messages 2>&1")) {
 				if ($shell) {
 					pclose($shell);
 				}
@@ -1328,7 +1390,8 @@ function pkg_list_repos() {
 
 	$path = "/usr/local/share/{$g['product_name']}/pkg/repos";
 
-	$default_descr = @file_get_contents($path . "/{$g['product_name']}-repo.descr");
+	$default_descr = @file_get_contents($path .
+	    "/{$g['product_name']}-repo.descr");
 
 	$default = array(
 	    'name' => 'Default',

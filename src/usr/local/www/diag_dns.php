@@ -215,16 +215,11 @@ $form->addGlobal(new Form_Button(
 ))->addClass('btn-primary');
 
 if (!empty($resolved) && isAllowedPage('firewall_aliases_edit.php')) {
-	if ($alias_exists) {
-		$button_text = gettext("Update alias");
-	} else {
-		$button_text = gettext("Add alias");
-	}
 	$form->addGlobal(new Form_Button(
 		'create_alias',
-		$button_text,
+		($alias_exists) ? gettext("Update Alias") : gettext("Add Alias"),
 		null,
-		'fa-plus'
+		($alias_exists) ? 'fa-refresh' : 'fa-plus'
 	))->removeClass('btn-primary')->addClass('btn-success');
 }
 

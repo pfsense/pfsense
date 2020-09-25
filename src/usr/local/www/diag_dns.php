@@ -106,8 +106,7 @@ if ($_POST) {
 	} else {
 		// Test resolution speed of each DNS server.
 		$dns_speeds = array();
-		$dns_servers = array();
-		exec("/usr/bin/grep nameserver /etc/resolv.conf | /usr/bin/cut -f2 -d' '", $dns_servers);
+		$dns_servers = get_dns_nameservers(false, true);
 		foreach ($dns_servers as $dns_server) {
 			$query_time = exec("/usr/bin/drill {$host_esc} " . escapeshellarg("@" . trim($dns_server)) . " | /usr/bin/grep Query | /usr/bin/cut -d':' -f2");
 			if ($query_time == "") {

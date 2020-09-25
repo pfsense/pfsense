@@ -132,21 +132,9 @@ if ($_POST['save']) {
 	// forwarding mode requires having valid DNS servers
 	if (isset($pconfig['forwarding'])) {
 		$founddns = false;
-		if (isset($config['system']['dnsallowoverride'])) {
-			$dns_servers = get_dns_servers();
-			if (is_array($dns_servers)) {
-				foreach ($dns_servers as $dns_server) {
-					if (!ip_in_subnet($dns_server, "127.0.0.0/8")) {
-						$founddns = true;
-					}
-				}
-			}
-		}
-		if (is_array($config['system']['dnsserver'])) {
-			foreach ($config['system']['dnsserver'] as $dnsserver) {
-				if (is_ipaddr($dnsserver)) {
-					$founddns = true;
-				}
+		foreach (get_dns_nameservers(false, true) as $dns_server) {
+			if (!ip_in_subnet($dns_server, "127.0.0.0/8")) {
+				$founddns = true;
 			}
 		}
 		if ($founddns == false) {
@@ -156,7 +144,7 @@ if ($_POST['save']) {
 
 	if (empty($pconfig['active_interface'])) {
 		$input_errors[] = gettext("One or more Network Interfaces must be selected for binding.");
-	} else if (!isset($config['system']['dnslocalhost']) && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
+	} elseif (($config['system']['dnslocalhost'] != 'remote') && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
 		$input_errors[] = gettext("This system is configured to use the DNS Resolver as its DNS server, so Localhost or All must be selected in Network Interfaces.");
 	}
 

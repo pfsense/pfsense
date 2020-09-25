@@ -6300,6 +6300,12 @@ function upgrade_208_to_209() {
 	}
 }
 
+function upgrade_209_to_210() {
+	global $config;
+	if (isset($config['system']['dnslocalhost'])) {
+		$config['system']['dnslocalhost'] = 'remote';
+	}
+}
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

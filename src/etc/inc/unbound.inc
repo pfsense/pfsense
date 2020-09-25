@@ -361,24 +361,7 @@ EOD;
 
 	// Set up forwarding if it is configured
 	if (isset($unboundcfg['forwarding'])) {
-		$dnsservers = array();
-		if (isset($config['system']['dnsallowoverride'])) {
-			$ns = array_unique(get_nameservers());
-			foreach ($ns as $nameserver) {
-				if ($nameserver) {
-					$dnsservers[] = $nameserver;
-				}
-			}
-		} else {
-			$ns = array();
-		}
-		$sys_dnsservers = array_unique(get_dns_servers());
-		foreach ($sys_dnsservers as $sys_dnsserver) {
-			if ($sys_dnsserver && (!in_array($sys_dnsserver, $ns))) {
-				$dnsservers[] = $sys_dnsserver;
-			}
-		}
-
+		$dnsservers = get_dns_nameservers(false, true);
 		if (!empty($dnsservers)) {
 			$forward_conf .=<<<EOD
 # Forwarding

@@ -86,7 +86,7 @@ $pconfig['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlog
 $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
 $pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
 $pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
-$pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
+$pconfig['dnslocalhost'] = $config['system']['dnslocalhost'];
 //$pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
 $pconfig['roworderdragging'] = isset($config['system']['webgui']['roworderdragging']);
 $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
@@ -369,8 +369,8 @@ if ($_POST) {
 		unset($config['system']['dnsallowoverride']);
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
 
-		if ($_POST['dnslocalhost'] == "yes") {
-			$config['system']['dnslocalhost'] = true;
+		if ($_POST['dnslocalhost']) {
+			$config['system']['dnslocalhost'] = $_POST['dnslocalhost'];
 		} else {
 			unset($config['system']['dnslocalhost']);
 		}
@@ -622,15 +622,19 @@ $section->addInput(new Form_Checkbox(
 	'the DNS Forwarder/DNS Resolver). However, they will not be assigned to DHCP '.
 	'clients.', $g['product_name']);
 
-$section->addInput(new Form_Checkbox(
+$section->addInput(new Form_Select(
 	'dnslocalhost',
-	'Disable DNS Forwarder',
-	'Do not use the DNS Forwarder/DNS Resolver as a DNS server for the firewall',
-	$pconfig['dnslocalhost']
-))->setHelp('By default localhost (127.0.0.1) will be used as the first DNS '.
-	'server where the DNS Forwarder or DNS Resolver is enabled and set to '.
-	'listen on localhost, so system can use the local DNS service to perform '.
-	'lookups. Checking this box omits localhost from the list of DNS servers in resolv.conf.');
+	'DNS Resolution Behavior',
+	$pconfig['dnslocalhost'],
+	array(
+		''       => 'Use local DNS (127.0.0.1), fall back to remote DNS Servers (Default)',
+		'local'  => 'Use local DNS (127.0.0.1), ignore remote DNS Servers',
+		'remote' => 'Use remote DNS Servers, ignore local DNS',
+	)
+))->setHelp('By default the firewall will use local DNS service (127.0.0.1, DNS '.
+	'Resolver or Forwarder) as the first DNS server when possible, and it '.
+	'will fall back to remote DNS servers otherwise. Use this option to '.
+	'choose alternate behaviors.');
 
 $form->add($section);
 

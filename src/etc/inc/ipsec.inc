@@ -2035,7 +2035,11 @@ function ipsec_setup_tunnels() {
 			$conn =& $scconf["{$cname}-defaults"];
 			$scconf['connections']["{$cname} : {$cname}-defaults"] = array("# Stub to load con-mobile-defaults");
 		} else {
-			$cname = "con" . get_ipsecifnum($ph1ent['ikeid'], 0);
+			if (get_ipsecifnum($ph1ent['ikeid'], 0)) {
+				$cname = "con" . get_ipsecifnum($ph1ent['ikeid'], 0);
+			} else {
+				$cname = "con{$ph1ent['ikeid']}00000";
+			}
 			/* Start with common default values */
 			$scconf['connections'][$cname] = $conn_defaults;
 			/* Array reference to make things easier */

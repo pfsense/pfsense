@@ -811,8 +811,6 @@ function install_package_xml($package_name) {
 		return false;
 	}
 
-	/* safe side. Write config below will send to ro again. */
-
 	pkg_debug(gettext("Beginning package installation.") . "\n");
 	log_error(sprintf(gettext('Beginning package installation for %s .'),
 	    $pkg_info['name']));

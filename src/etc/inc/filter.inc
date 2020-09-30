@@ -2721,11 +2721,14 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						$src = "(self)";
 						break;
 					case 'pppoe':
-						/* XXX: This needs to be fixed somehow! */
 						if (is_array($FilterIflist['pppoe'])) {
-							$pppoesav6 = gen_subnetv6($FilterIflist['pppoe'][0]['ipv6'], $FilterIflist['pppoe'][0]['snv6']);
-							$pppoesnv6 = $FilterIflist['pppoe'][0]['snv6'];
-							$src = "{$pppoesav6}/{$pppoesnv6}";
+							$src = "{ ";
+							foreach ($FilterIflist['pppoe'] as $pppoe) {
+								$pppoesav6 = gen_subnetv6($pppoe['ipv6'], $pppoe['snv6']);
+								$pppoesnv6 = $pppoe['snv6'];
+								$src .= "{$pppoesav6}/{$pppoesnv6} ";
+							}
+							$src .= "}";
 						}
 					}
 				if (isset($rule[$target]['not']) && !is_subnet($src)) {
@@ -2759,11 +2762,14 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						$src = "(self)";
 						break;
 					case 'pppoe':
-						/* XXX: This needs to be fixed somehow! */
 						if (is_array($FilterIflist['pppoe'])) {
-							$pppoesa = gen_subnet($FilterIflist['pppoe'][0]['sa'], $FilterIflist['pppoe'][0]['sn']);
-							$pppoesn = $FilterIflist['pppoe'][0]['sn'];
-							$src = "{$pppoesa}/{$pppoesn}";
+							$src = "{ ";
+							foreach ($FilterIflist['pppoe'] as $pppoe) {
+								$pppoesa = gen_subnet($pppoe['sa'], $pppoe['sn']);
+								$pppoesn = $pppoe['sn'];
+								$src .= "{$pppoesa}/{$pppoesn} ";
+							}
+							$src .= "}";
 						}
 						break;
 				}

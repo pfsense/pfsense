@@ -113,13 +113,13 @@ foreach ($a_monitor as $monitor) {
 ?>
 					<tr>
 						<td>
-							<?=$monitor['name']?>
+							<?=htmlspecialchars($monitor['name'])?>
 						</td>
 						<td>
-							<?=$monitor['type']?>
+							<?=htmlspecialchars($monitor['type'])?>
 						</td>
 						<td>
-							<?=$monitor['descr']?>
+							<?=htmlspecialchars($monitor['descr'])?>
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit monitor')?>"	href="load_balancer_monitor_edit.php?id=<?=$idx?>"></a>

@@ -29,6 +29,14 @@
 
 require_once("guiconfig.inc");
 
+$types = array(
+	"icmp" => gettext("ICMP"),
+	"tcp" => gettext("TCP"),
+	"http" => gettext("HTTP"),
+	"https" => gettext("HTTPS"),
+	"send" => gettext("Send/Expect")
+);
+
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_monitor.php');
 
 init_config_arr(array('load_balancer', 'monitor_type'));
@@ -84,6 +92,9 @@ if ($_POST['save']) {
 		}
 	}
 
+	if (!array_key_exists($_POST['type'], $types)) {
+		$input_errors[] = gettext("Select a valid monitor type.");
+	}
 	if (preg_match('/[ \/]/', $_POST['name'])) {
 		$input_errors[] = gettext("Spaces or slashes cannot be used in the 'name' field.");
 	}
@@ -194,7 +205,6 @@ $pglinks = array("", "load_balancer_pool.php", "load_balancer_monitor.php", "@se
 $shortcut_section = "relayd";
 
 include("head.inc");
-$types = array("icmp" => gettext("ICMP"), "tcp" => gettext("TCP"), "http" => gettext("HTTP"), "https" => gettext("HTTPS"), "send" => gettext("Send/Expect"));
 
 ?>
 

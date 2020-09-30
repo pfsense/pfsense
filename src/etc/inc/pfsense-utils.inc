@@ -526,7 +526,7 @@ function hardware_offloading_applyflags($iface) {
 	/* disable hardware checksum offloading for VirtIO network drivers,
 	 * see https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=165059 */
 	if (isset($config['system']['disablechecksumoffloading']) ||
-	    stristr($iface, "vtnet")) { 
+	    stristr($iface, "vtnet") || stristr($iface, "ena")) { 
 		if (isset($options['encaps']['txcsum'])) {
 			$flags_off |= IFCAP_TXCSUM;
 		}

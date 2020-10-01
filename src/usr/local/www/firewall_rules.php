@@ -43,14 +43,16 @@ $ShXmoveTitle = gettext("Move checked rules below this one. Release shift to mov
 
 $shortcut_section = "firewall";
 
-function get_pf_rules($rules, $tracker) {
+function get_pf_rules($rules, $tracker_start, $tracker_end) {
 
-	if ($rules == NULL || !is_array($rules))
+	if ($rules == NULL || !is_array($rules)) {
 		return (NULL);
+	}
 
 	$arr = array();
 	foreach ($rules as $rule) {
-		if ($rule['tracker'] === $tracker) {
+		if ($rule['tracker'] >= $tracker_start &&
+		    $rule['tracker'] <= $tracker_end) {
 			$arr[] = $rule;
 		}
 	}
@@ -61,8 +63,18 @@ function get_pf_rules($rules, $tracker) {
 	return ($arr);
 }
 
-function print_states($tracker) {
+function print_states($tracker_start, $tracker_end = -1) {
 	global $rulescnt;
+
+	if (empty($tracker_start)) {
+		return;
+	}
+
+	if ($tracker_end === -1) {
+		$tracker_end = $tracker_start;
+	} elseif ($tracker_end < $tracker_start) {
+		return;
+	}
 
 	$rulesid = "";
 	$bytes = 0;
@@ -70,7 +82,7 @@ function print_states($tracker) {
 	$packets = 0;
 	$evaluations = 0;
 	$stcreations = 0;
-	$rules = get_pf_rules($rulescnt, $tracker);
+	$rules = get_pf_rules($rulescnt, $tracker_start, $tracker_end);
 	if (is_array($rules)) {
 		foreach ($rules as $rule) {
 			$bytes += $rule['bytes'];
@@ -85,13 +97,22 @@ function print_states($tracker) {
 		}
 	}
 
-	$trackertext = !empty($tracker) ? "Tracking ID: {$tracker}<br>" : "";
-	printf("<a href=\"diag_dump_states.php?ruleid=%s\" data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"%s\" ",
-	    $rulesid, gettext("States details"));
-	printf("data-content=\"{$trackertext}evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\" usepost>",
-	    format_number($evaluations), format_number($packets), format_bytes($bytes),
-	    format_number($states), format_number($stcreations));
-	printf("%s/%s</a><br>", format_number($states), format_bytes($bytes));
+	$trackertext = "Tracking ID: {$tracker_start}";
+	if ($tracker_end != $tracker_start) {
+		$trackertext .= '-' . $tracker_end;
+	}
+	$trackertext .= "<br />";
+
+	printf("<a href=\"diag_dump_states.php?ruleid=%s\" " .
+	    "data-toggle=\"popover\" data-trigger=\"hover focus\" " .
+	    "title=\"%s\" ", $rulesid, gettext("States details"));
+	printf("data-content=\"{$trackertext}evaluations: %s<br />packets: " .
+	    "%s<br />bytes: %s<br />states: %s<br />state creations: " .
+	    "%s\" data-html=\"true\" usepost>",
+	    format_number($evaluations), format_number($packets),
+	    format_bytes($bytes), format_number($states),
+	    format_number($stcreations));
+	printf("%s/%s</a><br />", format_number($states), format_bytes($bytes));
 }
 
 function delete_nat_association($id) {
@@ -395,7 +416,7 @@ if ($if == "FloatingRules") {
 					<tr id="antilockout">
 						<td></td>
 						<td title="<?=gettext("traffic is passed")?>"><i class="fa fa-check text-success"></i></td>
-						<td><?php print_states(intval(ANTILOCKOUT_TRACKER)); ?></td>
+						<td><?php print_states(intval(ANTILOCKOUT_TRACKER_START), intval(ANTILOCKOUT_TRACKER_END)); ?></td>
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
@@ -414,7 +435,7 @@ if ($if == "FloatingRules") {
 					<tr id="private">
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
-						<td><?php print_states(intval(RFC1918_TRACKER)); ?></td>
+						<td><?php print_states(intval(RFC1918_TRACKER_START), intval(RFC1918_TRACKER_END)); ?></td>
 						<td>*</td>
 						<td><?=gettext("RFC 1918 networks");?></td>
 						<td>*</td>
@@ -433,7 +454,7 @@ if ($if == "FloatingRules") {
 					<tr id="bogons">
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
-						<td><?php print_states(intval(BOGONS_TRACKER)); ?></td>
+						<td><?php print_states(intval(BOGONS_TRACKER_START), intval(BOGONS_TRACKER_END)); ?></td>
 						<td>*</td>
 						<td><?=sprintf(gettext("Reserved%sNot assigned by IANA"), "<br />");?></td>
 						<td>*</td>

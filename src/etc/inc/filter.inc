@@ -109,14 +109,38 @@ $filter_interface_blacklist = array("ipsec");
  *
  */
 
-define("ANTILOCKOUT_TRACKER", 10000);
-define("BOGONS_TRACKER", 11000);
-define("RFC1918_TRACKER", 12000);
+define("ANTILOCKOUT_TRACKER_START", 10000);
+define("ANTILOCKOUT_TRACKER_END", 10999);
+define("BOGONS_TRACKER_START", 11000);
+define("BOGONS_TRACKER_END", 11999);
+define("RFC1918_TRACKER_START", 12000);
+define("RFC1918_TRACKER_END", 12999);
 define("PFLABEL_MAXLEN", 63);
 define("USER_LABEL_INTRO", "USER_RULE: ");
 
 $tracker = 1000000000;
 $negate_tracker = 10000000;
+$antilockout_tracker = ANTILOCKOUT_TRACKER_START;
+$bogons_tracker = BOGONS_TRACKER_START;
+$rfc1918_tracker = RFC1918_TRACKER_START;
+
+function filter_antilockout_tracker() {
+	global $antilockout_tracker;
+
+	return (++$antilockout_tracker);
+}
+
+function filter_bogons_tracker() {
+	global $bogons_tracker;
+
+	return (++$bogons_tracker);
+}
+
+function filter_rfc1918_tracker() {
+	global $rfc1918_tracker;
+
+	return (++$rfc1918_tracker);
+}
 
 function filter_rule_tracker($tracker) {
 	global $tracker;
@@ -3272,10 +3296,15 @@ function filter_generate_user_rule($rule) {
 }
 
 function filter_rules_generate() {
-	global $config, $g, $FilterIflist, $time_based_rules, $GatewaysList, $tracker, $vlanprio_values;
+	global $config, $g, $FilterIflist, $time_based_rules, $GatewaysList,
+	       $tracker, $vlanprio_values, $antilockout_tracker,
+	       $bogons_tracker, $rfc1918_tracker;
 
 	$fix_rule_label = 'fix_rule_label';
 	$increment_tracker = 'filter_rule_tracker';
+	$antilockout_increment = 'filter_antilockout_tracker';
+	$bogons_increment = 'filter_bogons_tracker';
+	$rfc1918_increment = 'filter_rfc1918_tracker';
 
 	update_filter_reload_status(gettext("Creating default rules"));
 	if (isset($config['system']['developerspew'])) {
@@ -3524,11 +3553,10 @@ EOD;
 		}
 
 		if (isset($config['interfaces'][$on]['blockbogons'])) {
-			$bogons_tracker = BOGONS_TRACKER;
 			$ipfrules .= <<<EOD
 # block bogon networks (IPv4)
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
-block in $bogonlog quick on \${$oc['descr']} from <bogons> to any tracker $bogons_tracker label "{$fix_rule_label("block bogon IPv4 networks from {$oc['descr']}")}"
+block in $bogonlog quick on \${$oc['descr']} from <bogons> to any tracker {$bogons_increment()} label "{$fix_rule_label("block bogon IPv4 networks from {$oc['descr']}")}"
 
 EOD;
 
@@ -3536,7 +3564,7 @@ EOD;
 				$ipfrules .= <<<EOD
 # block bogon networks (IPv6)
 # http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
-block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any tracker $bogons_tracker label "{$fix_rule_label("block bogon IPv6 networks from {$oc['descr']}")}"
+block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any tracker {$bogons_increment()} label "{$fix_rule_label("block bogon IPv6 networks from {$oc['descr']}")}"
 
 EOD;
 			}
@@ -3571,14 +3599,13 @@ EOD;
 
 		if (isset($config['interfaces'][$on]['blockpriv'])) {
 			if ($isbridged == false) {
-				$rfc1918_tracker = RFC1918_TRACKER;
 				$ipfrules .= <<<EOD
 # block anything from private networks on interfaces with the option set
-block in $privnetlog quick on \${$oc['descr']} from 10.0.0.0/8 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block private networks from {$oc['descr']} block 10/8")}"
-block in $privnetlog quick on \${$oc['descr']} from 127.0.0.0/8 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block private networks from {$oc['descr']} block 127/8")}"
-block in $privnetlog quick on \${$oc['descr']} from 172.16.0.0/12 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block private networks from {$oc['descr']} block 172.16/12")}"
-block in $privnetlog quick on \${$oc['descr']} from 192.168.0.0/16 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block private networks from {$oc['descr']} block 192.168/16")}"
-block in $privnetlog quick on \${$oc['descr']} from fc00::/7 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block ULA networks from {$oc['descr']} block fc00::/7")}"
+block in $privnetlog quick on \${$oc['descr']} from 10.0.0.0/8 to any tracker {$rfc1918_increment()} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 10/8")}"
+block in $privnetlog quick on \${$oc['descr']} from 127.0.0.0/8 to any tracker {$rfc1918_increment()} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 127/8")}"
+block in $privnetlog quick on \${$oc['descr']} from 172.16.0.0/12 to any tracker {$rfc1918_increment()} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 172.16/12")}"
+block in $privnetlog quick on \${$oc['descr']} from 192.168.0.0/16 to any tracker {$rfc1918_increment()} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 192.168/16")}"
+block in $privnetlog quick on \${$oc['descr']} from fc00::/7 to any tracker {$rfc1918_increment()} label "{$fix_rule_label("Block ULA networks from {$oc['descr']} block fc00::/7")}"
 
 EOD;
 			}
@@ -3802,7 +3829,6 @@ EOD;
 	if (is_array($config['system']['webgui']) && !isset($config['system']['webgui']['noantilockout'])) {
 		$alports = filter_get_antilockout_ports();
 
-		$lockout_tracker = ANTILOCKOUT_TRACKER;
 		if (count($config['interfaces']) > 1 && !empty($FilterIflist['lan']['if'])) {
 			/* if antilockout is enabled, LAN exists and has
 			 * an IP and subnet mask assigned
@@ -3810,7 +3836,7 @@ EOD;
 			$lanif = $FilterIflist['lan']['if'];
 			$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-pass in {$log['pass']} quick on {$lanif} proto tcp from any to ({$lanif}) port { {$alports} } tracker $lockout_tracker keep state label "anti-lockout rule"
+pass in {$log['pass']} quick on {$lanif} proto tcp from any to ({$lanif}) port { {$alports} } tracker {$antilockout_increment()} keep state label "anti-lockout rule"
 
 EOD;
 		} else if (count($config['interfaces']) == 1) {
@@ -3818,7 +3844,7 @@ EOD;
 			$wanif = $FilterIflist["wan"]['if'];
 			$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-pass in {$log['pass']} quick on {$wanif} proto tcp from any to ({$wanif}) port { {$alports} } tracker $lockout_tracker keep state label "anti-lockout rule"
+pass in {$log['pass']} quick on {$wanif} proto tcp from any to ({$wanif}) port { {$alports} } tracker {$antilockout_increment()} keep state label "anti-lockout rule"
 
 EOD;
 		}

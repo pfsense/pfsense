@@ -1569,20 +1569,21 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 			$ldapdn = $ldapsearchbasedn;
 		}
 		$search = @$ldapfunc($ldap, $ldapdn, $ldapfilter);
-		$info = ldap_get_entries($ldap, $search);
+		if (!$search) {
+			log_error(sprintf(gettext("Search resulted in error: %s"), ldap_error($ldap)));
+			continue;
+		}
 		if (isset($authcfg['ldap_rfc2307']) && isset($ldapgroupfilter)) {
 			if (isset($authcfg['ldap_rfc2307_userdn'])) {
+				$info = ldap_get_entries($ldap, $search);
 				$username = $info[0]['dn'];
 			}
 			$ldapgroupfilter = "(&({$ldapgroupattribute}={$username})({$ldapextendedquery}))";
+			$groupsearch = @$ldapfunc($ldap, $ldapdn, $ldapgroupfilter);
 		}
 
 		if (isset($ldapgroupfilter) && !$groupsearch) {
 			log_error(sprintf(gettext("Extended group search resulted in error: %s"), ldap_error($ldap)));
-			continue;
-		}
-		if (!$search) {
-			log_error(sprintf(gettext("Search resulted in error: %s"), ldap_error($ldap)));
 			continue;
 		}
 		if (isset($groupsearch)) {

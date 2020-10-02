@@ -938,6 +938,20 @@ function filter_generate_gateways() {
 						break;
 					}
 				}
+				/* see "Load balancing fails when one gateway has a weight of 1 
+				* and another gateway has a weight >1", https://redmine.pfsense.org/issues/6025 */
+				foreach ($members as $idx => $member) {
+					if ((int) $member['weight'] == 1) {
+						$weight1 = true;
+					} elseif ((int) $member['weight'] > 1) {
+						$weightgt1 = true;
+					}
+				}
+				if ($weight1 && $weightgt1) {
+					$mult = 2;
+				} else {
+					$mult = 1;
+				}
 				foreach ($members as $idx => $member) {
 					$int = $member['int'];
 					$gatewayip = $member['gwip'];
@@ -953,13 +967,13 @@ function filter_generate_gateways() {
 						if ($g['debug']) {
 							log_error(sprintf(gettext('Setting up route with %1$s on %2$s'), $gatewayip, $int));
 						}
-						if ($routetomembers + (int) $member['weight'] > 384) {
+						if ($routetomembers + ((int) $member['weight'] * $mult) > 384) {
 							// would create invalid ruleset, bail
 							log_error(sprintf(gettext("Too many members in group %s, gateway group truncated in ruleset."), $member['name']));
 							continue;
 						}
-						if ((int) $member['weight'] > 1) {
-							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight']);
+						if ((int) $member['weight'] > 0) {
+							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight'] * $mult);
 							$routetomembers += (int) $member['weight'];
 						} else {
 							$routeto .= "( {$int} {$gatewayip} ) ";

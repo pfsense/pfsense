@@ -1081,7 +1081,7 @@ function alias_info_popup($alias_id) {
 		}
 
 		$content .= "</tbody>\n";
-		$content .= "<table>\n";
+		$content .= "</table>\n";
 	}
 
 	return $content;

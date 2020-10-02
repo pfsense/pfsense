@@ -1155,7 +1155,7 @@ function gateway_info_popup($showgw) {
 			$idx++;
 		}
 		$content .= "</tbody>\n";
-		$content .= "<table>\n";
+		$content .= "</table>\n";
 	} else {
 		return;
 	}

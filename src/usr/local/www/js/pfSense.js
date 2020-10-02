@@ -273,7 +273,7 @@ $(function() {
 
 	defaultWhiteList.table = []
 	defaultWhiteList.thead = []
-	defaultWhiteList.tr = []
+	defaultWhiteList.tr = ["class"]
 	defaultWhiteList.th = ["style"]
 	defaultWhiteList.tbody = []
 	defaultWhiteList.td = ["style"]

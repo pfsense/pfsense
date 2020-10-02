@@ -267,6 +267,17 @@ $(function() {
 	  }
 	};
 
+	// Bootstrap 3.4.1 sanitizes the contents of popovers even when data-html is specified
+	// Add table tags to the list of elements permitted by the sanitizer
+	var defaultWhiteList = $.fn.tooltip.Constructor.DEFAULTS.whiteList
+
+	defaultWhiteList.table = []
+	defaultWhiteList.thead = []
+	defaultWhiteList.tr = []
+	defaultWhiteList.th = ["style"]
+	defaultWhiteList.tbody = []
+	defaultWhiteList.td = ["style"]
+
 	// Enable popovers globally
 	$('[data-toggle="popover"]').popover({ delay: {show: 50, hide: 400} });
 

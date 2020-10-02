@@ -494,6 +494,11 @@ if ($_POST['apply']) {
 		if (is_subsystem_dirty('staticroutes') && (system_routing_configure() == 0)) {
 			clear_subsystem_dirty('staticroutes');
 		}
+
+		init_config_arr(array('syslog'));
+		if (isset($config['syslog']['enable']) && ($ifapply == $config['syslog']['sourceip'])) {
+			system_syslogd_start();
+		}
 	}
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
 } else if ($_POST['save']) {

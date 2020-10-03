@@ -52,6 +52,16 @@ if (isset($_POST['deleteentry'])) {
 		$savemsg = sprintf(gettext("The ARP cache entry for %s has been deleted."), $ip);
 		$savemsgtype = 'success';
 	}
+} elseif (isset($_POST['cleararptable'])) {
+	$out = "";
+	$ret = exec("/usr/sbin/arp -d -a", $out, $arpTableRetVal);
+	if ($arpTableRetVal == 0) { 
+		$savemsg = gettext("ARP Table has been cleared.");
+		$savemsgtype = 'success';
+	} else {
+		$savemsg = gettext("Unable to clear ARP Table.");
+		$savemsgtype = 'alert-warning';
+	}
 }
 
 $leases = system_get_dhcpleases();
@@ -261,6 +271,13 @@ $mac_man = load_mac_manufacturer_table();
 	</div>
 </div>
 
+<nav class="action-buttons">
+	<button id="cleararp" class="btn btn-danger no-confirm">
+		<i class="fa fa-trash icon-embed-btn"></i>
+		<?=gettext("Clear ARP Table")?>
+	</button>
+</nav>
+
 <script type="text/javascript">
 //<![CDATA[
 // Clear the "loading" div once the page has loaded"
@@ -320,6 +337,12 @@ events.push(function() {
 	$("#searchstr").on("keyup", function (event) {
 		if (event.keyCode == 13) {
 			$("#btnsearch").get(0).click();
+		}
+	});
+
+	$('#cleararp').click(function() {
+		if (confirm("Are you sure you wish to clear ARP table?")) {
+			postSubmit({cleararptable: 'true'}, 'diag_arp.php');
 		}
 	});
 

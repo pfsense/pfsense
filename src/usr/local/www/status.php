@@ -62,16 +62,16 @@ $output_path = "/tmp/status_output/";
 $output_file = "/tmp/status_output.tgz";
 
 $filtered_tags = array(
-	'accountkey', 'authorizedkeys', 'auth_pass', 
+	'accountkey', 'authorizedkeys', 'auth_pass',
 	'auth_server_shared_secret', 'auth_server_shared_secret2', 'auth_user',
 	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'community', 'crypto_password',
 	'crypto_password2', 'dns_nsupdatensupdate_key', 'encryption_password',
 	'etpro_code', 'etprocode', 'gold_encryption_password', 'gold_password',
 	'influx_pass', 'ipsecpsk', 'ldap_bindpw', 'ldapbindpass', 'ldap_pass',
 	'lighttpd_ls_password', 'maxmind_geoipdb_key', 'maxmind_key', 'md5-hash',
-	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'oinkcode', 
-	'oinkmastercode', 'passphrase', 'password', 'passwordagain', 
-	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',	'proxypass', 
+	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'oinkcode',
+	'oinkmastercode', 'passphrase', 'password', 'passwordagain',
+	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',	'proxypass',
 	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radius_secret',
 	'redis_password', 'redis_passwordagain', 'rocommunity',	'secret', 'secret2',
 	'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',

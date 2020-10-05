@@ -1342,7 +1342,7 @@ function interface_vxlan_configure(&$vxlan, $vxlankey = "") {
 		log_error(gettext("could not bring parentif up -- variable not defined -- interface_vxlan_configure()"));
 	}
 
-	if (!(empty($vxlan['vxlanif']))) {				//Interface us defined.
+	if (!(empty($vxlan['vxlanif']))) {				//Interface is defined.
 		if (!platform_booting()) {
 			pfSense_interface_destroy($vxlan['vxlanif']);	//Calling this after boot implies we are editing an existing interface so destroy it first.
 		}

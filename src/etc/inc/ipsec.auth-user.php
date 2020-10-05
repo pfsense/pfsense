@@ -93,7 +93,7 @@ foreach ($authmodes as $authmode) {
 
 	$authenticated = authenticate_user($username, $password, $authcfg, $attributes);
 	if ($authenticated == true) {
-		$userGroups = getUserGroups($username, $authcfg, $attributes = array());
+		$userGroups = getUserGroups($username, $authcfg, $attributes);
 		if ($authmode == "Local Database") {
 			$user = getUserEntry($username);
 			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin") ||

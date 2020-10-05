@@ -266,6 +266,7 @@ if ($_POST['save']) {
 
 		if (!isset($id)) {
 			$id = count($a_pppoes);
+		    	$reload = true;
 		}
 
 		if (file_exists("{$g['tmp_path']}/.vpn_pppoe.apply")) {
@@ -274,8 +275,6 @@ if ($_POST['save']) {
 			$toapplylist = array();
 		}
 
-		write_config();
-
 		if ($reload) {
 			$toapplylist[] = $pppoecfg['pppoeid'];
 			mark_subsystem_dirty('vpnpppoe');
@@ -283,6 +282,7 @@ if ($_POST['save']) {
 		}
 
 		$a_pppoes[$id] = $pppoecfg;
+		write_config();
 		vpn_pppoe_updatesecret($pppoecfg);
 
 		header("Location: services_pppoe.php");

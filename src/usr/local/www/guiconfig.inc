@@ -1113,7 +1113,7 @@ function gateway_info_popup($showgw) {
 			if ($gwgroup['name'] == $showgw) {
 				foreach ($gwgroup['item'] as $member) {
 					$membersplit = explode("|", $member);
-					$gateways[] = $membersplit[0];
+					$gws[] = $membersplit[0];
 				}
 			}
 		}

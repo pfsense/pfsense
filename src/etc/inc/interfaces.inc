@@ -5151,6 +5151,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		sleep(2);
 		mwexec("/usr/sbin/rtsold -1 " .
 		    "-p {$g['varrun_path']}/rtsold_{$wanif}.pid " .
+		    "-M {$g['varetc_path']}/rtsold_{$wanif}_script.sh " .
 		    "-O {$g['varetc_path']}/rtsold_{$wanif}_script.sh " .
 		    $wanif);
 	}

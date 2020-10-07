@@ -34,7 +34,7 @@ if (isset($_REQUEST["getThermalSensorsData"])) {
 		$_gb = exec("/sbin/sysctl -q dev.cpu | grep temperature | sort",
 		    $dfout);
 	} else {
-		$_gb = exec("/sbin/sysctl -aq | grep temperature", $dfout);
+		$_gb = exec("/sbin/sysctl -aq | grep temperature:", $dfout);
 	}
 	$dfout_filtered = array_filter($dfout, function($v) {
 		return strpos($negsign, ' -') === false;

@@ -2626,7 +2626,7 @@ function route_get($target, $ipprotocol = '') {
 
 	$result = array();
 	foreach ($rtable[$family] as $item) {
-		if ($item['destination'] == $target) {
+		if (ip_in_subnet($target, $item['destination'])) {
 			$result[] = $item;
 		}
 	}

@@ -32,6 +32,8 @@
 ##|*MATCH=services_dhcp_edit.php*
 ##|-PRIV
 
+global $ddnsdomainkeyalgorithms;
+
 function staticmapcmp($a, $b) {
 	return ipcmp($a['ipaddr'], $b['ipaddr']);
 }
@@ -89,6 +91,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ddnsdomain'] = $a_maps[$id]['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $a_maps[$id]['ddnsdomainprimary'];
 	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkeyalgorithm'] = $a_maps[$id]['ddnsdomainkeyalgorithm'];
 	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($a_maps[$id]['ddnsforcehostname']);
@@ -127,6 +130,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ddnsdomain'] = $_REQUEST['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $_REQUEST['ddnsdomainprimary'];
 	$pconfig['ddnsdomainkeyname'] = $_REQUEST['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkeyalgorithm'] = $_REQUEST['ddnsdomainkeyalgorithm'];
 	$pconfig['ddnsdomainkey'] = $_REQUEST['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($_REQUEST['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($_REQUEST['ddnsforcehostname']);
@@ -288,6 +292,9 @@ if ($_POST['save']) {
 		if (!is_ipaddr($_POST['ddnsdomainprimary'])) {
 			$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
 		}
+		if (!$_POST['ddnsdomainkeyname'] || !$_POST['ddnsdomainkeyalgorithm'] || !$_POST['ddnsdomainkey']) {
+			$input_errors[] = gettext("A valid domain key name, algorithm and secret must be specified.");
+		}
 		if (preg_match('/[^A-Za-z0-9\.\-\_]/', $_POST['ddnsdomainkeyname'])) {
 			$input_errors[] = gettext("The domain key name may only contain the characters a-z, A-Z, 0-9, '-', '_' and '.'");
 		}
@@ -367,6 +374,7 @@ if ($_POST['save']) {
 		$mapent['ddnsdomain'] = $_POST['ddnsdomain'];
 		$mapent['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
 		$mapent['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
+		$mapent['ddnsdomainkeyalgorithm'] = $_POST['ddnsdomainkeyalgorithm'];
 		$mapent['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$mapent['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 		$mapent['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
@@ -651,7 +659,9 @@ $section->addInput(new Form_Input(
 	'DDNS Domain',
 	'text',
 	$pconfig['ddnsdomain']
-))->setHelp('Leave blank to disable dynamic DNS registration. Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
+))->setHelp('Leave blank to disable dynamic DNS registration. Enter the dynamic DNS domain which will ' .
+	    'be used to register client names in the DNS server. Only the first defined set of option for each ' .
+	    'domain will be honored if it is used for multiple interfaces/entries.');
 
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
@@ -666,6 +676,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['ddnsdomainkeyname']
 ))->setHelp('Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.');
+
+$section->addInput(new Form_Select(
+	'ddnsdomainkeyalgorithm',
+	'Key algorithm',
+	$pconfig['ddnsdomainkeyalgorithm'],
+	$ddnsdomainkeyalgorithms
+));
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkey',

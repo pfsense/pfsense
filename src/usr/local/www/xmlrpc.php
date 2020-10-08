@@ -245,6 +245,9 @@ class pfsense_xmlrpc_server {
 					if (isset($config['voucher'][$cpzone])) {
 						unset($config['voucher'][$cpzone]);
 					}
+					unlink_if_exists("/var/db/captiveportal{$cpzone}.db");
+					unlink_if_exists("/var/db/captiveportal_usedmacs_{$cpzone}.db");
+					unlink_if_exists("/var/db/voucher_{$cpzone}_*.db");
 				}
 			}
 		}

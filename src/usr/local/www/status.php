@@ -73,7 +73,7 @@ $filtered_tags = array(
 	'oinkmastercode', 'passphrase', 'password', 'passwordagain',
 	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',	'proxypass',
 	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radius_secret',
-	'redis_password', 'redis_passwordagain', 'rocommunity',	'secret', 'secret2',
+	'redis_password', 'redis_passwordagain', 'rocommunity',	'secret', 'secret2', 'serverauthkey',
 	'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',
 	'varclientpasswordinput', 'varclientsharedsecret', 'varsqlconfpassword',
 	'varsqlconf2password', 	'varsyncpassword', 'varmodulesldappassword', 'varmodulesldap2password',

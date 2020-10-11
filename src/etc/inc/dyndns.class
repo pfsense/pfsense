@@ -29,6 +29,7 @@
 	 *    - DynDns (dyndns.org) [dynamic, static, custom]
 	 *    - No-IP (no-ip.com)
 	 *    - EasyDNS (easydns.com)
+	 *    - EasyDNS IPv6 (easydns.com)
 	 *    - DHS (www.dhs.org)
 	 *    - HN (hn.org) -- incomplete checking!
 	 *    - DynS (dyns.org)
@@ -306,6 +307,7 @@
 				case 'noip-v6':
 				case 'noip-free-v6':
 				case 'dynv6-v6':
+				case 'easydns-v6':
 					$this->_useIPv6 = true;
 					break;
 				default:
@@ -362,6 +364,7 @@
 					case 'noip-free':
 					case 'noip-free-v6':
 					case 'easydns':
+					case 'easydns-v6':
 					case 'hn':
 					case 'zoneedit':
 					case 'dyns':
@@ -582,6 +585,19 @@
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . urlencode($this->_dnsUser) . '&pass=' . urlencode($this->_dnsPass) . '&h[]=' . $this->_dnsHost . '&ip=' . $iptoset);
 					break;
 				case 'easydns':
+					$needsIP = TRUE;
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					$server = "https://members.easydns.com/dyn/dyndns.php";
+					$port = "";
+					if ($this->_dnsServer) {
+						$server = $this->_dnsServer;
+					}
+					if ($this->_dnsPort) {
+						$port = ":" . $this->_dnsPort;
+					}
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard=' . $this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=' . $this->_dnsBackMX);
+					break;
+				case 'easydns-v6':
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$server = "https://members.easydns.com/dyn/dyndns.php";
@@ -1796,6 +1812,24 @@
 					}
 					break;
 				case 'easydns':
+					if (preg_match('/NOACCESS/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Authentication Failed: Username and/or Password was Incorrect.");
+					} else if (preg_match('/NOSERVICE/i', $data)) {
+						$status = $status_intro . $error_str . gettext("No Service: Dynamic DNS Service has been disabled for this domain.");
+					} else if (preg_match('/ILLEGAL INPUT/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Illegal Input: Self-Explanatory");
+					} else if (preg_match('/TOOSOON/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Too Soon: Not Enough Time Has Elapsed Since Last Update");
+					} else if (preg_match('/NOERROR/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Updated Successfully!");
+						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
+					}
+					break;
+				case 'easydns-v6':
 					if (preg_match('/NOACCESS/i', $data)) {
 						$status = $status_intro . $error_str . gettext("Authentication Failed: Username and/or Password was Incorrect.");
 					} else if (preg_match('/NOSERVICE/i', $data)) {

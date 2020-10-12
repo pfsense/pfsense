@@ -314,4 +314,13 @@ $system_log_compression_types = array(
 		),
 );
 
+global $ddnsdomainkeyalgorithms;
+$ddnsdomainkeyalgorithms = array(
+		'hmac-md5' => 'HMAC-MD5 (legacy default)',
+		'hmac-sha1' => 'HMAC-SHA1',
+		'hmac-sha224' => 'HMAC-SHA224',
+		'hmac-sha256' => 'HMAC-SHA256 (current bind9 default)',
+		'hmac-sha384' => 'HMAC-SHA384',
+		'hmac-sha512' => 'HMAC-SHA512 (most secure)');
+
 ?>

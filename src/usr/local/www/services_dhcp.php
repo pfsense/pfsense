@@ -38,6 +38,8 @@ require_once('rrd.inc');
 require_once("shaper.inc");
 require_once("util.inc");
 
+global $ddnsdomainkeyalgorithms;
+
 if (!$g['services_dhcp_server_enable']) {
 	header("Location: /");
 	exit;
@@ -1325,14 +1327,7 @@ $section->addInput(new Form_Select(
 	'ddnsdomainkeyalgorithm',
 	'Key algorithm',
 	$pconfig['ddnsdomainkeyalgorithm'],
-	array(
-		'hmac-md5' => 'HMAC-MD5 (legacy default)',
-		'hmac-sha1' => 'HMAC-SHA1',
-		'hmac-sha224' => 'HMAC-SHA224',
-		'hmac-sha256' => 'HMAC-SHA256 (current bind9 default)',
-		'hmac-sha384' => 'HMAC-SHA384',
-		'hmac-sha512' => 'HMAC-SHA512 (most secure)',
-	)
+	$ddnsdomainkeyalgorithms
 ));
 
 $section->addInput(new Form_Input(

@@ -2931,7 +2931,7 @@ $group->setHelp('Leave the date field empty, for the reset to be executed each d
 $section->add($group);
 
 $group = new Form_MultiCheckboxGroup('cron based reset');
-$group->addClass('pppoepreset');
+$group->addClass('pppoepreset notoggleall');
 
 $group->add(new Form_MultiCheckbox(
 	'pppoe_pr_preset_val',

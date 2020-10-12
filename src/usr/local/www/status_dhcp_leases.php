@@ -74,6 +74,15 @@ if (($_POST['deleteip']) && (is_ipaddr($_POST['deleteip']))) {
 	header("Location: status_dhcp_leases.php?all={$_REQUEST['all']}");
 }
 
+if ($_POST['cleardhcpleases']) {
+	killbyname("dhcpd");
+	sleep(2);
+	unlink_if_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases*");
+
+	services_dhcpd_configure();
+	header("Location: status_dhcp_leases.php?all={$_REQUEST['all']}");
+}
+
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 
@@ -356,6 +365,7 @@ else:
 <?php else: ?>
 	<a class="btn btn-info" href="status_dhcp_leases.php?all=1"><i class="fa fa-plus-circle icon-embed-btn"></i><?=gettext("Show all configured leases")?></a>
 <?php endif; ?>
+	<a class="btn btn-danger no-confirm" id="cleardhcp"><i class="fa fa-trash icon-embed-btn"></i><?=gettext("Clear all DHCP leases")?></a>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -419,6 +429,12 @@ events.push(function() {
 	$("#searchstr").on("keyup", function (event) {
 		if (event.keyCode == 13) {
 			$("#btnsearch").get(0).click();
+		}
+	});
+  
+	$('#cleardhcp').click(function() {
+		if (confirm("Are you sure you wish to clear all DHCP leases?")) {
+			postSubmit({cleardhcpleases: 'true'}, 'status_dhcp_leases.php');
 		}
 	});
 

@@ -1593,6 +1593,7 @@ global $ntp_poll_min_value, $ntp_poll_max_value;
 global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
 global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
 global $ntp_poll_min_default, $ntp_poll_max_default;
+global $ntp_auth_halgos;
 $ntp_poll_min_value = 4;
 $ntp_poll_max_value = 17;
 $ntp_poll_min_default_gps = 4;
@@ -1601,6 +1602,10 @@ $ntp_poll_min_default_pps = 4;
 $ntp_poll_max_default_pps = 4;
 $ntp_poll_min_default = 'omit';
 $ntp_poll_max_default = 9;
+$ntp_auth_halgos = array(
+	'md5' => 'MD5',
+	'sha1' => 'SHA1'
+);
 
 function system_ntp_poll_values() {
 	global $ntp_poll_min_value, $ntp_poll_max_value;
@@ -1766,6 +1771,7 @@ function system_ntp_configure() {
 		}
 		@unlink("{$g['varrun_path']}/ntpd.pid");
 		@unlink("{$g['varetc_path']}/ntpd.conf");
+		@unlink("{$g['varetc_path']}/ntp.keys");
 		log_error("NTPD is disabled.");
 		return;
 	}
@@ -1780,10 +1786,30 @@ function system_ntp_configure() {
 	}
 	@unlink("{$g['varrun_path']}/ntpd.pid");
 
+	/* set NTP server authentication key */
+	if ($config['ntpd']['serverauth'] == 'yes') {
+		$ntpkeyscfg = "1 " . strtoupper($config['ntpd']['serverauthalgo']) . " " . base64_decode($config['ntpd']['serverauthkey']) . "\n";
+		if (!@file_put_contents("{$g['varetc_path']}/ntp.keys", $ntpkeyscfg)) {
+			log_error(sprintf(gettext("Could not open %s/ntp.keys for writing"), $g['varetc_path']));
+			return;
+		}
+	} else {
+		unlink_if_exists("{$g['varetc_path']}/ntp.keys");
+	}
+
 	$ntpcfg = "# \n";
 	$ntpcfg .= "# pfSense ntp configuration file \n";
 	$ntpcfg .= "# \n\n";
-	$ntpcfg .= "tinker panic 0 \n";
+	$ntpcfg .= "tinker panic 0 \n\n";
+
+	if ($config['ntpd']['serverauth'] == 'yes') {
+		$ntpcfg .= "# Authentication settings \n";
+		$ntpcfg .= "keys /var/etc/ntp.keys \n";
+		$ntpcfg .= "trustedkey 1 \n";
+		$ntpcfg .= "requestkey 1 \n";
+		$ntpcfg .= "controlkey 1 \n";
+		$ntpcfg .= "\n";
+	}
 
 	/* Add Orphan mode */
 	$ntpcfg .= "# Orphan mode stratum and Maximum candidate NTP peers\n";

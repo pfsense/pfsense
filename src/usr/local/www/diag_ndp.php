@@ -54,6 +54,16 @@ if (isset($_POST['deleteentry'])) {
 	$deleteResultMessageType = ($deleteSucceededFlag)
 		? 'success'
 		: 'alert-warning';
+} elseif (isset($_POST['clearndptable'])) {
+	$out = "";
+	$ret = exec("/usr/sbin/ndp -c", $out, $ndpTableRetVal);
+	if ($ndpTableRetVal == 0) { 
+		$deleteResultMessage = gettext("NDP Table has been cleared.");
+		$deleteResultMessageType = 'success';
+	} else {
+		$deleteResultMessage = gettext("Unable to clear NDP Table.");
+		$deleteResultMessageType = 'alert-warning';
+	}
 }
 
 exec(NDP_BINARY_PATH . " -na", $rawdata);
@@ -226,6 +236,13 @@ if (isset($deleteResultMessage, $deleteResultMessageType)) {
 	</div>
 </div>
 
+<nav class="action-buttons">
+	<button id="clearndp" class="btn btn-danger no-confirm">
+		<i class="fa fa-trash icon-embed-btn"></i>
+		<?=gettext("Clear NDP Table")?>
+	</button>
+</nav>
+
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
@@ -280,6 +297,12 @@ events.push(function() {
 	$("#searchstr").on("keyup", function (event) {
 		if (event.keyCode == 13) {
 			$("#btnsearch").get(0).click();
+		}
+	});
+
+	$('#clearndp').click(function() {
+		if (confirm("Are you sure you wish to clear NDP table?")) {
+			postSubmit({clearndptable: 'true'}, 'diag_ndp.php');
 		}
 	});
 

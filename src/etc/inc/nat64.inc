@@ -77,7 +77,9 @@ function filter_generate_nat64_rules() {
 		$newRule = ''; $newRuleOptions = ''; $ip4 = ''; $ip6 = '';
 		if ($i < count($a_nat64) && !isset($a_nat64[$i]['disabled'])) {
 			$ip4 = $a_nat64[$i]['prefix4']['address'];
+			if (strpos($ip4, '/') === FALSE) $ip4 .= '/32';
 			$ip6 = $a_nat64[$i]['prefix6']['address'];
+			//if (strpos($ip6, '/') === FALSE) $ip6 .= '/128'; //ipv6 prefix cannot be 128 bits long (RFC6052)
 			$allowrfc = isset($a_nat64[$i]['allowrfc1918']) ? ' allow_private' : '';
 			$max_ports = isset($a_nat64[$i]['max_ports']) && $a_nat64[$i]['max_ports'] != 2048 ? ' max_ports '.$a_nat64[$i]['max_ports'] : '';
 			$host_del_age = isset($a_nat64[$i]['host_del_age']) && $a_nat64[$i]['max_ports'] != 3600 ? ' host_del_age '.$a_nat64[$i]['host_del_age'] : '';

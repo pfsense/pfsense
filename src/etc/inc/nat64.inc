@@ -40,11 +40,12 @@ function nat64_load_modules() {
 		mwexec("/sbin/kldload ipfw_nat64");
 	set_sysctl(array(
 		//having ipfw enabled in pfil conflicts with capture portal.
-		"net.inet.ip.pfil.inbound" => "pf",
+		"net.inet.ip.pfil.inbound" => "pf,ipfw", //has ipfw for NAT44+NAT64
 		"net.inet6.ip6.pfil.inbound" => "pf",
 		"net.inet.ip.pfil.outbound" => "pf",
 		"net.inet6.ip6.pfil.outbound" => "pf",
 	    "net.link.ether.ipfw" => "1",
+	    "net.inet.ip.fw.nat64_direct_output" => "0",
 	    "net.inet.ip.fw.one_pass" => "1",
 	    "net.inet.ip.fw.tables_max" => "65534"
 	));

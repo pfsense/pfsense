@@ -189,7 +189,7 @@ function captiveportal_load_modules() {
 		mwexec("/sbin/kldload ipfw");
 		/* make sure ipfw is not on pfil hooks */
 		set_sysctl(array(
-		    "net.inet.ip.pfil.inbound" => "pf",
+		    "net.inet.ip.pfil.inbound" => "pf,ipfw", //leave it on for inbound NAT64
 		    "net.inet6.ip6.pfil.inbound" => "pf",
 		    "net.inet.ip.pfil.outbound" => "pf",
 		    "net.inet6.ip6.pfil.outbound" => "pf"

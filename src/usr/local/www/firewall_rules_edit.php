@@ -723,9 +723,6 @@ if ($_POST['save']) {
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates'])) {
 			$input_errors[] = gettext("The maximum new connections per host / per second(s) (advanced option) can only be specified for TCP protocol.");
 		}
-		if (!empty($_POST['statetimeout'])) {
-			$input_errors[] = gettext("The state timeout (advanced option) can only be specified for TCP protocol.");
-		}
 	}
 
 	if ($_POST['type'] <> "pass") {
@@ -1657,7 +1654,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['statetimeout'],
 	['min' => 1]
-))->setHelp('State Timeout in seconds (TCP only)');
+))->setHelp('State Timeout in seconds');
 
 $section->addInput(new Form_StaticText(
 	'TCP Flags',

@@ -3186,9 +3186,9 @@ function filter_generate_user_rule($rule) {
 			    (isset($rule['max']) and $rule['max'] <> "") or
 			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
 			    (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
+			    (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
 			    ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
-			     ((isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
-			      (isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
+			      ((isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
 			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
 			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
 			    (isset($rule['sloppy'])) or
@@ -3217,10 +3217,19 @@ function filter_generate_user_rule($rule) {
 				if (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") {
 					$aline['flags'] .= "max-src-states " . $rule['max-src-states'] . " ";
 				}
-				if ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
-				    (isset($rule['statetimeout'])) and
-				    ($rule['statetimeout'] <> "")) {
-					$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
+				if (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") {
+					if (in_array($rule['protocol'], array("tcp", "tcp/udp")) ||
+					    empty($rule['protocol'])) { 
+						$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
+					}
+					if (in_array($rule['protocol'], array("udp", "tcp/udp")) ||
+					    empty($rule['protocol'])) { 
+						$aline['flags'] .= "udp.multiple " . $rule['statetimeout'] . " ";
+					}
+					if (!in_array($rule['protocol'], array("udp", "tcp", "tcp/udp")) ||
+					    empty($rule['protocol'])) { 
+						$aline['flags'] .= "other.multiple " . $rule['statetimeout'] . " ";
+					}
 				}
 				if ((in_array($rule['protocol'], array("tcp", "tcp/udp"))) and
 				    (isset($rule['max-src-conn-rate'])) and

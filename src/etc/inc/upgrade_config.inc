@@ -32,9 +32,10 @@ if (!function_exists("console_configure")) {
 }
 
 /* Upgrade functions must be named:
-*    upgrade_XXX_to_YYY
-	* where XXX == previous version, zero padded, and YYY == next version, zero padded
-	*/
+ *    upgrade_XXX_to_YYY
+ * where XXX == previous version, zero padded, and YYY == next version, zero
+ * padded
+ */
 function upgrade_010_to_011() {
 	global $config;
 	$opti = 1;
@@ -6260,6 +6261,51 @@ function upgrade_207_to_208() {
 	$config['system']['hn_altq_enable'] = true;
 }
 
+/* Update IPsec VTI to new VTIMAP format 
+ * https://redmine.pfsense.org/issues/9592
+ */
+function upgrade_208_to_209() {
+	require_once("interfaces.inc");
+	global $config;
+
+	init_config_arr(array('ipsec', 'vtimaps', 'item'));
+
+	if (!is_array($config['ipsec']['phase1']) ||
+	    !is_array($config['ipsec']['phase2'])) {
+		return;
+	}
+
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if (!isset($ph1ent['mobile']) &&
+		    ($ph1ent['iketype'] == 'ikev1' ||
+		    isset($ph1ent['splitconn']))) {
+			$vtisubnet_spec = ipsec_vti($ph1ent, true, false);
+			if (empty($vtisubnet_spec)) {
+				continue;
+			}
+			foreach ($vtisubnet_spec as $idx => $vtisub) {
+				$config['ipsec']['vtimaps']['item'][] = array(
+					"reqid" => $ph1ent['ikeid'],
+					"index" => $idx,
+					"ifnum" => "{$ph1ent['ikeid']}00{$idx}"
+				);
+			}
+		} else {
+			$config['ipsec']['vtimaps']['item'][] = array(
+				"reqid" => $ph1ent['ikeid'],
+				"index" => "0",
+				"ifnum" => "{$ph1ent['ikeid']}000"
+			);
+		}
+	}
+}
+
+function upgrade_209_to_210() {
+	global $config;
+	if (isset($config['system']['dnslocalhost'])) {
+		$config['system']['dnslocalhost'] = 'remote';
+	}
+}
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

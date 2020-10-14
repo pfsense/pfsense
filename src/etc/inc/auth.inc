@@ -982,9 +982,6 @@ function ldap_test_connection($authcfg) {
 		return false;
 	}
 
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
-
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -996,6 +993,9 @@ function ldap_test_connection($authcfg) {
 		return false;
 	}
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($ldap, $authcfg);
+
 	return true;
 }
 
@@ -1005,33 +1005,34 @@ function ldap_setup_caenv($ldap, $authcfg) {
 
 	unset($caref);
 	if (empty($authcfg['ldap_caref']) || strstr($authcfg['ldap_urltype'], "Standard")) {
-		putenv('LDAPTLS_REQCERT=never');
+		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 		return;
 	} elseif ($authcfg['ldap_caref'] == "global") {
-		putenv('LDAPTLS_REQCERT=hard');
-		putenv("LDAPTLS_CACERTDIR=/etc/ssl/");
-		putenv("LDAPTLS_CACERT=/etc/ssl/cert.pem");
+		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, "/etc/ssl/");
+		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, "/etc/ssl/cert.pem");
+		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
 	} else {
 		$caref = lookup_ca($authcfg['ldap_caref']);
+		$cert_details = openssl_x509_parse(base64_decode($caref['crt']));
 		$param = array('caref' => $authcfg['ldap_caref']);
 		$cachain = ca_chain($param);
 		if (!$caref) {
 			log_error(sprintf(gettext("LDAP: Could not lookup CA by reference for host %s."), $authcfg['ldap_caref']));
 			/* XXX: Prevent for credential leaking since we cannot setup the CA env. Better way? */
-			putenv('LDAPTLS_REQCERT=hard');
+			ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
 			return;
 		}
 
 		$cert_path = "{$g['varrun_path']}/certs";
+		$cert_filename = "{$cert_path}/{$cert_details['hash']}.0";
 		safe_mkdir($cert_path);
-		unlink_if_exists("{$cert_path}/{$caref['refid']}.ca");
-		file_put_contents("{$cert_path}/{$caref['refid']}.ca", $cachain);
-		@chmod("{$cert_path}/{$caref['refid']}.ca", 0600);
+		unlink_if_exists($cert_filename);
+		file_put_contents($cert_filename, $cachain);
+		@chmod($cert_filename, 0600);
 
-		putenv('LDAPTLS_REQCERT=hard');
-		/* XXX: Probably even the hashed link should be created for this? */
-		putenv("LDAPTLS_CACERTDIR={$g['varrun_path']}/certs");
-		putenv("LDAPTLS_CACERT={$g['varrun_path']}/certs/{$caref['refid']}.ca");
+		ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_HARD);
+		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, $cert_path);
+		ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, $cert_filename);
 	}
 }
 
@@ -1068,9 +1069,6 @@ function ldap_test_bind($authcfg) {
 		return false;
 	}
 
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
-
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -1081,6 +1079,9 @@ function ldap_test_bind($authcfg) {
 		log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
 		return false;
 	}
+
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($ldap, $authcfg);
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
@@ -1156,9 +1157,6 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 		return $ous;
 	}
 
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
-
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -1169,6 +1167,9 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 		log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
 		return $ous;
 	}
+
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($ldap, $authcfg);
 
 	$ldapfilter = "(|(ou=*)(cn=Users))";
 
@@ -1296,9 +1297,6 @@ function ldap_get_groups($username, $authcfg) {
 	$ldapgroupattribute = strtolower($ldapgroupattribute);
 	$memberof = array();
 
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
-
 	/* connect and see if server is up */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
@@ -1309,6 +1307,9 @@ function ldap_get_groups($username, $authcfg) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() Could not connect to server %s."), $ldapname));
 		return $memberof;
 	}
+
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($ldap, $authcfg);
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
@@ -1366,12 +1367,12 @@ function ldap_get_groups($username, $authcfg) {
 			}
 			$username = $userinfo[0]['dn'];
 		}
-		$ldapgroupfilter         = "(&(objectClass={$authcfg['ldap_attr_groupobj']})({$ldapgroupattribute}={$username}))";
+		$ldapfilter = "(&(objectClass={$authcfg['ldap_attr_groupobj']})({$ldapgroupattribute}={$username}))";
 	} else {
-		$ldapgroupfilter         = "({$ldapnameattribute}={$username})";
+		$ldapfilter = "({$ldapnameattribute}={$username})";
 	}
 
-	$search = @$ldapfunc($ldap, $ldapdn, $ldapgroupfilter, array($ldapgroupattribute));
+	$search = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
 	$info = @ldap_get_entries($ldap, $search);
 
 	$gresults = isset($authcfg['ldap_rfc2307']) ? $info : $info[0][$ldapgroupattribute];
@@ -1482,14 +1483,14 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		return null;
 	}
 
-	/* Setup CA environment if needed. */
-	ldap_setup_caenv($ldap, $authcfg);
-
 	/* Make sure we can connect to LDAP */
 	$error = false;
 	if (!($ldap = ldap_connect($ldapserver))) {
 		$error = true;
 	}
+
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($ldap, $authcfg);
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
@@ -1568,24 +1569,21 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 			$ldapdn = $ldapsearchbasedn;
 		}
 		$search = @$ldapfunc($ldap, $ldapdn, $ldapfilter);
-		$info = ldap_get_entries($ldap, $search);
-		if (isset($authcfg['ldap_rfc2307'])) {
+		if (!$search) {
+			log_error(sprintf(gettext("Search resulted in error: %s"), ldap_error($ldap)));
+			continue;
+		}
+		if (isset($authcfg['ldap_rfc2307']) && isset($ldapgroupfilter)) {
 			if (isset($authcfg['ldap_rfc2307_userdn'])) {
+				$info = ldap_get_entries($ldap, $search);
 				$username = $info[0]['dn'];
 			}
 			$ldapgroupfilter = "(&({$ldapgroupattribute}={$username})({$ldapextendedquery}))";
-		}
-
-		if (isset($ldapgroupfilter)) {
 			$groupsearch = @$ldapfunc($ldap, $ldapdn, $ldapgroupfilter);
 		}
 
 		if (isset($ldapgroupfilter) && !$groupsearch) {
 			log_error(sprintf(gettext("Extended group search resulted in error: %s"), ldap_error($ldap)));
-			continue;
-		}
-		if (!$search) {
-			log_error(sprintf(gettext("Search resulted in error: %s"), ldap_error($ldap)));
 			continue;
 		}
 		if (isset($groupsearch)) {
@@ -1594,6 +1592,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 				log_auth(sprintf(gettext("LDAP group search: %s results."), $validgroup));
 			}
 		}
+		$info = ldap_get_entries($ldap, $search);
 		$matches = $info['count'];
 		if ($matches == 1) {
 			$userdn = $_SESSION['ldapdn'] = $info[0]['dn'];
@@ -2192,5 +2191,97 @@ function get_user_remote_authsource() {
 		$authsource .= " ({$_SESSION['authsource']})";
 	}
 	return $authsource;
+}
+
+function set_pam_auth() {
+	global $config;
+
+	$header = "# This file is automatically generated. Do not edit.\n\n";
+	$pam_sshd =<<<EOD
+# auth
+auth		required	pam_unix.so		no_warn try_first_pass
+
+# account
+account		required	pam_nologin.so
+account		required	pam_login_access.so
+account		required	pam_unix.so
+
+# session
+session		required	pam_permit.so
+
+# password
+password	required	pam_unix.so		no_warn try_first_pass
+
+EOD;
+
+	$pam_system =<<<EOD
+# auth
+auth		required	pam_unix.so		no_warn try_first_pass
+
+# account
+account		required	pam_login_access.so
+account		required	pam_unix.so
+
+# session
+session		required	pam_lastlog.so		no_fail
+
+# password
+password	required	pam_unix.so		no_warn try_first_pass
+
+EOD;
+
+	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+	if (($authcfg['type'] == "radius") && isset($authcfg['radius_auth_port'])) {
+		$radius_conf = "auth {$authcfg['host']}:{$authcfg['radius_auth_port']} " .
+		        	"{$authcfg['radius_secret']} {$authcfg['radius_timeout']}\n";
+		if (isset($authcfg['radius_acct_port'])) {
+			$radius_conf .= "acct {$authcfg['host']}:{$authcfg['radius_acct_port']} " .
+				"{$authcfg['radius_secret']} {$authcfg['radius_timeout']}\n";
+		}
+		
+		$pam_sshd =<<<EOD
+# auth
+auth            sufficient      pam_radius.so
+auth		required	pam_unix.so		no_warn try_first_pass
+
+# account
+account		required	pam_nologin.so
+account		required	pam_login_access.so
+account         sufficient      pam_radius.so
+
+# session
+session		required	pam_permit.so
+
+# password
+password        sufficient      pam_radius.so
+password	required	pam_unix.so		no_warn try_first_pass
+
+EOD;
+
+		$pam_system =<<<EOD
+# auth
+auth            sufficient      pam_radius.so
+auth		required	pam_unix.so		no_warn try_first_pass
+
+# account
+account		required	pam_login_access.so
+account         sufficient      pam_radius.so
+
+# session
+session		required	pam_lastlog.so		no_fail
+
+# password
+password        sufficient      pam_radius.so
+password	required	pam_unix.so		no_warn try_first_pass
+
+EOD;
+
+		@file_put_contents("/etc/radius.conf", $header . $radius_conf);
+	} else {
+		unlink_if_exists("/etc/radius.conf");
+	}
+
+	@file_put_contents("/etc/pam.d/sshd", $header . $pam_sshd);
+	@file_put_contents("/etc/pam.d/system", $header . $pam_system);
 }
 ?>

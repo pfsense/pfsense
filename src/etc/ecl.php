@@ -40,7 +40,7 @@ function get_swap_disks() {
 
 function get_disk_slices($disk) {
 	global $g, $debug;
-	$slices = glob("/dev/" . $disk . "s*");
+	$slices = glob("/dev/" . $disk . "[ps]*");
 	$slices = str_replace("/dev/", "", $slices);
 	return $slices;
 }

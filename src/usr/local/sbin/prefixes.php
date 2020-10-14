@@ -22,6 +22,7 @@
  */
 
 require_once('system.inc');
+require_once('util.inc');
 
 $leases_file = "/var/dhcpd/var/db/dhcpd6.leases";
 if (!file_exists($leases_file)) {
@@ -102,8 +103,7 @@ foreach ($duid_arr as $entry) {
 // echo "add routes\n";
 if (count($routes) > 0) {
 	foreach ($routes as $address => $prefix) {
-		echo "/sbin/route change -inet6 {$prefix} {$address} " .
-		    "|| /sbin/route add -inet6 {$prefix} {$address}\n";
+		route_add_or_change($prefix, $address);
 	}
 }
 
@@ -127,7 +127,7 @@ if (file_exists($dhcpdlogfile)) {
 // echo "remove routes\n";
 if (count($expires) > 0) {
 	foreach ($expires as $prefix) {
-		echo "/sbin/route delete -inet6 {$prefix['prefix']}\n";
+		route_del($prefix['prefix']);
 	}
 }
 

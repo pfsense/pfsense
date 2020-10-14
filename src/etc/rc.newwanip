@@ -124,15 +124,21 @@ if (is_ipaddr($curwanip)) {
 link_interface_to_vips($interface, "update");
 
 unset($gre);
-$gre = link_interface_to_gre($interface);
+$gre = link_interface_to_tunnelif($interface, 'gre');
 if (!empty($gre)) {
 	array_walk($gre, 'interface_gre_configure');
 }
 
 unset($gif);
-$gif = link_interface_to_gif($interface);
+$gif = link_interface_to_tunnelif($interface, 'gif');
 if (!empty($gif)) {
 	array_walk($gif, 'interface_gif_configure');
+}
+
+unset($vxlan);
+$vxlan = link_interface_to_tunnelif($interface, 'vxlan');
+if (!empty($vxlan)) {
+	array_walk($vxlan, 'interface_vxlan_configure');
 }
 
 $grouptmp = link_interface_to_group($interface);

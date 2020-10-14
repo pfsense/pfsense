@@ -26,8 +26,8 @@
  */
 
 
-define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dreamhost dreamhost-v6 duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia namecheap noip noip-v6 noip-free noip-free-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi Live DNS,GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,Namecheap,No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsmadeeasy dnsomatic domeneshop domeneshop-v6 dreamhost dreamhost-v6 duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia namecheap noip noip-v6 noip-free noip-free-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,Domeneshop,Domeneshop (v6),DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi Live DNS,GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,Namecheap,No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -158,12 +158,7 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
 				break;
 		}
-		if ($dhcpv6ifconf['ramode'] == "unmanaged") {
-			$prefixnet = $ifcfgipv6;
-		} else {
-			$prefixnet = $subnetv6;
-		}
-		$radvdconf .= "\tprefix {$prefixnet}/{$ifcfgsnv6} {\n";
+		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 		if ($racarpif == true) {
 			$radvdconf .= "\t\tDeprecatePrefix off;\n";
 		} else {
@@ -186,7 +181,6 @@ function services_radvd_configure($blacklist = array()) {
 			case "unmanaged":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
 				$radvdconf .= "\t\tAdvAutonomous on;\n";
-				$radvdconf .= "\t\tAdvRouterAddr on;\n";
 				break;
 		}
 
@@ -1140,6 +1134,8 @@ EOD;
 		if (is_array($dhcpifconf['staticmap'])) {
 
 			$i = 0;
+			$sm_newzone[] = array();
+			$need_sm_ddns_updates = false;
 			foreach ($dhcpifconf['staticmap'] as $sm) {
 				$cid = '';
 				$dhcpdconf .= "host s_{$dhcpif}_{$i} {\n";
@@ -1190,6 +1186,7 @@ EOD;
 				if (isset($sm['ddnsupdate'])) {
 					if (($sm['ddnsdomain'] <> "") && ($sm['ddnsdomain'] != $dhcpifconf['ddnsdomain'])) {
 						$smdnscfg .= "		ddns-domainname \"{$sm['ddnsdomain']}\";\n";
+				 		$need_sm_ddns_updates = true;	
 					}
 					$smdnscfg .= "		ddns-update-style interim;\n";
 				}
@@ -1268,6 +1265,26 @@ EOD;
 
 				$dhcpdconf .= "}\n";
 
+				// add zone DDNS key/server to $ddns_zone[] if required
+				if ($need_sm_ddns_updates) {
+					$ddnsduplicate = false;
+					foreach ($ddns_zones as $ddnszone) {
+						if ($ddnszone['domain-name'] == $sm['ddnsdomain']) {
+							$ddnsduplicate = true;
+						}
+					}
+					if (!$ddnsduplicate) {
+						$sm_newzone['dns-servers'] = array($sm['ddnsdomainprimary']);
+						$sm_newzone['domain-name'] = $sm['ddnsdomain'];
+						$sm_newzone['ddnsdomainkeyname'] = $sm['ddnsdomainkeyname'];
+						$sm_newzone['ddnsdomainkeyalgorithm'] = $sm['ddnsdomainkeyalgorithm'];
+						$sm_newzone['ddnsdomainkey'] = $sm['ddnsdomainkey'];
+						$dhcpdconf .= dhcpdkey($sm_newzone);
+						$ddns_zones[] = $sm_newzone;
+						$need_ddns_updates = true;
+					}
+				}
+
 				// subclass for DHCP limiting
 				if (!empty($sm['mac'])) {
 					// assuming ALL addresses are ethernet hardware type ("1:" prefix)
@@ -1336,7 +1353,7 @@ function dhcpdkey($dhcpifconf) {
 	$dhcpdconf = "";
 	if (!empty($dhcpifconf['ddnsdomainkeyname']) && !empty($dhcpifconf['ddnsdomainkey'])) {
 		$algorithm = empty($dhcpifconf['ddnsdomainkeyalgorithm']) ? 'hmac-md5' : $dhcpifconf['ddnsdomainkeyalgorithm'];
-		$dhcpdconf .= "key {$dhcpifconf['ddnsdomainkeyname']} {\n";
+		$dhcpdconf .= "key \"{$dhcpifconf['ddnsdomainkeyname']}\" {\n";
 		$dhcpdconf .= "	algorithm {$algorithm};\n";
 		$dhcpdconf .= "	secret {$dhcpifconf['ddnsdomainkey']};\n";
 		$dhcpdconf .= "}\n";
@@ -1381,7 +1398,7 @@ function dhcpdzones($ddns_zones) {
 					$dhcpdconf .= "	secondary6 {$secondary};\n";
 				}
 				if ($zone['ddnsdomainkeyname'] <> "" && $zone['ddnsdomainkey'] <> "") {
-					$dhcpdconf .= "	key {$zone['ddnsdomainkeyname']};\n";
+					$dhcpdconf .= "	key \"{$zone['ddnsdomainkeyname']}\";\n";
 				}
 				$dhcpdconf .= "}\n";
 				$added_zones[] = $zone['domain-name'];
@@ -1399,7 +1416,7 @@ function dhcpdzones($ddns_zones) {
 					$dhcpdconf .= "	secondary6 {$secondary};\n";
 				}
 				if ($zone['ddnsdomainkeyname'] <> "" && $zone['ddnsdomainkey'] <> "") {
-					$dhcpdconf .= "	key {$zone['ddnsdomainkeyname']};\n";
+					$dhcpdconf .= "	key \"{$zone['ddnsdomainkeyname']}\";\n";
 				}
 				$dhcpdconf .= "}\n";
 				$added_zones[] = $zone['ptr-domain'];
@@ -1547,6 +1564,10 @@ EOD;
 				$dns_arrv6 = array();
 				foreach ($syscfg['dnsserver'] as $dnsserver) {
 					if (is_ipaddrv6($dnsserver)) {
+						if ($ifcfgv6['ipaddrv6'] == 'track6' &&
+						    Net_IPv6::isInNetmask($dnsserver, '::', $pdlen)) {
+							$dnsserver = merge_ipv6_delegated_prefix($ifcfgipv6, $dnsserver, $pdlen);
+						}
 						$dns_arrv6[] = $dnsserver;
 					}
 				}
@@ -1768,7 +1789,7 @@ EOD;
 	if (count($dhcpdv6ifs) > 0) {
 		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf -pf {$g['varrun_path']}/dhcpdv6.pid " .
 			join(" ", $dhcpdv6ifs));
-		mwexec("/usr/local/sbin/dhcpleases6 -c \"/usr/local/bin/php-cgi -f /usr/local/sbin/prefixes.php|/bin/sh\" -l {$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
+		mwexec("/usr/local/sbin/dhcpleases6 -c \"/usr/local/bin/php-cgi -f /usr/local/sbin/prefixes.php\" -l {$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
 	}
 	if (platform_booting()) {
 		print gettext("done.") . "\n";
@@ -2839,6 +2860,10 @@ EOD;
 		$upinst = "";
 		if (!empty($dnsupdate['server'])) {
 			$upinst .= "server {$dnsupdate['server']}\n";
+		}
+
+		if (!empty($dnsupdate['zone'])) {
+			$upinst .= "zone {$dnsupdate['zone']}\n";
 		}
 
 		$cachedipv4 = '';

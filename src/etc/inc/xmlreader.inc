@@ -34,8 +34,8 @@ function listtags() {
 	$ret = array(
 		'acls', 'alias', 'aliasurl', 'allowedip', 'allowedhostname', 'authserver',
 		'bridged', 'build_port_path',
-		'ca', 'cacert', 'cert', 'crl', 'clone', 'config', 'container', 'columnitem',
-		'checkipservice',
+		'ca', 'cacert', 'cert', 'crl', 'clone', 'config',
+	       	'container', 'columnitem', 'checkipservice',
 		'depends_on_package', 'disk', 'dnsserver', 'dnsupdate', 'domainoverrides', 'dyndns',
 		'earlyshellcmd', 'element', 'encryption-algorithm-option',
 		'field', 'fieldname',
@@ -51,7 +51,7 @@ function listtags() {
 		'schedule', 'service', 'servernat', 'servers',
 		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue', 'switch', 'swport',
 		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'vlangroup', 'voucherdbfile',
-		'winsserver', 'wolentry', 'widget'
+		'vxlan', 'winsserver', 'wolentry', 'widget', 'xmldatafile'
 	);
 	return array_flip($ret);
 }

@@ -70,7 +70,7 @@ $g = array(
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
 	"debug" => false,
-	"latest_config" => "20.8",
+	"latest_config" => "21.0",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -91,7 +91,13 @@ $g = array(
 	"default_log_entries" => 500,
 	"default_log_size" => 512000,
 	"minimumtableentries_bogonsv6" => 400000,
-	"alternativemetaports" => array("vmware", "php72", "php73")
+	"alternativemetaports" => array("vmware", "php72", "php73", "php74"),
+	"backuppath" => array(
+		'captiveportal' => "/var/db/captiveportal*.db",
+		'dhcpd' => "/var/dhcpd/var/db/dhcpd.leases",
+		'dhcpdv6' => "/var/dhcpd/var/db/dhcpd6.leases",
+		'voucher' => "/var/db/voucher_*.db"
+	)
 );
 
 /* IP TOS flags */
@@ -309,5 +315,14 @@ $system_log_compression_types = array(
 			'ext' => '',
 		),
 );
+
+global $ddnsdomainkeyalgorithms;
+$ddnsdomainkeyalgorithms = array(
+		'hmac-md5' => 'HMAC-MD5 (legacy default)',
+		'hmac-sha1' => 'HMAC-SHA1',
+		'hmac-sha224' => 'HMAC-SHA224',
+		'hmac-sha256' => 'HMAC-SHA256 (current bind9 default)',
+		'hmac-sha384' => 'HMAC-SHA384',
+		'hmac-sha512' => 'HMAC-SHA512 (most secure)');
 
 ?>

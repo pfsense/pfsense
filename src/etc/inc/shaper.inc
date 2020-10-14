@@ -1814,28 +1814,28 @@ class priq_queue {
 			null,
 			null,
 			!empty($this->GetRed())
-		))->setHelp('%1$sRandom Early Detection%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/book/trafficshaper/advanced-customization.html#editing-shaper-queues">', '</a>');
+		))->setHelp('%1$sRandom Early Detection%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/trafficshaper/advanced.html#editing-shaper-queues">', '</a>');
 
 		$group->add(new Form_Checkbox(
 			'rio',
 			null,
 			null,
 			!empty($this->GetRio())
-		))->setHelp('%1$sRandom Early Detection In and Out%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/book/trafficshaper/advanced-customization.html#editing-shaper-queues">', '</a>');
+		))->setHelp('%1$sRandom Early Detection In and Out%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/trafficshaper/advanced.html#editing-shaper-queues">', '</a>');
 
 		$group->add(new Form_Checkbox(
 			'ecn',
 			null,
 			null,
 			!empty($this->GetEcn())
-		))->setHelp('%1$sExplicit Congestion Notification%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/book/trafficshaper/advanced-customization.html#editing-shaper-queues">', '</a>');
+		))->setHelp('%1$sExplicit Congestion Notification%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/trafficshaper/advanced.html#editing-shaper-queues">', '</a>');
 
 		$group->add(new Form_Checkbox(
 			'codel',
 			null,
 			null,
 			!empty($this->GetCodel())
-		))->setHelp('%1$sCodel Active Queue%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/book/trafficshaper/altq-scheduler-types.html#codel-active-queue-management">', '</a>');
+		))->setHelp('%1$sCodel Active Queue%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/trafficshaper/altq-scheduler-types.html#codel-active-queue-management">', '</a>');
 
 		$group->setHelp('Select options for this queue');
 
@@ -4134,7 +4134,10 @@ class dnpipe_class extends dummynet_class {
 		}
 		$selectedScheduler = getSchedulers()[$this->getScheduler()];
 		if ($selectedScheduler) {
-			$pfq_rule .= "\nsched ". $this->GetNumber() . " config pipe " . $this->GetNumber() . " " . FormatParameters($selectedScheduler["parameter_format"], $this->GetSchedulerParameters());
+			$pfq_rule .= "\nsched ". $this->GetNumber() . " config ";
+			$pfq_rule .= "pipe ". $this->GetNumber();
+			$this->build_mask_rules($pfq_rule);
+			$pfq_rule .= " " . FormatParameters($selectedScheduler["parameter_format"], $this->GetSchedulerParameters());			
 			if ($selectedScheduler["ecn"]) {
 				if ($this->getECN() == 'on') {
 					$pfq_rule .= ' ecn';
@@ -5252,7 +5255,7 @@ function dnpipe_find_nextnumber() {
 }
 
 function filter_generate_dummynet_rules() {
-	global $g, $dummynet_pipe_list;
+	global $config, $g, $dummynet_pipe_list;
 
 	read_dummynet_config();
 
@@ -5272,11 +5275,20 @@ function filter_generate_dummynet_rules() {
 		if (!is_module_loaded("dummynet.ko")) {
 			mwexec("/sbin/kldload dummynet");
 		}
-		set_sysctl(array(
+		$sysctls = (array(
 				"net.inet.ip.dummynet.io_fast" => "1",
 				"net.inet.ip.dummynet.hash_size" => "256",
 				"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
 		));
+		init_config_arr(array('sysctl', 'item'));
+		if (!empty($config['sysctl']['item'])) {
+			foreach ($config['sysctl']['item'] as $item) {
+				if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
+					$sysctls[$item['tunable']] = $item['value'];
+				}
+			}
+		}
+		set_sysctl($sysctls);
 		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
 		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");
 	}

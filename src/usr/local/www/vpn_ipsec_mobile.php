@@ -45,13 +45,34 @@ $a_phase1 = &$config['ipsec']['phase1'];
 init_config_arr(array('ipsec', 'client'));
 $a_client = &$config['ipsec']['client'];
 
+init_config_arr(array('system', 'group'));
+$a_group = &$config['system']['group'];
+
+$auth_groups = array();
+foreach ($config['system']['group'] as $group) {
+	if (isset($group['priv'])) {
+		foreach ($group['priv'] as $priv) {
+			if (($priv == 'page-all') || ($priv == 'user-ipsec-xauth-dialin')) {
+				if (!empty($group['description'])) {
+					$auth_groups[$group['name']] = $group['description'] . " (" . $group['name'] . ")";
+				} else {
+					$auth_groups[$group['name']] = $group['name'];
+				}
+				continue 2;
+			}
+		}
+	}
+}
+
 if (count($a_client)) {
 
 	$pconfig['enable'] = $a_client['enable'];
 	$pconfig['radiusaccounting'] = ($a_client['radiusaccounting'] == 'enabled');
+	$pconfig['radius_groups'] = $a_client['radius_groups'];
 
 	$pconfig['user_source'] = $a_client['user_source'];
 	$pconfig['group_source'] = $a_client['group_source'];
+	$pconfig['auth_groups'] = $a_client['auth_groups'];
 
 	$pconfig['pool_address'] = $a_client['pool_address'];
 	$pconfig['pool_netbits'] = $a_client['pool_netbits'];
@@ -73,6 +94,11 @@ if (count($a_client)) {
 	
 	if (isset($pconfig['enable'])) {
 		$pconfig['enable'] = true;
+	}
+
+	if ($pconfig['group_source'] == 'enabled') {
+		$pconfig['group_source'] = true;
+		$pconfig['auth_groups'] = $a_client['auth_groups'];
 	}
 
 	if ($pconfig['pool_address'] && $pconfig['pool_netbits']) {
@@ -153,8 +179,8 @@ if ($_POST['save']) {
 
 	/* input validation */
 
-	$reqdfields = explode(" ", "user_source group_source");
-	$reqdfieldsn = array(gettext("User Authentication Source"), gettext("Group Authentication Source"));
+	$reqdfields = explode(" ", "user_source");
+	$reqdfieldsn = array(gettext("User Authentication Source"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -257,7 +283,14 @@ if ($_POST['save']) {
 			$client['user_source'] = htmlentities($client['user_source'],ENT_COMPAT,'UTF-8');
 		}
 
-		$client['group_source'] = $pconfig['group_source'];
+		$client['group_source'] = ($pconfig['group_source'] == 'yes') ? "enabled" : "disabled";
+
+		if (($pconfig['group_source'] == 'yes') && !empty($pconfig['auth_groups'])) {
+			$client['auth_groups'] = implode(",", $pconfig['auth_groups']);
+		} else {
+			unset($client['group_source']);
+			unset($client['auth_groups']);
+		}
 
 		if ($pconfig['pool_enable']) {
 			$client['pool_address'] = $pconfig['pool_address'];
@@ -470,15 +503,30 @@ $section->addInput(new Form_Select(
 	true
 ))->setHelp('Source');
 
-$section->addInput(new Form_Select(
+$section->addInput(new Form_Checkbox(
 	'group_source',
-	'*Group Authentication',
+	'Group Authentication',
+	'Group Authentication',
 	$pconfig['group_source'],
-	array(
-		'none' => gettext('none'),
-		'system' => gettext('system'),
-	)
-))->setHelp('Source');
+))->setHelp('Authenticate members of groups which have either "User - VPN: IPsec with Dialin" or "WebCfg - All pages" privileges.')
+  ->toggles('.toggle-group_source');
+
+$group = new Form_Group('Authentication Groups');
+$group->addClass('toggle-group_source collapse');
+
+if (!empty($pconfig['group_source'])) {
+	$group->addClass('in');
+}
+
+$group->add(new Form_Select(
+	'auth_groups',
+	'Groups',
+	explode(",", $pconfig['auth_groups']),
+	$auth_groups,
+	true
+))->setHelp('Multiple group selection is allowed.');
+
+$section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'radiusaccounting',

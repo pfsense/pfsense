@@ -62,21 +62,22 @@ $output_path = "/tmp/status_output/";
 $output_file = "/tmp/status_output.tgz";
 
 $filtered_tags = array(
-	'accountkey', 'authorizedkeys', 'auth_pass', 'auth_user',
-	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'crypto_password',
+	'accountkey', 'authorizedkeys', 'auth_pass',
+	'auth_server_shared_secret', 'auth_server_shared_secret2', 'auth_user',
+	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'community', 'crypto_password',
 	'crypto_password2', 'dns_nsupdatensupdate_key', 'encryption_password',
 	'etpro_code', 'etprocode', 'gold_encryption_password', 'gold_password',
 	'influx_pass', 'ipsecpsk', 'ldap_bindpw', 'ldapbindpass', 'ldap_pass',
-	'lighttpd_ls_password',	'md5-hash', 'md5password', 'md5sigkey',	'md5sigpass', 
-	'nt-hash', 'oinkcode', 'oinkmastercode', 'passphrase', 'password', 
-	'passwordagain', 'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',
-	'proxypass', 'proxy_passwd', 'proxyuser', 'proxy_user', 'prv',
-	'radius_secret', 'redis_password', 'redis_passwordagain', 'rocommunity',
-	'secret', 'shared_key', 'tls', 'tlspskidentity', 'tlspskfile',
+	'lighttpd_ls_password', 'maxmind_geoipdb_key', 'maxmind_key', 'md5-hash',
+	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'oinkcode',
+	'oinkmastercode', 'passphrase', 'password', 'passwordagain',
+	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',	'proxypass',
+	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radius_secret',
+	'redis_password', 'redis_passwordagain', 'rocommunity',	'secret', 'secret2', 'serverauthkey',
+	'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',
 	'varclientpasswordinput', 'varclientsharedsecret', 'varsqlconfpassword',
-	'varsqlconf2password', 'varsyncpassword', 'varmodulesldappassword', 
-	'varmodulesldap2password', 'varusersmotpinitsecret', 'varusersmotppin', 
-	'varuserspassword', 'webrootftppassword'
+	'varsqlconf2password', 	'varsyncpassword', 'varmodulesldappassword', 'varmodulesldap2password',
+	'varusersmotpinitsecret', 'varusersmotppin', 'varuserspassword', 'webrootftppassword'
 );
 
 $acme_filtered_tags = array('key', 'password', 'secret', 'token', 'pwd', 'pw');
@@ -326,6 +327,10 @@ defCmdT("Disk-Contents of var run", "/bin/ls /var/run");
 defCmdT("Disk-Contents of conf", "/bin/ls /conf");
 defCmdT("config.xml", "dumpconfigxml");
 defCmdT("DNS-Resolution Configuration", "/bin/cat /etc/resolv.conf");
+defCmdT("DNS-Resolver Access Lists", "/bin/cat /var/unbound/access_lists.conf");
+defCmdT("DNS-Resolver Configuration", "/bin/cat /var/unbound/unbound.conf");
+defCmdT("DNS-Resolver Domain Overrides", "/bin/cat /var/unbound/domainoverrides.conf");
+defCmdT("DNS-Resolver Host Overrides", "/bin/cat /var/unbound/host_entries.conf");
 defCmdT("DHCP-IPv4 Configuration", "/bin/cat /var/dhcpd/etc/dhcpd.conf");
 defCmdT("DHCP-IPv6-Configuration", "/bin/cat /var/dhcpd/etc/dhcpdv6.conf");
 defCmdT("IPsec-strongSwan Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/strongswan.conf');

@@ -108,28 +108,10 @@ function get_tmp_file() {
 	return "{$g['tmp_path']}/tmp-" . time();
 }
 
-/****f* pfsense-utils/get_dns_servers
- * NAME
- *   get_dns_servers - get system dns servers
- * INPUTS
- *   none
- * RESULT
- *   $dns_servers - an array of the dns servers
- ******/
+/* Stub for deprecated function
+ * See https://redmine.pfsense.org/issues/10931 */
 function get_dns_servers() {
-	$dns_servers = array();
-	if (file_exists("/etc/resolv.conf")) {
-		$dns_s = file("/etc/resolv.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	}
-	if (is_array($dns_s)) {
-		foreach ($dns_s as $dns) {
-			$matches = "";
-			if (preg_match("/nameserver (.*)/", $dns, $matches)) {
-				$dns_servers[] = $matches[1];
-			}
-		}
-	}
-	return array_unique($dns_servers);
+	return get_dns_nameservers(false, true);
 }
 
 /****f* pfsense-utils/pfSenseHeader
@@ -541,7 +523,10 @@ function hardware_offloading_applyflags($iface) {
 	$flags_off = 0;
 	$options = pfSense_get_interface_addresses($iface);
 
-	if (isset($config['system']['disablechecksumoffloading'])) {
+	/* disable hardware checksum offloading for VirtIO network drivers,
+	 * see https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=165059 */
+	if (isset($config['system']['disablechecksumoffloading']) ||
+	    stristr($iface, "vtnet") || stristr($iface, "ena")) { 
 		if (isset($options['encaps']['txcsum'])) {
 			$flags_off |= IFCAP_TXCSUM;
 		}
@@ -571,8 +556,10 @@ function hardware_offloading_applyflags($iface) {
 
 	if (isset($config['system']['disablesegmentationoffloading'])) {
 		$flags_off |= IFCAP_TSO;
+		$flags_off |= IFCAP_VLAN_HWTSO;
 	} else if (isset($options['caps']['tso']) || isset($options['caps']['tso4']) || isset($options['caps']['tso6'])) {
 		$flags_on |= IFCAP_TSO;
+		$flags_on |= IFCAP_VLAN_HWTSO;
 	}
 
 	if (isset($config['system']['disablelargereceiveoffloading'])) {
@@ -1328,13 +1315,6 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	if (isset($config['system']['pti_disabled'])) {
 		$data[] = 'vm.pmap.pti="0"';
 	}
-
-	if (isset($config['system']['maximumtableentries'])) {
-		$maximumtableentries = $config['system']['maximumtableentries'];
-	} else {
-		$maximumtableentries = pfsense_default_table_entries_size();
-	}
-	$data[] = 'net.pf.request_maxcount="' .  $maximumtableentries . '"';
 
 	/* Enable ALTQ support for hnX NICs. */
 	if (isset($config['system']['hn_altq_enable'])) {

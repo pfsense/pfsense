@@ -57,6 +57,7 @@ if (is_numericint($_REQUEST['id'])) {
 
 if (isset($id) && $a_pppoes[$id]) {
 	$pppoecfg =& $a_pppoes[$id];
+	$pppoecfg_old = $a_pppoes[$id];
 
 	$pconfig['remoteip'] = $pppoecfg['remoteip'];
 	$pconfig['localip'] = $pppoecfg['localip'];
@@ -107,6 +108,11 @@ if ($_POST['save']) {
 			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
 			$reqdfieldsn = array_merge($reqdfieldsn,
 				array(gettext("RADIUS server address"), gettext("RADIUS shared secret")));
+		}
+		if ($_POST['radiussecenable']) {
+			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver2 radiussecret2"));
+			$reqdfieldsn = array_merge($reqdfieldsn,
+				array(gettext("Secondary RADIUS server address"), gettext("Secondary RADIUS server shared secret")));
 		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -242,8 +248,25 @@ if ($_POST['save']) {
 			$pppoecfg['username'] = implode(" ", $users);
 		}
 
+		if (isset($id) && 
+		    (($pppoecfg_old['remoteip'] != $pppoecfg['remoteip']) ||
+		    ($pppoecfg_old['localip'] != $pppoecfg['localip']) ||
+		    ($pppoecfg_old['mode'] != $pppoecfg['mode']) ||
+		    ($pppoecfg_old['interface'] != $pppoecfg['interface']) ||
+		    ($pppoecfg_old['n_pppoe_units'] != $pppoecfg['n_pppoe_units']) ||
+		    ($pppoecfg_old['n_pppoe_maxlogin'] != $pppoecfg['n_pppoe_maxlogin']) ||
+		    ($pppoecfg_old['pppoe_subnet'] != $pppoecfg['pppoe_subnet']) ||
+		    ($pppoecfg_old['dns1'] != $pppoecfg['dns1']) ||
+		    ($pppoecfg_old['dns2'] != $pppoecfg['dns2']) ||
+		    ($pppoecfg_old['radius'] != $pppoecfg['radius']))) {
+		    	$reload = true;
+		} else {
+			$reload = false;
+		}
+
 		if (!isset($id)) {
 			$id = count($a_pppoes);
+		    	$reload = true;
 		}
 
 		if (file_exists("{$g['tmp_path']}/.vpn_pppoe.apply")) {
@@ -252,12 +275,16 @@ if ($_POST['save']) {
 			$toapplylist = array();
 		}
 
-		$toapplylist[] = $pppoecfg['pppoeid'];
-		$a_pppoes[$id] = $pppoecfg;
+		if ($reload) {
+			$toapplylist[] = $pppoecfg['pppoeid'];
+			mark_subsystem_dirty('vpnpppoe');
+			file_put_contents("{$g['tmp_path']}/.vpn_pppoe.apply", serialize($toapplylist));
+		}
 
+		$a_pppoes[$id] = $pppoecfg;
 		write_config();
-		mark_subsystem_dirty('vpnpppoe');
-		file_put_contents("{$g['tmp_path']}/.vpn_pppoe.apply", serialize($toapplylist));
+		vpn_pppoe_updatesecret($pppoecfg);
+
 		header("Location: services_pppoe.php");
 		exit;
 	}
@@ -269,7 +296,9 @@ function build_interface_list() {
 	$interfaces = get_configured_interface_with_descr();
 
 	foreach ($interfaces as $iface => $ifacename) {
-		$list[$iface] = $ifacename;
+		if (!is_pseudo_interface(convert_friendly_interface_to_real_interface_name($iface))) {
+			$list[$iface] = $ifacename;
+		}
 	}
 
 	return($list);
@@ -470,10 +499,11 @@ $section->addPassword(new Form_Input(
 $counter = 0;
 $numrows = count($item) -1;
 
-$usernames = $pconfig['username'];
-
-//DEBUG
-//$usernames = 'sbeaver:TXlQYXNzd2Q=:192.168.1.1 smith:TXlQYXNzd2Q=:192.168.2.1 sjones:TXlQYXNzd2Q=:192.168.3.1 salpha:TXlQYXNzd2Q=:192.168.4.1';
+if (!empty($pconfig['username'])) {
+	$usernames = $pconfig['username'];
+} else {
+	$usernames = $pppoecfg['username'];
+}
 
 if ($usernames == "") {
 	$usernames = '::';

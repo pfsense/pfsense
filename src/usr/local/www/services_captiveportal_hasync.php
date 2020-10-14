@@ -126,6 +126,8 @@ if ($_POST['save']) {
 				$active_vouchers = unserialize(base64_decode($resp['active_vouchers']));
 				// Contain bitmask of both in use and expired vouchers (will be stored in "used vouchers" db)
 				$expired_vouchers = unserialize(base64_decode($resp['expired_vouchers']));
+				// Contains array of usedmacs (will be stored in usedmacs db)
+				$usedmacs = unserialize(base64_decode($resp['usedmacs']));
 
 				foreach ($connected_users as $id => $user) {
 					$pipeno = captiveportal_get_next_dn_ruleno('auth');
@@ -146,9 +148,10 @@ if ($_POST['save']) {
 				foreach ($active_vouchers as $roll => $vouchers) {
 					voucher_write_active_db($roll, $vouchers);
 				}
+				captiveportal_write_usedmacs_db($usedmacs); 
 			}
 			if (!$input_errors) {
-				$savemsg = sprintf(gettext('Connected users and used vouchers are now synchronized with %1$s'), $newcp['backwardsyncip']);
+				$savemsg = sprintf(gettext('Connected users, used vouchers and used MACs are now synchronized with %1$s'), $newcp['backwardsyncip']);
 			}
 		}
 		if (!$input_errors) {

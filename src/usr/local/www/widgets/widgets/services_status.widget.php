@@ -100,7 +100,7 @@ if (count($services) > 0) {
 			$service['description'] = get_pkg_descr($service['name']);
 		}
 
-		$service_desc = explode(".",$service['description']);
+		$service_desc = explode(". ",$service['description']);
 ?>
 			<tr>
 				<td><?=get_service_status_icon($service, false, true, false, "state")?></td>

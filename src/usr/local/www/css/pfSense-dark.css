@@ -300,6 +300,11 @@ tr.disabled a {
     color: rgba(0, 150, 136,.5);
 }
 
+.table-striped>tbody>tr.disabled>td:first-child {
+    border-left: 3px solid #F44336;
+    padding-left: 7px;
+}
+
 .table-bordered {
     border: 1px solid #303030;
 }

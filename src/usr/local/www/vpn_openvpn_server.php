@@ -993,7 +993,7 @@ if ($act=="new" || $act=="edit"):
 		        '<br/>' .
 		        gettext('Generating new or stronger DH parameters is CPU-intensive and must be performed manually.') . ' ' .
 		        sprintf(gettext('Consult %1$sthe doc wiki article on DH Parameters%2$sfor information on generating new or stronger parameter sets.'),
-					'<a href="https://docs.netgate.com/pfsense/en/latest/book/openvpn/openvpn-configuration-options.html#dh-parameters-length">',
+					'<a href="https://docs.netgate.com/pfsense/en/latest/vpn/openvpn/configure.html#dh-parameters-length">',
 					'</a> '),
 				'info', false),
 		    '</div>');

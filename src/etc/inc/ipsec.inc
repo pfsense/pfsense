@@ -1368,6 +1368,10 @@ function ipsec_setup_strongswan() {
 		$ssconf['charon']['accept_unencrypted_mainmode_messages'] = "yes";
 	}
 
+	if (isset($config['ipsec']['maxexchange'])) {
+		$ssconf['charon']['max_ikev1_exchanges'] = $config['ipsec']['maxexchange'];
+	}
+
 	$unity_enabled = isset($config['ipsec']['unityplugin']) ? 'yes' : 'no';
 	$ssconf['charon']['cisco_unity'] = $unity_enabled;
 
@@ -1377,6 +1381,14 @@ function ipsec_setup_strongswan() {
 
 	if (isset($config['ipsec']['makebeforebreak'])) {
 		$ssconf['charon']['make_before_break'] = "yes";
+	}
+
+	if (isset($config['ipsec']['port'])) {
+		$ssconf['charon']['port'] = $config['ipsec']['port'];
+	}
+
+	if (isset($config['ipsec']['port_nat_t'])) {
+		$ssconf['charon']['port_nat_t'] = $config['ipsec']['port_nat_t'];
 	}
 
 	$ssconf['charon']['syslog'] = array();
@@ -1631,22 +1643,25 @@ function ipsec_setup_userpools() {
 	return;
 }
 
-/****f* ipsec/ipsec_setup_bypasslan
+/****f* ipsec/ipsec_setup_bypass
  * NAME
- *   ipsec_setup_bypasslan - Generate a bypass connection for LAN-LAN traffic
+ *   ipsec_setup_bypass - Generate a bypass connection for LAN-LAN and custom rules traffic
  * INPUTS
  *   None
  * RESULT
  *   Sets up a bypass connection to prevent local traffic from being caught by
  *   IPsec policies.
  ******/
-function ipsec_setup_bypasslan() {
+function ipsec_setup_bypass() {
 	global $config, $scconf;
-	if (isset($config['ipsec']['noshuntlaninterfaces'])) {
-		return array();
-	}
-	$bypassnets = array();
+
+	$scconf['connections']['bypass'] = array();
+	/* Prevents the connection from being considered for remote peers */
+	$scconf['connections']['bypass']['remote_addrs'] = "127.0.0.1";
+	$scconf['connections']['bypass']['children'] = array();
+
 	/* Locate the LAN IPv4 and IPv6 subnets */
+	$bypassnets = array();
 	if ($config['interfaces']['lan']) {
 		$lanip = get_interface_ip("lan");
 		if (!empty($lanip) && is_ipaddrv4($lanip)) {
@@ -1665,19 +1680,30 @@ function ipsec_setup_bypasslan() {
 			}
 		}
 	}
-	/* If we have viable targets, setup a bypass connection */
-	if (!empty($bypassnets)) {
+	/* If we have viable targets, setup a bypass LAN connection */
+	if (!empty($bypassnets) && !isset($config['ipsec']['noshuntlaninterfaces'])) {
 		$bypass = implode(',', $bypassnets);
-		$scconf['connections']['bypass'] = array();
-		/* Prevents the connection from being considered for remote peers */
-		$scconf['connections']['bypass']['remote_addrs'] = "127.0.0.1";
-		$scconf['connections']['bypass']['children'] = array();
-		$scconf['connections']['bypass']['children']['bypass'] = array();
-		$scconf['connections']['bypass']['children']['bypass']['local_ts'] = $bypass;
-		$scconf['connections']['bypass']['children']['bypass']['remote_ts'] = $bypass;
-		$scconf['connections']['bypass']['children']['bypass']['mode'] = "pass";
-		$scconf['connections']['bypass']['children']['bypass']['start_action'] = "trap";
+		$scconf['connections']['bypass']['children']['bypasslan'] = array();
+		$scconf['connections']['bypass']['children']['bypasslan']['local_ts'] = $bypass;
+		$scconf['connections']['bypass']['children']['bypasslan']['remote_ts'] = $bypass;
+		$scconf['connections']['bypass']['children']['bypasslan']['mode'] = "pass";
+		$scconf['connections']['bypass']['children']['bypasslan']['start_action'] = "trap";
 	}
+
+	/* Setup custom bypass rules */
+	if ((isset($config['ipsec']['ipsecbypass']) && $config['ipsec']['bypassrules']) &&
+	    is_array($config['ipsec']['bypassrules'])) {
+		foreach ($config['ipsec']['bypassrules']['rule'] as $id => $rule) {
+			$scconf['connections']['bypass']['children']["rule{$id}"] = array();
+			$scconf['connections']['bypass']['children']["rule{$id}"]["local_ts"] = $rule['source'] .
+			       	"/" . $rule['srcmask'];
+			$scconf['connections']['bypass']['children']["rule{$id}"]["remote_ts"] = $rule['destination'] .
+			       	"/" . $rule['dstmask'];
+			$scconf['connections']['bypass']['children']["rule{$id}"]["mode"] = "pass";
+			$scconf['connections']['bypass']['children']["rule{$id}"]["start_action"] = "trap";
+		}
+	}
+
 	return;
 }
 
@@ -1711,35 +1737,35 @@ function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
 			$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
 		}
 	}
-	if ($family == 'inet') {
-		if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
-			$gatewayip = get_interface_gateway($vpninterface);
-			$interfaceip = get_interface_ip($vpninterface);
-			$subnet_bits = get_interface_subnet($vpninterface);
-			$subnet_ip = gen_subnetv4($interfaceip, $subnet_bits);
-			/* if the remote gateway is in the local subnet, then don't add a route */
-			if (is_ipaddrv4($sourcehost) &&
-			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
-				if (is_ipaddrv4($gatewayip) && !$duplicates) {
-					// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
-					route_add_or_change("-host {$sourcehost} {$gatewayip}");
-				}
-			}
+	if ($family == 'inet' && !empty($ifacesuse) &&
+	    interface_has_gateway($vpninterface)) {
+		$gatewayip = get_interface_gateway($vpninterface);
+		$interfaceip = get_interface_ip($vpninterface);
+		$subnet_bits = get_interface_subnet($vpninterface);
+		$subnet_ip = gen_subnetv4($interfaceip, $subnet_bits);
+		/*
+		 * if the remote gateway is in the local subnet, then don't add
+		 * a route
+		 */
+		if (is_ipaddrv4($sourcehost) &&
+		    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}") &&
+		    is_ipaddrv4($gatewayip) && !$duplicates) {
+			route_add_or_change($sourcehost, $gatewayip);
 		}
-	} else if ($family == 'inet6') {
-		if (!empty($ifacesuse) && interface_has_gatewayv6($vpninterface)) {
-			$gatewayip = get_interface_gateway_v6($vpninterface);
-			$interfaceip = get_interface_ipv6($vpninterface);
-			$subnet_bits = get_interface_subnetv6($vpninterface);
-			$subnet_ip = gen_subnetv6($interfaceip, $subnet_bits);
-			/* if the remote gateway is in the local subnet, then don't add a route */
-			if (is_ipaddrv6($sourcehost) &&
-			    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
-				if (is_ipaddrv6($gatewayip) && !$duplicates) {
-					// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
-					route_add_or_change("-inet6 -host {$sourcehost} {$gatewayip}");
-				}
-			}
+	} else if ($family == 'inet6' && !empty($ifacesuse) &&
+	    interface_has_gatewayv6($vpninterface)) {
+		$gatewayip = get_interface_gateway_v6($vpninterface);
+		$interfaceip = get_interface_ipv6($vpninterface);
+		$subnet_bits = get_interface_subnetv6($vpninterface);
+		$subnet_ip = gen_subnetv6($interfaceip, $subnet_bits);
+		/*
+		 * if the remote gateway is in the local subnet, then don't add
+		 * a route
+		 */
+		if (is_ipaddrv6($sourcehost) &&
+		    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}") &&
+		    is_ipaddrv6($gatewayip) && !$duplicates) {
+			route_add_or_change($sourcehost, $gatewayip);
 		}
 	}
 	return $ifacesuse;
@@ -1758,7 +1784,7 @@ function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
  *   details.
  ******/
 function ipsec_setup_authentication(& $ph1ent, & $conn) {
-	global $rgmap, $ipsec_swanctl_dirs;
+	global $rgmap, $ipsec_swanctl_dirs, $config;
 	$local = array();
 	$remote = array();
 	$remote2 = array();
@@ -1812,6 +1838,10 @@ function ipsec_setup_authentication(& $ph1ent, & $conn) {
 				$remote['eap_id'] = "%any";
 			} else {
 				$local['auth'] = "eap-radius";
+			}
+			if (($config['ipsec']['client']['group_source'] == 'enabled') &&
+			    !empty($config['ipsec']['client']['auth_groups'])) {
+				$remote['groups'] = $config['ipsec']['client']['auth_groups'];
 			}
 			$remote['auth'] = "eap-radius";
 			break;
@@ -1960,7 +1990,7 @@ function ipsec_setup_proposal_entry(& $ph2ent, & $algo_arr, $ealg_id, $keylen) {
  *   Sets up VTI-specific values for a request.
  ******/
 function ipsec_setup_vtireq(& $child, & $ipsec_vti_cleanup_ifs, $ikeid, $idx = 0) {
-	$child['reqid'] = "{$ikeid}00{$idx}";
+	$child['reqid'] = get_ipsecifnum($ikeid, $idx);
 	/* This interface will be a valid IPsec interface, so remove it from the cleanup list. */
 	$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array("ipsec{$child['reqid']}"));
 	$child['local_ts'] .= ",0.0.0.0/0";
@@ -2005,7 +2035,11 @@ function ipsec_setup_tunnels() {
 			$conn =& $scconf["{$cname}-defaults"];
 			$scconf['connections']["{$cname} : {$cname}-defaults"] = array("# Stub to load con-mobile-defaults");
 		} else {
-			$cname = "con{$ph1ent['ikeid']}000";
+			if (get_ipsecifnum($ph1ent['ikeid'], 0)) {
+				$cname = "con" . get_ipsecifnum($ph1ent['ikeid'], 0);
+			} else {
+				$cname = "con{$ph1ent['ikeid']}00000";
+			}
 			/* Start with common default values */
 			$scconf['connections'][$cname] = $conn_defaults;
 			/* Array reference to make things easier */
@@ -2112,6 +2146,17 @@ function ipsec_setup_tunnels() {
 		/* TFC Padding */
 		if (isset($ph1ent['tfc_enable'])) {
 			$conn['tfc_padding'] = (isset($ph1ent['tfc_bytes']) && is_numericint($ph1ent['tfc_bytes'])) ? $ph1ent['tfc_bytes'] : "mtu";
+		}
+
+		/* Custom Ports */
+		if (isset($ph1ent['ikeport'])) {
+			/* For a connection without encapsulation, do not set local_port */
+			$conn['remote_port'] = $ph1ent['ikeport'];
+		} elseif (isset($ph1ent['nattport'])) {
+			/* For an encapsulated connection,
+			 * set local_port to the server NAT-T port value or default (4500) */
+			$conn['local_port'] = isset($config['ipsec']['port_nat_t']) ? $config['ipsec']['port_nat_t'] : 4500;
+			$conn['remote_port'] = $ph1ent['nattport'];
 		}
 
 		/* Arrays for P2s/children */
@@ -2263,7 +2308,7 @@ function ipsec_setup_tunnels() {
 			if (!isset($ph1ent['mobile']) && (($ikeversion == 1) || isset($ph1ent['splitconn']))) {
 				if (!empty($remote_ts)) {
 					/* Setup child sub-connections using unique names with a suffix */
-					$subconname = "con{$ph1ent['ikeid']}00{$suffix}";
+					$subconname = "con" . get_ipsecifnum($ph1ent['ikeid'], $idx) . $suffix;
 					$children[$subconname] = $child;
 					$children[$subconname]['local_ts'] = $local_ts;
 					$children[$subconname]['remote_ts'] = $remote_ts;
@@ -2673,8 +2718,8 @@ function ipsec_configure($restart = false) {
 	$scconf = array();
 	$scconf[] = "# This file is automatically generated. Do not edit";
 	$scconf['connections'] = array();
-	/* Setup LAN bypass */
-	ipsec_setup_bypasslan();
+	/* Setup IPsec bypass */
+	ipsec_setup_bypass();
 	/* Setup connections */
 	ipsec_setup_tunnels();
 	$scconf['pools'] = array();

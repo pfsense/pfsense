@@ -1081,7 +1081,7 @@ function alias_info_popup($alias_id) {
 		}
 
 		$content .= "</tbody>\n";
-		$content .= "<table>\n";
+		$content .= "</table>\n";
 	}
 
 	return $content;
@@ -1113,7 +1113,7 @@ function gateway_info_popup($showgw) {
 			if ($gwgroup['name'] == $showgw) {
 				foreach ($gwgroup['item'] as $member) {
 					$membersplit = explode("|", $member);
-					$gateways[] = $membersplit[0];
+					$gws[] = $membersplit[0];
 				}
 			}
 		}
@@ -1155,7 +1155,7 @@ function gateway_info_popup($showgw) {
 			$idx++;
 		}
 		$content .= "</tbody>\n";
-		$content .= "<table>\n";
+		$content .= "</table>\n";
 	} else {
 		return;
 	}

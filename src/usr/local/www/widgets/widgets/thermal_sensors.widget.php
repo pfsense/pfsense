@@ -31,10 +31,9 @@ if (isset($_REQUEST["getThermalSensorsData"])) {
 
 	$specplatform = system_identify_specific_platform();
 	if ($specplatform['name'] == 'SG-5100') {
-		$_gb = exec("/sbin/sysctl -q dev.cpu | grep temperature | sort",
-		    $dfout);
+		$_gb = exec("/sbin/sysctl -q dev.cpu | /usr/bin/grep temperature | /usr/bin/sort", $dfout);
 	} else {
-		$_gb = exec("/sbin/sysctl -aq | grep temperature", $dfout);
+		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu | /usr/bin/grep 'temperature:'", $dfout);
 	}
 	$dfout_filtered = array_filter($dfout, function($v) {
 		return strpos($negsign, ' -') === false;

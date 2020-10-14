@@ -143,13 +143,15 @@ if (!empty($config['captiveportal']) && is_array($config['hasync']) && !empty($c
 		$rpc_client->setConnectionData($config['hasync']['synchronizetoip'], $xmlrpc_port, $xmlrpc_username, $config['hasync']['password']);
 		$resp = $rpc_client->xmlrpc_method('captive_portal_sync', array('op' => 'get_databases', 'zone' => $cpzone));
 
-		if (is_array($resp)) { // $rep will be an array only if the communication was successful
+		if (is_array($resp)) { // $resp will be an array only if the communication was successful
 			// Contains array of connected users (will be stored in SQLite DB)
 			$connected_users = unserialize(base64_decode($resp['connected_users']));
 			// Contains array of active vouchers (will be stored in active vouchers db)
 			$active_vouchers = unserialize(base64_decode($resp['active_vouchers']));
 			// Contain bitmask of both in use and expired vouchers (will be stored in "used vouchers" db)
 			$expired_vouchers = unserialize(base64_decode($resp['expired_vouchers']));
+			// Contains array of usedmacs (will be stored in usedmacs db)
+			$usedmacs = unserialize(base64_decode($resp['usedmacs']));
 
 			$cpdb = captiveportal_read_db();
 			$unsetindexes = array_column($cpdb, 5);
@@ -177,8 +179,9 @@ if (!empty($config['captiveportal']) && is_array($config['hasync']) && !empty($c
 			foreach ($active_vouchers as $roll => $vouchers) {
 				voucher_write_active_db($roll, $vouchers);
 			}
+			captiveportal_write_usedmacs_db($usedmacs); 
 		}
-		captiveportal_syslog(sprintf(gettext('Connected users and used vouchers have been synchronized from %1$s'), $config['hasync']['synchronizetoip']));
+		captiveportal_syslog(sprintf(gettext('Connected users, used vouchers and used MACs have been synchronized from %1$s'), $config['hasync']['synchronizetoip']));
 	}
 }
 openlog("", LOG_PID, LOG_LOCAL0);

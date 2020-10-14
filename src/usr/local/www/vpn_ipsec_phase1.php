@@ -50,8 +50,10 @@ if ($_REQUEST['generatekey']) {
 
 init_config_arr(array('ipsec', 'phase1'));
 init_config_arr(array('ipsec', 'phase2'));
+init_config_arr(array('ipsec', 'vtimaps', 'item'));
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
+$a_vtimaps = &$config['ipsec']['vtimaps']['item'];
 
 if (is_numericint($_REQUEST['p1index'])) {
 	$p1index = $_REQUEST['p1index'];
@@ -83,6 +85,8 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['mobile'] = 'true';
 	} else {
 		$pconfig['remotegw'] = $a_phase1[$p1index]['remote-gateway'];
+		$pconfig['ikeport'] = $a_phase1[$p1index]['ikeport'];
+		$pconfig['nattport'] = $a_phase1[$p1index]['nattport'];
 	}
 
 	if (empty($a_phase1[$p1index]['iketype'])) {
@@ -293,6 +297,26 @@ if ($_POST['save']) {
 		}
 	}
 
+	if ($_POST['ikeport']) {
+		if (!is_port($pconfig['ikeport'])) {
+			$input_errors[] = gettext("The IKE port number is invalid.");
+		}
+	} else {
+		unset($pconfig['ikeport']);
+	}
+
+	if ($_POST['nattport']) {
+		if (!is_port($pconfig['nattport'])) {
+			$input_errors[] = gettext("The NAT-T port number is invalid.");
+		}
+	} else {
+		unset($pconfig['nattport']);
+	}
+
+	if (isset($pconfig['ikeport']) && isset($pconfig['nattport']) && $pconfig['ikeport'] == $pconfig['nattport']) {
+		$input_errors[] = gettext("IKE and NAT-T port numbers must be different.");
+	}
+
 	if ($pconfig['remotegw'] && is_ipaddr($pconfig['remotegw']) && !isset($pconfig['disabled'])) {
 		$t = 0;
 		foreach ($a_phase1 as $ph1tmp) {
@@ -486,14 +510,36 @@ if ($_POST['save']) {
 		} else {
 			$ph1ent['mode'] = $pconfig['mode'];
 		}
+
+		// re-create vtimaps after IKE version switching
+		$vtisubnet_spec = ipsec_vti($ph1ent, true);
+		if ((($pconfig['iketype'] != $a_phase1[$p1index]['iketype']) ||
+		    (isset($pconfig['splitconn']) != isset($a_phase1[$p1index]['splitconn']))) &&
+		    ($vtisubnet_spec || is_array($vtisubnet_spec))) {
+			foreach ($a_vtimaps as $id => $vtimap) {
+				if ($vtimap['reqid'] == $ph1ent['ikeid']) {
+					unset($a_vtimaps[$id]);
+				}
+			}
+			if (($pconfig['iketype'] == 'ikev1') ||
+			    isset($pconfig['splitconn'])) {
+				foreach ($vtisubnet_spec as $idx => $vtisub) {
+					$a_vtimaps[] = ipsec_create_vtimap(
+					    $ph1ent['ikeid'], $idx);
+				}
+			} else {
+				$a_vtimaps[] = ipsec_create_vtimap(
+				    $ph1ent['ikeid'], 0);
+			}
+		}
+
 		$ph1ent['disabled'] = $pconfig['disabled'] ? true : false;
 		$ph1ent['interface'] = $pconfig['interface'];
 		/* if the remote gateway changed and the interface is not WAN then remove route */
 		/* the ipsec_configure() handles adding the route */
 		if ($pconfig['interface'] <> "wan") {
 			if ($old_ph1ent['remote-gateway'] <> $pconfig['remotegw']) {
-                                $rgateway = exec("/sbin/route -n get {$old_ph1ent} | /usr/bin/awk '/gateway:/ {print $2;}'");
-				mwexec("/sbin/route delete -host {$old_ph1ent['remote-gateway']} " . escapeshellarg($rgateway));
+				route_del($old_ph1ent['remote-gateway']);
 			}
 		}
 
@@ -501,6 +547,16 @@ if ($_POST['save']) {
 			$ph1ent['mobile'] = true;
 		} else {
 			$ph1ent['remote-gateway'] = $pconfig['remotegw'];
+			if ( !empty($pconfig['ikeport']) ) {
+				$ph1ent['ikeport'] = $pconfig['ikeport'];
+			} else {
+				unset($ph1ent['ikeport']);
+			}
+			if ( !empty($pconfig['nattport']) ) {
+				$ph1ent['nattport'] = $pconfig['nattport'];
+			} else {
+				unset($ph1ent['nattport']);
+			}
 		}
 
 		$ph1ent['protocol'] = $pconfig['protocol'];
@@ -739,9 +795,11 @@ $section->addInput(new Form_Select(
 ))->setHelp('Select the interface for the local endpoint of this phase1 entry.');
 
 if (!$pconfig['mobile']) {
-	$section->addInput(new Form_Input(
+	$group = new Form_Group('*Remote Gateway');
+
+	$group->add(new Form_Input(
 		'remotegw',
-		'*Remote Gateway',
+		'Remote Gateway',
 		'text',
 		$pconfig['remotegw']
 	))->setHelp('Enter the public IP address or host name of the remote gateway.%1$s%2$s%3$s',
@@ -750,6 +808,25 @@ if (!$pconfig['mobile']) {
 	    'to allow connections from any IPv6 address.' . '<br/>' . 'Responder Only must be set and ' . 
 	    'Peer IP Address cannot be used for Remote Identifier.'), 'info', false),
 	    '</div>');
+	$group->add(new Form_Input(
+	    'ikeport',
+	    'Remote IKE Port',
+	    'number',
+	    $pconfig['ikeport'],
+	    ['min' => 1, 'max' => 65535]
+	))->setHelp('UDP port for IKE on the remote gateway. Leave empty for default automatic behavior (500/4500).');
+	$group->add(new Form_Input(
+	    'nattport',
+	    'Remote NAT-T Port',
+	    'number',
+	    $pconfig['nattport'],
+	    ['min' => 1, 'max' => 65535]
+	))->setHelp('UDP port for NAT-T on the remote gateway.%1$s%2$s%3$s',
+	    '<div class="infoblock">',
+	    sprint_info_box(gettext('If the IKE port is empty and NAT-T contains a value, the tunnel will use only NAT-T.'),
+	    'info', false),
+	    '</div>');
+	$section->add($group);
 }
 
 $section->addInput(new Form_Input(

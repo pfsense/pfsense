@@ -106,8 +106,7 @@ if ($_POST) {
 	} else {
 		// Test resolution speed of each DNS server.
 		$dns_speeds = array();
-		$dns_servers = array();
-		exec("/usr/bin/grep nameserver /etc/resolv.conf | /usr/bin/cut -f2 -d' '", $dns_servers);
+		$dns_servers = get_dns_nameservers(false, true);
 		foreach ($dns_servers as $dns_server) {
 			$query_time = exec("/usr/bin/drill {$host_esc} " . escapeshellarg("@" . trim($dns_server)) . " | /usr/bin/grep Query | /usr/bin/cut -d':' -f2");
 			if ($query_time == "") {
@@ -216,16 +215,11 @@ $form->addGlobal(new Form_Button(
 ))->addClass('btn-primary');
 
 if (!empty($resolved) && isAllowedPage('firewall_aliases_edit.php')) {
-	if ($alias_exists) {
-		$button_text = gettext("Update alias");
-	} else {
-		$button_text = gettext("Add alias");
-	}
 	$form->addGlobal(new Form_Button(
 		'create_alias',
-		$button_text,
+		($alias_exists) ? gettext("Update Alias") : gettext("Add Alias"),
 		null,
-		'fa-plus'
+		($alias_exists) ? 'fa-refresh' : 'fa-plus'
 	))->removeClass('btn-primary')->addClass('btn-success');
 }
 

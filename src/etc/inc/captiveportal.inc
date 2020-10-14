@@ -2201,11 +2201,15 @@ function portal_ip_from_client_ip($cliip) {
 		}
 	}
 
-	$inet = ($isipv6) ? '-inet6' : '-inet';
-	$iface = exec_command("/sbin/route -n get {$inet} {$cliip} | /usr/bin/awk '/interface/ { print \$2; };'");
-	$iface = trim($iface, "\n");
+	$route = route_get($cliip);
+	if (empty($route)) {
+		return false;
+	}
+
+	$iface = $route[0]['interface-name'];
 	if (!empty($iface)) {
-		$ip = ($isipv6) ? find_interface_ipv6($iface) : find_interface_ip($iface);
+		$ip = ($isipv6) ? find_interface_ipv6($iface)
+		    : find_interface_ip($iface);
 		if (is_ipaddr($ip)) {
 			return $ip;
 		}
@@ -2745,6 +2749,7 @@ function portal_consume_passthrough_credit($clientmac) {
 						unset($usedmacs[$key]);
 						$usedmacs[] = implode(",", $usedmac);
 						captiveportal_write_usedmacs_db($usedmacs);
+						xmlrpc_sync_usedmacs($usedmacs);
 					}
 
 					return false;
@@ -2770,7 +2775,31 @@ function portal_consume_passthrough_credit($clientmac) {
 	}
 
 	captiveportal_write_usedmacs_db($usedmacs);
+	xmlrpc_sync_usedmacs($usedmacs);
 	return true;
+}
+
+function xmlrpc_sync_usedmacs($usedmacs) { 
+	global $config, $cpzone;
+
+	// XMLRPC Call over to the other node
+	if (captiveportal_xmlrpc_sync_get_details($syncip, $syncport,
+	    $syncuser, $syncpass, $carp_loop)) {
+		$rpc_client = new pfsense_xmlrpc_client();
+		$rpc_client->setConnectionData($syncip, $syncport, $syncuser, $syncpass);
+		$rpc_client->set_noticefile("CaptivePortalUsedmacsSync");
+		$arguments = array(
+			'usedmacs' => $usedmacs
+		);
+
+		$rpc_client->xmlrpc_method('captive_portal_sync',
+			array(
+				'op' => 'write_usedmacs',
+				'zone' => $cpzone,
+				'arguments' => base64_encode(serialize($arguments))
+			)
+		);
+	}
 }
 
 function captiveportal_read_usedmacs_db() {

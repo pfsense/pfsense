@@ -158,7 +158,7 @@ display_top_tabs($tab_array);
 			}
 			echo "<br />\n";
 		}
-		$tmpaddr = array_map('idn_to_utf8', explode(" ", $alias['address']));
+		$tmpaddr = array_map('alias_idn_to_utf8', explode(" ", $alias['address']));
 		$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
 		echo $addresses;
 		if (count($tmpaddr) > 10) {

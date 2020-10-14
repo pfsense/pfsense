@@ -231,7 +231,7 @@ function saveAlias($post, $id) {
 		/* item is a url table type */
 		if ($post['address0']) {
 			/* fetch down and add in */
-			$post['address0'] = trim(idn_to_ascii($post['address0']));
+			$post['address0'] = trim(alias_idn_to_ascii($post['address0']));
 			$address[] = $post['address0'];
 			$alias['url'] = $post['address0'];
 			$alias['updatefreq'] = $post['address_subnet0'] ? $post['address_subnet0'] : 7;
@@ -258,7 +258,7 @@ function saveAlias($post, $id) {
 
 		/* item is a url type */
 		for ($x = 0; $x < $max_alias_addresses - 1; $x++) {
-			$post['address' . $x] = trim(idn_to_ascii($post['address' . $x]));
+			$post['address' . $x] = trim(alias_idn_to_ascii($post['address' . $x]));
 			if ($post['address' . $x]) {
 				/* fetch down and add in */
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
@@ -344,7 +344,7 @@ function saveAlias($post, $id) {
 					$detail_text = sprintf(gettext("Entry added %s"), date('r'));
 				}
 
-				$address_items = explode(" ", trim(idn_to_ascii($post["address{$x}"])));
+				$address_items = explode(" ", trim(alias_idn_to_ascii($post["address{$x}"])));
 				foreach ($address_items as $address_item) {
 					$iprange_type = is_iprange($address_item);
 					if ($iprange_type == 4) {

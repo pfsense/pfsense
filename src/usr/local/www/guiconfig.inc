@@ -1071,7 +1071,7 @@ function alias_info_popup($alias_id) {
 		foreach ($alias_addresses as $ap) {
 			$content .= "	<tr>\n";
 			$content .= "		<td>\n";
-			$content .= 			idn_to_utf8($ap);
+			$content .= 			alias_idn_to_utf8($ap);
 			$content .=	"		</td>\n";
 			$content .= "		<td style='padding-left: 10px;'>\n";
 			$content .= 			htmlspecialchars($alias_details[$idx]);

@@ -115,7 +115,7 @@ if ($_POST['save']) {
 }
 
 if ($_REQUEST['exportaliases']) {
-	$expdata = array_map('idn_to_utf8', explode(" ", $a_aliases[$id]['address']));
+	$expdata = array_map('alias_idn_to_utf8', explode(" ", $a_aliases[$id]['address']));
 	$expdata = implode("\n", $expdata);
 	$expdata .= "\n";
 	send_user_download('data', $expdata, "{$_POST['origname']}.txt");
@@ -339,7 +339,7 @@ while ($counter < count($addresses)) {
 	$group->add(new Form_IpAddress(
 		'address' . $counter,
 		'Address',
-		idn_to_utf8($address),
+		alias_idn_to_utf8($address),
 		'ALIASV4V6'
 	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern($pattern_str[$tab]);
 

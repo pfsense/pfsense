@@ -107,7 +107,7 @@ if ($_POST) {
 
 		foreach ($tocheck as $impline) {
 			$implinea = explode(" ", trim($impline), 2);
-			$impip = idn_to_ascii($implinea[0]);
+			$impip = alias_idn_to_ascii($implinea[0]);
 			$impdesc = trim($implinea[1]);
 			if (strlen($impdesc) < 200) {
 				if ((strpos($impdesc, "||") === false) && (substr($impdesc, 0, 1) != "|") && (substr($impdesc, -1, 1) != "|")) {

@@ -3545,4 +3545,20 @@ function parse_cisco_acl($attribs, $dev) {
 	return $finalrules;
 }
 
+function alias_idn_to_utf8($alias) {
+	if (is_alias($alias)) {
+		return $alias;
+	} else {
+		return idn_to_utf8($alias);
+	}
+}
+
+function alias_idn_to_ascii($alias) {
+	if (is_alias($alias)) {
+		return $alias;
+	} else {
+		return idn_to_ascii($alias);
+	}
+}
+
 ?>

@@ -465,7 +465,7 @@ function return_gateways_status($byname = false, $gways = false, $clear_alarm = 
 		// That reports "highdelay" or "highloss" rather than just "down".
 		// Because reporting the gateway down would be misleading (gateway action is disabled)
 		$action_disable = $gateways_arr[$gwname]['action_disable'];
-		$dpinger_status = get_dpinger_status($gwname, $action_disable, $clear_alarm);
+		$dpinger_status = get_dpinger_status($gwname, $gways, $action_disable, $clear_alarm);
 		if ($dpinger_status === false) {
 			continue;
 		}

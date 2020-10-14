@@ -96,6 +96,14 @@ if ($_POST['save']) {
 		$_POST['subnet'] = trim($_POST['subnet']);
 	}
 
+	if (is_pseudo_interface(convert_friendly_interface_to_real_interface_name($_POST['interface']))) {
+		if ($_POST['mode'] == 'carp') {
+			$input_errors[] = gettext("The interface chosen for the VIP does not support CARP mode.");
+		} elseif ($_POST['mode'] == 'proxyarp') {
+			$input_errors[] = gettext("The interface chosen for the VIP does not support Proxy ARP mode.");
+		}
+	}
+
 	if ($_POST['subnet']) {
 		if (!is_ipaddr($_POST['subnet'])) {
 			$input_errors[] = gettext("A valid IP address must be specified.");
@@ -450,7 +458,7 @@ print($form);
 
 <div class="infoblock">
 	<?php print_info_box(gettext("Proxy ARP and Other type Virtual IP addresses cannot be used for binding by services on the firewall (IPsec, OpenVPN, etc.). Use an IP Alias or CARP type VIP for these roles.") . '<br />' .
-			   sprintf(gettext("For more information, visit the pfSense book section on %s"), '<a href="https://docs.netgate.com/pfsense/en/latest/book/firewall/virtual-ip-addresses.html">Virtual IP Addresses</a>.'), 'info', false); ?>
+			   sprintf(gettext("For more information, visit the pfSense book section on %s"), '<a href="https://docs.netgate.com/pfsense/en/latest/firewall/virtual-ip-addresses.html">Virtual IP Addresses</a>.'), 'info', false); ?>
 </div>
 
 <script type="text/javascript">

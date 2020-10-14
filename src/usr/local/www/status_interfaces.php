@@ -152,13 +152,11 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				showDef($ifinfo['subnetv6'], gettext('Subnet mask IPv6'), $ifinfo['subnetv6']);
 				showDef($ifinfo['gatewayv6'], gettext("Gateway IPv6"), $config['interfaces'][$ifdescr]['gatewayv6'] . " " . $ifinfo['gatewayv6']);
 
-				if ($ifdescr == "wan" && file_exists("{$g['etc_path']}/resolv.conf")) {
-					$dns_servers = get_dns_servers();
-					$dnscnt = 0;
-					foreach ($dns_servers as $dns) {
-						showDef(true, $dnscnt == 0 ? gettext('DNS servers'):'', $dns);
-						$dnscnt++;
-					}
+				$dns_servers = get_dynamic_nameservers($ifinfo['hwif']);
+				$dnscnt = 0;
+				foreach ($dns_servers as $dns) {
+					showDef(true, $dnscnt == 0 ? gettext('DNS servers'):'', $dns);
+					$dnscnt++;
 				}
 			}
 

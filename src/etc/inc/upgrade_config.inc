@@ -27,11 +27,15 @@ if (!function_exists("dump_rrd_to_xml")) {
 if (!function_exists("read_altq_config")) {
 	require_once("shaper.inc");
 }
+if (!function_exists("console_configure")) {
+	require_once("/etc/inc/pfsense-utils.inc");
+}
 
 /* Upgrade functions must be named:
-*    upgrade_XXX_to_YYY
-	* where XXX == previous version, zero padded, and YYY == next version, zero padded
-	*/
+ *    upgrade_XXX_to_YYY
+ * where XXX == previous version, zero padded, and YYY == next version, zero
+ * padded
+ */
 function upgrade_010_to_011() {
 	global $config;
 	$opti = 1;
@@ -5943,7 +5947,10 @@ function upgrade_189_to_190() {
 	global $config;
 	init_config_arr(array('ipsec', 'phase1'));
 	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
-		if (empty($ph1ent['protocol'])) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+		if (!isset($ph1ent['protocol']) || empty($ph1ent['protocol'])) {
 			$ph1ent['protocol'] = 'inet';
 		}
 	}
@@ -6097,6 +6104,9 @@ function upgrade_199_to_200() {
 	global $config;
 	init_config_arr(array('ipsec', 'phase1'));
 	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
 		/* Convert lifetime to reauth_time since that's how previous
 		 * versions behaved. */
 		if (isset($ph1ent['reauth_enable'])) {
@@ -6156,6 +6166,146 @@ function upgrade_201_to_202() {
 	}
 }
 
+function upgrade_202_to_203() {
+	global $config;
+	// Upgrade GREs with IPv6 tunnel networks to new dual stack format
+	if (is_array($config['gres']['gre'])) {
+		foreach ($config['gres']['gre'] as $idx => &$gre) {
+			if (is_ipaddrv6($gre['tunnel-local-addr'])) {
+				$gre['tunnel-local-addr6'] = $gre['tunnel-local-addr'];
+				$gre['tunnel-remote-addr6'] = $gre['tunnel-remote-addr'];
+				$gre['tunnel-remote-net6'] = $gre['tunnel-remote-net'];
+				$gre['tunnel-local-addr'] = '';
+				$gre['tunnel-remote-addr'] = '';
+				$gre['tunnel-remote-net'] = '';
+			} else {
+				$gre['tunnel-local-addr6'] = '';
+				$gre['tunnel-remote-addr6'] = '';
+				$gre['tunnel-remote-net6'] = '';
+			}
+		}
+	}
+}
+
+/*
+ * Change IPsec close_action values
+ * See https://redmine.pfsense.org/issues/10632
+ */
+
+function upgrade_203_to_204() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+		if (isset($ph1ent['closeaction'])) {
+			switch ($ph1ent['closeaction']) {
+				case 'clear':
+					/* swanctl.conf combined "clear" and "none" */
+					$ph1ent['closeaction'] = "none";
+					break;
+				case 'restart':
+					/* swanctl.conf uses "start" not "restart" */
+					$ph1ent['closeaction'] = "start";
+					break;
+				case 'hold':
+					/* swanctl.conf uses "trap" not "hold" */
+					$ph1ent['closeaction'] = "trap";
+					break;
+				default:
+					/* "none" does not need changed. */
+			}
+		}
+	}
+}
+
+function upgrade_204_to_205() {
+	global $config, $g;
+
+	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone => $cp) {
+			unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
+
+			if (is_array($config['voucher'][$cpzone])) {
+				if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
+					$config['captiveportal'][$cpzone]['enablebackwardsync'] = '';
+					$config['captiveportal'][$cpzone]['backwardsyncip'] = $config['voucher'][$cpzone]['vouchersyncdbip'];
+					$config['captiveportal'][$cpzone]['backwardsyncuser'] = $config['voucher'][$cpzone]['vouchersyncusername'];
+					$config['captiveportal'][$cpzone]['backwardsyncpassword'] = $config['voucher'][$cpzone]['vouchersyncpass'];
+				}
+			}
+		}
+	}
+}
+
+function upgrade_205_to_206() {
+	/*
+	 * Trigger a boot loader settings update to make sure the contents will
+	 * be updated before the reboot.
+	 */
+	console_configure();
+}
+
+function upgrade_206_to_207() {
+	/*
+	 * Trigger a boot loader settings update to make sure the contents will
+	 * be updated before the reboot.
+	 */
+	console_configure();
+}
+
+function upgrade_207_to_208() {
+	global $config;
+
+	$config['system']['hn_altq_enable'] = true;
+}
+
+/* Update IPsec VTI to new VTIMAP format 
+ * https://redmine.pfsense.org/issues/9592
+ */
+function upgrade_208_to_209() {
+	require_once("interfaces.inc");
+	global $config;
+
+	init_config_arr(array('ipsec', 'vtimaps', 'item'));
+
+	if (!is_array($config['ipsec']['phase1']) ||
+	    !is_array($config['ipsec']['phase2'])) {
+		return;
+	}
+
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if (!isset($ph1ent['mobile']) &&
+		    ($ph1ent['iketype'] == 'ikev1' ||
+		    isset($ph1ent['splitconn']))) {
+			$vtisubnet_spec = ipsec_vti($ph1ent, true, false);
+			if (empty($vtisubnet_spec)) {
+				continue;
+			}
+			foreach ($vtisubnet_spec as $idx => $vtisub) {
+				$config['ipsec']['vtimaps']['item'][] = array(
+					"reqid" => $ph1ent['ikeid'],
+					"index" => $idx,
+					"ifnum" => "{$ph1ent['ikeid']}00{$idx}"
+				);
+			}
+		} else {
+			$config['ipsec']['vtimaps']['item'][] = array(
+				"reqid" => $ph1ent['ikeid'],
+				"index" => "0",
+				"ifnum" => "{$ph1ent['ikeid']}000"
+			);
+		}
+	}
+}
+
+function upgrade_209_to_210() {
+	global $config;
+	if (isset($config['system']['dnslocalhost'])) {
+		$config['system']['dnslocalhost'] = 'remote';
+	}
+}
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

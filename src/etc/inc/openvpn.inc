@@ -1140,6 +1140,9 @@ function openvpn_reconfigure($mode, $settings) {
 
 		// The remote server
 		$remoteproto = strtolower($settings['protocol']);
+		if (substr($remoteproto, 0, 3) == "tcp") {
+			$remoteproto .= "-{$mode}";
+		}
 		$conf .= "remote {$settings['server_addr']} {$settings['server_port']} {$remoteproto}\n";
 
 		if (!empty($settings['use_shaper'])) {
@@ -1521,6 +1524,9 @@ function openvpn_delete($mode, $settings) {
 	/* destroy the device */
 	pfSense_interface_destroy($devname);
 
+	/* Invalidate cache */
+	get_interface_arr(true);
+
 	/* remove the configuration files */
 	@array_map('unlink', glob("{$g['openvpn_base']}/{$mode_id}/csc/*"));
 	@array_map('unlink', glob("{$g['openvpn_base']}/{$mode_id}/*"));
@@ -1547,6 +1553,10 @@ function openvpn_resync_csc(& $settings) {
 
 	if ($settings['push_reset']) {
 		$conf .= "push-reset\n";
+	}
+
+	if ($settings['remove_route']) {
+		$conf .= "push-remove route\n";
 	}
 
 	if ($settings['local_network']) {
@@ -1655,6 +1665,7 @@ function openvpn_resync_all($interface = "") {
 		$config['openvpn'] = array();
 	}
 
+	openlog("", LOG_PID, LOG_LOCAL0);
 	if ($interface <> "") {
 		log_error(sprintf(gettext("Resyncing OpenVPN instances for interface %s."), convert_friendly_interface_to_friendly_descr($interface)));
 	} else {

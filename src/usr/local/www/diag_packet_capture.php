@@ -547,7 +547,7 @@ if ($do_tcpdump) :
 	$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);
 
 	if ($action == gettext("Start")) {
-		$matchstr = implode($matches, " and ");
+		$matchstr = implode(" and ", $matches);
 		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
 		print_info_box(gettext('Packet capture is running'), 'info');
 		?>

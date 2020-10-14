@@ -188,6 +188,9 @@ ca_setup_trust_store();
 /* start syslogd */
 system_syslogd_start();
 
+/* set pam shell authentication backend */
+set_pam_auth();
+
 /* Log the RAM disk restore messages. */
 if (file_exists("/var/log/restore_ramdisk_store.boot")) {
 	exec("logger -f /var/log/restore_ramdisk_store.boot");

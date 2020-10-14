@@ -46,6 +46,16 @@ if (empty($argument) || $argument == "all") {
 	}
 	services_dyndns_configure($interface);
 	services_dnsupdate_process($interface);
+
+	/* check if this interface is used by gateway groups,
+	 * see https://redmine.pfsense.org/issues/9435 */
+	$gateways = gateway_is_gwgroup_member($argument);
+	if (is_array($gateways) && !empty($gateways)) {
+		foreach ($gateways as $gw) {
+			services_dyndns_configure($gw);
+			services_dnsupdate_process($gw);
+		}
+	}
 }
 
 ?>

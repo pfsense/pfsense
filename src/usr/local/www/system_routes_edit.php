@@ -200,12 +200,18 @@ if ($_POST['save']) {
 					if (is_ipaddrv6($dts)) {
 						$family = "-inet6";
 					}
-					$rgateway = exec("/sbin/route -n get {$dts} | /usr/bin/awk '/gateway:/ {print $2;}'");
-					$toapplylist[] = "/sbin/route delete {$family} {$dts} " . escapeshellarg($rgateway);
+					$route = route_get($dts);
+					if (!count($route)) {
+						continue;
+					}
+					$rgateway = $route[0]['gateway'];
+					$toapplylist[] = "/sbin/route delete " .
+					    $family . " " . $dts . $rgateway;
 				}
 			}
 		}
-		file_put_contents("{$g['tmp_path']}/.system_routes.apply", serialize($toapplylist));
+		file_put_contents("{$g['tmp_path']}/.system_routes.apply",
+		    serialize($toapplylist));
 
 		mark_subsystem_dirty('staticroutes');
 

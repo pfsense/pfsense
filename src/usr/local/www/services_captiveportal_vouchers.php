@@ -139,7 +139,7 @@ if ($_POST['act'] == "del") {
 		unset($a_roll[$id]);
 		voucher_unlink_db($roll);
 		unlock($voucherlck);
-		write_config();
+		write_config("Deleted voucher roll");
 	}
 	header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
 	exit;
@@ -191,10 +191,6 @@ $pconfig['publickey'] = base64_decode($config['voucher'][$cpzone]['publickey']);
 $pconfig['privatekey'] = base64_decode($config['voucher'][$cpzone]['privatekey']);
 $pconfig['msgnoaccess'] = $config['voucher'][$cpzone]['descrmsgnoaccess'];
 $pconfig['msgexpired'] = $config['voucher'][$cpzone]['descrmsgexpired'];
-$pconfig['vouchersyncdbip'] = $config['voucher'][$cpzone]['vouchersyncdbip'];
-$pconfig['vouchersyncport'] = $config['voucher'][$cpzone]['vouchersyncport'];
-$pconfig['vouchersyncpass'] = $config['voucher'][$cpzone]['vouchersyncpass'];
-$pconfig['vouchersyncusername'] = $config['voucher'][$cpzone]['vouchersyncusername'];
 
 if ($_POST['save']) {
 	unset($input_errors);
@@ -208,49 +204,36 @@ if ($_POST['save']) {
 
 	/* input validation */
 	if ($_POST['enable'] == "yes") {
-		if (!$_POST['vouchersyncusername']) {
-			$reqdfields = explode(" ", "charset rollbits ticketbits checksumbits publickey magic");
-			$reqdfieldsn = array(gettext("charset"), gettext("rollbits"), gettext("ticketbits"), gettext("checksumbits"), gettext("publickey"), gettext("magic"));
-		} else {
-			$reqdfields = explode(" ", "vouchersyncdbip vouchersyncport vouchersyncpass vouchersyncusername");
-			$reqdfieldsn = array(gettext("Synchronize Voucher Database IP"), gettext("Sync port"), gettext("Sync password"), gettext("Sync username"));
-		}
+		$reqdfields = explode(" ", "charset rollbits ticketbits checksumbits publickey magic");
+		$reqdfieldsn = array(gettext("charset"), gettext("rollbits"), gettext("ticketbits"), gettext("checksumbits"), gettext("publickey"), gettext("magic"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	}
 
-	if (!$_POST['vouchersyncusername']) {
-		// Check for form errors
-		if ($_POST['charset'] && (strlen($_POST['charset']) < 2)) {
-			$input_errors[] = gettext("Need at least 2 characters to create vouchers.");
-		}
-		if ($_POST['charset'] && (strpos($_POST['charset'], "\"") > 0)) {
-			$input_errors[] = gettext("Double quotes aren't allowed.");
-		}
-		if ($_POST['charset'] && (strpos($_POST['charset'], ",") > 0)) {
-			$input_errors[] = gettext("',' aren't allowed.");
-		}
-		if ($_POST['rollbits'] && (!is_numeric($_POST['rollbits']) || ($_POST['rollbits'] < 1) || ($_POST['rollbits'] > 31))) {
-			$input_errors[] = gettext("# of Bits to store Roll Id needs to be between 1..31.");
-		}
-		if ($_POST['ticketbits'] && (!is_numeric($_POST['ticketbits']) || ($_POST['ticketbits'] < 1) || ($_POST['ticketbits'] > 16))) {
-			$input_errors[] = gettext("# of Bits to store Ticket Id needs to be between 1..16.");
-		}
-		if ($_POST['checksumbits'] && (!is_numeric($_POST['checksumbits']) || ($_POST['checksumbits'] < 1) || ($_POST['checksumbits'] > 31))) {
-			$input_errors[] = gettext("# of Bits to store checksum needs to be between 1..31.");
-		}
-		if ($_POST['publickey'] && (!strstr($_POST['publickey'], "BEGIN PUBLIC KEY"))) {
-			$input_errors[] = gettext("This doesn't look like an RSA Public key.");
-		}
-		if ($_POST['privatekey'] && (!strstr($_POST['privatekey'], "BEGIN RSA PRIVATE KEY"))) {
-			$input_errors[] = gettext("This doesn't look like an RSA Private key.");
-		}
-		if ($_POST['vouchersyncdbip'] && (is_ipaddr_configured($_POST['vouchersyncdbip']))) {
-			$input_errors[] = gettext("The voucher database cannot be sync'd to this host (itself).");
-		}
-		if ($_POST['vouchersyncpass'] != $_POST['vouchersyncpass_confirm']) {
-			$input_errors[] = gettext("Password and confirmed password must match.");
-		}
+	// Check for form errors
+	if ($_POST['charset'] && (strlen($_POST['charset']) < 2)) {
+		$input_errors[] = gettext("Need at least 2 characters to create vouchers.");
+	}
+	if ($_POST['charset'] && (strpos($_POST['charset'], "\"") > 0)) {
+		$input_errors[] = gettext("Double quotes aren't allowed.");
+	}
+	if ($_POST['charset'] && (strpos($_POST['charset'], ",") > 0)) {
+		$input_errors[] = gettext("',' aren't allowed.");
+	}
+	if ($_POST['rollbits'] && (!is_numeric($_POST['rollbits']) || ($_POST['rollbits'] < 1) || ($_POST['rollbits'] > 31))) {
+		$input_errors[] = gettext("# of Bits to store Roll Id needs to be between 1..31.");
+	}
+	if ($_POST['ticketbits'] && (!is_numeric($_POST['ticketbits']) || ($_POST['ticketbits'] < 1) || ($_POST['ticketbits'] > 16))) {
+		$input_errors[] = gettext("# of Bits to store Ticket Id needs to be between 1..16.");
+	}
+	if ($_POST['checksumbits'] && (!is_numeric($_POST['checksumbits']) || ($_POST['checksumbits'] < 1) || ($_POST['checksumbits'] > 31))) {
+		$input_errors[] = gettext("# of Bits to store checksum needs to be between 1..31.");
+	}
+	if ($_POST['publickey'] && (!strstr($_POST['publickey'], "BEGIN PUBLIC KEY"))) {
+		$input_errors[] = gettext("This doesn't look like an RSA Public key.");
+	}
+	if ($_POST['privatekey'] && (!strstr($_POST['privatekey'], "BEGIN RSA PRIVATE KEY"))) {
+		$input_errors[] = gettext("This doesn't look like an RSA Private key.");
 	}
 
 	if (!$input_errors) {
@@ -264,102 +247,21 @@ if ($_POST['save']) {
 		} else {
 			unset($newvoucher['enable']);
 		}
-		if (empty($_POST['vouchersyncusername'])) {
-			unset($newvoucher['vouchersyncdbip']);
-			unset($newvoucher['vouchersyncport']);
-			unset($newvoucher['vouchersyncusername']);
-			unset($newvoucher['vouchersyncpass']);
-			$newvoucher['charset'] = $_POST['charset'];
-			$newvoucher['rollbits'] = $_POST['rollbits'];
-			$newvoucher['ticketbits'] = $_POST['ticketbits'];
-			$newvoucher['checksumbits'] = $_POST['checksumbits'];
-			$newvoucher['magic'] = $_POST['magic'];
-			$newvoucher['exponent'] = $_POST['exponent'];
-			$newvoucher['publickey'] = base64_encode($_POST['publickey']);
-			$newvoucher['privatekey'] = base64_encode($_POST['privatekey']);
-			$newvoucher['descrmsgnoaccess'] = $_POST['msgnoaccess'];
-			$newvoucher['descrmsgexpired'] = $_POST['msgexpired'];
-			$config['voucher'][$cpzone] = $newvoucher;
-			write_config();
-			voucher_configure_zone();
-			// Refresh captiveportal login to show voucher changes
-			captiveportal_configure_zone($config['captiveportal'][$cpzone]);
-		} else {
-			$newvoucher['vouchersyncdbip'] = $_POST['vouchersyncdbip'];
-			$newvoucher['vouchersyncport'] = $_POST['vouchersyncport'];
-			$newvoucher['vouchersyncusername'] = $_POST['vouchersyncusername'];
-			if ($_POST['vouchersyncpass'] != DMYPWD ) {
-				$newvoucher['vouchersyncpass'] = $_POST['vouchersyncpass'];
-			} else {
-				$newvoucher['vouchersyncpass'] = $config['voucher'][$cpzone]['vouchersyncpass'];
-			}
-			if ($newvoucher['vouchersyncpass'] && $newvoucher['vouchersyncusername'] &&
-			    $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
-
-				// Synchronize the voucher DB from the master node
-				$execcmd = <<<EOF
-				global \$config;
-				\$toreturn = array();
-				\$toreturn['voucher'] = \$config['voucher']['$cpzone'];
-				unset(\$toreturn['vouchersyncport'], \$toreturn['vouchersyncpass'], \$toreturn['vouchersyncusername'], \$toreturn['vouchersyncdbip']);
-
-EOF;
-				require_once("xmlrpc_client.inc");
-				$rpc_client = new pfsense_xmlrpc_client();
-				$rpc_client->setConnectionData(
-						$newvoucher['vouchersyncdbip'], $newvoucher['vouchersyncport'],
-						$newvoucher['vouchersyncusername'], $newvoucher['vouchersyncpass']);
-				$rpc_client->set_noticefile("CaptivePortalVoucherSync");
-				$resp = $rpc_client->xmlrpc_exec_php($execcmd);
-				if ($resp == null) {
-					$input_errors[] = $rpc_client->get_error();
-				}
-
-				if (!$input_errors) {
-					if (is_array($resp)) {
-						log_error(sprintf(gettext("The Captive Portal voucher database has been synchronized with %s (pfsense.exec_php)."), $url));
-						// If we received back the voucher roll and other information then store it.
-						if ($resp['voucher']['roll']) {
-							$newvoucher['roll'] = $resp['voucher']['roll'];
-						}
-						if ($resp['voucher']['rollbits']) {
-							$newvoucher['rollbits'] = $resp['voucher']['rollbits'];
-						}
-						if ($resp['voucher']['ticketbits']) {
-							$newvoucher['ticketbits'] = $resp['voucher']['ticketbits'];
-						}
-						if ($resp['voucher']['checksumbits']) {
-							$newvoucher['checksumbits'] = $resp['voucher']['checksumbits'];
-						}
-						if ($resp['voucher']['magic']) {
-							$newvoucher['magic'] = $resp['voucher']['magic'];
-						}
-						if ($resp['voucher']['exponent']) {
-							$newvoucher['exponent'] = $resp['voucher']['exponent'];
-						}
-						if ($resp['voucher']['publickey']) {
-							$newvoucher['publickey'] = $resp['voucher']['publickey'];
-						}
-						if ($resp['voucher']['privatekey']) {
-							$newvoucher['privatekey'] = $resp['voucher']['privatekey'];
-						}
-						if ($resp['voucher']['descrmsgnoaccess']) {
-							$newvoucher['descrmsgnoaccess'] = $resp['voucher']['descrmsgnoaccess'];
-						}
-						if ($resp['voucher']['descrmsgexpired']) {
-							$newvoucher['descrmsgexpired'] = $resp['voucher']['descrmsgexpired'];
-						}
-						$savemsg = sprintf(gettext('Voucher database has been synchronized from %1$s'), $url);
-
-						$config['voucher'][$cpzone] = $newvoucher;
-						write_config();
-						voucher_configure_zone(true);
-						// Refresh captiveportal login to show voucher changes
-						captiveportal_configure_zone($config['captiveportal'][$cpzone]);
-					}
-				}
-			}
-		}
+		$newvoucher['charset'] = $_POST['charset'];
+		$newvoucher['rollbits'] = $_POST['rollbits'];
+		$newvoucher['ticketbits'] = $_POST['ticketbits'];
+		$newvoucher['checksumbits'] = $_POST['checksumbits'];
+		$newvoucher['magic'] = $_POST['magic'];
+		$newvoucher['exponent'] = $_POST['exponent'];
+		$newvoucher['publickey'] = base64_encode($_POST['publickey']);
+		$newvoucher['privatekey'] = base64_encode($_POST['privatekey']);
+		$newvoucher['descrmsgnoaccess'] = $_POST['msgnoaccess'];
+		$newvoucher['descrmsgexpired'] = $_POST['msgexpired'];
+		$config['voucher'][$cpzone] = $newvoucher;
+		write_config('Updated vouchers settings');
+		voucher_configure_zone();
+		// Refresh captiveportal login to show voucher changes
+		captiveportal_configure_zone($config['captiveportal'][$cpzone]);
 
 		if (!$input_errors) {
 			header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
@@ -384,6 +286,7 @@ $tab_array[] = array(gettext("MACs"), false, "services_captiveportal_mac.php?zon
 $tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), true, "services_captiveportal_vouchers.php?zone={$cpzone}");
+$tab_array[] = array(gettext("High Availability"), false, "services_captiveportal_hasync.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 
@@ -522,40 +425,6 @@ $section->addInput(new Form_Input(
 	$pconfig['msgexpired']
 ))->setHelp('Error message displayed for expired vouchers on captive portal error page ($PORTAL_MESSAGE$).');
 
-$form->add($section);
-
-$section = new Form_Section('Voucher Database Synchronization');
-$section->addClass('rolledit');
-
-$section->addInput(new Form_IpAddress(
-	'vouchersyncdbip',
-	'Synchronize Voucher Database IP',
-	$pconfig['vouchersyncdbip']
-))->setHelp('IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from.%1$s' .
-			'NOTE: this should be setup on the slave nodes and not the primary node!', '<br />');
-
-$section->addInput(new Form_Input(
-	'vouchersyncport',
-	'Voucher sync port',
-	'text',
-	$pconfig['vouchersyncport']
-))->setHelp('The port of the master voucher node\'s webConfigurator. Example: 443 ');
-
-$section->addInput(new Form_Input(
-	'vouchersyncusername',
-	'Voucher sync username',
-	'text',
-	$pconfig['vouchersyncusername'],
-	['autocomplete' => 'new-password']
-))->setHelp('This is the username of the master voucher nodes webConfigurator.');
-
-$section->addPassword(new Form_Input(
-	'vouchersyncpass',
-	'Voucher sync password',
-	'password',
-	$pconfig['vouchersyncpass']
-))->setHelp('This is the password of the master voucher nodes webConfigurator.');
-
 $form->addGlobal(new Form_Input(
 	'zone',
 	null,
@@ -573,12 +442,6 @@ $form->addGlobal(new Form_Input(
 $form->add($section);
 print($form);
 ?>
-<div class="rolledit">
-<?php
-	print_info_box(gettext('Changing any Voucher parameter (apart from managing the list of Rolls) on this page will render existing vouchers useless if they were generated with different settings. ' .
-							'Specifying the Voucher Database Synchronization options will not record any other value from the other options. They will be retrieved/synced from the master.'), 'info');
-?>
-</div>
 
 <script type="text/javascript">
 //<![CDATA[

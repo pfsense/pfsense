@@ -73,7 +73,7 @@ fsck_forced_iterations=`/bin/kenv -q pfsense.fsck.force`
 if [ ! -z "${fsck_forced_iterations}" ]; then
 	echo "Forcing filesystem check (${fsck_forced_iterations} times)..."
 	while [ ${fsck_forced_iterations} -gt 0 ]; do
-		/sbin/fsck -y -t ufs
+		/sbin/fsck -fy -t ufs
 		fsck_forced_iterations=$((fsck_forced_iterations - 1))
 	done
 fi
@@ -120,14 +120,14 @@ esac
 
 if [ ${FSCK_ACTION_NEEDED} = 1 ]; then
 	echo "WARNING: Trying to recover filesystem from inconsistency..."
-	/sbin/fsck -y -t ufs
+	/sbin/fsck -fy -t ufs
 fi
 
 /sbin/mount -a 2>/dev/null
 mount_rc=$?
 attempts=0
 while [ ${mount_rc} -ne 0 -a ${attempts} -lt 10 ]; do
-	/sbin/fsck -y -t ufs
+	/sbin/fsck -fy -t ufs
 	/sbin/mount -a 2>/dev/null
 	mount_rc=$?
 	attempts=$((attempts+1))

@@ -517,7 +517,12 @@ function get_queue_bandwidth($obj) {
 
 	switch ($match[1]) {
 		case '%':
-			$objbw = ($bw / 100) * get_queue_bandwidth($obj->GetParent());
+			if (method_exists($obj, 'GetParent')) {
+				$getobjbw = get_queue_bandwidth($obj->GetParent());
+			} else {
+				$getobjbw = $obj->bandwidth;
+			}
+			$objbw = ($bw / 100) * $getobjbw;
 			break;
 		default:
 			$objbw = $bw * get_bandwidthtype_scale($scale);
@@ -564,9 +569,12 @@ function shaper_do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input
 function cleanup_queue_from_rules($queue) {
 	global $config;
 
-	foreach ($config['filter']['rule'] as $rule) {
+	foreach ($config['filter']['rule'] as & $rule) {
 		if ($rule['defaultqueue'] == $queue) {
 			unset($rule['defaultqueue']);
+			if (isset($rule['ackqueue'])) {
+				unset($rule['ackqueue']);
+			}
 		}
 		if ($rule['ackqueue'] == $queue) {
 			unset($rule['ackqueue']);
@@ -577,12 +585,38 @@ function cleanup_queue_from_rules($queue) {
 function cleanup_dnqueue_from_rules($queue) {
 	global $config;
 
-	foreach ($config['filter']['rule'] as $rule) {
+	foreach ($config['filter']['rule'] as & $rule) {
 		if ($rule['dnpipe'] == $queue) {
 			unset($rule['dnpipe']);
 		}
 		if ($rule['pdnpipe'] == $queue) {
 			unset($rule['pdnpipe']);
+		}
+	}
+}
+
+function rename_queue_in_rules($name, $newname) {
+	global $config;
+
+	foreach ($config['filter']['rule'] as & $rule) {
+		if ($rule['defaultqueue'] == $name) {
+			$rule['defaultqueue'] = $newname;
+		}
+		if ($rule['ackqueue'] == $name) {
+			$rule['ackqueue'] = $newname;
+		}
+	}
+}
+
+function rename_dnqueue_in_rules($name, $newname) {
+	global $config;
+
+	foreach ($config['filter']['rule'] as & $rule) {
+		if ($rule['dnpipe'] == $name) {
+			$rule['dnpipe'] = $newname;
+		}
+		if ($rule['pdnpipe'] == $name) {
+			$rule['pdnpipe'] = $newname;
 		}
 	}
 }
@@ -699,11 +733,13 @@ class altq_root_queue {
 
 	function CheckBandwidth($bw, $bwtype) {
 		$sum = $this->GetTotalBw();
-		if ($sum > $bw * get_bandwidthtype_scale($bwtype))
+		if ($sum > ($bw * get_bandwidthtype_scale($bwtype))) {
 			return 1;
+		}
 		foreach ($this->queues as $q) {
-			if ($q->CheckBandwidth(0, ''))
+			if ($q->CheckBandwidth(0, '')) {
 				return 1;
+			}
 		}
 
 		return 0;
@@ -712,8 +748,9 @@ class altq_root_queue {
 	function GetTotalBw($qignore = NULL) {
 		$sum = 0;
 		foreach ($this->queues as $q) {
-			if ($qignore != NULL && $qignore == $q)
+			if (($qignore != NULL) && ($qignore == $q)) {
 				continue;
+			}
 			$sum += get_bandwidth($q->GetBandwidth(), $q->GetBwscale(), $this);
 		}
 
@@ -914,8 +951,9 @@ class altq_root_queue {
 	}
 
 	function delete_queue() {
-		foreach ($this->queues as $q)
+		foreach ($this->queues as $q) {
 			$q->delete_queue();
+		}
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -1504,14 +1542,14 @@ class priq_queue {
 		$reqdfieldsn[] = gettext("Name");
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
-		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) {
+		if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
 			$input_errors[] = gettext("Bandwidth must be an integer.");
 		}
 		if ($data['bandwidth'] < 0) {
 			$input_errors[] = gettext("Bandwidth cannot be negative.");
 		}
 		if ($data['bandwidthtype'] == "%") {
-			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
+			if (($data['bandwidth'] > 100) || ($data['bandwidth'] < 0)) {
 				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
 			}
 		}
@@ -1538,21 +1576,36 @@ class priq_queue {
 		if (!empty($data['default']) && altq_get_default_queue($data['interface']) && empty($default)) {
 			$input_errors[] = gettext("Only one default queue per interface is allowed.");
 		}
+
+		$parent = $this->GetParent();
+		if (is_array($parent->queues)) {
+			foreach ($parent->queues as $q) {
+				if (($data['newname'] == $q->GetQname()) && ($data['name'] != $data['newname'])) { 
+					$input_errors[] = gettext("A queue with the same name already exists.");
+				}
+				if (in_array($parent->GetScheduler(), array('CBQ', 'FAIRQ','PRIQ')) &&
+				    ($data['priority'] == $q->GetQpriority()) && ($data['name'] != $q->GetQname())) { 
+					$input_errors[] = sprintf(gettext("The priority %d is already used by queue %s."),
+							$data['priority'], $q->GetQname());
+				}
+			}
+		}
 	}
 
 	function ReadConfig(&$q) {
-		if (!empty($q['name']) && !empty($q['newname']) && $q['name'] != $q['newname']) {
+		if (!empty($q['name']) && !empty($q['newname']) && ($q['name'] != $q['newname'])) {
 			$this->SetQname($q['newname']);
+			rename_queue_in_rules($q['name'], $q['newname']);
 		} else if (!empty($q['newname'])) {
 			$this->SetQname($q['newname']);
-		} else if (isset($q['name'])) {
+		} elseif (isset($q['name'])) {
 			$this->SetQname($q['name']);
 		}
 		if (isset($q['interface'])) {
 			$this->SetInterface($q['interface']);
 		}
 		$this->SetBandwidth($q['bandwidth']);
-		if ($q['bandwidthtype'] <> "") {
+		if (!empty($q['bandwidthtype'])) {
 			$this->SetBwscale($q['bandwidthtype']);
 		}
 		if (!empty($q['qlimit'])) {
@@ -1761,28 +1814,28 @@ class priq_queue {
 			null,
 			null,
 			!empty($this->GetRed())
-		))->setHelp('%1$sRandom Early Detection%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/book/trafficshaper/advanced-customization.html#editing-shaper-queues">', '</a>');
+		))->setHelp('%1$sRandom Early Detection%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/trafficshaper/advanced.html#editing-shaper-queues">', '</a>');
 
 		$group->add(new Form_Checkbox(
 			'rio',
 			null,
 			null,
 			!empty($this->GetRio())
-		))->setHelp('%1$sRandom Early Detection In and Out%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/book/trafficshaper/advanced-customization.html#editing-shaper-queues">', '</a>');
+		))->setHelp('%1$sRandom Early Detection In and Out%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/trafficshaper/advanced.html#editing-shaper-queues">', '</a>');
 
 		$group->add(new Form_Checkbox(
 			'ecn',
 			null,
 			null,
 			!empty($this->GetEcn())
-		))->setHelp('%1$sExplicit Congestion Notification%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/book/trafficshaper/advanced-customization.html#editing-shaper-queues">', '</a>');
+		))->setHelp('%1$sExplicit Congestion Notification%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/trafficshaper/advanced.html#editing-shaper-queues">', '</a>');
 
 		$group->add(new Form_Checkbox(
 			'codel',
 			null,
 			null,
 			!empty($this->GetCodel())
-		))->setHelp('%1$sCodel Active Queue%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/book/trafficshaper/altq-scheduler-types.html#codel-active-queue-management">', '</a>');
+		))->setHelp('%1$sCodel Active Queue%2$s', '<a target="_new" href="https://docs.netgate.com/pfsense/en/latest/trafficshaper/altq-scheduler-types.html#codel-active-queue-management">', '</a>');
 
 		$group->setHelp('Select options for this queue');
 
@@ -2167,8 +2220,9 @@ class hfsc_queue extends priq_queue {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
 		$parent =& $this->GetParent();
-		foreach ($this->subqueues as $q)
+		foreach ($this->subqueues as $q) {
 			$q->delete_queue();
+		}
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -2210,8 +2264,8 @@ class hfsc_queue extends priq_queue {
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
-		if (isset($data['linkshare3']) && $data['linkshare3'] <> "") {
-			if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) {
+		if (isset($data['linkshare3']) && !empty($data['linkshare3'])) {
+			if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
 				$input_errors[] = gettext("Bandwidth must be an integer.");
 			}
 
@@ -2220,25 +2274,25 @@ class hfsc_queue extends priq_queue {
 			}
 
 			if ($data['bandwidthtype'] == "%") {
-				if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
+				if (($data['bandwidth'] > 100) || ($data['bandwidth'] < 0)) {
 					$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
 				}
 			}
 		}
 
-		if ($data['upperlimit1'] <> "" && $data['upperlimit2'] == "") {
+		if (!empty($data['upperlimit1']) && empty($data['upperlimit2'])) {
 			$input_errors[] = gettext("upperlimit service curve defined but missing (d) value");
 		}
-		if ($data['upperlimit2'] <> "" && $data['upperlimit1'] == "") {
+		if (!empty($data['upperlimit2']) && empty($data['upperlimit1'])) {
 			$input_errors[] = gettext("upperlimit service curve defined but missing initial bandwidth (m1) value");
 		}
-		if ($data['upperlimit1'] <> "" && !is_valid_shaperbw($data['upperlimit1'])) {
+		if (!empty($data['upperlimit1']) && !is_valid_shaperbw($data['upperlimit1'])) {
 			$input_errors[] = gettext("upperlimit m1 value needs to be Kb, Mb, Gb, or %");
 		}
-		if ($data['upperlimit2'] <> "" && !is_numeric($data['upperlimit2'])) {
+		if (!empty($data['upperlimit2']) && !is_numeric($data['upperlimit2'])) {
 			$input_errors[] = gettext("upperlimit d value needs to be numeric");
 		}
-		if ($data['upperlimit3'] <> "" && !is_valid_shaperbw($data['upperlimit3'])) {
+		if (!empty($data['upperlimit3']) && !is_valid_shaperbw($data['upperlimit3'])) {
 			$input_errors[] = gettext("upperlimit m2 value needs to be Kb, Mb, Gb, or %");
 		}
 
@@ -2941,8 +2995,9 @@ class cbq_queue extends priq_queue {
 	function delete_queue() {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
-		foreach ($this->subqueues as $q)
+		foreach ($this->subqueues as $q) {
 			$q->delete_queue();
+		}
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -3664,11 +3719,11 @@ class dnpipe_class extends dummynet_class {
 	var $qbandwidthtype;
 
 	/* Limiter queue patch */
-    var $ecn; // ecn 'on' or 'off'
-    var $aqm; // key to aqm_map
-    var $aqm_params = array(); // AQM params
-    var $scheduler;	// key to scheduler_map
-    var $scheduler_params = array(); // AQM params
+	var $ecn; // ecn 'on' or 'off'
+	var $aqm; // key to aqm_map
+	var $aqm_params = array(); // AQM params
+	var $scheduler;	// key to scheduler_map
+	var $scheduler_params = array(); // AQM params
 	function GetAQM() {
 			return $this->aqm;
 	}
@@ -3867,6 +3922,7 @@ class dnpipe_class extends dummynet_class {
 	function ReadConfig(&$q) {
 		if (!empty($q['name']) && !empty($q['newname']) && $q['name'] != $q['newname']) {
 			$this->SetQname($q['newname']);
+			rename_dnqueue_in_rules($q['name'], $q['newname']);
 		} else if (!empty($q['newname'])) {
 			$this->SetQname($q['newname']);
 		} else {
@@ -4078,7 +4134,10 @@ class dnpipe_class extends dummynet_class {
 		}
 		$selectedScheduler = getSchedulers()[$this->getScheduler()];
 		if ($selectedScheduler) {
-			$pfq_rule .= "\nsched ". $this->GetNumber() . " config pipe " . $this->GetNumber() . " " . FormatParameters($selectedScheduler["parameter_format"], $this->GetSchedulerParameters());
+			$pfq_rule .= "\nsched ". $this->GetNumber() . " config ";
+			$pfq_rule .= "pipe ". $this->GetNumber();
+			$this->build_mask_rules($pfq_rule);
+			$pfq_rule .= " " . FormatParameters($selectedScheduler["parameter_format"], $this->GetSchedulerParameters());			
 			if ($selectedScheduler["ecn"]) {
 				if ($this->getECN() == 'on') {
 					$pfq_rule .= ' ecn';
@@ -4196,7 +4255,7 @@ EOD;
 
 		// If there are no bandwidths defined, make a blank one for convenience
 		if (empty($bandwidth)) {
-			$bandwidth = array(0 => array('bw' => '', 'bwscale' => 'Kb', 'bwsched' => 'none'));
+			$bandwidth = array(0 => array('bw' => '', 'bwscale' => 'Mb', 'bwsched' => 'none'));
 		}
 
 		if (is_array($bandwidth)) {
@@ -5196,7 +5255,7 @@ function dnpipe_find_nextnumber() {
 }
 
 function filter_generate_dummynet_rules() {
-	global $g, $dummynet_pipe_list;
+	global $config, $g, $dummynet_pipe_list;
 
 	read_dummynet_config();
 
@@ -5216,11 +5275,20 @@ function filter_generate_dummynet_rules() {
 		if (!is_module_loaded("dummynet.ko")) {
 			mwexec("/sbin/kldload dummynet");
 		}
-		set_sysctl(array(
+		$sysctls = (array(
 				"net.inet.ip.dummynet.io_fast" => "1",
 				"net.inet.ip.dummynet.hash_size" => "256",
 				"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
 		));
+		init_config_arr(array('sysctl', 'item'));
+		if (!empty($config['sysctl']['item'])) {
+			foreach ($config['sysctl']['item'] as $item) {
+				if (preg_match('/net\.inet\.ip\.dummynet\./', $item['tunable'])) {
+					$sysctls[$item['tunable']] = $item['value'];
+				}
+			}
+		}
+		set_sysctl($sysctls);
 		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
 		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");
 	}

@@ -132,21 +132,9 @@ if ($_POST['save']) {
 	// forwarding mode requires having valid DNS servers
 	if (isset($pconfig['forwarding'])) {
 		$founddns = false;
-		if (isset($config['system']['dnsallowoverride'])) {
-			$dns_servers = get_dns_servers();
-			if (is_array($dns_servers)) {
-				foreach ($dns_servers as $dns_server) {
-					if (!ip_in_subnet($dns_server, "127.0.0.0/8")) {
-						$founddns = true;
-					}
-				}
-			}
-		}
-		if (is_array($config['system']['dnsserver'])) {
-			foreach ($config['system']['dnsserver'] as $dnsserver) {
-				if (is_ipaddr($dnsserver)) {
-					$founddns = true;
-				}
+		foreach (get_dns_nameservers(false, true) as $dns_server) {
+			if (!ip_in_subnet($dns_server, "127.0.0.0/8")) {
+				$founddns = true;
 			}
 		}
 		if ($founddns == false) {
@@ -156,7 +144,7 @@ if ($_POST['save']) {
 
 	if (empty($pconfig['active_interface'])) {
 		$input_errors[] = gettext("One or more Network Interfaces must be selected for binding.");
-	} else if (!isset($config['system']['dnslocalhost']) && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
+	} elseif (($config['system']['dnslocalhost'] != 'remote') && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
 		$input_errors[] = gettext("This system is configured to use the DNS Resolver as its DNS server, so Localhost or All must be selected in Network Interfaces.");
 	}
 
@@ -452,6 +440,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['regdhcp']
 ))->setHelp('If this option is set, then machines that specify their hostname when requesting an IPv4 DHCP lease will be registered'.
 					' in the DNS Resolver so that their name can be resolved.'.
+	    				' Note that this will cause the Resolver to reload and flush its resolution cache whenever a DHCP lease is issued.'.
 					' The domain in %1$sSystem &gt; General Setup%2$s should also be set to the proper value.','<a href="system.php">','</a>');
 
 $section->addInput(new Form_Checkbox(
@@ -702,6 +691,8 @@ endforeach;
 	lookup server should be queried instead. Non-standard, 'invalid' and local domains, and subdomains, can also be entered,
 	such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. The IP address is treated as the
 	authoritative lookup server for the domain (including all of its subdomains), and other lookup servers will not be queried.
+	If there are multiple authoritative DNS servers available for a domain then make a separate entry for each, 
+	using the same domain name.
 </span>
 
 <nav class="action-buttons">

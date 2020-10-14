@@ -2,9 +2,9 @@
 benchmarks/%%PRODUCT_NAME%%-pkg-iperf
 benchmarks/iperf
 benchmarks/iperf3
-databases/php73-mysqli
-databases/php73-pdo_mysql
-databases/php73-pgsql
+databases/php74-mysqli
+databases/php74-pdo_mysql
+databases/php74-pgsql
 devel/aws-sdk-php
 devel/gdb
 dns/%%PRODUCT_NAME%%-pkg-bind
@@ -27,12 +27,12 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-snmptt
 net-mgmt/%%PRODUCT_NAME%%-pkg-softflowd
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent4
-net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent42
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent44
+net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent5
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy4
-net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy42
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy44
+net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy5
 net-mgmt/dhcp_probe
 net-mgmt/iprange
 net-mgmt/net-snmp

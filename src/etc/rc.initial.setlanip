@@ -492,6 +492,10 @@ $upperifname = strtoupper($interface);
 if (!$dry_run) {
 	echo "\nPlease wait while the changes are saved to {$upperifname}...";
 	write_config(sprintf(gettext("%s IP configuration from console menu"), $interface));
+	if (file_exists("{$g['conf_path']}/trigger_initial_wizard")) {
+		// if any of the interfaces is manually configured, it means that the assignment is OK
+		touch("{$g['conf_path']}/assign_complete");
+	}
 	interface_reconfigure(strtolower($upperifname));
 	echo "\n Reloading filter...";
 	filter_configure_sync();

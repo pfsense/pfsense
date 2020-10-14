@@ -108,7 +108,7 @@
 			<!-- we must unset the fields because this is an array. -->
 			<unsetfield>yes</unsetfield>
 			<arraynum>0</arraynum>
-			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<validate>^(?:((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|([0-9a-f:]{3,39}|[0-9a-f:]{2,30}[0-9.]{7,15}))$</validate>
 			<message>Primary DNS Server field is invalid</message>
 		</field>
 		<field>
@@ -116,7 +116,7 @@
 			<type>input</type>
 			<bindstofield>system->dnsserver</bindstofield>
 			<arraynum>1</arraynum>
-			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<validate>^(?:((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|([0-9a-f:]{3,39}|[0-9a-f:]{2,30}[0-9.]{7,15}))$</validate>
 			<message>Secondary DNS Server field is invalid</message>
 		</field>
 		<field>

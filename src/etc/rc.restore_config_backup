@@ -30,25 +30,6 @@ unset($confvers['versions']);
 
 $fp = fopen('php://stdin', 'r');
 
-function print_backup_info($backup_info, $number) {
-	if ($backup_info['time'] != 0) {
-		$date = date(gettext("n/j/y H:i:s"), $backup_info['time']);
-	} else {
-		$date = gettext("Unknown");
-	}
-
-	list($page, $reason) = explode(": ", $backup_info['description'], 2);
-	if (empty($reason)) {
-		$reason = $page;
-		$page = gettext("Unknown Page");
-	}
-
-	echo sprintf("%02d", $number) . ". {$date}\tv{$backup_info['version']}\t{$page}\n";
-	if ($reason) {
-		echo "    {$reason}\n";
-	}
-}
-
 function list_backups($which="all", $return=false) {
 	global $confvers;
 
@@ -61,7 +42,7 @@ function list_backups($which="all", $return=false) {
 		if (is_numeric($which) && ($c != $which)) {
 			continue;
 		}
-		print_backup_info($confvers[$c], $c+1);
+		echo backup_info($confvers[$c], $c+1);
 		echo "\n";
 	}
 }
@@ -97,6 +78,11 @@ function restore_history_backup($number) {
 				echo "\n";
 				echo sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $thisbackup['time']), $thisbackup['description']);
 				echo "\n" . gettext("You may need to reboot the firewall or restart services before the restored configuration is fully active.") . "\n\n";
+				if (file_exists("{$g['conf_path']}/trigger_initial_wizard")) {
+					/* restoring from a backup history means that the assignment is OK,
+					 * interfaces reassignment may only be need on restore from the WebGUI */
+					touch("{$g['conf_path']}/assign_complete");
+				}
 			} else {
 				echo gettext("Unable to revert to the selected configuration.") . "\n";
 			}

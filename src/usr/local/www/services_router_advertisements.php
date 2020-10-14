@@ -196,6 +196,13 @@ if ($_POST['save']) {
 	if ($_POST['raadvdefaultlifetime'] && (($_POST['raadvdefaultlifetime'] < 1) || ($_POST['raadvdefaultlifetime'] > 9000))) {
 		$input_errors[] = gettext("Router lifetime must be an integer between 1 and 9000.");
 	}
+	if (($_POST['ravalidlifetime'] && $_POST['rapreferredlifetime'] &&
+	    ($_POST['ravalidlifetime'] < $_POST['rapreferredlifetime'])) ||
+	    ($_POST['ravalidlifetime'] && empty($_POST['rapreffedlifetime']) &&
+	    ($_POST['ravalidlifetime'] < 14400)) || (empty($_POST['ravalidlifetime']) &&
+	    $_POST['rapreferredlifetime'] && ($_POST['rapreferredlifetime'] > 86400))) { 
+		$input_errors[] = gettext("Default valid lifetime must be greater than Default preferred lifetime.");
+	}
 
 	if (!$input_errors) {
 		if (!is_array($config['dhcpdv6'])) {

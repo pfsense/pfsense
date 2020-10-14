@@ -46,13 +46,22 @@ if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
+$dup = false;
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$dup = true;
+}
+
 if (isset($id) && isset($a_rfc2136[$id])) {
 	$pconfig['enable'] = isset($a_rfc2136[$id]['enable']);
-	$pconfig['host'] = $a_rfc2136[$id]['host'];
+	if (!$dup) {
+		$pconfig['host'] = $a_rfc2136[$id]['host'];
+	}
 	$pconfig['ttl'] = $a_rfc2136[$id]['ttl'];
 	if (!$pconfig['ttl']) {
 		$pconfig['ttl'] = 60;
 	}
+	$pconfig['zone'] = $a_rfc2136[$id]['zone'];
 	$pconfig['keyname'] = $a_rfc2136[$id]['keyname'];
 	$pconfig['keyalgorithm'] = $a_rfc2136[$id]['keyalgorithm'];
 	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
@@ -84,6 +93,9 @@ if ($_POST['save'] || $_POST['force']) {
 	if ($_POST['host'] && !is_domain($_POST['host'])) {
 		$input_errors[] = gettext("The DNS update host name contains invalid characters.");
 	}
+	if ($_POST['zone'] && !is_domain($_POST['zone'])) {
+		$input_errors[] = gettext("The DNS zone name contains invalid characters.");
+	}
 	if ($_POST['ttl'] && !is_numericint($_POST['ttl'])) {
 		$input_errors[] = gettext("The DNS update TTL must be an integer.");
 	}
@@ -98,6 +110,7 @@ if ($_POST['save'] || $_POST['force']) {
 		$rfc2136 = array();
 		$rfc2136['enable'] = $_POST['enable'] ? true : false;
 		$rfc2136['host'] = $_POST['host'];
+		$rfc2136['zone'] = $_POST['zone'];
 		$rfc2136['ttl'] = $_POST['ttl'];
 		$rfc2136['keyname'] = $_POST['keyname'];
 		$rfc2136['keyalgorithm'] = $_POST['keyalgorithm'];
@@ -111,7 +124,7 @@ if ($_POST['save'] || $_POST['force']) {
 		$rfc2136['updatesourcefamily'] = $_POST['updatesourcefamily'];
 		$rfc2136['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_rfc2136[$id]) {
+		if (isset($id) && $a_rfc2136[$id] && !$dup) {
 			$a_rfc2136[$id] = $rfc2136;
 		} else {
 			$a_rfc2136[] = $rfc2136;
@@ -195,6 +208,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['host']
 ))->setHelp('Fully qualified hostname of the host to be updated.');
+
+$section->addInput(new Form_Input(
+	'zone',
+	'Zone',
+	'text',
+	$pconfig['zone']
+))->setHelp('Hostname zone (optional).');
 
 $section->addInput(new Form_Input(
 	'ttl',

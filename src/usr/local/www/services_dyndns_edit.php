@@ -48,15 +48,23 @@ $a_dyndns = &$config['dyndnses']['dyndns'];
 
 $id = $_REQUEST['id'];
 
+$dup = false;
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$dup = true;
+}
+
 if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['username'] = $a_dyndns[$id]['username'];
 	$pconfig['password'] = $a_dyndns[$id]['password'];
-	$pconfig['host'] = $a_dyndns[$id]['host'];
+	if (!$dup) {
+		$pconfig['host'] = $a_dyndns[$id]['host'];
+	}
 	$pconfig['domainname'] = $a_dyndns[$id]['domainname'];
 	$pconfig['mx'] = $a_dyndns[$id]['mx'];
 	$pconfig['type'] = $a_dyndns[$id]['type'];
 	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
-	$pconfig['interface'] = $a_dyndns[$id]['interface'];
+	$pconfig['interface'] = str_replace('_stf', '', $a_dyndns[$id]['interface']);
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
 	$pconfig['proxied'] = isset($a_dyndns[$id]['proxied']);
 	$pconfig['verboselog'] = isset($a_dyndns[$id]['verboselog']);
@@ -66,7 +74,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['ttl'] = $a_dyndns[$id]['ttl'];
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
 	$pconfig['resultmatch'] = $a_dyndns[$id]['resultmatch'];
-	$pconfig['requestif'] = $a_dyndns[$id]['requestif'];
+	$pconfig['requestif'] = str_replace('_stf', '', $a_dyndns[$id]['requestif']);
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
@@ -75,11 +83,10 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns")
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "freedns2" || $pconfig['type'] == "freedns2-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns")
 	    && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
-
 	/* input validation */
 	$reqdfields = array();
 	$reqdfieldsn = array();
@@ -187,13 +194,22 @@ if ($_POST['save'] || $_POST['force']) {
 		} else {
 			$dyndns['enable'] = true;
 		}
-		$dyndns['interface'] = $_POST['interface'];
+		if (preg_match('/.+-v6/', $_POST['type']) && is_stf_interface($_POST['interface'])) { 
+			$dyndns['interface'] = $_POST['interface'] . '_stf';
+		} else {
+			$dyndns['interface'] = $_POST['interface'];
+		}
 		$dyndns['zoneid'] = $_POST['zoneid'];
 		$dyndns['ttl'] = $_POST['ttl'];
 		$dyndns['updateurl'] = $_POST['updateurl'];
 		// Trim hard-to-type but sometimes returned characters
 		$dyndns['resultmatch'] = trim($_POST['resultmatch'], "\t\n\r");
-		($dyndns['type'] == "custom" || $dyndns['type'] == "custom-v6") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
+		($dyndns['type'] == "custom") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
+		if (($dyndns['type'] == "custom-v6") && is_stf_interface($_POST['requestif'])) { 
+			$dyndns['requestif'] = $_POST['requestif'] . '_stf';
+		} else {
+			$dyndns['requestif'] = $_POST['requestif'];
+		}
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
 
@@ -201,7 +217,7 @@ if ($_POST['save'] || $_POST['force']) {
 			$dyndns['username'] = "";
 		}
 
-		if (isset($id) && $a_dyndns[$id]) {
+		if (isset($id) && $a_dyndns[$id] && !$dup) {
 			$a_dyndns[$id] = $dyndns;
 		} else {
 			$a_dyndns[] = $dyndns;
@@ -378,12 +394,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['username'],
 	['autocomplete' => 'new-password']
-))->setHelp('Username is required for all types except Namecheap, FreeDNS, FreeDNS-v6, DigitalOcean, Linode and Custom Entries.%1$s' .
+))->setHelp('Username is required for all types except Namecheap, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), DigitalOcean, Linode and Custom Entries.%1$s' .
 			'Azure: Enter your Azure AD application ID%1$s' .
 			'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
 			'Route 53: Enter the Access Key ID.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
+			'Domeneshop: Enter the API token.%1$s' .
 			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
 			'Godaddy: Enter the API key.%1$s' .
 			'Cloudflare: Enter email for Global API Key or Zone ID for API token.%1$s' .
@@ -394,12 +411,13 @@ $section->addPassword(new Form_Input(
 	'Password',
 	'password',
 	$pconfig['password']
-))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
+))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
 			'Azure: client secret of the AD application%1$s' .
 			'DNS Made Easy: Dynamic DNS Password%1$s' .
 			'DigitalOcean: Enter API token%1$s' .
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
+			'Domeneshop: Enter the API secret.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
 			'Gandi LiveDNS: Enter API token%1$s' .
 			'GoDaddy: Enter the API secret.%1$s' .
@@ -580,6 +598,22 @@ events.push(function() {
 				hideCheckbox('proxied', false);
 				hideInput('zoneid', true);
 				hideInput('ttl', false);
+				break;
+			case "domeneshop":
+		        case "domeneshop-v6":
+				hideGroupInput('domainname', true);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('username', false);
+				hideInput('host', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideCheckbox('proxied', true);
+				hideInput('zoneid', true);
+				hideInput('ttl', true);
 				break;
 			case "digitalocean":
 		        case "digitalocean-v6":

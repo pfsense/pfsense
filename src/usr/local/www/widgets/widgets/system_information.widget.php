@@ -328,7 +328,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			<td>
 				<ul style="margin-bottom:0px">
 				<?php
-					$dns_servers = get_dns_servers();
+					$dns_servers = get_dns_nameservers(false, true);
 					foreach ($dns_servers as $dns) {
 						echo "<li>{$dns}</li>";
 					}

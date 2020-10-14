@@ -36,33 +36,9 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("pfsense-utils.inc");
 require_once("services.inc");
+require_once("acb.inc");
 
-function index_of_command() {
-	global $croncmd, $a_cron;
-
-	$i = 0;
-	$rv = -1;
-
-	if (count($a_cron) > 0) {
-		foreach ($a_cron as $ent) {
-			if ($ent['command'] === $croncmd) {
-				return $i;
-			}
-
-		$i++;
-		}
-	}
-
-	return $rv;
-
-}
-
-$croncmd = "/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/execacb.php";
-
-init_config_arr(array('cron', 'item'));
-$a_cron = &$config['cron']['item'];
 $pconfig = $config['system']['acb'];
-
 
 if (isset($_POST['save'])) {
 	unset($input_errors);
@@ -99,43 +75,24 @@ if (isset($_POST['save'])) {
 		$input_errors[] = gettext("You may not retain more than 50 manual backups.");
 	}
 
+	$pwd = "";
+
 	if (!$input_errors) {
 		if($update_ep) {
-			$config['system']['acb']['encryption_password'] = $pconfig['encryption_password'];
+			$pwd = $pconfig['encryption_password'];
 		}
 
-		$config['system']['acb']['enable'] = $pconfig['enable'];
-		$config['system']['acb']['hint'] = $pconfig['hint'];
-		$config['system']['acb']['frequency'] = $pconfig['frequency'];
-		$config['system']['acb']['hours'] = $pconfig['hours'];
-		$config['system']['acb']['month'] = $pconfig['month'];
-		$config['system']['acb']['day'] = $pconfig['day'];
-		$config['system']['acb']['dow'] = $pconfig['dow'];
-		$config['system']['acb']['numman'] = $pconfig['numman'];
-
-		// Remove any existing cron jobs
-		$cronid = index_of_command();
-
-		if ($cronid >= 0) {
-			unset($a_cron[$cronid]);
-		}
-
-		if ($pconfig['frequency'] === "cron") {
-			$ent = array();
-			$ent['minute'] = '0';
-			$ent['hour'] = $pconfig['hours'];
-			$ent['mday'] = $pconfig['day'];
-			$ent['month'] = $pconfig['month'];
-			$ent['wday'] = $pconfig['dow'];
-			$ent['who'] = 'root';
-			$ent['command'] = $croncmd;
-
-			$a_cron[] = $ent;
-
-		}
-
-		write_config("AutoConfigBackup settings updated");
-		configure_cron();
+		setup_ACB(
+			$pconfig['enable'],
+			$pconfig['hint'],
+			$pconfig['frequency'],
+			$pconfig['hours'],
+			$pconfig['month'],
+			$pconfig['day'],
+			$pconfig['dow'],
+			$pconfig['numman'],
+			$pwd
+		);
 	}
 }
 

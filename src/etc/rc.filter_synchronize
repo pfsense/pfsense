@@ -76,19 +76,6 @@ function backup_vip_config_section() {
 	return $temp;
 }
 
-function remove_special_characters($string) {
-	$match_array = "";
-	preg_match_all("/[a-zA-Z0-9\_\-]+/", $string, $match_array);
-	$string = "";
-	foreach ($match_array[0] as $ma) {
-		if ($string <> "") {
-			$string .= " ";
-		}
-		$string .= $ma;
-	}
-	return $string;
-}
-
 function carp_check_version() {
 	global $config, $g;
 
@@ -99,7 +86,6 @@ function carp_check_version() {
 	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('host_firmware_version');
 
-	log_error(sprintf(gettext("XMLRPC versioncheck: ").$resp['config_version'] ." -- ". $config['version']));
 	if (!isset($resp['config_version'])) {
 		update_filter_reload_status("The {$g['product_name']} software configuration version of the other member could not be determined. Skipping synchronization to avoid causing a problem!");
 		log_error("The {$g['product_name']} software configuration version of the other member could not be determined. Skipping synchronization to avoid causing a problem!");
@@ -128,7 +114,6 @@ function carp_sync_xml($sections) {
 	if (is_array($config_copy['nat']['outbound']['rule'])) {
 		$rulescnt = count($config_copy['nat']['outbound']['rule']);
 		for ($x = 0; $x < $rulescnt; $x++) {
-			$config_copy['nat']['outbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['outbound']['rule'][$x]['descr']);
 			if (isset ($config_copy['nat']['outbound']['rule'][$x]['nosync'])) {
 				unset ($config_copy['nat']['outbound']['rule'][$x]);
 			}
@@ -137,7 +122,6 @@ function carp_sync_xml($sections) {
 	if (is_array($config_copy['nat']['rule'])) {
 		$natcnt = count($config_copy['nat']['rule']);
 		for ($x = 0; $x < $natcnt; $x++) {
-			$config_copy['nat']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['rule'][$x]['descr']);
 			if (isset ($config_copy['nat']['rule'][$x]['nosync'])) {
 				unset ($config_copy['nat']['rule'][$x]);
 			}
@@ -146,7 +130,6 @@ function carp_sync_xml($sections) {
 	if (is_array($config_copy['filter']['rule'])) {
 		$filtercnt = count($config_copy['filter']['rule']);
 		for ($x = 0; $x < $filtercnt; $x++) {
-			$config_copy['filter']['rule'][$x]['descr'] = remove_special_characters($config_copy['filter']['rule'][$x]['descr']);
 			if (isset ($config_copy['filter']['rule'][$x]['nosync'])) {
 				unset ($config_copy['filter']['rule'][$x]);
 			}
@@ -155,7 +138,6 @@ function carp_sync_xml($sections) {
 	if (is_array($config_copy['aliases']['alias'])) {
 		$aliascnt = count($config_copy['aliases']['alias']);
 		for ($x = 0; $x < $aliascnt; $x++) {
-			$config_copy['aliases']['alias'][$x]['descr'] = remove_special_characters($config_copy['aliases']['alias'][$x]['descr']);
 			if (isset ($config_copy['aliases']['alias'][$x]['nosync'])) {
 				unset ($config_copy['aliases']['alias'][$x]);
 			}
@@ -164,7 +146,6 @@ function carp_sync_xml($sections) {
 	if (is_array($config_copy['dnsmasq']['hosts'])) {
 		$dnscnt = count($config_copy['dnsmasq']['hosts']);
 		for ($x = 0; $x < $dnscnt; $x++) {
-			$config_copy['dnsmasq']['hosts'][$x]['descr'] = remove_special_characters($config_copy['dnsmasq']['hosts'][$x]['descr']);
 			if (isset ($config_copy['dnsmasq']['hosts'][$x]['nosync'])) {
 				unset ($config_copy['dnsmasq']['hosts'][$x]);
 			}
@@ -173,7 +154,6 @@ function carp_sync_xml($sections) {
 	if (is_array($config_copy['ipsec']['tunnel'])) {
 		$ipseccnt = count($config_copy['ipsec']['tunnel']);
 		for ($x = 0; $x < $ipseccnt; $x++) {
-			$config_copy['ipsec']['tunnel'][$x]['descr'] = remove_special_characters($config_copy['ipsec']['tunnel'][$x]['descr']);
 			if (isset ($config_copy['ipsec']['tunnel'][$x]['nosync'])) {
 				unset ($config_copy['ipsec']['tunnel'][$x]);
 			}
@@ -355,7 +335,10 @@ if (is_array($config['hasync'])) {
 		}
 		$sections[] = 'schedules';
 	}
-	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['captiveportal'])) {
+	if ($hasync['synchronizecaptiveportal'] != "") {
+		if (!is_array($config['captiveportal'])) {
+			$config['captiveportal'] = array();
+		}
 		$sections[] = 'captiveportal';
 	}
 	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['voucher'])) {

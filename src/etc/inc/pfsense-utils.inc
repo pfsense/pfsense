@@ -108,28 +108,10 @@ function get_tmp_file() {
 	return "{$g['tmp_path']}/tmp-" . time();
 }
 
-/****f* pfsense-utils/get_dns_servers
- * NAME
- *   get_dns_servers - get system dns servers
- * INPUTS
- *   none
- * RESULT
- *   $dns_servers - an array of the dns servers
- ******/
+/* Stub for deprecated function
+ * See https://redmine.pfsense.org/issues/10931 */
 function get_dns_servers() {
-	$dns_servers = array();
-	if (file_exists("/etc/resolv.conf")) {
-		$dns_s = file("/etc/resolv.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	}
-	if (is_array($dns_s)) {
-		foreach ($dns_s as $dns) {
-			$matches = "";
-			if (preg_match("/nameserver (.*)/", $dns, $matches)) {
-				$dns_servers[] = $matches[1];
-			}
-		}
-	}
-	return array_unique($dns_servers);
+	return get_dns_nameservers(false, true);
 }
 
 /****f* pfsense-utils/pfSenseHeader
@@ -541,7 +523,10 @@ function hardware_offloading_applyflags($iface) {
 	$flags_off = 0;
 	$options = pfSense_get_interface_addresses($iface);
 
-	if (isset($config['system']['disablechecksumoffloading'])) {
+	/* disable hardware checksum offloading for VirtIO network drivers,
+	 * see https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=165059 */
+	if (isset($config['system']['disablechecksumoffloading']) ||
+	    stristr($iface, "vtnet") || stristr($iface, "ena")) { 
 		if (isset($options['encaps']['txcsum'])) {
 			$flags_off |= IFCAP_TXCSUM;
 		}
@@ -571,8 +556,10 @@ function hardware_offloading_applyflags($iface) {
 
 	if (isset($config['system']['disablesegmentationoffloading'])) {
 		$flags_off |= IFCAP_TSO;
+		$flags_off |= IFCAP_VLAN_HWTSO;
 	} else if (isset($options['caps']['tso']) || isset($options['caps']['tso4']) || isset($options['caps']['tso6'])) {
 		$flags_on |= IFCAP_TSO;
+		$flags_on |= IFCAP_VLAN_HWTSO;
 	}
 
 	if (isset($config['system']['disablelargereceiveoffloading'])) {
@@ -770,6 +757,29 @@ function get_carp_interface_status($carpid) {
 	}
 
 	return "";
+}
+
+/*
+ * Return true if the CARP status of at least one interface of a captive portal zone is in backup mode
+ * This function return false if CARP is not enabled on any interface of the captive portal zone
+ */
+function captiveportal_ha_is_node_in_backup_mode($cpzone) {
+	global $config;
+
+	$cpinterfaces = explode(",", $config['captiveportal'][$cpzone]['interface']);
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($cpinterfaces as $interface) {
+			foreach ($config['virtualip']['vip'] as $vip) {
+				if (($vip['interface'] == $interface) && ($vip['mode'] == "carp")) {
+					if (get_carp_interface_status("_vip{$vip['uniqid']}") != "MASTER") {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 /*
@@ -1185,7 +1195,8 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	 * As they will be replaced when necessary. */
 	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
 	    "hw.e6000sw.default_disabled", "vm.pmap.pti",
-	    "net.pf.request_maxcount");
+	    "net.pf.request_maxcount", "hw.hn.vf_transparent",
+	    "hw.hn.use_if_start");
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
 		$remove = array_merge($remove,
@@ -1301,17 +1312,15 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'hint.uart.1.flags="0x10"';
 	}
 	$data[] = 'autoboot_delay="3"';
-	$data[] = 'hw.usb.no_pf="1"';
 	if (isset($config['system']['pti_disabled'])) {
 		$data[] = 'vm.pmap.pti="0"';
 	}
 
-	if (isset($config['system']['maximumtableentries'])) {
-		$maximumtableentries = $config['system']['maximumtableentries'];
-	} else {
-		$maximumtableentries = pfsense_default_table_entries_size();
+	/* Enable ALTQ support for hnX NICs. */
+	if (isset($config['system']['hn_altq_enable'])) {
+		$data[] = 'hw.hn.vf_transparent="0"';
+		$data[] = 'hw.hn.use_if_start="1"';
 	}
-	$data[] = 'net.pf.request_maxcount="' .  $maximumtableentries . '"';
 
 	safe_write_file($loader_conf_file, $data);
 

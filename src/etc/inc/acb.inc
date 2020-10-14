@@ -313,3 +313,58 @@ function upload_config($manual = false) {
 		}
 	}
 }
+
+// Save the updated ACB configuration
+// Create a crontab entry for scheduled backups
+// if frequency == "cron", a new crontab entry is created, otherwise any existing
+// ACB entry is removed
+function setup_ACB($enable, $hint, $frequency, $hours, $month, $day, $dow, $numman, $pwd) {
+	global $config;
+
+	$config['system']['acb']['enable'] = $enable;
+	$config['system']['acb']['hint'] = $hint;
+	$config['system']['acb']['frequency'] = $frequency;
+	$config['system']['acb']['hour'] = $hours;
+	$config['system']['acb']['month'] = $month;
+	$config['system']['acb']['day'] = $day;
+	$config['system']['acb']['dow'] = $dow;
+	$config['system']['acb']['numman'] = $numman;
+	if (strlen($pwd) >= 8) {
+		$config['system']['acb']['encryption_password'] = $pwd;
+	}
+
+
+	init_config_arr(array('cron'));
+	$a_cron = &$config['cron']['item'];
+	$croncmd = "/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/execacb.php";
+
+	$i = 0;
+
+	// Remove the existing cron job
+	if (count($a_cron) > 0) {
+		foreach ($a_cron as $ent) {
+			if ($ent['command'] === $croncmd) {
+				unset($a_cron[$i]);
+				break;
+			}
+
+		$i++;
+		}
+	}
+
+	if ($frequency == "cron") {
+		$crondef = array();
+		$crondef['minute'] = '0';
+		$crondef['hour'] = $hours;
+		$crondef['mday'] = $day;
+		$crondef['month'] = $month;
+		$crondef['wday'] = $dow;
+		$crondef['who'] = 'root';
+		$crondef['command'] = $croncmd;
+
+		$a_cron[$i] = $crondef;
+	}
+
+	write_config("AutoConfigBackup settings updated");
+	configure_cron();
+}

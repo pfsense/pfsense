@@ -183,13 +183,16 @@ $section->addInput(new Form_Select(
 	'Identifier type',
 	$pconfig['ident_type'],
 	build_ipsecid_list()
-))->setWidth(4)->setHelp('Optional: specify identifier type for strongswan');
+))->setWidth(4)->setHelp('Optional: specify identifier type for EAP authentication');
 
-$section->addInput(new Form_IpAddress(
+$group = new Form_Group('Virtual Address Pool');
+$group->addClass('virtualip');
+$group->add(new Form_IpAddress(
 	'pool_address',
 	'Virtual Address Pool',
 	$pconfig['pool_address']
 ))->setWidth(4)->setHelp('Optional. If used, must be IPv4 address. If left blank, "Virtual Address Pool" of "Mobile Clients" will be used.')->addMask('pool_netbits', $pconfig['pool_netbits'], 32, 0);
+$section->add($group);
 
 $section->addInput(new Form_IpAddress(
 	'dns_address',
@@ -215,5 +218,25 @@ print $form;
 print_info_box(gettext("PSK for any user can be set by using an identifier of any."), 'info', false);
 ?>
 </div>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	function change_type() {
+		hide = $('#type').val() != 'EAP';
+		hideInput('ident_type', hide);
+		hideClass('virtualip', hide);
+		hideInput('dns_address', hide);
+	}
+
+	$('#type').change(function () {
+		change_type();
+	});
+
+	// ---------- On initial page load ------------------------------------------------------------
+
+	change_type();
+});
+//]]>
+</script>
 <?php
 include("foot.inc");

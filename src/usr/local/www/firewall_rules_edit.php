@@ -408,6 +408,10 @@ if ($_POST['save']) {
 		}
 	}
 
+	if (strpos($_POST['descr'], "\\") !== false) {
+		$input_errors[] = gettext("The '\' character is not allowed in the Description field.");
+	}
+
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
 		$_POST['srcbeginport'] = 0;
 		$_POST['srcendport'] = 0;
@@ -1352,6 +1356,7 @@ $section->addInput(new Form_Select(
 		'esp' => 'ESP',
 		'ah' => 'AH',
 		'gre' => 'GRE',
+		'etherip' => 'EoIP',
 		'ipv6' => 'IPV6',
 		'igmp' => 'IGMP',
 		'pim' => 'PIM',

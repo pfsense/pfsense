@@ -141,33 +141,23 @@ function delete_gateway_item($id) {
 	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) &&
 	    !isset($a_gateways[$id]['disabled']) &&
 	    isset($a_gateways[$id]['isdefaultgw'])) {
-		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? '-inet6' : '-inet');
-		file_put_contents("/dev/console", "\n[".getmypid()."] DEL_GW, route= delete {$inet} default");
-		mwexec("/sbin/route delete {$inet} default " . escapeshellarg($a_gateways[$id]['gateway']));
+		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway'])
+		    ? 'inet6' : 'inet');
+		route_del('default', $inet);
 	}
 
 	/* NOTE: Cleanup static routes for the interface route if any */
 	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) &&
 	    $gateway['gateway'] != $a_gateways[$id]['gateway'] &&
 	    isset($a_gateways[$id]["nonlocalgateway"])) {
-		$realif = get_real_interface($a_gateways[$id]['interface']);
-		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? "-inet6" : "-inet");
-		$rgateway = $a_gateways[$id]['gateway'];
-		file_put_contents("/dev/console", "\n[".getmypid()."] DEL_GW, route= $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif));
-		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif) . " " . escapeshellarg($rgateway);
-		mwexec($cmd);
+		route_del($a_gateways[$id]['gateway']);
 	}
 	/* NOTE: Cleanup static routes for the monitor ip if any */
 	if (!empty($a_gateways[$id]['monitor']) &&
 	    $a_gateways[$id]['monitor'] != "dynamic" &&
 	    is_ipaddr($a_gateways[$id]['monitor']) &&
 	    $a_gateways[$id]['gateway'] != $a_gateways[$id]['monitor']) {
-		$rgateway = $a_gateways[$id]['gateway'];
-		if (is_ipaddrv4($a_gateways[$id]['monitor'])) {
-			mwexec("/sbin/route delete " . escapeshellarg($a_gateways[$id]['monitor']) . " " . escapeshellarg($rgateway));
-		} else {
-			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateways[$id]['monitor']) . " " . escapeshellarg($rgateway));
-		}
+		route_del($a_gateways[$id]['monitor']);
 	}
 
 	if ($config['interfaces'][$a_gateways[$id]['friendlyiface']]['gateway'] == $a_gateways[$id]['name']) {
@@ -238,39 +228,6 @@ foreach($simplefields as $field) {
 	$pconfig[$field] = $config['gateways'][$field];
 }
 
-function gateway_displaygwtiername($gwname) {
-	global $config;
-	$gw = lookup_gateway_or_group_by_name($gwname);
-	if ($config['gateways']['defaultgw4'] == $gwname || $config['gateways']['defaultgw6'] == $gwname) {
-		$result = "Default";
-	} else {
-		if ($gw['ipprotocol'] == 'inet') {
-			$defgw = lookup_gateway_or_group_by_name($config['gateways']['defaultgw4']);
-		} else {
-			$defgw = lookup_gateway_or_group_by_name($config['gateways']['defaultgw6']);
-		}
-		if ($defgw['type'] == "gatewaygroup") {
-			$detail = gateway_is_gwgroup_member($gwname, true);
-			foreach($detail as $gwitem) {
-				if ($gwitem['name'] == $defgw['name']) {
-					if (isset($gwitem['tier'])) {
-						$result = "Tier " . $gwitem['tier'];
-						break;
-					}
-				}
-			}
-		}
-	}
-	if (!empty($result)) {
-		if ($gw['ipprotocol'] == "inet") {
-			$result .= " (IPv4)";
-		} elseif ($gw['ipprotocol'] == "inet6") {
-			$result .= " (IPv6)";
-		}
-	}
-	return $result;
-}
-
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"));
 $pglinks = array("", "@self", "@self");
 $shortcut_section = "gateways";
@@ -319,42 +276,45 @@ display_top_tabs($tab_array);
 <?php
 foreach ($a_gateways as $i => $gateway):
 	if (isset($gateway['inactive'])) {
+		$title = gettext("Gateway inactive, interface is missing");
 		$icon = 'fa-times-circle-o';
 	} elseif (isset($gateway['disabled'])) {
 		$icon = 'fa-ban';
+		$title = gettext("Gateway disabled");
 	} else {
 		$icon = 'fa-check-circle-o';
+		$title = gettext("Gateway enabled");
 	}
 
-	if (isset($gateway['inactive'])) {
-		$title = gettext("This gateway is inactive because interface is missing");
-	} else {
-		$title = '';
+	$gtitle = "";
+	if (isset($gateway['isdefaultgw'])) {
+		$gtitle = gettext("Default gateway");
 	}
+
 	$id = $gateway['attribute'];
 ?>
-				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?> onClick="fr_toggle(<?=$id;?>)" id="fr<?=$id;?>">
-					<td style="white-space: nowrap;">
-						<?php 
-						if (is_numeric($id)) :?>
-							<input type='checkbox' id='frc<?=$id?>' onClick='fr_toggle(<?=$id?>)' name='row[]' value='<?=$id?>'/>
-							<a class='fa fa-anchor' id='Xmove_<?=$id?>' title='"<?=gettext("Move checked entries to here")?>"'></a>
-						<?php endif; ?>
-					</td>
-					<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
-					<td>
+					<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?> onClick="fr_toggle(<?=$id;?>)" id="fr<?=$id;?>">
+						<td style="white-space: nowrap;">
+							<?php 
+							if (is_numeric($id)) :?>
+								<input type='checkbox' id='frc<?=$id?>' onClick='fr_toggle(<?=$id?>)' name='row[]' value='<?=$id?>'/>
+								<a class='fa fa-anchor' id='Xmove_<?=$id?>' title='"<?=gettext("Move checked entries to here")?>"'></a>
+							<?php endif; ?>
+						</td>
+						<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
+						<td title="<?=$gtitle?>">
 						<?=htmlspecialchars($gateway['name'])?>
 <?php
-						if (isset($gateway['isdefaultgw'])) {
-							echo ' <i class="fa fa-globe"></i>';
-						}
+							if (isset($gateway['isdefaultgw'])) {
+								echo ' <i class="fa fa-globe"></i>';
+							}
 ?>
 						</td>
 						<td>
-							<?=gateway_displaygwtiername($gateway['name'])?>
+							<?=htmlspecialchars($gateway['tiername'])?>
 						</td>
 						<td>
-							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>
+							<?=htmlspecialchars($gateway['friendlyifdescr'])?>
 						</td>
 						<td>
 							<?=htmlspecialchars($gateway['gateway'])?>
@@ -406,42 +366,20 @@ foreach ($a_gateways as $i => $gateway):
 $form = new Form;
 $section = new Form_Section('Default gateway');
 
-$items4 = array();
-$items6 = array();
-$items4[''] = "Automatic";
-$items6[''] = "Automatic";
-foreach($a_gateways as $gw) {
-	$gwn = $gw['name'];
-	if ($gw['ipprotocol'] == "inet6") {
-		$items6[$gwn] = $gwn;
-	} else {
-		$items4[$gwn] = $gwn;
-	}
-}
-$groups = return_gateway_groups_array();
-foreach ($groups as $key => $group) {
-	$gwn = $group['descr'];
-	if ($group['ipprotocol'] == "inet6") {
-		$items6[$key] = "$key ($gwn)";
-	} else {
-		$items4[$key] = "$key ($gwn)";
-	}
-}
-$items4['-'] = "None";
-$items6['-'] = "None";
+$dflts = available_default_gateways();
 
 $section->addInput(new Form_Select(
 	'defaultgw4',
 	'Default gateway IPv4',
 	$pconfig['defaultgw4'],
-	$items4
+	$dflts['v4']
 ))->setHelp('Select the gateway or gatewaygroup to use as the default gateway.');
 
 $section->addInput(new Form_Select(
 	'defaultgw6',
 	'Default gateway IPv6',
 	$pconfig['defaultgw6'],
-	$items6
+	$dflts['v6']
 ))->setHelp('Select the gateway or gatewaygroup to use as the default gateway.');
 
 $form->add($section);
@@ -451,7 +389,10 @@ print $form;
 <div class="infoblock">
 <?php
 print_info_box(
-	sprintf(gettext('%1$s%2$s%3$s is the current default route as present in the current routing table of the operating system'), '<strong>', '<i class="fa fa-globe"></i>', '</strong>')
+	sprintf(gettext('%1$s The current default route as present in the current routing table of the operating system'), '<strong><i class="fa fa-globe"></i></strong>') .
+	sprintf(gettext('%1$s Gateway is inactive, interface is missing'), '<br /><strong><i class="fa fa-times-circle-o"></i></strong>') .
+	sprintf(gettext('%1$s Gateway disabled'), '<br /><strong><i class="fa fa-ban"></i></strong>') .
+	sprintf(gettext('%1$s Gateway enabled'), '<br /><strong><i class="fa fa-check-circle-o"></i></strong>')
 	);
 ?>
 </div>

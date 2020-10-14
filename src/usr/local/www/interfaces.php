@@ -446,6 +446,7 @@ if ($_POST['apply']) {
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
 			foreach ($toapplylist as $ifapply => $ifcfgo) {
+				$ifmtu = get_interface_mtu(get_real_interface($ifapply));
 				if (isset($config['interfaces'][$ifapply]['enable'])) {
 					interface_bring_down($ifapply, false, $ifcfgo);
 					interface_configure($ifapply, true);
@@ -465,15 +466,19 @@ if ($_POST['apply']) {
 						services_dhcpd_configure();
 					}
 				}
-				if (interface_has_clones(get_real_interface($ifapply))) {
+				if (interface_has_clones(get_real_interface($ifapply)) &&
+				    (isset($config['interfaces'][$ifapply]['mtu']) &&
+				    ($config['interfaces'][$ifapply]['mtu'] != $ifmtu)) ||
+				    (!isset($config['interfaces'][$ifapply]['mtu']) &&
+				    (get_interface_default_mtu() != $ifmtu))) { 
 					$vlan_redo = true;
 				}
 			}
 		}
 
 		/*
-		 * If the parent interface has changed above, the VLANs needs to be
-		 * redone.
+                 * If the parent interface has changed MTU above, the VLANs needs to be
+                 * redone.
 		 */
 		if ($vlan_redo) {
 			interfaces_vlan_configure();

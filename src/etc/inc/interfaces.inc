@@ -496,6 +496,10 @@ function interface_vlan_configure(&$vlan, $flush = true) {
 	/* XXX: ermal -- for now leave it here at the moment it does not hurt. */
 	interfaces_bring_up($if);
 
+	if (interface_vlan_mtu_configured($vlanif)) {
+		set_interface_mtu($vlanif, interface_vlan_mtu_configured($vlanif));
+	}
+
 	return $vlanif;
 }
 
@@ -4005,7 +4009,7 @@ function interface_virtual_create($interface) {
 	global $config;
 
 	if (interface_is_vlan($interface) != NULL) {
-		interfaces_vlan_configure($interface);
+		interface_vlan_configure(interface_is_vlan($interface));
 	} else if (substr($interface, 0, 3) == "gre") {
 		interfaces_tunnel_configure(0, $interface, 'gre');
 	} else if (substr($interface, 0, 3) == "gif") {
@@ -4065,12 +4069,13 @@ function interface_vlan_mtu_configured($iface) {
 				continue;
 
 			$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+			$parentinf = convert_real_interface_to_friendly_interface_name($vlan['if']);
 			if (!empty($assignedport) && !empty($config['interfaces'][$assignedport]['mtu'])) {
 				/* VLAN MTU */
 				$mtu = $config['interfaces'][$assignedport]['mtu'];
-			} elseif (!empty($config['interfaces'][$vlan['if']]['mtu'])) {
+			} elseif (!empty($config['interfaces'][$parentinf]['mtu'])) {
 				/* Parent MTU */
-				$mtu = $config['interfaces'][$vlan['if']]['mtu'];
+				$mtu = $config['interfaces'][$parentinf]['mtu'];
 			}
 		}
 	}

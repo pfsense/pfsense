@@ -78,26 +78,33 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The number of IKEv1 phase 2 exchanges must be between 3 and 64.");
 	}
 
-	$bypassrules = array();
-	for ($x = 0; $x < 99; $x++) {
-		if (isset($_POST["source{$x}"]) && isset($_POST["destination{$x}"]) &&
-		    isset($_POST["srcmask{$x}"]) && isset($_POST["dstmask{$x}"])) {
-			$source = $_POST["source{$x}"] . '/' . $_POST["srcmask{$x}"];
-			$destination = $_POST["destination{$x}"] . '/' . $_POST["dstmask{$x}"];
-			if (!is_subnetv4($source) && !is_subnetv6($source)) {
-				$input_errors[] = sprintf(gettext('%s is not valid source IP address for IPsec bypass rule'),
-				htmlspecialchars($source));
+	if ($_POST['ipsecbypass']) {
+		$bypassrules = array();
+		for ($x = 0; $x < 99; $x++) {
+			if (isset($_POST["source{$x}"]) && isset($_POST["destination{$x}"]) &&
+			    isset($_POST["srcmask{$x}"]) && isset($_POST["dstmask{$x}"])) {
+				$source = $_POST["source{$x}"] . '/' . $_POST["srcmask{$x}"];
+				$destination = $_POST["destination{$x}"] . '/' . $_POST["dstmask{$x}"];
+				if (!is_subnetv4($source) && !is_subnetv6($source)) {
+					$input_errors[] = sprintf(gettext('%s is not valid source IP address for
+					       	IPsec bypass rule'), htmlspecialchars($source));
+				}
+				if (!is_subnetv4($destination) && !is_subnetv6($destination)) {
+					$input_errors[] = sprintf(gettext('%s is not valid destination IP address 
+						for IPsec bypass rule'), htmlspecialchars($destination));
+				}
+				if ((is_subnetv4($source) && is_subnetv6($destination)) ||
+				    (is_subnetv6($source) && is_subnetv4($destination))) {
+					$input_errors[] = gettext('IPsec bypass source and destination addresses
+						must belong to the same IP family.');
+				}
+				$bypassrules['rule'][] = array(
+					'source' => $_POST["source{$x}"],
+				       	'srcmask' => $_POST["srcmask{$x}"],
+					'destination' => $_POST["destination{$x}"], 
+					'dstmask' => $_POST["dstmask{$x}"]
+				);
 			}
-			if (!is_subnetv4($destination) && !is_subnetv6($destination)) {
-				$input_errors[] = sprintf(gettext('%s is not valid destination IP address for IPsec bypass rule'),
-				htmlspecialchars($destination));
-			}
-			if ((is_subnetv4($source) && is_subnetv6($destination)) ||
-			    (is_subnetv6($source) && is_subnetv4($destination))) {
-				$input_errors[] = gettext('IPsec bypass source and destination addresses must belong to the same IP family.');
-			}
-			$bypassrules['rule'][] = array('source' => $_POST["source{$x}"], 'srcmask' => $_POST["srcmask{$x}"],
-						'destination' => $_POST["destination{$x}"], 'dstmask' => $_POST["dstmask{$x}"]);
 		}
 	}
 

@@ -347,7 +347,7 @@ function get_dpinger_status($gwname, $gways = false, $action_disable = false,
 		    file_get_contents("/tmp/.alarm.{$gwname}")));
 
 		if ($clear_alarm) {
-			unlink("/tmp/.alarm.{$gwname}");
+			unlink_if_exists("/tmp/.alarm.{$gwname}");
 		}
 	} else {
 		// otherwise, read the current stats from the dpinger socket

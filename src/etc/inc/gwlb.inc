@@ -317,7 +317,7 @@ function setup_gateways_monitor() {
 }
 
 function get_dpinger_status($gwname, $gways = false, $action_disable = false,
-    $clear_alarm = false) {
+    $clear_alarm = true) {
 	global $g;
 
 	$running_processes = running_dpinger_processes();
@@ -468,7 +468,7 @@ function get_dpinger_status($gwname, $gways = false, $action_disable = false,
 
 /* return the status of the dpinger targets as an array */
 function return_gateways_status($byname = false, $gways = false,
-    $clear_alarm = false) {
+    $clear_alarm = true) {
 	global $config, $g;
 
 	$dpinger_gws = running_dpinger_processes();

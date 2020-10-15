@@ -442,7 +442,7 @@ if ($_POST['apply']) {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
 
-		$vlan_redo = false;
+		$vlan_redo = array();
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
 			foreach ($toapplylist as $ifapply => $ifcfgo) {
@@ -471,7 +471,7 @@ if ($_POST['apply']) {
 				    ($config['interfaces'][$ifapply]['mtu'] != $ifmtu)) ||
 				    (!isset($config['interfaces'][$ifapply]['mtu']) &&
 				    (get_interface_default_mtu() != $ifmtu))) { 
-					$vlan_redo = true;
+					$vlan_redo[] = get_real_interface($ifapply);
 				}
 			}
 		}
@@ -480,8 +480,10 @@ if ($_POST['apply']) {
                  * If the parent interface has changed MTU above, the VLANs needs to be
                  * redone.
 		 */
-		if ($vlan_redo) {
-			interfaces_vlan_configure();
+		if (!empty($vlan_redo)) {
+			foreach ($vlan_redo as $vlredo) {
+				interfaces_vlan_configure($vlredo);
+			}
 		}
 
 		/* restart snmp so that it binds to correct address */

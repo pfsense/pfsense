@@ -415,7 +415,7 @@ function interface_has_clones($if) {
 	return (FALSE);
 }
 
-function interfaces_vlan_configure($realif = "") {
+function interfaces_vlan_configure($parentif = "") {
 	global $config, $g;
 	if (platform_booting()) {
 		echo gettext("Configuring VLAN interfaces...");
@@ -425,7 +425,7 @@ function interfaces_vlan_configure($realif = "") {
 			if (empty($vlan['vlanif'])) {
 				$vlan['vlanif'] = vlan_interface($vlan);
 			}
-			if (!empty($realif) && $realif != $vlan['vlanif']) {
+			if (!empty($parentif) && ($parentif != $vlan['if'])) {
 				continue;
 			}
 

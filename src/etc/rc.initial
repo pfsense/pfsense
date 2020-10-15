@@ -30,18 +30,18 @@ trap : 2
 trap : 3
 trap : 4
 
+unset do_sleep
 if [ -f /etc/rc.local ]; then
-	RCLOCALPWD=`ps awux | grep rc.local | grep -v grep | awk '{ print $2 }'`
-	if [ "$RCLOCALPWD" = "" ]; then
+	if ! ps auxwww | egrep -q '[r]c.local$'; then
 		echo ">>> Launching rc.local in background..."
 		sh /etc/rc.local &
-		sleep 1
+		do_sleep=1
+	fi
+	if [ -f /etc/rc.local.running ] && \
+	    ! ps auxwww | egrep -q '[r]c.local.running$'; then
+		[ -n "${do_sleep}" ] && sleep 1
+		echo ">>> Launching rc.local.running in background..."
 		sh /etc/rc.local.running &
-	else
-		if [ -f /etc/rc.local.running ]; then
-			echo ">>> Launching rc.local.running in background..."
-			sh /etc/rc.local.running &
-		fi
 	fi
 fi
 

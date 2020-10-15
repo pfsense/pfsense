@@ -59,7 +59,7 @@ function set_networking_interfaces_ports() {
 		echo "\n";
 	}
 
-	$iflist = get_interface_list();
+	$iflist = get_interface_list('active', 'physical', true);
 
 	/* Function flow is based on $key or the lack thereof */
 	$key = null;

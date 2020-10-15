@@ -1614,7 +1614,26 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'tun',
 				'lagg',
 				'vip',
-				'ipfw'
+				'ipfw',
+				'vxlan'
+		);
+	} else {
+		$vfaces = array(
+				'bridge',
+				'sl',
+				'faith',
+				'lo',
+				'ng',
+				'_vlan',
+				'_wlan',
+				'pflog',
+				'plip',
+				'pfsync',
+				'enc',
+				'tun',
+				'lagg',
+				'vip',
+				'ipfw',
 		);
 	}
 	switch ($mode) {

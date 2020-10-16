@@ -430,6 +430,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= "{$altq_queues}\n";
 	$rules .= "{$natrules}\n";
 	$rules .= "{$pfrules}\n";
+	$rules .= "{$nat64_rules}\n";
 	$rules .= discover_pkg_rules("filter");
 
 	unset($aliases, $gateways, $altq_queues, $natrules, $pfrules);

@@ -161,6 +161,15 @@ if ($_POST['save']) {
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NAT64"), gettext("Edit"));
 $pglinks = array("", "firewall_nat.php", "firewall_nat_nat64.php", "@self");
 include("head.inc");
+?>
+<div class="infoblock blockopen">
+<?php
+print_info_box(gettext('Remember to create firewall rules to allow the NAT64 traffic to arrive on the interfaces after '.
+'the translation has occurred. Make sure those rules are State: None since inbound and outbound will not match. '.
+'i.e. IPv4 allow rules on the IPv6 side of the NAT64 and IPv6 rules on the IPv4 side.'), 'info', false);
+?>
+</div>
+<?php
 
 if ($input_errors) {
 	print_input_errors($input_errors);

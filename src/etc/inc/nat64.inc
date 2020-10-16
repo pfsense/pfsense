@@ -64,6 +64,7 @@ function filter_generate_nat64_rules() {
 
 	$modulesLoaded = false;
 	$anyRule = false;
+	$pfrules = '';
 	for($i = 0; $i < $g['nat64_rules_interval']; $i++) {
 		nat64_syslog('ID = '.$i);
 		
@@ -96,6 +97,9 @@ function filter_generate_nat64_rules() {
 				$max_ports.$host_del_age.$pg_del_age.$tcp_syn_age.$tcp_close_age.$tcp_est_age.$udp_age.$icmp_age.
 				$allowrfc;
 			$newRule = 'nat64lsn NAT64_'.$i.$newRuleOptions;
+			
+			$pfrules .= 'pass out inet6 from '.$ip6.' to any no state label "NAT64 rule '.$i.'"'."\n";
+			$pfrules .= 'pass out inet from '.$ip4.' to any no state label "NAT64 rule '.$i.'"'."\n";
 		}
 		nat64_syslog('newRule = '.$newRule);
 		
@@ -146,6 +150,8 @@ function filter_generate_nat64_rules() {
 			}
 		}
 	}
+	
+	return $pfrules;
 }
 
 /* log simple messages to syslog */

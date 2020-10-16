@@ -44,6 +44,13 @@ init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
 $a_separators = &$config['nat']['separator'];
 
+$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
+$ifdisp = get_configured_interface_with_descr();
+foreach ($ifdisp as $kif => $kdescr) {
+	$specialsrcdst[] = "{$kif}";
+	$specialsrcdst[] = "{$kif}ip";
+}
+
 /* update rule order, POST[rule] is an array of ordered IDs */
 if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($natent['interface'])) {
 	if (is_array($_REQUEST['rule']) && !empty($_REQUEST['rule'])) {
@@ -279,6 +286,15 @@ foreach ($a_nat as $natent):
 	} else {
 		$iconfn = "pass";
 		$trclass = '';
+	}
+
+	if (is_specialnet($natent['target'])) {
+		foreach ($ifdisp as $kif => $kdescr) {
+			if ($natent['target'] == "{$kif}ip") {
+				$natent['target'] = $kdescr . ' address';
+				break;
+			}
+		}
 	}
 ?>
 

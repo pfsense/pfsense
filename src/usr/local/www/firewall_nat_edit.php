@@ -92,6 +92,7 @@ if (isset($id) && $a_nat[$id]) {
 		$pconfig['dstendport'] = "any";
 	}
 
+	$pconfig['ipprotocol'] = $a_nat[$id]['ipprotocol'];
 	$pconfig['proto'] = $a_nat[$id]['protocol'];
 	$pconfig['localip'] = $a_nat[$id]['target'];
 	$pconfig['localbeginport'] = $a_nat[$id]['local-port'];
@@ -195,19 +196,35 @@ if ($_POST['save']) {
 	if (is_specialnet($_POST['srctype'])) {
 		$_POST['src'] = $_POST['srctype'];
 		$_POST['srcmask'] = 0;
-	} else if ($_POST['srctype'] == "single") {
-		$_POST['srcmask'] = 32;
+	} elseif ($_POST['srctype'] == "single") {
+		if ($_POST['ipprotocol'] == 'inet') {
+			$_POST['srcmask'] = 32;
+		} else {
+			$_POST['srcmask'] = 128;
+		}
 	}
 
 	if (is_specialnet($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 0;
-	} else if ($_POST['dsttype'] == "single") {
-		$_POST['dstmask'] = 32;
-	} else if (is_ipaddr($_POST['dsttype'])) {
+	} elseif ($_POST['dsttype'] == "single") {
+		if ($_POST['ipprotocol'] == 'inet') {
+			$_POST['dstmask'] = 32;
+		} else {
+			$_POST['dstmask'] = 128;
+		}
+	} elseif (is_ipaddr($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
-		$_POST['dstmask'] = 32;
 		$_POST['dsttype'] = "single";
+		if ($_POST['ipprotocol'] == 'inet') {
+			$_POST['dstmask'] = 32;
+		} else {
+			$_POST['dstmask'] = 128;
+		}
+	}
+
+	if (is_specialnet($_POST['localtype'])) {
+		$_POST['localip'] = $_POST['localtype'];
 	}
 
 	$pconfig = $_POST;
@@ -262,12 +279,29 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The submitted interface does not exist.");
 	}
 
-	if (!isset($_POST['nordr']) && ($_POST['localip'] && !is_ipaddroralias($_POST['localip']))) {
+	if (!isset($_POST['nordr']) && $_POST['localip'] &&
+	    !is_ipaddroralias($_POST['localip']) && !is_specialnet($_POST['localtype'])) {
 		$input_errors[] = sprintf(gettext("\"%s\" is not a valid redirect target IP address or host alias."), $_POST['localip']);
 	}
 
-	if ($_POST['localip'] && is_ipaddrv6($_POST['localip'])) {
-		$input_errors[] = sprintf(gettext("Redirect target IP must be IPv4."));
+	if ($_POST['localip']) {
+		if (is_specialnet($_POST['localtype'])) {
+			foreach ($ifdisp as $kif => $kdescr) {
+				if ($_POST['localtype'] == "{$kif}ip") {
+					if (($_POST['ipprotocol'] == 'inet') && !get_interface_ip($kif)) {
+						$input_errors[] = sprintf(gettext("Redirect interface must have IPv4 address."));
+						break;
+					} elseif (($_POST['ipprotocol'] == 'inet6') && !get_interface_ipv6($kif)) {
+						$input_errors[] = sprintf(gettext("Redirect interface must have IPv6 address."));
+						break;
+					}
+				}
+			}
+		} elseif (($_POST['ipprotocol'] == 'inet') && is_ipaddrv6($_POST['localip'])) {
+			$input_errors[] = sprintf(gettext("Redirect target IP must be IPv4."));
+		} elseif (($_POST['ipprotocol'] == 'inet6') && is_ipaddrv4($_POST['localip'])) {
+			$input_errors[] = sprintf(gettext("Redirect target IP must be IPv6."));
+		}
 	}
 
 	if ($_POST['srcbeginport'] && !is_port_or_alias($_POST['srcbeginport'])) {
@@ -297,10 +331,14 @@ if ($_POST['save']) {
 		if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."), $_POST['src']);
 		}
-		if ($_POST['src'] && is_ipaddrv6($_POST['src'])) {
-			$input_errors[] = sprintf(gettext("Source must be IPv4."));
+		if ($_POST['src']) {
+			if (($_POST['ipprotocol'] == 'inet') && is_ipaddrv6($_POST['src'])) {
+				$input_errors[] = sprintf(gettext("Source must be IPv4."));
+			} elseif (($_POST['ipprotocol'] == 'inet6') && is_ipaddrv4($_POST['src'])) {
+				$input_errors[] = sprintf(gettext("Source must be IPv6."));
+			}
 		}
-		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
+		if (($_POST['srcmask'] && !is_subnet($_POST['src'] . '/' . $_POST['srcmask']))) {
 			$input_errors[] = gettext("A valid source bit count must be specified.");
 		}
 	}
@@ -309,10 +347,14 @@ if ($_POST['save']) {
 		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
 		}
-		if ($_POST['dst'] && is_ipaddrv6($_POST['dst'])) {
-			$input_errors[] = sprintf(gettext("Destination must be IPv4."));
+		if ($_POST['dst']) {
+			if (($_POST['ipprotocol'] == 'inet') && is_ipaddrv6($_POST['dst'])) {
+				$input_errors[] = sprintf(gettext("Destination must be IPv4."));
+			} elseif (($_POST['ipprotocol'] == 'inet6') && is_ipaddrv4($_POST['dst'])) {
+				$input_errors[] = sprintf(gettext("Destination must be IPv6."));
+			}
 		}
-		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {
+		if (($_POST['dstmask'] && !is_subnet($_POST['dst'] . '/' . $_POST['dstmask']))) {
 			$input_errors[] = gettext("A valid destination bit count must be specified.");
 		}
 	}
@@ -389,6 +431,7 @@ if ($_POST['save']) {
 			$_POST['dstmask'], $_POST['dstnot'],
 			$_POST['dstbeginport'], $_POST['dstendport']);
 
+		$natent['ipprotocol'] = $_POST['ipprotocol'];
 		$natent['protocol'] = $_POST['proto'];
 
 		if (!isset($natent['nordr'])) {
@@ -462,8 +505,13 @@ if ($_POST['save']) {
 
 			// Update interface, protocol and destination
 			$filterent['interface'] = $_POST['interface'];
+			$filterent['ipprotocol'] = $_POST['ipprotocol'];
 			$filterent['protocol'] = $_POST['proto'];
-			$filterent['destination']['address'] = $_POST['localip'];
+			if (is_specialnet($_POST['localtype'])) {
+				$filterent['destination']['network'] = $_POST['localtype'];
+			} else {
+				$filterent['destination']['address'] = $_POST['localip'];
+			}
 
 			if (isset($_POST['disabled'])) {
 				$filterent['disabled'] = true;
@@ -569,7 +617,8 @@ function srctype_selected() {
 	if (array_key_exists($pconfig['src'], build_srctype_list())) {
 		$selected = $pconfig['src'];
 	} else {
-		if ($pconfig['srcmask'] == 32) {
+		if ((($pconfig['srcmask'] == 32) && ($pconfig['ipprotocol'] == 'inet')) ||
+		    (($pconfig['srcmask'] == 128) && ($pconfig['ipprotocol'] == 'inet6'))) {
 			$selected = 'single';
 		} else {
 			$selected = 'network';
@@ -603,10 +652,8 @@ function build_dsttype_list() {
 	$templist = array();
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
-			if (is_ipaddrv6($sn['subnet'])) {
-				continue;
-			}
-			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
+			if ((($sn['mode'] == "proxyarp") || ($sn['mode'] == "other")) &&
+			    ($sn['type'] == "network") && is_subnetv4($sn['subnet'])) {
 				$templist[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
 				if (isset($sn['noexpand'])) {
 					continue;
@@ -641,7 +688,8 @@ function dsttype_selected() {
 	if (array_key_exists($pconfig['dst'], build_dsttype_list())) {
 		$selected = $pconfig['dst'];
 	} else {
-		if ($pconfig['dstmask'] == 32) {
+		if ((($pconfig['dstmask'] == 32) && ($pconfig['ipprotocol'] == 'inet')) ||
+		    (($pconfig['dstmask'] == 128) && ($pconfig['ipprotocol'] == 'inet6'))) {
 			$selected = 'single';
 		} else {
 			$selected = 'network';
@@ -649,6 +697,37 @@ function dsttype_selected() {
 	}
 
 	return($selected);
+}
+
+function build_localtype_list() {
+	global $pconfig, $ifdisp;
+
+	$list = array('single' => gettext('Single host'));
+
+	foreach ($ifdisp as $ifent => $ifdesc) {
+		if (have_ruleint_access($ifent)) {
+			$list[$ifent . 'ip'] = $ifdesc . ' address';
+		}
+	}
+
+	return($list);
+}
+
+function localtype_selected() {
+	global $pconfig;
+
+	if ($pconfig['localtype']) {
+		// The rule type came from the $_POST array, after input errors, so keep it.
+		return $pconfig['localtype'];
+	}
+
+	$sel = is_specialnet($pconfig['localip']);
+
+	if (!$sel) {
+		return('single');
+	}
+
+	return($pconfig['localip']);
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"), gettext("Edit"));
@@ -685,6 +764,16 @@ $section->addInput(new Form_Select(
 ))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
 
 $protocols = "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP PIM OSPF";
+
+$section->addInput(new Form_Select(
+	'ipprotocol',
+	'*Address Family',
+	$pconfig['ipprotocol'],
+	array(
+		'inet' => 'IPv4',
+		'inet6' => 'IPv6'
+	)
+))->setHelp('Select the Internet Protocol version this rule applies to.');
 
 $section->addInput(new Form_Select(
 	'proto',
@@ -837,12 +926,32 @@ $group->setHelp('Specify the port or port range for the destination of the packe
 
 $section->add($group);
 
-$section->addInput(new Form_IpAddress(
+$group = new Form_Group('*Redirect target IP');
+
+$group->add(new Form_StaticText(
+	null,
+	null
+))->setWidth(2);
+
+$group->add(new Form_Select(
+	'localtype',
+	null,
+	localtype_selected(),
+	build_localtype_list()
+))->setHelp('Type');
+
+$group->add(new Form_IpAddress(
 	'localip',
-	'*Redirect target IP',
+	null,
 	$pconfig['localip'],
 	'ALIASV4V6'
-))->setHelp('Enter the internal IP address of the server on which to map the ports.%s e.g.: 192.168.1.12', '<br />');
+))->setHelp('Address');
+
+$group->setHelp('Enter the internal IP address of the server on which to map the ports. e.g.: 192.168.1.12 for IPv4%1$s ' .
+	    'In case of IPv6 addresses, in must be from the same "scope",%1$s i.e. it is not possible to redirect from ' .
+	    'link-local addresses scope (fe80:*) to local scope (::1)', '<br />');
+
+$section->add($group);
 
 $group = new Form_Group('*Redirect target port');
 $group->addClass('lclportrange');
@@ -1115,6 +1224,16 @@ events.push(function() {
 				disableInput('dstmask', true);
 				break;
 		}
+
+		switch ($('#localtype').find(":selected").index()) {
+			case 0: // single
+				disableInput('localip', false);
+				break;
+			default:
+				$('#localip').val('');
+				disableInput('localip', true);
+				break;
+		}
 	}
 
 	function src_rep_change() {
@@ -1187,6 +1306,10 @@ events.push(function() {
 	});
 
 	$('#dsttype').change(function () {
+		typesel_change();
+	});
+
+	$('#localtype').change(function () {
 		typesel_change();
 	});
 

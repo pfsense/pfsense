@@ -2380,6 +2380,12 @@ function filter_nat_rules_generate() {
 				$localport = " port {$localport}";
 			}
 
+			if ($rule['ipprotocol'] == 'inet6') {
+				$ipproto = 'inet6';
+			} else {
+				$ipproto = 'inet';
+			}
+
 			switch (strtolower($rule['protocol'])) {
 				case "tcp/udp":
 					$protocol = "{ tcp udp }";
@@ -2394,7 +2400,14 @@ function filter_nat_rules_generate() {
 					break;
 			}
 
-			$target = alias_expand($rule['target']);
+			if (is_ipaddr($rule['target'])) {
+				$target = $rule['target'];
+			} else {
+				$tmprule = array();
+				$tmprule['localip']['network'] = $rule['target'];
+				$tmprule['ipprotocol'] = $ipproto;
+				$target = filter_generate_address($tmprule, 'localip');
+			}
 			if (!$target && !isset($rule['nordr'])) {
 				$natrules .= "# Unresolvable alias {$rule['target']}\n";
 				continue;		/* unresolvable alias */
@@ -2467,7 +2480,8 @@ function filter_nat_rules_generate() {
 			$natif = $FilterIflist[$natif]['if'];
 
 			$reflection_type = "none";
-			if ($rule['natreflection'] != "disable" && $dstaddr_port[0] != "0.0.0.0") {
+			if (($rule['natreflection'] != "disable") && ($dstaddr_port[0] != "0.0.0.0") && 
+			    ($dstaddr_port[0] != "::")) {
 				if ($rule['natreflection'] == "enable") {
 					$reflection_type = "proxy";
 				} else if ($rule['natreflection'] == "purenat") {
@@ -2497,21 +2511,27 @@ function filter_nat_rules_generate() {
 			}
 
 			if ($srcaddr <> "" && $dstaddr <> "" && $natif) {
-				$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+				$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} {$ipproto} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 
 				/* Does this rule redirect back to a internal host? */
 				if (isset($rule['destination']['any']) && !isset($rule['nordr']) && !isset($config['system']['enablenatreflectionhelper']) && !interface_has_gateway($rule['interface'])) {
-					$rule_interface_ip = find_interface_ip($natif);
-					$rule_interface_subnet = find_interface_subnet($natif);
+					if ($ipproto == 'inet') {
+						$rule_interface_ip = find_interface_ip($natif);
+						$rule_interface_subnet = find_interface_subnet($natif);
+					} else {
+						$rule_interface_ip = find_interface_ipv6($natif);
+						$rule_interface_subnet = find_interface_subnetv6($natif);
+					}
 					if (!empty($rule_interface_ip) && !empty($rule_interface_subnet)) {
 						$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
 						$natrules .= "\n";
 						/* Do not generate a rule with an interface source if that interface has no IP address.
 						 * See https://redmine.pfsense.org/issues/8604 */
-						if (!empty(get_interface_ip($natif))) {
-							$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
+						if ((($ipproto == 'inet') && !empty(get_interface_ip($natif))) || 
+						    (($ipproto == 'inet6') && !empty(get_interface_ipv6($natif)))) {
+							$natrules .= "no nat on {$natif} {$ipproto} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
 						}
-						$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
+						$natrules .= "nat on {$natif} {$ipproto} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 					}
 				}
 
@@ -2528,7 +2548,7 @@ function filter_nat_rules_generate() {
 							$rdr_if_list = "{ {$rdr_if_list} }";
 						}
 						$natrules .= "\n# Reflection redirect\n";
-						$natrules .= "{$nordr}rdr {$rdrpass}on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+						$natrules .= "{$nordr}rdr {$rdrpass}on {$rdr_if_list} {$ipproto} proto {$protocol} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 						$nat_if_list = array_merge(array($natif), $nat_if_list);
 					}
 				}

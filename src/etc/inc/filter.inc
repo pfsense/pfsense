@@ -2019,11 +2019,19 @@ function filter_nat_rules_generate() {
 
 			$sn = "";
 			$sn1 = "";
+
+			if (($rule['ipprotocol'] == 'inet6') || is_ipaddrv6($rule['external'])) {
+				$ipproto = 'inet6';
+			} else {
+				$ipproto = 'inet';
+			}
+
 			if (is_ipaddr($rule['external'])) {
 				$target = $rule['external'];
 			} else {
 				$tmprule = array();
 				$tmprule['external']['network'] = $rule['external'];
+				$tmprule['ipprotocol'] = $ipproto;
 				$target = filter_generate_address($tmprule, 'external');
 			}
 			if (!$target) {
@@ -2069,7 +2077,7 @@ function filter_nat_rules_generate() {
 
 			$nat_if_list = array();
 			if (isset($rule['nobinat'])) {
-				$natrules .= "no binat on {$natif} from {$srcaddr} to {$dstaddr}\n";
+				$natrules .= "no binat on {$natif} {$ipproto} from {$srcaddr} to {$dstaddr}\n";
 			} else {
 				/*
 				 * If reflection is enabled, turn on extra redirections
@@ -2080,12 +2088,12 @@ function filter_nat_rules_generate() {
 					$nat_if_list = filter_get_reflection_interfaces($natifname);
 				}
 
-				$natrules .= "binat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
+				$natrules .= "binat on {$natif} {$ipproto} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
 
 				if (!empty($nat_if_list)) {
 					$binat_if_list = implode(" ", $nat_if_list);
 					$binat_if_list = "{ {$binat_if_list} }";
-					$reflection_txt .= "rdr on {$binat_if_list} from {$dstaddr} to {$target}{$sn1} -> {$srcaddr} bitmask\n";
+					$reflection_txt .= "rdr on {$binat_if_list} {$ipproto} from {$dstaddr} to {$target}{$sn1} -> {$srcaddr} bitmask\n";
 				}
 			}
 

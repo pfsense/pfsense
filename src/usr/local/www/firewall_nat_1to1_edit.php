@@ -81,6 +81,7 @@ if (isset($id) && $a_1to1[$id]) {
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
 	$pconfig['interface'] = $a_1to1[$id]['interface'];
+	$pconfig['ipprotocol'] = $a_1to1[$id]['ipprotocol'];
 	if (!$pconfig['interface']) {
 		$pconfig['interface'] = "wan";
 	}
@@ -160,12 +161,12 @@ if ($_POST['save']) {
 		$_POST['dstmask'] = (is_ipaddrv4($_POST['dst'])) ? 32 : 128; 
 	} else if (is_ipaddr($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
-		$_POST['dstmask'] = 32;
 		$_POST['dsttype'] = "single";
-	}
-
-	if (is_specialnet($_POST['exttype'])) {
-		$_POST['external'] = $_POST['exttype'];
+		if ($_POST['ipprotocol'] == 'inet') {
+			$_POST['dstmask'] = 32;
+		} else {
+			$_POST['dstmask'] = 128;
+		}
 	}
 
 	$pconfig = $_POST;
@@ -174,9 +175,21 @@ if ($_POST['save']) {
 	$srcipaddrtype = false;
 	$dstipaddrtype = false;
 
-	/* For external, user can enter only ip's */
-	if ($_POST['external'] && !is_specialnet($_POST['exttype'])) {
+	if ((($_POST['ipprotocol'] == 'inet') && !get_interface_ip($_POST['interface'])) ||
+	    (($_POST['ipprotocol'] == 'inet6') && !get_interface_ipv6($_POST['interface']))) {
+		$input_errors[] = gettext("The interface do not have address from the specified address family.");
+	}
+
+	if ($_POST['external'] && !is_specialnet($_POST['exttype']) &&
+	    ((($_POST['ipprotocol'] == 'inet') && (is_ipaddrv4($_POST['external']))) ||
+	    (($_POST['ipprotocol'] == 'inet6') && (is_ipaddrv6($_POST['external']))))) {
 		$extipaddrtype = validateipaddr($_POST['external'], IPV4V6, "External subnet IP", $input_errors, false);
+	} elseif (is_specialnet($_POST['exttype'])) {
+		$extipaddrtype = get_specialnet_type($_POST['exttype'], $_POST['ipprotocol']);
+	}
+
+	if (!$extipaddrtype) {
+		$input_errors[] = gettext("The external subnet IP is not from the specified address family.");
 	}
 
 	/* For dst, if user enters an alias and selects "network" then disallow. */
@@ -184,59 +197,36 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Alias entries must specify a single host or alias.");
 	}
 
-	/* For src, user can enter only ips or networks */
-	if (!is_specialnet($_POST['srctype']) && !is_specialnet($_POST['exttype'])) {
-		if ($_POST['src']) {
-			$srcipaddrtype = validateipaddr($_POST['src'], IPV4V6, "Internal address", $input_errors, false);
-			if ($srcipaddrtype) {
-				// It is a valid IP address of some address family.
-				// Check that the address family matches the other IP addresses entered.
-				if ($extipaddrtype && ($srcipaddrtype != $extipaddrtype)) {
-					$input_errors[] = sprintf(
-						gettext('The external IP address (%1$s) and internal IP address (%2$s) are of different address families.') .
-							get_must_be_both_text(),
-						$_POST['external'],
-						$_POST['src']);
-				}
-			}
-		}
-
-		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
-			$input_errors[] = gettext("A valid internal bit count must be specified.");
-		}
+	if ($_POST['src'] && $_POST['srcmask'] && !is_numericint($_POST['srcmask'])) {
+		$input_errors[] = gettext("A valid internal bit count must be specified.");
 	}
 
-	/* For dst, user can enter ips, networks or aliases */
-	if (!is_specialnet($_POST['dsttype']) && !is_specialnet($_POST['exttype'])) {
-		if ($_POST['dst']) {
-			$dstipaddrtype = validateipaddr($_POST['dst'], IPV4V6, "Destination address", $input_errors, true);
-			if ($dstipaddrtype == ALIAS) {
-				// It is an alias.
-				// pf does not report "error loading rules" if the address family of items in the alias does not match the external/internal address family.
-				// So that is up to the user to make sensible, we do not try and verify it here.
-			} elseif ($dstipaddrtype) {
-				// It is a valid IP address of some address family.
-				// Check that the address family matches the other IP addresses entered.
-				if ($extipaddrtype && ($dstipaddrtype != $extipaddrtype)) {
-					$input_errors[] = sprintf(
-						gettext('The external IP address (%1$s) and destination IP address (%2$s) are of different address families.') .
-							get_must_be_both_text(),
-						$_POST['external'],
-						$_POST['dst']);
-				}
-				if ($srcipaddrtype && ($dstipaddrtype != $srcipaddrtype)) {
-					$input_errors[] = sprintf(
-						gettext('The internal IP address (%1$s) and destination IP address (%2$s) are of different address families.') .
-							get_must_be_both_text(),
-						$_POST['src'],
-						$_POST['dst']);
-				}
-			}
-		}
+	if ($_POST['src'] && !is_specialnet($_POST['srctype']) &&
+	    ((($_POST['ipprotocol'] == 'inet') && (is_ipaddrv4($_POST['src']))) ||
+	    (($_POST['ipprotocol'] == 'inet6') && (is_ipaddrv6($_POST['src']))))) {
+		$srcipaddrtype = validateipaddr($_POST['src'], IPV4V6, "Internal IP", $input_errors, false);
+	} elseif (is_specialnet($_POST['srctype'])) {
+		$srcipaddrtype = get_specialnet_type($_POST['srctype'], $_POST['ipprotocol']);
+	}
 
-		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {
-			$input_errors[] = gettext("A valid destination bit count must be specified.");
-		}
+	if (($_POST['src'] != 'any') && !$srcipaddrtype) {
+		$input_errors[] = gettext("The internal IP is not from the specified address family.");
+	}
+
+	if ($_POST['dst'] && $_POST['dstmask'] && !is_numericint($_POST['dstmask'])) {
+		$input_errors[] = gettext("A valid destination bit count must be specified.");
+	}
+
+	if ($_POST['dst'] && !is_specialnet($_POST['dsttype']) &&
+	    ((($_POST['ipprotocol'] == 'inet') && (is_ipaddrv4($_POST['dst']))) ||
+	    (($_POST['ipprotocol'] == 'inet6') && (is_ipaddrv6($_POST['dst']))))) {
+		$dstipaddrtype = validateipaddr($_POST['dst'], IPV4V6, "Destination address", $input_errors, false);
+	} elseif (is_specialnet($_POST['dsttype'])) {
+		$dstipaddrtype = get_specialnet_type($_POST['dsttype'], $_POST['ipprotocol']);
+	}
+
+	if (($_POST['dst'] != 'any') && !$dstipaddrtype) {
+		$input_errors[] = gettext("The destination address is not from the specified address family.");
 	}
 
 	/* check for overlaps with other 1:1 */
@@ -251,6 +241,11 @@ if ($_POST['save']) {
 		}
 	}
 
+	if (is_specialnet($_POST['exttype'])) {
+		$_POST['external'] = $_POST['exttype'];
+		$pconfig['external'] = $_POST['exttype'];
+	}
+
 	if (!$input_errors) {
 		$natent = array();
 
@@ -259,6 +254,7 @@ if ($_POST['save']) {
 		$natent['external'] = $_POST['external'];
 		$natent['descr'] = $_POST['descr'];
 		$natent['interface'] = $_POST['interface'];
+		$natent['ipprotocol'] = $_POST['ipprotocol'];
 
 		pconfig_to_address($natent['source'], $_POST['src'],
 			$_POST['srcmask'], $_POST['srcnot']);
@@ -445,6 +441,21 @@ function exttype_selected() {
 	return($pconfig['external']);
 }
 
+function get_specialnet_type($type, $ipprotocol='inet') {
+
+	foreach (get_configured_interface_with_descr() as $kif => $kdescr) {
+		if (($type == "{$kif}ip") || ($type == $kif)) {
+			if (($ipprotocol == 'inet') && get_interface_ip($kif)) {
+				return '4';
+			} elseif (($ipprotocol == 'inet6') && get_interface_ipv6($kif)) {
+				return '6';
+			}
+		}
+	}
+
+	return false;
+}
+
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
@@ -478,6 +489,16 @@ $section->addInput(new Form_Select(
 	$pconfig['interface'],
 	filter_get_interface_list()
 ))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
+
+$section->addInput(new Form_Select(
+	'ipprotocol',
+	'*Address Family',
+	$pconfig['ipprotocol'],
+	array(
+		'inet' => 'IPv4',
+		'inet6' => 'IPv6'
+	)
+))->setHelp('Select the Internet Protocol version this rule applies to.');
 
 $group = new Form_Group('*External subnet IP');
 

@@ -351,16 +351,43 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 	endif;
 	if (!in_array('state_table_size', $skipsysinfoitems)):
 		$rows_displayed = true;
+
+		// Calculate scaling factor
+		$adaptive = false;
+
+		if (isset($config['system']['adaptivestart']) and $config['system']['adaptivestart'] > 0) {
+		    $adaptivestart = "{$config['system']['adaptivestart']}";
+		} else {
+		    $adaptivestart = intval($maxstates * 0.6);
+		}
+		if (isset($config['system']['adaptiveend']) and $config['system']['adaptiveend'] > 0) {
+		    $adaptiveend = "{$config['system']['adaptiveend']}";
+		} else {
+		    $adaptiveend = intval($maxstates * 1.2);
+		}
+		$adaptive_text = "";
+		if ($curentries > $adaptivestart) {
+		    $scalingfactor = round(($adaptiveend - $curentries) / ($adaptiveend - $adaptivestart) * 100, 0);
+		    $adaptive = true;
+		}
 ?>
 		<tr>
-			<th><?=gettext("State table size");?></th>
+			<th>
+<?php
+				print(gettext("State table size"));
+				if ($adaptive) {
+					print('<br /><a href="#" data-toggle="tooltip" title="" data-placement="right" data-original-title="Adaptive state handling enabled, state timeouts reduced by ' . $scalingfactor . '%">' . gettext("Adaptive states") . '</a>');
+				}
+?>
+
+			</th>
 			<td>
 				<?php
 					$pfstatetext = get_pfstate();
 					$pfstateusage = get_pfstate(true);
 				?>
 				<div class="progress">
-					<div id="statePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
+					<div id="statePB" class="progress-bar progress-bar-striped <?=$adaptive ? 'progress-bar-warning' : ''?>" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
 					</div>
 				</div>
 				<span id="pfstateusagemeter"><?=$pfstateusage?>%</span>&nbsp;<span id="pfstate">(<?= htmlspecialchars($pfstatetext)?>)</span>&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
@@ -701,6 +728,10 @@ function widgetActive(x) {
 <?php endif; // $widget_first_instance ?>
 
 events.push(function(){
+	// Enable tooltips
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip()
+	})
 
 	// --------------------- Centralized widget refresh system ------------------------------
 

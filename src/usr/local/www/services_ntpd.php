@@ -153,6 +153,7 @@ if ($_POST) {
 		$config['ntpd']['orphan'] = trim($pconfig['ntporphan']);
 		$config['ntpd']['ntpminpoll'] = $pconfig['ntpminpoll'];
 		$config['ntpd']['ntpmaxpoll'] = $pconfig['ntpmaxpoll'];
+		$config['ntpd']['dnsresolv'] = $pconfig['dnsresolv'];
 
 		if (!empty($_POST['logpeer'])) {
 			$config['ntpd']['logpeer'] = $_POST['logpeer'];
@@ -507,6 +508,17 @@ $section->addInput(new Form_Input(
 	null,
 	'file'
 ))->addClass('btn-default');
+
+$section->addInput(new Form_Select(
+	'dnsresolv',
+	'DNS Resolution',
+	$pconfig['dnsresolv'],
+	array(
+		'auto' => 'Auto',
+		'inet' => 'IPv4',
+		'inet6' => 'IPv6',
+	)
+))->setHelp('Force NTP peers DNS resolution IP protocol. Do not affect pools.');
 
 $section->addInput(new Form_Checkbox(
 	'serverauth',

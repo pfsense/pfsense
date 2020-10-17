@@ -1957,6 +1957,11 @@ function system_ntp_configure() {
 			$have_pools = true;
 		} else {
 			$ntpcfg .= 'server ';
+			if ($config['ntpd']['dnsresolv'] == 'inet') {
+				$ntpcfg .= '-4 ';
+			} elseif ($config['ntpd']['dnsresolv'] == 'inet6') {
+				$ntpcfg .= '-6 ';
+			}
 		}
 
 		$ntpcfg .= "{$ts} iburst";

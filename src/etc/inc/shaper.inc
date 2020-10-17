@@ -693,6 +693,14 @@ class altq_root_queue {
 	function GetBwscale() {
 		return $this->bandwidthtype;
 	}
+	function FormGetBwscale() {
+		if ($this->GetBwscale()) {
+			$bwscale = $this->GetBwscale();
+		} else {
+			$bwscale = 'Mb';
+		}
+		return $bwscale;
+	}
 	function SetBwscale($bwscale) {
 		$this->bandwidthtype = $bwscale;
 	}
@@ -1157,7 +1165,7 @@ class altq_root_queue {
 		$group->add(new Form_Select(
 			'bandwidthtype',
 			null,
-			$this->GetBwscale(),
+			$this->FormGetBwscale(),
 			array('Kb' => 'Kbit/s',
 				  'Mb' => 'Mbit/s',
 				  'Gb' => 'Gbit/s',
@@ -1364,6 +1372,14 @@ class priq_queue {
 	}
 	function GetBwscale() {
 		return $this->qbandwidthtype;
+	}
+	function FormGetBwscale() {
+		if ($this->GetBwscale()) {
+			$bwscale = $this->GetBwscale();
+		} else {
+			$bwscale = 'Mb';
+		}
+		return $bwscale;
 	}
 	function SetBwscale($scale) {
 		$this->qbandwidthtype = $scale;
@@ -2634,7 +2650,7 @@ EOJS;
 		$group->add(new Form_Select(
 			'bandwidthtype',
 			null,
-			$this->GetBwscale(),
+			$this->FormGetBwscale(),
 			array('Kb' => 'Kbit/s',
 				  'Mb' => 'Mbit/s',
 				  'Gb' => 'Gbit/s',
@@ -3148,7 +3164,7 @@ class cbq_queue extends priq_queue {
 		$group->add(new Form_Select(
 			'bandwidthtype',
 			null,
-			$this->GetBwscale(),
+			$this->FormGetBwscale(),
 			array('Kb' => 'Kbit/s',
 				  'Mb' => 'Mbit/s',
 				  'Gb' => 'Gbit/s',
@@ -3421,7 +3437,7 @@ class fairq_queue extends priq_queue {
 		$group->add(new Form_Select(
 			'bandwidthtype',
 			null,
-			$this->GetBwscale(),
+			$this->FormGetBwscale(),
 			array('Kb' => 'Kbit/s',
 				  'Mb' => 'Mbit/s',
 				  'Gb' => 'Gbit/s',

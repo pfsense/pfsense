@@ -1315,7 +1315,11 @@ class priq_queue {
 		$this->qlimit = $limit;
 	}
 	function GetQpriority() {
-		return $this->qpriority;
+		if (is_numeric($this->qpriority)) {
+			return $this->qpriority;
+		} else {
+			return '1';
+		}
 	}
 	function SetQpriority($priority) {
 		$this->qpriority = $priority;
@@ -1557,6 +1561,7 @@ class priq_queue {
 		$reqdfields[] = "name";
 		$reqdfieldsn[] = gettext("Name");
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		$parent = $this->GetParent();
 
 		if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
 			$input_errors[] = gettext("Bandwidth must be an integer.");
@@ -1572,10 +1577,14 @@ class priq_queue {
 		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype']))
 			$input_errors[] = "The sum of child bandwidth is higher than parent.";
 
-		if (isset($data['priority']) && (!is_numeric($data['priority']) ||
+		if (($parent->GetScheduler() == 'PRIQ') && (!is_numeric($data['priority']) ||
 		    ($data['priority'] < 0) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 0 and 15.");
+		} elseif (in_array($parent->GetScheduler(), array('FAIRQ','CBQ')) && (!is_numeric($data['priority']) ||
+		    ($data['priority'] < 0) || ($data['priority'] > 7))) {
+			$input_errors[] = gettext("The priority must be an integer between 0 and 7.");
 		}
+
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
 				$input_errors[] = gettext("Queue limit must be an integer");
 		}
@@ -1593,13 +1602,12 @@ class priq_queue {
 			$input_errors[] = gettext("Only one default queue per interface is allowed.");
 		}
 
-		$parent = $this->GetParent();
 		if (is_array($parent->queues)) {
 			foreach ($parent->queues as $q) {
 				if (($data['newname'] == $q->GetQname()) && ($data['name'] != $data['newname'])) { 
 					$input_errors[] = gettext("A queue with the same name already exists.");
 				}
-				if (in_array($parent->GetScheduler(), array('CBQ', 'FAIRQ','PRIQ')) &&
+				if (in_array($parent->GetScheduler(), array('FAIRQ','PRIQ')) &&
 				    ($data['priority'] == $q->GetQpriority()) && ($data['name'] != $q->GetQname())) { 
 					$input_errors[] = sprintf(gettext("The priority %d is already used by queue %s."),
 							$data['priority'], $q->GetQname());

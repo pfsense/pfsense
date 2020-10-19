@@ -352,6 +352,9 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 	if (!in_array('state_table_size', $skipsysinfoitems)):
 		$rows_displayed = true;
 
+		$pfstatetext = get_pfstate();
+		$pfstateusage = get_pfstate(true);
+
 		// Calculate scaling factor
 		$adaptive = false;
 
@@ -366,8 +369,8 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		    $adaptiveend = intval($maxstates * 1.2);
 		}
 		$adaptive_text = "";
-		if ($curentries > $adaptivestart) {
-		    $scalingfactor = round(($adaptiveend - $curentries) / ($adaptiveend - $adaptivestart) * 100, 0);
+		if ($pfstatetext > $adaptivestart) {
+		    $scalingfactor = round(($adaptiveend - $pfstatetext) / ($adaptiveend - $adaptivestart) * 100, 0);
 		    $adaptive = true;
 		}
 ?>
@@ -385,10 +388,6 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 
 			</th>
 			<td>
-				<?php
-					$pfstatetext = get_pfstate();
-					$pfstateusage = get_pfstate(true);
-				?>
 				<!-- The color of the progress bar is changed to 'warniing' to indicate adaprive state handling is in use -->
 				<div class="progress">
 					<div id="statePB" class="progress-bar progress-bar-striped <?=$adaptive ? 'progress-bar-warning' : ''?>" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">

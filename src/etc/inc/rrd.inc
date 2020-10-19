@@ -399,7 +399,8 @@ function enable_rrd_graphing() {
 			}
 
 			/* QUEUES, set up the queues databases */
-			if ($altq_list_queues[$ifname]) {
+			if (($altq_list_queues[$ifname]) && 
+			    !empty($altq_list_queues[$ifname]->get_queue_list())) {
 				$altq =& $altq_list_queues[$ifname];
 				/* NOTE: Is it worth as its own function?! */
 				switch ($altq->GetBwscale()) {

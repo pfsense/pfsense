@@ -235,6 +235,10 @@
 				break;
 			case "cloudflare-v6":
 			case "cloudflare":
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				break;
 			case "gratisdns":
 			case "hover":
 				if (!$dnsUser) $this->_error(3);
@@ -883,12 +887,19 @@
 
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-					if (strpos($this->_dnsUser, '@') !== false) {
-						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-							'X-Auth-Email: ' . $this->_dnsUser,
-							'X-Auth-Key: ' . $this->_dnsPass,
-							'Content-Type: application/json'
-						));
+					if ((!$this->_dnsUser) || (strpos($this->_dnsUser, '@') !== false)) {
+						if (strpos($this->_dnsUser, '@') !== false) {
+							curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+										'X-Auth-Email: ' . $this->_dnsUser,
+										'X-Auth-Key: ' . $this->_dnsPass,
+										'Content-Type: application/json'
+										));
+						} else {
+							curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+										'Authorization: Bearer ' . $this->_dnsPass,
+										'Content-Type: application/json'
+										));
+						}
 
 						// Get zone ID
 						$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$this->_dnsDomain}";

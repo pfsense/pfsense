@@ -375,8 +375,11 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			<th>
 <?php
 				print(gettext("State table size"));
+				// If adaptive state handling is enabled, dis play the % and provide a tooltip with more details
 				if ($adaptive) {
-					print('<br /><a href="#" data-toggle="tooltip" title="" data-placement="right" data-original-title="Adaptive state handling enabled, state timeouts reduced by ' . $scalingfactor . '%">' . gettext("Adaptive states") . '</a>');
+					print('<br /><a href="#" data-toggle="tooltip" title="" data-placement="right" data-original-title="' .
+						gettext("Adaptive state handling is enabled, state timeouts are reduced by ") . $scalingfactor . '%">' .
+						gettext("Scaling ") . $scalingfactor . '%</a>');
 				}
 ?>
 
@@ -386,6 +389,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					$pfstatetext = get_pfstate();
 					$pfstateusage = get_pfstate(true);
 				?>
+				<!-- The color of the progress bar is changed to 'warniing' to indicate adaprive state handling is in use -->
 				<div class="progress">
 					<div id="statePB" class="progress-bar progress-bar-striped <?=$adaptive ? 'progress-bar-warning' : ''?>" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
 					</div>

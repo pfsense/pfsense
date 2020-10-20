@@ -711,6 +711,9 @@ function updateState(x) {
 	if ($('#pfstate')) {
 		$('[id="pfstate"]').html('(' + x + ')');
 
+		// get numeric part of string before hte '/'
+		x = x.split('/')[0]
+
 		if (x > adaptivestart) {
 			var scalingfactor = Math.round((adaptiveend - x) / (adaptiveend - adaptivestart) * 100);
 			var disphtml = 	'<br /><a href="#" data-toggle="tooltip" title="" data-placement="right" data-original-title="' +

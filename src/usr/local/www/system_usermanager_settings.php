@@ -49,7 +49,7 @@ if ($_REQUEST['ajax']) {
 	} else {
 		print("<pre>");
 
-		print('<table class="table table-hover table-striped table-condensed">');
+		print('<table class="table table-hover table-condensed">');
 
 		print("<tr><td>" . sprintf(gettext('Attempting connection to %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server_host), "</center></td>"));
 		if (ldap_test_connection($authcfg)) {
@@ -68,7 +68,7 @@ if ($_REQUEST['ajax']) {
 
 					if (is_array($ous)) {
 						print("<b>" . gettext("Organization units found") . "</b>");
-						print('<table class="table table-hover">');
+						print('<table class="table-hover">');
 						foreach ($ous as $ou) {
 							print("<tr><td>" . $ou . "</td></tr>");
 						}

@@ -58,6 +58,7 @@ $sysinfo_items = array(
 
 // Declared here so that JavaScript can access it
 $updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa fa-cog fa-spin'></i>");
+$state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced by ");
 
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
@@ -349,6 +350,8 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<?php endif; ?>
 <?php
 	endif;
+
+
 	if (!in_array('state_table_size', $skipsysinfoitems)):
 		$rows_displayed = true;
 
@@ -358,17 +361,26 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		// Calculate scaling factor
 		$adaptive = false;
 
+		if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0) {
+			$maxstates="{$config['system']['maximumstates']}";
+		} else {
+			$maxstates=pfsense_default_state_size();
+		}
+
 		if (isset($config['system']['adaptivestart']) and $config['system']['adaptivestart'] > 0) {
 		    $adaptivestart = "{$config['system']['adaptivestart']}";
 		} else {
 		    $adaptivestart = intval($maxstates * 0.6);
 		}
+
 		if (isset($config['system']['adaptiveend']) and $config['system']['adaptiveend'] > 0) {
 		    $adaptiveend = "{$config['system']['adaptiveend']}";
 		} else {
 		    $adaptiveend = intval($maxstates * 1.2);
 		}
+
 		$adaptive_text = "";
+
 		if ($pfstatetext > $adaptivestart) {
 		    $scalingfactor = round(($adaptiveend - $pfstatetext) / ($adaptiveend - $adaptivestart) * 100, 0);
 		    $adaptive = true;
@@ -378,21 +390,20 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			<th>
 <?php
 				print(gettext("State table size"));
-				// If adaptive state handling is enabled, dis play the % and provide a tooltip with more details
-				if ($adaptive) {
-					print('<br /><a href="#" data-toggle="tooltip" title="" data-placement="right" data-original-title="' .
-						gettext("Adaptive state handling is enabled, state timeouts are reduced by ") . $scalingfactor . '%">' .
-						gettext("Scaling ") . $scalingfactor . '%</a>');
-				}
-?>
+				// If adaptive state handling is enabled, display the % and provide a tooltip with more details
+				print('<span id="scaledstates"><br /><a href="#" data-toggle="tooltip" title="" data-placement="right" data-original-title="' .
+					$state_tt . $scalingfactor . '%">' .
+					gettext("Scaling ") . $scalingfactor . '%</a></span>');
 
+?>
 			</th>
 			<td>
-				<!-- The color of the progress bar is changed to 'warniing' to indicate adaprive state handling is in use -->
+				<!-- The color of the progress bar is changed to 'warniing' to indicate adaptive state handling is in use -->
 				<div class="progress">
 					<div id="statePB" class="progress-bar progress-bar-striped <?=$adaptive ? 'progress-bar-warning' : ''?>" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
 					</div>
 				</div>
+
 				<span id="pfstateusagemeter"><?=$pfstateusage?>%</span>&nbsp;<span id="pfstate">(<?= htmlspecialchars($pfstatetext)?>)</span>&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
 			</td>
 		</tr>
@@ -587,6 +598,13 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 
 var lastTotal = 0;
 var lastUsed = 0;
+// Collect some PHP values required by the states calculation
+var adaptiveend = <?=$adaptiveend?>;
+var adaptivestart = <?=$adaptivestart?>;
+var maxstates = <?=$maxstates?>;
+var state_tt = "<?=$state_tt?>";
+
+console.log('state_tt: ' + state_tt);
 
 function setProgress(barName, percent) {
 	$('[id="' + barName + '"]').css('width', percent + '%').attr('aria-valuenow', percent);
@@ -694,6 +712,28 @@ function updateUptime(x) {
 function updateState(x) {
 	if ($('#pfstate')) {
 		$('[id="pfstate"]').html('(' + x + ')');
+
+		if (x > adaptivestart) {
+			var scalingfactor = Math.round((adaptiveend - x) / (adaptiveend - adaptivestart) * 100);
+			var disphtml = 	'<br /><a href="#" data-toggle="tooltip" title="" data-placement="right" data-original-title="' +
+				state_tt +  scalingfactor + '%">' +
+				'Scaling ' + scalingfactor + '%</a>';
+
+			// Only update the display if the tooltip is not visible. Otherwise the tip will go away
+			if ($('.tooltip').length == 0) {
+				$('#scaledstates').html(disphtml);
+			}
+
+			// Renable the tooltip
+			$(function () {
+				$('[data-toggle="tooltip"]').tooltip()
+			})
+
+			$('#statePB').addClass('progress-bar-warning');
+		} else {
+			$('#scaledstates').html('');
+			$('#statePB').removeClass('progress-bar-warning');
+		}
 	}
 }
 
@@ -730,7 +770,10 @@ function widgetActive(x) {
 
 <?php endif; // $widget_first_instance ?>
 
-events.push(function(){
+events.push(function() {
+
+	$('#scaledstates').html('');
+
 	// Enable tooltips
 	$(function () {
 		$('[data-toggle="tooltip"]').tooltip()

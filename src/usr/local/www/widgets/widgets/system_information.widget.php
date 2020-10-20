@@ -604,8 +604,6 @@ var adaptivestart = <?=$adaptivestart?>;
 var maxstates = <?=$maxstates?>;
 var state_tt = "<?=$state_tt?>";
 
-console.log('state_tt: ' + state_tt);
-
 function setProgress(barName, percent) {
 	$('[id="' + barName + '"]').css('width', percent + '%').attr('aria-valuenow', percent);
 }

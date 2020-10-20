@@ -6727,6 +6727,14 @@ function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallb
 		}
 	}
 
+	/* try to find track6 address, see https://redmine.pfsense.org/issues/5999 */
+	if ($config['interfaces'][$interface]['ipaddrv6'] == 'track6') {
+		$curip = get_interface_track6ip($interface);
+		if ($curip) {
+			return $curip[0];
+		}
+	}
+
 	/*
 	 * Beaware that find_interface_ip() is our last option, it will
 	 * return the first IP it find on interface, not necessarily the
@@ -6769,6 +6777,24 @@ function get_interface_linklocal($interface = "wan") {
 	} else {
 		return null;
 	}
+}
+
+function get_interface_track6ip($interface = "wan") {
+	$realif = get_real_interface($interface);
+	$vips = get_configured_vip_list('inet6');
+
+	foreach (pfSense_getall_interface_addresses($realif) as $ifaddr) {
+		list($ip, $bits) = explode("/", $ifaddr);
+		$ip = text_to_compressed_ip6($ip);
+		if (is_ipaddrv6($ip) && !is_linklocal($ip)) {
+			foreach ($vips as $vip) {
+				if ($ip != text_to_compressed_ip6($vip)) {
+					return array($ip, $bits);
+				}
+			}
+		}
+	}
+	return false;
 }
 
 function get_interface_subnet($interface = "wan") {
@@ -6815,6 +6841,14 @@ function get_interface_subnetv6($interface = "wan") {
 	$realif = get_real_interface($interface, 'inet6');
 	if (!$realif) {
 		return (NULL);
+	}
+
+	/* try to find track6 address, see https://redmine.pfsense.org/issues/5999 */
+	if ($config['interfaces'][$interface]['ipaddrv6'] == 'track6') {
+		$curip = get_interface_track6ip($interface);
+		if ($curip) {
+			return $curip[1];
+		}
 	}
 
 	$cursn = find_interface_subnetv6($realif);

@@ -338,7 +338,7 @@ if ($_POST['save']) {
 				$input_errors[] = sprintf(gettext("Source must be IPv6."));
 			}
 		}
-		if (($_POST['srcmask'] && !is_subnet($_POST['src'] . '/' . $_POST['srcmask']))) {
+		if (is_ipaddr($_POST['src']) && !is_subnet($_POST['src'] . '/' . $_POST['srcmask'])) {
 			$input_errors[] = gettext("A valid source bit count must be specified.");
 		}
 	}
@@ -354,7 +354,7 @@ if ($_POST['save']) {
 				$input_errors[] = sprintf(gettext("Destination must be IPv6."));
 			}
 		}
-		if (($_POST['dstmask'] && !is_subnet($_POST['dst'] . '/' . $_POST['dstmask']))) {
+		if (is_ipaddr($_POST['dst']) && !is_subnet($_POST['dst'] . '/' . $_POST['dstmask'])) {
 			$input_errors[] = gettext("A valid destination bit count must be specified.");
 		}
 	}

@@ -2410,6 +2410,8 @@ function filter_nat_rules_generate() {
 
 			if (is_ipaddr($rule['target'])) {
 				$target = $rule['target'];
+			} elseif (is_alias($rule['target'])) {
+				$target = alias_expand($rule['target']);
 			} else {
 				$tmprule = array();
 				$tmprule['localip']['network'] = $rule['target'];

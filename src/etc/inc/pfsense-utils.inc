@@ -934,9 +934,6 @@ function restore_config_section($section_name, $new_contents) {
 	if ($xml['pfsense']) {
 		$xml = $xml['pfsense'];
 	}
-	else if ($xml['m0n0wall']) {
-		$xml = $xml['m0n0wall'];
-	}
 	if ($xml[$section_name]) {
 		$section_xml = $xml[$section_name];
 	} else {

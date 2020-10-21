@@ -282,12 +282,6 @@ function execPost($post, $postfiles, $ui = true) {
 							}
 						}
 					}
-					if (stristr($data, "<m0n0wall>")) {
-						log_error(gettext("Upgrading m0n0wall configuration to pfsense."));
-						/* m0n0wall was found in config.  convert it. */
-						$data = str_replace("m0n0wall", "pfsense", $data);
-						$m0n0wall_upgrade = true;
-					}
 
 					/* If the config on disk had empty rrddata tags, remove them to
 					 * avoid an XML parsing error.
@@ -397,59 +391,6 @@ function execPost($post, $postfiles, $ui = true) {
 									write_config(gettext("Unset RRD and extra data from configuration after full restore."));
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									convert_config();
-								}
-								if ($m0n0wall_upgrade == true) {
-									if ($config['system']['gateway'] <> "") {
-										$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
-									}
-									unset($config['shaper']);
-									/* optional if list */
-									$ifdescrs = get_configured_interface_list(true);
-									/* remove special characters from interface descriptions */
-									if (is_array($ifdescrs)) {
-										foreach ($ifdescrs as $iface) {
-											$config['interfaces'][$iface]['descr'] = preg_replace('/[^a-z_0-9]/i', '', $config['interfaces'][$iface]['descr']);
-										}
-									}
-									/* check for interface names with an alias */
-									if (is_array($ifdescrs)) {
-										foreach ($ifdescrs as $iface) {
-											if (is_alias($config['interfaces'][$iface]['descr'])) {
-												$origname = $config['interfaces'][$iface]['descr'];
-												update_alias_name($origname . "Alias", $origname);
-											}
-										}
-									}
-									unlink_if_exists("{$g['tmp_path']}/config.cache");
-									// Reset configuration version to something low
-									// in order to force the config upgrade code to
-									// run through with all steps that are required.
-									$config['system']['version'] = "1.0";
-									// Deal with descriptions longer than 63 characters
-									for ($i = 0; isset($config["filter"]["rule"][$i]); $i++) {
-										if (count($config['filter']['rule'][$i]['descr']) > 63) {
-											$config['filter']['rule'][$i]['descr'] = substr($config['filter']['rule'][$i]['descr'], 0, 63);
-										}
-									}
-									// Move interface from ipsec to enc0
-									for ($i = 0; isset($config["filter"]["rule"][$i]); $i++) {
-										if ($config['filter']['rule'][$i]['interface'] == "ipsec") {
-											$config['filter']['rule'][$i]['interface'] = "enc0";
-										}
-									}
-									// Convert icmp types
-									// http://www.openbsd.org/cgi-bin/man.cgi?query=icmp&sektion=4&arch=i386&apropos=0&manpath=OpenBSD+Current
-									$convert = array('echo' => 'echoreq', 'timest' => 'timereq', 'timestrep' => 'timerep');
-									foreach ($config["filter"]["rule"] as $ruleid => &$ruledata) {
-										if ($convert[$ruledata['icmptype']]) {
-											$ruledata['icmptype'] = $convert[$ruledata['icmptype']];
-										}
-									}
-									$config['diag']['ipv6nat'] = true;
-									write_config(gettext("Imported m0n0wall configuration"));
-									convert_config();
-									$savemsg = gettext("The m0n0wall configuration has been restored and upgraded to pfSense.");
-									mark_subsystem_dirty("restore");
 								}
 								if (is_array($config['captiveportal'])) {
 									foreach ($config['captiveportal'] as $cp) {

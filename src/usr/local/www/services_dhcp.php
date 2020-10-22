@@ -1152,7 +1152,8 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['omapi_port']
 ))->setAttribute('placeholder', 'OMAPI Port')
-  ->setHelp('Set the port that OMAPI will listen on. The default port is 7911, leave blank to disable.');
+  ->setHelp('Set the port that OMAPI will listen on. The default port is 7911, leave blank to disable.' .
+	    'Only the first OMAPI configuration is used.');
 
 $group = new Form_Group('OMAPI Key');
 

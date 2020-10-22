@@ -559,17 +559,21 @@ update-conflict-detection false;
 
 EOD;
 
-	if (!isset($dhcpifconf['disableauthoritative'])) {
-		$dhcpdconf .= "authoritative;\n";
-	}
+	/* take these settings from the first DHCP configured interface,
+	 * see https://redmine.pfsense.org/issues/10270 
+	 * TODO: Global Settings tab, see https://redmine.pfsense.org/issues/5080 */
+	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+		if (!isset($dhcpifconf['disableauthoritative'])) {
+			$dhcpdconf .= "authoritative;\n";
+		}
 
-	if (isset($dhcpifconf['alwaysbroadcast'])) {
-		$dhcpdconf .= "always-broadcast on\n";
-	}
+		if (isset($dhcpifconf['alwaysbroadcast'])) {
+			$dhcpdconf .= "always-broadcast on\n";
+		}
 
-	// OMAPI Settings
-	if (isset($dhcpifconf['omapi_port']) && is_numeric($dhcpifconf['omapi_port'])) {
-		$dhcpdconf .= <<<EOD
+		// OMAPI Settings
+		if (isset($dhcpifconf['omapi_port']) && is_numeric($dhcpifconf['omapi_port'])) {
+			$dhcpdconf .= <<<EOD
 
 key omapi_key {
   algorithm {$dhcpifconf['omapi_key_algorithm']};
@@ -579,6 +583,9 @@ omapi-port {$dhcpifconf['omapi_port']};
 omapi-key omapi_key;
 
 EOD;
+
+		}
+		break;
 	}
 
 	$dhcpdifs = array();

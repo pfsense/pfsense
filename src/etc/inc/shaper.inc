@@ -1557,11 +1557,12 @@ class priq_queue {
 	function find_parentqueue($interface, $qname) { return; }
 
 	function validate_input($data, &$input_errors) {
+		global $altq_list_queues;
 
 		$reqdfields[] = "name";
 		$reqdfieldsn[] = gettext("Name");
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-		$parent = $this->GetParent();
+		$parent = $altq_list_queues[$this->GetInterface()];
 
 		if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
 			$input_errors[] = gettext("Bandwidth must be an integer.");

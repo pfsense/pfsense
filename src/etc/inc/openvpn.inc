@@ -907,14 +907,12 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 	}
 	if ($settings['dev_mode'] === 'tun' && isset($config['unbound']['enable']) && isset($config['unbound']['regovpnclients'])) {
-		switch($settings['mode']) {
-			case 'server_tls':
-			case 'server_tls_user':
-				$domain = !empty($settings['dns_domain']) ? $settings['dns_domain'] : $config['system']['domain'];
-				if (is_domain($domain)) {
-					$conf .= "learn-address \"/usr/local/sbin/openvpn.learn-address.sh $domain\"\n";
-				}
-				break;
+		if (($settings['mode'] == 'server_tls') || ($settings['mode'] == 'server_tls_user') ||
+		    (($settings['mode'] == 'server_user') && ($settings['username_as_common_name'] == 'enabled'))) {
+			$domain = !empty($settings['dns_domain']) ? $settings['dns_domain'] : $config['system']['domain'];
+			if (is_domain($domain)) {
+				$conf .= "learn-address \"/usr/local/sbin/openvpn.learn-address.sh $domain\"\n";
+			}
 		}
 	}
 

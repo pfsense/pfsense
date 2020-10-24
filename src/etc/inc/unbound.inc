@@ -357,6 +357,7 @@ include: {$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf
 EOD;
 	} else {
 		$openvpn_clients_conf = '';
+		unlink_if_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf");
 	}
 
 	// Set up forwarding if it is configured

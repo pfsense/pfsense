@@ -977,6 +977,7 @@ events.push(function() {
 		hideInput('ddnsdomainprimary', !showadvdns);
 		hideInput('ddnsdomainkeyname', !showadvdns);
 		hideInput('ddnsdomainkey', !showadvdns);
+		hideInput('ddnsdomainkeyalgorithm', !showadvdns);
 
 		if (showadvdns) {
 			text = "<?=gettext('Hide Advanced');?>";

@@ -48,12 +48,16 @@ if (ipsec_enabled()) {
 }
 
 foreach (array('server', 'client') as $mode) {
-	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
-		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
-			if (!isset($setting['disable'])) {
-				$ifdescrs['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " " . $mode . ": ".htmlspecialchars($setting['description']);
-			}
+	if (!is_array($config['openvpn']["openvpn-{$mode}"])) {
+		continue;
+	}
+	foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
+		if (isset($setting['disable'])) {
+			continue;
 		}
+		$ifdescrs['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] =
+		    gettext("OpenVPN") . " " . $mode . ": " .
+		    htmlspecialchars($setting['description']);
 	}
 }
 
@@ -80,7 +84,7 @@ if (!empty($_POST)) {
 	$curinvert = $_POST['invert'];
 	$cursmoothing = $_POST['smoothfactor'];
 	$curmode = $_POST['mode'];
-	
+
 	// Save data to config
 	if (isset($_POST['save'])) {
 		$pconfig = array();
@@ -110,7 +114,10 @@ if (!empty($_POST)) {
 	} else {
 		// initialize when no config details are present
 		if (empty($ifdescrs["wan"])) {
-			/* Handle the case when WAN has been disabled. Use the first key in ifdescrs. */
+			/*
+			 * Handle the case when WAN has been disabled. Use the
+			 * first key in ifdescrs.
+			 */
 			reset($ifdescrs);
 			$curif = key($ifdescrs);
 		} else {
@@ -182,7 +189,7 @@ $group->add(new Form_Select(
 	null,
 	$curhostipformat,
 	array (
-		''			=> gettext('IP Address'),
+		''		=> gettext('IP Address'),
 		'hostname'	=> gettext('Host Name'),
 		'descr'		=> gettext('Description'),
 		'fqdn'		=> gettext('FQDN')
@@ -190,15 +197,15 @@ $group->add(new Form_Select(
 ))->setHelp('Display');
 
 $group->add(new Form_Select(
-    'mode',
-    null,
-    $curmode,
-    array (
-        'rate'		=> gettext('rate (standard)'),
-        'iftop'	    => gettext('iftop (experimental)')
-    )
+	'mode',
+	null,
+	$curmode,
+	array (
+		'rate'	=> gettext('rate (standard)'),
+		'iftop'	=> gettext('iftop (experimental)')
+	)
 ))->setHelp('Mode');
-    
+
 $section->add($group);
 
 $group2 = new Form_Group('Controls');
@@ -209,7 +216,8 @@ $group2->add(new Form_Select(
 	$curbackgroundupdate,
 	array (
 		'false'	=> gettext('Clear graphs when not visible.'),
-		'true'	=> gettext('Keep graphs updated on inactive tab. (increases cpu usage)'),
+		'true'	=> gettext('Keep graphs updated on inactive tab. ' .
+		    '(increases cpu usage)'),
 	)
 ))->setHelp('Background updates');
 
@@ -258,7 +266,7 @@ events.push(function() {
 
 	var InterfaceString = "<?=$curif?>";
 	var RealInterfaceString = "<?=$realif?>";
-    window.graph_backgroundupdate = $('#backgroundupdate').val() === "true";
+	window.graph_backgroundupdate = $('#backgroundupdate').val() === "true";
 	window.smoothing = $('#smoothfactor').val();
 	window.interval = 1;
 	window.invert = $('#invert').val() === "true";

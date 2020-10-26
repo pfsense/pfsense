@@ -96,7 +96,8 @@ $g = array(
 		'dhcpd' => "/var/dhcpd/var/db/dhcpd.leases",
 		'dhcpdv6' => "/var/dhcpd/var/db/dhcpd6.leases",
 		'voucher' => "/var/db/voucher_*.db"
-	)
+	),
+	"wg_conf_path" => "/etc/wg/conf"
 );
 
 /* IP TOS flags */

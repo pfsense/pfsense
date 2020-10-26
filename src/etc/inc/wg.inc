@@ -3,8 +3,6 @@
  * syslog.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2013 BSD Perimeter
- * Copyright (c) 2013-2016 Electric Sheep Fencing
  * Copyright (c) 2014-2020 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
@@ -28,7 +26,7 @@
 require_once("globals.inc");
 require_once('config.inc');
 
-// Read the Wireguard configuration from $config.xml and create a number of *.conf files for wg-quick to read
+// Read the Wireguard configuration from config.xml and create a number of *.conf files for wg-quick to read
 function wg_create_config_files() {
 	global $config, $g;
 
@@ -71,10 +69,10 @@ function make_wg_conf($tunnel, $idx) {
 	$txt .= "\n";
 
 	// Process peers section
-	if (isset($tunnel["peer"]) && count($tunnel["peer"]) > 0) {
+	if (isset($tunnel["peers"]) && count($tunnel["peers"]) > 0) {
 		global $g;
 
-		foreach ($tunnel["peer"] as $peer) {
+		foreach ($tunnel["peers"] as $peer) {
 			$txt .= "# Peer: {$peer['descr']}\n";
 			$txt .= "[Peer]\n";
 
@@ -105,3 +103,50 @@ function make_wg_conf($tunnel, $idx) {
 	file_put_contents($g["wg_conf_path"] . "/wg_" . $idx . ".conf", $txt);
 }
 
+
+/*
+Sample Wireguard config.xml entry
+
+	<wireguard>
+		<tunnel>
+			<descr>Home office</descr>
+			<interface>
+				<privatekey>yAnz5TF+lXXJte14tji3zlMNq+hd2rYUIgJBgB3fBmk=</privatekey>
+				<address>10.0.0.1/24, fdc9:281f:04d7:9ee9::1/64</address>
+				<listenport>51820</listenport>
+			</interface>
+			<peers>
+				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
+				<endpoint>192.88.8.88:51820</endpoint>
+				<allowedips>10.192.122.1/32, 10.192.124.1/24</allowedips>
+				<descr>Alice</descr>
+			</peers>
+			<peers>
+				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
+				<endpoint>192.88.8.88:51820</endpoint>
+				<allowedips>10.192.122.2/32, 10.192.124.2/24</allowedips>
+				<descr>Bob</descr>
+			</peers>
+			<peers>
+				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
+				<endpoint>192.88.8.88:51820</endpoint>
+				<allowedips>10.192.122.3/32, 10.192.124.3/24</allowedips>
+				<descr>Charlie</descr>
+			</peers>
+		</tunnel>
+		<tunnel>
+			<descr>Branch office</descr>
+			<interface>
+				<privatekey>yAnz5TF+lXXJte14tji3zlMNq+hd2rYUIgJBgB3fBmk=</privatekey>
+				<address>10.0.0.1/24, fdc9:281f:04d7:9ee9::1/64</address>
+				<listenport>51820</listenport>
+			</interface>
+			<peers>
+				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
+				<endpoint>192.88.8.88:51820</endpoint>
+				<allowedips>10.192.122.1/32, 10.192.124.1/24</allowedips>
+				<descr>Alice</descr>
+			</peers>
+		</tunnel>
+	</wireguard>
+*/

@@ -1344,6 +1344,8 @@ function get_system_pkg_version($baseonly = false, $use_cache = true) {
 		if ($rc == 0 || $rc == 2) {
 			@file_put_contents($cache_file, $output);
 			@file_put_contents($rc_file, $rc);
+		} else {
+			return false;
 		}
 	}
 

@@ -94,6 +94,7 @@ sysutils/devcpu-data
 sysutils/flashrom
 sysutils/htop
 sysutils/lsof
+sysutils/memtester
 sysutils/pstree
 sysutils/screen
 sysutils/stress

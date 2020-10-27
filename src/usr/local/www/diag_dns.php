@@ -108,7 +108,7 @@ if ($_POST) {
 		$dns_speeds = array();
 		$dns_servers = get_dns_nameservers(false, true);
 		foreach ($dns_servers as $dns_server) {
-			$query_time = exec("/usr/bin/drill {$host_esc} " . escapeshellarg("@" . trim($dns_server)) . " | /usr/bin/grep Query | /usr/bin/cut -d':' -f2");
+			$query_time = exec("/usr/bin/drill " . escapeshellarg($host) . " " . escapeshellarg("@" . trim($dns_server)) . " | /usr/bin/grep Query | /usr/bin/cut -d':' -f2");
 			if ($query_time == "") {
 				$query_time = gettext("No response");
 			}

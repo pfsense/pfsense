@@ -101,14 +101,14 @@ $i = 0; foreach ($tunnels as $tunnel):
 						<td><?=$tunnel['interface']['privatekey']?></td>
 				
 						<td style="cursor: pointer;">
-							<a class="fa fa-pencil" href="vpn_ipsec_phase1.php?p1index=<?=$i?>" title="<?=gettext("Edit phase1 entry"); ?>"></a>
-							<a class="fa fa-trash" id="Xdel_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>"></a>
+							<a class="fa fa-pencil" href="vpn_wg_edit.php?index=<?=$i?>" title="<?=gettext("Edit tunnel"); ?>"></a>
+							<a class="fa fa-trash" id="Xdel_<?=$i?>" title="<?=gettext('Delete tunnel'); ?>"></a>
 						</td>
 					</tr>
 
-					<tr  class="peer-entries">
+					<tr  class="peer-entries" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 						<td>Peers</td>
-						<td colspan="5">
+						<td colspan="6">
 							<table class="table table-hover" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 								<thead>
 									<tr>
@@ -168,34 +168,15 @@ events.push(function() {
 
 	hideClass('peer-entries', peershidden);
 
+	// Toggle peer visibility
 	$('#showpeers').click(function () {
 		peershidden = !peershidden;
 		hideClass('peer-entries', peershidden);
 	})
 
-	$('thead th').css({ height: '2px'});
-
-	$('[id^=Xmove_]').click(function (event) {
-		// ToDo: We POST shift="yes" if the user has the shift key depressed, but that is not yet used
-		// by the $_POST code. It is intended to allow the user to choose to move stuff to the row before or
-		// after the clicked anchor icon
-		if (event.shiftKey) {
-			$('form').append('<input type="hidden" id="shift" name="shift" value="yes" />');
-		}
-
-		$('#' + event.target.id.slice(1)).click();
-	});
-
+	// Delete tunnel
 	$('[id^=Xdel_]').click(function (event) {
-		if (confirm("<?=gettext('Confirmation required to delete this P1 entry.')?>")) {
-			$('#' + event.target.id.slice(1)).click();
-		}
-	});
-
-	$('[id^=Xdelp2_]').click(function (event) {
-		if (confirm("<?=gettext('Confirmation required to delete this P2 entry.')?>")) {
-			$('#' + event.target.id.slice(1)).click();
-		}
+		$('#' + event.target.id.slice(1)).click();
 	});
 });
 //]]>

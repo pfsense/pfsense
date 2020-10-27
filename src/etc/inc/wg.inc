@@ -27,7 +27,7 @@ require_once("globals.inc");
 require_once('config.inc');
 
 // Read the Wireguard configuration from config.xml and create a number of *.conf files for wg-quick to read
-function wg_create_config_files() {
+function wg_create_config_files($clean = true) {
 	global $config, $g;
 
 	if ($config["wireguard"]["tunnel"]) {
@@ -39,6 +39,10 @@ function wg_create_config_files() {
 		}
 	}
 
+	if ($clean) {
+		delete_wg_configs();
+	}
+
 	$idx = 0;
 	foreach ($wg_tunnels as $tunnel) {
 		make_wg_conf($tunnel, $idx);
@@ -47,6 +51,8 @@ function wg_create_config_files() {
 }
 
 function make_wg_conf($tunnel, $idx) {
+	global $g;
+
 	$txt = "# This Wireguard config file has been created automatically. Do not edit!\n";
 
 	$txt .= "# Description: {$tunnel['descr']}\n\n";
@@ -54,15 +60,15 @@ function make_wg_conf($tunnel, $idx) {
 	// Process Interfaces section
 	$txt .= "[Interface]\n";
 
-	if (isset($tunnel["interface"]["privatekey"]) && strlen($tunnel["interface"]["privatekey"]) > 0 ) {
+	if (!empty($tunnel["interface"]["privatekey"])) {
 		$txt .= "PrivateKey = {$tunnel["interface"]["privatekey"]}\n";
 	}
 
-	if (isset($tunnel["interface"]["address"]) && strlen($tunnel["interface"]["address"]) > 0 ) {
+	if (!empty($tunnel["interface"]["address"])) {
 		$txt .= "Address = {$tunnel["interface"]["address"]}\n";
 	}
 
-	if (isset($tunnel["interface"]["listenport"]) && strlen($tunnel["interface"]["listenport"]) > 0 ) {
+	if (!empty($tunnel["interface"]["listenport"])) {
 		$txt .= "ListenPort = {$tunnel["interface"]["listenport"]}\n";
 	}
 
@@ -70,39 +76,48 @@ function make_wg_conf($tunnel, $idx) {
 
 	// Process peers section
 	if (isset($tunnel["peers"]) && count($tunnel["peers"]) > 0) {
-		global $g;
-
 		foreach ($tunnel["peers"] as $peer) {
 			$txt .= "# Peer: {$peer['descr']}\n";
 			$txt .= "[Peer]\n";
 
-			if (isset($peer["publickey"]) && strlen($peer["publickey"]) > 0 ) {
+			if (!empty($peer["publickey"])) {
 				$txt .= "PublicKey = {$peer['publickey']}\n";
 			}
 
-			if (isset($peer["address"]) && strlen($peer["address"]) > 0 ) {
+			if (!empty($peer["address"])) {
 				$txt .= "Address = {$peer['address']}\n";
 			}
 
-			if (isset($peer["listenport"]) && strlen($peer["listenport"]) > 0 ) {
+			if (!empty($peer["listenport"])) {
 				$txt .= "ListenPort = {$peer['listenport']}\n";
 			}
 
-			if (isset($peer["endpoint"]) && strlen($peer["endpoint"]) > 0 ) {
+			if (!empty($peer["endpoint"])) {
 				$txt .= "EndPoint = {$peer['endpoint']}\n";
 			}
 
-			if (isset($peer["allowedips"]) && strlen($peer["allowedips"]) > 0 ) {
+			if (!empty($peer["allowedips"])) {
 				$txt .= "AllowedIPs = {$peer['allowedips']}\n";
+			}
+
+			if (!empty($peer["persistentkeepalive"])) {
+				$txt .= "PersistentKeepalive = {$peer['persistentkeepalive']}\n";
+			}
+
+			if (!empty($peer["presharedkey"])) {
+				$txt .= "PresharedKey = {$peer['presharedkey']}\n";
 			}
 
 			$txt .= "\n";
 		}
 	}
 
-	file_put_contents($g["wg_conf_path"] . "/wg_" . $idx . ".conf", $txt);
+	file_put_contents($g["wg_conf_path"] . "/wg" . $idx . ".conf", $txt);
 }
 
+function delete_wg_configs() {
+
+}
 
 /*
 Sample Wireguard config.xml entry
@@ -145,6 +160,7 @@ Sample Wireguard config.xml entry
 				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
 				<endpoint>192.88.8.88:51820</endpoint>
 				<allowedips>10.192.122.1/32, 10.192.124.1/24</allowedips>
+				<persistentkeepalive>25</persistentkeepalive>
 				<descr>Alice</descr>
 			</peers>
 		</tunnel>

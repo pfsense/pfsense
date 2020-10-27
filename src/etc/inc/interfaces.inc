@@ -4947,7 +4947,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 			if (!isset($wancfg['dhcp6prefixonly'])) {
 				$dhcp6cconf .= "\tsend ia-na 0;\t# request stateful address\n";
 			}
-			if (is_numeric($wancfg['dhcp6-ia-pd-len'])) {
+			if (is_numeric($wancfg['dhcp6-ia-pd-len']) && !empty($trackiflist)) {
 				$dhcp6cconf .= "\tsend ia-pd 0;\t# request prefix delegation\n";
 			}
 

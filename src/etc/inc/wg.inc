@@ -26,7 +26,7 @@
 require_once("globals.inc");
 require_once('config.inc');
 
-// Read the Wireguard configuration from config.xml and create a number of *.conf files for wg-quick to read
+// Read the Wireguard configurations from config.xml and create a number of *.conf files for wg-quick to read
 function wg_create_config_files($clean = true) {
 	global $config, $g;
 
@@ -37,19 +37,23 @@ function wg_create_config_files($clean = true) {
 		if (!file_exists($cfgpath)) {
 			mkdir($cfgpath, 0644);
 		}
-	}
 
-	if ($clean) {
-		delete_wg_configs();
-	}
+		if ($clean) {
+			delete_wg_configs();
+		}
 
-	$idx = 0;
-	foreach ($wg_tunnels as $tunnel) {
-		make_wg_conf($tunnel, $idx);
-		$idx++;
+		$idx = 0;
+		foreach ($wg_tunnels as $tunnel) {
+			if (!empty($tunnel['enabled']) && $tunnel['enabled'] == 'yes') {
+				make_wg_conf($tunnel, $idx);
+			}
+
+			$idx++;
+		}
 	}
 }
 
+// Write each file
 function make_wg_conf($tunnel, $idx) {
 	global $g;
 
@@ -115,14 +119,23 @@ function make_wg_conf($tunnel, $idx) {
 	file_put_contents($g["wg_conf_path"] . "/wg" . $idx . ".conf", $txt);
 }
 
+// Remove all wg config files from the conf directory
 function delete_wg_configs() {
+	global $g;
 
+	$files = glob($g["wg_conf_path"] . "/*.conf"); // get all confog file names
+	foreach($files as $file) {
+	  if(is_file($file))
+	    unlink($file);
+	}
 }
 
 /*
 Sample Wireguard config.xml entry
 
 	<wireguard>
+		<fwpubkey></fwpubkey>
+		<fwprivkey></fwprivkey>
 		<tunnel>
 			<descr>Home office</descr>
 			<interface>

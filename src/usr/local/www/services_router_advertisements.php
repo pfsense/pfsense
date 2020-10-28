@@ -470,7 +470,7 @@ $section->addInput(new Form_Checkbox(
 	'radvd-dns',
 	null,
 	'Provide DNS configuration via radvd',
-	($pconfig['radvd-dns'] == "enabled")
+	$pconfig['radvd-dns']
 ))->setHelp('Unchecking this box disables the RDNSS/DNSSL options in /var/etc/radvd.conf. ' .
 			'Use with caution, as the resulting behavior may violate some RFCs.');
 

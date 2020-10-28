@@ -52,6 +52,7 @@ if (isset($index) && $tunnels[$index]) {
 
 if ($_POST['save']) {
 	// $input_errors = wg_do_post($POST);
+	exit();
 }
 
 $shortcut_section = "wireguard";
@@ -111,7 +112,7 @@ $form->add($section);
 
 
 $section2 = new Form_Section('Peers');
-
+/*
 $idx = 0;
 foreach ($pconfig['peers'] as $peer) {
 	$section2->addInput(new Form_Input(
@@ -123,6 +124,87 @@ foreach ($pconfig['peers'] as $peer) {
 
 	$idx++;
 }
+*/
+
+if (!is_array($pconfig['peers'])) {
+	$pconfig['peers'] = array();
+}
+
+$peer_count = count($pconfig['peers']);
+$peer_num = 0;
+$peer_help = gettext("Description");
+$dnshost_help = gettext("Public key");
+$dnsgw_help = gettext("Endpoint");
+$ka_help = gettext("Keepalive");
+$aips_help = gettext("Allowed IPs");
+
+// If there are no peers, make an empty entry for initial display.
+if ($peer_count == 0) {
+	$pconfig['peer'][] = '';
+}
+
+foreach ($pconfig['peers'] as $peer) {
+	$is_last_peer = (($peer_num == $peer_count - 1) || $peer_count == 0);
+	$group = new Form_Group('Peer ' . $peer_num);
+	$group->addClass('repeatable')->addClass('peer_group_' . $peer_num);
+
+	$group->add(new Form_Input(
+		'descp' . $peer_num,
+		'Description',
+		'text',
+		$peer['descr']
+	))->setHelp(($is_last_peer) ? $peer_help:null);
+
+	$group->add(new Form_Input(
+		'endpoint' . $peer_num,
+		'Endpoint',
+		'text',
+		$peer['endpoint']
+	))->setHelp(($is_last_peer) ? $dnsgw_help:null)->setWidth(3);
+
+	$group->add(new Form_Input(
+		'persistentkeepalive',
+		'Keepalive',
+		'PDF_pcos_get_number(p, doc, path)',
+		$peer['persistentkeepalive']
+	))->setHelp(($is_last_peer) ? $ka_help:null)->setWidth(1);
+
+	$group->add(new Form_Button(
+		'killpeer' . $peer_num,
+		'Delete',
+		null,
+		'fa-trash'
+	))->setWidth(1)->addClass('btn-warning btn-sm');
+
+	$group2 = new Form_Group('');
+	$group2->addClass('repeatable')->addClass('peer_group_' . $peer_num);
+
+	$group2->add(new Form_Input(
+		'publickeyp' . $peer_num,
+		'Public key',
+		'text',
+		$peer['publickey']
+	))->setHelp(($is_last_peer) ? $dnshost_help:null)->setWidth(4);
+
+
+	$group2->add(new Form_Input(
+		'allowedips' . $peer_num,
+		'Allowed IPs',
+		'text',
+		$peer['allowedips']
+	))->setHelp(($is_last_peer) ? $aips_help:null);
+
+	$section2->add($group);
+	$section2->add($group2);
+	$peer_num++;
+}
+
+$section2->addInput(new Form_Button(
+	'addrow',
+	'Add peer',
+	null,
+	'fa-plus'
+))->addClass('btn-success addbtn btn-sm');
 
 $form->add($section2);
 
@@ -133,7 +215,26 @@ print($form);
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+	// Don't show delete button if there is only one peer
+	function hideDeleteBtn() {
+		if ($('[id^=descp]').length <= 1) {
+			$('[id^=killpeer]').hide();
+		} else {
+			$('[id^=killpeer]').show();
+		}
+	}
 
+	// Delete a peer
+	$('[id^=killpeer]').click(function (event) {
+		event.preventDefault();
+		if (confirm('Are you sure you want to delete this peer?')) {
+			var row = event.target.id.slice(8);
+			var target = '.peer_group_' + row
+			$(target).remove();
+			hideDeleteBtn();
+		}
+
+	})
 });
 //]]>
 </script>

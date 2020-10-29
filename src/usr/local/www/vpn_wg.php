@@ -88,12 +88,7 @@ $i = 0; foreach ($tunnels as $tunnel):
 	}
 ?>
 					<tr id="fr<?=$i?>" id="frd<?=$i?>"  class="<?= $entryStatus ?>">
-						<td class="peer-entries">
-							<?=gettext('Interface')?>
-							<!--
-							<button value="toggle_<?=$i?>" name="toggle_<?=$i?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-<?= ($entryStatus == 'disabled' ? 'success' : 'warning') ?>" type="submit"><?= ($entryStatus == 'disabled' ? 'Enable' : 'Disable') ?></button>
-							-->
-						</td>
+						<td class="peer-entries"><?=gettext('Interface')?></td>
 						<td>wg<?=$i?></td>
 						<td><?=$tunnel['descr']?></td>
 						<td><?=$tunnel['interface']['address']?></td>
@@ -147,7 +142,7 @@ $i = 0; foreach ($tunnels as $tunnel):
 			<?=gettext("Show peers")?>
 		</a>
 
-		<a href="vpn_ipsec_phase1.php" class="btn btn-success btn-sm"  usepost>
+		<a href="vpn_wg_edit.php?index=<?=$i?>" class="btn btn-success btn-sm">
 			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext("Add Tunnel")?>
 		</a>

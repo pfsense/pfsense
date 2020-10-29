@@ -45,10 +45,7 @@ if (is_numericint($_REQUEST['index'])) {
 
 if (isset($index) && $tunnels[$index]) {
 	$pconfig = &$tunnels[$index];
-} else {
-	/* defaults */
 }
-
 
 if ($_POST['save']) {
 	// $input_errors = wg_do_post($POST);
@@ -68,7 +65,15 @@ if ($input_errors) {
 
 $form = new Form();
 
+// First row
 $section = new Form_Section('Interface wg' . $index);
+
+$section->addInput(new Form_Input(
+	'index',
+	'',
+	'hidden',
+	$index
+));
 
 $section->addInput(new Form_Checkbox(
 	'enabled',
@@ -110,21 +115,8 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-
+// Second row
 $section2 = new Form_Section('Peers');
-/*
-$idx = 0;
-foreach ($pconfig['peers'] as $peer) {
-	$section2->addInput(new Form_Input(
-		'descr_p' . $idx,
-		'Description',
-		'text',
-		$peer['descr']
-	))->setHelp('Optional.');
-
-	$idx++;
-}
-*/
 
 if (!is_array($pconfig['peers'])) {
 	$pconfig['peers'] = array();
@@ -138,10 +130,12 @@ $dnsgw_help = gettext("Endpoint");
 $ka_help = gettext("Keepalive");
 $aips_help = gettext("Allowed IPs");
 
-// If there are no peers, make an empty entry for initial display.
+// If there are no peers, make an empty entry for initial display. This will be the case when creating a new tunnel
 if ($peer_count == 0) {
-	$pconfig['peer'][] = '';
+	$pconfig['peers'][] = array('descr' => '', 'endpoint' => '', 'persistentkeepalive' => '', 'publickey', 'allowedips' => '');
 }
+
+print_r($pconfig);
 
 foreach ($pconfig['peers'] as $peer) {
 	$is_last_peer = (($peer_num == $peer_count - 1) || $peer_count == 0);

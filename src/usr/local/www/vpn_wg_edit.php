@@ -43,13 +43,18 @@ if (is_numericint($_REQUEST['index'])) {
 	$index = $_REQUEST['index'];
 }
 
-if (isset($index) && $tunnels[$index]) {
-	$pconfig = &$tunnels[$index];
-}
-
+// All form save logic is in /etc/inc/wg.inc
 if ($_POST['save']) {
-	// $input_errors = wg_do_post($POST);
-	exit();
+	$saveresult = wg_do_post($_POST);
+	$input_errors = $saveresult['input_errors'];
+	$pconfig = $saveresult['pconfig'];
+	if (!$input_errors) {
+		header("Location: vpn_wg.php");
+	}
+} else {
+	if (isset($index) && $tunnels[$index]) {
+		$pconfig = &$tunnels[$index];
+	}
 }
 
 $shortcut_section = "wireguard";
@@ -134,8 +139,6 @@ $aips_help = gettext("Allowed IPs");
 if ($peer_count == 0) {
 	$pconfig['peers'][] = array('descr' => '', 'endpoint' => '', 'persistentkeepalive' => '', 'publickey', 'allowedips' => '');
 }
-
-print_r($pconfig);
 
 foreach ($pconfig['peers'] as $peer) {
 	$is_last_peer = (($peer_num == $peer_count - 1) || $peer_count == 0);

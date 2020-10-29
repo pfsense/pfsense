@@ -26,6 +26,53 @@
 require_once("globals.inc");
 require_once('config.inc');
 
+// Write new tunnel values to the configuration system
+function wg_do_post($post, $json = false) {
+	global $config;
+
+	$input_errors = array();
+
+	$index = $post['index'];
+	$pconfig = &$config['wireguard']['tunnel'][$index];
+
+	$pconfig['enabled'] = empty($post['enabled']) ? 'no':'yes';
+	$pconfig['descr'] = $post['descr'];
+
+	// Interface section
+	$pconfig['interface']['address'] = $post['address'];
+	$pconfig['interface']['listenport'] = $post['listenport'];
+	$pconfig['interface']['privatekey'] = $post['privatekey'];
+	
+	// Peers section
+	$pconfig['peers'] = array();
+
+	$idx = 0;
+
+	for (;;) {
+		if (!$post['publickeyp' . $idx] && !$post['endpoint' . $idx] && !$post['allowedips' . $idx] && !$post['descr' . $idx] && !$post['persistentkeepalive' . $idx]) {
+			break;
+		}
+
+		$peer = array();
+		$peer['publickey'] =  $post['publickeyp' . $idx];
+		$peer['endpoint'] =  $post['endpoint' . $idx];
+		$peer['allowedips'] =  $post['allowedips' . $idx];
+		$peer['descr'] =  $post['descp' . $idx];
+		$peer['persistentkeepalive'] =  $post['persistentkeepalive' . $idx];
+
+		$pconfig['peers'][] = $peer;
+		$idx++;
+	}
+
+	// print_r($pconfig);
+	// $input_errors[] = "What were you thinking?";
+
+	$config['wireguard']['tunnel'][$index] = $pconfig;
+	write_config("Wireguard tunnel {$index} updated.");
+
+	return(array('input_errors' => $input_errors, 'pconfig' => $pconfig));
+}
+
 // Read the Wireguard configurations from config.xml and create a number of *.conf files for wg-quick to read
 function wg_create_config_files($clean = true) {
 	global $config, $g;

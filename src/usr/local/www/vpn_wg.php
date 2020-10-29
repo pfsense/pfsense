@@ -94,7 +94,7 @@ $i = 0; foreach ($tunnels as $tunnel):
 						<td><?=$tunnel['interface']['address']?></td>
 						<td><?=$tunnel['interface']['listenport']?></td>
 						<td><?=$tunnel['interface']['privatekey']?></td>
-				
+
 						<td style="cursor: pointer;">
 							<a class="fa fa-pencil" href="vpn_wg_edit.php?index=<?=$i?>" title="<?=gettext("Edit tunnel"); ?>"></a>
 							<a class="fa fa-trash" id="Xdel_<?=$i?>" title="<?=gettext('Delete tunnel'); ?>"></a>

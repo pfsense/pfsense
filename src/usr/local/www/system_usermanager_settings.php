@@ -104,6 +104,8 @@ if (isset($config['system']['webgui']['authmode'])) {
 	$pconfig['authmode'] = "Local Database";
 }
 
+$pconfig['shellauth'] = isset($config['system']['webgui']['shellauth']) ? true : false;
+
 $pconfig['backend'] = $config['system']['webgui']['backend'];
 
 $pconfig['auth_refresh_time'] = $config['system']['webgui']['auth_refresh_time'];
@@ -132,9 +134,15 @@ if ($_POST) {
 		}
 	}
 
-	if ((auth_get_authserver($_POST['authmode'])['type'] == 'radius') &&
-		!isset(auth_get_authserver($_POST['authmode'])['radius_auth_port'])) {
+	$authcfg = auth_get_authserver($_POST['authmode']);
+	if (($authcfg['type'] == 'radius') && !isset($authcfg['radius_auth_port'])) {
 		$input_errors[] = gettext("RADIUS Authentication Server must provide Authentication service.");
+	}
+
+	if (($authcfg['type'] == 'ldap') && empty($authcfg['ldap_pam_groupdn']) &&
+	    isset($_POST['shellauth'])) {
+		$input_errors[] = gettext("Shell Authentication Group DN must be specified for LDAP server if " . 
+			"Shell Authentication is used.");
 	}
 
 	if (($_POST['authmode'] == "Local Database") && $_POST['savetest']) {
@@ -163,6 +171,12 @@ if ($_POST) {
 			$config['system']['webgui']['authmode'] = $_POST['authmode'];
 		} else {
 			unset($config['system']['webgui']['authmode']);
+		}
+
+		if (isset($_POST['shellauth'])) {
+			$config['system']['webgui']['shellauth'] = true;
+		} else {
+			unset($config['system']['webgui']['shellauth']);
 		}
 
 		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
@@ -226,7 +240,18 @@ $section->addInput(new Form_Select(
 	'*Authentication Server',
 	$pconfig['authmode'],
 	$auth_servers
-))->setHelp('To allow SSH and console logins with RADIUS credentials, equivalent local users with the expected privileges must be created first.'); 
+));
+
+$section->addInput(new Form_Checkbox(
+	'shellauth',
+	'Shell Authentication',
+	'Use Authentication Server for Shell Authentication',
+	$pconfig['shellauth'],
+))->setHelp('If RADIUS or LDAP server is selected it is used for console and SSH authentication. ' .
+	    'Otherwise, the Local Database is used.%1$s To allow logins with RADIUS credentials, ' .
+	    'equivalent local users with the expected privileges must be created first.%1$s ' .
+	    'To allow logins with LDAP credentials, ' .
+	    'Shell Authentication Group DN must be specified on the LDAP server configuration page.', '<br/>'); 
 
 $section->addInput(new Form_Input(
 	'auth_refresh_time',

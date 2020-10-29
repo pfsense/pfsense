@@ -26,6 +26,15 @@
 require_once("globals.inc");
 require_once('config.inc');
 
+function deleteTunnel($tunidx) {
+	global $config;
+
+	if ($config['wireguard']['tunnel'][$tunidx]) {
+		unset($config['wireguard']['tunnel'][$tunidx]);
+		write_config("Wireguard tunnel {$index} updated.");
+	}
+}
+
 // Write new tunnel values to the configuration system
 function wg_do_post($post, $json = false) {
 	global $config;

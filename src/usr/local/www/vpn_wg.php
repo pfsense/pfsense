@@ -48,6 +48,12 @@ include("head.inc");
 if (is_subsystem_dirty('wireguard')) {
 	print_apply_box(gettext("The Wireguard tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
+
+if (array_key_exists('delidx', $_POST)) {
+	deleteTunnel($_POST['delidx']);
+	header("Location: vpn_wg.php");
+}
+
 ?>
 
 <form name="mainform" method="post">
@@ -94,7 +100,7 @@ $i = 0; foreach ($tunnels as $tunnel):
 
 						<td style="cursor: pointer;">
 							<a class="fa fa-pencil" href="vpn_wg_edit.php?index=<?=$i?>" title="<?=gettext("Edit tunnel"); ?>"></a>
-							<a class="fa fa-trash" id="Xdel_<?=$i?>" title="<?=gettext('Delete tunnel'); ?>"></a>
+							<a class="fa fa-trash text-danger" id="Xdel_<?=$i?>" title="<?=gettext('Delete tunnel'); ?>"></a>
 						</td>
 					</tr>
 
@@ -147,6 +153,10 @@ $i = 0; foreach ($tunnels as $tunnel):
 	</nav>
 </form>
 
+<form name="delform" id="delform" method="post">
+	<input id="delidx" name="delidx" type="hidden" />
+</form>
+
 <script type="text/javascript">
 //<![CDATA[
 function show_phase2(id, buttonid) {
@@ -169,7 +179,9 @@ events.push(function() {
 
 	// Delete tunnel
 	$('[id^=Xdel_]').click(function (event) {
-		$('#' + event.target.id.slice(1)).click();
+		var idx = event.target.id.split('_')[1];
+		$('#delidx').val(idx);
+		$('#delform').submit();
 	});
 });
 //]]>

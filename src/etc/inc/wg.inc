@@ -30,6 +30,8 @@ require_once('config.inc');
 function wg_do_post($post, $json = false) {
 	global $config;
 
+	init_config_arr(array('wireguard', 'tunnel'));
+
 	$input_errors = array();
 
 	$index = $post['index'];
@@ -185,6 +187,7 @@ Sample Wireguard config.xml entry
 		<fwprivkey></fwprivkey>
 		<tunnel>
 			<descr>Home office</descr>
+			<enabled>yes</enabled>
 			<interface>
 				<privatekey>yAnz5TF+lXXJte14tji3zlMNq+hd2rYUIgJBgB3fBmk=</privatekey>
 				<address>10.0.0.1/24, fdc9:281f:04d7:9ee9::1/64</address>
@@ -211,6 +214,7 @@ Sample Wireguard config.xml entry
 		</tunnel>
 		<tunnel>
 			<descr>Branch office</descr>
+			<enabled>yes</enabled>
 			<interface>
 				<privatekey>yAnz5TF+lXXJte14tji3zlMNq+hd2rYUIgJBgB3fBmk=</privatekey>
 				<address>10.0.0.1/24, fdc9:281f:04d7:9ee9::1/64</address>

@@ -45,20 +45,17 @@ $shortcut_section = "wireguard";
 
 include("head.inc");
 
-if ($input_errors) {
-	print_input_errors($input_errors);
-}
-
-if ($_POST['apply']) {
-	print_apply_result_box($retval);
-}
-
 if (is_subsystem_dirty('wireguard')) {
 	print_apply_box(gettext("The Wireguard tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 ?>
 
 <form name="mainform" method="post">
+<?php
+	if (count($tunnels) == 0) {
+		print_info_box(gettext('No Wireguard tunnels have benn configured have been configured. Click the "Add tunnel" button below to create one.'), 'warning', false);
+	} else {
+?>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Wireguard Tunnels')?></h2></div>
 		<div class="panel-body table-responsive">
@@ -135,6 +132,7 @@ $i = 0; foreach ($tunnels as $tunnel):
 			</table>
 		</div>
 	</div>
+<?php } // e-o- else (no tunnels) ?>
 
 	<nav class="action-buttons">
 		<a href="#" class="btn btn-info btn-sm" id="showpeers">

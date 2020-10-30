@@ -53,7 +53,7 @@ if (isset($_GET['interface'])) {
 	$argument = str_replace("\n", "", $argv[1]);
 }
 
-openlog("rc.newwanip", LOG_PID, LOG_LOCAL0);
+openlog("", LOG_PID, LOG_LOCAL0);
 log_error("rc.newwanip: Info: starting on {$argument}.");
 
 if (empty($argument)) {

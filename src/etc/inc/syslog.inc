@@ -276,7 +276,7 @@ EOD;
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
-		$syslogconf .= "!dpinger,gwlb,rc.newwanip,rc.newwanipv6\n";
+		$syslogconf .= "!dpinger\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$g['varlog_path']}/gateways.log\n";
 		}

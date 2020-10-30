@@ -34,7 +34,7 @@ if (platform_booting()) {
 }
 
 function handle_argument_group($iface, $argument2) {
-	global $config;
+	global $g, $config;
 
 	if (!is_array($config['interfaces'][$iface])) {
 		log_error("Cannot find interface configuration for {$iface}");
@@ -114,6 +114,18 @@ function handle_argument_group($iface, $argument2) {
 				log_error("HOTPLUG: Configuring interface {$iface}");
 				// Do not try to readd to bridge otherwise em(4) has problems
 				interface_configure($iface, true, true);
+				/*
+				 * SLAAC configure interfaces will never
+				 * trigger rc.newwanipv6 since it's triggered
+				 * by dhcp6c.  Do it here to make sure dpinger
+				 * is properly initialized
+				 *
+				 * XXX: There should be a better way to trigger
+				 *      rc.newwanipv6 when it happens
+				 */
+				if ($ip6addr == 'slaac') {
+					mwexec_bg("{$g['etc_path']}/rc.newwanipv6 {$iface}");
+				}
 				break;
 		}
 	}

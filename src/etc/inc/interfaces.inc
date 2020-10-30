@@ -2073,6 +2073,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			kill_dhcp6client_process($realif, $destroy, false);
 			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
 			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh");
+			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}_dhcp6withoutra_script.sh");
 			unlink_if_exists("{$g['varetc_path']}/rtsold_{$realifv6}_script.sh");
 			if (does_interface_exist($realifv6)) {
 				$ip6 = find_interface_ipv6($realifv6);

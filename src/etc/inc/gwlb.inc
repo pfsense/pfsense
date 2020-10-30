@@ -257,7 +257,7 @@ function setup_gateways_monitor() {
 
 			if (is_linklocal($gateway['monitor'])) {
 				if (get_ll_scope($gateway['monitor']) == '') {
-					$gateway['monitor'] .= '%' . $gateway['interface'];
+					$gateways_arr[$gwname]['monitor'] .= '%' . $gateway['interface'];
 				}
 
 				$gwifip = find_interface_ipv6_ll($gateway['interface'], true);

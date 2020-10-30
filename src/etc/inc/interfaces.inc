@@ -4969,7 +4969,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 				$dhcp6cconf .= "id-assoc na 0 { };\n";
 			}
 
-			if (is_numeric($wancfg['dhcp6-ia-pd-len']) && !empty($trackiflist)) {
+			if (is_numeric($wancfg['dhcp6-ia-pd-len'])) {
 				/* Setup the prefix delegation */
 				$dhcp6cconf .= "id-assoc pd 0 {\n";
 				$preflen = 64 - $wancfg['dhcp6-ia-pd-len'];

@@ -279,7 +279,7 @@ function setup_gateways_monitor() {
 			 * Add static routes for each gateway with their monitor IP
 			 * not strictly necessary but is a added level of protection.
 			 */
-			if ($gateway['gateway'] != $gateway['monitor']) {
+			if ($gateway['gateway'] != $gateways_arr[$gwname]['monitor']) {
 				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
 				if (interface_isppp_type($gateway['friendlyiface'])) {
 					route_add_or_change($gateway['monitor'],

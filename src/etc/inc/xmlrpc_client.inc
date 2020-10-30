@@ -89,6 +89,7 @@ class pfsense_xmlrpc_client {
 		while ($numberofruns < 2) {
 			$numberofruns++;
 
+			log_error(sprintf(gettext("Beginning XMLRPC sync data to %s."), $this->logurl));
 			$cli = XML_RPC2_Client::create($this->url, $options);
 			if (!is_object($cli)) {
 				$this->error = sprintf(gettext("A communications error occurred while attempting XMLRPC sync with %s (pfsense.%s)."), $this->log, $method);
@@ -138,6 +139,7 @@ class pfsense_xmlrpc_client {
 				file_notice($this->filenotice, $this->error, "Settings Sync", "");
 				continue;
 			}
+			log_error(sprintf(gettext("XMLRPC reload data success with %s (pfsense.{$method})."), $this->logurl));
 			return $resp;
 		}
 		return null;

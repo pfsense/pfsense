@@ -54,7 +54,6 @@ if (isset($_GET['interface'])) {
 	$argument = trim($argv[1], " \n\t");
 }
 
-openlog("", LOG_PID, LOG_LOCAL0);
 log_error("rc.newwanipv6: Info: starting on {$argument}.");
 
 if (empty($argument)) {

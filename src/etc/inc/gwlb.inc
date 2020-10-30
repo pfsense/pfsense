@@ -1130,7 +1130,6 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			}
 		}
 		if (empty($set_dfltgwname)) {
-			openlog("", LOG_PID, LOG_LOCAL0);
 			log_error(sprintf("Gateway, none 'available' for %s, use the first one configured. '%s'", $ipprotocol, $fallback));
 			$set_dfltgwname = $fallback;
 		}

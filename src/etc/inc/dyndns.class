@@ -804,7 +804,7 @@
 					$needsIP = FALSE;
 					$server = "https://ipv4.tunnelbroker.net/ipv4_end.php?";
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
-					curl_setopt($ch, CURLOPT_URL, $server . 'tid=' . $this->_dnsHost);
+					curl_setopt($ch, CURLOPT_URL, $server . 'tid=' . $this->_dnsHost  . '&ip=' . $this->_dnsIP);
 					break;
 				case 'selfhost':
 					$needsIP = FALSE;

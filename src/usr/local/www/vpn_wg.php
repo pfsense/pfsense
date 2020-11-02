@@ -3,7 +3,6 @@
  * vpn_ipsec.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
  * Copyright (c) 2014-2020 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
@@ -26,9 +25,9 @@
  */
 
 ##|+PRIV
-##|*IDENT=page-vpn-ipsec
-##|*NAME=VPN: IPsec
-##|*DESCR=Allow access to the 'VPN: IPsec' page.
+##|*IDENT=page-vpn-wg
+##|*NAME=VPN: Wireguard
+##|*DESCR=Allow access to the 'VPN: Wireguard' page.
 ##|*MATCH=vpn_ipsec.php*
 ##|-PRIV
 
@@ -44,10 +43,6 @@ $pglinks = array("", "@self", "@self");
 $shortcut_section = "wireguard";
 
 include("head.inc");
-
-if (is_subsystem_dirty('wireguard')) {
-	print_apply_box(gettext("The Wireguard tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
-}
 
 // Delete a tunnel?
 if (array_key_exists('delidx', $_POST)) {
@@ -73,7 +68,7 @@ if (array_key_exists('delidx', $_POST)) {
 						<th><?=gettext("Description")?></th>
 						<th><?=gettext("Address")?></th>
 						<th><?=gettext("Port")?></th>
-						<th><?=gettext("Private key")?></th>
+						<th><?=gettext("# Peers")?></th>
 						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
@@ -90,7 +85,7 @@ if (array_key_exists('delidx', $_POST)) {
 						<td><?=$tunnel['descr']?></td>
 						<td><?=$tunnel['interface']['address']?></td>
 						<td><?=$tunnel['interface']['listenport']?></td>
-						<td><?=$tunnel['interface']['privatekey']?></td>
+						<td><?=count($tunnel['peers'])?></td>
 
 						<td style="cursor: pointer;">
 							<a class="fa fa-pencil" href="vpn_wg_edit.php?index=<?=$i?>" title="<?=gettext("Edit tunnel"); ?>"></a>
@@ -100,6 +95,8 @@ if (array_key_exists('delidx', $_POST)) {
 
 					<tr  class="peer-entries" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 						<td>Peers</td>
+<?php 
+	if ($tunnel['peers'] && count($tunnel['peers']) > 0) { ?>
 						<td colspan="6">
 							<table class="table table-hover" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 								<thead>
@@ -123,6 +120,10 @@ if (array_key_exists('delidx', $_POST)) {
 								</tbody>
 							</table>
 						</td>
+<?php } else {
+	print('<td colspan="6">' . gettext("No peers have been configured") . '</td>');
+}
+?>
 					</tr>
 <?php
 					$i++;
@@ -132,9 +133,41 @@ if (array_key_exists('delidx', $_POST)) {
 			</table>
 		</div>
 	</div>
+
+
+<?php
+	$section = new Form_Section('Firewall keys');
+	$section->addClass('fwkeys');
+
+	$section->addInput(new Form_Input(
+		'pubkey',
+		'Public key',
+		'',
+		''
+	))->setReadonly();
+
+	$section->addInput(new Form_Input(
+		'privkey',
+		'Private key',
+		'',
+		''
+	))->setReadonly();
+
+	print($section);
+
+	if (empty($config['wireguard']['fwpubkey']) || empty($config['wireguard']['fwprivkey'])) {
+		wgCreateKeys();
+	}
+
+	$fwpubkey = $config['wireguard']['fwpubkey'];
+	$fwprivkey = $config['wireguard']['fwprivkey'];
+?>
+
 <?php } // e-o- else (no tunnels) ?>
 
 	<nav class="action-buttons">
+		<a class="fa fa-key" id="showkeys" title="<?=gettext('Show keys for this firewall'); ?>"></a>
+		&nbsp;&nbsp;
 		<a href="#" class="btn btn-info btn-sm" id="showpeers">
 			<i class="fa fa-info icon-embed-btn"></i>
 			<?=gettext("Show peers")?>
@@ -154,17 +187,13 @@ if (array_key_exists('delidx', $_POST)) {
 
 <script type="text/javascript">
 //<![CDATA[
-function show_phase2(id, buttonid) {
-	document.getElementById(buttonid).innerHTML='';
-	document.getElementById(id).style.display = "block";
-	var visible = id + '-visible';
-	document.getElementById(visible).value = "1";
-}
 
 events.push(function() {
 	var peershidden = true;
+	var keyshidden = true;
 
 	hideClass('peer-entries', peershidden);
+	hideClass('fwkeys', keyshidden);
 
 	// Toggle peer visibility
 	$('#showpeers').click(function () {
@@ -177,6 +206,15 @@ events.push(function() {
 		var idx = event.target.id.split('_')[1];
 		$('#delidx').val(idx);  // Set the id of the tunnel
 		$('#delform').submit(); // Submit the form 
+	});
+
+	$('#showkeys').click(function () {
+		keyshidden = !keyshidden;
+		hideClass('fwkeys', keyshidden);
+		if (!keyshidden) {
+			$('#pubkey').val("<?=$fwpubkey?>");
+			$('#privkey').val("<?=$fwprivkey?>");
+		}
 	});
 });
 //]]>

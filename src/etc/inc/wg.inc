@@ -26,6 +26,21 @@
 require_once("globals.inc");
 require_once('config.inc');
 
+// Create public and private keys
+function wgCreateKeys() {
+	global $config;
+
+	// ToDo Inset wireguard magic to create public and private keys
+	// Debug
+	$pubkey = "xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=";
+	$privkey = "yAnz5TF+lXXJte14tji3zlMNq+hd2rYUIgJBgB3fBmk=";
+
+	$config['wireguard']['fwpubkey'] = $pubkey;
+	$config['wireguard']['fwprivkey'] = $privkey;
+
+	write_config("Wireguard keys created");
+}
+
 // Return the next wireguard interface name that is not currently in use
 function nextFreeWGInterfaceName() {
 	global $config;

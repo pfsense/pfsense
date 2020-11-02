@@ -77,7 +77,7 @@ if (array_key_exists('delidx', $_POST)) {
 
 	$i = 0;
 	foreach ($tunnels as $tunnel):
-		$entryStatus = (isset($tunnel['disabled']) ? 'disabled' : 'enabled');
+		$entryStatus = ($tunnel['enabled'] == 'yes') ? 'enabled':'disabled';
 ?>
 					<tr id="fr<?=$i?>" id="frd<?=$i?>"  class="<?= $entryStatus ?>">
 						<td class="peer-entries"><?=gettext('Interface')?></td>
@@ -205,7 +205,7 @@ events.push(function() {
 	$('[id^=Xdel_]').click(function (event) {
 		var idx = event.target.id.split('_')[1];
 		$('#delidx').val(idx);  // Set the id of the tunnel
-		$('#delform').submit(); // Submit the form 
+		$('#delform').submit(); // Submit the form
 	});
 
 	$('#showkeys').click(function () {

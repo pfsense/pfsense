@@ -95,7 +95,7 @@ function wg_do_post($post, $json = false) {
 	$pconfig['interface']['address'] = $post['address'];
 	$pconfig['interface']['listenport'] = $post['listenport'];
 	$pconfig['interface']['privatekey'] = $post['privatekey'];
-	
+
 	// Peers section
 	$pconfig['peers'] = array();
 

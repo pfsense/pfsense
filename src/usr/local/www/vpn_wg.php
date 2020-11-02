@@ -95,7 +95,7 @@ if (array_key_exists('delidx', $_POST)) {
 
 					<tr  class="peer-entries" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 						<td>Peers</td>
-<?php 
+<?php
 	if ($tunnel['peers'] && count($tunnel['peers']) > 0) { ?>
 						<td colspan="6">
 							<table class="table table-hover" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->

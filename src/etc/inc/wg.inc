@@ -26,12 +26,37 @@
 require_once("globals.inc");
 require_once('config.inc');
 
+// Return the next wireguard interface name that is not currently in use
+function nextFreeWGInterfaceName() {
+	global $config;
+
+	$tunnels = $config['wireguard']['tunnel'];
+	$num = count($tunnels);
+
+	for( $idx=0; $idx<$num; $idx++) {
+		if ($idx != intval(substr($tunnels[$idx]['name'], 2))) {
+			return $idx;
+		}
+	}
+
+	return $idx;
+}
+
 function deleteTunnel($tunidx) {
 	global $config;
 
 	if ($config['wireguard']['tunnel'][$tunidx]) {
+		// Delete the config file entry
 		unset($config['wireguard']['tunnel'][$tunidx]);
 		write_config("Wireguard tunnel {$index} updated.");
+
+		// Delete the wg?.conf file
+		$fname = $config['wireguard']['tunnel'][$tunidx]['name'];
+		if(is_file($fname)) {
+			unlink($fname);
+		}
+
+		// ToDo: kill the deleted tunnel
 	}
 }
 
@@ -44,8 +69,10 @@ function wg_do_post($post, $json = false) {
 	$input_errors = array();
 
 	$index = $post['index'];
+
 	$pconfig = &$config['wireguard']['tunnel'][$index];
 
+	$pconfig['name'] = "wg" . $index;
 	$pconfig['enabled'] = empty($post['enabled']) ? 'no':'yes';
 	$pconfig['descr'] = $post['descr'];
 
@@ -100,19 +127,16 @@ function wg_create_config_files($clean = true) {
 			delete_wg_configs();
 		}
 
-		$idx = 0;
 		foreach ($wg_tunnels as $tunnel) {
 			if (!empty($tunnel['enabled']) && $tunnel['enabled'] == 'yes') {
-				make_wg_conf($tunnel, $idx);
+				make_wg_conf($tunnel);
 			}
-
-			$idx++;
 		}
 	}
 }
 
 // Write each file
-function make_wg_conf($tunnel, $idx) {
+function make_wg_conf($tunnel) {
 	global $g;
 
 	$txt = "# This Wireguard config file has been created automatically. Do not edit!\n";
@@ -174,7 +198,7 @@ function make_wg_conf($tunnel, $idx) {
 		}
 	}
 
-	file_put_contents($g["wg_conf_path"] . "/wg" . $idx . ".conf", $txt);
+	file_put_contents($g["wg_conf_path"] . "" . $tunnel['name'] . ".conf", $txt);
 }
 
 // Remove all wg config files from the conf directory
@@ -183,8 +207,9 @@ function delete_wg_configs() {
 
 	$files = glob($g["wg_conf_path"] . "/*.conf"); // get all confog file names
 	foreach($files as $file) {
-	  if(is_file($file))
-	    unlink($file);
+		if(is_file($file)) {
+			unlink($file);
+		}
 	}
 }
 
@@ -195,6 +220,7 @@ Sample Wireguard config.xml entry
 		<fwpubkey></fwpubkey>
 		<fwprivkey></fwprivkey>
 		<tunnel>
+			<name>wg0</name>
 			<descr>Home office</descr>
 			<enabled>yes</enabled>
 			<interface>
@@ -222,6 +248,7 @@ Sample Wireguard config.xml entry
 			</peers>
 		</tunnel>
 		<tunnel>
+			<name>wg1</name>
 			<descr>Branch office</descr>
 			<enabled>yes</enabled>
 			<interface>
@@ -234,7 +261,7 @@ Sample Wireguard config.xml entry
 				<endpoint>192.88.8.88:51820</endpoint>
 				<allowedips>10.192.122.1/32, 10.192.124.1/24</allowedips>
 				<persistentkeepalive>25</persistentkeepalive>
-				<descr>Alice</descr>
+				<descr>Sam</descr>
 			</peers>
 		</tunnel>
 	</wireguard>

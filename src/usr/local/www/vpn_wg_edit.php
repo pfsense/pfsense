@@ -49,6 +49,10 @@ if ($_POST['save']) {
 	$input_errors = $saveresult['input_errors'];
 	$pconfig = $saveresult['pconfig'];
 	if (!$input_errors) {
+		// Create teh new WG config files
+		wg_create_config_files();
+
+		// Go back to the tunnel table
 		header("Location: vpn_wg.php");
 	}
 } else {

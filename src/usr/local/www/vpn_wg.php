@@ -49,11 +49,11 @@ if (is_subsystem_dirty('wireguard')) {
 	print_apply_box(gettext("The Wireguard tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
+// Delete a tunnel?
 if (array_key_exists('delidx', $_POST)) {
 	deleteTunnel($_POST['delidx']);
 	header("Location: vpn_wg.php");
 }
-
 ?>
 
 <form name="mainform" method="post">
@@ -80,19 +80,13 @@ if (array_key_exists('delidx', $_POST)) {
 				<tbody>
 <?php
 
-$i = 0; foreach ($tunnels as $tunnel):
-
-	$iconfn = "pass";
-
-	$entryStatus = (isset($tunnel['disabled']) ? 'disabled' : 'enabled');
-
-	if ($entryStatus == 'disabled') {
-		$iconfn .= "_d";
-	}
+	$i = 0;
+	foreach ($tunnels as $tunnel):
+		$entryStatus = (isset($tunnel['disabled']) ? 'disabled' : 'enabled');
 ?>
 					<tr id="fr<?=$i?>" id="frd<?=$i?>"  class="<?= $entryStatus ?>">
 						<td class="peer-entries"><?=gettext('Interface')?></td>
-						<td>wg<?=$i?></td>
+						<td><?=$tunnel['name']?></td>
 						<td><?=$tunnel['descr']?></td>
 						<td><?=$tunnel['interface']['address']?></td>
 						<td><?=$tunnel['interface']['listenport']?></td>
@@ -146,13 +140,14 @@ $i = 0; foreach ($tunnels as $tunnel):
 			<?=gettext("Show peers")?>
 		</a>
 
-		<a href="vpn_wg_edit.php?index=<?=$i?>" class="btn btn-success btn-sm">
+		<a href="vpn_wg_edit.php?index=<?=nextFreeWGInterfaceName();?>" class="btn btn-success btn-sm">
 			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext("Add Tunnel")?>
 		</a>
 	</nav>
 </form>
 
+<!-- Simple form that is submitted on tunnel delete -->
 <form name="delform" id="delform" method="post">
 	<input id="delidx" name="delidx" type="hidden" />
 </form>
@@ -180,8 +175,8 @@ events.push(function() {
 	// Delete tunnel
 	$('[id^=Xdel_]').click(function (event) {
 		var idx = event.target.id.split('_')[1];
-		$('#delidx').val(idx);
-		$('#delform').submit();
+		$('#delidx').val(idx);  // Set the id of the tunnel
+		$('#delform').submit(); // Submit the form 
 	});
 });
 //]]>

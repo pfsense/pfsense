@@ -19,6 +19,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# If the user touches ~/.keephistory, enable command history storage and related
+# settings. See https://redmine.pfsense.org/issues/11029
+if ( $?prompt && -f ~/.keephistory ) then
+	set history = 1000
+	set savehist = (1000 merge)
+	bindkey -k down history-search-forward
+	bindkey -k up history-search-backward
+	echo "Command history storage is enabled. Clear history with: history -c; history -S."
+endif
+
 set prompt="[%B`cat /etc/version`%b][%B%n%b%{\033[0;1;31m%}@%{\033[0;0;0m%}%B%M%b]%/%{\033[0;1;31m%}:%{\033[0;0;0m%} "
 set autologout="0"
 set autolist set color set colorcat

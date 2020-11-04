@@ -309,7 +309,7 @@ $system_log_compression_types = array(
 		),
 	'none' => array(
 			'flag' => '',
-			'cat' => '/usr/bin/cat',
+			'cat' => '/bin/cat',
 			'ext' => '',
 		),
 );

@@ -628,6 +628,11 @@ if (is_ipaddrv6($ifcfgip)) {
 
 	if ($ifcfgip == "::") {
 		$sntext = "Prefix Delegation";
+		if (get_interface_track6ip($if)) {
+			$track6ip = get_interface_track6ip($if);
+			$pdsubnet = gen_subnetv6($track6ip[0], $track6ip[1]);
+			$sntext .= " ({$pdsubnet}/{$track6ip[1]})";
+		}
 	} else {
 		$sntext = gen_subnetv6($ifcfgip, $ifcfgsn);
 	}

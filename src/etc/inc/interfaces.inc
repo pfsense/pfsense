@@ -6788,10 +6788,14 @@ function get_interface_track6ip($interface = "wan") {
 		list($ip, $bits) = explode("/", $ifaddr);
 		$ip = text_to_compressed_ip6($ip);
 		if (is_ipaddrv6($ip) && !is_linklocal($ip)) {
-			foreach ($vips as $vip) {
-				if ($ip != text_to_compressed_ip6($vip)) {
-					return array($ip, $bits);
+			if (is_array($vips) && !empty($vips)) {
+				foreach ($vips as $vip) {
+					if ($ip != text_to_compressed_ip6($vip)) {
+						return array($ip, $bits);
+					}
 				}
+			} else {
+				return array($ip, $bits);
 			}
 		}
 	}

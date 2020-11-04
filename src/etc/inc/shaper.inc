@@ -1578,12 +1578,26 @@ class priq_queue {
 		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype']))
 			$input_errors[] = "The sum of child bandwidth is higher than parent.";
 
-		if (($parent->GetScheduler() == 'PRIQ') && (!is_numeric($data['priority']) ||
-		    ($data['priority'] < 0) || ($data['priority'] > 15))) {
-			$input_errors[] = gettext("The priority must be an integer between 0 and 15.");
-		} elseif (in_array($parent->GetScheduler(), array('FAIRQ','CBQ')) && (!is_numeric($data['priority']) ||
-		    ($data['priority'] < 0) || ($data['priority'] > 7))) {
-			$input_errors[] = gettext("The priority must be an integer between 0 and 7.");
+		if ($parent) {
+			if (($parent->GetScheduler() == 'PRIQ') && (!is_numeric($data['priority']) ||
+			    ($data['priority'] < 0) || ($data['priority'] > 15))) {
+				$input_errors[] = gettext("The priority must be an integer between 0 and 15.");
+			} elseif (in_array($parent->GetScheduler(), array('FAIRQ','CBQ')) && (!is_numeric($data['priority']) ||
+			    ($data['priority'] < 0) || ($data['priority'] > 7))) {
+				$input_errors[] = gettext("The priority must be an integer between 0 and 7.");
+			}
+			if (is_array($parent->queues)) {
+				foreach ($parent->queues as $q) {
+					if (($data['newname'] == $q->GetQname()) && ($data['name'] != $data['newname'])) { 
+						$input_errors[] = gettext("A queue with the same name already exists.");
+					}
+					if (in_array($parent->GetScheduler(), array('FAIRQ','PRIQ')) &&
+					    ($data['priority'] == $q->GetQpriority()) && ($data['name'] != $q->GetQname())) { 
+						$input_errors[] = sprintf(gettext("The priority %d is already used by queue %s."),
+								$data['priority'], $q->GetQname());
+					}
+				}
+			}
 		}
 
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
@@ -1601,19 +1615,6 @@ class priq_queue {
 		$default = $this->GetDefault();
 		if (!empty($data['default']) && altq_get_default_queue($data['interface']) && empty($default)) {
 			$input_errors[] = gettext("Only one default queue per interface is allowed.");
-		}
-
-		if (is_array($parent->queues)) {
-			foreach ($parent->queues as $q) {
-				if (($data['newname'] == $q->GetQname()) && ($data['name'] != $data['newname'])) { 
-					$input_errors[] = gettext("A queue with the same name already exists.");
-				}
-				if (in_array($parent->GetScheduler(), array('FAIRQ','PRIQ')) &&
-				    ($data['priority'] == $q->GetQpriority()) && ($data['name'] != $q->GetQname())) { 
-					$input_errors[] = sprintf(gettext("The priority %d is already used by queue %s."),
-							$data['priority'], $q->GetQname());
-				}
-			}
 		}
 	}
 

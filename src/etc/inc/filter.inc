@@ -2457,6 +2457,12 @@ function filter_nat_rules_generate() {
 				continue;
 			}
 
+			if (($ipproto == 'inet6') && is_stf_interface($natif)) {
+				$rdrif = $natif . "_stf";
+			} else {
+				$rdrif = $FilterIflist[$natif]['if'];
+			}
+
 			$srcaddr = filter_generate_address($rule, 'source', true);
 			$dstaddr = filter_generate_address($rule, 'destination', true);
 			$srcaddr = trim($srcaddr);
@@ -2521,7 +2527,7 @@ function filter_nat_rules_generate() {
 			}
 
 			if ($srcaddr <> "" && $dstaddr <> "" && $natif) {
-				$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} {$ipproto} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+				$natrules .= "{$nordr}rdr {$rdrpass}on {$rdrif} {$ipproto} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 
 				/* Does this rule redirect back to a internal host? */
 				if (isset($rule['destination']['any']) && !isset($rule['nordr']) && !isset($config['system']['enablenatreflectionhelper']) && !interface_has_gateway($rule['interface'])) {
@@ -2539,9 +2545,9 @@ function filter_nat_rules_generate() {
 						 * See https://redmine.pfsense.org/issues/8604 */
 						if ((($ipproto == 'inet') && !empty(get_interface_ip($natif))) || 
 						    (($ipproto == 'inet6') && !empty(get_interface_ipv6($natif)))) {
-							$natrules .= "no nat on {$natif} {$ipproto} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
+							$natrules .= "no nat on {$rdrif} {$ipproto} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
 						}
-						$natrules .= "nat on {$natif} {$ipproto} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
+						$natrules .= "nat on {$rdrif} {$ipproto} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 					}
 				}
 

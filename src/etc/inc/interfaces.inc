@@ -2962,9 +2962,6 @@ function interfaces_sync_setup() {
 		$pfsyncenabled = $config['hasync']['pfsyncenabled'];
 		$pfsyncinterface = $config['hasync']['pfsyncinterface'];
 		$pfsyncpeerip = $config['hasync']['pfsyncpeerip'];
-	} else {
-		unset($pfsyncinterface);
-		unset($pfsyncenabled);
 	}
 
 	set_sysctl(array(
@@ -2974,8 +2971,6 @@ function interfaces_sync_setup() {
 
 	if (!empty($pfsyncinterface)) {
 		$carp_sync_int = get_real_interface($pfsyncinterface);
-	} else {
-		unset($carp_sync_int);
 	}
 
 	/* setup pfsync interface */

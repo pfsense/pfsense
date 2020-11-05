@@ -3030,15 +3030,22 @@ class cbq_queue extends priq_queue {
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
 
-		if ($data['priority'] > 7) {
-				$input_errors[] = gettext("Priority must be an integer between 0 and 7.");
-		}
 		$reqdfields[] = "bandwidth";
 		$reqdfieldsn[] = gettext("Bandwidth");
 		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = gettext("Bandwidthtype");
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+
+		if ($data['priority'] > 7) {
+			$input_errors[] = gettext("Priority must be an integer between 0 and 7.");
+		}
+
+		$parent = $this->GetParent();
+		if (method_exists($parent, 'GetParent') && ($parent->GetBorrow() != "on") &&
+		    ($data['borrow'] == 'yes')) {
+			$input_errors[] = gettext("You cannot set 'Borrow' if the parent queue also does not borrow.");
+		}
 	}
 
 	function ReadConfig(&$q) {

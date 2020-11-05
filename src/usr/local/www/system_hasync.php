@@ -77,7 +77,7 @@ if ($_POST) {
 	}
 
 	if (!empty($pconfig['synchronizetoip']) && !is_ipaddr($pconfig['synchronizetoip'])) {
-		$input_errors[] = gettext("pfsync Synchronize Peer IP must be a valid IP address.");
+		$input_errors[] = gettext("Synchronize Config to IP must be a valid IP address.");
 	}
 
 	if (!$input_errors) {

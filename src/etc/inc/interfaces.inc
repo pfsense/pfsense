@@ -2990,19 +2990,22 @@ function interfaces_sync_setup() {
 		    "{$syncpeer} up");
 		mwexec("/sbin/ifconfig pfsync0 -defer");
 
-		sleep(1);
-
 		/*
 		 * XXX: Handle an issue with pfsync(4) and carp(4). In a
 		 * cluster carp will come up before pfsync(4) has updated and
 		 * so will cause issues for existing sessions.
 		 */
 		log_error(gettext("waiting for pfsync..."));
+
 		$i = 0;
-		while (intval(trim(`/sbin/ifconfig pfsync0 | /usr/bin/grep 'syncok: 0' | /usr/bin/grep -v grep | /usr/bin/wc -l`)) == 0 && $i < 30) {
-			$i++;
+		do {
 			sleep(1);
-		}
+			$_gb = exec('/sbin/ifconfig pfsync0 | ' .
+			    '/usr/bin/grep -q "syncok: 0" 2>/dev/null', $output,
+			    $rc);
+			$i++;
+		} while ($rc != 0 && $i <= 30);
+
 		log_error(sprintf(gettext("pfsync done in %s seconds."), $i));
 		log_error(gettext("Configuring CARP settings finalize..."));
 	} else {

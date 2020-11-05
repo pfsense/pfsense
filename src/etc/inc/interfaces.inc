@@ -3008,7 +3008,7 @@ function interfaces_sync_setup() {
 	}
 
 	$carplist = get_configured_vip_list('all', VIP_CARP);
-	if (isset($carplist) && is_array($carplist) && count($carplist) > 0) {
+	if (is_array($carplist) && count($carplist) > 0) {
 		set_single_sysctl("net.inet.carp.allow", "1");
 	} else {
 		set_single_sysctl("net.inet.carp.allow", "0");

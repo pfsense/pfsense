@@ -1710,13 +1710,13 @@ function interface_ipsec_vti_configure($ph1ent) {
 		}
 		// Create IPsec interface
 		if (does_interface_exist($ipsecif)) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " destroy", false);
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " destroy");
 		}
-		mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " create reqid " . escapeshellarg($ipsecifnum), false);
+		mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " create reqid " . escapeshellarg($ipsecifnum));
 
 		/* Apply the outer tunnel addresses to the interface */
 		$inet = is_ipaddrv6($left_spec) ? "inet6" : "inet";
-		mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} tunnel " . escapeshellarg($left_spec) . " " . escapeshellarg($right_spec) . " up", false);
+		mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} tunnel " . escapeshellarg($left_spec) . " " . escapeshellarg($right_spec) . " up");
 
 		/* Loop through all of the addresses for this interface and apply them as needed */
 		foreach ($addrs as $addr) {
@@ -1731,7 +1731,7 @@ function interface_ipsec_vti_configure($ph1ent) {
 				$right = escapeshellarg($addr['right']);
 			}
 
-			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} " . escapeshellarg($addr['left']) . " " . $right . $addr['alias'], false);
+			mwexec("/sbin/ifconfig " . escapeshellarg($ipsecif) . " {$inet} " . escapeshellarg($addr['left']) . " " . $right . $addr['alias']);
 			/* If alias is empty, this is the first address on the interface and should be used as the gateway. */
 			if (empty($addr['alias'])) {
 				file_put_contents("/tmp/{$ipsecif}_router{$gwtype}", $addr['right']);
@@ -2986,8 +2986,8 @@ function interfaces_sync_setup() {
 			$syncpeer = "-syncpeer";
 		}
 
-		mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} {$syncpeer} up", false);
-		mwexec("/sbin/ifconfig pfsync0 -defer", false);
+		mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} {$syncpeer} up");
+		mwexec("/sbin/ifconfig pfsync0 -defer");
 
 		sleep(1);
 
@@ -3003,7 +3003,7 @@ function interfaces_sync_setup() {
 		log_error(sprintf(gettext("pfsync done in %s seconds."), $i));
 		log_error(gettext("Configuring CARP settings finalize..."));
 	} else {
-		mwexec("/sbin/ifconfig pfsync0 -syncdev -syncpeer down", false);
+		mwexec("/sbin/ifconfig pfsync0 -syncdev -syncpeer down");
 	}
 
 	$carplist = get_configured_vip_list('all', VIP_CARP);
@@ -3843,10 +3843,10 @@ EOD;
 
 	/* configure wireless */
 	$wlcmd_args = implode(" ", $wlcmd);
-	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $wlcmd_args, false);
+	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $wlcmd_args);
 	fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " " . "$wlcmd_args \n");
 	/* Bring the interface up only after setting up all the other parameters. */
-	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up", false);
+	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
 	fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " up\n");
 	fclose($wlan_setup_log);
 

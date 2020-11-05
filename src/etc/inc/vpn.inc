@@ -388,7 +388,7 @@ l2tps:
 
 	set ccp yes mppc
 
-	set iface name l2tp
+	set iface name l2tps
 	set iface group l2tp
 	set iface up-script /usr/local/sbin/vpn-linkup-l2tp
 	set iface down-script /usr/local/sbin/vpn-linkdown-l2tp

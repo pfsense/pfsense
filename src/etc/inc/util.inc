@@ -1599,6 +1599,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'pppoe',
 				'pptp',
 				'l2tp',
+				'l2tps',
 				'sl',
 				'gif',
 				'gre',
@@ -1634,6 +1635,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'lagg',
 				'vip',
 				'ipfw',
+				'l2tps'
 		);
 	}
 	switch ($mode) {
@@ -1670,7 +1672,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		$alink = explode(" ", $link);
 		$ifname = rtrim(trim($alink[0]), '*');
 		/* trim out all numbers before checking for vfaces */
-		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces) &&
+		if (!in_array(array_shift(preg_split('/\d$/', $ifname)), $vfaces) &&
 		    interface_is_vlan($ifname) == NULL &&
 		    interface_is_qinq($ifname) == NULL &&
 		    !stristr($ifname, "_wlan") &&

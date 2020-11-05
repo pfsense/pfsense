@@ -20,4 +20,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-/usr/local/sbin/vpn-linkdown l2tp $1 $2 $3 $4 $5
+/usr/local/sbin/vpn-linkdown l2tps $1 $2 $3 $4 $5

@@ -2986,13 +2986,16 @@ function interfaces_sync_setup() {
 			$syncpeer = "-syncpeer";
 		}
 
-		mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} {$syncpeer} up");
+		mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} " .
+		    "{$syncpeer} up");
 		mwexec("/sbin/ifconfig pfsync0 -defer");
 
 		sleep(1);
 
-		/* XXX: Handle an issue with pfsync(4) and carp(4). In a cluster carp will come up before pfsync(4) has updated and so will cause issues
-		 * for existing sessions.
+		/*
+		 * XXX: Handle an issue with pfsync(4) and carp(4). In a
+		 * cluster carp will come up before pfsync(4) has updated and
+		 * so will cause issues for existing sessions.
 		 */
 		log_error(gettext("waiting for pfsync..."));
 		$i = 0;

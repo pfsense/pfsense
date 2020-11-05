@@ -491,10 +491,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("GCM Encryption Algorithms cannot be used with Shared Key mode.");
 	}
 
-	if ($pconfig['dev_mode'] != "tap") {
-		$reqdfields[] = 'tunnel_network';
-		$reqdfieldsn[] = gettext('IPv4 Tunnel network');
-	} else {
+	if ($pconfig['dev_mode'] == "tap") {
 		if ($pconfig['serverbridge_dhcp'] && $pconfig['tunnel_network']) {
 			$input_errors[] = gettext("Using a tunnel network and server bridge settings together is not allowed.");
 		}
@@ -1654,7 +1651,9 @@ else:
 						<?=htmlspecialchars($server['protocol'])?> / <?=htmlspecialchars($server['local_port'])?>
 					</td>
 					<td>
+					<?php if (!empty($server['tunnel_network'])): ?>
 						<?=htmlspecialchars($server['tunnel_network'])?><br />
+					<?php endif; ?>
 						<?=htmlspecialchars($server['tunnel_networkv6'])?>
 					</td>
 					<td>
@@ -1965,7 +1964,6 @@ events.push(function() {
 				hideCheckbox('serverbridge_routegateway', true);
 				hideInput('serverbridge_dhcp_start', true);
 				hideInput('serverbridge_dhcp_end', true);
-				setRequired('tunnel_network', true);
 				if (sharedkey) {
 					hideInput('local_network', true);
 					hideInput('local_networkv6', true);
@@ -1982,7 +1980,6 @@ events.push(function() {
 
 			case "tap":
 				hideInput('tunnel_network', false);
-				setRequired('tunnel_network', false);
 
 				if (!p2p) {
 					hideCheckbox('serverbridge_dhcp', false);

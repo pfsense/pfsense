@@ -977,11 +977,19 @@ function openvpn_reconfigure($mode, $settings) {
 				// If the CIDR is less than a /30, OpenVPN will complain if you try to
 				//  use the server directive. It works for a single client without it.
 				//  See ticket #1417
-				if (!empty($ip) && !empty($mask) && ($cidr < 30)) {
-					$conf .= "server {$ip} {$mask}\n";
-					$conf .= "client-config-dir {$g['openvpn_base']}/server{$vpnid}/csc\n";
+				if ((!empty($ip) && !empty($mask)) ||
+				    (!empty($ipv6) && !empty($prefix))) {
+					$add_ccd = false;
+					if (is_ipaddr($ip) && ($cidr < 30)) {
+						$add_ccd = true;
+						$conf .= "server {$ip} {$mask}\n";
+					}
 					if (is_ipaddr($ipv6)) {
+						$add_ccd = true;
 						$conf .= "server-ipv6 {$ipv6}/{$prefix}\n";
+					}
+					if ($add_ccd) {
+						$conf .= "client-config-dir {$g['openvpn_base']}/server{$vpnid}/csc\n";
 					}
 				}
 			case 'p2p_shared_key':
@@ -1005,8 +1013,11 @@ function openvpn_reconfigure($mode, $settings) {
 			case 'server_tls':
 			case 'server_user':
 			case 'server_tls_user':
-				if (!empty($ip) && !empty($mask)) {
-					$conf .= "server {$ip} {$mask}\n";
+				if ((!empty($ip) && !empty($mask)) ||
+				    (!empty($ipv6) && !empty($prefix))) {
+					if (is_ipaddr($ip)) {
+						$conf .= "server {$ip} {$mask}\n";
+					}
 					if (is_ipaddr($ipv6)) {
 						$conf .= "server-ipv6 {$ipv6}/{$prefix}\n";
 					}

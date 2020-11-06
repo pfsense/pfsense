@@ -834,7 +834,7 @@ function openvpn_reconfigure($mode, $settings) {
 			$proto = "{$proto}-{$mode}";
 	}
 	$dev_mode = $settings['dev_mode'];
-	$cipher = $settings['crypto'];
+	$fbcipher = $settings['data_ciphers_fallback'];
 	// OpenVPN defaults to SHA1, so use it when unset to maintain compatibility.
 	$digest = !empty($settings['digest']) ? $settings['digest'] : "SHA1";
 
@@ -900,7 +900,6 @@ function openvpn_reconfigure($mode, $settings) {
 	$conf .= "persist-tun\n";
 	$conf .= "persist-key\n";
 	$conf .= "proto {$proto}\n";
-	$conf .= "cipher {$cipher}\n";
 	$conf .= "auth {$digest}\n";
 	$conf .= "up /usr/local/sbin/ovpn-linkup\n";
 	$conf .= "down /usr/local/sbin/ovpn-linkdown\n";
@@ -1313,14 +1312,23 @@ function openvpn_reconfigure($mode, $settings) {
 				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, $tls_directive, $tlsopt);
 			}
 
-			/* NCP support. If it is not set, assume enabled since that is OpenVPN's default. */
+			/* Data encryption cipher support.
+			 * If it is not set, assume enabled since that is OpenVPN's default.
+			 * Note that diabling this is now deprecated and will be removed in a future version of OpenVPN */
 			if ($settings['ncp_enable'] == "disabled") {
 				$conf .= "ncp-disable\n";
+				$conf .= "cipher {$fbcipher}\n";
 			} else {
-				/* If the ncp-ciphers list is empty, don't specify a list so OpenVPN's default will be used. */
-				if (!empty($settings['ncp-ciphers'])) {
-					$conf .= "ncp-ciphers " . str_replace(',', ':', $settings['ncp-ciphers']) . "\n";
+				/* If the data_ciphers list is empty, populate it with the fallback cipher. */
+				if (empty($settings['data_ciphers'])) {
+					$settings['data_ciphers'] = $fbcipher;
 				}
+				/* Add the fallback cipher to the data ciphers list if it isn't already present */
+				if (!in_array($fbcipher, explode(',', $settings['data_ciphers']))) {
+					$settings['data_ciphers'] .= ',' . $fbcipher;
+				}
+				$conf .= "data-ciphers " . str_replace(',', ':', $settings['data_ciphers']) . "\n";
+				$conf .= "data-ciphers-fallback {$fbcipher}\n";
 			}
 
 			break;

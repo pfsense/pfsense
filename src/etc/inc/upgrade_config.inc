@@ -6306,6 +6306,44 @@ function upgrade_209_to_210() {
 		$config['system']['dnslocalhost'] = 'remote';
 	}
 }
+
+/* OpenVPN Data Cipher changes
+ * https://redmine.pfsense.org/issues/10919 */
+function upgrade_210_to_211() {
+	global $config;
+	init_config_arr(array('openvpn', 'openvpn-server'));
+	init_config_arr(array('openvpn', 'openvpn-client'));
+	foreach(array('server', 'client') as $mode) {
+		foreach ($config['openvpn']["openvpn-{$mode}"] as & $settings) {
+			/* Rename ncp-ciphers to data_ciphers */
+			if (!empty($settings['ncp-ciphers'])) {
+				$settings['data_ciphers'] = $settings['ncp-ciphers'];
+			} elseif ($settings['crypto'] == 'none') {
+				$settings['data_ciphers'] = 'none';
+			} else {
+				$settings['data_ciphers'] = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305';
+			}
+			if (isset($settings['ncp-ciphers'])) {
+				unset($settings['ncp-ciphers']);
+			}
+			/* Add crypto to data_ciphers */
+			if (!empty($settings['crypto']) &&
+			    ($settings['crypto'] != 'none') &&
+			    !in_array($settings['crypto'], explode(',', $settings['data_ciphers']))) {
+				$settings['data_ciphers'] .= ',' . $settings['crypto'];
+			}
+			/* Rename crypto to data_ciphers_fallback */
+			if (isset($settings['crypto'])) {
+				$settings['data_ciphers_fallback'] = $settings['crypto'];
+				unset($settings['crypto']);
+			}
+			/* Forcefully enable data cipher negotiation since
+			 * disabling negotiation is now deprecated */
+			$settings['ncp_enable'] = "enabled";
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

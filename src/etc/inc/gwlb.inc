@@ -242,6 +242,7 @@ function setup_gateways_monitor() {
 				if (interface_isppp_type($gateway['friendlyiface'])) {
 					route_add_or_change($gateway['monitor'],
 					    '', $gateway['interface']);
+					system_staticroutes_configure($gateway['friendlyiface']);
 				} else {
 					route_add_or_change($gateway['monitor'],
 					    $gateway['gateway']);
@@ -284,6 +285,7 @@ function setup_gateways_monitor() {
 				if (interface_isppp_type($gateway['friendlyiface'])) {
 					route_add_or_change($gateway['monitor'],
 					    '', $gateway['interface']);
+					system_staticroutes_configure($gateway['friendlyiface']);
 				} else {
 					route_add_or_change($gateway['monitor'],
 					    $gateway['gateway']);

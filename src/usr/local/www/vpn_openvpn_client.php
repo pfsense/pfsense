@@ -96,7 +96,8 @@ if ($act == "new") {
 	$pconfig['server_port'] = 1194;
 	$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 	$pconfig['digest'] = "SHA256";
-	$pconfig['compression'] = "none";
+	$pconfig['allow_compression'] = "no";
+	$pconfig['compression'] = "";
 }
 
 global $simplefields;
@@ -158,6 +159,7 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['remote_network'] = $a_client[$id]['remote_network'];
 		$pconfig['remote_networkv6'] = $a_client[$id]['remote_networkv6'];
 		$pconfig['use_shaper'] = $a_client[$id]['use_shaper'];
+		$pconfig['allow_compression'] = $a_client[$id]['allow_compression'];
 		$pconfig['compression'] = $a_client[$id]['compression'];
 		$pconfig['auth-retry-none'] = $a_client[$id]['auth-retry-none'];
 		$pconfig['passtos'] = $a_client[$id]['passtos'];
@@ -501,6 +503,7 @@ if ($_POST['save']) {
 		$client['remote_network'] = $pconfig['remote_network'];
 		$client['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$client['use_shaper'] = $pconfig['use_shaper'];
+		$client['allow_compression'] = $pconfig['allow_compression'];
 		$client['compression'] = $pconfig['compression'];
 		$client['auth-retry-none'] = $pconfig['auth-retry-none'];
 		$client['passtos'] = $pconfig['passtos'];
@@ -934,15 +937,25 @@ if ($act=="new" || $act=="edit"):
 				'Not compatible with UDP Fast I/O.');
 
 	$section->addInput(new Form_Select(
-		'compression',
-		'Compression',
-		$pconfig['compression'],
-		$openvpn_compression_modes
-	))->setHelp('Compress tunnel packets using the LZO algorithm. %1$s' .
+		'allow_compression',
+		'Allow Compression',
+		$pconfig['allow_compression'],
+		$openvpn_allow_compression
+		))->setHelp('Allow compression to be used with this VPN instance. %1$s' .
 				'Compression can potentially increase throughput but may allow an attacker to extract secrets if they can control ' .
 				'compressed plaintext traversing the VPN (e.g. HTTP). ' .
 				'Before enabling compression, consult information about the VORACLE, CRIME, TIME, and BREACH attacks against TLS ' .
 				'to decide if the use case for this specific VPN is vulnerable to attack. %1$s%1$s' .
+				'Asymmetric compression allows an easier transition when connecting with older peers. %1$s',
+				'<br/>');
+
+	$section->addInput(new Form_Select(
+		'compression',
+		'Compression',
+		$pconfig['compression'],
+		$openvpn_compression_modes
+		))->setHelp('Deprecated. Compress tunnel packets using the LZO algorithm. %1$s' .
+				'Compression can potentially dangerous and insecure. See the note on the Allow Compression option above. %1$s%1$s' .
 				'Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the ' .
 				'packets is not being compressed efficiently.',
 				'<br/>');

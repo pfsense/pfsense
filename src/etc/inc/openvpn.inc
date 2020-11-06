@@ -123,15 +123,22 @@ $openvpn_client_modes = array(
 	'p2p_tls' => gettext("Peer to Peer ( SSL/TLS )"),
 	'p2p_shared_key' => gettext("Peer to Peer ( Shared Key )"));
 
+global $openvpn_allow_compression;
+$openvpn_allow_compression = array(
+	'asym' => gettext("Decompress incoming, do not compress outgoing (Asymmetric)"),
+	'no'   => gettext("Refuse any non-stub compression (Most secure)"),
+	'yes'  => gettext("Compress packets (WARNING: Potentially dangerous!)"),
+);
+
 global $openvpn_compression_modes;
 $openvpn_compression_modes = array(
+	'' => gettext("Disable Compression [Omit Preference]"),
 	'none' => gettext("Disable Compression, retain compression packet framing [compress]"),
+	'stub' => gettext("Enable Compression (stub) [compress stub]"),
+	'stub-v2' => gettext("Enable Compression (stub v2) [compress stub-v2]"),
 	'lz4' => gettext("LZ4 Compression [compress lz4]"),
 	'lz4-v2' => gettext("LZ4 Compression v2 [compress lz4-v2]"),
 	'lzo' => gettext("LZO Compression [compress lzo, equivalent to comp-lzo yes for compatibility]"),
-	'stub' => gettext("Enable Compression (stub) [compress stub]"),
-	'stub-v2' => gettext("Enable Compression (stub v2) [compress stub-v2]"),
-	'' => gettext("Omit Preference (Use OpenVPN Default)"),
 	'noadapt' => gettext("Omit Preference, + Disable Adaptive LZO Compression [Legacy style, comp-noadapt]"),
 	'adaptive' => gettext("Adaptive LZO Compression [Legacy style, comp-lzo adaptive]"),
 	'yes' => gettext("LZO Compression [Legacy style, comp-lzo yes]"),
@@ -1317,6 +1324,10 @@ function openvpn_reconfigure($mode, $settings) {
 			}
 
 			break;
+	}
+
+	if (!empty($settings['allow_compression'])) {
+		$conf .= "allow-compression {$settings['allow_compression']}\n";
 	}
 
 	$compression = "";

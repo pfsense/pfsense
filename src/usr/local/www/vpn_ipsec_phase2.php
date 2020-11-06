@@ -412,7 +412,7 @@ if ($_POST['save']) {
 			// add new vtimap if needed
 			if (($ph1ent['iketype'] == 'ikev1') ||
 			    isset($ph1ent['splitconn'])) {
-				if ($vtisubnet_spec ||
+				if (!empty($vtisubnet_spec) &&
 				    is_array($vtisubnet_spec)) {
 					$a_vtimaps[] = ipsec_create_vtimap(
 					    $ph1ent['ikeid'],
@@ -422,8 +422,8 @@ if ($_POST['save']) {
 					    $ph1ent['ikeid'], 0);
 				}
 			} else {
-				if (!$vtisubnet_spec &&
-				    !is_array($vtisubnet_spec)) {
+				if (empty($vtisubnet_spec) &&
+				    is_array($vtisubnet_spec)) {
 					$a_vtimaps[] = ipsec_create_vtimap(
 					    $ph1ent['ikeid'], 0);
 				}

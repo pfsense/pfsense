@@ -515,7 +515,7 @@ if ($_POST['save']) {
 		$vtisubnet_spec = ipsec_vti($ph1ent, true);
 		if ((($pconfig['iketype'] != $a_phase1[$p1index]['iketype']) ||
 		    (isset($pconfig['splitconn']) != isset($a_phase1[$p1index]['splitconn']))) &&
-		    ($vtisubnet_spec || is_array($vtisubnet_spec))) {
+		    !empty($vtisubnet_spec) && is_array($vtisubnet_spec)) {
 			foreach ($a_vtimaps as $id => $vtimap) {
 				if ($vtimap['reqid'] == $ph1ent['ikeid']) {
 					unset($a_vtimaps[$id]);

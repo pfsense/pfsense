@@ -128,11 +128,11 @@ $form->add($section);
 // Second row
 $section2 = new Form_Section('Peers');
 
-if (!is_array($pconfig['peers'])) {
-	$pconfig['peers'] = array();
+if (!is_array($pconfig['peer'])) {
+	$pconfig['peer'] = array();
 }
 
-$peer_count = count($pconfig['peers']);
+$peer_count = count($pconfig['peer']);
 $peer_num = 0;
 $peer_help = gettext("Description");
 $dnshost_help = gettext("Public key");
@@ -142,10 +142,10 @@ $aips_help = gettext("Allowed IPs");
 
 // If there are no peers, make an empty entry for initial display. This will be the case when creating a new tunnel
 if ($peer_count == 0) {
-	$pconfig['peers'][] = array('descr' => '', 'endpoint' => '', 'persistentkeepalive' => '', 'publickey', 'allowedips' => '');
+	$pconfig['peer'][] = array('descr' => '', 'endpoint' => '', 'persistentkeepalive' => '', 'publickey', 'allowedips' => '');
 }
 
-foreach ($pconfig['peers'] as $peer) {
+foreach ($pconfig['peer'] as $peer) {
 	$is_last_peer = (($peer_num == $peer_count - 1) || $peer_count == 0);
 	$group = new Form_Group('Peer ' . $peer_num);
 	$group->addClass('repeatable')->addClass('peer_group_' . $peer_num);

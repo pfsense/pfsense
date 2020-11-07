@@ -85,7 +85,7 @@ if (array_key_exists('delidx', $_POST)) {
 						<td><?=$tunnel['descr']?></td>
 						<td><?=$tunnel['interface']['address']?></td>
 						<td><?=$tunnel['interface']['listenport']?></td>
-						<td><?=count($tunnel['peers'])?></td>
+						<td><?=count($tunnel['peer'])?></td>
 
 						<td style="cursor: pointer;">
 							<a class="fa fa-pencil" href="vpn_wg_edit.php?index=<?=$i?>" title="<?=gettext("Edit tunnel"); ?>"></a>
@@ -96,7 +96,7 @@ if (array_key_exists('delidx', $_POST)) {
 					<tr  class="peer-entries" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 						<td>Peers</td>
 <?php
-	if ($tunnel['peers'] && count($tunnel['peers']) > 0) { ?>
+	if ($tunnel['peer'] && count($tunnel['peer']) > 0) { ?>
 						<td colspan="6">
 							<table class="table table-hover" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 								<thead>
@@ -109,7 +109,7 @@ if (array_key_exists('delidx', $_POST)) {
 								</thead>
 								<tbody>
 
-<?php $idx=0; foreach ($tunnel['peers'] as $peer) { ?>
+<?php $idx=0; foreach ($tunnel['peer'] as $peer) { ?>
 									<tr>
 										<td><?=$peer['descr']?></td>
 										<td><?=$peer['endpoint']?></td>

@@ -93,7 +93,7 @@ function wg_do_post($post, $json = false) {
 	$pconfig['interface']['privatekey'] = $post['privatekey'];
 
 	// Peers section
-	$pconfig['peers'] = array();
+	$pconfig['peer'] = array();
 
 	$idx = 0;
 
@@ -109,7 +109,7 @@ function wg_do_post($post, $json = false) {
 		$peer['descr'] =  $post['descp' . $idx];
 		$peer['persistentkeepalive'] =  $post['persistentkeepalive' . $idx];
 
-		$pconfig['peers'][] = $peer;
+		$pconfig['peer'][] = $peer;
 		$idx++;
 	}
 
@@ -172,8 +172,8 @@ function make_wg_conf($tunnel) {
 	$txt .= "\n";
 
 	// Process peers section
-	if (isset($tunnel["peers"]) && count($tunnel["peers"]) > 0) {
-		foreach ($tunnel["peers"] as $peer) {
+	if (isset($tunnel["peer"]) && count($tunnel["peer"]) > 0) {
+		foreach ($tunnel["peer"] as $peer) {
 			$txt .= "# Peer: {$peer['descr']}\n";
 			$txt .= "[Peer]\n";
 
@@ -239,24 +239,24 @@ Sample Wireguard config.xml entry
 				<address>10.0.0.1/24, fdc9:281f:04d7:9ee9::1/64</address>
 				<listenport>51820</listenport>
 			</interface>
-			<peers>
+			<peer>
 				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
 				<endpoint>192.88.8.88:51820</endpoint>
 				<allowedips>10.192.122.1/32, 10.192.124.1/24</allowedips>
 				<descr>Alice</descr>
-			</peers>
-			<peers>
+			</peer>
+			<peer>
 				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
 				<endpoint>192.88.8.88:51820</endpoint>
 				<allowedips>10.192.122.2/32, 10.192.124.2/24</allowedips>
 				<descr>Bob</descr>
-			</peers>
-			<peers>
+			</peer>
+			<peer>
 				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
 				<endpoint>192.88.8.88:51820</endpoint>
 				<allowedips>10.192.122.3/32, 10.192.124.3/24</allowedips>
 				<descr>Charlie</descr>
-			</peers>
+			</peer>
 		</tunnel>
 		<tunnel>
 			<name>wg1</name>
@@ -267,13 +267,13 @@ Sample Wireguard config.xml entry
 				<address>10.0.0.1/24, fdc9:281f:04d7:9ee9::1/64</address>
 				<listenport>51820</listenport>
 			</interface>
-			<peers>
+			<peer>
 				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
 				<endpoint>192.88.8.88:51820</endpoint>
 				<allowedips>10.192.122.1/32, 10.192.124.1/24</allowedips>
 				<persistentkeepalive>25</persistentkeepalive>
 				<descr>Sam</descr>
-			</peers>
+			</peer>
 		</tunnel>
 	</wireguard>
 */

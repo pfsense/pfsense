@@ -482,7 +482,7 @@ if ($_POST['apply']) {
 		 */
 		if (!empty($vlan_redo)) {
 			foreach ($vlan_redo as $vlredo) {
-				interfaces_vlan_configure($vlredo);
+				interfaces_vlan_configure_mtu($vlredo);
 			}
 		}
 

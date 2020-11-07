@@ -49,7 +49,7 @@ if ($_POST['save']) {
 	$input_errors = $saveresult['input_errors'];
 	$pconfig = $saveresult['pconfig'];
 	if (!$input_errors) {
-		// Create tthe new WG config files
+		// Create the new WG config files
 		wg_create_config_files();
 
 		// ToDo: use wg-quick to start the newly configured tunnels using the files wg?.conf created sabove

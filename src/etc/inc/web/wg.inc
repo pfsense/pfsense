@@ -1,13 +1,9 @@
 <?php
 /*
- * syslog.inc
+ * wg.inc
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2014-2020 Rubicon Communications, LLC (Netgate)
- * All rights reserved.
- *
- * originally part of m0n0wall (http://m0n0.ch/wall)
- * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

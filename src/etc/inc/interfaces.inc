@@ -1481,23 +1481,12 @@ function interface_vxlan_configure(&$vxlan, $vxlankey = "", $flush = true) {
 	}
 
 	/* Interface is defined */
-	if (!empty($vxlan['vxlanif'])) {
-		if (!platform_booting()) {
-			/*
-			 * Calling this after boot implies we are editing an
-			 * existing interface so destroy it first
-			 */
-			pfSense_interface_destroy($vxlan['vxlanif']);
-		}
-		/* Create the interfaces at boot */
+	if (platform_booting() || !(empty($vxlan['vxlanif']))) {
+		pfSense_interface_destroy($vxlan['vxlanif']);
 		pfSense_interface_create($vxlan['vxlanif']);
 		$vxlanif = $vxlan['vxlanif'];
 	} else {
-		/*
-		 * The interface is undefined, we are creating a new one. Next
-		 * interface name is returned
-		 */
-		$vxlanif = pfSense_interface_create("vxlan");
+		$vxlanif = pfSense_interface_create("vxlanif");
 	}
 
 	$ifconfigcmd = "/sbin/ifconfig " . escapeshellarg($vxlanif) .

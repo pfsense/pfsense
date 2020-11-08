@@ -36,7 +36,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
-require_Once("alias-utils.inc");
+require_once("alias-utils.inc");
 
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];

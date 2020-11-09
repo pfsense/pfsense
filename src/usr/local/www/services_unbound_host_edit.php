@@ -242,7 +242,7 @@ $section->addInput(new Form_StaticText(
 		"and parent domain (e.g., 'somesite.google.com' is entered as host='somesite' and parent domain='google.com'). Any " .
 		"attempt to lookup that host will automatically return the given IP address, and any usual external lookup server for " .
 		"the domain will not be queried. Both the name and parent domain can contain 'non-standard', 'invalid' and 'local' " .
-		"domains such as 'test', 'mycompany.localdomain', or '1.168.192.in-addr.arpa', as well as usual publicly resolvable names ".
+		"domains such as 'test', 'nas.home.arpa', 'mycompany.localdomain', or '1.168.192.in-addr.arpa', as well as usual publicly resolvable names ".
 		"such as 'www' or 'google.co.uk'.") .
 	'</span>'
 ));

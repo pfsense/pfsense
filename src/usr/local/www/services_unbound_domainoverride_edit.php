@@ -172,7 +172,7 @@ $section->addInput(new Form_StaticText(
 	'<span class="help-block">' .
 	gettext("This page is used to specify domains for which the resolver's standard DNS lookup process will be overridden, " .
 	"and the resolver will query a different (non-standard) lookup server instead. It is possible to enter 'non-standard', 'invalid' " .
-	"and 'local' domains such as 'test', 'mycompany.localdomain', or '1.168.192.in-addr.arpa', as well as usual publicly resolvable " .
+	"and 'local' domains such as 'test', 'nas.home.arpa', 'mycompany.localdomain', or '1.168.192.in-addr.arpa', as well as usual publicly resolvable " .
 	"domains such as 'org', 'info', or 'google.co.uk'.  The IP address entered will be treated as the IP address of an authoritative " .
 	"lookup server for the domain (including all of its subdomains), and other lookup servers will not be queried.") .
 	'</span>'

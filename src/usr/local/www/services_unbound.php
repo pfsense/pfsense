@@ -635,7 +635,7 @@ endforeach;
 <span class="help-block">
 	Enter any individual hosts for which the resolver's standard DNS lookup process should be overridden and a specific
 	IPv4 or IPv6 address should automatically be returned by the resolver. Standard and also non-standard names and parent domains
-	can be entered, such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. Any lookup attempt for
+	can be entered, such as 'test', 'nas.home.arpa', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. Any lookup attempt for
 	the host will automatically return the given IP address, and the usual lookup server for the domain will not be queried for
 	the host's records.
 </span>
@@ -692,7 +692,7 @@ endforeach;
 <span class="help-block">
 	Enter any domains for which the resolver's standard DNS lookup process should be overridden and a different (non-standard)
 	lookup server should be queried instead. Non-standard, 'invalid' and local domains, and subdomains, can also be entered,
-	such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. The IP address is treated as the
+	such as 'test', 'nas.home.arpa', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. The IP address is treated as the
 	authoritative lookup server for the domain (including all of its subdomains), and other lookup servers will not be queried.
 	If there are multiple authoritative DNS servers available for a domain then make a separate entry for each, 
 	using the same domain name.

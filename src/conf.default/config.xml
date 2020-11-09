@@ -5,7 +5,7 @@
 	<system>
 		<optimization>normal</optimization>
 		<hostname>pfSense</hostname>
-		<domain>localdomain</domain>
+		<domain>home.arpa</domain>
 		<dnsserver/>
 		<dnsallowoverride/>
 		<group>

@@ -504,30 +504,39 @@ function interface_vlan_configure(&$vlan, $flush = true) {
 	return $vlanif;
 }
 
-/* reconfigure VLAN childs interfaces after MTU changes, see https://redmine.pfsense.org/issues/11035 */
+/*
+ * reconfigure VLAN childs interfaces after MTU changes, see
+ * https://redmine.pfsense.org/issues/11035
+ */
 function interfaces_vlan_configure_mtu($parentif = "") {
 	global $config;
 
 	init_config_arr(array('ppps', 'ppp'));
-	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $vlan) {
-			if ($parentif == $vlan['if']) {
-				if (interface_vlan_mtu_configured($vlan['vlanif'])) {
-				       set_interface_mtu($vlan['vlanif'], interface_vlan_mtu_configured($vlan['vlanif']));
-				}
-				if (empty($config['ppps']['ppp'])) {
+	if (!is_array($config['vlans']['vlan']) ||
+	    !count($config['vlans']['vlan'])) {
+		return;
+	}
+
+	foreach ($config['vlans']['vlan'] as $vlan) {
+		if ($parentif != $vlan['if']) {
+			continue;
+		}
+		if (interface_vlan_mtu_configured($vlan['vlanif'])) {
+		       set_interface_mtu($vlan['vlanif'],
+			   interface_vlan_mtu_configured($vlan['vlanif']));
+		}
+		if (empty($config['ppps']['ppp'])) {
+			continue;
+		}
+		// PPP interfaces must be restarted to adjust MTU changes
+		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+			$ports = explode(',', $ppp['ports']);
+			foreach ($ports as $pid => $port) {
+				if ($port != $vlan['vlanif']) {
 					continue;
 				}
-				// PPP interfaces must be restarted to adjust MTU changes
-				foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-					$ports = explode(',', $ppp['ports']);
-					foreach ($ports as $pid => $port) {
-						if ($port == $vlan['vlanif']) {
-							$confif = convert_real_interface_to_friendly_interface_name($ppp['if']);
-							interface_configure($confif);
-						}
-					}
-				}
+				$confif = convert_real_interface_to_friendly_interface_name($ppp['if']);
+				interface_configure($confif);
 			}
 		}
 	}

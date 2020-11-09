@@ -57,7 +57,7 @@ if ($_POST['save']) {
 		header("Location: vpn_wg.php");
 	}
 } else if ($_POST['action'] == 'genkeys') { // Process ajax call requesting new key pair
-	print(json_encode(genKeyPair()));
+	print(genKeyPair(true));
 	// Debug:
 	// print(json_encode(array('pubkey' => 'myPublicKeyThingyXXXXXXXXXXXXXXXXXX==', 'privkey' => 'myPrivateKeyThingyYYYYYYYYYYYYYYYYYY==')));
 	exit;

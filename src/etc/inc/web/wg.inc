@@ -25,13 +25,14 @@ require_once('config.inc');
 $wgbinpath = '/usr/local/bin/wg';
 
 // Generate private key
-function genKeyPair() {
+function genKeyPair($json = false) {
 	global $wgbinpath;
 
 	$privkey = exec("{$wgbinpath} genkey");
 	$pubkey = genPubKey($privkey);
 
-	return array('privkey' => $privkey, 'pubkey' => $pubkey);
+	$res = array('privkey' => $privkey, 'pubkey' => $pubkey);
+	return $json ? json_encode($res) : $res;
 }
 
 // Compose the public key from a provided private key

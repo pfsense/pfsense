@@ -22,6 +22,25 @@
 require_once("globals.inc");
 require_once('config.inc');
 
+$wgbinpath = '/usr/local/bin/wg';
+
+// Generate private key
+function genKeyPair() {
+	global $wgbinpath;
+
+	$privkey = exec("{$wgbinpath} genkey");
+	$pubkey = genPubKey($privkey);
+
+	return array('privkey' => $privkey, 'pubkey' => $pubkey);
+}
+
+// Compose the public key from a provided private key
+function genPubKey($privkey) {
+	global $wgbinpath;
+
+	return (exec("echo {$privkey} | {$wgbinpath} pubkey"));
+}
+
 // Return the next wireguard interface name that is not currently in use
 function nextFreeWGInterfaceName() {
 	global $config;
@@ -76,6 +95,7 @@ function wg_do_post($post, $json = false) {
 	$pconfig['interface']['address'] = $post['address'];
 	$pconfig['interface']['listenport'] = $post['listenport'];
 	$pconfig['interface']['privatekey'] = $post['privatekey'];
+	$pconfig['interface']['publickey'] = $post['publickey'];
 
 	// Peers section
 	$pconfig['peers'] = array();
@@ -143,6 +163,7 @@ function make_wg_conf($tunnel) {
 	if (!empty($tunnel["interface"]["privatekey"])) {
 		$txt .= "PrivateKey = {$tunnel["interface"]["privatekey"]}\n";
 	}
+
 
 	if (!empty($tunnel["interface"]["address"])) {
 		$txt .= "Address = {$tunnel["interface"]["address"]}\n";

@@ -56,6 +56,11 @@ if ($_POST['save']) {
 		// Go back to the tunnel table
 		header("Location: vpn_wg.php");
 	}
+} else if ($_POST['action'] == 'genkeys') { // Process ajax call requesting new key pair
+	print(json_encode(genKeyPair()));
+	// Debug:
+	// print(json_encode(array('pubkey' => 'myPublicKeyThingyXXXXXXXXXXXXXXXXXX==', 'privkey' => 'myPrivateKeyThingyYYYYYYYYYYYYYYYYYY==')));
+	exit;
 } else {
 	if (isset($index) && $tunnels[$index]) {
 		$pconfig = &$tunnels[$index];
@@ -115,14 +120,30 @@ $section->addInput(new Form_Input(
 	$pconfig['interface']['listenport']
 ))->setHelp('Port to listen on.');
 
+$group = new Form_Group('Interface keys');
 
-$section->addInput(new Form_Input(
+$group->add(new Form_Input(
 	'privatekey',
 	'Private key',
 	'text',
 	$pconfig['interface']['privatekey']
-))->setHelp('Private, sorry.');
+))->setHelp('Private key for this interface.');
 
+$group->add(new Form_Input(
+	'publickey',
+	'Public key',
+	'text',
+	$pconfig['interface']['publickey']
+))->setHelp('Public key for this interface.');
+
+$group->add(new Form_Button(
+	'genkeys',
+	'Generate',
+	null,
+	'fa-key'
+))->setWidth(1)->addClass('btn-primary btn-sm')->setHelp('New keys.');
+
+$section->add($group);
 $form->add($section);
 
 // Second row
@@ -215,6 +236,8 @@ $form->add($section2);
 
 print($form);
 
+$genkeywarning = gettext('Are you sure you want to generate a new private and public key for this tunnel interface? ' .
+						 'All remote tunnels that use the current public key will need to be updated!');
 ?>
 
 <script type="text/javascript">
@@ -246,6 +269,27 @@ events.push(function() {
 	// on click . .
 	$('#add2rows').click(function() {
 		add2rows();
+	});
+
+	$("#genkeys").prop('type' ,'button');
+
+	// Request a new public/private key pair
+	$('#genkeys').click(function(event) {
+		if ($('#privatekey').val().length == 0 || confirm("<?=$genkeywarning?>")) {
+			ajaxRequest = $.ajax('/vpn_wg_edit.php',
+				{
+				type: 'post',
+				data: {
+					action: 'genkeys'
+				},
+				success: function(response, textStatus, jqXHR) {
+					resp = JSON.parse(response);
+					// console.log(response);
+					$('#publickey').val(resp.pubkey);
+					$('#privatekey').val(resp.privkey);
+				}
+			});
+		}
 	});
 
 	// Similar to the functions in pfSenseHelpers.js but we add two rows, not just one so the code changes somewhat

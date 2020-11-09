@@ -88,6 +88,7 @@ if ($_POST['act'] == "del") {
 if ($act == "new") {
 	$pconfig['ncp_enable'] = "enabled";
 	$pconfig['data_ciphers'] = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305';
+	$pconfig['data_ciphers_fallback'] = 'AES-256-CBC';
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
 	$pconfig['tlsauth_keydir'] = "default";
@@ -824,7 +825,7 @@ if ($act=="new" || $act=="edit"):
 		($pconfig['ncp_enable'] == "enabled")
 	))->setHelp('This option allows OpenVPN clients and servers to negotiate a compatible set of acceptable cryptographic ' .
 			'data encryption algorithms from those selected in the Data Encryption Algorithms list below. ' .
-			'Diabling this feature is deprecated.%1$s%2$s%3$s');
+			'Disabling this feature is deprecated.');
 
 	foreach (explode(",", $pconfig['data_ciphers']) as $cipher) {
 		$data_ciphers_list[$cipher] = $cipher;
@@ -1178,8 +1179,9 @@ else:
 			<thead>
 				<tr>
 					<th><?=gettext("Interface")?></th>
-					<th><?=gettext("Protocol")?></th>
+					<th data-sortable-type="alpha"><?=gettext("Protocol")?></th>
 					<th><?=gettext("Server")?></th>
+					<th><?=gettext("Mode / Crypto")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>
@@ -1190,6 +1192,13 @@ else:
 	$i = 0;
 	foreach ($a_client as $client):
 		$server = "{$client['server_addr']}:{$client['server_port']}";
+		$dc = openvpn_build_data_cipher_list($client['data_ciphers'], $client['data_ciphers_fallback']);
+		$dca = explode(',', $dc);
+		if (count($dca) > 5) {
+			$dca = array_slice($dca, 0, 5);
+			$dca[] = '[...]';
+		}
+		$dc = implode(', ', $dca);
 ?>
 				<tr <?=isset($client['disable']) ? 'class="disabled"':''?>>
 					<td>
@@ -1197,9 +1206,26 @@ else:
 					</td>
 					<td>
 						<?=htmlspecialchars($client['protocol'])?>
+						<br/>(<?= htmlspecialchars(strtoupper($client['dev_mode'])) ?>)
 					</td>
 					<td>
 						<?=htmlspecialchars($server)?>
+					</td>
+					<td>
+						<strong><?= gettext('Mode') ?>:</strong> <?= htmlspecialchars($openvpn_client_modes[$client['mode']]) ?>
+						<br/>
+						<strong><?= gettext('Data Ciphers') ?>:</strong> <?= htmlspecialchars($dc) ?>
+						<br/>
+						<strong><?= gettext('Digest') ?>:</strong> <?= htmlspecialchars($client['digest']) ?>
+					<?php if (!empty($client['dh_length'])): ?>
+						<br/>
+						<strong><?= gettext('D-H Params') ?>:</strong>
+						<?php if (is_numeric($client['dh_length'])): ?>
+							<?= htmlspecialchars($client['dh_length']) ?> <?= gettext('bits') ?>
+						<?php elseif ($client['dh_length'] == "none"): ?>
+							<?= gettext("Disabled, ECDH Only") ?>
+						<?php endif; ?>
+					<?php endif; ?>
 					</td>
 					<td>
 						<?=htmlspecialchars($client['description'])?>

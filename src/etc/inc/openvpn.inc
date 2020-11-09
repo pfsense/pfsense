@@ -1311,27 +1311,18 @@ function openvpn_reconfigure($mode, $settings) {
 				}
 				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, $tls_directive, $tlsopt);
 			}
-
-			/* Data encryption cipher support.
-			 * If it is not set, assume enabled since that is OpenVPN's default.
-			 * Note that diabling this is now deprecated and will be removed in a future version of OpenVPN */
-			if ($settings['ncp_enable'] == "disabled") {
-				$conf .= "ncp-disable\n";
-				$conf .= "cipher {$fbcipher}\n";
-			} else {
-				/* If the data_ciphers list is empty, populate it with the fallback cipher. */
-				if (empty($settings['data_ciphers'])) {
-					$settings['data_ciphers'] = $fbcipher;
-				}
-				/* Add the fallback cipher to the data ciphers list if it isn't already present */
-				if (!in_array($fbcipher, explode(',', $settings['data_ciphers']))) {
-					$settings['data_ciphers'] .= ',' . $fbcipher;
-				}
-				$conf .= "data-ciphers " . str_replace(',', ':', $settings['data_ciphers']) . "\n";
-				$conf .= "data-ciphers-fallback {$fbcipher}\n";
-			}
-
 			break;
+	}
+
+	/* Data encryption cipher support.
+	 * If it is not set, assume enabled since that is OpenVPN's default.
+	 * Note that diabling this is now deprecated and will be removed in a future version of OpenVPN */
+	if ($settings['ncp_enable'] == "disabled") {
+		$conf .= "ncp-disable\n";
+		$conf .= "cipher {$fbcipher}\n";
+	} else {
+		$conf .= "data-ciphers " . str_replace(',', ':', openvpn_build_data_cipher_list($settings['data_ciphers'], $fbcipher)) . "\n";
+		$conf .= "data-ciphers-fallback {$fbcipher}\n";
 	}
 
 	if (!empty($settings['allow_compression'])) {
@@ -2252,4 +2243,17 @@ function openvpn_is_tunnel_network_in_use($net) {
 	}
 	return false;
 }
+
+function openvpn_build_data_cipher_list($data_ciphers = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305', $fallback_cipher = 'AES-256-GBC') {
+	/* If the data_ciphers list is empty, populate it with the fallback cipher. */
+	if (empty($data_ciphers)) {
+		$data_ciphers = $fallback_cipher;
+	}
+	/* Add the fallback cipher to the data ciphers list if it isn't already present */
+	if (!in_array($fallback_cipher, explode(',', $data_ciphers))) {
+		$data_ciphers .= ',' . $fallback_cipher;
+	}
+	return $data_ciphers;
+}
+
 ?>

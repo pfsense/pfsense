@@ -22,21 +22,6 @@
 require_once("globals.inc");
 require_once('config.inc');
 
-// Create public and private keys
-function wgCreateKeys() {
-	global $config;
-
-	// ToDo Inset wireguard magic to create public and private keys
-	// Debug
-	$pubkey = "xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=";
-	$privkey = "yAnz5TF+lXXJte14tji3zlMNq+hd2rYUIgJBgB3fBmk=";
-
-	$config['wireguard']['fwpubkey'] = $pubkey;
-	$config['wireguard']['fwprivkey'] = $privkey;
-
-	write_config("Wireguard keys created");
-}
-
 // Return the next wireguard interface name that is not currently in use
 function nextFreeWGInterfaceName() {
 	global $config;
@@ -93,7 +78,8 @@ function wg_do_post($post, $json = false) {
 	$pconfig['interface']['privatekey'] = $post['privatekey'];
 
 	// Peers section
-	$pconfig['peer'] = array();
+	$pconfig['peers'] = array();
+	$pconfig['peers']['peer'] = array();
 
 	$idx = 0;
 
@@ -109,12 +95,9 @@ function wg_do_post($post, $json = false) {
 		$peer['descr'] =  $post['descp' . $idx];
 		$peer['persistentkeepalive'] =  $post['persistentkeepalive' . $idx];
 
-		$pconfig['peer'][] = $peer;
+		$pconfig['peers']['peer'][] = $peer;
 		$idx++;
 	}
-
-	// print_r($pconfig);
-	// $input_errors[] = "What were you thinking?";
 
 	$config['wireguard']['tunnel'][$index] = $pconfig;
 	write_config("Wireguard tunnel {$index} updated.");
@@ -131,7 +114,7 @@ function wg_create_config_files($clean = true) {
 		$cfgpath = $g["wg_conf_path"];
 
 		if (!file_exists($cfgpath)) {
-			mkdir($cfgpath, 0644);
+			mkdir($cfgpath, 0644, true);
 		}
 
 		if ($clean) {
@@ -172,8 +155,10 @@ function make_wg_conf($tunnel) {
 	$txt .= "\n";
 
 	// Process peers section
-	if (isset($tunnel["peer"]) && count($tunnel["peer"]) > 0) {
-		foreach ($tunnel["peer"] as $peer) {
+	if (isset($tunnel['peers']) && is_array($tunnel['peers']) &&
+	    isset($tunnel['peers']['peer']) && is_array($tunnel['peers']['peer']) &&
+	    count($tunnel['peers']['peer']) > 0) {
+		foreach ($tunnel['peers']['peer'] as $peer) {
 			$txt .= "# Peer: {$peer['descr']}\n";
 			$txt .= "[Peer]\n";
 
@@ -209,7 +194,7 @@ function make_wg_conf($tunnel) {
 		}
 	}
 
-	file_put_contents($g["wg_conf_path"] . "" . $tunnel['name'] . ".conf", $txt);
+	file_put_contents($g["wg_conf_path"] . "/" . $tunnel['name'] . ".conf", $txt);
 }
 
 // Remove all wg config files from the conf directory
@@ -239,24 +224,26 @@ Sample Wireguard config.xml entry
 				<address>10.0.0.1/24, fdc9:281f:04d7:9ee9::1/64</address>
 				<listenport>51820</listenport>
 			</interface>
-			<peer>
-				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
-				<endpoint>192.88.8.88:51820</endpoint>
-				<allowedips>10.192.122.1/32, 10.192.124.1/24</allowedips>
-				<descr>Alice</descr>
-			</peer>
-			<peer>
-				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
-				<endpoint>192.88.8.88:51820</endpoint>
-				<allowedips>10.192.122.2/32, 10.192.124.2/24</allowedips>
-				<descr>Bob</descr>
-			</peer>
-			<peer>
-				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
-				<endpoint>192.88.8.88:51820</endpoint>
-				<allowedips>10.192.122.3/32, 10.192.124.3/24</allowedips>
-				<descr>Charlie</descr>
-			</peer>
+			<peers>
+				<peer>
+					<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
+					<endpoint>192.88.8.88:51820</endpoint>
+					<allowedips>10.192.122.1/32, 10.192.124.1/24</allowedips>
+					<descr>Alice</descr>
+				</peer>
+				<peer>
+					<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
+					<endpoint>192.88.8.88:51820</endpoint>
+					<allowedips>10.192.122.2/32, 10.192.124.2/24</allowedips>
+					<descr>Bob</descr>
+				</peer>
+				<peer>
+					<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
+					<endpoint>192.88.8.88:51820</endpoint>
+					<allowedips>10.192.122.3/32, 10.192.124.3/24</allowedips>
+					<descr>Charlie</descr>
+				</peer>
+			</peers>
 		</tunnel>
 		<tunnel>
 			<name>wg1</name>
@@ -267,13 +254,15 @@ Sample Wireguard config.xml entry
 				<address>10.0.0.1/24, fdc9:281f:04d7:9ee9::1/64</address>
 				<listenport>51820</listenport>
 			</interface>
-			<peer>
-				<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
-				<endpoint>192.88.8.88:51820</endpoint>
-				<allowedips>10.192.122.1/32, 10.192.124.1/24</allowedips>
-				<persistentkeepalive>25</persistentkeepalive>
-				<descr>Sam</descr>
-			</peer>
+			<peers>
+				<peer>
+					<publickey>xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=</publickey>
+					<endpoint>192.88.8.88:51820</endpoint>
+					<allowedips>10.192.122.1/32, 10.192.124.1/24</allowedips>
+					<persistentkeepalive>25</persistentkeepalive>
+					<descr>Sam</descr>
+				</peer>
+			</peers>
 		</tunnel>
 	</wireguard>
 */

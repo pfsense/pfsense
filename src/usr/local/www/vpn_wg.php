@@ -78,6 +78,12 @@ if (array_key_exists('delidx', $_POST)) {
 	$i = 0;
 	foreach ($tunnels as $tunnel):
 		$entryStatus = ($tunnel['enabled'] == 'yes') ? 'enabled':'disabled';
+		if (!$tunnel['peers'] || !is_array($tunnel['peers'])) {
+			$tunnel['peers'] = array();
+		}
+		if (!$tunnel['peers']['peer'] || !is_array($tunnel['peers']['peer'])) {
+			$tunnel['peers']['peer'] = array();
+		}
 ?>
 					<tr id="fr<?=$i?>" id="frd<?=$i?>"  class="<?= $entryStatus ?>">
 						<td class="peer-entries"><?=gettext('Interface')?></td>
@@ -85,7 +91,7 @@ if (array_key_exists('delidx', $_POST)) {
 						<td><?=$tunnel['descr']?></td>
 						<td><?=$tunnel['interface']['address']?></td>
 						<td><?=$tunnel['interface']['listenport']?></td>
-						<td><?=count($tunnel['peer'])?></td>
+						<td><?=count($tunnel['peers']['peer'])?></td>
 
 						<td style="cursor: pointer;">
 							<a class="fa fa-pencil" href="vpn_wg_edit.php?index=<?=$i?>" title="<?=gettext("Edit tunnel"); ?>"></a>
@@ -96,7 +102,7 @@ if (array_key_exists('delidx', $_POST)) {
 					<tr  class="peer-entries" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 						<td>Peers</td>
 <?php
-	if ($tunnel['peer'] && count($tunnel['peer']) > 0) { ?>
+		if (count($tunnel['peers']['peer']) > 0) { ?>
 						<td colspan="6">
 							<table class="table table-hover" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 								<thead>
@@ -109,25 +115,25 @@ if (array_key_exists('delidx', $_POST)) {
 								</thead>
 								<tbody>
 
-<?php $idx=0; foreach ($tunnel['peer'] as $peer) { ?>
+<?php			foreach ($tunnel['peers']['peer'] as $peer) { ?>
 									<tr>
 										<td><?=$peer['descr']?></td>
 										<td><?=$peer['endpoint']?></td>
 										<td><?=$peer['allowedips']?></td>
 										<td><?=$peer['publickey']?></td>
 									</tr>
-<?php $idx++; } ?>
+<?php			} ?>
 								</tbody>
 							</table>
 						</td>
-<?php } else {
-	print('<td colspan="6">' . gettext("No peers have been configured") . '</td>');
-}
+<?php		} else {
+			print('<td colspan="6">' . gettext("No peers have been configured") . '</td>');
+		}
 ?>
 					</tr>
 <?php
-					$i++;
-				endforeach;	 // $a_phase1 as $ph1ent
+		$i++;
+	endforeach;	 // $tunnelsa
 ?>
 				</tbody>
 			</table>
@@ -154,20 +160,11 @@ if (array_key_exists('delidx', $_POST)) {
 	))->setReadonly();
 
 	print($section);
-
-	if (empty($config['wireguard']['fwpubkey']) || empty($config['wireguard']['fwprivkey'])) {
-		wgCreateKeys();
-	}
-
-	$fwpubkey = $config['wireguard']['fwpubkey'];
-	$fwprivkey = $config['wireguard']['fwprivkey'];
 ?>
 
 <?php } // e-o- else (no tunnels) ?>
 
 	<nav class="action-buttons">
-		<a class="fa fa-key" id="showkeys" title="<?=gettext('Show keys for this firewall'); ?>"></a>
-		&nbsp;&nbsp;
 		<a href="#" class="btn btn-info btn-sm" id="showpeers">
 			<i class="fa fa-info icon-embed-btn"></i>
 			<?=gettext("Show peers")?>
@@ -206,15 +203,6 @@ events.push(function() {
 		var idx = event.target.id.split('_')[1];
 		$('#delidx').val(idx);  // Set the id of the tunnel
 		$('#delform').submit(); // Submit the form
-	});
-
-	$('#showkeys').click(function () {
-		keyshidden = !keyshidden;
-		hideClass('fwkeys', keyshidden);
-		if (!keyshidden) {
-			$('#pubkey').val("<?=$fwpubkey?>");
-			$('#privkey').val("<?=$fwprivkey?>");
-		}
 	});
 });
 //]]>

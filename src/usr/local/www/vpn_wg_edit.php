@@ -105,7 +105,7 @@ $section->addInput(new Form_Input(
 	'Address',
 	'text',
 	$pconfig['interface']['address']
-))->setHelp('Addresses.');
+))->setHelp('Interface Addresses.');
 
 
 $section->addInput(new Form_Input(
@@ -128,11 +128,14 @@ $form->add($section);
 // Second row
 $section2 = new Form_Section('Peers');
 
-if (!is_array($pconfig['peer'])) {
-	$pconfig['peer'] = array();
+if (!isset($pconfig['peers']) || !is_array($pconfig['peers'])) {
+	$pconfig['peers'] = array();
+}
+if (!isset($pconfig['peers']['peer']) || !is_array($pconfig['peers']['peer'])) {
+	$pconfig['peers']['peer'] = array();
 }
 
-$peer_count = count($pconfig['peer']);
+$peer_count = count($pconfig['peers']['peer']);
 $peer_num = 0;
 $peer_help = gettext("Description");
 $dnshost_help = gettext("Public key");
@@ -142,10 +145,10 @@ $aips_help = gettext("Allowed IPs");
 
 // If there are no peers, make an empty entry for initial display. This will be the case when creating a new tunnel
 if ($peer_count == 0) {
-	$pconfig['peer'][] = array('descr' => '', 'endpoint' => '', 'persistentkeepalive' => '', 'publickey', 'allowedips' => '');
+	$pconfig['peers']['peer'][] = array('descr' => '', 'endpoint' => '', 'persistentkeepalive' => '', 'publickey', 'allowedips' => '');
 }
 
-foreach ($pconfig['peer'] as $peer) {
+foreach ($pconfig['peers']['peer'] as $peer) {
 	$is_last_peer = (($peer_num == $peer_count - 1) || $peer_count == 0);
 	$group = new Form_Group('Peer ' . $peer_num);
 	$group->addClass('repeatable')->addClass('peer_group_' . $peer_num);

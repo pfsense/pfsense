@@ -1274,9 +1274,12 @@ if ($act=="new" || $act=="edit"):
 	$section->addInput(new Form_Checkbox(
 		'duplicate_cn',
 		'Duplicate Connection',
-		'Allow multiple concurrent connections from clients using the same Common Name.',
+		'Allow multiple concurrent connections from the same user',
 		$pconfig['duplicate_cn']
-	))->setHelp('(This is not generally recommended, but may be needed for some scenarios.)');
+	))->setHelp('When set, the same user may connect multiple times. ' .
+			'When unset, a new connection from a user will disconnect the previous session. %1$s%1$s' .
+			'Users are identified by their username or certificate properties, depending on the VPN configuration. ' .
+			'This practice is discouraged security reasons, but may be necessary in some environments.', '<br />');
 
 	$form->add($section);
 

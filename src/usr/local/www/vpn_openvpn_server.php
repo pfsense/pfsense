@@ -1655,7 +1655,7 @@ else:
 <?php
 	$i = 0;
 	foreach ($a_server as $server):
-		$dc = openvpn_build_data_cipher_list($server['data_ciphers'], $server['data_ciphers_fallback']);
+		$dc = openvpn_build_data_cipher_list($server['data_ciphers'], $server['data_ciphers_fallback'], ($server['ncp_enable'] != "disabled"));
 		$dca = explode(',', $dc);
 		if (count($dca) > 5) {
 			$dca = array_slice($dca, 0, 5);

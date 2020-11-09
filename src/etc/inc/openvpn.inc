@@ -2244,9 +2244,9 @@ function openvpn_is_tunnel_network_in_use($net) {
 	return false;
 }
 
-function openvpn_build_data_cipher_list($data_ciphers = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305', $fallback_cipher = 'AES-256-GBC') {
+function openvpn_build_data_cipher_list($data_ciphers = 'AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305', $fallback_cipher = 'AES-256-GBC', $ncp_enabled = true) {
 	/* If the data_ciphers list is empty, populate it with the fallback cipher. */
-	if (empty($data_ciphers)) {
+	if (empty($data_ciphers) || !$ncp_enabled) {
 		$data_ciphers = $fallback_cipher;
 	}
 	/* Add the fallback cipher to the data ciphers list if it isn't already present */

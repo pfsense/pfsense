@@ -1353,7 +1353,8 @@ function openvpn_reconfigure($mode, $settings) {
 			break;
 	}
 
-	if (!empty($compression)) {
+	if (($settings['allow_compression'] != 'no') &&
+	    !empty($compression)) {
 		$conf .= "{$compression}\n";
 		if ($settings['compression_push']) {
 			$conf .= "push \"{$compression}\"\n";

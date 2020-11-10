@@ -1343,6 +1343,11 @@ events.push(function() {
 		hideInput('ping_action_seconds', keepalive);
 	}
 
+	function allow_compression_change() {
+		var hide  = ($('#allow_compression').val() == 'no')
+		hideInput('compression', hide);
+	}
+
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
 
 	 // TLS Authorization
@@ -1383,6 +1388,11 @@ events.push(function() {
 	 // Auto TLS
 	$('#autotls_enable').click(function () {
 		autotls_change();
+	});
+
+	// Compression Settings
+	$('#allow_compression').change(function () {
+		allow_compression_change();
 	});
 
 	function updateCipher(mem) {
@@ -1435,6 +1445,7 @@ events.push(function() {
 	tlsauth_change();
 	useproxy_changed();
 	ping_method_change();
+	allow_compression_change();
 });
 //]]>
 </script>

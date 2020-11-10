@@ -2066,6 +2066,12 @@ events.push(function() {
 		hideInput('ocspurl', hide);
 	}
 
+	function allow_compression_change() {
+		var hide  = ($('#allow_compression').val() == 'no')
+		hideInput('compression', hide);
+		hideCheckbox('compression_push', hide);
+	}
+
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
 
 	// NTP
@@ -2155,6 +2161,11 @@ events.push(function() {
 		$('#certtype').html(errmsg);
 	});
 
+	// Compression Settings
+	$('#allow_compression').change(function () {
+		allow_compression_change();
+	});
+
 	function updateCipher(mem) {
 		var found = false;
 
@@ -2213,6 +2224,7 @@ events.push(function() {
 	tuntap_change();
 	ping_method_change();
 	ocspcheck_change();
+	allow_compression_change();
 });
 //]]>
 </script>

@@ -1672,7 +1672,7 @@ else:
 					</td>
 					<td data-value="<?=htmlspecialchars($server['local_port']) . '-' . htmlspecialchars($server['protocol'])?>">
 						<?=htmlspecialchars($server['protocol'])?> / <?=htmlspecialchars($server['local_port'])?>
-						<br/>(<?= htmlspecialchars(strtoupper($server['dev_mode'])) ?>)
+						<br/>(<?= htmlspecialchars(strtoupper(empty($server['dev_mode']) ? 'TUN' : $server['dev_mode'])) ?>)
 					</td>
 					<td>
 					<?php if (!empty($server['tunnel_network'])): ?>

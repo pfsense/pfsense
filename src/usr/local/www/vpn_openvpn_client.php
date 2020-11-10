@@ -1206,7 +1206,7 @@ else:
 					</td>
 					<td>
 						<?=htmlspecialchars($client['protocol'])?>
-						<br/>(<?= htmlspecialchars(strtoupper($client['dev_mode'])) ?>)
+						<br/>(<?= htmlspecialchars(strtoupper(empty($client['dev_mode']) ? 'TUN' : $client['dev_mode'])) ?>)
 					</td>
 					<td>
 						<?=htmlspecialchars($server)?>

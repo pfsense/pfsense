@@ -91,71 +91,71 @@ $dfltmsg = false;
 
 if ($_GET) {
 	switch ($action) {
-		case "delete":
-			if ($queue) {
-				$queue->delete_queue();
-				if (write_config()) {
-					mark_subsystem_dirty('shaper');
-				}
-			}
-
-			header("Location: firewall_shaper.php");
-			exit;
-			break;
-		case "resetall":
-			foreach ($altq_list_queues as $altq) {
-				$altq->delete_all();
-			}
-			unset($altq_list_queues);
-			$altq_list_queues = array();
-			$tree = "<ul class=\"tree\" >";
-			$tree .= get_interface_list_to_show();
-			$tree .= "</ul>";
-			unset($config['shaper']['queue']);
-			unset($queue);
-			unset($altq);
-			$can_add = false;
-			$can_enable = false;
-			$dontshow = true;
-			foreach ($config['filter']['rule'] as $key => $rule) {
-				if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
-					unset($config['filter']['rule'][$key]);
-				}
-			}
-
+	case "delete":
+		if ($queue) {
+			$queue->delete_queue();
 			if (write_config()) {
-				$changes_applied = true;
-				$retval = 0;
-				$retval |= filter_configure();
-			} else {
-				$no_write_config_msg = gettext("Unable to write config.xml (Access Denied?).");
+				mark_subsystem_dirty('shaper');
 			}
+		}
 
-			$dfltmsg = true;
+		header("Location: firewall_shaper.php");
+		exit;
+		break;
+	case "resetall":
+		foreach ($altq_list_queues as $altq) {
+			$altq->delete_all();
+		}
+		unset($altq_list_queues);
+		$altq_list_queues = array();
+		$tree = "<ul class=\"tree\" >";
+		$tree .= get_interface_list_to_show();
+		$tree .= "</ul>";
+		unset($config['shaper']['queue']);
+		unset($queue);
+		unset($altq);
+		$can_add = false;
+		$can_enable = false;
+		$dontshow = true;
+		foreach ($config['filter']['rule'] as $key => $rule) {
+			if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
+				unset($config['filter']['rule'][$key]);
+			}
+		}
+
+		if (write_config()) {
+			$changes_applied = true;
+			$retval = 0;
+			$retval |= filter_configure();
+		} else {
+			$no_write_config_msg = gettext("Unable to write config.xml (Access Denied?).");
+		}
+
+		$dfltmsg = true;
 
 
 		break;
 
 	case "add":
-			/* XXX: Find better way because we shouldn't know about this */
+		/* XXX: Find better way because we shouldn't know about this */
 		if ($altq) {
 
 			switch ($altq->GetScheduler()) {
-				case "PRIQ":
-					$q = new priq_queue();
+			case "PRIQ":
+				$q = new priq_queue();
 				break;
-				case "FAIRQ":
-					$q = new fairq_queue();
+			case "FAIRQ":
+				$q = new fairq_queue();
 				break;
-				case "HFSC":
-					$q = new hfsc_queue();
+			case "HFSC":
+				$q = new hfsc_queue();
 				break;
-				case "CBQ":
-						$q = new cbq_queue();
+			case "CBQ":
+				$q = new cbq_queue();
 				break;
-				default:
-					/* XXX: Happens when sched==NONE?! */
-					$q = new altq_root_queue();
+			default:
+				/* XXX: Happens when sched==NONE?! */
+				$q = new altq_root_queue();
 				break;
 			}
 		} else if ($addnewaltq) {
@@ -168,50 +168,50 @@ if ($_GET) {
 			$q->SetInterface($interface);
 			$sform = $q->build_form();
 			$sform->addGlobal(new Form_Input(
-				'parentqueue',
-				null,
-				'hidden',
-				$qname
-			));
+			    'parentqueue',
+			    null,
+			    'hidden',
+			    $qname
+			    ));
 
 			$newjavascript = $q->build_javascript();
 			unset($q);
 			$newqueue = true;
 		}
 		break;
-		case "show":
-			if ($queue) {
-				$sform = $queue->build_form();
-			} else {
-				$input_errors[] = gettext("Queue not found!");
-			}
+	case "show":
+		if ($queue) {
+			$sform = $queue->build_form();
+		} else {
+			$input_errors[] = gettext("Queue not found!");
+		}
 		break;
-		case "enable":
-			if ($queue) {
-				$queue->SetEnabled("on");
-				$sform = $queue->build_form();
-				if (write_config()) {
-					mark_subsystem_dirty('shaper');
-				}
-			} else {
-				$input_errors[] = gettext("Queue not found!");
+	case "enable":
+		if ($queue) {
+			$queue->SetEnabled("on");
+			$sform = $queue->build_form();
+			if (write_config()) {
+				mark_subsystem_dirty('shaper');
 			}
-			break;
-		case "disable":
-			if ($queue) {
-				$queue->SetEnabled("");
-				$sform = $queue->build_form();
-				if (write_config()) {
-					mark_subsystem_dirty('shaper');
-				}
-			} else {
-				$input_errors[] = gettext("Queue not found!");
+		} else {
+			$input_errors[] = gettext("Queue not found!");
+		}
+		break;
+	case "disable":
+		if ($queue) {
+			$queue->SetEnabled("");
+			$sform = $queue->build_form();
+			if (write_config()) {
+				mark_subsystem_dirty('shaper');
 			}
-			break;
-		default:
-			$dfltmsg = true;
-			$dontshow = true;
-			break;
+		} else {
+			$input_errors[] = gettext("Queue not found!");
+		}
+		break;
+	default:
+		$dfltmsg = true;
+		$dontshow = true;
+		break;
 	}
 }
 

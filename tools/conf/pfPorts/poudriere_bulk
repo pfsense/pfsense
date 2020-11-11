@@ -40,8 +40,6 @@ net-mgmt/iprange
 net-mgmt/net-snmp
 net/%%PRODUCT_NAME%%-pkg-Avahi
 net/%%PRODUCT_NAME%%-pkg-LADVD
-net/%%PRODUCT_NAME%%-pkg-OpenBGPD
-net/%%PRODUCT_NAME%%-pkg-Quagga_OSPF
 net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 net/%%PRODUCT_NAME%%-pkg-arping
 net/%%PRODUCT_NAME%%-pkg-cellular
@@ -54,7 +52,6 @@ net/%%PRODUCT_NAME%%-pkg-ntopng
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG-devel
 net/%%PRODUCT_NAME%%-pkg-pimd
-net/%%PRODUCT_NAME%%-pkg-routed
 net/%%PRODUCT_NAME%%-pkg-siproxd
 net/bird
 net/hping
@@ -86,9 +83,7 @@ sysutils/%%PRODUCT_NAME%%-pkg-Service_Watchdog
 sysutils/%%PRODUCT_NAME%%-pkg-Shellcmd
 sysutils/%%PRODUCT_NAME%%-pkg-System_Patches
 sysutils/%%PRODUCT_NAME%%-pkg-apcupsd
-sysutils/%%PRODUCT_NAME%%-pkg-blinkled
 sysutils/%%PRODUCT_NAME%%-pkg-filer
-sysutils/%%PRODUCT_NAME%%-pkg-gwled
 sysutils/%%PRODUCT_NAME%%-pkg-node_exporter
 sysutils/%%PRODUCT_NAME%%-pkg-nut
 sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng

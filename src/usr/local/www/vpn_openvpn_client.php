@@ -863,7 +863,7 @@ if ($act=="new" || $act=="edit"):
 	$section->addInput(new Form_Select(
 		'data_ciphers_fallback',
 		'Fallback Data Encryption Algorithm',
-		$pconfig['crypto'],
+		$pconfig['data_ciphers_fallback'],
 		openvpn_get_cipherlist()
 		))->setHelp('The Fallback Data Encryption Algorithm used for data channel packets when communicating with ' .
 				'clients that do not support data encryption algorithm negotiation. ' .

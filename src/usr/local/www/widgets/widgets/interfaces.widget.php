@@ -103,7 +103,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 ?>
 	<tr>
-		<td title="<?=htmlspecialchars($ifinfo['macaddr'])?>">
+		<td title="<?=htmlspecialchars($ifinfo['if'])?> (<?=htmlspecialchars($ifinfo['macaddr'])?>)">
 			<i class="fa fa-<?=$typeicon?>"></i>
 			<a href="/interfaces.php?if=<?=$ifdescr?>">
 				<?=htmlspecialchars($ifname);?>

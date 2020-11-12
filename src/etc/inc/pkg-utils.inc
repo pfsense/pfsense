@@ -1649,6 +1649,17 @@ function save_repo($json) {
 		file_put_contents($basename . "altabi", $repo['altabi']);
 		file_put_contents($basename . "name", $repo['name']);
 		file_put_contents($basename . "help", $repo['help']);
+
+		// Save fingerprint file
+		if (!empty($repo['fingerprint'])) {
+			if (!empty($repo['fpname'])) {
+				$fppath = "/usr/local/share/pfSense/keys/pkg/trusted/" . $repo['fpname'];
+			} else {
+				$fppath = "/usr/local/share/pfSense/keys/pkg/trusted/custom.pfsense.org";
+			}
+
+			file_put_contents($fppath, $repo['fingerprint']);
+		}
 	} else {
 		/*
 		 * If there was anything wrong with the custom repository

@@ -521,6 +521,10 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		backup_config();
 	}
 
+	if ($desc == "Unknown") {
+		file_notice("config.xml", gettext(
+		    'WARNING: write_config() was called without description'));
+	}
 	$config['revision'] = make_config_revision_entry($desc);
 
 	$lockkey = lock('config', LOCK_EX);

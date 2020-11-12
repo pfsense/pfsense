@@ -42,23 +42,12 @@ $a_secret = &$config['l2tp']['user'];
 
 $pconfig = $_POST;
 
-if ($_POST['apply']) {
-	$retval = 0;
-	if (!is_subsystem_dirty('rebootreq')) {
-		$retval |= vpn_l2tp_configure();
-	}
-	if ($retval == 0) {
-		if (is_subsystem_dirty('l2tpusers')) {
-			clear_subsystem_dirty('l2tpusers');
-		}
-	}
-}
-
 if ($_POST['act'] == "del") {
 	if ($a_secret[$_POST['id']]) {
 		unset($a_secret[$_POST['id']]);
+		l2tp_users_sort();
 		write_config(gettext("Deleted a L2TP VPN user."));
-		mark_subsystem_dirty('l2tpusers');
+		vpn_l2tp_updatesecret();
 		pfSenseHeader("vpn_l2tp_users.php");
 		exit;
 	}
@@ -66,18 +55,9 @@ if ($_POST['act'] == "del") {
 
 include("head.inc");
 
-if ($_POST['apply']) {
-	print_apply_result_box($retval);
-}
-
 if (isset($config['l2tp']['radius']['enable'])) {
 	print_info_box(gettext("RADIUS is enabled. The local user database will not be used."));
 }
-
-if (is_subsystem_dirty('l2tpusers')) {
-	print_apply_box(gettext("The L2TP user list has been modified.") . "<br />" . gettext("The changes must be applied for them to take effect") . ".<br /><b>" . gettext("Warning: this will terminate all current L2TP sessions!") . "</b>");
-}
-
 
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), false, "vpn_l2tp.php");

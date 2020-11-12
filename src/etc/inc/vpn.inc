@@ -490,4 +490,18 @@ function vpn_l2tp_updatesecret() {
 	return 0;
 }
 
+function l2tpusercmp($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
+}
+
+function l2tp_users_sort() {
+	global $config;
+
+	if (!is_array($config['l2tp']['user'])) {
+		return;
+	}
+
+	usort($config['l2tp']['user'], "l2tpusercmp");
+}
+
 ?>

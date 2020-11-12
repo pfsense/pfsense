@@ -141,7 +141,7 @@ EOD;
 			$translated_text = gettext("Voucher Code");
 			$htmltext .= <<<EOD
 				<br  /><br  />
-				<input name="auth_voucher" type="text" placeholder="{$translated_text}">
+				<input name="auth_voucher" type="text" placeholder="{$translated_text}" value="#VOUCHER#">
 EOD;
 		}
 	}
@@ -2201,7 +2201,7 @@ function portal_hostname_from_client_ip($cliip) {
 
 /* functions move from index.php */
 
-function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null, $username = null, $password = null) {
+function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null, $username = null, $password = null, $voucher = null) {
 	global $g, $config, $cpzone;
 
 	/* Get captive portal layout */
@@ -2244,6 +2244,7 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	$htmltext = str_replace("#CLIENT_IP#", htmlspecialchars($clientip), $htmltext);
 	$htmltext = str_replace("#USERNAME#", htmlspecialchars($username), $htmltext);
 	$htmltext = str_replace("#PASSWORD#", htmlspecialchars($password), $htmltext);
+	$htmltext = str_replace("#VOUCHER#", htmlspecialchars($voucher), $htmltext);
 
 	echo $htmltext;
 }

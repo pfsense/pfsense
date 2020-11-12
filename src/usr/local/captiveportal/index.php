@@ -82,7 +82,12 @@ if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['l
 } elseif (!empty($cpsession) && (!isset($_POST['logout_id']) || !isset($config['captiveportal'][$cpzone]['logoutwin_enable']))) {
 	/* If client try to access captive portal page while already connected, 
 		but no custom logout page does exist and logout popup is disabled */	
-	echo gettext("You are connected.");
+	echo gettext("You are connected.<br/>");
+	if ($_GET['redirurl'] || $_POST['redirurl']) {
+		$redirurl = $_GET['redirurl'] ? $_GET['redirurl'] : $_POST['redirurl'];
+		$redirurl = htmlspecialchars($redirurl);
+		echo ("You can proceed to: <a href='{$redirurl}'>{$redirurl}</a>");
+	} 
 	ob_flush();
 	return;
 } elseif ($orig_host != $ourhostname) {
@@ -157,8 +162,15 @@ EOD;
 	captiveportal_logportalauth("unauthenticated", $clientmac, $clientip, "ACCEPT");
 	portal_allow($clientip, $clientmac, "unauthenticated");
 
-} elseif (isset($config['voucher'][$cpzone]['enable']) && $_POST['accept'] && $_POST['auth_voucher']) {
-	$voucher = trim($_POST['auth_voucher']);
+} elseif (isset($config['voucher'][$cpzone]['enable']) && ($_POST['accept'] && $_POST['auth_voucher']) || $_GET['voucher']) {
+	if (isset($_POST['auth_voucher'])) {
+		$voucher = trim($_POST['auth_voucher']);
+	} else {
+		/* submit voucher via URL, see https://redmine.pfsense.org/issues/1984 */
+		$voucher = trim($_GET['voucher']);
+		portal_reply_page($redirurl, "login", null, null, null, null, null, $voucher);
+		return;
+	}
 	$errormsg = gettext("Invalid credentials specified.");
 	$timecredit = voucher_auth($voucher);
 	// $timecredit contains either a credit in minutes or an error message

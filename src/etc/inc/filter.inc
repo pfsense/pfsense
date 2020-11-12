@@ -4344,6 +4344,7 @@ function filter_process_carp_rules($log) {
 	$lines = "";
 	/* return if there are no carp configured items */
 	if (!empty($config['hasync']) or !empty($config['virtualip']['vip'])) {
+		$lines .= "\n# CARP rules\n";
 		$lines .= "block in {$log['block']} quick proto carp from (self) to any tracker {$increment_tracker()}\n";
 		$lines .= "pass {$log['pass']} quick proto carp tracker {$increment_tracker()} no state\n";
 	}

@@ -71,7 +71,7 @@ if (isset($a_unboundcfg['regovpnclients'])) {
 $pconfig['python_order'] = $a_unboundcfg['python_order'];
 $pconfig['python_script'] = $a_unboundcfg['python_script'];
 $pconfig['port'] = $a_unboundcfg['port'];
-$pconfig['sslport'] = $a_unboundcfg['sslport'];
+$pconfig['tlsport'] = $a_unboundcfg['tlsport'];
 $pconfig['sslcertref'] = $a_unboundcfg['sslcertref'];
 $pconfig['custom_options'] = base64_decode($a_unboundcfg['custom_options']);
 
@@ -155,7 +155,7 @@ if ($_POST['save']) {
 	if ($pconfig['port'] && !is_port($pconfig['port'])) {
 		$input_errors[] = gettext("A valid port number must be specified.");
 	}
-	if ($pconfig['sslport'] && !is_port($pconfig['sslport'])) {
+	if ($pconfig['tlsport'] && !is_port($pconfig['tlsport'])) {
 		$input_errors[] = gettext("A valid SSL/TLS port number must be specified.");
 	}
 
@@ -190,7 +190,7 @@ if ($_POST['save']) {
 		$a_unboundcfg['enable'] = isset($pconfig['enable']);
 		$a_unboundcfg['enablessl'] = isset($pconfig['enablessl']);
 		$a_unboundcfg['port'] = $pconfig['port'];
-		$a_unboundcfg['sslport'] = $pconfig['sslport'];
+		$a_unboundcfg['tlsport'] = $pconfig['tlsport'];
 		$a_unboundcfg['sslcertref'] = $pconfig['sslcertref'];
 		$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
 
@@ -342,10 +342,10 @@ if ($certs_available) {
 }
 
 $section->addInput(new Form_Input(
-	'sslport',
+	'tlsport',
 	'SSL/TLS Listen Port',
 	'number',
-	$pconfig['sslport'],
+	$pconfig['tlsport'],
 	['placeholder' => '853']
 ))->setHelp('The port used for responding to SSL/TLS DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 853.');
 

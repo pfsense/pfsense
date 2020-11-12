@@ -6344,6 +6344,14 @@ function upgrade_210_to_211() {
 	}
 }
 
+function upgrade_211_to_212() {
+	global $config;
+	if (isset($config['unbound']['sslport'])) {
+		$config['unbound']['tlsport'] = $config['unbound']['sslport'];
+		unset($config['unbound']['sslport']);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

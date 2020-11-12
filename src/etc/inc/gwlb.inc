@@ -2141,7 +2141,7 @@ function save_gateway($gateway_settings, $realid = "") {
 
 	mark_subsystem_dirty('staticroutes');
 
-	write_config();
+	write_config("Gateway settings changed");
 
 	if (!empty($reloadif)) {
 		send_event("interface reconfigure {$reloadif}");

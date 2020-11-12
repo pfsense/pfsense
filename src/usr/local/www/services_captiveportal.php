@@ -480,7 +480,7 @@ if ($_POST['save']) {
 			move_uploaded_file( $_FILES['background-img']['tmp_name'], $target);
 		}
 
-		write_config();
+		write_config("Captive portal settings saved");
 
 		captiveportal_configure_zone($newcp);
 		unset($newcp);

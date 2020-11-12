@@ -117,7 +117,7 @@ if ($_POST) {
 		$config['dhcrelay6']['agentoption'] = $_POST['agentoption'] ? true : false;
 		$config['dhcrelay6']['server'] = $svrlist;
 
-		write_config();
+		write_config("DHCPv6 Relay settings saved");
 
 		$changes_applied = true;
 		$retval = 0;

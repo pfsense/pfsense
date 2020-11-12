@@ -63,7 +63,7 @@ if ($_POST['save']) {
 		unset($config['igmpproxy']['enable']);
 	}
 	$config['syslog']['igmpxverbose'] = $_POST['igmpxverbose'] ? true : false;
-	write_config();
+	write_config("IGMP Proxy settings saved");
 	mark_subsystem_dirty('igmpproxy');
 	header("Location: services_igmpproxy.php");
 	exit;
@@ -72,7 +72,7 @@ if ($_POST['save']) {
 if ($_POST['act'] == "del") {
 	if ($a_igmpproxy[$_POST['id']]) {
 		unset($a_igmpproxy[$_POST['id']]);
-		write_config();
+		write_config("IGMP Proxy item deleted");
 		mark_subsystem_dirty('igmpproxy');
 		header("Location: services_igmpproxy.php");
 		exit;

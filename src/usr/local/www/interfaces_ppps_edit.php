@@ -463,7 +463,7 @@ if ($_POST['save']) {
 			$a_ppps[] = $ppp;
 		}
 
-		write_config();
+		write_config("PPP interface added");
 		configure_cron();
 
 		foreach ($iflist as $pppif => $ifdescr) {

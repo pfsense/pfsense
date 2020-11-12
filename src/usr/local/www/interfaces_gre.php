@@ -59,7 +59,7 @@ if ($_POST['act'] == "del") {
 		pfSense_interface_destroy($a_gres[$_POST['id']]['greif']);
 		unset($a_gres[$_POST['id']]);
 
-		write_config();
+		write_config("GRE interface deleted");
 
 		header("Location: interfaces_gre.php");
 		exit;

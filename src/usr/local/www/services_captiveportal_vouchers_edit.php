@@ -159,7 +159,7 @@ if ($_POST['save']) {
 			$a_roll[] = $rollent;
 		}
 
-		write_config();
+		write_config("Captive portal vouchers edited");
 
 		header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
 		exit;

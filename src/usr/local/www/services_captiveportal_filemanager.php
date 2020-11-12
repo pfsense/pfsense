@@ -120,7 +120,7 @@ if ($_POST['Submit']) {
 			$a_element[] = $element;
 			cpelements_sort();
 
-			write_config();
+			write_config("Captive portal file manager: file uploaded");
 			captiveportal_write_elements();
 			header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");
 			exit;
@@ -130,7 +130,7 @@ if ($_POST['Submit']) {
 	@unlink("{$g['captiveportal_element_path']}/" . $a_element[$_POST['id']]['name']);
 	@unlink("{$g['captiveportal_path']}/" . $a_element[$_POST['id']]['name']);
 	unset($a_element[$_POST['id']]);
-	write_config();
+	write_config("Captive portal file manager: file deleted");
 	header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");
 	exit;
 }

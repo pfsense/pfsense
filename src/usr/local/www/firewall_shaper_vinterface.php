@@ -103,7 +103,7 @@ if ($_GET) {
 				}
 				if (!$input_errors) {
 					$queue->delete_queue();
-					if (write_config()) {
+					if (write_config("Traffic Shaper: Queue deleted")) {
 						mark_subsystem_dirty('shaper');
 					}
 					header("Location: firewall_shaper_vinterface.php");
@@ -136,7 +136,7 @@ if ($_GET) {
 					unset($config['filter']['rule'][$key]['pdnpipe']);
 				}
 			}
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Reset all")) {
 				$changes_applied = true;
 				$retval = 0;
 				$retval |= filter_configure();
@@ -186,7 +186,7 @@ if ($_GET) {
 			$queue->SetEnabled("on");
 			$sform = $queue->build_form();
 			$queue->wconfig();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Queue enabled")) {
 				mark_subsystem_dirty('shaper');
 			}
 		} else {
@@ -198,7 +198,7 @@ if ($_GET) {
 			$queue->SetEnabled("");
 			$sform = $queue->build_form();
 			$queue->wconfig();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Queue disabled")) {
 				mark_subsystem_dirty('shaper');
 			}
 		} else {
@@ -230,7 +230,7 @@ if ($_POST) {
 				$tmppath[] = $dnpipe->GetQname();
 				$dnpipe->SetLink($tmppath);
 				$dnpipe->wconfig();
-				if (write_config()) {
+				if (write_config("Traffic Shaper: New pipe added")) {
 					mark_subsystem_dirty('shaper');
 				}
 				$can_enable = true;
@@ -251,7 +251,7 @@ if ($_POST) {
 			if (!$input_errors) {
 				array_pop($tmppath);
 				$tmp->wconfig();
-				if (write_config()) {
+				if (write_config("Traffic Shaper: New queue added")) {
 					$can_enable = true;
 					$can_add = false;
 					mark_subsystem_dirty('shaper');
@@ -263,7 +263,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Could not add new queue.");
 		}
 	} else if ($_POST['apply']) {
-		write_config();
+		write_config("Traffic Shaper: Changes applied");
 
 		$changes_applied = true;
 		$retval = 0;
@@ -287,7 +287,7 @@ if ($_POST) {
 		if (!$input_errors) {
 			$queue->update_dn_data($_POST);
 			$queue->wconfig();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Queue changed")) {
 				mark_subsystem_dirty('shaper');
 			}
 			$dontshow = false;

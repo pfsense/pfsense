@@ -244,7 +244,7 @@ if ($_POST['save']) {
 			unset($config['dhcpdv6'][$if]['subnets']);
 		}
 
-		write_config();
+		write_config("Router Advertisements settings saved");
 		$changes_applied = true;
 		$retval = 0;
 		$retval |= services_radvd_configure();

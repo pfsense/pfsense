@@ -185,7 +185,7 @@ if ($_POST) {
 			unset($config['system']['webgui']['auth_refresh_time']);
 		}
 
-		write_config();
+		write_config("User Manager Settings saved");
 		set_pam_auth();
 	}
 }

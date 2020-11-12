@@ -133,7 +133,7 @@ if (isset($_POST['save'])) {
 		mark_subsystem_dirty('staticroutes');
 		mark_subsystem_dirty('gwgroup.' . $gateway_group['name']);
 
-		write_config();
+		write_config("Gateway Groups settings saved");
 
 		header("Location: system_gateway_groups.php");
 		exit;

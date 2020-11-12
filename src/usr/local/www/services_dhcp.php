@@ -832,7 +832,7 @@ if ((isset($_POST['save']) || isset($_POST['apply'])) && (!$input_errors)) {
 if ($act == "delpool") {
 	if ($a_pools[$_POST['id']]) {
 		unset($a_pools[$_POST['id']]);
-		write_config();
+		write_config("DHCP Server pool deleted");
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
 	}
@@ -845,7 +845,7 @@ if ($act == "del") {
 			mwexec("/usr/sbin/arp -d " . escapeshellarg($a_maps[$_POST['id']]['ipaddr']));
 		}
 		unset($a_maps[$_POST['id']]);
-		write_config();
+		write_config("DHCP Server static map deleted");
 		if (isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
 			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic'])) {

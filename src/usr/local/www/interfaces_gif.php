@@ -58,7 +58,7 @@ if ($_POST['act'] == "del") {
 		pfSense_interface_destroy($a_gifs[$_POST['id']]['gifif']);
 		unset($a_gifs[$_POST['id']]);
 
-		write_config();
+		write_config("GIF interface deleted");
 
 		header("Location: interfaces_gif.php");
 		exit;

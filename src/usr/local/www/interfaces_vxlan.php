@@ -59,7 +59,7 @@ if ($_POST['act'] == "del") {
 		pfSense_interface_destroy($a_vxlans[$_POST['id']]['vxlanif']);
 		unset($a_vxlans[$_POST['id']]);
 
-		write_config();
+		write_config("VXLAN interface deleted");
 
 		header("Location: interfaces_vxlan.php");
 		exit;

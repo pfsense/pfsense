@@ -40,7 +40,7 @@ if ($_GET['reset'] != "") {
 }
 
 if ($_POST['apply']) {
-	write_config();
+	write_config("Traffic Shaper Wizard settings applied");
 
 	$retval = 0;
 	/* Setup pf rules since the user may have changed the optimization value */

@@ -123,7 +123,7 @@ if ($_POST['save']) {
 				$a_vxlans[] = $vxlan;
 			}
 
-			write_config();
+			write_config("VXLAN interface added");
 
 			$confif = convert_real_interface_to_friendly_interface_name($vxlan['vxlanif']);
 

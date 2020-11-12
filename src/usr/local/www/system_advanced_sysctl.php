@@ -63,7 +63,7 @@ if ($_POST['act'] == "del") {
 	if ($a_tunable[$id]) {
 		if (!$input_errors) {
 			unset($a_tunable[$id]);
-			write_config();
+			write_config("Custom System Tunables deleted");
 			mark_subsystem_dirty('sysctl');
 			pfSenseHeader("system_advanced_sysctl.php");
 			exit;
@@ -101,7 +101,7 @@ if ($_POST['save'] || $_POST['apply']) {
 			}
 
 			mark_subsystem_dirty('sysctl');
-			write_config();
+			write_config("System Tunables Advanced Settings saved");
 			pfSenseHeader("system_advanced_sysctl.php");
 			exit;
 		}

@@ -94,7 +94,7 @@ if ($_GET) {
 	case "delete":
 		if ($queue) {
 			$queue->delete_queue();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Item deleted")) {
 				mark_subsystem_dirty('shaper');
 			}
 		}
@@ -123,7 +123,7 @@ if ($_GET) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config("Traffic Shapper: Reset all")) {
 			$changes_applied = true;
 			$retval = 0;
 			$retval |= filter_configure();
@@ -190,7 +190,7 @@ if ($_GET) {
 		if ($queue) {
 			$queue->SetEnabled("on");
 			$sform = $queue->build_form();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Queue enabled")) {
 				mark_subsystem_dirty('shaper');
 			}
 		} else {
@@ -201,7 +201,7 @@ if ($_GET) {
 		if ($queue) {
 			$queue->SetEnabled("");
 			$sform = $queue->build_form();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Queue disabled")) {
 				mark_subsystem_dirty('shaper');
 			}
 		} else {
@@ -228,7 +228,7 @@ if ($_POST) {
 			$tmppath[] = $altq->GetInterface();
 			$altq->SetLink($tmppath);
 			$altq->wconfig();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Added root queue")) {
 				mark_subsystem_dirty('shaper');
 			}
 			$can_enable = true;
@@ -256,7 +256,7 @@ if ($_POST) {
 				} else {
 					$can_add = false;
 				}
-				if (write_config()) {
+				if (write_config("Traffic Shaper: Added new queue")) {
 					mark_subsystem_dirty('shaper');
 				}
 				$can_enable = true;
@@ -274,7 +274,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Could not add new queue.");
 		}
 	} else if ($_POST['apply']) {
-		write_config();
+		write_config("Traffic Shaper: Apply changes");
 		$changes_applied = true;
 		$retval = 0;
 		$retval |= filter_configure();
@@ -298,7 +298,7 @@ if ($_POST) {
 		if (!$input_errors) {
 			$queue->update_altq_queue_data($_POST);
 			$queue->wconfig();
-			if (write_config()) {
+			if (write_config("Traffic Shaper: Changed queue")) {
 				mark_subsystem_dirty('shaper');
 			}
 			$dontshow = false;

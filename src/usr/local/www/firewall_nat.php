@@ -78,7 +78,7 @@ if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($nate
 			}
 		}
 
-		if (write_config()) {
+		if (write_config("NAT: Rule order changed")) {
 			mark_subsystem_dirty('filter');
 		}
 
@@ -122,7 +122,7 @@ if (($_POST['act'] == "del") && have_natpfruleint_access($natent['interface'])) 
 		$mvnrows = -1;
 		move_separators($a_separators, $ridx, $mvnrows);
 
-		if (write_config()) {
+		if (write_config("NAT: Rule deleted")) {
 			mark_subsystem_dirty('natconf');
 			if ($want_dirty_filter) {
 				mark_subsystem_dirty('filter');
@@ -159,7 +159,7 @@ if (isset($_POST['del_x']) && have_natpfruleint_access($natent['interface'])) {
 			$num_deleted++;
 		}
 
-		if (write_config()) {
+		if (write_config("NAT: Rule deleted")) {
 			mark_subsystem_dirty('natconf');
 		}
 

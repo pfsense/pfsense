@@ -160,7 +160,7 @@ if ($_POST['save']) {
 		}
 		staticmaps_sort($if);
 
-		write_config();
+		write_config("DHCPv6 server static maps saved");
 
 		if (isset($config['dhcpdv6'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');

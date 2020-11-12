@@ -421,7 +421,7 @@ if ($_POST['save']) {
 			set_pam_auth();
 		}
 
-		write_config();
+		write_config("Authentication Servers settings saved");
 
 		pfSenseHeader("system_authservers.php");
 	}

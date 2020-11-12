@@ -176,7 +176,7 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		write_config();
+		write_config("DNS Forwarder settings saved");
 		mark_subsystem_dirty('hosts');
 	}
 }
@@ -186,7 +186,7 @@ if ($_POST['act'] == "del") {
 	if ($_POST['type'] == 'host') {
 		if ($a_hosts[$_POST['id']]) {
 			unset($a_hosts[$_POST['id']]);
-			write_config();
+			write_config("DNS Forwarder host override deleted");
 			mark_subsystem_dirty('hosts');
 			header("Location: services_dnsmasq.php");
 			exit;
@@ -194,7 +194,7 @@ if ($_POST['act'] == "del") {
 	} elseif ($_POST['type'] == 'doverride') {
 		if ($a_domainOverrides[$_POST['id']]) {
 			unset($a_domainOverrides[$_POST['id']]);
-			write_config();
+			write_config("DNS Forwarder domain override deleted");
 			mark_subsystem_dirty('hosts');
 			header("Location: services_dnsmasq.php");
 			exit;

@@ -179,7 +179,7 @@ if ($_POST['save']) {
 				$a_gres[] = $gre;
 			}
 
-			write_config();
+			write_config("GRE interface added");
 
 			$confif = convert_real_interface_to_friendly_interface_name($gre['greif']);
 

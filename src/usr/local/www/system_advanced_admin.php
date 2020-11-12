@@ -355,7 +355,7 @@ if ($_POST) {
 			$restart_sshguard = true;
 		}
 
-		write_config();
+		write_config("Admin Access Advanced Settings saved");
 
 		$changes_applied = true;
 		$retval = 0;

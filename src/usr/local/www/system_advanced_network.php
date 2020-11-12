@@ -191,7 +191,7 @@ if ($_POST) {
 		setup_microcode();
 
 		// Write out configuration (config.xml)
-		write_config();
+		write_config("Networking Advanced Settings saved");
 
 		// Set preferred protocol
 		prefer_ipv4_or_ipv6();

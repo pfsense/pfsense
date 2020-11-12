@@ -68,7 +68,7 @@ if ($_POST['act'] == "del") {
 			mwexec("/bin/rm -r {$g['varetc_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid']);
 		}
 		unset($a_pppoes[$_POST['id']]);
-		write_config();
+		write_config("PPPoE Server deleted");
 		header("Location: services_pppoe.php");
 		exit;
 	}

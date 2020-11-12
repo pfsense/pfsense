@@ -127,7 +127,7 @@ if ($_POST['save']) {
 				}
 
 				usort($a_clones, "clone_compare");
-				write_config();
+				write_config("Wireless interface added");
 
 				header("Location: interfaces_wireless.php");
 				exit;

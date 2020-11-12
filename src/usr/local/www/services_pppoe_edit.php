@@ -282,7 +282,7 @@ if ($_POST['save']) {
 		}
 
 		$a_pppoes[$id] = $pppoecfg;
-		write_config();
+		write_config("PPPoE Server item saved");
 		vpn_pppoe_updatesecret($pppoecfg);
 
 		header("Location: services_pppoe.php");

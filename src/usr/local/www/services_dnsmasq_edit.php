@@ -158,7 +158,7 @@ if ($_POST['save']) {
 
 		mark_subsystem_dirty('hosts');
 
-		write_config();
+		write_config("DNS Forwarder host override saved");
 
 		header("Location: services_dnsmasq.php");
 		exit;

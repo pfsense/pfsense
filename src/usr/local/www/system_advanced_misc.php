@@ -328,7 +328,7 @@ if ($_POST) {
 			install_cron_job("/etc/rc.backup_logs.sh", ($config['system']['logsbackup'] > 0), $minute="0", "*/{$config['system']['logsbackup']}", '*', '*', '*', 'root', false);
 		}
 
-		write_config();
+		write_config("Miscellaneous Advanced Settings saved");
 
 		$changes_applied = true;
 		$retval = 0;

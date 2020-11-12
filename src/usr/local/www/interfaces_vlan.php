@@ -54,7 +54,7 @@ if ($_POST['act'] == "del") {
 		}
 		unset($a_vlans[$_POST['id']]);
 
-		write_config();
+		write_config("VLAN interface deleted");
 
 		header("Location: interfaces_vlan.php");
 		exit;

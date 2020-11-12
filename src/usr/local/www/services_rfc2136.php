@@ -36,7 +36,7 @@ $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 if ($_POST['act'] == "del") {
 	unset($a_rfc2136[$_POST['id']]);
 
-	write_config();
+	write_config("RFC 2136 client deleted");
 
 	header("Location: services_rfc2136.php");
 	exit;
@@ -44,10 +44,12 @@ if ($_POST['act'] == "del") {
 	if ($a_rfc2136[$_POST['id']]) {
 		if (isset($a_rfc2136[$_POST['id']]['enable'])) {
 			unset($a_rfc2136[$_POST['id']]['enable']);
+			$action = "disabled";
 		} else {
 			$a_rfc2136[$_POST['id']]['enable'] = true;
+			$action = "enabled";
 		}
-		write_config();
+		write_config("RFC 2136 {$action}");
 
 		header("Location: services_rfc2136.php");
 		exit;

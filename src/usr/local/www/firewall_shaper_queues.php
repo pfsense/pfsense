@@ -80,7 +80,7 @@ if ($_GET) {
 			$qtmp =& $altq->find_queue("", $qname);
 			if ($qtmp) {
 				$qtmp->delete_queue();
-				if (write_config()) {
+				if (write_config("Traffic Shaper: Queue deleted")) {
 					mark_subsystem_dirty('shaper');
 				}
 			}
@@ -125,7 +125,7 @@ if ($_GET) {
 						$config['shaper']['queue'][] = $newroot;
 					}
 
-					if (write_config()) {
+					if (write_config("Traffic Shaper: Added new queue")) {
 						mark_subsystem_dirty('shaper');
 					}
 
@@ -165,7 +165,7 @@ if ($_GET) {
 }
 
 if ($_POST['apply']) {
-	write_config();
+	write_config("Traffic Shaper: Changes applied");
 
 	$retval = 0;
 	/* Setup pf rules since the user may have changed the optimization value */

@@ -67,7 +67,7 @@ if ($_POST['act'] == "del") {
 		pfSense_interface_destroy($qinq['vlanif']);
 		unset($a_qinqs[$id]);
 
-		write_config();
+		write_config("QinQ interface deleted");
 
 		header("Location: interfaces_qinq.php");
 		exit;

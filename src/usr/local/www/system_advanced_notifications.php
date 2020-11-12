@@ -242,7 +242,7 @@ if ($_POST) {
 		}
 
 		if (!$input_errors && !$testsmtp && !$testtelegram && !$testpushover) {
-			write_config();
+			write_config("Notifications Advanced Settings saved");
 
 			pfSenseHeader("system_advanced_notifications.php");
 			return;

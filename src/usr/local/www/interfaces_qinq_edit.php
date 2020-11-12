@@ -226,7 +226,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		write_config();
+		write_config("QinQ interface added");
 
 		header("Location: interfaces_qinq.php");
 		exit;

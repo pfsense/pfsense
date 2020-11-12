@@ -162,7 +162,7 @@ if ($_POST['save']) {
 		}
 		passthrumacs_sort();
 
-		write_config();
+		write_config("Captive portal passthrough MAC added");
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];

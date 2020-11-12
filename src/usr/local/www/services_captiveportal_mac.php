@@ -111,7 +111,7 @@ if ($_POST['save']) {
 				mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 				@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 				unset($a_passthrumacs[$idx]);
-				write_config();
+				write_config("Captive portal passthrough MAC deleted");
 				echo gettext("The entry was successfully deleted") . "\n";
 			} else {
 				echo gettext("No entry exists for this mac address:") . " " . htmlspecialchars($_POST['delmac']) . "\n";
@@ -130,7 +130,7 @@ if ($_POST['act'] == "del") {
 		mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 		@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		unset($a_passthrumacs[$_POST['id']]);
-		write_config();
+		write_config("Captive portal passthrough MAC deleted");
 		header("Location: services_captiveportal_mac.php?zone={$cpzone}");
 		exit;
 	}

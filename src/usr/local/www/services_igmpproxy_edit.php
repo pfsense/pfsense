@@ -111,7 +111,7 @@ if ($_POST['save']) {
 			$a_igmpproxy[] = $igmpentry;
 		}
 
-		write_config();
+		write_config("IGMP Proxy item saved");
 
 		mark_subsystem_dirty('igmpproxy');
 		header("Location: services_igmpproxy.php");

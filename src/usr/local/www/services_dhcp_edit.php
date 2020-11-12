@@ -408,7 +408,7 @@ if ($_POST['save']) {
 		}
 		staticmaps_sort($if);
 
-		write_config();
+		write_config("DHCP Server settings saved");
 
 		if (isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');

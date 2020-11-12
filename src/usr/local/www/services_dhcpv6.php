@@ -497,7 +497,7 @@ if (isset($_POST['apply'])) {
 
 		$config['dhcpdv6'][$if]['numberoptions'] = $numberoptions;
 
-		write_config();
+		write_config("DHCPv6 server settings saved");
 
 		$changes_applied = true;
 		$retval = dhcpv6_apply_changes($dhcpdv6_enable_changed);
@@ -507,7 +507,7 @@ if (isset($_POST['apply'])) {
 if ($_POST['act'] == "del") {
 	if ($a_maps[$_POST['id']]) {
 		unset($a_maps[$_POST['id']]);
-		write_config();
+		write_config("DHCPv6 server static map deleted");
 		if (isset($config['dhcpdv6'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmapsv6');
 			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstaticv6'])) {

@@ -181,7 +181,7 @@ if ($_POST['save']) {
 				$a_laggs[] = $lagg;
 			}
 
-			write_config();
+			write_config("LAGG interface added");
 
 			$confif = convert_real_interface_to_friendly_interface_name($lagg['laggif']);
 			if ($confif != "") {

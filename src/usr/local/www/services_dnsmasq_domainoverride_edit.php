@@ -106,7 +106,7 @@ if ($_POST['save']) {
 
 		$retval = services_dnsmasq_configure();
 
-		write_config();
+		write_config("DNS Forwarder domain override saved");
 
 		header("Location: services_dnsmasq.php");
 		exit;

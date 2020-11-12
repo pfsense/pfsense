@@ -149,7 +149,7 @@ if ($_POST['save']) {
 
 		allowedips_sort();
 
-		write_config();
+		write_config("Captive portal allowed IPs added");
 
 		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
 			$rules = "";

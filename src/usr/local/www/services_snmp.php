@@ -161,7 +161,7 @@ if ($_POST) {
 			$config['snmpd']['bindip'] = implode(",", $_POST['bindip']);
 		}
 
-		write_config();
+		write_config("SNMP settings saved");
 
 		$changes_applied = true;
 		$retval = 0;

@@ -363,7 +363,7 @@ if ($_POST['save']) {
 				$a_bridges[] = $bridge;
 			}
 
-			write_config();
+			write_config("Bridge interface created");
 
 			$confif = convert_real_interface_to_friendly_interface_name($bridge['bridgeif']);
 			if ($confif <> "") {

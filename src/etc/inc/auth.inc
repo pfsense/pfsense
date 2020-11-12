@@ -2392,6 +2392,7 @@ EOD;
 
 			@file_put_contents("/var/etc/pam_ldap.conf", $ldapconf);
 			@chmod("/var/etc/pam_ldap.conf", 0600);
+			@unlink_if_exists("/usr/local/etc/nss_ldap.conf");
 			@symlink("/var/etc/pam_ldap.conf", "/usr/local/etc/nss_ldap.conf");
 		}
 	}

@@ -473,7 +473,7 @@ function interface_vlan_configure(&$vlan, $flush = true) {
 		pfSense_interface_destroy($vlanif);
 	}
 
-	$tmpvlanif = pfSense_interface_create("vlan");
+	$tmpvlanif = pfSense_interface_create2("vlan");
 	pfSense_interface_rename($tmpvlanif, $vlanif);
 	pfSense_ngctl_name("{$tmpvlanif}:", $vlanif);
 
@@ -820,12 +820,12 @@ function interface_bridge_configure(&$bridge, $checkmember = 0, $flush = true) {
 
 	if (!empty($bridge['bridgeif'])) {
 		pfSense_interface_destroy($bridge['bridgeif']);
-		pfSense_interface_create($bridge['bridgeif']);
+		pfSense_interface_create2($bridge['bridgeif']);
 		$bridgeif = escapeshellarg($bridge['bridgeif']);
 	} else {
 		// if called directly, as interfaces_bridge_edit.php does, and bridgeif isn't set
 		// normally set by interfaces_bridge_configure, but not upon creation of new bridge
-		$bridgeif = pfSense_interface_create("bridge");
+		$bridgeif = pfSense_interface_create2("bridge");
 		$bridge['bridgeif'] = $bridgeif;
 	}
 
@@ -1081,10 +1081,10 @@ function interface_lagg_configure($lagg, $flush = true) {
 
 	if (platform_booting() || !(empty($lagg['laggif']))) {
 		pfSense_interface_destroy($lagg['laggif']);
-		pfSense_interface_create($lagg['laggif']);
+		pfSense_interface_create2($lagg['laggif']);
 		$laggif = $lagg['laggif'];
 	} else {
-		$laggif = pfSense_interface_create("lagg");
+		$laggif = pfSense_interface_create2("lagg");
 	}
 
 	/* Check if MTU was defined for this lagg interface */
@@ -1166,10 +1166,10 @@ function interface_gre_configure(&$gre, $grekey = "", $flush = true) {
 
 	if (platform_booting() || !(empty($gre['greif']))) {
 		pfSense_interface_destroy($gre['greif']);
-		pfSense_interface_create($gre['greif']);
+		pfSense_interface_create2($gre['greif']);
 		$greif = $gre['greif'];
 	} else {
-		$greif = pfSense_interface_create("gre");
+		$greif = pfSense_interface_create2("gre");
 	}
 
 	$tunnel_type = '';
@@ -1325,10 +1325,10 @@ function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
 
 	if (platform_booting() || !(empty($gif['gifif']))) {
 		pfSense_interface_destroy($gif['gifif']);
-		pfSense_interface_create($gif['gifif']);
+		pfSense_interface_create2($gif['gifif']);
 		$gifif = $gif['gifif'];
 	} else {
-		$gifif = pfSense_interface_create("gif");
+		$gifif = pfSense_interface_create2("gif");
 	}
 
 	/* Do not change the order here for more see gif(4) NOTES section. */
@@ -1521,10 +1521,10 @@ function interface_vxlan_configure(&$vxlan, $vxlankey = "", $flush = true) {
 	/* Interface is defined */
 	if (platform_booting() || !(empty($vxlan['vxlanif']))) {
 		pfSense_interface_destroy($vxlan['vxlanif']);
-		pfSense_interface_create($vxlan['vxlanif']);
+		pfSense_interface_create2($vxlan['vxlanif']);
 		$vxlanif = $vxlan['vxlanif'];
 	} else {
-		$vxlanif = pfSense_interface_create("vxlanif");
+		$vxlanif = pfSense_interface_create2("vxlanif");
 	}
 
 	$ifconfigcmd = "/sbin/ifconfig " . escapeshellarg($vxlanif) .
@@ -4799,7 +4799,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	if (does_interface_exist($stfiface)) {
 		pfSense_interface_destroy($stfiface);
 	}
-	$tmpstfiface = pfSense_interface_create("stf");
+	$tmpstfiface = pfSense_interface_create2("stf");
 	pfSense_interface_rename($tmpstfiface, $stfiface);
 	pfSense_interface_flags($stfiface, IFF_LINK2);
 	mwexec("/sbin/ifconfig {$stfiface} inet6 {$rd6prefix}/{$rd6prefixlen}");
@@ -4915,7 +4915,7 @@ function interface_6to4_configure($interface = "wan", $wancfg) {
 	if (does_interface_exist($stfiface)) {
 		pfSense_interface_destroy($stfiface);
 	}
-	$tmpstfiface = pfSense_interface_create("stf");
+	$tmpstfiface = pfSense_interface_create2("stf");
 	pfSense_interface_rename($tmpstfiface, $stfiface);
 	pfSense_interface_flags($stfiface, IFF_LINK2);
 	mwexec("/sbin/ifconfig {$stfiface} inet6 {$stflanpr} prefixlen 16");

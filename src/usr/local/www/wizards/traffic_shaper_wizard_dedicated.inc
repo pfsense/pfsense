@@ -95,11 +95,6 @@ function step2_stepbeforeformdisplay() {
 
 	$fields = &$pkg['step'][1]['fields']['field'];
 
-	/*
-	unset($config['ezshaper']['step2']);
-	$config['ezshaper']['step2'] = array();
-	write_config();
-	*/
 	$fields = array();
 
 	for ($i = 0; $i < $numberofconnections; $i++) {

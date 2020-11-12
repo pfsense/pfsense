@@ -115,6 +115,7 @@ function wg_do_post($post, $json = false) {
 		$peer['allowedips'] =  $post['allowedips' . $idx];
 		$peer['descr'] =  $post['descp' . $idx];
 		$peer['persistentkeepalive'] =  $post['persistentkeepalive' . $idx];
+		$peer['presharedkey'] =  $post['presharedkey' . $idx];
 
 		$pconfig['peers']['peer'][] = $peer;
 		$idx++;

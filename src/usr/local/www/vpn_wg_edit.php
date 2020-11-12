@@ -163,6 +163,7 @@ $dnshost_help = gettext("Public key");
 $dnsgw_help = gettext("Endpoint");
 $ka_help = gettext("Keepalive");
 $aips_help = gettext("Allowed IPs");
+$preshare_help = gettext("Pre-shared key");
 
 // If there are no peers, make an empty entry for initial display. This will be the case when creating a new tunnel
 if ($peer_count == 0) {
@@ -219,6 +220,13 @@ foreach ($pconfig['peers']['peer'] as $peer) {
 		'text',
 		$peer['allowedips']
 	))->setHelp($aips_help);
+
+	$group2->add(new Form_Input(
+		'presharedkey' . $peer_num,
+		'Preshared key',
+		'text',
+		$peer['presharedkey']
+	))->setHelp($preshare_help);
 
 	$section2->add($group);
 	$section2->add($group2);

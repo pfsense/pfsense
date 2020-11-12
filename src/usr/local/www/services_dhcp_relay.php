@@ -112,7 +112,13 @@ if ($_POST) {
 	if (!$input_errors) {
 		init_config_arr(array('dhcrelay'));
 		$config['dhcrelay']['enable'] = $_POST['enable'] ? true : false;
-		$config['dhcrelay']['interface'] = implode(",", $_POST['interface']);
+		if (isset($_POST['interface']) &&
+		    is_array($_POST['interface'])) {
+			$config['dhcrelay']['interface'] = implode(",",
+			    $_POST['interface']);
+		} else {
+			unset($config['dhcrelay']['interface']);
+		}
 		$config['dhcrelay']['agentoption'] = $_POST['agentoption'] ? true : false;
 		$config['dhcrelay']['server'] = $svrlist;
 

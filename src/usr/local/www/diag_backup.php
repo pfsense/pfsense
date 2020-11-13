@@ -176,7 +176,7 @@ $section->addInput(new Form_Checkbox(
 	'backupdata',
 	'Include extra data',
 	'Backup extra data.',
-	true
+	false
 ))->setHelp('Backup extra data files for some services.%1$s' .
 	    '%2$s%3$sCaptive Portal - Captive Portal DB and UsedMACs DB%4$s' .
 	    '%3$sCaptive Portal Vouchers - Used Vouchers DB%4$s' .

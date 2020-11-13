@@ -202,6 +202,21 @@ function restore_backup($file) {
 	global $g;
 
 	if (file_exists($file)) {
+		/* restore rrddata/xmldata and clear appropriate data,
+		 * see https://redmine.pfsense.org/issues/11050 */
+		$data = file_get_contents("$file");
+		$conf = parse_xml_config("$file", $g['xml_rootobj']);
+		if ($conf['rrddata']) {
+			restore_rrddata($conf);
+			$data = clear_tagdata("rrd", $data);
+		}
+		foreach ($g['backuppath'] as $bk => $path) {
+			if (!empty($conf[$bk][$bk.'data'])) {
+				restore_xmldatafile($bk, $conf);
+				$data = clear_tagdata($bk, $data);
+			}
+		}
+		file_put_contents($file, $data);
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		copy("$file", "/cf/conf/config.xml");
 		//pfSense_fsync("/cf/conf/config.xml");
@@ -209,6 +224,93 @@ function restore_backup($file) {
 		disable_security_checks();
 		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file));
 		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file), "pfSenseConfigurator", "");
+	}
+}
+
+/*
+ *	Backup RRD/XML Data
+ */
+
+/* If the config on disk had rrddata/xmldata tags already, remove that section first.
+ * See https://redmine.pfsense.org/issues/8994,
+ *     https://redmine.pfsense.org/issues/10508, 
+ *     https://redmine.pfsense.org/issues/11050 */
+function clear_tagdata($tag = "rrd", $data) {
+	$data = preg_replace("/[[:blank:]]*<{$tag}data>.*<\\/{$tag}data>[[:blank:]]*\n*/s", "", $data);
+	$data = preg_replace("/[[:blank:]]*<{$tag}data\\/>[[:blank:]]*\n*/", "", $data);
+
+	return $data;
+}
+
+function restore_xmldatafile($type='voucher', $conf = false) {
+	global $config, $g;
+
+	if (!$conf) {
+		$conf = & $config;
+	}
+
+	foreach ($conf[$type]["{$type}data"]["xmldatafile"] as $file) {
+		$basename = basename($file['filename']);
+		$dirname = dirname($g['backuppath'][$type]);
+		$xmldata_file = "{$dirname}/{$basename}";
+		if (file_put_contents($xmldata_file, gzinflate(base64_decode($file['data']))) === false) {
+			log_error(sprintf(gettext("Cannot write %s"), $xmldata_file));
+			continue;
+		}
+	}
+}
+
+function restore_rrddata($conf = false) {
+	global $config, $g, $rrdtool, $input_errors;
+
+	if (!$conf) {
+		$conf = & $config;
+	}
+
+	foreach ($conf['rrddata']['rrddatafile'] as $rrd) {
+		if ($rrd['xmldata']) {
+			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
+			$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
+			if (file_put_contents($xml_file, gzinflate(base64_decode($rrd['xmldata']))) === false) {
+				log_error(sprintf(gettext("Cannot write %s"), $xml_file));
+				continue;
+			}
+			$output = array();
+			$status = null;
+			exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $output, $status);
+			if ($status) {
+				log_error("rrdtool restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
+				continue;
+			}
+			unlink($xml_file);
+		} else if ($rrd['data']) {
+			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
+			$rrd_fd = fopen($rrd_file, "w");
+			if (!$rrd_fd) {
+				log_error(sprintf(gettext("Cannot write %s"), $rrd_file));
+				continue;
+			}
+			$data = base64_decode($rrd['data']);
+			/* Try to decompress the data. */
+			$dcomp = @gzinflate($data);
+			if ($dcomp) {
+				/* If the decompression worked, write the decompressed data */
+				if (fwrite($rrd_fd, $dcomp) === false) {
+					log_error(sprintf(gettext("fwrite %s failed"), $rrd_file));
+					continue;
+				}
+			} else {
+				/* If the decompression failed, it wasn't compressed, so write raw data */
+				if (fwrite($rrd_fd, $data) === false) {
+					log_error(sprintf(gettext("fwrite %s failed"), $rrd_file));
+					continue;
+				}
+			}
+			if (fclose($rrd_fd) === false) {
+				log_error(sprintf(gettext("fclose %s failed"), $rrd_file));
+				continue;
+			}
+		}
 	}
 }
 

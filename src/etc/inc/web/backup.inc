@@ -65,69 +65,6 @@ function rrd_data_xml() {
 	return $result;
 }
 
-function restore_rrddata() {
-	global $config, $g, $rrdtool, $input_errors;
-	foreach ($config['rrddata']['rrddatafile'] as $rrd) {
-		if ($rrd['xmldata']) {
-			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
-			$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
-			if (file_put_contents($xml_file, gzinflate(base64_decode($rrd['xmldata']))) === false) {
-				log_error(sprintf(gettext("Cannot write %s"), $xml_file));
-				continue;
-			}
-			$output = array();
-			$status = null;
-			exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $output, $status);
-			if ($status) {
-				log_error("rrdtool restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
-				continue;
-			}
-			unlink($xml_file);
-		} else if ($rrd['data']) {
-			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
-			$rrd_fd = fopen($rrd_file, "w");
-			if (!$rrd_fd) {
-				log_error(sprintf(gettext("Cannot write %s"), $rrd_file));
-				continue;
-			}
-			$data = base64_decode($rrd['data']);
-			/* Try to decompress the data. */
-			$dcomp = @gzinflate($data);
-			if ($dcomp) {
-				/* If the decompression worked, write the decompressed data */
-				if (fwrite($rrd_fd, $dcomp) === false) {
-					log_error(sprintf(gettext("fwrite %s failed"), $rrd_file));
-					continue;
-				}
-			} else {
-				/* If the decompression failed, it wasn't compressed, so write raw data */
-				if (fwrite($rrd_fd, $data) === false) {
-					log_error(sprintf(gettext("fwrite %s failed"), $rrd_file));
-					continue;
-				}
-			}
-			if (fclose($rrd_fd) === false) {
-				log_error(sprintf(gettext("fclose %s failed"), $rrd_file));
-				continue;
-			}
-		}
-	}
-}
-
-function restore_xmldatafile($type='voucher') {
-	global $config, $g;
-
-	foreach ($config[$type]["{$type}data"]["xmldatafile"] as $file) {
-		$basename = basename($file['filename']);
-		$dirname = dirname($g['backuppath'][$type]);
-		$xmldata_file = "{$dirname}/{$basename}";
-		if (file_put_contents($xmldata_file, gzinflate(base64_decode($file['data']))) === false) {
-			log_error(sprintf(gettext("Cannot write %s"), $xmldata_file));
-			continue;
-		}
-	}
-}
-
 function backup_xmldatafile($tab=false, $type='voucher') {
 	global $g;
 
@@ -206,6 +143,7 @@ function execPost($post, $postfiles, $ui = true) {
 						$name = "{$post['backuparea']}-{$name}";
 					} else if (array_key_exists($post['backuparea'], $g['backuppath']) && $post['backupdata']) {
 						$data = backup_config_section($post['backuparea']);
+						$data = clear_tagdata($post['backuparea'], $data);
 						$dataxml = backup_xmldatafile(false, $post['backuparea']);
 						$closing_tag = "</{$post['backuparea']}>";
 						$data = str_replace($closing_tag, $dataxml . $closing_tag, $data);
@@ -217,21 +155,14 @@ function execPost($post, $postfiles, $ui = true) {
 					}
 				}
 
-				//unlock($lockbckp);
-
-				/*
-				 *	Backup RRD Data
-				 */
-
-				/* If the config on disk had rrddata tags already, remove that section first.
-				 * See https://redmine.pfsense.org/issues/8994 and
-				 *     https://redmine.pfsense.org/issues/10508 */
-				$data = preg_replace("/[[:blank:]]*<rrddata>.*<\\/rrddata>[[:blank:]]*\n*/s", "", $data);
-				$data = preg_replace("/[[:blank:]]*<rrddata\\/>[[:blank:]]*\n*/", "", $data);
+				if ($post['backuparea'] != "rrddata") {
+					$data = clear_tagdata('rrd', $data);
+				}
 
 				if (!$post['backuparea'] && $post['backupdata']) {
 					foreach ($g['backuppath'] as $bk => $path) {
 						if (!empty($config[$bk])) {
+							$data = clear_tagdata($bk, $data);
 							$dataxml = backup_xmldatafile(true, $bk);
 							$closing_tag = "\t</{$bk}>";
 							$data = str_replace($closing_tag, $dataxml . $closing_tag, $data);
@@ -239,7 +170,7 @@ function execPost($post, $postfiles, $ui = true) {
 					}
 				}
 
-				if ($post['backuparea'] !== "rrddata" && !$post['donotbackuprrd']) {
+				if (($post['backuparea'] != "rrddata") && !$post['donotbackuprrd']) {
 					$rrd_data_xml = rrd_data_xml();
 					$closing_tag = "</" . $g['xml_rootobj'] . ">";
 					$data = str_replace($closing_tag, $rrd_data_xml . $closing_tag, $data);

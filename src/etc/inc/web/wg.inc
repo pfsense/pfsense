@@ -24,6 +24,63 @@ require_once('config.inc');
 
 $wgbinpath = '/usr/local/bin/wg';
 
+// Setup all Wireguard tunnels
+function wg_configure() {
+	global $config;
+
+	if (!isset($config["wireguard"]["tunnel"]) || !is_array($config["wireguard"]["tunnel"])) {
+		return;
+	}
+	if (platform_booting()) {
+		echo gettext("Configuring Wireguard Tunnels...");
+	}
+
+	foreach ($config["wireguard"]["tunnel"] as $tunnel) {
+		if (isset($tunnel['enabled']) && $tunnel['enabled'] == 'yes') {
+			wg_configure_if($tunnel['name']);
+		}
+	}
+
+	if (platform_booting()) {
+		echo gettext("done.") . "\n";
+	}
+}
+
+// Setup Wireguard tunnel
+function wg_configure_if($wg_ifname) {
+	global $config, $g;
+
+	if (!isset($config["wireguard"]["tunnel"]) || !is_array($config["wireguard"]["tunnel"])) {
+		return;
+	}
+
+	unset($tunnel);
+	foreach ($config["wireguard"]["tunnel"] as $tun) {
+		if (isset($tun['enabled']) && $tun['enabled'] == 'yes' && $tun['name'] == $wg_ifname) {
+			$tunnel = $tun;
+			break;
+		}
+	}
+
+	if (!isset($tunnel) || !is_array($tunnel)) {
+		return;
+	}
+
+	echo $tunnel['name'] . " ";
+	wg_destroy_if($tunnel['name']);
+	$if = pfSense_interface_create($tunnel['name']);
+//echo "<pre>"; print_r($if); echo "</pre>";
+	$conf_path = $g["wg_conf_path"] . "/" . $tunnel['name'] . ".conf";
+	/* XXX - workaround while pfSense-module 0.69 isn't available */
+	mwexec("/sbin/ifconfig " . escapeshellarg($tunnel['name']) . " create");
+	mwexec("/usr/local/bin/wg setconf " . escapeshellarg($tunnel['name']) . " " . escapeshellarg($conf_path));
+}
+
+// Setup Wireguard tunnel
+function wg_destroy_if($wg_ifname) {
+	return (pfSense_interface_destroy($wg_ifname));
+}
+
 // Generate private key
 function genKeyPair($json = false) {
 	global $wgbinpath;
@@ -59,20 +116,28 @@ function nextFreeWGInterfaceName() {
 }
 
 function deleteTunnel($tunidx) {
-	global $config;
+	global $config, $g;
 
 	if ($config['wireguard']['tunnel'][$tunidx]) {
-		// Delete the config file entry
+		unset($ifname);
+		unset($conf_path);
+		if (isset($config['wireguard']['tunnel'][$tunidx]['name'])) {
+			$ifname = $config['wireguard']['tunnel'][$tunidx]['name'];
+		}
+		if (isset($ifname)) {
+			$conf_path = $g["wg_conf_path"] . "/" . $ifname . ".conf";
+		}
+		// Delete the tunnel configuration entry
 		unset($config['wireguard']['tunnel'][$tunidx]);
 		write_config("Wireguard tunnel {$index} updated.");
 
 		// Delete the wg?.conf file
-		$fname = $config['wireguard']['tunnel'][$tunidx]['name'];
-		if(is_file($fname)) {
-			unlink($fname);
+		if (isset($conf_path) && is_file($conf_path)) {
+			unlink($conf_path);
 		}
 
-		// ToDo: kill the deleted tunnel
+		// Destroy the deleted tunnel
+		wg_destroy_if($ifname);
 	}
 }
 
@@ -116,6 +181,7 @@ function wg_do_post($post, $json = false) {
 		$peer['descr'] =  $post['descp' . $idx];
 		$peer['persistentkeepalive'] =  $post['persistentkeepalive' . $idx];
 		$peer['presharedkey'] =  $post['presharedkey' . $idx];
+		$peer['port'] =  $post['port' . $idx];
 
 		$pconfig['peers']['peer'][] = $peer;
 		$idx++;
@@ -136,7 +202,9 @@ function wg_create_config_files($clean = true) {
 		$cfgpath = $g["wg_conf_path"];
 
 		if (!file_exists($cfgpath)) {
-			mkdir($cfgpath, 0644, true);
+			mkdir($cfgpath, 0700, true);
+		} else {
+			chmod($cfgpath, 0700);
 		}
 
 		if ($clean) {
@@ -166,11 +234,6 @@ function make_wg_conf($tunnel) {
 		$txt .= "PrivateKey = {$tunnel["interface"]["privatekey"]}\n";
 	}
 
-
-	if (!empty($tunnel["interface"]["address"])) {
-		$txt .= "Address = {$tunnel["interface"]["address"]}\n";
-	}
-
 	if (!empty($tunnel["interface"]["listenport"])) {
 		$txt .= "ListenPort = {$tunnel["interface"]["listenport"]}\n";
 	}
@@ -189,16 +252,8 @@ function make_wg_conf($tunnel) {
 				$txt .= "PublicKey = {$peer['publickey']}\n";
 			}
 
-			if (!empty($peer["address"])) {
-				$txt .= "Address = {$peer['address']}\n";
-			}
-
-			if (!empty($peer["listenport"])) {
-				$txt .= "ListenPort = {$peer['listenport']}\n";
-			}
-
-			if (!empty($peer["endpoint"])) {
-				$txt .= "EndPoint = {$peer['endpoint']}\n";
+			if (!empty($peer["endpoint"]) && !empty($peer["port"])) {
+				$txt .= "EndPoint = {$peer['endpoint']}:{$peer['port']}\n";
 			}
 
 			if (!empty($peer["allowedips"])) {
@@ -218,6 +273,7 @@ function make_wg_conf($tunnel) {
 	}
 
 	file_put_contents($g["wg_conf_path"] . "/" . $tunnel['name'] . ".conf", $txt);
+	chmod($g["wg_conf_path"] . "/" . $tunnel['name'] . ".conf", 0600);
 }
 
 // Remove all wg config files from the conf directory

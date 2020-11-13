@@ -52,7 +52,9 @@ if ($_POST['save']) {
 		// Create the new WG config files
 		wg_create_config_files();
 
-		// ToDo: use wg-quick to start the newly configured tunnels using the files wg?.conf created sabove
+		// Setup and start the new WG tunnel
+		wg_configure_if($pconfig['name']);
+
 		// Go back to the tunnel table
 		header("Location: vpn_wg.php");
 	}
@@ -164,6 +166,7 @@ $dnsgw_help = gettext("Endpoint");
 $ka_help = gettext("Keepalive");
 $aips_help = gettext("Allowed IPs");
 $preshare_help = gettext("Pre-shared key");
+$port_help = gettext("Remote Port");
 
 // If there are no peers, make an empty entry for initial display. This will be the case when creating a new tunnel
 if ($peer_count == 0) {
@@ -190,6 +193,13 @@ foreach ($pconfig['peers']['peer'] as $peer) {
 	))->setHelp($dnsgw_help)->setWidth(3);
 
 	$group->add(new Form_Input(
+		'port' . $peer_num,
+		'Port',
+		'text',
+		$peer['port']
+	))->setHelp($port_help);
+
+	$group->add(new Form_Input(
 		'persistentkeepalive' . $peer_num,
 		'Keepalive',
 		'PDF_pcos_get_number(p, doc, path)',
@@ -212,7 +222,6 @@ foreach ($pconfig['peers']['peer'] as $peer) {
 		'text',
 		$peer['publickey']
 	))->setHelp($dnshost_help)->setWidth(4);
-
 
 	$group2->add(new Form_Input(
 		'allowedips' . $peer_num,

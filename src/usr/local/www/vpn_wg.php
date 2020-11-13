@@ -118,7 +118,7 @@ if (array_key_exists('delidx', $_POST)) {
 <?php			foreach ($tunnel['peers']['peer'] as $peer) { ?>
 									<tr>
 										<td><?=$peer['descr']?></td>
-										<td><?=$peer['endpoint']?></td>
+										<td><?=$peer['endpoint']?>:<?=$peer['port']?></td>
 										<td><?=$peer['allowedips']?></td>
 										<td><?=$peer['publickey']?></td>
 									</tr>

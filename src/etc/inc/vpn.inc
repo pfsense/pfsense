@@ -154,6 +154,7 @@ poes:
 	set mppc yes e128
 	set mppc yes stateless
 
+	set iface name poes{$pppoecfg['pppoeid']}-
 	set iface group pppoe
 	set iface up-script /usr/local/sbin/vpn-linkup-poes
 	set iface down-script /usr/local/sbin/vpn-linkdown-poes

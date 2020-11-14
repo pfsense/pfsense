@@ -1546,7 +1546,7 @@ function get_configured_ip_addresses() {
 		foreach ($config['pppoes']['pppoe'] as $pppoe) {
 			if ($pppoe['mode'] == "server") {
 				if (is_ipaddr($pppoe['localip'])) {
-					$int = "pppoes". $pppoe['pppoeid'];
+					$int = "poes". $pppoe['pppoeid'];
 					$ip_array[$int] = $pppoe['localip'];
 				}
 			}
@@ -1597,6 +1597,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'bridge',
 				'ppp',
 				'pppoe',
+				'poes',
 				'pptp',
 				'l2tp',
 				'l2tps',
@@ -1621,6 +1622,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 	} else {
 		$vfaces = array(
 				'bridge',
+				'poes',
 				'sl',
 				'faith',
 				'lo',

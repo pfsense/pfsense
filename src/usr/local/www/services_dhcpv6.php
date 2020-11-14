@@ -556,7 +556,8 @@ foreach ($iflist as $ifent => $ifname) {
 	    !is_linklocal($oc['ipaddrv6'])));
 
 	if ((!is_array($config['dhcpdv6'][$ifent]) ||
-	    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
+	    !isset($config['dhcpdv6'][$ifent]['enable']) ||
+	    preg_match('/poes/', $ifent)) &&
 	    !$valid_if_ipaddrv6) {
 		continue;
 	}

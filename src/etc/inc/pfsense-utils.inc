@@ -3419,7 +3419,7 @@ function get_pppoes_child_interfaces($ifpattern) {
 
 	exec("/sbin/ifconfig", $out, $ret);
 	foreach ($out as $line) {
-		if (preg_match("/^({$ifpattern}[0-9]+):/i", $line, $match)) {
+		if (preg_match("/^({$ifpattern}-[0-9]+):/i", $line, $match)) {
 			$if_arr[] = $match[1];
 		}
 	}

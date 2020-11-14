@@ -537,7 +537,8 @@
 				case 'noip-v6':
 				case 'noip-free-v6':
 					$needsIP = TRUE;
-					$server = "https://dynupdate.no-ip.com/ducupdate.php";
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					$server = "https://dynupdate.no-ip.com/nic/update";
 					$port = "";
 					if ($this->_dnsServer) {
 						$server = $this->_dnsServer;
@@ -558,17 +559,14 @@
 					} else {
 						$iptoset = $this->_dnsIP;
 					}
-					$url_data = $server . $port;
-					$url_data .= '?username=' . urlencode($this->_dnsUser);
-					$url_data .= '&pass=' . urlencode($this->_dnsPass);
-					$url_data .= '&h[]=' . $this->_dnsHost;
-					$url_data .= '&ipv6=' . $iptoset;
 					curl_setopt($ch, CURLOPT_URL, $url_data);
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myipv6=' . $iptoset);
 					break;
 				case 'noip':
 				case 'noip-free':
 					$needsIP = TRUE;
-					$server = "https://dynupdate.no-ip.com/ducupdate.php";
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					$server = "https://dynupdate.no-ip.com/nic/update";
 					$port = "";
 					if ($this->_dnsServer) {
 						$server = $this->_dnsServer;
@@ -586,7 +584,7 @@
 					} else {
 						$iptoset = $this->_dnsIP;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . urlencode($this->_dnsUser) . '&pass=' . urlencode($this->_dnsPass) . '&h[]=' . $this->_dnsHost . '&ip=' . $iptoset);
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myip=' . $iptoset);
 					break;
 				case 'easydns':
 					$needsIP = TRUE;

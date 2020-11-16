@@ -68,12 +68,28 @@ function wg_configure_if($wg_ifname) {
 
 	echo $tunnel['name'] . " ";
 	wg_destroy_if($tunnel['name']);
-	$if = pfSense_interface_create($tunnel['name']);
-//echo "<pre>"; print_r($if); echo "</pre>";
+	//$if = pfSense_interface_create($tunnel['name']);
 	$conf_path = $g["wg_conf_path"] . "/" . $tunnel['name'] . ".conf";
 	/* XXX - workaround while pfSense-module 0.69 isn't available */
 	mwexec("/sbin/ifconfig " . escapeshellarg($tunnel['name']) . " create");
 	mwexec("/usr/local/bin/wg setconf " . escapeshellarg($tunnel['name']) . " " . escapeshellarg($conf_path));
+	$ip4_first = true;
+	$ip6_first = true;
+	foreach (explode(",", $tunnel['interface']['address']) as $addr) {
+		if (strstr($addr, "/") == false) {
+			continue;
+		}
+		list($ip, $mask) = explode("/", trim($addr));
+		if (is_ipaddrv4($ip)) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($tunnel['name']) . " inet " . escapeshellarg($ip) .
+			    " netmask " . escapeshellarg(gen_subnet_mask($mask)) . ($ip4_first ? "" : " alias"));
+			$ip4_first = false;
+		} elseif (is_ipaddrv6($ip)) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($tunnel['name']) . " inet6 " . escapeshellarg($ip) .
+			    " netmask " . escapeshellarg(gen_subnet_mask($mask)) . ($ip6_first ? "" : " alias"));
+			$ip6_first = false;
+		}
+	}
 }
 
 // Setup Wireguard tunnel

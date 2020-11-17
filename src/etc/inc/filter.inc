@@ -488,7 +488,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 				$error_msg = gettext("PF was wedged/busy and has been reset.");
 				file_notice("pf_busy", $error_msg, "pf_busy", "");
 			} elseif (file_exists("{$g['cf_conf_path']}/rules.debug.old")) {
-				$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug.old 2>&1");
+				$_grbg = exec("/sbin/pfctl -o basic -f {$g['cf_conf_path']}/rules.debug.old 2>&1");
 			}
 			if ($line_error and $line_number) {
 				file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error), "Filter Reload", "");

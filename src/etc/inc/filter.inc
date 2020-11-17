@@ -428,11 +428,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	unset($aliases, $gateways, $altq_queues, $natrules, $pfrules);
 
-	// Copy rules.debug to rules.debug.old
-	if (file_exists("{$g['tmp_path']}/rules.debug")) {
-		@copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
-	}
-
 	if (!@file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");
 		unlock($filterlck);
@@ -492,7 +487,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 				exec("/sbin/pfctl -d; /sbin/pfctl -e; /sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 				$error_msg = gettext("PF was wedged/busy and has been reset.");
 				file_notice("pf_busy", $error_msg, "pf_busy", "");
-			} else {
+			} elseif (file_exists("{$g['cf_conf_path']}/rules.debug.old")) {
 				$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug.old 2>&1");
 			}
 			if ($line_error and $line_number) {
@@ -503,6 +498,10 @@ function filter_configure_sync($delete_states_if_needed = true) {
 			}
 		}
 		unset($rules_loading, $rules_error);
+	} else {
+		/* Save the last version that works */
+		@copy("{$g['tmp_path']}/rules.debug",
+		    "{$g['cf_conf_path']}/rules.debug.old");
 	}
 
 	# If we are not using bogonsv6 then we can remove any bogonsv6 table from the running pf (if the table is not there, the kill is still fine).

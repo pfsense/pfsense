@@ -234,8 +234,8 @@ foreach ($a_dyndns as $dyndns):
 </nav>
 
 <div>
-	<?=sprintf(gettext('IP addresses appearing in %1$sgreen%2$s are up to date with Dynamic DNS provider. '), '<span class="text-success">', '</span>')?>
-	<?=gettext('An update for an IP address can be forced on the edit page for that service.')?>
+	<?=sprintf(gettext('Entries with a %3$s status column icon and IP address appearing in %1$sgreen%2$s are up to date with Dynamic DNS provider. '), '<span class="text-success">', '</span>', '<i class="fa fa-check-circle text-success"></i>')?>
+	<?=gettext('An update can be forced on the edit page for an entry.')?>
 </div>
 
 <?php

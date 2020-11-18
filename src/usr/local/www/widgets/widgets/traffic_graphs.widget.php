@@ -94,14 +94,16 @@ if (isset($user_settings['widgets']['traffic_graphs']['size'])) {
 	$tg_size = 1;
 }
 
-if (isset($user_settings['widgets']['traffic_graphs']['invert'])) {
-	$tg_invert = (boolean)$user_settings['widgets']['traffic_graphs']['invert'];
+if (isset($user_settings['widgets']['traffic_graphs']['invert']) &&
+    ($user_settings['widgets']['traffic_graphs']['invert'] == 'false')) {
+	$tg_invert = false;
 } else {
 	$tg_invert = true;
 }
 
-if (isset($user_settings['widgets']['traffic_graphs']['backgroundupdate'])) {
-	$tg_backgroundupdate = (boolean)$user_settings['widgets']['traffic_graphs']['backgroundupdate'];
+if (isset($user_settings['widgets']['traffic_graphs']['backgroundupdate']) &&
+    ($user_settings['widgets']['traffic_graphs']['backgroundupdate'] == 'false')) {
+	$tg_backgroundupdate = false;
 } else {
 	$tg_backgroundupdate = true;
 }

@@ -2274,9 +2274,21 @@ function ipsec_setup_tunnels() {
 
 			/* Setup child SA proposals */
 			$proposal = array();
+			$ph2ent_ealgos = array();
+			$ph2ent_ealgos_aead = array();
 			if ($ph2ent['protocol'] == 'esp') {
 				if (is_array($ph2ent['encryption-algorithm-option'])) {
 					foreach ($ph2ent['encryption-algorithm-option'] as $ealg) {
+						if (strpos($ealg['name'], "gcm")) {
+							/* put AEAD ciphers on top, 
+							*  see https://redmine.pfsense.org/issues/11078 */
+							$ph2ent_ealgos_aead[] = $ealg;
+						} else {
+							$ph2ent_ealgos[] = $ealg;
+						}
+					}
+					$ph2ent_ealgos = array_merge(array_reverse($ph2ent_ealgos_aead), $ph2ent_ealgos);
+					foreach ($ph2ent_ealgos as $ealg) {
 						$ealg_id = $ealg['name'];
 						$ealg_kl = $ealg['keylen'];
 

@@ -58,6 +58,7 @@ net/hping
 net/mosh
 net/nss_ldap
 net/py-speedtest-cli
+net/realtek-re-kmod
 net/trafshow
 net/trafshow3
 net/vnstat

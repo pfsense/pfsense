@@ -231,6 +231,12 @@ EOF;
 		$bindintcfg .= "interface-automatic: " . (isset($unboundcfg['enablessl']) ? "no" : "yes") . "\n";
 	} else {
 		foreach ($active_interfaces as $ubif) {
+			/* Do not bind to disabled/nocarrier interfaces,
+			 * see https://redmine.pfsense.org/issues/11087 */
+			$ifinfo = get_interface_info($ubif);
+			if ($ifinfo && (($ifinfo['status'] != 'up') || !$ifinfo['enable'])) {
+				continue;
+			}
 			if (is_ipaddr($ubif)) {
 				$bindints[] = $ubif;
 			} else {
@@ -287,6 +293,10 @@ EOF;
 		$outgoingints = "# Outgoing interfaces to be used\n";
 		$outgoing_interfaces = explode(",", $unboundcfg['outgoing_interface']);
 		foreach ($outgoing_interfaces as $outif) {
+			$ifinfo = get_interface_info($outif);
+			if ($ifinfo && (($ifinfo['status'] != 'up') || !$ifinfo['enable'])) {
+				continue;
+			}
 			$outip = get_interface_ip($outif);
 			if (is_ipaddr($outip)) {
 				$outgoingints .= "outgoing-interface: $outip\n";

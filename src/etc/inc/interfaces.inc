@@ -1772,7 +1772,7 @@ function interfaces_configure() {
 	/* set up IPsec VTI interfaces */
 	interfaces_ipsec_vti_configure();
 
-	$iflist = get_configured_interface_with_descr();
+	$iflist = get_configured_interface_with_descr(true);
 	$delayed_list = array();
 	$bridge_list = array();
 	$track6_list = array();
@@ -1786,7 +1786,9 @@ function interfaces_configure() {
 
 	foreach ($iflist as $if => $ifname) {
 		$realif = $config['interfaces'][$if]['if'];
-		if (strstr($realif, "bridge")) {
+		if (!isset($config['interfaces'][$if]['enable'])) {
+			interface_bring_down($if, true);
+		} elseif (strstr($realif, "bridge")) {
 			$bridge_list[$if] = $ifname;
 		} elseif (strstr($realif, "gre")) {
 			$delayed_list[$if] = $ifname;

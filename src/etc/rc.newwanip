@@ -190,6 +190,15 @@ if (!empty($gre)) {
 		}
 	}
 }
+if (!empty($vxlan)) {
+	foreach ($vxlan as $vxlantun) {
+		$confif = convert_real_interface_to_friendly_interface_name($vxlantun['vxlanif']);
+		if (!empty($confif)) {
+			interface_configure($confif);
+			system_routing_configure($confif);
+		}
+	}
+}
 
 if (platform_booting() && !in_array(substr($interface_real, 0, 3), array("ppp", "ppt", "l2t"))) {
 	// unlike dhcp interfaces which wait until they get an ip, a ppp connection lets the boot continue while 

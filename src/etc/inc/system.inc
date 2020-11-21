@@ -273,11 +273,11 @@ function get_dynamic_nameservers($iface = '') {
 	$master_list = array();
 
 	if (!empty($iface)) {
-		$iface = get_real_interface($iface);
+		$realif = get_real_interface($iface);
 	}
 
 	// Read in dynamic nameservers
-	$dns_lists = glob("/var/etc/nameserver_{$iface}*");
+	$dns_lists = array_merge(glob("/var/etc/nameserver_{$realif}*"), glob("/var/etc/nameserver_v6{$iface}*"));
 	if (is_array($dns_lists)) {
 		foreach ($dns_lists as $fdns) {
 			$contents = file($fdns, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

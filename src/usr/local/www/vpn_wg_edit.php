@@ -45,9 +45,10 @@ if (is_numericint($_REQUEST['index'])) {
 
 // All form save logic is in /etc/inc/wg.inc
 if ($_POST['save']) {
-	$saveresult = wg_do_post($_POST);
-	$input_errors = $saveresult['input_errors'];
-	$pconfig = $saveresult['pconfig'];
+	$res = wg_do_post($_POST);
+	$input_errors = $res['input_errors'];
+	$pconfig = $res['pconfig'];
+
 	if (!$input_errors) {
 		// Create the new WG config files
 		wg_create_config_files();
@@ -109,20 +110,20 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'address',
-	'Address',
+	'*Address',
 	'text',
 	$pconfig['interface']['address']
-))->setHelp('Interface Addresses.');
+))->setHelp('Comma separated list of interface Addresses.');
 
 
 $section->addInput(new Form_Input(
 	'listenport',
-	'Listen port',
+	'*Listen port',
 	'text',
 	$pconfig['interface']['listenport']
 ))->setHelp('Port to listen on.');
 
-$group = new Form_Group('Interface keys');
+$group = new Form_Group('*Interface keys');
 
 $group->add(new Form_Input(
 	'privatekey',

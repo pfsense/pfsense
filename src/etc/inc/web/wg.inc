@@ -24,6 +24,85 @@ require_once('config.inc');
 
 $wgbinpath = '/usr/local/bin/wg';
 
+// Validate the user's input and return error messages if not acceptable
+function wg_validate_post($pconfig) {
+	$input_errors = array();
+
+	// Check the addresses
+	$addrs = explode(",", $pconfig['interface']['address']);
+
+	foreach ($addrs as $addr) {
+		$addr = trim($addr);
+
+		if (!is_subnet($addr)) {
+			$input_errors[] = $addr . gettext(" is not a valid CIDR address");
+		}
+
+		$a = explode("/", $addr);
+		$conflicts = where_is_ipaddr_configured($a[0], false, true, true, $a[1]);
+
+		if (!empty($conflicts)) {
+			foreach ($conflicts as $conflict) {
+				$input_errors[] = $addr . gettext(" is already configured on this firewall:  ") . strtoupper($conflict['if']) . " (" . $conflict['ip_or_subnet'] . ")";
+			}
+		}
+	}
+
+	// Check listen port
+	$lport = $pconfig['interface']['listenport'];
+	if (empty($lport) || $lport > 65535 || $lport < 512 ) {
+		$input_errors[] = gettext("Invalid interface listen port.");
+	}
+
+	// Check keys
+	if (empty($pconfig['interface']['privatekey']) || empty($pconfig['interface']['publickey'])) {
+		$input_errors[] = gettext("Both a public and private key must be specified");
+	}
+
+	// Now the peers
+	$idx = 0;
+	foreach ($pconfig['peers']['peer'] as $peer) {
+		$input_errors =  array_merge($input_errors, wg_validate_peer($idx, $peer));
+		$idx++;
+	}
+
+	return $input_errors;
+}
+
+// Valildate a peer
+function wg_validate_peer($idx, $peer) {
+	$input_errors = array();
+
+	// Check remote port
+	$rport = $peer['port'];
+	if (!empty($rport) && ($rport > 65535 || $rport < 512 )) {
+		$input_errors[] = "Peer " . $idx . gettext(": Invalid remote port. (") . $rport . ")";
+	}
+
+	// Check key
+	if (empty($peer['publickey'])) {
+		$input_errors[] = "Peer " . $idx . gettext(": A public key must be specified");
+	}
+
+	// Endpoint
+	if (empty($peer['endpoint'])) {
+		$input_errors[] = "Peer " . $idx . gettext(": An endpoint must be specified");
+	} else {
+		$ep = explode(":", $peer['endpoint']);
+
+		if (empty($ep[1]) || $ep[1] < 512 || $ep[1] > 65535) {
+			$input_errors[] = "Peer " . $idx . gettext(": Endpoint port ") . $ep[1] . gettext(" is not valid.");
+		}
+
+		if (!is_ipaddrv4($ep[0]) && !is_ipaddrv6($ep[0])) {
+			$input_errors[] = "Peer " . $idx . gettext(": Endpoint address ") . $ep[0] . gettext(" is not valid.");
+		}
+
+	}
+
+	return $input_errors;
+}
+
 // Setup all Wireguard tunnels
 function wg_configure() {
 	global $config;
@@ -31,6 +110,7 @@ function wg_configure() {
 	if (!isset($config["wireguard"]["tunnel"]) || !is_array($config["wireguard"]["tunnel"])) {
 		return;
 	}
+
 	if (platform_booting()) {
 		echo gettext("Configuring Wireguard Tunnels...");
 	}
@@ -92,7 +172,7 @@ function wg_configure_if($wg_ifname) {
 	}
 }
 
-// Setup Wireguard tunnel
+// Remove Wireguard tunnel
 function wg_destroy_if($wg_ifname) {
 	return (pfSense_interface_destroy($wg_ifname));
 }
@@ -203,8 +283,12 @@ function wg_do_post($post, $json = false) {
 		$idx++;
 	}
 
-	$config['wireguard']['tunnel'][$index] = $pconfig;
-	write_config("Wireguard tunnel {$index} updated.");
+	$input_errors = wg_validate_post($pconfig);
+
+	if (!$input_errors) {
+		$config['wireguard']['tunnel'][$index] = $pconfig;
+		write_config("Wireguard tunnel {$index} updated.");
+	}
 
 	return(array('input_errors' => $input_errors, 'pconfig' => $pconfig));
 }

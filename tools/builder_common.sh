@@ -1833,7 +1833,8 @@ poudriere_bulk() {
 
 	_makeconf=/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
 	if [ -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" ]; then
-		cp -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" ${_makeconf}
+		sed -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
+		    "${BUILDER_TOOLS}/conf/pfPorts/make.conf" > ${_makeconf}
 	fi
 
 	cat <<EOF >>/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf

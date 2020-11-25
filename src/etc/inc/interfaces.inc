@@ -5138,17 +5138,18 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 			$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c rebind on {$wanif}\"\n";
 		}
 		$dhcp6cscript .= ";;\n";
+		$dhcp6cscript .= "REQUEST|";
 		if (isset($wancfg['dhcp6norelease'])) {
 			$dhcp6cscript .= "EXIT)\n";
 		} else {
 			$dhcp6cscript .= "RELEASE)\n";
 		}
 		if ($debugOption == '-D') {
-			$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c EXIT or RELEASE on {$wanif} running rc.newwanipv6\"\n";
+			$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c RELEASE, REQUEST or EXIT on {$wanif} running rc.newwanipv6\"\n";
 		}
 		$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}\"\n";
 		$dhcp6cscript .= ";;\n";
-		$dhcp6cscript .= "RENEW|REQUEST|INFO)\n";
+		$dhcp6cscript .= "RENEW|INFO)\n";
 		if ($debugOption == '-D') {
 			$dhcp6cscript .= "/usr/bin/logger -t dhcp6c \"dhcp6c renew, no change - bypassing update on {$wanif}\"\n";
 		}

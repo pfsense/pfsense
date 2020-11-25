@@ -755,9 +755,12 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 			}
 		}
 
-		if (($checkmember == 1) && $ifname &&
-		    ($config['interfaces'][$ifname]['ipaddrv6'] == "track6")) {
-			continue;
+		if ($ifname && ($config['interfaces'][$ifname]['ipaddrv6'] == "track6")) {
+			if ($checkmember == 1) {
+				continue;
+			} else {
+				$checkmember = 0;
+			}
 		} elseif (($checkmember == 2) && !$ifname) {
 			continue;
 		}
@@ -1841,6 +1844,7 @@ function interfaces_configure() {
 	$delayed_list = array();
 	$bridge_list = array();
 	$track6_list = array();
+	$dhcp6c_list = array();
 
 	/* This is needed to speedup interfaces on bootup. */
 	$reload = false;
@@ -1866,6 +1870,20 @@ function interfaces_configure() {
 		    $config['interfaces'][$if]['ipaddrv6'] == "track6") {
 			$track6_list[$if] = $ifname;
 		} else {
+			/* do not run dhcp6c if track interface does not exists
+			 * see https://redmine.pfsense.org/issues/3965 */
+			if (!empty($config['interfaces'][$if]['ipaddrv6']) &&
+			    $config['interfaces'][$if]['ipaddrv6'] == "dhcp6") {
+				$tr6list = link_interface_to_track6($if);
+				if (is_array($tr6list) && !empty($tr6list)) {
+					foreach ($tr6list as $tr6if) {
+						if (!does_interface_exist($tr6if)) {
+							$dhcp6c_list[$if] = $ifname;
+							continue;
+						}
+					}
+				}
+			}
 			if (platform_booting()) {
 				printf(gettext("Configuring %s interface..."),
 				    $ifname);
@@ -1957,6 +1975,21 @@ function interfaces_configure() {
 		// redmine #3997
 		interface_reconfigure($if, $reload);
 		interfaces_vips_configure($if);
+
+		if (platform_booting()) {
+			echo gettext("done.") . "\n";
+		}
+	}
+
+	foreach ($dhcp6c_list as $if => $ifname) {
+		if (platform_booting()) {
+			printf(gettext("Configuring %s interface..."), $ifname);
+		}
+		if ($g['debug']) {
+			log_error(sprintf(gettext("Configuring %s"), $ifname));
+		}
+
+		interface_configure($if, $reload);
 
 		if (platform_booting()) {
 			echo gettext("done.") . "\n";

@@ -77,10 +77,14 @@ function services_radvd_configure($blacklist = array()) {
 		}
 
 		$racarpif = false;
+		$rasrcaddr = "";
 		/* check if binding to CARP IP */
 		if (!empty($dhcpv6ifconf['rainterface'])) {
 			if (strstr($dhcpv6ifconf['rainterface'], "_vip")) {
-				if (get_carp_interface_status($dhcpv6ifconf['rainterface']) == "MASTER") {
+				if (is_linklocal(get_configured_vip_ipv6($dhcpv6ifconf['rainterface']))) {
+					$rasrcaddr = get_configured_vip_ipv6($dhcpv6ifconf['rainterface']);
+				}
+				elseif (get_carp_interface_status($dhcpv6ifconf['rainterface']) == "MASTER") {
 					$dhcpv6if = $dhcpv6ifconf['rainterface'];
 					$racarpif = true;
 				} else {
@@ -114,6 +118,12 @@ function services_radvd_configure($blacklist = array()) {
 			$radvdconf .= "\tUnicastOnly on;\n";
 		}
 		$radvdconf .= "\tAdvSendAdvert on;\n";
+
+		if ($rasrcaddr) {
+			$radvdconf .= "\tAdvRASrcAddress {\n";
+			$radvdconf .= "\t\t{$rasrcaddr};\n";
+			$radvdconf .= "\t};\n";
+		}
 
 		if (is_numericint($dhcpv6ifconf['raminrtradvinterval'])) {
 			$radvdconf .= "\tMinRtrAdvInterval {$dhcpv6ifconf['raminrtradvinterval']};\n";

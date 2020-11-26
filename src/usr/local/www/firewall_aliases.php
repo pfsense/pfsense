@@ -158,7 +158,10 @@ display_top_tabs($tab_array);
 			}
 			echo "<br />\n";
 		}
-		$tmpaddr = array_map('alias_idn_to_utf8', explode(" ", $alias['address']));
+		$tmpaddr = explode(" ", $alias['address']);
+		if ($alias['type'] == 'host') {
+			$tmpaddr = array_map('alias_idn_to_utf8', $tmpaddr);
+		}
 		$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
 		echo $addresses;
 		if (count($tmpaddr) > 10) {

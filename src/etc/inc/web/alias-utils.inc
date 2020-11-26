@@ -231,7 +231,6 @@ function saveAlias($post, $id) {
 		/* item is a url table type */
 		if ($post['address0']) {
 			/* fetch down and add in */
-			$post['address0'] = trim(alias_idn_to_ascii($post['address0']));
 			$address[] = $post['address0'];
 			$alias['url'] = $post['address0'];
 			$alias['updatefreq'] = $post['address_subnet0'] ? $post['address_subnet0'] : 7;
@@ -258,7 +257,6 @@ function saveAlias($post, $id) {
 
 		/* item is a url type */
 		for ($x = 0; $x < $max_alias_addresses - 1; $x++) {
-			$post['address' . $x] = trim(alias_idn_to_ascii($post['address' . $x]));
 			if ($post['address' . $x]) {
 				/* fetch down and add in */
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");

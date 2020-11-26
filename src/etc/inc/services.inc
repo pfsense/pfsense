@@ -122,13 +122,17 @@ function services_radvd_configure($blacklist = array()) {
 		}
 
 		if (is_numericint($dhcpv6ifconf['ramaxrtradvinterval'])) {
-			$radvdconf .= "\tMaxRtrAdvInterval {$dhcpv6ifconf['ramaxrtradvinterval']};\n";
+			$ramaxrtradvinterval = $dhcpv6ifconf['ramaxrtradvinterval'];
 		} else {
-			$radvdconf .= "\tMaxRtrAdvInterval 20;\n";
+			$ramaxrtradvinterval = 20;
 		}
+		$radvdconf .= "\tMaxRtrAdvInterval {$ramaxrtradvinterval};\n";
 		if (is_numericint($dhcpv6ifconf['raadvdefaultlifetime'])) {
-			$radvdconf .= "\tAdvDefaultLifetime {$dhcpv6ifconf['raadvdefaultlifetime']};\n";
+			$raadvdefaultlifetime = $dhcpv6ifconf['raadvdefaultlifetime'];
+		} else {
+			$raadvdefaultlifetime = $ramaxrtradvinterval * 3;
 		}
+		$radvdconf .= "\tAdvDefaultLifetime {$raadvdefaultlifetime};\n";
 
 		$mtu = get_interface_mtu($realif);
 		if (is_numeric($mtu)) {
@@ -267,7 +271,16 @@ function services_radvd_configure($blacklist = array()) {
 			if (count($dnslist) > 0) {
 				$dnsstring = implode(" ", $dnslist);
 				if ($dnsstring <> "") {
-					$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
+					/* 
+					 * The value of Lifetime SHOULD by default be at least
+					 * 3 * MaxRtrAdvInterval, where MaxRtrAdvInterval is the
+					 * maximum RA interval as defined in [RFC4861].
+					 * see https://redmine.pfsense.org/issues/11105 
+					 */
+					$raadvrdnsslifetime = $ramaxrtradvinterval * 3;
+					$radvdconf .= "\tRDNSS {$dnsstring} {\n";
+					$radvdconf .= "\t\tAdvRDNSSLifetime {$raadvrdnsslifetime};\n";
+					$radvdconf .= "\t};\n";
 				}
 			}
 

@@ -341,12 +341,13 @@ function upload_config($manual = false) {
 // Create a crontab entry for scheduled backups
 // if frequency == "cron", a new crontab entry is created, otherwise any existing
 // ACB entry is removed
-function setup_ACB($enable, $hint, $frequency, $hours, $month, $day, $dow, $numman, $pwd) {
+function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $dow, $numman, $pwd) {
 	global $config;
 
 	$config['system']['acb']['enable'] = $enable;
 	$config['system']['acb']['hint'] = $hint;
 	$config['system']['acb']['frequency'] = $frequency;
+	$config['system']['acb']['minute'] = $minute;
 	$config['system']['acb']['hour'] = $hours;
 	$config['system']['acb']['month'] = $month;
 	$config['system']['acb']['day'] = $day;
@@ -355,7 +356,6 @@ function setup_ACB($enable, $hint, $frequency, $hours, $month, $day, $dow, $numm
 	if (strlen($pwd) >= 8) {
 		$config['system']['acb']['encryption_password'] = $pwd;
 	}
-
 
 	init_config_arr(array('cron'));
 	$a_cron = &$config['cron']['item'];
@@ -377,7 +377,7 @@ function setup_ACB($enable, $hint, $frequency, $hours, $month, $day, $dow, $numm
 
 	if ($frequency == "cron") {
 		$crondef = array();
-		$crondef['minute'] = '0';
+		$crondef['minute'] = $minute;
 		$crondef['hour'] = $hours;
 		$crondef['mday'] = $day;
 		$crondef['month'] = $month;

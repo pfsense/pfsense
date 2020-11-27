@@ -1723,7 +1723,14 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 			$nasip = get_interface_ip($nasip);
 
 			if (!is_ipaddr($nasip)) {
-				$nasip = get_interface_ip();//We use wan interface IP as fallback for NAS-IP-Address
+				/* use first interface with IP as fallback for NAS-IP-Address
+				 * see https://redmine.pfsense.org/issues/11109 */
+				foreach (get_configured_interface_list() as $if) {
+					$nasip = get_interface_ip($if);
+					if (is_ipaddr($nasip)) {
+						break;
+					}
+				}
 			}
 		}
 		$nasmac = get_interface_mac(find_ip_interface($nasip));

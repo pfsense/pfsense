@@ -80,11 +80,11 @@ if (isset($config['system']['gw_down_kill_states'])) {
 			}
 
 			$cleared_states[] = "{$osrc},{$dst}";
-			pfSense_kill_states($osrc, $dst);
+			pfSense_kill_states(utf8_encode($osrc), utf8_encode($dst));
 		}
-		pfSense_kill_states("0.0.0.0/0", "{$local_ip}/{$subnet_bits}");
-		pfSense_kill_states("{$local_ip}/{$subnet_bits}");
-		pfSense_kill_srcstates("{$local_ip}/{$subnet_bits}");
+		pfSense_kill_states("0.0.0.0/0", utf8_encode("{$local_ip}/{$subnet_bits}"));
+		pfSense_kill_states(utf8_encode("{$local_ip}/{$subnet_bits}"));
+		pfSense_kill_srcstates(utf8_encode("{$local_ip}/{$subnet_bits}"));
 	}
 	log_error("rc.kill_states: Removing states for interface {$interface}");
 	mwexec("/sbin/pfctl -i {$interface} -Fs", true);

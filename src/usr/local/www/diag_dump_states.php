@@ -51,7 +51,7 @@ function get_ip($addr) {
 /* handle AJAX operations */
 if (isset($_POST['action']) && $_POST['action'] == "remove") {
 	if (isset($_POST['srcip']) && isset($_POST['dstip']) && is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
-		$retval = pfSense_kill_states($_POST['srcip'], $_POST['dstip']);
+		$retval = pfSense_kill_states(utf8_encode($_POST['srcip']), utf8_encode($_POST['dstip']));
 		echo htmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|0|");
 	} else {
 		echo gettext("invalid input");
@@ -69,8 +69,8 @@ if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 		$tokill = "";
 	}
 	if (!empty($tokill)) {
-		$retval = pfSense_kill_states($tokill);
-		$retval = pfSense_kill_states("0.0.0.0/0", $tokill);
+		$retval = pfSense_kill_states(utf8_encode($tokill));
+		$retval = pfSense_kill_states("0.0.0.0/0", utf8_encode($tokill));
 	}
 }
 

@@ -1160,8 +1160,8 @@ function captiveportal_disconnect($dbent, $term_cause = 1, $stop_time = null, $c
 			    IP_FW_TABLE_XDEL, "{$dbent[2]}/{$clientsn}");
 		}
 		/* XXX: Redundant?! Ensure all pf(4) states are killed. */
-		$_gb = @pfSense_kill_states($dbent[2]);
-		$_gb = @pfSense_kill_srcstates($dbent[2]);
+		$_gb = @pfSense_kill_states(utf8_encode($dbent[2]));
+		$_gb = @pfSense_kill_srcstates(utf8_encode($dbent[2]));
 	}
 
 	/*

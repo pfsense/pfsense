@@ -52,11 +52,11 @@ if (function_exists("display_error_form")) {
 			/* They may never see the error since the connection will be cut off, but try to be nice anyhow. */
 			display_error_form("501", gettext("Access Denied<br/><br/>Access attempt from a temporarily locked out client address.<br /><br />Try accessing the firewall again after the lockout expires."));
 			/* If they are locked out, they shouldn't have a state. Disconnect their connections. */
-			$retval = pfSense_kill_states($_SERVER['REMOTE_ADDR']);
+			$retval = pfSense_kill_states(utf8_encode($_SERVER['REMOTE_ADDR']));
 			if (is_ipaddrv4($_SERVER['REMOTE_ADDR'])) {
-				$retval = pfSense_kill_states("0.0.0.0/0", $_SERVER['REMOTE_ADDR']);
+				$retval = pfSense_kill_states("0.0.0.0/0", utf8_encode($_SERVER['REMOTE_ADDR']));
 			} elseif (is_ipaddrv6($_SERVER['REMOTE_ADDR'])) {
-				$retval = pfSense_kill_states("::", $_SERVER['REMOTE_ADDR']);
+				$retval = pfSense_kill_states("::", utf8_encode($_SERVER['REMOTE_ADDR']));
 			}
 			exit;
 		}

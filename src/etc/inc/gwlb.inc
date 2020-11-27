@@ -248,7 +248,7 @@ function setup_gateways_monitor() {
 					    $gateway['gateway']);
 				}
 
-				pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
+				pfSense_kill_states("0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmp");
 			}
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
 			if (is_linklocal($gateway['gateway']) &&
@@ -291,7 +291,7 @@ function setup_gateways_monitor() {
 					    $gateway['gateway']);
 				}
 
-				pfSense_kill_states("::0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmpv6");
+				pfSense_kill_states("::0.0.0.0/0", utf8_encode($gateway['monitor']), utf8_encode($gateway['interface']), "icmpv6");
 			}
 		} else {
 			continue;

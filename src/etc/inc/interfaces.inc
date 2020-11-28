@@ -417,6 +417,8 @@ function interface_has_clones($if) {
 
 function interfaces_vlan_configure($parentif = "") {
 	global $config, $g;
+	$dhcp6c_list = array();
+
 	if (platform_booting()) {
 		echo gettext("Configuring VLAN interfaces...");
 	}
@@ -429,8 +431,19 @@ function interfaces_vlan_configure($parentif = "") {
 			if (!empty($parentif) && ($parentif != $vlan['if'])) {
 				continue;
 			}
+			/* configure dhcp6 enabled VLAN interfaces later
+			 * see https://redmine.pfsense.org/issues/3965 */
+			$if = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+			if (!empty($config['interfaces'][$if]['ipaddrv6']) &&
+			    $config['interfaces'][$if]['ipaddrv6'] == "dhcp6") {
+				$dhcp6c_list[$if] = $vlan;
+				continue;
+			}
 
 			/* XXX: Maybe we should report any errors?! */
+			interface_vlan_configure($vlan, false);
+		}
+		foreach ($dhcp6c_list as $if => $vlan) {
 			interface_vlan_configure($vlan, false);
 		}
 	}

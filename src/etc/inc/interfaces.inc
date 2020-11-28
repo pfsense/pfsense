@@ -6917,12 +6917,17 @@ function interface_has_gateway($friendly) {
 		$ifname = &$config['interfaces'][$friendly];
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
+				/* see https://redmine.pfsense.org/issues/5135 */
+				if (get_interface_gateway($friendly)) {
+					return true;
+				}
+				break;
 			case "pppoe":
 			case "pptp":
 			case "l2tp":
 			case "ppp":
 				return true;
-			break;
+				break;
 			default:
 				if ((substr($ifname['if'], 0, 4) == "ovpn") ||
 				    (substr($ifname['if'], 0, 5) == "ipsec") ||
@@ -6938,7 +6943,7 @@ function interface_has_gateway($friendly) {
 				if (!empty($ifname['gateway'])) {
 					return true;
 				}
-			break;
+				break;
 		}
 	}
 

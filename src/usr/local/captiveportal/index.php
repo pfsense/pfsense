@@ -168,7 +168,7 @@ EOD;
 	} else {
 		/* submit voucher via URL, see https://redmine.pfsense.org/issues/1984 */
 		$voucher = trim($_GET['voucher']);
-		portal_reply_page($redirurl, "login", null, null, null, null, null, $voucher);
+		portal_reply_page($redirurl, "login", null, $clientmac, $clientip, null, null, $voucher);
 		return;
 	}
 	$errormsg = gettext("Invalid credentials specified.");

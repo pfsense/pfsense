@@ -162,12 +162,19 @@ switch ($config['interfaces'][$interface]['ipaddrv6']) {
 	case "6rd":
 		interface_6rd_configure($interface, $config['interfaces'][$interface]);
 		break;
+	case "slaac":
 	case "dhcp6":
 		// N.B. PPP connections using PPP as the IPv6 parent interface are excluded because the ppp-ipv6 script calls
 		// interface_dhcpv6_configure() for these connections after IPv6CP is up
-		if (isset($config['interfaces'][$interface]['dhcp6usev4iface']) && !interface_isppp_type($interface)) {
+		if ((($config['interfaces'][$interface]['ipaddrv6'] == 'dhcp6') &&
+		    isset($config['interfaces'][$interface]['dhcp6usev4iface'])) ||
+		    (($config['interfaces'][$interface]['ipaddrv6'] == 'slaac') &&
+		    isset($config['interfaces'][$interface]['slaacusev4iface'])) ||
+		    !interface_isppp_type($interface)) {
 			interface_dhcpv6_configure($interface, $config['interfaces'][$interface]);
 		}
+		break;
+	default:
 		break;
 }
 

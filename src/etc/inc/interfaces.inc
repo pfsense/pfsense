@@ -4479,7 +4479,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* Remove the check file. Should not be there but just in case */
 			unlink_if_exists("/tmp/{$wanif}_dhcp6_complete");
 			log_error(gettext("calling interface_dhcpv6_configure."));
-			if (!(isset($wancfg['dhcp6usev4iface']) || $wancfg['ipaddr']==='ppp')) {
+			if ((($wancfg['ipaddrv6'] == 'dhcp6') && !isset($wancfg['dhcp6usev4iface'])) ||
+			    (($wancfg['ipaddrv6'] == 'slaac') && !isset($wancfg['slaacusev4iface'])) ||
+			    !interface_isppp_type($interface)) {
 				interface_dhcpv6_configure($interface, $wancfg);
 			}
 			break;

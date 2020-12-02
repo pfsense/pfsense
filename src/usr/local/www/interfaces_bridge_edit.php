@@ -217,6 +217,10 @@ if ($_POST['save']) {
 			if (is_array($_POST['members']) && !in_array($ifstp, $_POST['members'])) {
 				$input_errors[] = sprintf(gettext('STP interface (%s) is not part of the bridge. Remove the STP interface to continue.'), $ifacelist[$ifstp]);
 			}
+			$realif = get_real_interface($ifstp);
+			if (is_pseudo_interface($realif) || interface_is_vlan($realif)) {
+				$input_errors[] = sprintf(gettext('STP interface (%s) must not be a pseudo-interface or a VLAN interface.'), $ifacelist[$ifstp]);
+			}
 		}
 		$pconfig['stp'] = implode(',', $_POST['stp']);
 	}
@@ -299,6 +303,7 @@ if ($_POST['save']) {
 		$bridge['proto'] = $_POST['proto'];
 		$bridge['holdcnt'] = $_POST['holdcnt'];
 		$i = 0;
+		$j = 0;
 		$ifpriority = "";
 		$ifpathcost = "";
 
@@ -312,14 +317,15 @@ if ($_POST['save']) {
 					$ifpriority .= ",";
 				}
 				$ifpriority .= $ifn.":".$_POST[$ifn];
+				$i++;
 			}
 			if ($_POST["{$ifn}0"] <> "") {
-				if ($i > 0) {
+				if ($j > 0) {
 					$ifpathcost .= ",";
 				}
 				$ifpathcost .= $ifn.":".$_POST["{$ifn}0"];
+				$j++;
 			}
-			$i++;
 		}
 
 		$bridge['ifpriority'] = $ifpriority;

@@ -37,6 +37,8 @@ require_once("interfaces.inc");
 require_once("pfsense-utils.inc");
 require_once("util.inc");
 
+global $config;
+
 if ($_POST['ifdescr'] && $_POST['submit']) {
 	$interface = $_POST['ifdescr'];
 	if ($_POST['status'] == "up") {
@@ -124,10 +126,21 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 								'<input type="hidden" name="if" value='.$ifinfo['if'].' />';
 	$chkbox_relinquish_lease_v4 = $chkbox_relinquish_lease . '<input type="hidden" name="ipv" value=4 />';
 	$chkbox_relinquish_lease_v6 = $chkbox_relinquish_lease . '<input type="hidden" name="ipv" value=6 />';
+
+	$ifhwinfo = $ifinfo['hwif'];
+	$vlan = interface_is_vlan($ifinfo['hwif']);
+	if ($vlan && is_array($config['switches']['switch'][0]['vlangroups']['vlangroup'])) {
+		foreach ($config['switches']['switch'][0]['vlangroups']['vlangroup'] as $vlangroup) {
+			if ($vlangroup['vlanid'] == $vlan['tag']) {
+				$ifhwinfo .= ', switchports: ' . $vlangroup['members'];
+				break;
+			}
+		}
+	}
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($ifname)?><?=gettext(" Interface "); ?>(<?=htmlspecialchars($ifdescr)?>, <?=htmlspecialchars($ifinfo['hwif'])?>)</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($ifname)?><?=gettext(" Interface "); ?>(<?=htmlspecialchars($ifdescr)?>, <?=htmlspecialchars($ifhwinfo)?>)</h2></div>
 	<div class="panel-body">
 		<dl class="dl-horizontal">
 <?php

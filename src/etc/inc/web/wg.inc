@@ -24,6 +24,13 @@ require_once('config.inc');
 
 $wgbinpath = '/usr/local/bin/wg';
 
+// Gnerate a preshared key
+function gerneratePSK() {
+	global $wgbinpath;
+
+	return exec("{$wgbinpath} genpsk");
+}
+
 // Return the next available wWreguard port
 function next_wg_port() {
 	global $config;
@@ -102,9 +109,9 @@ function wg_validate_peer($idx, $peer) {
 
 	// Check remote port
 	$rport = $peer['port'];
-	if (!empty($rport){
-		$input_errors[] = "Peer " . $idx . gettext(": A port must be specified";
-	} else  if ($rport > 65535 || $rport < 512 )) {
+	if (empty($rport)) {
+		$input_errors[] = "Peer " . $idx . gettext(": A port must be specified");
+	} else  if ($rport > 65535 || $rport < 512 ) {
 		$input_errors[] = "Peer " . $idx . gettext(": Invalid remote port. (") . $rport . ")";
 	}
 

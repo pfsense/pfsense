@@ -43,6 +43,11 @@ if (is_numericint($_REQUEST['index'])) {
 	$index = $_REQUEST['index'];
 }
 
+if ($_REQUEST['ajax']) {
+	print(gettext("Pre-shaed key: ") . gerneratePSK());
+	exit;
+}
+
 // All form save logic is in /etc/inc/wg.inc
 if ($_POST['save']) {
 	$res = wg_do_post($_POST);
@@ -244,12 +249,21 @@ foreach ($pconfig['peers']['peer'] as $peer) {
 	$peer_num++;
 }
 
-$section2->addInput(new Form_Button(
+$group3 = new Form_Group('');
+$group3->add(new Form_Button(
 	'add2rows',
 	'Add peer',
 	null,
 	'fa-plus'
 ))->addClass('btn-success addbtn btn-sm');
+
+$group3->add(new Form_Button(
+	'genpsk',
+	'Generate PSK',
+	null
+))->addClass('btn-info btn-sm');
+
+$section2->add($group3);
 
 $form->add($section2);
 
@@ -284,10 +298,28 @@ events.push(function() {
 
 	// These are action buttons, not submit buttons
 	$('#add2rows').prop('type','button');
+	$('#genpsk').prop('type','button');
 
 	// on click . .
 	$('#add2rows').click(function() {
 		add2rows();
+	});
+
+	$('#genpsk').click(function () {
+		ajaxRequest = $.ajax(
+			{
+				url: "/vpn_wg_edit.php",
+				type: "post",
+				data: {
+					ajax: 	"ajax"
+				}
+			}
+		);
+
+		// Deal with the results of the above ajax call
+		ajaxRequest.done(function (response, textStatus, jqXHR) {
+			alert(response);
+		});
 	});
 
 	$("#genkeys").prop('type' ,'button');

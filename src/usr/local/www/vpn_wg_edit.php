@@ -163,12 +163,12 @@ if (!isset($pconfig['peers']['peer']) || !is_array($pconfig['peers']['peer'])) {
 $peer_count = count($pconfig['peers']['peer']);
 $peer_num = 0;
 $peer_help = gettext("Description");
-$dnshost_help = gettext("Public key");
-$dnsgw_help = gettext("Endpoint");
-$ka_help = gettext("Keepalive");
+$dnshost_help = '*' . gettext("Public key");
+$endpoint_help = '*' . gettext("Endpoint");
+$ka_help = gettext("Keepalive (Seconds)");
 $aips_help = gettext("Allowed IPs");
 $preshare_help = gettext("Pre-shared key");
-$port_help = gettext("Remote Port");
+$port_help = '*' . gettext("Remote Port");
 
 // If there are no peers, make an empty entry for initial display. This will be the case when creating a new tunnel
 if ($peer_count == 0) {
@@ -192,7 +192,7 @@ foreach ($pconfig['peers']['peer'] as $peer) {
 		'Endpoint',
 		'text',
 		$peer['endpoint']
-	))->setHelp($dnsgw_help)->setWidth(3);
+	))->setHelp($endpoint_help)->setWidth(3);
 
 	$group->add(new Form_Input(
 		'port' . $peer_num,
@@ -203,7 +203,7 @@ foreach ($pconfig['peers']['peer'] as $peer) {
 
 	$group->add(new Form_Input(
 		'persistentkeepalive' . $peer_num,
-		'Keepalive (seconds)',
+		'Keepalive',
 		'PDF_pcos_get_number(p, doc, path)',
 		$peer['persistentkeepalive']
 	))->setHelp($ka_help)->setWidth(1);
@@ -312,7 +312,7 @@ events.push(function() {
 	});
 
 	// Similar to the functions in pfSenseHelpers.js but we add two rows, not just one so the code changes somewhat
-	//Since this is the only page that uses double rows, the code is here rather than in the helper file
+	// Since this is the only page that uses double rows, the code is here rather than in the helper file
 	function add2rows() {
 		// Find the last repeatable group
 		var lastRepeatableGroup = $('.repeatable:last').prev();
@@ -349,10 +349,12 @@ events.push(function() {
 		$(lastRepeatableGroup2).after(newGroup);
 
 		// Delete any help text from the group we have cloned
+		/*
 		$(lastRepeatableGroup).find('.help-block').each(function() {
 			if ((typeof retainhelp) == "undefined")
 				$(this).remove();
 		});
+		*/
 
 		checkLastRow();
 

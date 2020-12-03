@@ -370,6 +370,11 @@ tr.disabled a {
     margin-bottom: 0;
 }
 
+.help-block-underlined {
+    margin-bottom: 0;
+    text-decoration: underline;
+}
+
 .action-buttons {
     text-align: right;
     margin-top: 10px;

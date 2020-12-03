@@ -251,9 +251,12 @@ class Form_Input extends Form_Element
 		if (!isset($this->_help) && '<div>' == $column)
 			return (string)$input;
 
-		if (!empty($this->_help))
-		{
-			$help = '<span class="help-block">'. $this->_help .'</span>';
+		if (!empty($this->_help)) {
+			if ($this->_help[0] == '*') { // Used to indicate a required item
+				$help = '<span class="help-block-underlined">' . substr($this->_help, 1) . '</span>';
+			} else {
+				$help = '<span class="help-block">'. $this->_help .'</span>';
+			}
 		}
 
 		return <<<EOT

@@ -24,6 +24,33 @@ require_once('config.inc');
 
 $wgbinpath = '/usr/local/bin/wg';
 
+// Return the next available wWreguard port
+function next_wg_port() {
+	global $config;
+
+	init_config_arr(array('wireguard', 'tunnel'));
+	$tunnels = &$config['wireguard']['tunnel'];
+
+	$found = true;
+	for ($idx=51820; $idx<65535 && $found; $idx++) {
+
+		// Check to see if the port is already in use
+		$found = false;
+		foreach ($tunnels as $tunnel) {
+			if ($tunnel['interface']['listenport'] == $idx) {
+				$found = true;
+			}
+		}
+
+		// If not, it can be used
+		if (!$found) {
+			return $idx;
+		}
+	}
+
+	return 51820;
+}
+
 // Validate the user's input and return error messages if not acceptable
 function wg_validate_post($pconfig) {
 	$input_errors = array();
@@ -75,7 +102,9 @@ function wg_validate_peer($idx, $peer) {
 
 	// Check remote port
 	$rport = $peer['port'];
-	if (!empty($rport) && ($rport > 65535 || $rport < 512 )) {
+	if (!empty($rport){
+		$input_errors[] = "Peer " . $idx . gettext(": A port must be specified";
+	} else  if ($rport > 65535 || $rport < 512 )) {
 		$input_errors[] = "Peer " . $idx . gettext(": Invalid remote port. (") . $rport . ")";
 	}
 

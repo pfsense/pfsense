@@ -61,12 +61,12 @@ if ($_POST['save']) {
 	}
 } else if ($_POST['action'] == 'genkeys') { // Process ajax call requesting new key pair
 	print(genKeyPair(true));
-	// Debug:
-	// print(json_encode(array('pubkey' => 'myPublicKeyThingyXXXXXXXXXXXXXXXXXX==', 'privkey' => 'myPrivateKeyThingyYYYYYYYYYYYYYYYYYY==')));
 	exit;
 } else {
-	if (isset($index) && $tunnels[$index]) {
-		$pconfig = &$tunnels[$index];
+	if (isset($index)) {
+		if ($tunnels[$index]) {
+			$pconfig = &$tunnels[$index];
+		}
 	}
 }
 
@@ -113,14 +113,15 @@ $section->addInput(new Form_Input(
 	'*Address',
 	'text',
 	$pconfig['interface']['address']
-))->setHelp('Comma separated list of interface Addresses.');
+))->setHelp('Comma separated list of addresses assigned to interface.');
 
 
 $section->addInput(new Form_Input(
 	'listenport',
 	'*Listen port',
 	'text',
-	$pconfig['interface']['listenport']
+	$tunnels[$index],
+	['placeholder' => next_wg_port()]
 ))->setHelp('Port to listen on.');
 
 $group = new Form_Group('*Interface keys');
@@ -202,7 +203,7 @@ foreach ($pconfig['peers']['peer'] as $peer) {
 
 	$group->add(new Form_Input(
 		'persistentkeepalive' . $peer_num,
-		'Keepalive',
+		'Keepalive (seconds)',
 		'PDF_pcos_get_number(p, doc, path)',
 		$peer['persistentkeepalive']
 	))->setHelp($ka_help)->setWidth(1);
@@ -219,7 +220,7 @@ foreach ($pconfig['peers']['peer'] as $peer) {
 
 	$group2->add(new Form_Input(
 		'publickeyp' . $peer_num,
-		'Public key',
+		'*Public key',
 		'text',
 		$peer['publickey']
 	))->setHelp($dnshost_help)->setWidth(4);

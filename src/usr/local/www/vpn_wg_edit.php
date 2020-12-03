@@ -125,7 +125,7 @@ $section->addInput(new Form_Input(
 	'listenport',
 	'*Listen port',
 	'text',
-	$tunnels[$index],
+	$pconfig['interface']['listenport'],
 	['placeholder' => next_wg_port()]
 ))->setHelp('Port to listen on.');
 
@@ -173,7 +173,7 @@ $endpoint_help = '*' . gettext("Endpoint");
 $ka_help = gettext("Keepalive (Seconds)");
 $aips_help = gettext("Allowed IPs");
 $preshare_help = gettext("Pre-shared key");
-$port_help = '*' . gettext("Remote Port");
+$port_help = '*' . gettext("Endpoint Port");
 
 // If there are no peers, make an empty entry for initial display. This will be the case when creating a new tunnel
 if ($peer_count == 0) {
@@ -201,7 +201,7 @@ foreach ($pconfig['peers']['peer'] as $peer) {
 
 	$group->add(new Form_Input(
 		'port' . $peer_num,
-		'Port',
+		'Endpoint port',
 		'text',
 		$peer['port']
 	))->setHelp($port_help);

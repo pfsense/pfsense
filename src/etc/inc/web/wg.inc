@@ -121,10 +121,20 @@ function wg_validate_peer($idx, $peer) {
 	}
 
 	// Endpoint
-	if (empty($peer['endpoint'])) {
+	$ep = trim($peer['endpoint']);
+	if (empty($ep)) {
 		$input_errors[] = "Peer " . $idx . gettext(": An endpoint must be specified");
-	} else if (!is_hostname($peer['endpoint']) && !is_ipaddrv4($peer['endpoint']) && !is_ipaddrv6($peer['endpoint'])) {
+	} else if (!is_hostname($ep) && !is_ipaddrv4($ep) && !is_ipaddrv6($ep)) {
 		$input_errors[] = "Peer " . $idx . gettext(": Endpoint must be a valid IPv4 or IPv6 aadress or hostname.");
+	}
+
+	// Allowed IPs
+	if (!emoty($peer['allowedips'])) {
+		foreach (explode(",", $peer['allowedips']) as $ip) {
+			if (!is_subnet(trim($ip))) {
+				$input_errors[] = "Peer " . $idx . gettext(": Address {$ip} is not a valid IPv4 or IPv6 CIDR subnet aadress.");
+			}
+		}
 	}
 
 	return $input_errors;

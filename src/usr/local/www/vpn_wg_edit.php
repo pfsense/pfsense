@@ -86,7 +86,7 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-$form = new Form();
+$form = new Form(false);
 
 // First row
 $section = new Form_Section('Interface wg' . $index);
@@ -249,25 +249,30 @@ foreach ($pconfig['peers']['peer'] as $peer) {
 	$peer_num++;
 }
 
-$group3 = new Form_Group('');
-$group3->add(new Form_Button(
+$section2->addInput(new Form_Button(
 	'add2rows',
 	'Add peer',
 	null,
 	'fa-plus'
 ))->addClass('btn-success addbtn btn-sm');
 
-$group3->add(new Form_Button(
-	'genpsk',
-	'Generate PSK',
-	null
-))->addClass('btn-info btn-sm');
-
-$section2->add($group3);
-
 $form->add($section2);
 
 print($form);
+?>
+
+<nav class="action-buttons">
+	<button type="submit" id="genpsk" name="genpsk" class="btn btn-sm btn-info" title="<?=gettext('Add separator')?>">
+		<i class="fa fa-key icon-embed-btn"></i>
+                <?=gettext("Generate PSK")?>
+	</button>
+
+	<button type="submit" id="saveform" name="saveform" class="btn btn-sm btn-primary" value="save" title="<?=gettext('Save tunnel')?>">
+		<i class="fa fa-save icon-embed-btn"></i>
+		<?=gettext("Save")?>
+	</button>
+</nav>
+<?php
 
 $genkeywarning = gettext('Are you sure you want to generate a new private and public key for this tunnel interface? ' .
 						 'All remote tunnels that use the current public key will need to be updated!');
@@ -285,6 +290,16 @@ events.push(function() {
 		}
 	}
 
+	// Save teh form
+	$('#saveform').click(function () {
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'save',
+			value: 'save'
+		}).appendTo(form);
+		$(form).submit();
+	});
+
 	// Delete a peer
 	$('[id^=killpeer]').click(function (event) {
 		event.preventDefault();
@@ -294,7 +309,7 @@ events.push(function() {
 			$(target).remove();
 			hideDeleteBtn();
 		}
-	})
+	});
 
 	// These are action buttons, not submit buttons
 	$('#add2rows').prop('type','button');

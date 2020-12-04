@@ -305,6 +305,9 @@ $section2->add($group2);
 events.push(function() {
 	var pconfig = JSON.parse('<?=$jpconfig?>');
 
+	// Eliminate ghost lines in modal
+	$('.form-group').css({"border-bottom-width" : "0"});
+
 	// Edit peer
 	$('[id^=editpeer_]').click(function () {
 		var peernum =  this.id.slice('editpeer_'.length);

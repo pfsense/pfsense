@@ -1,6 +1,6 @@
 <?php
 /*
- * vpn_ipsec.php
+ * vpn_iwg.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2013-2016 Electric Sheep Fencing

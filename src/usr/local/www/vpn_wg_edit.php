@@ -44,7 +44,7 @@ if (is_numericint($_REQUEST['index'])) {
 }
 
 if ($_REQUEST['ajax']) {
-	print(gettext("Pre-shaed key: ") . gerneratePSK());
+	print(gerneratePSK());
 	exit;
 }
 
@@ -150,121 +150,146 @@ $group->add(new Form_Button(
 	'Generate',
 	null,
 	'fa-key'
-))->setWidth(1)->addClass('btn-primary btn-sm')->setHelp('New keys.');
+))->setWidth(1)->addClass('btn-primary btn-xs')->setHelp('New');
 
 $section->add($group);
 $form->add($section);
 
-// Second row
-$section2 = new Form_Section('Peers');
-
-if (!isset($pconfig['peers']) || !is_array($pconfig['peers'])) {
-	$pconfig['peers'] = array();
-}
-if (!isset($pconfig['peers']['peer']) || !is_array($pconfig['peers']['peer'])) {
-	$pconfig['peers']['peer'] = array();
-}
-
-$peer_count = count($pconfig['peers']['peer']);
-$peer_num = 0;
-$peer_help = gettext("Description");
-$dnshost_help = '*' . gettext("Public key");
-$endpoint_help = '*' . gettext("Endpoint");
-$ka_help = gettext("Keepalive (Seconds)");
-$aips_help = gettext("Allowed IPs");
-$preshare_help = gettext("Pre-shared key");
-$port_help = '*' . gettext("Endpoint Port");
-
-// If there are no peers, make an empty entry for initial display. This will be the case when creating a new tunnel
-if ($peer_count == 0) {
-	$pconfig['peers']['peer'][] = array('descr' => '', 'endpoint' => '', 'persistentkeepalive' => '', 'publickey', 'allowedips' => '');
-}
-
-foreach ($pconfig['peers']['peer'] as $peer) {
-	$is_last_peer = (($peer_num == $peer_count - 1) || $peer_count == 0);
-	$group = new Form_Group('Peer ' . $peer_num);
-	$group->addClass('repeatable')->addClass('peer_group_' . $peer_num);
-
-	$group->add(new Form_Input(
-		'descp' . $peer_num,
-		'Description',
-		'text',
-		$peer['descr']
-	))->setHelp($peer_help);
-
-	$group->add(new Form_Input(
-		'endpoint' . $peer_num,
-		'Endpoint',
-		'text',
-		$peer['endpoint']
-	))->setHelp($endpoint_help)->setWidth(3);
-
-	$group->add(new Form_Input(
-		'port' . $peer_num,
-		'Endpoint port',
-		'text',
-		$peer['port']
-	))->setHelp($port_help);
-
-	$group->add(new Form_Input(
-		'persistentkeepalive' . $peer_num,
-		'Keepalive',
-		'PDF_pcos_get_number(p, doc, path)',
-		$peer['persistentkeepalive']
-	))->setHelp($ka_help)->setWidth(1);
-
-	$group->add(new Form_Button(
-		'killpeer' . $peer_num,
-		'Delete',
-		null,
-		'fa-trash'
-	))->setWidth(1)->addClass('btn-warning btn-sm');
-
-	$group2 = new Form_Group('');
-	$group2->addClass('repeatable')->addClass('peer_group_' . $peer_num);
-
-	$group2->add(new Form_Input(
-		'publickeyp' . $peer_num,
-		'*Public key',
-		'text',
-		$peer['publickey']
-	))->setHelp($dnshost_help)->setWidth(4);
-
-	$group2->add(new Form_Input(
-		'allowedips' . $peer_num,
-		'Allowed IPs',
-		'text',
-		$peer['allowedips']
-	))->setHelp($aips_help);
-
-	$group2->add(new Form_Input(
-		'presharedkey' . $peer_num,
-		'Preshared key',
-		'text',
-		$peer['presharedkey']
-	))->setHelp($preshare_help);
-
-	$section2->add($group);
-	$section2->add($group2);
-	$peer_num++;
-}
-
-$section2->addInput(new Form_Button(
-	'add2rows',
-	'Add peer',
-	null,
-	'fa-plus'
-))->addClass('btn-success addbtn btn-sm');
-
-$form->add($section2);
-
 print($form);
+
+// ============ Peer edit modal ===================================================================================================
+$section2 = new Form_Section('Peer');
+
+$section2->addInput(new Form_Input(
+	'peer_num',
+	'',
+	'hidden'
+));
+
+$section2->addInput(new Form_Input(
+	'pdescr',
+	'Description',
+	'text'
+))->setHelp("Peer description - not parsed");
+
+$section2->addInput(new Form_Input(
+	'endpoint',
+	'*Endpoint',
+	'text'
+))->setHelp("Hostname, IPv4 or IP46 address");
+
+$section2->addInput(new Form_Input(
+	'port',
+	'*Endpoint port',
+	'text'
+));
+
+$section2->addInput(new Form_Input(
+	'persistentkeepalive',
+	'Keepalive',
+	'text'
+))->setHelp("Keep alive value in seconds");
+
+$section2->addInput(new Form_Input(
+	'ppublickey',
+	'*Public key',
+	'text'
+));
+
+$section2->addInput(new Form_Input(
+	'allowedips',
+	'Allowed IPs',
+	'text'
+))->setHelp("List of IPs allowed to connect");
+
+$group2 = new Form_Group('Pre-shared key');
+
+$group2->add(new Form_Input(
+	'presharedkey',
+	'Preshared key',
+	'text'
+))->setHelp("Optional pre-shared key");
+
+$group2->add(new Form_Button(
+	'genpsk',
+	'Generate key',
+	null
+))->addClass('btn btn-xs success');
+
+$section2->add($group2);
+
 ?>
 
+<!-- Modal -->
+<div id="peermodal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-body">
+        <?=$section2?>
+
+        <nav class="action-buttons">
+			<button type="submit" id="savemodal" class="btn btn-sm btn-primary" title="<?=gettext('Update peer')?>">
+				<?=gettext("Update")?>
+			</button>
+
+			<button type="submit" id="closemodal" class="btn btn-sm btn-info" title="<?=gettext('Cancel')?>">
+				<?=gettext("Cancel")?>
+			</button>
+		</nav>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="panel panel-default">
+	<div id="mainarea" class="table-responsive panel-body">
+		<table id="ruletable" class="table table-hover table-striped table-condensed" style="overflow-x: 'visible'">
+			<thead>
+				<tr>
+					<th><?=gettext("Peer")?></th>
+					<th><?=gettext("Description")?></th>
+					<th><?=gettext("Endpoint")?></th>
+					<th><?=gettext("Port")?></th>
+					<th><?=gettext("Public key")?></th>
+					<th></th>
+
+				</tr>
+			</thead>
+
+			<tbody>
+<?php
+				$peer_num = 0;
+				if (!empty($pconfig['peers']['peer'])) {
+					foreach ($pconfig['peers']['peer'] as $peer) {
+						print('<tr class="peer_group_' . $peer_num . '">');
+						print("<td>{$peer_num}</td>\n");
+						print("<td>{$peer['descr']}</td>\n");
+						print("<td>{$peer['endpoint']}</td>\n");
+						print("<td>{$peer['port']}</td>\n");
+						print("<td>{$peer['publickey']}</td>\n");
+?>
+						<td style="cursor: pointer;">
+							<a class="fa fa-pencil" href="#" id="editpeer_<?=$peer_num?>"title="<?=gettext("Edit peer"); ?>"></a>
+							<a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_<?=$peer_num?>" title="<?=gettext('Delete peer');?>"></a>
+						</td>
+<?php
+						print("</tr>");
+						$peer_num++;
+					}
+				}
+?>
+			</tbody>
+		</table>
+	</div>
+</div>
+
 <nav class="action-buttons">
-	<button type="submit" id="genpsk" name="genpsk" class="btn btn-sm btn-info" title="<?=gettext('Add separator')?>">
-		<i class="fa fa-key icon-embed-btn"></i>
-                <?=gettext("Generate PSK")?>
+	<button type="submit" id="editpeer_new" class="btn btn-sm btn-success" title="<?=gettext('Add new peer')?>">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add peer")?>
 	</button>
 
 	<button type="submit" id="saveform" name="saveform" class="btn btn-sm btn-primary" value="save" title="<?=gettext('Save tunnel')?>">
@@ -272,25 +297,61 @@ print($form);
 		<?=gettext("Save")?>
 	</button>
 </nav>
-<?php
 
-$genkeywarning = gettext('Are you sure you want to generate a new private and public key for this tunnel interface? ' .
-						 'All remote tunnels that use the current public key will need to be updated!');
-?>
+<?php $jpconfig = json_encode($pconfig); ?>
 
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	// Don't show delete button if there is only one peer
-	function hideDeleteBtn() {
-		if ($('[id^=descp]').length <= 1) {
-			$('[id^=killpeer]').hide();
-		} else {
-			$('[id^=killpeer]').show();
-		}
-	}
+	var pconfig = JSON.parse('<?=$jpconfig?>');
 
-	// Save teh form
+	// Edit peer
+	$('[id^=editpeer_]').click(function () {
+		var peernum =  this.id.slice('editpeer_'.length);
+		$('#peer_num').val(peernum);
+
+		// peer -1 means creating a new peer
+		if (peernum != "new") {
+			$('#pdescr').val(pconfig.peers.peer[peernum].descr);
+			$('#endpoint').val(pconfig.peers.peer[peernum].endpoint);
+			$('#port').val(pconfig.peers.peer[peernum].port);
+			$('#persistentkeepalive').val(pconfig.peers.peer[peernum].persistentkeepalive);
+			$('#ppublickey').val(pconfig.peers.peer[peernum].publickey);
+			$('#allowedips').val(pconfig.peers.peer[peernum].allowedips);
+			$('#presharedkey').val(pconfig.peers.peer[peernum].presharedkey);
+		} else {
+			$('#pdescr').val("");
+			$('#endpoint').val("");
+			$('#port').val('');
+			$('#persistentkeepalive').val('');
+			$('#ppublickey').val('');
+			$('#allowedips').val('');
+			$('#presharedkey').val('');
+		}
+
+		$('#peermodal').modal('show');
+	});
+
+	$('#addpeer').click(function () {
+		$('#peermodal').modal('show');
+	});
+
+	$('#closemodal').click(function () {
+		$('#peermodal').modal('hide');
+	});
+
+	$('#savemodal').click(function () {
+		var peernum = $('#peer_num').val();
+
+		$('.peer_group_' + peernum).find('td').eq(1).text($('#pdescr').val())
+		$('.peer_group_' + peernum).find('td').eq(2).text($('#endpoint').val())
+		$('.peer_group_' + peernum).find('td').eq(3).text($('#port').val())
+		$('.peer_group_' + peernum).find('td').eq(4).text($('#ppublickey').val())
+
+		$('#peermodal').modal('hide');
+	});
+
+	// Save the form
 	$('#saveform').click(function () {
 		$('<input>').attr({
 			type: 'hidden',
@@ -301,24 +362,18 @@ events.push(function() {
 	});
 
 	// Delete a peer
-	$('[id^=killpeer]').click(function (event) {
-		event.preventDefault();
-		if (confirm('Are you sure you want to delete this peer?')) {
-			var row = event.target.id.slice(8);
+	$('[id^=killpeer_]').click(function () {
+		var row = this.id.slice('killpeer_'.length)
+		if (confirm('Are you sure you want to delete peer ' + row + '?')) {
 			var target = '.peer_group_' + row
 			$(target).remove();
-			hideDeleteBtn();
 		}
 	});
 
 	// These are action buttons, not submit buttons
-	$('#add2rows').prop('type','button');
 	$('#genpsk').prop('type','button');
-
-	// on click . .
-	$('#add2rows').click(function() {
-		add2rows();
-	});
+	$("#genkeys").prop('type' ,'button');
+	$("#savemodal").prop('type' ,'button');
 
 	$('#genpsk').click(function () {
 		ajaxRequest = $.ajax(
@@ -333,11 +388,11 @@ events.push(function() {
 
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			alert(response);
+			if (response.length > 0) {
+				$('#presharedkey').val(response);
+			}
 		});
 	});
-
-	$("#genkeys").prop('type' ,'button');
 
 	// Request a new public/private key pair
 	$('#genkeys').click(function(event) {
@@ -357,92 +412,6 @@ events.push(function() {
 			});
 		}
 	});
-
-	// Similar to the functions in pfSenseHelpers.js but we add two rows, not just one so the code changes somewhat
-	// Since this is the only page that uses double rows, the code is here rather than in the helper file
-	function add2rows() {
-		// Find the last repeatable group
-		var lastRepeatableGroup = $('.repeatable:last').prev();
-		var lastRepeatableGroup2 = $('.repeatable:last');
-
-		// If the number of repeats exceeds the maximum, do not add another clone
-		if ($('.repeatable').length >= lastRepeatableGroup.attr('max_repeats')) {
-			// Alert user if alert message is specified
-			if (typeof lastRepeatableGroup.attr('max_repeats_alert') !== 'undefined') {
-				alert(lastRepeatableGroup.attr('max_repeats_alert'));
-			}
-
-			return;
-		}
-
-		// Clone it
-		var newGroup = lastRepeatableGroup.clone();
-		var newGroup2 = lastRepeatableGroup2.clone();
-
-		// Increment the suffix number for each input element in the new group(s)
-		bump_ids(newGroup);
-		bump_ids(newGroup2);
-
-		// Increment the peer_group_n class (used for deleting a row)
-		var cn = $(newGroup).prop('className').split(' ')[2];
-		var cn2 = bumpStringInt(cn);
-		$(newGroup.removeClass(cn));
-		$(newGroup).addClass(cn2);
-		$(newGroup2).removeClass(cn);
-		$(newGroup2).addClass(cn2);
-
-		// Insert the updated/cloned row
-		$(lastRepeatableGroup2).after(newGroup2);
-		$(lastRepeatableGroup2).after(newGroup);
-
-		// Delete any help text from the group we have cloned
-		/*
-		$(lastRepeatableGroup).find('.help-block').each(function() {
-			if ((typeof retainhelp) == "undefined")
-				$(this).remove();
-		});
-		*/
-
-		checkLastRow();
-
-
-		// Now that we are no longer cloning the event handlers, we need to remove and re-add after a new row
-		// has been added to the table
-		$('[id^=killpeer]').unbind();
-		$('[id^=killpeer]').click(function(event) {
-			event.preventDefault();
-			if (confirm('Are you sure you want to delete this peer?')) {
-				var row = event.target.id.slice(8);
-				var target = '.peer_group_' + row
-				$(target).remove();
-				hideDeleteBtn();
-			}
-		});
-	}
-
-	// Increment the suffix of every element in the row(s)
-	function bump_ids(ng) {
-		$(ng).find('input').each(function() {
-			$(this).prop("id", bumpStringInt(this.id));
-			$(this).prop("name", bumpStringInt(this.name));
-			$(this).val('');
-		});
-
-		// Increment the suffix number for the deleterow button element in the new group
-		$(ng).find('[id^=killpeer]').each(function() {
-			$(this).prop("id", bumpStringInt(this.id));
-			$(this).prop("name", bumpStringInt(this.name));
-		});
-
-		// Increment the label
-		$(ng).find('span:first').each(function() {
-			var label = $(this).html();
-			if (label.startsWith('Peer')) {
-				label = bumpStringInt(label);
-				$(this).parent().find("span").html(label);
-			}
-		});
-	}
 });
 //]]>
 </script>

@@ -16,13 +16,11 @@ IPV4REGEX='^[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}$'
 
 if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 	if [ $(expr "${IP}" : ${IPV4REGEX}) -ne 0 ]; then
-		SUFFIX='ipv4' 
 		ARECORD='A' 
 	else
-		SUFFIX='ipv6' 
 		ARECORD='AAAA' 
 	fi
-	CONF="${DIR}/openvpn.client.${CN}.${SUFFIX}.conf"
+	CONF="${DIR}/openvpn.client.${IP}.conf"
 
 	case "${OP}" in
 
@@ -53,7 +51,8 @@ if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 				/bin/chmod 644 "${TMPCONF}" "${TMPSRV}"
 				/usr/local/sbin/unbound-checkconf "${TMPSRV}" && /bin/mv "${TMPCONF}" "${CONF}"
 
-				/bin/pkill -HUP -F "${PIDFILE}"
+				# do not restart unbound on connect, see https://redmine.pfsense.org/issues/11129
+				/usr/bin/su -m unbound -c "unbound-control -c /var/unbound/unbound.conf local_data ${CN}.${DOMAIN} ${ARECORD} ${IP}"
 			fi
 
 			/bin/test -f "${TMPCONF}" && /bin/rm "${TMPCONF}"
@@ -61,8 +60,12 @@ if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 		;;
 
 		delete)
-			# CN is not set on delete.
-			/bin/test -f "${CONF}" && /bin/rm "${CONF}" && /bin/pkill -HUP -F "${PIDFILE}"
+			# CN is not set on delete
+			if [ -f "${CONF}" ]; then
+				ENTRY=`/usr/bin/sed -nr 's/(local-data-ptr\:) \"(.*) (.*)"/\3/p' ${CONF}` &&
+				/usr/bin/su -m unbound -c "unbound-control -c /var/unbound/unbound.conf local_data_remove ${ENTRY}"
+				/bin/rm "${CONF}"
+			fi
 		;;
 
 	esac

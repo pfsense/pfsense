@@ -51,6 +51,12 @@ $interface_list_disabled = get_configured_interface_with_descr(true);
 $ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9) and '_' are allowed.");
 $ifname_no_digit_text = gettext("The group name cannot end with a digit.");
 
+/* hide VTI interfaces, see https://redmine.pfsense.org/issues/11134 */
+foreach ($interface_list as $if => $ifdescr) {
+	if (substr(get_real_interface($if), 0, 5) == "ipsec") {
+		unset($interface_list[$if]);
+	}
+}
 
 if ($_POST['save']) {
 	unset($input_errors);

@@ -1540,7 +1540,7 @@ function interface_vxlan_configure(&$vxlan, $vxlankey = "", $flush = true) {
 		pfSense_interface_create2($vxlan['vxlanif']);
 		$vxlanif = $vxlan['vxlanif'];
 	} else {
-		$vxlanif = pfSense_interface_create2("vxlanif");
+		$vxlanif = pfSense_interface_create2("vxlan");
 	}
 
 	$ifconfigcmd = "/sbin/ifconfig " . escapeshellarg($vxlanif) .
@@ -7698,7 +7698,7 @@ function is_pseudo_interface($inf, $tap=true) {
 				$type = ($m[1] == 'c') ? 'client' : 'server';
 				foreach ($config['openvpn']['openvpn-'.$type] as $ovpn) {
 					if (($ovpn['vpnid'] == $m[2]) && ($ovpn['dev_mode'] == 'tap')) {
-						return false; 
+						return false;
 					} elseif ($ovpn['vpnid'] == $m[2]) {
 						return true;
 					}

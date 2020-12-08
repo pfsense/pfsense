@@ -246,7 +246,7 @@ $section2->add($group2);
 
 <div class="panel panel-default">
 	<div id="mainarea" class="table-responsive panel-body">
-		<table id="ruletable" class="table table-hover table-striped table-condensed" style="overflow-x: 'visible'">
+		<table id="peertable" class="table table-hover table-striped table-condensed" style="overflow-x: 'visible'">
 			<thead>
 				<tr>
 					<th><?=gettext("Peer")?></th>
@@ -254,6 +254,9 @@ $section2->add($group2);
 					<th><?=gettext("Endpoint")?></th>
 					<th><?=gettext("Port")?></th>
 					<th><?=gettext("Public key")?></th>
+					<th style="display:none;"><?=gettext("Keepalive")?></th>
+					<th style="display:none;"><?=gettext("Allowed IPs")?></th>
+					<th style="display:none;"><?=gettext("PSK")?></th>
 					<th></th>
 
 				</tr>
@@ -270,6 +273,11 @@ $section2->add($group2);
 						print("<td>{$peer['endpoint']}</td>\n");
 						print("<td>{$peer['port']}</td>\n");
 						print("<td>{$peer['publickey']}</td>\n");
+
+						// hidden columns
+						print("<td style=\"display:none;\">{$peer['persistenkeepalive']}</td>\n");
+						print("<td style=\"display:none;\">{$peer['allowedips']}</td>\n");
+						print("<td style=\"display:none;\">{$peer['presharedkey']}</td>\n");
 ?>
 						<td style="cursor: pointer;">
 							<a class="fa fa-pencil" href="#" id="editpeer_<?=$peer_num?>"title="<?=gettext("Edit peer"); ?>"></a>
@@ -308,32 +316,11 @@ events.push(function() {
 	// Eliminate ghost lines in modal
 	$('.form-group').css({"border-bottom-width" : "0"});
 
-	// Edit peer
-	$('[id^=editpeer_]').click(function () {
-		var peernum =  this.id.slice('editpeer_'.length);
-		$('#peer_num').val(peernum);
-
-		// peer -1 means creating a new peer
-		if (peernum != "new") {
-			$('#pdescr').val(pconfig.peers.peer[peernum].descr);
-			$('#endpoint').val(pconfig.peers.peer[peernum].endpoint);
-			$('#port').val(pconfig.peers.peer[peernum].port);
-			$('#persistentkeepalive').val(pconfig.peers.peer[peernum].persistentkeepalive);
-			$('#ppublickey').val(pconfig.peers.peer[peernum].publickey);
-			$('#allowedips').val(pconfig.peers.peer[peernum].allowedips);
-			$('#presharedkey').val(pconfig.peers.peer[peernum].presharedkey);
-		} else {
-			$('#pdescr').val("");
-			$('#endpoint').val("");
-			$('#port').val('');
-			$('#persistentkeepalive').val('');
-			$('#ppublickey').val('');
-			$('#allowedips').val('');
-			$('#presharedkey').val('');
-		}
-
-		$('#peermodal').modal('show');
-	});
+	// Return text from peer table cell
+	function tabletext (row, col) {
+		row++; col++;
+		return $('#peertable tr:nth-child(' + row + ') td:nth-child('+ col + ')').text();
+	}
 
 	$('#addpeer').click(function () {
 		$('#peermodal').modal('show');
@@ -346,10 +333,25 @@ events.push(function() {
 	$('#savemodal').click(function () {
 		var peernum = $('#peer_num').val();
 
+		if (peernum == 'new') {
+			var lastrow = $('#peertable tr:last td:nth-child(1)').text()
+			$('#peer_num').val(++lastrow)
+			peernum = lastrow
+
+			$('#peertable tr:last').after('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a>  <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
+
+			attachhandlers()
+		}
+
+		$('.peer_group_' + peernum).find('td').eq(0).text(peernum)
 		$('.peer_group_' + peernum).find('td').eq(1).text($('#pdescr').val())
 		$('.peer_group_' + peernum).find('td').eq(2).text($('#endpoint').val())
 		$('.peer_group_' + peernum).find('td').eq(3).text($('#port').val())
 		$('.peer_group_' + peernum).find('td').eq(4).text($('#ppublickey').val())
+
+		$('.peer_group_' + peernum).find('td').eq(5).text($('#persistentkeepalive').val())
+		$('.peer_group_' + peernum).find('td').eq(6).text($('#allowedips').val())
+		$('.peer_group_' + peernum).find('td').eq(7).text($('#presharedkey').val())
 
 		$('#peermodal').modal('hide');
 	});
@@ -364,14 +366,47 @@ events.push(function() {
 		$(form).submit();
 	});
 
-	// Delete a peer
-	$('[id^=killpeer_]').click(function () {
-		var row = this.id.slice('killpeer_'.length)
-		if (confirm('Are you sure you want to delete peer ' + row + '?')) {
-			var target = '.peer_group_' + row
-			$(target).remove();
-		}
-	});
+	attachhandlers()
+
+	function attachhandlers() {
+		// Delete a peer
+		$('[id^=killpeer_]').click(function () {
+			var row = this.id.slice('killpeer_'.length)
+			if (confirm('Are you sure you want to delete peer ' + row + '?')) {
+				var target = '.peer_group_' + row
+				$(target).remove();
+			}
+		});
+
+		// Edit peer - Copy a row from the table to the edit form
+		$('[id^=editpeer_]').click(function () {
+			var peernum =  this.id.slice('editpeer_'.length);
+
+			$('#peer_num').val(peernum);
+
+			// peer -1 means creating a new peer
+			if (peernum != "new") {
+				$('#pdescr').val(tabletext(peernum, 1));
+				$('#endpoint').val(tabletext(peernum, 2));
+				$('#port').val(tabletext(peernum, 3));
+				$('#ppublickey').val(tabletext(peernum, 4));
+
+				$('#persistentkeepalive').val(tabletext(peernum, 7));
+				$('#allowedips').val(tabletext(peernum, 6));
+				$('#presharedkey').val(tabletext(peernum, 7));
+			} else {
+				$('#pdescr').val("");
+				$('#endpoint').val("");
+				$('#port').val('');
+				$('#persistentkeepalive').val('');
+				$('#ppublickey').val('');
+				$('#allowedips').val('');
+				$('#presharedkey').val('');
+			}
+
+			$('#peermodal').modal('show');
+		});
+	}
 
 	// These are action buttons, not submit buttons
 	$('#genpsk').prop('type','button');

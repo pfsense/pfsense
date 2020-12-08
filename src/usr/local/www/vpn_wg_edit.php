@@ -118,7 +118,7 @@ $section->addInput(new Form_Input(
 	'*Address',
 	'text',
 	$pconfig['interface']['address']
-))->setHelp('Comma separated list of addresses assigned to interface.');
+))->setHelp('Comma separated list of CIDR addresses assigned to interface.');
 
 
 $section->addInput(new Form_Input(
@@ -200,7 +200,7 @@ $section2->addInput(new Form_Input(
 	'allowedips',
 	'Allowed IPs',
 	'text'
-))->setHelp("List of IPs allowed to connect");
+))->setHelp("List of CIDR IPs allowed to connect");
 
 $group2 = new Form_Group('Pre-shared key');
 
@@ -308,6 +308,7 @@ $section2->add($group2);
 
 <?php $jpconfig = json_encode($pconfig); ?>
 
+<!-- ============== JavaScript =================================================================================================-->
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
@@ -331,16 +332,49 @@ events.push(function() {
 	});
 
 	$('#savemodal').click(function () {
+		var errmsg = [];
+		if ($('#endpoint').val().length === 0) {
+			errmsg.push("A peer endpoint is required");
+		}
+
+		if ($('#port').val().length === 0) {
+			errmsg.push("An endpoint port is required");
+		}
+
+		if ($('#ppublickey').val().length === 0) {
+			errmsg.push("A public key is required");
+		}
+
+		if (errmsg.length > 0) {
+			var errstr = "";
+
+			for(var i=0; i<errmsg.length; i++) {
+				errstr += (errmsg[i] +  "\n");
+			}
+
+			alert(errstr);
+			return;
+		}
+
 		var peernum = $('#peer_num').val();
 
 		if (peernum == 'new') {
-			var lastrow = $('#peertable tr:last td:nth-child(1)').text()
-			$('#peer_num').val(++lastrow)
-			peernum = lastrow
+			if ($('#peertable tbody').find('tr').length === 0) { // Now entries
+				peernum = 0;
+				$('#peer_num').val(0);
 
-			$('#peertable tr:last').after('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a>  <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
+				$('#peertable tbody').append('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a>  <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
+				} else {
+					var lastrow = $('#peertable tr:last td:nth-child(1)').text()
+
+					$('#peer_num').val(++lastrow)
+					peernum = lastrow
+
+					$('#peertable tr:last').after('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a>  <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
+				}
 
 			attachhandlers()
+
 		}
 
 		$('.peer_group_' + peernum).find('td').eq(0).text(peernum)
@@ -348,7 +382,6 @@ events.push(function() {
 		$('.peer_group_' + peernum).find('td').eq(2).text($('#endpoint').val())
 		$('.peer_group_' + peernum).find('td').eq(3).text($('#port').val())
 		$('.peer_group_' + peernum).find('td').eq(4).text($('#ppublickey').val())
-
 		$('.peer_group_' + peernum).find('td').eq(5).text($('#persistentkeepalive').val())
 		$('.peer_group_' + peernum).find('td').eq(6).text($('#allowedips').val())
 		$('.peer_group_' + peernum).find('td').eq(7).text($('#presharedkey').val())
@@ -358,11 +391,20 @@ events.push(function() {
 
 	// Save the form
 	$('#saveform').click(function () {
-		$('<input>').attr({
-			type: 'hidden',
-			name: 'save',
-			value: 'save'
-		}).appendTo(form);
+		// For each row in the peers table, construct an array of inputs with the values from the row
+		$('#peertable > tbody').find('tr').each(function (idx) {
+			console.log('Descr: ' + $(this).find('td').eq(1).text())
+			$('<input>').attr({type: 'hidden',name: 'descp' + idx, value: $(this).find('td').eq(1).text()}).appendTo(form);
+			$('<input>').attr({type: 'hidden',name: 'endpoint' + idx, value: $(this).find('td').eq(2).text()}).appendTo(form);
+			$('<input>').attr({type: 'hidden',name: 'port' + idx, value: $(this).find('td').eq(3).text()}).appendTo(form);
+			$('<input>').attr({type: 'hidden',name: 'publickeyp' + idx, value: $(this).find('td').eq(4).text()}).appendTo(form);
+			$('<input>').attr({type: 'hidden',name: 'persistentkeepalive' + idx, value: $(this).find('td').eq(5).text()}).appendTo(form);
+			$('<input>').attr({type: 'hidden',name: 'allowedips' + idx, value: $(this).find('td').eq(6).text()}).appendTo(form);
+			$('<input>').attr({type: 'hidden',name: 'presharedkey' + idx, value: $(this).find('td').eq(7).text()}).appendTo(form);
+
+			$('<input>').attr({type: 'hidden',name: 'save',value: 'save'}).appendTo(form);
+		});
+
 		$(form).submit();
 	});
 
@@ -390,11 +432,10 @@ events.push(function() {
 				$('#endpoint').val(tabletext(peernum, 2));
 				$('#port').val(tabletext(peernum, 3));
 				$('#ppublickey').val(tabletext(peernum, 4));
-
 				$('#persistentkeepalive').val(tabletext(peernum, 7));
 				$('#allowedips').val(tabletext(peernum, 6));
 				$('#presharedkey').val(tabletext(peernum, 7));
-			} else {
+			} else { // Clear all the fields
 				$('#pdescr').val("");
 				$('#endpoint').val("");
 				$('#port').val('');

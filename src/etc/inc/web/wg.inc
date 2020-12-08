@@ -129,7 +129,7 @@ function wg_validate_peer($idx, $peer) {
 	}
 
 	// Allowed IPs
-	if (!emoty($peer['allowedips'])) {
+	if (!empty($peer['allowedips'])) {
 		foreach (explode(",", $peer['allowedips']) as $ip) {
 			if (!is_subnet(trim($ip))) {
 				$input_errors[] = "Peer " . $idx . gettext(": Address {$ip} is not a valid IPv4 or IPv6 CIDR subnet aadress.");

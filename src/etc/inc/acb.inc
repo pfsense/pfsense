@@ -33,7 +33,7 @@ function get_device_key() {
 		}
 
 		// Generate a new key pair
-		exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t ed25519 -b 4096 -N '' -f /etc/ssh//ssh_host_ed25519_key");
+		exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t ed25519 -b 4096 -N '' -f /etc/ssh/ssh_host_ed25519_key");
 		sleep(2);
 
 		$cnt = 0;
@@ -48,7 +48,7 @@ function get_device_key() {
 	$pkey =  file_get_contents("/etc/ssh/ssh_host_ed25519_key.pub");
 
 	// Check that the key looks reasonable
-	if (substr( $pkey, 0, 3 ) != "ssh") {
+	if (substr($pkey, 0, 3) != "ssh") {
 		return "";
 	}
 

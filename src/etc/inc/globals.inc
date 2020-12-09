@@ -115,9 +115,6 @@ if (is_numeric($g["product_version_patch"]) && $g["product_version_patch"] != "0
 	$g['product_version_string'] .= "-p{$g['product_version_patch']}";
 }
 
-/* XXX: Backward compatible */
-$g['platform'] = $g['product_name'];
-
 if (file_exists("{$g['etc_path']}/default-config-flavor")) {
 	$flavor_array = file("{$g['etc_path']}/default-config-flavor");
 	$g['default-config-flavor'] = chop($flavor_array[0]);

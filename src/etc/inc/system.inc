@@ -2625,7 +2625,7 @@ function system_identify_specific_platform() {
 	}
 	unset($dmesg_boot);
 
-	return array('name' => $g['platform'], 'descr' => $g['platform']);
+	return array('name' => $g['product_name'], 'descr' => $g['product_name']);
 }
 
 function system_get_dmesg_boot() {

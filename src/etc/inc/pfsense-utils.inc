@@ -1035,7 +1035,7 @@ function host_firmware_version($tocheck = "") {
 		"firmware" => array("version" => $g['product_version']),
 		"kernel"   => array("version" => $os_version),
 		"base"     => array("version" => $os_version),
-		"platform" => $g['platform'],
+		"platform" => $g['product_label'],
 		"config_version" => $config['version']
 	);
 }

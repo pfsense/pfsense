@@ -325,7 +325,7 @@ $section->addInput(new Form_Input(
 	$pconfig['certexpiredays']
 ))->setAttribute('placeholder', $g['default_cert_expiredays'])
   ->setHelp('The number of days at which a certificate lifetime is considered to ' .
-	'be expiring soon and worthy of notification. Default is 30 days.');
+	'be expiring soon and worthy of notification. Default is %d days.', $g['default_cert_expiredays']);
 
 $form->add($section);
 

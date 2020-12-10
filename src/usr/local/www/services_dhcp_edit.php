@@ -90,6 +90,7 @@ if (isset($id) && $a_maps[$id]) {
 	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $a_maps[$id]['dnsserver'];
 	$pconfig['ddnsdomain'] = $a_maps[$id]['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $a_maps[$id]['ddnsdomainprimary'];
+	$pconfig['ddnsdomainsecondary'] = $a_maps[$id]['ddnsdomainsecondary'];
 	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkeyalgorithm'] = $a_maps[$id]['ddnsdomainkeyalgorithm'];
 	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
@@ -129,6 +130,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['dns4'] = $_REQUEST['dns4'];
 	$pconfig['ddnsdomain'] = $_REQUEST['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $_REQUEST['ddnsdomainprimary'];
+	$pconfig['ddnsdomainsecondary'] = $_REQUEST['ddnsdomainsecondary'];
 	$pconfig['ddnsdomainkeyname'] = $_REQUEST['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkeyalgorithm'] = $_REQUEST['ddnsdomainkeyalgorithm'];
 	$pconfig['ddnsdomainkey'] = $_REQUEST['ddnsdomainkey'];
@@ -279,18 +281,15 @@ if ($_POST['save']) {
 	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
 		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 	}
-	if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain']))) {
-		$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
-	}
-	if (($_POST['ddnsdomain'] && !is_ipaddr($_POST['ddnsdomainprimary']))) {
-		$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
-	}
 	if ($_POST['ddnsupdate']) {
 		if (!is_domain($_POST['ddnsdomain'])) {
 			$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
 		}
 		if (!is_ipaddr($_POST['ddnsdomainprimary'])) {
 			$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
+		}
+		if (!empty($_POST['ddnsdomainsecondary']) && !is_ipaddr($_POST['ddnsdomainsecondary'])) {
+			$input_errors[] = gettext("A valid secondary domain name server IP address must be specified for the dynamic domain name.");
 		}
 		if (!$_POST['ddnsdomainkeyname'] || !$_POST['ddnsdomainkeyalgorithm'] || !$_POST['ddnsdomainkey']) {
 			$input_errors[] = gettext("A valid domain key name, algorithm and secret must be specified.");
@@ -373,6 +372,7 @@ if ($_POST['save']) {
 		$mapent['domainsearchlist'] = $_POST['domainsearchlist'];
 		$mapent['ddnsdomain'] = $_POST['ddnsdomain'];
 		$mapent['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
+		$mapent['ddnsdomainsecondary'] = $_POST['ddnsdomainsecondary'];
 		$mapent['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$mapent['ddnsdomainkeyalgorithm'] = $_POST['ddnsdomainkeyalgorithm'];
 		$mapent['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
@@ -665,10 +665,17 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
-	'DDNS Server IP',
+	'Primary DDNS address',
 	$pconfig['ddnsdomainprimary'],
 	'BOTH'
-))->setHelp('Enter the primary domain name server IP address for the dynamic domain name.');
+))->setHelp('Primary domain name server IP address for the dynamic domain name.');
+
+$section->addInput(new Form_IpAddress(
+	'ddnsdomainsecondary',
+	'Secondary DDNS address',
+	$pconfig['ddnsdomainsecondary'],
+	'BOTH'
+))->setHelp('Secondary domain name server IP address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkeyname',
@@ -958,8 +965,14 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (!$pconfig['ddnsupdate'] && !$pconfig['ddnsforcehostname'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
-			    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey'])) {
+		if (!$pconfig['ddnsupdate'] &&
+	       	    !$pconfig['ddnsforcehostname'] &&
+		    empty($pconfig['ddnsdomain']) &&
+		    empty($pconfig['ddnsdomainprimary']) &&
+		    empty($pconfig['ddnsdomainsecondary']) &&
+		    empty($pconfig['ddnsdomainkeyname']) &&
+		    (empty($pconfig['ddnsdomainkeyalgorithm']) || ($pconfig['ddnsdomainkeyalgorithm'] == "hmac-md5")) &&
+		    empty($pconfig['ddnsdomainkey'])) {
 				$showadv = false;
 			} else {
 				$showadv = true;
@@ -975,6 +988,7 @@ events.push(function() {
 		hideCheckbox('ddnsforcehostname', !showadvdns);
 		hideInput('ddnsdomain', !showadvdns);
 		hideInput('ddnsdomainprimary', !showadvdns);
+		hideInput('ddnsdomainsecondary', !showadvdns);
 		hideInput('ddnsdomainkeyname', !showadvdns);
 		hideInput('ddnsdomainkey', !showadvdns);
 		hideInput('ddnsdomainkeyalgorithm', !showadvdns);

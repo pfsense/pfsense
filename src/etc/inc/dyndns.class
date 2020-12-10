@@ -1680,6 +1680,22 @@
 						$this->_debug($data);
 					}
 					break;
+				case 'domeneshop':
+				case 'domeneshop-v6':
+					/* Responds with HTTP 204 on success.
+					 * see https://api.domeneshop.no/docs/index.html#tag/ddns/paths/~1dyndns~1update/get */
+
+                                        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					
+					if ($code == "204") {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $code . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
+					}
+					break;
 				case 'citynetwork':
 					if (preg_match('/notfqdn/i', $data)) {
 						$status = $status_intro . $error_str . gettext("Not A FQDN!");

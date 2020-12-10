@@ -36,7 +36,15 @@ if (is_writable("/etc")) {
 	if (!file_exists("/etc/product_name") || is_writable("/etc/product_name"))
 		$handle = fopen("/etc/product_name", 'w');
 	if ($handle != NULL)
-		fwrite($handle, $product);
+		fwrite($handle, $g['product_name']);
+	if ($handle != NULL)
+		fclose($handle);
+
+	$handle = NULL;
+	if (!file_exists("/etc/product_label") || is_writable("/etc/product_label"))
+		$handle = fopen("/etc/product_label", 'w');
+	if ($handle != NULL)
+		fwrite($handle, $g['product_label']);
 	if ($handle != NULL)
 		fclose($handle);
 }

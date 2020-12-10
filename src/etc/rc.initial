@@ -59,6 +59,13 @@ else
 	product_name=$(/usr/local/sbin/read_global_var product_name pfSense)
 fi
 
+# Read product_label from $g, defaults to pfSense
+if [ -f /etc/product_label ]; then
+	product_label=$(/bin/cat /etc/product_label)
+else
+	product_label=$(/usr/local/sbin/read_global_var product_label pfSense)
+fi
+
 # Check to see if SSH is running.
 if /bin/pgrep -qaF /var/run/sshd.pid sshd 2>/dev/null; then
 	sshd_option='Disable'

@@ -205,11 +205,12 @@ fi
 
 # Read product_name from $g, defaults to pfSense
 # Use php -n here because we are not ready to load extensions yet
-product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+product_name=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+product_label=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_label pfSense)
 
 # Setup ddb on all platforms.
 if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
-	/sbin/ddb /etc/${product}-ddb.conf
+	/sbin/ddb /etc/${product_name}-ddb.conf
 fi
 
 # Restore contents of the RAM disk store
@@ -247,7 +248,7 @@ echo
 cat /usr/local/share/pfSense/ascii-art/pfsense-logo-small.txt
 echo
 echo
-echo "Welcome to ${product} ${version}${version_patch}..."
+echo "Welcome to ${product_label} ${version}${version_patch}..."
 echo
 
 /sbin/conscontrol mute off >/dev/null
@@ -374,13 +375,13 @@ fi
 
 # Second upgrade stage
 [ -z "$skip_packages" ] \
-	&& /usr/local/sbin/${product}-upgrade -y -U -b 2
+	&& /usr/local/sbin/${product_name}-upgrade -y -U -b 2
 
 # Copy default openssl config file
 [ -d /etc/ssl ] \
 	|| mkdir -p /etc/ssl
-[ -f /usr/local/share/${product}/ssl/openssl.cnf ] \
-	&& cp -f /usr/local/share/${product}/ssl/openssl.cnf /etc/ssl
+[ -f /usr/local/share/${product_name}/ssl/openssl.cnf ] \
+	&& cp -f /usr/local/share/${product_name}/ssl/openssl.cnf /etc/ssl
 mkdir -p /usr/local/openssl >/dev/null 2>&1
 ln -sf /etc/ssl/openssl.cnf \
 	/usr/local/openssl/openssl.cnf
@@ -408,10 +409,10 @@ echo -n "Launching the init system..."
 /usr/bin/touch $varrunpath/booting
 
 # Copy custom logo over if it's present
-if [ -d /usr/local/share/${product}/custom_logos ]; then
-	cp -f /usr/local/share/${product}/custom_logos/*svg \
+if [ -d /usr/local/share/${product_name}/custom_logos ]; then
+	cp -f /usr/local/share/${product_name}/custom_logos/*svg \
 		/usr/local/www
-	cp -f /usr/local/share/${product}/custom_logos/*css \
+	cp -f /usr/local/share/${product_name}/custom_logos/*css \
 		/usr/local/www/css
 fi
 
@@ -487,7 +488,7 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 fi
 
 [ -z "$skip_packages" ] \
-	&& /usr/local/sbin/${product}-upgrade -y -U -b 3
+	&& /usr/local/sbin/${product_name}-upgrade -y -U -b 3
 
 # Start packages
 [ -z "$skip_packages" ] \
@@ -500,7 +501,7 @@ fi
 get_version
 BUILDTIME=`cat /etc/version.buildtime`
 ARCH=`uname -m`
-echo "$product ${version}${version_patch} $ARCH $BUILDTIME"
+echo "$product_label ${version}${version_patch} $ARCH $BUILDTIME"
 
 echo "Bootup complete"
 echo "Bootup complete" | /usr/bin/logger

@@ -64,6 +64,7 @@ $g = array(
 	"xml_rootobj" => "pfsense",
 	"admin_group" => "admins",
 	"product_name" => "pfSense",
+	"product_label" => "pfSense",
 	"product_version" => trim(file_get_contents("/etc/version"), " \n"),
 	"product_copyright_years" => "2004 - ".date("Y"),
 	"disablehelpmenu" => false,

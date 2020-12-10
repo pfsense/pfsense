@@ -71,7 +71,8 @@ fi
 /etc/rc.banner
 
 # Read product_name from $g, defaults to pfSense
-product=$(/usr/local/sbin/read_global_var product_name pfSense)
+product_name=$(/usr/local/sbin/read_global_var product_name pfSense)
+product_label=$(/usr/local/sbin/read_global_var product_label pfSense)
 
 # Check to see if SSH is running.
 if pgrep -q -a -F /var/run/sshd.pid sshd >/dev/null 2>&1; then
@@ -85,7 +86,7 @@ echo ""
 echo " 0) Logout (SSH only)                  9) pfTop"
 echo " 1) Assign Interfaces                 10) Filter Logs"
 echo " 2) Set interface(s) IP address       11) Restart webConfigurator"
-echo " 3) Reset webConfigurator password    12) PHP shell + ${product} tools"
+echo " 3) Reset webConfigurator password    12) PHP shell + ${product_label} tools"
 echo " 4) Reset to factory defaults         13) Update from console"
 echo " 5) Reboot system                     ${sshd_option}"
 echo " 6) Halt system                       15) Restore recent configuration"
@@ -138,7 +139,7 @@ case ${opmode} in
 	/usr/local/sbin/pfSsh.php
 	;;
 13)
-	/bin/sh /usr/local/sbin/${product}-upgrade
+	/bin/sh /usr/local/sbin/${product_name}-upgrade
 	;;
 14)
 	php -f /etc/rc.initial.toggle_sshd

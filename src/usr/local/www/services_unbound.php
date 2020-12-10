@@ -375,7 +375,7 @@ $section->addInput(new Form_Select(
 	'*System Domain Local Zone Type',
 	$pconfig['system_domain_local_zone_type'],
 	unbound_local_zone_types()
-))->setHelp('The local-zone type used for the pfSense system domain (System | General Setup | Domain).  Transparent is the default.  Local-Zone type descriptions are available in the unbound.conf(5) manual pages.');
+))->setHelp('The local-zone type used for the %1$s system domain (System | General Setup | Domain).  Transparent is the default.  Local-Zone type descriptions are available in the unbound.conf(5) manual pages.', $g['product_label']);
 
 $section->addInput(new Form_Checkbox(
 	'dnssec',

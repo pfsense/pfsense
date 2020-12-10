@@ -355,7 +355,7 @@ EOD;
 		}
 		/* write syslog config to pfSense.conf */
 		if (!@file_put_contents("{$g['varetc_path']}/syslog.d/pfSense.conf", $syslogconf)) {
-			printf(gettext("Error: cannot open pfSense.conf in system_syslogd_start().%s"), "\n");
+			printf(gettext("Error: cannot open syslog config file in system_syslogd_start().%s"), "\n");
 			unset($syslogconf);
 			return 1;
 		}
@@ -553,7 +553,7 @@ EOD;
 		}
 
 		if (!@file_put_contents("{$g['varetc_path']}/newsyslog.conf.d/pfSense.conf", $newsyslogconf)) {
-			printf(gettext("Error: cannot open pfSense.conf in system_log_rotation_setup().%s"), "\n");
+			printf(gettext("Error: cannot open syslog config file in system_log_rotation_setup().%s"), "\n");
 		}
 		unset($newsyslogconf);
 	}

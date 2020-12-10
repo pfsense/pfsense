@@ -215,7 +215,7 @@ $section = new Form_Section('Restore Backup');
 
 $section->addInput(new Form_StaticText(
 	null,
-	sprintf(gettext("Open a %s configuration XML file and click the button below to restore the configuration."), $g['product_name'])
+	sprintf(gettext("Open a %s configuration XML file and click the button below to restore the configuration."), $g['product_label'])
 ));
 
 $section->addInput(new Form_Select(

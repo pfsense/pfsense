@@ -54,7 +54,7 @@ $priv_list['user-shell-access']['warn'] = "standard-warning-root";
 
 $priv_list['user-copy-files'] = array();
 $priv_list['user-copy-files']['name']  = gettext("User - System: Copy files (scp)");
-$priv_list['user-copy-files']['descr'] = gettext("Indicates whether this user is allowed to copy files onto the {$g['product_name']} appliance via SCP/SFTP.");
+$priv_list['user-copy-files']['descr'] = gettext("Indicates whether this user is allowed to copy files onto the {$g['product_label']} appliance via SCP/SFTP.");
 $priv_list['user-copy-files']['warn'] = "standard-warning-root";
 
 $priv_list['user-copy-files-chroot'] = array();

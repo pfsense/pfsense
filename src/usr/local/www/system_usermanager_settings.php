@@ -275,7 +275,7 @@ $modal = new Modal("LDAP settings", "testresults", true);
 
 $modal->addInput(new Form_StaticText(
 	'Test results',
-	'<span id="ldaptestop">Testing pfSense LDAP settings... One moment please...' . $g['product_name'] . '</span>'
+	'<span id="ldaptestop">Testing %s LDAP settings... One moment please...</span>', $g['product_label']
 ));
 
 $form->add($modal);

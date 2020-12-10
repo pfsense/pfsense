@@ -162,14 +162,14 @@ foreach ($keys as $key) {
 
 if (!empty($generate_keys)) {
 	/* remove previous keys and regen later */
-	file_notice("SSH", "{$g['product_name']} has started creating missing SSH keys.  SSH Startup will be delayed.  Please note that reloading the filter rules and changes will be delayed until this operation is completed.", "SSH KeyGen", "");
+	file_notice("SSH", "{$g['product_label']} has started creating missing SSH keys.  SSH Startup will be delayed.  Please note that reloading the filter rules and changes will be delayed until this operation is completed.", "SSH KeyGen", "");
 	mark_subsystem_dirty('sshdkeys');
 	echo " Generating Keys:\n";
 	foreach ($generate_keys as $key) {
 		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t {$key['type']} -b 4096 -N '' -f {$sshConfigDir}/ssh_host_{$key['suffix']}key");
 	}
 	clear_subsystem_dirty('sshdkeys');
-	file_notice("SSH", "{$g['product_name']} has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");
+	file_notice("SSH", "{$g['product_label']} has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");
 }
 
 /* kill existing sshd process, server only, not the children */

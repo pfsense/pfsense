@@ -689,7 +689,7 @@ if (file_exists('/conf/needs_package_sync') && platform_booting()) {
 	$warning_text = sprintf(gettext(
 	    '%1$s%3$s is booting, then packages will be reinstalled in the ' .
 	    'background.%2$s%1$sDo not make changes in the GUI until this is ' .
-	    'complete.%2$s'), '<p>', '</p>', $g['product_name']);
+	    'complete.%2$s'), '<p>', '</p>', $g['product_label']);
 } elseif (is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	$warning_text = sprintf(gettext('%1$sPackages are currently being ' .

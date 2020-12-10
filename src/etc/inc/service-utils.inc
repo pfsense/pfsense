@@ -46,7 +46,7 @@ function write_rcfile($params) {
 	}
 
 	$towrite = "#!/bin/sh\n";
-	$towrite .= "# This file was automatically generated\n# by the {$g['product_name']} service handler.\n\n";
+	$towrite .= "# This file was automatically generated\n# by the {$g['product_label']} service handler.\n\n";
 
 	/* write our rc functions */
 	$towrite .= "rc_start() {\n";

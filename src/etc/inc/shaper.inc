@@ -5363,7 +5363,7 @@ function build_iface_without_this_queue($iface, $qname) {
 
 }
 
-$default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "<br />";
+$default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_label']) . "<br />";
 $dn_default_shaper_msg = $default_shaper_msg;
 
 $shaper_msg = gettext("The tree on the left navigates through the %s.");

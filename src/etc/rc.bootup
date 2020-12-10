@@ -354,7 +354,7 @@ if ($config['system']['afterbootupshellcmd'] <> "") {
 
 if ($physmem < $g['minimum_ram_warning']) {
 	require_once("/etc/inc/notices.inc");
-	file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
+	file_notice("{$g['product_label']}MemoryRequirements", "{$g['product_label']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
 	set_sysctl(array(
 		"net.inet.tcp.recvspace" => "4096",
 		"net.inet.tcp.sendspace" => "4096"

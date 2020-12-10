@@ -201,7 +201,7 @@ function execCmds() {
 function get_firewall_info() {
 	global $g, $output_path;
 	/* Firewall Platform/Serial */
-	$firewall_info = "Product Name: " . htmlspecialchars($g['product_name']);
+	$firewall_info = "Product Name: " . htmlspecialchars($g['product_label']);
 	$platform = system_identify_specific_platform();
 	if (!empty($platform['descr'])) {
 		$firewall_info .= "<br/>Platform: " . htmlspecialchars($platform['descr']);
@@ -228,7 +228,7 @@ function get_firewall_info() {
 	}
 
 	if (!empty($g['product_version_string'])) {
-		$firewall_info .= "<br/>" . htmlspecialchars($g['product_name']) .
+		$firewall_info .= "<br/>" . htmlspecialchars($g['product_label']) .
 		    " version: " . htmlspecialchars($g['product_version_string']);
 	}
 
@@ -437,7 +437,7 @@ defCmdT("Disk-GEOM Mirror Status", "/sbin/gmirror status");
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
-$pgtitle = array($g['product_name'], "Status");
+$pgtitle = array($g['product_label'], "Status");
 
 if (!$console):
 include("head.inc"); ?>

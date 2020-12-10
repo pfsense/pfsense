@@ -40,7 +40,7 @@ echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
 
 if (strcasecmp(chop(fgets($fp)), "y") == 0) {
 	reset_factory_defaults();
-	echo "\n" . sprintf(gettext("%s is rebooting now."), $g['product_name']) . "\n";
+	echo "\n" . sprintf(gettext("%s is rebooting now."), $g['product_label']) . "\n";
 	system_reboot_sync();
 }
 

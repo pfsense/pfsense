@@ -1072,7 +1072,7 @@ function system_webgui_create_certificate() {
 	$cert_hostname = "{$config['system']['hostname']}-{$cert['refid']}";
 
 	$dn = array(
-		'organizationName' => "{$g['product_name']} webConfigurator Self-Signed Certificate",
+		'organizationName' => "{$g['product_label']} webConfigurator Self-Signed Certificate",
 		'commonName' => $cert_hostname,
 		'subjectAltName' => "DNS:{$cert_hostname}");
 	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
@@ -2625,7 +2625,7 @@ function system_identify_specific_platform() {
 	}
 	unset($dmesg_boot);
 
-	return array('name' => $g['product_name'], 'descr' => $g['product_name']);
+	return array('name' => $g['product_name'], 'descr' => $g['product_label']);
 }
 
 function system_get_dmesg_boot() {

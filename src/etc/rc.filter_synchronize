@@ -88,12 +88,12 @@ function carp_check_version() {
 
 	log_error(sprintf(gettext("XMLRPC versioncheck: ").$resp['config_version'] ." -- ". $config['version']));
 	if (!isset($resp['config_version'])) {
-		update_filter_reload_status("The {$g['product_name']} software configuration version of the other member could not be determined. Skipping synchronization to avoid causing a problem!");
-		log_error("The {$g['product_name']} software configuration version of the other member could not be determined. Skipping synchronization to avoid causing a problem!");
+		update_filter_reload_status("The {$g['product_label']} software configuration version of the other member could not be determined. Skipping synchronization to avoid causing a problem!");
+		log_error("The {$g['product_label']} software configuration version of the other member could not be determined. Skipping synchronization to avoid causing a problem!");
 		return false;
 	} elseif ($resp['config_version'] != $config['version']) {
-		update_filter_reload_status("The other member is on a different configuration version of {$g['product_name']}. Sync will not be done to prevent problems!");
-		log_error("The other member is on a different configuration version of {$g['product_name']}. Sync will not be done to prevent problems!");
+		update_filter_reload_status("The other member is on a different configuration version of {$g['product_label']}. Sync will not be done to prevent problems!");
+		log_error("The other member is on a different configuration version of {$g['product_label']}. Sync will not be done to prevent problems!");
 		return false;
 	} else {
 		return true;

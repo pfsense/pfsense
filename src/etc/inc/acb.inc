@@ -181,7 +181,7 @@ function test_connection($post) {
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($curl_session, CURLOPT_CONNECTTIMEOUT, 55);
 	curl_setopt($curl_session, CURLOPT_TIMEOUT, 30);
-	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
 	curl_setopt_array($curl_session, configure_proxy());
 
@@ -294,7 +294,7 @@ function upload_config($manual = false) {
 			curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, 1);
 			curl_setopt($curl_session, CURLOPT_CONNECTTIMEOUT, 55);
 			curl_setopt($curl_session, CURLOPT_TIMEOUT, 30);
-			curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+			curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
 			// Proxy
 			curl_setopt_array($curl_session, configure_proxy());
 
@@ -313,7 +313,9 @@ function upload_config($manual = false) {
 			}
 
 			if (strpos($data, "500") != false) {
-				$notice_text = gettext("An error occurred while uploading your pfSense configuration to ") . $upload_url . " (" . htmlspecialchars($data) . ")";
+				$notice_text = sprintf(gettext(
+				    "An error occurred while uploading your %s configuration to "), $g['product_label']) .
+				    $upload_url . " (" . htmlspecialchars($data) . ")";
 				log_error($notice_text . " - " . $data);
 				file_notice("AutoConfigBackup", $notice_text);
 				update_filter_reload_status($notice_text);

@@ -24,7 +24,7 @@
 
 require_once("globals.inc");
 if ($argc < 2) {
-	echo "Starting the {$g['product_name']} developer shell";
+	echo "Starting the {$g['product_label']} developer shell";
 }
 require_once("functions.inc");
 if ($argc < 2) {
@@ -131,7 +131,7 @@ $show_help_text = <<<EOF
 	/* to output the dhcp server configuration */
 	print_r(\$config['dhcpd']);
 
-	/* to exit the {$g['product_name']} developer shell */
+	/* to exit the {$g['product_label']} developer shell */
 	exit
 
 	/* to output supported wireless modes for an interface */
@@ -204,7 +204,7 @@ function get_playback_files() {
 }
 
 if ($argc < 2) {
-	echo "Welcome to the {$g['product_name']} developer shell\n";
+	echo "Welcome to the {$g['product_label']} developer shell\n";
 	echo "\nType \"help\" to show common usage scenarios.\n";
 	echo "\nAvailable playback commands:\n     ";
 	$tccommands[] = "playback";
@@ -246,7 +246,7 @@ $tccommands[] = "master";
 $tccommands[] = "RELENG_1_2";
 
 while ($shell_active == true) {
-	$command = readline("{$g['product_name']} shell: ");
+	$command = readline("{$g['product_label']} shell: ");
 	readline_add_history($command);
 	$command_split = explode(" ", $command);
 	$first_command = $command_split[0];

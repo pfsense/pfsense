@@ -535,7 +535,7 @@ $group->add(new Form_MultiCheckbox(
 
 $group->setHelp('Syslog sends UDP datagrams to port 514 on the specified remote '.
 	'syslog server, unless another port is specified. Be sure to set syslogd on '.
-	'the remote server to accept syslog messages from pfSense.');
+	'the remote server to accept syslog messages from %s.', $g['product_label']);
 
 $section->add($group);
 

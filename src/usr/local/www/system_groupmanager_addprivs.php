@@ -267,7 +267,7 @@ events.push(function() {
 				continue;
 			}
 
-			$desc = preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']);
+			$desc = preg_replace("/pfSense/i", $g['product_label'], $pdata['descr']);
 			if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
 				$desc .= ' ' . gettext('(This privilege effectively gives administrator-level access to users in the group)');
 			}

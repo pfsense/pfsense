@@ -701,8 +701,8 @@ if (!$g['enableserial_force'] && !$g['primaryconsole_force']) {
 			'video' => gettext('VGA Console'),
 		)
 	))->setHelp('Select the preferred console if multiple consoles are present. '.
-		'The preferred console will show pfSense boot script output. All consoles '.
-		'display OS boot messages, console messages, and the console menu.');
+		'The preferred console will show %1$s boot script output. All consoles '.
+		'display OS boot messages, console messages, and the console menu.', $g['product_label']);
 }
 
 $form->add($section);

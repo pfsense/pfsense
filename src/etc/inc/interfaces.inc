@@ -3538,7 +3538,7 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 
 	$fd_set = fopen("{$g['tmp_path']}/{$if}_setup.sh", "w");
 	fwrite($fd_set, "#!/bin/sh\n");
-	fwrite($fd_set, "# {$g['product_name']} wireless configuration script.\n\n");
+	fwrite($fd_set, "# {$g['product_label']} wireless configuration script.\n\n");
 
 	$wlan_setup_log = fopen("{$g['tmp_path']}/{$if}_setup.log", "w");
 

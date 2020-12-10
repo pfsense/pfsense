@@ -116,7 +116,7 @@ if ($_POST && !$input_errors) {
 		eval($pkg['step'][$stepid]['stepsubmitphpaction']);
 	}
 	if (!$input_errors) {
-		write_config(gettext("Configuration changed via the pfSense wizard subsystem."));
+		write_config(gettext("Configuration changed via the wizard subsystem."));
 	}
 
 	$stepid++;

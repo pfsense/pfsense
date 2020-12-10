@@ -25,11 +25,11 @@ if ! /usr/bin/lockf -s -t 30 /tmp/config.lock /usr/bin/true; then
 	exit -1
 fi
 
-# Read product_name from $g, defaults to pfSense
-product=$(/usr/local/sbin/read_global_var product_name pfSense)
+# Read product_label from $g, defaults to pfSense
+product_label=$(/usr/local/sbin/read_global_var product_label pfSense)
 
 echo
-echo "${product} is now shutting down ..."
+echo "${product_label} is now shutting down ..."
 echo
 
 stty status '^T'

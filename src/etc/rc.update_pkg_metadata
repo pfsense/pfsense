@@ -24,17 +24,17 @@ else
 fi
 
 # Read product_name from $g, defaults to pfSense
-product=$(/usr/local/sbin/read_global_var product_name pfSense)
+product_name=$(/usr/local/sbin/read_global_var product_name pfSense)
 
-tmp_version=$(mktemp -q /tmp/${product}_version.XXXXXXXX) \
+tmp_version=$(mktemp -q /tmp/${product_name}_version.XXXXXXXX) \
 	|| exit 1
 
 ( \
 	sleep $sleep_time \
 	&& /usr/local/bin/php -r 'require_once("pkg-utils.inc");update_repos();' \
-	&& /usr/local/sbin/${product}-upgrade -uf \
+	&& /usr/local/sbin/${product_name}-upgrade -uf \
 	&& ( \
-		/usr/local/sbin/${product}-upgrade -Uc > ${tmp_version}.tmp \
+		/usr/local/sbin/${product_name}-upgrade -Uc > ${tmp_version}.tmp \
 		; rc=$? \
 		; tail -n 1 ${tmp_version}.tmp > $tmp_version \
 		; rm -f ${tmp_version}.tmp \
@@ -42,8 +42,8 @@ tmp_version=$(mktemp -q /tmp/${product}_version.XXXXXXXX) \
 		; test $rc -eq 2 && return 0 || return $rc \
 	) \
 	&& ( \
-		mv $tmp_version /var/run/${product}_version \
-		&& mv ${tmp_version}.rc /var/run/${product}_version.rc \
+		mv $tmp_version /var/run/${product_name}_version \
+		&& mv ${tmp_version}.rc /var/run/${product_name}_version.rc \
 	) || rm -f $tmp_version ${tmp_version}.rc
 ) >/dev/null 2>&1 &
 

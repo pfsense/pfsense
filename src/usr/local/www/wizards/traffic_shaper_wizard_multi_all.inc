@@ -1763,7 +1763,7 @@ function apply_all_chosen_items() {
 			}
 		}
 	}
-	write_config(gettext("Shaper configuration saved via pfSense traffic shaper wizard."));
+	write_config(gettext("Shaper configuration saved via traffic shaper wizard."));
 }
 
 function wizard_get_bandwidthtype_scale($type = "b") {

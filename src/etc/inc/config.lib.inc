@@ -222,8 +222,8 @@ function restore_backup($file) {
 		//pfSense_fsync("/cf/conf/config.xml");
 		//pfSense_fsync($g['conf_path']);
 		disable_security_checks();
-		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file));
-		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file), "pfSenseConfigurator", "");
+		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_label'], $file));
+		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_label'], $file), "pfSenseConfigurator", "");
 	}
 }
 
@@ -337,7 +337,7 @@ function parse_config_bootup() {
 				restore_backup("/cf/conf/backup/{$last_backup}");
 			}
 			if (!file_exists("{$g['conf_path']}/config.xml")) {
-				echo sprintf(gettext("XML configuration file not found.  %s cannot continue booting."), $g['product_name']) . "\n";
+				echo sprintf(gettext("XML configuration file not found.  %s cannot continue booting."), $g['product_label']) . "\n";
 				unlock($lockkey);
 				die(gettext("Could not find a usable configuration file or it's backup! Exiting...."));
 			} else {
@@ -372,9 +372,9 @@ function parse_config_bootup() {
 
 *******************************************************************************
 * WARNING!                                                                    *
-* The current configuration has been created with a newer version of {$g['product_name']}  *
+* The current configuration has been created with a newer version of {$g['product_label']}  *
 * than this one! This can lead to serious misbehavior and even security       *
-* holes! You are urged to either upgrade to a newer version of {$g['product_name']} or     *
+* holes! You are urged to either upgrade to a newer version of {$g['product_label']} or     *
 * revert to the default configuration immediately!                            *
 *******************************************************************************
 

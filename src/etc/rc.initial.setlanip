@@ -295,7 +295,7 @@ function console_configure_ip_address($version) {
 			if ($is_ipaddr && $intip != '') {
 				if ($intbits_ok == false) {
 					echo "\n" . sprintf(gettext("Subnet masks are entered as bit counts (as in CIDR notation) in %s."),
-							$g['product_name']) . "\n";
+							$g['product_label']) . "\n";
 					if ($version === 6) {
 						echo "e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00 = 120\n";
 						echo "     ffff:ffff:ffff:ffff:ffff:ffff:ffff:0    = 112\n";

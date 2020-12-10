@@ -2578,7 +2578,7 @@ trap := "{$config['snmpd']['trapstring']}"
 EOD;
 		}
 
-		$sysDescr = "{$g['product_name']} {$config['system']['hostname']}.{$config['system']['domain']}" .
+		$sysDescr = "{$g['product_label']} {$config['system']['hostname']}.{$config['system']['domain']}" .
 			" {$g['product_version_string']} " . php_uname("s") .
 			" " . php_uname("r") . " " . php_uname("m");
 

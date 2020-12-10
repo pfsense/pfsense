@@ -29,7 +29,6 @@ require_once("gwlb.inc");
 require_once("interfaces.inc");
 
 $hostname = $config['system']['hostname'];
-$product = $g['product_name'];
 $machine = trim(`uname -m`);
 
 $platform = system_identify_specific_platform();
@@ -42,7 +41,7 @@ if (!empty($serial)) {
 }
 printf("%s: %s\n\n", gettext("Netgate Device ID"), system_get_uniqueid());
 
-print "*** Welcome to {$product} {$g['product_version_string']} ({$machine}) on {$hostname} ***\n";
+print "*** Welcome to {$g['product_label']} {$g['product_version_string']} ({$machine}) on {$hostname} ***\n";
 
 $iflist = get_configured_interface_with_descr(true);
 foreach ($iflist as $ifname => $friendly) {

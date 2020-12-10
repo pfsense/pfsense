@@ -60,7 +60,7 @@ if (isset($_REQUEST['closenotice'])) {
 }
 
 if (($g['disablecrashreporter'] != true) && (system_has_crash_data() || system_has_php_errors())) {
-	$savemsg = sprintf(gettext("%s has detected a crash report or programming bug."), $g['product_name']) . " ";
+	$savemsg = sprintf(gettext("%s has detected a crash report or programming bug."), $g['product_label']) . " ";
 	if (isAllowedPage("/crash_reporter.php")) {
 		$savemsg .= sprintf(gettext('Click %1$shere%2$s for more information.'), '<a href="crash_reporter.php">', '</a>');
 	} else {
@@ -192,7 +192,7 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 <html lang="en">
 	<head>
 		<link rel="stylesheet" href="/css/pfSense.css" />
-		<title><?=$g['product_name']?>.home.arpa - <?=$g['product_name']?> first time setup</title>
+		<title><?=$g['product_label']?>.home.arpa - <?=$g['product_label']?> first time setup</title>
 		<meta http-equiv="refresh" content="1;url=wizard.php?xml=setup_wizard.xml" />
 	</head>
 	<body id="loading-wizard" class="no-menu">
@@ -200,10 +200,10 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 			<div class="container">
 				<div class="col-sm-offset-3 col-sm-6 col-xs-12">
 					<font color="white">
-					<p><h3><?=sprintf(gettext("Welcome to %s!") . "\n", $g['product_name'])?></h3></p>
+					<p><h3><?=sprintf(gettext("Welcome to %s!") . "\n", $g['product_label'])?></h3></p>
 					<p><?=gettext("One moment while the initial setup wizard starts.")?></p>
 					<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
-					<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_name'])?></p>
+					<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_label'])?></p>
 					</font>
 				</div>
 			</div>

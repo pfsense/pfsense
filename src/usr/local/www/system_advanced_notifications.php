@@ -255,7 +255,7 @@ if ($_POST) {
 		if (file_exists("/var/db/notices_lastmsg.txt")) {
 			unlink("/var/db/notices_lastmsg.txt");
 		}
-		$test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_name']), true);
+		$test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_label']), true);
 		if (empty($test_result)) {
 			$test_result = gettext("SMTP testing e-mail successfully sent");
 			$test_class = 'success';
@@ -265,7 +265,7 @@ if ($_POST) {
 	}
 	if ($testtelegram) {
 		// Send test message via telegram
-		$test_result = notify_via_telegram(sprintf(gettext("This is a Telegram test message from %s. It is safe to ignore this message."), $g['product_name']), true);
+		$test_result = notify_via_telegram(sprintf(gettext("This is a Telegram test message from %s. It is safe to ignore this message."), $g['product_label']), true);
 		if (empty($test_result)) {
 			$test_result = gettext("Telegram testing message successfully sent");
 			$test_class = 'success';
@@ -275,7 +275,7 @@ if ($_POST) {
 	}
 	if ($testpushover) {
 		// Send test message via pushover
-		$test_result = notify_via_pushover(sprintf(gettext("This is a Pushover test message from %s. It is safe to ignore this message."), $g['product_name']), true);
+		$test_result = notify_via_pushover(sprintf(gettext("This is a Pushover test message from %s. It is safe to ignore this message."), $g['product_label']), true);
 		if (empty($test_result)) {
 			$test_result = gettext("Pushover testing message successfully sent");
 			$test_class = 'success';

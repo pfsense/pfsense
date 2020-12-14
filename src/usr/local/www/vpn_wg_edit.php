@@ -401,10 +401,9 @@ events.push(function() {
 			$('<input>').attr({type: 'hidden',name: 'persistentkeepalive' + idx, value: $(this).find('td').eq(5).text()}).appendTo(form);
 			$('<input>').attr({type: 'hidden',name: 'allowedips' + idx, value: $(this).find('td').eq(6).text()}).appendTo(form);
 			$('<input>').attr({type: 'hidden',name: 'presharedkey' + idx, value: $(this).find('td').eq(7).text()}).appendTo(form);
-
-			$('<input>').attr({type: 'hidden',name: 'save',value: 'save'}).appendTo(form);
 		});
 
+		$('<input>').attr({type: 'hidden',name: 'save',value: 'save'}).appendTo(form);
 		$(form).submit();
 	});
 

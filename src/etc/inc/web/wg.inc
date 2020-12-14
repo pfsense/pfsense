@@ -94,10 +94,12 @@ function wg_validate_post($pconfig) {
 	}
 
 	// Now the peers
-	$idx = 0;
-	foreach ($pconfig['peers']['peer'] as $peer) {
-		$input_errors =  array_merge($input_errors, wg_validate_peer($idx, $peer));
-		$idx++;
+	if (isset($pconfig['peers']['peer'])) {
+		$idx = 0;
+		foreach ($pconfig['peers']['peer'] as $peer) {
+			$input_errors =  array_merge($input_errors, wg_validate_peer($idx, $peer));
+			$idx++;
+		}
 	}
 
 	return $input_errors;
@@ -296,28 +298,32 @@ function wg_do_post($post, $json = false) {
 	$pconfig['interface']['privatekey'] = $post['privatekey'];
 	$pconfig['interface']['publickey'] = $post['publickey'];
 
-	// Peers section
-	$pconfig['peers'] = array();
-	$pconfig['peers']['peer'] = array();
+	if (isset($post['endpoint0'])) {
+		// Peers section
+		$pconfig['peers'] = array();
+		$pconfig['peers']['peer'] = array();
 
-	$idx = 0;
+		$idx = 0;
 
-	for (;;) {
-		if (!$post['publickeyp' . $idx] && !$post['endpoint' . $idx] && !$post['allowedips' . $idx] && !$post['descr' . $idx] && !$post['persistentkeepalive' . $idx]) {
-			break;
+		for (;;) {
+			if (!$post['publickeyp' . $idx] && !$post['endpoint' . $idx] && !$post['allowedips' . $idx] && !$post['descr' . $idx] && !$post['persistentkeepalive' . $idx]) {
+				break;
+			}
+
+			$peer = array();
+			$peer['publickey'] =  $post['publickeyp' . $idx];
+			$peer['endpoint'] =  $post['endpoint' . $idx];
+			$peer['allowedips'] =  $post['allowedips' . $idx];
+			$peer['descr'] =  $post['descp' . $idx];
+			$peer['persistentkeepalive'] =  $post['persistentkeepalive' . $idx];
+			$peer['presharedkey'] =  $post['presharedkey' . $idx];
+			$peer['port'] =  $post['port' . $idx];
+
+			$pconfig['peers']['peer'][] = $peer;
+			$idx++;
 		}
-
-		$peer = array();
-		$peer['publickey'] =  $post['publickeyp' . $idx];
-		$peer['endpoint'] =  $post['endpoint' . $idx];
-		$peer['allowedips'] =  $post['allowedips' . $idx];
-		$peer['descr'] =  $post['descp' . $idx];
-		$peer['persistentkeepalive'] =  $post['persistentkeepalive' . $idx];
-		$peer['presharedkey'] =  $post['presharedkey' . $idx];
-		$peer['port'] =  $post['port' . $idx];
-
-		$pconfig['peers']['peer'][] = $peer;
-		$idx++;
+	} else {
+		unset($pconfig['peers']);
 	}
 
 	$input_errors = wg_validate_post($pconfig);

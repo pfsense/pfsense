@@ -704,7 +704,10 @@
 		</field>
 		<field>
 			<name>interface</name>
-			<type>interfaces_selection</type>
+			<type>select_source</type>
+			<source><![CDATA[openvpn_wizard_build_if_list()]]></source>
+			<source_name>name</source_name>
+			<source_value>value</source_value>
 			<description>The interface where OpenVPN will listen for incoming connections (typically WAN.)</description>
 			<displayname>Interface</displayname>
 			<bindstofield>ovpnserver->step10->interface</bindstofield>

@@ -733,4 +733,13 @@ function step12_submitphpaction() {
 	exit;
 }
 
+function openvpn_wizard_build_if_list() {
+	$list = array();
+
+	foreach (openvpn_build_if_list() as $iface => $ifacename) {
+	   $list[] = array("name" => $ifacename, "value" => $iface);
+	}
+
+	return($list);
+}
 ?>

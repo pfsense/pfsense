@@ -138,11 +138,10 @@ if (isset($_POST['del_x']) && have_natpfruleint_access($natent['interface'])) {
 
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
+		$first_idx = 0;		
 		$num_deleted = 0;
 
 		foreach ($_POST['rule'] as $rulei) {
-			$target = $rule['target'];
-
 			// Check for filter rule associations
 			if (isset($a_nat[$rulei]['associated-rule-id'])) {
 				delete_id($a_nat[$rulei]['associated-rule-id'], $config['filter']['rule']);
@@ -151,16 +150,16 @@ if (isset($_POST['del_x']) && have_natpfruleint_access($natent['interface'])) {
 
 			unset($a_nat[$rulei]);
 
-			// Update the separators
-			// As rules are deleted, $ridx has to be decremented or separator position will break
-			$ridx = $rulei - $num_deleted;
-			$mvnrows = -1;
-			move_separators($a_separators, $ridx, $mvnrows);
+			// Capture first changed filter index for later separator shifting
+			if (!$first_idx) $first_idx = $rulei;
 			$num_deleted++;
 		}
 
-		if (write_config("NAT: Rule deleted")) {
-			mark_subsystem_dirty('natconf');
+		if ($num_deleted) {
+			move_separators($a_separators, $first_idx, -$num_deleted);
+			if (write_config("NAT: Rule deleted")) {
+				mark_subsystem_dirty('natconf');
+			}
 		}
 
 		header("Location: firewall_nat.php");

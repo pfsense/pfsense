@@ -197,9 +197,8 @@ if (isset($_POST['del_x'])) {
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
 			unset($a_filter[$rulei]);
 
-			// Update the separators
-			$ridx = ifridx($if, $rulei);	      // get rule index within interface
-			if (!$first_idx) $first_idx = $ridx;  // capture first changed filter index
+			// Capture first changed filter index for later separator shifting
+			if (!$first_idx) $first_idx = ifridx($if, $rulei);
 			$num_deleted++;
 		}
 

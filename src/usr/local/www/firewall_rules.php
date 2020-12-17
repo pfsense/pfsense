@@ -196,7 +196,6 @@ if (isset($_POST['del_x'])) {
 		foreach ($_POST['rule'] as $rulei) {
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
 			unset($a_filter[$rulei]);
-			$deleted = true;
 
 			// Update the separators
 			$ridx = ifridx($if, $rulei);	      // get rule index within interface

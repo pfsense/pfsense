@@ -997,7 +997,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 			$group->add(new Form_Select(
 				'keylen',
 				null,
-				$pconfig['keylen'],
+				$pconfig['keylen'] ? $pconfig['keylen'] : '2048',
 				array_combine($cert_keylens, $cert_keylens)
 			))->setHelp('The length to use when generating a new RSA key, in bits. %1$s' .
 				'The Key Length should not be lower than 2048 or some platforms ' .
@@ -1009,7 +1009,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 			$group->add(new Form_Select(
 				'ecname',
 				null,
-				$pconfig['ecname'],
+				$pconfig['ecname'] ? $pconfig['ecname'] : 'prime256v1',
 				$openssl_ecnames
 			))->setHelp('Curves may not be compatible with all uses. Known compatible curve uses are denoted in brackets.');
 			$section->add($group);
@@ -1017,7 +1017,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 			$section->addInput(new Form_Select(
 				'csrsign_digest_alg',
 				'*Digest Algorithm',
-				$pconfig['csrsign_digest_alg'],
+				$pconfig['csrsign_digest_alg'] ? $pconfig['csrsign_digest_alg'] : 'sha256',
 				array_combine($openssl_digest_algs, $openssl_digest_algs)
 			))->setHelp('The digest method used when the certificate is signed. %1$s' .
 				'The best practice is to use an algorithm stronger than SHA1. '.

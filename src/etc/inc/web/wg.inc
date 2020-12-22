@@ -465,13 +465,7 @@ function make_wg_conf($tunnel) {
 function delete_wg_configs() {
 	global $g;
 
-	// get all config file names
-	$files = glob($g["wg_conf_path"] . "/*.conf");
-	foreach($files as $file) {
-		if(is_file($file)) {
-			unlink($file);
-		}
-	}
+	unlink_if_exists($g["wg_conf_path"] . "/*.conf");
 }
 
 /*

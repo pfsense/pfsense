@@ -53,9 +53,9 @@ if (array_key_exists('delidx', $_POST)) {
 
 <form name="mainform" method="post">
 <?php
-	if (count($tunnels) == 0) {
+	if (count($tunnels) == 0):
 		print_info_box(gettext('No Wireguard tunnels have benn configured. Click the "Add tunnel" button below to create one.'), 'warning', false);
-	} else {
+	else:
 ?>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Wireguard Tunnels')?></h2></div>
@@ -75,15 +75,15 @@ if (array_key_exists('delidx', $_POST)) {
 				<tbody>
 <?php
 
-	$i = 0;
-	foreach ($tunnels as $tunnel):
-		$entryStatus = ($tunnel['enabled'] == 'yes') ? 'enabled':'disabled';
-		if (!$tunnel['peers'] || !is_array($tunnel['peers'])) {
-			$tunnel['peers'] = array();
-		}
-		if (!$tunnel['peers']['peer'] || !is_array($tunnel['peers']['peer'])) {
-			$tunnel['peers']['peer'] = array();
-		}
+		$i = 0;
+		foreach ($tunnels as $tunnel):
+			$entryStatus = ($tunnel['enabled'] == 'yes') ? 'enabled':'disabled';
+			if (!$tunnel['peers'] || !is_array($tunnel['peers'])) {
+				$tunnel['peers'] = array();
+			}
+			if (!$tunnel['peers']['peer'] || !is_array($tunnel['peers']['peer'])) {
+				$tunnel['peers']['peer'] = array();
+			}
 ?>
 					<tr id="fr<?=$i?>" id="frd<?=$i?>" class="<?= $entryStatus ?>">
 						<td class="peer-entries"><?=gettext('Interface')?></td>
@@ -102,7 +102,8 @@ if (array_key_exists('delidx', $_POST)) {
 					<tr class="peer-entries" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 						<td>Peers</td>
 <?php
-		if (count($tunnel['peers']['peer']) > 0) { ?>
+			if (count($tunnel['peers']['peer']) > 0):
+?>
 						<td colspan="6">
 							<table class="table table-hover" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 								<thead>
@@ -115,25 +116,30 @@ if (array_key_exists('delidx', $_POST)) {
 								</thead>
 								<tbody>
 
-<?php			foreach ($tunnel['peers']['peer'] as $peer) { ?>
+<?php
+				foreach ($tunnel['peers']['peer'] as $peer):
+?>
 									<tr>
 										<td><?=$peer['descr']?></td>
 										<td><?=$peer['endpoint']?>:<?=$peer['port']?></td>
 										<td><?=$peer['allowedips']?></td>
 										<td><?=$peer['publickey']?></td>
 									</tr>
-<?php			} ?>
+<?php
+				endforeach;
+?>
 								</tbody>
 							</table>
 						</td>
-<?php		} else {
-			print('<td colspan="6">' . gettext("No peers have been configured") . '</td>');
-		}
+<?php
+			else:
+				print('<td colspan="6">' . gettext("No peers have been configured") . '</td>');
+			endif;
 ?>
 					</tr>
 <?php
-		$i++;
-	endforeach;	 // $tunnelsa
+			$i++;
+		endforeach;	 // $tunnelsa
 ?>
 				</tbody>
 			</table>
@@ -142,27 +148,26 @@ if (array_key_exists('delidx', $_POST)) {
 
 
 <?php
-	$section = new Form_Section('Firewall keys');
-	$section->addClass('fwkeys');
+		$section = new Form_Section('Firewall keys');
+		$section->addClass('fwkeys');
 
-	$section->addInput(new Form_Input(
-		'pubkey',
-		'Public key',
-		'',
-		''
-	))->setReadonly();
+		$section->addInput(new Form_Input(
+			'pubkey',
+			'Public key',
+			'',
+			''
+		))->setReadonly();
 
-	$section->addInput(new Form_Input(
-		'privkey',
-		'Private key',
-		'',
-		''
-	))->setReadonly();
+		$section->addInput(new Form_Input(
+			'privkey',
+			'Private key',
+			'',
+			''
+		))->setReadonly();
 
-	print($section);
+		print($section);
+	endif;
 ?>
-
-<?php } // e-o- else (no tunnels) ?>
 
 	<nav class="action-buttons">
 		<a href="#" class="btn btn-info btn-sm" id="showpeers">

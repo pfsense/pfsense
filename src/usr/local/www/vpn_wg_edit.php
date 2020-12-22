@@ -350,7 +350,7 @@ events.push(function() {
 			var errstr = "";
 
 			for(var i=0; i<errmsg.length; i++) {
-				errstr += (errmsg[i] +  "\n");
+				errstr += (errmsg[i] + "\n");
 			}
 
 			alert(errstr);
@@ -364,14 +364,14 @@ events.push(function() {
 				peernum = 0;
 				$('#peer_num').val(0);
 
-				$('#peertable tbody').append('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a>  <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
+				$('#peertable tbody').append('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a> <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
 				} else {
 					var lastrow = $('#peertable tr:last td:nth-child(1)').text()
 
 					$('#peer_num').val(++lastrow)
 					peernum = lastrow
 
-					$('#peertable tr:last').after('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a>  <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
+					$('#peertable tr:last').after('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a> <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
 				}
 
 			attachhandlers()
@@ -422,7 +422,7 @@ events.push(function() {
 
 		// Edit peer - Copy a row from the table to the edit form
 		$('[id^=editpeer_]').click(function () {
-			var peernum =  this.id.slice('editpeer_'.length);
+			var peernum = this.id.slice('editpeer_'.length);
 
 			$('#peer_num').val(peernum);
 

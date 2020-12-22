@@ -85,7 +85,7 @@ if (array_key_exists('delidx', $_POST)) {
 			$tunnel['peers']['peer'] = array();
 		}
 ?>
-					<tr id="fr<?=$i?>" id="frd<?=$i?>"  class="<?= $entryStatus ?>">
+					<tr id="fr<?=$i?>" id="frd<?=$i?>" class="<?= $entryStatus ?>">
 						<td class="peer-entries"><?=gettext('Interface')?></td>
 						<td><?=$tunnel['name']?></td>
 						<td><?=$tunnel['descr']?></td>
@@ -99,7 +99,7 @@ if (array_key_exists('delidx', $_POST)) {
 						</td>
 					</tr>
 
-					<tr  class="peer-entries" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
+					<tr class="peer-entries" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 						<td>Peers</td>
 <?php
 		if (count($tunnel['peers']['peer']) > 0) { ?>

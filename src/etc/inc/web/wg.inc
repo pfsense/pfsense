@@ -104,7 +104,7 @@ function wg_validate_post($pconfig) {
 	if (isset($pconfig['peers']['peer'])) {
 		$idx = 0;
 		foreach ($pconfig['peers']['peer'] as $peer) {
-			$input_errors =  array_merge($input_errors,
+			$input_errors = array_merge($input_errors,
 			    wg_validate_peer($idx, $peer));
 			$idx++;
 		}
@@ -122,7 +122,7 @@ function wg_validate_peer($idx, $peer) {
 	if (empty($rport)) {
 		$input_errors[] = sprintf(gettext(
 		    'Peer %1$s: An endpoint port must be specified'), $idx);
-	} else  if ($rport > 65535 || $rport < 512 ) {
+	} elseif ($rport > 65535 || $rport < 512 ) {
 		$input_errors[] = sprintf(gettext(
 		    'Peer %1$s: Invalid remote port. (%2$s)'), $idx, $rport);
 	}
@@ -342,14 +342,14 @@ function wg_do_post($post, $json = false) {
 			}
 
 			$peer = array();
-			$peer['publickey'] =  $post['publickeyp' . $idx];
-			$peer['endpoint'] =  $post['endpoint' . $idx];
-			$peer['allowedips'] =  $post['allowedips' . $idx];
-			$peer['descr'] =  $post['descp' . $idx];
+			$peer['publickey'] = $post['publickeyp' . $idx];
+			$peer['endpoint'] = $post['endpoint' . $idx];
+			$peer['allowedips'] = $post['allowedips' . $idx];
+			$peer['descr'] = $post['descp' . $idx];
 			$peer['persistentkeepalive'] =
 			    $post['persistentkeepalive' . $idx];
-			$peer['presharedkey'] =  $post['presharedkey' . $idx];
-			$peer['port'] =  $post['port' . $idx];
+			$peer['presharedkey'] = $post['presharedkey' . $idx];
+			$peer['port'] = $post['port' . $idx];
 
 			$pconfig['peers']['peer'][] = $peer;
 			$idx++;

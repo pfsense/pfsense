@@ -163,7 +163,7 @@ function wg_validate_peer($idx, $peer) {
 function wg_configure() {
 	global $config;
 
-	if (!isset($config["wireguard"]["tunnel"]) || !is_array($config["wireguard"]["tunnel"])) {
+	if (!is_array($config["wireguard"]["tunnel"])) {
 		return;
 	}
 
@@ -186,7 +186,7 @@ function wg_configure() {
 function wg_configure_if($wg_ifname) {
 	global $config, $g;
 
-	if (!isset($config["wireguard"]["tunnel"]) || !is_array($config["wireguard"]["tunnel"])) {
+	if (!is_array($config["wireguard"]["tunnel"])) {
 		return;
 	}
 
@@ -199,7 +199,7 @@ function wg_configure_if($wg_ifname) {
 		}
 	}
 
-	if (!isset($tunnel) || !is_array($tunnel)) {
+	if (!is_array($tunnel)) {
 		return;
 	}
 
@@ -421,8 +421,7 @@ function make_wg_conf($tunnel) {
 	$txt .= "\n";
 
 	// Process peers section
-	if (isset($tunnel['peers']) && is_array($tunnel['peers']) &&
-	    isset($tunnel['peers']['peer']) && is_array($tunnel['peers']['peer']) &&
+	if (is_array($tunnel['peers']) && is_array($tunnel['peers']['peer']) &&
 	    count($tunnel['peers']['peer']) > 0) {
 		foreach ($tunnel['peers']['peer'] as $peer) {
 			$txt .= "# Peer: {$peer['descr']}\n";

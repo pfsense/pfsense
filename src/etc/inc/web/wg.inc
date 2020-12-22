@@ -68,7 +68,7 @@ function wg_validate_post($pconfig) {
 		$addr = trim($addr);
 
 		if (!is_subnet($addr)) {
-			$input_errors[] = $addr . gettext(" is not a valid CIDR address");
+			$input_errors[] = sprintf(gettext('%1$s is not a valid CIDR address'), $addr);
 		}
 
 		$a = explode("/", $addr);
@@ -76,7 +76,7 @@ function wg_validate_post($pconfig) {
 
 		if (!empty($conflicts)) {
 			foreach ($conflicts as $conflict) {
-				$input_errors[] = $addr . gettext(" is already configured on this firewall:  ") . strtoupper($conflict['if']) . " (" . $conflict['ip_or_subnet'] . ")";
+				$input_errors[] = sprintf(gettext('%1$s is already configured on this firewall: %2$s (%3$s)'), $addr, strtoupper($conflict['if']), $conflict['ip_or_subnet']);
 			}
 		}
 	}
@@ -111,29 +111,29 @@ function wg_validate_peer($idx, $peer) {
 	// Check remote port
 	$rport = $peer['port'];
 	if (empty($rport)) {
-		$input_errors[] = "Peer " . $idx . gettext(": An endpoint port must be specified");
+		$input_errors[] = sprintf(gettext('Peer %1$s: An endpoint port must be specified'), $idx);
 	} else  if ($rport > 65535 || $rport < 512 ) {
-		$input_errors[] = "Peer " . $idx . gettext(": Invalid remote port. (") . $rport . ")";
+		$input_errors[] = sprintf(gettext('Peer %1$s: Invalid remote port. (%2$s)'), $idx, $rport);
 	}
 
 	// Check key
 	if (empty($peer['publickey'])) {
-		$input_errors[] = "Peer " . $idx . gettext(": A public key must be specified");
+		$input_errors[] = sprintf(gettext('Peer %1$s: A public key must be specified'), $idx);
 	}
 
 	// Endpoint
 	$ep = trim($peer['endpoint']);
 	if (empty($ep)) {
-		$input_errors[] = "Peer " . $idx . gettext(": An endpoint must be specified");
+		$input_errors[] = sprintf(gettext('Peer %1$s: An endpoint must be specified'), $idx);
 	} else if (!is_hostname($ep) && !is_ipaddrv4($ep) && !is_ipaddrv6($ep)) {
-		$input_errors[] = "Peer " . $idx . gettext(": Endpoint must be a valid IPv4 or IPv6 aadress or hostname.");
+		$input_errors[] = sprintf(gettext('Peer %1$s: Endpoint must be a valid IPv4 or IPv6 aadress or hostname.'), $idx);
 	}
 
 	// Allowed IPs
 	if (!empty($peer['allowedips'])) {
 		foreach (explode(",", $peer['allowedips']) as $ip) {
 			if (!is_subnet(trim($ip))) {
-				$input_errors[] = "Peer " . $idx . gettext(": Address {$ip} is not a valid IPv4 or IPv6 CIDR subnet aadress.");
+				$input_errors[] = sprintf(gettext('Peer %1$s: Address %2$s is not a valid IPv4 or IPv6 CIDR subnet aadress.'), $idx, $ip);
 			}
 		}
 	}

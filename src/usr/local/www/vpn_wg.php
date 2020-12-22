@@ -28,7 +28,7 @@
 ##|*IDENT=page-vpn-wg
 ##|*NAME=VPN: Wireguard
 ##|*DESCR=Allow access to the 'VPN: Wireguard' page.
-##|*MATCH=vpn_ipsec.php*
+##|*MATCH=vpn_wg.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");

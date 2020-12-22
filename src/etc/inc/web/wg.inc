@@ -72,8 +72,15 @@ function wg_validate_post($pconfig) {
 			    '%1$s is not a valid CIDR address'), $addr);
 		}
 
+		$iflist = get_configured_interface_list_by_realif();
+
+		$skip = '';
+		if (!empty($iflist[$pconfig['name']])) {
+			$skip = $iflist[$pconfig['name']];
+		}
+
 		$a = explode("/", $addr);
-		$conflicts = where_is_ipaddr_configured($a[0], false, true,
+		$conflicts = where_is_ipaddr_configured($a[0], $skip, true,
 		    true, $a[1]);
 
 		if (!empty($conflicts)) {

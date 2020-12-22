@@ -68,15 +68,21 @@ function wg_validate_post($pconfig) {
 		$addr = trim($addr);
 
 		if (!is_subnet($addr)) {
-			$input_errors[] = sprintf(gettext('%1$s is not a valid CIDR address'), $addr);
+			$input_errors[] = sprintf(gettext(
+			    '%1$s is not a valid CIDR address'), $addr);
 		}
 
 		$a = explode("/", $addr);
-		$conflicts = where_is_ipaddr_configured($a[0], false, true, true, $a[1]);
+		$conflicts = where_is_ipaddr_configured($a[0], false, true,
+		    true, $a[1]);
 
 		if (!empty($conflicts)) {
 			foreach ($conflicts as $conflict) {
-				$input_errors[] = sprintf(gettext('%1$s is already configured on this firewall: %2$s (%3$s)'), $addr, strtoupper($conflict['if']), $conflict['ip_or_subnet']);
+				$input_errors[] = sprintf(gettext(
+				    '%1$s is already configured on this ' .
+				    'firewall: %2$s (%3$s)'), $addr,
+					strtoupper($conflict['if']),
+					$conflict['ip_or_subnet']);
 			}
 		}
 	}
@@ -88,15 +94,18 @@ function wg_validate_post($pconfig) {
 	}
 
 	// Check keys
-	if (empty($pconfig['interface']['privatekey']) || empty($pconfig['interface']['publickey'])) {
-		$input_errors[] = gettext("Both a public and private key must be specified");
+	if (empty($pconfig['interface']['privatekey']) ||
+	    empty($pconfig['interface']['publickey'])) {
+		$input_errors[] = gettext("Both a public and private key " .
+		    "must be specified");
 	}
 
 	// Now the peers
 	if (isset($pconfig['peers']['peer'])) {
 		$idx = 0;
 		foreach ($pconfig['peers']['peer'] as $peer) {
-			$input_errors =  array_merge($input_errors, wg_validate_peer($idx, $peer));
+			$input_errors =  array_merge($input_errors,
+			    wg_validate_peer($idx, $peer));
 			$idx++;
 		}
 	}
@@ -111,29 +120,38 @@ function wg_validate_peer($idx, $peer) {
 	// Check remote port
 	$rport = $peer['port'];
 	if (empty($rport)) {
-		$input_errors[] = sprintf(gettext('Peer %1$s: An endpoint port must be specified'), $idx);
+		$input_errors[] = sprintf(gettext(
+		    'Peer %1$s: An endpoint port must be specified'), $idx);
 	} else  if ($rport > 65535 || $rport < 512 ) {
-		$input_errors[] = sprintf(gettext('Peer %1$s: Invalid remote port. (%2$s)'), $idx, $rport);
+		$input_errors[] = sprintf(gettext(
+		    'Peer %1$s: Invalid remote port. (%2$s)'), $idx, $rport);
 	}
 
 	// Check key
 	if (empty($peer['publickey'])) {
-		$input_errors[] = sprintf(gettext('Peer %1$s: A public key must be specified'), $idx);
+		$input_errors[] = sprintf(gettext(
+		    'Peer %1$s: A public key must be specified'), $idx);
 	}
 
 	// Endpoint
 	$ep = trim($peer['endpoint']);
 	if (empty($ep)) {
-		$input_errors[] = sprintf(gettext('Peer %1$s: An endpoint must be specified'), $idx);
-	} else if (!is_hostname($ep) && !is_ipaddrv4($ep) && !is_ipaddrv6($ep)) {
-		$input_errors[] = sprintf(gettext('Peer %1$s: Endpoint must be a valid IPv4 or IPv6 aadress or hostname.'), $idx);
+		$input_errors[] = sprintf(gettext(
+		    'Peer %1$s: An endpoint must be specified'), $idx);
+	} elseif (!is_hostname($ep) && !is_ipaddrv4($ep) && !is_ipaddrv6($ep)) {
+		$input_errors[] = sprintf(gettext(
+		    'Peer %1$s: Endpoint must be a valid IPv4 or IPv6 ' .
+		    'adress or hostname.'), $idx);
 	}
 
 	// Allowed IPs
 	if (!empty($peer['allowedips'])) {
 		foreach (explode(",", $peer['allowedips']) as $ip) {
 			if (!is_subnet(trim($ip))) {
-				$input_errors[] = sprintf(gettext('Peer %1$s: Address %2$s is not a valid IPv4 or IPv6 CIDR subnet aadress.'), $idx, $ip);
+				$input_errors[] = sprintf(gettext(
+				    'Peer %1$s: Address %2$s is not a valid ' .
+				    'IPv4 or IPv6 CIDR subnet aadress.'),
+					$idx, $ip);
 			}
 		}
 	}
@@ -174,7 +192,8 @@ function wg_configure_if($wg_ifname) {
 
 	unset($tunnel);
 	foreach ($config["wireguard"]["tunnel"] as $tun) {
-		if (isset($tun['enabled']) && $tun['enabled'] == 'yes' && $tun['name'] == $wg_ifname) {
+		if (isset($tun['enabled']) && $tun['enabled'] == 'yes' &&
+		    $tun['name'] == $wg_ifname) {
 			$tunnel = $tun;
 			break;
 		}
@@ -190,7 +209,8 @@ function wg_configure_if($wg_ifname) {
 	$conf_path = $g["wg_conf_path"] . "/" . $tunnel['name'] . ".conf";
 	/* XXX - workaround while pfSense-module 0.69 isn't available */
 	mwexec("/sbin/ifconfig " . escapeshellarg($tunnel['name']) . " create");
-	mwexec("/usr/local/bin/wg setconf " . escapeshellarg($tunnel['name']) . " " . escapeshellarg($conf_path));
+	mwexec("/usr/local/bin/wg setconf " . escapeshellarg($tunnel['name']) .
+	    " " . escapeshellarg($conf_path));
 	$ip4_first = true;
 	$ip6_first = true;
 	foreach (explode(",", $tunnel['interface']['address']) as $addr) {
@@ -199,12 +219,18 @@ function wg_configure_if($wg_ifname) {
 		}
 		list($ip, $mask) = explode("/", trim($addr));
 		if (is_ipaddrv4($ip)) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($tunnel['name']) . " inet " . escapeshellarg($ip) .
-			    " netmask " . escapeshellarg(gen_subnet_mask($mask)) . ($ip4_first ? "" : " alias"));
+			mwexec("/sbin/ifconfig " .
+			    escapeshellarg($tunnel['name']) . " inet " .
+			    escapeshellarg($ip) . " netmask " .
+			    escapeshellarg(gen_subnet_mask($mask)) .
+			    ($ip4_first ? "" : " alias"));
 			$ip4_first = false;
 		} elseif (is_ipaddrv6($ip)) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($tunnel['name']) . " inet6 " . escapeshellarg($ip) .
-			    " netmask " . escapeshellarg(gen_subnet_mask($mask)) . ($ip6_first ? "" : " alias"));
+			mwexec("/sbin/ifconfig " .
+			    escapeshellarg($tunnel['name']) . " inet6 " .
+			    escapeshellarg($ip) . " netmask " .
+			    escapeshellarg(gen_subnet_mask($mask)) .
+			    ($ip6_first ? "" : " alias"));
 			$ip6_first = false;
 		}
 	}
@@ -256,10 +282,12 @@ function deleteTunnel($tunidx) {
 		unset($ifname);
 		unset($conf_path);
 		if (isset($config['wireguard']['tunnel'][$tunidx]['name'])) {
-			$ifname = $config['wireguard']['tunnel'][$tunidx]['name'];
+			$ifname =
+			    $config['wireguard']['tunnel'][$tunidx]['name'];
 		}
 		if (isset($ifname)) {
-			$conf_path = $g["wg_conf_path"] . "/" . $ifname . ".conf";
+			$conf_path = $g["wg_conf_path"] . "/" . $ifname .
+			    ".conf";
 		}
 		// Delete the tunnel configuration entry
 		unset($config['wireguard']['tunnel'][$tunidx]);
@@ -305,7 +333,11 @@ function wg_do_post($post, $json = false) {
 		$idx = 0;
 
 		for (;;) {
-			if (!$post['publickeyp' . $idx] && !$post['endpoint' . $idx] && !$post['allowedips' . $idx] && !$post['descr' . $idx] && !$post['persistentkeepalive' . $idx]) {
+			if (!$post['publickeyp'.$idx] &&
+			    !$post['endpoint'.$idx] &&
+			    !$post['allowedips'.$idx] &&
+			    !$post['descr'.$idx] &&
+			    !$post['persistentkeepalive'.$idx]) {
 				break;
 			}
 
@@ -314,7 +346,8 @@ function wg_do_post($post, $json = false) {
 			$peer['endpoint'] =  $post['endpoint' . $idx];
 			$peer['allowedips'] =  $post['allowedips' . $idx];
 			$peer['descr'] =  $post['descp' . $idx];
-			$peer['persistentkeepalive'] =  $post['persistentkeepalive' . $idx];
+			$peer['persistentkeepalive'] =
+			    $post['persistentkeepalive' . $idx];
 			$peer['presharedkey'] =  $post['presharedkey' . $idx];
 			$peer['port'] =  $post['port' . $idx];
 
@@ -335,7 +368,10 @@ function wg_do_post($post, $json = false) {
 	return(array('input_errors' => $input_errors, 'pconfig' => $pconfig));
 }
 
-// Read the Wireguard configurations from config.xml and create a number of *.conf files for wg-quick to read
+/*
+ * Read the Wireguard configurations from config.xml and create a number of
+ * *.conf files for wg-quick to read
+ */
 function wg_create_config_files($clean = true) {
 	global $config, $g;
 
@@ -354,7 +390,8 @@ function wg_create_config_files($clean = true) {
 		}
 
 		foreach ($wg_tunnels as $tunnel) {
-			if (!empty($tunnel['enabled']) && $tunnel['enabled'] == 'yes') {
+			if (!empty($tunnel['enabled']) &&
+			    $tunnel['enabled'] == 'yes') {
 				make_wg_conf($tunnel);
 			}
 		}
@@ -365,7 +402,8 @@ function wg_create_config_files($clean = true) {
 function make_wg_conf($tunnel) {
 	global $g;
 
-	$txt = "# This Wireguard config file has been created automatically. Do not edit!\n";
+	$txt = "# This Wireguard config file has been created automatically. " .
+	    "Do not edit!\n";
 
 	$txt .= "# Description: {$tunnel['descr']}\n\n";
 
@@ -394,8 +432,10 @@ function make_wg_conf($tunnel) {
 				$txt .= "PublicKey = {$peer['publickey']}\n";
 			}
 
-			if (!empty($peer["endpoint"]) && !empty($peer["port"])) {
-				$txt .= "EndPoint = {$peer['endpoint']}:{$peer['port']}\n";
+			if (!empty($peer["endpoint"]) &&
+			    !empty($peer["port"])) {
+				$txt .= "EndPoint = " .
+				    "{$peer['endpoint']}:{$peer['port']}\n";
 			}
 
 			if (!empty($peer["allowedips"])) {
@@ -403,18 +443,21 @@ function make_wg_conf($tunnel) {
 			}
 
 			if (!empty($peer["persistentkeepalive"])) {
-				$txt .= "PersistentKeepalive = {$peer['persistentkeepalive']}\n";
+				$txt .= "PersistentKeepalive = " .
+				    "{$peer['persistentkeepalive']}\n";
 			}
 
 			if (!empty($peer["presharedkey"])) {
-				$txt .= "PresharedKey = {$peer['presharedkey']}\n";
+				$txt .= "PresharedKey = " .
+				    "{$peer['presharedkey']}\n";
 			}
 
 			$txt .= "\n";
 		}
 	}
 
-	file_put_contents($g["wg_conf_path"] . "/" . $tunnel['name'] . ".conf", $txt);
+	file_put_contents($g["wg_conf_path"] . "/" . $tunnel['name'] . ".conf",
+	    $txt);
 	chmod($g["wg_conf_path"] . "/" . $tunnel['name'] . ".conf", 0600);
 }
 
@@ -422,7 +465,8 @@ function make_wg_conf($tunnel) {
 function delete_wg_configs() {
 	global $g;
 
-	$files = glob($g["wg_conf_path"] . "/*.conf"); // get all confog file names
+	// get all config file names
+	$files = glob($g["wg_conf_path"] . "/*.conf");
 	foreach($files as $file) {
 		if(is_file($file)) {
 			unlink($file);

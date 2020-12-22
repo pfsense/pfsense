@@ -64,7 +64,8 @@ if ($_POST['save']) {
 		// Go back to the tunnel table
 		header("Location: vpn_wg.php");
 	}
-} else if ($_POST['action'] == 'genkeys') { // Process ajax call requesting new key pair
+} elseif ($_POST['action'] == 'genkeys') {
+	// Process ajax call requesting new key pair
 	print(genKeyPair(true));
 	exit;
 } else {
@@ -157,7 +158,7 @@ $form->add($section);
 
 print($form);
 
-// ============ Peer edit modal ===================================================================================================
+// ============ Peer edit modal ==================================
 $section2 = new Form_Section('Peer');
 
 $section2->addInput(new Form_Input(

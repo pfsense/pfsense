@@ -38,14 +38,13 @@ function next_wg_port() {
 	init_config_arr(array('wireguard', 'tunnel'));
 	$tunnels = &$config['wireguard']['tunnel'];
 
-	$found = true;
-	for ($idx=51820; $idx<65535 && $found; $idx++) {
-
+	for ($idx=51820; $idx<65535; $idx++) {
 		// Check to see if the port is already in use
 		$found = false;
 		foreach ($tunnels as $tunnel) {
 			if ($tunnel['interface']['listenport'] == $idx) {
 				$found = true;
+				break;
 			}
 		}
 

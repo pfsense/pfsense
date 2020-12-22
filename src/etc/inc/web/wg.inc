@@ -138,7 +138,7 @@ function wg_validate_peer($idx, $peer) {
 	if (empty($ep)) {
 		$input_errors[] = sprintf(gettext(
 		    'Peer %1$s: An endpoint must be specified'), $idx);
-	} elseif (!is_hostname($ep) && !is_ipaddrv4($ep) && !is_ipaddrv6($ep)) {
+	} elseif (!is_hostname($ep) && !is_ipaddr($ep)) {
 		$input_errors[] = sprintf(gettext(
 		    'Peer %1$s: Endpoint must be a valid IPv4 or IPv6 ' .
 		    'adress or hostname.'), $idx);

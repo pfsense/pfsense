@@ -31,22 +31,7 @@
 
 require_once("guiconfig.inc");
 require_once("interfaces.inc");
-
-function get_ip($addr) {
-
-	$parts = explode(":", $addr);
-	if (count($parts) == 2) {
-		return (trim($parts[0]));
-	} else {
-		/* IPv6 */
-		$parts = explode("[", $addr);
-		if (count($parts) == 2) {
-			return (trim($parts[0]));
-		}
-	}
-
-	return ("");
-}
+require_once("diag_dump_states.inc");
 
 /* handle AJAX operations */
 if (isset($_POST['action']) && $_POST['action'] == "remove") {
@@ -56,6 +41,7 @@ if (isset($_POST['action']) && $_POST['action'] == "remove") {
 	} else {
 		echo gettext("invalid input");
 	}
+
 	return;
 }
 
@@ -176,6 +162,11 @@ if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST[
 
 $form->add($section);
 print $form;
+
+// Process web request and return an array of filtered states
+$statedisp = process_state_req($_POST, $_REQUEST, false);
+$states = count($statedisp);
+
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("States")?></h2></div>
@@ -193,68 +184,17 @@ print $form;
 						<th data-sortable="false"></th> <!-- For the optional "Remove" button -->
 					</tr>
 				</thead>
-				<tbody>
 <?php
-	$arr = array();
-	/* RuleId filter. */
-	if (isset($_REQUEST['ruleid'])) {
-		$ids = explode(",", $_REQUEST['ruleid']);
-		for ($i = 0; $i < count($ids); $i++) {
-			$arr[] = array("ruleid" => intval($ids[$i]));
-		}
-	}
-
-	/* Interface filter. */
-	if (isset($_POST['interface']) && $_POST['interface'] != "all") {
-		$arr[] = array("interface" => get_real_interface($_POST['interface']));
-	}
-
-	if (isset($_POST['filter']) && strlen($_POST['filter']) > 0) {
-		$arr[] = array("filter" => $_POST['filter']);
-	}
-
-	if (isset($_POST['filter']) || isset($_REQUEST['ruleid']) ||
-	    !isset($config['system']['webgui']['requirestatefilter'])) {
-		if (count($arr) > 0) {
-			$res = pfSense_get_pf_states($arr);
-		} else {
-			$res = pfSense_get_pf_states();
-		}
-	} else {
-		$res = NULL;
-	}
-
-	$states = 0;
-	if ($res != NULL && is_array($res)) {
-		$states = count($res);
-	}
-
-	for ($i = 0; $i < $states; $i++):
-		$info = $res[$i]['src'];
-		$srcip = get_ip($res[$i]['src']);
-		$dstip = get_ip($res[$i]['dst']);
-		if ($res[$i]['src-orig']) {
-			$info .= " (" . $res[$i]['src-orig'] . ")";
-		}
-		$info .= " -> ";
-		$info .= $res[$i]['dst'];
-		if ($res[$i]['dst-orig']) {
-			$info .= " (" . $res[$i]['dst-orig'] . ")";
-			$killdstip = get_ip($res[$i]['dst-orig']);
-		} else {
-			$killdstip = $dstip;
-		}
-
+		foreach ($statedisp as $dstate):
 ?>
+				<tbody>
 					<tr>
-						<td><?= convert_real_interface_to_friendly_descr($res[$i]['if']) ?></td>
-						<td><?= $res[$i]['proto'] ?></td>
-						<td><?= $info ?></td>
-						<td><?= $res[$i]['state'] ?></td>
-						<td><?= format_number($res[$i]['packets in']) ?> /
-						    <?= format_number($res[$i]['packets out']) ?></td>
-						<td><?= format_bytes($res[$i]['bytes in']) ?> /
-						    <?= format_bytes($res[$i]['bytes out']) ?></td>
+						<td><?= $dstate['interface '] ?></td>
+						<td><?= $dstate['proto'] ?></td>
+						<td><?= $dstate['source'] ?></td>
+						<td><?= $dstate['state'] ?></td>
+						<td><?= $dstate['packets'] ?></td>
+						<td><?= $dstate['bytes'] ?></td>
 
 						<td>
 							<a class="btn fa fa-trash no-confirm" data-entry="<?=$srcip?>|<?=$killdstip?>"
@@ -262,7 +202,7 @@ print $form;
 						</td>
 					</tr>
 <?php
-	endfor;
+	endforeach;
 ?>
 				</tbody>
 			</table>

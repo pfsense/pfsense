@@ -36,6 +36,7 @@
 @ini_set('implicit_flush', 1);
 
 require_once("guiconfig.inc");
+require_once("diag_arp.inc");
 
 // delete arp entry
 if (isset($_POST['deleteentry'])) {
@@ -64,48 +65,8 @@ if (isset($_POST['deleteentry'])) {
 	}
 }
 
-$leases = system_get_dhcpleases();
 
-// Put this in an easy to use form
-$dhcpmac = array();
-$dhcpip = array();
-
-foreach ($leases['lease'] as $value) {
-	$dhcpmac[$value['mac']] = $value['hostname'];
-	$dhcpip[$value['ip']] = $value['hostname'];
-}
-
-$arp_table = system_get_arp_table();
-
-$i = 0;
-
-/* if list */
-$ifdescrs = get_configured_interface_with_descr();
-
-foreach ($ifdescrs as $key => $interface) {
-	$thisif = convert_friendly_interface_to_real_interface_name($key);
-	if (!empty($thisif)) {
-		$hwif[$thisif] = $interface;
-	}
-}
-
-function _getHostName($mac, $ip) {
-	global $dhcpmac, $dhcpip;
-
-	if ($dhcpmac[$mac]) {
-		return $dhcpmac[$mac];
-	} else if ($dhcpip[$ip]) {
-		return $dhcpip[$ip];
-	} else {
-		exec("host -W 1 " . escapeshellarg($ip), $output);
-		if (preg_match('/.*pointer ([A-Za-z_0-9.-]+)\..*/', $output[0], $matches)) {
-			if ($matches[1] <> $ip) {
-				return $matches[1];
-			}
-		}
-	}
-	return "";
-}
+$arp_table = prepare_ARP_table();
 
 $pgtitle = array(gettext("Diagnostics"), gettext("ARP Table"));
 include("head.inc");
@@ -114,54 +75,6 @@ include("head.inc");
 if ($savemsg) {
 	print_info_box(htmlentities($savemsg), $savemsgtype);
 }
-?>
-
-<!-- On modern hardware the table will load so fast you may never see this! -->
-<div id="loading">
-	<?= gettext(" Loading, please wait...")?>
-</div>
-
-<?php
-
-// Flush buffers out to client so that they see Loading, please wait....
-for ($i = 0; $i < ob_get_level(); $i++) {
-	ob_end_flush();
-}
-
-ob_implicit_flush(1);
-
-// Resolve hostnames and replace Z_ with "".  The intention
-// is to sort the list by hostnames, alpha and then the non
-// resolvable addresses will appear last in the list.
-$dnsavailable=1;
-$dns = trim(_getHostName("", "8.8.8.8"));
-if ($dns == "") {
-	$dns = trim(_getHostName("", "8.8.4.4"));
-	if ($dns == "") {
-		$dnsavailable = 0;
-	}
-}
-
-foreach ($arp_table as &$entry) {
-	if ($dnsavailable && !empty($entry['mac-address'])) {
-		$dns = trim(_getHostName($entry['mac-address'],
-		    $entry['ip-address']));
-	} else {
-		$dns="";
-	}
-	if (trim($dns)) {
-		$entry['dnsresolve'] = "$dns";
-	} else {
-		$entry['dnsresolve'] = "Z_ ";
-	}
-}
-unset($entry);
-
-// Sort the data alpha first
-$arp_table = msort($arp_table, "dnsresolve");
-
-// Load MAC-Manufacturer table
-$mac_man = load_mac_manufacturer_table();
 ?>
 <div class="panel panel-default" id="search-panel">
 	<div class="panel-heading">
@@ -224,38 +137,11 @@ $mac_man = load_mac_manufacturer_table();
 <?php
 		foreach ($arp_table as $entry): ?>
 			<tr>
-				<td><?=$hwif[$entry['interface']]?></td>
+				<td><?=$entry['interface']?></td>
 				<td><?=$entry['ip-address']?></td>
-<?php
-				if (empty($entry['mac-address'])) {
-					$mac = '(' . gettext("Incomplete") .')';
-					print "<td>{$mac}</td>";
-				} else {
-					$mac = trim($entry['mac-address']);
-					print "<td>{$mac}";
-					$mac_hi = strtoupper($mac[0] . $mac[1] .
-					    $mac[3] . $mac[4] . $mac[6] .
-					    $mac[7]);
-
-					if (isset($mac_man[$mac_hi])) {
-						print ' <small>('.
-						    $mac_man[$mac_hi] .
-						    ')</small>';
-					}
-				}
-
-				$status = '';
-				if (!empty($entry['expires'])) {
-					$status = sprintf(gettext(
-					    "Expires in %d seconds"),
-					    $entry['expires']);
-				} else if (!empty($entry['permanent'])) {
-					$status = gettext("Permanent");
-				}
-?>
-				</td>
-				<td><?=trim(str_replace("Z_ ", "", $entry['dnsresolve']))?></td>
-				<td><?=ucfirst($status)?></td>
+				<td><?=$entry['mac-address']?></td>
+				<td><?=$entry['dnsresolve']?></td>
+				<td><?=$entry['expires']?></td>
 				<td><?=$entry['type']?></td>
 				<td>
 					<a class="fa fa-trash" title="<?=gettext('Delete arp cache entry')?>"	href="diag_arp.php?deleteentry=<?=$entry['ip-address']?>" usepost></a>

@@ -2267,6 +2267,10 @@ function ipsec_setup_tunnels() {
 
 			if (!empty($ph2ent['lifetime'])) {
 				$child['life_time'] = intval($ph2ent['lifetime']);
+				/* Rekey at 90% of lifetime */
+				$child['rekey_time'] = intval($child['life_time'] * 0.9);
+				/* Random rekey fuzz time */
+				$child['rand_time'] = intval($child['life_time'] * 0.1);
 			}
 
 			/* If we are to act only as a responder, disable the start action */

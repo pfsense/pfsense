@@ -308,6 +308,7 @@ $section2->add($group2);
 </nav>
 
 <?php $jpconfig = json_encode($pconfig); ?>
+<?php $genkeywarning = gettext("Are you sure you want to overwrite keys?"); ?>
 
 <!-- ============== JavaScript =================================================================================================-->
 <script type="text/javascript">

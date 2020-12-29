@@ -474,6 +474,22 @@ function delete_wg_configs() {
 	unlink_if_exists($g["wg_conf_path"] . "/*.conf");
 }
 
+/* Check if at least one tunnel is enabled */
+function is_wg_enabled() {
+	global $config;
+
+	init_config_arr(array('wireguard', 'tunnel'));
+
+	foreach ($config['wireguard']['tunnel'] as $tunnel) {
+		if (empty($tunnel['enabled'])) {
+			continue;
+		}
+		return true;
+	}
+
+	return false;
+}
+
 /*
 Sample Wireguard config.xml entry
 

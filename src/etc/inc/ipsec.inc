@@ -2504,8 +2504,8 @@ function ipsec_setup_secrets() {
 					$myid = "@{$myid}";
 				}
 
-				$myid = isset($ph1ent['mobile']) ? trim($myid_data) : "%any";
-				$peerid = ($peerid_data != 'allusers') ? trim($peerid_data) : '';
+				$myid = isset($ph1ent['mobile']) ? ipsec_fixup_id($myid_type, trim($myid_data)) : "%any";
+				$peerid = ($peerid_data != 'allusers') ? ipsec_fixup_id($peerid_type, trim($peerid_data)) : '';
 
 				if ($peerid_type == 'fqdn' && !empty($peerid)) {
 					$peerid = "@{$peerid}";

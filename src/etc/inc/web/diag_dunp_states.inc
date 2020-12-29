@@ -23,7 +23,6 @@
  */
 
 require_once("interfaces.inc");
-require_once("diag_dump_states.php");
 require_once("config.gui.inc");
 
 
@@ -98,9 +97,11 @@ function process_state_req($post, $request, $json = false) {
 			$killdstip = $dstip;
 		}
 
-		$statedisp[$i]['interface '] = convert_real_interface_to_friendly_descr($res[$i]['if']);
+		$statedisp[$i]['interface'] = convert_real_interface_to_friendly_descr($res[$i]['if']);
 		$statedisp[$i]['proto'] = $res[$i]['proto'];
-		$statedisp[$i]['source'] = $info;
+		$statedisp[$i]['display'] = $info;
+		$statedisp[$i]['srcip'] = $srcip;
+		$statedisp[$i]['dstip'] =  $dstip;
 		$statedisp[$i]['state'] = $res[$i]['state'];
 		$statedisp[$i]['packets'] = format_number($res[$i]['packets in']) . ' / ' . format_number($res[$i]['packets out']);
 		$statedisp[$i]['bytes'] = format_bytes($res[$i]['bytes in']) . ' / ' . format_bytes($res[$i]['bytes out']);

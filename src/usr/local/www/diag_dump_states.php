@@ -189,16 +189,16 @@ $states = count($statedisp);
 ?>
 				<tbody>
 					<tr>
-						<td><?= $dstate['interface '] ?></td>
+						<td><?= $dstate['interface']?></td>
 						<td><?= $dstate['proto'] ?></td>
-						<td><?= $dstate['source'] ?></td>
+						<td><?= $dstate['display']?></td>
 						<td><?= $dstate['state'] ?></td>
-						<td><?= $dstate['packets'] ?></td>
+						<td><?= $dstate['packets']?></td>
 						<td><?= $dstate['bytes'] ?></td>
 
 						<td>
-							<a class="btn fa fa-trash no-confirm" data-entry="<?=$srcip?>|<?=$killdstip?>"
-								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $srcip, $killdstip);?>"></a>
+							<a class="btn fa fa-trash no-confirm" data-entry="<?=$dstate['srcip']?>|<?=$dstate['sdstip']?>"
+								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $dstate['srcip'], $dstate['dstip']);?>"></a>
 						</td>
 					</tr>
 <?php

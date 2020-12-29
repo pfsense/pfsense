@@ -81,8 +81,8 @@ if (array_key_exists('delidx', $_POST)) {
 			if (!$tunnel['peers'] || !is_array($tunnel['peers'])) {
 				$tunnel['peers'] = array();
 			}
-			if (!$tunnel['peers']['peer'] || !is_array($tunnel['peers']['peer'])) {
-				$tunnel['peers']['peer'] = array();
+			if (!$tunnel['peers']['wgpeer'] || !is_array($tunnel['peers']['wgpeer'])) {
+				$tunnel['peers']['wgpeer'] = array();
 			}
 ?>
 					<tr id="fr<?=$i?>" id="frd<?=$i?>" class="<?= $entryStatus ?>">
@@ -91,7 +91,7 @@ if (array_key_exists('delidx', $_POST)) {
 						<td><?=$tunnel['descr']?></td>
 						<td><?=$tunnel['interface']['address']?></td>
 						<td><?=$tunnel['interface']['listenport']?></td>
-						<td><?=count($tunnel['peers']['peer'])?></td>
+						<td><?=count($tunnel['peers']['wgpeer'])?></td>
 
 						<td style="cursor: pointer;">
 							<a class="fa fa-pencil" href="vpn_wg_edit.php?index=<?=$i?>" title="<?=gettext("Edit tunnel"); ?>"></a>
@@ -102,22 +102,22 @@ if (array_key_exists('delidx', $_POST)) {
 					<tr class="peer-entries" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 						<td>Peers</td>
 <?php
-			if (count($tunnel['peers']['peer']) > 0):
+			if (count($tunnel['peers']['wgpeer']) > 0):
 ?>
 						<td colspan="6">
 							<table class="table table-hover" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
 								<thead>
 									<tr>
 										<th>Description</th>
-										<th >Endpoint</th>
+										<th>Endpoint</th>
 										<th>Allowed IPs</th>
-										<th >Public key</th>
+										<th>Public key</th>
 									</tr>
 								</thead>
 								<tbody>
 
 <?php
-				foreach ($tunnel['peers']['peer'] as $peer):
+				foreach ($tunnel['peers']['wgpeer'] as $peer):
 ?>
 									<tr>
 										<td><?=$peer['descr']?></td>

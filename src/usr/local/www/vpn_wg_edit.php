@@ -266,8 +266,8 @@ $section2->add($group2);
 			<tbody>
 <?php
 				$peer_num = 0;
-				if (!empty($pconfig['peers']['peer'])) {
-					foreach ($pconfig['peers']['peer'] as $peer) {
+				if (!empty($pconfig['peers']['wgpeer'])) {
+					foreach ($pconfig['peers']['wgpeer'] as $peer) {
 						print('<tr class="peer_group_' . $peer_num . '">');
 						print("<td>{$peer_num}</td>\n");
 						print("<td>{$peer['descr']}</td>\n");

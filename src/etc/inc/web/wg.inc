@@ -108,9 +108,9 @@ function wg_validate_post($pconfig) {
 	}
 
 	// Now the peers
-	if (isset($pconfig['peers']['peer'])) {
+	if (isset($pconfig['peers']['wgpeer'])) {
 		$idx = 0;
-		foreach ($pconfig['peers']['peer'] as $peer) {
+		foreach ($pconfig['peers']['wgpeer'] as $peer) {
 			$input_errors = array_merge($input_errors,
 			    wg_validate_peer($idx, $peer));
 			$idx++;
@@ -335,7 +335,7 @@ function wg_do_post($post, $json = false) {
 	if (isset($post['endpoint0'])) {
 		// Peers section
 		$pconfig['peers'] = array();
-		$pconfig['peers']['peer'] = array();
+		$pconfig['peers']['wgpeer'] = array();
 
 		$idx = 0;
 
@@ -358,7 +358,7 @@ function wg_do_post($post, $json = false) {
 			$peer['presharedkey'] = $post['presharedkey' . $idx];
 			$peer['port'] = $post['port' . $idx];
 
-			$pconfig['peers']['peer'][] = $peer;
+			$pconfig['peers']['wgpeer'][] = $peer;
 			$idx++;
 		}
 	} else {
@@ -428,9 +428,9 @@ function make_wg_conf($tunnel) {
 	$txt .= "\n";
 
 	// Process peers section
-	if (is_array($tunnel['peers']) && is_array($tunnel['peers']['peer']) &&
-	    count($tunnel['peers']['peer']) > 0) {
-		foreach ($tunnel['peers']['peer'] as $peer) {
+	if (is_array($tunnel['peers']) && is_array($tunnel['peers']['wgpeer']) &&
+	    count($tunnel['peers']['wgpeer']) > 0) {
+		foreach ($tunnel['peers']['wgpeer'] as $peer) {
 			$txt .= "# Peer: {$peer['descr']}\n";
 			$txt .= "[Peer]\n";
 

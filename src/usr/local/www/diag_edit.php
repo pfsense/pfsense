@@ -149,6 +149,12 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
+		// Hitting the enter key will do the same as clicking the 'Load' button
+		$("#fbTarget").on("keyup", function (event) {
+			if (event.keyCode == 13) {
+				loadFile();
+			}
+		});
 
 		function showLine(tarea, lineNum) {
 

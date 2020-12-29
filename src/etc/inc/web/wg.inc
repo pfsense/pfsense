@@ -214,7 +214,7 @@ function wg_configure_if($wg_ifname) {
 	wg_destroy_if($tunnel['name']);
 	//$if = pfSense_interface_create($tunnel['name']);
 	$conf_path = $g["wg_conf_path"] . "/" . $tunnel['name'] . ".conf";
-	/* XXX - workaround while pfSense-module 0.69 isn't available */
+	/* XXX - workaround while pfSense-module is fixed */
 	mwexec("/sbin/ifconfig " . escapeshellarg($tunnel['name']) . " create");
 	mwexec("/usr/local/bin/wg setconf " . escapeshellarg($tunnel['name']) .
 	    " " . escapeshellarg($conf_path));

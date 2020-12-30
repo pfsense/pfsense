@@ -45,13 +45,13 @@ function listtags() {
 		'member', 'menu', 'tab', 'mobilekey', 'monitor_type', 'mount',
 		'npt', 'ntpserver',
 		'onetoone', 'openvpn-server', 'openvpn-client', 'openvpn-csc', 'option',
-		'package', 'passthrumac', 'peer', 'phase1', 'phase2', 'ppp', 'pppoe', 'priv', 'proxyarpnet', 'pool',
+		'package', 'passthrumac', 'phase1', 'phase2', 'ppp', 'pppoe', 'priv', 'proxyarpnet', 'pool',
 		'qinqentry', 'queue',
 		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
 		'schedule', 'service', 'servernat', 'servers',
 		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue', 'switch', 'swport',
 		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'vlangroup', 'voucherdbfile',
-		'vxlan', 'winsserver', 'wolentry', 'widget', 'xmldatafile'
+		'vxlan', 'wgpeer', 'winsserver', 'wolentry', 'widget', 'xmldatafile'
 	);
 	return array_flip($ret);
 }

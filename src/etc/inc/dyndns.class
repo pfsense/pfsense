@@ -1387,9 +1387,9 @@
 			case 'gandi-livedns':
 				// NOTE: quite similar to digitalocean case but with json content like azure case
 				// Get record href
-				$server = 'https://dns.api.gandi.net/api/v5/domains/';
+				$server = 'https://api.gandi.net/v5/livedns/domains/';
 				$url = $server . $this->_dnsDomain . '/records';
-				curl_setopt($ch, CURLOPT_HTTPHEADER, array("X-Api-Key: {$this->_dnsPass}"));
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Apikey {$this->_dnsPass}"));
 				curl_setopt($ch, CURLOPT_URL, $url);
 				$output = json_decode(curl_exec($ch));
 				if (!is_array($output)) {
@@ -1404,7 +1404,7 @@
 				}
 				$request_headers = array();
 				//$request_headers[] = 'Accept: application/json';
-				$request_headers[] = 'X-Api-Key: ' . $this->_dnsPass;
+				$request_headers[] = 'Authorization: Apikey ' . $this->_dnsPass;
 				$request_headers[] = 'Content-Type: application/json';
 				//create or update record
 				if ($recordHref == null) {

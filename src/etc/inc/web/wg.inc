@@ -175,8 +175,10 @@ function wg_configure() {
 	}
 
 	if (platform_booting()) {
-		echo gettext("Configuring Wireguard Tunnels...");
+		echo gettext("Configuring Wireguard Tunnels... ");
 	}
+
+	wg_create_config_files();
 
 	foreach ($config["wireguard"]["tunnel"] as $tunnel) {
 		if (isset($tunnel['enabled']) && $tunnel['enabled'] == 'yes') {

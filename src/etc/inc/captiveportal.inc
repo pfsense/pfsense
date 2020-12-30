@@ -2402,12 +2402,6 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 	$unsetindexes = array();
 
 	foreach ($cpdb as $cpentry) {
-		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "Entering for each loop $username = {$username}");	
-		if (isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) {
-			captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "config['captiveportal'][$cpzone]['noconcurrentlogins'] exists = set");	
-		} else {
-			captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "config['captiveportal'][$cpzone]['noconcurrentlogins'] does not exists = NOT set");
-		}
 		/* on the same ip */
 		if ($cpentry[2] == $clientip) {
 			if (isset($config['captiveportal'][$cpzone]['nomacfilter']) || $cpentry[3] == $clientmac) {

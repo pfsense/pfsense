@@ -51,9 +51,12 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-/* update rule order, POST[rule] is an array of ordered IDs */
 if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($natent['interface'])) {
-	if (is_array($_REQUEST['rule']) && !empty($_REQUEST['rule'])) {
+	$updated = false;
+	$dirty = false;
+
+	/* update rule order, POST[rule] is an array of ordered IDs */
+	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_nat_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
@@ -61,30 +64,40 @@ if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($nate
 			$a_nat_new[] = $a_nat[$id];
 		}
 
-		$a_nat = $a_nat_new;
-
-
-		$config['nat']['separator'] = "";
-
-		if ($_POST['separator']) {
-			$idx = 0;
-
-			if (!is_array($config['nat']['separator'])) {
-				$config['nat']['separator'] = array();
-			}
-
-			foreach ($_POST['separator'] as $separator) {
-				$config['nat']['separator']['sep' . $idx++] = $separator;
-			}
+		if ($a_nat !== $a_nat_new) {
+			$a_nat = $a_nat_new;
+			$dirty = true;
 		}
-
-		if (write_config("NAT: Rule order changed")) {
-			mark_subsystem_dirty('filter');
-		}
-
-		header("Location: firewall_nat.php");
-		exit;
 	}
+
+	/* update separator order, POST[separator] is an array of ordered IDs */
+	if (is_array($_POST['separator']) && !empty($_POST['separator'])) {
+		$new_separator = array();
+		$idx = 0;
+
+		foreach ($_POST['separator'] as $separator) {
+			$new_separator['sep' . $idx++] = $separator;
+		}
+
+		if ($a_separators !== $new_separator) {
+			$a_separators = $new_separator;
+			$updated = true;
+		}			
+	} else if (!empty($a_separators)) {
+		$a_separators = "";
+		$updated = true;
+	}
+
+	if ($updated || $dirty) {
+		if (write_config("NAT: Rule order changed")) {
+			if ($dirty) {
+				mark_subsystem_dirty('natconf');
+			}
+		}
+	}
+
+	header("Location: firewall_nat.php");
+	exit;
 }
 
 /* if a custom message has been passed along, lets process it */

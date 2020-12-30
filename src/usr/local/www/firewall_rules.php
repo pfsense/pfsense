@@ -234,6 +234,8 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 } else if ($_POST['order-store']) {
+	$updated = false;
+	$dirty = false;
 
 	/* update rule order, POST[rule] is an array of ordered IDs */
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
@@ -266,32 +268,42 @@ if (isset($_POST['del_x'])) {
 			}
 		}
 
-		$a_filter = $a_filter_new;
-
-		$config['filter']['separator'][strtolower($if)] = "";
-
-		if ($_POST['separator']) {
-			$idx = 0;
-			if (!is_array($config['filter']['separator'])) {
-				$config['filter']['separator'] = array();
-			}
-
-			foreach ($_POST['separator'] as $separator) {
-				if (!is_array($config['filter']['separator'][strtolower($separator['if'])]))  {
-					$config['filter']['separator'][strtolower($separator['if'])] = array();
-				}
-
-				$config['filter']['separator'][strtolower($separator['if'])]['sep' . $idx++] = $separator;
-			}
+		if ($a_filter !== $a_filter_new) {
+			$a_filter = $a_filter_new;
+			$dirty = true;
 		}
-
-		if (write_config(gettext("Firewall: Rules - reordered firewall rules."))) {
-			mark_subsystem_dirty('filter');
-		}
-
-		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
-		exit;
 	}
+
+	$a_separators = &$config['filter']['separator'][strtolower($if)];
+
+	/* update separator order, POST[separator] is an array of ordered IDs */
+	if (is_array($_POST['separator']) && !empty($_POST['separator'])) {
+		$new_separator = array();
+		$idx = 0;
+
+		foreach ($_POST['separator'] as $separator) {
+			$new_separator['sep' . $idx++] = $separator;
+		}
+
+		if ($a_separators !== $new_separator) {
+			$a_separators = $new_separator;
+			$updated = true;
+		}
+	} else if (!empty($a_separators)) {
+		$a_separators = "";
+		$updated = true;
+	}
+
+	if ($updated || $dirty) {
+		if (write_config(gettext("Firewall: Rules - reordered firewall rules."))) {
+			if ($dirty) {
+				mark_subsystem_dirty('filter');
+			}
+		}
+	}
+
+	header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
+	exit;
 }
 
 $tab_array = array(array(gettext("Floating"), ("FloatingRules" == $if), "firewall_rules.php?if=FloatingRules"));

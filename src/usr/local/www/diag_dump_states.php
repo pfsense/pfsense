@@ -197,7 +197,7 @@ $states = count($statedisp);
 						<td><?= $dstate['bytes'] ?></td>
 
 						<td>
-							<a class="btn fa fa-trash no-confirm" data-entry="<?=$dstate['srcip']?>|<?=$dstate['sdstip']?>"
+							<a class="btn fa fa-trash no-confirm" data-entry="<?=$dstate['srcip']?>|<?=$dstate['dstip']?>"
 								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $dstate['srcip'], $dstate['dstip']);?>"></a>
 						</td>
 					</tr>

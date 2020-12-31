@@ -194,7 +194,7 @@ EOD;
 
 	$syslogd_extra = "";
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'miniupnpd', 'igmpproxy', 'filterlog');
+		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'watchfrr', 'miniupnpd', 'igmpproxy', 'filterlog');
 		$syslogconf = "# Automatically generated, do not edit!\n";
 
 		if ($config['installedpackages']['package']) {
@@ -220,7 +220,7 @@ EOD;
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "auth.*;authpriv.*");
 		}
 
-		$syslogconf .= "!radvd,routed,zebra,ospfd,ospf6d,bgpd,miniupnpd,igmpproxy\n";
+		$syslogconf .= "!radvd,routed,zebra,ospfd,ospf6d,bgpd,watchfrr,miniupnpd,igmpproxy\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$g['varlog_path']}/routing.log\n";
 		}
@@ -509,7 +509,7 @@ EOD;
 
 
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'miniupnpd', 'igmpproxy', 'filterlog');
+		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'zebra', 'ospfd', 'ospf6d', 'bgpd', 'watchfrr', 'miniupnpd', 'igmpproxy', 'filterlog');
 		$newsyslogconf = <<<EOD
 /var/log/userlog		root:wheel	600	3	{$log_size}	*	B
 /var/log/utx.log		root:wheel	644	3	{$log_size}	*	B

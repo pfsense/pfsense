@@ -1436,9 +1436,22 @@ function ipsec_setup_strongswan() {
 		$ssconf['charon']['plugins']['eap-radius']['eap_start'] = "no";
 		/* Activate RADIUS accounting only if it was selected on the IPsec Mobile Clients tab */
 		if ($auth_server && isset($auth_server['radius_acct_port']) &&
-		    (is_array($a_client) && ($a_client['radiusaccounting'] == "enabled"))){
+		    (is_array($a_client) && ($a_client['radiusaccounting'] == "enabled"))) {
 			$ssconf['charon']['plugins']['eap-radius']['accounting'] = "yes";
 			$ssconf['charon']['plugins']['eap-radius']['accounting_close_on_timeout'] = "no";
+		}
+		/* advanced parameters, see https://redmine.pfsense.org/issues/11211 */
+		if (isset($a_client['radius_retransmit_base'])) {
+			$ssconf['charon']['plugins']['eap-radius']['retransmit_base'] = $a_client['radius_retransmit_base'];
+		}
+		if (isset($a_client['radius_retransmit_timeout'])) {
+			$ssconf['charon']['plugins']['eap-radius']['retransmit_timeout'] = $a_client['radius_retransmit_timeout'];
+		}
+		if (isset($a_client['radius_retransmit_tries'])) {
+			$ssconf['charon']['plugins']['eap-radius']['retransmit_tries'] = $a_client['radius_retransmit_tries'];
+		}
+		if (isset($a_client['radius_sockets'])) {
+			$ssconf['charon']['plugins']['eap-radius']['sockets'] = $a_client['radius_sockets'];
 		}
 		$ssconf['charon']['plugins']['eap-radius']['servers'] = $radius_servers;
 	}

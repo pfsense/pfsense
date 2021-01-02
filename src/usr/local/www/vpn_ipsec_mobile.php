@@ -78,6 +78,10 @@ if (count($a_client)) {
 	$pconfig['pool_netbits'] = $a_client['pool_netbits'];
 	$pconfig['pool_address_v6'] = $a_client['pool_address_v6'];
 	$pconfig['pool_netbits_v6'] = $a_client['pool_netbits_v6'];
+	$pconfig['radius_retransmit_base'] = $a_client['radius_retransmit_base'];
+	$pconfig['radius_retransmit_timeout'] = $a_client['radius_retransmit_timeout'];
+	$pconfig['radius_retransmit_tries'] = $a_client['radius_retransmit_tries'];
+	$pconfig['radius_sockets'] = $a_client['radius_sockets'];
 	$pconfig['net_list'] = $a_client['net_list'];
 	$pconfig['save_passwd'] = $a_client['save_passwd'];
 	$pconfig['dns_domain'] = $a_client['dns_domain'];
@@ -109,6 +113,11 @@ if (count($a_client)) {
 
 	if (isset($pconfig['radius_ip_priority_enable'])) {
 		$pconfig['radius_ip_priority_enable'] = true;
+	}
+
+	if ($pconfig['radius_retransmit_base'] || $pconfig['radius_retransmit_timeout'] ||
+	    $pconfig['radius_retransmit_tries'] || $pconfig['radius_sockets']) {
+		$pconfig['radius_advanced'] = true;
 	}
 
 	if ($pconfig['pool_address_v6'] && $pconfig['pool_netbits_v6']) {
@@ -193,6 +202,18 @@ if ($_POST['save']) {
 		if (!is_ipaddrv6($pconfig['pool_address_v6'])) {
 			$input_errors[] = gettext("A valid IPv6 address for 'Virtual IPv6 Address Pool Network' must be specified.");
 		}
+	}
+	if ($pconfig['radius_retransmit_base'] && !is_numericint($pconfig['radius_retransmit_base'])) {
+		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Base.");
+	}
+	if ($pconfig['radius_retransmit_timeout'] && !is_numericint($pconfig['radius_retransmit_timeout'])) {
+		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Timeout.");
+	}
+	if ($pconfig['radius_retransmit_tries'] && !is_numericint($pconfig['radius_retransmit_tries'])) {
+		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Tries.");
+	}
+	if ($pconfig['radius_sockets'] && !is_numericint($pconfig['radius_sockets'])) {
+		$input_errors[] = gettext("An integer must be specified for RADIUS Sockets.");
 	}
 	if ($pconfig['dns_domain_enable']) {
 		if (!is_domain($pconfig['dns_domain'])) {
@@ -306,6 +327,19 @@ if ($_POST['save']) {
 			$client['pool_netbits_v6'] = $pconfig['pool_netbits_v6'];
 		}
 
+		if ($pconfig['radius_retransmit_base']) {
+			$client['radius_retransmit_base'] = $pconfig['radius_retransmit_base'];
+		}
+		if ($pconfig['radius_retransmit_timeout']) {
+			$client['radius_retransmit_timeout'] = $pconfig['radius_retransmit_timeout'];
+		}
+		if ($pconfig['radius_retransmit_tries']) {
+			$client['radius_retransmit_tries'] = $pconfig['radius_retransmit_tries'];
+		}
+		if ($pconfig['radius_sockets']) {
+			$client['radius_sockets'] = $pconfig['radius_sockets'];
+		}
+
 		if ($pconfig['net_list_enable']) {
 			$client['net_list'] = true;
 		}
@@ -380,6 +414,21 @@ include("head.inc");
 			} else {
 				document.iform.pool_address_v6.disabled = 1;
 				document.iform.pool_netbits_v6.disabled = 1;
+			}
+		}
+
+		function radius_advanced_change() {
+
+			if (document.iform.radius_advanced_enable.checked) {
+				document.iform.radius_retransmit_base.disabled = 0;
+				document.iform.radius_retransmit_timeout.disabled = 0;
+				document.iform.radius_retransmit_tries.disabled = 0;
+				document.iform.radius_sockets.disabled = 0;
+			} else {
+				document.iform.radius_retransmit_base.disabled = 1;
+				document.iform.radius_retransmit_timeout.disabled = 1;
+				document.iform.radius_retransmit_tries.disabled = 1;
+				document.iform.radius_sockets.disabled = 1;
 			}
 		}
 
@@ -623,6 +672,58 @@ $section->addInput(new Form_Checkbox(
 	'IPv4/IPv6 address pool is used if address is not supplied by RADIUS server',
 	$pconfig['radius_ip_priority_enable']
 ));
+
+$section->addInput(new Form_Checkbox(
+	'radius_advanced',
+	'RADIUS Advanced Parameters',
+	'Show Advanced RADIUS parameters',
+	$pconfig['radius_advanced']
+))->toggles('.toggle-radius_advanced')->setHelp('May only be required when using 2FA/MFA with RADIUS or under high load.');
+
+$group = new Form_Group('');
+$group->addClass('toggle-radius_advanced collapse');
+
+if (!empty($pconfig['radius_advanced'])) {
+	$group->addClass('in');
+}
+
+$group->add(new Form_Input(
+	'radius_retransmit_base',
+	'Retrasmit Base',
+	'text',
+	$pconfig['radius_retransmit_base'],
+	['placeholder' => 1.4]
+))->setHelp('%1$sRetransmit Base%2$s -%3$sBase to use for calculating exponential back off.',
+	'<b>', '</b>', '<br/>');
+
+$group->add(new Form_Input(
+	'radius_retransmit_timeout',
+	'Retrasmit Timeout',
+	'text',
+	$pconfig['radius_retransmit_timeout'],
+	['placeholder' => 2.0]
+))->setHelp('%1$sRetransmit Timeout%2$s -%3$sTimeout in seconds before sending first retransmit.',
+	'<b>', '</b>', '<br/>');
+
+$group->add(new Form_Input(
+	'radius_retransmit_tries',
+	'Retransmit Tries',
+	'text',
+	$pconfig['radius_retransmit_tries'],
+	['placeholder' => 4]
+))->setHelp('%1$sRetransmit Tries%2$s -%3$sNumber of times to retransmit a packet before giving up.',
+	'<b>', '</b>', '<br/>');
+
+$group->add(new Form_Input(
+	'radius_sockets',
+	'Sockets',
+	'text',
+	$pconfig['radius_sockets'],
+	['placeholder' => 1]
+))->setHelp('%1$sSockets%2$s -%3$sNumber of sockets (ports) to use, increase for high load.',
+	'<b>', '</b>', '<br/>');
+
+$section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'net_list_enable',

@@ -4,7 +4,7 @@ require_once("guiconfig.inc");
 
 /*
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2013-2020 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2013-2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  */
 // Fetch a list of directories and files inside a given directory

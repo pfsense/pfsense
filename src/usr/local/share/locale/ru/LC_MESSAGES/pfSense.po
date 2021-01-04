@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-10 12:32-0300\n"
+"POT-Creation-Date: 2021-01-04 11:27-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -107,7 +107,7 @@ msgstr "Брандмауэр: NAT: 1:1 - отключенное правило N
 #: src/usr/local/www/firewall_shaper_wizards.php:59
 #: src/usr/local/www/firewall_shaper_vinterface.php:41
 #: src/usr/local/www/firewall_aliases.php:80
-#: src/usr/local/www/firewall_nat.php:195
+#: src/usr/local/www/firewall_nat.php:208
 #: src/usr/local/www/firewall_shaper_queues.php:182
 #: src/usr/local/www/firewall_virtual_ip.php:265
 #: src/usr/local/www/firewall_virtual_ip_edit.php:297
@@ -120,7 +120,7 @@ msgstr "Брандмауэр: NAT: 1:1 - отключенное правило N
 #: src/usr/local/www/firewall_aliases_import.php:50
 #: src/usr/local/www/firewall_schedule.php:44 src/usr/local/www/easyrule.php:63
 #: src/usr/local/www/firewall_aliases_edit.php:139
-#: src/usr/local/www/firewall_rules.php:310
+#: src/usr/local/www/firewall_rules.php:322
 #: src/usr/local/www/firewall_nat_npt_edit.php:150
 msgid "Firewall"
 msgstr "Межсетевой экран"
@@ -128,7 +128,7 @@ msgstr "Межсетевой экран"
 #: src/usr/local/www/firewall_nat_1to1.php:127
 #: src/usr/local/www/firewall_nat_1to1_edit.php:289
 #: src/usr/local/www/firewall_nat_out.php:197
-#: src/usr/local/www/firewall_nat.php:195 src/usr/local/www/diag_backup.php:91
+#: src/usr/local/www/firewall_nat.php:208 src/usr/local/www/diag_backup.php:91
 #: src/usr/local/www/firewall_nat_edit.php:735
 #: src/usr/local/www/firewall_nat_npt.php:118
 #: src/usr/local/www/firewall_nat_out_edit.php:392
@@ -141,14 +141,14 @@ msgstr "Сетевая Трансляция Адресов (NAT)"
 #: src/usr/local/www/firewall_nat_1to1.php:142
 #: src/usr/local/www/firewall_nat_1to1_edit.php:289
 #: src/usr/local/www/firewall_nat_out.php:216
-#: src/usr/local/www/firewall_nat.php:210
+#: src/usr/local/www/firewall_nat.php:223
 #: src/usr/local/www/firewall_nat_npt.php:133
 msgid "1:1"
 msgstr "1:1"
 
 #: src/usr/local/www/firewall_nat_1to1.php:136
 #: src/usr/local/www/firewall_nat_out.php:210
-#: src/usr/local/www/firewall_nat.php:204
+#: src/usr/local/www/firewall_nat.php:217
 #: src/usr/local/www/firewall_nat_npt.php:127
 msgid "The NAT configuration has been changed."
 msgstr "Конфигурация NAT была изменена"
@@ -166,7 +166,7 @@ msgstr "Конфигурация NAT была изменена"
 #: src/usr/local/www/firewall_shaper_wizards.php:86
 #: src/usr/local/www/firewall_shaper_vinterface.php:368
 #: src/usr/local/www/firewall_aliases.php:94
-#: src/usr/local/www/firewall_nat.php:205
+#: src/usr/local/www/firewall_nat.php:218
 #: src/usr/local/www/services_igmpproxy.php:90
 #: src/usr/local/www/services_pppoe.php:86
 #: src/usr/local/www/vpn_ipsec_mobile.php:456
@@ -180,15 +180,15 @@ msgstr "Конфигурация NAT была изменена"
 #: src/usr/local/www/vpn_ipsec_keys.php:84
 #: src/usr/local/www/services_unbound_advanced.php:280
 #: src/usr/local/www/system_gateways.php:246
-#: src/usr/local/www/firewall_rules.php:326
+#: src/usr/local/www/firewall_rules.php:338
 #: src/usr/local/www/system_gateway_groups.php:113
 msgid "The changes must be applied for them to take effect."
 msgstr "Изменения должны быть применены для того, чтобы они вступили в силу."
 
 #: src/usr/local/www/firewall_nat_1to1.php:141
 #: src/usr/local/www/firewall_nat_out.php:215
-#: src/usr/local/www/firewall_nat.php:195
-#: src/usr/local/www/firewall_nat.php:209
+#: src/usr/local/www/firewall_nat.php:208
+#: src/usr/local/www/firewall_nat.php:222
 #: src/usr/local/www/firewall_nat_edit.php:735
 #: src/usr/local/www/firewall_nat_npt.php:132
 msgid "Port Forward"
@@ -197,7 +197,7 @@ msgstr "Проброс Порта"
 #: src/usr/local/www/firewall_nat_1to1.php:143
 #: src/usr/local/www/firewall_nat_out.php:197
 #: src/usr/local/www/firewall_nat_out.php:217
-#: src/usr/local/www/firewall_nat.php:211
+#: src/usr/local/www/firewall_nat.php:224
 #: src/usr/local/www/firewall_nat_npt.php:134
 #: src/usr/local/www/firewall_nat_out_edit.php:392
 msgid "Outbound"
@@ -205,7 +205,7 @@ msgstr "Исходящий"
 
 #: src/usr/local/www/firewall_nat_1to1.php:144
 #: src/usr/local/www/firewall_nat_out.php:218
-#: src/usr/local/www/firewall_nat.php:212
+#: src/usr/local/www/firewall_nat.php:225
 #: src/usr/local/www/firewall_nat_npt.php:118
 #: src/usr/local/www/firewall_nat_npt.php:135
 #: src/usr/local/www/firewall_nat_npt_edit.php:150
@@ -222,8 +222,8 @@ msgstr "NAT 1:1 "
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
 #: src/usr/local/www/guiconfig.inc:1126
-#: src/usr/local/www/diag_dump_states.php:138
-#: src/usr/local/www/diag_dump_states.php:187
+#: src/usr/local/www/diag_dump_states.php:124
+#: src/usr/local/www/diag_dump_states.php:178
 #: src/usr/local/www/services_rfc2136.php:83
 #: src/usr/local/www/status_logs_filter.php:153
 #: src/usr/local/www/status_logs_common.inc:504
@@ -235,7 +235,7 @@ msgstr "NAT 1:1 "
 #: src/usr/local/www/firewall_nat_out.php:527
 #: src/usr/local/www/services_dhcp_relay.php:81
 #: src/usr/local/www/services_ntpd.php:296
-#: src/usr/local/www/firewall_nat.php:236 src/usr/local/www/status_upnp.php:71
+#: src/usr/local/www/firewall_nat.php:249 src/usr/local/www/status_upnp.php:71
 #: src/usr/local/www/services_wol.php:193
 #: src/usr/local/www/interfaces_qinq.php:107
 #: src/usr/local/www/interfaces_gif.php:97
@@ -243,7 +243,7 @@ msgstr "NAT 1:1 "
 #: src/usr/local/www/firewall_virtual_ip.php:290
 #: src/usr/local/www/system_routes.php:243
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
-#: src/usr/local/www/diag_arp.php:185 src/usr/local/www/diag_arp.php:213
+#: src/usr/local/www/diag_arp.php:98 src/usr/local/www/diag_arp.php:126
 #: src/usr/local/www/interfaces_ppps.php:105
 #: src/usr/local/www/firewall_nat_edit.php:235
 #: src/usr/local/www/firewall_nat_edit.php:238
@@ -322,7 +322,7 @@ msgstr "IP назначения"
 #: src/usr/local/www/interfaces_groups.php:81
 #: src/usr/local/www/status_services.php:89
 #: src/usr/local/www/interfaces_wireless_edit.php:189
-#: src/usr/local/www/firewall_nat.php:244
+#: src/usr/local/www/firewall_nat.php:257
 #: src/usr/local/www/services_dhcp_edit.php:525
 #: src/usr/local/www/pkg_mgr.php:69 src/usr/local/www/pkg_mgr.php:161
 #: src/usr/local/www/status_upnp.php:77 src/usr/local/www/services_wol.php:195
@@ -385,7 +385,7 @@ msgstr "IP назначения"
 #: src/usr/local/www/vpn_openvpn_server.php:863
 #: src/usr/local/www/vpn_openvpn_server.php:1652
 #: src/usr/local/www/services_dyndns.php:96
-#: src/usr/local/www/firewall_rules.php:403
+#: src/usr/local/www/firewall_rules.php:415
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:80
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:231
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:167
@@ -426,7 +426,7 @@ msgstr "Описание"
 #: src/usr/local/www/interfaces_groups.php:82
 #: src/usr/local/www/services_captiveportal_vouchers.php:306
 #: src/usr/local/www/status_services.php:91
-#: src/usr/local/www/firewall_nat.php:245
+#: src/usr/local/www/firewall_nat.php:258
 #: src/usr/local/www/system_camanager.php:401
 #: src/usr/local/www/services_wol.php:196
 #: src/usr/local/www/diag_confbak.php:217
@@ -438,7 +438,7 @@ msgstr "Описание"
 #: src/usr/local/www/firewall_virtual_ip.php:293
 #: src/usr/local/www/system_routes.php:245
 #: src/usr/local/www/services_captiveportal_mac.php:166
-#: src/usr/local/www/diag_arp.php:219 src/usr/local/www/vpn_openvpn_csc.php:698
+#: src/usr/local/www/diag_arp.php:132 src/usr/local/www/vpn_openvpn_csc.php:698
 #: src/usr/local/www/system_authservers.php:510
 #: src/usr/local/www/interfaces_ppps.php:108
 #: src/usr/local/www/services_captiveportal_zones.php:81
@@ -457,7 +457,7 @@ msgstr "Описание"
 #: src/usr/local/www/system_gateways.php:272
 #: src/usr/local/www/vpn_openvpn_server.php:1653
 #: src/usr/local/www/services_dyndns.php:97
-#: src/usr/local/www/firewall_rules.php:404
+#: src/usr/local/www/firewall_rules.php:416
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:52
 #: src/usr/local/www/interfaces_vlan.php:101
 #: src/usr/local/www/interfaces_lagg.php:107
@@ -469,14 +469,14 @@ msgstr "Действия"
 
 #: src/usr/local/www/firewall_nat_1to1.php:189
 #: src/usr/local/www/vpn_ipsec.php:329 src/usr/local/www/vpn_ipsec.php:495
-#: src/usr/local/www/firewall_nat.php:310
+#: src/usr/local/www/firewall_nat.php:323
 #: src/usr/local/www/firewall_nat_npt.php:176
-#: src/usr/local/www/firewall_rules.php:514
+#: src/usr/local/www/firewall_rules.php:526
 msgid "click to toggle enabled/disabled status"
 msgstr "щелкните по переключателю что бы активировать/деактивировать статус"
 
 #: src/usr/local/www/firewall_nat_1to1.php:191
-#: src/usr/local/www/firewall_nat.php:314
+#: src/usr/local/www/firewall_nat.php:327
 msgid "Negated: This rule excludes NAT from a later rule"
 msgstr "Отрицание: Данное правило исключает NAT в дальнейшем правиле"
 
@@ -485,16 +485,16 @@ msgstr "Отрицание: Данное правило исключает NAT �
 #: src/usr/local/www/firewall_nat_out.php:369
 #: src/usr/local/www/firewall_nat_out.php:396
 #: src/usr/local/www/firewall_nat_out.php:420
-#: src/usr/local/www/firewall_nat.php:352
-#: src/usr/local/www/firewall_nat.php:369
-#: src/usr/local/www/firewall_nat.php:387
-#: src/usr/local/www/firewall_nat.php:404
-#: src/usr/local/www/firewall_nat.php:421
-#: src/usr/local/www/firewall_nat.php:439
-#: src/usr/local/www/firewall_rules.php:780
-#: src/usr/local/www/firewall_rules.php:789
-#: src/usr/local/www/firewall_rules.php:798
-#: src/usr/local/www/firewall_rules.php:807
+#: src/usr/local/www/firewall_nat.php:365
+#: src/usr/local/www/firewall_nat.php:382
+#: src/usr/local/www/firewall_nat.php:400
+#: src/usr/local/www/firewall_nat.php:417
+#: src/usr/local/www/firewall_nat.php:434
+#: src/usr/local/www/firewall_nat.php:452
+#: src/usr/local/www/firewall_rules.php:792
+#: src/usr/local/www/firewall_rules.php:801
+#: src/usr/local/www/firewall_rules.php:810
+#: src/usr/local/www/firewall_rules.php:819
 msgid "Alias details"
 msgstr "Детали алиаса"
 
@@ -550,9 +550,9 @@ msgstr "Добавить соответствие вверх списка"
 #: src/usr/local/www/interfaces_groups.php:126
 #: src/usr/local/www/services_ntpd.php:354
 #: src/usr/local/www/services_captiveportal_vouchers.php:341
-#: src/usr/local/www/firewall_nat.php:486
-#: src/usr/local/www/firewall_nat.php:490
-#: src/usr/local/www/services_dhcp_edit.php:940
+#: src/usr/local/www/firewall_nat.php:499
+#: src/usr/local/www/firewall_nat.php:503
+#: src/usr/local/www/services_dhcp_edit.php:947
 #: src/usr/local/www/system_camanager.php:490
 #: src/usr/local/www/services_wol.php:177
 #: src/usr/local/www/services_wol.php:225
@@ -585,8 +585,8 @@ msgstr "Добавить соответствие вверх списка"
 #: src/usr/local/www/system_gateways.php:360
 #: src/usr/local/www/vpn_openvpn_server.php:1720
 #: src/usr/local/www/services_dyndns.php:232
-#: src/usr/local/www/firewall_rules.php:899
-#: src/usr/local/www/firewall_rules.php:903
+#: src/usr/local/www/firewall_rules.php:911
+#: src/usr/local/www/firewall_rules.php:915
 #: src/usr/local/www/vpn_ipsec_settings.php:546
 #: src/usr/local/www/pkg_edit.php:1481
 #: src/usr/local/www/interfaces_vlan.php:140
@@ -617,8 +617,8 @@ msgstr "Удалить выделенное соотвествие"
 #: src/usr/local/www/firewall_nat_out.php:499
 #: src/usr/local/www/services_dhcp_relay.php:196
 #: src/usr/local/www/services_ntpd.php:344
-#: src/usr/local/www/firewall_nat.php:494
-#: src/usr/local/www/services_dhcp_edit.php:928
+#: src/usr/local/www/firewall_nat.php:507
+#: src/usr/local/www/services_dhcp_edit.php:935
 #: src/usr/local/www/system.php:599
 #: src/usr/local/www/system_advanced_admin.php:651
 #: src/usr/local/www/firewall_schedule_edit.php:618
@@ -632,7 +632,7 @@ msgstr "Удалить выделенное соотвествие"
 #: src/usr/local/www/services_unbound_host_edit.php:292
 #: src/usr/local/www/interfaces_qinq_edit.php:330
 #: src/usr/local/www/services_dnsmasq_edit.php:281
-#: src/usr/local/www/firewall_rules.php:907
+#: src/usr/local/www/firewall_rules.php:919
 #: src/usr/local/www/vpn_ipsec_settings.php:534
 #: src/usr/local/www/pkg_edit.php:1469 src/etc/inc/shaper.inc:4332
 msgid "Delete"
@@ -654,8 +654,8 @@ msgstr "Сохранить порядок соотвествий"
 #: src/usr/local/www/system_certmanager.php:652
 #: src/usr/local/www/system_certmanager.php:673
 #: src/usr/local/www/firewall_nat_out.php:503
-#: src/usr/local/www/firewall_nat.php:498
-#: src/usr/local/www/firewall_nat.php:513
+#: src/usr/local/www/firewall_nat.php:511
+#: src/usr/local/www/firewall_nat.php:526
 #: src/usr/local/www/system_camanager.php:331
 #: src/usr/local/www/system_camanager.php:351
 #: src/usr/local/www/diag_confbak.php:174 src/usr/local/www/diag_edit.php:124
@@ -665,8 +665,8 @@ msgstr "Сохранить порядок соотвествий"
 #: src/usr/local/www/system_crlmanager.php:366
 #: src/usr/local/www/firewall_nat_npt.php:235
 #: src/usr/local/www/system_gateways.php:356
-#: src/usr/local/www/firewall_rules.php:911
-#: src/usr/local/www/firewall_rules.php:962
+#: src/usr/local/www/firewall_rules.php:923
+#: src/usr/local/www/firewall_rules.php:974
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:260
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:318
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:164
@@ -745,7 +745,7 @@ msgstr ""
 #: src/usr/local/www/status_filter_reload.php:35
 #: src/usr/local/www/status_ntpd.php:300 src/usr/local/www/status_ntpd.php:312
 #: src/usr/local/www/status_logs_filter_dynamic.php:84
-#: src/usr/local/www/diag_arp.php:189 src/usr/local/www/diag_arp.php:217
+#: src/usr/local/www/diag_arp.php:102 src/usr/local/www/diag_arp.php:130
 #: src/usr/local/www/status_gateways.php:37
 #: src/usr/local/www/status_gateways.php:62
 #: src/usr/local/www/status_captiveportal.php:155
@@ -1045,7 +1045,7 @@ msgstr "IP Компрессия:"
 #: src/usr/local/www/firewall_rules_edit.php:1711
 #: src/usr/local/www/firewall_rules_edit.php:1750
 #: src/usr/local/www/firewall_rules_edit.php:1757
-#: src/usr/local/www/firewall_rules.php:838 src/etc/inc/openvpn.inc:55
+#: src/usr/local/www/firewall_rules.php:850 src/etc/inc/openvpn.inc:55
 msgid "none"
 msgstr "нет"
 
@@ -1195,7 +1195,7 @@ msgstr "Недоступны сведения о статусе IPsec."
 #: src/usr/local/www/interfaces.php:1833
 #: src/usr/local/www/status_logs_filter_summary.php:86
 #: src/usr/local/www/interfaces_qinq_edit.php:31
-#: src/usr/local/www/firewall_rules.php:391
+#: src/usr/local/www/firewall_rules.php:403
 #: src/usr/local/www/widgets/include/interfaces.inc:25
 #: src/usr/local/www/interfaces_vlan.php:65
 #: src/usr/local/www/interfaces_lagg.php:75
@@ -1270,7 +1270,7 @@ msgstr "Удалить интерфейс"
 #: src/usr/local/www/services_wol_edit.php:110
 #: src/usr/local/www/interfaces_qinq_edit.php:31
 #: src/usr/local/www/vpn_openvpn_server.php:756
-#: src/usr/local/www/firewall_rules.php:854
+#: src/usr/local/www/firewall_rules.php:866
 #: src/usr/local/www/services_captiveportal_mac_edit.php:66
 #: src/usr/local/www/firewall_nat_npt_edit.php:150
 msgid "Edit"
@@ -1577,7 +1577,7 @@ msgstr ""
 "прежде чем они смогут быть назначены."
 
 #: src/usr/local/www/diag_limiter_info.php:33
-#: src/usr/local/www/diag_dump_states.php:77
+#: src/usr/local/www/diag_dump_states.php:63
 #: src/usr/local/www/diag_pftop.php:33 src/usr/local/www/diag_resetstate.php:58
 #: src/usr/local/www/diag_system_activity.php:33
 #: src/usr/local/www/diag_reboot.php:45
@@ -1588,7 +1588,7 @@ msgstr ""
 #: src/usr/local/www/diag_sockets.php:33 src/usr/local/www/diag_confbak.php:96
 #: src/usr/local/www/diag_states_summary.php:199
 #: src/usr/local/www/diag_backup.php:121 src/usr/local/www/diag_edit.php:34
-#: src/usr/local/www/diag_arp.php:110 src/usr/local/www/diag_testport.php:40
+#: src/usr/local/www/diag_arp.php:71 src/usr/local/www/diag_testport.php:40
 #: src/usr/local/www/diag_routes.php:68 src/usr/local/www/diag_defaults.php:43
 #: src/usr/local/www/diag_command.php:66 src/usr/local/www/diag_tables.php:31
 #: src/usr/local/www/crash_reporter.php:58 src/usr/local/www/head.inc:702
@@ -2032,7 +2032,7 @@ msgstr "*Внешняя подсеть IP"
 #: src/usr/local/www/services_dhcp.php:1600
 #: src/usr/local/www/system_certmanager.php:1187
 #: src/usr/local/www/system_certmanager.php:1190
-#: src/usr/local/www/services_dhcp_edit.php:917
+#: src/usr/local/www/services_dhcp_edit.php:924
 #: src/usr/local/www/services_igmpproxy.php:128
 #: src/usr/local/www/firewall_virtual_ip.php:291
 #: src/usr/local/www/status_ntpd.php:316
@@ -2165,7 +2165,7 @@ msgstr "Использовать параметры системы по умол
 #: src/usr/local/www/services_dhcp_relay.php:158
 #: src/usr/local/www/services_ntpd.php:287
 #: src/usr/local/www/services_captiveportal_vouchers.php:353
-#: src/usr/local/www/services_dhcp_edit.php:798
+#: src/usr/local/www/services_dhcp_edit.php:805
 #: src/usr/local/www/services_snmp.php:215
 #: src/usr/local/www/services_snmp.php:258
 #: src/usr/local/www/services_igmpproxy.php:102
@@ -2177,7 +2177,7 @@ msgstr "Использовать параметры системы по умол
 #: src/usr/local/www/services_captiveportal.php:534
 #: src/usr/local/www/vpn_ipsec_phase1.php:1067
 #: src/usr/local/www/interfaces.php:1911 src/usr/local/www/interfaces.php:3316
-#: src/usr/local/www/firewall_rules.php:858 src/etc/inc/shaper.inc:4367
+#: src/usr/local/www/firewall_rules.php:870 src/etc/inc/shaper.inc:4367
 #: src/etc/inc/shaper.inc:4821 src/usr/local/www/diag_routes.php:85
 msgid "Enable"
 msgstr "Включить"
@@ -2187,7 +2187,7 @@ msgstr "Включить"
 #: src/usr/local/www/vpn_openvpn_csc.php:356
 #: src/usr/local/www/firewall_nat_edit.php:1005
 #: src/usr/local/www/vpn_ipsec_phase1.php:1067
-#: src/usr/local/www/firewall_rules.php:861
+#: src/usr/local/www/firewall_rules.php:873
 msgid "Disable"
 msgstr "Выключить"
 
@@ -2319,7 +2319,7 @@ msgstr "Отображаются только первые 10 тысяч зап�
 #: src/usr/local/www/system_advanced_sysctl.php:155
 #: src/usr/local/www/services_dhcp.php:1607
 #: src/usr/local/www/system_certmanager.php:1197
-#: src/usr/local/www/services_dhcp_edit.php:924
+#: src/usr/local/www/services_dhcp_edit.php:931
 msgid "Value"
 msgstr "Значение"
 
@@ -2371,7 +2371,7 @@ msgstr "Имя"
 #: src/usr/local/www/firewall_rules_edit.php:1738
 #: src/usr/local/www/interfaces.php:629 src/usr/local/www/interfaces.php:680
 #: src/usr/local/www/system_gateways.php:269
-#: src/usr/local/www/firewall_rules.php:400
+#: src/usr/local/www/firewall_rules.php:412
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:307
 msgid "Gateway"
 msgstr "Шлюз"
@@ -2425,13 +2425,13 @@ msgstr "Для каждого DNS-сервера должен быть указ�
 
 #: src/usr/local/www/services_dhcpv6.php:311
 #: src/usr/local/www/services_dhcp.php:364
-#: src/usr/local/www/services_dhcp_edit.php:277
+#: src/usr/local/www/services_dhcp_edit.php:279
 msgid "The default lease time must be at least 60 seconds."
 msgstr "Время аренды по умолчанию должно быть как минимум 60 секунд."
 
 #: src/usr/local/www/services_dhcpv6.php:314
 #: src/usr/local/www/services_dhcp.php:392
-#: src/usr/local/www/services_dhcp_edit.php:280
+#: src/usr/local/www/services_dhcp_edit.php:282
 msgid ""
 "The maximum lease time must be at least 60 seconds and higher than the "
 "default lease time."
@@ -2441,8 +2441,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:318
 #: src/usr/local/www/services_dhcp.php:396
-#: src/usr/local/www/services_dhcp_edit.php:283
-#: src/usr/local/www/services_dhcp_edit.php:290
+#: src/usr/local/www/services_dhcp_edit.php:286
 msgid ""
 "A valid domain name must be specified for the dynamic DNS registration."
 msgstr ""
@@ -2450,8 +2449,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:321
 #: src/usr/local/www/services_dhcp.php:399
-#: src/usr/local/www/services_dhcp_edit.php:286
-#: src/usr/local/www/services_dhcp_edit.php:293
+#: src/usr/local/www/services_dhcp_edit.php:289
 msgid ""
 "A valid primary domain name server IP address must be specified for the "
 "dynamic domain name."
@@ -2461,6 +2459,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:324
 #: src/usr/local/www/services_dhcp.php:402
+#: src/usr/local/www/services_dhcp_edit.php:292
 msgid ""
 "A valid secondary domain name server IP address must be specified for the "
 "dynamic domain name."
@@ -2468,14 +2467,14 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:327
 #: src/usr/local/www/services_dhcp.php:405
-#: src/usr/local/www/services_dhcp_edit.php:296
+#: src/usr/local/www/services_dhcp_edit.php:295
 msgid "A valid domain key name, algorithm and secret must be specified."
 msgstr ""
 "Необходимо указать действительное имя домена, алгоритм и секретный ключ."
 
 #: src/usr/local/www/services_dhcpv6.php:330
 #: src/usr/local/www/services_dhcp.php:408
-#: src/usr/local/www/services_dhcp_edit.php:299
+#: src/usr/local/www/services_dhcp_edit.php:298
 msgid ""
 "The domain key name may only contain the characters a-z, A-Z, 0-9, '-', '_' "
 "and '.'"
@@ -2483,14 +2482,14 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:333
 #: src/usr/local/www/services_dhcp.php:411
-#: src/usr/local/www/services_dhcp_edit.php:302
+#: src/usr/local/www/services_dhcp_edit.php:301
 msgid "The domain key secret must be a Base64 encoded value."
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:340
 #: src/usr/local/www/services_router_advertisements.php:167
 #: src/usr/local/www/services_dhcp.php:418
-#: src/usr/local/www/services_dhcp_edit.php:309
+#: src/usr/local/www/services_dhcp_edit.php:308
 msgid "A valid domain search list must be specified."
 msgstr "Валидный список поиска доменов должен быть указан."
 
@@ -2504,7 +2503,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:352
 #: src/usr/local/www/services_dhcp.php:438
-#: src/usr/local/www/services_dhcp_edit.php:321
+#: src/usr/local/www/services_dhcp_edit.php:320
 msgid "A valid domain name must be specified for the DNS domain."
 msgstr "Доменное имя должно быть указано для домена DNS."
 
@@ -2851,17 +2850,17 @@ msgstr ""
 #: src/usr/local/www/services_ntpd.php:598
 #: src/usr/local/www/services_ntpd.php:635
 #: src/usr/local/www/services_dhcp_edit.php:631
-#: src/usr/local/www/services_dhcp_edit.php:696
-#: src/usr/local/www/services_dhcp_edit.php:740
-#: src/usr/local/www/services_dhcp_edit.php:762
-#: src/usr/local/www/services_dhcp_edit.php:784
-#: src/usr/local/www/services_dhcp_edit.php:856
-#: src/usr/local/www/services_dhcp_edit.php:985
-#: src/usr/local/www/services_dhcp_edit.php:1021
-#: src/usr/local/www/services_dhcp_edit.php:1055
-#: src/usr/local/www/services_dhcp_edit.php:1089
-#: src/usr/local/www/services_dhcp_edit.php:1124
-#: src/usr/local/www/services_dhcp_edit.php:1165
+#: src/usr/local/www/services_dhcp_edit.php:703
+#: src/usr/local/www/services_dhcp_edit.php:747
+#: src/usr/local/www/services_dhcp_edit.php:769
+#: src/usr/local/www/services_dhcp_edit.php:791
+#: src/usr/local/www/services_dhcp_edit.php:863
+#: src/usr/local/www/services_dhcp_edit.php:999
+#: src/usr/local/www/services_dhcp_edit.php:1035
+#: src/usr/local/www/services_dhcp_edit.php:1069
+#: src/usr/local/www/services_dhcp_edit.php:1103
+#: src/usr/local/www/services_dhcp_edit.php:1138
+#: src/usr/local/www/services_dhcp_edit.php:1179
 #: src/usr/local/www/system_gateways_edit.php:243
 #: src/usr/local/www/system_gateways_edit.php:447
 #: src/usr/local/www/interfaces_bridge_edit.php:437
@@ -2889,7 +2888,7 @@ msgstr "Отобразить Расширенные"
 #: src/usr/local/www/services_rfc2136_edit.php:177
 #: src/usr/local/www/head.inc:328 src/usr/local/www/services_dyndns.php:69
 #: src/etc/inc/ipsec.inc:104 src/etc/inc/dyndns.class:1299
-#: src/etc/inc/dyndns.class:2428
+#: src/etc/inc/dyndns.class:2443
 msgid "Dynamic DNS"
 msgstr "Динамический DNS"
 
@@ -2928,11 +2927,11 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:822
 #: src/usr/local/www/services_dhcp.php:1308
+#: src/usr/local/www/services_dhcp_edit.php:668
 msgid "Primary DDNS address"
 msgstr "Основной адрес DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:825
-#: src/usr/local/www/services_dhcp_edit.php:671
 msgid ""
 "Enter the primary domain name server IP address for the dynamic domain name."
 msgstr ""
@@ -2941,6 +2940,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:829
 #: src/usr/local/www/services_dhcp.php:1315
+#: src/usr/local/www/services_dhcp_edit.php:675
 msgid "Secondary DDNS address"
 msgstr ""
 
@@ -2951,12 +2951,12 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:836
-#: src/usr/local/www/services_dhcp_edit.php:675
+#: src/usr/local/www/services_dhcp_edit.php:682
 msgid "DDNS Domain Key name"
 msgstr "Ключ имени домена DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:839
-#: src/usr/local/www/services_dhcp_edit.php:678
+#: src/usr/local/www/services_dhcp_edit.php:685
 msgid ""
 "Enter the dynamic DNS domain key name which will be used to register client "
 "names in the DNS server."
@@ -2966,17 +2966,17 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:843
 #: src/usr/local/www/services_dhcp.php:1329
-#: src/usr/local/www/services_dhcp_edit.php:682
+#: src/usr/local/www/services_dhcp_edit.php:689
 msgid "Key algorithm"
 msgstr "Алгоритм Ключа"
 
 #: src/usr/local/www/services_dhcpv6.php:857
-#: src/usr/local/www/services_dhcp_edit.php:689
+#: src/usr/local/www/services_dhcp_edit.php:696
 msgid "DDNS Domain Key secret"
 msgstr "Ключ пароля домена DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:861
-#: src/usr/local/www/services_dhcp_edit.php:692
+#: src/usr/local/www/services_dhcp_edit.php:699
 msgid ""
 "Enter the dynamic DNS domain key secret which will be used to register "
 "client names in the DNS server."
@@ -3027,39 +3027,39 @@ msgid "DDNS Reverse"
 msgstr "Обратный DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:893
-#: src/usr/local/www/services_dhcp_edit.php:704
+#: src/usr/local/www/services_dhcp_edit.php:711
 msgid "NTP servers"
 msgstr "NTP серверы"
 
 #: src/usr/local/www/services_dhcpv6.php:897
-#: src/usr/local/www/services_dhcp_edit.php:708
+#: src/usr/local/www/services_dhcp_edit.php:715
 #: src/usr/local/www/vpn_openvpn_csc.php:533
 msgid "NTP Servers"
 msgstr "NTP серверы"
 
 #: src/usr/local/www/services_dhcpv6.php:901
 #: src/usr/local/www/services_dhcp.php:1401
-#: src/usr/local/www/services_dhcp_edit.php:712
+#: src/usr/local/www/services_dhcp_edit.php:719
 #: src/usr/local/www/vpn_openvpn_server.php:1470
 msgid "NTP Server 1"
 msgstr "Сервер NTP 1"
 
 #: src/usr/local/www/services_dhcpv6.php:909
 #: src/usr/local/www/services_dhcp.php:1408
-#: src/usr/local/www/services_dhcp_edit.php:720
+#: src/usr/local/www/services_dhcp_edit.php:727
 #: src/usr/local/www/vpn_openvpn_server.php:1477
 msgid "NTP Server 2"
 msgstr "Сервер NTP 2"
 
 #: src/usr/local/www/services_dhcpv6.php:917
 #: src/usr/local/www/services_dhcp.php:1415
-#: src/usr/local/www/services_dhcp_edit.php:728
+#: src/usr/local/www/services_dhcp_edit.php:735
 msgid "NTP Server 3"
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:937
 #: src/usr/local/www/services_dhcp.php:1453
-#: src/usr/local/www/services_dhcp_edit.php:770
+#: src/usr/local/www/services_dhcp_edit.php:777
 msgid "LDAP"
 msgstr "LDAP"
 
@@ -3079,14 +3079,14 @@ msgstr "Универсальный указатель ресурса загру�
 #: src/usr/local/www/services_dhcpv6.php:986
 #: src/usr/local/www/services_dhcp.php:1547
 #: src/usr/local/www/services_dhcp.php:1553
-#: src/usr/local/www/services_dhcp_edit.php:864
-#: src/usr/local/www/services_dhcp_edit.php:870
+#: src/usr/local/www/services_dhcp_edit.php:871
+#: src/usr/local/www/services_dhcp_edit.php:877
 msgid "Additional BOOTP/DHCP Options"
 msgstr "Дополнительные BOOTP/DHCP Опции"
 
 #: src/usr/local/www/services_dhcpv6.php:1021
 #: src/usr/local/www/services_dhcp.php:1592
-#: src/usr/local/www/services_dhcp_edit.php:909
+#: src/usr/local/www/services_dhcp_edit.php:916
 msgid "Number"
 msgstr "Число"
 
@@ -3139,7 +3139,7 @@ msgstr "IPv6 адрес"
 #: src/usr/local/www/services_dyndns_edit.php:324
 #: src/usr/local/www/services_captiveportal_hostname.php:119
 #: src/usr/local/www/system.php:172 src/usr/local/www/system.php:545
-#: src/usr/local/www/diag_arp.php:188 src/usr/local/www/diag_arp.php:216
+#: src/usr/local/www/diag_arp.php:101 src/usr/local/www/diag_arp.php:129
 #: src/usr/local/www/services_rfc2136_edit.php:89
 #: src/usr/local/www/status_dhcpv6_leases.php:257
 #: src/usr/local/www/status_dhcpv6_leases.php:287
@@ -3179,12 +3179,12 @@ msgstr "Удалить статическую привязку"
 #: src/usr/local/www/services_dhcp.php:2021
 #: src/usr/local/www/services_ntpd.php:596
 #: src/usr/local/www/services_ntpd.php:633
-#: src/usr/local/www/services_dhcp_edit.php:983
-#: src/usr/local/www/services_dhcp_edit.php:1019
-#: src/usr/local/www/services_dhcp_edit.php:1053
-#: src/usr/local/www/services_dhcp_edit.php:1087
-#: src/usr/local/www/services_dhcp_edit.php:1122
-#: src/usr/local/www/services_dhcp_edit.php:1163
+#: src/usr/local/www/services_dhcp_edit.php:997
+#: src/usr/local/www/services_dhcp_edit.php:1033
+#: src/usr/local/www/services_dhcp_edit.php:1067
+#: src/usr/local/www/services_dhcp_edit.php:1101
+#: src/usr/local/www/services_dhcp_edit.php:1136
+#: src/usr/local/www/services_dhcp_edit.php:1177
 #: src/usr/local/www/system_gateways_edit.php:445
 #: src/usr/local/www/interfaces_bridge_edit.php:687
 #: src/usr/local/www/firewall_nat_edit.php:1262
@@ -3289,7 +3289,7 @@ msgstr "Имя пользователя"
 
 #: src/usr/local/www/vpn_l2tp_users.php:75
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:58
-#: src/usr/local/www/services_dhcp.php:1695 src/usr/local/www/diag_arp.php:214
+#: src/usr/local/www/services_dhcp.php:1695 src/usr/local/www/diag_arp.php:127
 #: src/usr/local/www/status_captiveportal.php:217
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:63
 #: src/usr/local/www/services_unbound_host_edit.php:71
@@ -3488,31 +3488,31 @@ msgstr ""
 "PSK для любого пользователя может быть установлен с помощью любого "
 "идентификатора."
 
-#: src/usr/local/www/diag_dump_states.php:57
+#: src/usr/local/www/diag_dump_states.php:42
 #: src/usr/local/www/status_openvpn.php:49
 #: src/usr/local/www/diag_dump_states_sources.php:41
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:288
 msgid "invalid input"
 msgstr "неверный ввод"
 
-#: src/usr/local/www/diag_dump_states.php:77
-#: src/usr/local/www/diag_dump_states.php:113
-#: src/usr/local/www/diag_dump_states.php:181
+#: src/usr/local/www/diag_dump_states.php:63
+#: src/usr/local/www/diag_dump_states.php:99
+#: src/usr/local/www/diag_dump_states.php:172
 #: src/usr/local/www/diag_resetstate.php:58
 #: src/usr/local/www/diag_resetstate.php:83
 #: src/usr/local/www/diag_dump_states_sources.php:55
 #: src/usr/local/www/diag_dump_states_sources.php:60
 #: src/usr/local/www/diag_states_summary.php:154
 #: src/usr/local/www/diag_states_summary.php:156 src/usr/local/www/head.inc:416
-#: src/usr/local/www/firewall_rules.php:387
+#: src/usr/local/www/firewall_rules.php:399
 msgid "States"
 msgstr "Состояния"
 
-#: src/usr/local/www/diag_dump_states.php:80
+#: src/usr/local/www/diag_dump_states.php:66
 msgid "Are you sure you wish to delete this state?"
 msgstr "Вы уверены, что хотите удалить это состояние?"
 
-#: src/usr/local/www/diag_dump_states.php:115
+#: src/usr/local/www/diag_dump_states.php:101
 #: src/usr/local/www/diag_resetstate.php:86
 #: src/usr/local/www/diag_resetstate.php:106
 #: src/usr/local/www/diag_dump_states_sources.php:55
@@ -3520,24 +3520,24 @@ msgstr "Вы уверены, что хотите удалить это сост�
 msgid "Source Tracking"
 msgstr "Отслеживание источника"
 
-#: src/usr/local/www/diag_dump_states.php:117
+#: src/usr/local/www/diag_dump_states.php:103
 #: src/usr/local/www/diag_resetstate.php:58
 #: src/usr/local/www/diag_resetstate.php:89
 #: src/usr/local/www/diag_dump_states_sources.php:62
 msgid "Reset States"
 msgstr "Сбросить Состояния"
 
-#: src/usr/local/www/diag_dump_states.php:125
+#: src/usr/local/www/diag_dump_states.php:111
 msgid "State Filter"
 msgstr "Фильтр Состояний"
 
-#: src/usr/local/www/diag_dump_states.php:145
+#: src/usr/local/www/diag_dump_states.php:131
 #: src/usr/local/www/diag_pftop.php:129
 #: src/usr/local/www/diag_dump_states_sources.php:99
 msgid "Filter expression"
 msgstr "Фильтр выражений"
 
-#: src/usr/local/www/diag_dump_states.php:153 src/usr/local/www/pkg.php:356
+#: src/usr/local/www/diag_dump_states.php:139 src/usr/local/www/pkg.php:356
 #: src/usr/local/www/diag_dump_states_sources.php:108
 #: src/usr/local/www/system_groupmanager_addprivs.php:208
 #: src/usr/local/www/system_groupmanager_addprivs.php:228
@@ -3548,25 +3548,25 @@ msgstr "Фильтр выражений"
 msgid "Filter"
 msgstr "Фильтр"
 
-#: src/usr/local/www/diag_dump_states.php:166
+#: src/usr/local/www/diag_dump_states.php:152
 msgid "Kill States"
 msgstr "Удалить Состояния"
 
-#: src/usr/local/www/diag_dump_states.php:172
+#: src/usr/local/www/diag_dump_states.php:158
 msgid "Kill filtered states"
 msgstr "Удалить отфильтрованные состояния"
 
-#: src/usr/local/www/diag_dump_states.php:174
+#: src/usr/local/www/diag_dump_states.php:160
 msgid "Remove all states to and from the filtered address"
 msgstr ""
 "Удалить все состояния  - входящие и исходящие - для отфильтрованного адреса"
 
-#: src/usr/local/www/diag_dump_states.php:188
+#: src/usr/local/www/diag_dump_states.php:179
 #: src/usr/local/www/status_ipsec_sad.php:70
 #: src/usr/local/www/status_logs_filter.php:165
 #: src/usr/local/www/status_logs_common.inc:477
 #: src/usr/local/www/vpn_openvpn_client.php:1182
-#: src/usr/local/www/firewall_nat.php:237 src/usr/local/www/status_upnp.php:72
+#: src/usr/local/www/firewall_nat.php:250 src/usr/local/www/status_upnp.php:72
 #: src/usr/local/www/diag_states_summary.php:155
 #: src/usr/local/www/interfaces_bridge_edit.php:567
 #: src/usr/local/www/status_logs_filter_dynamic.php:396
@@ -3579,41 +3579,41 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:256
 #: src/usr/local/www/status_ipsec_spd.php:64
 #: src/usr/local/www/firewall_nat_out_edit.php:155
-#: src/usr/local/www/easyrule.php:92 src/usr/local/www/firewall_rules.php:395
+#: src/usr/local/www/easyrule.php:92 src/usr/local/www/firewall_rules.php:407
 msgid "Protocol"
 msgstr "Протокол"
 
-#: src/usr/local/www/diag_dump_states.php:189
+#: src/usr/local/www/diag_dump_states.php:180
 msgid "Source (Original Source) -> Destination (Original Destination)"
 msgstr ""
 "Адрес Источника (Первоначального Источника) -> Адрес Назначения "
 "(Первоначального Назначения)"
 
-#: src/usr/local/www/diag_dump_states.php:190
+#: src/usr/local/www/diag_dump_states.php:181
 #: src/usr/local/www/status_dhcpv6_leases.php:380
 msgid "State"
 msgstr "Состояние"
 
-#: src/usr/local/www/diag_dump_states.php:191
+#: src/usr/local/www/diag_dump_states.php:182
 msgid "Packets"
 msgstr "Пакеты"
 
-#: src/usr/local/www/diag_dump_states.php:192
+#: src/usr/local/www/diag_dump_states.php:183
 #: src/usr/local/www/diag_pftop.php:151
 msgid "Bytes"
 msgstr "Байты"
 
-#: src/usr/local/www/diag_dump_states.php:261
+#: src/usr/local/www/diag_dump_states.php:201
 #, php-format
 msgid "Remove all state entries from %1$s to %2$s"
 msgstr "Удалите все записи состояния от %1$s до %2$s"
 
-#: src/usr/local/www/diag_dump_states.php:276
+#: src/usr/local/www/diag_dump_states.php:216
 msgid "No states were found that match the current filter."
 msgstr ""
 "Не найдено ни одного состояния, который бы соответствовал данному фильтру."
 
-#: src/usr/local/www/diag_dump_states.php:279
+#: src/usr/local/www/diag_dump_states.php:219
 msgid ""
 "State display suppressed without filter submission. See System > General "
 "Setup, Require State Filter."
@@ -3621,7 +3621,7 @@ msgstr ""
 "Отображение состояний приостановлено без применения фильтра. Смотрите в "
 "Система -> Общие Настройки, Необходимо наличие Фильтра Состояний."
 
-#: src/usr/local/www/diag_dump_states.php:282
+#: src/usr/local/www/diag_dump_states.php:222
 msgid "No states were found."
 msgstr "Ни одного состояния не найдено."
 
@@ -4348,7 +4348,7 @@ msgstr "Пакет"
 msgid "Source Port"
 msgstr "Порт Источника"
 
-#: src/usr/local/www/diag_pftop.php:157 src/usr/local/www/firewall_nat.php:238
+#: src/usr/local/www/diag_pftop.php:157 src/usr/local/www/firewall_nat.php:251
 #: src/usr/local/www/status_logs_settings.php:399
 msgid "Source Address"
 msgstr "Адрес Источника"
@@ -4699,9 +4699,9 @@ msgstr ""
 #: src/usr/local/www/status_queues.php:216 src/usr/local/www/head.inc:620
 #: src/usr/local/www/system_usermanager_addprivs.php:150
 #: src/usr/local/www/services_ntpd_acls.php:192
-#: src/usr/local/www/firewall_rules.php:430
-#: src/usr/local/www/firewall_rules.php:449
-#: src/usr/local/www/firewall_rules.php:468
+#: src/usr/local/www/firewall_rules.php:442
+#: src/usr/local/www/firewall_rules.php:461
+#: src/usr/local/www/firewall_rules.php:480
 #: src/usr/local/www/status_logs_settings.php:231
 msgid "Settings"
 msgstr "Настройки"
@@ -4884,7 +4884,7 @@ msgstr "Пользователь"
 #: src/usr/local/www/vpn_l2tp_users_edit.php:156
 #: src/usr/local/www/diag_dns.php:154
 #: src/usr/local/www/services_dhcp_edit.php:493
-#: src/usr/local/www/diag_arp.php:186 src/usr/local/www/diag_tables.php:270
+#: src/usr/local/www/diag_arp.php:99 src/usr/local/www/diag_tables.php:270
 #: src/usr/local/www/services_pppoe_edit.php:439
 #: src/usr/local/www/services_pppoe_edit.php:472
 #: src/usr/local/www/services_pppoe_edit.php:546
@@ -5383,7 +5383,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:61
 #: src/usr/local/www/firewall_nat_out_edit.php:155
 #: src/usr/local/www/easyrule.php:84 src/usr/local/www/easyrule.php:94
-#: src/usr/local/www/firewall_rules.php:396
+#: src/usr/local/www/firewall_rules.php:408
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
 #: src/usr/local/www/widgets/widgets/log.widget.php:119
 msgid "Source"
@@ -5398,7 +5398,7 @@ msgstr "Источник"
 #: src/usr/local/www/firewall_rules_edit.php:1383
 #: src/usr/local/www/status_ipsec_spd.php:62
 #: src/usr/local/www/firewall_nat_out_edit.php:155
-#: src/usr/local/www/easyrule.php:96 src/usr/local/www/firewall_rules.php:398
+#: src/usr/local/www/easyrule.php:96 src/usr/local/www/firewall_rules.php:410
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:230
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
@@ -5658,12 +5658,12 @@ msgid "Destination IP Address"
 msgstr "IP Адрес Назначения"
 
 #: src/usr/local/www/status_logs_common.inc:452
-#: src/usr/local/www/firewall_nat.php:575
+#: src/usr/local/www/firewall_nat.php:588
 #: src/usr/local/www/services_captiveportal_mac.php:60
 #: src/usr/local/www/firewall_nat_edit.php:1012
 #: src/usr/local/www/firewall_nat_edit.php:1047
 #: src/usr/local/www/firewall_rules_edit.php:1221
-#: src/usr/local/www/firewall_rules.php:925
+#: src/usr/local/www/firewall_rules.php:937
 #: src/usr/local/www/widgets/widgets/log.widget.php:252
 #: src/usr/local/www/services_captiveportal_mac_edit.php:207
 #: src/usr/local/www/status_logs_common.inc:453
@@ -5673,7 +5673,7 @@ msgstr "Разрешить"
 #: src/usr/local/www/status_logs_common.inc:493
 #: src/usr/local/www/services_captiveportal_mac.php:61
 #: src/usr/local/www/firewall_rules_edit.php:1222
-#: src/usr/local/www/firewall_rules.php:927
+#: src/usr/local/www/firewall_rules.php:939
 #: src/usr/local/www/widgets/widgets/log.widget.php:256
 #: src/usr/local/www/services_captiveportal_mac_edit.php:207
 #: src/usr/local/www/status_logs_common.inc:494
@@ -5992,7 +5992,7 @@ msgstr ""
 #: src/usr/local/www/index.php:546 src/usr/local/www/services_unbound.php:260
 #: src/usr/local/www/firewall_aliases.php:71
 #: src/usr/local/www/services_snmp.php:176
-#: src/usr/local/www/diag_backup.php:106 src/usr/local/www/diag_arp.php:191
+#: src/usr/local/www/diag_backup.php:106 src/usr/local/www/diag_arp.php:104
 #: src/usr/local/www/services_ntpd_gps.php:339
 #: src/usr/local/www/status_dhcpv6_leases.php:262
 #: src/usr/local/www/diag_ndp.php:166
@@ -8170,7 +8170,7 @@ msgid "Delete WiFi interface"
 msgstr "Удалить интерфейс WiFi"
 
 #: src/usr/local/www/services_dhcp.php:241
-#: src/usr/local/www/services_dhcp_edit.php:162
+#: src/usr/local/www/services_dhcp_edit.php:164
 msgid "The DHCP option must be a number between 1 and 254."
 msgstr "Параметр DHCP должен быть числом от 1 до 254."
 
@@ -8225,7 +8225,7 @@ msgstr ""
 ""
 
 #: src/usr/local/www/services_dhcp.php:355
-#: src/usr/local/www/services_dhcp_edit.php:266
+#: src/usr/local/www/services_dhcp_edit.php:268
 #, php-format
 msgid ""
 "The gateway address %s does not lie within the chosen interface's subnet."
@@ -8261,7 +8261,7 @@ msgstr ""
 "действительные частичные MAC-адреса."
 
 #: src/usr/local/www/services_dhcp.php:435
-#: src/usr/local/www/services_dhcp_edit.php:318
+#: src/usr/local/www/services_dhcp_edit.php:317
 msgid ""
 "A valid IP address or hostname must be specified for the primary/secondary "
 "NTP servers."
@@ -8719,10 +8719,12 @@ msgstr ""
 "не было, он /присваивает/ адрес. Включено по умолчанию."
 
 #: src/usr/local/www/services_dhcp.php:1311
+#: src/usr/local/www/services_dhcp_edit.php:671
 msgid "Primary domain name server IP address for the dynamic domain name."
 msgstr "IP-адрес основного DNS сервера для динамического имени домена."
 
 #: src/usr/local/www/services_dhcp.php:1318
+#: src/usr/local/www/services_dhcp_edit.php:678
 msgid "Secondary domain name server IP address for the dynamic domain name."
 msgstr ""
 
@@ -8783,7 +8785,7 @@ msgid "TFTP"
 msgstr "TFTP"
 
 #: src/usr/local/www/services_dhcp.php:1437
-#: src/usr/local/www/services_dhcp_edit.php:754
+#: src/usr/local/www/services_dhcp_edit.php:761
 msgid "TFTP Server"
 msgstr "Сервер TFTP"
 
@@ -8796,12 +8798,12 @@ msgstr ""
 "URL-адрес для TFTP-сервера."
 
 #: src/usr/local/www/services_dhcp.php:1459
-#: src/usr/local/www/services_dhcp_edit.php:776
+#: src/usr/local/www/services_dhcp_edit.php:783
 msgid "LDAP Server URI"
 msgstr "URI LDAP Сервера"
 
 #: src/usr/local/www/services_dhcp.php:1462
-#: src/usr/local/www/services_dhcp_edit.php:779
+#: src/usr/local/www/services_dhcp_edit.php:786
 msgid ""
 "Leave blank to disable. Enter a full URI for the LDAP server in the form "
 "ldap://ldap.example.com/dc=example,dc=com "
@@ -8810,47 +8812,47 @@ msgstr ""
 "форме ldap: //ldap.example.com/dc=example,dc=com"
 
 #: src/usr/local/www/services_dhcp.php:1475
-#: src/usr/local/www/services_dhcp_edit.php:792
+#: src/usr/local/www/services_dhcp_edit.php:799
 msgid "Network Booting"
 msgstr "Сетевая Загрузка"
 
 #: src/usr/local/www/services_dhcp.php:1488
-#: src/usr/local/www/services_dhcp_edit.php:805
+#: src/usr/local/www/services_dhcp_edit.php:812
 msgid "Next Server"
 msgstr "Следующий Сервер"
 
 #: src/usr/local/www/services_dhcp.php:1491
-#: src/usr/local/www/services_dhcp_edit.php:808
+#: src/usr/local/www/services_dhcp_edit.php:815
 msgid "Enter the IP address of the next server"
 msgstr "Введите IP-адрес следующего сервера"
 
 #: src/usr/local/www/services_dhcp.php:1495
-#: src/usr/local/www/services_dhcp_edit.php:812
+#: src/usr/local/www/services_dhcp_edit.php:819
 msgid "Default BIOS file name"
 msgstr "Имя файла BIOS по умолчанию"
 
 #: src/usr/local/www/services_dhcp.php:1502
-#: src/usr/local/www/services_dhcp_edit.php:819
+#: src/usr/local/www/services_dhcp_edit.php:826
 msgid "UEFI 32 bit file name"
 msgstr "Имя файла UEFI в формате 32 бита"
 
 #: src/usr/local/www/services_dhcp.php:1509
-#: src/usr/local/www/services_dhcp_edit.php:826
+#: src/usr/local/www/services_dhcp_edit.php:833
 msgid "UEFI 64 bit file name"
 msgstr "Имя файла UEFI в формате 64 бита"
 
 #: src/usr/local/www/services_dhcp.php:1516
-#: src/usr/local/www/services_dhcp_edit.php:833
+#: src/usr/local/www/services_dhcp_edit.php:840
 msgid "ARM 32 bit file name"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1523
-#: src/usr/local/www/services_dhcp_edit.php:840
+#: src/usr/local/www/services_dhcp_edit.php:847
 msgid "ARM 64 bit file name"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1526
-#: src/usr/local/www/services_dhcp_edit.php:843
+#: src/usr/local/www/services_dhcp_edit.php:850
 msgid ""
 "Both a filename and a boot server must be configured for this to work! All "
 "five filenames and a configured boot server are necessary for UEFI & ARM to "
@@ -8858,20 +8860,20 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1531
-#: src/usr/local/www/services_dhcp_edit.php:848
+#: src/usr/local/www/services_dhcp_edit.php:855
 #: src/usr/local/www/services_dhcpv6_edit.php:244
 msgid "Root path"
 msgstr "Корневой путь"
 
 #: src/usr/local/www/services_dhcp.php:1534
-#: src/usr/local/www/services_dhcp_edit.php:851
+#: src/usr/local/www/services_dhcp_edit.php:858
 msgid "string-format: iscsi:(servername):(protocol):(port):(LUN):targetname "
 msgstr ""
 "формат-строки: iscsi: (имя_сервера) :( протокол) :( порт) :( LUN): "
 "целевое_имя"
 
 #: src/usr/local/www/services_dhcp.php:1558
-#: src/usr/local/www/services_dhcp_edit.php:875
+#: src/usr/local/www/services_dhcp_edit.php:882
 msgid ""
 "Enter the DHCP option number and the value for each item to include in the "
 "DHCP lease information."
@@ -8880,64 +8882,64 @@ msgstr ""
 "информацию аренды DHCP."
 
 #: src/usr/local/www/services_dhcp.php:1559
-#: src/usr/local/www/services_dhcp_edit.php:876
+#: src/usr/local/www/services_dhcp_edit.php:883
 #, php-format
 msgid "For a list of available options please visit this %1$s URL%2$s.%3$s"
 msgstr ""
 "Список доступных опций можно найти на этой странице. %1$s URL%2$s.%3$s"
 
 #: src/usr/local/www/services_dhcp.php:1568
-#: src/usr/local/www/services_dhcp_edit.php:885
+#: src/usr/local/www/services_dhcp_edit.php:892
 msgid "Text"
 msgstr "Текст"
 
 #: src/usr/local/www/services_dhcp.php:1568
-#: src/usr/local/www/services_dhcp_edit.php:885
+#: src/usr/local/www/services_dhcp_edit.php:892
 msgid "String"
 msgstr "Строка"
 
 #: src/usr/local/www/services_dhcp.php:1568
-#: src/usr/local/www/services_dhcp_edit.php:885
+#: src/usr/local/www/services_dhcp_edit.php:892
 msgid "Boolean"
 msgstr "Логический"
 
 #: src/usr/local/www/services_dhcp.php:1569
-#: src/usr/local/www/services_dhcp_edit.php:886
+#: src/usr/local/www/services_dhcp_edit.php:893
 msgid "Unsigned 8-bit integer"
 msgstr "Беззнаковый 8-разрядный целочисленный "
 
 #: src/usr/local/www/services_dhcp.php:1569
-#: src/usr/local/www/services_dhcp_edit.php:886
+#: src/usr/local/www/services_dhcp_edit.php:893
 msgid "Unsigned 16-bit integer"
 msgstr "Беззнаковый 16-разрядный целочисленный "
 
 #: src/usr/local/www/services_dhcp.php:1569
-#: src/usr/local/www/services_dhcp_edit.php:886
+#: src/usr/local/www/services_dhcp_edit.php:893
 msgid "Unsigned 32-bit integer"
 msgstr "Беззнаковый 32-разрядный целочисленный "
 
 #: src/usr/local/www/services_dhcp.php:1570
-#: src/usr/local/www/services_dhcp_edit.php:887
+#: src/usr/local/www/services_dhcp_edit.php:894
 msgid "Signed 8-bit integer"
 msgstr "Подписанный 8-разрядный целочисленный"
 
 #: src/usr/local/www/services_dhcp.php:1570
-#: src/usr/local/www/services_dhcp_edit.php:887
+#: src/usr/local/www/services_dhcp_edit.php:894
 msgid "Signed 16-bit integer"
 msgstr "Подписанный 16-разрядный целочисленный"
 
 #: src/usr/local/www/services_dhcp.php:1570
-#: src/usr/local/www/services_dhcp_edit.php:887
+#: src/usr/local/www/services_dhcp_edit.php:894
 msgid "Signed 32-bit integer"
 msgstr "Подписанный 32-разрядный целочисленный"
 
 #: src/usr/local/www/services_dhcp.php:1570
-#: src/usr/local/www/services_dhcp_edit.php:887
+#: src/usr/local/www/services_dhcp_edit.php:894
 msgid "IP address or host"
 msgstr "IP-адрес или хост"
 
 #: src/usr/local/www/services_dhcp.php:1583
-#: src/usr/local/www/services_dhcp_edit.php:900
+#: src/usr/local/www/services_dhcp_edit.php:907
 msgid "Option"
 msgstr "Опция "
 
@@ -8953,7 +8955,7 @@ msgstr "Статическая запись DHCP для данного инте�
 #: src/usr/local/www/services_dhcp.php:1687
 #: src/usr/local/www/services_wol.php:194
 #: src/usr/local/www/services_captiveportal_mac.php:164
-#: src/usr/local/www/diag_arp.php:215
+#: src/usr/local/www/diag_arp.php:128
 #: src/usr/local/www/status_captiveportal.php:221
 #: src/usr/local/www/status_dhcpv6_leases.php:286
 #: src/usr/local/www/diag_ndp.php:189
@@ -10391,8 +10393,8 @@ msgstr "Вставьте сюда сертификат, полученный о�
 #: src/usr/local/www/system_certmanager.php:1325
 #: src/usr/local/www/system_camanager.php:356
 #: src/usr/local/www/system_camanager.php:378 src/usr/local/www/pkg_mgr.php:144
-#: src/usr/local/www/pkg_mgr.php:166 src/usr/local/www/diag_arp.php:169
-#: src/usr/local/www/diag_arp.php:195
+#: src/usr/local/www/pkg_mgr.php:166 src/usr/local/www/diag_arp.php:82
+#: src/usr/local/www/diag_arp.php:108
 #: src/usr/local/www/status_dhcpv6_leases.php:237
 #: src/usr/local/www/status_dhcpv6_leases.php:266
 #: src/usr/local/www/diag_ndp.php:145 src/usr/local/www/diag_ndp.php:170
@@ -10403,7 +10405,7 @@ msgstr "Поиск"
 
 #: src/usr/local/www/system_certmanager.php:1314
 #: src/usr/local/www/system_camanager.php:367 src/usr/local/www/pkg_mgr.php:155
-#: src/usr/local/www/diag_arp.php:180
+#: src/usr/local/www/diag_arp.php:93
 #: src/usr/local/www/status_dhcpv6_leases.php:248
 #: src/usr/local/www/diag_ndp.php:156
 #: src/usr/local/www/status_dhcp_leases.php:168
@@ -10420,7 +10422,7 @@ msgstr "Определённое Имя"
 #: src/usr/local/www/system_certmanager.php:1326
 #: src/usr/local/www/system_camanager.php:379 src/usr/local/www/pkg_mgr.php:167
 #: src/usr/local/www/system_groupmanager_addprivs.php:239
-#: src/usr/local/www/diag_arp.php:196 src/usr/local/www/diag_command.php:206
+#: src/usr/local/www/diag_arp.php:109 src/usr/local/www/diag_command.php:206
 #: src/usr/local/www/system_usermanager_addprivs.php:219
 #: src/usr/local/www/status_dhcpv6_leases.php:267
 #: src/usr/local/www/diag_ndp.php:171
@@ -11527,7 +11529,7 @@ msgstr "Текущая Неактивная Сота"
 #: src/usr/local/www/status_interfaces.php:154
 #: src/usr/local/www/services_dhcp_edit.php:461
 #: src/usr/local/www/services_dhcp_edit.php:476
-#: src/usr/local/www/diag_arp.php:187
+#: src/usr/local/www/diag_arp.php:100
 #: src/usr/local/www/status_dhcpv6_leases.php:256
 #: src/usr/local/www/diag_ndp.php:162 src/usr/local/www/interfaces.php:1958
 #: src/usr/local/www/status_dhcp_leases.php:174
@@ -12855,8 +12857,8 @@ msgstr ""
 #: src/usr/local/www/diag_testport.php:54
 #: src/usr/local/www/firewall_aliases_edit.php:183
 #: src/usr/local/www/interfaces.php:3396 src/usr/local/www/interfaces.php:3420
-#: src/usr/local/www/firewall_rules.php:397
-#: src/usr/local/www/firewall_rules.php:399
+#: src/usr/local/www/firewall_rules.php:409
+#: src/usr/local/www/firewall_rules.php:411
 msgid "Port"
 msgstr "Порт"
 
@@ -13658,7 +13660,7 @@ msgstr "Частота резервного копирования"
 
 #: src/usr/local/www/services_acb_settings.php:144
 #: src/usr/local/www/firewall_rules_edit.php:1709
-#: src/usr/local/www/firewall_rules.php:402
+#: src/usr/local/www/firewall_rules.php:414
 msgid "Schedule"
 msgstr "Расписание"
 
@@ -14112,134 +14114,134 @@ msgstr "*Родительский Интерфейс"
 msgid "*Mode"
 msgstr "*Режим"
 
-#: src/usr/local/www/firewall_nat.php:187
+#: src/usr/local/www/firewall_nat.php:200
 msgid "Firewall: NAT: Port forward, enable/disable NAT rule"
 msgstr "Фаерволл: NAT: Проброс порта, активировать/диактивировать правило NAT"
 
-#: src/usr/local/www/firewall_nat.php:228
+#: src/usr/local/www/firewall_nat.php:241
 #: src/usr/local/www/firewall_rules_edit.php:1158
-#: src/usr/local/www/head.inc:308 src/usr/local/www/firewall_rules.php:310
-#: src/usr/local/www/firewall_rules.php:350
+#: src/usr/local/www/head.inc:308 src/usr/local/www/firewall_rules.php:322
+#: src/usr/local/www/firewall_rules.php:362
 msgid "Rules"
 msgstr "Правила"
 
-#: src/usr/local/www/firewall_nat.php:239
+#: src/usr/local/www/firewall_nat.php:252
 #: src/usr/local/www/diag_states_summary.php:157
 #: src/usr/local/www/status_logs_filter_summary.php:90
 msgid "Source Ports"
 msgstr "Порты Источника"
 
-#: src/usr/local/www/firewall_nat.php:240
+#: src/usr/local/www/firewall_nat.php:253
 msgid "Dest. Address"
 msgstr "Адрес Назначения"
 
-#: src/usr/local/www/firewall_nat.php:241
+#: src/usr/local/www/firewall_nat.php:254
 #: src/usr/local/www/diag_states_summary.php:158
 msgid "Dest. Ports"
 msgstr "Порты Назачения"
 
-#: src/usr/local/www/firewall_nat.php:242
+#: src/usr/local/www/firewall_nat.php:255
 msgid "NAT IP"
 msgstr "NAT IP"
 
-#: src/usr/local/www/firewall_nat.php:243
+#: src/usr/local/www/firewall_nat.php:256
 msgid "NAT Ports"
 msgstr "Порты NAT"
 
-#: src/usr/local/www/firewall_nat.php:321
+#: src/usr/local/www/firewall_nat.php:334
 msgid "All traffic matching this NAT entry is passed"
 msgstr "Весь траффик попадающий под это правило NAT будет разрешен. "
 
-#: src/usr/local/www/firewall_nat.php:325
+#: src/usr/local/www/firewall_nat.php:338
 #, php-format
 msgid "Firewall rule ID %s is managed by this rule"
 msgstr "Правило фаерволла с ID %s управляется данным правилом"
 
-#: src/usr/local/www/firewall_nat.php:458
+#: src/usr/local/www/firewall_nat.php:471
 msgid "Edit rule"
 msgstr "Редактировать правило"
 
-#: src/usr/local/www/firewall_nat.php:459
+#: src/usr/local/www/firewall_nat.php:472
 msgid "Add a new NAT based on this one"
 msgstr "Добавить новое правило NAT на основе данного"
 
-#: src/usr/local/www/firewall_nat.php:460
+#: src/usr/local/www/firewall_nat.php:473
 msgid "Delete rule"
 msgstr "Удалить правило"
 
-#: src/usr/local/www/firewall_nat.php:484
-#: src/usr/local/www/firewall_rules.php:897
+#: src/usr/local/www/firewall_nat.php:497
+#: src/usr/local/www/firewall_rules.php:909
 msgid "Add rule to the top of the list"
 msgstr "Добавить правило в верх списка"
 
-#: src/usr/local/www/firewall_nat.php:488
-#: src/usr/local/www/firewall_rules.php:901
+#: src/usr/local/www/firewall_nat.php:501
+#: src/usr/local/www/firewall_rules.php:913
 msgid "Add rule to the end of the list"
 msgstr "Добавить правило в низ списка"
 
-#: src/usr/local/www/firewall_nat.php:492
-#: src/usr/local/www/firewall_rules.php:905
+#: src/usr/local/www/firewall_nat.php:505
+#: src/usr/local/www/firewall_rules.php:917
 msgid "Delete selected rules"
 msgstr "Удалить выбранные правила"
 
-#: src/usr/local/www/firewall_nat.php:496
+#: src/usr/local/www/firewall_nat.php:509
 #: src/usr/local/www/system_gateways.php:354
-#: src/usr/local/www/firewall_rules.php:909
+#: src/usr/local/www/firewall_rules.php:921
 msgid "Save rule order"
 msgstr "Сохранить порядок правил"
 
-#: src/usr/local/www/firewall_nat.php:500
-#: src/usr/local/www/firewall_rules.php:913
+#: src/usr/local/www/firewall_nat.php:513
+#: src/usr/local/www/firewall_rules.php:925
 msgid "Add separator"
 msgstr "Добавить разделитель"
 
-#: src/usr/local/www/firewall_nat.php:502
-#: src/usr/local/www/firewall_rules.php:915
+#: src/usr/local/www/firewall_nat.php:515
+#: src/usr/local/www/firewall_rules.php:927
 msgid "Separator"
 msgstr "Разделитель"
 
-#: src/usr/local/www/firewall_nat.php:512 src/usr/local/www/interfaces.php:2131
+#: src/usr/local/www/firewall_nat.php:525 src/usr/local/www/interfaces.php:2131
 #: src/usr/local/www/interfaces.php:3536 src/usr/local/www/diag_halt.php:80
-#: src/usr/local/www/firewall_rules.php:961
+#: src/usr/local/www/firewall_rules.php:973
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/usr/local/www/firewall_nat.php:514
-#: src/usr/local/www/firewall_rules.php:963
+#: src/usr/local/www/firewall_nat.php:527
+#: src/usr/local/www/firewall_rules.php:975
 msgid "Enter a description, Save, then drag to final location."
 msgstr "Добавьте описание, сохраните, потом перетащите в конечную позицию. "
 
-#: src/usr/local/www/firewall_nat.php:552
+#: src/usr/local/www/firewall_nat.php:565
 msgid ""
 "One or more Port Forward rules have been moved but have not yet been saved"
 msgstr ""
 "Одно или несколько правил проброса порта были перемещены, но пока не "
 "сохранены"
 
-#: src/usr/local/www/firewall_nat.php:574
-#: src/usr/local/www/firewall_rules.php:924
+#: src/usr/local/www/firewall_nat.php:587
+#: src/usr/local/www/firewall_rules.php:936
 msgid "Legend"
 msgstr "Легенда"
 
-#: src/usr/local/www/firewall_nat.php:576
+#: src/usr/local/www/firewall_nat.php:589
 msgid "Linked rule"
 msgstr "Связанное правило"
 
-#: src/usr/local/www/services_dhcp_edit.php:184
+#: src/usr/local/www/services_dhcp_edit.php:186
 msgid "Either MAC address or Client identifier must be specified"
 msgstr "Необходимо указать либо MAC-адрес, либо идентификатор клиента"
 
-#: src/usr/local/www/services_dhcp_edit.php:193
+#: src/usr/local/www/services_dhcp_edit.php:195
 #: src/usr/local/www/services_dhcpv6_edit.php:100
 msgid "The hostname cannot end with a hyphen according to RFC952"
 msgstr "Имя хоста не может заканчиваться дефисом в соответствии с RFC952"
 
-#: src/usr/local/www/services_dhcp_edit.php:196
+#: src/usr/local/www/services_dhcp_edit.php:198
 #: src/usr/local/www/services_dhcpv6_edit.php:103
 msgid "The hostname can only contain the characters A-Z, 0-9 and '-'."
 msgstr "Имя хоста может только содержать символы A-Z, 0-9 и '-'."
 
-#: src/usr/local/www/services_dhcp_edit.php:199
+#: src/usr/local/www/services_dhcp_edit.php:201
 #: src/usr/local/www/system.php:181
 #: src/usr/local/www/services_dhcpv6_edit.php:106
 #: src/usr/local/www/services_unbound_host_edit.php:80
@@ -14248,33 +14250,33 @@ msgid ""
 "A valid hostname is specified, but the domain name part should be omitted"
 msgstr "Допустимое имя хоста указано, но доменная часть должна быть опущена"
 
-#: src/usr/local/www/services_dhcp_edit.php:205
+#: src/usr/local/www/services_dhcp_edit.php:207
 #: src/usr/local/www/interfaces.php:765
 msgid "A valid IPv4 address must be specified."
 msgstr "Должен быть указан валидный адрес IPv4."
 
-#: src/usr/local/www/services_dhcp_edit.php:209
+#: src/usr/local/www/services_dhcp_edit.php:211
 #: src/usr/local/www/services_wol.php:74 src/usr/local/www/interfaces.php:897
 #: src/usr/local/www/services_wol_edit.php:80
 msgid "A valid MAC address must be specified."
 msgstr "Должен быть задан допустимый MAC адрес."
 
-#: src/usr/local/www/services_dhcp_edit.php:212
+#: src/usr/local/www/services_dhcp_edit.php:214
 msgid "Static ARP is enabled.  An IP address must be specified."
 msgstr "Статический ARP включен. Должен быть указан IP-адрес."
 
-#: src/usr/local/www/services_dhcp_edit.php:222
+#: src/usr/local/www/services_dhcp_edit.php:224
 msgid "This MAC address or Client identifier already exists."
 msgstr "Этот MAC-адрес или идентификатор клиента уже существует."
 
-#: src/usr/local/www/services_dhcp_edit.php:230
+#: src/usr/local/www/services_dhcp_edit.php:232
 #, php-format
 msgid "The IP address must not be within the DHCP range for this interface."
 msgstr ""
 "IP-адрес не должен находиться в пределах диапазона DHCP для этого интерфейса."
 ""
 
-#: src/usr/local/www/services_dhcp_edit.php:235
+#: src/usr/local/www/services_dhcp_edit.php:237
 msgid ""
 "The IP address must not be within the range configured on a DHCP pool for "
 "this interface."
@@ -14282,26 +14284,26 @@ msgstr ""
 "IP-адрес не должен находиться в пределах диапазона, настроенного для пула "
 "DHCP для этого интерфейса."
 
-#: src/usr/local/www/services_dhcp_edit.php:243
+#: src/usr/local/www/services_dhcp_edit.php:245
 #, php-format
 msgid "The IP address must lie in the %s subnet."
 msgstr "IP-адрес должен находить в пределах %s подсети"
 
-#: src/usr/local/www/services_dhcp_edit.php:247
+#: src/usr/local/www/services_dhcp_edit.php:249
 #, php-format
 msgid "The IP address cannot be the %s network address."
 msgstr "IP-адрес не может быть адресом сети %s"
 
-#: src/usr/local/www/services_dhcp_edit.php:251
+#: src/usr/local/www/services_dhcp_edit.php:253
 #, php-format
 msgid "The IP address cannot be the %s broadcast address."
 msgstr "IP-адрес не может быть широковещательным адресом %s"
 
-#: src/usr/local/www/services_dhcp_edit.php:256
+#: src/usr/local/www/services_dhcp_edit.php:258
 msgid "A valid IPv4 address must be specified for the gateway."
 msgstr "Для шлюза должен быть указан действительный адрес IPv4."
 
-#: src/usr/local/www/services_dhcp_edit.php:259
+#: src/usr/local/www/services_dhcp_edit.php:261
 msgid ""
 "A valid IPv4 address must be specified for the primary/secondary WINS "
 "servers."
@@ -14309,29 +14311,29 @@ msgstr ""
 "Для основногоного/вторичного WINS-серверов должен быть указан действительный "
 "адрес IPv4."
 
-#: src/usr/local/www/services_dhcp_edit.php:273
+#: src/usr/local/www/services_dhcp_edit.php:275
 msgid "A valid IPV4 address must be specified for each of the DNS servers."
 msgstr "Для каждого DNS-сервера должен быть указан действительный адрес IPV4."
 
-#: src/usr/local/www/services_dhcp_edit.php:324
+#: src/usr/local/www/services_dhcp_edit.php:323
 msgid ""
 "A valid IPv4 address, hostname or URL must be specified for the TFTP server."
 msgstr ""
 "Для TFTP-сервера должен быть указан действительный адрес IPv4, имя хоста или "
 "URL-адрес."
 
-#: src/usr/local/www/services_dhcp_edit.php:327
+#: src/usr/local/www/services_dhcp_edit.php:326
 msgid "A valid IPv4 address must be specified for the network boot server."
 msgstr ""
 "Для сетевого загрузочного сервера должен быть указан допустимый IPv4-адрес."
 
-#: src/usr/local/www/services_dhcp_edit.php:330
+#: src/usr/local/www/services_dhcp_edit.php:329
 msgid "A valid MAC address must be specified for use with static ARP."
 msgstr ""
 "Для использования статического ARP необходимо указать действительный MAC-"
 "адрес."
 
-#: src/usr/local/www/services_dhcp_edit.php:333
+#: src/usr/local/www/services_dhcp_edit.php:332
 msgid "A valid IPv4 address must be specified for use with static ARP."
 msgstr ""
 "Для использования статического ARP должен быть указан действительный адрес "
@@ -14452,15 +14454,11 @@ msgid ""
 "used for multiple interfaces/entries."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:668
-msgid "DDNS Server IP"
-msgstr "IP DDNS Сервера"
-
-#: src/usr/local/www/services_dhcp_edit.php:748
+#: src/usr/local/www/services_dhcp_edit.php:755
 msgid "TFTP servers"
 msgstr "TFTP серверы"
 
-#: src/usr/local/www/services_dhcp_edit.php:757
+#: src/usr/local/www/services_dhcp_edit.php:764
 msgid ""
 "Leave blank to disable. Enter a full hostname or IP for the TFTP server."
 msgstr ""
@@ -19140,78 +19138,61 @@ msgstr "*URL (Единый указатель ресурса )"
 msgid "User name"
 msgstr "Имя пользователя"
 
-#: src/usr/local/www/diag_arp.php:49
+#: src/usr/local/www/diag_arp.php:50
 #, php-format
 msgid "%s is not a valid IPv4 address or could not be deleted."
 msgstr "%s  не является валидным IPv4 адресом или не может быть удалён."
 
-#: src/usr/local/www/diag_arp.php:52
+#: src/usr/local/www/diag_arp.php:53
 #, php-format
 msgid "The ARP cache entry for %s has been deleted."
 msgstr "Запись ARP кэша для %s удалена."
 
-#: src/usr/local/www/diag_arp.php:59
+#: src/usr/local/www/diag_arp.php:60
 msgid "ARP Table has been cleared."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:62
+#: src/usr/local/www/diag_arp.php:63
 msgid "Unable to clear ARP Table."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:110 src/usr/local/www/diag_arp.php:206
+#: src/usr/local/www/diag_arp.php:71 src/usr/local/www/diag_arp.php:119
 #: src/usr/local/www/head.inc:392
 msgid "ARP Table"
 msgstr "ARP таблица"
 
-#: src/usr/local/www/diag_arp.php:121
-msgid " Loading, please wait..."
-msgstr "Загрузка, пожалуйста, подождите..."
-
-#: src/usr/local/www/diag_arp.php:190 src/usr/local/www/diag_arp.php:218
+#: src/usr/local/www/diag_arp.php:103 src/usr/local/www/diag_arp.php:131
 msgid "Link Type"
 msgstr "Тип соединения"
 
-#: src/usr/local/www/diag_arp.php:199
+#: src/usr/local/www/diag_arp.php:112
 #: src/usr/local/www/status_dhcpv6_leases.php:270
 #: src/usr/local/www/diag_ndp.php:174
 #: src/usr/local/www/status_dhcp_leases.php:190
 msgid "Enter a search string or *nix regular expression to filter entries."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:231
-msgid "Incomplete"
-msgstr ""
-
-#: src/usr/local/www/diag_arp.php:250
-#, php-format
-msgid "Expires in %d seconds"
-msgstr ""
-
-#: src/usr/local/www/diag_arp.php:253
-msgid "Permanent"
-msgstr ""
-
-#: src/usr/local/www/diag_arp.php:261
+#: src/usr/local/www/diag_arp.php:147
 msgid "Delete arp cache entry"
 msgstr "Удалите запись arp кэша"
 
-#: src/usr/local/www/diag_arp.php:277
+#: src/usr/local/www/diag_arp.php:163
 msgid "Clear ARP Table"
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:355
+#: src/usr/local/www/diag_arp.php:241
 #, php-format
 msgid "Local IPv6 peers use %1$sNDP%2$s instead of ARP."
 msgstr "Локальные IPv6 узлы используют %1$sNDP%2$s вместо ARP."
 
-#: src/usr/local/www/diag_arp.php:356
+#: src/usr/local/www/diag_arp.php:242
 msgid ""
 "Permanent ARP entries are shown for local interfaces or static ARP entries."
 msgstr ""
 "Постоянные ARP записи показаны  для локальных интерфейсов или статические "
 "ARP записи."
 
-#: src/usr/local/www/diag_arp.php:357
+#: src/usr/local/www/diag_arp.php:243
 msgid ""
 "Normal dynamic ARP entries show a countdown timer until they will expire and "
 "then be re-checked."
@@ -19219,7 +19200,7 @@ msgstr ""
 "Обычные динамические ARP записи показывают таймеры обратного отсчета до тех "
 "пор, пока они не истекут, и только потом ARP записи обновляются."
 
-#: src/usr/local/www/diag_arp.php:358
+#: src/usr/local/www/diag_arp.php:244
 msgid ""
 "Incomplete ARP entries indicate that the target host has not yet replied to "
 "an ARP request."
@@ -20423,119 +20404,119 @@ msgstr "Убрать Шейпер "
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule_edit.php:251
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Mon"
 msgstr "Пн"
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Tues"
 msgstr "Вт"
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule_edit.php:253
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Wed"
 msgstr "Ср"
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Thur"
 msgstr "Чт"
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule_edit.php:255
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Fri"
 msgstr "Пт"
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule_edit.php:256
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Sat"
 msgstr "Сб"
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule_edit.php:257
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Sun"
 msgstr "Вс"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "January"
 msgstr "Январь"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "February"
 msgstr "Февраль"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "March"
 msgstr "Март"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "April"
 msgstr "Апрель"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "May"
 msgstr "Май"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "June"
 msgstr "Июнь"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "July"
 msgstr "Июль"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "August"
 msgstr "Август"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "September"
 msgstr "Сентябрь"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "October"
 msgstr "Октябрь"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "November"
 msgstr "Ноябрь"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "December"
 msgstr "Декабрь"
 
@@ -22565,7 +22546,7 @@ msgstr "Любые флаги"
 
 #: src/usr/local/www/firewall_rules_edit.php:1163
 #: src/usr/local/www/firewall_rules_edit.php:1326
-#: src/usr/local/www/firewall_rules.php:297
+#: src/usr/local/www/firewall_rules.php:309
 msgid "Floating"
 msgstr "Плавающие"
 
@@ -22586,13 +22567,13 @@ msgid "Ruleid"
 msgstr "Правило"
 
 #: src/usr/local/www/firewall_rules_edit.php:1223
-#: src/usr/local/www/firewall_rules.php:928
+#: src/usr/local/www/firewall_rules.php:940
 #: src/usr/local/www/widgets/widgets/log.widget.php:260
 msgid "Reject"
 msgstr "Отвергнуть"
 
 #: src/usr/local/www/firewall_rules_edit.php:1227
-#: src/usr/local/www/firewall_rules.php:926
+#: src/usr/local/www/firewall_rules.php:938
 msgid "Match"
 msgstr "Совпадение"
 
@@ -22665,7 +22646,7 @@ msgid "ICMP Subtypes"
 msgstr "Подтипы ICMP"
 
 #: src/usr/local/www/firewall_rules_edit.php:1370
-#: src/usr/local/www/firewall_rules.php:771
+#: src/usr/local/www/firewall_rules.php:783
 msgid "ICMP subtypes"
 msgstr "Подтипы ICMP"
 
@@ -22739,7 +22720,7 @@ msgstr "Дополнительные опции"
 
 #: src/usr/local/www/firewall_rules_edit.php:1516
 #: src/usr/local/www/diag_smart.php:295 src/usr/local/www/diag_smart.php:298
-#: src/usr/local/www/firewall_rules.php:929
+#: src/usr/local/www/firewall_rules.php:941
 msgid "Log"
 msgstr "Логировать"
 
@@ -24143,7 +24124,7 @@ msgid "Status Queues"
 msgstr "Очереди Статуса"
 
 #: src/usr/local/www/status_queues.php:235
-#: src/usr/local/www/firewall_rules.php:401 src/etc/inc/shaper.inc:4447
+#: src/usr/local/www/firewall_rules.php:413 src/etc/inc/shaper.inc:4447
 #: src/etc/inc/shaper.inc:4893
 msgid "Queue"
 msgstr "Очередь"
@@ -29450,7 +29431,7 @@ msgstr ""
 "данный сетевой интерфейс тоже находится в частном адресном пространстве."
 
 #: src/usr/local/www/interfaces.php:3459
-#: src/usr/local/www/firewall_rules.php:466
+#: src/usr/local/www/firewall_rules.php:478
 msgid "Block bogon networks"
 msgstr "Блокировать богон (bogon) сети"
 
@@ -29918,9 +29899,10 @@ msgid "Certificate Expiration Threshold"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:327
+#, php-format
 msgid ""
 "The number of days at which a certificate lifetime is considered to be "
-"expiring soon and worthy of notification. Default is 30 days."
+"expiring soon and worthy of notification. Default is %d days."
 msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:333
@@ -31121,102 +31103,102 @@ msgstr "Брандмауэр: Правила - включенное правил
 msgid "Firewall: Rules - disabled a firewall rule."
 msgstr "Брандмауэр: Правила - выключенное правило брандмауэра."
 
-#: src/usr/local/www/firewall_rules.php:288
+#: src/usr/local/www/firewall_rules.php:298
 msgid "Firewall: Rules - reordered firewall rules."
 msgstr "Брандмауэр: Правила - переупорядоченные правила  брандмауэра."
 
-#: src/usr/local/www/firewall_rules.php:326
+#: src/usr/local/www/firewall_rules.php:338
 msgid "The firewall rule configuration has been changed."
 msgstr "Конфигурация правил фаерволла была изменена"
 
-#: src/usr/local/www/firewall_rules.php:352
+#: src/usr/local/www/firewall_rules.php:364
 msgid "Rules (Drag to Change Order)"
 msgstr "Правила (Перетащите для изменения порядка)"
 
-#: src/usr/local/www/firewall_rules.php:418
-#: src/usr/local/www/firewall_rules.php:509
+#: src/usr/local/www/firewall_rules.php:430
+#: src/usr/local/www/firewall_rules.php:521
 msgid "traffic is passed"
 msgstr "траффик разрешен"
 
-#: src/usr/local/www/firewall_rules.php:428
+#: src/usr/local/www/firewall_rules.php:440
 msgid "Anti-Lockout Rule"
 msgstr "Правило Анти-Блокировки"
 
-#: src/usr/local/www/firewall_rules.php:437
-#: src/usr/local/www/firewall_rules.php:456
-#: src/usr/local/www/firewall_rules.php:500
+#: src/usr/local/www/firewall_rules.php:449
+#: src/usr/local/www/firewall_rules.php:468
+#: src/usr/local/www/firewall_rules.php:512
 msgid "traffic is blocked"
 msgstr "Трафик заблокирован"
 
-#: src/usr/local/www/firewall_rules.php:440
+#: src/usr/local/www/firewall_rules.php:452
 msgid "RFC 1918 networks"
 msgstr "Сети RFC 1918"
 
-#: src/usr/local/www/firewall_rules.php:447
+#: src/usr/local/www/firewall_rules.php:459
 msgid "Block private networks"
 msgstr "Блокировать частные сети"
 
-#: src/usr/local/www/firewall_rules.php:459
+#: src/usr/local/www/firewall_rules.php:471
 #, php-format
 msgid "Reserved%sNot assigned by IANA"
 msgstr "Зарезервировано%sНе присвоено IANA"
 
-#: src/usr/local/www/firewall_rules.php:503
+#: src/usr/local/www/firewall_rules.php:515
 msgid "traffic is rejected"
 msgstr "трафик отвергнут"
 
-#: src/usr/local/www/firewall_rules.php:506
+#: src/usr/local/www/firewall_rules.php:518
 msgid "traffic is matched"
 msgstr "трафик сопоставлен"
 
-#: src/usr/local/www/firewall_rules.php:518
-#: src/usr/local/www/firewall_rules.php:931
+#: src/usr/local/www/firewall_rules.php:530
+#: src/usr/local/www/firewall_rules.php:943
 msgid "&quot;Quick&quot; rule. Applied immediately on match."
 msgstr "&quot;Быстрое&quot; правило. Применяется сразу при соотвествии. "
 
-#: src/usr/local/www/firewall_rules.php:523
+#: src/usr/local/www/firewall_rules.php:535
 msgid "advanced setting"
 msgstr "расширенные настройки"
 
-#: src/usr/local/www/firewall_rules.php:527
+#: src/usr/local/www/firewall_rules.php:539
 msgid "traffic is logged"
 msgstr "трафик журналируется"
 
-#: src/usr/local/www/firewall_rules.php:662
+#: src/usr/local/www/firewall_rules.php:674
 msgid "Traffic matching this rule is currently being denied"
 msgstr "Трафик, соответствующий этому правилу, в текущий момент не допущен"
 
-#: src/usr/local/www/firewall_rules.php:666
+#: src/usr/local/www/firewall_rules.php:678
 msgid "Traffic matching this rule is currently being allowed"
 msgstr "Трафик, соответствующий этому правилу, в текущий момент разрешён"
 
-#: src/usr/local/www/firewall_rules.php:675
+#: src/usr/local/www/firewall_rules.php:687
 msgid "This rule is not currently active because its period has expired"
 msgstr ""
 "Данное правило неактивно в текущий момент, потому что его временной период "
 "истёк."
 
-#: src/usr/local/www/firewall_rules.php:816
+#: src/usr/local/www/firewall_rules.php:828
 msgid "Gateways details"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:855
+#: src/usr/local/www/firewall_rules.php:867
 msgid "Copy"
 msgstr "Копировать"
 
-#: src/usr/local/www/firewall_rules.php:864
+#: src/usr/local/www/firewall_rules.php:876
 msgid "Delete this rule"
 msgstr "Удалить это правило"
 
-#: src/usr/local/www/firewall_rules.php:886
+#: src/usr/local/www/firewall_rules.php:898
 msgid "No floating rules are currently defined."
 msgstr "На текущий момент нет плавающих правил"
 
-#: src/usr/local/www/firewall_rules.php:888
+#: src/usr/local/www/firewall_rules.php:900
 msgid "No rules are currently defined for this interface"
 msgstr "На текущий момент для данного интерфейса нет правил"
 
-#: src/usr/local/www/firewall_rules.php:889
+#: src/usr/local/www/firewall_rules.php:901
 msgid ""
 "All incoming connections on this interface will be blocked until pass rules "
 "are added."
@@ -31224,15 +31206,15 @@ msgstr ""
 "Все входящие соединения будут заблокированы до момента создания разрешающего "
 "правила. "
 
-#: src/usr/local/www/firewall_rules.php:891
+#: src/usr/local/www/firewall_rules.php:903
 msgid "Click the button to add a new rule."
 msgstr "Нажмите не кнопку что бы добавить новое правило. "
 
-#: src/usr/local/www/firewall_rules.php:930
+#: src/usr/local/www/firewall_rules.php:942
 msgid "Advanced filter"
 msgstr "Расширенный фильтер"
 
-#: src/usr/local/www/firewall_rules.php:936
+#: src/usr/local/www/firewall_rules.php:948
 msgid ""
 "Rules are evaluated on a first-match basis (i.e. the action of the first "
 "rule to match a packet will be executed). "
@@ -31240,7 +31222,7 @@ msgstr ""
 "Правила оцениваются по первому совпадению (т. е. Выполняется действие "
 "первого правила для соотвествующего пакета)."
 
-#: src/usr/local/www/firewall_rules.php:938
+#: src/usr/local/www/firewall_rules.php:950
 msgid ""
 "This means that if block rules are used, it is important to pay attention to "
 "the rule order. Everything that isn't explicitly passed is blocked by "
@@ -31250,7 +31232,7 @@ msgstr ""
 "внимание на порядок правил. Все, что не разрешено явно, по умолчанию "
 "заблокировано."
 
-#: src/usr/local/www/firewall_rules.php:942
+#: src/usr/local/www/firewall_rules.php:954
 msgid ""
 "Floating rules are evaluated on a first-match basis (i.e. the action of the "
 "first rule to match a packet will be executed) only if the 'quick' option is "
@@ -31266,7 +31248,7 @@ msgstr ""
 "не выполняется ни одно правило, используются правила для каждого интерфейса "
 "или по умолчанию."
 
-#: src/usr/local/www/firewall_rules.php:949
+#: src/usr/local/www/firewall_rules.php:961
 #, php-format
 msgid ""
 "%1$sClick the anchor icon %2$s to move checked rules before the clicked row. "
@@ -31276,7 +31258,7 @@ msgstr ""
 "указанной строкой. Удерживайте нажатой клавишу Shift и щелкните, чтобы "
 "переместить правила после указанной строки."
 
-#: src/usr/local/www/firewall_rules.php:1069
+#: src/usr/local/www/firewall_rules.php:1081
 msgid "One or more rules have been moved but have not yet been saved"
 msgstr "Одно или несколько правил были перемещены, но пока не сохранены"
 
@@ -33661,57 +33643,57 @@ msgstr ""
 msgid "The remote gateway %s already exists on another phase 1 entry"
 msgstr "Удаленный шлюз %s уже используется в другой записи для 1 фазы"
 
-#: src/etc/inc/ipsec.inc:2334
+#: src/etc/inc/ipsec.inc:2356
 #, php-format
 msgid "No phase2 specifications for tunnel with REQID = %s"
 msgstr "Нет данных о фазе 2 для туннеля с REQID = %s"
 
-#: src/etc/inc/ipsec.inc:2421
+#: src/etc/inc/ipsec.inc:2443
 #, php-format
 msgid "Warning: Missing CRL data for %s"
 msgstr ""
 "Предупреждение: Отсутствуют данные списка аннулированных сертификатов для %s"
 
-#: src/etc/inc/ipsec.inc:2426
+#: src/etc/inc/ipsec.inc:2448
 #, php-format
 msgid "Error: Cannot write IPsec CRL file for %s"
 msgstr ""
 "Ошибка: Невозможно записать файл списка аннулированных сертификатов IPsec "
 "для %s"
 
-#: src/etc/inc/ipsec.inc:2448
+#: src/etc/inc/ipsec.inc:2470
 #, php-format
 msgid "Error: Invalid phase1 certificate reference for %s"
 msgstr "Ошибка: Невалидная ссылка на сертификат фазы 1 для %s"
 
-#: src/etc/inc/ipsec.inc:2466
+#: src/etc/inc/ipsec.inc:2488
 #, php-format
 msgid "Error: Cannot write phase1 key file for %s"
 msgstr "Ошибка: Невозможно записать файл ключа фазы 1 для %s"
 
-#: src/etc/inc/ipsec.inc:2473
+#: src/etc/inc/ipsec.inc:2495
 #, php-format
 msgid "Error: Cannot write phase1 certificate file for %s"
 msgstr "Ошибка: Невозможно записать файл сертификата фазы 1 для %s"
 
-#: src/etc/inc/ipsec.inc:2490
+#: src/etc/inc/ipsec.inc:2512
 #, php-format
 msgid ""
 "Error: Invalid phase1 PKCS#11 certificate reference or PKCS#11 is not "
 "present for %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2558
+#: src/etc/inc/ipsec.inc:2580
 #, php-format
 msgid "Error: Invalid certificate hash info for %s"
 msgstr "Ошибка: Невалидные сведения хэша сертификата для %s"
 
-#: src/etc/inc/ipsec.inc:2563
+#: src/etc/inc/ipsec.inc:2585
 #, php-format
 msgid "Error: Cannot write IPsec CA file for %s"
 msgstr "Ошибка: Невозможно записать файл центра сертификации для %s"
 
-#: src/etc/inc/ipsec.inc:2640
+#: src/etc/inc/ipsec.inc:2662
 msgid "Configuring IPsec VPN... "
 msgstr "Настраиваем IPsec VPN"
 
@@ -33903,36 +33885,31 @@ msgstr "Обнаружено новое предупреждение: %s"
 msgid "Notifications in this message: %s"
 msgstr "Уведомления в этом сообщении: %s"
 
-#: src/etc/inc/notices.inc:430
-#, php-format
-msgid "Could not send the message to %1$s -- Error: %2$s"
-msgstr "Не удаётся отправить сообщение %1$s -- Ошибка: %2$s"
-
-#: src/etc/inc/notices.inc:436
+#: src/etc/inc/notices.inc:443
 #, php-format
 msgid "Message sent to %s OK"
 msgstr "Сообщение отравлено %s"
 
-#: src/etc/inc/notices.inc:454
+#: src/etc/inc/notices.inc:461
 msgid ""
 "Unable to test Telegram notification without both API Key & Chat ID set"
 msgstr ""
 
-#: src/etc/inc/notices.inc:473
+#: src/etc/inc/notices.inc:480
 msgid "API to Telegram did not return data in expected format!"
 msgstr ""
 
-#: src/etc/inc/notices.inc:504
+#: src/etc/inc/notices.inc:511
 msgid ""
 "Unable to test Pushover notification without both API Key & User Key set"
 msgstr ""
 
-#: src/etc/inc/notices.inc:527
+#: src/etc/inc/notices.inc:534
 #, php-format
 msgid "Failed to send Pushover notification. Error received was: %s"
 msgstr ""
 
-#: src/etc/inc/notices.inc:531
+#: src/etc/inc/notices.inc:538
 msgid "Pushover API server did not return data in expected format!"
 msgstr ""
 
@@ -34198,7 +34175,7 @@ msgstr ""
 "phpDynDNS: Не обновляю %s AAAA запись, потому что IPv6 адрес не изменился."
 
 #: src/etc/inc/services.inc:2959 src/etc/inc/services.inc:2971
-#: src/etc/inc/dyndns.class:2472 src/etc/inc/dyndns.class:2480
+#: src/etc/inc/dyndns.class:2487 src/etc/inc/dyndns.class:2495
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS: обновление файла кэша  %1$s: %2$s"
@@ -34793,6 +34770,19 @@ msgstr ""
 #: src/etc/inc/web/alias-utils.inc:528
 msgid "Edited a firewall alias."
 msgstr "Изменен алиас брандмауэра."
+
+#: src/etc/inc/web/diag_arp.inc:109
+msgid "Incomplete"
+msgstr ""
+
+#: src/etc/inc/web/diag_arp.inc:130
+#, php-format
+msgid "Expires in %d seconds"
+msgstr ""
+
+#: src/etc/inc/web/diag_arp.inc:133
+msgid "Permanent"
+msgstr ""
 
 #: src/etc/inc/rrd.inc:34
 #, php-format
@@ -36997,7 +36987,7 @@ msgstr "Ошибка:%1$s Описание:%2$s"
 
 #: src/etc/inc/authgui.inc:122 src/etc/inc/dyndns.class:1299
 #: src/etc/inc/dyndns.class:1587 src/etc/inc/dyndns.class:1639
-#: src/etc/inc/dyndns.class:2496
+#: src/etc/inc/dyndns.class:2511
 msgid "Error"
 msgstr "Ошибка"
 
@@ -40109,13 +40099,13 @@ msgstr ""
 msgid "User Authentication Failed"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1315 src/etc/inc/dyndns.class:1695
-#: src/etc/inc/dyndns.class:1713 src/etc/inc/dyndns.class:1730
-#: src/etc/inc/dyndns.class:1747 src/etc/inc/dyndns.class:1956
-#: src/etc/inc/dyndns.class:2076 src/etc/inc/dyndns.class:2141
-#: src/etc/inc/dyndns.class:2238 src/etc/inc/dyndns.class:2304
-#: src/etc/inc/dyndns.class:2413 src/etc/inc/dyndns.class:2438
-#: src/etc/inc/dyndns.class:2449
+#: src/etc/inc/dyndns.class:1315 src/etc/inc/dyndns.class:1711
+#: src/etc/inc/dyndns.class:1729 src/etc/inc/dyndns.class:1746
+#: src/etc/inc/dyndns.class:1763 src/etc/inc/dyndns.class:1972
+#: src/etc/inc/dyndns.class:2091 src/etc/inc/dyndns.class:2156
+#: src/etc/inc/dyndns.class:2253 src/etc/inc/dyndns.class:2319
+#: src/etc/inc/dyndns.class:2428 src/etc/inc/dyndns.class:2453
+#: src/etc/inc/dyndns.class:2464
 msgid "User Authorization Failed"
 msgstr "Неудачная Попытка Авторизации Пользователя."
 
@@ -40157,23 +40147,23 @@ msgid "Curl error occurred:"
 msgstr "Произошла ошибка Curl:"
 
 #: src/etc/inc/dyndns.class:1601 src/etc/inc/dyndns.class:1656
-#: src/etc/inc/dyndns.class:1679 src/etc/inc/dyndns.class:1698
-#: src/etc/inc/dyndns.class:1716 src/etc/inc/dyndns.class:1733
-#: src/etc/inc/dyndns.class:1750 src/etc/inc/dyndns.class:1837
-#: src/etc/inc/dyndns.class:1855 src/etc/inc/dyndns.class:1875
-#: src/etc/inc/dyndns.class:1893 src/etc/inc/dyndns.class:1903
-#: src/etc/inc/dyndns.class:1917 src/etc/inc/dyndns.class:1931
-#: src/etc/inc/dyndns.class:1944 src/etc/inc/dyndns.class:1959
-#: src/etc/inc/dyndns.class:1978 src/etc/inc/dyndns.class:2002
-#: src/etc/inc/dyndns.class:2021 src/etc/inc/dyndns.class:2041
-#: src/etc/inc/dyndns.class:2062 src/etc/inc/dyndns.class:2079
-#: src/etc/inc/dyndns.class:2128 src/etc/inc/dyndns.class:2144
-#: src/etc/inc/dyndns.class:2162 src/etc/inc/dyndns.class:2175
-#: src/etc/inc/dyndns.class:2200 src/etc/inc/dyndns.class:2224
-#: src/etc/inc/dyndns.class:2249 src/etc/inc/dyndns.class:2286
-#: src/etc/inc/dyndns.class:2307 src/etc/inc/dyndns.class:2322
-#: src/etc/inc/dyndns.class:2333 src/etc/inc/dyndns.class:2422
-#: src/etc/inc/dyndns.class:2458
+#: src/etc/inc/dyndns.class:1679 src/etc/inc/dyndns.class:1695
+#: src/etc/inc/dyndns.class:1714 src/etc/inc/dyndns.class:1732
+#: src/etc/inc/dyndns.class:1749 src/etc/inc/dyndns.class:1766
+#: src/etc/inc/dyndns.class:1853 src/etc/inc/dyndns.class:1871
+#: src/etc/inc/dyndns.class:1891 src/etc/inc/dyndns.class:1909
+#: src/etc/inc/dyndns.class:1919 src/etc/inc/dyndns.class:1933
+#: src/etc/inc/dyndns.class:1947 src/etc/inc/dyndns.class:1960
+#: src/etc/inc/dyndns.class:1975 src/etc/inc/dyndns.class:1994
+#: src/etc/inc/dyndns.class:2018 src/etc/inc/dyndns.class:2036
+#: src/etc/inc/dyndns.class:2056 src/etc/inc/dyndns.class:2077
+#: src/etc/inc/dyndns.class:2094 src/etc/inc/dyndns.class:2143
+#: src/etc/inc/dyndns.class:2159 src/etc/inc/dyndns.class:2177
+#: src/etc/inc/dyndns.class:2190 src/etc/inc/dyndns.class:2215
+#: src/etc/inc/dyndns.class:2239 src/etc/inc/dyndns.class:2264
+#: src/etc/inc/dyndns.class:2301 src/etc/inc/dyndns.class:2322
+#: src/etc/inc/dyndns.class:2337 src/etc/inc/dyndns.class:2348
+#: src/etc/inc/dyndns.class:2437 src/etc/inc/dyndns.class:2473
 msgid "PAYLOAD:"
 msgstr "ПОЛЕЗНАЯ НАГРУЗКА:"
 
@@ -40192,37 +40182,38 @@ msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
 msgstr "Динамический DNS %1$s (%2$s): _checkStatus() инициализирован"
 
 #: src/etc/inc/dyndns.class:1652 src/etc/inc/dyndns.class:1673
-#: src/etc/inc/dyndns.class:1692 src/etc/inc/dyndns.class:1710
-#: src/etc/inc/dyndns.class:1727 src/etc/inc/dyndns.class:1744
-#: src/etc/inc/dyndns.class:1913 src/etc/inc/dyndns.class:1927
-#: src/etc/inc/dyndns.class:1940 src/etc/inc/dyndns.class:1953
-#: src/etc/inc/dyndns.class:1970 src/etc/inc/dyndns.class:2073
-#: src/etc/inc/dyndns.class:2138 src/etc/inc/dyndns.class:2235
-#: src/etc/inc/dyndns.class:2256 src/etc/inc/dyndns.class:2301
-#: src/etc/inc/dyndns.class:2313 src/etc/inc/dyndns.class:2329
-#: src/etc/inc/dyndns.class:2355 src/etc/inc/dyndns.class:2415
-#: src/etc/inc/dyndns.class:2418 src/etc/inc/dyndns.class:2435
-#: src/etc/inc/dyndns.class:2451 src/etc/inc/dyndns.class:2454
+#: src/etc/inc/dyndns.class:1708 src/etc/inc/dyndns.class:1726
+#: src/etc/inc/dyndns.class:1743 src/etc/inc/dyndns.class:1760
+#: src/etc/inc/dyndns.class:1929 src/etc/inc/dyndns.class:1943
+#: src/etc/inc/dyndns.class:1956 src/etc/inc/dyndns.class:1969
+#: src/etc/inc/dyndns.class:1986 src/etc/inc/dyndns.class:2088
+#: src/etc/inc/dyndns.class:2153 src/etc/inc/dyndns.class:2250
+#: src/etc/inc/dyndns.class:2271 src/etc/inc/dyndns.class:2316
+#: src/etc/inc/dyndns.class:2328 src/etc/inc/dyndns.class:2344
+#: src/etc/inc/dyndns.class:2370 src/etc/inc/dyndns.class:2430
+#: src/etc/inc/dyndns.class:2433 src/etc/inc/dyndns.class:2450
+#: src/etc/inc/dyndns.class:2466 src/etc/inc/dyndns.class:2469
 msgid "IP Address Changed Successfully!"
 msgstr "IP адрес успешно изменён!"
 
 #: src/etc/inc/dyndns.class:1655 src/etc/inc/dyndns.class:1678
-#: src/etc/inc/dyndns.class:1697 src/etc/inc/dyndns.class:1715
-#: src/etc/inc/dyndns.class:1732 src/etc/inc/dyndns.class:1749
-#: src/etc/inc/dyndns.class:1818 src/etc/inc/dyndns.class:1836
-#: src/etc/inc/dyndns.class:1854 src/etc/inc/dyndns.class:1874
-#: src/etc/inc/dyndns.class:1892 src/etc/inc/dyndns.class:1902
-#: src/etc/inc/dyndns.class:1916 src/etc/inc/dyndns.class:1930
-#: src/etc/inc/dyndns.class:1943 src/etc/inc/dyndns.class:1958
-#: src/etc/inc/dyndns.class:1977 src/etc/inc/dyndns.class:2001
-#: src/etc/inc/dyndns.class:2020 src/etc/inc/dyndns.class:2040
-#: src/etc/inc/dyndns.class:2061 src/etc/inc/dyndns.class:2078
-#: src/etc/inc/dyndns.class:2143 src/etc/inc/dyndns.class:2161
-#: src/etc/inc/dyndns.class:2174 src/etc/inc/dyndns.class:2199
-#: src/etc/inc/dyndns.class:2223 src/etc/inc/dyndns.class:2248
-#: src/etc/inc/dyndns.class:2285 src/etc/inc/dyndns.class:2306
-#: src/etc/inc/dyndns.class:2321 src/etc/inc/dyndns.class:2332
-#: src/etc/inc/dyndns.class:2421 src/etc/inc/dyndns.class:2457
+#: src/etc/inc/dyndns.class:1694 src/etc/inc/dyndns.class:1713
+#: src/etc/inc/dyndns.class:1731 src/etc/inc/dyndns.class:1748
+#: src/etc/inc/dyndns.class:1765 src/etc/inc/dyndns.class:1834
+#: src/etc/inc/dyndns.class:1852 src/etc/inc/dyndns.class:1870
+#: src/etc/inc/dyndns.class:1890 src/etc/inc/dyndns.class:1908
+#: src/etc/inc/dyndns.class:1918 src/etc/inc/dyndns.class:1932
+#: src/etc/inc/dyndns.class:1946 src/etc/inc/dyndns.class:1959
+#: src/etc/inc/dyndns.class:1974 src/etc/inc/dyndns.class:1993
+#: src/etc/inc/dyndns.class:2017 src/etc/inc/dyndns.class:2035
+#: src/etc/inc/dyndns.class:2055 src/etc/inc/dyndns.class:2076
+#: src/etc/inc/dyndns.class:2093 src/etc/inc/dyndns.class:2158
+#: src/etc/inc/dyndns.class:2176 src/etc/inc/dyndns.class:2189
+#: src/etc/inc/dyndns.class:2214 src/etc/inc/dyndns.class:2238
+#: src/etc/inc/dyndns.class:2263 src/etc/inc/dyndns.class:2300
+#: src/etc/inc/dyndns.class:2321 src/etc/inc/dyndns.class:2336
+#: src/etc/inc/dyndns.class:2347 src/etc/inc/dyndns.class:2436
+#: src/etc/inc/dyndns.class:2472
 msgid "Unknown Response"
 msgstr "Неизвестный ответ"
 
@@ -40267,57 +40258,67 @@ msgstr "Имя хоста заблокировано из-за злоупотр�
 msgid "DNS error encountered. Stop updating for 30 minutes."
 msgstr "Ошибка DNS. Обновления приостановлены на 30 минут. "
 
-#: src/etc/inc/dyndns.class:1685 src/etc/inc/dyndns.class:1705
-#: src/etc/inc/dyndns.class:1722 src/etc/inc/dyndns.class:1739
-#: src/etc/inc/dyndns.class:2068 src/etc/inc/dyndns.class:2133
-#: src/etc/inc/dyndns.class:2294
+#: src/etc/inc/dyndns.class:1691 src/etc/inc/dyndns.class:1884
+#: src/etc/inc/dyndns.class:1887 src/etc/inc/dyndns.class:1905
+#: src/etc/inc/dyndns.class:1915 src/etc/inc/dyndns.class:2014
+#: src/etc/inc/dyndns.class:2030 src/etc/inc/dyndns.class:2049
+#: src/etc/inc/dyndns.class:2070 src/etc/inc/dyndns.class:2126
+#: src/etc/inc/dyndns.class:2173 src/etc/inc/dyndns.class:2186
+#: src/etc/inc/dyndns.class:2202 src/etc/inc/dyndns.class:2226
+msgid "IP Address Updated Successfully!"
+msgstr "IP Адрес Успешно Обновлен!"
+
+#: src/etc/inc/dyndns.class:1701 src/etc/inc/dyndns.class:1721
+#: src/etc/inc/dyndns.class:1738 src/etc/inc/dyndns.class:1755
+#: src/etc/inc/dyndns.class:2083 src/etc/inc/dyndns.class:2148
+#: src/etc/inc/dyndns.class:2309
 msgid "Not A FQDN!"
 msgstr "Не FQDN!"
 
-#: src/etc/inc/dyndns.class:1687 src/etc/inc/dyndns.class:2296
+#: src/etc/inc/dyndns.class:1703 src/etc/inc/dyndns.class:2311
 msgid "No such host"
 msgstr "Не известное имя хоста"
 
-#: src/etc/inc/dyndns.class:1689 src/etc/inc/dyndns.class:1707
-#: src/etc/inc/dyndns.class:1724 src/etc/inc/dyndns.class:1741
-#: src/etc/inc/dyndns.class:1910 src/etc/inc/dyndns.class:1924
-#: src/etc/inc/dyndns.class:1937 src/etc/inc/dyndns.class:1950
-#: src/etc/inc/dyndns.class:2135 src/etc/inc/dyndns.class:2232
-#: src/etc/inc/dyndns.class:2275 src/etc/inc/dyndns.class:2298
+#: src/etc/inc/dyndns.class:1705 src/etc/inc/dyndns.class:1723
+#: src/etc/inc/dyndns.class:1740 src/etc/inc/dyndns.class:1757
+#: src/etc/inc/dyndns.class:1926 src/etc/inc/dyndns.class:1940
+#: src/etc/inc/dyndns.class:1953 src/etc/inc/dyndns.class:1966
+#: src/etc/inc/dyndns.class:2150 src/etc/inc/dyndns.class:2247
+#: src/etc/inc/dyndns.class:2290 src/etc/inc/dyndns.class:2313
 msgid "No Change In IP Address"
 msgstr "IP адрес не изменился. "
 
-#: src/etc/inc/dyndns.class:1763
+#: src/etc/inc/dyndns.class:1779
 msgid "IP address is current, no update performed."
 msgstr "IP адрес актуален, обновление не требуется. "
 
-#: src/etc/inc/dyndns.class:1767
+#: src/etc/inc/dyndns.class:1783
 msgid "DNS hostname update successful."
 msgstr "Имя DNS хоста обновлено успешно"
 
-#: src/etc/inc/dyndns.class:1771
+#: src/etc/inc/dyndns.class:1787
 msgid "Hostname supplied does not exist."
 msgstr "Данное имя хоста не существует."
 
-#: src/etc/inc/dyndns.class:1774
+#: src/etc/inc/dyndns.class:1790
 msgid "Invalid Username."
 msgstr "Неверное Имя Пользователя"
 
-#: src/etc/inc/dyndns.class:1777
+#: src/etc/inc/dyndns.class:1793
 msgid "Invalid Password."
 msgstr "Неверный Пароль"
 
-#: src/etc/inc/dyndns.class:1780
+#: src/etc/inc/dyndns.class:1796
 msgid "Too many updates sent."
 msgstr "Послано слишком много обновлений"
 
-#: src/etc/inc/dyndns.class:1783
+#: src/etc/inc/dyndns.class:1799
 msgid "Account disabled due to violation of No-IP terms of service."
 msgstr ""
 "Учетная запись отключена по причине нарушения правил пользования сервисом No-"
 "IP"
 
-#: src/etc/inc/dyndns.class:1786
+#: src/etc/inc/dyndns.class:1802
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
@@ -40325,40 +40326,40 @@ msgstr ""
 "Неверный IP адрес. Указанный адрес имеет неверный формат, либо является "
 "приватным, либо находится в черном списке. "
 
-#: src/etc/inc/dyndns.class:1789
+#: src/etc/inc/dyndns.class:1805
 msgid "Disabled / Locked Hostname."
 msgstr "Отключенное / Заблокированное Имя Хоста"
 
-#: src/etc/inc/dyndns.class:1792
+#: src/etc/inc/dyndns.class:1808
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
 "Обновленный хост настроен для перенаправления WEB и обновление не было "
 "выполнено"
 
-#: src/etc/inc/dyndns.class:1795
+#: src/etc/inc/dyndns.class:1811
 msgid "Group supplied does not exist."
 msgstr "Указанная группа не существует"
 
-#: src/etc/inc/dyndns.class:1798
+#: src/etc/inc/dyndns.class:1814
 msgid "DNS group update is successful."
 msgstr "DNS группа успешно обновлена"
 
-#: src/etc/inc/dyndns.class:1802
+#: src/etc/inc/dyndns.class:1818
 msgid "DNS group is current, no update performed."
 msgstr "DNS группа актуальна, обновление не требуется"
 
-#: src/etc/inc/dyndns.class:1806
+#: src/etc/inc/dyndns.class:1822
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
 "Поддержка обновления клиента недоступна для указанного имени хоста или "
 "группы"
 
-#: src/etc/inc/dyndns.class:1809
+#: src/etc/inc/dyndns.class:1825
 msgid "Hostname supplied does not have offline settings configured."
 msgstr "Указанное имя хоста не имеет оффлайн настроек"
 
-#: src/etc/inc/dyndns.class:1812 src/etc/inc/dyndns.class:1815
+#: src/etc/inc/dyndns.class:1828 src/etc/inc/dyndns.class:1831
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
@@ -40366,347 +40367,337 @@ msgstr ""
 "Клиент отключен. Клиент должен выйти и не выполнять больше обновлений без "
 "вмешательства пользователя."
 
-#: src/etc/inc/dyndns.class:1819
+#: src/etc/inc/dyndns.class:1835
 msgid "Unknown Response:"
 msgstr "Неизвестный Ответ:"
 
-#: src/etc/inc/dyndns.class:1825 src/etc/inc/dyndns.class:1843
+#: src/etc/inc/dyndns.class:1841 src/etc/inc/dyndns.class:1859
 msgid "Authentication Failed: Username and/or Password was Incorrect."
 msgstr "Ошибка Аутентификации: Неверно Указаны Имя Пользователя и/или Пароль"
 
-#: src/etc/inc/dyndns.class:1827 src/etc/inc/dyndns.class:1845
+#: src/etc/inc/dyndns.class:1843 src/etc/inc/dyndns.class:1861
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
 msgstr "Сервис недоступен: Служба DynDNS отключена для данного домена. "
 
-#: src/etc/inc/dyndns.class:1829 src/etc/inc/dyndns.class:1847
+#: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1863
 msgid "Illegal Input: Self-Explanatory"
 msgstr "Неверный ввод данных: Объяснения не требуются"
 
-#: src/etc/inc/dyndns.class:1831 src/etc/inc/dyndns.class:1849
+#: src/etc/inc/dyndns.class:1847 src/etc/inc/dyndns.class:1865
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
 msgstr ""
 "Слишком Скоро: Прошло Недостаточно Времени с Момента Поледнего Обновления"
 
-#: src/etc/inc/dyndns.class:1833 src/etc/inc/dyndns.class:1851
+#: src/etc/inc/dyndns.class:1849 src/etc/inc/dyndns.class:1867
 msgid "IP Updated Successfully!"
 msgstr "IP  Успешно Обновлен!"
 
-#: src/etc/inc/dyndns.class:1864
+#: src/etc/inc/dyndns.class:1880
 msgid "Error 799"
 msgstr "Ошибка 799"
 
-#: src/etc/inc/dyndns.class:1864 src/etc/inc/dyndns.class:1866
+#: src/etc/inc/dyndns.class:1880 src/etc/inc/dyndns.class:1882
 msgid "Update Failed!"
 msgstr "Неудачная Попатка Обновления!"
 
-#: src/etc/inc/dyndns.class:1866
+#: src/etc/inc/dyndns.class:1882
 msgid "Error 700"
 msgstr "Ошибка 700"
 
-#: src/etc/inc/dyndns.class:1868 src/etc/inc/dyndns.class:1871
-#: src/etc/inc/dyndns.class:1889 src/etc/inc/dyndns.class:1899
-#: src/etc/inc/dyndns.class:1998 src/etc/inc/dyndns.class:2014
-#: src/etc/inc/dyndns.class:2034 src/etc/inc/dyndns.class:2055
-#: src/etc/inc/dyndns.class:2111 src/etc/inc/dyndns.class:2158
-#: src/etc/inc/dyndns.class:2171 src/etc/inc/dyndns.class:2187
-#: src/etc/inc/dyndns.class:2211
-msgid "IP Address Updated Successfully!"
-msgstr "IP Адрес Успешно Обновлен!"
-
-#: src/etc/inc/dyndns.class:1881
+#: src/etc/inc/dyndns.class:1897
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
 "Неправильный Запрос - URL неправильно сформирован. Отсутствуют необходимые "
 "параметры."
 
-#: src/etc/inc/dyndns.class:1883
+#: src/etc/inc/dyndns.class:1899
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
 "Слишком Скорый Запрос Обновления  - Слишком Скорая Попытка Обновиться с "
 "Момента Последних Изменений. "
 
-#: src/etc/inc/dyndns.class:1885
+#: src/etc/inc/dyndns.class:1901
 msgid "Database Error - There was a server-sided database error."
 msgstr "Ошибка БД - Ошибка БД на Стороне Сервера."
 
-#: src/etc/inc/dyndns.class:1887
+#: src/etc/inc/dyndns.class:1903
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
 msgstr ""
 "Ошибка Имени Хоста - Имя Хоста (%1$s) Не Принадлежит Пользователю (%2$s)."
 
-#: src/etc/inc/dyndns.class:1965
+#: src/etc/inc/dyndns.class:1981
 msgid "Not a valid username or password!"
 msgstr "Не валидные имя пользователя или пароль!"
 
-#: src/etc/inc/dyndns.class:1967
+#: src/etc/inc/dyndns.class:1983
 msgid "Hostname specified does not exist."
 msgstr "Указанное имя хоста не существует"
 
-#: src/etc/inc/dyndns.class:1973
+#: src/etc/inc/dyndns.class:1989
 msgid "Hostname specified exists, but not under the username specified."
 msgstr ""
 "Указанное имя хоста существует, но не под указанным именем пользователя"
 
-#: src/etc/inc/dyndns.class:1975
+#: src/etc/inc/dyndns.class:1991
 msgid "Updating too frequently, considered abuse."
 msgstr ""
 "Обновления выполняется слишком часто, что рассматривается как "
 "злоупотребление"
 
-#: src/etc/inc/dyndns.class:1984 src/etc/inc/dyndns.class:2049
+#: src/etc/inc/dyndns.class:2000 src/etc/inc/dyndns.class:2064
 msgid "Bad Request - The IP provided was invalid."
 msgstr "Неправильный запрос - указанный IP задан неверно"
 
-#: src/etc/inc/dyndns.class:1986
+#: src/etc/inc/dyndns.class:2002
 msgid "Bad Request - Required parameters were not provided."
 msgstr "Неправильный запрос - требуемые параметры не были указаны"
 
-#: src/etc/inc/dyndns.class:1988
+#: src/etc/inc/dyndns.class:2004
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr ""
 "Неправильный запрос - неверные символы указаны либо в имени пользователя, "
 "либо в пароле."
 
-#: src/etc/inc/dyndns.class:1990
+#: src/etc/inc/dyndns.class:2006
 msgid "Invalid password."
 msgstr "Неправильный пароль."
 
-#: src/etc/inc/dyndns.class:1992
+#: src/etc/inc/dyndns.class:2008
 msgid "This account has been administratively locked."
 msgstr "Учётная запись административно заблокирована"
 
-#: src/etc/inc/dyndns.class:1994
+#: src/etc/inc/dyndns.class:2010
 msgid "Updating too frequently."
 msgstr "Обновления выполняется слишком часто"
 
-#: src/etc/inc/dyndns.class:1996 src/etc/inc/dyndns.class:2010
-#: src/etc/inc/dyndns.class:2028
+#: src/etc/inc/dyndns.class:2012 src/etc/inc/dyndns.class:2026
+#: src/etc/inc/dyndns.class:2043
 msgid "Server side error."
 msgstr "Ошибка на стороне сервера"
 
-#: src/etc/inc/dyndns.class:2012
+#: src/etc/inc/dyndns.class:2028
 msgid "Badly Formed Request (check the settings)."
 msgstr "Неправильно сформированный запрос (проверьте настройки)"
 
-#: src/etc/inc/dyndns.class:2030 src/etc/inc/dyndns.class:2051
+#: src/etc/inc/dyndns.class:2045 src/etc/inc/dyndns.class:2066
 msgid "Bad Request - A hostname was not provided."
 msgstr "Неправильный запрос - не указано имя хоста"
 
-#: src/etc/inc/dyndns.class:2032 src/etc/inc/dyndns.class:2053
+#: src/etc/inc/dyndns.class:2047 src/etc/inc/dyndns.class:2068
 msgid "Invalid username or password."
 msgstr "Неправильное имя пользователя или пароль"
 
-#: src/etc/inc/dyndns.class:2037 src/etc/inc/dyndns.class:2058
-#: src/etc/inc/dyndns.class:2070
+#: src/etc/inc/dyndns.class:2052 src/etc/inc/dyndns.class:2073
+#: src/etc/inc/dyndns.class:2085
 msgid "No Change In IP Address."
 msgstr "Нет изменений в IP адресе"
 
-#: src/etc/inc/dyndns.class:2086
+#: src/etc/inc/dyndns.class:2101
 msgid "Route53 API call failed"
 msgstr "Route53 API вызов не был успешным"
 
-#: src/etc/inc/dyndns.class:2090
+#: src/etc/inc/dyndns.class:2105
 msgid "IP address changed successfully"
 msgstr "IP адрес успешно изменён"
 
-#: src/etc/inc/dyndns.class:2113 src/etc/inc/dyndns.class:2316
+#: src/etc/inc/dyndns.class:2128 src/etc/inc/dyndns.class:2331
 msgid "Result did not match."
 msgstr "Результат не совпадает"
 
-#: src/etc/inc/dyndns.class:2120
+#: src/etc/inc/dyndns.class:2135
 #, php-format
 msgid "%1$s updated to %2$s"
 msgstr "%1$s обновлено к  %2$s"
 
-#: src/etc/inc/dyndns.class:2123
+#: src/etc/inc/dyndns.class:2138
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "Cloudflare."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:2125
+#: src/etc/inc/dyndns.class:2140
 msgid "Zone or Host ID was not found, check the hostname."
 msgstr "Зона или идентификатор хоста не найдены, проверьте имя хоста."
 
-#: src/etc/inc/dyndns.class:2127
+#: src/etc/inc/dyndns.class:2142
 msgid "UNKNOWN ERROR"
 msgstr "НЕИЗВЕСТНАЯ ОШИБКА"
 
-#: src/etc/inc/dyndns.class:2150
+#: src/etc/inc/dyndns.class:2165
 msgid "Wrong values - Update could not be completed."
 msgstr "Неверные значения - обновление не может быть завершено"
 
-#: src/etc/inc/dyndns.class:2152
+#: src/etc/inc/dyndns.class:2167
 msgid "Unknown username - User does not exist."
 msgstr "Неизвестное имя пользователя - пользователь не существует"
 
-#: src/etc/inc/dyndns.class:2154
+#: src/etc/inc/dyndns.class:2169
 msgid "Wrong password - Remember password is case sensitive."
 msgstr "Неправильный пароль - помните, что пароль чувствителен к регистру"
 
-#: src/etc/inc/dyndns.class:2156
+#: src/etc/inc/dyndns.class:2171
 msgid "User unable to administer the selected domain."
 msgstr "Пользователь не имеет административных прав для выбранного домена"
 
-#: src/etc/inc/dyndns.class:2230
+#: src/etc/inc/dyndns.class:2245
 msgid "Not A FQDN"
 msgstr "Не является полностью определённым именем домена"
 
-#: src/etc/inc/dyndns.class:2240
+#: src/etc/inc/dyndns.class:2255
 msgid "Hostname does not exist or DynDNS not enabled"
 msgstr "Имя хоста не существует или динамический DNS не включен"
 
-#: src/etc/inc/dyndns.class:2242
+#: src/etc/inc/dyndns.class:2257
 msgid "Bad request"
 msgstr "Неправильный запрос"
 
-#: src/etc/inc/dyndns.class:2244
+#: src/etc/inc/dyndns.class:2259
 msgid "Dynamic DNS access has been blocked!"
 msgstr "Доступ к динамическому DNS заблокирован!"
 
-#: src/etc/inc/dyndns.class:2246
+#: src/etc/inc/dyndns.class:2261
 msgid "Error on Google's end, retry in 5 minutes"
 msgstr "Ошибка на стороне Google, попытка повтора через 5 минут"
 
-#: src/etc/inc/dyndns.class:2260 src/etc/inc/dyndns.class:2318
+#: src/etc/inc/dyndns.class:2275 src/etc/inc/dyndns.class:2333
 msgid "Invalid username or password"
 msgstr "Неправильное имя пользователя или пароль"
 
-#: src/etc/inc/dyndns.class:2263
+#: src/etc/inc/dyndns.class:2278
 msgid "Account suspended"
 msgstr "Учетная запись заблокирована"
 
-#: src/etc/inc/dyndns.class:2266
+#: src/etc/inc/dyndns.class:2281
 msgid "Account revoked"
 msgstr "Учетная запись отозвана"
 
-#: src/etc/inc/dyndns.class:2269
+#: src/etc/inc/dyndns.class:2284
 msgid "Record does not exist in the system. Unable to update record"
 msgstr "Запись не существует в системе. Невозможно обновить запись."
 
-#: src/etc/inc/dyndns.class:2272
+#: src/etc/inc/dyndns.class:2287
 msgid "User does not have access to this record"
 msgstr "Пользователь не имеет доступа к данной записи"
 
-#: src/etc/inc/dyndns.class:2279
+#: src/etc/inc/dyndns.class:2294
 msgid "General system error recognized by the system"
 msgstr "Обнаружена общая ошибка системы"
 
-#: src/etc/inc/dyndns.class:2282
+#: src/etc/inc/dyndns.class:2297
 msgid "General system error unrecognized by the system"
 msgstr "Обнаружена неизвестная общая ошибка системы"
 
-#: src/etc/inc/dyndns.class:2349 src/etc/inc/dyndns.class:2432
+#: src/etc/inc/dyndns.class:2364 src/etc/inc/dyndns.class:2447
 #, php-format
 msgid "_checkStatus() results: %1$s"
 msgstr "Результат _checkStatus(): %1$s"
 
-#: src/etc/inc/dyndns.class:2360
+#: src/etc/inc/dyndns.class:2375
 msgid "No record exists."
 msgstr "Ни одной записи нет."
 
-#: src/etc/inc/dyndns.class:2364
+#: src/etc/inc/dyndns.class:2379
 msgid "No type exists."
 msgstr "Ни одного типа нет."
 
-#: src/etc/inc/dyndns.class:2368
+#: src/etc/inc/dyndns.class:2383
 msgid "No value exists."
 msgstr "Ни одного значения нет."
 
-#: src/etc/inc/dyndns.class:2371
+#: src/etc/inc/dyndns.class:2386
 msgid "No such zone exists."
 msgstr "Такой зоны не существует."
 
-#: src/etc/inc/dyndns.class:2374
+#: src/etc/inc/dyndns.class:2389
 msgid "The specified record is invalid."
 msgstr "Указанная запись невалидна"
 
-#: src/etc/inc/dyndns.class:2377
+#: src/etc/inc/dyndns.class:2392
 msgid "The specified type is invalid."
 msgstr "Указанный тип невалиден."
 
-#: src/etc/inc/dyndns.class:2380
+#: src/etc/inc/dyndns.class:2395
 msgid "The specified value is invalid."
 msgstr "Указанное значение невалидно."
 
-#: src/etc/inc/dyndns.class:2383
+#: src/etc/inc/dyndns.class:2398
 msgid "Record is not editable."
 msgstr "Запись нередактируема. "
 
-#: src/etc/inc/dyndns.class:2386
+#: src/etc/inc/dyndns.class:2401
 msgid "Record exists but is not editable."
 msgstr "Запись существует, но она нередактируема. ."
 
-#: src/etc/inc/dyndns.class:2389
+#: src/etc/inc/dyndns.class:2404
 msgid "Record exists and must be removed before adding."
 msgstr "Запись существует и она должна быть удалена перед добавлением."
 
-#: src/etc/inc/dyndns.class:2392 src/etc/inc/dyndns.class:2398
+#: src/etc/inc/dyndns.class:2407 src/etc/inc/dyndns.class:2413
 msgid "A remote server error occurred updating the zone."
 msgstr "Произошла ошибка удалённого сервера при обновлении зоны."
 
-#: src/etc/inc/dyndns.class:2395
+#: src/etc/inc/dyndns.class:2410
 msgid "A remote server error occurred loading the zone."
 msgstr "Произошла ошибка удалённого сервера при загрузке зоны."
 
-#: src/etc/inc/dyndns.class:2401
+#: src/etc/inc/dyndns.class:2416
 msgid "A remote server error occurred adding a new record."
 msgstr "Произошла ошибка удалённого сервера при добавлении новой записи."
 
-#: src/etc/inc/dyndns.class:2404
+#: src/etc/inc/dyndns.class:2419
 msgid "A remote server error occurred removing an existing record."
 msgstr "Произошла ошибка удалённого сервера при удалении существующей записи."
 
-#: src/etc/inc/dyndns.class:2471
+#: src/etc/inc/dyndns.class:2486
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "Динамический DNS обновил IP адрес на %1$s (%2$s) к %3$s"
 
-#: src/etc/inc/dyndns.class:2479
+#: src/etc/inc/dyndns.class:2494
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
 msgstr "Динамический DNS  обновил IPv6 адрес на %1$s (%2$s) к %3$s"
 
-#: src/etc/inc/dyndns.class:2495
+#: src/etc/inc/dyndns.class:2510
 msgid "ERROR!"
 msgstr "ОШИБКА!"
 
-#: src/etc/inc/dyndns.class:2501
+#: src/etc/inc/dyndns.class:2516
 msgid "No Dynamic DNS Service provider was selected."
 msgstr "Не выбран провайдер динамического DNS"
 
-#: src/etc/inc/dyndns.class:2504
+#: src/etc/inc/dyndns.class:2519
 msgid "No Username Provided."
 msgstr "Не указано имя пользователя"
 
-#: src/etc/inc/dyndns.class:2507
+#: src/etc/inc/dyndns.class:2522
 msgid "No Password Provided."
 msgstr "Не указан пароль"
 
-#: src/etc/inc/dyndns.class:2510
+#: src/etc/inc/dyndns.class:2525
 msgid "No Hostname Provided."
 msgstr "Не указано имя хоста"
 
-#: src/etc/inc/dyndns.class:2513
+#: src/etc/inc/dyndns.class:2528
 msgid "The Dynamic DNS Service provided is not yet supported."
 msgstr "Указанный сервис динамического DNS ещё не поддерживается"
 
-#: src/etc/inc/dyndns.class:2516
+#: src/etc/inc/dyndns.class:2531
 msgid "No Update URL Provided."
 msgstr "Не указан  универсальный указатель ресурса (URL)"
 
-#: src/etc/inc/dyndns.class:2519
+#: src/etc/inc/dyndns.class:2534
 msgid "Invalid ZoneID"
 msgstr "Неверный идентификатор зоны"
 
-#: src/etc/inc/dyndns.class:2522
+#: src/etc/inc/dyndns.class:2537
 msgid "Invalid TTL"
 msgstr "Неверный TTL"
 
-#: src/etc/inc/dyndns.class:2525
+#: src/etc/inc/dyndns.class:2540
 #, php-format
 msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
@@ -40715,16 +40706,16 @@ msgstr ""
 "IP адрес не изменился и/или %s дней не прошло. Запись динамического DNS не "
 "будет обновлена."
 
-#: src/etc/inc/dyndns.class:2528
+#: src/etc/inc/dyndns.class:2543
 msgid "Unknown Response."
 msgstr "Неизвестный Ответ."
 
-#: src/etc/inc/dyndns.class:2547
+#: src/etc/inc/dyndns.class:2562
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _detectChange() starting."
 msgstr "Динамический DNS %1$s (%2$s):_detectChange() инициализируется"
 
-#: src/etc/inc/dyndns.class:2554
+#: src/etc/inc/dyndns.class:2569
 #, php-format
 msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
@@ -40733,72 +40724,72 @@ msgstr ""
 "Динамический DNS  (%s): Текущий WAN IP невозможно определить, пропускаем "
 "процесс обновления"
 
-#: src/etc/inc/dyndns.class:2557
+#: src/etc/inc/dyndns.class:2572
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
 msgstr "Динамический DNS (%1$s): Текущий WAN IP: %2$s"
 
-#: src/etc/inc/dyndns.class:2565
+#: src/etc/inc/dyndns.class:2580
 #, php-format
 msgid "Cached IPv6: %s"
 msgstr "Закэшированный IPv6: %s"
 
-#: src/etc/inc/dyndns.class:2571
+#: src/etc/inc/dyndns.class:2586
 msgid "No Cached IPv6 found."
 msgstr "Закэшированный IPv6 не найден"
 
-#: src/etc/inc/dyndns.class:2579
+#: src/etc/inc/dyndns.class:2594
 #, php-format
 msgid "Cached IP: %s"
 msgstr "Закэшированый IP: %s"
 
-#: src/etc/inc/dyndns.class:2585
+#: src/etc/inc/dyndns.class:2600
 msgid "No Cached IP found."
 msgstr "Закэшированный IP не найден"
 
-#: src/etc/inc/dyndns.class:2599
+#: src/etc/inc/dyndns.class:2614
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
 msgstr "Динамический DNS: cacheIP != wan_ip. Обновляем."
 
-#: src/etc/inc/dyndns.class:2600
+#: src/etc/inc/dyndns.class:2615
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
 msgstr "Закэшированый IP: %1$s WAN IP: %2$s"
 
-#: src/etc/inc/dyndns.class:2605
+#: src/etc/inc/dyndns.class:2620
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
 msgstr "Динамический DNS: Больше чем %s дней. Обновляем."
 
-#: src/etc/inc/dyndns.class:2610
+#: src/etc/inc/dyndns.class:2625
 msgid "Initial update."
 msgstr "Первоначальное обновление"
 
-#: src/etc/inc/dyndns.class:2647
+#: src/etc/inc/dyndns.class:2662
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
 msgstr "Динамический DNS %1$s (%2$s):_checkIP()  инициализирован"
 
-#: src/etc/inc/dyndns.class:2664
+#: src/etc/inc/dyndns.class:2679
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from Check IP Service"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:2667
+#: src/etc/inc/dyndns.class:2682
 #, php-format
 msgid ""
 "Dynamic DNS %1$s (%2$s): IP address could not be extracted from Check IP "
 "Service"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:2672
+#: src/etc/inc/dyndns.class:2687
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
 msgstr "Dynamic DNS %1$s (%2$s): %3$s извлечён из локальной системы"
 
 #: src/etc/inc/copynotice.inc:52
 msgid ""
-"<p align=\"center\"><font size=\"3\">Copyright &copy; 2004-2020. Electric "
+"<p align=\"center\"><font size=\"3\">Copyright &copy; 2004-2021. Electric "
 "Sheep Fencing LLC (\"ESF\"). All Rights Reserved.</p>\n"
 "\t\t\t\t\t<p align=\"center\"><strong>NO COMMERCIAL DISTRIBUTION OF THE "
 "PFSENSE&reg; CE SOFTWARE IS ALLOWED.</strong>\n"
@@ -40929,7 +40920,7 @@ msgstr ""
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
 msgstr "Ошибка: не могу открыть %1$s' в captiveportal_write_elements()%2$s"
 
-#: src/etc/inc/captiveportal.inc:2657
+#: src/etc/inc/captiveportal.inc:2651
 msgid "Captive Portal allowed users configuration changed"
 msgstr "Портал Авторизации позволил пользователям изменить настройки"
 
@@ -41479,12 +41470,12 @@ msgid "Enable registration of DHCP client names in DNS"
 msgstr "Включить регистрацию имен клиентов DHCP в DNS"
 
 #: src/usr/local/www/services_dhcp.php:1482
-#: src/usr/local/www/services_dhcp_edit.php:799
+#: src/usr/local/www/services_dhcp_edit.php:806
 msgid "Enables network booting"
 msgstr "Включает сетевую загрузку"
 
 #: src/usr/local/www/services_dhcp.php:1558
-#: src/usr/local/www/services_dhcp_edit.php:875
+#: src/usr/local/www/services_dhcp_edit.php:882
 msgid "<div class=\"alert alert-info\"> "
 msgstr "<div class=\"alert alert-info\"> "
 

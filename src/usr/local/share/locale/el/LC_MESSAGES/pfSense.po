@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-10 12:32-0300\n"
+"POT-Creation-Date: 2021-01-04 11:27-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -102,7 +102,7 @@ msgstr "Τείχος Προστασίας: NAT: - απενεργοποιήθηκ
 #: src/usr/local/www/firewall_shaper_wizards.php:59
 #: src/usr/local/www/firewall_shaper_vinterface.php:41
 #: src/usr/local/www/firewall_aliases.php:80
-#: src/usr/local/www/firewall_nat.php:195
+#: src/usr/local/www/firewall_nat.php:208
 #: src/usr/local/www/firewall_shaper_queues.php:182
 #: src/usr/local/www/firewall_virtual_ip.php:265
 #: src/usr/local/www/firewall_virtual_ip_edit.php:297
@@ -115,7 +115,7 @@ msgstr "Τείχος Προστασίας: NAT: - απενεργοποιήθηκ
 #: src/usr/local/www/firewall_aliases_import.php:50
 #: src/usr/local/www/firewall_schedule.php:44 src/usr/local/www/easyrule.php:63
 #: src/usr/local/www/firewall_aliases_edit.php:139
-#: src/usr/local/www/firewall_rules.php:310
+#: src/usr/local/www/firewall_rules.php:322
 #: src/usr/local/www/firewall_nat_npt_edit.php:150
 msgid "Firewall"
 msgstr "Τείχος Προστασίας"
@@ -123,7 +123,7 @@ msgstr "Τείχος Προστασίας"
 #: src/usr/local/www/firewall_nat_1to1.php:127
 #: src/usr/local/www/firewall_nat_1to1_edit.php:289
 #: src/usr/local/www/firewall_nat_out.php:197
-#: src/usr/local/www/firewall_nat.php:195 src/usr/local/www/diag_backup.php:91
+#: src/usr/local/www/firewall_nat.php:208 src/usr/local/www/diag_backup.php:91
 #: src/usr/local/www/firewall_nat_edit.php:735
 #: src/usr/local/www/firewall_nat_npt.php:118
 #: src/usr/local/www/firewall_nat_out_edit.php:392
@@ -136,14 +136,14 @@ msgstr "NAT"
 #: src/usr/local/www/firewall_nat_1to1.php:142
 #: src/usr/local/www/firewall_nat_1to1_edit.php:289
 #: src/usr/local/www/firewall_nat_out.php:216
-#: src/usr/local/www/firewall_nat.php:210
+#: src/usr/local/www/firewall_nat.php:223
 #: src/usr/local/www/firewall_nat_npt.php:133
 msgid "1:1"
 msgstr "1:1"
 
 #: src/usr/local/www/firewall_nat_1to1.php:136
 #: src/usr/local/www/firewall_nat_out.php:210
-#: src/usr/local/www/firewall_nat.php:204
+#: src/usr/local/www/firewall_nat.php:217
 #: src/usr/local/www/firewall_nat_npt.php:127
 msgid "The NAT configuration has been changed."
 msgstr "Οι ρυθμίσεις του ΝΑΤ έχουν αλλάξει"
@@ -161,7 +161,7 @@ msgstr "Οι ρυθμίσεις του ΝΑΤ έχουν αλλάξει"
 #: src/usr/local/www/firewall_shaper_wizards.php:86
 #: src/usr/local/www/firewall_shaper_vinterface.php:368
 #: src/usr/local/www/firewall_aliases.php:94
-#: src/usr/local/www/firewall_nat.php:205
+#: src/usr/local/www/firewall_nat.php:218
 #: src/usr/local/www/services_igmpproxy.php:90
 #: src/usr/local/www/services_pppoe.php:86
 #: src/usr/local/www/vpn_ipsec_mobile.php:456
@@ -175,15 +175,15 @@ msgstr "Οι ρυθμίσεις του ΝΑΤ έχουν αλλάξει"
 #: src/usr/local/www/vpn_ipsec_keys.php:84
 #: src/usr/local/www/services_unbound_advanced.php:280
 #: src/usr/local/www/system_gateways.php:246
-#: src/usr/local/www/firewall_rules.php:326
+#: src/usr/local/www/firewall_rules.php:338
 #: src/usr/local/www/system_gateway_groups.php:113
 msgid "The changes must be applied for them to take effect."
 msgstr "Οι αλλαγές πρέπει να εφαρμοστούν για να ισχύσουν."
 
 #: src/usr/local/www/firewall_nat_1to1.php:141
 #: src/usr/local/www/firewall_nat_out.php:215
-#: src/usr/local/www/firewall_nat.php:195
-#: src/usr/local/www/firewall_nat.php:209
+#: src/usr/local/www/firewall_nat.php:208
+#: src/usr/local/www/firewall_nat.php:222
 #: src/usr/local/www/firewall_nat_edit.php:735
 #: src/usr/local/www/firewall_nat_npt.php:132
 msgid "Port Forward"
@@ -192,7 +192,7 @@ msgstr "Πόρτα προώθησης"
 #: src/usr/local/www/firewall_nat_1to1.php:143
 #: src/usr/local/www/firewall_nat_out.php:197
 #: src/usr/local/www/firewall_nat_out.php:217
-#: src/usr/local/www/firewall_nat.php:211
+#: src/usr/local/www/firewall_nat.php:224
 #: src/usr/local/www/firewall_nat_npt.php:134
 #: src/usr/local/www/firewall_nat_out_edit.php:392
 msgid "Outbound"
@@ -200,7 +200,7 @@ msgstr "Εξερχόμενο"
 
 #: src/usr/local/www/firewall_nat_1to1.php:144
 #: src/usr/local/www/firewall_nat_out.php:218
-#: src/usr/local/www/firewall_nat.php:212
+#: src/usr/local/www/firewall_nat.php:225
 #: src/usr/local/www/firewall_nat_npt.php:118
 #: src/usr/local/www/firewall_nat_npt.php:135
 #: src/usr/local/www/firewall_nat_npt_edit.php:150
@@ -217,8 +217,8 @@ msgstr "NAT 1:1 αντιστοιχίσης"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
 #: src/usr/local/www/guiconfig.inc:1126
-#: src/usr/local/www/diag_dump_states.php:138
-#: src/usr/local/www/diag_dump_states.php:187
+#: src/usr/local/www/diag_dump_states.php:124
+#: src/usr/local/www/diag_dump_states.php:178
 #: src/usr/local/www/services_rfc2136.php:83
 #: src/usr/local/www/status_logs_filter.php:153
 #: src/usr/local/www/status_logs_common.inc:504
@@ -230,7 +230,7 @@ msgstr "NAT 1:1 αντιστοιχίσης"
 #: src/usr/local/www/firewall_nat_out.php:527
 #: src/usr/local/www/services_dhcp_relay.php:81
 #: src/usr/local/www/services_ntpd.php:296
-#: src/usr/local/www/firewall_nat.php:236 src/usr/local/www/status_upnp.php:71
+#: src/usr/local/www/firewall_nat.php:249 src/usr/local/www/status_upnp.php:71
 #: src/usr/local/www/services_wol.php:193
 #: src/usr/local/www/interfaces_qinq.php:107
 #: src/usr/local/www/interfaces_gif.php:97
@@ -238,7 +238,7 @@ msgstr "NAT 1:1 αντιστοιχίσης"
 #: src/usr/local/www/firewall_virtual_ip.php:290
 #: src/usr/local/www/system_routes.php:243
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
-#: src/usr/local/www/diag_arp.php:185 src/usr/local/www/diag_arp.php:213
+#: src/usr/local/www/diag_arp.php:98 src/usr/local/www/diag_arp.php:126
 #: src/usr/local/www/interfaces_ppps.php:105
 #: src/usr/local/www/firewall_nat_edit.php:235
 #: src/usr/local/www/firewall_nat_edit.php:238
@@ -317,7 +317,7 @@ msgstr "IP Προορισμού "
 #: src/usr/local/www/interfaces_groups.php:81
 #: src/usr/local/www/status_services.php:89
 #: src/usr/local/www/interfaces_wireless_edit.php:189
-#: src/usr/local/www/firewall_nat.php:244
+#: src/usr/local/www/firewall_nat.php:257
 #: src/usr/local/www/services_dhcp_edit.php:525
 #: src/usr/local/www/pkg_mgr.php:69 src/usr/local/www/pkg_mgr.php:161
 #: src/usr/local/www/status_upnp.php:77 src/usr/local/www/services_wol.php:195
@@ -380,7 +380,7 @@ msgstr "IP Προορισμού "
 #: src/usr/local/www/vpn_openvpn_server.php:863
 #: src/usr/local/www/vpn_openvpn_server.php:1652
 #: src/usr/local/www/services_dyndns.php:96
-#: src/usr/local/www/firewall_rules.php:403
+#: src/usr/local/www/firewall_rules.php:415
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:80
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:231
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:167
@@ -421,7 +421,7 @@ msgstr "Περιγραφή"
 #: src/usr/local/www/interfaces_groups.php:82
 #: src/usr/local/www/services_captiveportal_vouchers.php:306
 #: src/usr/local/www/status_services.php:91
-#: src/usr/local/www/firewall_nat.php:245
+#: src/usr/local/www/firewall_nat.php:258
 #: src/usr/local/www/system_camanager.php:401
 #: src/usr/local/www/services_wol.php:196
 #: src/usr/local/www/diag_confbak.php:217
@@ -433,7 +433,7 @@ msgstr "Περιγραφή"
 #: src/usr/local/www/firewall_virtual_ip.php:293
 #: src/usr/local/www/system_routes.php:245
 #: src/usr/local/www/services_captiveportal_mac.php:166
-#: src/usr/local/www/diag_arp.php:219 src/usr/local/www/vpn_openvpn_csc.php:698
+#: src/usr/local/www/diag_arp.php:132 src/usr/local/www/vpn_openvpn_csc.php:698
 #: src/usr/local/www/system_authservers.php:510
 #: src/usr/local/www/interfaces_ppps.php:108
 #: src/usr/local/www/services_captiveportal_zones.php:81
@@ -452,7 +452,7 @@ msgstr "Περιγραφή"
 #: src/usr/local/www/system_gateways.php:272
 #: src/usr/local/www/vpn_openvpn_server.php:1653
 #: src/usr/local/www/services_dyndns.php:97
-#: src/usr/local/www/firewall_rules.php:404
+#: src/usr/local/www/firewall_rules.php:416
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:52
 #: src/usr/local/www/interfaces_vlan.php:101
 #: src/usr/local/www/interfaces_lagg.php:107
@@ -464,15 +464,15 @@ msgstr "Ενέργειες"
 
 #: src/usr/local/www/firewall_nat_1to1.php:189
 #: src/usr/local/www/vpn_ipsec.php:329 src/usr/local/www/vpn_ipsec.php:495
-#: src/usr/local/www/firewall_nat.php:310
+#: src/usr/local/www/firewall_nat.php:323
 #: src/usr/local/www/firewall_nat_npt.php:176
-#: src/usr/local/www/firewall_rules.php:514
+#: src/usr/local/www/firewall_rules.php:526
 msgid "click to toggle enabled/disabled status"
 msgstr ""
 "Κάνετε κλικ για να μεταβάλλετε την κατάσταση ενεργοποίησης/απενεργοποίησης"
 
 #: src/usr/local/www/firewall_nat_1to1.php:191
-#: src/usr/local/www/firewall_nat.php:314
+#: src/usr/local/www/firewall_nat.php:327
 msgid "Negated: This rule excludes NAT from a later rule"
 msgstr ""
 
@@ -481,16 +481,16 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out.php:369
 #: src/usr/local/www/firewall_nat_out.php:396
 #: src/usr/local/www/firewall_nat_out.php:420
-#: src/usr/local/www/firewall_nat.php:352
-#: src/usr/local/www/firewall_nat.php:369
-#: src/usr/local/www/firewall_nat.php:387
-#: src/usr/local/www/firewall_nat.php:404
-#: src/usr/local/www/firewall_nat.php:421
-#: src/usr/local/www/firewall_nat.php:439
-#: src/usr/local/www/firewall_rules.php:780
-#: src/usr/local/www/firewall_rules.php:789
-#: src/usr/local/www/firewall_rules.php:798
-#: src/usr/local/www/firewall_rules.php:807
+#: src/usr/local/www/firewall_nat.php:365
+#: src/usr/local/www/firewall_nat.php:382
+#: src/usr/local/www/firewall_nat.php:400
+#: src/usr/local/www/firewall_nat.php:417
+#: src/usr/local/www/firewall_nat.php:434
+#: src/usr/local/www/firewall_nat.php:452
+#: src/usr/local/www/firewall_rules.php:792
+#: src/usr/local/www/firewall_rules.php:801
+#: src/usr/local/www/firewall_rules.php:810
+#: src/usr/local/www/firewall_rules.php:819
 msgid "Alias details"
 msgstr "Λεπτομέρειες ψευδωνύμου"
 
@@ -546,9 +546,9 @@ msgstr "Προσθήκη αντιστοίχισης στην αρχή της λ�
 #: src/usr/local/www/interfaces_groups.php:126
 #: src/usr/local/www/services_ntpd.php:354
 #: src/usr/local/www/services_captiveportal_vouchers.php:341
-#: src/usr/local/www/firewall_nat.php:486
-#: src/usr/local/www/firewall_nat.php:490
-#: src/usr/local/www/services_dhcp_edit.php:940
+#: src/usr/local/www/firewall_nat.php:499
+#: src/usr/local/www/firewall_nat.php:503
+#: src/usr/local/www/services_dhcp_edit.php:947
 #: src/usr/local/www/system_camanager.php:490
 #: src/usr/local/www/services_wol.php:177
 #: src/usr/local/www/services_wol.php:225
@@ -581,8 +581,8 @@ msgstr "Προσθήκη αντιστοίχισης στην αρχή της λ�
 #: src/usr/local/www/system_gateways.php:360
 #: src/usr/local/www/vpn_openvpn_server.php:1720
 #: src/usr/local/www/services_dyndns.php:232
-#: src/usr/local/www/firewall_rules.php:899
-#: src/usr/local/www/firewall_rules.php:903
+#: src/usr/local/www/firewall_rules.php:911
+#: src/usr/local/www/firewall_rules.php:915
 #: src/usr/local/www/vpn_ipsec_settings.php:546
 #: src/usr/local/www/pkg_edit.php:1481
 #: src/usr/local/www/interfaces_vlan.php:140
@@ -613,8 +613,8 @@ msgstr "Διαγραφή επιλεγμένων αντιστοιχίσεων"
 #: src/usr/local/www/firewall_nat_out.php:499
 #: src/usr/local/www/services_dhcp_relay.php:196
 #: src/usr/local/www/services_ntpd.php:344
-#: src/usr/local/www/firewall_nat.php:494
-#: src/usr/local/www/services_dhcp_edit.php:928
+#: src/usr/local/www/firewall_nat.php:507
+#: src/usr/local/www/services_dhcp_edit.php:935
 #: src/usr/local/www/system.php:599
 #: src/usr/local/www/system_advanced_admin.php:651
 #: src/usr/local/www/firewall_schedule_edit.php:618
@@ -628,7 +628,7 @@ msgstr "Διαγραφή επιλεγμένων αντιστοιχίσεων"
 #: src/usr/local/www/services_unbound_host_edit.php:292
 #: src/usr/local/www/interfaces_qinq_edit.php:330
 #: src/usr/local/www/services_dnsmasq_edit.php:281
-#: src/usr/local/www/firewall_rules.php:907
+#: src/usr/local/www/firewall_rules.php:919
 #: src/usr/local/www/vpn_ipsec_settings.php:534
 #: src/usr/local/www/pkg_edit.php:1469 src/etc/inc/shaper.inc:4332
 msgid "Delete"
@@ -650,8 +650,8 @@ msgstr "Αποθήκευση σειράς αντιστοίχισης"
 #: src/usr/local/www/system_certmanager.php:652
 #: src/usr/local/www/system_certmanager.php:673
 #: src/usr/local/www/firewall_nat_out.php:503
-#: src/usr/local/www/firewall_nat.php:498
-#: src/usr/local/www/firewall_nat.php:513
+#: src/usr/local/www/firewall_nat.php:511
+#: src/usr/local/www/firewall_nat.php:526
 #: src/usr/local/www/system_camanager.php:331
 #: src/usr/local/www/system_camanager.php:351
 #: src/usr/local/www/diag_confbak.php:174 src/usr/local/www/diag_edit.php:124
@@ -661,8 +661,8 @@ msgstr "Αποθήκευση σειράς αντιστοίχισης"
 #: src/usr/local/www/system_crlmanager.php:366
 #: src/usr/local/www/firewall_nat_npt.php:235
 #: src/usr/local/www/system_gateways.php:356
-#: src/usr/local/www/firewall_rules.php:911
-#: src/usr/local/www/firewall_rules.php:962
+#: src/usr/local/www/firewall_rules.php:923
+#: src/usr/local/www/firewall_rules.php:974
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:260
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:318
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:164
@@ -737,7 +737,7 @@ msgstr ""
 #: src/usr/local/www/status_filter_reload.php:35
 #: src/usr/local/www/status_ntpd.php:300 src/usr/local/www/status_ntpd.php:312
 #: src/usr/local/www/status_logs_filter_dynamic.php:84
-#: src/usr/local/www/diag_arp.php:189 src/usr/local/www/diag_arp.php:217
+#: src/usr/local/www/diag_arp.php:102 src/usr/local/www/diag_arp.php:130
 #: src/usr/local/www/status_gateways.php:37
 #: src/usr/local/www/status_gateways.php:62
 #: src/usr/local/www/status_captiveportal.php:155
@@ -1036,7 +1036,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1711
 #: src/usr/local/www/firewall_rules_edit.php:1750
 #: src/usr/local/www/firewall_rules_edit.php:1757
-#: src/usr/local/www/firewall_rules.php:838 src/etc/inc/openvpn.inc:55
+#: src/usr/local/www/firewall_rules.php:850 src/etc/inc/openvpn.inc:55
 msgid "none"
 msgstr "κανένα"
 
@@ -1186,7 +1186,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:1833
 #: src/usr/local/www/status_logs_filter_summary.php:86
 #: src/usr/local/www/interfaces_qinq_edit.php:31
-#: src/usr/local/www/firewall_rules.php:391
+#: src/usr/local/www/firewall_rules.php:403
 #: src/usr/local/www/widgets/include/interfaces.inc:25
 #: src/usr/local/www/interfaces_vlan.php:65
 #: src/usr/local/www/interfaces_lagg.php:75
@@ -1261,7 +1261,7 @@ msgstr "Διαγραφή διεπαφής"
 #: src/usr/local/www/services_wol_edit.php:110
 #: src/usr/local/www/interfaces_qinq_edit.php:31
 #: src/usr/local/www/vpn_openvpn_server.php:756
-#: src/usr/local/www/firewall_rules.php:854
+#: src/usr/local/www/firewall_rules.php:866
 #: src/usr/local/www/services_captiveportal_mac_edit.php:66
 #: src/usr/local/www/firewall_nat_npt_edit.php:150
 msgid "Edit"
@@ -1549,7 +1549,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/diag_limiter_info.php:33
-#: src/usr/local/www/diag_dump_states.php:77
+#: src/usr/local/www/diag_dump_states.php:63
 #: src/usr/local/www/diag_pftop.php:33 src/usr/local/www/diag_resetstate.php:58
 #: src/usr/local/www/diag_system_activity.php:33
 #: src/usr/local/www/diag_reboot.php:45
@@ -1560,7 +1560,7 @@ msgstr ""
 #: src/usr/local/www/diag_sockets.php:33 src/usr/local/www/diag_confbak.php:96
 #: src/usr/local/www/diag_states_summary.php:199
 #: src/usr/local/www/diag_backup.php:121 src/usr/local/www/diag_edit.php:34
-#: src/usr/local/www/diag_arp.php:110 src/usr/local/www/diag_testport.php:40
+#: src/usr/local/www/diag_arp.php:71 src/usr/local/www/diag_testport.php:40
 #: src/usr/local/www/diag_routes.php:68 src/usr/local/www/diag_defaults.php:43
 #: src/usr/local/www/diag_command.php:66 src/usr/local/www/diag_tables.php:31
 #: src/usr/local/www/crash_reporter.php:58 src/usr/local/www/head.inc:702
@@ -2000,7 +2000,7 @@ msgstr "Διεύθυνση υποδίκτυου IP"
 #: src/usr/local/www/services_dhcp.php:1600
 #: src/usr/local/www/system_certmanager.php:1187
 #: src/usr/local/www/system_certmanager.php:1190
-#: src/usr/local/www/services_dhcp_edit.php:917
+#: src/usr/local/www/services_dhcp_edit.php:924
 #: src/usr/local/www/services_igmpproxy.php:128
 #: src/usr/local/www/firewall_virtual_ip.php:291
 #: src/usr/local/www/status_ntpd.php:316
@@ -2127,7 +2127,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_relay.php:158
 #: src/usr/local/www/services_ntpd.php:287
 #: src/usr/local/www/services_captiveportal_vouchers.php:353
-#: src/usr/local/www/services_dhcp_edit.php:798
+#: src/usr/local/www/services_dhcp_edit.php:805
 #: src/usr/local/www/services_snmp.php:215
 #: src/usr/local/www/services_snmp.php:258
 #: src/usr/local/www/services_igmpproxy.php:102
@@ -2139,7 +2139,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:534
 #: src/usr/local/www/vpn_ipsec_phase1.php:1067
 #: src/usr/local/www/interfaces.php:1911 src/usr/local/www/interfaces.php:3316
-#: src/usr/local/www/firewall_rules.php:858 src/etc/inc/shaper.inc:4367
+#: src/usr/local/www/firewall_rules.php:870 src/etc/inc/shaper.inc:4367
 #: src/etc/inc/shaper.inc:4821 src/usr/local/www/diag_routes.php:85
 msgid "Enable"
 msgstr "Ενεργοποίηση"
@@ -2149,7 +2149,7 @@ msgstr "Ενεργοποίηση"
 #: src/usr/local/www/vpn_openvpn_csc.php:356
 #: src/usr/local/www/firewall_nat_edit.php:1005
 #: src/usr/local/www/vpn_ipsec_phase1.php:1067
-#: src/usr/local/www/firewall_rules.php:861
+#: src/usr/local/www/firewall_rules.php:873
 msgid "Disable"
 msgstr "Απενεργοποίηση"
 
@@ -2282,7 +2282,7 @@ msgstr "εμφανίζονται μόνο οι πρώτες 10k εγγραφές
 #: src/usr/local/www/system_advanced_sysctl.php:155
 #: src/usr/local/www/services_dhcp.php:1607
 #: src/usr/local/www/system_certmanager.php:1197
-#: src/usr/local/www/services_dhcp_edit.php:924
+#: src/usr/local/www/services_dhcp_edit.php:931
 msgid "Value"
 msgstr "Τιμή"
 
@@ -2334,7 +2334,7 @@ msgstr "Όνομα"
 #: src/usr/local/www/firewall_rules_edit.php:1738
 #: src/usr/local/www/interfaces.php:629 src/usr/local/www/interfaces.php:680
 #: src/usr/local/www/system_gateways.php:269
-#: src/usr/local/www/firewall_rules.php:400
+#: src/usr/local/www/firewall_rules.php:412
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:307
 msgid "Gateway"
 msgstr "Πύλη δικτύου"
@@ -2386,13 +2386,13 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:311
 #: src/usr/local/www/services_dhcp.php:364
-#: src/usr/local/www/services_dhcp_edit.php:277
+#: src/usr/local/www/services_dhcp_edit.php:279
 msgid "The default lease time must be at least 60 seconds."
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:314
 #: src/usr/local/www/services_dhcp.php:392
-#: src/usr/local/www/services_dhcp_edit.php:280
+#: src/usr/local/www/services_dhcp_edit.php:282
 msgid ""
 "The maximum lease time must be at least 60 seconds and higher than the "
 "default lease time."
@@ -2402,8 +2402,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:318
 #: src/usr/local/www/services_dhcp.php:396
-#: src/usr/local/www/services_dhcp_edit.php:283
-#: src/usr/local/www/services_dhcp_edit.php:290
+#: src/usr/local/www/services_dhcp_edit.php:286
 msgid ""
 "A valid domain name must be specified for the dynamic DNS registration."
 msgstr ""
@@ -2412,8 +2411,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:321
 #: src/usr/local/www/services_dhcp.php:399
-#: src/usr/local/www/services_dhcp_edit.php:286
-#: src/usr/local/www/services_dhcp_edit.php:293
+#: src/usr/local/www/services_dhcp_edit.php:289
 msgid ""
 "A valid primary domain name server IP address must be specified for the "
 "dynamic domain name."
@@ -2421,6 +2419,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:324
 #: src/usr/local/www/services_dhcp.php:402
+#: src/usr/local/www/services_dhcp_edit.php:292
 msgid ""
 "A valid secondary domain name server IP address must be specified for the "
 "dynamic domain name."
@@ -2428,13 +2427,13 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:327
 #: src/usr/local/www/services_dhcp.php:405
-#: src/usr/local/www/services_dhcp_edit.php:296
+#: src/usr/local/www/services_dhcp_edit.php:295
 msgid "A valid domain key name, algorithm and secret must be specified."
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:330
 #: src/usr/local/www/services_dhcp.php:408
-#: src/usr/local/www/services_dhcp_edit.php:299
+#: src/usr/local/www/services_dhcp_edit.php:298
 msgid ""
 "The domain key name may only contain the characters a-z, A-Z, 0-9, '-', '_' "
 "and '.'"
@@ -2442,14 +2441,14 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:333
 #: src/usr/local/www/services_dhcp.php:411
-#: src/usr/local/www/services_dhcp_edit.php:302
+#: src/usr/local/www/services_dhcp_edit.php:301
 msgid "The domain key secret must be a Base64 encoded value."
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:340
 #: src/usr/local/www/services_router_advertisements.php:167
 #: src/usr/local/www/services_dhcp.php:418
-#: src/usr/local/www/services_dhcp_edit.php:309
+#: src/usr/local/www/services_dhcp_edit.php:308
 msgid "A valid domain search list must be specified."
 msgstr ""
 
@@ -2461,7 +2460,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:352
 #: src/usr/local/www/services_dhcp.php:438
-#: src/usr/local/www/services_dhcp_edit.php:321
+#: src/usr/local/www/services_dhcp_edit.php:320
 msgid "A valid domain name must be specified for the DNS domain."
 msgstr "Ενα έγκυρο όνομα domain πρέπει να ορισθεί για το DNS domain."
 
@@ -2782,17 +2781,17 @@ msgstr ""
 #: src/usr/local/www/services_ntpd.php:598
 #: src/usr/local/www/services_ntpd.php:635
 #: src/usr/local/www/services_dhcp_edit.php:631
-#: src/usr/local/www/services_dhcp_edit.php:696
-#: src/usr/local/www/services_dhcp_edit.php:740
-#: src/usr/local/www/services_dhcp_edit.php:762
-#: src/usr/local/www/services_dhcp_edit.php:784
-#: src/usr/local/www/services_dhcp_edit.php:856
-#: src/usr/local/www/services_dhcp_edit.php:985
-#: src/usr/local/www/services_dhcp_edit.php:1021
-#: src/usr/local/www/services_dhcp_edit.php:1055
-#: src/usr/local/www/services_dhcp_edit.php:1089
-#: src/usr/local/www/services_dhcp_edit.php:1124
-#: src/usr/local/www/services_dhcp_edit.php:1165
+#: src/usr/local/www/services_dhcp_edit.php:703
+#: src/usr/local/www/services_dhcp_edit.php:747
+#: src/usr/local/www/services_dhcp_edit.php:769
+#: src/usr/local/www/services_dhcp_edit.php:791
+#: src/usr/local/www/services_dhcp_edit.php:863
+#: src/usr/local/www/services_dhcp_edit.php:999
+#: src/usr/local/www/services_dhcp_edit.php:1035
+#: src/usr/local/www/services_dhcp_edit.php:1069
+#: src/usr/local/www/services_dhcp_edit.php:1103
+#: src/usr/local/www/services_dhcp_edit.php:1138
+#: src/usr/local/www/services_dhcp_edit.php:1179
 #: src/usr/local/www/system_gateways_edit.php:243
 #: src/usr/local/www/system_gateways_edit.php:447
 #: src/usr/local/www/interfaces_bridge_edit.php:437
@@ -2820,7 +2819,7 @@ msgstr "Για προχωρημένους"
 #: src/usr/local/www/services_rfc2136_edit.php:177
 #: src/usr/local/www/head.inc:328 src/usr/local/www/services_dyndns.php:69
 #: src/etc/inc/ipsec.inc:104 src/etc/inc/dyndns.class:1299
-#: src/etc/inc/dyndns.class:2428
+#: src/etc/inc/dyndns.class:2443
 msgid "Dynamic DNS"
 msgstr "Δυναμικό DNV"
 
@@ -2856,17 +2855,18 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:822
 #: src/usr/local/www/services_dhcp.php:1308
+#: src/usr/local/www/services_dhcp_edit.php:668
 msgid "Primary DDNS address"
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:825
-#: src/usr/local/www/services_dhcp_edit.php:671
 msgid ""
 "Enter the primary domain name server IP address for the dynamic domain name."
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:829
 #: src/usr/local/www/services_dhcp.php:1315
+#: src/usr/local/www/services_dhcp_edit.php:675
 msgid "Secondary DDNS address"
 msgstr ""
 
@@ -2877,12 +2877,12 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:836
-#: src/usr/local/www/services_dhcp_edit.php:675
+#: src/usr/local/www/services_dhcp_edit.php:682
 msgid "DDNS Domain Key name"
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:839
-#: src/usr/local/www/services_dhcp_edit.php:678
+#: src/usr/local/www/services_dhcp_edit.php:685
 msgid ""
 "Enter the dynamic DNS domain key name which will be used to register client "
 "names in the DNS server."
@@ -2890,17 +2890,17 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:843
 #: src/usr/local/www/services_dhcp.php:1329
-#: src/usr/local/www/services_dhcp_edit.php:682
+#: src/usr/local/www/services_dhcp_edit.php:689
 msgid "Key algorithm"
 msgstr "Αλγόριθμος κλειδιού"
 
 #: src/usr/local/www/services_dhcpv6.php:857
-#: src/usr/local/www/services_dhcp_edit.php:689
+#: src/usr/local/www/services_dhcp_edit.php:696
 msgid "DDNS Domain Key secret"
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:861
-#: src/usr/local/www/services_dhcp_edit.php:692
+#: src/usr/local/www/services_dhcp_edit.php:699
 msgid ""
 "Enter the dynamic DNS domain key secret which will be used to register "
 "client names in the DNS server."
@@ -2943,39 +2943,39 @@ msgid "DDNS Reverse"
 msgstr "Αντίστροφο DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:893
-#: src/usr/local/www/services_dhcp_edit.php:704
+#: src/usr/local/www/services_dhcp_edit.php:711
 msgid "NTP servers"
 msgstr "διακομιστές NTP"
 
 #: src/usr/local/www/services_dhcpv6.php:897
-#: src/usr/local/www/services_dhcp_edit.php:708
+#: src/usr/local/www/services_dhcp_edit.php:715
 #: src/usr/local/www/vpn_openvpn_csc.php:533
 msgid "NTP Servers"
 msgstr "Διακομιστές NTP"
 
 #: src/usr/local/www/services_dhcpv6.php:901
 #: src/usr/local/www/services_dhcp.php:1401
-#: src/usr/local/www/services_dhcp_edit.php:712
+#: src/usr/local/www/services_dhcp_edit.php:719
 #: src/usr/local/www/vpn_openvpn_server.php:1470
 msgid "NTP Server 1"
 msgstr "Διακομιστής NTP 1"
 
 #: src/usr/local/www/services_dhcpv6.php:909
 #: src/usr/local/www/services_dhcp.php:1408
-#: src/usr/local/www/services_dhcp_edit.php:720
+#: src/usr/local/www/services_dhcp_edit.php:727
 #: src/usr/local/www/vpn_openvpn_server.php:1477
 msgid "NTP Server 2"
 msgstr "Διακομιστής NTP 2"
 
 #: src/usr/local/www/services_dhcpv6.php:917
 #: src/usr/local/www/services_dhcp.php:1415
-#: src/usr/local/www/services_dhcp_edit.php:728
+#: src/usr/local/www/services_dhcp_edit.php:735
 msgid "NTP Server 3"
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:937
 #: src/usr/local/www/services_dhcp.php:1453
-#: src/usr/local/www/services_dhcp_edit.php:770
+#: src/usr/local/www/services_dhcp_edit.php:777
 msgid "LDAP"
 msgstr "LDAP"
 
@@ -2995,14 +2995,14 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:986
 #: src/usr/local/www/services_dhcp.php:1547
 #: src/usr/local/www/services_dhcp.php:1553
-#: src/usr/local/www/services_dhcp_edit.php:864
-#: src/usr/local/www/services_dhcp_edit.php:870
+#: src/usr/local/www/services_dhcp_edit.php:871
+#: src/usr/local/www/services_dhcp_edit.php:877
 msgid "Additional BOOTP/DHCP Options"
 msgstr "Πρόσθετες επιλογές για BOOT/DHCP"
 
 #: src/usr/local/www/services_dhcpv6.php:1021
 #: src/usr/local/www/services_dhcp.php:1592
-#: src/usr/local/www/services_dhcp_edit.php:909
+#: src/usr/local/www/services_dhcp_edit.php:916
 msgid "Number"
 msgstr "Νούμερο"
 
@@ -3053,7 +3053,7 @@ msgstr "Διεύθυνση IPv6"
 #: src/usr/local/www/services_dyndns_edit.php:324
 #: src/usr/local/www/services_captiveportal_hostname.php:119
 #: src/usr/local/www/system.php:172 src/usr/local/www/system.php:545
-#: src/usr/local/www/diag_arp.php:188 src/usr/local/www/diag_arp.php:216
+#: src/usr/local/www/diag_arp.php:101 src/usr/local/www/diag_arp.php:129
 #: src/usr/local/www/services_rfc2136_edit.php:89
 #: src/usr/local/www/status_dhcpv6_leases.php:257
 #: src/usr/local/www/status_dhcpv6_leases.php:287
@@ -3093,12 +3093,12 @@ msgstr "Διαγραφή στατικής αντιστοίχισης"
 #: src/usr/local/www/services_dhcp.php:2021
 #: src/usr/local/www/services_ntpd.php:596
 #: src/usr/local/www/services_ntpd.php:633
-#: src/usr/local/www/services_dhcp_edit.php:983
-#: src/usr/local/www/services_dhcp_edit.php:1019
-#: src/usr/local/www/services_dhcp_edit.php:1053
-#: src/usr/local/www/services_dhcp_edit.php:1087
-#: src/usr/local/www/services_dhcp_edit.php:1122
-#: src/usr/local/www/services_dhcp_edit.php:1163
+#: src/usr/local/www/services_dhcp_edit.php:997
+#: src/usr/local/www/services_dhcp_edit.php:1033
+#: src/usr/local/www/services_dhcp_edit.php:1067
+#: src/usr/local/www/services_dhcp_edit.php:1101
+#: src/usr/local/www/services_dhcp_edit.php:1136
+#: src/usr/local/www/services_dhcp_edit.php:1177
 #: src/usr/local/www/system_gateways_edit.php:445
 #: src/usr/local/www/interfaces_bridge_edit.php:687
 #: src/usr/local/www/firewall_nat_edit.php:1262
@@ -3203,7 +3203,7 @@ msgstr "Όνομα Χρήστη"
 
 #: src/usr/local/www/vpn_l2tp_users.php:75
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:58
-#: src/usr/local/www/services_dhcp.php:1695 src/usr/local/www/diag_arp.php:214
+#: src/usr/local/www/services_dhcp.php:1695 src/usr/local/www/diag_arp.php:127
 #: src/usr/local/www/status_captiveportal.php:217
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:63
 #: src/usr/local/www/services_unbound_host_edit.php:71
@@ -3391,31 +3391,31 @@ msgstr ""
 msgid "PSK for any user can be set by using an identifier of any."
 msgstr ""
 
-#: src/usr/local/www/diag_dump_states.php:57
+#: src/usr/local/www/diag_dump_states.php:42
 #: src/usr/local/www/status_openvpn.php:49
 #: src/usr/local/www/diag_dump_states_sources.php:41
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:288
 msgid "invalid input"
 msgstr "Μη έγκυρη τιμή"
 
-#: src/usr/local/www/diag_dump_states.php:77
-#: src/usr/local/www/diag_dump_states.php:113
-#: src/usr/local/www/diag_dump_states.php:181
+#: src/usr/local/www/diag_dump_states.php:63
+#: src/usr/local/www/diag_dump_states.php:99
+#: src/usr/local/www/diag_dump_states.php:172
 #: src/usr/local/www/diag_resetstate.php:58
 #: src/usr/local/www/diag_resetstate.php:83
 #: src/usr/local/www/diag_dump_states_sources.php:55
 #: src/usr/local/www/diag_dump_states_sources.php:60
 #: src/usr/local/www/diag_states_summary.php:154
 #: src/usr/local/www/diag_states_summary.php:156 src/usr/local/www/head.inc:416
-#: src/usr/local/www/firewall_rules.php:387
+#: src/usr/local/www/firewall_rules.php:399
 msgid "States"
 msgstr "Καταστάσεις"
 
-#: src/usr/local/www/diag_dump_states.php:80
+#: src/usr/local/www/diag_dump_states.php:66
 msgid "Are you sure you wish to delete this state?"
 msgstr "Είστε σίγουρος ότι θέλετε να διαγραφεί αυτή η κατάσταση;"
 
-#: src/usr/local/www/diag_dump_states.php:115
+#: src/usr/local/www/diag_dump_states.php:101
 #: src/usr/local/www/diag_resetstate.php:86
 #: src/usr/local/www/diag_resetstate.php:106
 #: src/usr/local/www/diag_dump_states_sources.php:55
@@ -3423,24 +3423,24 @@ msgstr "Είστε σίγουρος ότι θέλετε να διαγραφεί 
 msgid "Source Tracking"
 msgstr ""
 
-#: src/usr/local/www/diag_dump_states.php:117
+#: src/usr/local/www/diag_dump_states.php:103
 #: src/usr/local/www/diag_resetstate.php:58
 #: src/usr/local/www/diag_resetstate.php:89
 #: src/usr/local/www/diag_dump_states_sources.php:62
 msgid "Reset States"
 msgstr "Επαναφορά Καταστάσεων"
 
-#: src/usr/local/www/diag_dump_states.php:125
+#: src/usr/local/www/diag_dump_states.php:111
 msgid "State Filter"
 msgstr "Φίλτρο Κατάστασεων"
 
-#: src/usr/local/www/diag_dump_states.php:145
+#: src/usr/local/www/diag_dump_states.php:131
 #: src/usr/local/www/diag_pftop.php:129
 #: src/usr/local/www/diag_dump_states_sources.php:99
 msgid "Filter expression"
 msgstr "Έκφραση Φίλτρου "
 
-#: src/usr/local/www/diag_dump_states.php:153 src/usr/local/www/pkg.php:356
+#: src/usr/local/www/diag_dump_states.php:139 src/usr/local/www/pkg.php:356
 #: src/usr/local/www/diag_dump_states_sources.php:108
 #: src/usr/local/www/system_groupmanager_addprivs.php:208
 #: src/usr/local/www/system_groupmanager_addprivs.php:228
@@ -3451,24 +3451,24 @@ msgstr "Έκφραση Φίλτρου "
 msgid "Filter"
 msgstr "Φίλτρο"
 
-#: src/usr/local/www/diag_dump_states.php:166
+#: src/usr/local/www/diag_dump_states.php:152
 msgid "Kill States"
 msgstr "Τερματισμός Καταστάσεων"
 
-#: src/usr/local/www/diag_dump_states.php:172
+#: src/usr/local/www/diag_dump_states.php:158
 msgid "Kill filtered states"
 msgstr ""
 
-#: src/usr/local/www/diag_dump_states.php:174
+#: src/usr/local/www/diag_dump_states.php:160
 msgid "Remove all states to and from the filtered address"
 msgstr ""
 
-#: src/usr/local/www/diag_dump_states.php:188
+#: src/usr/local/www/diag_dump_states.php:179
 #: src/usr/local/www/status_ipsec_sad.php:70
 #: src/usr/local/www/status_logs_filter.php:165
 #: src/usr/local/www/status_logs_common.inc:477
 #: src/usr/local/www/vpn_openvpn_client.php:1182
-#: src/usr/local/www/firewall_nat.php:237 src/usr/local/www/status_upnp.php:72
+#: src/usr/local/www/firewall_nat.php:250 src/usr/local/www/status_upnp.php:72
 #: src/usr/local/www/diag_states_summary.php:155
 #: src/usr/local/www/interfaces_bridge_edit.php:567
 #: src/usr/local/www/status_logs_filter_dynamic.php:396
@@ -3481,44 +3481,44 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:256
 #: src/usr/local/www/status_ipsec_spd.php:64
 #: src/usr/local/www/firewall_nat_out_edit.php:155
-#: src/usr/local/www/easyrule.php:92 src/usr/local/www/firewall_rules.php:395
+#: src/usr/local/www/easyrule.php:92 src/usr/local/www/firewall_rules.php:407
 msgid "Protocol"
 msgstr "Πρωτόκολλο"
 
-#: src/usr/local/www/diag_dump_states.php:189
+#: src/usr/local/www/diag_dump_states.php:180
 msgid "Source (Original Source) -> Destination (Original Destination)"
 msgstr ""
 
-#: src/usr/local/www/diag_dump_states.php:190
+#: src/usr/local/www/diag_dump_states.php:181
 #: src/usr/local/www/status_dhcpv6_leases.php:380
 msgid "State"
 msgstr "Κατάσταση"
 
-#: src/usr/local/www/diag_dump_states.php:191
+#: src/usr/local/www/diag_dump_states.php:182
 msgid "Packets"
 msgstr "Πακέτα "
 
-#: src/usr/local/www/diag_dump_states.php:192
+#: src/usr/local/www/diag_dump_states.php:183
 #: src/usr/local/www/diag_pftop.php:151
 msgid "Bytes"
 msgstr "Bytes"
 
-#: src/usr/local/www/diag_dump_states.php:261
+#: src/usr/local/www/diag_dump_states.php:201
 #, php-format
 msgid "Remove all state entries from %1$s to %2$s"
 msgstr ""
 
-#: src/usr/local/www/diag_dump_states.php:276
+#: src/usr/local/www/diag_dump_states.php:216
 msgid "No states were found that match the current filter."
 msgstr ""
 
-#: src/usr/local/www/diag_dump_states.php:279
+#: src/usr/local/www/diag_dump_states.php:219
 msgid ""
 "State display suppressed without filter submission. See System > General "
 "Setup, Require State Filter."
 msgstr ""
 
-#: src/usr/local/www/diag_dump_states.php:282
+#: src/usr/local/www/diag_dump_states.php:222
 msgid "No states were found."
 msgstr ""
 
@@ -4235,7 +4235,7 @@ msgstr "Πακέτο "
 msgid "Source Port"
 msgstr ""
 
-#: src/usr/local/www/diag_pftop.php:157 src/usr/local/www/firewall_nat.php:238
+#: src/usr/local/www/diag_pftop.php:157 src/usr/local/www/firewall_nat.php:251
 #: src/usr/local/www/status_logs_settings.php:399
 msgid "Source Address"
 msgstr ""
@@ -4556,9 +4556,9 @@ msgstr ""
 #: src/usr/local/www/status_queues.php:216 src/usr/local/www/head.inc:620
 #: src/usr/local/www/system_usermanager_addprivs.php:150
 #: src/usr/local/www/services_ntpd_acls.php:192
-#: src/usr/local/www/firewall_rules.php:430
-#: src/usr/local/www/firewall_rules.php:449
-#: src/usr/local/www/firewall_rules.php:468
+#: src/usr/local/www/firewall_rules.php:442
+#: src/usr/local/www/firewall_rules.php:461
+#: src/usr/local/www/firewall_rules.php:480
 #: src/usr/local/www/status_logs_settings.php:231
 msgid "Settings"
 msgstr "Ρυθμίσεις"
@@ -4723,7 +4723,7 @@ msgstr "Χρήστης"
 #: src/usr/local/www/vpn_l2tp_users_edit.php:156
 #: src/usr/local/www/diag_dns.php:154
 #: src/usr/local/www/services_dhcp_edit.php:493
-#: src/usr/local/www/diag_arp.php:186 src/usr/local/www/diag_tables.php:270
+#: src/usr/local/www/diag_arp.php:99 src/usr/local/www/diag_tables.php:270
 #: src/usr/local/www/services_pppoe_edit.php:439
 #: src/usr/local/www/services_pppoe_edit.php:472
 #: src/usr/local/www/services_pppoe_edit.php:546
@@ -5192,7 +5192,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:61
 #: src/usr/local/www/firewall_nat_out_edit.php:155
 #: src/usr/local/www/easyrule.php:84 src/usr/local/www/easyrule.php:94
-#: src/usr/local/www/firewall_rules.php:396
+#: src/usr/local/www/firewall_rules.php:408
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
 #: src/usr/local/www/widgets/widgets/log.widget.php:119
 msgid "Source"
@@ -5207,7 +5207,7 @@ msgstr "Πηγή"
 #: src/usr/local/www/firewall_rules_edit.php:1383
 #: src/usr/local/www/status_ipsec_spd.php:62
 #: src/usr/local/www/firewall_nat_out_edit.php:155
-#: src/usr/local/www/easyrule.php:96 src/usr/local/www/firewall_rules.php:398
+#: src/usr/local/www/easyrule.php:96 src/usr/local/www/firewall_rules.php:410
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:230
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
@@ -5461,12 +5461,12 @@ msgid "Destination IP Address"
 msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:452
-#: src/usr/local/www/firewall_nat.php:575
+#: src/usr/local/www/firewall_nat.php:588
 #: src/usr/local/www/services_captiveportal_mac.php:60
 #: src/usr/local/www/firewall_nat_edit.php:1012
 #: src/usr/local/www/firewall_nat_edit.php:1047
 #: src/usr/local/www/firewall_rules_edit.php:1221
-#: src/usr/local/www/firewall_rules.php:925
+#: src/usr/local/www/firewall_rules.php:937
 #: src/usr/local/www/widgets/widgets/log.widget.php:252
 #: src/usr/local/www/services_captiveportal_mac_edit.php:207
 #: src/usr/local/www/status_logs_common.inc:453
@@ -5476,7 +5476,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:493
 #: src/usr/local/www/services_captiveportal_mac.php:61
 #: src/usr/local/www/firewall_rules_edit.php:1222
-#: src/usr/local/www/firewall_rules.php:927
+#: src/usr/local/www/firewall_rules.php:939
 #: src/usr/local/www/widgets/widgets/log.widget.php:256
 #: src/usr/local/www/services_captiveportal_mac_edit.php:207
 #: src/usr/local/www/status_logs_common.inc:494
@@ -5759,7 +5759,7 @@ msgstr ""
 #: src/usr/local/www/index.php:546 src/usr/local/www/services_unbound.php:260
 #: src/usr/local/www/firewall_aliases.php:71
 #: src/usr/local/www/services_snmp.php:176
-#: src/usr/local/www/diag_backup.php:106 src/usr/local/www/diag_arp.php:191
+#: src/usr/local/www/diag_backup.php:106 src/usr/local/www/diag_arp.php:104
 #: src/usr/local/www/services_ntpd_gps.php:339
 #: src/usr/local/www/status_dhcpv6_leases.php:262
 #: src/usr/local/www/diag_ndp.php:166
@@ -7765,7 +7765,7 @@ msgid "Delete WiFi interface"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:241
-#: src/usr/local/www/services_dhcp_edit.php:162
+#: src/usr/local/www/services_dhcp_edit.php:164
 msgid "The DHCP option must be a number between 1 and 254."
 msgstr ""
 
@@ -7816,7 +7816,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:355
-#: src/usr/local/www/services_dhcp_edit.php:266
+#: src/usr/local/www/services_dhcp_edit.php:268
 #, php-format
 msgid ""
 "The gateway address %s does not lie within the chosen interface's subnet."
@@ -7846,7 +7846,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:435
-#: src/usr/local/www/services_dhcp_edit.php:318
+#: src/usr/local/www/services_dhcp_edit.php:317
 msgid ""
 "A valid IP address or hostname must be specified for the primary/secondary "
 "NTP servers."
@@ -8226,10 +8226,12 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1311
+#: src/usr/local/www/services_dhcp_edit.php:671
 msgid "Primary domain name server IP address for the dynamic domain name."
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1318
+#: src/usr/local/www/services_dhcp_edit.php:678
 msgid "Secondary domain name server IP address for the dynamic domain name."
 msgstr ""
 
@@ -8282,7 +8284,7 @@ msgid "TFTP"
 msgstr "TFTP"
 
 #: src/usr/local/www/services_dhcp.php:1437
-#: src/usr/local/www/services_dhcp_edit.php:754
+#: src/usr/local/www/services_dhcp_edit.php:761
 msgid "TFTP Server"
 msgstr "Διακομιστής TFTP"
 
@@ -8293,59 +8295,59 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1459
-#: src/usr/local/www/services_dhcp_edit.php:776
+#: src/usr/local/www/services_dhcp_edit.php:783
 msgid "LDAP Server URI"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1462
-#: src/usr/local/www/services_dhcp_edit.php:779
+#: src/usr/local/www/services_dhcp_edit.php:786
 msgid ""
 "Leave blank to disable. Enter a full URI for the LDAP server in the form "
 "ldap://ldap.example.com/dc=example,dc=com "
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1475
-#: src/usr/local/www/services_dhcp_edit.php:792
+#: src/usr/local/www/services_dhcp_edit.php:799
 msgid "Network Booting"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1488
-#: src/usr/local/www/services_dhcp_edit.php:805
+#: src/usr/local/www/services_dhcp_edit.php:812
 msgid "Next Server"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1491
-#: src/usr/local/www/services_dhcp_edit.php:808
+#: src/usr/local/www/services_dhcp_edit.php:815
 msgid "Enter the IP address of the next server"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1495
-#: src/usr/local/www/services_dhcp_edit.php:812
+#: src/usr/local/www/services_dhcp_edit.php:819
 msgid "Default BIOS file name"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1502
-#: src/usr/local/www/services_dhcp_edit.php:819
+#: src/usr/local/www/services_dhcp_edit.php:826
 msgid "UEFI 32 bit file name"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1509
-#: src/usr/local/www/services_dhcp_edit.php:826
+#: src/usr/local/www/services_dhcp_edit.php:833
 msgid "UEFI 64 bit file name"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1516
-#: src/usr/local/www/services_dhcp_edit.php:833
+#: src/usr/local/www/services_dhcp_edit.php:840
 msgid "ARM 32 bit file name"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1523
-#: src/usr/local/www/services_dhcp_edit.php:840
+#: src/usr/local/www/services_dhcp_edit.php:847
 msgid "ARM 64 bit file name"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1526
-#: src/usr/local/www/services_dhcp_edit.php:843
+#: src/usr/local/www/services_dhcp_edit.php:850
 msgid ""
 "Both a filename and a boot server must be configured for this to work! All "
 "five filenames and a configured boot server are necessary for UEFI & ARM to "
@@ -8353,81 +8355,81 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1531
-#: src/usr/local/www/services_dhcp_edit.php:848
+#: src/usr/local/www/services_dhcp_edit.php:855
 #: src/usr/local/www/services_dhcpv6_edit.php:244
 msgid "Root path"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1534
-#: src/usr/local/www/services_dhcp_edit.php:851
+#: src/usr/local/www/services_dhcp_edit.php:858
 msgid "string-format: iscsi:(servername):(protocol):(port):(LUN):targetname "
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1558
-#: src/usr/local/www/services_dhcp_edit.php:875
+#: src/usr/local/www/services_dhcp_edit.php:882
 msgid ""
 "Enter the DHCP option number and the value for each item to include in the "
 "DHCP lease information."
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1559
-#: src/usr/local/www/services_dhcp_edit.php:876
+#: src/usr/local/www/services_dhcp_edit.php:883
 #, php-format
 msgid "For a list of available options please visit this %1$s URL%2$s.%3$s"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1568
-#: src/usr/local/www/services_dhcp_edit.php:885
+#: src/usr/local/www/services_dhcp_edit.php:892
 msgid "Text"
 msgstr "Κείμενο"
 
 #: src/usr/local/www/services_dhcp.php:1568
-#: src/usr/local/www/services_dhcp_edit.php:885
+#: src/usr/local/www/services_dhcp_edit.php:892
 msgid "String"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1568
-#: src/usr/local/www/services_dhcp_edit.php:885
+#: src/usr/local/www/services_dhcp_edit.php:892
 msgid "Boolean"
 msgstr "Λογικός"
 
 #: src/usr/local/www/services_dhcp.php:1569
-#: src/usr/local/www/services_dhcp_edit.php:886
+#: src/usr/local/www/services_dhcp_edit.php:893
 msgid "Unsigned 8-bit integer"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1569
-#: src/usr/local/www/services_dhcp_edit.php:886
+#: src/usr/local/www/services_dhcp_edit.php:893
 msgid "Unsigned 16-bit integer"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1569
-#: src/usr/local/www/services_dhcp_edit.php:886
+#: src/usr/local/www/services_dhcp_edit.php:893
 msgid "Unsigned 32-bit integer"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1570
-#: src/usr/local/www/services_dhcp_edit.php:887
+#: src/usr/local/www/services_dhcp_edit.php:894
 msgid "Signed 8-bit integer"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1570
-#: src/usr/local/www/services_dhcp_edit.php:887
+#: src/usr/local/www/services_dhcp_edit.php:894
 msgid "Signed 16-bit integer"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1570
-#: src/usr/local/www/services_dhcp_edit.php:887
+#: src/usr/local/www/services_dhcp_edit.php:894
 msgid "Signed 32-bit integer"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1570
-#: src/usr/local/www/services_dhcp_edit.php:887
+#: src/usr/local/www/services_dhcp_edit.php:894
 msgid "IP address or host"
 msgstr "Διεύθυνση IP ή host"
 
 #: src/usr/local/www/services_dhcp.php:1583
-#: src/usr/local/www/services_dhcp_edit.php:900
+#: src/usr/local/www/services_dhcp_edit.php:907
 msgid "Option"
 msgstr "Επιλογή"
 
@@ -8443,7 +8445,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:1687
 #: src/usr/local/www/services_wol.php:194
 #: src/usr/local/www/services_captiveportal_mac.php:164
-#: src/usr/local/www/diag_arp.php:215
+#: src/usr/local/www/diag_arp.php:128
 #: src/usr/local/www/status_captiveportal.php:221
 #: src/usr/local/www/status_dhcpv6_leases.php:286
 #: src/usr/local/www/diag_ndp.php:189
@@ -9735,8 +9737,8 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:1325
 #: src/usr/local/www/system_camanager.php:356
 #: src/usr/local/www/system_camanager.php:378 src/usr/local/www/pkg_mgr.php:144
-#: src/usr/local/www/pkg_mgr.php:166 src/usr/local/www/diag_arp.php:169
-#: src/usr/local/www/diag_arp.php:195
+#: src/usr/local/www/pkg_mgr.php:166 src/usr/local/www/diag_arp.php:82
+#: src/usr/local/www/diag_arp.php:108
 #: src/usr/local/www/status_dhcpv6_leases.php:237
 #: src/usr/local/www/status_dhcpv6_leases.php:266
 #: src/usr/local/www/diag_ndp.php:145 src/usr/local/www/diag_ndp.php:170
@@ -9747,7 +9749,7 @@ msgstr "Αναζήτηση"
 
 #: src/usr/local/www/system_certmanager.php:1314
 #: src/usr/local/www/system_camanager.php:367 src/usr/local/www/pkg_mgr.php:155
-#: src/usr/local/www/diag_arp.php:180
+#: src/usr/local/www/diag_arp.php:93
 #: src/usr/local/www/status_dhcpv6_leases.php:248
 #: src/usr/local/www/diag_ndp.php:156
 #: src/usr/local/www/status_dhcp_leases.php:168
@@ -9764,7 +9766,7 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:1326
 #: src/usr/local/www/system_camanager.php:379 src/usr/local/www/pkg_mgr.php:167
 #: src/usr/local/www/system_groupmanager_addprivs.php:239
-#: src/usr/local/www/diag_arp.php:196 src/usr/local/www/diag_command.php:206
+#: src/usr/local/www/diag_arp.php:109 src/usr/local/www/diag_command.php:206
 #: src/usr/local/www/system_usermanager_addprivs.php:219
 #: src/usr/local/www/status_dhcpv6_leases.php:267
 #: src/usr/local/www/diag_ndp.php:171
@@ -10797,7 +10799,7 @@ msgstr ""
 #: src/usr/local/www/status_interfaces.php:154
 #: src/usr/local/www/services_dhcp_edit.php:461
 #: src/usr/local/www/services_dhcp_edit.php:476
-#: src/usr/local/www/diag_arp.php:187
+#: src/usr/local/www/diag_arp.php:100
 #: src/usr/local/www/status_dhcpv6_leases.php:256
 #: src/usr/local/www/diag_ndp.php:162 src/usr/local/www/interfaces.php:1958
 #: src/usr/local/www/status_dhcp_leases.php:174
@@ -11997,8 +11999,8 @@ msgstr ""
 #: src/usr/local/www/diag_testport.php:54
 #: src/usr/local/www/firewall_aliases_edit.php:183
 #: src/usr/local/www/interfaces.php:3396 src/usr/local/www/interfaces.php:3420
-#: src/usr/local/www/firewall_rules.php:397
-#: src/usr/local/www/firewall_rules.php:399
+#: src/usr/local/www/firewall_rules.php:409
+#: src/usr/local/www/firewall_rules.php:411
 msgid "Port"
 msgstr "Θύρα"
 
@@ -12721,7 +12723,7 @@ msgstr ""
 
 #: src/usr/local/www/services_acb_settings.php:144
 #: src/usr/local/www/firewall_rules_edit.php:1709
-#: src/usr/local/www/firewall_rules.php:402
+#: src/usr/local/www/firewall_rules.php:414
 msgid "Schedule"
 msgstr "Χρονοδιάγραμμα"
 
@@ -13130,132 +13132,132 @@ msgstr ""
 msgid "*Mode"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:187
+#: src/usr/local/www/firewall_nat.php:200
 msgid "Firewall: NAT: Port forward, enable/disable NAT rule"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:228
+#: src/usr/local/www/firewall_nat.php:241
 #: src/usr/local/www/firewall_rules_edit.php:1158
-#: src/usr/local/www/head.inc:308 src/usr/local/www/firewall_rules.php:310
-#: src/usr/local/www/firewall_rules.php:350
+#: src/usr/local/www/head.inc:308 src/usr/local/www/firewall_rules.php:322
+#: src/usr/local/www/firewall_rules.php:362
 msgid "Rules"
 msgstr "Κανόνες"
 
-#: src/usr/local/www/firewall_nat.php:239
+#: src/usr/local/www/firewall_nat.php:252
 #: src/usr/local/www/diag_states_summary.php:157
 #: src/usr/local/www/status_logs_filter_summary.php:90
 msgid "Source Ports"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:240
+#: src/usr/local/www/firewall_nat.php:253
 msgid "Dest. Address"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:241
+#: src/usr/local/www/firewall_nat.php:254
 #: src/usr/local/www/diag_states_summary.php:158
 msgid "Dest. Ports"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:242
+#: src/usr/local/www/firewall_nat.php:255
 msgid "NAT IP"
 msgstr "NAT IP"
 
-#: src/usr/local/www/firewall_nat.php:243
+#: src/usr/local/www/firewall_nat.php:256
 msgid "NAT Ports"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:321
+#: src/usr/local/www/firewall_nat.php:334
 msgid "All traffic matching this NAT entry is passed"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:325
+#: src/usr/local/www/firewall_nat.php:338
 #, php-format
 msgid "Firewall rule ID %s is managed by this rule"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:458
+#: src/usr/local/www/firewall_nat.php:471
 msgid "Edit rule"
 msgstr "Επεξεργασία κανόνα"
 
-#: src/usr/local/www/firewall_nat.php:459
+#: src/usr/local/www/firewall_nat.php:472
 msgid "Add a new NAT based on this one"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:460
+#: src/usr/local/www/firewall_nat.php:473
 msgid "Delete rule"
 msgstr "Διαγραφή κανόνα"
 
-#: src/usr/local/www/firewall_nat.php:484
-#: src/usr/local/www/firewall_rules.php:897
+#: src/usr/local/www/firewall_nat.php:497
+#: src/usr/local/www/firewall_rules.php:909
 msgid "Add rule to the top of the list"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:488
-#: src/usr/local/www/firewall_rules.php:901
+#: src/usr/local/www/firewall_nat.php:501
+#: src/usr/local/www/firewall_rules.php:913
 msgid "Add rule to the end of the list"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:492
-#: src/usr/local/www/firewall_rules.php:905
+#: src/usr/local/www/firewall_nat.php:505
+#: src/usr/local/www/firewall_rules.php:917
 msgid "Delete selected rules"
 msgstr "Διαγραφή επιλεγμένων κανόνων"
 
-#: src/usr/local/www/firewall_nat.php:496
+#: src/usr/local/www/firewall_nat.php:509
 #: src/usr/local/www/system_gateways.php:354
-#: src/usr/local/www/firewall_rules.php:909
+#: src/usr/local/www/firewall_rules.php:921
 msgid "Save rule order"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:500
-#: src/usr/local/www/firewall_rules.php:913
+#: src/usr/local/www/firewall_nat.php:513
+#: src/usr/local/www/firewall_rules.php:925
 msgid "Add separator"
 msgstr "Προσθήκη Διαχωριστικού"
 
-#: src/usr/local/www/firewall_nat.php:502
-#: src/usr/local/www/firewall_rules.php:915
+#: src/usr/local/www/firewall_nat.php:515
+#: src/usr/local/www/firewall_rules.php:927
 msgid "Separator"
 msgstr "Διαχωριστικό"
 
-#: src/usr/local/www/firewall_nat.php:512 src/usr/local/www/interfaces.php:2131
+#: src/usr/local/www/firewall_nat.php:525 src/usr/local/www/interfaces.php:2131
 #: src/usr/local/www/interfaces.php:3536 src/usr/local/www/diag_halt.php:80
-#: src/usr/local/www/firewall_rules.php:961
+#: src/usr/local/www/firewall_rules.php:973
 msgid "Cancel"
 msgstr "Ακύρωση"
 
-#: src/usr/local/www/firewall_nat.php:514
-#: src/usr/local/www/firewall_rules.php:963
+#: src/usr/local/www/firewall_nat.php:527
+#: src/usr/local/www/firewall_rules.php:975
 msgid "Enter a description, Save, then drag to final location."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:552
+#: src/usr/local/www/firewall_nat.php:565
 msgid ""
 "One or more Port Forward rules have been moved but have not yet been saved"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:574
-#: src/usr/local/www/firewall_rules.php:924
+#: src/usr/local/www/firewall_nat.php:587
+#: src/usr/local/www/firewall_rules.php:936
 msgid "Legend"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat.php:576
+#: src/usr/local/www/firewall_nat.php:589
 msgid "Linked rule"
 msgstr "Συνδεδεμένος κανόνας"
 
-#: src/usr/local/www/services_dhcp_edit.php:184
+#: src/usr/local/www/services_dhcp_edit.php:186
 msgid "Either MAC address or Client identifier must be specified"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:193
+#: src/usr/local/www/services_dhcp_edit.php:195
 #: src/usr/local/www/services_dhcpv6_edit.php:100
 msgid "The hostname cannot end with a hyphen according to RFC952"
 msgstr "Το hostname δεν μπορεί να τελειώνει σε ενωτικό σύμφωνα με το RFC952"
 
-#: src/usr/local/www/services_dhcp_edit.php:196
+#: src/usr/local/www/services_dhcp_edit.php:198
 #: src/usr/local/www/services_dhcpv6_edit.php:103
 msgid "The hostname can only contain the characters A-Z, 0-9 and '-'."
 msgstr "Το hostname μπορεί να περιέχει μόνο τους χαρακτήρες A-Z,0-9 και '-'."
 
-#: src/usr/local/www/services_dhcp_edit.php:199
+#: src/usr/local/www/services_dhcp_edit.php:201
 #: src/usr/local/www/system.php:181
 #: src/usr/local/www/services_dhcpv6_edit.php:106
 #: src/usr/local/www/services_unbound_host_edit.php:80
@@ -13264,81 +13266,81 @@ msgid ""
 "A valid hostname is specified, but the domain name part should be omitted"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:205
+#: src/usr/local/www/services_dhcp_edit.php:207
 #: src/usr/local/www/interfaces.php:765
 msgid "A valid IPv4 address must be specified."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:209
+#: src/usr/local/www/services_dhcp_edit.php:211
 #: src/usr/local/www/services_wol.php:74 src/usr/local/www/interfaces.php:897
 #: src/usr/local/www/services_wol_edit.php:80
 msgid "A valid MAC address must be specified."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:212
+#: src/usr/local/www/services_dhcp_edit.php:214
 msgid "Static ARP is enabled.  An IP address must be specified."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:222
+#: src/usr/local/www/services_dhcp_edit.php:224
 msgid "This MAC address or Client identifier already exists."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:230
+#: src/usr/local/www/services_dhcp_edit.php:232
 #, php-format
 msgid "The IP address must not be within the DHCP range for this interface."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:235
+#: src/usr/local/www/services_dhcp_edit.php:237
 msgid ""
 "The IP address must not be within the range configured on a DHCP pool for "
 "this interface."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:243
+#: src/usr/local/www/services_dhcp_edit.php:245
 #, php-format
 msgid "The IP address must lie in the %s subnet."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:247
+#: src/usr/local/www/services_dhcp_edit.php:249
 #, php-format
 msgid "The IP address cannot be the %s network address."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:251
+#: src/usr/local/www/services_dhcp_edit.php:253
 #, php-format
 msgid "The IP address cannot be the %s broadcast address."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:256
+#: src/usr/local/www/services_dhcp_edit.php:258
 msgid "A valid IPv4 address must be specified for the gateway."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:259
+#: src/usr/local/www/services_dhcp_edit.php:261
 msgid ""
 "A valid IPv4 address must be specified for the primary/secondary WINS "
 "servers."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:273
+#: src/usr/local/www/services_dhcp_edit.php:275
 msgid "A valid IPV4 address must be specified for each of the DNS servers."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:324
+#: src/usr/local/www/services_dhcp_edit.php:323
 msgid ""
 "A valid IPv4 address, hostname or URL must be specified for the TFTP server."
 msgstr ""
 "Μια έγκυρη IPv4 διεύθυνση, hostname ή URL πρέπει να ορισθεί για τον TFTP "
 "διακομιστή."
 
-#: src/usr/local/www/services_dhcp_edit.php:327
+#: src/usr/local/www/services_dhcp_edit.php:326
 msgid "A valid IPv4 address must be specified for the network boot server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:330
+#: src/usr/local/www/services_dhcp_edit.php:329
 msgid "A valid MAC address must be specified for use with static ARP."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:333
+#: src/usr/local/www/services_dhcp_edit.php:332
 msgid "A valid IPv4 address must be specified for use with static ARP."
 msgstr ""
 
@@ -13442,15 +13444,11 @@ msgid ""
 "used for multiple interfaces/entries."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp_edit.php:668
-msgid "DDNS Server IP"
-msgstr "IP Διεύθυνση DDNS διακομιστή"
-
-#: src/usr/local/www/services_dhcp_edit.php:748
+#: src/usr/local/www/services_dhcp_edit.php:755
 msgid "TFTP servers"
 msgstr "διακομιστές TFTP"
 
-#: src/usr/local/www/services_dhcp_edit.php:757
+#: src/usr/local/www/services_dhcp_edit.php:764
 msgid ""
 "Leave blank to disable. Enter a full hostname or IP for the TFTP server."
 msgstr ""
@@ -17689,82 +17687,65 @@ msgstr "*URL"
 msgid "User name"
 msgstr "Όνομα Χρήστη"
 
-#: src/usr/local/www/diag_arp.php:49
+#: src/usr/local/www/diag_arp.php:50
 #, php-format
 msgid "%s is not a valid IPv4 address or could not be deleted."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:52
+#: src/usr/local/www/diag_arp.php:53
 #, php-format
 msgid "The ARP cache entry for %s has been deleted."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:59
+#: src/usr/local/www/diag_arp.php:60
 msgid "ARP Table has been cleared."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:62
+#: src/usr/local/www/diag_arp.php:63
 msgid "Unable to clear ARP Table."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:110 src/usr/local/www/diag_arp.php:206
+#: src/usr/local/www/diag_arp.php:71 src/usr/local/www/diag_arp.php:119
 #: src/usr/local/www/head.inc:392
 msgid "ARP Table"
 msgstr "Πίνακας ARP"
 
-#: src/usr/local/www/diag_arp.php:121
-msgid " Loading, please wait..."
-msgstr ""
-
-#: src/usr/local/www/diag_arp.php:190 src/usr/local/www/diag_arp.php:218
+#: src/usr/local/www/diag_arp.php:103 src/usr/local/www/diag_arp.php:131
 msgid "Link Type"
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:199
+#: src/usr/local/www/diag_arp.php:112
 #: src/usr/local/www/status_dhcpv6_leases.php:270
 #: src/usr/local/www/diag_ndp.php:174
 #: src/usr/local/www/status_dhcp_leases.php:190
 msgid "Enter a search string or *nix regular expression to filter entries."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:231
-msgid "Incomplete"
-msgstr ""
-
-#: src/usr/local/www/diag_arp.php:250
-#, php-format
-msgid "Expires in %d seconds"
-msgstr ""
-
-#: src/usr/local/www/diag_arp.php:253
-msgid "Permanent"
-msgstr ""
-
-#: src/usr/local/www/diag_arp.php:261
+#: src/usr/local/www/diag_arp.php:147
 msgid "Delete arp cache entry"
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:277
+#: src/usr/local/www/diag_arp.php:163
 msgid "Clear ARP Table"
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:355
+#: src/usr/local/www/diag_arp.php:241
 #, php-format
 msgid "Local IPv6 peers use %1$sNDP%2$s instead of ARP."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:356
+#: src/usr/local/www/diag_arp.php:242
 msgid ""
 "Permanent ARP entries are shown for local interfaces or static ARP entries."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:357
+#: src/usr/local/www/diag_arp.php:243
 msgid ""
 "Normal dynamic ARP entries show a countdown timer until they will expire and "
 "then be re-checked."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:358
+#: src/usr/local/www/diag_arp.php:244
 msgid ""
 "Incomplete ARP entries indicate that the target host has not yet replied to "
 "an ARP request."
@@ -18854,119 +18835,119 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule_edit.php:251
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Mon"
 msgstr "Δευ"
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Tues"
 msgstr "Τρι"
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule_edit.php:253
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Wed"
 msgstr "Τετ"
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Thur"
 msgstr "Πεμπ"
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule_edit.php:255
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Fri"
 msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule_edit.php:256
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Sat"
 msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:59
 #: src/usr/local/www/firewall_schedule_edit.php:257
 #: src/usr/local/www/firewall_schedule.php:37
-#: src/usr/local/www/firewall_rules.php:547
+#: src/usr/local/www/firewall_rules.php:559
 msgid "Sun"
 msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "January"
 msgstr "Ιανουάριος"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "February"
 msgstr "Φεβρουάριος"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "March"
 msgstr "Μάρτιος"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "April"
 msgstr "Απρίλιος"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "May"
 msgstr "Μάιος"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "June"
 msgstr "Ιούνιος"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "July"
 msgstr "Ιούλιος"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "August"
 msgstr "Αύγουστος"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "September"
 msgstr "Σεπτέμβριος"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "October"
 msgstr "Οκτώβριος"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "November"
 msgstr "Νοέμβριος"
 
 #: src/usr/local/www/firewall_schedule_edit.php:60
 #: src/usr/local/www/firewall_schedule.php:38
-#: src/usr/local/www/firewall_rules.php:548
+#: src/usr/local/www/firewall_rules.php:560
 msgid "December"
 msgstr "Δεκέμβριος"
 
@@ -20827,7 +20808,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1163
 #: src/usr/local/www/firewall_rules_edit.php:1326
-#: src/usr/local/www/firewall_rules.php:297
+#: src/usr/local/www/firewall_rules.php:309
 msgid "Floating"
 msgstr ""
 
@@ -20848,13 +20829,13 @@ msgid "Ruleid"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1223
-#: src/usr/local/www/firewall_rules.php:928
+#: src/usr/local/www/firewall_rules.php:940
 #: src/usr/local/www/widgets/widgets/log.widget.php:260
 msgid "Reject"
 msgstr "Απόρριψη"
 
 #: src/usr/local/www/firewall_rules_edit.php:1227
-#: src/usr/local/www/firewall_rules.php:926
+#: src/usr/local/www/firewall_rules.php:938
 msgid "Match"
 msgstr "Αντιστοιχία"
 
@@ -20916,7 +20897,7 @@ msgid "ICMP Subtypes"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1370
-#: src/usr/local/www/firewall_rules.php:771
+#: src/usr/local/www/firewall_rules.php:783
 msgid "ICMP subtypes"
 msgstr ""
 
@@ -20985,7 +20966,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1516
 #: src/usr/local/www/diag_smart.php:295 src/usr/local/www/diag_smart.php:298
-#: src/usr/local/www/firewall_rules.php:929
+#: src/usr/local/www/firewall_rules.php:941
 msgid "Log"
 msgstr ""
 
@@ -22245,7 +22226,7 @@ msgid "Status Queues"
 msgstr ""
 
 #: src/usr/local/www/status_queues.php:235
-#: src/usr/local/www/firewall_rules.php:401 src/etc/inc/shaper.inc:4447
+#: src/usr/local/www/firewall_rules.php:413 src/etc/inc/shaper.inc:4447
 #: src/etc/inc/shaper.inc:4893
 msgid "Queue"
 msgstr "Ουρά αναμονής"
@@ -27070,7 +27051,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:3459
-#: src/usr/local/www/firewall_rules.php:466
+#: src/usr/local/www/firewall_rules.php:478
 msgid "Block bogon networks"
 msgstr ""
 
@@ -27518,9 +27499,10 @@ msgid "Certificate Expiration Threshold"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:327
+#, php-format
 msgid ""
 "The number of days at which a certificate lifetime is considered to be "
-"expiring soon and worthy of notification. Default is 30 days."
+"expiring soon and worthy of notification. Default is %d days."
 msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:333
@@ -28589,127 +28571,127 @@ msgstr ""
 msgid "Firewall: Rules - disabled a firewall rule."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:288
+#: src/usr/local/www/firewall_rules.php:298
 msgid "Firewall: Rules - reordered firewall rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:326
+#: src/usr/local/www/firewall_rules.php:338
 msgid "The firewall rule configuration has been changed."
 msgstr "Το configuration του κανόνα firewall έχει αλλάξει."
 
-#: src/usr/local/www/firewall_rules.php:352
+#: src/usr/local/www/firewall_rules.php:364
 msgid "Rules (Drag to Change Order)"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:418
-#: src/usr/local/www/firewall_rules.php:509
+#: src/usr/local/www/firewall_rules.php:430
+#: src/usr/local/www/firewall_rules.php:521
 msgid "traffic is passed"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:428
+#: src/usr/local/www/firewall_rules.php:440
 msgid "Anti-Lockout Rule"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:437
-#: src/usr/local/www/firewall_rules.php:456
-#: src/usr/local/www/firewall_rules.php:500
+#: src/usr/local/www/firewall_rules.php:449
+#: src/usr/local/www/firewall_rules.php:468
+#: src/usr/local/www/firewall_rules.php:512
 msgid "traffic is blocked"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:440
+#: src/usr/local/www/firewall_rules.php:452
 msgid "RFC 1918 networks"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:447
+#: src/usr/local/www/firewall_rules.php:459
 msgid "Block private networks"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:459
+#: src/usr/local/www/firewall_rules.php:471
 #, php-format
 msgid "Reserved%sNot assigned by IANA"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:503
+#: src/usr/local/www/firewall_rules.php:515
 msgid "traffic is rejected"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:506
+#: src/usr/local/www/firewall_rules.php:518
 msgid "traffic is matched"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:518
-#: src/usr/local/www/firewall_rules.php:931
+#: src/usr/local/www/firewall_rules.php:530
+#: src/usr/local/www/firewall_rules.php:943
 msgid "&quot;Quick&quot; rule. Applied immediately on match."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:523
+#: src/usr/local/www/firewall_rules.php:535
 msgid "advanced setting"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:527
+#: src/usr/local/www/firewall_rules.php:539
 msgid "traffic is logged"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:662
+#: src/usr/local/www/firewall_rules.php:674
 msgid "Traffic matching this rule is currently being denied"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:666
+#: src/usr/local/www/firewall_rules.php:678
 msgid "Traffic matching this rule is currently being allowed"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:675
+#: src/usr/local/www/firewall_rules.php:687
 msgid "This rule is not currently active because its period has expired"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:816
+#: src/usr/local/www/firewall_rules.php:828
 msgid "Gateways details"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:855
+#: src/usr/local/www/firewall_rules.php:867
 msgid "Copy"
 msgstr "Αντιγραφή"
 
-#: src/usr/local/www/firewall_rules.php:864
+#: src/usr/local/www/firewall_rules.php:876
 msgid "Delete this rule"
 msgstr "Διαγραφή κανόνα"
 
-#: src/usr/local/www/firewall_rules.php:886
+#: src/usr/local/www/firewall_rules.php:898
 msgid "No floating rules are currently defined."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:888
+#: src/usr/local/www/firewall_rules.php:900
 msgid "No rules are currently defined for this interface"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:889
+#: src/usr/local/www/firewall_rules.php:901
 msgid ""
 "All incoming connections on this interface will be blocked until pass rules "
 "are added."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:891
+#: src/usr/local/www/firewall_rules.php:903
 msgid "Click the button to add a new rule."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:930
+#: src/usr/local/www/firewall_rules.php:942
 msgid "Advanced filter"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:936
+#: src/usr/local/www/firewall_rules.php:948
 msgid ""
 "Rules are evaluated on a first-match basis (i.e. the action of the first "
 "rule to match a packet will be executed). "
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:938
+#: src/usr/local/www/firewall_rules.php:950
 msgid ""
 "This means that if block rules are used, it is important to pay attention to "
 "the rule order. Everything that isn't explicitly passed is blocked by "
 "default. "
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:942
+#: src/usr/local/www/firewall_rules.php:954
 msgid ""
 "Floating rules are evaluated on a first-match basis (i.e. the action of the "
 "first rule to match a packet will be executed) only if the 'quick' option is "
@@ -28718,14 +28700,14 @@ msgid ""
 "matches, the per-interface or default rules are used. "
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:949
+#: src/usr/local/www/firewall_rules.php:961
 #, php-format
 msgid ""
 "%1$sClick the anchor icon %2$s to move checked rules before the clicked row. "
 "Hold down the shift key and click to move the rules after the clicked row."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:1069
+#: src/usr/local/www/firewall_rules.php:1081
 msgid "One or more rules have been moved but have not yet been saved"
 msgstr ""
 
@@ -30987,54 +30969,54 @@ msgstr ""
 msgid "The remote gateway %s already exists on another phase 1 entry"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2334
+#: src/etc/inc/ipsec.inc:2356
 #, php-format
 msgid "No phase2 specifications for tunnel with REQID = %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2421
+#: src/etc/inc/ipsec.inc:2443
 #, php-format
 msgid "Warning: Missing CRL data for %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2426
+#: src/etc/inc/ipsec.inc:2448
 #, php-format
 msgid "Error: Cannot write IPsec CRL file for %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2448
+#: src/etc/inc/ipsec.inc:2470
 #, php-format
 msgid "Error: Invalid phase1 certificate reference for %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2466
+#: src/etc/inc/ipsec.inc:2488
 #, php-format
 msgid "Error: Cannot write phase1 key file for %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2473
+#: src/etc/inc/ipsec.inc:2495
 #, php-format
 msgid "Error: Cannot write phase1 certificate file for %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2490
+#: src/etc/inc/ipsec.inc:2512
 #, php-format
 msgid ""
 "Error: Invalid phase1 PKCS#11 certificate reference or PKCS#11 is not "
 "present for %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2558
+#: src/etc/inc/ipsec.inc:2580
 #, php-format
 msgid "Error: Invalid certificate hash info for %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2563
+#: src/etc/inc/ipsec.inc:2585
 #, php-format
 msgid "Error: Cannot write IPsec CA file for %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2640
+#: src/etc/inc/ipsec.inc:2662
 msgid "Configuring IPsec VPN... "
 msgstr ""
 
@@ -31220,36 +31202,31 @@ msgstr ""
 msgid "Notifications in this message: %s"
 msgstr ""
 
-#: src/etc/inc/notices.inc:430
-#, php-format
-msgid "Could not send the message to %1$s -- Error: %2$s"
-msgstr ""
-
-#: src/etc/inc/notices.inc:436
+#: src/etc/inc/notices.inc:443
 #, php-format
 msgid "Message sent to %s OK"
 msgstr "Επιτυχής αποστολή μηνύματος στο %s "
 
-#: src/etc/inc/notices.inc:454
+#: src/etc/inc/notices.inc:461
 msgid ""
 "Unable to test Telegram notification without both API Key & Chat ID set"
 msgstr ""
 
-#: src/etc/inc/notices.inc:473
+#: src/etc/inc/notices.inc:480
 msgid "API to Telegram did not return data in expected format!"
 msgstr ""
 
-#: src/etc/inc/notices.inc:504
+#: src/etc/inc/notices.inc:511
 msgid ""
 "Unable to test Pushover notification without both API Key & User Key set"
 msgstr ""
 
-#: src/etc/inc/notices.inc:527
+#: src/etc/inc/notices.inc:534
 #, php-format
 msgid "Failed to send Pushover notification. Error received was: %s"
 msgstr ""
 
-#: src/etc/inc/notices.inc:531
+#: src/etc/inc/notices.inc:538
 msgid "Pushover API server did not return data in expected format!"
 msgstr ""
 
@@ -31509,7 +31486,7 @@ msgid ""
 msgstr ""
 
 #: src/etc/inc/services.inc:2959 src/etc/inc/services.inc:2971
-#: src/etc/inc/dyndns.class:2472 src/etc/inc/dyndns.class:2480
+#: src/etc/inc/dyndns.class:2487 src/etc/inc/dyndns.class:2495
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS: ενημέρωση του αρχείου cache %1$s: %2$s"
@@ -32094,6 +32071,19 @@ msgstr ""
 
 #: src/etc/inc/web/alias-utils.inc:528
 msgid "Edited a firewall alias."
+msgstr ""
+
+#: src/etc/inc/web/diag_arp.inc:109
+msgid "Incomplete"
+msgstr ""
+
+#: src/etc/inc/web/diag_arp.inc:130
+#, php-format
+msgid "Expires in %d seconds"
+msgstr ""
+
+#: src/etc/inc/web/diag_arp.inc:133
+msgid "Permanent"
 msgstr ""
 
 #: src/etc/inc/rrd.inc:34
@@ -34170,7 +34160,7 @@ msgstr "Σφάλμα:%1$s  Περιγραφή:%2$s"
 
 #: src/etc/inc/authgui.inc:122 src/etc/inc/dyndns.class:1299
 #: src/etc/inc/dyndns.class:1587 src/etc/inc/dyndns.class:1639
-#: src/etc/inc/dyndns.class:2496
+#: src/etc/inc/dyndns.class:2511
 msgid "Error"
 msgstr "Σφάλμα"
 
@@ -37118,13 +37108,13 @@ msgstr ""
 msgid "User Authentication Failed"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1315 src/etc/inc/dyndns.class:1695
-#: src/etc/inc/dyndns.class:1713 src/etc/inc/dyndns.class:1730
-#: src/etc/inc/dyndns.class:1747 src/etc/inc/dyndns.class:1956
-#: src/etc/inc/dyndns.class:2076 src/etc/inc/dyndns.class:2141
-#: src/etc/inc/dyndns.class:2238 src/etc/inc/dyndns.class:2304
-#: src/etc/inc/dyndns.class:2413 src/etc/inc/dyndns.class:2438
-#: src/etc/inc/dyndns.class:2449
+#: src/etc/inc/dyndns.class:1315 src/etc/inc/dyndns.class:1711
+#: src/etc/inc/dyndns.class:1729 src/etc/inc/dyndns.class:1746
+#: src/etc/inc/dyndns.class:1763 src/etc/inc/dyndns.class:1972
+#: src/etc/inc/dyndns.class:2091 src/etc/inc/dyndns.class:2156
+#: src/etc/inc/dyndns.class:2253 src/etc/inc/dyndns.class:2319
+#: src/etc/inc/dyndns.class:2428 src/etc/inc/dyndns.class:2453
+#: src/etc/inc/dyndns.class:2464
 msgid "User Authorization Failed"
 msgstr "Απέτυχε ο  έλεγχος ταυτότητας του χρήστη. "
 
@@ -37166,23 +37156,23 @@ msgid "Curl error occurred:"
 msgstr "Προέκυψε σφάλμα curl:"
 
 #: src/etc/inc/dyndns.class:1601 src/etc/inc/dyndns.class:1656
-#: src/etc/inc/dyndns.class:1679 src/etc/inc/dyndns.class:1698
-#: src/etc/inc/dyndns.class:1716 src/etc/inc/dyndns.class:1733
-#: src/etc/inc/dyndns.class:1750 src/etc/inc/dyndns.class:1837
-#: src/etc/inc/dyndns.class:1855 src/etc/inc/dyndns.class:1875
-#: src/etc/inc/dyndns.class:1893 src/etc/inc/dyndns.class:1903
-#: src/etc/inc/dyndns.class:1917 src/etc/inc/dyndns.class:1931
-#: src/etc/inc/dyndns.class:1944 src/etc/inc/dyndns.class:1959
-#: src/etc/inc/dyndns.class:1978 src/etc/inc/dyndns.class:2002
-#: src/etc/inc/dyndns.class:2021 src/etc/inc/dyndns.class:2041
-#: src/etc/inc/dyndns.class:2062 src/etc/inc/dyndns.class:2079
-#: src/etc/inc/dyndns.class:2128 src/etc/inc/dyndns.class:2144
-#: src/etc/inc/dyndns.class:2162 src/etc/inc/dyndns.class:2175
-#: src/etc/inc/dyndns.class:2200 src/etc/inc/dyndns.class:2224
-#: src/etc/inc/dyndns.class:2249 src/etc/inc/dyndns.class:2286
-#: src/etc/inc/dyndns.class:2307 src/etc/inc/dyndns.class:2322
-#: src/etc/inc/dyndns.class:2333 src/etc/inc/dyndns.class:2422
-#: src/etc/inc/dyndns.class:2458
+#: src/etc/inc/dyndns.class:1679 src/etc/inc/dyndns.class:1695
+#: src/etc/inc/dyndns.class:1714 src/etc/inc/dyndns.class:1732
+#: src/etc/inc/dyndns.class:1749 src/etc/inc/dyndns.class:1766
+#: src/etc/inc/dyndns.class:1853 src/etc/inc/dyndns.class:1871
+#: src/etc/inc/dyndns.class:1891 src/etc/inc/dyndns.class:1909
+#: src/etc/inc/dyndns.class:1919 src/etc/inc/dyndns.class:1933
+#: src/etc/inc/dyndns.class:1947 src/etc/inc/dyndns.class:1960
+#: src/etc/inc/dyndns.class:1975 src/etc/inc/dyndns.class:1994
+#: src/etc/inc/dyndns.class:2018 src/etc/inc/dyndns.class:2036
+#: src/etc/inc/dyndns.class:2056 src/etc/inc/dyndns.class:2077
+#: src/etc/inc/dyndns.class:2094 src/etc/inc/dyndns.class:2143
+#: src/etc/inc/dyndns.class:2159 src/etc/inc/dyndns.class:2177
+#: src/etc/inc/dyndns.class:2190 src/etc/inc/dyndns.class:2215
+#: src/etc/inc/dyndns.class:2239 src/etc/inc/dyndns.class:2264
+#: src/etc/inc/dyndns.class:2301 src/etc/inc/dyndns.class:2322
+#: src/etc/inc/dyndns.class:2337 src/etc/inc/dyndns.class:2348
+#: src/etc/inc/dyndns.class:2437 src/etc/inc/dyndns.class:2473
 msgid "PAYLOAD:"
 msgstr ""
 
@@ -37199,37 +37189,38 @@ msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
 msgstr "Δυναμικο DNS %1$s (%2$s): _checkStatus() εκκινηση."
 
 #: src/etc/inc/dyndns.class:1652 src/etc/inc/dyndns.class:1673
-#: src/etc/inc/dyndns.class:1692 src/etc/inc/dyndns.class:1710
-#: src/etc/inc/dyndns.class:1727 src/etc/inc/dyndns.class:1744
-#: src/etc/inc/dyndns.class:1913 src/etc/inc/dyndns.class:1927
-#: src/etc/inc/dyndns.class:1940 src/etc/inc/dyndns.class:1953
-#: src/etc/inc/dyndns.class:1970 src/etc/inc/dyndns.class:2073
-#: src/etc/inc/dyndns.class:2138 src/etc/inc/dyndns.class:2235
-#: src/etc/inc/dyndns.class:2256 src/etc/inc/dyndns.class:2301
-#: src/etc/inc/dyndns.class:2313 src/etc/inc/dyndns.class:2329
-#: src/etc/inc/dyndns.class:2355 src/etc/inc/dyndns.class:2415
-#: src/etc/inc/dyndns.class:2418 src/etc/inc/dyndns.class:2435
-#: src/etc/inc/dyndns.class:2451 src/etc/inc/dyndns.class:2454
+#: src/etc/inc/dyndns.class:1708 src/etc/inc/dyndns.class:1726
+#: src/etc/inc/dyndns.class:1743 src/etc/inc/dyndns.class:1760
+#: src/etc/inc/dyndns.class:1929 src/etc/inc/dyndns.class:1943
+#: src/etc/inc/dyndns.class:1956 src/etc/inc/dyndns.class:1969
+#: src/etc/inc/dyndns.class:1986 src/etc/inc/dyndns.class:2088
+#: src/etc/inc/dyndns.class:2153 src/etc/inc/dyndns.class:2250
+#: src/etc/inc/dyndns.class:2271 src/etc/inc/dyndns.class:2316
+#: src/etc/inc/dyndns.class:2328 src/etc/inc/dyndns.class:2344
+#: src/etc/inc/dyndns.class:2370 src/etc/inc/dyndns.class:2430
+#: src/etc/inc/dyndns.class:2433 src/etc/inc/dyndns.class:2450
+#: src/etc/inc/dyndns.class:2466 src/etc/inc/dyndns.class:2469
 msgid "IP Address Changed Successfully!"
 msgstr "Η διεύθυνση IP άλλαξε με επιτυχία!"
 
 #: src/etc/inc/dyndns.class:1655 src/etc/inc/dyndns.class:1678
-#: src/etc/inc/dyndns.class:1697 src/etc/inc/dyndns.class:1715
-#: src/etc/inc/dyndns.class:1732 src/etc/inc/dyndns.class:1749
-#: src/etc/inc/dyndns.class:1818 src/etc/inc/dyndns.class:1836
-#: src/etc/inc/dyndns.class:1854 src/etc/inc/dyndns.class:1874
-#: src/etc/inc/dyndns.class:1892 src/etc/inc/dyndns.class:1902
-#: src/etc/inc/dyndns.class:1916 src/etc/inc/dyndns.class:1930
-#: src/etc/inc/dyndns.class:1943 src/etc/inc/dyndns.class:1958
-#: src/etc/inc/dyndns.class:1977 src/etc/inc/dyndns.class:2001
-#: src/etc/inc/dyndns.class:2020 src/etc/inc/dyndns.class:2040
-#: src/etc/inc/dyndns.class:2061 src/etc/inc/dyndns.class:2078
-#: src/etc/inc/dyndns.class:2143 src/etc/inc/dyndns.class:2161
-#: src/etc/inc/dyndns.class:2174 src/etc/inc/dyndns.class:2199
-#: src/etc/inc/dyndns.class:2223 src/etc/inc/dyndns.class:2248
-#: src/etc/inc/dyndns.class:2285 src/etc/inc/dyndns.class:2306
-#: src/etc/inc/dyndns.class:2321 src/etc/inc/dyndns.class:2332
-#: src/etc/inc/dyndns.class:2421 src/etc/inc/dyndns.class:2457
+#: src/etc/inc/dyndns.class:1694 src/etc/inc/dyndns.class:1713
+#: src/etc/inc/dyndns.class:1731 src/etc/inc/dyndns.class:1748
+#: src/etc/inc/dyndns.class:1765 src/etc/inc/dyndns.class:1834
+#: src/etc/inc/dyndns.class:1852 src/etc/inc/dyndns.class:1870
+#: src/etc/inc/dyndns.class:1890 src/etc/inc/dyndns.class:1908
+#: src/etc/inc/dyndns.class:1918 src/etc/inc/dyndns.class:1932
+#: src/etc/inc/dyndns.class:1946 src/etc/inc/dyndns.class:1959
+#: src/etc/inc/dyndns.class:1974 src/etc/inc/dyndns.class:1993
+#: src/etc/inc/dyndns.class:2017 src/etc/inc/dyndns.class:2035
+#: src/etc/inc/dyndns.class:2055 src/etc/inc/dyndns.class:2076
+#: src/etc/inc/dyndns.class:2093 src/etc/inc/dyndns.class:2158
+#: src/etc/inc/dyndns.class:2176 src/etc/inc/dyndns.class:2189
+#: src/etc/inc/dyndns.class:2214 src/etc/inc/dyndns.class:2238
+#: src/etc/inc/dyndns.class:2263 src/etc/inc/dyndns.class:2300
+#: src/etc/inc/dyndns.class:2321 src/etc/inc/dyndns.class:2336
+#: src/etc/inc/dyndns.class:2347 src/etc/inc/dyndns.class:2436
+#: src/etc/inc/dyndns.class:2472
 msgid "Unknown Response"
 msgstr "Άγνωστη Απάντηση"
 
@@ -37275,56 +37266,66 @@ msgstr ""
 msgid "DNS error encountered. Stop updating for 30 minutes."
 msgstr "Παρουσιάστηκε σφάλμα DNS.  Σταματησαν οι ενημερωσεις για 30 λεπτά."
 
-#: src/etc/inc/dyndns.class:1685 src/etc/inc/dyndns.class:1705
-#: src/etc/inc/dyndns.class:1722 src/etc/inc/dyndns.class:1739
-#: src/etc/inc/dyndns.class:2068 src/etc/inc/dyndns.class:2133
-#: src/etc/inc/dyndns.class:2294
+#: src/etc/inc/dyndns.class:1691 src/etc/inc/dyndns.class:1884
+#: src/etc/inc/dyndns.class:1887 src/etc/inc/dyndns.class:1905
+#: src/etc/inc/dyndns.class:1915 src/etc/inc/dyndns.class:2014
+#: src/etc/inc/dyndns.class:2030 src/etc/inc/dyndns.class:2049
+#: src/etc/inc/dyndns.class:2070 src/etc/inc/dyndns.class:2126
+#: src/etc/inc/dyndns.class:2173 src/etc/inc/dyndns.class:2186
+#: src/etc/inc/dyndns.class:2202 src/etc/inc/dyndns.class:2226
+msgid "IP Address Updated Successfully!"
+msgstr "Επιτυχής Ανανέωση Διεύθυνσης IP! "
+
+#: src/etc/inc/dyndns.class:1701 src/etc/inc/dyndns.class:1721
+#: src/etc/inc/dyndns.class:1738 src/etc/inc/dyndns.class:1755
+#: src/etc/inc/dyndns.class:2083 src/etc/inc/dyndns.class:2148
+#: src/etc/inc/dyndns.class:2309
 msgid "Not A FQDN!"
 msgstr "Δεν ειναι FQDN!"
 
-#: src/etc/inc/dyndns.class:1687 src/etc/inc/dyndns.class:2296
+#: src/etc/inc/dyndns.class:1703 src/etc/inc/dyndns.class:2311
 msgid "No such host"
 msgstr "Ανύπαρκτος εξυπηρετητής"
 
-#: src/etc/inc/dyndns.class:1689 src/etc/inc/dyndns.class:1707
-#: src/etc/inc/dyndns.class:1724 src/etc/inc/dyndns.class:1741
-#: src/etc/inc/dyndns.class:1910 src/etc/inc/dyndns.class:1924
-#: src/etc/inc/dyndns.class:1937 src/etc/inc/dyndns.class:1950
-#: src/etc/inc/dyndns.class:2135 src/etc/inc/dyndns.class:2232
-#: src/etc/inc/dyndns.class:2275 src/etc/inc/dyndns.class:2298
+#: src/etc/inc/dyndns.class:1705 src/etc/inc/dyndns.class:1723
+#: src/etc/inc/dyndns.class:1740 src/etc/inc/dyndns.class:1757
+#: src/etc/inc/dyndns.class:1926 src/etc/inc/dyndns.class:1940
+#: src/etc/inc/dyndns.class:1953 src/etc/inc/dyndns.class:1966
+#: src/etc/inc/dyndns.class:2150 src/etc/inc/dyndns.class:2247
+#: src/etc/inc/dyndns.class:2290 src/etc/inc/dyndns.class:2313
 msgid "No Change In IP Address"
 msgstr "Καμία μεταβολή Διεύθυνσης IP"
 
-#: src/etc/inc/dyndns.class:1763
+#: src/etc/inc/dyndns.class:1779
 msgid "IP address is current, no update performed."
 msgstr "Προϋπάρχουσα Διεύθυνση IP, δεν έγινε ανανέωση. "
 
-#: src/etc/inc/dyndns.class:1767
+#: src/etc/inc/dyndns.class:1783
 msgid "DNS hostname update successful."
 msgstr "Επιτυχής Ανανέωση Ονόματος Διακομιστή DNS.  "
 
-#: src/etc/inc/dyndns.class:1771
+#: src/etc/inc/dyndns.class:1787
 msgid "Hostname supplied does not exist."
 msgstr "Το όνομα του κεντρικού υπολογιστή που παρέχεται δεν υπάρχει."
 
-#: src/etc/inc/dyndns.class:1774
+#: src/etc/inc/dyndns.class:1790
 msgid "Invalid Username."
 msgstr "Εσφαλμένο  όνομα χρήστη."
 
-#: src/etc/inc/dyndns.class:1777
+#: src/etc/inc/dyndns.class:1793
 msgid "Invalid Password."
 msgstr "Εσφαλμένος κωδικός πρόσβασης."
 
-#: src/etc/inc/dyndns.class:1780
+#: src/etc/inc/dyndns.class:1796
 msgid "Too many updates sent."
 msgstr "Απεστάλησαν υπερβολικά πολλές ανανεώσεις. "
 
-#: src/etc/inc/dyndns.class:1783
+#: src/etc/inc/dyndns.class:1799
 msgid "Account disabled due to violation of No-IP terms of service."
 msgstr ""
 "Ο λογαριασμος εχει απενεργοποιηθει λογω παραβιασης των Ορων Χρησης του NO-IP"
 
-#: src/etc/inc/dyndns.class:1786
+#: src/etc/inc/dyndns.class:1802
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
@@ -37332,42 +37333,42 @@ msgstr ""
 "Μη έγκυρη διεύθυνση IP. Η διεύθυνση IP που υποβλήθηκε δεν έχει διαμορφωθεί "
 "σωστά ή είναι ιδιωτική διεύθυνση IP ή βρίσκεται σε μαύρη λίστα."
 
-#: src/etc/inc/dyndns.class:1789
+#: src/etc/inc/dyndns.class:1805
 msgid "Disabled / Locked Hostname."
 msgstr "Απενεργοποιημένο / Κλειδωμένο Όνομα Διακομιστή "
 
-#: src/etc/inc/dyndns.class:1792
+#: src/etc/inc/dyndns.class:1808
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
 "Ο ενημερωμένος κεντρικός υπολογιστής έχει ρυθμιστεί ως ανακατεύθυνση ιστού "
 "και δεν πραγματοποιήθηκε καμία ενημέρωση."
 
-#: src/etc/inc/dyndns.class:1795
+#: src/etc/inc/dyndns.class:1811
 msgid "Group supplied does not exist."
 msgstr "Η ομάδα που παρέχεται δεν υπάρχει."
 
-#: src/etc/inc/dyndns.class:1798
+#: src/etc/inc/dyndns.class:1814
 msgid "DNS group update is successful."
 msgstr "Η ενημέρωση ομάδας DNS είναι επιτυχής."
 
-#: src/etc/inc/dyndns.class:1802
+#: src/etc/inc/dyndns.class:1818
 msgid "DNS group is current, no update performed."
 msgstr "Η ομάδα DNS είναι τρέχουσα, δεν πραγματοποιήθηκε ενημέρωση."
 
-#: src/etc/inc/dyndns.class:1806
+#: src/etc/inc/dyndns.class:1822
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
 "Η ενημέρωση υποστήριξης πελατών δεν είναι διαθέσιμη για το παρεχόμενο όνομα "
 "κεντρικού υπολογιστή ή ομάδα."
 
-#: src/etc/inc/dyndns.class:1809
+#: src/etc/inc/dyndns.class:1825
 msgid "Hostname supplied does not have offline settings configured."
 msgstr ""
 "Το όνομα κεντρικού υπολογιστή που παρέχεται δεν έχει ρυθμίσει τις ρυθμίσεις "
 "εκτός σύνδεσης."
 
-#: src/etc/inc/dyndns.class:1812 src/etc/inc/dyndns.class:1815
+#: src/etc/inc/dyndns.class:1828 src/etc/inc/dyndns.class:1831
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
@@ -37375,451 +37376,441 @@ msgstr ""
 "Ο πελάτης απενεργοποιήθηκε. Ο πελάτης πρέπει να αποχωρήσει και να μην προβεί "
 "σε άλλες ενημερώσεις χωρίς παρέμβαση του χρήστη."
 
-#: src/etc/inc/dyndns.class:1819
+#: src/etc/inc/dyndns.class:1835
 msgid "Unknown Response:"
 msgstr "Άγνωστη Απάντηση:"
 
-#: src/etc/inc/dyndns.class:1825 src/etc/inc/dyndns.class:1843
+#: src/etc/inc/dyndns.class:1841 src/etc/inc/dyndns.class:1859
 msgid "Authentication Failed: Username and/or Password was Incorrect."
 msgstr ""
 "Ο έλεγχος ταυτότητας απέτυχε: Το όνομα χρήστη και / ή ο κωδικός πρόσβασης "
 "ήταν εσφαλμένος."
 
-#: src/etc/inc/dyndns.class:1827 src/etc/inc/dyndns.class:1845
+#: src/etc/inc/dyndns.class:1843 src/etc/inc/dyndns.class:1861
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
 msgstr ""
 "Δεν υπάρχει υπηρεσία: Η υπηρεσία Dynamic DNS έχει απενεργοποιηθεί για αυτόν "
 "τον τομέα."
 
-#: src/etc/inc/dyndns.class:1829 src/etc/inc/dyndns.class:1847
+#: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1863
 msgid "Illegal Input: Self-Explanatory"
 msgstr "Παράνομη Εισαγωγή: Αυτονόητο "
 
-#: src/etc/inc/dyndns.class:1831 src/etc/inc/dyndns.class:1849
+#: src/etc/inc/dyndns.class:1847 src/etc/inc/dyndns.class:1865
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
 msgstr ""
 "Πάρα πολύ σύντομα: Δεν έχει περάσει αρκετός χρόνος από την τελευταία "
 "ενημέρωση"
 
-#: src/etc/inc/dyndns.class:1833 src/etc/inc/dyndns.class:1851
+#: src/etc/inc/dyndns.class:1849 src/etc/inc/dyndns.class:1867
 msgid "IP Updated Successfully!"
 msgstr "Η IP ανανεώθηκε επιτυχώς! "
 
-#: src/etc/inc/dyndns.class:1864
+#: src/etc/inc/dyndns.class:1880
 msgid "Error 799"
 msgstr "Σφάλμα 799."
 
-#: src/etc/inc/dyndns.class:1864 src/etc/inc/dyndns.class:1866
+#: src/etc/inc/dyndns.class:1880 src/etc/inc/dyndns.class:1882
 msgid "Update Failed!"
 msgstr "Η Ενημέρωση Απέτυχε!"
 
-#: src/etc/inc/dyndns.class:1866
+#: src/etc/inc/dyndns.class:1882
 msgid "Error 700"
 msgstr "Σφάλμα 700"
 
-#: src/etc/inc/dyndns.class:1868 src/etc/inc/dyndns.class:1871
-#: src/etc/inc/dyndns.class:1889 src/etc/inc/dyndns.class:1899
-#: src/etc/inc/dyndns.class:1998 src/etc/inc/dyndns.class:2014
-#: src/etc/inc/dyndns.class:2034 src/etc/inc/dyndns.class:2055
-#: src/etc/inc/dyndns.class:2111 src/etc/inc/dyndns.class:2158
-#: src/etc/inc/dyndns.class:2171 src/etc/inc/dyndns.class:2187
-#: src/etc/inc/dyndns.class:2211
-msgid "IP Address Updated Successfully!"
-msgstr "Επιτυχής Ανανέωση Διεύθυνσης IP! "
-
-#: src/etc/inc/dyndns.class:1881
+#: src/etc/inc/dyndns.class:1897
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
 "Κακο Αιτημα - Η διεύθυνση URL ήταν ακατάλληλη. Οι απαιτούμενες παράμετροι "
 "δεν παρασχέθηκαν."
 
-#: src/etc/inc/dyndns.class:1883
+#: src/etc/inc/dyndns.class:1899
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
 "Ενημέρωση πολύ σύντομα - Προσπάθεια ενημέρωσης πολύ γρήγορα από την "
 "τελευταία αλλαγή."
 
-#: src/etc/inc/dyndns.class:1885
+#: src/etc/inc/dyndns.class:1901
 msgid "Database Error - There was a server-sided database error."
 msgstr "Σφάλμα βάσης δεδομένων - Υπήρξε σφάλμα βάσης δεδομένων διακομιστή."
 
-#: src/etc/inc/dyndns.class:1887
+#: src/etc/inc/dyndns.class:1903
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
 msgstr ""
 "Σφαλμα Ονοματος Κεντρικου Υπολογιστη - Το ονομα κεντρικου υπολογιστη (%1$s) "
 "δεν ανηκει στον χρηστη (%2$s)."
 
-#: src/etc/inc/dyndns.class:1965
+#: src/etc/inc/dyndns.class:1981
 msgid "Not a valid username or password!"
 msgstr "Μή έγκυρο όνομα χρήστη  ή κωδικός πρόσβασης!"
 
-#: src/etc/inc/dyndns.class:1967
+#: src/etc/inc/dyndns.class:1983
 msgid "Hostname specified does not exist."
 msgstr "Το καθορισμένο ονομα κεντρικου υπολογιστή δεν υπάρχει."
 
-#: src/etc/inc/dyndns.class:1973
+#: src/etc/inc/dyndns.class:1989
 msgid "Hostname specified exists, but not under the username specified."
 msgstr ""
 "Ο καθορισμένος κεντρικός υπολογιστής υπάρχει, αλλά όχι με το καθορισμένο "
 "όνομα χρήστη."
 
-#: src/etc/inc/dyndns.class:1975
+#: src/etc/inc/dyndns.class:1991
 msgid "Updating too frequently, considered abuse."
 msgstr "Ενημέρωση πολύ συχνά, θεωρείται κατάχρηση."
 
-#: src/etc/inc/dyndns.class:1984 src/etc/inc/dyndns.class:2049
+#: src/etc/inc/dyndns.class:2000 src/etc/inc/dyndns.class:2064
 msgid "Bad Request - The IP provided was invalid."
 msgstr "Κακο Αιτημα - Η παρεχόμενη διεύθυνση IP δεν ήταν έγκυρη."
 
-#: src/etc/inc/dyndns.class:1986
+#: src/etc/inc/dyndns.class:2002
 msgid "Bad Request - Required parameters were not provided."
 msgstr "Κακο Αιτημα - Δεν ζητήθηκαν οι απαιτούμενες παράμετροι."
 
-#: src/etc/inc/dyndns.class:1988
+#: src/etc/inc/dyndns.class:2004
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr ""
 "Κακο Αιτημα - Παράνομους χαρακτήρες στο όνομα χρήστη ή τον κωδικό πρόσβασης."
 
-#: src/etc/inc/dyndns.class:1990
+#: src/etc/inc/dyndns.class:2006
 msgid "Invalid password."
 msgstr "Εσφαλμένος κωδικός χρήστη."
 
-#: src/etc/inc/dyndns.class:1992
+#: src/etc/inc/dyndns.class:2008
 msgid "This account has been administratively locked."
 msgstr "Αυτός ο λογαριασμός έχει κλειδωθεί διοικητικά."
 
-#: src/etc/inc/dyndns.class:1994
+#: src/etc/inc/dyndns.class:2010
 msgid "Updating too frequently."
 msgstr "Ενημέρωση πολύ συχνά."
 
-#: src/etc/inc/dyndns.class:1996 src/etc/inc/dyndns.class:2010
-#: src/etc/inc/dyndns.class:2028
+#: src/etc/inc/dyndns.class:2012 src/etc/inc/dyndns.class:2026
+#: src/etc/inc/dyndns.class:2043
 msgid "Server side error."
 msgstr "Σφάλμα  διακομιστή."
 
-#: src/etc/inc/dyndns.class:2012
+#: src/etc/inc/dyndns.class:2028
 msgid "Badly Formed Request (check the settings)."
 msgstr "Ακατάλληλο αίτημα (ελέγξτε τις ρυθμίσεις)."
 
-#: src/etc/inc/dyndns.class:2030 src/etc/inc/dyndns.class:2051
+#: src/etc/inc/dyndns.class:2045 src/etc/inc/dyndns.class:2066
 msgid "Bad Request - A hostname was not provided."
 msgstr "Ακατάλληλο αίτημα - Δεν δόθηκε όνομα κεντρικού υπολογιστή."
 
-#: src/etc/inc/dyndns.class:2032 src/etc/inc/dyndns.class:2053
+#: src/etc/inc/dyndns.class:2047 src/etc/inc/dyndns.class:2068
 msgid "Invalid username or password."
 msgstr "Μή έγκυρο όνομα χρήστη  ή κωδικός πρόσβασης."
 
-#: src/etc/inc/dyndns.class:2037 src/etc/inc/dyndns.class:2058
-#: src/etc/inc/dyndns.class:2070
+#: src/etc/inc/dyndns.class:2052 src/etc/inc/dyndns.class:2073
+#: src/etc/inc/dyndns.class:2085
 msgid "No Change In IP Address."
 msgstr "Δεν υπάρχει αλλαγή στη διεύθυνση IP."
 
-#: src/etc/inc/dyndns.class:2086
+#: src/etc/inc/dyndns.class:2101
 msgid "Route53 API call failed"
 msgstr "Route53 API χρηση απετυχε"
 
-#: src/etc/inc/dyndns.class:2090
+#: src/etc/inc/dyndns.class:2105
 msgid "IP address changed successfully"
 msgstr "Η διεύθυνση IP άλλαξε με επιτυχία"
 
-#: src/etc/inc/dyndns.class:2113 src/etc/inc/dyndns.class:2316
+#: src/etc/inc/dyndns.class:2128 src/etc/inc/dyndns.class:2331
 msgid "Result did not match."
 msgstr "Το αποτέλεσμα δεν ταιριάζει. "
 
-#: src/etc/inc/dyndns.class:2120
+#: src/etc/inc/dyndns.class:2135
 #, php-format
 msgid "%1$s updated to %2$s"
 msgstr "%1$s ενημερώθηκε σε %2$s"
 
-#: src/etc/inc/dyndns.class:2123
+#: src/etc/inc/dyndns.class:2138
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "Cloudflare."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:2125
+#: src/etc/inc/dyndns.class:2140
 msgid "Zone or Host ID was not found, check the hostname."
 msgstr ""
 "Δεν βρέθηκε ζώνη ή αναγνωριστικό κεντρικού υπολογιστή, ελέγξτε το όνομα του "
 "κεντρικού υπολογιστή."
 
-#: src/etc/inc/dyndns.class:2127
+#: src/etc/inc/dyndns.class:2142
 msgid "UNKNOWN ERROR"
 msgstr "ΑΓΝΩΣΤΟ ΣΦΑΛΜΑ"
 
-#: src/etc/inc/dyndns.class:2150
+#: src/etc/inc/dyndns.class:2165
 msgid "Wrong values - Update could not be completed."
 msgstr "Λάθος Τιμές: Η ανανέωση δεν μπορεί να ολοκληρωθεί. "
 
-#: src/etc/inc/dyndns.class:2152
+#: src/etc/inc/dyndns.class:2167
 msgid "Unknown username - User does not exist."
 msgstr "Αγνωστο όνομα χρήστη -  Ο χρήστης δεν υπάρχει. "
 
-#: src/etc/inc/dyndns.class:2154
+#: src/etc/inc/dyndns.class:2169
 msgid "Wrong password - Remember password is case sensitive."
 msgstr ""
 "Εσφαλμένος κωδικός πρόσβασης -  Θυμηθείτε γίνεται  διάκριση πεζών-κεφαλαίων"
 
-#: src/etc/inc/dyndns.class:2156
+#: src/etc/inc/dyndns.class:2171
 msgid "User unable to administer the selected domain."
 msgstr "Ο χρήστης δεν μπορεί να διαχειριστεί τον επιλεγμένο τομέα."
 
-#: src/etc/inc/dyndns.class:2230
+#: src/etc/inc/dyndns.class:2245
 msgid "Not A FQDN"
 msgstr "Δεν είναι ένα FQDN"
 
-#: src/etc/inc/dyndns.class:2240
+#: src/etc/inc/dyndns.class:2255
 msgid "Hostname does not exist or DynDNS not enabled"
 msgstr ""
 "Το όνομα κεντρικού υπολογιστή δεν υπάρχει ή το DynDNS δεν είναι "
 "ενεργοποιημένο"
 
-#: src/etc/inc/dyndns.class:2242
+#: src/etc/inc/dyndns.class:2257
 msgid "Bad request"
 msgstr "Εσφαλμένη αίτηση"
 
-#: src/etc/inc/dyndns.class:2244
+#: src/etc/inc/dyndns.class:2259
 msgid "Dynamic DNS access has been blocked!"
 msgstr "Μπλοκαρισμένη πρόσβαση στο Δυναμικό DNS! "
 
-#: src/etc/inc/dyndns.class:2246
+#: src/etc/inc/dyndns.class:2261
 msgid "Error on Google's end, retry in 5 minutes"
 msgstr "Σφάλμα από την πλευρά της Google, ξαναπροσπαθήστε σε 5 λεπτά "
 
-#: src/etc/inc/dyndns.class:2260 src/etc/inc/dyndns.class:2318
+#: src/etc/inc/dyndns.class:2275 src/etc/inc/dyndns.class:2333
 msgid "Invalid username or password"
 msgstr "Μή έγκυρο όνομα χρήστη  ή κωδικός πρόσβασης"
 
-#: src/etc/inc/dyndns.class:2263
+#: src/etc/inc/dyndns.class:2278
 msgid "Account suspended"
 msgstr "Ο λογαριασμός είναι σε αναστολή"
 
-#: src/etc/inc/dyndns.class:2266
+#: src/etc/inc/dyndns.class:2281
 msgid "Account revoked"
 msgstr "Ο λογαριασμός ανακλήθηκε"
 
-#: src/etc/inc/dyndns.class:2269
+#: src/etc/inc/dyndns.class:2284
 msgid "Record does not exist in the system. Unable to update record"
 msgstr ""
 "Η εγγραφή δεν υπάρχει στο σύστημα. Δεν είναι δυνατή η ενημέρωση της εγγραφής"
 
-#: src/etc/inc/dyndns.class:2272
+#: src/etc/inc/dyndns.class:2287
 msgid "User does not have access to this record"
 msgstr "Ο χρήστης δεν έχει πρόσβαση σε αυτό το αρχείο "
 
-#: src/etc/inc/dyndns.class:2279
+#: src/etc/inc/dyndns.class:2294
 msgid "General system error recognized by the system"
 msgstr "Γενικό σφάλμα συστήματος βρεθηκε από το σύστημα"
 
-#: src/etc/inc/dyndns.class:2282
+#: src/etc/inc/dyndns.class:2297
 msgid "General system error unrecognized by the system"
 msgstr "Γενικό σφάλμα συστήματος που δεν κατηγοριοποιειται από το σύστημα"
 
-#: src/etc/inc/dyndns.class:2349 src/etc/inc/dyndns.class:2432
+#: src/etc/inc/dyndns.class:2364 src/etc/inc/dyndns.class:2447
 #, php-format
 msgid "_checkStatus() results: %1$s"
 msgstr "_checkStatus() results: %1$s"
 
-#: src/etc/inc/dyndns.class:2360
+#: src/etc/inc/dyndns.class:2375
 msgid "No record exists."
 msgstr "Δεν υπάρχει εγγραφή"
 
-#: src/etc/inc/dyndns.class:2364
+#: src/etc/inc/dyndns.class:2379
 msgid "No type exists."
 msgstr "Ανύπαρκτος τύπος. "
 
-#: src/etc/inc/dyndns.class:2368
+#: src/etc/inc/dyndns.class:2383
 msgid "No value exists."
 msgstr "Ανύπαρκτη τιμή. "
 
-#: src/etc/inc/dyndns.class:2371
+#: src/etc/inc/dyndns.class:2386
 msgid "No such zone exists."
 msgstr "Ανύπαρκτη ζώνη. "
 
-#: src/etc/inc/dyndns.class:2374
+#: src/etc/inc/dyndns.class:2389
 msgid "The specified record is invalid."
 msgstr "Η προσδιορισμένη καταχώρηση είναι μη έγκυρη. "
 
-#: src/etc/inc/dyndns.class:2377
+#: src/etc/inc/dyndns.class:2392
 msgid "The specified type is invalid."
 msgstr "Ο καθορισμένος τύπος δεν είναι έγκυρος."
 
-#: src/etc/inc/dyndns.class:2380
+#: src/etc/inc/dyndns.class:2395
 msgid "The specified value is invalid."
 msgstr "Η καθορισμένη τιμή δεν είναι έγκυρη."
 
-#: src/etc/inc/dyndns.class:2383
+#: src/etc/inc/dyndns.class:2398
 msgid "Record is not editable."
 msgstr "Η καταχώρηση δεν είναι επεξεργάσιμη. "
 
-#: src/etc/inc/dyndns.class:2386
+#: src/etc/inc/dyndns.class:2401
 msgid "Record exists but is not editable."
 msgstr "Η εγγραφή υπάρχει αλλά δεν μπορεί να γινει επεξεργασια."
 
-#: src/etc/inc/dyndns.class:2389
+#: src/etc/inc/dyndns.class:2404
 msgid "Record exists and must be removed before adding."
 msgstr "Η εγγραφή υπάρχει και πρέπει να καταργηθεί πριν την προσθήκη."
 
-#: src/etc/inc/dyndns.class:2392 src/etc/inc/dyndns.class:2398
+#: src/etc/inc/dyndns.class:2407 src/etc/inc/dyndns.class:2413
 msgid "A remote server error occurred updating the zone."
 msgstr ""
 "Παρουσιάστηκε σφάλμα απομακρυσμένου διακομιστή για την ενημέρωση της ζώνης"
 
-#: src/etc/inc/dyndns.class:2395
+#: src/etc/inc/dyndns.class:2410
 msgid "A remote server error occurred loading the zone."
 msgstr ""
 "Παρουσιάστηκε σφάλμα απομακρυσμένου διακομιστή για τη φόρτωση της ζώνης"
 
-#: src/etc/inc/dyndns.class:2401
+#: src/etc/inc/dyndns.class:2416
 msgid "A remote server error occurred adding a new record."
 msgstr ""
 "Παρουσιάστηκε σφάλμα απομακρυσμένου διακομιστή κατα την προσθηκη νεας "
 "εγγραφης."
 
-#: src/etc/inc/dyndns.class:2404
+#: src/etc/inc/dyndns.class:2419
 msgid "A remote server error occurred removing an existing record."
 msgstr ""
 "Παρουσιάστηκε σφάλμα απομακρυσμένου διακομιστή κατά την κατάργηση υπάρχουσας "
 "εγγραφής"
 
-#: src/etc/inc/dyndns.class:2471
+#: src/etc/inc/dyndns.class:2486
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "DynDNS ανανέωσε την διεύθυνση IP στο %1$s (%2$s) to %3$s"
 
-#: src/etc/inc/dyndns.class:2479
+#: src/etc/inc/dyndns.class:2494
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
 msgstr "Το DynDNS ενημέρωσε τη διεύθυνση IPv6 στο %1$s (%2$s) to %3$s"
 
-#: src/etc/inc/dyndns.class:2495
+#: src/etc/inc/dyndns.class:2510
 msgid "ERROR!"
 msgstr "ΣΦΑΛΜΑ!"
 
-#: src/etc/inc/dyndns.class:2501
+#: src/etc/inc/dyndns.class:2516
 msgid "No Dynamic DNS Service provider was selected."
 msgstr "Δεν επιλέχθηκε κανένας παροχέας δυναμικών υπηρεσιών DNS."
 
-#: src/etc/inc/dyndns.class:2504
+#: src/etc/inc/dyndns.class:2519
 msgid "No Username Provided."
 msgstr "Δεν δόθηκε όνομα χρήστη."
 
-#: src/etc/inc/dyndns.class:2507
+#: src/etc/inc/dyndns.class:2522
 msgid "No Password Provided."
 msgstr "Δεν δόθηκε κωδικός πρόσβασης."
 
-#: src/etc/inc/dyndns.class:2510
+#: src/etc/inc/dyndns.class:2525
 msgid "No Hostname Provided."
 msgstr "Δεν διευκρινήστηκε όνομα διακομιστή. "
 
-#: src/etc/inc/dyndns.class:2513
+#: src/etc/inc/dyndns.class:2528
 msgid "The Dynamic DNS Service provided is not yet supported."
 msgstr "Η υπηρεσία Dynamic DNS που παρέχεται δεν υποστηρίζεται ακόμη."
 
-#: src/etc/inc/dyndns.class:2516
+#: src/etc/inc/dyndns.class:2531
 msgid "No Update URL Provided."
 msgstr "Δεν παρέχεται διεύθυνση ενημέρωσης URL ."
 
-#: src/etc/inc/dyndns.class:2519
+#: src/etc/inc/dyndns.class:2534
 msgid "Invalid ZoneID"
 msgstr "Μη έγκυρο ZoneID"
 
-#: src/etc/inc/dyndns.class:2522
+#: src/etc/inc/dyndns.class:2537
 msgid "Invalid TTL"
 msgstr "Μη έγκυρο TTL"
 
-#: src/etc/inc/dyndns.class:2525
+#: src/etc/inc/dyndns.class:2540
 #, php-format
 msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
 "dynamic DNS entry."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:2528
+#: src/etc/inc/dyndns.class:2543
 msgid "Unknown Response."
 msgstr "Άγνωστη Απάντηση."
 
-#: src/etc/inc/dyndns.class:2547
+#: src/etc/inc/dyndns.class:2562
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _detectChange() starting."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:2554
+#: src/etc/inc/dyndns.class:2569
 #, php-format
 msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
 "process."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:2557
+#: src/etc/inc/dyndns.class:2572
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:2565
+#: src/etc/inc/dyndns.class:2580
 #, php-format
 msgid "Cached IPv6: %s"
 msgstr "Αποθηκευμένο IPv6: %s"
 
-#: src/etc/inc/dyndns.class:2571
+#: src/etc/inc/dyndns.class:2586
 msgid "No Cached IPv6 found."
 msgstr "Δεν βρέθηκε αποθηκευμένο IPv6."
 
-#: src/etc/inc/dyndns.class:2579
+#: src/etc/inc/dyndns.class:2594
 #, php-format
 msgid "Cached IP: %s"
 msgstr "Αποθηκευμενο IP: %s"
 
-#: src/etc/inc/dyndns.class:2585
+#: src/etc/inc/dyndns.class:2600
 msgid "No Cached IP found."
 msgstr "Δεν βρέθηκε αποθηκευμένη IP."
 
-#: src/etc/inc/dyndns.class:2599
+#: src/etc/inc/dyndns.class:2614
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
 msgstr "Δυναμικο Dns: cacheIP != wan_ip. Ενημερωση."
 
-#: src/etc/inc/dyndns.class:2600
+#: src/etc/inc/dyndns.class:2615
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
 msgstr "Αποθηκευμένη IP: %1$s WAN IP: %2$s"
 
-#: src/etc/inc/dyndns.class:2605
+#: src/etc/inc/dyndns.class:2620
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
 msgstr "Δυναμικο Dns: Περισσοτερες απο  %s ημερες. Εημερωση."
 
-#: src/etc/inc/dyndns.class:2610
+#: src/etc/inc/dyndns.class:2625
 msgid "Initial update."
 msgstr "Αρχική ενημέρωση."
 
-#: src/etc/inc/dyndns.class:2647
+#: src/etc/inc/dyndns.class:2662
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:2664
+#: src/etc/inc/dyndns.class:2679
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from Check IP Service"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:2667
+#: src/etc/inc/dyndns.class:2682
 #, php-format
 msgid ""
 "Dynamic DNS %1$s (%2$s): IP address could not be extracted from Check IP "
 "Service"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:2672
+#: src/etc/inc/dyndns.class:2687
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
 msgstr ""
 
 #: src/etc/inc/copynotice.inc:52
 msgid ""
-"<p align=\"center\"><font size=\"3\">Copyright &copy; 2004-2020. Electric "
+"<p align=\"center\"><font size=\"3\">Copyright &copy; 2004-2021. Electric "
 "Sheep Fencing LLC (\"ESF\"). All Rights Reserved.</p>\n"
 "\t\t\t\t\t<p align=\"center\"><strong>NO COMMERCIAL DISTRIBUTION OF THE "
 "PFSENSE&reg; CE SOFTWARE IS ALLOWED.</strong>\n"
@@ -37951,7 +37942,7 @@ msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
 msgstr ""
 "Σφαλμα: αδυναμια να ανοιξει το '%1$s' στο captiveportal_write_elements()%2$s"
 
-#: src/etc/inc/captiveportal.inc:2657
+#: src/etc/inc/captiveportal.inc:2651
 msgid "Captive Portal allowed users configuration changed"
 msgstr "Οι ρυθμισεις επιτρεπομενων χρηστων του Captive Portal αλλαξαν"
 
@@ -38456,12 +38447,12 @@ msgid "Enable registration of DHCP client names in DNS"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1482
-#: src/usr/local/www/services_dhcp_edit.php:799
+#: src/usr/local/www/services_dhcp_edit.php:806
 msgid "Enables network booting"
 msgstr "Ενεργοποίηση εκκίνησης μέσω δικτύου "
 
 #: src/usr/local/www/services_dhcp.php:1558
-#: src/usr/local/www/services_dhcp_edit.php:875
+#: src/usr/local/www/services_dhcp_edit.php:882
 msgid "<div class=\"alert alert-info\"> "
 msgstr "<div class=\"alert alert-info\"> "
 

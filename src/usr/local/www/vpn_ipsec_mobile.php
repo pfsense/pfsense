@@ -498,7 +498,7 @@ foreach (auth_get_authserver_list() as $key => $authServer) {
 $section->addInput(new Form_Select(
 	'user_source',
 	'*User Authentication',
-	explode(",", $pconfig['user_source']),
+	is_array($pconfig['user_source']) ? $pconfig['user_source'] : explode(",", $pconfig['user_source']),
 	$authServers,
 	true
 ))->setHelp('Source');

@@ -2530,7 +2530,7 @@ function system_identify_specific_platform() {
 		case 'SG-5100':
 			return (array('name' => 'SG-5100', 'descr' => 'Netgate SG-5100'));
 			break;
-		case 'Minnowboard Turbot D0 PLATFORM':
+		case 'Minnowboard Turbot D0 PLATFORM' || 'Minnowboard Turbot D0/D1 PLATFORM':
 			$result = array();
 			$result['name'] = 'Turbot Dual-E';
 			/* Detect specific model */

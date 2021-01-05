@@ -6097,43 +6097,9 @@ function upgrade_198_to_199() {
 	}
 }
 
-/* Update IPsec reauth and rekey variable names and values based on existing settings
- * https://redmine.pfsense.org/issues/9983
- */
+/* Superceded. See https://redmine.pfsense.org/issues/11219 and upgrade_212_to_213() */
 function upgrade_199_to_200() {
 	global $config;
-	init_config_arr(array('ipsec', 'phase1'));
-	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
-		if (empty($ph1ent)) {
-			continue;
-		}
-		/* Convert lifetime to reauth_time since that's how previous
-		 * versions behaved. */
-		if (isset($ph1ent['reauth_enable'])) {
-			$ph1ent['reauth_time'] = "0";
-			/* If reauth is disabled, set hard P1 lifetime  limit */
-			$ph1ent['over_time'] = $ph1ent['lifetime'];
-		} else {
-			/* Reauth at 90% of requested lifetime, set hard limit at full (relative) lifetime */
-			$ph1ent['reauth_time'] = (int)($ph1ent['lifetime'] * 0.90);
-			$ph1ent['over_time'] = (int)($ph1ent['lifetime'] * 0.10);
-		}
-		/* Auto or IKEv2, rekey items */
-		if (($ph1ent['iketype'] == 'ikev2') || ($ph1ent['iketype'] == 'auto')) {
-			if (isset($ph1ent['rekey_enable'])) {
-				/* Disable rekey */
-				$ph1ent['rekey_time'] = "0";
-				$ph1ent['reauth_time'] = "0";
-				/* If rekey is disabled, set hard P1 lifetime limit */
-				$ph1ent['over_time'] = $ph1ent['lifetime'];
-			} elseif (!empty($ph1ent['margintime'])) {
-				/* If margintime is set, use that to calculate over_time and reauth_time */
-				$ph1ent['reauth_time'] = ($ph1ent['lifetime'] - $ph1ent['margintime']);
-				$ph1ent['over_time'] = $ph1ent['margintime'];
-			}
-		}
-		unset($ph1ent['lifetime'], $ph1ent['reauth_enable'], $ph1ent['rekey_enable'], $ph1ent['margintime']);
-	}
 }
 
 /* Update LDAP transport values */
@@ -6349,6 +6315,50 @@ function upgrade_211_to_212() {
 	if (isset($config['unbound']['sslport'])) {
 		$config['unbound']['tlsport'] = $config['unbound']['sslport'];
 		unset($config['unbound']['sslport']);
+	}
+}
+
+/* IPsec Expiration and Replacement values which need updated for swanctl format
+ * https://redmine.pfsense.org/issues/11219
+ * https://redmine.pfsense.org/issues/9983
+ */
+function upgrade_212_to_213() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+
+		if (isset($ph1ent['reauth_enable'])) {
+			/* Disable reauth */
+			$ph1ent['reauth_time'] = "0";
+		} elseif (!empty($ph1ent['margintime'])) {
+			/* If margintime is set, use that to calculte reauth_time */
+			$ph1ent['reauth_time'] = ($ph1ent['lifetime'] - $ph1ent['margintime']);
+		}
+		/* Auto or IKEv2, rekey items */
+		if (($ph1ent['iketype'] == 'ikev2') || ($ph1ent['iketype'] == 'auto')) {
+			if (isset($ph1ent['rekey_enable'])) {
+				/* Disable rekey */
+				$ph1ent['rekey_time'] = "0";
+				$ph1ent['reauth_time'] = "0";
+			} elseif (!empty($ph1ent['margintime'])) {
+				/* If margintime is set, use that to calculate rekey_time */
+				$ph1ent['rekey_time'] = ($ph1ent['lifetime'] - $ph1ent['margintime']);
+			}
+		}
+
+		if (!empty($ph1ent['margintime'])) {
+			$ph1ent['rand_time'] = $ph1ent['margintime'];
+		}
+
+		/* Older snaps had over_time, now need lifetime back. */
+		if (!empty($ph1ent['over_time']) && empty($ph1ent['lifetime'])) {
+			$ph1ent['lifetime'] = $ph1ent['over_time'] + max($ph1ent['rekey_time'], $ph1ent['reauth_time']);
+		}
+
+		unset($ph1ent['reauth_enable'], $ph1ent['rekey_enable'], $ph1ent['margintime'], $ph1ent['over_time']);
 	}
 }
 

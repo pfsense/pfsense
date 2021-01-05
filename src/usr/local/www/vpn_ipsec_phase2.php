@@ -87,6 +87,8 @@ if ($ph2found === true) {
 	$pconfig['halgos'] = $ph2['hash-algorithm-option'];
 	$pconfig['pfsgroup'] = $ph2['pfsgroup'];
 	$pconfig['lifetime'] = $ph2['lifetime'];
+	$pconfig['rekey_time'] = $ph2['rekey_time'];
+	$pconfig['rand_time'] = $ph2['rand_time'];
 	$pconfig['pinghost'] = $ph2['pinghost'];
 	$pconfig['reqid'] = $ph2['reqid'];
 
@@ -369,9 +371,25 @@ if ($_POST['save']) {
 			}
 		}
 	}
-	if (($_POST['lifetime'] && !is_numericint($_POST['lifetime']))) {
-		$input_errors[] = gettext("The P2 lifetime must be an integer.");
+
+	if (!empty($pconfig['lifetime'])) {
+		if (!is_numericint($pconfig['lifetime'])) {
+			$input_errors[] = gettext("Life Time must be an integer.");
+		}
+		if (!empty($pconfig['rekey_time']) && ($pconfig['lifetime'] == $pconfig['rekey_time'])) {
+			$input_errors[] = gettext("Life Time cannot be set to the same value as Rekey Time.");
+		}
+		if ($pconfig['rekey_time'] > $pconfig['lifetime']) {
+			$input_errors[] = gettext("Life Time must be larger than Rekey Time.");
+		}
 	}
+	if (!empty($pconfig['rekey_time']) && !is_numericint($pconfig['rekey_time'])) {
+		$input_errors[] = gettext("Rekey Time must be an integer.");
+	}
+	if (!empty($pconfig['rand_time']) && !is_numericint($pconfig['rand_time'])) {
+		$input_errors[] = gettext("Rand Time must be an integer.");
+	}
+
 	if (($pconfig['mode'] == "vti") && $pconfig['disabled']) {
 		$input_errors[] = gettext("Cannot disable a VTI Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
 	}
@@ -443,6 +461,8 @@ if ($_POST['save']) {
 		}
 		$ph2ent['pfsgroup'] = $pconfig['pfsgroup'];
 		$ph2ent['lifetime'] = $pconfig['lifetime'];
+		$ph2ent['rekey_time'] = $pconfig['rekey_time'];
+		$ph2ent['rand_time'] = $pconfig['rand_time'];
 		$ph2ent['pinghost'] = $pconfig['pinghost'];
 		$ph2ent['descr'] = $pconfig['descr'];
 
@@ -739,12 +759,44 @@ $section->addInput(new Form_Select(
 	$sm ? $p2_pfskeygroups:array()
 ))->setHelp($helpstr);
 
+$form->add($section);
+
+$section = new Form_Section('Expiration and Replacement');
+
 $section->addInput(new Form_Input(
 	'lifetime',
-	'Lifetime',
+	'Life Time',
 	'number',
-	$pconfig['lifetime']
-))->setHelp('Specifies how often the connection must be rekeyed, in seconds');
+	$pconfig['lifetime'],
+	["placeholder" => ipsec_get_life_time($pconfig)]
+))->setHelp('Hard Child SA life time, in seconds, after which the Child SA will be expired. ' .
+		'Must be larger than Rekey Time. ' .
+		'Cannot be set to the same value as Rekey Time. ' .
+		'If left empty, defaults to 110% of Rekey Time. ' .
+		'If both Life Time and Rekey Time are empty, defaults to 3960.');
+
+$section->addInput(new Form_Input(
+	'rekey_time',
+	'Rekey Time',
+	'number',
+	$pconfig['rekey_time'],
+	['min' => 0, "placeholder" => ipsec_get_rekey_time($pconfig)]
+))->setHelp('Time, in seconds, before a Child SA establishes new keys. This works without interruption. ' .
+		'Cannot be set to the same value as Life Time. ' .
+		'Leave blank to use a default value of 90% Life Time. ' .
+		'If both Life Time and Rekey Time are empty, defaults to 3600. ' .
+		'Enter a value of 0 to disable, but be aware that when rekey is disabled, ' .
+		'connections can be interrupted while new Child SA entries are negotiated.');
+
+$section->addInput(new Form_Input(
+	'rand_time',
+	'Rand Time',
+	'number',
+	$pconfig['rand_time'],
+	['min' => 0, "placeholder" => ipsec_get_rand_time($pconfig)]
+))->setHelp('A random value up to this amount will be subtracted from Rekey Time to avoid simultaneous renegotiation. ' .
+		'If left empty, defaults to 10% of Life Time. ' .
+		'Enter 0 to disable randomness, but be aware that simultaneous renegotiation can lead to duplicate security associations.');
 
 $form->add($section);
 

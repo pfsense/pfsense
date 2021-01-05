@@ -2139,18 +2139,19 @@ function ipsec_setup_tunnels() {
 			$child_params['dpd_action'] = "clear";
 		}
 
-		/* Reauth (Any) */
-		$conn['reauth_time'] = (empty($ph1ent['reauth_time']) ? "0" : $ph1ent['reauth_time']) . "s";
-
 		/* Rekey (IKEv2 or Auto only, not supported by IKEv1) */
 		if (($ikeversion == 0) || ($ikeversion == 2)) {
-			$conn['rekey_time'] = (empty($ph1ent['rekey_time']) ? "0" : $ph1ent['rekey_time']) . "s";
+			$conn['rekey_time'] = ipsec_get_rekey_time($ph1ent) . "s";
 		}
 
+		/* Reauth (Any) */
+		$conn['reauth_time'] = ipsec_get_reauth_time($ph1ent) . "s";
+
 		/* Over Time */
-		if (!empty($ph1ent['over_time'])) {
-			$conn['over_time'] = "{$ph1ent['over_time']}s";
-		}
+		$conn['over_time'] = ipsec_get_over_time($ph1ent) . "s";
+
+		/* Rand Time */
+		$conn['rand_time'] = ipsec_get_rand_time($ph1ent) . "s";
 
 		/* NAT Traversal */
 		$conn['encap'] = ($ph1ent['nat_traversal'] == 'force') ? "yes" : "no";
@@ -2284,11 +2285,11 @@ function ipsec_setup_tunnels() {
 			$reqids[] = $ph2ent['reqid'];
 
 			if (!empty($ph2ent['lifetime'])) {
-				$child['life_time'] = intval($ph2ent['lifetime']);
+				$child['life_time'] = ipsec_get_life_time($ph2ent) . "s";
 				/* Rekey at 90% of lifetime */
-				$child['rekey_time'] = intval($child['life_time'] * 0.9);
+				$child['rekey_time'] = ipsec_get_rekey_time($ph2ent) . "s";
 				/* Random rekey fuzz time */
-				$child['rand_time'] = intval($child['life_time'] * 0.1);
+				$child['rand_time'] = ipsec_get_rand_time($ph2ent) . "s";
 			}
 
 			/* If we are to act only as a responder, disable the start action */
@@ -2844,4 +2845,117 @@ function ipsec_gre_default_mtu() {
 		}
 	}
 }
+
+/* Return the larger of derived SA rekey time and reauth time */
+function ipsec_get_renewmax($entry) {
+	if (empty($entry) || !is_array($entry)) {
+		return 0;
+	}
+	return max(ipsec_get_rekey_time($entry), ipsec_get_reauth_time($entry));
+}
+
+/* Determine the life time of an SA entry (Hard upper total time limit for SA before it is removed) */
+function ipsec_get_life_time($entry) {
+	if (empty($entry) || !is_array($entry)) {
+		return 0;
+	}
+	/* Use a hardcoded value if present in the configuration */
+	if ($entry['lifetime'] > 0) {
+		return $entry['lifetime'];
+	}
+	/* If rekey or reauth are enabled, attempt to derive a lifetime from one of those */
+	$renewmax = ipsec_get_renewmax($entry);
+	if ($renewmax > 0) {
+		return intval($renewmax / 0.9);
+	}
+	/* To reach here, rekey_time and lifetime are both 0 which is invalid
+	 * Default to 16000 for p1 and 4000 for p2 */
+	if ($entry['iketype']) {
+		return 16000;
+	} else {
+		return 4000;
+	}
+}
+
+/* Determine the rekey time of an SA entry (Time at which to rekey IKEv2 or Child SA entries) */
+function ipsec_get_rekey_time($entry) {
+	if (empty($entry) || !is_array($entry)) {
+		return 0;
+	}
+	/* Use a hardcoded value if present in the configuration */
+	if (strlen($entry['rekey_time'])) {
+		/* Check via strlen since 0 is a valid value */
+		return $entry['rekey_time'];
+	} elseif ($entry['lifetime'] > 0) {
+		/* If rekey_time is empty and lifetime is non-zero, use 90% lifetime */
+		return intval($entry['lifetime'] * 0.9);
+	}
+	/* To reach here, rekey_time and lifetime are empty
+	 * Default to 14400 for p1 and 3600 for p2 */
+	if ($entry['iketype']) {
+		return 14400;
+	} else {
+		return 3600;
+	}
+}
+
+/* Determine the reauth time of an SA entry (IKE SA tear-down/reauthenticate) */
+function ipsec_get_reauth_time($entry) {
+	if (empty($entry) || !is_array($entry)) {
+		return 0;
+	}
+	/* Use a hardcoded value if present in the configuration */
+	if (strlen($entry['reauth_time'])) {
+		/* Check via strlen since 0 is a valid value */
+		return $entry['reauth_time'];
+	} elseif ($entry['lifetime'] > 0) {
+		/* If reauth_time is empty and lifetime is non-zero,
+		 * use 90% lifetime for IKEv1, disable for IKEv2/auto */
+		if ($entry['iketype'] == 'ikev1') {
+			return intval($entry['lifetime'] * 0.9);
+		} else {
+			return 0;
+		}
+	}
+	/* To reach here, rekey_time and lifetime are empty
+	 * Default to disabled (0) */
+	return 0;
+}
+
+/* Determine the over time of an SA entry (Hard upper IKE SA time limit, relative to rekey/reauth time) */
+function ipsec_get_over_time($entry) {
+	if (empty($entry) || !is_array($entry)) {
+		return 0;
+	}
+	/* Automatically derive the value for rand_time */
+	$lifetime = ipsec_get_life_time($entry);
+	$renewmax = ipsec_get_renewmax($entry);
+	if (($lifetime > 0) && ($renewmax > 0)) {
+		/* If life time and rekey/reauth time both have values, subtract to get rand time */
+		return $lifetime - $renewmax;
+	} elseif ($lifetime > 0) {
+		/* If only life time has a value, use 10% of that */
+		return intval($lifetime * 0.1);
+	} elseif ($renewmax > 0) {
+		/* If only rekey/reauth time has a value, use 10% of that */
+		return intval($renewmax * 0.1);
+	}
+	/* No value can be determined, default to 0 */
+	return 0;
+}
+
+/* Determine the rand time of an SA entry (random value subtracted from renewal time to prevent collisions) */
+function ipsec_get_rand_time($entry) {
+	if (empty($entry) || !is_array($entry)) {
+		return 0;
+	}
+	/* Use a hardcoded value if present in the configuration */
+	if (strlen($entry['rand_time'])) {
+		/* Check via strlen since 0 is a valid value */
+		return $entry['rand_time'];
+	}
+	/* Logic to automatically determine rand time is identical to calculating over time */
+	return ipsec_get_over_time($entry);
+}
+
 ?>

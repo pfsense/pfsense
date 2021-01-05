@@ -1326,7 +1326,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			$newbtn = new Form_Button(
 				$pkga['fieldname'],
-				$pkga['fieldname'],
+				$pkga['fielddescr'],
 				null,
 				$newbtnicon
 			);

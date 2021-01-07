@@ -363,7 +363,7 @@ $section->addInput(new Form_Checkbox(
 	'<span class="infoblock" style="font-size:90%"><br />',
 	'&nbsp;<a target="_blank" href="https://security.stackexchange.com/questions/3630/how-to-find-out-that-a-nic-is-in-promiscuous-mode-on-a-lan">[1]</a>' .
 		'&nbsp;<a href="https://nmap.org/nsedoc/scripts/sniffer-detect.html">[2]</a>',
-	'&nbsp;<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+11.0-stable&amp;arch=default&amp;format=html">[3]</a>',
+	'&nbsp;<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=tcpdump&apropos=0&sektion=0&manpath=FreeBSD+12.2-RELEASE+and+Ports&arch=default&format=html">[3]</a>',
 	'</span></p>'
 );
 

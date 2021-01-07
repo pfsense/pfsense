@@ -214,7 +214,7 @@ $section->addInput(new Form_Checkbox(
 	'This blocks private IP responses from the configured DNS servers. Check this '.
 	'box to disable this protection if it interferes with webConfigurator access or '.
 	'name resolution in the environment.',
-	'<a href="http://en.wikipedia.org/wiki/DNS_rebinding">', '</a>');
+	'<a href="https://en.wikipedia.org/wiki/DNS_rebinding">', '</a>');
 
 $section->addInput(new Form_Input(
 	'althostnames',
@@ -235,7 +235,7 @@ $section->addInput(new Form_Checkbox(
 	'protection if it interferes with webConfigurator access in certain '.
 	'corner cases such as using external scripts to interact with this system. More '.
 	'information on HTTP_REFERER is available from %1$sWikipedia%2$s',
-	'<a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_referrer">', '</a>.');
+	'<a target="_blank" href="https://en.wikipedia.org/wiki/HTTP_referrer">', '</a>.');
 
 gen_pagenamefirst_field($section, $pconfig['pagenamefirst']);
 

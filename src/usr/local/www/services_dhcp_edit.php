@@ -880,7 +880,7 @@ $section->addClass('adnlopts');
 $section->addInput(new Form_StaticText(
 	null,
 	'<div class="alert alert-info"> ' . gettext('Enter the DHCP option number and the value for each item to include in the DHCP lease information.') . ' ' .
-	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s.%3$s'), '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a>', '</div>')
+	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s.%3$s'), '<a href="https://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a>', '</div>')
 ));
 
 if (!$pconfig['numberoptions']) {

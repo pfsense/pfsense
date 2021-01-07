@@ -41,12 +41,12 @@ include("head.inc");
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("CPU Load Graph");?></h2></div>
 	<div class="panel-body text-center">
 		<embed src="graph_cpu.php" type="image/svg+xml"
-			   width="550" height="275" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+			   width="550" height="275" pluginspage="https://www.adobe.com/svg/viewer/install/auto" />
 	</div>
 
 	<p class="text-center">
 		<strong><?=gettext("Note"); ?>:</strong>
-		<?=sprintf(gettext('If the graph cannot be seen, the %1$sAdobe SVG viewer%2$s may need to be installed'), '<a href="http://www.adobe.com/svg/viewer/install/" target="_blank">', '</a>')?>
+		<?=sprintf(gettext('If the graph cannot be seen, the %1$sAdobe SVG viewer%2$s may need to be installed'), '<a href="https://www.adobe.com/svg/viewer/install/" target="_blank">', '</a>')?>
 	</p>
 </div>
 

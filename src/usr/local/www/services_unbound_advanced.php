@@ -334,7 +334,7 @@ $section->addInput(new Form_Checkbox(
 	'Prefetch DNS Key Support',
 	'DNSKEYs are fetched earlier in the validation process when a Delegation signer is encountered',
 	$pconfig['prefetchkey']
-))->setHelp('This helps lower the latency of requests but does utilize a little more CPU. See: %1$sWikipedia%2$s', '<a href="http://en.wikipedia.org/wiki/List_of_DNS_record_types">', '</a>');
+))->setHelp('This helps lower the latency of requests but does utilize a little more CPU. See: %1$sWikipedia%2$s', '<a href="https://en.wikipedia.org/wiki/List_of_DNS_record_types">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'dnssecstripped',

@@ -1411,7 +1411,7 @@ function dhcpdzones($ddns_zones) {
 				$added_zones[] = $zone['domain-name'];
 			}
 			if ($zone['ptr-domain'] && !in_array($zone['ptr-domain'], $added_zones)) {
-				$dhcpdconf .= "zone {$zone['ptr-domain']} {\n";
+				$dhcpdconf .= "zone {$zone['ptr-domain']}. {\n";
 				if (is_ipaddrv4($primary)) {
 					$dhcpdconf .= "	primary {$primary};\n";
 				} else {

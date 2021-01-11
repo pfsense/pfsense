@@ -243,6 +243,9 @@ function wg_configure_if($wg_ifname) {
 			$ip6_first = false;
 		}
 	}
+
+	system_routing_configure(
+	    convert_real_interface_to_friendly_interface_name($wg_ifname));
 }
 
 // Remove Wireguard tunnel

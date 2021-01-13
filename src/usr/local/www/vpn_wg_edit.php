@@ -44,8 +44,12 @@ if (is_numericint($_REQUEST['index'])) {
 }
 
 if ($_REQUEST['ajax']) {
-	print(gerneratePSK());
-	exit;
+	switch ($_REQUEST['action']) {
+		case "genpsk" : { 
+			print(gerneratePSK());
+			exit;
+		}
+	}
 }
 
 // All form save logic is in /etc/inc/wg.inc
@@ -203,6 +207,18 @@ $section2->addInput(new Form_Input(
 	'text'
 ))->setHelp("List of CIDR IPs allowed to connect");
 
+$section2->addInput(new Form_Input(
+	'peerwgaddr',
+	'Peer Wireguard Address',
+	'text'
+))->setHelp("IPv4/IPv6 specifies the wireguard interface address of the peer, since it can differ from AllowedIPs");
+
+$section2->addInput(new Form_Input(
+	'peernwks',
+	'Peer Routed Networks',
+	'text'
+))->setHelp("Comma separated list of networks to route using the automatic gateway provided by \"Peer Wireguard Address\"");
+
 $group2 = new Form_Group('Pre-shared key');
 
 $group2->add(new Form_Input(
@@ -231,12 +247,12 @@ $section2->add($group2);
         <?=$section2?>
 
         <nav class="action-buttons">
-			<button type="submit" id="savemodal" class="btn btn-sm btn-primary" title="<?=gettext('Update peer')?>">
-				<?=gettext("Update")?>
-			</button>
-
 			<button type="submit" id="closemodal" class="btn btn-sm btn-info" title="<?=gettext('Cancel')?>">
 				<?=gettext("Cancel")?>
+			</button>
+
+			<button type="submit" id="savemodal" class="btn btn-sm btn-primary" title="<?=gettext('Update peer')?>">
+				<?=gettext("Update")?>
 			</button>
 		</nav>
       </div>
@@ -279,6 +295,8 @@ $section2->add($group2);
 						print("<td style=\"display:none;\">{$peer['persistenkeepalive']}</td>\n");
 						print("<td style=\"display:none;\">{$peer['allowedips']}</td>\n");
 						print("<td style=\"display:none;\">{$peer['presharedkey']}</td>\n");
+						print("<td style=\"display:none;\">{$peer['peerwgaddr']}</td>\n");
+						print("<td style=\"display:none;\">{$peer['peernwks']}</td>\n");
 ?>
 						<td style="cursor: pointer;">
 							<a class="fa fa-pencil" href="#" id="editpeer_<?=$peer_num?>"title="<?=gettext("Edit peer"); ?>"></a>
@@ -327,6 +345,7 @@ events.push(function() {
 
 	$('#addpeer').click(function () {
 		$('#peermodal').modal('show');
+		incrementPeer($('#address').val());
 	});
 
 	$('#closemodal').click(function () {
@@ -365,15 +384,15 @@ events.push(function() {
 				peernum = 0;
 				$('#peer_num').val(0);
 
-				$('#peertable tbody').append('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a> <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
-				} else {
-					var lastrow = $('#peertable tr:last td:nth-child(1)').text()
+				$('#peertable tbody').append('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a> <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
+			} else {
+				var lastrow = $('#peertable tr:last td:nth-child(1)').text()
 
-					$('#peer_num').val(++lastrow)
-					peernum = lastrow
+				$('#peer_num').val(++lastrow)
+				peernum = lastrow
 
-					$('#peertable tr:last').after('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a> <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
-				}
+				$('#peertable tr:last').after('<tr class="peer_group_' + peernum + '"> <td></td> <td></td> <td></td> <td></td> <td></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td> <td style="display:none;"></td><td style="cursor: pointer;"><a class="fa fa-pencil" href="#" id="editpeer_' + peernum + '"title="<?=gettext("Edit peer"); ?>"></a> <a class="fa fa-trash text-danger no-confirm" href="#" id="killpeer_' + peernum + '" title="<?=gettext('Delete peer');?>"></a></td> </tr>');
+			}
 
 			attachhandlers()
 
@@ -387,6 +406,8 @@ events.push(function() {
 		$('.peer_group_' + peernum).find('td').eq(5).text($('#persistentkeepalive').val())
 		$('.peer_group_' + peernum).find('td').eq(6).text($('#allowedips').val())
 		$('.peer_group_' + peernum).find('td').eq(7).text($('#presharedkey').val())
+		$('.peer_group_' + peernum).find('td').eq(8).text($('#peerwgaddr').val())
+		$('.peer_group_' + peernum).find('td').eq(9).text($('#peernwks').val())
 
 		$('#peermodal').modal('hide');
 	});
@@ -403,6 +424,8 @@ events.push(function() {
 			$('<input>').attr({type: 'hidden',name: 'persistentkeepalive' + idx, value: $(this).find('td').eq(5).text()}).appendTo(form);
 			$('<input>').attr({type: 'hidden',name: 'allowedips' + idx, value: $(this).find('td').eq(6).text()}).appendTo(form);
 			$('<input>').attr({type: 'hidden',name: 'presharedkey' + idx, value: $(this).find('td').eq(7).text()}).appendTo(form);
+			$('<input>').attr({type: 'hidden',name: 'peerwgaddr' + idx, value: $(this).find('td').eq(8).text()}).appendTo(form);
+			$('<input>').attr({type: 'hidden',name: 'peernwks' + idx, value: $(this).find('td').eq(9).text()}).appendTo(form);
 		});
 
 		$('<input>').attr({type: 'hidden',name: 'save',value: 'save'}).appendTo(form);
@@ -436,6 +459,8 @@ events.push(function() {
 				$('#persistentkeepalive').val(tabletext(peernum, 7));
 				$('#allowedips').val(tabletext(peernum, 6));
 				$('#presharedkey').val(tabletext(peernum, 7));
+				$('#peerwgaddr').val(tabletext(peernum, 8));
+				$('#peernwks').val(tabletext(peernum, 9));
 			} else { // Clear all the fields
 				$('#pdescr').val("");
 				$('#endpoint').val("");
@@ -444,6 +469,8 @@ events.push(function() {
 				$('#ppublickey').val('');
 				$('#allowedips').val('');
 				$('#presharedkey').val('');
+				$('#peerwgaddr').val('');
+				$('#peernwks').val('');
 			}
 
 			$('#peermodal').modal('show');
@@ -461,7 +488,8 @@ events.push(function() {
 				url: "/vpn_wg_edit.php",
 				type: "post",
 				data: {
-					ajax: 	"ajax"
+					ajax: 	"ajax",
+					action: "genpsk"
 				}
 			}
 		);
@@ -492,6 +520,7 @@ events.push(function() {
 			});
 		}
 	});
+
 });
 //]]>
 </script>

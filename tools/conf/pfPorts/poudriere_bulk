@@ -14,6 +14,7 @@ editors/vim-console
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
 ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
 ftp/%%PRODUCT_NAME%%-pkg-tftpd
+graphics/drm-kmod
 mail/%%PRODUCT_NAME%%-pkg-mailreport
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 net-mgmt/%%PRODUCT_NAME%%-pkg-arpwatch

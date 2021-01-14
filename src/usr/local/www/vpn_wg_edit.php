@@ -429,6 +429,9 @@ events.push(function() {
 		});
 
 		$('<input>').attr({type: 'hidden',name: 'save',value: 'save'}).appendTo(form);
+
+		// Recaculate the table has so the browser doesn't intercept the save
+		tableHash = hashCode($('#peertable').html());
 		$(form).submit();
 	});
 
@@ -521,6 +524,22 @@ events.push(function() {
 		}
 	});
 
+	// Warn the user if the peer table has been updated, but the form has not yet been saved ----------------------------
+	// SAev te htable state on page load
+	var tableHash = hashCode($('#peertable').html());
+
+	window.addEventListener('beforeunload', (event) => {
+		// If the table has changed since page load . .
+		if (hashCode($('#peertable').html()) !== tableHash) {
+			// Cause the browser to display "Are you sure" message)
+			// Unfortunately it is no longer possible to customize the browser message
+			event.returnValue = '';
+		}
+	});
+
+	function hashCode(s){
+		return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
+	}
 });
 //]]>
 </script>

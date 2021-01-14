@@ -1192,10 +1192,10 @@ EOD;
 
 				if (isset($sm['ddnsupdate'])) {
 					if (($sm['ddnsdomain'] <> "") && ($sm['ddnsdomain'] != $dhcpifconf['ddnsdomain'])) {
-						$smdnscfg .= "		ddns-domainname \"{$sm['ddnsdomain']}\";\n";
+						$smdnscfg .= "	ddns-domainname \"{$sm['ddnsdomain']}\";\n";
 				 		$need_sm_ddns_updates = true;	
 					}
-					$smdnscfg .= "		ddns-update-style interim;\n";
+					$smdnscfg .= "	ddns-update-style interim;\n";
 				}
 
 				if (is_array($sm['dnsserver']) && ($sm['dnsserver'][0]) && ($sm['dnsserver'][0] != $dhcpifconf['dnsserver'][0])) {

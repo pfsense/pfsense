@@ -352,7 +352,7 @@ function openvpn_build_bridge_list() {
 
 function openvpn_create_key() {
 
-	$fp = popen("/usr/local/sbin/openvpn --genkey --secret /dev/stdout 2>/dev/null", "r");
+	$fp = popen("/usr/local/sbin/openvpn --genkey secret /dev/stdout 2>/dev/null", "r");
 	if (!$fp) {
 		return false;
 	}

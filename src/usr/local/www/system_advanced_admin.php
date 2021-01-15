@@ -636,7 +636,7 @@ $numaddrs = count($addresses);
 while ($counter < $numaddrs) {
 	list($address, $address_subnet) = explode("/", $addresses[$counter]);
 
-	$group = new Form_Group($counter == 0 ? 'Whitelist' : '');
+	$group = new Form_Group($counter == 0 ? 'Pass list' : '');
 	$group->addClass('repeatable');
 
 	$group->add(new Form_IpAddress(
@@ -654,7 +654,7 @@ while ($counter < $numaddrs) {
 	))->addClass('btn-warning btn-xs');
 
 	if ($counter == ($numaddrs - 1)) {
-		$group->setHelp(gettext(sprintf("%sAddresses added to the whitelist will bypass login protection.%s", 
+		$group->setHelp(gettext(sprintf("%sAddresses added to the pass list will bypass login protection.%s", 
 			'<span class="text-danger">', '</span>')));
 	}
 

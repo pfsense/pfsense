@@ -222,7 +222,7 @@ if ($tab == "port") {
 	$sectiontext = gettext('IP Alias Details');
 	$helptext = gettext('Paste in the aliases to ' .
 		'import separated by a carriage return. Common examples are lists of IPs, ' .
-		'networks, blacklists, etc. The list may contain IP addresses, with or without ' .
+		'networks, blocklists, etc. The list may contain IP addresses, with or without ' .
 		'CIDR prefix, IP ranges, blank lines (ignored) and an optional description after ' .
 		'each IP. e.g.:') .
 		'</span><ul><li>' .

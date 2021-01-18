@@ -4254,7 +4254,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 	}
 
-	if (!platform_booting() && !(substr($realif, 0, 4) == "ovpn") && !(substr($realif, 0, 5) == "ipsec")) {
+	if (!platform_booting() && (substr($realif, 0, 4) != "ovpn") && (substr($realif, 0, 5) != "ipsec")) {
 		/* remove all IPv4 and IPv6 addresses */
 		$tmpifaces = pfSense_getall_interface_addresses($realif);
 		if (is_array($tmpifaces)) {

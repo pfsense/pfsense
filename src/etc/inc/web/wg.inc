@@ -126,10 +126,7 @@ function wg_validate_peer($idx, $peer) {
 
 	// Check remote port
 	$rport = $peer['port'];
-	if (empty($rport)) {
-		$input_errors[] = sprintf(gettext(
-		    'Peer %1$s: An endpoint port must be specified'), $idx);
-	} elseif ($rport > 65535 || $rport < 512 ) {
+	if (!empty($rport) && ($rport > 65535 || $rport < 512 )) {
 		$input_errors[] = sprintf(gettext(
 		    'Peer %1$s: Invalid remote port. (%2$s)'), $idx, $rport);
 	}
@@ -142,10 +139,7 @@ function wg_validate_peer($idx, $peer) {
 
 	// Endpoint
 	$ep = trim($peer['endpoint']);
-	if (empty($ep)) {
-		$input_errors[] = sprintf(gettext(
-		    'Peer %1$s: An endpoint must be specified'), $idx);
-	} elseif (!is_hostname($ep) && !is_ipaddr($ep)) {
+	if (!empty($ep) && !is_hostname($ep) && !is_ipaddr($ep)) {
 		$input_errors[] = sprintf(gettext(
 		    'Peer %1$s: Endpoint must be a valid IPv4 or IPv6 ' .
 		    'adress or hostname.'), $idx);

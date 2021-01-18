@@ -179,13 +179,13 @@ $section2->addInput(new Form_Input(
 
 $section2->addInput(new Form_Input(
 	'endpoint',
-	'*Endpoint',
+	'Endpoint',
 	'text'
 ))->setHelp("Hostname, IPv4 or IP46 address");
 
 $section2->addInput(new Form_Input(
 	'port',
-	'*Endpoint port',
+	'Endpoint port',
 	'text'
 ));
 
@@ -354,13 +354,6 @@ events.push(function() {
 
 	$('#savemodal').click(function () {
 		var errmsg = [];
-		if ($('#endpoint').val().length === 0) {
-			errmsg.push("A peer endpoint is required");
-		}
-
-		if ($('#port').val().length === 0) {
-			errmsg.push("An endpoint port is required");
-		}
 
 		if ($('#ppublickey').val().length === 0) {
 			errmsg.push("A public key is required");

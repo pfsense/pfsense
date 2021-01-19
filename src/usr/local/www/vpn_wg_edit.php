@@ -1,15 +1,10 @@
 <?php
 
 /*
- * vpn_ipsec_phase1.php
+ * vpn_wg_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2021 Rubicon Communications, LLC (Netgate)
- * All rights reserved.
- *
- * originally based on m0n0wall (http://m0n0.ch/wall)
- * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * Copyright (c) 2021 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

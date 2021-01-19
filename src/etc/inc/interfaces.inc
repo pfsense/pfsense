@@ -2078,7 +2078,6 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		return;
 	}
 
-	/* There is nothing to be done here for Wireguard interfaces */
 	if (substr($config['interfaces'][$interface]['if'], 0, 2) == 'wg') {
 		require_once('wg.inc');
 		if ($destroy) {

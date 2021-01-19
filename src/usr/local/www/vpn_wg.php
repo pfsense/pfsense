@@ -26,8 +26,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-vpn-wg
-##|*NAME=VPN: Wireguard
-##|*DESCR=Allow access to the 'VPN: Wireguard' page.
+##|*NAME=VPN: WireGuard
+##|*DESCR=Allow access to the 'VPN: WireGuard' page.
 ##|*MATCH=vpn_wg.php*
 ##|-PRIV
 
@@ -38,7 +38,7 @@ require_once("wg.inc");
 init_config_arr(array('wireguard', 'tunnel'));
 $tunnels = &$config['wireguard']['tunnel'];
 
-$pgtitle = array(gettext("VPN"), gettext("Wireguard"), gettext("Tunnels"));
+$pgtitle = array(gettext("VPN"), gettext("WireGuard"), gettext("Tunnels"));
 $pglinks = array("", "@self", "@self");
 $shortcut_section = "wireguard";
 
@@ -54,11 +54,11 @@ if (array_key_exists('delidx', $_POST)) {
 <form name="mainform" method="post">
 <?php
 	if (count($tunnels) == 0):
-		print_info_box(gettext('No Wireguard tunnels have been configured. Click the "Add tunnel" button below to create one.'), 'warning', false);
+		print_info_box(gettext('No WireGuard tunnels have been configured. Click the "Add tunnel" button below to create one.'), 'warning', false);
 	else:
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Wireguard Tunnels')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('WireGuard Tunnels')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>

@@ -321,7 +321,7 @@ filter_configure_sync();
 /* setup pppoe and pptp */
 vpn_setup();
 
-/* Setup Wireguard tunnels. */
+/* Setup WireGuard tunnels. */
 wg_configure();
 
 /* start the captive portal */

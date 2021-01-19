@@ -27,8 +27,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-vpn-wg-edit
-##|*NAME=VPN: Wireguard: Edit
-##|*DESCR=Edit wireguard tunnele.
+##|*NAME=VPN: WireGuard: Edit
+##|*DESCR=Edit wireGuard tunnele.
 ##|*MATCH=vpn_wg_edit.php*
 ##|-PRIV
 
@@ -82,7 +82,7 @@ if ($_POST['save']) {
 
 $shortcut_section = "wireguard";
 
-$pgtitle = array(gettext("VPN"), gettext("Wireguard"), gettext("Tunnel"));
+$pgtitle = array(gettext("VPN"), gettext("WireGuard"), gettext("Tunnel"));
 $pglinks = array("", "vpn_wg.php", "vpn_wg.php", "@self");
 
 include("head.inc");
@@ -209,15 +209,15 @@ $section2->addInput(new Form_Input(
 
 $section2->addInput(new Form_Input(
 	'peerwgaddr',
-	'Peer Wireguard Address',
+	'Peer WireGuard Address',
 	'text'
-))->setHelp("IPv4/IPv6 specifies the wireguard interface address of the peer, since it can differ from AllowedIPs");
+))->setHelp("IPv4/IPv6 specifies the wireGuard interface address of the peer, since it can differ from AllowedIPs");
 
 $section2->addInput(new Form_Input(
 	'peernwks',
 	'Peer Routed Networks',
 	'text'
-))->setHelp("Comma separated list of networks to route using the automatic gateway provided by \"Peer Wireguard Address\"");
+))->setHelp("Comma separated list of networks to route using the automatic gateway provided by \"Peer WireGuard Address\"");
 
 $group2 = new Form_Group('Pre-shared key');
 

@@ -160,7 +160,7 @@ function wg_validate_peer($idx, $peer) {
 	return $input_errors;
 }
 
-// Setup all Wireguard tunnels
+// Setup all WireGuard tunnels
 function wg_configure() {
 	global $config;
 
@@ -169,7 +169,7 @@ function wg_configure() {
 	}
 
 	if (platform_booting()) {
-		echo gettext("Configuring Wireguard Tunnels... ");
+		echo gettext("Configuring WireGuard Tunnels... ");
 	}
 
 	wg_create_config_files();
@@ -185,7 +185,7 @@ function wg_configure() {
 	}
 }
 
-// Setup Wireguard tunnel
+// Setup WireGuard tunnel
 function wg_configure_if($wg_ifname) {
 	global $config, $g;
 
@@ -242,7 +242,7 @@ function wg_configure_if($wg_ifname) {
 	    convert_real_interface_to_friendly_interface_name($wg_ifname));
 }
 
-// Remove Wireguard tunnel
+// Remove WireGuard tunnel
 function wg_destroy_if($wg_ifname) {
 	return (pfSense_interface_destroy($wg_ifname));
 }
@@ -265,7 +265,7 @@ function genPubKey($privkey) {
 	return (exec("echo {$privkey} | {$wgbinpath} pubkey"));
 }
 
-// Return the next wireguard interface name that is not currently in use
+// Return the next wireGuard interface name that is not currently in use
 function nextFreeWGInterfaceName() {
 	global $config;
 
@@ -297,7 +297,7 @@ function deleteTunnel($tunidx) {
 		}
 		// Delete the tunnel configuration entry
 		unset($config['wireguard']['tunnel'][$tunidx]);
-		write_config("Wireguard tunnel {$index} updated.");
+		write_config("WireGuard tunnel {$index} updated.");
 
 		// Delete the wg?.conf file
 		if (isset($conf_path) && is_file($conf_path)) {
@@ -370,14 +370,14 @@ function wg_do_post($post, $json = false) {
 
 	if (!$input_errors) {
 		$config['wireguard']['tunnel'][$index] = $pconfig;
-		write_config("Wireguard tunnel {$index} updated.");
+		write_config("WireGuard tunnel {$index} updated.");
 	}
 
 	return(array('input_errors' => $input_errors, 'pconfig' => $pconfig));
 }
 
 /*
- * Read the Wireguard configurations from config.xml and create a number of
+ * Read the WireGuard configurations from config.xml and create a number of
  * *.conf files for wg-quick to read
  */
 function wg_create_config_files($clean = true) {
@@ -410,7 +410,7 @@ function wg_create_config_files($clean = true) {
 function make_wg_conf($tunnel) {
 	global $g;
 
-	$txt = "# This Wireguard config file has been created automatically. " .
+	$txt = "# This WireGuard config file has been created automatically. " .
 	    "Do not edit!\n";
 
 	$txt .= "# Description: {$tunnel['descr']}\n\n";

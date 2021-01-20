@@ -208,12 +208,6 @@ $section2->addInput(new Form_Input(
 	'text'
 ))->setHelp("IPv4/IPv6 specifies the WireGuard interface address of the peer, since it can differ from AllowedIPs");
 
-$section2->addInput(new Form_Input(
-	'peernwks',
-	'Peer Routed Networks',
-	'text'
-))->setHelp("Comma separated list of networks to route using the automatic gateway provided by \"Peer WireGuard Address\"");
-
 $group2 = new Form_Group('Pre-shared key');
 
 $group2->add(new Form_Input(
@@ -291,7 +285,6 @@ $section2->add($group2);
 						print("<td style=\"display:none;\">{$peer['allowedips']}</td>\n");
 						print("<td style=\"display:none;\">{$peer['presharedkey']}</td>\n");
 						print("<td style=\"display:none;\">{$peer['peerwgaddr']}</td>\n");
-						print("<td style=\"display:none;\">{$peer['peernwks']}</td>\n");
 ?>
 						<td style="cursor: pointer;">
 							<a class="fa fa-pencil" href="#" id="editpeer_<?=$peer_num?>"title="<?=gettext("Edit peer"); ?>"></a>
@@ -395,7 +388,6 @@ events.push(function() {
 		$('.peer_group_' + peernum).find('td').eq(6).text($('#allowedips').val())
 		$('.peer_group_' + peernum).find('td').eq(7).text($('#presharedkey').val())
 		$('.peer_group_' + peernum).find('td').eq(8).text($('#peerwgaddr').val())
-		$('.peer_group_' + peernum).find('td').eq(9).text($('#peernwks').val())
 
 		$('#peermodal').modal('hide');
 	});
@@ -413,7 +405,6 @@ events.push(function() {
 			$('<input>').attr({type: 'hidden',name: 'allowedips' + idx, value: $(this).find('td').eq(6).text()}).appendTo(form);
 			$('<input>').attr({type: 'hidden',name: 'presharedkey' + idx, value: $(this).find('td').eq(7).text()}).appendTo(form);
 			$('<input>').attr({type: 'hidden',name: 'peerwgaddr' + idx, value: $(this).find('td').eq(8).text()}).appendTo(form);
-			$('<input>').attr({type: 'hidden',name: 'peernwks' + idx, value: $(this).find('td').eq(9).text()}).appendTo(form);
 		});
 
 		$('<input>').attr({type: 'hidden',name: 'save',value: 'save'}).appendTo(form);
@@ -451,7 +442,6 @@ events.push(function() {
 				$('#allowedips').val(tabletext(peernum, 6));
 				$('#presharedkey').val(tabletext(peernum, 7));
 				$('#peerwgaddr').val(tabletext(peernum, 8));
-				$('#peernwks').val(tabletext(peernum, 9));
 			} else { // Clear all the fields
 				$('#pdescr').val("");
 				$('#endpoint').val("");
@@ -461,7 +451,6 @@ events.push(function() {
 				$('#allowedips').val('');
 				$('#presharedkey').val('');
 				$('#peerwgaddr').val('');
-				$('#peernwks').val('');
 			}
 
 			$('#peermodal').modal('show');

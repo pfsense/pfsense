@@ -363,7 +363,6 @@ function wg_do_post($post, $json = false) {
 			$peer['presharedkey'] = $post['presharedkey' . $idx];
 			$peer['port'] = $post['port' . $idx];
 			$peer['peerwgaddr'] = $post['peerwgaddr' . $idx];
-			$peer['peernwks'] = $post['peernwks' . $idx];
 
 			$pconfig['peers']['wgpeer'][] = $peer;
 			$idx++;

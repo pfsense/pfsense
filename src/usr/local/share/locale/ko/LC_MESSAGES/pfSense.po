@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-04 11:27-0300\n"
+"POT-Creation-Date: 2021-01-20 14:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -146,7 +146,7 @@ msgid "The NAT configuration has been changed."
 msgstr "NAT 구성이 변경되었습니다."
 
 #: src/usr/local/www/firewall_nat_1to1.php:137
-#: src/usr/local/www/interfaces_assign.php:463
+#: src/usr/local/www/interfaces_assign.php:453
 #: src/usr/local/www/services_dhcpv6.php:544
 #: src/usr/local/www/system_advanced_sysctl.php:130
 #: src/usr/local/www/vpn_ipsec.php:270
@@ -209,8 +209,7 @@ msgid "NAT 1:1 Mappings"
 msgstr "NAT 1:1 맵핑"
 
 #: src/usr/local/www/firewall_nat_1to1.php:157
-#: src/usr/local/www/interfaces_assign.php:509
-#: src/usr/local/www/interfaces_vxlan.php:97
+#: src/usr/local/www/interfaces_assign.php:498
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
 #: src/usr/local/www/guiconfig.inc:1126
@@ -222,30 +221,30 @@ msgstr "NAT 1:1 맵핑"
 #: src/usr/local/www/status_logs_common.inc:547
 #: src/usr/local/www/status_logs_common.inc:550
 #: src/usr/local/www/vpn_openvpn_client.php:1181
-#: src/usr/local/www/interfaces_wireless.php:96
+#: src/usr/local/www/interfaces_wireless.php:95
 #: src/usr/local/www/firewall_nat_out.php:274
 #: src/usr/local/www/firewall_nat_out.php:527
 #: src/usr/local/www/services_dhcp_relay.php:81
 #: src/usr/local/www/services_ntpd.php:296
-#: src/usr/local/www/firewall_nat.php:249 src/usr/local/www/status_upnp.php:71
-#: src/usr/local/www/services_wol.php:193
-#: src/usr/local/www/interfaces_qinq.php:107
-#: src/usr/local/www/interfaces_gif.php:97
+#: src/usr/local/www/firewall_nat.php:249 src/usr/local/www/vpn_wg.php:84
+#: src/usr/local/www/status_upnp.php:71 src/usr/local/www/services_wol.php:193
+#: src/usr/local/www/interfaces_qinq.php:106
+#: src/usr/local/www/interfaces_gif.php:96
 #: src/usr/local/www/services_pppoe.php:98
 #: src/usr/local/www/firewall_virtual_ip.php:290
 #: src/usr/local/www/system_routes.php:243
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
 #: src/usr/local/www/diag_arp.php:98 src/usr/local/www/diag_arp.php:126
-#: src/usr/local/www/interfaces_ppps.php:105
+#: src/usr/local/www/interfaces_ppps.php:104
 #: src/usr/local/www/firewall_nat_edit.php:235
 #: src/usr/local/www/firewall_nat_edit.php:238
 #: src/usr/local/www/firewall_nat_npt.php:147
 #: src/usr/local/www/services_dhcpv6_relay.php:82
-#: src/usr/local/www/interfaces_gre.php:97
+#: src/usr/local/www/interfaces_gre.php:96
 #: src/usr/local/www/firewall_nat_out_edit.php:155
 #: src/usr/local/www/services_captiveportal.php:188
 #: src/usr/local/www/easyrule.php:82 src/usr/local/www/easyrule.php:90
-#: src/usr/local/www/interfaces_bridge.php:102
+#: src/usr/local/www/interfaces_bridge.php:101
 #: src/usr/local/www/diag_ndp.php:164 src/usr/local/www/diag_ndp.php:191
 #: src/usr/local/www/services_wol_edit.php:72
 #: src/usr/local/www/system_gateways.php:268
@@ -257,8 +256,8 @@ msgstr "NAT 1:1 맵핑"
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:171
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:168
-#: src/usr/local/www/interfaces_vlan.php:97
-#: src/usr/local/www/interfaces_lagg.php:104
+#: src/usr/local/www/interfaces_vlan.php:96
+#: src/usr/local/www/interfaces_lagg.php:103
 #: src/usr/local/www/status_dhcp_leases.php:332
 #: src/usr/local/www/status_graph.php:164
 #: src/usr/local/www/firewall_nat_npt_edit.php:94 src/etc/inc/gwlb.inc:1712
@@ -279,7 +278,6 @@ msgstr "목적지 IP"
 
 #: src/usr/local/www/firewall_nat_1to1.php:161
 #: src/usr/local/www/status_ipsec.php:570
-#: src/usr/local/www/interfaces_vxlan.php:99
 #: src/usr/local/www/firewall_nat_1to1_edit.php:583
 #: src/usr/local/www/guiconfig.inc:1067
 #: src/usr/local/www/services_dhcpv6.php:1091
@@ -299,7 +297,7 @@ msgstr "목적지 IP"
 #: src/usr/local/www/system_groupmanager.php:487
 #: src/usr/local/www/vpn_openvpn_client.php:687
 #: src/usr/local/www/vpn_openvpn_client.php:1185
-#: src/usr/local/www/interfaces_wireless.php:98
+#: src/usr/local/www/interfaces_wireless.php:97
 #: src/usr/local/www/services_dhcp.php:871
 #: src/usr/local/www/services_dhcp.php:1697
 #: src/usr/local/www/services_unbound.php:574
@@ -311,26 +309,25 @@ msgstr "목적지 IP"
 #: src/usr/local/www/firewall_nat_out.php:535
 #: src/usr/local/www/pkg_mgr_installed.php:72
 #: src/usr/local/www/firewall_aliases.php:111
-#: src/usr/local/www/interfaces_groups.php:81
+#: src/usr/local/www/interfaces_groups.php:80
 #: src/usr/local/www/status_services.php:89
 #: src/usr/local/www/interfaces_wireless_edit.php:189
 #: src/usr/local/www/firewall_nat.php:257
-#: src/usr/local/www/services_dhcp_edit.php:525
+#: src/usr/local/www/services_dhcp_edit.php:525 src/usr/local/www/vpn_wg.php:63
 #: src/usr/local/www/pkg_mgr.php:69 src/usr/local/www/pkg_mgr.php:161
 #: src/usr/local/www/status_upnp.php:77 src/usr/local/www/services_wol.php:195
 #: src/usr/local/www/services_dyndns_edit.php:462
 #: src/usr/local/www/services_captiveportal_hostname.php:120
-#: src/usr/local/www/interfaces_qinq.php:110
-#: src/usr/local/www/interfaces_gif.php:99
+#: src/usr/local/www/interfaces_qinq.php:109
+#: src/usr/local/www/interfaces_gif.php:98
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:182
 #: src/usr/local/www/services_igmpproxy.php:130
 #: src/usr/local/www/system_gateways_edit.php:235
 #: src/usr/local/www/services_pppoe.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:287
 #: src/usr/local/www/system_gateway_groups_edit.php:311
-#: src/usr/local/www/interfaces_vlan_edit.php:222
+#: src/usr/local/www/interfaces_vlan_edit.php:211
 #: src/usr/local/www/interfaces_bridge_edit.php:429
-#: src/usr/local/www/interfaces_vxlan_edit.php:224
 #: src/usr/local/www/firewall_virtual_ip.php:292
 #: src/usr/local/www/system_routes.php:244
 #: src/usr/local/www/firewall_virtual_ip_edit.php:433
@@ -338,7 +335,7 @@ msgstr "목적지 IP"
 #: src/usr/local/www/services_checkip_edit.php:162
 #: src/usr/local/www/vpn_openvpn_csc.php:370
 #: src/usr/local/www/vpn_openvpn_csc.php:697
-#: src/usr/local/www/interfaces_ppps.php:107
+#: src/usr/local/www/interfaces_ppps.php:106
 #: src/usr/local/www/services_captiveportal_zones.php:80
 #: src/usr/local/www/firewall_nat_edit.php:983
 #: src/usr/local/www/firewall_schedule_edit.php:370
@@ -346,24 +343,26 @@ msgstr "목적지 IP"
 #: src/usr/local/www/status_gateways.php:63
 #: src/usr/local/www/interfaces_gre_edit.php:291
 #: src/usr/local/www/interfaces_ppps_edit.php:540
+#: src/usr/local/www/vpn_wg_edit.php:110 src/usr/local/www/vpn_wg_edit.php:171
+#: src/usr/local/www/vpn_wg_edit.php:265
 #: src/usr/local/www/firewall_nat_npt.php:150
 #: src/usr/local/www/system_usermanager.php:512
 #: src/usr/local/www/firewall_rules_edit.php:1525
 #: src/usr/local/www/services_pppoe_edit.php:373
 #: src/usr/local/www/services_rfc2136_edit.php:318
-#: src/usr/local/www/interfaces_gre.php:99
+#: src/usr/local/www/interfaces_gre.php:98
 #: src/usr/local/www/firewall_nat_out_edit.php:646
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:155
 #: src/usr/local/www/firewall_aliases_import.php:255
 #: src/usr/local/www/services_captiveportal.php:541
 #: src/usr/local/www/firewall_schedule.php:94
-#: src/usr/local/www/vpn_ipsec_phase1.php:834
+#: src/usr/local/www/vpn_ipsec_phase1.php:848
 #: src/usr/local/www/firewall_aliases_edit.php:293
 #: src/usr/local/www/firewall_aliases_edit.php:354
-#: src/usr/local/www/interfaces_bridge.php:104
+#: src/usr/local/www/interfaces_bridge.php:103
 #: src/usr/local/www/interfaces_gif_edit.php:220
 #: src/usr/local/www/services_captiveportal_ip.php:109
-#: src/usr/local/www/vpn_ipsec_phase2.php:656
+#: src/usr/local/www/vpn_ipsec_phase2.php:676
 #: src/usr/local/www/interfaces.php:543 src/usr/local/www/interfaces.php:2115
 #: src/usr/local/www/interfaces.php:3520
 #: src/usr/local/www/services_dhcpv6_edit.php:229
@@ -381,8 +380,8 @@ msgstr "목적지 IP"
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:80
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:231
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:167
-#: src/usr/local/www/interfaces_vlan.php:100
-#: src/usr/local/www/interfaces_lagg.php:106
+#: src/usr/local/www/interfaces_vlan.php:99
+#: src/usr/local/www/interfaces_lagg.php:105
 #: src/usr/local/www/status_dhcp_leases.php:177
 #: src/usr/local/www/status_dhcp_leases.php:207
 #: src/usr/local/www/services_captiveportal_mac_edit.php:238
@@ -395,7 +394,6 @@ msgid "Description"
 msgstr "설명"
 
 #: src/usr/local/www/firewall_nat_1to1.php:162
-#: src/usr/local/www/interfaces_vxlan.php:100
 #: src/usr/local/www/vpn_l2tp_users.php:76
 #: src/usr/local/www/services_checkip.php:96
 #: src/usr/local/www/services_rfc2136.php:88
@@ -403,7 +401,7 @@ msgstr "설명"
 #: src/usr/local/www/services_unbound_acls.php:287
 #: src/usr/local/www/system_groupmanager.php:378
 #: src/usr/local/www/vpn_openvpn_client.php:1186
-#: src/usr/local/www/interfaces_wireless.php:99
+#: src/usr/local/www/interfaces_wireless.php:98
 #: src/usr/local/www/services_dhcp.php:872
 #: src/usr/local/www/services_unbound.php:575
 #: src/usr/local/www/services_unbound.php:659
@@ -415,16 +413,16 @@ msgstr "설명"
 #: src/usr/local/www/firewall_nat_out.php:283
 #: src/usr/local/www/pkg_mgr_installed.php:73
 #: src/usr/local/www/firewall_aliases.php:112
-#: src/usr/local/www/interfaces_groups.php:82
+#: src/usr/local/www/interfaces_groups.php:81
 #: src/usr/local/www/services_captiveportal_vouchers.php:306
 #: src/usr/local/www/status_services.php:91
 #: src/usr/local/www/firewall_nat.php:258
-#: src/usr/local/www/system_camanager.php:401
+#: src/usr/local/www/system_camanager.php:401 src/usr/local/www/vpn_wg.php:67
 #: src/usr/local/www/services_wol.php:196
 #: src/usr/local/www/diag_confbak.php:217
 #: src/usr/local/www/services_captiveportal_hostname.php:121
-#: src/usr/local/www/interfaces_qinq.php:111
-#: src/usr/local/www/interfaces_gif.php:100
+#: src/usr/local/www/interfaces_qinq.php:110
+#: src/usr/local/www/interfaces_gif.php:99
 #: src/usr/local/www/services_igmpproxy.php:131
 #: src/usr/local/www/services_pppoe.php:102
 #: src/usr/local/www/firewall_virtual_ip.php:293
@@ -432,16 +430,16 @@ msgstr "설명"
 #: src/usr/local/www/services_captiveportal_mac.php:166
 #: src/usr/local/www/diag_arp.php:132 src/usr/local/www/vpn_openvpn_csc.php:698
 #: src/usr/local/www/system_authservers.php:510
-#: src/usr/local/www/interfaces_ppps.php:108
+#: src/usr/local/www/interfaces_ppps.php:107
 #: src/usr/local/www/services_captiveportal_zones.php:81
 #: src/usr/local/www/system_crlmanager.php:611
 #: src/usr/local/www/status_captiveportal.php:242
 #: src/usr/local/www/firewall_nat_npt.php:151
 #: src/usr/local/www/system_usermanager.php:667
-#: src/usr/local/www/interfaces_gre.php:100
+#: src/usr/local/www/interfaces_gre.php:99
 #: src/usr/local/www/vpn_ipsec_keys.php:105
 #: src/usr/local/www/firewall_schedule.php:95
-#: src/usr/local/www/interfaces_bridge.php:105
+#: src/usr/local/www/interfaces_bridge.php:104
 #: src/usr/local/www/status_dhcpv6_leases.php:292
 #: src/usr/local/www/diag_ndp.php:193
 #: src/usr/local/www/services_captiveportal_ip.php:110
@@ -451,8 +449,8 @@ msgstr "설명"
 #: src/usr/local/www/services_dyndns.php:97
 #: src/usr/local/www/firewall_rules.php:416
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:52
-#: src/usr/local/www/interfaces_vlan.php:101
-#: src/usr/local/www/interfaces_lagg.php:107
+#: src/usr/local/www/interfaces_vlan.php:100
+#: src/usr/local/www/interfaces_lagg.php:106
 #: src/usr/local/www/status_dhcp_leases.php:212
 #: src/usr/local/www/system_gateway_groups.php:133
 #: src/usr/local/www/services_captiveportal_filemanager.php:198
@@ -516,7 +514,6 @@ msgstr "목록 맨 위에 매핑 추가"
 #: src/usr/local/www/firewall_nat_1to1.php:253
 #: src/usr/local/www/firewall_nat_1to1.php:257
 #: src/usr/local/www/interfaces_assign.php:54
-#: src/usr/local/www/interfaces_vxlan.php:136
 #: src/usr/local/www/services_dhcpv6.php:1134
 #: src/usr/local/www/vpn_l2tp_users.php:103
 #: src/usr/local/www/services_checkip.php:160
@@ -527,7 +524,7 @@ msgstr "목록 맨 위에 매핑 추가"
 #: src/usr/local/www/system_groupmanager.php:330
 #: src/usr/local/www/system_groupmanager.php:422
 #: src/usr/local/www/vpn_openvpn_client.php:1251
-#: src/usr/local/www/interfaces_wireless.php:137
+#: src/usr/local/www/interfaces_wireless.php:136
 #: src/usr/local/www/services_dhcp.php:1105
 #: src/usr/local/www/services_dhcp.php:1623
 #: src/usr/local/www/services_dhcp.php:1756
@@ -539,7 +536,7 @@ msgstr "목록 맨 위에 매핑 추가"
 #: src/usr/local/www/firewall_nat_out.php:491
 #: src/usr/local/www/firewall_nat_out.php:495
 #: src/usr/local/www/firewall_aliases.php:194
-#: src/usr/local/www/interfaces_groups.php:126
+#: src/usr/local/www/interfaces_groups.php:125
 #: src/usr/local/www/services_ntpd.php:354
 #: src/usr/local/www/services_captiveportal_vouchers.php:341
 #: src/usr/local/www/firewall_nat.php:499
@@ -549,8 +546,8 @@ msgstr "목록 맨 위에 매핑 추가"
 #: src/usr/local/www/services_wol.php:177
 #: src/usr/local/www/services_wol.php:225
 #: src/usr/local/www/services_captiveportal_hostname.php:164
-#: src/usr/local/www/interfaces_qinq.php:150
-#: src/usr/local/www/interfaces_gif.php:130
+#: src/usr/local/www/interfaces_qinq.php:149
+#: src/usr/local/www/interfaces_gif.php:129
 #: src/usr/local/www/services_igmpproxy.php:180
 #: src/usr/local/www/services_pppoe.php:142
 #: src/usr/local/www/firewall_virtual_ip.php:365
@@ -558,7 +555,7 @@ msgstr "목록 맨 위에 매핑 추가"
 #: src/usr/local/www/services_captiveportal_mac.php:209
 #: src/usr/local/www/vpn_openvpn_csc.php:735
 #: src/usr/local/www/system_authservers.php:536
-#: src/usr/local/www/interfaces_ppps.php:157
+#: src/usr/local/www/interfaces_ppps.php:156
 #: src/usr/local/www/services_captiveportal_zones.php:121
 #: src/usr/local/www/system_crlmanager.php:568
 #: src/usr/local/www/system_crlmanager.php:688
@@ -567,10 +564,10 @@ msgstr "목록 맨 위에 매핑 추가"
 #: src/usr/local/www/system_usermanager.php:566
 #: src/usr/local/www/system_usermanager.php:616
 #: src/usr/local/www/system_usermanager.php:710
-#: src/usr/local/www/interfaces_gre.php:136
+#: src/usr/local/www/interfaces_gre.php:135
 #: src/usr/local/www/vpn_ipsec_keys.php:170
 #: src/usr/local/www/firewall_schedule.php:244
-#: src/usr/local/www/interfaces_bridge.php:156
+#: src/usr/local/www/interfaces_bridge.php:155
 #: src/usr/local/www/services_captiveportal_ip.php:155
 #: src/usr/local/www/services_ntpd_acls.php:321
 #: src/usr/local/www/interfaces.php:2122 src/usr/local/www/interfaces.php:3527
@@ -581,8 +578,8 @@ msgstr "목록 맨 위에 매핑 추가"
 #: src/usr/local/www/firewall_rules.php:915
 #: src/usr/local/www/vpn_ipsec_settings.php:546
 #: src/usr/local/www/pkg_edit.php:1481
-#: src/usr/local/www/interfaces_vlan.php:140
-#: src/usr/local/www/interfaces_lagg.php:145
+#: src/usr/local/www/interfaces_vlan.php:139
+#: src/usr/local/www/interfaces_lagg.php:144
 #: src/usr/local/www/system_gateway_groups.php:187
 #: src/usr/local/www/services_captiveportal_filemanager.php:242
 msgid "Add"
@@ -618,7 +615,7 @@ msgstr "선택한 맵핑 삭제 "
 #: src/usr/local/www/firewall_nat_npt.php:231
 #: src/usr/local/www/system_usermanager.php:715
 #: src/usr/local/www/services_pppoe_edit.php:550
-#: src/usr/local/www/vpn_ipsec_phase1.php:972
+#: src/usr/local/www/vpn_ipsec_phase1.php:986
 #: src/usr/local/www/firewall_aliases_edit.php:361
 #: src/usr/local/www/services_ntpd_acls.php:307
 #: src/usr/local/www/services_unbound_host_edit.php:292
@@ -637,7 +634,7 @@ msgid "Save mapping order"
 msgstr "매핑 순서 저장"
 
 #: src/usr/local/www/firewall_nat_1to1.php:265
-#: src/usr/local/www/interfaces_assign.php:573
+#: src/usr/local/www/interfaces_assign.php:562
 #: src/usr/local/www/system_advanced_sysctl.php:84
 #: src/usr/local/www/status_logs_common.inc:1015 src/usr/local/www/pkg.php:602
 #: src/usr/local/www/services_unbound_acls.php:125
@@ -655,6 +652,7 @@ msgstr "매핑 순서 저장"
 #: src/usr/local/www/system_authservers.php:84
 #: src/usr/local/www/system_crlmanager.php:278
 #: src/usr/local/www/system_crlmanager.php:366
+#: src/usr/local/www/vpn_wg_edit.php:319
 #: src/usr/local/www/firewall_nat_npt.php:235
 #: src/usr/local/www/system_gateways.php:356
 #: src/usr/local/www/firewall_rules.php:923
@@ -762,7 +760,7 @@ msgstr "상태"
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:113
 #: src/usr/local/www/services_unbound.php:278
 #: src/usr/local/www/status_logs.php:63 src/usr/local/www/diag_backup.php:83
-#: src/usr/local/www/head.inc:319 src/usr/local/www/head.inc:360
+#: src/usr/local/www/head.inc:319 src/usr/local/www/head.inc:361
 #: src/usr/local/www/services_unbound_advanced.php:266
 #: src/usr/local/www/services_unbound_host_edit.php:185
 #: src/etc/inc/service-utils.inc:267
@@ -803,7 +801,7 @@ msgstr "TTL"
 
 #: src/usr/local/www/status_unbound.php:61
 #: src/usr/local/www/vpn_openvpn_client.php:1037
-#: src/usr/local/www/diag_dns.php:282 src/usr/local/www/head.inc:408
+#: src/usr/local/www/diag_dns.php:282 src/usr/local/www/head.inc:409
 #: src/usr/local/www/diag_ping.php:37 src/usr/local/www/diag_ping.php:135
 #: src/usr/local/www/diag_ping.php:177
 #: src/usr/local/www/vpn_openvpn_server.php:1354
@@ -920,8 +918,8 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:790
 #: src/usr/local/www/firewall_rules_edit.php:1243
 #: src/usr/local/www/firewall_nat_out_edit.php:462
-#: src/usr/local/www/vpn_ipsec_phase1.php:771
-#: src/usr/local/www/vpn_ipsec_phase2.php:570
+#: src/usr/local/www/vpn_ipsec_phase1.php:785
+#: src/usr/local/www/vpn_ipsec_phase2.php:590
 #: src/usr/local/www/interfaces.php:2915
 #: src/usr/local/www/vpn_openvpn_server.php:792
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:292
@@ -1072,14 +1070,14 @@ msgstr "연결 끊김"
 #: src/usr/local/www/vpn_ipsec_mobile.php:354
 #: src/usr/local/www/status_ipsec_spd.php:41
 #: src/usr/local/www/vpn_ipsec_keys.php:73 src/usr/local/www/head.inc:346
-#: src/usr/local/www/head.inc:363 src/usr/local/www/vpn_ipsec_phase1.php:743
-#: src/usr/local/www/vpn_ipsec_phase1.php:746
-#: src/usr/local/www/vpn_ipsec_phase2.php:474
-#: src/usr/local/www/vpn_ipsec_phase2.php:478
+#: src/usr/local/www/head.inc:364 src/usr/local/www/vpn_ipsec_phase1.php:757
+#: src/usr/local/www/vpn_ipsec_phase1.php:760
+#: src/usr/local/www/vpn_ipsec_phase2.php:494
+#: src/usr/local/www/vpn_ipsec_phase2.php:498
 #: src/usr/local/www/vpn_ipsec_settings.php:299
 #: src/usr/local/www/widgets/include/ipsec.inc:24
 #: src/usr/local/www/status_graph.php:47 src/usr/local/www/status_graph.php:337
-#: src/etc/inc/interfaces.inc:7680
+#: src/etc/inc/interfaces.inc:7575
 msgid "IPsec"
 msgstr "IPsec"
 
@@ -1159,7 +1157,6 @@ msgid "No IPsec status information available."
 msgstr "사용 가능한 IPsec 상태 정보가 없습니다."
 
 #: src/usr/local/www/interfaces_assign.php:38
-#: src/usr/local/www/interfaces_vxlan.php:69
 #: src/usr/local/www/interfaces_lagg_edit.php:233
 #: src/usr/local/www/interfaces_wireless.php:67
 #: src/usr/local/www/status_interfaces.php:112
@@ -1168,14 +1165,13 @@ msgstr "사용 가능한 IPsec 상태 정보가 없습니다."
 #: src/usr/local/www/interfaces_groups_edit.php:35
 #: src/usr/local/www/interfaces_qinq.php:77
 #: src/usr/local/www/interfaces_gif.php:68 src/usr/local/www/diag_backup.php:88
-#: src/usr/local/www/interfaces_vlan_edit.php:185
+#: src/usr/local/www/interfaces_vlan_edit.php:174
 #: src/usr/local/www/interfaces_bridge_edit.php:404
-#: src/usr/local/www/interfaces_vxlan_edit.php:150
 #: src/usr/local/www/interfaces_ppps.php:80
 #: src/usr/local/www/services_captiveportal_zones.php:78
 #: src/usr/local/www/interfaces_gre_edit.php:206
 #: src/usr/local/www/interfaces_ppps_edit.php:479
-#: src/usr/local/www/interfaces_gre.php:69 src/usr/local/www/head.inc:362
+#: src/usr/local/www/interfaces_gre.php:69 src/usr/local/www/head.inc:363
 #: src/usr/local/www/interfaces_bridge.php:74
 #: src/usr/local/www/interfaces_gif_edit.php:159
 #: src/usr/local/www/interfaces.php:1833
@@ -1189,8 +1185,7 @@ msgid "Interfaces"
 msgstr "인터페이스"
 
 #: src/usr/local/www/interfaces_assign.php:38
-#: src/usr/local/www/interfaces_assign.php:480
-#: src/usr/local/www/interfaces_vxlan.php:77
+#: src/usr/local/www/interfaces_assign.php:470
 #: src/usr/local/www/interfaces_wireless.php:76
 #: src/usr/local/www/interfaces_groups.php:59
 #: src/usr/local/www/interfaces_qinq.php:86
@@ -1231,9 +1226,8 @@ msgstr "인터페이스 삭제"
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:63
 #: src/usr/local/www/system_gateways_edit.php:109
 #: src/usr/local/www/system_gateway_groups_edit.php:143
-#: src/usr/local/www/interfaces_vlan_edit.php:185
+#: src/usr/local/www/interfaces_vlan_edit.php:174
 #: src/usr/local/www/interfaces_bridge_edit.php:404
-#: src/usr/local/www/interfaces_vxlan_edit.php:150
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:51
 #: src/usr/local/www/firewall_virtual_ip_edit.php:297
 #: src/usr/local/www/system_groupmanager_addprivs.php:45
@@ -1267,28 +1261,28 @@ msgstr "편집"
 msgid "on"
 msgstr "on"
 
-#: src/usr/local/www/interfaces_assign.php:232
+#: src/usr/local/www/interfaces_assign.php:224
 msgid "Interface has been added."
 msgstr "인터페이스가 추가되었습니다."
 
-#: src/usr/local/www/interfaces_assign.php:267
+#: src/usr/local/www/interfaces_assign.php:259
 #, php-format
 msgid "Cannot set port %1$s because the submitted interface does not exist."
 msgstr ""
 
-#: src/usr/local/www/interfaces_assign.php:275
+#: src/usr/local/www/interfaces_assign.php:267
 #, php-format
 msgid "Port %1$s  was assigned to %2$s interfaces:"
 msgstr "%1$s 포트가 %2$s 인터페이스에 할당되었습니다."
 
-#: src/usr/local/www/interfaces_assign.php:293
+#: src/usr/local/www/interfaces_assign.php:285
 #, php-format
 msgid ""
 "Cannot set port %1$s to interface %2$s because this interface is a member of "
 "%3$s."
 msgstr "%1$s 포트를 %2$s 인터페이스에 설정할 수 없습니다. 이 인터페이스가 %3$s의 멤버입니다."
 
-#: src/usr/local/www/interfaces_assign.php:304
+#: src/usr/local/www/interfaces_assign.php:296
 #, php-format
 msgid ""
 "Vlan parent interface %1$s does not exist anymore so vlan id %2$s cannot be "
@@ -1297,70 +1291,63 @@ msgstr ""
 "Vlan 상위 인터페이스 %1$s가 더 이상 없으므로 VLAN ID %2$s을(를) 생성할 수 없습니다. 계속하기 전에 문제를 "
 "해결하십시오."
 
-#: src/usr/local/www/interfaces_assign.php:373
+#: src/usr/local/www/interfaces_assign.php:365
 msgid ""
 "The interface is part of a group. Please remove it from the group to "
 "continue"
 msgstr "인터페이스는 그룹의 일부입니다. 계속하려면 그룹에서 제거하십시오."
 
-#: src/usr/local/www/interfaces_assign.php:375
+#: src/usr/local/www/interfaces_assign.php:367
 msgid ""
 "The interface is part of a bridge. Please remove it from the bridge to "
 "continue"
 msgstr "인터페이스는 브리지의 일부입니다. 계속하려면 브리지에서 제거하십시오."
 
-#: src/usr/local/www/interfaces_assign.php:377
+#: src/usr/local/www/interfaces_assign.php:369
 msgid ""
 "The interface is part of a gre tunnel. Please delete the tunnel to continue"
 msgstr "인터페이스는 gre 터널의 일부입니다. 계속하려면 터널을 삭제하십시오."
 
-#: src/usr/local/www/interfaces_assign.php:379
+#: src/usr/local/www/interfaces_assign.php:371
 msgid ""
 "The interface is part of a gif tunnel. Please delete the tunnel to continue"
 msgstr "인터페이스는 Gif 터널의 일부입니다. 계속하려면 터널을 삭제하십시오."
 
-#: src/usr/local/www/interfaces_assign.php:381
-msgid ""
-"The interface is part of a vxlan tunnel. Please delete the tunnel to "
-"continue"
-msgstr ""
-
-#: src/usr/local/www/interfaces_assign.php:383
+#: src/usr/local/www/interfaces_assign.php:373
 msgid ""
 "The interface has a traffic shaper queue configured.\n"
 "Please remove all queues on the interface to continue."
 msgstr "인터페이스에는 트래픽 셰이퍼 대기열이 구성되어 있습니다.\n"
 "계속하려면 인터페이스의 모든 대기열을 제거하십시오."
 
-#: src/usr/local/www/interfaces_assign.php:428
+#: src/usr/local/www/interfaces_assign.php:418
 msgid "Interface has been deleted."
 msgstr "인터페이스가 삭제되었습니다."
 
-#: src/usr/local/www/interfaces_assign.php:449
+#: src/usr/local/www/interfaces_assign.php:439
 msgid "The system is now rebooting. Please wait."
 msgstr "이제 시스템이 재부팅됩니다. 기다려 주세요."
 
-#: src/usr/local/www/interfaces_assign.php:452
+#: src/usr/local/www/interfaces_assign.php:442
 msgid "Reboot is needed. Please apply the settings in order to reboot."
 msgstr "재부팅이 필요합니다. 재부팅하려면 설정을 적용하십시오."
 
-#: src/usr/local/www/interfaces_assign.php:456
+#: src/usr/local/www/interfaces_assign.php:446
 msgid ""
 "Interface mismatch detected. Please resolve the mismatch, save and then "
 "click 'Apply Changes'. The firewall will reboot afterwards."
 msgstr ""
 "인터페이스 불일치가 감지되었습니다. 불일치를 해결하고, 저장한 다음 '변경 사항 적용'을 클릭하십시오. 나중에 방화벽이 재부팅됩니다."
 
-#: src/usr/local/www/interfaces_assign.php:463
+#: src/usr/local/www/interfaces_assign.php:453
 msgid "The interface configuration has been changed."
 msgstr "인터페이스 구성이 변경되었습니다."
 
-#: src/usr/local/www/interfaces_assign.php:481
-#: src/usr/local/www/interfaces_vxlan.php:78
+#: src/usr/local/www/interfaces_assign.php:471
 #: src/usr/local/www/interfaces_wireless.php:77
 #: src/usr/local/www/interfaces_groups.php:53
 #: src/usr/local/www/interfaces_groups.php:60
-#: src/usr/local/www/interfaces_groups.php:73
+#: src/usr/local/www/interfaces_groups.php:72
 #: src/usr/local/www/interfaces_groups_edit.php:35
 #: src/usr/local/www/interfaces_qinq.php:87
 #: src/usr/local/www/interfaces_gif.php:78
@@ -1372,8 +1359,7 @@ msgstr "인터페이스 구성이 변경되었습니다."
 msgid "Interface Groups"
 msgstr "인터페이스 그룹"
 
-#: src/usr/local/www/interfaces_assign.php:482
-#: src/usr/local/www/interfaces_vxlan.php:79
+#: src/usr/local/www/interfaces_assign.php:472
 #: src/usr/local/www/status_wireless.php:33
 #: src/usr/local/www/status_logs_common.inc:115
 #: src/usr/local/www/interfaces_wireless.php:67
@@ -1384,20 +1370,19 @@ msgstr "인터페이스 그룹"
 #: src/usr/local/www/interfaces_qinq.php:88
 #: src/usr/local/www/interfaces_gif.php:79
 #: src/usr/local/www/interfaces_ppps.php:87
-#: src/usr/local/www/interfaces_gre.php:79 src/usr/local/www/head.inc:385
+#: src/usr/local/www/interfaces_gre.php:79 src/usr/local/www/head.inc:386
 #: src/usr/local/www/interfaces_bridge.php:84
 #: src/usr/local/www/interfaces_vlan.php:74
 #: src/usr/local/www/interfaces_lagg.php:86
 msgid "Wireless"
 msgstr "무선"
 
-#: src/usr/local/www/interfaces_assign.php:483
-#: src/usr/local/www/interfaces_vxlan.php:80
+#: src/usr/local/www/interfaces_assign.php:473
 #: src/usr/local/www/interfaces_wireless.php:79
 #: src/usr/local/www/interfaces_groups.php:62
 #: src/usr/local/www/interfaces_qinq.php:89
 #: src/usr/local/www/interfaces_gif.php:80
-#: src/usr/local/www/interfaces_vlan_edit.php:185
+#: src/usr/local/www/interfaces_vlan_edit.php:174
 #: src/usr/local/www/interfaces_ppps.php:88
 #: src/usr/local/www/interfaces_gre.php:80
 #: src/usr/local/www/interfaces_bridge.php:85
@@ -1407,8 +1392,7 @@ msgstr "무선"
 msgid "VLANs"
 msgstr "VLANs"
 
-#: src/usr/local/www/interfaces_assign.php:484
-#: src/usr/local/www/interfaces_vxlan.php:81
+#: src/usr/local/www/interfaces_assign.php:474
 #: src/usr/local/www/interfaces_wireless.php:80
 #: src/usr/local/www/interfaces_groups.php:63
 #: src/usr/local/www/interfaces_qinq.php:77
@@ -1423,8 +1407,7 @@ msgstr "VLANs"
 msgid "QinQs"
 msgstr "QinQs"
 
-#: src/usr/local/www/interfaces_assign.php:485
-#: src/usr/local/www/interfaces_vxlan.php:82
+#: src/usr/local/www/interfaces_assign.php:475
 #: src/usr/local/www/interfaces_wireless.php:81
 #: src/usr/local/www/interfaces_groups.php:64
 #: src/usr/local/www/interfaces_qinq.php:91
@@ -1439,8 +1422,7 @@ msgstr "QinQs"
 msgid "PPPs"
 msgstr "PPPs"
 
-#: src/usr/local/www/interfaces_assign.php:486
-#: src/usr/local/www/interfaces_vxlan.php:83
+#: src/usr/local/www/interfaces_assign.php:476
 #: src/usr/local/www/interfaces_wireless.php:82
 #: src/usr/local/www/interfaces_groups.php:65
 #: src/usr/local/www/interfaces_qinq.php:92
@@ -1455,8 +1437,7 @@ msgstr "PPPs"
 msgid "GREs"
 msgstr "GREs"
 
-#: src/usr/local/www/interfaces_assign.php:487
-#: src/usr/local/www/interfaces_vxlan.php:84
+#: src/usr/local/www/interfaces_assign.php:477
 #: src/usr/local/www/interfaces_wireless.php:83
 #: src/usr/local/www/interfaces_groups.php:66
 #: src/usr/local/www/interfaces_qinq.php:93
@@ -1471,73 +1452,55 @@ msgstr "GREs"
 msgid "GIFs"
 msgstr "GIFs"
 
-#: src/usr/local/www/interfaces_assign.php:488
-#: src/usr/local/www/interfaces_vxlan.php:69
-#: src/usr/local/www/interfaces_vxlan.php:85
+#: src/usr/local/www/interfaces_assign.php:478
 #: src/usr/local/www/interfaces_wireless.php:84
 #: src/usr/local/www/interfaces_groups.php:67
 #: src/usr/local/www/interfaces_qinq.php:94
 #: src/usr/local/www/interfaces_gif.php:85
-#: src/usr/local/www/interfaces_vxlan_edit.php:150
+#: src/usr/local/www/interfaces_bridge_edit.php:404
 #: src/usr/local/www/interfaces_ppps.php:93
 #: src/usr/local/www/interfaces_gre.php:85
+#: src/usr/local/www/interfaces_bridge.php:74
 #: src/usr/local/www/interfaces_bridge.php:90
 #: src/usr/local/www/interfaces_vlan.php:80
 #: src/usr/local/www/interfaces_lagg.php:92
-msgid "VXLANs"
-msgstr ""
+msgid "Bridges"
+msgstr "Bridges"
 
-#: src/usr/local/www/interfaces_assign.php:489
-#: src/usr/local/www/interfaces_vxlan.php:86
+#: src/usr/local/www/interfaces_assign.php:479
+#: src/usr/local/www/interfaces_lagg_edit.php:233
 #: src/usr/local/www/interfaces_wireless.php:85
 #: src/usr/local/www/interfaces_groups.php:68
 #: src/usr/local/www/interfaces_qinq.php:95
 #: src/usr/local/www/interfaces_gif.php:86
-#: src/usr/local/www/interfaces_bridge_edit.php:404
 #: src/usr/local/www/interfaces_ppps.php:94
 #: src/usr/local/www/interfaces_gre.php:86
-#: src/usr/local/www/interfaces_bridge.php:74
 #: src/usr/local/www/interfaces_bridge.php:91
 #: src/usr/local/www/interfaces_vlan.php:81
-#: src/usr/local/www/interfaces_lagg.php:93
-msgid "Bridges"
-msgstr "Bridges"
-
-#: src/usr/local/www/interfaces_assign.php:490
-#: src/usr/local/www/interfaces_vxlan.php:87
-#: src/usr/local/www/interfaces_lagg_edit.php:233
-#: src/usr/local/www/interfaces_wireless.php:86
-#: src/usr/local/www/interfaces_groups.php:69
-#: src/usr/local/www/interfaces_qinq.php:96
-#: src/usr/local/www/interfaces_gif.php:87
-#: src/usr/local/www/interfaces_ppps.php:95
-#: src/usr/local/www/interfaces_gre.php:87
-#: src/usr/local/www/interfaces_bridge.php:92
-#: src/usr/local/www/interfaces_vlan.php:82
 #: src/usr/local/www/interfaces_lagg.php:75
-#: src/usr/local/www/interfaces_lagg.php:94
+#: src/usr/local/www/interfaces_lagg.php:93
 msgid "LAGGs"
 msgstr "LAGGs"
 
-#: src/usr/local/www/interfaces_assign.php:510
+#: src/usr/local/www/interfaces_assign.php:499
 msgid "Network port"
 msgstr "네트워크 포트"
 
-#: src/usr/local/www/interfaces_assign.php:549
+#: src/usr/local/www/interfaces_assign.php:538
 msgid "Available network ports:"
 msgstr "사용가능한 네트워크 포트"
 
-#: src/usr/local/www/interfaces_assign.php:562
+#: src/usr/local/www/interfaces_assign.php:551
 msgid "Add selected interface"
 msgstr "선택된 인터페이스 추가"
 
-#: src/usr/local/www/interfaces_assign.php:578
+#: src/usr/local/www/interfaces_assign.php:567
 msgid ""
 "Interfaces that are configured as members of a lagg(4) interface will not be "
 "shown."
 msgstr "lagg(4) 인터페이스의 구성원으로 구성된 인터페이스는 표시되지 않습니다."
 
-#: src/usr/local/www/interfaces_assign.php:580
+#: src/usr/local/www/interfaces_assign.php:569
 msgid ""
 "Wireless interfaces must be created on the Wireless tab before they can be "
 "assigned."
@@ -1558,7 +1521,7 @@ msgstr "무선 인터페이스를 할당하려면 먼저 무선 탭에 무선 �
 #: src/usr/local/www/diag_arp.php:71 src/usr/local/www/diag_testport.php:40
 #: src/usr/local/www/diag_routes.php:68 src/usr/local/www/diag_defaults.php:43
 #: src/usr/local/www/diag_command.php:66 src/usr/local/www/diag_tables.php:31
-#: src/usr/local/www/crash_reporter.php:58 src/usr/local/www/head.inc:702
+#: src/usr/local/www/crash_reporter.php:58 src/usr/local/www/head.inc:703
 #: src/usr/local/www/diag_ndp.php:133 src/usr/local/www/diag_smart.php:38
 #: src/usr/local/www/diag_pf_info.php:33
 #: src/usr/local/www/diag_traceroute.php:39 src/usr/local/www/diag_halt.php:47
@@ -1566,7 +1529,7 @@ msgstr "무선 인터페이스를 할당하려면 먼저 무선 탭에 무선 �
 msgid "Diagnostics"
 msgstr "진단"
 
-#: src/usr/local/www/diag_limiter_info.php:33 src/usr/local/www/head.inc:405
+#: src/usr/local/www/diag_limiter_info.php:33 src/usr/local/www/head.inc:406
 msgid "Limiter Info"
 msgstr "제한자 정보"
 
@@ -1583,7 +1546,7 @@ msgid "Schedulers"
 msgstr ""
 
 #: src/usr/local/www/diag_limiter_info.php:50
-#: src/usr/local/www/status_queues.php:42 src/usr/local/www/head.inc:366
+#: src/usr/local/www/status_queues.php:42 src/usr/local/www/head.inc:367
 msgid "Queues"
 msgstr "Queues"
 
@@ -1660,7 +1623,7 @@ msgstr "IPsec 풀이 없습니다."
 #: src/usr/local/www/services_captiveportal_zones.php:62
 #: src/usr/local/www/status_captiveportal.php:155
 #: src/usr/local/www/services_captiveportal.php:63
-#: src/usr/local/www/head.inc:317 src/usr/local/www/head.inc:354
+#: src/usr/local/www/head.inc:317 src/usr/local/www/head.inc:355
 #: src/usr/local/www/services_captiveportal_ip.php:58
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:54
 #: src/usr/local/www/status_captiveportal_vouchers.php:54
@@ -1741,46 +1704,6 @@ msgstr "공백 또는 새 줄로 구분된 여러 개의 vouchers를 입력합�
 #: src/usr/local/www/status_captiveportal_expire.php:100
 msgid "Expire"
 msgstr "소멸"
-
-#: src/usr/local/www/interfaces_vxlan.php:52
-#: src/usr/local/www/interfaces_gif.php:51
-#: src/usr/local/www/interfaces_gre.php:52
-#: src/usr/local/www/interfaces_bridge.php:52
-#: src/usr/local/www/interfaces_vlan.php:45
-#: src/usr/local/www/interfaces_lagg.php:58
-msgid "Wrong parameters supplied"
-msgstr "잘못된 매개 변수가 제공됨"
-
-#: src/usr/local/www/interfaces_vxlan.php:54
-#: src/usr/local/www/interfaces_gif.php:53
-#: src/usr/local/www/interfaces_gre.php:54
-#: src/usr/local/www/interfaces_bridge.php:54
-#: src/usr/local/www/interfaces_vlan.php:47
-#: src/usr/local/www/interfaces_lagg.php:60
-msgid "Wrong index supplied"
-msgstr "잘못된 인덱스 제공"
-
-#: src/usr/local/www/interfaces_vxlan.php:57
-msgid ""
-"This VXLAN tunnel cannot be deleted because it is still being used as an "
-"interface."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan.php:91
-msgid "VXLAN Interfaces"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan.php:98
-msgid "Tunnel to"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan.php:122
-msgid "Edit VXLAN interface"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan.php:123
-msgid "Delete VXLAN interface"
-msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:44
 msgid "They must be either both IPv4 or both IPv6 addresses."
@@ -1876,9 +1799,9 @@ msgstr "Single host"
 #: src/usr/local/www/firewall_rules_edit.php:1415
 #: src/usr/local/www/firewall_nat_out_edit.php:507
 #: src/usr/local/www/firewall_nat_out_edit.php:532
-#: src/usr/local/www/vpn_ipsec_phase2.php:594
-#: src/usr/local/www/vpn_ipsec_phase2.php:615
-#: src/usr/local/www/vpn_ipsec_phase2.php:641
+#: src/usr/local/www/vpn_ipsec_phase2.php:614
+#: src/usr/local/www/vpn_ipsec_phase2.php:635
+#: src/usr/local/www/vpn_ipsec_phase2.php:661
 msgid "Network"
 msgstr "Network"
 
@@ -1929,10 +1852,10 @@ msgstr "나중에 더 일반적인 규칙에서 주소를 제외합니다."
 #: src/usr/local/www/status_openvpn.php:32 src/usr/local/www/status_logs.php:55
 #: src/usr/local/www/diag_backup.php:92
 #: src/usr/local/www/vpn_openvpn_csc.php:304 src/usr/local/www/head.inc:347
-#: src/usr/local/www/head.inc:365 src/usr/local/www/vpn_openvpn_server.php:752
+#: src/usr/local/www/head.inc:366 src/usr/local/www/vpn_openvpn_server.php:752
 #: src/usr/local/www/widgets/include/openvpn.inc:24
 #: src/usr/local/www/status_graph.php:59 src/etc/inc/service-utils.inc:409
-#: src/etc/inc/interfaces.inc:6739 src/etc/inc/interfaces.inc:7685
+#: src/etc/inc/interfaces.inc:6634 src/etc/inc/interfaces.inc:7580
 msgid "OpenVPN"
 msgstr "OpenVPN"
 
@@ -1950,7 +1873,7 @@ msgstr "OpenVPN"
 #: src/usr/local/www/services_pppoe_edit.php:330
 #: src/usr/local/www/services_rfc2136_edit.php:200
 #: src/usr/local/www/firewall_nat_out_edit.php:476
-#: src/usr/local/www/vpn_ipsec_phase1.php:792
+#: src/usr/local/www/vpn_ipsec_phase1.php:806
 #: src/usr/local/www/services_wol_edit.php:133
 #: src/usr/local/www/vpn_openvpn_server.php:848
 #: src/usr/local/www/firewall_nat_npt_edit.php:171
@@ -2008,23 +1931,23 @@ msgstr "*외부 서브넷 IP"
 #: src/usr/local/www/firewall_nat_out_edit.php:533
 #: src/usr/local/www/vpn_ipsec_keys.php:103
 #: src/usr/local/www/diag_smart.php:252
-#: src/usr/local/www/vpn_ipsec_phase2.php:595
-#: src/usr/local/www/vpn_ipsec_phase2.php:622
+#: src/usr/local/www/vpn_ipsec_phase2.php:615
 #: src/usr/local/www/vpn_ipsec_phase2.php:642
+#: src/usr/local/www/vpn_ipsec_phase2.php:662
 msgid "Type"
 msgstr "유형"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:521
-#: src/usr/local/www/system.php:543
+#: src/usr/local/www/vpn_wg.php:64 src/usr/local/www/system.php:543
 #: src/usr/local/www/system_advanced_admin.php:644
 #: src/usr/local/www/firewall_nat_edit.php:950
 #: src/usr/local/www/firewall_aliases_edit.php:347
-#: src/usr/local/www/vpn_ipsec_phase2.php:594
-#: src/usr/local/www/vpn_ipsec_phase2.php:601
-#: src/usr/local/www/vpn_ipsec_phase2.php:615
-#: src/usr/local/www/vpn_ipsec_phase2.php:628
-#: src/usr/local/www/vpn_ipsec_phase2.php:641
+#: src/usr/local/www/vpn_ipsec_phase2.php:614
+#: src/usr/local/www/vpn_ipsec_phase2.php:621
+#: src/usr/local/www/vpn_ipsec_phase2.php:635
 #: src/usr/local/www/vpn_ipsec_phase2.php:648
+#: src/usr/local/www/vpn_ipsec_phase2.php:661
+#: src/usr/local/www/vpn_ipsec_phase2.php:668
 msgid "Address"
 msgstr "주소"
 
@@ -2078,20 +2001,20 @@ msgstr "1:1 매핑은 지정된 대상에 대한 연결에만 사용됩니다. �
 #: src/usr/local/www/services_dhcp_edit.php:528
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:185
 #: src/usr/local/www/system_gateway_groups_edit.php:314
-#: src/usr/local/www/interfaces_vxlan_edit.php:227
 #: src/usr/local/www/firewall_virtual_ip_edit.php:436
 #: src/usr/local/www/services_checkip_edit.php:165
 #: src/usr/local/www/firewall_nat_edit.php:986
 #: src/usr/local/www/interfaces_gre_edit.php:294
+#: src/usr/local/www/vpn_wg_edit.php:113
 #: src/usr/local/www/services_rfc2136_edit.php:321
 #: src/usr/local/www/firewall_nat_out_edit.php:649
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:158
 #: src/usr/local/www/firewall_aliases_import.php:258
 #: src/usr/local/www/services_captiveportal.php:544
-#: src/usr/local/www/vpn_ipsec_phase1.php:837
+#: src/usr/local/www/vpn_ipsec_phase1.php:851
 #: src/usr/local/www/firewall_aliases_edit.php:296
 #: src/usr/local/www/interfaces_gif_edit.php:223
-#: src/usr/local/www/vpn_ipsec_phase2.php:659
+#: src/usr/local/www/vpn_ipsec_phase2.php:679
 #: src/usr/local/www/services_dhcpv6_edit.php:232
 #: src/usr/local/www/services_wol_edit.php:150
 #: src/usr/local/www/services_unbound_host_edit.php:227
@@ -2129,7 +2052,7 @@ msgstr "시스템 기본값 사용"
 #: src/usr/local/www/services_pppoe_edit.php:322
 #: src/usr/local/www/services_rfc2136_edit.php:191
 #: src/usr/local/www/services_captiveportal.php:534
-#: src/usr/local/www/vpn_ipsec_phase1.php:1067
+#: src/usr/local/www/vpn_ipsec_phase1.php:1097
 #: src/usr/local/www/interfaces.php:1911 src/usr/local/www/interfaces.php:3316
 #: src/usr/local/www/firewall_rules.php:870 src/etc/inc/shaper.inc:4367
 #: src/etc/inc/shaper.inc:4821 src/usr/local/www/diag_routes.php:85
@@ -2140,7 +2063,7 @@ msgstr "활성화 "
 #: src/usr/local/www/services_dyndns_edit.php:292
 #: src/usr/local/www/vpn_openvpn_csc.php:356
 #: src/usr/local/www/firewall_nat_edit.php:1005
-#: src/usr/local/www/vpn_ipsec_phase1.php:1067
+#: src/usr/local/www/vpn_ipsec_phase1.php:1097
 #: src/usr/local/www/firewall_rules.php:873
 msgid "Disable"
 msgstr "비활성화"
@@ -2167,7 +2090,7 @@ msgstr "인증 및 계정"
 #: src/usr/local/www/diag_authentication.php:71
 #: src/usr/local/www/status_logs.php:109
 #: src/usr/local/www/services_captiveportal.php:893
-#: src/usr/local/www/head.inc:393
+#: src/usr/local/www/head.inc:394
 msgid "Authentication"
 msgstr "인증"
 
@@ -2286,10 +2209,10 @@ msgstr "값"
 #: src/usr/local/www/firewall_aliases.php:109
 #: src/usr/local/www/diag_gmirror.php:223
 #: src/usr/local/www/diag_gmirror.php:304
-#: src/usr/local/www/interfaces_groups.php:79
+#: src/usr/local/www/interfaces_groups.php:78
 #: src/usr/local/www/system_camanager.php:372
-#: src/usr/local/www/system_camanager.php:395 src/usr/local/www/pkg_mgr.php:67
-#: src/usr/local/www/pkg_mgr.php:160
+#: src/usr/local/www/system_camanager.php:395 src/usr/local/www/vpn_wg.php:62
+#: src/usr/local/www/pkg_mgr.php:67 src/usr/local/www/pkg_mgr.php:160
 #: src/usr/local/www/services_igmpproxy.php:127
 #: src/usr/local/www/services_checkip_edit.php:62
 #: src/usr/local/www/status_gateways.php:56
@@ -2526,7 +2449,7 @@ msgstr "DHCP 범위는 정적 DHCP 매핑과 겹칠 수 없습니다."
 #: src/usr/local/www/services_rfc2136_edit.php:177
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:116
 #: src/usr/local/www/services_captiveportal.php:63
-#: src/usr/local/www/head.inc:367
+#: src/usr/local/www/head.inc:368
 #: src/usr/local/www/services_unbound_advanced.php:266
 #: src/usr/local/www/services_captiveportal_ip.php:58
 #: src/usr/local/www/services_ntpd_acls.php:178
@@ -3107,15 +3030,15 @@ msgstr "고급 숨기기"
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:147
 #: src/usr/local/www/status_logs_vpn.php:86 src/usr/local/www/vpn_ipsec.php:248
 #: src/usr/local/www/vpn_openvpn_client.php:554
-#: src/usr/local/www/vpn_l2tp_users_edit.php:31
+#: src/usr/local/www/vpn_l2tp_users_edit.php:31 src/usr/local/www/vpn_wg.php:36
 #: src/usr/local/www/vpn_l2tp.php:182
 #: src/usr/local/www/vpn_ipsec_mobile.php:354
 #: src/usr/local/www/vpn_openvpn_csc.php:304
-#: src/usr/local/www/vpn_ipsec_keys.php:73
-#: src/usr/local/www/vpn_ipsec_phase1.php:743
-#: src/usr/local/www/vpn_ipsec_phase1.php:746
-#: src/usr/local/www/vpn_ipsec_phase2.php:474
-#: src/usr/local/www/vpn_ipsec_phase2.php:478
+#: src/usr/local/www/vpn_wg_edit.php:80 src/usr/local/www/vpn_ipsec_keys.php:73
+#: src/usr/local/www/vpn_ipsec_phase1.php:757
+#: src/usr/local/www/vpn_ipsec_phase1.php:760
+#: src/usr/local/www/vpn_ipsec_phase2.php:494
+#: src/usr/local/www/vpn_ipsec_phase2.php:498
 #: src/usr/local/www/vpn_openvpn_server.php:752
 #: src/usr/local/www/vpn_ipsec_settings.php:299
 msgid "VPN"
@@ -3271,7 +3194,7 @@ msgstr "식별자"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:69
 #: src/usr/local/www/vpn_ipsec_keys.php:104
-#: src/usr/local/www/vpn_ipsec_phase1.php:248
+#: src/usr/local/www/vpn_ipsec_phase1.php:249
 #: src/usr/local/www/interfaces.php:3340
 msgid "Pre-Shared Key"
 msgstr "사전 공유 키"
@@ -3285,7 +3208,7 @@ msgid "A user with this name already exists. Add the key to the user instead."
 msgstr "이 이름의 사용자가 이미 있습니다. 대신 사용자에게 키를 추가하십시오."
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:83
-#: src/usr/local/www/vpn_ipsec_phase1.php:273
+#: src/usr/local/www/vpn_ipsec_phase1.php:274
 msgid "Pre-Shared Key contains invalid characters."
 msgstr "사전 공유 키에 잘못된 문자가 있습니다."
 
@@ -3315,8 +3238,8 @@ msgstr "IPsec 사전 공유 키 추가"
 #: src/usr/local/www/vpn_ipsec_keys.php:73
 #: src/usr/local/www/vpn_ipsec_keys.php:90
 #: src/usr/local/www/vpn_ipsec_keys.php:96
-#: src/usr/local/www/vpn_ipsec_phase1.php:761
-#: src/usr/local/www/vpn_ipsec_phase2.php:560
+#: src/usr/local/www/vpn_ipsec_phase1.php:775
+#: src/usr/local/www/vpn_ipsec_phase2.php:580
 #: src/usr/local/www/vpn_ipsec_settings.php:332
 msgid "Pre-Shared Keys"
 msgstr "사전 공유 키"
@@ -3340,7 +3263,7 @@ msgid "*Secret type"
 msgstr "*비밀 타입"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:176
-#: src/usr/local/www/vpn_ipsec_phase1.php:900
+#: src/usr/local/www/vpn_ipsec_phase1.php:914
 msgid "*Pre-Shared Key"
 msgstr "*사전 공유 키"
 
@@ -3397,7 +3320,7 @@ msgstr "잘못된 입력"
 #: src/usr/local/www/diag_dump_states_sources.php:55
 #: src/usr/local/www/diag_dump_states_sources.php:60
 #: src/usr/local/www/diag_states_summary.php:154
-#: src/usr/local/www/diag_states_summary.php:156 src/usr/local/www/head.inc:416
+#: src/usr/local/www/diag_states_summary.php:156 src/usr/local/www/head.inc:417
 #: src/usr/local/www/firewall_rules.php:399
 msgid "States"
 msgstr "상태"
@@ -3701,7 +3624,7 @@ msgstr "저장된 펌웨어 분기 설정."
 #: src/usr/local/www/system_usermanager.php:623
 #: src/usr/local/www/system_advanced_network.php:205
 #: src/usr/local/www/system_certmanager_renew.php:91
-#: src/usr/local/www/head.inc:694 src/usr/local/www/system_user_settings.php:34
+#: src/usr/local/www/head.inc:695 src/usr/local/www/system_user_settings.php:34
 #: src/usr/local/www/system_usermanager_addprivs.php:43
 #: src/usr/local/www/system_advanced_notifications.php:288
 #: src/usr/local/www/system_gateways.php:231
@@ -3720,8 +3643,8 @@ msgstr "시스템"
 #: src/usr/local/www/system_certmanager.php:1244
 #: src/usr/local/www/system_certmanager.php:1292
 #: src/usr/local/www/pkg_mgr_installed.php:218
-#: src/usr/local/www/diag_routes.php:109 src/usr/local/www/diag_tables.php:156
-#: src/usr/local/www/head.inc:249
+#: src/usr/local/www/vpn_wg_edit.php:250 src/usr/local/www/diag_routes.php:109
+#: src/usr/local/www/diag_tables.php:156 src/usr/local/www/head.inc:249
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 #: src/usr/local/www/system_update_settings.php:108
 msgid "Update"
@@ -3743,7 +3666,7 @@ msgstr "설정 업데이트"
 #: src/usr/local/www/pkg_mgr_installed.php:36
 #: src/usr/local/www/pkg_mgr_installed.php:189 src/usr/local/www/pkg_mgr.php:40
 #: src/usr/local/www/pkg_mgr.php:132 src/usr/local/www/diag_backup.php:93
-#: src/usr/local/www/head.inc:252 src/usr/local/www/head.inc:694
+#: src/usr/local/www/head.inc:252 src/usr/local/www/head.inc:695
 msgid "Package Manager"
 msgstr "패키지 관리자"
 
@@ -4084,6 +4007,7 @@ msgid "Tunable Name"
 msgstr "튜너블 이름"
 
 #: src/usr/local/www/system_advanced_sysctl.php:156
+#: src/usr/local/www/vpn_wg_edit.php:153
 msgid "New"
 msgstr "New"
 
@@ -4109,11 +4033,11 @@ msgstr "*값"
 
 #: src/usr/local/www/system_advanced_sysctl.php:219
 #: src/usr/local/www/interfaces_groups_edit.php:242
-#: src/usr/local/www/interfaces_vlan_edit.php:238
+#: src/usr/local/www/interfaces_vlan_edit.php:227
 msgid "id"
 msgstr "id"
 
-#: src/usr/local/www/diag_pftop.php:33 src/usr/local/www/head.inc:411
+#: src/usr/local/www/diag_pftop.php:33 src/usr/local/www/head.inc:412
 msgid "pfTop"
 msgstr "pfTop"
 
@@ -4186,7 +4110,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:1012
 #: src/usr/local/www/firewall_rules_edit.php:70
 #: src/usr/local/www/services_ntpd_gps.php:416
-#: src/usr/local/www/vpn_ipsec_phase2.php:615
+#: src/usr/local/www/vpn_ipsec_phase2.php:635
 #: src/usr/local/www/interfaces.php:1840 src/usr/local/www/interfaces.php:1843
 #: src/usr/local/www/interfaces.php:1866 src/usr/local/www/interfaces.php:1879
 #: src/etc/inc/ipsec.inc:471 src/etc/inc/shaper.inc:4411
@@ -4547,7 +4471,7 @@ msgstr ""
 #: src/usr/local/www/system_authservers.php:494
 #: src/usr/local/www/system_usermanager.php:648
 #: src/usr/local/www/services_ntpd_gps.php:374
-#: src/usr/local/www/status_queues.php:216 src/usr/local/www/head.inc:620
+#: src/usr/local/www/status_queues.php:216 src/usr/local/www/head.inc:621
 #: src/usr/local/www/system_usermanager_addprivs.php:150
 #: src/usr/local/www/services_ntpd_acls.php:192
 #: src/usr/local/www/firewall_rules.php:442
@@ -4677,7 +4601,7 @@ msgstr "L2TP 로그인"
 #: src/usr/local/www/status_logs.php:106 src/usr/local/www/status_logs.php:109
 #: src/usr/local/www/status_logs.php:112
 #: src/usr/local/www/status_logs_filter_dynamic.php:84
-#: src/usr/local/www/head.inc:368 src/usr/local/www/easyrule.php:124
+#: src/usr/local/www/head.inc:369 src/usr/local/www/easyrule.php:124
 #: src/usr/local/www/status_logs_filter_summary.php:69
 #: src/usr/local/www/status_logs_settings.php:231
 msgid "System Logs"
@@ -4733,7 +4657,7 @@ msgstr "User"
 #: src/usr/local/www/services_pppoe_edit.php:472
 #: src/usr/local/www/services_pppoe_edit.php:546
 #: src/usr/local/www/status_dhcpv6_leases.php:253
-#: src/usr/local/www/vpn_ipsec_phase2.php:757
+#: src/usr/local/www/vpn_ipsec_phase2.php:809
 #: src/usr/local/www/interfaces.php:3390 src/usr/local/www/interfaces.php:3414
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:38
 #: src/usr/local/www/status_dhcp_leases.php:173
@@ -4984,9 +4908,8 @@ msgid "Failover Master Interface must be selected as member."
 msgstr ""
 
 #: src/usr/local/www/interfaces_lagg_edit.php:176
-#: src/usr/local/www/interfaces_vlan_edit.php:150
+#: src/usr/local/www/interfaces_vlan_edit.php:139
 #: src/usr/local/www/interfaces_bridge_edit.php:363
-#: src/usr/local/www/interfaces_vxlan_edit.php:118
 #: src/usr/local/www/interfaces_gre_edit.php:174
 #: src/usr/local/www/interfaces_gif_edit.php:127
 msgid "Error occurred creating interface, please retry."
@@ -5350,7 +5273,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd.php:260 src/usr/local/www/status_logs.php:57
 #: src/usr/local/www/status_ntpd.php:300
 #: src/usr/local/www/services_ntpd_gps.php:360 src/usr/local/www/head.inc:330
-#: src/usr/local/www/head.inc:364 src/usr/local/www/services_ntpd_acls.php:178
+#: src/usr/local/www/head.inc:365 src/usr/local/www/services_ntpd_acls.php:178
 msgid "NTP"
 msgstr "NTP"
 
@@ -5372,7 +5295,7 @@ msgstr "일반"
 #: src/usr/local/www/system_routes.php:227
 #: src/usr/local/www/status_gateways.php:37
 #: src/usr/local/www/status_gateways.php:44
-#: src/usr/local/www/status_gateways.php:49 src/usr/local/www/head.inc:357
+#: src/usr/local/www/status_gateways.php:49 src/usr/local/www/head.inc:358
 #: src/usr/local/www/system_gateways.php:231
 #: src/usr/local/www/system_gateways.php:250
 #: src/usr/local/www/system_gateways.php:258
@@ -5698,7 +5621,7 @@ msgid ""
 "settings changes first."
 msgstr "로컬 로그 파일을 지우고 빈 로그로 다시 초기화합니다. 먼저 설정 변경 사항을 저장하십시오."
 
-#: src/usr/local/www/diag_system_activity.php:33 src/usr/local/www/head.inc:418
+#: src/usr/local/www/diag_system_activity.php:33 src/usr/local/www/head.inc:419
 msgid "System Activity"
 msgstr "시스템 활동"
 
@@ -5764,7 +5687,7 @@ msgstr "임베디드 플랫폼 사용자 : 마법사는 일반적인 GUI보다 �
 msgid "To bypass the wizard, click on the %s logo on the initial page."
 msgstr "마법사를 건너 뛰려면 초기 페이지에서 %s 로고를 클릭하십시오."
 
-#: src/usr/local/www/index.php:327 src/usr/local/www/head.inc:356
+#: src/usr/local/www/index.php:327 src/usr/local/www/head.inc:357
 msgid "Dashboard"
 msgstr "대시보드"
 
@@ -5932,7 +5855,7 @@ msgid "Deleted selected IPsec Phase 2 entries."
 msgstr "선택한 IPsec 2 단계 항목을 삭제했습니다."
 
 #: src/usr/local/www/vpn_ipsec.php:184
-#: src/usr/local/www/vpn_ipsec_phase1.php:495
+#: src/usr/local/www/vpn_ipsec_phase1.php:508
 msgid ""
 "Cannot disable a Phase 1 with a child Phase 2 while the interface is "
 "assigned. Remove the interface assignment before disabling this P2."
@@ -5941,7 +5864,7 @@ msgstr ""
 "제거하십시오."
 
 #: src/usr/local/www/vpn_ipsec.php:194
-#: src/usr/local/www/vpn_ipsec_phase2.php:376
+#: src/usr/local/www/vpn_ipsec_phase2.php:394
 msgid ""
 "Cannot disable a VTI Phase 2 while the interface is assigned. Remove the "
 "interface assignment before disabling this P2."
@@ -5962,12 +5885,12 @@ msgid "Saved configuration changes for IPsec tunnels."
 msgstr "IPsec 터널의 저장된 구성 변경 사항."
 
 #: src/usr/local/www/vpn_ipsec.php:248 src/usr/local/www/vpn_ipsec.php:259
-#: src/usr/local/www/vpn_ipsec_mobile.php:472
+#: src/usr/local/www/vpn_wg.php:36 src/usr/local/www/vpn_ipsec_mobile.php:472
 #: src/usr/local/www/vpn_ipsec_keys.php:88
-#: src/usr/local/www/vpn_ipsec_phase1.php:746
-#: src/usr/local/www/vpn_ipsec_phase1.php:759
-#: src/usr/local/www/vpn_ipsec_phase2.php:478
-#: src/usr/local/www/vpn_ipsec_phase2.php:558
+#: src/usr/local/www/vpn_ipsec_phase1.php:760
+#: src/usr/local/www/vpn_ipsec_phase1.php:773
+#: src/usr/local/www/vpn_ipsec_phase2.php:498
+#: src/usr/local/www/vpn_ipsec_phase2.php:578
 #: src/usr/local/www/vpn_ipsec_settings.php:330
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:201
 msgid "Tunnels"
@@ -5977,10 +5900,10 @@ msgstr "터널"
 #: src/usr/local/www/vpn_ipsec_mobile.php:354
 #: src/usr/local/www/vpn_ipsec_mobile.php:473
 #: src/usr/local/www/vpn_ipsec_keys.php:89
-#: src/usr/local/www/vpn_ipsec_phase1.php:743
-#: src/usr/local/www/vpn_ipsec_phase1.php:760
-#: src/usr/local/www/vpn_ipsec_phase2.php:474
-#: src/usr/local/www/vpn_ipsec_phase2.php:559
+#: src/usr/local/www/vpn_ipsec_phase1.php:757
+#: src/usr/local/www/vpn_ipsec_phase1.php:774
+#: src/usr/local/www/vpn_ipsec_phase2.php:494
+#: src/usr/local/www/vpn_ipsec_phase2.php:579
 #: src/usr/local/www/vpn_ipsec_settings.php:331
 msgid "Mobile Clients"
 msgstr "모바일 클라이언트"
@@ -5990,10 +5913,10 @@ msgstr "모바일 클라이언트"
 #: src/usr/local/www/services_unbound.php:298
 #: src/usr/local/www/vpn_ipsec_mobile.php:475
 #: src/usr/local/www/vpn_ipsec_keys.php:91
-#: src/usr/local/www/vpn_ipsec_phase1.php:762
+#: src/usr/local/www/vpn_ipsec_phase1.php:776
 #: src/usr/local/www/services_unbound_advanced.php:266
 #: src/usr/local/www/services_unbound_advanced.php:285
-#: src/usr/local/www/vpn_ipsec_phase2.php:561
+#: src/usr/local/www/vpn_ipsec_phase2.php:581
 #: src/usr/local/www/vpn_ipsec_settings.php:299
 #: src/usr/local/www/vpn_ipsec_settings.php:333
 msgid "Advanced Settings"
@@ -6014,13 +5937,13 @@ msgid "IKE"
 msgstr "IKE"
 
 #: src/usr/local/www/vpn_ipsec.php:284
-#: src/usr/local/www/vpn_ipsec_phase1.php:802
+#: src/usr/local/www/vpn_ipsec_phase1.php:816
 msgid "Remote Gateway"
 msgstr "원격 게이트웨이"
 
 #: src/usr/local/www/vpn_ipsec.php:285 src/usr/local/www/vpn_ipsec.php:463
 #: src/usr/local/www/vpn_openvpn_client.php:1215
-#: src/usr/local/www/interfaces_wireless.php:97
+#: src/usr/local/www/interfaces_wireless.php:96
 #: src/usr/local/www/firewall_nat_out.php:225
 #: src/usr/local/www/firewall_nat_out.php:229
 #: src/usr/local/www/interfaces_wireless_edit.php:73
@@ -6793,12 +6716,12 @@ msgid "Member Count"
 msgstr "회원 수"
 
 #: src/usr/local/www/system_groupmanager.php:403
-#: src/usr/local/www/interfaces_groups.php:112
+#: src/usr/local/www/interfaces_groups.php:111
 msgid "Edit group"
 msgstr "그룹 편집 "
 
 #: src/usr/local/www/system_groupmanager.php:405
-#: src/usr/local/www/interfaces_groups.php:113
+#: src/usr/local/www/interfaces_groups.php:112
 msgid "Delete group"
 msgstr "그룹 삭제 "
 
@@ -6838,9 +6761,9 @@ msgid "Not members"
 msgstr "멤버 아님"
 
 #: src/usr/local/www/system_groupmanager.php:533
-#: src/usr/local/www/interfaces_groups.php:80
-#: src/usr/local/www/interfaces_bridge.php:103
-#: src/usr/local/www/interfaces_lagg.php:105
+#: src/usr/local/www/interfaces_groups.php:79
+#: src/usr/local/www/interfaces_bridge.php:102
+#: src/usr/local/www/interfaces_lagg.php:104
 msgid "Members"
 msgstr "멤버들"
 
@@ -6986,8 +6909,8 @@ msgstr ""
 #: src/usr/local/www/system_crlmanager.php:372
 #: src/usr/local/www/system_crlmanager.php:682
 #: src/usr/local/www/system_certmanager_renew.php:51
-#: src/usr/local/www/vpn_ipsec_phase1.php:254
-#: src/usr/local/www/vpn_ipsec_phase1.php:258
+#: src/usr/local/www/vpn_ipsec_phase1.php:255
+#: src/usr/local/www/vpn_ipsec_phase1.php:259
 #: src/usr/local/www/vpn_openvpn_server.php:486 src/etc/inc/certs.inc:2263
 msgid "Certificate Authority"
 msgstr "인증 기관"
@@ -7098,8 +7021,8 @@ msgstr "마법사"
 
 #: src/usr/local/www/vpn_openvpn_client.php:588
 #: src/usr/local/www/vpn_openvpn_csc.php:334
-#: src/usr/local/www/vpn_ipsec_phase1.php:767
-#: src/usr/local/www/vpn_ipsec_phase2.php:566
+#: src/usr/local/www/vpn_ipsec_phase1.php:781
+#: src/usr/local/www/vpn_ipsec_phase2.php:586
 #: src/usr/local/www/vpn_openvpn_server.php:788
 msgid "General Information"
 msgstr "일반 정보 "
@@ -7120,7 +7043,7 @@ msgstr "*서버 모드"
 #: src/usr/local/www/firewall_nat_edit.php:782
 #: src/usr/local/www/firewall_rules_edit.php:1345
 #: src/usr/local/www/firewall_nat_out_edit.php:496
-#: src/usr/local/www/vpn_ipsec_phase2.php:667
+#: src/usr/local/www/vpn_ipsec_phase2.php:687
 #: src/usr/local/www/vpn_openvpn_server.php:833
 msgid "*Protocol"
 msgstr "*프로토콜"
@@ -7332,7 +7255,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:774
 #: src/usr/local/www/vpn_openvpn_client.php:780
-#: src/usr/local/www/vpn_ipsec_phase1.php:928
+#: src/usr/local/www/vpn_ipsec_phase1.php:942
 #: src/usr/local/www/vpn_openvpn_server.php:922
 #: src/usr/local/www/vpn_openvpn_server.php:928
 msgid "*Peer Certificate Authority"
@@ -7683,7 +7606,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:1064
 #: src/usr/local/www/interfaces_bridge_edit.php:451
 #: src/usr/local/www/interfaces_ppps_edit.php:805
-#: src/usr/local/www/vpn_ipsec_phase2.php:751
+#: src/usr/local/www/vpn_ipsec_phase2.php:803
 #: src/usr/local/www/vpn_openvpn_server.php:1529
 #: src/usr/local/www/interfaces.php:2155 src/usr/local/www/interfaces.php:2360
 msgid "Advanced Configuration"
@@ -7832,15 +7755,15 @@ msgid ""
 ""
 msgstr "이 무선 클론은 인터페이스로 할당되었으므로 삭제할 수 없습니다."
 
-#: src/usr/local/www/interfaces_wireless.php:90
+#: src/usr/local/www/interfaces_wireless.php:89
 msgid "Wireless Interfaces"
 msgstr "무선 인터페이스"
 
-#: src/usr/local/www/interfaces_wireless.php:120
+#: src/usr/local/www/interfaces_wireless.php:119
 msgid "Edit WiFi interface"
 msgstr "WiFi 인터페이스 편집"
 
-#: src/usr/local/www/interfaces_wireless.php:121
+#: src/usr/local/www/interfaces_wireless.php:120
 msgid "Delete WiFi interface"
 msgstr "WiFi 인터페이스 삭제"
 
@@ -8986,7 +8909,7 @@ msgstr "이 장치에 대한 백업을 찾을 수 없습니다."
 msgid "Current count of hosted backups"
 msgstr "호스팅된 백업의 현재 수"
 
-#: src/usr/local/www/diag_reboot.php:45 src/usr/local/www/head.inc:412
+#: src/usr/local/www/diag_reboot.php:45 src/usr/local/www/head.inc:413
 #: src/usr/local/www/interfaces.php:2241
 msgid "Reboot"
 msgstr "Reboot"
@@ -9323,7 +9246,7 @@ msgstr "인증 기관"
 #: src/usr/local/www/system_camanager.php:180
 #: src/usr/local/www/system_camanager.php:192
 #: src/usr/local/www/system_usermanager.php:224
-#: src/usr/local/www/vpn_ipsec_phase1.php:954
+#: src/usr/local/www/vpn_ipsec_phase1.php:968
 msgid "Key length"
 msgstr "키 길이"
 
@@ -9356,7 +9279,6 @@ msgstr "인증서 유형"
 #: src/usr/local/www/system_usermanager.php:225
 #: src/usr/local/www/system_usermanager.php:1028
 #: src/usr/local/www/system_certmanager_renew.php:227
-#: src/usr/local/www/vpn_ipsec_phase2.php:744
 msgid "Lifetime"
 msgstr "유효기간"
 
@@ -11171,8 +11093,8 @@ msgstr "로깅 기능이 있는 패키지가 현재 설치되지 않았습니다
 #: src/usr/local/www/firewall_virtual_ip_edit.php:389
 #: src/usr/local/www/firewall_rules_edit.php:1374
 #: src/usr/local/www/firewall_nat_out_edit.php:593
-#: src/usr/local/www/vpn_ipsec_phase2.php:603
-#: src/usr/local/www/vpn_ipsec_phase2.php:650
+#: src/usr/local/www/vpn_ipsec_phase2.php:623
+#: src/usr/local/www/vpn_ipsec_phase2.php:670
 #, php-format
 msgid "%s"
 msgstr "%s"
@@ -11629,7 +11551,7 @@ msgid "Periodic DHCP Leases Backup"
 msgstr "주기적인 DHCP 백업 리스"
 
 #: src/usr/local/www/system_advanced_misc.php:623
-#: src/usr/local/www/head.inc:358 src/usr/local/www/status_dhcp_leases.php:39
+#: src/usr/local/www/head.inc:359 src/usr/local/www/status_dhcp_leases.php:39
 msgid "DHCP Leases"
 msgstr "DHCP 리스"
 
@@ -12081,7 +12003,7 @@ msgstr ""
 msgid "Download Capture"
 msgstr "캡처 다운로드"
 
-#: src/usr/local/www/diag_packet_capture.php:142 src/usr/local/www/head.inc:420
+#: src/usr/local/www/diag_packet_capture.php:142 src/usr/local/www/head.inc:421
 msgid "Packet Capture"
 msgstr "패킷 캡처"
 
@@ -12231,9 +12153,9 @@ msgstr ""
 "xx:xx) 부분.%1$s이 필드를 비워 두면 지정된 인터페이스의 모든 패킷이 캡처됩니다."
 
 #: src/usr/local/www/diag_packet_capture.php:401
-#: src/usr/local/www/status_upnp.php:74
+#: src/usr/local/www/vpn_wg.php:65 src/usr/local/www/status_upnp.php:74
 #: src/usr/local/www/firewall_nat_edit.php:966
-#: src/usr/local/www/diag_testport.php:54
+#: src/usr/local/www/diag_testport.php:54 src/usr/local/www/vpn_wg_edit.php:267
 #: src/usr/local/www/firewall_aliases_edit.php:183
 #: src/usr/local/www/interfaces.php:3396 src/usr/local/www/interfaces.php:3420
 #: src/usr/local/www/firewall_rules.php:409
@@ -12349,7 +12271,7 @@ msgstr ""
 msgid "Select a detail level to view the contents of the packet capture."
 msgstr ""
 
-#: src/usr/local/www/diag_gmirror.php:35 src/usr/local/www/head.inc:401
+#: src/usr/local/www/diag_gmirror.php:35 src/usr/local/www/head.inc:402
 msgid "GEOM Mirrors"
 msgstr "GEOM 미러(Mirrors)"
 
@@ -12547,7 +12469,7 @@ msgstr "인증 실패: 권한이 충분하지 않습니다."
 msgid "Merged in config (%s sections) from XMLRPC client."
 msgstr "XMLRPC 클라이언트의 구성(%s 섹션)에 병합되었습니다."
 
-#: src/usr/local/www/interfaces_groups.php:131
+#: src/usr/local/www/interfaces_groups.php:130
 #, php-format
 msgid ""
 "Interface Groups allow setting up rules for multiple interfaces without "
@@ -12620,7 +12542,7 @@ msgid "Add server"
 msgstr "서버 추가"
 
 #: src/usr/local/www/diag_dns.php:31 src/usr/local/www/diag_dns.php:198
-#: src/usr/local/www/head.inc:396
+#: src/usr/local/www/head.inc:397
 msgid "DNS Lookup"
 msgstr "DNS 조회"
 
@@ -12726,7 +12648,7 @@ msgstr "쿼리(Query) 시간"
 msgid "More Information"
 msgstr "추가 정보"
 
-#: src/usr/local/www/diag_dns.php:283 src/usr/local/www/head.inc:419
+#: src/usr/local/www/diag_dns.php:283 src/usr/local/www/head.inc:420
 #: src/usr/local/www/diag_traceroute.php:39
 #: src/usr/local/www/diag_traceroute.php:126
 #: src/usr/local/www/diag_traceroute.php:175 src/etc/inc/filter.inc:89
@@ -13284,7 +13206,7 @@ msgstr "새 키 생성"
 msgid "No services found."
 msgstr "서비스를 찾을 수 없습니다."
 
-#: src/usr/local/www/diag_sockets.php:33 src/usr/local/www/head.inc:415
+#: src/usr/local/www/diag_sockets.php:33 src/usr/local/www/head.inc:416
 msgid "Sockets"
 msgstr "소켓"
 
@@ -13360,8 +13282,7 @@ msgid ""
 msgstr "%1$sFOREIGN ADDRESS%2$s %3$s 소켓의 외부 끝에 바인딩되어 있습니다.%4$s"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:73
-#: src/usr/local/www/interfaces_vlan_edit.php:85
-#: src/usr/local/www/interfaces_vxlan_edit.php:59
+#: src/usr/local/www/interfaces_vlan_edit.php:74
 #: src/usr/local/www/interfaces_gre_edit.php:77
 #: src/usr/local/www/interfaces_gre_edit.php:88
 #: src/usr/local/www/interfaces_gre_edit.php:96
@@ -13407,15 +13328,14 @@ msgid "Wireless Interface Configuration"
 msgstr "무선 인터페이스 구성"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:171
-#: src/usr/local/www/interfaces_vlan_edit.php:199
-#: src/usr/local/www/interfaces_vxlan_edit.php:165
+#: src/usr/local/www/interfaces_vlan_edit.php:188
 #: src/usr/local/www/interfaces_gre_edit.php:221
 #: src/usr/local/www/interfaces_gif_edit.php:174
 msgid "*Parent Interface"
 msgstr "*패런트(Parent) 인터페이스"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:178
-#: src/usr/local/www/vpn_ipsec_phase2.php:577
+#: src/usr/local/www/vpn_ipsec_phase2.php:597
 msgid "*Mode"
 msgstr "*모드"
 
@@ -13505,7 +13425,8 @@ msgstr "구분 기호 추가"
 msgid "Separator"
 msgstr "분리기"
 
-#: src/usr/local/www/firewall_nat.php:525 src/usr/local/www/interfaces.php:2131
+#: src/usr/local/www/firewall_nat.php:525 src/usr/local/www/vpn_wg_edit.php:245
+#: src/usr/local/www/vpn_wg_edit.php:246 src/usr/local/www/interfaces.php:2131
 #: src/usr/local/www/interfaces.php:3536 src/usr/local/www/diag_halt.php:80
 #: src/usr/local/www/firewall_rules.php:973
 msgid "Cancel"
@@ -13904,6 +13825,58 @@ msgid ""
 "be left blank."
 msgstr "다음 인증 기관 대상 구성 요소는 선택 사항이며 비워 둘 수 있습니다."
 
+#: src/usr/local/www/vpn_wg.php:36 src/usr/local/www/vpn_wg_edit.php:80
+#: src/usr/local/www/head.inc:350
+msgid "WireGuard"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:52
+msgid ""
+"No WireGuard tunnels have been configured. Click the \"Add tunnel\" button "
+"below to create one."
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:56
+msgid "WireGuard Tunnels"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:66
+msgid "# Peers"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:92
+msgid "Edit tunnel"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:93
+msgid "Delete tunnel"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:131
+msgid "No peers have been configured"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:146
+msgid "Firewall keys"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:151 src/usr/local/www/vpn_wg_edit.php:143
+#: src/usr/local/www/vpn_wg_edit.php:268
+msgid "Public key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:158 src/usr/local/www/vpn_wg_edit.php:136
+msgid "Private key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:170
+msgid "Show peers"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:175
+msgid "Add Tunnel"
+msgstr ""
+
 #: src/usr/local/www/pkg_mgr.php:85
 msgid "Visit official website"
 msgstr "공식 웹사이트 방문"
@@ -14081,7 +14054,7 @@ msgid "Group Description"
 msgstr "그룹 설명"
 
 #: src/usr/local/www/interfaces_groups_edit.php:225
-#: src/usr/local/www/interfaces_vlan_edit.php:226
+#: src/usr/local/www/interfaces_vlan_edit.php:215
 msgid ""
 "A group description may be entered here for administrative reference (not "
 "parsed)."
@@ -14105,7 +14078,7 @@ msgid "Rules have been cleared and the daemon restarted."
 msgstr "규칙이 삭제되고 데몬(daemon)이 다시 시작됩니다."
 
 #: src/usr/local/www/status_upnp.php:44 src/usr/local/www/head.inc:338
-#: src/usr/local/www/head.inc:372
+#: src/usr/local/www/head.inc:373
 msgid "UPnP &amp; NAT-PMP"
 msgstr "UPnP &amp; NAT-PMP"
 
@@ -14273,7 +14246,7 @@ msgstr "%1$s 시간 스탬프와 \"%2$s\" 설명을 사용하여 백업을 삭�
 
 #: src/usr/local/www/diag_confbak.php:96 src/usr/local/www/diag_confbak.php:109
 #: src/usr/local/www/diag_backup.php:121 src/usr/local/www/diag_backup.php:145
-#: src/usr/local/www/head.inc:394 src/usr/local/www/head.inc:703
+#: src/usr/local/www/head.inc:395 src/usr/local/www/head.inc:704
 msgid "Backup & Restore"
 msgstr "백업 & 복원"
 
@@ -14564,7 +14537,7 @@ msgstr "%1$s들어오거나 나가는%2$s 모든 연결이 허용됩니다."
 msgid "Protocol counts"
 msgstr "프로토콜 수"
 
-#: src/usr/local/www/diag_states_summary.php:199 src/usr/local/www/head.inc:417
+#: src/usr/local/www/diag_states_summary.php:199 src/usr/local/www/head.inc:418
 msgid "States Summary"
 msgstr "상태 요약"
 
@@ -14735,7 +14708,7 @@ msgid "High-latency"
 msgstr "대기 시간 단축"
 
 #: src/usr/local/www/system_advanced_firewall.php:464
-#: src/usr/local/www/vpn_ipsec_phase1.php:854
+#: src/usr/local/www/vpn_ipsec_phase1.php:868
 msgid "Aggressive"
 msgstr "활동적"
 
@@ -15103,28 +15076,28 @@ msgid ""
 "interface."
 msgstr "이 QinQ는 태그 중 하나가 여전히 인터페이스로 사용 중이므로 삭제할 수 없습니다."
 
-#: src/usr/local/www/interfaces_qinq.php:101
+#: src/usr/local/www/interfaces_qinq.php:100
 msgid "QinQ Interfaces"
 msgstr "QinQ 인터페이스"
 
-#: src/usr/local/www/interfaces_qinq.php:108
+#: src/usr/local/www/interfaces_qinq.php:107
 #: src/usr/local/www/firewall_rules_edit.php:1582
 msgid "Tag"
 msgstr "테그"
 
-#: src/usr/local/www/interfaces_qinq.php:109
+#: src/usr/local/www/interfaces_qinq.php:108
 msgid "QinQ members"
 msgstr "QinQ 멤버"
 
-#: src/usr/local/www/interfaces_qinq.php:134
+#: src/usr/local/www/interfaces_qinq.php:133
 msgid "Edit Q-in-Q interface"
 msgstr "Q-in-Q 인터페이스 편집"
 
-#: src/usr/local/www/interfaces_qinq.php:135
+#: src/usr/local/www/interfaces_qinq.php:134
 msgid "Delete Q-in-Q interface"
 msgstr "Q-in-Q 인터페이스 삭제"
 
-#: src/usr/local/www/interfaces_qinq.php:155
+#: src/usr/local/www/interfaces_qinq.php:154
 #, php-format
 msgid ""
 "Not all drivers/NICs support 802.1Q QinQ tagging properly. %1$sOn cards that "
@@ -15136,26 +15109,42 @@ msgstr ""
 "태깅이 계속 작동하지만 줄어든 MTU로 인해 문제가 발생할 수 있습니다.지원되는 카드에 대한 자세한 내용은 핸드북을 "
 "%1$s참조%2$s하십시오."
 
+#: src/usr/local/www/interfaces_gif.php:51
+#: src/usr/local/www/interfaces_gre.php:52
+#: src/usr/local/www/interfaces_bridge.php:52
+#: src/usr/local/www/interfaces_vlan.php:45
+#: src/usr/local/www/interfaces_lagg.php:58
+msgid "Wrong parameters supplied"
+msgstr "잘못된 매개 변수가 제공됨"
+
+#: src/usr/local/www/interfaces_gif.php:53
+#: src/usr/local/www/interfaces_gre.php:54
+#: src/usr/local/www/interfaces_bridge.php:54
+#: src/usr/local/www/interfaces_vlan.php:47
+#: src/usr/local/www/interfaces_lagg.php:60
+msgid "Wrong index supplied"
+msgstr "잘못된 인덱스 제공"
+
 #: src/usr/local/www/interfaces_gif.php:56
 msgid ""
 "This gif TUNNEL cannot be deleted because it is still being used as an "
 "interface."
 msgstr "이 GIF TUNNEL은 여전히 인터페이스로 사용 중이므로 삭제할 수 없습니다."
 
-#: src/usr/local/www/interfaces_gif.php:91
+#: src/usr/local/www/interfaces_gif.php:90
 msgid "GIF Interfaces"
 msgstr "GIF 인터페이스"
 
-#: src/usr/local/www/interfaces_gif.php:98
-#: src/usr/local/www/interfaces_gre.php:98
+#: src/usr/local/www/interfaces_gif.php:97
+#: src/usr/local/www/interfaces_gre.php:97
 msgid "Tunnel to &hellip;"
 msgstr "터널과 셸립 연결"
 
-#: src/usr/local/www/interfaces_gif.php:116
+#: src/usr/local/www/interfaces_gif.php:115
 msgid "Edit GIF interface"
 msgstr "GIF 인터페이스 편집"
 
-#: src/usr/local/www/interfaces_gif.php:117
+#: src/usr/local/www/interfaces_gif.php:116
 msgid "Delete GIF interface"
 msgstr "GIF 인터페이스 삭제"
 
@@ -15865,7 +15854,7 @@ msgstr "%s사용자 생성 테마는 지원되지 않습니다. 위험을 감수
 #: src/usr/local/www/services_pppoe.php:77
 #: src/usr/local/www/services_pppoe.php:91
 #: src/usr/local/www/services_pppoe_edit.php:307 src/usr/local/www/head.inc:331
-#: src/etc/inc/interfaces.inc:7675
+#: src/etc/inc/interfaces.inc:7570
 msgid "PPPoE Server"
 msgstr "PPPoE 서버"
 
@@ -16162,64 +16151,64 @@ msgid ""
 "Don't forget to add a firewall rule to permit traffic from L2TP clients."
 msgstr "L2TP 클라이언트의 트래픽을 허용하도록 방화벽 규칙을 추가하는 것을 잊지 마십시오."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:85
-#: src/usr/local/www/interfaces_vlan.php:98
+#: src/usr/local/www/interfaces_vlan_edit.php:74
+#: src/usr/local/www/interfaces_vlan.php:97
 msgid "VLAN tag"
 msgstr "VLAN 태그"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:90
+#: src/usr/local/www/interfaces_vlan_edit.php:79
 msgid "The VLAN tag must be an integer between 1 and 4094."
 msgstr "VLAN 태그는 1에서 4094 사이의 정수여야 합니다."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:93
+#: src/usr/local/www/interfaces_vlan_edit.php:82
 msgid "The VLAN Priority must be an integer between 0 and 7."
 msgstr "VLAN 우선 순위는 0에서 7 사이의 정수여야 합니다."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:97
+#: src/usr/local/www/interfaces_vlan_edit.php:86
 msgid "Interface supplied as parent is invalid"
 msgstr "상위(parent)로 제공된 인터페이스가 잘못되었습니다."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:103
+#: src/usr/local/www/interfaces_vlan_edit.php:92
 msgid "The VLAN tag cannot be changed while the interface is assigned."
 msgstr "인터페이스가 할당된 동안에는 VLAN 태그를 변경할 수 없습니다."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:113
+#: src/usr/local/www/interfaces_vlan_edit.php:102
 #, php-format
 msgid "A VLAN with the tag %s is already defined on this interface."
 msgstr "%s 태그가 있는 VLAN이 이 인터페이스에 이미 정의되어 있습니다."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:120
+#: src/usr/local/www/interfaces_vlan_edit.php:109
 #, php-format
 msgid ""
 "A QinQ VLAN exists on %s with this tag. Please remove it to use this tag for "
 "a normal VLAN."
 msgstr "이 태그가 있는 %s에 QinQ VLAN이 있습니다. 일반 VLAN에 대해 이 태그를 사용하려면 그것을 제거하십시오."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:195
+#: src/usr/local/www/interfaces_vlan_edit.php:184
 msgid "VLAN Configuration"
 msgstr "VLAN 구성"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:202
+#: src/usr/local/www/interfaces_vlan_edit.php:191
 msgid "Only VLAN capable interfaces will be shown."
 msgstr "VLAN 지원 인터페이스만 표시됩니다."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:206
+#: src/usr/local/www/interfaces_vlan_edit.php:195
 msgid "*VLAN Tag"
 msgstr "*VLAN 태그"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:210
+#: src/usr/local/www/interfaces_vlan_edit.php:199
 msgid "802.1Q VLAN tag (between 1 and 4094)."
 msgstr "802.1Q VLAN 태그(1과 4094 사이)"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:214
+#: src/usr/local/www/interfaces_vlan_edit.php:203
 msgid "VLAN Priority"
 msgstr "VLAN 우선 순위"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:218
+#: src/usr/local/www/interfaces_vlan_edit.php:207
 msgid "802.1Q VLAN Priority (between 0 and 7)."
 msgstr "802.1Q VLAN 우선 순위(0과 7 사이)."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:230
+#: src/usr/local/www/interfaces_vlan_edit.php:219
 msgid "vlanif"
 msgstr "vlanif"
 
@@ -16618,7 +16607,7 @@ msgstr "브리지에 포함되는 인터페이스."
 #: src/usr/local/www/interfaces_bridge_edit.php:445
 #: src/usr/local/www/firewall_rules_edit.php:1542
 #: src/usr/local/www/firewall_rules_edit.php:1548
-#: src/usr/local/www/vpn_ipsec_phase1.php:1039 src/etc/inc/shaper.inc:4497
+#: src/usr/local/www/vpn_ipsec_phase1.php:1069 src/etc/inc/shaper.inc:4497
 #: src/etc/inc/shaper.inc:4928
 msgid "Advanced Options"
 msgstr "고급 옵션"
@@ -16815,7 +16804,7 @@ msgstr ""
 "수 있습니다. 기본값은 2초입니다. 최소값은 1초이고 최대값은 2초입니다. "
 
 #: src/usr/local/www/interfaces_bridge_edit.php:611
-#: src/usr/local/www/interfaces_vlan.php:99
+#: src/usr/local/www/interfaces_vlan.php:98
 #: src/usr/local/www/system_gateway_groups.php:131 src/etc/inc/shaper.inc:1812
 msgid "Priority"
 msgstr "우선 순위"
@@ -16866,7 +16855,7 @@ msgstr ""
 "인터페이스의 스패닝 트리 경로 비용을 value로 설정합니다. 기본값은 링크 속도에서 계산됩니다. 이전에 선택한 경로 비용을 다시 "
 "자동으로 변경하려면 비용을 0으로 설정하십시오. 최소값은 1이고 최대 값은 200000000입니다. "
 
-#: src/usr/local/www/diag_edit.php:34 src/usr/local/www/head.inc:397
+#: src/usr/local/www/diag_edit.php:34 src/usr/local/www/head.inc:398
 msgid "Edit File"
 msgstr "파일 편집"
 
@@ -17009,117 +16998,6 @@ msgstr "GB/s"
 #: src/usr/local/www/firewall_shaper_queues.php:42
 msgid "No Queue Configured/Selected"
 msgstr "구성된 대기열 없음/선택됨"
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:59
-msgid "VXLAN remote address"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:59
-msgid "VXLAN ID"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:64
-msgid ""
-"The remote peer address must have valid IP address and must not contain CIDR "
-"masks or prefixes."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:70
-#: src/usr/local/www/interfaces_gif_edit.php:94
-msgid ""
-"The alias IP address family has to match the family of the remote peer "
-"address."
-msgstr "별칭 IP 주소 패밀리는 원격 피어 주소의 패밀리와 일치해야 합니다."
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:74
-msgid "VXLAN ID valid range is 1-16777215."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:78
-#: src/usr/local/www/interfaces_vxlan_edit.php:82
-msgid "VXLAN Local Port must be valid port value."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:87
-msgid "VXLAN TTL must be in range between 1 and 255."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:97
-#, php-format
-msgid "A vxlan with the remote address %s and VXLAN ID %s is already defined."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:161
-msgid "VXLAN Configuration"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:168
-msgid ""
-"This interface serves as the local address to be used for the VXLAN tunnel."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:172
-msgid "*VXLAN Remote Address"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:174
-msgid ""
-"Peer address or multicast group where encapsulated VXLAN packets will be "
-"sent."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:178
-msgid "*VXLAN ID"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:181
-msgid ""
-"24-bit VXLAN Network Identifier (VNI) that identifies the virtual network "
-"segment membership of the interface."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:185
-msgid "VXLAN Local Port"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:189
-msgid ""
-"The port number the interface will listen on. The default port number is "
-"4789."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:193
-msgid "VXLAN Remote Port"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:197
-msgid ""
-"The destination port number used in the encapsulating IPv4/IPv6 header. The "
-"remote host should be listening on this port. The default port number is "
-"4789. Note some other implementations, such as Linux, do not default to the "
-"IANA assigned port, but instead listen on port 8472."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:204
-msgid "VXLAN TTL"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:208
-msgid "The TTL used in the encapsulating IPv4/IPv6 header. The default is\t64."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:212
-msgid "VXLAN Learn"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:215
-msgid ""
-"The source IP address and inner source Ethernet MAC address of received "
-"packets are used to dynamically populate the forwarding table. When in "
-"multicast mode, an entry in the forwarding table allows the interface to "
-"send the frame directly to the remote host instead of broadcasting the frame "
-"to the multicast group. This is the default."
-msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip.php:99
 msgid ""
@@ -17366,7 +17244,7 @@ msgid "%1$s Route enabled"
 msgstr ""
 
 #: src/usr/local/www/status_filter_reload.php:35
-#: src/usr/local/www/status_filter_reload.php:61 src/usr/local/www/head.inc:361
+#: src/usr/local/www/status_filter_reload.php:61 src/usr/local/www/head.inc:362
 msgid "Filter Reload"
 msgstr "필터 재로드"
 
@@ -17965,8 +17843,8 @@ msgid ""
 msgstr "잠재적 인 공격자가 점수를 재설정하기 전에 최대 detect_time 초 동안 기억하십시오. "
 
 #: src/usr/local/www/system_advanced_admin.php:639
-msgid "Whitelist"
-msgstr "화이트리스트(Whitelist)"
+msgid "Pass list"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:667
 msgid "Add address"
@@ -18148,7 +18026,7 @@ msgid "Unable to clear ARP Table."
 msgstr ""
 
 #: src/usr/local/www/diag_arp.php:71 src/usr/local/www/diag_arp.php:119
-#: src/usr/local/www/head.inc:392
+#: src/usr/local/www/head.inc:393
 msgid "ARP Table"
 msgstr "ARP 테이블"
 
@@ -18512,7 +18390,7 @@ msgstr "CSC 재정의 삭제"
 msgid "Help"
 msgstr "도움"
 
-#: src/usr/local/www/help.php:422 src/usr/local/www/head.inc:426
+#: src/usr/local/www/help.php:422 src/usr/local/www/head.inc:427
 msgid "About this Page"
 msgstr "이 페이지에 대해"
 
@@ -18968,19 +18846,19 @@ msgid ""
 "an interface."
 msgstr "두 지점 간 링크는 아직 인터페이스로 사용 중이므로 삭제할 수 없습니다."
 
-#: src/usr/local/www/interfaces_ppps.php:99
+#: src/usr/local/www/interfaces_ppps.php:98
 msgid "PPP Interfaces"
 msgstr "PPP 인터페이스"
 
-#: src/usr/local/www/interfaces_ppps.php:106
+#: src/usr/local/www/interfaces_ppps.php:105
 msgid "Interface(s)/Port(s)"
 msgstr "인터페이스/포트"
 
-#: src/usr/local/www/interfaces_ppps.php:139
+#: src/usr/local/www/interfaces_ppps.php:138
 msgid "Edit PPP interface"
 msgstr "PPP 인터페이스 편집"
 
-#: src/usr/local/www/interfaces_ppps.php:140
+#: src/usr/local/www/interfaces_ppps.php:139
 msgid "Delete PPP interface"
 msgstr "PPP 인터페이스 삭제"
 
@@ -19979,7 +19857,7 @@ msgid "Select a Certificate Authority for the new CRL"
 msgstr ""
 
 #: src/usr/local/www/diag_testport.php:40
-#: src/usr/local/www/diag_testport.php:219 src/usr/local/www/head.inc:409
+#: src/usr/local/www/diag_testport.php:219 src/usr/local/www/head.inc:410
 msgid "Test Port"
 msgstr "포트 테스트"
 
@@ -20555,6 +20433,165 @@ msgstr "MRU"
 msgid "MRRU"
 msgstr "MRRU"
 
+#: src/usr/local/www/vpn_wg_edit.php:80
+msgid "Tunnel"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:92
+msgid "Interface wg"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:103
+#: src/usr/local/www/system_usermanager.php:690
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:292
+msgid "Enabled"
+msgstr "활성화"
+
+#: src/usr/local/www/vpn_wg_edit.php:118
+#: src/usr/local/www/firewall_nat_out_edit.php:565
+#: src/usr/local/www/firewall_nat_npt_edit.php:186
+#: src/usr/local/www/firewall_nat_npt_edit.php:201
+msgid "*Address"
+msgstr "*주소"
+
+#: src/usr/local/www/vpn_wg_edit.php:121
+msgid "Comma separated list of CIDR addresses assigned to interface."
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:126
+msgid "*Listen port"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:130
+msgid "Port to listen on."
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:132
+msgid "*Interface keys"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:139
+msgid "Private key for this interface."
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:146
+msgid "Public key for this interface."
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:150
+msgid "Generate"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:161 src/usr/local/www/vpn_wg_edit.php:264
+msgid "Peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:173
+msgid "Peer description - not parsed"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:177 src/usr/local/www/vpn_wg_edit.php:266
+msgid "Endpoint"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:179
+msgid "Hostname, IPv4 or IP46 address"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:183
+msgid "Endpoint port"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:189 src/usr/local/www/vpn_wg_edit.php:269
+msgid "Keepalive"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:191
+msgid "Keep alive value in seconds"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:195
+msgid "*Public key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:201 src/usr/local/www/vpn_wg_edit.php:270
+msgid "Allowed IPs"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:203
+msgid "List of CIDR IPs allowed to connect"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:207
+msgid "Peer WireGuard Address"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:209
+msgid ""
+"IPv4/IPv6 specifies the wireGuard interface address of the peer, since it "
+"can differ from AllowedIPs"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:213
+msgid "Peer Routed Networks"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:215
+msgid ""
+"Comma separated list of networks to route using the automatic gateway "
+"provided by \"Peer WireGuard Address\""
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:217
+msgid "Pre-shared key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:221
+msgid "Preshared key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:223
+msgid "Optional pre-shared key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:227
+msgid "Generate key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:249
+msgid "Update peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:271
+msgid "PSK"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:297 src/usr/local/www/vpn_wg_edit.php:375
+#: src/usr/local/www/vpn_wg_edit.php:382
+msgid "Edit peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:298 src/usr/local/www/vpn_wg_edit.php:375
+#: src/usr/local/www/vpn_wg_edit.php:382
+msgid "Delete peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:312
+msgid "Add new peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:314
+msgid "Add peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:317
+msgid "Save tunnel"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:324
+msgid "Are you sure you want to overwrite keys?"
+msgstr ""
+
 #: src/usr/local/www/status_captiveportal.php:73
 msgid "Session details"
 msgstr "세션 세부 정보"
@@ -20694,7 +20731,7 @@ msgstr "내부 접두 부호 표현"
 msgid "One or more NPt mappings have been moved but have not yet been saved"
 msgstr "하나 이상의 NPt 매핑이 이동되었지만 아직 저장되지 않았습니다."
 
-#: src/usr/local/www/diag_routes.php:68 src/usr/local/www/head.inc:413
+#: src/usr/local/www/diag_routes.php:68 src/usr/local/www/head.inc:414
 msgid "Routes"
 msgstr "루트"
 
@@ -20814,11 +20851,6 @@ msgstr "이 인증서 연계를 제거하시겠습니까? (인증서는 삭제�
 msgid "Full name"
 msgstr "전체 이름"
 
-#: src/usr/local/www/system_usermanager.php:690
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:292
-msgid "Enabled"
-msgstr "활성화"
-
 #: src/usr/local/www/system_usermanager.php:713
 msgid "Delete selected users"
 msgstr "선택된 사용자 삭제"
@@ -20887,7 +20919,7 @@ msgstr "\"비회원\" 목록으로 이동"
 #: src/usr/local/www/system_usermanager.php:928
 #: src/usr/local/www/system_usermanager.php:934
 #: src/usr/local/www/system_certmanager_renew.php:57
-#: src/usr/local/www/vpn_ipsec_phase1.php:254
+#: src/usr/local/www/vpn_ipsec_phase1.php:255
 #: src/usr/local/www/vpn_openvpn_server.php:486 src/etc/inc/certs.inc:2263
 msgid "Certificate"
 msgstr "인증서"
@@ -21688,7 +21720,7 @@ msgstr "기본 Queue"
 msgid "Choose the Acknowledge Queue only if there is a selected Queue."
 msgstr "선택한 큐가 있는 경우에만 승인(Acknowledge) 큐(Queue)를 선택합니다."
 
-#: src/usr/local/www/diag_defaults.php:43 src/usr/local/www/head.inc:398
+#: src/usr/local/www/diag_defaults.php:43 src/usr/local/www/head.inc:399
 msgid "Factory Defaults"
 msgstr "공장 기본값"
 
@@ -22075,7 +22107,7 @@ msgstr "이 옵션은 이전 IP 주소와 연결된 상태가 아니라 WAN IP �
 msgid "Uploaded file to %s."
 msgstr "%s에 파일을 업로드했습니다."
 
-#: src/usr/local/www/diag_command.php:66 src/usr/local/www/head.inc:395
+#: src/usr/local/www/diag_command.php:66 src/usr/local/www/head.inc:396
 msgid "Command Prompt"
 msgstr "명령 프롬프트"
 
@@ -22164,7 +22196,7 @@ msgstr "이 PHP 코드 실행"
 msgid "Example"
 msgstr "예시"
 
-#: src/usr/local/www/diag_tables.php:31 src/usr/local/www/head.inc:407
+#: src/usr/local/www/diag_tables.php:31 src/usr/local/www/head.inc:408
 msgid "Tables"
 msgstr "테이블"
 
@@ -22743,15 +22775,15 @@ msgid ""
 "interface."
 msgstr "이 GRE 터널은 인터페이스로 계속 사용되고 있으므로 삭제할 수 없습니다."
 
-#: src/usr/local/www/interfaces_gre.php:91
+#: src/usr/local/www/interfaces_gre.php:90
 msgid "GRE Interfaces"
 msgstr "GRE 인터페이스"
 
-#: src/usr/local/www/interfaces_gre.php:122
+#: src/usr/local/www/interfaces_gre.php:121
 msgid "Edit GRE interface"
 msgstr "GRE 인터페이스 편집"
 
-#: src/usr/local/www/interfaces_gre.php:123
+#: src/usr/local/www/interfaces_gre.php:122
 msgid "Delete GRE interface"
 msgstr "GRE 인터페이스 삭제"
 
@@ -22923,12 +22955,6 @@ msgstr "대상 일치의 감지를 도치시킵니다."
 #: src/usr/local/www/firewall_nat_out_edit.php:560
 msgid "Translation"
 msgstr "변환"
-
-#: src/usr/local/www/firewall_nat_out_edit.php:565
-#: src/usr/local/www/firewall_nat_npt_edit.php:186
-#: src/usr/local/www/firewall_nat_npt_edit.php:201
-msgid "*Address"
-msgstr "*주소"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:568
 #, php-format
@@ -23310,12 +23336,10 @@ msgstr "IP 별칭 세부 사항"
 #: src/usr/local/www/firewall_aliases_import.php:223
 msgid ""
 "Paste in the aliases to import separated by a carriage return. Common "
-"examples are lists of IPs, networks, blacklists, etc. The list may contain "
+"examples are lists of IPs, networks, blocklists, etc. The list may contain "
 "IP addresses, with or without CIDR prefix, IP ranges, blank lines (ignored) "
 "and an optional description after each IP. e.g.:"
 msgstr ""
-"가져올 별칭에 캐리지 리턴으로 구분하여 붙여 넣습니다. 일반적인 예는 IP, 네트워크, 블랙리스트 등의 목록입니다. 목록에는 CIDR "
-"접두사가 있거나없는 IP 주소, IP 범위, 공백 행 (무시) ​​및 각 IP 다음에 설명이 포함될 수 있습니다.예:"
 
 #: src/usr/local/www/firewall_aliases_import.php:235
 msgid "192.168.1.254 Home router"
@@ -23846,7 +23870,7 @@ msgid ""
 msgstr "Captive Portal에서 사용할 수 있는 약관을 복사하여 붙여 넣습니다. HTML 태그는 제거됩니다."
 
 #: src/usr/local/www/services_captiveportal.php:896
-#: src/usr/local/www/vpn_ipsec_phase1.php:845
+#: src/usr/local/www/vpn_ipsec_phase1.php:859
 msgid "*Authentication Method"
 msgstr "*인증 방법"
 
@@ -24139,7 +24163,7 @@ msgstr ""
 "초과보다 높은지 확인하십시오. 또한 인증되지 않은 클라이언트의 DNS 검색에 대해 DNS Forwarder 또는 Resolver를 "
 "사용하도록 설정해야 합니다. "
 
-#: src/usr/local/www/head.inc:247 src/usr/local/www/head.inc:537
+#: src/usr/local/www/head.inc:247 src/usr/local/www/head.inc:538
 #: src/etc/inc/captiveportal.inc:316
 msgid "Logout"
 msgstr "로그아웃"
@@ -24168,107 +24192,107 @@ msgstr "배정"
 msgid "Switches"
 msgstr "Switches"
 
-#: src/usr/local/www/head.inc:355
+#: src/usr/local/www/head.inc:356
 msgid "CARP (failover)"
 msgstr "CARP (시스템 대체 작동)"
 
-#: src/usr/local/www/head.inc:359 src/usr/local/www/status_dhcpv6_leases.php:41
+#: src/usr/local/www/head.inc:360 src/usr/local/www/status_dhcpv6_leases.php:41
 msgid "DHCPv6 Leases"
 msgstr "DHCPv6 리스"
 
-#: src/usr/local/www/head.inc:369 src/usr/local/www/status_graph.php:148
+#: src/usr/local/www/head.inc:370 src/usr/local/www/status_graph.php:148
 #: src/usr/local/www/status_graph.php:157
 #: src/usr/local/www/status_graph.php:343
 msgid "Traffic Graph"
 msgstr "트래픽 그래프"
 
-#: src/usr/local/www/head.inc:404 src/usr/local/www/diag_halt.php:47
+#: src/usr/local/www/head.inc:405 src/usr/local/www/diag_halt.php:47
 msgid "Halt System"
 msgstr "시스템 중단"
 
-#: src/usr/local/www/head.inc:406 src/usr/local/www/diag_ndp.php:133
+#: src/usr/local/www/head.inc:407 src/usr/local/www/diag_ndp.php:133
 #: src/usr/local/www/diag_ndp.php:181
 msgid "NDP Table"
 msgstr "NDP 테이블"
 
-#: src/usr/local/www/head.inc:410 src/usr/local/www/diag_pf_info.php:33
+#: src/usr/local/www/head.inc:411 src/usr/local/www/diag_pf_info.php:33
 msgid "pfInfo"
 msgstr "pf정보"
 
-#: src/usr/local/www/head.inc:414 src/usr/local/www/diag_smart.php:38
+#: src/usr/local/www/head.inc:415 src/usr/local/www/diag_smart.php:38
 #: src/usr/local/www/widgets/include/smart_status.inc:25
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:69
 msgid "S.M.A.R.T. Status"
 msgstr "S.M.A.R.T. 상태"
 
-#: src/usr/local/www/head.inc:428
+#: src/usr/local/www/head.inc:429
 msgid "Bug Database"
 msgstr "버그 데이터베이스"
 
-#: src/usr/local/www/head.inc:431
+#: src/usr/local/www/head.inc:432
 msgid "User Forum"
 msgstr "사용자 포럼"
 
-#: src/usr/local/www/head.inc:432
+#: src/usr/local/www/head.inc:433
 msgid "Documentation"
 msgstr "도큐멘데이션"
 
-#: src/usr/local/www/head.inc:433
+#: src/usr/local/www/head.inc:434
 msgid "Paid Support"
 msgstr "유료 지원"
 
-#: src/usr/local/www/head.inc:434
+#: src/usr/local/www/head.inc:435
 msgid "pfSense Book"
 msgstr "pfSense 책"
 
-#: src/usr/local/www/head.inc:435
+#: src/usr/local/www/head.inc:436
 msgid "FreeBSD Handbook"
 msgstr "FreeBSD 핸드북"
 
-#: src/usr/local/www/head.inc:436
+#: src/usr/local/www/head.inc:437
 msgid "User survey"
 msgstr ""
 
-#: src/usr/local/www/head.inc:528 src/usr/local/www/head.inc:734
+#: src/usr/local/www/head.inc:529 src/usr/local/www/head.inc:735
 msgid "Notices"
 msgstr "알림"
 
-#: src/usr/local/www/head.inc:556
+#: src/usr/local/www/head.inc:557
 #, php-format
 msgid ""
 "%sWARNING:%s The 'admin' account password is set to the default value.  %s "
 "Change the password in the User Manager.%s"
 msgstr "%s경고:%s 'admin' 계정 암호가 기본값으로 설정되었습니다. %s 사용자 관리자에서 암호를 변경합니다.%s"
 
-#: src/usr/local/www/head.inc:583
+#: src/usr/local/www/head.inc:584
 msgid "Save dashboard layout"
 msgstr "대시보드 레이아웃 저장"
 
-#: src/usr/local/www/head.inc:591
+#: src/usr/local/www/head.inc:592
 msgid "Available widgets"
 msgstr "사용 가능한 위젯"
 
-#: src/usr/local/www/head.inc:599
+#: src/usr/local/www/head.inc:600
 msgid "Log filter"
 msgstr "로그 필터"
 
-#: src/usr/local/www/head.inc:610
+#: src/usr/local/www/head.inc:611
 msgid "Manage log"
 msgstr "로그 관리"
 
-#: src/usr/local/www/head.inc:628
+#: src/usr/local/www/head.inc:629
 msgid "Refresh Graph"
 msgstr "그래프 새로 고침"
 
-#: src/usr/local/www/head.inc:633
+#: src/usr/local/www/head.inc:634
 msgid "Export Graph"
 msgstr "그래프 내보내기"
 
-#: src/usr/local/www/head.inc:678
+#: src/usr/local/www/head.inc:679
 msgid "Help for items on this page"
 msgstr "이 페이지의 항목에 대한 도움말"
 
-#: src/usr/local/www/head.inc:690
+#: src/usr/local/www/head.inc:691
 #, php-format
 msgid ""
 "%1$s%3$s is booting, then packages will be reinstalled in the background."
@@ -24277,7 +24301,7 @@ msgstr ""
 "%1$s%3$s를 부팅한 다음 패키지를 배경에 다시 설치합니다. %2$s%1$s이 작업이 완료될 때까지 GUI를 변경하지 마십시오."
 "%2$s"
 
-#: src/usr/local/www/head.inc:695
+#: src/usr/local/www/head.inc:696
 #, php-format
 msgid ""
 "%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
@@ -24286,7 +24310,7 @@ msgstr ""
 "%1$sPackages가 현재 백그라운드에서 다시 설치되고 있습니다.%2$s%1$s이 작업이 완료될 때까지 GUI를 변경하지 마십시오. "
 "%2$s"
 
-#: src/usr/local/www/head.inc:698
+#: src/usr/local/www/head.inc:699
 #, php-format
 msgid ""
 "%1$sIf the above message is still displayed after a couple of hours, use the "
@@ -24296,15 +24320,15 @@ msgstr ""
 "%1$s몇 시간 후에도 위의 메시지가 계속 표시되면 %3$s 페이지의 '패키지 잠금 지우기' 버튼을 사용하여 패키지를 수동으로 다시 "
 "설치하십시오. %2$s"
 
-#: src/usr/local/www/head.inc:714
+#: src/usr/local/www/head.inc:715
 msgid "This page is currently being managed by a remote machine."
 msgstr "이 페이지는 현재 원격 시스템에서 관리되고 있습니다."
 
-#: src/usr/local/www/head.inc:773
+#: src/usr/local/www/head.inc:774
 msgid "Close"
 msgstr "닫기"
 
-#: src/usr/local/www/head.inc:775
+#: src/usr/local/www/head.inc:776
 msgid "Mark All as Read"
 msgstr "모두 읽은 상태로 표시"
 
@@ -24365,239 +24389,255 @@ msgid ""
 "Schedules act as placeholders for time ranges to be used in firewall rules."
 msgstr "스케줄은 방화벽 규칙에 사용할 시간 범위의 자리 표시자로 작동합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:227
+#: src/usr/local/www/vpn_ipsec_phase1.php:228
 msgid "EAP-MSChapv2 can only be used with IKEv2 type VPNs."
 msgstr "EAP-MSChapv2는 IKEv2 유형 VPN에서만 사용할 수 있습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:232
+#: src/usr/local/www/vpn_ipsec_phase1.php:233
 msgid "EAP-TLS can only be used with IKEv2 type VPNs."
 msgstr "EAP-TLS는 IKEv2 유형 VPN에만 사용할 수 있습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:237
+#: src/usr/local/www/vpn_ipsec_phase1.php:238
 msgid "EAP-RADIUS can only be used with IKEv2 type VPNs."
 msgstr "EAP-RADIUS는 IKEv2 유형 VPNs와 함께만 사용할 수 있습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:258
+#: src/usr/local/www/vpn_ipsec_phase1.php:259
 msgid "Token Certificate"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:258
+#: src/usr/local/www/vpn_ipsec_phase1.php:259
 msgid "Token PIN"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:266
+#: src/usr/local/www/vpn_ipsec_phase1.php:267
 msgid "Remote gateway"
 msgstr "원격 게이트웨이"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:277
-msgid "Rekey Time must be an integer."
-msgstr ""
-
-#: src/usr/local/www/vpn_ipsec_phase1.php:280
-msgid "Reauth Time must be an integer."
+#: src/usr/local/www/vpn_ipsec_phase1.php:279
+#: src/usr/local/www/vpn_ipsec_phase2.php:377
+msgid "Life Time must be an integer."
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:283
-msgid "Over Time must be an integer."
+msgid ""
+"Life Time cannot be set to the same value as Rekey Time or Reauth Time."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:287
+#: src/usr/local/www/vpn_ipsec_phase1.php:286
+msgid "Life Time must be larger than Rekey Time and Reauth Time."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:290
+#: src/usr/local/www/vpn_ipsec_phase2.php:387
+msgid "Rekey Time must be an integer."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:293
+msgid "Reauth Time must be an integer."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:296
+#: src/usr/local/www/vpn_ipsec_phase2.php:390
+msgid "Rand Time must be an integer."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:300
 msgid "Invalid Child SA Close Action."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:292
+#: src/usr/local/www/vpn_ipsec_phase1.php:305
 msgid "A valid remote gateway address or host name must be specified."
 msgstr "올바른 원격 게이트웨이 주소 또는 호스트 이름을 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:294
+#: src/usr/local/www/vpn_ipsec_phase1.php:307
 msgid ""
 "A valid remote gateway IPv4 address must be specified or protocol needs to "
 "be changed to IPv6"
 msgstr "올바른 원격 게이트웨이 IPv4 주소를 지정하거나 프로토콜을 IPv6으로 변경해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:296
+#: src/usr/local/www/vpn_ipsec_phase1.php:309
 msgid ""
 "A valid remote gateway IPv6 address must be specified or protocol needs to "
 "be changed to IPv4"
 msgstr "올바른 원격 게이트웨이 IPv6 주소를 지정하거나 프로토콜을 IPv4로 변경해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:302
+#: src/usr/local/www/vpn_ipsec_phase1.php:315
 #: src/usr/local/www/vpn_ipsec_settings.php:113
 msgid "The IKE port number is invalid."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:310
+#: src/usr/local/www/vpn_ipsec_phase1.php:323
 #: src/usr/local/www/vpn_ipsec_settings.php:121
 msgid "The NAT-T port number is invalid."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:317
+#: src/usr/local/www/vpn_ipsec_phase1.php:330
 #: src/usr/local/www/vpn_ipsec_settings.php:128
 msgid "IKE and NAT-T port numbers must be different."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:328
+#: src/usr/local/www/vpn_ipsec_phase1.php:341
 #, php-format
 msgid "The remote gateway \"%1$s\" is already used by phase1 \"%2$s\"."
 msgstr "원격 게이트웨이 \"%1$s\"는 이미 1단계 \"%2$s\"에서 사용되고 있습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:337
+#: src/usr/local/www/vpn_ipsec_phase1.php:350
 msgid ""
 "The remote gateway \"0.0.0.0\" or \"::\" address can only be used with "
 "\"Responder Only\"."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:340
+#: src/usr/local/www/vpn_ipsec_phase1.php:353
 msgid ""
 "The remote gateway \"0.0.0.0\" or \"::\" address can not be used with IP "
 "address peer identifier."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:349
+#: src/usr/local/www/vpn_ipsec_phase1.php:362
 msgid "There is a Phase 2 using IPv6, cannot use IPv4."
 msgstr "IPv6을 사용하는 2단계에서는 IPv4를 사용할 수 없습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:353
+#: src/usr/local/www/vpn_ipsec_phase1.php:366
 msgid "There is a Phase 2 using IPv4, cannot use IPv6."
 msgstr "IPv4을 사용하는 2단계에서는 IPv6를 사용할 수 없습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:367
+#: src/usr/local/www/vpn_ipsec_phase1.php:380
 msgid "Please enter an address for 'My Identifier'"
 msgstr "'내 식별자'의 주소를 입력하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:371
+#: src/usr/local/www/vpn_ipsec_phase1.php:384
 msgid "Please enter a keyid tag for 'My Identifier'"
 msgstr "'내 식별자'의 키 ID 태그를 입력하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:375
+#: src/usr/local/www/vpn_ipsec_phase1.php:388
 msgid "Please enter a fully qualified domain name for 'My Identifier'"
 msgstr "'내 식별자'에 대해 정규화된 도메인 이름을 입력하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:379
+#: src/usr/local/www/vpn_ipsec_phase1.php:392
 msgid ""
 "Please enter a user and fully qualified domain name for 'My Identifier'"
 msgstr "'내 식별자'에 대한 사용자 및 정규화된 도메인 이름을 입력하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:383
+#: src/usr/local/www/vpn_ipsec_phase1.php:396
 msgid "Please enter a dynamic domain name for 'My Identifier'"
 msgstr "'내 식별자'의 다이나믹 도메인 이름을 입력하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:387
+#: src/usr/local/www/vpn_ipsec_phase1.php:400
 msgid "A valid IP address for 'My identifier' must be specified."
 msgstr "'내 식별자'에 대한 올바른 IP 주소를 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:391
+#: src/usr/local/www/vpn_ipsec_phase1.php:404
 msgid "A valid domain name for 'My identifier' must be specified."
 msgstr "'내 식별자'에 대한 올바른 도메인 이름을 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:396
+#: src/usr/local/www/vpn_ipsec_phase1.php:409
 msgid "A valid FQDN for 'My identifier' must be specified."
 msgstr "'내 식별자'에 올바른 FQDN을 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:403
+#: src/usr/local/www/vpn_ipsec_phase1.php:416
 msgid ""
 "A valid User FQDN in the form of user@my.domain.com for 'My identifier' must "
 "be specified."
 msgstr "'내 식별자'에 대해 user@my.domain.com 형식의 유효한 사용자 FQDN을 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:409
+#: src/usr/local/www/vpn_ipsec_phase1.php:422
 msgid "A valid Dynamic DNS address for 'My identifier' must be specified."
 msgstr "'내 식별자'에 올바른 동적 DNS 주소를 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:422
+#: src/usr/local/www/vpn_ipsec_phase1.php:435
 msgid "Please enter an address for 'Peer Identifier'"
 msgstr "'피어(Peer) 식별자' 주소를 입력하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:426
+#: src/usr/local/www/vpn_ipsec_phase1.php:439
 msgid "Please enter a keyid tag for 'Peer Identifier'"
 msgstr "'주체 식별자'에 대한 키id 태그를 입력하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:430
+#: src/usr/local/www/vpn_ipsec_phase1.php:443
 msgid "Please enter a fully qualified domain name for 'Peer Identifier'"
 msgstr "'Peer 식별자'에 대한 정규화된 도메인 이름을 입력하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:434
+#: src/usr/local/www/vpn_ipsec_phase1.php:447
 msgid ""
 "Please enter a user and fully qualified domain name for 'Peer Identifier'"
 msgstr "'Peer 식별자'에 대한 사용자 및 정규화된 도메인 이름을 입력하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:438
+#: src/usr/local/www/vpn_ipsec_phase1.php:451
 msgid "A valid IP address for 'Peer identifier' must be specified."
 msgstr "'Peer 식별자'에 대한 올바른 IP 주소를 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:442
+#: src/usr/local/www/vpn_ipsec_phase1.php:455
 msgid "A valid domain name for 'Peer identifier' must be specified."
 msgstr "'피어 식별자'에 대한 올바른 도메인 이름을 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:447
+#: src/usr/local/www/vpn_ipsec_phase1.php:460
 msgid "A valid FQDN for 'Peer identifier' must be specified."
 msgstr "'피어 식별자'에 올바른 FQDN을 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:454
+#: src/usr/local/www/vpn_ipsec_phase1.php:467
 msgid ""
 "A valid User FQDN in the form of user@my.domain.com for 'Peer identifier' "
 "must be specified."
 msgstr "'피어(Peer) 식별자'에 대해 user@my.domain.com 형식의 유효한 사용자 FQDN을 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:461
+#: src/usr/local/www/vpn_ipsec_phase1.php:474
 msgid "A numeric value must be specified for DPD delay."
 msgstr "DPD 지연에 대해 숫자 값을 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:465
+#: src/usr/local/www/vpn_ipsec_phase1.php:478
 msgid "A numeric value must be specified for DPD retries."
 msgstr "DPD 재시도에는 숫자 값을 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:470
+#: src/usr/local/www/vpn_ipsec_phase1.php:483
 msgid "A numeric value must be specified for TFC bytes."
 msgstr "TFC 바이트에는 숫자 값을 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:474
+#: src/usr/local/www/vpn_ipsec_phase1.php:487
 msgid "Valid arguments for IKE type are v1, v2 or auto"
 msgstr "IKE 유형에 유효한 인수는 v1, v2 또는 자동입니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:479
+#: src/usr/local/www/vpn_ipsec_phase1.php:492
 msgid "Encryption Algorithm AES-GCM can only be used with IKEv2"
 msgstr "암호화 알고리즘 AES-GCM은 IKEv2에서만 사용할 수 있습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:489
+#: src/usr/local/www/vpn_ipsec_phase1.php:502
 msgid ""
 "A valid RADIUS server must be selected for user authentication on the Mobile "
 "Clients tab in order to set EAP-RADIUS as the authentication method."
 msgstr ""
 "EAP-RADIUS를 인증 방법으로 설정하려면 모바일 클라이언트 탭에서 사용자 인증을 위해 유효한 RADIUS 서버를 선택해야 합니다. "
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:501
+#: src/usr/local/www/vpn_ipsec_phase1.php:514
 msgid ""
 "The selected ECDSA certificate does not use a curve compatible with IKEv2"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:634
+#: src/usr/local/www/vpn_ipsec_phase1.php:648
 msgid "Saved IPsec tunnel Phase 1 configuration."
 msgstr "저장된 IPsec 터널 1단계 구성."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:662
+#: src/usr/local/www/vpn_ipsec_phase1.php:676
 #, php-format
 msgid "GW Group %s"
 msgstr "GW 그룹 %s"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:743
-#: src/usr/local/www/vpn_ipsec_phase1.php:746
+#: src/usr/local/www/vpn_ipsec_phase1.php:757
+#: src/usr/local/www/vpn_ipsec_phase1.php:760
 msgid "Edit Phase 1"
 msgstr "1단계 편집"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:780
-#: src/usr/local/www/vpn_ipsec_phase1.php:1059
-#: src/usr/local/www/vpn_ipsec_phase2.php:701
+#: src/usr/local/www/vpn_ipsec_phase1.php:794
+#: src/usr/local/www/vpn_ipsec_phase1.php:1089
+#: src/usr/local/www/vpn_ipsec_phase2.php:721
 #: src/usr/local/www/interfaces.php:3121 src/usr/local/www/interfaces.php:3176
-#: src/usr/local/www/interfaces.php:3185 src/etc/inc/interfaces.inc:7193
+#: src/usr/local/www/interfaces.php:3185 src/etc/inc/interfaces.inc:7088
 msgid "Auto"
 msgstr "자동"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:778
+#: src/usr/local/www/vpn_ipsec_phase1.php:792
 msgid "*Key Exchange version"
 msgstr "*키 교환 버전"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:781
+#: src/usr/local/www/vpn_ipsec_phase1.php:795
 msgid ""
 "Select the Internet Key Exchange protocol version to be used. Auto uses "
 "IKEv2 when initiator, and accepts either IKEv1 or IKEv2 as responder."
@@ -24605,94 +24645,94 @@ msgstr ""
 "사용할 인터넷 키 교환 프로토콜 버전을 선택합니다. 자동은 이니시에이터가 IKEv2를 사용하고 IKEv1 또는 IKEv2를 응답자로 "
 "사용합니다. "
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:785
+#: src/usr/local/www/vpn_ipsec_phase1.php:799
 msgid "*Internet Protocol"
 msgstr "*인터넷 프로토콜"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:788
+#: src/usr/local/www/vpn_ipsec_phase1.php:802
 msgid "Select the Internet Protocol family."
 msgstr "인터넷 프로토콜 패밀리를 선택합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:795
+#: src/usr/local/www/vpn_ipsec_phase1.php:809
 msgid "Select the interface for the local endpoint of this phase1 entry."
 msgstr "이 단계1 항목의 로컬 끝점에 대한 인터페이스를 선택합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:798
+#: src/usr/local/www/vpn_ipsec_phase1.php:812
 msgid "*Remote Gateway"
 msgstr "*원격 게이트웨이"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:807
+#: src/usr/local/www/vpn_ipsec_phase1.php:821
 msgid ""
 "Use '0.0.0.0' to allow connections from any IPv4 address or '::' to allow "
 "connections from any IPv6 address.<br/>Responder Only must be set and Peer "
 "IP Address cannot be used for Remote Identifier."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:805
+#: src/usr/local/www/vpn_ipsec_phase1.php:819
 #, php-format
 msgid ""
 "Enter the public IP address or host name of the remote gateway.%1$s%2$s%3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:813
+#: src/usr/local/www/vpn_ipsec_phase1.php:827
 msgid "Remote IKE Port"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:817
+#: src/usr/local/www/vpn_ipsec_phase1.php:831
 msgid ""
 "UDP port for IKE on the remote gateway. Leave empty for default automatic "
 "behavior (500/4500)."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:820
+#: src/usr/local/www/vpn_ipsec_phase1.php:834
 msgid "Remote NAT-T Port"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:826
+#: src/usr/local/www/vpn_ipsec_phase1.php:840
 msgid ""
 "If the IKE port is empty and NAT-T contains a value, the tunnel will use "
 "only NAT-T."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:824
+#: src/usr/local/www/vpn_ipsec_phase1.php:838
 #, php-format
 msgid "UDP port for NAT-T on the remote gateway.%1$s%2$s%3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:841
+#: src/usr/local/www/vpn_ipsec_phase1.php:855
 msgid "Phase 1 Proposal (Authentication)"
 msgstr "1단계 제안(인증)"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:848
+#: src/usr/local/www/vpn_ipsec_phase1.php:862
 msgid "Must match the setting chosen on the remote side."
 msgstr "원격에서 선택한 설정과 일치해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:854
+#: src/usr/local/www/vpn_ipsec_phase1.php:868
 msgid "Main"
 msgstr "Main"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:852
+#: src/usr/local/www/vpn_ipsec_phase1.php:866
 msgid "*Negotiation mode"
 msgstr "*협상 모드"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:855
+#: src/usr/local/www/vpn_ipsec_phase1.php:869
 msgid "Aggressive is more flexible, but less secure."
 msgstr "활동적인 것은 더 유연하지만, 덜 안전합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:857
+#: src/usr/local/www/vpn_ipsec_phase1.php:871
 msgid "*My identifier"
 msgstr "*내 식별자"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:875
+#: src/usr/local/www/vpn_ipsec_phase1.php:889
 msgid "*Peer identifier"
 msgstr "*피어 식별자"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:893
+#: src/usr/local/www/vpn_ipsec_phase1.php:907
 msgid ""
 "This is known as the \"group\" setting on some VPN client implementations"
 msgstr "일부 VPN 클라이언트 실행에서 \"그룹\" 설정이라고 알려져있습다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:903
+#: src/usr/local/www/vpn_ipsec_phase1.php:917
 #, php-format
 msgid ""
 "Enter the Pre-Shared Key string. This key must match on both peers. %1$sThis "
@@ -24702,144 +24742,166 @@ msgstr ""
 "사전 공유 키 문자열을 입력합니다. 이 키는 두 피어 모두에서 일치해야 합니다. %1$s이 키는 터널과 터널의 내용을 보호하기 위해 길고 "
 "랜덤이어야 합니다. 사전 공유 키가 약하면 터널이 손상될 수 있습니다.%1$s"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:907
+#: src/usr/local/www/vpn_ipsec_phase1.php:921
 msgid "*My Certificate"
 msgstr "*내 인증서"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:910
+#: src/usr/local/www/vpn_ipsec_phase1.php:924
 msgid "Select a certificate previously configured in the Certificate Manager."
 msgstr "인증서 관리자에 이전에 구성된 인증서를 선택하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:914
+#: src/usr/local/www/vpn_ipsec_phase1.php:928
 msgid "*PKCS#11 Certificate"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:917
+#: src/usr/local/www/vpn_ipsec_phase1.php:931
 msgid "Select a Certificate from an attached PKCS#11 token device"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:921
+#: src/usr/local/www/vpn_ipsec_phase1.php:935
 msgid "*PKCS#11 PIN"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:924
+#: src/usr/local/www/vpn_ipsec_phase1.php:938
 msgid "Enter PKCS#11 token PIN number"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:931
+#: src/usr/local/www/vpn_ipsec_phase1.php:945
 msgid ""
 "Select a certificate authority previously configured in the Certificate "
 "Manager."
 msgstr "인증서 관리자에 이전에 구성된 인증 기관을 선택하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:936
+#: src/usr/local/www/vpn_ipsec_phase1.php:950
 msgid "Phase 1 Proposal (Encryption Algorithm)"
 msgstr "1단계 제안(암호화 알고리즘)"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:939
+#: src/usr/local/www/vpn_ipsec_phase1.php:953
 msgid "*Encryption Algorithm"
 msgstr "*암호화 알고리즘"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:947
+#: src/usr/local/www/vpn_ipsec_phase1.php:961
 msgid "Algorithm"
 msgstr "알고리즘"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:958
+#: src/usr/local/www/vpn_ipsec_phase1.php:972
 msgid "*Hash Algorithm"
 msgstr "해쉬 알고리즘"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:961
+#: src/usr/local/www/vpn_ipsec_phase1.php:975
 msgid "Hash"
 msgstr "해쉬"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:965
+#: src/usr/local/www/vpn_ipsec_phase1.php:979
 msgid "*DH Group"
 msgstr "*DH 그룹"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:968
+#: src/usr/local/www/vpn_ipsec_phase1.php:982
 msgid "DH Group"
 msgstr "DH 그룹"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:984
+#: src/usr/local/www/vpn_ipsec_phase1.php:998
 msgid "*PRF Algorithm"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:987
+#: src/usr/local/www/vpn_ipsec_phase1.php:1001
 msgid "PRF"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:992
+#: src/usr/local/www/vpn_ipsec_phase1.php:1006
 msgid ""
 "Note: Blowfish, 3DES, CAST128, MD5, SHA1, and DH groups 1, 2, 5, 22, 23, and "
 "24 provide weak security and should be avoided."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:996
+#: src/usr/local/www/vpn_ipsec_phase1.php:1010
 msgid "Add Algorithm"
 msgstr "알고리즘 추가"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1005
+#: src/usr/local/www/vpn_ipsec_phase1.php:1019
+#: src/usr/local/www/vpn_ipsec_phase2.php:764
 msgid "Expiration and Replacement"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1009
-msgid "Rekey Time"
-msgstr ""
-
-#: src/usr/local/www/vpn_ipsec_phase1.php:1013
-msgid ""
-"Time, in seconds, before an IKE SA establishes new keys. This works without "
-"interruption. Only supported by IKEv2, and is recommended for use with IKEv2."
-" Leave blank or enter a value of 0 to disable."
-msgstr ""
-
-#: src/usr/local/www/vpn_ipsec_phase1.php:1019
-msgid "Reauth Time"
-msgstr ""
-
 #: src/usr/local/www/vpn_ipsec_phase1.php:1023
-msgid ""
-"Time, in seconds, before an IKE SA is torn down and recreated from scratch, "
-"including authentication. This can be disruptive unless both sides support "
-"make-before-break and overlapping IKE SA entries. Supported by IKEv1 and "
-"IKEv2. Leave blank or enter a value of 0 to disable."
+#: src/usr/local/www/vpn_ipsec_phase2.php:768
+msgid "Life Time"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1029
-msgid "Over Time"
-msgstr ""
-
-#: src/usr/local/www/vpn_ipsec_phase1.php:1033
+#: src/usr/local/www/vpn_ipsec_phase1.php:1027
 #, php-format
 msgid ""
 "Hard IKE SA life time, in seconds, after which the IKE SA will be expired. "
-"This time is relative to reauthentication and rekey time. If left empty, "
-"defaults to 10% of whichever timer is higher (reauth or rekey)"
+"Must be larger than Rekey Time and Reauth Time. Cannot be set to the same "
+"value as Rekey Time or Reauth Time. If left empty, defaults to 110% of "
+"whichever timer is higher (reauth or rekey)"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1043
+#: src/usr/local/www/vpn_ipsec_phase1.php:1034
+#: src/usr/local/www/vpn_ipsec_phase2.php:780
+msgid "Rekey Time"
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1038
+msgid ""
+"Time, in seconds, before an IKE SA establishes new keys. This works without "
+"interruption. Cannot be set to the same value as Life Time. Only supported "
+"by IKEv2, and is recommended for use with IKEv2. Leave blank to use a "
+"default value of 90% Life Time when using IKEv2. Enter a value of 0 to "
+"disable."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1046
+msgid "Reauth Time"
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1050
+msgid ""
+"Time, in seconds, before an IKE SA is torn down and recreated from scratch, "
+"including authentication. This can be disruptive unless both sides support "
+"make-before-break and overlapping IKE SA entries. Cannot be set to the same "
+"value as Life Time. Supported by IKEv1 and IKEv2. Leave blank to use a "
+"default value of 90% Life Time when using IKEv1. Enter a value of 0 to "
+"disable."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1059
+#: src/usr/local/www/vpn_ipsec_phase2.php:793
+msgid "Rand Time"
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1063
+#, php-format
+msgid ""
+"A random value up to this amount will be subtracted from Rekey Time/Reauth "
+"Time to avoid simultaneous renegotiation. If left empty, defaults to 10% of "
+"Life Time. Enter 0 to disable randomness, but be aware that simultaneous "
+"renegotiation can lead to duplicate security associations."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1073
 msgid "Responder Only"
 msgstr "응답기 전용"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1050
+#: src/usr/local/www/vpn_ipsec_phase1.php:1080
 msgid "Child SA Close Action"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1053
+#: src/usr/local/www/vpn_ipsec_phase1.php:1083
 msgid ""
 "Set this option to control the behavior when the remote peer unexpectedly "
 "closes a child SA (P2)"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1059
+#: src/usr/local/www/vpn_ipsec_phase1.php:1089
 msgid "Force"
 msgstr "강제"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1057
+#: src/usr/local/www/vpn_ipsec_phase1.php:1087
 msgid "NAT Traversal"
 msgstr "NAT 순회"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1060
+#: src/usr/local/www/vpn_ipsec_phase1.php:1090
 msgid ""
 "Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in "
 "UDP packets) if needed, which can help with clients that are behind "
@@ -24848,15 +24910,15 @@ msgstr ""
 "필요에 따라 제한적인 방화벽 뒤에 있는 클라이언트에 도움이 될 수 있는 NAT-T(예, UDP 패킷의 ESP 캡슐화)를 사용하려면 이 "
 "옵션을 설정하십시오. "
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1065
+#: src/usr/local/www/vpn_ipsec_phase1.php:1095
 msgid "MOBIKE"
 msgstr "MOBIKE"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1068
+#: src/usr/local/www/vpn_ipsec_phase1.php:1098
 msgid "Set this option to control the use of MOBIKE"
 msgstr "MOBIKE 사용을 제어하려면 이 옵션을 설정합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1073
+#: src/usr/local/www/vpn_ipsec_phase1.php:1103
 #, php-format
 msgid ""
 "Enable this to allow multiple phase 1 configurations with the same endpoint. "
@@ -24865,45 +24927,45 @@ msgid ""
 "Static routes can override this behavior."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1072
+#: src/usr/local/www/vpn_ipsec_phase1.php:1102
 msgid "Gateway duplicates"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1081
+#: src/usr/local/www/vpn_ipsec_phase1.php:1111
 msgid "Split connections"
 msgstr "연결 분할"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1088
+#: src/usr/local/www/vpn_ipsec_phase1.php:1118
 msgid "PRF Selection"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1091
+#: src/usr/local/www/vpn_ipsec_phase1.php:1121
 msgid ""
 "Manual PRF selection is typically not required, but can be useful in "
 "combination with AEAD Encryption Algorithms such as AES-GCM"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1114
+#: src/usr/local/www/vpn_ipsec_phase1.php:1144
 msgid "Dead Peer Detection"
 msgstr "데드(Dead) 피어 탐지"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1121
+#: src/usr/local/www/vpn_ipsec_phase1.php:1151
 msgid "Delay"
 msgstr "지연 "
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1124
+#: src/usr/local/www/vpn_ipsec_phase1.php:1154
 msgid "Delay between requesting peer acknowledgement."
 msgstr "피어 확인을 요청하는 사이의 지연."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1128
+#: src/usr/local/www/vpn_ipsec_phase1.php:1158
 msgid "Max failures"
 msgstr "최대 실패 수"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1131
+#: src/usr/local/www/vpn_ipsec_phase1.php:1161
 msgid "Number of consecutive failures allowed before disconnect. "
 msgstr "연결 끊기 전에 허용되는 연속 장애 수입니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1419
+#: src/usr/local/www/vpn_ipsec_phase1.php:1449
 msgid "Generate new Pre-Shared Key"
 msgstr "새 사전 공유 키 생성"
 
@@ -25144,15 +25206,15 @@ msgstr ""
 msgid "This bridge cannot be deleted because it is assigned as an interface."
 msgstr "이 브리지는 인터페이스로 지정되었으므로 삭제할 수 없습니다."
 
-#: src/usr/local/www/interfaces_bridge.php:96
+#: src/usr/local/www/interfaces_bridge.php:95
 msgid "Bridge Interfaces"
 msgstr "브리지 인터페이스"
 
-#: src/usr/local/www/interfaces_bridge.php:139
+#: src/usr/local/www/interfaces_bridge.php:138
 msgid "Edit interface bridge"
 msgstr "인터페이스 브리지 편집"
 
-#: src/usr/local/www/interfaces_bridge.php:140
+#: src/usr/local/www/interfaces_bridge.php:139
 msgid "Delete interface bridge"
 msgstr "인터페이스 브리지 삭제"
 
@@ -25746,6 +25808,12 @@ msgstr "터널 로컬 주소가 IPv6인 경우 Gif 터널 원격 주소는 IPv6�
 msgid "The gif tunnel subnet must be an integer between 1 and 128."
 msgstr "Gif 터널 서브넷은 1에서 128 사이의 정수여야 합니다."
 
+#: src/usr/local/www/interfaces_gif_edit.php:94
+msgid ""
+"The alias IP address family has to match the family of the remote peer "
+"address."
+msgstr "별칭 IP 주소 패밀리는 원격 피어 주소의 패밀리와 일치해야 합니다."
+
 #: src/usr/local/www/interfaces_gif_edit.php:104
 #, php-format
 msgid "A gif with the network %s is already defined."
@@ -26127,43 +26195,43 @@ msgstr "피어 안함"
 msgid "notrap"
 msgstr "트랩 안함"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:137
+#: src/usr/local/www/vpn_ipsec_phase2.php:139
 msgid "A valid ikeid must be specified."
 msgstr "올바른 ikeid를 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:142
+#: src/usr/local/www/vpn_ipsec_phase2.php:144
 msgid "Local network type"
 msgstr "로컬 네트워크 유형"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:142
+#: src/usr/local/www/vpn_ipsec_phase2.php:144
 msgid "Unique Identifier"
 msgstr "고유 식별자"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:145
+#: src/usr/local/www/vpn_ipsec_phase2.php:147
 msgid "Remote network type"
 msgstr "원격 네트워크 유형"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:154
+#: src/usr/local/www/vpn_ipsec_phase2.php:156
 msgid "A valid local network bit count must be specified."
 msgstr "올바른 로컬 네트워크 비트 수를 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:158
+#: src/usr/local/www/vpn_ipsec_phase2.php:160
 msgid "A valid local network IP address must be specified."
 msgstr "올바른 로컬 네트워크 IP 주소를 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:161
+#: src/usr/local/www/vpn_ipsec_phase2.php:163
 msgid "VTI requires a valid local address"
 msgstr "VTI에는 올바른 로컬 주소가 필요합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:164
+#: src/usr/local/www/vpn_ipsec_phase2.php:166
 msgid "An IPv4 local address was specified but the mode is not set to tunnel"
 msgstr "IPv4 로컬 주소가 지정되었지만 모드가 터널로 설정되지 않았습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:166
+#: src/usr/local/www/vpn_ipsec_phase2.php:168
 msgid "An IPv6 local address was specified but the mode is not set to tunnel6"
 msgstr "IPv6 로컬 주소가 지정되었지만 모드가 tunnel6으로 설정되지 않았습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:171
+#: src/usr/local/www/vpn_ipsec_phase2.php:173
 msgid ""
 "VTI requires a valid local network or IP address for its endpoint address, "
 "it cannot use a network macro for a different interface (e.g. LAN)."
@@ -26171,169 +26239,197 @@ msgstr ""
 "VTI에는 끝점 주소에 올바른 로컬 네트워크 또는 IP 주소가 필요하며, 다른 인터페이스(예: LAN)에는 네트워크 매크로를 사용할 수 "
 "없습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:182
-#: src/usr/local/www/vpn_ipsec_phase2.php:212
+#: src/usr/local/www/vpn_ipsec_phase2.php:184
+#: src/usr/local/www/vpn_ipsec_phase2.php:214
 msgid "Invalid Local Network."
 msgstr "잘못된 로컬 네트워크"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:182
-#: src/usr/local/www/vpn_ipsec_phase2.php:212
+#: src/usr/local/www/vpn_ipsec_phase2.php:184
+#: src/usr/local/www/vpn_ipsec_phase2.php:214
 #, php-format
 msgid "%s has no subnet."
 msgstr "%s에 서브넷이 없습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:190
+#: src/usr/local/www/vpn_ipsec_phase2.php:192
 msgid "A valid NAT local network bit count must be specified."
 msgstr "올바른 NAT 로컬 네트워크 비트 수를 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:193
+#: src/usr/local/www/vpn_ipsec_phase2.php:195
 msgid ""
 "A network type address cannot be configured for NAT while only an address "
 "type is selected for local source."
 msgstr "로컬 소스에 대해 주소 유형만 선택되는 동안에는 NAT에 대해 네트워크 유형 주소를 구성할 수 없습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:197
+#: src/usr/local/www/vpn_ipsec_phase2.php:199
 msgid "A valid NAT local network IP address must be specified."
 msgstr "올바른 NAT 로컬 네트워크 IP 주소를 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:199
+#: src/usr/local/www/vpn_ipsec_phase2.php:201
 msgid ""
 "A valid NAT local network IPv4 address must be specified or Mode needs to be "
 "changed to IPv6"
 msgstr "올바른 NAT 로컬 네트워크 IPv4 주소를 지정하거나 모드를 IPv6으로 변경해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:201
+#: src/usr/local/www/vpn_ipsec_phase2.php:203
 msgid ""
 "A valid NAT local network IPv6 address must be specified or Mode needs to be "
 "changed to IPv4"
 msgstr "올바른 NAT 로컬 네트워크 IPv6 주소를 지정하거나 모드를 IPv4로 변경해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:220
+#: src/usr/local/www/vpn_ipsec_phase2.php:222
 msgid "A valid remote network bit count must be specified."
 msgstr "올바른 원격 네트워크 비트 수를 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:224
+#: src/usr/local/www/vpn_ipsec_phase2.php:226
 msgid "A valid remote network IP address must be specified."
 msgstr "올바른 원격 네트워크 IP 주소를 지정해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:227
+#: src/usr/local/www/vpn_ipsec_phase2.php:229
 msgid "VTI requires a valid remote address"
 msgstr "VTI에는 올바른 원격 주소가 필요합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:230
+#: src/usr/local/www/vpn_ipsec_phase2.php:232
 msgid "An IPv4 remote network was specified but the mode is not set to tunnel"
 msgstr "IPv4 원격 네트워크가 지정되었지만 모드가 터널로 설정되지 않았습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:232
+#: src/usr/local/www/vpn_ipsec_phase2.php:234
 msgid ""
 "An IPv6 remote network was specified but the mode is not set to tunnel6"
 msgstr "IPv6 원격 네트워크가 지정되었지만 모드가 터널6으로 설정되지 않았습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:241
+#: src/usr/local/www/vpn_ipsec_phase2.php:243
 msgid "VTI is not compatible with mobile IPsec."
 msgstr "VTI는 모바일 IPsec과 호환되지 않습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:262
+#: src/usr/local/www/vpn_ipsec_phase2.php:264
 msgid "Phase2 with this Local Network is already defined for mobile clients."
 msgstr "이 로컬 네트워크가 포함된 2단계는 모바일 클라이언트에 대해 이미 정의되어 있습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:295
+#: src/usr/local/www/vpn_ipsec_phase2.php:297
 msgid ""
 "Phase2 with this Local/Remote networks combination is already defined for "
 "this Phase1."
 msgstr "이 로컬/원격 네트워크 조합이 있는 2단계는 이 단계1에서 이미 정의되어 있습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:306
+#: src/usr/local/www/vpn_ipsec_phase2.php:308
 msgid ""
 "Cannot switch away from VTI while the interface is assigned. Remove the "
 "interface assignment before switching away from VTI."
 msgstr "인터페이스가 할당된 동안에는 VTI에서 전환할 수 없습니다. VTI에서 전환하기 전에 인터페이스 할당을 제거하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:341
-#: src/usr/local/www/vpn_ipsec_phase2.php:346
+#: src/usr/local/www/vpn_ipsec_phase2.php:343
+#: src/usr/local/www/vpn_ipsec_phase2.php:348
 msgid ""
 "The local and remote networks of a phase 2 entry cannot overlap the outside "
 "of the tunnel (interface and remote gateway) configured in its phase 1."
 msgstr "2단계 항목의 로컬 및 원격 네트워크는 1단계에서 구성한 터널(인터페이스 및 원격 게이트웨이) 외부와 겹칠 수 없습니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:360
+#: src/usr/local/www/vpn_ipsec_phase2.php:362
 msgid "At least one encryption algorithm must be selected."
 msgstr "암호화 알고리즘을 하나 이상 선택해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:365
+#: src/usr/local/www/vpn_ipsec_phase2.php:367
 msgid "At least one hashing algorithm needs to be selected."
 msgstr "해싱 알고리즘을 하나 이상 선택해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:373
-msgid "The P2 lifetime must be an integer."
-msgstr "P2 수명은 정수여야 합니다."
+#: src/usr/local/www/vpn_ipsec_phase2.php:380
+msgid "Life Time cannot be set to the same value as Rekey Time."
+msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:459
+#: src/usr/local/www/vpn_ipsec_phase2.php:383
+msgid "Life Time must be larger than Rekey Time."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase2.php:479
 msgid "Saved IPsec tunnel Phase 2 configuration."
 msgstr "저장된 IPsec 터널 2단계 구성"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:474
-#: src/usr/local/www/vpn_ipsec_phase2.php:478
+#: src/usr/local/www/vpn_ipsec_phase2.php:494
+#: src/usr/local/www/vpn_ipsec_phase2.php:498
 msgid "Edit Phase 2"
 msgstr "Phase 2 편집"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:582
+#: src/usr/local/www/vpn_ipsec_phase2.php:602
 msgid "*Local Network"
 msgstr "*로컬 네트워크"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:606
+#: src/usr/local/www/vpn_ipsec_phase2.php:626
 msgid "NAT/BINAT translation"
 msgstr "NAT/BINAT 변환"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:630
+#: src/usr/local/www/vpn_ipsec_phase2.php:650
 msgid ""
 "If NAT/BINAT is required on this network specify the address to be "
 "translated"
 msgstr "이 네트워크에서 NAT/BINAT가 필요한 경우 변환할 주소를 지정하십시오."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:634
+#: src/usr/local/www/vpn_ipsec_phase2.php:654
 msgid "*Remote Network"
 msgstr "*원격 네트워크"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:663
+#: src/usr/local/www/vpn_ipsec_phase2.php:683
 msgid "Phase 2 Proposal (SA/Key Exchange)"
 msgstr "2단계 제안(SA/Key Exchange)"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:670
+#: src/usr/local/www/vpn_ipsec_phase2.php:690
 msgid ""
 "Encapsulating Security Payload (ESP) is encryption, Authentication Header "
 "(AH) is authentication only."
 msgstr "ESP(캡슐화 보안 페이로드)는 암호화이며 AH(인증 헤더)는 오로지 인증 입니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:676
+#: src/usr/local/www/vpn_ipsec_phase2.php:696
 msgid "*Encryption Algorithms"
 msgstr "*암호화 알고리즘"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:707
+#: src/usr/local/www/vpn_ipsec_phase2.php:727
 msgid ""
 "Note: Blowfish, 3DES, and CAST128 provide weak security and should be "
 "avoided."
 msgstr "참고: Blowfish, 3DES 및 CAST128은 약한 보안을 제공하므로 피해야 합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:714
+#: src/usr/local/www/vpn_ipsec_phase2.php:734
 msgid "*Hash Algorithms"
 msgstr "*해쉬 알고리즘"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:726
+#: src/usr/local/www/vpn_ipsec_phase2.php:746
 msgid ""
 "Note: Hash is ignored with GCM algorithms. MD5 and SHA1 provide weak "
 "security and should be avoided."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:737
+#: src/usr/local/www/vpn_ipsec_phase2.php:757
 msgid "PFS key group"
 msgstr "PFS 키 그룹"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:747
-msgid "Specifies how often the connection must be rekeyed, in seconds"
-msgstr "연결이 키를 재생성해야 하는 빈도(초)를 지정합니다."
+#: src/usr/local/www/vpn_ipsec_phase2.php:772
+#, php-format
+msgid ""
+"Hard Child SA life time, in seconds, after which the Child SA will be "
+"expired. Must be larger than Rekey Time. Cannot be set to the same value as "
+"Rekey Time. If left empty, defaults to 110% of Rekey Time. If both Life Time "
+"and Rekey Time are empty, defaults to 3960."
+msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:755
+#: src/usr/local/www/vpn_ipsec_phase2.php:784
+msgid ""
+"Time, in seconds, before a Child SA establishes new keys. This works without "
+"interruption. Cannot be set to the same value as Life Time. Leave blank to "
+"use a default value of 90% Life Time. If both Life Time and Rekey Time are "
+"empty, defaults to 3600. Enter a value of 0 to disable, but be aware that "
+"when rekey is disabled, connections can be interrupted while new Child SA "
+"entries are negotiated."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase2.php:797
+#, php-format
+msgid ""
+"A random value up to this amount will be subtracted from Rekey Time to avoid "
+"simultaneous renegotiation. If left empty, defaults to 10% of Life Time. "
+"Enter 0 to disable randomness, but be aware that simultaneous renegotiation "
+"can lead to duplicate security associations."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase2.php:807
 msgid "Automatically ping host"
 msgstr "자동 호스트 통신상태 테스트"
 
@@ -30759,19 +30855,19 @@ msgid ""
 "This VLAN cannot be deleted because it is still being used as an interface."
 msgstr "이 VLAN은 여전히 인터페이스로 사용 중이므로 삭제할 수 없습니다."
 
-#: src/usr/local/www/interfaces_vlan.php:91
+#: src/usr/local/www/interfaces_vlan.php:90
 msgid "VLAN Interfaces"
 msgstr "VLAN 인터페이스"
 
-#: src/usr/local/www/interfaces_vlan.php:107
+#: src/usr/local/www/interfaces_vlan.php:106
 msgid "Edit VLAN"
 msgstr "VLAN 편집"
 
-#: src/usr/local/www/interfaces_vlan.php:107
+#: src/usr/local/www/interfaces_vlan.php:106
 msgid "Delete VLAN"
 msgstr "VLAN 삭제"
 
-#: src/usr/local/www/interfaces_vlan.php:147
+#: src/usr/local/www/interfaces_vlan.php:146
 #, php-format
 msgid ""
 "Not all drivers/NICs support 802.1Q VLAN tagging properly. %1$sOn cards that "
@@ -30783,7 +30879,7 @@ msgstr ""
 "카드에서는 VLAN 태깅이 계속 작동하지만 MTU 감소로 인해 문제가 발생할 수 있습니다.%1$s지원되는 카드에 대한 자세한 내용은 "
 "%2$s 핸드북을 참조하십시오. "
 
-#: src/usr/local/www/interfaces_vlan.php:154
+#: src/usr/local/www/interfaces_vlan.php:153
 msgid "Are you sure you want to delete this VLAN?"
 msgstr "이 VLAN을 정말 삭제하시겠습니까?"
 
@@ -30820,15 +30916,15 @@ msgstr "분(min)"
 msgid "This LAGG interface cannot be deleted because it is still being used."
 msgstr "이 LAGG 인터페이스는 아직 사용 중이므로 삭제할 수 없습니다."
 
-#: src/usr/local/www/interfaces_lagg.php:98
+#: src/usr/local/www/interfaces_lagg.php:97
 msgid "LAGG Interfaces"
 msgstr "LAGG 인터페이스"
 
-#: src/usr/local/www/interfaces_lagg.php:128
+#: src/usr/local/www/interfaces_lagg.php:127
 msgid "Edit LAGG interface"
 msgstr "LAGG 인터페이스 편집"
 
-#: src/usr/local/www/interfaces_lagg.php:129
+#: src/usr/local/www/interfaces_lagg.php:128
 msgid "Delete LAGG interface"
 msgstr "LAGG 인터페이스 삭제"
 
@@ -31275,14 +31371,15 @@ msgstr "패키지를 제거하는 중..."
 #: src/etc/inc/system.inc:2307 src/etc/inc/services.inc:1805
 #: src/etc/inc/services.inc:2138 src/etc/inc/services.inc:2361
 #: src/etc/inc/services.inc:2499 src/etc/inc/services.inc:2724
-#: src/etc/inc/rrd.inc:936 src/etc/inc/interfaces.inc:207
-#: src/etc/inc/interfaces.inc:455 src/etc/inc/interfaces.inc:667
-#: src/etc/inc/interfaces.inc:741 src/etc/inc/interfaces.inc:1082
-#: src/etc/inc/interfaces.inc:1832 src/etc/inc/interfaces.inc:1911
-#: src/etc/inc/interfaces.inc:1945 src/etc/inc/interfaces.inc:1972
-#: src/etc/inc/interfaces.inc:1993 src/etc/inc/interfaces.inc:2008
-#: src/etc/inc/interfaces.inc:3112 src/etc/inc/syslog.inc:464
-#: src/etc/inc/filter.inc:317 src/etc/inc/filter.inc:606
+#: src/etc/inc/web/wg.inc:184 src/etc/inc/rrd.inc:936
+#: src/etc/inc/interfaces.inc:207 src/etc/inc/interfaces.inc:455
+#: src/etc/inc/interfaces.inc:667 src/etc/inc/interfaces.inc:741
+#: src/etc/inc/interfaces.inc:1082 src/etc/inc/interfaces.inc:1745
+#: src/etc/inc/interfaces.inc:1822 src/etc/inc/interfaces.inc:1853
+#: src/etc/inc/interfaces.inc:1877 src/etc/inc/interfaces.inc:1898
+#: src/etc/inc/interfaces.inc:1913 src/etc/inc/interfaces.inc:3025
+#: src/etc/inc/syslog.inc:464 src/etc/inc/filter.inc:317
+#: src/etc/inc/filter.inc:606
 msgid "done."
 msgstr "완료."
 
@@ -31807,54 +31904,54 @@ msgstr "IPsec 오류: %s 연결의 1단계 소스를 찾을 수 없습니다. �
 msgid "The remote gateway %s already exists on another phase 1 entry"
 msgstr "원격 게이트웨이 %s이(가) 다른 1단계 항목에 이미 있습니다."
 
-#: src/etc/inc/ipsec.inc:2356
+#: src/etc/inc/ipsec.inc:2357
 #, php-format
 msgid "No phase2 specifications for tunnel with REQID = %s"
 msgstr "REQID = %s인 터널에 대한 단계2 설명서 없음"
 
-#: src/etc/inc/ipsec.inc:2443
+#: src/etc/inc/ipsec.inc:2444
 #, php-format
 msgid "Warning: Missing CRL data for %s"
 msgstr "경고: %s에 대한 CRL 데이터 누락"
 
-#: src/etc/inc/ipsec.inc:2448
+#: src/etc/inc/ipsec.inc:2449
 #, php-format
 msgid "Error: Cannot write IPsec CRL file for %s"
 msgstr "오류: %s에 대한 IPsec CRL 파일을 쓸 수 없습니다."
 
-#: src/etc/inc/ipsec.inc:2470
+#: src/etc/inc/ipsec.inc:2471
 #, php-format
 msgid "Error: Invalid phase1 certificate reference for %s"
 msgstr "오류: %s에 대한 단계 1 인증서 참조가 잘못되었습니다."
 
-#: src/etc/inc/ipsec.inc:2488
+#: src/etc/inc/ipsec.inc:2489
 #, php-format
 msgid "Error: Cannot write phase1 key file for %s"
 msgstr "오류: %s에 대한 1단계 키 파일을 쓸 수 없습니다."
 
-#: src/etc/inc/ipsec.inc:2495
+#: src/etc/inc/ipsec.inc:2496
 #, php-format
 msgid "Error: Cannot write phase1 certificate file for %s"
 msgstr "오류: %s에 대한 1단계 인증서 파일을 쓸 수 없습니다."
 
-#: src/etc/inc/ipsec.inc:2512
+#: src/etc/inc/ipsec.inc:2513
 #, php-format
 msgid ""
 "Error: Invalid phase1 PKCS#11 certificate reference or PKCS#11 is not "
 "present for %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2580
+#: src/etc/inc/ipsec.inc:2581
 #, php-format
 msgid "Error: Invalid certificate hash info for %s"
 msgstr "오류: %s에 대한 인증서 해시 정보가 잘못되었습니다."
 
-#: src/etc/inc/ipsec.inc:2585
+#: src/etc/inc/ipsec.inc:2586
 #, php-format
 msgid "Error: Cannot write IPsec CA file for %s"
 msgstr "오류: %s에 대한 IPsec CA 파일을 쓸 수 없습니다."
 
-#: src/etc/inc/ipsec.inc:2662
+#: src/etc/inc/ipsec.inc:2663
 msgid "Configuring IPsec VPN... "
 msgstr "IPsec VPN을 구성하는 중..."
 
@@ -31970,11 +32067,11 @@ msgstr "오류: system_dmesg_save()에서 dmesg.boot을 열 수 없습니다. %s
 msgid "Setting hard disk standby... "
 msgstr "하드 디스크 대기 설정 중..."
 
-#: src/etc/inc/system.inc:2601
+#: src/etc/inc/system.inc:2602
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2605 src/etc/inc/system.inc:2624
+#: src/etc/inc/system.inc:2606 src/etc/inc/system.inc:2625
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -32886,6 +32983,49 @@ msgstr "별칭: %s은(는) 동일한 유형이 아니므로 중첩될 수 없습
 #: src/etc/inc/web/alias-utils.inc:528
 msgid "Edited a firewall alias."
 msgstr "방화벽 별칭을 편집했습니다."
+
+#: src/etc/inc/web/wg.inc:72
+#, php-format
+msgid "%1$s is not a valid CIDR address"
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:89
+#, php-format
+msgid "%1$s is already configured on this firewall: %2$s (%3$s)"
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:100
+msgid "Invalid interface listen port."
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:106
+msgid "Both a public and private key must be specified"
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:131
+#, php-format
+msgid "Peer %1$s: Invalid remote port. (%2$s)"
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:137
+#, php-format
+msgid "Peer %1$s: A public key must be specified"
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:144
+#, php-format
+msgid "Peer %1$s: Endpoint must be a valid IPv4 or IPv6 adress or hostname."
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:153
+#, php-format
+msgid ""
+"Peer %1$s: Address %2$s is not a valid IPv4 or IPv6 CIDR subnet aadress."
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:172
+msgid "Configuring WireGuard Tunnels... "
+msgstr ""
 
 #: src/etc/inc/web/diag_arp.inc:109
 msgid "Incomplete"
@@ -34687,46 +34827,46 @@ msgstr ""
 "%1$s 이름은 ssh, smtp, pop3, tftp, http, openvpn 등과 같이 잘 알려져 있거나 등록된 TCP 또는 UDP "
 "포트 이름일 수 없습니다. "
 
-#: src/etc/inc/util.inc:1820
+#: src/etc/inc/util.inc:1819
 #, php-format
 msgid "The command '%1$s' returned exit code '%2$d', the output was '%3$s' "
 msgstr "'%1$s' 명령에서 종료 코드 '%2$d'을 반환했습니다. 출력은 '%3$s'입니다. "
 
-#: src/etc/inc/util.inc:3028
+#: src/etc/inc/util.inc:3027
 #, php-format
 msgid "%s must be a valid IPv4 address or alias."
 msgstr "%s은(는) 올바른 IPv4 주소 또는 별칭이어야 합니다."
 
-#: src/etc/inc/util.inc:3032
+#: src/etc/inc/util.inc:3031
 #, php-format
 msgid "%s must be a valid IPv4 address."
 msgstr "%s은(는) 올바른 IPv4 주소여야 합니다."
 
-#: src/etc/inc/util.inc:3044
+#: src/etc/inc/util.inc:3043
 #, php-format
 msgid "%s must be a valid IPv6 address or alias."
 msgstr "%s은(는) 올바른 IPv6 주소 또는 별칭이어야 합니다."
 
-#: src/etc/inc/util.inc:3048
+#: src/etc/inc/util.inc:3047
 #, php-format
 msgid "%s must be a valid IPv6 address."
 msgstr "%s은(는) 올바른 IPv6 주소여야 합니다."
 
-#: src/etc/inc/util.inc:3062
+#: src/etc/inc/util.inc:3061
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address or alias."
 msgstr "%s은(는) 올바른 IPv4 또는 IPv6 주소 또는 별칭이어야 합니다."
 
-#: src/etc/inc/util.inc:3066
+#: src/etc/inc/util.inc:3065
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address."
 msgstr "%s은(는) 올바른 IPv4 또는 IPv6 주소여야 합니다."
 
-#: src/etc/inc/util.inc:3172
+#: src/etc/inc/util.inc:3171
 msgid "Error: attempting to write DUID file - Invalid DUID detected"
 msgstr "오류: DUID 파일 쓰기 시도 중 - 잘못된 DUID가 감지됨"
 
-#: src/etc/inc/util.inc:3182
+#: src/etc/inc/util.inc:3181
 msgid "Error: attempting to write DUID file - File write error"
 msgstr "오류: DUID 파일 쓰기 시도 - 파일 쓰기 오류"
 
@@ -35248,68 +35388,62 @@ msgid ""
 "interface_gre_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1339
+#: src/etc/inc/interfaces.inc:1334
 msgid ""
 "could not bring parentif up -- variable not defined -- "
 "interface_gif_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1386
+#: src/etc/inc/interfaces.inc:1381
 msgid "could not bring gifif up -- variable not defined"
 msgstr "gifif을 가져올 수 없습니다 -- 변수가 정의되지 않음"
 
-#: src/etc/inc/interfaces.inc:1479
+#: src/etc/inc/interfaces.inc:1474
 msgid "All 32767 ipsec interface numbers have been assigned!"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1534
-msgid ""
-"could not bring parentif up -- variable not defined -- "
-"interface_vxlan_configure()"
-msgstr ""
-
-#: src/etc/inc/interfaces.inc:1666 src/etc/inc/interfaces.inc:1670
-#: src/etc/inc/interfaces.inc:6751
+#: src/etc/inc/interfaces.inc:1579 src/etc/inc/interfaces.inc:1583
+#: src/etc/inc/interfaces.inc:6646
 msgid "IPsec VTI"
 msgstr "IPsec VTI"
 
-#: src/etc/inc/interfaces.inc:1819
+#: src/etc/inc/interfaces.inc:1732
 msgid "Configuring IPsec VTI interfaces..."
 msgstr "IPsec VTI 인터페이스 구성중 ..."
 
-#: src/etc/inc/interfaces.inc:1901 src/etc/inc/interfaces.inc:1936
-#: src/etc/inc/interfaces.inc:1963 src/etc/inc/interfaces.inc:1981
-#: src/etc/inc/interfaces.inc:1999
+#: src/etc/inc/interfaces.inc:1812 src/etc/inc/interfaces.inc:1844
+#: src/etc/inc/interfaces.inc:1868 src/etc/inc/interfaces.inc:1886
+#: src/etc/inc/interfaces.inc:1904
 #, php-format
 msgid "Configuring %s interface..."
 msgstr "%s 인터페이스 구성중..."
 
-#: src/etc/inc/interfaces.inc:1906 src/etc/inc/interfaces.inc:1939
-#: src/etc/inc/interfaces.inc:1966 src/etc/inc/interfaces.inc:1984
-#: src/etc/inc/interfaces.inc:2002
+#: src/etc/inc/interfaces.inc:1817 src/etc/inc/interfaces.inc:1847
+#: src/etc/inc/interfaces.inc:1871 src/etc/inc/interfaces.inc:1889
+#: src/etc/inc/interfaces.inc:1907
 #, php-format
 msgid "Configuring %s"
 msgstr "%s 구성중"
 
-#: src/etc/inc/interfaces.inc:2082
+#: src/etc/inc/interfaces.inc:1995
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
 msgstr "%1$s 인터페이스를 호출합니다. 훼손은 %2$s입니다."
 
-#: src/etc/inc/interfaces.inc:2096
+#: src/etc/inc/interfaces.inc:2009
 msgid "Wrong parameters used during interface_bring_down"
 msgstr " interface_bring_down중에 잘못된 매개 변수가 사용되었습니다."
 
-#: src/etc/inc/interfaces.inc:2273
+#: src/etc/inc/interfaces.inc:2186
 msgid "Enter CARP maintenance mode"
 msgstr "CARP 유지 모드 입력"
 
-#: src/etc/inc/interfaces.inc:2501
+#: src/etc/inc/interfaces.inc:2414
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
 msgstr "interface_ppps_configure()에서 %s에 대한 PPP 구성을 찾을 수 없습니다."
 
-#: src/etc/inc/interfaces.inc:2558
+#: src/etc/inc/interfaces.inc:2471
 #, php-format
 msgid ""
 "Could not get a Local IP address for PPTP/L2TP link on %s in "
@@ -35318,7 +35452,7 @@ msgstr ""
 "interfaces_ppps_configure에서 %s에 있는 PPTP/L2TP 링크의 로컬 IP 주소를 가져올 수 없습니다. 0.0.0."
 "0 ip 사용!"
 
-#: src/etc/inc/interfaces.inc:2565
+#: src/etc/inc/interfaces.inc:2478
 #, php-format
 msgid ""
 "Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in "
@@ -35326,179 +35460,179 @@ msgid ""
 msgstr ""
 "interface_ppps_configure에 있는 %2$s에 대해 %1$s에서 PPTP/L2TP 원격 IP 주소를 가져올 수 없습니다."
 
-#: src/etc/inc/interfaces.inc:2572
+#: src/etc/inc/interfaces.inc:2485
 #, php-format
 msgid ""
 "Device %s does not exist. PPP link cannot start without the modem device."
 msgstr "%s 디바이스가 없습니다. 모뎀 장치 없이는 PPP 링크를 시작할 수 없습니다."
 
-#: src/etc/inc/interfaces.inc:2577
+#: src/etc/inc/interfaces.inc:2490
 #, php-format
 msgid "Unknown %s configured as ppp interface."
 msgstr "알 수 없는 %s이(가) ppp 인터페이스로 구성되었습니다."
 
-#: src/etc/inc/interfaces.inc:2937
+#: src/etc/inc/interfaces.inc:2850
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
 msgstr "오류: interface_ppps_configure()에서 mpd_%1$s.conf를 열 수 없습니다.%2$s"
 
-#: src/etc/inc/interfaces.inc:3032
+#: src/etc/inc/interfaces.inc:2945
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
 msgstr "인터페이스 '%2$s'에 대한 기기 '%1$s'에 3gstats.php을 시작합니다."
 
-#: src/etc/inc/interfaces.inc:3049
+#: src/etc/inc/interfaces.inc:2962
 msgid "Configuring CARP settings..."
 msgstr "CARP 설정을 구성하는 중..."
 
-#: src/etc/inc/interfaces.inc:3086
+#: src/etc/inc/interfaces.inc:2999
 msgid "waiting for pfsync..."
 msgstr "pfsync를 기다리는 중..."
 
-#: src/etc/inc/interfaces.inc:3097
+#: src/etc/inc/interfaces.inc:3010
 #, php-format
 msgid "pfsync done in %s seconds."
 msgstr "pfsync는 %s 초 내에 완료됩니다."
 
-#: src/etc/inc/interfaces.inc:3098
+#: src/etc/inc/interfaces.inc:3011
 msgid "Configuring CARP settings finalize..."
 msgstr "CARP 설정 구성 완료..."
 
-#: src/etc/inc/interfaces.inc:3327
+#: src/etc/inc/interfaces.inc:3240
 #, php-format
 msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
 "this VIP."
 msgstr "가상 IP 주소 %s에 대해 지정된 인터페이스가 없습니다. 이 VIP를 건너뜁니다."
 
-#: src/etc/inc/interfaces.inc:3405
+#: src/etc/inc/interfaces.inc:3318
 #, php-format
 msgid "Interface %s changed to hostap mode"
 msgstr "인터페이스 %s가 hostap 모드로 변경 되었습니다."
 
-#: src/etc/inc/interfaces.inc:3409
+#: src/etc/inc/interfaces.inc:3322
 #, php-format
 msgid "Interface %s changed to adhoc mode"
 msgstr "인터페이스 %s가 adhoc 모드로 변경 되었습니다."
 
-#: src/etc/inc/interfaces.inc:3413
+#: src/etc/inc/interfaces.inc:3326
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
 msgstr "인터페이스 %s가 infrastructure 모드로 변경 되었습니다."
 
-#: src/etc/inc/interfaces.inc:3429
+#: src/etc/inc/interfaces.inc:3342
 #, php-format
 msgid "Cloning new wireless interface %s"
 msgstr "새 무선 인터페이스 %s 복제"
 
-#: src/etc/inc/interfaces.inc:3434
+#: src/etc/inc/interfaces.inc:3347
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
 msgstr "%1$s 인터페이스를 복제하지 못했습니다(오류 코드 %2$s, 출력 %3$s)."
 
-#: src/etc/inc/interfaces.inc:4104
+#: src/etc/inc/interfaces.inc:4017
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
 msgstr "RA 모드가 없는 DHCP6에서 %s 인터페이스를 위한 DHCPp6 클라이언트 시작"
 
-#: src/etc/inc/interfaces.inc:4125
+#: src/etc/inc/interfaces.inc:4038
 #, php-format
 msgid "OpenVPN: Resync server %s"
 msgstr "OpenVPN: %s 서버 다시 동기화"
 
-#: src/etc/inc/interfaces.inc:4138
+#: src/etc/inc/interfaces.inc:4051
 #, php-format
 msgid "OpenVPN: Resync client %s"
 msgstr "OpenVPN: 재동기화 클라이언트 %s"
 
-#: src/etc/inc/interfaces.inc:4298
+#: src/etc/inc/interfaces.inc:4219
 #, php-format
 msgid "Deny router advertisements for interface %s"
 msgstr "%s 인터페이스에 대한 라우터 알림 거부"
 
-#: src/etc/inc/interfaces.inc:4321
+#: src/etc/inc/interfaces.inc:4242
 msgid "Generating new MAC address."
 msgstr "새 MAC 주소를 생성하는 중입니다."
 
-#: src/etc/inc/interfaces.inc:4325 src/etc/inc/interfaces.inc:4328
+#: src/etc/inc/interfaces.inc:4246 src/etc/inc/interfaces.inc:4249
 #, php-format
 msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr "%1$s 인터페이스에 잘못된 MAC 주소 (ff:ff:ff:ff:ff:ff)가 자동으로 %2$s(으)로 대체되었습니다."
 
-#: src/etc/inc/interfaces.inc:4410
+#: src/etc/inc/interfaces.inc:4328
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
 msgstr "상위 %1$s와 VLAN(%2$s) 사이의 MTU에 충돌이 있습니다."
 
-#: src/etc/inc/interfaces.inc:4481
+#: src/etc/inc/interfaces.inc:4399
 msgid "calling interface_dhcpv6_configure."
 msgstr " interface_dhcpv6_configure 부르는중."
 
-#: src/etc/inc/interfaces.inc:4616 src/etc/inc/interfaces.inc:4686
-#: src/etc/inc/interfaces.inc:4750
+#: src/etc/inc/interfaces.inc:4526 src/etc/inc/interfaces.inc:4596
+#: src/etc/inc/interfaces.inc:4660
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
 msgstr "존재하지 않는 인터페이스 %1$s  추적 %2$s"
 
-#: src/etc/inc/interfaces.inc:4623 src/etc/inc/interfaces.inc:4629
+#: src/etc/inc/interfaces.inc:4533 src/etc/inc/interfaces.inc:4539
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
 msgstr "%3$s 유형 %2$s 을(를) 통해 구성된 인터페이스 %1$s"
 
-#: src/etc/inc/interfaces.inc:4692
+#: src/etc/inc/interfaces.inc:4602
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr "'%2$s' 인터페이스의 IPv4 '%1$s' 인터페이스 주소가 잘못되었습니다. 6RD 터널을 구성하지 않습니다."
 
-#: src/etc/inc/interfaces.inc:4728
+#: src/etc/inc/interfaces.inc:4638
 #, php-format
 msgid "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr "%3$s ipv4 %4$s에 기반을 둔 ipv6 주소 %2$s가 있는 rd6 %1$s "
 
-#: src/etc/inc/interfaces.inc:4756 src/etc/inc/interfaces.inc:4811
-#: src/etc/inc/interfaces.inc:4900
+#: src/etc/inc/interfaces.inc:4666 src/etc/inc/interfaces.inc:4721
+#: src/etc/inc/interfaces.inc:4810
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
 "configuring 6RD tunnel"
 msgstr "'%2$s' 인터페이스의 IPv4 '%1$s' 인터페이스 주소가 공개적이지 않습니다. 6RD 터널을 구성하지 않습니다."
 
-#: src/etc/inc/interfaces.inc:4788
+#: src/etc/inc/interfaces.inc:4698
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr "%3$s ipv4 %4$s에 기반을 둔 ipv6 주소 %2$s가 있는 sixto4 %1$s"
 
-#: src/etc/inc/interfaces.inc:5012
+#: src/etc/inc/interfaces.inc:4922
 msgid "Failed to write user DUID file!"
 msgstr "사용자 DUID 파일을 쓰지 못했습니다!"
 
-#: src/etc/inc/interfaces.inc:5483
+#: src/etc/inc/interfaces.inc:5393
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr "오류: %s을 읽기위해 DHCP6_Config_File_Override()에서 열 수 없습니다."
 
-#: src/etc/inc/interfaces.inc:5515
+#: src/etc/inc/interfaces.inc:5425
 #, php-format
 msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
 "writing."
 msgstr "오류: dhclient_%s.conf를 쓰기위 interface_dhcp_configure()에서 열 수 없습니다. "
 
-#: src/etc/inc/interfaces.inc:5528
+#: src/etc/inc/interfaces.inc:5438
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
 msgstr "interface_dhcp_configure()에서 잘못된 인터페이스 \"%s\""
 
-#: src/etc/inc/interfaces.inc:5678
+#: src/etc/inc/interfaces.inc:5588
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
 msgstr "오류: %s을 읽기위해 DHCP_Config_File_Override() 에서 열 수 없습니다."
 
-#: src/etc/inc/interfaces.inc:7671
+#: src/etc/inc/interfaces.inc:7566
 msgid "L2TP VPN"
 msgstr "L2TP VPN"
 
@@ -39800,12 +39934,6 @@ msgstr "클라이언트에게 2단계 PFS 그룹을 제공합니다 (모든 모�
 msgid "Provide a login banner to clients"
 msgstr "클라이언트에게 로그인 배너 제공"
 
-#: src/usr/local/www/interfaces_vxlan_edit.php:213
-msgid ""
-"Populate the forwarding table with the source IP address and inner source "
-"Ethernet MAC address of received packets."
-msgstr ""
-
 #: src/usr/local/www/firewall_virtual_ip_edit.php:394
 msgid ""
 "Disable expansion of this entry into IPs on NAT lists (e.g. 192.168.1.0/24 "
@@ -40352,18 +40480,18 @@ msgstr "HTTPS 로그인 사용"
 msgid "Disable HTTPS Forwards"
 msgstr "HTTPS Forwards 사용 안 함"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:772
+#: src/usr/local/www/vpn_ipsec_phase1.php:786
 msgid ""
 "Set this option to disable this phase1 without removing it from the list. "
 msgstr "이 단계1을 목록에서 제거하지 않고 비활성화하려면 이 옵션을 설정합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1044
+#: src/usr/local/www/vpn_ipsec_phase1.php:1074
 msgid ""
 "Enable this option to never initiate this connection from this side, only "
 "respond to incoming requests."
 msgstr "이 쪽에서 이 연결을 시작하지 않으려면 이 옵션을 사용하도록 설정하고 들어오는 요청에만 응답합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1082
+#: src/usr/local/www/vpn_ipsec_phase1.php:1112
 msgid ""
 "Enable this to split connection entries with multiple phase 2 configurations."
 " Required for remote endpoints that support only a single traffic selector "
@@ -40372,11 +40500,11 @@ msgstr ""
 "여러개의 단계 2 구성으로 연결 항목을 분할하려면 이 옵션을 사용합니다. 하위 SA당 하나의 트래픽 선택자만 지원하는 원격 끝점에 "
 "필요합니다."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1089
+#: src/usr/local/www/vpn_ipsec_phase1.php:1119
 msgid "Enable manual Pseudo-Random Function (PRF) selection"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1115
+#: src/usr/local/www/vpn_ipsec_phase1.php:1145
 msgid "Enable DPD"
 msgstr "DPD 사용"
 
@@ -40484,7 +40612,7 @@ msgstr "피어(peer) 연계를 시도하는 패킷을 거부합니다 (nopeer)."
 msgid "Deny mode 6 control message trap service (notrap)."
 msgstr "모드 6 컨트롤 메시지 트랩 서비스 거부합니다 (notrap)."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:571
+#: src/usr/local/www/vpn_ipsec_phase2.php:591
 msgid "Disable this phase 2 entry without removing it from the list. "
 msgstr "목록에서 제거하지 않고 2단계 항목을 사용 안 함."
 

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-04 11:27-0300\n"
+"POT-Creation-Date: 2021-01-20 14:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -150,7 +150,7 @@ msgid "The NAT configuration has been changed."
 msgstr "Konfiguracja NAT została zmieniona."
 
 #: src/usr/local/www/firewall_nat_1to1.php:137
-#: src/usr/local/www/interfaces_assign.php:463
+#: src/usr/local/www/interfaces_assign.php:453
 #: src/usr/local/www/services_dhcpv6.php:544
 #: src/usr/local/www/system_advanced_sysctl.php:130
 #: src/usr/local/www/vpn_ipsec.php:270
@@ -213,8 +213,7 @@ msgid "NAT 1:1 Mappings"
 msgstr "Mapowanie NAT 1:1"
 
 #: src/usr/local/www/firewall_nat_1to1.php:157
-#: src/usr/local/www/interfaces_assign.php:509
-#: src/usr/local/www/interfaces_vxlan.php:97
+#: src/usr/local/www/interfaces_assign.php:498
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
 #: src/usr/local/www/guiconfig.inc:1126
@@ -226,30 +225,30 @@ msgstr "Mapowanie NAT 1:1"
 #: src/usr/local/www/status_logs_common.inc:547
 #: src/usr/local/www/status_logs_common.inc:550
 #: src/usr/local/www/vpn_openvpn_client.php:1181
-#: src/usr/local/www/interfaces_wireless.php:96
+#: src/usr/local/www/interfaces_wireless.php:95
 #: src/usr/local/www/firewall_nat_out.php:274
 #: src/usr/local/www/firewall_nat_out.php:527
 #: src/usr/local/www/services_dhcp_relay.php:81
 #: src/usr/local/www/services_ntpd.php:296
-#: src/usr/local/www/firewall_nat.php:249 src/usr/local/www/status_upnp.php:71
-#: src/usr/local/www/services_wol.php:193
-#: src/usr/local/www/interfaces_qinq.php:107
-#: src/usr/local/www/interfaces_gif.php:97
+#: src/usr/local/www/firewall_nat.php:249 src/usr/local/www/vpn_wg.php:84
+#: src/usr/local/www/status_upnp.php:71 src/usr/local/www/services_wol.php:193
+#: src/usr/local/www/interfaces_qinq.php:106
+#: src/usr/local/www/interfaces_gif.php:96
 #: src/usr/local/www/services_pppoe.php:98
 #: src/usr/local/www/firewall_virtual_ip.php:290
 #: src/usr/local/www/system_routes.php:243
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
 #: src/usr/local/www/diag_arp.php:98 src/usr/local/www/diag_arp.php:126
-#: src/usr/local/www/interfaces_ppps.php:105
+#: src/usr/local/www/interfaces_ppps.php:104
 #: src/usr/local/www/firewall_nat_edit.php:235
 #: src/usr/local/www/firewall_nat_edit.php:238
 #: src/usr/local/www/firewall_nat_npt.php:147
 #: src/usr/local/www/services_dhcpv6_relay.php:82
-#: src/usr/local/www/interfaces_gre.php:97
+#: src/usr/local/www/interfaces_gre.php:96
 #: src/usr/local/www/firewall_nat_out_edit.php:155
 #: src/usr/local/www/services_captiveportal.php:188
 #: src/usr/local/www/easyrule.php:82 src/usr/local/www/easyrule.php:90
-#: src/usr/local/www/interfaces_bridge.php:102
+#: src/usr/local/www/interfaces_bridge.php:101
 #: src/usr/local/www/diag_ndp.php:164 src/usr/local/www/diag_ndp.php:191
 #: src/usr/local/www/services_wol_edit.php:72
 #: src/usr/local/www/system_gateways.php:268
@@ -261,8 +260,8 @@ msgstr "Mapowanie NAT 1:1"
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:171
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:168
-#: src/usr/local/www/interfaces_vlan.php:97
-#: src/usr/local/www/interfaces_lagg.php:104
+#: src/usr/local/www/interfaces_vlan.php:96
+#: src/usr/local/www/interfaces_lagg.php:103
 #: src/usr/local/www/status_dhcp_leases.php:332
 #: src/usr/local/www/status_graph.php:164
 #: src/usr/local/www/firewall_nat_npt_edit.php:94 src/etc/inc/gwlb.inc:1712
@@ -283,7 +282,6 @@ msgstr "Docelowy adres IP"
 
 #: src/usr/local/www/firewall_nat_1to1.php:161
 #: src/usr/local/www/status_ipsec.php:570
-#: src/usr/local/www/interfaces_vxlan.php:99
 #: src/usr/local/www/firewall_nat_1to1_edit.php:583
 #: src/usr/local/www/guiconfig.inc:1067
 #: src/usr/local/www/services_dhcpv6.php:1091
@@ -303,7 +301,7 @@ msgstr "Docelowy adres IP"
 #: src/usr/local/www/system_groupmanager.php:487
 #: src/usr/local/www/vpn_openvpn_client.php:687
 #: src/usr/local/www/vpn_openvpn_client.php:1185
-#: src/usr/local/www/interfaces_wireless.php:98
+#: src/usr/local/www/interfaces_wireless.php:97
 #: src/usr/local/www/services_dhcp.php:871
 #: src/usr/local/www/services_dhcp.php:1697
 #: src/usr/local/www/services_unbound.php:574
@@ -315,26 +313,25 @@ msgstr "Docelowy adres IP"
 #: src/usr/local/www/firewall_nat_out.php:535
 #: src/usr/local/www/pkg_mgr_installed.php:72
 #: src/usr/local/www/firewall_aliases.php:111
-#: src/usr/local/www/interfaces_groups.php:81
+#: src/usr/local/www/interfaces_groups.php:80
 #: src/usr/local/www/status_services.php:89
 #: src/usr/local/www/interfaces_wireless_edit.php:189
 #: src/usr/local/www/firewall_nat.php:257
-#: src/usr/local/www/services_dhcp_edit.php:525
+#: src/usr/local/www/services_dhcp_edit.php:525 src/usr/local/www/vpn_wg.php:63
 #: src/usr/local/www/pkg_mgr.php:69 src/usr/local/www/pkg_mgr.php:161
 #: src/usr/local/www/status_upnp.php:77 src/usr/local/www/services_wol.php:195
 #: src/usr/local/www/services_dyndns_edit.php:462
 #: src/usr/local/www/services_captiveportal_hostname.php:120
-#: src/usr/local/www/interfaces_qinq.php:110
-#: src/usr/local/www/interfaces_gif.php:99
+#: src/usr/local/www/interfaces_qinq.php:109
+#: src/usr/local/www/interfaces_gif.php:98
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:182
 #: src/usr/local/www/services_igmpproxy.php:130
 #: src/usr/local/www/system_gateways_edit.php:235
 #: src/usr/local/www/services_pppoe.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:287
 #: src/usr/local/www/system_gateway_groups_edit.php:311
-#: src/usr/local/www/interfaces_vlan_edit.php:222
+#: src/usr/local/www/interfaces_vlan_edit.php:211
 #: src/usr/local/www/interfaces_bridge_edit.php:429
-#: src/usr/local/www/interfaces_vxlan_edit.php:224
 #: src/usr/local/www/firewall_virtual_ip.php:292
 #: src/usr/local/www/system_routes.php:244
 #: src/usr/local/www/firewall_virtual_ip_edit.php:433
@@ -342,7 +339,7 @@ msgstr "Docelowy adres IP"
 #: src/usr/local/www/services_checkip_edit.php:162
 #: src/usr/local/www/vpn_openvpn_csc.php:370
 #: src/usr/local/www/vpn_openvpn_csc.php:697
-#: src/usr/local/www/interfaces_ppps.php:107
+#: src/usr/local/www/interfaces_ppps.php:106
 #: src/usr/local/www/services_captiveportal_zones.php:80
 #: src/usr/local/www/firewall_nat_edit.php:983
 #: src/usr/local/www/firewall_schedule_edit.php:370
@@ -350,24 +347,26 @@ msgstr "Docelowy adres IP"
 #: src/usr/local/www/status_gateways.php:63
 #: src/usr/local/www/interfaces_gre_edit.php:291
 #: src/usr/local/www/interfaces_ppps_edit.php:540
+#: src/usr/local/www/vpn_wg_edit.php:110 src/usr/local/www/vpn_wg_edit.php:171
+#: src/usr/local/www/vpn_wg_edit.php:265
 #: src/usr/local/www/firewall_nat_npt.php:150
 #: src/usr/local/www/system_usermanager.php:512
 #: src/usr/local/www/firewall_rules_edit.php:1525
 #: src/usr/local/www/services_pppoe_edit.php:373
 #: src/usr/local/www/services_rfc2136_edit.php:318
-#: src/usr/local/www/interfaces_gre.php:99
+#: src/usr/local/www/interfaces_gre.php:98
 #: src/usr/local/www/firewall_nat_out_edit.php:646
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:155
 #: src/usr/local/www/firewall_aliases_import.php:255
 #: src/usr/local/www/services_captiveportal.php:541
 #: src/usr/local/www/firewall_schedule.php:94
-#: src/usr/local/www/vpn_ipsec_phase1.php:834
+#: src/usr/local/www/vpn_ipsec_phase1.php:848
 #: src/usr/local/www/firewall_aliases_edit.php:293
 #: src/usr/local/www/firewall_aliases_edit.php:354
-#: src/usr/local/www/interfaces_bridge.php:104
+#: src/usr/local/www/interfaces_bridge.php:103
 #: src/usr/local/www/interfaces_gif_edit.php:220
 #: src/usr/local/www/services_captiveportal_ip.php:109
-#: src/usr/local/www/vpn_ipsec_phase2.php:656
+#: src/usr/local/www/vpn_ipsec_phase2.php:676
 #: src/usr/local/www/interfaces.php:543 src/usr/local/www/interfaces.php:2115
 #: src/usr/local/www/interfaces.php:3520
 #: src/usr/local/www/services_dhcpv6_edit.php:229
@@ -385,8 +384,8 @@ msgstr "Docelowy adres IP"
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:80
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:231
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:167
-#: src/usr/local/www/interfaces_vlan.php:100
-#: src/usr/local/www/interfaces_lagg.php:106
+#: src/usr/local/www/interfaces_vlan.php:99
+#: src/usr/local/www/interfaces_lagg.php:105
 #: src/usr/local/www/status_dhcp_leases.php:177
 #: src/usr/local/www/status_dhcp_leases.php:207
 #: src/usr/local/www/services_captiveportal_mac_edit.php:238
@@ -399,7 +398,6 @@ msgid "Description"
 msgstr "Opis"
 
 #: src/usr/local/www/firewall_nat_1to1.php:162
-#: src/usr/local/www/interfaces_vxlan.php:100
 #: src/usr/local/www/vpn_l2tp_users.php:76
 #: src/usr/local/www/services_checkip.php:96
 #: src/usr/local/www/services_rfc2136.php:88
@@ -407,7 +405,7 @@ msgstr "Opis"
 #: src/usr/local/www/services_unbound_acls.php:287
 #: src/usr/local/www/system_groupmanager.php:378
 #: src/usr/local/www/vpn_openvpn_client.php:1186
-#: src/usr/local/www/interfaces_wireless.php:99
+#: src/usr/local/www/interfaces_wireless.php:98
 #: src/usr/local/www/services_dhcp.php:872
 #: src/usr/local/www/services_unbound.php:575
 #: src/usr/local/www/services_unbound.php:659
@@ -419,16 +417,16 @@ msgstr "Opis"
 #: src/usr/local/www/firewall_nat_out.php:283
 #: src/usr/local/www/pkg_mgr_installed.php:73
 #: src/usr/local/www/firewall_aliases.php:112
-#: src/usr/local/www/interfaces_groups.php:82
+#: src/usr/local/www/interfaces_groups.php:81
 #: src/usr/local/www/services_captiveportal_vouchers.php:306
 #: src/usr/local/www/status_services.php:91
 #: src/usr/local/www/firewall_nat.php:258
-#: src/usr/local/www/system_camanager.php:401
+#: src/usr/local/www/system_camanager.php:401 src/usr/local/www/vpn_wg.php:67
 #: src/usr/local/www/services_wol.php:196
 #: src/usr/local/www/diag_confbak.php:217
 #: src/usr/local/www/services_captiveportal_hostname.php:121
-#: src/usr/local/www/interfaces_qinq.php:111
-#: src/usr/local/www/interfaces_gif.php:100
+#: src/usr/local/www/interfaces_qinq.php:110
+#: src/usr/local/www/interfaces_gif.php:99
 #: src/usr/local/www/services_igmpproxy.php:131
 #: src/usr/local/www/services_pppoe.php:102
 #: src/usr/local/www/firewall_virtual_ip.php:293
@@ -436,16 +434,16 @@ msgstr "Opis"
 #: src/usr/local/www/services_captiveportal_mac.php:166
 #: src/usr/local/www/diag_arp.php:132 src/usr/local/www/vpn_openvpn_csc.php:698
 #: src/usr/local/www/system_authservers.php:510
-#: src/usr/local/www/interfaces_ppps.php:108
+#: src/usr/local/www/interfaces_ppps.php:107
 #: src/usr/local/www/services_captiveportal_zones.php:81
 #: src/usr/local/www/system_crlmanager.php:611
 #: src/usr/local/www/status_captiveportal.php:242
 #: src/usr/local/www/firewall_nat_npt.php:151
 #: src/usr/local/www/system_usermanager.php:667
-#: src/usr/local/www/interfaces_gre.php:100
+#: src/usr/local/www/interfaces_gre.php:99
 #: src/usr/local/www/vpn_ipsec_keys.php:105
 #: src/usr/local/www/firewall_schedule.php:95
-#: src/usr/local/www/interfaces_bridge.php:105
+#: src/usr/local/www/interfaces_bridge.php:104
 #: src/usr/local/www/status_dhcpv6_leases.php:292
 #: src/usr/local/www/diag_ndp.php:193
 #: src/usr/local/www/services_captiveportal_ip.php:110
@@ -455,8 +453,8 @@ msgstr "Opis"
 #: src/usr/local/www/services_dyndns.php:97
 #: src/usr/local/www/firewall_rules.php:416
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:52
-#: src/usr/local/www/interfaces_vlan.php:101
-#: src/usr/local/www/interfaces_lagg.php:107
+#: src/usr/local/www/interfaces_vlan.php:100
+#: src/usr/local/www/interfaces_lagg.php:106
 #: src/usr/local/www/status_dhcp_leases.php:212
 #: src/usr/local/www/system_gateway_groups.php:133
 #: src/usr/local/www/services_captiveportal_filemanager.php:198
@@ -520,7 +518,6 @@ msgstr "Dodaj mapowanie na początku listy"
 #: src/usr/local/www/firewall_nat_1to1.php:253
 #: src/usr/local/www/firewall_nat_1to1.php:257
 #: src/usr/local/www/interfaces_assign.php:54
-#: src/usr/local/www/interfaces_vxlan.php:136
 #: src/usr/local/www/services_dhcpv6.php:1134
 #: src/usr/local/www/vpn_l2tp_users.php:103
 #: src/usr/local/www/services_checkip.php:160
@@ -531,7 +528,7 @@ msgstr "Dodaj mapowanie na początku listy"
 #: src/usr/local/www/system_groupmanager.php:330
 #: src/usr/local/www/system_groupmanager.php:422
 #: src/usr/local/www/vpn_openvpn_client.php:1251
-#: src/usr/local/www/interfaces_wireless.php:137
+#: src/usr/local/www/interfaces_wireless.php:136
 #: src/usr/local/www/services_dhcp.php:1105
 #: src/usr/local/www/services_dhcp.php:1623
 #: src/usr/local/www/services_dhcp.php:1756
@@ -543,7 +540,7 @@ msgstr "Dodaj mapowanie na początku listy"
 #: src/usr/local/www/firewall_nat_out.php:491
 #: src/usr/local/www/firewall_nat_out.php:495
 #: src/usr/local/www/firewall_aliases.php:194
-#: src/usr/local/www/interfaces_groups.php:126
+#: src/usr/local/www/interfaces_groups.php:125
 #: src/usr/local/www/services_ntpd.php:354
 #: src/usr/local/www/services_captiveportal_vouchers.php:341
 #: src/usr/local/www/firewall_nat.php:499
@@ -553,8 +550,8 @@ msgstr "Dodaj mapowanie na początku listy"
 #: src/usr/local/www/services_wol.php:177
 #: src/usr/local/www/services_wol.php:225
 #: src/usr/local/www/services_captiveportal_hostname.php:164
-#: src/usr/local/www/interfaces_qinq.php:150
-#: src/usr/local/www/interfaces_gif.php:130
+#: src/usr/local/www/interfaces_qinq.php:149
+#: src/usr/local/www/interfaces_gif.php:129
 #: src/usr/local/www/services_igmpproxy.php:180
 #: src/usr/local/www/services_pppoe.php:142
 #: src/usr/local/www/firewall_virtual_ip.php:365
@@ -562,7 +559,7 @@ msgstr "Dodaj mapowanie na początku listy"
 #: src/usr/local/www/services_captiveportal_mac.php:209
 #: src/usr/local/www/vpn_openvpn_csc.php:735
 #: src/usr/local/www/system_authservers.php:536
-#: src/usr/local/www/interfaces_ppps.php:157
+#: src/usr/local/www/interfaces_ppps.php:156
 #: src/usr/local/www/services_captiveportal_zones.php:121
 #: src/usr/local/www/system_crlmanager.php:568
 #: src/usr/local/www/system_crlmanager.php:688
@@ -571,10 +568,10 @@ msgstr "Dodaj mapowanie na początku listy"
 #: src/usr/local/www/system_usermanager.php:566
 #: src/usr/local/www/system_usermanager.php:616
 #: src/usr/local/www/system_usermanager.php:710
-#: src/usr/local/www/interfaces_gre.php:136
+#: src/usr/local/www/interfaces_gre.php:135
 #: src/usr/local/www/vpn_ipsec_keys.php:170
 #: src/usr/local/www/firewall_schedule.php:244
-#: src/usr/local/www/interfaces_bridge.php:156
+#: src/usr/local/www/interfaces_bridge.php:155
 #: src/usr/local/www/services_captiveportal_ip.php:155
 #: src/usr/local/www/services_ntpd_acls.php:321
 #: src/usr/local/www/interfaces.php:2122 src/usr/local/www/interfaces.php:3527
@@ -585,8 +582,8 @@ msgstr "Dodaj mapowanie na początku listy"
 #: src/usr/local/www/firewall_rules.php:915
 #: src/usr/local/www/vpn_ipsec_settings.php:546
 #: src/usr/local/www/pkg_edit.php:1481
-#: src/usr/local/www/interfaces_vlan.php:140
-#: src/usr/local/www/interfaces_lagg.php:145
+#: src/usr/local/www/interfaces_vlan.php:139
+#: src/usr/local/www/interfaces_lagg.php:144
 #: src/usr/local/www/system_gateway_groups.php:187
 #: src/usr/local/www/services_captiveportal_filemanager.php:242
 msgid "Add"
@@ -622,7 +619,7 @@ msgstr "Usuń wybrane mapowania"
 #: src/usr/local/www/firewall_nat_npt.php:231
 #: src/usr/local/www/system_usermanager.php:715
 #: src/usr/local/www/services_pppoe_edit.php:550
-#: src/usr/local/www/vpn_ipsec_phase1.php:972
+#: src/usr/local/www/vpn_ipsec_phase1.php:986
 #: src/usr/local/www/firewall_aliases_edit.php:361
 #: src/usr/local/www/services_ntpd_acls.php:307
 #: src/usr/local/www/services_unbound_host_edit.php:292
@@ -641,7 +638,7 @@ msgid "Save mapping order"
 msgstr "Zapisz kolejność mapowania"
 
 #: src/usr/local/www/firewall_nat_1to1.php:265
-#: src/usr/local/www/interfaces_assign.php:573
+#: src/usr/local/www/interfaces_assign.php:562
 #: src/usr/local/www/system_advanced_sysctl.php:84
 #: src/usr/local/www/status_logs_common.inc:1015 src/usr/local/www/pkg.php:602
 #: src/usr/local/www/services_unbound_acls.php:125
@@ -659,6 +656,7 @@ msgstr "Zapisz kolejność mapowania"
 #: src/usr/local/www/system_authservers.php:84
 #: src/usr/local/www/system_crlmanager.php:278
 #: src/usr/local/www/system_crlmanager.php:366
+#: src/usr/local/www/vpn_wg_edit.php:319
 #: src/usr/local/www/firewall_nat_npt.php:235
 #: src/usr/local/www/system_gateways.php:356
 #: src/usr/local/www/firewall_rules.php:923
@@ -771,7 +769,7 @@ msgstr "Status"
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:113
 #: src/usr/local/www/services_unbound.php:278
 #: src/usr/local/www/status_logs.php:63 src/usr/local/www/diag_backup.php:83
-#: src/usr/local/www/head.inc:319 src/usr/local/www/head.inc:360
+#: src/usr/local/www/head.inc:319 src/usr/local/www/head.inc:361
 #: src/usr/local/www/services_unbound_advanced.php:266
 #: src/usr/local/www/services_unbound_host_edit.php:185
 #: src/etc/inc/service-utils.inc:267
@@ -812,7 +810,7 @@ msgstr "TTL"
 
 #: src/usr/local/www/status_unbound.php:61
 #: src/usr/local/www/vpn_openvpn_client.php:1037
-#: src/usr/local/www/diag_dns.php:282 src/usr/local/www/head.inc:408
+#: src/usr/local/www/diag_dns.php:282 src/usr/local/www/head.inc:409
 #: src/usr/local/www/diag_ping.php:37 src/usr/local/www/diag_ping.php:135
 #: src/usr/local/www/diag_ping.php:177
 #: src/usr/local/www/vpn_openvpn_server.php:1354
@@ -929,8 +927,8 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:790
 #: src/usr/local/www/firewall_rules_edit.php:1243
 #: src/usr/local/www/firewall_nat_out_edit.php:462
-#: src/usr/local/www/vpn_ipsec_phase1.php:771
-#: src/usr/local/www/vpn_ipsec_phase2.php:570
+#: src/usr/local/www/vpn_ipsec_phase1.php:785
+#: src/usr/local/www/vpn_ipsec_phase2.php:590
 #: src/usr/local/www/interfaces.php:2915
 #: src/usr/local/www/vpn_openvpn_server.php:792
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:292
@@ -1081,14 +1079,14 @@ msgstr "Odłączony"
 #: src/usr/local/www/vpn_ipsec_mobile.php:354
 #: src/usr/local/www/status_ipsec_spd.php:41
 #: src/usr/local/www/vpn_ipsec_keys.php:73 src/usr/local/www/head.inc:346
-#: src/usr/local/www/head.inc:363 src/usr/local/www/vpn_ipsec_phase1.php:743
-#: src/usr/local/www/vpn_ipsec_phase1.php:746
-#: src/usr/local/www/vpn_ipsec_phase2.php:474
-#: src/usr/local/www/vpn_ipsec_phase2.php:478
+#: src/usr/local/www/head.inc:364 src/usr/local/www/vpn_ipsec_phase1.php:757
+#: src/usr/local/www/vpn_ipsec_phase1.php:760
+#: src/usr/local/www/vpn_ipsec_phase2.php:494
+#: src/usr/local/www/vpn_ipsec_phase2.php:498
 #: src/usr/local/www/vpn_ipsec_settings.php:299
 #: src/usr/local/www/widgets/include/ipsec.inc:24
 #: src/usr/local/www/status_graph.php:47 src/usr/local/www/status_graph.php:337
-#: src/etc/inc/interfaces.inc:7680
+#: src/etc/inc/interfaces.inc:7575
 msgid "IPsec"
 msgstr "IPsec"
 
@@ -1168,7 +1166,6 @@ msgid "No IPsec status information available."
 msgstr "Brak informacji o statusie IPsec."
 
 #: src/usr/local/www/interfaces_assign.php:38
-#: src/usr/local/www/interfaces_vxlan.php:69
 #: src/usr/local/www/interfaces_lagg_edit.php:233
 #: src/usr/local/www/interfaces_wireless.php:67
 #: src/usr/local/www/status_interfaces.php:112
@@ -1177,14 +1174,13 @@ msgstr "Brak informacji o statusie IPsec."
 #: src/usr/local/www/interfaces_groups_edit.php:35
 #: src/usr/local/www/interfaces_qinq.php:77
 #: src/usr/local/www/interfaces_gif.php:68 src/usr/local/www/diag_backup.php:88
-#: src/usr/local/www/interfaces_vlan_edit.php:185
+#: src/usr/local/www/interfaces_vlan_edit.php:174
 #: src/usr/local/www/interfaces_bridge_edit.php:404
-#: src/usr/local/www/interfaces_vxlan_edit.php:150
 #: src/usr/local/www/interfaces_ppps.php:80
 #: src/usr/local/www/services_captiveportal_zones.php:78
 #: src/usr/local/www/interfaces_gre_edit.php:206
 #: src/usr/local/www/interfaces_ppps_edit.php:479
-#: src/usr/local/www/interfaces_gre.php:69 src/usr/local/www/head.inc:362
+#: src/usr/local/www/interfaces_gre.php:69 src/usr/local/www/head.inc:363
 #: src/usr/local/www/interfaces_bridge.php:74
 #: src/usr/local/www/interfaces_gif_edit.php:159
 #: src/usr/local/www/interfaces.php:1833
@@ -1198,8 +1194,7 @@ msgid "Interfaces"
 msgstr "Interfejsy"
 
 #: src/usr/local/www/interfaces_assign.php:38
-#: src/usr/local/www/interfaces_assign.php:480
-#: src/usr/local/www/interfaces_vxlan.php:77
+#: src/usr/local/www/interfaces_assign.php:470
 #: src/usr/local/www/interfaces_wireless.php:76
 #: src/usr/local/www/interfaces_groups.php:59
 #: src/usr/local/www/interfaces_qinq.php:86
@@ -1240,9 +1235,8 @@ msgstr "Usuń interfejs"
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:63
 #: src/usr/local/www/system_gateways_edit.php:109
 #: src/usr/local/www/system_gateway_groups_edit.php:143
-#: src/usr/local/www/interfaces_vlan_edit.php:185
+#: src/usr/local/www/interfaces_vlan_edit.php:174
 #: src/usr/local/www/interfaces_bridge_edit.php:404
-#: src/usr/local/www/interfaces_vxlan_edit.php:150
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:51
 #: src/usr/local/www/firewall_virtual_ip_edit.php:297
 #: src/usr/local/www/system_groupmanager_addprivs.php:45
@@ -1276,21 +1270,21 @@ msgstr "Edytuj"
 msgid "on"
 msgstr ""
 
-#: src/usr/local/www/interfaces_assign.php:232
+#: src/usr/local/www/interfaces_assign.php:224
 msgid "Interface has been added."
 msgstr "Dodano interfejs."
 
-#: src/usr/local/www/interfaces_assign.php:267
+#: src/usr/local/www/interfaces_assign.php:259
 #, php-format
 msgid "Cannot set port %1$s because the submitted interface does not exist."
 msgstr ""
 
-#: src/usr/local/www/interfaces_assign.php:275
+#: src/usr/local/www/interfaces_assign.php:267
 #, php-format
 msgid "Port %1$s  was assigned to %2$s interfaces:"
 msgstr "Port%1$s został przypisany do interfejsów%2$s:"
 
-#: src/usr/local/www/interfaces_assign.php:293
+#: src/usr/local/www/interfaces_assign.php:285
 #, php-format
 msgid ""
 "Cannot set port %1$s to interface %2$s because this interface is a member of "
@@ -1299,7 +1293,7 @@ msgstr ""
 "Nie można przypisać portu %1$s do interfejsu %2$s, ponieważ ten interfejs "
 "jest członkiem %3$s."
 
-#: src/usr/local/www/interfaces_assign.php:304
+#: src/usr/local/www/interfaces_assign.php:296
 #, php-format
 msgid ""
 "Vlan parent interface %1$s does not exist anymore so vlan id %2$s cannot be "
@@ -1308,36 +1302,30 @@ msgstr ""
 "Interfejs nadrzędny Vlan %1$s nie istnieje, więc vlan id%2$s nie może być "
 "utworzony. Proszę rozwiązać problem przed kontynuowaniem."
 
-#: src/usr/local/www/interfaces_assign.php:373
+#: src/usr/local/www/interfaces_assign.php:365
 msgid ""
 "The interface is part of a group. Please remove it from the group to "
 "continue"
 msgstr "Interfejs jest częścią grupy. Usuń go z grupy, aby kontynuować"
 
-#: src/usr/local/www/interfaces_assign.php:375
+#: src/usr/local/www/interfaces_assign.php:367
 msgid ""
 "The interface is part of a bridge. Please remove it from the bridge to "
 "continue"
 msgstr ""
 "Ten interfejs jest częścią mostu. Proszę usunąć go z mostu aby kontynuować."
 
-#: src/usr/local/www/interfaces_assign.php:377
+#: src/usr/local/www/interfaces_assign.php:369
 msgid ""
 "The interface is part of a gre tunnel. Please delete the tunnel to continue"
 msgstr "Interfejs jest częścią tunelu GRE. Usuń tunel, aby kontynuować"
 
-#: src/usr/local/www/interfaces_assign.php:379
+#: src/usr/local/www/interfaces_assign.php:371
 msgid ""
 "The interface is part of a gif tunnel. Please delete the tunnel to continue"
 msgstr "Interfejs jest częścią tunelu gif. Usuń tunel, aby kontynuować"
 
-#: src/usr/local/www/interfaces_assign.php:381
-msgid ""
-"The interface is part of a vxlan tunnel. Please delete the tunnel to "
-"continue"
-msgstr ""
-
-#: src/usr/local/www/interfaces_assign.php:383
+#: src/usr/local/www/interfaces_assign.php:373
 msgid ""
 "The interface has a traffic shaper queue configured.\n"
 "Please remove all queues on the interface to continue."
@@ -1345,21 +1333,21 @@ msgstr ""
 "Interfejs ma skonfigurowaną kolejkę kształtowania ruchu.\n"
 "Usuń wszystkie kolejki dla tego interfejsu aby kontynuować."
 
-#: src/usr/local/www/interfaces_assign.php:428
+#: src/usr/local/www/interfaces_assign.php:418
 msgid "Interface has been deleted."
 msgstr "Interfejs został usunięty."
 
-#: src/usr/local/www/interfaces_assign.php:449
+#: src/usr/local/www/interfaces_assign.php:439
 msgid "The system is now rebooting. Please wait."
 msgstr "System jest teraz ponownie uruchamiany. Proszę czekać."
 
-#: src/usr/local/www/interfaces_assign.php:452
+#: src/usr/local/www/interfaces_assign.php:442
 msgid "Reboot is needed. Please apply the settings in order to reboot."
 msgstr ""
 "Wymagane jest ponowne uruchomienie. Proszę zastosować te ustawienia w celu "
 "ponownego uruchomienia komputera."
 
-#: src/usr/local/www/interfaces_assign.php:456
+#: src/usr/local/www/interfaces_assign.php:446
 msgid ""
 "Interface mismatch detected. Please resolve the mismatch, save and then "
 "click 'Apply Changes'. The firewall will reboot afterwards."
@@ -1367,16 +1355,15 @@ msgstr ""
 "Wykryto niezgodność interfejsu. Rozwiąż niezgodność, zapisz a następnie "
 "kliknij przycisk „Zastosuj zmiany”. Zapora zostanie ponownie uruchomiona."
 
-#: src/usr/local/www/interfaces_assign.php:463
+#: src/usr/local/www/interfaces_assign.php:453
 msgid "The interface configuration has been changed."
 msgstr "Konfiguracja interfejsu została zmieniona."
 
-#: src/usr/local/www/interfaces_assign.php:481
-#: src/usr/local/www/interfaces_vxlan.php:78
+#: src/usr/local/www/interfaces_assign.php:471
 #: src/usr/local/www/interfaces_wireless.php:77
 #: src/usr/local/www/interfaces_groups.php:53
 #: src/usr/local/www/interfaces_groups.php:60
-#: src/usr/local/www/interfaces_groups.php:73
+#: src/usr/local/www/interfaces_groups.php:72
 #: src/usr/local/www/interfaces_groups_edit.php:35
 #: src/usr/local/www/interfaces_qinq.php:87
 #: src/usr/local/www/interfaces_gif.php:78
@@ -1388,8 +1375,7 @@ msgstr "Konfiguracja interfejsu została zmieniona."
 msgid "Interface Groups"
 msgstr "Grupy interfejsów"
 
-#: src/usr/local/www/interfaces_assign.php:482
-#: src/usr/local/www/interfaces_vxlan.php:79
+#: src/usr/local/www/interfaces_assign.php:472
 #: src/usr/local/www/status_wireless.php:33
 #: src/usr/local/www/status_logs_common.inc:115
 #: src/usr/local/www/interfaces_wireless.php:67
@@ -1400,20 +1386,19 @@ msgstr "Grupy interfejsów"
 #: src/usr/local/www/interfaces_qinq.php:88
 #: src/usr/local/www/interfaces_gif.php:79
 #: src/usr/local/www/interfaces_ppps.php:87
-#: src/usr/local/www/interfaces_gre.php:79 src/usr/local/www/head.inc:385
+#: src/usr/local/www/interfaces_gre.php:79 src/usr/local/www/head.inc:386
 #: src/usr/local/www/interfaces_bridge.php:84
 #: src/usr/local/www/interfaces_vlan.php:74
 #: src/usr/local/www/interfaces_lagg.php:86
 msgid "Wireless"
 msgstr "Sieć bezprzewodowa"
 
-#: src/usr/local/www/interfaces_assign.php:483
-#: src/usr/local/www/interfaces_vxlan.php:80
+#: src/usr/local/www/interfaces_assign.php:473
 #: src/usr/local/www/interfaces_wireless.php:79
 #: src/usr/local/www/interfaces_groups.php:62
 #: src/usr/local/www/interfaces_qinq.php:89
 #: src/usr/local/www/interfaces_gif.php:80
-#: src/usr/local/www/interfaces_vlan_edit.php:185
+#: src/usr/local/www/interfaces_vlan_edit.php:174
 #: src/usr/local/www/interfaces_ppps.php:88
 #: src/usr/local/www/interfaces_gre.php:80
 #: src/usr/local/www/interfaces_bridge.php:85
@@ -1423,8 +1408,7 @@ msgstr "Sieć bezprzewodowa"
 msgid "VLANs"
 msgstr "Sieci VLAN"
 
-#: src/usr/local/www/interfaces_assign.php:484
-#: src/usr/local/www/interfaces_vxlan.php:81
+#: src/usr/local/www/interfaces_assign.php:474
 #: src/usr/local/www/interfaces_wireless.php:80
 #: src/usr/local/www/interfaces_groups.php:63
 #: src/usr/local/www/interfaces_qinq.php:77
@@ -1439,8 +1423,7 @@ msgstr "Sieci VLAN"
 msgid "QinQs"
 msgstr "QinQs"
 
-#: src/usr/local/www/interfaces_assign.php:485
-#: src/usr/local/www/interfaces_vxlan.php:82
+#: src/usr/local/www/interfaces_assign.php:475
 #: src/usr/local/www/interfaces_wireless.php:81
 #: src/usr/local/www/interfaces_groups.php:64
 #: src/usr/local/www/interfaces_qinq.php:91
@@ -1455,8 +1438,7 @@ msgstr "QinQs"
 msgid "PPPs"
 msgstr "PPP"
 
-#: src/usr/local/www/interfaces_assign.php:486
-#: src/usr/local/www/interfaces_vxlan.php:83
+#: src/usr/local/www/interfaces_assign.php:476
 #: src/usr/local/www/interfaces_wireless.php:82
 #: src/usr/local/www/interfaces_groups.php:65
 #: src/usr/local/www/interfaces_qinq.php:92
@@ -1471,8 +1453,7 @@ msgstr "PPP"
 msgid "GREs"
 msgstr "GRE"
 
-#: src/usr/local/www/interfaces_assign.php:487
-#: src/usr/local/www/interfaces_vxlan.php:84
+#: src/usr/local/www/interfaces_assign.php:477
 #: src/usr/local/www/interfaces_wireless.php:83
 #: src/usr/local/www/interfaces_groups.php:66
 #: src/usr/local/www/interfaces_qinq.php:93
@@ -1487,67 +1468,49 @@ msgstr "GRE"
 msgid "GIFs"
 msgstr "GIF"
 
-#: src/usr/local/www/interfaces_assign.php:488
-#: src/usr/local/www/interfaces_vxlan.php:69
-#: src/usr/local/www/interfaces_vxlan.php:85
+#: src/usr/local/www/interfaces_assign.php:478
 #: src/usr/local/www/interfaces_wireless.php:84
 #: src/usr/local/www/interfaces_groups.php:67
 #: src/usr/local/www/interfaces_qinq.php:94
 #: src/usr/local/www/interfaces_gif.php:85
-#: src/usr/local/www/interfaces_vxlan_edit.php:150
+#: src/usr/local/www/interfaces_bridge_edit.php:404
 #: src/usr/local/www/interfaces_ppps.php:93
 #: src/usr/local/www/interfaces_gre.php:85
+#: src/usr/local/www/interfaces_bridge.php:74
 #: src/usr/local/www/interfaces_bridge.php:90
 #: src/usr/local/www/interfaces_vlan.php:80
 #: src/usr/local/www/interfaces_lagg.php:92
-msgid "VXLANs"
-msgstr ""
+msgid "Bridges"
+msgstr "Mosty"
 
-#: src/usr/local/www/interfaces_assign.php:489
-#: src/usr/local/www/interfaces_vxlan.php:86
+#: src/usr/local/www/interfaces_assign.php:479
+#: src/usr/local/www/interfaces_lagg_edit.php:233
 #: src/usr/local/www/interfaces_wireless.php:85
 #: src/usr/local/www/interfaces_groups.php:68
 #: src/usr/local/www/interfaces_qinq.php:95
 #: src/usr/local/www/interfaces_gif.php:86
-#: src/usr/local/www/interfaces_bridge_edit.php:404
 #: src/usr/local/www/interfaces_ppps.php:94
 #: src/usr/local/www/interfaces_gre.php:86
-#: src/usr/local/www/interfaces_bridge.php:74
 #: src/usr/local/www/interfaces_bridge.php:91
 #: src/usr/local/www/interfaces_vlan.php:81
-#: src/usr/local/www/interfaces_lagg.php:93
-msgid "Bridges"
-msgstr "Mosty"
-
-#: src/usr/local/www/interfaces_assign.php:490
-#: src/usr/local/www/interfaces_vxlan.php:87
-#: src/usr/local/www/interfaces_lagg_edit.php:233
-#: src/usr/local/www/interfaces_wireless.php:86
-#: src/usr/local/www/interfaces_groups.php:69
-#: src/usr/local/www/interfaces_qinq.php:96
-#: src/usr/local/www/interfaces_gif.php:87
-#: src/usr/local/www/interfaces_ppps.php:95
-#: src/usr/local/www/interfaces_gre.php:87
-#: src/usr/local/www/interfaces_bridge.php:92
-#: src/usr/local/www/interfaces_vlan.php:82
 #: src/usr/local/www/interfaces_lagg.php:75
-#: src/usr/local/www/interfaces_lagg.php:94
+#: src/usr/local/www/interfaces_lagg.php:93
 msgid "LAGGs"
 msgstr "LAGG"
 
-#: src/usr/local/www/interfaces_assign.php:510
+#: src/usr/local/www/interfaces_assign.php:499
 msgid "Network port"
 msgstr "Port sieciowy"
 
-#: src/usr/local/www/interfaces_assign.php:549
+#: src/usr/local/www/interfaces_assign.php:538
 msgid "Available network ports:"
 msgstr "Dostępne porty sieciowe:"
 
-#: src/usr/local/www/interfaces_assign.php:562
+#: src/usr/local/www/interfaces_assign.php:551
 msgid "Add selected interface"
 msgstr "Dodaj wybrany interfejs"
 
-#: src/usr/local/www/interfaces_assign.php:578
+#: src/usr/local/www/interfaces_assign.php:567
 msgid ""
 "Interfaces that are configured as members of a lagg(4) interface will not be "
 "shown."
@@ -1555,7 +1518,7 @@ msgstr ""
 "Interfejsy skonfigurowane jako członkowie interfejsu lagg (4) nie będą "
 "wyświetlane."
 
-#: src/usr/local/www/interfaces_assign.php:580
+#: src/usr/local/www/interfaces_assign.php:569
 msgid ""
 "Wireless interfaces must be created on the Wireless tab before they can be "
 "assigned."
@@ -1578,7 +1541,7 @@ msgstr ""
 #: src/usr/local/www/diag_arp.php:71 src/usr/local/www/diag_testport.php:40
 #: src/usr/local/www/diag_routes.php:68 src/usr/local/www/diag_defaults.php:43
 #: src/usr/local/www/diag_command.php:66 src/usr/local/www/diag_tables.php:31
-#: src/usr/local/www/crash_reporter.php:58 src/usr/local/www/head.inc:702
+#: src/usr/local/www/crash_reporter.php:58 src/usr/local/www/head.inc:703
 #: src/usr/local/www/diag_ndp.php:133 src/usr/local/www/diag_smart.php:38
 #: src/usr/local/www/diag_pf_info.php:33
 #: src/usr/local/www/diag_traceroute.php:39 src/usr/local/www/diag_halt.php:47
@@ -1586,7 +1549,7 @@ msgstr ""
 msgid "Diagnostics"
 msgstr "Diagnostyka"
 
-#: src/usr/local/www/diag_limiter_info.php:33 src/usr/local/www/head.inc:405
+#: src/usr/local/www/diag_limiter_info.php:33 src/usr/local/www/head.inc:406
 msgid "Limiter Info"
 msgstr "Informacje o limicie"
 
@@ -1603,7 +1566,7 @@ msgid "Schedulers"
 msgstr "Harmonogramy"
 
 #: src/usr/local/www/diag_limiter_info.php:50
-#: src/usr/local/www/status_queues.php:42 src/usr/local/www/head.inc:366
+#: src/usr/local/www/status_queues.php:42 src/usr/local/www/head.inc:367
 msgid "Queues"
 msgstr "Kolejki"
 
@@ -1680,7 +1643,7 @@ msgstr "Brak pul IPsec."
 #: src/usr/local/www/services_captiveportal_zones.php:62
 #: src/usr/local/www/status_captiveportal.php:155
 #: src/usr/local/www/services_captiveportal.php:63
-#: src/usr/local/www/head.inc:317 src/usr/local/www/head.inc:354
+#: src/usr/local/www/head.inc:317 src/usr/local/www/head.inc:355
 #: src/usr/local/www/services_captiveportal_ip.php:58
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:54
 #: src/usr/local/www/status_captiveportal_vouchers.php:54
@@ -1763,46 +1726,6 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_expire.php:100
 msgid "Expire"
 msgstr "Wygasa"
-
-#: src/usr/local/www/interfaces_vxlan.php:52
-#: src/usr/local/www/interfaces_gif.php:51
-#: src/usr/local/www/interfaces_gre.php:52
-#: src/usr/local/www/interfaces_bridge.php:52
-#: src/usr/local/www/interfaces_vlan.php:45
-#: src/usr/local/www/interfaces_lagg.php:58
-msgid "Wrong parameters supplied"
-msgstr "Dostarczono nieprawidłowe parametry"
-
-#: src/usr/local/www/interfaces_vxlan.php:54
-#: src/usr/local/www/interfaces_gif.php:53
-#: src/usr/local/www/interfaces_gre.php:54
-#: src/usr/local/www/interfaces_bridge.php:54
-#: src/usr/local/www/interfaces_vlan.php:47
-#: src/usr/local/www/interfaces_lagg.php:60
-msgid "Wrong index supplied"
-msgstr "Dostarczono nieprawidłowy indeks"
-
-#: src/usr/local/www/interfaces_vxlan.php:57
-msgid ""
-"This VXLAN tunnel cannot be deleted because it is still being used as an "
-"interface."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan.php:91
-msgid "VXLAN Interfaces"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan.php:98
-msgid "Tunnel to"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan.php:122
-msgid "Edit VXLAN interface"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan.php:123
-msgid "Delete VXLAN interface"
-msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:44
 msgid "They must be either both IPv4 or both IPv6 addresses."
@@ -1899,9 +1822,9 @@ msgstr "Pojedynczy host"
 #: src/usr/local/www/firewall_rules_edit.php:1415
 #: src/usr/local/www/firewall_nat_out_edit.php:507
 #: src/usr/local/www/firewall_nat_out_edit.php:532
-#: src/usr/local/www/vpn_ipsec_phase2.php:594
-#: src/usr/local/www/vpn_ipsec_phase2.php:615
-#: src/usr/local/www/vpn_ipsec_phase2.php:641
+#: src/usr/local/www/vpn_ipsec_phase2.php:614
+#: src/usr/local/www/vpn_ipsec_phase2.php:635
+#: src/usr/local/www/vpn_ipsec_phase2.php:661
 msgid "Network"
 msgstr "Sieć"
 
@@ -1952,10 +1875,10 @@ msgstr "Wyklucza adres z późniejszej, bardziej ogólnej reguły."
 #: src/usr/local/www/status_openvpn.php:32 src/usr/local/www/status_logs.php:55
 #: src/usr/local/www/diag_backup.php:92
 #: src/usr/local/www/vpn_openvpn_csc.php:304 src/usr/local/www/head.inc:347
-#: src/usr/local/www/head.inc:365 src/usr/local/www/vpn_openvpn_server.php:752
+#: src/usr/local/www/head.inc:366 src/usr/local/www/vpn_openvpn_server.php:752
 #: src/usr/local/www/widgets/include/openvpn.inc:24
 #: src/usr/local/www/status_graph.php:59 src/etc/inc/service-utils.inc:409
-#: src/etc/inc/interfaces.inc:6739 src/etc/inc/interfaces.inc:7685
+#: src/etc/inc/interfaces.inc:6634 src/etc/inc/interfaces.inc:7580
 msgid "OpenVPN"
 msgstr "OpenVPN"
 
@@ -1973,7 +1896,7 @@ msgstr "OpenVPN"
 #: src/usr/local/www/services_pppoe_edit.php:330
 #: src/usr/local/www/services_rfc2136_edit.php:200
 #: src/usr/local/www/firewall_nat_out_edit.php:476
-#: src/usr/local/www/vpn_ipsec_phase1.php:792
+#: src/usr/local/www/vpn_ipsec_phase1.php:806
 #: src/usr/local/www/services_wol_edit.php:133
 #: src/usr/local/www/vpn_openvpn_server.php:848
 #: src/usr/local/www/firewall_nat_npt_edit.php:171
@@ -2035,23 +1958,23 @@ msgstr "*Zewnętrzny adres IP podsieci"
 #: src/usr/local/www/firewall_nat_out_edit.php:533
 #: src/usr/local/www/vpn_ipsec_keys.php:103
 #: src/usr/local/www/diag_smart.php:252
-#: src/usr/local/www/vpn_ipsec_phase2.php:595
-#: src/usr/local/www/vpn_ipsec_phase2.php:622
+#: src/usr/local/www/vpn_ipsec_phase2.php:615
 #: src/usr/local/www/vpn_ipsec_phase2.php:642
+#: src/usr/local/www/vpn_ipsec_phase2.php:662
 msgid "Type"
 msgstr "Rodzaj"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:521
-#: src/usr/local/www/system.php:543
+#: src/usr/local/www/vpn_wg.php:64 src/usr/local/www/system.php:543
 #: src/usr/local/www/system_advanced_admin.php:644
 #: src/usr/local/www/firewall_nat_edit.php:950
 #: src/usr/local/www/firewall_aliases_edit.php:347
-#: src/usr/local/www/vpn_ipsec_phase2.php:594
-#: src/usr/local/www/vpn_ipsec_phase2.php:601
-#: src/usr/local/www/vpn_ipsec_phase2.php:615
-#: src/usr/local/www/vpn_ipsec_phase2.php:628
-#: src/usr/local/www/vpn_ipsec_phase2.php:641
+#: src/usr/local/www/vpn_ipsec_phase2.php:614
+#: src/usr/local/www/vpn_ipsec_phase2.php:621
+#: src/usr/local/www/vpn_ipsec_phase2.php:635
 #: src/usr/local/www/vpn_ipsec_phase2.php:648
+#: src/usr/local/www/vpn_ipsec_phase2.php:661
+#: src/usr/local/www/vpn_ipsec_phase2.php:668
 msgid "Address"
 msgstr "Adres"
 
@@ -2109,20 +2032,20 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:528
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:185
 #: src/usr/local/www/system_gateway_groups_edit.php:314
-#: src/usr/local/www/interfaces_vxlan_edit.php:227
 #: src/usr/local/www/firewall_virtual_ip_edit.php:436
 #: src/usr/local/www/services_checkip_edit.php:165
 #: src/usr/local/www/firewall_nat_edit.php:986
 #: src/usr/local/www/interfaces_gre_edit.php:294
+#: src/usr/local/www/vpn_wg_edit.php:113
 #: src/usr/local/www/services_rfc2136_edit.php:321
 #: src/usr/local/www/firewall_nat_out_edit.php:649
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:158
 #: src/usr/local/www/firewall_aliases_import.php:258
 #: src/usr/local/www/services_captiveportal.php:544
-#: src/usr/local/www/vpn_ipsec_phase1.php:837
+#: src/usr/local/www/vpn_ipsec_phase1.php:851
 #: src/usr/local/www/firewall_aliases_edit.php:296
 #: src/usr/local/www/interfaces_gif_edit.php:223
-#: src/usr/local/www/vpn_ipsec_phase2.php:659
+#: src/usr/local/www/vpn_ipsec_phase2.php:679
 #: src/usr/local/www/services_dhcpv6_edit.php:232
 #: src/usr/local/www/services_wol_edit.php:150
 #: src/usr/local/www/services_unbound_host_edit.php:227
@@ -2162,7 +2085,7 @@ msgstr "Użyj ustawień systemowych"
 #: src/usr/local/www/services_pppoe_edit.php:322
 #: src/usr/local/www/services_rfc2136_edit.php:191
 #: src/usr/local/www/services_captiveportal.php:534
-#: src/usr/local/www/vpn_ipsec_phase1.php:1067
+#: src/usr/local/www/vpn_ipsec_phase1.php:1097
 #: src/usr/local/www/interfaces.php:1911 src/usr/local/www/interfaces.php:3316
 #: src/usr/local/www/firewall_rules.php:870 src/etc/inc/shaper.inc:4367
 #: src/etc/inc/shaper.inc:4821 src/usr/local/www/diag_routes.php:85
@@ -2173,7 +2096,7 @@ msgstr "Włącz"
 #: src/usr/local/www/services_dyndns_edit.php:292
 #: src/usr/local/www/vpn_openvpn_csc.php:356
 #: src/usr/local/www/firewall_nat_edit.php:1005
-#: src/usr/local/www/vpn_ipsec_phase1.php:1067
+#: src/usr/local/www/vpn_ipsec_phase1.php:1097
 #: src/usr/local/www/firewall_rules.php:873
 msgid "Disable"
 msgstr "Wyłącz"
@@ -2200,7 +2123,7 @@ msgstr "Uwierzytelnianie i rejestrowanie"
 #: src/usr/local/www/diag_authentication.php:71
 #: src/usr/local/www/status_logs.php:109
 #: src/usr/local/www/services_captiveportal.php:893
-#: src/usr/local/www/head.inc:393
+#: src/usr/local/www/head.inc:394
 msgid "Authentication"
 msgstr "Uwierzytelnianie"
 
@@ -2321,10 +2244,10 @@ msgstr "Wartość"
 #: src/usr/local/www/firewall_aliases.php:109
 #: src/usr/local/www/diag_gmirror.php:223
 #: src/usr/local/www/diag_gmirror.php:304
-#: src/usr/local/www/interfaces_groups.php:79
+#: src/usr/local/www/interfaces_groups.php:78
 #: src/usr/local/www/system_camanager.php:372
-#: src/usr/local/www/system_camanager.php:395 src/usr/local/www/pkg_mgr.php:67
-#: src/usr/local/www/pkg_mgr.php:160
+#: src/usr/local/www/system_camanager.php:395 src/usr/local/www/vpn_wg.php:62
+#: src/usr/local/www/pkg_mgr.php:67 src/usr/local/www/pkg_mgr.php:160
 #: src/usr/local/www/services_igmpproxy.php:127
 #: src/usr/local/www/services_checkip_edit.php:62
 #: src/usr/local/www/status_gateways.php:56
@@ -2575,7 +2498,7 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:177
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:116
 #: src/usr/local/www/services_captiveportal.php:63
-#: src/usr/local/www/head.inc:367
+#: src/usr/local/www/head.inc:368
 #: src/usr/local/www/services_unbound_advanced.php:266
 #: src/usr/local/www/services_captiveportal_ip.php:58
 #: src/usr/local/www/services_ntpd_acls.php:178
@@ -3181,15 +3104,15 @@ msgstr "Ukryj opcje zaawansowane"
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:147
 #: src/usr/local/www/status_logs_vpn.php:86 src/usr/local/www/vpn_ipsec.php:248
 #: src/usr/local/www/vpn_openvpn_client.php:554
-#: src/usr/local/www/vpn_l2tp_users_edit.php:31
+#: src/usr/local/www/vpn_l2tp_users_edit.php:31 src/usr/local/www/vpn_wg.php:36
 #: src/usr/local/www/vpn_l2tp.php:182
 #: src/usr/local/www/vpn_ipsec_mobile.php:354
 #: src/usr/local/www/vpn_openvpn_csc.php:304
-#: src/usr/local/www/vpn_ipsec_keys.php:73
-#: src/usr/local/www/vpn_ipsec_phase1.php:743
-#: src/usr/local/www/vpn_ipsec_phase1.php:746
-#: src/usr/local/www/vpn_ipsec_phase2.php:474
-#: src/usr/local/www/vpn_ipsec_phase2.php:478
+#: src/usr/local/www/vpn_wg_edit.php:80 src/usr/local/www/vpn_ipsec_keys.php:73
+#: src/usr/local/www/vpn_ipsec_phase1.php:757
+#: src/usr/local/www/vpn_ipsec_phase1.php:760
+#: src/usr/local/www/vpn_ipsec_phase2.php:494
+#: src/usr/local/www/vpn_ipsec_phase2.php:498
 #: src/usr/local/www/vpn_openvpn_server.php:752
 #: src/usr/local/www/vpn_ipsec_settings.php:299
 msgid "VPN"
@@ -3349,7 +3272,7 @@ msgstr "Identyfikator"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:69
 #: src/usr/local/www/vpn_ipsec_keys.php:104
-#: src/usr/local/www/vpn_ipsec_phase1.php:248
+#: src/usr/local/www/vpn_ipsec_phase1.php:249
 #: src/usr/local/www/interfaces.php:3340
 msgid "Pre-Shared Key"
 msgstr "Klucz wstępny"
@@ -3364,7 +3287,7 @@ msgstr ""
 "Użytkownik o tej nazwie już istnieje. W zamian dodaj klucz do użytkownika."
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:83
-#: src/usr/local/www/vpn_ipsec_phase1.php:273
+#: src/usr/local/www/vpn_ipsec_phase1.php:274
 msgid "Pre-Shared Key contains invalid characters."
 msgstr "Klucz wstępny zawiera nieprawidłowe znaki."
 
@@ -3394,8 +3317,8 @@ msgstr "Dodano klucze wstępne do kluczy IPsec"
 #: src/usr/local/www/vpn_ipsec_keys.php:73
 #: src/usr/local/www/vpn_ipsec_keys.php:90
 #: src/usr/local/www/vpn_ipsec_keys.php:96
-#: src/usr/local/www/vpn_ipsec_phase1.php:761
-#: src/usr/local/www/vpn_ipsec_phase2.php:560
+#: src/usr/local/www/vpn_ipsec_phase1.php:775
+#: src/usr/local/www/vpn_ipsec_phase2.php:580
 #: src/usr/local/www/vpn_ipsec_settings.php:332
 msgid "Pre-Shared Keys"
 msgstr "Klawisze wstępnie udostępnione"
@@ -3420,7 +3343,7 @@ msgid "*Secret type"
 msgstr "* Tajny typ"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:176
-#: src/usr/local/www/vpn_ipsec_phase1.php:900
+#: src/usr/local/www/vpn_ipsec_phase1.php:914
 msgid "*Pre-Shared Key"
 msgstr "* Klucz wstępny"
 
@@ -3477,7 +3400,7 @@ msgstr "Nieprawidłowe wejście"
 #: src/usr/local/www/diag_dump_states_sources.php:55
 #: src/usr/local/www/diag_dump_states_sources.php:60
 #: src/usr/local/www/diag_states_summary.php:154
-#: src/usr/local/www/diag_states_summary.php:156 src/usr/local/www/head.inc:416
+#: src/usr/local/www/diag_states_summary.php:156 src/usr/local/www/head.inc:417
 #: src/usr/local/www/firewall_rules.php:399
 msgid "States"
 msgstr "Stany pakietów"
@@ -3786,7 +3709,7 @@ msgstr "Zapisano wybór gałęzi oprogramowania systemowego."
 #: src/usr/local/www/system_usermanager.php:623
 #: src/usr/local/www/system_advanced_network.php:205
 #: src/usr/local/www/system_certmanager_renew.php:91
-#: src/usr/local/www/head.inc:694 src/usr/local/www/system_user_settings.php:34
+#: src/usr/local/www/head.inc:695 src/usr/local/www/system_user_settings.php:34
 #: src/usr/local/www/system_usermanager_addprivs.php:43
 #: src/usr/local/www/system_advanced_notifications.php:288
 #: src/usr/local/www/system_gateways.php:231
@@ -3805,8 +3728,8 @@ msgstr "System"
 #: src/usr/local/www/system_certmanager.php:1244
 #: src/usr/local/www/system_certmanager.php:1292
 #: src/usr/local/www/pkg_mgr_installed.php:218
-#: src/usr/local/www/diag_routes.php:109 src/usr/local/www/diag_tables.php:156
-#: src/usr/local/www/head.inc:249
+#: src/usr/local/www/vpn_wg_edit.php:250 src/usr/local/www/diag_routes.php:109
+#: src/usr/local/www/diag_tables.php:156 src/usr/local/www/head.inc:249
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 #: src/usr/local/www/system_update_settings.php:108
 msgid "Update"
@@ -3828,7 +3751,7 @@ msgstr "Ustawienia aktualizacji"
 #: src/usr/local/www/pkg_mgr_installed.php:36
 #: src/usr/local/www/pkg_mgr_installed.php:189 src/usr/local/www/pkg_mgr.php:40
 #: src/usr/local/www/pkg_mgr.php:132 src/usr/local/www/diag_backup.php:93
-#: src/usr/local/www/head.inc:252 src/usr/local/www/head.inc:694
+#: src/usr/local/www/head.inc:252 src/usr/local/www/head.inc:695
 msgid "Package Manager"
 msgstr "Menedżer pakietów"
 
@@ -4176,6 +4099,7 @@ msgid "Tunable Name"
 msgstr "Nazwa dostrajalna"
 
 #: src/usr/local/www/system_advanced_sysctl.php:156
+#: src/usr/local/www/vpn_wg_edit.php:153
 msgid "New"
 msgstr "Nowy"
 
@@ -4201,11 +4125,11 @@ msgstr "*Wartość"
 
 #: src/usr/local/www/system_advanced_sysctl.php:219
 #: src/usr/local/www/interfaces_groups_edit.php:242
-#: src/usr/local/www/interfaces_vlan_edit.php:238
+#: src/usr/local/www/interfaces_vlan_edit.php:227
 msgid "id"
 msgstr "ID"
 
-#: src/usr/local/www/diag_pftop.php:33 src/usr/local/www/head.inc:411
+#: src/usr/local/www/diag_pftop.php:33 src/usr/local/www/head.inc:412
 msgid "pfTop"
 msgstr "PfTop"
 
@@ -4272,7 +4196,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:1012
 #: src/usr/local/www/firewall_rules_edit.php:70
 #: src/usr/local/www/services_ntpd_gps.php:416
-#: src/usr/local/www/vpn_ipsec_phase2.php:615
+#: src/usr/local/www/vpn_ipsec_phase2.php:635
 #: src/usr/local/www/interfaces.php:1840 src/usr/local/www/interfaces.php:1843
 #: src/usr/local/www/interfaces.php:1866 src/usr/local/www/interfaces.php:1879
 #: src/etc/inc/ipsec.inc:471 src/etc/inc/shaper.inc:4411
@@ -4660,7 +4584,7 @@ msgstr ""
 #: src/usr/local/www/system_authservers.php:494
 #: src/usr/local/www/system_usermanager.php:648
 #: src/usr/local/www/services_ntpd_gps.php:374
-#: src/usr/local/www/status_queues.php:216 src/usr/local/www/head.inc:620
+#: src/usr/local/www/status_queues.php:216 src/usr/local/www/head.inc:621
 #: src/usr/local/www/system_usermanager_addprivs.php:150
 #: src/usr/local/www/services_ntpd_acls.php:192
 #: src/usr/local/www/firewall_rules.php:442
@@ -4799,7 +4723,7 @@ msgstr "Logowania L2TP"
 #: src/usr/local/www/status_logs.php:106 src/usr/local/www/status_logs.php:109
 #: src/usr/local/www/status_logs.php:112
 #: src/usr/local/www/status_logs_filter_dynamic.php:84
-#: src/usr/local/www/head.inc:368 src/usr/local/www/easyrule.php:124
+#: src/usr/local/www/head.inc:369 src/usr/local/www/easyrule.php:124
 #: src/usr/local/www/status_logs_filter_summary.php:69
 #: src/usr/local/www/status_logs_settings.php:231
 msgid "System Logs"
@@ -4855,7 +4779,7 @@ msgstr "Użytkownik"
 #: src/usr/local/www/services_pppoe_edit.php:472
 #: src/usr/local/www/services_pppoe_edit.php:546
 #: src/usr/local/www/status_dhcpv6_leases.php:253
-#: src/usr/local/www/vpn_ipsec_phase2.php:757
+#: src/usr/local/www/vpn_ipsec_phase2.php:809
 #: src/usr/local/www/interfaces.php:3390 src/usr/local/www/interfaces.php:3414
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:38
 #: src/usr/local/www/status_dhcp_leases.php:173
@@ -5118,9 +5042,8 @@ msgid "Failover Master Interface must be selected as member."
 msgstr ""
 
 #: src/usr/local/www/interfaces_lagg_edit.php:176
-#: src/usr/local/www/interfaces_vlan_edit.php:150
+#: src/usr/local/www/interfaces_vlan_edit.php:139
 #: src/usr/local/www/interfaces_bridge_edit.php:363
-#: src/usr/local/www/interfaces_vxlan_edit.php:118
 #: src/usr/local/www/interfaces_gre_edit.php:174
 #: src/usr/local/www/interfaces_gif_edit.php:127
 msgid "Error occurred creating interface, please retry."
@@ -5486,7 +5409,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd.php:260 src/usr/local/www/status_logs.php:57
 #: src/usr/local/www/status_ntpd.php:300
 #: src/usr/local/www/services_ntpd_gps.php:360 src/usr/local/www/head.inc:330
-#: src/usr/local/www/head.inc:364 src/usr/local/www/services_ntpd_acls.php:178
+#: src/usr/local/www/head.inc:365 src/usr/local/www/services_ntpd_acls.php:178
 msgid "NTP"
 msgstr "NTP"
 
@@ -5508,7 +5431,7 @@ msgstr "Ogólne"
 #: src/usr/local/www/system_routes.php:227
 #: src/usr/local/www/status_gateways.php:37
 #: src/usr/local/www/status_gateways.php:44
-#: src/usr/local/www/status_gateways.php:49 src/usr/local/www/head.inc:357
+#: src/usr/local/www/status_gateways.php:49 src/usr/local/www/head.inc:358
 #: src/usr/local/www/system_gateways.php:231
 #: src/usr/local/www/system_gateways.php:250
 #: src/usr/local/www/system_gateways.php:258
@@ -5851,7 +5774,7 @@ msgstr ""
 "Usuwa lokalny plik dziennika i inicjalizuje go jako pusty dziennik. Najpierw "
 "zapisz ewentualne zmiany ustawień."
 
-#: src/usr/local/www/diag_system_activity.php:33 src/usr/local/www/head.inc:418
+#: src/usr/local/www/diag_system_activity.php:33 src/usr/local/www/head.inc:419
 msgid "System Activity"
 msgstr "Stan systemu"
 
@@ -5924,7 +5847,7 @@ msgstr ""
 msgid "To bypass the wizard, click on the %s logo on the initial page."
 msgstr "Aby pominąć kreatora, kliknij logo %s na stronie startowej."
 
-#: src/usr/local/www/index.php:327 src/usr/local/www/head.inc:356
+#: src/usr/local/www/index.php:327 src/usr/local/www/head.inc:357
 msgid "Dashboard"
 msgstr "Podsumowanie"
 
@@ -6097,14 +6020,14 @@ msgid "Deleted selected IPsec Phase 2 entries."
 msgstr "Usunięto wybrane wpisy fazy 2 IPsec."
 
 #: src/usr/local/www/vpn_ipsec.php:184
-#: src/usr/local/www/vpn_ipsec_phase1.php:495
+#: src/usr/local/www/vpn_ipsec_phase1.php:508
 msgid ""
 "Cannot disable a Phase 1 with a child Phase 2 while the interface is "
 "assigned. Remove the interface assignment before disabling this P2."
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec.php:194
-#: src/usr/local/www/vpn_ipsec_phase2.php:376
+#: src/usr/local/www/vpn_ipsec_phase2.php:394
 msgid ""
 "Cannot disable a VTI Phase 2 while the interface is assigned. Remove the "
 "interface assignment before disabling this P2."
@@ -6121,12 +6044,12 @@ msgid "Saved configuration changes for IPsec tunnels."
 msgstr "Zapisano zmiany konfiguracji tuneli IPsec."
 
 #: src/usr/local/www/vpn_ipsec.php:248 src/usr/local/www/vpn_ipsec.php:259
-#: src/usr/local/www/vpn_ipsec_mobile.php:472
+#: src/usr/local/www/vpn_wg.php:36 src/usr/local/www/vpn_ipsec_mobile.php:472
 #: src/usr/local/www/vpn_ipsec_keys.php:88
-#: src/usr/local/www/vpn_ipsec_phase1.php:746
-#: src/usr/local/www/vpn_ipsec_phase1.php:759
-#: src/usr/local/www/vpn_ipsec_phase2.php:478
-#: src/usr/local/www/vpn_ipsec_phase2.php:558
+#: src/usr/local/www/vpn_ipsec_phase1.php:760
+#: src/usr/local/www/vpn_ipsec_phase1.php:773
+#: src/usr/local/www/vpn_ipsec_phase2.php:498
+#: src/usr/local/www/vpn_ipsec_phase2.php:578
 #: src/usr/local/www/vpn_ipsec_settings.php:330
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:201
 msgid "Tunnels"
@@ -6136,10 +6059,10 @@ msgstr "Tunele"
 #: src/usr/local/www/vpn_ipsec_mobile.php:354
 #: src/usr/local/www/vpn_ipsec_mobile.php:473
 #: src/usr/local/www/vpn_ipsec_keys.php:89
-#: src/usr/local/www/vpn_ipsec_phase1.php:743
-#: src/usr/local/www/vpn_ipsec_phase1.php:760
-#: src/usr/local/www/vpn_ipsec_phase2.php:474
-#: src/usr/local/www/vpn_ipsec_phase2.php:559
+#: src/usr/local/www/vpn_ipsec_phase1.php:757
+#: src/usr/local/www/vpn_ipsec_phase1.php:774
+#: src/usr/local/www/vpn_ipsec_phase2.php:494
+#: src/usr/local/www/vpn_ipsec_phase2.php:579
 #: src/usr/local/www/vpn_ipsec_settings.php:331
 msgid "Mobile Clients"
 msgstr "Klienci mobilni"
@@ -6149,10 +6072,10 @@ msgstr "Klienci mobilni"
 #: src/usr/local/www/services_unbound.php:298
 #: src/usr/local/www/vpn_ipsec_mobile.php:475
 #: src/usr/local/www/vpn_ipsec_keys.php:91
-#: src/usr/local/www/vpn_ipsec_phase1.php:762
+#: src/usr/local/www/vpn_ipsec_phase1.php:776
 #: src/usr/local/www/services_unbound_advanced.php:266
 #: src/usr/local/www/services_unbound_advanced.php:285
-#: src/usr/local/www/vpn_ipsec_phase2.php:561
+#: src/usr/local/www/vpn_ipsec_phase2.php:581
 #: src/usr/local/www/vpn_ipsec_settings.php:299
 #: src/usr/local/www/vpn_ipsec_settings.php:333
 msgid "Advanced Settings"
@@ -6173,13 +6096,13 @@ msgid "IKE"
 msgstr "IKE"
 
 #: src/usr/local/www/vpn_ipsec.php:284
-#: src/usr/local/www/vpn_ipsec_phase1.php:802
+#: src/usr/local/www/vpn_ipsec_phase1.php:816
 msgid "Remote Gateway"
 msgstr "Zdalna brama"
 
 #: src/usr/local/www/vpn_ipsec.php:285 src/usr/local/www/vpn_ipsec.php:463
 #: src/usr/local/www/vpn_openvpn_client.php:1215
-#: src/usr/local/www/interfaces_wireless.php:97
+#: src/usr/local/www/interfaces_wireless.php:96
 #: src/usr/local/www/firewall_nat_out.php:225
 #: src/usr/local/www/firewall_nat_out.php:229
 #: src/usr/local/www/interfaces_wireless_edit.php:73
@@ -6985,12 +6908,12 @@ msgid "Member Count"
 msgstr "Ilość członków"
 
 #: src/usr/local/www/system_groupmanager.php:403
-#: src/usr/local/www/interfaces_groups.php:112
+#: src/usr/local/www/interfaces_groups.php:111
 msgid "Edit group"
 msgstr "Edytuj grupę"
 
 #: src/usr/local/www/system_groupmanager.php:405
-#: src/usr/local/www/interfaces_groups.php:113
+#: src/usr/local/www/interfaces_groups.php:112
 msgid "Delete group"
 msgstr "Usuń grupę"
 
@@ -7028,9 +6951,9 @@ msgid "Not members"
 msgstr "Nie są członkami"
 
 #: src/usr/local/www/system_groupmanager.php:533
-#: src/usr/local/www/interfaces_groups.php:80
-#: src/usr/local/www/interfaces_bridge.php:103
-#: src/usr/local/www/interfaces_lagg.php:105
+#: src/usr/local/www/interfaces_groups.php:79
+#: src/usr/local/www/interfaces_bridge.php:102
+#: src/usr/local/www/interfaces_lagg.php:104
 msgid "Members"
 msgstr "Członkowie"
 
@@ -7185,8 +7108,8 @@ msgstr ""
 #: src/usr/local/www/system_crlmanager.php:372
 #: src/usr/local/www/system_crlmanager.php:682
 #: src/usr/local/www/system_certmanager_renew.php:51
-#: src/usr/local/www/vpn_ipsec_phase1.php:254
-#: src/usr/local/www/vpn_ipsec_phase1.php:258
+#: src/usr/local/www/vpn_ipsec_phase1.php:255
+#: src/usr/local/www/vpn_ipsec_phase1.php:259
 #: src/usr/local/www/vpn_openvpn_server.php:486 src/etc/inc/certs.inc:2263
 msgid "Certificate Authority"
 msgstr "Urząd Certyfikacji"
@@ -7300,8 +7223,8 @@ msgstr "Kreatory"
 
 #: src/usr/local/www/vpn_openvpn_client.php:588
 #: src/usr/local/www/vpn_openvpn_csc.php:334
-#: src/usr/local/www/vpn_ipsec_phase1.php:767
-#: src/usr/local/www/vpn_ipsec_phase2.php:566
+#: src/usr/local/www/vpn_ipsec_phase1.php:781
+#: src/usr/local/www/vpn_ipsec_phase2.php:586
 #: src/usr/local/www/vpn_openvpn_server.php:788
 msgid "General Information"
 msgstr "Informacje ogólne"
@@ -7322,7 +7245,7 @@ msgstr "*Tryb serwera"
 #: src/usr/local/www/firewall_nat_edit.php:782
 #: src/usr/local/www/firewall_rules_edit.php:1345
 #: src/usr/local/www/firewall_nat_out_edit.php:496
-#: src/usr/local/www/vpn_ipsec_phase2.php:667
+#: src/usr/local/www/vpn_ipsec_phase2.php:687
 #: src/usr/local/www/vpn_openvpn_server.php:833
 msgid "*Protocol"
 msgstr "*Protokół"
@@ -7545,7 +7468,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:774
 #: src/usr/local/www/vpn_openvpn_client.php:780
-#: src/usr/local/www/vpn_ipsec_phase1.php:928
+#: src/usr/local/www/vpn_ipsec_phase1.php:942
 #: src/usr/local/www/vpn_openvpn_server.php:922
 #: src/usr/local/www/vpn_openvpn_server.php:928
 msgid "*Peer Certificate Authority"
@@ -7907,7 +7830,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:1064
 #: src/usr/local/www/interfaces_bridge_edit.php:451
 #: src/usr/local/www/interfaces_ppps_edit.php:805
-#: src/usr/local/www/vpn_ipsec_phase2.php:751
+#: src/usr/local/www/vpn_ipsec_phase2.php:803
 #: src/usr/local/www/vpn_openvpn_server.php:1529
 #: src/usr/local/www/interfaces.php:2155 src/usr/local/www/interfaces.php:2360
 msgid "Advanced Configuration"
@@ -8062,15 +7985,15 @@ msgstr ""
 "Ten klon sieci bezprzewodowej nie może zostać usunięty, ponieważ został "
 "przypisany jako interfejs."
 
-#: src/usr/local/www/interfaces_wireless.php:90
+#: src/usr/local/www/interfaces_wireless.php:89
 msgid "Wireless Interfaces"
 msgstr "Interfejsy bezprzewodowe "
 
-#: src/usr/local/www/interfaces_wireless.php:120
+#: src/usr/local/www/interfaces_wireless.php:119
 msgid "Edit WiFi interface"
 msgstr "Edytuj interfejs WiFi"
 
-#: src/usr/local/www/interfaces_wireless.php:121
+#: src/usr/local/www/interfaces_wireless.php:120
 msgid "Delete WiFi interface"
 msgstr "Usuń interfejs Wi-Fi"
 
@@ -9289,7 +9212,7 @@ msgstr "Nie można znaleźć kopii zapasowych a tym urządzeniu."
 msgid "Current count of hosted backups"
 msgstr ""
 
-#: src/usr/local/www/diag_reboot.php:45 src/usr/local/www/head.inc:412
+#: src/usr/local/www/diag_reboot.php:45 src/usr/local/www/head.inc:413
 #: src/usr/local/www/interfaces.php:2241
 msgid "Reboot"
 msgstr "Restart"
@@ -9644,7 +9567,7 @@ msgstr "Organ certyfikacji"
 #: src/usr/local/www/system_camanager.php:180
 #: src/usr/local/www/system_camanager.php:192
 #: src/usr/local/www/system_usermanager.php:224
-#: src/usr/local/www/vpn_ipsec_phase1.php:954
+#: src/usr/local/www/vpn_ipsec_phase1.php:968
 msgid "Key length"
 msgstr "Długość klucza"
 
@@ -9677,7 +9600,6 @@ msgstr "Typ Certyfikatu"
 #: src/usr/local/www/system_usermanager.php:225
 #: src/usr/local/www/system_usermanager.php:1028
 #: src/usr/local/www/system_certmanager_renew.php:227
-#: src/usr/local/www/vpn_ipsec_phase2.php:744
 msgid "Lifetime"
 msgstr "Ważność"
 
@@ -11556,8 +11478,8 @@ msgstr "Obecnie nie są zainstalowane pakiety z narzędziami rejestrowania."
 #: src/usr/local/www/firewall_virtual_ip_edit.php:389
 #: src/usr/local/www/firewall_rules_edit.php:1374
 #: src/usr/local/www/firewall_nat_out_edit.php:593
-#: src/usr/local/www/vpn_ipsec_phase2.php:603
-#: src/usr/local/www/vpn_ipsec_phase2.php:650
+#: src/usr/local/www/vpn_ipsec_phase2.php:623
+#: src/usr/local/www/vpn_ipsec_phase2.php:670
 #, php-format
 msgid "%s"
 msgstr "%s"
@@ -12039,7 +11961,7 @@ msgid "Periodic DHCP Leases Backup"
 msgstr "Okresowa kopia zapasowa dzierżaw DHCP"
 
 #: src/usr/local/www/system_advanced_misc.php:623
-#: src/usr/local/www/head.inc:358 src/usr/local/www/status_dhcp_leases.php:39
+#: src/usr/local/www/head.inc:359 src/usr/local/www/status_dhcp_leases.php:39
 msgid "DHCP Leases"
 msgstr "Dzierżawy DHCP"
 
@@ -12509,7 +12431,7 @@ msgstr ""
 msgid "Download Capture"
 msgstr "Pobierz przechwyt"
 
-#: src/usr/local/www/diag_packet_capture.php:142 src/usr/local/www/head.inc:420
+#: src/usr/local/www/diag_packet_capture.php:142 src/usr/local/www/head.inc:421
 msgid "Packet Capture"
 msgstr "Przechwytywanie pakietów"
 
@@ -12663,9 +12585,9 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:401
-#: src/usr/local/www/status_upnp.php:74
+#: src/usr/local/www/vpn_wg.php:65 src/usr/local/www/status_upnp.php:74
 #: src/usr/local/www/firewall_nat_edit.php:966
-#: src/usr/local/www/diag_testport.php:54
+#: src/usr/local/www/diag_testport.php:54 src/usr/local/www/vpn_wg_edit.php:267
 #: src/usr/local/www/firewall_aliases_edit.php:183
 #: src/usr/local/www/interfaces.php:3396 src/usr/local/www/interfaces.php:3420
 #: src/usr/local/www/firewall_rules.php:409
@@ -12789,7 +12711,7 @@ msgstr ""
 msgid "Select a detail level to view the contents of the packet capture."
 msgstr ""
 
-#: src/usr/local/www/diag_gmirror.php:35 src/usr/local/www/head.inc:401
+#: src/usr/local/www/diag_gmirror.php:35 src/usr/local/www/head.inc:402
 msgid "GEOM Mirrors"
 msgstr ""
 
@@ -13004,7 +12926,7 @@ msgstr "Uwierzytelnianie nie powiodło się: brak wystarczających uprawnień"
 msgid "Merged in config (%s sections) from XMLRPC client."
 msgstr "Połączono w konfiguracji (sekcje% s) z klienta XMLRPC."
 
-#: src/usr/local/www/interfaces_groups.php:131
+#: src/usr/local/www/interfaces_groups.php:130
 #, php-format
 msgid ""
 "Interface Groups allow setting up rules for multiple interfaces without "
@@ -13081,7 +13003,7 @@ msgid "Add server"
 msgstr "Dodaj serwer"
 
 #: src/usr/local/www/diag_dns.php:31 src/usr/local/www/diag_dns.php:198
-#: src/usr/local/www/head.inc:396
+#: src/usr/local/www/head.inc:397
 msgid "DNS Lookup"
 msgstr "Wyszukiwanie DNS"
 
@@ -13186,7 +13108,7 @@ msgstr "Czas zapytania"
 msgid "More Information"
 msgstr "Więcej informacji"
 
-#: src/usr/local/www/diag_dns.php:283 src/usr/local/www/head.inc:419
+#: src/usr/local/www/diag_dns.php:283 src/usr/local/www/head.inc:420
 #: src/usr/local/www/diag_traceroute.php:39
 #: src/usr/local/www/diag_traceroute.php:126
 #: src/usr/local/www/diag_traceroute.php:175 src/etc/inc/filter.inc:89
@@ -13763,7 +13685,7 @@ msgstr "Utwórz nowe klucze"
 msgid "No services found."
 msgstr "Nie znaleziono usług."
 
-#: src/usr/local/www/diag_sockets.php:33 src/usr/local/www/head.inc:415
+#: src/usr/local/www/diag_sockets.php:33 src/usr/local/www/head.inc:416
 msgid "Sockets"
 msgstr "Gniazda"
 
@@ -13842,8 +13764,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/interfaces_wireless_edit.php:73
-#: src/usr/local/www/interfaces_vlan_edit.php:85
-#: src/usr/local/www/interfaces_vxlan_edit.php:59
+#: src/usr/local/www/interfaces_vlan_edit.php:74
 #: src/usr/local/www/interfaces_gre_edit.php:77
 #: src/usr/local/www/interfaces_gre_edit.php:88
 #: src/usr/local/www/interfaces_gre_edit.php:96
@@ -13891,15 +13812,14 @@ msgid "Wireless Interface Configuration"
 msgstr "Konfiguracja interfejsu bezprzewodowego"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:171
-#: src/usr/local/www/interfaces_vlan_edit.php:199
-#: src/usr/local/www/interfaces_vxlan_edit.php:165
+#: src/usr/local/www/interfaces_vlan_edit.php:188
 #: src/usr/local/www/interfaces_gre_edit.php:221
 #: src/usr/local/www/interfaces_gif_edit.php:174
 msgid "*Parent Interface"
 msgstr "* Interfejs rodzicielski"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:178
-#: src/usr/local/www/vpn_ipsec_phase2.php:577
+#: src/usr/local/www/vpn_ipsec_phase2.php:597
 msgid "*Mode"
 msgstr "*Tryb"
 
@@ -13989,7 +13909,8 @@ msgstr "Dodaj separator"
 msgid "Separator"
 msgstr "Separator"
 
-#: src/usr/local/www/firewall_nat.php:525 src/usr/local/www/interfaces.php:2131
+#: src/usr/local/www/firewall_nat.php:525 src/usr/local/www/vpn_wg_edit.php:245
+#: src/usr/local/www/vpn_wg_edit.php:246 src/usr/local/www/interfaces.php:2131
 #: src/usr/local/www/interfaces.php:3536 src/usr/local/www/diag_halt.php:80
 #: src/usr/local/www/firewall_rules.php:973
 msgid "Cancel"
@@ -14409,6 +14330,58 @@ msgid ""
 "be left blank."
 msgstr ""
 
+#: src/usr/local/www/vpn_wg.php:36 src/usr/local/www/vpn_wg_edit.php:80
+#: src/usr/local/www/head.inc:350
+msgid "WireGuard"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:52
+msgid ""
+"No WireGuard tunnels have been configured. Click the \"Add tunnel\" button "
+"below to create one."
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:56
+msgid "WireGuard Tunnels"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:66
+msgid "# Peers"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:92
+msgid "Edit tunnel"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:93
+msgid "Delete tunnel"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:131
+msgid "No peers have been configured"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:146
+msgid "Firewall keys"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:151 src/usr/local/www/vpn_wg_edit.php:143
+#: src/usr/local/www/vpn_wg_edit.php:268
+msgid "Public key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:158 src/usr/local/www/vpn_wg_edit.php:136
+msgid "Private key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:170
+msgid "Show peers"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg.php:175
+msgid "Add Tunnel"
+msgstr ""
+
 #: src/usr/local/www/pkg_mgr.php:85
 msgid "Visit official website"
 msgstr "Odwiedź oficjalną stronę internetową"
@@ -14589,7 +14562,7 @@ msgid "Group Description"
 msgstr "opis grupy"
 
 #: src/usr/local/www/interfaces_groups_edit.php:225
-#: src/usr/local/www/interfaces_vlan_edit.php:226
+#: src/usr/local/www/interfaces_vlan_edit.php:215
 msgid ""
 "A group description may be entered here for administrative reference (not "
 "parsed)."
@@ -14616,7 +14589,7 @@ msgid "Rules have been cleared and the daemon restarted."
 msgstr "Reguły zostały usunięte i demona została uruchomiona ponownie."
 
 #: src/usr/local/www/status_upnp.php:44 src/usr/local/www/head.inc:338
-#: src/usr/local/www/head.inc:372
+#: src/usr/local/www/head.inc:373
 msgid "UPnP &amp; NAT-PMP"
 msgstr "UPnP &amp; NAT-PMP"
 
@@ -14794,7 +14767,7 @@ msgstr "Usunięto kopię zapasową z oznaczeniem czasu%1$s i opis \"%2$s\"."
 
 #: src/usr/local/www/diag_confbak.php:96 src/usr/local/www/diag_confbak.php:109
 #: src/usr/local/www/diag_backup.php:121 src/usr/local/www/diag_backup.php:145
-#: src/usr/local/www/head.inc:394 src/usr/local/www/head.inc:703
+#: src/usr/local/www/head.inc:395 src/usr/local/www/head.inc:704
 msgid "Backup & Restore"
 msgstr "Kopia zapasowa i przywracanie"
 
@@ -15092,7 +15065,7 @@ msgstr "Dopuszczalne są wszystkie połączenia%1$sto lub od%2$s"
 msgid "Protocol counts"
 msgstr "Protokół liczy"
 
-#: src/usr/local/www/diag_states_summary.php:199 src/usr/local/www/head.inc:417
+#: src/usr/local/www/diag_states_summary.php:199 src/usr/local/www/head.inc:418
 msgid "States Summary"
 msgstr "Podsumowanie stanów pakietów"
 
@@ -15272,7 +15245,7 @@ msgid "High-latency"
 msgstr "Wysoka latencja"
 
 #: src/usr/local/www/system_advanced_firewall.php:464
-#: src/usr/local/www/vpn_ipsec_phase1.php:854
+#: src/usr/local/www/vpn_ipsec_phase1.php:868
 msgid "Aggressive"
 msgstr "Agresywny"
 
@@ -15680,28 +15653,28 @@ msgid ""
 "interface."
 msgstr ""
 
-#: src/usr/local/www/interfaces_qinq.php:101
+#: src/usr/local/www/interfaces_qinq.php:100
 msgid "QinQ Interfaces"
 msgstr "Interfejsy QinQ"
 
-#: src/usr/local/www/interfaces_qinq.php:108
+#: src/usr/local/www/interfaces_qinq.php:107
 #: src/usr/local/www/firewall_rules_edit.php:1582
 msgid "Tag"
 msgstr "Etykietka"
 
-#: src/usr/local/www/interfaces_qinq.php:109
+#: src/usr/local/www/interfaces_qinq.php:108
 msgid "QinQ members"
 msgstr "Członkowie QinQ"
 
-#: src/usr/local/www/interfaces_qinq.php:134
+#: src/usr/local/www/interfaces_qinq.php:133
 msgid "Edit Q-in-Q interface"
 msgstr "Edytuj interfejs Q-in-Q"
 
-#: src/usr/local/www/interfaces_qinq.php:135
+#: src/usr/local/www/interfaces_qinq.php:134
 msgid "Delete Q-in-Q interface"
 msgstr "Usuń interfejs Q-in-Q"
 
-#: src/usr/local/www/interfaces_qinq.php:155
+#: src/usr/local/www/interfaces_qinq.php:154
 #, php-format
 msgid ""
 "Not all drivers/NICs support 802.1Q QinQ tagging properly. %1$sOn cards that "
@@ -15715,6 +15688,22 @@ msgstr ""
 "problemy.%1$sPobierz podręcznik%2$s, aby uzyskać informacje o obsługiwanych "
 "kartach."
 
+#: src/usr/local/www/interfaces_gif.php:51
+#: src/usr/local/www/interfaces_gre.php:52
+#: src/usr/local/www/interfaces_bridge.php:52
+#: src/usr/local/www/interfaces_vlan.php:45
+#: src/usr/local/www/interfaces_lagg.php:58
+msgid "Wrong parameters supplied"
+msgstr "Dostarczono nieprawidłowe parametry"
+
+#: src/usr/local/www/interfaces_gif.php:53
+#: src/usr/local/www/interfaces_gre.php:54
+#: src/usr/local/www/interfaces_bridge.php:54
+#: src/usr/local/www/interfaces_vlan.php:47
+#: src/usr/local/www/interfaces_lagg.php:60
+msgid "Wrong index supplied"
+msgstr "Dostarczono nieprawidłowy indeks"
+
 #: src/usr/local/www/interfaces_gif.php:56
 msgid ""
 "This gif TUNNEL cannot be deleted because it is still being used as an "
@@ -15723,20 +15712,20 @@ msgstr ""
 "Ten gif TUNNEL nie może zostać usunięty, ponieważ jest on nadal używany jako "
 "interfejs."
 
-#: src/usr/local/www/interfaces_gif.php:91
+#: src/usr/local/www/interfaces_gif.php:90
 msgid "GIF Interfaces"
 msgstr "Interfejsy GIF"
 
-#: src/usr/local/www/interfaces_gif.php:98
-#: src/usr/local/www/interfaces_gre.php:98
+#: src/usr/local/www/interfaces_gif.php:97
+#: src/usr/local/www/interfaces_gre.php:97
 msgid "Tunnel to &hellip;"
 msgstr "Tunel do & hellip;"
 
-#: src/usr/local/www/interfaces_gif.php:116
+#: src/usr/local/www/interfaces_gif.php:115
 msgid "Edit GIF interface"
 msgstr "Edytuj interfejs GIF"
 
-#: src/usr/local/www/interfaces_gif.php:117
+#: src/usr/local/www/interfaces_gif.php:116
 msgid "Delete GIF interface"
 msgstr "Usuwanie interfejsu GIF"
 
@@ -16506,7 +16495,7 @@ msgstr "%sUser-created motywy nie są obsługiwane, używać na własne ryzyko."
 #: src/usr/local/www/services_pppoe.php:77
 #: src/usr/local/www/services_pppoe.php:91
 #: src/usr/local/www/services_pppoe_edit.php:307 src/usr/local/www/head.inc:331
-#: src/etc/inc/interfaces.inc:7675
+#: src/etc/inc/interfaces.inc:7570
 msgid "PPPoE Server"
 msgstr "Serwer PPPoE"
 
@@ -16819,34 +16808,34 @@ msgstr ""
 "Nie zapomnij dodać reguły zapory, aby umożliwić klientom komunikację z "
 "klientami L2TP."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:85
-#: src/usr/local/www/interfaces_vlan.php:98
+#: src/usr/local/www/interfaces_vlan_edit.php:74
+#: src/usr/local/www/interfaces_vlan.php:97
 msgid "VLAN tag"
 msgstr "Znacznik VLAN"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:90
+#: src/usr/local/www/interfaces_vlan_edit.php:79
 msgid "The VLAN tag must be an integer between 1 and 4094."
 msgstr "Znacznik VLAN musi być liczbą całkowitą pomiędzy 1 a 4094."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:93
+#: src/usr/local/www/interfaces_vlan_edit.php:82
 msgid "The VLAN Priority must be an integer between 0 and 7."
 msgstr "Priorytet sieci VLAN musi być liczbą całkowitą pomiędzy 0 a 7."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:97
+#: src/usr/local/www/interfaces_vlan_edit.php:86
 msgid "Interface supplied as parent is invalid"
 msgstr "Interfejs wskazany jako nadrzędny jest nieprawidłowy"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:103
+#: src/usr/local/www/interfaces_vlan_edit.php:92
 msgid "The VLAN tag cannot be changed while the interface is assigned."
 msgstr "Nie można zmienić znacznika VLAN gdy jest przypisany interfejs."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:113
+#: src/usr/local/www/interfaces_vlan_edit.php:102
 #, php-format
 msgid "A VLAN with the tag %s is already defined on this interface."
 msgstr ""
 "Dla tego interfejsu jest już zdefiniowana sieć VLAN ze znacznikiem %s."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:120
+#: src/usr/local/www/interfaces_vlan_edit.php:109
 #, php-format
 msgid ""
 "A QinQ VLAN exists on %s with this tag. Please remove it to use this tag for "
@@ -16855,31 +16844,31 @@ msgstr ""
 "A QinQ VLAN istnieje na %s przy użyciu tego tagu. Usuń ten tag, aby używać "
 "tego tagu dla normalnej sieci VLAN."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:195
+#: src/usr/local/www/interfaces_vlan_edit.php:184
 msgid "VLAN Configuration"
 msgstr "Konfiguracja sieci VLAN"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:202
+#: src/usr/local/www/interfaces_vlan_edit.php:191
 msgid "Only VLAN capable interfaces will be shown."
 msgstr "Zostaną wyświetlone tylko interfejsy obsługujące VLAN."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:206
+#: src/usr/local/www/interfaces_vlan_edit.php:195
 msgid "*VLAN Tag"
 msgstr "*Znacznik VLAN"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:210
+#: src/usr/local/www/interfaces_vlan_edit.php:199
 msgid "802.1Q VLAN tag (between 1 and 4094)."
 msgstr "Znacznik 802.1Q VLAN (od 1 do 4094)."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:214
+#: src/usr/local/www/interfaces_vlan_edit.php:203
 msgid "VLAN Priority"
 msgstr "Priorytet VLAN"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:218
+#: src/usr/local/www/interfaces_vlan_edit.php:207
 msgid "802.1Q VLAN Priority (between 0 and 7)."
 msgstr "Priorytet 802.1Q VLAN (od 0 do 7)."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:230
+#: src/usr/local/www/interfaces_vlan_edit.php:219
 msgid "vlanif"
 msgstr "Vlanif"
 
@@ -17315,7 +17304,7 @@ msgstr "Interfejsy uczestniczące w mostku."
 #: src/usr/local/www/interfaces_bridge_edit.php:445
 #: src/usr/local/www/firewall_rules_edit.php:1542
 #: src/usr/local/www/firewall_rules_edit.php:1548
-#: src/usr/local/www/vpn_ipsec_phase1.php:1039 src/etc/inc/shaper.inc:4497
+#: src/usr/local/www/vpn_ipsec_phase1.php:1069 src/etc/inc/shaper.inc:4497
 #: src/etc/inc/shaper.inc:4928
 msgid "Advanced Options"
 msgstr "Opcje zaawansowane "
@@ -17537,7 +17526,7 @@ msgstr ""
 "1 sekunda, a maksimum wynosi 2 sekundy."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:611
-#: src/usr/local/www/interfaces_vlan.php:99
+#: src/usr/local/www/interfaces_vlan.php:98
 #: src/usr/local/www/system_gateway_groups.php:131 src/etc/inc/shaper.inc:1812
 msgid "Priority"
 msgstr "Priorytet"
@@ -17592,7 +17581,7 @@ msgstr ""
 "ścieżkę z powrotem na koszt, automatycznie ustawić koszt na 0. Minimum "
 "wynosi 1, a maksimum to 200000000."
 
-#: src/usr/local/www/diag_edit.php:34 src/usr/local/www/head.inc:397
+#: src/usr/local/www/diag_edit.php:34 src/usr/local/www/head.inc:398
 msgid "Edit File"
 msgstr "Edytuj plik"
 
@@ -17737,119 +17726,6 @@ msgstr "GB/s"
 #: src/usr/local/www/firewall_shaper_queues.php:42
 msgid "No Queue Configured/Selected"
 msgstr "Nie skonfigurowano/wybrano kolejki"
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:59
-msgid "VXLAN remote address"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:59
-msgid "VXLAN ID"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:64
-msgid ""
-"The remote peer address must have valid IP address and must not contain CIDR "
-"masks or prefixes."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:70
-#: src/usr/local/www/interfaces_gif_edit.php:94
-msgid ""
-"The alias IP address family has to match the family of the remote peer "
-"address."
-msgstr ""
-"Protokół aliasów adresów IP musi odpowiadać protokołowi zdalnego adresu "
-"równorzędnego."
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:74
-msgid "VXLAN ID valid range is 1-16777215."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:78
-#: src/usr/local/www/interfaces_vxlan_edit.php:82
-msgid "VXLAN Local Port must be valid port value."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:87
-msgid "VXLAN TTL must be in range between 1 and 255."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:97
-#, php-format
-msgid "A vxlan with the remote address %s and VXLAN ID %s is already defined."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:161
-msgid "VXLAN Configuration"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:168
-msgid ""
-"This interface serves as the local address to be used for the VXLAN tunnel."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:172
-msgid "*VXLAN Remote Address"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:174
-msgid ""
-"Peer address or multicast group where encapsulated VXLAN packets will be "
-"sent."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:178
-msgid "*VXLAN ID"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:181
-msgid ""
-"24-bit VXLAN Network Identifier (VNI) that identifies the virtual network "
-"segment membership of the interface."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:185
-msgid "VXLAN Local Port"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:189
-msgid ""
-"The port number the interface will listen on. The default port number is "
-"4789."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:193
-msgid "VXLAN Remote Port"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:197
-msgid ""
-"The destination port number used in the encapsulating IPv4/IPv6 header. The "
-"remote host should be listening on this port. The default port number is "
-"4789. Note some other implementations, such as Linux, do not default to the "
-"IANA assigned port, but instead listen on port 8472."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:204
-msgid "VXLAN TTL"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:208
-msgid "The TTL used in the encapsulating IPv4/IPv6 header. The default is\t64."
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:212
-msgid "VXLAN Learn"
-msgstr ""
-
-#: src/usr/local/www/interfaces_vxlan_edit.php:215
-msgid ""
-"The source IP address and inner source Ethernet MAC address of received "
-"packets are used to dynamically populate the forwarding table. When in "
-"multicast mode, an entry in the forwarding table allows the interface to "
-"send the frame directly to the remote host instead of broadcasting the frame "
-"to the multicast group. This is the default."
-msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip.php:99
 msgid ""
@@ -18114,7 +17990,7 @@ msgid "%1$s Route enabled"
 msgstr ""
 
 #: src/usr/local/www/status_filter_reload.php:35
-#: src/usr/local/www/status_filter_reload.php:61 src/usr/local/www/head.inc:361
+#: src/usr/local/www/status_filter_reload.php:61 src/usr/local/www/head.inc:362
 msgid "Filter Reload"
 msgstr "Przeładuj filtr"
 
@@ -18735,8 +18611,8 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:639
-msgid "Whitelist"
-msgstr "Biała lista"
+msgid "Pass list"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:667
 msgid "Add address"
@@ -18923,7 +18799,7 @@ msgid "Unable to clear ARP Table."
 msgstr ""
 
 #: src/usr/local/www/diag_arp.php:71 src/usr/local/www/diag_arp.php:119
-#: src/usr/local/www/head.inc:392
+#: src/usr/local/www/head.inc:393
 msgid "ARP Table"
 msgstr "Tabela ARP"
 
@@ -19322,7 +19198,7 @@ msgstr "Usuwanie CSC"
 msgid "Help"
 msgstr "Wsparcie"
 
-#: src/usr/local/www/help.php:422 src/usr/local/www/head.inc:426
+#: src/usr/local/www/help.php:422 src/usr/local/www/head.inc:427
 msgid "About this Page"
 msgstr "O tej stronie"
 
@@ -19795,19 +19671,19 @@ msgstr ""
 "Nie można usunąć tego łącza punkt-punkt, ponieważ jest on nadal używany jako "
 "interfejs"
 
-#: src/usr/local/www/interfaces_ppps.php:99
+#: src/usr/local/www/interfaces_ppps.php:98
 msgid "PPP Interfaces"
 msgstr "Interfejsy PPP"
 
-#: src/usr/local/www/interfaces_ppps.php:106
+#: src/usr/local/www/interfaces_ppps.php:105
 msgid "Interface(s)/Port(s)"
 msgstr "Interfejs(y)/port(y)"
 
-#: src/usr/local/www/interfaces_ppps.php:139
+#: src/usr/local/www/interfaces_ppps.php:138
 msgid "Edit PPP interface"
 msgstr "Edytuj interfejs PPP"
 
-#: src/usr/local/www/interfaces_ppps.php:140
+#: src/usr/local/www/interfaces_ppps.php:139
 msgid "Delete PPP interface"
 msgstr "Usuń interfejs PPP"
 
@@ -20842,7 +20718,7 @@ msgid "Select a Certificate Authority for the new CRL"
 msgstr ""
 
 #: src/usr/local/www/diag_testport.php:40
-#: src/usr/local/www/diag_testport.php:219 src/usr/local/www/head.inc:409
+#: src/usr/local/www/diag_testport.php:219 src/usr/local/www/head.inc:410
 msgid "Test Port"
 msgstr "Testowanie portów"
 
@@ -21470,6 +21346,165 @@ msgstr "MRU"
 msgid "MRRU"
 msgstr "MRRU"
 
+#: src/usr/local/www/vpn_wg_edit.php:80
+msgid "Tunnel"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:92
+msgid "Interface wg"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:103
+#: src/usr/local/www/system_usermanager.php:690
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:292
+msgid "Enabled"
+msgstr "Włączone"
+
+#: src/usr/local/www/vpn_wg_edit.php:118
+#: src/usr/local/www/firewall_nat_out_edit.php:565
+#: src/usr/local/www/firewall_nat_npt_edit.php:186
+#: src/usr/local/www/firewall_nat_npt_edit.php:201
+msgid "*Address"
+msgstr "*Adres"
+
+#: src/usr/local/www/vpn_wg_edit.php:121
+msgid "Comma separated list of CIDR addresses assigned to interface."
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:126
+msgid "*Listen port"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:130
+msgid "Port to listen on."
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:132
+msgid "*Interface keys"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:139
+msgid "Private key for this interface."
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:146
+msgid "Public key for this interface."
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:150
+msgid "Generate"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:161 src/usr/local/www/vpn_wg_edit.php:264
+msgid "Peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:173
+msgid "Peer description - not parsed"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:177 src/usr/local/www/vpn_wg_edit.php:266
+msgid "Endpoint"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:179
+msgid "Hostname, IPv4 or IP46 address"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:183
+msgid "Endpoint port"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:189 src/usr/local/www/vpn_wg_edit.php:269
+msgid "Keepalive"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:191
+msgid "Keep alive value in seconds"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:195
+msgid "*Public key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:201 src/usr/local/www/vpn_wg_edit.php:270
+msgid "Allowed IPs"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:203
+msgid "List of CIDR IPs allowed to connect"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:207
+msgid "Peer WireGuard Address"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:209
+msgid ""
+"IPv4/IPv6 specifies the wireGuard interface address of the peer, since it "
+"can differ from AllowedIPs"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:213
+msgid "Peer Routed Networks"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:215
+msgid ""
+"Comma separated list of networks to route using the automatic gateway "
+"provided by \"Peer WireGuard Address\""
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:217
+msgid "Pre-shared key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:221
+msgid "Preshared key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:223
+msgid "Optional pre-shared key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:227
+msgid "Generate key"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:249
+msgid "Update peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:271
+msgid "PSK"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:297 src/usr/local/www/vpn_wg_edit.php:375
+#: src/usr/local/www/vpn_wg_edit.php:382
+msgid "Edit peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:298 src/usr/local/www/vpn_wg_edit.php:375
+#: src/usr/local/www/vpn_wg_edit.php:382
+msgid "Delete peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:312
+msgid "Add new peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:314
+msgid "Add peer"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:317
+msgid "Save tunnel"
+msgstr ""
+
+#: src/usr/local/www/vpn_wg_edit.php:324
+msgid "Are you sure you want to overwrite keys?"
+msgstr ""
+
 #: src/usr/local/www/status_captiveportal.php:73
 msgid "Session details"
 msgstr "Szczegóły sesji"
@@ -21611,7 +21646,7 @@ msgstr ""
 "Jeden lub więcej mapowań NPt zostało przeniesionych, ale nie zostały jeszcze "
 "zapisane"
 
-#: src/usr/local/www/diag_routes.php:68 src/usr/local/www/head.inc:413
+#: src/usr/local/www/diag_routes.php:68 src/usr/local/www/head.inc:414
 msgid "Routes"
 msgstr "Trasy"
 
@@ -21737,11 +21772,6 @@ msgstr "Usunąć to powiązanie certyfikatu? (Certyfikat nie zostanie usunięty)
 msgid "Full name"
 msgstr "Imię i nazwisko"
 
-#: src/usr/local/www/system_usermanager.php:690
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:292
-msgid "Enabled"
-msgstr "Włączone"
-
 #: src/usr/local/www/system_usermanager.php:713
 msgid "Delete selected users"
 msgstr "Usuń wybranych użytkowników"
@@ -21816,7 +21846,7 @@ msgstr "Przenieś do listy \"Nie jest członkiem\""
 #: src/usr/local/www/system_usermanager.php:928
 #: src/usr/local/www/system_usermanager.php:934
 #: src/usr/local/www/system_certmanager_renew.php:57
-#: src/usr/local/www/vpn_ipsec_phase1.php:254
+#: src/usr/local/www/vpn_ipsec_phase1.php:255
 #: src/usr/local/www/vpn_openvpn_server.php:486 src/etc/inc/certs.inc:2263
 msgid "Certificate"
 msgstr "Certyfikat"
@@ -22703,7 +22733,7 @@ msgstr "Domyślna kolejka"
 msgid "Choose the Acknowledge Queue only if there is a selected Queue."
 msgstr "Wybierz kolejkę ACK tylko wtedy, gdy jest wybrana kolejka."
 
-#: src/usr/local/www/diag_defaults.php:43 src/usr/local/www/head.inc:398
+#: src/usr/local/www/diag_defaults.php:43 src/usr/local/www/head.inc:399
 msgid "Factory Defaults"
 msgstr "Ustawienia fabryczne"
 
@@ -23114,7 +23144,7 @@ msgstr ""
 msgid "Uploaded file to %s."
 msgstr "Przesłany plik do %s."
 
-#: src/usr/local/www/diag_command.php:66 src/usr/local/www/head.inc:395
+#: src/usr/local/www/diag_command.php:66 src/usr/local/www/head.inc:396
 msgid "Command Prompt"
 msgstr "Wiersz polecenia"
 
@@ -23207,7 +23237,7 @@ msgstr "Wykonaj ten kod PHP"
 msgid "Example"
 msgstr "Przykład"
 
-#: src/usr/local/www/diag_tables.php:31 src/usr/local/www/head.inc:407
+#: src/usr/local/www/diag_tables.php:31 src/usr/local/www/head.inc:408
 msgid "Tables"
 msgstr "Tabele"
 
@@ -23826,15 +23856,15 @@ msgstr ""
 "Ten tunel GRE nie może zostać usunięty, ponieważ jest nadal używany jako "
 "interfejs."
 
-#: src/usr/local/www/interfaces_gre.php:91
+#: src/usr/local/www/interfaces_gre.php:90
 msgid "GRE Interfaces"
 msgstr "Interfejsy GRE"
 
-#: src/usr/local/www/interfaces_gre.php:122
+#: src/usr/local/www/interfaces_gre.php:121
 msgid "Edit GRE interface"
 msgstr "Edytuj interfejs GRE"
 
-#: src/usr/local/www/interfaces_gre.php:123
+#: src/usr/local/www/interfaces_gre.php:122
 msgid "Delete GRE interface"
 msgstr "Usuń interfejs GRE"
 
@@ -24019,12 +24049,6 @@ msgstr "Odwróć sens dopasowania miejsca docelowego."
 #: src/usr/local/www/firewall_nat_out_edit.php:560
 msgid "Translation"
 msgstr "Tłumaczenie"
-
-#: src/usr/local/www/firewall_nat_out_edit.php:565
-#: src/usr/local/www/firewall_nat_npt_edit.php:186
-#: src/usr/local/www/firewall_nat_npt_edit.php:201
-msgid "*Address"
-msgstr "*Adres"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:568
 #, php-format
@@ -24427,14 +24451,10 @@ msgstr "Szczegóły aliasu IP"
 #: src/usr/local/www/firewall_aliases_import.php:223
 msgid ""
 "Paste in the aliases to import separated by a carriage return. Common "
-"examples are lists of IPs, networks, blacklists, etc. The list may contain "
+"examples are lists of IPs, networks, blocklists, etc. The list may contain "
 "IP addresses, with or without CIDR prefix, IP ranges, blank lines (ignored) "
 "and an optional description after each IP. e.g.:"
 msgstr ""
-"Wklej aliasy, aby importować oddzielone przez powrót karetki. Typowe "
-"przykłady to listy adresów IP, sieci, czarnych list itp. Lista może zawierać "
-"adres IP, z prefiksem CIDR lub bez niego, zakresy adresów IP, puste linie "
-"(ignorowane) i opcjonalny opis po każdym IP. na przykład.:"
 
 #: src/usr/local/www/firewall_aliases_import.php:235
 msgid "192.168.1.254 Home router"
@@ -25007,7 +25027,7 @@ msgstr ""
 "Kopiuj/wklej regulamin korzystania z sieci. Znaczniki HTML zostaną usunięte."
 
 #: src/usr/local/www/services_captiveportal.php:896
-#: src/usr/local/www/vpn_ipsec_phase1.php:845
+#: src/usr/local/www/vpn_ipsec_phase1.php:859
 msgid "*Authentication Method"
 msgstr "*Metoda uwierzytelniania"
 
@@ -25282,7 +25302,7 @@ msgstr ""
 "Forwarder lub Resolver, aby można było wyszukiwać wyszukiwania DNS przez "
 "nieuwierzytelnione klientów."
 
-#: src/usr/local/www/head.inc:247 src/usr/local/www/head.inc:537
+#: src/usr/local/www/head.inc:247 src/usr/local/www/head.inc:538
 #: src/etc/inc/captiveportal.inc:316
 msgid "Logout"
 msgstr "Wyloguj"
@@ -25311,107 +25331,107 @@ msgstr "Przypisania"
 msgid "Switches"
 msgstr "Przełączniki"
 
-#: src/usr/local/www/head.inc:355
+#: src/usr/local/www/head.inc:356
 msgid "CARP (failover)"
 msgstr "CARP (przełączanie awaryjne)"
 
-#: src/usr/local/www/head.inc:359 src/usr/local/www/status_dhcpv6_leases.php:41
+#: src/usr/local/www/head.inc:360 src/usr/local/www/status_dhcpv6_leases.php:41
 msgid "DHCPv6 Leases"
 msgstr "Dzierżawy DHCPv6"
 
-#: src/usr/local/www/head.inc:369 src/usr/local/www/status_graph.php:148
+#: src/usr/local/www/head.inc:370 src/usr/local/www/status_graph.php:148
 #: src/usr/local/www/status_graph.php:157
 #: src/usr/local/www/status_graph.php:343
 msgid "Traffic Graph"
 msgstr "Wykres ruchu"
 
-#: src/usr/local/www/head.inc:404 src/usr/local/www/diag_halt.php:47
+#: src/usr/local/www/head.inc:405 src/usr/local/www/diag_halt.php:47
 msgid "Halt System"
 msgstr "Zatrzymaj system"
 
-#: src/usr/local/www/head.inc:406 src/usr/local/www/diag_ndp.php:133
+#: src/usr/local/www/head.inc:407 src/usr/local/www/diag_ndp.php:133
 #: src/usr/local/www/diag_ndp.php:181
 msgid "NDP Table"
 msgstr "Tabela NDP"
 
-#: src/usr/local/www/head.inc:410 src/usr/local/www/diag_pf_info.php:33
+#: src/usr/local/www/head.inc:411 src/usr/local/www/diag_pf_info.php:33
 msgid "pfInfo"
 msgstr "PfInfo"
 
-#: src/usr/local/www/head.inc:414 src/usr/local/www/diag_smart.php:38
+#: src/usr/local/www/head.inc:415 src/usr/local/www/diag_smart.php:38
 #: src/usr/local/www/widgets/include/smart_status.inc:25
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:69
 msgid "S.M.A.R.T. Status"
 msgstr "Status S.M.A.R.T."
 
-#: src/usr/local/www/head.inc:428
+#: src/usr/local/www/head.inc:429
 msgid "Bug Database"
 msgstr "Baza danych o błędach"
 
-#: src/usr/local/www/head.inc:431
+#: src/usr/local/www/head.inc:432
 msgid "User Forum"
 msgstr "Forum użytkowników"
 
-#: src/usr/local/www/head.inc:432
+#: src/usr/local/www/head.inc:433
 msgid "Documentation"
 msgstr "Dokumentacja"
 
-#: src/usr/local/www/head.inc:433
+#: src/usr/local/www/head.inc:434
 msgid "Paid Support"
 msgstr "Płatne wsparcie"
 
-#: src/usr/local/www/head.inc:434
+#: src/usr/local/www/head.inc:435
 msgid "pfSense Book"
 msgstr "Książka o pfSense"
 
-#: src/usr/local/www/head.inc:435
+#: src/usr/local/www/head.inc:436
 msgid "FreeBSD Handbook"
 msgstr "Podręcznik FreeBSD"
 
-#: src/usr/local/www/head.inc:436
+#: src/usr/local/www/head.inc:437
 msgid "User survey"
 msgstr ""
 
-#: src/usr/local/www/head.inc:528 src/usr/local/www/head.inc:734
+#: src/usr/local/www/head.inc:529 src/usr/local/www/head.inc:735
 msgid "Notices"
 msgstr "Powiadomienia"
 
-#: src/usr/local/www/head.inc:556
+#: src/usr/local/www/head.inc:557
 #, php-format
 msgid ""
 "%sWARNING:%s The 'admin' account password is set to the default value.  %s "
 "Change the password in the User Manager.%s"
 msgstr ""
 
-#: src/usr/local/www/head.inc:583
+#: src/usr/local/www/head.inc:584
 msgid "Save dashboard layout"
 msgstr "Zapisz układ ekranu podsumowania"
 
-#: src/usr/local/www/head.inc:591
+#: src/usr/local/www/head.inc:592
 msgid "Available widgets"
 msgstr "Dostępne widgety"
 
-#: src/usr/local/www/head.inc:599
+#: src/usr/local/www/head.inc:600
 msgid "Log filter"
 msgstr "Filtr dziennika"
 
-#: src/usr/local/www/head.inc:610
+#: src/usr/local/www/head.inc:611
 msgid "Manage log"
 msgstr "Zarządzaj logiem"
 
-#: src/usr/local/www/head.inc:628
+#: src/usr/local/www/head.inc:629
 msgid "Refresh Graph"
 msgstr "Odśwież wykres"
 
-#: src/usr/local/www/head.inc:633
+#: src/usr/local/www/head.inc:634
 msgid "Export Graph"
 msgstr "Wykres Eksportu"
 
-#: src/usr/local/www/head.inc:678
+#: src/usr/local/www/head.inc:679
 msgid "Help for items on this page"
 msgstr "Pomoc dla elementów na tej stronie"
 
-#: src/usr/local/www/head.inc:690
+#: src/usr/local/www/head.inc:691
 #, php-format
 msgid ""
 "%1$s%3$s is booting, then packages will be reinstalled in the background."
@@ -25421,7 +25441,7 @@ msgstr ""
 "w tle.%2$s,%1$sNie zmieniaj niczego za pomocą tego interfejsu, dopóki "
 "instalacja nie zostanie zakończona.%2$s"
 
-#: src/usr/local/www/head.inc:695
+#: src/usr/local/www/head.inc:696
 #, php-format
 msgid ""
 "%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
@@ -25431,7 +25451,7 @@ msgstr ""
 "niczego za pomocą tego interfejsu, dopóki instalacja nie zostanie zakończona."
 "%2$s"
 
-#: src/usr/local/www/head.inc:698
+#: src/usr/local/www/head.inc:699
 #, php-format
 msgid ""
 "%1$sIf the above message is still displayed after a couple of hours, use the "
@@ -25442,15 +25462,15 @@ msgstr ""
 "użyj przycisku \"Clear Package Lock\" na stronie%3$s i zainstaluj pakiety "
 "ręcznie.,%2$s"
 
-#: src/usr/local/www/head.inc:714
+#: src/usr/local/www/head.inc:715
 msgid "This page is currently being managed by a remote machine."
 msgstr "Ta strona jest obecnie zarządzana przez zdalną maszynę."
 
-#: src/usr/local/www/head.inc:773
+#: src/usr/local/www/head.inc:774
 msgid "Close"
 msgstr "Zamknij"
 
-#: src/usr/local/www/head.inc:775
+#: src/usr/local/www/head.inc:776
 msgid "Mark All as Read"
 msgstr "Oznacz wszystkie jako przeczytane"
 
@@ -25514,51 +25534,67 @@ msgstr ""
 "Harmonogramy działają jako placeholders dla zakresów czasowych, które mają "
 "być użyte w regułach zapory."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:227
+#: src/usr/local/www/vpn_ipsec_phase1.php:228
 msgid "EAP-MSChapv2 can only be used with IKEv2 type VPNs."
 msgstr "EAP-MSChapv2 może być używany tylko w sieciach VPN typu IKEv2."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:232
+#: src/usr/local/www/vpn_ipsec_phase1.php:233
 msgid "EAP-TLS can only be used with IKEv2 type VPNs."
 msgstr "EAP-TLS może być używany tylko w sieciach VPN typu IKEv2."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:237
+#: src/usr/local/www/vpn_ipsec_phase1.php:238
 msgid "EAP-RADIUS can only be used with IKEv2 type VPNs."
 msgstr "Protokół EAP-RADIUS może być używany tylko w sieciach VPN typu IKEv2."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:258
+#: src/usr/local/www/vpn_ipsec_phase1.php:259
 msgid "Token Certificate"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:258
+#: src/usr/local/www/vpn_ipsec_phase1.php:259
 msgid "Token PIN"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:266
+#: src/usr/local/www/vpn_ipsec_phase1.php:267
 msgid "Remote gateway"
 msgstr "Zdalna brama"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:277
-msgid "Rekey Time must be an integer."
-msgstr ""
-
-#: src/usr/local/www/vpn_ipsec_phase1.php:280
-msgid "Reauth Time must be an integer."
+#: src/usr/local/www/vpn_ipsec_phase1.php:279
+#: src/usr/local/www/vpn_ipsec_phase2.php:377
+msgid "Life Time must be an integer."
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:283
-msgid "Over Time must be an integer."
+msgid ""
+"Life Time cannot be set to the same value as Rekey Time or Reauth Time."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:287
+#: src/usr/local/www/vpn_ipsec_phase1.php:286
+msgid "Life Time must be larger than Rekey Time and Reauth Time."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:290
+#: src/usr/local/www/vpn_ipsec_phase2.php:387
+msgid "Rekey Time must be an integer."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:293
+msgid "Reauth Time must be an integer."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:296
+#: src/usr/local/www/vpn_ipsec_phase2.php:390
+msgid "Rand Time must be an integer."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:300
 msgid "Invalid Child SA Close Action."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:292
+#: src/usr/local/www/vpn_ipsec_phase1.php:305
 msgid "A valid remote gateway address or host name must be specified."
 msgstr "Musi być określony prawidłowy adres bramy zdalnej lub nazwa hosta."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:294
+#: src/usr/local/www/vpn_ipsec_phase1.php:307
 msgid ""
 "A valid remote gateway IPv4 address must be specified or protocol needs to "
 "be changed to IPv6"
@@ -25566,7 +25602,7 @@ msgstr ""
 "Należy określić adres IPv4 bramy zdalnej lub protokół musi zostać zmieniony "
 "na IPv6"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:296
+#: src/usr/local/www/vpn_ipsec_phase1.php:309
 msgid ""
 "A valid remote gateway IPv6 address must be specified or protocol needs to "
 "be changed to IPv4"
@@ -25574,83 +25610,83 @@ msgstr ""
 "Wymagany jest prawidłowy adres IPv6 bramy zdalnej lub protokół musi zostać "
 "zmieniony na IPv4"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:302
+#: src/usr/local/www/vpn_ipsec_phase1.php:315
 #: src/usr/local/www/vpn_ipsec_settings.php:113
 msgid "The IKE port number is invalid."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:310
+#: src/usr/local/www/vpn_ipsec_phase1.php:323
 #: src/usr/local/www/vpn_ipsec_settings.php:121
 msgid "The NAT-T port number is invalid."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:317
+#: src/usr/local/www/vpn_ipsec_phase1.php:330
 #: src/usr/local/www/vpn_ipsec_settings.php:128
 msgid "IKE and NAT-T port numbers must be different."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:328
+#: src/usr/local/www/vpn_ipsec_phase1.php:341
 #, php-format
 msgid "The remote gateway \"%1$s\" is already used by phase1 \"%2$s\"."
 msgstr "Zdalna brama „%1$s” jest już używana przez fazę1 „%2$s”."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:337
+#: src/usr/local/www/vpn_ipsec_phase1.php:350
 msgid ""
 "The remote gateway \"0.0.0.0\" or \"::\" address can only be used with "
 "\"Responder Only\"."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:340
+#: src/usr/local/www/vpn_ipsec_phase1.php:353
 msgid ""
 "The remote gateway \"0.0.0.0\" or \"::\" address can not be used with IP "
 "address peer identifier."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:349
+#: src/usr/local/www/vpn_ipsec_phase1.php:362
 msgid "There is a Phase 2 using IPv6, cannot use IPv4."
 msgstr ""
 "Jest faza 2 przy użyciu protokołu IPv6, nie można używać protokołu IPv4."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:353
+#: src/usr/local/www/vpn_ipsec_phase1.php:366
 msgid "There is a Phase 2 using IPv4, cannot use IPv6."
 msgstr ""
 "Jest Faza 2 przy użyciu protokołu IPv4, nie można używać protokołu IPv6."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:367
+#: src/usr/local/www/vpn_ipsec_phase1.php:380
 msgid "Please enter an address for 'My Identifier'"
 msgstr "Wprowadź adres \"Mój identyfikator\""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:371
+#: src/usr/local/www/vpn_ipsec_phase1.php:384
 msgid "Please enter a keyid tag for 'My Identifier'"
 msgstr "Wpisz tag \"key key\" dla \"Mój identyfikator\""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:375
+#: src/usr/local/www/vpn_ipsec_phase1.php:388
 msgid "Please enter a fully qualified domain name for 'My Identifier'"
 msgstr "Wprowadź pełną nazwę domeny dla \"Mój identyfikator\""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:379
+#: src/usr/local/www/vpn_ipsec_phase1.php:392
 msgid ""
 "Please enter a user and fully qualified domain name for 'My Identifier'"
 msgstr ""
 "Wprowadź nazwę użytkownika i pełną nazwę domeny dla \"Mój identyfikator\""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:383
+#: src/usr/local/www/vpn_ipsec_phase1.php:396
 msgid "Please enter a dynamic domain name for 'My Identifier'"
 msgstr "Wprowadź nazwę domeny dynamicznej dla \"Mój identyfikator\""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:387
+#: src/usr/local/www/vpn_ipsec_phase1.php:400
 msgid "A valid IP address for 'My identifier' must be specified."
 msgstr "Musi być określony prawidłowy adres IP dla \"Mój identyfikator\"."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:391
+#: src/usr/local/www/vpn_ipsec_phase1.php:404
 msgid "A valid domain name for 'My identifier' must be specified."
 msgstr "Należy określić prawidłową nazwę domeny dla \"Mój identyfikator\"."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:396
+#: src/usr/local/www/vpn_ipsec_phase1.php:409
 msgid "A valid FQDN for 'My identifier' must be specified."
 msgstr "Należy określić prawidłową nazwę FQDN dla \"Mój identyfikator\"."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:403
+#: src/usr/local/www/vpn_ipsec_phase1.php:416
 msgid ""
 "A valid User FQDN in the form of user@my.domain.com for 'My identifier' must "
 "be specified."
@@ -25658,44 +25694,44 @@ msgstr ""
 "Należy podać prawidłową nazwę użytkownika FQDN w postaci adresu user@my."
 "domain.com dla \"Mój identyfikator\"."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:409
+#: src/usr/local/www/vpn_ipsec_phase1.php:422
 msgid "A valid Dynamic DNS address for 'My identifier' must be specified."
 msgstr ""
 "Musi być określony prawidłowy adres dynamicznego DNS dla \"Mój "
 "identyfikator\"."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:422
+#: src/usr/local/www/vpn_ipsec_phase1.php:435
 msgid "Please enter an address for 'Peer Identifier'"
 msgstr "Proszę podać adres \"Peer Identifier\""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:426
+#: src/usr/local/www/vpn_ipsec_phase1.php:439
 msgid "Please enter a keyid tag for 'Peer Identifier'"
 msgstr "Proszę wprowadzić znacznik keyid dla 'Peer Identifier'"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:430
+#: src/usr/local/www/vpn_ipsec_phase1.php:443
 msgid "Please enter a fully qualified domain name for 'Peer Identifier'"
 msgstr "Proszę podać w pełni kwalifikowaną nazwę domeny dla \"Peer Identifier\""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:434
+#: src/usr/local/www/vpn_ipsec_phase1.php:447
 msgid ""
 "Please enter a user and fully qualified domain name for 'Peer Identifier'"
 msgstr ""
 "Wprowadź nazwę użytkownika i w pełni kwalifikowaną nazwę domeny dla "
 "'Identyfikatora Peer'"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:438
+#: src/usr/local/www/vpn_ipsec_phase1.php:451
 msgid "A valid IP address for 'Peer identifier' must be specified."
 msgstr "Musi być określony prawidłowy adres IP dla 'Identyfikatora Peer'."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:442
+#: src/usr/local/www/vpn_ipsec_phase1.php:455
 msgid "A valid domain name for 'Peer identifier' must be specified."
 msgstr "Należy określić prawidłową nazwę domeny dla \"Peer identifier\"."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:447
+#: src/usr/local/www/vpn_ipsec_phase1.php:460
 msgid "A valid FQDN for 'Peer identifier' must be specified."
 msgstr "Należy określić prawidłową nazwę FQDN dla 'Peer identifier'."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:454
+#: src/usr/local/www/vpn_ipsec_phase1.php:467
 msgid ""
 "A valid User FQDN in the form of user@my.domain.com for 'Peer identifier' "
 "must be specified."
@@ -25703,27 +25739,27 @@ msgstr ""
 "Należy podać prawidłową nazwę użytkownika FQDN w postaci adresu user@my."
 "domain.com dla 'Identyfikatora Peer'."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:461
+#: src/usr/local/www/vpn_ipsec_phase1.php:474
 msgid "A numeric value must be specified for DPD delay."
 msgstr "Dla opóźnienia DPD należy podać wartość liczbową."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:465
+#: src/usr/local/www/vpn_ipsec_phase1.php:478
 msgid "A numeric value must be specified for DPD retries."
 msgstr "Dla DPD retries należy określić wartość liczbową."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:470
+#: src/usr/local/www/vpn_ipsec_phase1.php:483
 msgid "A numeric value must be specified for TFC bytes."
 msgstr "Dla bajtów TFC należy podać wartość liczbową."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:474
+#: src/usr/local/www/vpn_ipsec_phase1.php:487
 msgid "Valid arguments for IKE type are v1, v2 or auto"
 msgstr "Prawidłowymi argumentami typu IKE są v1, v2 lub auto"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:479
+#: src/usr/local/www/vpn_ipsec_phase1.php:492
 msgid "Encryption Algorithm AES-GCM can only be used with IKEv2"
 msgstr "Algorytm szyfrowania AES-GCM może być używany tylko z IKEv2"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:489
+#: src/usr/local/www/vpn_ipsec_phase1.php:502
 msgid ""
 "A valid RADIUS server must be selected for user authentication on the Mobile "
 "Clients tab in order to set EAP-RADIUS as the authentication method."
@@ -25731,38 +25767,38 @@ msgstr ""
 ", Należy wybrać prawidłowy serwer RADIUS do uwierzytelniania użytkowników na "
 "karcie Mobile, Clients, aby ustawić metodę autoryzacji jako EAP-RADIUS."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:501
+#: src/usr/local/www/vpn_ipsec_phase1.php:514
 msgid ""
 "The selected ECDSA certificate does not use a curve compatible with IKEv2"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:634
+#: src/usr/local/www/vpn_ipsec_phase1.php:648
 msgid "Saved IPsec tunnel Phase 1 configuration."
 msgstr "Zapisany tunel IPsec w konfiguracji Fazy 1."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:662
+#: src/usr/local/www/vpn_ipsec_phase1.php:676
 #, php-format
 msgid "GW Group %s"
 msgstr "Grupa GW %s"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:743
-#: src/usr/local/www/vpn_ipsec_phase1.php:746
+#: src/usr/local/www/vpn_ipsec_phase1.php:757
+#: src/usr/local/www/vpn_ipsec_phase1.php:760
 msgid "Edit Phase 1"
 msgstr "Edytuj fazę 1"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:780
-#: src/usr/local/www/vpn_ipsec_phase1.php:1059
-#: src/usr/local/www/vpn_ipsec_phase2.php:701
+#: src/usr/local/www/vpn_ipsec_phase1.php:794
+#: src/usr/local/www/vpn_ipsec_phase1.php:1089
+#: src/usr/local/www/vpn_ipsec_phase2.php:721
 #: src/usr/local/www/interfaces.php:3121 src/usr/local/www/interfaces.php:3176
-#: src/usr/local/www/interfaces.php:3185 src/etc/inc/interfaces.inc:7193
+#: src/usr/local/www/interfaces.php:3185 src/etc/inc/interfaces.inc:7088
 msgid "Auto"
 msgstr "Automatyczny"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:778
+#: src/usr/local/www/vpn_ipsec_phase1.php:792
 msgid "*Key Exchange version"
 msgstr "*Wersja protokołu wymiany kluczy"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:781
+#: src/usr/local/www/vpn_ipsec_phase1.php:795
 msgid ""
 "Select the Internet Key Exchange protocol version to be used. Auto uses "
 "IKEv2 when initiator, and accepts either IKEv1 or IKEv2 as responder."
@@ -25771,96 +25807,96 @@ msgstr ""
 "„automatycznie” korzysta z protokołu IKEv2, gdy jest inicjatorem i akceptuje "
 "IKEv1 lub IKEv2 jako odpowiadający."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:785
+#: src/usr/local/www/vpn_ipsec_phase1.php:799
 msgid "*Internet Protocol"
 msgstr "*Protokół internetowy"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:788
+#: src/usr/local/www/vpn_ipsec_phase1.php:802
 msgid "Select the Internet Protocol family."
 msgstr "Wybierz rodzinę protokołu internetowego."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:795
+#: src/usr/local/www/vpn_ipsec_phase1.php:809
 msgid "Select the interface for the local endpoint of this phase1 entry."
 msgstr "Wybierz interfejs dla lokalnego punktu końcowego tego wpisu fazy 1."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:798
+#: src/usr/local/www/vpn_ipsec_phase1.php:812
 msgid "*Remote Gateway"
 msgstr "*Zdalna brama"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:807
+#: src/usr/local/www/vpn_ipsec_phase1.php:821
 msgid ""
 "Use '0.0.0.0' to allow connections from any IPv4 address or '::' to allow "
 "connections from any IPv6 address.<br/>Responder Only must be set and Peer "
 "IP Address cannot be used for Remote Identifier."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:805
+#: src/usr/local/www/vpn_ipsec_phase1.php:819
 #, php-format
 msgid ""
 "Enter the public IP address or host name of the remote gateway.%1$s%2$s%3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:813
+#: src/usr/local/www/vpn_ipsec_phase1.php:827
 msgid "Remote IKE Port"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:817
+#: src/usr/local/www/vpn_ipsec_phase1.php:831
 msgid ""
 "UDP port for IKE on the remote gateway. Leave empty for default automatic "
 "behavior (500/4500)."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:820
+#: src/usr/local/www/vpn_ipsec_phase1.php:834
 msgid "Remote NAT-T Port"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:826
+#: src/usr/local/www/vpn_ipsec_phase1.php:840
 msgid ""
 "If the IKE port is empty and NAT-T contains a value, the tunnel will use "
 "only NAT-T."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:824
+#: src/usr/local/www/vpn_ipsec_phase1.php:838
 #, php-format
 msgid "UDP port for NAT-T on the remote gateway.%1$s%2$s%3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:841
+#: src/usr/local/www/vpn_ipsec_phase1.php:855
 msgid "Phase 1 Proposal (Authentication)"
 msgstr "Propozycja fazy 1 (uwierzytelnianie)"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:848
+#: src/usr/local/www/vpn_ipsec_phase1.php:862
 msgid "Must match the setting chosen on the remote side."
 msgstr "Musi być zgodna z ustawieniem wybranym po stronie zdalnej."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:854
+#: src/usr/local/www/vpn_ipsec_phase1.php:868
 msgid "Main"
 msgstr "Główny"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:852
+#: src/usr/local/www/vpn_ipsec_phase1.php:866
 msgid "*Negotiation mode"
 msgstr "* Tryb negocjacji"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:855
+#: src/usr/local/www/vpn_ipsec_phase1.php:869
 msgid "Aggressive is more flexible, but less secure."
 msgstr "Agresywny jest bardziej elastyczny, ale mniej bezpieczny."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:857
+#: src/usr/local/www/vpn_ipsec_phase1.php:871
 msgid "*My identifier"
 msgstr "* Mój identyfikator"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:875
+#: src/usr/local/www/vpn_ipsec_phase1.php:889
 msgid "*Peer identifier"
 msgstr "* Identyfikator Peer"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:893
+#: src/usr/local/www/vpn_ipsec_phase1.php:907
 msgid ""
 "This is known as the \"group\" setting on some VPN client implementations"
 msgstr ""
 "Jest to znane jako ustawienie \"grupa\" w niektórych implementacjach klienta "
 "sieci VPN"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:903
+#: src/usr/local/www/vpn_ipsec_phase1.php:917
 #, php-format
 msgid ""
 "Enter the Pre-Shared Key string. This key must match on both peers. %1$sThis "
@@ -25868,32 +25904,32 @@ msgid ""
 "Pre-Shared Key can lead to a tunnel compromise.%1$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:907
+#: src/usr/local/www/vpn_ipsec_phase1.php:921
 msgid "*My Certificate"
 msgstr "* Mój certyfikat"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:910
+#: src/usr/local/www/vpn_ipsec_phase1.php:924
 msgid "Select a certificate previously configured in the Certificate Manager."
 msgstr ""
 "Wybierz certyfikat skonfigurowany wcześniej w Menedżerze certyfikatów."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:914
+#: src/usr/local/www/vpn_ipsec_phase1.php:928
 msgid "*PKCS#11 Certificate"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:917
+#: src/usr/local/www/vpn_ipsec_phase1.php:931
 msgid "Select a Certificate from an attached PKCS#11 token device"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:921
+#: src/usr/local/www/vpn_ipsec_phase1.php:935
 msgid "*PKCS#11 PIN"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:924
+#: src/usr/local/www/vpn_ipsec_phase1.php:938
 msgid "Enter PKCS#11 token PIN number"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:931
+#: src/usr/local/www/vpn_ipsec_phase1.php:945
 msgid ""
 "Select a certificate authority previously configured in the Certificate "
 "Manager."
@@ -25901,114 +25937,136 @@ msgstr ""
 "Wybierz organ certyfikacji uprzednio skonfigurowany w certyfikacie, "
 "menedżerze."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:936
+#: src/usr/local/www/vpn_ipsec_phase1.php:950
 msgid "Phase 1 Proposal (Encryption Algorithm)"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:939
+#: src/usr/local/www/vpn_ipsec_phase1.php:953
 msgid "*Encryption Algorithm"
 msgstr "Algorytm szyfrowania"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:947
+#: src/usr/local/www/vpn_ipsec_phase1.php:961
 msgid "Algorithm"
 msgstr "Algotytm"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:958
+#: src/usr/local/www/vpn_ipsec_phase1.php:972
 msgid "*Hash Algorithm"
 msgstr "Algorytm Hash"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:961
+#: src/usr/local/www/vpn_ipsec_phase1.php:975
 msgid "Hash"
 msgstr "Hash"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:965
+#: src/usr/local/www/vpn_ipsec_phase1.php:979
 msgid "*DH Group"
 msgstr "* Grupa DH"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:968
+#: src/usr/local/www/vpn_ipsec_phase1.php:982
 msgid "DH Group"
 msgstr "Grupa DH"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:984
+#: src/usr/local/www/vpn_ipsec_phase1.php:998
 msgid "*PRF Algorithm"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:987
+#: src/usr/local/www/vpn_ipsec_phase1.php:1001
 msgid "PRF"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:992
+#: src/usr/local/www/vpn_ipsec_phase1.php:1006
 msgid ""
 "Note: Blowfish, 3DES, CAST128, MD5, SHA1, and DH groups 1, 2, 5, 22, 23, and "
 "24 provide weak security and should be avoided."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:996
+#: src/usr/local/www/vpn_ipsec_phase1.php:1010
 msgid "Add Algorithm"
 msgstr "Dodaj algorytm"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1005
+#: src/usr/local/www/vpn_ipsec_phase1.php:1019
+#: src/usr/local/www/vpn_ipsec_phase2.php:764
 msgid "Expiration and Replacement"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1009
-msgid "Rekey Time"
-msgstr ""
-
-#: src/usr/local/www/vpn_ipsec_phase1.php:1013
-msgid ""
-"Time, in seconds, before an IKE SA establishes new keys. This works without "
-"interruption. Only supported by IKEv2, and is recommended for use with IKEv2."
-" Leave blank or enter a value of 0 to disable."
-msgstr ""
-
-#: src/usr/local/www/vpn_ipsec_phase1.php:1019
-msgid "Reauth Time"
-msgstr ""
-
 #: src/usr/local/www/vpn_ipsec_phase1.php:1023
-msgid ""
-"Time, in seconds, before an IKE SA is torn down and recreated from scratch, "
-"including authentication. This can be disruptive unless both sides support "
-"make-before-break and overlapping IKE SA entries. Supported by IKEv1 and "
-"IKEv2. Leave blank or enter a value of 0 to disable."
+#: src/usr/local/www/vpn_ipsec_phase2.php:768
+msgid "Life Time"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1029
-msgid "Over Time"
-msgstr ""
-
-#: src/usr/local/www/vpn_ipsec_phase1.php:1033
+#: src/usr/local/www/vpn_ipsec_phase1.php:1027
 #, php-format
 msgid ""
 "Hard IKE SA life time, in seconds, after which the IKE SA will be expired. "
-"This time is relative to reauthentication and rekey time. If left empty, "
-"defaults to 10% of whichever timer is higher (reauth or rekey)"
+"Must be larger than Rekey Time and Reauth Time. Cannot be set to the same "
+"value as Rekey Time or Reauth Time. If left empty, defaults to 110% of "
+"whichever timer is higher (reauth or rekey)"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1043
+#: src/usr/local/www/vpn_ipsec_phase1.php:1034
+#: src/usr/local/www/vpn_ipsec_phase2.php:780
+msgid "Rekey Time"
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1038
+msgid ""
+"Time, in seconds, before an IKE SA establishes new keys. This works without "
+"interruption. Cannot be set to the same value as Life Time. Only supported "
+"by IKEv2, and is recommended for use with IKEv2. Leave blank to use a "
+"default value of 90% Life Time when using IKEv2. Enter a value of 0 to "
+"disable."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1046
+msgid "Reauth Time"
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1050
+msgid ""
+"Time, in seconds, before an IKE SA is torn down and recreated from scratch, "
+"including authentication. This can be disruptive unless both sides support "
+"make-before-break and overlapping IKE SA entries. Cannot be set to the same "
+"value as Life Time. Supported by IKEv1 and IKEv2. Leave blank to use a "
+"default value of 90% Life Time when using IKEv1. Enter a value of 0 to "
+"disable."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1059
+#: src/usr/local/www/vpn_ipsec_phase2.php:793
+msgid "Rand Time"
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1063
+#, php-format
+msgid ""
+"A random value up to this amount will be subtracted from Rekey Time/Reauth "
+"Time to avoid simultaneous renegotiation. If left empty, defaults to 10% of "
+"Life Time. Enter 0 to disable randomness, but be aware that simultaneous "
+"renegotiation can lead to duplicate security associations."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:1073
 msgid "Responder Only"
 msgstr "Responder Only"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1050
+#: src/usr/local/www/vpn_ipsec_phase1.php:1080
 msgid "Child SA Close Action"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1053
+#: src/usr/local/www/vpn_ipsec_phase1.php:1083
 msgid ""
 "Set this option to control the behavior when the remote peer unexpectedly "
 "closes a child SA (P2)"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1059
+#: src/usr/local/www/vpn_ipsec_phase1.php:1089
 msgid "Force"
 msgstr "Wymuś"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1057
+#: src/usr/local/www/vpn_ipsec_phase1.php:1087
 msgid "NAT Traversal"
 msgstr "Traversowanie NAT "
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1060
+#: src/usr/local/www/vpn_ipsec_phase1.php:1090
 msgid ""
 "Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in "
 "UDP packets) if needed, which can help with clients that are behind "
@@ -26018,15 +26076,15 @@ msgstr ""
 "NAT (np. kapsułkowania pakietów ESP w pakietach UDP), co może pomóc "
 "klientom, którzy są za restrykcyjnymi zaporami."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1065
+#: src/usr/local/www/vpn_ipsec_phase1.php:1095
 msgid "MOBIKE"
 msgstr "MOBIKE"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1068
+#: src/usr/local/www/vpn_ipsec_phase1.php:1098
 msgid "Set this option to control the use of MOBIKE"
 msgstr "Ustaw tę opcję, aby kontrolować użycie MOBIKE"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1073
+#: src/usr/local/www/vpn_ipsec_phase1.php:1103
 #, php-format
 msgid ""
 "Enable this to allow multiple phase 1 configurations with the same endpoint. "
@@ -26035,45 +26093,45 @@ msgid ""
 "Static routes can override this behavior."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1072
+#: src/usr/local/www/vpn_ipsec_phase1.php:1102
 msgid "Gateway duplicates"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1081
+#: src/usr/local/www/vpn_ipsec_phase1.php:1111
 msgid "Split connections"
 msgstr "Podziel połączenia"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1088
+#: src/usr/local/www/vpn_ipsec_phase1.php:1118
 msgid "PRF Selection"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1091
+#: src/usr/local/www/vpn_ipsec_phase1.php:1121
 msgid ""
 "Manual PRF selection is typically not required, but can be useful in "
 "combination with AEAD Encryption Algorithms such as AES-GCM"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1114
+#: src/usr/local/www/vpn_ipsec_phase1.php:1144
 msgid "Dead Peer Detection"
 msgstr "Wykrywanie martwego peera"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1121
+#: src/usr/local/www/vpn_ipsec_phase1.php:1151
 msgid "Delay"
 msgstr "Opóźnienie"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1124
+#: src/usr/local/www/vpn_ipsec_phase1.php:1154
 msgid "Delay between requesting peer acknowledgement."
 msgstr "Opóźnienie między żądaniem potwierdzenia rówieśniczego."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1128
+#: src/usr/local/www/vpn_ipsec_phase1.php:1158
 msgid "Max failures"
 msgstr "Maks. błędów"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1131
+#: src/usr/local/www/vpn_ipsec_phase1.php:1161
 msgid "Number of consecutive failures allowed before disconnect. "
 msgstr "Liczba dopuszczalnych kolejnych błędów przed rozłączeniem."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1419
+#: src/usr/local/www/vpn_ipsec_phase1.php:1449
 msgid "Generate new Pre-Shared Key"
 msgstr "Generuj nowy klucz wspóldzielony"
 
@@ -26333,15 +26391,15 @@ msgstr ""
 msgid "This bridge cannot be deleted because it is assigned as an interface."
 msgstr "Ten mostek nie można usunąć, ponieważ jest przypisany jako interfejs."
 
-#: src/usr/local/www/interfaces_bridge.php:96
+#: src/usr/local/www/interfaces_bridge.php:95
 msgid "Bridge Interfaces"
 msgstr "Interfejsy mostków"
 
-#: src/usr/local/www/interfaces_bridge.php:139
+#: src/usr/local/www/interfaces_bridge.php:138
 msgid "Edit interface bridge"
 msgstr "Edytuj mostek interfejsu"
 
-#: src/usr/local/www/interfaces_bridge.php:140
+#: src/usr/local/www/interfaces_bridge.php:139
 msgid "Delete interface bridge"
 msgstr "Usunąć mostek interfejsu"
 
@@ -26977,6 +27035,14 @@ msgstr ""
 msgid "The gif tunnel subnet must be an integer between 1 and 128."
 msgstr "Podsieć tunelu gif musi być liczbą całkowitą między 1 a 128."
 
+#: src/usr/local/www/interfaces_gif_edit.php:94
+msgid ""
+"The alias IP address family has to match the family of the remote peer "
+"address."
+msgstr ""
+"Protokół aliasów adresów IP musi odpowiadać protokołowi zdalnego adresu "
+"równorzędnego."
+
 #: src/usr/local/www/interfaces_gif_edit.php:104
 #, php-format
 msgid "A gif with the network %s is already defined."
@@ -27362,64 +27428,64 @@ msgstr "Nopeer"
 msgid "notrap"
 msgstr "Notrap"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:137
+#: src/usr/local/www/vpn_ipsec_phase2.php:139
 msgid "A valid ikeid must be specified."
 msgstr "Musi być określony prawidłowy plik ikeid."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:142
+#: src/usr/local/www/vpn_ipsec_phase2.php:144
 msgid "Local network type"
 msgstr "Typ sieci lokalnej"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:142
+#: src/usr/local/www/vpn_ipsec_phase2.php:144
 msgid "Unique Identifier"
 msgstr "Unikalny identyfikator"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:145
+#: src/usr/local/www/vpn_ipsec_phase2.php:147
 msgid "Remote network type"
 msgstr "Zdalny typ sieci"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:154
+#: src/usr/local/www/vpn_ipsec_phase2.php:156
 msgid "A valid local network bit count must be specified."
 msgstr "Należy określić prawidłową liczbę bitów sieci lokalnej."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:158
+#: src/usr/local/www/vpn_ipsec_phase2.php:160
 msgid "A valid local network IP address must be specified."
 msgstr "Musi być określony prawidłowy adres IP sieci lokalnej."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:161
+#: src/usr/local/www/vpn_ipsec_phase2.php:163
 msgid "VTI requires a valid local address"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:164
+#: src/usr/local/www/vpn_ipsec_phase2.php:166
 msgid "An IPv4 local address was specified but the mode is not set to tunnel"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:166
+#: src/usr/local/www/vpn_ipsec_phase2.php:168
 msgid "An IPv6 local address was specified but the mode is not set to tunnel6"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:171
+#: src/usr/local/www/vpn_ipsec_phase2.php:173
 msgid ""
 "VTI requires a valid local network or IP address for its endpoint address, "
 "it cannot use a network macro for a different interface (e.g. LAN)."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:182
-#: src/usr/local/www/vpn_ipsec_phase2.php:212
+#: src/usr/local/www/vpn_ipsec_phase2.php:184
+#: src/usr/local/www/vpn_ipsec_phase2.php:214
 msgid "Invalid Local Network."
 msgstr "Nieprawidłowa sieć lokalna."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:182
-#: src/usr/local/www/vpn_ipsec_phase2.php:212
+#: src/usr/local/www/vpn_ipsec_phase2.php:184
+#: src/usr/local/www/vpn_ipsec_phase2.php:214
 #, php-format
 msgid "%s has no subnet."
 msgstr "%s nie ma podsieci."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:190
+#: src/usr/local/www/vpn_ipsec_phase2.php:192
 msgid "A valid NAT local network bit count must be specified."
 msgstr "Należy określić prawidłową liczbę bitów sieci lokalnej NAT."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:193
+#: src/usr/local/www/vpn_ipsec_phase2.php:195
 msgid ""
 "A network type address cannot be configured for NAT while only an address "
 "type is selected for local source."
@@ -27427,11 +27493,11 @@ msgstr ""
 ", Nie można skonfigurować adresu typu sieciowego dla NAT, a tylko typ "
 "adresu, dla źródła lokalnego."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:197
+#: src/usr/local/www/vpn_ipsec_phase2.php:199
 msgid "A valid NAT local network IP address must be specified."
 msgstr "Musi być określony prawidłowy adres IP sieci lokalnej."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:199
+#: src/usr/local/www/vpn_ipsec_phase2.php:201
 msgid ""
 "A valid NAT local network IPv4 address must be specified or Mode needs to be "
 "changed to IPv6"
@@ -27439,7 +27505,7 @@ msgstr ""
 ", Należy określić adres IPv4 sieci lokalnej NAT lub tryb musi zostać "
 "zmieniony na IPv6"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:201
+#: src/usr/local/www/vpn_ipsec_phase2.php:203
 msgid ""
 "A valid NAT local network IPv6 address must be specified or Mode needs to be "
 "changed to IPv4"
@@ -27447,37 +27513,37 @@ msgstr ""
 ", Należy określić adres IPv6 sieci lokalnej NAT lub tryb musi zostać "
 "zmieniony na IPv4"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:220
+#: src/usr/local/www/vpn_ipsec_phase2.php:222
 msgid "A valid remote network bit count must be specified."
 msgstr "Należy określić ważną liczbę bitów sieci zdalnej."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:224
+#: src/usr/local/www/vpn_ipsec_phase2.php:226
 msgid "A valid remote network IP address must be specified."
 msgstr "Musi być określony prawidłowy adres IP sieci zdalnej."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:227
+#: src/usr/local/www/vpn_ipsec_phase2.php:229
 msgid "VTI requires a valid remote address"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:230
+#: src/usr/local/www/vpn_ipsec_phase2.php:232
 msgid "An IPv4 remote network was specified but the mode is not set to tunnel"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:232
+#: src/usr/local/www/vpn_ipsec_phase2.php:234
 msgid ""
 "An IPv6 remote network was specified but the mode is not set to tunnel6"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:241
+#: src/usr/local/www/vpn_ipsec_phase2.php:243
 msgid "VTI is not compatible with mobile IPsec."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:262
+#: src/usr/local/www/vpn_ipsec_phase2.php:264
 msgid "Phase2 with this Local Network is already defined for mobile clients."
 msgstr ""
 "Faza 2 z tą Lokalną siecią jest już zdefiniowana dla klientów mobilnych."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:295
+#: src/usr/local/www/vpn_ipsec_phase2.php:297
 msgid ""
 "Phase2 with this Local/Remote networks combination is already defined for "
 "this Phase1."
@@ -27485,14 +27551,14 @@ msgstr ""
 ", Phase2 z tą kombinacją lokalnej / zdalnej sieci jest już zdefiniowana dla "
 "tego, Phase1."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:306
+#: src/usr/local/www/vpn_ipsec_phase2.php:308
 msgid ""
 "Cannot switch away from VTI while the interface is assigned. Remove the "
 "interface assignment before switching away from VTI."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:341
-#: src/usr/local/www/vpn_ipsec_phase2.php:346
+#: src/usr/local/www/vpn_ipsec_phase2.php:343
+#: src/usr/local/www/vpn_ipsec_phase2.php:348
 msgid ""
 "The local and remote networks of a phase 2 entry cannot overlap the outside "
 "of the tunnel (interface and remote gateway) configured in its phase 1."
@@ -27500,36 +27566,40 @@ msgstr ""
 ", Lokalne i zdalne sieci wejścia fazy 2 nie mogą się pokrywać na zewnątrz, "
 "tunelu (interfejs i brama zdalna) skonfigurowanego w jego fazie 1."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:360
+#: src/usr/local/www/vpn_ipsec_phase2.php:362
 msgid "At least one encryption algorithm must be selected."
 msgstr "Należy wybrać co najmniej jeden algorytm szyfrowania."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:365
+#: src/usr/local/www/vpn_ipsec_phase2.php:367
 msgid "At least one hashing algorithm needs to be selected."
 msgstr "Należy wybrać co najmniej jeden algorytm mieszający."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:373
-msgid "The P2 lifetime must be an integer."
-msgstr "Czas życia P2 musi być liczbą całkowitą."
+#: src/usr/local/www/vpn_ipsec_phase2.php:380
+msgid "Life Time cannot be set to the same value as Rekey Time."
+msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:459
+#: src/usr/local/www/vpn_ipsec_phase2.php:383
+msgid "Life Time must be larger than Rekey Time."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase2.php:479
 msgid "Saved IPsec tunnel Phase 2 configuration."
 msgstr "Zapisany protokół IPsec w tunelu Fazy 2."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:474
-#: src/usr/local/www/vpn_ipsec_phase2.php:478
+#: src/usr/local/www/vpn_ipsec_phase2.php:494
+#: src/usr/local/www/vpn_ipsec_phase2.php:498
 msgid "Edit Phase 2"
 msgstr "Edytuj fazę 2"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:582
+#: src/usr/local/www/vpn_ipsec_phase2.php:602
 msgid "*Local Network"
 msgstr "*Lokalna sieć"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:606
+#: src/usr/local/www/vpn_ipsec_phase2.php:626
 msgid "NAT/BINAT translation"
 msgstr "Tłumaczenie NAT / BINAT"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:630
+#: src/usr/local/www/vpn_ipsec_phase2.php:650
 msgid ""
 "If NAT/BINAT is required on this network specify the address to be "
 "translated"
@@ -27537,49 +27607,73 @@ msgstr ""
 ", Jeśli wymagana jest NAT / BINAT w tej sieci, określ adres, który ma zostać "
 "przetłumaczony"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:634
+#: src/usr/local/www/vpn_ipsec_phase2.php:654
 msgid "*Remote Network"
 msgstr "*Zdalna sieć"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:663
+#: src/usr/local/www/vpn_ipsec_phase2.php:683
 msgid "Phase 2 Proposal (SA/Key Exchange)"
 msgstr "Faza 2 Wniosek (SA / wymiana kluczy)"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:670
+#: src/usr/local/www/vpn_ipsec_phase2.php:690
 msgid ""
 "Encapsulating Security Payload (ESP) is encryption, Authentication Header "
 "(AH) is authentication only."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:676
+#: src/usr/local/www/vpn_ipsec_phase2.php:696
 msgid "*Encryption Algorithms"
 msgstr "Algorytmy szyfrowania"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:707
+#: src/usr/local/www/vpn_ipsec_phase2.php:727
 msgid ""
 "Note: Blowfish, 3DES, and CAST128 provide weak security and should be "
 "avoided."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:714
+#: src/usr/local/www/vpn_ipsec_phase2.php:734
 msgid "*Hash Algorithms"
 msgstr "Algorytmy haseł"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:726
+#: src/usr/local/www/vpn_ipsec_phase2.php:746
 msgid ""
 "Note: Hash is ignored with GCM algorithms. MD5 and SHA1 provide weak "
 "security and should be avoided."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:737
+#: src/usr/local/www/vpn_ipsec_phase2.php:757
 msgid "PFS key group"
 msgstr "Grupa kluczowa PFS"
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:747
-msgid "Specifies how often the connection must be rekeyed, in seconds"
+#: src/usr/local/www/vpn_ipsec_phase2.php:772
+#, php-format
+msgid ""
+"Hard Child SA life time, in seconds, after which the Child SA will be "
+"expired. Must be larger than Rekey Time. Cannot be set to the same value as "
+"Rekey Time. If left empty, defaults to 110% of Rekey Time. If both Life Time "
+"and Rekey Time are empty, defaults to 3960."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:755
+#: src/usr/local/www/vpn_ipsec_phase2.php:784
+msgid ""
+"Time, in seconds, before a Child SA establishes new keys. This works without "
+"interruption. Cannot be set to the same value as Life Time. Leave blank to "
+"use a default value of 90% Life Time. If both Life Time and Rekey Time are "
+"empty, defaults to 3600. Enter a value of 0 to disable, but be aware that "
+"when rekey is disabled, connections can be interrupted while new Child SA "
+"entries are negotiated."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase2.php:797
+#, php-format
+msgid ""
+"A random value up to this amount will be subtracted from Rekey Time to avoid "
+"simultaneous renegotiation. If left empty, defaults to 10% of Life Time. "
+"Enter 0 to disable randomness, but be aware that simultaneous renegotiation "
+"can lead to duplicate security associations."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase2.php:807
 msgid "Automatically ping host"
 msgstr "Automatycznie ping host"
 
@@ -32234,19 +32328,19 @@ msgstr ""
 ", Ta sieć VLAN nie może zostać usunięta, ponieważ jest nadal używany jako "
 "interfejs."
 
-#: src/usr/local/www/interfaces_vlan.php:91
+#: src/usr/local/www/interfaces_vlan.php:90
 msgid "VLAN Interfaces"
 msgstr "Interfejsy VLAN"
 
-#: src/usr/local/www/interfaces_vlan.php:107
+#: src/usr/local/www/interfaces_vlan.php:106
 msgid "Edit VLAN"
 msgstr "Edytuj sieć VLAN"
 
-#: src/usr/local/www/interfaces_vlan.php:107
+#: src/usr/local/www/interfaces_vlan.php:106
 msgid "Delete VLAN"
 msgstr "Usuń VLAN"
 
-#: src/usr/local/www/interfaces_vlan.php:147
+#: src/usr/local/www/interfaces_vlan.php:146
 #, php-format
 msgid ""
 "Not all drivers/NICs support 802.1Q VLAN tagging properly. %1$sOn cards that "
@@ -32260,7 +32354,7 @@ msgstr ""
 "problemy.%1$sPobierz podręcznik%2$s, aby uzyskać informacje na temat "
 "obsługiwanych kart."
 
-#: src/usr/local/www/interfaces_vlan.php:154
+#: src/usr/local/www/interfaces_vlan.php:153
 msgid "Are you sure you want to delete this VLAN?"
 msgstr "Czy na pewno chcesz usunąć tę sieć VLAN?"
 
@@ -32298,15 +32392,15 @@ msgid "This LAGG interface cannot be deleted because it is still being used."
 msgstr ""
 "Ten interfejs LAGG nie może zostać usunięty, ponieważ jest nadal używany."
 
-#: src/usr/local/www/interfaces_lagg.php:98
+#: src/usr/local/www/interfaces_lagg.php:97
 msgid "LAGG Interfaces"
 msgstr "Interfejsy LAGG"
 
-#: src/usr/local/www/interfaces_lagg.php:128
+#: src/usr/local/www/interfaces_lagg.php:127
 msgid "Edit LAGG interface"
 msgstr "Edytuj interfejs LAGG"
 
-#: src/usr/local/www/interfaces_lagg.php:129
+#: src/usr/local/www/interfaces_lagg.php:128
 msgid "Delete LAGG interface"
 msgstr "Usuń interfejs LAGG"
 
@@ -32769,14 +32863,15 @@ msgstr "Usuwanie pakietu..."
 #: src/etc/inc/system.inc:2307 src/etc/inc/services.inc:1805
 #: src/etc/inc/services.inc:2138 src/etc/inc/services.inc:2361
 #: src/etc/inc/services.inc:2499 src/etc/inc/services.inc:2724
-#: src/etc/inc/rrd.inc:936 src/etc/inc/interfaces.inc:207
-#: src/etc/inc/interfaces.inc:455 src/etc/inc/interfaces.inc:667
-#: src/etc/inc/interfaces.inc:741 src/etc/inc/interfaces.inc:1082
-#: src/etc/inc/interfaces.inc:1832 src/etc/inc/interfaces.inc:1911
-#: src/etc/inc/interfaces.inc:1945 src/etc/inc/interfaces.inc:1972
-#: src/etc/inc/interfaces.inc:1993 src/etc/inc/interfaces.inc:2008
-#: src/etc/inc/interfaces.inc:3112 src/etc/inc/syslog.inc:464
-#: src/etc/inc/filter.inc:317 src/etc/inc/filter.inc:606
+#: src/etc/inc/web/wg.inc:184 src/etc/inc/rrd.inc:936
+#: src/etc/inc/interfaces.inc:207 src/etc/inc/interfaces.inc:455
+#: src/etc/inc/interfaces.inc:667 src/etc/inc/interfaces.inc:741
+#: src/etc/inc/interfaces.inc:1082 src/etc/inc/interfaces.inc:1745
+#: src/etc/inc/interfaces.inc:1822 src/etc/inc/interfaces.inc:1853
+#: src/etc/inc/interfaces.inc:1877 src/etc/inc/interfaces.inc:1898
+#: src/etc/inc/interfaces.inc:1913 src/etc/inc/interfaces.inc:3025
+#: src/etc/inc/syslog.inc:464 src/etc/inc/filter.inc:317
+#: src/etc/inc/filter.inc:606
 msgid "done."
 msgstr "Gotowe."
 
@@ -33312,54 +33407,54 @@ msgstr ""
 msgid "The remote gateway %s already exists on another phase 1 entry"
 msgstr "Zdalna brama %s już istnieje w innym wpisie fazy 1"
 
-#: src/etc/inc/ipsec.inc:2356
+#: src/etc/inc/ipsec.inc:2357
 #, php-format
 msgid "No phase2 specifications for tunnel with REQID = %s"
 msgstr "Brak specyfikacji fazy 2 dla tunelu z REQID =%s"
 
-#: src/etc/inc/ipsec.inc:2443
+#: src/etc/inc/ipsec.inc:2444
 #, php-format
 msgid "Warning: Missing CRL data for %s"
 msgstr "Ostrzeżenie: brakuje danych CRL dla %s"
 
-#: src/etc/inc/ipsec.inc:2448
+#: src/etc/inc/ipsec.inc:2449
 #, php-format
 msgid "Error: Cannot write IPsec CRL file for %s"
 msgstr "Błąd: nie można zapisać pliku IPsec CRL dla %s"
 
-#: src/etc/inc/ipsec.inc:2470
+#: src/etc/inc/ipsec.inc:2471
 #, php-format
 msgid "Error: Invalid phase1 certificate reference for %s"
 msgstr "Błąd: nieprawidłowy referencyjny certyfikat phase1 dla %s"
 
-#: src/etc/inc/ipsec.inc:2488
+#: src/etc/inc/ipsec.inc:2489
 #, php-format
 msgid "Error: Cannot write phase1 key file for %s"
 msgstr "Błąd: nie można zapisać pliku klucza fazy 1 dla %s"
 
-#: src/etc/inc/ipsec.inc:2495
+#: src/etc/inc/ipsec.inc:2496
 #, php-format
 msgid "Error: Cannot write phase1 certificate file for %s"
 msgstr "Błąd: nie można zapisać pliku certyfikatu fazy 1 dla %s"
 
-#: src/etc/inc/ipsec.inc:2512
+#: src/etc/inc/ipsec.inc:2513
 #, php-format
 msgid ""
 "Error: Invalid phase1 PKCS#11 certificate reference or PKCS#11 is not "
 "present for %s"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:2580
+#: src/etc/inc/ipsec.inc:2581
 #, php-format
 msgid "Error: Invalid certificate hash info for %s"
 msgstr "Błąd: nieprawidłowy hasz certyfikaty dla %s"
 
-#: src/etc/inc/ipsec.inc:2585
+#: src/etc/inc/ipsec.inc:2586
 #, php-format
 msgid "Error: Cannot write IPsec CA file for %s"
 msgstr "Błąd: nie można zapisać pliku CA IPsec dla %s"
 
-#: src/etc/inc/ipsec.inc:2662
+#: src/etc/inc/ipsec.inc:2663
 msgid "Configuring IPsec VPN... "
 msgstr "Konfigurowanie protokołu IPsec VPN…"
 
@@ -33483,11 +33578,11 @@ msgstr "Błąd: nie można otworzyć dmesg.boot w systemie_dmesg_save().%s"
 msgid "Setting hard disk standby... "
 msgstr "Ustawianie trybu gotowości dysku twardego ..."
 
-#: src/etc/inc/system.inc:2601
+#: src/etc/inc/system.inc:2602
 msgid "PC Engines WRAP"
 msgstr "Silniki PC WRAP"
 
-#: src/etc/inc/system.inc:2605 src/etc/inc/system.inc:2624
+#: src/etc/inc/system.inc:2606 src/etc/inc/system.inc:2625
 msgid "PC Engines ALIX"
 msgstr "Silniki PC ALIX"
 
@@ -34442,6 +34537,49 @@ msgstr ""
 #: src/etc/inc/web/alias-utils.inc:528
 msgid "Edited a firewall alias."
 msgstr "Edytował alias algorytmu zapory."
+
+#: src/etc/inc/web/wg.inc:72
+#, php-format
+msgid "%1$s is not a valid CIDR address"
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:89
+#, php-format
+msgid "%1$s is already configured on this firewall: %2$s (%3$s)"
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:100
+msgid "Invalid interface listen port."
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:106
+msgid "Both a public and private key must be specified"
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:131
+#, php-format
+msgid "Peer %1$s: Invalid remote port. (%2$s)"
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:137
+#, php-format
+msgid "Peer %1$s: A public key must be specified"
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:144
+#, php-format
+msgid "Peer %1$s: Endpoint must be a valid IPv4 or IPv6 adress or hostname."
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:153
+#, php-format
+msgid ""
+"Peer %1$s: Address %2$s is not a valid IPv4 or IPv6 CIDR subnet aadress."
+msgstr ""
+
+#: src/etc/inc/web/wg.inc:172
+msgid "Configuring WireGuard Tunnels... "
+msgstr ""
 
 #: src/etc/inc/web/diag_arp.inc:109
 msgid "Incomplete"
@@ -36315,47 +36453,47 @@ msgid ""
 "such as ssh, smtp, pop3, tftp, http, openvpn etc."
 msgstr ""
 
-#: src/etc/inc/util.inc:1820
+#: src/etc/inc/util.inc:1819
 #, php-format
 msgid "The command '%1$s' returned exit code '%2$d', the output was '%3$s' "
 msgstr "Polecenie \"%1$s\" zwróciło kod zakończenia \"%2$d\", wynik \"%3$s\""
 
-#: src/etc/inc/util.inc:3028
+#: src/etc/inc/util.inc:3027
 #, php-format
 msgid "%s must be a valid IPv4 address or alias."
 msgstr "%s musi być poprawnym adresem IPv4 lub aliasem."
 
-#: src/etc/inc/util.inc:3032
+#: src/etc/inc/util.inc:3031
 #, php-format
 msgid "%s must be a valid IPv4 address."
 msgstr "%s musi być poprawnym adresem IPv4."
 
-#: src/etc/inc/util.inc:3044
+#: src/etc/inc/util.inc:3043
 #, php-format
 msgid "%s must be a valid IPv6 address or alias."
 msgstr "%s musi być poprawnym adresem IPv6 lub aliasem."
 
-#: src/etc/inc/util.inc:3048
+#: src/etc/inc/util.inc:3047
 #, php-format
 msgid "%s must be a valid IPv6 address."
 msgstr "%s musi być poprawnym adresem IPv6."
 
-#: src/etc/inc/util.inc:3062
+#: src/etc/inc/util.inc:3061
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address or alias."
 msgstr "%s musi być poprawnym adresem IPv4 lub IPv6 lub aliasem."
 
-#: src/etc/inc/util.inc:3066
+#: src/etc/inc/util.inc:3065
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address."
 msgstr "%s musi być prawidłowym adresem IPv4 lub IPv6."
 
-#: src/etc/inc/util.inc:3172
+#: src/etc/inc/util.inc:3171
 msgid "Error: attempting to write DUID file - Invalid DUID detected"
 msgstr ""
 "Błąd: próba zapisania pliku DUID – wykryto nieprawidłowy identyfikator DUID"
 
-#: src/etc/inc/util.inc:3182
+#: src/etc/inc/util.inc:3181
 msgid "Error: attempting to write DUID file - File write error"
 msgstr "Błąd: próba zapisania pliku DUID – błąd zapisu pliku"
 
@@ -36906,69 +37044,63 @@ msgid ""
 "interface_gre_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1339
+#: src/etc/inc/interfaces.inc:1334
 msgid ""
 "could not bring parentif up -- variable not defined -- "
 "interface_gif_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1386
+#: src/etc/inc/interfaces.inc:1381
 msgid "could not bring gifif up -- variable not defined"
 msgstr "Nie mógł przynieść gifif - zmienna nie została zdefiniowana"
 
-#: src/etc/inc/interfaces.inc:1479
+#: src/etc/inc/interfaces.inc:1474
 msgid "All 32767 ipsec interface numbers have been assigned!"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1534
-msgid ""
-"could not bring parentif up -- variable not defined -- "
-"interface_vxlan_configure()"
-msgstr ""
-
-#: src/etc/inc/interfaces.inc:1666 src/etc/inc/interfaces.inc:1670
-#: src/etc/inc/interfaces.inc:6751
+#: src/etc/inc/interfaces.inc:1579 src/etc/inc/interfaces.inc:1583
+#: src/etc/inc/interfaces.inc:6646
 msgid "IPsec VTI"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1819
+#: src/etc/inc/interfaces.inc:1732
 msgid "Configuring IPsec VTI interfaces..."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1901 src/etc/inc/interfaces.inc:1936
-#: src/etc/inc/interfaces.inc:1963 src/etc/inc/interfaces.inc:1981
-#: src/etc/inc/interfaces.inc:1999
+#: src/etc/inc/interfaces.inc:1812 src/etc/inc/interfaces.inc:1844
+#: src/etc/inc/interfaces.inc:1868 src/etc/inc/interfaces.inc:1886
+#: src/etc/inc/interfaces.inc:1904
 #, php-format
 msgid "Configuring %s interface..."
 msgstr "Konfigurowanie interfejsu %s…"
 
-#: src/etc/inc/interfaces.inc:1906 src/etc/inc/interfaces.inc:1939
-#: src/etc/inc/interfaces.inc:1966 src/etc/inc/interfaces.inc:1984
-#: src/etc/inc/interfaces.inc:2002
+#: src/etc/inc/interfaces.inc:1817 src/etc/inc/interfaces.inc:1847
+#: src/etc/inc/interfaces.inc:1871 src/etc/inc/interfaces.inc:1889
+#: src/etc/inc/interfaces.inc:1907
 #, php-format
 msgid "Configuring %s"
 msgstr "Konfigurowanie %s"
 
-#: src/etc/inc/interfaces.inc:2082
+#: src/etc/inc/interfaces.inc:1995
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
 msgstr "Wyłączam interfejs dla interfejsu %1$s, zniszczenie to %2$s"
 
-#: src/etc/inc/interfaces.inc:2096
+#: src/etc/inc/interfaces.inc:2009
 msgid "Wrong parameters used during interface_bring_down"
 msgstr "Niewłaściwe parametry użyte podczas interfejsu"
 
-#: src/etc/inc/interfaces.inc:2273
+#: src/etc/inc/interfaces.inc:2186
 msgid "Enter CARP maintenance mode"
 msgstr "Wejdź w tryb konserwacji CARP"
 
-#: src/etc/inc/interfaces.inc:2501
+#: src/etc/inc/interfaces.inc:2414
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
 msgstr ""
 "Nie można odnaleźć konfiguracji PPP dla %s w interface_ppps_configure ()."
 
-#: src/etc/inc/interfaces.inc:2558
+#: src/etc/inc/interfaces.inc:2471
 #, php-format
 msgid ""
 "Could not get a Local IP address for PPTP/L2TP link on %s in "
@@ -36977,7 +37109,7 @@ msgstr ""
 ", Nie udało się uzyskać lokalnego adresu IP dla połączenia PPTP / L2TP na %s "
 "w, interfejsy_opisu_konfiguracji. Korzystanie z 0.0.0.0 ip!"
 
-#: src/etc/inc/interfaces.inc:2565
+#: src/etc/inc/interfaces.inc:2478
 #, php-format
 msgid ""
 "Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in "
@@ -36986,7 +37118,7 @@ msgstr ""
 "Nie można uzyskać zdalnego adresu IP protokołu PPTP / L2TP z %1$s dla %2$s w "
 "interfaces_fps_ppps_configure."
 
-#: src/etc/inc/interfaces.inc:2572
+#: src/etc/inc/interfaces.inc:2485
 #, php-format
 msgid ""
 "Device %s does not exist. PPP link cannot start without the modem device."
@@ -36994,40 +37126,40 @@ msgstr ""
 "Urządzenie %s nie istnieje. Łącze PPP nie może zostać uruchomione bez modemu."
 ""
 
-#: src/etc/inc/interfaces.inc:2577
+#: src/etc/inc/interfaces.inc:2490
 #, php-format
 msgid "Unknown %s configured as ppp interface."
 msgstr "Nieznane %s skonfigurowano jako interfejs ppp."
 
-#: src/etc/inc/interfaces.inc:2937
+#: src/etc/inc/interfaces.inc:2850
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
 msgstr ""
 "BŁĄD: Nie można otworzyć mpd_%1$s.conf w interface_ppps_configure().%2$s"
 
-#: src/etc/inc/interfaces.inc:3032
+#: src/etc/inc/interfaces.inc:2945
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
 msgstr "Inicjuję 3gstats.php na urządzeniu '%1$s' na interfejsie '%2$s'"
 
-#: src/etc/inc/interfaces.inc:3049
+#: src/etc/inc/interfaces.inc:2962
 msgid "Configuring CARP settings..."
 msgstr "Konfiguracja ustawień CARP…"
 
-#: src/etc/inc/interfaces.inc:3086
+#: src/etc/inc/interfaces.inc:2999
 msgid "waiting for pfsync..."
 msgstr "Oczekiwanie na pfsync…"
 
-#: src/etc/inc/interfaces.inc:3097
+#: src/etc/inc/interfaces.inc:3010
 #, php-format
 msgid "pfsync done in %s seconds."
 msgstr "Pfsync gotowe w ciągu sekund: %s."
 
-#: src/etc/inc/interfaces.inc:3098
+#: src/etc/inc/interfaces.inc:3011
 msgid "Configuring CARP settings finalize..."
 msgstr "Konfigurowanie ustawień CARP kończy się ..."
 
-#: src/etc/inc/interfaces.inc:3327
+#: src/etc/inc/interfaces.inc:3240
 #, php-format
 msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
@@ -37036,58 +37168,58 @@ msgstr ""
 ", Interfejs podany dla wirtualnego adresu IP% s nie istnieje. Pomijaj, ten "
 "VIP."
 
-#: src/etc/inc/interfaces.inc:3405
+#: src/etc/inc/interfaces.inc:3318
 #, php-format
 msgid "Interface %s changed to hostap mode"
 msgstr "Interfejs% s został zmieniony na tryb hosta"
 
-#: src/etc/inc/interfaces.inc:3409
+#: src/etc/inc/interfaces.inc:3322
 #, php-format
 msgid "Interface %s changed to adhoc mode"
 msgstr "Interfejs% s został zmieniony na tryb adhoc"
 
-#: src/etc/inc/interfaces.inc:3413
+#: src/etc/inc/interfaces.inc:3326
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
 msgstr "Interfejs% s został zmieniony na tryb infrastruktury"
 
-#: src/etc/inc/interfaces.inc:3429
+#: src/etc/inc/interfaces.inc:3342
 #, php-format
 msgid "Cloning new wireless interface %s"
 msgstr "Klonowanie nowego interfejsu bezprzewodowego %s"
 
-#: src/etc/inc/interfaces.inc:3434
+#: src/etc/inc/interfaces.inc:3347
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
 msgstr ""
 "Nie udało się sklonować interfejsu %1$s z kodem błędu %2$s, informacje "
 "zwrotne %3$s"
 
-#: src/etc/inc/interfaces.inc:4104
+#: src/etc/inc/interfaces.inc:4017
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
 msgstr "Uruchamianie klienta dhcp6 dla interfejsu wan %s w DHCP6 bez trybu RA"
 
-#: src/etc/inc/interfaces.inc:4125
+#: src/etc/inc/interfaces.inc:4038
 #, php-format
 msgid "OpenVPN: Resync server %s"
 msgstr "OpenVPN: serwer resync %s"
 
-#: src/etc/inc/interfaces.inc:4138
+#: src/etc/inc/interfaces.inc:4051
 #, php-format
 msgid "OpenVPN: Resync client %s"
 msgstr "OpenVPN: klient Resync %s"
 
-#: src/etc/inc/interfaces.inc:4298
+#: src/etc/inc/interfaces.inc:4219
 #, php-format
 msgid "Deny router advertisements for interface %s"
 msgstr "Zabroń rozgłaszania routera na interfejsie %s"
 
-#: src/etc/inc/interfaces.inc:4321
+#: src/etc/inc/interfaces.inc:4242
 msgid "Generating new MAC address."
 msgstr "Generowanie nowego adresu MAC."
 
-#: src/etc/inc/interfaces.inc:4325 src/etc/inc/interfaces.inc:4328
+#: src/etc/inc/interfaces.inc:4246 src/etc/inc/interfaces.inc:4249
 #, php-format
 msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
@@ -37096,28 +37228,28 @@ msgstr ""
 "Nieprawidłowy adres MAC (ff:ff:ff:ff:ff:ff) na interfejsie %1$s został "
 "automatycznie zastąpiony %2$s"
 
-#: src/etc/inc/interfaces.inc:4410
+#: src/etc/inc/interfaces.inc:4328
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
 msgstr ""
 "Wystąpił konflikt między MTU między rodzicem %1$s a siecią VLAN (%2$s)"
 
-#: src/etc/inc/interfaces.inc:4481
+#: src/etc/inc/interfaces.inc:4399
 msgid "calling interface_dhcpv6_configure."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4616 src/etc/inc/interfaces.inc:4686
-#: src/etc/inc/interfaces.inc:4750
+#: src/etc/inc/interfaces.inc:4526 src/etc/inc/interfaces.inc:4596
+#: src/etc/inc/interfaces.inc:4660
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
 msgstr "Interfejs %1$s śledzący nieistniejący interfejs %2$s"
 
-#: src/etc/inc/interfaces.inc:4623 src/etc/inc/interfaces.inc:4629
+#: src/etc/inc/interfaces.inc:4533 src/etc/inc/interfaces.inc:4539
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
 msgstr "Interfejs%1$s skonfigurowany przez%2$s typ%3$s"
 
-#: src/etc/inc/interfaces.inc:4692
+#: src/etc/inc/interfaces.inc:4602
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
@@ -37126,13 +37258,13 @@ msgstr ""
 ", Interfejs IPv4 '%1$s' na interfejsie '%2$s' nie jest poprawny, a nie "
 "konfiguruje tunel 6RD"
 
-#: src/etc/inc/interfaces.inc:4728
+#: src/etc/inc/interfaces.inc:4638
 #, php-format
 msgid "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr "Rd6%1$s z adresem ipv6%2$s na podstawie%3$s ipv4%4$s"
 
-#: src/etc/inc/interfaces.inc:4756 src/etc/inc/interfaces.inc:4811
-#: src/etc/inc/interfaces.inc:4900
+#: src/etc/inc/interfaces.inc:4666 src/etc/inc/interfaces.inc:4721
+#: src/etc/inc/interfaces.inc:4810
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
@@ -37141,22 +37273,22 @@ msgstr ""
 ", Interfejs IPv4 '%1$s' na interfejsie '%2$s' nie jest publiczny, a nie "
 "konfiguruje tunel 6RD"
 
-#: src/etc/inc/interfaces.inc:4788
+#: src/etc/inc/interfaces.inc:4698
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr "Sixto4%1$s z adresem ipv6%2$s na podstawie%3$s ipv4%4$s"
 
-#: src/etc/inc/interfaces.inc:5012
+#: src/etc/inc/interfaces.inc:4922
 msgid "Failed to write user DUID file!"
 msgstr "Nie udało się zapisać pliku DUID użytkownika!"
 
-#: src/etc/inc/interfaces.inc:5483
+#: src/etc/inc/interfaces.inc:5393
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr ""
 "Błąd: nie można otworzyć %s w pliku protokołu DHCP6_Config_File_Override ()."
 
-#: src/etc/inc/interfaces.inc:5515
+#: src/etc/inc/interfaces.inc:5425
 #, php-format
 msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
@@ -37165,17 +37297,17 @@ msgstr ""
 ", Błąd: nie można otworzyć dhclient_ %s.conf w interfejsie_dhcp_configure () "
 "w celu zapisu."
 
-#: src/etc/inc/interfaces.inc:5528
+#: src/etc/inc/interfaces.inc:5438
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
 msgstr "Nieprawidłowy interfejs „%s” w interfejsie_dhcp_configure ()"
 
-#: src/etc/inc/interfaces.inc:5678
+#: src/etc/inc/interfaces.inc:5588
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
 msgstr "Błąd: nie można otworzyć %s w protokole DHCP_Config_File_Override ()."
 
-#: src/etc/inc/interfaces.inc:7671
+#: src/etc/inc/interfaces.inc:7566
 msgid "L2TP VPN"
 msgstr "L2TP VPN"
 
@@ -41616,12 +41748,6 @@ msgstr ""
 msgid "Provide a login banner to clients"
 msgstr "Zapewnienie baneru logowania do klientów"
 
-#: src/usr/local/www/interfaces_vxlan_edit.php:213
-msgid ""
-"Populate the forwarding table with the source IP address and inner source "
-"Ethernet MAC address of received packets."
-msgstr ""
-
 #: src/usr/local/www/firewall_virtual_ip_edit.php:394
 msgid ""
 "Disable expansion of this entry into IPs on NAT lists (e.g. 192.168.1.0/24 "
@@ -42206,12 +42332,12 @@ msgstr "Włącz logowanie HTTPS"
 msgid "Disable HTTPS Forwards"
 msgstr "Wyłącz protokół HTTPS forwards"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:772
+#: src/usr/local/www/vpn_ipsec_phase1.php:786
 msgid ""
 "Set this option to disable this phase1 without removing it from the list. "
 msgstr ", Ustaw tę opcję, aby wyłączyć tę fazę1 bez usuwania jej z listy."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1044
+#: src/usr/local/www/vpn_ipsec_phase1.php:1074
 msgid ""
 "Enable this option to never initiate this connection from this side, only "
 "respond to incoming requests."
@@ -42219,7 +42345,7 @@ msgstr ""
 ", Włącz tę opcję, aby nigdy nie inicjować tego połączenia z tej strony, "
 "tylko, odpowiadać na przychodzące żądania."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1082
+#: src/usr/local/www/vpn_ipsec_phase1.php:1112
 msgid ""
 "Enable this to split connection entries with multiple phase 2 configurations."
 " Required for remote endpoints that support only a single traffic selector "
@@ -42229,11 +42355,11 @@ msgstr ""
 ", Wymagane dla zdalnych punktów końcowych, które obsługują tylko pojedynczy "
 "selektor ruchu na dziecko SA."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1089
+#: src/usr/local/www/vpn_ipsec_phase1.php:1119
 msgid "Enable manual Pseudo-Random Function (PRF) selection"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:1115
+#: src/usr/local/www/vpn_ipsec_phase1.php:1145
 msgid "Enable DPD"
 msgstr "Włącz DPD"
 
@@ -42353,7 +42479,7 @@ msgstr ""
 msgid "Deny mode 6 control message trap service (notrap)."
 msgstr "Tryb odmowy 6 usługa pułapek komunikatów (notrap)."
 
-#: src/usr/local/www/vpn_ipsec_phase2.php:571
+#: src/usr/local/www/vpn_ipsec_phase2.php:591
 msgid "Disable this phase 2 entry without removing it from the list. "
 msgstr "Wyłącz wpis z fazy 2 bez usuwania z listy."
 

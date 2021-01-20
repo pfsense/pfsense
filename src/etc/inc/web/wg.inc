@@ -246,6 +246,23 @@ function wg_configure_if($wg_ifname) {
 
 	system_routing_configure(
 	    convert_real_interface_to_friendly_interface_name($wg_ifname));
+
+	if (is_array($tunnel['peers']) && is_array($tunnel['peers']['wgpeer']) &&
+	    count($tunnel['peers']['wgpeer']) > 0) {
+		foreach ($tunnel['peers']['wgpeer'] as $peer) {
+			if (!empty($peer['allowedips'])) {
+				foreach (explode(",", $peer['allowedips']) as $ip) {
+					$ip = trim($ip);
+					if (empty($ip) ||
+					    ($ip == '0.0.0.0/0') ||
+					    ($ip == '::/0')) {
+						continue;
+					}
+					route_add_or_change($ip, $tunnel['name'], $tunnel['name']);
+				}
+			}
+		}
+	}
 }
 
 // Remove WireGuard tunnel

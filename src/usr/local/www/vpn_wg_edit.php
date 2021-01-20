@@ -200,13 +200,14 @@ $section2->addInput(new Form_Input(
 	'allowedips',
 	'Allowed IPs',
 	'text'
-))->setHelp("List of CIDR IPs allowed to connect");
+))->setHelp("List of CIDR-masked subnets which can be reached via this peer. %s " .
+		"Routes for these subnets will be automatically added to the routing table, except for default routes.", '<br/>');
 
 $section2->addInput(new Form_Input(
 	'peerwgaddr',
 	'Peer WireGuard Address',
 	'text'
-))->setHelp("IPv4/IPv6 specifies the WireGuard interface address of the peer, since it can differ from AllowedIPs");
+))->setHelp("IPv4/IPv6 specifies the WireGuard interface address of the peer, since it can differ from Allowed IPs");
 
 $group2 = new Form_Group('Pre-shared key');
 

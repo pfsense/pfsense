@@ -23,7 +23,7 @@
 ##|+PRIV
 ##|*IDENT=page-vpn-wg-edit
 ##|*NAME=VPN: WireGuard: Edit
-##|*DESCR=Edit wireGuard tunnele.
+##|*DESCR=Edit WireGuard tunnele.
 ##|*MATCH=vpn_wg_edit.php*
 ##|-PRIV
 
@@ -206,7 +206,7 @@ $section2->addInput(new Form_Input(
 	'peerwgaddr',
 	'Peer WireGuard Address',
 	'text'
-))->setHelp("IPv4/IPv6 specifies the wireGuard interface address of the peer, since it can differ from AllowedIPs");
+))->setHelp("IPv4/IPv6 specifies the WireGuard interface address of the peer, since it can differ from AllowedIPs");
 
 $section2->addInput(new Form_Input(
 	'peernwks',

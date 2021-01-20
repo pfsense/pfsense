@@ -271,7 +271,7 @@ function genPubKey($privkey) {
 	return (exec("echo {$privkey} | {$wgbinpath} pubkey"));
 }
 
-// Return the next wireGuard interface name that is not currently in use
+// Return the next WireGuard interface name that is not currently in use
 function nextFreeWGInterfaceName() {
 	global $config;
 

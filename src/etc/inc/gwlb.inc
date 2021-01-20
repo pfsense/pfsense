@@ -832,6 +832,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							continue 2;
 						}
 					}
+				} elseif (substr($ifcfg['if'], 0, 2) == "wg") {
+					if (!find_interface_ip($ifcfg['if'])) {
+						continue 2;
+					}
+					$ctype = "WGv4";
 				} elseif ($tunnelif == "gif" || $tunnelif == "gre") {
 					$ctype = "TUNNELv4";
 				}
@@ -975,6 +980,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							continue 2;
 						}
 					}
+				} elseif (substr($ifcfg['if'], 0, 2) == "wg") {
+					if (!find_interface_ipv6($ifcfg['if'])) {
+						continue 2;
+					}
+					$ctype = "WGv6";
 				} else if ($tunnelif == "gif" || $tunnelif == "gre") {
 					$ctype = "TUNNELv6";
 				}

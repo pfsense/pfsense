@@ -227,6 +227,9 @@ function wg_configure_if($wg_ifname) {
 			    escapeshellarg($ip) . " netmask " .
 			    escapeshellarg(gen_subnet_mask($mask)) .
 			    ($ip4_first ? "" : " alias"));
+			if ($ip4_first) {
+				file_put_contents("/tmp/{$tunnel['name']}_router", $ip);
+			}
 			$ip4_first = false;
 		} elseif (is_ipaddrv6($ip)) {
 			mwexec("/sbin/ifconfig " .
@@ -234,6 +237,9 @@ function wg_configure_if($wg_ifname) {
 			    escapeshellarg($ip) . " netmask " .
 			    escapeshellarg(gen_subnet_mask($mask)) .
 			    ($ip6_first ? "" : " alias"));
+			if ($ip6_first) {
+				file_put_contents("/tmp/{$tunnel['name']}_routerv6", $ip);
+			}
 			$ip6_first = false;
 		}
 	}

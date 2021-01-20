@@ -6886,6 +6886,9 @@ function get_interfaces_with_gateway() {
 				} elseif (substr($ifname['if'], 0, 5) == "ipsec" ||
 				    !empty($ifname['gateway'])) {
 					$ints[$ifdescr] = $ifdescr;
+				} elseif (substr($ifname['if'], 0, 2) == "wg" ||
+				    !empty($ifname['gateway'])) {
+					$ints[$ifdescr] = $ifdescr;
 				}
 
 				break;
@@ -6910,7 +6913,8 @@ function interface_has_gateway($friendly) {
 			break;
 			default:
 				if ((substr($ifname['if'], 0, 4) == "ovpn") ||
-				    (substr($ifname['if'], 0, 5) == "ipsec")) {
+				    (substr($ifname['if'], 0, 5) == "ipsec") ||
+				    (substr($ifname['if'], 0, 2) == "wg")) {
 					return true;
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);
@@ -6944,7 +6948,8 @@ function interface_has_gatewayv6($friendly) {
 				break;
 			default:
 				if ((substr($ifname['if'], 0, 4) == "ovpn") ||
-				    (substr($ifname['if'], 0, 5) == "ipsec")) {
+				    (substr($ifname['if'], 0, 5) == "ipsec") ||
+				    (substr($ifname['if'], 0, 2) == "wg")) {
 					return true;
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);

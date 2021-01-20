@@ -107,14 +107,6 @@ if (isset($config['gres']['gre']) && is_array($config['gres']['gre']) && count($
 	}
 }
 
-/* add VXLAN interfaces */
-if (isset($config['vxlans']['vxlan']) && is_array($config['vxlans']['vxlan']) && count($config['vxlans']['vxlan'])) {
-	foreach ($config['vxlans']['vxlan'] as $gre) {
-		$portlist[$gre['vxlanif']] = $gre;
-		$portlist[$gre['vxlanif']]['isvxlan'] = true;
-	}
-}
-
 /* add LAGG interfaces */
 if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 	foreach ($config['laggs']['lagg'] as $lagg) {
@@ -324,8 +316,8 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 						$config['interfaces'][$ifname]['ipaddr'] = $portlist[$ifport]['type'];
 					}
 
-					if ((substr($ifport, 0, 3) == 'gre') || (substr($ifport, 0, 3) == 'gif') || 
-					    (substr($ifport, 0, 5) == 'vxlan')) {
+					if ((substr($ifport, 0, 3) == 'gre') ||
+					    (substr($ifport, 0, 5) == 'gif')) {
 						unset($config['interfaces'][$ifname]['ipaddr']);
 						unset($config['interfaces'][$ifname]['subnet']);
 						unset($config['interfaces'][$ifname]['ipaddrv6']);
@@ -377,8 +369,6 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			$input_errors[] = gettext("The interface is part of a gre tunnel. Please delete the tunnel to continue");
 		} else if (link_interface_to_tunnelif($id, 'gif')) {
 			$input_errors[] = gettext("The interface is part of a gif tunnel. Please delete the tunnel to continue");
-		} else if (link_interface_to_tunnelif($id, 'vxlan')) {
-			$input_errors[] = gettext("The interface is part of a vxlan tunnel. Please delete the tunnel to continue");
 		} else if (interface_has_queue($id)) {
 			$input_errors[] = gettext("The interface has a traffic shaper queue configured.\nPlease remove all queues on the interface to continue.");
 		} else {
@@ -485,7 +475,6 @@ $tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
 $tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
 $tab_array[] = array(gettext("GREs"), false, "interfaces_gre.php");
 $tab_array[] = array(gettext("GIFs"), false, "interfaces_gif.php");
-$tab_array[] = array(gettext("VXLANs"), false, "interfaces_vxlan.php");
 $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);

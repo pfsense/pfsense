@@ -256,11 +256,6 @@ function interface_assign_description_fast($portlist, $friendlyifnames) {
 			if ($portinfo['descr']) {
 				$descr .= " (" . $portinfo['descr'] . ")";
 			}
-		} elseif ($portinfo['isvxlan']) {
-			$descr = "VXLAN {$portinfo['remote-addr']}";
-			if ($portinfo['descr']) {
-				$descr .= " (" . $portinfo['descr'] . ")";
-			}
 		} elseif ($portinfo['islagg']) {
 			$descr = strtoupper($portinfo['laggif']);
 			if ($portinfo['descr']) {

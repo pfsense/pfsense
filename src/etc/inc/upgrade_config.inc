@@ -6362,6 +6362,15 @@ function upgrade_212_to_213() {
 	}
 }
 
+/* VXLAN support was removed */
+function upgrade_213_to_214() {
+	global $config;
+
+	if (isset($config['vxlans'])) {
+		unset($config['vxlans']);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

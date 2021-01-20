@@ -134,12 +134,6 @@ if (!empty($gif)) {
 	array_walk($gif, 'interface_gif_configure');
 }
 
-unset($vxlan);
-$vxlan = link_interface_to_tunnelif($interface, 'vxlan');
-if (!empty($vxlan)) {
-	array_walk($vxlan, 'interface_vxlan_configure');
-}
-
 $grouptmp = link_interface_to_group($interface);
 if (!empty($grouptmp)) {
 	array_walk($grouptmp, 'interface_group_add_member');
@@ -191,15 +185,6 @@ if (!empty($gif)) {
 if (!empty($gre)) {
 	foreach ($gre as $gretun) {
 		$confif = convert_real_interface_to_friendly_interface_name($gretun['greif']);
-		if (!empty($confif)) {
-			interface_configure($confif);
-			system_routing_configure($confif);
-		}
-	}
-}
-if (!empty($vxlan)) {
-	foreach ($vxlan as $vxlantun) {
-		$confif = convert_real_interface_to_friendly_interface_name($vxlantun['vxlanif']);
 		if (!empty($confif)) {
 			interface_configure($confif);
 			system_routing_configure($confif);

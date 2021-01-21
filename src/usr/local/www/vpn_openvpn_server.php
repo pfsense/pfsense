@@ -1753,13 +1753,12 @@ events.push(function() {
 		hideCheckbox('tlsauth_enable', false);
 		hideInput('caref', false);
 		hideInput('crlref', false);
-		hideInput('ocspcheck', false);
+		hideCheckbox('ocspcheck', false);
 		hideLabel('Peer Certificate Revocation list', false);
 
 		switch (value) {
 			case "p2p_tls":
 			case "server_tls":
-			case "server_user":
 				hideInput('tls', false);
 				hideInput('tls_type', false);
 				hideInput('certref', false);
@@ -1772,6 +1771,25 @@ events.push(function() {
 				hideInput('topology', false);
 				hideCheckbox('compression_push', false);
 				hideCheckbox('duplicate_cn', false);
+				hideCheckbox('ocspcheck', false);
+			break;
+			case "server_user":
+				hideInput('caref', true);
+				hideInput('crlref', true);
+				hideLabel('Peer Certificate Revocation list', true);
+				hideLabel('Peer Certificate Authority', true);
+				hideInput('certref', true);
+				hideCheckbox('tlsauth_enable', false);
+				hideInput('dh_length', true);
+				hideInput('ecdh_curve', true);
+				hideInput('cert_depth', true);
+				hideCheckbox('strictusercn', true);
+				hideCheckbox('autokey_enable', true);
+				hideInput('shared_key', false);
+				hideInput('topology', false);
+				hideCheckbox('compression_push', false);
+				hideCheckbox('duplicate_cn', false);
+				hideCheckbox('ocspcheck', true);
 			break;
 			case "server_tls_user":
 				hideInput('tls', false);
@@ -1786,13 +1804,13 @@ events.push(function() {
 				hideInput('topology', false);
 				hideCheckbox('compression_push', false);
 				hideCheckbox('duplicate_cn', false);
+				hideCheckbox('ocspcheck', false);
 			break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
 				hideInput('tls_type', true);
 				hideInput('caref', true);
 				hideInput('crlref', true);
-				hideInput('ocspcheck', true);
 				hideLabel('Peer Certificate Revocation list', true);
 				hideLabel('Peer Certificate Authority', true);
 				hideInput('certref', true);
@@ -1806,6 +1824,7 @@ events.push(function() {
 				hideInput('topology', true);
 				hideCheckbox('compression_push', true);
 				hideCheckbox('duplicate_cn', true);
+				hideCheckbox('ocspcheck', true);
 			break;
 		}
 

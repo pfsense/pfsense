@@ -49,6 +49,9 @@ if ($_REQUEST['ajax']) {
 
 // All form save logic is in /etc/inc/wg.inc
 if ($_POST['save']) {
+	if (empty($_POST['listenport'])) {
+		$_POST['listenport'] = next_wg_port();
+	}
 	$res = wg_do_post($_POST);
 	$input_errors = $res['input_errors'];
 	$pconfig = $res['pconfig'];
@@ -123,7 +126,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'listenport',
-	'*Listen port',
+	'Listen port',
 	'text',
 	$pconfig['interface']['listenport'],
 	['placeholder' => next_wg_port()]

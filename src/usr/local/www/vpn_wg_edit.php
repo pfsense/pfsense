@@ -184,7 +184,7 @@ $section2->addInput(new Form_Input(
 	'endpoint',
 	'Endpoint',
 	'text'
-))->setHelp("Hostname, IPv4 or IP46 address");
+))->setHelp("Hostname, IPv4 or IPv6 address");
 
 $section2->addInput(new Form_Input(
 	'port',

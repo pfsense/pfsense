@@ -1085,6 +1085,23 @@ function filter_get_vpns_list() {
 		}
 	}
 
+	/* wireguard */
+	if (is_wg_enabled()) {
+		foreach ($config['wireguard']['tunnel'] as $wg) {
+			if (empty($wg['enabled'])) {
+				continue;
+			}
+			if (!is_array($wg['peers']['wgpeer']) ||
+			    count($wg['peers']['wgpeer']) == 0) {
+				continue;
+			}
+			$wgpeer = $wg['peers']['wgpeer'];
+			foreach (explode(",", $wgpeer['allowedips']) as $ip) {
+				$vpns_arr[] = $ip;
+			}
+		}
+	}
+
 	if (!empty($vpns_arr)) {
 		$vpns = implode(" ", $vpns_arr);
 	}
@@ -1291,6 +1308,15 @@ function filter_generate_optcfg_array() {
 		$oic['type'] = "none";
 		$oic['virtual'] = true;
 		$FilterIflist['openvpn'] = $oic;
+	}
+	/* add wireguard interfaces */
+	if (is_wg_enabled()) {
+		$oic = array();
+		$oic['if'] = "wg";
+		$oic['descr'] = 'Wireguard';
+		$oic['type'] = "none";
+		$oic['virtual'] = true;
+		$FilterIflist['wireguard'] = $oic;
 	}
 	/* add interface groups */
 	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
@@ -1734,6 +1760,19 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 				$tonathosts[] = $ovpncli['tunnel_network'];
 				$descriptions[] = gettext("OpenVPN client");
 			}
+		}
+	}
+
+	if (is_wg_enabled()) {
+		foreach ($config['wireguard']['tunnel'] as $wg) {
+			if (empty($wg['enabled'])) {
+				continue;
+			}
+			if (empty($wg['interface']['address'])) {
+				continue;
+			}
+			$tonathosts[] = $wg['interface']['address'];
+			$descriptions[] = gettext('Wireguard');
 		}
 	}
 
@@ -3930,7 +3969,7 @@ EOD;
 		$rule_arr1 = array();
 		$rule_arr2 = array();
 		$rule_arr3 = array();
-		$vpn_and_ppp_ifs = array("l2tp", "pptp", "pppoe", "enc0", "openvpn");
+		$vpn_and_ppp_ifs = array("l2tp", "pptp", "pppoe", "enc0", "openvpn", "wireguard");
 		/*
 		 * NB: The order must be: Floating rules, then interface group and then regular ones.
 		 */

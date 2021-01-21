@@ -30,6 +30,7 @@ require_once("globals.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
 require_once("ipsec.inc");
+require_once("wg.inc");
 
 function interfaces_bring_up($interface) {
 	if (!$interface) {
@@ -7583,6 +7584,10 @@ function create_interface_list() {
 	// add openvpn/tun interfaces
 	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 		$iflist["openvpn"] = gettext("OpenVPN");
+	}
+
+	if (is_wg_enabled() && have_ruleint_access("wireguard")) {
+		$iflist['wireguard'] = 'Wireguard';
 	}
 
 	return($iflist);

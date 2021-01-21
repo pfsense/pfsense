@@ -177,6 +177,14 @@ foreach ($ipsec_descrs as $ifname => $ifdescr) {
 	$portlist[$ifname] = array('descr' => $ifdescr);
 }
 
+global $wg_descrs;
+init_config_arr(array('wireguard', 'tunnel'));
+foreach ($config['wireguard']['tunnel'] as $tunnel) {
+	if (isset($tunnel['enabled']) && ($tunnel['enabled'] == 'yes')) {
+		$portlist[$tunnel['name']] = array('descr' => $tunnel['descr']);
+		$wg_descrs[$tunnel['name']] = $tunnel['descr'];
+	}
+}
 
 $ifdescrs = interface_assign_description_fast($portlist,$friendlyifnames);
 

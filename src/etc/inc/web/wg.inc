@@ -76,6 +76,10 @@ function wg_validate_post($pconfig) {
 
 		$skip = '';
 		if (!empty($iflist[$pconfig['name']])) {
+			if (!isset($pconfig['enabled']) ||
+			    ($pconfig['enabled'] != 'yes')) {
+				$input_errors[] = gettext('Cannot disable a WireGuard instance while it is assigned as an interface.');
+			}
 			$skip = $iflist[$pconfig['name']];
 		}
 
@@ -177,6 +181,8 @@ function wg_configure() {
 	foreach ($config["wireguard"]["tunnel"] as $tunnel) {
 		if (isset($tunnel['enabled']) && $tunnel['enabled'] == 'yes') {
 			wg_configure_if($tunnel['name']);
+		} else {
+			wg_destroy_if($tunnel['name']);
 		}
 	}
 

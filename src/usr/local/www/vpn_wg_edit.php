@@ -61,7 +61,12 @@ if ($_POST['save']) {
 		wg_create_config_files();
 
 		// Setup and start the new WG tunnel
-		wg_configure_if($pconfig['name']);
+		if (isset($pconfig['enabled']) &&
+		    ($pconfig['enabled'] == 'yes')) {
+			wg_configure_if($pconfig['name']);
+		} else {
+			wg_destroy_if($pconfig['name']);
+		}
 
 		// Go back to the tunnel table
 		header("Location: vpn_wg.php");

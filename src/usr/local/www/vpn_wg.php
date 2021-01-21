@@ -40,9 +40,19 @@ $shortcut_section = "wireguard";
 include("head.inc");
 
 // Delete a tunnel?
-if (array_key_exists('delidx', $_POST)) {
-	deleteTunnel($_POST['delidx']);
-	header("Location: vpn_wg.php");
+if (array_key_exists('delidx', $_POST) &&
+    ($tunnels[$_POST['delidx']])) {
+	$iflist = get_configured_interface_list_by_realif();
+	if (!empty($iflist[$tunnels[$_POST['delidx']]['name']])) {
+		$input_errors[] = gettext('Cannot delete a WireGuard instance while it is assigned as an interface.');
+	} else {
+		deleteTunnel($_POST['delidx']);
+		header("Location: vpn_wg.php");
+	}
+}
+
+if ($input_errors) {
+	print_input_errors($input_errors);
 }
 ?>
 

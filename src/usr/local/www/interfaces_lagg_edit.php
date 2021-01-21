@@ -212,8 +212,11 @@ function build_member_list() {
 
 	$memberlist = array('list' => array(), 'selected' => array());
 
+	/* Do not allow WireGuard interfaces to be used for LAGG
+	 * https://redmine.pfsense.org/issues/11277 */
 	foreach ($portlist as $ifn => $ifinfo) {
-		if (array_key_exists($ifn, $realifchecklist)) {
+		if (array_key_exists($ifn, $realifchecklist) ||
+		    (substr($ifn, 0, 2) == 'wg')) {
 			continue;
 		}
 

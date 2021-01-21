@@ -52,6 +52,15 @@ foreach ($lagglist as $laggif => $lagg) {
 	}
 }
 
+/* Do not allow WireGuard interfaces to be used for VLANs
+ * https://redmine.pfsense.org/issues/11277 */
+init_config_arr(array('wireguard', 'tunnel'));
+foreach ($config['wireguard']['tunnel'] as $tunnel) {
+	if (isset($portlist[$tunnel['name']])) {
+		unset($portlist[$tunnel['name']]);
+	}
+}
+
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }

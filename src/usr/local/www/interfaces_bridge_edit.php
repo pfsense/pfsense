@@ -389,7 +389,10 @@ function build_port_list($selecton) {
 	$portlist = array('list' => array(), 'selected' => array());
 
 	foreach ($ifacelist as $ifn => $ifdescr) {
-		if (substr($config['interfaces'][$ifn]['if'], 0, 6) != "bridge") {
+		/* Do not allow WireGuard interfaces to be used for bridges
+		 * https://redmine.pfsense.org/issues/11277 */
+		if ((substr($config['interfaces'][$ifn]['if'], 0, 6) != "bridge") &&
+		    (substr($config['interfaces'][$ifn]['if'], 0, 2) != 'wg')) {
 			$portlist['list'][$ifn] = $ifdescr;
 
 			if (in_array($ifn, explode(',', $selecton))) {

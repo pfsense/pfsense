@@ -721,7 +721,7 @@ foreach ($a_filter as $filteri => $filterent):
 								$selected_descs[] = 'OpenVPN';
 							break;
 						case 'wireguard':
-							$selected_descs[] = 'Wireguard';
+							$selected_descs[] = 'WireGuard';
 							break;
 						default:
 							$selected_descs[] = $interface;

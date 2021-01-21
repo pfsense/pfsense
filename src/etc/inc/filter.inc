@@ -1313,7 +1313,7 @@ function filter_generate_optcfg_array() {
 	if (is_wg_enabled()) {
 		$oic = array();
 		$oic['if'] = "wg";
-		$oic['descr'] = 'Wireguard';
+		$oic['descr'] = 'WireGuard';
 		$oic['type'] = "none";
 		$oic['virtual'] = true;
 		$FilterIflist['wireguard'] = $oic;
@@ -1772,7 +1772,7 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 				continue;
 			}
 			$tonathosts[] = $wg['interface']['address'];
-			$descriptions[] = gettext('Wireguard');
+			$descriptions[] = gettext('WireGuard');
 		}
 	}
 

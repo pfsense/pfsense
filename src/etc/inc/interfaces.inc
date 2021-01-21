@@ -7587,7 +7587,7 @@ function create_interface_list() {
 	}
 
 	if (is_wg_enabled() && have_ruleint_access("wireguard")) {
-		$iflist['wireguard'] = 'Wireguard';
+		$iflist['wireguard'] = 'WireGuard';
 	}
 
 	return($iflist);

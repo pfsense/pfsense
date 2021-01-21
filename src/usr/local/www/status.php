@@ -71,7 +71,7 @@ $filtered_tags = array(
 	'lighttpd_ls_password', 'maxmind_geoipdb_key', 'maxmind_key', 'md5-hash',
 	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'oinkcode',
 	'oinkmastercode', 'passphrase', 'password', 'passwordagain',
-	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',	'proxypass',
+	'pkcs11pin', 'postgresqlpasswordenc', 'presharedkey', 'pre-shared-key', 'privatekey', 'proxypass',
 	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radius_secret',
 	'redis_password', 'redis_passwordagain', 'rocommunity',	'secret', 'secret2', 'serverauthkey',
 	'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',
@@ -276,7 +276,7 @@ if (function_exists("system_get_thothid") &&
 }
 
 defCmdT("OS-Uptime", "/usr/bin/uptime");
-defCmdT("Network-Interfaces", "/sbin/ifconfig -vvvvvam");
+defCmdT("Network-Interfaces", '/sbin/ifconfig -vvvvvam | /usr/bin/sed "s/\([[:blank:]]private-key: \).*/\1<redacted>/"');
 defCmdT("Network-Interface Statistics", "/usr/bin/netstat -nWi");
 defCmdT("Process-Top Usage", "/usr/bin/top | /usr/bin/head -n5");
 defCmdT("Process-List", "/bin/ps xauwwd");
@@ -368,6 +368,17 @@ if (is_dir("/var/etc/openvpn")) {
 		defCmdT("OpenVPN-Configuration {$ovpnfile[4]}", "/bin/cat " . escapeshellarg($file));
 	}
 }
+
+if (is_dir("/etc/wg")) {
+	foreach(glob('/etc/wg/*.conf') as $file) {
+		$wgfile = explode('/', $file);
+		if (!count($wgfile) || (count($wgfile) < 4)) {
+			continue;
+		}
+		defCmdT("WireGuard-Configuration File {$wgfile[3]}", '/usr/bin/sed -E "s/([[:blank:]]*(PrivateKey = )).*/\1<redacted>/" ' . escapeshellarg($file) );
+	}
+}
+defCmdT("WireGuard-Active Configuration", "/usr/local/bin/wg");
 
 if (file_exists("/var/etc/l2tp-vpn/mpd.conf")) {
 	defCmdT("L2TP-Configuration", '/usr/bin/sed -E "s/([[:blank:]](secret|radius server .*) ).*/\1<redacted>/" /var/etc/l2tp-vpn/mpd.conf');

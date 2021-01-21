@@ -1549,7 +1549,7 @@ events.push(function() {
 		setRequired('cert', true);
 		hideInput('key', false);
 		setRequired('key', true);
-	} else {
+	} else if ($('input[name=import_type]:checked').val() == 'pkcs12') {
 		hideInput('cert', true);
 		setRequired('cert', false);
 		hideInput('key', true);

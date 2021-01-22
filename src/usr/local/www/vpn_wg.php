@@ -126,7 +126,13 @@ if ($input_errors) {
 ?>
 									<tr>
 										<td><?=$peer['descr']?></td>
-										<td><?=$peer['endpoint']?>:<?=$peer['port']?></td>
+										<td>
+										<?php if (!empty($peer["endpoint"])): ?>
+											<?=$peer['endpoint']?>:<?=((empty($peer["port"])) ? '51820' : $peer["port"])?>
+										<?php else: ?>
+											Dynamic
+										<?php endif; ?>
+										</td>
 										<td><?=$peer['allowedips']?></td>
 										<td><?=$peer['publickey']?></td>
 									</tr>

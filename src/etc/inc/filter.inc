@@ -1833,7 +1833,8 @@ function filter_nat_rules_outbound_automatic($src) {
 	$rules = array();
 	foreach ($FilterIflist as $if => $ifcfg) {
 		if ((substr($ifcfg['if'], 0, 4) == "ovpn") ||
-		    (substr($ifcfg['if'], 0, 5) == "ipsec")) {
+		    (substr($ifcfg['if'], 0, 5) == "ipsec") ||
+		    (substr($ifcfg['if'], 0, 2) == "wg")) {
 			continue;
 		}
 		if (!interface_has_gateway($if)) {

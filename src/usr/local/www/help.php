@@ -235,6 +235,8 @@ $helppages = array(
 	'vpn_openvpn_export.php' => 'https://docs.netgate.com/pfsense/en/latest/vpn/openvpn/index.html',
 	'vpn_openvpn_export_shared.php' => 'https://docs.netgate.com/pfsense/en/latest/vpn/openvpn/index.html',
 	'vpn_openvpn_server.php' => 'https://docs.netgate.com/pfsense/en/latest/vpn/openvpn/index.html',
+	'vpn_wg.php' => 'https://docs.netgate.com/pfsense/en/latest/vpn/wireguard/index.html',
+	'vpn_wg_edit.php' => 'https://docs.netgate.com/pfsense/en/latest/vpn/wireguard/index.html',
 
 	/* Packages from here on down. Not checked as strictly. Pages may not yet exist. */
 	'acme/acme_accountkeys_edit.php' => 'https://docs.netgate.com/pfsense/en/latest/packages/acme/index.html',

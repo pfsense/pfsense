@@ -467,10 +467,9 @@ function make_wg_conf($tunnel) {
 				$txt .= "PublicKey = {$peer['publickey']}\n";
 			}
 
-			if (!empty($peer["endpoint"]) &&
-			    !empty($peer["port"])) {
+			if (!empty($peer["endpoint"])) {
 				$txt .= "EndPoint = " .
-				    "{$peer['endpoint']}:{$peer['port']}\n";
+				    "{$peer['endpoint']}:" . ((empty($peer["port"])) ? '51820' : $peer["port"]) . "\n";
 			}
 
 			if (!empty($peer["allowedips"])) {

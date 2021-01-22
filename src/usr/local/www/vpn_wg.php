@@ -104,15 +104,15 @@ if ($input_errors) {
 						</td>
 					</tr>
 
-					<tr class="peer-entries" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
+					<tr class="peer-entries peerbg_color">
 						<td>Peers</td>
 <?php
 			if (count($tunnel['peers']['wgpeer']) > 0):
 ?>
 						<td colspan="6">
-							<table class="table table-hover" style="background-color:#ccf2ff;"> <!-- Move to pfSense.css -->
+							<table class="table table-hover peerbg_color">
 								<thead>
-									<tr>
+									<tr class="peerbg_color">
 										<th>Description</th>
 										<th>Endpoint</th>
 										<th>Allowed IPs</th>
@@ -124,7 +124,7 @@ if ($input_errors) {
 <?php
 				foreach ($tunnel['peers']['wgpeer'] as $peer):
 ?>
-									<tr>
+									<tr class="peerbg_color">
 										<td><?=$peer['descr']?></td>
 										<td>
 										<?php if (!empty($peer["endpoint"])): ?>

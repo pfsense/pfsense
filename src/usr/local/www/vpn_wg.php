@@ -130,7 +130,7 @@ if ($input_errors) {
 										<?php if (!empty($peer["endpoint"])): ?>
 											<?=$peer['endpoint']?>:<?=((empty($peer["port"])) ? '51820' : $peer["port"])?>
 										<?php else: ?>
-											Dynamic
+											<?=gettext("Dynamic")?>
 										<?php endif; ?>
 										</td>
 										<td><?=$peer['allowedips']?></td>

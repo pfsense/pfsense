@@ -90,7 +90,7 @@ if ($input_errors) {
 				$tunnel['peers']['wgpeer'] = array();
 			}
 ?>
-					<tr id="fr<?=$i?>" id="frd<?=$i?>" class="<?= $entryStatus ?>">
+					<tr ondblclick="document.location='vpn_wg_edit.php?index=<?=$i?>';" class="<?= $entryStatus ?>">
 						<td class="peer-entries"><?=gettext('Interface')?></td>
 						<td><?=$tunnel['name']?></td>
 						<td><?=$tunnel['descr']?></td>

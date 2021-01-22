@@ -282,7 +282,7 @@ $section2->add($group2);
 				$peer_num = 0;
 				if (!empty($pconfig['peers']['wgpeer'])) {
 					foreach ($pconfig['peers']['wgpeer'] as $peer) {
-						print('<tr class="peer_group_' . $peer_num . '">');
+						print('<tr id="peer_row_' . $peer_num . '" class="peer_group_' . $peer_num . '">');
 						print("<td>{$peer_num}</td>\n");
 						print("<td>{$peer['descr']}</td>\n");
 						print("<td>{$peer['endpoint']}</td>\n");
@@ -330,6 +330,12 @@ $section2->add($group2);
 //<![CDATA[
 events.push(function() {
 	var pconfig = JSON.parse('<?=$jpconfig?>');
+
+	// Double-click handler for peer table
+	$('[id^=peer_row_]').dblclick(function() {
+		var peernum = this.id.slice('peer_row_'.length);
+		editPeer(peernum);
+	});
 
 	// Eliminate ghost lines in modal
 	$('.form-group').css({"border-bottom-width" : "0"});
@@ -438,32 +444,35 @@ events.push(function() {
 		// Edit peer - Copy a row from the table to the edit form
 		$('[id^=editpeer_]').click(function () {
 			var peernum = this.id.slice('editpeer_'.length);
-
-			$('#peer_num').val(peernum);
-
-			// peer -1 means creating a new peer
-			if (peernum != "new") {
-				$('#pdescr').val(tabletext(peernum, 1));
-				$('#endpoint').val(tabletext(peernum, 2));
-				$('#port').val(tabletext(peernum, 3));
-				$('#ppublickey').val(tabletext(peernum, 4));
-				$('#persistentkeepalive').val(tabletext(peernum, 7));
-				$('#allowedips').val(tabletext(peernum, 6));
-				$('#presharedkey').val(tabletext(peernum, 7));
-				$('#peerwgaddr').val(tabletext(peernum, 8));
-			} else { // Clear all the fields
-				$('#pdescr').val("");
-				$('#endpoint').val("");
-				$('#port').val('');
-				$('#persistentkeepalive').val('');
-				$('#ppublickey').val('');
-				$('#allowedips').val('');
-				$('#presharedkey').val('');
-				$('#peerwgaddr').val('');
-			}
-
-			$('#peermodal').modal('show');
+			editPeer(peernum);
 		});
+	}
+
+	function editPeer(peernum) {
+		$('#peer_num').val(peernum);
+
+		// peer -1 means creating a new peer
+		if (peernum != "new") {
+			$('#pdescr').val(tabletext(peernum, 1));
+			$('#endpoint').val(tabletext(peernum, 2));
+			$('#port').val(tabletext(peernum, 3));
+			$('#ppublickey').val(tabletext(peernum, 4));
+			$('#persistentkeepalive').val(tabletext(peernum, 7));
+			$('#allowedips').val(tabletext(peernum, 6));
+			$('#presharedkey').val(tabletext(peernum, 7));
+			$('#peerwgaddr').val(tabletext(peernum, 8));
+		} else { // Clear all the fields
+			$('#pdescr').val("");
+			$('#endpoint').val("");
+			$('#port').val('');
+			$('#persistentkeepalive').val('');
+			$('#ppublickey').val('');
+			$('#allowedips').val('');
+			$('#presharedkey').val('');
+			$('#peerwgaddr').val('');
+		}
+
+		$('#peermodal').modal('show');
 	}
 
 	// These are action buttons, not submit buttons

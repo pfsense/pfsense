@@ -457,7 +457,7 @@ events.push(function() {
 			$('#endpoint').val(tabletext(peernum, 2));
 			$('#port').val(tabletext(peernum, 3));
 			$('#ppublickey').val(tabletext(peernum, 4));
-			$('#persistentkeepalive').val(tabletext(peernum, 7));
+			$('#persistentkeepalive').val(tabletext(peernum, 5));
 			$('#allowedips').val(tabletext(peernum, 6));
 			$('#presharedkey').val(tabletext(peernum, 7));
 			$('#peerwgaddr').val(tabletext(peernum, 8));

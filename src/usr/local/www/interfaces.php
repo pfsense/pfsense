@@ -575,8 +575,8 @@ if ($_POST['apply']) {
 		}
 
 		if ((strlen(trim($_POST['descr'])) > 25) && ((substr($realifname, 0, 4) == 'ovpn') ||
-		    (substr($realifname, 0, 5) == 'ipsec'))) {
-			$input_errors[] = gettext("The OpenVPN and VTI interface description must be less than 26 characters long.");
+		    (substr($realifname, 0, 5) == 'ipsec') || (substr($realifname, 0, 2) == 'wg'))) {
+			$input_errors[] = gettext("VTI, WireGuard, and OpenVPN interface descriptions must be less than 26 characters long.");
 		}
 
 		if ((strlen(trim($_POST['descr'])) > 22) && ((substr($realifname, 0, 3) == 'gif') ||

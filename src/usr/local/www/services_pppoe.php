@@ -64,8 +64,8 @@ if ($_POST['act'] == "del") {
 		if ("{$g['varrun_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'] . "-vpn.pid") {
 			killbypid("{$g['varrun_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'] . "-vpn.pid");
 		}
-		if (is_dir("{$g['varetc_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'])) {
-			mwexec("/bin/rm -r {$g['varetc_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid']);
+		if (is_dir("{$g['varetc_path']}/pppoe{$a_pppoes[$_POST['id']]['pppoeid']}-vpn")) {
+			rmdir_recursive("{$g['varetc_path']}/pppoe{$a_pppoes[$_POST['id']]['pppoeid']}-vpn");
 		}
 		unset($a_pppoes[$_POST['id']]);
 		write_config("PPPoE Server deleted");

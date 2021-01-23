@@ -293,11 +293,6 @@ function vpn_l2tp_configure() {
 	$syscfg = $config['system'];
 	$l2tpcfg = $config['l2tp'];
 
-	/* create directory if it does not exist */
-	if (!is_dir("{$g['varetc_path']}/l2tp-vpn")) {
-		mkdir("{$g['varetc_path']}/l2tp-vpn");
-	}
-
 	if (platform_booting()) {
 		if (!$l2tpcfg['mode'] || ($l2tpcfg['mode'] == "off")) {
 			return 0;
@@ -313,11 +308,6 @@ function vpn_l2tp_configure() {
 		/* wait for process to die */
 		sleep(8);
 
-	}
-
-	/* make sure l2tp-vpn directory exists */
-	if (!file_exists("{$g['varetc_path']}/l2tp-vpn")) {
-		mkdir("{$g['varetc_path']}/l2tp-vpn");
 	}
 
 	switch ($l2tpcfg['mode']) {
@@ -339,6 +329,11 @@ function vpn_l2tp_configure() {
 				default:
 					$paporchap = "set link enable pap";
 					break;
+			}
+
+			/* create directory if it does not exist */
+			if (!is_dir("{$g['varetc_path']}/l2tp-vpn")) {
+				mkdir("{$g['varetc_path']}/l2tp-vpn");
 			}
 
 			/* write mpd.conf */
@@ -455,10 +450,9 @@ EOD;
 
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");
-
 			break;
-
-		case 'redir':
+		default:
+			rmdir_recursive("{$g['varetc_path']}/l2tp-vpn");
 			break;
 	}
 
@@ -472,6 +466,10 @@ EOD;
 function vpn_l2tp_updatesecret() {
 	global $config, $g;
 	$l2tpcfg = $config['l2tp'];
+
+	if ($l2tpcfg['mode'] != 'server') {
+		return 0;
+	}
 
 	$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.secret", "w");
 	if (!$fd) {

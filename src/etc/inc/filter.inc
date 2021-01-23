@@ -958,11 +958,12 @@ function filter_generate_gateways() {
 					    isset($GatewaysList[$member['gw']]) &&
 					    (isset($GatewaysList[$member['gw']]['action_disable']) ||
 					    (!isset($GatewaysList[$member['gw']]['force_down']) &&
-					    !stristr($GatewaysStatus[$member['gw']]['status'], 'down') && 
-					    ((!stristr($GatewaysStatus[$member['gw']]['status'], 'loss') &&
-					    !stristr($trigger, 'loss')) ||
-					    (!stristr($GatewaysStatus[$member['gw']]['status'], 'delay') &&
-					    !stristr($trigger, 'latency')))))) {
+					    ((($GatewaysStatus[$member['gw']]['status'] != 'down') &&
+					    ($trigger == 'down')) ||
+					    (($GatewaysStatus[$member['gw']]['substatus'] != 'highloss') &&
+					    stristr($trigger, 'loss')) ||
+					    (($GatewaysStatus[$member['gw']]['substatus'] != 'highdelay') &&
+					    stristr($trigger, 'latency')))))) {
 						if ($g['debug']) {
 							log_error(sprintf(gettext('Setting up route with %1$s on %2$s'), $gatewayip, $int));
 						}

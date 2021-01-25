@@ -130,7 +130,7 @@ function wg_validate_peer($idx, $peer) {
 
 	// Check remote port
 	$rport = $peer['port'];
-	if (!empty($rport) && ($rport > 65535 || $rport < 512 )) {
+	if (!empty($rport) && ($rport > 65535)) {
 		$input_errors[] = sprintf(gettext(
 		    'Peer %1$s: Invalid remote port. (%2$s)'), $idx, $rport);
 	}

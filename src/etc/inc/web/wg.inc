@@ -298,6 +298,7 @@ function genPubKey($privkey) {
 function nextFreeWGInterfaceName() {
 	global $config;
 
+	init_config_arr(array('wireguard', 'tunnel'));
 	$tunnels = $config['wireguard']['tunnel'];
 	$num = count($tunnels);
 

@@ -464,6 +464,12 @@ function ip_greater_than($ip1, $ip2) {
 
 /* compare two IP addresses */
 function ipcmp($a, $b) {
+	if (is_subnet($a)) {
+		list($a, $amask) = explode('/', $a);
+	}
+	if (is_subnet($b)) {
+		list($b, $bmask) = explode('/', $b);
+	}
 	if (ip_less_than($a, $b)) {
 		return -1;
 	} else if (ip_greater_than($a, $b)) {

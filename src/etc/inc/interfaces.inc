@@ -1260,6 +1260,11 @@ function interface_is_type($if = NULL, $type) {
 			$entry = 'lagg';
 			$entif = 'laggif';
 			break;
+		case "wg":
+			$list = 'wireguard';
+			$entry = 'tunnel';
+			$entif = 'name';
+			break;
 		default:
 			break;
 	}
@@ -4314,6 +4319,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 	if (($wantedmtu == 0) && interface_is_type($mtuif, 'gif')) {
 		$wantedmtu = 1280;
+	}
+	/* Default MTU for WireGuard is 1420
+	 * https://redmine.pfsense.org/issues/11291 */
+	if (($wantedmtu == 0) && interface_is_type($mtuif, 'wg')) {
+		$wantedmtu = 1420;
 	}
 
 	/* Set the MTU to 1500 if no explicit MTU configured. */

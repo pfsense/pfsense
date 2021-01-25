@@ -100,6 +100,7 @@ function build_area_list($showall) {
 		"snmpd" => gettext("SNMP Server"),
 		"shaper" => gettext("Traffic Shaper"),
 		"vlans" => gettext("VLANS"),
+		"wireguard" => gettext("WireGuard VPN Tunnels"),
 		"wol" => gettext("Wake-on-LAN")
 		);
 

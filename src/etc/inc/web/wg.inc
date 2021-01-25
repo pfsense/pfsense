@@ -100,7 +100,7 @@ function wg_validate_post($pconfig) {
 
 	// Check listen port
 	$lport = $pconfig['interface']['listenport'];
-	if (empty($lport) || $lport > 65535 || $lport < 512 ) {
+	if (empty($lport) || $lport > 65535) {
 		$input_errors[] = gettext("Invalid interface listen port.");
 	}
 

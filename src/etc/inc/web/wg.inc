@@ -234,7 +234,7 @@ function wg_configure_if($wg_ifname) {
 			    escapeshellarg(gen_subnet_mask($mask)) .
 			    ($ip4_first ? "" : " alias"));
 			if ($ip4_first) {
-				file_put_contents("/tmp/{$tunnel['name']}_router", $ip);
+				file_put_contents("/tmp/{$tunnel['name']}_router", wg_find_tunnel_gw($tunnel, $addr));
 			}
 			$ip4_first = false;
 		} elseif (is_ipaddrv6($ip)) {
@@ -244,7 +244,7 @@ function wg_configure_if($wg_ifname) {
 			    escapeshellarg(gen_subnet_mask($mask)) .
 			    ($ip6_first ? "" : " alias"));
 			if ($ip6_first) {
-				file_put_contents("/tmp/{$tunnel['name']}_routerv6", $ip);
+				file_put_contents("/tmp/{$tunnel['name']}_routerv6", wg_find_tunnel_gw($tunnel, $addr));
 			}
 			$ip6_first = false;
 		}
@@ -542,4 +542,38 @@ function wg_get_tunnel_networks($family = 'both') {
 		}
 	}
 	return $wg_tunnel_networks;
+}
+
+/* Locate a viable remote gateway address for a WireGuard tunnel
+ * Fall back to using the tunnel address itself.
+ * https://redmine.pfsense.org/issues/11300 */
+function wg_find_tunnel_gw($tunnel, $addr) {
+	list($ip, $mask) = explode("/", trim($addr));
+	/* Loop through peers looking for a viable remote gateway address */
+	if (is_array($tunnel['peers']) &&
+	    is_array($tunnel['peers']['wgpeer']) &&
+	    count($tunnel['peers']['wgpeer']) > 0) {
+		foreach ($tunnel['peers']['wgpeer'] as $peer) {
+			/* If this peer has no configured Peer WireGuard Address, skip it. */
+			if (empty($peer['peerwgaddr'])) {
+				continue;
+			}
+			/* Check each Peer WireGuard Address entry */
+			foreach (explode(',', $peer['peerwgaddr']) as $pwga) {
+				/* Ensure the address family of this entry matches the one we're seeking */
+				if (is_v4($ip) !== is_v4($pwga)) {
+					continue;
+				}
+				/* If there is a subnet mask, ditch it. */
+				list($pip, $pmask) = explode('/', trim($pwga));
+				/* Check that this address is in the desired subnet */
+				if (ip_in_subnet($pip, trim($addr))) {
+					/* We found a good candidate, return it */
+					return $pip;
+				}
+			}
+		}
+	}
+	/* If no viable candidate is found, return the tunnel address */
+	return $ip;
 }

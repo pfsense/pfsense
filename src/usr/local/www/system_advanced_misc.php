@@ -426,7 +426,7 @@ $group->add(new Form_Input(
 	'number',
 	$pconfig['srctrack'],
 	["placeholder" => "0"]
-))->setHelp('Set the source tracking timeout for sticky connections. By default '.
+))->setHelp('Set the source tracking timeout for sticky connections in seconds. By default '.
 	'this is 0, so source tracking is removed as soon as the state expires. '.
 	'Setting this timeout higher will cause the source/destination relationship '.
 	'to persist for longer periods of time.');

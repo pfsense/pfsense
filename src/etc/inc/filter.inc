@@ -1763,17 +1763,9 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		}
 	}
 
-	if (is_wg_enabled()) {
-		foreach ($config['wireguard']['tunnel'] as $wg) {
-			if (empty($wg['enabled'])) {
-				continue;
-			}
-			if (empty($wg['interface']['address'])) {
-				continue;
-			}
-			$tonathosts[] = $wg['interface']['address'];
-			$descriptions[] = gettext('WireGuard');
-		}
+	foreach (wg_get_tunnel_networks('ipv4') as $wgn) {
+		$tonathosts[] = $wgn;
+		$descriptions[] = gettext('WireGuard');
 	}
 
 	/* IPsec mode_cfg subnet */

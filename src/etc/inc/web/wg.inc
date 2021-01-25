@@ -518,3 +518,28 @@ function is_wg_enabled() {
 
 	return false;
 }
+
+/* Return WireGuard tunnel networks for a given address family */
+function wg_get_tunnel_networks($family = 'both') {
+	global $config;
+	$wg_tunnel_networks = array();
+	init_config_arr(array('wireguard', 'tunnel'));
+	if (is_wg_enabled()) {
+		foreach ($config['wireguard']['tunnel'] as $wg) {
+			if (empty($wg['enabled']) ||
+			    empty($wg['interface']['address'])) {
+				continue;
+			}
+			foreach(explode(',', $wg['interface']['address']) as $wga) {
+				list($wgnet, $wgmask) = explode('/', trim($wga));
+				if ((is_ipaddrv6($wgnet) && ($family == 'ipv4')) ||
+				    (is_ipaddrv4($wgnet) && ($family == 'ipv6'))) {
+					continue;
+				}
+				$network = gen_subnet($wgnet, $wgmask);
+				$wg_tunnel_networks[] = "{$network}/{$wgmask}";
+			}
+		}
+	}
+	return $wg_tunnel_networks;
+}

@@ -921,6 +921,11 @@ function unbound_acls_config($cfgsubdir = "") {
 			$aclcfg .= "access-control: {$config['ipsec']['client']['pool_address_v6']}/{$config['ipsec']['client']['pool_netbits_v6']} allow\n";
 		}
 
+		// WireGuard Interface Networks
+		foreach (wg_get_tunnel_networks() as $wgn) {
+			$aclcfg .= "access-control: {$wgn} allow\n";
+		}
+
 		// Generate IPv4 access-control entries using the same logic as automatic outbound NAT
 		if (empty($FilterIflist)) {
 			filter_generate_optcfg_array();
@@ -928,7 +933,7 @@ function unbound_acls_config($cfgsubdir = "") {
 		$natnetworks_array = array();
 		$natnetworks_array = filter_nat_rules_automatic_tonathosts();
 		foreach ($natnetworks_array as $allowednet) {
-			$aclcfg .= "access-control: $allowednet allow \n";
+			$aclcfg .= "access-control: {$allowednet} allow \n";
 		}
 	}
 

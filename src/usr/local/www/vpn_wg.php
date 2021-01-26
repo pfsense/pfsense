@@ -92,10 +92,10 @@ if ($input_errors) {
 ?>
 					<tr ondblclick="document.location='vpn_wg_edit.php?index=<?=$i?>';" class="<?= $entryStatus ?>">
 						<td class="peer-entries"><?=gettext('Interface')?></td>
-						<td><?=$tunnel['name']?></td>
-						<td><?=$tunnel['descr']?></td>
-						<td><?=$tunnel['interface']['address']?></td>
-						<td><?=$tunnel['interface']['listenport']?></td>
+						<td><?=htmlspecialchars($tunnel['name'])?></td>
+						<td><?=htmlspecialchars($tunnel['descr'])?></td>
+						<td><?=htmlspecialchars($tunnel['interface']['address'])?></td>
+						<td><?=htmlspecialchars($tunnel['interface']['listenport'])?></td>
 						<td><?=count($tunnel['peers']['wgpeer'])?></td>
 
 						<td style="cursor: pointer;">
@@ -125,16 +125,16 @@ if ($input_errors) {
 				foreach ($tunnel['peers']['wgpeer'] as $peer):
 ?>
 									<tr class="peerbg_color">
-										<td><?=$peer['descr']?></td>
+										<td><?=htmlspecialchars($peer['descr'])?></td>
 										<td>
 										<?php if (!empty($peer["endpoint"])): ?>
-											<?=$peer['endpoint']?>:<?=((empty($peer["port"])) ? '51820' : $peer["port"])?>
+											<?=htmlspecialchars($peer['endpoint'])?>:<?=((empty($peer["port"])) ? '51820' : htmlspecialchars($peer["port"]))?>
 										<?php else: ?>
 											<?=gettext("Dynamic")?>
 										<?php endif; ?>
 										</td>
-										<td><?=$peer['allowedips']?></td>
-										<td><?=$peer['publickey']?></td>
+										<td><?=htmlspecialchars($peer['allowedips'])?></td>
+										<td><?=htmlspecialchars($peer['publickey'])?></td>
 									</tr>
 <?php
 				endforeach;

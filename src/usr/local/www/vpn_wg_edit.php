@@ -283,17 +283,17 @@ $section2->add($group2);
 				if (!empty($pconfig['peers']['wgpeer'])) {
 					foreach ($pconfig['peers']['wgpeer'] as $peer) {
 						print('<tr id="peer_row_' . $peer_num . '" class="peer_group_' . $peer_num . '">');
-						print("<td>{$peer_num}</td>\n");
-						print("<td>{$peer['descr']}</td>\n");
-						print("<td>{$peer['endpoint']}</td>\n");
-						print("<td>{$peer['port']}</td>\n");
-						print("<td>{$peer['publickey']}</td>\n");
+						print("<td>" . htmlspecialchars($peer_num) . "</td>\n");
+						print("<td>" . htmlspecialchars($peer['descr']) . "</td>\n");
+						print("<td>" . htmlspecialchars($peer['endpoint']) . "</td>\n");
+						print("<td>" . htmlspecialchars($peer['port']) . "</td>\n");
+						print("<td>" . htmlspecialchars($peer['publickey']) . "</td>\n");
 
 						// hidden columns
-						print("<td style=\"display:none;\">{$peer['persistenkeepalive']}</td>\n");
-						print("<td style=\"display:none;\">{$peer['allowedips']}</td>\n");
-						print("<td style=\"display:none;\">{$peer['presharedkey']}</td>\n");
-						print("<td style=\"display:none;\">{$peer['peerwgaddr']}</td>\n");
+						print("<td style=\"display:none;\">" . htmlspecialchars($peer['persistenkeepalive']) . "</td>\n");
+						print("<td style=\"display:none;\">" . htmlspecialchars($peer['allowedips']) . "</td>\n");
+						print("<td style=\"display:none;\">" . htmlspecialchars($peer['presharedkey']) . "</td>\n");
+						print("<td style=\"display:none;\">" . htmlspecialchars($peer['peerwgaddr']) . "</td>\n");
 ?>
 						<td style="cursor: pointer;">
 							<a class="fa fa-pencil" href="#" id="editpeer_<?=$peer_num?>"title="<?=gettext("Edit peer"); ?>"></a>
@@ -322,7 +322,7 @@ $section2->add($group2);
 	</button>
 </nav>
 
-<?php $jpconfig = json_encode($pconfig); ?>
+<?php $jpconfig = json_encode($pconfig, JSON_HEX_APOS); ?>
 <?php $genkeywarning = gettext("Are you sure you want to overwrite keys?"); ?>
 
 <!-- ============== JavaScript =================================================================================================-->

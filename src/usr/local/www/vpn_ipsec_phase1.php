@@ -510,8 +510,13 @@ if ($_POST['save']) {
 
 	if (!empty($pconfig['certref'])) {
 		$errchkcert =& lookup_cert($pconfig['certref']);
-		if (is_array($errchkcert) && !cert_check_pkey_compatibility($errchkcert['prv'], 'IPsec')) {
-			$input_errors[] = gettext("The selected ECDSA certificate does not use a curve compatible with IKEv2");
+		if (is_array($errchkcert)) {
+			if (!cert_check_pkey_compatibility($errchkcert['prv'], 'IPsec')) {
+				$input_errors[] = gettext("The selected ECDSA certificate does not use a curve compatible with IKEv2");
+			}
+			if (preg_grep('/\*/', cert_get_sans($errchkcert['crt']))) {
+				$input_errors[] = gettext("The selected certificate contains wildcard entries, which are not supported.");
+			}
 		}
 	}
 

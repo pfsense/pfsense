@@ -394,16 +394,16 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['username'],
 	['autocomplete' => 'new-password']
-))->setHelp('Username is required for all types except Namecheap, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), DigitalOcean, Linode, Cloudflare and Custom Entries.%1$s' .
+))->setHelp('Username is required for all types except Cloudflare, DigitalOcean, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), Linode, Namecheap and Custom Entries.%1$s' .
 			'Azure: Enter your Azure AD application ID%1$s' .
+	    		'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
 			'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
-			'Route 53: Enter the Access Key ID.%1$s' .
-			'GleSYS: Enter the API user.%1$s' .
 			'Domeneshop: Enter the API token.%1$s' .
-			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
+	    		'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
+			'GleSYS: Enter the API user.%1$s' .
 			'Godaddy: Enter the API key.%1$s' .
-			'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
+	    		'Route 53: Enter the Access Key ID.%1$s' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
 
 $section->addPassword(new Form_Input(
@@ -413,26 +413,27 @@ $section->addPassword(new Form_Input(
 	$pconfig['password']
 ))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
 			'Azure: client secret of the AD application%1$s' .
+	    		'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone%1$s' .
 			'DNS Made Easy: Dynamic DNS Password%1$s' .
+	    		'DNSimple: Enter the API token.%1$s' .
 			'DigitalOcean: Enter API token%1$s' .
-			'Route 53: Enter the Secret Access Key.%1$s' .
-			'GleSYS: Enter the API key.%1$s' .
 			'Domeneshop: Enter the API secret.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
 			'Gandi LiveDNS: Enter API token%1$s' .
-			'GoDaddy: Enter the API secret.%1$s' .
-			'DNSimple: Enter the API token.%1$s' .
+			'GleSYS: Enter the API key.%1$s' .
+	    		'GoDaddy: Enter the API secret.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
-			'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone.', '<br />');
+	    		'Route 53: Enter the Secret Access Key.', '<br />');
 
 $section->addInput(new Form_Input(
 	'zoneid',
 	'Zone ID',
 	'text',
 	$pconfig['zoneid']
-))->setHelp('Route53: Enter AWS Zone ID.%1$s' .
-			'Azure: Enter the resource id of the of the DNS Zone%1$s' .
-			'DNSimple: Enter the Record ID of record to update.', '<br />');
+))->setHelp('Azure: Enter the resource id of the of the DNS Zone%1$s' .
+			'DNSimple: Enter the Record ID of record to update.%1$s' .
+			'Route53: Enter AWS Zone ID.', '<br />');
+
 
 $section->addInput(new Form_Input(
 	'updateurl',

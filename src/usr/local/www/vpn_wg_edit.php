@@ -294,7 +294,7 @@ $section2->add($group2);
 						print("<td>" . htmlspecialchars($peer['publickey']) . "</td>\n");
 
 						// hidden columns
-						print("<td style=\"display:none;\">" . htmlspecialchars($peer['persistenkeepalive']) . "</td>\n");
+						print("<td style=\"display:none;\">" . htmlspecialchars($peer['persistentkeepalive']) . "</td>\n");
 						print("<td style=\"display:none;\">" . htmlspecialchars($peer['allowedips']) . "</td>\n");
 						print("<td style=\"display:none;\">" . htmlspecialchars($peer['presharedkey']) . "</td>\n");
 						print("<td style=\"display:none;\">" . htmlspecialchars($peer['peerwgaddr']) . "</td>\n");

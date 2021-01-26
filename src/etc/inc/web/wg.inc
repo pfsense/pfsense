@@ -100,7 +100,7 @@ function wg_validate_post($pconfig) {
 
 	// Check listen port
 	$lport = $pconfig['interface']['listenport'];
-	if (empty($lport) || $lport > 65535) {
+	if (!empty($lport) && (!ctype_digit($lport) || !is_port($lport))) {
 		$input_errors[] = gettext("Invalid interface listen port.");
 	}
 
@@ -130,7 +130,7 @@ function wg_validate_peer($idx, $peer) {
 
 	// Check remote port
 	$rport = $peer['port'];
-	if (!empty($rport) && ($rport > 65535)) {
+	if (!empty($rport) && (!ctype_digit($rport) || !is_port($rport))) {
 		$input_errors[] = sprintf(gettext(
 		    'Peer %1$s: Invalid remote port. (%2$s)'), $idx, $rport);
 	}

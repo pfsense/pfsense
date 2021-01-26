@@ -185,6 +185,12 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		return;
 	}
 
+	if ($field_type == "select") {
+		if (is_array($updatetext)) {
+			$updatetext = implode(',', $updatetext);
+		}
+	}
+
 	if ($unset == "yes") {
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
@@ -767,6 +773,12 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 				$multiple = ($field['multiple'] == "yes");
 
+				if ($multiple) {
+					$values = explode(',', $value);
+				} else {
+					$values = array($value);
+				}
+
 				$onchange = "";
 				foreach ($field['options']['option'] as $opt) {
 					if ($opt['enablefields'] != "") {
@@ -778,8 +790,8 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$selected = array();
 
 				foreach ($field['options']['option'] as $opt) {
-					if ($value == $opt['value']) {
-						array_push($selected, $value);
+					if (in_array($opt['value'], $values)) {
+						array_push($selected, $opt['value']);
 					}
 
 					if ($opt['displayname']) {

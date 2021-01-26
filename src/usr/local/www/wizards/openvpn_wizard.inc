@@ -338,7 +338,7 @@ function step10_stepbeforeformdisplay() {
 	global $pkg, $stepid, $netbios_nodetypes;
 
 	foreach ($pkg['step'][$stepid]['fields']['field'] as $idx => $field) {
-		if ($field['name'] == "crypto") {
+		if ($field['name'] == "dataciphersfallback") {
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
 			$cipherlist = openvpn_get_cipherlist();
 			foreach ($cipherlist as $name => $desc) {
@@ -351,6 +351,15 @@ function step10_stepbeforeformdisplay() {
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
 			$digestlist = openvpn_get_digestlist();
 			foreach ($digestlist as $name => $desc) {
+				$opt = array();
+				$opt['name'] = $desc;
+				$opt['value'] = $name;
+			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
+			}
+		} else if ($field['name'] == "allowcompression") {
+			global $openvpn_allow_compression;
+			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
+			foreach ($openvpn_allow_compression as $name => $desc) {
 				$opt = array();
 				$opt['name'] = $desc;
 				$opt['value'] = $name;
@@ -618,7 +627,9 @@ function step12_submitphpaction() {
 	$server['caref'] = $ca['refid'];
 	$server['certref'] = $cert['refid'];
 	$server['dh_length'] = $pconfig['step10']['dhkey'];
-	$server['crypto'] = $pconfig['step10']['crypto'];
+	$server['ncp_enable'] = $pconfig['step10']['ncpenable'];
+	$server['data_ciphers'] = is_array($pconfig['step10']['dataciphers']) ? implode(',', $pconfig['step10']['dataciphers']) : $pconfig['step10']['dataciphers'];
+	$server['data_ciphers_fallback'] = $pconfig['step10']['dataciphersfallback'];
 	$server['digest'] = $pconfig['step10']['digest'];
 	$server['engine'] = $pconfig['step10']['engine'];
 	$server['tunnel_network'] = $pconfig['step10']['tunnelnet'];
@@ -628,6 +639,8 @@ function step12_submitphpaction() {
 		$server['local_network'] = $pconfig['step10']['localnet'];
 	if (isset($pconfig['step10']['concurrentcon']))
 		$server['maxclients'] = $pconfig['step10']['concurrentcon'];
+	if (isset($pconfig['step10']['allowcompression']))
+		$server['allow_compression'] = $pconfig['step10']['allowcompression'];
 	if (isset($pconfig['step10']['compression']))
 		$server['compression'] = $pconfig['step10']['compression'];
 	if (isset($pconfig['step10']['tos']))

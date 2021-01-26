@@ -798,18 +798,60 @@
 			<description>&lt;br/&gt;Length of Diffie-Hellman (DH) key exchange parameters, used for establishing a secure communications channel. The DH parameters are different from key sizes, but as with other such settings, the larger the key, the more security it offers, but larger keys take considerably more time to generate. As of 2016, 2048 bit is a common and typical selection.</description>
 		</field>
 		<field>
-			<name>crypto</name>
+			<name>ncpenable</name>
+			<displayname>Data Encryption Negotiation</displayname>
+			<type>checkbox</type>
+			<value>on</value>
+			<description>
+				Enable negotiation of Data Encryption Algorithms between client and server.
+				The best practice is keep this setting enabled.
+			</description>
+			<bindstofield>ovpnserver->step10->ncpenable</bindstofield>
+		</field>
+		<field>
+			<name>dataciphers</name>
 			<type>select</type>
-			<displayname>Encryption Algorithm</displayname>
-			<bindstofield>ovpnserver->step10->crypto</bindstofield>
-			<value>AES-128-CBC</value>
+			<multiple>yes</multiple>
+			<size>3</size>
+			<disabled>yes</disabled>
+			<displayname>Data Encryption Algorithms</displayname>
+			<bindstofield>ovpnserver->step10->dataciphers</bindstofield>
+			<value>AES-256-GCM,AES-128-GCM,CHACHA20-POLY1305</value>
+			<options>
+				<option>
+					<name>AES-256-GCM</name>
+					<value>AES-256-GCM</value>
+				</option>
+				<option>
+					<name>AES-128-GCM</name>
+					<value>AES-128-GCM</value>
+				</option>
+				<option>
+					<name>CHACHA20-POLY1305</name>
+					<value>CHACHA20-POLY1305</value>
+				</option>
+			</options>
+			<description>
+				&lt;br/&gt;List of algorithms clients can negotiate to encrypt traffic between endpoints.
+				The best practice is to use the exact algorithms listed above, in that order.
+				Certain algorithms will perform better on different hardware,
+				depending on the availability of supported VPN accelerator chips.
+				Edit the server after finishing the wizard for additional choices.
+			</description>
+		</field>
+		<field>
+			<name>dataciphersfallback</name>
+			<type>select</type>
+			<displayname>Fallback Data Encryption Algorithm</displayname>
+			<bindstofield>ovpnserver->step10->dataciphersfallback</bindstofield>
+			<value>AES-256-CBC</value>
 			<options>
 				<option>
 					<name>dummy</name>
 					<value>dummy</value>
 				</option>
 			</options>
-			<description>&lt;br/&gt;The algorithm used to encrypt traffic between endpoints. This setting must match on the client and server side, but is otherwise set however desired. Certain algorithms will perform better on different hardware, depending on the availability of supported VPN accelerator chips.</description>
+			<description>&lt;br/&gt;The algorithm used to encrypt traffic between endpoints when data encryption negotiation is diabled or fails.</description>
 		</field>
 		<field>
 			<name>digest</name>
@@ -874,9 +916,28 @@
 			<bindstofield>ovpnserver->step10->concurrentcon</bindstofield>
 		</field>
 		<field>
+			<displayname>Allow Compression</displayname>
+			<name>allowcompression</name>
+			<description>
+				&lt;br/&gt;Allow compression to be used with this VPN instance, which is potentially insecure.</description>
+			<bindstofield>ovpnserver->step10->allowcompression</bindstofield>
+			<type>select</type>
+			<value>no</value>
+			<options>
+				<option>
+					<name>dummy</name>
+					<value>dummy</value>
+				</option>
+			</options>
+		</field>
+		<field>
 			<displayname>Compression</displayname>
 			<name>compression</name>
-			<description>&lt;br/&gt;Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently.</description>
+			<description>
+				&lt;br/&gt;Compress tunnel packets using the chosen option. Can save bandwidth, but is potentially insecure and may expose data.
+				This setting has no effect if compression is not allowed.
+				Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently.
+			</description>
 			<bindstofield>ovpnserver->step10->compression</bindstofield>
 			<type>select</type>
 			<options>

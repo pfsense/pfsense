@@ -396,7 +396,7 @@ $section->addInput(new Form_Input(
 	['autocomplete' => 'new-password']
 ))->setHelp('Username is required for all types except Cloudflare, DigitalOcean, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), Linode, Namecheap and Custom Entries.%1$s' .
 			'Azure: Enter your Azure AD application ID%1$s' .
-	    		'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
+			'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
 			'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
 			'Domeneshop: Enter the API token.%1$s' .

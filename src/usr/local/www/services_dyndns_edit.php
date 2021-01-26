@@ -411,14 +411,14 @@ $section->addPassword(new Form_Input(
 	'Password',
 	'password',
 	$pconfig['password']
-))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
-			'Azure: client secret of the AD application%1$s' .
+))->setHelp('Azure: client secret of the AD application%1$s' .
 	    		'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone%1$s' .
 			'DNS Made Easy: Dynamic DNS Password%1$s' .
 	    		'DNSimple: Enter the API token.%1$s' .
 			'DigitalOcean: Enter API token%1$s' .
 			'Domeneshop: Enter the API secret.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
+			'FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
 			'Gandi LiveDNS: Enter API token%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 	    		'GoDaddy: Enter the API secret.%1$s' .
@@ -430,7 +430,7 @@ $section->addInput(new Form_Input(
 	'Zone ID',
 	'text',
 	$pconfig['zoneid']
-))->setHelp('Azure: Enter the resource id of the of the DNS Zone%1$s' .
+))->setHelp('Azure: Enter the resource id of the of the DNS Zone.%1$s' .
 			'DNSimple: Enter the Record ID of record to update.%1$s' .
 			'Route53: Enter AWS Zone ID.', '<br />');
 

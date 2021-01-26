@@ -158,7 +158,7 @@ $group->add(new Form_Button(
 	'Generate',
 	null,
 	'fa-key'
-))->setWidth(1)->addClass('btn-primary btn-xs');
+))->setWidth(1)->addClass('btn-primary btn-xs')->setHelp('New Keys');
 
 $section->add($group);
 $form->add($section);

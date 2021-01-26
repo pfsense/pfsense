@@ -403,7 +403,7 @@ $section->addInput(new Form_Input(
 	    		'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
 			'Godaddy: Enter the API key.%1$s' .
-	    		'Route 53: Enter the Access Key ID.%1$s' .
+			'Route 53: Enter the Access Key ID.%1$s' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
 
 $section->addPassword(new Form_Input(
@@ -421,9 +421,9 @@ $section->addPassword(new Form_Input(
 			'FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
 			'Gandi LiveDNS: Enter API token%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
-	    		'GoDaddy: Enter the API secret.%1$s' .
+			'GoDaddy: Enter the API secret.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
-	    		'Route 53: Enter the Secret Access Key.', '<br />');
+			'Route 53: Enter the Secret Access Key.', '<br />');
 
 $section->addInput(new Form_Input(
 	'zoneid',

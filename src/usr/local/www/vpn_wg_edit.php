@@ -118,7 +118,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('A description may be entered here for administrative reference (not parsed).');
+))->setHelp('Tunnel description for administrative reference (not parsed)');
 
 
 $section->addInput(new Form_Input(
@@ -126,39 +126,39 @@ $section->addInput(new Form_Input(
 	'*Address',
 	'text',
 	$pconfig['interface']['address']
-))->setHelp('Comma separated list of CIDR addresses assigned to interface.');
+))->setHelp('Comma separated list of CIDR-masked IPv4 and IPv6 addresses assigned to the tunnel interface');
 
 
 $section->addInput(new Form_Input(
 	'listenport',
-	'Listen port',
+	'Listen Port',
 	'text',
 	$pconfig['interface']['listenport'],
 	['placeholder' => next_wg_port()]
-))->setHelp('Port to listen on.');
+))->setHelp('Port used by this tunnel to communicate with peers');
 
 $group = new Form_Group('*Interface keys');
 
 $group->add(new Form_Input(
 	'privatekey',
-	'Private key',
+	'Private Key',
 	'text',
 	$pconfig['interface']['privatekey']
-))->setHelp('Private key for this interface.');
+))->setHelp('Private key for this tunnel');
 
 $group->add(new Form_Input(
 	'publickey',
-	'Public key',
+	'Public Key',
 	'text',
 	$pconfig['interface']['publickey']
-))->setHelp('Public key for this interface.');
+))->setHelp('Public key for this tunnel');
 
 $group->add(new Form_Button(
 	'genkeys',
 	'Generate',
 	null,
 	'fa-key'
-))->setWidth(1)->addClass('btn-primary btn-xs')->setHelp('New');
+))->setWidth(1)->addClass('btn-primary btn-xs');
 
 $section->add($group);
 $form->add($section);
@@ -178,56 +178,60 @@ $section2->addInput(new Form_Input(
 	'pdescr',
 	'Description',
 	'text'
-))->setHelp("Peer description - not parsed");
+))->setHelp("Peer description");
 
 $section2->addInput(new Form_Input(
 	'endpoint',
 	'Endpoint',
 	'text'
-))->setHelp("Hostname, IPv4 or IPv6 address");
+))->setHelp('Hostname, IPv4, or IPv6 address of this peer.%1$s ' .
+		'Leave blank if unknown (dynamic endpoints).', '<br />');
 
 $section2->addInput(new Form_Input(
 	'port',
-	'Endpoint port',
+	'Endpoint Port',
 	'text'
-));
+))->setHelp('Port used by this peer. Ignored for dynamic endpoints. Leave blank for default (51820).');
 
 $section2->addInput(new Form_Input(
 	'persistentkeepalive',
-	'Keepalive',
+	'Keep Alive',
 	'text'
-))->setHelp("Keep alive value in seconds");
+))->setHelp('Interval (in seconds) for Keep Alive packets sent to this peer. ' .
+		'Default is empty (disabled).', '<br />');
 
 $section2->addInput(new Form_Input(
 	'ppublickey',
-	'*Public key',
+	'*Public Key',
 	'text'
-));
+))->setHelp('WireGuard Public Key for this peer.');
 
 $section2->addInput(new Form_Input(
 	'allowedips',
 	'Allowed IPs',
 	'text'
-))->setHelp("List of CIDR-masked subnets which can be reached via this peer. %s " .
-		"Routes for these subnets will be automatically added to the routing table, except for default routes.", '<br/>');
+))->setHelp('List of CIDR-masked IPv4 and IPv6 subnets reached via this peer.%1$s ' .
+		'Routes for these subnets are automatically added to the routing table, except for default routes.', '<br/>');
 
 $section2->addInput(new Form_Input(
 	'peerwgaddr',
 	'Peer WireGuard Address',
 	'text'
-))->setHelp("IPv4/IPv6 specifies the WireGuard interface address of the peer, since it can differ from Allowed IPs");
+))->setHelp('IPv4/IPv6 WireGuard tunnel interface address of the peer since it can differ from Allowed IPs.%1$s ' .
+		'When the WireGuard interface is assigned, this value may be automatically selected as a gateway.', '<br/>');
 
 $group2 = new Form_Group('Pre-shared key');
 
 $group2->add(new Form_Input(
 	'presharedkey',
-	'Preshared key',
+	'Pre-Shared Key',
 	'text'
-))->setHelp("Optional pre-shared key");
+))->setHelp('Optional Pre-Shared Key for this peer.%1$s ' .
+		'Mixes symmetric-key cryptography into public-key cryptography for post-quantum resistance.', '<br/>');
 
 $group2->add(new Form_Button(
 	'genpsk',
-	'Generate key',
+	'Generate PSK',
 	null
 ))->addClass('btn btn-xs success');
 

@@ -412,7 +412,7 @@ $section->addPassword(new Form_Input(
 	'password',
 	$pconfig['password']
 ))->setHelp('Azure: client secret of the AD application%1$s' .
-	    		'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone%1$s' .
+			'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone%1$s' .
 			'DNS Made Easy: Dynamic DNS Password%1$s' .
 	    		'DNSimple: Enter the API token.%1$s' .
 			'DigitalOcean: Enter API token%1$s' .

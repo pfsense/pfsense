@@ -521,7 +521,7 @@ if (!empty($pconfig['group_source'])) {
 $group->add(new Form_Select(
 	'auth_groups',
 	'Groups',
-	explode(",", $pconfig['auth_groups']),
+	is_array($pconfig['auth_groups']) ? $pconfig['auth_groups'] : explode(",", $pconfig['auth_groups']),
 	$auth_groups,
 	true
 ))->setHelp('Multiple group selection is allowed.');

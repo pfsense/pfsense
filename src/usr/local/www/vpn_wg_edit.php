@@ -144,14 +144,14 @@ $group->add(new Form_Input(
 	'Private Key',
 	'text',
 	$pconfig['interface']['privatekey']
-))->setHelp('Private key for this tunnel');
+))->setHelp('Private key for this tunnel (Required)');
 
 $group->add(new Form_Input(
 	'publickey',
 	'Public Key',
 	'text',
 	$pconfig['interface']['publickey']
-))->setHelp('Public key for this tunnel');
+))->setHelp('Public key for this tunnel (%sCopy%s)', '<a id="copypubkey" href="#">', '</a>')->setReadonly();
 
 $group->add(new Form_Button(
 	'genkeys',
@@ -431,6 +431,12 @@ events.push(function() {
 		// Recaculate the table has so the browser doesn't intercept the save
 		tableHash = hashCode($('#peertable').html());
 		$(form).submit();
+	});
+
+	$('#copypubkey').click(function () {
+		$('#publickey').focus();
+		$('#publickey').select();
+		document.execCommand("copy");
 	});
 
 	attachhandlers()

@@ -105,10 +105,8 @@ function wg_validate_post($pconfig) {
 	}
 
 	// Check keys
-	if (empty($pconfig['interface']['privatekey']) ||
-	    empty($pconfig['interface']['publickey'])) {
-		$input_errors[] = gettext("Both a public and private key " .
-		    "must be specified");
+	if (empty($pconfig['interface']['privatekey'])) {
+		$input_errors[] = gettext("Private key must be specified");
 	}
 
 	// Now the peers
@@ -359,7 +357,11 @@ function wg_do_post($post, $json = false) {
 	$pconfig['interface']['address'] = $post['address'];
 	$pconfig['interface']['listenport'] = $post['listenport'];
 	$pconfig['interface']['privatekey'] = $post['privatekey'];
-	$pconfig['interface']['publickey'] = $post['publickey'];
+	if (!empty($post['publickey'])) {
+		$pconfig['interface']['publickey'] = $post['publickey'];
+	} else {
+		$pconfig['interface']['publickey'] = genPubKey($post['privatekey']);
+	}
 
 	if (isset($post['endpoint0'])) {
 		// Peers section

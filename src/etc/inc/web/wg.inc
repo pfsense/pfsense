@@ -31,7 +31,7 @@ function gerneratePSK() {
 	return exec("{$wgbinpath} genpsk");
 }
 
-// Return the next available wWreguard port
+// Return the next available WireGuard port
 function next_wg_port() {
 	global $config;
 
@@ -55,6 +55,26 @@ function next_wg_port() {
 	}
 
 	return 51820;
+}
+
+// Return the next available WireGuard interface
+function next_wg_if() {
+	global $config;
+	init_config_arr(array('wireguard', 'tunnel'));
+	$tunnels = &$config['wireguard']['tunnel'];
+
+	$used_ifs = array();
+	foreach ($tunnels as $tunnel) {
+		$used_ifs[] = $tunnel['name'];
+	}
+
+	for ($ifnum = 0; $ifnum < 32768; $ifnum++) {
+		$want_if = "wg{$ifnum}";
+		if (!in_array($want_if, $used_ifs)) {
+			return $want_if;
+		}
+	}
+	return -1;
 }
 
 // Validate the user's input and return error messages if not acceptable
@@ -349,7 +369,9 @@ function wg_do_post($post, $json = false) {
 
 	$pconfig = &$config['wireguard']['tunnel'][$index];
 
-	$pconfig['name'] = "wg" . $index;
+	if (empty($pconfig['name'])) {
+		$pconfig['name'] = next_wg_if();
+	}
 	$pconfig['enabled'] = empty($post['enabled']) ? 'no':'yes';
 	$pconfig['descr'] = $post['descr'];
 

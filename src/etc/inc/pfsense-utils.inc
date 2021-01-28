@@ -2003,7 +2003,9 @@ function load_crypto() {
 		}
 		if (!is_module_loaded($enmod)) {
 			log_error(sprintf(gettext("Loading %s cryptographic accelerator module."), $enmod));
+			mute_kernel_msgs();
 			mwexec("/sbin/kldload " . escapeshellarg($enmod));
+			unmute_kernel_msgs();
 		}
 	}
 }

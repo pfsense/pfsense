@@ -489,8 +489,9 @@ function make_wg_conf($tunnel) {
 			}
 
 			if (!empty($peer["endpoint"])) {
-				$txt .= "EndPoint = " .
-				    "{$peer['endpoint']}:" . ((empty($peer["port"])) ? '51820' : $peer["port"]) . "\n";
+				$txt .= "EndPoint = ";
+				$txt .= is_ipaddrv6($peer["endpoint"]) ? "[{$peer['endpoint']}]" : $peer['endpoint'];
+				$txt .= ":" . ((empty($peer["port"])) ? '51820' : $peer["port"]) . "\n";
 			}
 
 			if (!empty($peer["allowedips"])) {

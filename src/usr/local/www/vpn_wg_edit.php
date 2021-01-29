@@ -217,7 +217,7 @@ $section2->addInput(new Form_Input(
 	'peerwgaddr',
 	'Peer WireGuard Address',
 	'text'
-))->setHelp('IPv4/IPv6 WireGuard tunnel interface address of the peer since it can differ from Allowed IPs.%1$s ' .
+))->setHelp('IPv4/IPv6 WireGuard tunnel interface addresses (comma separated) of the peer since it can differ from Allowed IPs.%1$s ' .
 		'When the WireGuard interface is assigned, this value may be automatically selected as a gateway.', '<br/>');
 
 $group2 = new Form_Group('Pre-shared key');

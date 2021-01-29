@@ -1760,7 +1760,6 @@ events.push(function() {
 			case "p2p_tls":
 			case "server_tls":
 				hideInput('tls', false);
-				hideInput('tls_type', false);
 				hideInput('certref', false);
 				hideInput('dh_length', false);
 				hideInput('ecdh_curve', false);
@@ -1793,7 +1792,6 @@ events.push(function() {
 			break;
 			case "server_tls_user":
 				hideInput('tls', false);
-				hideInput('tls_type', false);
 				hideInput('certref', false);
 				hideInput('dh_length', false);
 				hideInput('ecdh_curve', false);
@@ -1808,7 +1806,6 @@ events.push(function() {
 			break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
-				hideInput('tls_type', true);
 				hideInput('caref', true);
 				hideInput('crlref', true);
 				hideLabel('Peer Certificate Revocation list', true);
@@ -1911,11 +1908,13 @@ events.push(function() {
 		if (($('#mode').val() == 'p2p_shared_key') || (!$('#tlsauth_enable').prop('checked'))) {
 			hideInput('tls', true);
 			hideInput('tls_type', true);
+			hideInput('tlsauth_keydir', true);
 			hideInput('autotls_enable', true);
 		} else {
 			hideInput('autotls_enable', false);
 			hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
 			hideInput('tls_type', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
+			hideInput('tlsauth_keydir', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
 		}
 	}
 

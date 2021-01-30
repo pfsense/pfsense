@@ -1818,15 +1818,17 @@ function check_wireless_mode() {
 // Find all possible media options for the interface
 $mediaopts_list = array();
 $intrealname = $config['interfaces'][$if]['if'];
-exec("/sbin/ifconfig -m $intrealname | grep \"media \"", $mediaopts);
-foreach ($mediaopts as $mediaopt) {
-	preg_match("/media (.*)/", $mediaopt, $matches);
-	if (preg_match("/(.*) mediaopt (.*)/", $matches[1], $matches1)) {
-		// there is media + mediaopt like "media 1000baseT mediaopt full-duplex"
-		array_push($mediaopts_list, $matches1[1] . " " . $matches1[2]);
-	} else {
-		// there is only media like "media 1000baseT"
-		array_push($mediaopts_list, $matches[1]);
+if (!is_pseudo_interface($intrealname, false)) {
+	exec("/sbin/ifconfig -m $intrealname | grep \"media \"", $mediaopts);
+	foreach ($mediaopts as $mediaopt) {
+		preg_match("/media (.*)/", $mediaopt, $matches);
+		if (preg_match("/(.*) mediaopt (.*)/", $matches[1], $matches1)) {
+			// there is media + mediaopt like "media 1000baseT mediaopt full-duplex"
+			array_push($mediaopts_list, $matches1[1] . " " . $matches1[2]);
+		} else {
+			// there is only media like "media 1000baseT"
+			array_push($mediaopts_list, $matches[1]);
+		}
 	}
 }
 

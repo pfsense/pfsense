@@ -334,7 +334,7 @@ defCmdT("DNS-Resolver Host Overrides", "/bin/cat /var/unbound/host_entries.conf"
 defCmdT("DHCP-IPv4 Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpd.conf');
 defCmdT("DHCP-IPv6-Configuration", '/usr/bin/sed "s/\([[:blank:]]secret \).*/\1<redacted>/" /var/dhcpd/etc/dhcpdv6.conf');
 defCmdT("IPsec-strongSwan Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/strongswan.conf');
-defCmdT("IPsec-Configuration", '/usr/bin/sed "s/\([[:blank:]]secret = \).*/\1<redacted>/" /var/etc/ipsec/swanctl.conf');
+defCmdT("IPsec-Configuration", '/usr/bin/sed -E "s/([[:blank:]]*(secret|pin) = ).*/\1<redacted>/" /var/etc/ipsec/swanctl.conf');
 defCmdT("IPsec-Status-Statistics", "/usr/local/sbin/swanctl --stats --pretty");
 defCmdT("IPsec-Status-Connections", "/usr/local/sbin/swanctl --list-conns");
 defCmdT("IPsec-Status-Active SAs", "/usr/local/sbin/swanctl --list-sas");

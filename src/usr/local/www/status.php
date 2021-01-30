@@ -375,7 +375,7 @@ if (is_dir("/etc/wg")) {
 		if (!count($wgfile) || (count($wgfile) < 4)) {
 			continue;
 		}
-		defCmdT("WireGuard-Configuration File {$wgfile[3]}", '/usr/bin/sed -E "s/([[:blank:]]*(PrivateKey = )).*/\1<redacted>/" ' . escapeshellarg($file) );
+		defCmdT("WireGuard-Configuration File {$wgfile[3]}", '/usr/bin/sed -E "s/([[:blank:]]*((PrivateKey|PresharedKey) = )).*/\1<redacted>/" ' . escapeshellarg($file) );
 	}
 }
 defCmdT("WireGuard-Active Configuration", "/usr/local/bin/wg");

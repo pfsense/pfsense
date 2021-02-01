@@ -50,6 +50,7 @@
 		<bogons>
 			<interval>monthly</interval>
 		</bogons>
+		<hn_altq_enable></hn_altq_enable>
 	</system>
 	<interfaces>
 		<wan>

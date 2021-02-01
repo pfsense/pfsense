@@ -35,13 +35,38 @@
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
+require_once("system_advanced.inc");
 
 init_config_arr(array('sysctl', 'item'));
 $a_tunable = &$config['sysctl']['item'];
-$tunables = system_get_sysctls();
+$tunables = getTunables();
 
 if (isset($_REQUEST['id'])) {
 	$id = htmlspecialchars_decode($_REQUEST['id']);
+}
+
+if ($_POST['act'] == "del") {
+	if (deleteTunable($id)) {
+		exit;
+	}
+}
+
+if ($_POST['apply']) {
+	$retval = 0;
+	system_setup_sysctl();
+	clear_subsystem_dirty('sysctl');
+}
+
+if ($_POST['save'] == gettext("Save")) {
+	$rv = saveTunable($_POST, $id);
+
+	$input_errors = $rv['input_errors'];
+	$pconfig = $rv['pconfig'];
+
+	if (!$input_errors) {
+		pfSenseHeader("system_advanced_sysctl.php");
+		exit;
+	}
 }
 
 $act = $_REQUEST['act'];
@@ -56,55 +81,6 @@ if ($act == "edit") {
 		$pconfig['tunable'] = $tunables[$id]['tunable'];
 		$pconfig['value'] = $tunables[$id]['value'];
 		$pconfig['descr'] = $tunables[$id]['descr'];
-	}
-}
-
-if ($_POST['act'] == "del") {
-	if ($a_tunable[$id]) {
-		if (!$input_errors) {
-			unset($a_tunable[$id]);
-			write_config("Custom System Tunables deleted");
-			mark_subsystem_dirty('sysctl');
-			pfSenseHeader("system_advanced_sysctl.php");
-			exit;
-		}
-	}
-}
-
-if ($_POST['save'] || $_POST['apply']) {
-	unset($input_errors);
-	$pconfig = $_POST;
-
-	if ($_POST['apply']) {
-		$retval = 0;
-		system_setup_sysctl();
-		clear_subsystem_dirty('sysctl');
-	}
-
-	if ($_POST['save'] == gettext("Save")) {
-
-		$tunableent = array();
-
-		if (!$_POST['tunable'] || !isset($_POST['value'])) {
-			$input_errors[] = gettext("Both a name and a value must be specified.");
-		} else if (preg_match("/[^a-zA-Z0-9.\-_%\/]/", $_POST['value'])) {
-			$input_errors[] = gettext("The value may only contain alphanumeric characters, -, _, %, and /.");
-		} else {
-			$tunableent['tunable'] = htmlspecialchars($_POST['tunable']);
-			$tunableent['value'] = htmlspecialchars($_POST['value']);
-			$tunableent['descr'] = strip_tags($_POST['descr']);
-
-			if (isset($id) && isset($a_tunable[$id])) {
-				$a_tunable[$id] = $tunableent;
-			} else {
-				$a_tunable[] = $tunableent;
-			}
-
-			mark_subsystem_dirty('sysctl');
-			write_config("System Tunables Advanced Settings saved");
-			pfSenseHeader("system_advanced_sysctl.php");
-			exit;
-		}
 	}
 }
 

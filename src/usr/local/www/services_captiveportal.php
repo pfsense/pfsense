@@ -438,12 +438,14 @@ if ($_POST['save']) {
 
 			/* Validated above, so returned value is OK */
 			$logo_name = "captiveportal-logo." . image_type_to_extension(is_supported_image($_FILES['logo-img']['tmp_name']));
-			for ($i = 0; $i < count($a_cp[$cpzone]['element']); $i++) {
-				if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-logo.") !== false){
-					// remove old image before replacing it.
-					@unlink("{$g['captiveportal_element_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
-					@unlink("{$g['captiveportal_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
-					unset($a_cp[$cpzone]['element'][$i]);
+			if (is_array($a_cp[$cpzone]['element']) && !empty($a_cp[$cpzone]['element'])) {
+				for ($i = 0; $i < count($a_cp[$cpzone]['element']); $i++) {
+					if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-logo.") !== false){
+						// remove old image before replacing it.
+						@unlink("{$g['captiveportal_element_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
+						@unlink("{$g['captiveportal_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
+						unset($a_cp[$cpzone]['element'][$i]);
+					}
 				}
 			}
 			$element = array();
@@ -460,12 +462,14 @@ if ($_POST['save']) {
 			/* Validated above, so returned value is OK */
 			$background_name = "captiveportal-background." . image_type_to_extension(is_supported_image($_FILES['background-img']['tmp_name']));
 			// is there already a file with that name?
-			for ($i = 0; $i < count($a_cp[$cpzone]['element']); $i++) {
-				if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-background.") !== false){
-					// remove old image and replace it.
-					@unlink("{$g['captiveportal_element_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
-					@unlink("{$g['captiveportal_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
-					unset($a_cp[$cpzone]['element'][$i]);
+			if (is_array($a_cp[$cpzone]['element']) && !empty($a_cp[$cpzone]['element'])) {
+				for ($i = 0; $i < count($a_cp[$cpzone]['element']); $i++) {
+					if (strpos($a_cp[$cpzone]['element'][$i]['name'], "captiveportal-background.") !== false){
+						// remove old image and replace it.
+						@unlink("{$g['captiveportal_element_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
+						@unlink("{$g['captiveportal_path']}/" . $a_cp[$cpzone]['element'][$i]['name']);
+						unset($a_cp[$cpzone]['element'][$i]);
+					}
 				}
 			}
 

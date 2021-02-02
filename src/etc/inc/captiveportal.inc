@@ -54,7 +54,9 @@ function get_default_captive_portal_html() {
 	$bg_src = "linear-gradient(135deg, #1475CF, #2B40B5, #1C1275)";
 	// Check if customlogo is set and if the element exists
 	// Check if the image is in the directory
-	if (isset($config['captiveportal'][$cpzone]['customlogo'])) {
+	if (isset($config['captiveportal'][$cpzone]['customlogo']) &&
+	    is_array($config['captiveportal'][$cpzone]['element']) &&
+	    !empty($config['captiveportal'][$cpzone]['element'])) {
 		foreach ($config['captiveportal'][$cpzone]['element'] as $element) {
 			if (strpos($element['name'], "captiveportal-logo.") !== false) {
 				if (file_exists("{$g['captiveportal_path']}/{$element['name']}")) {
@@ -65,7 +67,9 @@ function get_default_captive_portal_html() {
 		}
 	}
 	// check if custombg is set and if the element exists
-	if (isset($config['captiveportal'][$cpzone]['custombg'])) {
+	if (isset($config['captiveportal'][$cpzone]['custombg']) &&
+	    is_array($config['captiveportal'][$cpzone]['element']) &&
+	    !empty($config['captiveportal'][$cpzone]['element'])) { 
 		foreach ($config['captiveportal'][$cpzone]['element'] as $element) {
 			if (strpos($element['name'],"captiveportal-background.") !== false) {
 				if( file_exists("{$g['captiveportal_path']}/{$element['name']}")) {

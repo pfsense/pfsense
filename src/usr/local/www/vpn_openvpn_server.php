@@ -1890,10 +1890,12 @@ events.push(function() {
 	}
 
 	function protocol_change() {
-		hideInput('interface', (($('#protocol').val().toLowerCase() == 'udp') || ($('#protocol').val().toLowerCase() == 'tcp')));
-		var notudp = !($('#protocol').val().substring(0, 3).toLowerCase() == 'udp');
-		hideCheckbox('udp_fast_io', notudp);
-		hideInput('exit_notify', notudp);
+		if ($('#protocol').val() != undefined) {
+			hideInput('interface', (($('#protocol').val().toLowerCase() == 'udp') || ($('#protocol').val().toLowerCase() == 'tcp')));
+			var notudp = !($('#protocol').val().substring(0, 3).toLowerCase() == 'udp');
+			hideCheckbox('udp_fast_io', notudp);
+			hideInput('exit_notify', notudp);
+		}
 	}
 
 	// Process "Enable authentication of TLS packets" checkbox
@@ -2224,7 +2226,7 @@ events.push(function() {
 	// and select all of the chosen ciphers so that they are submitted
 	$('form').submit(function() {
 		$("#availciphers" ).prop( "disabled", true);
-		$('[id="data_ciphers[]"] option').attr("selected", "selected");
+		$('[id="data_ciphers[]"] option').prop("selected", true);
 	});
 
 	// ---------- Set initial page display state ----------------------------------------------------------------------

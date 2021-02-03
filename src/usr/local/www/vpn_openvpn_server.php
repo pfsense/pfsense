@@ -462,16 +462,21 @@ if ($_POST['save']) {
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
-		if (empty(trim($pconfig['certref']))) {
-			$input_errors[] = gettext("The selected certificate is not valid");
-		}
+		if ($pconfig['mode'] != "server_user") {
+			if (empty(trim($pconfig['certref']))) {
+				$input_errors[] = gettext("The selected certificate is not valid");
+			}
 
-		if (!empty($pconfig['dh_length']) && !in_array($pconfig['dh_length'], array_keys($openvpn_dh_lengths))) {
-			$input_errors[] = gettext("The specified DH Parameter length is invalid or the DH file does not exist.");
-		}
+			if (!empty($pconfig['dh_length']) && !in_array($pconfig['dh_length'], array_keys($openvpn_dh_lengths))) {
+				$input_errors[] = gettext("The specified DH Parameter length is invalid or " .
+					"the DH file does not exist.");
+			}
 
-		if (!empty($pconfig['ecdh_curve']) && !openvpn_validate_curve($pconfig['ecdh_curve'])) {
-			$input_errors[] = gettext("The specified ECDH Curve is invalid.");
+			if (!empty($pconfig['ecdh_curve']) && !openvpn_validate_curve($pconfig['ecdh_curve'])) {
+				$input_errors[] = gettext("The specified ECDH Curve is invalid.");
+			}
+			$reqdfields = explode(" ", "caref certref");
+			$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 		}
 
 		if (($pconfig['ncp_enable'] != "disabled") && !empty($pconfig['data_ciphers']) && is_array($pconfig['data_ciphers'])) {
@@ -481,9 +486,6 @@ if ($_POST['save']) {
 				}
 			}
 		}
-
-		$reqdfields = explode(" ", "caref certref");
-		$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 	} elseif (!$pconfig['autokey_enable']) {
 		/* We only need the shared key filled in if we are in shared key mode and autokey is not selected. */
 		$reqdfields = array('shared_key');

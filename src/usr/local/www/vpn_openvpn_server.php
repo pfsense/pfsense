@@ -462,22 +462,20 @@ if ($_POST['save']) {
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
-		if ($pconfig['mode'] != "server_user") {
-			if (empty(trim($pconfig['certref']))) {
-				$input_errors[] = gettext("The selected certificate is not valid");
-			}
-
-			if (!empty($pconfig['dh_length']) && !in_array($pconfig['dh_length'], array_keys($openvpn_dh_lengths))) {
-				$input_errors[] = gettext("The specified DH Parameter length is invalid or " .
-					"the DH file does not exist.");
-			}
-
-			if (!empty($pconfig['ecdh_curve']) && !openvpn_validate_curve($pconfig['ecdh_curve'])) {
-				$input_errors[] = gettext("The specified ECDH Curve is invalid.");
-			}
-			$reqdfields = explode(" ", "caref certref");
-			$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
+		if (empty(trim($pconfig['certref']))) {
+			$input_errors[] = gettext("The selected certificate is not valid");
 		}
+
+		if (!empty($pconfig['dh_length']) && !in_array($pconfig['dh_length'], array_keys($openvpn_dh_lengths))) {
+			$input_errors[] = gettext("The specified DH Parameter length is invalid or " .
+				"the DH file does not exist.");
+		}
+
+		if (!empty($pconfig['ecdh_curve']) && !openvpn_validate_curve($pconfig['ecdh_curve'])) {
+			$input_errors[] = gettext("The specified ECDH Curve is invalid.");
+		}
+		$reqdfields = explode(" ", "caref certref");
+		$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 
 		if (($pconfig['ncp_enable'] != "disabled") && !empty($pconfig['data_ciphers']) && is_array($pconfig['data_ciphers'])) {
 			foreach ($pconfig['data_ciphers'] as $dc) {
@@ -1761,6 +1759,7 @@ events.push(function() {
 		switch (value) {
 			case "p2p_tls":
 			case "server_tls":
+			case "server_user":
 				hideInput('tls', false);
 				hideInput('certref', false);
 				hideInput('dh_length', false);
@@ -1772,25 +1771,6 @@ events.push(function() {
 				hideInput('topology', false);
 				hideCheckbox('compression_push', false);
 				hideCheckbox('duplicate_cn', false);
-				hideCheckbox('ocspcheck', false);
-			break;
-			case "server_user":
-				hideInput('caref', true);
-				hideInput('crlref', true);
-				hideLabel('Peer Certificate Revocation list', true);
-				hideLabel('Peer Certificate Authority', true);
-				hideInput('certref', true);
-				hideCheckbox('tlsauth_enable', false);
-				hideInput('dh_length', true);
-				hideInput('ecdh_curve', true);
-				hideInput('cert_depth', true);
-				hideCheckbox('strictusercn', true);
-				hideCheckbox('autokey_enable', true);
-				hideInput('shared_key', false);
-				hideInput('topology', false);
-				hideCheckbox('compression_push', false);
-				hideCheckbox('duplicate_cn', false);
-				hideCheckbox('ocspcheck', true);
 			break;
 			case "server_tls_user":
 				hideInput('tls', false);
@@ -1804,7 +1784,6 @@ events.push(function() {
 				hideInput('topology', false);
 				hideCheckbox('compression_push', false);
 				hideCheckbox('duplicate_cn', false);
-				hideCheckbox('ocspcheck', false);
 			break;
 			case "p2p_shared_key":
 				hideInput('tls', true);

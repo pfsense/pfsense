@@ -1548,7 +1548,8 @@ function openvpn_delete($mode, $settings) {
 	get_interface_arr(true);
 
 	/* remove the configuration files */
-	rmdir_recursive("{$g['openvpn_base']}/{$mode_id}");
+	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*/*");
+	unlink_if_exists("{$g['openvpn_base']}/{$mode_id}/*");
 }
 
 function openvpn_resync_csc(& $settings) {

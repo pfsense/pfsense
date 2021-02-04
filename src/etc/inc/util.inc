@@ -1838,17 +1838,21 @@ function mwexec_bg($command, $clearsigmask = false) {
 	return mwexec($command, false, $clearsigmask, true);
 }
 
-/*	unlink a file, or pattern-match of a file, if it exists
-	if the file/path contains glob() compatible wildcards, all matching files will be unlinked
-	any warning/errors are suppressed (e.g. no matching files to delete)
-	If there are matching file(s) and they were all unlinked OK, then return true.
-	Otherwise return false (the requested file(s) did not exist, or could not be deleted)
-	This allows the caller to know if they were the one to successfully delete the file(s).
-*/
+/*
+ * Unlink a file, or pattern-match of a file, if it exists
+ *
+ * If the file/path contains glob() compatible wildcards, all matching files
+ * will be unlinked.
+ * Any warning/errors are suppressed (e.g. no matching files to delete)
+ * If there are matching file(s) and they were all unlinked OK, then return
+ * true.  Otherwise return false (the requested file(s) did not exist, or
+ * could not be deleted), this allows the caller to know if they were the one
+ * to successfully delete the file(s).
+ */
 function unlink_if_exists($fn) {
 	$to_do = glob($fn);
 	if (is_array($to_do) && count($to_do) > 0) {
-		// Returns an array of true/false indicating if each unlink worked
+		// Returns an array of boolean indicating if each unlink worked
 		$results = @array_map("unlink", $to_do);
 		// If there is no false in the array, then all went well
 		$result = !in_array(false, $results, true);
@@ -1857,6 +1861,7 @@ function unlink_if_exists($fn) {
 	}
 	return $result;
 }
+
 /* make a global alias table (for faster lookups) */
 function alias_make_table() {
 	global $aliastable, $config;
@@ -1903,11 +1908,16 @@ function alias_expand($name) {
 		if (is_numericint($name)) {
 			return null;
 		}
-		// make sure if it's a ports alias, it actually exists. redmine #5845
+		/*
+		 * make sure if it's a ports alias, it actually exists.
+		 * redmine #5845
+		 */
 		foreach ($config['aliases']['alias'] as $alias) {
 			if ($alias['name'] == $name) {
 				if ($alias['type'] == "urltable_ports") {
-					if (is_URL($alias['url']) && file_exists($urltable_filename) && filesize($urltable_filename)) {
+					if (is_URL($alias['url']) &&
+					    file_exists($urltable_filename) &&
+					    filesize($urltable_filename)) {
 						return "\${$name}";
 					} else {
 						return null;
@@ -1916,7 +1926,8 @@ function alias_expand($name) {
 			}
 		}
 		return "\${$name}";
-	} else if (is_ipaddr($name) || is_subnet($name) || is_port_or_range($name)) {
+	} else if (is_ipaddr($name) || is_subnet($name) ||
+	    is_port_or_range($name)) {
 		return "{$name}";
 	} else {
 		return null;
@@ -1928,20 +1939,25 @@ function alias_expand_urltable($name) {
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if (preg_match("/urltable/i", $alias['type']) && ($alias['name'] == $name)) {
-				if (is_URL($alias["url"]) && file_exists($urltable_filename)) {
-					if (!filesize($urltable_filename)) {
-						// file exists, but is empty, try to sync
-						send_event("service sync alias {$name}");
-					}
-					return $urltable_filename;
-				} else {
-					send_event("service sync alias {$name}");
-					break;
-				}
+	if (!is_array($config['aliases']['alias'])) {
+		return null;
+	}
+
+	foreach ($config['aliases']['alias'] as $alias) {
+		if (!preg_match("/urltable/i", $alias['type']) ||
+		    ($alias['name'] != $name)) {
+			continue;
+		}
+
+		if (is_URL($alias["url"]) && file_exists($urltable_filename)) {
+			if (!filesize($urltable_filename)) {
+				// file exists, but is empty, try to sync
+				send_event("service sync alias {$name}");
 			}
+			return $urltable_filename;
+		} else {
+			send_event("service sync alias {$name}");
+			break;
 		}
 	}
 	return null;

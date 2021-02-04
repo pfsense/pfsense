@@ -230,7 +230,6 @@ function wg_configure_if($wg_ifname) {
 		return;
 	}
 
-	echo $tunnel['name'] . " ";
 	wg_destroy_if($tunnel['name']);
 	//$if = pfSense_interface_create($tunnel['name']);
 	$conf_path = $g["wg_conf_path"] . "/" . $tunnel['name'] . ".conf";

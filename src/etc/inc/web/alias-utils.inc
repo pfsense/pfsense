@@ -115,7 +115,8 @@ function find_alias_reference($section, $field, $origname, &$is_alias_referenced
 					break;
 				}
 			}
-			if ($fieldfound && $fieldref == $origname) {
+			/* explode() alias address string, see https://redmine.pfsense.org/issues/11372 */
+			if ($fieldfound && in_array($origname, explode(' ', $fieldref))) {
 				$is_alias_referenced = true;
 				if (is_array($item)) {
 					$referenced_by = $item['descr'];

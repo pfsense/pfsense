@@ -6800,13 +6800,12 @@ function get_interface_track6ip($interface = "wan") {
 		if (is_ipaddrv6($ip) && !is_linklocal($ip)) {
 			if (is_array($vips) && !empty($vips)) {
 				foreach ($vips as $vip) {
-					if ($ip != text_to_compressed_ip6($vip)) {
-						return array($ip, $bits);
+					if ($ip == text_to_compressed_ip6($vip)) {
+						continue 2;
 					}
 				}
-			} else {
-				return array($ip, $bits);
 			}
+			return array($ip, $bits);
 		}
 	}
 	return false;

@@ -1275,6 +1275,7 @@ events.push(function() {
 		switch ($('#mode').val()) {
 			case "p2p_tls":
 				hideCheckbox('tlsauth_enable', false);
+				hideInput('tlsauth_keydir', false);
 				hideInput('caref', false);
 				hideInput('certref', false);
 				hideClass('authentication', false);
@@ -1287,6 +1288,7 @@ events.push(function() {
 				break;
 			case "p2p_shared_key":
 				hideCheckbox('tlsauth_enable', true);
+				hideInput('tlsauth_keydir', true);
 				hideInput('caref', true);
 				hideInput('certref', true);
 				hideClass('authentication', true);
@@ -1320,7 +1322,7 @@ events.push(function() {
 
 	// Process "Automatically generate a shared key" checkbox
 	function autokey_change() {
-		hideInput('shared_key', $('#autokey_enable').prop('checked'));
+		hideInput('shared_key', ($('#autokey_enable').prop('checked') || ($('#mode').val() == 'p2p_tls')));
 	}
 
 	function useproxy_changed() {

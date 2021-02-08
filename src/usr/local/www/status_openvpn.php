@@ -108,6 +108,7 @@ include("head.inc"); ?>
 						<th><?=gettext("Connected Since"); ?></th>
 						<th><?=gettext("Bytes Sent")?></th>
 						<th><?=gettext("Bytes Received")?></th>
+						<th><?=gettext("Cipher")?></th>
 						<th><!-- Icons --></th>
 					</tr>
 				</thead>
@@ -137,6 +138,7 @@ include("head.inc"); ?>
 						<td><?=$conn['connect_time'];?></td>
 						<td data-value="<?=trim($conn['bytes_sent'])?>"><?=format_bytes($conn['bytes_sent']);?></td>
 						<td data-value="<?=trim($conn['bytes_recv'])?>"><?=format_bytes($conn['bytes_recv']);?></td>
+						<td data-value="<?=trim($conn['cipher'])?>"><?=$conn['cipher'];?></td>
 						<td>
 							<a
 							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>');" style="cursor:pointer;"

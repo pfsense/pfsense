@@ -1832,6 +1832,7 @@ function openvpn_get_server_status($server, $socket) {
 				$conn['user_name'] = $list[9];
 				$conn['client_id'] = $list[10];
 				$conn['peer_id'] = $list[11];
+				$conn['cipher'] = $list[12];
 				$server['conns'][] = $conn;
 			}
 			/* parse routing table lines */

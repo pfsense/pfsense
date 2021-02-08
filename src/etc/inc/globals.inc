@@ -65,6 +65,7 @@ $g = array(
 	"admin_group" => "admins",
 	"product_name" => "pfSense",
 	"product_label" => "pfSense",
+	"product_label_html" => "Netgate pfSense<sup>&#174;</sup> Plus",
 	"product_version" => trim(file_get_contents("/etc/version"), " \n"),
 	"product_copyright_years" => "2004 - ".date("Y"),
 	"disablehelpmenu" => false,

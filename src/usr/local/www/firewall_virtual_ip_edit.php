@@ -463,7 +463,7 @@ print($form);
 	    'firewall (IPsec, OpenVPN, etc.). Use an IP Alias or CARP type ' .
 	    'VIP for these roles.%1$s' .
 	    'For more information, visit the %2$s book section on %3$s'),
-		'<br />', $g['product_label'],
+		'<br />', $g['product_label_html'],
 		'<a href="https://docs.netgate.com/pfsense/en/latest/firewall/virtual-ip-addresses.html">Virtual IP Addresses</a>.'),
 	    'info', false);
 	?>

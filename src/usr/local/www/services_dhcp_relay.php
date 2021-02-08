@@ -175,7 +175,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['agentoption']
 ))->setHelp(
 	'If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.',
-	$g['product_label']
+	$g['product_label_html']
 	);
 
 $counter = 0;

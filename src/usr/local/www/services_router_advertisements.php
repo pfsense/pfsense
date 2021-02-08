@@ -125,7 +125,7 @@ $ramode_help = gettext('Select the Operating Mode for the Router Advertisement (
 	'</dl>' .
 	sprintf(gettext('It is not required to activate DHCPv6 server on %s ' .
 	    'when set to "Managed", "Assisted" or "Stateless DHCP", it can ' .
-	    'be another host on the network.'), $g['product_label']) .
+	    'be another host on the network.'), $g['product_label_html']) .
 	'</div>';
 
 if ($_POST['save']) {

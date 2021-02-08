@@ -287,7 +287,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable',
 	'Enable NTP Server',
 	($pconfig['enable'] == 'enabled')
-))->setHelp('You may need to disable NTP if %1$s is running in a virtual machine and the host is responsible for the clock.', $g['product_label']);
+))->setHelp('You may need to disable NTP if %1$s is running in a virtual machine and the host is responsible for the clock.', $g['product_label_html']);
 
 $iflist = build_interface_list();
 

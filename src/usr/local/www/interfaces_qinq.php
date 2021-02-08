@@ -153,7 +153,7 @@ endforeach;
 <div class="infoblock">
 	<?php print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q QinQ tagging properly. %1$sOn cards that do not explicitly support it, ' .
 		'QinQ tagging will still work, but the reduced MTU may cause problems.%1$s' .
-		'See the %2$s handbook for information on supported cards.'), '<br />', $g['product_label']), 'info', false); ?>
+		'See the %2$s handbook for information on supported cards.'), '<br />', $g['product_label_html']), 'info', false); ?>
 </div>
 
 <?php

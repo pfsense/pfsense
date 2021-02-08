@@ -38,7 +38,6 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("vpn.inc");
-include_once("system_advanced.inc");
 
 $powerd_modes = array(
 	'hadp' => gettext('Hiadaptive'),
@@ -54,7 +53,53 @@ $mds_modes = array(
 	3 => gettext('Automatic VERW or Software selection'),
 );
 
-$pconfig = getSystemAdvancedMisc();
+$available_kernel_memory = get_single_sysctl("vm.kmem_map_free");
+
+$pconfig['proxyurl'] = $config['system']['proxyurl'];
+$pconfig['proxyport'] = $config['system']['proxyport'];
+$pconfig['proxyuser'] = $config['system']['proxyuser'];
+$pconfig['proxypass'] = $config['system']['proxypass'];
+$pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
+$pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
+$pconfig['srctrack'] = $config['system']['srctrack'];
+$pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
+$pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
+$pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
+$pconfig['pti_disabled'] = isset($config['system']['pti_disabled']);
+$pconfig['mds_disable'] = $config['system']['mds_disable'];
+$pconfig['schedule_states'] = isset($config['system']['schedule_states']);
+$pconfig['gw_down_kill_states'] = isset($config['system']['gw_down_kill_states']);
+$pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
+$pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
+$pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
+$pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
+$pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid']);
+
+$use_mfs_tmpvar_before = isset($config['system']['use_mfs_tmpvar']) ? true : false;
+$use_mfs_tmpvar_after = $use_mfs_tmpvar_before;
+
+/* Adjust available kernel memory to account for existing RAM disks
+ * https://redmine.pfsense.org/issues/10420 */
+if ($use_mfs_tmpvar_before) {
+	/* Get current RAM disk sizes */
+	$current_ram_disk_size = (int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'"));
+	$available_kernel_memory += $current_ram_disk_size;
+}
+
+$pconfig['powerd_ac_mode'] = "hadp";
+if (!empty($config['system']['powerd_ac_mode'])) {
+	$pconfig['powerd_ac_mode'] = $config['system']['powerd_ac_mode'];
+}
+
+$pconfig['powerd_battery_mode'] = "hadp";
+if (!empty($config['system']['powerd_battery_mode'])) {
+	$pconfig['powerd_battery_mode'] = $config['system']['powerd_battery_mode'];
+}
+
+$pconfig['powerd_normal_mode'] = "hadp";
+if (!empty($config['system']['powerd_normal_mode'])) {
+	$pconfig['powerd_normal_mode'] = $config['system']['powerd_normal_mode'];
+}
 
 $crypto_modules = array(
 	'aesni' => gettext("AES-NI CPU-based Acceleration"),
@@ -64,26 +109,244 @@ $crypto_modules = array(
 
 $thermal_hardware_modules = array(
 	'coretemp' => gettext("Intel Core* CPU on-die thermal sensor"),
-	'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor")
-);
-
-$rebootneeded = false;
+	'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor"));
 
 if ($_POST) {
+	unset($input_errors);
+	$pconfig = $_POST;
+
 	ob_flush();
 	flush();
 
-	$rv = saveSystemAdvancedMisc($_POST);
+	if (!empty($_POST['crypto_hardware']) && !array_key_exists($_POST['crypto_hardware'], $crypto_modules)) {
+		$input_errors[] = gettext("Please select a valid Cryptographic Accelerator.");
+	}
 
-	$pconfig = $rv['post'];
-	$input_errors = $rv['input_errors'];
-	$retval = $rv['retval'];
-	$changes_applied = $rv['changes_applied'];
-	$rebootneeded = $rv['reboot'];
-} else {
-	$pconfig = getSystemAdvancedMisc();
+	if (!empty($_POST['thermal_hardware']) && !array_key_exists($_POST['thermal_hardware'], $thermal_hardware_modules)) {
+		$input_errors[] = gettext("Please select a valid Thermal Hardware Sensor.");
+	}
+
+	if (!empty($_POST['use_mfs_tmp_size']) && (!is_numeric($_POST['use_mfs_tmp_size']) || ($_POST['use_mfs_tmp_size'] < 40))) {
+		$input_errors[] = gettext("/tmp Size must be numeric and should not be less than 40MiB.");
+	}
+
+	if (!empty($_POST['use_mfs_var_size']) && (!is_numeric($_POST['use_mfs_var_size']) || ($_POST['use_mfs_var_size'] < 60))) {
+		$input_errors[] = gettext("/var Size must be numeric and should not be less than 60MiB.");
+	}
+
+	if (is_numericint($_POST['use_mfs_tmp_size']) && is_numericint($_POST['use_mfs_var_size']) &&
+	    ((($_POST['use_mfs_tmp_size'] + $_POST['use_mfs_var_size']) * 1024 * 1024) > $available_kernel_memory)) {
+		$input_errors[] = gettext("Combined size of /tmp and /var RAM disks would exceed available kernel memory.");
+	}
+
+	if (!empty($_POST['proxyport']) && !is_port($_POST['proxyport'])) {
+		$input_errors[] = gettext("Proxy port must be a valid port number, 1-65535.");
+	}
+
+	if (!empty($_POST['proxyurl']) && !is_fqdn($_POST['proxyurl']) && !is_ipaddr($_POST['proxyurl'])) {
+		$input_errors[] = gettext("Proxy URL must be a valid IP address or FQDN.");
+	}
+
+	if (!empty($_POST['proxyuser']) && preg_match("/[^a-zA-Z0-9\.\-_@]/", $_POST['proxyuser'])) {
+		$input_errors[] = gettext("The proxy username contains invalid characters.");
+	}
+
+	if ($_POST['proxypass'] != $_POST['proxypass_confirm']) {
+		$input_errors[] = gettext("Proxy password and confirmation must match.");
+	}
+
+	if (!in_array($_POST['powerd_ac_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid AC Power mode.");
+	}
+	if (!in_array($_POST['powerd_battery_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid Battery Power mode.");
+	}
+	if (!in_array($_POST['powerd_normal_mode'], array_keys($powerd_modes))) {
+		$input_errors[] = gettext("Invalid Unknown Power mode.");
+	}
+	if (!in_array($_POST['mds_disable'], array_keys($mds_modes))) {
+		$input_errors[] = gettext("Invalid MDS Mode.");
+	}
+
+	if (!$input_errors) {
+
+		if ($_POST['harddiskstandby'] <> "") {
+			$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
+			system_set_harddisk_standby();
+		} else {
+			unset($config['system']['harddiskstandby']);
+		}
+
+		if ($_POST['proxyurl'] <> "") {
+			$config['system']['proxyurl'] = $_POST['proxyurl'];
+		} else {
+			unset($config['system']['proxyurl']);
+		}
+
+		if ($_POST['proxyport'] <> "") {
+			$config['system']['proxyport'] = $_POST['proxyport'];
+		} else {
+			unset($config['system']['proxyport']);
+		}
+
+		if ($_POST['proxyuser'] <> "") {
+			$config['system']['proxyuser'] = $_POST['proxyuser'];
+		} else {
+			unset($config['system']['proxyuser']);
+		}
+
+		if ($_POST['proxypass'] <> "") {
+			if ($_POST['proxypass'] != DMYPWD) {
+				$config['system']['proxypass'] = $_POST['proxypass'];
+			}
+		} else {
+			unset($config['system']['proxypass']);
+		}
+
+		if ($_POST['lb_use_sticky'] == "yes") {
+			if (!isset($config['system']['lb_use_sticky'])) {
+				$config['system']['lb_use_sticky'] = true;
+			}
+			if ($config['system']['srctrack'] != $_POST['srctrack']) {
+				$config['system']['srctrack'] = $_POST['srctrack'];
+			}
+		} else {
+			if (isset($config['system']['lb_use_sticky'])) {
+				unset($config['system']['lb_use_sticky']);
+			}
+		}
+
+		if ($_POST['pkg_nochecksig'] == "yes") {
+			$config['system']['pkg_nochecksig'] = true;
+		} elseif (isset($config['system']['pkg_nochecksig'])) {
+			unset($config['system']['pkg_nochecksig']);
+		}
+
+		if ($_POST['do_not_send_uniqueid'] == "yes") {
+			$config['system']['do_not_send_uniqueid'] = true;
+		} else {
+			unset($config['system']['do_not_send_uniqueid']);
+		}
+
+		if ($_POST['powerd_enable'] == "yes") {
+			$config['system']['powerd_enable'] = true;
+		} else {
+			unset($config['system']['powerd_enable']);
+		}
+
+		$config['system']['powerd_ac_mode'] = $_POST['powerd_ac_mode'];
+		$config['system']['powerd_battery_mode'] = $_POST['powerd_battery_mode'];
+		$config['system']['powerd_normal_mode'] = $_POST['powerd_normal_mode'];
+
+		if ($_POST['crypto_hardware']) {
+			$config['system']['crypto_hardware'] = $_POST['crypto_hardware'];
+		} else {
+			unset($config['system']['crypto_hardware']);
+		}
+
+		if ($_POST['thermal_hardware']) {
+			$config['system']['thermal_hardware'] = $_POST['thermal_hardware'];
+		} else {
+			unset($config['system']['thermal_hardware']);
+		}
+
+		$old_pti_state = isset($config['system']['pti_disabled']);
+		if ($_POST['pti_disabled'] == "yes") {
+			$config['system']['pti_disabled'] = true;
+		} else {
+			unset($config['system']['pti_disabled']);
+		}
+		if (isset($_POST['mds_disable']) && (strlen($_POST['mds_disable']) > 0)) {
+			$config['system']['mds_disable'] = $_POST['mds_disable'];
+		} else {
+			unset($config['system']['mds_disable']);
+		}
+
+		if ($_POST['schedule_states'] == "yes") {
+			$config['system']['schedule_states'] = true;
+		} else {
+			unset($config['system']['schedule_states']);
+		}
+
+		if ($_POST['gw_down_kill_states'] == "yes") {
+			$config['system']['gw_down_kill_states'] = true;
+		} else {
+			unset($config['system']['gw_down_kill_states']);
+		}
+
+		if ($_POST['skip_rules_gw_down'] == "yes") {
+			$config['system']['skip_rules_gw_down'] = true;
+		} else {
+			unset($config['system']['skip_rules_gw_down']);
+		}
+
+		if ($_POST['use_mfs_tmpvar'] == "yes") {
+			$config['system']['use_mfs_tmpvar'] = true;
+			$use_mfs_tmpvar_after = true;
+		} else {
+			unset($config['system']['use_mfs_tmpvar']);
+			$use_mfs_tmpvar_after = false;
+		}
+
+		$config['system']['use_mfs_tmp_size'] = $_POST['use_mfs_tmp_size'];
+		$config['system']['use_mfs_var_size'] = $_POST['use_mfs_var_size'];
+
+		if (isset($_POST['rrdbackup'])) {
+			if (($_POST['rrdbackup'] > 0) && ($_POST['rrdbackup'] <= 24)) {
+				$config['system']['rrdbackup'] = intval($_POST['rrdbackup']);
+			} else {
+				unset($config['system']['rrdbackup']);
+			}
+		}
+		if (isset($_POST['dhcpbackup'])) {
+			if (($_POST['dhcpbackup'] > 0) && ($_POST['dhcpbackup'] <= 24)) {
+				$config['system']['dhcpbackup'] = intval($_POST['dhcpbackup']);
+			} else {
+				unset($config['system']['dhcpbackup']);
+			}
+		}
+		if (isset($_POST['logsbackup'])) {
+			if (($_POST['logsbackup'] > 0) && ($_POST['logsbackup'] <= 24)) {
+				$config['system']['logsbackup'] = intval($_POST['logsbackup']);
+			} else {
+				unset($config['system']['logsbackup']);
+			}
+		}
+
+		// Add/Remove RAM disk periodic backup cron jobs according to settings and installation type.
+		// Remove the cron jobs on full install if not using RAM disk.
+		// Add the cron jobs on all others if the periodic backup option is set.  Otherwise the cron job is removed.
+		if (!isset($config['system']['use_mfs_tmpvar'])) {
+			/* See #7146 for detail on why the extra parameters are needed for the time being. */
+			install_cron_job("/etc/rc.backup_rrd.sh", false, null, null, null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", false, null, null, null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_logs.sh", false, null, null, null, null, null, null, false);
+		} else {
+			/* See #7146 for detail on why the extra parameters are needed for the time being. */
+			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}", '*', '*', '*', 'root', false);
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}", '*', '*', '*', 'root', false);
+			install_cron_job("/etc/rc.backup_logs.sh", ($config['system']['logsbackup'] > 0), $minute="0", "*/{$config['system']['logsbackup']}", '*', '*', '*', 'root', false);
+		}
+
+		write_config("Miscellaneous Advanced Settings saved");
+
+		$changes_applied = true;
+		$retval = 0;
+		system_resolvconf_generate(true);
+		$retval |= filter_configure();
+
+		if ($old_pti_state != isset($config['system']['pti_disabled'])) {
+			setup_loader_settings();
+		}
+		if (isset($config['system']['mds_disable']) &&
+		    (strlen($config['system']['mds_disable']) > 0)) {
+			set_single_sysctl("hw.mds_disable" , (int)$config['system']['mds_disable']);
+		}
+		activate_powerd();
+		load_crypto();
+		load_thermal_hardware();
+	}
 }
-
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Miscellaneous"));
 $pglinks = array("", "system_advanced_admin.php", "@self");
@@ -243,7 +506,7 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-$pti = $pconfig['pti'];
+$pti = get_single_sysctl('vm.pmap.pti');
 if (strlen($pti) > 0) {
 	$section = new Form_Section('Kernel Page Table Isolation');
 	$section->addInput(new Form_Checkbox(
@@ -258,7 +521,7 @@ if (strlen($pti) > 0) {
 	$form->add($section);
 }
 
-$mds = $pconfig['mds'];
+$mds = get_single_sysctl('hw.mds_disable_state');
 if (strlen($mds) > 0) {
 	$section = new Form_Section('Microarchitectural Data Sampling Mitigation');
 	$section->addInput(new Form_Select(
@@ -337,7 +600,7 @@ $group->add(new Form_Input(
 $group->setHelp('Sets the size, in MiB, for the RAM disks. ' .
 	'Ensure each RAM disk is large enough to contain the current contents of the directories in question. %s' .
 	'Maximum total size of all RAM disks cannot exceed available kernel memory: %s',
-	'<br/>', format_bytes( $pconfig['available_kernel_memory'] ));
+	'<br/>', format_bytes( $available_kernel_memory ));
 
 $section->add($group);
 
@@ -404,13 +667,15 @@ $form->add($section);
 print $form;
 
 $ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This requires the firewall\nto reboot.\n\nReboot now ?');
+$use_mfs_tmpvar_changed = ((($use_mfs_tmpvar_before !== $use_mfs_tmpvar_after) ||
+			    (!empty($_POST) && $use_mfs_tmpvar_after && file_exists('/conf/ram_disks_failed'))) && !$input_errors);
 ?>
 
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 	// Has the Use ramdisk checkbox changed state?
-	if (<?=(int)$rebootneeded?> && confirm("<?=$ramdisk_msg?>")) {
+	if (<?=(int)$use_mfs_tmpvar_changed?> && confirm("<?=$ramdisk_msg?>")) {
 		postSubmit({override : 'yes'}, 'diag_reboot.php')
 	}
 

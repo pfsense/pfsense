@@ -1964,25 +1964,27 @@ if ($show_address_controls) {
 	));
 }
 
-$macaddress = new Form_Input(
-	'spoofmac',
-	'MAC Address',
-	'text',
-	$pconfig['spoofmac'],
-	['placeholder' => 'xx:xx:xx:xx:xx:xx']
-);
+if (!is_pseudo_interface($intrealname, true)) {
+	$macaddress = new Form_Input(
+		'spoofmac',
+		'MAC Address',
+		'text',
+		$pconfig['spoofmac'],
+		['placeholder' => 'xx:xx:xx:xx:xx:xx']
+	);
 
-if (interface_is_vlan($realifname)) {
-	$macaddress->setDisabled();
-	$macaddress->setHelp('The MAC address of a VLAN interface must be ' .
-	    'set on its parent interface');
-} else {
-	$macaddress->setHelp('This field can be used to modify ("spoof") the ' .
-	    'MAC address of this interface.%sEnter a MAC address in the ' .
-	    'following format: xx:xx:xx:xx:xx:xx or leave blank.', '<br />');
+	if (interface_is_vlan($realifname)) {
+		$macaddress->setDisabled();
+		$macaddress->setHelp('The MAC address of a VLAN interface must be ' .
+		    'set on its parent interface');
+	} else {
+		$macaddress->setHelp('This field can be used to modify ("spoof") the ' .
+		    'MAC address of this interface.%sEnter a MAC address in the ' .
+		    'following format: xx:xx:xx:xx:xx:xx or leave blank.', '<br />');
+	}
+
+	$section->addInput($macaddress);
 }
-
-$section->addInput($macaddress);
 
 $section->addInput(new Form_Input(
 	'mtu',

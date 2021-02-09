@@ -1565,8 +1565,7 @@ function update_repos() {
 		// Compose a version string in JSON format
 		$os = php_uname('s');
 		$osver = php_uname('r');
-		$v = strtolower(php_uname('v'));
-		$ed =  (strpos($v, 'factory') !== false)
+		$ed =  (strpos($g['product_label'], 'Plus') !== false)
 		    ? "Plus" : "Community";
 		$pkglist = get_pkg_info("all", false, true);
 		$platform = system_identify_specific_platform();

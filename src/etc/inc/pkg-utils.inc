@@ -1567,7 +1567,7 @@ function update_repos() {
 		$osver = php_uname('r');
 		$v = strtolower(php_uname('v'));
 		$ed =  (strpos($v, 'factory') !== false)
-		    ? "Factory" : "Community";
+		    ? "Plus" : "Community";
 		$pkglist = get_pkg_info("all", false, true);
 		$platform = system_identify_specific_platform();
 		$platformname = gettext('Unknown system');

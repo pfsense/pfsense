@@ -161,10 +161,6 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.udp.checksum" => 1,
 	"net.inet.icmp.reply_from_interface" => 1,
 	"net.inet6.ip6.rfc6204w3" => 1,
-	"net.enc.out.ipsec_bpf_mask" => "0x0001",
-	"net.enc.out.ipsec_filter_mask" => "0x0001",
-	"net.enc.in.ipsec_bpf_mask" => "0x0002",
-	"net.enc.in.ipsec_filter_mask" => "0x0002",
 	"net.key.preferred_oldsa" => "0",
 	"net.inet.carp.senderr_demotion_factor" => 0, /* Do not demote CARP for interface send errors */
 	"net.pfsync.carp_demotion_factor" => 0, /* Do not demote CARP for pfsync errors */
@@ -322,5 +318,31 @@ $ddnsdomainkeyalgorithms = array(
 		'hmac-sha256' => 'HMAC-SHA256 (current bind9 default)',
 		'hmac-sha384' => 'HMAC-SHA384',
 		'hmac-sha512' => 'HMAC-SHA512 (most secure)');
+
+global $ipsec_filtermodes;
+$ipsec_filtermodes = array(
+	'enc' => 'Filter IPsec Tunnel and VTI on IPsec tab (enc0)',
+	'if_ipsec' => 'Filter IPsec VTI on assigned interfaces, block all tunnel mode traffic'
+);
+
+global $ipsec_filter_sysctl;
+$ipsec_filter_sysctl = array(
+	'enc' => array(
+		"net.inet.ipsec.filtertunnel"   => "0x0000",
+		"net.inet6.ipsec6.filtertunnel" => "0x0000",
+		"net.enc.out.ipsec_bpf_mask"    => "0x0001",
+		"net.enc.out.ipsec_filter_mask" => "0x0001",
+		"net.enc.in.ipsec_bpf_mask"     => "0x0002",
+		"net.enc.in.ipsec_filter_mask"  => "0x0002"
+	),
+	'if_ipsec' => array(
+		"net.inet.ipsec.filtertunnel"   => "0x0001",
+		"net.inet6.ipsec6.filtertunnel" => "0x0001",
+		"net.enc.out.ipsec_bpf_mask"    => "0x0000",
+		"net.enc.out.ipsec_filter_mask" => "0x0000",
+		"net.enc.in.ipsec_bpf_mask"     => "0x0000",
+		"net.enc.in.ipsec_filter_mask"  => "0x0000"
+	),
+);
 
 ?>

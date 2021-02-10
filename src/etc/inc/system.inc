@@ -102,7 +102,14 @@ function system_get_sysctls() {
 }
 
 function activate_sysctls() {
-	global $config, $g, $sysctls;
+	global $config, $g, $sysctls, $ipsec_filter_sysctl;
+
+	if (!is_array($sysctls)) {
+		$sysctls = array();
+	}
+
+	$ipsec_filtermode = empty($config['ipsec']['filtermode']) ? 'enc' : $config['ipsec']['filtermode'];
+	$sysctls = array_merge($sysctls, $ipsec_filter_sysctl[$ipsec_filtermode]);
 
 	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
 		foreach ($config['sysctl']['item'] as $tunable) {

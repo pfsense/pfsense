@@ -97,8 +97,14 @@ $icmptypes = array(
  * Specify the driver prefix to match (from the left)
  * https://redmine.pfsense.org/issues/8685
  */
-global $filter_interface_blacklist;
-$filter_interface_blacklist = array("ipsec");
+global $filter_interface_remove;
+$filter_interface_remove = array();
+
+if ($config['ipsec']['filtermode'] == 'if_ipsec') {
+	$filter_interface_remove[] = 'enc';
+} else {
+	$filter_interface_remove[] = 'ipsec';
+}
 
 /*
  * Fixed tracker values (used to group and track usage in GUI):
@@ -4700,13 +4706,13 @@ function move_separators(&$a_separators, $ridx, $mvnrows) {
 }
 
 function filter_get_interface_list() {
-	global $filter_interface_blacklist;
+	global $filter_interface_remove;
 	$iflist = create_interface_list();
 	$filter_ifs = array();
 	foreach ($iflist as $ifent => $ifname) {
 		$realifname = get_real_interface($ifent);
-		foreach ($filter_interface_blacklist as $ifbl) {
-			if (substr($realifname, 0, strlen($ifbl)) == $ifbl) {
+		foreach ($filter_interface_remove as $ifr) {
+			if (substr($realifname, 0, strlen($ifr)) == $ifr) {
 				continue 2;
 			}
 		}

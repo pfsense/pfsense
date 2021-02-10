@@ -620,7 +620,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('If this option is set, %s will use DNS servers '.
 	'assigned by a DHCP/PPP server on WAN for its own purposes (including '.
 	'the DNS Forwarder/DNS Resolver). However, they will not be assigned to DHCP '.
-	'clients.', $g['product_label_html']);
+	'clients.', $g['product_label']);
 
 $section->addInput(new Form_Select(
 	'dnslocalhost',

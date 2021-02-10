@@ -367,7 +367,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 <?php
 			elseif ($firmwareupdate):
 ?>
-				<?=sprintf(gettext('Confirmation Required to update %s system.'), $g['product_label_html'])?>
+				<?=sprintf(gettext('Confirmation Required to update %s system.'), $g['product_label'])?>
 <?php
 			else:
 ?>

@@ -40,7 +40,7 @@ function updatecopyright() {
 
 	if (file_exists($idfile)) {
 		if (function_exists('curl_version')) {
-			$post = ['uid' => file_get_contents($idfile), 'language' => '0', 'edition' => 'community', 'version' => '1'];
+			$post = ['uid' => file_get_contents($idfile), 'language' => '0', 'edition' => 'community', 'version' => '2'];
 			$url = $FQDN;
 
 			$ch = curl_init();

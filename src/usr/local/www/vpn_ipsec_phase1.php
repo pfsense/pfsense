@@ -1111,7 +1111,7 @@ $section->addInput(new Form_Checkbox(
 	'Gateway duplicates',
 	sprintf(gettext('Enable this to allow multiple phase 1 configurations with the same endpoint. ' .
 	    'When enabled, %s does not manage routing to the remote gateway and traffic will follow the default route ' .
-	    'without regard for the chosen interface. Static routes can override this behavior.'), $g['product_label_html']),
+	    'without regard for the chosen interface. Static routes can override this behavior.'), $g['product_label']),
 	$pconfig['gw_duplicates']
 ));
 

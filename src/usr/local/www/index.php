@@ -60,7 +60,7 @@ if (isset($_REQUEST['closenotice'])) {
 }
 
 if (($g['disablecrashreporter'] != true) && (system_has_crash_data() || system_has_php_errors())) {
-	$savemsg = sprintf(gettext("%s has detected a crash report or programming bug."), $g['product_label_html']) . " ";
+	$savemsg = sprintf(gettext("%s has detected a crash report or programming bug."), $g['product_label']) . " ";
 	if (isAllowedPage("/crash_reporter.php")) {
 		$savemsg .= sprintf(gettext('Click %1$shere%2$s for more information.'), '<a href="crash_reporter.php">', '</a>');
 	} else {
@@ -200,10 +200,10 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 			<div class="container">
 				<div class="col-sm-offset-3 col-sm-6 col-xs-12">
 					<font color="white">
-					<p><h3><?=sprintf(gettext("Welcome to %s!") . "\n", $g['product_label_html'])?></h3></p>
+					<p><h3><?=sprintf(gettext("Welcome to %s!") . "\n", $g['product_label'])?></h3></p>
 					<p><?=gettext("One moment while the initial setup wizard starts.")?></p>
 					<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
-					<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_label_html'])?></p>
+					<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_label'])?></p>
 					</font>
 				</div>
 			</div>

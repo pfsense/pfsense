@@ -1,4 +1,3 @@
-#irc/znc
 benchmarks/%%PRODUCT_NAME%%-pkg-iperf
 benchmarks/iperf
 benchmarks/iperf3
@@ -50,10 +49,8 @@ net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG-devel
 net/%%PRODUCT_NAME%%-pkg-pimd
 net/%%PRODUCT_NAME%%-pkg-siproxd
-net/bird
 net/hping
 net/mosh
-net/nss_ldap
 net/py-speedtest-cli
 net/realtek-re-kmod
 net/trafshow
@@ -85,7 +82,6 @@ sysutils/%%PRODUCT_NAME%%-pkg-node_exporter
 sysutils/%%PRODUCT_NAME%%-pkg-nut
 sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
 sysutils/ccze
-sysutils/devcpu-data
 sysutils/flashrom
 sysutils/htop
 sysutils/lsof

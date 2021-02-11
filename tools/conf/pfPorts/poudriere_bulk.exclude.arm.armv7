@@ -7,7 +7,6 @@ sysutils/%%PRODUCT_NAME%%-builder
 sysutils/%%PRODUCT_NAME%%-pkg-LCDproc
 sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Coreboot_Upgrade
 sysutils/azure-agent
-sysutils/devcpu-data
 sysutils/flashrom
 sysutils/vm-bhyve
 sysutils/xe-guest-utilities

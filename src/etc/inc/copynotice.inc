@@ -45,7 +45,7 @@ $copyrightfile = "{$g['cf_conf_path']}/copyright";
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 <?php
-			if (file_exists($copyrightfile)) {
+			if (file_exists($copyrightfile) && (filesize($copyrightfile) > 0)) {
 				require_once($copyrightfile);
 			} else {
 ?>

@@ -1355,8 +1355,8 @@ function console_configure($when = "save", $path = "") {
 	}
 
 	$console_line = "console\tnone\t\t\t\tunknown\toff\tsecure";
-	$ttyv0_line =
-	    "ttyv0\t\"/usr/libexec/getty {$console_type}\"\txterm\tonifexists secure";
+	$virt_line =
+	    "\"/usr/libexec/getty {$console_type}\"\txterm\tonifexists secure";
 	$ttyu_line =
 	    "\"/usr/libexec/getty {$serial_type}\"\tvt100\t{$on_off}\tsecure";
 
@@ -1370,7 +1370,10 @@ function console_configure($when = "save", $path = "") {
 
 		if (stristr($tty, "ttyv0")) {
 			$found['ttyv0'] = 1;
-			$data[] = $ttyv0_line;
+			$data[] = "ttyv0\t{$virt_line}";
+		} elseif (stristr($tty, "xc0")) {
+			$found['xc0'] = 1;
+			$data[] = "xc0\t{$virt_line}";
 		} elseif (stristr($tty, "ttyu")) {
 			$ttyn = substr($tty, 0, 5);
 			$found[$ttyn] = 1;
@@ -1391,7 +1394,8 @@ function console_configure($when = "save", $path = "") {
 		'ttyu0',
 		'ttyu1',
 		'ttyu2',
-		'ttyu3'
+		'ttyu3',
+		'xc0'
 	);
 
 	foreach ($items as $item) {
@@ -1401,8 +1405,9 @@ function console_configure($when = "save", $path = "") {
 
 		if ($item == 'console') {
 			$data[] = $console_line;
-		} elseif ($item == 'ttyv0') {
-			$data[] = $ttyv0_line;
+		} elseif (($item == 'ttyv0') || ($item == 'xc0')) {
+			/* xc0 - Xen console, see https://redmine.pfsense.org/issues/11402 */
+			$data[] = "{$item}\t{$virt_line}";
 		} else {
 			$data[] = "{$item}\t{$ttyu_line}";
 		}

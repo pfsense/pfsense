@@ -663,7 +663,7 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 			$domain_entries .= "private-domain: \"$domain\"\n";
 			$domain_entries .= "domain-insecure: \"$domain\"\n";
 		} else if ($pvt_rev == "reverse") {
-			if ((substr($domain, -14) == ".in-addr.arpa.") || (substr($domain, -13) == ".in-addr.arpa")) {
+			if (preg_match("/.+\.(in-addr|ip6)\.arpa\.?$/", $domain)) {
 				$domain_entries .= "local-zone: \"$domain\" typetransparent\n";
 			}
 		} else {

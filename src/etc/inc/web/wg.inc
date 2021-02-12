@@ -311,23 +311,6 @@ function genPubKey($privkey) {
 	return (exec("echo {$privkey} | {$wgbinpath} pubkey"));
 }
 
-// Return the next WireGuard interface name that is not currently in use
-function nextFreeWGInterfaceName() {
-	global $config;
-
-	init_config_arr(array('wireguard', 'tunnel'));
-	$tunnels = $config['wireguard']['tunnel'];
-	$num = count($tunnels);
-
-	for( $idx=0; $idx<$num; $idx++) {
-		if ($idx != intval(substr($tunnels[$idx]['name'], 2))) {
-			return $idx;
-		}
-	}
-
-	return $idx;
-}
-
 function deleteTunnel($tunidx) {
 	global $config, $g;
 

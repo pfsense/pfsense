@@ -80,6 +80,9 @@ if ($_POST['save']) {
 		if ($tunnels[$index]) {
 			$pconfig = &$tunnels[$index];
 		}
+	} else {
+		$pconfig = array();
+		$pconfig['name'] = next_wg_if();
 	}
 }
 
@@ -97,7 +100,7 @@ if ($input_errors) {
 $form = new Form(false);
 
 // First row
-$section = new Form_Section('Interface wg' . $index);
+$section = new Form_Section('Interface ' . $pconfig['name']);
 
 $section->addInput(new Form_Input(
 	'index',

@@ -186,7 +186,7 @@ if ($input_errors) {
 			<?=gettext("Show peers")?>
 		</a>
 
-		<a href="vpn_wg_edit.php?index=<?=nextFreeWGInterfaceName();?>" class="btn btn-success btn-sm">
+		<a href="vpn_wg_edit.php" class="btn btn-success btn-sm">
 			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext("Add Tunnel")?>
 		</a>

@@ -1211,6 +1211,7 @@ function saveAdvancedNotifications($post, $json = false) {
 	$rv['pconfig'] = $post;
 	$rv['test_result'] = $test_result;
 	$rv['test_class'] = $test_class;
+	$rv['input_errors'] = $input_errors;
 
 	return $json ? json_encode($rv):$rv;
 }

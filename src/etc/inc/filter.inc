@@ -634,12 +634,20 @@ function filter_generate_scrubing() {
 		if (isset($scrubcfg['virtual']) || empty($scrubcfg['descr'])) {
 			continue;
 		}
+		if (($scrubcfg['type6'] == '6rd') || ($scrubcfg['type6'] == '6to4')) {
+			$scrubifname6 = $scrubcfg['descr'] . "_STF";
+		} else {
+			$scrubifname6 = $scrubcfg['descr'];
+		}
 		/* set up MSS clamping */
 		if (($scrubcfg['mss'] <> "") &&
 		    (is_numeric($scrubcfg['mss']))) {
-			$mssclamp = "max-mss " . (intval($scrubcfg['mss'] - 40));
+			/* different size of IPv4/IPv6 header, https://redmine.pfsense.org/issues/11409 */
+			$mssclamp4 = "max-mss " . (intval($scrubcfg['mss'] - 40));
+			$mssclamp6 = "max-mss " . (intval($scrubcfg['mss'] - 60));
 		} else {
-			$mssclamp = "";
+			$mssclamp4 = "";
+			$mssclamp6 = "";
 		}
 		/* configure no-df for linux nfs and others */
 		if ($config['system']['scrubnodf']) {
@@ -653,9 +661,13 @@ function filter_generate_scrubing() {
 			$scrubrnid = "";
 		}
 		if (!isset($config['system']['disablescrub'])) {
-			$scrubrules .= "scrub on \${$scrubcfg['descr']} all {$scrubnodf} {$scrubrnid} {$mssclamp} fragment reassemble\n"; // reassemble all directions
-		} else if (!empty($mssclamp)) {
-			$scrubrules .= "scrub on \${$scrubcfg['descr']} {$mssclamp}\n";
+			$scrubrules .= "scrub on \${$scrubcfg['descr']} inet all {$scrubnodf} {$scrubrnid} {$mssclamp4} " .
+			    "fragment reassemble\n"; // reassemble all directions
+			$scrubrules .= "scrub on \${$scrubifname6} inet6 all {$scrubnodf} {$scrubrnid} {$mssclamp6} " .
+			    "fragment reassemble\n";
+		} else if (!empty($mssclamp4)) {
+			$scrubrules .= "scrub on \${$scrubcfg['descr']} inet {$mssclamp4}\n";
+			$scrubrules .= "scrub on \${$scrubifname6} inet6 {$mssclamp6}\n";
 		}
 	}
 	return $scrubrules;

@@ -1997,8 +1997,8 @@ $section->addInput(new Form_Input(
 	'MSS',
 	'number',
 	$pconfig['mss']
-))->setHelp('If a value is entered in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP ' .
-			'header size) will be in effect.');
+))->setHelp('If a value is entered in this field, then MSS clamping for TCP connections to the value entered above ' .
+	    'minus 40 for IPv4 (TCP/IPv4 header size) and minus 60 for IPv6 (TCP/IPv6 header size) will be in effect.');
 
 if (count($mediaopts_list) > 0) {
 	$section->addInput(new Form_Select(

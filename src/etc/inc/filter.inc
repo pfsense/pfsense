@@ -2896,7 +2896,13 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			filter_address_add_vips_subnets($src, $rule[$target]['network'], isset($rule[$target]['not']));
 		}
 	} else if ($rule[$target]['address']) {
-		$expsrc = alias_expand($rule[$target]['address']);
+		/* static host portion of IPv6, see https://redmine.pfsense.org/issues/6626 */
+		if (substr($rule[$target]['address'], 0, 2) == '::') {
+			$expsrc = merge_ipv6_delegated_prefix(get_interface_ipv6($rule['interface']),
+			    $rule[$target]['address'], get_interface_subnetv6($rule['interface']));
+		} else {
+			$expsrc = alias_expand($rule[$target]['address']);
+		}
 		if (isset($rule[$target]['not'])) {
 			$not = "!";
 		} else {

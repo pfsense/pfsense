@@ -412,6 +412,14 @@ l2tps:
 	set link enable incoming
 
 EOD;
+
+			if (!empty($l2tpcfg['mtu'])) {
+				$mpdconf .=<<<EOD
+	set link mtu {$l2tpcfg['mtu']}
+
+EOD;
+			}
+
 			if (!empty($l2tpcfg['secret'])) {
 				$secret = str_replace('"', '\"', $l2tpcfg['secret']);
 				$mpdconf .=<<<EOD
@@ -419,7 +427,6 @@ EOD;
 
 EOD;
 			}
-
 
 			if (isset ($l2tpcfg['radius']['enable'])) {
 				$mpdconf .=<<<EOD

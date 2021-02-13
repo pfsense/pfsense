@@ -41,6 +41,7 @@ $pconfig['mode'] = $l2tpcfg['mode'];
 $pconfig['interface'] = $l2tpcfg['interface'];
 $pconfig['l2tp_dns1'] = $l2tpcfg['dns1'];
 $pconfig['l2tp_dns2'] = $l2tpcfg['dns2'];
+$pconfig['mtu'] = $l2tpcfg['mtu'];
 $pconfig['radiusenable'] = isset($l2tpcfg['radius']['enable']);
 $pconfig['radacct_enable'] = isset($l2tpcfg['radius']['accounting']);
 $pconfig['radiusserver'] = $l2tpcfg['radius']['server'];
@@ -115,7 +116,16 @@ if ($_POST['save']) {
 		if (!empty($_POST['l2tp_dns2']) && empty($_POST['l2tp_dns1'])) {
 			$input_errors[] = gettext("The Secondary L2TP DNS Server cannot be set when the Primary L2TP DNS Server is empty.");
 		}
-
+		if ($_POST['mtu']) {
+			if (!is_numericint($_POST['mtu'])) {
+				$input_errors[] = "MTU must be an integer.";
+			}
+			$min_mtu = 576;
+			$max_mtu = 9000;
+			if (($_POST['mtu'] < $min_mtu) || ($_POST['mtu'] > $max_mtu)) {
+				$input_errors[] = sprintf(gettext("The MTU must be between %d and %d bytes."), $min_mtu, $max_mtu);
+			}
+		}
 	}
 
 	if (!$input_errors) {
@@ -151,6 +161,14 @@ if ($_POST['save']) {
 			}
 		} else {
 			$l2tpcfg['dns2'] = $_POST['l2tp_dns2'];
+		}
+
+		if ($_POST['mtu'] == "") {
+			if (isset($l2tpcfg['mtu'])) {
+				unset($l2tpcfg['mtu']);
+			}
+		} else {
+			$l2tpcfg['mtu'] = $_POST['mtu'];
 		}
 
 		if ($_POST['radiusenable'] == "yes") {
@@ -281,6 +299,14 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['l2tp_dns2']
 ));
+
+$section->addInput(new Form_Input(
+	'mtu',
+	'VPN MTU',
+	'number',
+	$pconfig['mtu']
+))->setHelp('If this field is blank, the adapter\'s default MTU will be used. ' .
+			'This is typically 1500 bytes but can vary in some circumstances.');
 
 $form->add($section);
 

@@ -130,7 +130,7 @@ if (!empty($config['captiveportal']) && is_array($config['hasync']) && !empty($c
 		$xmlrpc_username = $config['hasync']['username'];
 	}
 	$xmlrpc_port = $config['system']['webgui']['port'];
-	if (empty($port)) {
+	if (empty($xmlrpc_port)) {
 		if ($config['system']['webgui']['protocol'] == "http") {
 			$xmlrpc_port = "80";
 		} else {

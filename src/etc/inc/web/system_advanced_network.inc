@@ -42,7 +42,6 @@ function getAdvancedNetwork($json = false) {
 	$pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 	$pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 	$pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
-	$pconfig['hnaltqenable'] = isset($config['system']['hn_altq_enable']);
 	$pconfig['duid'] = get_duid_from_file();
 
 	return $json ? json_encode($pconfig) : $pconfig;

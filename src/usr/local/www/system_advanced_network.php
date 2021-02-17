@@ -252,7 +252,7 @@ $section->addInput(new Form_Checkbox(
 	'hnaltqenable',
 	'hn ALTQ support',
 	'Enable the ALTQ support for hn NICs.',
-	$pconfig['hn_altq_enable']
+	$pconfig['hnaltqenable']
 ))->setHelp('Checking this option will enable the ALTQ support for hn NICs. '.
 	'The ALTQ support disables the multiqueue API and may reduce the system '.
 	'capability to handle traffic. This will take effect after a machine reboot.');

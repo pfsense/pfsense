@@ -68,18 +68,26 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 						$ikenum[$ph1ent['ikeid']]++;
 					}
 
-					$ikeid = "con{$ph1ent['ikeid']}00" . $ikenum[$ph1ent['ikeid']];
+					if (get_ipsecifnum($ph1ent['ikeid'], $ikenum[$ph1ent['ikeid']])) {
+						$ikeid = "con" . get_ipsecifnum($ph1ent['ikeid'], $ikenum[$ph1ent['ikeid']]);
+					} else {
+						$ikeid = "con" . $ikenum[$ph1ent['ikeid']];
+					}
 				} else {
 					if (isset($ikenum[$ph1ent['ikeid']])) {
 						continue;
 					}
 
-					$ikeid = "con{$ph1ent['ikeid']}000";
+					if (get_ipsecifnum($ph1ent['ikeid'], 0)) {
+						$ikeid = "con" . get_ipsecifnum($ph1ent['ikeid'], 0);
+					} else {
+						$ikeid = "con{$ph1ent['ikeid']}00000";
+					}
 					$ikenum[$ph1ent['ikeid']] = true;
 				}
 
 				$found = false;
-				if(is_array($ipsec_status) && !empty($ipsec_status)){
+				if (is_array($ipsec_status) && !empty($ipsec_status)) {
 					foreach ($ipsec_status as $id => $ikesa) {
 						if (isset($ikesa['child-sas'])) {
 							foreach ($ikesa['child-sas'] as $childid => $childsa) {
@@ -89,7 +97,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 									break;
 								}
 							}
-						} else if ($ikeid == $ikesa['con-id']) {
+						} elseif ($ikeid == $ikesa['con-id']) {
 							$found = true;
 						}
 
@@ -139,7 +147,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	$data->overview .= "</tr>";
 
 	$data->tunnel = "";
-	if(is_array($ipsec_detail_array) && !empty($ipsec_detail_array)){
+	if (is_array($ipsec_detail_array) && !empty($ipsec_detail_array)) {
 		foreach ($ipsec_detail_array as $ipsec) {
 			$data->tunnel .= "<tr>";
 			$data->tunnel .= "<td>" . htmlspecialchars($ipsec['src']) . "</td>";

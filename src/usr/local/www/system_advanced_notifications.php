@@ -31,7 +31,7 @@
 require_once("guiconfig.inc");
 require_once("notices.inc");
 require_once("pfsense-utils.inc");
-require_once("system_advanced.inc");
+require_once("system_advanced_notifications.inc");
 
 global $smtp_authentication_mechanisms;
 global $pushover_sounds;

@@ -35,7 +35,7 @@
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
-require_once("system_advanced.inc");
+require_once("system_advanced_sysctl.inc");
 
 init_config_arr(array('sysctl', 'item'));
 $a_tunable = &$config['sysctl']['item'];

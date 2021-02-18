@@ -36,6 +36,7 @@
 require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("firewall_virtual_ip.inc");
 
 init_config_arr(array('virtualip', 'vip'));
 $a_vip = &$config['virtualip']['vip'];
@@ -47,19 +48,6 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 function return_first_two_octets($ip) {
 	$ip_split = explode(".", $ip);
 	return $ip_split[0] . "." . $ip_split[1];
-}
-
-function find_last_used_vhid() {
-	global $config, $g;
-
-	$vhid = 0;
-	foreach ($config['virtualip']['vip'] as $vip) {
-		if ($vip['vhid'] > $vhid) {
-			$vhid = $vip['vhid'];
-		}
-	}
-
-	return $vhid;
 }
 
 if (isset($id) && $a_vip[$id]) {
@@ -83,212 +71,10 @@ if (isset($id) && $a_vip[$id]) {
 }
 
 if ($_POST['save']) {
-	unset($input_errors);
-	$pconfig = $_POST;
-
-	/* input validation */
-	$reqdfields = explode(" ", "mode");
-	$reqdfieldsn = array(gettext("Type"));
-
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-
-	if ($_POST['subnet']) {
-		$_POST['subnet'] = trim($_POST['subnet']);
-	}
-
-	if (is_pseudo_interface(convert_friendly_interface_to_real_interface_name($_POST['interface']))) {
-		if ($_POST['mode'] == 'carp') {
-			$input_errors[] = gettext("The interface chosen for the VIP does not support CARP mode.");
-		} elseif ($_POST['mode'] == 'proxyarp') {
-			$input_errors[] = gettext("The interface chosen for the VIP does not support Proxy ARP mode.");
-		}
-	}
-
-	if ($_POST['subnet']) {
-		if (!is_ipaddr($_POST['subnet'])) {
-			$input_errors[] = gettext("A valid IP address must be specified.");
-		} else {
-			if (isset($id) && isset($a_vip[$id])) {
-				$ignore_if = $a_vip[$id]['interface'];
-				$ignore_mode = $a_vip[$id]['mode'];
-				if (isset($a_vip[$id]['uniqid']))
-					$ignore_uniqid = $a_vip[$id]['uniqid'];
-			} else {
-				$ignore_if = $_POST['interface'];
-				$ignore_mode = $_POST['mode'];
-			}
-
-			if (!isset($ignore_uniqid))
-				$ignore_uniqid = $_POST['uniqid'];
-
-			if ($ignore_mode == 'carp' || $ignore_mode == 'ipalias')
-				$ignore_if = "_vip{$ignore_uniqid}";
-
-			if (is_ipaddr_configured($_POST['subnet'], $ignore_if)) {
-				$input_errors[] = gettext("This IP address is being used by another interface or VIP.");
-			}
-
-			unset($ignore_if, $ignore_mode);
-		}
-	}
-
-	$natiflist = get_configured_interface_with_descr();
-	foreach ($natiflist as $natif => $natdescr) {
-		if ($_POST['interface'] == $natif && (empty($config['interfaces'][$natif]['ipaddr']) && empty($config['interfaces'][$natif]['ipaddrv6']))) {
-			$input_errors[] = gettext("The interface chosen for the VIP has no IPv4 or IPv6 address configured so it cannot be used as a parent for the VIP.");
-		}
-	}
-
-	/* ipalias and carp should not use network or broadcast address */
-	if ($_POST['mode'] == "ipalias" || $_POST['mode'] == "carp") {
-		if (is_ipaddrv4($_POST['subnet']) && $_POST['subnet_bits'] != "32" && $_POST['subnet_bits'] != "31") {
-			$network_addr = gen_subnet($_POST['subnet'], $_POST['subnet_bits']);
-			$broadcast_addr = gen_subnet_max($_POST['subnet'], $_POST['subnet_bits']);
-		} else if (is_ipaddrv6($_POST['subnet']) && $_POST['subnet_bits'] != "128") {
-			$network_addr = gen_subnetv6($_POST['subnet'], $_POST['subnet_bits']);
-			$broadcast_addr = gen_subnetv6_max($_POST['subnet'], $_POST['subnet_bits']);
-		}
-
-		if (isset($network_addr) && $_POST['subnet'] == $network_addr) {
-			$input_errors[] = gettext("The network address cannot be used for this VIP");
-		} else if (isset($broadcast_addr) && $_POST['subnet'] == $broadcast_addr) {
-			$input_errors[] = gettext("The broadcast address cannot be used for this VIP");
-		}
-	}
-
-	/* make sure new ip is within the subnet of a valid ip
-	 * on one of our interfaces (wan, lan optX)
-	 */
-	switch ($_POST['mode']) {
-		case 'carp':
-			/* verify against reusage of vhids */
-			$idtracker = 0;
-			foreach ($config['virtualip']['vip'] as $vip) {
-				if ($vip['vhid'] == $_POST['vhid'] && $vip['interface'] == $_POST['interface'] && $idtracker != $id) {
-					$input_errors[] = sprintf(gettext("VHID %1$s is already in use on interface %2$s. Pick a unique number on this interface."), $_POST['vhid'], convert_friendly_interface_to_friendly_descr($_POST['interface']));
-				}
-				$idtracker++;
-			}
-
-			if (empty($_POST['password'])) {
-				$input_errors[] = gettext("A CARP password that is shared between the two VHID members must be specified.");
-			}
-
-			if ($_POST['password'] != $_POST['password_confirm']) {
-				$input_errors[] = gettext("Password and confirm password must match");
-			}
-
-			if ($_POST['interface'] == 'lo0') {
-				$input_errors[] = gettext("For this type of vip localhost is not allowed.");
-			} else if (strstr($_POST['interface'], '_vip')) {
-				$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
-			}
-
-			break;
-		case 'ipalias':
-			/* verify IP alias on CARP has proper address family */
-			if (strstr($_POST['interface'], '_vip')) {
-				$vipif = get_configured_vip($_POST['interface']);
-				if (is_ipaddrv4($_POST['subnet']) && is_ipaddrv6($vipif['subnet'])) {
-					$input_errors[] = gettext("An IPv4 Virtual IP cannot have an IPv6 CARP parent.");
-				}
-				if (is_ipaddrv6($_POST['subnet']) && is_ipaddrv4($vipif['subnet'])) {
-					$input_errors[] = gettext("An IPv6 Virtual IP cannot have an IPv4 CARP parent.");
-				}
-			}
-			break;
-		default:
-			if ($_POST['interface'] == 'lo0') {
-				$input_errors[] = gettext("For this type of vip localhost is not allowed.");
-			} else if (strstr($_POST['interface'], '_vip')) {
-				$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
-			}
-
-			break;
-	}
-
-	if (!$input_errors) {
-		$vipent = array();
-
-		$vipent['mode'] = $_POST['mode'];
-		$vipent['interface'] = $_POST['interface'];
-
-		/* ProxyARP & Other specific fields */
-		if (($_POST['mode'] === "proxyarp") || ($_POST['mode'] === "other")) {
-			$vipent['noexpand'] = isset($_POST['noexpand']);
-		}
-
-		/* CARP specific fields */
-		if ($_POST['mode'] === "carp") {
-			$vipent['vhid'] = $_POST['vhid'];
-			$vipent['advskew'] = $_POST['advskew'];
-			$vipent['advbase'] = $_POST['advbase'];
-
-			if ($_POST['password'] != DMYPWD) {
-				$vipent['password'] = $_POST['password'];
-			} else {
-				$vipent['password'] = $a_vip[$id]['password'];
-			}
-		}
-
-		/* IPalias and CARP should have a uniqid */
-		if ($_POST['mode'] === "carp" || $_POST['mode'] === "ipalias") {
-			if (empty($_POST['uniqid'])) {
-				// if we changed a 'parp' or 'other' alias to 'carp'/'ipalias' it needs a uniqid
-				$vipent['uniqid'] = uniqid();
-			} else {
-				$vipent['uniqid'] = $_POST['uniqid'];
-			}
-		}
-
-		/* Common fields */
-		$vipent['descr'] = $_POST['descr'];
-		if (isset($_POST['type'])) {
-			$vipent['type'] = $_POST['type'];
-		} else {
-			$vipent['type'] = "single";
-		}
-
-		if ($vipent['type'] == "single" || $vipent['type'] == "network") {
-			if (!isset($_POST['subnet_bits'])) {
-				$vipent['subnet_bits'] = "32";
-			} else {
-				$vipent['subnet_bits'] = $_POST['subnet_bits'];
-			}
-
-			$vipent['subnet'] = $_POST['subnet'];
-		}
-
-		if (!isset($id)) {
-			$id = count($a_vip);
-		}
-		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
-			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
-		} else {
-			$toapplylist = array();
-		}
-
-		$toapplylist[$id] = $a_vip[$id];
-
-		if (!empty($a_vip[$id])) {
-			/* modify all virtual IP rules with this address */
-			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
-				if ($config['nat']['rule'][$i]['destination']['address'] == $a_vip[$id]['subnet']) {
-					$config['nat']['rule'][$i]['destination']['address'] = $vipent['subnet'];
-				}
-			}
-		}
-
-		$a_vip[$id] = $vipent;
-
-		if (write_config(gettext("Saved/edited a virtual IP."))) {
-			mark_subsystem_dirty('vip');
-			file_put_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply", serialize($toapplylist));
-		}
-
-		header("Location: firewall_virtual_ip.php");
-		exit;
-	}
+	$_POST['id'] = $id;
+	$rv = saveVIP($_POST);
+	$input_errors = $rv['input_errors'];
+	$a_vip = $rv['a_vip'];
 }
 
 $ipaliashelp = gettext('The mask must be the network\'s subnet mask. It does not specify a CIDR range.');

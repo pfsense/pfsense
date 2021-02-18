@@ -25,6 +25,252 @@ require_once("interfaces.inc");
 require_once("pfsense-utils.inc");
 
 // Functions included by firewall_virtual_ip.php =============================
+function find_last_used_vhid() {
+	global $config, $g;
+
+	$vhid = 0;
+	foreach ($config['virtualip']['vip'] as $vip) {
+		if ($vip['vhid'] > $vhid) {
+			$vhid = $vip['vhid'];
+		}
+	}
+
+	return $vhid;
+}
+
+// Get VIP configuration
+function getVIPs($json = false) {
+	global $config;
+
+	$vips = $config['virtualip']['vip'];
+	$vips['nextvip'] = find_last_used_vhid() + 1;
+
+	return $json ? json_encode($vips) : $vips;
+}
+
+// Save virtual IP changes
+function saveVIP($post, $json = false) {
+	global $config;
+
+	init_config_arr(array('virtualip', 'vip'));
+	$a_vip = &$config['virtualip']['vip'];
+	$rv = array();
+	$id = $post['id'];
+
+	$input_errors = array();
+
+	/* input validation */
+	$reqdfields = explode(" ", "mode");
+	$reqdfieldsn = array(gettext("Type"));
+
+	do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if ($post['subnet']) {
+		$post['subnet'] = trim($post['subnet']);
+	}
+
+	if (is_pseudo_interface(convert_friendly_interface_to_real_interface_name($post['interface']))) {
+		if ($post['mode'] == 'carp') {
+			$input_errors[] = gettext("The interface chosen for the VIP does not support CARP mode.");
+		} elseif ($post['mode'] == 'proxyarp') {
+			$input_errors[] = gettext("The interface chosen for the VIP does not support Proxy ARP mode.");
+		}
+	}
+
+	if ($post['subnet']) {
+		if (!is_ipaddr($post['subnet'])) {
+			$input_errors[] = gettext("A valid IP address must be specified.");
+		} else {
+			if (isset($id) && isset($a_vip[$id])) {
+				$ignore_if = $a_vip[$id]['interface'];
+				$ignore_mode = $a_vip[$id]['mode'];
+				if (isset($a_vip[$id]['uniqid']))
+					$ignore_uniqid = $a_vip[$id]['uniqid'];
+			} else {
+				$ignore_if = $post['interface'];
+				$ignore_mode = $post['mode'];
+			}
+
+			if (!isset($ignore_uniqid))
+				$ignore_uniqid = $post['uniqid'];
+
+			if ($ignore_mode == 'carp' || $ignore_mode == 'ipalias')
+				$ignore_if = "_vip{$ignore_uniqid}";
+
+			if (is_ipaddr_configured($post['subnet'], $ignore_if)) {
+				$input_errors[] = gettext("This IP address is being used by another interface or VIP.");
+			}
+
+			unset($ignore_if, $ignore_mode);
+		}
+	}
+
+	$natiflist = get_configured_interface_with_descr();
+	foreach ($natiflist as $natif => $natdescr) {
+		if ($post['interface'] == $natif && (empty($config['interfaces'][$natif]['ipaddr']) && empty($config['interfaces'][$natif]['ipaddrv6']))) {
+			$input_errors[] = gettext("The interface chosen for the VIP has no IPv4 or IPv6 address configured so it cannot be used as a parent for the VIP.");
+		}
+	}
+
+	/* ipalias and carp should not use network or broadcast address */
+	if ($post['mode'] == "ipalias" || $post['mode'] == "carp") {
+		if (is_ipaddrv4($post['subnet']) && $post['subnet_bits'] != "32" && $post['subnet_bits'] != "31") {
+			$network_addr = gen_subnet($post['subnet'], $post['subnet_bits']);
+			$broadcast_addr = gen_subnet_max($post['subnet'], $post['subnet_bits']);
+		} else if (is_ipaddrv6($post['subnet']) && $post['subnet_bits'] != "128") {
+			$network_addr = gen_subnetv6($post['subnet'], $post['subnet_bits']);
+			$broadcast_addr = gen_subnetv6_max($post['subnet'], $post['subnet_bits']);
+		}
+
+		if (isset($network_addr) && $post['subnet'] == $network_addr) {
+			$input_errors[] = gettext("The network address cannot be used for this VIP");
+		} else if (isset($broadcast_addr) && $post['subnet'] == $broadcast_addr) {
+			$input_errors[] = gettext("The broadcast address cannot be used for this VIP");
+		}
+	}
+
+	/* make sure new ip is within the subnet of a valid ip
+	 * on one of our interfaces (wan, lan optX)
+	 */
+	switch ($post['mode']) {
+		case 'carp':
+			/* verify against reusage of vhids */
+			$idtracker = 0;
+			foreach ($config['virtualip']['vip'] as $vip) {
+				if ($vip['vhid'] == $post['vhid'] && $vip['interface'] == $post['interface'] && $idtracker != $id) {
+					$input_errors[] = sprintf(gettext("VHID %1$s is already in use on interface %2$s. Pick a unique number on this interface."), $post['vhid'], convert_friendly_interface_to_friendly_descr($post['interface']));
+				}
+				$idtracker++;
+			}
+
+			if (empty($post['password'])) {
+				$input_errors[] = gettext("A CARP password that is shared between the two VHID members must be specified.");
+			}
+
+			if ($post['password'] != $post['password_confirm']) {
+				$input_errors[] = gettext("Password and confirm password must match");
+			}
+
+			if ($post['interface'] == 'lo0') {
+				$input_errors[] = gettext("For this type of vip localhost is not allowed.");
+			} else if (strstr($post['interface'], '_vip')) {
+				$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
+			}
+
+			break;
+		case 'ipalias':
+			/* verify IP alias on CARP has proper address family */
+			if (strstr($post['interface'], '_vip')) {
+				$vipif = get_configured_vip($post['interface']);
+				if (is_ipaddrv4($post['subnet']) && is_ipaddrv6($vipif['subnet'])) {
+					$input_errors[] = gettext("An IPv4 Virtual IP cannot have an IPv6 CARP parent.");
+				}
+				if (is_ipaddrv6($post['subnet']) && is_ipaddrv4($vipif['subnet'])) {
+					$input_errors[] = gettext("An IPv6 Virtual IP cannot have an IPv4 CARP parent.");
+				}
+			}
+			break;
+		default:
+			if ($post['interface'] == 'lo0') {
+				$input_errors[] = gettext("For this type of vip localhost is not allowed.");
+			} else if (strstr($post['interface'], '_vip')) {
+				$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
+			}
+
+			break;
+	}
+
+	if (!$input_errors) {
+		$vipent = array();
+
+		$vipent['mode'] = $post['mode'];
+		$vipent['interface'] = $post['interface'];
+
+		/* ProxyARP & Other specific fields */
+		if (($post['mode'] === "proxyarp") || ($post['mode'] === "other")) {
+			$vipent['noexpand'] = isset($post['noexpand']);
+		}
+
+		/* CARP specific fields */
+		if ($post['mode'] === "carp") {
+			$vipent['vhid'] = $post['vhid'];
+			$vipent['advskew'] = $post['advskew'];
+			$vipent['advbase'] = $post['advbase'];
+
+			if ($post['password'] != DMYPWD) {
+				$vipent['password'] = $post['password'];
+			} else {
+				$vipent['password'] = $a_vip[$id]['password'];
+			}
+		}
+
+		/* IPalias and CARP should have a uniqid */
+		if ($post['mode'] === "carp" || $post['mode'] === "ipalias") {
+			if (empty($post['uniqid'])) {
+				// if we changed a 'parp' or 'other' alias to 'carp'/'ipalias' it needs a uniqid
+				$vipent['uniqid'] = uniqid();
+			} else {
+				$vipent['uniqid'] = $post['uniqid'];
+			}
+		}
+
+		/* Common fields */
+		$vipent['descr'] = $post['descr'];
+		if (isset($post['type'])) {
+			$vipent['type'] = $post['type'];
+		} else {
+			$vipent['type'] = "single";
+		}
+
+		if ($vipent['type'] == "single" || $vipent['type'] == "network") {
+			if (!isset($post['subnet_bits'])) {
+				$vipent['subnet_bits'] = "32";
+			} else {
+				$vipent['subnet_bits'] = $post['subnet_bits'];
+			}
+
+			$vipent['subnet'] = $post['subnet'];
+		}
+
+		if (!isset($id)) {
+			$id = count($a_vip);
+		}
+		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
+			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
+		} else {
+			$toapplylist = array();
+		}
+
+		$toapplylist[$id] = $a_vip[$id];
+
+		if (!empty($a_vip[$id])) {
+			/* modify all virtual IP rules with this address */
+			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
+				if ($config['nat']['rule'][$i]['destination']['address'] == $a_vip[$id]['subnet']) {
+					$config['nat']['rule'][$i]['destination']['address'] = $vipent['subnet'];
+				}
+			}
+		}
+
+		$a_vip[$id] = $vipent;
+
+		if (write_config(gettext("Saved/edited a virtual IP."))) {
+			mark_subsystem_dirty('vip');
+			file_put_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply", serialize($toapplylist));
+		}
+
+		if (!$json) {
+			header("Location: firewall_virtual_ip.php");
+			exit;
+		}
+	}
+
+	$rv['input_errors'] = $input_errors;
+	$rv['a_vip'] = $a_vip;
+
+	return $json? json_encode($rv) : $rv;
+}
+
 // Apply changes
 function applyVIP() {
 	$rv = array();

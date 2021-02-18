@@ -2803,7 +2803,7 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 
 	$params = '';
 	if (!empty($iface) && does_interface_exist($iface)) {
-		$params .= " -iface {$gw}";
+		$params .= " -iface {$iface}";
 	}
 	if (is_ipaddr($gw)) {
 		$params .= " " . $gw;

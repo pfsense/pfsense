@@ -598,11 +598,19 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 
 var lastTotal = 0;
 var lastUsed = 0;
+
 // Collect some PHP values required by the states calculation
+<?php if (!in_array('state_table_size', $skipsysinfoitems)): ?>
 var adaptiveend = <?=$adaptiveend?>;
 var adaptivestart = <?=$adaptivestart?>;
 var maxstates = <?=$maxstates?>;
 var state_tt = "<?=$state_tt?>";
+<?php else: ?>
+var adaptiveend = 0;
+var adaptivestart = 0;
+var maxstates = 0;
+var state_tt = "";
+<?php endif; ?>
 
 function setProgress(barName, percent) {
 	$('[id="' + barName + '"]').css('width', percent + '%').attr('aria-valuenow', percent);

@@ -42,10 +42,16 @@ function find_last_used_vhid() {
 function getVIPs($json = false) {
 	global $config;
 
-	$vips = $config['virtualip']['vip'];
-	$vips['nextvip'] = find_last_used_vhid() + 1;
+	$vips = array();
 
-	return $json ? json_encode($vips) : $vips;
+	foreach ($config['virtualip']['vip'] as $vip) {
+		$vips[] = $vip;
+	}
+
+	$rv = array();
+	$rv['virtualips'] = $vips;
+
+	return $json ? json_encode($rv) : $rv;
 }
 
 // Save virtual IP changes

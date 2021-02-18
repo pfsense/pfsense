@@ -2523,16 +2523,8 @@ function ipsec_setup_secrets() {
 					continue;
 				}
 
-				if ($myid_type == 'fqdn' && !empty($myid)) {
-					$myid = "@{$myid}";
-				}
-
 				$myid = isset($ph1ent['mobile']) ? ipsec_fixup_id($myid_type, trim($myid_data)) : "%any";
 				$peerid = ($peerid_data != 'allusers') ? ipsec_fixup_id($peerid_type, trim($peerid_data)) : '';
-
-				if ($peerid_type == 'fqdn' && !empty($peerid)) {
-					$peerid = "@{$peerid}";
-				}
 
 				if (!empty($ph1ent['pre-shared-key'])) {
 					$scconf['secrets']['ike-' . $suffix++] = array(

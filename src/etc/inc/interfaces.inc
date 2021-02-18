@@ -5783,6 +5783,9 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 		case "openvpn":
 			$ifdesc = "OpenVPN";
 			break;
+		case "wireguard":
+			$ifdesc = "WireGuard";
+			break;
 		case "lo0":
 			$ifdesc = "Loopback";
 			break;

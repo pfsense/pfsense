@@ -224,43 +224,168 @@ function get_cpufreq() {
 	return $out;
 }
 
-function get_cpu_crypto_support() {
+define("INTEL_C2000_IQIA_PHYS", "0x1f188086");
+define("INTEL_C3K_QAT", "0x19e28086");
+define("INTEL_C3K_QAT_VF", "0x19e38086");
+define("INTEL_C620_QAT", "0x37c88086");
+define("INTEL_C620_QAT_VF", "0x37c98086");
+define("INTEL_XEOND_QAT", "0x6f548086");
+define("INTEL_XEOND_QAT_VF", "0x6f558086");
+define("INTEL_DH895XCC_QAT", "0x04358086");
+define("INTEL_DH895XCC_QAT_VF", "0x04438086");
+define("AESNI_ALGS", "AES-CBC,AES-CCM,AES-GCM,AES-ICM,AES-XTS");
+define("AESNI_ALGS_SHA", "SHA1,SHA256");
+define("QAT_ALGS", "AES-CBC,AES-CCM,AES-GCM,AES-ICM,AES-XTS,SHA1,SHA256,SHA384,SHA512");
+
+function crypto_accel_new($name = "", $algs = "") {
+	return (array("name" => $name, "present" => false, "enabled" => false, "algs" => explode(",", $algs)));
+}
+
+function crypto_accel_init() {
 	$machine = get_single_sysctl('hw.machine');
-	$accelerated_arm_platforms = array('am335x');
-	$cpucrypto_type = "";
+
+	/* Defaults */
+	$crypto = array();
+	$crypto["accel"] = array();
 
 	switch ($machine) {
 	case 'amd64':
-		$cpucrypto_type = "AES-NI CPU Crypto: ";
-		exec("/usr/bin/grep -c '  Features.*AESNI' /var/log/dmesg.boot", $cpucrypto_present);
-		if ($cpucrypto_present[0] > 0) {
-			$cpucrypto_type .= "Yes ";
-			$cpucrypto_type .= (is_module_loaded('aesni')) ? "(active)" : "(inactive)";
+		$crypto["accel"][] = crypto_accel_new("AESNI", AESNI_ALGS);
+		$crypto["accel"][] = crypto_accel_new("QAT", QAT_ALGS);
+		break;
+	}
+
+	return ($crypto);
+}
+
+function crypto_accel_set_flags($crypto, $name, $present = false, $enabled = false) {
+
+	foreach ($crypto["accel"] as $id => &$accel) {
+		if ($accel["name"] != $name) {
+			continue;
+		}
+		$accel["present"] = $present;
+		$accel["enabled"] = $enabled;
+	}
+
+	return ($crypto);
+}
+
+function crypto_accel_get($crypto, $name, $key) {
+
+	foreach ($crypto["accel"] as $id => $accel) {
+		if ($accel["name"] != $name) {
+			continue;
+		}
+                return ($accel[$key]);
+	}
+
+	return ("");
+}
+
+function crypto_accel_set_algs($crypto, $name, $algs) {
+
+	foreach ($crypto["accel"] as $id => &$accel) {
+		if ($accel["name"] != $name) {
+			continue;
+		}
+		$a = explode(",", $algs);
+		$m = array_merge($accel["algs"], $a);
+		$accel["algs"] = array_unique($m, SORT_STRING);
+	}
+
+	return ($crypto);
+}
+
+function crypto_accel_get_algs($crypto) {
+	$algs = array();
+	$algs_str = "";
+
+	foreach ($crypto["accel"] as $id => $accel) {
+		if (!$accel["present"] || !$accel["enabled"]) {
+			continue;
+		}
+		$algs = array_merge($accel["algs"], $algs);
+	}
+	foreach (array_unique($algs, SORT_STRING) as $id => $alg) {
+		if (strlen($algs_str) > 0) {
+			$algs_str .= ",";
+		}
+		$algs_str .= $alg;
+	}
+
+	return ($algs_str);
+}
+
+
+function get_cpu_crypto_support() {
+	global $g;
+	$machine = get_single_sysctl('hw.machine');
+	$QATIDS = array(INTEL_C2000_IQIA_PHYS, INTEL_C3K_QAT, INTEL_C3K_QAT_VF, INTEL_C620_QAT, INTEL_C620_QAT_VF,
+			INTEL_XEOND_QAT, INTEL_XEOND_QAT_VF, INTEL_DH895XCC_QAT, INTEL_DH895XCC_QAT_VF);
+
+	/* Defaults */
+	$crypto = crypto_accel_init();
+
+	switch ($machine) {
+	case 'amd64':
+		$fd = @fopen("{$g['varlog_path']}/dmesg.boot", "r");
+		while ($fd && !feof($fd)) {
+			$dmesgl = fgets($fd);
+			if (preg_match("/^  Features2.*AESNI/", $dmesgl, $matches)) {
+				$crypto = crypto_accel_set_flags($crypto, "AESNI", true, (is_module_loaded('aesni')) ? true : false);
+			}
+			if (preg_match("/^  Structured Extended Features.*SHA/", $dmesgl, $matches)) {
+				$crypto = crypto_accel_set_algs($crypto, "AESNI", AESNI_ALGS_SHA);
+			}
+		}
+		if ($fd) {
+			fclose($fd);
+		}
+		exec("/usr/sbin/pciconf -l | /usr/bin/awk '{ printf \"%s\\n\", $4 }' | /usr/bin/cut -f2 -d=", $pciids);
+		if (isset($pciids) && is_array($pciids)) {
+			foreach ($pciids as $id => $pciid) {
+				if (in_array($pciid, $QATIDS)) {
+					$crypto = crypto_accel_set_flags($crypto, "QAT", true, (is_module_loaded('qat')) ? true : false);
+					break;
+				}
+			}
+		}
+		break;
+	}
+
+	return ($crypto);
+}
+
+function get_cpu_crypto_string($crypto) {
+	$machine = get_single_sysctl('hw.machine');
+	$string = "";
+
+	switch ($machine) {
+	case 'amd64':
+		$string = "AES-NI CPU Crypto: ";
+		if (crypto_accel_get($crypto, "AESNI", "present")) {
+			$string .= "Yes ";
+			$string .= crypto_accel_get($crypto, "AESNI", "enabled") ? "(active)" : "(inactive)";
 		} else {
-			$cpucrypto_type .= "No";
+			$string .= "No";
+		}
+		$string .= "<br>\n";
+		$string .= "QAT Crypto: ";
+		if (crypto_accel_get($crypto, "QAT", "present")) {
+			$string .= "Yes ";
+			$string .= crypto_accel_get($crypto, "QAT", "enabled") ? "(active)" : "(inactive)";
+		} else {
+			$string .= "No";
 		}
 		break;
-	case 'arm':
-		$armplatform = get_single_sysctl('hw.platform');
-		if (in_array($armplatform, $accelerated_arm_platforms)) {
-		/* No drivers yet, so mark inactive! */
-			$cpucrypto_type = "{$armplatform} built-in CPU Crypto (inactive)";
-			break;
-		}
-		$armmv = get_single_sysctl('hw.mv_soc_model');
-		if (strpos($armmv, "Marvell 88F682") != 0) {
-			$cpucrypto_type = "Crypto: ". get_single_sysctl('dev.cesa.0.%desc');
-		}
-		break;
-	default:
-		/* Unknown/unidentified platform */
 	}
 
-	if (!empty($cpucrypto_type)) {
-		return $cpucrypto_type;
+	if (strlen($string) == 0) {
+		$string = "CPU Crypto: None/Unknown Platform";
 	}
 
-	return "CPU Crypto: None/Unknown Platform";
+	return ($string);
 }
 
 function get_cpu_count($show_detail = false) {

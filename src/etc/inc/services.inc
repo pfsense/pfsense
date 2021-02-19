@@ -2438,7 +2438,10 @@ function services_unbound_configure($restart_dhcp = true) {
 			if (!is_dir("{$g['unbound_chroot_path']}/dev")) {
 				safe_mkdir("{$g['unbound_chroot_path']}/dev");
 			}
-			exec("/sbin/mount -t devfs devfs " . escapeshellarg("{$g['unbound_chroot_path']}/dev"));
+			$status = "/sbin/mount | /usr/bin/grep " .  escapeshellarg("{$g['unbound_chroot_path']}/dev");
+			if (!trim($status)) {
+				exec("/sbin/mount -t devfs devfs " . escapeshellarg("{$g['unbound_chroot_path']}/dev"));
+			}
 		} else {
 			if (is_dir("{$g['unbound_chroot_path']}/dev")) {
 				exec("/sbin/umount -f " . escapeshellarg("{$g['unbound_chroot_path']}/dev"));

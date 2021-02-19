@@ -1388,11 +1388,6 @@ function openvpn_reconfigure($mode, $settings) {
 
 	// New client features
 	if ($mode == "client") {
-		// Dont pull routes checkbox
-		if ($settings['route_no_pull']) {
-			$conf .= "route-nopull\n";
-		}
-
 		// Dont add/remove routes checkbox
 		if ($settings['route_no_exec']) {
 			$conf .= "route-noexec\n";
@@ -1423,6 +1418,12 @@ function openvpn_reconfigure($mode, $settings) {
 	}
 
 	openvpn_add_custom($settings, $conf);
+
+	/* add nopull option after custom options, see https://redmine.pfsense.org/issues/11448 */
+	if (($mode == "client") && $settings['route_no_pull']) {
+		// Dont pull routes checkbox
+		$conf .= "route-nopull\n";
+	}
 
 	openvpn_create_dirs();
 	$fpath = "{$g['openvpn_base']}/{$mode_id}/config.ovpn";

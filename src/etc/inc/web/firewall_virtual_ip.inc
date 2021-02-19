@@ -69,7 +69,9 @@ function saveVIP($post, $json = false) {
 	$reqdfields = explode(" ", "mode");
 	$reqdfieldsn = array(gettext("Type"));
 
-	do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
+	if (!$json) {
+		do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
+	}
 
 	if ($post['subnet']) {
 		$post['subnet'] = trim($post['subnet']);

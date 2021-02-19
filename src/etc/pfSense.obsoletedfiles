@@ -51,6 +51,7 @@
 /etc/inc/xmlrpc.inc
 /etc/inc/xmlrpc_server.inc
 /etc/inc/zeromq.inc
+/etc/inc/web/system_advanced.inc
 /etc/inetd.conf
 /etc/isdn
 /etc/libmap32.conf

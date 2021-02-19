@@ -216,24 +216,7 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 
 ## Find out whether there's hardware encryption or not
 unset($hwcrypto);
-$fd = @fopen("{$g['varlog_path']}/dmesg.boot", "r");
-if ($fd) {
-	while (!feof($fd)) {
-		$dmesgl = fgets($fd);
-		if (preg_match("/^hifn.: (.*?),/", $dmesgl, $matches)
-			or preg_match("/.*(VIA Padlock)/", $dmesgl, $matches)
-			or preg_match("/^safe.: (\w.*)/", $dmesgl, $matches)
-			or preg_match("/^ubsec.: (.*?),/", $dmesgl, $matches)
-			or preg_match("/^padlock.: <(.*?)>,/", $dmesgl, $matches)) {
-			$hwcrypto = $matches[1];
-			break;
-		}
-	}
-	fclose($fd);
-	if (!isset($hwcrypto) && get_single_sysctl("dev.aesni.0.%desc")) {
-		$hwcrypto = get_single_sysctl("dev.aesni.0.%desc");
-	}
-}
+$hwcrypto = get_cpu_crypto_support();
 
 ##build widget saved list information
 if ($user_settings['widgets']['sequence'] != "") {

@@ -293,7 +293,7 @@ function print_gps() {
 
 	print("</tr>\n");
 	print("<tr>\n");
-	print('<td colspan="' . $gps_goo_lnk . '"><a target="_gmaps" href="http://maps.google.com/?q=' . $gps_lat . ',' . $gps_lon . '">' . gettext("Google Maps Link") . '</a></td>');
+	print('<td colspan="' . $gps_goo_lnk . '"><a target="_gmaps" href="https://maps.google.com/?q=' . $gps_lat . ',' . $gps_lon . '">' . gettext("Google Maps Link") . '</a></td>');
 	print("</tr>\n");
 }
 

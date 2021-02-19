@@ -35,6 +35,7 @@ require_once("auth.inc");
 require_once("filter.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("openvpn.inc");
 require_once("captiveportal.inc");
 require_once("shaper.inc");
 require_once("XML/RPC2/Server.php");
@@ -189,7 +190,7 @@ class pfsense_xmlrpc_server {
 	public function restore_config_section($sections) {
 		$this->auth();
 
-		global $config, $cpzone, $cpzoneid;
+		global $config, $cpzone, $cpzoneid, $old_config;
 
 		$old_config = $config;
 		$old_ipsec_enabled = ipsec_enabled();
@@ -209,7 +210,6 @@ class pfsense_xmlrpc_server {
 			'cert',
 			'crl',
 			'dhcpd',
-			'dhcpv6',
 			'dnshaper',
 			'dnsmasq',
 			'filter',
@@ -524,6 +524,7 @@ class pfsense_xmlrpc_server {
 		 * This is a copy of interfaces_vips_configure with addition of
 		 * not reloading existing/not changed carps
 		 */
+		$force_filterconfigure = false;
 		if (isset($sections['virtualip']) &&
 		    is_array($config['virtualip']) &&
 		    is_array($config['virtualip']['vip'])) {
@@ -582,6 +583,7 @@ class pfsense_xmlrpc_server {
 					interface_carp_configure($vip);
 					break;
 				}
+				$force_filterconfigure = true;
 			}
 
 			/* Cleanup remaining old carps */
@@ -616,10 +618,9 @@ class pfsense_xmlrpc_server {
 			ipsec_configure();
 		}
 
-		unset($old_config);
-
 		local_sync_accounts($u2add, $u2del, $g2add, $g2del);
-		$this->filter_configure(false);
+		$this->filter_configure(false, $force_filterconfigure);
+		unset($old_config);
 
 		return true;
 	}
@@ -683,38 +684,91 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return bool
 	 */
-	private function filter_configure($reset_accounts = true) {
-		global $g, $config;
+	private function filter_configure($reset_accounts = true, $force = false) {
+		global $g, $config, $old_config;
 
 		filter_configure();
 		system_routing_configure();
 		setup_gateways_monitor();
-		require_once("openvpn.inc");
-		openvpn_resync_all();
+
+		/* do not restart unchanged services on XMLRPC sync,
+		 * see https://redmine.pfsense.org/issues/11082 
+		 */
+		if (is_array($config['openvpn']) || is_array($old_config['openvpn'])) {
+			foreach (array("server", "client") as $type) {
+				$remove_id = array();
+				if (is_array($old_config['openvpn']["openvpn-{$type}"])) {
+					foreach ($old_config['openvpn']["openvpn-{$type}"] as & $old_settings) {
+						$remove_id[] = $old_settings['vpnid'];
+					}
+				}
+				if (!is_array($config['openvpn']["openvpn-{$type}"])) {
+					continue;
+				}
+				foreach ($config['openvpn']["openvpn-{$type}"] as & $settings) {
+					$new_instance = true;
+					if (in_array($settings['vpnid'], $remove_id)) {
+						$remove_id = array_diff($remove_id, array($settings['vpnid']));
+					}
+					if (is_array($old_config['openvpn']["openvpn-{$type}"])) {
+						foreach ($old_config['openvpn']["openvpn-{$type}"] as & $old_settings) {
+							if ($settings['vpnid'] == $old_settings['vpnid']) {
+								$new_instance = false;
+								if (($settings != $old_settings) || $force) {
+									/* restart changed openvpn instance */
+									openvpn_resync($type, $settings);
+									break;
+								}
+							}
+						}
+					}
+					if ($new_instance) {
+						/* start new openvpn instance */
+						openvpn_resync($type, $settings);
+					}
+				}
+				if (!empty($remove_id)) {
+					foreach ($remove_id as $id) {
+						/* stop/delete removed openvpn instances */
+						openvpn_delete($type, array('vpnid' => $id));
+					}
+				}
+			}
+			/* no service restart required */
+			openvpn_resync_csc_all();
+		}
 
 		/*
 		 * The DNS Resolver and the DNS Forwarder may both be active so
 		 * long as * they are running on different ports.
 		 * See ticket #5882
 		 */
-		if (isset($config['dnsmasq']['enable'])) {
-			/* Configure dnsmasq but tell it NOT to restart DHCP */
-			services_dnsmasq_configure(false);
-		} else {
-			/* kill any running dnsmasq instance */
-			if (isvalidpid("{$g['varrun_path']}/dnsmasq.pid")) {
-				sigkillbypid("{$g['varrun_path']}/dnsmasq.pid",
-				    "TERM");
+		if (((is_array($config['dnsmasq']) || is_array($old_config['dnsmasq'])) &&
+		    ($config['dnsmasq'] != $old_config['dnsmasq'])) ||
+		    $force) {
+			if (isset($config['dnsmasq']['enable'])) {
+				/* Configure dnsmasq but tell it NOT to restart DHCP */
+				services_dnsmasq_configure(false);
+			} else {
+				/* kill any running dnsmasq instance */
+				if (isvalidpid("{$g['varrun_path']}/dnsmasq.pid")) {
+					sigkillbypid("{$g['varrun_path']}/dnsmasq.pid",
+					    "TERM");
+				}
 			}
 		}
-		if (isset($config['unbound']['enable'])) {
-			/* Configure unbound but tell it NOT to restart DHCP */
-			services_unbound_configure(false);
-		} else {
-			/* kill any running Unbound instance */
-			if (isvalidpid("{$g['varrun_path']}/unbound.pid")) {
-				sigkillbypid("{$g['varrun_path']}/unbound.pid",
-				    "TERM");
+		if (((is_array($config['unbound']) || is_array($old_config['unbound'])) &&
+		    ($config['unbound'] != $old_config['unbound'])) ||
+		    $force) {
+			if (isset($config['unbound']['enable'])) {
+				/* Configure unbound but tell it NOT to restart DHCP */
+				services_unbound_configure(false);
+			} else {
+				/* kill any running Unbound instance */
+				if (isvalidpid("{$g['varrun_path']}/unbound.pid")) {
+					sigkillbypid("{$g['varrun_path']}/unbound.pid",
+					    "TERM");
+				}
 			}
 		}
 
@@ -724,14 +778,26 @@ class pfsense_xmlrpc_server {
 		 * This avoids restarting dhcpd twice as described on
 		 * ticket #3797
 		 */
-		services_dhcpd_configure();
+		if (((is_array($config['dhcpd']) || is_array($old_config['dhcpd'])) &&
+		    ($config['dhcpd'] != $old_config['dhcpd'])) ||
+		    $force) {
+			services_dhcpd_configure();
+		}
 
 		if ($reset_accounts) {
 			local_reset_accounts();
 		}
 
-		captiveportal_configure();
-		voucher_configure();
+		if ((is_array($config['captiveportal']) || is_array($old_config['captiveportal']) &&
+		    ($config['captiveportal'] != $old_config['captiveportal'])) ||
+		    $force) {
+			captiveportal_configure();
+		}
+		if ((is_array($config['voucher']) || is_array($old_config['voucher']) &&
+		    ($config['voucher'] != $old_config['voucher'])) ||
+		    $force) {
+			voucher_configure();
+		}
 
 		return true;
 	}

@@ -112,6 +112,11 @@ $a_ca = &$config['ca'];
 
 $act = $_REQUEST['act'];
 
+if ($act == 'dup') {
+	$dup = true;
+	$act = 'edit';
+}
+
 if ($_POST['act'] == "del") {
 
 	if (!$a_server[$_POST['id']]) {
@@ -139,7 +144,9 @@ if ($act == "edit") {
 	if (isset($id) && $a_server[$id]) {
 
 		$pconfig['type'] = $a_server[$id]['type'];
-		$pconfig['name'] = $a_server[$id]['name'];
+		if (!$dup) {
+			$pconfig['name'] = $a_server[$id]['name'];
+		}
 
 		if ($pconfig['type'] == "ldap") {
 			$pconfig['ldap_caref'] = $a_server[$id]['ldap_caref'];
@@ -208,6 +215,10 @@ if ($act == "new") {
 	$pconfig['radius_srvcs'] = "both";
 	$pconfig['radius_auth_port'] = "1812";
 	$pconfig['radius_acct_port'] = "1813";
+}
+
+if ($dup) {
+	unset($id);
 }
 
 if ($_POST['save']) {
@@ -519,6 +530,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 						<td>
 						<?php if ($i < (count($a_server) - 1)): ?>
 							<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>"></a>
+							<a class="fa fa-clone" title="<?=gettext("Copy server"); ?>" href="system_authservers.php?act=dup&amp;id=<?=$i?>"></a>
 							<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>" usepost></a>
 						<?php endif?>
 						</td>
@@ -1065,7 +1077,7 @@ events.push(function() {
 		});
 
 <?php
-		if (!$input_errors) {
+		if (!$input_errors && !$dup) {
 ?>
 		$('#name').prop("readonly", true);
 <?php

@@ -678,6 +678,21 @@ events.push(function() {
 				hideInput('zoneid', true);
 				hideInput('ttl', false);
 				break;
+			case "mythicbeasts-v6":
+			case "mythicbeasts":
+				hideGroupInput('domainname', false);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('host', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				hideCheckbox('proxied', true);
+				hideInput('zoneid', true);
+				hideInput('ttl', true);
+				break;
 			default:
 				hideGroupInput('domainname', true);
 				hideInput('resultmatch', true);

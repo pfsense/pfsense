@@ -266,7 +266,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 				</div>
 		<?php endif; ?>
 				<div id="cpucrypto">
-					<?= get_cpu_crypto_support(); ?>
+					<?= get_cpu_crypto_string($hwcrypto); ?>
 				</div>
 			</td>
 		</tr>
@@ -278,7 +278,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<?php if ($hwcrypto): ?>
 		<tr>
 			<th><?=gettext("Hardware crypto");?></th>
-			<td><?=htmlspecialchars($hwcrypto);?></td>
+			<td><?=htmlspecialchars(crypto_accel_get_algs($hwcrypto));?></td>
 		</tr>
 		<?php endif; ?>
 <?php

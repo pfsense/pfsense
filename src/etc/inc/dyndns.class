@@ -304,6 +304,7 @@
 				case 'godaddy-v6':
 				case 'azurev6':
 				case 'linode-v6':
+				case 'mythicbeasts-v6':
 				case 'noip-v6':
 				case 'noip-free-v6':
 				case 'dynv6-v6':
@@ -415,6 +416,8 @@
 					case 'gandi-livedns-v6':
 					case 'dynv6':
 					case 'dynv6-v6':
+					case 'mythicbeasts':
+					case 'mythicbeasts-v6':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -768,6 +771,23 @@
 					*/
 					$needsIP = FALSE;
 					$server = "https://{$this->_dnsUser}:{$this->_dnsPass}@api.domeneshop.no/v0/dyndns/update?hostname={$this->_dnsHost}&myip={$this->_dnsIP}";
+					curl_setopt($ch, CURLOPT_URL, $server);
+					break;
+				case 'mythicbeasts':
+				case 'mythicbeasts-v6':
+					/* Example:
+						https://{login}:{password}@https://api.mythic-beasts.com/dns/v2/zones/example.com/records/test1/A -d data=1.2.3.4
+					*/
+					$needsIP = FALSE;
+					if ($this->_useIPv6) {
+						$record = "AAAA"; 
+					} else {
+						$record = "A"; 
+					}
+					$post_data['data'] = $this->_dnsIP;
+					$server = "https://api.mythic-beasts.com/dns/v2/zones/{$this->_dnsDomain}/records/{$this->_dnsHost}/{$record}";
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					curl_setopt($ch, CURLOPT_URL, $server);
 					break;
 				case 'namecheap':
@@ -2000,6 +2020,17 @@
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 						$this->_debug($data);
+					}
+					break;
+				case 'mythicbeasts':
+				case 'mythicbeasts-v6':
+					/* https://www.mythic-beasts.com/support/api/dnsv2/tutorial */
+					$result = json_decode($data, true);
+					if ($result['message'] == '1 records added') {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+						$successful_update = true;
+					} else {
+						log_error($status_intro . " ( " . gettext("Error message: ") . $result['error'] . " )");
 					}
 					break;
 				case 'namecheap':

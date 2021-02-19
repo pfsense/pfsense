@@ -26,8 +26,8 @@
  */
 
 
-define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsmadeeasy dnsomatic domeneshop domeneshop-v6 dreamhost dreamhost-v6 duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns easydns-v6 eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns gandi-livedns-v6 godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia namecheap noip noip-v6 noip-free noip-free-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,Domeneshop,Domeneshop (v6),DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,easyDNS (v6),Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi Live DNS,Gandi Live DNS (v6),GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,Namecheap,No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsmadeeasy dnsomatic domeneshop domeneshop-v6 dreamhost dreamhost-v6 duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns easydns-v6 eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns gandi-livedns-v6 godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia mythicbeasts mythicbeasts-v6 namecheap noip noip-v6 noip-free noip-free-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,Domeneshop,Domeneshop (v6),DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,easyDNS (v6),Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi Live DNS,Gandi Live DNS (v6),GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,,Mythic Beasts,Mythic Beasts (v6),Namecheap,No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -122,13 +122,17 @@ function services_radvd_configure($blacklist = array()) {
 		}
 
 		if (is_numericint($dhcpv6ifconf['ramaxrtradvinterval'])) {
-			$radvdconf .= "\tMaxRtrAdvInterval {$dhcpv6ifconf['ramaxrtradvinterval']};\n";
+			$ramaxrtradvinterval = $dhcpv6ifconf['ramaxrtradvinterval'];
 		} else {
-			$radvdconf .= "\tMaxRtrAdvInterval 20;\n";
+			$ramaxrtradvinterval = 20;
 		}
+		$radvdconf .= "\tMaxRtrAdvInterval {$ramaxrtradvinterval};\n";
 		if (is_numericint($dhcpv6ifconf['raadvdefaultlifetime'])) {
-			$radvdconf .= "\tAdvDefaultLifetime {$dhcpv6ifconf['raadvdefaultlifetime']};\n";
+			$raadvdefaultlifetime = $dhcpv6ifconf['raadvdefaultlifetime'];
+		} else {
+			$raadvdefaultlifetime = $ramaxrtradvinterval * 3;
 		}
+		$radvdconf .= "\tAdvDefaultLifetime {$raadvdefaultlifetime};\n";
 
 		$mtu = get_interface_mtu($realif);
 		if (is_numeric($mtu)) {
@@ -267,7 +271,16 @@ function services_radvd_configure($blacklist = array()) {
 			if (count($dnslist) > 0) {
 				$dnsstring = implode(" ", $dnslist);
 				if ($dnsstring <> "") {
-					$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
+					/* 
+					 * The value of Lifetime SHOULD by default be at least
+					 * 3 * MaxRtrAdvInterval, where MaxRtrAdvInterval is the
+					 * maximum RA interval as defined in [RFC4861].
+					 * see https://redmine.pfsense.org/issues/11105 
+					 */
+					$raadvrdnsslifetime = $ramaxrtradvinterval * 3;
+					$radvdconf .= "\tRDNSS {$dnsstring} {\n";
+					$radvdconf .= "\t\tAdvRDNSSLifetime {$raadvrdnsslifetime};\n";
+					$radvdconf .= "\t};\n";
 				}
 			}
 

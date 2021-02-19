@@ -27,7 +27,7 @@ function trafficshowDiv(incDiv,ifDescription,refreshIntervalSec,swapButtons) {
 		'<object data="graph.php?ifnum=' + incDiv + '&amp;ifname=' + ifDescription + '&amp;timeint=' + refreshIntervalSec + '&amp;initdelay=0" height="100%" width="100%">' +
 		'<param name="id" value="graph" />' +
 		'<param name="type" value="image/svg+xml" />' +
-		'<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />' +
+		'<param name="pluginspage" value="https://www.adobe.com/svg/viewer/install/auto" />' +
 		'</object>');
 	$('#' + selectedDiv).effect('blind',{mode:'show'},1000);
 	d = document;

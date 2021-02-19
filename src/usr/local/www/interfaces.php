@@ -1964,25 +1964,27 @@ if ($show_address_controls) {
 	));
 }
 
-$macaddress = new Form_Input(
-	'spoofmac',
-	'MAC Address',
-	'text',
-	$pconfig['spoofmac'],
-	['placeholder' => 'xx:xx:xx:xx:xx:xx']
-);
+if (!is_pseudo_interface($intrealname, true)) {
+	$macaddress = new Form_Input(
+		'spoofmac',
+		'MAC Address',
+		'text',
+		$pconfig['spoofmac'],
+		['placeholder' => 'xx:xx:xx:xx:xx:xx']
+	);
 
-if (interface_is_vlan($realifname)) {
-	$macaddress->setDisabled();
-	$macaddress->setHelp('The MAC address of a VLAN interface must be ' .
-	    'set on its parent interface');
-} else {
-	$macaddress->setHelp('This field can be used to modify ("spoof") the ' .
-	    'MAC address of this interface.%sEnter a MAC address in the ' .
-	    'following format: xx:xx:xx:xx:xx:xx or leave blank.', '<br />');
+	if (interface_is_vlan($realifname)) {
+		$macaddress->setDisabled();
+		$macaddress->setHelp('The MAC address of a VLAN interface must be ' .
+		    'set on its parent interface');
+	} else {
+		$macaddress->setHelp('This field can be used to modify ("spoof") the ' .
+		    'MAC address of this interface.%sEnter a MAC address in the ' .
+		    'following format: xx:xx:xx:xx:xx:xx or leave blank.', '<br />');
+	}
+
+	$section->addInput($macaddress);
 }
-
-$section->addInput($macaddress);
 
 $section->addInput(new Form_Input(
 	'mtu',
@@ -1997,8 +1999,8 @@ $section->addInput(new Form_Input(
 	'MSS',
 	'number',
 	$pconfig['mss']
-))->setHelp('If a value is entered in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP ' .
-			'header size) will be in effect.');
+))->setHelp('If a value is entered in this field, then MSS clamping for TCP connections to the value entered above ' .
+	    'minus 40 for IPv4 (TCP/IPv4 header size) and minus 60 for IPv6 (TCP/IPv6 header size) will be in effect.');
 
 if (count($mediaopts_list) > 0) {
 	$section->addInput(new Form_Select(

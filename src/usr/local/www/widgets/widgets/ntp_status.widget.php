@@ -169,7 +169,7 @@ if ($_REQUEST['updateme'] && is_array($config['ntpd']) && ($config['ntpd']['enab
 		<tr>
 			<th><?=gettext('Clock location')?></th>
 			<td>
-				<a target="_gmaps" href="http://maps.google.com/?q=<?=$gps_lat;?>,<?=$gps_lon;?>">
+				<a target="_gmaps" href="https://maps.google.com/?q=<?=$gps_lat;?>,<?=$gps_lon;?>">
 				<?php
 				echo sprintf("%.5f", $gps_lat) . " " . $gps_lat_dir . ", " . sprintf("%.5f", $gps_lon) . " " . $gps_lon_dir; ?>
 				</a>

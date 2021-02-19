@@ -352,7 +352,7 @@ function filter_form_system() {
 		$btnsubmit
 	));
 
-	$group->setHelp('<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">' . gettext('Regular expression reference') . '</a> ' . gettext('Precede with exclamation (!) to exclude match.'));
+	$group->setHelp('<a target="_blank" href="https://www.php.net/manual/en/book.pcre.php">' . gettext('Regular expression reference') . '</a> ' . gettext('Precede with exclamation (!) to exclude match.'));
 	$section->add($group);
 	$form->add($section);
 	print $form;
@@ -583,7 +583,7 @@ function filter_form_firewall() {
 		$btnsubmit
 	));
 
-	$group->setHelp('<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">' . gettext('Regular expression reference') . '</a> ' . gettext('Precede with exclamation (!) to exclude match.'));
+	$group->setHelp('<a target="_blank" href="https://www.php.net/manual/en/book.pcre.php">' . gettext('Regular expression reference') . '</a> ' . gettext('Precede with exclamation (!) to exclude match.'));
 	$section->add($group);
 	$form->add($section);
 	print($form);

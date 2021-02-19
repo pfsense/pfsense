@@ -1614,14 +1614,26 @@ function update_repos() {
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_VERBOSE, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' .
-		    $g['product_version']);
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version']);
 		curl_setopt($ch, CURLOPT_URL, $FQDN);
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,4);
+
+		if (!empty($config['system']['proxyurl'])) {
+			curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
+			if (!empty($config['system']['proxyport'])) {
+				curl_setopt($ch, CURLOPT_PROXYPORT, $config['system']['proxyport']);
+			}
+			if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
+				@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
+				curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
+			}
+		}
+
 		$response = curl_exec($ch);
 		$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
 		curl_close($ch);
 
 		if ($status == 200) {

@@ -488,6 +488,7 @@ function curl_post_telegram($url) {
 	curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, true);
 	curl_setopt($conn, CURLOPT_FRESH_CONNECT,  true);
 	curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
+	set_curlproxy($ch);
 	$curl_post_telegram_data = curl_exec($conn);
 	curl_close($conn);
 	return $curl_post_telegram_data;	//json encoded
@@ -547,6 +548,7 @@ function curl_post_pushover($url, $data) {
 	curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, true);
 	curl_setopt($conn, CURLOPT_FRESH_CONNECT,  true);
 	curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
+	set_curlproxy($ch);
 	$curl_post_pushover_data = curl_exec($conn);
 	curl_close($conn);
 	return $curl_post_pushover_data;	//json encoded

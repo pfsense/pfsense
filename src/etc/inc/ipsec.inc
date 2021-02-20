@@ -1487,10 +1487,7 @@ function ipsec_setup_pools() {
 	if (!is_array($a_client) || !isset($a_client['enable'])) {
 		return;
 	}
-	if (($mobile_ipsec_auth == "eap-radius") && empty($a_client['pool_address']) &&
-	    empty($a_client['pool_address_v6'])) {
-		return;
-	}
+
 	$scconf['mobile-pool'] = array();
 	$scconf['pools'] = array();
 	$pool_common =& $scconf['mobile-pool'];
@@ -1582,6 +1579,16 @@ function ipsec_setup_pools() {
 		if (!empty($net_list6)) {
 			$v6pool['subnet'] = implode(",", $net_list6);
 			$v6pool['split_include'] = implode(",", $net_list6);
+			unset($net_list6);
+		}
+	}
+	if ($mobile_ipsec_auth == "eap-radius") {
+		$scconf['pools']['radius-pool : mobile-pool'] = array();
+		$radpool =& $scconf['pools']['radius-pool : mobile-pool'];
+		if (!empty($net_list4) || !empty($net_list6)) {
+			$radpool['subnet'] = implode(",", array_merge($net_list4, $net_list6));
+			$radpool['split_include'] = implode(",", array_merge($net_list4, $net_list6));
+			unset($net_list4);
 			unset($net_list6);
 		}
 	}
@@ -2392,6 +2399,7 @@ function ipsec_setup_tunnels() {
 		if (isset($ph1ent['mobile'])) {
 			if (($ph1ent['authentication_method'] == 'eap-radius') && 
 			    empty($a_client['pool_address']) && empty($a_client['pool_address_v6'])) {
+				$pools[] = "radius-pool";
 				$pools[] = "radius";
 			} else {
 				if (!empty($a_client['pool_address'])) {

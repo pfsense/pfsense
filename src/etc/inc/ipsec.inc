@@ -2356,7 +2356,13 @@ function ipsec_setup_tunnels() {
 			if (!isset($ph1ent['mobile']) && (($ikeversion == 1) || isset($ph1ent['splitconn']))) {
 				if (!empty($remote_ts)) {
 					/* Setup child sub-connections using unique names with a suffix */
-					$subconname = "con" . get_ipsecifnum($ph1ent['ikeid'], $idx) . $suffix;
+					if (get_ipsecifnum($ph1ent['ikeid'], $idx)) {
+						$subconnum = get_ipsecifnum($ph1ent['ikeid'], $idx);
+					} else {
+						$subconnum = "{$ph1ent['ikeid']}00000";
+					}
+
+					$subconname = "con" . ($subconnum + $suffix);
 					$children[$subconname] = $child;
 					$children[$subconname]['local_ts'] = $local_ts;
 					$children[$subconname]['remote_ts'] = $remote_ts;

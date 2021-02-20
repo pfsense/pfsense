@@ -2405,7 +2405,9 @@ function ipsec_setup_tunnels() {
 				}
 			}
 		}
-		$conn['pools'] = implode(', ', $pools);
+		if (!empty($pools)) {
+			$conn['pools'] = implode(', ', $pools);
+		}
 
 		/* For IKEv2 without Split Connections, setup combined sets of
 		 * local/remote traffic selectors and propsals */

@@ -494,7 +494,7 @@ function openvpn_validate_curve($curve) {
 /* Obtain the list of digest algorithms supported by openssl and their alternate names */
 function openvpn_get_openssldigestmappings() {
 	$digests = array();
-	$digest_out = shell_exec('/usr/bin/openssl list-message-digest-algorithms | /usr/bin/grep "=>"');
+	$digest_out = shell_exec('/usr/bin/openssl list -digest-algorithms | /usr/bin/grep "=>"');
 	$digest_lines = explode("\n", trim($digest_out));
 	sort($digest_lines);
 	foreach ($digest_lines as $line) {

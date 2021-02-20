@@ -50,24 +50,33 @@ if (($_POST['act'] == 'connect') || ($_POST['act'] == 'childconnect')) {
 		$ph1ent = ipsec_get_phase1($_POST['ikeid']);
 		if (!empty($ph1ent)) {
 			if (empty($ph1ent['iketype']) || ($ph1ent['iketype'] == 'ikev1') || isset($ph1ent['splitconn'])) {
-				$ph2entries = ipsec_get_number_of_phase2($_POST['ikeid']);
+				$ph2entries = ipsec_get_number_of_phase2($ph1ent['ikeid']);
 				for ($i = 0; $i < $ph2entries; $i++) {
-					$connid = escapeshellarg("con{$_POST['ikeid']}00{$i}");
+					if (get_ipsecifnum($ph1ent['ikeid'], $i)) {
+						$connum = get_ipsecifnum($ph1ent['ikeid'], $i);
+					} else {
+						$connum = "{$ph1ent['ikeid']}00000";
+					}
+					$connid = escapeshellarg("con" . $connum);
 					if ($_POST['act'] != 'childconnect') {
 						mwexec_bg("/usr/local/sbin/swanctl --terminate --child {$connid}");
 					}
 					mwexec_bg("/usr/local/sbin/swanctl --initiate --child {$connid}");
 				}
 			} else {
-				if ($_POST['act'] != 'childconnect') {
-					mwexec_bg("/usr/local/sbin/swanctl --terminate --ike con" . escapeshellarg($_POST['ikeid'] . '000'));
+				if (get_ipsecifnum($ph1ent['ikeid'], 0)) {
+					$connum = get_ipsecifnum($ph1ent['ikeid'], 0);
+				} else {
+					$connum = "{$ph1ent['ikeid']}00000";
 				}
-				mwexec_bg("/usr/local/sbin/swanctl --initiate --child con" . escapeshellarg($_POST['ikeid'] . '000'));
+				if ($_POST['act'] != 'childconnect') {
+					mwexec_bg("/usr/local/sbin/swanctl --terminate --ike " . escapeshellarg("con{$connum}"));
+				}
+				mwexec_bg("/usr/local/sbin/swanctl --initiate --child " . escapeshellarg("con{$connum}"));
 			}
 		}
 	}
 } else if ($_POST['act'] == 'ikedisconnect') {
-
 	if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
 		mwexec_bg("/usr/local/sbin/swanctl --terminate --ike " . escapeshellarg($_POST['ikeid']) . " --ike-id " .escapeshellarg($_POST['ikesaid']));
 	} else {

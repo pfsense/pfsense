@@ -2086,16 +2086,7 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version']);
 	}
 
-	if (!empty($config['system']['proxyurl'])) {
-		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
-		if (!empty($config['system']['proxyport'])) {
-			curl_setopt($ch, CURLOPT_PROXYPORT, $config['system']['proxyport']);
-		}
-		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
-			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
-		}
-	}
+	set_curlproxy($ch);
 
 	@curl_exec($ch);
 	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -2142,16 +2133,7 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_label'] . '/' . $g['product_version']);
 	}
 
-	if (!empty($config['system']['proxyurl'])) {
-		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
-		if (!empty($config['system']['proxyport'])) {
-			curl_setopt($ch, CURLOPT_PROXYPORT, $config['system']['proxyport']);
-		}
-		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
-			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
-		}
-	}
+	set_curlproxy($ch);
 
 	@curl_exec($ch);
 	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -3609,6 +3591,21 @@ function get_pf_timeouts () {
 		}
 	}
 	return $pftimeout;
+}
+
+function set_curlproxy(&$ch) {
+	global $config;
+
+	if (!empty($config['system']['proxyurl'])) {
+		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
+		if (!empty($config['system']['proxyport'])) {
+			curl_setopt($ch, CURLOPT_PROXYPORT, $config['system']['proxyport']);
+		}
+		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
+			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
+			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
+		}
+	}
 }
 
 ?>

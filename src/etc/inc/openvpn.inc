@@ -901,7 +901,11 @@ function openvpn_reconfigure($mode, $settings) {
 	$conf .= "persist-key\n";
 	$conf .= "proto {$proto}\n";
 	$conf .= "auth {$digest}\n";
-	$conf .= "up /usr/local/sbin/ovpn-linkup\n";
+	if ($settings['dns_add']) {
+		$conf .= "up /usr/local/sbin/ovpn-dnslinkup\n";
+	} else {
+		$conf .= "up /usr/local/sbin/ovpn-linkup\n";
+	}
 	$conf .= "down /usr/local/sbin/ovpn-linkdown\n";
 	if (file_exists("/usr/local/sbin/openvpn.attributes.sh")) {
 		switch ($settings['mode']) {

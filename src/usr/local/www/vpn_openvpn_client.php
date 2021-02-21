@@ -175,6 +175,7 @@ if (($act == "edit") || ($act == "dup")) {
 
 		$pconfig['route_no_pull'] = $a_client[$id]['route_no_pull'];
 		$pconfig['route_no_exec'] = $a_client[$id]['route_no_exec'];
+		$pconfig['dns_add'] = $a_client[$id]['dns_add'];
 		if (isset($a_client[$id]['create_gw'])) {
 			$pconfig['create_gw'] = $a_client[$id]['create_gw'];
 		} else {
@@ -514,6 +515,7 @@ if ($_POST['save']) {
 
 		$client['route_no_pull'] = $pconfig['route_no_pull'];
 		$client['route_no_exec'] = $pconfig['route_no_exec'];
+		$client['dns_add'] = $pconfig['dns_add'];
 		$client['verbosity_level'] = $pconfig['verbosity_level'];
 		$client['create_gw'] = $pconfig['create_gw'];
 
@@ -986,6 +988,13 @@ if ($act=="new" || $act=="edit"):
 		'Don\'t add or remove routes automatically',
 		$pconfig['route_no_exec']
 	))->setHelp('Do not execute operating system commands to install routes. Instead, pass routes to --route-up script using environmental variables.');
+
+	$section->addInput(new Form_Checkbox(
+		'dns_add',
+		'Pull DNS',
+		'Add server provided DNS',
+		$pconfig['dns_add']
+	))->setHelp('If this option is set, pfSense will use DNS servers assigned by remote OpenVPN server for its own purposes (including the DNS Forwarder/DNS Resolver).');
 
 	$form->add($section);
 

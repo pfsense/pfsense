@@ -1,0 +1,80 @@
+#!/bin/sh
+#
+# ovpn-dnslinkup
+#
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2021 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+if [ "${dev_type}" = "tun" ]; then
+	if [ -n "${route_vpn_gateway}" ]; then
+		/bin/echo ${route_vpn_gateway} > /tmp/${1}_router
+	elif [ -n "${ifconfig_remote}" ]; then
+		/bin/echo ${ifconfig_remote} > /tmp/${1}_router
+	elif [ -n "${ifconfig_local}" ]; then
+		/bin/echo ${ifconfig_local} > /tmp/${1}_router
+	else
+		/bin/echo ${5} > /tmp/${1}_router
+	fi
+
+	if [ -n "${route_ipv6_gateway_1}" ]; then
+		/bin/echo ${route_ipv6_gateway_1} > /tmp/${1}_routerv6
+	elif [ -n "${ifconfig_ipv6_remote}" ]; then
+		/bin/echo ${ifconfig_ipv6_remote} > /tmp/${1}_routerv6
+	elif [ -n "${ifconfig_ipv6_local}" ]; then
+		/bin/echo ${ifconfig_ipv6_local} > /tmp/${1}_routerv6
+	fi
+
+else
+	if [ -n "${route_vpn_gateway}" ]; then
+		/bin/echo ${route_vpn_gateway} > /tmp/${1}_router
+	fi
+
+	if [ -n "${route_ipv6_gateway_1}" ]; then
+		/bin/echo ${route_ipv6_gateway_1} > /tmp/${1}_routerv6
+	fi
+fi
+
+# use OpenVPN provided DNS, see https://redmine.pfsense.org/issues/11140
+/bin/rm -f /var/etc/nameserver_${1}
+/bin/rm -f /var/etc/nameserver_v6${1}
+/bin/rm -f /var/etc/searchdomain_${1}
+for num in `seq 50`; do
+	option="$(eval echo \$foreign_option_${num})"
+	if [ -z "${option}" ]; then
+		break
+	fi
+	part1="$(/bin/echo ${option} | /usr/bin/cut -d ' ' -f 1)"
+	if [ "$part1" == "dhcp-option" ]; then
+		part2="$(/bin/echo ${option} | /usr/bin/cut -d ' ' -f 2)"
+		part3="$(/bin/echo ${option} | /usr/bin/cut -d ' ' -f 3)"
+		if [ "$part2" = "DNS" ]; then
+			DNS="${part3}"
+			/bin/echo ${DNS} >> /var/etc/nameserver_${1}
+			route change -inet "${DNS}" -iface ${1} || route add -inet "${DNS}" -iface ${1}
+		elif [ "$part2" = "DNS6" ]; then
+			DNS="${part3}"
+			/bin/echo ${DNS} >> /var/etc/nameserver_v6${1}
+			route change -inet6 "${DNS}" -iface ${1} || route add -inet6 "${DNS}" -iface ${1}
+		elif [ "$part2" = "DOMAIN" -o "$part2" = "DOMAIN-SEARCH" ]; then
+			/bin/echo ${part3} >> /var/etc/searchdomain_${1}
+		fi
+	fi
+done
+
+/usr/bin/touch /tmp/${1}up
+# reload filter
+/usr/local/sbin/pfSctl -c "interface newip ${1}"
+exit 0

@@ -83,7 +83,7 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "freedns2" || $pconfig['type'] == "freedns2-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns" || $pconfig['type'] == "cloudflare" || $pconfig['type'] == "cloudflare-v6")
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "freedns2" || $pconfig['type'] == "freedns2-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns" ||  $pconfig['type'] == "gandi-livedns-v6" || $pconfig['type'] == "cloudflare" || $pconfig['type'] == "cloudflare-v6")
 	    && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
@@ -120,7 +120,7 @@ if ($_POST['save'] || $_POST['force']) {
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		$allow_wildcard = false;
 		/* Namecheap can have a @. and *. in hostname */
-		if (($pconfig['type'] == "namecheap" || $pconfig['type'] == "gandi-livedns") && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
+		if (($pconfig['type'] == "namecheap") && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
 		} elseif (($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
@@ -129,7 +129,7 @@ if ($_POST['save'] || $_POST['force']) {
 			$host_to_check = $_POST['domainname'];
 		} elseif (($pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6") && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
-		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6")) {
+		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;
 		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
@@ -616,7 +616,9 @@ events.push(function() {
 				hideInput('ttl', true);
 				break;
 			case "digitalocean":
-		        case "digitalocean-v6":
+			case "digitalocean-v6":
+			case "gandi-livedns":
+			case "gandi-livedns-v6":
 				hideGroupInput('domainname', false);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);
@@ -690,21 +692,6 @@ events.push(function() {
 				hideCheckbox('proxied', true);
 				hideInput('zoneid', true);
 				hideInput('ttl', true);
-				break;
-			case "gandi-livedns": // NOTE: same as digitalocean
-				hideGroupInput('domainname', false);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('username', true);
-				hideInput('host', false);
-				hideInput('mx', true);
-				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
-				hideInput('ttl', false);
 				break;
 			default:
 				hideGroupInput('domainname', true);

@@ -1844,7 +1844,7 @@ function interfaces_configure() {
 	/* set up GIF virtual interfaces */
 	interfaces_tunnel_configure(1,'','gif');
 
-	/* set up BRIDGe virtual interfaces */
+	/* set up BRIDGE virtual interfaces */
 	interfaces_bridge_configure(1);
 
 	foreach ($track6_list as $if => $ifname) {
@@ -1886,7 +1886,7 @@ function interfaces_configure() {
 		}
 	}
 
-	/* set up BRIDGe virtual interfaces */
+	/* set up BRIDGE virtual interfaces */
 	interfaces_bridge_configure(2);
 
 	foreach ($bridge_list as $if => $ifname) {

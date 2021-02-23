@@ -707,6 +707,10 @@ function cert_format_date($validTS, $validTS_time_t, $outputstring = true) {
 
 	/* Try to create a DateTime object from the full time string */
 	$date = DateTime::createFromFormat('ymdHis', rtrim($validTS, 'Z'), new DateTimeZone('Z'));
+	/* If that failed, try using a four digit year */
+	if ($date === false) {
+		$date = DateTime::createFromFormat('YmdHis', rtrim($validTS, 'Z'), new DateTimeZone('Z'));
+	}
 	/* If that failed, try to create it from the UNIX timestamp */
 	if (($date === false) && (!empty($validTS_time_t))) {
 		$date = new DateTime('@' . $validTS_time_t, new DateTimeZone('Z'));

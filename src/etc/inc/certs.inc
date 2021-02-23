@@ -708,7 +708,7 @@ function cert_format_date($validTS, $validTS_time_t, $outputstring = true) {
 	/* Try to create a DateTime object from the full time string */
 	$date = DateTime::createFromFormat('ymdHis', rtrim($validTS, 'Z'), new DateTimeZone('Z'));
 	/* If that failed, try to create it from the UNIX timestamp */
-	if ($date === false) {
+	if (($date === false) && (!empty($validTS_time_t))) {
 		$date = new DateTime('@' . $validTS_time_t, new DateTimeZone('Z'));
 	}
 	/* If we have a valid DateTime object, format it in a nice way */
@@ -2186,16 +2186,18 @@ function cert_print_infoblock($cert) {
 
 	/* Total Lifetime (days from cert start to end) */
 	$lifetime = cert_get_lifetime($cert);
-	$certextinfo .= '<b>' . gettext("Total Lifetime: ") . '</b> ';
-	$certextinfo .= sprintf("%d %s", $lifetime, (abs($lifetime) == 1) ? gettext('day') : gettext('days'));
-	$certextinfo .= '<br/>';
+	if ($lifetime !== false) {
+		$certextinfo .= '<b>' . gettext("Total Lifetime: ") . '</b> ';
+		$certextinfo .= sprintf("%d %s", $lifetime, (abs($lifetime) == 1) ? gettext('day') : gettext('days'));
+		$certextinfo .= '<br/>';
 
-	/* Lifetime before certificate expires (days from now to end) */
-	$expiredays = cert_get_lifetime($cert, true);
-	list($lrclass, $expstring) = cert_analyze_lifetime($expiredays);
-	$certextinfo .= '<b>' . gettext("Lifetime Remaining: ") . '</b> ';
-	$certextinfo .= "<span class=\"text-{$lrclass}\">{$expstring}</span>";
-	$certextinfo .= '<br/>';
+		/* Lifetime before certificate expires (days from now to end) */
+		$expiredays = cert_get_lifetime($cert, true);
+		list($lrclass, $expstring) = cert_analyze_lifetime($expiredays);
+		$certextinfo .= '<b>' . gettext("Lifetime Remaining: ") . '</b> ';
+		$certextinfo .= "<span class=\"text-{$lrclass}\">{$expstring}</span>";
+		$certextinfo .= '<br/>';
+	}
 
 	if ($purpose['ca'] == 'Yes') {
 		/* CA Trust store presence */

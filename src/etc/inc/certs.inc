@@ -234,7 +234,7 @@ function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256", $keyt
 	}
 
 	// self sign the certificate
-	$res_crt = openssl_csr_sign($res_csr, null, $res_key, $lifetime, $args);
+	$res_crt = openssl_csr_sign($res_csr, null, $res_key, $lifetime, $args, cert_get_random_serial());
 	if (!$res_crt) {
 		return false;
 	}
@@ -386,7 +386,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 		$ca           = null;
 		$ca_res_crt   = null;
 		$ca_res_key   = $res_key;
-		$ca_serial    = 0;
+		$ca_serial    = cert_get_random_serial();
 		$cert['type'] = "server";
 	}
 
@@ -1239,10 +1239,29 @@ function cert_generate_serial() {
 function ca_has_serial($caref, $serial) {
 	global $config;
 
+	/* Check certs first -- more likely to find a hit */
 	foreach ($config['cert'] as $cert) {
 		if (($cert['caref'] == $caref) &&
 		    (cert_get_serial($cert['crt'], true) == $serial)) {
 			/* If this certificate is issued by the CA in question
+			 * and has a matching serial number, stop processing
+			 * and return true. */
+			return true;
+		}
+	}
+
+	/* Check the CA iteself */
+	$this_ca = lookup_ca($caref);
+	$this_serial = cert_get_serial($this_ca['crt'], true);
+	if ($serial == $this_serial) {
+		return true;
+	}
+
+	/* Check other CAs for a match (intermediates signed by this CA) */
+	foreach ($config['ca'] as $ca) {
+		if (($ca['caref'] == $caref) &&
+		    (cert_get_serial($ca['crt'], true) == $serial)) {
+			/* If this CA is issued by the CA in question
 			 * and has a matching serial number, stop processing
 			 * and return true. */
 			return true;
@@ -1261,7 +1280,7 @@ function ca_has_serial($caref, $serial) {
  *   Random serial number which is not in use by any known certificate in a CA
  ******/
 
-function cert_get_random_serial($caref) {
+function cert_get_random_serial($caref = '') {
 	/* Number of attempts to generate a usable serial. Multiple attempts
 	 *  are necessary to ensure that the number is usable and unique. */
 	$attempts = 10;
@@ -1722,7 +1741,8 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 		 */
 		$ca_res_crt   = null;
 		$ca_res_key   = $res_key;
-		$ca_serial    = 0; /* TODO: Check if we should increment from previous */
+		/* Use random serial from this CA/Self-Signed Cert */
+		$ca_serial    = cert_get_random_serial($cert['refid']);
 	}
 
 	/* Sign the CSR */

@@ -243,6 +243,7 @@ function saveVIP($post, $json = false) {
 		if (!isset($id)) {
 			$id = count($a_vip);
 		}
+
 		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
 		} else {
@@ -275,6 +276,7 @@ function saveVIP($post, $json = false) {
 
 	$rv['input_errors'] = $input_errors;
 	$rv['a_vip'] = $a_vip;
+	$rv['id'] = $id;
 
 	return $json? json_encode($rv) : $rv;
 }

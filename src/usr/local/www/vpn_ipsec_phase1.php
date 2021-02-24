@@ -831,24 +831,7 @@ if (!$pconfig['mobile']) {
 	    'to allow connections from any IPv6 address.' . '<br/>' . 'Responder Only must be set and ' . 
 	    'Peer IP Address cannot be used for Remote Identifier.'), 'info', false),
 	    '</div>');
-	$group->add(new Form_Input(
-	    'ikeport',
-	    'Remote IKE Port',
-	    'number',
-	    $pconfig['ikeport'],
-	    ['min' => 1, 'max' => 65535]
-	))->setHelp('UDP port for IKE on the remote gateway. Leave empty for default automatic behavior (500/4500).');
-	$group->add(new Form_Input(
-	    'nattport',
-	    'Remote NAT-T Port',
-	    'number',
-	    $pconfig['nattport'],
-	    ['min' => 1, 'max' => 65535]
-	))->setHelp('UDP port for NAT-T on the remote gateway.%1$s%2$s%3$s',
-	    '<div class="infoblock">',
-	    sprint_info_box(gettext('If the IKE port is empty and NAT-T contains a value, the tunnel will use only NAT-T.'),
-	    'info', false),
-	    '</div>');
+
 	$section->add($group);
 }
 
@@ -1128,6 +1111,29 @@ $section->addInput(new Form_Checkbox(
 	'Enable manual Pseudo-Random Function (PRF) selection',
 	$pconfig['prfselect_enable']
 ))->setHelp('Manual PRF selection is typically not required, but can be useful in combination with AEAD Encryption Algorithms such as AES-GCM');
+
+$group = new Form_Group('Custom IKE/NAT-T Ports');
+
+$group->add(new Form_Input(
+    'ikeport',
+    'Remote IKE Port',
+    'number',
+    $pconfig['ikeport'],
+    ['min' => 1, 'max' => 65535]
+))->setHelp('UDP port for IKE on the remote gateway. Leave empty for default automatic behavior (500/4500).');
+$group->add(new Form_Input(
+    'nattport',
+    'Remote NAT-T Port',
+    'number',
+    $pconfig['nattport'],
+    ['min' => 1, 'max' => 65535]
+))->setHelp('UDP port for NAT-T on the remote gateway.%1$s%2$s%3$s',
+    '<div class="infoblock">',
+    sprint_info_box(gettext('If the IKE port is empty and NAT-T contains a value, the tunnel will use only NAT-T.'),
+    'info', false),
+    '</div>');
+
+$section->add($group);
 
 /* FreeBSD doesn't yet have TFC support. this is ready to go once it does
 https://redmine.pfsense.org/issues/4688

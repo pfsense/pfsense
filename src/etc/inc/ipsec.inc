@@ -1901,6 +1901,9 @@ function ipsec_setup_authentication(& $ph1ent, & $conn) {
 	if (in_array($ph1ent['authentication_method'], array('eap-tls', 'xauth_cert_server', 'cert', 'pkcs11')) &&
 	    isset($cafn)) {
 		$remote['cacerts'] = $cafn;
+		if (isset($config['ipsec']['strictcrlpolicy'])) {
+			$remote['revocation'] = "strict";
+		}
 	}
 
 	$conn['local'] = $local;
@@ -2758,9 +2761,6 @@ function ipsec_configure($restart = false) {
 	if (!empty($config['ipsec']['uniqueids']) &&
 	    array_key_exists($config['ipsec']['uniqueids'], $ipsec_idhandling)) {
 		$conn_defaults['unique'] = $config['ipsec']['uniqueids'];
-	}
-	if (isset($config['ipsec']['strictcrlpolicy'])) {
-		$conn_defaults['strictcrlpolicy'] = "yes";
 	}
 	/* Disable ipcomp for now. redmine #6167
 	if (isset($config['ipsec']['compression'])) {

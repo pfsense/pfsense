@@ -164,7 +164,7 @@ function carp_sync_xml($sections) {
 	if (is_array($config_copy['dhcpd'])) {
 		foreach ($config_copy['dhcpd'] as $dhcpif => $dhcpifconf) {
 			if ($dhcpifconf['failover_peerip'] <> "") {
-				$int = guess_interface_from_ip($dhcpifconf['failover_peerip']);
+				$int = convert_friendly_interface_to_real_interface_name($dhcpif);
 				$intip = find_interface_ip($int);
 				$config_copy['dhcpd'][$dhcpif]['failover_peerip'] = $intip;
 			}

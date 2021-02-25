@@ -2649,7 +2649,9 @@ function route_table() {
 }
 
 /* Get static route for specific destination */
-function route_get($target, $ipprotocol = '') {
+function route_get($target, $ipprotocol = '', $useroute = false) {
+	global $config;
+
 	if (!empty($ipprotocol)) {
 		$family = $ipprotocol;
 	} else if (is_v4($target)) {
@@ -2662,17 +2664,41 @@ function route_get($target, $ipprotocol = '') {
 		return array();
 	}
 
-	$rtable = route_table();
+	if ($useroute) {
+		if ($family == 'inet') {
+			$inet = '4';
+		} else {
+			$inet = '6';
+		}
+		$interface = exec("/sbin/route -n{$inet} get {$target} | /usr/bin/awk '/interface:/{print $2}'");
+		if (empty($interface)) {
+			return array();
+		} elseif ($interface == 'lo0') {
+			// interface assigned IP address
+			foreach ($config['interfaces'] as $intf => $infconf) {
+				if ((($inet == '4') && (get_interface_ip($intf) == $target)) ||
+				    (($inet == '6') && (get_interface_ipv6($intf) == $target))) {
+					$interface = convert_friendly_interface_to_real_interface_name($intf);
+					$gateway = $interface;
+					break;
+				}
+			}
+		} else {
+			$gateway = exec("/sbin/route -n{$inet} get {$target} | /usr/bin/awk '/gateway:/{print $2}'");
+		}
+		$result[] = array('gateway' => $gateway, 'interface-name' => $interface);
+	} else {
+		$rtable = route_table();
+		if (empty($rtable)) {
+			return array();
+		}
 
-	if (empty($rtable)) {
-		return array();
-	}
-
-	$result = array();
-	foreach ($rtable[$family] as $item) {
-		if ($item['destination'] == $target ||
-		    ip_in_subnet($target, $item['destination'])) {
-			$result[] = $item;
+		$result = array();
+		foreach ($rtable[$family] as $item) {
+			if ($item['destination'] == $target ||
+			    ip_in_subnet($target, $item['destination'])) {
+				$result[] = $item;
+			}
 		}
 	}
 
@@ -2686,7 +2712,7 @@ function route_get_default($ipprotocol) {
 		return '';
 	}
 
-	$route = route_get('default', $ipprotocol);
+	$route = route_get('default', $ipprotocol, true);
 
 	if (empty($route)) {
 		return '';

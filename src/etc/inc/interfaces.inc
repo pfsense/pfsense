@@ -6159,7 +6159,7 @@ function guess_interface_from_ip($ipaddress) {
 		return false;
 	}
 
-	$route = route_get($ipaddress);
+	$route = route_get($ipaddress, '', true);
 	if (empty($route)) {
 		return false;
 	}

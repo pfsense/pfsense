@@ -3401,7 +3401,7 @@ if (isset($wancfg['wireless'])) {
 		'wpa_eap_inner_auth',
 		'Inner Authentication Method',
 		$pconfig['wpa_eap_inner_auth'],
-		['mschapv2' => gettext('MSCHAPv2'), 'md5' => gettext('MD5')]
+		['MSCHAPV2' => gettext('MSCHAPv2'), 'MD5' => gettext('MD5'), 'PAP' => gettext('PAP')]
 	));
 
 	$section->addInput(new Form_Input(

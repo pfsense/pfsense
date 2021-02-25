@@ -3643,12 +3643,10 @@ EOD;
 				if ($wlcfg['wpa']['wpa_key_mgmt'] == 'WPA-EAP') {
 					if (($wlcfg['wpa']['wpa_eap_client_mode'] == 'PEAP') ||
 					    ($wlcfg['wpa']['wpa_eap_client_mode'] == 'TTLS')) {
-						if ($wlcfg['wpa']['wpa_eap_inner_auth'] == 'mschapv2') {
+						if ($wlcfg['wpa']['wpa_eap_inner_auth'] == 'MSCHAPV2') {
 							$wpa .= "phase1=\"peaplabel=0\"\n";
-							$wpa .= "phase2=\"auth=MSCHAPV2\"\n";
-						} else {
-							$wpa .= "phase2=\"auth=MD5\"\n";
 						}
+						$wpa .= "phase2=\"auth={$wlcfg['wpa']['wpa_eap_inner_auth']}\"\n";
 						$wpa .= "identity=\"{$wlcfg['wpa']['wpa_eap_inner_id']}\"\n";
 						$eappass = base64_decode($wlcfg['wpa']['wpa_eap_inner_password']);
 						$wpa .= "password=\"{$eappass}\"\n";

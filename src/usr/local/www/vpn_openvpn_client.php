@@ -99,6 +99,7 @@ if ($act == "new") {
 	$pconfig['digest'] = "SHA256";
 	$pconfig['allow_compression'] = "no";
 	$pconfig['compression'] = "";
+	$pconfig['exit_notify'] = 1;
 }
 
 global $simplefields;

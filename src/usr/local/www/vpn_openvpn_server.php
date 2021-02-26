@@ -294,6 +294,8 @@ if ($_POST['save']) {
 		$vpnid = 0;
 	}
 
+	$pconfig['ncp_enable'] = ($pconfig['ncp_enable'] == 'yes') ? 'enabled' : 'disabled';
+
 	if (isset($pconfig['custom_options']) &&
 	    ($pconfig['custom_options'] != $a_server[$id]['custom_options']) &&
 	    !$user_can_edit_advanced) {
@@ -712,7 +714,7 @@ if ($_POST['save']) {
 			$server['data_ciphers'] = implode(",", $pconfig['data_ciphers']);
 		}
 
-		$server['ncp_enable'] = $pconfig['ncp_enable'] ? "enabled":"disabled";
+		$server['ncp_enable'] = $pconfig['ncp_enable'];
 
 		$server['ping_method'] = $pconfig['ping_method'];
 		$server['keepalive_interval'] = $pconfig['keepalive_interval'];

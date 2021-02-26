@@ -1769,9 +1769,6 @@ function interfaces_configure() {
 
 	interfaces_qinq_configure();
 
-	/* set up IPsec VTI interfaces */
-	interfaces_ipsec_vti_configure();
-
 	$iflist = get_configured_interface_with_descr(true);
 	$delayed_list = array();
 	$bridge_list = array();
@@ -1831,6 +1828,9 @@ function interfaces_configure() {
 			}
 		}
 	}
+
+	/* set up IPsec VTI interfaces */
+	interfaces_ipsec_vti_configure();
 
 	/*
 	 * NOTE: The following function parameter consists of

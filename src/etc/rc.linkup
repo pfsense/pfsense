@@ -120,6 +120,13 @@ function handle_argument_group($iface, $argument2) {
 				    $ip6addr == 'dhcp6') {
 					setup_gateways_monitor();
 				}
+				/* restart unbound on interface recover,
+				 * https://redmine.pfsense.org/issues/11547 */
+				if (isset($config['unbound']['enable']) &&
+				    (in_array($iface, explode(',', $config['unbound']['active_interface'])) ||
+				    in_array($iface, explode(',', $config['unbound']['outgoing_interface'])))) {
+					services_unbound_configure();
+				}
 				break;
 		}
 	}

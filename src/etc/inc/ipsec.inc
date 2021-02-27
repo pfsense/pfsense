@@ -831,6 +831,11 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 		case 'asn1dn':
 			$thisid_data = $id_data;
 			break;
+		case 'any':
+			$thisid_data = '%any';
+			break;
+		default:
+			break;
 	}
 	return array($thisid_type, $thisid_data);
 }
@@ -851,7 +856,7 @@ function ipsec_fixup_id($type, $data) {
 	}
 
 	if ($type == 'any') {
-		$idstring = "";
+		$idstring = "%any";
 	} elseif (!in_array($type, $auto_types)) {
 		$idstring = "{$type}:{$data}";
 	} else {

@@ -361,7 +361,7 @@ foreach ($pftimeouts as $proto => $tm) {
 			$item['keyname'],
 			$item['name'],
 			'number',
-			$config['system'][$keyname],
+			$config['system'][$item['keyname']],
 			['placeholder' => $item['value']]
 		));
 	}

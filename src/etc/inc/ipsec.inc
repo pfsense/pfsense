@@ -2496,6 +2496,14 @@ function ipsec_setup_secrets() {
 				continue;
 			}
 
+			if (isset($ph1ent['mobile'])) {
+				if ($ph1ent['authentication_method'] == 'pre_shared_key') {
+					$mobilepsk = true;
+				} elseif ($ph1ent['authentication_method'] == 'eap-mschapv2') {
+					$mobileeap = true;
+				}
+			}
+
 			if (strstr($ph1ent['authentication_method'], 'cert') ||
 			    in_array($ph1ent['authentication_method'], array('eap-mschapv2', 'eap-tls', 'eap-radius'))) {
 				/* Write certificate and private key, point to private key */
@@ -2618,7 +2626,7 @@ function ipsec_setup_secrets() {
 	}
 
 	/* Add user PSKs */
-	if (is_array($config['system']) && is_array($config['system']['user'])) {
+	if ($mobilepsk && is_array($config['system']) && is_array($config['system']['user'])) {
 		foreach ($config['system']['user'] as $user) {
 			if (!empty($user['ipsecpsk'])) {
 				$scconf['secrets']['ike-' . $suffix++] = array(
@@ -2631,18 +2639,21 @@ function ipsec_setup_secrets() {
 		unset($user);
 	}
 
-	/* add PSKs for mobile clients */
+	/* add PSKs/EAPs for mobile clients */
 	if (is_array($ipseccfg['mobilekey'])) {
 		foreach ($ipseccfg['mobilekey'] as $key) {
-			if (($key['ident'] == 'allusers') ||
-			    ($key['ident'] == 'any')) {
-				$key['ident'] = '%any';
+			if (($mobileeap && ($key['type'] == 'EAP')) ||
+			    ($key['type'] == 'PSK')) {
+				if (($key['ident'] == 'allusers') ||
+				    ($key['ident'] == 'any')) {
+					$key['ident'] = '%any';
+				}
+				$userkeyprefix = (strtolower($key['type']) == 'eap') ? 'eap' : 'ike';
+				$scconf['secrets'][$userkeyprefix . '-' . $suffix++] = array(
+					'secret' => '0s' . base64_encode(trim($key['pre-shared-key'])),
+					'id-0' => $key['ident'],
+				);
 			}
-			$userkeyprefix = (strtolower($key['type']) == 'eap') ? 'eap' : 'ike';
-			$scconf['secrets'][$userkeyprefix . '-' . $suffix++] = array(
-				'secret' => '0s' . base64_encode(trim($key['pre-shared-key'])),
-				'id-0' => $key['ident'],
-			);
 		}
 		unset($key);
 	}

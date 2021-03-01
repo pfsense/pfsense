@@ -118,23 +118,23 @@ if ($hostipformat != "") {
 //get the mode
 $mode = !empty($_REQUEST['mode']) ? $_REQUEST['mode'] : '';
 if ($mode == "iftop") {
-	$current_ts = time();
-	if ( file_exists("/var/run/iftop_{$real_interface}.pid") ) {
-		$statPID = stat("/var/run/iftop_{$real_interface}.pid");
-		$since = $current_ts - $statPID['mtime'];
-		if ( $since < 5 && file_exists("/var/db/iftop_{$real_interface}.log") ) {
-			$listedIPs=file("/var/db/iftop_{$real_interface}.log");
-		} else {
-			if ( isvalidpid("/var/run/iftop_{$real_interface}.pid") ) {
-				killbypid("/var/run/iftop_{$real_interface}.pid");
-			}
-			unlink ( "/var/run/iftop_{$real_interface}.pid" );
-			$_grb = exec ( "/usr/local/bin/iftop_parser.sh {$real_interface} $current_ts", $listedIPs );
-		}
-	} else {
-		// refresh iftop infos
-		$_grb = exec ( "/usr/local/bin/iftop_parser.sh {$real_interface} $current_ts", $listedIPs );
-	}
+    $current_ts = time();
+    $pidFile = "/var/run/iftop_{$real_interface}.pid";
+    $logFile = "/var/db/iftop_{$real_interface}.log";
+
+    $since = null;
+    if (file_exists($pidFile)) {
+	$since = $current_ts - filemtime($pidFile);
+    }
+
+    $logExists = file_exists($logFile);
+    if (!$since || $since >= 3 || !$logExists) {
+	$_grb = exec("/usr/local/bin/iftop_parser.sh {$real_interface} 1>/dev/null 2>&1 &", $listedIPs);
+    }
+
+    if ($logExists) {
+	$listedIPs = file($logFile);
+    }
 
 	// order and group by
 	$arr_in = array();
@@ -176,6 +176,12 @@ if ($mode == "iftop") {
 
 
 $someinfo = false;
+$formatNumericRate = function(&$value){
+    // rate and iftop output format is inconsistent, unify it
+    $value = str_replace('K', 'k', $value);
+    $value = preg_replace('~^([\d.]+)[ ]?([a-z]?)$~i', '\\1 \\2', $value);
+};
+
 for ($x=2; $x<12; $x++) {
 
 	$bandwidthinfo = $listedIPs[$x];
@@ -208,6 +214,9 @@ for ($x=2; $x<12; $x++) {
 					}
 				}
 			}
+
+			$formatNumericRate($infoarray[1]);
+			$formatNumericRate($infoarray[2]);
 			//print host information;
 			echo $addrdata . ";" . $infoarray[1] . ";" . $infoarray[2] . "|";
 

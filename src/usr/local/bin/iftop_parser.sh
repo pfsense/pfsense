@@ -46,7 +46,7 @@ if [ -f $pid_file ]; then
         fi
 else
         echo -n $$ > $pid_file
-        $IFTOP -nNb -i $1 -s 3 -o 2s -t 2>> /dev/null | $AWK -f $awk_script > ${cache_file}.tmp
+        $IFTOP -nNb -i $1 -s 2 -o 2s -t 2>> /dev/null | $AWK -f $awk_script > ${cache_file}.tmp
         $CAT ${cache_file}.tmp > $cache_file
         $CAT $cache_file
         $RM $pid_file

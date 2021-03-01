@@ -1,15 +1,21 @@
 #!/bin/sh
 
 # Usage
-if [ $# -ne 1 -a $# -ne 2 ]; then
-        echo "Usage : $0 iface"
+if [ $# -ne 2 ]; then
+        echo "Usage : $0 iface {all|hidesource|hidedestination}"
+        exit
+fi
+
+if [ "$2" != "all" ] && [ "$2" != "hidesource" ] && [ "$2" != "hidedestination" ]; then
+        echo "Usage : $0 iface {all|hidesource|hidedestination}"
         exit
 fi
 
 # files paths
-pid_file=/var/run/iftop_${1}.pid
-cache_file=/var/db/iftop_${1}.log
+pid_file=/var/run/iftop_${1}_${2}.pid
+cache_file=/var/db/iftop_${1}_${2}.log
 awk_script=/usr/local/bin/iftop_parse.awk
+iftop_config=/usr/local/bin/iftop_${2}.conf
 
 # Binaries paths
 DATE=/bin/date
@@ -46,7 +52,7 @@ if [ -f $pid_file ]; then
         fi
 else
         echo -n $$ > $pid_file
-        $IFTOP -nNb -i $1 -s 2 -o 2s -t 2>> /dev/null | $AWK -f $awk_script > ${cache_file}.tmp
+        $IFTOP -nNb -i $1 -s 2 -o 2s -t -c $iftop_config 2>> /dev/null | $AWK -f $awk_script > ${cache_file}.tmp
         $CAT ${cache_file}.tmp > $cache_file
         $CAT $cache_file
         $RM $pid_file

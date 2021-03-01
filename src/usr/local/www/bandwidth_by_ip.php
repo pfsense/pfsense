@@ -37,6 +37,8 @@ if (!does_interface_exist($real_interface)) {
 	return;
 }
 
+$has_dhcp = is_dhcp_server_enabled_on_interface($interface);
+
 $intip = find_interface_ip($real_interface);
 $intip6 = find_interface_ipv6($real_interface);
 //get interface subnet
@@ -54,11 +56,13 @@ if ($filter == "") {
 
 if ($filter == "local") {
 	$ratesubnet = "-c " . $intsubnet;
+	$iftopParam = $has_dhcp ? "hidesource" : "all";
 } else {
 	// Tell the rate utility to consider the whole internet (0.0.0.0/0)
 	// and to consider local "l" traffic - i.e. traffic within the whole internet
 	// then we can filter the resulting output as we wish below.
 	$ratesubnet = "-lc 0.0.0.0/0";
+	$iftopParam = ($filter == "all" || !$has_dhcp) ? "all" : "hidedestination";
 }
 
 //get the sort method
@@ -119,8 +123,8 @@ if ($hostipformat != "") {
 $mode = !empty($_REQUEST['mode']) ? $_REQUEST['mode'] : '';
 if ($mode == "iftop") {
     $current_ts = time();
-    $pidFile = "/var/run/iftop_{$real_interface}.pid";
-    $logFile = "/var/db/iftop_{$real_interface}.log";
+    $pidFile = "/var/run/iftop_{$real_interface}_{$iftopParam}.pid";
+    $logFile = "/var/db/iftop_{$real_interface}_{$iftopParam}.log";
 
     $since = null;
     if (file_exists($pidFile)) {
@@ -129,7 +133,7 @@ if ($mode == "iftop") {
 
     $logExists = file_exists($logFile);
     if (!$since || $since >= 3 || !$logExists) {
-	$_grb = exec("/usr/local/bin/iftop_parser.sh {$real_interface} 1>/dev/null 2>&1 &", $listedIPs);
+	$_grb = exec("/usr/local/bin/iftop_parser.sh {$real_interface} {$iftopParam} 1>/dev/null 2>&1 &", $listedIPs);
     }
 
     if ($logExists) {
@@ -190,6 +194,9 @@ for ($x=2; $x<12; $x++) {
 	$emptyinfocounter = 1;
 	if ($bandwidthinfo != "") {
 		$infoarray = explode (";", $bandwidthinfo);
+		if ($infoarray[0] == '*') {
+			continue;
+		}
 		if (($filter == "all") ||
 		    (($filter == "local") && ((ip_in_subnet($infoarray[0], $intsubnet)) || (ip_in_subnet($infoarray[0], $intsubnet6)))) ||
 		    (($filter == "remote") && ((!ip_in_subnet($infoarray[0], $intsubnet)) || (!ip_in_subnet($infoarray[0], $intsubnet6))))) {

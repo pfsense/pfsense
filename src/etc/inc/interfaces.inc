@@ -3653,11 +3653,11 @@ EOD;
 						$eappass = base64_decode($wlcfg['wpa']['wpa_eap_inner_password']);
 						$wpa .= "password=\"{$eappass}\"\n";
 					}
-					if (strstr($wlcfg['wpa']['wpa_eap_client_mode'], 'TLS')) { 
+					if (strstr($wlcfg['wpa']['wpa_eap_client_mode'], 'TLS')) {
 						$cert = lookup_cert($wlcfg['wpa']['wpa_eap_cert']);
 						@file_put_contents($wpa_supplicant_file . "crt", base64_decode($cert['crt']) . "\n" .
-						    ca_chain($cert)); 
-						@file_put_contents($wpa_supplicant_file . "key", base64_decode($cert['prv'])); 
+						    ca_chain($cert));
+						@file_put_contents($wpa_supplicant_file . "key", base64_decode($cert['prv']));
 						@chmod($wpa_supplicant_crt, 0600);
 						@chmod($wpa_supplicant_key, 0600);
 						$wpa .= "client_cert=\"{$wpa_supplicant_crt}\"\n";
@@ -3665,7 +3665,7 @@ EOD;
 					}
 					$ca = lookup_ca($wlcfg['wpa']['wpa_eap_ca']);
 					@file_put_contents($wpa_supplicant_file . "ca", base64_decode($ca['crt']) . "\n" .
-					    ca_chain($ca)); 
+					    ca_chain($ca));
 					$wpa .= "ca_cert=\"{$wpa_supplicant_ca}\"\n";
 					$wpa .= "eap={$wlcfg['wpa']['wpa_eap_client_mode']}\n";
 				} else {
@@ -7684,6 +7684,19 @@ function is_stf_interface($inf) {
 	}
 
 	return false;
+}
+
+function is_dhcp_server_enabled_on_interface($if) {
+	global $config;
+
+	if (!isset($config['dhcpd'][$if])) {
+		return false;
+	}
+	$dhcpifconf = $config['dhcpd'][$if];
+	if (!isset($dhcpifconf['enable']) || empty($config['interfaces'][$if])) {
+		return false;
+	}
+	return true;
 }
 
 ?>

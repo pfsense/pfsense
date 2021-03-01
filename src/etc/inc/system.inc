@@ -220,12 +220,20 @@ function system_resolvconf_generate($dynupdate = false) {
 		}
 		/* dns server array starts at 0 */
 		$dnsserver = $syscfg['dnsserver'][$dnscounter - 1];
+
+		/* specify IP protocol version for correct add/del,
+		 * see https://redmine.pfsense.org/issues/11578 */
+		if (is_ipaddrv4($dnsserver)) {
+			$ipprotocol = 'inet';
+		} else {
+			$ipprotocol = 'inet6';
+		}
 		if (!empty($dnsserver)) {
 			if (is_ipaddr($gatewayip)) {
-				route_add_or_change($dnsserver, $gatewayip);
+				route_add_or_change($dnsserver, $gatewayip, '', '', $ipprotocol);
 			} else {
 				/* Remove old route when disable gw */
-				route_del($dnsserver);
+				route_del($dnsserver, $ipprotocol);
 			}
 		}
 		$dnscounter++;

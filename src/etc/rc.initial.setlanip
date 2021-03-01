@@ -208,7 +208,7 @@ function next_unused_gateway_name($interface, $inet_type = 'inet') {
 	return $new_name;
 }
 
-function add_gateway_to_config($interface, $gatewayip, $inet_type) {
+function add_gateway_to_config($interface, $gatewayip, $inet_type, $nonlocalgateway=false) {
 	global $g, $config, $dry_run;
 	init_config_arr(array('gateways', 'gateway_item'));
 	$a_gateways = &$config['gateways']['gateway_item'];
@@ -234,6 +234,9 @@ function add_gateway_to_config($interface, $gatewayip, $inet_type) {
 			"interval" => true,
 			"descr" => "Interface $interface Gateway"
 		);
+		if ($nonlocalgateway) {
+			$item['nonlocalgateway'] = true;
+		}
 		if ($dry_run) {
 			print_r($item);
 		}
@@ -255,7 +258,7 @@ function console_configure_ip_address($version) {
 	global $g, $config, $interface, $restart_dhcpd, $ifaceassigned, $fp;
 
 	$label_IPvX = ($version === 6) ? "IPv6"   : "IPv4";
-	$maxbits    = ($version === 6) ? 127      : 31;
+	$maxbits    = ($version === 6) ? 128      : 32;
 	$label_DHCP = ($version === 6) ? "DHCP6"  : "DHCP";
 
 	$upperifname = strtoupper($interface);
@@ -340,18 +343,20 @@ function console_configure_ip_address($version) {
 					$gwip = chop(fgets($fp));
 					$is_ipaddr = ($version === 6) ? is_ipaddrv6($gwip) : is_ipaddrv4($gwip);
 					$is_in_subnet = $is_ipaddr && ip_in_subnet($gwip, $subnet . "/" . $intbits);
+					$nonlocalgateway = false;
 					if ($gwip != '') {
 						if (!$is_ipaddr) {
 							echo sprintf(gettext("not an %s IP address!"), $label_IPvX) . "\n";
 						} else if (!$is_in_subnet) {
-							echo gettext("not in subnet!") . "\n";
+							$nonlocalgateway = true;
+							echo gettext("Non-local gateway detected.");
 						}
 					}
-				} while (!($gwip == '' || ($is_ipaddr && $is_in_subnet)));
+				} while (!(empty($gwip) || $is_ipaddr));
 
 				if ($gwip != '') {
 					$inet_type = ($version === 6) ? "inet6" : "inet";
-					$gwname = add_gateway_to_config($interface, $gwip, $inet_type);
+					$gwname = add_gateway_to_config($interface, $gwip, $inet_type, $nonlocalgateway);
 				}
 			}
 			$ifppp = console_get_interface_from_ppp(get_real_interface($interface));

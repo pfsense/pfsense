@@ -122,12 +122,12 @@ $format_bits = function ($num) {
 	$units = array('', 'k', 'M', 'G', 'T');
 
 	$i = 0;
-	while ($num > 1000 && $i < count($units)) {
+	while ($num >= 1000 && $i < count($units)) {
 		$num /= 1000;
 		$i++;
 	}
 	$precision = $i > 0 ? 1 : 0;
-	$num = number_format($num, $precision);
+	$num = number_format($num, $precision, '.', '');
 
 	return ("$num {$units[$i]}");
 };

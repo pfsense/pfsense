@@ -2810,7 +2810,8 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 		return false;
 	}
 
-	if (is_subnet($target)) {
+	/* use '-host' for IPv6 /128 routes, see https://redmine.pfsense.org/issues/11594 */
+	if (is_subnetv4($target) || (is_subnetv6($target) && (subnet_size($target) > 1))) {
 		$target_prefix = '-net';
 	} else if (is_ipaddr($target)) {
 		$target_prefix = '-host';

@@ -173,7 +173,7 @@ function wg_validate_peer($idx, $peer) {
 			if (!is_subnet(trim($ip))) {
 				$input_errors[] = sprintf(gettext(
 				    'Peer %1$s: Address %2$s is not a valid ' .
-				    'IPv4 or IPv6 CIDR subnet aadress.'),
+				    'IPv4 or IPv6 CIDR subnet address.'),
 					$idx, $ip);
 			}
 		}

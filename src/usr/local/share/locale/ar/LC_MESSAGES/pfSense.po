@@ -32126,7 +32126,7 @@ msgstr ""
 #: src/etc/inc/web/wg.inc:153
 #, php-format
 msgid ""
-"Peer %1$s: Address %2$s is not a valid IPv4 or IPv6 CIDR subnet aadress."
+"Peer %1$s: Address %2$s is not a valid IPv4 or IPv6 CIDR subnet address."
 msgstr ""
 
 #: src/etc/inc/web/wg.inc:172

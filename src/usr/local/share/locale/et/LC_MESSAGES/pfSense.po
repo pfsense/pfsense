@@ -28,7 +28,7 @@ msgstr ""
 
 #: src/usr/local/captiveportal/index.php:155
 msgid "This MAC address has been blocked"
-msgstr "See MAC aadress on blokeeritud"
+msgstr "See MAC address on blokeeritud"
 
 #: src/usr/local/captiveportal/index.php:174
 #: src/usr/local/captiveportal/index.php:250
@@ -1721,13 +1721,13 @@ msgstr "Väline alamvõrk"
 #: src/usr/local/www/firewall_nat_edit.php:243
 #: src/usr/local/www/vpn_ipsec_settings.php:524
 msgid "Source address"
-msgstr "Lähteaadress"
+msgstr "Lähteaddress"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:135
 #: src/usr/local/www/firewall_nat_edit.php:248
 #: src/usr/local/www/vpn_ipsec_settings.php:530
 msgid "Destination address"
-msgstr "Sihtaadress"
+msgstr "Sihtaddress"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:180
 msgid "The interface do not have address from the specified address family."
@@ -1945,7 +1945,7 @@ msgstr "Tüüp"
 #: src/usr/local/www/vpn_ipsec_phase2.php:661
 #: src/usr/local/www/vpn_ipsec_phase2.php:668
 msgid "Address"
-msgstr "Aadress"
+msgstr "address"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:523
 msgid ""
@@ -1967,7 +1967,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:823
 #: src/usr/local/www/firewall_nat_edit.php:891
 msgid "Address/mask"
-msgstr "Aadress/mask"
+msgstr "address/mask"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:549
 msgid ""
@@ -2940,7 +2940,7 @@ msgstr "DUID"
 #: src/usr/local/www/diag_ndp.php:188 src/usr/local/www/interfaces.php:680
 #: src/usr/local/www/services_dhcpv6_edit.php:214
 msgid "IPv6 address"
-msgstr "IPv6 aadress"
+msgstr "IPv6 address"
 
 #: src/usr/local/www/services_dhcpv6.php:1090
 #: src/usr/local/www/services_rfc2136.php:85
@@ -3108,7 +3108,7 @@ msgstr "Kasutajanimi"
 #: src/usr/local/www/status_dhcp_leases.php:203 src/etc/inc/ipsec.inc:99
 #: src/etc/inc/ipsec.inc:111 src/etc/inc/certs.inc:49
 msgid "IP address"
-msgstr "IP aadress"
+msgstr "IP address"
 
 #: src/usr/local/www/vpn_l2tp_users.php:90
 #: src/usr/local/www/system_usermanager.php:693
@@ -4613,7 +4613,7 @@ msgstr "Kasutaja"
 #: src/usr/local/www/status_dhcp_leases.php:173
 #: src/usr/local/www/status_graph.php:192
 msgid "IP Address"
-msgstr "IP aadress"
+msgstr "IP address"
 
 #: src/usr/local/www/status_logs_vpn.php:181
 #: src/usr/local/www/status_logs_vpn.php:380
@@ -6989,11 +6989,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:636
 msgid "*Server host or address"
-msgstr "*Serveri nimi või aadress"
+msgstr "*Serveri nimi või address"
 
 #: src/usr/local/www/vpn_openvpn_client.php:639
 msgid "The IP address or hostname of the OpenVPN server."
-msgstr "OpenVPNi serveri IP aadress või hostinimi."
+msgstr "OpenVPNi serveri IP address või hostinimi."
 
 #: src/usr/local/www/vpn_openvpn_client.php:643
 msgid "*Server port"
@@ -7005,7 +7005,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:650
 msgid "Proxy host or address"
-msgstr "Puhverserveri hostinimi või aadress"
+msgstr "Puhverserveri hostinimi või address"
 
 #: src/usr/local/www/vpn_openvpn_client.php:653
 #, php-format
@@ -8166,7 +8166,7 @@ msgid ""
 "TFTP server."
 msgstr ""
 "Jäta tühjaks, et välja lülitada. Sisesta TFTP serveri kehtiv\n"
-" IP aadress, hostinimi või URL"
+" IP address, hostinimi või URL"
 
 #: src/usr/local/www/services_dhcp.php:1459
 #: src/usr/local/www/services_dhcp_edit.php:783
@@ -8195,7 +8195,7 @@ msgstr "Järgmine server"
 #: src/usr/local/www/services_dhcp.php:1491
 #: src/usr/local/www/services_dhcp_edit.php:815
 msgid "Enter the IP address of the next server"
-msgstr "Sisesta järgmise serveri IP aadress"
+msgstr "Sisesta järgmise serveri IP address"
 
 #: src/usr/local/www/services_dhcp.php:1495
 #: src/usr/local/www/services_dhcp_edit.php:819
@@ -13818,7 +13818,7 @@ msgstr ""
 #: src/usr/local/www/services_wol.php:151
 #: src/usr/local/www/services_wol_edit.php:143
 msgid "Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx"
-msgstr "Sisesta MAC aadress järgnevas formaadis: xx:xx:xx:xx:xx:xx"
+msgstr "Sisesta MAC address järgnevas formaadis: xx:xx:xx:xx:xx:xx"
 
 #: src/usr/local/www/services_wol.php:157
 msgid "Send"
@@ -14822,7 +14822,7 @@ msgstr "Lüüsi nimi"
 
 #: src/usr/local/www/system_gateways_edit.php:187
 msgid "Gateway IP address"
-msgstr "Lüüsi IP aadress"
+msgstr "Lüüsi IP address"
 
 #: src/usr/local/www/system_gateways_edit.php:200
 msgid "This will consider this gateway as always being up."
@@ -15610,7 +15610,7 @@ msgstr "Luba L2TP"
 
 #: src/usr/local/www/vpn_l2tp.php:232
 msgid "*Server address"
-msgstr "*Serveri aadress"
+msgstr "*Serveri address"
 
 #: src/usr/local/www/vpn_l2tp.php:235
 #, php-format
@@ -19425,7 +19425,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_ppps_edit.php:237
 #: src/usr/local/www/interfaces_ppps_edit.php:240
 msgid "Local IP address"
-msgstr "Kohalik IP aadress"
+msgstr "Kohalik IP address"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:237
 #: src/usr/local/www/interfaces_ppps_edit.php:240
@@ -20852,7 +20852,7 @@ msgstr "Tüüp"
 
 #: src/usr/local/www/firewall_rules_edit.php:1450
 msgid " Address"
-msgstr "Aadress"
+msgstr "address"
 
 #: src/usr/local/www/firewall_rules_edit.php:1464
 #, php-format
@@ -22243,7 +22243,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:410 src/etc/inc/util.inc:1316
 msgid "Interface Address"
-msgstr "Liidese aadress"
+msgstr "Liidese address"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:417
 msgid "Subnet: "
@@ -25291,7 +25291,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_ip.php:108
 msgid "IP Addresses"
-msgstr "IP aadress"
+msgstr "IP address"
 
 #: src/usr/local/www/services_captiveportal_ip.php:129
 msgid "Edit IP"
@@ -25887,7 +25887,7 @@ msgstr "PPTP salasõna"
 
 #: src/usr/local/www/interfaces.php:659 src/usr/local/www/interfaces.php:662
 msgid "PPTP local IP address"
-msgstr "PPTP kohalik IP aadress"
+msgstr "PPTP kohalik IP address"
 
 #: src/usr/local/www/interfaces.php:659 src/usr/local/www/interfaces.php:662
 msgid "PPTP subnet"
@@ -26696,7 +26696,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3028
 msgid "*Local IP address"
-msgstr "*Kohalik IP aadress"
+msgstr "*Kohalik IP address"
 
 #: src/usr/local/www/interfaces.php:3035
 msgid "*Remote IP address"
@@ -30045,7 +30045,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_mac_edit.php:227
 msgid "*MAC Address"
-msgstr "*MAC aadress"
+msgstr "*MAC address"
 
 #: src/usr/local/www/services_captiveportal_mac_edit.php:231
 msgid ""
@@ -30745,7 +30745,7 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:98
 msgid "My IP address"
-msgstr "Minu IP aadress"
+msgstr "Minu IP address"
 
 #: src/etc/inc/ipsec.inc:100 src/etc/inc/ipsec.inc:112
 msgid "Distinguished name"
@@ -32055,7 +32055,7 @@ msgstr ""
 #: src/etc/inc/web/wg.inc:153
 #, php-format
 msgid ""
-"Peer %1$s: Address %2$s is not a valid IPv4 or IPv6 CIDR subnet aadress."
+"Peer %1$s: Address %2$s is not a valid IPv4 or IPv6 CIDR subnet address."
 msgstr ""
 
 #: src/etc/inc/web/wg.inc:172

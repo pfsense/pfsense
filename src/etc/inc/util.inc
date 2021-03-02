@@ -3417,9 +3417,8 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 	/* Source */
 	if (trim($rule[$index]) == "host") {
 		$index++;
-		if ((is_ipaddrv4(trim($rule[$index])) && ($proto == "inet")) ||
-		    (is_ipaddrv6(trim($rule[$index])) && ($proto == "inet6")) ||
-		    (trim($rule[$index]) == "{clientip}")) {
+		if ((($proto == 'inet') && (is_ipaddrv4(trim($rule[$index])) || (trim($rule[$index]) == "{clientip}"))) ||
+		    (($proto == 'inet6') && (is_ipaddrv6(trim($rule[$index])) || (trim($rule[$index]) == "{clientipv6}")))) {
 			$tmprule .= "from {$rule[$index]} ";
 			$index++;
 		} else {
@@ -3493,9 +3492,8 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 	/* Destination */
 	if (trim($rule[$index]) == "host") {
 		$index++;
-		if ((is_ipaddrv4(trim($rule[$index])) && ($proto == "inet")) ||
-		    (is_ipaddrv6(trim($rule[$index])) && ($proto == "inet6")) ||
-		    (trim($rule[$index]) == "{clientip}")) {
+		if ((($proto == 'inet') && (is_ipaddrv4(trim($rule[$index])) || (trim($rule[$index]) == "{clientip}"))) ||
+		    (($proto == 'inet6') && (is_ipaddrv6(trim($rule[$index])) || (trim($rule[$index]) == "{clientipv6}")))) {
 			$tmprule .= "to {$rule[$index]} ";
 			$index++;
 		} else {

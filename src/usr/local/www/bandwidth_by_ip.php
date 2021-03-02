@@ -118,6 +118,22 @@ if ($hostipformat != "") {
 	}
 }
 
+$tryToResolveHostAssignmentFromStaticRouteSubnets = function(string $ip, bool $shortenIp) {
+    	global $config;
+	if ($ip) {
+	    $routes = $config['staticroutes']['route'];
+	    foreach ($routes as $route) {
+	        if (ip_in_subnet($ip, $route['network'])) {
+	            if ($shortenIp && preg_match('~([0-9]{1,3}\.[0-9]{1,3}|[0-9a-f]{1,4})[:]*$~i', $ip, $match)) {
+	                $shortIpIdent = $match[1];
+		    }
+	            return ($shortIpIdent ?? $ip) . '@' . ($route['descr'] ?: $route['gateway']);
+		}
+	    }
+	}
+	return $ip;
+};
+
 $format_bits = function ($num) {
 	$units = array('', 'k', 'M', 'G', 'T');
 
@@ -230,6 +246,8 @@ for ($x=2; $x<12; $x++) {
 							$name_array = explode(".", $addrdata);
 							$addrdata = $name_array[0];
 						}
+					} else {
+						$addrdata = $tryToResolveHostAssignmentFromStaticRouteSubnets($infoarray[0], $hostipformat != "fqdn");
 					}
 				}
 			}

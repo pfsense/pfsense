@@ -2195,7 +2195,7 @@ function portal_ip_from_client_ip($cliip) {
 		}
 	}
 
-	$route = route_get($cliip);
+	$route = route_get($cliip, 'inet', true);
 	if (empty($route)) {
 		return false;
 	}

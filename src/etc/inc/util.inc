@@ -2685,6 +2685,10 @@ function route_get($target, $ipprotocol = '', $useroute = false) {
 			}
 		} else {
 			$gateway = exec("/sbin/route -n{$inet} get {$target} | /usr/bin/awk '/gateway:/{print $2}'");
+			if (!$gateway) {
+				// non-local gateway
+				$gateway = get_interface_mac($interface);
+			}
 		}
 		$result[] = array('gateway' => $gateway, 'interface-name' => $interface);
 	} else {
@@ -2738,7 +2742,7 @@ function route_del($target, $ipprotocol = '') {
 		return false;
 	}
 
-	$route = route_get($target, $ipprotocol);
+	$route = route_get($target, $ipprotocol, true);
 
 	if (empty($route)) {
 		return;

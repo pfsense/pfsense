@@ -200,7 +200,7 @@ if ($_POST['save']) {
 					if (is_ipaddrv6($dts)) {
 						$family = "-inet6";
 					}
-					$route = route_get($dts);
+					$route = route_get($dts, '', true);
 					if (!count($route)) {
 						continue;
 					}

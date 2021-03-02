@@ -2100,7 +2100,7 @@ function format_number($num, $precision = 3) {
 		$num /= 1000;
 		$i++;
 	}
-	$num = number_format($num, $precision);
+	$num = round($num, $precision);
 
 	return ("$num {$units[$i]}");
 }

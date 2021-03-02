@@ -118,6 +118,19 @@ if ($hostipformat != "") {
 	}
 }
 
+$format_bits = function ($num) {
+	$units = array('', 'k', 'M', 'G', 'T');
+
+	$i = 0;
+	while ($num > 1000 && $i < count($units)) {
+		$num /= 1000;
+		$i++;
+	}
+	$precision = $i > 0 ? 1 : 0;
+	$num = number_format($num, $precision);
+
+	return ("$num {$units[$i]}");
+};
 
 //get the mode
 $mode = !empty($_REQUEST['mode']) ? $_REQUEST['mode'] : '';
@@ -171,7 +184,7 @@ if ($mode == "iftop") {
 	$listedIPs[] = "";
 	$listedIPs[] = "";
 	foreach ($arrIP as $k => $ip) {
-		$listedIPs[] = $ip.";".format_number($arr_in[$ip],2).";".format_number($arr_out[$ip],2);
+		$listedIPs[] = $ip . ";" . $format_bits($arr_in[$ip]) . ";" . $format_bits($arr_out[$ip]);
 	}
 
 } else {
@@ -182,7 +195,6 @@ if ($mode == "iftop") {
 $someinfo = false;
 $formatNumericRate = function(&$value){
     // rate and iftop output format is inconsistent, unify it
-    $value = str_replace('K', 'k', $value);
     $value = preg_replace('~^([\d.]+)[ ]?([a-z]?)$~i', '\\1 \\2', $value);
 };
 

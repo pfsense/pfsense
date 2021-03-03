@@ -782,6 +782,7 @@ function check_for_alternate_interfaces() {
 				'if' => 'ix3',
 				'descr' => 'OPT4'
 			);
+			break;
 		default:
 			$default_device['wan'] = "";
 			$default_device['lan'] = "";

@@ -429,8 +429,16 @@ function console_configure_dhcpd($version = 4) {
 	} else {
 		if (isset($config[$dhcpd][$interface]['enable'])) {
 			unset($config[$dhcpd][$interface]['enable']);
-			printf(gettext("Disabling %s DHCPD..."), $label_IPvX);
 			$restart_dhcpd = true;
+		}
+		/* disable RA mode, see https://redmine.pfsense.org/issues/11609 */
+		if (isset($config[$dhcpd][$interface]['ramode']) &&
+		    ($config[$dhcpd][$interface]['ramode'] != 'disabled')) {
+			$config[$dhcpd][$interface]['ramode'] = 'disabled';
+			$restart_dhcpd = true;
+		}
+		if ($restart_dhcpd) {
+			printf(gettext("Disabling %s DHCPD...") . "\n", $label_IPvX);
 		}
 	}
 	return 1;

@@ -645,6 +645,11 @@ function filter_generate_scrubing() {
 			/* different size of IPv4/IPv6 header, https://redmine.pfsense.org/issues/11409 */
 			$mssclamp4 = "max-mss " . (intval($scrubcfg['mss'] - 40));
 			$mssclamp6 = "max-mss " . (intval($scrubcfg['mss'] - 60));
+		} elseif (substr($scrubcfg['if'], 0, 2) == 'wg') {
+			/* WireGuard interfaces should be mss clamped by default,
+			*  see https://redmine.pfsense.org/issues/11600 */
+			$mssclamp4 = "max-mss 1380";
+			$mssclamp6 = "max-mss 1360";
 		} else {
 			$mssclamp4 = "";
 			$mssclamp6 = "";

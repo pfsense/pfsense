@@ -37,26 +37,32 @@ require_once("guiconfig.inc");
 init_config_arr(array('wol', 'wolentry'));
 $a_wol = &$config['wol']['wolentry'];
 
+function send_wol($if, $mac, $description, & $savemsg, & $class) {
+	$ipaddr = get_interface_ip($if);
+	if (!is_ipaddr($ipaddr) || !is_macaddr($mac)) {
+		return array();
+	}
+	if (!empty($description)) {
+		$description = ' (' . htmlspecialchars($description) . ')';
+	}
+	/* determine broadcast address */
+	$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
+	/* Execute wol command and check return code. */
+	if (!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")) {
+		$savemsg .= sprintf(gettext('Sent magic packet to %1$s%2$s.'), $mac, $description) . "<br />";
+		$class = 'success';
+	} else {
+		$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully.'), '<a href="/status_logs.php">', '</a>', $description, htmlspecialchars($mac)) . "<br />";
+		$class = 'warning';
+	}
+}
+
+$savemsg = "";
+$class = "";
+
 if ($_REQUEST['wakeall'] != "") {
-	$i = 0;
-	$savemsg = "";
 	foreach ($a_wol as $wolent) {
-		$mac = $wolent['mac'];
-		$if = $wolent['interface'];
-		$description = $wolent['descr'];
-		$ipaddr = get_interface_ip($if);
-		if (!is_ipaddr($ipaddr)) {
-			continue;
-		}
-		$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
-		/* Execute wol command and check return code. */
-		if (!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")) {
-			$savemsg .= sprintf(gettext('Sent magic packet to %1$s (%2$s).'), $mac, $description) . "<br />";
-			$class = 'success';
-		} else {
-			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully.'), '<a href="/status_logs.php">', '</a>', $description, $mac) . "<br />";
-			$class = 'warning';
-		}
+		send_wol($wolent['interface'], $wolent['mac'], $wolent['descr'], $savemsg, $class);
 	}
 }
 
@@ -79,21 +85,7 @@ if ($_POST['Submit'] || $_POST['mac']) {
 	}
 
 	if (!$input_errors) {
-		/* determine broadcast address */
-		$ipaddr = get_interface_ip($if);
-		if (!is_ipaddr($ipaddr)) {
-			$input_errors[] = gettext("A valid ip could not be found!");
-		} else {
-			$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
-			/* Execute wol command and check return code. */
-			if (!mwexec("/usr/local/bin/wol -i {$bcip} " . escapeshellarg($mac))) {
-				$savemsg .= sprintf(gettext("Sent magic packet to %s."), $mac);
-				$class = 'success';
-			} else {
-				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully.'), '<a href="/status_logs.php">', '</a>', $mac) . "<br />";
-				$class = 'warning';
-			}
-		}
+		send_wol($if, $mac, '', $savemsg, $class);
 	}
 }
 
@@ -225,7 +217,7 @@ print $form;
 			<?=gettext("Add");?>
 		</a>
 
-		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary">
+		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary" usepost>
 			<i class="fa fa-power-off icon-embed-btn"></i>
 			<?=gettext("Wake All Devices")?>
 		</a>

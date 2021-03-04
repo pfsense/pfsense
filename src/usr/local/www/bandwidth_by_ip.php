@@ -118,23 +118,23 @@ if ($hostipformat != "") {
 	}
 }
 
-$tryToResolveHostAssignmentFromStaticRouteSubnets = function(string $ip, bool $shortenIp) {
-    	global $config;
+$tryToResolveHostAssignmentFromStaticRouteSubnets = function(string $ip, bool $shortenIp): string {
+	global $config;
 	if ($ip) {
-	    $routes = $config['staticroutes']['route'];
-	    foreach ($routes as $route) {
-	        if (ip_in_subnet($ip, $route['network'])) {
-	            if ($shortenIp && preg_match('~([0-9]{1,3}\.[0-9]{1,3}|[0-9a-f]{1,4})[:]*$~i', $ip, $match)) {
-	                $shortIpIdent = $match[1];
-		    }
-	            return ($shortIpIdent ?? $ip) . '@' . ($route['descr'] ?: $route['gateway']);
+		$routes = $config['staticroutes']['route'];
+		foreach ($routes as $route) {
+			if (ip_in_subnet($ip, $route['network'])) {
+				if ($shortenIp && preg_match('~([0-9]{1,3}\.[0-9]{1,3}|[0-9a-f]{1,4})[:]*$~i', $ip, $match)) {
+					$shortIpIdent = $match[1];
+				}
+				return ($shortIpIdent ?? $ip) . '@' . ($route['descr'] ?: $route['gateway']);
+			}
 		}
-	    }
 	}
 	return $ip;
 };
 
-$format_bits = function ($num) {
+$format_bits = function (string $num): string {
 	$units = array('', 'k', 'M', 'G', 'T');
 
 	$i = 0;
@@ -151,23 +151,21 @@ $format_bits = function ($num) {
 //get the mode
 $mode = !empty($_REQUEST['mode']) ? $_REQUEST['mode'] : '';
 if ($mode == "iftop") {
-    $current_ts = time();
-    $pidFile = "/var/run/iftop_{$real_interface}_{$iftopParam}.pid";
-    $logFile = "/var/db/iftop_{$real_interface}_{$iftopParam}.log";
+	$current_ts = time();
+	$pidFile = "/var/run/iftop/{$real_interface}_{$iftopParam}.pid";
+	$dataFile = "/var/tmp/iftop/{$real_interface}_{$iftopParam}.txt";
 
-    $since = null;
-    if (file_exists($pidFile)) {
-	$since = $current_ts - filemtime($pidFile);
-    }
+	$since = null;
+	if (file_exists($pidFile)) {
+		$since = $current_ts - filemtime($pidFile);
+	}
 
-    $logExists = file_exists($logFile);
-    if (!$since || $since >= 3 || !$logExists) {
-	$_grb = exec("/usr/local/bin/iftop_parser.sh {$real_interface} {$iftopParam} 1>/dev/null 2>&1 &", $listedIPs);
-    }
+	$dataExists = file_exists($dataFile);
+	if (!$since || $since >= 3 || !$dataExists) {
+		$_grb = exec("/usr/local/bin/iftop_parser.sh {$real_interface} {$iftopParam} 1>/dev/null 2>&1 &");
+	}
 
-    if ($logExists) {
-	$listedIPs = file($logFile);
-    }
+	$listedIPs = $dataExists ? file($dataFile) : [];
 
 	// order and group by
 	$arr_in = array();
@@ -209,9 +207,9 @@ if ($mode == "iftop") {
 
 
 $someinfo = false;
-$formatNumericRate = function(&$value){
-    // rate and iftop output format is inconsistent, unify it
-    $value = preg_replace('~^([\d.]+)[ ]?([a-z]?)$~i', '\\1 \\2', $value);
+$formatNumericRate = function(string &$value): void {
+	// rate and iftop output format is inconsistent, unify it
+	$value = preg_replace('~^([\d.]+)[ ]?([a-z]?)$~i', '\\1 \\2', $value);
 };
 
 for ($x=2; $x<12; $x++) {

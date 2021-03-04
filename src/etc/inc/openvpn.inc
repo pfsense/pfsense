@@ -1075,7 +1075,7 @@ function openvpn_reconfigure($mode, $settings) {
 					if ($settings['strictusercn']) {
 						$strictusercn = "true";
 					}
-					$conf .= "plugin /usr/local/lib/openvpn/plugins/openvpn-plugin-auth-script.so /usr/local/sbin/ovpn_auth_verify_async user " . base64_encode($settings['authmode']) . " {$strictusercn} {$mode_id} {$settings['local_port']}\n";
+					$conf .= openvpn_authscript_string($settings['authmode'], $strictusercn, $mode_id, $settings['local_port']);
 				}
 				break;
 		}
@@ -2261,6 +2261,10 @@ function openvpn_build_data_cipher_list($data_ciphers = 'AES-256-GCM,AES-128-GCM
 		$data_ciphers .= ',' . $fallback_cipher;
 	}
 	return $data_ciphers;
+}
+
+function openvpn_authscript_string($authmode, $strictusercn, $mode_id, $local_port) {
+	return "plugin /usr/local/lib/openvpn/plugins/openvpn-plugin-auth-script.so /usr/local/sbin/ovpn_auth_verify_async user " . base64_encode($authmode) . " {$strictusercn} {$mode_id} {$local_port}\n";
 }
 
 ?>

@@ -349,6 +349,19 @@ if ($_POST['save']) {
 		$input_errors[] = $result;
 	}
 
+	/* Maximum option line length = 256, see https://redmine.pfsense.org/issues/11104 */
+	if (!empty($pconfig['authmode']) && is_port($pconfig['local_port'])) {
+		$strictusercn = "false";
+		if ($pconfig['strictusercn']) {
+			$strictusercn = "true";
+		}
+		$authstring = openvpn_authscript_string(implode(',', $pconfig['authmode']),
+			    $strictusercn, $vpnid, $pconfig['local_port']);
+		if (strlen($authstring) > 254) {
+			$input_errors[] = gettext("Too many Authentication Backends have been selected or their names are too long.");
+		}
+	}
+
 	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4")) {
 		$input_errors[] = $result;
 	}

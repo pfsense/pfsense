@@ -13,9 +13,9 @@ fi
 
 # files paths
 pid_dir=/var/run/iftop
-pid_file=$pid_dir/${1}_${2}.pid
+pid_file=${pid_dir}/${1}_${2}.pid
 data_dir=/var/tmp/iftop
-data_file=$data_dir/${1}_${2}.txt
+data_file=${data_dir}/${1}_${2}.txt
 awk_script=/usr/local/bin/iftop_parse.awk
 iftop_config=/usr/local/etc/iftop/filter_${2}.conf
 

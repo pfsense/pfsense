@@ -4102,7 +4102,6 @@ class dnpipe_class extends dummynet_class {
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bw) {
 				if ($bw['bwsched'] != "none") {
-					$time_based_rules = true;
 					if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
 						foreach ($config['schedules']['schedule'] as $schedule) {
 							if ($bw['bwsched'] == $schedule['name']) {

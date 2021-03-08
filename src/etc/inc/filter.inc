@@ -2902,7 +2902,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 
 function filter_generate_user_rule($rule) {
 	global $config, $g, $FilterIflist, $GatewaysList;
-	global $dummynet_name_list, $vlanprio_values;
+	global $dummynet_name_list, $vlanprio_values, $time_based_rules;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -3313,6 +3313,18 @@ function filter_generate_user_rule($rule) {
 	}
 	if ($rule['dnpipe'] <> "") {
 		if (!empty($dummynet_name_list[$rule['dnpipe']])) {
+			/* https://redmine.pfsense.org/issues/11636 */
+			foreach ($config['dnshaper']['queue'] as $queue) {
+				if (($queue['name'] == $rule['dnpipe']) &&
+				    is_array($queue['bandwidth']['item'])) {
+					foreach ($queue['bandwidth']['item'] as $bw) {
+				       		if ($bw['bwsched'] != "none") {
+							$time_based_rules = true;
+							break 2;
+						}
+					}
+				}
+			}
 			if ($dummynet_name_list[$rule['dnpipe']][0] == "?") {
 				$aline['dnpipe'] = " dnqueue( ";
 				$aline['dnpipe'] .= substr($dummynet_name_list[$rule['dnpipe']], 1);

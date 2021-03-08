@@ -39,14 +39,10 @@ require_once("shaper.inc");
 require_once("itemid.inc");
 require_once("firewall_nat.inc");
 
-init_config_arr(array('filter', 'rule'));
-init_config_arr(array('nat', 'separator'));
 init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
-$a_separators = &$config['nat']['separator'];
 
 // Process $_POST/$_REQUEST =======================================================================
-
 if ($_REQUEST['savemsg']) {
 	$savemsg = $_REQUEST['savemsg'];
 }

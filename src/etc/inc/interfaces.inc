@@ -1800,17 +1800,14 @@ function interfaces_configure() {
 			$track6_list[$if] = $ifname;
 		} else {
 			/* do not run dhcp6c if track interface does not exists
-			 * see https://redmine.pfsense.org/issues/3965 */
+			 * see https://redmine.pfsense.org/issues/3965
+			 * and https://redmine.pfsense.org/issues/11633 */ 
 			if (!empty($config['interfaces'][$if]['ipaddrv6']) &&
 			    $config['interfaces'][$if]['ipaddrv6'] == "dhcp6") {
 				$tr6list = link_interface_to_track6($if);
 				if (is_array($tr6list) && !empty($tr6list)) {
-					foreach ($tr6list as $tr6if) {
-						if (!does_interface_exist($tr6if)) {
-							$dhcp6c_list[$if] = $ifname;
-							continue;
-						}
-					}
+					$dhcp6c_list[$if] = $ifname;
+					continue;
 				}
 			}
 			if (platform_booting()) {

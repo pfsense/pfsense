@@ -1826,9 +1826,6 @@ function interfaces_configure() {
 		}
 	}
 
-	/* set up IPsec VTI interfaces */
-	interfaces_ipsec_vti_configure();
-
 	/*
 	 * NOTE: The following function parameter consists of
 	 *	1 - Do not load gre/gif/bridge with parent/member as vip
@@ -1918,6 +1915,9 @@ function interfaces_configure() {
 			echo gettext("done.") . "\n";
 		}
 	}
+
+	/* set up IPsec VTI interfaces */
+	interfaces_ipsec_vti_configure();
 
 	/* configure interface groups */
 	interfaces_group_setup();

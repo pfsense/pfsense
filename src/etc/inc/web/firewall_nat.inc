@@ -19,18 +19,221 @@
  * limitations under the License.
  */
 
+// Functions to support firewall_nat.php and firewall_nat_edit.php
+
 require_once("config.gui.inc");
 require_once("interfaces.inc");
 require_once("util.inc");
 require_once("pfsense-utils.inc");
 require_once("ipsec.inc");
 require_once("wg.inc");
+require_once("filter.inc");
+require_once("itemid.inc");
 
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
 foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}";
 	$specialsrcdst[] = "{$kif}ip";
+}
+
+function toggleNATrule($post, $json = false) {
+	global $config;
+
+	init_config_arr(array('nat', 'rule'));
+	$a_nat = &$config['nat']['rule'];
+	init_config_arr(array('nat', 'separator'));
+	$a_separators = &$config['nat']['separator'];
+
+	if (isset($a_nat[$post['id']]['disabled'])) {
+		unset($a_nat[$post['id']]['disabled']);
+		$rule_status = true;
+	} else {
+		$a_nat[$post['id']]['disabled'] = true;
+		$rule_status = false;
+	}
+
+	// Check for filter rule associations
+	if (isset($a_nat[$post['id']]['associated-rule-id'])) {
+		toggle_id($a_nat[$post['id']]['associated-rule-id'],
+		    $config['filter']['rule'], $rule_status);
+		unset($rule_status);
+
+		if(!$json) {
+			mark_subsystem_dirty('filter');
+		}
+	}
+
+	if (write_config(gettext("Firewall: NAT: Port forward, enable/disable NAT rule"))) {
+		if (!$json) {
+			mark_subsystem_dirty('natconf');
+		}
+	}
+
+	if(!$json) {
+		header("Location: firewall_nat.php");
+		exit;
+	}
+}
+
+function deleteMultipleNATrules($post, $json = false) {
+	global $config;
+
+	init_config_arr(array('nat', 'rule'));
+	$a_nat = &$config['nat']['rule'];
+	init_config_arr(array('nat', 'separator'));
+	$a_separators = &$config['nat']['separator'];
+
+	$first_idx = 0;
+	$num_deleted = 0;
+
+	foreach ($post['rule'] as $rulei) {
+		// Check for filter rule associations
+		if (isset($a_nat[$rulei]['associated-rule-id'])) {
+			delete_id($a_nat[$rulei]['associated-rule-id'], $config['filter']['rule']);
+			if (!$json) {
+				mark_subsystem_dirty('filter');
+			}
+		}
+
+		unset($a_nat[$rulei]);
+
+		// Capture first changed filter index for later separator shifting
+		if (!$first_idx) {
+			$first_idx = $rulei;
+		}
+
+		$num_deleted++;
+	}
+
+	if ($num_deleted) {
+		move_separators($a_separators, $first_idx, -$num_deleted);
+		if (write_config("NAT: Rule deleted")) {
+			if ($json) {
+				filter_configure();
+			} else {
+				mark_subsystem_dirty('natconf');
+			}
+		}
+	}
+
+	if(!$json) {
+		header("Location: firewall_nat.php");
+		exit;
+	}
+}
+
+function deleteNATrule($post, $json = false) {
+	global $config;
+
+	init_config_arr(array('nat', 'rule'));
+	$a_nat = &$config['nat']['rule'];
+	init_config_arr(array('nat', 'separator'));
+	$a_separators = &$config['nat']['separator'];
+
+	if (isset($a_nat[$post['id']]['associated-rule-id'])) {
+		delete_id($a_nat[$post['id']]['associated-rule-id'], $config['filter']['rule']);
+		$want_dirty_filter = true;
+	}
+
+	unset($a_nat[$post['id']]);
+
+	// Update the separators
+	$ridx = $post['id'];
+	$mvnrows = -1;
+	move_separators($a_separators, $ridx, $mvnrows);
+
+	if (write_config("NAT: Rule deleted")) {
+		if ($json) {
+			filter_configure();
+		} else {
+			mark_subsystem_dirty('natconf');
+			if ($want_dirty_filter) {
+				mark_subsystem_dirty('filter');
+			}
+		}
+	}
+
+	if(!$json) {
+		header("Location: firewall_nat.php");
+		exit;
+	}
+}
+
+function applyNATrules() {
+	$retval = 0;
+
+	$retval |= filter_configure();
+
+	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/apply");
+
+	if ($retval == 0) {
+		clear_subsystem_dirty('natconf');
+		clear_subsystem_dirty('filter');
+	}
+
+	return $retval;
+}
+
+// Re-order the NAT rules per the array of iindicies passed in $post
+function reorderNATrules($post, $json = false) {
+	global $config;
+
+	$updated = false;
+	$dirty = false;
+
+	init_config_arr(array('nat', 'separator'));
+	init_config_arr(array('nat', 'rule'));
+	$a_nat = &$config['nat']['rule'];
+	$a_separators = &$config['nat']['separator'];
+
+	/* update rule order, POST[rule] is an array of ordered IDs */
+	if (is_array($post['rule']) && !empty($post['rule'])) {
+		$a_nat_new = array();
+
+		// if a rule is not in POST[rule], it has been deleted by the user
+		foreach ($post['rule'] as $id) {
+			$a_nat_new[] = $a_nat[$id];
+		}
+
+		if ($a_nat !== $a_nat_new) {
+			$a_nat = $a_nat_new;
+			$dirty = true;
+		}
+	}
+
+	/* update separator order, POST[separator] is an array of ordered IDs */
+	if (is_array($post['separator']) && !empty($post['separator'])) {
+		$new_separator = array();
+		$idx = 0;
+
+		foreach ($post['separator'] as $separator) {
+			$new_separator['sep' . $idx++] = $separator;
+		}
+
+		if ($a_separators !== $new_separator) {
+			$a_separators = $new_separator;
+			$updated = true;
+		}
+	} else if (!empty($a_separators)) {
+		$a_separators = "";
+		$updated = true;
+	}
+
+	if ($updated || $dirty) {
+		if (write_config("NAT: Rule order changed")) {
+			if ($json) {
+				filter_configure();
+			} else if ($dirty) {
+				mark_subsystem_dirty('natconf');
+			}
+		}
+	}
+
+	if(!$json) {
+		header("Location: firewall_nat.php");
+		exit;
+	}
 }
 
 function MVC_is_specialnet($net) {

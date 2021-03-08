@@ -37,6 +37,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("itemid.inc");
+require_once("firewall_nat.inc");
 
 init_config_arr(array('filter', 'rule'));
 init_config_arr(array('nat', 'separator'));
@@ -44,166 +45,32 @@ init_config_arr(array('nat', 'rule'));
 $a_nat = &$config['nat']['rule'];
 $a_separators = &$config['nat']['separator'];
 
-$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
-$ifdisp = get_configured_interface_with_descr();
-foreach ($ifdisp as $kif => $kdescr) {
-	$specialsrcdst[] = "{$kif}";
-	$specialsrcdst[] = "{$kif}ip";
-}
+// Process $_POST/$_REQUEST =======================================================================
 
-if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($natent['interface'])) {
-	$updated = false;
-	$dirty = false;
-
-	/* update rule order, POST[rule] is an array of ordered IDs */
-	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
-		$a_nat_new = array();
-
-		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id) {
-			$a_nat_new[] = $a_nat[$id];
-		}
-
-		if ($a_nat !== $a_nat_new) {
-			$a_nat = $a_nat_new;
-			$dirty = true;
-		}
-	}
-
-	/* update separator order, POST[separator] is an array of ordered IDs */
-	if (is_array($_POST['separator']) && !empty($_POST['separator'])) {
-		$new_separator = array();
-		$idx = 0;
-
-		foreach ($_POST['separator'] as $separator) {
-			$new_separator['sep' . $idx++] = $separator;
-		}
-
-		if ($a_separators !== $new_separator) {
-			$a_separators = $new_separator;
-			$updated = true;
-		}			
-	} else if (!empty($a_separators)) {
-		$a_separators = "";
-		$updated = true;
-	}
-
-	if ($updated || $dirty) {
-		if (write_config("NAT: Rule order changed")) {
-			if ($dirty) {
-				mark_subsystem_dirty('natconf');
-			}
-		}
-	}
-
-	header("Location: firewall_nat.php");
-	exit;
-}
-
-/* if a custom message has been passed along, lets process it */
 if ($_REQUEST['savemsg']) {
 	$savemsg = $_REQUEST['savemsg'];
 }
 
-if ($_POST['apply'] && have_natpfruleint_access($natent['interface'])) {
-
-	$retval = 0;
-
-	$retval |= filter_configure();
-
-	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/apply");
-
-	if ($retval == 0) {
-		clear_subsystem_dirty('natconf');
-		clear_subsystem_dirty('filter');
-	}
-
-}
-
-if (($_POST['act'] == "del") && have_natpfruleint_access($natent['interface'])) {
+if (array_key_exists('order-store', $_REQUEST) && have_natpfruleint_access($natent['interface'])) {
+	reorderNATrules($_POST);
+} else if ($_POST['apply'] && have_natpfruleint_access($natent['interface'])) {
+	$retval = applyNATrules();
+} else if (($_POST['act'] == "del") && have_natpfruleint_access($natent['interface'])) {
 	if ($a_nat[$_POST['id']]) {
-
-		if (isset($a_nat[$_POST['id']]['associated-rule-id'])) {
-			delete_id($a_nat[$_POST['id']]['associated-rule-id'], $config['filter']['rule']);
-			$want_dirty_filter = true;
-		}
-
-		unset($a_nat[$_POST['id']]);
-
-		// Update the separators
-		$ridx = $_POST['id'];
-		$mvnrows = -1;
-		move_separators($a_separators, $ridx, $mvnrows);
-
-		if (write_config("NAT: Rule deleted")) {
-			mark_subsystem_dirty('natconf');
-			if ($want_dirty_filter) {
-				mark_subsystem_dirty('filter');
-			}
-		}
-
-		header("Location: firewall_nat.php");
-		exit;
+		deleteNATrule($_POST);
 	}
-}
-
-if (isset($_POST['del_x']) && have_natpfruleint_access($natent['interface'])) {
-
+} else if (isset($_POST['del_x']) && have_natpfruleint_access($natent['interface'])) {
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		$first_idx = 0;		
-		$num_deleted = 0;
-
-		foreach ($_POST['rule'] as $rulei) {
-			// Check for filter rule associations
-			if (isset($a_nat[$rulei]['associated-rule-id'])) {
-				delete_id($a_nat[$rulei]['associated-rule-id'], $config['filter']['rule']);
-				mark_subsystem_dirty('filter');
-			}
-
-			unset($a_nat[$rulei]);
-
-			// Capture first changed filter index for later separator shifting
-			if (!$first_idx) $first_idx = $rulei;
-			$num_deleted++;
-		}
-
-		if ($num_deleted) {
-			move_separators($a_separators, $first_idx, -$num_deleted);
-			if (write_config("NAT: Rule deleted")) {
-				mark_subsystem_dirty('natconf');
-			}
-		}
-
-		header("Location: firewall_nat.php");
-		exit;
+		deleteMultipleNATrules($_POST);
 	}
 } elseif (($_POST['act'] == "toggle") && have_natpfruleint_access($natent['interface'])) {
 	if ($a_nat[$_POST['id']]) {
-		if (isset($a_nat[$_POST['id']]['disabled'])) {
-			unset($a_nat[$_POST['id']]['disabled']);
-			$rule_status = true;
-		} else {
-			$a_nat[$_POST['id']]['disabled'] = true;
-			$rule_status = false;
-		}
-
-		// Check for filter rule associations
-		if (isset($a_nat[$_POST['id']]['associated-rule-id'])) {
-			toggle_id($a_nat[$_POST['id']]['associated-rule-id'],
-			    $config['filter']['rule'], $rule_status);
-			unset($rule_status);
-			mark_subsystem_dirty('filter');
-		}
-
-		if (write_config(gettext("Firewall: NAT: Port forward, enable/disable NAT rule"))) {
-			mark_subsystem_dirty('natconf');
-		}
-		header("Location: firewall_nat.php");
-		exit;
+		toggleNATrule($_POST);
 	}
 }
 
+// Construct the page =============================================================================
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"));
 $pglinks = array("", "@self", "@self");
 include("head.inc");
@@ -559,6 +426,8 @@ events.push(function() {
 	dirty = false;
 
 	// provide a warning message if the user tries to change page before saving
+	// Unfortunately the custom message is not supported in modern browsers, but he user wil lat
+	// least see a generic warning message
 	$(window).bind('beforeunload', function(){
 		if (!saving && dirty) {
 			return ("<?=gettext('One or more Port Forward rules have been moved but have not yet been saved')?>");

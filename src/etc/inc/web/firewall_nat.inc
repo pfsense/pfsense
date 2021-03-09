@@ -37,6 +37,587 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
+function build_localtype_list() {
+	global $pconfig, $ifdisp;
+
+	$list = array('single' => gettext('Single host'));
+
+	foreach ($ifdisp as $ifent => $ifdesc) {
+		if (have_ruleint_access($ifent)) {
+			$list[$ifent . 'ip'] = $ifdesc . ' address';
+		}
+	}
+
+	return($list);
+}
+
+function build_dsttype_list($json = false) {
+	global $config, $ifdisp;
+
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'), '(self)' => gettext('This Firewall (self)'));
+
+	if ($json || have_ruleint_access("pppoe")) {
+		$list['pppoe'] = gettext('PPPoE clients');
+	}
+
+	if ($json || have_ruleint_access("l2tp")) {
+		$list['l2tp'] = gettext('L2TP clients');
+	}
+
+	foreach ($ifdisp as $ifent => $ifdesc) {
+		if ($json || have_ruleint_access($ifent)) {
+			$list[$ifent] = $ifdesc . ' net';
+			$list[$ifent . 'ip'] = $ifdesc . ' address';
+		}
+	}
+
+	//Temporary array so we can sort IPs
+	$templist = array();
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $sn) {
+			if ((($sn['mode'] == "proxyarp") || ($sn['mode'] == "other")) &&
+			    ($sn['type'] == "network") && is_subnetv4($sn['subnet'])) {
+				$templist[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+				if (isset($sn['noexpand'])) {
+					continue;
+				}
+				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+				$len = $end - $start;
+
+				for ($i = 0; $i <= $len; $i++) {
+					$snip = long2ip32($start+$i);
+
+					$templist[$snip] = $snip . ' (' . $sn['descr'] . ')';
+				}
+			} else {
+				$templist[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+			}
+		}
+	}
+
+	//Sort temp IP array and append onto main array
+	asort($templist);
+	$list = array_merge($list, $templist);
+	unset($templist);
+
+	if ($json) {
+		$rv = array();
+
+		foreach ($list as $ifent => $ifname) {
+			$rv[] = array("text" => $ifname, "value" => $ifent);
+		}
+
+		return(json_encode($rv));
+	} else {
+		return($list);
+	}
+}
+
+function build_srctype_list() {
+	global $ifdisp, $config;
+
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
+
+	if (have_ruleint_access("pppoe")) {
+		$list['pppoe'] = gettext('PPPoE clients');
+	}
+
+	if (have_ruleint_access("l2tp")) {
+		$list['l2tp'] = gettext('L2TP clients');
+	}
+
+	foreach ($ifdisp as $ifent => $ifdesc) {
+		if (have_ruleint_access($ifent)) {
+			$list[$ifent] = $ifdesc . ' net';
+			$list[$ifent . 'ip'] = $ifdesc . ' address';
+		}
+	}
+
+	return($list);
+}
+
+function saveNATrule($post, $id, $json = false) {
+	global $config;
+
+	init_config_arr(array('filter', 'rule'));
+	init_config_arr(array('nat', 'separator'));
+	init_config_arr(array('nat', 'rule'));
+	$a_nat = &$config['nat']['rule'];
+	$a_separators = &$config['nat']['separator'];
+
+	$input_errors = array();
+
+	if (strtoupper($post['proto']) == "TCP" || strtoupper($post['proto']) == "UDP" || strtoupper($post['proto']) == "TCP/UDP") {
+		if ($post['srcbeginport_cust'] && !$post['srcbeginport']) {
+			$post['srcbeginport'] = trim($post['srcbeginport_cust']);
+		}
+		if ($post['srcendport_cust'] && !$post['srcendport']) {
+			$post['srcendport'] = trim($post['srcendport_cust']);
+		}
+
+		if ($post['srcbeginport'] == "any") {
+			$post['srcbeginport'] = 0;
+			$post['srcendport'] = 0;
+		} else {
+			if (!$post['srcendport']) {
+				$post['srcendport'] = $post['srcbeginport'];
+			}
+		}
+		if ($post['srcendport'] == "any") {
+			$post['srcendport'] = $post['srcbeginport'];
+		}
+
+		if ($post['dstbeginport_cust'] && !$post['dstbeginport']) {
+			$post['dstbeginport'] = trim($post['dstbeginport_cust']);
+		}
+		if ($post['dstendport_cust'] && !$post['dstendport']) {
+			$post['dstendport'] = trim($post['dstendport_cust']);
+		}
+
+		if ($post['dstbeginport'] == "any") {
+			$post['dstbeginport'] = "1";
+			$post['dstendport'] = "65535";
+			$post['localbeginport'] = "1";
+		} else {
+			if (!$post['dstendport']) {
+				$post['dstendport'] = $post['dstbeginport'];
+			}
+		}
+		if ($post['dstendport'] == "any") {
+			$post['dstendport'] = $post['dstbeginport'];
+		}
+
+		if ($post['localbeginport_cust'] && !$post['localbeginport']) {
+			$post['localbeginport'] = trim($post['localbeginport_cust']);
+		}
+
+		/* Make beginning port end port if not defined and endport is */
+		if (!$post['srcbeginport'] && $post['srcendport']) {
+			$post['srcbeginport'] = $post['srcendport'];
+		}
+		if (!$post['dstbeginport'] && $post['dstendport']) {
+			$post['dstbeginport'] = $post['dstendport'];
+		}
+	} else {
+		$post['srcbeginport'] = 0;
+		$post['srcendport'] = 0;
+		$post['dstbeginport'] = 0;
+		$post['dstendport'] = 0;
+	}
+
+	if (is_specialnet($post['srctype'])) {
+		$post['src'] = $post['srctype'];
+		$post['srcmask'] = 0;
+	} elseif ($post['srctype'] == "single") {
+		if (is_ipaddrv6($post['src'])) {
+			$post['srcmask'] = 128;
+		} else {
+			$post['srcmask'] = 32;
+		}
+	}
+
+	if (is_specialnet($post['dsttype'])) {
+		$post['dst'] = $post['dsttype'];
+		$post['dstmask'] = 0;
+	} elseif ($post['dsttype'] == "single") {
+		if (is_ipaddrv6($post['dst'])) {
+			$post['dstmask'] = 128;
+		} else {
+			$post['dstmask'] = 32;
+		}
+	} elseif (is_ipaddr($post['dsttype'])) {
+		$post['dst'] = $post['dsttype'];
+		$post['dsttype'] = "single";
+		if (is_ipaddrv6($post['dst'])) {
+			$post['dstmask'] = 128;
+		} else {
+			$post['dstmask'] = 32;
+		}
+	}
+
+	if (is_specialnet($post['localtype'])) {
+		$post['localip'] = $post['localtype'];
+	}
+
+	$pconfig = $post;
+
+	/* input validation */
+	if (strtoupper($post['proto']) == "TCP" or strtoupper($post['proto']) == "UDP" or strtoupper($post['proto']) == "TCP/UDP") {
+		$reqdfields = explode(" ", "interface proto dstbeginport dstendport");
+		$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"), gettext("Destination port from"), gettext("Destination port to"));
+	} else {
+		$reqdfields = explode(" ", "interface proto");
+		$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"));
+	}
+
+	if ($post['srctype'] == "single" || $post['srctype'] == "network") {
+		$reqdfields[] = "src";
+		$reqdfieldsn[] = gettext("Source address");
+	}
+
+	if ($post['dsttype'] == "single" || $post['dsttype'] == "network") {
+		$reqdfields[] = "dst";
+		$reqdfieldsn[] = gettext("Destination address");
+	}
+
+	if (!isset($post['nordr'])) {
+		$reqdfields[] = "localip";
+		$reqdfieldsn[] = gettext("Redirect target IP");
+	}
+
+	if (!$json) {
+		do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
+	}
+
+	if (!$post['srcbeginport']) {
+		$post['srcbeginport'] = 0;
+		$post['srcendport'] = 0;
+	}
+
+	if (!$post['dstbeginport']) {
+		$post['dstbeginport'] = 0;
+		$post['dstendport'] = 0;
+	}
+
+	if ($post['src']) {
+		$post['src'] = trim($post['src']);
+	}
+	if ($post['dst']) {
+		$post['dst'] = trim($post['dst']);
+	}
+	if ($post['localip']) {
+		$post['localip'] = trim($post['localip']);
+	}
+
+	if (!array_key_exists($post['interface'], create_interface_list())) {
+		$input_errors[] = gettext("The submitted interface does not exist.");
+	}
+
+	if (!isset($post['nordr']) && $post['localip'] &&
+	    !is_ipaddroralias($post['localip']) && !is_specialnet($post['localtype'])) {
+		$input_errors[] = sprintf(gettext("\"%s\" is not a valid redirect target IP address or host alias."), $post['localip']);
+	}
+
+	if ($post['localip']) {
+		if (is_specialnet($post['localtype'])) {
+			foreach ($ifdisp as $kif => $kdescr) {
+				if ($post['localtype'] == "{$kif}ip") {
+					if (($post['ipprotocol'] == 'inet') && !get_interface_ip($kif)) {
+						$input_errors[] = sprintf(gettext("Redirect interface must have IPv4 address."));
+						break;
+					} elseif (($post['ipprotocol'] == 'inet6') && !get_interface_ipv6($kif)) {
+						$input_errors[] = sprintf(gettext("Redirect interface must have IPv6 address."));
+						break;
+					}
+				}
+			}
+		} elseif (($post['ipprotocol'] == 'inet') && is_ipaddrv6($post['localip'])) {
+			$input_errors[] = sprintf(gettext("Redirect target IP must be IPv4."));
+		} elseif (($post['ipprotocol'] == 'inet6') && is_ipaddrv4($post['localip'])) {
+			$input_errors[] = sprintf(gettext("Redirect target IP must be IPv6."));
+		}
+	}
+
+	if ($post['srcbeginport'] && !is_port_or_alias($post['srcbeginport'])) {
+		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $post['srcbeginport']);
+	}
+	if ($post['srcendport'] && !is_port_or_alias($post['srcendport'])) {
+		$input_errors[] = sprintf(gettext("%s is not a valid end source port. It must be a port alias or integer between 1 and 65535."), $post['srcendport']);
+	}
+	if ($post['dstbeginport'] && !is_port_or_alias($post['dstbeginport'])) {
+		$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."), $post['dstbeginport']);
+	}
+	if ($post['dstendport'] && !is_port_or_alias($post['dstendport'])) {
+		$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."), $post['dstendport']);
+	}
+
+	if ((strtoupper($post['proto']) == "TCP" || strtoupper($post['proto']) == "UDP" || strtoupper($post['proto']) == "TCP/UDP") && (!isset($post['nordr']) && !is_port_or_alias($post['localbeginport']))) {
+		$input_errors[] = sprintf(gettext("%s is not a valid redirect target port. It must be a port alias or integer between 1 and 65535."), $post['localbeginport']);
+	}
+
+	/* if user enters an alias and selects "network" then disallow. */
+	if (($post['srctype'] == "network" && is_alias($post['src'])) ||
+	    ($post['dsttype'] == "network" && is_alias($post['dst']))) {
+		$input_errors[] = gettext("Alias entries must specify a single host or alias.");
+	}
+
+	if (!is_specialnet($post['srctype'])) {
+		if (($post['src'] && !is_ipaddroralias($post['src']))) {
+			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."), $post['src']);
+		}
+		if ($post['src']) {
+			if (($post['ipprotocol'] == 'inet') && is_ipaddrv6($post['src'])) {
+				$input_errors[] = sprintf(gettext("Source must be IPv4."));
+			} elseif (($post['ipprotocol'] == 'inet6') && is_ipaddrv4($post['src'])) {
+				$input_errors[] = sprintf(gettext("Source must be IPv6."));
+			}
+		}
+		if (is_ipaddr($post['src']) && !is_subnet($post['src'] . '/' . $post['srcmask'])) {
+			$input_errors[] = gettext("A valid source bit count must be specified.");
+		}
+	}
+
+	if (!is_specialnet($post['dsttype'])) {
+		if (($post['dst'] && !is_ipaddroralias($post['dst']))) {
+			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $post['dst']);
+		}
+		if ($post['dst']) {
+			if (($post['ipprotocol'] == 'inet') && is_ipaddrv6($post['dst'])) {
+				$input_errors[] = sprintf(gettext("Destination must be IPv4."));
+			} elseif (($post['ipprotocol'] == 'inet6') && is_ipaddrv4($post['dst'])) {
+				$input_errors[] = sprintf(gettext("Destination must be IPv6."));
+			}
+		}
+		if (is_ipaddr($post['dst']) && !is_subnet($post['dst'] . '/' . $post['dstmask'])) {
+			$input_errors[] = gettext("A valid destination bit count must be specified.");
+		}
+	}
+
+	if ($post['srcbeginport'] > $post['srcendport']) {
+		/* swap */
+		$tmp = $post['srcendport'];
+		$post['srcendport'] = $post['srcbeginport'];
+		$post['srcbeginport'] = $tmp;
+	}
+
+	if ($post['dstbeginport'] > $post['dstendport']) {
+		/* swap */
+		$tmp = $post['dstendport'];
+		$post['dstendport'] = $post['dstbeginport'];
+		$post['dstbeginport'] = $tmp;
+	}
+
+	if (!$input_errors) {
+		if (!isset($post['nordr']) && ((int) $post['dstendport'] - (int) $post['dstbeginport'] + (int) $post['localbeginport']) > 65535) {
+			$input_errors[] = gettext("The target port range must be an integer between 1 and 65535.");
+		}
+	}
+
+	/* check for overlaps */
+	foreach ($a_nat as $natent) {
+		if (isset($id) && ($a_nat[$id]) && ($a_nat[$id] === $natent)) {
+			continue;
+		}
+		if ($natent['interface'] != $post['interface']) {
+			continue;
+		}
+		if ($natent['destination']['address'] != $post['dst']) {
+			continue;
+		}
+		if (($natent['proto'] != $post['proto']) && ($natent['proto'] != "tcp/udp") && ($post['proto'] != "tcp/udp")) {
+			continue;
+		}
+
+		list($begp, $endp) = explode("-", $natent['destination']['port']);
+		if (!$endp) {
+			$endp = $begp;
+		}
+
+		if (!((($post['dstbeginport'] < $begp) && ($post['dstendport'] < $begp)) ||
+		      (($post['dstbeginport'] > $endp) && ($post['dstendport'] > $endp)))) {
+			$input_errors[] = gettext("The destination port range overlaps with an existing entry.");
+			break;
+		}
+	}
+
+	if (!$input_errors) {
+
+		$natent = array();
+
+		if (isset($post['disabled'])) {
+			$natent['disabled'] = true;
+		}
+
+		if (isset($post['nordr'])) {
+			$natent['nordr'] = true;
+		}
+
+		if ($natent['nordr']) {
+			$post['associated-rule-id'] = '';
+			$post['filter-rule-association'] = '';
+		}
+
+		pconfig_to_address($natent['source'], $post['src'],
+			$post['srcmask'], $post['srcnot'],
+			$post['srcbeginport'], $post['srcendport']);
+
+		pconfig_to_address($natent['destination'], $post['dst'],
+			$post['dstmask'], $post['dstnot'],
+			$post['dstbeginport'], $post['dstendport']);
+
+		$natent['ipprotocol'] = $post['ipprotocol'];
+		$natent['protocol'] = $post['proto'];
+
+		if (!isset($natent['nordr'])) {
+			$natent['target'] = $post['localip'];
+			$natent['local-port'] = $post['localbeginport'];
+		}
+
+		$natent['interface'] = $post['interface'];
+		$natent['descr'] = $post['descr'];
+		$natent['associated-rule-id'] = $post['associated-rule-id'];
+
+		if ($post['filter-rule-association'] == "pass") {
+			$natent['associated-rule-id'] = "pass";
+		}
+
+		if ($post['nosync'] == "yes") {
+			$natent['nosync'] = true;
+		} else {
+			unset($natent['nosync']);
+		}
+
+		if ($post['natreflection'] == "enable" || $post['natreflection'] == "purenat" || $post['natreflection'] == "disable") {
+			$natent['natreflection'] = $post['natreflection'];
+		} else {
+			unset($natent['natreflection']);
+		}
+
+		// If we used to have an associated filter rule, but no-longer should have one
+		if (!empty($a_nat[$id]) && (empty($natent['associated-rule-id']) || $natent['associated-rule-id'] != $a_nat[$id]['associated-rule-id'])) {
+			// Delete the previous rule
+			delete_id($a_nat[$id]['associated-rule-id'], $config['filter']['rule']);
+			if (!$json) {
+				mark_subsystem_dirty('filter');
+			}
+		}
+
+		$need_filter_rule = false;
+		// Updating a rule with a filter rule associated
+		if (!empty($natent['associated-rule-id'])) {
+			$need_filter_rule = true;
+		}
+		// Create a rule or if we want to create a new one
+		if ($natent['associated-rule-id'] == 'new') {
+			$need_filter_rule = true;
+			unset($natent['associated-rule-id']);
+			$post['filter-rule-association']='add-associated';
+		}
+		// If creating a new rule, where we want to add the filter rule, associated or not
+		else if (isset($post['filter-rule-association']) &&
+		    ($post['filter-rule-association'] == 'add-associated' ||
+		     $post['filter-rule-association'] == 'add-unassociated')) {
+			$need_filter_rule = true;
+		}
+
+		if ($need_filter_rule == true) {
+			/* auto-generate a matching firewall rule */
+			$filterent = array();
+			unset($filterentid);
+
+			// If a rule already exists, load it
+			if (!empty($natent['associated-rule-id'])) {
+				$filterentid = get_id($natent['associated-rule-id'], $config['filter']['rule']);
+				if ($filterentid === false) {
+					$filterent['associated-rule-id'] = $natent['associated-rule-id'];
+				} else {
+					$filterent =& $config['filter']['rule'][$filterentid];
+				}
+			}
+
+			pconfig_to_address($filterent['source'], $post['src'],
+				$post['srcmask'], $post['srcnot'],
+				$post['srcbeginport'], $post['srcendport']);
+
+			// Update interface, protocol and destination
+			$filterent['interface'] = $post['interface'];
+			$filterent['ipprotocol'] = $post['ipprotocol'];
+			$filterent['protocol'] = $post['proto'];
+			if (is_specialnet($post['localtype'])) {
+				$filterent['destination']['network'] = $post['localtype'];
+			} else {
+				$filterent['destination']['address'] = $post['localip'];
+			}
+
+			if (isset($post['disabled'])) {
+				$filterent['disabled'] = true;
+			}
+
+			$dstpfrom = $post['localbeginport'];
+			$dstpto = (int) $dstpfrom + (int) $post['dstendport'] - (int) $post['dstbeginport'];
+
+			if ($dstpfrom == $dstpto) {
+				$filterent['destination']['port'] = $dstpfrom;
+			} else {
+				$filterent['destination']['port'] = $dstpfrom . "-" . $dstpto;
+			}
+
+			/*
+			 * Our firewall filter description may be no longer than
+			 * 63 characters, so don't let it be.
+			 */
+			$filterent['descr'] = substr("NAT " . $post['descr'], 0, 62);
+
+			// If this is a new rule, create an ID and add the rule
+			if ($post['filter-rule-association'] == 'add-associated') {
+				$filterent['associated-rule-id'] = $natent['associated-rule-id'] = get_unique_id();
+				$filterent['tracker'] = (int)microtime(true);
+				$filterent['created'] = make_config_revision_entry(null, gettext("NAT Port Forward"));
+				$config['filter']['rule'][] = $filterent;
+			}
+
+			if (!$json) {
+				mark_subsystem_dirty('filter');
+			}
+		}
+
+		if (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created'])) {
+			$natent['created'] = $a_nat[$id]['created'];
+		}
+
+		$natent['updated'] = make_config_revision_entry();
+
+		if (!$json) {
+			// Allow extending of the firewall edit page and include custom input validation
+			pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_write_config");
+		}
+
+		// Update the NAT entry now
+		if (isset($id) && $a_nat[$id]) {
+
+			if (isset($natent['associated-rule-id']) &&
+			    (isset($a_nat[$id]['disabled']) !== isset($natent['disabled']))) {
+				// Check for filter rule associations
+				toggle_id($natent['associated-rule-id'],
+				    $config['filter']['rule'],
+				    !isset($natent['disabled']));
+				
+				if (!$json) {
+					mark_subsystem_dirty('filter');
+				}
+			}
+			$a_nat[$id] = $natent;
+		} else {
+			$natent['created'] = make_config_revision_entry();
+			if (is_numeric($after)) {
+				array_splice($a_nat, $after+1, 0, array($natent));
+
+				// Update the separators
+				$ridx = $after;
+				$mvnrows = +1;
+				move_separators($a_separators, $ridx, $mvnrows);
+			} else {
+				$a_nat[] = $natent;
+			}
+		}
+
+		if (write_config(gettext("Firewall: NAT: Port Forward - saved/edited a port forward rule."))) {
+			if (!$json) {
+				mark_subsystem_dirty('natconf');
+			} else {
+				filter_configure();
+			}
+		}
+	}
+
+	$rv = array();
+	$rv['input_errors'] = $input_errors;
+	$rv['pconfig'] = $pconfig;
+
+	return $json ? json_encode($rv) : $rv;
+}
+
 function toggleNATrule($post, $json = false) {
 	global $config;
 
@@ -234,63 +815,6 @@ function reorderNATrules($post, $json = false) {
 		header("Location: firewall_nat.php");
 		exit;
 	}
-}
-
-function MVC_is_specialnet($net) {
-	global $specialsrcdst;
-
-	if (!$net) {
-		return false;
-	}
-	if (in_array($net, $specialsrcdst)) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-function MVC_build_dsttype_list() {
-	global $config, $ifdisp;
-
-	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
-	$list['pppoe'] = gettext('PPPoE clients');
-	$list['l2tp'] = gettext('L2TP clients');
-
-	foreach ($ifdisp as $if => $ifdesc) {
-		$list[$if] = $ifdesc;
-		$list[$if . 'ip'] = $ifdesc . ' address';
-	}
-
-	$list['(self)'] = gettext("This firewall (self)");
-
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $sn) {
-			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
-				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
-				if (isset($sn['noexpand'])) {
-					continue;
-				}
-				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-				$len = $end - $start;
-				for ($i = 0; $i <= $len; $i++) {
-					$snip = long2ip32($start+$i);
-
-					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
-				}
-			} else {
-				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
-			}
-		}
-	}
-
-	$rv = array();
-
-	foreach ($list as $ifent => $ifname) {
-		$rv[] = array("text" => $ifname, "value" => $ifent);
-	}
-
-	return(json_encode($rv));
 }
 
 function MVC_filter_get_interface_list() {

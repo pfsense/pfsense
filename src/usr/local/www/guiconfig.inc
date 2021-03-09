@@ -29,6 +29,7 @@
 /* THIS MUST BE ABOVE ALL OTHER CODE */
 header("X-Frame-Options: SAMEORIGIN");
 include_once('phpsessionmanager.inc');
+include_once("util.inc");
 
 function pfSense_csrf_callback() {
 	include "csrf_error.php";
@@ -643,96 +644,6 @@ function update_if_changed($varname, & $orig, $new) {
 	return false;
 }
 
-function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendport) {
-	if (isset($adr['any'])) {
-		$padr = "any";
-	} else if ($adr['network']) {
-		$padr = $adr['network'];
-	} else if ($adr['address']) {
-		list($padr, $pmask) = explode("/", $adr['address']);
-		if (!$pmask) {
-			if (is_ipaddrv6($padr)) {
-				$pmask = 128;
-			} else {
-				$pmask = 32;
-			}
-		}
-	}
-
-	if (isset($adr['not'])) {
-		$pnot = 1;
-	} else {
-		$pnot = 0;
-	}
-
-	if ($adr['port']) {
-		list($pbeginport, $pendport) = explode("-", $adr['port']);
-		if (!$pendport) {
-			$pendport = $pbeginport;
-		}
-	} else if (!is_alias($pbeginport) && !is_alias($pendport)) {
-		$pbeginport = "any";
-		$pendport = "any";
-	}
-}
-
-function pconfig_to_address(&$adr, $padr, $pmask, $pnot = false, $pbeginport = 0, $pendport = 0) {
-	$adr = array();
-
-	if ($padr == "any") {
-		$adr['any'] = true;
-	} else if (is_specialnet($padr)) {
-		$adr['network'] = $padr;
-	} else {
-		$adr['address'] = $padr;
-		if (is_ipaddrv6($padr)) {
-			if ($pmask != 128) {
-				$adr['address'] .= "/" . $pmask;
-			}
-		} else {
-			if ($pmask != 32) {
-				$adr['address'] .= "/" . $pmask;
-			}
-		}
-	}
-
-	if ($pnot) {
-		$adr['not'] = true;
-	} else {
-		unset($adr['not']);
-	}
-
-	if (($pbeginport != 0) && ($pbeginport != "any")) {
-		if ($pbeginport != $pendport) {
-			$adr['port'] = $pbeginport . "-" . $pendport;
-		} else {
-			$adr['port'] = $pbeginport;
-		}
-	}
-
-	/*
-	 * If the port is still unset, then it must not be numeric, but could
-	 * be an alias or a well-known/registered service.
-	 * See https://redmine.pfsense.org/issues/8410
-	 */
-	if (!isset($adr['port']) && is_port_or_alias($pbeginport)) {
-		$adr['port'] = $pbeginport;
-	}
-}
-
-function is_specialnet($net) {
-	global $specialsrcdst;
-
-	if (!$net) {
-		return false;
-	}
-	if (in_array($net, $specialsrcdst)) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
 //function to create widget tabs when called
 function display_widget_tabs(& $tab_array) {
 	echo "<div id=\"tabs\">";
@@ -762,7 +673,6 @@ function display_widget_tabs(& $tab_array) {
 	echo "</div>";
 }
 
-
 // Return inline javascript file or CSS to minimize
 // request count going back to server.
 function outputJavaScriptFileInline($javascript) {
@@ -775,8 +685,6 @@ function outputJavaScriptFileInline($javascript) {
 	}
 }
 
-
-
 function outputCSSPrintFileInline($css) {
 	if (file_exists($css)) {
 		echo "\n<style media=\"print\" type=\"text/css\">\n";
@@ -786,7 +694,6 @@ function outputCSSPrintFileInline($css) {
 		echo "\n\n<!-- Could not locate file:  {$css} -->\n\n";
 	}
 }
-
 
 function outputCSSFileInline($css) {
 	if (file_exists($css)) {

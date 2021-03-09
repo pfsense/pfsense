@@ -70,7 +70,7 @@ sysutils/%%PRODUCT_NAME%%-builder
 sysutils/%%PRODUCT_NAME%%-pkg-Backup
 sysutils/%%PRODUCT_NAME%%-pkg-Cron
 sysutils/%%PRODUCT_NAME%%-pkg-LCDproc
-sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Coreboot_Upgrade
+sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Firmware_Upgrade
 sysutils/%%PRODUCT_NAME%%-pkg-Notes
 sysutils/%%PRODUCT_NAME%%-pkg-RRD_Summary
 sysutils/%%PRODUCT_NAME%%-pkg-Service_Watchdog

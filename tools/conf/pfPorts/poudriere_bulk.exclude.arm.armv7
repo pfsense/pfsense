@@ -5,7 +5,7 @@ net/realtek-re-kmod
 sysutils/%%PRODUCT_NAME%%-azure
 sysutils/%%PRODUCT_NAME%%-builder
 sysutils/%%PRODUCT_NAME%%-pkg-LCDproc
-sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Coreboot_Upgrade
+sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Firmware_Upgrade
 sysutils/azure-agent
 sysutils/flashrom
 sysutils/vm-bhyve

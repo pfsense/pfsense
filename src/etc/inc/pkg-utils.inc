@@ -1581,7 +1581,7 @@ function update_repos() {
 		    "\",\"os\":\"" . $os .
 		    "\",\"osver\":\"" . $osver .
 		    "\",\"prod\":\"" . $g['product_label'] .
-		    "\",\"ver\":\"" . $g['product_version'] .
+		    "\",\"ver\":\"" . $g['product_version_string'] .
 		    "\",\"ed\":\"" . $ed .
 		    "\",\"pkgs\":[";
 

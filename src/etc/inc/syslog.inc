@@ -109,9 +109,28 @@ function sort_related_log_files($logfile = "/var/log/system.log", $string = true
 }
 
 function rsort_log_filename($a, $b) {
-	list($abasename, $anumber, $aext) = explode('.', $a);
-	list($bbasename, $bnumber, $bext) = explode('.', $b);
-	return ($anumber > $bnumber) ? -1 : 1;
+	/* Break the filename up into components by '.', it could be in one
+	 * Of the following formats:
+	 * Compressed:   /var/log/<name>.log.<number>.<compressed extension>
+	 * Uncompressed: /var/log/<name>.log.<number>
+	 *
+	 * See: https://redmine.pfsense.org/issues/11639
+	 */
+	$aparts = explode('.', $a);
+	/* If the last part is not a number, it's a compressed log extension,
+	 * pop it off. */
+	if (!is_numeric($aparts[count($aparts)-1])) {
+		array_pop($aparts);
+	}
+
+	$bparts = explode('.', $b);
+	if (!is_numeric($bparts[count($bparts)-1])) {
+		array_pop($bparts);
+	}
+
+	/* Compare the last entry in each filename array which should now be
+	 * the log number */
+	return ($aparts[count($aparts)-1] > $bparts[count($bparts)-1]) ? -1 : 1;
 }
 
 function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true, $remove_rotated = true) {

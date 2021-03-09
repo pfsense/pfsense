@@ -224,6 +224,7 @@ if (platform_booting()) {
 if (is_array($config['hasync'])) {
 	update_filter_reload_status("Building high availability sync information");
 	$hasync = $config['hasync'];
+	$sections = array();
 
 	if (empty($hasync['synchronizetoip'])) {
 		/* this gets hit on every filter sync on the secondary, a log here creates a lot of log spam and I never saw it actually log anything useful */

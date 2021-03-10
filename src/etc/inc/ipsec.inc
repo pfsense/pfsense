@@ -319,7 +319,13 @@ function ipsec_get_phase1_src(& $ph1ent) {
 	} else {
 		$if = "wan";
 	}
-	$ip6 = get_interface_ipv6($if);
+	/* get correct interface name for 6RD/6to4 interfaces
+	 * see https://redmine.pfsense.org/issues/11643 */
+	if (is_stf_interface($ph1ent['interface'])) {
+		$ip6 = get_interface_ipv6($ph1ent['interface']);
+	} else {
+		$ip6 = get_interface_ipv6($if);
+	}
 	$ip4 = get_interface_ip($if);
 	if ($ph1ent['protocol'] == "inet6") {
 		$interfaceip = $ip6;

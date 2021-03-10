@@ -1631,9 +1631,6 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 
 	/* Convert the internal certificate type to an openssl.cnf section name */
 	$cert_type = cert_type_config_section($cert['type']);
-	if ($cert['type'] != 'ca') {
-		$cert_type .= '_san';
-	}
 
 	/* Reuse lifetime (convert seconds to days) */
 	$lifetime = (int) round(($cert_details['validTo_time_t'] - $cert_details['validFrom_time_t']) / 86400);
@@ -1650,9 +1647,16 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 		$sans = cert_add_altname_type($dn['commonName']);
 	}
 
-	/* subjectAltName can be set _only_ via configuration file, so put the
-	 * value into the environment where it will be read from the configuration */
-	putenv("SAN={$sans}");
+	/* Do not setup SANs if the SAN list is empty (e.g. no SAN list and/or
+	 * CN cannot be mapped to a valid SAN type) */
+	if (!empty($sans)) {
+		if ($cert['type'] != 'ca') {
+			$cert_type .= '_san';
+		}
+		/* subjectAltName can be set _only_ via configuration file, so put the
+		 * value into the environment where it will be read from the configuration */
+		putenv("SAN={$sans}");
+	}
 
 	/* If we are enforcing strict security, then check the digest against a
 	 * blacklist of insecure digest methods. */

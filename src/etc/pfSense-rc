@@ -182,7 +182,7 @@ ramdisk_relocate_pkgdb_all
 
 # Dismount /tmp and /var on ZFS if using RAM disks and they are separate volumes
 if [ -n "${USE_ZFS}" -a -n "${USE_RAMDISK}" ]; then
-	ramdisk_fixup_zfs
+	ramdisk_fixup_zfs umount
 fi
 
 # Attempt to create and mount RAM disks

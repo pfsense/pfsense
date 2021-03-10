@@ -1197,7 +1197,7 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
 		$remove = array_merge($remove,
-		    array("autoboot_delay", "console", "comconsole_speed",
+		    array("autoboot_delay", "console", "comconsole_speed", "comconsole_port",
 		    "boot_multicons", "boot_serial", "hint.uart.0.flags",
 		    "hint.uart.1.flags"));
 	}

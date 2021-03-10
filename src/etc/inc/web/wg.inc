@@ -257,8 +257,8 @@ function wg_configure_if($wg_ifname) {
 		} elseif (is_ipaddrv6($ip)) {
 			mwexec("/sbin/ifconfig " .
 			    escapeshellarg($tunnel['name']) . " inet6 " .
-			    escapeshellarg($ip) . " netmask " .
-			    escapeshellarg(gen_subnet_mask($mask)) .
+			    escapeshellarg($ip) . " prefixlen " .
+			    escapeshellarg($mask) .
 			    ($ip6_first ? "" : " alias"));
 			if ($ip6_first) {
 				file_put_contents("/tmp/{$tunnel['name']}_routerv6", wg_find_tunnel_gw($tunnel, $addr));

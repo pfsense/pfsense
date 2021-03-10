@@ -355,21 +355,6 @@ if ($_POST['save']) {
 
 	}
 
-	if (($pconfig['iketype'] == "ikev1") && is_array($a_phase2) && (count($a_phase2))) {
-		foreach ($a_phase2 as $phase2) {
-			if ($phase2['ikeid'] == $pconfig['ikeid']) {
-				if (($pconfig['protocol'] == "inet") && ($phase2['mode'] == "tunnel6")) {
-					$input_errors[] = gettext("There is a Phase 2 using IPv6, cannot use IPv4.");
-					break;
-				}
-				if (($pconfig['protocol'] == "inet6") && ($phase2['mode'] == "tunnel")) {
-					$input_errors[] = gettext("There is a Phase 2 using IPv4, cannot use IPv6.");
-					break;
-				}
-			}
-		}
-	}
-
 	/* My identity */
 
 	if ($pconfig['myid_type'] == "myaddress") {

@@ -938,6 +938,12 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 		$gateways_status = return_gateways_status(true);
 
 		foreach ($static_routes as $rtent) {
+			/* Do not delete disabled routes on boot,
+			 * see https://redmine.pfsense.org/issues/3709 */
+			if (isset($rtent['disabled']) && platform_booting()) {
+				continue;
+			}
+
 			if (empty($gateways_arr[$rtent['gateway']])) {
 				log_error(sprintf(gettext("Static Routes: Gateway IP could not be found for %s"), $rtent['network']));
 				continue;

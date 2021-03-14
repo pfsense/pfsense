@@ -651,23 +651,25 @@ function interface_qinq_configure(&$qinq, $fd = NULL, $flush = true) {
 	return $vlanif;
 }
 
-function interfaces_qinq_configure() {
+function interfaces_qinq_configure($ovpn=false) {
 	global $config, $g;
-	if (platform_booting()) {
+	if (platform_booting() && !$ovpn) {
 		echo gettext("Configuring QinQ interfaces...");
 	}
 	if (is_array($config['qinqs']['qinqentry']) &&
 	    count($config['qinqs']['qinqentry'])) {
 		foreach ($config['qinqs']['qinqentry'] as $qinq) {
-			/* XXX: Maybe we should report any errors?! */
-			interface_qinq_configure($qinq, NULL, false);
+			if (($ovpn && strstr($qinq['if'], "ovpn")) ||
+			    (!$ovpn && !strstr($qinq['if'], "ovpn"))) {
+				interface_qinq_configure($qinq, NULL, false);
+			}
 		}
 	}
 
 	/* Invalidate cache */
 	get_interface_arr(true);
 
-	if (platform_booting()) {
+	if (platform_booting() && !$ovpn) {
 		echo gettext("done.") . "\n";
 	}
 }
@@ -1755,7 +1757,7 @@ function interfaces_configure() {
 	/* set up VLAN virtual interfaces */
 	interfaces_vlan_configure();
 
-	interfaces_qinq_configure();
+	interfaces_qinq_configure(false);
 
 	$iflist = get_configured_interface_with_descr();
 	$delayed_list = array();

@@ -1741,6 +1741,11 @@ function openvpn_resync_all($interface = "") {
 
 	openvpn_resync_csc_all();
 
+	/* configure OpenVPN-parent QinQ interfaces after creating OpenVPN interfaces
+	 * see https://redmine.pfsense.org/issues/11662 */
+	if (platform_booting()) {
+		interfaces_qinq_configure(true);
+	}
 }
 
 // Resync and restart all VPNs using a gateway group.

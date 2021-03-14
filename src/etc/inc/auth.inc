@@ -2307,7 +2307,7 @@ EOD;
 			// do not try to reconnect
 			$ldapconf = "bind_policy soft\n";
 			// Bind/connect timelimit
-			$ldapconf = "bind_timelimit {$authcfg['ldap_timeout']}\n";
+			$ldapconf .= "bind_timelimit {$authcfg['ldap_timeout']}\n";
 			$uri = ($authcfg['ldap_urltype'] == 'SSL/TLS Encrypted') ? 'ldaps' : 'ldap';
 			$ldapconf .= "uri {$uri}://{$authcfg['host']}/\n";
 			$ldapconf .= "port {$authcfg['ldap_port']}\n";

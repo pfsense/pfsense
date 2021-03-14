@@ -853,7 +853,13 @@ function openvpn_reconfigure($mode, $settings) {
 	if (is_ipaddrv6($ipaddr)) {
 		$iface_ipv6 = $ipaddr;
 	} elseif (!empty($interface) && strcmp($interface, "any")) {
-		$iface_ipv6=get_interface_ipv6($interface);
+		/* get correct interface name for 6RD/6to4 interfaces
+		 * see https://redmine.pfsense.org/issues/11674 */
+		if (is_stf_interface($settings['interface'])) {
+			$iface_ipv6=get_interface_ipv6($settings['interface']);
+		} else {
+			$iface_ipv6=get_interface_ipv6($interface);
+		}
 	}
 
 	$conf = "dev {$devname}\n";

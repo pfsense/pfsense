@@ -50,6 +50,22 @@ foreach ($lagglist as $laggif => $lagg) {
 	}
 }
 
+/* Do not allow OpenVPN TUN interfaces to be used for QinQ
+ * https://redmine.pfsense.org/issues/11675 */
+init_config_arr(array('openvpn', 'openvpn-server'));
+init_config_arr(array('openvpn', 'openvpn-client'));
+foreach ($portlist as $portname => $port) {
+	if (strstr($portname, "ovpn")) {
+		preg_match('/ovpn([cs])([1-9]+)/', $portname, $m);
+		$type = ($m[1] == 'c') ? 'client' : 'server';
+		foreach ($config['openvpn']['openvpn-'.$type] as $ovpn) {
+			if (($ovpn['vpnid'] == $m[2]) && ($ovpn['dev_mode'] == 'tun')) {
+				unset($portlist[$portname]);
+			}
+		}
+	}
+}
+
 if (count($portlist) < 1) {
 	header("Location: interfaces_qinq.php");
 	exit;

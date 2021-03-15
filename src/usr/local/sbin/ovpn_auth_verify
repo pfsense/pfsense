@@ -24,14 +24,14 @@ if [ "$1" = "tls" ]; then
 	for check_depth in $(/usr/bin/seq ${3} -1 0)
 	do
 		eval serial="\$tls_serial_${check_depth}"
-		RESULT=$(/usr/local/sbin/fcgicli -f /etc/inc/openvpn.tls-verify.php -d "servercn=$2&depth=$3&certdepth=$4&certsubject=$5&serial=$serial&config=$config")
+		RESULT=$(/usr/local/bin/php-cgi -q /etc/inc/openvpn.tls-verify.php "servercn=$2&depth=$3&certdepth=$4&certsubject=$5&serial=$serial&config=$config")
 	done
 else
 	# Single quoting $password breaks getting the value from the variable.
 	# Base64 and urlEncode usernames and passwords
 	password=$(echo -n "${password}" | openssl enc -base64 | sed -e 's_=_%3D_g;s_+_%2B_g;s_/_%2F_g')
 	username=$(echo -n "${username}" | openssl enc -base64 | sed -e 's_=_%3D_g;s_+_%2B_g;s_/_%2F_g')
-	RESULT=$(/usr/local/sbin/fcgicli -f /etc/inc/openvpn.auth-user.php -d "username=$username&password=$password&cn=$common_name&strictcn=$3&authcfg=$2&modeid=$4&nas_port=$5")
+	RESULT=$(/usr/local/bin/php-cgi -q /etc/inc/openvpn.auth-user.php "username=$username&password=$password&cn=$common_name&strictcn=$3&authcfg=$2&modeid=$4&nas_port=$5")
 fi
 
 if [ "${RESULT}" = "OK" ]; then

@@ -2670,7 +2670,7 @@ function route_get($target, $ipprotocol = '', $useroute = false) {
 		} else {
 			$inet = '6';
 		}
-		$interface = exec("/sbin/route -n{$inet} get {$target} | /usr/bin/awk '/interface:/{print $2}'");
+		$interface = exec("/sbin/route -n{$inet} get {$target} 2>/dev/null | /usr/bin/awk '/interface:/{print $2}'");
 		if (empty($interface)) {
 			return array();
 		} elseif ($interface == 'lo0') {
@@ -2684,7 +2684,7 @@ function route_get($target, $ipprotocol = '', $useroute = false) {
 				}
 			}
 		} else {
-			$gateway = exec("/sbin/route -n{$inet} get {$target} | /usr/bin/awk '/gateway:/{print $2}'");
+			$gateway = exec("/sbin/route -n{$inet} get {$target} 2>/dev/null | /usr/bin/awk '/gateway:/{print $2}'");
 			if (!$gateway) {
 				// non-local gateway
 				$gateway = get_interface_mac($interface);

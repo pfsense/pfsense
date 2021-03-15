@@ -35,7 +35,7 @@
 # nas_port          - $5
 
 # ---------- Command Definitions
-fcgicli="/usr/local/sbin/fcgicli"
+phpcgi="/usr/local/bin/php-cgi"
 openssl="/usr/bin/openssl"
 sed="/usr/bin/sed"
 auth_user_php="/etc/inc/openvpn.auth-user.php"
@@ -66,7 +66,7 @@ auth_server_1="cn=${common_name}&strictcn=${strictcn}&authcfg=${authcfg}&dev=${d
 auth_server_2="modeid=${modeid}&nas_port=${nas_port}"
 auth_args="${auth_credentials}&${auth_server_1}&${auth_server_2}"
 
-result=$("${fcgicli}" -f "${auth_user_php}" -d "${auth_args}")
+result=$("${phpcgi}" -f "${auth_user_php}" "${auth_args}")
 
 # ---------- Write the Result
 

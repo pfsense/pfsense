@@ -922,6 +922,15 @@ function is_captiveportal_cert($certref) {
 	return false;
 }
 
+function is_unbound_cert($certref) {
+	global $config;
+	if (($config['unbound']['sslcertref'] == $certref) &&
+	    isset($config['unbound']['enablessl']) &&
+	    isset($config['unbound']['enable'])) {
+		return true;
+	}
+}
+
 function cert_in_use($certref) {
 
 	return (is_webgui_cert($certref) ||
@@ -930,6 +939,7 @@ function cert_in_use($certref) {
 		is_openvpn_client_cert($certref) ||
 		is_ipsec_cert($certref) ||
 		is_captiveportal_cert($certref) ||
+		is_unbound_cert($certref) ||
 		is_package_cert($certref));
 }
 

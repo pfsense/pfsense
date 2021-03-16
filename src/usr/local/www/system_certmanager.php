@@ -1428,6 +1428,9 @@ foreach ($a_cert as $cert):
 						<?php if (is_captiveportal_cert($cert['refid'])): ?>
 							<?=gettext("Captive Portal")?>
 						<?php endif?>
+						<?php if (is_unbound_cert($cert['refid'])): ?>
+							<?=gettext("DNS Resolver")?>
+						<?php endif?>
 						<?php echo cert_usedby_description($cert['refid'], $certificates_used_by_packages); ?>
 					</td>
 					<td>

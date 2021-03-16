@@ -112,6 +112,7 @@ if ($act == "new") {
 	$pconfig['allow_compression'] = "no";
 	$pconfig['compression'] = "";
 	$pconfig['inactive_seconds'] = 300;
+	$pconfig['exit_notify'] = 1;
 }
 
 if (($act == "edit") || ($act == "dup")) {

@@ -305,6 +305,18 @@ function wg_configure_if($wg_ifname) {
 			}
 		}
 	}
+
+	/* set correct MTU on boot/config changes, https://redmine.pfsense.org/issues/11482 */
+	$mtu = get_interface_default_mtu('wg');
+	if (is_array($config['interfaces'])) {
+		foreach ($config['interfaces'] as $tmpinterface) {
+			if (($tmpinterface['if'] == $tunnel['name']) && !empty($tmpinterface['mtu'])) {
+				$mtu = $tmpinterface['mtu'];
+				break;
+			}
+		}
+	}
+	set_interface_mtu($tunnel['name'], $mtu);
 }
 
 // Remove WireGuard tunnel

@@ -680,6 +680,15 @@ function is_ipaddrv6($ipaddr) {
 	return Net_IPv6::checkIPv6($ipaddr);
 }
 
+function is_ipaddrv6_v4map($ipaddr) {
+	/* check RFC4291 par 2.2.2 format, ex: fd00::1.2.3.4
+	 * see https://redmine.pfsense.org/issues/11446 */
+	if (is_ipaddrv6($ipaddr) && preg_match('/^[0-9a-f:]{2,30}[0-9.]{7,15}$/i', $ipaddr)) {
+		return true;
+	}
+	return false;
+}
+
 /* returns true if $ipaddr is a valid dotted IPv4 address */
 function is_ipaddrv4($ipaddr) {
 	if (!is_string($ipaddr) || empty($ipaddr) || ip2long($ipaddr) === FALSE) {

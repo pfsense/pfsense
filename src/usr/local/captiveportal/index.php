@@ -126,25 +126,9 @@ if ($macfilter || isset($cpcfg['passthrumacadd'])) {
 }
 
 if ($_POST['logout_id']) {
-	echo <<<EOD
-<html>
-<head><title>Disconnecting...</title></head>
-<body bgcolor="#435370">
-<span style="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
-<b>You have been disconnected.</b>
-</span>
-<script type="text/javascript">
-<!--
-setTimeout('window.close();',5000) ;
--->
-</script>
-</body>
-</html>
-
-EOD;
-
 	$safe_logout_id = SQLite3::escapeString($_POST['logout_id']);
 	captiveportal_disconnect_client($safe_logout_id);
+	header("Location: index.php?zone=".$cpzone);
 
 } elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac' || !empty($cpcfg['blockedmacsurl'])) && $macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
 	captiveportal_logportalauth($clientmac, $clientmac, $clientip, "Blocked MAC address");

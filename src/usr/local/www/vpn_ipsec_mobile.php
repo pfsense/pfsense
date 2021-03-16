@@ -239,16 +239,20 @@ if ($_POST['save']) {
 		    !$pconfig['dns_server3'] && !$pconfig['dns_server4']) {
 			$input_errors[] = gettext("At least one DNS server must be specified to enable the DNS Server option.");
 		}
-		if ($pconfig['dns_server1'] && !is_ipaddr($pconfig['dns_server1'])) {
+		if ($pconfig['dns_server1'] && (!is_ipaddr($pconfig['dns_server1']) ||
+		    is_ipaddrv6_v4map($pconfig['dns_server1']))) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #1' must be specified.");
 		}
-		if ($pconfig['dns_server2'] && !is_ipaddr($pconfig['dns_server2'])) {
+		if ($pconfig['dns_server2'] && (!is_ipaddr($pconfig['dns_server2']) ||
+		    is_ipaddrv6_v4map($pconfig['dns_server2']))) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #2' must be specified.");
 		}
-		if ($pconfig['dns_server3'] && !is_ipaddr($pconfig['dns_server3'])) {
+		if ($pconfig['dns_server3'] && (!is_ipaddr($pconfig['dns_server3']) ||
+		    is_ipaddrv6_v4map($pconfig['dns_server3']))) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #3' must be specified.");
 		}
-		if ($pconfig['dns_server4'] && !is_ipaddr($pconfig['dns_server4'])) {
+		if ($pconfig['dns_server4'] && (!is_ipaddr($pconfig['dns_server4']) ||
+		    is_ipaddrv6_v4map($pconfig['dns_server4']))) {
 			$input_errors[] = gettext("A valid IP address for 'DNS Server #4' must be specified.");
 		}
 	}
@@ -790,7 +794,7 @@ $section->addInput(new Form_Checkbox(
 	'DNS Servers',
 	'Provide a DNS server list to clients',
 	$pconfig['dns_server_enable']
-))->toggles('.toggle-dns_server_enable');
+))->setHelp('NOTE: IPv4-mapped IPv6 addresses (ex: fd00::1.2.3.4) are not supported.')->toggles('.toggle-dns_server_enable');
 
 for ($i = 1; $i <= 4; $i++) {
 	$group = new Form_Group('Server #' . $i);

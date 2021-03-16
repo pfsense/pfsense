@@ -86,7 +86,7 @@ if ($_REQUEST['rmver'] != "") {
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
-	curl_setopt_array($curl_session, configure_proxy());
+	set_curlproxy($curl_session);
 
 	$data = curl_exec($curl_session);
 	if (curl_errno($curl_session)) {
@@ -118,7 +118,7 @@ if ($_REQUEST['newver'] != "") {
 	curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
-	curl_setopt_array($curl_session, configure_proxy());
+	set_curlproxy($curl_session);
 	$data = curl_exec($curl_session);
 	$data_split = explode('++++', $data);
 	$sha256 = trim($data_split[0]);
@@ -192,7 +192,7 @@ if ($_REQUEST['download']) {
 
 	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
-	curl_setopt_array($curl_session, configure_proxy());
+	set_curlproxy($curl_session);
 	$data = curl_exec($curl_session);
 
 	if (!tagfile_deformat($data, $data1, "config.xml")) {
@@ -233,7 +233,7 @@ if ( !($_REQUEST['download']) || $input_errors) {
 
 	curl_setopt($curl_session, CURLOPT_USERAGENT, $g['product_label'] . '/' . rtrim(file_get_contents("/etc/version")));
 	// Proxy
-	curl_setopt_array($curl_session, configure_proxy());
+	set_curlproxy($curl_session);
 
 	$data = curl_exec($curl_session);
 

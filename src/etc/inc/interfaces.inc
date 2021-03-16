@@ -7326,6 +7326,9 @@ function get_interface_default_mtu($type = "ethernet") {
 		case "gif":
 			return 1280;
 			break;
+		case "wg":
+			return 1420;
+			break;
 		case "tun":
 		case "vlan":
 		case "tap":

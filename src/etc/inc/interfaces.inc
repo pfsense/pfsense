@@ -5176,11 +5176,16 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	unset($dhcp6cscript);
 	@chmod("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", 0755);
 
-	$rtsoldscript = "#!/bin/sh\n";
-	$rtsoldscript .= "# This shell script launches dhcp6c and configured gateways for this interface.\n";
-	$rtsoldscript .= "echo $2 > {$g['tmp_path']}/{$wanif}_routerv6\n";
-	$rtsoldscript .= "echo $2 > {$g['tmp_path']}/{$wanif}_defaultgwv6\n";
-	$rtsoldscript .= "/usr/bin/logger -t rtsold \"Received RA specifying route \$2 for interface {$interface}({$wanif})\"\n";
+	$rtsoldscript = <<<EOD
+#!/bin/sh
+# This shell script launches dhcp6c and configured gateways for this interface.
+if [ -n "\$2" ]; then
+	echo \$2 > {$g['tmp_path']}/{$wanif}_routerv6
+	echo \$2 > {$g['tmp_path']}/{$wanif}_defaultgwv6
+	/usr/bin/logger -t rtsold "Received RA specifying route \$2 for interface {$interface}({$wanif})"
+fi
+
+EOD;
 
 	/* non ipoe Process */
 	if (!isset($wancfg['dhcp6withoutra'])) {

@@ -1065,3 +1065,11 @@ text underline, but text-color, background, font etc. could also be used */
 .peerbg_color {
     background-color: #ccf2ff;"
 }
+
+.traffic-hosts .numeric {
+    text-align: right;
+}
+
+.traffic-hosts .speed-G .number, .traffic-hosts .speed-M .number {
+    font-weight: bold;
+}

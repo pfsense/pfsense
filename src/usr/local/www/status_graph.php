@@ -307,11 +307,12 @@ function updateBandwidth() {
 				for (var y=0; y<10; y++) {
 					if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
 						hostinfo = hosts_split[y].split(";");
-
-						$('#top10-hosts').append('<tr>'+
-							'<td>'+ hostinfo[0] +'</td>'+
-							'<td>'+ hostinfo[1] +' <?=gettext("Bits/sec");?></td>'+
-							'<td>'+ hostinfo[2] +' <?=gettext("Bits/sec");?></td>'+
+						hostinfo[1] = hostinfo[1].split(" ");
+						hostinfo[2] = hostinfo[2].split(" ");
+						$('#top10-hosts').append('<tr>' +
+							'<td>' + hostinfo[0] + '</td>'+
+							'<td class="numeric speed-' + hostinfo[1][1] + '"><span class="number">' + hostinfo[1][0] + '</span> ' + hostinfo[1][1] + '<?= gettext("bits/s"); ?></td>' +
+							'<td class="numeric speed-' + hostinfo[2][1] + '"><span class="number">' + hostinfo[2][0] + '</span> ' + hostinfo[2][1] + '<?= gettext("bits/s"); ?></td>' +
 						'</tr>');
 					}
 				}
@@ -349,12 +350,12 @@ if (ipsec_enabled()) {
 			</div>
 		</div>
 		<div class="col-sm-6">
-			<table class="table table-striped table-condensed">
+			<table class="table table-striped table-condensed traffic-hosts">
 				<thead>
 					<tr>
 						<th><?=(($curhostipformat == "") ? gettext("Host IP") : gettext("Host Name or IP")); ?></th>
-						<th><?=gettext("Bandwidth In"); ?></th>
-						<th><?=gettext("Bandwidth Out"); ?></th>
+						<th class="numeric"><?=gettext("Bandwidth In"); ?></th>
+						<th class="numeric"><?=gettext("Bandwidth Out"); ?></th>
 					</tr>
 				</thead>
 				<tbody id="top10-hosts">

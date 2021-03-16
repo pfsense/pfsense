@@ -68,50 +68,7 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	$after = $_REQUEST['dup'];
 }
 
-if (isset($id) && $a_nat[$id]) {
-	if (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created'])) {
-		$pconfig['created'] = $a_nat[$id]['created'];
-	}
-
-	if (isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['updated'])) {
-		$pconfig['updated'] = $a_nat[$id]['updated'];
-	}
-
-	$pconfig['disabled'] = isset($a_nat[$id]['disabled']);
-	$pconfig['nordr'] = isset($a_nat[$id]['nordr']);
-
-	address_to_pconfig($a_nat[$id]['source'], $pconfig['src'],
-		$pconfig['srcmask'], $pconfig['srcnot'],
-		$pconfig['srcbeginport'], $pconfig['srcendport']);
-
-	address_to_pconfig($a_nat[$id]['destination'], $pconfig['dst'],
-		$pconfig['dstmask'], $pconfig['dstnot'],
-		$pconfig['dstbeginport'], $pconfig['dstendport']);
-
-	if (($pconfig['dstbeginport'] == 1) && ($pconfig['dstendport'] == 65535)) {
-		$pconfig['dstbeginport'] = "any";
-		$pconfig['dstendport'] = "any";
-	}
-
-	$pconfig['ipprotocol'] = $a_nat[$id]['ipprotocol'];
-	$pconfig['proto'] = $a_nat[$id]['protocol'];
-	$pconfig['localip'] = $a_nat[$id]['target'];
-	$pconfig['localbeginport'] = $a_nat[$id]['local-port'];
-	$pconfig['descr'] = $a_nat[$id]['descr'];
-	$pconfig['interface'] = $a_nat[$id]['interface'];
-	$pconfig['associated-rule-id'] = $a_nat[$id]['associated-rule-id'];
-	$pconfig['nosync'] = isset($a_nat[$id]['nosync']);
-	$pconfig['natreflection'] = $a_nat[$id]['natreflection'];
-
-	if (!$pconfig['interface']) {
-		$pconfig['interface'] = "wan";
-	}
-} else {
-	$pconfig['interface'] = "wan";
-	$pconfig['src'] = "any";
-	$pconfig['srcbeginport'] = "any";
-	$pconfig['srcendport'] = "any";
-}
+$pconfig = getNATRule($id);
 
 if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);

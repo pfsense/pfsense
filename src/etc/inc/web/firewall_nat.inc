@@ -37,18 +37,28 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-function build_localtype_list() {
+function build_localtype_list($json = false) {
 	global $pconfig, $ifdisp;
 
 	$list = array('single' => gettext('Single host'));
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
-		if (have_ruleint_access($ifent)) {
+		if ($json || have_ruleint_access($ifent)) {
 			$list[$ifent . 'ip'] = $ifdesc . ' address';
 		}
 	}
 
-	return($list);
+	if ($json) {
+		$rv = array();
+
+		foreach ($list as $ifent => $ifname) {
+			$rv[] = array("text" => $ifname, "value" => $ifent);
+		}
+
+		return(json_encode($rv));
+	} else {
+		return($list);
+	}
 }
 
 function build_dsttype_list($json = false) {
@@ -114,27 +124,37 @@ function build_dsttype_list($json = false) {
 	}
 }
 
-function build_srctype_list() {
+function build_srctype_list($json = false) {
 	global $ifdisp, $config;
 
 	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
 
-	if (have_ruleint_access("pppoe")) {
+	if ($json || have_ruleint_access("pppoe")) {
 		$list['pppoe'] = gettext('PPPoE clients');
 	}
 
-	if (have_ruleint_access("l2tp")) {
+	if ($json || have_ruleint_access("l2tp")) {
 		$list['l2tp'] = gettext('L2TP clients');
 	}
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
-		if (have_ruleint_access($ifent)) {
+		if ($json || have_ruleint_access($ifent)) {
 			$list[$ifent] = $ifdesc . ' net';
 			$list[$ifent . 'ip'] = $ifdesc . ' address';
 		}
 	}
 
-	return($list);
+	if ($json) {
+		$rv = array();
+
+		foreach ($list as $ifent => $ifname) {
+			$rv[] = array("text" => $ifname, "value" => $ifent);
+		}
+
+		return(json_encode($rv));
+	} else {
+		return($list);
+	}
 }
 
 function saveNATrule($post, $id, $json = false) {

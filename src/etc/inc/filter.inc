@@ -2974,7 +2974,11 @@ function filter_generate_user_rule($rule) {
 			if (!empty($ifliste)) {
 				$aline['interface'] = " on { {$ifliste} } ";
 			} else {
-				$aline['interface'] = "";
+				/* This rule specifies interface(s), but none of those were
+				 * found in the enabled list, so just ignore the rule.
+				 * See https://redmine.pfsense.org/issues/11688.
+				 */
+				return "# rule " . $rule['descr'] . " has no enabled interfaces";
 			}
 		} else {
 			$aline['interface'] = "";

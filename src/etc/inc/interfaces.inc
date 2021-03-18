@@ -2282,8 +2282,8 @@ function handle_pppoe_reset($post_array) {
 	}
 	$item = array();
 	if (isset($post_array['pppoe-reset-type']) && $post_array['pppoe-reset-type'] == "custom") {
-		$item['minute'] = $post_array['pppoe_resetminute'];
-		$item['hour'] = $post_array['pppoe_resethour'];
+		$item['minute'] = $post_array['pppoe_resetminute'] ? $post_array['pppoe_resetminute'] : "*";
+		$item['hour'] = $post_array['pppoe_resethour'] ? $post_array['pppoe_resethour'] : "*";
 		if (isset($post_array['pppoe_resetdate']) && $post_array['pppoe_resetdate'] <> "") {
 			$date = explode("/", $post_array['pppoe_resetdate']);
 			$item['mday'] = $date[1];

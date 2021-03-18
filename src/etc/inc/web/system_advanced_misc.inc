@@ -32,6 +32,15 @@ function getSystemAdvancedMisc($json = false) {
 	global $config;
 
 	$pconfig = array();
+
+	$pconfig['available_kernel_memory'] = get_single_sysctl("vm.kmem_map_free");
+
+	/* Adjust available kernel memory to account for existing RAM disks
+	 * https://redmine.pfsense.org/issues/10420 */
+	if (isset($config['system']['use_mfs_tmpvar'])) {
+		$pconfig['available_kernel_memory'] += (int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'"));
+	}
+
 	$pconfig['proxyurl'] = $config['system']['proxyurl'];
 	$pconfig['proxyport'] = $config['system']['proxyport'];
 	$pconfig['proxyuser'] = $config['system']['proxyuser'];
@@ -51,16 +60,8 @@ function getSystemAdvancedMisc($json = false) {
 	$pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 	$pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 	$pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid']);
-	$pconfig['available_kernel_memory'] = get_single_sysctl("vm.kmem_map_free");
 	$pconfig['pti'] = get_single_sysctl('vm.pmap.pti');
 	$pconfig['mds']= get_single_sysctl('hw.mds_disable_state');
-
-	/* Adjust available kernel memory to account for existing RAM disks
-	 * https://redmine.pfsense.org/issues/10420 */
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		/* Get current RAM disk sizes */
-		$pconfig['available_kernel_memory'] += ((int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'")));
-	}
 
 	$pconfig['powerd_ac_mode'] = "hadp";
 	if (!empty($config['system']['powerd_ac_mode'])) {
@@ -110,6 +111,14 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		'coretemp' => gettext("Intel Core* CPU on-die thermal sensor"),
 		'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor")
 	);
+
+	$post['available_kernel_memory'] = get_single_sysctl("vm.kmem_map_free");
+
+	/* Adjust available kernel memory to account for existing RAM disks
+	 * https://redmine.pfsense.org/issues/10420 */
+	if (isset($config['system']['use_mfs_tmpvar'])) {
+		$post['available_kernel_memory'] += (int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'"));
+	}
 
 	if (!empty($post['crypto_hardware']) && !array_key_exists($post['crypto_hardware'], $crypto_modules)) {
 		$input_errors[] = gettext("Please select a valid Cryptographic Accelerator.");
@@ -357,7 +366,6 @@ function saveSystemAdvancedMisc($post, $json = false) {
 
 	// Compose the structure to retuen
 	$rv['input_errors'] = $input_errors;
-	$post['available_kernel_memory'] = get_single_sysctl("vm.kmem_map_free");
 	$post['pti'] = get_single_sysctl('vm.pmap.pti');
 	$post['mds'] = get_single_sysctl('hw.mds_disable_state');
 

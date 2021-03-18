@@ -55,6 +55,7 @@ $mds_modes = array(
 	3 => gettext('Automatic VERW or Software selection'),
 );
 
+
 $pconfig = getSystemAdvancedMisc();
 
 $crypto_modules = array(
@@ -337,7 +338,7 @@ $group->add(new Form_Input(
 $group->setHelp('Sets the size, in MiB, for the RAM disks. ' .
 	'Ensure each RAM disk is large enough to contain the current contents of the directories in question. %s' .
 	'Maximum total size of all RAM disks cannot exceed available kernel memory: %s',
-	'<br/>', format_bytes( $available_kernel_memory ));
+	'<br/>', format_bytes( $pconfig['available_kernel_memory']));
 
 $section->add($group);
 
@@ -404,8 +405,7 @@ $form->add($section);
 print $form;
 
 $ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This requires the firewall\nto reboot.\n\nReboot now ?');
-$use_mfs_tmpvar_changed = ((($use_mfs_tmpvar_before !== $use_mfs_tmpvar_after) ||
-			    (!empty($_POST) && $use_mfs_tmpvar_after && file_exists('/conf/ram_disks_failed'))) && !$input_errors);
+$use_mfs_tmpvar_changed = $rebootneeded;
 ?>
 
 <script type="text/javascript">

@@ -65,6 +65,8 @@ elif [ "$script_type" = "client-disconnect" ]; then
 	eval $command
 	/sbin/pfctl -k $ifconfig_pool_remote_ip
 	/sbin/pfctl -K $ifconfig_pool_remote_ip
+	/sbin/pfctl -k $ifconfig_pool_remote_ip6
+	/sbin/pfctl -K $ifconfig_pool_remote_ip6
 
 	/bin/rm "${lockfile}"
 fi

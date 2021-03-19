@@ -1573,7 +1573,7 @@ $cert_strict_values = array(
  ******/
 
 function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
-	global $cert_strict_values, $cert_curve_compatible;
+	global $cert_strict_values, $cert_curve_compatible, $curve_compatible_list;
 
 	/* If there is no certificate or private key string, this entry is either
 	 *  invalid or cannot be renewed by this function. */
@@ -1591,6 +1591,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 
 	$subj = cert_get_subject($cert['crt']);
 	$issuer = cert_get_issuer($cert['crt']);
+	$purpose = cert_get_purpose($cert['crt']);
 
 	$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
 	$key_details = openssl_pkey_get_details($res_key);
@@ -1625,8 +1626,8 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 		/* If a serial value is present, this must be a CA */
 		$cert['type'] = 'ca';
 	} elseif (empty($cert['type'])) {
-		/* Assume server certificate if empty & non-CA (e.g. self-signed) */
-		$cert['type'] = 'server';
+		/* Automatically determine certificate type if unset based on purpose value */
+		$cert['type'] = ($purpose['server'] == 'Yes') ? 'server' : 'user';
 	}
 
 	/* Convert the internal certificate type to an openssl.cnf section name */
@@ -1636,7 +1637,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 	$lifetime = (int) round(($cert_details['validTo_time_t'] - $cert_details['validFrom_time_t']) / 86400);
 
 	/* If we are enforcing strict security, then cap the lifetime for server certificates */
-	if (($cert_type == 'server_san') && $strictsecurity &&
+	if (($cert_type == 'server') && $strictsecurity &&
 	    ($lifetime > $cert_strict_values['max_server_cert_lifetime'])) {
 		$lifetime = $cert_strict_values['max_server_cert_lifetime'];
 	}

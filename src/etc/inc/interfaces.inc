@@ -5088,7 +5088,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	$dhcp6cscriptwithoutra .= "case \$REASON in\n";
 	$dhcp6cscriptwithoutra .= "REQUEST)\n";
 	$dhcp6cscriptwithoutra .= "/bin/sleep 2\n";
-	$dhcp6cscriptwithoutra .= "/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}\n";
+	$dhcp6cscriptwithoutra .= "/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -M {$g['varetc_path']}/rtsold_{$wanif}_script.sh -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}\n";
 	if ($debugOption == '-D') {
 		$dhcp6cscriptwithoutra .= "/usr/bin/logger -t dhcp6c \"dhcp6c REQUEST on {$wanif} - running rtsold\"\n";
 	}

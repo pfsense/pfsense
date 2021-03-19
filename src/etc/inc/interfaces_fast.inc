@@ -221,7 +221,7 @@ function get_real_interface_fast($interfaces = array(), $family = "all", $realv6
  *
  */
 function interface_assign_description_fast($portlist, $friendlyifnames) {
-	global $ovpn_descrs, $ipsec_descrs, $wg_descrs;
+	global $ovpn_descrs, $ipsec_descrs;
 	$out = array();
 	$gettext = gettext('on');
 	foreach($portlist as $portname => $portinfo) {
@@ -267,8 +267,6 @@ function interface_assign_description_fast($portlist, $friendlyifnames) {
 			$descr = $portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")";
 		} elseif (substr($portname, 0, 5) == 'ipsec') {
 			$descr = $portname . " (" . $ipsec_descrs[$portname] . ")";
-		} elseif (substr($portname, 0, 2) == 'wg') {
-			$descr = $portname . " (" . $wg_descrs[$portname] . ")";
 		} else {
 			$descr = $portname . " (" . $portinfo['mac'] . ")";
 		}

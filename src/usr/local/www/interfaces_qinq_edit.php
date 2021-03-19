@@ -50,15 +50,6 @@ foreach ($lagglist as $laggif => $lagg) {
 	}
 }
 
-/* Do not allow WireGuard interfaces to be used for QinQ
- * https://redmine.pfsense.org/issues/11277 */
-init_config_arr(array('wireguard', 'tunnel'));
-foreach ($config['wireguard']['tunnel'] as $tunnel) {
-	if (isset($portlist[$tunnel['name']])) {
-		unset($portlist[$tunnel['name']]);
-	}
-}
-
 if (count($portlist) < 1) {
 	header("Location: interfaces_qinq.php");
 	exit;

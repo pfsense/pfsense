@@ -922,9 +922,6 @@ function unbound_acls_config($cfgsubdir = "") {
 			$aclnets[] = "{$config['ipsec']['client']['pool_address_v6']}/{$config['ipsec']['client']['pool_netbits_v6']}";
 		}
 
-		// WireGuard Interface Networks
-		$aclnets = array_merge($aclnets, wg_get_tunnel_networks());
-
 		// Generate IPv4 access-control entries using the same logic as automatic outbound NAT
 		if (empty($FilterIflist)) {
 			filter_generate_optcfg_array();

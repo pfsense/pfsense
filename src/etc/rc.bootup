@@ -60,8 +60,6 @@ require_once("/etc/inc/ipsec.inc");
 echo ".";
 require_once("/etc/inc/vpn.inc");
 echo ".";
-require_once("/etc/inc/web/wg.inc");
-echo ".";
 require_once("/etc/inc/openvpn.inc");
 echo ".";
 require_once("/etc/inc/captiveportal.inc");
@@ -320,9 +318,6 @@ filter_configure_sync();
 
 /* setup pppoe and pptp */
 vpn_setup();
-
-/* Setup WireGuard tunnels. */
-wg_configure();
 
 /* start the captive portal */
 captiveportal_configure();

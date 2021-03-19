@@ -2391,7 +2391,7 @@ function is_interface_mismatch() {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
 			if (interface_is_vlan($ifcfg['if']) != NULL ||
 			    interface_is_qinq($ifcfg['if']) != NULL ||
-			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|^wg|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
+			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;

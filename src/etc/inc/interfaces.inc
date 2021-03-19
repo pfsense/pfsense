@@ -30,7 +30,6 @@ require_once("globals.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
 require_once("ipsec.inc");
-require_once("wg.inc");
 
 function interfaces_bring_up($interface) {
 	if (!$interface) {
@@ -1260,11 +1259,6 @@ function interface_is_type($if = NULL, $type) {
 			$entry = 'lagg';
 			$entif = 'laggif';
 			break;
-		case "wg":
-			$list = 'wireguard';
-			$entry = 'tunnel';
-			$entif = 'name';
-			break;
 		default:
 			break;
 	}
@@ -1985,14 +1979,6 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	global $config, $g;
 
 	if (!isset($config['interfaces'][$interface])) {
-		return;
-	}
-
-	if (substr($config['interfaces'][$interface]['if'], 0, 2) == 'wg') {
-		require_once('wg.inc');
-		if ($destroy) {
-			wg_destroy_if($config['interfaces'][$interface]['if']);
-		}
 		return;
 	}
 
@@ -4193,11 +4179,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		return;
 	}
 
-	if (substr($config['interfaces'][$interface]['if'], 0, 2) == 'wg') {
-		require_once('wg.inc');
-		wg_configure_if($config['interfaces'][$interface]['if']);
-	}
-
 	$realif = get_real_interface($interface);
 	$realhwif_array = get_parent_interface($interface);
 	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
@@ -4214,10 +4195,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 	}
 
-	if (!platform_booting() &&
-	    (substr($realif, 0, 4) != "ovpn") &&
-	    (substr($realif, 0, 5) != "ipsec") &&
-	    (substr($realif, 0, 2) != "wg")) {
+	if (!platform_booting() && (substr($realif, 0, 4) != "ovpn") && (substr($realif, 0, 5) != "ipsec")) {
 		/* remove all IPv4 and IPv6 addresses */
 		$tmpifaces = pfSense_getall_interface_addresses($realif);
 		if (is_array($tmpifaces)) {
@@ -4355,11 +4333,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 	if (($wantedmtu == 0) && interface_is_type($mtuif, 'gif')) {
 		$wantedmtu = 1280;
-	}
-	/* Default MTU for WireGuard is 1420
-	 * https://redmine.pfsense.org/issues/11291 */
-	if (($wantedmtu == 0) && interface_is_type($mtuif, 'wg')) {
-		$wantedmtu = 1420;
 	}
 
 	/* Set the MTU to 1500 if no explicit MTU configured. */
@@ -5824,9 +5797,6 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 		case "openvpn":
 			$ifdesc = "OpenVPN";
 			break;
-		case "wireguard":
-			$ifdesc = "WireGuard";
-			break;
 		case "lo0":
 			$ifdesc = "Loopback";
 			break;
@@ -6940,9 +6910,6 @@ function get_interfaces_with_gateway() {
 				} elseif (substr($ifname['if'], 0, 5) == "ipsec" ||
 				    !empty($ifname['gateway'])) {
 					$ints[$ifdescr] = $ifdescr;
-				} elseif (substr($ifname['if'], 0, 2) == "wg" ||
-				    !empty($ifname['gateway'])) {
-					$ints[$ifdescr] = $ifdescr;
 				}
 
 				break;
@@ -6972,8 +6939,7 @@ function interface_has_gateway($friendly) {
 				break;
 			default:
 				if ((substr($ifname['if'], 0, 4) == "ovpn") ||
-				    (substr($ifname['if'], 0, 5) == "ipsec") ||
-				    (substr($ifname['if'], 0, 2) == "wg")) {
+				    (substr($ifname['if'], 0, 5) == "ipsec")) {
 					return true;
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);
@@ -7007,8 +6973,7 @@ function interface_has_gatewayv6($friendly) {
 				break;
 			default:
 				if ((substr($ifname['if'], 0, 4) == "ovpn") ||
-				    (substr($ifname['if'], 0, 5) == "ipsec") ||
-				    (substr($ifname['if'], 0, 2) == "wg")) {
+				    (substr($ifname['if'], 0, 5) == "ipsec")) {
 					return true;
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);
@@ -7331,9 +7296,6 @@ function get_interface_default_mtu($type = "ethernet") {
 		case "gif":
 			return 1280;
 			break;
-		case "wg":
-			return 1420;
-			break;
 		case "tun":
 		case "vlan":
 		case "tap":
@@ -7647,16 +7609,12 @@ function create_interface_list() {
 		$iflist["openvpn"] = gettext("OpenVPN");
 	}
 
-	if (is_wg_enabled() && have_ruleint_access("wireguard")) {
-		$iflist['wireguard'] = 'WireGuard';
-	}
-
 	return($iflist);
 }
 
 function is_pseudo_interface($inf, $tap=true) {
 	global $config;
-	$psifs = array('ovpn', 'ipsec', 'l2tp', 'pptp', 'gif', 'gre', 'ppp', 'pppoe', 'wg');
+	$psifs = array('ovpn', 'ipsec', 'l2tp', 'pptp', 'gif', 'gre', 'ppp', 'pppoe');
 	foreach ($psifs as $pif) {
 		if (substr($inf, 0, strlen($pif)) == $pif) {
 			if (($pif == 'ovpn') && $tap) {

@@ -87,7 +87,7 @@ $a_gateways = &$config['gateways']['gateway_item'];
 $interfaces = get_configured_interface_with_descr();
 /* Interfaces which have addresses configured elsewhere and should not be
  * configured here. See https://redmine.pfsense.org/issues/8687 */
-$no_address_interfaces = array("ovpn", "ipsec", "gif", "gre", "wg");
+$no_address_interfaces = array("ovpn", "ipsec", "gif", "gre");
 $show_address_controls = true;
 $realifname = get_real_interface($if);
 foreach ($no_address_interfaces as $ifbl) {
@@ -581,8 +581,8 @@ if ($_POST['apply']) {
 		}
 
 		if ((strlen(trim($_POST['descr'])) > 25) && ((substr($realifname, 0, 4) == 'ovpn') ||
-		    (substr($realifname, 0, 5) == 'ipsec') || (substr($realifname, 0, 2) == 'wg'))) {
-			$input_errors[] = gettext("VTI, WireGuard, and OpenVPN interface descriptions must be less than 26 characters long.");
+		    (substr($realifname, 0, 5) == 'ipsec'))) {
+			$input_errors[] = gettext("The OpenVPN and VTI interface description must be less than 26 characters long.");
 		}
 
 		if ((strlen(trim($_POST['descr'])) > 22) && ((substr($realifname, 0, 3) == 'gif') ||
@@ -1850,17 +1850,15 @@ function check_wireless_mode() {
 // Find all possible media options for the interface
 $mediaopts_list = array();
 $intrealname = $config['interfaces'][$if]['if'];
-if (!is_pseudo_interface($intrealname, false)) {
-	exec("/sbin/ifconfig -m $intrealname | grep \"media \"", $mediaopts);
-	foreach ($mediaopts as $mediaopt) {
-		preg_match("/media (.*)/", $mediaopt, $matches);
-		if (preg_match("/(.*) mediaopt (.*)/", $matches[1], $matches1)) {
-			// there is media + mediaopt like "media 1000baseT mediaopt full-duplex"
-			array_push($mediaopts_list, $matches1[1] . " " . $matches1[2]);
-		} else {
-			// there is only media like "media 1000baseT"
-			array_push($mediaopts_list, $matches[1]);
-		}
+exec("/sbin/ifconfig -m $intrealname | grep \"media \"", $mediaopts);
+foreach ($mediaopts as $mediaopt) {
+	preg_match("/media (.*)/", $mediaopt, $matches);
+	if (preg_match("/(.*) mediaopt (.*)/", $matches[1], $matches1)) {
+		// there is media + mediaopt like "media 1000baseT mediaopt full-duplex"
+		array_push($mediaopts_list, $matches1[1] . " " . $matches1[2]);
+	} else {
+		// there is only media like "media 1000baseT"
+		array_push($mediaopts_list, $matches[1]);
 	}
 }
 

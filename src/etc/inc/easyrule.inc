@@ -63,9 +63,6 @@ function easyrule_find_rule_interface($int) {
 	if (substr($int, 0, 5) == "ipsec") {
 		return "ipsec";
 	}
-	if (substr($int, 0, 2) == "wg") {
-		return "wireguard";
-	}
 
 	return false;
 }

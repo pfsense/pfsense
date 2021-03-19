@@ -715,9 +715,6 @@ foreach ($a_filter as $filteri => $filterent):
 							if  ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client'])
 								$selected_descs[] = 'OpenVPN';
 							break;
-						case 'wireguard':
-							$selected_descs[] = 'WireGuard';
-							break;
 						default:
 							$selected_descs[] = $interface;
 							break;

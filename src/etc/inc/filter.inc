@@ -645,11 +645,6 @@ function filter_generate_scrubing() {
 			/* different size of IPv4/IPv6 header, https://redmine.pfsense.org/issues/11409 */
 			$mssclamp4 = "max-mss " . (intval($scrubcfg['mss'] - 40));
 			$mssclamp6 = "max-mss " . (intval($scrubcfg['mss'] - 60));
-		} elseif (substr($scrubcfg['if'], 0, 2) == 'wg') {
-			/* WireGuard interfaces should be mss clamped by default,
-			*  see https://redmine.pfsense.org/issues/11600 */
-			$mssclamp4 = "max-mss 1380";
-			$mssclamp6 = "max-mss 1360";
 		} else {
 			$mssclamp4 = "";
 			$mssclamp6 = "";
@@ -1109,23 +1104,6 @@ function filter_get_vpns_list() {
 		}
 	}
 
-	/* wireguard */
-	if (is_wg_enabled()) {
-		foreach ($config['wireguard']['tunnel'] as $wg) {
-			if (empty($wg['enabled'])) {
-				continue;
-			}
-			if (!is_array($wg['peers']['wgpeer']) ||
-			    count($wg['peers']['wgpeer']) == 0) {
-				continue;
-			}
-			$wgpeer = $wg['peers']['wgpeer'];
-			foreach (explode(",", $wgpeer['allowedips']) as $ip) {
-				$vpns_arr[] = $ip;
-			}
-		}
-	}
-
 	if (!empty($vpns_arr)) {
 		$vpns = implode(" ", $vpns_arr);
 	}
@@ -1332,15 +1310,6 @@ function filter_generate_optcfg_array() {
 		$oic['type'] = "none";
 		$oic['virtual'] = true;
 		$FilterIflist['openvpn'] = $oic;
-	}
-	/* add wireguard interfaces */
-	if (is_wg_enabled()) {
-		$oic = array();
-		$oic['if'] = "wg";
-		$oic['descr'] = 'WireGuard';
-		$oic['type'] = "none";
-		$oic['virtual'] = true;
-		$FilterIflist['wireguard'] = $oic;
 	}
 	/* add interface groups */
 	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
@@ -1787,11 +1756,6 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		}
 	}
 
-	foreach (wg_get_tunnel_networks('ipv4') as $wgn) {
-		$tonathosts[] = $wgn;
-		$descriptions[] = gettext('WireGuard');
-	}
-
 	/* IPsec mode_cfg subnet */
 	if ((isset($config['ipsec']['client']['enable'])) &&
 	    (!empty($config['ipsec']['client']['pool_address'])) &&
@@ -1849,8 +1813,7 @@ function filter_nat_rules_outbound_automatic($src) {
 	$rules = array();
 	foreach ($FilterIflist as $if => $ifcfg) {
 		if ((substr($ifcfg['if'], 0, 4) == "ovpn") ||
-		    (substr($ifcfg['if'], 0, 5) == "ipsec") ||
-		    (substr($ifcfg['if'], 0, 2) == "wg")) {
+		    (substr($ifcfg['if'], 0, 5) == "ipsec")) {
 			continue;
 		}
 		if (!interface_has_gateway($if)) {
@@ -3992,7 +3955,7 @@ EOD;
 		$rule_arr1 = array();
 		$rule_arr2 = array();
 		$rule_arr3 = array();
-		$vpn_and_ppp_ifs = array("l2tp", "pptp", "pppoe", "enc0", "openvpn", "wireguard");
+		$vpn_and_ppp_ifs = array("l2tp", "pptp", "pppoe", "enc0", "openvpn");
 		/*
 		 * NB: The order must be: Floating rules, then interface group and then regular ones.
 		 */

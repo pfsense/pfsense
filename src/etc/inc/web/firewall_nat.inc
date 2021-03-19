@@ -353,7 +353,7 @@ function saveNATrule($post, $id, $json = false) {
 	}
 
 	if ((strtoupper($post['proto']) == "TCP" || strtoupper($post['proto']) == "UDP" || strtoupper($post['proto']) == "TCP/UDP") && (!isset($post['nordr']) && !is_port_or_alias($post['localbeginport']))) {
-		$input_errors[] = sprintf(gettext("Redirect target port %s is not. It must be a port alias or integer between 1 and 65535."), $post['localbeginport']);
+		$input_errors[] = sprintf(gettext("Redirect target port %s is not valid. It must be a port alias or integer between 1 and 65535."), $post['localbeginport']);
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */

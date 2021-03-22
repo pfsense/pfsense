@@ -164,7 +164,7 @@ function clear_all_log_files($restart = false) {
 
 	/* Combine list of syslog and non-syslog log files */
 	/* exclude dmesg.boot, see https://redmine.pfsense.org/issues/11428 */
-	foreach (array_merge(system_syslogd_get_all_logfilenames(true), array_diff($system_log_non_syslog_files, 'dmesg.boot')) as $lfile) {
+	foreach (array_merge(system_syslogd_get_all_logfilenames(true), array_diff($system_log_non_syslog_files, array('dmesg.boot'))) as $lfile) {
 		clear_log_file("{$g['varlog_path']}/{$lfile}", false);
 	}
 

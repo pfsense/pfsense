@@ -100,7 +100,7 @@ class pfsense_xmlrpc_client {
 			try {//restore_config_section
 				$REQUEST_URI = $_SERVER['REQUEST_URI'];
 				unset($_SERVER['REQUEST_URI']); // force use of 'toText()' when setting XML_RPC2_CurlException message
-				$resp = $cli->$method($parameter);
+				$resp = $cli->$method($parameter, $timeout);
 			} catch (XML_RPC2_FaultException $e) {
 				// The XMLRPC server returns a XMLRPC error
 				$this->error = "Exception calling XMLRPC method {$method} #" . $e->getFaultCode() . ' : ' . $e->getFaultString();

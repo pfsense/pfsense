@@ -128,7 +128,8 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return array
 	 */
-	public function host_firmware_version($dummy = 1) {
+	public function host_firmware_version($dummy = 1, $timeout) {
+		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 		return host_firmware_version();
 	}
@@ -187,7 +188,8 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return bool
 	 */
-	public function restore_config_section($sections) {
+	public function restore_config_section($sections, $timeout) {
+		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 
 		global $config, $cpzone, $cpzoneid, $old_config;
@@ -632,7 +634,8 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return bool
 	 */
-	public function merge_installedpackages_section($section) {
+	public function merge_installedpackages_section($section, $timeout) {
+		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 
 		global $config;
@@ -659,7 +662,8 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return bool
 	 */
-	public function merge_config_section($section) {
+	public function merge_config_section($section, $timeout) {
+		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 
 		global $config;
@@ -810,7 +814,8 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return array
 	 */
-	public function captive_portal_sync($arguments) {
+	public function captive_portal_sync($arguments, $timeout) {
+		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 		// Note : no protection against CARP loop is done here, and this is in purpose.
 		// This function is used for bi-directionnal sync, which is precisely what CARP loop protection is supposed to prevent.

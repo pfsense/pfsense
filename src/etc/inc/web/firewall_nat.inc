@@ -26,7 +26,6 @@ require_once("interfaces.inc");
 require_once("util.inc");
 require_once("pfsense-utils.inc");
 require_once("ipsec.inc");
-require_once("wg.inc");
 require_once("filter.inc");
 require_once("itemid.inc");
 

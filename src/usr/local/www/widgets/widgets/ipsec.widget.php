@@ -71,7 +71,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 					if (get_ipsecifnum($ph1ent['ikeid'], $ikenum[$ph1ent['ikeid']])) {
 						$ikeid = "con" . get_ipsecifnum($ph1ent['ikeid'], $ikenum[$ph1ent['ikeid']]);
 					} else {
-						$ikeid = "con" . $ikenum[$ph1ent['ikeid']];
+						$ikeid = "con{$ph1ent['ikeid']}00000";
 					}
 				} else {
 					if (isset($ikenum[$ph1ent['ikeid']])) {

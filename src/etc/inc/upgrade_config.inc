@@ -6371,6 +6371,15 @@ function upgrade_213_to_214() {
 	}
 }
 
+/* WireGuard support was removed */
+function upgrade_214_to_215() {
+	global $config;
+
+	if (isset($config['wireguard'])) {
+		unset($config['wireguard']);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

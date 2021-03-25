@@ -54,8 +54,20 @@ function find_ipalias($carpif) {
 
 $status = get_carp_status();
 
-if ($status != 0 && $_POST['carp_maintenancemode'] != "") {
-	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
+if ($_POST['carp_maintenancemode'] != "") {
+	if (!isset($config["virtualip_carp_maintenancemode"])) {
+		$maintenancemode = true;
+		$savemsg = gettext("Entering Persistent CARP Maintenance Mode.");
+	} else {
+		$maintenancemode = false;
+		$savemsg = gettext("Leaving Persistent CARP Maintenance Mode.");
+	}
+	/* allow to switch to Persistent Maintenance Mode if CARP is disabled
+	 * see https://redmine.pfsense.org/issues/11727 */
+	interfaces_carp_set_maintenancemode($maintenancemode);
+	if ($status == 0) {
+		$_POST['disablecarp'] = "off";
+	}
 }
 
 if ($_POST['disablecarp'] != "") {
@@ -73,7 +85,7 @@ if ($_POST['disablecarp'] != "") {
 		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot and some configuration changes will re-enable."), $carp_counter);
 		$status = 0;
 	} else {
-		$savemsg = gettext("CARP has been enabled.");
+		$savemsg .= gettext("CARP has been enabled.");
 		foreach ($viparr as $vip) {
 			switch ($vip['mode']) {
 				case "carp":
@@ -106,10 +118,6 @@ $shortcut_section = "carp";
 include("head.inc");
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
-}
-
-if ($status == 0 && $_POST['carp_maintenancemode'] != "") {
-	print_info_box('Please enable CARP before setting the maintenance mode.');
 }
 
 $carpcount = 0;

@@ -111,6 +111,7 @@ if ($act == "new") {
 	$pconfig['digest'] = "SHA256";
 	$pconfig['allow_compression'] = "no";
 	$pconfig['compression'] = "";
+	$pconfig['inactive_seconds'] = 300;
 }
 
 if (($act == "edit") || ($act == "dup")) {

@@ -37,6 +37,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("pkg-utils.inc");
 
+$failmsg = "";
 $sendto = "output";
 $start_polling = false;
 $firmwareupdate = false;
@@ -610,27 +611,31 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 	}
 
 	if (isset($params)) {
-		$upgrade_script = "{$pfsense_upgrade} -y -l " .
-		    "{$logfilename}.txt -p {$sock_file}";
+		$upgrade_script = "{$pfsense_upgrade} -y -l {$logfilename}.txt -p {$sock_file}";
 
-		for ($idx = 0; $idx < 3; $idx++) {
+		for ($idx = 0; $idx < 30; $idx++) {
 			unlink_if_exists($sock_file);
 			$execpid = mwexec_bg("{$upgrade_script} {$params}");
 
 			// Make sure the upgrade process starts
-			while (posix_kill($execpid, 0) && !file_exists(
-			    $sock_file)) {
-				sleep(1);
+			while (posix_kill($execpid, 0) && !file_exists($sock_file)) {
+				usleep(100000);
 			}
 
-			if (posix_kill($execpid, 0) && file_exists(
-			    $sock_file)) {
+			if (posix_kill($execpid, 0) && file_exists($sock_file)) {
 				$start_polling = true;
 				@file_put_contents($gui_pidfile, $execpid);
 				@file_put_contents($gui_mode, $mode);
 				break;
 			}
 		}
+	}
+
+	// If the update process aborted, record a generic message here which will be displayed by
+	// jQuery after the texarea is rendered
+	if (isset($params) && !$start_polling) {
+		$failmsg = gettext("The update process has failed. " .
+		   "It may be helpful to try updating from the CLI (option 13) to see the reason for the failure.");
 	}
 }
 
@@ -879,6 +884,14 @@ function startCountdown() {
 }
 
 events.push(function() {
+	// If the update has a message to be displayed, do that here
+	var failmsg = "<?=$failmsg?>"
+
+	if (failmsg.length > 0) {
+		$('#output').html(failmsg)
+	}
+
+	// Start polling the system to obtain progress information
 	if ("<?=$start_polling?>") {
 		setTimeout(getLogsStatus, 3000);
 		show_info();

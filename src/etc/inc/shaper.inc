@@ -788,9 +788,12 @@ class altq_root_queue {
 				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
 			}
 		}
-		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype']))
+		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype'])) {
 			$input_errors[] = "The sum of child bandwidth is higher than parent.";
-
+		}
+		if ($data['qlimit'] && ($data['scheduler'] == 'CODELQ')) {
+			$input_errors[] = gettext("CODELQ scheduler doesn't support Qlimit parameter.");
+		}
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
 			$input_errors[] = gettext("Qlimit must be an integer.");
 		}

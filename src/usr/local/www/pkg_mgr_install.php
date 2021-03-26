@@ -611,6 +611,8 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 	}
 
 	if (isset($params)) {
+		$another_instance = true;
+		$log = array();
 		$upgrade_script = "{$pfsense_upgrade} -y -l {$logfilename}.txt -p {$sock_file}";
 
 		for ($idx = 0; $idx < 30; $idx++) {
@@ -622,21 +624,55 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 				usleep(100000);
 			}
 
-			if (posix_kill($execpid, 0) && file_exists($sock_file)) {
+			// Collect log output earlier
+			$log = file($logfilename . '.txt',
+			    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+			/*
+			 * If it is not running anymore, read return code from
+			 * logfile and decide what to do next
+			 */
+			if (!posix_kill($execpid, 0)) {
+				$last = preg_match('/^__RC=(\d+)/', end($log),
+				    $matches);
+
+				if (!empty($matches[1])) {
+					/*
+					 * return code 75 means another process
+					 * is running.  In this case we try
+					 * again
+					 */
+					if ((int)$matches[1] != 75) {
+						$another_instance = false;
+						break;
+					}
+				}
+			} elseif (file_exists($sock_file)) {
+				$another_instance = false;
 				$start_polling = true;
 				@file_put_contents($gui_pidfile, $execpid);
 				@file_put_contents($gui_mode, $mode);
 				break;
 			}
 		}
+
+		/*
+		 * If pfSense-upgrade failed to run, present log to user
+		 */
+		if ($another_instance) {
+			$failmsg = gettext(sprintf("Another instance of %s " .
+			    "is running.  Try again later"),
+			    $g['product_name'] . "-upgrade");
+		} elseif (!$start_polling) {
+			/* Remove last line, used to provide return code */
+			unset($log[count($log)-1]);
+			$failmsg = implode($log, "\n");
+			/* Make javascript happy not sending any \n */
+			$failmsg = preg_replace("/\n/", '%%', $failmsg);
+			file_put_contents("/tmp/lala", $failmsg, FILE_APPEND);
+		}
 	}
 
-	// If the update process aborted, record a generic message here which will be displayed by
-	// jQuery after the texarea is rendered
-	if (isset($params) && !$start_polling) {
-		$failmsg = gettext("The update process has failed. " .
-		   "It may be helpful to try updating from the CLI (option 13) to see the reason for the failure.");
-	}
 }
 
 $uptodatemsg = gettext("Up to date.");
@@ -885,10 +921,11 @@ function startCountdown() {
 
 events.push(function() {
 	// If the update has a message to be displayed, do that here
-	var failmsg = "<?=$failmsg?>"
+	var failmsg = "<?=$failmsg?>".replace(/%%/g, "\n");
 
 	if (failmsg.length > 0) {
 		$('#output').html(failmsg)
+		show_failure();
 	}
 
 	// Start polling the system to obtain progress information

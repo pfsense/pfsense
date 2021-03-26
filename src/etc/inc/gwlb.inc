@@ -1123,7 +1123,8 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 				continue;
 			}
 
-			if ((isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) || $gateways_status[$gwname]['status'] == "none")) {
+			if (isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) ||
+			    ($gateways_status[$gwname]['status'] == "online")) {
 				$set_dfltgwname = $gwname;
 				break;
 			}

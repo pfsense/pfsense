@@ -457,7 +457,7 @@ $form->add($section);
 $section = new Form_Section('Configured Ranges');
 $counter = 0;
 
-if ($getSchedule) {
+if ($getSchedule && !empty($pconfig['timerange'])) {
 	$maxrows = count($pconfig['timerange']) -1;
 
 	foreach ($pconfig['timerange'] as $timerange) {
@@ -620,7 +620,7 @@ if ($getSchedule) {
 				'fa-trash'
 			))->setAttribute('type','button')->addClass('btn-xs btn-warning');
 
-			$form->addGlobal(new Form_Input(
+			$group->add(new Form_Input(
 				'schedule' . $counter,
 				null,
 				'hidden',

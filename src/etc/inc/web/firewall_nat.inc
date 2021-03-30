@@ -883,10 +883,6 @@ function MVC_create_interface_list() {
 		$iflist["openvpn"] = gettext("OpenVPN");
 	}
 
-	if (is_wg_enabled()) {
-		$iflist['wireguard'] = 'WireGuard';
-	}
-
 	return($iflist);
 }
 

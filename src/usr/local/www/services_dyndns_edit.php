@@ -337,8 +337,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
-			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy, Linode: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
-			'DigitalOcean: Enter the record ID as the hostname and the domain separately.%1$s' .
+			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS, GoDaddy, Linode, DigitalOcean: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.%1$s' .
 			'Cloudflare, Linode: Enter @ as the hostname to indicate an empty field.', '<br />');
 
 $section->add($group);

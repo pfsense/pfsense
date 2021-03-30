@@ -311,7 +311,7 @@ function saveNATrule($post, $id, $json = false) {
 		$post['localip'] = trim($post['localip']);
 	}
 
-	if (!array_key_exists($post['interface'], create_interface_list(true))) {
+	if (!array_key_exists($post['interface'], create_interface_list($json))) {
 		$input_errors[] = gettext("The submitted interface does not exist.");
 	}
 

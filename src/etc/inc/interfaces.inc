@@ -7571,7 +7571,7 @@ function build_ppps_link_list() {
 	return($linklist);
 }
 
-function create_interface_list() {
+function create_interface_list($open = false) {
 	global $config;
 
 	$iflist = array();
@@ -7579,28 +7579,28 @@ function create_interface_list() {
 	// add group interfaces
 	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
-			if (have_ruleint_access($ifgen['ifname'])) {
+			if ($open || have_ruleint_access($ifgen['ifname'])) {
 				$iflist[$ifgen['ifname']] = $ifgen['ifname'];
 			}
 		}
 	}
 
 	foreach (get_configured_interface_with_descr() as $ifent => $ifdesc) {
-		if (have_ruleint_access($ifent)) {
+		if ($open || have_ruleint_access($ifent)) {
 			$iflist[$ifent] = $ifdesc;
 		}
 	}
 
-	if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp")) {
+	if ($config['l2tp']['mode'] == "server" && ($open || have_ruleint_access("l2tp"))) {
 		$iflist['l2tp'] = gettext('L2TP VPN');
 	}
 
-	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
+	if (is_pppoe_server_enabled() && ($open || have_ruleint_access("pppoe"))) {
 		$iflist['pppoe'] = gettext("PPPoE Server");
 	}
 
 	// add ipsec interfaces
-	if (ipsec_enabled() && have_ruleint_access("enc0")) {
+	if (ipsec_enabled() && ($open || have_ruleint_access("enc0"))) {
 		$iflist["enc0"] = gettext("IPsec");
 	}
 

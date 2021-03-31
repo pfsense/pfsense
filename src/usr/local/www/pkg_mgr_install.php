@@ -625,6 +625,9 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 			}
 
 			// Collect log output earlier
+			if (!file_exists($logfilename . '.txt')) {
+				touch($logfilename . '.txt');
+			}
 			$log = file($logfilename . '.txt',
 			    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 

@@ -185,17 +185,21 @@ function generate_config_cache($config) {
 }
 
 function discover_last_backup() {
+	global $g;
+
 	$backups = glob('/cf/conf/backup/*.xml');
-	$last_backup = "";
-	$last_mtime = 0;
-	foreach ($backups as $backup) {
-		if (filemtime($backup) > $last_mtime) {
-			$last_mtime = filemtime($backup);
-			$last_backup = $backup;
-		}
+	foreach (array_reverse($backups) as $backup) {
+		/* checking multiple backups when detecting invalid configuration
+		 * https://redmine.pfsense.org/issues/11748 */
+		if (filesize($backup) != 0) {
+			$testconfig = parse_xml_config($backup, $g['xml_rootobj']);
+			if ($testconfig != -1) {
+				return basename($backup);
+			}
+		} 
 	}
 
-	return basename($last_backup);
+	return false;
 }
 
 function restore_backup($file) {

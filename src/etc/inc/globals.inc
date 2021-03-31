@@ -344,4 +344,6 @@ $ipsec_filter_sysctl = array(
 	),
 );
 
+global $vpn_and_ppp_ifs;
+$vpn_and_ppp_ifs = array("l2tp", "pppoe", "enc0", "openvpn");
 ?>

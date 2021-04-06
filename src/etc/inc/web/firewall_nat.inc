@@ -167,6 +167,10 @@ function saveNATrule($post, $id, $json = false) {
 
 	$input_errors = array();
 
+	if (isset($post['after'])) {
+		$after = $post['after'];
+	}
+
 	if (strtoupper($post['proto']) == "TCP" || strtoupper($post['proto']) == "UDP" || strtoupper($post['proto']) == "TCP/UDP") {
 		if ($post['srcbeginport_cust'] && !$post['srcbeginport']) {
 			$post['srcbeginport'] = trim($post['srcbeginport_cust']);
@@ -596,7 +600,6 @@ function saveNATrule($post, $id, $json = false) {
 
 		// Update the NAT entry now
 		if (isset($id) && $a_nat[$id]) {
-
 			if (isset($natent['associated-rule-id']) &&
 			    (isset($a_nat[$id]['disabled']) !== isset($natent['disabled']))) {
 				// Check for filter rule associations
@@ -675,6 +678,8 @@ function toggleNATrule($post, $json = false) {
 	if(!$json) {
 		header("Location: firewall_nat.php");
 		exit;
+	} else {
+		return isset($a_nat[$post['id']]['disabled']) ? "disabled":"enabled";
 	}
 }
 

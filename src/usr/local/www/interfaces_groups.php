@@ -82,7 +82,7 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach ($a_ifgroups as $i => $ifgroupentry): ?>
+<?php foreach ($a_ifgroups as $i => $ifgroupentry): if (isset($ifgroupentry['hide']) && $ifgroupentry['hide'] != 'yes'): ?>
 					<tr>
 						<td>
 							<?=htmlspecialchars($ifgroupentry['ifname']); ?>
@@ -112,7 +112,7 @@ display_top_tabs($tab_array);
 							<a class="fa fa-trash"	title="<?=gettext('Delete group')?>"	href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>" usepost></a>
 						</td>
 					</tr>
-<?php endforeach; ?>
+<?php endif; endforeach; ?>
 				</tbody>
 			</table>
 		</div>

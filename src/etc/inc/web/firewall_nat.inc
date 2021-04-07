@@ -679,6 +679,7 @@ function toggleNATrule($post, $json = false) {
 		header("Location: firewall_nat.php");
 		exit;
 	} else {
+		$a_nat = &$config['nat']['rule'];
 		return isset($a_nat[$post['id']]['disabled']) ? "disabled":"enabled";
 	}
 }

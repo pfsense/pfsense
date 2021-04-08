@@ -6380,6 +6380,46 @@ function upgrade_214_to_215() {
 	}
 }
 
+/* Fix VTI interface numbers */
+function upgrade_215_to_216() {
+	global $config;
+
+	init_config_arr(array('ipsec', 'vtimaps', 'item'));
+
+	if (count($config['ipsec']['vtimaps']['item']) == 0) {
+		return;
+	}
+
+	$iflist = get_configured_interface_list_by_realif(true);
+
+	foreach ($config['ipsec']['vtimaps']['item'] as $idx => $vtimap) {
+		if ($vtimap['ifnum'] <= 32767) {
+			continue;
+		}
+
+		$new_vtimap = ipsec_create_vtimap($vtimap['reqid'],
+		    $vtimap['index']);
+
+		/*
+		 * NULL means 32767 limit was reached.  It should never hit
+		 * this
+		 */
+		if ($new_vtimap == NULL) {
+			break;
+		}
+
+		$old_if = 'ipsec' . $vtimap['ifnum'];
+
+		/* Interface is assigned */
+		if (isset($iflist[$old_if])) {
+			$config['interfaces'][$iflist[$old_if]]['if'] =
+			    'ipsec' . $new_vtimap['ifnum'];
+		}
+
+		$config['ipsec']['vtimaps']['item'][$idx] = $new_vtimap;
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

@@ -38,7 +38,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("vpn.inc");
-include_once("system_advanced_misc.inc");
+require_once("system_advanced_misc.inc");
 
 $powerd_modes = array(
 	'hadp' => gettext('Hiadaptive'),

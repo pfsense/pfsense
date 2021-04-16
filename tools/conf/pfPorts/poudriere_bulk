@@ -56,6 +56,8 @@ net/realtek-re-kmod
 net/trafshow
 net/trafshow3
 net/vnstat
+net/wireguard-kmod
+net/wireguard-tools
 security/%%PRODUCT_NAME%%-pkg-acme
 security/%%PRODUCT_NAME%%-pkg-nmap
 security/%%PRODUCT_NAME%%-pkg-openvpn-client-export

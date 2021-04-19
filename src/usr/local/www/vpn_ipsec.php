@@ -181,7 +181,28 @@ if ($_POST['apply']) {
 			unset($a_phase1[$togglebtn]['disabled']);
 		} else {
 			if (ipsec_vti($a_phase1[$togglebtn], false, false)) {
-				$input_errors[] = gettext("Cannot disable a Phase 1 with a child Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
+				/* disable all phase2 entries that match the ikeid */
+				$ikeid = $a_phase1[$toggelebtn]['ikeid'];
+				$p1_has_vti = false;
+				$disablep2ids = array();
+				foreach ($a_phase2 as $p2index => $ph2tmp) {
+					if ($ph2tmp['ikeid'] == $ikeid) {
+						if (is_interface_ipsec_vti_assigned($ph2tmp)) {
+							$p1_has_vti = true;
+						} else {
+							$disablep2ids[] = $p2index;
+						}
+					}
+				}
+
+				if ($p1_has_vti) {
+					$input_errors[] = gettext("Cannot disable a Phase 1 which contains an active VTI Phase 2 with an interface assigned. Remove the interface assignment before deleting this P1.");
+				} else {
+					foreach ($disablep2ids as $dp2idx) {
+						$a_phase2[$togglebtnp2]['disabled'] = true;
+					}
+					$a_phase1[$togglebtn]['disabled'] = true;
+				}
 			} else {
 				$a_phase1[$togglebtn]['disabled'] = true;
 			}

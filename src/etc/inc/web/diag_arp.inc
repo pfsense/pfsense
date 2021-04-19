@@ -63,6 +63,9 @@ function prepare_ARP_table($json = false) {
 		$dhcpip[$value['ip']] = $value['hostname'];
 	}
 
+	// Load MAC-Manufacturer table
+	$mac_man = load_mac_manufacturer_table();
+
 	$arp_table = system_get_arp_table();
 
 	$i = 0;

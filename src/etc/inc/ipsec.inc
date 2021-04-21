@@ -964,7 +964,7 @@ function ipsec_vti($ph1ent, $returnaddresses = false, $skipdisabled = true) {
 					'descr' => $ph2ent['descr'],
 				);
 			}
-			if (!$skipdisabled && isset($ph2ent['disabled'])) {
+			if ($skipdisabled && isset($ph2ent['disabled'])) {
 				continue;
 			} else {
 				$is_vti = true;

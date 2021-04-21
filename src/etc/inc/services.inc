@@ -251,7 +251,13 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\t\tAdvRoutePreference medium;\n";
 				break;
 		}
-		$radvdconf .= "\t\tRemoveRoute on;\n";
+
+		if ($rasrcaddr) {
+			$radvdconf .= "\t\tRemoveRoute off;\n";
+		}
+		else {
+			$radvdconf .= "\t\tRemoveRoute on;\n";
+		}
 		$radvdconf .= "\t};\n";
 
 		/* add DNS servers */

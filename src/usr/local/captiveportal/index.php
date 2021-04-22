@@ -26,6 +26,7 @@
  */
 
 require_once("auth.inc");
+require_once("util.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
 
@@ -38,6 +39,23 @@ global $cpzone, $cpzoneid;
 
 $cpzone = strtolower($_REQUEST['zone']);
 $cpcfg = $config['captiveportal'][$cpzone];
+
+/* NOTE: IE 8/9 is buggy and that is why this is needed */
+$orig_request = trim($_REQUEST['redirurl'], " /");
+
+/* If the post-auth redirect is set, always use it. Otherwise take what was supplied in URL. */
+if (!empty($cpcfg) && is_URL($cpcfg['redirurl'])) {
+	$redirurl = $cpcfg['redirurl'];
+} elseif (preg_match("/redirurl=(.*)/", $orig_request, $matches)) {
+	$redirurl = urldecode($matches[1]);
+} elseif ($_REQUEST['redirurl']) {
+	$redirurl = $_REQUEST['redirurl'];
+}
+/* Sanity check: If the redirect target is not a URL, do not attempt to use it like one. */
+if (!is_URL(urldecode($redirurl))) {
+	$redirurl = "";
+}
+
 if (empty($cpcfg)) {
 	log_error("Submission to captiveportal with unknown parameter zone: " . htmlspecialchars($cpzone));
 	portal_reply_page($redirurl, "error", gettext("Internal error"));
@@ -46,10 +64,7 @@ if (empty($cpcfg)) {
 }
 
 $cpzoneid = $cpcfg['zoneid'];
-
 $orig_host = $_SERVER['HTTP_HOST'];
-/* NOTE: IE 8/9 is buggy and that is why this is needed */
-$orig_request = trim($_REQUEST['redirurl'], " /");
 $clientip = $_SERVER['REMOTE_ADDR'];
 
 if (!$clientip) {
@@ -83,8 +98,7 @@ if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['l
 	/* If client try to access captive portal page while already connected, 
 		but no custom logout page does exist and logout popup is disabled */	
 	echo gettext("You are connected.<br/>");
-	if ($_GET['redirurl'] || $_POST['redirurl']) {
-		$redirurl = $_GET['redirurl'] ? $_GET['redirurl'] : $_POST['redirurl'];
+	if (!empty($redirurl)) {
 		$redirurl = htmlspecialchars($redirurl);
 		echo ("You can proceed to: <a href='{$redirurl}'>{$redirurl}</a>");
 	} 
@@ -98,14 +112,6 @@ if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['l
 
 	ob_flush();
 	return;
-}
-
-if (preg_match("/redirurl=(.*)/", $orig_request, $matches)) {
-	$redirurl = urldecode($matches[1]);
-} elseif ($_REQUEST['redirurl']) {
-	$redirurl = $_REQUEST['redirurl'];
-} elseif (!empty($cpcfg['redirurl'])) {
-	$redirurl = $cpcfg['redirurl'];
 }
 
 $macfilter = !isset($cpcfg['nomacfilter']);
@@ -129,7 +135,6 @@ if ($_POST['logout_id']) {
 	$safe_logout_id = SQLite3::escapeString($_POST['logout_id']);
 	captiveportal_disconnect_client($safe_logout_id);
 	header("Location: index.php?zone=".$cpzone);
-
 } elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac' || !empty($cpcfg['blockedmacsurl'])) && $macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
 	captiveportal_logportalauth($clientmac, $clientmac, $clientip, "Blocked MAC address");
 	if (!empty($cpcfg['blockedmacsurl'])) {
@@ -223,7 +228,7 @@ if ($_POST['logout_id']) {
 		captiveportal_free_dn_ruleno($pipeno);
 		$type = "error";
 			
-		if (!empty($auth_result['attributes']['url_redirection'])) {
+		if (is_URL($auth_result['attributes']['url_redirection'])) {
 			$redirurl = $auth_result['attributes']['url_redirection'];
 			$type = "redir";
 		}

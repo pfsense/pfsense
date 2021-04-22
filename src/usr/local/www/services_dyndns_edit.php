@@ -194,7 +194,7 @@ if ($_POST['save'] || $_POST['force']) {
 		} else {
 			$dyndns['enable'] = true;
 		}
-		if (preg_match('/.+-v6/', $_POST['type']) && is_stf_interface($_POST['interface'])) { 
+		if (preg_match('/.+-v6/', $_POST['type']) && is_stf_interface($_POST['interface'])) {
 			$dyndns['interface'] = $_POST['interface'] . '_stf';
 		} else {
 			$dyndns['interface'] = $_POST['interface'];
@@ -205,7 +205,7 @@ if ($_POST['save'] || $_POST['force']) {
 		// Trim hard-to-type but sometimes returned characters
 		$dyndns['resultmatch'] = trim($_POST['resultmatch'], "\t\n\r");
 		($dyndns['type'] == "custom") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
-		if (($dyndns['type'] == "custom-v6") && is_stf_interface($_POST['requestif'])) { 
+		if (($dyndns['type'] == "custom-v6") && is_stf_interface($_POST['requestif'])) {
 			$dyndns['requestif'] = $_POST['requestif'] . '_stf';
 		} else {
 			$dyndns['requestif'] = $_POST['requestif'];

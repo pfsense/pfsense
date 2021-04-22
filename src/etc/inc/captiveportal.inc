@@ -2257,8 +2257,13 @@ function portal_hostname_from_client_ip($cliip) {
 function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null, $username = null, $password = null, $voucher = null) {
 	global $g, $config, $cpzone;
 
+	$ourhostname = portal_hostname_from_client_ip($clientip);
+	$protocol = (isset($cpcfg['httpslogin'])) ? 'https://' : 'http://';
+	$portal_url = "{$protocol}{$ourhostname}/index.php?zone={$cpzone}";
+
 	/* Get captive portal layout */
 	if ($type == "redir") {
+		$redirurl = is_URL($redirurl) ? $redirurl : $portal_url;
 		header("Location: {$redirurl}");
 		return;
 	} else if ($type == "login") {
@@ -2276,10 +2281,8 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	}
 
 	/* substitute other variables */
-	$ourhostname = portal_hostname_from_client_ip($clientip);
-	$protocol = (isset($cpcfg['httpslogin'])) ? 'https://' : 'http://';
-	$htmltext = str_replace("\$PORTAL_ACTION\$", "{$protocol}{$ourhostname}/index.php?zone={$cpzone}", $htmltext);
-	$htmltext = str_replace("#PORTAL_ACTION#", "{$protocol}{$ourhostname}/index.php?zone={$cpzone}", $htmltext);
+	$htmltext = str_replace("\$PORTAL_ACTION\$", $portal_url, $htmltext);
+	$htmltext = str_replace("#PORTAL_ACTION#", $portal_url, $htmltext);
 
 	$htmltext = str_replace("\$PORTAL_ZONE\$", htmlspecialchars($cpzone), $htmltext);
 	$htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);
@@ -2663,12 +2666,12 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 		}
 	}
 	/* redirect user to desired destination */
-	if (!empty($attributes['url_redirection'])) {
+	if (is_URL($attributes['url_redirection'])) {
 		$my_redirurl = $attributes['url_redirection'];
-	} else if (!empty($redirurl)) {
-		$my_redirurl = $redirurl;
-	} else if (!empty($config['captiveportal'][$cpzone]['redirurl'])) {
+	} else if (is_URL($config['captiveportal'][$cpzone]['redirurl'])) {
 		$my_redirurl = $config['captiveportal'][$cpzone]['redirurl'];
+	} else if (is_URL($redirurl)) {
+		$my_redirurl = $redirurl;
 	}
 
 	if (isset($config['captiveportal'][$cpzone]['logoutwin_enable']) && !isset($config['captiveportal'][$cpzone]['passthrumacadd'])) {

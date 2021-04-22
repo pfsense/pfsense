@@ -492,10 +492,24 @@ print($form);
 events.push(function() {
 
 	function setVisible(service) {
+		// First, set default visibility and then modify per service, if needed.
+		hideGroupInput('domainname', true);
+		hideInput('resultmatch', true);
+		hideInput('updateurl', true);
+		hideInput('requestif', true);
+		hideCheckbox('curl_ipresolve_v4', true);
+		hideCheckbox('curl_ssl_verifypeer', true);
+		hideInput('username', false); // show by default
+		hideInput('host', false); // show by default
+		hideInput('mx', false); // show by default
+		hideCheckbox('wildcard', false); // show by default
+		hideCheckbox('proxied', true);
+		hideInput('zoneid', true);
+		hideInput('ttl', true);
+
 		switch (service) {
 			case "custom" :
 			case "custom-v6" :
-				hideGroupInput('domainname', true);
 				hideInput('resultmatch', false);
 				hideInput('updateurl', false);
 				hideInput('requestif', false);
@@ -504,37 +518,17 @@ events.push(function() {
 				hideInput('host', true);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
-				hideInput('ttl', true);
 				break;
-
 			case "dnsimple":
-				hideGroupInput('domainname', true);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
 				hideCheckbox('curl_ssl_verifypeer', false);
-				hideInput('host', false);
-				hideInput('mx', false);
-				hideCheckbox('wildcard', false);
-				hideCheckbox('proxied', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
 				break;
 			case "route53-v6":
 			case "route53":
-				hideGroupInput('domainname', true);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
 				hideCheckbox('curl_ssl_verifypeer', false);
-				hideInput('host', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
 				break;
@@ -542,169 +536,67 @@ events.push(function() {
 			case "gratisdns":
 			case "hover":
 				hideGroupInput('domainname', false);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
-				hideInput('mx', false);
-				hideCheckbox('wildcard', false);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
-				hideInput('ttl', true);
 				break;
 			case "cloudns":
 				hideGroupInput('domainname', false);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
-				hideInput('mx', false);
-				hideCheckbox('wildcard', false);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
 				hideInput('ttl', false);
 				break;
 			case 'dreamhost':
 			case 'dreamhost-v6':
-				hideGroupInput('domainname', true);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
-				hideInput('ttl', true);
 				break;
 			case "cloudflare-v6":
 			case "cloudflare":
 				hideGroupInput('domainname', false);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
 				hideCheckbox('proxied', false);
-				hideInput('zoneid', true);
 				hideInput('ttl', false);
 				break;
 			case "domeneshop":
 		        case "domeneshop-v6":
-				hideGroupInput('domainname', true);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('username', false);
-				hideInput('host', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
-				hideInput('ttl', true);
 				break;
 			case "digitalocean":
 			case "digitalocean-v6":
 			case "gandi-livedns":
 			case "gandi-livedns-v6":
 				hideGroupInput('domainname', false);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
 				hideInput('username', true);
-				hideInput('host', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
 				hideInput('ttl', false);
 				break;
 			case "godaddy":
 			case "godaddy-v6":
 				hideGroupInput('domainname', false);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
 				hideInput('ttl', false);
 				break;
 			case "azurev6":
 			case "azure":
-				hideGroupInput('domainname', true);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
 				break;
 			case "linode-v6":
 			case "linode":
 				hideGroupInput('domainname', false);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
 				hideInput('ttl', false);
 				break;
 			case "mythicbeasts-v6":
 			case "mythicbeasts":
 				hideGroupInput('domainname', false);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
-				hideInput('ttl', true);
 				break;
 			default:
-				hideGroupInput('domainname', true);
-				hideInput('resultmatch', true);
-				hideInput('updateurl', true);
-				hideInput('requestif', true);
-				hideCheckbox('curl_ipresolve_v4', true);
-				hideCheckbox('curl_ssl_verifypeer', true);
-				hideInput('host', false);
-				hideInput('mx', false);
-				hideCheckbox('wildcard', false);
-				hideCheckbox('proxied', true);
-				hideInput('zoneid', true);
-				hideInput('ttl', true);
 		}
 	}
 

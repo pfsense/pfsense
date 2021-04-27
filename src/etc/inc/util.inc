@@ -2895,15 +2895,15 @@ function set_ipv6routes_mtu($interface, $mtu) {
 	$a_staticroutes = get_staticroutes(false, false, true);
 	foreach ($a_gateways as $gate) {
 		foreach ($a_staticroutes as $sroute) {
-			if ($gate['interface'] == $interface &&
-			    $sroute['gateway'] == $gate['name']) {
+			if (($gate['interface'] == $interface) &&
+			    ($sroute['gateway'] == $gate['name'])) {
 				$tgt = $sroute['network'];
 				$gateway = $gate['gateway'];
 				$ipv6mturoutes[$tgt] = $gateway;
 			}
 		}
-		if ($gate['interface'] == $interface &&
-		    $gate['isdefaultgw']) {
+		if (($gate['interface'] == $interface) &&
+		    $gate['isdefaultgw'] && is_ipaddrv6($gate['gateway'])) {
 			$tgt = "default";
 			$gateway = $gate['gateway'];
 			$ipv6mturoutes[$tgt] = $gateway;

@@ -2175,23 +2175,26 @@ function cert_print_infoblock($cert) {
 	/* Private key information */
 	if (!empty($cert['prv'])) {
 		$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
-		$key_details = openssl_pkey_get_details($res_key);
-
-		/* Key type (RSA or EC) */
 		$certextinfo .= '<b>' . gettext("Key Type: ") . '</b> ';
-		if ($key_details['type'] == OPENSSL_KEYTYPE_RSA) {
-			/* RSA Key size */
-			$certextinfo .= 'RSA<br/>';
-			$certextinfo .= '<b>' . gettext("Key Size: ") . '</b> ';
-			$certextinfo .= $key_details['bits'] . '<br/>';
-		} else {
-			/* Elliptic curve (EC) key curve name */
-			$certextinfo .= 'ECDSA<br/>';
-			$curve = cert_get_pkey_curve($cert['prv']);
-			if (!empty($curve)) {
-				$certextinfo .= '<b>' . gettext("Elliptic curve name:") . ' </b>';
-				$certextinfo .= $curve . '<br/>';
+		if ($res_key) {
+			$key_details = openssl_pkey_get_details($res_key);
+			/* Key type (RSA or EC) */
+			if ($key_details['type'] == OPENSSL_KEYTYPE_RSA) {
+				/* RSA Key size */
+				$certextinfo .= 'RSA<br/>';
+				$certextinfo .= '<b>' . gettext("Key Size: ") . '</b> ';
+				$certextinfo .= $key_details['bits'] . '<br/>';
+			} else {
+				/* Elliptic curve (EC) key curve name */
+				$certextinfo .= 'ECDSA<br/>';
+				$curve = cert_get_pkey_curve($cert['prv']);
+				if (!empty($curve)) {
+					$certextinfo .= '<b>' . gettext("Elliptic curve name:") . ' </b>';
+					$certextinfo .= $curve . '<br/>';
+				}
 			}
+		} else {
+			$certextinfo .= '<i>' . gettext("Unknown (Key could not be parsed)") . '</i><br/>';
 		}
 	}
 

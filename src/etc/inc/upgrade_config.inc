@@ -6358,7 +6358,18 @@ function upgrade_212_to_213() {
 			$ph1ent['lifetime'] = $ph1ent['over_time'] + max($ph1ent['rekey_time'], $ph1ent['reauth_time']);
 		}
 
-		unset($ph1ent['reauth_enable'], $ph1ent['rekey_enable'], $ph1ent['margintime'], $ph1ent['over_time']);
+		if (isset($ph1ent['reauth_enable'])) {
+			unset($ph1ent['reauth_enable']);
+		}
+		if (isset($ph1ent['rekey_enable'])) {
+			unset($ph1ent['rekey_enable']);
+		}
+		if (isset($ph1ent['margintime'])) {
+			unset($ph1ent['margintime']);
+		}
+		if (isset($ph1ent['over_time'])) {
+			unset($ph1ent['over_time']);
+		}
 	}
 }
 

@@ -3087,8 +3087,8 @@ function filter_generate_user_rule($rule) {
 
 	/* source address */
 	$src = trim(filter_generate_address($rule, "source"));
-	if (empty($src) || ($src == "/")) {
-		return "# at the break!";
+	if (empty($src) || ($src == "/") || ($src == "!")) {
+		return "# source address is empty. ";
 	}
 	$aline['src'] = " from $src ";
 
@@ -3099,8 +3099,8 @@ function filter_generate_user_rule($rule) {
 
 	/* destination address */
 	$dst = trim(filter_generate_address($rule, "destination"));
-	if (empty($dst) || ($dst == "/")) {
-		return "# returning at dst $dst == \"/\"";
+	if (empty($dst) || ($dst == "/") || ($dst == "!")) {
+		return "# destination address is empty. ";
 	}
 	$aline['dst'] = "to $dst ";
 

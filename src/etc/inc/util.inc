@@ -2037,26 +2037,26 @@ function resolve_retry($hostname, $protocol = 'inet') {
 	$recresult = array();
 	$returnres = array();
 
-	for ($i = 0; $i < $retries; $i++) {
-		switch ($protocol) {
-			case 'any':
-				$checkproto = 'is_ipaddr';
-				$dnsproto = DNS_ANY;
-				$dnstype = array('A', 'AAAA');
-				break;
-			case 'inet6':
-				$checkproto = 'is_ipaddrv6';
-				$dnsproto = DNS_AAAA;
-				$dnstype = array('AAAA');
-				break;
-			case 'inet': 
-			default:
-				$checkproto = 'is_ipaddrv4';
-				$dnsproto = DNS_A;
-				$dnstype = array('A');
-				break;
-		}
+	switch ($protocol) {
+		case 'any':
+			$checkproto = 'is_ipaddr';
+			$dnsproto = DNS_ANY;
+			$dnstype = array('A', 'AAAA');
+			break;
+		case 'inet6':
+			$checkproto = 'is_ipaddrv6';
+			$dnsproto = DNS_AAAA;
+			$dnstype = array('AAAA');
+			break;
+		case 'inet': 
+		default:
+			$checkproto = 'is_ipaddrv4';
+			$dnsproto = DNS_A;
+			$dnstype = array('A');
+			break;
+	}
 
+	for ($i = 0; $i < $retries; $i++) {
 		if ($checkproto($hostname)) {
 			return $hostname;
 		}

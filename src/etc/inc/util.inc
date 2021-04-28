@@ -2031,10 +2031,12 @@ function mac_format($clientmac) {
 	}
 }
 
-function resolve_retry($hostname, $protocol = 'inet', $retries = 5, $numrecords = 1) {
-
+function resolve_retry($hostname, $protocol = 'inet') {
+	$retries = 50
+	$numrecords = 1
 	$recresult = array();
 	$returnres = array();
+
 	for ($i = 0; $i < $retries; $i++) {
 		switch ($protocol) {
 			case 'any':
@@ -2054,34 +2056,39 @@ function resolve_retry($hostname, $protocol = 'inet', $retries = 5, $numrecords 
 				$dnstype = array('A');
 				break;
 		}
+
 		if ($checkproto($hostname)) {
 			return $hostname;
 		}
+
 		$dnsresult = @dns_get_record($hostname, $dnsproto);
+
 		if (!empty($dnsresult)) {
 			foreach ($dnsresult as $dnsrec => $ip) {
 				if (is_array($ip)) {
 					if (in_array($ip['type'], $dnstype)) {
-					    if ($checkproto($ip['ip'])) { 
-						    $recresult[] = $ip['ip'];
-					    }
-					    if ($checkproto($ip['ipv6'])) { 
-						    $recresult[] = $ip['ipv6'];
-					    }
+						if ($checkproto($ip['ip'])) { 
+							$recresult[] = $ip['ip'];
+						}
+
+						if ($checkproto($ip['ipv6'])) { 
+							$recresult[] = $ip['ipv6'];
+						}
 					}
 				}
 			}
 		}
 
-		sleep(1);
-	}
-
-	if (!empty($recresult)) {
-		if ($numrecords == 1) {
-			return $recresult[0];
-		} else {
-			return array_slice($recresult, 0, $numrecords);
+		// Return on success
+		if (!empty($recresult)) {
+			if ($numrecords == 1) {
+				return $recresult[0];
+			} else {
+				return array_slice($recresult, 0, $numrecords);
+			}
 		}
+
+		usleep(100000);
 	}
 
 	return false;

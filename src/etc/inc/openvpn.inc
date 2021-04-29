@@ -1022,7 +1022,7 @@ function openvpn_reconfigure($mode, $settings) {
 					if ($settings['dev_mode'] == 'tun') {
 						$conf .= "ifconfig-ipv6 {$ipv6_1} {$ipv6_2}\n";
 					} else {
-						$conf .= "ifconfig-ipv6 {$ipv6_1} {$prefix}\n";
+						$conf .= "ifconfig-ipv6 {$ipv6_1}/{$prefix} {$ipv6_2}\n";
 					}
 				}
 				break;
@@ -1191,7 +1191,7 @@ function openvpn_reconfigure($mode, $settings) {
 			if ($settings['dev_mode'] == 'tun') {
 				$conf .= "ifconfig-ipv6 {$ipv6_2} {$ipv6_1}\n";
 			} else {
-				$conf .= "ifconfig-ipv6 {$ipv6_2} {$prefix}\n";
+				$conf .= "ifconfig-ipv6 {$ipv6_1}/{$prefix} {$ipv6_2}\n";
 			}
 		}
 

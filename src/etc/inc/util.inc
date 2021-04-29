@@ -2032,8 +2032,8 @@ function mac_format($clientmac) {
 }
 
 function resolve_retry($hostname, $protocol = 'inet') {
-	$retries = 50
-	$numrecords = 1
+	$retries = 50;
+	$numrecords = 1;
 	$recresult = array();
 	$returnres = array();
 

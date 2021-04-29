@@ -2257,6 +2257,7 @@ function portal_hostname_from_client_ip($cliip) {
 function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null, $username = null, $password = null, $voucher = null) {
 	global $g, $config, $cpzone;
 
+	$cpcfg = $config['captiveportal'][$cpzone];
 	$ourhostname = portal_hostname_from_client_ip($clientip);
 	$protocol = (isset($cpcfg['httpslogin'])) ? 'https://' : 'http://';
 	$portal_url = "{$protocol}{$ourhostname}/index.php?zone={$cpzone}";
@@ -2271,8 +2272,6 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	} else {
 		$htmltext = get_include_contents("{$g['varetc_path']}/captiveportal-{$cpzone}-error.html");
 	}
-
-	$cpcfg = $config['captiveportal'][$cpzone];
 
 	/* substitute the PORTAL_REDIRURL variable */
 	if ($cpcfg['preauthurl']) {

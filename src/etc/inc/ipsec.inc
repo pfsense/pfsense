@@ -207,6 +207,14 @@ $ipsec_preshared_key_type = array(
 	'EAP' => 'EAP'
 );
 
+global $ipsec_startactions;
+$ipsec_startactions = array(
+	'' => gettext('Default'),
+	'none' => gettext('None (Responder Only)'),
+	'start' => gettext('Initiate at start (VTI or Tunnel Mode)'),
+	'trap' => gettext('Initiate on demand (Tunnel mode only)'),
+);
+
 global $ipsec_closeactions;
 $ipsec_closeactions = array(
 	'' => gettext('Default'),
@@ -2326,8 +2334,13 @@ function ipsec_setup_tunnels() {
 				$child['rand_time'] = ipsec_get_rand_time($ph2ent) . "s";
 			}
 
-			/* If we are to act only as a responder, disable the start action */
-			$child['start_action'] = isset($ph1ent['responderonly']) ? 'none' : $start_action;
+			/* Set Child SA Start Action based on user preference, except
+			 * for invalid combinations such as 'trap' on VTI */
+			if (!isset($ph2ent['mobile']) &&
+			    !(($ph2ent['mode'] == 'vti') && ($ph1ent['startaction'] == 'trap'))) {
+				$start_action = !empty($ph1ent['startaction']) ? $ph1ent['startaction'] : $start_action;
+			}
+			$child['start_action'] = $start_action;
 
 			/* Setup child SA proposals */
 			$proposal = array();

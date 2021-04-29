@@ -125,11 +125,8 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['gw_duplicates'] = true;
 	}
 
+	$pconfig['startaction'] = $a_phase1[$p1index]['startaction'];
 	$pconfig['closeaction'] = $a_phase1[$p1index]['closeaction'];
-
-	if (isset($a_phase1[$p1index]['responderonly'])) {
-		$pconfig['responderonly'] = true;
-	}
 
 	if ($a_phase1[$p1index]['dpd_delay'] && $a_phase1[$p1index]['dpd_maxfail']) {
 		$pconfig['dpd_enable'] = true;
@@ -296,6 +293,13 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Rand Time must be an integer.");
 	}
 
+	if (!empty($pconfig['startaction']) && !array_key_exists($pconfig['startaction'], $ipsec_startactions)) {
+		$input_errors[] = gettext("Invalid Child SA Start Action.");
+	} elseif ($pconfig['mobile']) {
+		/* Start action cannot be set for mobile tunnels */
+		$input_errors[] = gettext("Child SA Start Action cannot be set for Mobile Phase 1 entries.");
+	}
+
 	if (!empty($pconfig['closeaction']) && !array_key_exists($pconfig['closeaction'], $ipsec_closeactions)) {
 		$input_errors[] = gettext("Invalid Child SA Close Action.");
 	}
@@ -346,8 +350,8 @@ if ($_POST['save']) {
 	}
 
 	if (($pconfig['remotegw'] == '0.0.0.0') || ($pconfig['remotegw'] == '::')) {
-		if (!isset($pconfig['responderonly'])) {
-			$input_errors[] = gettext('The remote gateway "0.0.0.0" or "::" address can only be used with "Responder Only".');
+		if ($pconfig['startaction'] != 'none') {
+			$input_errors[] = gettext('The remote gateway "0.0.0.0" or "::" address can only be used with a Child SA Start Action of "None (Responder Only)".');
 		}
 		if ($pconfig['peerid_type'] == "peeraddress") {
 			$input_errors[] = gettext('The remote gateway "0.0.0.0" or "::" address can not be used with IP address peer identifier.');
@@ -595,18 +599,13 @@ if ($_POST['save']) {
 			unset($ph1ent['gw_duplicates']);
 		}
 
+		$ph1ent['startaction'] = $pconfig['startaction'];
 		$ph1ent['closeaction'] = $pconfig['closeaction'];
 
 		if (isset($pconfig['prfselect_enable'])) {
 			$ph1ent['prfselect_enable'] = 'yes';
 		} else {
 			unset($ph1ent['prfselect_enable']);
-		}
-
-		if (isset($pconfig['responderonly'])) {
-			$ph1ent['responderonly'] = true;
-		} else {
-			unset($ph1ent['responderonly']);
 		}
 
 		if (isset($pconfig['dpd_enable'])) {
@@ -812,8 +811,8 @@ if (!$pconfig['mobile']) {
 		$pconfig['remotegw']
 	))->setHelp('Enter the public IP address or host name of the remote gateway.%1$s%2$s%3$s',
 	    '<div class="infoblock">',
-	    sprint_info_box(gettext('Use \'0.0.0.0\' to allow connections from any IPv4 address or \'::\' ' . 
-	    'to allow connections from any IPv6 address.' . '<br/>' . 'Responder Only must be set and ' . 
+	    sprint_info_box(gettext('Use \'0.0.0.0\' to allow connections from any IPv4 address or \'::\' ' .
+	    'to allow connections from any IPv6 address.' . '<br/>' . 'Child SA Start Action must be set to None and ' .
 	    'Peer IP Address cannot be used for Remote Identifier.'), 'info', false),
 	    '</div>');
 
@@ -1045,12 +1044,14 @@ $form->add($section);
 
 $section = new Form_Section('Advanced Options');
 
-$section->addInput(new Form_Checkbox(
-	'responderonly',
-	'Responder Only',
-	'Enable this option to never initiate this connection from this side, only respond to incoming requests.',
-	$pconfig['responderonly']
-));
+if (!$pconfig['mobile']) {
+	$section->addInput(new Form_Select(
+		'startaction',
+		'Child SA Start Action',
+		$pconfig['startaction'],
+		$ipsec_startactions
+	))->setHelp('Set this option to force specific initiation/responder behavior for child SA (P2) entries');
+}
 
 $section->addInput(new Form_Select(
 	'closeaction',

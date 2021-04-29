@@ -6432,6 +6432,25 @@ function upgrade_215_to_216() {
 }
 
 /*
+ * Child SA Start Action has replaced the Responder Only option. Update P1
+ * to match.
+ * https://redmine.pfsense.org/issues/11576
+ */
+function upgrade_216_to_217() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+		if (isset($ph1ent['responderonly'])) {
+			$ph1ent['startaction'] = 'none';
+			unset($ph1ent['responderonly']);
+		}
+	}
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

@@ -73,6 +73,10 @@ function getSystemAdvancedFirewall($json = false) {
 	$pconfig['udpfirsttimeout'] = $config['system']['udpfirsttimeout'];
 	$pconfig['udpmultipletimeout'] = $config['system']['udpmultipletimeout'];
 	$pconfig['udpsingletimeout'] = $config['system']['udpsingletimeout'];
+	$pconfig['vpn_scrubnodf'] = $config['system']['vpn_scrubnodf'];
+	$pconfig['vpn_fragrement_reassemble'] = $config['system']['vpn_fragment_reassemble'];
+	$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
+	$pconfig['maxmss'] = $config['system']['maxmss'];
 
 	return $json ? json_encode($pconfig) : $pconfig;
 }
@@ -170,6 +174,15 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		    $g['minimumtableentries_bogonsv6']);
 	}
 
+	if ($post['maxmss']) {
+		if (!is_numericint($post['maxmss'])) {
+			$input_errors[] = gettext("An integer must be specified for Maximum MSS.");
+		}
+		if (($post['maxmss'] < 576) || ($post['maxmss'] > 65535)) {
+			$input_errors[] = gettext("An integer between 576 and 65535 must be specified for Maximum MSS");
+		}
+	}
+
 	if (!$json) {
 		ob_flush();
 		flush();
@@ -228,6 +241,30 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		$config['system']['aliasesresolveinterval'] = $post['aliasesresolveinterval'];
 		$config['system']['maximumtableentries'] = $post['maximumtableentries'];
 		$config['system']['maximumfrags'] = $post['maximumfrags'];
+
+		if ($post['maxmss_enable'] == "yes") {
+			$config['system']['maxmss_enable'] = true;
+			$config['system']['maxmss'] = $post['maxmss'];
+		} else {
+			if (isset($config['system']['maxmss_enable'])) {
+				unset($config['system']['maxmss_enable']);
+			}
+			if (isset($config['system']['maxmss'])) {
+				unset($config['system']['maxmss']);
+			}
+		}
+
+		if ($post['vpn_scrubnodf'] == "yes") {
+			$config['system']['vpn_scrubnodf'] = true;
+		} else {
+			unset($config['system']['scrubnodf']);
+		}
+
+		if ($post['vpn_fragment_reassemble'] == "yes") {
+			$config['system']['vpn_fragment_reassemble'] = true;
+		} else {
+			unset($config['system']['vpn_fragment_reassemble']);
+		}
 
 		if (!empty($post['tcpfirsttimeout'])) {
 			$config['system']['tcpfirsttimeout'] = $post['tcpfirsttimeout'];

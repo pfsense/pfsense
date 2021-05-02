@@ -46,8 +46,6 @@ $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
 $pconfig['maxexchange'] = $config['ipsec']['maxexchange'];
-$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
-$pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 $pconfig['filtermode'] = $config['ipsec']['filtermode'];
 $pconfig['ipsecbypass'] = isset($config['ipsec']['ipsecbypass']);
@@ -64,15 +62,6 @@ if ($_POST['save']) {
 			$input_errors[] = sprintf(gettext("A valid value must be specified for %s debug."), $desc);
 		} else {
 			$pconfig['logging'][$cat] = $pconfig['logging_' . $cat];
-		}
-	}
-
-	if (isset($pconfig['maxmss'])) {
-		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] != '') {
-			$input_errors[] = gettext("An integer must be specified for Maximum MSS.");
-		}
-		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535) {
-			$input_errors[] = gettext("An integer between 576 and 65535 must be specified for Maximum MSS");
 		}
 	}
 
@@ -247,18 +236,6 @@ if ($_POST['save']) {
 			unset($config['ipsec']['filtermode']);
 		}
 
-		if ($_POST['maxmss_enable'] == "yes") {
-			$config['system']['maxmss_enable'] = true;
-			$config['system']['maxmss'] = $_POST['maxmss'];
-		} else {
-			if (isset($config['system']['maxmss_enable'])) {
-				unset($config['system']['maxmss_enable']);
-			}
-			if (isset($config['system']['maxmss'])) {
-				unset($config['system']['maxmss']);
-			}
-		}
-
 		if (isset($config['ipsec']['bypassrules']['rule'])) {
 			unset($config['ipsec']['bypassrules']['rule']);
 		}
@@ -312,23 +289,7 @@ $pglinks = array("", "vpn_ipsec.php", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
-?>
 
-<script type="text/javascript">
-//<![CDATA[
-
-function maxmss_checked(obj) {
-	if (obj.checked) {
-		$('#maxmss').attr('disabled', false);
-	} else {
-		$('#maxmss').attr('disabled', 'true');
-	}
-}
-
-//]]>
-</script>
-
-<?php
 if ($changes_applied) {
 	print_apply_result_box($retval);
 }
@@ -433,32 +394,6 @@ $section->addInput(new Form_Input(
 	'Undersized values can break VPN connections with many phase 2 definitions. ' .
 	'If unsure, set this value to match the largest number of phase 2 entries on any phase 1.'
 );
-
-$section->addInput(new Form_Checkbox(
-	'maxmss_enable',
-	'Enable Maximum MSS',
-	'Enable MSS clamping on VPN traffic',
-	$pconfig['maxmss_enable']
-))->toggles('.toggle-maxmss', 'collapse');
-
-$group = new Form_Group('Maximum MSS');
-$group->addClass('toggle-maxmss collapse');
-
-if (!empty($pconfig['maxmss_enable'])) {
-	$group->addClass('in');
-}
-
-$group->add(new Form_Input(
-	'maxmss',
-	'Maximum MSS',
-	'text',
-	($pconfig['maxmss'] ? $pconfig['maxmss'] : '1400')
-))->setHelp(
-	'Enable MSS clamping on TCP flows over VPN. ' .
-	'This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. '
-);
-
-$section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'unityplugin',

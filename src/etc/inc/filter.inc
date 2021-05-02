@@ -621,15 +621,33 @@ function filter_generate_scrubing() {
 	global $config, $FilterIflist;
 	$scrubrules = "";
 
-	if (isset($config['system']['maxmss_enable'])) {
-		$maxmss = 1400;
-		if (!empty($config['system']['maxmss'])) {
-			$maxmss = $config['system']['maxmss'];
-		}
-
-		$scrubrules .= "scrub from any to <vpn_networks> max-mss {$maxmss}\n";
-		$scrubrules .= "scrub from <vpn_networks> to any max-mss {$maxmss}\n";
+	/* see https://redmine.pfsense.org/issues/7801 */
+	if (isset($config['system']['vpn_scrubnodf'])) {
+		$scrubnodf = "no-df";
+	} else {
+		$scrubnodf = "";
 	}
+	if (isset($config['system']['vpn_fragment_reassemble'])) {
+		$fragreassemble = "fragment reassemble";
+	} else {
+		$fragreassemble = "";
+	}
+
+	if (isset($config['system']['maxmss_enable'])) {
+		$mmss = 1400;
+		if (!empty($config['system']['maxmss'])) {
+			$mmss = $config['system']['maxmss'];
+		}
+		$maxmss = "max-mss {$mmss}";
+	} else {
+		$maxmss = "";
+	}
+
+	if (!empty($scrubnodf) || !empty($fragreassemble) || !empty($maxmss)) {
+		$scrubrules .= "scrub from any to <vpn_networks> {$maxmss} {$scrubnodf} {$fragreassemble}\n";
+		$scrubrules .= "scrub from <vpn_networks> to any {$maxmss} {$scrubnodf} {$fragreassemble}\n";
+	}
+
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {
 		if (isset($scrubcfg['virtual']) || empty($scrubcfg['descr'])) {

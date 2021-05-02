@@ -86,7 +86,7 @@ display_top_tabs($tab_array);
 ?><div id="container"><?php
 
 $form = new Form;
-$section = new Form_Section('Firewall Advanced');
+$section = new Form_Section('Packet Processing');
 
 $section->addInput(new Form_Checkbox(
 	'scrubnodf',
@@ -119,15 +119,6 @@ $section->addInput($input = new Form_Select(
 		'conservative' => gettext('Conservative'),
 	)
 ))->setHelp('Select the type of state table optimization to use');
-
-$section->addInput(new Form_Checkbox(
-	'disablefilter',
-	'Disable Firewall',
-	'Disable all packet filtering.',
-	isset($config['system']['disablefilter'])
-))->setHelp('Note: This converts %1$s into a routing only platform!%2$s'.
-	'Note: This will also turn off NAT! To only disable NAT, '.
-	'and not firewall rules, visit the %3$sOutbound NAT%4$s page.', $g["product_label"], '<br/>', '<a href="firewall_nat_out.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'disablescrub',
@@ -197,6 +188,73 @@ $section->addInput(new Form_Input(
 	['placeholder' => 5000]
 ))->setHelp('Maximum number of packet fragments to hold for reassembly by scrub rules. Leave this blank for the default (5000)');
 
+$form->add($section);
+
+$section = new Form_Section('VPN Packet Processing');
+
+$section->addInput(new Form_StaticText(
+	'',
+	gettext('These setting will affect IPsec, OpenVPN and PPPoE Server network traffic')
+));
+
+$section->addInput(new Form_Checkbox(
+	'vpn_scrubnodf',
+	'IP Do-Not-Fragment compatibility',
+	'Clear invalid DF bits instead of dropping the packets',
+	$pconfig['vpn_scrubnodf']
+))->setHelp('This allows for communications with hosts that generate fragmented '.
+	'packets with the don\'t fragment (DF) bit set. Linux NFS is known to do this. '.
+	'This will cause the filter to not drop such packets but instead clear the don\'t '.
+	'fragment bit.');
+
+$section->addInput(new Form_Checkbox(
+	'vpn_fragment_reassemble',
+	'IP Fragment Reassemble',
+	'Reassemble IP Fragments until they form a complete packet',
+	$pconfig['vpn_fragment_reassemble']
+))->setHelp('Reassemble IP Fragments for normalization. In this case, fragments are buffered until ' .
+	    'they form a complete packet, and only the completed packet is passed on to the filter. ' .
+	    'The advantage is that filter rules have to deal only with complete packets, and can ignore ' .
+	    'fragments. The drawback of caching fragments is the additional memory cost.');
+
+$section->addInput(new Form_Checkbox(
+	'maxmss_enable',
+	'Enable Maximum MSS',
+	'Enable MSS clamping on VPN traffic',
+	$pconfig['maxmss_enable']
+))->toggles('.toggle-maxmss', 'collapse');
+
+$group = new Form_Group('Maximum MSS');
+$group->addClass('toggle-maxmss collapse');
+
+if (!empty($pconfig['maxmss_enable'])) {
+	$group->addClass('in');
+}
+
+$group->add(new Form_Input(
+	'maxmss',
+	'Maximum MSS',
+	'text',
+	$pconfig['maxmss'],
+	['placeholder' => 1400]
+))->setHelp(
+	'Enable MSS clamping on TCP flows over VPN. ' .
+	'This helps overcome problems with PMTUD on IPsec VPN links. The default value is 1400 bytes.');
+
+$section->add($group);
+$form->add($section);
+
+$section = new Form_Section('Advanced Options');
+
+$section->addInput(new Form_Checkbox(
+	'disablefilter',
+	'Disable Firewall',
+	'Disable all packet filtering.',
+	isset($config['system']['disablefilter'])
+))->setHelp('Note: This converts %1$s into a routing only platform!%2$s'.
+	'Note: This will also turn off NAT! To only disable NAT, '.
+	'and not firewall rules, visit the %3$sOutbound NAT%4$s page.', $g["product_label"], '<br/>', '<a href="firewall_nat_out.php">', '</a>');
+
 $section->addInput(new Form_Checkbox(
 	'bypassstaticroutes',
 	'Static route filtering',
@@ -259,6 +317,7 @@ $section->addInput(new Form_Checkbox(
 	'aliases. If it\'s not valid or is revoked, do not download it.');
 
 $form->add($section);
+
 $section = new Form_Section('Bogon Networks');
 
 $section->addInput(new Form_Select(
@@ -414,6 +473,7 @@ events.push(function() {
 	if (<?=(int)$show_reboot_msg?> && confirm("<?=$reboot_msg?>")) {
 		postSubmit({override : 'yes'}, 'diag_reboot.php')
 	}
+
 });
 //]]>
 </script>

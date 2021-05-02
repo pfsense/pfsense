@@ -12,6 +12,7 @@ dns/dnstop
 editors/nano
 editors/vim-console
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
+emulators/qemu-guest-agent
 ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
 ftp/%%PRODUCT_NAME%%-pkg-tftpd
 mail/%%PRODUCT_NAME%%-pkg-mailreport

@@ -600,7 +600,8 @@ display_top_tabs($tab_array);
 			<tbody id="ipsec-body">
 				<tr>
 					<td colspan="10">
-						<?=print_info_box(gettext("Collecting IPsec status information."), "warning", "")?>
+						<?=print_info_box('<i class="fa fa-gear fa-spin"></i>&nbsp;&nbsp;' .
+						   gettext("Collecting IPsec status information."), "warning", "")?>
 					</td>
 				</tr>
 			</tbody>

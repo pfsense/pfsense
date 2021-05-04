@@ -262,6 +262,7 @@ if (!empty($if) && isset($iflist[$if])) {
 }
 $pgtitle[] = gettext("Router Advertisements");
 $pglinks[] = "@self";
+$shortcut_section = "radvd";
 
 include("head.inc");
 

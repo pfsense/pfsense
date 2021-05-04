@@ -5272,7 +5272,11 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 		$information_only = "\tinformation-only;\n";
 	}
 
-	$script = "\tscript \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\";\n";
+	if (isset($wancfg['dhcp6withoutra'])) {
+		$script = "\tscript \"{$g['varetc_path']}/dhcp6c_{$interface}_dhcp6withoutra_script.sh\";\n";
+	} else {
+		$script = "\tscript \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\";\n";
+	}
 	if ($wancfg['adv_dhcp6_interface_statement_script'] != '') {
 		$script = "\tscript \"{$wancfg['adv_dhcp6_interface_statement_script']}\";\n";
 	}

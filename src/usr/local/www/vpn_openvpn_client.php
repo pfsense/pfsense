@@ -100,6 +100,7 @@ if ($act == "new") {
 	$pconfig['allow_compression'] = "no";
 	$pconfig['compression'] = "";
 	$pconfig['exit_notify'] = 1;
+	$pconfig['remote_cert_tls'] = "yes";
 }
 
 global $simplefields;
@@ -148,6 +149,7 @@ if (($act == "edit") || ($act == "dup")) {
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
 				$pconfig['tls_type'] = $a_client[$id]['tls_type'];
 			}
+			$pconfig['remote_cert_tls'] = $a_client[$id]['remote_cert_tls'];
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
 		}
@@ -501,6 +503,7 @@ if ($_POST['save']) {
 				$client['tls_type'] = $pconfig['tls_type'];
 				$client['tlsauth_keydir'] = $pconfig['tlsauth_keydir'];
 			}
+			$client['remote_cert_tls'] = $pconfig['remote_cert_tls'];
 		} else {
 			$client['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
@@ -894,6 +897,13 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['engine'],
 		openvpn_get_engines()
 		));
+
+	$section->addInput(new Form_Checkbox(
+		'remote_cert_tls',
+		'Server Certificate Key Usage Validation',
+		'Enforce key usage',
+		$pconfig['remote_cert_tls']
+	))->setHelp('Verify that remote host uses a server certificate (EKU: "TLS Web Server Authentication").');
 
 	$form->add($section);
 
@@ -1290,6 +1300,7 @@ events.push(function() {
 				hideInput('certref', false);
 				hideClass('authentication', false);
 				hideCheckbox('autokey_enable', true);
+				hideCheckbox('remote_cert_tls', false);
 				hideInput('shared_key', true);
 				hideLabel('Peer Certificate Revocation list', false);
 				hideInput('crlref', false);
@@ -1303,6 +1314,7 @@ events.push(function() {
 				hideInput('certref', true);
 				hideClass('authentication', true);
 				hideCheckbox('autokey_enable', false);
+				hideCheckbox('remote_cert_tls', true);
 				hideInput('shared_key', false);
 				hideLabel('Peer Certificate Revocation list', true);
 				hideInput('crlref', true);

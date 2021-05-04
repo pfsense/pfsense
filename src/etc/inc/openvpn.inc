@@ -1134,6 +1134,10 @@ function openvpn_reconfigure($mode, $settings) {
 		    isset($settings['duplicate_cn'])) {
 			$conf .= "duplicate-cn\n";
 		}
+		if (($settings['mode'] != 'p2p_shared_key') &&
+		    isset($settings['remote_cert_tls'])) {
+			$conf .= "remote-cert-tls client\n";
+		}
 	}
 
 	// client specific settings
@@ -1225,6 +1229,11 @@ function openvpn_reconfigure($mode, $settings) {
 				file_put_contents("{$g['openvpn_base']}/{$mode_id}/proxy_auth", $proxypas);
 			}
 			$conf .= " \n";
+		}
+
+		if (($settings['mode'] != 'shared_key') &&
+		    isset($settings['remote_cert_tls'])) {
+			$conf .= "remote-cert-tls server\n";
 		}
 	}
 

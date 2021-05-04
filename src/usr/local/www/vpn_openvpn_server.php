@@ -113,6 +113,7 @@ if ($act == "new") {
 	$pconfig['compression'] = "";
 	$pconfig['inactive_seconds'] = 300;
 	$pconfig['exit_notify'] = 1;
+	$pconfig['remote_cert_tls'] = "yes";
 }
 
 if (($act == "edit") || ($act == "dup")) {
@@ -168,6 +169,7 @@ if (($act == "edit") || ($act == "dup")) {
 			if ($pconfig['mode'] == "server_tls_user") {
 				$pconfig['strictusercn'] = $a_server[$id]['strictusercn'];
 			}
+			$pconfig['remote_cert_tls'] = $a_server[$id]['remote_cert_tls'];
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
 		}
@@ -642,6 +644,7 @@ if ($_POST['save']) {
 			if ($pconfig['mode'] == "server_tls_user") {
 				$server['strictusercn'] = $pconfig['strictusercn'];
 			}
+			$server['remote_cert_tls'] = $pconfig['remote_cert_tls'];
 		} else {
 			$server['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
@@ -1125,6 +1128,13 @@ if ($act=="new" || $act=="edit"):
 		'Enforce match',
 		$pconfig['strictusercn']
 	))->setHelp('When authenticating users, enforce a match between the common name of the client certificate and the username given at login.');
+
+	$section->addInput(new Form_Checkbox(
+		'remote_cert_tls',
+		'Client Certificate Key Usage Validation',
+		'Enforce key usage',
+		$pconfig['remote_cert_tls']
+	))->setHelp('Verify that only hosts with a client certificate can connect (EKU: "TLS Web Client Authentication").');
 
 	$form->add($section);
 
@@ -1788,6 +1798,7 @@ events.push(function() {
 				hideInput('ecdh_curve', false);
 				hideInput('cert_depth', false);
 				hideCheckbox('strictusercn', true);
+				hideCheckbox('remote_cert_tls', false);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', false);
@@ -1801,6 +1812,7 @@ events.push(function() {
 				hideInput('ecdh_curve', false);
 				hideInput('cert_depth', false);
 				hideCheckbox('strictusercn', false);
+				hideCheckbox('remote_cert_tls', false);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
 				hideInput('topology', false);
@@ -1819,6 +1831,7 @@ events.push(function() {
 				hideInput('ecdh_curve', true);
 				hideInput('cert_depth', true);
 				hideCheckbox('strictusercn', true);
+				hideCheckbox('remote_cert_tls', true);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', true);

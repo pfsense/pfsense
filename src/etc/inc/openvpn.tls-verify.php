@@ -82,6 +82,7 @@ foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
 		$issuer = $capath . $cert_details['hash'] . ".0";
 		$serial = $_GET['serial'];
 		$status = exec("/usr/bin/openssl ocsp -issuer " . escapeshellarg($issuer)
+			. " -resp_text"
 			. " -no_nonce"
 			. " -CApath " . escapeshellarg($capath)
 			. " -url " . escapeshellarg($ovpns['ocspurl'])
@@ -91,7 +92,7 @@ foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
 			closelog();
 			return;
 		} else if (preg_match('/Cert Status: good/', $status)) {
-			if (preg_match('/^Response verify OK/', $status)) {
+			if (preg_match('/OCSP Response Status: successful \(0x0\)/', $status)) {
 				break;
 			}
 		} else {

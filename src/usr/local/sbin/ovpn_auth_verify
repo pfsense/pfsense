@@ -24,7 +24,12 @@ if [ "$1" = "tls" ]; then
 	for check_depth in $(/usr/bin/seq ${3} -1 0)
 	do
 		eval serial="\$tls_serial_${check_depth}"
-		RESULT=$(/usr/local/bin/php-cgi -q /etc/inc/openvpn.tls-verify.php "servercn=$2&depth=$3&certdepth=$4&certsubject=$5&serial=$serial&config=$config")
+		if [ -n "$serial" ]; then
+			RESULT=$(/usr/local/bin/php-cgi -q /etc/inc/openvpn.tls-verify.php "servercn=$2&depth=$3&certdepth=$4&certsubject=$5&serial=$serial&config=$config")
+			if [ "${RESULT}" = "FAILED" ]; then
+				exit 1
+			fi
+		fi
 	done
 else
 	# Single quoting $password breaks getting the value from the variable.

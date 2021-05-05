@@ -295,7 +295,7 @@ if ($_POST['save']) {
 
 	if (!empty($pconfig['startaction']) && !array_key_exists($pconfig['startaction'], $ipsec_startactions)) {
 		$input_errors[] = gettext("Invalid Child SA Start Action.");
-	} elseif ($pconfig['mobile']) {
+	} elseif ($pconfig['mobile'] && !empty($pconfig['startaction'])) {
 		/* Start action cannot be set for mobile tunnels */
 		$input_errors[] = gettext("Child SA Start Action cannot be set for Mobile Phase 1 entries.");
 	}

@@ -334,14 +334,15 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("IKE and NAT-T port numbers must be different.");
 	}
 
-	if ($pconfig['remotegw'] && is_ipaddr($pconfig['remotegw']) && !isset($pconfig['disabled'])) {
+	if ($pconfig['remotegw'] && !isset($pconfig['disabled'])) {
 		$t = 0;
 		foreach ($a_phase1 as $ph1tmp) {
 			if ($p1index != $t) {
 				$tremotegw = $pconfig['remotegw'];
 				if (($ph1tmp['remote-gateway'] == $tremotegw) && ($ph1tmp['remote-gateway'] != '0.0.0.0') &&
 				    ($ph1tmp['remote-gateway'] != '::') && !isset($ph1tmp['disabled']) &&
-				    (!isset($pconfig['gw_duplicates']) || !isset($ph1tmp['gw_duplicates']))) {
+				    (!isset($pconfig['gw_duplicates']) || !isset($ph1tmp['gw_duplicates']) ||
+			    	    !is_ipaddr($tremotegw))) {
 					$input_errors[] = sprintf(gettext('The remote gateway "%1$s" is already used by phase1 "%2$s".'), $tremotegw, $ph1tmp['descr']);
 				}
 			}

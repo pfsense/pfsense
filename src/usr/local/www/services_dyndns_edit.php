@@ -404,7 +404,7 @@ $section->addInput(new Form_Input(
 			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
 			'Godaddy: Enter the API key.%1$s' .
 			'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
-			'NoIP: For group authentication, replace semicolon (:) with hash-key (#).%1s' .
+			'NoIP: For group authentication, replace semicolon (:) with pound-key (#).%1$s' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
 
 $section->addPassword(new Form_Input(

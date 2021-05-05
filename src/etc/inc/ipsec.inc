@@ -1507,7 +1507,10 @@ function ipsec_setup_pools() {
 		return;
 	}
 
-	$scconf['mobile-pool'] = array();
+	/* Keep the comment in the array to ensure the entry makes it into the
+	 * config in all cases.
+	 * See https://redmine.pfsense.org/issues/11891 */
+	$scconf['mobile-pool'] = array("# Mobile pool settings template");
 	$scconf['pools'] = array();
 	$pool_common =& $scconf['mobile-pool'];
 
@@ -1602,7 +1605,10 @@ function ipsec_setup_pools() {
 		}
 	}
 	if ($mobile_ipsec_auth == "eap-radius") {
-		$scconf['pools']['radius-pool : mobile-pool'] = array();
+		/* Keep the comment in the array to ensure the entry makes it into the
+		 * config in all cases.
+		 * See https://redmine.pfsense.org/issues/11891 */
+		$scconf['pools']['radius-pool : mobile-pool'] = array("# RADIUS pool settings");
 		$radpool =& $scconf['pools']['radius-pool : mobile-pool'];
 		if (!empty($net_list4) || !empty($net_list6)) {
 			$radpool['subnet'] = implode(",", array_merge($net_list4, $net_list6));

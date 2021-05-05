@@ -346,7 +346,7 @@ function gen_subnetv4($ipaddr, $bits) {
 		if ($bits == 0) {
 			return '0.0.0.0';  // avoids <<32
 		}
-		return long2ip(ip2long($ipaddr) & ((0xFFFFFFFF << (32 - $bits)) & 0xFFFFFFFF));
+		return long2ip32(ip2long($ipaddr) & ((0xFFFFFFFF << (32 - $bits)) & 0xFFFFFFFF));
 	}
 	return "";
 }
@@ -400,7 +400,7 @@ function gen_subnet_mask_long($bits) {
 
 /* same as above but returns a string */
 function gen_subnet_mask($bits) {
-	return long2ip(gen_subnet_mask_long($bits));
+	return long2ip32(gen_subnet_mask_long($bits));
 }
 
 /* Convert a prefix length to an IPv6 address-like mask notation. Very rare but at least ntp needs it. See #4463 */
@@ -416,6 +416,10 @@ function gen_subnet_mask_v6($bits) {
 /* Convert long int to IPv4 address
    Returns '' if not valid IPv4 (including if any bits >32 are non-zero) */
 function long2ip32($ip) {
+	if (PHP_INT_SIZE == 4) {
+		/* Convert long int on 32bit ARM, see NG #5445 */
+		return long2ip((int) ($ip + 0));
+	}
 	return long2ip($ip & 0xFFFFFFFF);
 }
 
@@ -601,7 +605,7 @@ function ip_range_to_address_array($startip, $endip, $max_size = 5000) {
 	$rangeaddresses = array();
 	$end_int = ip2ulong($endip);
 	for ($ip_int = ip2ulong($startip); $ip_int <= $end_int; $ip_int++) {
-		$rangeaddresses[] = long2ip($ip_int);
+		$rangeaddresses[] = long2ip32($ip_int);
 	}
 
 	return $rangeaddresses;
@@ -1025,7 +1029,7 @@ function subnetv4_expand($subnet) {
 	$net &= $mask;
 	$size = round(exp(log(2) * (32 - $bits)));
 	for ($i = 0; $i < $size; $i += 1) {
-		$result[] = long2ip($net | $i);
+		$result[] = long2ip32($net | $i);
 	}
 	return $result;
 }

@@ -83,7 +83,7 @@ if ($_POST['save'] || $_POST['force']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "freedns2" || $pconfig['type'] == "freedns2-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns" ||  $pconfig['type'] == "gandi-livedns-v6" || $pconfig['type'] == "cloudflare" || $pconfig['type'] == "cloudflare-v6")
+	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "freedns-v6" || $pconfig['type'] == "freedns2" || $pconfig['type'] == "freedns2-v6" || $pconfig['type'] == "namecheap" || $pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6" || $pconfig['type'] == "linode" || $pconfig['type'] == "linode-v6" || $pconfig['type'] == "gandi-livedns" ||  $pconfig['type'] == "gandi-livedns-v6" || $pconfig['type'] == "cloudflare" || $pconfig['type'] == "cloudflare-v6" || $pconfig['type'] == "yandex" || $pconfig['type'] == "yandex-v6")
 	    && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
@@ -129,7 +129,7 @@ if ($_POST['save'] || $_POST['force']) {
 			$host_to_check = $_POST['domainname'];
 		} elseif (($pconfig['type'] == "digitalocean" || $pconfig['type'] == "digitalocean-v6") && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
-		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6")) {
+		} elseif (($pconfig['type'] == "linode") || ($pconfig['type'] == "linode-v6") || ($pconfig['type'] == "gandi-livedns") || ($pconfig['type'] == "gandi-livedns-v6") || ($pconfig['type'] == "yandex") || ($pconfig['type'] == "yandex-v6")) {
 			$host_to_check = $_POST['host'] == '@' ? $_POST['domainname'] : ( $_POST['host'] . '.' . $_POST['domainname'] );
 			$allow_wildcard = true;
 		} elseif (($pconfig['type'] == "route53") || ($pconfig['type'] == "route53-v6")) {
@@ -423,6 +423,7 @@ $section->addPassword(new Form_Input(
 			'GoDaddy: Enter the API secret.%1$s' .
 			'DNSimple: Enter the API token.%1$s' .
 			'Linode: Enter the Personal Access Token.%1$s' .
+			'Yandex: Yandex PDD Token.%1$s' .
 			'Cloudflare: Enter the Global API Key or API token with DNS edit permisson on the provided zone.', '<br />');
 
 $section->addInput(new Form_Input(
@@ -557,6 +558,8 @@ events.push(function() {
 				break;
 			case "domeneshop":
 		        case "domeneshop-v6":
+			case "nicru":
+		        case "nicru-v6":
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
 				break;
@@ -564,6 +567,8 @@ events.push(function() {
 			case "digitalocean-v6":
 			case "gandi-livedns":
 			case "gandi-livedns-v6":
+			case "yandex":
+			case "yandex-v6":
 				hideGroupInput('domainname', false);
 				hideInput('username', true);
 				hideInput('mx', true);
@@ -586,6 +591,8 @@ events.push(function() {
 				break;
 			case "linode-v6":
 			case "linode":
+			case "onecom-v6":
+			case "onecom":
 				hideGroupInput('domainname', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);

@@ -37,9 +37,7 @@ $fp = fopen('php://stdin', 'r');
 echo "\n" . sprintf(gettext("%s will reboot. This may take a few minutes, depending on your hardware."), $g['product_label']) . "\n";
 echo gettext("Do you want to proceed?") . "\n\n";
 echo "    " . gettext("Y/y: Reboot normally") . "\n";
-if (!is_module_loaded("zfs.ko")) {
-	echo "    " . gettext("R/r: Reroot (Stop processes, remount disks, re-run startup sequence)") . "\n";
-}
+echo "    " . gettext("R/r: Reroot (Stop processes, remount disks, re-run startup sequence)") . "\n";
 echo "    " . gettext("S: Reboot into Single User Mode (requires console access!)") . "\n";
 echo "    " . gettext("F: Reboot and run a filesystem check") . "\n\n";
 
@@ -58,10 +56,8 @@ switch (chop(fgets($fp))) {
 		break;
 	case "R":
 	case "r":
-		if (!is_module_loaded("zfs.ko")) {
-			echo "\n" . sprintf(gettext("%s is rerooting now."), $g['product_label']) . "\n";
-			system_reboot_sync(true);
-		}
+		echo "\n" . sprintf(gettext("%s is rerooting now."), $g['product_label']) . "\n";
+		system_reboot_sync(true);
 		break;
 	case "Y":
 	case "y":

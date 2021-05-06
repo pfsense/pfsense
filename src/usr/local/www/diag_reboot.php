@@ -60,9 +60,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
 				}
 				break;
 			case 'Reroot':
-				if (!is_module_loaded("zfs.ko")) {
-					system_reboot_sync(true);
-				}
+				system_reboot_sync(true);
 				break;
 			case 'Reboot':
 				system_reboot();
@@ -126,10 +124,10 @@ if (php_uname('m') != 'arm') {
         $help .= ', "Reboot with Filesystem Check" to reboot and run filesystem check';
         $modeslist += ['FSCKReboot' => 'Reboot with Filesystem Check'];
         }
-if (!is_module_loaded("zfs.ko")) {
-	$help .= ' or "Reroot" to stop processes, remount disks and re-run startup sequence';
-	$modeslist += ['Reroot' => 'Reroot'];
-	} 
+
+$help .= ', or "Reroot" to stop processes, remount disks and re-run startup sequence';
+$modeslist += ['Reroot' => 'Reroot'];
+
 $help .= '.';
 
 $section = new Form_Section('Select reboot method');

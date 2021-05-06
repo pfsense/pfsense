@@ -566,7 +566,7 @@
 				case 'noip':
 				case 'noip-free':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_USERPWD, urlencode($this->_dnsUser) . ':' . urlencode($this->_dnsPass));
 					$server = "https://dynupdate.no-ip.com/nic/update";
 					$port = "";
 					if ($this->_dnsServer) {
@@ -1773,8 +1773,32 @@
 				case 'dhs':
 					break;
 				case 'noip':
-				case 'noip-v6':
 				case 'noip-free':
+					if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+						$successful_update = true;
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = $status_intro . $success_str . gettext("No Change In IP Address");
+						$successful_update = true;
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Hostname supplied does not exist under specified account");
+					} else if (preg_match('/badauth/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Invalid username password combination");
+					} else if (preg_match('/badagent/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Client disabled");
+					} else if (preg_match('/\!donator/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Feature is not available");
+					} else if (preg_match('/abuse/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Username is blocked due to abuse");
+					} else if (preg_match('/911/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Fatal error");
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						$this->_debug($data);
+					}
+					break;
+				case 'noip-v6':
 				case 'noip-free-v6':
 					list($ip, $code) = explode(":", $data);
 					switch ($code) {

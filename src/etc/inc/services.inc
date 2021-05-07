@@ -2214,7 +2214,7 @@ function dyndnsCheckIP($int) {
 		$ip_result_page = curl_exec($ip_ch);
 		curl_close($ip_ch);
 		$ip_result_decoded = urldecode($ip_result_page);
-		preg_match('=(?:^\\s*|(?:Current|Your|Detected) IP (?:Address)?(?: is)? ?: |^IPv\\d+,)((?!ip)[^\\s<>]+)(\\s*$|</body>|,)=siUm', $ip_result_decoded, $matches);
+		preg_match('=(?:^\\s*|(?:Current|Your|Detected) IP(?: Address)?(?: is)? ?: |^IPv\\d+,)((?!ip)[^\\s<>]+)(\\s*$|</body>|,)=siUm', $ip_result_decoded, $matches);
 		$ip_address = trim($matches[1]);
 	}
 	return $ip_address;

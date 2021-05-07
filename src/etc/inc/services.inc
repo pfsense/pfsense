@@ -2214,7 +2214,7 @@ function dyndnsCheckIP($int) {
 		$ip_result_page = curl_exec($ip_ch);
 		curl_close($ip_ch);
 		$ip_result_decoded = urldecode($ip_result_page);
-		preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
+		preg_match('=(?:^\\s*|Current IP Address: )([^\\s<>]+)(\\s*$|</body>)=siU', $ip_result_decoded, $matches);
 		$ip_address = trim($matches[1]);
 	}
 	return $ip_address;

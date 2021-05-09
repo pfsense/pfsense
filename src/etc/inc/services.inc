@@ -2214,8 +2214,7 @@ function dyndnsCheckIP($int) {
 		curl_setopt($ip_ch, CURLOPT_USERPWD, "{$username}:{$password}");
 		$ip_result_page = curl_exec($ip_ch);
 		curl_close($ip_ch);
-		$ip_result_decoded = urldecode($ip_result_page);
-		preg_match($frag ? $frag : '/(.*)/', $ip_result_decoded, $matches);
+		preg_match($frag ? $frag : '/(.*)/', $ip_result_page, $matches);
 		$ip_address = trim($matches[1]);
 	}
 	return $ip_address;

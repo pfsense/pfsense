@@ -1439,10 +1439,10 @@ foreach ($a_cert as $cert):
 							<a href="system_certmanager.php?act=exp&amp;id=<?=$cert['refid']?>" class="fa fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
 							<?php if ($cert['prv']): ?>
 								<a href="system_certmanager.php?act=key&amp;id=<?=$cert['refid']?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
+								<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa fa-archive" title="<?=gettext("Export P12")?>"></a>
 							<?php endif?>
 							<?php if (is_cert_locally_renewable($cert)): ?>
 								<a href="system_certmanager_renew.php?type=cert&amp;refid=<?=$cert['refid']?>" class="fa fa-repeat" title="<?=gettext("Reissue/Renew")?>"></a>
-							<a href="system_certmanager.php?act=p12&amp;id=<?=$cert['refid']?>" class="fa fa-archive" title="<?=gettext("Export P12")?>"></a>
 							<?php endif ?>
 						<?php else: ?>
 							<a href="system_certmanager.php?act=csr&amp;id=<?=$cert['refid']?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>"></a>

@@ -175,9 +175,10 @@ if ($_POST['save']) {
 	$srcipaddrtype = false;
 	$dstipaddrtype = false;
 
-	if ((($_POST['ipprotocol'] == 'inet') && !get_interface_ip($_POST['interface'])) ||
-	    (($_POST['ipprotocol'] == 'inet6') && !get_interface_ipv6($_POST['interface']))) {
-		$input_errors[] = gettext("The interface do not have address from the specified address family.");
+	if (((($_POST['ipprotocol'] == 'inet') && !is_interface_ipaddr($_POST['interface'])) ||
+	    (($_POST['ipprotocol'] == 'inet6') && !is_interface_ipaddrv6($_POST['interface']))) &&
+       	    !is_interface_group($_POST['interface']) && !in_array($_POST['interface'], $vpn_and_ppp_ifs)) {
+		$input_errors[] = gettext("The interface does not have an address from the specified address family.");
 	}
 
 	if ($_POST['external'] && !is_specialnet($_POST['exttype']) &&

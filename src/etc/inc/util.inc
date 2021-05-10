@@ -3750,4 +3750,27 @@ function is_specialnet($net) {
 		return false;
 	}
 }
+
+function is_interface_ipaddr($interface) {
+	global $config;
+
+	if (is_array($config['interfaces'][$interface]) &&
+	    isset($config['interfaces'][$interface]['ipaddr']) &&
+	    !empty($config['interfaces'][$interface]['ipaddr'])) {
+		return true;
+	}
+	return false;
+}
+
+function is_interface_ipaddrv6($interface) {
+	global $config;
+
+	if (is_array($config['interfaces'][$interface]) &&
+	    isset($config['interfaces'][$interface]['ipaddrv6']) &&
+	    !empty($config['interfaces'][$interface]['ipaddrv6'])) {
+		return true;
+	}
+	return false;
+}
+
 ?>

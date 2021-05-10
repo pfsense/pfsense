@@ -3393,7 +3393,7 @@ function filter_generate_user_rule($rule) {
 function filter_rules_generate() {
 	global $config, $g, $FilterIflist, $time_based_rules, $GatewaysList,
 	       $tracker, $vlanprio_values, $antilockout_tracker,
-	       $bogons_tracker, $rfc1918_tracker;
+	       $bogons_tracker, $rfc1918_tracker, $vpn_and_ppp_ifs;
 
 	$fix_rule_label = 'fix_rule_label';
 	$increment_tracker = 'filter_rule_tracker';
@@ -3967,7 +3967,6 @@ EOD;
 		$rule_arr1 = array();
 		$rule_arr2 = array();
 		$rule_arr3 = array();
-		$vpn_and_ppp_ifs = array("l2tp", "pptp", "pppoe", "enc0", "openvpn");
 		/*
 		 * NB: The order must be: Floating rules, then interface group and then regular ones.
 		 */

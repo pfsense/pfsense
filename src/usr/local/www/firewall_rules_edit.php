@@ -809,6 +809,13 @@ if ($_POST['save']) {
 		}
 		if (empty($outoftcpflags) && !empty($settcpflags)) {
 			$input_errors[] = gettext("If TCP flags that should be set is specified, then out of which flags should be specified as well.");
+		} else {
+			/* https://redmine.pfsense.org/issues/11762 */
+			foreach ($settcpflags as $tcpflag) {
+				if (!in_array($tcpflag, $outoftcpflags)) {
+					$input_errors[] = sprintf(gettext("The TCP flag %s must be checked in 'out of' list."), strtoupper($tcpflag));
+				}
+			}
 		}
 	}
 

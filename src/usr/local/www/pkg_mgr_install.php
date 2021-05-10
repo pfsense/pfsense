@@ -479,7 +479,7 @@ $pkgname_bold = '<b>' . $pkgname . '</b>';
 
 if ($firmwareupdate) {
 	$panel_heading_txt = gettext("Updating System");
-	$pkg_success_txt = gettext('System update successfully completed.');
+	$pkg_success_txt = gettext('Upgrade will continue after the system restarts. Please do not reset or power off.');
 	$pkg_fail_txt = gettext('System update failed!');
 	$pkg_wait_txt = gettext('Please wait while the system update completes.');
 } else if ($pkgmode == 'delete') {
@@ -723,7 +723,11 @@ function setProgress(barName, percent, transition) {
 
 // Display a success banner
 function show_success() {
-	$('#final').removeClass("alert-info").addClass("alert-success");
+	if (!"<?=$firmwareupdate?>") {
+		$('#final').removeClass("alert-info").addClass("alert-success");
+	} else {
+		$('#final').addClass("alert-warning");
+	}
 	if ("<?=$pkgmode?>" != "reinstallall") {
 		$('#final').html("<?=$pkg_success_txt?>");
 	} else {

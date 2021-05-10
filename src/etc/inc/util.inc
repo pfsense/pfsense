@@ -2854,8 +2854,9 @@ function route_add_or_change($target, $gw, $iface = '', $args = '',
 	}
 	if (is_ipaddr($gw)) {
 		/* set correct linklocal gateway address,
-		 * see https://redmine.pfsense.org/issues/11713 */
-		if (is_linklocal($gw) && empty(get_ll_scope($gw))) {
+		 * see https://redmine.pfsense.org/issues/11713 
+		 * and https://redmine.pfsense.org/issues/11806 */
+		if (is_ipaddrv6($gw) && is_linklocal($gw) && empty(get_ll_scope($gw))) {
 			$routeget = route_get($gw, 'inet6', true);
 			$gw .= "%" . $routeget[0]['interface-name'];
 		}

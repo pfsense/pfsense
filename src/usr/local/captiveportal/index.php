@@ -143,7 +143,7 @@ if ($_POST['logout_id']) {
 		if ($cpcfg['auth_method'] === 'radmac') {
 			echo gettext("This MAC address has been blocked");
 		} else {
-			portal_reply_page($redirurl, "error", "This MAC address has been blocked");
+			portal_reply_page($redirurl, "error", "This MAC address has been blocked", $clientmac, $clientip);
 		}
 	}
 } elseif (portal_consume_passthrough_credit($clientmac)) {
@@ -172,19 +172,19 @@ if ($_POST['logout_id']) {
 			'session_timeout' => $timecredit*60,
 			'session_terminate_time' => 0);
 		if (portal_allow($clientip, $clientmac, $voucher, null, $redirurl, $attr, null, 'voucher', 'voucher') === 2) {
-			portal_reply_page($redirurl, "error", "Reuse of identification not allowed.");
+			portal_reply_page($redirurl, "error", "Reuse of identification not allowed.", $clientmac, $clientip);
 		} elseif (portal_allow($clientip, $clientmac, $voucher, null, $redirurl, $attr, null, 'voucher', 'voucher')) {
 			// YES: user is good for $timecredit minutes.
 			captiveportal_logportalauth($voucher, $clientmac, $clientip, "Voucher login good for $timecredit min.");
 		} else {
-			portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg);
+			portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg, $clientmac, $clientip);
 		}
 	} elseif (-1 == $timecredit) {  // valid but expired
 		captiveportal_logportalauth($voucher, $clientmac, $clientip, "FAILURE", "voucher expired");
-		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg);
+		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgexpired'] ? $config['voucher'][$cpzone]['descrmsgexpired']: $errormsg, $clientmac, $clientip);
 	} else {
 		captiveportal_logportalauth($voucher, $clientmac, $clientip, "FAILURE");
-		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgnoaccess'] ? $config['voucher'][$cpzone]['descrmsgnoaccess'] : $errormsg);
+		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['descrmsgnoaccess'] ? $config['voucher'][$cpzone]['descrmsgnoaccess'] : $errormsg, $clientmac, $clientip);
 	}
 
 } elseif ($_POST['accept'] || $cpcfg['auth_method'] === 'radmac') {
@@ -212,7 +212,7 @@ if ($_POST['logout_id']) {
 			ob_flush();
 			return;
 		} else {
-			portal_reply_page($redirurl, "error", $replymsg);
+			portal_reply_page($redirurl, "error", $replymsg, $clientmac, $clientip);
 		}
 		log_error("Zone: {$cpzone} - WARNING!  Captive portal has reached maximum login capacity");
 		
@@ -245,7 +245,7 @@ if ($_POST['logout_id']) {
 		if ($context === 'radmac' && $type !== 'redir' && !isset($cpcfg['radmac_fallback'])) {
 			echo $replymsg;
 		} else {
-			portal_reply_page($redirurl, $type, $replymsg);
+			portal_reply_page($redirurl, $type, $replymsg, $clientmac, $clientip);
 		}
 	}
 } else {

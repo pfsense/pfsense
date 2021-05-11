@@ -190,9 +190,6 @@ if (substr($interface_real, 0, 4) != "ovpn") {
 /* reload graphing functions */
 enable_rrd_graphing();
 
-/* reload igmpproxy */
-services_igmpproxy_configure();
-
 restart_packages();
 
 ?>

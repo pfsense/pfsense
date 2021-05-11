@@ -2510,6 +2510,22 @@ function system_identify_specific_platform() {
 	$_gb = exec('/bin/kenv -q smbios.system.maker 2>/dev/null', $maker);
 	$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $bios);
 
+	$vm = get_single_sysctl('kern.vm_guest');
+
+	// This switch needs to be expanded to include other virtualization systems
+	switch ($vm) {
+		case "none" :
+		break;
+
+		case "kvm" :
+			return (array('name' => 'KVM', 'descr' => 'KVM Guest'));
+		break;
+	}
+
+	if ($maker[0] == "QEMU") {
+		return (array('name' => 'QEMU', 'descr' => 'QEMU'));
+	}
+
 	// AWS can only be identified via the bios version
 	if (stripos($bios[0], "amazon") !== false) {
 		return (array('name' => 'AWS', 'descr' => 'Amazon Web Services'));

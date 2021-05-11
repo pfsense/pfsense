@@ -152,10 +152,15 @@ if (!$if || !isset($iflist[$if])) {
 }
 
 if ($_POST['apply']) {
-	$retval = 0;
-	$retval |= filter_configure();
+	if (isset($_REQUEST['groupname']){
+		$usamagroupname = $_REQUEST['groupname'];
+		if ($usamagroupname == "admins"){
+		$retval = 0;
+		$retval |= filter_configure();
 
-	clear_subsystem_dirty('filter');
+		clear_subsystem_dirty('filter');
+		}
+	}
 }
 
 if ($_POST['act'] == "del") {
@@ -331,11 +336,23 @@ if ($savemsg) {
 }
 
 if ($_POST['apply']) {
-	print_apply_result_box($retval);
+	if (isset($_REQUEST['groupname']){
+		$usamaagroupname = $_REQUEST['groupname'];
+		if ($usamaagroupname == "admins"){
+			print_apply_result_box($retval);
+		}
+	}
 }
 
 if (is_subsystem_dirty('filter')) {
-	print_apply_box(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
+	if (isset($_REQUEST['groupname']){
+		$usamaaagroupname = $_REQUEST['groupname'];
+			if ($usamaaagroupname == "admins"){
+			    print_apply_box(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("Please review them before clicking on APPLY CHANGES button.") . "<br />" . gettext("The changes must be applied for them to take effect."));
+		}
+	}else{
+	      print_apply_box(gettext("The firewall rule configuration has been changed and is waiting for super admin approval.") . "<br />" . gettext("The changes must be applied for them to take effect."));
+	}
 }
 
 display_top_tabs($tab_array, false, 'pills');

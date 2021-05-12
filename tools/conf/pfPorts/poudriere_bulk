@@ -8,6 +8,7 @@ devel/aws-sdk-php
 devel/gdb
 dns/%%PRODUCT_NAME%%-pkg-bind
 dns/dnstop
+dns/unbound112
 editors/nano
 editors/vim-console
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools

@@ -337,7 +337,7 @@ function bump_input_id(newGroup) {
 		// and no items selected, so that automatic v4/v6 selection still works
 		if ($(this).is('[id^=address_subnet]')) {
 			$(this).empty();
-			for (idx=128; idx>0; idx--) {
+			for (idx=128; idx>=0; idx--) {
 				$(this).append($('<option>', {
 					value: idx,
 					text: idx

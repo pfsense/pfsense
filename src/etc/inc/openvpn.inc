@@ -1490,7 +1490,7 @@ function openvpn_restart($mode, $settings) {
 	/* Do not start an instance if we are not CARP master on this vip! */
 	if (strstr($settings['interface'], "_vip")) {
 	       	$carpstatus = get_carp_interface_status($settings['interface']);
-		if (in_array($carpstatus, array('BACKUP', 'INIT')) {
+		if (in_array($carpstatus, array('BACKUP', 'INIT'))) {
 			unlock($lockhandle);
 			return;
 		} elseif (empty($carpstatus)) {

@@ -137,7 +137,11 @@ export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
 # Do not touch builder /usr/obj
 export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
 
-export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"aesni amdtemp amdsmn blake2 coretemp cryptodev cpuctl drm2 fdescfs dummynet hwpmc i2c if_stf ipdivert ipfw ipfw_nat64 ipmi ix ixv ndis nmdm opensolaris sfxge vmm zfs usb/cdce usb/ipheth usb/ure usb/urndis cc/cc_cdg cc/cc_chd cc/cc_cubic cc/cc_dctcp cc/cc_hd cc/cc_htcp cc/cc_vegas"}
+if [ -z "${MODULES_OVERRIDE}" ]; then
+	export MODULES_OVERRIDE_base="cryptodev hwpmc i2c if_stf ipdivert ipfw ipfw_nat64 dummynet fdescfs opensolaris zfs usb/cdce usb/ipheth usb/ure usb/urndis cc/cc_cdg cc/cc_chd cc/cc_cubic cc/cc_dctcp cc/cc_hd cc/cc_htcp cc/cc_vegas"
+	export MODULES_OVERRIDE_amd64="${MODULES_OVERRIDE_base} aesni amdtemp amdsmn blake2 coretemp cpuctl drm2 ipmi ix ixv ndis nmdm sfxge vmm"
+	export MODULES_OVERRIDE="${MODULES_OVERRIDE_amd64}"
+fi
 
 # gnid
 export GNID_REPO_BASE=${GNID_REPO_BASE:-"${GIT_REPO_BASE}/gnid.git"}

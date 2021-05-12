@@ -124,7 +124,11 @@ function does_vip_exist($vip) {
 	$ifacedata = pfSense_getall_interface_addresses($realif);
 
 	if (is_subnetv6("{$vip['subnet']}/{$vip['subnet_bits']}")) {
-		$comparevip = text_to_compressed_ip6("{$vip['subnet']}/{$vip['subnet_bits']}");
+		$comparevip = text_to_compressed_ip6($vip['subnet']);
+		if (is_linklocal($vip['subnet'])) {
+			$comparevip .= "%{$realif}";
+		}
+		$comparevip .= "/{$vip['subnet_bits']}";
 	} else {
 		$comparevip = "{$vip['subnet']}/{$vip['subnet_bits']}";
 	}

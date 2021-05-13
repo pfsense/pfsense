@@ -30,11 +30,11 @@
 ##|-PRIV
 
 require_once("ipsec.inc");
-
 require_once("guiconfig.inc");
 require_once("interfaces.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("firewall_nat_npt.inc");
 
 $ifdisp = get_configured_interface_with_descr();
 
@@ -59,89 +59,18 @@ if (isset($_REQUEST['dup'])) {
 	$after = $_REQUEST['dup'];
 }
 
-if (isset($id) && $a_npt[$id]) {
-	$pconfig['disabled'] = isset($a_npt[$id]['disabled']);
-
-	address_to_pconfig($a_npt[$id]['source'], $pconfig['src'],
-		$pconfig['srcmask'], $pconfig['srcnot'],
-		$pconfig['srcbeginport'], $pconfig['srcendport']);
-
-	address_to_pconfig($a_npt[$id]['destination'], $pconfig['dst'],
-		$pconfig['dstmask'], $pconfig['dstnot'],
-		$pconfig['dstbeginport'], $pconfig['dstendport']);
-
-	$pconfig['interface'] = $a_npt[$id]['interface'];
-	if (!$pconfig['interface']) {
-		$pconfig['interface'] = "wan";
-	}
-
-	$pconfig['descr'] = $a_npt[$id]['descr'];
-} else {
-	$pconfig['interface'] = "wan";
-}
+$pconfig = getnptNATRule($id);
 
 if (isset($_REQUEST['dup'])) {
 	unset($id);
 }
 
 if ($_POST['save']) {
-
-	unset($input_errors);
-	$pconfig = $_POST;
-
-	/* input validation */
-	$reqdfields = explode(" ", "interface");
-	$reqdfieldsn = array(gettext("Interface"));
-	$reqdfields[] = "src";
-	$reqdfieldsn[] = gettext("Source prefix");
-	$reqdfields[] = "dst";
-	$reqdfieldsn[] = gettext("Destination prefix");
-
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-
-	if (!is_ipaddrv6(trim($_POST['src']))) {
-		$input_errors[] = gettext("The specified source address is not a valid IPv6 prefix");
-	}
-	if (!is_ipaddrv6(trim($_POST['dst']))) {
-		$input_errors[] = gettext("The specified destination address is not a valid IPv6 prefix");
-	}
-	if (check_subnetsv6_overlap(get_interface_ipv6($_POST['interface']), 128, trim($_POST['dst']), $_POST['dstmask']) &&
-	    !$_POST['dstnot']) {
-		$input_errors[] = gettext("The specified destination address and interface IPv6 address cannot overlap");
-	}
+	$rv = savenptNATrule($_POST, $id);
+	$input_errors = $rv['input_errors'];
+	$pconfig = $rv['pconfig'];
 
 	if (!$input_errors) {
-		$natent = array();
-
-		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
-		$natent['descr'] = $_POST['descr'];
-		$natent['interface'] = $_POST['interface'];
-
-		if ($_POST['src']) {
-			$_POST['src'] = trim($_POST['src']);
-		}
-		if ($_POST['dst']) {
-			$_POST['dst'] = trim($_POST['dst']);
-		}
-
-		pconfig_to_address($natent['source'], $_POST['src'], $_POST['srcmask'], $_POST['srcnot']);
-
-		pconfig_to_address($natent['destination'], $_POST['dst'], $_POST['dstmask'], $_POST['dstnot']);
-
-		if (isset($id) && $a_npt[$id]) {
-			$a_npt[$id] = $natent;
-		} else {
-			if (is_numeric($after)) {
-				array_splice($a_npt, $after+1, 0, array($natent));
-			} else {
-				$a_npt[] = $natent;
-			}
-		}
-
-		if (write_config(gettext("Firewall: NAT: NPt - saved/edited NPt mapping."))) {
-			mark_subsystem_dirty('natconf');
-		}
-
 		header("Location: firewall_nat_npt.php");
 		exit;
 	}

@@ -24,6 +24,7 @@
 
 require_once("globals.inc");
 require_once("service-utils.inc");
+require_once("/usr/local/www/includes/functions.inc.php");
 
 if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlreader.inc");
@@ -1575,11 +1576,22 @@ function update_repos() {
 			$platformname = $platform['descr'];
 		}
 
+		$filesystems = get_mounted_filesystems();
+		$fstype = "";
+
+		foreach ($filesystems as $fs)  {
+		   if ($fs['mountpoint'] == "/") {
+		      $fstype = strtoupper($fs['type']);
+		      break;
+		   }
+		}
+
 		/* XXX: Use json_encode instead of hardcode it */
 		$version =
 		    "{\"platform\":\"" . $platformname .
 		    "\",\"os\":\"" . $os .
 		    "\",\"osver\":\"" . $osver .
+		    "\",\"fstype\":\"" . $fstype .
 		    "\",\"prod\":\"" . $g['product_label'] .
 		    "\",\"ver\":\"" . $g['product_version_string'] .
 		    "\",\"ed\":\"" . $ed .

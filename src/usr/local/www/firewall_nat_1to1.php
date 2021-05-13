@@ -36,6 +36,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("firewall_nat_1to1.inc");
 
 init_config_arr(array('nat', 'onetoone'));
 $a_1to1 = &$config['nat']['onetoone'];
@@ -48,82 +49,31 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-/* update rule order, POST[rule] is an array of ordered IDs */
-if (array_key_exists('order-store', $_POST)) {
-	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
-		$a_1to1_new = array();
-
-		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id) {
-			$a_1to1_new[] = $a_1to1[$id];
-		}
-
-		$a_1to1 = $a_1to1_new;
-
-		if (write_config(gettext("Firewall: NAT: 1:1 - reordered NAT 1:1 mappings."))) {
-			mark_subsystem_dirty('natconf');
-		}
-
-		header("Location: firewall_nat_1to1.php");
-		exit;
-	}
+// Process $_POST/$_REQUEST =======================================================================
+if ($_REQUEST['savemsg']) {
+	$savemsg = $_REQUEST['savemsg'];
 }
 
-
-if ($_POST['apply']) {
-	$retval = 0;
-	$retval |= filter_configure();
-
-	if ($retval == 0) {
-		clear_subsystem_dirty('natconf');
-		clear_subsystem_dirty('filter');
-	}
-}
-
-if ($_POST['act'] == "del") {
+if (array_key_exists('order-store', $_REQUEST)) {
+	reorder1to1NATrules($_POST);
+} else if ($_POST['apply']) {
+	$retval = apply1to1NATrules();
+} else if (($_POST['act'] == "del")) {
 	if ($a_1to1[$_POST['id']]) {
-		unset($a_1to1[$_POST['id']]);
-		if (write_config(gettext("Firewall: NAT: 1:1 - deleted NAT 1:1 mapping."))) {
-			mark_subsystem_dirty('natconf');
-		}
-
-		header("Location: firewall_nat_1to1.php");
-		exit;
+		delete1to1NATrule($_POST);
 	}
-}
-
-if (isset($_POST['del_x'])) {
+} else if (isset($_POST['del_x'])) {
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		foreach ($_POST['rule'] as $rulei) {
-			unset($a_1to1[$rulei]);
-		}
-
-		if (write_config(gettext("Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings."))) {
-			mark_subsystem_dirty('natconf');
-		}
-
-		header("Location: firewall_nat_1to1.php");
-		exit;
+		deleteMultiple1to1NATrules($_POST);
 	}
-
-} else if ($_POST['act'] == "toggle") {
+} elseif (($_POST['act'] == "toggle")) {
 	if ($a_1to1[$_POST['id']]) {
-		if (isset($a_1to1[$_POST['id']]['disabled'])) {
-			unset($a_1to1[$_POST['id']]['disabled']);
-			$wc_msg = gettext('Firewall: NAT: 1:1 - enabled a NAT 1:1 rule.');
-		} else {
-			$a_1to1[$_POST['id']]['disabled'] = true;
-			$wc_msg = gettext('Firewall: NAT: 1:1 - disabled a NAT 1:1 rule.');
-		}
-		if (write_config($wc_msg)) {
-			mark_subsystem_dirty('natconf');
-		}
-		header("Location: firewall_nat_1to1.php");
-		exit;
+		toggle1to1NATrule($_POST);
 	}
 }
 
+// Construct/display the form =====================================================================
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("1:1"));
 $pglinks = array("", "firewall_nat.php", "@self");
 include("head.inc");
@@ -134,7 +84,7 @@ if ($_POST['apply']) {
 
 if (is_subsystem_dirty('natconf')) {
 	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
-					gettext('The changes must be applied for them to take effect.'));
+	   gettext('The changes must be applied for them to take effect.'));
 }
 
 $tab_array = array();

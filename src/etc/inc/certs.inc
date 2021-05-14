@@ -814,7 +814,8 @@ function is_ldap_peer_ca($caref) {
 		return;
 	}
 	foreach ($config['system']['authserver'] as $authserver) {
-		if ($authserver['ldap_caref'] == $caref) {
+		if (($authserver['ldap_caref'] == $caref) &&
+		    ($authserver['ldap_urltype'] != 'Standard TCP')) {
 			return true;
 		}
 	}

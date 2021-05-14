@@ -1119,11 +1119,11 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	}
 	/* syslog */
 	$need_syslog_restart = false;
-	if (is_array($pkg_info['logging']) &&
-	    $pkg_info['logging']['logfilename'] <> "") {
+	if (is_array($pkg_info['logging']) && !empty($pkg_info['logging']['logfilename'])) {
 		update_status(gettext("Syslog entries... "));
-		@unlink_if_exists($g['varlog_path'] . "/" .
-		    $pkg_info['logging']['logfilename']);
+		/* remove package-related syslog configuration but retain log data,
+		 * see https://redmine.pfsense.org/issues/11846 */
+		@unlink_if_exists("{$g['varetc_path']}/syslog.d/" . basename($pkg_info['logging']['logfilename']) . ".conf");
 		update_status("done.\n");
 		$need_syslog_restart = true;
 	}

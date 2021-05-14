@@ -29,7 +29,7 @@ require_once("ipsec.inc");
 require_once("filter.inc");
 
 function save1to1NATrule($post, $id, $json = false) {
-	global $config;
+	global $config, $vpn_and_ppp_ifs;
 
 	init_config_arr(array('nat', 'onetoone'));
 	$a_1to1 = &$config['nat']['onetoone'];

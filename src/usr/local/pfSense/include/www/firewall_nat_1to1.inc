@@ -92,7 +92,7 @@ function save1to1NATrule($post, $id, $json = false) {
 		$post['dst'] = $post['dsttype'];
 		$post['dstmask'] = 0;
 	} else if ($post['dsttype'] == "single") {
-		$post['dstmask'] = (is_ipaddrv4($post['dst'])) ? 32 : 128;
+		$post['dstmask'] = (is_ipaddrv6($post['dst'])) ? 128 : 32;
 	} else if (is_ipaddr($post['dsttype'])) {
 		$post['dst'] = $post['dsttype'];
 		$post['dsttype'] = "single";
@@ -152,10 +152,10 @@ function save1to1NATrule($post, $id, $json = false) {
 		$input_errors[] = gettext("A valid destination bit count must be specified.");
 	}
 
-	if ($post['dst'] && !is_specialnet($post['dsttype']) &&
-	    ((($post['ipprotocol'] == 'inet') && (is_ipaddrv4($post['dst']))) ||
+	if ($post['dst'] && !is_specialnet($post['dsttype']) && (is_alias($post['dst']) ||
+	    (($post['ipprotocol'] == 'inet') && (is_ipaddrv4($post['dst']))) ||
 	    (($post['ipprotocol'] == 'inet6') && (is_ipaddrv6($post['dst']))))) {
-		$dstipaddrtype = validateipaddr($post['dst'], IPV4V6, "Destination address", $input_errors, false);
+		$dstipaddrtype = validateipaddr($post['dst'], IPV4V6, "Destination address", $input_errors, true);
 	} elseif (is_specialnet($post['dsttype'])) {
 		$dstipaddrtype = get_specialnet_type($post['dsttype'], $post['ipprotocol']);
 	}
@@ -474,7 +474,7 @@ function dsttype_selected() {
 	if (!$sel) {
 		if ((($pconfig['dstmask'] == 32) && (is_ipaddrv4($pconfig['dst']))) ||
 		    (($pconfig['dstmask'] == 128) && (is_ipaddrv6($pconfig['dst']))) ||
-		    (!isset($pconfig['dstmask']))) {
+		    (!isset($pconfig['dstmask'])) || is_alias($pconfig['dst'])) {
 			return('single');
 		}
 

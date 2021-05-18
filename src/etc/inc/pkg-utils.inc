@@ -1586,30 +1586,21 @@ function update_repos() {
 		   }
 		}
 
-		/* XXX: Use json_encode instead of hardcode it */
-		$version =
-		    "{\"platform\":\"" . $platformname .
-		    "\",\"os\":\"" . $os .
-		    "\",\"osver\":\"" . $osver .
-		    "\",\"fstype\":\"" . $fstype .
-		    "\",\"prod\":\"" . $g['product_label'] .
-		    "\",\"ver\":\"" . $g['product_version_string'] .
-		    "\",\"ed\":\"" . $ed .
-		    "\",\"pkgs\":[";
-
-		$first = true;
+		$va = array();
+		$va['platform'] = $platformname;
+		$va['os'] = $os;
+		$va['osver'] = $platformname;
+		$va['fstype'] = $fstype;
+		$va['prod'] = $g['product_label'];
+		$va['ver'] = $g['product_version_string'];
+		$va['ed'] = $ed;
+		$va['pkgs'] = array();
 
 		foreach($pkglist as $pkg) {
-			if (!$first) {
-				$version .= ",";
-			}
-
-			$version .= "{\"name\":\"" . $pkg['shortname'] .
-			    "\",\"ver\":\"" . $pkg['version'] . "\"}";
-			$first = false;
+			$va['pkgs'][] = array('name' => $pkg['shortname'], 'ver' => $pkg['version']);
 		}
 
-		$version .= "]}";
+		$version .= json_encode($va);
 
 		$arch =  php_uname('m');
 		$locale = $config['system']['language'];

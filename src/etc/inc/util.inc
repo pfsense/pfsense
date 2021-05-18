@@ -1926,7 +1926,7 @@ function alias_expand($name) {
 				if ($alias['type'] == "urltable_ports") {
 					if (is_URL($alias['url']) &&
 					    file_exists($urltable_filename) &&
-					    filesize($urltable_filename)) {
+					    !empty(trim(file_get_contents($urltable_filename)))) {
 						return "\${$name}";
 					} else {
 						return null;

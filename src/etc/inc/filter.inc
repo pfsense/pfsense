@@ -904,7 +904,7 @@ function filter_generate_aliases() {
 			case "urltable_ports":
 				// TODO: Change it when pf supports tables with ports
 				$urlfn = alias_expand_urltable($aliased['name']);
-				if ($urlfn) {
+				if ($urlfn && !empty(trim(file_get_contents($urlfn)))) {
 					$ports_tmp = parse_aliases_file($urlfn, "urltable_ports", "-1", false);
 					$aliases .= "{$aliased['name']} = \"{ " . preg_replace("/\n/", " ", implode("\n", $ports_tmp)) . " }\"\n";
 				}

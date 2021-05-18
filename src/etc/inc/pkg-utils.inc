@@ -1576,6 +1576,10 @@ function update_repos() {
 			$platformname = $platform['descr'];
 		}
 
+		$arch =  php_uname('m');
+		$locale = $config['system']['language'];
+
+		// Find root file system type
 		$filesystems = get_mounted_filesystems();
 		$fstype = "";
 
@@ -1600,16 +1604,11 @@ function update_repos() {
 			$va['pkgs'][] = array('name' => $pkg['shortname'], 'ver' => $pkg['version']);
 		}
 
-		$version .= json_encode($va);
-
-		$arch =  php_uname('m');
-		$locale = $config['system']['language'];
-
 		$post = [
 		    'uid' => $nid,
 		    'language' => $locale,
 		    'serial' => $serial,
-		    'version' => $version,
+		    'version' => json_encode($va),
 		    'arch' => $arch
 		];
 

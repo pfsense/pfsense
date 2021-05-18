@@ -449,9 +449,11 @@ function saveAlias($post, $id) {
 		foreach ($input_addresses as $idx => $input_address) {
 			if (is_alias($input_address)) {
 				if (!alias_same_type($input_address, $post['type'])) {
-					// But alias type network can include alias type urltable. Feature#1603.
+					/* alias type network can include alias type URL/URLTable.
+					 * see https://redmine.pfsense.org/issues/1603
+					 * and https://redmine.pfsense.org/issues/11863 */
 					if (!($post['type'] == 'network' &&
-					    preg_match("/urltable/i", alias_get_type($input_address)))) {
+					    preg_match("/url/i", alias_get_type($input_address)))) {
 						$wrongaliases .= " " . $input_address;
 					}
 				}

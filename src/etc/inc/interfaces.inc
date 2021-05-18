@@ -1756,7 +1756,7 @@ function interfaces_configure() {
 
 	interfaces_qinq_configure();
 
-	$iflist = get_configured_interface_with_descr(true);
+	$iflist = get_configured_interface_with_descr();
 	$delayed_list = array();
 	$bridge_list = array();
 	$track6_list = array();
@@ -1770,9 +1770,7 @@ function interfaces_configure() {
 
 	foreach ($iflist as $if => $ifname) {
 		$realif = $config['interfaces'][$if]['if'];
-		if (!isset($config['interfaces'][$if]['enable'])) {
-			interface_bring_down($if, true);
-		} elseif (strstr($realif, "bridge")) {
+		if (strstr($realif, "bridge")) {
 			$bridge_list[$if] = $ifname;
 		} elseif (strstr($realif, "gre")) {
 			$delayed_list[$if] = $ifname;

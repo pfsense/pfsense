@@ -141,7 +141,7 @@ foreach ($a_nat as $natent):
 
 	list($dstbeginport, $dstendport) = explode("-", $natent['destination']['port']);
 
-	if ($dstendport) {
+	if ($dstendport && is_port($localport)) {
 		$localendport = $natent['local-port'] + $dstendport - $dstbeginport;
 		$localport	 .= '-' . $localendport;
 	}

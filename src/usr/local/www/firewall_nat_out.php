@@ -36,6 +36,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("firewall_nat_out.inc");
 
 global $FilterIflist;
 global $GatewaysList;
@@ -46,25 +47,7 @@ $a_out = &$config['nat']['outbound']['rule'];
 // update rule order, POST[rule] is an array of ordered IDs
 // All rule are 'checked' before posting
 if (isset($_REQUEST['order-store'])) {
-	if (is_array($_REQUEST['rule']) && !empty($_REQUEST['rule'])) {
-
-		$a_out_new = array();
-
-		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_REQUEST['rule'] as $id) {
-			$a_out_new[] = $a_out[$id];
-		}
-
-		$a_out = $a_out_new;
-
-		if (write_config(gettext("Firewall: NAT: Outbound - reordered outbound NAT mappings."))) {
-			mark_subsystem_dirty('natconf');
-		}
-
-		header("Location: firewall_nat_out.php");
-		exit;
-
-	}
+	reorderoutNATrules($_POST);
 }
 
 if (!isset($config['nat']['outbound']['mode'])) {
@@ -74,124 +57,16 @@ if (!isset($config['nat']['outbound']['mode'])) {
 $mode = $config['nat']['outbound']['mode'];
 
 if ($_POST['apply']) {
-	$retval = 0;
-	$retval |= filter_configure();
-
-	if ($retval == 0) {
-		clear_subsystem_dirty('natconf');
-		clear_subsystem_dirty('filter');
-	}
-}
-
-if ($_POST['save']) {
-	/* mutually exclusive settings - if user wants advanced NAT, we don't generate automatic rules */
-	if ($_POST['mode'] == "advanced" && ($mode == "automatic" || $mode == "hybrid")) {
-		/*
-		 *	user has enabled advanced outbound NAT and doesn't have rules
-		 *	lets automatically create entries
-		 *	for all of the interfaces to make life easier on the pip-o-chap
-		 */
-		if (empty($FilterIflist)) {
-			filter_generate_optcfg_array();
-		}
-
-		if (empty($GatewaysList)) {
-			filter_generate_gateways();
-		}
-
-		$tonathosts = filter_nat_rules_automatic_tonathosts(true);
-		$automatic_rules = filter_nat_rules_outbound_automatic("");
-
-		foreach ($tonathosts as $tonathost) {
-			foreach ($automatic_rules as $natent) {
-				$natent['source']['network'] = $tonathost['subnet'];
-				$natent['descr'] .= sprintf(gettext(' - %1$s to %2$s'),
-					$tonathost['descr'],
-					convert_real_interface_to_friendly_descr($natent['interface']));
-				$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
-
-				/* Try to detect already auto created rules and avoid duplicating them */
-				$found = false;
-				foreach ($a_out as $rule) {
-					if ($rule['interface'] == $natent['interface'] &&
-					    $rule['source']['network'] == $natent['source']['network'] &&
-					    $rule['dstport'] == $natent['dstport'] &&
-					    $rule['target'] == $natent['target'] &&
-					    $rule['descr'] == $natent['descr']) {
-						$found = true;
-						break;
-					}
-				}
-
-				if ($found === false) {
-					$a_out[] = $natent;
-				}
-			}
-		}
-		$default_rules_msg = gettext("Default rules for each interface have been created.");
-		unset($FilterIflist, $GatewaysList);
-	}
-
-	$config['nat']['outbound']['mode'] = $_POST['mode'];
-
-	if (write_config(gettext("Firewall: NAT: Outbound - saved outbound NAT settings."))) {
-		mark_subsystem_dirty('natconf');
-	}
-
-	header("Location: firewall_nat_out.php");
-	exit;
-}
-
-//	Delete a single rule/map
-if ($_POST['act'] == "del") {
-
-	if ($a_out[$_POST['id']]) {
-		unset($a_out[$_POST['id']]);
-		if (write_config(gettext("Firewall: NAT: Outbound - deleted outbound NAT mapping."))) {
-			mark_subsystem_dirty('natconf');
-		}
-
-	header("Location: firewall_nat_out.php");
-	exit;
-	}
-}
-
-// Delete multiple maps Only checked rules will be in the
-// POST
-if (isset($_POST['del_x'])) {
+	$retval = applyoutNATrules();
+} else if ($_POST['save']) {
+	saveNAToutMode($_POST);
+} else if ($_POST['act'] == "del") {
+	deleteoutNATrule($_POST);
+} else if (isset($_POST['del_x'])) {
 	/* delete selected rules */
-	print('Deleting rows<br />');
-
-	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		foreach ($_POST['rule'] as $rulei) {
-			print('Deleting ' . $rulei . '<br />');
-			unset($a_out[$rulei]);
-		}
-
-		if (write_config(gettext("Firewall: NAT: Outbound - deleted selected outbound NAT mappings."))) {
-			mark_subsystem_dirty('natconf');
-		}
-
-		header("Location: firewall_nat_out.php");
-		exit;
-	}
-
+	deleteMultipleoutNATrules($_POST);
 } else if ($_POST['act'] == "toggle") {
-	if ($a_out[$_POST['id']]) {
-		if (isset($a_out[$_POST['id']]['disabled'])) {
-			unset($a_out[$_POST['id']]['disabled']);
-			$wc_msg = gettext('Firewall: NAT: Outbound - enabled outbound NAT rule.');
-		} else {
-			$a_out[$_POST['id']]['disabled'] = true;
-			$wc_msg = gettext('Firewall: NAT: Outbound - disabled outbound NAT rule.');
-		}
-		if (write_config($wc_msg)) {
-			mark_subsystem_dirty('natconf');
-		}
-
-		header("Location: firewall_nat_out.php");
-		exit;
-	}
+	toggleoutNATrule($_POST);
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"));

@@ -541,7 +541,7 @@ function ipsec_phase1_status($ipsec_status, $ikeid) {
  */
 function ipsec_phase2_status($ipsec_status, $phase2) {
 
-	if (ipsec_lookup_phase1($ph2ent, $ph1ent)) {
+	if (ipsec_lookup_phase1($phase2, $ph1ent)) {
 		return ipsec_phase1_status($ipsec_status, $ph1ent['ikeid']);
 	}
 

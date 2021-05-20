@@ -17,8 +17,10 @@ IPV4REGEX='^[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}$'
 if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 	if [ $(expr "${IP}" : ${IPV4REGEX}) -ne 0 ]; then
 		ARECORD='A' 
+		PTRRECORD=$(/bin/echo ${IP} | /usr/bin/awk -F . '{print $4"."$3"."$2"."$1".in-addr.arpa."}')
 	else
 		ARECORD='AAAA' 
+		PTRRECORD=$(/bin/echo ${IP} | /usr/bin/awk -F: 'BEGIN {OFS=""; }{addCount = 9 - NF; for(i=1; i<=NF;i++){if(length($i) == 0){ for(j=1;j<=addCount;j++){$i = ($i "0000");} } else { $i = substr(("0000" $i), length($i)+5-4);}}; print}'| /usr/bin/rev | /usr/bin/sed -e "s/./&./g;s/.*/&ip6.arpa/")
 	fi
 	CONF="${DIR}/openvpn.client.${IP}.conf"
 
@@ -52,7 +54,10 @@ if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 				/usr/local/sbin/unbound-checkconf "${TMPSRV}" && /bin/mv "${TMPCONF}" "${CONF}"
 
 				# do not restart unbound on connect, see https://redmine.pfsense.org/issues/11129
-				/usr/bin/su -m unbound -c "unbound-control -c /var/unbound/unbound.conf local_data ${CN}.${DOMAIN} ${ARECORD} ${IP}"
+				/usr/bin/su -m unbound -c "/usr/local/sbin/unbound-control -c /var/unbound/unbound.conf local_data ${CN}.${DOMAIN} ${ARECORD} ${IP}"
+				/usr/bin/su -m unbound -c "/usr/local/sbin/unbound-control -c /var/unbound/unbound.conf local_data ${CN} ${ARECORD} ${IP}"
+				/usr/bin/su -m unbound -c "/usr/local/sbin/unbound-control -c /var/unbound/unbound.conf local_data ${PTRRECORD} PTR ${CN}.${DOMAIN}"
+
 			fi
 
 			/bin/test -f "${TMPCONF}" && /bin/rm "${TMPCONF}"
@@ -62,8 +67,10 @@ if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 		delete)
 			# CN is not set on delete
 			if [ -f "${CONF}" ]; then
-				ENTRY=`/usr/bin/sed -nr 's/(local-data-ptr\:) \"(.*) (.*)"/\3/p' ${CONF}` &&
-				/usr/bin/su -m unbound -c "unbound-control -c /var/unbound/unbound.conf local_data_remove ${ENTRY}"
+				CN=`/usr/bin/sed -nr "s/(local-data-ptr\:) "\""(.*) (.*).${DOMAIN}"\""/\3/p" ${CONF}` &&
+				/usr/bin/su -m unbound -c "/usr/local/sbin/unbound-control -c /var/unbound/unbound.conf local_data_remove ${CN}.${DOMAIN}" &&
+				/usr/bin/su -m unbound -c "/usr/local/sbin/unbound-control -c /var/unbound/unbound.conf local_data_remove ${CN}" &&
+				/usr/bin/su -m unbound -c "/usr/local/sbin/unbound-control -c /var/unbound/unbound.conf local_data_remove ${PTRRECORD}"
 				/bin/rm "${CONF}"
 			fi
 		;;

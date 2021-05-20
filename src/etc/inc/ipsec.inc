@@ -526,10 +526,8 @@ function ipsec_lookup_phase1($ph2ent, &$ph1ent) {
 function ipsec_phase1_status($ipsec_status, $ikeid) {
 
 	foreach ($ipsec_status as $ike) {
-		if ($ike['id'] == $ikeid) {
-			if ($ike['status'] == 'established') {
-				return true;
-			}
+		if ($ike['id'] == $ikeid && $ike['status'] == 'established') {
+			return true;
 		}
 	}
 

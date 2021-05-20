@@ -364,7 +364,7 @@ function get_cpu_crypto_string($crypto) {
 	switch ($machine) {
 	case 'amd64':
 		$string = "AES-NI CPU Crypto: ";
-		if (crypto_accel_get($crypto, "AESNI", "present")) {
+		if ($crypto && crypto_accel_get($crypto, "AESNI", "present")) {
 			$string .= "Yes ";
 			$string .= crypto_accel_get($crypto, "AESNI", "enabled") ? "(active)" : "(inactive)";
 		} else {
@@ -372,7 +372,7 @@ function get_cpu_crypto_string($crypto) {
 		}
 		$string .= "<br>\n";
 		$string .= "QAT Crypto: ";
-		if (crypto_accel_get($crypto, "QAT", "present")) {
+		if ($crypto && crypto_accel_get($crypto, "QAT", "present")) {
 			$string .= "Yes ";
 			$string .= crypto_accel_get($crypto, "QAT", "enabled") ? "(active)" : "(inactive)";
 		} else {

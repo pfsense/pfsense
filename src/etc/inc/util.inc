@@ -57,7 +57,7 @@ function isvalidproc($proc) {
 }
 
 /* sigkill a process by pid file, and wait for it to terminate or remove the .pid file for $waitfor seconds */
-/* return 1 for success and 0 for a failure */
+/* return 0 for success and 1 for a failure */
 function sigkillbypid($pidfile, $sig, $waitfor = 0) {
 	if (isvalidpid($pidfile)) {
 		$result = mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
@@ -69,8 +69,9 @@ function sigkillbypid($pidfile, $sig, $waitfor = 0) {
 		}
 		return $result;
 	}
-
-	return 0;
+	
+	// No match, return 1
+	return 1;
 }
 
 /* kill a process by name */

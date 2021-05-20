@@ -2169,8 +2169,7 @@ function filter_nat_rules_generate() {
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid']) && !isset($ph2ent['disabled'])) {
-					ipsec_lookup_phase1($ph2ent, $ph1ent);
-					if (!is_array($ph1ent)) {
+					if (!ipsec_lookup_phase1($ph2ent, $ph1ent)) {
 						continue;
 					}
 					if (isset($ph1ent['disabled'])) {

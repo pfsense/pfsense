@@ -49,7 +49,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 		if (isset($config['ipsec']['phase2']) && is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
-				if (!ipsec_lookup_phase1($ph2ent,$ph1ent)) {
+				if (!ipsec_lookup_phase1($ph2ent, $ph1ent)) {
 					continue;
 				}
 

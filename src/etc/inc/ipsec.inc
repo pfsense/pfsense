@@ -497,7 +497,7 @@ function ipsec_idinfo_to_text(& $idinfo) {
 /*
  * Return phase1 association for phase2
  */
-function ipsec_lookup_phase1(& $ph2ent, & $ph1ent) {
+function ipsec_lookup_phase1($ph2ent, &$ph1ent) {
 	global $config;
 
 	if (!is_array($config['ipsec'])) {
@@ -513,7 +513,7 @@ function ipsec_lookup_phase1(& $ph2ent, & $ph1ent) {
 	foreach ($config['ipsec']['phase1'] as $ph1tmp) {
 		if ($ph1tmp['ikeid'] == $ph2ent['ikeid']) {
 			$ph1ent = $ph1tmp;
-			return $ph1ent;
+			return true;
 		}
 	}
 

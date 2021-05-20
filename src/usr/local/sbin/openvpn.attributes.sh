@@ -25,7 +25,14 @@ lockfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.lock"
 rulesfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.rules"
 anchorname="openvpn/${dev}_${username}_${trusted_port}"
 
+if [ -z "${untrusted_ip6}" ]; then
+	ipaddress="${untrusted_ip}"
+else
+	ipaddress="${untrusted_ip6}"
+fi
+
 if [ "$script_type" = "client-connect" ]; then
+	/usr/bin/logger -t openvpn "openvpn server '${dev}' user '${username}' address '${ipaddress}' - connected"
 	i=1
 	while [ -f "${lockfile}" ]; do
 		if [ $i -ge 30 ]; then
@@ -49,6 +56,7 @@ if [ "$script_type" = "client-connect" ]; then
 
 	/bin/rm "${lockfile}"
 elif [ "$script_type" = "client-disconnect" ]; then
+	/usr/bin/logger -t openvpn "openvpn server '${dev}' user '${username}' address '${ipaddress}' - disconnected"
 	i=1
 	while [ -f "${lockfile}" ]; do
 		if [ $i -ge 30 ]; then

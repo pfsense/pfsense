@@ -283,6 +283,10 @@ function saveVIP($post, $json = false) {
 
 // Apply changes
 function applyVIP() {
+	global $config, $g;
+
+	init_config_arr(array('virtualip', 'vip'));
+	$a_vip = &$config['virtualip']['vip'];
 	$rv = array();
 
 	$check_carp = false;

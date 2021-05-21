@@ -1455,13 +1455,9 @@ function ipsec_create_vtimap($ikeid, $idx) {
 	$assigned = array_column($config['ipsec']['vtimaps']['item'], 'ifnum');
 	asort($assigned, SORT_NUMERIC);
 	$new = 1;
-	foreach($assigned as $ipsecifnum) {
+	foreach ($assigned as $ipsecifnum) {
 		if ($ipsecifnum != $new) {
-			return array(
-				"reqid" => $ikeid,
-				"index" => $idx,
-				"ifnum" => $new
-			);
+			break;
 		}
 		if ($new++ > 32767) {
 			log_error(gettext("All 32767 ipsec interface numbers " .
@@ -1469,6 +1465,11 @@ function ipsec_create_vtimap($ikeid, $idx) {
 			return(NULL);
 		}
 	}
+	return array(
+		"reqid" => $ikeid,
+		"index" => $idx,
+		"ifnum" => $new
+	);
 }
 
 function ipsec_del_vtimap($phase2) {

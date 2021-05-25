@@ -2572,6 +2572,13 @@ default:
 	set iface name {$pppif}
 
 EOD;
+
+	if (isset($ifcfg['descr'])) {
+		$mpdconf .= <<<EOD
+	set iface description "{$ifcfg['descr']}"
+
+EOD;
+	}
 	$setdefaultgw = false;
 	$defgw4 = lookup_gateway_or_group_by_name($config['gateways']['defaultgw4']);
 //	$defgw6 = lookup_gateway_or_group_by_name($config['gateways']['defaultgw6']);

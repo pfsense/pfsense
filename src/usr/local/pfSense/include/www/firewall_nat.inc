@@ -445,10 +445,16 @@ function saveNATrule($post, $id, $json = false) {
 		if ($natent['interface'] != $post['interface']) {
 			continue;
 		}
-		if ($natent['destination']['address'] != $post['dst']) {
+ 		if ((($post['srctype'] == "network") && ($natent['source']['address'] != ($post['src'] . $post['srcmask']))) ||
+			(($post['srctype'] != "network") && ($natent['source']['address'] != $post['src']))) {
 			continue;
 		}
-		if (($natent['proto'] != $post['proto']) && ($natent['proto'] != "tcp/udp") && ($post['proto'] != "tcp/udp")) {
+		if ((($post['dsttype'] == "network") && ($natent['destination']['address'] != ($post['dst'] . $post['dstmask']))) ||
+		    (($post['dsttype'] != "network") && ($natent['destination']['address'] != $post['dst']))) {
+			continue;
+		}
+		if (($natent['protocol'] != $post['proto']) &&
+		    (strtoupper($natent['protocol']) != "TCP/UDP") && (strtoupper($post['proto']) != "TCP/UDP")) {
 			continue;
 		}
 

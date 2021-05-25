@@ -284,8 +284,8 @@ function toggle1to1NATrule($post, $json = false) {
 		header("Location: firewall_nat_1to1.php");
 		exit;
 	} else {
-		$a_nat = &$config['nat']['onetoone'];
-		return isset($a_nat[$post['id']]['disabled']) ? "disabled":"enabled";
+		$a_1to1 = &$config['nat']['onetoone'];
+		return isset($a_1to1[$post['id']]['disabled']) ? "disabled":"enabled";
 	}
 }
 

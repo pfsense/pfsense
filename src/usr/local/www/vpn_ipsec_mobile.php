@@ -203,10 +203,10 @@ if ($_POST['save']) {
 			$input_errors[] = gettext("A valid IPv6 address for 'Virtual IPv6 Address Pool Network' must be specified.");
 		}
 	}
-	if ($pconfig['radius_retransmit_base'] && !is_numericint($pconfig['radius_retransmit_base'])) {
+	if ($pconfig['radius_retransmit_base'] && !is_numeric($pconfig['radius_retransmit_base'])) {
 		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Base.");
 	}
-	if ($pconfig['radius_retransmit_timeout'] && !is_numericint($pconfig['radius_retransmit_timeout'])) {
+	if ($pconfig['radius_retransmit_timeout'] && !is_numeric($pconfig['radius_retransmit_timeout'])) {
 		$input_errors[] = gettext("An integer must be specified for RADIUS Retrasmit Timeout.");
 	}
 	if ($pconfig['radius_retransmit_tries'] && !is_numericint($pconfig['radius_retransmit_tries'])) {

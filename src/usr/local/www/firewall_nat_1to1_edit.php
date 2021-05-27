@@ -51,6 +51,7 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 
 if (isset($_REQUEST['after'])) {
 	$after = $_REQUEST['after'];
+	$_POST['after'] = $after;
 }
 
 if (isset($_REQUEST['dup'])) {

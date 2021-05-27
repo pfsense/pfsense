@@ -41,6 +41,10 @@ function save1to1NATrule($post, $id, $json = false) {
 	init_config_arr(array('nat', 'onetoone'));
 	$a_1to1 = &$config['nat']['onetoone'];
 
+	if (isset($post['after'])) {
+		$after = $post['after'];
+	}
+
 	/*	run through $post items encoding HTML entities so that the user
 	 *	cannot think he is slick and perform a XSS attack on the unwilling
 	 */

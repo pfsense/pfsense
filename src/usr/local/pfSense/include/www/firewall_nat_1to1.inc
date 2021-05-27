@@ -69,7 +69,9 @@ function save1to1NATrule($post, $id, $json = false) {
 		$reqdfieldsn[] = gettext("Destination address");
 	}
 
-	do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
+	if (!$json) {
+		do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
+	}
 
 	if ($post['external']) {
 		$post['external'] = trim($post['external']);

@@ -41,14 +41,6 @@ require_once("firewall_nat_1to1.inc");
 init_config_arr(array('nat', 'onetoone'));
 $a_1to1 = &$config['nat']['onetoone'];
 
-$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
-$ifdisp = get_configured_interface_with_descr();
-
-foreach ($ifdisp as $kif => $kdescr) {
-	$specialsrcdst[] = "{$kif}";
-	$specialsrcdst[] = "{$kif}ip";
-}
-
 // Process $_POST/$_REQUEST =======================================================================
 if ($_REQUEST['savemsg']) {
 	$savemsg = $_REQUEST['savemsg'];

@@ -28,6 +28,13 @@ require_once("pfsense-utils.inc");
 require_once("ipsec.inc");
 require_once("filter.inc");
 
+$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
+$ifdisp = get_configured_interface_with_descr();
+foreach ($ifdisp as $kif => $kdescr) {
+	$specialsrcdst[] = "{$kif}";
+	$specialsrcdst[] = "{$kif}ip";
+}
+
 function save1to1NATrule($post, $id, $json = false) {
 	global $config, $vpn_and_ppp_ifs;
 

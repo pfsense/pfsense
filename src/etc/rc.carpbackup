@@ -110,7 +110,7 @@ if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
 	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
 		foreach ($vips as $vip) {
 			if ($dhcpv6ifconf['rainterface'] == "_vip{$vip['uniqid']}") {
-				log_error("Stopping radvd instance on {$friendly_descr} because of transition to CARP master.");
+				log_error("Stopping radvd instance on {$friendly_descr} because of transition to CARP backup.");
 				$rafound = true;
 			}
 		}

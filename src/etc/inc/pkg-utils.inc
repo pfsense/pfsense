@@ -969,6 +969,7 @@ function install_package_xml($package_name) {
 		$pkg_data['include_file'] = $pkg_config['include_file'];
 	}
 	if (is_array($pkg_config['plugins']['item'])) {
+		init_config_arr(array('installedpackages', 'package', $pkgid, 'plugins', 'item'));
 		$pkg_data['plugins']['item'] = $pkg_config['plugins']['item'];
 	}
 

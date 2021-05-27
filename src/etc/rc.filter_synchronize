@@ -250,6 +250,12 @@ if (is_array($config['hasync'])) {
 	if ($hasync['synchronizedhcpd'] != "" and is_array($config['dhcpd'])) {
 		$sections[] = 'dhcpd';
 	}
+	if ($hasync['synchronizedhcrelay'] != "" and is_array($config['dhcrelay'])) {
+		$sections[] = 'dhcrelay';
+	}
+	if ($hasync['synchronizedhcrelay6'] != "" and is_array($config['dhcrelay6'])) {
+		$sections[] = 'dhcrelay6';
+	}
 	if ($hasync['synchronizewol'] != "") {
 		if (!is_array($config['wol'])) {
 			$config['wol'] = array();

@@ -42,6 +42,7 @@ if (empty($config['dhcrelay6']['interface'])) {
 
 $pconfig['agentoption'] = isset($config['dhcrelay6']['agentoption']);
 $pconfig['server'] = $config['dhcrelay6']['server'];
+$pconfig['carpstatusvip'] = isset($config['dhcrelay6']['carpstatusvip']) ? $config['dhcrelay6']['carpstatusvip'] : 'none';
 
 $iflist = array_intersect_key(
 	get_configured_interface_with_descr(),
@@ -55,6 +56,19 @@ $iflist = array_intersect_key(
 		)
 	)
 );
+
+$carpiflist = array_merge(array('none' => 'none'), array_intersect_key(
+       	get_configured_vip_list_with_descr('inet6', VIP_CARP),
+	array_flip(
+		array_filter(
+			array_keys(get_configured_vip_list_with_descr('inet6', VIP_CARP)),
+			function($if) {
+				return (get_interface_ip($if) &&
+				    !is_pseudo_interface(convert_friendly_interface_to_real_interface_name($if)));
+			}
+		)
+	)
+));
 
 /*   set the enabled flag which will tell us if DHCP server is enabled
  *   on any interface.   We will use this to disable dhcp-relay since
@@ -122,6 +136,7 @@ if ($_POST) {
 		}
 		$config['dhcrelay6']['agentoption'] = $_POST['agentoption'] ? true : false;
 		$config['dhcrelay6']['server'] = $svrlist;
+		$config['dhcrelay6']['carpstatusvip'] = $_POST['carpstatusvip'];
 
 		write_config("DHCPv6 Relay settings saved");
 
@@ -156,7 +171,7 @@ $section = new Form_Section('DHCPv6 Relay Configuration');
 $section->addInput(new Form_Checkbox(
 	'enable',
 	'Enable',
-	'Enable DHCPv6 relay on interface',
+	'Enable DHCPv6 Relay on interface',
 	$pconfig['enable']
 ))->toggles('.form-group:not(:first-child)');
 
@@ -168,6 +183,13 @@ $section->addInput(new Form_Select(
 	true
 ))->setHelp('Interfaces without an IPv6 address will not be shown.');
 
+$section->addInput(new Form_Select(
+	'carpstatusvip',
+	'*CARP Status VIP',
+	$pconfig['carpstatusvip'],
+	$carpiflist,
+))->setHelp('Used to determine the HA MASTER/BACKUP status. DHCPv6 Relay will be stopped when the ' .
+	    'chosen VIP is in BACKUP status, and started in MASTER status.');
 
 $section->addInput(new Form_Checkbox(
 	'agentoption',
@@ -175,7 +197,7 @@ $section->addInput(new Form_Checkbox(
 	'Append circuit ID and agent ID to requests',
 	$pconfig['agentoption']
 ))->setHelp(
-	'If this is checked, the DHCPv6 relay will append the circuit ID (%s interface number) and the agent ID to the DHCPv6 request.',
+	'If this is checked, the DHCPv6 Relay will append the circuit ID (%s interface number) and the agent ID to the DHCPv6 request.',
 	$g['product_label']
 );
 

@@ -130,6 +130,20 @@ if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
 	}
 }
 
+/* Reconfigure DHCP Relay when necessary */
+if (isset($config['dhcrelay']) && is_array($config['dhcrelay']) && isset($config['dhcrelay']['enable']) &&
+    isset($config['dhcrelay']['carpstatusvip']) && ($config['dhcrelay']['carpstatusvip'] == "_vip{$vip['uniqid']}")) {
+	log_error("Starting DHCP Relay service because of transition to CARP master.");
+	services_dhcrelay_configure();
+}
+
+/* Reconfigure DHCPv6 Relay when necessary */
+if (isset($config['dhcrelay6']) && is_array($config['dhcrelay6']) && isset($config['dhcrelay6']['enable']) &&
+    isset($config['dhcrelay6']['carpstatusvip']) && ($config['dhcrelay6']['carpstatusvip'] == "_vip{$vip['uniqid']}")) {
+	log_error("Starting DHCPv6 Relay service because of transition to CARP master.");
+	services_dhcrelay6_configure();
+}
+
 /* Reconfigure captive portal when necessary :
    If we are the primary node, and we are switching back from backup to master : Get user list from the backup node */
 if (!empty($config['captiveportal']) && is_array($config['hasync']) && !empty($config['hasync']['synchronizetoip']) &&

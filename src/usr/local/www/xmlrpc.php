@@ -211,6 +211,8 @@ class pfsense_xmlrpc_server {
 			'cert',
 			'crl',
 			'dhcpd',
+			'dhcrelay',
+			'dhcrelay6',
 			'dnshaper',
 			'dnsmasq',
 			'filter',
@@ -788,6 +790,18 @@ class pfsense_xmlrpc_server {
 		    ($config['dhcpd'] != $old_config['dhcpd'])) ||
 		    $force) {
 			services_dhcpd_configure();
+		}
+
+		if (((is_array($config['dhcrelay']) || is_array($old_config['dhcrelay'])) &&
+		    ($config['dhcrelay'] != $old_config['dhcrelay'])) ||
+		    $force) {
+			services_dhcrelay_configure();
+		}
+
+		if (((is_array($config['dhcrelay6']) || is_array($old_config['dhcrelay6'])) &&
+		    ($config['dhcrelay6'] != $old_config['dhcrelay6'])) ||
+		    $force) {
+			services_dhcrelay6_configure();
 		}
 
 		if ($reset_accounts) {

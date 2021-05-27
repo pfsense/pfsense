@@ -1939,8 +1939,27 @@ function services_dhcrelay_configure() {
 		return 0;
 	}
 
+	/* Start/Restart DHCP Relay, if a CARP VIP is set, check its status and act
+	* appropriately. */
+	if (isset($dhcrelaycfg['carpstatusvip']) && ($dhcrelaycfg['carpstatusvip'] != "none")) {
+		$status = get_carp_interface_status($dhcrelaycfg['carpstatusvip']);
+		switch (strtoupper($status)) {
+			// Do not start DHCP Relay service if the VIP is in BACKUP or INIT state.
+			case "BACKUP":
+			case "INIT":
+				log_error("Stopping DHCP Relay (CARP BACKUP/INIT)");
+				return 0;
+				break;
+			// Start the service if the VIP is MASTER state.
+			case "MASTER":
+			// Assume it's up if the status can't be determined.
+			default:
+				break;
+		}
+	}
+
 	if (platform_booting()) {
-		echo gettext("Starting DHCP relay service...");
+		echo gettext("Starting DHCP Relay service...");
 	} else {
 		sleep(1);
 	}
@@ -2041,8 +2060,27 @@ function services_dhcrelay6_configure() {
 		return 0;
 	}
 
+	/* Start/Restart DHCPv6 Relay, if a CARP VIP is set, check its status and act
+	* appropriately. */
+	if (isset($dhcrelaycfg['carpstatusvip']) && ($dhcrelaycfg['carpstatusvip'] != "none")) {
+		$status = get_carp_interface_status($dhcrelaycfg['carpstatusvip']);
+		switch (strtoupper($status)) {
+			// Do not start DHCP Relay service if the VIP is in BACKUP or INIT state.
+			case "BACKUP":
+			case "INIT":
+				log_error("Stopping DHCPv6 Relay (CARP BACKUP/INIT)");
+				return 0;
+				break;
+			// Start the service if the VIP is MASTER state.
+			case "MASTER":
+			// Assume it's up if the status can't be determined.
+			default:
+				break;
+		}
+	}
+
 	if (platform_booting()) {
-		echo gettext("Starting DHCPv6 relay service...");
+		echo gettext("Starting DHCPv6 Relay service...");
 	} else {
 		sleep(1);
 	}

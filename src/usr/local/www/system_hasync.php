@@ -46,6 +46,8 @@ $checkbox_names = array(
 	'synchronizeipsec',
 	'synchronizeopenvpn',
 	'synchronizedhcpd',
+	'synchronizedhcrelay',
+	'synchronizedhcrelay6',
 	'synchronizewol',
 	'synchronizestaticroutes',
 	'synchronizevirtualip',
@@ -268,6 +270,22 @@ $group->add(new Form_MultiCheckbox(
 	'Synchronize DHCPD',
 	'DHCP Server settings ',
 	($pconfig['synchronizedhcpd'] === 'on'),
+	'on'
+));
+
+$group->add(new Form_MultiCheckbox(
+	'synchronizedhcrelay',
+	'Synchronize DHCP Relay',
+	'DHCP Relay settings ',
+	($pconfig['synchronizedhcrelay'] === 'on'),
+	'on'
+));
+
+$group->add(new Form_MultiCheckbox(
+	'synchronizedhcrelay6',
+	'Synchronize DHCPv6 Relay',
+	'DHCPv6 Relay settings',
+	($pconfig['synchronizedhcrelay6'] === 'on'),
 	'on'
 ));
 

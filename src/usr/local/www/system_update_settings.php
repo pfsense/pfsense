@@ -206,7 +206,7 @@ if (file_exists("/usr/local/bin/git")) {
 		'Branch name',
 		'text',
 		($gitcfg['branch'] ? $gitcfg['branch'] : '')
-		))->setHelp('The most recently used branch was "%1$s". (Usually the branch name is master)' .
+		))->setHelp('The most recently used branch was "%1$s". (Usually the branch name is RELENG_2_5_2)' .
 					'%2$sNote: Sync will not be performed if a branch is not specified.', $lastbranch, '<br />');
 
 	$group = new Form_Group('Sync options');

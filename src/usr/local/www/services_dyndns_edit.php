@@ -560,18 +560,19 @@ events.push(function() {
 				break;
 			case "domeneshop":
 			case "domeneshop-v6":
+			case "dreamhost":
+			case "dreamhost-v6":
 			case "nicru":
 			case "nicru-v6":
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
 				break;
-			case "dreamhost":
-			case "dreamhost-v6":
-				hideInput('mx', true);
-				hideCheckbox('wildcard', true);
-				break;
 			case "godaddy":
 			case "godaddy-v6":
+			case "linode":
+			case "linode-v6":
+			case "onecom":
+			case "onecom-v6":
 				hideGroupInput('domainname', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
@@ -581,15 +582,6 @@ events.push(function() {
 			case "hover":
 			case "namecheap":
 				hideGroupInput('domainname', false);
-				break;
-			case "linode":
-			case "linode-v6":
-			case "onecom":
-			case "onecom-v6":
-				hideGroupInput('domainname', false);
-				hideInput('mx', true);
-				hideCheckbox('wildcard', true);
-				hideInput('ttl', false);
 				break;
 			case "mythicbeasts":
 			case "mythicbeasts-v6":

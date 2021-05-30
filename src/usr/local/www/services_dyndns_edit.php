@@ -604,6 +604,10 @@ events.push(function() {
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
 				break;
+			case "strato":
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				break;
 			default:
 		}
 	}

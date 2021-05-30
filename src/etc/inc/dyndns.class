@@ -2311,21 +2311,21 @@
 					break;
 				case 'strato':
  					if (preg_match('/good\s' . $this->_dnsIP . '/i', $data)) {
-						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
+						$status = $status_intro . $success_str . gettext("IP address updated successfully") . " (" . $this->_dnsIP . ")";
  						$successful_update = true;
  					} else if (preg_match('/good/i', $data)) {
-						$status = $status_intro . $error_str . gettext("Result did not match.");
+						$status = $status_intro . $error_str . gettext("IP result did not match");
 					} else if (preg_match('/nochg/i', $data)) {
-						$status = $status_intro . $success_str . gettext("No Change In IP Address.");
+						$status = $status_intro . $success_str . gettext("IP was not changed");
 						$successful_update = true;
 					} else if (preg_match("/badauth/i", $data)) {
-						$status = $status_intro . $error_str . gettext("Invalid username or password");
+						$status = $status_intro . $error_str . gettext("invalid username or password");
 					} else if (preg_match('/nohost/i', $data)) {
-						$status = $status_intro . $error_str . gettext("Invalid hostname");
+						$status = $status_intro . $error_str . gettext("invalid hostname");
 					} else if (preg_match('/abuse/i', $data)) {
 						$status = $status_intro . $error_str . gettext("too many requests - please wait");
 					} else {
-						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						$status = $status_intro . "(" . gettext("unknown response") . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $header . $data);
  						$this->_debug($data);
  						$this->_debug($header);

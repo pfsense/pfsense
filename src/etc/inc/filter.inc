@@ -423,6 +423,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= filter_setup_logging_interfaces();
 	$rules .= "\n";
 	$rules .= "set skip on pfsync0\n";
+	$rules .= "set keepcounters\n";
 	$rules .= "\n";
 	update_filter_reload_status(gettext("Setting up SCRUB information"));
 	$rules .= filter_generate_scrubing();

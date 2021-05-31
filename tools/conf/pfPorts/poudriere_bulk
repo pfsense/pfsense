@@ -6,6 +6,7 @@ databases/php74-pdo_mysql
 databases/php74-pgsql
 devel/aws-sdk-php
 devel/gdb
+devel/git
 dns/%%PRODUCT_NAME%%-pkg-bind
 dns/dnstop
 editors/nano

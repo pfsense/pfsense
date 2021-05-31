@@ -3352,14 +3352,14 @@ function filter_generate_user_rule($rule) {
 			if ($sched['name'] == $rule['sched']) {
 				if (!filter_get_time_based_rule_status($sched)) {
 					if (!isset($config['system']['schedule_states'])) {
-						mwexec("/sbin/pfctl -y {$sched['schedlabel']}");
+						mwexec("/sbin/pfctl -k s:{$sched['schedlabel']}");
 					}
 					return "# schedule finished - {$rule['descr']}";
 				} else if ($g['debug']) {
 					log_error(sprintf(gettext("[TDR DEBUG] status true -- rule type '%s'"), $type));
 				}
 
-				$aline['schedlabel'] = " schedule \"{$sched['schedlabel']}\" ";
+				$aline['schedlabel'] = " label \"s:{$sched['schedlabel']}\" ";
 				break;
 			}
 		}

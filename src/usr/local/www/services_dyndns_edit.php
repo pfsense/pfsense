@@ -72,6 +72,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['curl_ssl_verifypeer'] = isset($a_dyndns[$id]['curl_ssl_verifypeer']);
 	$pconfig['zoneid'] = $a_dyndns[$id]['zoneid'];
 	$pconfig['ttl'] = $a_dyndns[$id]['ttl'];
+	$pconfig['maxcacheage'] = $a_dyndns[$id]['maxcacheage'];
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
 	$pconfig['resultmatch'] = $a_dyndns[$id]['resultmatch'];
 	$pconfig['requestif'] = str_replace('_stf', '', $a_dyndns[$id]['requestif']);
@@ -170,6 +171,9 @@ if ($_POST['save'] || $_POST['force']) {
 	if ((in_array("username", $reqdfields) && $_POST['username'] && !is_dyndns_username($_POST['username'])) || ((in_array("username", $reqdfields)) && ($_POST['username'] == ""))) {
 		$input_errors[] = gettext("The username contains invalid characters.");
 	}
+	if (isset($_POST['maxcacheage']) && $_POST['maxcacheage'] !== "" && (!is_numericint($_POST['maxcacheage']) || (int)$_POST['maxcacheage'] < 1)) {
+		$input_errors[] = gettext("The max cache age must be an integer and greater than 0 (or empty for the default).");
+	}
 
 	if (!$input_errors) {
 		$dyndns = array();
@@ -201,6 +205,7 @@ if ($_POST['save'] || $_POST['force']) {
 		}
 		$dyndns['zoneid'] = $_POST['zoneid'];
 		$dyndns['ttl'] = $_POST['ttl'];
+		$dyndns['maxcacheage'] = $_POST['maxcacheage'];
 		$dyndns['updateurl'] = $_POST['updateurl'];
 		// Trim hard-to-type but sometimes returned characters
 		$dyndns['resultmatch'] = trim($_POST['resultmatch'], "\t\n\r");
@@ -459,6 +464,13 @@ $section->addInput(new Form_Input(
 ))->setHelp('Choose TTL for the dns record.');
 
 $section->addInput(new Form_Input(
+	'maxcacheage',
+	'Max Cache Age',
+	'number',
+	$pconfig['maxcacheage']
+))->setHelp('The number of days after which the DNS record is always updated. The DNS record is updated when: update is forced, WAN address changes or this number of days has passed.');
+
+$section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
@@ -508,6 +520,7 @@ events.push(function() {
 		hideCheckbox('proxied', true);
 		hideInput('zoneid', true);
 		hideInput('ttl', true);
+		hideInput('maxcacheage', true);
 
 		switch (service) {
 			case "custom" :
@@ -520,6 +533,7 @@ events.push(function() {
 				hideInput('host', true);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
+				hideInput('maxcacheage', false);
 				break;
 			// providers in an alphabetical order (based on the first provider in a group of cases)
 			case "azure":

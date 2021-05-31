@@ -2105,6 +2105,7 @@ function services_dyndns_configure_client($conf) {
 		$dnsTTL = $conf['ttl'],
 		$dnsResultMatch = "{$conf['resultmatch']}",
 		$dnsRequestIf = "{$conf['requestif']}",
+		$dnsMaxCacheAge = $conf['maxcacheage'],
 		$dnsID = "{$conf['id']}",
 		$dnsVerboseLog = $conf['verboselog'],
 		$curlIpresolveV4 = $conf['curl_ipresolve_v4'],

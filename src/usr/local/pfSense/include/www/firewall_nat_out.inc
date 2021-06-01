@@ -30,7 +30,10 @@ require_once("filter.inc");
 
 // Save Outbound mode
 function saveNAToutMode($post, $json = false) {
-	global $config;
+	global $config, $FilterIflist, $GatewaysList;
+
+	init_config_arr(array('nat', 'outbound', 'rule'));
+	$a_out = &$config['nat']['outbound']['rule'];
 
 	if (!isset($config['nat']['outbound']['mode'])) {
 		$config['nat']['outbound']['mode'] = "automatic";

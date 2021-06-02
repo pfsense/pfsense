@@ -34,7 +34,7 @@ fi
 timeout=`expr $slottime \* 2 + 3`
 
 printf "Setup IFS parameters on interface ${DEV} for %i meter p-2-p link\n" $d
-ATHN=`echo $DEV | sed 's/ath//'`
+ATHN=`echo $DEV | /usr/bin/sed 's/ath//'`
 sysctl dev.ath.$ATHN.slottime=$slottime
 sysctl dev.ath.$ATHN.acktimeout=$timeout
 sysctl dev.ath.$ATHN.ctstimeout=$timeout

@@ -63,11 +63,11 @@ for num in `seq 50`; do
 		if [ "$part2" = "DNS" ]; then
 			DNS="${part3}"
 			/bin/echo ${DNS} >> /var/etc/nameserver_${1}
-			route change -inet "${DNS}" -iface ${1} || route add -inet "${DNS}" -iface ${1}
+			/sbin/route change -inet "${DNS}" -iface ${1} || /sbin/route add -inet "${DNS}" -iface ${1}
 		elif [ "$part2" = "DNS6" ]; then
 			DNS="${part3}"
 			/bin/echo ${DNS} >> /var/etc/nameserver_v6${1}
-			route change -inet6 "${DNS}" -iface ${1} || route add -inet6 "${DNS}" -iface ${1}
+			/sbin/route change -inet6 "${DNS}" -iface ${1} || /sbin/route add -inet6 "${DNS}" -iface ${1}
 		elif [ "$part2" = "DOMAIN" -o "$part2" = "DOMAIN-SEARCH" ]; then
 			/bin/echo ${part3} >> /var/etc/searchdomain_${1}
 		fi

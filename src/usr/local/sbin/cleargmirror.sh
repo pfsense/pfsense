@@ -2,7 +2,7 @@
 
 clear_disk() {
 	local _disk="${1}"
-	local _mirror=$(/sbin/gmirror dump ${_disk} 2>/dev/null | sed '/name: /!d; s,^.*: ,,')
+	local _mirror=$(/sbin/gmirror dump ${_disk} 2>/dev/null | /usr/bin/sed '/name: /!d; s,^.*: ,,')
 
 	if [ -n "${_mirror}" ]; then
 		/sbin/gmirror destroy -f ${_mirror} >/dev/null 2>&1

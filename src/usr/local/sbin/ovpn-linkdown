@@ -29,20 +29,20 @@
 
 if [ -f "/var/etc/nameserver_${1}" -o -f "/var/etc/nameserver_v6${1}" ]; then
 	if [ -f "/var/etc/nameserver_${1}" ]; then
-		for nameserver in `cat /var/etc/nameserver_${1}`; do
+		for nameserver in `/bin/cat /var/etc/nameserver_${1}`; do
 			/sbin/route -q delete -inet -host ${nameserver} -iface ${1} >/dev/null 2>&1
 		done
 	fi
 	/bin/rm -f /var/etc/nameserver_$1
 	if [ -f "/var/etc/nameserver_v6${1}" ]; then
-		for nameserver in `cat /var/etc/nameserver_v6${1}`; do
+		for nameserver in `/bin/cat /var/etc/nameserver_v6${1}`; do
 			/sbin/route -q delete -inet6 -host ${nameserver} -iface ${1} >/dev/null 2>&1
 		done
 	fi
 	/bin/rm -f /var/etc/nameserver_v6$1
-	if pgrep -q -a -F /var/run/unbound.pid unbound >/dev/null 2>&1; then
+	if /usr/bin/pgrep -q -a -F /var/run/unbound.pid unbound >/dev/null 2>&1; then
 		/usr/local/sbin/pfSsh.php playback svc restart unbound
-	elif pgrep -q -a -F /var/run/dnsmasq.pid unbound >/dev/null 2>&1; then
+	elif /usr/bin/pgrep -q -a -F /var/run/dnsmasq.pid unbound >/dev/null 2>&1; then
 		/usr/local/sbin/pfSsh.php playback svc restart dnsmasq
 	fi
 fi

@@ -35,6 +35,10 @@ function savenptNATrule($post, $id, $json = false) {
 	init_config_arr(array('nat', 'npt'));
 	$a_npt = &$config['nat']['npt'];
 
+	if (isset($post['after'])) {
+		$after = $post['after'];
+	}
+
 	unset($input_errors);
 	$pconfig = $post;
 
@@ -46,7 +50,9 @@ function savenptNATrule($post, $id, $json = false) {
 	$reqdfields[] = "dst";
 	$reqdfieldsn[] = gettext("Destination prefix");
 
-	do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
+	if (!$json) {
+		do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
+	}
 
 	if (!is_ipaddrv6(trim($post['src']))) {
 		$input_errors[] = gettext("The specified source address is not a valid IPv6 prefix");
@@ -90,12 +96,11 @@ function savenptNATrule($post, $id, $json = false) {
 		if (write_config(gettext("Firewall: NAT: NPt - saved/edited NPt mapping.")) && !$json) {
 			mark_subsystem_dirty('natconf');
 		}
-
-		$rv = array();
-		$rv['input_errors'] = $input_errors;
-		$rv['pconfig'] = $pconfig;
 	}
 
+	$rv = array();
+	$rv['input_errors'] = $input_errors;
+	$rv['pconfig'] = $pconfig;
 	return $json ? json_encode($rv) : $rv;
 }
 

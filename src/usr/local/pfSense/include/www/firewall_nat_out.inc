@@ -474,6 +474,9 @@ function toggleoutNATrule($post, $json = false) {
 	if (!$json) {
 		header("Location: firewall_nat_out.php");
 		exit;
+	} else {
+		$a_out = &$config['nat']['outbound'];
+		return isset($a_out['rule'][$post['id']]['disabled']) ? "disabled":"enabled";
 	}
 }
 
@@ -613,5 +616,22 @@ function build_target_list() {
 	$list['Oother-subnet'] = gettext('Other Subnet (Enter Below)');
 
 	return($list);
+}
+
+function getAutoRules($json = false) {
+	global $FilterIflist;
+	global $GatewaysList;
+
+	if (empty($FilterIflist)) {
+		filter_generate_optcfg_array();
+	}
+
+	if (empty($GatewaysList)) {
+		filter_generate_gateways();
+	}
+
+	$automatic_rules = filter_nat_rules_outbound_automatic(implode(" ", filter_nat_rules_automatic_tonathosts()));
+
+	return $json ? json_encode($automatic_rules) : $automatic_rules;
 }
 ?>

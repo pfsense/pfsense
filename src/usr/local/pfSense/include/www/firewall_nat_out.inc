@@ -146,7 +146,9 @@ function saveoutNATrule($post, $id, $json = false) {
 	$reqdfields = explode(" ", "interface protocol source source_subnet destination destination_subnet");
 	$reqdfieldsn = array(gettext("Interface"), gettext("Protocol"), gettext("Source"), gettext("Source bit count"), gettext("Destination"), gettext("Destination bit count"));
 
-	do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
+	if (!$json) {
+		do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
+	}
 
 	$protocol_uses_ports = in_array($post['protocol'], explode(" ", "any tcp udp tcp/udp"));
 

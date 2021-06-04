@@ -107,6 +107,10 @@ function saveoutNATrule($post, $id, $json = false) {
 	init_config_arr(array('nat', 'outbound', 'rule'));
 	$a_out = &$config['nat']['outbound']['rule'];
 
+	if (isset($post['after'])) {
+		$after = $post['after'];
+	}
+
 	if ($post['destination_type'] == "any") {
 		$post['destination'] = "any";
 		$post['destination_subnet'] = 24;
@@ -372,11 +376,11 @@ function saveoutNATrule($post, $id, $json = false) {
 		if (write_config(gettext("Firewall: NAT: Outbound - saved/edited outbound NAT mapping.")) && !$json) {
 			mark_subsystem_dirty('natconf');
 		}
-
-		$rv = array();
-		$rv['input_errors'] = $input_errors;
-		$rv['pconfig'] = $pconfig;
 	}
+
+	$rv = array();
+	$rv['input_errors'] = $input_errors;
+	$rv['pconfig'] = $pconfig;
 
 	return $json ? json_encode($rv) : $rv;
 }
@@ -520,7 +524,7 @@ function deleteoutNATrule($post, $json = false) {
 }
 
 // Re-order the NPtNAT rules per the array of iindicies passed in $post
-function reorderoutNATrules($post, $json = false) {
+function outNATrulesreorder($post, $json = false) {
 	global $config;
 
 	if (is_array($post['rule']) && !empty($post['rule'])) {

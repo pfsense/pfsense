@@ -84,10 +84,18 @@ if [ -n "${recover_disk}" ] ; then
 		if [ "${fs_type}" == "zfs" ]; then
 			# Load KLD for ZFS support
 			/sbin/kldload zfs
-			# Import pool (name=zroot) with alternate mount
+			# Import pool with alternate mount. Try zoot first, then pfSense
 			/sbin/zpool import -R ${recovery_mount} -f zroot
-			# Mount the default root directory of the previous install
-			/sbin/mount -t zfs zroot/ROOT/default ${recovery_mount}
+			zpool_import=$?
+			if [ ${zpool_import} -eq 0 ]; then
+				# Mount the default root directory of the previous install
+				/sbin/mount -t zfs zroot/ROOT/default ${recovery_mount}
+			else
+				# If the pool name is pfSense, it's the new style layout
+				/sbin/zpool import -R ${recovery_mount} -f pfSense
+				# New layout has /cf/conf as its own dataset and doesn't need
+				# its root mounted manually to reach it.
+			fi
 		fi
 	fi
 
@@ -105,7 +113,7 @@ if [ -n "${recover_disk}" ] ; then
 
 	# ZFS cleanup, export the pool and then unload ZFS KLD.
 	if [ "${fs_type}" == "zfs" ]; then
-		/sbin/zpool export -f zroot
+		/sbin/zpool export -f zroot pfSense
 		/sbin/kldunload zfs
 	fi
 fi

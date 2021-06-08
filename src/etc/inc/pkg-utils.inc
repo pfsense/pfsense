@@ -1266,12 +1266,14 @@ function stop_packages() {
 	if (isset($config['installedpackages']['package']) &&
 	    is_array($config['installedpackages']['package'])) {
 		foreach ($config['installedpackages']['package'] as $package) {
-			echo " Stopping package {$package['name']}...";
 			$internal_name = get_package_internal_name($package);
-			stop_service($internal_name);
-			unset($rcfiles[RCFILEPREFIX .
-			    strtolower($internal_name) . ".sh"]);
-			echo "done.\n";
+			if (is_service_running($internal_name)) {
+				echo " Stopping package {$package['name']}...";
+				stop_service($internal_name);
+				echo "done.\n";
+				unset($rcfiles[RCFILEPREFIX .
+				    strtolower($internal_name) . ".sh"]);
+			}
 		}
 	}
 

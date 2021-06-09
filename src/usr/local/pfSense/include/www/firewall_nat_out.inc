@@ -102,7 +102,7 @@ function saveNAToutMode($post, $json = false) {
 }
 // Save Outbound rule
 function saveoutNATrule($post, $id, $json = false) {
-	global $config;
+	global $after, $config;
 
 	init_config_arr(array('nat', 'outbound', 'rule'));
 	$a_out = &$config['nat']['outbound']['rule'];

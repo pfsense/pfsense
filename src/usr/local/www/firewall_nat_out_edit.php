@@ -49,11 +49,6 @@ if (isset($_REQUEST['after']) && (is_numericint($_REQUEST['after']) || $_REQUEST
 	$after = $_REQUEST['after'];
 }
 
-if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
-	$id = $_REQUEST['dup'];
-	$after = $_REQUEST['dup'];
-}
-
 if ($_POST['save']) {
 	$rv = saveoutNATrule($_POST, $id);
 
@@ -65,6 +60,11 @@ if ($_POST['save']) {
 		exit;
 	}
 } else {
+	if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+		$id = $_REQUEST['dup'];
+		$after = $_REQUEST['dup'];
+	}
+
 	$pconfig = getoutNATrule($id);
 }
 

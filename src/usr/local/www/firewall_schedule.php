@@ -40,6 +40,7 @@ $monthArray = array (gettext('January'), gettext('February'), gettext('March'), 
 require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("firewall_schedule.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"));
 
@@ -47,38 +48,13 @@ init_config_arr(array('schedules', 'schedule'));
 $a_schedules = &$config['schedules']['schedule'];
 
 if ($_POST['act'] == "del") {
-	if ($a_schedules[$_POST['id']]) {
-		/* make sure rule is not being referenced by any nat or filter rules */
-		$is_schedule_referenced = false;
-		$referenced_by = false;
-		$schedule_name = $a_schedules[$_POST['id']]['name'];
-
-		if (is_array($config['filter']['rule'])) {
-			foreach ($config['filter']['rule'] as $rule) {
-				//check for this later once this is established
-				if ($rule['sched'] == $schedule_name) {
-					$referenced_by = $rule['descr'];
-					$is_schedule_referenced = true;
-					break;
-				}
-			}
-		}
-
-		if ($is_schedule_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete schedule. Currently in use by %s."), $referenced_by);
-		} else {
-			unset($a_schedules[$_POST['id']]);
-			write_config(gettext("Firewall schedule deleted."));
-			header("Location: firewall_schedule.php");
-			exit;
-		}
-	}
+	$errmsg = deleteSchedule($_POST);
 }
 
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($errmsg) {
+	print_info_box($errmsg, 'danger');
 }
 ?>
 

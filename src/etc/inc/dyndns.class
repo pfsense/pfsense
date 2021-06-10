@@ -575,7 +575,7 @@
 				case 'noip':
 				case 'noip-free':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_USERPWD, urlencode($this->_dnsUser) . ':' . urlencode($this->_dnsPass));
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					$server = "https://dynupdate.no-ip.com/nic/update";
 					$port = "";
 					if ($this->_dnsServer) {

@@ -864,8 +864,6 @@ function install_package_xml($package_name) {
 		return false;
 	}
 
-	$pkg_data = &$config['installedpackages']['package'][$pkgid];
-
 	update_status(gettext("Loading package configuration... "));
 	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
 	    $pkg_info['configurationfile'], "packagegui");
@@ -873,7 +871,7 @@ function install_package_xml($package_name) {
 	update_status(gettext("Configuring package components...") .
 	    "\n");
 	if (!empty($pkg_config['filter_rules_needed'])) {
-		$pkg_data['filter_rule_function'] =
+		$config['installedpackages']['package'][$pkgid]['filter_rule_function'] =
 		    $pkg_config['filter_rules_needed'];
 	}
 	/* modify system files */
@@ -962,15 +960,16 @@ function install_package_xml($package_name) {
 		update_status(gettext("done.") . "\n");
 	}
 	if (is_array($pkg_config['tabs'])) {
-		$pkg_data['tabs'] = $pkg_config['tabs'];
+		init_config_arr(array('installedpackages', 'package', $pkgid, 'tabs'));
+		$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];
 	}
 	/* plugins */
 	if (isset($pkg_config['include_file'])) {
-		$pkg_data['include_file'] = $pkg_config['include_file'];
+		$config['installedpackages']['package'][$pkgid]['include_file'] = $pkg_config['include_file'];
 	}
-	if (is_array($pkg_config['plugins']['item'])) {
-		init_config_arr(array('installedpackages', 'package', $pkgid, 'plugins', 'item'));
-		$pkg_data['plugins']['item'] = $pkg_config['plugins']['item'];
+	if (is_array($pkg_config['plugins'])) {
+		init_config_arr(array('installedpackages', 'package', $pkgid, 'plugins'));
+		$config['installedpackages']['package'][$pkgid]['plugins'] = $pkg_config['plugins'];
 	}
 
 	update_status(gettext("Writing configuration... "));

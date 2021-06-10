@@ -679,6 +679,7 @@ function step12_submitphpaction() {
 		$server['netbios_enable'] = $pconfig['step10']['nbtenable'];
 	}
 	$server['exit_notify'] = 1;
+	$server['inactive_seconds'] = 300;
 
 	$tracker = (int)microtime(true);
 	if (isset($pconfig['step11']['ovpnrule'])) {

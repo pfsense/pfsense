@@ -4442,7 +4442,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		link_interface_to_vips($interface, "update");
 
 		if ($tunnelif != 'gre') {
-			unset($gre);
 			$gre = link_interface_to_tunnelif($interface, 'gre');
 			if (!empty($gre)) {
 				array_walk($gre, 'interface_gre_configure');
@@ -4450,7 +4449,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 
 		if ($tunnelif != 'gif') {
-			unset($gif);
 			$gif = link_interface_to_tunnelif($interface, 'gif');
 			if (!empty($gif)) {
 				array_walk($gif, 'interface_gif_configure');

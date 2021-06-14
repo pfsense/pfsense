@@ -2019,6 +2019,9 @@ EOD;
 function filter_nat_rules_generate() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $aliases;
 
+	init_config_arr(array('ipsec', 'client'));
+	$ipsec_client = $config['ipsec']['client'];
+
 	$natrules = "no nat proto carp\n";
 	$natrules .= "no rdr proto carp\n";
 	$natrules .= "nat-anchor \"natearly/*\"\n";
@@ -2202,7 +2205,11 @@ function filter_nat_rules_generate() {
 						$ph2ent['remoteid'] = array();
 					}
 					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
-					$remote_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					if (!isset($ph2ent['mobile'])) {
+						$remote_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					} elseif (!empty($ipsec_client['pool_address'])) {
+						$remote_subnet = "{$ipsec_client['pool_address']}/{$ipsec_client['pool_netbits']}";
+					}
 					if (empty($remote_subnet)) {
 						continue;
 					}

@@ -4443,16 +4443,12 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 		if ($tunnelif != 'gre') {
 			$gre = link_interface_to_tunnelif($interface, 'gre');
-			if (!empty($gre)) {
-				array_walk($gre, 'interface_gre_configure');
-			}
+			array_walk($gre, 'interface_gre_configure');
 		}
 
 		if ($tunnelif != 'gif') {
 			$gif = link_interface_to_tunnelif($interface, 'gif');
-			if (!empty($gif)) {
-				array_walk($gif, 'interface_gif_configure');
-			}
+			array_walk($gif, 'interface_gif_configure');
 		}
 
 		if (($linkupevent == false) || (substr($realif, 0, 4) == "ovpn") || (substr($realif, 0, 5) == "ipsec")) {
@@ -6240,13 +6236,8 @@ function interface_find_child_cfgmtu($realiface) {
 	$vlans = link_interface_to_vlans($realiface);
 	$qinqs = link_interface_to_qinqs($realiface);
 	$bridge = link_interface_to_bridge($realiface);
-	if (!empty($interface)) {
-		$gifs = link_interface_to_tunnelif($interface, 'gif');
-		$gres = link_interface_to_tunnelif($interface, 'gre');
-	} else {
-		$gifs = array();
-		$gres = array();
-	}
+	$gifs = link_interface_to_tunnelif($interface, 'gif');
+	$gres = link_interface_to_tunnelif($interface, 'gre');
 
 	$mtu = 0;
 	if (is_array($vlans)) {
@@ -6275,29 +6266,25 @@ function interface_find_child_cfgmtu($realiface) {
 			}
 		}
 	}
-	if (is_array($gifs)) {
-		foreach ($gifs as $gif) {
-			$ifass = convert_real_interface_to_friendly_interface_name($gif['gifif']);
-			if (empty($ifass)) {
-				continue;
-			}
-			if (!empty($config['interfaces'][$ifass]['mtu'])) {
-				if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
-					$mtu = intval($config['interfaces'][$ifass]['mtu']);
-				}
+	foreach ($gifs as $gif) {
+		$ifass = convert_real_interface_to_friendly_interface_name($gif['gifif']);
+		if (empty($ifass)) {
+			continue;
+		}
+		if (!empty($config['interfaces'][$ifass]['mtu'])) {
+			if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
+				$mtu = intval($config['interfaces'][$ifass]['mtu']);
 			}
 		}
 	}
-	if (is_array($gres)) {
-		foreach ($gres as $gre) {
-			$ifass = convert_real_interface_to_friendly_interface_name($gre['greif']);
-			if (empty($ifass)) {
-				continue;
-			}
-			if (!empty($config['interfaces'][$ifass]['mtu'])) {
-				if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
-					$mtu = intval($config['interfaces'][$ifass]['mtu']);
-				}
+	foreach ($gres as $gre) {
+		$ifass = convert_real_interface_to_friendly_interface_name($gre['greif']);
+		if (empty($ifass)) {
+			continue;
+		}
+		if (!empty($config['interfaces'][$ifass]['mtu'])) {
+			if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
+				$mtu = intval($config['interfaces'][$ifass]['mtu']);
 			}
 		}
 	}
@@ -6444,11 +6431,15 @@ function link_interface_to_group($int) {
 function link_interface_to_tunnelif($interface, $type) {
 	global $config;
 
-	if (!in_array($type, array('gre', 'gif'))) {
-		return;
+	$result = array();
+
+	if (empty($interface)) {
+		return $result;
 	}
 
-	$result = array();
+	if (!in_array($type, array('gre', 'gif'))) {
+		return $result;
+	}
 
 	if (is_array($config["{$type}s"][$type])) {
 		foreach ($config["{$type}s"][$type] as $tunnel) {

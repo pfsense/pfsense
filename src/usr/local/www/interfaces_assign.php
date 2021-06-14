@@ -365,9 +365,9 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			$input_errors[] = gettext("The interface is part of a group. Please remove it from the group to continue");
 		} else if (link_interface_to_bridge($id)) {
 			$input_errors[] = gettext("The interface is part of a bridge. Please remove it from the bridge to continue");
-		} else if (link_interface_to_tunnelif($id, 'gre')) {
+		} else if (!empty(link_interface_to_tunnelif($id, 'gre'))) {
 			$input_errors[] = gettext("The interface is part of a gre tunnel. Please delete the tunnel to continue");
-		} else if (link_interface_to_tunnelif($id, 'gif')) {
+		} else if (!empty(link_interface_to_tunnelif($id, 'gif'))) {
 			$input_errors[] = gettext("The interface is part of a gif tunnel. Please delete the tunnel to continue");
 		} else if (interface_has_queue($id)) {
 			$input_errors[] = gettext("The interface has a traffic shaper queue configured.\nPlease remove all queues on the interface to continue.");

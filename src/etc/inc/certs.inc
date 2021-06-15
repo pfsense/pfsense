@@ -2201,7 +2201,9 @@ function cert_print_infoblock($cert) {
 	/* Distinguished name (DN) */
 	if (!empty($cert_details['name'])) {
 		$certextinfo .= '<b>' . gettext("DN: ") . '</b> ';
-		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($cert_details['name'], true));
+		/* UTF8 DN support, see https://redmine.pfsense.org/issues/12041 */
+		$certdnstring = preg_replace_callback('/\\\\x([0-9A-F]{2})/', function ($a) { return pack('H*', $a[1]); }, $cert_details['name']);
+		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($certdnstring, true));
 		$certextinfo .= '<br/>';
 	}
 

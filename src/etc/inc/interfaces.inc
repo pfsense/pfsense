@@ -1183,6 +1183,12 @@ function interface_gre_configure(&$gre, $grekey = "", $flush = true) {
 	$realifip = get_interface_ip($gre['if']);
 	$realifip6 = get_interface_ipv6($gre['if']);
 
+	/* do not run ifconfig without correct $realifip */
+	if ((!$realifip && is_ipaddrv4($gre['remote-addr'])) || 
+	    (!$realifip6 && is_ipaddrv6($gre['remote-addr']))) {
+		return -1;
+	}
+
 	/* make sure the parent interface is up */
 	interfaces_bring_up($realif);
 
@@ -1332,6 +1338,13 @@ function interface_gif_configure(&$gif, $gifkey = "", $flush = true) {
 		}
 		$realifgw = get_interface_gateway_v6($gif['if']);
 	}
+
+	/* do not run ifconfig without correct $realifip */
+	if ((!is_ipaddrv4($realifip) && is_ipaddrv4($gif['remote-addr'])) || 
+	    (!is_ipaddrv6($realifip) && is_ipaddrv6($gif['remote-addr']))) {
+		return -1;
+	}
+
 	/* make sure the parent interface is up */
 	$parentif = get_real_interface($gif['if']);
 	if ($parentif) {
@@ -4224,9 +4237,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* Need to check that the interface exists or not in the case where its coming back from disabled state see #3270 */
-	if (!platform_booting() && (in_array(substr($realif, 0, 3), array("gre", "gif", "ips")) || !does_interface_exist($interface_to_check))) {
+	if ((!platform_booting() && !does_interface_exist($interface_to_check)) ||
+	    (in_array(substr($realif, 0, 3), array("gre", "gif", "ips")) && !does_interface_exist($realif))) {
 		interface_virtual_create($interface_to_check);
 	}
+
 
 	/* Disable Accepting router advertisements unless specifically requested */
 	if ($g['debug']) {
@@ -6430,7 +6445,7 @@ function link_interface_to_group($int) {
 	return $result;
 }
 
-function link_interface_to_tunnelif($interface, $type) {
+function link_interface_to_tunnelif($interface, $type, $remote = 'any') {
 	global $config;
 
 	$result = array();
@@ -6445,7 +6460,9 @@ function link_interface_to_tunnelif($interface, $type) {
 
 	if (is_array($config["{$type}s"][$type])) {
 		foreach ($config["{$type}s"][$type] as $tunnel) {
-			if ($tunnel['if'] == $interface) {
+			if (($tunnel['if'] == $interface) && (($remote == 'any') ||
+			    (is_ipaddr($tunnel['remote-addr']) && ($remote == 'inet')) ||
+			    (is_ipaddrv6($tunnel['remote-addr']) && ($remote == 'inet6')))) { 
 				$result[] = $tunnel;
 			}
 		}

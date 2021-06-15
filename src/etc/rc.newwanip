@@ -122,10 +122,10 @@ if (is_ipaddr($curwanip)) {
 
 link_interface_to_vips($interface, "update");
 
-$gre = link_interface_to_tunnelif($interface, 'gre');
+$gre = link_interface_to_tunnelif($interface, 'gre', 'inet');
 array_walk($gre, 'interface_gre_configure');
 
-$gif = link_interface_to_tunnelif($interface, 'gif');
+$gif = link_interface_to_tunnelif($interface, 'gif', 'inet');
 array_walk($gif, 'interface_gif_configure');
 
 $grouptmp = link_interface_to_group($interface);

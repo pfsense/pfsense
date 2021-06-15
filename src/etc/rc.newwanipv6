@@ -150,34 +150,32 @@ if (platform_booting()) {
 /* signal filter reload */
 filter_configure();
 
+$srvupdate = true;
 if (empty($oldipv6) || is_ipaddrv6($oldipv6)) {
 	if ($curwanipv6 == $oldipv6) {
 		// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
-		if (in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
-			/* reconfigure IPsec tunnels */
-			ipsec_force_reload($interface);
-
-			/* start OpenVPN server & clients */
-			if (substr($interface_real, 0, 4) != "ovpn") {
-				openvpn_resync_all($interface);
-			}
+		if (!in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
+			return;
+		} else {
+			$srvupdate = false;
 		}
-		return;
-	} else if (does_interface_exist($interface_real) && !empty($oldipv6)) {
+	} elseif (does_interface_exist($interface_real) && !empty($oldipv6)) {
 		mwexec("/sbin/ifconfig {$interface_real} inet6 {$oldipv6} delete");
 	}
 
 	file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);
 }
 
-/* reload unbound */
-services_unbound_configure();
+if ($srvupdate) {
+	/* reload unbound */
+	services_unbound_configure();
 
-/* perform RFC 2136 DNS update */
-services_dnsupdate_process($interface);
+	/* perform RFC 2136 DNS update */
+	services_dnsupdate_process($interface);
 
-/* signal dyndns update */
-services_dyndns_configure($interface);
+	/* signal dyndns update */
+	services_dyndns_configure($interface);
+}
 
 /* reconfigure IPsec tunnels */
 ipsec_force_reload($interface);
@@ -187,9 +185,33 @@ if (substr($interface_real, 0, 4) != "ovpn") {
 	openvpn_resync_all($interface);
 }
 
-/* reload graphing functions */
-enable_rrd_graphing();
+/* reconfigure GRE/GIF tunnels */
+$gre = link_interface_to_tunnelif($interface, 'gre', 'inet6');
+array_walk($gre, 'interface_gre_configure');
 
-restart_packages();
+$gif = link_interface_to_tunnelif($interface, 'gif', 'inet6');
+array_walk($gif, 'interface_gif_configure');
+
+foreach ($gif as $giftun) {
+	$confif = convert_real_interface_to_friendly_interface_name($giftun['gifif']);
+	if (!empty($confif)) {
+		interface_configure($confif);
+		system_routing_configure($confif);
+	}
+}
+foreach ($gre as $gretun) {
+	$confif = convert_real_interface_to_friendly_interface_name($gretun['greif']);
+	if (!empty($confif)) {
+		interface_configure($confif);
+		system_routing_configure($confif);
+	}
+}
+
+if ($srvupdate) {
+	/* reload graphing functions */
+	enable_rrd_graphing();
+
+	restart_packages();
+}
 
 ?>

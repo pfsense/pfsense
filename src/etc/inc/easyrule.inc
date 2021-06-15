@@ -227,12 +227,18 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 	return true;
 }
 
-function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
+function easyrule_block_host_add($host, $int = 'wan') {
 	global $retval;
 	/* Bail if the supplied host is not a valid IP address */
 	$host = trim($host, "[]");
 	if (!is_ipaddr($host) && !is_subnet($host)) {
 		return false;
+	}
+
+	if (is_v6($host)) {
+		$ipproto = 'inet6';
+	} else {
+		$ipproto = 'inet';
 	}
 
 	/* Flag whether or not we need to reload the filter */
@@ -341,7 +347,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	}
 }
 
-function easyrule_parse_block($int, $src, $ipproto = "inet") {
+function easyrule_parse_block($int, $src) {
 	if (!empty($src) && !empty($int)) {
 		$src = trim($src, "[]");
 		if (!is_ipaddr($src) && !is_subnet($src)) {
@@ -351,7 +357,7 @@ function easyrule_parse_block($int, $src, $ipproto = "inet") {
 		if ($int === false) {
 			return gettext("Invalid interface for block rule:") . ' ' . htmlspecialchars($int);
 		}
-		if (easyrule_block_host_add($src, $int, $ipproto)) {
+		if (easyrule_block_host_add($src, $int)) {
 			return gettext("Host added successfully");
 		} else {
 			return gettext("Failed to create block rule, alias, or add host.");
@@ -362,7 +368,7 @@ function easyrule_parse_block($int, $src, $ipproto = "inet") {
 	return gettext("Unknown block error.");
 }
 
-function easyrule_parse_unblock($int, $host, $ipproto = "inet") {
+function easyrule_parse_unblock($int, $host) {
 	global $blockaliasname, $config;
 
 	if (!empty($host) && !empty($int)) {
@@ -462,6 +468,14 @@ function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = 
 		}
 		if (!is_ipaddr($dst) && !is_subnet($dst) && !is_ipaddroralias($dst) && !is_specialnet($dst)) {
 			return gettext("Tried to pass invalid destination IP:") . ' ' . htmlspecialchars($dst);
+		}
+		if ((is_v6($src) && is_v4($dst)) || (is_v4($src) && is_v6($dst))) {
+			return gettext("The source IP address family has to match the family of the destination IP address.");
+		}
+		if (is_v6($src)) {
+			$ipproto = 'inet6';
+		} else {
+			$ipproto = 'inet';
 		}
 		if (in_array($proto, $protocols_with_ports)) {
 			if (empty($dstport)) {

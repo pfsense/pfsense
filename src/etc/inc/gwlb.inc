@@ -194,7 +194,9 @@ function setup_gateways_monitor() {
 		stop_dpinger();
 		return;
 	}
-
+	if (platform_booting()) {
+		echo "Setting up gateway monitors...";
+	}
 	$monitor_ips = array();
 	foreach ($gateways_arr as $gwname => $gateway) {
 		/* Do not monitor if such was requested */
@@ -313,6 +315,9 @@ function setup_gateways_monitor() {
 		if (start_dpinger($gateway) != 0) {
 			log_error(sprintf(gettext("Error starting gateway monitor for %s"), $gateway['name']));
 		}
+	}
+	if (platform_booting()) {
+		echo "done.\n";
 	}
 
 	return;

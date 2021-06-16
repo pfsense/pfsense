@@ -1,6 +1,6 @@
 <?php
 /*
- * xmlrpc_client.php
+ * xmlrpc_client.inc
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2016 Electric Sheep Fencing

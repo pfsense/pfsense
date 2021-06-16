@@ -448,7 +448,7 @@ if ($_POST['save'] == gettext("Save")) {
 				}
 				if (count($altnames)) {
 					foreach ($altnames as $altname) {
-						$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
+						$altnames_tmp[] = "{$altname['type']}:" . $altname['value'];
 					}
 					$altname_str = implode(",", $altnames_tmp);
 				}
@@ -498,21 +498,21 @@ if ($_POST['save'] == gettext("Save")) {
 				break;
 			case 'internal':
 				/* Create an internal certificate */
-				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+				$dn = array('commonName' => $pconfig['dn_commonname']);
 				if (!empty($pconfig['dn_country'])) {
 					$dn['countryName'] = $pconfig['dn_country'];
 				}
 				if (!empty($pconfig['dn_state'])) {
-					$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['dn_state']);
+					$dn['stateOrProvinceName'] = $pconfig['dn_state'];
 				}
 				if (!empty($pconfig['dn_city'])) {
-					$dn['localityName'] = cert_escape_x509_chars($pconfig['dn_city']);
+					$dn['localityName'] = $pconfig['dn_city'];
 				}
 				if (!empty($pconfig['dn_organization'])) {
-					$dn['organizationName'] = cert_escape_x509_chars($pconfig['dn_organization']);
+					$dn['organizationName'] = $pconfig['dn_organization'];
 				}
 				if (!empty($pconfig['dn_organizationalunit'])) {
-					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
+					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
 				}
 				$altnames_tmp = array();
 				$cn_altname = cert_add_altname_type($pconfig['dn_commonname']);
@@ -523,7 +523,7 @@ if ($_POST['save'] == gettext("Save")) {
 					foreach ($altnames as $altname) {
 						// The CN is added as a SAN automatically, do not add it again.
 						if ($altname['value'] != $pconfig['dn_commonname']) {
-							$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
+							$altnames_tmp[] = "{$altname['type']}:" . $altname['value'];
 						}
 					}
 				}
@@ -542,21 +542,21 @@ if ($_POST['save'] == gettext("Save")) {
 				break;
 			case 'external':
 				/* Create a certificate signing request */
-				$dn = array('commonName' => cert_escape_x509_chars($pconfig['csr_dn_commonname']));
+				$dn = array('commonName' => $pconfig['csr_dn_commonname']);
 				if (!empty($pconfig['csr_dn_country'])) {
 					$dn['countryName'] = $pconfig['csr_dn_country'];
 				}
 				if (!empty($pconfig['csr_dn_state'])) {
-					$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['csr_dn_state']);
+					$dn['stateOrProvinceName'] = $pconfig['csr_dn_state'];
 				}
 				if (!empty($pconfig['csr_dn_city'])) {
-					$dn['localityName'] = cert_escape_x509_chars($pconfig['csr_dn_city']);
+					$dn['localityName'] = $pconfig['csr_dn_city'];
 				}
 				if (!empty($pconfig['csr_dn_organization'])) {
-					$dn['organizationName'] = cert_escape_x509_chars($pconfig['csr_dn_organization']);
+					$dn['organizationName'] = $pconfig['csr_dn_organization'];
 				}
 				if (!empty($pconfig['csr_dn_organizationalunit'])) {
-					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['csr_dn_organizationalunit']);
+					$dn['organizationalUnitName'] = $pconfig['csr_dn_organizationalunit'];
 				}
 				$altnames_tmp = array();
 				$cn_altname = cert_add_altname_type($pconfig['csr_dn_commonname']);
@@ -567,7 +567,7 @@ if ($_POST['save'] == gettext("Save")) {
 					foreach ($altnames as $altname) {
 						// The CN is added as a SAN automatically, do not add it again.
 						if ($altname['value'] != $pconfig['csr_dn_commonname']) {
-							$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
+							$altnames_tmp[] = "{$altname['type']}:" . $altname['value'];
 						}
 					}
 				}

@@ -526,18 +526,18 @@ function step12_submitphpaction() {
 		$ca['refid'] = uniqid();
 		$ca['descr'] = $pconfig['step6']['certca'];
 
-		$dn = array('commonName' => cert_escape_x509_chars($pconfig['step6']['certca']));
+		$dn = array('commonName' => $pconfig['step6']['certca']);
 		if (!empty($pconfig['step6']['country'])) {
 			$dn['countryName'] = $pconfig['step6']['country'];
 		}
 		if (!empty($pconfig['step6']['state'])) {
-			$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['step6']['state']);
+			$dn['stateOrProvinceName'] = $pconfig['step6']['state'];
 		}
 		if (!empty($pconfig['step6']['city'])) {
-			$dn['localityName'] = cert_escape_x509_chars($pconfig['step6']['city']);
+			$dn['localityName'] = $pconfig['step6']['city');
 		}
 		if (!empty($pconfig['step6']['organization'])) {
-			$dn['organizationName'] = cert_escape_x509_chars($pconfig['step6']['organization']);
+			$dn['organizationName'] = $pconfig['step6']['organization'];
 		}
 
 		ca_create($ca, $pconfig['step6']['keylength'], $pconfig['step6']['lifetime'], $dn, "sha256");
@@ -561,20 +561,20 @@ function step12_submitphpaction() {
 		$cert['descr'] = $pconfig['step9']['certname'];
 
 		$dn = array(
-			'commonName' => cert_escape_x509_chars($pconfig['step9']['certname']),
+			'commonName' => $pconfig['step9']['certname'],
 			'subjectAltName' => cert_add_altname_type($pconfig['step9']['certname']),
 			);
 		if (!empty($pconfig['step9']['country'])) {
 			$dn['countryName'] = $pconfig['step9']['country'];
 		}
 		if (!empty($pconfig['step9']['state'])) {
-			$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['step9']['state']);
+			$dn['stateOrProvinceName'] = $pconfig['step9']['state'];
 		}
 		if (!empty($pconfig['step9']['city'])) {
-			$dn['localityName'] = cert_escape_x509_chars($pconfig['step9']['city']);
+			$dn['localityName'] = $pconfig['step9']['city'];
 		}
 		if (!empty($pconfig['step9']['organization'])) {
-			$dn['organizationName'] = cert_escape_x509_chars($pconfig['step9']['organization']);
+			$dn['organizationName'] = $pconfig['step9']['organization'];
 		}
 
 		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn, 'server', "sha256");

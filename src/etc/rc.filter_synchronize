@@ -76,14 +76,13 @@ function backup_vip_config_section() {
 	return $temp;
 }
 
-function carp_check_version() {
+function carp_check_version($rpc_client) {
 	global $config, $g;
 
 	if (file_exists("{$g['varrun_path']}/booting") || platform_booting()) {
 		return;
 	}
 
-	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('host_firmware_version');
 
 	log_error(sprintf(gettext("XMLRPC versioncheck: ").$resp['config_version'] ." -- ". $config['version']));
@@ -101,7 +100,7 @@ function carp_check_version() {
 	return false;
 }
 
-function carp_sync_xml($sections) {
+function carp_sync_xml($rpc_client, $sections) {
 	global $config, $g;
 
 	if (file_exists("{$g['varrun_path']}/booting") || platform_booting()) {
@@ -201,7 +200,6 @@ function carp_sync_xml($sections) {
 		$xml['hasync']['adminsync'] = $config_copy['hasync']['adminsync'];
 	}
 
-	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('restore_config_section', $xml, 900);
 	if ($resp != null) {
 		$url = $rpc_client->getUrl();
@@ -352,12 +350,14 @@ if (is_array($config['hasync'])) {
 		return;
 	}
 
-	if (!carp_check_version()) {
+	$rpc_client = new pfsense_xmlrpc_client();
+
+	if (!carp_check_version($rpc_client)) {
 		return;
 	}
 
 	update_filter_reload_status("Signaling CARP reload signal...");
-	if (!carp_sync_xml($sections)) {
+	if (!carp_sync_xml($rpc_client, $sections)) {
 		return;
 	}
 }

@@ -1,6 +1,5 @@
 devel/aws-sdk-php
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
-net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 net/realtek-re-kmod
 sysutils/%%PRODUCT_NAME%%-azure
 sysutils/%%PRODUCT_NAME%%-pkg-LCDproc

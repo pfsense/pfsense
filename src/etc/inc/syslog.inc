@@ -367,12 +367,6 @@ EOD;
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
-		if (isset($syslogcfg['zmqserver'])) {
-				$syslogconf .= <<<EOD
-*.*								^{$syslogcfg['zmqserver']}
-
-EOD;
-		}
 		/* write syslog config to pfSense.conf */
 		if (!@file_put_contents("{$g['varetc_path']}/syslog.d/pfSense.conf", $syslogconf)) {
 			printf(gettext("Error: cannot open syslog config file in system_syslogd_start().%s"), "\n");

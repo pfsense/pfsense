@@ -98,7 +98,6 @@ $helppages = array(
 	'interfaces_wireless.php' => 'https://docs.netgate.com/pfsense/en/latest/wireless/index.html',
 	'miniupnpd.xml' => 'https://docs.netgate.com/pfsense/en/latest/services/upnp.html',
 	'openvpn_wizard.xml' => 'https://docs.netgate.com/pfsense/en/latest/recipes/openvpn-ra.html',
-	'openvpn-client-export.xml' => 'https://docs.netgate.com/pfsense/en/latest/packages/openvpn-client-export.html',
 	'pkg_mgr_installed.php' => 'https://docs.netgate.com/pfsense/en/latest/packages/manager.html',
 	'pkg_mgr_install.php' => 'https://docs.netgate.com/pfsense/en/latest/packages/manager.html',
 	'pkg_mgr.php' => 'https://docs.netgate.com/pfsense/en/latest/packages/manager.html',
@@ -232,8 +231,8 @@ $helppages = array(
 	'vpn_l2tp_users.php' => 'https://docs.netgate.com/pfsense/en/latest/vpn/l2tp/configuration.html',
 	'vpn_openvpn_client.php' => 'https://docs.netgate.com/pfsense/en/latest/vpn/openvpn/index.html',
 	'vpn_openvpn_csc.php' => 'https://docs.netgate.com/pfsense/en/latest/vpn/openvpn/index.html',
-	'vpn_openvpn_export.php' => 'https://docs.netgate.com/pfsense/en/latest/vpn/openvpn/index.html',
-	'vpn_openvpn_export_shared.php' => 'https://docs.netgate.com/pfsense/en/latest/vpn/openvpn/index.html',
+	'vpn_openvpn_export.php' => 'https://docs.netgate.com/pfsense/en/latest/packages/openvpn-client-export.html',
+	'vpn_openvpn_export_shared.php' => 'https://docs.netgate.com/pfsense/en/latest/packages/openvpn-client-export.html',
 	'vpn_openvpn_server.php' => 'https://docs.netgate.com/pfsense/en/latest/vpn/openvpn/index.html',
 
 	/* Packages from here on down. Not checked as strictly. Pages may not yet exist. */

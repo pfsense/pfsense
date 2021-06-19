@@ -425,11 +425,11 @@ function interfaces_vlan_configure($parentif = "") {
 	global $config, $g;
 	$dhcp6c_list = array();
 
-	if (platform_booting()) {
-		echo gettext("Configuring VLAN interfaces...");
-	}
 	if (is_array($config['vlans']['vlan']) &&
 	    count($config['vlans']['vlan'])) {
+		if (platform_booting()) {
+			echo gettext("Configuring VLAN interfaces...");
+		}
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if (empty($vlan['vlanif'])) {
 				$vlan['vlanif'] = vlan_interface($vlan);
@@ -452,13 +452,11 @@ function interfaces_vlan_configure($parentif = "") {
 		foreach ($dhcp6c_list as $if => $vlan) {
 			interface_vlan_configure($vlan, false);
 		}
-	}
-
-	/* Invalidate cache */
-	get_interface_arr(true);
-
-	if (platform_booting()) {
-		echo gettext("done.") . "\n";
+		/* Invalidate cache */
+		get_interface_arr(true);
+		if (platform_booting()) {
+			echo gettext("done.") . "\n";
+		}
 	}
 }
 
@@ -655,24 +653,25 @@ function interface_qinq_configure(&$qinq, $fd = NULL, $flush = true) {
 
 function interfaces_qinq_configure($ovpn=false) {
 	global $config, $g;
-	if (platform_booting() && !$ovpn) {
-		echo gettext("Configuring QinQ interfaces...");
-	}
+
 	if (is_array($config['qinqs']['qinqentry']) &&
 	    count($config['qinqs']['qinqentry'])) {
+		if (platform_booting() && $ovpn) {
+			echo gettext("Configuring OpenVPN QinQ interfaces...");
+		} elseif (platform_booting()) {
+			echo gettext("Configuring QinQ interfaces...");
+		}
 		foreach ($config['qinqs']['qinqentry'] as $qinq) {
 			if (($ovpn && strstr($qinq['if'], "ovpn")) ||
 			    (!$ovpn && !strstr($qinq['if'], "ovpn"))) {
 				interface_qinq_configure($qinq, NULL, false);
 			}
 		}
-	}
-
-	/* Invalidate cache */
-	get_interface_arr(true);
-
-	if (platform_booting() && !$ovpn) {
-		echo gettext("done.") . "\n";
+		/* Invalidate cache */
+		get_interface_arr(true);
+		if (platform_booting()) {
+			echo gettext("done.") . "\n";
+		}
 	}
 }
 
@@ -716,10 +715,6 @@ function interface_qinq2_configure(&$qinq, &$cmdbuf, $macaddr, $flush = true) {
 function interfaces_create_wireless_clones() {
 	global $config, $g;
 
-	if (platform_booting()) {
-		echo gettext("Creating wireless clone interfaces...");
-	}
-
 	$iflist = get_configured_interface_list();
 
 	foreach ($iflist as $if) {
@@ -734,6 +729,9 @@ function interfaces_create_wireless_clones() {
 	if (isset($config['wireless']['clone']) &&
 	    is_array($config['wireless']['clone']) &&
 	    count($config['wireless']['clone'])) {
+		if (platform_booting()) {
+			echo gettext("Creating wireless clone interfaces...");
+		}
 		foreach ($config['wireless']['clone'] as $clone) {
 			if (empty($clone['cloneif'])) {
 				continue;
@@ -744,11 +742,10 @@ function interfaces_create_wireless_clones() {
 			/* XXX: Maybe we should report any errors?! */
 			interface_wireless_clone($clone['cloneif'], $clone);
 		}
+		if (platform_booting()) {
+			echo gettext("done.") . "\n";
+		}
 	}
-	if (platform_booting()) {
-		echo gettext("done.") . "\n";
-	}
-
 }
 
 function interfaces_bridge_configure($checkmember = 0, $realif = "") {
@@ -1065,12 +1062,12 @@ function interface_bridge_add_member($bridgeif, $interface, $flagsapplied = fals
 
 function interfaces_lagg_configure($realif = "") {
 	global $config, $g;
-	if (platform_booting()) {
-		echo gettext("Configuring LAGG interfaces...");
-	}
 	$i = 0;
 	if (is_array($config['laggs']['lagg']) &&
 	    count($config['laggs']['lagg'])) {
+		if (platform_booting()) {
+			echo gettext("Configuring LAGG interfaces...");
+		}
 		foreach ($config['laggs']['lagg'] as $lagg) {
 			if (empty($lagg['laggif'])) {
 				$lagg['laggif'] = "lagg{$i}";
@@ -1082,12 +1079,11 @@ function interfaces_lagg_configure($realif = "") {
 			interface_lagg_configure($lagg, false);
 			$i++;
 		}
-
 		/* Invalidate cache */
 		get_interface_arr(true);
-	}
-	if (platform_booting()) {
-		echo gettext("done.") . "\n";
+		if (platform_booting()) {
+			echo gettext("done.") . "\n";
+		}
 	}
 }
 

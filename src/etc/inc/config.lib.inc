@@ -1102,7 +1102,7 @@ function make_config_revision_entry($desc = null, $override_user = null) {
 }
 
 function pfSense_clear_globals() {
-	global $config, $FilterIfList, $GatewaysList, $filterdns, $aliases, $aliastable;
+	global $config, $g, $FilterIfList, $GatewaysList, $filterdns, $aliases, $aliastable;
 
 	$error = error_get_last();
 

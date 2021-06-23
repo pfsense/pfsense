@@ -194,7 +194,7 @@ if ($_POST['save'] || $_POST['force']) {
 		} else {
 			$dyndns['enable'] = true;
 		}
-		if (preg_match('/.+-v6/', $_POST['type']) && is_stf_interface($_POST['interface'])) { 
+		if (preg_match('/.+-v6/', $_POST['type']) && is_stf_interface($_POST['interface'])) {
 			$dyndns['interface'] = $_POST['interface'] . '_stf';
 		} else {
 			$dyndns['interface'] = $_POST['interface'];
@@ -205,7 +205,7 @@ if ($_POST['save'] || $_POST['force']) {
 		// Trim hard-to-type but sometimes returned characters
 		$dyndns['resultmatch'] = trim($_POST['resultmatch'], "\t\n\r");
 		($dyndns['type'] == "custom") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
-		if (($dyndns['type'] == "custom-v6") && is_stf_interface($_POST['requestif'])) { 
+		if (($dyndns['type'] == "custom-v6") && is_stf_interface($_POST['requestif'])) {
 			$dyndns['requestif'] = $_POST['requestif'] . '_stf';
 		} else {
 			$dyndns['requestif'] = $_POST['requestif'];
@@ -521,47 +521,25 @@ events.push(function() {
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
 				break;
-			case "dnsimple":
-				hideCheckbox('curl_ssl_verifypeer', false);
-				hideInput('zoneid', false);
-				hideInput('ttl', false);
-				break;
-			case "route53-v6":
-			case "route53":
-				hideCheckbox('curl_ssl_verifypeer', false);
+			// providers in an alphabetical order (based on the first provider in a group of cases)
+			case "azure":
+			case "azurev6":
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
 				break;
-			case "namecheap":
-			case "gratisdns":
-			case "hover":
-				hideGroupInput('domainname', false);
-				break;
-			case "cloudns":
-				hideGroupInput('domainname', false);
-				hideInput('ttl', false);
-				break;
-			case 'dreamhost':
-			case 'dreamhost-v6':
-				hideInput('mx', true);
-				hideCheckbox('wildcard', true);
-				break;
-			case "cloudflare-v6":
 			case "cloudflare":
+			case "cloudflare-v6":
 				hideGroupInput('domainname', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
 				hideCheckbox('proxied', false);
 				hideInput('ttl', false);
 				break;
-			case "domeneshop":
-		        case "domeneshop-v6":
-			case "nicru":
-		        case "nicru-v6":
-				hideInput('mx', true);
-				hideCheckbox('wildcard', true);
+			case "cloudns":
+				hideGroupInput('domainname', false);
+				hideInput('ttl', false);
 				break;
 			case "digitalocean":
 			case "digitalocean-v6":
@@ -575,34 +553,49 @@ events.push(function() {
 				hideCheckbox('wildcard', true);
 				hideInput('ttl', false);
 				break;
+			case "dnsimple":
+				hideCheckbox('curl_ssl_verifypeer', false);
+				hideInput('zoneid', false);
+				hideInput('ttl', false);
+				break;
+			case "domeneshop":
+			case "domeneshop-v6":
+			case "dreamhost":
+			case "dreamhost-v6":
+			case "nicru":
+			case "nicru-v6":
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				break;
 			case "godaddy":
 			case "godaddy-v6":
+			case "linode":
+			case "linode-v6":
+			case "onecom":
+			case "onecom-v6":
 				hideGroupInput('domainname', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
 				hideInput('ttl', false);
 				break;
-			case "azurev6":
-			case "azure":
+			case "gratisdns":
+			case "hover":
+			case "namecheap":
+				hideGroupInput('domainname', false);
+				break;
+			case "mythicbeasts":
+			case "mythicbeasts-v6":
+				hideGroupInput('domainname', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
+				break;
+			case "route53":
+			case "route53-v6":
+				hideCheckbox('curl_ssl_verifypeer', false);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
-				break;
-			case "linode-v6":
-			case "linode":
-			case "onecom-v6":
-			case "onecom":
-				hideGroupInput('domainname', false);
-				hideInput('mx', true);
-				hideCheckbox('wildcard', true);
-				hideInput('ttl', false);
-				break;
-			case "mythicbeasts-v6":
-			case "mythicbeasts":
-				hideGroupInput('domainname', false);
-				hideInput('mx', true);
-				hideCheckbox('wildcard', true);
 				break;
 			default:
 		}

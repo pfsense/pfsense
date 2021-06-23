@@ -2848,7 +2848,10 @@
 			}
 
 			// Convert seconds = days * hr/day * min/hr * sec/min
-			$maxCacheAgeSecs = $this->_dnsMaxCacheAgeDays * 24 * 60 * 60;
+			// We subtract 1 hour, so that when this code is executed few seconds
+			// before _dnsMaxCacheAgeDays has passed, then we still consider that
+			// a required number of days has passed.
+			$maxCacheAgeSecs = $this->_dnsMaxCacheAgeDays * 24 * 60 * 60 - 60 * 60;
 
 			$needs_updating = FALSE;
 			/* lets determine if the item needs updating */

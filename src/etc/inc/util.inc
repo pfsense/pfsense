@@ -3427,9 +3427,8 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 		$index++;
 		if ((($proto == 'inet') && (is_ipaddrv4(trim($rule[$index])) || (trim($rule[$index]) == "{clientip}"))) ||
 		    (($proto == 'inet6') && (is_ipaddrv6(trim($rule[$index])) || (trim($rule[$index]) == "{clientipv6}")))) {
-			if($GLOBALS['attributes']['framed_ip']) {
-				$framed_ip = $GLOBALS['attributes']['framed_ip'];
-				$tmprule .= "from {$framed_ip} ";
+			if ($GLOBALS['attributes']['framed_ip']) {
+				$tmprule .= "from {$GLOBALS['attributes']['framed_ip']} ";
 			} else {
 				$tmprule .= "from {$rule[$index]} ";
 			}

@@ -6470,7 +6470,7 @@ function link_interface_to_tunnelif($interface, $type, $remote = 'any') {
 	if (is_array($config["{$type}s"][$type])) {
 		foreach ($config["{$type}s"][$type] as $tunnel) {
 			if (($tunnel['if'] == $interface) && (($remote == 'any') ||
-			    (is_ipaddr($tunnel['remote-addr']) && ($remote == 'inet')) ||
+			    (is_ipaddrv4($tunnel['remote-addr']) && ($remote == 'inet')) ||
 			    (is_ipaddrv6($tunnel['remote-addr']) && ($remote == 'inet6')))) { 
 				$result[] = $tunnel;
 			}

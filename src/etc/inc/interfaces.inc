@@ -6476,6 +6476,28 @@ function link_interface_to_tunnelif($interface, $type, $remote = 'any') {
 	return $result;
 }
 
+function link_interface_to_ppp_tunnelif($interface) {
+	global $config;
+
+	$result = array();
+
+	if (empty($interface)) {
+		return $result;
+	}
+
+	init_config_arr(array('ppps', 'ppp'));
+	if (!empty($config['ppps']['ppp'])) {
+		$realif = get_real_interface($interface);
+		foreach ($config['ppps']['ppp'] as $ppp) {
+			if (($ppp['ports'] == $realif) && in_array($ppp['type'], array('l2tp', 'pptp'))) { 
+				$result[] = $ppp;
+			}
+		}
+	}
+
+	return $result;
+}
+
 /*
  * find_interface_ip($interface): return the interface ip (first found)
  */

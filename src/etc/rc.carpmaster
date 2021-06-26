@@ -26,6 +26,7 @@ require_once("functions.inc");
 require_once("config.inc");
 require_once("notices.inc");
 require_once("openvpn.inc");
+require_once("ipsec.inc");
 require_once("interfaces.inc");
 require_once("captiveportal.inc");
 
@@ -100,6 +101,15 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'
 				log_error("Starting OpenVPN server instance on {$friendly_descr} because of transition to CARP master.");
 				openvpn_restart('server', $settings);
 			}
+		}
+	}
+}
+if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1'])) {
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if ((substr($ph1ent['interface'], 0, 4) == '_vip') && (in_array($ph1ent['interface'], $vips))) {
+			log_error("Reconfiguring IPsec because of transition to CARP master.");
+			ipsec_configure();
+			break;
 		}
 	}
 }

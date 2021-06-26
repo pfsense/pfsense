@@ -195,7 +195,6 @@ class pfsense_xmlrpc_server {
 		global $config, $cpzone, $cpzoneid, $old_config;
 
 		$old_config = $config;
-		$old_ipsec_enabled = ipsec_enabled();
 
 		if ($this->loop_detected) {
 			log_error("Disallowing CARP sync loop");
@@ -616,10 +615,6 @@ class pfsense_xmlrpc_server {
 			}
 		}
 
-		if ($old_ipsec_enabled !== ipsec_enabled()) {
-			ipsec_configure();
-		}
-
 		local_sync_accounts($u2add, $u2del, $g2add, $g2del);
 		$this->filter_configure(false, $force_filterconfigure);
 		unset($old_config);
@@ -740,6 +735,13 @@ class pfsense_xmlrpc_server {
 			}
 			/* no service restart required */
 			openvpn_resync_csc_all();
+		}
+
+		/* run ipsec_configure() on any IPsec change, see https://redmine.pfsense.org/issues/12075 */
+		if (((is_array($config['ipsec']) || is_array($old_config['ipsec'])) &&
+		    ($config['ipsec'] != $old_config['ipsec'])) ||
+		    $force) {
+			ipsec_configure();
 		}
 
 		/*

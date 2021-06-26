@@ -2091,9 +2091,18 @@ function ipsec_setup_tunnels() {
 
 		$ikeid = $ph1ent['ikeid'];
 
+		$carpbackup = false;
+		if ((substr($ph1ent['interface'], 0, 4) == "_vip") &&
+		    in_array(get_carp_bind_status($ph1ent['interface']), array('BACKUP', 'INIT'))) {
+			$carpbackup = true;
+		}
+
 		/* "trap" adds policies to start a tunnel when interesting
 		 * traffic is observed by the host. */
 		$start_action = "trap";
+		if ($carpbackup) {
+			$start_action = "none";
+		}
 
 		/* Set the IKE version appropriately (empty = IKEv1) */
 		switch ($ph1ent['iketype']) {
@@ -2280,6 +2289,9 @@ function ipsec_setup_tunnels() {
 				$child['policies'] = "no";
 				/* VTI cannot use trap policies, so start automatically instead */
 				$start_action = 'start';
+				if ($carpbackup) {
+					$start_action = "none";
+				}
 				if ($child_params['dpd_action'] == "trap") {
 					$child_params['dpd_action'] = "restart";
 				}
@@ -2331,7 +2343,7 @@ function ipsec_setup_tunnels() {
 
 			/* Set Child SA Start Action based on user preference, except
 			 * for invalid combinations such as 'trap' on VTI */
-			if (!isset($ph2ent['mobile']) &&
+			if (!isset($ph2ent['mobile']) && !$carpbackup &&
 			    !(($ph2ent['mode'] == 'vti') && ($ph1ent['startaction'] == 'trap'))) {
 				$start_action = !empty($ph1ent['startaction']) ? $ph1ent['startaction'] : $start_action;
 			}

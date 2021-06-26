@@ -759,6 +759,21 @@ function get_carp_interface_status($carpid) {
 	return "";
 }
 
+function get_carp_bind_status($interface) {
+	global $config;
+
+	$carpstatus = get_carp_interface_status($interface);
+	if (!empty($carpstatus)) {
+		return $carpstatus;
+	} else {
+		foreach ($config['virtualip']['vip'] as $vip) {
+			if ($interface == "_vip{$vip['uniqid']}") { 
+				return get_carp_interface_status($vip['interface']);
+			}
+		}
+	}
+}
+
 /*
  * Return true if the CARP status of at least one interface of a captive portal zone is in backup mode
  * This function return false if CARP is not enabled on any interface of the captive portal zone

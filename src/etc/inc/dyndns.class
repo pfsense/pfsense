@@ -67,11 +67,11 @@
 	 *    - Namecheap (namecheap.com)
 	 *    - No-IP (no-ip.com)
 	 *    - OpenDNS (opendns.com)
-   *    - SelfHost (selfhost.de)
+	 *    - SelfHost (selfhost.de)
 	 *    - SPDYN (spdyn.de)
 	 *    - SPDYN IPv6 (spdyn.de)
 	 *    - StaticCling (staticcling.org)
-   *    - Strato (www.strato.de)
+	 *    - Strato (www.strato.de)
 	 *    - ZoneEdit (zoneedit.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
@@ -133,9 +133,9 @@
 	 *  OVH DynHOST     - Last Tested: NEVER
 	 *  OpenDNS         - Last Tested: 4 August 2008
 	 *  SelfHost        - Last Tested: 26 December 2011
-   *  SPDYN           - Last Tested: 02 July 2016
+	 *  SPDYN           - Last Tested: 02 July 2016
 	 *  SPDYN IPv6      - Last Tested: 02 July 2016
-   *  StaticCling     - Last Tested: 27 April 2006
+	 *  StaticCling     - Last Tested: 27 April 2006
 	 *  Strato          - Last Tested: 29 May 2021
 	 *  ZoneEdit        - Last Tested: NEVER
 	 * +====================================================+
@@ -427,7 +427,7 @@
 					case 'spdyn':
 					case 'spdyn-v6':
 					case 'staticcling':
-          case 'strato':
+					case 'strato':
 					case 'yandex':
 					case 'yandex-v6':
 					case 'zoneedit':

@@ -423,6 +423,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= filter_setup_logging_interfaces();
 	$rules .= "\n";
 	$rules .= "set skip on pfsync0\n";
+	$rules .= "set keepcounters\n";
 	$rules .= "\n";
 	update_filter_reload_status(gettext("Setting up SCRUB information"));
 	$rules .= filter_generate_scrubing();
@@ -2018,6 +2019,9 @@ EOD;
 function filter_nat_rules_generate() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $aliases;
 
+	init_config_arr(array('ipsec', 'client'));
+	$ipsec_client = $config['ipsec']['client'];
+
 	$natrules = "no nat proto carp\n";
 	$natrules .= "no rdr proto carp\n";
 	$natrules .= "nat-anchor \"natearly/*\"\n";
@@ -2201,7 +2205,11 @@ function filter_nat_rules_generate() {
 						$ph2ent['remoteid'] = array();
 					}
 					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
-					$remote_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					if (!isset($ph2ent['mobile'])) {
+						$remote_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					} elseif (!empty($ipsec_client['pool_address'])) {
+						$remote_subnet = "{$ipsec_client['pool_address']}/{$ipsec_client['pool_netbits']}";
+					}
 					if (empty($remote_subnet)) {
 						continue;
 					}
@@ -3124,34 +3132,34 @@ function filter_generate_user_rule($rule) {
 	if (!empty($rule['dscp'])) {
 		switch (strtolower($rule['dscp'])) {
 			case 'va':
-				$aline['dscp'] = " dscp \"44\" ";
+				$aline['dscp'] = " tos \"44\" ";
 				break;
 			case 'VA':
-				$aline['dscp'] = " dscp \"44\" ";
+				$aline['dscp'] = " tos \"44\" ";
 				break;
 			case 'cs1':
-				$aline['dscp'] = " dscp \"8\" ";
+				$aline['dscp'] = " tos \"8\" ";
 				break;
 			case 'cs2':
-				$aline['dscp'] = " dscp \"16\" ";
+				$aline['dscp'] = " tos \"16\" ";
 				break;
 			case 'cs3':
-				$aline['dscp'] = " dscp \"24\" ";
+				$aline['dscp'] = " tos \"24\" ";
 				break;
 			case 'cs4':
-				$aline['dscp'] = " dscp \"32\" ";
+				$aline['dscp'] = " tos \"32\" ";
 				break;
 			case 'cs5':
-				$aline['dscp'] = " dscp \"40\" ";
+				$aline['dscp'] = " tos \"40\" ";
 				break;
 			case 'cs6':
-				$aline['dscp'] = " dscp \"48\" ";
+				$aline['dscp'] = " tos \"48\" ";
 				break;
 			case 'cs7':
-				$aline['dscp'] = " dscp \"56\" ";
+				$aline['dscp'] = " tos \"56\" ";
 				break;
 			default:
-				$aline['dscp'] = " dscp " . $rule['dscp'] . " ";
+				$aline['dscp'] = " tos " . $rule['dscp'] . " ";
 				break;
 		}
 	}
@@ -3351,14 +3359,14 @@ function filter_generate_user_rule($rule) {
 			if ($sched['name'] == $rule['sched']) {
 				if (!filter_get_time_based_rule_status($sched)) {
 					if (!isset($config['system']['schedule_states'])) {
-						mwexec("/sbin/pfctl -y {$sched['schedlabel']}");
+						mwexec("/sbin/pfctl -k label -k s:{$sched['schedlabel']}");
 					}
 					return "# schedule finished - {$rule['descr']}";
 				} else if ($g['debug']) {
 					log_error(sprintf(gettext("[TDR DEBUG] status true -- rule type '%s'"), $type));
 				}
 
-				$aline['schedlabel'] = " schedule \"{$sched['schedlabel']}\" ";
+				$aline['schedlabel'] = " label \"s:{$sched['schedlabel']}\" ";
 				break;
 			}
 		}

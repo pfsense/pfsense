@@ -49,15 +49,6 @@ if (isset($_REQUEST['after']) && (is_numericint($_REQUEST['after']) || $_REQUEST
 	$after = $_REQUEST['after'];
 }
 
-if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
-	$id = $_REQUEST['dup'];
-	$after = $_REQUEST['dup'];
-}
-
-if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
-	unset($id);
-}
-
 if ($_POST['save']) {
 	$rv = saveoutNATrule($_POST, $id);
 
@@ -69,7 +60,12 @@ if ($_POST['save']) {
 		exit;
 	}
 } else {
-	$pconfig = getoutNATrule($id);
+	if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+		$after = $_REQUEST['dup'];
+		$pconfig = getoutNATrule($_REQUEST['dup']);
+	} else {
+		$pconfig = getoutNATrule($id);
+	}
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"), gettext("Edit"));

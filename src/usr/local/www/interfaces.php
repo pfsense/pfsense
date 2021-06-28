@@ -2244,6 +2244,8 @@ if (interface_is_vlan($wancfg['if']) != NULL) {
 
 $group = new Form_Group('Protocol timing');
 $group->addClass('dhcpadvanced');
+$group->setHelp('The values in these fields are DHCP protocol timings used when requesting a lease.%1$s' .
+				'See %2$shere%3$s for more information.', '<br />', '<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING">', '</a>');
 
 $group->add(new Form_Input(
 	'adv_dhcp_pt_timeout',
@@ -2324,9 +2326,6 @@ $group->add(new Form_Checkbox(
 	null,
 	'SavedCfg'
 ))->displayAsRadio();
-
-$group->setHelp('The values in these fields are DHCP protocol timings used when requesting a lease.%1$s' .
-				'See %2$shere%3$s for more information', '<br />', '<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING">', '</a>');
 
 $section->add($group);
 

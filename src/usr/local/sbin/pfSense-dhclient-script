@@ -61,7 +61,7 @@ delete_old_states() {
 	_FLUSHED=0
 	# If the IP changed, remove states from the old one
 	if [ -f /var/db/${interface}_ip ]; then
-		OLD_IP=`cat /var/db/${interface}_ip`
+		OLD_IP=`/bin/cat /var/db/${interface}_ip`
 		$LOGGER "Comparing IPs: Old: ${OLD_IP} New: ${new_ip_address}"
 		if [ -n "${OLD_IP}" ] && [ "${OLD_IP}" != "${new_ip_address}" ]; then
 			$LOGGER "Removing states from old IP '${OLD_IP}' (new IP '${new_ip_address}')"
@@ -75,7 +75,7 @@ delete_old_states() {
 	if [ -n "${old_routers}" ]; then
 		OLD_ROUTER=$old_routers
 	elif [ -f /tmp/${interface}_router ]; then
-		OLD_ROUTER=`cat /tmp/${interface}_router`
+		OLD_ROUTER=`/bin/cat /tmp/${interface}_router`
 	fi
 	if [ ${_FLUSHED} -eq 0 -a -n "${OLD_ROUTER}" ]; then
 		$LOGGER "Comparing Routers: Old: ${OLD_ROUTER} New: ${new_routers}"
@@ -163,7 +163,7 @@ delete_old_routes() {
 		fill_classless_routes "$old_classless_routes"
 		set $classless_routes
 		while [ $# -gt 1 ]; do
-			route delete "$1" "$2"
+			$ROUTE delete "$1" "$2"
 			shift; shift
 		done
 		return 0;
@@ -210,9 +210,9 @@ add_new_routes() {
 		set $classless_routes
 		while [ $# -gt 1 ]; do
 			if [ "0.0.0.0" = "$2" ]; then
-				route add "$1" -iface "$interface"
+				$ROUTE add "$1" -iface "$interface"
 			else
-				route add "$1" "$2"
+				$ROUTE add "$1" "$2"
 			fi
 			shift; shift
 		done

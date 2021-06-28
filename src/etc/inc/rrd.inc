@@ -164,6 +164,7 @@ function enable_rrd_graphing() {
 	$proc = "-processor.rrd";
 	$mem = "-memory.rrd";
 	$mbuf = "-mbuf.rrd";
+	$sensors = "-sensors.rrd";
 	$cellular = "-cellular.rrd";
 	$vpnusers = "-vpnusers.rrd";
 	$captiveportalconcurrent = "-concurrent.rrd";
@@ -174,6 +175,7 @@ function enable_rrd_graphing() {
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
 	$awk = "/usr/bin/awk";
+	$sed = "/usr/bin/sed";
 	$tar = "/usr/bin/tar";
 	$pfctl = "/sbin/pfctl";
 	$sysctl = "/sbin/sysctl";
@@ -194,6 +196,7 @@ function enable_rrd_graphing() {
 	$rrdprocinterval = 60;
 	$rrdmeminterval = 60;
 	$rrdmbufinterval = 60;
+	$rrdsensorsinterval = 60;
 	$rrdcellularinterval = 60;
 	$rrdvpninterval = 60;
 	$rrdcaptiveportalinterval = 60;
@@ -210,6 +213,7 @@ function enable_rrd_graphing() {
 	$procvalid = $rrdlbpoolinterval * 2;
 	$memvalid = $rrdmeminterval * 2;
 	$mbufvalid = $rrdmbufinterval * 2;
+	$sensorsvalid = $rrdsensorsinterval * 2;
 	$cellularvalid = $rrdcellularinterval * 2;
 	$vpnvalid = $rrdvpninterval * 2;
 	$captiveportalvalid = $rrdcaptiveportalinterval * 2;
@@ -675,6 +679,56 @@ function enable_rrd_graphing() {
 		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$mbuf N:\${MBUF}\n";
 
 		/* End mbuf statistics */
+
+		/* CPU temperature */
+
+		$sensors_array = array();
+		$unknown = "";
+		$rrdupdateds = "";
+		$rrdsensors = "";
+		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc | /usr/bin/grep temperature | /usr/bin/cut -d':' -f1", $sensors_array);
+
+		if (!empty($sensors_array)) {
+			foreach ($sensors_array as $sensor) {
+				preg_match("/^(.+)\.(.+\..+)\.temperature/", $sensor, $sensor_match);
+				$sensor_name = str_replace(".", "_", $sensor_match[2]);
+				$rrdcreateds .= "DS:$sensor_name:GAUGE:$sensorsvalid:0:100 ";
+				$unknown .= ":U";
+				$rrddsname = strtoupper($sensor_name);
+				$rrdupdateds .= "$rrddsname=`$sysctl -qn $sensor | $sed 's/C//'`\n";
+				$rrdsensors .= ":\${$rrddsname}";
+			}
+			if (!file_exists("$rrddbpath$ifname$sensors")) {
+				$rrdcreate = "$rrdtool create $rrddbpath$ifname$sensors --step $rrdsensorsinterval ";
+				$rrdcreate .= $rrdcreateds;
+				$rrdcreate .= "RRA:MIN:0.5:5:720 ";
+				$rrdcreate .= "RRA:MIN:0.5:60:1860 ";
+				$rrdcreate .= "RRA:MIN:0.5:1440:2284 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1440:2284 ";
+				$rrdcreate .= "RRA:MAX:0.5:1:1200 ";
+				$rrdcreate .= "RRA:MAX:0.5:5:720 ";
+				$rrdcreate .= "RRA:MAX:0.5:60:1860 ";
+				$rrdcreate .= "RRA:MAX:0.5:1440:2284";
+
+				create_new_rrd($rrdcreate);
+				unset($rrdcreate);
+			}
+
+			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+			if (platform_booting()) {
+				mwexec("$rrdtool update $rrddbpath$ifname$sensors N$unknown");
+			}
+
+			/* the CPU temp gathering function. */
+
+			$rrdupdatesh .= $rrdupdateds;
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$sensors N$rrdsensors\n";
+		}
+
+		/* End CPU temperature */
 
 		/* Captive Portal statistics, set up the rrd file */
 		if (is_array($config['captiveportal'])) {

@@ -864,8 +864,6 @@ function install_package_xml($package_name) {
 		return false;
 	}
 
-	$pkg_data = &$config['installedpackages']['package'][$pkgid];
-
 	update_status(gettext("Loading package configuration... "));
 	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
 	    $pkg_info['configurationfile'], "packagegui");
@@ -873,7 +871,7 @@ function install_package_xml($package_name) {
 	update_status(gettext("Configuring package components...") .
 	    "\n");
 	if (!empty($pkg_config['filter_rules_needed'])) {
-		$pkg_data['filter_rule_function'] =
+		$config['installedpackages']['package'][$pkgid]['filter_rule_function'] =
 		    $pkg_config['filter_rules_needed'];
 	}
 	/* modify system files */
@@ -962,15 +960,16 @@ function install_package_xml($package_name) {
 		update_status(gettext("done.") . "\n");
 	}
 	if (is_array($pkg_config['tabs'])) {
-		$pkg_data['tabs'] = $pkg_config['tabs'];
+		init_config_arr(array('installedpackages', 'package', $pkgid, 'tabs'));
+		$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];
 	}
 	/* plugins */
 	if (isset($pkg_config['include_file'])) {
-		$pkg_data['include_file'] = $pkg_config['include_file'];
+		$config['installedpackages']['package'][$pkgid]['include_file'] = $pkg_config['include_file'];
 	}
-	if (is_array($pkg_config['plugins']['item'])) {
-		init_config_arr(array('installedpackages', 'package', $pkgid, 'plugins', 'item'));
-		$pkg_data['plugins']['item'] = $pkg_config['plugins']['item'];
+	if (is_array($pkg_config['plugins'])) {
+		init_config_arr(array('installedpackages', 'package', $pkgid, 'plugins'));
+		$config['installedpackages']['package'][$pkgid]['plugins'] = $pkg_config['plugins'];
 	}
 
 	update_status(gettext("Writing configuration... "));
@@ -1120,11 +1119,11 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	}
 	/* syslog */
 	$need_syslog_restart = false;
-	if (is_array($pkg_info['logging']) &&
-	    $pkg_info['logging']['logfilename'] <> "") {
+	if (is_array($pkg_info['logging']) && !empty($pkg_info['logging']['logfilename'])) {
 		update_status(gettext("Syslog entries... "));
-		@unlink_if_exists($g['varlog_path'] . "/" .
-		    $pkg_info['logging']['logfilename']);
+		/* remove package-related syslog configuration but retain log data,
+		 * see https://redmine.pfsense.org/issues/11846 */
+		@unlink_if_exists("{$g['varetc_path']}/syslog.d/" . basename($pkg_info['logging']['logfilename']) . ".conf");
 		update_status("done.\n");
 		$need_syslog_restart = true;
 	}
@@ -1267,12 +1266,14 @@ function stop_packages() {
 	if (isset($config['installedpackages']['package']) &&
 	    is_array($config['installedpackages']['package'])) {
 		foreach ($config['installedpackages']['package'] as $package) {
-			echo " Stopping package {$package['name']}...";
 			$internal_name = get_package_internal_name($package);
-			stop_service($internal_name);
-			unset($rcfiles[RCFILEPREFIX .
-			    strtolower($internal_name) . ".sh"]);
-			echo "done.\n";
+			if (is_service_running($internal_name)) {
+				echo " Stopping package {$package['name']}...";
+				stop_service($internal_name);
+				echo "done.\n";
+				unset($rcfiles[RCFILEPREFIX .
+				    strtolower($internal_name) . ".sh"]);
+			}
 		}
 	}
 

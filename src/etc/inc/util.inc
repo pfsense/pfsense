@@ -1031,12 +1031,12 @@ function is_hostname($hostname, $allow_wildcard=false) {
 		if ((substr_count($hostname, ".") == 1) && ($hostname[strlen($hostname)-1] == ".")) {
 			/* Only a single dot at the end like "test." - hosts cannot be directly in the root domain. */
 			return false;
-		} else {
+		} elseif (!is_numericint($hostname)) {
+			/* OS interprets numeric value as decimal IP address, see https://redmine.pfsense.org/issues/12000 */
 			return true;
 		}
-	} else {
-		return false;
 	}
+	return false;
 }
 
 /* returns true if $domain is a valid domain name */
@@ -3487,9 +3487,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 	} else if (trim($rule[$index]) == "range") {
 		$port = array($rule[++$index], $rule[++$index]);
 		if (is_port($port[0]) && is_port($port[1])) {
-			$port[0]--;
-			$port[1]++;
-			$tmprule .= "port {$port[0]} >< {$port[1]} ";
+			$tmprule .= "port {$port[0]}:{$port[1]} ";
 		} else {
 			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source ports: '$port[0]' & '$port[1]' one or both are not a numeric value between 0 and 65535.");
 			return;
@@ -3562,9 +3560,7 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 	} else if (trim($rule[$index]) == "range") {
 		$port = array($rule[++$index], $rule[++$index]);
 		if (is_port($port[0]) && is_port($port[1])) {
-			$port[0]--;
-			$port[1]++;
-			$tmprule .= "port {$port[0]} >< {$port[1]} ";
+			$tmprule .= "port {$port[0]}:{$port[1]} ";
 		} else {
 			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid destination ports: '$port[0]' '$port[1]' one or both are not a numeric value between 0 and 65535.");
 			return;

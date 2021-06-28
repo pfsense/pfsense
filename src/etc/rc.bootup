@@ -196,9 +196,12 @@ if (file_exists("/var/log/restore_ramdisk_store.boot")) {
 	exec("logger -f /var/log/restore_ramdisk_store.boot");
 }
 
-echo "Starting Secure Shell Services...";
-send_event("service reload sshd");
-echo "done.\n";
+init_config_arr(array('system', 'ssh'));
+if (isset($config['system']['ssh']['enable'])) {
+	echo "Starting Secure Shell Services...";
+	send_event("service reload sshd");
+	echo "done.\n";
+}
 
 /* setup interface microcode which improves tcp/ip speed */
 echo "Setting up interfaces microcode...";
@@ -255,21 +258,24 @@ filter_pflog_start();
 echo "done.\n";
 
 /* reconfigure our gateway monitor */
-echo "Setting up gateway monitors...";
 setup_gateways_monitor();
-echo "done.\n";
 
 /* set up static routes */
 echo "Setting up static routes...";
 system_routing_configure();
 echo "done.\n";
 
-echo "Setting up DNSs...\n";
-/* start dnsmasq service */
-services_dnsmasq_configure();
+init_config_arr(array('unbound'));
+init_config_arr(array('dnsmasq'));
+if (isset($config['unbound']['enable']) ||
+    isset($config['dnsmasq']['enable'])) {
+	echo "Setting up DNSs...\n";
+	/* start dnsmasq service */
+	services_dnsmasq_configure();
 
-/* start unbound service */
-services_unbound_configure();
+	/* start unbound service */
+	services_unbound_configure();
+}
 
 echo "Synchronizing user settings...";
 local_reset_accounts();

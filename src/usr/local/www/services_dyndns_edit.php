@@ -589,10 +589,6 @@ events.push(function() {
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
 				break;
-			case "strato":
-				hideInput('mx', true);
-				hideCheckbox('wildcard', true);
-        break;
 			case "route53":
 			case "route53-v6":
 				hideCheckbox('curl_ssl_verifypeer', false);
@@ -600,6 +596,10 @@ events.push(function() {
 				hideCheckbox('wildcard', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
+				break;
+			case "strato":
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
 				break;
 			default:
 		}

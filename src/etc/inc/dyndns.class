@@ -35,6 +35,7 @@
 	 *    - Cloudflare IPv6 (www.cloudflare.com)
 	 *    - Custom DDNS (any URL)
 	 *    - Custom DDNS IPv6 (any URL)
+	 *    - deSEC (desec.io)
 	 *    - DHS (www.dhs.org)
 	 *    - DNS Made Easy (www.dnsmadeeasy.com)
 	 *    - DNS-O-Matic (dnsomatic.com)
@@ -95,6 +96,8 @@
 	 *  ClouDNS         - Last Tested: 22 August 2017
 	 *  Cloudflare      - Last Tested: 05 September 2016
 	 *  Cloudflare IPv6 - Last Tested: 17 July 2016
+	 *  deSEC           - Last Tested: NEVER
+	 *  deSEC IPv6      - Last Tested: NEVER
 	 *  DHS             - Last Tested: 12 July 2005
 	 *  DNS Made Easy   - Last Tested: 27 April 2015
 	 *  DNS-O-Matic     - Last Tested: 9 September 2010
@@ -252,6 +255,11 @@
 				if (!$dnsDomain) $this->_error(5);
 				if (!$dnsTTL) $this->_error(9);
 				break;
+			case 'desec':
+			case 'desec-v6':
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				break;
 			case 'digitalocean':
 			case 'digitalocean-v6':
 			case 'gandi-livedns':
@@ -300,6 +308,7 @@
 				case 'azurev6':
 				case 'cloudflare-v6':
 				case 'custom-v6':
+				case 'desec-v6':
 				case 'digitalocean-v6':
 				case 'domeneshop-v6':
 				case 'dreamhost-v6':
@@ -374,6 +383,8 @@
 					case 'cloudns':
 					case 'custom':
 					case 'custom-v6':
+					case 'desec':
+					case 'desec-v6':
 					case 'dhs':
 					case 'digitalocean':
 					case 'digitalocean-v6':
@@ -1578,6 +1589,14 @@
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
 					break;
+				case 'desec':
+					curl_setopt($ch, CURLOPT_URL, 'https://update.dedyn.io/?hostname=' . $this->_dnsHost);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token ' . $this->_dnsPass));
+					break;
+				case 'desec-v6':
+					curl_setopt($ch, CURLOPT_URL, 'https://update6.dedyn.io/?hostname=' . $this->_dnsHost);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token ' . $this->_dnsPass));
+					break;
 				default:
 					break;
 			}
@@ -2750,6 +2769,24 @@
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $http_code);
 						$this->_debug($data);
+					}
+					break;
+				case 'desec':
+				case 'desec-v6':
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					switch ($http_code) {
+						case '200':
+							$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+							$successful_update = true;
+							break;
+						case '401':
+							$status = $status_intro . $error_str . gettext("User Authorization Failed");
+							break;
+						default:
+							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+							log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+							$this->_debug($data);
+							break;
 					}
 					break;
 				default:

@@ -204,10 +204,12 @@ function interfaces_loopback_configure() {
 
 	if (platform_booting()) {
 		echo gettext("Configuring loopback interface...");
+		mute_kernel_msgs();
 	}
 	pfSense_interface_setaddress("lo0", "127.0.0.1");
 	interfaces_bring_up("lo0");
 	if (platform_booting()) {
+		unmute_kernel_msgs();
 		echo gettext("done.") . "\n";
 	}
 	return 0;

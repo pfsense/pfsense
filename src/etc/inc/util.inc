@@ -3427,7 +3427,11 @@ function parse_cisco_acl_rule($rule, $devname, $dir, $proto) {
 		$index++;
 		if ((($proto == 'inet') && (is_ipaddrv4(trim($rule[$index])) || (trim($rule[$index]) == "{clientip}"))) ||
 		    (($proto == 'inet6') && (is_ipaddrv6(trim($rule[$index])) || (trim($rule[$index]) == "{clientipv6}")))) {
-			$tmprule .= "from {$rule[$index]} ";
+			if ($GLOBALS['attributes']['framed_ip']) {
+				$tmprule .= "from {$GLOBALS['attributes']['framed_ip']} ";
+			} else {
+				$tmprule .= "from {$rule[$index]} ";
+			}
 			$index++;
 		} else {
 			syslog(LOG_WARNING, "Error parsing rule {$rule_orig}: Invalid source host '{$rule[$index]}'.");

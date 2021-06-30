@@ -71,6 +71,7 @@
 	 *    - SPDYN IPv6 (spdyn.de)
 	 *    - SelfHost (selfhost.de)
 	 *    - StaticCling (staticcling.org)
+	 *    - Strato (www.strato.de)
 	 *    - ZoneEdit (zoneedit.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
@@ -135,6 +136,7 @@
 	 *  SPDYN IPv6      - Last Tested: 02 July 2016
 	 *  SelfHost        - Last Tested: 26 December 2011
 	 *  StaticCling     - Last Tested: 27 April 2006
+	 *  Strato          - Last Tested: 29 May 2021
 	 *  ZoneEdit        - Last Tested: NEVER
 	 * +====================================================+
 	 *
@@ -429,6 +431,7 @@
 					case 'spdyn':
 					case 'spdyn-v6':
 					case 'staticcling':
+					case 'strato':
 					case 'yandex':
 					case 'yandex-v6':
 					case 'zoneedit':
@@ -933,6 +936,12 @@
 						$port = ":" . $this->_dnsPort;
 					}
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard=' . $this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
+					break;
+				case 'strato':
+					$needsIP = FALSE;
+					$server = 'https://dyndns.strato.com/nic/update';
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, $server . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				case 'route53':
 					require_once("r53.class");
@@ -2337,6 +2346,28 @@
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 						$this->_debug($data);
+					}
+					break;
+				case 'strato':
+					if (preg_match('/good\s' . $this->_dnsIP . '/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP address updated successfully") . " (" . $this->_dnsIP . ")";
+						$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $error_str . gettext("IP result did not match");
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP was not changed");
+						$successful_update = true;
+					} else if (preg_match("/badauth/i", $data)) {
+						$status = $status_intro . $error_str . gettext("invalid username or password");
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = $status_intro . $error_str . gettext("invalid hostname");
+					} else if (preg_match('/abuse/i', $data)) {
+						$status = $status_intro . $error_str . gettext("too many requests - please wait");
+					} else {
+						$status = $status_intro . "(" . gettext("unknown response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $header . $data);
+						$this->_debug($data);
+						$this->_debug($header);
 					}
 					break;
 				case 'route53':

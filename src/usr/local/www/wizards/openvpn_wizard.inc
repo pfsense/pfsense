@@ -534,7 +534,7 @@ function step12_submitphpaction() {
 			$dn['stateOrProvinceName'] = $pconfig['step6']['state'];
 		}
 		if (!empty($pconfig['step6']['city'])) {
-			$dn['localityName'] = $pconfig['step6']['city');
+			$dn['localityName'] = $pconfig['step6']['city'];
 		}
 		if (!empty($pconfig['step6']['organization'])) {
 			$dn['organizationName'] = $pconfig['step6']['organization'];

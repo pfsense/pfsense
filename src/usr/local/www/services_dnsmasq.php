@@ -34,196 +34,24 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("pfsense-utils.inc");
-require_once("shaper.inc");
-require_once("system.inc");
+require_once("services_dnsmasq.inc");
 
-// Sort host entries for display in alphabetical order
-function hostcmp($a, $b) {
-	return strcasecmp($a['host'], $b['host']);
-}
+$retval = 0;
 
-function hosts_sort() {
-	global $a_hosts;
-
-	if (!is_array($a_hosts)) {
-		return;
-	}
-
-	uasort($a_hosts, "hostcmp");
-}
-
-// Sort domain entries for display in alphabetical order
-function domaincmp($a, $b) {
-	return strcasecmp($a['domain'], $b['domain']);
-}
-
-function domains_sort() {
-	global $a_domainOverrides;
-
-	if (!is_array($a_domainOverrides)) {
-		return;
-	}
-
-	uasort($a_domainOverrides, "domaincmp");
-}
-
-$pconfig['enable'] = isset($config['dnsmasq']['enable']);
-$pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
-$pconfig['regdhcpstatic'] = isset($config['dnsmasq']['regdhcpstatic']);
-$pconfig['dhcpfirst'] = isset($config['dnsmasq']['dhcpfirst']);
-$pconfig['strict_order'] = isset($config['dnsmasq']['strict_order']);
-$pconfig['domain_needed'] = isset($config['dnsmasq']['domain_needed']);
-$pconfig['no_private_reverse'] = isset($config['dnsmasq']['no_private_reverse']);
-$pconfig['port'] = $config['dnsmasq']['port'];
-$pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
-$pconfig['strictbind'] = isset($config['dnsmasq']['strictbind']);
-
-if (!empty($config['dnsmasq']['interface'])) {
-	$pconfig['interface'] = explode(",", $config['dnsmasq']['interface']);
-} else {
-	$pconfig['interface'] = array();
-}
-
-init_config_arr(array('dnsmasq', 'hosts'));
-$a_hosts = &$config['dnsmasq']['hosts'];
-
-// Add a temporary index so we don't lose the order after sorting
-for ($idx=0; $idx<count($a_hosts); $idx++) {
-	$a_hosts[$idx]['idx'] = $idx;
-}
-
-hosts_sort();
-
-init_config_arr(array('dnsmasq', 'domainoverrides'));
-$a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
-
-// Add a temporary index so we don't lose the order after sorting
-for ($idx=0; $idx<count($a_domainOverrides); $idx++) {
-	$a_domainOverrides[$idx]['idx'] = $idx;
-}
-
-domains_sort();
-
+$rv = getDNSMasqConfig();
+$pconfig = $rv['config'];
+$a_hosts = $rv['hosts'];
+$a_domainOverrides = $rv['domainoverrides'];
+$iflist = $rv['iflist'];
 
 if ($_POST['apply']) {
-	$retval = 0;
-	$retval |= services_dnsmasq_configure();
-
-	// Reload filter (we might need to sync to CARP hosts)
-	filter_configure();
-	/* Update resolv.conf in case the interface bindings exclude localhost. */
-	system_resolvconf_generate();
-	/* Start or restart dhcpleases when it's necessary */
-	system_dhcpleases_configure();
-
-	if ($retval == 0) {
-		clear_subsystem_dirty('hosts');
-	}
-}
-
-if ($_POST['save']) {
-	$pconfig = $_POST;
-	unset($input_errors);
-
-	$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
-	$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
-	$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
-	$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
-	$config['dnsmasq']['strict_order'] = ($_POST['strict_order']) ? true : false;
-	$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
-	$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
-	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
-	$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
-
-	if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
-		if ($_POST['port'] == $config['unbound']['port']) {
-			$input_errors[] = gettext("The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.");
-		}
-	}
-
-	if ((isset($_POST['regdhcp']) || isset($_POST['regdhcpstatic']) || isset($_POST['dhcpfirst'])) && !is_dhcp_server_enabled()) {
-		$input_errors[] = gettext("DHCP Server must be enabled for DHCP Registration to work in DNS Forwarder.");
-	}
-
-	if ($_POST['port']) {
-		if (is_port($_POST['port'])) {
-			$config['dnsmasq']['port'] = $_POST['port'];
-		} else {
-			$input_errors[] = gettext("A valid port number must be specified.");
-		}
-	} else if (isset($config['dnsmasq']['port'])) {
-		unset($config['dnsmasq']['port']);
-	}
-
-	if (is_array($_POST['interface'])) {
-		$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
-	} elseif (isset($config['dnsmasq']['interface'])) {
-		unset($config['dnsmasq']['interface']);
-	}
-
-	if ($config['dnsmasq']['custom_options']) {
-		$args = '';
-		foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
-			$args .= escapeshellarg("--{$c}") . " ";
-		}
-		exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
-		if ($rc != 0) {
-			$input_errors[] = gettext("Invalid custom options");
-		}
-	}
-
-	if (!$input_errors) {
-		write_config("DNS Forwarder settings saved");
-		mark_subsystem_dirty('hosts');
-	}
-}
-
-
-if ($_POST['act'] == "del") {
-	if ($_POST['type'] == 'host') {
-		if ($a_hosts[$_POST['id']]) {
-			unset($a_hosts[$_POST['id']]);
-			write_config("DNS Forwarder host override deleted");
-			mark_subsystem_dirty('hosts');
-			header("Location: services_dnsmasq.php");
-			exit;
-		}
-	} elseif ($_POST['type'] == 'doverride') {
-		if ($a_domainOverrides[$_POST['id']]) {
-			unset($a_domainOverrides[$_POST['id']]);
-			write_config("DNS Forwarder domain override deleted");
-			mark_subsystem_dirty('hosts');
-			header("Location: services_dnsmasq.php");
-			exit;
-		}
-	}
-}
-
-function build_if_list() {
-	global $pconfig;
-
-	$interface_addresses = get_possible_listen_ips(true);
-	$iflist = array('options' => array(), 'selected' => array());
-
-	$iflist['options'][""]	= "All";
-	if (empty($pconfig['interface']) || empty($pconfig['interface'][0])) {
-		array_push($iflist['selected'], "");
-	}
-
-	foreach ($interface_addresses as $laddr => $ldescr) {
-		$iflist['options'][$laddr] = htmlspecialchars($ldescr);
-
-		if ($pconfig['interface'] && in_array($laddr, $pconfig['interface'])) {
-			array_push($iflist['selected'], $laddr);
-		}
-	}
-
-	unset($interface_addresses);
-
-	return($iflist);
+	$retval = applyDNSMasqConfig();
+} else if ($_POST['save']) {
+	$rv = saveDNSMasqConfig($_POST);
+	$pconfig = $rv['pconfig'];
+	$input_errors = $rv['input_errors'];
+} else if ($_POST['act'] == "del") {
+	deleteDNSMasqEntry($_POST);
 }
 
 $pgtitle = array(gettext("Services"), gettext("DNS Forwarder"));
@@ -325,8 +153,6 @@ $section->addInput(new Form_Input(
 	$pconfig['port'],
 	['placeholder' => '53']
 ))->setHelp('The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.');
-
-$iflist = build_if_list();
 
 $section->addInput(new Form_Select(
 	'interface',

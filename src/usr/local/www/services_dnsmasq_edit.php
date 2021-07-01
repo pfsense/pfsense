@@ -34,6 +34,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("services_dnsmasq.inc");
 
 init_config_arr(array('dnsmasq', 'hosts'));
 $a_hosts = &$config['dnsmasq']['hosts'];
@@ -41,7 +42,6 @@ $a_hosts = &$config['dnsmasq']['hosts'];
 if (is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
-
 
 if (isset($id) && $a_hosts[$id]) {
 	$pconfig['host'] = $a_hosts[$id]['host'];
@@ -52,117 +52,9 @@ if (isset($id) && $a_hosts[$id]) {
 }
 
 if ($_POST['save']) {
-	unset($input_errors);
-	$pconfig = $_POST;
-
-	/* input validation */
-	$reqdfields = explode(" ", "domain ip");
-	$reqdfieldsn = array(gettext("Domain"), gettext("IP address"));
-
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-
-	if ($_POST['host']) {
-		if (!is_hostname($_POST['host'])) {
-			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'. It may not start or end with '-'.");
-		} else {
-			if (!is_unqualified_hostname($_POST['host'])) {
-				$input_errors[] = gettext("A valid hostname is specified, but the domain name part should be omitted");
-			}
-		}
-	}
-
-	if (($_POST['domain'] && !is_domain($_POST['domain']))) {
-		$input_errors[] = gettext("A valid domain must be specified.");
-	}
-
-	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
-		$input_errors[] = gettext("A valid IP address must be specified.");
-	}
-
-	/* collect aliases */
-	$aliases = array();
-
-	if (!empty($_POST['aliashost0'])) {
-		foreach ($_POST as $key => $value) {
-			$entry = '';
-			if (!substr_compare('aliashost', $key, 0, 9)) {
-				$entry = substr($key, 9);
-				$field = 'host';
-			} elseif (!substr_compare('aliasdomain', $key, 0, 11)) {
-				$entry = substr($key, 11);
-				$field = 'domain';
-			} elseif (!substr_compare('aliasdescription', $key, 0, 16)) {
-				$entry = substr($key, 16);
-				$field = 'description';
-			}
-			if (ctype_digit($entry)) {
-				$aliases[$entry][$field] = $value;
-			}
-		}
-		$pconfig['aliases']['item'] = $aliases;
-
-		/* validate aliases */
-		foreach ($aliases as $idx => $alias) {
-			$aliasreqdfields = array('aliasdomain' . $idx);
-			$aliasreqdfieldsn = array(gettext("Alias Domain"));
-
-			do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
-			if ($alias['host']) {
-				if (!is_hostname($alias['host'])) {
-					$input_errors[] = gettext("Hostnames in an alias list can only contain the characters A-Z, 0-9 and '-'. They may not start or end with '-'.");
-				} else {
-					if (!is_unqualified_hostname($alias['host'])) {
-						$input_errors[] = gettext("A valid alias hostname is specified, but the domain name part should be omitted");
-					}
-				}
-			}
-
-			if (($alias['domain'] && !is_domain($alias['domain']))) {
-				$input_errors[] = gettext("A valid domain must be specified in alias list.");
-			}
-		}
-	}
-
-	/* check for overlaps */
-	foreach ($a_hosts as $hostent) {
-		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent)) {
-			continue;
-		}
-
-		if (($hostent['host'] == $_POST['host']) &&
-		    ($hostent['domain'] == $_POST['domain'])) {
-			if (is_ipaddrv4($hostent['ip']) && is_ipaddrv4($_POST['ip'])) {
-				$input_errors[] = gettext("This host/domain override combination already exists with an IPv4 address.");
-				break;
-			}
-			if (is_ipaddrv6($hostent['ip']) && is_ipaddrv6($_POST['ip'])) {
-				$input_errors[] = gettext("This host/domain override combination already exists with an IPv6 address.");
-				break;
-			}
-		}
-	}
-
-	if (!$input_errors) {
-		$hostent = array();
-		$hostent['host'] = $_POST['host'];
-		$hostent['domain'] = $_POST['domain'];
-		$hostent['ip'] = $_POST['ip'];
-		$hostent['descr'] = $_POST['descr'];
-		$hostent['aliases']['item'] = $aliases;
-
-		if (isset($id) && $a_hosts[$id]) {
-			$a_hosts[$id] = $hostent;
-		} else {
-			$a_hosts[] = $hostent;
-		}
-
-		mark_subsystem_dirty('hosts');
-
-		write_config("DNS Forwarder host override saved");
-
-		header("Location: services_dnsmasq.php");
-		exit;
-	}
+	$rv = saveDNSMasqHost($_POST, $id);
+	$pconfig = $rv['config'];
+	$input_errors = $rv['input_errors'];
 }
 
 // Delete a row in the options table

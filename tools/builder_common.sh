@@ -1604,13 +1604,32 @@ poudriere_create_ports_tree() {
 			print_error_pfS
 		fi
 		if [ -n "${POUDRIERE_PORTS_GIT_BRANCH}" ]; then
-			_branch="-B ${POUDRIERE_PORTS_GIT_BRANCH}"
+			_branch="${POUDRIERE_PORTS_GIT_BRANCH}"
 		fi
 		echo -n ">>> Creating poudriere ports tree, it may take some time... " | tee -a ${LOGFILE}
-		if ! script -aq ${LOGFILE} poudriere ports -c -p "${POUDRIERE_PORTS_NAME}" -m git -U ${POUDRIERE_PORTS_GIT_URL} ${_branch} >/dev/null 2>&1; then
-			echo "" | tee -a ${LOGFILE}
-			echo ">>> ERROR: Error creating poudriere ports tree, aborting..." | tee -a ${LOGFILE}
-			print_error_pfS
+		if [ "${AWS}" = 1 ]; then
+			set -e
+			script -aq ${LOGFILE} poudriere ports -c -p "${POUDRIERE_PORTS_NAME}" -m none
+			script -aq ${LOGFILE} zfs create ${ZFS_TANK}/poudriere/ports/${POUDRIERE_PORTS_NAME}
+			# Download local copy of the ports tree stashed in S3
+			echo ">>>  Downloading cached copy of the ports tree from S3.." | tee -a ${LOGFILE}
+			script -aq ${LOGFILE} env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+				aws s3 cp s3://pfsense-engineering-build-pkg/factory-ports.tz . --no-progress
+			script -aq ${LOGFILE} tar --strip-components 1 -xf factory-ports.tz -C /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}
+			# Update the ports tree
+			(
+				cd /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}
+				echo ">>>  Updating cached copy of the ports tree from git.." | tee -a ${LOGFILE}
+				script -aq ${LOGFILE} git pull
+				script -aq ${LOGFILE} git checkout ${_branch}
+			)
+			set +e
+		else
+			if ! script -aq ${LOGFILE} poudriere ports -c -p "${POUDRIERE_PORTS_NAME}" -m git -U ${POUDRIERE_PORTS_GIT_URL} -B ${_branch} >/dev/null 2>&1; then
+				echo "" | tee -a ${LOGFILE}
+				echo ">>> ERROR: Error creating poudriere ports tree, aborting..." | tee -a ${LOGFILE}
+				print_error_pfS
+			fi
 		fi
 		echo "Done!" | tee -a ${LOGFILE}
 		poudriere_rename_ports
@@ -1715,6 +1734,17 @@ EOF
 		mkdir -p /usr/ports/distfiles
 	fi
 
+	if [ "${AWS}" = 1 ]; then
+		# Download a copy of the distfiles from S3
+		echo ">>> Downloading distfile cache from S3.." | tee -a ${LOGFILE}
+		script -aq ${LOGFILE} env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+			aws s3 cp s3://pfsense-engineering-build-pkg/distfiles.tar . --no-progress
+		script -aq ${LOGFILE} tar -xf distfiles.tar -C /usr/ports/distfiles
+		# Save a list of distfiles
+		find /usr/ports/distfiles > pre-build-distfile-list
+
+	fi
+
 	# Remove old jails
 	for jail_arch in ${_archs}; do
 		jail_name=$(poudriere_jail_name ${jail_arch})
@@ -1729,6 +1759,13 @@ EOF
 	if poudriere ports -l | grep -q -E "^${POUDRIERE_PORTS_NAME}[[:blank:]]"; then
 		echo ">>> Poudriere ports tree ${POUDRIERE_PORTS_NAME} already exists, deleting it..." | tee -a ${LOGFILE}
 		poudriere ports -d -p "${POUDRIERE_PORTS_NAME}"
+		if [ "${AWS}" = 1 ]; then
+			for d in `zfs list -o name`; do
+				if [ "${d}" = "${ZFS_TANK}/poudriere/ports/${POUDRIERE_PORTS_NAME}" ]; then
+					script -aq ${LOGFILE} zfs destroy ${ZFS_TANK}/poudriere/ports/${POUDRIERE_PORTS_NAME}
+				fi
+			done
+		fi
 	fi
 
 	local native_xtools=""
@@ -1742,12 +1779,62 @@ EOF
 			native_xtools=""
 		fi
 
-		echo -n ">>> Creating jail ${jail_name}, it may take some time... " | tee -a ${LOGFILE}
-		if ! script -aq ${LOGFILE} poudriere jail -c -j "${jail_name}" -v ${FREEBSD_BRANCH} \
-				-a ${jail_arch} -m git -U ${FREEBSD_REPO_BASE_POUDRIERE} ${native_xtools} >/dev/null 2>&1; then
-			echo "" | tee -a ${LOGFILE}
-			echo ">>> ERROR: Error creating jail ${jail_name}, aborting..." | tee -a ${LOGFILE}
-			print_error_pfS
+		echo ">>> Creating jail ${jail_name}, it may take some time... " | tee -a ${LOGFILE}
+		if [ "${AWS}" = "1" ]; then
+			mkdir objs
+			echo ">>> Downloading prebuilt release objs from s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/ ..." | tee -a ${LOGFILE}
+			# Download prebuilt release tarballs from previous job
+			env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+				aws s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/LATEST-${jail_arch} objs --no-progress
+			SRC_COMMIT=`cat objs/LATEST-${jail_arch}`
+			env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+				aws s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/MANIFEST-${jail_arch}-${SRC_COMMIT} objs --no-progress
+			ln -s MANIFEST-${jail_arch}-${SRC_COMMIT} objs/MANIFEST
+			for i in base doc kernel src tests; do
+				if [ ! -f objs/${i}-${jail_arch}-${SRC_COMMIT}.txz ]; then
+					env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+						aws s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/${i}-${jail_arch}-${SRC_COMMIT}.txz objs --no-progress
+					ln -s ${i}-${jail_arch}-${SRC_COMMIT}.txz objs/${i}.txz
+				fi
+			done
+
+			if ! script -aq ${LOGFILE} poudriere jail -c -j "${jail_name}" -v ${FREEBSD_BRANCH} \
+					-a ${jail_arch} -m url=file://${PWD}/objs >/dev/null 2>&1; then
+				echo "" | tee -a ${LOGFILE}
+				echo ">>> ERROR: Error creating jail ${jail_name}, aborting..." | tee -a ${LOGFILE}
+				print_error_pfS
+			fi
+
+			# Download a cached pkg repo from S3
+			OLDIFS=${IFS}
+			IFS=$'\n'
+			echo ">>> Downloading cached pkgs for ${jail_arch} from S3.." | tee -a ${LOGFILE}
+			for i in `env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+			    aws s3 ls s3://pfsense-engineering-build-pkg/`; do
+				echo ${i} | awk '{print $4}' | grep pkgs-${jail_arch}.tar > /dev/null
+				if [ $? -eq 0 ]; then
+					script -aq ${LOGFILE} env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+					    aws s3 cp s3://pfsense-engineering-build-pkg/pkgs-${jail_arch}.tar . --no-progress
+					[ ! -d /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME} ] && mkdir -p /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}
+					echo "Extracting pkgs-${jail_arch}.tar to /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}" | tee -a ${LOGFILE}
+					[ ! -d /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME} ] && mkdir /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}
+					script -aq ${LOGFILE} tar -xf pkgs-${jail_arch}.tar -C /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}
+					# Save a list of pkgs
+					cd /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}/.latest
+					find . > ${WORKSPACE}/pre-build-pkg-list-${jail_arch}
+					cd ${WORKSPACE}
+				else
+					touch pre-build-pkg-list-${jail_arch}
+				fi
+			done
+			IFS=${OLDIFS}
+		else
+			if ! script -aq ${LOGFILE} poudriere jail -c -j "${jail_name}" -v ${FREEBSD_BRANCH} \
+					-a ${jail_arch} -m git -U ${FREEBSD_REPO_BASE_POUDRIERE} ${native_xtools} >/dev/null 2>&1; then
+				echo "" | tee -a ${LOGFILE}
+				echo ">>> ERROR: Error creating jail ${jail_name}, aborting..." | tee -a ${LOGFILE}
+				print_error_pfS
+			fi
 		fi
 		echo "Done!" | tee -a ${LOGFILE}
 	done
@@ -1806,6 +1893,32 @@ poudriere_update_ports() {
 		echo "Done!" | tee -a ${LOGFILE}
 		poudriere_rename_ports
 	fi
+}
+
+save_logs_to_s3() {
+	# Save a copy of the past few logs into S3
+	DATE=`date +%Y%m%d-%H%M%S`
+	script -aq ${LOGFILE} tar --zstd -cf pkg-logs-${jail_arch}-${DATE}.tar -C /usr/local/poudriere/data/logs/bulk/${jail_name}-${POUDRIERE_PORTS_NAME}/latest/ .
+	script -aq ${LOGFILE} env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+	    aws s3 cp pkg-logs-${jail_arch}-${DATE}.tar s3://pfsense-engineering-build-pkg/logs/ --no-progress
+	OLDIFS=${IFS}
+	IFS=$'\n'
+	local _logtemp=$( mktemp /tmp/loglist.XXXXX )
+	for i in `env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+	    aws s3 ls s3://pfsense-engineering-build-pkg/logs/`; do
+		echo ${i} | awk '{print $4}' | grep pkg-logs-${jail_arch} >> ${_logtemp}
+	done
+	local _maxlogs=5
+	local _curlogs=0
+	_curlogs=$( wc -l ${_logtemp} | awk '{print $1}' )
+	if [ ${_curlogs} -gt ${_maxlogs} ]; then
+		local _extralogs=$(( ${_curlogs} - ${_maxlogs} ))
+		for _last in $( head -${_extralogs} ${_logtemp} ); do
+			env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+			    aws s3 rm s3://pfsense-engineering-build-pkg/logs/${_last}
+		done
+	fi
+	IFS=${OLDIFS}
 }
 
 poudriere_bulk() {
@@ -1918,10 +2031,15 @@ EOF
 			rm -f ${_bulk}.tmp ${_bulk}.exclude
 		fi
 
+		echo ">>> Poudriere bulk started at `date "+%Y/%m/%d %H:%M:%S"` for ${jail_arch}"
 		if ! poudriere bulk -f ${_bulk} -j ${jail_name} -p ${POUDRIERE_PORTS_NAME}; then
 			echo ">>> ERROR: Something went wrong..."
+			if [ "${AWS}" = 1 ]; then
+				save_logs_to_s3
+			fi
 			print_error_pfS
 		fi
+		echo ">>> Poudriere bulk complated at `date "+%Y/%m/%d %H:%M:%S"` for ${jail_arch}"
 
 		echo ">>> Cleaning up old packages from repo..."
 		if ! poudriere pkgclean -f ${_bulk} -j ${jail_name} -p ${POUDRIERE_PORTS_NAME} -y; then
@@ -1929,8 +2047,37 @@ EOF
 			print_error_pfS
 		fi
 
+		if [ "${AWS}" = 1 ]; then
+			echo ">>> Save a copy of the package repo into S3..." | tee -a ${LOGFILE}
+			cd /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}/.latest
+			find . > ${WORKSPACE}/post-build-pkg-list-${jail_arch}
+			cd ${WORKSPACE}
+			diff pre-build-pkg-list-${jail_arch} post-build-pkg-list-${jail_arch} > /dev/null
+			if [ $? = 1 ]; then
+				[ -f pkgs-${jail_arch}.tar ] && rm pkgs-${jail_arch}.tar
+				script -aq ${LOGFILE} tar -cf pkgs-${jail_arch}.tar -C /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME} .
+				script -aq ${LOGFILE} env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+					aws s3 cp pkgs-${jail_arch}.tar s3://pfsense-engineering-build-pkg/ --no-progress
+
+				save_logs_to_s3
+			fi
+		fi
+
 		pkg_repo_rsync "/usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}"
 	done
+
+	if [ "${AWS}" = 1 ]; then
+		echo ">>> Save a copy of the distfiles into S3..." | tee -a ${LOGFILE}
+		# Save a copy of the distfiles from S3
+		find /usr/ports/distfiles > post-build-distfile-list
+		diff pre-build-distfile-list post-build-distfile-list > /dev/null
+		if [ $? -eq 1 ]; then
+			rm distfiles.tar
+			script -aq ${LOGFILE} tar -cf distfiles.tar -C /usr/ports/distfiles .
+			script -aq ${LOGFILE} env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+			    aws s3 cp distfiles.tar s3://pfsense-engineering-build-pkg/ --no-progress
+		fi
+	fi
 }
 
 # This routine is called to write out to stdout

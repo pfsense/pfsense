@@ -44,6 +44,7 @@
 	 *    - DreamHost DNS (www.dreamhost.com)
 	 *    - DuiaDNS (www.duiadns.net)
 	 *    - DuiaDNS IPv6 (www.duiadns.net)
+	 *    - DY.fi (dy.fi)
 	 *    - DynDns (dyndns.org) [dynamic, static, custom]
 	 *    - DynS (dyns.org)
 	 *    - Dynv6 (www.dynv6.com)
@@ -108,6 +109,7 @@
 	 *  DreamHost IPv6  - Not Yet Tested
 	 *  DuiaDNS         - Last Tested: 25 November 2016
 	 *  DuiaDNS IPv6    - Last Tested: 25 November 2016
+	 *  DY.fi           - Last Tested: 22 April 2021
 	 *  DynDNS Custom   - Last Tested: NEVER
 	 *  DynDNS Dynamic  - Last Tested: 12 July 2005
 	 *  DynDNS Static   - Last Tested: NEVER
@@ -352,7 +354,14 @@
 			if ($dnsMaxCacheAge !== "") {
 				$this->_dnsMaxCacheAgeDays = (int)$dnsMaxCacheAge;
 			} else {
-				$this->_dnsMaxCacheAgeDays = 25;
+				switch ($dnsService) {
+					// exceptions to _dnsMaxCacheAgeDays in an alphabetical order
+					case 'dyfi':
+						$this->_dnsMaxCacheAgeDays = 6;
+						break;
+					default:
+						$this->_dnsMaxCacheAgeDays = 25;
+				}
 			}
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s'), $this->_FQDN, $dnsRequestIf, $this->_dnsRequestIf));
@@ -396,6 +405,7 @@
 					case 'domeneshop-v6':
 					case 'duiadns':
 					case 'duiadns-v6':
+					case 'dyfi':
 					case 'dyndns':
 					case 'dyndns-custom':
 					case 'dyndns-static':
@@ -529,6 +539,13 @@
 					curl_setopt($ch, CURLOPT_URL, $server);
 					break;
 				// Providers in an alphabetical order. Add code for new providers below in a correct position.
+				case 'dyfi':
+					// see specification at https://www.dy.fi/page/specification
+					$needsIP = FALSE;
+					$server = 'https://www.dy.fi/nic/update';
+					curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
+					curl_setopt($ch, CURLOPT_URL, "{$server}?hostname={$this->_dnsHost}");
+					break;
 				case 'glesys':
 					$needsIP = TRUE;
 					$server = 'https://api.glesys.com/domain/updaterecord/format/json';
@@ -1846,6 +1863,32 @@
 					}
 					break;
 				// Providers in an alphabetical order. Add code for new providers below in a correct position.
+				case 'dyfi':
+					// see specification at https://www.dy.fi/page/specification
+					if (preg_match('/badauth/i', $data)) {
+						$status = $status_intro . $error_str . gettext("User Authorization Failed");
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = $status_intro . $error_str . gettext("No such host");
+					} else if (preg_match('/notfqdn/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Not A FQDN!");
+					} else if (preg_match('/badip/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Invalid IP. IP Address submitted is improperly formatted or is a private IP address or is on a blacklist.");
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = $status_intro . $success_str . gettext("No Change In IP Address");
+						$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
+						$successful_update = true;
+					} else if (preg_match('/dnserr/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Server side error.");
+					} else if (preg_match('/abuse/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Updating too frequently, considered abuse.");
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						$this->_debug($data);
+					}
+					break;
 				case 'glesys':
 					$status_intro = "GleSYS ({$this->_dnsHost}): ";
 					if (preg_match('/Record updated/i', $data)) {

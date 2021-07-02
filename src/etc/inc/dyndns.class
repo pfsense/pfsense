@@ -30,9 +30,9 @@
 	 *    - Amazon Route 53 (aws.amazon.com)
 	 *    - Azure DNS (azure.microsoft.com)
 	 *    - City Network (citynetwork.se)
-	 *    - ClouDNS (www.cloudns.net)
 	 *    - Cloudflare (www.cloudflare.com)
 	 *    - Cloudflare IPv6 (www.cloudflare.com)
+	 *    - ClouDNS (www.cloudns.net)
 	 *    - Custom DDNS (any URL)
 	 *    - Custom DDNS IPv6 (any URL)
 	 *    - deSEC (desec.io)
@@ -68,9 +68,9 @@
 	 *    - Namecheap (namecheap.com)
 	 *    - No-IP (no-ip.com)
 	 *    - OpenDNS (opendns.com)
+	 *    - SelfHost (selfhost.de)
 	 *    - SPDYN (spdyn.de)
 	 *    - SPDYN IPv6 (spdyn.de)
-	 *    - SelfHost (selfhost.de)
 	 *    - StaticCling (staticcling.org)
 	 *    - Strato (www.strato.de)
 	 *    - ZoneEdit (zoneedit.com)
@@ -93,17 +93,17 @@
 	 *  Amazon Route 53 - Last Tested: 04 February 2017
 	 *  Azure DNS       - Last Tested: 08 March 2018
 	 *  City Network    - Last Tested: 13 November 2013
-	 *  ClouDNS         - Last Tested: 22 August 2017
 	 *  Cloudflare      - Last Tested: 05 September 2016
 	 *  Cloudflare IPv6 - Last Tested: 17 July 2016
+	 *  ClouDNS         - Last Tested: 22 August 2017
 	 *  deSEC           - Last Tested: NEVER
 	 *  deSEC IPv6      - Last Tested: NEVER
 	 *  DHS             - Last Tested: 12 July 2005
+	 *  DigitalOcean    - Not Yet Tested
 	 *  DNS Made Easy   - Last Tested: 27 April 2015
 	 *  DNS-O-Matic     - Last Tested: 9 September 2010
 	 *  DNSexit         - Last Tested: 20 July 2008
 	 *  DNSimple        - Last Tested: 09 February 2015
-	 *  DigitalOcean    - Not Yet Tested
 	 *  DreamHost       - Last Tested: 30 April 2017
 	 *  DreamHost IPv6  - Not Yet Tested
 	 *  DuiaDNS         - Last Tested: 25 November 2016
@@ -133,11 +133,11 @@
 	 *  Namecheap       - Last Tested: 31 August 2010
 	 *  No-IP           - Last Tested: 20 July 2008
 	 *  ODS             - Last Tested: 02 August 2005
-	 *  OVH DynHOST     - Last Tested: NEVER
 	 *  OpenDNS         - Last Tested: 4 August 2008
+	 *  OVH DynHOST     - Last Tested: NEVER
+	 *  SelfHost        - Last Tested: 26 December 2011
 	 *  SPDYN           - Last Tested: 02 July 2016
 	 *  SPDYN IPv6      - Last Tested: 02 July 2016
-	 *  SelfHost        - Last Tested: 26 December 2011
 	 *  StaticCling     - Last Tested: 27 April 2006
 	 *  Strato          - Last Tested: 29 May 2021
 	 *  ZoneEdit        - Last Tested: NEVER

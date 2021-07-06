@@ -2297,6 +2297,10 @@ function cert_notify_expiring() {
 		if (empty($cert)) {
 			continue;
 		}
+		/* Proceed only for not revoked certificate */
+		if (is_cert_revoked($cert)) {
+			continue;
+		}
 		/* Fetch and analyze expiration */
 		$expiredays = cert_get_lifetime($cert, true);
 		/* If the result is null, then the lifetime data is missing, so skip the invalid entry. */

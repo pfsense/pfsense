@@ -78,7 +78,7 @@ function getDNSMasqConfig($json = false) {
     $rv['config'] = $pconfig;
     $rv['hosts'] = $a_hosts;
     $rv['domainoverrides'] = $a_domainOverrides;
-    $rv['iflist'] = build_if_list();
+    $rv['iflist'] = build_if_list($pconfig);
 
     return $json ? json_encode($rv) : $rv;
 }
@@ -140,9 +140,7 @@ function deleteDNSMasqEntry($post, $json=false) {
     }
 }
 
-function build_if_list() {
-	global $pconfig;
-
+function build_if_list($pconfig) {
 	$interface_addresses = get_possible_listen_ips(true);
 	$iflist = array('options' => array(), 'selected' => array());
 

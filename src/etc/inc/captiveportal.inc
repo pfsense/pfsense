@@ -193,7 +193,7 @@ function captiveportal_load_modules() {
 		mwexec("/sbin/kldload ipfw");
 		/* make sure ipfw is not on pfil hooks */
 		set_sysctl(array(
-		    "net.inet.ip.pfil.inbound" => "pf",
+		    "net.inet.ip.pfil.inbound" => "pf,ipfw", //leave it on for inbound NAT64
 		    "net.inet6.ip6.pfil.inbound" => "pf",
 		    "net.inet.ip.pfil.outbound" => "pf",
 		    "net.inet6.ip6.pfil.outbound" => "pf"
@@ -439,7 +439,8 @@ EOD;
 
 		captiveportal_delete_rules($pipes_to_remove);
 
-		if (empty($config['captiveportal'])) {
+		//must check that NAT64 isn't using ipfw
+		if (empty($config['captiveportal']) && empty($config['nat']['nat64']['rule'])) {
 			set_single_sysctl("net.link.ether.ipfw", "0");
 		} else {
 			/* Deactivate ipfw(4) if not needed */
@@ -447,6 +448,15 @@ EOD;
 			if (is_array($config['captiveportal'])) {
 				foreach ($config['captiveportal'] as $cpkey => $cp) {
 					if (isset($cp['enable'])) {
+						$cpactive = true;
+						break;
+					}
+				}
+			}
+			//must check that NAT64 isn't using ipfw
+			if (is_array($config['nat']['nat64']['rule'])) {
+				foreach ($config['nat']['nat64']['rule'] as $cpkey => $cp) {
+					if (!isset($cp['disabled'])) {
 						$cpactive = true;
 						break;
 					}

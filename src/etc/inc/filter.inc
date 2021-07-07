@@ -325,6 +325,12 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		unlock($filterlck);
 		return;
 	}
+	update_filter_reload_status(gettext("Generating NAT64 rules"));
+	require_once("nat64.inc");
+	$nat64_rules = filter_generate_nat64_rules();
+	if (platform_booting() == true) {
+		echo ".";
+	}
 
 	$limitrules = "";
 	/* User defined maximum table entries in Advanced menu. */
@@ -431,6 +437,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= "{$altq_queues}\n";
 	$rules .= "{$natrules}\n";
 	$rules .= "{$pfrules}\n";
+	$rules .= "{$nat64_rules}\n";
 	$rules .= discover_pkg_rules("filter");
 
 	unset($aliases, $gateways, $altq_queues, $natrules, $pfrules);

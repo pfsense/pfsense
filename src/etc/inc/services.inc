@@ -2262,6 +2262,7 @@ function dyndnsCheckIP($int) {
 		}
 
 		$hosttocheck = $url;
+		$frag = urldecode(parse_url($url, PHP_URL_FRAGMENT));
 		$ip_ch = curl_init($hosttocheck);
 		curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, $verifysslpeer);
@@ -2273,8 +2274,7 @@ function dyndnsCheckIP($int) {
 		curl_setopt($ip_ch, CURLOPT_USERPWD, "{$username}:{$password}");
 		$ip_result_page = curl_exec($ip_ch);
 		curl_close($ip_ch);
-		$ip_result_decoded = urldecode($ip_result_page);
-		preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
+		preg_match($frag ? $frag : '/(.*)/', $ip_result_page, $matches);
 		$ip_address = trim($matches[1]);
 	}
 	return $ip_address;

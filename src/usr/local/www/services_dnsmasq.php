@@ -50,6 +50,7 @@ if ($_POST['apply']) {
 	$rv = saveDNSMasqConfig($_POST);
 	$pconfig = $rv['pconfig'];
 	$input_errors = $rv['input_errors'];
+	$iflist = $rv['iflist'];
 } else if ($_POST['act'] == "del") {
 	deleteDNSMasqEntry($_POST);
 }

@@ -223,8 +223,6 @@ function saveDNSMasqConfig($post, $json=false) {
 		mark_subsystem_dirty('hosts');
 	}
 
-    
-
     if ($json) {
         applyDNSMasqConfig(true);
         return json_encode($input_errors);
@@ -232,6 +230,7 @@ function saveDNSMasqConfig($post, $json=false) {
         $rv = array();
         $rv['input_errors'] = $input_errors;
         $rv['pconfig'] = $pconfig;
+		$rv['iflist'] = build_if_list($pconfig);
         return $rv;
     }
 }

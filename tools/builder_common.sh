@@ -1921,6 +1921,22 @@ save_logs_to_s3() {
 	IFS=${OLDIFS}
 }
 
+save_pkgs_to_s3() {
+	echo ">>> Save a copy of the package repo into S3..." | tee -a ${LOGFILE}
+	cd /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}/.latest
+	find . > ${WORKSPACE}/post-build-pkg-list-${jail_arch}
+	cd ${WORKSPACE}
+	diff pre-build-pkg-list-${jail_arch} post-build-pkg-list-${jail_arch} > /dev/null
+	if [ $? = 1 ]; then
+		[ -f pkgs-${jail_arch}.tar ] && rm pkgs-${jail_arch}.tar
+		script -aq ${LOGFILE} tar -cf pkgs-${jail_arch}.tar -C /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME} .
+		script -aq ${LOGFILE} env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
+		    aws s3 cp pkgs-${jail_arch}.tar s3://pfsense-engineering-build-pkg/ --no-progress
+
+		save_logs_to_s3
+	fi
+}
+
 poudriere_bulk() {
 	local _archs=$(poudriere_possible_archs)
 	local _makeconf
@@ -2035,7 +2051,7 @@ EOF
 		if ! poudriere bulk -f ${_bulk} -j ${jail_name} -p ${POUDRIERE_PORTS_NAME}; then
 			echo ">>> ERROR: Something went wrong..."
 			if [ "${AWS}" = 1 ]; then
-				save_logs_to_s3
+				save_pkgs_to_s3
 			fi
 			print_error_pfS
 		fi
@@ -2048,19 +2064,7 @@ EOF
 		fi
 
 		if [ "${AWS}" = 1 ]; then
-			echo ">>> Save a copy of the package repo into S3..." | tee -a ${LOGFILE}
-			cd /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}/.latest
-			find . > ${WORKSPACE}/post-build-pkg-list-${jail_arch}
-			cd ${WORKSPACE}
-			diff pre-build-pkg-list-${jail_arch} post-build-pkg-list-${jail_arch} > /dev/null
-			if [ $? = 1 ]; then
-				[ -f pkgs-${jail_arch}.tar ] && rm pkgs-${jail_arch}.tar
-				script -aq ${LOGFILE} tar -cf pkgs-${jail_arch}.tar -C /usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME} .
-				script -aq ${LOGFILE} env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
-					aws s3 cp pkgs-${jail_arch}.tar s3://pfsense-engineering-build-pkg/ --no-progress
-
-				save_logs_to_s3
-			fi
+			save_pkgs_to_s3
 		fi
 
 		pkg_repo_rsync "/usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}"

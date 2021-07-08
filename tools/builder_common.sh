@@ -1614,8 +1614,8 @@ poudriere_create_ports_tree() {
 			# Download local copy of the ports tree stashed in S3
 			echo ">>>  Downloading cached copy of the ports tree from S3.." | tee -a ${LOGFILE}
 			script -aq ${LOGFILE} env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=us-east-2 \
-				aws s3 cp s3://pfsense-engineering-build-pkg/factory-ports.tz . --no-progress
-			script -aq ${LOGFILE} tar --strip-components 1 -xf factory-ports.tz -C /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}
+				aws s3 cp s3://pfsense-engineering-build-pkg/${FLAVOR}-ports.tz . --no-progress
+			script -aq ${LOGFILE} tar --strip-components 1 -xf ${FLAVOR}-ports.tz -C /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}
 			# Update the ports tree
 			(
 				cd /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}

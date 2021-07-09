@@ -1611,9 +1611,23 @@ poudriere_create_ports_tree() {
 			set -e
 			script -aq ${LOGFILE} poudriere ports -c -p "${POUDRIERE_PORTS_NAME}" -m none
 			script -aq ${LOGFILE} zfs create ${ZFS_TANK}/poudriere/ports/${POUDRIERE_PORTS_NAME}
-			# Download local copy of the ports tree stashed in S3
-			echo ">>>  Downloading cached copy of the ports tree from S3.." | tee -a ${LOGFILE}
-			aws_exec s3 cp s3://pfsense-engineering-build-pkg/${FLAVOR}-ports.tz . --no-progress
+
+			# If S3 doesn't contain stashed ports tree, create one
+			if ! aws_exec ls s3://pfsense-engineering-build-pkg/${FLAVOR}-ports.tz >/dev/null 2>&1; then
+				mkdir ${SCRATCHDIR}/${FLAVOR}-ports
+				${BUILDER_SCRIPTS}/git_checkout.sh \
+				    -r ${POUDRIERE_PORTS_GIT_URL} \
+				    -d ${SCRATCHDIR}/${FLAVOR}-ports \
+				    -b ${POUDRIERE_PORTS_GIT_BRANCH}
+
+				tar --zstd -C ${SCRATCHDIR} -cf ${FLAVOR}-ports.tz ${FLAVOR}-ports
+				aws_exec s3 cp ${FLAVOR}-ports.tz s3://pfsense-engineering-build-pkg/${FLAVOR}-ports.tz --no-progress
+			else
+				# Download local copy of the ports tree stashed in S3
+				echo ">>>  Downloading cached copy of the ports tree from S3.." | tee -a ${LOGFILE}
+				aws_exec s3 cp s3://pfsense-engineering-build-pkg/${FLAVOR}-ports.tz . --no-progress
+			fi
+
 			script -aq ${LOGFILE} tar --strip-components 1 -xf ${FLAVOR}-ports.tz -C /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}
 			# Update the ports tree
 			(

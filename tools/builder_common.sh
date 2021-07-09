@@ -1747,7 +1747,8 @@ EOF
 		mkdir -p /usr/ports/distfiles
 	fi
 
-	if [ "${AWS}" = 1 ]; then
+	if [ "${AWS}" = 1 ] && \
+	    aws_exec s3 ls s3://pfsense-engineering-build-pkg/distfiles.tar >/dev/null 2>&1; then
 		# Download a copy of the distfiles from S3
 		echo ">>> Downloading distfile cache from S3.." | tee -a ${LOGFILE}
 		aws_exec s3 cp s3://pfsense-engineering-build-pkg/distfiles.tar . --no-progress

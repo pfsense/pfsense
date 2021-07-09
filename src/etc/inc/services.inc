@@ -2275,7 +2275,17 @@ function dyndnsCheckIP($int) {
 		curl_close($ip_ch);
 		$ip_result_decoded = urldecode($ip_result_page);
 		preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
-		$ip_address = trim($matches[1]);
+
+		if ($matches[1]) {
+			$parsed_ip = trim($matches[1]);
+		} else {
+			$parsed_ip = trim($ip_result_decoded);
+		}
+
+		preg_match('=((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])=', $parsed_ip, $matches);
+		if ($matches[0]) {
+			$ip_address = $matches[0];
+		}
 	}
 	return $ip_address;
 }

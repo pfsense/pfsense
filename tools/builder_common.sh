@@ -1613,7 +1613,7 @@ poudriere_create_ports_tree() {
 			script -aq ${LOGFILE} zfs create ${ZFS_TANK}/poudriere/ports/${POUDRIERE_PORTS_NAME}
 
 			# If S3 doesn't contain stashed ports tree, create one
-			if ! aws_exec ls s3://pfsense-engineering-build-pkg/${FLAVOR}-ports.tz >/dev/null 2>&1; then
+			if ! aws_exec s3 ls s3://pfsense-engineering-build-pkg/${FLAVOR}-ports.tz >/dev/null 2>&1; then
 				mkdir ${SCRATCHDIR}/${FLAVOR}-ports
 				${BUILDER_SCRIPTS}/git_checkout.sh \
 				    -r ${POUDRIERE_PORTS_GIT_URL} \

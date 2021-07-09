@@ -1795,15 +1795,15 @@ EOF
 		echo ">>> Creating jail ${jail_name}, it may take some time... " | tee -a ${LOGFILE}
 		if [ "${AWS}" = "1" ]; then
 			mkdir objs
-			echo ">>> Downloading prebuilt release objs from s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/ ..." | tee -a ${LOGFILE}
+			echo ">>> Downloading prebuilt release objs from s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/${FREEBSD_BRANCH}/ ..." | tee -a ${LOGFILE}
 			# Download prebuilt release tarballs from previous job
-			aws_exec s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/LATEST-${jail_arch} objs --no-progress
+			aws_exec s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/${FREEBSD_BRANCH}/LATEST-${jail_arch} objs --no-progress
 			SRC_COMMIT=`cat objs/LATEST-${jail_arch}`
-			aws_exec s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/MANIFEST-${jail_arch}-${SRC_COMMIT} objs --no-progress
+			aws_exec s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/${FREEBSD_BRANCH}/MANIFEST-${jail_arch}-${SRC_COMMIT} objs --no-progress
 			ln -s MANIFEST-${jail_arch}-${SRC_COMMIT} objs/MANIFEST
 			for i in base doc kernel src tests; do
 				if [ ! -f objs/${i}-${jail_arch}-${SRC_COMMIT}.txz ]; then
-					aws_exec s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/${i}-${jail_arch}-${SRC_COMMIT}.txz objs --no-progress
+					aws_exec s3 cp s3://pfsense-engineering-build-freebsd-obj-tarballs/${FLAVOR}/${FREEBSD_BRANCH}/${i}-${jail_arch}-${SRC_COMMIT}.txz objs --no-progress
 					ln -s ${i}-${jail_arch}-${SRC_COMMIT}.txz objs/${i}.txz
 				fi
 			done

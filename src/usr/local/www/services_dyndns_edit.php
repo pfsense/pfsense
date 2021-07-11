@@ -584,6 +584,7 @@ events.push(function() {
 			case "domeneshop-v6":
 			case "dreamhost":
 			case "dreamhost-v6":
+			case "dyfi":
 			case "nicru":
 			case "nicru-v6":
 				hideInput('mx', true);

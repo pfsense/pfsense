@@ -344,8 +344,9 @@ function saveAlias($post, $id) {
 					$detail_text = sprintf(gettext("Entry added %s"), date('r'));
 				}
 
-				$address_items = explode(" ", trim(alias_idn_to_ascii($post["address{$x}"])));
+				$address_items = explode(" ", trim($post["address{$x}"]));
 				foreach ($address_items as $address_item) {
+					$address_item = alias_idn_to_ascii($address_item);
 					$iprange_type = is_iprange($address_item);
 					if ($iprange_type == 4) {
 						list($startip, $endip) = explode('-', $address_item);

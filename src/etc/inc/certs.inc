@@ -1437,9 +1437,26 @@ function is_openvpn_server_crl($crlref) {
 	return false;
 }
 
+function is_package_crl($crlref) {
+	$pluginparams = array();
+	$pluginparams['type'] = 'certificates';
+	$pluginparams['event'] = 'used_crl';
+
+	$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
+
+	/* Check if any package is using CRL */
+	foreach ($certificates_used_by_packages as $name => $package) {
+		if (is_array($package['certificatelist'][$crlref]) &&
+		    (count($package['certificatelist'][$crlref]) > 0) {
+			return true;
+		}
+	}
+}
+
 // Keep this general to allow for future expansion. See cert_in_use() above.
 function crl_in_use($crlref) {
-	return (is_openvpn_server_crl($crlref));
+	return (is_openvpn_server_crl($crlref) ||
+		is_package_crl($crlref));
 }
 
 function is_crl_internal($crl) {

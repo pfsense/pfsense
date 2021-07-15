@@ -328,6 +328,14 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			}
 		}
 
+		if (isset($post['captiveportalbackup'])) {
+			if (($post['captiveportalbackup'] > 0) && ($post['captiveportalbackup'] <= 24)) {
+				$config['system']['captiveportalbackup'] = intval($post['captiveportalbackup']);
+			} else {
+				unset($config['system']['captiveportalbackup']);
+			}
+		}
+
 		// Add/Remove RAM disk periodic backup cron jobs according to settings and installation type.
 		// Remove the cron jobs on full install if not using RAM disk.
 		// Add the cron jobs on all others if the periodic backup option is set.  Otherwise the cron job is removed.
@@ -341,6 +349,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}", '*', '*', '*', 'root', false);
 			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}", '*', '*', '*', 'root', false);
 			install_cron_job("/etc/rc.backup_logs.sh", ($config['system']['logsbackup'] > 0), $minute="0", "*/{$config['system']['logsbackup']}", '*', '*', '*', 'root', false);
+			install_cron_job("/etc/rc.backup_captiveportal.sh", ($config['system']['captiveportalbackup'] > 0), $minute="0", "*/{$config['system']['captiveportalbackup']}", '*', '*', '*', 'root', false);
 		}
 
 		write_config("Miscellaneous Advanced Settings saved");

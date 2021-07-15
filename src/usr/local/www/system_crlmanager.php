@@ -640,7 +640,10 @@ if ($act == "new" || $act == gettext("Save")) {
 						<td><?=$tmpcrl['descr']; ?></td>
 						<td><i class="fa fa-<?=($internal) ? "check" : "times"; ?>"></i></td>
 						<td><?=($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
-						<td><i class="fa fa-<?=($inuse) ? "check" : "times"; ?>"></i>
+						<td>
+						<?php if (is_openvpn_server_crl($tmpcrl['refid'])): ?>
+							<?=gettext("OpenVPN Server")?>
+						<?php endif?>
 						<?php echo cert_usedby_description($tmpcrl['refid'], $certificates_used_by_packages); ?>
 						</td>
 						<td>

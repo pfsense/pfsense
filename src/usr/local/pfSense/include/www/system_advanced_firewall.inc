@@ -73,8 +73,8 @@ function getSystemAdvancedFirewall($json = false) {
 	$pconfig['udpfirsttimeout'] = $config['system']['udpfirsttimeout'];
 	$pconfig['udpmultipletimeout'] = $config['system']['udpmultipletimeout'];
 	$pconfig['udpsingletimeout'] = $config['system']['udpsingletimeout'];
-	$pconfig['vpn_scrubnodf'] = $config['system']['vpn_scrubnodf'];
-	$pconfig['vpn_fragrement_reassemble'] = $config['system']['vpn_fragment_reassemble'];
+	$pconfig['vpn_scrubnodf'] = isset($config['system']['vpn_scrubnodf']);
+	$pconfig['vpn_fragment_reassemble'] = isset($config['system']['vpn_fragment_reassemble']);
 	$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 	$pconfig['maxmss'] = $config['system']['maxmss'];
 

@@ -78,15 +78,17 @@ if (($_POST['act'] == 'connect') || ($_POST['act'] == 'childconnect')) {
 	}
 } else if ($_POST['act'] == 'ikedisconnect') {
 	if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
-		mwexec_bg("/usr/local/sbin/swanctl --terminate --ike " . escapeshellarg($_POST['ikeid']) . " --ike-id " .escapeshellarg($_POST['ikesaid']));
+		mwexec_bg("/usr/local/sbin/swanctl --terminate --ike-id " . escapeshellarg($_POST['ikesaid']));
 	} else {
 		mwexec_bg("/usr/local/sbin/swanctl --terminate --ike " . escapeshellarg($_POST['ikeid']));
 	}
 } else if ($_POST['act'] == 'childdisconnect') {
 	//pull out number from id
-		if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
-			mwexec_bg("/usr/local/sbin/swanctl --terminate --child " . escapeshellarg($_POST['ikeid']) . " --child-id " . escapeshellarg($_POST['ikesaid']));
-		}
+	if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
+		mwexec_bg("/usr/local/sbin/swanctl --terminate --child-id " . escapeshellarg($_POST['ikesaid']));
+	} else {
+		mwexec_bg("/usr/local/sbin/swanctl --terminate --child " . escapeshellarg($_POST['ikeid']));
+	}
 }
 
 // Table body is composed here so that it can be more easily updated via AJAX

@@ -157,7 +157,7 @@ function build_srctype_list($json = false) {
 }
 
 function saveNATrule($post, $id, $json = false) {
-	global $config;
+	global $config, $ifdisp;
 
 	init_config_arr(array('filter', 'rule'));
 	init_config_arr(array('nat', 'separator'));

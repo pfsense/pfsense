@@ -163,8 +163,10 @@ function try_lock($lock, $timeout = 5) {
 /* unlock configuration file */
 function unlock($cfglckkey = 0) {
 	global $g;
-	flock($cfglckkey, LOCK_UN);
-	fclose($cfglckkey);
+	if (!is_null($cfglckkey)) {
+		@flock($cfglckkey, LOCK_UN);
+		@fclose($cfglckkey);
+	}
 	return;
 }
 

@@ -50,6 +50,7 @@ if ($_POST['apply']) {
 	$rv = saveDNSMasqConfig($_POST);
 	$pconfig = $rv['pconfig'];
 	$input_errors = $rv['input_errors'];
+	$iflist = $rv['iflist'];
 } else if ($_POST['act'] == "del") {
 	deleteDNSMasqEntry($_POST);
 }
@@ -160,7 +161,8 @@ $section->addInput(new Form_Select(
 	$iflist['selected'],
 	$iflist['options'],
 	true
-))->setHelp('Interface IPs used by the DNS Forwarder for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. ' .
+))->setHelp('Interface IPs used by the DNS Forwarder for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, ' . 
+			'both are used. Queries to other interface IPs not selected above are discarded. ' .
 			'The default behavior is to respond to queries on every available IPv4 and IPv6 address.');
 
 $section->addInput(new Form_Checkbox(

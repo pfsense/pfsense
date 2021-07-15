@@ -1208,7 +1208,7 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
 	    "hw.e6000sw.default_disabled", "vm.pmap.pti",
 	    "net.pf.request_maxcount", "hw.hn.vf_transparent",
-	    "hw.hn.use_if_start");
+	    "hw.hn.use_if_start", "net.link.ifqmaxlen");
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
 		$remove = array_merge($remove,
@@ -1333,6 +1333,9 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'hw.hn.vf_transparent="0"';
 		$data[] = 'hw.hn.use_if_start="1"';
 	}
+
+	/* Set maximum send queue length. */
+	$data[] = 'net.link.ifqmaxlen="128"';
 
 	safe_write_file($loader_conf_file, $data);
 

@@ -200,7 +200,7 @@ if ($_POST['save']) {
 	}
 	if (($_POST['ravalidlifetime'] && $_POST['rapreferredlifetime'] &&
 	    ($_POST['ravalidlifetime'] < $_POST['rapreferredlifetime'])) ||
-	    ($_POST['ravalidlifetime'] && empty($_POST['rapreffedlifetime']) &&
+	    ($_POST['ravalidlifetime'] && empty($_POST['rapreferredlifetime']) &&
 	    ($_POST['ravalidlifetime'] < 14400)) || (empty($_POST['ravalidlifetime']) &&
 	    $_POST['rapreferredlifetime'] && ($_POST['rapreferredlifetime'] > 86400))) { 
 		$input_errors[] = gettext("Default valid lifetime must be greater than Default preferred lifetime.");

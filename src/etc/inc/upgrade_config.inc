@@ -6451,6 +6451,25 @@ function upgrade_216_to_217() {
 }
 
 /*
+ * Disable PC/SC Smart Card Daemon if PKCS#11 authentication is not used
+ * https://redmine.pfsense.org/issues/11933
+ */
+function upgrade_217_to_218() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+		if (($ph1ent['authentication_method'] == 'pkcs11') &&
+		    !isset($ph1ent['disabled'])) {
+			$config['ipsec']['pkcs11support'] = true;
+			break;
+		}
+	}
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

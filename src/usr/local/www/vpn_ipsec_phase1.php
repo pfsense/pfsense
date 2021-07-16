@@ -675,12 +675,16 @@ function build_interface_list() {
 }
 
 function build_auth_method_list() {
-	global $p1_authentication_methods, $pconfig;
+	global $p1_authentication_methods, $pconfig, $config;
 
 	$list = array();
 
 	foreach ($p1_authentication_methods as $method_type => $method_params) {
 		if (!$pconfig['mobile'] && $method_params['mobile']) {
+			continue;
+		}
+		if (!isset($config['ipsec']['pkcs11support']) &&
+		    ($method_type == 'pkcs11')) {
 			continue;
 		}
 

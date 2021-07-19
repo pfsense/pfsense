@@ -937,9 +937,10 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 		$gateways_arr = return_gateways_array(false, true);
 
 		foreach ($static_routes as $rtent) {
-			/* Do not delete disabled routes on boot,
-			 * see https://redmine.pfsense.org/issues/3709 */
-			if (isset($rtent['disabled']) && platform_booting()) {
+			/* Do not delete disabled routes,
+			 * see https://redmine.pfsense.org/issues/3709 
+			 * and https://redmine.pfsense.org/issues/10706 */
+			if (isset($rtent['disabled'])) {
 				continue;
 			}
 

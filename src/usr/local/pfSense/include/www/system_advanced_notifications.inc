@@ -124,7 +124,7 @@ function getAdvancedNotifications($json = false) {
 }
 
 function saveAdvancedNotifications($post, $json = false) {
-	global $config, $smtp_authentication_mechanisms, $pushover_sounds;
+	global $g, $config, $smtp_authentication_mechanisms, $pushover_sounds;
 
 	$input_errors = array();
 	$rv = array();
@@ -137,8 +137,9 @@ function saveAdvancedNotifications($post, $json = false) {
 
 		// General Settings
 		$config['notifications']['certexpire']['enable'] = ($post['cert_enable_notify'] == "yes") ? "enabled" : "disabled";
-		if (empty($post['certexpiredays']) ||
-		    (is_numericint($post['certexpiredays']) && ($post['certexpiredays'] > 0))) {
+		if (empty($post['certexpiredays'])) {
+			$config['notifications']['certexpire']['expiredays'] = $g['default_cert_expiredays'];
+		} elseif (is_numericint($post['certexpiredays']) && ($post['certexpiredays'] > 0)) {
 			$config['notifications']['certexpire']['expiredays'] = $post['certexpiredays'];
 		} else {
 			$input_errors[] = gettext("Certificate Expiration Threshold must be a positive integer");

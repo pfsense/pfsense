@@ -445,12 +445,14 @@ function saveNATrule($post, $id, $json = false) {
 		if ($natent['interface'] != $post['interface']) {
 			continue;
 		}
- 		if ((($post['srctype'] == "network") && ($natent['source']['address'] != ($post['src'] . $post['srcmask']))) ||
-			(($post['srctype'] != "network") && ($natent['source']['address'] != $post['src']))) {
+ 		if ((($post['srctype'] == "network") && ($natent['source']['address'] != ($post['src'] . '/' . $post['srcmask']))) ||
+		    (($post['srctype'] == "single") && ($natent['source']['address'] != $post['src'])) ||
+		    ((is_specialnet($post['srctype'])) && ($natent['source']['network'] != $post['src']))) {
 			continue;
 		}
-		if ((($post['dsttype'] == "network") && ($natent['destination']['address'] != ($post['dst'] . $post['dstmask']))) ||
-		    (($post['dsttype'] != "network") && ($natent['destination']['address'] != $post['dst']))) {
+		if ((($post['dsttype'] == "network") && ($natent['destination']['address'] != ($post['dst'] . '/' . $post['dstmask']))) ||
+		    (($post['dsttype'] == "single") && ($natent['destination']['address'] != $post['dst'])) ||
+		    ((is_specialnet($post['dsttype'])) && ($natent['destination']['network'] != $post['dst']))) {
 			continue;
 		}
 		if (($natent['protocol'] != $post['proto']) &&

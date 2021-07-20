@@ -149,7 +149,7 @@ function saveAdvancedNotifications($post, $json = false) {
 		$validate_smtp = $testsmtp || (empty($post['disable_smtp']) &&
 		    !empty($post['smtpipaddress']));
 
-		if ($validate_smtp && (!is_ipaddr($post['smtpipaddress']) ||
+		if ($validate_smtp && (!is_ipaddr($post['smtpipaddress']) &&
 		    !is_fqdn($post['smtpipaddress']))) {
 			$input_errors[] = gettext("Please enter valid E-Mail server address.");
 		} else {

@@ -69,6 +69,7 @@ $pconfig['lognginx'] = !isset($config['syslog']['nolognginx']);
 $pconfig['rawfilter'] = isset($config['syslog']['rawfilter']);
 $pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
+$pconfig['logconfigchanges'] = ($config['syslog']['logconfigchanges'] != "disabled");
 $pconfig['logfilesize'] = $config['syslog']['logfilesize'];
 $pconfig['logcompressiontype'] = $config['syslog']['logcompressiontype'];
 $pconfig['rotatecount'] = $config['syslog']['rotatecount'];
@@ -179,6 +180,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['routing'] = $_POST['routing'] ? true : false;
 		$config['syslog']['ntpd'] = $_POST['ntpd'] ? true : false;
 		$config['syslog']['disablelocallogging'] = $_POST['disablelocallogging'] ? true : false;
+		$config['syslog']['logconfigchanges'] = $_POST['logconfigchanges'] ? "enabled" : "disabled";
 		$config['syslog']['enable'] = $_POST['enable'] ? true : false;
 		$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
 		$oldnologdefaultpass = isset($config['syslog']['nologdefaultpass']);
@@ -346,6 +348,13 @@ $section->addInput(new Form_Checkbox(
 	'Local Logging',
 	"Disable writing log files to the local disk",
 	$pconfig['disablelocallogging']
+));
+
+$section->addInput(new Form_Checkbox(
+	'logconfigchanges',
+	'Log Configuration Changes',
+	"Generate log entries when making changes to the configuration.",
+	$pconfig['logconfigchanges']
 ));
 
 $section->addInput(new Form_Button(

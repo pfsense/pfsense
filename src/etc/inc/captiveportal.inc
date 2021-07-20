@@ -2264,7 +2264,7 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 
 	/* Get captive portal layout */
 	if ($type == "redir") {
-		$redirurl = is_URL($redirurl) ? $redirurl : $portal_url;
+		$redirurl = is_URL($redirurl, true) ? $redirurl : $portal_url;
 		header("Location: {$redirurl}");
 		return;
 	} else if ($type == "login") {
@@ -2665,11 +2665,11 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 		}
 	}
 	/* redirect user to desired destination */
-	if (is_URL($attributes['url_redirection'])) {
+	if (is_URL($attributes['url_redirection'], true)) {
 		$my_redirurl = $attributes['url_redirection'];
-	} else if (is_URL($config['captiveportal'][$cpzone]['redirurl'])) {
+	} else if (is_URL($config['captiveportal'][$cpzone]['redirurl'], true)) {
 		$my_redirurl = $config['captiveportal'][$cpzone]['redirurl'];
-	} else if (is_URL($redirurl)) {
+	} else if (is_URL($redirurl, true)) {
 		$my_redirurl = $redirurl;
 	}
 

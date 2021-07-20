@@ -44,7 +44,7 @@ $cpcfg = $config['captiveportal'][$cpzone];
 $orig_request = trim($_REQUEST['redirurl'], " /");
 
 /* If the post-auth redirect is set, always use it. Otherwise take what was supplied in URL. */
-if (!empty($cpcfg) && is_URL($cpcfg['redirurl'])) {
+if (!empty($cpcfg) && is_URL($cpcfg['redirurl'], true)) {
 	$redirurl = $cpcfg['redirurl'];
 } elseif (preg_match("/redirurl=(.*)/", $orig_request, $matches)) {
 	$redirurl = urldecode($matches[1]);
@@ -52,7 +52,7 @@ if (!empty($cpcfg) && is_URL($cpcfg['redirurl'])) {
 	$redirurl = $_REQUEST['redirurl'];
 }
 /* Sanity check: If the redirect target is not a URL, do not attempt to use it like one. */
-if (!is_URL(urldecode($redirurl))) {
+if (!is_URL(urldecode($redirurl), true)) {
 	$redirurl = "";
 }
 
@@ -228,7 +228,7 @@ if ($_POST['logout_id']) {
 		captiveportal_free_dn_ruleno($pipeno);
 		$type = "error";
 			
-		if (is_URL($auth_result['attributes']['url_redirection'])) {
+		if (is_URL($auth_result['attributes']['url_redirection'], true)) {
 			$redirurl = $auth_result['attributes']['url_redirection'];
 			$type = "redir";
 		}

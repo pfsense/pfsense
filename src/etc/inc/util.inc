@@ -2513,14 +2513,20 @@ function msort($array, $id = "id", $sort_ascending = true) {
  * NAME
  *   is_URL
  * INPUTS
- *   string to check
+ *   $url: string to check
+ *   $httponly: Only allow HTTP or HTTPS scheme
  * RESULT
  *   Returns true if item is a URL
  ******/
-function is_URL($url) {
+function is_URL($url, $httponly = false) {
 	$match = preg_match("'\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))'", $url);
 	if ($match) {
-		return true;
+		if ($httponly) {
+			$urlparts = parse_url($url);
+			return in_array(strtolower($urlparts['scheme']), array('http', 'https'));
+		} else {
+			return true;
+		}
 	}
 	return false;
 }

@@ -627,7 +627,11 @@ function step12_submitphpaction() {
 	$server['caref'] = $ca['refid'];
 	$server['certref'] = $cert['refid'];
 	$server['dh_length'] = $pconfig['step10']['dhkey'];
-	$server['ncp_enable'] = $pconfig['step10']['ncpenable'];
+	if ($pconfig['step10']['ncpenable'] == 'on') {
+		$server['ncp_enable'] = 'enabled';
+	} else {
+		$server['ncp_enable'] = 'disabled';
+	}
 	$server['data_ciphers'] = is_array($pconfig['step10']['dataciphers']) ? implode(',', $pconfig['step10']['dataciphers']) : $pconfig['step10']['dataciphers'];
 	$server['data_ciphers_fallback'] = $pconfig['step10']['dataciphersfallback'];
 	$server['digest'] = $pconfig['step10']['digest'];

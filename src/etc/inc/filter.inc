@@ -2097,7 +2097,7 @@ function filter_nat_rules_generate() {
 				continue;
 			}
 
-			if (!is_ipaddr($srcaddr) && !is_subnet($srcaddr)) {
+			if (($srcaddr != 'any') && !is_ipaddr($srcaddr) && !is_subnet($srcaddr)) {
 				$srcaddr = explode(' ', $srcaddr)[1];
 			}
 			$tmp = explode('/', $srcaddr);
@@ -2108,7 +2108,9 @@ function filter_nat_rules_generate() {
 			}
 
 			$natifname = $FilterIflist[$natif]['if'];
-			if (is_ipaddrv6($tmp[0]) && (($FilterIflist[$natif]['type6'] == '6rd') ||
+			if ((($srcaddr == 'any') || is_ipaddrv6($tmp[0])) &&
+			    ($ipproto == 'inet6') &&
+			    (($FilterIflist[$natif]['type6'] == '6rd') ||
 			    ($FilterIflist[$natif]['type6'] == '6to4'))) {
 				$natif = strtolower($FilterIflist[$natif]['descr']) . "_stf";
 			} else {

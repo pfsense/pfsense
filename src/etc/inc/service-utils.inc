@@ -270,12 +270,14 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	$pconfig = array();
-	$pconfig['name'] = "pcscd";
-	$pconfig['description'] = gettext("PC/SC Smart Card Daemon");
-	$pconfig['enabled'] = is_service_enabled("pcscd");
-	$pconfig['status'] = get_service_status($pconfig);
-	$services[] = $pconfig;
+	if (isset($config['ipsec']['pkcs11support'])) {
+		$pconfig = array();
+		$pconfig['name'] = "pcscd";
+		$pconfig['description'] = gettext("PC/SC Smart Card Daemon");
+		$pconfig['enabled'] = is_service_enabled("pcscd");
+		$pconfig['status'] = get_service_status($pconfig);
+		$services[] = $pconfig;
+	}
 
 	if (is_array($config['ntpd']) && ($config['ntpd']['enable'] != 'disabled')) {
 		$pconfig = array();

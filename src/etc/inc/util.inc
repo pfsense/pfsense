@@ -2413,6 +2413,25 @@ function is_interface_mismatch() {
 		}
 	}
 
+	/* VLAN/QinQ-only interface mismatch detection
+	 * see https://redmine.pfsense.org/issues/12170 */
+	init_config_arr(array('vlans', 'vlan'));
+	foreach ($config['vlans']['vlan'] as $vlan) {
+		if (!does_interface_exist($vlan['if']) && 
+		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $vlan['if'])) {
+			$missing_interfaces[] = $vlan['if'];
+			$do_assign = true;
+		}
+	}
+	init_config_arr(array('qinqs', 'qinqentry'));
+	foreach ($config['qinqs']['qinqentry'] as $qinq) {
+		if (!does_interface_exist($qinq['if']) &&
+		    !preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^ipsec|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $qinq['if'])) {
+			$missing_interfaces[] = $qinq['if'];
+			$do_assign = true;
+		}
+	}
+
 	if (file_exists("{$g['tmp_path']}/assign_complete")) {
 		$do_assign = false;
 	}

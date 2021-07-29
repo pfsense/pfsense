@@ -284,6 +284,7 @@ function services_radvd_configure($blacklist = array()) {
 					}
 				}
 			}
+			$raadvdnsslifetime = $ramaxrtradvinterval * 3;
 			if (count($dnslist) > 0) {
 				$dnsstring = implode(" ", $dnslist);
 				if ($dnsstring <> "") {
@@ -293,9 +294,8 @@ function services_radvd_configure($blacklist = array()) {
 					 * maximum RA interval as defined in [RFC4861].
 					 * see https://redmine.pfsense.org/issues/11105 
 					 */
-					$raadvrdnsslifetime = $ramaxrtradvinterval * 3;
 					$radvdconf .= "\tRDNSS {$dnsstring} {\n";
-					$radvdconf .= "\t\tAdvRDNSSLifetime {$raadvrdnsslifetime};\n";
+					$radvdconf .= "\t\tAdvRDNSSLifetime {$raadvdnsslifetime};\n";
 					$radvdconf .= "\t};\n";
 				}
 			}
@@ -312,9 +312,17 @@ function services_radvd_configure($blacklist = array()) {
 				$searchliststring = trim(implode(" ", $searchlist));
 			}
 			if (!empty($dhcpv6ifconf['domain'])) {
-				$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} {$searchliststring} { };\n";
+				/* 
+				 * Lifetime SHOULD by default be at least 3 * MaxRtrAdvInterval
+				 * see https://redmine.pfsense.org/issues/12173 
+				 */
+				$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} {$searchliststring} {\n";
+				$radvdconf .= "\t\tAdvDNSSLLifetime {$raadvdnsslifetime};\n";
+				$radvdconf .= "\t};\n";
 			} elseif (!empty($config['system']['domain'])) {
-				$radvdconf .= "\tDNSSL {$config['system']['domain']} {$searchliststring} { };\n";
+				$radvdconf .= "\tDNSSL {$config['system']['domain']} {$searchliststring} {\n";
+				$radvdconf .= "\t\tAdvDNSSLLifetime {$raadvdnsslifetime};\n";
+				$radvdconf .= "\t};\n";
 			}
 		}
 		$radvdconf .= "};\n";
@@ -409,7 +417,9 @@ function services_radvd_configure($blacklist = array()) {
 				}
 			}
 			if (!empty($config['system']['domain'])) {
-				$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
+				$radvdconf .= "\tDNSSL {$config['system']['domain']} {\n";
+				$radvdconf .= "\t\tAdvDNSSLLifetime {$raadvdnsslifetime};\n";
+				$radvdconf .= "\t};\n";
 			}
 		}
 		$radvdconf .= "};\n";

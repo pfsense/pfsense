@@ -1361,7 +1361,7 @@ pkg_repo_rsync() {
 		#
 		# https://github.com/freebsd/pkg/issues/1364
 		#
-		if script -aq ${_logfile} pkg repo ${_real_repo_path}/ \
+		if script -aq ${_logfile} pkg -o REPO_ACCEPT_LEGACY_PKG=true repo ${_real_repo_path}/ \
 		    signing_command: ${PKG_REPO_SIGNING_COMMAND} >/dev/null 2>&1; then
 			echo "Done!" | tee -a ${_logfile}
 		else

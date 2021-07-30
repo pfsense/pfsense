@@ -44,7 +44,7 @@ $cpcfg = $config['captiveportal'][$cpzone];
 $orig_request = trim($_REQUEST['redirurl'], " /");
 
 /* If the post-auth redirect is set, always use it. Otherwise take what was supplied in URL. */
-if (!empty($cpcfg) && is_URL($cpcfg['redirurl'])) {
+if (!empty($cpcfg) && is_URL($cpcfg['redirurl'], true)) {
 	$redirurl = $cpcfg['redirurl'];
 } elseif (preg_match("/redirurl=(.*)/", $orig_request, $matches)) {
 	$redirurl = urldecode($matches[1]);
@@ -52,7 +52,7 @@ if (!empty($cpcfg) && is_URL($cpcfg['redirurl'])) {
 	$redirurl = $_REQUEST['redirurl'];
 }
 /* Sanity check: If the redirect target is not a URL, do not attempt to use it like one. */
-if (!is_URL(urldecode($redirurl))) {
+if (!is_URL(urldecode($redirurl), true)) {
 	$redirurl = "";
 }
 
@@ -76,15 +76,18 @@ if (!$clientip) {
 	return;
 }
 
-$cpsession = captiveportal_isip_logged($clientip);
 $ourhostname = portal_hostname_from_client_ip($clientip);
+$protocol = (isset($config['captiveportal'][$cpzone]['httpslogin'])) ? 'https://' : 'http://';
+$logouturl = "{$protocol}{$ourhostname}/";
+
+$cpsession = captiveportal_isip_logged($clientip);
+if (!empty($cpsession)) {
+	$sessionid = $cpsession['sessionid'];
+}
+
 /* Automatically switching to the logout page requires a custom logout page to be present. */
 if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['logouttext']))) {
 	/* if client already connected and a custom logout page is set : show logout page */
-	$protocol = (isset($config['captiveportal'][$cpzone]['httpslogin'])) ? 'https://' : 'http://';
-	$logouturl = "{$protocol}{$ourhostname}/";
-
-	$sessionid = $cpsession['sessionid'];
 	$attributes = array();
 	if (!empty($cpsession['session_timeout']))
 		$attributes['session_timeout'] = $cpsession['session_timeout'];
@@ -94,14 +97,51 @@ if ((!empty($cpsession)) && (! $_POST['logout_id']) && (!empty($cpcfg['page']['l
 	include("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 	ob_flush();
 	return;
-} elseif (!empty($cpsession) && (!isset($_POST['logout_id']) || !isset($config['captiveportal'][$cpzone]['logoutwin_enable']))) {
-	/* If client try to access captive portal page while already connected, 
-		but no custom logout page does exist and logout popup is disabled */	
-	echo gettext("You are connected.<br/>");
-	if (!empty($redirurl)) {
-		$redirurl = htmlspecialchars($redirurl);
-		echo ("You can proceed to: <a href='{$redirurl}'>{$redirurl}</a>");
-	} 
+} elseif (!empty($cpsession) && !isset($_POST['logout_id'])) {
+	/* If the client tries to access the captive portal page while already connected,
+		but no custom logout page exists */
+	$logo_src = get_captive_portal_logo();
+	$bg_src = get_captive_portal_bg();
+?>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Captive Portal</title>
+  <style>
+	  #content,.login,.login-card a,.login-card h1,.login-help{text-align:center}body,html{margin:0;padding:0;width:100%;height:100%;display:table}#content{font-family:'Source Sans Pro',sans-serif;background-color:#1C1275;background:<?= $bg_src ?>;-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;display:table-cell;vertical-align:middle}.login-card{padding:40px;width:280px;background-color:#F7F7F7;margin:100px auto 10px;border-radius:2px;box-shadow:0 2px 2px rgba(0,0,0,.3);overflow:hidden}.login-card h1{font-weight:400;font-size:2.3em;color:#1383c6}.login-card h1 span{color:#f26721}.login-card img{width:70%;height:70%}.login-card input[type=submit]{width:100%;display:block;margin-bottom:10px;position:relative}.login-card input[type=text],input[type=password]{height:44px;font-size:16px;width:100%;margin-bottom:10px;-webkit-appearance:none;background:#fff;border:1px solid #d9d9d9;border-top:1px solid silver;padding:0 8px;box-sizing:border-box;-moz-box-sizing:border-box}.login-card input[type=text]:hover,input[type=password]:hover{border:1px solid #b9b9b9;border-top:1px solid #a0a0a0;-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}.login{font-size:14px;font-family:Arial,sans-serif;font-weight:700;height:36px;padding:0 8px}.login-submit{-webkit-appearance:none;-moz-appearance:none;appearance:none;border:0;color:#fff;text-shadow:0 1px rgba(0,0,0,.1);background-color:#4d90fe}.login-submit:disabled{opacity:.6}.login-submit:hover{border:0;text-shadow:0 1px rgba(0,0,0,.3);background-color:#357ae8}.login-card a{text-decoration:none;color:#222;font-weight:400;display:inline-block;opacity:.6;transition:opacity ease .5s}.login-card a:hover{opacity:1}.login-help{width:100%;font-size:12px}.list{list-style-type:none;padding:0}.list__item{margin:0 0 .7rem;padding:0}label{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;text-align:left;font-size:14px;}input[type=checkbox]{-webkit-box-flex:0;-webkit-flex:none;-ms-flex:none;flex:none;margin-right:10px;float:left}@media screen and (max-width:450px){.login-card{width:70%!important}.login-card img{width:30%;height:30%}}textarea{width:66%;margin:auto;height:120px;max-height:120px;background-color:#f7f7f7;padding:20px}#terms{display:none;padding-top:100px;padding-bottom:300px;}.auth_source{border: 1px solid lightgray; padding:20px 8px 0px 8px; margin-top: -2em; border-radius: 2px; }.auth_head{background-color:#f7f7f7;display:inline-block;}.auth_head_div{text-align:left;}#error-message{text-align:left;color:#ff3e3e;font-style:italic;}
+  </style>
+</head>
+
+<body>
+<div id="content">
+	<div class="login-card">
+		<img src="<?= $logo_src ?>"/><br>
+		<h1></h1>
+		<div class="login-help">
+			<?= gettext("The portal session is connected.") ?>
+<?php if (!empty($redirurl)):
+		$redirurl = htmlspecialchars($redirurl); ?>
+			<br/><br/>
+			<?= gettext("Proceed to: ") ?>
+			<a href="<?=$redirurl?>"><?=$redirurl?></a>
+<?php endif; ?>
+		</div>
+<br/>
+	<form method="POST" action="<?=$logouturl;?>">
+		<input name="logout_id" type="hidden" value="<?=$sessionid;?>" />
+		<input name="zone" type="hidden" value="<?=$cpzone;?>" />
+		<input name="logout" type="submit" value="<?= gettext("Disconnect") ?>" />
+	</form>
+	<br  />
+	<span> <i>Made with &hearts; by</i> <strong>Netgate</strong></span>
+	</div>
+</div>
+</body>
+</html>
+<?php
 	ob_flush();
 	return;
 } elseif ($orig_host != $ourhostname) {
@@ -135,6 +175,8 @@ if ($_POST['logout_id']) {
 	$safe_logout_id = SQLite3::escapeString($_POST['logout_id']);
 	captiveportal_disconnect_client($safe_logout_id);
 	header("Location: index.php?zone=".$cpzone);
+	ob_flush();
+	return;
 } elseif (($_POST['accept'] || $cpcfg['auth_method'] === 'radmac' || !empty($cpcfg['blockedmacsurl'])) && $macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
 	captiveportal_logportalauth($clientmac, $clientmac, $clientip, "Blocked MAC address");
 	if (!empty($cpcfg['blockedmacsurl'])) {
@@ -228,7 +270,7 @@ if ($_POST['logout_id']) {
 		captiveportal_free_dn_ruleno($pipeno);
 		$type = "error";
 			
-		if (is_URL($auth_result['attributes']['url_redirection'])) {
+		if (is_URL($auth_result['attributes']['url_redirection'], true)) {
 			$redirurl = $auth_result['attributes']['url_redirection'];
 			$type = "redir";
 		}

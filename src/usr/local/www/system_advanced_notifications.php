@@ -44,6 +44,7 @@ if ($_POST) {
 	$pconfig = $rv['pconfig'];
 	$test_result = $rv['test_result'];
 	$test_class = $rv['test_class'];
+	$input_errors = $rv['input_errors'];
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Notifications"));

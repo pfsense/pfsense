@@ -1447,7 +1447,7 @@ function is_package_crl($crlref) {
 	/* Check if any package is using CRL */
 	foreach ($certificates_used_by_packages as $name => $package) {
 		if (is_array($package['certificatelist'][$crlref]) &&
-		    (count($package['certificatelist'][$crlref]) > 0) {
+		    (count($package['certificatelist'][$crlref]) > 0)) {
 			return true;
 		}
 	}

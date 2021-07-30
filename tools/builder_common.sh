@@ -1376,6 +1376,9 @@ pkg_repo_rsync() {
 
 			if sha256 -q ${_pkgfile} | ${PKG_REPO_SIGNING_COMMAND} \
 			    > ${_pkgfile}.sig 2>/dev/null; then
+				# XXX Temporary workaround to create link to pkg sig
+				[ -e ${_repo_path}/Latest/pkg.pkg ] && \
+					ln -sf pkg.txz.sig ${_repo_path}/Latest/pkg.pkg.sig
 				echo "Done!" | tee -a ${_logfile}
 			else
 				echo "Failed!" | tee -a ${_logfile}

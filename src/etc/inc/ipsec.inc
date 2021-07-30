@@ -1424,12 +1424,14 @@ function ipsec_setup_strongswan() {
 	$ssconf['charon']['plugins']['unity'] = array('load' => $unity_enabled);
 	$ssconf['charon']['plugins']['curve25519'] = array('load' => "yes");
 
-	$ssconf['charon']['plugins']['pkcs11'] = array();
-	$ssconf['charon']['plugins']['pkcs11']['load'] = "yes";
-	$ssconf['charon']['plugins']['pkcs11']['modules'] = array();
-	$ssconf['charon']['plugins']['pkcs11']['modules']['opensc'] = array();
-	$ssconf['charon']['plugins']['pkcs11']['modules']['opensc']['load_certs'] = "yes";
-	$ssconf['charon']['plugins']['pkcs11']['modules']['opensc']['path'] = "/usr/local/lib/opensc-pkcs11.so";
+	if (isset($config['ipsec']['pkcs11support'])) {
+		$ssconf['charon']['plugins']['pkcs11'] = array();
+		$ssconf['charon']['plugins']['pkcs11']['load'] = "yes";
+		$ssconf['charon']['plugins']['pkcs11']['modules'] = array();
+		$ssconf['charon']['plugins']['pkcs11']['modules']['opensc'] = array();
+		$ssconf['charon']['plugins']['pkcs11']['modules']['opensc']['load_certs'] = "yes";
+		$ssconf['charon']['plugins']['pkcs11']['modules']['opensc']['path'] = "/usr/local/lib/opensc-pkcs11.so";
+	}
 
 	/* Find RADIUS servers designated for Mobile IPsec user auth */
 	$radius_servers = array();
@@ -2715,6 +2717,8 @@ function ipsec_configure($restart = false) {
 		killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
 		/* Wait for process to die */
 		sleep(2);
+		/* Stop PC/SC Smart Card Services */
+		killbyname("pcscd");
 		/* Shutdown enc0 interface*/
 		mwexec("/sbin/ifconfig enc0 down");
 		ipsec_gre_default_mtu(); 
@@ -2722,6 +2726,20 @@ function ipsec_configure($restart = false) {
 	} else {
 		/* Startup enc0 interface */
 		mwexec("/sbin/ifconfig enc0 up");
+		/* PC/SC daemon must be started before strongswan */
+		if (isset($config['ipsec']['pkcs11support']) && !isvalidproc("pcscd")) {
+			if (platform_booting()) {
+				echo gettext("Starting PC/SC Smart Card Services...");
+			}
+			mwexec_bg("/usr/local/sbin/pcscd");
+			if (platform_booting()) {
+				echo gettext("done.\n");
+			}
+		} elseif (!isset($config['ipsec']['pkcs11support']) && isvalidproc("pcscd")) {
+			/* strongswan must be stopped first, otherwise it will flood the logs */
+			mwexec("/usr/local/sbin/strongswanrc stop");
+			killbyname("pcscd");
+		}
 	}
 
 	if (platform_booting()) {

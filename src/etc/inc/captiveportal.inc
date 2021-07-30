@@ -42,16 +42,9 @@ define("CUSTOM_RADIUS_ACCT_INPUT_GIGAWORDS", "52");
 define("CUSTOM_RADIUS_ACCT_OUTPUT_GIGAWORDS", "53");
 define("GIGAWORDS_RIGHT_OPERAND", '4294967296'); // 2^32
 
-function get_default_captive_portal_html() {
+function get_captive_portal_logo() {
 	global $config, $g, $cpzone;
-
-	$translated_text1 = gettext("User");
-	$translated_text2 = gettext("Password");
-	$translated_text3 = gettext("First Authentication Method ");
-	$translated_text4 = gettext("Second Authentication Method ");
-	// default images to use.
 	$logo_src = "captiveportal-default-logo.png";
-	$bg_src = "linear-gradient(135deg, #1475CF, #2B40B5, #1C1275)";
 	// Check if customlogo is set and if the element exists
 	// Check if the image is in the directory
 	if (isset($config['captiveportal'][$cpzone]['customlogo']) &&
@@ -66,6 +59,12 @@ function get_default_captive_portal_html() {
 			}
 		}
 	}
+	return $logo_src;
+}
+
+function get_captive_portal_bg() {
+	$bg_src = "linear-gradient(135deg, #1475CF, #2B40B5, #1C1275)";
+	global $config, $g, $cpzone;
 	// check if custombg is set and if the element exists
 	if (isset($config['captiveportal'][$cpzone]['custombg']) &&
 	    is_array($config['captiveportal'][$cpzone]['element']) &&
@@ -78,8 +77,20 @@ function get_default_captive_portal_html() {
 				}
 			}
 		}
-
 	}
+	return $bg_src;
+}
+
+function get_default_captive_portal_html() {
+	global $config, $g, $cpzone;
+
+	$translated_text1 = gettext("User");
+	$translated_text2 = gettext("Password");
+	$translated_text3 = gettext("First Authentication Method ");
+	$translated_text4 = gettext("Second Authentication Method ");
+	// default images to use.
+	$logo_src = get_captive_portal_logo();
+	$bg_src = get_captive_portal_bg();
 	// bring in terms and conditions
 	$termsconditions = base64_decode($config['captiveportal'][$cpzone]['termsconditions']);
 	// if there is no terms and conditions do not require the checkbox to be selected.
@@ -2264,7 +2275,7 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 
 	/* Get captive portal layout */
 	if ($type == "redir") {
-		$redirurl = is_URL($redirurl) ? $redirurl : $portal_url;
+		$redirurl = is_URL($redirurl, true) ? $redirurl : $portal_url;
 		header("Location: {$redirurl}");
 		return;
 	} else if ($type == "login") {
@@ -2665,11 +2676,11 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $redir
 		}
 	}
 	/* redirect user to desired destination */
-	if (is_URL($attributes['url_redirection'])) {
+	if (is_URL($attributes['url_redirection'], true)) {
 		$my_redirurl = $attributes['url_redirection'];
-	} else if (is_URL($config['captiveportal'][$cpzone]['redirurl'])) {
+	} else if (is_URL($config['captiveportal'][$cpzone]['redirurl'], true)) {
 		$my_redirurl = $config['captiveportal'][$cpzone]['redirurl'];
-	} else if (is_URL($redirurl)) {
+	} else if (is_URL($redirurl, true)) {
 		$my_redirurl = $redirurl;
 	}
 

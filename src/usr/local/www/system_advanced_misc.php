@@ -368,6 +368,14 @@ $group->add(new Form_Input(
 	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
 ))->setHelp('Log Directory');
 
+$group->add(new Form_Input(
+	'captiveportalbackup',
+	'Periodic Captive Portal DB and Vouchers Backup',
+	'number',
+	$config['system']['captiveportalbackup'],
+	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
+))->setHelp('Captive Portal Data');
+
 $group->setHelp('Sets the interval, in hours, to periodically backup these portions of RAM disk data so '.
 	'they can be restored automatically on the next boot. Keep in mind that the more '.
 	'frequent the backup, the more writes will happen to the media.');

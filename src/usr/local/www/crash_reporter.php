@@ -97,7 +97,7 @@ if ($_POST['Submit'] == "No") {
 	}
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("The firewall has enountered an error")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("The firewall has encountered an error")?></h2></div>
 	<div class="panel-body">
 		<div class="content">
 			<p>

@@ -37,12 +37,16 @@ require_once("vpn.inc");
 
 global $ipsec_filtermodes;
 
+init_config_arr(array('ipsec', 'phase1'));
+$a_phase1 = &$config['ipsec']['phase1'];
+
 $pconfig['logging'] = ipsec_get_loglevels();
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
 $pconfig['strictcrlpolicy'] = isset($config['ipsec']['strictcrlpolicy']);
 $pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
 $pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
+$pconfig['pkcs11support'] = isset($config['ipsec']['pkcs11support']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
 $pconfig['maxexchange'] = $config['ipsec']['maxexchange'];
@@ -147,6 +151,28 @@ if ($_POST['save']) {
 		} elseif (isset($config['ipsec']['compression'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['compression']);
+		}
+
+		if ($_POST['pkcs11support'] == "yes") {
+			if (!isset($config['ipsec']['pkcs11support'])) {
+				$needsrestart = true;
+			}
+			$config['ipsec']['pkcs11support'] = true;
+		} elseif (isset($config['ipsec']['pkcs11support'])) {
+			foreach ($a_phase1 as $ph1ent) {
+				if (($ph1ent['authentication_method'] == 'pkcs11') &&
+				    !isset($ph1ent['disabled'])) {
+					$pkcs11phase1 = true;
+					break;
+				}
+			}
+			if ($pkcs11phase1) {
+				$input_errors[] = gettext("Unable to disable PKCS#11 support,
+				       	already in use for Phase 1 authentication.");
+			} else {
+				$needsrestart = true;
+				unset($config['ipsec']['pkcs11support']);
+			}
 		}
 
 		if ($_POST['enableinterfacesuse'] == "yes") {
@@ -363,6 +389,13 @@ $section->addInput(new Form_Checkbox(
 	'Enable IPCompression',
 	$pconfig['compression']
 ))->setHelp('IPComp compression of content is proposed on the connection.');
+
+$section->addInput(new Form_Checkbox(
+	'pkcs11support',
+	'PKCS#11 Support',
+	'Enable PKCS#11',
+	$pconfig['pkcs11support']
+))->setHelp('Allow use of PKCS#11 tokens for Phase 1 authentication.');
 
 $section->addInput(new Form_Checkbox(
 	'enableinterfacesuse',

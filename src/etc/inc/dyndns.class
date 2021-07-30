@@ -1155,7 +1155,8 @@
 				case 'dnsmadeeasy':
 					$needsIP = TRUE;
 					$server = "https://cp.dnsmadeeasy.com/servlet/updateip";
-					curl_setopt($ch, CURLOPT_URL, $server . '?username=' . $this->_dnsUser . '&password=' . $this->_dnsPass . '&id=' . $this->_dnsHost . '&ip=' . $this->_dnsIP);
+					$username = empty($this->_dnsUser) ? "" : "&username={$this->dnsUser}";
+					curl_setopt($ch, CURLOPT_URL, $server . '?password=' . $this->_dnsPass . '&id=' . $this->_dnsHost . '&ip=' . $this->_dnsIP . $username);
 					break;
 				case 'spdyn':
 				case 'spdyn-v6':

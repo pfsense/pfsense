@@ -6470,6 +6470,84 @@ function upgrade_217_to_218() {
 }
 
 /*
+ * Convert VTI interface names to new format
+ */
+function upgrade_218_to_219() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	init_config_arr(array('ipsec', 'phase2'));
+	init_config_arr(array('ipsec', 'vtimaps', 'item'));
+
+	/* Deprecated method.
+	 * $ipsecifnum = get_ipsecifnum($ikeid, $idx);
+	 * locates and returns an ipsecifnum in the config.
+	 */
+	function upgrade219_get_ipsecifnum($ikeid, $idx) {
+		global $config;
+		foreach ($config['ipsec']['vtimaps']['item'] as $vtimap) {
+			if (($vtimap['reqid'] == $ikeid) &&
+			    ($vtimap['index'] == $idx)) {
+				return $vtimap['ifnum'];
+			}
+		}
+		return false;
+	}
+
+	/* If IPsec is disabled or there are no P1 or P2 entries, there cannot
+	 * be any current assignments, so bail early */
+	if (!ipsec_enabled() ||
+	    empty($config['ipsec']['phase1']) ||
+	    empty($config['ipsec']['phase2'])) {
+		return false;
+	}
+
+	/* Make an associative array with old name as key and new name as value for all VTI tunnels */
+	$ipsecifs = array();
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if (empty($ph1ent) || !is_array($ph1ent)) {
+			continue;
+		}
+		$ifent = array();
+		/* If there is data here, then it's a VTI tunnel */
+		$vtisubnet_spec = ipsec_vti($ph1ent, true);
+		if (!$vtisubnet_spec || !is_array($vtisubnet_spec)) {
+			/* Not VTI, so skip it. */
+			continue;
+		}
+		if (!isset($ph1ent['mobile']) && ($ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn']))) {
+			foreach ($vtisubnet_spec as $idx => $vtisub) {
+				/* Determine old name */
+				$old = "ipsec" . upgrade219_get_ipsecifnum($ph1ent['ikeid'], $idx);
+				/* Determine new name */
+				$new = ipsec_get_ifname($ph1ent, $vtisub['reqid']);
+				$ipsecifs[$old] = $new;
+			}
+		} else {
+			/* For IKEv2, only create one interface with additional addresses as aliases */
+			/* Determine old name */
+			$old = "ipsec" . upgrade219_get_ipsecifnum($ph1ent['ikeid'], 0);
+			/* Determine new name */
+			$new = ipsec_get_ifname($ph1ent);
+			$ipsecifs[$old] = $new;
+		}
+	}
+
+	/* If there are no VTI interfaces, we have nothing to do */
+	if (empty($ipsecifs)) {
+		return null;
+	}
+
+	foreach ($config['interfaces'] as $ifname => &$ifcfg) {
+		/* Check current interface assignments and see if any match a value we want */
+		if (array_key_exists($ifcfg['if'], $ipsecifs)) {
+			/* Update assignment to new name */
+			$ifcfg['if'] = $ipsecifs[$ifcfg['if']];
+		}
+	}
+	unset($config['ipsec']['vtimaps']);
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

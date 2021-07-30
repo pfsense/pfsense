@@ -42,10 +42,8 @@ init_config_arr(array('ipsec', 'client'));
 $a_client = &$config['ipsec']['client'];
 init_config_arr(array('ipsec', 'phase1'));
 init_config_arr(array('ipsec', 'phase2'));
-init_config_arr(array('ipsec', 'vtimaps', 'item'));
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
-$a_vtimaps = &$config['ipsec']['vtimaps']['item'];
 
 if (!empty($_REQUEST['p2index'])) {
 	$uindex = $_REQUEST['p2index'];
@@ -415,43 +413,6 @@ if ($_POST['save']) {
 			$ph2ent['remoteid'] = pconfig_to_idinfo("remote", $pconfig);
 		}
 
-		// create/delete vtimaps on P2 add/mod
-		$need_vtimap = true;
-		$ph1ent = ipsec_get_phase1($ph2ent['ikeid']);
-		$vtisubnet_spec = ipsec_vti($ph1ent, true);
-		foreach ($a_phase2 as $ph2) {
-			if (($ph2['uniqid'] == $ph2ent['uniqid']) &&
-			    ($ph2['mode'] == 'vti')) {
-				// config P2 mode is VTI and not changed
-				$need_vtimap = false;
-			}
-		}
-		if (($ph2ent['mode'] == "vti") && $need_vtimap) {
-			// add new vtimap if needed
-			if (($ph1ent['iketype'] == 'ikev1') ||
-			    isset($ph1ent['splitconn'])) {
-				if (!empty($vtisubnet_spec) &&
-				    is_array($vtisubnet_spec)) {
-					$a_vtimaps[] = ipsec_create_vtimap(
-					    $ph1ent['ikeid'],
-					    count($vtisubnet_spec));
-				} else {
-					$a_vtimaps[] = ipsec_create_vtimap(
-					    $ph1ent['ikeid'], 0);
-				}
-			} else {
-				if (empty($vtisubnet_spec) &&
-				    is_array($vtisubnet_spec)) {
-					$a_vtimaps[] = ipsec_create_vtimap(
-					    $ph1ent['ikeid'], 0);
-				}
-			}
-		} else if (($ph2ent['mode'] != "vti") && !$need_vtimap &&
-		    (count($vtisubnet_spec) > 0)) {
-			// del vtimap on P2 mode change
-			ipsec_del_vtimap($ph2ent);
-		}
-
 		$ph2ent['protocol'] = $pconfig['proto'];
 		$ph2ent['encryption-algorithm-option'] = $ealgos;
 		if (!empty($pconfig['halgos'])) {
@@ -585,6 +546,13 @@ $form = new Form();
 
 $section = new Form_Section('General Information');
 
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
+
 $section->addInput(new Form_Checkbox(
 	'disabled',
 	'Disabled',
@@ -598,6 +566,35 @@ $section->addInput(new Form_Select(
 	$pconfig['mode'],
 	$p2_modes
 ));
+
+if (!empty($pconfig['ikeid'])) {
+	$p1 = ipsec_get_phase1($pconfig['ikeid']);
+	if (!empty($p1['descr'])) {
+		$p1name = $p1['descr'];
+	} else {
+		$p1name = '<i>' . gettext('No description') . '</i> ';
+	}
+	$p1name .= ' (IKE ID ' . $pconfig['ikeid'];
+	if ($pconfig['mobile']) {
+		$p1name .= ', ' . gettext('Mobile');
+	}
+	$p1name .= ')';
+	$section->addInput(new Form_StaticText(
+		'Phase 1',
+		$p1name .
+		' <a class="fa fa-pencil" href="vpn_ipsec_phase1.php?ikeid=' . $p1['ikeid'] . '" title="' . gettext("Edit Phase 1 Entry") . '"></a>'
+	));
+}
+if (!empty($pconfig['reqid'])) {
+	$section->addInput(new Form_StaticText(
+		'P2 reqid',
+		$pconfig['reqid']
+	));
+}
+
+$form->add($section);
+
+$section = new Form_Section('Networks');
 
 $group = new Form_Group('*Local Network');
 $group->addClass('opt_localid');
@@ -670,13 +667,6 @@ if (!isset($pconfig['mobile'])) {
 	$group->setHelp('%s', '<span id="opt_remoteid_help"></span>');
 	$section->add($group);
 }
-
-$section->addInput(new Form_Input(
-	'descr',
-	'Description',
-	'text',
-	$pconfig['descr']
-))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $form->add($section);
 
@@ -800,13 +790,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$section = new Form_Section('Advanced Configuration');
-
-$section->addInput(new Form_IpAddress(
-	'pinghost',
-	'Automatically ping host',
-	$pconfig['pinghost']
-))->setHelp('IP Address');
+$p1 = ipsec_get_phase1($pconfig['ikeid']);
 
 // Hidden inputs
 if ($pconfig['mobile']) {
@@ -816,6 +800,14 @@ if ($pconfig['mobile']) {
 		'hidden',
 		'true'
 	));
+} else {
+	$section = new Form_Section('Keep Alive');
+
+	$section->addInput(new Form_IpAddress(
+		'pinghost',
+		'Automatically ping host',
+		$pconfig['pinghost']
+	))->setHelp('IP Address');
 }
 
 $form->addGlobal(new Form_Input(

@@ -30,152 +30,104 @@
 
 require_once("auth_check.inc");
 require_once("functions.inc");
+require_once("service-utils.inc");
 require_once("ipsec.inc");
 
 // Compose the table contents and pass it back to the ajax caller
 if ($_REQUEST && $_REQUEST['ajax']) {
 
-	if (isset($config['ipsec']['phase1']) && is_array($config['ipsec']['phase1'])) {
-		$spd = ipsec_dump_spd();
-		$sad = ipsec_dump_sad();
+	init_config_arr(array('ipsec', 'phase1'));
+	init_config_arr(array('ipsec', 'phase2'));
+
+	if (ipsec_enabled() && get_service_status(array('name' => 'ipsec'))) {
+		$cmap = ipsec_status();
 		$mobile = ipsec_dump_mobile();
-		$ipsec_status = ipsec_list_sa();
+	} else {
+		$cmap = array();
+	}
 
-		$activecounter = 0;
-		$inactivecounter = 0;
-
-		$ipsec_detail_array = array();
-		$ikenum = array();
-
-		if (isset($config['ipsec']['phase2']) && is_array($config['ipsec']['phase2'])) {
-			foreach ($config['ipsec']['phase2'] as $ph2ent) {
-				if (!ipsec_lookup_phase1($ph2ent, $ph1ent)) {
-					continue;
-				}
-
-				if ($ph2ent['remoteid']['type'] == "mobile" || isset($ph1ent['mobile'])) {
-					continue;
-				}
-
-				if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
-					continue;
-				}
-
-				if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn'])) {
-					if (!isset($ikenum[$ph1ent['ikeid']])) {
-						$ikenum[$ph1ent['ikeid']] = 0;
-					} else {
-						$ikenum[$ph1ent['ikeid']]++;
-					}
-
-					if (get_ipsecifnum($ph1ent['ikeid'], $ikenum[$ph1ent['ikeid']])) {
-						$ikeid = "con" . get_ipsecifnum($ph1ent['ikeid'], $ikenum[$ph1ent['ikeid']]);
-					} else {
-						$ikeid = "con{$ph1ent['ikeid']}00000";
-					}
-				} else {
-					if (get_ipsecifnum($ph1ent['ikeid'], 0)) {
-						$ikeid = "con" . get_ipsecifnum($ph1ent['ikeid'], 0);
-					} else {
-						$ikeid = "con{$ph1ent['ikeid']}00000";
-					}
-					$ikenum[$ph1ent['ikeid']] = true;
-				}
-
-				if (!is_array($ipsec_detail_array[$ikenum[$ph1ent['ikeid']]]) ||
-				    ($ph1ent['iketype'] == 'ikev1') || isset($ph1ent['splitconn'])) {
-					$allow_count = true;
-				} else {
-					$allow_count = false;
-				}
-
-				$found = false;
-				if (is_array($ipsec_status) && !empty($ipsec_status) && $allow_count) { 
-					foreach ($ipsec_status as $id => $ikesa) {
-						if (isset($ikesa['child-sas'])) {
-							foreach ($ikesa['child-sas'] as $childid => $childsa) {
-								list($childcid, $childsid) = explode('-', $childid, 2);
-								if ($ikeid == $childcid) {
-									$found = true;
-									break;
-								}
-							}
-						} elseif ($ikeid == $ikesa['con-id']) {
-							$found = true;
-						}
-
-						if ($found === true) {
-							if ($ikesa['state'] == 'ESTABLISHED') {
-								/* tunnel is up */
-								$iconfn = "true";
-								$activecounter++;
-							} else {
-								/* tunnel is down */
-								$iconfn = "false";
-								$inactivecounter++;
-							}
-							break;
-						}
-					}
-				}
-
-				if (($found == false) && $allow_count) {
-					/* tunnel is down */
-					$iconfn = "false";
-					$inactivecounter++;
-				}
-
-				if (!is_array($ipsec_detail_array[$ikenum[$ph1ent['ikeid']]])) {
-					$ipsec_detail_array[$ikenum[$ph1ent['ikeid']]] = array(
-						'src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),
-						'local-subnet' => array(),
-						'dest' => $ph1ent['remote-gateway'],
-						'remote-subnet' => array(),
-						'descr' => $ph2ent['descr'],
-						'total-subnets' => 0,
-						'status' => $iconfn);
-				}
-				$ipsec_detail_array[$ikenum[$ph1ent['ikeid']]]['total-subnets'] += 1;
-				if ($ipsec_detail_array[$ikenum[$ph1ent['ikeid']]]['total-subnets'] < 6) {
-					$ipsec_detail_array[$ikenum[$ph1ent['ikeid']]]['local-subnet'][] =
-						ipsec_idinfo_to_text($ph2ent['localid']);
-					$ipsec_detail_array[$ikenum[$ph1ent['ikeid']]]['remote-subnet'][] =
-						ipsec_idinfo_to_text($ph2ent['remoteid']);
-				} else {
-					$others = $ipsec_detail_array[$ikenum[$ph1ent['ikeid']]]['total-subnets'] - 4;
-					$ipsec_detail_array[$ikenum[$ph1ent['ikeid']]]['local-subnet'][4] = "+ {$others} others";
-					$ipsec_detail_array[$ikenum[$ph1ent['ikeid']]]['remote-subnet'][4] = "+ {$others} others";
-				}
-			}
+	$mobileactive = 0;
+	$mobileinactive = 0;
+	if (is_array($mobile['pool'])) {
+		foreach ($mobile['pool'] as $pool) {
+			$mobileactive += $pool['online'];
+			$mobileinactive += $pool['offline'];
 		}
-		unset($ikenum);
 	}
 
 	// Generate JSON formatted data for the widget to update from
 	$data = new stdClass();
 	$data->overview = "<tr>";
-	$data->overview .= "<td>" . $activecounter . "</td>";
-	$data->overview .= "<td>" . $inactivecounter . "</td>";
-	$mobileusage = 0;
-	if (is_array($mobile['pool'])) {
-		foreach ($mobile['pool'] as $pool) {
-			$mobileusage += $pool['online'] + $pool['offline'];
-		}
-	}
-	$data->overview .= "<td>" . htmlspecialchars($mobileusage) . "</td>";
+	$data->overview .= "<td>" . count($cmap['connected']['p1']) . " / ";
+	$data->overview .= count($cmap['connected']['p1']) + count($cmap['disconnected']['p1']) . "</td>";
+	$data->overview .= "<td>" . count($cmap['connected']['p2']) . " / ";
+	$data->overview .= count($cmap['connected']['p2']) + count($cmap['disconnected']['p2']) . "</td>";
+	$data->overview .= "<td>" . htmlspecialchars($mobileactive) . " / ";
+	$data->overview .= htmlspecialchars($mobileactive + $mobileinactive) . "</td>";
 	$data->overview .= "</tr>";
 
+	$gateways_status = return_gateways_status(true);
 	$data->tunnel = "";
-	if (is_array($ipsec_detail_array) && !empty($ipsec_detail_array)) {
-		foreach ($ipsec_detail_array as $ipsec) {
-			$data->tunnel .= "<tr>";
-			$data->tunnel .= "<td>" . implode('<br/>', $ipsec['local-subnet']) . "<br />(" . htmlspecialchars($ipsec['src']) . ")</td>";
-			$data->tunnel .= "<td>" . implode('<br/>', $ipsec['remote-subnet']) . "<br />(" . htmlspecialchars($ipsec['dest']) . ")</td>";
-			$data->tunnel .= "<td>" . htmlspecialchars($ipsec['descr']) . "</td>";
-			if ($ipsec['status'] == "true") {
-				$data->tunnel .= '<td><i class="fa fa-arrow-up text-success"></i></td>';
+	foreach ($cmap as $k => $tunnel) {
+		if (in_array($k, array('connected', 'disconnected')) ||
+		    (!array_key_exists('p1', $tunnel) ||
+		    isset($tunnel['p1']['disabled'])) ||
+		    isset($tunnel['p1']['mobile'])) {
+			continue;
+		}
+
+		// convert_friendly_interface_to_friendly_descr($ph1ent['interface'])
+		$p1src = ipsec_get_phase1_src($tunnel['p1'], $gateways_status);
+		if (empty($p1src)) {
+			$p1src = gettext("Unknown");
+		} else {
+			$p1src = str_replace(',', ', ', $p1src);
+		}
+		$p1dst = ipsec_get_phase1_dst($tunnel['p1']);
+		$data->tunnel .= "<tr>";
+		$data->tunnel .= "<td colspan=2>" . htmlspecialchars($p1src) . "</td>";
+		$data->tunnel .= "<td colspan=2>" . htmlspecialchars($p1dst) . "</td>";
+		$data->tunnel .= "<td colspan=2>" . htmlspecialchars($tunnel['p1']['descr']) . "</td>";
+		$p1conid = ipsec_conid($tunnel['p1'], null);
+		if (isset($tunnel['p1']['connected'])) {
+			$data->tunnel .= '<td><i class="fa fa-arrow-up text-success"></i> ';
+			$data->tunnel .= ipsec_status_button('ajax', 'disconnect', 'ike', $p1conid, null, false);
+			$data->tunnel .= '</td>';
+		} else {
+			$data->tunnel .= '<td><i class="fa fa-arrow-down text-danger"></i> ';
+			$data->tunnel .= ipsec_status_button('ajax', 'connect', 'all', $p1conid, null, false);
+			$data->tunnel .= '</td>';
+		}
+		$data->tunnel .= "</tr>";
+
+		foreach ($tunnel['p2'] as $p2) {
+			if (isset($p2['mobile'])) {
+				continue;
+			}
+			$p2src = ipsec_idinfo_to_text($p2['localid']);
+			$p2dst = ipsec_idinfo_to_text($p2['remoteid']);
+
+			if ($tunnel['p1']['iketype'] == 'ikev2' && !isset($tunnel['p1']['splitconn'])) {
+				$p2conid = ipsec_conid($tunnel['p1']);
 			} else {
-				$data->tunnel .= '<td><i class="fa fa-arrow-down text-danger"></i></td>';
+				$p2conid = ipsec_conid($tunnel['p1'], $p2);
+			}
+
+			$data->tunnel .= "<tr>";
+			$data->tunnel .= "<td>&nbsp;</td>";
+			$data->tunnel .= "<td>" . htmlspecialchars($p2src) . "</td>";
+			$data->tunnel .= "<td>&nbsp;</td>";
+			$data->tunnel .= "<td>" . htmlspecialchars($p2dst) . "</td>";
+			$data->tunnel .= "<td>&nbsp;</td>";
+			$data->tunnel .= "<td>" . htmlspecialchars($p2['descr']) . "</td>";
+			if (isset($p2['connected'])) {
+				$data->tunnel .= '<td><i class="fa fa-arrow-up text-success"></i> ';
+				$data->tunnel .= ipsec_status_button('ajax', 'disconnect', 'child', $p2conid, null, false);
+				$data->tunnel .= '</td>';
+			} else {
+				$data->tunnel .= '<td><i class="fa fa-arrow-down text-danger"></i> ';
+				$data->tunnel .= ipsec_status_button('ajax', 'connect', 'child', $p2conid, null, false);
+				$data->tunnel .= '</td>';
 			}
 			$data->tunnel .= "</tr>";
 		}
@@ -234,18 +186,18 @@ if (isset($config['ipsec']['phase1'])) {
 $mobile = ipsec_dump_mobile();
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 
-if (isset($config['ipsec']['phase2'])): ?>
+if (count($config['ipsec']['phase2'])): ?>
 <div id="<?=htmlspecialchars($widgetkey_nodash)?>-Overview" style="display:block;"  class="table-responsive">
 	<table class="table table-striped table-hover">
 		<thead>
 		<tr>
-			<th><?=gettext("Active Tunnels")?></th>
-			<th><?=gettext("Inactive Tunnels")?></th>
-			<th><?=gettext("Mobile Users")?></th>
+			<th><?= htmlspecialchars(gettext("P1 Active/Total")) ?></th>
+			<th><?= htmlspecialchars(gettext("P2 Active/Total")) ?></th>
+			<th><?= htmlspecialchars(gettext("Mobile Active/Total")) ?></th>
 		</tr>
 		</thead>
 		<tbody>
-			<tr><td colspan="3"><?=gettext("Retrieving overview data ")?><i class="fa fa-cog fa-spin"></i></td></tr>
+			<tr><td colspan="5"><?= htmlspecialchars(gettext("Retrieving overview data")) ?> <i class="fa fa-cog fa-spin"></i></td></tr>
 		</tbody>
 	</table>
 </div>
@@ -253,14 +205,14 @@ if (isset($config['ipsec']['phase2'])): ?>
 	<table class="table table-striped table-hover">
 	<thead>
 	<tr>
-		<th><?=gettext("Source")?></th>
-		<th><?=gettext("Destination")?></th>
-		<th><?=gettext("Description")?></th>
-		<th><?=gettext("Status")?></th>
+		<th colspan="2"><?= htmlspecialchars(gettext("Source")) ?></th>
+		<th colspan="2"><?= htmlspecialchars(gettext("Destination")) ?></th>
+		<th colspan="2"><?= htmlspecialchars(gettext("Description")) ?></th>
+		<th colspan="2"><?= htmlspecialchars(gettext("Status")) ?></th>
 	</tr>
 	</thead>
 	<tbody>
-		<tr><td colspan="4"><?=gettext("Retrieving tunnel data ")?><i class="fa fa-cog fa-spin"></i></td></tr>
+		<tr><td colspan="4"><?= htmlspecialchars(gettext("Retrieving tunnel data"))?> <i class="fa fa-cog fa-spin"></i></td></tr>
 	</tbody>
 	</table>
 </div>
@@ -270,18 +222,18 @@ if (isset($config['ipsec']['phase2'])): ?>
 <?php if (is_array($mobile['pool'])): ?>
 		<thead>
 		<tr>
-			<th><?=gettext("User")?></th>
-			<th><?=gettext("IP")?></th>
-			<th><?=gettext("Status")?></th>
+			<th><?= htmlspecialchars(gettext("User")) ?></th>
+			<th><?= htmlspecialchars(gettext("IP")) ?></th>
+			<th><?= htmlspecialchars(gettext("Status")) ?></th>
 		</tr>
 		</thead>
 		<tbody>
-			<tr><td colspan="3"><?=gettext("Retrieving mobile data ")?><i class="fa fa-cog fa-spin"></i></td></tr>
+			<tr><td colspan="3"><?= htmlspecialchars(gettext("Retrieving mobile data")) ?> <i class="fa fa-cog fa-spin"></i></td></tr>
 		</tbody>
 <?php else:?>
 		<thead>
 			<tr>
-				<th colspan="3" class="text-danger"><?=gettext("No mobile tunnels have been configured")?></th>
+				<th colspan="3" class="text-danger"><?=htmlspecialchars(gettext("No mobile tunnels have been configured")) ?></th>
 			</tr>
 		</thead>
 <?php endif;?>
@@ -290,8 +242,8 @@ if (isset($config['ipsec']['phase2'])): ?>
 
 <?php else: ?>
 	<div>
-		<h5 style="padding-left:10px;"><?=gettext("There are no configured IPsec Tunnels")?></h5>
-		<p  style="padding-left:10px;"><?=gettext('IPsec can be configured <a href="vpn_ipsec.php">here</a>.')?></p>
+		<h5 style="padding-left:10px;"><?= htmlspecialchars(gettext("There are no configured IPsec Tunnels")) ?></h5>
+		<p  style="padding-left:10px;"><?= htmlspecialchars(gettext('IPsec can be configured <a href="vpn_ipsec.php">here</a>.')) ?></p>
 	</div>
 <?php endif;
 

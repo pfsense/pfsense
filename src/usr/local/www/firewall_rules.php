@@ -487,6 +487,10 @@ $separators = $config['filter']['separator'][strtolower($if)];
 // More efficient than looping through the list of separators on every row.
 $seprows = separator_rows($separators);
 
+/* Cache gateway status for this page load.
+ * See https://redmine.pfsense.org/issues/12174 */
+$gateways_status = return_gateways_status(true);
+
 foreach ($a_filter as $filteri => $filterent):
 
 	if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
@@ -820,7 +824,7 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td>
 							<?php if (isset($filterent['gateway'])): ?>
-								<span data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Gateways details')?>" data-content="<?=gateway_info_popup($filterent['gateway'])?>" data-html="true">
+								<span data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Gateways details')?>" data-content="<?=gateway_info_popup($filterent['gateway'], $gateways_status)?>" data-html="true">
 							<?php else: ?>
 								<span>
 							<?php endif; ?>

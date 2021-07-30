@@ -994,12 +994,17 @@ function alias_info_popup($alias_id) {
 	return $content;
 }
 
-function gateway_info_popup($showgw) {
+function gateway_info_popup($showgw, $gateways_status = false) {
 	global $config, $user_settings;
 
 	init_config_arr(array('gateways', 'gateway_group'));
 	$a_gateways = return_gateways_array();
-	$gateways_status = return_gateways_status(true);
+
+	/* Use cached gateway status if available.
+	 * See https://redmine.pfsense.org/issues/12174 */
+	if (!is_array($gateways_status)) {
+		$gateways_status = return_gateways_status(true);
+	}
 
 	$content = "";
 	$gws = array();

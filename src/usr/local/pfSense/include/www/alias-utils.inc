@@ -42,7 +42,7 @@ function deleteAlias($id, $apply = false) {
 
 	$delete_error = "";
 	$is_alias_referenced = false;
-	$referenced_by = false;
+	$referenced_by = array();
 	$alias_name = $a_aliases[$id]['name'];
 	// Firewall rules
 	find_alias_reference(array('filter', 'rule'), array('source', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
@@ -69,7 +69,7 @@ function deleteAlias($id, $apply = false) {
 	// Static routes
 	find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
 	if ($is_alias_referenced == true) {
-		$delete_error = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars($referenced_by));
+		$delete_error = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars(implode(", ", $referenced_by)));
 	} else {
 		if (preg_match("/urltable/i", $a_aliases[$id]['type'])) {
 			// this is a URL table type alias, delete its file as well
@@ -90,7 +90,7 @@ function deleteAlias($id, $apply = false) {
 
 function find_alias_reference($section, $field, $origname, &$is_alias_referenced, &$referenced_by) {
 	global $config;
-	if (!$origname || $is_alias_referenced) {
+	if (!$origname) {
 		return;
 	}
 
@@ -119,9 +119,8 @@ function find_alias_reference($section, $field, $origname, &$is_alias_referenced
 			if ($fieldfound && in_array($origname, explode(' ', $fieldref))) {
 				$is_alias_referenced = true;
 				if (is_array($item)) {
-					$referenced_by = $item['descr'];
+					$referenced_by[] = $item['descr'];
 				}
-				break;
 			}
 		}
 	}

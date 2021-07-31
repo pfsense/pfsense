@@ -5759,10 +5759,12 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 			} elseif (substr($interface, 0, 4) == '_vip') {
 				if (is_array($config['virtualip']['vip'])) {
 					foreach ($config['virtualip']['vip'] as $counter => $vip) {
-						if ($vip['mode'] == "carp") {
+						if (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias")) {
 							if ($interface == "_vip{$vip['uniqid']}") {
 								$descr = $vip['subnet'];
-								$descr .= " (vhid {$vip['vhid']})";
+								if (!empty($vip['vhid'])) {
+									$descr .= " (vhid {$vip['vhid']})";
+								}
 								if (!empty($vip['descr'])) {
 									$descr .= " - " .$vip['descr'];
 								}

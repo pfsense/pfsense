@@ -80,6 +80,12 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('When enabled, the firewall will check CA and Certificate expiration ' .
 	'times daily and file notices when expired or soon-to-expire ' .
 	'entries are detected.');
+$section->addInput(new Form_Checkbox(
+    'revoked_cert_ignore_notify',
+    'Ignore for Revoked Certificate',
+    'Ignore notifications for revoked certificates',
+    $pconfig['revoked_cert_ignore_notify']
+))->setHelp('When enabled, the firewall will NOT check expiring for revoked (at least once) certificates');
 $section->addInput(new Form_Input(
 	'certexpiredays',
 	'Certificate Expiration Threshold',

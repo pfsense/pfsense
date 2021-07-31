@@ -2314,8 +2314,8 @@ function cert_notify_expiring() {
 		if (empty($cert)) {
 			continue;
 		}
-		/* Proceed only for not revoked certificate */
-		if (is_cert_revoked($cert)) {
+		/* Proceed only for not revoked certificate if ignore setting enabled */
+		if (($config['notifications']['certexpire']['ignore_revoked'] == "enabled") && is_cert_revoked($cert)) {
 			continue;
 		}
 		/* Fetch and analyze expiration */

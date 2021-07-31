@@ -28,6 +28,17 @@ require_once("certs.inc");
 require_once("interfaces.inc");
 
 /* IPsec defines */
+
+global $ipsec_conid_prefix;
+$ipsec_conid_prefix = 'con';
+
+global $ipsec_conid_separator;
+$ipsec_conid_separator = '_';
+
+/* Leave plenty of room for dynamically allocated reqids */
+global $ipsec_reqid_base;
+$ipsec_reqid_base = 5000;
+
 global $ipsec_loglevels;
 $ipsec_loglevels = array(
 	"dmn" => gettext("Daemon"),
@@ -293,9 +304,87 @@ function ipsec_enabled() {
 
 function ipsec_ikeid_used($ikeid) {
 	global $config;
-
+	init_config_arr(array('ipsec', 'phase1'));
 	foreach ($config['ipsec']['phase1'] as $ph1ent) {
 		if ($ikeid == $ph1ent['ikeid']) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function ipsec_ikeid_next() {
+	global $config;
+	$ikeid = 1;
+	init_config_arr(array('ipsec', 'phase1'));
+	$ipsecikeid = lock('ipsecikeids', LOCK_EX);
+	$ikeids = array();
+
+	foreach ($config['ipsec']['phase1'] as $ph1) {
+		$keyids[$ph1['ikeid']] = $ph1['ikeid'];
+	}
+
+	for ($i = 1; $i < 16000; $i++) {
+		if (!isset($keyids[$i])) {
+			$keyid = $i;
+			break;
+		}
+	}
+
+	unlock($ipsecreqid);
+	return $keyid;
+}
+
+function ipsec_new_reqid() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase2'));
+	$ipsecreqid = lock('ipsecreqids', LOCK_EX);
+	$keyids = array();
+	$keyid = 1;
+
+	foreach ($config['ipsec']['phase2'] as $ph2) {
+		$keyids[$ph2['reqid']] = $ph2['reqid'];
+	}
+
+	for ($i = 1; $i < 16000; $i++) {
+		if (!isset($keyids[$i])) {
+			$keyid = $i;
+			break;
+		}
+	}
+
+	unlock($ipsecreqid);
+	return $keyid;
+}
+
+function ipsec_get_phase1($ikeid) {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+
+	foreach ($config['ipsec']['phase1'] as $p1) {
+		if ($p1['ikeid'] == $ikeid) {
+			return $p1;
+		}
+	}
+}
+
+function ipsec_get_p1_descr($ikeid) {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	$p1 = ipsec_get_phase1($ikeid);
+	return (!empty($p1['descr'])) ? $p1['descr'] : '';
+}
+
+/*
+ * Return phase1 by reference for a given phase2
+ */
+function ipsec_lookup_phase1($p2, &$p1ref) {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+
+	foreach ($config['ipsec']['phase1'] as & $p1) {
+		if ($p1['ikeid'] == $p2['ikeid']) {
+			$p1ref = $p1;
 			return true;
 		}
 	}
@@ -303,54 +392,145 @@ function ipsec_ikeid_used($ikeid) {
 	return false;
 }
 
-function ipsec_ikeid_next() {
+function ipsec_get_phase2($reqid) {
+	global $config;
+	init_config_arr(array('ipsec', 'phase2'));
 
-	$ikeid = 1;
-	while (ipsec_ikeid_used($ikeid)) {
-		$ikeid++;
+	foreach ($config['ipsec']['phase2'] as $p2) {
+		if ($p2['reqid'] == $reqid) {
+			return $p2;
+		}
+	}
+}
+
+function ipsec_get_phase2_by_ikeid($ikeid) {
+	global $config;
+	init_config_arr(array('ipsec', 'phase2'));
+	$results = array();
+	foreach ($config['ipsec']['phase2'] as $p2) {
+		if ($p2['ikeid'] == $ikeid) {
+			$results[] = $p2;
+		}
+	}
+	return $results;
+}
+
+function ipsec_get_number_of_phase2($ikeid) {
+	global $config;
+	return count(ipsec_get_phase2_by_ikeid($ikeid));
+}
+
+/* Return a nested hash with P1 indexed by ikeid and P2 indexed by reqid */
+function ipsec_map_config_by_id() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	init_config_arr(array('ipsec', 'phase2'));
+	$map = array();
+
+	foreach ($config['ipsec']['phase1'] as $p1) {
+		$map[$p1['ikeid']] = array();
+		$map[$p1['ikeid']]['p1'] = $p1;
+	}
+	foreach ($config['ipsec']['phase2'] as $p2) {
+		if (!is_array($map[$p2['ikeid']]['p2'])) {
+			$map[$p2['ikeid']]['p2'] = array();
+		}
+		$map[$p2['ikeid']]['p2'][$p2['reqid']] = $p2;
 	}
 
-	return $ikeid;
+	return $map;
+}
+
+function ipsec_conid($p1 = null, $p2 = null) {
+	global $ipsec_conid_prefix, $ipsec_conid_separator;
+
+	$conid = NULL;
+	$have_p1 = (!empty($p1) && is_array($p1));
+	$have_p2 = (!empty($p2) && is_array($p2));
+
+	if (!$have_p1 && $have_p2) {
+		$p1 = ipsec_get_phase1($p2['ikeid']);
+	}
+
+	if (isset($p1['mobile'])) {
+		return "{$ipsec_conid_prefix}-mobile";
+	}
+
+	$conid = "{$ipsec_conid_prefix}{$p1['ikeid']}";
+
+	if ($have_p2) {
+		/* IKEv1 or IKEv2+Split Connections use separate P2 entries
+		 * so add reqid to ID */
+		if (($p1['iketype'] != 'ikev2') || isset($p1['splitconn'])) {
+			$conid .= "{$ipsec_conid_separator}{$p2['reqid']}";
+		}
+	}
+
+	return $conid;
+}
+
+function ipsec_id_by_conid($conid) {
+	global $config, $ipsec_conid_prefix, $ipsec_conid_separator;
+
+	if ($conid == "{$ipsec_conid_prefix}-mobile") {
+		init_config_arr(array('ipsec', 'phase1'));
+		foreach ($config['ipsec']['phase1'] as $p1) {
+			if (isset($p1['mobile'])) {
+				$conid = "{$ipsec_conid_prefix}{$p1['ikeid']}";
+			}
+		}
+	}
+
+	if (substr($conid, 0, strlen($ipsec_conid_prefix)) == $ipsec_conid_prefix) {
+		$conid = substr($conid, strlen($ipsec_conid_prefix));
+	}
+	$parts = explode($ipsec_conid_separator, $conid);
+	if (count($parts) == 1) {
+		$parts[1] = NULL;
+	}
+	return array($parts[0], $parts[1]);
 }
 
 /*
  * Return phase1 local address
  */
-function ipsec_get_phase1_src(& $ph1ent) {
-
+function ipsec_get_phase1_src(& $ph1ent, $gateways_status = false) {
+	global $interface_ip_arr_cache;
+	global $interface_sn_arr_cache;
 	if ($ph1ent['interface']) {
-		if (substr($ph1ent['interface'], 0, 4) == "_vip") {
-			$if = $ph1ent['interface'];
-		} else {
-			$if = get_failover_interface($ph1ent['interface']);
-		}
+		/* get_interface_ip() already calls get_failover_interface so no need for special handling */
+		$if = $ph1ent['interface'];
 	} else {
 		$if = "wan";
 	}
-	/* get correct interface name for 6RD/6to4 interfaces
-	 * see https://redmine.pfsense.org/issues/11643 */
-	if (is_stf_interface($ph1ent['interface'])) {
-		$ip6 = get_interface_ipv6($ph1ent['interface']);
-	} else {
-		$ip6 = get_interface_ipv6($if);
+
+	/* Fetch gateway status if not passed */
+	if (!is_array($gateways_status)) {
+		$gateways_status = return_gateways_status(true);
 	}
-	$ip4 = get_interface_ip($if);
-	if ($ph1ent['protocol'] == "inet6") {
-		$interfaceip = $ip6;
-	} elseif ($ph1ent['protocol'] == "inet") {
-		$interfaceip = $ip4;
-	} elseif ($ph1ent['protocol'] == "both") {
-		$ifips = array();
+
+	$ifips = array();
+	if (in_array($ph1ent['protocol'], array('inet', 'both'))) {
+		$ip4 = get_interface_ip($if, $gateways_status);
 		if (!empty($ip4)) {
 			$ifips[] = $ip4;
+		}
+	}
+
+	if (in_array($ph1ent['protocol'], array('inet6', 'both'))) {
+		/* get correct interface name for 6RD/6to4 interfaces
+		 * see https://redmine.pfsense.org/issues/11643 */
+		if (is_stf_interface($ph1ent['interface'])) {
+			$ip6 = get_interface_ipv6($ph1ent['interface'], false, false, $gateways_status);
+		} else {
+			$ip6 = get_interface_ipv6($if, false, false, $gateways_status);
 		}
 		if (!empty($ip6)) {
 			$ifips[] = $ip6;
 		}
-		$interfaceip = implode(',', $ifips);
 	}
 
-	return $interfaceip;
+	return implode(',', $ifips);
 }
 
 /*
@@ -495,67 +675,250 @@ function ipsec_idinfo_to_text(& $idinfo) {
 }
 
 /*
- * Return phase1 association for phase2
- */
-function ipsec_lookup_phase1($ph2ent, &$ph1ent) {
-	global $config;
-
-	if (!is_array($config['ipsec'])) {
-		return false;
-	}
-	if (!is_array($config['ipsec']['phase1'])) {
-		return false;
-	}
-	if (empty($config['ipsec']['phase1'])) {
-		return false;
-	}
-
-	foreach ($config['ipsec']['phase1'] as $ph1tmp) {
-		if ($ph1tmp['ikeid'] == $ph2ent['ikeid']) {
-			$ph1ent = $ph1tmp;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/*
- * Check phase1 communications status
- */
-function ipsec_phase1_status($ipsec_status, $ikeid) {
-
-	foreach ($ipsec_status as $ike) {
-		if ($ike['id'] == $ikeid && $ike['status'] == 'established') {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/*
- * Check phase2 communications status
- */
-function ipsec_phase2_status($ipsec_status, $phase2) {
-
-	if (ipsec_lookup_phase1($phase2, $ph1ent)) {
-		return ipsec_phase1_status($ipsec_status, $ph1ent['ikeid']);
-	}
-
-	return false;
-}
-
-/*
  * Wrapper to call pfSense_ipsec_list_sa() when IPsec is enabled
  */
 function ipsec_list_sa() {
-
 	if (ipsec_enabled()) {
 		return pfSense_ipsec_list_sa();
 	}
-
 	return array();
+}
+
+function ipsec_status() {
+	$cmap = ipsec_map_config_by_id();
+	$status = ipsec_list_sa();
+
+	/*
+	Start:
+	$cmap[$ikeid]['p1'] => Phase 1 config
+	$cmap[$ikeid]['p2'] => Array of P2 configs indexed by reqid
+
+	End:
+	$cmap[$ikeid]['p1']['status'] => Array of IKE SA entries and child SAs for this P1
+	$cmap[$ikeid]['p1']['connected'] => true/false if the P1 is connected
+	$cmap[$ikeid]['p2'][$reqid]['connected'] => true/false if the P2 is connected
+		If non-split IKEv2 then mark all as 'true'
+	*/
+
+	if (!is_array($status)) {
+		$status = array();
+	}
+
+	$cmap['connected'] = array(
+		/* List of connected P1 conid entries (excluding mobile) */
+		'p1' => array(),
+		/* List of connected P2 conid entries (excluding mobile) */
+		'p2' => array(),
+	);
+	$cmap['disconnected'] = array(
+		/* List of disconnected P1 conid entries (excluding mobile) */
+		'p1' => array(),
+		/* List of disconnected P2 conid entries (excluding mobile) */
+		'p2' => array(),
+	);
+
+	/* First level of array has IKE SA content */
+	foreach ($status as $ikesa) {
+		/* If the con-id isn't there it must not be a proper entry */
+		if (!isset($ikesa['con-id'])) {
+			continue;
+		}
+
+		/* Mark this IKE ID as connected and drop the status info underneath the P1 config */
+		list($ikeid, $reqid) = ipsec_id_by_conid($ikesa['con-id']);
+		if (!array_key_exists($ikeid, $cmap)) {
+			// Doesn't match known tunnel
+			$cmap['connected']['p1'][$ikesa['con-id']] = $ikesa['con-id'];
+		} else {
+			/* Track this IKE ID in the connection list */
+			$cmap['connected']['p1'][$ikeid] = $ikesa['con-id'];
+			/* Copy the status data. Use an array since it could be connected multiple times. */
+			if (!is_array($cmap[$ikeid]['status'])) {
+				$cmap[$ikeid]['status'] = array();
+			}
+			$cmap[$ikeid]['status'][] = $ikesa;
+			$cmap[$ikeid]['p1']['connected'] = true;
+		}
+
+		/* If there are child SAs under this IKE entry, process them */
+		if (array_key_exists('child-sas', $ikesa) &&
+		    is_array($ikesa['child-sas'])) {
+			foreach ($ikesa['child-sas'] as $childid => $childsa) {
+				/* Mark this reqid as connected */
+				list($childikeid, $childreqid) = ipsec_id_by_conid($childsa['name']);
+
+				if ($childreqid != null) {
+					if (!isset($cmap[$childikeid]['p2'][$childreqid]['mobile'])) {
+						$cmap['connected']['p2'][$childreqid] = $childsa['name'];
+						$cmap[$childikeid]['p2'][$childreqid]['connected'] = true;
+					}
+				} else {
+					/* If this is IKEv2 w/o Split, mark all reqids for the P1 as connected */
+					if ($cmap[$childikeid]['p1']['iketype'] == 'ikev2' &&
+					    !isset($cmap[$childikeid]['p1']['splitconn'])) {
+						foreach ($cmap[$ikeid]['p2'] as $p2) {
+							if (isset($p2['mobile'])) {
+								continue;
+							}
+							$cmap['connected']['p2'][$p2['reqid']] = $childsa['name'];
+							$cmap[$childikeid]['p2'][$p2['reqid']]['connected'] = true;
+						}
+					}
+				}
+			}
+		}
+	}
+	if (is_array($cmap)) {
+		foreach ($cmap as $k => $tunnel) {
+			if (in_array($k, array('connected', 'disconnected')) ||
+			    (!array_key_exists('p1', $tunnel) ||
+			    isset($tunnel['p1']['disabled'])) ||
+			    isset($tunnel['p1']['mobile'])) {
+				continue;
+			}
+			if (!array_key_exists($tunnel['p1']['ikeid'], $cmap['connected']['p1'])) {
+				$cmap['disconnected']['p1'][$tunnel['p1']['ikeid']] = ipsec_conid($tunnel['p1']);
+			}
+			foreach ($tunnel['p2'] as $p2) {
+				if (isset($p2['mobile'])) {
+					continue;
+				}
+				if (!array_key_exists($p2['reqid'], $cmap['connected']['p2'])) {
+					/* This P2 is not connected */
+					$cmap['disconnected']['p2'][$p2['reqid']] = ipsec_conid($p1['p1'], $p2);
+				}
+			}
+		}
+	}
+	return $cmap;
+}
+
+function ipsec_status_button($req = 'post', $act = 'connect', $type = 'ike', $conid, $uniqueid = null, $full = true) {
+	$btn = '<a href="';
+	if ($act == 'disconnect') {
+		$buttonclass = ($type == 'ike') ? 'danger' : 'warning';
+		$title = gettext("Disconnect");
+		$icon = 'trash';
+	} else {
+		$buttonclass = 'success';
+		$title = gettext("Connect");
+		$icon = 'sign-in';
+	}
+	if ($full) {
+		$linkclass = 'btn btn-xs btn-' . htmlspecialchars($buttonclass);
+	} else {
+		$linkclass = '';
+	}
+
+	$title .= " ";
+	switch ($type) {
+		case 'all':
+			$title .= gettext("P1 and P2s");
+			break;
+		case 'child':
+			$title .= gettext("P2");
+			break;
+		case 'ike':
+		default:
+			$title .= gettext("P1");
+			break;
+	}
+
+	if ($req == 'post') {
+		$btn .= 'status_ipsec.php?act=' . htmlspecialchars($act) .
+			'&amp;type=' . htmlspecialchars($type) .
+			'&amp;conid=' . htmlspecialchars($conid);
+		if (!empty($uniqueid)) {
+			$btn .= '&amp;uniqueid=' . htmlspecialchars($uniqueid);
+		}
+	} else {
+		$btn .= '#" id="' . 'ipsecstatus-' .
+			htmlspecialchars($act) . '-' .
+			htmlspecialchars($type) . '-' .
+			htmlspecialchars($conid);
+		if (!empty($uniqueid)) {
+			$btn .= '-' . htmlspecialchars($uniqueid);
+		}
+	}
+
+	$btn .= '"';
+	if ($full) {
+		$btn .= ' class="' . htmlspecialchars($linkclass) . '"';
+	}
+	$btn .= ' title="' . htmlspecialchars($title) . '"';
+
+	if ($req == 'post') {
+		$btn .= ' usepost';
+	}
+	$btn .= '>';
+	$btn .= '<i class="fa fa-' . htmlspecialchars($icon);
+	if ($req == 'post') {
+		$btn .= ' icon-embed-btn';
+	}
+	$btn .= '"></i>';
+
+	if ($full) {
+		$btn .= ' ' . htmlspecialchars($title);
+	}
+	$btn .= '</a>';
+	return $btn;
+}
+
+function ipsec_initiate($type = 'ike', $p1 = null, $p2 = null) {
+	return ipsec_initiate_by_conid($type, ipsec_conid($p1, $p2));
+}
+
+function ipsec_initiate_by_conid($type = 'ike', $conid) {
+	if (empty($conid)) {
+		return false;
+	}
+	switch ($type) {
+		case 'all':
+			/* Find relevant P2s and initaite all of them */
+			$cmap = ipsec_map_config_by_id();
+			list($ikeid, $reqid) = ipsec_id_by_conid($conid);
+			if (array_key_exists($ikeid, $cmap)) {
+				if ($cmap[$ikeid]['p1']['iketype'] == 'ikev2' && !isset($cmap[$ikeid]['p1']['splitconn'])) {
+					/* IKEv2 without split only has one P2, named the same as the the P1 */
+					ipsec_initiate_by_conid('child', ipsec_conid($cmap[$ikeid]['p1']));
+				} else {
+					foreach ($cmap[$ikeid]['p2'] as $p2) {
+						ipsec_initiate_by_conid('child', ipsec_conid($cmap[$ikeid]['p1'], $p2));
+					}
+				}
+			}
+			break;
+		case 'ike':
+		case 'child':
+			mwexec_bg("/usr/local/sbin/swanctl --initiate " . escapeshellarg('--' . $type) . " " . escapeshellarg($conid));
+			break;
+		default:
+			/* Do nothing. Invalid type. */
+			break;
+	}
+	return true;
+}
+
+function ipsec_terminate($type = 'ike', $p1 = null, $p2 = null, $uniqueid = null) {
+	return ipsec_terminate_by_conid($type, ipsec_conid($p1, $p2), $uniqueid);
+}
+
+function ipsec_terminate_by_conid($type = 'ike', $conid = null, $uniqueid = null) {
+	/* Must have one or the other */
+	if (($conid === null) && ($uniqueid === null)) {
+		return false;
+	}
+	$selector = '--';
+	$selector .= ($type == 'ike') ? 'ike' : 'child';
+
+	if (ctype_digit($uniqueid) && ($uniqueid > 0)) {
+		$selector .= '-id';
+		$term = $uniqueid;
+	} else {
+		$term = $conid;
+	}
+	mwexec_bg("/usr/local/sbin/swanctl --terminate " . escapeshellarg($selector) . " " . escapeshellarg($term));
+	return true;
 }
 
 /*
@@ -727,57 +1090,6 @@ function ipsec_mobilekey_sort() {
 	usort($config['ipsec']['mobilekey'], "mobilekeycmp");
 }
 
-function ipsec_get_number_of_phase2($ikeid) {
-	global $config;
-	$a_phase2 = $config['ipsec']['phase2'];
-
-	$nbph2 = 0;
-
-	if (is_array($a_phase2) && count($a_phase2)) {
-		foreach ($a_phase2 as $ph2tmp) {
-			if ($ph2tmp['ikeid'] == $ikeid) {
-				$nbph2++;
-			}
-		}
-	}
-
-	return $nbph2;
-}
-
-function ipsec_get_descr($ikeid) {
-	global $config;
-
-	if (!isset($config['ipsec']['phase1']) ||
-	    !is_array($config['ipsec']['phase1'])) {
-		return '';
-	}
-
-	foreach ($config['ipsec']['phase1'] as $p1) {
-		if ($p1['ikeid'] == $ikeid) {
-			return $p1['descr'];
-		}
-	}
-
-	return '';
-}
-
-function ipsec_get_phase1($ikeid) {
-		global $config;
-
-		if (!isset($config['ipsec']['phase1']) ||
-		    !is_array($config['ipsec']['phase1'])) {
-			return '';
-		}
-
-		$a_phase1 = $config['ipsec']['phase1'];
-		foreach ($a_phase1 as $p1) {
-			if ($p1['ikeid'] == $ikeid) {
-				return $p1;
-			}
-		}
-		unset($a_phase1);
-}
-
 function ipsec_fixup_ip($ipaddr) {
 	if (is_ipaddrv6($ipaddr) || is_subnetv6($ipaddr)) {
 		return text_to_compressed_ip6($ipaddr);
@@ -786,12 +1098,12 @@ function ipsec_fixup_ip($ipaddr) {
 	}
 }
 
-function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
+function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array(), $gateways_status = false) {
 	if ($side == "local") {
 		$id_type = $ph1ent['myid_type'];
 		$id_data = $ph1ent['myid_data'];
 
-		$addr = ipsec_get_phase1_src($ph1ent);
+		$addr = ipsec_get_phase1_src($ph1ent, $gateways_status);
 		if (!$addr) {
 			return array();
 		}
@@ -898,31 +1210,6 @@ function ipsec_fixup_network($network) {
 	return $result;
 }
 
-function ipsec_new_reqid() {
-	global $config;
-
-	if (!is_array($config['ipsec']) || !is_array($config['ipsec']['phase2'])) {
-		return;
-	}
-
-	$ipsecreqid = lock('ipsecreqids', LOCK_EX);
-	$keyids = array();
-	$keyid = 1;
-	foreach ($config['ipsec']['phase2'] as $ph2) {
-		$keyids[$ph2['reqid']] = $ph2['reqid'];
-	}
-
-	for ($i = 1; $i < 16000; $i++) {
-		if (!isset($keyids[$i])) {
-			$keyid = $i;
-			break;
-		}
-	}
-	unlock($ipsecreqid);
-
-	return $keyid;
-}
-
 function ipsec_get_loglevels() {
 	global $config, $ipsec_log_cats;
 	$def_loglevel = '1';
@@ -941,28 +1228,22 @@ function ipsec_get_loglevels() {
 	return $levels;
 }
 
-function ipsec_vti($ph1ent, $returnaddresses = false, $skipdisabled = true) {
+function ipsec_vti($p1, $returnaddresses = false, $skipdisabled = true) {
 	global $config;
-	if (empty($ph1ent) || !is_array($ph1ent) || !is_array($config['ipsec']['phase2'])) {
-		return false;
-	}
-
 	$is_vti = false;
 	$vtisubnet_spec = array();
 
-	foreach ($config['ipsec']['phase2'] as $ph2ent) {
-		if ($ph1ent['ikeid'] != $ph2ent['ikeid']) {
-			continue;
-		}
-		if ($ph2ent['mode'] == 'vti') {
+	foreach(ipsec_get_phase2_by_ikeid($p1['ikeid']) as $p2) {
+		if ($p2['mode'] == 'vti') {
 			if ($returnaddresses) {
 				$vtisubnet_spec[] = array(
-					'left' => ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']),
-					'right' => ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']),
-					'descr' => $ph2ent['descr'],
+					'left' => ipsec_idinfo_to_cidr($p2['localid'], true, $p2['mode']),
+					'right' => ipsec_idinfo_to_cidr($p2['remoteid'], false, $p2['mode']),
+					'descr' => $p2['descr'],
+					'reqid' => $p2['reqid'],
 				);
 			}
-			if ($skipdisabled && isset($ph2ent['disabled'])) {
+			if ($skipdisabled && isset($p2['disabled'])) {
 				continue;
 			} else {
 				$is_vti = true;
@@ -1180,11 +1461,16 @@ function ipsec_create_dirs() {
  * RESULT
  *   Sets up VTI interfaces and gateways, populates ipsecpinghosts
  ******/
-function ipsec_setup_gwifs() {
+function ipsec_setup_gwifs($gateways_status = false) {
 	global $g, $a_phase1, $a_phase2, $rgmap, $filterdns_list,
 		$aggressive_mode_psk, $mobile_ipsec_auth, $ifacesuse,
 		$ipsecpinghostsactive;
 	/* resolve all local, peer addresses and setup pings */
+	/* Fetch gateway status if not passed */
+	if (!is_array($gateways_status)) {
+		$gateways_status = return_gateways_status(true);
+	}
+
 	unset($iflist);
 	if (is_array($a_phase1) && count($a_phase1)) {
 		$ipsecpinghosts = array();
@@ -1193,12 +1479,11 @@ function ipsec_setup_gwifs() {
 			if (isset($ph1ent['disabled'])) {
 				continue;
 			}
-
 			if (substr($ph1ent['interface'], 0, 4) == "_vip") {
 				$vpninterface = get_configured_vip_interface($ph1ent['interface']);
 				$ifacesuse[] = get_real_interface($vpninterface);
 			} else {
-				$vpninterface = get_failover_interface($ph1ent['interface']);
+				$vpninterface = get_failover_interface($ph1ent['interface'], 'all', $gateways_status);
 				if (substr($vpninterface, 0, 4) == "_vip") {
 					$vpninterface = get_configured_vip_interface($vpninterface);
 					$ifacesuse[] = get_real_interface($vpninterface);
@@ -1206,14 +1491,13 @@ function ipsec_setup_gwifs() {
 					$ifacesuse[] = $vpninterface;
 				}
 			}
-
 			if ($ph1ent['mode'] == "aggressive" && ($ph1ent['authentication_method'] == "pre_shared_key" || $ph1ent['authentication_method'] == "xauth_psk_server")) {
 				$aggressive_mode_psk = true;
 			}
 
 			$ikeid = $ph1ent['ikeid'];
 
-			$local_spec = ipsec_get_phase1_src($ph1ent);
+			$local_spec = ipsec_get_phase1_src($ph1ent, $gateways_status);
 			/* When automatically guessing, use the first address. */
 			$local_spec  = explode(',', $local_spec);
 			$local_spec  = $local_spec[0];
@@ -1250,6 +1534,9 @@ function ipsec_setup_gwifs() {
 			if (is_array($a_phase2)) {
 				/* step through each phase2 entry */
 				foreach ($a_phase2 as $ph2ent) {
+					if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
+						continue;
+					}
 					if ($ph2ent['mode'] == 'vti') {
 						$is_vti = true;
 					}
@@ -1277,7 +1564,7 @@ function ipsec_setup_gwifs() {
 							}
 						} else {
 							foreach ($iflist as $ifent => $ifname) {
-								$interface_ip = get_interface_ip($ifent);
+								$interface_ip = get_interface_ip($ifent, $gateways_status);
 								if (!is_ipaddrv4($interface_ip)) {
 									continue;
 								}
@@ -1307,7 +1594,7 @@ function ipsec_setup_gwifs() {
 				}
 			}
 			if ($is_vti) {
-				interface_ipsec_vti_configure($ph1ent);
+				interface_ipsec_vti_configure($ph1ent, $gateways_status);
 			}
 		}
 		@file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
@@ -1688,7 +1975,7 @@ function ipsec_setup_userpools() {
  *   Sets up a bypass connection to prevent local traffic from being caught by
  *   IPsec policies.
  ******/
-function ipsec_setup_bypass() {
+function ipsec_setup_bypass($gateways_status) {
 	global $config, $scconf;
 
 	$scconf['connections']['bypass'] = array();
@@ -1699,7 +1986,7 @@ function ipsec_setup_bypass() {
 	/* Locate the LAN IPv4 and IPv6 subnets */
 	$bypassnets = array();
 	if ($config['interfaces']['lan']) {
-		$lanip = get_interface_ip("lan");
+		$lanip = get_interface_ip("lan", $gateways_status);
 		if (!empty($lanip) && is_ipaddrv4($lanip)) {
 			$lansn = get_interface_subnet("lan");
 			$lansa = gen_subnetv4($lanip, $lansn);
@@ -1707,7 +1994,7 @@ function ipsec_setup_bypass() {
 				$bypassnets[] = "{$lansa}/{$lansn}";
 			}
 		}
-		$lanip6 = get_interface_ipv6("lan");
+		$lanip6 = get_interface_ipv6("lan", $gateways_status);
 		if (!empty($lanip6) && is_ipaddrv6($lanip6)) {
 			$lansn6 = get_interface_subnetv6("lan");
 			$lansa6 = gen_subnetv6($lanip6, $lansn6);
@@ -1819,13 +2106,18 @@ function ipsec_setup_routes($interface, $family, $sourcehost, $duplicates) {
  *   Populates $conn with local and remote arrays containing authentication
  *   details.
  ******/
-function ipsec_setup_authentication(& $ph1ent, & $conn) {
+function ipsec_setup_authentication(& $ph1ent, & $conn, $gateways_status = false) {
 	global $rgmap, $ipsec_swanctl_dirs, $config;
 	$local = array();
 	$remote = array();
 	$remote2 = array();
 
-	list($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
+	/* Fetch gateway status if not passed */
+	if (!is_array($gateways_status)) {
+		$gateways_status = return_gateways_status(true);
+	}
+
+	list($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local', array(), $gateways_status);
 	$localid = ipsec_fixup_id($myid_type, $myid_data);
 	if (!empty($localid)) {
 		$local['id'] = $localid;
@@ -1834,7 +2126,7 @@ function ipsec_setup_authentication(& $ph1ent, & $conn) {
 	// Only specify peer ID if we are not dealing with mobile PSK
 	if (!(isset($ph1ent['mobile']) &&
 	    in_array($ph1ent['authentication_method'], array("pre_shared_key", "xauth_psk_server")))) {
-		list ($remoteid_type, $remoteid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
+		list ($remoteid_type, $remoteid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap, $gateways_status);
 		$remoteid = ipsec_fixup_id($remoteid_type, $remoteid_data);
 	}
 	if (!empty($remoteid)) {
@@ -2017,23 +2309,66 @@ function ipsec_setup_proposal_entry(& $ph2ent, & $algo_arr, $ealg_id, $keylen) {
 	return implode(',', $proposal);
 }
 
+function ipsec_get_ifname($p1, $reqid = 0) {
+	global $config;
+	$ifname = "ipsec";
+	if ($reqid > 0) {
+		$ifname .= "{$reqid}";
+	} else {
+		$p2s = ipsec_get_phase2_by_ikeid($p1['ikeid']);
+		if (!empty($p2s)) {
+			$ifname .= $p2s[0]['reqid'];
+		}
+	}
+	return $ifname;
+}
+
+function ipsec_get_ifname_by_conf($p1 = array(), $p2 = array()) {
+	global $config;
+	$have_p1 = (!empty($p1) && is_array($p1));
+	$have_p2 = (!empty($p2) && is_array($p2));
+	$reqid = null;
+
+	if (!$have_p1 && $have_p2) {
+		$p1 = ipsec_get_phase1($p2['ikeid']);
+	}
+
+	if ($have_p2) {
+		$reqid = $p2['reqid'];
+	}
+
+	return ipsec_get_ifname($p1, $reqid);
+}
+
 /****f* ipsec/ipsec_setup_vtireq
  * NAME
  *   ipsec_setup_vtireq - Setup a VTI type IPsec request
  * INPUTS
  *   $child                : A swanctl child array
  *   $ipsec_vti_cleanup_ifs: An array of VTI interface names for later cleanup
- *   $ikeid                : The IKE ID of this child
- *   $idx                  : The index of this child (for split connections/IKEv1)
+ *   $p1                   : The IKE config under which this child exists
+ *   $reqid                : The reqid of the P2 if known, otherwise the first P2 reqid for this P1 is looked up.
  * RESULT
  *   Sets up VTI-specific values for a request.
  ******/
-function ipsec_setup_vtireq(& $child, & $ipsec_vti_cleanup_ifs, $ikeid, $idx = 0) {
-	$child['reqid'] = get_ipsecifnum($ikeid, $idx);
+function ipsec_setup_vtireq(& $child, & $ipsec_vti_cleanup_ifs, $p1, $reqid = 0) {
+	global $ipsec_reqid_base;
+	if ($reqid > 0) {
+		$child['reqid'] = $ipsec_reqid_base + $reqid;
+	} else {
+		$p2s = ipsec_get_phase2_by_ikeid($p1['ikeid']);
+		if (!empty($p2s)) {
+			$reqid = $p2s[0]['reqid'];
+			$child['reqid'] = $ipsec_reqid_base + $reqid;
+		} else {
+			return false;
+		}
+	}
 	/* This interface will be a valid IPsec interface, so remove it from the cleanup list. */
-	$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array("ipsec{$child['reqid']}"));
-	$child['local_ts'] .= ",0.0.0.0/0";
-	$child['remote_ts'] .= ",0.0.0.0/0";
+	$ipsec_vti_cleanup_ifs = array_diff($ipsec_vti_cleanup_ifs, array(ipsec_get_ifname($p1, $reqid)));
+	$child['local_ts'] .= ",0.0.0.0/0,::/0";
+	$child['remote_ts'] .= ",0.0.0.0/0,::/0";
+	return true;
 }
 
 /****f* ipsec/ipsec_setup_tunnels
@@ -2045,7 +2380,7 @@ function ipsec_setup_vtireq(& $child, & $ipsec_vti_cleanup_ifs, $ikeid, $idx = 0
  *   Sets up a swanctl array for all connections in the configuration along with
  *   their children, authentication, etc.
  ******/
-function ipsec_setup_tunnels() {
+function ipsec_setup_tunnels($gateways_status = false) {
 	global $aggressive_mode_psk, $a_client, $config,
 		$filterdns_list, $g, $ifacesuse, $ipsec_idhandling, $ipsec_log_cats,
 		$ipsec_log_sevs, $ipsec_swanctl_basedir, $ipsec_swanctl_dirs,
@@ -2053,13 +2388,18 @@ function ipsec_setup_tunnels() {
 		$p2_ealgos, $rgmap, $sa, $sn, $scconf, $conn, $tunnels,
 		$ipsec_vti_cleanup_ifs, $conn_defaults;
 
+	/* Fetch gateway status if not passed */
+	if (!is_array($gateways_status)) {
+		$gateways_status = return_gateways_status(true);
+	}
+
 	foreach ($tunnels as $ph1ent) {
 		/* Skip disabled entries */
 		if (isset($ph1ent['disabled'])) {
 			continue;
 		}
 		/* If the local source is invalid, skip this entry. */
-		$local_spec = ipsec_get_phase1_src($ph1ent);
+		$local_spec = ipsec_get_phase1_src($ph1ent, $gateways_status);
 		if (!$local_spec) {
 			continue;
 		}
@@ -2074,13 +2414,14 @@ function ipsec_setup_tunnels() {
 			$conn =& $scconf["{$cname}-defaults"];
 			$scconf['connections']["{$cname} : {$cname}-defaults"] = array("# Stub to load con-mobile-defaults");
 		} else {
-			if (get_ipsecifnum($ph1ent['ikeid'], 0)) {
-				$cname = "con" . get_ipsecifnum($ph1ent['ikeid'], 0);
-			} else {
-				$cname = "con{$ph1ent['ikeid']}00000";
-			}
+			$cname = ipsec_conid($ph1ent);
 			/* Start with common default values */
 			$scconf['connections'][$cname] = $conn_defaults;
+			$descr = "# P1 (ikeid {$ph1ent['ikeid']})";
+			if (!empty($ph1ent['descr'])) {
+				$descr .= ": {$ph1ent['descr']}";
+			}
+			array_unshift($scconf['connections'][$cname], $descr);
 			/* Array reference to make things easier */
 			$conn =& $scconf['connections'][$cname];
 		}
@@ -2231,7 +2572,6 @@ function ipsec_setup_tunnels() {
 		$has_vti = false;
 		$ealgoAHsp2arr = array();
 		$ealgoESPsp2arr = array();
-		$suffix = 0;
 
 		foreach ($ph1ent['p2'] as $ph2ent) {
 			/* If this entry is disabled, or cannot be configured, skip. */
@@ -2312,7 +2652,7 @@ function ipsec_setup_tunnels() {
 				    isset($ph1ent['mobile'])) {
 					$local_spec = "0.0.0.0/0,::/0";
 				} else {
-					$local_ts = ipsec_get_phase1_src($ph1ent);
+					$local_ts = ipsec_get_phase1_src($ph1ent, $gateways_status);
 				}
 
 				if (!isset($ph2ent['mobile'])) {
@@ -2398,25 +2738,25 @@ function ipsec_setup_tunnels() {
 			/* Not mobile, and IKEv1 or Split Connections active */
 			if (!isset($ph1ent['mobile']) && (($ikeversion == 1) || isset($ph1ent['splitconn']))) {
 				if (!empty($remote_ts)) {
-					/* Setup child sub-connections using unique names with a suffix */
-					if (get_ipsecifnum($ph1ent['ikeid'], $idx)) {
-						$subconnum = get_ipsecifnum($ph1ent['ikeid'], $idx);
-					} else {
-						$subconnum = "{$ph1ent['ikeid']}00000";
-					}
-
-					$subconname = "con" . ($subconnum + $suffix);
+					/* Setup child sub-connections using unique names */
+					$subconname = ipsec_conid($ph1ent, $ph2ent);
 					$children[$subconname] = $child;
+
+					$descr = "# P2 (reqid {$ph2ent['reqid']})";
+					if (!empty($ph2ent['descr'])) {
+						$descr .= ": {$ph2ent['descr']}";
+					}
+					array_unshift($children[$subconname], $descr);
 					$children[$subconname]['local_ts'] = $local_ts;
 					$children[$subconname]['remote_ts'] = $remote_ts;
 					if ($has_vti) {
-						ipsec_setup_vtireq($children[$subconname], $ipsec_vti_cleanup_ifs, $ph1ent['ikeid'], $suffix);
+						ipsec_setup_vtireq($children[$subconname], $ipsec_vti_cleanup_ifs, $ph1ent, $ph2ent['reqid']);
 					}
 					if (!empty($ph2ent['protocol']) && !empty($proposal)) {
 						$children[$subconname][$ph2ent['protocol'] . '_proposals'] = implode(',', $proposal);
 					}
 				} else {
-					log_error(sprintf(gettext("No phase2 specifications for tunnel with REQID = %s"), $ikeid));
+					log_error(sprintf(gettext("No phase2 specifications for tunnel with ikeid = %s"), $ikeid));
 				}
 			} else {
 				/* TODO: Fix this to nicely merge all P2 params for single child case */
@@ -2424,8 +2764,13 @@ function ipsec_setup_tunnels() {
 					$children[$cname] = array();
 				}
 				$children[$cname] = array_merge($children[$cname], $child);
+
+				$descr = "# P2 (reqid {$ph2ent['reqid']})";
+				if (!empty($ph2ent['descr'])) {
+					$descr .= ": {$ph2ent['descr']}";
+				}
+				array_unshift($children[$cname], $descr);
 			}
-			$suffix++;
 		}
 
 		$conn['local_addrs'] = $local_spec;
@@ -2462,7 +2807,7 @@ function ipsec_setup_tunnels() {
 				$children[$cname]['local_ts'] = implode(",", $local_ts_spec);
 			}
 			if ($has_vti) {
-				ipsec_setup_vtireq($children[$cname], $ipsec_vti_cleanup_ifs, $ph1ent['ikeid']);
+				ipsec_setup_vtireq($children[$cname], $ipsec_vti_cleanup_ifs, $ph1ent);
 			}
 			if (!empty($ealgoAHsp2arr)) {
 				$children[$cname]['ah_proposals'] = implode(',', array_unique($ealgoAHsp2arr));
@@ -2473,15 +2818,15 @@ function ipsec_setup_tunnels() {
 		}
 
 		/* Setup connection authentication */
-		ipsec_setup_authentication($ph1ent, $conn);
+		ipsec_setup_authentication($ph1ent, $conn, $gateways_status);
 
 		/* Add children to this connection, including default child parameters */
 		if (count($children)) {
 			foreach($children as $name => $child) {
-				$conn['children'][$name] = array_merge($child_params, $child);
+				$conn['children'][$name] = array_merge($child, $child_params);
 			}
 		}
-
+		unset ($ph2ent);
 	}
 
 	return;
@@ -2496,7 +2841,7 @@ function ipsec_setup_tunnels() {
  *   Returns a swanctl array containing secrets (PSKs, certs, etc) and writes out
  *   necessary CA, CRL, and certificate data.
  ******/
-function ipsec_setup_secrets() {
+function ipsec_setup_secrets($gateways_status = false) {
 	global $config, $a_phase1, $ipsec_swanctl_dirs, $ipseccfg, $rgmap, $scconf;
 
 	$suffix = 0;
@@ -2514,6 +2859,11 @@ function ipsec_setup_secrets() {
 				continue;
 			}
 		}
+	}
+
+	/* Fetch gateway status if not passed */
+	if (!is_array($gateways_status)) {
+		$gateways_status = return_gateways_status(true);
 	}
 
 	$vpncas = array();
@@ -2587,8 +2937,8 @@ function ipsec_setup_secrets() {
 				}
 			} else {
 				/* Setup pre-shared keys */
-				list($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
-				list($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
+				list($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local', array(), $gateways_status);
+				list($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap, $gateways_status);
 				$myid = trim($myid_data);
 
 				if (empty($peerid_data)) {
@@ -2765,6 +3115,7 @@ function ipsec_configure($restart = false) {
 
 	$mobile_configured = false;
 
+
 	/* Setup a single structured array to process, to avoid repeatedly
 	 * looping through the arrays to locate entries later. */
 	$tunnels = array();
@@ -2794,21 +3145,18 @@ function ipsec_configure($restart = false) {
 	set_sysctl(array('net.inet.ipsec.async_crypto' => (int) (isset($ipseccfg['async_crypto']) && ($ipseccfg['async_crypto'] == "enabled"))));
 
 	/* Build a list of all IPsec interfaces configured on the firewall at the OS level */
+	$gateways_status = return_gateways_status(true);
 	foreach (get_interface_arr() as $thisif) {
 		if (substr($thisif, 0, 5) == "ipsec") {
 			$ipsec_vti_cleanup_ifs[] = $thisif;
 		}
 	}
-
 	/* Create directory structure for IPsec */
 	ipsec_create_dirs();
-
 	/* Setup gateways and interfaces */
-	ipsec_setup_gwifs();
-
+	ipsec_setup_gwifs($gateways_status);
 	/* Setup and write strongswan.conf */
 	ipsec_setup_strongswan();
-
 	/* Start Global Connection default values */
 	$conn_defaults = array();
 	/* Fragmentation is on for everyone */
@@ -2834,9 +3182,9 @@ function ipsec_configure($restart = false) {
 	$scconf[] = "# This file is automatically generated. Do not edit";
 	$scconf['connections'] = array();
 	/* Setup IPsec bypass */
-	ipsec_setup_bypass();
+	ipsec_setup_bypass($gateways_status);
 	/* Setup connections */
-	ipsec_setup_tunnels();
+	ipsec_setup_tunnels($gateways_status);
 	$scconf['pools'] = array();
 	if ($mobile_configured) {
 		/* Setup mobile address pools */
@@ -2846,7 +3194,7 @@ function ipsec_configure($restart = false) {
 	}
 	/* Setup secret data */
 	$scconf['secrets'] = array();
-	ipsec_setup_secrets();
+	ipsec_setup_secrets($gateways_status);
 
 	@file_put_contents("{$g['varetc_path']}/ipsec/swanctl.conf", ipsec_strongswan_confgen($scconf));
 

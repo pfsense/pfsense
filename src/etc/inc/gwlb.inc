@@ -815,7 +815,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							}
 							if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
 								foreach ($vtisubnet_spec as $idx => $vtisub) {
-									if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], $idx))) {
+									if ($ifcfg['if'] == ipsec_get_ifname($ph1ent, $vtisub['reqid'])) {
 										// If this specific VTI remote is v4, then we can make a v4 gw
 										if (is_ipaddrv4($vtisub['right'])) {
 											$ctype = "VTIv4";
@@ -823,7 +823,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 									}
 								}
 							} else {
-								if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], 0))) {
+								if ($ifcfg['if'] == ipsec_get_ifname($ph1ent)) {
 									// If any of the VTI remotes are v4, then we can make a v4 gw
 									foreach ($vtisubnet_spec as $vtisub) {
 										if (is_ipaddrv4($vtisub['right'])) {
@@ -958,7 +958,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							}
 							if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
 								foreach ($vtisubnet_spec as $idx => $vtisub) {
-									if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], $idx))) {
+									if ($ifcfg['if'] == ipsec_get_ifname($ph1ent, $vtisub['reqid'])) {
 										// If this specific VTI remote is v6, then we can make a v6 gw
 										if (is_ipaddrv6($vtisub['right'])) {
 											$ctype = "VTIv6";
@@ -966,7 +966,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 									}
 								}
 							} else {
-								if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], 0))) {
+								if ($ifcfg['if'] == ipsec_get_ifname($ph1ent)) {
 									// If any of the VTI remotes are v6, then we can make a v6 gw
 									foreach ($vtisubnet_spec as $vtisub) {
 										if (is_ipaddrv6($vtisub['right'])) {

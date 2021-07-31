@@ -34,10 +34,17 @@
 
 require_once("guiconfig.inc");
 require_once("ipsec.inc");
+require_once("service-utils.inc");
 
-global $g;
-
-init_config_arr(array('ipsec', 'phase1'));
+if ($_POST['act'] == 'connect') {
+	/* Assume type is IKE */
+	$type = empty($_POST['type']) ? 'ike' : $_POST['type'];
+	ipsec_initiate_by_conid($type, $_POST['conid']);
+} elseif ($_POST['act'] == 'disconnect') {
+	/* Assume type is IKE */
+	$type = empty($_POST['type']) ? 'ike' : $_POST['type'];
+	ipsec_terminate_by_conid($type, $_POST['conid'], $_POST['uniqueid']);
+}
 
 // If this is just an AJAX call to update the table body, just generate the body and quit
 if ($_REQUEST['ajax']) {
@@ -45,527 +52,544 @@ if ($_REQUEST['ajax']) {
 	exit;
 }
 
-if (($_POST['act'] == 'connect') || ($_POST['act'] == 'childconnect')) {
-	if (ctype_digit($_POST['ikeid'])) {
-		$ph1ent = ipsec_get_phase1($_POST['ikeid']);
-		if (!empty($ph1ent)) {
-			if (empty($ph1ent['iketype']) || ($ph1ent['iketype'] == 'ikev1') || isset($ph1ent['splitconn'])) {
-				$ph2entries = ipsec_get_number_of_phase2($ph1ent['ikeid']);
-				for ($i = 0; $i < $ph2entries; $i++) {
-					if (get_ipsecifnum($ph1ent['ikeid'], $i)) {
-						$connum = get_ipsecifnum($ph1ent['ikeid'], $i);
-					} else {
-						$connum = "{$ph1ent['ikeid']}00000";
-					}
-					$connid = escapeshellarg("con" . $connum);
-					if ($_POST['act'] != 'childconnect') {
-						mwexec_bg("/usr/local/sbin/swanctl --terminate --child {$connid}");
-					}
-					mwexec_bg("/usr/local/sbin/swanctl --initiate --child {$connid}");
-				}
-			} else {
-				if (get_ipsecifnum($ph1ent['ikeid'], 0)) {
-					$connum = get_ipsecifnum($ph1ent['ikeid'], 0);
-				} else {
-					$connum = "{$ph1ent['ikeid']}00000";
-				}
-				if ($_POST['act'] != 'childconnect') {
-					mwexec_bg("/usr/local/sbin/swanctl --terminate --ike " . escapeshellarg("con{$connum}"));
-				}
-				mwexec_bg("/usr/local/sbin/swanctl --initiate --child " . escapeshellarg("con{$connum}"));
-			}
-		}
-	}
-} else if ($_POST['act'] == 'ikedisconnect') {
-	if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
-		mwexec_bg("/usr/local/sbin/swanctl --terminate --ike-id " . escapeshellarg($_POST['ikesaid']));
-	} else {
-		mwexec_bg("/usr/local/sbin/swanctl --terminate --ike " . escapeshellarg($_POST['ikeid']));
-	}
-} else if ($_POST['act'] == 'childdisconnect') {
-	//pull out number from id
-	if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
-		mwexec_bg("/usr/local/sbin/swanctl --terminate --child-id " . escapeshellarg($_POST['ikesaid']));
-	} else {
-		mwexec_bg("/usr/local/sbin/swanctl --terminate --child " . escapeshellarg($_POST['ikeid']));
-	}
-}
-
 // Table body is composed here so that it can be more easily updated via AJAX
 function print_ipsec_body() {
 	global $config;
-	$a_phase1 = &$config['ipsec']['phase1'];
-	$conmap = array();
-	foreach ($a_phase1 as $ph1ent) {
-		if (get_ipsecifnum($ph1ent['ikeid'], 0)) {
-			$cname = "con" . get_ipsecifnum($ph1ent['ikeid'], 0);
-		} else {
-			$cname = "con{$ph1ent['ikeid']}00000";
-		}
-		$conmap[$cname] = $ph1ent['ikeid'];
+
+	if (!ipsec_enabled()) {
+?>
+<tr>
+	<td colspan="10">
+		<?php print_info_box(addslashes(gettext("IPsec is disabled.")), "warning", ""); ?>
+	</td>
+</tr>
+<?php
+		return;
+	}
+	if (!get_service_status(array('name' => 'ipsec'))) {
+?>
+<tr>
+	<td colspan="10">
+		<?php print_info_box(addslashes(gettext("IPsec daemon is stopped.")), "warning", ""); ?>
+	</td>
+</tr>
+<?php
+		return;
 	}
 
+	$cmap = ipsec_map_config_by_id();
 	$status = ipsec_list_sa();
-	$ipsecconnected = array();
-	if (is_array($status)) {
-		foreach ($status as $ikeid => $ikesa) {
-			//check which array format
-			if (isset($ikesa['con-id'])) {
-				$con_id = substr($ikesa['con-id'], 3);
-			} else {
-				$con_id = filter_var($ikeid, FILTER_SANITIZE_NUMBER_INT);
-			}
-			$con_name = "con" . $con_id;
-			if ($ikesa['version'] == 1) {
-				$ph1idx = $conmap[$con_name];
-				$ipsecconnected[$ph1idx] = $ph1idx;
-			} else {
-				if (!ipsec_ikeid_used($con_id)) {
-					// probably a v2 with split connection then
-					$ph1idx = $conmap[$con_name];
-					$ipsecconnected[$ph1idx] = $ph1idx;
-				} else {
-					$ipsecconnected[$con_id] = $ph1idx = $con_id;
-				}
-			}
 
-			print("<tr>\n");
+	$p1conids = array_column($status, 'con-id');
+	$p1uniqueids = array_column($status, 'uniqueid');
+	array_multisort($p1conids, SORT_NATURAL,
+			$p1uniqueids, SORT_NUMERIC,
+			$status);
 
-			print("<td>\n");
-			print(htmlspecialchars($ikesa['con-id'])) . ":\n";
-			print('#' . htmlspecialchars($ikesa['uniqueid']));
-			print("</td>\n");
-
-			print("<td>\n");
-			if (is_array($a_phase1) && htmlspecialchars(ipsec_get_descr($ph1idx)) == "") {
-				foreach ($a_phase1 as $ph1) {
-					if ($con_id == $ph1['ikeid'] && isset($ph1['mobile'])) {
-						print(htmlspecialchars($ph1['descr']));
-						break;
-					}
-				}
-			}
-			print(htmlspecialchars(ipsec_get_descr($ph1idx)));
-			print("</td>\n");
-
-			print("<td>\n");
-
-			print("<b>ID:</b> ");
-			if (!empty($ikesa['local-id'])) {
-				if ($ikesa['local-id'] == '%any') {
-					print(gettext('Any identifier'));
-				} else {
-					print(htmlspecialchars($ikesa['local-id']));
-				}
-			} else {
-				print(gettext("Unknown"));
-			}
-
-			print("<br/>");
-			print("<b>Host:</b> ");
-
-			if (!empty($ikesa['local-host'])) {
-				$lhost = $ikesa['local-host'];
-				if (!empty($ikesa['local-port'])) {
-					if (is_ipaddrv6($ikesa['local-host'])) {
-						$lhost = "[{$lhost}]";
-					}
-					$lhost .= ":{$ikesa['local-port']}";
-				}
-				print(htmlspecialchars($lhost));
-
-			} else {
-				print(gettext("Unknown"));
-			}
-
-			print("<br/>");
-			print("<b>SPI:</b> " . htmlspecialchars( ($ikesa['initiator'] == 'yes') ? $ikesa['initiator-spi'] : $ikesa['responder-spi'] ));
-
-			/*
-			 * XXX: local-nat-t was defined by pfSense
-			 * When strongswan team accepted the change, they changed it to
-			 * nat-local. Keep both for a while and remove local-nat-t in
-			 * the future
-			 */
-			if (isset($ikesa['local-nat-t']) || isset($ikesa['nat-local'])) {
-				print(" NAT-T");
-			}
-
-			print("</td>\n");
-			print("<td>\n");
-
-			print("<b>ID:</b> ");
-
-			$identity = "";
-			if (!empty($ikesa['remote-id'])) {
-				if ($ikesa['remote-id'] == '%any') {
-					$identity = htmlspecialchars(gettext('Any identifier'));
-				} else {
-					$identity = htmlspecialchars($ikesa['remote-id']);
-				}
-			}
-
-			if (!empty($ikesa['remote-xauth-id'])) {
-				echo htmlspecialchars($ikesa['remote-xauth-id']);
-				echo "<br/>{$identity}";
-			} elseif (!empty($ikesa['remote-eap-id'])) {
-				echo htmlspecialchars($ikesa['remote-eap-id']);
-				echo "<br/>{$identity}";
-			} else {
-				if (empty($identity)) {
-					print(gettext("Unknown"));
-				} else {
-					print($identity);
-				}
-			}
-
-			print("<br/>");
-			print("<b>Host:</b> ");
-
-			if (!empty($ikesa['remote-host'])) {
-				$rhost = $ikesa['remote-host'];
-				if (!empty($ikesa['remote-port'])) {
-					if (is_ipaddrv6($ikesa['remote-host'])) {
-						$rhost = "[{$rhost}]";
-					}
-					$rhost .= ":{$ikesa['remote-port']}";
-				}
-				print(htmlspecialchars($rhost));
-			} else {
-				print(gettext("Unknown"));
-			}
-			/*
-			 * XXX: remote-nat-t was defined by pfSense
-			 * When strongswan team accepted the change, they changed it to
-			 * nat-remote. Keep both for a while and remove remote-nat-t in
-			 * the future
-			 */
-			if (isset($ikesa['remote-nat-t']) || isset($ikesa['nat-remote'])) {
-				print(" NAT-T");
-			}
-
-			print("<br/>");
-			print("<b>SPI:</b> " . htmlspecialchars( ($ikesa['initiator'] == 'yes') ? $ikesa['responder-spi'] : $ikesa['initiator-spi'] ));
-
-			print("</td>\n");
-			print("<td>\n");
-			print("IKEv" . htmlspecialchars($ikesa['version']));
-			print("<br/>\n");
-
-			if ($ikesa['initiator'] == 'yes') {
-				print("initiator");
-			} else {
-				print("responder");
-			}
-
-			print("</td>\n");
-			print("<td>\n");
-			if ($ikesa['version'] == 2) {
-				print("<b>" . gettext("Rekey:") . "</b> ");
-				if (!empty($ikesa['rekey-time'])) {
-					print(htmlspecialchars($ikesa['rekey-time']) . gettext("s (") . convert_seconds_to_dhms($ikesa['rekey-time']) . ")");
-				} else {
-					print(gettext("Disabled"));
-				}
-				print("<br/>");
-			}
-			print("<b>" . gettext("Reauth:") . "</b> ");
-			if (!empty($ikesa['reauth-time'])) {
-				print(htmlspecialchars($ikesa['reauth-time']) . gettext("s (") . convert_seconds_to_dhms($ikesa['reauth-time']) . ")");
-			} else {
-				print(gettext("Disabled"));
-			}
-			print("</td>\n");
-			print("<td>\n");
-			print(htmlspecialchars($ikesa['encr-alg']));
-			if (!empty($ikesa['encr-keysize'])) {
-				print(" (" . htmlspecialchars($ikesa['encr-keysize']) . ")");
-			}
-			print("<br/>");
-			print(htmlspecialchars($ikesa['integ-alg']));
-			print("<br/>");
-			print(htmlspecialchars($ikesa['prf-alg']));
-			print("<br/>\n");
-			print(htmlspecialchars($ikesa['dh-group']));
-			print("</td>\n");
-			print("<td>\n");
-
-			if ($ikesa['state'] == 'ESTABLISHED') {
-				print('<span class="text-success">');
-			} else {
-				print('<span>');
-			}
-
-			print(ucfirst(htmlspecialchars($ikesa['state'])));
-
-			if ($ikesa['state'] == 'ESTABLISHED') {
-				print("<br/>");
-				printf(gettext('%1$s seconds (%2$s) ago'), htmlspecialchars($ikesa['established']), convert_seconds_to_dhms($ikesa['established']));
-			}
-
-			print("</span><br /><br />");
-
-			if ($ikesa['state'] != 'ESTABLISHED') {
-
-				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '&amp;ikesaid=' .$ikesa['uniqueid'] . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '" usepost>');
-				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
-				print(gettext("Connect VPN"));
-				print("</a>\n");
-
-			} else {
-
-				print('<a href="status_ipsec.php?act=ikedisconnect&amp;ikeid=' . $ikesa['con-id']. '&amp;ikesaid=' .$ikesa['uniqueid'] . '"class="btn btn-xs btn-danger" data-toggle="tooltip" title="' . gettext("Disconnect VPN") . '" usepost>');
-				print('<i class="fa fa-trash icon-embed-btn"></i>');
-				print(gettext("Disconnect"));
-				print("</a><br />\n");
-
-			}
-			if (empty($ikesa['child-sas'])) {
-				print('<br/><a href="status_ipsec.php?act=childconnect&amp;ikeid=' . substr($con_id, 0, -3) . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect Children"). '" usepost>');
-				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
-				print(gettext("Connect Children"));
-				print("</a>\n");
-			}
-
-			print("</td>\n");
-			print("</tr>\n");
-			print("<tr>\n");
-			print("<td colspan = 10>\n");
-
-			if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
-				$child_key = "";
-				foreach ($ikesa['child-sas'] as $key => $val){
-					$child_key = $key;
-					break;
-				}
-
-				print('<div>');
-				print('<a type="button" id="btnchildsa-'. $child_key .  '" class="btn btn-sm btn-info">');
-				print('<i class="fa fa-plus-circle icon-embed-btn"></i>');
-				print(sprintf(gettext('Show child SA entries (%d)'), count($ikesa['child-sas'])));
-				print("</a>\n");
-				print("	</div>\n");
-
-				print('<table class="table table-hover table-condensed" id="childsa-'.$child_key . '" style="display:none">');
-				print("<thead>\n");
-				print('<tr class="bg-info">');
-				print('<th>' . gettext("IPsec ID") . '</th>');
-				print('<th>' . gettext("Local subnets") . '</th>');
-				print('<th>' . gettext("Local SPI(s)") . '</th>');
-				print('<th>' . gettext("Remote subnets") . '</th>');
-				print('<th>' . gettext("Times") . '</th>');
-				print('<th>' . gettext("Algo") . '</th>');
-				print('<th>' . gettext("Stats") . '</th>');
-				print('<th><!-- Buttons --></th>');
-				print("</tr\n");
-				print("</thead>\n");
-				print("<tbody>\n");
-
-				foreach ($ikesa['child-sas'] as $childid => $childsa) {
-					print("<tr>");
-					print("<td>\n");
-					print($childsa['name'] . ":<br />");
-					print("#" . $childsa['uniqueid']);
-					print("</td>\n");
-					print("<td>\n");
-
-					if (is_array($childsa['local-ts'])) {
-						foreach ($childsa['local-ts'] as $lnets) {
-							print(htmlspecialchars(ipsec_fixup_network($lnets)) . "<br />");
-						}
-					} else {
-						print(gettext("Unknown"));
-					}
-
-					print("</td>\n");
-					print("<td>\n");
-
-					if (isset($childsa['spi-in'])) {
-						print("<b>" . gettext("Local:") . "</b> " . htmlspecialchars($childsa['spi-in']));
-					}
-
-					if (isset($childsa['spi-out'])) {
-						print("<br/>");
-						print("<b>" . gettext('Remote:') . "</b> " . htmlspecialchars($childsa['spi-out']));
-					}
-
-					print("</td>\n");
-					print("<td>\n");
-
-					if (is_array($childsa['remote-ts'])) {
-						foreach ($childsa['remote-ts'] as $rnets) {
-							print(htmlspecialchars(ipsec_fixup_network($rnets)) . '<br />');
-						}
-					} else {
-						print(gettext("Unknown"));
-					}
-
-					print("</td>\n");
-					print("<td>\n");
-
-					printf(gettext('%3$sRekey: %4$s%1$s seconds (%2$s)'), htmlspecialchars($childsa['rekey-time']), convert_seconds_to_dhms($childsa['rekey-time']), "<b>", "</b>");
-					print('<br/>');
-					printf(gettext('%3$sLife: %4$s%1$s seconds (%2$s)'), htmlspecialchars($childsa['life-time']), convert_seconds_to_dhms($childsa['life-time']), "<b>", "</b>");
-					print('<br/>');
-					printf(gettext('%3$sInstall: %4$s%1$s seconds (%2$s)'), htmlspecialchars($childsa['install-time']), convert_seconds_to_dhms($childsa['install-time']), "<b>", "</b>");
-
-
-					print("</td>\n");
-					print("<td>\n");
-
-					print(htmlspecialchars($childsa['encr-alg']));
-					if (!empty($childsa['encr-keysize'])) {
-						print(" (" . htmlspecialchars($childsa['encr-keysize']) . ")");
-					}
-					print('<br/>');
-
-					print(htmlspecialchars($childsa['integ-alg']) . '<br/>');
-
-					if (!empty($childsa['prf-alg'])) {
-						print(htmlspecialchars($childsa['prf-alg']) . '<br/>');
-					}
-
-					if (!empty($childsa['dh-group'])) {
-						print(htmlspecialchars($childsa['dh-group']) . '<br/>');
-					}
-
-					if (!empty($childsa['esn'])) {
-						print(htmlspecialchars($childsa['esn']) . '<br/>');
-					}
-
-					print(gettext("IPComp: "));
-					if (!empty($childsa['cpi-in']) || !empty($childsa['cpi-out'])) {
-						print(htmlspecialchars($childsa['cpi-in']) . " " . htmlspecialchars($childsa['cpi-out']));
-					} else {
-						print(gettext('none'));
-					}
-
-					print("</td>\n");
-					print("<td>\n");
-
-					print("<b>" . gettext("Bytes-In:") . "</b> " . htmlspecialchars(number_format($childsa['bytes-in'])) . ' (' . htmlspecialchars(format_bytes($childsa['bytes-in'])) . ')<br/>');
-					print("<b>" . gettext("Packets-In:") . "</b> " . htmlspecialchars(number_format($childsa['packets-in'])) . '<br/>');
-					print("<b>" . gettext("Bytes-Out:") . "</b> " . htmlspecialchars(number_format($childsa['bytes-out'])) . ' (' . htmlspecialchars(format_bytes($childsa['bytes-out'])) . ')<br/>');
-					print("<b>" . gettext("Packets-Out:") . "</b> " . htmlspecialchars(number_format($childsa['packets-out'])) . '<br/>');
-
-					print("</td>\n");
-					print("<td>\n");
-					print('<a href="status_ipsec.php?act=childdisconnect&amp;ikeid=' . $childsa['name'] . '&amp;ikesaid=' . $childsa['uniqueid'] . '" class="btn btn-xs btn-warning" data-toggle="tooltip" title="' . gettext('Disconnect Child SA') . '" usepost>');
-					print('<i class="fa fa-trash icon-embed-btn"></i>');
-					print(gettext("Disconnect"));
-					print("</a>\n");
-					print("</td>\n");
-					print("</tr>\n");
-
-				}
-
-				print("</tbody>\n");
-				print("	</table>\n");
-				print("</td>\n");
-				print("</tr>\n");
-
-			}
-
-			unset($con_id);
+	$p1connected = array();
+	$p2connected = array();
+	if (!is_array($status)) {
+		$status = array();
+	}
+	foreach ($status as $ikesa) {
+		list($ikeid, $reqid) = ipsec_id_by_conid($ikesa['con-id']);
+		if (!array_key_exists($ikeid, $cmap)) {
+			// Doesn't match known tunnel
+			$p1connected[$ikesa['con-id']] = $ikesa['con-id'];
+		} else {
+			$p1connected[$ikeid] = $ph1idx = $ikeid;
 		}
+		if (array_key_exists('child-sas', $ikesa) && is_array($ikesa['child-sas'])) {
+			$p2conids = array_column($ikesa['child-sas'], 'name');
+			$p2uniqueids = array_column($ikesa['child-sas'], 'uniqueid');
+			array_multisort($p2conids, SORT_NATURAL,
+					$p2uniqueids, SORT_NUMERIC,
+					$ikesa['child-sas']);
 
+			foreach ($ikesa['child-sas'] as $childid => $childsa) {
+				list($childikeid, $childreqid) = ipsec_id_by_conid($childsa['name']);
+				if ($childreqid != null) {
+					$p2connected[$childreqid] = $childsa['name'];
+				} else {
+					/* If this is IKEv2 w/o Split, mark all reqids for the P1 as connected */
+					if ($cmap[$childikeid]['p1']['iketype'] == 'ikev2' &&
+					    !isset($cmap[$childikeid]['p1']['splitconn'])) {
+						foreach ($cmap[$ikeid]['p2'] as $p2) {
+							$p2connected[$p2['reqid']] = $childsa['name'];
+						}
+					}
+				}
+			}
+		}
+		$p2disconnected = array();
+		if (!$cmap[$ikeid]['p1']['mobile'] &&
+		    isset($cmap[$ikeid]) &&
+		    is_array($cmap[$ikeid]) &&
+		    is_array($cmap[$ikeid]['p2'])) {
+			foreach ($cmap[$ikeid]['p2'] as $p2) {
+				if (!array_key_exists($p2['reqid'], $p2connected)) {
+					/* This P2 is not connected */
+					$p2conid = ipsec_conid($cmap[$ikeid]['p1'], $p2);
+					$p2disconnected[$p2conid] = $p2;
+				}
+			}
+		}
+?>
+
+<tr>
+	<td>
+		<?= htmlspecialchars($ikesa['con-id']) ?>
+		#<?= htmlspecialchars($ikesa['uniqueid']) ?>
+	</td>
+	<td>
+		<?= htmlspecialchars($cmap[$ikeid]['p1']['descr']) ?>
+		<br/>
+		<a class="fa fa-pencil" href="vpn_ipsec_phase1.php?ikeid=<?= htmlspecialchars($ikeid) ?>"
+			title="<?= htmlspecialchars(gettext("Edit Phase 1 Entry")) ?>">
+		</a>
+	</td>
+	<td>
+		<b>ID:</b>
+<?php
+		$localid = gettext("Unknown");
+		if (!empty($ikesa['local-id'])) {
+			if ($ikesa['local-id'] == '%any') {
+				$localid = gettext('Any identifier');
+			} else {
+				$localid = $ikesa['local-id'];
+			}
+		}
+?>
+		<?= htmlspecialchars($localid) ?>
+		<br/>
+		<b><?= htmlspecialchars(gettext("Host:")); ?></b>
+<?php
+		$lhost = gettext("Unknown");
+		if (!empty($ikesa['local-host'])) {
+			$lhost = $ikesa['local-host'];
+			if (!empty($ikesa['local-port'])) {
+				if (is_ipaddrv6($ikesa['local-host'])) {
+					$lhost = "[{$lhost}]";
+				}
+				$lhost .= ":{$ikesa['local-port']}";
+			}
+		}
+?>
+		<?= htmlspecialchars($lhost) ?>
+		<br/>
+		<b>SPI:</b>
+		<?= htmlspecialchars( ($ikesa['initiator'] == 'yes') ? $ikesa['initiator-spi'] : $ikesa['responder-spi'] ) ?>
+<?php		if (isset($ikesa['nat-local'])): ?>
+			<?= htmlspecialchars(gettext("NAT-T")); ?>
+<?php		endif; ?>
+	</td>
+	<td>
+		<b>ID:</b>
+<?php
+		$identity = "";
+		if (!empty($ikesa['remote-id'])) {
+			if ($ikesa['remote-id'] == '%any') {
+				$identity = gettext('Any identifier');
+			} else {
+				$identity = $ikesa['remote-id'];
+			}
+		}
+		$remoteid = "";
+		if (!empty($ikesa['remote-xauth-id'])) {
+			$remoteid = $ikesa['remote-xauth-id'];
+		} elseif (!empty($ikesa['remote-eap-id'])) {
+			$remoteid = $ikesa['remote-eap-id'];
+		} else {
+			if (empty($identity)) {
+				$identity = gettext("Unknown");
+			}
+		}
+?>
+<?php		if (!empty($remoteid)): ?>
+		<?= htmlspecialchars($remoteid) ?><br/>
+<?php		endif; ?>
+		<?= htmlspecialchars($identity) ?>
+		<br/>
+		<b><?= htmlspecialchars(gettext("Host:")); ?></b>
+<?php
+		$rhost = gettext("Unknown");
+		if (!empty($ikesa['remote-host'])) {
+			$rhost = $ikesa['remote-host'];
+			if (!empty($ikesa['remote-port'])) {
+				if (is_ipaddrv6($ikesa['remote-host'])) {
+					$rhost = "[{$rhost}]";
+				}
+				$rhost .= ":{$ikesa['remote-port']}";
+			}
+		}
+?>
+		<?= htmlspecialchars($rhost) ?>
+<?php		if (isset($ikesa['nat-remote'])): ?>
+		<?= htmlspecialchars(gettext("NAT-T")); ?>
+<?php		endif; ?>
+		<br/>
+		<b>SPI:</b>
+		<?= htmlspecialchars( ($ikesa['initiator'] == 'yes') ? $ikesa['responder-spi'] : $ikesa['initiator-spi'] ) ?>
+	</td>
+	<td>
+		IKEv<?= htmlspecialchars($ikesa['version']) ?><br/>
+<?php		if ($ikesa['initiator'] == 'yes'): ?>
+		<?= htmlspecialchars(gettext("Initiator")); ?>
+<?php		else: ?>
+		<?= htmlspecialchars(gettext("Responder")); ?>
+<?php		endif; ?>
+	</td>
+	<td>
+<?php		if ($ikesa['version'] == 2): ?>
+		<b><?= htmlspecialchars(gettext("Rekey:")) ?></b>
+<?php			if (!empty($ikesa['rekey-time'])): ?>
+		<?= htmlspecialchars($ikesa['rekey-time']) ?>s
+		(<?= convert_seconds_to_dhms($ikesa['rekey-time']) ?>)
+<?php			else: ?>
+		<?= htmlspecialchars(gettext("Disabled")) ?>
+<?php			endif; ?>
+		<br/>
+<?php		endif; ?>
+		<b><?= htmlspecialchars(gettext("Reauth:")) ?></b>
+<?php		if (!empty($ikesa['reauth-time'])): ?>
+		<?= htmlspecialchars(htmlspecialchars($ikesa['reauth-time'])) ?>s
+		(<?= convert_seconds_to_dhms($ikesa['reauth-time']) ?>)
+<?php		else: ?>
+		<?= htmlspecialchars(gettext("Disabled")) ?>
+<?php		endif; ?>
+	</td>
+	<td>
+		<?= htmlspecialchars($ikesa['encr-alg']) ?>
+<?php		if (!empty($ikesa['encr-keysize'])): ?>
+		(<?= htmlspecialchars($ikesa['encr-keysize']) ?>)
+<?php		endif; ?>
+		<br/>
+		<?= htmlspecialchars($ikesa['integ-alg']) ?><br/>
+		<?= htmlspecialchars($ikesa['prf-alg']) ?><br/>
+		<?= htmlspecialchars($ikesa['dh-group']) ?><br/>
+	</td>
+	<td>
+		<span<?= ($ikesa['state'] == 'ESTABLISHED') ? ' class="text-success"' : '' ; ?>>
+		<?= htmlspecialchars(ucfirst(strtolower($ikesa['state']))) ?>
+<?php		if ($ikesa['state'] == 'ESTABLISHED'): ?>
+		<br/>
+		<? printf(gettext('%1$s seconds (%2$s) ago'), htmlspecialchars($ikesa['established']), convert_seconds_to_dhms($ikesa['established'])) ?>
+<?php		endif; ?>
+		</span>
+		<br/>
+		<br/>
+<?php		if ($ikesa['state'] != 'ESTABLISHED'): ?>
+		<?= ipsec_status_button('ajax', 'connect', 'all', $ikesa['con-id'], null, true) ?>
+<?php		else: ?>
+		<?= ipsec_status_button('ajax', 'disconnect', 'ike', $ikesa['con-id'], $ikesa['uniqueid'], true) ?>
+<?php		endif; ?>
+		<br>
+<?php		if (empty($ikesa['child-sas'])): ?>
+		<br/>
+		<?= ipsec_status_button('ajax', 'connect', 'all', $ikesa['con-id'], null, true) ?>
+<?php			endif; ?>
+	</td>
+</tr>
+<tr>
+	<td colspan="10">
+<?php		$child_key = "{$ikesa['con-id']}_{$ikesa['uniqueid']}_children"; ?>
+	<div>
+<?php		if ((count($ikesa['child-sas']) + count($p2disconnected)) > 0): ?>
+		<a type="button" id="btnchildsa-<?= htmlspecialchars($child_key) ?>" class="btn btn-sm btn-info">
+		<i class="fa fa-plus-circle icon-embed-btn"></i>
+		<?= htmlspecialchars(gettext('Show child SA entries')) ?>
+<?php
+			$p2counts = count($ikesa['child-sas']) . " " . gettext("Connected");
+			if (count($p2disconnected) > 0) {
+				$p2counts .= ", " . count($p2disconnected) . " " . gettext("Disconnected");
+			}
+?>
+		(<?= htmlspecialchars($p2counts) ?>)
+<?php		endif; ?>
+		</a>
+	</div>
+	<table class="table table-hover table-condensed" id="childsa-<?= htmlspecialchars($child_key) ?>" style="display:none">
+	<thead>
+	<tr class="bg-info">
+		<th><?= htmlspecialchars(gettext("ID")) ?></th>
+		<th><?= htmlspecialchars(gettext("Description")) ?></th>
+		<th><?= htmlspecialchars(gettext("Local")) ?></th>
+		<th><?= htmlspecialchars(gettext("SPI(s)")) ?></th>
+		<th><?= htmlspecialchars(gettext("Remote")) ?></th>
+		<th><?= htmlspecialchars(gettext("Times")) ?></th>
+		<th><?= htmlspecialchars(gettext("Algo")) ?></th>
+		<th><?= htmlspecialchars(gettext("Stats")) ?></th>
+		<th><!-- Buttons --></th>
+	</tr>
+	</thead>
+	<tbody>
+<?php		if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
+			foreach ($ikesa['child-sas'] as $childid => $childsa) {
+				list($childikeid, $childreqid) = ipsec_id_by_conid($childsa['name']);
+?>
+	<tr>
+		<td>
+			<?= htmlspecialchars($childsa['name']) ?>:<br />
+			#<?= htmlspecialchars($childsa['uniqueid']) ?>
+		</td>
+		<td>
+<?php
+				$p2descr = "";
+				$p2uid = "";
+				if (!empty($childreqid)) {
+					/* IKEv1 or IKEv2+Split */
+					$p2descr = $cmap[$childikeid]['p2'][$childreqid]['descr'];
+					$p2uid = $cmap[$childikeid]['p2'][$childreqid]['uniqid'];
+				} else {
+					$childreqid = array_key_first($cmap[$childikeid]['p2']);
+					$p2uid = $cmap[$childikeid]['p2'][$childreqid]['uniqid'];
+					if (count($cmap[$childikeid]['p2']) > 1) {
+						$p2descr = gettext("Multiple");
+					} else {
+						$p2descr = $cmap[$childikeid]['p2'][$childreqid]['descr'];
+					}
+				}
+?>
+			<?= htmlspecialchars($p2descr) ?>
+<?php				if (!empty($p2uid) && ($p2descr != gettext("Multiple"))): ?>
+			<br/>
+			<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?uniqid=<?= htmlspecialchars($p2uid) ?>"
+				title="<?= gettext("Edit Phase 2 Entry") ?>">
+			</a>
+<?php				endif ?>
+		</td>
+		<td>
+<?php
+				$lnetlist = array();
+				if (is_array($childsa['local-ts'])) {
+					foreach ($childsa['local-ts'] as $lnets) {
+						$lnetlist[] = htmlspecialchars(ipsec_fixup_network($lnets));
+					}
+				} else {
+					$lnetlist[] = htmlspecialchars(gettext("Unknown"));
+				}
+?>
+			<?= htmlspecialchars(implode('<br/>', $lnetlist)) ?>
+		</td>
+		<td>
+<?php
+				if (isset($childsa['spi-in'])) {
+?>
+			<b><?= htmlspecialchars(gettext("Local:")) ?></b>
+			<?= htmlspecialchars($childsa['spi-in']) ?>
+<?php
+				}
+				if (isset($childsa['spi-out'])) {
+?>
+			<br/>
+			<b><?= htmlspecialchars(gettext("Remote:")) ?></b>
+			<?= htmlspecialchars($childsa['spi-out']) ?>
+<?php
+				}
+?>
+		</td>
+		<td>
+<?php
+				$rnetlist = array();
+				if (is_array($childsa['remote-ts'])) {
+					foreach ($childsa['remote-ts'] as $rnets) {
+						$rnetlist[] = htmlspecialchars(ipsec_fixup_network($rnets));
+					}
+				} else {
+					$rnetlist[] = htmlspecialchars(gettext("Unknown"));
+				}
+?>
+			<?= htmlspecialchars(implode('<br/>', $rnetlist)) ?>
+		</td>
+		<td>
+			<b><?= htmlspecialchars(gettext("Rekey:")) ?></b>
+			<?= htmlspecialchars($childsa['rekey-time']) ?>s
+			(<?= convert_seconds_to_dhms($childsa['rekey-time']) ?>)
+			<br/>
+
+			<b><?= htmlspecialchars(gettext("Life:")) ?></b>
+			<?= htmlspecialchars($childsa['life-time']) ?>s
+			(<?= convert_seconds_to_dhms($childsa['life-time']) ?>)
+			<br/>
+
+			<b><?= htmlspecialchars(gettext("Install:")) ?></b>
+			<?= htmlspecialchars($childsa['install-time']) ?>s
+			(<?= convert_seconds_to_dhms($childsa['install-time']) ?>)
+		</td>
+		<td>
+			<?= htmlspecialchars($childsa['encr-alg']) ?>
+<?php				if (!empty($childsa['encr-keysize'])): ?>
+			(<?= htmlspecialchars($childsa['encr-keysize']) ?>)
+<?php				endif; ?>
+			<br/>
+			<?= htmlspecialchars($childsa['integ-alg']) ?>
+			<br/>
+<?php				if (!empty($childsa['prf-alg'])): ?>
+			<?= htmlspecialchars($childsa['prf-alg']) ?>
+			<br/>
+<?php				endif; ?>
+<?php				if (!empty($childsa['dh-group'])): ?>
+			<?= htmlspecialchars($childsa['dh-group']) ?>
+			<br/>
+<?php				endif; ?>
+<?php				if (!empty($childsa['esn'])): ?>
+			<?= htmlspecialchars($childsa['esn']) ?>
+			<br/>
+<?php				endif;
+				$ipcomp = gettext('None');
+				if (!empty($childsa['cpi-in']) || !empty($childsa['cpi-out'])) {
+					$ipcomp = "{$childsa['cpi-in']} {$childsa['cpi-out']}";
+				}
+?>
+			<?= htmlspecialchars(gettext("IPComp: ")) ?> <?= htmlspecialchars($ipcomp) ?>
+		</td>
+		<td>
+			<b><?= htmlspecialchars(gettext("Bytes-In:")) ?></b>
+			<?= htmlspecialchars(number_format($childsa['bytes-in'])) ?>
+			(<?= htmlspecialchars(format_bytes($childsa['bytes-in'])) ?>)
+			<br/>
+			<b><?= htmlspecialchars(gettext("Packets-In:")) ?></b>
+			<?= htmlspecialchars(number_format($childsa['packets-in'])) ?>
+			<br/>
+			<b><?= htmlspecialchars(gettext("Bytes-Out:")) ?></b>
+			<?= htmlspecialchars(number_format($childsa['bytes-out'])) ?>
+			(<?= htmlspecialchars(format_bytes($childsa['bytes-out'])) ?>)
+			<br/>
+			<b><?= htmlspecialchars(gettext("Packets-Out:")) ?></b>
+			<?= htmlspecialchars(number_format($childsa['packets-out'])) ?>
+			<br/>
+		</td>
+		<td>
+
+			<?= htmlspecialchars(ucfirst(strtolower($childsa['state']))) ?><br/>
+			<?= ipsec_status_button('ajax', 'disconnect', 'child', $childsa['name'], $childsa['uniqueid'], true) ?>
+		</td>
+<?php
+			}
+?>
+	</tr>
+<?php
+		}
+			foreach ($p2disconnected as $p2conid => $p2) {
+?>
+	<tr>
+		<td><?= htmlspecialchars($p2conid) ?></td>
+		<td>
+			<?= htmlspecialchars($p2['descr']) ?>
+			<br/>
+			<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?uniqid=<?= htmlspecialchars($p2['uniqid']) ?>"
+				title="<?= htmlspecialchars(gettext("Edit Phase 2 Entry")) ?>">
+			</a>
+		</td>
+		<td>
+			<?= htmlspecialchars(ipsec_idinfo_to_cidr($p2['localid'], false, $p2['mode'])) ?>
+		</td>
+		<td><!-- SPI n/a --></td>
+		<td>
+			<?= htmlspecialchars(ipsec_idinfo_to_cidr($p2['remoteid'], false, $p2['mode'])) ?>
+		</td>
+		<td><!-- Times n/a --></td>
+		<td><!-- Algo is too much here --></td>
+		<td><!-- Stats n/a --></td>
+		<td>
+			<?= htmlspecialchars(gettext("Disconnected")) ?><br/>
+			<?= ipsec_status_button('ajax', 'connect', 'child', $p2conid, null, true) ?>
+		</td>
+	</tr>
+<?php
+			}
+?>
+	</tbody>
+	</table>
+	</td>
+</tr>
+<?php
 	}
 
 	$rgmap = array();
-	if (is_array($a_phase1)) {
-		foreach ($a_phase1 as $ph1ent) {
-			if (isset($ph1ent['disabled'])) {
-				continue;
-			}
+	$gateways_status = return_gateways_status(true);
 
-			$rgmap[$ph1ent['remote-gateway']] = $ph1ent['remote-gateway'];
-
-			if ($ipsecconnected[$ph1ent['ikeid']]) {
-				continue;
-			}
-
-			print("<tr>\n");
-			print("<td></td>\n");
-			print("<td>\n");
-			print(htmlspecialchars($ph1ent['descr']));
-			print("</td>\n");
-			print("<td>\n");
-			print("<b>ID:</b> \n");
-			list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
-
-			if (empty($myid_data)) {
-				print(gettext("Unknown"));
-			} else {
-				print(htmlspecialchars($myid_data));
-			}
-
-			print("<br/>\n");
-			print("<b>Host:</b> \n");
-			$ph1src = ipsec_get_phase1_src($ph1ent);
-
-			if (empty($ph1src)) {
-				print(gettext("Unknown"));
-			} else {
-				print(htmlspecialchars(str_replace(',', ', ', $ph1src)));
-			}
-
-			print("</td>\n");
-			print("<td>\n");
-
-			print("<b>ID:</b> \n");
-
-			list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
-
-			if (empty($peerid_data)) {
-				print(gettext("Unknown"));
-			} else {
-				print(htmlspecialchars($peerid_data));
-			}
-
-			print("<br/>\n");
-			print("<b>Host:</b> \n");
-
-			$ph1src = ipsec_get_phase1_dst($ph1ent);
-
-			if (empty($ph1src)) {
-				print(gettext("Unknown"));
-			} else {
-				print(htmlspecialchars($ph1src));
-			}
-
-			print("</td>\n");
-			print("<td>\n");
-			print("</td>\n");
-			print("<td>\n");
-			print("</td>\n");
-			print("<td>\n");
-			print("</td>\n");
-
-			if (isset($ph1ent['mobile'])) {
-
-				print("<td>\n");
-				print(gettext("Awaiting connections"));
-				print("</td>\n");
-				print("<td>\n");
-				print("</td>\n");
-				print("</td>\n");
-			} else {
-
-				print("<td>\n");
-				print(gettext("Disconnected"));
-				print("<br/>\n");
-				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $ph1ent['ikeid'] . '" class="btn btn-xs btn-success" usepost>');
-				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
-				print(gettext("Connect VPN"));
-				print("</a>\n");
-				print("</td>\n");
-
-			}
-			print("</tr>\n");
+	foreach ($cmap as $p1) {
+		if (!array_key_exists('p1', $p1) ||
+		    isset($p1['p1']['disabled'])) {
+			continue;
 		}
-	}
+		$ph1ent = &$p1['p1'];
+		$rgmap[$ph1ent['remote-gateway']] = $ph1ent['remote-gateway'];
+		if ($p1connected[$ph1ent['ikeid']]) {
+			continue;
+		}
+?>
+<tr>
+	<td>
+		<?= htmlspecialchars(ipsec_conid($ph1ent)) ?>
+	</td>
+	<td>
+		<?= htmlspecialchars($ph1ent['descr']) ?>
+	</td>
+	<td>
+		<b><?= htmlspecialchars(gettext("ID:")) ?></b>
+<?php
+		list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local", array(), $gateways_status);
+		if (empty($myid_data)) {
+			$myid_data = gettext("Unknown");
+		}
+?>
+		<?= htmlspecialchars($myid_data) ?>
+		<br/>
+		<b><?= htmlspecialchars(gettext("Host:")) ?></b>
+<?php
+		$ph1src = ipsec_get_phase1_src($ph1ent, $gateways_status);
+		if (empty($ph1src)) {
+			$ph1src = gettext("Unknown");
+		} else {
+			$ph1src = str_replace(',', ', ', $ph1src);
+		}
+?>
+		<?= htmlspecialchars($ph1src) ?>
+	</td>
+	<td>
+<?php		if (!isset($ph1ent['mobile'])): ?>
+		<b><?= htmlspecialchars(gettext("ID:")) ?></b>
+<?php
+		list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap, $gateways_status);
+		if (empty($peerid_data)) {
+			$peerid_data = gettext("Unknown");
+		}
+?>
+		<?= htmlspecialchars($peerid_data) ?>
+		<br/>
+		<b><?= htmlspecialchars(gettext("Host:")) ?></b>
+<?php
+		$ph1dst = ipsec_get_phase1_dst($ph1ent);
+		if (empty($ph1dst)) {
+			$ph1dst = print(gettext("Unknown"));
+		}
+?>
+		<?= htmlspecialchars($ph1dst) ?>
+<?php		else: ?>
+		<?= htmlspecialchars(gettext("Mobile Clients")) ?>
+<?php		endif; ?>
+	</td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td>
+<?php		if (isset($ph1ent['mobile'])): ?>
+		<?= htmlspecialchars(gettext("Awaiting connections")) ?>
+<?php		else: ?>
+		<?= htmlspecialchars(gettext("Disconnected")) ?>
+		<br/>
+		<?= ipsec_status_button('ajax', 'connect', 'all', ipsec_conid($ph1ent), null, true) ?>
+		<br/><br/>
+		<?= ipsec_status_button('ajax', 'connect', 'ike', ipsec_conid($ph1ent), null, true) ?>
 
-	unset($ipsecconnected, $phase1, $rgmap);
+<?php		endif; ?>
+	</td>
+</tr>
+<?php
+	}
+	unset($p1connected, $p2connected, $p2disconnected, $rgmap);
 }
 
 $pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("Overview"));
@@ -583,27 +607,26 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("IPsec Status");?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?= htmlspecialchars(gettext("IPsec Status")); ?></h2></div>
 	<div class="panel-body table-responsive">
 		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
-					<th><?=gettext("IPsec ID")?></th>
-					<th><?=gettext("Description")?></th>
-					<th><?=gettext("Local")?></th>
-					<th><?=gettext("Remote")?></th>
-					<th><?=gettext("Role")?></th>
-					<th><?=gettext("Timers")?></th>
-					<th><?=gettext("Algo")?></th>
-					<th><?=gettext("Status")?></th>
-					<th></th>
+					<th><?= htmlspecialchars(gettext("ID")) ?></th>
+					<th><?= htmlspecialchars(gettext("Description") )?></th>
+					<th><?= htmlspecialchars(gettext("Local")) ?></th>
+					<th><?= htmlspecialchars(gettext("Remote")) ?></th>
+					<th><?= htmlspecialchars(gettext("Role")) ?></th>
+					<th><?= htmlspecialchars(gettext("Timers")) ?></th>
+					<th><?= htmlspecialchars(gettext("Algo")) ?></th>
+					<th><?= htmlspecialchars(gettext("Status")) ?></th>
 				</tr>
 			</thead>
 			<tbody id="ipsec-body">
 				<tr>
 					<td colspan="10">
-						<?=print_info_box('<i class="fa fa-gear fa-spin"></i>&nbsp;&nbsp;' .
-						   gettext("Collecting IPsec status information."), "warning", "")?>
+						<?= print_info_box('<i class="fa fa-gear fa-spin"></i>&nbsp;&nbsp;' .
+						   gettext("Collecting IPsec status information."), "warning", "") ?>
 					</td>
 				</tr>
 			</tbody>
@@ -620,7 +643,7 @@ if (ipsec_enabled()) {
 	print('<div class="infoblock blockopen">');
 }
 
-print_info_box(sprintf(gettext('IPsec can be configured %1$shere%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
+print_info_box(sprintf(gettext('IPsec is not enabled. %1$sConfigure IPsec%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
 ?>
 </div>
 

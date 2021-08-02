@@ -823,11 +823,25 @@ foreach ($a_filter as $filteri => $filterent):
 							<?php endif; ?>
 						</td>
 						<td>
-							<?php if (isset($filterent['gateway'])): ?>
-								<span data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Gateways details')?>" data-content="<?=gateway_info_popup($filterent['gateway'], $gateways_status)?>" data-html="true">
-							<?php else: ?>
-								<span>
-							<?php endif; ?>
+							<?php 
+								/* Cache gateway info for this page load.
+								 * See https://redmine.pfsense.org/issues/12174 */
+								if (isset($filterent['gateway'])) {
+									if (!is_array($gw_table)) {
+										$gw_table = array();
+									}
+									if (empty($gw_table[$filterent['gateway']])) {
+										$gw_table[$filterent['gateway']] = gateway_info_popup($filterent['gateway']);
+									}
+									if (!empty($gw_table[$filterent['gateway']])) {
+										echo sprintf('<span data-toggle="popover" data-trigger="hover focus" title="%s" data-content="%s" data-html="true">', gettext('Gateway details'), $gw_table[$filterent['gateway']]);
+									} else {
+										echo "<span>";
+									}
+								} else {
+									echo "<span>";
+								}
+							?>
 								<?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])): ?>
 									<?=str_replace('_', '_<wbr>', htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']))?>
 								<?php else: ?>

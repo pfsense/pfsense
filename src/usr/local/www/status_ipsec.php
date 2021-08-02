@@ -369,7 +369,7 @@ function print_ipsec_body() {
 					$lnetlist[] = htmlspecialchars(gettext("Unknown"));
 				}
 ?>
-			<?= htmlspecialchars(implode('<br/>', $lnetlist)) ?>
+			<?= implode('<br/>', $lnetlist) ?>
 		</td>
 		<td>
 <?php
@@ -399,7 +399,7 @@ function print_ipsec_body() {
 					$rnetlist[] = htmlspecialchars(gettext("Unknown"));
 				}
 ?>
-			<?= htmlspecialchars(implode('<br/>', $rnetlist)) ?>
+			<?= implode('<br/>', $rnetlist) ?>
 		</td>
 		<td>
 			<b><?= htmlspecialchars(gettext("Rekey:")) ?></b>

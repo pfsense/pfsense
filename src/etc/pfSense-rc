@@ -470,6 +470,9 @@ echo "done."
 # Start ping handler every 240 seconds
 /usr/local/bin/minicron 240 $varrunpath/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 
+# Start IPsec keep alive handler every 300 seconds
+/usr/local/bin/minicron 300 $varrunpath/ipsec_keepalive.pid /usr/local/bin/ipsec_keepalive.php
+
 # Start account expire handler every hour
 /usr/local/bin/minicron 3600 $varrunpath/expire_accounts.pid '/usr/local/sbin/fcgicli -f /etc/rc.expireaccounts'
 

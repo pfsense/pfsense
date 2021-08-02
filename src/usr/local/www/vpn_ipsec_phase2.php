@@ -88,6 +88,7 @@ if ($ph2found === true) {
 	$pconfig['rekey_time'] = $ph2['rekey_time'];
 	$pconfig['rand_time'] = $ph2['rand_time'];
 	$pconfig['pinghost'] = $ph2['pinghost'];
+	$pconfig['keepalive'] = ($ph2['keepalive'] == 'enabled');
 	$pconfig['reqid'] = $ph2['reqid'];
 
 	if (isset($ph2['mobile'])) {
@@ -425,6 +426,7 @@ if ($_POST['save']) {
 		$ph2ent['rekey_time'] = $pconfig['rekey_time'];
 		$ph2ent['rand_time'] = $pconfig['rand_time'];
 		$ph2ent['pinghost'] = $pconfig['pinghost'];
+		$ph2ent['keepalive'] = ($pconfig['keepalive']) ? 'enabled' : 'disabled';
 		$ph2ent['descr'] = $pconfig['descr'];
 
 		if (isset($pconfig['mobile'])) {
@@ -807,7 +809,17 @@ if ($pconfig['mobile']) {
 		'pinghost',
 		'Automatically ping host',
 		$pconfig['pinghost']
-	))->setHelp('IP Address');
+	))->setHelp('Sends an ICMP echo request inside the tunnel to the specified IP Address. ' .
+			'Can trigger initiation of a tunnel mode P2, but does not trigger initiation of a VTI mode P2. ');
+
+	$section->addInput(new Form_Checkbox(
+		'keepalive',
+		'Keep Alive',
+		'Enable periodic keep alive check',
+		$pconfig['keepalive']
+	))->setHelp('Periodically checks to see if the P2 is disconnected and initiates when it is down. ' .
+			'Does not send traffic inside the tunnel. Works for VTI and tunnel mode P2 entries. ' .
+			'For IKEv2 without split connections, this only needs enabled on one P2.');
 }
 
 $form->addGlobal(new Form_Input(

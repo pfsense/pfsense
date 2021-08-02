@@ -827,14 +827,14 @@ foreach ($a_filter as $filteri => $filterent):
 								/* Cache gateway info for this page load.
 								 * See https://redmine.pfsense.org/issues/12174 */
 								if (isset($filterent['gateway'])) {
-									if (!is_array($gw_table)) {
-										$gw_table = array();
+									if (!is_array($gw_info)) {
+										$gw_info = array();
 									}
-									if (empty($gw_table[$filterent['gateway']])) {
-										$gw_table[$filterent['gateway']] = gateway_info_popup($filterent['gateway']);
+									if (empty($gw_info[$filterent['gateway']])) {
+										$gw_info[$filterent['gateway']] = gateway_info_popup($filterent['gateway']);
 									}
-									if (!empty($gw_table[$filterent['gateway']])) {
-										echo sprintf('<span data-toggle="popover" data-trigger="hover focus" title="%s" data-content="%s" data-html="true">', gettext('Gateway details'), $gw_table[$filterent['gateway']]);
+									if (!empty($gw_info[$filterent['gateway']])) {
+										echo sprintf('<span data-toggle="popover" data-trigger="hover focus" title="%s" data-content="%s" data-html="true">', gettext('Gateway details'), $gw_info[$filterent['gateway']]);
 									} else {
 										echo "<span>";
 									}

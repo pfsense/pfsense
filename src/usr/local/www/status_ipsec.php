@@ -278,13 +278,13 @@ function print_ipsec_body() {
 		</span>
 		<br/>
 		<br/>
-<?php		if ($ikesa['state'] != 'ESTABLISHED'): ?>
+<?php		if (!in_array($ikesa['state'], array('ESTABLISHED', 'CONNECTING'))): ?>
 		<?= ipsec_status_button('ajax', 'connect', 'all', $ikesa['con-id'], null, true) ?>
 <?php		else: ?>
 		<?= ipsec_status_button('ajax', 'disconnect', 'ike', $ikesa['con-id'], $ikesa['uniqueid'], true) ?>
 <?php		endif; ?>
 		<br>
-<?php		if (empty($ikesa['child-sas'])): ?>
+<?php		if (empty($ikesa['child-sas']) && ($ikesa['state'] != 'CONNECTING')): ?>
 		<br/>
 		<?= ipsec_status_button('ajax', 'connect', 'all', $ikesa['con-id'], null, true) ?>
 <?php			endif; ?>

@@ -82,7 +82,7 @@ $section->addInput(new Form_Checkbox(
 	'entries are detected.');
 $section->addInput(new Form_Checkbox(
     'revoked_cert_ignore_notify',
-    'Ignore for Revoked Certificate',
+    'Ignore Revoked',
     'Ignore notifications for revoked certificates',
     $pconfig['revoked_cert_ignore_notify']
 ))->setHelp('When enabled, the firewall will NOT check expiring for revoked (at least once) certificates');

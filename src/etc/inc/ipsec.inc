@@ -89,30 +89,27 @@ $ipsec_log_cats = array(
 	"lib" => gettext("StrongSwan Lib")
 );
 
+/* For PSK tab, different order based on likely user preference */
 global $ipsec_identifier_list;
 $ipsec_identifier_list = array(
-	// 'ipv4' => array('desc' => gettext('IPv4 address'), 'mobile' => true),
-	// 'ipv6' => array('desc' => gettext('IPv6 address'), 'mobile' => true),
-	// 'rfc822' => array('desc' => gettext('RFC822'), 'mobile' => true),
-	'none' => array('desc' => '', 'mobile' => true),
+	'none' => array('desc' => 'Automatic based on content', 'mobile' => true),
 	'email' => array('desc' => gettext('E-mail address'), 'mobile' => true),
-	'userfqdn' => array('desc' => gettext('User Fully Qualified Domain Name'), 'mobile' => true)
-	// 'fqdn' => array('desc' => gettext('Fully Qualified Domain Name'), 'mobile' => true),
-	// 'dns' => array('desc' => gettext('DNS'), 'mobile' => true),
-	// 'asn1dn' => array('desc' => gettext('ASN.1 Distinguished Name'), 'mobile' => true),
-	// 'asn1gn' => array('desc' => gettext('ASN.1 GN'), 'mobile' => true),
-	// 'keyid' => array('desc' => gettext('KeyID'), 'mobile' => true)
+	'fqdn' => array('desc' => gettext('Fully qualified domain name'), 'mobile' => true),
+	'userfqdn' => array('desc' => gettext('User fully qualified domain name'), 'mobile' => true),
+	'keyid' => array('desc' => gettext('KeyID tag'), 'mobile' => true),
+	'asn1dn' => array('desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true),
 );
 
 global $my_identifier_list;
 $my_identifier_list = array(
 	'myaddress' => array('desc' => gettext('My IP address'), 'mobile' => true),
 	'address' => array('desc' => gettext('IP address'), 'mobile' => true),
-	'fqdn' => array('desc' => gettext('Distinguished name'), 'mobile' => true),
-	'user_fqdn' => array('desc' => gettext('User distinguished name'), 'mobile' => true),
+	'fqdn' => array('desc' => gettext('Fully qualified domain name'), 'mobile' => true),
+	'user_fqdn' => array('desc' => gettext('User fully qualified domain name / E-mail'), 'mobile' => true),
 	'asn1dn' => array('desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true),
 	'keyid tag' => array('desc' => gettext('KeyID tag'), 'mobile' => true),
-	'dyn_dns' => array('desc' => gettext('Dynamic DNS'), 'mobile' => true)
+	'dyn_dns' => array('desc' => gettext('Dynamic DNS'), 'mobile' => true),
+	'auto' => array('desc' => gettext('Automatic based on content'), 'mobile' => true),
 );
 
 global $peer_identifier_list;
@@ -120,10 +117,11 @@ $peer_identifier_list = array(
 	'any' => array('desc' => gettext('Any'), 'mobile' => true),
 	'peeraddress' => array('desc' => gettext('Peer IP address'), 'mobile' => false),
 	'address' => array('desc' => gettext('IP address'), 'mobile' => false),
-	'fqdn' => array('desc' => gettext('Distinguished name'), 'mobile' => true),
-	'user_fqdn' => array('desc' => gettext('User distinguished name'), 'mobile' => true),
+	'fqdn' => array('desc' => gettext('Fully qualified domain name'), 'mobile' => true),
+	'user_fqdn' => array('desc' => gettext('User fully qualified domain name / E-mail'), 'mobile' => true),
 	'asn1dn' => array('desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true),
-	'keyid tag' => array('desc' =>gettext('KeyID tag'), 'mobile' => true)
+	'keyid tag' => array('desc' =>gettext('KeyID tag'), 'mobile' => true),
+	'auto' => array('desc' => gettext('Automatic based on content'), 'mobile' => true),
 );
 
 global $ipsec_idhandling;
@@ -1123,7 +1121,6 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array(), $gateways_s
 		return array();
 	}
 
-
 	$thisid_type = $id_type;
 	switch ($thisid_type) {
 		case 'myaddress':
@@ -1138,25 +1135,22 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array(), $gateways_s
 			$thisid_type = 'address';
 			$thisid_data = $rgmap[$ph1ent['remote-gateway']];
 			break;
-		case 'address':
-			$thisid_data = $id_data;
-			break;
-		case 'fqdn':
-			$thisid_data = "{$id_data}";
-			break;
 		case 'keyid tag':
 			$thisid_type = 'keyid';
-			$thisid_data = "{$id_data}";
+			$thisid_data = $id_data;
 			break;
 		case 'user_fqdn':
 			$thisid_type = 'userfqdn';
-			$thisid_data = "{$id_data}";
-			break;
-		case 'asn1dn':
 			$thisid_data = $id_data;
 			break;
 		case 'any':
 			$thisid_data = '%any';
+			break;
+		case 'address':
+		case 'fqdn':
+		case 'asn1dn':
+		case 'auto':
+			$thisid_data = $id_data;
 			break;
 		default:
 			break;
@@ -1169,9 +1163,9 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array(), $gateways_s
  */
 function ipsec_fixup_id($type, $data) {
 	/* List of types to pass through as-is without changes or adding prefix */
-	$auto_types = array('address');
+	$auto_types = array('address', 'auto');
 	/* List of types which need the resulting string double quoted. */
-	$quote_types = array('keyid', 'asn1dn');
+	$quote_types = array('keyid', 'asn1dn', 'auto');
 
 	/* If the first character of asn1dn type data is not #, then rely on
 	 * automatic parsing https://redmine.pfsense.org/issues/4792 */
@@ -1947,7 +1941,7 @@ function ipsec_setup_userpools() {
 		$scconf['connections'][$upconn] = array();
 		$scconf['pools'][$upname] = array();
 
-		$clientid = ($mkent['ident_type'] == "none") ? "\"{$mkent['ident']}\"" : "{$mkent['ident_type']}:{$mkent['ident']}";
+		$clientid = (in_array($mkent['ident_type'], array('auto', 'none'))) ? "\"{$mkent['ident']}\"" : "{$mkent['ident_type']}:{$mkent['ident']}";
 		$clienteapid = ($ph1ent['authentication_method'] == "eap-mschapv2") ? $clientid : '%any';
 
 		/* Craft a cloned connection with the ID information to match */

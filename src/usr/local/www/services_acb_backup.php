@@ -42,10 +42,10 @@ if ($_POST) {
 
 	if ($_REQUEST['reason']) {
 		if (write_config($_REQUEST['reason'] . "-MaNuAlBaCkUp")) {
-			$savemsg = "Backup completed successfully.";
+			$savemsg = "Backup queued successfully.";
 		}
 	} elseif (write_config("Backup invoked via Auto Config Backup." . "-MaNuAlBaCkUp")) {
-			$savemsg = "Backup completed successfully.";
+			$savemsg = "Backup queued successfully.";
 	} else {
 		$savemsg = "Backup not completed - write_config() failed.";
 	}

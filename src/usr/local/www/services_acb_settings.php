@@ -82,7 +82,7 @@ if (isset($_POST['save'])) {
 			$pwd = $pconfig['encryption_password'];
 		}
 
-		setup_ACB(
+		$pconfig = setup_ACB(
 			$pconfig['enable'],
 			$pconfig['hint'],
 			$pconfig['frequency'],

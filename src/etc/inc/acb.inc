@@ -268,6 +268,17 @@ function upload_config($manual = false) {
 				'manmax' => $manmax
 			);
 
+			if (!is_dir($g['acbbackuppath'])) {
+				mkdir($g['acbbackuppath']);
+			}
+
+			file_put_contents($g['acbbackuppath'] . $post_fields['sha256_hash'] . ".form", json_encode($post_fields));
+			file_put_contents($g['acbbackuppath'] . $post_fields['sha256_hash'] . ".data", $data);
+
+			/*
+			This functionality is now provided by a cron job /usr/local/sbin/acbupload.php run once per minute when ACB is enabled.
+			Commented block can be removed after testing.
+
 			// Check configuration into the ESF repo
 			$curl_session = curl_init();
 
@@ -313,7 +324,7 @@ function upload_config($manual = false) {
 				log_error($notice_text);
 				update_filter_reload_status($notice_text);
 			}
-
+*/
 		} else {
 			// Debugging
 			//log_error("No https://acb.netgate.com backup required.");
@@ -328,6 +339,11 @@ function upload_config($manual = false) {
 function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $dow, $numman, $pwd) {
 	global $config;
 
+	// Randomize the minutes if not specified
+	if (!isset($minute) || strlen($minute) == 0 || minute == "0") {
+		$minute = rand(1, 59);
+	}
+
 	$config['system']['acb']['enable'] = $enable;
 	$config['system']['acb']['hint'] = $hint;
 	$config['system']['acb']['frequency'] = $frequency;
@@ -341,37 +357,18 @@ function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $d
 		$config['system']['acb']['encryption_password'] = $pwd;
 	}
 
-	init_config_arr(array('cron'));
-	$a_cron = &$config['cron']['item'];
-	$croncmd = "/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/execacb.php";
+	install_cron_job("/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/execacb.php", $frequency == "cron",
+	   $minute,
+	   is_numeric($hours) ? $hours : "*",
+	   is_numeric($day) ? $day : "*",
+	   is_numeric($month) ? $month : "*",
+	   is_numeric($dow) ? $dow : "*"
+	);
 
-	$i = 0;
-
-	// Remove the existing cron job
-	if (count($a_cron) > 0) {
-		foreach ($a_cron as $ent) {
-			if ($ent['command'] === $croncmd) {
-				unset($a_cron[$i]);
-				break;
-			}
-
-		$i++;
-		}
-	}
-
-	if ($frequency == "cron") {
-		$crondef = array();
-		$crondef['minute'] = $minute;
-		$crondef['hour'] = $hours;
-		$crondef['mday'] = $day;
-		$crondef['month'] = $month;
-		$crondef['wday'] = $dow;
-		$crondef['who'] = 'root';
-		$crondef['command'] = $croncmd;
-
-		$a_cron[$i] = $crondef;
-	}
+	// Install cron job 
+	install_cron_job("/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/acbupload.php", $enable == "yes", "*");
 
 	write_config("AutoConfigBackup settings updated");
-	configure_cron();
+
+	return($config['system']['acb']);
 }

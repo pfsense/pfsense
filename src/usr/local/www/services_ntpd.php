@@ -115,12 +115,6 @@ if ($_POST) {
 			unset($config['ntpd']['interface']);
 		}
 
-		if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport'])) {
-			$config['ntpd']['gpsport'] = $_POST['gpsport'];
-		} elseif (isset($config['ntpd']['gpsport'])) {
-			unset($config['ntpd']['gpsport']);
-		}
-
 		unset($config['ntpd']['prefer']);
 		unset($config['ntpd']['noselect']);
 		unset($config['ntpd']['ispool']);

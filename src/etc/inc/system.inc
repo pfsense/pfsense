@@ -1666,7 +1666,7 @@ function system_ntp_setup_gps($serialport) {
 	init_config_arr(array('ntpd', 'gps'));
 
 	$gps_device = '/dev/gps0';
-	$serialport = '/dev/'.$serialport;
+	$serialport = '/dev/'.basename($serialport);
 
 	if (!file_exists($serialport)) {
 		return false;
@@ -1752,7 +1752,7 @@ function system_ntp_setup_pps($serialport) {
 	global $config, $g;
 
 	$pps_device = '/dev/pps0';
-	$serialport = '/dev/'.$serialport;
+	$serialport = '/dev/'.basename($serialport);
 
 	if (!file_exists($serialport)) {
 		return false;

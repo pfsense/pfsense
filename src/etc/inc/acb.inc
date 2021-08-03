@@ -340,7 +340,7 @@ function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $d
 	global $config;
 
 	// Randomize the minutes if not specified
-	if (!isset($minute) || strlen($minute) == 0 || minute == "0") {
+	if (!isset($minute) || strlen($minute) == 0 || $minute == "0") {
 		$minute = rand(1, 59);
 	}
 

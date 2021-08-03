@@ -1262,7 +1262,8 @@ function openvpn_reconfigure($mode, $settings) {
 			$cas = ca_chain_array($param);
 			$capath = "{$g['openvpn_base']}/{$mode_id}/ca";
 			/* Cleanup old CA/CRL references */
-			@unlink_if_exists("{$capath}.*0");
+			@unlink_if_exists("{$capath}/*.0");
+			@unlink_if_exists("{$capath}/*.r*");
 			/* Find the CRL listed in the settings */
 			if (!empty($settings['crlref'])) {
 				$crl = lookup_crl($settings['crlref']);

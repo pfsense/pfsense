@@ -71,8 +71,8 @@ function upload($basename) {
     // Ensure there are no backups from systems we do not allow
     foreach ($badreasons as $term) {
         if (strpos(strtolower($post_fields['reason']), $term) !== false) {
-            // unlink_if_exists($acbuploadpath . $basename . ".data");
-            // unlink_if_exists($acbuploadpath . $basename . ".form");
+            unlink_if_exists($acbuploadpath . $basename . ".data");
+            unlink_if_exists($acbuploadpath . $basename . ".form");
             return;
         }
     }

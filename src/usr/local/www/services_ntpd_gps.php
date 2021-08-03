@@ -159,6 +159,10 @@ if ($_POST) {
 		$input_errors[] = gettext("The submitted GPS type is invalid.");
 	}
 
+	if (!file_exists('/dev/'.basename($_POST['gpsport']))) {
+		$input_errors[] = gettext("The selected GPS port does not exist.");
+	}
+
 	if (!array_key_exists($pconfig['gpsminpoll'], $ntp_poll_values)) {
 		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is invalid.");
 	}
@@ -183,7 +187,7 @@ if ($_POST) {
 
 if ($_POST && empty($input_errors)) {
 
-	if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport'])) {
+	if (!empty($_POST['gpsport']) && file_exists('/dev/'.basename($_POST['gpsport']))) {
 		$config['ntpd']['gps']['port'] = $_POST['gpsport'];
 	} else {
 		/* if port is not set, remove all the gps config */

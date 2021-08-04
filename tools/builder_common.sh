@@ -1914,7 +1914,8 @@ save_logs_to_s3() {
 	for i in $(aws_exec s3 ls s3://pfsense-engineering-build-pkg/logs/); do
 		echo ${i} | awk '{print $4}' | grep pkg-logs-${jail_arch} | tr -d '\r' >> ${_logtemp}
 	done
-	local _maxlogs=5
+	# keep at least ~30 days of logs, plus some extra for one off runs
+	local _maxlogs=45
 	local _curlogs=0
 	_curlogs=$( wc -l ${_logtemp} | awk '{print $1}' )
 	if [ ${_curlogs} -gt ${_maxlogs} ]; then

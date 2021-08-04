@@ -6554,6 +6554,8 @@ function upgrade_218_to_219() {
 function upgrade_219_to_220() {
 	global $config;
 
+	init_config_arr(array('system', 'acb'));
+
 	if ($config['system']['acb']['enable'] == "yes" && file_exists("/usr/local/sbin/acbupload.php")) {
 		install_cron_job("/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/acbupload.php", true, "*");
 	}

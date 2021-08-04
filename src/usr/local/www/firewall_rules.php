@@ -831,7 +831,7 @@ foreach ($a_filter as $filteri => $filterent):
 										$gw_info = array();
 									}
 									if (empty($gw_info[$filterent['gateway']])) {
-										$gw_info[$filterent['gateway']] = gateway_info_popup($filterent['gateway'],$gateways_status);
+										$gw_info[$filterent['gateway']] = gateway_info_popup($filterent['gateway'], $gateways_status);
 									}
 								?>
 								<?php if (!empty($gw_info[$filterent['gateway']])): ?>

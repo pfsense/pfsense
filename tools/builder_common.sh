@@ -1912,7 +1912,7 @@ save_logs_to_s3() {
 	IFS=$'\n'
 	local _logtemp=$( mktemp /tmp/loglist.XXXXX )
 	for i in $(aws_exec s3 ls s3://pfsense-engineering-build-pkg/logs/); do
-		echo ${i} | awk '{print $4}' | grep pkg-logs-${jail_arch} >> ${_logtemp}
+		echo ${i} | awk '{print $4}' | grep pkg-logs-${jail_arch} | tr -d '\r' >> ${_logtemp}
 	done
 	local _maxlogs=5
 	local _curlogs=0

@@ -358,5 +358,7 @@ events.push(function() {
 include("foot.inc");
 
 if (is_subsystem_dirty('restore')) {
+	print('<span style="display: none;">');
 	system_reboot();
+	print('</span>');
 }

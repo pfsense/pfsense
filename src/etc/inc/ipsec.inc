@@ -2840,21 +2840,6 @@ function ipsec_setup_secrets($gateways_status = false) {
 
 	$suffix = 0;
 
-	/* write out CRL files */
-	if (is_array($config['crl']) && count($config['crl'])) {
-		foreach ($config['crl'] as $crl) {
-			if (!isset($crl['text'])) {
-				log_error(sprintf(gettext("Warning: Missing CRL data for %s"), $crl['descr']));
-				continue;
-			}
-			$fpath = "{$ipsec_swanctl_dirs['crlpath']}/{$crl['refid']}.crl";
-			if (!@file_put_contents($fpath, base64_decode($crl['text']))) {
-				log_error(sprintf(gettext("Error: Cannot write IPsec CRL file for %s"), $crl['descr']));
-				continue;
-			}
-		}
-	}
-
 	/* Fetch gateway status if not passed */
 	if (!is_array($gateways_status)) {
 		$gateways_status = return_gateways_status(true);
@@ -2993,6 +2978,21 @@ function ipsec_setup_secrets($gateways_status = false) {
 		if (!@file_put_contents($cafilename, $cacrt)) {
 				log_error(sprintf(gettext("Error: Cannot write IPsec CA file for %s"), $cadata['descr']));
 				continue;
+		}
+	}
+
+	/* write out CRL files */
+	if (is_array($config['crl']) && count($config['crl']) && !empty($vpncas)) {
+		foreach ($config['crl'] as $crl) {
+			if (!isset($crl['text'])) {
+				log_error(sprintf(gettext("Warning: Missing CRL data for %s"), $crl['descr']));
+				continue;
+			}
+			$fpath = "{$ipsec_swanctl_dirs['crlpath']}/{$crl['refid']}.crl";
+			if (!@file_put_contents($fpath, base64_decode($crl['text']))) {
+				log_error(sprintf(gettext("Error: Cannot write IPsec CRL file for %s"), $crl['descr']));
+				continue;
+			}
 		}
 	}
 

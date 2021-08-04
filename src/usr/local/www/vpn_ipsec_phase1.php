@@ -1076,14 +1076,16 @@ $section->addInput(new Form_Select(
 	array('on' => gettext('Enable'), 'off' => gettext('Disable'))
 ))->setHelp('Set this option to control the use of MOBIKE');
 
-$section->addInput(new Form_Checkbox(
-	'gw_duplicates',
-	'Gateway duplicates',
-	sprintf(gettext('Enable this to allow multiple phase 1 configurations with the same endpoint. ' .
-	    'When enabled, %s does not manage routing to the remote gateway and traffic will follow the default route ' .
-	    'without regard for the chosen interface. Static routes can override this behavior.'), $g['product_label']),
-	$pconfig['gw_duplicates']
-));
+if (!isset($pconfig['mobile'])) {
+	$section->addInput(new Form_Checkbox(
+		'gw_duplicates',
+		'Gateway duplicates',
+		sprintf(gettext('Enable this to allow multiple phase 1 configurations with the same endpoint. ' .
+		    'When enabled, %s does not manage routing to the remote gateway and traffic will follow the default route ' .
+		    'without regard for the chosen interface. Static routes can override this behavior.'), $g['product_label']),
+		$pconfig['gw_duplicates']
+	));
+}
 
 $section->addInput(new Form_Checkbox(
 	'splitconn',

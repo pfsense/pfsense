@@ -502,7 +502,13 @@ if ($_POST['save']) {
 		}
 	}
 	if (is_array($old_ph1ent) && ipsec_vti($old_ph1ent, false, false) && $pconfig['disabled']) {
-		$input_errors[] = gettext("Cannot disable a Phase 1 with a child Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
+		foreach ($a_phase2 as $p2index => $ph2tmp) {
+			if (($ph2tmp['ikeid'] == $old_ph1ent['ikeid']) &&
+			    is_interface_ipsec_vti_assigned($ph2tmp)) {
+				$input_errors[] = gettext("Cannot disable a Phase 1 with a child Phase 2 while the interface is assigned. Remove the interface assignment before disabling this P2.");
+				break;
+			}
+		}
 	}
 
 	if (!empty($pconfig['certref'])) {

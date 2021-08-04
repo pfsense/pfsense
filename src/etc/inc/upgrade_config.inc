@@ -6548,6 +6548,18 @@ function upgrade_218_to_219() {
 }
 
 /*
+ * Ensure the ACB cron job is installed after upgrade if ACB is enabled
+ * If the cron job already exists, no harm is done
+ */
+function upgrade_219_to_220() {
+	global $config;
+
+	if ($config['system']['acb']['enable'] == "yes" && file_exists("/usr/local/sbin/acbupload.php")) {
+		install_cron_job("/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/acbupload.php", true, "*");
+	}
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

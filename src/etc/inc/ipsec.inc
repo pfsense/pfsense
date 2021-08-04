@@ -1766,6 +1766,85 @@ function ipsec_setup_strongswan() {
 			}
 			$ssconf['charon']['plugins']['xauth-generic']['authcfg'] = implode(",", $authcfgs);
 		}
+
+		$ssconf['charon']['plugins']['attr'] = array();
+
+		$rightdnsservers = array();
+		if (!empty($a_client['dns_server1'])) {
+			$rightdnsservers[] = $a_client['dns_server1'];
+		}
+		if (!empty($a_client['dns_server2'])) {
+			$rightdnsservers[] = $a_client['dns_server2'];
+		}
+		if (!empty($a_client['dns_server3'])) {
+			$rightdnsservers[] = $a_client['dns_server3'];
+		}
+		if (!empty($a_client['dns_server4'])) {
+			$rightdnsservers[] = $a_client['dns_server4'];
+		}
+		if (count($rightdnsservers)) {
+			$ssconf['charon']['plugins']['attr']['dns'] = implode(',', $rightdnsservers);
+		}
+
+		$cfgservers = array();
+		if (!empty($a_client['wins_server1'])) {
+			$cfgservers[] = $a_client['wins_server1'];
+		}
+		if (!empty($a_client['wins_server2'])) {
+			$cfgservers[] = $a_client['wins_server2'];
+		}
+		if (!empty($cfgservers)) {
+			$ssconf['charon']['plugins']['attr']['nbns'] = implode(',', $cfgservers);
+		}
+		unset($cfgservers);
+
+		$net_list = array();
+		if (isset($a_client['net_list']) && is_array($a_phase2)) {
+			foreach ($a_phase2 as $ph2ent) {
+				if (isset($ph2ent['disabled']) ||
+				    !isset($ph2ent['mobile'])) {
+					continue;
+				}
+				$nlent = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
+				if (is_subnet($nlent)) {
+					$net_list[] = $nlent;
+				}
+				unset($nlent);
+			}
+		}
+
+		if (!empty($net_list)) {
+			$ssconf['charon']['plugins']['attr']['subnet'] = implode(',', $net_list);
+			$ssconf['charon']['plugins']['attr']['split-include'] = implode(',', $net_list);
+		}
+
+		if (!empty($a_client['dns_domain'])) {
+			$ssconf['charon']['plugins']['attr'][] = "# Search domain and default domain";
+			$ssconf['charon']['plugins']['attr']['27674'] = "\"{$a_client['dns_domain']}\"";
+			if (empty($a_client['dns_split'])) {
+				$ssconf['charon']['plugins']['attr']['27675'] = "\"{$a_client['dns_domain']}\"";
+			}
+		}
+
+		if (!empty($a_client['dns_split'])) {
+			$ssconf['charon']['plugins']['attr'][] = "# Split DNS";
+			$ssconf['charon']['plugins']['attr']['28675'] = "\"{$a_client['dns_split']}\"";
+		}
+
+		if (!empty($a_client['login_banner'])) {
+			$ssconf['charon']['plugins']['attr'][] = "# Login Banner";
+			$ssconf['charon']['plugins']['attr']['28672'] = "\"{$a_client['login_banner']}\"";
+		}
+
+		if (isset($a_client['save_passwd'])) {
+			$ssconf['charon']['plugins']['attr'][] = "# Save Xauth Password";
+			$ssconf['charon']['plugins']['attr']['28673'] = "1";
+		}
+
+		if ($a_client['pfs_group']) {
+			$ssconf['charon']['plugins']['attr'][] = "# Phase2 PFS Group";
+			$ssconf['charon']['plugins']['attr']['28679'] = "\"{$a_client['pfs_group']}\"";
+		}
 	}
 
 	@file_put_contents("{$g['varetc_path']}/ipsec/strongswan.conf", ipsec_strongswan_confgen($ssconf));
@@ -1799,95 +1878,15 @@ function ipsec_setup_pools() {
 	$scconf['pools'] = array();
 	$pool_common =& $scconf['mobile-pool'];
 
-	$rightdnsservers = array();
-	if (!empty($a_client['dns_server1'])) {
-		$rightdnsservers[] = $a_client['dns_server1'];
-	}
-	if (!empty($a_client['dns_server2'])) {
-		$rightdnsservers[] = $a_client['dns_server2'];
-	}
-	if (!empty($a_client['dns_server3'])) {
-		$rightdnsservers[] = $a_client['dns_server3'];
-	}
-	if (!empty($a_client['dns_server4'])) {
-		$rightdnsservers[] = $a_client['dns_server4'];
-	}
-	if (count($rightdnsservers)) {
-		$pool_common['dns'] = implode(',', $rightdnsservers);
-	}
-
-	$cfgservers = array();
-	if (!empty($a_client['wins_server1'])) {
-		$cfgservers[] = $a_client['wins_server1'];
-	}
-	if (!empty($a_client['wins_server2'])) {
-		$cfgservers[] = $a_client['wins_server2'];
-	}
-	if (!empty($cfgservers)) {
-		$pool_common['nbns'] = implode(",", $cfgservers);
-	}
-	unset($cfgservers);
-
-	$net_list4 = array();
-	$net_list6 = array();
-	if (isset($a_client['net_list']) && is_array($a_phase2)) {
-		foreach ($a_phase2 as $ph2ent) {
-			if (isset($ph2ent['disabled']) ||
-			    !isset($ph2ent['mobile'])) {
-				continue;
-			}
-			$nlent = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
-			if (is_subnetv4($nlent)) {
-				$net_list4[] = $nlent;
-			} elseif (is_subnetv6($nlent)) {
-				$net_list6[] = $nlent;
-			}
-			unset($nlent);
-		}
-	}
-	if (!empty($a_client['dns_domain'])) {
-		$pool_common[] = "# Search domain and default domain";
-		$pool_common['28674'] = "\"{$a_client['dns_domain']}\"";
-		if (empty($a_client['dns_split'])) {
-			$pool_common['28675'] = "\"{$a_client['dns_domain']}\"";
-		}
-	}
-
-	if (!empty($a_client['dns_split'])) {
-		$pool_common['28675'] = "\"{$a_client['dns_split']}\"";
-	}
-
-	if (!empty($a_client['login_banner'])) {
-		$pool_common['28672'] = "\"{$a_client['login_banner']}\"";
-	}
-
-	if (isset($a_client['save_passwd'])) {
-		$pool_common['28673'] = "1";
-	}
-
-	if ($a_client['pfs_group']) {
-		$pool_common['28679'] = "\"{$a_client['pfs_group']}\"";
-	}
-
 	if (!empty($a_client['pool_address'])) {
 		$scconf['pools']['mobile-pool-v4 : mobile-pool'] = array();
 		$v4pool =& $scconf['pools']['mobile-pool-v4 : mobile-pool'];
 		$v4pool['addrs'] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
-		if (!empty($net_list4)) {
-			$v4pool['subnet'] = implode(",", $net_list4);
-			$v4pool['split_include'] = implode(",", $net_list4);
-			unset($net_list4);
-		}
 	}
 	if (!empty($a_client['pool_address_v6'])) {
 		$scconf['pools']['mobile-pool-v6 : mobile-pool'] = array();
 		$v6pool =& $scconf['pools']['mobile-pool-v6 : mobile-pool'];
 		$v6pool['addrs'] = "{$a_client['pool_address_v6']}/{$a_client['pool_netbits_v6']}";
-		if (!empty($net_list6)) {
-			$v6pool['subnet'] = implode(",", $net_list6);
-			$v6pool['split_include'] = implode(",", $net_list6);
-			unset($net_list6);
-		}
 	}
 
 	return;

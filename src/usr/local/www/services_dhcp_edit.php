@@ -106,6 +106,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['filename64'] = $a_maps[$id]['filename64'];
 	$pconfig['filename32arm'] = $dhcpdconf['filename32arm'];
 	$pconfig['filename64arm'] = $dhcpdconf['filename64arm'];
+	$pconfig['uefihttpboot'] = $a_maps[$id]['uefihttpboot'];
 	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
 	$pconfig['netmask'] = $a_maps[$id]['netmask'];
 	$pconfig['numberoptions'] = $a_maps[$id]['numberoptions'];
@@ -148,6 +149,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['filename64'] = $_REQUEST['filename64'];
 	$pconfig['filename32arm'] = $dhcpdconf['filename32arm'];
 	$pconfig['filename64arm'] = $dhcpdconf['filename64arm'];
+	$pconfig['uefihttpboot'] = $_REQUEST['uefihttpboot'];
 	$pconfig['rootpath'] = $_REQUEST['rootpath'];
 	$pconfig['netmask'] = $_REQUEST['netmask'];
 	$pconfig['numberoptions'] = $_REQUEST['numberoptions'];
@@ -399,6 +401,7 @@ if ($_POST['save']) {
 		$mapent['filename64'] = $_POST['filename64'];
 		$mapent['filename32arm'] = $_POST['filename32arm'];
 		$mapent['filename64arm'] = $_POST['filename64arm'];
+		$mapent['uefihttpboot'] = $_POST['uefihttpboot'];
 		$mapent['numberoptions'] = $pconfig['numberoptions'];
 
 		if (isset($id) && $a_maps[$id]) {
@@ -851,6 +854,13 @@ $section->addInput(new Form_Input(
 			'All five filenames and a configured boot server are necessary for UEFI & ARM to work! ');
 
 $section->addInput(new Form_Input(
+	'uefihttpboot',
+	'UEFI HTTPBoot URL',
+	'text',
+	$pconfig['uefihttpboot']
+))->setHelp('string-format: http://(servername)/(firmwarepath)');
+
+$section->addInput(new Form_Input(
 	'rootpath',
 	'Root path',
 	'text',
@@ -1171,6 +1181,7 @@ events.push(function() {
 		hideInput('filename64', !showadvnwkboot);
 		hideInput('filename32arm', !showadvnwkboot);
 		hideInput('filename64arm', !showadvnwkboot);
+		hideInput('uefihttpboot', !showadvnwkboot);
 		hideInput('rootpath', !showadvnwkboot);
 
 		if (showadvnwkboot) {

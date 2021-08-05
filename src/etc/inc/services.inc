@@ -1005,6 +1005,11 @@ EOPP;
 				    ($poolconf['filename'] != $dhcpifconf['filename']))) {
 					$filename = $poolconf['filename'];
 				}
+				if (!empty($poolconf['uefihttpboot']) &&
+				    (!isset($dhcpifconf['uefihttpboot']) ||
+				    ($poolconf['uefihttpboot'] != $dhcpifconf['uefihttpboot']))) {
+					$pxe_files[] = array('HTTPClient', $poolconf['uefihttpboot']);
+				}
 				if (!empty($poolconf['filename32']) &&
 				    (!isset($dhcpifconf['filename32']) ||
 				    ($poolconf['filename32'] != $dhcpifconf['filename32']))) {
@@ -1030,11 +1035,16 @@ EOPP;
 				$pxeif = false;
 				if (is_array($pxe_files) && !empty($pxe_files)) {
 					foreach ($pxe_files as $pxe) {
+						if ($pxe[0] == 'HTTPClient') {
+							$expr = "substring (option vendor-class-identifier, 0, 10) = \"HTTPClient\" {\n";
+						} else {
+							$expr = "option arch = {$pxe[0]} {\n";
+						}
 						if (!$pxeif) {
-							$dhcpdconf .= "		if option arch = {$pxe[0]} {\n";
+							$dhcpdconf .= "		if " . $expr;
 							$pxeif = true;
 						} else {
-							$dhcpdconf .= " else if option arch = {$pxe[0]} {\n";
+							$dhcpdconf .= " else if " . $expr;
 						}
 						$dhcpdconf .= "			filename \"{$pxe[1]}\";\n";
 						$dhcpdconf .= "		}";
@@ -1136,6 +1146,9 @@ EOD;
 			if (!empty($dhcpifconf['filename'])) {
 				$filename = $dhcpifconf['filename'];
 			}
+			if (!empty($dhcpifconf['uefihttpboot'])) {
+				$pxe_files[] = array('HTTPClient', $dhcpifconf['uefihttpboot']);
+			}
 			if (!empty($dhcpifconf['filename32'])) {
 				$pxe_files[] = array('00:06', $dhcpifconf['filename32']);
 			}
@@ -1153,11 +1166,16 @@ EOD;
 			$pxeif = false;
 			if (is_array($pxe_files) && !empty($pxe_files)) {
 				foreach ($pxe_files as $pxe) {
+					if ($pxe[0] == 'HTTPClient') {
+						$expr = "substring (option vendor-class-identifier, 0, 10) = \"HTTPClient\" {\n";
+					} else {
+						$expr = "option arch = {$pxe[0]} {\n";
+					}
 					if (!$pxeif) {
-						$dhcpdconf .= "	if option arch = {$pxe[0]} {\n";
+						$dhcpdconf .= "	if " . $expr; 
 						$pxeif = true;
 					} else {
-						$dhcpdconf .= " else if option arch = {$pxe[0]} {\n";
+						$dhcpdconf .= " else if " . $expr; 
 					}
 					$dhcpdconf .= "		filename \"{$pxe[1]}\";\n";
 					$dhcpdconf .= "	}";

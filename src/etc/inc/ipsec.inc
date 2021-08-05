@@ -1229,6 +1229,11 @@ function ipsec_vti($p1, $returnaddresses = false, $skipdisabled = true) {
 
 	foreach(ipsec_get_phase2_by_ikeid($p1['ikeid']) as $p2) {
 		if ($p2['mode'] == 'vti') {
+			if ($skipdisabled && isset($p2['disabled'])) {
+				continue;
+			} else {
+				$is_vti = true;
+			}
 			if ($returnaddresses) {
 				$vtisubnet_spec[] = array(
 					'left' => ipsec_idinfo_to_cidr($p2['localid'], true, $p2['mode']),
@@ -1236,11 +1241,6 @@ function ipsec_vti($p1, $returnaddresses = false, $skipdisabled = true) {
 					'descr' => $p2['descr'],
 					'reqid' => $p2['reqid'],
 				);
-			}
-			if ($skipdisabled && isset($p2['disabled'])) {
-				continue;
-			} else {
-				$is_vti = true;
 			}
 		}
 	}

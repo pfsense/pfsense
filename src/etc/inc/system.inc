@@ -1625,7 +1625,8 @@ $ntp_poll_min_default = 'omit';
 $ntp_poll_max_default = 9;
 $ntp_auth_halgos = array(
 	'md5' => 'MD5',
-	'sha1' => 'SHA1'
+	'sha1' => 'SHA1',
+	'sha256' => 'SHA256'
 );
 
 function system_ntp_poll_values() {

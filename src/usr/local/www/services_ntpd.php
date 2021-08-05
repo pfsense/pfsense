@@ -104,6 +104,9 @@ if ($_POST) {
 		} elseif (($pconfig['serverauthalgo'] == 'sha1') && ((strlen($pconfig['serverauthkey']) != 40) ||
 		    !ctype_xdigit($pconfig['serverauthkey']))) {
 			$input_errors[] = gettext("The supplied value for NTP Authentication key for SHA1 digest must be hex-encoded string of 40 characters.");
+		} elseif (($pconfig['serverauthalgo'] == 'sha256') && ((strlen($pconfig['serverauthkey']) != 64) ||
+		    !ctype_xdigit($pconfig['serverauthkey']))) {
+			$input_errors[] = gettext("The supplied value for NTP Authentication key for SHA256 digest must be hex-encoded string of 64 characters.");
 		}
 	}
 
@@ -533,7 +536,8 @@ $group->add(new Form_IpAddress(
 	['placeholder' => 'NTP Authentication key']
 ))->setHelp(
 	'Key format: %1$s MD5 - The key is 1 to 20 printable characters %1$s' .
-	'SHA1 - The key is a hex-encoded ASCII string of 40 characters',
+	'SHA1 - The key is a hex-encoded ASCII string of 40 characters %1$s' .
+	'SHA256 - The key is a hex-encoded ASCII string of 64 characters',
 	'<br />'
 );
 

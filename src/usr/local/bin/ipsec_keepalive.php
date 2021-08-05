@@ -26,7 +26,7 @@ init_config_arr(array('ipsec', 'phase1'));
 init_config_arr(array('ipsec', 'phase2'));
 global $config;
 
-$debug = true;
+$debug = false;
 
 /* Check if there are any tunnels defined, bail if not */
 /* Check if IPsec is enabled and running, bail if disabled or stopped */
@@ -74,6 +74,15 @@ foreach ($initiate as $conid) {
 	if (is_array($status['disconnected']) &&
 	    is_array($status['disconnected']['p2']) &&
 	    in_array($conid, $status['disconnected']['p2'])) {
+		/* Check if P1 is using a CARP VIP. If so, check CARP status. */
+		list($ikeid, $reqid) = ipsec_id_by_conid($conid);
+		if ((substr($status[$ikeid]['p1']['interface'], 0, 4) == "_vip") &&
+		    in_array(get_carp_bind_status($status[$ikeid]['p1']['interface']), array('BACKUP', 'INIT'))) {
+			if ($debug) {
+				echo "{$conid} is disconnected but using a CARP VIP in BACKUP or INIT status. Skipping.\n";
+			}
+			continue;
+		}
 		if ($debug) {
 			echo "{$conid} is disconnected. Attempting to initiate.\n";
 		}

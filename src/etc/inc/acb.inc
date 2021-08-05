@@ -339,6 +339,8 @@ function upload_config($manual = false) {
 function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $dow, $numman, $pwd) {
 	global $config;
 
+	init_config_arr(array('system', 'acb'));
+
 	// Randomize the minutes if not specified
 	if (!isset($minute) || strlen($minute) == 0 || $minute == "0") {
 		$minute = rand(1, 59);

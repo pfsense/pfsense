@@ -333,6 +333,24 @@ if ($act == "new" || $act == "edit"):
 
 	$section = new Form_Section('General Information');
 
+	$section->addInput(new Form_Input(
+		'description',
+		'Description',
+		'text',
+		$pconfig['description']
+	))->setHelp('A description of this override for administrative reference.');
+
+	$section->addInput(new Form_Checkbox(
+		'disable',
+		'Disable',
+		'Disable this override',
+		$pconfig['disable']
+	))->setHelp('Set this option to disable this client-specific override without removing it from the list.');
+
+	$form->add($section);
+
+	$section = new Form_Section('Override Configuration');
+
 	$serveroptionlist = array();
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
@@ -342,35 +360,12 @@ if ($act == "new" || $act == "edit"):
 		}
 	}
 
-	$section->addInput(new Form_Select(
-		'server_list',
-		'Server List',
-		$pconfig['server_list'],
-		$serveroptionlist,
-		true
-		))->setHelp('Select the servers that will utilize this override. When no servers are selected, the override will apply to all servers.');
-
-
-	$section->addInput(new Form_Checkbox(
-		'disable',
-		'Disable',
-		'Disable this override',
-		$pconfig['disable']
-	))->setHelp('Set this option to disable this client-specific override without removing it from the list.');
-
 	$section->addInput(new Form_Input(
 		'common_name',
 		'*Common Name',
 		'text',
 		$pconfig['common_name']
-	))->setHelp('Enter the X.509 common name for the client certificate, or the username for VPNs utilizing password authentication. This match is case sensitive.');
-
-	$section->addInput(new Form_Input(
-		'description',
-		'Description',
-		'text',
-		$pconfig['description']
-	))->setHelp('A description for administrative reference (not parsed).');
+	))->setHelp('Enter the X.509 common name for the client certificate, or the username for VPNs utilizing password authentication. This match is case sensitive. Enter "DEFAULT" to override default client behavior.');
 
 	$section->addInput(new Form_Checkbox(
 		'block',
@@ -378,6 +373,14 @@ if ($act == "new" || $act == "edit"):
 		'Block this client connection based on its common name.',
 		$pconfig['block']
 	))->setHelp('Prevents the client from connecting to this server. Do not use this option to permanently disable a client due to a compromised key or password. Use a CRL (certificate revocation list) instead.');
+
+	$section->addInput(new Form_Select(
+		'server_list',
+		'Server List',
+		$pconfig['server_list'],
+		$serveroptionlist,
+		true
+		))->setHelp('Select the servers that will utilize this override. When no servers are selected, the override will apply to all servers.');
 
 	$form->add($section);
 

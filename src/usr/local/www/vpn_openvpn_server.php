@@ -812,12 +812,30 @@ if ($act=="new" || $act=="edit"):
 
 	$section = new Form_Section('General Information');
 
+	$section->addInput(new Form_Input(
+		'description',
+		'Description',
+		'text',
+		$pconfig['description']
+	))->setHelp('A description of this VPN for administrative reference.');
+
 	$section->addInput(new Form_Checkbox(
 		'disable',
 		'Disabled',
 		'Disable this server',
 		$pconfig['disable']
 	))->setHelp('Set this option to disable this server without removing it from the list.');
+
+	if ($vpnid) {
+		$section->addInput(new Form_StaticText(
+			'Unique VPN ID',
+			gettext('Server') . " {$vpnid} (ovpns{$vpnid})"
+		));
+	}
+
+	$form->add($section);
+
+	$section = new Form_Section('Mode Configuration');
 
 	$section->addInput(new Form_Select(
 		'mode',
@@ -854,19 +872,23 @@ if ($act=="new" || $act=="edit"):
 		))->addClass('authmode');
 
 	$section->addInput(new Form_Select(
-		'protocol',
-		'*Protocol',
-		$pconfig['protocol'],
-		$openvpn_prots
-		));
-
-	$section->addInput(new Form_Select(
 		'dev_mode',
 		'*Device mode',
 		empty($pconfig['dev_mode']) ? 'tun':$pconfig['dev_mode'],
 		$openvpn_dev_mode
 		))->setHelp('"tun" mode carries IPv4 and IPv6 (OSI layer 3) and is the most common and compatible mode across all platforms.%1$s' .
 		    '"tap" mode is capable of carrying 802.3 (OSI Layer 2.)', '<br/>');
+
+	$form->add($section);
+
+	$section = new Form_Section('Endpoint Configuration');
+
+	$section->addInput(new Form_Select(
+		'protocol',
+		'*Protocol',
+		$pconfig['protocol'],
+		$openvpn_prots
+		));
 
 	$section->addInput(new Form_Select(
 		'interface',
@@ -882,13 +904,6 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['local_port'],
 		['min' => '0']
 	))->setHelp("The port used by OpenVPN to receive client connections.");
-
-	$section->addInput(new Form_Input(
-		'description',
-		'Description',
-		'text',
-		$pconfig['description']
-	))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 	$form->add($section);
 

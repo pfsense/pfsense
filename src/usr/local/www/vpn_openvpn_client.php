@@ -600,12 +600,30 @@ if ($act=="new" || $act=="edit"):
 
 	$section = new Form_Section('General Information');
 
+	$section->addInput(new Form_Input(
+		'description',
+		'Description',
+		'text',
+		$pconfig['description']
+	))->setHelp('A description of this VPN for administrative reference.');
+
 	$section->addInput(new Form_Checkbox(
 		'disable',
 		'Disabled',
 		'Disable this client',
 		$pconfig['disable']
 	))->setHelp('Set this option to disable this client without removing it from the list.');
+
+	if ($vpnid) {
+		$section->addInput(new Form_StaticText(
+			'Unique VPN ID',
+			gettext('Client') . " {$vpnid} (ovpnc{$vpnid})"
+		));
+	}
+
+	$form->add($section);
+
+	$section = new Form_Section('Mode Configuration');
 
 	$section->addInput(new Form_Select(
 		'mode',
@@ -615,19 +633,23 @@ if ($act=="new" || $act=="edit"):
 		));
 
 	$section->addInput(new Form_Select(
-		'protocol',
-		'*Protocol',
-		$pconfig['protocol'],
-		$openvpn_prots
-		));
-
-	$section->addInput(new Form_Select(
 		'dev_mode',
 		'*Device mode',
 		empty($pconfig['dev_mode']) ? 'tun':$pconfig['dev_mode'],
 		$openvpn_dev_mode
 		))->setHelp('"tun" mode carries IPv4 and IPv6 (OSI layer 3) and is the most common and compatible mode across all platforms.%1$s' .
 		    '"tap" mode is capable of carrying 802.3 (OSI Layer 2.)', '<br/>');
+
+	$form->add($section);
+
+	$section = new Form_Section('Endpoint Configuration');
+
+	$section->addInput(new Form_Select(
+		'protocol',
+		'*Protocol',
+		$pconfig['protocol'],
+		$openvpn_prots
+		));
 
 	$section->addInput(new Form_Select(
 		'interface',
@@ -694,13 +716,6 @@ if ($act=="new" || $act=="edit"):
 		'password',
 		$pconfig['proxy_passwd'],
 	), false);
-
-	$section->addInput(new Form_Input(
-		'description',
-		'Description',
-		'text',
-		$pconfig['description']
-	))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 	$form->add($section);
 	$section = new Form_Section('User Authentication Settings');

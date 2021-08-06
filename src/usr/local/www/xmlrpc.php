@@ -583,6 +583,11 @@ class pfsense_xmlrpc_server {
 					break;
 				case "carp":
 					$carp_setuped = true;
+					/* properly remove the old VHID
+					 * see https://redmine.pfsense.org/issues/12202 */
+					$realif = get_real_interface($vip['interface']);
+					mwexec("/sbin/ifconfig {$realif} " .
+					    escapeshellarg($vip['subnet']) . " -alias");
 					interface_carp_configure($vip);
 					break;
 				}
@@ -596,6 +601,13 @@ class pfsense_xmlrpc_server {
 
 				if (empty($oldvipif)) {
 					continue;
+				}
+
+				/* do not remove VIP if the IP address remains the same */
+				foreach ($config['virtualip']['vip'] as $vip) {
+					if ($vip['subnet'] == $oldvipar['subnet']) {
+						continue 2;
+					}
 				}
 
 				if (is_ipaddrv6($oldvipar['subnet'])) {

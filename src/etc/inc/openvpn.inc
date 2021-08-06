@@ -1493,6 +1493,7 @@ function openvpn_restart($mode, $settings) {
 	}
 
 	if (isset($settings['disable'])) {
+		openvpn_delete($mode, $settings);
 		unlock($lockhandle);
 		return;
 	}

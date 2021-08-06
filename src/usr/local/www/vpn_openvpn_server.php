@@ -366,8 +366,8 @@ if ($_POST['save']) {
 		}
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4")) {
-		$input_errors[] = $result;
+	if (!empty($pconfig['tunnel_network']) && !is_subnetv4(trim($pconfig['tunnel_network']))) {
+		$input_errors[] = gettext("The field 'IPv4 Tunnel Network' must contain a valid IPv4 subnet with CIDR mask.");
 	}
 
 	if (!empty($pconfig['tunnel_network']) &&
@@ -377,8 +377,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The submitted IPv4 Tunnel Network is already in use.");
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6")) {
-		$input_errors[] = $result;
+	if (!empty($pconfig['tunnel_networkv6']) && !is_subnetv6(trim($pconfig['tunnel_networkv6']))) {
+		$input_errors[] = gettext("The field 'IPv6 Tunnel Network' must contain a valid IPv6 prefix.");
 	}
 
 	if (!empty($pconfig['tunnel_networkv6']) &&

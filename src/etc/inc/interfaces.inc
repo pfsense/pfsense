@@ -3218,6 +3218,17 @@ function interface_carp_configure(&$vip, $maintenancemode_only = false) {
 		}
 	}
 
+	/* reconfigure stacked IP Aliases after CARP VIP changes, see https://redmine.pfsense.org/issues/12227 */
+	if (!platform_booting()) {
+		foreach ($config['virtualip']['vip'] as $viface) {
+			if (($viface['mode'] == 'ipalias') &&
+			    (get_root_interface($viface['interface']) == $vip['interface'])) { 
+				interface_vip_bring_down($viface);
+				interface_ipalias_configure($viface);
+			}
+		}
+	}
+
 	return $realif;
 }
 

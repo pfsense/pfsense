@@ -7437,14 +7437,16 @@ function return_gateway_groups_array_with_descr() {
 	return $interfaces;
 }
 
-function get_serial_ports() {
+function get_serial_ports($short=false) {
 	$linklist = array();
 	if (!is_dir("/var/spool/lock")) {
 		mwexec("/bin/mkdir -p /var/spool/lock");
 	}
 	$serialports = glob("/dev/cua[a-zA-Z][0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
 	foreach ($serialports as $port) {
-		$linklist[$port] = trim($port);
+		$port = trim($port);
+		$port = ($short) ? basename($port) : $port;
+		$linklist[$port] = $port;
 	}
 	return $linklist;
 }

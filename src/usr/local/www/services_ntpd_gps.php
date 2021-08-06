@@ -36,6 +36,8 @@ $gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'M
 global $ntp_poll_min_default_gps, $ntp_poll_max_default_gps;
 $ntp_poll_values = system_ntp_poll_values();
 
+$serialports = get_serial_ports(true);
+
 function set_default_gps() {
 	global $config;
 
@@ -159,7 +161,7 @@ if ($_POST) {
 		$input_errors[] = gettext("The submitted GPS type is invalid.");
 	}
 
-	if (!file_exists('/dev/'.basename($_POST['gpsport']))) {
+	if (!empty($_POST['gpsport']) && !array_key_exists($_POST['gpsport'], $serialports)) {
 		$input_errors[] = gettext("The selected GPS port does not exist.");
 	}
 
@@ -187,7 +189,7 @@ if ($_POST) {
 
 if ($_POST && empty($input_errors)) {
 
-	if (!empty($_POST['gpsport']) && file_exists('/dev/'.basename($_POST['gpsport']))) {
+	if (!empty($_POST['gpsport']) && array_key_exists($_POST['gpsport'], $serialports)) {
 		$config['ntpd']['gps']['port'] = $_POST['gpsport'];
 	} else {
 		/* if port is not set, remove all the gps config */
@@ -403,21 +405,12 @@ $section->addInput(new Form_Select(
     'Default is the configuration of %1$s 2.1 and earlier (not recommended). Select Generic if the GPS is not listed.%2$s' .
     'The predefined configurations assume the GPS has already been set to NMEA mode.', $g['product_label'], '<br /><br />');
 
-$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
-
 if (!empty($serialports)) {
-	$splist = array();
-
-	foreach ($serialports as $port) {
-		$shortport = substr($port, 5);
-		$splist[$shortport] = $shortport;
-	}
-
 	$section->addInput(new Form_Select(
 		'gpsport',
 		'Serial Port',
 		$pconfig['port'],
-		['' => gettext('None')] + $splist
+		['' => gettext('None')] + $serialports
 	))->setHelp('All serial ports are listed, be sure to pick the port with the GPS attached. ');
 
 	$section->addInput(new Form_Select(

@@ -48,6 +48,11 @@ unset($id);
 $id = $_REQUEST['groupid'];
 $act = (isset($_REQUEST['act']) ? $_REQUEST['act'] : '');
 
+if ($act == 'dup') {
+	$dup = true;
+	$act = 'edit';
+}
+
 function cpusercmp($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
 }
@@ -130,10 +135,15 @@ if (($_POST['act'] == "delpriv") && !$read_only) {
 
 if ($act == "edit") {
 	if (isset($id) && isset($a_group[$id])) {
-		$pconfig['name'] = $a_group[$id]['name'];
-		$pconfig['gid'] = $a_group[$id]['gid'];
-		$pconfig['gtype'] = empty($a_group[$id]['scope'])
-		    ? "local" : $a_group[$id]['scope'];
+		if (!$dup) {
+			$pconfig['name'] = $a_group[$id]['name'];
+			$pconfig['gid'] = $a_group[$id]['gid'];
+			$pconfig['gtype'] = empty($a_group[$id]['scope'])
+			    ? "local" : $a_group[$id]['scope'];
+		} else {
+			$pconfig['gtype'] = ($a_group[$id]['scope'] == 'system')
+			    ? "local" : $a_group[$id]['scope'];
+		}
 		$pconfig['description'] = $a_group[$id]['description'];
 		$pconfig['members'] = $a_group[$id]['member'];
 		$pconfig['priv'] = $a_group[$id]['priv'];
@@ -172,6 +182,10 @@ if (isset($_POST['dellall_x']) && !$read_only) {
 if (isset($_POST['save']) && !$read_only) {
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	if ($dup) {
+		unset($id);
+	}
 
 	/* input validation */
 	$reqdfields = explode(" ", "groupname");
@@ -401,6 +415,7 @@ if (!($act == "new" || $act == "edit")) {
 						</td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
+							<a class="fa fa-clone" title="<?=gettext("Copy group"); ?>" href="?act=dup&amp;groupid=<?=$i?>"></a>
 							<?php if (($group['scope'] != "system") && !$read_only): ?>
 								<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" usepost></a>
 							<?php endif;?>
@@ -558,7 +573,7 @@ if ($pconfig['gid'] != 1998) {
 
 }
 
-if (isset($pconfig['gid'])) {
+if (isset($pconfig['gid']) || $dup) {
 	$section = new Form_Section('Assigned Privileges');
 
 	$section->addInput(new Form_StaticText(

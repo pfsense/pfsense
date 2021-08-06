@@ -2301,4 +2301,18 @@ function openvpn_authscript_string($authmode, $strictusercn, $mode_id, $local_po
 	return "plugin /usr/local/lib/openvpn/plugins/openvpn-plugin-auth-script.so /usr/local/sbin/ovpn_auth_verify_async user " . base64_encode($authmode) . " {$strictusercn} {$mode_id} {$local_port}\n";
 }
 
+function openvpn_inuse($id, $mode) {
+	global $config;
+
+	$type = ($mode == 'server') ? 's' : 'c';
+
+	foreach (get_configured_interface_list(true) as $if) {
+		if ($config['interfaces'][$if]['if'] == "ovpn{$type}{$id}") {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 ?>

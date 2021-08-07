@@ -1667,7 +1667,7 @@ function system_ntp_setup_gps($serialport) {
 	$serialports = get_serial_ports(true);
 
 	if (!array_key_exists($serialport, $serialports)) {
-		return false
+		return false;
 	}
 
 	$gps_device = '/dev/gps0';
@@ -1759,7 +1759,7 @@ function system_ntp_setup_pps($serialport) {
 	$serialports = get_serial_ports(true);
 
 	if (!array_key_exists($serialport, $serialports)) {
-		return false
+		return false;
 	}
 
 	$pps_device = '/dev/pps0';

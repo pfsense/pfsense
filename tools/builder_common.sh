@@ -1978,6 +1978,7 @@ poudriere_bulk() {
 	_makeconf=/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
 	if [ -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" ]; then
 		sed -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
+		    -e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION},g" \
 		    "${BUILDER_TOOLS}/conf/pfPorts/make.conf" > ${_makeconf}
 	fi
 

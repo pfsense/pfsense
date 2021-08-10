@@ -515,13 +515,13 @@ foreach ($pconfig['bypassrules']['rule'] as $rule) {
 		'source' . $counter,
 		null,
 		$rule['source']
-	))->setWidth(4)->setHelp('Source address')->addMask('srcmask' . $counter, $rule['srcmask'], 128, 0);
+	))->setWidth(4)->setHelp($numrows == $counter ? 'Source address' : null)->addMask('srcmask' . $counter, $rule['srcmask'], 128, 0);
 
 	$group->add(new Form_IpAddress(
 		'destination' . $counter,
 		null,
 		$rule['destination']
-	))->setWidth(4)->setHelp('Destination address')->addMask('dstmask' . $counter, $rule['dstmask'], 128, 0);
+	))->setWidth(4)->setHelp($numrows == $counter ? 'Destination address' : null)->addMask('dstmask' . $counter, $rule['dstmask'], 128, 0);
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,

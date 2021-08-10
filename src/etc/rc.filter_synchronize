@@ -76,14 +76,13 @@ function backup_vip_config_section() {
 	return $temp;
 }
 
-function carp_check_version() {
+function carp_check_version($rpc_client) {
 	global $config, $g;
 
 	if (file_exists("{$g['varrun_path']}/booting") || platform_booting()) {
 		return;
 	}
 
-	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('host_firmware_version');
 
 	log_error(sprintf(gettext("XMLRPC versioncheck: ").$resp['config_version'] ." -- ". $config['version']));
@@ -101,7 +100,7 @@ function carp_check_version() {
 	return false;
 }
 
-function carp_sync_xml($sections) {
+function carp_sync_xml($rpc_client, $sections) {
 	global $config, $g;
 
 	if (file_exists("{$g['varrun_path']}/booting") || platform_booting()) {
@@ -164,7 +163,7 @@ function carp_sync_xml($sections) {
 	if (is_array($config_copy['dhcpd'])) {
 		foreach ($config_copy['dhcpd'] as $dhcpif => $dhcpifconf) {
 			if ($dhcpifconf['failover_peerip'] <> "") {
-				$int = guess_interface_from_ip($dhcpifconf['failover_peerip']);
+				$int = convert_friendly_interface_to_real_interface_name($dhcpif);
 				$intip = find_interface_ip($int);
 				$config_copy['dhcpd'][$dhcpif]['failover_peerip'] = $intip;
 			}
@@ -201,7 +200,6 @@ function carp_sync_xml($sections) {
 		$xml['hasync']['adminsync'] = $config_copy['hasync']['adminsync'];
 	}
 
-	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('restore_config_section', $xml, 900);
 	if ($resp != null) {
 		$url = $rpc_client->getUrl();
@@ -224,6 +222,7 @@ if (platform_booting()) {
 if (is_array($config['hasync'])) {
 	update_filter_reload_status("Building high availability sync information");
 	$hasync = $config['hasync'];
+	$sections = array();
 
 	if (empty($hasync['synchronizetoip'])) {
 		/* this gets hit on every filter sync on the secondary, a log here creates a lot of log spam and I never saw it actually log anything useful */
@@ -250,6 +249,12 @@ if (is_array($config['hasync'])) {
 	}
 	if ($hasync['synchronizedhcpd'] != "" and is_array($config['dhcpd'])) {
 		$sections[] = 'dhcpd';
+	}
+	if ($hasync['synchronizedhcrelay'] != "" and is_array($config['dhcrelay'])) {
+		$sections[] = 'dhcrelay';
+	}
+	if ($hasync['synchronizedhcrelay6'] != "" and is_array($config['dhcrelay6'])) {
+		$sections[] = 'dhcrelay6';
 	}
 	if ($hasync['synchronizewol'] != "") {
 		if (!is_array($config['wol'])) {
@@ -351,12 +356,14 @@ if (is_array($config['hasync'])) {
 		return;
 	}
 
-	if (!carp_check_version()) {
+	$rpc_client = new pfsense_xmlrpc_client();
+
+	if (!carp_check_version($rpc_client)) {
 		return;
 	}
 
 	update_filter_reload_status("Signaling CARP reload signal...");
-	if (!carp_sync_xml($sections)) {
+	if (!carp_sync_xml($rpc_client, $sections)) {
 		return;
 	}
 }

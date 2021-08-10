@@ -176,7 +176,12 @@ $shortcuts['dhcp6'] = array();
 $shortcuts['dhcp6']['main'] = "services_dhcpv6.php";
 $shortcuts['dhcp6']['log'] = "status_logs.php?logfile=dhcpd";
 $shortcuts['dhcp6']['status'] = "status_dhcpv6_leases.php";
+$shortcuts['dhcp6']['service'] = "dhcpd";
 
+$shortcuts['radvd'] = array();
+$shortcuts['radvd']['main'] = "services_router_advertisements.php";
+$shortcuts['radvd']['log'] = "status_logs.php?logfile=routing";
+$shortcuts['radvd']['service'] = "radvd";
 
 $shortcuts['ipsec'] = array();
 $shortcuts['ipsec']['main'] = "vpn_ipsec.php";

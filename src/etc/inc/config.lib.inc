@@ -185,17 +185,21 @@ function generate_config_cache($config) {
 }
 
 function discover_last_backup() {
+	global $g;
+
 	$backups = glob('/cf/conf/backup/*.xml');
-	$last_backup = "";
-	$last_mtime = 0;
-	foreach ($backups as $backup) {
-		if (filemtime($backup) > $last_mtime) {
-			$last_mtime = filemtime($backup);
-			$last_backup = $backup;
-		}
+	foreach (array_reverse($backups) as $backup) {
+		/* checking multiple backups when detecting invalid configuration
+		 * https://redmine.pfsense.org/issues/11748 */
+		if (filesize($backup) != 0) {
+			$testconfig = parse_xml_config($backup, $g['xml_rootobj']);
+			if ($testconfig != -1) {
+				return basename($backup);
+			}
+		} 
 	}
 
-	return basename($last_backup);
+	return false;
 }
 
 function restore_backup($file) {
@@ -640,6 +644,11 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		unlock($lockkey);
 		file_notice("config.xml", sprintf(gettext('Unable to open %1$s/config.xml for writing in write_config()%2$s'), $g['cf_conf_path'], "\n"));
 		return -1;
+	}
+
+	init_config_arr('syslog');
+	if ($config['syslog']['logconfigchanges'] != "disabled") {
+		log_error(gettext("Configuration Change") . ": {$config['revision']['description']}");
 	}
 
 	cleanup_backupcache(true);
@@ -1098,7 +1107,7 @@ function make_config_revision_entry($desc = null, $override_user = null) {
 }
 
 function pfSense_clear_globals() {
-	global $config, $FilterIfList, $GatewaysList, $filterdns, $aliases, $aliastable;
+	global $config, $g, $FilterIfList, $GatewaysList, $filterdns, $aliases, $aliastable;
 
 	$error = error_get_last();
 

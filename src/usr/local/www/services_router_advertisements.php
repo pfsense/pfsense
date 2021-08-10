@@ -262,6 +262,7 @@ if (!empty($if) && isset($iflist[$if])) {
 }
 $pgtitle[] = gettext("Router Advertisements");
 $pglinks[] = "@self";
+$shortcut_section = "radvd";
 
 include("head.inc");
 
@@ -399,7 +400,7 @@ $section->addInput(new Form_Input(
 	$pconfig['raadvdefaultlifetime'],
 	['min' => 1, 'max' => 9000]
 ))->setHelp('The lifetime associated with the default router in seconds.%1$s' .
-'The default is 3 * Maximim RA interval seconds.', '<br />');
+'The default is 3 * Maximum RA interval seconds.', '<br />');
 
 $section->addInput(new Form_StaticText(
 	'RA Subnets',

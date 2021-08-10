@@ -111,6 +111,9 @@ if ($act == "new") {
 	$pconfig['digest'] = "SHA256";
 	$pconfig['allow_compression'] = "no";
 	$pconfig['compression'] = "";
+	$pconfig['inactive_seconds'] = 300;
+	$pconfig['exit_notify'] = 1;
+	$pconfig['remote_cert_tls'] = "yes";
 }
 
 if (($act == "edit") || ($act == "dup")) {
@@ -166,6 +169,7 @@ if (($act == "edit") || ($act == "dup")) {
 			if ($pconfig['mode'] == "server_tls_user") {
 				$pconfig['strictusercn'] = $a_server[$id]['strictusercn'];
 			}
+			$pconfig['remote_cert_tls'] = $a_server[$id]['remote_cert_tls'];
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
 		}
@@ -294,6 +298,8 @@ if ($_POST['save']) {
 		$vpnid = 0;
 	}
 
+	$pconfig['ncp_enable'] = ($pconfig['ncp_enable'] == 'yes') ? 'enabled' : 'disabled';
+
 	if (isset($pconfig['custom_options']) &&
 	    ($pconfig['custom_options'] != $a_server[$id]['custom_options']) &&
 	    !$user_can_edit_advanced) {
@@ -306,6 +312,11 @@ if ($_POST['save']) {
 	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
 	if (!in_array($pconfig['data_ciphers_fallback'], $cipher_validation_list)) {
 		$input_errors[] = gettext("The selected Fallback Data Encryption Algorithm is not valid.");
+	}
+
+	/* Maximum option line length = 256, see https://redmine.pfsense.org/issues/11559 */
+	if (!empty($pconfig['data_ciphers']) && (strlen("data-ciphers " . implode(",", $pconfig['data_ciphers'])) > 254)) {
+		$input_errors[] = gettext("Too many Data Encryption Algorithms have been selected.");
 	}
 
 	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
@@ -340,6 +351,19 @@ if ($_POST['save']) {
 	/* input validation */
 	if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port', 1)) {
 		$input_errors[] = $result;
+	}
+
+	/* Maximum option line length = 256, see https://redmine.pfsense.org/issues/11104 */
+	if (!empty($pconfig['authmode']) && is_port($pconfig['local_port'])) {
+		$strictusercn = "false";
+		if ($pconfig['strictusercn']) {
+			$strictusercn = "true";
+		}
+		$authstring = openvpn_authscript_string(implode(',', $pconfig['authmode']),
+			    $strictusercn, $vpnid, $pconfig['local_port']);
+		if (strlen($authstring) > 254) {
+			$input_errors[] = gettext("Too many Authentication Backends have been selected or their names are too long.");
+		}
 	}
 
 	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4")) {
@@ -620,6 +644,7 @@ if ($_POST['save']) {
 			if ($pconfig['mode'] == "server_tls_user") {
 				$server['strictusercn'] = $pconfig['strictusercn'];
 			}
+			$server['remote_cert_tls'] = $pconfig['remote_cert_tls'];
 		} else {
 			$server['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
@@ -712,7 +737,7 @@ if ($_POST['save']) {
 			$server['data_ciphers'] = implode(",", $pconfig['data_ciphers']);
 		}
 
-		$server['ncp_enable'] = $pconfig['ncp_enable'] ? "enabled":"disabled";
+		$server['ncp_enable'] = $pconfig['ncp_enable'];
 
 		$server['ping_method'] = $pconfig['ping_method'];
 		$server['keepalive_interval'] = $pconfig['keepalive_interval'];
@@ -787,12 +812,30 @@ if ($act=="new" || $act=="edit"):
 
 	$section = new Form_Section('General Information');
 
+	$section->addInput(new Form_Input(
+		'description',
+		'Description',
+		'text',
+		$pconfig['description']
+	))->setHelp('A description of this VPN for administrative reference.');
+
 	$section->addInput(new Form_Checkbox(
 		'disable',
 		'Disabled',
 		'Disable this server',
 		$pconfig['disable']
 	))->setHelp('Set this option to disable this server without removing it from the list.');
+
+	if ($vpnid) {
+		$section->addInput(new Form_StaticText(
+			'Unique VPN ID',
+			gettext('Server') . " {$vpnid} (ovpns{$vpnid})"
+		));
+	}
+
+	$form->add($section);
+
+	$section = new Form_Section('Mode Configuration');
 
 	$section->addInput(new Form_Select(
 		'mode',
@@ -829,19 +872,23 @@ if ($act=="new" || $act=="edit"):
 		))->addClass('authmode');
 
 	$section->addInput(new Form_Select(
-		'protocol',
-		'*Protocol',
-		$pconfig['protocol'],
-		$openvpn_prots
-		));
-
-	$section->addInput(new Form_Select(
 		'dev_mode',
 		'*Device mode',
 		empty($pconfig['dev_mode']) ? 'tun':$pconfig['dev_mode'],
 		$openvpn_dev_mode
 		))->setHelp('"tun" mode carries IPv4 and IPv6 (OSI layer 3) and is the most common and compatible mode across all platforms.%1$s' .
 		    '"tap" mode is capable of carrying 802.3 (OSI Layer 2.)', '<br/>');
+
+	$form->add($section);
+
+	$section = new Form_Section('Endpoint Configuration');
+
+	$section->addInput(new Form_Select(
+		'protocol',
+		'*Protocol',
+		$pconfig['protocol'],
+		$openvpn_prots
+		));
 
 	$section->addInput(new Form_Select(
 		'interface',
@@ -857,13 +904,6 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['local_port'],
 		['min' => '0']
 	))->setHelp("The port used by OpenVPN to receive client connections.");
-
-	$section->addInput(new Form_Input(
-		'description',
-		'Description',
-		'text',
-		$pconfig['description']
-	))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 	$form->add($section);
 
@@ -1103,6 +1143,13 @@ if ($act=="new" || $act=="edit"):
 		'Enforce match',
 		$pconfig['strictusercn']
 	))->setHelp('When authenticating users, enforce a match between the common name of the client certificate and the username given at login.');
+
+	$section->addInput(new Form_Checkbox(
+		'remote_cert_tls',
+		'Client Certificate Key Usage Validation',
+		'Enforce key usage',
+		$pconfig['remote_cert_tls']
+	))->setHelp('Verify that only hosts with a client certificate can connect (EKU: "TLS Web Client Authentication").');
 
 	$form->add($section);
 
@@ -1766,6 +1813,7 @@ events.push(function() {
 				hideInput('ecdh_curve', false);
 				hideInput('cert_depth', false);
 				hideCheckbox('strictusercn', true);
+				hideCheckbox('remote_cert_tls', false);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', false);
@@ -1779,6 +1827,7 @@ events.push(function() {
 				hideInput('ecdh_curve', false);
 				hideInput('cert_depth', false);
 				hideCheckbox('strictusercn', false);
+				hideCheckbox('remote_cert_tls', false);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
 				hideInput('topology', false);
@@ -1797,6 +1846,7 @@ events.push(function() {
 				hideInput('ecdh_curve', true);
 				hideInput('cert_depth', true);
 				hideCheckbox('strictusercn', true);
+				hideCheckbox('remote_cert_tls', true);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', true);

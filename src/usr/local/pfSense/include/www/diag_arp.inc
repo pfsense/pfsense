@@ -59,9 +59,17 @@ function prepare_ARP_table($json = false) {
 	$dhcpip = array();
 
 	foreach ($leases['lease'] as $value) {
+		if ($value["act"] == "expired") {
+			/* Skip expired leases
+			 * See https://redmine.pfsense.org/issues/11510 */
+			continue;
+		}
 		$dhcpmac[$value['mac']] = $value['hostname'];
 		$dhcpip[$value['ip']] = $value['hostname'];
 	}
+
+	// Load MAC-Manufacturer table
+	$mac_man = load_mac_manufacturer_table();
 
 	$arp_table = system_get_arp_table();
 

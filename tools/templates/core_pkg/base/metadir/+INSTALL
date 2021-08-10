@@ -70,4 +70,7 @@ fi
 # Restore IFS
 IFS=${oIFS}
 
+# Save current pkg_set_version
+cp -f /etc/version /usr/local/share/%%PRODUCT_NAME%%/running_pkg_set_version
+
 exit 0

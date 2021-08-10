@@ -98,9 +98,10 @@ if ($_POST) {
 	if (isset($pconfig['serverauth'])) {
 		if (empty($pconfig['serverauthkey'])) {
 			$input_errors[] = gettext("The supplied value for NTP Authentication key can't be empty.");
-		} elseif (($pconfig['serverauthalgo'] == 'md5') && (strlen(base64_decode($pconfig['serverauthkey'])) > 16)) {
-			$input_errors[] = gettext("The supplied value for NTP Authentication key for MD5 digest must be from 1 to 16 printable characters.");
-		} elseif (($pconfig['serverauthalgo'] == 'sha1') && ((strlen(base64_decode($pconfig['serverauthkey'])) != 40) ||
+		} elseif (($pconfig['serverauthalgo'] == 'md5') && ((strlen($pconfig['serverauthkey']) > 20) ||
+		    !ctype_print($pconfig['serverauthkey']))) {
+			$input_errors[] = gettext("The supplied value for NTP Authentication key for MD5 digest must be from 1 to 20 printable characters.");
+		} elseif (($pconfig['serverauthalgo'] == 'sha1') && ((strlen($pconfig['serverauthkey']) != 40) ||
 		    !ctype_xdigit($pconfig['serverauthkey']))) {
 			$input_errors[] = gettext("The supplied value for NTP Authentication key for SHA1 digest must be hex-encoded string of 40 characters.");
 		}
@@ -112,12 +113,6 @@ if ($_POST) {
 			$config['ntpd']['interface'] = implode(",", $_POST['interface']);
 		} elseif (isset($config['ntpd']['interface'])) {
 			unset($config['ntpd']['interface']);
-		}
-
-		if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport'])) {
-			$config['ntpd']['gpsport'] = $_POST['gpsport'];
-		} elseif (isset($config['ntpd']['gpsport'])) {
-			unset($config['ntpd']['gpsport']);
 		}
 
 		unset($config['ntpd']['prefer']);
@@ -537,7 +532,7 @@ $group->add(new Form_IpAddress(
 	base64_decode($pconfig['serverauthkey']),
 	['placeholder' => 'NTP Authentication key']
 ))->setHelp(
-	'Key format: %1$s MD5 - The key is 1 to 16 printable characters %1$s' .
+	'Key format: %1$s MD5 - The key is 1 to 20 printable characters %1$s' .
 	'SHA1 - The key is a hex-encoded ASCII string of 40 characters',
 	'<br />'
 );

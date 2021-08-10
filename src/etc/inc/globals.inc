@@ -42,6 +42,7 @@ define('DMYPWD', "********");
 
 global $g;
 $g = array(
+	"acbbackuppath" => "/cf/conf/acb/",
 	"event_address" => "unix:///var/run/check_reload_status",
 	"factory_shipped_username" => "admin",
 	"factory_shipped_password" => "pfsense",
@@ -72,7 +73,7 @@ $g = array(
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
 	"debug" => false,
-	"latest_config" => "21.4",
+	"latest_config" => "22.0",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -97,8 +98,7 @@ $g = array(
 		'dhcpd' => "/var/dhcpd/var/db/dhcpd.leases",
 		'dhcpdv6' => "/var/dhcpd/var/db/dhcpd6.leases",
 		'voucher' => "/var/db/voucher_*.db"
-	),
-	"wg_conf_path" => "/etc/wg"
+	)
 );
 
 /* IP TOS flags */
@@ -345,4 +345,6 @@ $ipsec_filter_sysctl = array(
 	),
 );
 
+global $vpn_and_ppp_ifs;
+$vpn_and_ppp_ifs = array("l2tp", "pppoe", "enc0", "openvpn");
 ?>

@@ -128,7 +128,8 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return array
 	 */
-	public function host_firmware_version($dummy = 1) {
+	public function host_firmware_version($dummy = 1, $timeout) {
+		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 		return host_firmware_version();
 	}
@@ -187,13 +188,13 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return bool
 	 */
-	public function restore_config_section($sections) {
+	public function restore_config_section($sections, $timeout) {
+		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 
 		global $config, $cpzone, $cpzoneid, $old_config;
 
 		$old_config = $config;
-		$old_ipsec_enabled = ipsec_enabled();
 
 		if ($this->loop_detected) {
 			log_error("Disallowing CARP sync loop");
@@ -210,6 +211,8 @@ class pfsense_xmlrpc_server {
 			'cert',
 			'crl',
 			'dhcpd',
+			'dhcrelay',
+			'dhcrelay6',
 			'dnshaper',
 			'dnsmasq',
 			'filter',
@@ -614,10 +617,6 @@ class pfsense_xmlrpc_server {
 			}
 		}
 
-		if ($old_ipsec_enabled !== ipsec_enabled()) {
-			ipsec_configure();
-		}
-
 		local_sync_accounts($u2add, $u2del, $g2add, $g2del);
 		$this->filter_configure(false, $force_filterconfigure);
 		unset($old_config);
@@ -632,7 +631,8 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return bool
 	 */
-	public function merge_installedpackages_section($section) {
+	public function merge_installedpackages_section($section, $timeout) {
+		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 
 		global $config;
@@ -659,7 +659,8 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return bool
 	 */
-	public function merge_config_section($section) {
+	public function merge_config_section($section, $timeout) {
+		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 
 		global $config;
@@ -738,6 +739,13 @@ class pfsense_xmlrpc_server {
 			openvpn_resync_csc_all();
 		}
 
+		/* run ipsec_configure() on any IPsec change, see https://redmine.pfsense.org/issues/12075 */
+		if (((is_array($config['ipsec']) || is_array($old_config['ipsec'])) &&
+		    ($config['ipsec'] != $old_config['ipsec'])) ||
+		    $force) {
+			ipsec_configure();
+		}
+
 		/*
 		 * The DNS Resolver and the DNS Forwarder may both be active so
 		 * long as * they are running on different ports.
@@ -784,6 +792,18 @@ class pfsense_xmlrpc_server {
 			services_dhcpd_configure();
 		}
 
+		if (((is_array($config['dhcrelay']) || is_array($old_config['dhcrelay'])) &&
+		    ($config['dhcrelay'] != $old_config['dhcrelay'])) ||
+		    $force) {
+			services_dhcrelay_configure();
+		}
+
+		if (((is_array($config['dhcrelay6']) || is_array($old_config['dhcrelay6'])) &&
+		    ($config['dhcrelay6'] != $old_config['dhcrelay6'])) ||
+		    $force) {
+			services_dhcrelay6_configure();
+		}
+
 		if ($reset_accounts) {
 			local_reset_accounts();
 		}
@@ -810,7 +830,8 @@ class pfsense_xmlrpc_server {
 	 *
 	 * @return array
 	 */
-	public function captive_portal_sync($arguments) {
+	public function captive_portal_sync($arguments, $timeout) {
+		ini_set('default_socket_timeout', $timeout);
 		$this->auth();
 		// Note : no protection against CARP loop is done here, and this is in purpose.
 		// This function is used for bi-directionnal sync, which is precisely what CARP loop protection is supposed to prevent.

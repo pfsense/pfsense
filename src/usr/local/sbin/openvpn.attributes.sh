@@ -25,7 +25,14 @@ lockfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.lock"
 rulesfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.rules"
 anchorname="openvpn/${dev}_${username}_${trusted_port}"
 
+if [ -z "${untrusted_ip6}" ]; then
+	ipaddress="${untrusted_ip}"
+else
+	ipaddress="${untrusted_ip6}"
+fi
+
 if [ "$script_type" = "client-connect" ]; then
+	/usr/bin/logger -t openvpn "openvpn server '${dev}' user '${username}' address '${ipaddress}' - connected"
 	i=1
 	while [ -f "${lockfile}" ]; do
 		if [ $i -ge 30 ]; then
@@ -38,7 +45,7 @@ if [ "$script_type" = "client-connect" ]; then
 	done
 	/usr/bin/touch "${lockfile}"
 
-	/bin/cat "${rulesfile}" | /usr/bin/sed "s/{clientip}/${ifconfig_pool_remote_ip}/g" > "${rulesfile}.tmp" && /bin/mv "${rulesfile}.tmp" "${rulesfile}"
+	/bin/cat "${rulesfile}" | /usr/bin/sed "s/{clientip}/${ifconfig_pool_remote_ip}/g" | /usr/bin/sed "s/{clientipv6}/${ifconfig_pool_remote_ip6}/g" > "${rulesfile}.tmp" && /bin/mv "${rulesfile}.tmp" "${rulesfile}"
 	/sbin/pfctl -a "openvpn/${dev}_${username}_${trusted_port}" -f "${rulesfile}"
 	/bin/rm "${rulesfile}"
 
@@ -49,6 +56,7 @@ if [ "$script_type" = "client-connect" ]; then
 
 	/bin/rm "${lockfile}"
 elif [ "$script_type" = "client-disconnect" ]; then
+	/usr/bin/logger -t openvpn "openvpn server '${dev}' user '${username}' address '${ipaddress}' - disconnected"
 	i=1
 	while [ -f "${lockfile}" ]; do
 		if [ $i -ge 30 ]; then
@@ -65,6 +73,8 @@ elif [ "$script_type" = "client-disconnect" ]; then
 	eval $command
 	/sbin/pfctl -k $ifconfig_pool_remote_ip
 	/sbin/pfctl -K $ifconfig_pool_remote_ip
+	/sbin/pfctl -k $ifconfig_pool_remote_ip6
+	/sbin/pfctl -K $ifconfig_pool_remote_ip6
 
 	/bin/rm "${lockfile}"
 fi

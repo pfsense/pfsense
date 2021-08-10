@@ -256,21 +256,21 @@ if ($_POST['save']) {
 				ca_import($ca, $pconfig['cert'], $pconfig['key'], $pconfig['serial']);
 				$savemsg = sprintf(gettext("Imported Certificate Authority %s"), $ca['descr']);
 			} else if ($pconfig['method'] == "internal") {
-				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+				$dn = array('commonName' => $pconfig['dn_commonname']);
 				if (!empty($pconfig['dn_country'])) {
 					$dn['countryName'] = $pconfig['dn_country'];
 				}
 				if (!empty($pconfig['dn_state'])) {
-					$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['dn_state']);
+					$dn['stateOrProvinceName'] = $pconfig['dn_state'];
 				}
 				if (!empty($pconfig['dn_city'])) {
-					$dn['localityName'] = cert_escape_x509_chars($pconfig['dn_city']);
+					$dn['localityName'] = $pconfig['dn_city'];
 				}
 				if (!empty($pconfig['dn_organization'])) {
-					$dn['organizationName'] = cert_escape_x509_chars($pconfig['dn_organization']);
+					$dn['organizationName'] = $pconfig['dn_organization'];
 				}
 				if (!empty($pconfig['dn_organizationalunit'])) {
-					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
+					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
 				}
 				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'], $pconfig['keytype'], $pconfig['ecname'])) {
 					$input_errors = array();
@@ -282,21 +282,21 @@ if ($_POST['save']) {
 				}
 				$savemsg = sprintf(gettext("Created internal Certificate Authority %s"), $ca['descr']);
 			} else if ($pconfig['method'] == "intermediate") {
-				$dn = array('commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
+				$dn = array('commonName' => $pconfig['dn_commonname']);
 				if (!empty($pconfig['dn_country'])) {
 					$dn['countryName'] = $pconfig['dn_country'];
 				}
 				if (!empty($pconfig['dn_state'])) {
-					$dn['stateOrProvinceName'] = cert_escape_x509_chars($pconfig['dn_state']);
+					$dn['stateOrProvinceName'] = $pconfig['dn_state'];
 				}
 				if (!empty($pconfig['dn_city'])) {
-					$dn['localityName'] = cert_escape_x509_chars($pconfig['dn_city']);
+					$dn['localityName'] = $pconfig['dn_city'];
 				}
 				if (!empty($pconfig['dn_organization'])) {
-					$dn['organizationName'] = cert_escape_x509_chars($pconfig['dn_organization']);
+					$dn['organizationName'] = $pconfig['dn_organization'];
 				}
 				if (!empty($pconfig['dn_organizationalunit'])) {
-					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
+					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
 				}
 				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'], $pconfig['keytype'], $pconfig['ecname'])) {
 					$input_errors = array();

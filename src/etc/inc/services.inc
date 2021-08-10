@@ -26,8 +26,8 @@
  */
 
 
-define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsmadeeasy dnsomatic domeneshop domeneshop-v6 dreamhost dreamhost-v6 duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns easydns-v6 eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns gandi-livedns-v6 godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia mythicbeasts mythicbeasts-v6 namecheap noip noip-v6 noip-free noip-free-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,Domeneshop,Domeneshop (v6),DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,easyDNS (v6),Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi Live DNS,Gandi Live DNS (v6),GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,,Mythic Beasts,Mythic Beasts (v6),Namecheap,No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'all-inkl azure azurev6 citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 desec desec-v6 digitalocean digitalocean-v6 dnsexit dnsimple dnsmadeeasy dnsomatic domeneshop domeneshop-v6 dreamhost dreamhost-v6 duiadns duiadns-v6 dyfi dyndns dyndns-custom dyndns-static dyns dynv6 dynv6-v6 easydns easydns-v6 eurodns freedns freedns-v6 freedns2 freedns2-v6 glesys gandi-livedns gandi-livedns-v6 godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover linode linode-v6 loopia mythicbeasts mythicbeasts-v6 namecheap nicru nicru-v6 noip noip-v6 noip-free noip-free-v6 onecom onecom-v6 ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 strato yandex yandex-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,Azure DNS,Azure DNS (v6),City Network,Cloudflare,Cloudflare (v6),ClouDNS,Custom,Custom (v6),deSEC,deSEC (v6),DigitalOcean,DigitalOcean (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,Domeneshop,Domeneshop (v6),DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DY.fi,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,Dynv6,Dynv6 (v6),easyDNS,easyDNS (v6),Euro Dns,freeDNS,freeDNS (v6),freeDNS API Version 2, freeDNS API Version 2 (v6),GleSYS,Gandi Live DNS,Gandi Live DNS (v6),GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Linode,Linode (v6),Loopia,Mythic Beasts,Mythic Beasts (v6),Namecheap,NIC.RU,NIC.RU (v6),No-IP,No-IP (v6),No-IP (free),No-IP (free-v6),One.com,One.com (v6),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),Strato,Yandex,Yandex (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -173,7 +173,7 @@ function services_radvd_configure($blacklist = array()) {
 				break;
 		}
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
-		if ($racarpif == true) {
+		if ($racarpif == true || $rasrcaddr) {
 			$radvdconf .= "\t\tDeprecatePrefix off;\n";
 		} else {
 			$radvdconf .= "\t\tDeprecatePrefix on;\n";
@@ -251,7 +251,13 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\t\tAdvRoutePreference medium;\n";
 				break;
 		}
-		$radvdconf .= "\t\tRemoveRoute on;\n";
+
+		if ($rasrcaddr) {
+			$radvdconf .= "\t\tRemoveRoute off;\n";
+		}
+		else {
+			$radvdconf .= "\t\tRemoveRoute on;\n";
+		}
 		$radvdconf .= "\t};\n";
 
 		/* add DNS servers */
@@ -993,6 +999,7 @@ EOPP;
 					$dhcpdconf .= "		next-server {$poolconf['nextserver']};\n";
 				}
 
+				$pxe_files = array();
 				if (!empty($poolconf['filename']) &&
 				    (!isset($dhcpifconf['filename']) ||
 				    ($poolconf['filename'] != $dhcpifconf['filename']))) {
@@ -1001,60 +1008,47 @@ EOPP;
 				if (!empty($poolconf['filename32']) &&
 				    (!isset($dhcpifconf['filename32']) ||
 				    ($poolconf['filename32'] != $dhcpifconf['filename32']))) {
-					$filename32 = $poolconf['filename32'];
+					$pxe_files[] = array('00:06', $poolconf['filename32']);
 				}
 				if (!empty($poolconf['filename64']) &&
 				    (!isset($dhcpifconf['filename64']) ||
 				    ($poolconf['filename64'] != $dhcpifconf['filename64']))) {
-					$filename64 = $poolconf['filename64'];
+					$pxe_files[] = array('00:07', $poolconf['filename64']);
+					$pxe_files[] = array('00:09', $poolconf['filename64']);
 				}
 				if (!empty($poolconf['filename32arm']) &&
 				    (!isset($dhcpifconf['filename32arm']) ||
 				    ($poolconf['filename32arm'] != $dhcpifconf['filename32arm']))) {
-					$filename32arm = $poolconf['filename32arm'];
+					$pxe_files[] = array('00:0a', $poolconf['filename32arm']);
 				}
 				if (!empty($poolconf['filename64arm']) &&
 				    (!isset($dhcpifconf['filename64arm']) ||
 				    ($poolconf['filename64arm'] != $dhcpifconf['filename64arm']))) {
-					$filename64arm = $poolconf['filename64arm'];
+					$pxe_files[] = array('00:0b', $poolconf['filename64arm']);
 				}
 
-				if (!empty($filename32) || !empty($filename64) || !empty($filename32arm) || !empty($filename64arm)) {
-					if (empty($filename) && !empty($dhcpifconf['filename'])) {
-						$filename = $dhcpifconf['filename'];
+				$pxeif = false;
+				if (is_array($pxe_files) && !empty($pxe_files)) {
+					foreach ($pxe_files as $pxe) {
+						if (!$pxeif) {
+							$dhcpdconf .= "		if option arch = {$pxe[0]} {\n";
+							$pxeif = true;
+						} else {
+							$dhcpdconf .= " else if option arch = {$pxe[0]} {\n";
+						}
+						$dhcpdconf .= "			filename \"{$pxe[1]}\";\n";
+						$dhcpdconf .= "		}";
 					}
-					if (empty($filename32) && !empty($dhcpifconf['filename32'])) {
-						$filename32 = $dhcpifconf['filename32'];
+					if ($filename) {
+						$dhcpdconf .= " else {\n";
+						$dhcpdconf .= "			filename \"{$filename}\";\n";
+						$dhcpdconf .= "		}";
 					}
-					if (empty($filename64) && !empty($dhcpifconf['filename64'])) {
-						$filename64 = $dhcpifconf['filename64'];
-					}
-					if (empty($filename32arm) && !empty($dhcpifconf['filename32arm'])) {
-						$filename32arm = $dhcpifconf['filename32arm'];
-					}
-					if (empty($filename64arm) && !empty($dhcpifconf['filename64arm'])) {
-						$filename64arm = $dhcpifconf['filename64arm'];
-					}
-				}
-
-				if (!empty($filename) && !empty($filename32) && !empty($filename64) && !empty($filename32arm) && !empty($filename64arm)) {
-					$dhcpdconf .= "		if option arch = 00:06 {\n";
-					$dhcpdconf .= "			filename \"{$filename32}\";\n";
-					$dhcpdconf .= "		} else if option arch = 00:07 {\n";
-					$dhcpdconf .= "			filename \"{$filename64}\";\n";
-					$dhcpdconf .= "		} else if option arch = 00:09 {\n";
-					$dhcpdconf .= "			filename \"{$filename64}\";\n";
-					$dhcpdconf .= "		} else if option arch = 00:0a {\n";
-					$dhcpdconf .= "			filename \"{$filename32arm}\";\n";
-					$dhcpdconf .= "		} else if option arch = 00:0b {\n";
-					$dhcpdconf .= "			filename \"{$filename64arm}\";\n";
-					$dhcpdconf .= "		} else {\n";
-					$dhcpdconf .= "			filename \"{$filename}\";\n";
-					$dhcpdconf .= "		}\n\n";
+					$dhcpdconf .= "\n\n";
 				} elseif (!empty($filename)) {
 					$dhcpdconf .= "		filename \"{$filename}\";\n";
 				}
-				unset($filename, $filename32, $filename64, $filename32arm, $filename64arm);
+				unset($filename);
 
 				if (!empty($poolconf['rootpath']) && ($poolconf['rootpath'] != $dhcpifconf['rootpath'])) {
 					$dhcpdconf .= "		option root-path \"{$poolconf['rootpath']}\";\n";
@@ -1137,18 +1131,45 @@ EOD;
 			if ($dhcpifconf['nextserver'] <> "") {
 				$dhcpdconf .= "	next-server {$dhcpifconf['nextserver']};\n";
 			}
-			if (!empty($dhcpifconf['filename']) && !empty($dhcpifconf['filename32']) && !empty($dhcpifconf['filename64'])) {
-				$dhcpdconf .= "	if option arch = 00:06 {\n";
-				$dhcpdconf .= "		filename \"{$dhcpifconf['filename32']}\";\n";
-				$dhcpdconf .= "	} else if option arch = 00:07 {\n";
-				$dhcpdconf .= "		filename \"{$dhcpifconf['filename64']}\";\n";
-				$dhcpdconf .= "	} else if option arch = 00:09 {\n";
-				$dhcpdconf .= "		filename \"{$dhcpifconf['filename64']}\";\n";
-				$dhcpdconf .= "	} else {\n";
-				$dhcpdconf .= "		filename \"{$dhcpifconf['filename']}\";\n";
-				$dhcpdconf .= "	}\n\n";
-			} elseif (!empty($dhcpifconf['filename'])) {
-				$dhcpdconf .= "	filename \"{$dhcpifconf['filename']}\";\n";
+
+			$pxe_files = array();
+			if (!empty($dhcpifconf['filename'])) {
+				$filename = $dhcpifconf['filename'];
+			}
+			if (!empty($dhcpifconf['filename32'])) {
+				$pxe_files[] = array('00:06', $dhcpifconf['filename32']);
+			}
+			if (!empty($dhcpifconf['filename64'])) {
+				$pxe_files[] = array('00:07', $dhcpifconf['filename64']);
+				$pxe_files[] = array('00:09', $dhcpifconf['filename64']);
+			}
+			if (!empty($dhcpifconf['filename32arm'])) {
+				$pxe_files[] = array('00:0a', $dhcpifconf['filename32arm']);
+			}
+			if (!empty($dhcpifconf['filename64arm'])) {
+				$pxe_files[] = array('00:0b', $dhcpifconf['filename64arm']);
+			}
+
+			$pxeif = false;
+			if (is_array($pxe_files) && !empty($pxe_files)) {
+				foreach ($pxe_files as $pxe) {
+					if (!$pxeif) {
+						$dhcpdconf .= "	if option arch = {$pxe[0]} {\n";
+						$pxeif = true;
+					} else {
+						$dhcpdconf .= " else if option arch = {$pxe[0]} {\n";
+					}
+					$dhcpdconf .= "		filename \"{$pxe[1]}\";\n";
+					$dhcpdconf .= "	}";
+				}
+				if ($filename) {
+					$dhcpdconf .= " else {\n";
+					$dhcpdconf .= "		filename \"{$filename}\";\n";
+					$dhcpdconf .= "	}";
+				}
+				$dhcpdconf .= "\n\n";
+			} elseif (!empty($filename)) {
+				$dhcpdconf .= "		filename \"{$filename}\";\n";
 			}
 			if (!empty($dhcpifconf['rootpath'])) {
 				$dhcpdconf .= "	option root-path \"{$dhcpifconf['rootpath']}\";\n";
@@ -1918,8 +1939,27 @@ function services_dhcrelay_configure() {
 		return 0;
 	}
 
+	/* Start/Restart DHCP Relay, if a CARP VIP is set, check its status and act
+	* appropriately. */
+	if (isset($dhcrelaycfg['carpstatusvip']) && ($dhcrelaycfg['carpstatusvip'] != "none")) {
+		$status = get_carp_interface_status($dhcrelaycfg['carpstatusvip']);
+		switch (strtoupper($status)) {
+			// Do not start DHCP Relay service if the VIP is in BACKUP or INIT state.
+			case "BACKUP":
+			case "INIT":
+				log_error("Stopping DHCP Relay (CARP BACKUP/INIT)");
+				return 0;
+				break;
+			// Start the service if the VIP is MASTER state.
+			case "MASTER":
+			// Assume it's up if the status can't be determined.
+			default:
+				break;
+		}
+	}
+
 	if (platform_booting()) {
-		echo gettext("Starting DHCP relay service...");
+		echo gettext("Starting DHCP Relay service...");
 	} else {
 		sleep(1);
 	}
@@ -2020,8 +2060,27 @@ function services_dhcrelay6_configure() {
 		return 0;
 	}
 
+	/* Start/Restart DHCPv6 Relay, if a CARP VIP is set, check its status and act
+	* appropriately. */
+	if (isset($dhcrelaycfg['carpstatusvip']) && ($dhcrelaycfg['carpstatusvip'] != "none")) {
+		$status = get_carp_interface_status($dhcrelaycfg['carpstatusvip']);
+		switch (strtoupper($status)) {
+			// Do not start DHCP Relay service if the VIP is in BACKUP or INIT state.
+			case "BACKUP":
+			case "INIT":
+				log_error("Stopping DHCPv6 Relay (CARP BACKUP/INIT)");
+				return 0;
+				break;
+			// Start the service if the VIP is MASTER state.
+			case "MASTER":
+			// Assume it's up if the status can't be determined.
+			default:
+				break;
+		}
+	}
+
 	if (platform_booting()) {
-		echo gettext("Starting DHCPv6 relay service...");
+		echo gettext("Starting DHCPv6 Relay service...");
 	} else {
 		sleep(1);
 	}
@@ -2099,6 +2158,7 @@ function services_dyndns_configure_client($conf) {
 		$dnsTTL = $conf['ttl'],
 		$dnsResultMatch = "{$conf['resultmatch']}",
 		$dnsRequestIf = "{$conf['requestif']}",
+		$dnsMaxCacheAge = $conf['maxcacheage'],
 		$dnsID = "{$conf['id']}",
 		$dnsVerboseLog = $conf['verboselog'],
 		$curlIpresolveV4 = $conf['curl_ipresolve_v4'],
@@ -2152,6 +2212,7 @@ function services_dyndns_configure($int = "") {
 				$dyndns['curl_ipresolve_v4'] = isset($dyndns['curl_ipresolve_v4']);
 				$dyndns['curl_ssl_verifypeer'] = isset($dyndns['curl_ssl_verifypeer']);
 				$dyndns['proxied'] = isset($dyndns['proxied']);
+				$dyndns['wildcard'] = isset($dyndns['wildcard']);
 				services_dyndns_configure_client($dyndns);
 				sleep(1);
 			}
@@ -2437,7 +2498,10 @@ function services_unbound_configure($restart_dhcp = true) {
 			if (!is_dir("{$g['unbound_chroot_path']}/dev")) {
 				safe_mkdir("{$g['unbound_chroot_path']}/dev");
 			}
-			exec("/sbin/mount -t devfs devfs " . escapeshellarg("{$g['unbound_chroot_path']}/dev"));
+			$status = "/sbin/mount | /usr/bin/grep " .  escapeshellarg("{$g['unbound_chroot_path']}/dev");
+			if (!trim($status)) {
+				exec("/sbin/mount -t devfs devfs " . escapeshellarg("{$g['unbound_chroot_path']}/dev"));
+			}
 		} else {
 			if (is_dir("{$g['unbound_chroot_path']}/dev")) {
 				exec("/sbin/umount -f " . escapeshellarg("{$g['unbound_chroot_path']}/dev"));

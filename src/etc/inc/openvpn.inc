@@ -853,7 +853,13 @@ function openvpn_reconfigure($mode, $settings) {
 	if (is_ipaddrv6($ipaddr)) {
 		$iface_ipv6 = $ipaddr;
 	} elseif (!empty($interface) && strcmp($interface, "any")) {
-		$iface_ipv6=get_interface_ipv6($interface);
+		/* get correct interface name for 6RD/6to4 interfaces
+		 * see https://redmine.pfsense.org/issues/11674 */
+		if (is_stf_interface($settings['interface'])) {
+			$iface_ipv6=get_interface_ipv6($settings['interface']);
+		} else {
+			$iface_ipv6=get_interface_ipv6($interface);
+		}
 	}
 
 	$conf = "dev {$devname}\n";
@@ -1016,7 +1022,7 @@ function openvpn_reconfigure($mode, $settings) {
 					if ($settings['dev_mode'] == 'tun') {
 						$conf .= "ifconfig-ipv6 {$ipv6_1} {$ipv6_2}\n";
 					} else {
-						$conf .= "ifconfig-ipv6 {$ipv6_1} {$prefix}\n";
+						$conf .= "ifconfig-ipv6 {$ipv6_1}/{$prefix} {$ipv6_2}\n";
 					}
 				}
 				break;
@@ -1075,7 +1081,7 @@ function openvpn_reconfigure($mode, $settings) {
 					if ($settings['strictusercn']) {
 						$strictusercn = "true";
 					}
-					$conf .= "plugin /usr/local/lib/openvpn/plugins/openvpn-plugin-auth-script.so /usr/local/sbin/ovpn_auth_verify_async user " . base64_encode($settings['authmode']) . " {$strictusercn} {$mode_id} {$settings['local_port']}\n";
+					$conf .= openvpn_authscript_string($settings['authmode'], $strictusercn, $mode_id, $settings['local_port']);
 				}
 				break;
 		}
@@ -1127,6 +1133,10 @@ function openvpn_reconfigure($mode, $settings) {
 		if ($settings['mode'] != 'p2p_shared_key' &&
 		    isset($settings['duplicate_cn'])) {
 			$conf .= "duplicate-cn\n";
+		}
+		if (($settings['mode'] != 'p2p_shared_key') &&
+		    isset($settings['remote_cert_tls'])) {
+			$conf .= "remote-cert-tls client\n";
 		}
 	}
 
@@ -1185,7 +1195,7 @@ function openvpn_reconfigure($mode, $settings) {
 			if ($settings['dev_mode'] == 'tun') {
 				$conf .= "ifconfig-ipv6 {$ipv6_2} {$ipv6_1}\n";
 			} else {
-				$conf .= "ifconfig-ipv6 {$ipv6_2} {$prefix}\n";
+				$conf .= "ifconfig-ipv6 {$ipv6_1}/{$prefix} {$ipv6_2}\n";
 			}
 		}
 
@@ -1220,6 +1230,11 @@ function openvpn_reconfigure($mode, $settings) {
 			}
 			$conf .= " \n";
 		}
+
+		if (($settings['mode'] != 'shared_key') &&
+		    isset($settings['remote_cert_tls'])) {
+			$conf .= "remote-cert-tls server\n";
+		}
 	}
 
 	// Add a remote network route if set, and only for p2p modes.
@@ -1247,7 +1262,8 @@ function openvpn_reconfigure($mode, $settings) {
 			$cas = ca_chain_array($param);
 			$capath = "{$g['openvpn_base']}/{$mode_id}/ca";
 			/* Cleanup old CA/CRL references */
-			@unlink_if_exists("{$capath}.*0");
+			@unlink_if_exists("{$capath}/*.0");
+			@unlink_if_exists("{$capath}/*.r*");
 			/* Find the CRL listed in the settings */
 			if (!empty($settings['crlref'])) {
 				$crl = lookup_crl($settings['crlref']);
@@ -1482,9 +1498,14 @@ function openvpn_restart($mode, $settings) {
 	}
 
 	/* Do not start an instance if we are not CARP master on this vip! */
-	if (strstr($settings['interface'], "_vip") && !in_array(get_carp_interface_status($settings['interface']), array("MASTER", ""))) {
-		unlock($lockhandle);
-		return;
+	if (strstr($settings['interface'], "_vip")) {
+	       	$carpstatus = get_carp_bind_status($settings['interface']);
+		/* Do not start an instance if vip aliased to BACKUP CARP
+		 * see https://redmine.pfsense.org/issues/11793 */ 
+		if (in_array($carpstatus, array('BACKUP', 'INIT'))) {
+			unlock($lockhandle);
+			return;
+		} 
 	}
 
 	/* Check if client is bound to a gateway group */
@@ -1722,6 +1743,11 @@ function openvpn_resync_all($interface = "") {
 
 	openvpn_resync_csc_all();
 
+	/* configure OpenVPN-parent QinQ interfaces after creating OpenVPN interfaces
+	 * see https://redmine.pfsense.org/issues/11662 */
+	if (platform_booting()) {
+		interfaces_qinq_configure(true);
+	}
 }
 
 // Resync and restart all VPNs using a gateway group.
@@ -1781,9 +1807,15 @@ function openvpn_get_active_servers($type="multipoint") {
 			$socket = "unix://{$g['openvpn_base']}/{$server['mgmt']}/sock";
 			list($tn, $sm) = explode('/', trim($settings['tunnel_network']));
 
-			if ((($server['mode'] == "p2p_shared_key") || ($sm >= 30)) && ($type == "p2p")) {
+			if ((($server['mode'] == "p2p_shared_key") ||
+			    (($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) ||
+			    ($sm >= 30)) &&
+			    ($type == "p2p")) {
 				$servers[] = openvpn_get_client_status($server, $socket);
-			} elseif (($server['mode'] != "p2p_shared_key") && ($type == "multipoint") && ($sm < 30)) {
+			} elseif (($server['mode'] != "p2p_shared_key") &&
+			    !(($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) &&
+			    ($type == "multipoint") &&
+			    ($sm < 30)) {
 				$servers[] = openvpn_get_server_status($server, $socket);
 			}
 		}
@@ -2261,6 +2293,10 @@ function openvpn_build_data_cipher_list($data_ciphers = 'AES-256-GCM,AES-128-GCM
 		$data_ciphers .= ',' . $fallback_cipher;
 	}
 	return $data_ciphers;
+}
+
+function openvpn_authscript_string($authmode, $strictusercn, $mode_id, $local_port) {
+	return "plugin /usr/local/lib/openvpn/plugins/openvpn-plugin-auth-script.so /usr/local/sbin/ovpn_auth_verify_async user " . base64_encode($authmode) . " {$strictusercn} {$mode_id} {$local_port}\n";
 }
 
 ?>

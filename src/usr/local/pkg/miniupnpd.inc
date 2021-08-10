@@ -118,6 +118,15 @@
 			$input_errors[] = 'You must specify a valid traffic shaping queue.';
 		}
 
+		if ($post['enable_stun']) {
+			if (!$post['stun_host'] || (!is_ipaddrv4($post['stun_host']) && !is_hostname($post['stun_host']))) {
+				$input_errors[] = 'A valid IP address or hostname for \'STUN Server\' must be specified';
+			}
+			if (!$post['stun_port'] || !is_port($post['stun_port'])) {
+				$input_errors[] = 'A valid port number for \'STUN Port\' must be specified';
+			}
+		}
+
 		/* user permissions validation */
 		$j = substr_count(implode(array_keys($post)), "permuser");
 		for ($i = 0; $i < $j; $i++) {
@@ -274,6 +283,13 @@
 				/* Allow UPnP or NAT-PMP as requested */
 				$config_text .= "enable_upnp="   . ($upnp_config['enable_upnp']   ? "yes\n" : "no\n");
 				$config_text .= "enable_natpmp=" . ($upnp_config['enable_natpmp'] ? "yes\n" : "no\n");
+
+				/* STUN configuration */
+				if ($upnp_config['enable_stun']) {
+					$config_text .= "ext_perform_stun=yes\n";
+					$config_text .= "ext_stun_host={$upnp_config['stun_host']}\n";
+					$config_text .= "ext_stun_port={$upnp_config['stun_port']}\n";
+				}
 
 				/* write out the configuration */
 				upnp_write_config($config_file, $config_text);

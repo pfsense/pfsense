@@ -554,7 +554,3 @@ text underline, but text-color, background, font etc. could also be used */
 .element-required {
     box-shadow: inset 0 0px 0 white, inset 0 -1px 0 white
 }
-
-.peerbg_color {
-    background-color: #041f7a;"
-}

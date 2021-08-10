@@ -124,7 +124,7 @@ function getAdvancedNotifications($json = false) {
 }
 
 function saveAdvancedNotifications($post, $json = false) {
-	global $config, $smtp_authentication_mechanisms, $pushover_sounds;
+	global $g, $config, $smtp_authentication_mechanisms, $pushover_sounds;
 
 	$input_errors = array();
 	$rv = array();
@@ -137,21 +137,26 @@ function saveAdvancedNotifications($post, $json = false) {
 
 		// General Settings
 		$config['notifications']['certexpire']['enable'] = ($post['cert_enable_notify'] == "yes") ? "enabled" : "disabled";
-		if (empty($post['certexpiredays']) ||
-		    (is_numericint($post['certexpiredays']) && ($post['certexpiredays'] > 0))) {
+		if (empty($post['certexpiredays'])) {
+			$config['notifications']['certexpire']['expiredays'] = $g['default_cert_expiredays'];
+		} elseif (is_numericint($post['certexpiredays']) && ($post['certexpiredays'] > 0)) {
 			$config['notifications']['certexpire']['expiredays'] = $post['certexpiredays'];
 		} else {
 			$input_errors[] = gettext("Certificate Expiration Threshold must be a positive integer");
 		}
 
 		// SMTP
-		if (empty($post['smtpipaddress']) && (($post['disable_smtp'] != "yes") || $testsmtp)) {
+		$validate_smtp = $testsmtp || (empty($post['disable_smtp']) &&
+		    !empty($post['smtpipaddress']));
+
+		if ($validate_smtp && (!is_ipaddr($post['smtpipaddress']) &&
+		    !is_fqdn($post['smtpipaddress']))) {
 			$input_errors[] = gettext("Please enter valid E-Mail server address.");
 		} else {
 			$config['notifications']['smtp']['ipaddress'] = $post['smtpipaddress'];
 		}
 
-		if (!is_port($post['smtpport']) && ($post['disable_smtp'] != "yes")) {
+		if ($validate_smtp && !is_port($post['smtpport'])) {
 			$input_errors[] = gettext("Please enter valid SMTP port of E-Mail server address.");
 		} else {
 			$config['notifications']['smtp']['port'] = $post['smtpport'];
@@ -169,13 +174,14 @@ function saveAdvancedNotifications($post, $json = false) {
 			$config['notifications']['smtp']['sslvalidate'] = "disabled";
 		}
 
-		if (!empty($post['smtptimeout']) && !is_numeric($post['smtptimeout'])) {
+		if ($validate_smtp && !empty($post['smtptimeout']) &&
+		    !is_numeric($post['smtptimeout'])) {
 			$input_errors[] = gettext("Please enter valid connection timeout.");
 		} else {
 			$config['notifications']['smtp']['timeout'] = $post['smtptimeout'];
 		}
 
-		if (empty($post['smtpnotifyemailaddress']) && (($post['disable_smtp'] != "yes") || $testsmtp)) {
+		if ($validate_smtp && empty($post['smtpnotifyemailaddress'])) {
 			$input_errors[] = gettext("Please enter valid notification E-Mail address.");
 		} else {
 			$config['notifications']['smtp']['notifyemailaddress'] = $post['smtpnotifyemailaddress'];

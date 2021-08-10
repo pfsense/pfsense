@@ -308,6 +308,15 @@ if ($_POST['save']) {
 	    (is_supported_image($_FILES['background-img']['tmp_name']) === false)) {
 		$input_errors[] = gettext("Unsupported background image type.");
 	}
+	if (!empty($_POST['preauthurl']) && !is_URL($_POST['preauthurl'])) {
+		$input_errors[] = gettext("Pre-authentication redirect URL contents must be a valid URL");
+	}
+	if (!empty($_POST['blockedmacsurl']) && !is_URL($_POST['blockedmacsurl'])) {
+		$input_errors[] = gettext("After authentication Redirection URL contents must be a valid URL");
+	}
+	if (!empty($_POST['redirurl']) && !is_URL($_POST['redirurl'])) {
+		$input_errors[] = gettext("Blocked MAC address redirect URL contents must be a valid URL");
+	}
 
 	if (!$input_errors) {
 		init_config_arr(array('captiveportal', $cpzone));

@@ -184,10 +184,10 @@ $states = count($statedisp);
 						<th data-sortable="false"></th> <!-- For the optional "Remove" button -->
 					</tr>
 				</thead>
+				<tbody>
 <?php
 		foreach ($statedisp as $dstate):
 ?>
-				<tbody>
 					<tr>
 						<td><?= $dstate['interface']?></td>
 						<td><?= $dstate['proto'] ?></td>

@@ -347,7 +347,6 @@ $vpn_menu[] = array(gettext("IPsec"), "/vpn_ipsec.php");
 $vpn_menu[] = array(gettext("OpenVPN"), "/vpn_openvpn_server.php");
 //$vpn_menu[] = array(gettext("PPTP"), "/vpn_pptp.php");
 $vpn_menu[] = array(gettext("L2TP"), "/vpn_l2tp.php");
-$vpn_menu[] = array(gettext("WireGuard"), "/vpn_wg.php");
 $vpn_menu = msort(array_merge($vpn_menu, return_ext_menu("VPN")), 0);
 
 // Status
@@ -762,7 +761,7 @@ if ($display_notices):
 							<a href="<?=htmlspecialchars($notice['url'])?>"><?=htmlspecialchars($notice['id'])?></a> -
 <?php endif;?>
 						</b>
-						<?=str_replace("\n", "<br/>", htmlspecialchars($notice['notice']))?>
+						<?=str_replace("\n", "<br/>", htmlspecialchars(htmlspecialchars_decode(htmlspecialchars_decode($notice['notice']))))?>
 						<i>@ <?=date('Y-m-d H:i:s', $notice['time'])?></i>
 					</li>
 <?php	endforeach;?>

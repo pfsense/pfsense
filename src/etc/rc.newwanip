@@ -122,17 +122,14 @@ if (is_ipaddr($curwanip)) {
 
 link_interface_to_vips($interface, "update");
 
-unset($gre);
-$gre = link_interface_to_tunnelif($interface, 'gre');
-if (!empty($gre)) {
-	array_walk($gre, 'interface_gre_configure');
-}
+$gre = link_interface_to_tunnelif($interface, 'gre', 'inet');
+array_walk($gre, 'interface_gre_configure');
 
-unset($gif);
-$gif = link_interface_to_tunnelif($interface, 'gif');
-if (!empty($gif)) {
-	array_walk($gif, 'interface_gif_configure');
-}
+$gif = link_interface_to_tunnelif($interface, 'gif', 'inet');
+array_walk($gif, 'interface_gif_configure');
+
+/* reconfigure L2TP/PPTP tunnels, see https://redmine.pfsense.org/issues/12072 */ 
+$ppp = link_interface_to_ppp_tunnelif($interface);
 
 $grouptmp = link_interface_to_group($interface);
 if (!empty($grouptmp)) {
@@ -173,22 +170,25 @@ switch ($config['interfaces'][$interface]['ipaddrv6']) {
 }
 
 /* Check Gif tunnels */
-if (!empty($gif)) {
-	foreach ($gif as $giftun) {
-		$confif = convert_real_interface_to_friendly_interface_name($giftun['gifif']);
-		if (!empty($confif)) {
-			interface_configure($confif);
-			system_routing_configure($confif);
-		}
+foreach ($gif as $giftun) {
+	$confif = convert_real_interface_to_friendly_interface_name($giftun['gifif']);
+	if (!empty($confif)) {
+		interface_configure($confif);
+		system_routing_configure($confif);
 	}
 }
-if (!empty($gre)) {
-	foreach ($gre as $gretun) {
-		$confif = convert_real_interface_to_friendly_interface_name($gretun['greif']);
-		if (!empty($confif)) {
-			interface_configure($confif);
-			system_routing_configure($confif);
-		}
+foreach ($gre as $gretun) {
+	$confif = convert_real_interface_to_friendly_interface_name($gretun['greif']);
+	if (!empty($confif)) {
+		interface_configure($confif);
+		system_routing_configure($confif);
+	}
+}
+foreach ($ppp as $ppptun) {
+	$confif = convert_real_interface_to_friendly_interface_name($ppptun['if']);
+	if (!empty($confif)) {
+		interface_configure($confif);
+		system_routing_configure($confif);
 	}
 }
 

@@ -31,6 +31,8 @@
 ##|*MATCH=vendor/filebrowser/browser.php*
 ##|-PRIV
 
+$lineheight = "18"; // Required by the jumpToLine() JS function
+
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit File"));
 require_once("guiconfig.inc");
 
@@ -141,7 +143,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 			}
 			//]]>
 			</script>
-			<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols="20"></textarea>
+			<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols="20"  style="line-height: <?=$lineheight?>px;"></textarea>
 		</div>
 	</div>
 </div>
@@ -157,7 +159,6 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 		});
 
 		function showLine(tarea, lineNum) {
-
 			lineNum--; // array starts at 0
 			var lines = tarea.value.split("\n");
 
@@ -180,6 +181,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 				tarea.focus();
 				tarea.selectionStart = startPos;
 				tarea.selectionEnd = endPos;
+				jumpToLine(lineNum);
 				return true;
 			}
 
@@ -192,10 +194,21 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 				range.moveEnd("character", endPos);
 				range.moveStart("character", startPos);
 				range.select();
+				jumpToLine(lineNum);
 				return true;
 			}
 
 			return false;
+		}
+
+		// Jump to the specified line number
+		// This requires that the line-height CSS parameter applied to the text area is the same 
+		// as specified in this function
+		function jumpToLine(line) {
+			var lineht = <?=$lineheight?>; // Line height in pixels
+			console.log("Jumpting to line " + line);
+			var ta = document.getElementById("fileContent");
+			ta.scrollTop = lineht * (line - 1);
 		}
 
 		$("#btngoto").prop('type','button');

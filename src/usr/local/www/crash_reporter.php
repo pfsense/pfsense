@@ -73,9 +73,13 @@ if ($_POST['Submit'] == "No") {
 } else {
 	$crash_reports = $crash_report_header;
 	if (system_has_php_errors()) {
-		$php_errors = file_get_contents("/tmp/PHP_errors.log");
-		$crash_reports .= "\nPHP Errors:\n";
-		$crash_reports .= $php_errors . "\n\n";
+		if (filesize("/tmp/PHP_errors.log") < FILE_SIZE) {
+			$php_errors = file_get_contents("/tmp/PHP_errors.log");
+			$crash_reports .= "\nPHP Errors:\n";
+			$crash_reports .= $php_errors . "\n\n";
+		} else {
+			$crash_reports .= "\n/tmp/PHP_errors.log file is too large to display.\n";
+		}
 	} else {
 		$crash_reports .= "\nNo PHP errors found.\n";
 	}
@@ -93,7 +97,7 @@ if ($_POST['Submit'] == "No") {
 	}
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("The firewall has enountered an error")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("The firewall has encountered an error")?></h2></div>
 	<div class="panel-body">
 		<div class="content">
 			<p>

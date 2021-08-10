@@ -309,7 +309,7 @@ if ($_POST) {
 		$dfltmsg = true;
 		$dontshow = true;
 	}
-	mwexec("killall qstats");
+	mwexec("/usr/bin/killall -q qstats");
 }
 
 if (!$_POST && !$_GET) {

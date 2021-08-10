@@ -220,12 +220,20 @@ function system_resolvconf_generate($dynupdate = false) {
 		}
 		/* dns server array starts at 0 */
 		$dnsserver = $syscfg['dnsserver'][$dnscounter - 1];
+
+		/* specify IP protocol version for correct add/del,
+		 * see https://redmine.pfsense.org/issues/11578 */
+		if (is_ipaddrv4($dnsserver)) {
+			$ipprotocol = 'inet';
+		} else {
+			$ipprotocol = 'inet6';
+		}
 		if (!empty($dnsserver)) {
 			if (is_ipaddr($gatewayip)) {
-				route_add_or_change($dnsserver, $gatewayip);
+				route_add_or_change($dnsserver, $gatewayip, '', '', $ipprotocol);
 			} else {
 				/* Remove old route when disable gw */
-				route_del($dnsserver);
+				route_del($dnsserver, $ipprotocol);
 			}
 		}
 		$dnscounter++;
@@ -927,9 +935,14 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 	$static_routes = get_staticroutes(false, true);
 	if (count($static_routes)) {
 		$gateways_arr = return_gateways_array(false, true);
-		$gateways_status = return_gateways_status(true);
 
 		foreach ($static_routes as $rtent) {
+			/* Do not delete disabled routes on boot,
+			 * see https://redmine.pfsense.org/issues/3709 */
+			if (isset($rtent['disabled']) && platform_booting()) {
+				continue;
+			}
+
 			if (empty($gateways_arr[$rtent['gateway']])) {
 				log_error(sprintf(gettext("Static Routes: Gateway IP could not be found for %s"), $rtent['network']));
 				continue;
@@ -978,8 +991,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 				route_del($ip);
 			}
 
-			if (isset($rtent['disabled']) || (!isset($gateway['action_disable']) &&
-			    ($gateways_status[$gateway['name']]['status'] == 'down'))) {
+			if (isset($rtent['disabled'])) {
 				/*
 				 * XXX: This can break things by deleting
 				 * routes that shouldn't be deleted - OpenVPN,
@@ -1652,9 +1664,14 @@ function system_ntp_setup_gps($serialport) {
 	}
 
 	init_config_arr(array('ntpd', 'gps'));
+	$serialports = get_serial_ports(true);
+
+	if (!array_key_exists($serialport, $serialports)) {
+		return false;
+	}
 
 	$gps_device = '/dev/gps0';
-	$serialport = '/dev/'.$serialport;
+	$serialport = '/dev/'.basename($serialport);
 
 	if (!file_exists($serialport)) {
 		return false;
@@ -1739,8 +1756,14 @@ function system_ntp_setup_rawspeed($serialport, $baud) {
 function system_ntp_setup_pps($serialport) {
 	global $config, $g;
 
+	$serialports = get_serial_ports(true);
+
+	if (!array_key_exists($serialport, $serialports)) {
+		return false;
+	}
+
 	$pps_device = '/dev/pps0';
-	$serialport = '/dev/'.$serialport;
+	$serialport = '/dev/'.basename($serialport);
 
 	if (!file_exists($serialport)) {
 		return false;
@@ -2495,6 +2518,22 @@ function system_identify_specific_platform() {
 	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $product);
 	$_gb = exec('/bin/kenv -q smbios.system.maker 2>/dev/null', $maker);
 	$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $bios);
+
+	$vm = get_single_sysctl('kern.vm_guest');
+
+	// This switch needs to be expanded to include other virtualization systems
+	switch ($vm) {
+		case "none" :
+		break;
+
+		case "kvm" :
+			return (array('name' => 'KVM', 'descr' => 'KVM Guest'));
+		break;
+	}
+
+	if ($maker[0] == "QEMU") {
+		return (array('name' => 'QEMU', 'descr' => 'QEMU'));
+	}
 
 	// AWS can only be identified via the bios version
 	if (stripos($bios[0], "amazon") !== false) {

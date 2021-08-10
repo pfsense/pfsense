@@ -759,6 +759,21 @@ function get_carp_interface_status($carpid) {
 	return "";
 }
 
+function get_carp_bind_status($interface) {
+	global $config;
+
+	$carpstatus = get_carp_interface_status($interface);
+	if (!empty($carpstatus)) {
+		return $carpstatus;
+	} else {
+		foreach ($config['virtualip']['vip'] as $vip) {
+			if ($interface == "_vip{$vip['uniqid']}") { 
+				return get_carp_interface_status($vip['interface']);
+			}
+		}
+	}
+}
+
 /*
  * Return true if the CARP status of at least one interface of a captive portal zone is in backup mode
  * This function return false if CARP is not enabled on any interface of the captive portal zone
@@ -1193,11 +1208,11 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
 	    "hw.e6000sw.default_disabled", "vm.pmap.pti",
 	    "net.pf.request_maxcount", "hw.hn.vf_transparent",
-	    "hw.hn.use_if_start");
+	    "hw.hn.use_if_start", "net.link.ifqmaxlen");
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
 		$remove = array_merge($remove,
-		    array("autoboot_delay", "console", "comconsole_speed",
+		    array("autoboot_delay", "console", "comconsole_speed", "comconsole_port",
 		    "boot_multicons", "boot_serial", "hint.uart.0.flags",
 		    "hint.uart.1.flags"));
 	}
@@ -1318,6 +1333,9 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'hw.hn.vf_transparent="0"';
 		$data[] = 'hw.hn.use_if_start="1"';
 	}
+
+	/* Set maximum send queue length. */
+	$data[] = 'net.link.ifqmaxlen="128"';
 
 	safe_write_file($loader_conf_file, $data);
 

@@ -233,7 +233,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		}
 		if ($found_host == false) {
 			if (!security_checks_disabled()) {
-				display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . htmlspecialchars($_SERVER['HTTP_REFERER']) . ").  If not needed, this check can be disabled in System -> Advanced -> Admin.");
+				display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System > Advanced (" . htmlspecialchars($_SERVER['HTTP_REFERER']) . ").  If not needed, this check can be disabled in System > Advanced > Admin Access.");
 				exit;
 			}
 			$security_passed = false;
@@ -2307,7 +2307,7 @@ EOD;
 			// do not try to reconnect
 			$ldapconf = "bind_policy soft\n";
 			// Bind/connect timelimit
-			$ldapconf = "bind_timelimit {$authcfg['ldap_timeout']}\n";
+			$ldapconf .= "bind_timelimit {$authcfg['ldap_timeout']}\n";
 			$uri = ($authcfg['ldap_urltype'] == 'SSL/TLS Encrypted') ? 'ldaps' : 'ldap';
 			$ldapconf .= "uri {$uri}://{$authcfg['host']}/\n";
 			$ldapconf .= "port {$authcfg['ldap_port']}\n";

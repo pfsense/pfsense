@@ -38,7 +38,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("vpn.inc");
-include_once("system_advanced_misc.inc");
+require_once("system_advanced_misc.inc");
 
 $powerd_modes = array(
 	'hadp' => gettext('Hiadaptive'),
@@ -54,6 +54,7 @@ $mds_modes = array(
 	2 => gettext('Software sequence mitigation enabled (not recommended)'),
 	3 => gettext('Automatic VERW or Software selection'),
 );
+
 
 $pconfig = getSystemAdvancedMisc();
 
@@ -337,7 +338,7 @@ $group->add(new Form_Input(
 $group->setHelp('Sets the size, in MiB, for the RAM disks. ' .
 	'Ensure each RAM disk is large enough to contain the current contents of the directories in question. %s' .
 	'Maximum total size of all RAM disks cannot exceed available kernel memory: %s',
-	'<br/>', format_bytes( $available_kernel_memory ));
+	'<br/>', format_bytes( $pconfig['available_kernel_memory']));
 
 $section->add($group);
 
@@ -366,6 +367,14 @@ $group->add(new Form_Input(
 	$config['system']['logsbackup'],
 	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
 ))->setHelp('Log Directory');
+
+$group->add(new Form_Input(
+	'captiveportalbackup',
+	'Periodic Captive Portal DB and Vouchers Backup',
+	'number',
+	$config['system']['captiveportalbackup'],
+	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
+))->setHelp('Captive Portal Data');
 
 $group->setHelp('Sets the interval, in hours, to periodically backup these portions of RAM disk data so '.
 	'they can be restored automatically on the next boot. Keep in mind that the more '.
@@ -404,8 +413,7 @@ $form->add($section);
 print $form;
 
 $ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This requires the firewall\nto reboot.\n\nReboot now ?');
-$use_mfs_tmpvar_changed = ((($use_mfs_tmpvar_before !== $use_mfs_tmpvar_after) ||
-			    (!empty($_POST) && $use_mfs_tmpvar_after && file_exists('/conf/ram_disks_failed'))) && !$input_errors);
+$use_mfs_tmpvar_changed = $rebootneeded;
 ?>
 
 <script type="text/javascript">

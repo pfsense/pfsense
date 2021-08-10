@@ -34,6 +34,8 @@ require_once("guiconfig.inc");
 global $ntp_poll_min_default_pps, $ntp_poll_max_default_pps;
 $ntp_poll_values = system_ntp_poll_values();
 
+$serialports = get_serial_ports(true);
+
 if (!is_array($config['ntpd'])) {
 	$config['ntpd'] = array();
 }
@@ -43,6 +45,10 @@ if (!is_array($config['ntpd']['pps'])) {
 
 if ($_POST) {
 	unset($input_errors);
+
+	if (!empty($_POST['ppsport']) && !array_key_exists($_POST['ppsport'], $serialports)) {
+		$input_errors[] = gettext("The selected PPS port does not exist.");
+	}
 
 	if (!array_key_exists($pconfig['ppsminpoll'], $ntp_poll_values)) {
 		$input_errors[] = gettext("The supplied value for Minimum Poll Interval is invalid.");
@@ -59,7 +65,7 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		if (!empty($_POST['ppsport']) && file_exists('/dev/'.$_POST['ppsport'])) {
+		if (!empty($_POST['ppsport']) && array_key_exists($_POST['ppsport'], $serialports)) {
 			$config['ntpd']['pps']['port'] = $_POST['ppsport'];
 		} else {
 			/* if port is not set, remove all the pps config */
@@ -153,21 +159,12 @@ $section->addInput(new Form_StaticText(
 	'<a href="services_ntpd.php">' . 'Services > NTP > Settings' . '</a>' . ' to reliably supply the time of each PPS pulse.'
 ));
 
-$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
-
 if (!empty($serialports)) {
-	$splist = array();
-
-	foreach ($serialports as $port) {
-		$shortport = substr($port, 5);
-		$splist[$shortport] = $shortport;
-	}
-
 	$section->addInput(new Form_Select(
 		'ppsport',
 		'Serial Port',
 		$pconfig['port'],
-		['' => gettext('None')] + $splist
+		['' => gettext('None')] + $serialports
 	))->setHelp('All serial ports are listed, be sure to pick the port with the PPS source attached. ');
 }
 

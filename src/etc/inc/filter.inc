@@ -423,6 +423,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= filter_setup_logging_interfaces();
 	$rules .= "\n";
 	$rules .= "set skip on pfsync0\n";
+	$rules .= "set keepcounters\n";
 	$rules .= "\n";
 	update_filter_reload_status(gettext("Setting up SCRUB information"));
 	$rules .= filter_generate_scrubing();
@@ -620,15 +621,33 @@ function filter_generate_scrubing() {
 	global $config, $FilterIflist;
 	$scrubrules = "";
 
-	if (isset($config['system']['maxmss_enable'])) {
-		$maxmss = 1400;
-		if (!empty($config['system']['maxmss'])) {
-			$maxmss = $config['system']['maxmss'];
-		}
-
-		$scrubrules .= "scrub from any to <vpn_networks> max-mss {$maxmss}\n";
-		$scrubrules .= "scrub from <vpn_networks> to any max-mss {$maxmss}\n";
+	/* see https://redmine.pfsense.org/issues/7801 */
+	if (isset($config['system']['vpn_scrubnodf'])) {
+		$scrubnodf = "no-df";
+	} else {
+		$scrubnodf = "";
 	}
+	if (isset($config['system']['vpn_fragment_reassemble'])) {
+		$fragreassemble = "fragment reassemble";
+	} else {
+		$fragreassemble = "";
+	}
+
+	if (isset($config['system']['maxmss_enable'])) {
+		$mmss = 1400;
+		if (!empty($config['system']['maxmss'])) {
+			$mmss = $config['system']['maxmss'];
+		}
+		$maxmss = "max-mss {$mmss}";
+	} else {
+		$maxmss = "";
+	}
+
+	if (!empty($scrubnodf) || !empty($fragreassemble) || !empty($maxmss)) {
+		$scrubrules .= "scrub from any to <vpn_networks> {$maxmss} {$scrubnodf} {$fragreassemble}\n";
+		$scrubrules .= "scrub from <vpn_networks> to any {$maxmss} {$scrubnodf} {$fragreassemble}\n";
+	}
+
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {
 		if (isset($scrubcfg['virtual']) || empty($scrubcfg['descr'])) {
@@ -885,7 +904,7 @@ function filter_generate_aliases() {
 			case "urltable_ports":
 				// TODO: Change it when pf supports tables with ports
 				$urlfn = alias_expand_urltable($aliased['name']);
-				if ($urlfn) {
+				if ($urlfn && !empty(trim(file_get_contents($urlfn)))) {
 					$ports_tmp = parse_aliases_file($urlfn, "urltable_ports", "-1", false);
 					$aliases .= "{$aliased['name']} = \"{ " . preg_replace("/\n/", " ", implode("\n", $ports_tmp)) . " }\"\n";
 				}
@@ -1104,23 +1123,6 @@ function filter_get_vpns_list() {
 		}
 	}
 
-	/* wireguard */
-	if (is_wg_enabled()) {
-		foreach ($config['wireguard']['tunnel'] as $wg) {
-			if (empty($wg['enabled'])) {
-				continue;
-			}
-			if (!is_array($wg['peers']['wgpeer']) ||
-			    count($wg['peers']['wgpeer']) == 0) {
-				continue;
-			}
-			$wgpeer = $wg['peers']['wgpeer'];
-			foreach (explode(",", $wgpeer['allowedips']) as $ip) {
-				$vpns_arr[] = $ip;
-			}
-		}
-	}
-
 	if (!empty($vpns_arr)) {
 		$vpns = implode(" ", $vpns_arr);
 	}
@@ -1327,15 +1329,6 @@ function filter_generate_optcfg_array() {
 		$oic['type'] = "none";
 		$oic['virtual'] = true;
 		$FilterIflist['openvpn'] = $oic;
-	}
-	/* add wireguard interfaces */
-	if (is_wg_enabled()) {
-		$oic = array();
-		$oic['if'] = "wg";
-		$oic['descr'] = 'WireGuard';
-		$oic['type'] = "none";
-		$oic['virtual'] = true;
-		$FilterIflist['wireguard'] = $oic;
 	}
 	/* add interface groups */
 	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
@@ -1782,11 +1775,6 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		}
 	}
 
-	foreach (wg_get_tunnel_networks('ipv4') as $wgn) {
-		$tonathosts[] = $wgn;
-		$descriptions[] = gettext('WireGuard');
-	}
-
 	/* IPsec mode_cfg subnet */
 	if ((isset($config['ipsec']['client']['enable'])) &&
 	    (!empty($config['ipsec']['client']['pool_address'])) &&
@@ -1844,8 +1832,7 @@ function filter_nat_rules_outbound_automatic($src) {
 	$rules = array();
 	foreach ($FilterIflist as $if => $ifcfg) {
 		if ((substr($ifcfg['if'], 0, 4) == "ovpn") ||
-		    (substr($ifcfg['if'], 0, 5) == "ipsec") ||
-		    (substr($ifcfg['if'], 0, 2) == "wg")) {
+		    (substr($ifcfg['if'], 0, 5) == "ipsec")) {
 			continue;
 		}
 		if (!interface_has_gateway($if)) {
@@ -2050,6 +2037,9 @@ EOD;
 function filter_nat_rules_generate() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $aliases;
 
+	init_config_arr(array('ipsec', 'client'));
+	$ipsec_client = $config['ipsec']['client'];
+
 	$natrules = "no nat proto carp\n";
 	$natrules .= "no rdr proto carp\n";
 	$natrules .= "nat-anchor \"natearly/*\"\n";
@@ -2201,8 +2191,7 @@ function filter_nat_rules_generate() {
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid']) && !isset($ph2ent['disabled'])) {
-					ipsec_lookup_phase1($ph2ent, $ph1ent);
-					if (!is_array($ph1ent)) {
+					if (!ipsec_lookup_phase1($ph2ent, $ph1ent)) {
 						continue;
 					}
 					if (isset($ph1ent['disabled'])) {
@@ -2234,7 +2223,11 @@ function filter_nat_rules_generate() {
 						$ph2ent['remoteid'] = array();
 					}
 					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
-					$remote_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					if (!isset($ph2ent['mobile'])) {
+						$remote_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					} elseif (!empty($ipsec_client['pool_address'])) {
+						$remote_subnet = "{$ipsec_client['pool_address']}/{$ipsec_client['pool_netbits']}";
+					}
 					if (empty($remote_subnet)) {
 						continue;
 					}
@@ -2934,7 +2927,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 
 function filter_generate_user_rule($rule) {
 	global $config, $g, $FilterIflist, $GatewaysList;
-	global $dummynet_name_list, $vlanprio_values;
+	global $dummynet_name_list, $vlanprio_values, $time_based_rules;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -2969,7 +2962,11 @@ function filter_generate_user_rule($rule) {
 			if (!empty($ifliste)) {
 				$aline['interface'] = " on { {$ifliste} } ";
 			} else {
-				$aline['interface'] = "";
+				/* This rule specifies interface(s), but none of those were
+				 * found in the enabled list, so just ignore the rule.
+				 * See https://redmine.pfsense.org/issues/11688.
+				 */
+				return "# rule " . $rule['descr'] . " has no enabled interfaces";
 			}
 		} else {
 			$aline['interface'] = "";
@@ -3119,8 +3116,8 @@ function filter_generate_user_rule($rule) {
 
 	/* source address */
 	$src = trim(filter_generate_address($rule, "source"));
-	if (empty($src) || ($src == "/")) {
-		return "# at the break!";
+	if (empty($src) || ($src == "/") || ($src == "!")) {
+		return "# source address is empty. ";
 	}
 	$aline['src'] = " from $src ";
 
@@ -3131,8 +3128,8 @@ function filter_generate_user_rule($rule) {
 
 	/* destination address */
 	$dst = trim(filter_generate_address($rule, "destination"));
-	if (empty($dst) || ($dst == "/")) {
-		return "# returning at dst $dst == \"/\"";
+	if (empty($dst) || ($dst == "/") || ($dst == "!")) {
+		return "# destination address is empty. ";
 	}
 	$aline['dst'] = "to $dst ";
 
@@ -3153,34 +3150,34 @@ function filter_generate_user_rule($rule) {
 	if (!empty($rule['dscp'])) {
 		switch (strtolower($rule['dscp'])) {
 			case 'va':
-				$aline['dscp'] = " dscp \"44\" ";
+				$aline['dscp'] = " tos \"44\" ";
 				break;
 			case 'VA':
-				$aline['dscp'] = " dscp \"44\" ";
+				$aline['dscp'] = " tos \"44\" ";
 				break;
 			case 'cs1':
-				$aline['dscp'] = " dscp \"8\" ";
+				$aline['dscp'] = " tos \"8\" ";
 				break;
 			case 'cs2':
-				$aline['dscp'] = " dscp \"16\" ";
+				$aline['dscp'] = " tos \"16\" ";
 				break;
 			case 'cs3':
-				$aline['dscp'] = " dscp \"24\" ";
+				$aline['dscp'] = " tos \"24\" ";
 				break;
 			case 'cs4':
-				$aline['dscp'] = " dscp \"32\" ";
+				$aline['dscp'] = " tos \"32\" ";
 				break;
 			case 'cs5':
-				$aline['dscp'] = " dscp \"40\" ";
+				$aline['dscp'] = " tos \"40\" ";
 				break;
 			case 'cs6':
-				$aline['dscp'] = " dscp \"48\" ";
+				$aline['dscp'] = " tos \"48\" ";
 				break;
 			case 'cs7':
-				$aline['dscp'] = " dscp \"56\" ";
+				$aline['dscp'] = " tos \"56\" ";
 				break;
 			default:
-				$aline['dscp'] = " dscp " . $rule['dscp'] . " ";
+				$aline['dscp'] = " tos " . $rule['dscp'] . " ";
 				break;
 		}
 	}
@@ -3345,6 +3342,18 @@ function filter_generate_user_rule($rule) {
 	}
 	if ($rule['dnpipe'] <> "") {
 		if (!empty($dummynet_name_list[$rule['dnpipe']])) {
+			/* https://redmine.pfsense.org/issues/11636 */
+			foreach ($config['dnshaper']['queue'] as $queue) {
+				if (($queue['name'] == $rule['dnpipe']) &&
+				    is_array($queue['bandwidth']['item'])) {
+					foreach ($queue['bandwidth']['item'] as $bw) {
+				       		if ($bw['bwsched'] != "none") {
+							$time_based_rules = true;
+							break 2;
+						}
+					}
+				}
+			}
 			if ($dummynet_name_list[$rule['dnpipe']][0] == "?") {
 				$aline['dnpipe'] = " dnqueue( ";
 				$aline['dnpipe'] .= substr($dummynet_name_list[$rule['dnpipe']], 1);
@@ -3368,14 +3377,14 @@ function filter_generate_user_rule($rule) {
 			if ($sched['name'] == $rule['sched']) {
 				if (!filter_get_time_based_rule_status($sched)) {
 					if (!isset($config['system']['schedule_states'])) {
-						mwexec("/sbin/pfctl -y {$sched['schedlabel']}");
+						mwexec("/sbin/pfctl -k label -k s:{$sched['schedlabel']}");
 					}
 					return "# schedule finished - {$rule['descr']}";
 				} else if ($g['debug']) {
 					log_error(sprintf(gettext("[TDR DEBUG] status true -- rule type '%s'"), $type));
 				}
 
-				$aline['schedlabel'] = " schedule \"{$sched['schedlabel']}\" ";
+				$aline['schedlabel'] = " label \"s:{$sched['schedlabel']}\" ";
 				break;
 			}
 		}
@@ -3413,7 +3422,7 @@ function filter_generate_user_rule($rule) {
 function filter_rules_generate() {
 	global $config, $g, $FilterIflist, $time_based_rules, $GatewaysList,
 	       $tracker, $vlanprio_values, $antilockout_tracker,
-	       $bogons_tracker, $rfc1918_tracker;
+	       $bogons_tracker, $rfc1918_tracker, $vpn_and_ppp_ifs;
 
 	$fix_rule_label = 'fix_rule_label';
 	$increment_tracker = 'filter_rule_tracker';
@@ -3987,7 +3996,6 @@ EOD;
 		$rule_arr1 = array();
 		$rule_arr2 = array();
 		$rule_arr3 = array();
-		$vpn_and_ppp_ifs = array("l2tp", "pptp", "pppoe", "enc0", "openvpn", "wireguard");
 		/*
 		 * NB: The order must be: Floating rules, then interface group and then regular ones.
 		 */

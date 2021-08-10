@@ -66,7 +66,7 @@ if (isset($_POST['save'])) {
 	}
 
 	if ($_POST['frequency'] === 'cron') {
-		if (!preg_match('/^[0-9\*\/\-\,]+$/', $_POST['minute'] . $_POST['hours'] . $_POST['day'] . $_POST['month'] . $_POST['dow']))  {
+		if (!preg_match('/^[0-9\*\/\-\,]+$/', $_POST['minute'] . $_POST['hour'] . $_POST['day'] . $_POST['month'] . $_POST['dow']))  {
 			$input_errors[] = gettext("Schedule values may only contain 0-9 - , / *");
 		}
 	}
@@ -82,12 +82,12 @@ if (isset($_POST['save'])) {
 			$pwd = $pconfig['encryption_password'];
 		}
 
-		setup_ACB(
+		$pconfig = setup_ACB(
 			$pconfig['enable'],
 			$pconfig['hint'],
 			$pconfig['frequency'],
 			$pconfig['minute'],
-			$pconfig['hours'],
+			$pconfig['hour'],
 			$pconfig['month'],
 			$pconfig['day'],
 			$pconfig['dow'],
@@ -151,10 +151,10 @@ $group->add(new Form_Input(
 ))->setHelp("Minute (0-59)");
 
 $group->add(new Form_Input(
-	'hours',
+	'hour',
 	'Hour',
 	'text',
-	(isset($pconfig['hours']) ? $pconfig['hours']:'0')
+	(isset($pconfig['hour']) ? $pconfig['hour']:'0')
 ))->setHelp("Hours (0-23)");
 
 $group->add(new Form_Input(

@@ -26,6 +26,7 @@ require_once("functions.inc");
 require_once("config.inc");
 require_once("notices.inc");
 require_once("openvpn.inc");
+require_once("ipsec.inc");
 require_once("interfaces.inc");
 
 if (isset($_GET['interface'])) {
@@ -103,6 +104,15 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'
 		}
 	}
 }
+if (is_array($config['ipsec']) && is_array($config['ipsec']['phase1'])) {
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if ((substr($ph1ent['interface'], 0, 4) == '_vip') && (in_array($ph1ent['interface'], $vips))) {
+			log_error("Reconfiguring IPsec because of transition to CARP backup.");
+			ipsec_configure();
+			break;
+		}
+	}
+}
 
 /* Reconfigure radvd when necessary */
 if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
@@ -110,7 +120,7 @@ if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
 	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
 		foreach ($vips as $vip) {
 			if ($dhcpv6ifconf['rainterface'] == "_vip{$vip['uniqid']}") {
-				log_error("Stopping radvd instance on {$friendly_descr} because of transition to CARP master.");
+				log_error("Stopping radvd instance on {$friendly_descr} because of transition to CARP backup.");
 				$rafound = true;
 			}
 		}
@@ -118,6 +128,20 @@ if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
 	if ($rafound) {
 		services_radvd_configure();
 	}
+}
+
+/* Reconfigure DHCP Relay when necessary */
+if (isset($config['dhcrelay']) && is_array($config['dhcrelay']) && isset($config['dhcrelay']['enable']) &&
+    isset($config['dhcrelay']['carpstatusvip']) && ($config['dhcrelay']['carpstatusvip'] == "_vip{$vip['uniqid']}")) {
+	log_error("Stopping DHCP Relay service because of transition to CARP backup.");
+	services_dhcrelay_configure();
+}
+
+/* Reconfigure DHCPv6 Relay when necessary */
+if (isset($config['dhcrelay6']) && is_array($config['dhcrelay6']) && isset($config['dhcrelay6']['enable']) &&
+    isset($config['dhcrelay6']['carpstatusvip']) && ($config['dhcrelay6']['carpstatusvip'] == "_vip{$vip['uniqid']}")) {
+	log_error("Stopping DHCPv6 Relay service because of transition to CARP backup.");
+	services_dhcrelay6_configure();
 }
 
 $pluginparams = array();

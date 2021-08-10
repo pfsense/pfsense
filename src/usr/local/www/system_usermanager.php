@@ -452,9 +452,9 @@ if ($_POST['save'] && !$read_only) {
 				}
 
 				cert_create($cert, $_POST['caref'], $_POST['keylen'],
-					(int)$_POST['lifetime'], $dn, $_POST['type'],
+					(int)$_POST['lifetime'], $dn, 'user',
 					$_POST['digest_alg'], $_POST['keytype'],
-				       	$_POST['ecname']);
+					$_POST['ecname']);
 
 				if (!is_array($config['cert'])) {
 					$config['cert'] = array();
@@ -1015,9 +1015,9 @@ if ($act == "new" || $act == "edit" || $input_errors):
 			$section->add($group);
 
 			$section->addInput(new Form_Select(
-				'csrsign_digest_alg',
+				'digest_alg',
 				'*Digest Algorithm',
-				$pconfig['csrsign_digest_alg'] ? $pconfig['csrsign_digest_alg'] : 'sha256',
+				$pconfig['digest_alg'] ? $pconfig['digest_alg'] : 'sha256',
 				array_combine($openssl_digest_algs, $openssl_digest_algs)
 			))->setHelp('The digest method used when the certificate is signed. %1$s' .
 				'The best practice is to use an algorithm stronger than SHA1. '.

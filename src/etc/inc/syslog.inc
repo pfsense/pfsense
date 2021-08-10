@@ -109,9 +109,28 @@ function sort_related_log_files($logfile = "/var/log/system.log", $string = true
 }
 
 function rsort_log_filename($a, $b) {
-	list($abasename, $anumber, $aext) = explode('.', $a);
-	list($bbasename, $bnumber, $bext) = explode('.', $b);
-	return ($anumber > $bnumber) ? -1 : 1;
+	/* Break the filename up into components by '.', it could be in one
+	 * Of the following formats:
+	 * Compressed:   /var/log/<name>.log.<number>.<compressed extension>
+	 * Uncompressed: /var/log/<name>.log.<number>
+	 *
+	 * See: https://redmine.pfsense.org/issues/11639
+	 */
+	$aparts = explode('.', $a);
+	/* If the last part is not a number, it's a compressed log extension,
+	 * pop it off. */
+	if (!is_numeric($aparts[count($aparts)-1])) {
+		array_pop($aparts);
+	}
+
+	$bparts = explode('.', $b);
+	if (!is_numeric($bparts[count($bparts)-1])) {
+		array_pop($bparts);
+	}
+
+	/* Compare the last entry in each filename array which should now be
+	 * the log number */
+	return ($aparts[count($aparts)-1] > $bparts[count($bparts)-1]) ? -1 : 1;
 }
 
 function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true, $remove_rotated = true) {
@@ -144,7 +163,8 @@ function clear_all_log_files($restart = false) {
 	}
 
 	/* Combine list of syslog and non-syslog log files */
-	foreach (array_merge(system_syslogd_get_all_logfilenames(true), $system_log_non_syslog_files) as $lfile) {
+	/* exclude dmesg.boot, see https://redmine.pfsense.org/issues/11428 */
+	foreach (array_merge(system_syslogd_get_all_logfilenames(true), array_diff($system_log_non_syslog_files, array('dmesg.boot'))) as $lfile) {
 		clear_log_file("{$g['varlog_path']}/{$lfile}", false);
 	}
 
@@ -347,12 +367,6 @@ EOD;
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
-		if (isset($syslogcfg['zmqserver'])) {
-				$syslogconf .= <<<EOD
-*.*								^{$syslogcfg['zmqserver']}
-
-EOD;
-		}
 		/* write syslog config to pfSense.conf */
 		if (!@file_put_contents("{$g['varetc_path']}/syslog.d/pfSense.conf", $syslogconf)) {
 			printf(gettext("Error: cannot open syslog config file in system_syslogd_start().%s"), "\n");

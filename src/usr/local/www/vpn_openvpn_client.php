@@ -99,6 +99,8 @@ if ($act == "new") {
 	$pconfig['digest'] = "SHA256";
 	$pconfig['allow_compression'] = "no";
 	$pconfig['compression'] = "";
+	$pconfig['exit_notify'] = 1;
+	$pconfig['remote_cert_tls'] = "yes";
 }
 
 global $simplefields;
@@ -147,6 +149,7 @@ if (($act == "edit") || ($act == "dup")) {
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
 				$pconfig['tls_type'] = $a_client[$id]['tls_type'];
 			}
+			$pconfig['remote_cert_tls'] = $a_client[$id]['remote_cert_tls'];
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
 		}
@@ -215,6 +218,8 @@ if ($_POST['save']) {
 		$vpnid = 0;
 	}
 
+	$pconfig['ncp_enable'] = ($pconfig['ncp_enable'] == 'yes') ? 'enabled' : 'disabled';
+
 	if (isset($pconfig['custom_options']) &&
 	    ($pconfig['custom_options'] != $a_client[$id]['custom_options']) &&
 	    !$user_can_edit_advanced) {
@@ -227,6 +232,11 @@ if ($_POST['save']) {
 	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
 	if (!in_array($pconfig['data_ciphers_fallback'], $cipher_validation_list)) {
 		$input_errors[] = gettext("The selected Fallback Data Encryption Algorithm is not valid.");
+	}
+
+	/* Maximum option line length = 256, see https://redmine.pfsense.org/issues/11559 */
+	if (!empty($pconfig['data_ciphers']) && (strlen("data-ciphers " . implode(",", $pconfig['data_ciphers'])) > 254)) {
+		$input_errors[] = gettext("Too many Data Encryption Algorithms have been selected.");
 	}
 
 	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
@@ -493,6 +503,7 @@ if ($_POST['save']) {
 				$client['tls_type'] = $pconfig['tls_type'];
 				$client['tlsauth_keydir'] = $pconfig['tlsauth_keydir'];
 			}
+			$client['remote_cert_tls'] = $pconfig['remote_cert_tls'];
 		} else {
 			$client['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
@@ -523,7 +534,7 @@ if ($_POST['save']) {
 			$client['data_ciphers'] = implode(",", $pconfig['data_ciphers']);
 		}
 
-		$client['ncp_enable'] = $pconfig['ncp_enable'] ? "enabled":"disabled";
+		$client['ncp_enable'] = $pconfig['ncp_enable'];
 
 		$client['ping_method'] = $pconfig['ping_method'];
 		$client['keepalive_interval'] = $pconfig['keepalive_interval'];
@@ -589,12 +600,30 @@ if ($act=="new" || $act=="edit"):
 
 	$section = new Form_Section('General Information');
 
+	$section->addInput(new Form_Input(
+		'description',
+		'Description',
+		'text',
+		$pconfig['description']
+	))->setHelp('A description of this VPN for administrative reference.');
+
 	$section->addInput(new Form_Checkbox(
 		'disable',
 		'Disabled',
 		'Disable this client',
 		$pconfig['disable']
 	))->setHelp('Set this option to disable this client without removing it from the list.');
+
+	if ($vpnid) {
+		$section->addInput(new Form_StaticText(
+			'Unique VPN ID',
+			gettext('Client') . " {$vpnid} (ovpnc{$vpnid})"
+		));
+	}
+
+	$form->add($section);
+
+	$section = new Form_Section('Mode Configuration');
 
 	$section->addInput(new Form_Select(
 		'mode',
@@ -604,19 +633,23 @@ if ($act=="new" || $act=="edit"):
 		));
 
 	$section->addInput(new Form_Select(
-		'protocol',
-		'*Protocol',
-		$pconfig['protocol'],
-		$openvpn_prots
-		));
-
-	$section->addInput(new Form_Select(
 		'dev_mode',
 		'*Device mode',
 		empty($pconfig['dev_mode']) ? 'tun':$pconfig['dev_mode'],
 		$openvpn_dev_mode
 		))->setHelp('"tun" mode carries IPv4 and IPv6 (OSI layer 3) and is the most common and compatible mode across all platforms.%1$s' .
 		    '"tap" mode is capable of carrying 802.3 (OSI Layer 2.)', '<br/>');
+
+	$form->add($section);
+
+	$section = new Form_Section('Endpoint Configuration');
+
+	$section->addInput(new Form_Select(
+		'protocol',
+		'*Protocol',
+		$pconfig['protocol'],
+		$openvpn_prots
+		));
 
 	$section->addInput(new Form_Select(
 		'interface',
@@ -683,13 +716,6 @@ if ($act=="new" || $act=="edit"):
 		'password',
 		$pconfig['proxy_passwd'],
 	), false);
-
-	$section->addInput(new Form_Input(
-		'description',
-		'Description',
-		'text',
-		$pconfig['description']
-	))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 	$form->add($section);
 	$section = new Form_Section('User Authentication Settings');
@@ -886,6 +912,13 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['engine'],
 		openvpn_get_engines()
 		));
+
+	$section->addInput(new Form_Checkbox(
+		'remote_cert_tls',
+		'Server Certificate Key Usage Validation',
+		'Enforce key usage',
+		$pconfig['remote_cert_tls']
+	))->setHelp('Verify that remote host uses a server certificate (EKU: "TLS Web Server Authentication").');
 
 	$form->add($section);
 
@@ -1282,6 +1315,7 @@ events.push(function() {
 				hideInput('certref', false);
 				hideClass('authentication', false);
 				hideCheckbox('autokey_enable', true);
+				hideCheckbox('remote_cert_tls', false);
 				hideInput('shared_key', true);
 				hideLabel('Peer Certificate Revocation list', false);
 				hideInput('crlref', false);
@@ -1295,6 +1329,7 @@ events.push(function() {
 				hideInput('certref', true);
 				hideClass('authentication', true);
 				hideCheckbox('autokey_enable', false);
+				hideCheckbox('remote_cert_tls', true);
 				hideInput('shared_key', false);
 				hideLabel('Peer Certificate Revocation list', true);
 				hideInput('crlref', true);

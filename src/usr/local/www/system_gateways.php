@@ -373,14 +373,14 @@ $section->addInput(new Form_Select(
 	'Default gateway IPv4',
 	$pconfig['defaultgw4'],
 	$dflts['v4']
-))->setHelp('Select the gateway or gatewaygroup to use as the default gateway.');
+))->setHelp('Select a gateway or failover gateway group to use as the default gateway.');
 
 $section->addInput(new Form_Select(
 	'defaultgw6',
 	'Default gateway IPv6',
 	$pconfig['defaultgw6'],
 	$dflts['v6']
-))->setHelp('Select the gateway or gatewaygroup to use as the default gateway.');
+))->setHelp('Select a gateway or failover gateway group to use as the default gateway.');
 
 $form->add($section);
 print $form;

@@ -54,15 +54,13 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
 		print('<div><pre>');
 		switch ($_POST['rebootmode']) {
 			case 'FSCKReboot':
-				if (php_uname('m') != 'arm') {
+				if ((php_uname('m') != 'arm') && !is_module_loaded("zfs.ko")) {
 					mwexec('/sbin/nextboot -e "pfsense.fsck.force=5"');
 					system_reboot();
 				}
 				break;
 			case 'Reroot':
-				if (!is_module_loaded("zfs.ko")) {
-					system_reboot_sync(true);
-				}
+				system_reboot_sync(true);
 				break;
 			case 'Reboot':
 				system_reboot();
@@ -122,14 +120,14 @@ $form = new Form(false);
 
 $help = 'Select "Normal reboot" to reboot the system immediately';
 $modeslist = ['Reboot' => 'Normal reboot'];
-if (php_uname('m') != 'arm') {
+if ((php_uname('m') != 'arm') && !is_module_loaded("zfs.ko")) {
         $help .= ', "Reboot with Filesystem Check" to reboot and run filesystem check';
         $modeslist += ['FSCKReboot' => 'Reboot with Filesystem Check'];
-        }
-if (!is_module_loaded("zfs.ko")) {
-	$help .= ' or "Reroot" to stop processes, remount disks and re-run startup sequence';
-	$modeslist += ['Reroot' => 'Reroot'];
-	} 
+}
+
+$help .= ', or "Reroot" to stop processes, remount disks and re-run startup sequence';
+$modeslist += ['Reroot' => 'Reroot'];
+
 $help .= '.';
 
 $section = new Form_Section('Select reboot method');

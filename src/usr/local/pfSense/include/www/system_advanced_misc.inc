@@ -32,6 +32,15 @@ function getSystemAdvancedMisc($json = false) {
 	global $config;
 
 	$pconfig = array();
+
+	$pconfig['available_kernel_memory'] = get_single_sysctl("vm.kmem_map_free");
+
+	/* Adjust available kernel memory to account for existing RAM disks
+	 * https://redmine.pfsense.org/issues/10420 */
+	if (isset($config['system']['use_mfs_tmpvar'])) {
+		$pconfig['available_kernel_memory'] += (int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'"));
+	}
+
 	$pconfig['proxyurl'] = $config['system']['proxyurl'];
 	$pconfig['proxyport'] = $config['system']['proxyport'];
 	$pconfig['proxyuser'] = $config['system']['proxyuser'];
@@ -51,16 +60,8 @@ function getSystemAdvancedMisc($json = false) {
 	$pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 	$pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 	$pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid']);
-	$pconfig['available_kernel_memory'] = get_single_sysctl("vm.kmem_map_free");
 	$pconfig['pti'] = get_single_sysctl('vm.pmap.pti');
 	$pconfig['mds']= get_single_sysctl('hw.mds_disable_state');
-
-	/* Adjust available kernel memory to account for existing RAM disks
-	 * https://redmine.pfsense.org/issues/10420 */
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		/* Get current RAM disk sizes */
-		$pconfig['available_kernel_memory'] += ((int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'")));
-	}
 
 	$pconfig['powerd_ac_mode'] = "hadp";
 	if (!empty($config['system']['powerd_ac_mode'])) {
@@ -110,6 +111,14 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		'coretemp' => gettext("Intel Core* CPU on-die thermal sensor"),
 		'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor")
 	);
+
+	$post['available_kernel_memory'] = get_single_sysctl("vm.kmem_map_free");
+
+	/* Adjust available kernel memory to account for existing RAM disks
+	 * https://redmine.pfsense.org/issues/10420 */
+	if (isset($config['system']['use_mfs_tmpvar'])) {
+		$post['available_kernel_memory'] += (int) trim(exec("/bin/df -k /tmp /var | /usr/bin/awk '/\/dev\/md/ {sum += \$2 * 1024} END {print sum}'"));
+	}
 
 	if (!empty($post['crypto_hardware']) && !array_key_exists($post['crypto_hardware'], $crypto_modules)) {
 		$input_errors[] = gettext("Please select a valid Cryptographic Accelerator.");
@@ -319,6 +328,14 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			}
 		}
 
+		if (isset($post['captiveportalbackup'])) {
+			if (($post['captiveportalbackup'] > 0) && ($post['captiveportalbackup'] <= 24)) {
+				$config['system']['captiveportalbackup'] = intval($post['captiveportalbackup']);
+			} else {
+				unset($config['system']['captiveportalbackup']);
+			}
+		}
+
 		// Add/Remove RAM disk periodic backup cron jobs according to settings and installation type.
 		// Remove the cron jobs on full install if not using RAM disk.
 		// Add the cron jobs on all others if the periodic backup option is set.  Otherwise the cron job is removed.
@@ -332,6 +349,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}", '*', '*', '*', 'root', false);
 			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}", '*', '*', '*', 'root', false);
 			install_cron_job("/etc/rc.backup_logs.sh", ($config['system']['logsbackup'] > 0), $minute="0", "*/{$config['system']['logsbackup']}", '*', '*', '*', 'root', false);
+			install_cron_job("/etc/rc.backup_captiveportal.sh", ($config['system']['captiveportalbackup'] > 0), $minute="0", "*/{$config['system']['captiveportalbackup']}", '*', '*', '*', 'root', false);
 		}
 
 		write_config("Miscellaneous Advanced Settings saved");
@@ -357,7 +375,6 @@ function saveSystemAdvancedMisc($post, $json = false) {
 
 	// Compose the structure to retuen
 	$rv['input_errors'] = $input_errors;
-	$post['available_kernel_memory'] = get_single_sysctl("vm.kmem_map_free");
 	$post['pti'] = get_single_sysctl('vm.pmap.pti');
 	$post['mds'] = get_single_sysctl('hw.mds_disable_state');
 

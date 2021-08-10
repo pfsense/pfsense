@@ -50,10 +50,8 @@ if ($_REQUEST['generatekey']) {
 
 init_config_arr(array('ipsec', 'phase1'));
 init_config_arr(array('ipsec', 'phase2'));
-init_config_arr(array('ipsec', 'vtimaps', 'item'));
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
-$a_vtimaps = &$config['ipsec']['vtimaps']['item'];
 
 if (is_numericint($_REQUEST['p1index'])) {
 	$p1index = $_REQUEST['p1index'];
@@ -63,94 +61,102 @@ if (is_numericint($_REQUEST['dup'])) {
 	$p1index = $_REQUEST['dup'];
 }
 
-if (isset($p1index) && $a_phase1[$p1index]) {
+$p1 = null;
+if (!empty($_REQUEST['ikeid'])) {
+	foreach($a_phase1 as & $phase1) {
+		if ($phase1['ikeid'] == $_REQUEST['ikeid']) {
+			$p1 =& $phase1;
+		}
+	}
+} elseif (isset($p1index) && $a_phase1[$p1index]) {
+	$p1 =& $a_phase1[$p1index];
+}
+
+if ($p1) {
 	// don't copy the ikeid on dup
 	if (!isset($_REQUEST['dup']) || !is_numericint($_REQUEST['dup'])) {
-		$pconfig['ikeid'] = $a_phase1[$p1index]['ikeid'];
+		$pconfig['ikeid'] = $p1['ikeid'];
 	}
 
-	$old_ph1ent = $a_phase1[$p1index];
+	$old_ph1ent = $p1;
 
-	$pconfig['disabled'] = isset($a_phase1[$p1index]['disabled']);
+	$pconfig['disabled'] = isset($p1['disabled']);
 
-	if ($a_phase1[$p1index]['interface']) {
-		$pconfig['interface'] = $a_phase1[$p1index]['interface'];
+	if ($p1['interface']) {
+		$pconfig['interface'] = $p1['interface'];
 	} else {
 		$pconfig['interface'] = "wan";
 	}
 
-	list($pconfig['remotenet'], $pconfig['remotebits']) = explode("/", $a_phase1[$p1index]['remote-subnet']);
+	list($pconfig['remotenet'], $pconfig['remotebits']) = explode("/", $p1['remote-subnet']);
 
-	if (isset($a_phase1[$p1index]['mobile'])) {
+	if (isset($p1['mobile'])) {
 		$pconfig['mobile'] = 'true';
 	} else {
-		$pconfig['remotegw'] = $a_phase1[$p1index]['remote-gateway'];
-		$pconfig['ikeport'] = $a_phase1[$p1index]['ikeport'];
-		$pconfig['nattport'] = $a_phase1[$p1index]['nattport'];
+		$pconfig['remotegw'] = $p1['remote-gateway'];
+		$pconfig['ikeport'] = $p1['ikeport'];
+		$pconfig['nattport'] = $p1['nattport'];
 	}
 
-	if (empty($a_phase1[$p1index]['iketype'])) {
+	if (empty($p1['iketype'])) {
 		$pconfig['iketype'] = "ikev1";
 	} else {
-		$pconfig['iketype'] = $a_phase1[$p1index]['iketype'];
+		$pconfig['iketype'] = $p1['iketype'];
 	}
-	$pconfig['mode'] = $a_phase1[$p1index]['mode'];
-	$pconfig['protocol'] = $a_phase1[$p1index]['protocol'];
-	$pconfig['myid_type'] = $a_phase1[$p1index]['myid_type'];
-	$pconfig['myid_data'] = $a_phase1[$p1index]['myid_data'];
-	$pconfig['peerid_type'] = $a_phase1[$p1index]['peerid_type'];
-	$pconfig['peerid_data'] = $a_phase1[$p1index]['peerid_data'];
-	$pconfig['encryption'] = $a_phase1[$p1index]['encryption'];
-	$pconfig['lifetime'] = $a_phase1[$p1index]['lifetime'];
-	$pconfig['rekey_time'] = $a_phase1[$p1index]['rekey_time'];
-	$pconfig['reauth_time'] = $a_phase1[$p1index]['reauth_time'];
-	$pconfig['rand_time'] = $a_phase1[$p1index]['rand_time'];
-	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
+	$pconfig['mode'] = $p1['mode'];
+	$pconfig['protocol'] = $p1['protocol'];
+	$pconfig['myid_type'] = $p1['myid_type'];
+	$pconfig['myid_data'] = $p1['myid_data'];
+	$pconfig['peerid_type'] = $p1['peerid_type'];
+	$pconfig['peerid_data'] = $p1['peerid_data'];
+	$pconfig['encryption'] = $p1['encryption'];
+	$pconfig['lifetime'] = $p1['lifetime'];
+	$pconfig['rekey_time'] = $p1['rekey_time'];
+	$pconfig['reauth_time'] = $p1['reauth_time'];
+	$pconfig['rand_time'] = $p1['rand_time'];
+	$pconfig['authentication_method'] = $p1['authentication_method'];
 
 	if (($pconfig['authentication_method'] == "pre_shared_key") ||
 	    ($pconfig['authentication_method'] == "xauth_psk_server")) {
-		$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
+		$pconfig['pskey'] = $p1['pre-shared-key'];
 	} else {
-		$pconfig['pkcs11certref'] = $a_phase1[$p1index]['pkcs11certref'];
-		$pconfig['pkcs11pin'] = $a_phase1[$p1index]['pkcs11pin'];
-		$pconfig['certref'] = $a_phase1[$p1index]['certref'];
-		$pconfig['caref'] = $a_phase1[$p1index]['caref'];
+		$pconfig['pkcs11certref'] = $p1['pkcs11certref'];
+		$pconfig['pkcs11pin'] = $p1['pkcs11pin'];
+		$pconfig['certref'] = $p1['certref'];
+		$pconfig['caref'] = $p1['caref'];
 	}
 
-	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
-	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];
-	$pconfig['mobike'] = $a_phase1[$p1index]['mobike'];
+	$pconfig['descr'] = $p1['descr'];
+	$pconfig['nat_traversal'] = $p1['nat_traversal'];
+	$pconfig['mobike'] = $p1['mobike'];
 
-	if (isset($a_phase1[$p1index]['gw_duplicates'])) {
+	if (isset($p1['gw_duplicates'])) {
 		$pconfig['gw_duplicates'] = true;
 	}
 
-	$pconfig['closeaction'] = $a_phase1[$p1index]['closeaction'];
+	$pconfig['startaction'] = $p1['startaction'];
+	$pconfig['closeaction'] = $p1['closeaction'];
 
-	if (isset($a_phase1[$p1index]['responderonly'])) {
-		$pconfig['responderonly'] = true;
-	}
-
-	if ($a_phase1[$p1index]['dpd_delay'] && $a_phase1[$p1index]['dpd_maxfail']) {
+	if ($p1['dpd_delay'] && $p1['dpd_maxfail']) {
 		$pconfig['dpd_enable'] = true;
-		$pconfig['dpd_delay'] = $a_phase1[$p1index]['dpd_delay'];
-		$pconfig['dpd_maxfail'] = $a_phase1[$p1index]['dpd_maxfail'];
+		$pconfig['dpd_delay'] = $p1['dpd_delay'];
+		$pconfig['dpd_maxfail'] = $p1['dpd_maxfail'];
 	}
 
-	if (isset($a_phase1[$p1index]['prfselect_enable'])) {
+	if (isset($p1['prfselect_enable'])) {
 		$pconfig['prfselect_enable'] = 'yes';
 	}
 
-	if (isset($a_phase1[$p1index]['splitconn'])) {
+	if (isset($p1['splitconn'])) {
 		$pconfig['splitconn'] = true;
 	}
 
-	if (isset($a_phase1[$p1index]['tfc_enable'])) {
+	if (isset($p1['tfc_enable'])) {
 		$pconfig['tfc_enable'] = true;
 	}
 
-	if (isset($a_phase1[$p1index]['tfc_bytes'])) {
-		$pconfig['tfc_bytes'] = $a_phase1[$p1index]['tfc_bytes'];
+	if (isset($p1['tfc_bytes'])) {
+		$pconfig['tfc_bytes'] = $p1['tfc_bytes'];
 	}
 } else {
 	/* defaults */
@@ -296,6 +302,13 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Rand Time must be an integer.");
 	}
 
+	if (!empty($pconfig['startaction']) && !array_key_exists($pconfig['startaction'], $ipsec_startactions)) {
+		$input_errors[] = gettext("Invalid Child SA Start Action.");
+	} elseif ($pconfig['mobile'] && !empty($pconfig['startaction'])) {
+		/* Start action cannot be set for mobile tunnels */
+		$input_errors[] = gettext("Child SA Start Action cannot be set for Mobile Phase 1 entries.");
+	}
+
 	if (!empty($pconfig['closeaction']) && !array_key_exists($pconfig['closeaction'], $ipsec_closeactions)) {
 		$input_errors[] = gettext("Invalid Child SA Close Action.");
 	}
@@ -330,44 +343,28 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("IKE and NAT-T port numbers must be different.");
 	}
 
-	if ($pconfig['remotegw'] && is_ipaddr($pconfig['remotegw']) && !isset($pconfig['disabled'])) {
-		$t = 0;
+	if ($pconfig['remotegw'] && !isset($pconfig['disabled'])) {
 		foreach ($a_phase1 as $ph1tmp) {
-			if ($p1index != $t) {
+			if ($p1['ikeid'] != $ph1tmp['ikeid']) {
 				$tremotegw = $pconfig['remotegw'];
 				if (($ph1tmp['remote-gateway'] == $tremotegw) && ($ph1tmp['remote-gateway'] != '0.0.0.0') &&
 				    ($ph1tmp['remote-gateway'] != '::') && !isset($ph1tmp['disabled']) &&
-				    (!isset($pconfig['gw_duplicates']) || !isset($ph1tmp['gw_duplicates']))) {
+				    (!isset($pconfig['gw_duplicates']) || !isset($ph1tmp['gw_duplicates']) ||
+				    !is_ipaddr($tremotegw))) {
 					$input_errors[] = sprintf(gettext('The remote gateway "%1$s" is already used by phase1 "%2$s".'), $tremotegw, $ph1tmp['descr']);
 				}
 			}
-			$t++;
 		}
 	}
 
 	if (($pconfig['remotegw'] == '0.0.0.0') || ($pconfig['remotegw'] == '::')) {
-		if (!isset($pconfig['responderonly'])) {
-			$input_errors[] = gettext('The remote gateway "0.0.0.0" or "::" address can only be used with "Responder Only".');
+		if ($pconfig['startaction'] != 'none') {
+			$input_errors[] = gettext('The remote gateway "0.0.0.0" or "::" address can only be used with a Child SA Start Action of "None (Responder Only)".');
 		}
 		if ($pconfig['peerid_type'] == "peeraddress") {
 			$input_errors[] = gettext('The remote gateway "0.0.0.0" or "::" address can not be used with IP address peer identifier.');
 		}
 
-	}
-
-	if (($pconfig['iketype'] == "ikev1") && is_array($a_phase2) && (count($a_phase2))) {
-		foreach ($a_phase2 as $phase2) {
-			if ($phase2['ikeid'] == $pconfig['ikeid']) {
-				if (($pconfig['protocol'] == "inet") && ($phase2['mode'] == "tunnel6")) {
-					$input_errors[] = gettext("There is a Phase 2 using IPv6, cannot use IPv4.");
-					break;
-				}
-				if (($pconfig['protocol'] == "inet6") && ($phase2['mode'] == "tunnel")) {
-					$input_errors[] = gettext("There is a Phase 2 using IPv4, cannot use IPv6.");
-					break;
-				}
-			}
-		}
 	}
 
 	/* My identity */
@@ -533,28 +530,6 @@ if ($_POST['save']) {
 			$ph1ent['mode'] = $pconfig['mode'];
 		}
 
-		// re-create vtimaps after IKE version switching
-		$vtisubnet_spec = ipsec_vti($ph1ent, true);
-		if ((($pconfig['iketype'] != $a_phase1[$p1index]['iketype']) ||
-		    (isset($pconfig['splitconn']) != isset($a_phase1[$p1index]['splitconn']))) &&
-		    !empty($vtisubnet_spec) && is_array($vtisubnet_spec)) {
-			foreach ($a_vtimaps as $id => $vtimap) {
-				if ($vtimap['reqid'] == $ph1ent['ikeid']) {
-					unset($a_vtimaps[$id]);
-				}
-			}
-			if (($pconfig['iketype'] == 'ikev1') ||
-			    isset($pconfig['splitconn'])) {
-				foreach ($vtisubnet_spec as $idx => $vtisub) {
-					$a_vtimaps[] = ipsec_create_vtimap(
-					    $ph1ent['ikeid'], $idx);
-				}
-			} else {
-				$a_vtimaps[] = ipsec_create_vtimap(
-				    $ph1ent['ikeid'], 0);
-			}
-		}
-
 		$ph1ent['disabled'] = $pconfig['disabled'] ? true : false;
 		$ph1ent['interface'] = $pconfig['interface'];
 		/* if the remote gateway changed and the interface is not WAN then remove route */
@@ -610,18 +585,13 @@ if ($_POST['save']) {
 			unset($ph1ent['gw_duplicates']);
 		}
 
+		$ph1ent['startaction'] = $pconfig['startaction'];
 		$ph1ent['closeaction'] = $pconfig['closeaction'];
 
 		if (isset($pconfig['prfselect_enable'])) {
 			$ph1ent['prfselect_enable'] = 'yes';
 		} else {
 			unset($ph1ent['prfselect_enable']);
-		}
-
-		if (isset($pconfig['responderonly'])) {
-			$ph1ent['responderonly'] = true;
-		} else {
-			unset($ph1ent['responderonly']);
 		}
 
 		if (isset($pconfig['dpd_enable'])) {
@@ -648,8 +618,8 @@ if ($_POST['save']) {
 			$ph1ent['ikeid'] = ipsec_ikeid_next();
 		}
 
-		if (isset($p1index) && $a_phase1[$p1index]) {
-			$a_phase1[$p1index] = $ph1ent;
+		if ($p1 && !isset($_REQUEST['dup'])) {
+			$p1 = $ph1ent;
 		} else {
 			$a_phase1[] = $ph1ent;
 		}
@@ -690,12 +660,16 @@ function build_interface_list() {
 }
 
 function build_auth_method_list() {
-	global $p1_authentication_methods, $pconfig;
+	global $p1_authentication_methods, $pconfig, $config;
 
 	$list = array();
 
 	foreach ($p1_authentication_methods as $method_type => $method_params) {
 		if (!$pconfig['mobile'] && $method_params['mobile']) {
+			continue;
+		}
+		if (!isset($config['ipsec']['pkcs11support']) &&
+		    ($method_type == 'pkcs11')) {
 			continue;
 		}
 
@@ -789,12 +763,30 @@ $form = new Form();
 
 $section = new Form_Section('General Information');
 
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
+
 $section->addInput(new Form_Checkbox(
 	'disabled',
 	'Disabled',
 	'Set this option to disable this phase1 without removing it from the list. ',
 	$pconfig['disabled']
 ));
+
+if (!empty($pconfig['ikeid'])) {
+	$section->addInput(new Form_StaticText(
+		'IKE ID',
+		$pconfig['ikeid']
+	));
+}
+
+$form->add($section);
+
+$section = new Form_Section('IKE Endpoint Configuration');
 
 $section->addInput(new Form_Select(
 	'iketype',
@@ -827,37 +819,13 @@ if (!$pconfig['mobile']) {
 		$pconfig['remotegw']
 	))->setHelp('Enter the public IP address or host name of the remote gateway.%1$s%2$s%3$s',
 	    '<div class="infoblock">',
-	    sprint_info_box(gettext('Use \'0.0.0.0\' to allow connections from any IPv4 address or \'::\' ' . 
-	    'to allow connections from any IPv6 address.' . '<br/>' . 'Responder Only must be set and ' . 
+	    sprint_info_box(gettext('Use \'0.0.0.0\' to allow connections from any IPv4 address or \'::\' ' .
+	    'to allow connections from any IPv6 address.' . '<br/>' . 'Child SA Start Action must be set to None and ' .
 	    'Peer IP Address cannot be used for Remote Identifier.'), 'info', false),
 	    '</div>');
-	$group->add(new Form_Input(
-	    'ikeport',
-	    'Remote IKE Port',
-	    'number',
-	    $pconfig['ikeport'],
-	    ['min' => 1, 'max' => 65535]
-	))->setHelp('UDP port for IKE on the remote gateway. Leave empty for default automatic behavior (500/4500).');
-	$group->add(new Form_Input(
-	    'nattport',
-	    'Remote NAT-T Port',
-	    'number',
-	    $pconfig['nattport'],
-	    ['min' => 1, 'max' => 65535]
-	))->setHelp('UDP port for NAT-T on the remote gateway.%1$s%2$s%3$s',
-	    '<div class="infoblock">',
-	    sprint_info_box(gettext('If the IKE port is empty and NAT-T contains a value, the tunnel will use only NAT-T.'),
-	    'info', false),
-	    '</div>');
+
 	$section->add($group);
 }
-
-$section->addInput(new Form_Input(
-	'descr',
-	'Description',
-	'text',
-	$pconfig['descr']
-))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $form->add($section);
 
@@ -1077,12 +1045,14 @@ $form->add($section);
 
 $section = new Form_Section('Advanced Options');
 
-$section->addInput(new Form_Checkbox(
-	'responderonly',
-	'Responder Only',
-	'Enable this option to never initiate this connection from this side, only respond to incoming requests.',
-	$pconfig['responderonly']
-));
+if (!$pconfig['mobile']) {
+	$section->addInput(new Form_Select(
+		'startaction',
+		'Child SA Start Action',
+		$pconfig['startaction'],
+		$ipsec_startactions
+	))->setHelp('Set this option to force specific initiation/responder behavior for child SA (P2) entries');
+}
 
 $section->addInput(new Form_Select(
 	'closeaction',
@@ -1129,6 +1099,29 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['prfselect_enable']
 ))->setHelp('Manual PRF selection is typically not required, but can be useful in combination with AEAD Encryption Algorithms such as AES-GCM');
 
+$group = new Form_Group('Custom IKE/NAT-T Ports');
+
+$group->add(new Form_Input(
+    'ikeport',
+    'Remote IKE Port',
+    'number',
+    $pconfig['ikeport'],
+    ['min' => 1, 'max' => 65535]
+))->setHelp('UDP port for IKE on the remote gateway. Leave empty for default automatic behavior (500/4500).');
+$group->add(new Form_Input(
+    'nattport',
+    'Remote NAT-T Port',
+    'number',
+    $pconfig['nattport'],
+    ['min' => 1, 'max' => 65535]
+))->setHelp('UDP port for NAT-T on the remote gateway.%1$s%2$s%3$s',
+    '<div class="infoblock">',
+    sprint_info_box(gettext('If the IKE port is empty and NAT-T contains a value, the tunnel will use only NAT-T.'),
+    'info', false),
+    '</div>');
+
+$section->add($group);
+
 /* FreeBSD doesn't yet have TFC support. this is ready to go once it does
 https://redmine.pfsense.org/issues/4688
 
@@ -1169,7 +1162,16 @@ $section->addInput(new Form_Input(
 	$pconfig['dpd_maxfail']
 ))->setHelp('Number of consecutive failures allowed before disconnect. ');
 
-if (isset($p1index) && $a_phase1[$p1index]) {
+if ((!empty($_REQUEST['ikeid']) &&
+    $p1['ikeid']) &&
+    (!isset($_REQUEST['dup']))) {
+	$form->addGlobal(new Form_Input(
+		'ikeid',
+		null,
+		'hidden',
+		$p1['ikeid']
+	));
+} elseif (isset($p1index) && $a_phase1[$p1index]) {
 	$form->addGlobal(new Form_Input(
 		'p1index',
 		null,

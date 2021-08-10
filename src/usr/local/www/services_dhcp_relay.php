@@ -41,6 +41,7 @@ if (empty($config['dhcrelay']['interface'])) {
 
 $pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
 $pconfig['server'] = isset($config['dhcrelay']['server']) ? $config['dhcrelay']['server'] : null;
+$pconfig['carpstatusvip'] = isset($config['dhcrelay']['carpstatusvip']) ? $config['dhcrelay']['carpstatusvip'] : 'none';
 
 $iflist = array_intersect_key(
 	get_configured_interface_with_descr(),
@@ -54,6 +55,19 @@ $iflist = array_intersect_key(
 		)
 	)
 );
+
+$carpiflist = array_merge(array('none' => 'none'), array_intersect_key(
+       	get_configured_vip_list_with_descr('inet', VIP_CARP),
+	array_flip(
+		array_filter(
+			array_keys(get_configured_vip_list_with_descr('inet', VIP_CARP)),
+			function($if) {
+				return (get_interface_ip($if) &&
+				    !is_pseudo_interface(convert_friendly_interface_to_real_interface_name($if)));
+			}
+		)
+	)
+));
 
 /*   set the enabled flag which will tell us if DHCP server is enabled
  *   on any interface.   We will use this to disable dhcp-relay since
@@ -121,6 +135,7 @@ if ($_POST) {
 		}
 		$config['dhcrelay']['agentoption'] = $_POST['agentoption'] ? true : false;
 		$config['dhcrelay']['server'] = $svrlist;
+		$config['dhcrelay']['carpstatusvip'] = $_POST['carpstatusvip'];
 
 		write_config("DHCP Relay settings saved");
 
@@ -156,7 +171,7 @@ $section = new Form_Section('DHCP Relay Configuration');
 $section->addInput(new Form_Checkbox(
 	'enable',
 	'Enable',
-	'Enable DHCP relay on interface',
+	'Enable DHCP Relay on interface',
 	$pconfig['enable']
 ));
 
@@ -168,13 +183,21 @@ $section->addInput(new Form_Select(
 	true
 ))->setHelp('Interfaces without an IP address will not be shown.');
 
+$section->addInput(new Form_Select(
+	'carpstatusvip',
+	'*CARP Status VIP',
+	$pconfig['carpstatusvip'],
+	$carpiflist,
+))->setHelp('Used to determine the HA MASTER/BACKUP status. DHCP Relay will be stopped when the ' .
+	    'chosen VIP is in BACKUP status, and started in MASTER status.');
+
 $section->addInput(new Form_Checkbox(
 	'agentoption',
 	'',
 	'Append circuit ID and agent ID to requests',
 	$pconfig['agentoption']
 ))->setHelp(
-	'If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.',
+	'If this is checked, the DHCP Relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.',
 	$g['product_label']
 	);
 
@@ -225,6 +248,7 @@ print $form;
 			}
 
 			hideCheckbox('agentoption', hide);
+			hideInput('carpstatusvip', hide);
 			hideClass('repeatable', hide);
 		}
 

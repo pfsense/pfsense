@@ -6358,7 +6358,18 @@ function upgrade_212_to_213() {
 			$ph1ent['lifetime'] = $ph1ent['over_time'] + max($ph1ent['rekey_time'], $ph1ent['reauth_time']);
 		}
 
-		unset($ph1ent['reauth_enable'], $ph1ent['rekey_enable'], $ph1ent['margintime'], $ph1ent['over_time']);
+		if (isset($ph1ent['reauth_enable'])) {
+			unset($ph1ent['reauth_enable']);
+		}
+		if (isset($ph1ent['rekey_enable'])) {
+			unset($ph1ent['rekey_enable']);
+		}
+		if (isset($ph1ent['margintime'])) {
+			unset($ph1ent['margintime']);
+		}
+		if (isset($ph1ent['over_time'])) {
+			unset($ph1ent['over_time']);
+		}
 	}
 }
 
@@ -6368,6 +6379,185 @@ function upgrade_213_to_214() {
 
 	if (isset($config['vxlans'])) {
 		unset($config['vxlans']);
+	}
+}
+
+/* WireGuard support was removed */
+function upgrade_214_to_215() {
+	global $config;
+
+	if (isset($config['wireguard'])) {
+		unset($config['wireguard']);
+	}
+}
+
+/* Fix VTI interface numbers */
+function upgrade_215_to_216() {
+	global $config;
+
+	init_config_arr(array('ipsec', 'vtimaps', 'item'));
+
+	if (count($config['ipsec']['vtimaps']['item']) == 0) {
+		return;
+	}
+
+	$iflist = get_configured_interface_list_by_realif(true);
+
+	foreach ($config['ipsec']['vtimaps']['item'] as $idx => $vtimap) {
+		if ($vtimap['ifnum'] <= 32767) {
+			continue;
+		}
+
+		$new_vtimap = ipsec_create_vtimap($vtimap['reqid'],
+		    $vtimap['index']);
+
+		/*
+		 * NULL means 32767 limit was reached.  It should never hit
+		 * this
+		 */
+		if ($new_vtimap == NULL) {
+			break;
+		}
+
+		$old_if = 'ipsec' . $vtimap['ifnum'];
+
+		/* Interface is assigned */
+		if (isset($iflist[$old_if])) {
+			$config['interfaces'][$iflist[$old_if]]['if'] =
+			    'ipsec' . $new_vtimap['ifnum'];
+		}
+
+		$config['ipsec']['vtimaps']['item'][$idx] = $new_vtimap;
+	}
+}
+
+/*
+ * Child SA Start Action has replaced the Responder Only option. Update P1
+ * to match.
+ * https://redmine.pfsense.org/issues/11576
+ */
+function upgrade_216_to_217() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as & $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+		if (isset($ph1ent['responderonly'])) {
+			$ph1ent['startaction'] = 'none';
+			unset($ph1ent['responderonly']);
+		}
+	}
+}
+
+/*
+ * Disable PC/SC Smart Card Daemon if PKCS#11 authentication is not used
+ * https://redmine.pfsense.org/issues/11933
+ */
+function upgrade_217_to_218() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if (empty($ph1ent)) {
+			continue;
+		}
+		if (($ph1ent['authentication_method'] == 'pkcs11') &&
+		    !isset($ph1ent['disabled'])) {
+			$config['ipsec']['pkcs11support'] = true;
+			break;
+		}
+	}
+}
+
+/*
+ * Convert VTI interface names to new format
+ */
+function upgrade_218_to_219() {
+	global $config;
+	init_config_arr(array('ipsec', 'phase1'));
+	init_config_arr(array('ipsec', 'phase2'));
+	init_config_arr(array('ipsec', 'vtimaps', 'item'));
+
+	/* Deprecated method.
+	 * $ipsecifnum = get_ipsecifnum($ikeid, $idx);
+	 * locates and returns an ipsecifnum in the config.
+	 */
+	function upgrade219_get_ipsecifnum($ikeid, $idx) {
+		global $config;
+		foreach ($config['ipsec']['vtimaps']['item'] as $vtimap) {
+			if (($vtimap['reqid'] == $ikeid) &&
+			    ($vtimap['index'] == $idx)) {
+				return $vtimap['ifnum'];
+			}
+		}
+		return false;
+	}
+
+	/* If IPsec is disabled or there are no P1 or P2 entries, there cannot
+	 * be any current assignments, so bail early */
+	if (!ipsec_enabled() ||
+	    empty($config['ipsec']['phase1']) ||
+	    empty($config['ipsec']['phase2'])) {
+		return false;
+	}
+
+	/* Make an associative array with old name as key and new name as value for all VTI tunnels */
+	$ipsecifs = array();
+	foreach ($config['ipsec']['phase1'] as $ph1ent) {
+		if (empty($ph1ent) || !is_array($ph1ent)) {
+			continue;
+		}
+		$ifent = array();
+		/* If there is data here, then it's a VTI tunnel */
+		$vtisubnet_spec = ipsec_vti($ph1ent, true);
+		if (!$vtisubnet_spec || !is_array($vtisubnet_spec)) {
+			/* Not VTI, so skip it. */
+			continue;
+		}
+		if (!isset($ph1ent['mobile']) && ($ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn']))) {
+			foreach ($vtisubnet_spec as $idx => $vtisub) {
+				/* Determine old name */
+				$old = "ipsec" . upgrade219_get_ipsecifnum($ph1ent['ikeid'], $idx);
+				/* Determine new name */
+				$new = ipsec_get_ifname($ph1ent, $vtisub['reqid']);
+				$ipsecifs[$old] = $new;
+			}
+		} else {
+			/* For IKEv2, only create one interface with additional addresses as aliases */
+			/* Determine old name */
+			$old = "ipsec" . upgrade219_get_ipsecifnum($ph1ent['ikeid'], 0);
+			/* Determine new name */
+			$new = ipsec_get_ifname($ph1ent);
+			$ipsecifs[$old] = $new;
+		}
+	}
+
+	/* If there are no VTI interfaces, we have nothing to do */
+	if (empty($ipsecifs)) {
+		return null;
+	}
+
+	foreach ($config['interfaces'] as $ifname => &$ifcfg) {
+		/* Check current interface assignments and see if any match a value we want */
+		if (array_key_exists($ifcfg['if'], $ipsecifs)) {
+			/* Update assignment to new name */
+			$ifcfg['if'] = $ipsecifs[$ifcfg['if']];
+		}
+	}
+	unset($config['ipsec']['vtimaps']);
+}
+
+/*
+ * Ensure the ACB cron job is installed after upgrade if ACB is enabled
+ * If the cron job already exists, no harm is done
+ */
+function upgrade_219_to_220() {
+	global $config;
+
+	init_config_arr(array('system', 'acb'));
+
+	if ($config['system']['acb']['enable'] == "yes" && file_exists("/usr/local/sbin/acbupload.php")) {
+		install_cron_job("/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/acbupload.php", true, "*");
 	}
 }
 

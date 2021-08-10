@@ -814,7 +814,8 @@ function is_ldap_peer_ca($caref) {
 		return;
 	}
 	foreach ($config['system']['authserver'] as $authserver) {
-		if ($authserver['ldap_caref'] == $caref) {
+		if (($authserver['ldap_caref'] == $caref) &&
+		    ($authserver['ldap_urltype'] != 'Standard TCP')) {
 			return true;
 		}
 	}
@@ -922,6 +923,15 @@ function is_captiveportal_cert($certref) {
 	return false;
 }
 
+function is_unbound_cert($certref) {
+	global $config;
+	if (($config['unbound']['sslcertref'] == $certref) &&
+	    isset($config['unbound']['enablessl']) &&
+	    isset($config['unbound']['enable'])) {
+		return true;
+	}
+}
+
 function cert_in_use($certref) {
 
 	return (is_webgui_cert($certref) ||
@@ -930,6 +940,7 @@ function cert_in_use($certref) {
 		is_openvpn_client_cert($certref) ||
 		is_ipsec_cert($certref) ||
 		is_captiveportal_cert($certref) ||
+		is_unbound_cert($certref) ||
 		is_package_cert($certref));
 }
 
@@ -1426,9 +1437,26 @@ function is_openvpn_server_crl($crlref) {
 	return false;
 }
 
+function is_package_crl($crlref) {
+	$pluginparams = array();
+	$pluginparams['type'] = 'certificates';
+	$pluginparams['event'] = 'used_crl';
+
+	$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
+
+	/* Check if any package is using CRL */
+	foreach ($certificates_used_by_packages as $name => $package) {
+		if (is_array($package['certificatelist'][$crlref]) &&
+		    (count($package['certificatelist'][$crlref]) > 0)) {
+			return true;
+		}
+	}
+}
+
 // Keep this general to allow for future expansion. See cert_in_use() above.
 function crl_in_use($crlref) {
-	return (is_openvpn_server_crl($crlref));
+	return (is_openvpn_server_crl($crlref) ||
+		is_package_crl($crlref));
 }
 
 function is_crl_internal($crl) {
@@ -1573,7 +1601,7 @@ $cert_strict_values = array(
  ******/
 
 function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
-	global $cert_strict_values, $cert_curve_compatible;
+	global $cert_strict_values, $cert_curve_compatible, $curve_compatible_list;
 
 	/* If there is no certificate or private key string, this entry is either
 	 *  invalid or cannot be renewed by this function. */
@@ -1591,6 +1619,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 
 	$subj = cert_get_subject($cert['crt']);
 	$issuer = cert_get_issuer($cert['crt']);
+	$purpose = cert_get_purpose($cert['crt']);
 
 	$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
 	$key_details = openssl_pkey_get_details($res_key);
@@ -1625,21 +1654,18 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 		/* If a serial value is present, this must be a CA */
 		$cert['type'] = 'ca';
 	} elseif (empty($cert['type'])) {
-		/* Assume server certificate if empty & non-CA (e.g. self-signed) */
-		$cert['type'] = 'server';
+		/* Automatically determine certificate type if unset based on purpose value */
+		$cert['type'] = ($purpose['server'] == 'Yes') ? 'server' : 'user';
 	}
 
 	/* Convert the internal certificate type to an openssl.cnf section name */
 	$cert_type = cert_type_config_section($cert['type']);
-	if ($cert['type'] != 'ca') {
-		$cert_type .= '_san';
-	}
 
 	/* Reuse lifetime (convert seconds to days) */
 	$lifetime = (int) round(($cert_details['validTo_time_t'] - $cert_details['validFrom_time_t']) / 86400);
 
 	/* If we are enforcing strict security, then cap the lifetime for server certificates */
-	if (($cert_type == 'server_san') && $strictsecurity &&
+	if (($cert_type == 'server') && $strictsecurity &&
 	    ($lifetime > $cert_strict_values['max_server_cert_lifetime'])) {
 		$lifetime = $cert_strict_values['max_server_cert_lifetime'];
 	}
@@ -1650,9 +1676,16 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 		$sans = cert_add_altname_type($dn['commonName']);
 	}
 
-	/* subjectAltName can be set _only_ via configuration file, so put the
-	 * value into the environment where it will be read from the configuration */
-	putenv("SAN={$sans}");
+	/* Do not setup SANs if the SAN list is empty (e.g. no SAN list and/or
+	 * CN cannot be mapped to a valid SAN type) */
+	if (!empty($sans)) {
+		if ($cert['type'] != 'ca') {
+			$cert_type .= '_san';
+		}
+		/* subjectAltName can be set _only_ via configuration file, so put the
+		 * value into the environment where it will be read from the configuration */
+		putenv("SAN={$sans}");
+	}
 
 	/* If we are enforcing strict security, then check the digest against a
 	 * blacklist of insecure digest methods. */
@@ -2160,30 +2193,35 @@ function cert_print_infoblock($cert) {
 	/* Private key information */
 	if (!empty($cert['prv'])) {
 		$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
-		$key_details = openssl_pkey_get_details($res_key);
-
-		/* Key type (RSA or EC) */
 		$certextinfo .= '<b>' . gettext("Key Type: ") . '</b> ';
-		if ($key_details['type'] == OPENSSL_KEYTYPE_RSA) {
-			/* RSA Key size */
-			$certextinfo .= 'RSA<br/>';
-			$certextinfo .= '<b>' . gettext("Key Size: ") . '</b> ';
-			$certextinfo .= $key_details['bits'] . '<br/>';
-		} else {
-			/* Elliptic curve (EC) key curve name */
-			$certextinfo .= 'ECDSA<br/>';
-			$curve = cert_get_pkey_curve($cert['prv']);
-			if (!empty($curve)) {
-				$certextinfo .= '<b>' . gettext("Elliptic curve name:") . ' </b>';
-				$certextinfo .= $curve . '<br/>';
+		if ($res_key) {
+			$key_details = openssl_pkey_get_details($res_key);
+			/* Key type (RSA or EC) */
+			if ($key_details['type'] == OPENSSL_KEYTYPE_RSA) {
+				/* RSA Key size */
+				$certextinfo .= 'RSA<br/>';
+				$certextinfo .= '<b>' . gettext("Key Size: ") . '</b> ';
+				$certextinfo .= $key_details['bits'] . '<br/>';
+			} else {
+				/* Elliptic curve (EC) key curve name */
+				$certextinfo .= 'ECDSA<br/>';
+				$curve = cert_get_pkey_curve($cert['prv']);
+				if (!empty($curve)) {
+					$certextinfo .= '<b>' . gettext("Elliptic curve name:") . ' </b>';
+					$certextinfo .= $curve . '<br/>';
+				}
 			}
+		} else {
+			$certextinfo .= '<i>' . gettext("Unknown (Key could not be parsed)") . '</i><br/>';
 		}
 	}
 
 	/* Distinguished name (DN) */
 	if (!empty($cert_details['name'])) {
 		$certextinfo .= '<b>' . gettext("DN: ") . '</b> ';
-		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($cert_details['name'], true));
+		/* UTF8 DN support, see https://redmine.pfsense.org/issues/12041 */
+		$certdnstring = preg_replace_callback('/\\\\x([0-9A-F]{2})/', function ($a) { return pack('H*', $a[1]); }, $cert_details['name']);
+		$certextinfo .= htmlspecialchars(cert_escape_x509_chars($certdnstring, true));
 		$certextinfo .= '<br/>';
 	}
 

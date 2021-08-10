@@ -37,6 +37,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("pkg-utils.inc");
 
+$failmsg = "";
 $sendto = "output";
 $start_polling = false;
 $firmwareupdate = false;
@@ -478,7 +479,7 @@ $pkgname_bold = '<b>' . $pkgname . '</b>';
 
 if ($firmwareupdate) {
 	$panel_heading_txt = gettext("Updating System");
-	$pkg_success_txt = gettext('System update successfully completed.');
+	$pkg_success_txt = gettext('Upgrade will continue after the system restarts. Please do not reset or power off.');
 	$pkg_fail_txt = gettext('System update failed!');
 	$pkg_wait_txt = gettext('Please wait while the system update completes.');
 } else if ($pkgmode == 'delete') {
@@ -610,28 +611,71 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 	}
 
 	if (isset($params)) {
-		$upgrade_script = "{$pfsense_upgrade} -y -l " .
-		    "{$logfilename}.txt -p {$sock_file}";
+		$another_instance = true;
+		$log = array();
+		$upgrade_script = "{$pfsense_upgrade} -y -l {$logfilename}.txt -p {$sock_file}";
 
-		for ($idx = 0; $idx < 3; $idx++) {
+		for ($idx = 0; $idx < 30; $idx++) {
 			unlink_if_exists($sock_file);
 			$execpid = mwexec_bg("{$upgrade_script} {$params}");
 
 			// Make sure the upgrade process starts
-			while (posix_kill($execpid, 0) && !file_exists(
-			    $sock_file)) {
-				sleep(1);
+			while (posix_kill($execpid, 0) && !file_exists($sock_file)) {
+				usleep(100000);
 			}
 
-			if (posix_kill($execpid, 0) && file_exists(
-			    $sock_file)) {
+			// Collect log output earlier
+			if (!file_exists($logfilename . '.txt')) {
+				touch($logfilename . '.txt');
+			}
+			$log = file($logfilename . '.txt',
+			    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+			/*
+			 * If it is not running anymore, read return code from
+			 * logfile and decide what to do next
+			 */
+			if (!posix_kill($execpid, 0)) {
+				$last = preg_match('/^__RC=(\d+)/', end($log),
+				    $matches);
+
+				if (!empty($matches[1])) {
+					/*
+					 * return code 75 means another process
+					 * is running.  In this case we try
+					 * again
+					 */
+					if ((int)$matches[1] != 75) {
+						$another_instance = false;
+						break;
+					}
+				}
+			} elseif (file_exists($sock_file)) {
+				$another_instance = false;
 				$start_polling = true;
 				@file_put_contents($gui_pidfile, $execpid);
 				@file_put_contents($gui_mode, $mode);
 				break;
 			}
 		}
+
+		/*
+		 * If pfSense-upgrade failed to run, present log to user
+		 */
+		if ($another_instance) {
+			$failmsg = gettext(sprintf("Another instance of %s " .
+			    "is running.  Try again later"),
+			    $g['product_name'] . "-upgrade");
+		} elseif (!$start_polling) {
+			/* Remove last line, used to provide return code */
+			unset($log[count($log)-1]);
+			$failmsg = implode($log, "\n");
+			/* Make javascript happy not sending any \n */
+			$failmsg = preg_replace("/\n/", '%%', $failmsg);
+			file_put_contents("/tmp/lala", $failmsg, FILE_APPEND);
+		}
 	}
+
 }
 
 $uptodatemsg = gettext("Up to date.");
@@ -679,7 +723,11 @@ function setProgress(barName, percent, transition) {
 
 // Display a success banner
 function show_success() {
-	$('#final').removeClass("alert-info").addClass("alert-success");
+	if (!"<?=$firmwareupdate?>") {
+		$('#final').removeClass("alert-info").addClass("alert-success");
+	} else {
+		$('#final').addClass("alert-warning");
+	}
 	if ("<?=$pkgmode?>" != "reinstallall") {
 		$('#final').html("<?=$pkg_success_txt?>");
 	} else {
@@ -879,6 +927,15 @@ function startCountdown() {
 }
 
 events.push(function() {
+	// If the update has a message to be displayed, do that here
+	var failmsg = "<?=$failmsg?>".replace(/%%/g, "\n");
+
+	if (failmsg.length > 0) {
+		$('#output').html(failmsg)
+		show_failure();
+	}
+
+	// Start polling the system to obtain progress information
 	if ("<?=$start_polling?>") {
 		setTimeout(getLogsStatus, 3000);
 		show_info();

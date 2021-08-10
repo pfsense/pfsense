@@ -194,7 +194,9 @@ function setup_gateways_monitor() {
 		stop_dpinger();
 		return;
 	}
-
+	if (platform_booting()) {
+		echo "Setting up gateway monitors...";
+	}
 	$monitor_ips = array();
 	foreach ($gateways_arr as $gwname => $gateway) {
 		/* Do not monitor if such was requested */
@@ -313,6 +315,9 @@ function setup_gateways_monitor() {
 		if (start_dpinger($gateway) != 0) {
 			log_error(sprintf(gettext("Error starting gateway monitor for %s"), $gateway['name']));
 		}
+	}
+	if (platform_booting()) {
+		echo "done.\n";
 	}
 
 	return;
@@ -810,7 +815,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							}
 							if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
 								foreach ($vtisubnet_spec as $idx => $vtisub) {
-									if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], $idx))) {
+									if ($ifcfg['if'] == ipsec_get_ifname($ph1ent, $vtisub['reqid'])) {
 										// If this specific VTI remote is v4, then we can make a v4 gw
 										if (is_ipaddrv4($vtisub['right'])) {
 											$ctype = "VTIv4";
@@ -818,7 +823,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 									}
 								}
 							} else {
-								if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], 0))) {
+								if ($ifcfg['if'] == ipsec_get_ifname($ph1ent)) {
 									// If any of the VTI remotes are v4, then we can make a v4 gw
 									foreach ($vtisubnet_spec as $vtisub) {
 										if (is_ipaddrv4($vtisub['right'])) {
@@ -832,11 +837,6 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							continue 2;
 						}
 					}
-				} elseif (substr($ifcfg['if'], 0, 2) == "wg") {
-					if (!find_interface_ip($ifcfg['if'])) {
-						continue 2;
-					}
-					$ctype = "WGv4";
 				} elseif ($tunnelif == "gif" || $tunnelif == "gre") {
 					$ctype = "TUNNELv4";
 				}
@@ -958,7 +958,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							}
 							if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
 								foreach ($vtisubnet_spec as $idx => $vtisub) {
-									if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], $idx))) {
+									if ($ifcfg['if'] == ipsec_get_ifname($ph1ent, $vtisub['reqid'])) {
 										// If this specific VTI remote is v6, then we can make a v6 gw
 										if (is_ipaddrv6($vtisub['right'])) {
 											$ctype = "VTIv6";
@@ -966,7 +966,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 									}
 								}
 							} else {
-								if ($ifcfg['if'] == ("ipsec" . get_ipsecifnum($ph1ent['ikeid'], 0))) {
+								if ($ifcfg['if'] == ipsec_get_ifname($ph1ent)) {
 									// If any of the VTI remotes are v6, then we can make a v6 gw
 									foreach ($vtisubnet_spec as $vtisub) {
 										if (is_ipaddrv6($vtisub['right'])) {
@@ -980,11 +980,6 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 							continue 2;
 						}
 					}
-				} elseif (substr($ifcfg['if'], 0, 2) == "wg") {
-					if (!find_interface_ipv6($ifcfg['if'])) {
-						continue 2;
-					}
-					$ctype = "WGv6";
 				} else if ($tunnelif == "gif" || $tunnelif == "gre") {
 					$ctype = "TUNNELv6";
 				}
@@ -1133,7 +1128,8 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 				continue;
 			}
 
-			if ((isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) || $gateways_status[$gwname]['status'] == "none")) {
+			if (isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) ||
+			    ($gateways_status[$gwname]['status'] == "online")) {
 				$set_dfltgwname = $gwname;
 				break;
 			}

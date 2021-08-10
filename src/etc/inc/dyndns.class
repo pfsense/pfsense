@@ -26,52 +26,55 @@
 	 *
 	 * +====================================================+
 	 *  Services Supported:
+	 *    - All-Inkl (all-inkl.com)
+	 *    - Amazon Route 53 (aws.amazon.com)
+	 *    - Azure DNS (azure.microsoft.com)
+	 *    - City Network (citynetwork.se)
+	 *    - Cloudflare (www.cloudflare.com)
+	 *    - Cloudflare IPv6 (www.cloudflare.com)
+	 *    - ClouDNS (www.cloudns.net)
+	 *    - Custom DDNS (any URL)
+	 *    - Custom DDNS IPv6 (any URL)
+	 *    - deSEC (desec.io)
+	 *    - DHS (www.dhs.org)
+	 *    - DNS Made Easy (www.dnsmadeeasy.com)
+	 *    - DNS-O-Matic (dnsomatic.com)
+	 *    - DNSexit (dnsexit.com)
+	 *    - DNSimple (dnsimple.com)
+	 *    - DreamHost DNS (www.dreamhost.com)
+	 *    - DuiaDNS (www.duiadns.net)
+	 *    - DuiaDNS IPv6 (www.duiadns.net)
+	 *    - DY.fi (dy.fi)
 	 *    - DynDns (dyndns.org) [dynamic, static, custom]
-	 *    - No-IP (no-ip.com)
+	 *    - DynS (dyns.org)
+	 *    - Dynv6 (www.dynv6.com)
 	 *    - EasyDNS (easydns.com)
 	 *    - EasyDNS IPv6 (easydns.com)
-	 *    - DHS (www.dhs.org)
-	 *    - HN (hn.org) -- incomplete checking!
-	 *    - DynS (dyns.org)
-	 *    - ZoneEdit (zoneedit.com)
+	 *    - Eurodns (eurodns.com)
 	 *    - FreeDNS API v1 (freedns.afraid.org)
-	 *    - FreeDNS IPv6 API v1 (freedns.afraid.org)
 	 *    - FreeDNS API v2 (freedns.afraid.org)
+	 *    - FreeDNS IPv6 API v1 (freedns.afraid.org)
 	 *    - FreeDNS IPv6 API v2 (freedns.afraid.org)
-	 *    - Loopia (loopia.se)
-	 *    - StaticCling (staticcling.org)
-	 *    - DNSexit (dnsexit.com)
-	 *    - OpenDNS (opendns.com)
-	 *    - Namecheap (namecheap.com)
+	 *    - Gandi LiveDNS (www.gandi.net)
+	 *    - GleSYS (glesys.com)
+	 *    - GoDaddy (www.godaddy.com)
+	 *    - Google Domains (domains.google.com)
+	 *    - GratisDNS (gratisdns.dk)
 	 *    - HE.net (dns.he.net)
 	 *    - HE.net IPv6 (dns.he.net)
 	 *    - HE.net Tunnelbroker IP update (ipv4.tunnelbroker.net)
+	 *    - HN (hn.org) -- incomplete checking!
+	 *    - Hover (www.hover.com)
+	 *    - Loopia (loopia.se)
+	 *    - Namecheap (namecheap.com)
+	 *    - No-IP (no-ip.com)
+	 *    - OpenDNS (opendns.com)
 	 *    - SelfHost (selfhost.de)
-	 *    - Amazon Route 53 (aws.amazon.com)
-	 *    - DNS-O-Matic (dnsomatic.com)
-	 *    - Custom DDNS (any URL)
-	 *    - Custom DDNS IPv6 (any URL)
-	 *    - Cloudflare (www.cloudflare.com)
-	 *    - Cloudflare IPv6 (www.cloudflare.com)
-	 *    - Eurodns (eurodns.com)
-	 *    - Gandi LiveDNS (www.gandi.net)
-	 *    - GratisDNS (gratisdns.dk)
-	 *    - City Network (citynetwork.se)
-	 *    - GleSYS (glesys.com)
-	 *    - DNSimple (dnsimple.com)
-	 *    - Google Domains (domains.google.com)
-	 *    - DNS Made Easy (www.dnsmadeeasy.com)
 	 *    - SPDYN (spdyn.de)
 	 *    - SPDYN IPv6 (spdyn.de)
-	 *    - All-Inkl (all-inkl.com)
-	 *    - DuiaDNS (www.duiadns.net)
-	 *    - DuiaDNS IPv6 (www.duiadns.net)
-	 *    - Hover (www.hover.com)
-	 *    - DreamHost DNS (www.dreamhost.com)
-	 *    - ClouDNS (www.cloudns.net)
-	 *    - GoDaddy (www.godaddy.com)
-	 *    - Azure DNS (azure.microsoft.com)
-	 *    - Dynv6 (www.dynv6.com)
+	 *    - StaticCling (staticcling.org)
+	 *    - Strato (www.strato.de)
+	 *    - ZoneEdit (zoneedit.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -87,55 +90,59 @@
 	 *    - _debug()
 	 *    - _checkIP()
 	 * +----------------------------------------------------+
+	 *  All-Inkl        - Last Tested: 12 November 2016
+	 *  Amazon Route 53 - Last Tested: 04 February 2017
+	 *  Azure DNS       - Last Tested: 08 March 2018
+	 *  City Network    - Last Tested: 13 November 2013
+	 *  Cloudflare      - Last Tested: 05 September 2016
+	 *  Cloudflare IPv6 - Last Tested: 17 July 2016
+	 *  ClouDNS         - Last Tested: 22 August 2017
+	 *  deSEC           - Last Tested: NEVER
+	 *  deSEC IPv6      - Last Tested: NEVER
+	 *  DHS             - Last Tested: 12 July 2005
+	 *  DigitalOcean    - Not Yet Tested
+	 *  DNS Made Easy   - Last Tested: 27 April 2015
+	 *  DNS-O-Matic     - Last Tested: 9 September 2010
+	 *  DNSexit         - Last Tested: 20 July 2008
+	 *  DNSimple        - Last Tested: 09 February 2015
+	 *  DreamHost       - Last Tested: 30 April 2017
+	 *  DreamHost IPv6  - Not Yet Tested
+	 *  DuiaDNS         - Last Tested: 25 November 2016
+	 *  DuiaDNS IPv6    - Last Tested: 25 November 2016
+	 *  DY.fi           - Last Tested: 22 April 2021
+	 *  DynDNS Custom   - Last Tested: NEVER
 	 *  DynDNS Dynamic  - Last Tested: 12 July 2005
 	 *  DynDNS Static   - Last Tested: NEVER
-	 *  DynDNS Custom   - Last Tested: NEVER
-	 *  No-IP           - Last Tested: 20 July 2008
-	 *  HN.org          - Last Tested: 12 July 2005
-	 *  EasyDNS         - Last Tested: 20 July 2008
-	 *  DHS             - Last Tested: 12 July 2005
-	 *  ZoneEdit        - Last Tested: NEVER
 	 *  Dyns            - Last Tested: NEVER
-	 *  ODS             - Last Tested: 02 August 2005
+	 *  EasyDNS         - Last Tested: 20 July 2008
+	 *  Eurodns         - Last Tested: 27 June 2013
 	 *  FreeDNS         - Last Tested: 01 May 2016
 	 *  FreeDNS IPv6    - Last Tested: 01 May 2016
-	 *  FreeDNS v2      - Last Tested: 01 June 2020
 	 *  FreeDNS IPv6 v2 - Last Tested: 01 June 2020
-	 *  Loopia          - Last Tested: 21 August 2019
-	 *  StaticCling     - Last Tested: 27 April 2006
-	 *  DNSexit         - Last Tested: 20 July 2008
-	 *  OpenDNS         - Last Tested: 4 August 2008
-	 *  Namecheap       - Last Tested: 31 August 2010
+	 *  FreeDNS v2      - Last Tested: 01 June 2020
+	 *  Gandi LiveDNS   - Not Yet Tested
+	 *  GleSYS          - Last Tested: 3 February 2015
+	 *  GoDaddy         - Last Tested: 22 November 2017
+	 *  GoDaddy IPv6    - Last Tested: 22 November 2017
+	 *  Google Domains  - Last Tested: 27 April 2015
+	 *  GratisDNS       - Last Tested: 15 August 2012
 	 *  HE.net          - Last Tested: 7 July 2013
 	 *  HE.net IPv6     - Last Tested: 7 July 2013
 	 *  HE.net Tunnel   - Last Tested: 28 June 2011
-	 *  SelfHost        - Last Tested: 26 December 2011
-	 *  Amazon Route 53 - Last Tested: 04 February 2017
-	 *  DNS-O-Matic     - Last Tested: 9 September 2010
-	 *  Cloudflare      - Last Tested: 05 September 2016
-	 *  Cloudflare IPv6 - Last Tested: 17 July 2016
-	 *  Eurodns         - Last Tested: 27 June 2013
-	 *  GratisDNS       - Last Tested: 15 August 2012
+	 *  HN.org          - Last Tested: 12 July 2005
+	 *  Hover           - Last Tested: 15 February 2017
+	 *  Loopia          - Last Tested: 21 August 2019
+	 *  Namecheap       - Last Tested: 31 August 2010
+	 *  No-IP           - Last Tested: 20 July 2008
+	 *  ODS             - Last Tested: 02 August 2005
+	 *  OpenDNS         - Last Tested: 4 August 2008
 	 *  OVH DynHOST     - Last Tested: NEVER
-	 *  City Network    - Last Tested: 13 November 2013
-	 *  GleSYS          - Last Tested: 3 February 2015
-	 *  DNSimple        - Last Tested: 09 February 2015
-	 *  Google Domains  - Last Tested: 27 April 2015
-	 *  DNS Made Easy   - Last Tested: 27 April 2015
+	 *  SelfHost        - Last Tested: 26 December 2011
 	 *  SPDYN           - Last Tested: 02 July 2016
 	 *  SPDYN IPv6      - Last Tested: 02 July 2016
-	 *  All-Inkl        - Last Tested: 12 November 2016
-	 *  DuiaDNS         - Last Tested: 25 November 2016
-	 *  DuiaDNS IPv6    - Last Tested: 25 November 2016
-	 *  Hover           - Last Tested: 15 February 2017
-	 *  DreamHost       - Last Tested: 30 April 2017
-	 *  DreamHost IPv6  - Not Yet Tested
-	 *  ClouDNS         - Last Tested: 22 August 2017
-	 *  GoDaddy         - Last Tested: 22 November 2017
-	 *  GoDaddy IPv6    - Last Tested: 22 November 2017
-	 *  DigitalOcean    - Not Yet Tested
-	 *  Azure DNS       - Last Tested: 08 March 2018
-	 *  Gandi LiveDNS   - Not Yet Tested
+	 *  StaticCling     - Last Tested: 27 April 2006
+	 *  Strato          - Last Tested: 29 May 2021
+	 *  ZoneEdit        - Last Tested: NEVER
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -197,7 +204,7 @@
 		function __construct($dnsService = '', $dnsHost = '', $dnsDomain = '', $dnsUser = '', $dnsPass = '',
 					$dnsWildcard = 'OFF', $dnsProxied = false, $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
 					$dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false,
-					$dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '',
+					$dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '', $dnsMaxCacheAge = '',
 					$dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true) {
 
 			global $config, $g, $dyndns_split_domain_types;
@@ -222,55 +229,11 @@
 
 			if (!$dnsService) $this->_error(2);
 			switch ($dnsService) {
-			case 'freedns':
-			case 'freedns-v6':
-			case 'freedns2':
-			case 'freedns2-v6':
-				if (!$dnsHost) $this->_error(5);
+			case 'custom':
+			case 'custom-v6':
+				if (!$dnsUpdateURL) $this->_error(7);
 				break;
-			case "namecheap":
-				if (!$dnsPass) $this->_error(4);
-				if (!$dnsHost) $this->_error(5);
-				if (!$dnsDomain) $this->_error(5);
-				break;
-			case "cloudflare-v6":
-			case "cloudflare":
-				if (!$dnsPass) $this->_error(4);
-				if (!$dnsHost) $this->_error(5);
-				if (!$dnsDomain) $this->_error(5);
-				break;
-			case "gratisdns":
-			case "hover":
-				if (!$dnsUser) $this->_error(3);
-				if (!$dnsPass) $this->_error(4);
-				if (!$dnsHost) $this->_error(5);
-				if (!$dnsDomain) $this->_error(5);
-				break;
-			case 'route53-v6':
-			case 'route53':
-				if (!$dnsZoneID) $this->_error(8);
-				if (!$dnsTTL) $this->_error(9);
-				break;
-			case 'cloudns':
-			case "godaddy":
-			case "godaddy-v6":
-				if (!$dnsUser) $this->_error(3);
-				if (!$dnsPass) $this->_error(4);
-				if (!$dnsHost) $this->_error(5);
-				if (!$dnsDomain) $this->_error(5);
-				if (!$dnsTTL) $this->_error(9);
-				break;
-			case 'digitalocean':
-			case 'digitalocean-v6':
-			case 'linode':
-			case 'linode-v6':
-			case 'gandi-livedns':
-			case 'gandi-livedns-v6':
-				if (!$dnsPass) $this->_error(4);
-				if (!$dnsHost) $this->_error(5);
-				if (!$dnsDomain) $this->_error(5);
-				if (!$dnsTTL) $this->_error(9);
-				break;
+			// providers in an alphabetical order (based on the first provider in a group of cases)
 			case 'azure':
 			case 'azurev6':
 				if (!$dnsUser) $this->_error(3);
@@ -279,9 +242,63 @@
 				if (!$dnsZoneID) $this->_error(8);
 				if (!$dnsTTL) $this->_error(9);
 				break;
-			case 'custom':
-			case 'custom-v6':
-				if (!$dnsUpdateURL) $this->_error(7);
+			case 'cloudflare':
+			case 'cloudflare-v6':
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				break;
+			case 'cloudns':
+			case 'godaddy':
+			case 'godaddy-v6':
+				if (!$dnsUser) $this->_error(3);
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				if (!$dnsTTL) $this->_error(9);
+				break;
+			case 'desec':
+			case 'desec-v6':
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				break;
+			case 'digitalocean':
+			case 'digitalocean-v6':
+			case 'gandi-livedns':
+			case 'gandi-livedns-v6':
+			case 'linode':
+			case 'linode-v6':
+			case 'onecom':
+			case 'onecom-v6':
+			case 'yandex':
+			case 'yandex-v6':
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				if (!$dnsTTL) $this->_error(9);
+				break;
+			case 'freedns':
+			case 'freedns-v6':
+			case 'freedns2':
+			case 'freedns2-v6':
+				if (!$dnsHost) $this->_error(5);
+				break;
+			case 'gratisdns':
+			case 'hover':
+				if (!$dnsUser) $this->_error(3);
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				break;
+			case 'namecheap':
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				break;
+			case 'route53':
+			case 'route53-v6':
+				if (!$dnsZoneID) $this->_error(8);
+				if (!$dnsTTL) $this->_error(9);
 				break;
 			default:
 				if (!$dnsUser) $this->_error(3);
@@ -290,26 +307,28 @@
 			}
 
 			switch ($dnsService) {
-				case 'he-net-v6':
+				case 'azurev6':
+				case 'cloudflare-v6':
+				case 'custom-v6':
+				case 'desec-v6':
 				case 'digitalocean-v6':
 				case 'domeneshop-v6':
-				case 'custom-v6':
-				case 'spdyn-v6':
-				case 'route53-v6':
-				case 'duiadns-v6':
-				case 'freedns-v6':
-				case 'freedns2-v6':
-				case 'cloudflare-v6':
 				case 'dreamhost-v6':
-				case 'godaddy-v6':
-				case 'azurev6':
-				case 'linode-v6':
-				case 'mythicbeasts-v6':
-				case 'noip-v6':
-				case 'noip-free-v6':
+				case 'duiadns-v6':
 				case 'dynv6-v6':
 				case 'easydns-v6':
+				case 'freedns-v6':
+				case 'freedns2-v6':
 				case 'gandi-livedns-v6':
+				case 'godaddy-v6':
+				case 'he-net-v6':
+				case 'linode-v6':
+				case 'mythicbeasts-v6':
+				case 'noip-free-v6':
+				case 'noip-v6':
+				case 'route53-v6':
+				case 'spdyn-v6':
+				case 'yandex-v6':
 					$this->_useIPv6 = true;
 					break;
 				default:
@@ -332,11 +351,22 @@
 			$this->_dnsUpdateURL = $dnsUpdateURL;
 			$this->_dnsResultMatch = $dnsResultMatch;
 			$this->_dnsRequestIf = get_failover_interface($dnsRequestIf);
+			if ($dnsMaxCacheAge !== "") {
+				$this->_dnsMaxCacheAgeDays = (int)$dnsMaxCacheAge;
+			} else {
+				switch ($dnsService) {
+					// exceptions to _dnsMaxCacheAgeDays in an alphabetical order
+					case 'dyfi':
+						$this->_dnsMaxCacheAgeDays = 6;
+						break;
+					default:
+						$this->_dnsMaxCacheAgeDays = 25;
+				}
+			}
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s'), $this->_FQDN, $dnsRequestIf, $this->_dnsRequestIf));
 			}
 			$this->_dnsRequestIfIP = get_interface_ip($dnsRequestIf);
-			$this->_dnsMaxCacheAgeDays = 25;
 			$this->_dnsDummyUpdateDone = false;
 			$this->_forceUpdateNeeded = $forceUpdate;
 
@@ -353,71 +383,79 @@
 				$this->_error(10);
 			} else {
 				switch ($this->_dnsService) {
-					case 'glesys':
+					case 'all-inkl':
+					case 'azure':
+					case 'azurev6':
+					case 'citynetwork':
+					case 'cloudflare':
+					case 'cloudflare-v6':
+					case 'cloudns':
+					case 'custom':
+					case 'custom-v6':
+					case 'desec':
+					case 'desec-v6':
+					case 'dhs':
+					case 'digitalocean':
+					case 'digitalocean-v6':
+					case 'dnsexit':
+					case 'dnsimple':
+					case 'dnsmadeeasy':
 					case 'dnsomatic':
 					case 'domeneshop':
 					case 'domeneshop-v6':
+					case 'duiadns':
+					case 'duiadns-v6':
+					case 'dyfi':
 					case 'dyndns':
-					case 'dyndns-static':
 					case 'dyndns-custom':
-					case 'dhs':
-					case 'noip':
-					case 'noip-v6':
-					case 'noip-free':
-					case 'noip-free-v6':
+					case 'dyndns-static':
+					case 'dyns':
+					case 'dynv6':
+					case 'dynv6-v6':
 					case 'easydns':
 					case 'easydns-v6':
-					case 'hn':
-					case 'zoneedit':
-					case 'dyns':
-					case 'ods':
+					case 'eurodns':
 					case 'freedns':
 					case 'freedns-v6':
 					case 'freedns2':
 					case 'freedns2-v6':
-					case 'loopia':
-					case 'staticcling':
-					case 'dnsexit':
-					case 'custom':
-					case 'custom-v6':
-					case 'opendns':
-					case 'namecheap':
-					case 'he-net':
-					case 'he-net-v6':
-					case 'duiadns':
-					case 'duiadns-v6':
-					case 'selfhost':
-					case 'he-net-tunnelbroker':
-					case 'route53':
-					case 'route53-v6':
-					case 'cloudflare':
-					case 'cloudflare-v6':
-					case 'eurodns':
-					case 'gratisdns':
-					case 'ovh-dynhost':
-					case 'citynetwork':
-					case 'dnsimple':
-					case 'googledomains':
-					case 'dnsmadeeasy':
-					case 'spdyn':
-					case 'spdyn-v6':
-					case 'all-inkl':
-					case 'cloudns':
-					case 'hover':
-					case 'digitalocean':
-					case 'digitalocean-v6':
-					case 'godaddy':
-					case 'godaddy-v6':
-					case 'azure':
-					case 'azurev6':
-					case 'linode':
-					case 'linode-v6':
 					case 'gandi-livedns':
 					case 'gandi-livedns-v6':
-					case 'dynv6':
-					case 'dynv6-v6':
+					case 'glesys':
+					case 'godaddy':
+					case 'godaddy-v6':
+					case 'googledomains':
+					case 'gratisdns':
+					case 'he-net':
+					case 'he-net-tunnelbroker':
+					case 'he-net-v6':
+					case 'hn':
+					case 'hover':
+					case 'linode':
+					case 'linode-v6':
+					case 'loopia':
 					case 'mythicbeasts':
 					case 'mythicbeasts-v6':
+					case 'namecheap':
+					case 'nicru':
+					case 'nicru-v6':
+					case 'noip':
+					case 'noip-free':
+					case 'noip-free-v6':
+					case 'noip-v6':
+					case 'ods':
+					case 'opendns':
+					case 'ovh-dynhost':
+					case 'route53':
+					case 'route53-v6':
+					case 'selfhost':
+					case 'spdyn':
+					case 'spdyn-v6':
+					case 'staticcling':
+					case 'strato':
+					case 'yandex':
+					case 'yandex-v6':
+					case 'zoneedit':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -479,6 +517,35 @@
 			}
 
 			switch ($this->_dnsService) {
+				// The special custom provider
+				case 'custom':
+				case 'custom-v6':
+					if (strstr($this->dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
+					if ($this->_dnsUser != '') {
+						if ($this->_curlIpresolveV4) {
+							curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+						}
+						if ($this->_curlSslVerifypeer) {
+							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
+						} else {
+							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+						}
+						curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
+					}
+					$server = str_replace("%IP%", $this->_dnsIP, $this->_dnsUpdateURL);
+					if ($this->_dnsVerboseLog) {
+						log_error(sprintf(gettext("Sending request to: %s"), $server));
+					}
+					curl_setopt($ch, CURLOPT_URL, $server);
+					break;
+				// Providers in an alphabetical order. Add code for new providers below in a correct position.
+				case 'dyfi':
+					// see specification at https://www.dy.fi/page/specification
+					$needsIP = FALSE;
+					$server = 'https://www.dy.fi/nic/update';
+					curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
+					curl_setopt($ch, CURLOPT_URL, "{$server}?hostname={$this->_dnsHost}");
+					break;
 				case 'glesys':
 					$needsIP = TRUE;
 					$server = 'https://api.glesys.com/domain/updaterecord/format/json';
@@ -488,6 +555,10 @@
 					curl_setopt($ch, CURLOPT_URL, $server);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
+				//
+				// Not yet ordered providers.
+				// TODO: When editing a provider, move it above in a correct position.
+				//
 				case 'dyndns':
 				case 'dyndns-static':
 				case 'dyndns-custom':
@@ -780,9 +851,9 @@
 					*/
 					$needsIP = FALSE;
 					if ($this->_useIPv6) {
-						$record = "AAAA"; 
+						$record = "AAAA";
 					} else {
-						$record = "A"; 
+						$record = "A";
 					}
 					$post_data['data'] = $this->_dnsIP;
 					$server = "https://api.mythic-beasts.com/dns/v2/zones/{$this->_dnsDomain}/records/{$this->_dnsHost}/{$record}";
@@ -798,6 +869,62 @@
 					$dnspass = trim($this->_dnsPass);
 					$server = "https://dynamicdns.park-your-domain.com/update?host={$this->_dnsHost}&domain={$this->_dnsDomain}&password={$dnspass}&ip={$this->_dnsIP}";
 					curl_setopt($ch, CURLOPT_URL, $server);
+					break;
+				case 'nicru':
+				case 'nicru-v6':
+					/* see https://www.nic.ru/help/dynamic-dns-for-developers_5810.html */
+					$needsIP = FALSE;
+					if (is_ipaddrv6($this->_dnsIP)) {
+						$iptype = "ipv6";
+					} else {
+						$iptype = "myip";
+					}
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					$server = "https://api.nic.ru/dyndns/update?hostname={$this->_dnsHost}&{$iptype}={$this->_dnsIP}";
+					curl_setopt($ch, CURLOPT_URL, $server);
+					break;
+				case 'yandex':
+				case 'yandex-v6':
+					// https://yandex.com/dev/connect/directory/api/concepts/domains/dns-records-via-pdd.html
+
+					if (is_ipaddrv4($this->_dnsIP)) {
+						$type = 'A';
+					} else {
+						$type = 'AAAA';
+					}
+
+					// get record_id
+					curl_setopt($ch, CURLOPT_URL, "https://pddimp.yandex.ru/api2/admin/dns/list?domain={$this->_dnsDomain}");
+					curl_setopt($ch, CURLOPT_HTTPHEADER, 'PddToken: ' . $this->_dnsPass);
+					$output = json_decode(curl_exec($ch), true);
+					if (is_array($output["records"])) {
+						foreach($output["records"] as $record) {
+							if (($record["domain"] == $this->_dnsDomain) &&
+							    ($record["subdomain"] == $this->_dnsHost) &&
+							    ($record["type"] == $type)) {
+								$record_id = $record["record_id"];
+							}
+						}
+					}
+
+					if ($record_id) {
+						$action = 'edit';
+						$post_data['record_id'] = $record_id;
+					} else {
+						$action = 'add';
+					}
+
+					$post_data['domain'] = $this->_dnsDomain;
+					$post_data['subdomain'] = $this->_dnsHost;
+					$post_data['content'] = $this->_dnsIP;
+					$post_data['type'] = $type;
+					if ($this->_dnsTTL) {
+						$post_data['ttl'] = $this->_dnsTTL;
+					}
+
+					curl_setopt($ch, CURLOPT_URL, 'https://pddimp.yandex.ru/api2/admin/dns/' . $action);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, 'PddToken: ' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
 				case 'duiadns':
 				case 'duiadns-v6':
@@ -838,6 +965,12 @@
 					}
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard=' . $this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
+				case 'strato':
+					$needsIP = FALSE;
+					$server = 'https://dyndns.strato.com/nic/update';
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, $server . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					break;
 				case 'route53':
 					require_once("r53.class");
 					$r53 = new Route53($this->_dnsUser, $this->_dnsPass);
@@ -871,26 +1004,6 @@
 					}
 					curl_setopt($ch, CURLOPT_URL, $apiurl);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlreq);
-					break;
-				case 'custom':
-				case 'custom-v6':
-					if (strstr($this->dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
-					if ($this->_dnsUser != '') {
-						if ($this->_curlIpresolveV4) {
-							curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-						}
-						if ($this->_curlSslVerifypeer) {
-							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
-						} else {
-							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-						}
-						curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
-					}
-					$server = str_replace("%IP%", $this->_dnsIP, $this->_dnsUpdateURL);
-					if ($this->_dnsVerboseLog) {
-						log_error(sprintf(gettext("Sending request to: %s"), $server));
-					}
-					curl_setopt($ch, CURLOPT_URL, $server);
 					break;
 				case 'cloudflare-v6':
 				case 'cloudflare':
@@ -1042,7 +1155,8 @@
 				case 'dnsmadeeasy':
 					$needsIP = TRUE;
 					$server = "https://cp.dnsmadeeasy.com/servlet/updateip";
-					curl_setopt($ch, CURLOPT_URL, $server . '?username=' . $this->_dnsUser . '&password=' . $this->_dnsPass . '&id=' . $this->_dnsHost . '&ip=' . $this->_dnsIP);
+					$username = empty($this->_dnsUser) ? "" : "&username={$this->dnsUser}";
+					curl_setopt($ch, CURLOPT_URL, $server . '?password=' . $this->_dnsPass . '&id=' . $this->_dnsHost . '&ip=' . $this->_dnsIP . $username);
 					break;
 				case 'spdyn':
 				case 'spdyn-v6':
@@ -1113,6 +1227,75 @@
 						curl_setopt($ch, CURLOPT_URL, "https://www.hover.com/api/dns/{$hostID}");
 						log_error("HostID:{$hostID}, OldIP:{$hostIP}");
 					}
+					break;
+				case 'onecom':
+				case 'onecom-v6':
+					// see https://redmine.pfsense.org/issues/11293
+
+					// login in
+					$post_data['displayUsername'] = $this->_dnsUser;
+					$post_data['username'] = $this->_dnsUser;
+					$post_data['password1'] = $this->_dnsPass;
+					$post_data['loginDomain'] = True;
+					$post_data['loginTarget'] = '';
+					$post_data['targetDomain'] = '';
+
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					curl_setopt($ch, CURLOPT_URL, "https://www.one.com/admin/login.do");
+					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
+					$output = curl_exec($ch);
+
+					// extract the cookies
+					preg_match_all("/^Set-cookie: (.*?);/ism", $output, $cookies);
+					if( count($cookies[1]) > 0 ){
+						$cookie_data = implode("; ",$cookies[1]);
+					}
+
+					// gets all DNS records of the domain.
+					$post_data = null;
+					$url = "https://www.one.com/admin/api/domains/" . $this->_dnsDomain + "/dns/custom_records";
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					curl_setopt($ch, CURLOPT_COOKIE, $cookie_data);
+					curl_setopt($ch, CURLOPT_HEADER, 0);
+					curl_setopt($ch, CURLOPT_URL, $url);
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+					$output = curl_exec($ch);
+					$result = json_decode($output, true);
+					$records = $result['result']['data'];
+
+					// finds the record id of a record from it's subdomain
+					foreach ($records as $rec) {
+						if ($rec['attributes']['prefix'] == $this->_dnsHostname) {
+							$id = $rec['id'];
+							break;
+						}
+					}
+					if (!$id) {
+						log_error("Could not find one.com hostname record id");
+						return false;
+					}
+
+					// changes the IP Address of a TYPE A record. Default TTL=3800
+					$tosend = array();
+					$tosend['type'] = 'dns_service_records';
+					$tosend['id'] = $id;
+					if (is_ipaddrv4($this->_dnsIP)) {
+						$rectype = 'A';
+					} else {
+						$rectype = 'AAAA';
+					}
+					$tosend['attributes'] = array(
+						'type' => $rectype,
+						'prefix' => $this->_dnsHostname,
+						'content' => $this->_dnsIP,
+						'ttl' => $this->_dnsTTL
+					);
+					$url = "https://www.one.com/admin/api/domains/" . $this->_dnsDomain .
+						 "/dns/custom_records/" . $id;
+					curl_setopt($ch, CURLOPT_URL, $url);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($tosend));
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
 					break;
 				case 'dreamhost':
 				case 'dreamhost-v6':
@@ -1190,7 +1373,7 @@
 					$_count = count($_domain_records);
 
 					foreach($_domain_records as $dnsRecord) {
-						// NS records are named @ in DO's API, so check type as well 
+						// NS records are named @ in DO's API, so check type as well
 						// https://redmine.pfsense.org/issues/9171
 						if ($this->_dnsHost == $dnsRecord->name && $dnsRecord->type == ($isv6 ? 'AAAA' : 'A')) {
 							$recordID = $dnsRecord->id;
@@ -1424,6 +1607,14 @@
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
 					break;
+				case 'desec':
+					curl_setopt($ch, CURLOPT_URL, 'https://update.dedyn.io/?hostname=' . $this->_dnsHost);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token ' . $this->_dnsPass));
+					break;
+				case 'desec-v6':
+					curl_setopt($ch, CURLOPT_URL, 'https://update6.dedyn.io/?hostname=' . $this->_dnsHost);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token ' . $this->_dnsPass));
+					break;
 				default:
 					break;
 			}
@@ -1649,6 +1840,56 @@
 				return;
 			}
 			switch ($this->_dnsService) {
+				// The special custom provider
+				case 'custom':
+				case 'custom-v6':
+					$successful_update = false;
+					if ($this->_dnsResultMatch == "") {
+						$successful_update = true;
+					} else {
+						$this->_dnsResultMatch = str_replace("%IP%", $this->_dnsIP, $this->_dnsResultMatch);
+						$matches = preg_split("/(?<!\\\\)\\|/", $this->_dnsResultMatch);
+						foreach ($matches as $match) {
+							$match= str_replace("\\|", "|", $match);
+							if (strcmp($match, trim($data, "\t\n\r")) == 0) {
+								$successful_update = true;
+							}
+						}
+						unset ($matches);
+					}
+					if ($successful_update == true) {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+					} else {
+						$status = $status_intro . $error_str . gettext("Result did not match.") . " [" . $data . "]";
+					}
+					break;
+				// Providers in an alphabetical order. Add code for new providers below in a correct position.
+				case 'dyfi':
+					// see specification at https://www.dy.fi/page/specification
+					if (preg_match('/badauth/i', $data)) {
+						$status = $status_intro . $error_str . gettext("User Authorization Failed");
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = $status_intro . $error_str . gettext("No such host");
+					} else if (preg_match('/notfqdn/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Not A FQDN!");
+					} else if (preg_match('/badip/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Invalid IP. IP Address submitted is improperly formatted or is a private IP address or is on a blacklist.");
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = $status_intro . $success_str . gettext("No Change In IP Address");
+						$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
+						$successful_update = true;
+					} else if (preg_match('/dnserr/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Server side error.");
+					} else if (preg_match('/abuse/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Updating too frequently, considered abuse.");
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						$this->_debug($data);
+					}
+					break;
 				case 'glesys':
 					$status_intro = "GleSYS ({$this->_dnsHost}): ";
 					if (preg_match('/Record updated/i', $data)) {
@@ -1660,6 +1901,10 @@
 						$this->_debug($data);
 					}
 					break;
+				//
+				// Not yet ordered providers.
+				// TODO: When editing a provider, move it above in a correct position.
+				//
 				case 'dnsomatic':
 					$status_intro = "DNS-O-Matic ({$this->_dnsHost}): ";
 					if (preg_match('/badauth/i', $data)) {
@@ -1689,8 +1934,21 @@
 					 * see https://api.domeneshop.no/docs/index.html#tag/ddns/paths/~1dyndns~1update/get */
 
                                         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-					
+
 					if ($code == "204") {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ": " . $code . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
+					}
+					break;
+				case 'onecom':
+				case 'onecom-v6':
+                                        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+					if (($code == "200") || ($code == "204")) {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
 					} else {
@@ -1773,8 +2031,32 @@
 				case 'dhs':
 					break;
 				case 'noip':
-				case 'noip-v6':
 				case 'noip-free':
+					if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+						$successful_update = true;
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = $status_intro . $success_str . gettext("No Change In IP Address");
+						$successful_update = true;
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Hostname supplied does not exist under specified account");
+					} else if (preg_match('/badauth/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Invalid username password combination");
+					} else if (preg_match('/badagent/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Client disabled");
+					} else if (preg_match('/\!donator/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Feature is not available");
+					} else if (preg_match('/abuse/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Username is blocked due to abuse");
+					} else if (preg_match('/911/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Fatal error");
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						$this->_debug($data);
+					}
+					break;
+				case 'noip-v6':
 				case 'noip-free-v6':
 					list($ip, $code) = explode(":", $data);
 					switch ($code) {
@@ -2051,6 +2333,26 @@
 						$this->_debug($data);
 					}
 					break;
+				case 'nicru':
+				case 'nicru-v6':
+					$status_intro = "NIC.RU ({$this->_dnsHost}): ";
+					if (preg_match('/badauth/i', $data)) {
+						$status = $status_intro . gettext("The NIC.RU username or password specified are incorrect.");
+					} else if (preg_match('/notfqdn /i', $data)) {
+						$status = $status_intro . gettext("The hostname specified is not a fully-qualified domain name.");
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = $status_intro . gettext("The hostname passed could not be matched to any records configured.");
+					} else if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
+						$successful_update = true;
+					} else if (preg_match('/dnserr/i', $data)) {
+						$status = $status_intro . gettext("DNS error encountered. Stop updating for 30 minutes.");
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+						$this->_debug($data);
+					}
+					break;
 				case 'duiadns':
 				case 'duiadns-v6':
 					if (preg_match("/error/i", $data)) {
@@ -2109,6 +2411,28 @@
 						$this->_debug($data);
 					}
 					break;
+				case 'strato':
+					if (preg_match('/good\s' . $this->_dnsIP . '/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP address updated successfully") . " (" . $this->_dnsIP . ")";
+						$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $error_str . gettext("IP result did not match");
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP was not changed");
+						$successful_update = true;
+					} else if (preg_match("/badauth/i", $data)) {
+						$status = $status_intro . $error_str . gettext("invalid username or password");
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = $status_intro . $error_str . gettext("invalid hostname");
+					} else if (preg_match('/abuse/i', $data)) {
+						$status = $status_intro . $error_str . gettext("too many requests - please wait");
+					} else {
+						$status = $status_intro . "(" . gettext("unknown response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $header . $data);
+						$this->_debug($data);
+						$this->_debug($header);
+					}
+					break;
 				case 'route53':
 				case 'route53-v6':
 					if(preg_match('/ErrorResponse/', $data)){
@@ -2118,28 +2442,6 @@
 					} else {
 						$status = $status_intro . $success_str . gettext("IP address changed successfully");
 						$successful_update = true;
-					}
-					break;
-				case 'custom':
-				case 'custom-v6':
-					$successful_update = false;
-					if ($this->_dnsResultMatch == "") {
-						$successful_update = true;
-					} else {
-						$this->_dnsResultMatch = str_replace("%IP%", $this->_dnsIP, $this->_dnsResultMatch);
-						$matches = preg_split("/(?<!\\\\)\\|/", $this->_dnsResultMatch);
-						foreach ($matches as $match) {
-							$match= str_replace("\\|", "|", $match);
-							if (strcmp($match, trim($data, "\t\n\r")) == 0) {
-								$successful_update = true;
-							}
-						}
-						unset ($matches);
-					}
-					if ($successful_update == true) {
-						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
-					} else {
-						$status = $status_intro . $error_str . gettext("Result did not match.") . " [" . $data . "]";
 					}
 					break;
 				case 'cloudflare-v6':
@@ -2155,6 +2457,35 @@
 					} else {
 						$status = $status_intro . gettext("UNKNOWN ERROR") . " - " . $output->errors[0]->message;
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+					}
+					break;
+				case 'yandex-v6':
+				case 'yandex':
+					$result = json_decode($data, true);
+					if ($result['success'] == 'ok') {
+						$successful_update = true;
+					} elseif ($result['error'] == 'bad_domain') {
+						log_error($status_intro . $error_str .  gettext("The domain name was not specified or does not conform to the RFC"));
+					} elseif ($result['error'] == 'unknown') {
+						log_error($status_intro . $error_str .  gettext("A temporary failure or API error occurred"));
+					} elseif ($result['error'] == 'prohibited') {
+						log_error($status_intro . $error_str .  gettext("A forbidden domain name"));
+					} elseif ($result['error'] == 'bad_token') {
+						log_error($status_intro . $error_str .  gettext("Invalid PDD token"));
+					} elseif ($result['error'] == 'no_auth') {
+						log_error($status_intro . $error_str .  gettext("The PddToken header was omitted"));
+					} elseif ($result['error'] == 'not_allowed') {
+						log_error($status_intro . $error_str .  gettext("This operation is not allowed for this user"));
+					} elseif ($result['error'] == 'blocked') {
+						log_error($status_intro . $error_str .  gettext("Blocked domain"));
+					} elseif ($result['error'] == 'occupied') {
+						log_error($status_intro . $error_str .  gettext("The domain name is in use by another user"));
+					} elseif ($result['error'] == 'domain_limit_reached') {
+						log_error($status_intro . $error_str .  gettext("Exceeded the acceptable number of connected domains (50)"));
+					} elseif ($result['error'] == 'no_reply') {
+						log_error($status_intro . $error_str .  gettext("Yandex.Mail for Domain cannot connect to the server source for the import"));
+					} else {
+						log_error($status_intro . $error_str .  gettext("PAYLOAD:") . " " . $data);
 					}
 					break;
 				case 'eurodns':
@@ -2211,7 +2542,7 @@
 					   Returns JSON data as body */
 ;
                                         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-					
+
 					if ($code == "200") {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
@@ -2484,6 +2815,24 @@
 						$this->_debug($data);
 					}
 					break;
+				case 'desec':
+				case 'desec-v6':
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					switch ($http_code) {
+						case '200':
+							$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+							$successful_update = true;
+							break;
+						case '401':
+							$status = $status_intro . $error_str . gettext("User Authorization Failed");
+							break;
+						default:
+							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+							log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+							$this->_debug($data);
+							break;
+					}
+					break;
 				default:
 					break;
 			}
@@ -2615,7 +2964,10 @@
 			}
 
 			// Convert seconds = days * hr/day * min/hr * sec/min
-			$maxCacheAgeSecs = $this->_dnsMaxCacheAgeDays * 24 * 60 * 60;
+			// We subtract 1 hour, so that when this code is executed few seconds
+			// before _dnsMaxCacheAgeDays has passed, then we still consider that
+			// a required number of days has passed.
+			$maxCacheAgeSecs = $this->_dnsMaxCacheAgeDays * 24 * 60 * 60 - 60 * 60;
 
 			$needs_updating = FALSE;
 			/* lets determine if the item needs updating */

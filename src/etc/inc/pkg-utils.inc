@@ -24,6 +24,7 @@
 
 require_once("globals.inc");
 require_once("service-utils.inc");
+require_once("/usr/local/www/includes/functions.inc.php");
 
 if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlreader.inc");
@@ -863,8 +864,6 @@ function install_package_xml($package_name) {
 		return false;
 	}
 
-	$pkg_data = &$config['installedpackages']['package'][$pkgid];
-
 	update_status(gettext("Loading package configuration... "));
 	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
 	    $pkg_info['configurationfile'], "packagegui");
@@ -872,7 +871,7 @@ function install_package_xml($package_name) {
 	update_status(gettext("Configuring package components...") .
 	    "\n");
 	if (!empty($pkg_config['filter_rules_needed'])) {
-		$pkg_data['filter_rule_function'] =
+		$config['installedpackages']['package'][$pkgid]['filter_rule_function'] =
 		    $pkg_config['filter_rules_needed'];
 	}
 	/* modify system files */
@@ -961,14 +960,16 @@ function install_package_xml($package_name) {
 		update_status(gettext("done.") . "\n");
 	}
 	if (is_array($pkg_config['tabs'])) {
-		$pkg_data['tabs'] = $pkg_config['tabs'];
+		init_config_arr(array('installedpackages', 'package', $pkgid, 'tabs'));
+		$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];
 	}
 	/* plugins */
 	if (isset($pkg_config['include_file'])) {
-		$pkg_data['include_file'] = $pkg_config['include_file'];
+		$config['installedpackages']['package'][$pkgid]['include_file'] = $pkg_config['include_file'];
 	}
-	if (is_array($pkg_config['plugins']['item'])) {
-		$pkg_data['plugins']['item'] = $pkg_config['plugins']['item'];
+	if (is_array($pkg_config['plugins'])) {
+		init_config_arr(array('installedpackages', 'package', $pkgid, 'plugins'));
+		$config['installedpackages']['package'][$pkgid]['plugins'] = $pkg_config['plugins'];
 	}
 
 	update_status(gettext("Writing configuration... "));
@@ -1118,11 +1119,11 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	}
 	/* syslog */
 	$need_syslog_restart = false;
-	if (is_array($pkg_info['logging']) &&
-	    $pkg_info['logging']['logfilename'] <> "") {
+	if (is_array($pkg_info['logging']) && !empty($pkg_info['logging']['logfilename'])) {
 		update_status(gettext("Syslog entries... "));
-		@unlink_if_exists($g['varlog_path'] . "/" .
-		    $pkg_info['logging']['logfilename']);
+		/* remove package-related syslog configuration but retain log data,
+		 * see https://redmine.pfsense.org/issues/11846 */
+		@unlink_if_exists("{$g['varetc_path']}/syslog.d/" . basename($pkg_info['logging']['logfilename']) . ".conf");
 		update_status("done.\n");
 		$need_syslog_restart = true;
 	}
@@ -1265,12 +1266,14 @@ function stop_packages() {
 	if (isset($config['installedpackages']['package']) &&
 	    is_array($config['installedpackages']['package'])) {
 		foreach ($config['installedpackages']['package'] as $package) {
-			echo " Stopping package {$package['name']}...";
 			$internal_name = get_package_internal_name($package);
-			stop_service($internal_name);
-			unset($rcfiles[RCFILEPREFIX .
-			    strtolower($internal_name) . ".sh"]);
-			echo "done.\n";
+			if (is_service_running($internal_name)) {
+				echo " Stopping package {$package['name']}...";
+				stop_service($internal_name);
+				echo "done.\n";
+				unset($rcfiles[RCFILEPREFIX .
+				    strtolower($internal_name) . ".sh"]);
+			}
 		}
 	}
 
@@ -1575,38 +1578,39 @@ function update_repos() {
 			$platformname = $platform['descr'];
 		}
 
-		/* XXX: Use json_encode instead of hardcode it */
-		$version =
-		    "{\"platform\":\"" . $platformname .
-		    "\",\"os\":\"" . $os .
-		    "\",\"osver\":\"" . $osver .
-		    "\",\"prod\":\"" . $g['product_label'] .
-		    "\",\"ver\":\"" . $g['product_version'] .
-		    "\",\"ed\":\"" . $ed .
-		    "\",\"pkgs\":[";
-
-		$first = true;
-
-		foreach($pkglist as $pkg) {
-			if (!$first) {
-				$version .= ",";
-			}
-
-			$version .= "{\"name\":\"" . $pkg['shortname'] .
-			    "\",\"ver\":\"" . $pkg['version'] . "\"}";
-			$first = false;
-		}
-
-		$version .= "]}";
-
 		$arch =  php_uname('m');
 		$locale = $config['system']['language'];
+
+		// Find root file system type
+		$filesystems = get_mounted_filesystems();
+		$fstype = "";
+
+		foreach ($filesystems as $fs)  {
+		   if ($fs['mountpoint'] == "/") {
+		      $fstype = strtoupper($fs['type']);
+		      break;
+		   }
+		}
+
+		$va = array();
+		$va['platform'] = $platformname;
+		$va['os'] = $os;
+		$va['osver'] = $platformname;
+		$va['fstype'] = $fstype;
+		$va['prod'] = $g['product_label'];
+		$va['ver'] = $g['product_version_string'];
+		$va['ed'] = $ed;
+		$va['pkgs'] = array();
+
+		foreach($pkglist as $pkg) {
+			$va['pkgs'][] = array('name' => $pkg['shortname'], 'ver' => $pkg['version']);
+		}
 
 		$post = [
 		    'uid' => $nid,
 		    'language' => $locale,
 		    'serial' => $serial,
-		    'version' => $version,
+		    'version' => json_encode($va),
 		    'arch' => $arch
 		];
 

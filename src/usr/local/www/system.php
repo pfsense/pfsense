@@ -183,7 +183,7 @@ if ($_POST) {
 		}
 	}
 	if ($_POST['domain'] && (!is_domain($_POST['domain'], false, false))) {
-		$input_errors[] = gettext("The domain may only contain the characters a-z, 0-9, '-' and '.'.");
+		$input_errors[] = gettext("The domain may only contain the characters a-z, 0-9, '-' and '.', and it cannot start with '.' or '-'.");
 	}
 	validate_webguicss_field($input_errors, $_POST['webguicss']);
 	validate_webguifixedmenu_field($input_errors, $_POST['webguifixedmenu']);
@@ -522,12 +522,14 @@ $section->addInput(new Form_Input(
 	'*Domain',
 	'text',
 	$pconfig['domain'],
-	['placeholder' => 'mycorp.com, home, office, private, etc.']
-))->setHelp('Do not use \'.local\' as the final part of the domain (TLD), The \'.local\' domain is %1$swidely used%2$s by '.
-	'mDNS (including Avahi and Apple OS X\'s Bonjour/Rendezvous/Airprint/Airplay), and some Windows systems and networked devices. ' .
-	'These will not network correctly if the router uses \'.local\'. Alternatives such as \'.local.lan\' or \'.mylocal\' are safe.',
-	 '<a target="_blank" href="https://www.unbound.net/pipermail/unbound-users/2011-March/001735.html">',
-	 '</a>'
+	['placeholder' => 'example.com, home, office, private, etc.']
+))->setHelp('Do not end the domain name with \'.local\' as the final part (Top Level Domain, TLD), ' .
+	'The \'local\' TLD is %1$swidely used%2$s by mDNS (e.g. Avahi, Bonjour, Rendezvous, Airprint, Airplay) ' .
+	'and some Windows systems and networked devices. ' .
+	'These will not network correctly if the router uses \'local\' as its TLD. ' .
+	'Alternative TLDs such as \'local.lan\' or \'mylocal\' are safe.',
+	'<a target="_blank" href="https://www.unbound.net/pipermail/unbound-users/2011-March/001735.html">',
+	'</a>'
 );
 
 $form->add($section);

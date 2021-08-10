@@ -143,11 +143,13 @@ if ($_POST['save']) {
 			continue;
 		}
 
-		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
+		if (($gre['if'] == $_POST['if']) && !empty($gre['tunnel-remote-addr']) &&
+		    ($gre['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
 			$input_errors[] = sprintf(gettext("A GRE tunnel with the same IPv4 tunnel network is already defined."));
 			break;
 		}
-		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-addr6'] == $_POST['tunnel-remote-addr6'])) {
+		if (($gre['if'] == $_POST['if']) && !empty($gre['tunnel-remote-addr6']) &&
+		    ($gre['tunnel-remote-addr6'] == $_POST['tunnel-remote-addr6'])) {
 			$input_errors[] = sprintf(gettext("A GRE tunnel with the same IPv6 tunnel network is already defined."));
 			break;
 		}

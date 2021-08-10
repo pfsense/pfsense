@@ -132,7 +132,7 @@ $section = new Form_Section("Renew or Reissue: " . htmlspecialchars($torenew['de
 
 $section->addInput(new Form_StaticText(
 	"Subject",
-	htmlspecialchars($subj)
+	htmlspecialchars(cert_escape_x509_chars($subj, true))
 ));
 
 $section->addInput(new Form_StaticText(
@@ -157,7 +157,7 @@ if ($type == "cert") {
 if (!empty($issuer)) {
 	$section->addInput(new Form_StaticText(
 		'Issued By',
-		htmlspecialchars($issuer)
+		htmlspecialchars(cert_escape_x509_chars($issuer, true))
 	));
 }
 

@@ -335,8 +335,14 @@ function step9_submitphpaction() {
 }
 
 function step10_stepbeforeformdisplay() {
-	global $pkg, $stepid, $netbios_nodetypes;
+	global $pkg, $stepid, $netbios_nodetypes, $config;
 
+	if (isset($config['ovpnserver']['step10']['localport'])) {
+		unset($config['ovpnserver']['step10']['localport']);
+	}
+	if (isset($config['ovpnserver']['step10']['tunnelnet'])) {
+		unset($config['ovpnserver']['step10']['tunnelnet']);
+	}
 	foreach ($pkg['step'][$stepid]['fields']['field'] as $idx => $field) {
 		if ($field['name'] == "dataciphersfallback") {
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();

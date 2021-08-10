@@ -1392,46 +1392,48 @@ foreach ($a_cert as $cert):
 				<tr>
 					<td>
 						<?=$name?><br />
-						<?php if ($cert['type']): ?>
-							<i><?=$cert_types[$cert['type']]?></i><br />
-						<?php endif?>
-						<?php if (is_array($purpose)): ?>
-							CA: <b><?=$purpose['ca']?></b><br/>
-							<?=gettext("Server")?>: <b><?=$purpose['server']?></b><br/>
-						<?php endif?>
+						<?php 
+						if ($cert['type']) {
+							print("<i>{$cert_types[$cert['type']]}</i><br />");
+						}
+
+						if (is_array($purpose)) {
+							print("CA: <b>{$purpose['ca']}</b><br/>" .
+							gettext("Server") . ": <b>{$purpose['server']}</b><br/>");
+						}
+						?>
 					</td>
 					<td><?=$caname?></td>
 					<td>
 						<?=$subj?>
-						<?= cert_print_infoblock($cert); ?>
-						<?php cert_print_dates($cert);?>
+						<?php 
+						print(cert_print_infoblock($ca));
+						print(cert_format_dates($cert));?>
 					</td>
 					<td>
-						<?php if (is_cert_revoked($cert)): ?>
-							<i><?=gettext("Revoked")?></i>
-						<?php endif?>
-						<?php if (is_webgui_cert($cert['refid'])): ?>
-							<?=gettext("webConfigurator")?>
-						<?php endif?>
-						<?php if (is_user_cert($cert['refid'])): ?>
-							<?=gettext("User Cert")?>
-						<?php endif?>
-						<?php if (is_openvpn_server_cert($cert['refid'])): ?>
-							<?=gettext("OpenVPN Server")?>
-						<?php endif?>
-						<?php if (is_openvpn_client_cert($cert['refid'])): ?>
-							<?=gettext("OpenVPN Client")?>
-						<?php endif?>
-						<?php if (is_ipsec_cert($cert['refid'])): ?>
-							<?=gettext("IPsec Tunnel")?>
-						<?php endif?>
-						<?php if (is_captiveportal_cert($cert['refid'])): ?>
-							<?=gettext("Captive Portal")?>
-						<?php endif?>
-						<?php if (is_unbound_cert($cert['refid'])): ?>
-							<?=gettext("DNS Resolver")?>
-						<?php endif?>
-						<?php echo cert_usedby_description($cert['refid'], $certificates_used_by_packages); ?>
+						<?php
+						$inuse = "";
+						if (is_cert_revoked($cert)) {
+							$inuse = gettext("Revoked");
+						} else if (is_webgui_cert($cert['refid'])) {
+							$inuse = gettext("webConfigurator");
+						} else if (is_user_cert($cert['refid'])) {
+							$inuse = gettext("User Cert");
+						} else if (is_openvpn_server_cert($cert['refid'])) {
+							$inuse = gettext("OpenVPN Server");
+						} else if (is_openvpn_client_cert($cert['refid'])) {
+							$inuse = gettext("OpenVPN Client");
+						} else if (is_ipsec_cert($cert['refid'])) {
+							$inuse = gettext("IPsec Tunnel");
+						} else if (is_captiveportal_cert($cert['refid'])) {
+							$inuse = gettext("Captive Portal");
+						} else if (is_unbound_cert($cert['refid'])) {
+							$inuse = gettext("DNS Resolver");
+						}
+
+						print("<i>{$inuse}</i>");
+						print(cert_usedby_description($cert['refid'], $certificates_used_by_packages));
+						?>
 					</td>
 					<td>
 						<?php if (!$cert['csr']): ?>

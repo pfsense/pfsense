@@ -2096,7 +2096,7 @@ function cert_analyze_lifetime($expiredays) {
  *   Otherwise, outputs the dates to the user with formatting.
  ******/
 
-function cert_print_dates($cert) {
+function cert_format_dates($cert) {
 	/* If the certificate is not valid, bail. */
 	if (!is_array($cert) || empty($cert['crt'])) {
 		return null;
@@ -2114,16 +2114,15 @@ function cert_print_dates($cert) {
 	list($lrclass, $expstring) = cert_analyze_lifetime($expiredays);
 	/* Output the dates, with a tooltip showing days until expiration, and
 	 * a visual indication of warning/expired status. */
-	?>
-	<br />
-	<small>
-	<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br />
-	<?=gettext("Valid Until")?>:
-	<span class="text-<?=$lrclass?>" data-toggle="tooltip" data-placement="bottom" title="<?= $expstring ?>">
-	<b><?=$enddate ?></b>
-	</span>
-	</small>
-	<?php
+
+	$dates = '<br /><small>' .
+	gettext('Valid From') . ': <b>' . $startdate . '</b><br />' .
+	gettext('Valid Until') . ':' .
+	'<span class="text-' . $lrclass . '" data-toggle="tooltip" data-placement="bottom" title="' . $expstring . '">' .
+	'<b>' . $enddate . '</b>' .
+	'</span></small>';
+
+	return $dates;
 }
 
 /****f* certs/cert_print_infoblock
@@ -2275,13 +2274,12 @@ function cert_print_infoblock($cert) {
 		}
 	}
 
-	/* Output the infoblock */
-	if (!empty($certextinfo)) { ?>
-		<div class="infoblock">
-		<? print_info_box($certextinfo, 'info', false); ?>
-		</div>
-	<?php
+	if (!empty($certextinfo)) {
+		$certextinfo = '<div class="infoblock">' .
+		sprint_info_box($certextinfo, 'info', false) . '</div>';
 	}
+
+	return $certextinfo;
 }
 
 /****f* certs/cert_notify_expiring

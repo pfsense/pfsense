@@ -514,4 +514,9 @@ echo "Bootup complete" | /usr/bin/logger
 # Reset the cache.  read-only requires this.
 /bin/rm -f /tmp/config.cache
 
+# Run /etc/rc.local
+if [ -x /etc/rc.local ]; then
+        /etc/rc.local
+fi
+
 exit 0

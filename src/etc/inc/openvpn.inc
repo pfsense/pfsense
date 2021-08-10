@@ -917,6 +917,7 @@ function openvpn_reconfigure($mode, $settings) {
 		switch ($settings['mode']) {
 			case 'server_user':
 			case 'server_tls_user':
+			case 'server_tls':
 				$conf .= "client-connect /usr/local/sbin/openvpn.attributes.sh\n";
 				$conf .= "client-disconnect /usr/local/sbin/openvpn.attributes.sh\n";
 				break;

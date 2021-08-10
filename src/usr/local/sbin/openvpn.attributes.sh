@@ -20,16 +20,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-lockfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.lock"
-rulesfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.rules"
-anchorname="openvpn/${dev}_${username}_${trusted_port}"
-
 if [ -z "${untrusted_ip6}" ]; then
 	ipaddress="${untrusted_ip}"
 else
 	ipaddress="${untrusted_ip6}"
 fi
+
+# Remote Access (SSL/TLS) mode
+if [ -z "${username}" ]; then
+	if [ "$script_type" = "client-connect" ]; then
+		/usr/bin/logger -t openvpn "openvpn server '${dev}' user cert CN '${X509_0_CN}' address '${ipaddress}' - connected"
+	elif [ "$script_type" = "client-disconnect" ]; then
+		/usr/bin/logger -t openvpn "openvpn server '${dev}' user cert CN '${X509_0_CN}' address '${ipaddress}' - disconnected"
+		/sbin/pfctl -k $ifconfig_pool_remote_ip
+		/sbin/pfctl -K $ifconfig_pool_remote_ip
+		/sbin/pfctl -k $ifconfig_pool_remote_ip6
+		/sbin/pfctl -K $ifconfig_pool_remote_ip6
+	fi
+	exit 0
+fi
+
+lockfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.lock"
+rulesfile="/tmp/ovpn_${dev}_${username}_${trusted_port}.rules"
+anchorname="openvpn/${dev}_${username}_${trusted_port}"
 
 if [ "$script_type" = "client-connect" ]; then
 	/usr/bin/logger -t openvpn "openvpn server '${dev}' user '${username}' address '${ipaddress}' - connected"

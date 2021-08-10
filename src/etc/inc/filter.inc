@@ -1080,7 +1080,7 @@ function filter_get_vpns_list() {
 					}
 					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
 					$vpns_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
-					if (!is_subnet($vpns_subnet) || $vpns_subnet == "0.0.0.0/0") {
+					if (!is_subnet($vpns_subnet) || $vpns_subnet == "0.0.0.0/0" || $vpns_subnet == "::/0") {
 						continue;
 					}
 					$vpns_arr[] = $vpns_subnet;

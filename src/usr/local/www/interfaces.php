@@ -3999,21 +3999,21 @@ events.push(function() {
 	function updateeapclientmode(m) {
 		var wpa = !($('#wpa_enable').prop('checked'));
 		switch (m) {
-			case "peap": {
+			case "PEAP": {
 				hideInput('wpa_eap_cert', true);
 				hideInput('wpa_eap_inner_auth', wpa);
 				hideInput('wpa_eap_inner_id', wpa);
 				hideInput('wpa_eap_inner_password', wpa);
 				break;
 			}
-			case "tls": {
+			case "TLS": {
 				hideInput('wpa_eap_cert', wpa);
 				hideInput('wpa_eap_inner_auth', true);
 				hideInput('wpa_eap_inner_id', true);
 				hideInput('wpa_eap_inner_password', true);
 				break;
 			}
-			case "ttls": {
+			case "TTLS": {
 				hideInput('wpa_eap_cert', wpa);
 				hideInput('wpa_eap_inner_auth', wpa);
 				hideInput('wpa_eap_inner_id', wpa);

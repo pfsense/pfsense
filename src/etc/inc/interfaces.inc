@@ -7027,7 +7027,7 @@ function get_wireless_modes($interface) {
 
 	if ($cloned_interface && is_interface_wireless($cloned_interface)) {
 		$chan_list = "/sbin/ifconfig {$cloned_interface} list chan";
-		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
+		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\n\" \$3 }'";
 		$format_list = "/usr/bin/awk '{print \$5 \" \" \$6 \",\" \$1}'";
 
 		$interface_channels = "";
@@ -7069,7 +7069,7 @@ function get_wireless_modes($interface) {
 
 function get_wireless_channels($interface) {
 		$chan_list = "/sbin/ifconfig -v " . escapeshellarg($interface) . " list chan";
-		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
+		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\n\" \$3 }'";
 		$format_list = "/usr/bin/awk '{print \$5 \",\" \$6 \",\" \$1}'";
 
 		$interface_channels = "";
@@ -7141,7 +7141,7 @@ function get_wireless_channel_info($interface) {
 
 	if ($cloned_interface && is_interface_wireless($cloned_interface)) {
 		$chan_list = "/sbin/ifconfig " . escapeshellarg($cloned_interface) . " list txpower";
-		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
+		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\n\" \$3 }'";
 		$format_list = "/usr/bin/awk '{print \$1 \",\" \$3 \" \" \$4 \",\" \$5 \",\" \$7}'";
 
 		$interface_channels = "";

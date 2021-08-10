@@ -42,6 +42,8 @@ function getAdvancedNotifications($json = false) {
 	// General Settings
 	$nconfig['cert_enable_notify'] = ($config['notifications']['certexpire']['enable'] != "disabled");
 
+    	$nconfig['revoked_cert_ignore_notify'] = ($config['notifications']['certexpire']['ignore_revoked'] == "enabled");
+
 	if ($config['notifications']['certexpire']['expiredays']) {
 		$nconfig['certexpiredays'] = $config['notifications']['certexpire']['expiredays'];
 	}
@@ -137,6 +139,7 @@ function saveAdvancedNotifications($post, $json = false) {
 
 		// General Settings
 		$config['notifications']['certexpire']['enable'] = ($post['cert_enable_notify'] == "yes") ? "enabled" : "disabled";
+	    	$config['notifications']['certexpire']['ignore_revoked'] = ($post['revoked_cert_ignore_notify'] == "yes") ? "enabled" : "disabled";
 		if (empty($post['certexpiredays'])) {
 			$config['notifications']['certexpire']['expiredays'] = $g['default_cert_expiredays'];
 		} elseif (is_numericint($post['certexpiredays']) && ($post['certexpiredays'] > 0)) {

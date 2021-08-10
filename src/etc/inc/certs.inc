@@ -2072,7 +2072,7 @@ function cert_analyze_lifetime($expiredays) {
 		/* Not expiring soon */
 		$lrclass = 'normal';
 		$expstring = gettext("%d %s until expiration");
-	} elseif ($expiredays > 0) {
+	} elseif ($expiredays >= 0) {
 		/* Still valid but expiring soon */
 		$lrclass = 'warning';
 		$expstring = gettext("Expiring soon, in %d %s");
@@ -2314,10 +2314,14 @@ function cert_notify_expiring() {
 		if (empty($cert)) {
 			continue;
 		}
+		/* Proceed only for not revoked certificate if ignore setting enabled */
+		if (($config['notifications']['certexpire']['ignore_revoked'] == "enabled") && is_cert_revoked($cert)) {
+			continue;
+		}
 		/* Fetch and analyze expiration */
 		$expiredays = cert_get_lifetime($cert, true);
 		/* If the result is null, then the lifetime data is missing, so skip the invalid entry. */
-		if ($expiredays == null) {
+		if ($expiredays === null) {
 			continue;
 		}
 		list($lrclass, $expstring) = cert_analyze_lifetime($expiredays);

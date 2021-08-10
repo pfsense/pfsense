@@ -31,19 +31,6 @@ trap : 3
 trap : 4
 
 unset do_sleep
-if [ -f /etc/rc.local ]; then
-	if ! ps auxwww | egrep -q '[r]c.local$'; then
-		echo ">>> Launching rc.local in background..."
-		sh /etc/rc.local &
-		do_sleep=1
-	fi
-	if [ -f /etc/rc.local.running ] && \
-	    ! ps auxwww | egrep -q '[r]c.local.running$'; then
-		[ -n "${do_sleep}" ] && sleep 1
-		echo ">>> Launching rc.local.running in background..."
-		sh /etc/rc.local.running &
-	fi
-fi
 
 # Parse command line parameters
 while [ $# -gt 0 ]; do

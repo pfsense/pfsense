@@ -824,7 +824,21 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td>
 							<?php if (isset($filterent['gateway'])): ?>
-								<span data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Gateways details')?>" data-content="<?=gateway_info_popup($filterent['gateway'], $gateways_status)?>" data-html="true">
+								<?php
+									/* Cache gateway status for this page load.
+									 * See https://redmine.pfsense.org/issues/12174 */
+									if (!is_array($gw_info)) {
+										$gw_info = array();
+									}
+									if (empty($gw_info[$filterent['gateway']])) {
+										$gw_info[$filterent['gateway']] = gateway_info_popup($filterent['gateway'], $gateways_status);
+									}
+								?>
+								<?php if (!empty($gw_info[$filterent['gateway']])): ?>
+									<span data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Gateway details')?>" data-content="<?=$gw_info[$filterent['gateway']]?>" data-html="true">
+								<?php else: ?>
+									<span>
+								<?php endif; ?>
 							<?php else: ?>
 								<span>
 							<?php endif; ?>

@@ -85,7 +85,7 @@ function build_dsttype_list($json = false) {
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
 			if ((($sn['mode'] == "proxyarp") || ($sn['mode'] == "other")) &&
-			    ($sn['type'] == "network") && is_subnetv4($sn['subnet'])) {
+			    ($sn['type'] == "network") && is_subnetv4($sn['subnet'] . "/" . $sn['subnet_bits'])) {
 				$templist[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
 				if (isset($sn['noexpand'])) {
 					continue;

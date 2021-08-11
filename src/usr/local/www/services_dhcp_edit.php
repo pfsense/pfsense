@@ -104,8 +104,8 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['filename'] = $a_maps[$id]['filename'];
 	$pconfig['filename32'] = $a_maps[$id]['filename32'];
 	$pconfig['filename64'] = $a_maps[$id]['filename64'];
-	$pconfig['filename32arm'] = $dhcpdconf['filename32arm'];
-	$pconfig['filename64arm'] = $dhcpdconf['filename64arm'];
+	$pconfig['filename32arm'] = $a_maps[$id]['filename32arm'];
+	$pconfig['filename64arm'] = $a_maps[$id]['filename64arm'];
 	$pconfig['uefihttpboot'] = $a_maps[$id]['uefihttpboot'];
 	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
 	$pconfig['netmask'] = $a_maps[$id]['netmask'];
@@ -147,8 +147,8 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['filename'] = $_REQUEST['filename'];
 	$pconfig['filename32'] = $_REQUEST['filename32'];
 	$pconfig['filename64'] = $_REQUEST['filename64'];
-	$pconfig['filename32arm'] = $dhcpdconf['filename32arm'];
-	$pconfig['filename64arm'] = $dhcpdconf['filename64arm'];
+	$pconfig['filename32arm'] = $_REQUEST['filename32arm'];
+	$pconfig['filename64arm'] = $_REQUEST['filename64arm'];
 	$pconfig['uefihttpboot'] = $_REQUEST['uefihttpboot'];
 	$pconfig['rootpath'] = $_REQUEST['rootpath'];
 	$pconfig['netmask'] = $_REQUEST['netmask'];

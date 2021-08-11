@@ -32,7 +32,7 @@ require_once("notices.inc");
 $lockfile = "/tmp/acb.lock";
 // Check for 
 if (file_exists($lockfile)) {
-    if (time()-filemtime(lockfile) > (60 * 60)) {
+    if (time()-filemtime($lockfile) > (60 * 60)) {
         // The lock file is more than an hour old. Something probably went wrong
         unlink($lockfile);
         log_error("Stale ACB lock file removed");

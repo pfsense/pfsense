@@ -1854,6 +1854,8 @@ function get_interface_info($ifdescr) {
 		/* lookup the gateway */
 		if (interface_has_gateway($ifdescr)) {
 			$ifinfo['gateway'] = get_interface_gateway($ifdescr);
+		}
+		if (interface_has_gatewayv6($ifdescr)) {
 			$ifinfo['gatewayv6'] = get_interface_gateway_v6($ifdescr);
 		}
 	}

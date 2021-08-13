@@ -71,7 +71,7 @@ $filtered_tags = array(
 	'lighttpd_ls_password', 'maxmind_geoipdb_key', 'maxmind_key', 'md5-hash',
 	'md5password', 'md5sigkey', 'md5sigpass', 'nt-hash', 'oinkcode',
 	'oinkmastercode', 'pass', 'passphrase', 'password', 'passwordagain',
-	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key',	'proxypass',
+	'pkcs11pin', 'postgresqlpasswordenc', 'pre-shared-key', 'presharedkey', 'privatekey', 'proxypass',
 	'proxy_passwd', 'proxyuser', 'proxy_user', 'prv', 'radmac_secret', 'radius_secret',
 	'redis_password', 'redis_passwordagain', 'rocommunity',	'secret', 'secret2', 'securiteinfo_id',
        	'serverauthkey', 'shared_key', 'stats_password', 'tls', 'tlspskidentity', 'tlspskfile',

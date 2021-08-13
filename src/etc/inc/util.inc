@@ -1033,12 +1033,12 @@ function is_hostname($hostname, $allow_wildcard=false) {
 		if ((substr_count($hostname, ".") == 1) && ($hostname[strlen($hostname)-1] == ".")) {
 			/* Only a single dot at the end like "test." - hosts cannot be directly in the root domain. */
 			return false;
-		} elseif (!is_numericint($hostname)) {
-			/* OS interprets numeric value as decimal IP address, see https://redmine.pfsense.org/issues/12000 */
+		} else {
 			return true;
 		}
+	} else {
+		return false;
 	}
-	return false;
 }
 
 /* returns true if $domain is a valid domain name */

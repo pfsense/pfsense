@@ -147,7 +147,7 @@ function alias_same_type($name, $type) {
 }
 
 function saveAlias($post, $id) {
-	global $config, $pf_reserved_keywords, $reserved_table_names, $pconfig;
+	global $config, $pf_reserved_keywords, $reserved_table_names, $pconfig, $aliastable;
 
 	$origname = $post['origname'];
 	$reserved_ifs = get_configured_interface_list(true);
@@ -258,20 +258,23 @@ function saveAlias($post, $id) {
 
 		/* item is a url type */
 		for ($x = 0; $x < $max_alias_addresses - 1; $x++) {
-			if ($post['address' . $x]) {
+			if (is_URL($post['address' . $x])) {
 				/* fetch down and add in */
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
-				unlink_if_exists($temp_filename);
+				rmdir_recursive($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
 				if (!download_file($post['address' . $x], $temp_filename . "/aliases", $verify_ssl)) {
 					$data_errors[] = sprintf(gettext("Could not fetch the URL '%s'."), $post['address' . $x]);
+					rmdir_recursive($temp_filename);
 					continue;
 				}
 
 				/* if the item is tar gzipped then extract */
-				if (stristr($post['address' . $x], ".tgz")) {
-					process_alias_tgz($temp_filename);
+				if (stristr($post['address' . $x], ".tgz") && !process_alias_tgz($temp_filename)) {
+					$data_errors[] = sprintf(gettext("Could not unpack tgz from the URL '%s'."), $post['address' . $x]);
+					rmdir_recursive($temp_filename);
+					continue;
 				}
 
 				if (!isset($alias['aliasurl'])) {
@@ -303,11 +306,41 @@ function saveAlias($post, $id) {
 					} else {
 						array_push($address, ...$t_address);
 					}
-					unset($t_address);
-					mwexec("/bin/rm -rf " . escapeshellarg($temp_filename));
 				} else {
 					$data_errors[] = sprintf(gettext("URL '%s' is not valid."), $post['address' . $x]);
 				}
+				unset($t_address);
+				rmdir_recursive($temp_filename);
+			} elseif (is_alias($post['address' . $x]) &&
+			    in_array(alias_get_type($post['address' . $x]), array('url', 'url_ports'))) {
+				/* nested URL alias, see https://redmine.pfsense.org/issues/11863 */
+				if (!$aliastable) {
+					alias_make_table();
+				}
+				$t_address = explode(" ", $aliastable[$post['address' . $x]]);
+				if ($t_address == null) {
+					$data_errors[] = sprintf(gettext("A valid URL alias must be provided. Could not get usable data from '%s'."), $post['address' . $x]);
+					continue;
+				}
+				$alias['aliasurl'][] = $post['address' . $x];
+				if ($post["detail{$x}"] <> "") {
+					if ((strpos($post["detail{$x}"], "||") === false) && (substr($post["detail{$x}"], 0, 1) != "|") && (substr($post["detail{$x}"], -1, 1) != "|")) {
+						$final_address_details[] = $post["detail{$x}"];
+					} else {
+						/* Remove leading and trailing vertical bars and replace multiple vertical bars with single, */
+						/* and put in the output array so the text is at least redisplayed for the user. */
+						$final_address_details[] = preg_replace('/\|\|+/', '|', trim($post["detail{$x}"], "|"));
+						if (!$desc_fmt_err_found) {
+							$data_errors[] = $vertical_bar_err_text;
+							$desc_fmt_err_found = true;
+						}
+					}
+				} else {
+					$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
+				}
+				array_push($address, ...$t_address);
+			} elseif ($post['address' . $x]) {
+				$data_errors[] = sprintf(gettext("A valid URL or alias must be provided. Could not fetch usable data from '%s'."), $post['address' . $x]);
 			}
 		}
 		unset($desc_fmt_err_found);

@@ -2451,44 +2451,82 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 }
 
 function update_alias_url_data() {
-	global $config, $g;
+	global $config, $g, $aliastable;
 
 	$updated = false;
 
 	/* item is a url type */
 	$lockkey = lock('aliasurl');
 	if (is_array($config['aliases']['alias'])) {
+		$aliases = array();
+		$aliases_nested = array();
+
 		foreach ($config['aliases']['alias'] as $x => $alias) {
 			if (empty($alias['aliasurl'])) {
 				continue;
 			}
-
-			$address = null;
 			foreach ($alias['aliasurl'] as $alias_url) {
-				/* fetch down and add in */
-				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
-				unlink($temp_filename);
-				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
-				mkdir($temp_filename);
-				if (!download_file($alias_url, $temp_filename . "/aliases", $verify_ssl)) {
-					log_error(sprintf(gettext("Failed to download alias %s"), $alias_url));
-					continue;
-				}
-
-				/* if the item is tar gzipped then extract */
-				if (stripos($alias_url, '.tgz')) {
-					if (!process_alias_tgz($temp_filename)) {
-						continue;
-					}
-				}
-				if (file_exists("{$temp_filename}/aliases")) {
-					$address = parse_aliases_file("{$temp_filename}/aliases", $alias['type'], 5000);
-					mwexec("/bin/rm -rf {$temp_filename}");
+				if (is_alias($alias_url)) {
+					// process nested URL aliases after URL-only aliases
+					$aliases_nested[] = $x;
+					continue 2;
 				}
 			}
-			if ($address != null) {
-				$config['aliases']['alias'][$x]['address'] = implode(" ", $address);
-				$updated = true;
+			$aliases[] = $x;
+		}
+
+		foreach (array_merge($aliases, $aliases_nested) as $x) {
+
+			$address = array();
+			$type = $config['aliases']['alias'][$x]['type'];
+			foreach ($config['aliases']['alias'][$x]['aliasurl'] as $alias_url) {
+				/* fetch down and add in */
+				if (is_URL($alias_url)) {
+					$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
+					rmdir_recursive($temp_filename);
+					$verify_ssl = isset($config['system']['checkaliasesurlcert']);
+					mkdir($temp_filename);
+					if (!download_file($alias_url, $temp_filename . "/aliases", $verify_ssl)) {
+						log_error(sprintf(gettext("Failed to download alias %s"), $alias_url));
+						rmdir_recursive($temp_filename);
+						continue;
+					}
+
+					/* if the item is tar gzipped then extract */
+					if (stripos($alias_url, '.tgz') && !process_alias_tgz($temp_filename)) {
+						log_error(sprintf(gettext("Could not unpack tgz from the URL '%s'."), $alias_url));
+						rmdir_recursive($temp_filename);
+						continue;
+					}
+					if (file_exists("{$temp_filename}/aliases")) {
+						$t_address = parse_aliases_file("{$temp_filename}/aliases", $type, 5000);
+						if ($t_address == null) {
+							/* nothing was found */
+							log_error(sprintf(gettext("Could not fetch usable data from '%s'."), $alias_url));
+							//rmdir_recursive($temp_filename);
+							continue;
+						} else {
+							array_push($address, ...$t_address);
+						}
+						unset($t_address);
+					}
+					rmdir_recursive($temp_filename);
+				} elseif (is_alias($alias_url)) {
+					/* nested URL alias, see https://redmine.pfsense.org/issues/11863 */
+					if (!$aliastable) {
+						alias_make_table();
+					}
+					$t_address = explode(" ", $aliastable[$alias_url]);
+					if ($t_address == null) {
+						log_error(sprintf(gettext("Could not get usable data from '%s' URL alias."), $alias_url));
+						continue;
+					}
+					array_push($address, ...$t_address);
+				}
+				if (!empty($address)) {
+					$config['aliases']['alias'][$x]['address'] = implode(" ", $address);
+					$updated = true;
+				}
 			}
 		}
 	}

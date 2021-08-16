@@ -4441,6 +4441,7 @@ function filter_generate_ipsec_rules($log = array()) {
 		foreach ($config['ipsec']['phase1'] as $ph1ent) {
 			$tracker += 10;
 
+			$passout = true;
 			if (isset ($ph1ent['disabled']) || isset ($ph1ent['gw_duplicates'])) {
 				continue;
 			}
@@ -4450,9 +4451,13 @@ function filter_generate_ipsec_rules($log = array()) {
 				if (!$rgip) {
 					$ipfrules .= "# ERROR! Unable to determine remote IPsec peer address for {$ph1ent['remote-gateway']}\n";
 					continue;
+				} elseif (($rgip == '0.0.0.0') || ($rgip == '::')) {
+					$rgip .= '/0';
+					$passout = false;
 				}
 			} else {
 				$rgip = " any ";
+				$passout = false;
 			}
 			/* Determine best description */
 			if ($ph1ent['descr']) {
@@ -4539,8 +4544,8 @@ function filter_generate_ipsec_rules($log = array()) {
 
 			/* Add rules to allow IKE to pass */
 			$shorttunneldescr = substr($descr, 0, 35);
-			// don't add "pass out" rules where $rgip is any as it will over-match and often break VPN clients behind the system in multi-WAN scenarios. redmine #5819
-			if ($rgip != " any ") {
+			// don't add "pass out" rules where $rgip is any, 0.0.0.0/0 or ::/0 as it will over-match and often break VPN clients behind the system in multi-WAN scenarios. redmine #5819, #12262
+			if ($passout) {
 				$ike_out = isset($ph1ent['ikeport']) ? $ph1ent['ikeport'] : 500;
 				$ipfrules .= "pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = {$ike_out} tracker {$increment_tracker()} keep state label \"IPsec: {$shorttunneldescr} - outbound isakmp\"\n";
 			}
@@ -4549,7 +4554,7 @@ function filter_generate_ipsec_rules($log = array()) {
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = {$ike_in} tracker {$increment_tracker()} keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
 
 EOD;
-			if ($rgip != " any ") {
+			if ($passout) {
 				$natt_out = isset($ph1ent['nattport']) ? $ph1ent['nattport'] : 4500;
 				$ipfrules .= "pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = {$natt_out} tracker {$increment_tracker()} keep state label \"IPsec: {$shorttunneldescr} - outbound nat-t\"\n";
 			}
@@ -4560,7 +4565,7 @@ pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to
 EOD;
 			/* Add rules to allow the protocols in use */
 			if ($prot_used_esp) {
-				if ($rgip != " any ") {
+				if ($passout) {
 					$ipfrules .= "pass out {$log['pass']} $route_to proto esp from (self) to {$rgip} tracker {$increment_tracker()} keep state label \"IPsec: {$shorttunneldescr} - outbound esp proto\"\n";
 				}
 				$ipfrules .= <<<EOD
@@ -4569,7 +4574,7 @@ pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to
 EOD;
 			}
 			if ($prot_used_ah) {
-				if ($rgip != " any ") {
+				if ($passout) {
 					$ipfrules .= "pass out {$log['pass']} $route_to proto ah from (self) to {$rgip} tracker {$increment_tracker()} keep state label \"IPsec: {$shorttunneldescr} - outbound ah proto\"\n";
 				}
 				$ipfrules .= <<<EOD

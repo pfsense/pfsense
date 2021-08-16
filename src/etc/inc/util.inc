@@ -3781,4 +3781,63 @@ function is_interface_ipaddrv6($interface) {
 	return false;
 }
 
+function escape_filter_regex($filtertext) {
+	/* If the caller (user) has not already put a backslash before a slash, to escape it in the regex, */
+	/* then this will do it. Take out any "\/" already there, then turn all ordinary "/" into "\/".    */
+	return str_replace('/', '\/', str_replace('\/', '/', $filtertext));
+}
+
+/*
+ * Check if a given pattern has the same number of two different unescaped
+ * characters.
+ * For example, it can ensure a pattern has balanced sets of parentheses,
+ * braces, and brackets.
+ */
+function is_pattern_balanced_char($pattern, $open, $close) {
+	/* First remove escaped versions */
+	$pattern = str_replace('\\' . $open, '', $pattern);
+	$pattern = str_replace('\\' . $close, '', $pattern);
+	/* Check if the counts of both characters match in the target pattern */
+	return (substr_count($pattern, $open) == substr_count($pattern, $close));
+}
+
+/*
+ * Check if a pattern contains balanced sets of parentheses, braces, and
+ * brackets.
+ */
+function is_pattern_balanced($pattern) {
+	if (is_pattern_balanced_char($pattern, '(', ')') &&
+	    is_pattern_balanced_char($pattern, '{', '}') &&
+	    is_pattern_balanced_char($pattern, '[', ']')) {
+		/* Balanced if all are true */
+		return true;
+	}
+	return false;
+}
+
+function cleanup_regex_pattern($filtertext) {
+	/* Cleanup filter to prevent backreferences. */
+	$filtertext = escape_filter_regex($filtertext);
+
+	/* First check for unbalanced parentheses, braces, and brackets which
+	 * may be an error or attempt to circumvent protections */
+	if (!is_pattern_balanced($filtertext)) {
+		return '';
+	}
+
+	/* Remove \<digit>+ backreferences
+	 * To match \ it must be escaped as \\\\ in PHP for preg_replace() */
+	$filtertext = preg_replace('/\\\\\\d+/', '', $filtertext);
+
+	/* Remove attempts to repeat a group: )* )+ ){ */
+	$filtertext = str_replace(array(')*', ')+', '){'), '', $filtertext);
+
+	/* Check balance again, the cleanup above could leave a mismatch. */
+	if (!is_pattern_balanced($filtertext)) {
+		return '';
+	}
+
+	return $filtertext;
+}
+
 ?>

@@ -26,6 +26,7 @@
  */
 
 require_once('config.inc');
+require_once('util.inc');
 
 global $buffer_rules_rdr, $buffer_rules_normal;
 $buffer_rules_rdr = array();
@@ -861,12 +862,6 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 	if (isset($config['syslog'][$specific_log]['cronorder']) && ($config['syslog'][$specific_log]['cronorder'] == 'reverse')) $reverse = true;
 
 	return ($reverse) ? $filterlog : array_reverse($filterlog);
-}
-
-function escape_filter_regex($filtertext) {
-	/* If the caller (user) has not already put a backslash before a slash, to escape it in the regex, */
-	/* then this will do it. Take out any "\/" already there, then turn all ordinary "/" into "\/".    */
-	return str_replace('/', '\/', str_replace('\/', '/', $filtertext));
 }
 
 function match_filter_line($flent, $filtertext = "") {

@@ -32,6 +32,9 @@
 $limit = '100';
 $filter = '';
 
+/* Keep above the AJAX code so it gets CSRF protection */
+require_once('guiconfig.inc');
+
 if (isset($_POST['isAjax'])) {
 	require_once('auth_check.inc');
 
@@ -50,8 +53,13 @@ if (isset($_POST['isAjax'])) {
 
 	$netstat .= " | /usr/bin/tail -n +5";
 
-	if (!empty($_POST['filter'])) {
-		$netstat .= " | /usr/bin/egrep " . escapeshellarg($_POST['filter']);
+	/* Ensure the user-supplied filter is sane */
+	$filtertext = cleanup_regex_pattern($_POST['filter']);
+	if (!empty($filtertext)) {
+		/* Place filter after "--" (bare double-dash) so grep knows not
+		 * to interpret the filter as command line parameters.
+		 */
+		$netstat .= " | /usr/bin/egrep -- " . escapeshellarg($filtertext);
 	}
 
 	if (is_numeric($_POST['limit']) && $_POST['limit'] > 0) {
@@ -62,7 +70,6 @@ if (isset($_POST['isAjax'])) {
 
 	exit;
 }
-require_once('guiconfig.inc');
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Routes"));
 $shortcut_section = "routing";
@@ -99,7 +106,7 @@ $section->addInput(new Form_Input(
 	'Filter',
 	'text',
 	null
-))->setHelp('Use a regular expression to filter the tables.');
+))->setHelp('Use a regular expression to filter the tables. Invalid or potentially dangerous patterns will be ignored.');
 
 $form->add($section);
 

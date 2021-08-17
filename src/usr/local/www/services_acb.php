@@ -195,6 +195,16 @@ if ($_REQUEST['download']) {
 	set_curlproxy($curl_session);
 	$data = curl_exec($curl_session);
 
+	if (curl_errno($curl_session)) {
+		$fd = fopen("/tmp/acb_backupdebug.txt", "w");
+		fwrite($fd, "https://acb.netgate.com/getbkp" . "" . "action=sgetbackup" . "\n\n");
+		fwrite($fd, $data);
+		fwrite($fd, curl_error($curl_session));
+		fclose($fd);
+	} else {
+		curl_close($curl_session);
+	}
+
 	if (!tagfile_deformat($data, $data1, "config.xml")) {
 		$input_errors[] = "The downloaded file does not appear to contain an encrypted pfSense configuration.";
 	} else {

@@ -303,6 +303,10 @@ if (file_exists("/dev/etherswitch0")) {
 defCmdT("Firewall-Generated Ruleset", "/bin/cat {$g['tmp_path']}/rules.debug");
 defCmdT("Firewall-Generated Ruleset Limiters", "/bin/cat {$g['tmp_path']}/rules.limiter");
 defCmdT("Firewall-Generated Ruleset Limits", "/bin/cat {$g['tmp_path']}/rules.limits");
+foreach (glob("{$g['tmp_path']}/rules.packages.*") as $pkgrules) {
+	$pkgname = substr($pkgrules, strrpos($pkgrules, '.') + 1);
+	defCmdT("Firewall-Generated Package Invalid Ruleset {$pkgname}", "/bin/cat {$pkgrules}");
+}
 defCmdT("Firewall-pf NAT Rules", "/sbin/pfctl -vvsn");
 defCmdT("Firewall-pf Firewall Rules", "/sbin/pfctl -vvsr");
 defCmdT("Firewall-pf Tables", "/sbin/pfctl -vs Tables");

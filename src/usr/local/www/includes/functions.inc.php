@@ -27,17 +27,22 @@ if (Connection_Aborted()) {
 require_once("config.inc");
 require_once("pfsense-utils.inc");
 
-function get_stats() {
-	$stats['cpu'] = cpu_usage();
-	$stats['mem'] = mem_usage();
-	$stats['uptime'] = get_uptime();
-	$stats['states'] = get_pfstate();
-	$stats['temp'] = get_temp();
-	$stats['datetime'] = update_date_time();
-	$stats['cpufreq'] = get_cpufreq();
-	$stats['load_average'] = get_load_average();
-	get_mbuf($stats['mbuf'], $stats['mbufpercent']);
-	$stats['statepercent'] = get_pfstate(true);
+function get_stats($sitems = array()) {
+	$stats['cpu'] = (!in_array('cpu_usage', $sitems)) ? cpu_usage() : '|';
+	$stats['mem'] = (!in_array('memory_usage', $sitems)) ? mem_usage() : '';
+	$stats['uptime'] = (!in_array('uptime', $sitems)) ? get_uptime() : '';
+	$stats['states'] = (!in_array('state_table_size', $sitems)) ? get_pfstate() : '';
+	$stats['temp'] = (!in_array('temperature', $sitems)) ? get_temp() : '';
+	$stats['datetime'] = (!in_array('current_datetime', $sitems)) ? update_date_time() : '';
+	$stats['cpufreq'] = (!in_array('cpu_type', $sitems)) ? get_cpufreq() : '';
+	$stats['load_average'] = (!in_array('load_average', $sitems)) ? get_load_average() : '';
+	if (!in_array('mbuf_usage', $sitems)) {
+		get_mbuf($stats['mbuf'], $stats['mbufpercent']);
+	} else {
+		$stats['mbuf'] = '';
+		$stats['mbufpercent'] = '';
+	}
+	$stats['statepercent'] = (!in_array('state_table_size', $sitems)) ? get_pfstate(true) : '';
 	$stats = join("|", $stats);
 	return $stats;
 }

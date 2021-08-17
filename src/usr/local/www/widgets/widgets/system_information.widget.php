@@ -143,6 +143,7 @@ if ($_REQUEST['getupdatestatus']) {
 $filesystems = get_mounted_filesystems();
 
 $skipsysinfoitems = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
+
 $rows_displayed = false;
 // use the preference of the first thermal sensor widget, if it's available (false == empty)
 $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($user_settings['widgets']['thermal_sensors-0']['thermal_sensors_widget_show_fahrenheit']));
@@ -797,7 +798,8 @@ events.push(function() {
 
 	// POST data to send via AJAX
 	var postdata = {
-		ajax: "ajax"
+		ajax: "ajax",
+		skipitems: <?=json_encode($skipsysinfoitems)?>
 	 };
 
 	// Create an object defining the widget refresh AJAX call
@@ -826,7 +828,8 @@ events.push(function() {
 	// POST data to send via AJAX
 	var postdata = {
 		ajax: "ajax",
-		getupdatestatus: "1"
+		getupdatestatus: "1",
+		skipitems: <?=json_encode($skipsysinfoitems)?>
 	 };
 
 	// Create an object defining the widget refresh AJAX call
@@ -856,7 +859,8 @@ events.push(function() {
 			dataType: 'html',
 			data: {
 				ajax: "ajax",
-				getupdatestatus: "2"
+				getupdatestatus: "2",
+				skipitems: <?=json_encode($skipsysinfoitems)?>
 			},
 
 			success: function(data){

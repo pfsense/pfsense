@@ -37,6 +37,6 @@ header("Pragma: no-cache"); // HTTP/1.0
 require_once("auth_check.inc");
 include_once("includes/functions.inc.php");
 
-echo get_stats();
+echo get_stats($_POST['skipitems']);
 
 ?>

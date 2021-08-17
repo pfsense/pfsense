@@ -607,10 +607,18 @@ function dump_log($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert 
 			$grepfor[0] = substr($grepfor[0], 1);
 			$invert = '-v';
 		}
-		$grepline .= " | /usr/bin/egrep {$invert} " . escapeshellarg(implode("|", $grepfor));
+		/* Ensure the user-supplied filter is sane */
+		$filtertext = cleanup_regex_pattern(implode("|", $grepfor));
+		if (!empty($filtertext)) {
+			$grepline .= " | /usr/bin/egrep {$invert} -- " . escapeshellarg($filtertext);
+		}
 	}
 	if (is_array($grepinvert)) {
-		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
+		/* Ensure the user-supplied filter is sane */
+		$filtertext = cleanup_regex_pattern(implode("|", $grepinvert));
+		if (!empty($filtertext)) {
+			$grepline .= " | /usr/bin/egrep -v -- " . escapeshellarg($filtertext);
+		}
 	}
 	if (is_dir($logfile)) {
 		$logarr = array(sprintf(gettext("File %s is a directory."), $logfile));

@@ -3838,21 +3838,17 @@ function cleanup_regex_pattern($filtertext) {
 	/* Cleanup filter to prevent backreferences. */
 	$filtertext = escape_filter_regex($filtertext);
 
-	/* First check for unbalanced parentheses, braces, and brackets which
-	 * may be an error or attempt to circumvent protections */
-	if (!is_pattern_balanced($filtertext)) {
-		return '';
-	}
-
 	/* Remove \<digit>+ backreferences
 	 * To match \ it must be escaped as \\\\ in PHP for preg_replace() */
 	$filtertext = preg_replace('/\\\\\\d+/', '', $filtertext);
 
-	/* Remove attempts to repeat a group: )* )+ ){ */
-	$filtertext = str_replace(array(')*', ')+', '){'), '', $filtertext);
-
-	/* Check balance again, the cleanup above could leave a mismatch. */
-	if (!is_pattern_balanced($filtertext)) {
+	/* Check for unbalanced parentheses, braces, and brackets which
+	 * may be an error or attempt to circumvent protections.
+	 * Also discard any pattern that attempts group duplication */
+	if (!is_pattern_balanced($filtertext) ||
+	    (substr_count($filtertext, ')*') > 0) ||
+	    (substr_count($filtertext, ')+') > 0) ||
+	    (substr_count($filtertext, '){') > 0)) {
 		return '';
 	}
 

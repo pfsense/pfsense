@@ -34,7 +34,7 @@ $lockfile = "/tmp/acb.lock";
 if (file_exists($lockfile)) {
     if (time()-filemtime($lockfile) > (60 * 60)) {
         // The lock file is more than an hour old. Something probably went wrong
-        unlink($lockfile);
+        unlink_if_exists($lockfile);
         log_error("Stale ACB lock file removed");
     } else {
        exit();
@@ -63,7 +63,7 @@ if (count($files) > 0) {
     }
 }
 
-unlink($lockfile);
+unlink_if_exists($lockfile);
 
 function upload($basename) {
     global $acbuploadpath, $badreasons;

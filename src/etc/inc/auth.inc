@@ -431,21 +431,28 @@ function local_backed($username, $passwd) {
 		return false;
 	}
 
+	if ($user['sha512-hash']) {
+		if (hash_equals($user['sha512-hash'], crypt($passwd, $user['sha512-hash']))) {
+			return true;
+		}
+	}
+
+	//for backwards compatibility
 	if ($user['bcrypt-hash']) {
 		if (password_verify($passwd, $user['bcrypt-hash'])) {
 			return true;
 		}
 	}
 
-	//for backwards compatibility
+	// pfSense < 2.3 password hashing, see https://redmine.pfsense.org/issues/4120
 	if ($user['password']) {
-		if (crypt($passwd, $user['password']) == $user['password']) {
+		if (hash_equals($user['password'], crypt($passwd, $user['password']))) {
 			return true;
 		}
 	}
 
 	if ($user['md5-hash']) {
-		if (md5($passwd) == $user['md5-hash']) {
+		if (hash_equals($user['md5-hash'], md5($passwd))) {
 			return true;
 		}
 	}
@@ -626,7 +633,7 @@ function local_reset_accounts() {
 function local_user_set(& $user) {
 	global $g, $debug;
 
-	if (empty($user['password']) && empty($user['bcrypt-hash'])) {
+	if (empty($user['sha512-hash']) && empty($user['bcrypt-hash']) && empty($user['password'])) {
 		log_error("There is something wrong in the config because user {$user['name']} password is missing!");
 		return;
 	}
@@ -675,10 +682,12 @@ function local_user_set(& $user) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
 		$fd = popen($cmd, "w");
-		if (empty($user['bcrypt-hash'])) {
-			fwrite($fd, $user['password']);
-		} else {
+		if (isset($user['sha512-hash'])) {
+			fwrite($fd, $user['sha512-hash']);
+		} elseif (isset($user['bcrypt-hash'])) {
 			fwrite($fd, $user['bcrypt-hash']);
+		} else {
+			fwrite($fd, $user['password']);
 		}
 		pclose($fd);
 		$user_group = "wheel";
@@ -716,10 +725,12 @@ function local_user_set(& $user) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	}
 	$fd = popen($cmd, "w");
-	if (empty($user['bcrypt-hash'])) {
-		fwrite($fd, $user['password']);
-	} else {
+	if (isset($user['sha512-hash'])) {
+		fwrite($fd, $user['sha512-hash']);
+	} elseif (isset($user['bcrypt-hash'])) {
 		fwrite($fd, $user['bcrypt-hash']);
+	} else {
+		fwrite($fd, $user['password']);
 	}
 	pclose($fd);
 
@@ -795,7 +806,9 @@ function local_user_set_password(&$user, $password) {
 
 	unset($user['password']);
 	unset($user['md5-hash']);
-	$user['bcrypt-hash'] = password_hash($password, PASSWORD_BCRYPT);
+	unset($user['bcrypt-hash']);
+	$salt = substr(bin2hex(openssl_random_pseudo_bytes(16)),0,16);
+	$user['sha512-hash'] = crypt($password, '$6$'. $salt . '$');
 	if (($user['name'] == $config['hasync']['username']) &&
 	    ($config['hasync']['adminsync'] == 'on')) {
 		$config['hasync']['new_password'] = $password;

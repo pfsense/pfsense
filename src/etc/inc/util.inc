@@ -3844,11 +3844,12 @@ function cleanup_regex_pattern($filtertext) {
 
 	/* Check for unbalanced parentheses, braces, and brackets which
 	 * may be an error or attempt to circumvent protections.
-	 * Also discard any pattern that attempts group duplication */
+	 * Also discard any pattern that attempts problematic duplication
+	 * methods. */
 	if (!is_pattern_balanced($filtertext) ||
 	    (substr_count($filtertext, ')*') > 0) ||
 	    (substr_count($filtertext, ')+') > 0) ||
-	    (substr_count($filtertext, '){') > 0)) {
+	    (substr_count($filtertext, '{') > 0)) {
 		return '';
 	}
 

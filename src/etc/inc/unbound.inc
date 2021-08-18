@@ -114,20 +114,22 @@ function test_unbound_config($unboundcfg, &$output) {
 	$cfgdir = "{$g['unbound_chroot_path']}{$cfgsubdir}";
 	rmdir_recursive($cfgdir);
 
-	unbound_generate_config($unboundcfg, $cfgsubdir);
-	unbound_remote_control_setup($cfgsubdir);
-	do_as_unbound_user("unbound-anchor", $cfgsubdir);
-
 	// Copy the Python files to the test folder
-	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script'])) {
+	if (isset($unboundcfg['python']) &&
+	    !empty($unboundcfg['python_script'])) {
 		$python_files = glob("{$g['unbound_chroot_path']}/{$unboundcfg['python_script']}.*");
 		if (is_array($python_files)) {
+			create_unbound_chroot_path($cfgsubdir);
 			foreach ($python_files as $file) {
 				$file = pathinfo($file, PATHINFO_BASENAME);
 				@copy("{$g['unbound_chroot_path']}/{$file}", "{$cfgdir}/{$file}");
 			}
 		}
 	}
+
+	unbound_generate_config($unboundcfg, $cfgsubdir);
+	unbound_remote_control_setup($cfgsubdir);
+	do_as_unbound_user("unbound-anchor", $cfgsubdir);
 
 	$rv = 0;
 	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1",
@@ -159,6 +161,30 @@ function unbound_generate_config($unboundcfg = NULL, $cfgsubdir = "") {
 	file_put_contents("{$g['unbound_chroot_path']}{$cfgsubdir}/unbound.conf", $unboundcfgtxt);
 }
 
+function unbound_get_python_scriptname($unboundcfg, $cfgsubdir = '') {
+	global $g;
+	if (!isset($unboundcfg['python']) ||
+	    empty($unboundcfg['python_script'])) {
+		/* Python is not enabled, or no script defined. */
+		return "";
+	}
+
+	$python_path = $g['unbound_chroot_path'];
+	if (!empty($cfgsubdir)) {
+		$python_path .= "{$cfgsubdir}";
+	}
+
+	/* Full path to the selected script file */
+	$python_script_file = "{$python_path}/{$unboundcfg['python_script']}.py";
+
+	if (file_exists($python_script_file)) {
+		/* If using a subdir (e.g. testing) use the full path, otherwise
+		 * only use the base filename. */
+		return empty($cfgsubdir) ? basename($python_script_file) : $python_script_file;
+	} else {
+		return '';
+	}
+}
 
 function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 
@@ -177,7 +203,8 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 	$module_config = '';
 
 	// Setup Python module (pre validator)
-	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script']) && $unboundcfg['python_order'] == 'pre_validator') {
+	if (!empty(unbound_get_python_scriptname($unboundcfg, $cfgsubdir)) &&
+	    $unboundcfg['python_order'] == 'pre_validator') {
 		$module_config .= 'python ';
 	}
 
@@ -199,7 +226,8 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 	}
 
 	// Setup Python module (post validator)
-	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script']) && $unboundcfg['python_order'] == 'post_validator') {
+	if (!empty(unbound_get_python_scriptname($unboundcfg, $cfgsubdir)) &&
+	    $unboundcfg['python_order'] == 'post_validator') {
 		$module_config .= 'python ';
 	}
 
@@ -433,12 +461,9 @@ EOD;
 	}
 
 	$python_module = '';
-	if (isset($unboundcfg['python']) && !empty($unboundcfg['python_script'])) {
-		$python_path = '';
-		if (!empty($cfgsubdir)) {
-			$python_path = "{$g['unbound_chroot_path']}{$cfgsubdir}/";
-		}
-		$python_module = "\n# Python Module\npython:\npython-script: {$python_path}{$unboundcfg['python_script']}.py";
+	$python_script_file = unbound_get_python_scriptname($unboundcfg, $cfgsubdir);
+	if (!empty($python_script_file)) {
+		$python_module = "\n# Python Module\npython:\npython-script: {$python_script_file}";
 	}
 
 	$unboundconf = <<<EOD

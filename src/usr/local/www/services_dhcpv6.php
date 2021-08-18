@@ -556,8 +556,7 @@ foreach ($iflist as $ifent => $ifname) {
 	    !is_linklocal($oc['ipaddrv6'])));
 
 	if ((!is_array($config['dhcpdv6'][$ifent]) ||
-	    !isset($config['dhcpdv6'][$ifent]['enable']) ||
-	    preg_match('/poes/', $ifent)) &&
+	    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
 	    !$valid_if_ipaddrv6) {
 		continue;
 	}
@@ -570,26 +569,6 @@ foreach ($iflist as $ifent => $ifname) {
 
 	$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
 	$tabscounter++;
-}
-
-/* tack on PPPoE or PPtP servers here */
-/* pppoe server */
-if (is_array($config['pppoes']['pppoe'])) {
-	foreach ($config['pppoes']['pppoe'] as $pppoe) {
-		if ($pppoe['mode'] == "server") {
-			$ifent = "poes". $pppoe['pppoeid'];
-			$ifname = strtoupper($ifent);
-
-			if ($ifent == $if) {
-				$active = true;
-			} else {
-				$active = false;
-			}
-
-			$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
-			$tabscounter++;
-		}
-	}
 }
 
 if ($tabscounter == 0) {

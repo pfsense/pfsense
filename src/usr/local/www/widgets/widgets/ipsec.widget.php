@@ -33,11 +33,12 @@ require_once("functions.inc");
 require_once("service-utils.inc");
 require_once("ipsec.inc");
 
+// Should always be initialized
+init_config_arr(array('ipsec', 'phase1'));
+init_config_arr(array('ipsec', 'phase2'));
+
 // Compose the table contents and pass it back to the ajax caller
 if ($_REQUEST && $_REQUEST['ajax']) {
-
-	init_config_arr(array('ipsec', 'phase1'));
-	init_config_arr(array('ipsec', 'phase2'));
 
 	if (ipsec_enabled() && get_service_status(array('name' => 'ipsec'))) {
 		$cmap = ipsec_status();
@@ -243,7 +244,7 @@ if (count($config['ipsec']['phase2'])): ?>
 <?php else: ?>
 	<div>
 		<h5 style="padding-left:10px;"><?= htmlspecialchars(gettext("There are no configured IPsec Tunnels")) ?></h5>
-		<p  style="padding-left:10px;"><?= htmlspecialchars(gettext('IPsec can be configured <a href="vpn_ipsec.php">here</a>.')) ?></p>
+		<p  style="padding-left:10px;"><?= sprintf(htmlspecialchars(gettext('IPsec can be configured %shere.%s')), '<a href="vpn_ipsec.php">', '</a>') ?></p>
 	</div>
 <?php endif;
 

@@ -437,6 +437,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_POST['dup']) || !is_numericint($_POST
 
 	$hlpstr = '';
 	$rulelist = array('' => gettext('None'), 'pass' => gettext('Pass'));
+	$rule_association = 'associated-rule-id';
 
 	if (is_array($config['filter']['rule'])) {
 		filter_rules_sort();
@@ -455,26 +456,27 @@ if (isset($id) && $a_nat[$id] && (!isset($_POST['dup']) || !is_numericint($_POST
 	if (isset($pconfig['associated-rule-id'])) {
 		$rulelist['new'] = gettext('Create new associated filter rule');
 	}
-
-	$section->addInput(new Form_Select(
-		'associated-rule-id',
-		'Filter rule association',
-		$pconfig['associated-rule-id'],
-		$rulelist
-	))->setHelp($hlpstr);
 } else {
-	$section->addInput(new Form_Select(
-		'filter-rule-association',
-		'Filter rule association',
-		'add-associated',
-		array(
-			'' => 'None',
+	$rulelist = array(
+			'' => gettext('None'),
 			'add-associated'  => gettext('Add associated filter rule'),
 			'add-unassociated' => gettext('Add unassociated filter rule'),
 			'pass' => gettext('Pass')
-		)
-	))->setHelp('The "pass" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.');
+		);
+	$hlpstr = gettext('The "pass" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.');
+	$rule_association = 'filter-rule-association';
+	if (!isset($pconfig['associated-rule-id']) ||
+	    (strpos($pconfig['associated-rule-id'], 'nat') !== false)) { 
+		$pconfig['associated-rule-id'] = 'add-associated';
+	}
 }
+
+$section->addInput(new Form_Select(
+	$rule_association,
+	'Filter rule association',
+	$pconfig['associated-rule-id'],
+	$rulelist
+))->setHelp($hlpstr);
 
 $form->add($section);
 

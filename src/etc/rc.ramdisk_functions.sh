@@ -82,14 +82,15 @@ ramdisk_get_size () {
 ramdisk_check_size () {
 	tmpsize=$( ramdisk_get_size tmp )
 	varsize=$( ramdisk_get_size var )
-	# Check available kmem
-	KMEM_FREE=$( /sbin/sysctl -n vm.kmem_map_free )
+	# Check available RAM
+	PAGES_FREE=$( /sbin/sysctl -n vm.stats.vm.v_free_count )
+	PAGE_SIZE=$( /sbin/sysctl -n vm.stats.vm.v_page_size )
+	MEM_FREE=$( /bin/expr ${PAGES_FREE} \* ${PAGE_SIZE} )
 	# Convert to MB
-	KMEM_FREE=$( /bin/expr ${KMEM_FREE} / 1024 / 1024 )
+	MEM_FREE=$( /bin/expr ${MEM_FREE} / 1024 / 1024 )
 	# Total size of desired RAM disks
-	KMEM_NEED=$( /bin/expr ${tmpsize} + ${varsize} )
-	# echo "FREE: ${KMEM_FREE} NEED: ${KMEM_NEED}"
-	[ ${KMEM_FREE} -gt ${KMEM_NEED} ]
+	MEM_NEED=$( /bin/expr ${tmpsize} + ${varsize} )
+	[ ${MEM_FREE} -gt ${MEM_NEED} ]
 	return $?
 }
 
@@ -101,7 +102,7 @@ ramdisk_try_mount () {
 	NAME=$1
 	if [ ramdisk_check_size ]; then
 		SIZE=$(eval echo \${${NAME}size})m
-		/sbin/mdmfs -S -M -s ${SIZE} md /${NAME}
+		/sbin/mount -o rw,size=${SIZE},mode=1777 -t tmpfs tmpfs /${NAME}
 		return $?
 	else
 		return 1;

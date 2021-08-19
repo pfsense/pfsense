@@ -33,7 +33,7 @@ function getSystemAdvancedMisc($json = false) {
 
 	$pconfig = array();
 
-	$pconfig['available_kernel_memory'] = get_single_sysctl("vm.kmem_map_free");
+	$pconfig['available_kernel_memory'] = (int) get_single_sysctl("vm.stats.vm.v_free_count") * (int) get_single_sysctl("vm.stats.vm.v_page_size");
 
 	/* Adjust available kernel memory to account for existing RAM disks
 	 * https://redmine.pfsense.org/issues/10420 */
@@ -112,7 +112,7 @@ function saveSystemAdvancedMisc($post, $json = false) {
 		'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor")
 	);
 
-	$post['available_kernel_memory'] = get_single_sysctl("vm.kmem_map_free");
+	$post['available_kernel_memory'] = (int) get_single_sysctl("vm.stats.vm.v_free_count") * (int) get_single_sysctl("vm.stats.vm.v_page_size");;
 
 	/* Adjust available kernel memory to account for existing RAM disks
 	 * https://redmine.pfsense.org/issues/10420 */

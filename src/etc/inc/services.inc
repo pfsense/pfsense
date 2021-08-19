@@ -128,13 +128,13 @@ function services_radvd_configure($blacklist = array()) {
 		if (is_numericint($dhcpv6ifconf['raminrtradvinterval'])) {
 			$radvdconf .= "\tMinRtrAdvInterval {$dhcpv6ifconf['raminrtradvinterval']};\n";
 		} else {
-			$radvdconf .= "\tMinRtrAdvInterval 5;\n";
+			$radvdconf .= "\tMinRtrAdvInterval 200;\n";
 		}
 
 		if (is_numericint($dhcpv6ifconf['ramaxrtradvinterval'])) {
 			$ramaxrtradvinterval = $dhcpv6ifconf['ramaxrtradvinterval'];
 		} else {
-			$ramaxrtradvinterval = 20;
+			$ramaxrtradvinterval = 600;
 		}
 		$radvdconf .= "\tMaxRtrAdvInterval {$ramaxrtradvinterval};\n";
 		if (is_numericint($dhcpv6ifconf['raadvdefaultlifetime'])) {

@@ -380,25 +380,35 @@ $section->addInput(new Form_Input(
 	'Minimum RA interval',
 	'number',
 	$pconfig['raminrtradvinterval'],
-	['min' => 3, 'max' => 1350, 'placeholder' => 5]
+	['min' => 3, 'max' => 1350, 'placeholder' => 200]
 ))->setHelp('The minimum time allowed between sending unsolicited multicast router advertisements in seconds.%1$s' .
-'The default is 5 seconds.', '<br />');
+'The default is 200 seconds.', '<br />');
 
 $section->addInput(new Form_Input(
 	'ramaxrtradvinterval',
 	'Maximum RA interval',
 	'number',
 	$pconfig['ramaxrtradvinterval'],
-	['min' => 4, 'max' => 1800, 'placeholder' => 20]
+	['min' => 4, 'max' => 1800, 'placeholder' => 600]
 ))->setHelp('The maximum time allowed between sending unsolicited multicast router advertisements in seconds.%1$s' .
-'The default is 20 seconds.', '<br />');
+'The default is 600 seconds.', '<br />');
+
+if (isset($pconfig['raadvdefaultlifetime']) &&
+    is_numeric($pconfig['raadvdefaultlifetime'])) {
+	$raadvdefaultlifetime = $pconfig['raadvdefaultlifetime'];
+} elseif (isset($pconfig['ramaxrtradvinterval']) &&
+    is_numeric($pconfig['ramaxrtradvinterval'])) {
+	$raadvdefaultlifetime = $pconfig['ramaxrtradvinterval'] * 3;
+} else {
+	$raadvdefaultlifetime = 1800;
+}	
 
 $section->addInput(new Form_Input(
 	'raadvdefaultlifetime',
 	'Router lifetime',
 	'number',
 	$pconfig['raadvdefaultlifetime'],
-	['min' => 1, 'max' => 9000]
+	['min' => 1, 'max' => 9000, 'placeholder' => $raadvdefaultlifetime]
 ))->setHelp('The lifetime associated with the default router in seconds.%1$s' .
 'The default is 3 * Maximum RA interval seconds.', '<br />');
 

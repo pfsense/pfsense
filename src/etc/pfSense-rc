@@ -241,7 +241,7 @@ fi
 varrunpath=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var varrun_path "/var/run")
 
 if ! ramdisk_is_active; then
-	/sbin/mdmfs -S -M -s 4m md $varrunpath
+	/sbin/mount -o rw,size=4m,mode=1777 -t tmpfs tmpfs $varrunpath
 fi
 
 echo

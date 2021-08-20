@@ -27,6 +27,8 @@
  * limitations under the License.
  */
 
+require_once("openvpn.inc");
+
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
 
@@ -1097,12 +1099,20 @@ function filter_get_vpns_list() {
 					if (!isset($settings['disable'])) {
 						$remote_networks = explode(',', $settings['remote_network']);
 						foreach ($remote_networks as $remote_network) {
-							if (is_subnet($remote_network) && ($remote_network <> "0.0.0.0/0")) {
+							if (is_alias($remote_network)) {
+								foreach (alias_to_subnets_recursive($remote_network) as $net) {
+									if (is_subnetv4($net) && ($net != "0.0.0.0/0")) {
+										$vpns_arr[] = $net;
+									}
+								}
+							} elseif (is_subnetv4($remote_network) && ($remote_network != "0.0.0.0/0")) {
 								$vpns_arr[] = $remote_network;
 							}
 						}
-						if (is_subnet($settings['tunnel_network']) && $settings['tunnel_network'] <> "0.0.0.0/0") {
-							$vpns_arr[] = $settings['tunnel_network'];
+						if (openvpn_validate_tunnel_network($settings['tunnel_network'], 'ipv4') &&
+						    ($settings['tunnel_network'] != "0.0.0.0/0")) {
+
+							$vpns_arr[] = implode('/', openvpn_gen_tunnel_network($settings['tunnel_network']));
 						}
 					}
 				}
@@ -1760,7 +1770,7 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv) {
 			if (!isset($ovpnsrv['disable']) && !empty($ovpnsrv['tunnel_network'])) {
-				$tonathosts[] = $ovpnsrv['tunnel_network'];
+				$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpnsrv['tunnel_network']));
 				$descriptions[] = gettext("OpenVPN server");
 			}
 		}
@@ -1769,7 +1779,7 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	if (is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as $ovpncli) {
 			if (!isset($ovpncli['disable']) && !empty($ovpncli['tunnel_network'])) {
-				$tonathosts[] = $ovpncli['tunnel_network'];
+				$tonathosts[] = implode('/', openvpn_gen_tunnel_network($ovpncli['tunnel_network']));
 				$descriptions[] = gettext("OpenVPN client");
 			}
 		}

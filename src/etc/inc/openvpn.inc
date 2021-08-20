@@ -623,7 +623,7 @@ function openvpn_validate_port($value, $name, $first_port = 0) {
 	return false;
 }
 
-function openvpn_validate_cidr($value, $name, $multiple = false, $ipproto = "ipv4") {
+function openvpn_validate_cidr($value, $name, $multiple = false, $ipproto = "ipv4", $alias = false) {
 	$value = trim($value);
 	$error = false;
 	if (empty($value)) {
@@ -637,9 +637,9 @@ function openvpn_validate_cidr($value, $name, $multiple = false, $ipproto = "ipv
 
 	foreach ($networks as $network) {
 		if ($ipproto == "ipv4") {
-			$error = !openvpn_validate_cidr_ipv4($network);
+			$error = !openvpn_validate_cidr_ipv4($network, $alias);
 		} else {
-			$error = !openvpn_validate_cidr_ipv6($network);
+			$error = !openvpn_validate_cidr_ipv6($network, $alias);
 		}
 		if ($error) {
 			break;
@@ -653,29 +653,77 @@ function openvpn_validate_cidr($value, $name, $multiple = false, $ipproto = "ipv
 	}
 }
 
-function openvpn_validate_cidr_ipv4($value) {
+function openvpn_validate_cidr_ipv4($value, $alias = false) {
 	$value = trim($value);
 	if (!empty($value)) {
-		list($ip, $mask) = explode('/', $value);
-		if (!is_ipaddrv4($ip) or !is_numeric($mask) or ($mask > 32) or ($mask < 0)) {
-			return false;
+		if ($alias && is_alias($value) && in_array(alias_get_type($value), array('host', 'network'))) {
+			foreach (alias_to_subnets_recursive($value) as $net) {
+				if (!is_subnetv4($net)) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			if (!is_subnetv4($value)) {
+				return false;
+			}
 		}
 	}
 	return true;
 }
 
-function openvpn_validate_cidr_ipv6($value) {
+function openvpn_validate_cidr_ipv6($value, $alias = false) {
 	$value = trim($value);
 	if (!empty($value)) {
-		list($ipv6, $prefix) = explode('/', $value);
-		if (empty($prefix)) {
-			$prefix = "128";
-		}
-		if (!is_ipaddrv6($ipv6) or !is_numeric($prefix) or ($prefix > 128) or ($prefix < 0)) {
-			return false;
+		if ($alias && is_alias($value) && in_array(alias_get_type($value), array('host', 'network'))) {
+			foreach (alias_to_subnets_recursive($value) as $net) {
+				if (!is_subnetv6($net)) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			list($ipv6, $prefix) = explode('/', $value);
+			if (empty($prefix)) {
+				$prefix = "128";
+			}
+			if (!is_subnetv6($ipv6 . '/' . $prefix)) {
+				return false;
+			}
 		}
 	}
 	return true;
+}
+
+function openvpn_validate_tunnel_network($value, $ipproto) {
+	$value = trim($value);
+	if (!empty($value)) {
+		if (is_alias($value) && (alias_get_type($value) == 'network')) {
+			$net = alias_to_subnets_recursive($value);
+			if ((!is_subnetv4($net[0]) && ($ipproto == 'ipv4')) ||
+			    (!is_subnetv6($net[0]) && ($ipproto == 'ipv6')) ||
+			    (count($net) > 1)) {
+				return false;
+			}
+			return true;
+		} else {
+			if ((!is_subnetv4($value) && ($ipproto == 'ipv4')) ||
+			    (!is_subnetv6($value) && ($ipproto == 'ipv6'))) { 
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+function openvpn_gen_tunnel_network($tunnel_network) {
+	if (is_alias($tunnel_network)) {
+		$net = alias_to_subnets_recursive($tunnel_network);
+		$pair = $net[0];
+	} else {
+		$pair = $tunnel_network;
+	}
+	return explode('/', trim($pair));
 }
 
 function openvpn_add_dhcpopts(& $settings, & $conf) {
@@ -974,8 +1022,8 @@ function openvpn_reconfigure($mode, $settings) {
 	// server specific settings
 	if ($mode == 'server') {
 
-		list($ip, $cidr) = explode('/', trim($settings['tunnel_network']));
-		list($ipv6, $prefix) = explode('/', trim($settings['tunnel_networkv6']));
+		list($ip, $cidr) = openvpn_gen_tunnel_network($settings['tunnel_network']);
+		list($ipv6, $prefix) = openvpn_gen_tunnel_network($settings['tunnel_networkv6']);
 		$mask = gen_subnet_mask($cidr);
 
 		// configure tls modes
@@ -1180,7 +1228,7 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 
 		if (!empty($settings['tunnel_network'])) {
-			list($ip, $cidr) = explode('/', trim($settings['tunnel_network']));
+			list($ip, $cidr) = openvpn_gen_tunnel_network($settings['tunnel_network']);
 			$mask = gen_subnet_mask($cidr);
 			list($ip1, $ip2) = openvpn_get_interface_ip($ip, $cidr);
 			if ($settings['dev_mode'] == 'tun') {
@@ -1239,11 +1287,11 @@ function openvpn_reconfigure($mode, $settings) {
 	}
 
 	// Add a remote network route if set, and only for p2p modes.
-	if ((substr($settings['mode'], 0, 3) == "p2p") && (openvpn_validate_cidr($settings['remote_network'], "", true, "ipv4") === FALSE)) {
+	if ((substr($settings['mode'], 0, 3) == "p2p") && (openvpn_validate_cidr($settings['remote_network'], "", true, "ipv4", true) === FALSE)) {
 		$conf .= openvpn_gen_routes($settings['remote_network'], "ipv4", false);
 	}
 	// Add a remote network route if set, and only for p2p modes.
-	if ((substr($settings['mode'], 0, 3) == "p2p") && (openvpn_validate_cidr($settings['remote_networkv6'], "", true, "ipv6") === FALSE)) {
+	if ((substr($settings['mode'], 0, 3) == "p2p") && (openvpn_validate_cidr($settings['remote_networkv6'], "", true, "ipv6", true) === FALSE)) {
 		$conf .= openvpn_gen_routes($settings['remote_networkv6'], "ipv6", false);
 	}
 
@@ -1615,11 +1663,11 @@ function openvpn_resync_csc(& $settings) {
 	}
 
 	// Add a remote network iroute if set
-	if (openvpn_validate_cidr($settings['remote_network'], "", true, "ipv4") === FALSE) {
+	if (openvpn_validate_cidr($settings['remote_network'], "", true, "ipv4", true) === FALSE) {
 		$conf .= openvpn_gen_routes($settings['remote_network'], "ipv4", false, true);
 	}
 	// Add a remote network iroute if set
-	if (openvpn_validate_cidr($settings['remote_networkv6'], "", true, "ipv6") === FALSE) {
+	if (openvpn_validate_cidr($settings['remote_networkv6'], "", true, "ipv6", true) === FALSE) {
 		$conf .= openvpn_gen_routes($settings['remote_networkv6'], "ipv6", false, true);
 	}
 
@@ -1638,7 +1686,7 @@ function openvpn_resync_csc(& $settings) {
 					$csc_conf = $conf;
 
 					if (!empty($serversettings['tunnel_network']) && !empty($settings['tunnel_network'])) {
-						list($ip, $mask) = explode('/', trim($settings['tunnel_network']));
+						list($ip, $mask) = openvpn_gen_tunnel_network($settings['tunnel_network']);
 						if (($serversettings['dev_mode'] == 'tap') || ($serversettings['topology'] == "subnet")) {
 							$csc_conf .= "ifconfig-push {$ip} " . gen_subnet_mask($mask) . "\n";
 						} else {
@@ -1651,7 +1699,7 @@ function openvpn_resync_csc(& $settings) {
 					}
 
 					if (!empty($serversettings['tunnel_networkv6']) && !empty($settings['tunnel_networkv6'])) {
-						list($ipv6, $prefix) = explode('/', trim($serversettings['tunnel_networkv6']));
+						list($ipv6, $prefix) = openvpn_gen_tunnel_network($serversettings['tunnel_networkv6']);
 						list($ipv6_1, $ipv6_2) = openvpn_get_interface_ipv6($ipv6, $prefix);
 						$csc_conf .= "ifconfig-ipv6-push {$settings['tunnel_networkv6']} {$ipv6_1}\n";
 					}
@@ -1807,7 +1855,7 @@ function openvpn_get_active_servers($type="multipoint") {
 			$server['vpnid'] = $settings['vpnid'];
 			$server['mgmt'] = "server{$server['vpnid']}";
 			$socket = "unix://{$g['openvpn_base']}/{$server['mgmt']}/sock";
-			list($tn, $sm) = explode('/', trim($settings['tunnel_network']));
+			list($tn, $sm) = openvpn_gen_tunnel_network($settings['tunnel_network']);
 
 			if ((($server['mode'] == "p2p_shared_key") ||
 			    (($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) ||
@@ -2155,7 +2203,7 @@ function openvpn_clear_route($mode, $settings) {
 	if (empty($settings['tunnel_network'])) {
 		return;
 	}
-	list($ip, $cidr) = explode('/', trim($settings['tunnel_network']));
+	list($ip, $cidr) = openvpn_gen_tunnel_network($settings['tunnel_network']);
 	$mask = gen_subnet_mask($cidr);
 	$clear_route = false;
 
@@ -2181,10 +2229,23 @@ function openvpn_clear_route($mode, $settings) {
 
 function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false, $iroute = false) {
 	$routes = "";
+	$networks = array();
 	if (empty($value)) {
 		return "";
 	}
-	$networks = explode(',', $value);
+	$tmpnetworks = explode(',', $value);
+	foreach ($tmpnetworks as $network) {
+		if (is_alias($network)) {
+			foreach (alias_to_subnets_recursive($network) as $net) {
+				if ((($ipproto == "ipv4") && is_subnetv4($net)) ||
+				    (($ipproto == "ipv6") && is_subnetv6($net))) {
+					$networks[] = $net;
+				}
+			}
+		} else {
+			$networks[] = $network;
+		}
+	}
 
 	foreach ($networks as $network) {
 		if ($ipproto == "ipv4") {

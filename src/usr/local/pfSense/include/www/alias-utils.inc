@@ -29,6 +29,7 @@ require_once("config.gui.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("openvpn.inc");
 
 init_config_arr(array('aliases', 'alias'));
 $a_aliases = &$config['aliases']['alias'];
@@ -68,6 +69,23 @@ function deleteAlias($id, $apply = false) {
 	find_alias_reference(array('aliases', 'alias'), array('address'), $alias_name, $is_alias_referenced, $referenced_by);
 	// Static routes
 	find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
+	// OpenVPN
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('local_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('local_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-client'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-client'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-client'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-client'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('local_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('local_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
 	if ($is_alias_referenced == true) {
 		$delete_error = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars(implode(", ", $referenced_by)));
 	} else {
@@ -86,6 +104,44 @@ function deleteAlias($id, $apply = false) {
 	}
 
 	return $delete_error;
+}
+
+function openvpnAlias ($id) {
+	global $config;
+
+	init_config_arr(array('aliases', 'alias'));
+	$a_aliases = &$config['aliases']['alias'];
+
+	$alarm_message = "";
+	$is_alias_referenced = false;
+	$referenced_by = false;
+	$alias_name = $a_aliases[$id]['name'];
+
+	if ($a_aliases[$id]['type'] != 'network') {
+		return false;
+	}
+
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('local_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('local_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-server'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-client'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-client'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-client'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-client'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('tunnel_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('tunnel_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('local_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('local_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('remote_network'), $alias_name, $is_alias_referenced, $referenced_by);
+	find_alias_reference(array('openvpn', 'openvpn-csc'), array('remote_networkv6'), $alias_name, $is_alias_referenced, $referenced_by);
+	if ($is_alias_referenced == true) {
+		$alarm_message = sprintf(gettext("Alias is in use by OpenVPN. Pressing save will restart instances: %s."), htmlspecialchars(implode(", ", $referenced_by)));
+	}
+
+	return $alarm_message;
 }
 
 function find_alias_reference($section, $field, $origname, &$is_alias_referenced, &$referenced_by) {
@@ -116,10 +172,15 @@ function find_alias_reference($section, $field, $origname, &$is_alias_referenced
 				}
 			}
 			/* explode() alias address string, see https://redmine.pfsense.org/issues/11372 */
-			if ($fieldfound && in_array($origname, explode(' ', $fieldref))) {
+			if ($fieldfound && (in_array($origname, explode(' ', $fieldref)) ||
+			    in_array($origname, explode(',', $fieldref)))) {
 				$is_alias_referenced = true;
 				if (is_array($item)) {
-					$referenced_by[] = $item['descr'];
+					if (!empty($item['descr'])) {
+						$referenced_by[] = $item['descr'];
+					} elseif (!empty($item['description'])) {
+						$referenced_by[] = $item['description'];
+					}
 				}
 			}
 		}
@@ -563,6 +624,42 @@ function saveAlias($post, $id) {
 		$a_aliases = msort($a_aliases, "name");
 
 		write_config(gettext("Edited a firewall alias."));
+
+		/* restart related OpenVPN instances
+		 * see https://redmine.pfsense.org/issues/2668 */
+		if ($alias['type'] == 'network') {
+			$config = parse_config(true);
+			init_config_arr(array('openvpn', 'openvpn-server'));
+			init_config_arr(array('openvpn', 'openvpn-client'));
+			init_config_arr(array('openvpn', 'openvpn-csc'));
+			$ovpnnets = array(
+				'tunnel_network',
+				'tunnel_networkv6',
+				'local_network',
+				'local_networkv6',
+				'remote_network',
+			       	'remote_networkv6');
+			foreach (array("server", "client", "csc") as $type) {
+				foreach ($config['openvpn']['openvpn-'.$type] as & $settings) {
+					if (!isset($settings['disable'])) {
+						foreach ($ovpnnets as $nettype) {
+							foreach (explode(',', $settings[$nettype]) as $net) {
+								if ($net == $alias['name']) {
+									if ($type == 'csc') {
+										openvpn_resync_csc_all();
+										break 4;
+									} else {
+										/* restart changed openvpn instance */
+										openvpn_resync($type, $settings);
+										break 2;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	} else if (isset($pconfig)) {
 		//we received input errors, copy data to prevent retype
 		$pconfig['name'] = $post['name'];

@@ -939,7 +939,7 @@ function unbound_acls_config($cfgsubdir = "") {
 			if (is_array($config['openvpn'][$ovpnentry])) {
 				foreach ($config['openvpn'][$ovpnentry] as $ovpnent) {
 					if (!isset($ovpnent['disable']) && !empty($ovpnent['tunnel_networkv6'])) {
-						$aclnets[] = $ovpnent['tunnel_networkv6'];
+						$aclnets[] = implode('/', openvpn_gen_tunnel_network($settings['tunnel_networkv6']));
 					}
 				}
 			}

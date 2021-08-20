@@ -372,8 +372,8 @@ if ($_POST['save']) {
 		}
 	}
 
-	if (!empty($pconfig['tunnel_network']) && !is_subnetv4(trim($pconfig['tunnel_network']))) {
-		$input_errors[] = gettext("The field 'IPv4 Tunnel Network' must contain a valid IPv4 subnet with CIDR mask.");
+	if (!empty($pconfig['tunnel_network']) && !openvpn_validate_tunnel_network($pconfig['tunnel_network'], 'ipv4')) {
+		$input_errors[] = gettext("The field 'IPv4 Tunnel Network' must contain a valid IPv4 subnet with CIDR mask or an alias with a single IPv4 subnet with CIDR mask.");
 	}
 
 	if (!empty($pconfig['tunnel_network']) &&
@@ -383,8 +383,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The submitted IPv4 Tunnel Network is already in use.");
 	}
 
-	if (!empty($pconfig['tunnel_networkv6']) && !is_subnetv6(trim($pconfig['tunnel_networkv6']))) {
-		$input_errors[] = gettext("The field 'IPv6 Tunnel Network' must contain a valid IPv6 prefix.");
+	if (!empty($pconfig['tunnel_networkv6']) && !openvpn_validate_tunnel_network($pconfig['tunnel_networkv6'], 'ipv6')) {
+		$input_errors[] = gettext("The field 'IPv6 Tunnel Network' must contain a valid IPv6 prefix or an alias with a single IPv6 prefix.");
 	}
 
 	if (!empty($pconfig['tunnel_networkv6']) &&
@@ -394,19 +394,19 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The submitted IPv6 Tunnel Network is already in use.");
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4")) {
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4", true)) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6")) {
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6", true)) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4")) {
+	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4", true)) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6")) {
+	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6", true)) {
 		$input_errors[] = $result;
 	}
 
@@ -1166,8 +1166,9 @@ if ($act=="new" || $act=="edit"):
 		'IPv4 Tunnel Network',
 		'text',
 		$pconfig['tunnel_network']
-	))->setHelp('This is the IPv4 virtual network used for private communications between this server and client ' .
-				'hosts expressed using CIDR notation (e.g. 10.0.8.0/24). The first usable address in the network will be assigned to ' .
+	))->setHelp('This is the IPv4 virtual network or network type alias with a single entry used for private ' .
+				'communications between this server and client hosts expressed using CIDR notation ' .
+       				'(e.g. 10.0.8.0/24). The first usable address in the network will be assigned to ' .
 				'the server virtual interface. The remaining usable addresses will be assigned ' .
 				'to connecting clients.');
 
@@ -1176,10 +1177,10 @@ if ($act=="new" || $act=="edit"):
 		'IPv6 Tunnel Network',
 		'text',
 		$pconfig['tunnel_networkv6']
-	))->setHelp('This is the IPv6 virtual network used for private ' .
-				'communications between this server and client hosts expressed using CIDR notation (e.g. fe80::/64). ' .
-				'The ::1 address in the network will be assigned to the server virtual interface. The remaining ' .
-				'addresses will be assigned to connecting clients.');
+	))->setHelp('This is the IPv6 virtual network or network type alias with a single entry used for private ' .
+				'communications between this server and client hosts expressed using CIDR notation ' .
+				'(e.g. fe80::/64). The ::1 address in the network will be assigned to the server ' .
+			        'virtual interface. The remaining addresses will be assigned to connecting clients.');
 
 	$section->addInput(new Form_Checkbox(
 		'serverbridge_dhcp',
@@ -1241,7 +1242,7 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['local_network']
 	))->setHelp('IPv4 networks that will be accessible from the remote endpoint. ' .
-				'Expressed as a comma-separated list of one or more CIDR ranges. ' .
+				'Expressed as a comma-separated list of one or more CIDR ranges or host/network type aliases. ' .
 				'This may be left blank if not adding a route to the local network through this tunnel on the remote machine. ' .
 				'This is generally set to the LAN network.');
 
@@ -1251,7 +1252,7 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['local_networkv6']
 	))->setHelp('IPv6 networks that will be accessible from the remote endpoint. ' .
-				'Expressed as a comma-separated list of one or more IP/PREFIX. This may be left blank if not adding a ' .
+				'Expressed as a comma-separated list of one or more IP/PREFIX or host/network type aliases. This may be left blank if not adding a ' .
 				'route to the local network through this tunnel on the remote machine. This is generally set to the LAN network.');
 
 	$section->addInput(new Form_Input(
@@ -1260,7 +1261,7 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['remote_network']
 	))->setHelp('IPv4 networks that will be routed through the tunnel, so that a site-to-site VPN can be established without manually ' .
-				'changing the routing tables. Expressed as a comma-separated list of one or more CIDR ranges. ' .
+				'changing the routing tables. Expressed as a comma-separated list of one or more CIDR ranges or host/network type aliases. ' .
 				'If this is a site-to-site VPN, enter the remote LAN/s here. May be left blank for non site-to-site VPN.');
 
 	$section->addInput(new Form_Input(
@@ -1269,7 +1270,7 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['remote_networkv6']
 	))->setHelp('These are the IPv6 networks that will be routed through the tunnel, so that a site-to-site VPN can be established without manually ' .
-				'changing the routing tables. Expressed as a comma-separated list of one or more IP/PREFIX. ' .
+				'changing the routing tables. Expressed as a comma-separated list of one or more IP/PREFIX or host/network type aliases. ' .
 				'If this is a site-to-site VPN, enter the remote LAN/s here. May be left blank for non site-to-site VPN.');
 
 	$section->addInput(new Form_Input(

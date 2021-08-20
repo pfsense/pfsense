@@ -151,26 +151,27 @@ if ($_POST['save']) {
 		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network')) {
-		$input_errors[] = $result;
+	if (!empty($pconfig['tunnel_network']) && !openvpn_validate_tunnel_network($pconfig['tunnel_network'], 'ipv4')) {
+		$input_errors[] = gettext("The field 'IPv4 Tunnel Network' must contain a valid IPv4 subnet with CIDR mask or an alias with a single IPv4 subnet with CIDR mask.");
 	}
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6")) {
+
+	if (!empty($pconfig['tunnel_networkv6']) && !openvpn_validate_tunnel_network($pconfig['tunnel_networkv6'], 'ipv6')) {
+		$input_errors[] = gettext("The field 'IPv6 Tunnel Network' must contain a valid IPv6 prefix or an alias with a single IPv6 prefix.");
+	}
+
+	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4", true)) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4")) {
+	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6", true)) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6")) {
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4", true)) {
 		$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4")) {
-		$input_errors[] = $result;
-	}
-
-	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6")) {
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6", true)) {
 		$input_errors[] = $result;
 	}
 
@@ -391,7 +392,7 @@ if ($act == "new" || $act == "edit"):
 		'IPv4 Tunnel Network',
 		'text',
 		$pconfig['tunnel_network']
-	))->setHelp('The virtual IPv4 network used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.5/24). %1$s' .
+	))->setHelp('The virtual IPv4 network or network type alias with a single entry used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.5/24). %1$s' .
 		    'With subnet topology, enter the client IP address and the subnet mask must match the IPv4 Tunnel Network on the server. %1$s' .
 		    'With net30 topology, the first network address of the /30 is assumed to be the server address and the second network address will be assigned to the client.',
 			'<br />');
@@ -401,7 +402,7 @@ if ($act == "new" || $act == "edit"):
 		'IPv6 Tunnel Network',
 		'text',
 		$pconfig['tunnel_networkv6']
-	))->setHelp('The virtual IPv6 network used for private communications between this client and the server expressed using prefix (e.g. 2001:db9:1:1::100/64). %1$s' .
+	))->setHelp('The virtual IPv6 network or network type alias with a single entry used for private communications between this client and the server expressed using prefix (e.g. 2001:db9:1:1::100/64). %1$s' .
 		    'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ',
 			'<br />');
 
@@ -410,7 +411,7 @@ if ($act == "new" || $act == "edit"):
 		'IPv4 Local Network/s',
 		'text',
 		$pconfig['local_network']
-	))->setHelp('These are the IPv4 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR networks. %1$s' .
+	))->setHelp('These are the IPv4 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR ranges or host/network type aliases. %1$s' .
 		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
 			'<br />');
 

@@ -104,6 +104,8 @@ if (isset($id) && $a_aliases[$id]) {
 
 if ($dup) {
 	unset($id);
+} else {
+	$openvpnuse = openvpnAlias($id);
 }
 
 if ($_POST['save']) {
@@ -249,6 +251,10 @@ $types = array(
 
 if ($input_errors) {
 	print_input_errors($input_errors);
+}
+
+if ($openvpnuse) {
+	print_info_box($openvpnuse);
 }
 
 $form = new Form;

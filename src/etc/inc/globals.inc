@@ -321,8 +321,8 @@ $ddnsdomainkeyalgorithms = array(
 
 global $ipsec_filtermodes;
 $ipsec_filtermodes = array(
-	'enc' => 'Filter IPsec Tunnel and VTI on IPsec tab (enc0)',
-	'if_ipsec' => 'Filter IPsec VTI on assigned interfaces, block all tunnel mode traffic'
+	'enc' => 'Filter IPsec Tunnel, Transport, and VTI on IPsec tab (enc0)',
+	'if_ipsec' => 'Filter IPsec VTI and Transport on assigned interfaces, block all tunnel mode traffic'
 );
 
 global $ipsec_filter_sysctl;

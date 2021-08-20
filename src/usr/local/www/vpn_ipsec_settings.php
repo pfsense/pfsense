@@ -375,11 +375,11 @@ $section->addInput(new Form_Select(
 	$ipsec_filtermodes
 ))->setHelp(
 	'Experimental. Controls how the firewall will filter IPsec traffic. By default, rules on ' .
-	'the IPsec tab filter all IPsec traffic, including both tunnel mode and VTI mode. %3$s' .
-	'This is limited in that it does not allow for filtering on assigned VTI interfaces, and it does not ' .
+	'the IPsec tab filter all IPsec traffic, including tunnel mode, transport mode, and VTI mode. %3$s' .
+	'This is limited in that it does not allow for filtering on assigned VTI or transport mode interfaces (e.g. GRE), and it does not ' .
 	'support features such as NAT rules and reply-to for return routing. ' .
-	'When set to filter on assigned VTI interfaces, %1$sall tunnel mode traffic is blocked%2$s. ' .
-	'Do not set this option unless %1$sall%2$s IPsec tunnels are using VTI.',
+	'When set to filter on assigned VTI and transport interfaces, %1$sall tunnel mode traffic is blocked%2$s. ' .
+	'Do not set this option unless %1$sall%2$s IPsec tunnels are using VTI or transport mode.',
 	'<b>', '</b>', '<br />'
 );
 

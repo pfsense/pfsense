@@ -1210,13 +1210,14 @@ function setdefaultgateway($gw) {
 		log_error("Default gateway setting {$gw['descr']} as default.");
 
 		if ($ipprotocol == 'inet') {
-			array_map('unlink', glob("{$g['tmp_path']}/*_defaultgw", GLOB_BRACE));
+			$inet = '';
 		} else {
-			array_map('unlink', glob("{$g['tmp_path']}/*_defaultgwv6", GLOB_BRACE));
+			$inet = 'v6';
 		}
+		array_map('unlink', glob("{$g['tmp_path']}/*_defaultgw{$inet}", GLOB_BRACE));
 		$defaultif = get_real_interface($gw['interface']);
 		if ($defaultif) {
-			@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw", $gw['gateway']);
+			@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw{$inet}", $gw['gateway']);
 		}
 
 		if (isset($gw["nonlocalgateway"])) {

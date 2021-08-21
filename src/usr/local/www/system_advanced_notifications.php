@@ -315,6 +315,41 @@ $section->addInput(new Form_Button(
 		'not enabled.  The last SAVED values will be used, not necessarily the values displayed here.');
 
 $form->add($section);
+
+$section = new Form_Section('Slack');
+
+$section->addInput(new Form_Checkbox(
+	'enable_slack',
+	'Enable Slack',
+	'Enable Slack Notifications',
+	$pconfig['enable_slack']
+	))->setHelp('Check this option to enable Slack notifications. <br>You will need a Slack API key. See <a href="https://api.slack.com/tutorials/tracks/getting-a-token" target="_blank">Instructions here.</a>');
+
+$section->addInput(new Form_Input(
+	'slack_api',
+	'API Key',
+	'text',
+	$pconfig['slack_api'],
+	['placeholder' => '123456789ABCDEabcde_FGHIJfghijKLMNOklmnoPQRST']
+))->setHelp('Enter the Slack API key.');
+
+$section->addInput(new Form_Input(
+	'slack_channel',
+	'Slack Channel',
+	'text',
+	$pconfig['slack_channel'],
+))->setHelp('Enter the Slack Channel name that will be used to send the notifications to.');
+
+$section->addInput(new Form_Button(
+	'test-slack',
+	'Test Slack Settings',
+	null,
+	'fa-send'
+))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
+	'not enabled.  The last SAVED values will be used, not necessarily the values displayed here.');
+
+$form->add($section);
+
 print($form);
 
 include("foot.inc");

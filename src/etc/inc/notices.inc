@@ -468,7 +468,7 @@ function notify_via_telegram($message, $force = false) {
 		"chat_id" => $config['notifications']['telegram']['chatid'],
 		"text" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
 	);
-	$result = json_decode(curl_post_telegram($url . http_build_query($data)), true);
+	$result = json_decode(curl_post_notification($url . http_build_query($data)), true);
 	if (is_array($result)) {
 		if ($result['ok']) {
 			unset($err_msg);
@@ -481,17 +481,6 @@ function notify_via_telegram($message, $force = false) {
 		log_error($err_msg);
 	}
 	return $err_msg;
-}
-
-function curl_post_telegram($url) {
-	$conn = curl_init($url);
-	curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, true);
-	curl_setopt($conn, CURLOPT_FRESH_CONNECT,  true);
-	curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
-	set_curlproxy($conn);
-	$curl_post_telegram_data = curl_exec($conn);
-	curl_close($conn);
-	return $curl_post_telegram_data;	//json encoded
 }
 
 /****f* notices/notify_via_pushover
@@ -527,7 +516,7 @@ function notify_via_pushover($message, $force = false) {
 		"expire" => $config['notifications']['pushover']['expire'],
 		"message" => "{$config['system']['hostname']}.{$config['system']['domain']}\n{$message}"
 	);
-	$result = json_decode(curl_post_pushover($url, $data), true);
+	$result = json_decode(curl_post_notification($url, $data), true);
 	if (is_array($result)) {
 		if ($result['status']) {
 			unset($err_msg);
@@ -542,16 +531,60 @@ function notify_via_pushover($message, $force = false) {
 	return $err_msg;
 }
 
-function curl_post_pushover($url, $data) {
+/****f* notices/notify_via_slack
+ * NAME
+ *   notify_via_slack
+ * INPUTS
+ *	 notification string to send to Slack via API
+ * RESULT
+ *   returns NULL if message was sent
+ ******/
+
+function notify_via_slack($message, $force = false) {
+	global $config;
+	if ((!isset($config['notifications']['slack']['enabled']) && (!$force))
+	    || !$config['notifications']['slack']['api']
+	    || !$config['notifications']['slack']['channel']) {
+		if ($force) {
+			return gettext("Unable to test Slack notification without both API Key & Channel set");
+		}
+		return;
+	}
+
+	$url = "https://slack.com/api/chat.postMessage";
+	$data = array(
+		"token" => $config['notifications']['slack']['api'],
+		"channel" => "#" . $config['notifications']['slack']['channel'],
+		"text" => $message,
+		"username" => "{$config['system']['hostname']}.{$config['system']['domain']}"
+	);
+	$result = json_decode(curl_post_notification($url, $data), true);
+	if (is_array($result)) {
+		if ($result['ok']) {
+			unset($err_msg);
+		} else {
+			$err_msg = sprintf(gettext("Failed to send Slack notification. Error received was: %s"), $result['error']);
+			log_error($err_msg);
+		}
+	} else {
+		$err_msg = gettext("Slack API server did not return data in expected format!");
+		log_error($err_msg);
+	}
+	return $err_msg;
+}
+
+function curl_post_notification($url, $data = array()) {
 	$conn = curl_init($url);
-	curl_setopt($conn, CURLOPT_POSTFIELDS, $data);
+	if (!empty($data)) {
+		//curl_setopt($conn, CURLOPT_POSTFIELDS, $data);
+	}
 	curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, true);
 	curl_setopt($conn, CURLOPT_FRESH_CONNECT,  true);
 	curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
 	set_curlproxy($conn);
-	$curl_post_pushover_data = curl_exec($conn);
+	$curl_post_result = curl_exec($conn);
 	curl_close($conn);
-	return $curl_post_pushover_data;	//json encoded
+	return $curl_post_result;	//json encoded
 }
 
 /* Notify via remote methods only - not via GUI. */
@@ -559,6 +592,7 @@ function notify_all_remote($msg) {
 	notify_via_smtp($msg);
 	notify_via_telegram($msg);
 	notify_via_pushover($msg);
+	notify_via_slack($msg);
 }
 
 ?>

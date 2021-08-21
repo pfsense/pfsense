@@ -33,6 +33,7 @@ init_config_arr(array('notifications', 'certexpire'));
 init_config_arr(array('notifications', 'smtp'));
 init_config_arr(array('notifications', 'telegram'));
 init_config_arr(array('notifications', 'pushover'));
+init_config_arr(array('notifications', 'slack'));
 
 function getAdvancedNotifications($json = false) {
 	global $config;
@@ -121,6 +122,16 @@ function getAdvancedNotifications($json = false) {
 
 	$nconfig['pushoverretry'] = ($config['notifications']['pushover']['retry']) ? $config['notifications']['pushover']['retry'] : 60;
 	$nconfig['pushoverexpire'] = ($config['notifications']['pushover']['expire']) ? $config['notifications']['pushover']['expire'] : 300;
+	// Slack
+	$nconfig['enable_slack'] = isset($config['notifications']['slack']['enabled']);
+
+	if ($config['notifications']['slack']['api']) {
+		$nconfig['slack_api'] = $config['notifications']['slack']['api'];
+	}
+
+	if ($config['notifications']['slack']['channel']) {
+		$nconfig['slack_channel'] = $config['notifications']['slack']['channel'];
+	}
 
 	return $json? json_encode($nconfig):$nconfig;
 }
@@ -134,8 +145,9 @@ function saveAdvancedNotifications($post, $json = false) {
 	$testsmtp = isset($post['test-smtp']);
 	$testtelegram = isset($post['test-telegram']);
 	$testpushover = isset($post['test-pushover']);
+	$testslack = isset($post['test-slack']);
 
-	if (isset($post['save']) || $testsmtp || $testtelegram || $testpushover) {
+	if (isset($post['save']) || $testsmtp || $testtelegram || $testpushover || $testslack) {
 
 		// General Settings
 		$config['notifications']['certexpire']['enable'] = ($post['cert_enable_notify'] == "yes") ? "enabled" : "disabled";
@@ -271,7 +283,19 @@ function saveAdvancedNotifications($post, $json = false) {
 			$config['notifications']['pushover']['expire'] = $post['pushoverexpire'];
 		}
 
-		if (!$input_errors && !$testsmtp && !$testtelegram && !$testpushover) {
+		// Slack
+		$config['notifications']['slack']['enabled'] = ($post['enable_slack'] == "yes") ? true : false;
+		$config['notifications']['slack']['api'] = $post['slack_api'];
+		$config['notifications']['slack']['channel'] = $post['slack_channel'];
+
+		if (preg_replace("/[^a-zA-Z0-9:\-]/", "", $config['notifications']['slack']['api']) !== $config['notifications']['slack']['api']) {
+			$input_errors[] = gettext("The only special characters permitted in the Slack API string are - and :");
+		}
+		if (preg_replace("/[^a-zA-Z0-9\-]/", "", $config['notifications']['slack']['channel']) !== $config['notifications']['slack']['channel']) {
+			$input_errors[] = gettext("The Slack Channel name can only contain - as special characters");
+		}
+
+		if (!$input_errors && !$testsmtp && !$testtelegram && !$testpushover && !$testslack) {
 			write_config("Notifications Advanced Settings saved");
 
 			if (!$json) {
@@ -312,6 +336,17 @@ function saveAdvancedNotifications($post, $json = false) {
 		$test_result = notify_via_pushover(sprintf(gettext("This is a Pushover test message from %s. It is safe to ignore this message."), $g['product_label']), true);
 		if (empty($test_result)) {
 			$test_result = gettext("Pushover testing message successfully sent");
+			$test_class = 'success';
+		} else {
+			$test_class = 'danger';
+		}
+	}
+
+	if ($testslack) {
+		// Send test message via slack
+		$test_result = notify_via_slack(sprintf(gettext("This is a Slack test message from %s. It is safe to ignore this message."), $g['product_label']), true);
+		if (empty($test_result)) {
+			$test_result = gettext("Slack testing message successfully sent");
 			$test_class = 'success';
 		} else {
 			$test_class = 'danger';

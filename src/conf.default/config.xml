@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <pfsense>
 	<version>22.0</version>
-	<lastchange/>
+	<lastchange></lastchange>
 	<system>
 		<optimization>normal</optimization>
 		<hostname>pfSense</hostname>
 		<domain>home.arpa</domain>
-		<dnsserver/>
-		<dnsallowoverride/>
+		<dnsserver></dnsserver>
+		<dnsallowoverride></dnsallowoverride>
 		<group>
 			<name>all</name>
 			<description><![CDATA[All Users]]></description>
@@ -37,12 +37,12 @@
 		<timeservers>2.pfsense.pool.ntp.org</timeservers>
 		<webgui>
 			<protocol>https</protocol>
-			<loginautocomplete/>
+			<loginautocomplete></loginautocomplete>
 		</webgui>
 		<disablenatreflection>yes</disablenatreflection>
-		<disablesegmentationoffloading/>
-		<disablelargereceiveoffloading/>
-		<ipv6allow/>
+		<disablesegmentationoffloading></disablesegmentationoffloading>
+		<disablelargereceiveoffloading></disablelargereceiveoffloading>
+		<ipv6allow></ipv6allow>
 		<maximumtableentries>400000</maximumtableentries>
 		<powerd_ac_mode>hadp</powerd_ac_mode>
 		<powerd_battery_mode>hadp</powerd_battery_mode>
@@ -54,38 +54,38 @@
 	</system>
 	<interfaces>
 		<wan>
-			<enable/>
+			<enable></enable>
 			<if>em0</if>
-			<mtu/>
+			<mtu></mtu>
 			<ipaddr>dhcp</ipaddr>
 			<ipaddrv6>dhcp6</ipaddrv6>
-			<subnet/>
-			<gateway/>
-			<blockpriv/>
-			<blockbogons/>
-			<dhcphostname/>
-			<media/>
-			<mediaopt/>
-			<dhcp6-duid/>
+			<subnet></subnet>
+			<gateway></gateway>
+			<blockpriv></blockpriv>
+			<blockbogons></blockbogons>
+			<dhcphostname></dhcphostname>
+			<media></media>
+			<mediaopt></mediaopt>
+			<dhcp6-duid></dhcp6-duid>
 			<dhcp6-ia-pd-len>0</dhcp6-ia-pd-len>
 		</wan>
 		<lan>
-			<enable/>
+			<enable></enable>
 			<if>em1</if>
 			<ipaddr>192.168.1.1</ipaddr>
 			<subnet>24</subnet>
 			<ipaddrv6>track6</ipaddrv6>
 			<subnetv6>64</subnetv6>
-			<media/>
-			<mediaopt/>
+			<media></media>
+			<mediaopt></mediaopt>
 			<track6-interface>wan</track6-interface>
 			<track6-prefix-id>0</track6-prefix-id>
 		</lan>
 	</interfaces>
-	<staticroutes/>
+	<staticroutes></staticroutes>
 	<dhcpd>
 		<lan>
-			<enable/>
+			<enable></enable>
 			<range>
 				<from>192.168.1.100</from>
 				<to>192.168.1.199</to>
@@ -94,7 +94,7 @@
 	</dhcpd>
 	<dhcpdv6>
 		<lan>
-			<enable/>
+			<enable></enable>
 			<range>
 				<from>::1000</from>
 				<to>::2000</to>
@@ -104,13 +104,13 @@
 		</lan>
 	</dhcpdv6>
 	<snmpd>
-		<syslocation/>
-		<syscontact/>
+		<syslocation></syslocation>
+		<syscontact></syscontact>
 		<rocommunity>public</rocommunity>
 	</snmpd>
 	<diag>
 		<ipv6nat>
-			<ipaddr/>
+			<ipaddr></ipaddr>
 		</ipv6nat>
 	</diag>
 	<syslog>
@@ -132,7 +132,7 @@
 				<network>lan</network>
 			</source>
 			<destination>
-				<any/>
+				<any></any>
 			</destination>
 		</rule>
 		<rule>
@@ -145,14 +145,15 @@
 				<network>lan</network>
 			</source>
 			<destination>
-				<any/>
+				<any></any>
 			</destination>
 		</rule>
 	</filter>
-	<shaper/>
-	<ipsec/>
-	<aliases/>
-	<proxyarp/>
+	<shaper></shaper>
+	<ipsec></ipsec>
+	<aliases>
+	</aliases>
+	<proxyarp></proxyarp>
 	<cron>
 		<item>
 			<minute>*/1</minute>
@@ -245,24 +246,28 @@
 			<command>/usr/bin/nice -n20 /etc/rc.update_pkg_metadata</command>
 		</item>
 	</cron>
-	<wol/>
+	<wol></wol>
 	<rrd>
-		<enable/>
+		<enable></enable>
 	</rrd>
 	<widgets>
 		<sequence>system_information:col1:show,netgate_services_and_support:col2:show,interfaces:col2:show</sequence>
 		<period>10</period>
 	</widgets>
-	<openvpn/>
-	<dnshaper/>
+	<openvpn></openvpn>
+	<dnshaper></dnshaper>
 	<unbound>
-		<enable/>
-		<dnssec/>
-		<active_interface/>
-		<outgoing_interface/>
-		<custom_options/>
-		<hideidentity/>
-		<hideversion/>
-		<dnssecstripped/>
+		<enable></enable>
+		<dnssec></dnssec>
+		<active_interface></active_interface>
+		<outgoing_interface></outgoing_interface>
+		<custom_options></custom_options>
+		<hideidentity></hideidentity>
+		<hideversion></hideversion>
+		<dnssecstripped></dnssecstripped>
 	</unbound>
+	<vlans>
+	</vlans>
+	<qinqs>
+	</qinqs>
 </pfsense>

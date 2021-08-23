@@ -888,7 +888,7 @@ function ipsec_initiate_by_conid($type = 'ike', $conid) {
 			break;
 		case 'ike':
 		case 'child':
-			mwexec_bg("/usr/local/sbin/swanctl --initiate " . escapeshellarg('--' . $type) . " " . escapeshellarg($conid));
+			mwexec_bg("/usr/local/sbin/swanctl --initiate --timeout 5 " . escapeshellarg('--' . $type) . " " . escapeshellarg($conid));
 			break;
 		default:
 			/* Do nothing. Invalid type. */
@@ -915,7 +915,7 @@ function ipsec_terminate_by_conid($type = 'ike', $conid = null, $uniqueid = null
 	} else {
 		$term = $conid;
 	}
-	mwexec_bg("/usr/local/sbin/swanctl --terminate " . escapeshellarg($selector) . " " . escapeshellarg($term));
+	mwexec_bg("/usr/local/sbin/swanctl --terminate --force " . escapeshellarg($selector) . " " . escapeshellarg($term));
 	return true;
 }
 

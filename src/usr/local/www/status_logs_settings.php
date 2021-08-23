@@ -239,12 +239,21 @@ $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("Settings"))
 $pglinks = array("", "status_logs.php", "@self");
 include("head.inc");
 
-$logfilesizeHelp =	sprintf(gettext("This field controls the size at which logs will be rotated. By default this is %s per log file, and there are nearly 20 such log files."), format_bytes($g['default_log_size'])) .
+$current_log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : $g['default_log_size'];
+$current_rotate_count = is_numericint($syslogcfg['rotatecount']) ? $syslogcfg['rotatecount'] : 7;
+
+$logfilesizeHelp =	sprintf(gettext("This field controls the size at which logs will be rotated. By default this is %s per log file, and there are nearly 20 such log files. " .
+					"Rotated log files consume additional disk space, which varies depending on compression and retention count."), format_bytes($g['default_log_size'])) .
 					'<br /><br />' .
 					gettext("NOTE: Increasing this value allows every log file to grow to the specified size, so disk usage may increase significantly.") . '<br />' .
-					gettext("Log file sizes are checked once per minute to determine if rotation is necessary, so a very rapidly growing log file may exceed this value.") . '<br /><br />' .
-					gettext("Disk space currently used by log files is: ") . exec("/usr/bin/du -sh /var/log | /usr/bin/awk '{print $1;}'") .
-					gettext(" Remaining disk space for log files: ") . exec("/bin/df -h /var/log | /usr/bin/awk '{print $4;}'");
+					gettext("Logs from packages may consume additional space which is not accounted for in these settings. Check package-specific settings.") . ' ' .
+					gettext("Log file sizes are checked once per minute to determine if rotation is necessary, so a very rapidly growing log file may exceed this value.") . ' ' .
+					'<br /><br />' .
+					gettext("Disk space currently used by log files:") . ' ' . exec("/usr/bin/du -sh /var/log | /usr/bin/awk '{print $1;}'") .
+					'<br />' .
+					gettext("Worst case disk usage for base system logs based on current global settings:") . ' ' . format_bytes(count($system_log_files) * $current_log_size * $current_rotate_count) .
+					'<br />' .
+					gettext("Remaining disk space for log files:") . ' ' . exec("/bin/df -h /var/log | /usr/bin/awk '{print $4;}'");
 
 $remoteloghelp =	gettext("This option will allow the logging daemon to bind to a single IP address, rather than all IP addresses.") . " " .
 					gettext("If a single IP is picked, remote syslog servers must all be of that IP type. To mix IPv4 and IPv6 remote syslog servers, bind to all interfaces.") .
@@ -386,7 +395,10 @@ $section->addInput(new Form_Select(
 	!isset($pconfig['logcompressiontype']) ? 'bzip2' : $pconfig['logcompressiontype'],
 	array_combine(array_keys($system_log_compression_types), array_keys($system_log_compression_types))
 ))->setHelp('The type of compression to use when rotating log files. ' .
-	'Compressing rotated log files saves disk space, and the compressed logs remain available for display and searching in the GUI.%s' .
+	'Compressing rotated log files saves disk space, but can incur a performance penalty. ' .
+	'Compressed logs remain available for display and searching in the GUI.%1$s%1$s' .
+	'Compression should be disabled when using large log files and/or slower hardware.%1$s' .
+	'Disabled by default on new ZFS installations as ZFS already performs compression.%1$s' .
 	' WARNING: Changing this value will remove previously rotated compressed log files!', '<br />');
 
 $section->addInput(new Form_Input(

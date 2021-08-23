@@ -487,7 +487,12 @@ function system_log_get_compression() {
 	/* Default is bzip2 */
 	if (empty($config['syslog']['logcompressiontype']) ||
 	    !array_key_exists($config['syslog']['logcompressiontype'], $system_log_compression_types)) {
-		$compressiontype = 'bzip2';
+		if (file_exists("{$g['conf_path']}/syslog_default_uncompressed")) {
+			/* Disable log compression by default when flag file is present. */
+			$compressiontype = 'none';
+		} else {
+			$compressiontype = 'bzip2';
+		}
 	} else {
 		$compressiontype = $config['syslog']['logcompressiontype'];
 	}

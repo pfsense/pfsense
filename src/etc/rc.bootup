@@ -185,6 +185,18 @@ interfaces_loopback_configure();
 /* Setup Local CA Trust Store */
 ca_setup_trust_store();
 
+/* If the system uses ZFS and has compression enabled for /var/log, disable log
+ * compression by default. See https://redmine.pfsense.org/issues/12011
+ */
+$varlog_compression_state = 'off';
+if (is_module_loaded('zfs.ko')) {
+	exec("/sbin/zfs get -H compression /var/log | /usr/bin/awk '{print $3;}'", $varlog_compression_state);
+	$varlog_compression_state = $varlog_compression_state[0];
+}
+if (file_exists("{$g['conf_path']}/trigger_initial_wizard") &&
+    (trim($varlog_compression_state) != 'off')) {
+	touch("{$g['conf_path']}/syslog_default_uncompressed");
+}
 /* start syslogd */
 system_syslogd_start();
 

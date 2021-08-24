@@ -383,8 +383,10 @@ function services_radvd_configure($blacklist = array()) {
                 }
 		if (is_numericint($dhcpv6ifconf['ramaxrtradvinterval'])) {
 			$radvdconf .= "\tMaxRtrAdvInterval {$dhcpv6ifconf['ramaxrtradvinterval']};\n";
+			$raadvdnsslifetime = $dhcpv6ifconf['ramaxrtradvinterval'] * 3;
 		} else {
 			$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
+			$raadvdnsslifetime = 30;
 		}
 		$mtu = get_interface_mtu($realif);
 		if (is_numeric($mtu)) {

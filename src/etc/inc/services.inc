@@ -379,13 +379,13 @@ function services_radvd_configure($blacklist = array()) {
 		if (is_numericint($dhcpv6ifconf['raminrtradvinterval'])) {
 			$radvdconf .= "\tMinRtrAdvInterval {$dhcpv6ifconf['raminrtradvinterval']};\n";
 		} else {
-			$radvdconf .= "\tMinRtrAdvInterval 5;\n";
+			$radvdconf .= "\tMinRtrAdvInterval 200;\n";
                 }
 		if (is_numericint($dhcpv6ifconf['ramaxrtradvinterval'])) {
 			$radvdconf .= "\tMaxRtrAdvInterval {$dhcpv6ifconf['ramaxrtradvinterval']};\n";
 			$raadvdnsslifetime = $dhcpv6ifconf['ramaxrtradvinterval'] * 3;
 		} else {
-			$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
+			$radvdconf .= "\tMaxRtrAdvInterval 600;\n";
 			$raadvdnsslifetime = 30;
 		}
 		$mtu = get_interface_mtu($realif);

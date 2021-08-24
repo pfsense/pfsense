@@ -386,7 +386,7 @@ function services_radvd_configure($blacklist = array()) {
 			$raadvdnsslifetime = $dhcpv6ifconf['ramaxrtradvinterval'] * 3;
 		} else {
 			$radvdconf .= "\tMaxRtrAdvInterval 600;\n";
-			$raadvdnsslifetime = 30;
+			$raadvdnsslifetime = 1800;
 		}
 		$mtu = get_interface_mtu($realif);
 		if (is_numeric($mtu)) {

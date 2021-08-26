@@ -2578,7 +2578,7 @@ function system_identify_specific_platform() {
 			return (array('name' => 'RCC', 'descr' => 'Netgate XG-2758'));
 			break;
 		case 'SG-5100':
-			return (array('name' => '5100', 'descr' => 'Netgate-5100'));
+			return (array('name' => '5100', 'descr' => 'Netgate 5100'));
 			break;
 		case 'Minnowboard Turbot D0 PLATFORM':
 		case 'Minnowboard Turbot D0/D1 PLATFORM':

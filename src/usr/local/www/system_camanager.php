@@ -445,26 +445,23 @@ foreach ($a_ca as $ca):
 					<td><?=$certcount?></td>
 					<td>
 						<?=$subj?>
-						<?php 
-						print(cert_print_infoblock($ca)); 
-						print(cert_format_dates($ca));?>
+						<?php cert_print_infoblock($ca); ?>
+						<?php cert_print_dates($ca);?>
 					</td>
 					<td class="text-nowrap">
-						<?php
-						$inuse = "";
-						if (is_openvpn_server_ca($ca['refid'])) {
-							$inuse = gettext("OpenVPN Server");
-						} else if (is_openvpn_client_ca($ca['refid'])) {
-							$inuse = gettext("OpenVPN Client");
-						} else if (is_ipsec_peer_ca($ca['refid'])) {
-							$inuse = gettext("IPsec Tunnel");
-						} else if (is_ldap_peer_ca($ca['refid'])) {
-							$inuse = gettext("LDAP Server");
-						}
-
-						print("{$inuse}<br />");
-						print(cert_usedby_description($ca['refid'], $certificates_used_by_packages));
-						?>
+						<?php if (is_openvpn_server_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Server")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_client_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Client")?><br/>
+						<?php endif?>
+						<?php if (is_ipsec_peer_ca($ca['refid'])): ?>
+							<?=gettext("IPsec Tunnel")?><br/>
+						<?php endif?>
+						<?php if (is_ldap_peer_ca($ca['refid'])): ?>
+							<?=gettext("LDAP Server")?>
+						<?php endif?>
+						<?php echo cert_usedby_description($ca['refid'], $certificates_used_by_packages); ?>
 					</td>
 					<td class="text-nowrap">
 						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$ca['refid']?>"></a>

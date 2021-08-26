@@ -572,7 +572,7 @@ function check_for_alternate_interfaces() {
 				);
 			}
 			break;
-		case 'XG-1537':
+		case '1537':
 			if (does_interface_exist('cxl0')) {
 				/* It has 10G SFP+ addon */
 				$config['interfaces']['wan']['if'] = 'cxl0';
@@ -640,8 +640,8 @@ function check_for_alternate_interfaces() {
 				);
 			}
 			break;
-		case 'XG-1540':
-		case 'XG-1541':
+		case '1540':
+		case '1541':
 			if (does_interface_exist('igb2')) {
 				/* It has 4 port Intel 1Gb expansion card */
 				$config['interfaces']['wan']['if'] = 'igb4';
@@ -759,7 +759,7 @@ function check_for_alternate_interfaces() {
 				'descr' => 'OPT4'
 			);
 			break;
-		case 'SG-5100':
+		case '5100':
 			$config['interfaces']['wan']['if'] = 'igb0';
 			$config['interfaces']['lan']['if'] = 'igb1';
 			$config['interfaces']['opt1'] = array(

@@ -2578,7 +2578,7 @@ function system_identify_specific_platform() {
 			return (array('name' => 'RCC', 'descr' => 'Netgate XG-2758'));
 			break;
 		case 'SG-5100':
-			return (array('name' => 'SG-5100', 'descr' => 'Netgate SG-5100'));
+			return (array('name' => '5100', 'descr' => 'Netgate-5100'));
 			break;
 		case 'Minnowboard Turbot D0 PLATFORM':
 		case 'Minnowboard Turbot D0/D1 PLATFORM':
@@ -2613,9 +2613,9 @@ function system_identify_specific_platform() {
 			break;
 		case 'SYS-5018D-FN4T':
 			if (strpos($hw_model, "D-1541") !== false) {
-				return (array('name' => 'XG-1541', 'descr' => 'Super Micro XG-1541'));
+				return (array('name' => '1541', 'descr' => 'Super Micro XG-1541'));
 			} else {
-				return (array('name' => 'XG-1540', 'descr' => 'Super Micro XG-1540'));
+				return (array('name' => '1540', 'descr' => 'Super Micro XG-1540'));
 			}
 			break;
 		case 'apu2':
@@ -2645,7 +2645,7 @@ function system_identify_specific_platform() {
 	    $planar_product);
 	if (isset($planar_product[0]) &&
 	    $planar_product[0] == 'X10SDV-8C-TLN4F+') {
-		return array('name' => 'XG-1537', 'descr' => 'Super Micro XG-1537');
+		return array('name' => '1537', 'descr' => 'Super Micro XG-1537');
 	}
 
 	if (strpos($hw_model, "PC Engines WRAP") !== false) {

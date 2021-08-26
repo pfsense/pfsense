@@ -1248,7 +1248,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	$serial_only = false;
 	$specific_platform = system_identify_specific_platform();
 	$video_console_type = (get_single_sysctl("machdep.bootmethod") == "UEFI") ? "efi" : "vidconsole";
-	if ($specific_platform['name'] == 'XG-1540') {
+	if ($specific_platform['name'] == '1540') {
 		$vga_only = true;
 	} elseif ($specific_platform['name'] == 'Turbot Dual-E') {
 		$g['primaryconsole_force'] = "video";

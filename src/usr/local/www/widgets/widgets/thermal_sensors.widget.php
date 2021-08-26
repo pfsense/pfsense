@@ -30,7 +30,7 @@ require_once("system.inc");
 if (isset($_REQUEST["getThermalSensorsData"])) {
 
 	$specplatform = system_identify_specific_platform();
-	if ($specplatform['name'] == 'SG-5100') {
+	if ($specplatform['name'] == '5100') {
 		$_gb = exec("/sbin/sysctl -q dev.cpu | /usr/bin/grep temperature | /usr/bin/sort", $dfout);
 	} else {
 		$_gb = exec("/sbin/sysctl -q hw.acpi.thermal dev.cpu dev.t5nex dev.armada_thermal dev.cordbuc | /usr/bin/grep 'temperature:'", $dfout);

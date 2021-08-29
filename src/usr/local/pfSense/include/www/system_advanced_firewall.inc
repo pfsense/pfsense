@@ -257,7 +257,7 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 		if ($post['vpn_scrubnodf'] == "yes") {
 			$config['system']['vpn_scrubnodf'] = true;
 		} else {
-			unset($config['system']['scrubnodf']);
+			unset($config['system']['vpn_scrubnodf']);
 		}
 
 		if ($post['vpn_fragment_reassemble'] == "yes") {

@@ -1330,10 +1330,43 @@ function ipsec_force_reload($interface = "") {
 
 	if (!empty($interface) && is_array($ipseccfg['phase1'])) {
 		$found = false;
+		$gateways_status = null;
+		$realif = array();
+		$ifcache = array();
 		foreach ($ipseccfg['phase1'] as $ipsec) {
-			if (!isset($ipsec['disabled']) && ($ipsec['interface'] == $interface)) {
+			if (isset($ipsec['disabled'])) {
+				continue;
+			}
+			if ($ipsec['interface'] == $interface) {
 				$found = true;
 				break;
+			} else {
+				/* Fetch gateway status just once, and only if needed */
+				if (!is_array($gateways_status)) {
+					$gateways_status = return_gateways_status(true);
+				}
+				$fam = (!empty($ipsec['protocol'])) ? $ipsec['protocol'] : 'inet';
+
+				/* Find the real active passed interface for this address family, cache the result */
+				if (empty($realif) ||
+				    empty($realif[$fam])) {
+					$realif[$fam] = get_failover_interface($interface, $fam, $gateways_status);
+				}
+
+				/* Find the real active tunnel interface for this address family, cache the result */
+				if (empty($ifcache) ||
+				    empty($ifcache[$ipsec['interface']]) ||
+				    empty($ifcache[$ipsec['interface']][$fam])) {
+					if (!is_array($ifcache[$ipsec['interface']])) {
+						$ifcache[$ipsec['interface']] = array();
+					}
+					$ifcache[$ipsec['interface']][$fam] = get_failover_interface($ipsec['interface'], $fam, $gateways_status);
+				}
+
+				if ($realif[$fam] == $ifcache[$ipsec['interface']][$fam]) {
+					$found = true;
+					break;
+				}
 			}
 		}
 		if (!$found) {

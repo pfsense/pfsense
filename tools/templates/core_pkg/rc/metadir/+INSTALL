@@ -26,6 +26,9 @@ if ! /usr/bin/grep -q "net.pf.request_maxcount" /boot/loader.conf \
 	fi
 fi
 
+echo "%%PRODUCT_VERSION%%" \
+    > /usr/local/share/%%PRODUCT_NAME%%/next_pkg_set_version
+
 if [ -f /usr/local/share/%%PRODUCT_NAME%%/fix_for_SA-19-10.ufs ]; then
 	exit 0
 fi

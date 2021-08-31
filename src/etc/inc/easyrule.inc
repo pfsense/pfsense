@@ -29,22 +29,36 @@ require_once("util.inc");
 require_once("ipsec.inc");
 require_once("config.inc");
 
+global $specialsrcdst;
+$specialsrcdst = explode(" ", "any pppoe l2tp");
+
 function easyrule_find_rule_interface($int) {
 	global $config;
 	/* Borrowed from firewall_rules.php */
 	$iflist = get_configured_interface_with_descr(true);
 
-	if ($config['pppoe']['mode'] == "server") {
-		$iflist['pppoe'] = "PPPoE Server";
+	// add group interfaces
+	if (isset($config['ifgroups']['ifgroupentry']) && is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgen) {
+			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
+		}
+	}
+
+	if (is_pppoe_server_enabled()) {
+		$iflist['pppoe'] = gettext("PPPoE Server");
 	}
 
 	if ($config['l2tp']['mode'] == "server") {
-		$iflist['l2tp'] = "L2TP VPN";
+		$iflist['l2tp'] = gettext("L2TP VPN");
 	}
 
 	/* add ipsec interfaces */
 	if (ipsec_enabled()) {
-		$iflist["enc0"] = "IPSEC";
+		$iflist["enc0"] = gettext("IPsec");
+	}
+
+	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+		$iflist["openvpn"] = gettext("OpenVPN");
 	}
 
 	if (isset($iflist[$int])) {

@@ -22,84 +22,14 @@
  * limitations under the License.
  */
 
-
 require_once("pfsense-utils.inc");
 require_once("easyrule.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-$message = "";
-$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
-$ifdisp = get_configured_interface_with_descr();
-foreach ($ifdisp as $kif => $kdescr) {
-	$specialsrcdst[] = "{$kif}";
-	$specialsrcdst[] = "{$kif}ip";
-}
-
-/* Borrow this function from guiconfig.inc since we can't include it for use at the CLI
-
- - Maybe these need to be moved to util.inc or pfsense-utils.inc?
-
-*/
-function pconfig_to_address(&$adr, $padr, $pmask, $pnot=false, $pbeginport=0, $pendport=0) {
-
-	$adr = array();
-
-	if ($padr == "any") {
-		$adr['any'] = true;
-	} else if (is_specialnet($padr)) {
-		$adr['network'] = $padr;
-	} else {
-		$adr['address'] = $padr;
-		if ($pmask != 32) {
-			$adr['address'] .= "/" . $pmask;
-		}
-	}
-
-	if ($pnot) {
-		$adr['not'] = true;
-	} else {
-		unset($adr['not']);
-	}
-
-	if (($pbeginport != 0) && ($pbeginport != "any")) {
-		if ($pbeginport != $pendport) {
-			$adr['port'] = $pbeginport . "-" . $pendport;
-		} else {
-			$adr['port'] = $pbeginport;
-		}
-	}
-
-	if (is_alias($pbeginport)) {
-		$adr['port'] = $pbeginport;
-	}
-}
-
-/* Borrow this one from guiconfig.inc also */
-function is_specialnet($net) {
-	global $specialsrcdst;
-
-	if (!$net) {
-		return false;
-	}
-	if (in_array($net, $specialsrcdst)) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-
 if (($argc > 1) && !empty($argv[1])) {
-
-	/* Automagically derive an alternate alias name from the scripts name
-	 * This allows for using alternate alias lists with just a symlink */
-	if (($alias = basename($argv[0])) != 'easyrule') {
-		$blockaliasname = ucfirst($alias).'Rules';
-	}
-
-	$message = "";
-	switch ($argv[1]) {
+	$ret_code = 0;
+	switch (strtolower($argv[1])) {
 		case 'block':
 			$message = easyrule_parse_block($argv[2], $argv[3]);
 			break;
@@ -112,31 +42,39 @@ if (($argc > 1) && !empty($argv[1])) {
 		case 'pass':
 			$message = easyrule_parse_pass($argv[2], $argv[3], $argv[4], $argv[5], $argv[6]);
 			break;
+		default:
+			// Catch footgun and warn the user...
+			easyrule_print_usage();
+			$ret_code = 1;
+			break;
 	}
-	echo $message . "\n";
 } else {
-	// Print usage:
-	echo "usage:\n";
-	echo " Blocking only requires an IP to block, block rules can be shown with showblock and revoked using unblock\n";
-	echo "     " . basename($argv[0]) . " block <interface> <source IP>\n";
-	echo "\n";
-	echo " Passing requires more detail, as it must be as specific as possible. The destination port is optional if you're using a protocol without a port (e.g. ICMP, OSPF, etc).\n";
-	echo "     " . basename($argv[0]) . " pass <interface> <protocol> <source IP> <destination ip> [destination port]\n";
-	echo "\n";
-	echo " Block example:\n";
-	echo "     " . basename($argv[0]) . " block wan 1.2.3.4\n";
-	echo "\n";
-	echo " Show active blocks example:\n";
-	echo "     " . basename($argv[0]) . " showblock wan\n";
-	echo "\n";
-	echo " Unblock example:\n";
-	echo "     " . basename($argv[0]) . " unblock wan 1.2.3.4\n";
-	echo "\n";
-	echo " Pass example (protocol with port):\n";
-	echo "     " . basename($argv[0]) . " pass wan tcp 1.2.3.4 192.168.0.4 80\n";
-	echo "\n";
-	echo " Pass example (protocol without port):\n";
-	echo "     " . basename($argv[0]) . " pass wan icmp 1.2.3.4 192.168.0.4\n";
-	echo "\n";
+	// Show usage overview
+	easyrule_print_usage();
 }
+
+print("{$message}\n");
+exit($ret_code);
+
+function easyrule_print_usage() {
+	$s = fn($x) => $x;
+	foreach (array(
+		"Usage:\n",
+		" Blocking only requires an IP to block, block rules can be shown with showblock and revoked using unblock\n",
+		"     {$s(basename($argv[0]))} block <interface> <source IP>\n\n",
+		" Passing requires more detail, as it must be as specific as possible. The destination port is optional if you're using a protocol without a port (e.g. ICMP, OSPF, etc).\n",
+		"     {$s(basename($argv[0]))} pass <interface> <protocol> <source IP> <destination ip> [destination port]\n\n",
+		" Block example:\n",
+		"     {$s(basename($argv[0]))} block wan 1.2.3.4\n\n",
+		" Show active blocks example:\n",
+		"     {$s(basename($argv[0]))} showblock wan\n\n",
+		" Unblock example:\n",
+		"     {$s(basename($argv[0]))} unblock wan 1.2.3.4\n\n",
+		" Pass example (protocol with port):\n",
+		"     {$s(basename($argv[0]))} pass wan tcp 1.2.3.4 192.168.0.4 80\n\n",
+		" Pass example (protocol without port):\n",
+		"     {$s(basename($argv[0]))} pass wan icmp 1.2.3.4 192.168.0.4\n\n"
+	) as $line) { print($line); }
+}
+
 ?>

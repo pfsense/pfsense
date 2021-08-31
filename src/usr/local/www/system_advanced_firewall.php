@@ -376,7 +376,7 @@ if (count($config['interfaces']) > 1) {
 		'Reflection Timeout',
 		'number',
 		$config['system']['reflectiontimeout'],
-		['min' => 1]
+		['min' => 1, 'placeholder' => '2000']
 	))->setHelp('Enter value for Reflection timeout in seconds.%1$sNote: Only '.
 		'applies to Reflection on port forwards in NAT + proxy mode.', '<br/>');
 

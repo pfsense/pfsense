@@ -1366,11 +1366,12 @@ if ($act=="new" || $act=="edit"):
 		'number',
 		$pconfig['inactive_seconds'] ?: 0,
 		['min' => '0']
-	    ))->setHelp('Causes OpenVPN to exit after n seconds of ' .
-	    'inactivity on the TUN/TAP device.%1$s' .
-	    'The time length of inactivity is measured since the last ' .
-	    'incoming or outgoing tunnel packet.%1$s' .
-	    '0 disables this feature.%1$s', '<br />');
+	))->setHelp('Causes OpenVPN to close a client connection after n seconds of ' .
+		'inactivity on the TUN/TAP device.%1$s' .
+		'Activity is based on the last incoming or outgoing tunnel packet.%1$s' .
+		'A value of 0 disables this feature.%1$s' .
+		'This option is ignored in Peer-to-Peer Shared Key mode and in SSL/TLS mode with a blank or ' .
+		'/30 tunnel network as it will cause the server to exit and not restart.', '<br />');
 
 	$section->addInput(new Form_Select(
 		'ping_method',
@@ -1617,8 +1618,8 @@ if ($act=="new" || $act=="edit"):
 	))->setHelp('Send an explicit exit notification to connected clients/peers when restarting ' .
 		'or shutting down, so they may immediately disconnect rather than waiting for a timeout. ' .
 		'In SSL/TLS Server modes, clients may be directed to reconnect or use the next server. ' .
-		'In Peer-to-Peer Shared Key or with a /30 Tunnel Network, this value controls how ' .
-		'many times this instance will attempt to send the exit notification.');
+		'This option is ignored in Peer-to-Peer Shared Key mode and in SSL/TLS mode with a blank or ' .
+		'/30 tunnel network as it will cause the server to exit and not restart.');
 
 	$section->addInput(new Form_Select(
 		'sndrcvbuf',
@@ -1826,6 +1827,7 @@ events.push(function() {
 				hideInput('topology', false);
 				hideCheckbox('compression_push', false);
 				hideCheckbox('duplicate_cn', false);
+				hideInput('inactive_seconds', false);
 			break;
 			case "server_tls_user":
 				hideInput('tls', false);
@@ -1840,6 +1842,7 @@ events.push(function() {
 				hideInput('topology', false);
 				hideCheckbox('compression_push', false);
 				hideCheckbox('duplicate_cn', false);
+				hideInput('inactive_seconds', false);
 			break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
@@ -1860,6 +1863,7 @@ events.push(function() {
 				hideCheckbox('compression_push', true);
 				hideCheckbox('duplicate_cn', true);
 				hideCheckbox('ocspcheck', true);
+				hideInput('inactive_seconds', true);
 			break;
 		}
 
@@ -1876,6 +1880,7 @@ events.push(function() {
 				hideCheckbox('client2client', true);
 				hideCheckbox('autokey_enable', false);
 				hideCheckbox('username_as_common_name', true);
+				hideInput('exit_notify', true);
 			break;
 			case "p2p_tls":
 				advanced_change(true, value);
@@ -1888,6 +1893,7 @@ events.push(function() {
 				hideMultiClass('authmode', true);
 				hideCheckbox('client2client', false);
 				hideCheckbox('username_as_common_name', true);
+				hideInput('exit_notify', false);
 			break;
 			case "server_user":
 			case "server_tls_user":
@@ -1902,6 +1908,7 @@ events.push(function() {
 				hideCheckbox('client2client', false);
 				hideCheckbox('autokey_enable', true);
 				hideCheckbox('username_as_common_name', false);
+				hideInput('exit_notify', false);
 			break;
 			case "server_tls":
 				hideMultiClass('authmode', true);
@@ -1918,6 +1925,7 @@ events.push(function() {
 				hideInput('local_networkv6', false);
 				hideCheckbox('client2client', false);
 				hideCheckbox('username_as_common_name', true);
+				hideInput('exit_notify', false);
 			break;
 		}
 
@@ -1932,7 +1940,13 @@ events.push(function() {
 			hideInput('interface', (($('#protocol').val().toLowerCase() == 'udp') || ($('#protocol').val().toLowerCase() == 'tcp')));
 			var notudp = !($('#protocol').val().substring(0, 3).toLowerCase() == 'udp');
 			hideCheckbox('udp_fast_io', notudp);
-			hideInput('exit_notify', notudp);
+			switch ($('#mode').val()) {
+				case "p2p_shared_key":
+					hideInput('exit_notify', true);
+					break;
+				default:
+					hideInput('exit_notify', notudp);
+			}
 		}
 	}
 
@@ -2186,6 +2200,7 @@ events.push(function() {
 	$('#mode').change(function () {
 		mode_change();
 		tuntap_change();
+		protocol_change();
 	});
 
 	// Protocol

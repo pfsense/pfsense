@@ -923,10 +923,6 @@ function openvpn_reconfigure($mode, $settings) {
 	$conf .= "script-security 3\n";
 	$conf .= "daemon\n";
 
-	if (!empty($settings['inactive_seconds'])) {
-		$conf .= "inactive {$settings['inactive_seconds']}\n";
-	}
-
 	if (!empty($settings['ping_method']) &&
 	    $settings['ping_method'] == 'ping') {
 		$conf .= "ping {$settings['ping_seconds']}\n";
@@ -1466,11 +1462,33 @@ function openvpn_reconfigure($mode, $settings) {
 		$conf .= "fast-io\n";
 	}
 
-	/* Exit Notify. Only compatible with UDP. */
-	if (!empty($settings['exit_notify']) &&
+	/* Exit Notify.
+	 * Only compatible with UDP and specific combinations of
+	 * modes and settings, including:
+	 * if type is server AND
+	 *	mode is not shared key AND
+	 *		tunnel network CIDR mask < 30 AND
+	 *		tunnel network is not blank
+	 * if type is client AND
+	 *	mode is not shared key AND
+	 *		tunnel network is blank OR
+	 *		tunnel network CIDR mask < 30
+	 */
+	list($ip, $cidr) = openvpn_gen_tunnel_network($settings['tunnel_network']);
+	if ((!empty($settings['exit_notify']) &&
 	    is_numericint($settings['exit_notify']) &&
-	    (strtolower(substr($settings['protocol'], 0, 3)) == "udp")) {
+	    (strtolower(substr($settings['protocol'], 0, 3)) == "udp")) &&
+	    ((($mode == "server") && (($settings['mode'] != 'p2p_shared_key') && (($cidr < 30) && !empty($ip)))) ||
+	    (($mode == "client") && (($settings['mode'] != 'p2p_shared_key') && (($cidr < 30) || empty($ip)))))) {
 		$conf .= "explicit-exit-notify {$settings['exit_notify']}\n";
+	}
+
+	/* Inactive Seconds
+	 * Has similar restrictions to Exit Notify (above) but only for server mode.
+	 */
+	if (!empty($settings['inactive_seconds']) &&
+	    !(($mode == "server") && (($settings['mode'] == 'p2p_shared_key') || (($cidr >= 30) || empty($ip))))) {
+		$conf .= "inactive {$settings['inactive_seconds']}\n";
 	}
 
 	/* Send and Receive Buffer Settings */

@@ -1046,11 +1046,13 @@ if ($act=="new" || $act=="edit"):
 		'number',
 		$pconfig['inactive_seconds'] ?: 0,
 		['min' => '0']
-	    ))->setHelp('Causes OpenVPN to exit after n seconds of ' .
-	    'inactivity on the TUN/TAP device.%1$s' .
-	    'The time length of inactivity is measured since the last ' .
-	    'incoming or outgoing tunnel packet.%1$s' .
-	    '0 disables this feature.%1$s', '<br />');
+	))->setHelp('Causes OpenVPN to exit after n seconds of ' .
+		'inactivity on the TUN/TAP device.%1$s' .
+		'Activity is based on the last incoming or outgoing tunnel packet ' .
+		'(not control or keep-alive packets).%1$s' .
+		'A value of 0 disables this feature.%1$s%1$s' .
+		'WARNING: Use with caution. When triggered, the client process ' .
+		'will exit and it will not automatically restart.', '<br />');
 
 	$section->addInput(new Form_Select(
 		'ping_method',
@@ -1138,7 +1140,9 @@ if ($act=="new" || $act=="edit"):
 		$openvpn_exit_notify_client
 	))->setHelp('Send an explicit exit notification to connected servers/peers when restarting ' .
 		'or shutting down, so they may immediately disconnect rather than waiting for a timeout. ' .
-		'This value controls how many times this instance will attempt to send the exit notification.');
+		'This value controls how many times this instance will attempt to send the exit notification.%1$s%1$s' .
+		'This option is ignored in Peer-to-Peer Shared Key mode and in SSL/TLS mode with a ' .
+		'/30 tunnel network as it will cause the server to exit and not restart.', '<br/>');
 
 	$section->addInput(new Form_Select(
 		'sndrcvbuf',
@@ -1328,6 +1332,8 @@ events.push(function() {
 				hideInput('crlref', false);
 				hideInput('topology', false);
 				hideCheckbox('route_no_pull', false);
+				hideInput('inactive_seconds', false);
+				hideInput('exit_notify', false);
 				break;
 			case "p2p_shared_key":
 				hideCheckbox('tlsauth_enable', true);
@@ -1342,6 +1348,8 @@ events.push(function() {
 				hideInput('crlref', true);
 				hideInput('topology', true);
 				hideCheckbox('route_no_pull', true);
+				hideInput('inactive_seconds', true);
+				hideInput('exit_notify', true);
 				break;
 		}
 
@@ -1360,7 +1368,13 @@ events.push(function() {
 			hideInput('interface', (($('#protocol').val().toLowerCase() == 'udp') || ($('#protocol').val().toLowerCase() == 'tcp')));
 			var notudp = !($('#protocol').val().substring(0, 3).toLowerCase() == 'udp');
 			hideCheckbox('udp_fast_io', notudp);
-			hideInput('exit_notify', notudp);
+			switch ($('#mode').val()) {
+				case "p2p_shared_key":
+					hideInput('exit_notify', true);
+					break;
+				default:
+					hideInput('exit_notify', notudp);
+			}
 		}
 	}
 
@@ -1418,6 +1432,7 @@ events.push(function() {
 	 // Mode
 	$('#mode').change(function () {
 		mode_change();
+		protocol_change();
 	});
 
 	// Protocol

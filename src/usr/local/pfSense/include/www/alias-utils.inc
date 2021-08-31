@@ -627,7 +627,7 @@ function saveAlias($post, $id) {
 
 		/* restart related OpenVPN instances
 		 * see https://redmine.pfsense.org/issues/2668 */
-		if ($alias['type'] == 'network') {
+		if (in_array($alias['type'], array('host', 'network', 'url'))) {
 			$config = parse_config(true);
 			init_config_arr(array('openvpn', 'openvpn-server'));
 			init_config_arr(array('openvpn', 'openvpn-client'));

@@ -73,6 +73,8 @@ $pconfig['hostres'] = isset($config['snmpd']['modules']['hostres']);
 $pconfig['bridge'] = isset($config['snmpd']['modules']['bridge']);
 $pconfig['ucd'] = isset($config['snmpd']['modules']['ucd']);
 $pconfig['regex'] = isset($config['snmpd']['modules']['regex']);
+
+$pconfig['ipprotocol'] = $config['snmpd']['ipprotocol'];
 if (empty($config['snmpd']['bindip'])) {
 	$pconfig['bindip'] = array();
 } else {
@@ -157,6 +159,8 @@ if ($_POST) {
 		$config['snmpd']['modules']['bridge'] = $_POST['bridge'] ? true : false;
 		$config['snmpd']['modules']['ucd'] = $_POST['ucd'] ? true : false;
 		$config['snmpd']['modules']['regex'] = $_POST['regex'] ? true : false;
+
+		$config['snmpd']['ipprotocol'] = $_POST['ipprotocol'];
 		if (is_array($_POST['bindip']) && !empty($_POST['bindip'])) {
 			$config['snmpd']['bindip'] = implode(",", $_POST['bindip']);
 		}
@@ -343,6 +347,13 @@ $section->add($group);
 $form->add($section);
 
 $section = new Form_Section('Interface Binding');
+
+$section->addInput(new Form_Select(
+	'ipprotocol',
+	'Internet Protocol',
+	$pconfig['ipprotocol'],
+	array("inet4" => "IPv4", "inet6" => "IPv6", "inet46" => "IPv4+IPv6")
+));
 
 $iflist = build_if_list($pconfig['bindip']);
 

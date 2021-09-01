@@ -1056,14 +1056,16 @@ events.push(function() {
 	<?php endif; ?>
 
 	function change_protocol() {
-		hideClass('encalg', ($('#proto').val() != 'esp'));
+		var hide = ($('#proto').val() != 'esp');
+		hideClass('encalg', hide);
+		$("input[name='halgos[]']").prop("disabled", !hide);
 	}
 
 	function change_aead() {
 		var notaead = ['AES', 'Blowfish', '3DES', 'CAST128'];
 		var arrayLength = notaead.length;
 		for (var i = 0; i < arrayLength; i++) {
-			if ($('#' + notaead[i]).prop('checked')) {
+			if ($('#' + notaead[i]).prop('checked') || ($('#proto').val() != 'esp')) {
 				$("input[name='halgos[]']").prop("disabled", false);
 				return;
 			} 

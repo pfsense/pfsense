@@ -470,6 +470,12 @@ function saveNATrule($post, $id, $json = false) {
 			$input_errors[] = gettext("The destination port range overlaps with an existing entry.");
 			break;
 		}
+
+	}
+
+	/* https://redmine.pfsense.org/issues/12319 */
+	if (($post['ipprotocol'] == 'inet6') && ($post['natreflection'] == 'enable')) {
+		$input_errors[] = gettext("IPv6 address family doesn't support NAT + Proxy reflection mode.");
 	}
 
 	if (!$input_errors) {

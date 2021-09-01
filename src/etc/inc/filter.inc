@@ -1491,6 +1491,11 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 	$natrules = "";
 	$reflection_rules = array();
 
+	/* https://redmine.pfsense.org/issues/12319 */
+	if ($rule['ipprotocol'] == 'inet6') {
+		return "";
+	}
+
 	if (!empty($rdr_ifs)) {
 		if ($config['system']['reflectiontimeout']) {
 			$reflectiontimeout = $config['system']['reflectiontimeout'];
